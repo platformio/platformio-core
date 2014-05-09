@@ -1,4 +1,4 @@
 platformio
 ==========
 
-An easy way to manage different development platforms
+An easy way to build code with different development platforms
