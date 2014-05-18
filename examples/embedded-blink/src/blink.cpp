@@ -1,7 +1,12 @@
-/*
-  Turns ON and OFF the Wiring compatible board LED, with intervals of 1 second (1000 milliseconds)
-
+/**
+ * Copyright (C) Ivan Kravets <me@ikravets.com>
+ * See LICENSE for details.
  */
+
+/**
+  Turns ON and OFF the Wiring compatible board LED,
+  with intervals of 1 second (1000 milliseconds)
+*/
 
 #ifdef ENERGIA
 
