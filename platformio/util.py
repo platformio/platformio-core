@@ -1,10 +1,10 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from sys import exit
 from os import getcwd
-from os.path import dirname, expanduser, join, realpath, isfile
-from subprocess import Popen, PIPE
+from os.path import dirname, expanduser, isfile, join, realpath
+from subprocess import PIPE, Popen
+from sys import exit
 
 try:
     from configparser import ConfigParser

@@ -9,7 +9,6 @@ from os.path import join
 
 from SCons.Script import Import, Return
 
-
 env = None
 Import("env")
 

@@ -11,7 +11,6 @@ from os.path import join
 from SCons.Script import (AlwaysBuild, Builder, Default, DefaultEnvironment,
                           SConscript, SConscriptChdir)
 
-
 env = DefaultEnvironment()
 
 env.Replace(
@@ -93,9 +92,7 @@ env.PrependENVPath(
     join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
 )
 
-
 BUILT_LIBS = []
-
 
 #
 # Process framework script
@@ -108,13 +105,11 @@ if "FRAMEWORK" in env:
                        exports="env")
     BUILT_LIBS += flibs
 
-
 #
 # Target: Build executable and linkable firmware
 #
 
 target_elf = env.BuildFirmware(BUILT_LIBS + ["c", "gcc", "m"])
-
 
 #
 # Target: Build the .bin file
@@ -122,14 +117,12 @@ target_elf = env.BuildFirmware(BUILT_LIBS + ["c", "gcc", "m"])
 
 target_bin = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
 
-
 #
 # Target: Upload firmware
 #
 
 upload = env.Alias("upload", target_bin, ["$UPLOADCMD"])
 AlwaysBuild(upload)
-
 
 #
 # Target: Define targets

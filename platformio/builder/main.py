@@ -8,7 +8,6 @@ from SCons.Script import (DefaultEnvironment, Exit, SConscript,
 
 from platformio.util import get_home_dir, get_project_dir, get_source_dir
 
-
 # AllowSubstExceptions()
 
 # allow common variables from INI file

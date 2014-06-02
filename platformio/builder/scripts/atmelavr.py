@@ -11,7 +11,6 @@ from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
                           DefaultEnvironment, Exit, SConscript,
                           SConscriptChdir)
 
-
 env = DefaultEnvironment()
 
 env.Replace(
@@ -100,9 +99,7 @@ env.PrependENVPath(
     join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
 )
 
-
 BUILT_LIBS = []
-
 
 #
 # Process framework script
@@ -115,13 +112,11 @@ if "FRAMEWORK" in env:
                        exports="env")
     BUILT_LIBS += flibs
 
-
 #
 # Target: Build executable and linkable firmware
 #
 
 target_elf = env.BuildFirmware(BUILT_LIBS + ["m"])
-
 
 #
 # Target: Extract EEPROM data (from EEMEM directive) to .eep file
@@ -129,13 +124,11 @@ target_elf = env.BuildFirmware(BUILT_LIBS + ["m"])
 
 target_eep = env.ElfToEep(join("$BUILD_DIR", "firmware"), target_elf)
 
-
 #
 # Target: Build the .hex file
 #
 
 target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
-
 
 #
 # Target: Upload .eep file
@@ -145,7 +138,6 @@ eep = env.Alias("eep", target_eep, [
     lambda target, source, env: env.ResetDevice(), "$UPLOADEEPCMD"])
 AlwaysBuild(eep)
 
-
 #
 # Target: Upload .hex file
 #
@@ -153,7 +145,6 @@ AlwaysBuild(eep)
 upload = env.Alias("upload", target_hex, [
     lambda target, source, env: env.ResetDevice(), "$UPLOADHEXCMD"])
 AlwaysBuild(upload)
-
 
 #
 # Target: Define targets

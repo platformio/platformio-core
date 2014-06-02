@@ -11,7 +11,6 @@ from os.path import join
 from SCons.Script import (AlwaysBuild, Builder, Default, DefaultEnvironment,
                           SConscript, SConscriptChdir)
 
-
 env = DefaultEnvironment()
 
 env.Replace(
@@ -77,9 +76,7 @@ env.PrependENVPath(
     join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
 )
 
-
 BUILT_LIBS = []
-
 
 #
 # Process framework script
@@ -99,13 +96,11 @@ if "FRAMEWORK" in env:
 
 target_elf = env.BuildFirmware(BUILT_LIBS + ["m"])
 
-
 #
 # Target: Build the .hex
 #
 
 target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
-
 
 #
 # Target: Upload firmware
@@ -113,7 +108,6 @@ target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 upload = env.Alias("upload", target_hex, ["$UPLOADCMD"])
 AlwaysBuild(upload)
-
 
 #
 # Target: Define targets

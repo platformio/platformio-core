@@ -1,11 +1,10 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-import click
 from sys import exit
 
+import click
 from clint.textui import colored, indent, puts
-
 
 from platformio.util import get_project_config, run_builder
 
