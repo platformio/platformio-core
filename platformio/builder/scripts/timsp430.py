@@ -4,31 +4,17 @@
 """
     Builder for Texas Instruments
     MSP430 Ultra-Low Power 16-bit microcontrollers
-
-    Fully compatible with Energia programming language (based on Wiring).
 """
 
 from os.path import join
 
-from SCons.Script import AlwaysBuild, Builder, Default, DefaultEnvironment
+from SCons.Script import (AlwaysBuild, Builder, Default, DefaultEnvironment,
+                          SConscript, SConscriptChdir)
 
-#
-# SETUP ENVIRONMENT
-#
 
 env = DefaultEnvironment()
 
-BOARD_OPTIONS = env.ParseBoardOptions(join("$PLATFORM_DIR", "boards.txt"),
-                                      "${BOARD}")
 env.Replace(
-    # See https://github.com/energia/Energia/blob/master/app/src/
-    # processing/app/Base.java#L45
-    ARDUINO_VERSION="101",
-    ENERGIA_VERSION="12",
-
-    BOARD_MCU=BOARD_OPTIONS['build.mcu'],
-    BOARD_F_CPU=BOARD_OPTIONS['build.f_cpu'],
-
     AR="msp430-ar",
     AS="msp430-as",
     CC="msp430-gcc",
@@ -40,11 +26,9 @@ env.Replace(
 
     ASFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
-        "-assembler-with-cpp",
+        "-x", "-assembler-with-cpp",
         "-mmcu=$BOARD_MCU",
-        "-DF_CPU=$BOARD_F_CPU",
-        "-DARDUINO=$ARDUINO_VERSION",
-        "-DENERGIA=$ENERGIA_VERSION"
+        "-DF_CPU=$BOARD_F_CPU"
     ],
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
@@ -52,11 +36,9 @@ env.Replace(
         "-Wall",  # show warnings
         "-ffunction-sections",  # place each function in its own section
         "-fdata-sections",
-        "-mmcu=$BOARD_MCU",
-        "-DF_CPU=$BOARD_F_CPU",
         "-MMD",  # output dependancy info
-        "-DARDUINO=$ARDUINO_VERSION",
-        "-DENERGIA=$ENERGIA_VERSION"
+        "-mmcu=$BOARD_MCU",
+        "-DF_CPU=$BOARD_F_CPU"
     ],
 
     LINK="$CC",
@@ -66,14 +48,9 @@ env.Replace(
         "-Wl,-gc-sections,-u,main"
     ],
 
-    CPPPATH=[
-        "$PLATFORMCORE_DIR",
-        join("$PLATFORM_DIR", "variants", BOARD_OPTIONS['build.variant'])
-    ],
-
-    UPLOADER=(join("$PLATFORMTOOLS_DIR", "msp430", "mspdebug", "mspdebug")),
+    UPLOADER=(join("$PLATFORMTOOLS_DIR", "mspdebug", "mspdebug")),
     UPLOADERFLAGS=[
-        BOARD_OPTIONS['upload.protocol'],
+        "$UPLOAD_PROTOCOL",
         "--force-reset"
     ],
     UPLOADCMD='$UPLOADER $UPLOADERFLAGS "prog $SOURCES"'
@@ -97,22 +74,30 @@ env.Append(
 
 env.PrependENVPath(
     "PATH",
-    join(env.subst("$PLATFORMTOOLS_DIR"), "msp430", "bin")
+    join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
 )
 
 
+BUILT_LIBS = []
+
+
 #
-# Target: Build Core Library
+# Process framework script
 #
 
-target_corelib = env.BuildCoreLibrary()
+if "FRAMEWORK" in env:
+    SConscriptChdir(0)
+    flibs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
+                                      "frameworks", "${FRAMEWORK}.py")),
+                       exports="env")
+    BUILT_LIBS += flibs
 
 
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware([target_corelib, "m"])
+target_elf = env.BuildFirmware(BUILT_LIBS + ["m"])
 
 
 #
@@ -134,4 +119,4 @@ AlwaysBuild(upload)
 # Target: Define targets
 #
 
-Default([target_corelib, target_elf, target_hex])
+Default([target_elf, target_hex])

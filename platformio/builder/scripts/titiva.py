@@ -4,29 +4,17 @@
 """
     Builder for Texas Instruments
     Tiva C Series ARM Cortex-M4 microcontrollers.
-
-    Fully compatible with Energia programming language (based on Wiring).
 """
 
 from os.path import join
 
-from SCons.Script import AlwaysBuild, Builder, Default, DefaultEnvironment
+from SCons.Script import (AlwaysBuild, Builder, Default, DefaultEnvironment,
+                          SConscript, SConscriptChdir)
 
-#
-# SETUP ENVIRONMENT
-#
 
 env = DefaultEnvironment()
 
-BOARD_OPTIONS = env.ParseBoardOptions(join("$PLATFORM_DIR", "boards.txt"),
-                                      "${BOARD}")
 env.Replace(
-    ARDUINO_VERSION="101",
-    ENERGIA_VERSION="12",
-
-    BOARD_MCU=BOARD_OPTIONS['build.mcu'],
-    BOARD_F_CPU=BOARD_OPTIONS['build.f_cpu'],
-
     AR="arm-none-eabi-ar",
     AS="arm-none-eabi-as",
     CC="arm-none-eabi-gcc",
@@ -38,16 +26,14 @@ env.Replace(
 
     ASFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
-        "-assembler-with-cpp",
+        "-x", "-assembler-with-cpp",
         "-Wall",
         "-mthumb",
         "-mcpu=cortex-m4",
         "-mfloat-abi=hard",
         "-mfpu=fpv4-sp-d16",
         "-fsingle-precision-constant",
-        "-DF_CPU=$BOARD_F_CPU",
-        "-DARDUINO=$ARDUINO_VERSION",
-        "-DENERGIA=$ENERGIA_VERSION"
+        "-DF_CPU=$BOARD_F_CPU"
     ],
 
     CCFLAGS=[
@@ -62,10 +48,8 @@ env.Replace(
         "-mfloat-abi=hard",
         "-mfpu=fpv4-sp-d16",
         "-fsingle-precision-constant",
-        "-DF_CPU=$BOARD_F_CPU",
         "-MMD",  # output dependancy info
-        "-DARDUINO=$ARDUINO_VERSION",
-        "-DENERGIA=$ENERGIA_VERSION"
+        "-DF_CPU=$BOARD_F_CPU"
     ],
 
     CXXFLAGS=[
@@ -78,18 +62,12 @@ env.Replace(
         "-nostartfiles",
         "-nostdlib",
         "-Wl,--gc-sections",
-        "-T", join("$PLATFORMCORE_DIR", BOARD_OPTIONS['ldscript']),
         "-Wl,--entry=ResetISR",
         "-mthumb",
         "-mcpu=cortex-m4",
         "-mfloat-abi=hard",
         "-mfpu=fpv4-sp-d16",
         "-fsingle-precision-constant"
-    ],
-
-    CPPPATH=[
-        "$PLATFORMCORE_DIR",
-        join("$PLATFORM_DIR", "variants", BOARD_OPTIONS['build.variant'])
     ],
 
     UPLOADER="lm4flash",
@@ -112,22 +90,30 @@ env.Append(
 
 env.PrependENVPath(
     "PATH",
-    join(env.subst("$PLATFORMTOOLS_DIR"), "lm4f", "bin")
+    join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
 )
 
 
+BUILT_LIBS = []
+
+
 #
-# Target: Build Core Library
+# Process framework script
 #
 
-target_corelib = env.BuildCoreLibrary()
+if "FRAMEWORK" in env:
+    SConscriptChdir(0)
+    flibs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
+                                      "frameworks", "${FRAMEWORK}.py")),
+                       exports="env")
+    BUILT_LIBS += flibs
 
 
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware([target_corelib, "c", "gcc", "m"])
+target_elf = env.BuildFirmware(BUILT_LIBS + ["c", "gcc", "m"])
 
 
 #
@@ -149,4 +135,4 @@ AlwaysBuild(upload)
 # Target: Define targets
 #
 
-Default([target_corelib, target_elf, target_bin])
+Default([target_elf, target_bin])

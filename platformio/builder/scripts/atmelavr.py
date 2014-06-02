@@ -3,32 +3,18 @@
 
 """
     Builder for Atmel AVR series of microcontrollers
-
-    Fully compatible with Arduino programming language (based on Wiring)
 """
 
 from os.path import join
 
 from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
-                          DefaultEnvironment, Exit)
+                          DefaultEnvironment, Exit, SConscript,
+                          SConscriptChdir)
 
-#
-# SETUP ENVIRONMENT
-#
 
 env = DefaultEnvironment()
 
-BOARD_OPTIONS = env.ParseBoardOptions(join("$PLATFORM_DIR", "boards.txt"),
-                                      "${BOARD}")
 env.Replace(
-    ARDUINO_VERSION=open(join(env.subst("$PLATFORM_DIR"),
-                              "version.txt")).read().replace(".", "").strip(),
-
-    BOARD_MCU=BOARD_OPTIONS['build.mcu'],
-    BOARD_F_CPU=BOARD_OPTIONS['build.f_cpu'],
-    BOARD_VID=BOARD_OPTIONS.get("build.vid", "0"),
-    BOARD_PID=BOARD_OPTIONS.get("build.pid", "0"),
-
     AR="avr-ar",
     AS="avr-as",
     CC="avr-gcc",
@@ -42,38 +28,24 @@ env.Replace(
         "-g",  # include debugging info (so errors include line numbers)
         "-x", "assembler-with-cpp",
         "-mmcu=$BOARD_MCU",
-        "-DF_CPU=$BOARD_F_CPU",
-        "-DUSB_VID=$BOARD_VID",
-        "-DUSB_PID=$BOARD_PID",
-        "-DARDUINO=$ARDUINO_VERSION"
+        "-DF_CPU=$BOARD_F_CPU"
     ],
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
         "-Os",  # optimize for size
         "-Wall",  # show warnings
-        "-fno-exceptions",
         "-ffunction-sections",  # place each function in its own section
         "-fdata-sections",
-        "-mmcu=$BOARD_MCU",
-        "-DF_CPU=$BOARD_F_CPU",
         "-MMD",  # output dependancy info
-        "-DUSB_VID=$BOARD_VID",
-        "-DUSB_PID=$BOARD_PID",
-        "-DARDUINO=$ARDUINO_VERSION"
+        "-mmcu=$BOARD_MCU",
+        "-DF_CPU=$BOARD_F_CPU"
     ],
-    CFLAGS=["-std=gnu99"],
+    CXXFLAGS=["-fno-exceptions"],
 
     LINKFLAGS=[
         "-Os",
-        "-Wl,--gc-sections" + (",--relax" if BOARD_OPTIONS['build.mcu'] ==
-                               "atmega2560" else ""),
-        "-mmcu=$BOARD_MCU",
-        "-lm"
-    ],
-
-    CPPPATH=[
-        "$PLATFORMCORE_DIR",
-        join("$PLATFORM_DIR", "variants", BOARD_OPTIONS['build.variant'])
+        "-Wl,--gc-sections",
+        "-mmcu=$BOARD_MCU"
     ],
 
     UPLOADER="avrdude",
@@ -82,11 +54,10 @@ env.Replace(
         "-q",  # suppress progress output
         "-D",  # disable auto erase for flash memory
         "-p", "$BOARD_MCU",
-        "-C", join("$PLATFORMTOOLS_DIR", "avr", "etc", "avrdude.conf"),
-        "-c", ("stk500v1" if BOARD_OPTIONS['upload.protocol'] == "stk500" else
-               BOARD_OPTIONS['upload.protocol']),
-        "-b", BOARD_OPTIONS['upload.speed'],
-        "-P", "${UPLOAD_PORT}"
+        "-C", join("$PLATFORMTOOLS_DIR", "toolchain", "etc", "avrdude.conf"),
+        "-c", "$UPLOAD_PROTOCOL",
+        "-b", "$UPLOAD_SPEED",
+        "-P", "$UPLOAD_PORT"
     ],
     UPLOADHEXCMD="$UPLOADER $UPLOADERFLAGS -U flash:w:$SOURCES:i",
     UPLOADEEPCMD="$UPLOADER $UPLOADERFLAGS -U eeprom:w:$SOURCES:i"
@@ -126,22 +97,30 @@ env.Append(
 
 env.PrependENVPath(
     "PATH",
-    join(env.subst("$PLATFORMTOOLS_DIR"), "avr", "bin")
+    join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
 )
 
 
+BUILT_LIBS = []
+
+
 #
-# Target: Build Core Library
+# Process framework script
 #
 
-target_corelib = env.BuildCoreLibrary()
+if "FRAMEWORK" in env:
+    SConscriptChdir(0)
+    flibs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
+                                      "frameworks", "${FRAMEWORK}.py")),
+                       exports="env")
+    BUILT_LIBS += flibs
 
 
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware([target_corelib])
+target_elf = env.BuildFirmware(BUILT_LIBS + ["m"])
 
 
 #
@@ -181,7 +160,7 @@ AlwaysBuild(upload)
 #
 
 env.Alias("build-eep", [target_eep])
-Default([target_corelib, target_elf, target_hex])
+Default([target_elf, target_hex])
 
 # check for $UPLOAD_PORT variable
 is_uptarget = ("eep" in COMMAND_LINE_TARGETS or "upload" in
