@@ -18,8 +18,8 @@ setup(
     install_requires=[
         "click",
         "clint",
-        "pyserial"
-        "SCons"
+        "pyserial",
+        # "SCons"
     ],
     packages=find_packages(),
     entry_points={
