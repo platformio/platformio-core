@@ -17,7 +17,6 @@ setup(
     license=__license__,
     install_requires=[
         "click",
-        "clint",
         "pyserial",
         # "SCons"
     ],

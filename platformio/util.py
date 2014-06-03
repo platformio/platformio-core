@@ -5,6 +5,7 @@ from os import getcwd
 from os.path import dirname, expanduser, isfile, join, realpath
 from subprocess import PIPE, Popen
 from sys import exit
+from textwrap import fill
 
 try:
     from configparser import ConfigParser
@@ -37,6 +38,11 @@ def get_project_config():
     get_project_config._cache = ConfigParser()
     get_project_config._cache.read(path)
     return get_project_config._cache
+
+
+def textindent(text, quote):
+    return fill(text, initial_indent=quote,
+                subsequent_indent=quote, width=120)
 
 
 def exec_command(args):
