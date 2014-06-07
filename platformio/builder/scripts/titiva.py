@@ -69,7 +69,7 @@ env.Replace(
         "-fsingle-precision-constant"
     ],
 
-    UPLOADER="lm4flash",
+    UPLOADER=join("$PLATFORMTOOLS_DIR", "lm4flash", "lm4flash"),
     UPLOADCMD="$UPLOADER $SOURCES"
 )
 

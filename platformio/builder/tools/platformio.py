@@ -42,7 +42,7 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
     # add root dir by default
     variants = [variant_dir]
     env.VariantDir(variant_dir, src_dir, duplicate)
-    for root, dirnames, filenames in walk(env.subst(src_dir)):
+    for root, dirnames, _ in walk(env.subst(src_dir)):
         if not dirnames:
             continue
         for dn in dirnames:
@@ -95,7 +95,7 @@ def ResetDevice(env):
     s.close()
 
 
-def exists(env):
+def exists(_):
     return True
 
 

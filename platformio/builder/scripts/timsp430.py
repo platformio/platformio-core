@@ -47,7 +47,7 @@ env.Replace(
         "-Wl,-gc-sections,-u,main"
     ],
 
-    UPLOADER=(join("$PLATFORMTOOLS_DIR", "mspdebug", "mspdebug")),
+    UPLOADER=join("$PLATFORMTOOLS_DIR", "mspdebug", "mspdebug"),
     UPLOADERFLAGS=[
         "$UPLOAD_PROTOCOL",
         "--force-reset"
