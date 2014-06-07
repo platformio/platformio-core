@@ -3,11 +3,13 @@
 
 from os import listdir
 from os.path import join
-from sys import exit
+from sys import exit as sys_exit
+from traceback import format_exc
 
-from click import command, MultiCommand, version_option
+from click import command, MultiCommand, style, version_option
 
 from platformio import __version__
+from platformio.exception import PlatformioException, UnknownCLICommand
 from platformio.util import get_source_dir
 
 
@@ -24,7 +26,11 @@ class PlatformioCLI(MultiCommand):
         return cmds
 
     def get_command(self, ctx, name):
-        mod = __import__("platformio.commands." + name, None, None, ["cli"])
+        try:
+            mod = __import__("platformio.commands." + name,
+                             None, None, ["cli"])
+        except ImportError:
+            raise UnknownCLICommand(name)
         return mod.cli
 
 
@@ -35,8 +41,14 @@ def cli():
 
 
 def main():
-    cli()
+    try:
+        cli()
+    except Exception as e:  # pylint: disable=W0703
+        if isinstance(e, PlatformioException):
+            sys_exit(style("Error: ", fg="red") + str(e))
+        else:
+            print format_exc()
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys_exit(main())

@@ -1,16 +1,17 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import getcwd
+from os import getcwd, utime
 from os.path import dirname, expanduser, isfile, join, realpath
+from platform import architecture, system
 from subprocess import PIPE, Popen
-from sys import exit
-from textwrap import fill
+
+from platformio.exception import NotPlatformProject
 
 try:
     from configparser import ConfigParser
 except ImportError:
-        from ConfigParser import ConfigParser
+    from ConfigParser import ConfigParser
 
 
 def get_home_dir():
@@ -26,48 +27,23 @@ def get_project_dir():
 
 
 def get_project_config():
-    try:
-        return getattr(get_project_config, "_cache")
-    except AttributeError:
-        pass
-
     path = join(get_project_dir(), "platformio.ini")
     if not isfile(path):
-        exit("Not a platformio project. Use `platformio init` command")
+        raise NotPlatformProject()
+    cp = ConfigParser()
+    cp.read(path)
+    return cp
 
-    get_project_config._cache = ConfigParser()
-    get_project_config._cache.read(path)
-    return get_project_config._cache
+
+def get_system():
+    return (system() + architecture()[0][:-3]).lower()
 
 
-def textindent(text, quote):
-    return fill(text, initial_indent=quote,
-                subsequent_indent=quote, width=120)
+def change_filemtime(path, time):
+    utime(path, (time, time))
 
 
 def exec_command(args):
     p = Popen(args, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
-    result = dict(out=out.strip(), err=err.strip())
-
-    # fix STDERR "flash written"
-    if "flash written" in result['err']:
-        result['out'] += "\n" + result['err']
-        result['err'] = ""
-
-    return result
-
-
-def run_builder(variables, targets):
-    assert isinstance(variables, list)
-    assert isinstance(targets, list)
-
-    if "clean" in targets:
-        targets.remove("clean")
-        targets.append("-c")
-
-    return exec_command([
-        "scons",
-        "-Q",
-        "-f", join(get_source_dir(), "builder", "main.py")
-    ] + variables + targets)
+    return dict(out=out.strip(), err=err.strip())
