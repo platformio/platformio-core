@@ -18,6 +18,7 @@ setup(
     install_requires=[
         "click",
         "pyserial",
+        "requests",
         # "SCons"
     ],
     packages=find_packages(),
