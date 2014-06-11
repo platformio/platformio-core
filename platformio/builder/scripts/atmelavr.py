@@ -15,7 +15,7 @@ env = DefaultEnvironment()
 
 env.Replace(
     AR="avr-ar",
-    AS="avr-as",
+    AS="avr-gcc",
     CC="avr-gcc",
     CXX="avr-g++",
     OBJCOPY="avr-objcopy",

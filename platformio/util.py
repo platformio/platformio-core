@@ -44,6 +44,7 @@ def change_filemtime(path, time):
 
 
 def exec_command(args):
-    p = Popen(args, stdout=PIPE, stderr=PIPE)
+    use_shell = get_system() == "windows32"
+    p = Popen(args, stdout=PIPE, stderr=PIPE, shell=use_shell)
     out, err = p.communicate()
     return dict(out=out.strip(), err=err.strip())

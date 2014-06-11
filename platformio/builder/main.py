@@ -51,7 +51,7 @@ if not isdir(env['PLATFORMIOHOME_DIR']):
          "`platformio install` command")
 elif not isdir(env.subst("$PLATFORM_DIR")):
     Exit("An '%s' platform hasn't been installed yet. Please use "
-         "`platformio install %s` command" % (env['PLATFORM'].upper(),
+         "`platformio install %s` command" % (env['PLATFORM'],
                                               env['PLATFORM']))
 
 SConscriptChdir(0)

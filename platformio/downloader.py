@@ -65,13 +65,19 @@ class FileDownloader(object):
         if not sha1:
             return
 
+        dlsha1 = None
         try:
-            res = check_output(["shasum", self._destination])
+            res = check_output(["sha1sum", self._destination])
             dlsha1 = res[:40]
-            if sha1 != dlsha1:
-                raise FDSHASumMismatch(dlsha1, self._fname, sha1)
         except OSError:
-            pass
+            try:
+                res = check_output(["shasum", "-a", "1", self._destination])
+                dlsha1 = res[:40]
+            except OSError:
+                pass
+
+        if dlsha1 and sha1 != dlsha1:
+            raise FDSHASumMismatch(dlsha1, self._fname, sha1)
 
     def _preserve_filemtime(self, lmdate):
         timedata = parsedate_tz(lmdate)

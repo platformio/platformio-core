@@ -10,7 +10,7 @@ class TitivaPlatform(BasePlatform):
 
     PACKAGES = {
 
-        "toolchain-titiva": {
+        "toolchain-gccarmnoneeabi": {
             "path": join("tools", "toolchain"),
             "default": True
         },
@@ -22,7 +22,7 @@ class TitivaPlatform(BasePlatform):
 
         "framework-energiativa": {
             "path": join("frameworks", "energia"),
-            "default": False
+            "default": True
         }
     }
 

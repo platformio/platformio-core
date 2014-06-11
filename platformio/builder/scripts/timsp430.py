@@ -11,11 +11,13 @@ from os.path import join
 from SCons.Script import (AlwaysBuild, Builder, Default, DefaultEnvironment,
                           SConscript, SConscriptChdir)
 
+from platformio.util import get_system
+
 env = DefaultEnvironment()
 
 env.Replace(
     AR="msp430-ar",
-    AS="msp430-as",
+    AS="msp430-gcc",
     CC="msp430-gcc",
     CXX="msp430-g++",
     OBJCOPY="msp430-objcopy",
@@ -49,7 +51,7 @@ env.Replace(
 
     UPLOADER=join("$PLATFORMTOOLS_DIR", "mspdebug", "mspdebug"),
     UPLOADERFLAGS=[
-        "$UPLOAD_PROTOCOL",
+        "$UPLOAD_PROTOCOL" if get_system() != "windows32" else "tilib",
         "--force-reset"
     ],
     UPLOADCMD='$UPLOADER $UPLOADERFLAGS "prog $SOURCES"'

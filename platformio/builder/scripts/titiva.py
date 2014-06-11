@@ -15,7 +15,7 @@ env = DefaultEnvironment()
 
 env.Replace(
     AR="arm-none-eabi-ar",
-    AS="arm-none-eabi-as",
+    AS="arm-none-eabi-gcc",
     CC="arm-none-eabi-gcc",
     CXX="arm-none-eabi-g++",
     OBJCOPY="arm-none-eabi-objcopy",
@@ -25,7 +25,7 @@ env.Replace(
 
     ASFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
-        "-x", "-assembler-with-cpp",
+        "-x", "assembler-with-cpp",
         "-Wall",
         "-mthumb",
         "-mcpu=cortex-m4",

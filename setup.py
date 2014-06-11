@@ -17,6 +17,7 @@ setup(
     license=__license__,
     install_requires=[
         "click",
+        "colorama",
         "pyserial",
         "requests",
         # "SCons"
