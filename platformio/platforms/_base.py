@@ -34,6 +34,13 @@ class BasePlatform(object):
     def get_name(self):
         raise NotImplementedError()
 
+    def get_short_info(self):
+        if self.__doc__:
+            doclines = [l.strip() for l in self.__doc__.splitlines()]
+            return " ".join(doclines).strip()
+        else:
+            raise NotImplementedError()
+
     def install(self, with_packages, without_packages):
         requirements = []
         pm = PackageManager(self.get_name())

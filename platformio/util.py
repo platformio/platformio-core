@@ -1,7 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import getcwd, utime
+from os import getcwd, listdir, utime
 from os.path import dirname, expanduser, isfile, join, realpath
 from platform import architecture, system
 from subprocess import PIPE, Popen
@@ -12,6 +12,10 @@ try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
+
+
+def get_system():
+    return (system() + architecture()[0][:-3]).lower()
 
 
 def get_home_dir():
@@ -35,8 +39,13 @@ def get_project_config():
     return cp
 
 
-def get_system():
-    return (system() + architecture()[0][:-3]).lower()
+def get_platforms():
+    platforms = []
+    for p in listdir(join(get_source_dir(), "platforms")):
+        if p.startswith("_") or not p.endswith(".py"):
+            continue
+        platforms.append(p[:-3])
+    return platforms
 
 
 def change_filemtime(path, time):

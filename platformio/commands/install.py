@@ -3,7 +3,7 @@
 
 from click import argument, command, option, secho
 
-from platformio.platforms.base import PlatformFactory
+from platformio.platforms._base import PlatformFactory
 
 
 @command("run", short_help="Install new platforms")

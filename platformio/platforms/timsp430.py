@@ -3,10 +3,14 @@
 
 from os.path import join
 
-from platformio.platforms.base import BasePlatform
+from platformio.platforms._base import BasePlatform
 
 
 class Timsp430Platform(BasePlatform):
+    """
+        An embedded platform for TI MSP430 microcontrollers
+        (with Energia Framework)
+    """
 
     PACKAGES = {
 

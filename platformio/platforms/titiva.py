@@ -3,10 +3,14 @@
 
 from os.path import join
 
-from platformio.platforms.base import BasePlatform
+from platformio.platforms._base import BasePlatform
 
 
 class TitivaPlatform(BasePlatform):
+    """
+        An embedded platform for TI TIVA C ARM microcontrollers
+        (with Energia Framework)
+    """
 
     PACKAGES = {
 

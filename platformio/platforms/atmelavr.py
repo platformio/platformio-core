@@ -3,10 +3,14 @@
 
 from os.path import join
 
-from platformio.platforms.base import BasePlatform
+from platformio.platforms._base import BasePlatform
 
 
 class AtmelavrPlatform(BasePlatform):
+    """
+        An embedded platform for Atmel AVR microcontrollers
+        (with Arduino Framework)
+    """
 
     PACKAGES = {
 

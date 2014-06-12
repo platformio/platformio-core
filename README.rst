@@ -55,8 +55,8 @@ Quickstart
     # Install platformio
     $ pip install platformio && pip install --egg scons
 
-    # Print availalbe development platforms for installing
-    $ platformio search
+    # Print all availalbe development platforms for installing
+    $ platformio search all
 
     # Install new development platform
     $ platformio install SomePlatform
@@ -137,14 +137,15 @@ To print all available commands and options:
 ``platformio search``
 ~~~~~~~~~~~~~~~~~~~~~
 
-Search for available development platforms:
+Search for development platforms:
 
 .. code-block:: bash
 
-    $ platformio search "Query"
+    # Print all available development platforms
+    $ platformio search all
 
-You can leave search "Query" as empty. In this case ``platformio`` will print
-all available platforms.
+    # Filter platforms by "Query"
+    $ platformio search "Query"
 
 
 ``platformio install``
