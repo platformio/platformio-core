@@ -2,7 +2,7 @@ Atmel AVR: Native Blink Example
 ===============================
 
 1. Download ``platformio``
-`sources <https://github.com/ivankravets/platformio/archive/develop.zip>`_.
+   `sources <https://github.com/ivankravets/platformio/archive/develop.zip>`_
 2. Extract ZIP archive
 3. Then run these commands:
 
