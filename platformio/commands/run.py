@@ -3,17 +3,21 @@
 
 from click import command, echo, option, secho, style
 
-from platformio.exception import UndefinedEnvPlatform
+from platformio.exception import ProjecEnvsNotAvaialable, UndefinedEnvPlatform
 from platformio.platforms.base import PlatformFactory
 from platformio.util import get_project_config
 
 
 @command("run", short_help="Process project environments")
-@option("--environment", "-e", multiple=True)
-@option("--target", "-t", multiple=True)
+@option("--environment", "-e", multiple=True, metavar="<environment>")
+@option("--target", "-t", multiple=True, metavar="<target>")
 def cli(environment, target):
 
     config = get_project_config()
+
+    if not config.sections():
+        raise ProjecEnvsNotAvaialable()
+
     for section in config.sections():
         if section[:4] != "env:":
             continue
