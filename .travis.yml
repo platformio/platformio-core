@@ -1,0 +1,12 @@
+language: python
+python: 2.7
+
+env:
+    - TOX_ENV=lint
+    - TOX_ENV=py26
+
+install:
+    - pip install tox
+
+script:
+    - tox -e $TOX_ENV

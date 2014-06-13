@@ -1,0 +1,5 @@
+*.egg-info
+*.pyc
+.pioenvs
+.tox
+.sconsign.dblite
