@@ -23,13 +23,14 @@ setup(
         # "SCons"
     ],
     packages=find_packages(),
+    package_data={"platformio": ["*.ini"]},
     entry_points={
         "console_scripts": [
             "platformio = platformio.__main__:main"
         ]
     },
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "Environment :: Console",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
