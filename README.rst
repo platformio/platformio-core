@@ -11,7 +11,7 @@ flasher (for embedded) and many other useful tools.
 **Platformio** allows developer to compile the same code with different
 platforms using only one command ``platformio run``. This happens due to
 ``platformio.ini`` project's file (see
-`default template <https://github.com/ivankravets/platformio/blob/develop/platformio/projectconftpl.ini>`)
+`default template <https://github.com/ivankravets/platformio/blob/develop/platformio/projectconftpl.ini>`_)
 where you can setup different environments with specific settings: platform,
 firmware uploading options, pre-built framework and many more.
 
