@@ -1,6 +1,20 @@
 PlatformIO
 ==========
 
+.. image:: https://travis-ci.org/ivankravets/platformio.svg?branch=develop
+    :target: https://travis-ci.org/ivankravets/platformio
+    :alt: Build Status
+.. image:: https://gemnasium.com/ivankravets/platformio.png
+    :target: https://gemnasium.com/ivankravets/platformio
+    :alt: Dependency Status
+.. image:: https://pypip.in/version/platformio/badge.png
+    :target: https://pypi.python.org/pypi/platformio/
+    :alt: Latest Version
+.. image:: https://pypip.in/license/platformio/badge.png
+    :target: https://pypi.python.org/pypi/platformio/
+    :alt:  License
+
+
 **Platformio** is a console tool to build code with different development
 platforms.
 
