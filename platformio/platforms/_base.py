@@ -2,13 +2,11 @@
 # See LICENSE for details.
 
 from os.path import join
+from shutil import rmtree
 
-from click import echo, secho, style
-
-from platformio.exception import (PackageInstalled, UnknownPackage,
-                                  UnknownPlatform)
+from platformio.exception import UnknownPackage, UnknownPlatform
 from platformio.pkgmanager import PackageManager
-from platformio.util import exec_command, get_source_dir
+from platformio.util import exec_command, get_platforms, get_source_dir
 
 
 class PlatformFactory(object):
@@ -17,9 +15,10 @@ class PlatformFactory(object):
     def newPlatform(name):
         clsname = "%sPlatform" % name.title()
         try:
+            assert name in get_platforms()
             mod = __import__("platformio.platforms." + name.lower(),
                              None, None, [clsname])
-        except ImportError:
+        except (AssertionError, ImportError):
             raise UnknownPlatform(name)
 
         obj = getattr(mod, clsname)()
@@ -56,17 +55,26 @@ class BasePlatform(object):
             elif name in with_packages or opts["default"]:
                 requirements.append((name, opts["path"]))
 
-        for (name, path) in requirements:
-            echo("Installing %s package:" % style(name, fg="cyan"))
-            try:
-                pm.install(name, path)
-            except PackageInstalled:
-                secho("Already installed", fg="yellow")
-
+        for (package, path) in requirements:
+            pm.install(package, path)
         return True
 
-    def after_run(self, result):  # pylint: disable=R0201
-        return result
+    def uninstall(self):
+        platform = self.get_name()
+        pm = PackageManager(platform)
+
+        for package, data in pm.get_installed(platform).iteritems():
+            pm.uninstall(package, data['path'])
+
+        pm.unregister_platform(platform)
+        rmtree(pm.get_platform_dir())
+        return True
+
+    def update(self):
+        platform = self.get_name()
+        pm = PackageManager(platform)
+        for package in pm.get_installed(platform).keys():
+            pm.update(package)
 
     def run(self, variables, targets):
         assert isinstance(variables, list)
@@ -83,3 +91,6 @@ class BasePlatform(object):
         ] + variables + targets)
 
         return self.after_run(result)
+
+    def after_run(self, result):  # pylint: disable=R0201
+        return result

@@ -6,7 +6,7 @@ from click import argument, command, option, secho
 from platformio.platforms._base import PlatformFactory
 
 
-@command("run", short_help="Install new platforms")
+@command("install", short_help="Install new platforms")
 @argument("platform")
 @option('--with-package', multiple=True, metavar="<package>")
 @option('--without-package', multiple=True, metavar="<package>")

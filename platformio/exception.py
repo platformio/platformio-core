@@ -18,6 +18,12 @@ class UnknownPlatform(PlatformioException):
     MESSAGE = "Unknown platform '%s'"
 
 
+class PlatformNotInstalledYet(PlatformioException):
+
+    MESSAGE = ("The platform '%s' has not been installed yet. "
+               "Use `platformio install` command")
+
+
 class UnknownCLICommand(PlatformioException):
 
     MESSAGE = "Unknown command '%s'"
@@ -31,11 +37,6 @@ class UnknownPackage(PlatformioException):
 class InvalidPackageVersion(PlatformioException):
 
     MESSAGE = "The package '%s' with version '%d' does not exist"
-
-
-class PackageInstalled(PlatformioException):
-
-    MESSAGE = "The package '%s' is installed already"
 
 
 class NonSystemPackage(PlatformioException):
