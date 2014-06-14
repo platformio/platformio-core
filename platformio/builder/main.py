@@ -41,7 +41,11 @@ DefaultEnvironment(
     PLATFORMFW_DIR=join("$PLATFORM_DIR", "frameworks", "$FRAMEWORK"),
     PLATFORMTOOLS_DIR=join("$PLATFORM_DIR", "tools"),
 
-    BUILD_DIR=join("$PROJECT_DIR", ".pioenvs", "$PIOENV")
+    BUILD_DIR=join("$PROJECT_DIR", ".pioenvs", "$PIOENV"),
+    LIBSOURCE_DIRS=[
+        join("$PROJECT_DIR", "lib"),
+        join("$PLATFORMFW_DIR", "libraries"),
+    ]
 )
 
 env = DefaultEnvironment()

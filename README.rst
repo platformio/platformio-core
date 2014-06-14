@@ -35,9 +35,9 @@ instruments.
 
 **Platformio** is well suited for **embedded development**. It can:
 
-* Automatic dependency analysis
-* Reliable detection of build changes
-* Compile framework or library sources to static libraries
+* Automatically analyse dependency
+* Reliably detect of build changes
+* Build framework or library source code to static library
 * Build *ELF* (executable and linkable firmware)
 * Convert *ELF* to *HEX* or *BIN* file
 * Extract *EEPROM* data
@@ -287,14 +287,14 @@ Initialize new platformio based project.
     # Example
     $ platformio init
     Project successfully initialized.
-    Please put your source code to `src` directory, external libraries to `libs`
+    Please put your source code to `src` directory, external libraries to `lib`
     and setup environments in `platformio.ini` file.
     Then process project with `platformio run` command.
 
 After this command ``platformio`` will create:
 
 * ``.pioenvs`` - a temporary working directory.
-* ``libs`` - a directory for project specific libraries. Platformio will
+* ``lib`` - a directory for project specific libraries. Platformio will
   compile their to static libraries and link to executable file
 * ``src`` - a source directory. Put code here.
 * ``platformio.ini`` - a configuration file for project
