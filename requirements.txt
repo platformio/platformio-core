@@ -1,5 +1,5 @@
-click==2.0
+click==2.1
 colorama==0.3.1
 pyserial==2.7
-requests=2.3.0
-scons=2.3.0
+requests==2.3.0
+scons==2.3.0
