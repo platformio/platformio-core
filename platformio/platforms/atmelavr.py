@@ -26,7 +26,7 @@ class AtmelavrPlatform(BasePlatform):
 
         "framework-arduinoavr": {
             "path": join("frameworks", "arduino"),
-            "default": False
+            "default": True
         }
     }
 

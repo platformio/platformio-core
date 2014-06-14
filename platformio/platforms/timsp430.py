@@ -26,7 +26,7 @@ class Timsp430Platform(BasePlatform):
 
         "framework-energiamsp430": {
             "path": join("frameworks", "energia"),
-            "default": False
+            "default": True
         }
     }
 
