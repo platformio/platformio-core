@@ -36,7 +36,7 @@ instruments.
 **Platformio** is well suited for **embedded development**. It can:
 
 * Automatically analyse dependency
-* Reliably detect of build changes
+* Reliably detect build changes
 * Build framework or library source code to static library
 * Build *ELF* (executable and linkable firmware)
 * Convert *ELF* to *HEX* or *BIN* file
