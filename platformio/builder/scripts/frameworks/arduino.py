@@ -23,6 +23,7 @@ ARDUINO_FLAGS = [
     "-DARDUINO=%d" % ARDUINO_VERSION,
     "-DARDUINO_%s" % BOARD_OPTIONS['build.board']
 ]
+
 # usb flags
 if "build.usb_product" in BOARD_OPTIONS:
     ARDUINO_FLAGS += [
@@ -32,12 +33,18 @@ if "build.usb_product" in BOARD_OPTIONS:
             '"', "")
     ]
 
+# include board variant
+env.VariantDir(
+    join("$BUILD_DIR", "variant"),
+    join("$PLATFORMFW_DIR", "variants", BOARD_OPTIONS['build.variant'])
+)
+
 env.Append(
     ASFLAGS=ARDUINO_FLAGS,
     CCFLAGS=ARDUINO_FLAGS,
     CPPPATH=[
         join("$BUILD_DIR", "core"),
-        join("$PLATFORMFW_DIR", "variants", BOARD_OPTIONS['build.variant'])
+        join("$BUILD_DIR", "variant")
     ]
 )
 
