@@ -1,8 +1,9 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import walk
-from os.path import isfile, join
+import re
+from os import listdir, walk
+from os.path import isdir, isfile, join
 from time import sleep
 
 from serial import Serial
@@ -17,10 +18,34 @@ def BuildLibrary(env, variant_dir, library_dir):
     )
 
 
+def BuildDependentLibraries(env, src_dir):
+    libs = []
+    for deplibfile in env.GetDependentLibraries(src_dir):
+        for lsd_dir in env['LIBSOURCE_DIRS']:
+            lsd_dir = env.subst(lsd_dir)
+            if not isdir(lsd_dir):
+                continue
+            for libname in listdir(lsd_dir):
+                if not isfile(join(lsd_dir, libname, deplibfile)):
+                    continue
+                _libbuild_dir = join("$BUILD_DIR", libname)
+                env.Append(CPPPATH=[_libbuild_dir])
+                libs.append(
+                    env.BuildLibrary(_libbuild_dir, join(lsd_dir, libname)))
+    return libs
+
+
 def BuildFirmware(env, libslist):
     src = env.Clone()
-    vdirs = src.VariantDirRecursive(join("$BUILD_DIR", "src"),
-                                    join("$PROJECT_DIR", "src"))
+    vdirs = src.VariantDirRecursive(
+        join("$BUILD_DIR", "src"), join("$PROJECT_DIR", "src"))
+
+    # build source's dependent libs
+    for vdir in vdirs:
+        _libs = src.BuildDependentLibraries(vdir)
+        if _libs:
+            libslist += _libs
+
     return src.Program(
         join("$BUILD_DIR", "firmware"),
         [src.GlobCXXFiles(vdir) for vdir in vdirs],
@@ -36,6 +61,14 @@ def GlobCXXFiles(env, path):
         if _list:
             files += _list
     return files
+
+
+def GetDependentLibraries(env, src_dir):
+    deplibs = []
+    regexp = re.compile(r"^#include\s+<([^>]+)>", re.M)
+    for node in env.GlobCXXFiles(src_dir):
+        deplibs += regexp.findall(node.get_text_contents())
+    return deplibs
 
 
 def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
@@ -101,8 +134,10 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(BuildLibrary)
+    env.AddMethod(BuildDependentLibraries)
     env.AddMethod(BuildFirmware)
     env.AddMethod(GlobCXXFiles)
+    env.AddMethod(GetDependentLibraries)
     env.AddMethod(VariantDirRecursive)
     env.AddMethod(ParseBoardOptions)
     env.AddMethod(ResetDevice)

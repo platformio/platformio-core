@@ -24,12 +24,18 @@ ENERGIA_FLAGS = [
     "-DENERGIA=%d" % ENERGIA_VERSION
 ]
 
+# include board variant
+env.VariantDir(
+    join("$BUILD_DIR", "variant"),
+    join("$PLATFORMFW_DIR", "variants", BOARD_OPTIONS['build.variant'])
+)
+
 env.Append(
     ASFLAGS=ENERGIA_FLAGS,
     CCFLAGS=ENERGIA_FLAGS,
     CPPPATH=[
         join("$BUILD_DIR", "core"),
-        join("$PLATFORMFW_DIR", "variants", BOARD_OPTIONS['build.variant'])
+        join("$BUILD_DIR", "variant")
     ]
 )
 

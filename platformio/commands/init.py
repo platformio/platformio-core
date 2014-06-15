@@ -16,7 +16,7 @@ def cli():
 
     if isfile("platformio.ini") and isdir("src"):
         raise ProjectInitialized()
-    for d in (".pioenvs", "libs", "src"):
+    for d in (".pioenvs", "lib", "src"):
         if not isdir(d):
             makedirs(d)
     if not isfile("platformio.ini"):
@@ -24,7 +24,7 @@ def cli():
                  "platformio.ini")
     secho("Project successfully initialized.\n"
           "Please put your source code to `src` directory, "
-          "external libraries to `libs` and "
+          "external libraries to `lib` and "
           "setup environments in `platformio.ini` file.\n"
           "Then process project with `platformio run` command.",
           fg="green")
