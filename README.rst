@@ -36,6 +36,11 @@ Each platform consists of packages which are located in own repository.
 Due to ``platformio update`` command you will have up-to-date development
 instruments.
 
+.. image:: examples/platformio-examples.png
+    :target: examples/platformio-examples.png
+    :alt:  Examples
+    :width: 730px
+
 **Platformio** is well suited for **embedded development**. It can:
 
 * Automatically analyse dependency
@@ -57,11 +62,6 @@ It has support for many popular embedded platforms like these:
 
 
 See project `examples with screenshots <https://github.com/ivankravets/platformio/tree/develop/examples>`_.
-
-.. image:: examples/platformio-examples.png
-    :target: examples/
-    :alt:  Examples
-    :width: 730px
 
 
 Python & OS Support
