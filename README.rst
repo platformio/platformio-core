@@ -37,7 +37,7 @@ Due to ``platformio update`` command you will have up-to-date development
 instruments.
 
 .. image:: examples/platformio-examples.png
-    :target: examples/platformio-examples.png
+    :target: https://github.com/ivankravets/platformio/raw/develop/examples/platformio-examples.png
     :alt:  Examples
     :width: 730px
 
