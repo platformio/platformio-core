@@ -58,6 +58,11 @@ It has support for many popular embedded platforms like these:
 
 See project `examples with screenshots <https://github.com/ivankravets/platformio/tree/develop/examples>`_.
 
+.. image:: examples/platformio-examples.png
+    :target: examples/
+    :alt:  Examples
+    :width: 730px
+
 
 Python & OS Support
 -------------------
