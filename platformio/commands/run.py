@@ -3,7 +3,7 @@
 
 from click import command, echo, option, secho, style
 
-from platformio.exception import ProjecEnvsNotAvaialable, UndefinedEnvPlatform
+from platformio.exception import ProjectEnvsNotAvaialable, UndefinedEnvPlatform
 from platformio.platforms._base import PlatformFactory
 from platformio.util import get_project_config
 
@@ -16,7 +16,7 @@ def cli(environment, target):
     config = get_project_config()
 
     if not config.sections():
-        raise ProjecEnvsNotAvaialable()
+        raise ProjectEnvsNotAvaialable()
 
     for section in config.sections():
         if section[:4] != "env:":
