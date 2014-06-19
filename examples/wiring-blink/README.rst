@@ -12,13 +12,9 @@ Wiring Framework (Arduino + Energia) Blink Example
     $ cd platformio-develop/examples/wiring-blink/
 
     # Install Atmel AVR development platform with Arduino Framework
-    $ platformio install atmelavr --with-package=framework-arduinoavr
-
     # Install TI MSP430 development platform with Energia Framework
-    $ platformio install timsp430 --with-package=framework-energiamsp430
-
     # Install TI TIVA development platform with Energia Framework
-    $ platformio install titiva --with-package=framework-energiativa
+    $ platformio install atmelavr timsp430 titiva
 
     # Process example project
     $ platformio run

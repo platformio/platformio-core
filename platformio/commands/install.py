@@ -7,13 +7,15 @@ from platformio.platforms._base import PlatformFactory
 
 
 @command("install", short_help="Install new platforms")
-@argument("platform")
+@argument("platforms", nargs=-1)
 @option('--with-package', multiple=True, metavar="<package>")
 @option('--without-package', multiple=True, metavar="<package>")
-def cli(platform, with_package, without_package):
+def cli(platforms, with_package, without_package):
 
-    p = PlatformFactory().newPlatform(platform)
+    for platform in platforms:
 
-    if p.install(with_package, without_package):
-        secho("The platform '%s' has been successfully installed!" % platform,
-              fg="green")
+        p = PlatformFactory().newPlatform(platform)
+
+        if p.install(with_package, without_package):
+            secho("The platform '%s' has been successfully installed!" %
+                  platform, fg="green")
