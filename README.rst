@@ -18,14 +18,14 @@ PlatformIO
     :alt:  License
 
 
-**Platformio** is a console tool to build code with different development
+**PlatformIO** is a console tool to build code with different development
 platforms.
 
-You have no need to install any *IDE* or compile any toolchains. *Platformio*
+You have no need to install any *IDE* or compile any toolchains. *PlatformIO*
 has pre-built different development platforms including: compiler, debugger,
 flasher (for embedded) and many other useful tools.
 
-**Platformio** allows developer to compile the same code with different
+**PlatformIO** allows developer to compile the same code with different
 platforms using only one command ``platformio run``. This happens due to
 ``platformio.ini`` project's file (see
 `default template <https://github.com/ivankravets/platformio/blob/develop/platformio/projectconftpl.ini>`_)
@@ -41,7 +41,7 @@ instruments.
     :alt:  Examples
     :width: 730px
 
-**Platformio** is well suited for **embedded development**. It can:
+**PlatformIO** is well suited for **embedded development**. It can:
 
 * Automatically analyse dependency
 * Reliably detect build changes
@@ -67,7 +67,7 @@ See project `examples with screenshots <https://github.com/ivankravets/platformi
 Python & OS Support
 -------------------
 
-**Platformio** is written in `Python <https://www.python.org>`_ and works with
+**PlatformIO** is written in `Python <https://www.python.org>`_ and works with
 versions 2.6 and 2.7 on Unix/Linux, OS X, and Windows.
 
 
@@ -201,7 +201,7 @@ Search for development platforms:
 ``platformio install``
 ~~~~~~~~~~~~~~~~~~~~~~
 
-*Platformio* has pre-built development platforms with related packages. You
+*PlatformIO* has pre-built development platforms with related packages. You
 can install one of them:
 
 .. code-block:: bash
@@ -302,7 +302,7 @@ Initialize new platformio based project.
 After this command ``platformio`` will create:
 
 * ``.pioenvs`` - a temporary working directory.
-* ``lib`` - a directory for project specific libraries. Platformio will
+* ``lib`` - a directory for project specific libraries. PlatformIO will
   compile their to static libraries and link to executable file
 * ``src`` - a source directory. Put code here.
 * ``platformio.ini`` - a configuration file for project
