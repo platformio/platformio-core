@@ -108,7 +108,7 @@ application in your OS:
   `Command Prompt <http://en.wikipedia.org/wiki/Command_Prompt>`_ (``cmd.exe``)
   application.
 
-2. Check a ``python`` version:
+1. Check a ``python`` version:
 
 .. code-block:: bash
 
@@ -116,7 +116,7 @@ application in your OS:
 
 Windows OS Users only:
 
-    * `Download Python <https://www.python.org/downloads/>`_ and install it.
+    * `Download Python 2.7 <https://www.python.org/downloads/>`_ and install it.
     * Add to PATH system variable ``;C:\Python27;C:\Python27\Scripts;`` and
        reopen *Command Prompt* (``cmd.exe``) application. Please read this
        article `How to set the path and environment variables in Windows
