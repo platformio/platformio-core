@@ -64,6 +64,12 @@ It has support for many popular embedded platforms like these:
 See project `examples with screenshots <https://github.com/ivankravets/platformio/tree/develop/examples>`_.
 
 
+IDE Integration
+---------------
+
+* [Eclipse] `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
+
+
 Python & OS Support
 -------------------
 
