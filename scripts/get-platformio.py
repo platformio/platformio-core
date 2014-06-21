@@ -25,6 +25,8 @@ def fix_winpython_pathenv():
     # took these lines from the native "win_add2path.py"
     pythonpath = os.path.dirname(CURINTERPRETER_PATH)
     scripts = os.path.join(pythonpath, "Scripts")
+    if not os.path.isdir(scripts):
+        os.makedirs(scripts)
 
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, u"Environment") as key:
         try:
