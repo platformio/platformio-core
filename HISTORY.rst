@@ -4,6 +4,11 @@ Release History
 1.0.0 (?)
 ---------
 
+0.3.1 (2014-06-21)
+------------------
+
+* Fixed auto-installer for Windows OS (bug with %PATH% customisations)
+
 
 0.3.0 (2014-06-21)
 ------------------
