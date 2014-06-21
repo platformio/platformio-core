@@ -35,7 +35,7 @@ class PlatformioCLI(MultiCommand):
 
 
 @command(cls=PlatformioCLI)
-@version_option(__version__)
+@version_option(__version__, "platformio")
 def cli():
     pass
 

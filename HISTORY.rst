@@ -1,6 +1,16 @@
 Release History
 ===============
 
+0.3.0 (2014-06-21)
+---------
+
+* Allowed to pass multiple "SomePlatform" to install/uninstall commands
+* Added "IDE Integration" section to README with Eclipse project examples
+* Created auto installer script for *PlatformIO* (`issue #3 <https://github.com/ivankravets/platformio/issues/3>`_)
+* Added "Super-Quick" way to Installation section (README)
+* Implemented "build_flags" option for environments (`issue #4 <https://github.com/ivankravets/platformio/issues/4>`_)
+
+
 0.2.0 (2014-06-15)
 ------------------
 

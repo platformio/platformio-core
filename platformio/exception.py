@@ -63,7 +63,7 @@ class FDSHASumMismatch(PlatformioException):
 
 class NotPlatformProject(PlatformioException):
 
-    MESSAGE = "Not a platformio project. Use `platformio init` command"
+    MESSAGE = "Not a PlatformIO project. Use `platformio init` command"
 
 
 class UndefinedEnvPlatform(PlatformioException):
@@ -82,6 +82,6 @@ class ProjectInitialized(PlatformioException):
                "Process it with `platformio run` command")
 
 
-class ProjecEnvsNotAvaialable(PlatformioException):
+class ProjectEnvsNotAvaialable(PlatformioException):
 
     MESSAGE = "Please setup environments in `platformio.ini` file."

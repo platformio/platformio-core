@@ -1,6 +1,8 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+from sys import platform as sysplatform
+
 from setuptools import find_packages, setup
 
 from platformio import (__author__, __description__, __email__, __license__,
@@ -17,11 +19,10 @@ setup(
     license=__license__,
     install_requires=[
         "click",
-        "colorama",
         "pyserial",
         "requests",
         # "SCons"
-    ],
+    ] + (["colorama"] if sysplatform.startswith("win") else []),
     packages=find_packages(),
     package_data={"platformio": ["*.ini"]},
     entry_points={

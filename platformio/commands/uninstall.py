@@ -9,13 +9,15 @@ from platformio.platforms._base import PlatformFactory
 
 
 @command("uninstall", short_help="Uninstall the platforms")
-@argument("platform")
-def cli(platform):
+@argument("platforms", nargs=-1)
+def cli(platforms):
 
-    if platform not in PackageManager.get_installed():
-        raise PlatformNotInstalledYet(platform)
+    for platform in platforms:
 
-    p = PlatformFactory().newPlatform(platform)
-    if p.uninstall():
-        secho("The platform '%s' has been successfully "
-              "uninstalled!" % platform, fg="green")
+        if platform not in PackageManager.get_installed():
+            raise PlatformNotInstalledYet(platform)
+
+        p = PlatformFactory().newPlatform(platform)
+        if p.uninstall():
+            secho("The platform '%s' has been successfully "
+                  "uninstalled!" % platform, fg="green")

@@ -10,19 +10,22 @@ PlatformIO
 .. image:: https://pypip.in/version/platformio/badge.png
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
+.. image:: https://pypip.in/download/platformio/badge.png
+    :target: https://pypi.python.org/pypi/platformio/
+    :alt: Downloads
 .. image:: https://pypip.in/license/platformio/badge.png
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
 
 
-**Platformio** is a console tool to build code with different development
+**PlatformIO** is a console tool to build code with different development
 platforms.
 
-You have no need to install any *IDE* or compile any toolchains. *Platformio*
+You have no need to install any *IDE* or compile any toolchains. *PlatformIO*
 has pre-built different development platforms including: compiler, debugger,
 flasher (for embedded) and many other useful tools.
 
-**Platformio** allows developer to compile the same code with different
+**PlatformIO** allows developer to compile the same code with different
 platforms using only one command ``platformio run``. This happens due to
 ``platformio.ini`` project's file (see
 `default template <https://github.com/ivankravets/platformio/blob/develop/platformio/projectconftpl.ini>`_)
@@ -33,7 +36,12 @@ Each platform consists of packages which are located in own repository.
 Due to ``platformio update`` command you will have up-to-date development
 instruments.
 
-**Platformio** is well suited for **embedded development**. It can:
+.. image:: examples/platformio-examples.png
+    :target: https://github.com/ivankravets/platformio/raw/develop/examples/platformio-examples.png
+    :alt:  Examples
+    :width: 730px
+
+**PlatformIO** is well suited for **embedded development**. It can:
 
 * Automatically analyse dependency
 * Reliably detect build changes
@@ -56,10 +64,16 @@ It has support for many popular embedded platforms like these:
 See project `examples with screenshots <https://github.com/ivankravets/platformio/tree/develop/examples>`_.
 
 
+IDE Integration
+---------------
+
+* [Eclipse] `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
+
+
 Python & OS Support
 -------------------
 
-**Platformio** is written in `Python <https://www.python.org>`_ and works with
+**PlatformIO** is written in `Python <https://www.python.org>`_ and works with
 versions 2.6 and 2.7 on Unix/Linux, OS X, and Windows.
 
 
@@ -67,9 +81,6 @@ Quickstart
 ----------
 
 .. code-block:: bash
-
-    # Install platformio
-    $ pip install platformio && pip install --egg scons
 
     # Print all availalbe development platforms for installing
     $ platformio search all
@@ -93,29 +104,55 @@ Installation
 
 All commands below should be executed in
 `Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_
-application in your OS:
+application in your *OS*:
 
 * *Unix/Linux/OS X* this is *Terminal* application.
 * *Windows* this is
   `Command Prompt <http://en.wikipedia.org/wiki/Command_Prompt>`_ (``cmd.exe``)
   application.
 
-2. Check a ``python`` version:
+Also, the `Python Interpreter <https://www.python.org/downloads/>`_ (2.6 or 2.7)
+is required.
+
+
+Super-Quick
+~~~~~~~~~~~
+
+To install or upgrade *PlatformIO*, download
+`get-platformio.py <https://raw.githubusercontent.com/ivankravets/platformio/develop/scripts/get-platformio.py>`_ script.
+
+Then run the following (which may require administrator access):
+
+.. code-block:: bash
+
+    $ python get-platformio.py
+
+On *Windows OS* it may look like:
+
+.. code-block:: bash
+
+    C:\Python27\python.exe get-platformio.py
+
+
+Full Guide
+~~~~~~~~~~
+
+1. Check a ``python`` version (only 2.6-2.7 is supported):
 
 .. code-block:: bash
 
     $ python --version
 
-Windows OS Users only:
+*Windows OS* Users only:
 
-    * `Download Python <https://www.python.org/downloads/>`_ and install it.
+    * `Download Python 2.7 <https://www.python.org/downloads/>`_ and install it.
     * Add to PATH system variable ``;C:\Python27;C:\Python27\Scripts;`` and
        reopen *Command Prompt* (``cmd.exe``) application. Please read this
        article `How to set the path and environment variables in Windows
        <http://www.computerhope.com/issues/ch000549.htm>`_.
 
 
-2. Check a ``pip`` tool for installing and managing Python packages:
+2. Check a ``pip`` tool for installing and managing *Python* packages:
 
 .. code-block:: bash
 
@@ -193,7 +230,7 @@ Search for development platforms:
 ``platformio install``
 ~~~~~~~~~~~~~~~~~~~~~~
 
-*Platformio* has pre-built development platforms with related packages. You
+*PlatformIO* has pre-built development platforms with related packages. You
 can install one of them:
 
 .. code-block:: bash
@@ -294,7 +331,7 @@ Initialize new platformio based project.
 After this command ``platformio`` will create:
 
 * ``.pioenvs`` - a temporary working directory.
-* ``lib`` - a directory for project specific libraries. Platformio will
+* ``lib`` - a directory for project specific libraries. PlatformIO will
   compile their to static libraries and link to executable file
 * ``src`` - a source directory. Put code here.
 * ``platformio.ini`` - a configuration file for project
