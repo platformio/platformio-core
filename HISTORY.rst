@@ -1,8 +1,12 @@
 Release History
 ===============
 
-0.3.0 (2014-06-21)
+1.0.0 (?)
 ---------
+
+
+0.3.0 (2014-06-21)
+------------------
 
 * Allowed to pass multiple "SomePlatform" to install/uninstall commands
 * Added "IDE Integration" section to README with Eclipse project examples
