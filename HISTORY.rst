@@ -1,8 +1,14 @@
 Release History
 ===============
 
+0.3.1 (2014-06-21)
+------------------
+
+* Fixed auto-installer for Windows OS (bug with %PATH% customisations)
+
+
 0.3.0 (2014-06-21)
----------
+------------------
 
 * Allowed to pass multiple "SomePlatform" to install/uninstall commands
 * Added "IDE Integration" section to README with Eclipse project examples
