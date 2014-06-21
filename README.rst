@@ -82,9 +82,6 @@ Quickstart
 
 .. code-block:: bash
 
-    # Install platformio
-    $ pip install platformio && pip install --egg scons
-
     # Print all availalbe development platforms for installing
     $ platformio search all
 
@@ -107,20 +104,46 @@ Installation
 
 All commands below should be executed in
 `Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_
-application in your OS:
+application in your *OS*:
 
 * *Unix/Linux/OS X* this is *Terminal* application.
 * *Windows* this is
   `Command Prompt <http://en.wikipedia.org/wiki/Command_Prompt>`_ (``cmd.exe``)
   application.
 
-1. Check a ``python`` version:
+Also, the `Python Interpreter <https://www.python.org/downloads/>`_ (2.6 or 2.7)
+is required.
+
+
+Super-Quick
+~~~~~~~~~~~
+
+To install or upgrade *PlatformIO*, download
+`get-platformio.py <https://raw.githubusercontent.com/ivankravets/platformio/develop/scripts/get-platformio.py>`_ script.
+
+Then run the following (which may require administrator access):
+
+.. code-block:: bash
+
+    $ python get-platformio.py
+
+On *Windows OS* it may look like:
+
+.. code-block:: bash
+
+    C:\Python27\python.exe get-platformio.py
+
+
+Full Guide
+~~~~~~~~~~
+
+1. Check a ``python`` version (only 2.6-2.7 is supported):
 
 .. code-block:: bash
 
     $ python --version
 
-Windows OS Users only:
+*Windows OS* Users only:
 
     * `Download Python 2.7 <https://www.python.org/downloads/>`_ and install it.
     * Add to PATH system variable ``;C:\Python27;C:\Python27\Scripts;`` and
@@ -129,7 +152,7 @@ Windows OS Users only:
        <http://www.computerhope.com/issues/ch000549.htm>`_.
 
 
-2. Check a ``pip`` tool for installing and managing Python packages:
+2. Check a ``pip`` tool for installing and managing *Python* packages:
 
 .. code-block:: bash
 
