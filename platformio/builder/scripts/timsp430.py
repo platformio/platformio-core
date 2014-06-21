@@ -28,9 +28,9 @@ env.Replace(
     ASFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
         "-x", "-assembler-with-cpp",
-        "-mmcu=$BOARD_MCU",
-        "-DF_CPU=$BOARD_F_CPU"
+        "-mmcu=$BOARD_MCU"
     ],
+
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
         "-Os",  # optimize for size
@@ -38,8 +38,11 @@ env.Replace(
         "-ffunction-sections",  # place each function in its own section
         "-fdata-sections",
         "-MMD",  # output dependancy info
-        "-mmcu=$BOARD_MCU",
-        "-DF_CPU=$BOARD_F_CPU"
+        "-mmcu=$BOARD_MCU"
+    ],
+
+    CPPDEFINES=[
+        "F_CPU=$BOARD_F_CPU"
     ],
 
     LINK="$CC",
@@ -56,6 +59,9 @@ env.Replace(
     ],
     UPLOADCMD='$UPLOADER $UPLOADERFLAGS "prog $SOURCES"'
 )
+
+if "BUILD_FLAGS" in env:
+    env.MergeFlags(env['BUILD_FLAGS'])
 
 env.Append(
     BUILDERS=dict(

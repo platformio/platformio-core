@@ -31,8 +31,7 @@ env.Replace(
         "-mcpu=cortex-m4",
         "-mfloat-abi=hard",
         "-mfpu=fpv4-sp-d16",
-        "-fsingle-precision-constant",
-        "-DF_CPU=$BOARD_F_CPU"
+        "-fsingle-precision-constant"
     ],
 
     CCFLAGS=[
@@ -47,13 +46,16 @@ env.Replace(
         "-mfloat-abi=hard",
         "-mfpu=fpv4-sp-d16",
         "-fsingle-precision-constant",
-        "-MMD",  # output dependancy info
-        "-DF_CPU=$BOARD_F_CPU"
+        "-MMD"  # output dependancy info
     ],
 
     CXXFLAGS=[
         "-fno-rtti",
         "-fno-exceptions"
+    ],
+
+    CPPDEFINES=[
+        "F_CPU=$BOARD_F_CPU"
     ],
 
     LINKFLAGS=[
@@ -72,6 +74,9 @@ env.Replace(
     UPLOADER=join("$PLATFORMTOOLS_DIR", "lm4flash", "lm4flash"),
     UPLOADCMD="$UPLOADER $SOURCES"
 )
+
+if "BUILD_FLAGS" in env:
+    env.MergeFlags(env['BUILD_FLAGS'])
 
 env.Append(
     BUILDERS=dict(

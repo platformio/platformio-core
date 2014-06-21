@@ -19,18 +19,14 @@ BOARD_OPTIONS = env.ParseBoardOptions(
 ARDUINO_VERSION = int(
     open(join(env.subst("$PLATFORMFW_DIR"),
               "version.txt")).read().replace(".", "").strip())
-ARDUINO_FLAGS = [
-    "-DARDUINO=%d" % ARDUINO_VERSION,
-    "-DARDUINO_%s" % BOARD_OPTIONS['build.board']
-]
 
 # usb flags
+ARDUINO_USBDEFINES = []
 if "build.usb_product" in BOARD_OPTIONS:
-    ARDUINO_FLAGS += [
-        "-DUSB_VID=%s" % BOARD_OPTIONS['build.vid'],
-        "-DUSB_PID=%s" % BOARD_OPTIONS['build.pid'],
-        "-DUSB_PRODUCT=%s" % BOARD_OPTIONS['build.usb_product'].replace(
-            '"', "")
+    ARDUINO_USBDEFINES = [
+        "USB_VID=%s" % BOARD_OPTIONS['build.vid'],
+        "USB_PID=%s" % BOARD_OPTIONS['build.pid'],
+        "USB_PRODUCT=%s" % BOARD_OPTIONS['build.usb_product'].replace('"', "")
     ]
 
 # include board variant
@@ -40,8 +36,10 @@ env.VariantDir(
 )
 
 env.Append(
-    ASFLAGS=ARDUINO_FLAGS,
-    CCFLAGS=ARDUINO_FLAGS,
+    CPPDEFINES=[
+        "ARDUINO=%d" % ARDUINO_VERSION,
+        "ARDUINO_%s" % BOARD_OPTIONS['build.board']
+    ] + ARDUINO_USBDEFINES,
     CPPPATH=[
         join("$BUILD_DIR", "core"),
         join("$BUILD_DIR", "variant")

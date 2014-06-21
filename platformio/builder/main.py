@@ -16,6 +16,7 @@ commonvars.AddVariables(
     ("PIOENV",),
     ("PLATFORM",),
     ("FRAMEWORK",),
+    ("BUILD_FLAGS",),
 
     # board options
     ("BOARD",),

@@ -19,10 +19,6 @@ BOARD_OPTIONS = env.ParseBoardOptions(
 ENERGIA_VERSION = int(
     open(join(env.subst("$PLATFORMFW_DIR"),
               "version.txt")).read().replace(".", "").strip())
-ENERGIA_FLAGS = [
-    "-DARDUINO=101",
-    "-DENERGIA=%d" % ENERGIA_VERSION
-]
 
 # include board variant
 env.VariantDir(
@@ -31,8 +27,10 @@ env.VariantDir(
 )
 
 env.Append(
-    ASFLAGS=ENERGIA_FLAGS,
-    CCFLAGS=ENERGIA_FLAGS,
+    CPPDEFINES=[
+        "ARDUINO=101",
+        "ENERGIA=%d" % ENERGIA_VERSION
+    ],
     CPPPATH=[
         join("$BUILD_DIR", "core"),
         join("$BUILD_DIR", "variant")
