@@ -127,6 +127,13 @@ Then run the following (which may require administrator access):
 
     $ python get-platformio.py
 
+An alternative short version for *Mac/Linux* users:
+
+.. code-block:: bash
+
+    $ curl -L http://bit.ly/1lpanta | python
+
+
 On *Windows OS* it may look like:
 
 .. code-block:: bash
