@@ -70,6 +70,60 @@ IDE Integration
 * [Eclipse] `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
 
 
+Embedded Platform Boards
+------------------------
+
+**PlatformIO** has pre-configured settings for most popular platform boards. You
+have no need to specify in ``platformio.ini`` type or frequency of MCU, upload
+protocol or etc. Please use ``board`` option (for
+`example <https://github.com/ivankravets/platformio/blob/develop/examples/wiring-blink/platformio.ini>`_).
+
+
+Platform ``atmelavr``
+~~~~~~~~~~~~~~~~~~~~~
+
+* ``diecimilaatmega168`` Arduino Duemilanove or Diecimila (ATmega168)
+* ``diecimilaatmega328`` Arduino Duemilanove or Diecimila (ATmega328)
+* ``fio`` Arduino Fio
+* ``leonardo`` Arduino Leonard
+* ``LilyPadUSB`` Arduino LilyPad USB
+* ``lilypadatmega168`` Arduino LilyPad (ATmega168)
+* ``lilypadatmega328`` Arduino LilyPad (ATmega328)
+* ``megaatmega1280`` Arduino Mega (ATmega1280)
+* ``megaatmega2560`` Arduino Mega (ATmega2560)
+* ``megaADK`` Arduino Mega ADK
+* ``micro`` Arduino Micro
+* ``miniatmega168`` Arduino Mini (ATmega168)
+* ``miniatmega328`` Arduino Mini (ATmega328)
+* ``nanoatmega168`` Arduino Nano (ATmega168)
+* ``nanoatmega328`` Arduino Nano (ATmega328)
+* ``pro8MHzatmega168`` Arduino Pro or Pro Mini (ATmega168, 3.3V, 8MHz)
+* ``pro16MHzatmega168`` Arduino Pro or Pro Mini (ATmega168, 5V, 16MHz)
+* ``pro8MHzatmega328`` Arduino Pro or Pro Mini (ATmega328, 3.3V, 8MHz)
+* ``pro16MHzatmega328`` Arduino Pro or Pro Mini (ATmega328, 5V, 16MHz)
+* ``uno`` Arduino Uno
+
+
+Platform ``timsp430``
+~~~~~~~~~~~~~~~~~~~~~
+
+* ``lpmsp430g2231`` TI LaunchPad MSP430 (msp430g2231)
+* ``lpmsp430g2452`` TI LaunchPad MSP430 (msp430g2452)
+* ``lpmsp430g2553`` TI LaunchPad MSP430 (msp430g2553)
+* ``lpmsp430f5529`` TI LaunchPad MSP430 (msp430f5529, 16MHz)
+* ``lpmsp430f5529_25`` TI LaunchPad MSP430 (msp430f5529, 25MHz)
+* ``lpmsp430fr5969`` TI LaunchPad MSP430 (msp430fr5969)
+* ``lpmsp430fr5739`` TI FraunchPad MSP430 (msp430fr5739)
+
+
+Platform ``titiva``
+~~~~~~~~~~~~~~~~~~~
+
+* ``lplm4f120h5qr`` TI Stellaris LM4F120 LaunchPad
+* ``lptm4c1230c3pm`` TI Tiva C Series TM4C123G LaunchPad
+* ``lptm4c1294ncpdt`` TI Tiva C Series TM4C1294 Connected LaunchPad
+
+
 Python & OS Support
 -------------------
 
