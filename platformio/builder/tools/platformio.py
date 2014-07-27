@@ -43,6 +43,8 @@ def BuildFirmware(env, libslist):
         if _libs:
             libslist += _libs
 
+    src.MergeFlags(getenv("PIOSRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
+
     return src.Program(
         join("$BUILD_DIR", "firmware"),
         [src.GlobCXXFiles(vdir) for vdir in vdirs],

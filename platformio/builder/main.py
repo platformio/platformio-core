@@ -17,6 +17,7 @@ commonvars.AddVariables(
     ("PLATFORM",),
     ("FRAMEWORK",),
     ("BUILD_FLAGS",),
+    ("SRCBUILD_FLAGS",),
 
     # board options
     ("BOARD",),
