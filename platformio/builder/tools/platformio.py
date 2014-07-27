@@ -2,11 +2,8 @@
 # See LICENSE for details.
 
 import re
-from os import listdir, walk
 from os.path import isdir, isfile, join
-from time import sleep
 
-from serial import Serial
 
 
 def BuildLibrary(env, variant_dir, library_dir):
@@ -116,18 +113,6 @@ def ParseBoardOptions(env, path, name):
         return data
 
 
-def ResetDevice(env):
-    """ Pulse the DTR line and flush serial buffer """
-    s = Serial(env.subst("$UPLOAD_PORT"))
-    s.flushInput()
-    s.setDTR(False)
-    s.setRTS(False)
-    sleep(0.1)
-    s.setDTR(True)
-    s.setRTS(True)
-    s.close()
-
-
 def exists(_):
     return True
 
@@ -140,5 +125,4 @@ def generate(env):
     env.AddMethod(GetDependentLibraries)
     env.AddMethod(VariantDirRecursive)
     env.AddMethod(ParseBoardOptions)
-    env.AddMethod(ResetDevice)
     return env

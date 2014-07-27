@@ -85,3 +85,8 @@ class ProjectInitialized(PlatformioException):
 class ProjectEnvsNotAvaialable(PlatformioException):
 
     MESSAGE = "Please setup environments in `platformio.ini` file."
+
+
+class GetSerialPortsError(PlatformioException):
+
+    MESSAGE = "No implementation for your platform ('%s') available"

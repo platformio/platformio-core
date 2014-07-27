@@ -2,11 +2,14 @@
 # See LICENSE for details.
 
 from os import getcwd, listdir, utime
+from os import name as os_name
 from os.path import dirname, expanduser, isfile, join, realpath
 from platform import architecture, system
 from subprocess import PIPE, Popen
+from time import sleep
 
 from platformio.exception import NotPlatformProject
+from serial import Serial
 
 try:
     from configparser import ConfigParser
@@ -57,3 +60,24 @@ def exec_command(args):
     p = Popen(args, stdout=PIPE, stderr=PIPE, shell=use_shell)
     out, err = p.communicate()
     return dict(out=out.strip(), err=err.strip())
+
+
+def reset_serialport(port):
+    s = Serial(port)
+    s.flushInput()
+    s.setDTR(False)
+    s.setRTS(False)
+    sleep(0.1)
+    s.setDTR(True)
+    s.setRTS(True)
+    s.close()
+
+
+def get_serialports():
+    if os_name == "nt":
+        from serial.tools.list_ports_windows import comports
+    elif os_name == "posix":
+        from serial.tools.list_ports_posix import comports
+    else:
+        raise GetSerialPortsError(os_name)
+    return[{"port": p, "description": d, "hwid": h} for p, d, h in comports()]
