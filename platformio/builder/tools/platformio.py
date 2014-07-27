@@ -2,8 +2,28 @@
 # See LICENSE for details.
 
 import re
+from os import getenv, listdir, walk
 from os.path import isdir, isfile, join
 
+from SCons.Script import SConscript, SConscriptChdir
+
+
+def ProcessGeneral(env):
+    libs = []
+    if "BUILD_FLAGS" in env:
+        env.MergeFlags(env['BUILD_FLAGS'])
+
+    env.PrependENVPath(
+        "PATH",
+        join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
+    )
+
+    if "FRAMEWORK" in env:
+        SConscriptChdir(0)
+        libs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
+                                         "frameworks", "${FRAMEWORK}.py")),
+                          exports="env")
+    return libs
 
 
 def BuildLibrary(env, variant_dir, library_dir):
@@ -120,6 +140,7 @@ def exists(_):
 
 
 def generate(env):
+    env.AddMethod(ProcessGeneral)
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildDependentLibraries)
     env.AddMethod(BuildFirmware)
