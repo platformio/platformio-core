@@ -1,15 +1,16 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import getcwd, listdir, utime
 from os import name as os_name
+from os import getcwd, getenv, listdir, utime
 from os.path import dirname, expanduser, isfile, join, realpath
 from platform import architecture, system
 from subprocess import PIPE, Popen
 from time import sleep
 
-from platformio.exception import NotPlatformProject
 from serial import Serial
+
+from platformio.exception import GetSerialPortsError, NotPlatformProject
 
 try:
     from configparser import ConfigParser
@@ -31,6 +32,10 @@ def get_source_dir():
 
 def get_project_dir():
     return getcwd()
+
+
+def get_pioenvs_dir():
+    return getenv("PIOENVS_DIR", join(get_project_dir(), ".pioenvs"))
 
 
 def get_project_config():
