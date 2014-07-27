@@ -6,7 +6,7 @@ from os.path import join
 from sys import exit as sys_exit
 from traceback import format_exc
 
-from click import command, MultiCommand, style, version_option
+from click import command, MultiCommand, version_option
 
 from platformio import __version__
 from platformio.exception import PlatformioException, UnknownCLICommand
@@ -45,7 +45,7 @@ def main():
         cli()
     except Exception as e:  # pylint: disable=W0703
         if isinstance(e, PlatformioException):
-            sys_exit(style("Error: ", fg="red") + str(e))
+            sys_exit("Error: " + str(e))
         else:
             print format_exc()
 

@@ -3,7 +3,8 @@
 
 from click import command, echo, option, secho, style
 
-from platformio.exception import ProjectEnvsNotAvaialable, UndefinedEnvPlatform
+from platformio.exception import (InvalidEnvName, ProjectEnvsNotAvaialable,
+                                  UndefinedEnvPlatform, UnknownEnvNames)
 from platformio.platforms._base import PlatformFactory
 from platformio.util import get_project_config
 
@@ -11,26 +12,38 @@ from platformio.util import get_project_config
 @command("run", short_help="Process project environments")
 @option("--environment", "-e", multiple=True, metavar="<environment>")
 @option("--target", "-t", multiple=True, metavar="<target>")
-def cli(environment, target):
+@option("--upload-port", metavar="<upload port>")
+def cli(environment, target, upload_port):
 
     config = get_project_config()
 
     if not config.sections():
         raise ProjectEnvsNotAvaialable()
 
+    envnames = [s[4:] for s in config.sections()]
+    unknown = set(environment) - set(envnames)
+    if unknown:
+        raise UnknownEnvNames(", ".join(unknown))
+
     for section in config.sections():
         if section[:4] != "env:":
-            continue
+            raise InvalidEnvName(section)
 
         envname = section[4:]
         if environment and envname not in environment:
-            echo("Skipped %s environment" % style(envname, fg="yellow"))
+            # echo("Skipped %s environment" % style(envname, fg="yellow"))
             continue
 
         echo("Processing %s environment:" % style(envname, fg="cyan"))
-        variables = ["%s=%s" % (o.upper(), v) for o, v in config.items(section)
-                     if o != "targets"]
-        variables.append("PIOENV=" + envname)
+
+        variables = ["PIOENV=" + envname]
+        if upload_port:
+            variables.append("UPLOAD_PORT=%s" % upload_port)
+        for k, v in config.items(section):
+            k = k.upper()
+            if k == "TARGETS" or (k == "UPLOAD_PORT" and upload_port):
+                continue
+            variables.append("%s=%s" % (k.upper(), v))
 
         envtargets = []
         if target:
