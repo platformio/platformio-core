@@ -20,8 +20,7 @@ def cli(environment, target, upload_port):
     if not config.sections():
         raise ProjectEnvsNotAvaialable()
 
-    envnames = [s[4:] for s in config.sections()]
-    unknown = set(environment) - set(envnames)
+    unknown = set(environment) - set([s[4:] for s in config.sections()])
     if unknown:
         raise UnknownEnvNames(", ".join(unknown))
 
