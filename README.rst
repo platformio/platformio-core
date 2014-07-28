@@ -22,7 +22,8 @@ PlatformIO
 `Documentation <#documentation>`_ |
 `Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
 `Embedded Platform Boards <#embedded-platform-boards>`_ |
-`IDE Integration <#ide-integration>`_
+`IDE Integration <#ide-integration>`_ |
+`Blog <http://www.ikravets.com/category/computer-life/platformio>`_
 
 
 **PlatformIO** is a console tool to build code with different development
