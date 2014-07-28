@@ -256,36 +256,42 @@ To print all available commands and options:
       --help     Show this message and exit.
 
     Commands:
-      init       Initialize new platformio based project
-      install    Install new platforms
-      list       List installed platforms
-      run        Process project environments
-      search     Search for development platforms
-      show       Show details about an installed platforms
-      uninstall  Uninstall the platforms
-      update     Update installed platforms
+      init         Initialize new PlatformIO based project
+      install      Install new platforms
+      list         List installed platforms
+      run          Process project environments
+      search       Search for development platforms
+      serialports  List Serial ports
+      show         Show details about an installed platforms
+      uninstall    Uninstall platforms
+      update       Update installed platforms
 
 
-``platformio search``
-~~~~~~~~~~~~~~~~~~~~~
+``platformio init``
+~~~~~~~~~~~~~~~~~~~
 
-Search for development platforms:
+Initialize new PlatformIO based project.
 
 .. code-block:: bash
 
-    # Print all available development platforms
-    $ platformio search all
-
-    # Filter platforms by "Query"
-    $ platformio search "Query"
+    # Change directory to future project
+    $ cd /path/to/empty/directory
+    $ platformio init
 
     # Example
-    $ platformio search ti
-    timsp430 - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
-    titiva   - An embedded platform for TI TIVA C ARM microcontrollers (with Energia Framework)
+    $ platformio init
+    Project has been initialized!
+    Please put your source code to `src` directory, external libraries to `lib`
+    and setup environments in `platformio.ini` file.
+    Then process project with `platformio run` command.
 
-    $ platformio search arduino
-    atmelavr - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
+After this command ``platformio`` will create:
+
+* ``.pioenvs`` - a temporary working directory.
+* ``lib`` - a directory for project specific libraries. PlatformIO will
+  compile their to static libraries and link to executable file
+* ``src`` - a source directory. Put code here.
+* ``platformio.ini`` - a configuration file for project
 
 
 ``platformio install``
@@ -326,6 +332,163 @@ To list installed platforms:
     # Example
     $ platformio list
     timsp430    with packages: toolchain-timsp430, tool-mspdebug, framework-energiamsp430
+
+
+``platformio run``
+~~~~~~~~~~~~~~~~~~
+
+Process the project's environments defined in ``platformio.ini`` file:
+
+.. code-block:: bash
+
+    $ platformio run
+
+    # Example
+    $ platformio run
+    Processing arduino_pro5v environment:
+    scons: `.pioenvs/arduino_pro5v/firmware.elf' is up to date.
+    scons: `.pioenvs/arduino_pro5v/firmware.hex' is up to date.
+
+    Processing launchpad_msp430g2 environment:
+    scons: `.pioenvs/launchpad_msp430g2/firmware.elf' is up to date.
+    scons: `.pioenvs/launchpad_msp430g2/firmware.hex' is up to date.
+
+    Processing launchpad_lm4f120 environment:
+    scons: `.pioenvs/launchpad_lm4f120/firmware.elf' is up to date.
+    scons: `.pioenvs/launchpad_lm4f120/firmware.hex' is up to date
+
+Process specific environments:
+
+.. code-block:: bash
+
+    $ platformio run -e myenv1 -e myenv2
+
+    # Example
+    $ platformio run -e arduino_pro5v -e launchpad_lm4f120
+    Processing arduino_pro5v environment:
+    scons: `.pioenvs/arduino_pro5v/firmware.elf' is up to date.
+    scons: `.pioenvs/arduino_pro5v/firmware.hex' is up to date.
+
+    Processing launchpad_lm4f120 environment:
+    scons: `.pioenvs/launchpad_lm4f120/firmware.elf' is up to date.
+    scons: `.pioenvs/launchpad_lm4f120/firmware.hex' is up to date.
+
+Process specific target:
+
+.. code-block:: bash
+
+    $ platformio run -t clean
+    $ platformio run -t upload --upload-port=/dev/ttyUSBX
+
+    # Example
+    platformio run -t clean
+    Processing arduino_pro5v environment:
+    Removed .pioenvs/arduino_pro5v/src/main.o
+    ...
+    Removed .pioenvs/arduino_pro5v/firmware.hex
+
+    Processing launchpad_msp430g2 environment:
+    Removed .pioenvs/launchpad_msp430g2/src/main.o
+    ...
+    Removed .pioenvs/launchpad_msp430g2/firmware.hex
+
+    Processing launchpad_lm4f120 environment:
+    Removed .pioenvs/launchpad_lm4f120/src/main.o
+    ...
+    Removed .pioenvs/launchpad_lm4f120/firmware.hex
+
+Mix environments and targets:
+
+.. code-block:: bash
+
+    $ platformio run -e myembeddeddevice -t upload
+
+    # Example
+    $ platformio run -e launchpad_msp430g2 -t upload
+    Processing launchpad_msp430g2 environment:
+    /Users/ikravets/.platformio/timsp430/tools/mspdebug/mspdebug rf2500 --force-reset "prog .pioenvs/launchpad_msp430g2/firmware.hex"
+    MSPDebug version 0.20 - debugging tool for MSP430 MCUs
+    Copyright (C) 2009-2012 Daniel Beer <dlbeer@gmail.com>
+    This is free software; see the source for copying conditions.  There is NO
+    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    Trying to open interface 1 on 009
+    Initializing FET...
+    FET protocol version is 30394216
+    Configured for Spy-Bi-Wire
+    Sending reset...
+    Set Vcc: 3000 mV
+    Device ID: 0x2553
+      Code start address: 0xc000
+      Code size         : 16384 byte = 16 kb
+      RAM  start address: 0x200
+      RAM  end   address: 0x3ff
+      RAM  size         : 512 byte = 0 kb
+    Device: MSP430G2553/G2403
+    Code memory starts at 0xc000
+    Number of breakpoints: 2
+    Chip ID data: 25 53
+    Erasing...
+    Programming...
+    Writing  646 bytes at c000...
+    Writing   32 bytes at ffe0...
+    Done, 678 bytes total
+
+
+``platformio search``
+~~~~~~~~~~~~~~~~~~~~~
+
+Search for development platforms:
+
+.. code-block:: bash
+
+    # Print all available development platforms
+    $ platformio search all
+
+    # Filter platforms by "Query"
+    $ platformio search "Query"
+
+    # Example
+    $ platformio search ti
+    timsp430 - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
+    titiva   - An embedded platform for TI TIVA C ARM microcontrollers (with Energia Framework)
+
+    $ platformio search arduino
+    atmelavr - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
+
+
+``platformio serialports``
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To list available `Serial Ports <http://en.wikipedia.org/wiki/Serial_port>`_:
+
+.. code-block:: bash
+
+    $ platformio serialports
+
+    # Example (Posix)
+    $ platformio serialports
+    /dev/cu.SLAB_USBtoUART
+    ----------
+    Hardware ID: USB VID:PID=10c4:ea60 SNR=0001
+    Description: CP2102 USB to UART Bridge Controller
+
+    /dev/cu.uart-1CFF4676258F4543
+    ----------
+    Hardware ID: USB VID:PID=451:f432 SNR=1CFF4676258F4543
+    Description: Texas Instruments MSP-FET430UIF
+
+    # Example (Windows)
+    $ platformio serialports
+    COM4
+    ----------
+    Hardware ID: USB VID:PID=0451:F432
+    Description: MSP430 Application UART (COM4)
+
+    COM3
+    ----------
+    Hardware ID: USB VID:PID=10C4:EA60 SNR=0001
+    Description: Silicon Labs CP210x USB to UART Bridge (COM3)
 
 
 ``platformio show``
@@ -369,138 +532,6 @@ To uninstall platform:
     Uninstalling tool-mspdebug package:             [OK]
     Uninstalling framework-energiamsp430 package:   [OK]
     The platform 'timsp430' has been successfully uninstalled!
-
-
-``platformio init``
-~~~~~~~~~~~~~~~~~~~
-
-Initialize new platformio based project.
-
-.. code-block:: bash
-
-    # Change directory to future project
-    $ cd /path/to/empty/directory
-    $ platformio init
-
-    # Example
-    $ platformio init
-    Project successfully initialized.
-    Please put your source code to `src` directory, external libraries to `lib`
-    and setup environments in `platformio.ini` file.
-    Then process project with `platformio run` command.
-
-After this command ``platformio`` will create:
-
-* ``.pioenvs`` - a temporary working directory.
-* ``lib`` - a directory for project specific libraries. PlatformIO will
-  compile their to static libraries and link to executable file
-* ``src`` - a source directory. Put code here.
-* ``platformio.ini`` - a configuration file for project
-
-
-``platformio run``
-~~~~~~~~~~~~~~~~~~
-
-Process the project's environments defined in ``platformio.ini`` file:
-
-.. code-block:: bash
-
-    $ platformio run
-
-    # Example
-    $ platformio run
-    Processing arduino_pro5v environment:
-    scons: `.pioenvs/arduino_pro5v/firmware.elf' is up to date.
-    scons: `.pioenvs/arduino_pro5v/firmware.hex' is up to date.
-
-    Processing launchpad_msp430g2 environment:
-    scons: `.pioenvs/launchpad_msp430g2/firmware.elf' is up to date.
-    scons: `.pioenvs/launchpad_msp430g2/firmware.hex' is up to date.
-
-    Processing launchpad_lm4f120 environment:
-    scons: `.pioenvs/launchpad_lm4f120/firmware.elf' is up to date.
-    scons: `.pioenvs/launchpad_lm4f120/firmware.hex' is up to date
-
-Process specific environments:
-
-.. code-block:: bash
-
-    $ platformio run -e myenv1 -e myenv2
-
-    # Example
-    $ platformio run -e arduino_pro5v -e launchpad_lm4f120
-    Processing arduino_pro5v environment:
-    scons: `.pioenvs/arduino_pro5v/firmware.elf' is up to date.
-    scons: `.pioenvs/arduino_pro5v/firmware.hex' is up to date.
-
-    Skipped launchpad_msp430g2 environment
-    Processing launchpad_lm4f120 environment:
-    scons: `.pioenvs/launchpad_lm4f120/firmware.elf' is up to date.
-    scons: `.pioenvs/launchpad_lm4f120/firmware.hex' is up to date.
-
-Process specific target:
-
-.. code-block:: bash
-
-    $ platformio run -t clean
-    $ platformio run -t upload
-
-    # Example
-    platformio run -t clean
-    Processing arduino_pro5v environment:
-    Removed .pioenvs/arduino_pro5v/src/main.o
-    ...
-    Removed .pioenvs/arduino_pro5v/firmware.hex
-
-    Processing launchpad_msp430g2 environment:
-    Removed .pioenvs/launchpad_msp430g2/src/main.o
-    ...
-    Removed .pioenvs/launchpad_msp430g2/firmware.hex
-
-    Processing launchpad_lm4f120 environment:
-    Removed .pioenvs/launchpad_lm4f120/src/main.o
-    ...
-    Removed .pioenvs/launchpad_lm4f120/firmware.hex
-
-Mix environments and targets:
-
-.. code-block:: bash
-
-    $ platformio run -e myembeddeddevice -t upload
-
-    # Example
-    $ platformio run -e launchpad_msp430g2 -t upload
-    Skipped arduino_pro5v environment
-    Processing launchpad_msp430g2 environment:
-    /Users/ikravets/.platformio/timsp430/tools/mspdebug/mspdebug rf2500 --force-reset "prog .pioenvs/launchpad_msp430g2/firmware.hex"
-    MSPDebug version 0.20 - debugging tool for MSP430 MCUs
-    Copyright (C) 2009-2012 Daniel Beer <dlbeer@gmail.com>
-    This is free software; see the source for copying conditions.  There is NO
-    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    Trying to open interface 1 on 009
-    Initializing FET...
-    FET protocol version is 30394216
-    Configured for Spy-Bi-Wire
-    Sending reset...
-    Set Vcc: 3000 mV
-    Device ID: 0x2553
-      Code start address: 0xc000
-      Code size         : 16384 byte = 16 kb
-      RAM  start address: 0x200
-      RAM  end   address: 0x3ff
-      RAM  size         : 512 byte = 0 kb
-    Device: MSP430G2553/G2403
-    Code memory starts at 0xc000
-    Number of breakpoints: 2
-    Chip ID data: 25 53
-    Erasing...
-    Programming...
-    Writing  646 bytes at c000...
-    Writing   32 bytes at ffe0...
-    Done, 678 bytes total
-
-    Skipped launchpad_lm4f120 environment
 
 
 ``platformio update``

@@ -1,4 +1,4 @@
-click==2.4
+click==2.5
 colorama==0.3.1
 pyserial==2.7
 requests==2.3.0

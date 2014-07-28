@@ -4,6 +4,20 @@ Release History
 1.0.0 (?)
 ---------
 
+0.4.0 (?)
+---------
+
+* Implemented ``serialports`` command
+* Allowed to put special build flags only for ``src`` files via
+  ``srcbuild_flags`` environment option
+* Allowed to override some of settings via system environment variables
+  such as: ``$PIOSRCBUILD_FLAGS`` and ``$PIOENVS_DIR``
+* Added ``--upload-port`` option for ``platformio run`` command
+* Implemented (especially for `SmartAnthill <http://smartanthill.ikravets.com/>`_)
+  ``platformio run -t uploadlazy`` target (no dependencies to framework libs,
+  ELF and etc.)
+
+
 0.3.1 (2014-06-21)
 ------------------
 
