@@ -17,6 +17,10 @@ PlatformIO
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
 
+**`Quickstart <#quickstart>`_ | `Installation <#installation`_ |
+`Documentation <#documentation>`_ | `Embedded Platform Boards <#embedded-platform-boards>`_ |
+`IDE Integration <#ide-integration>`_**
+
 
 **PlatformIO** is a console tool to build code with different development
 platforms.
@@ -237,8 +241,8 @@ For upgrading the ``platformio`` to new version please use this command:
     $ pip install -U platformio
 
 
-User Guide
-----------
+Documentation
+-------------
 
 To print all available commands and options:
 
