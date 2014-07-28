@@ -17,8 +17,11 @@ PlatformIO
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
 
-`Quickstart <#quickstart>`_ | `Installation <#installation`_ |
-`Documentation <#documentation>`_ | `Embedded Platform Boards <#embedded-platform-boards>`_ |
+`Quickstart <#quickstart>`_ |
+`Installation <#installation>`_ |
+`Documentation <#documentation>`_ |
+`Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
+`Embedded Platform Boards <#embedded-platform-boards>`_ |
 `IDE Integration <#ide-integration>`_
 
 
