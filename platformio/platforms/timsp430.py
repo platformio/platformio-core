@@ -3,7 +3,7 @@
 
 from os.path import join
 
-from platformio.platforms._base import BasePlatform
+from platformio.platforms.base import BasePlatform
 
 
 class Timsp430Platform(BasePlatform):

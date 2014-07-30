@@ -5,7 +5,7 @@ from click import argument, command, secho
 
 from platformio.exception import PlatformNotInstalledYet
 from platformio.pkgmanager import PackageManager
-from platformio.platforms._base import PlatformFactory
+from platformio.platforms.base import PlatformFactory
 
 
 @command("uninstall", short_help="Uninstall platforms")

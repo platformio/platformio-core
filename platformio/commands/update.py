@@ -4,7 +4,7 @@
 from click import command, echo, style
 
 from platformio.pkgmanager import PackageManager
-from platformio.platforms._base import PlatformFactory
+from platformio.platforms.base import PlatformFactory
 
 
 @command("update", short_help="Update installed platforms")

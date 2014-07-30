@@ -5,7 +5,7 @@ from click import command, echo, option, secho, style
 
 from platformio.exception import (InvalidEnvName, ProjectEnvsNotAvaialable,
                                   UndefinedEnvPlatform, UnknownEnvNames)
-from platformio.platforms._base import PlatformFactory
+from platformio.platforms.base import PlatformFactory
 from platformio.util import get_project_config
 
 
