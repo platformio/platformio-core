@@ -16,12 +16,14 @@ class Timsp430Platform(BasePlatform):
 
         "toolchain-timsp430": {
             "path": join("tools", "toolchain"),
+            "alias": "toolchain",
             "default": True
         },
 
         "tool-mspdebug": {
             "path": join("tools", "mspdebug"),
-            "default": True,
+            "alias": "uploader",
+            "default": True
         },
 
         "framework-energiamsp430": {

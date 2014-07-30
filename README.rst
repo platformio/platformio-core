@@ -93,7 +93,7 @@ Platform ``atmelavr``
 * ``diecimilaatmega168`` Arduino Duemilanove or Diecimila (ATmega168)
 * ``diecimilaatmega328`` Arduino Duemilanove or Diecimila (ATmega328)
 * ``fio`` Arduino Fio
-* ``leonardo`` Arduino Leonard
+* ``leonardo`` Arduino Leonardo
 * ``LilyPadUSB`` Arduino LilyPad USB
 * ``lilypadatmega168`` Arduino LilyPad (ATmega168)
 * ``lilypadatmega328`` Arduino LilyPad (ATmega328)
@@ -158,7 +158,7 @@ Quickstart
     $ platformio run
 
 For more detailed information please follow to `Installation <#installation>`_
-and `User Guide <#user-guide>`_ sections.
+and `Documentation <#documentation>`_ sections.
 
 
 Installation
@@ -311,11 +311,12 @@ can install one of them:
 .. code-block:: bash
 
     $ platformio install SomePlatform
-    $ platformio install SomePlatform --with-package=PackageName
-    $ platformio install SomePlatform --without-package=PackageName
+    $ platformio install SomePlatform --with-package=toolchain|uploader|PackageName
+    $ platformio install SomePlatform --without-package=toolchain|uploader|PackageName
+    $ platformio install SomePlatform --skip-default-package
 
     # Example
-    $ platformio install timsp430 --with-package=framework-energiamsp430
+    $ platformio install timsp430
     Installing toolchain-timsp430 package:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
@@ -323,6 +324,13 @@ can install one of them:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
     Installing framework-energiamsp430 package:
+    Downloading  [####################################]  100%
+    Unpacking  [####################################]  100%
+    The platform 'timsp430' has been successfully installed!
+
+    # Skip default packages and install uploader utility only
+    $ platformio install timsp430 --skip-default-package --with-package=uploader
+    Installing tool-mspdebug package:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
     The platform 'timsp430' has been successfully installed!

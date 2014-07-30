@@ -16,6 +16,7 @@ Release History
 * Implemented (especially for `SmartAnthill <http://smartanthill.ikravets.com/>`_)
   ``platformio run -t uploadlazy`` target (no dependencies to framework libs,
   ELF and etc.)
+* Allowed to skip default packages via ``platformio install--skip-default-package`` flag
 
 
 0.3.1 (2014-06-21)

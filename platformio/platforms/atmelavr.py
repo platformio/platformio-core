@@ -16,12 +16,14 @@ class AtmelavrPlatform(BasePlatform):
 
         "toolchain-atmelavr": {
             "path": join("tools", "toolchain"),
+            "alias": "toolchain",
             "default": True
         },
 
         "tool-avrdude": {
             "path": join("tools", "avrdude"),
-            "default": True,
+            "alias": "uploader",
+            "default": True
         },
 
         "framework-arduinoavr": {
