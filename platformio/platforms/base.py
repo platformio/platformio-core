@@ -40,36 +40,27 @@ class BasePlatform(object):
         else:
             raise NotImplementedError()
 
-    def get_pkgname_by_alias(self, alias):
-        for name, opts in self.PACKAGES.items():
-            if opts.get("alias", None) == alias:
-                return name
-        return None
+    def pkg_aliases_to_names(self, aliases):
+        names = []
+        for alias in aliases:
+            name = alias
+            # lookup by packages alias
+            if name not in self.PACKAGES:
+                for _name, _opts in self.PACKAGES.items():
+                    if _opts.get("alias", None) == alias:
+                        name = _name
+                        break
+            names.append(name)
+        return names
 
     def install(self, with_packages, without_packages, skip_default_packages):
-        with_packages = set(with_packages)
-        without_packages = set(without_packages)
+        with_packages = set(self.pkg_aliases_to_names(with_packages))
+        without_packages = set(self.pkg_aliases_to_names(without_packages))
 
         upkgs = with_packages | without_packages
         ppkgs = set(self.PACKAGES.keys())
-        unknown = upkgs - ppkgs
-        if unknown:
-            _unknown = unknown.copy()
-            # maybe aliases
-            for alias in unknown:
-                pkgname = self.get_pkgname_by_alias(alias)
-                if pkgname not in self.PACKAGES:
-                    continue
-                if alias in with_packages:
-                    with_packages.discard(alias)
-                    with_packages.add(pkgname)
-                if alias in without_packages:
-                    without_packages.discard(alias)
-                    without_packages.add(pkgname)
-                _unknown.discard(alias)
-
-            if _unknown:
-                raise UnknownPackage(", ".join(_unknown))
+        if not upkgs.issubset(ppkgs):
+            raise UnknownPackage(", ".join(upkgs - ppkgs))
 
         requirements = []
         for name, opts in self.PACKAGES.items():
