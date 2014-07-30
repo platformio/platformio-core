@@ -40,6 +40,9 @@ class BasePlatform(object):
         else:
             raise NotImplementedError()
 
+    def get_pkg_alias(self, pkgname):
+        return self.PACKAGES[pkgname].get("alias", None)
+
     def pkg_aliases_to_names(self, aliases):
         names = []
         for alias in aliases:

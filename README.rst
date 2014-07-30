@@ -517,19 +517,21 @@ To show details about an installed platform:
     $ platformio show SomePlatform
 
     # Example
-    $ platformio show timsp430
-    timsp430    - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
+    $ platformio show atmelavr
+    atmelavr    - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
     ----------
-    Package: toolchain-timsp430
-    Location: /Users/ikravets/.platformio/timsp430/tools/toolchain
+    Package: toolchain-atmelavr
+    Alias: toolchain
+    Location: /Users/ikravets/.platformio/atmelavr/tools/toolchain
     Version: 1
     ----------
-    Package: tool-mspdebug
-    Location: /Users/ikravets/.platformio/timsp430/tools/mspdebug
+    Package: tool-avrdude
+    Alias: uploader
+    Location: /Users/ikravets/.platformio/atmelavr/tools/avrdude
     Version: 1
     ----------
-    Package: framework-energiamsp430
-    Location: /Users/ikravets/.platformio/timsp430/frameworks/energia
+    Package: framework-arduinoavr
+    Location: /Users/ikravets/.platformio/atmelavr/frameworks/arduino
     Version: 1
 
 

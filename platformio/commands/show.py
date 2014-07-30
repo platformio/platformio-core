@@ -23,7 +23,10 @@ def cli(platform):
 
     pm = PackageManager(platform)
     for name, data in pm.get_installed(platform).items():
+        pkgalias = p.get_pkg_alias(name)
         echo("----------")
         echo("Package: %s" % style(name, fg="yellow"))
+        if pkgalias:
+            echo("Alias: %s" % pkgalias)
         echo("Location: %s" % join(pm.get_platform_dir(), data['path']))
         echo("Version: %d" % int(data['version']))
