@@ -4,8 +4,8 @@ Release History
 1.0.0 (?)
 ---------
 
-0.4.0 (?)
----------
+0.4.0 (2014-07-31)
+------------------
 
 * Implemented ``serialports`` command
 * Allowed to put special build flags only for ``src`` files via
@@ -17,6 +17,8 @@ Release History
   ``platformio run -t uploadlazy`` target (no dependencies to framework libs,
   ELF and etc.)
 * Allowed to skip default packages via ``platformio install --skip-default-package`` flag
+* Added tools for Raspberry Pi platform
+* Added support for Microduino and Raspduino boards in ``atmelavr`` platform
 
 
 0.3.1 (2014-06-21)

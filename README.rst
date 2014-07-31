@@ -110,6 +110,17 @@ Platform ``atmelavr``
 * ``pro8MHzatmega328`` Arduino Pro or Pro Mini (ATmega328, 3.3V, 8MHz)
 * ``pro16MHzatmega328`` Arduino Pro or Pro Mini (ATmega328, 5V, 16MHz)
 * ``uno`` Arduino Uno
+* ``raspduino`` Raspduino
+* ``328p8m`` Microduino Core (ATmega328P, 3.3V, 8MHz)
+* ``328p16m`` Microduino Core (Atmega328P, 5V, 16MHz)
+* ``168pa8m`` Microduino Core (ATmega168PA, 3.3V, 8MHz)
+* ``168pa16m`` Microduino Core (ATmega168PA, 5V, 16MHz)
+* ``644pa8m`` Microduino Core+ (ATmega644PA, 3.3V, 8MHz)
+* ``644pa16m`` Microduino Core+ (ATmega644PA, 5V, 16MHz)
+* ``1284p8m`` Microduino-Core+ (ATmega1284P, 3.3V, 8MHz)
+* ``1284p16m`` Microduino-Core+ (ATmega1284P, 5V, 16MHz)
+* ``32u416m`` Microduino-Core USB (ATmega32U4, 5V, 16MHz)
+
 
 
 Platform ``timsp430``
