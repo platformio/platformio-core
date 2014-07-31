@@ -8,8 +8,9 @@
 from os.path import join
 
 from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
-                          DefaultEnvironment, Exit, SConscript,
-                          SConscriptChdir)
+                          DefaultEnvironment, Exit)
+
+from platformio.util import reset_serialport
 
 env = DefaultEnvironment()
 
@@ -66,9 +67,6 @@ env.Replace(
     UPLOADEEPCMD="$UPLOADER $UPLOADERFLAGS -U eeprom:w:$SOURCES:i"
 )
 
-if "BUILD_FLAGS" in env:
-    env.MergeFlags(env['BUILD_FLAGS'])
-
 env.Append(
     BUILDERS=dict(
         ElfToEep=Builder(
@@ -101,23 +99,7 @@ env.Append(
     )
 )
 
-env.PrependENVPath(
-    "PATH",
-    join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
-)
-
-BUILT_LIBS = []
-
-#
-# Process framework script
-#
-
-if "FRAMEWORK" in env:
-    SConscriptChdir(0)
-    flibs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
-                                      "frameworks", "${FRAMEWORK}.py")),
-                       exports="env")
-    BUILT_LIBS += flibs
+BUILT_LIBS = env.ProcessGeneral()
 
 #
 # Target: Build executable and linkable firmware
@@ -129,39 +111,48 @@ target_elf = env.BuildFirmware(BUILT_LIBS + ["m"])
 # Target: Extract EEPROM data (from EEMEM directive) to .eep file
 #
 
-target_eep = env.ElfToEep(join("$BUILD_DIR", "firmware"), target_elf)
+target_eep = env.Alias("eep", env.ElfToEep(join("$BUILD_DIR", "firmware"),
+                                           target_elf))
 
 #
 # Target: Build the .hex file
 #
 
-target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+if "uploadlazy" in COMMAND_LINE_TARGETS:
+    target_hex = join("$BUILD_DIR", "firmware.hex")
+else:
+    target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+
+#
+# Target: Upload by default .hex file
+#
+
+upload = env.Alias(["upload", "uploadlazy"], target_hex, [
+    lambda target, source, env: reset_serialport(env.subst("$UPLOAD_PORT")),
+    "$UPLOADHEXCMD"])
+AlwaysBuild(upload)
 
 #
 # Target: Upload .eep file
 #
 
-eep = env.Alias("eep", target_eep, [
-    lambda target, source, env: env.ResetDevice(), "$UPLOADEEPCMD"])
-AlwaysBuild(eep)
+uploadeep = env.Alias("uploadeep", target_eep, [
+    lambda target, source, env: reset_serialport(env.subst("$UPLOAD_PORT")),
+    "$UPLOADEEPCMD"])
+AlwaysBuild(uploadeep)
 
 #
-# Target: Upload .hex file
+# Check for $UPLOAD_PORT variable
 #
 
-upload = env.Alias("upload", target_hex, [
-    lambda target, source, env: env.ResetDevice(), "$UPLOADHEXCMD"])
-AlwaysBuild(upload)
-
-#
-# Target: Define targets
-#
-
-env.Alias("build-eep", [target_eep])
-Default([target_elf, target_hex])
-
-# check for $UPLOAD_PORT variable
-is_uptarget = ("eep" in COMMAND_LINE_TARGETS or "upload" in
-               COMMAND_LINE_TARGETS)
+is_uptarget = (set(["upload", "uploadlazy", "uploadeep"]) &
+               set(COMMAND_LINE_TARGETS))
 if is_uptarget and not env.subst("$UPLOAD_PORT"):
-    Exit("Please specify 'upload_port'")
+    Exit("Please specify environment 'upload_port' or use global "
+         "--upload-port option.")
+
+#
+# Setup default targets
+#
+
+Default(target_hex)

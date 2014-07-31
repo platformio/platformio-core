@@ -1,12 +1,16 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import getcwd, listdir, utime
+from os import name as os_name
+from os import getcwd, getenv, listdir, utime
 from os.path import dirname, expanduser, isfile, join, realpath
-from platform import architecture, system
+from platform import system, uname
 from subprocess import PIPE, Popen
+from time import sleep
 
-from platformio.exception import NotPlatformProject
+from serial import Serial
+
+from platformio.exception import GetSerialPortsError, NotPlatformProject
 
 try:
     from configparser import ConfigParser
@@ -14,8 +18,11 @@ except ImportError:
     from ConfigParser import ConfigParser
 
 
-def get_system():
-    return (system() + architecture()[0][:-3]).lower()
+def get_systype():
+    if system() == "Windows":
+        return "windows"
+    data = uname()
+    return ("%s_%s" % (data[0], data[4])).lower()
 
 
 def get_home_dir():
@@ -28,6 +35,10 @@ def get_source_dir():
 
 def get_project_dir():
     return getcwd()
+
+
+def get_pioenvs_dir():
+    return getenv("PIOENVS_DIR", join(get_project_dir(), ".pioenvs"))
 
 
 def get_project_config():
@@ -53,7 +64,28 @@ def change_filemtime(path, time):
 
 
 def exec_command(args):
-    use_shell = get_system() == "windows32"
+    use_shell = system() == "Windows"
     p = Popen(args, stdout=PIPE, stderr=PIPE, shell=use_shell)
     out, err = p.communicate()
     return dict(out=out.strip(), err=err.strip())
+
+
+def reset_serialport(port):
+    s = Serial(port)
+    s.flushInput()
+    s.setDTR(False)
+    s.setRTS(False)
+    sleep(0.1)
+    s.setDTR(True)
+    s.setRTS(True)
+    s.close()
+
+
+def get_serialports():
+    if os_name == "nt":
+        from serial.tools.list_ports_windows import comports
+    elif os_name == "posix":
+        from serial.tools.list_ports_posix import comports
+    else:
+        raise GetSerialPortsError(os_name)
+    return[{"port": p, "description": d, "hwid": h} for p, d, h in comports()]

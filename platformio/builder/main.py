@@ -6,7 +6,8 @@ from os.path import isdir, join
 from SCons.Script import (DefaultEnvironment, Exit, SConscript,
                           SConscriptChdir, Variables)
 
-from platformio.util import get_home_dir, get_project_dir, get_source_dir
+from platformio.util import (get_home_dir, get_pioenvs_dir, get_project_dir,
+                             get_source_dir)
 
 # AllowSubstExceptions()
 
@@ -17,6 +18,7 @@ commonvars.AddVariables(
     ("PLATFORM",),
     ("FRAMEWORK",),
     ("BUILD_FLAGS",),
+    ("SRCBUILD_FLAGS",),
 
     # board options
     ("BOARD",),
@@ -36,13 +38,14 @@ DefaultEnvironment(
 
     PIOBUILDER_DIR=join(get_source_dir(), "builder"),
     PROJECT_DIR=get_project_dir(),
+    PIOENVS_DIR=get_pioenvs_dir(),
 
     PLATFORMIOHOME_DIR=get_home_dir(),
     PLATFORM_DIR=join("$PLATFORMIOHOME_DIR", "$PLATFORM"),
     PLATFORMFW_DIR=join("$PLATFORM_DIR", "frameworks", "$FRAMEWORK"),
     PLATFORMTOOLS_DIR=join("$PLATFORM_DIR", "tools"),
 
-    BUILD_DIR=join("$PROJECT_DIR", ".pioenvs", "$PIOENV"),
+    BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
     LIBSOURCE_DIRS=[
         join("$PROJECT_DIR", "lib"),
         join("$PLATFORMFW_DIR", "libraries"),

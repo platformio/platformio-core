@@ -3,7 +3,7 @@
 
 from click import argument, command, echo, style
 
-from platformio.platforms._base import PlatformFactory
+from platformio.platforms.base import PlatformFactory
 from platformio.util import get_platforms
 
 

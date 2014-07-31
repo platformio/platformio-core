@@ -3,7 +3,7 @@
 
 from os.path import join
 
-from platformio.platforms._base import BasePlatform
+from platformio.platforms.base import BasePlatform
 
 
 class Timsp430Platform(BasePlatform):
@@ -16,12 +16,14 @@ class Timsp430Platform(BasePlatform):
 
         "toolchain-timsp430": {
             "path": join("tools", "toolchain"),
+            "alias": "toolchain",
             "default": True
         },
 
         "tool-mspdebug": {
             "path": join("tools", "mspdebug"),
-            "default": True,
+            "alias": "uploader",
+            "default": True
         },
 
         "framework-energiamsp430": {

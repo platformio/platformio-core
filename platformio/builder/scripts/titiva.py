@@ -8,8 +8,8 @@
 
 from os.path import join
 
-from SCons.Script import (AlwaysBuild, Builder, Default, DefaultEnvironment,
-                          SConscript, SConscriptChdir)
+from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
+                          DefaultEnvironment)
 
 env = DefaultEnvironment()
 
@@ -75,9 +75,6 @@ env.Replace(
     UPLOADCMD="$UPLOADER $SOURCES"
 )
 
-if "BUILD_FLAGS" in env:
-    env.MergeFlags(env['BUILD_FLAGS'])
-
 env.Append(
     BUILDERS=dict(
         ElfToBin=Builder(
@@ -87,28 +84,12 @@ env.Append(
                 "binary",
                 "$SOURCES",
                 "$TARGET"]),
-            suffix=".hex"
+            suffix=".bin"
         )
     )
 )
 
-env.PrependENVPath(
-    "PATH",
-    join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
-)
-
-BUILT_LIBS = []
-
-#
-# Process framework script
-#
-
-if "FRAMEWORK" in env:
-    SConscriptChdir(0)
-    flibs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
-                                      "frameworks", "${FRAMEWORK}.py")),
-                       exports="env")
-    BUILT_LIBS += flibs
+BUILT_LIBS = env.ProcessGeneral()
 
 #
 # Target: Build executable and linkable firmware
@@ -120,17 +101,20 @@ target_elf = env.BuildFirmware(BUILT_LIBS + ["c", "gcc", "m"])
 # Target: Build the .bin file
 #
 
-target_bin = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
+if "uploadlazy" in COMMAND_LINE_TARGETS:
+    target_bin = join("$BUILD_DIR", "firmware.bin")
+else:
+    target_bin = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Upload firmware
 #
 
-upload = env.Alias("upload", target_bin, ["$UPLOADCMD"])
+upload = env.Alias(["upload", "uploadlazy"], target_bin, "$UPLOADCMD")
 AlwaysBuild(upload)
 
 #
 # Target: Define targets
 #
 
-Default([target_elf, target_bin])
+Default(target_bin)

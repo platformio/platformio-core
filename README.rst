@@ -17,6 +17,14 @@ PlatformIO
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
 
+`Quickstart <#quickstart>`_ |
+`Installation <#installation>`_ |
+`Documentation <#documentation>`_ |
+`Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
+`Embedded Platform Boards <#embedded-platform-boards>`_ |
+`IDE Integration <#ide-integration>`_ |
+`Blog <http://www.ikravets.com/category/computer-life/platformio>`_
+
 
 **PlatformIO** is a console tool to build code with different development
 platforms.
@@ -70,6 +78,71 @@ IDE Integration
 * [Eclipse] `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
 
 
+Embedded Platform Boards
+------------------------
+
+**PlatformIO** has pre-configured settings for most popular platform boards. You
+have no need to specify in ``platformio.ini`` type or frequency of MCU, upload
+protocol or etc. Please use ``board`` option (for
+`example <https://github.com/ivankravets/platformio/blob/develop/examples/wiring-blink/platformio.ini>`_).
+
+
+Platform ``atmelavr``
+~~~~~~~~~~~~~~~~~~~~~
+
+* ``diecimilaatmega168`` Arduino Duemilanove or Diecimila (ATmega168)
+* ``diecimilaatmega328`` Arduino Duemilanove or Diecimila (ATmega328)
+* ``fio`` Arduino Fio
+* ``leonardo`` Arduino Leonardo
+* ``LilyPadUSB`` Arduino LilyPad USB
+* ``lilypadatmega168`` Arduino LilyPad (ATmega168)
+* ``lilypadatmega328`` Arduino LilyPad (ATmega328)
+* ``megaatmega1280`` Arduino Mega (ATmega1280)
+* ``megaatmega2560`` Arduino Mega (ATmega2560)
+* ``megaADK`` Arduino Mega ADK
+* ``micro`` Arduino Micro
+* ``miniatmega168`` Arduino Mini (ATmega168)
+* ``miniatmega328`` Arduino Mini (ATmega328)
+* ``nanoatmega168`` Arduino Nano (ATmega168)
+* ``nanoatmega328`` Arduino Nano (ATmega328)
+* ``pro8MHzatmega168`` Arduino Pro or Pro Mini (ATmega168, 3.3V, 8MHz)
+* ``pro16MHzatmega168`` Arduino Pro or Pro Mini (ATmega168, 5V, 16MHz)
+* ``pro8MHzatmega328`` Arduino Pro or Pro Mini (ATmega328, 3.3V, 8MHz)
+* ``pro16MHzatmega328`` Arduino Pro or Pro Mini (ATmega328, 5V, 16MHz)
+* ``uno`` Arduino Uno
+* ``raspduino`` Raspduino
+* ``328p8m`` Microduino Core (ATmega328P, 3.3V, 8MHz)
+* ``328p16m`` Microduino Core (Atmega328P, 5V, 16MHz)
+* ``168pa8m`` Microduino Core (ATmega168PA, 3.3V, 8MHz)
+* ``168pa16m`` Microduino Core (ATmega168PA, 5V, 16MHz)
+* ``644pa8m`` Microduino Core+ (ATmega644PA, 3.3V, 8MHz)
+* ``644pa16m`` Microduino Core+ (ATmega644PA, 5V, 16MHz)
+* ``1284p8m`` Microduino-Core+ (ATmega1284P, 3.3V, 8MHz)
+* ``1284p16m`` Microduino-Core+ (ATmega1284P, 5V, 16MHz)
+* ``32u416m`` Microduino-Core USB (ATmega32U4, 5V, 16MHz)
+
+
+
+Platform ``timsp430``
+~~~~~~~~~~~~~~~~~~~~~
+
+* ``lpmsp430g2231`` TI LaunchPad MSP430 (msp430g2231)
+* ``lpmsp430g2452`` TI LaunchPad MSP430 (msp430g2452)
+* ``lpmsp430g2553`` TI LaunchPad MSP430 (msp430g2553)
+* ``lpmsp430f5529`` TI LaunchPad MSP430 (msp430f5529, 16MHz)
+* ``lpmsp430f5529_25`` TI LaunchPad MSP430 (msp430f5529, 25MHz)
+* ``lpmsp430fr5969`` TI LaunchPad MSP430 (msp430fr5969)
+* ``lpmsp430fr5739`` TI FraunchPad MSP430 (msp430fr5739)
+
+
+Platform ``titiva``
+~~~~~~~~~~~~~~~~~~~
+
+* ``lplm4f120h5qr`` TI Stellaris LM4F120 LaunchPad
+* ``lptm4c1230c3pm`` TI Tiva C Series TM4C123G LaunchPad
+* ``lptm4c1294ncpdt`` TI Tiva C Series TM4C1294 Connected LaunchPad
+
+
 Python & OS Support
 -------------------
 
@@ -96,7 +169,7 @@ Quickstart
     $ platformio run
 
 For more detailed information please follow to `Installation <#installation>`_
-and `User Guide <#user-guide>`_ sections.
+and `Documentation <#documentation>`_ sections.
 
 
 Installation
@@ -126,6 +199,13 @@ Then run the following (which may require administrator access):
 .. code-block:: bash
 
     $ python get-platformio.py
+
+An alternative short version for *Mac/Linux* users:
+
+.. code-block:: bash
+
+    $ curl -L http://bit.ly/1lpanta | python
+
 
 On *Windows OS* it may look like:
 
@@ -176,8 +256,8 @@ For upgrading the ``platformio`` to new version please use this command:
     $ pip install -U platformio
 
 
-User Guide
-----------
+Documentation
+-------------
 
 To print all available commands and options:
 
@@ -195,36 +275,42 @@ To print all available commands and options:
       --help     Show this message and exit.
 
     Commands:
-      init       Initialize new platformio based project
-      install    Install new platforms
-      list       List installed platforms
-      run        Process project environments
-      search     Search for development platforms
-      show       Show details about an installed platforms
-      uninstall  Uninstall the platforms
-      update     Update installed platforms
+      init         Initialize new PlatformIO based project
+      install      Install new platforms
+      list         List installed platforms
+      run          Process project environments
+      search       Search for development platforms
+      serialports  List Serial ports
+      show         Show details about an installed platforms
+      uninstall    Uninstall platforms
+      update       Update installed platforms
 
 
-``platformio search``
-~~~~~~~~~~~~~~~~~~~~~
+``platformio init``
+~~~~~~~~~~~~~~~~~~~
 
-Search for development platforms:
+Initialize new PlatformIO based project.
 
 .. code-block:: bash
 
-    # Print all available development platforms
-    $ platformio search all
-
-    # Filter platforms by "Query"
-    $ platformio search "Query"
+    # Change directory to future project
+    $ cd /path/to/empty/directory
+    $ platformio init
 
     # Example
-    $ platformio search ti
-    timsp430 - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
-    titiva   - An embedded platform for TI TIVA C ARM microcontrollers (with Energia Framework)
+    $ platformio init
+    Project has been initialized!
+    Please put your source code to `src` directory, external libraries to `lib`
+    and setup environments in `platformio.ini` file.
+    Then process project with `platformio run` command.
 
-    $ platformio search arduino
-    atmelavr - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
+After this command ``platformio`` will create:
+
+* ``.pioenvs`` - a temporary working directory.
+* ``lib`` - a directory for project specific libraries. PlatformIO will
+  compile their to static libraries and link to executable file
+* ``src`` - a source directory. Put code here.
+* ``platformio.ini`` - a configuration file for project
 
 
 ``platformio install``
@@ -236,11 +322,12 @@ can install one of them:
 .. code-block:: bash
 
     $ platformio install SomePlatform
-    $ platformio install SomePlatform --with-package=PackageName
-    $ platformio install SomePlatform --without-package=PackageName
+    $ platformio install SomePlatform --with-package=toolchain|uploader|PackageName
+    $ platformio install SomePlatform --without-package=toolchain|uploader|PackageName
+    $ platformio install SomePlatform --skip-default-package
 
     # Example
-    $ platformio install timsp430 --with-package=framework-energiamsp430
+    $ platformio install timsp430
     Installing toolchain-timsp430 package:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
@@ -248,6 +335,13 @@ can install one of them:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
     Installing framework-energiamsp430 package:
+    Downloading  [####################################]  100%
+    Unpacking  [####################################]  100%
+    The platform 'timsp430' has been successfully installed!
+
+    # Skip default packages and install uploader utility only
+    $ platformio install timsp430 --skip-default-package --with-package=uploader
+    Installing tool-mspdebug package:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
     The platform 'timsp430' has been successfully installed!
@@ -265,76 +359,6 @@ To list installed platforms:
     # Example
     $ platformio list
     timsp430    with packages: toolchain-timsp430, tool-mspdebug, framework-energiamsp430
-
-
-``platformio show``
-~~~~~~~~~~~~~~~~~~~
-
-To show details about an installed platform:
-
-.. code-block:: bash
-
-    $ platformio show SomePlatform
-
-    # Example
-    $ platformio show timsp430
-    timsp430    - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
-    ----------
-    Package: toolchain-timsp430
-    Location: /Users/ikravets/.platformio/timsp430/tools/toolchain
-    Version: 1
-    ----------
-    Package: tool-mspdebug
-    Location: /Users/ikravets/.platformio/timsp430/tools/mspdebug
-    Version: 1
-    ----------
-    Package: framework-energiamsp430
-    Location: /Users/ikravets/.platformio/timsp430/frameworks/energia
-    Version: 1
-
-
-``platformio uninstall``
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-To uninstall platform:
-
-.. code-block:: bash
-
-    $ platformio uninstall SomePlatform
-
-    # Example
-    $ platformio uninstall timsp430
-    Uninstalling toolchain-timsp430 package:        [OK]
-    Uninstalling tool-mspdebug package:             [OK]
-    Uninstalling framework-energiamsp430 package:   [OK]
-    The platform 'timsp430' has been successfully uninstalled!
-
-
-``platformio init``
-~~~~~~~~~~~~~~~~~~~
-
-Initialize new platformio based project.
-
-.. code-block:: bash
-
-    # Change directory to future project
-    $ cd /path/to/empty/directory
-    $ platformio init
-
-    # Example
-    $ platformio init
-    Project successfully initialized.
-    Please put your source code to `src` directory, external libraries to `lib`
-    and setup environments in `platformio.ini` file.
-    Then process project with `platformio run` command.
-
-After this command ``platformio`` will create:
-
-* ``.pioenvs`` - a temporary working directory.
-* ``lib`` - a directory for project specific libraries. PlatformIO will
-  compile their to static libraries and link to executable file
-* ``src`` - a source directory. Put code here.
-* ``platformio.ini`` - a configuration file for project
 
 
 ``platformio run``
@@ -372,7 +396,6 @@ Process specific environments:
     scons: `.pioenvs/arduino_pro5v/firmware.elf' is up to date.
     scons: `.pioenvs/arduino_pro5v/firmware.hex' is up to date.
 
-    Skipped launchpad_msp430g2 environment
     Processing launchpad_lm4f120 environment:
     scons: `.pioenvs/launchpad_lm4f120/firmware.elf' is up to date.
     scons: `.pioenvs/launchpad_lm4f120/firmware.hex' is up to date.
@@ -382,7 +405,7 @@ Process specific target:
 .. code-block:: bash
 
     $ platformio run -t clean
-    $ platformio run -t upload
+    $ platformio run -t upload --upload-port=/dev/ttyUSBX
 
     # Example
     platformio run -t clean
@@ -409,7 +432,6 @@ Mix environments and targets:
 
     # Example
     $ platformio run -e launchpad_msp430g2 -t upload
-    Skipped arduino_pro5v environment
     Processing launchpad_msp430g2 environment:
     /Users/ikravets/.platformio/timsp430/tools/mspdebug/mspdebug rf2500 --force-reset "prog .pioenvs/launchpad_msp430g2/firmware.hex"
     MSPDebug version 0.20 - debugging tool for MSP430 MCUs
@@ -439,7 +461,106 @@ Mix environments and targets:
     Writing   32 bytes at ffe0...
     Done, 678 bytes total
 
-    Skipped launchpad_lm4f120 environment
+
+``platformio search``
+~~~~~~~~~~~~~~~~~~~~~
+
+Search for development platforms:
+
+.. code-block:: bash
+
+    # Print all available development platforms
+    $ platformio search all
+
+    # Filter platforms by "Query"
+    $ platformio search "Query"
+
+    # Example
+    $ platformio search ti
+    timsp430 - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
+    titiva   - An embedded platform for TI TIVA C ARM microcontrollers (with Energia Framework)
+
+    $ platformio search arduino
+    atmelavr - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
+
+
+``platformio serialports``
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To list available `Serial Ports <http://en.wikipedia.org/wiki/Serial_port>`_:
+
+.. code-block:: bash
+
+    $ platformio serialports
+
+    # Example (Posix)
+    $ platformio serialports
+    /dev/cu.SLAB_USBtoUART
+    ----------
+    Hardware ID: USB VID:PID=10c4:ea60 SNR=0001
+    Description: CP2102 USB to UART Bridge Controller
+
+    /dev/cu.uart-1CFF4676258F4543
+    ----------
+    Hardware ID: USB VID:PID=451:f432 SNR=1CFF4676258F4543
+    Description: Texas Instruments MSP-FET430UIF
+
+    # Example (Windows)
+    $ platformio serialports
+    COM4
+    ----------
+    Hardware ID: USB VID:PID=0451:F432
+    Description: MSP430 Application UART (COM4)
+
+    COM3
+    ----------
+    Hardware ID: USB VID:PID=10C4:EA60 SNR=0001
+    Description: Silicon Labs CP210x USB to UART Bridge (COM3)
+
+
+``platformio show``
+~~~~~~~~~~~~~~~~~~~
+
+To show details about an installed platform:
+
+.. code-block:: bash
+
+    $ platformio show SomePlatform
+
+    # Example
+    $ platformio show atmelavr
+    atmelavr    - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
+    ----------
+    Package: toolchain-atmelavr
+    Alias: toolchain
+    Location: /Users/ikravets/.platformio/atmelavr/tools/toolchain
+    Version: 1
+    ----------
+    Package: tool-avrdude
+    Alias: uploader
+    Location: /Users/ikravets/.platformio/atmelavr/tools/avrdude
+    Version: 1
+    ----------
+    Package: framework-arduinoavr
+    Location: /Users/ikravets/.platformio/atmelavr/frameworks/arduino
+    Version: 1
+
+
+``platformio uninstall``
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+To uninstall platform:
+
+.. code-block:: bash
+
+    $ platformio uninstall SomePlatform
+
+    # Example
+    $ platformio uninstall timsp430
+    Uninstalling toolchain-timsp430 package:        [OK]
+    Uninstalling tool-mspdebug package:             [OK]
+    Uninstalling framework-energiamsp430 package:   [OK]
+    The platform 'timsp430' has been successfully uninstalled!
 
 
 ``platformio update``

@@ -3,7 +3,7 @@
 
 from os.path import join
 
-from platformio.platforms._base import BasePlatform
+from platformio.platforms.base import BasePlatform
 
 
 class TitivaPlatform(BasePlatform):
@@ -16,12 +16,14 @@ class TitivaPlatform(BasePlatform):
 
         "toolchain-gccarmnoneeabi": {
             "path": join("tools", "toolchain"),
+            "alias": "toolchain",
             "default": True
         },
 
         "tool-lm4flash": {
             "path": join("tools", "lm4flash"),
-            "default": True,
+            "alias": "uploader",
+            "default": True
         },
 
         "framework-energiativa": {

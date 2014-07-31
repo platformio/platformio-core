@@ -7,7 +7,7 @@ from click import argument, command, echo, style
 
 from platformio.exception import PlatformNotInstalledYet
 from platformio.pkgmanager import PackageManager
-from platformio.platforms._base import PlatformFactory
+from platformio.platforms.base import PlatformFactory
 
 
 @command("show", short_help="Show details about an installed platforms")
@@ -22,8 +22,11 @@ def cli(platform):
                                       info=p.get_short_info()))
 
     pm = PackageManager(platform)
-    for name, data in pm.get_installed(platform).iteritems():
+    for name, data in pm.get_installed(platform).items():
+        pkgalias = p.get_pkg_alias(name)
         echo("----------")
         echo("Package: %s" % style(name, fg="yellow"))
+        if pkgalias:
+            echo("Alias: %s" % pkgalias)
         echo("Location: %s" % join(pm.get_platform_dir(), data['path']))
         echo("Version: %d" % int(data['version']))

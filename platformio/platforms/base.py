@@ -40,30 +40,49 @@ class BasePlatform(object):
         else:
             raise NotImplementedError()
 
-    def install(self, with_packages, without_packages):
-        requirements = []
-        pm = PackageManager(self.get_name())
+    def get_pkg_alias(self, pkgname):
+        return self.PACKAGES[pkgname].get("alias", None)
 
-        upkgs = set(with_packages + without_packages)
+    def pkg_aliases_to_names(self, aliases):
+        names = []
+        for alias in aliases:
+            name = alias
+            # lookup by packages alias
+            if name not in self.PACKAGES:
+                for _name, _opts in self.PACKAGES.items():
+                    if _opts.get("alias", None) == alias:
+                        name = _name
+                        break
+            names.append(name)
+        return names
+
+    def install(self, with_packages, without_packages, skip_default_packages):
+        with_packages = set(self.pkg_aliases_to_names(with_packages))
+        without_packages = set(self.pkg_aliases_to_names(without_packages))
+
+        upkgs = with_packages | without_packages
         ppkgs = set(self.PACKAGES.keys())
         if not upkgs.issubset(ppkgs):
             raise UnknownPackage(", ".join(upkgs - ppkgs))
 
-        for name, opts in self.PACKAGES.iteritems():
+        requirements = []
+        for name, opts in self.PACKAGES.items():
             if name in without_packages:
                 continue
-            elif name in with_packages or opts["default"]:
-                requirements.append((name, opts["path"]))
+            elif (name in with_packages or (not skip_default_packages and
+                                            opts['default'])):
+                requirements.append((name, opts['path']))
 
+        pm = PackageManager(self.get_name())
         for (package, path) in requirements:
             pm.install(package, path)
-        return True
+        return len(requirements)
 
     def uninstall(self):
         platform = self.get_name()
         pm = PackageManager(platform)
 
-        for package, data in pm.get_installed(platform).iteritems():
+        for package, data in pm.get_installed(platform).items():
             pm.uninstall(package, data['path'])
 
         pm.unregister_platform(platform)

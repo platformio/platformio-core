@@ -11,18 +11,18 @@ from platformio.exception import ProjectInitialized
 from platformio.util import get_source_dir
 
 
-@command("init", short_help="Initialize new platformio based project")
+@command("init", short_help="Initialize new PlatformIO based project")
 def cli():
 
     if isfile("platformio.ini") and isdir("src"):
         raise ProjectInitialized()
-    for d in (".pioenvs", "lib", "src"):
+    for d in ("lib", "src"):
         if not isdir(d):
             makedirs(d)
     if not isfile("platformio.ini"):
         copyfile(join(get_source_dir(), "projectconftpl.ini"),
                  "platformio.ini")
-    secho("Project successfully initialized.\n"
+    secho("Project has been initialized!\n"
           "Please put your source code to `src` directory, "
           "external libraries to `lib` and "
           "setup environments in `platformio.ini` file.\n"

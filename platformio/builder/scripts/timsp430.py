@@ -7,11 +7,10 @@
 """
 
 from os.path import join
+from platform import system
 
-from SCons.Script import (AlwaysBuild, Builder, Default, DefaultEnvironment,
-                          SConscript, SConscriptChdir)
-
-from platformio.util import get_system
+from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
+                          DefaultEnvironment)
 
 env = DefaultEnvironment()
 
@@ -54,14 +53,11 @@ env.Replace(
 
     UPLOADER=join("$PLATFORMTOOLS_DIR", "mspdebug", "mspdebug"),
     UPLOADERFLAGS=[
-        "$UPLOAD_PROTOCOL" if get_system() != "windows32" else "tilib",
+        "$UPLOAD_PROTOCOL" if system() != "Windows" else "tilib",
         "--force-reset"
     ],
     UPLOADCMD='$UPLOADER $UPLOADERFLAGS "prog $SOURCES"'
 )
-
-if "BUILD_FLAGS" in env:
-    env.MergeFlags(env['BUILD_FLAGS'])
 
 env.Append(
     BUILDERS=dict(
@@ -79,24 +75,7 @@ env.Append(
     )
 )
 
-env.PrependENVPath(
-    "PATH",
-    join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
-)
-
-BUILT_LIBS = []
-
-#
-# Process framework script
-#
-
-if "FRAMEWORK" in env:
-    SConscriptChdir(0)
-    flibs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
-                                      "frameworks", "${FRAMEWORK}.py")),
-                       exports="env")
-    BUILT_LIBS += flibs
-
+BUILT_LIBS = env.ProcessGeneral()
 
 #
 # Target: Build executable and linkable firmware
@@ -108,17 +87,20 @@ target_elf = env.BuildFirmware(BUILT_LIBS + ["m"])
 # Target: Build the .hex
 #
 
-target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+if "uploadlazy" in COMMAND_LINE_TARGETS:
+    target_hex = join("$BUILD_DIR", "firmware.hex")
+else:
+    target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Upload firmware
 #
 
-upload = env.Alias("upload", target_hex, ["$UPLOADCMD"])
+upload = env.Alias(["upload", "uploadlazy"], target_hex, "$UPLOADCMD")
 AlwaysBuild(upload)
 
 #
 # Target: Define targets
 #
 
-Default([target_elf, target_hex])
+Default(target_hex)

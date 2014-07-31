@@ -85,3 +85,18 @@ class ProjectInitialized(PlatformioException):
 class ProjectEnvsNotAvaialable(PlatformioException):
 
     MESSAGE = "Please setup environments in `platformio.ini` file."
+
+
+class InvalidEnvName(PlatformioException):
+
+    MESSAGE = "Invalid environment '%s'. The name must start " "with 'env:'."
+
+
+class UnknownEnvNames(PlatformioException):
+
+    MESSAGE = "Unknown environment names '%s'."
+
+
+class GetSerialPortsError(PlatformioException):
+
+    MESSAGE = "No implementation for your platform ('%s') available"

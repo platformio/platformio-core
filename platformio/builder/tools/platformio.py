@@ -2,11 +2,28 @@
 # See LICENSE for details.
 
 import re
-from os import listdir, walk
+from os import getenv, listdir, walk
 from os.path import isdir, isfile, join
-from time import sleep
 
-from serial import Serial
+from SCons.Script import SConscript, SConscriptChdir
+
+
+def ProcessGeneral(env):
+    libs = []
+    if "BUILD_FLAGS" in env:
+        env.MergeFlags(env['BUILD_FLAGS'])
+
+    env.PrependENVPath(
+        "PATH",
+        join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
+    )
+
+    if "FRAMEWORK" in env:
+        SConscriptChdir(0)
+        libs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
+                                         "frameworks", "${FRAMEWORK}.py")),
+                          exports="env")
+    return libs
 
 
 def BuildLibrary(env, variant_dir, library_dir):
@@ -45,6 +62,8 @@ def BuildFirmware(env, libslist):
         _libs = src.BuildDependentLibraries(vdir)
         if _libs:
             libslist += _libs
+
+    src.MergeFlags(getenv("PIOSRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
 
     return src.Program(
         join("$BUILD_DIR", "firmware"),
@@ -116,23 +135,12 @@ def ParseBoardOptions(env, path, name):
         return data
 
 
-def ResetDevice(env):
-    """ Pulse the DTR line and flush serial buffer """
-    s = Serial(env.subst("$UPLOAD_PORT"))
-    s.flushInput()
-    s.setDTR(False)
-    s.setRTS(False)
-    sleep(0.1)
-    s.setDTR(True)
-    s.setRTS(True)
-    s.close()
-
-
 def exists(_):
     return True
 
 
 def generate(env):
+    env.AddMethod(ProcessGeneral)
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildDependentLibraries)
     env.AddMethod(BuildFirmware)
@@ -140,5 +148,4 @@ def generate(env):
     env.AddMethod(GetDependentLibraries)
     env.AddMethod(VariantDirRecursive)
     env.AddMethod(ParseBoardOptions)
-    env.AddMethod(ResetDevice)
     return env
