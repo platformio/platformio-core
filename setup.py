@@ -1,7 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from sys import platform as sysplatform
+from platform import system
 
 from setuptools import find_packages, setup
 
@@ -22,7 +22,7 @@ setup(
         "pyserial",
         "requests",
         # "SCons"
-    ] + (["colorama"] if sysplatform.startswith("win") else []),
+    ] + (["colorama"] if system() == "Windows" else []),
     packages=find_packages(),
     package_data={"platformio": ["*.ini"]},
     entry_points={
