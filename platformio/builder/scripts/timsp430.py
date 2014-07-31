@@ -7,12 +7,10 @@
 """
 
 from os.path import join
+from platform import system
 
 from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
                           DefaultEnvironment)
-
-from platformio.util import get_system
-
 
 env = DefaultEnvironment()
 
@@ -55,7 +53,7 @@ env.Replace(
 
     UPLOADER=join("$PLATFORMTOOLS_DIR", "mspdebug", "mspdebug"),
     UPLOADERFLAGS=[
-        "$UPLOAD_PROTOCOL" if get_system() != "windows32" else "tilib",
+        "$UPLOAD_PROTOCOL" if system() != "Windows" else "tilib",
         "--force-reset"
     ],
     UPLOADCMD='$UPLOADER $UPLOADERFLAGS "prog $SOURCES"'

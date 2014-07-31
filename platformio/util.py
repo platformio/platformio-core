@@ -4,7 +4,7 @@
 from os import name as os_name
 from os import getcwd, getenv, listdir, utime
 from os.path import dirname, expanduser, isfile, join, realpath
-from platform import architecture, system
+from platform import system, uname
 from subprocess import PIPE, Popen
 from time import sleep
 
@@ -18,8 +18,11 @@ except ImportError:
     from ConfigParser import ConfigParser
 
 
-def get_system():
-    return (system() + architecture()[0][:-3]).lower()
+def get_systype():
+    if system() == "Windows":
+        return "windows"
+    data = uname()
+    return ("%s_%s" % (data[0], data[4])).lower()
 
 
 def get_home_dir():
@@ -61,7 +64,7 @@ def change_filemtime(path, time):
 
 
 def exec_command(args):
-    use_shell = get_system() == "windows32"
+    use_shell = system() == "Windows"
     p = Popen(args, stdout=PIPE, stderr=PIPE, shell=use_shell)
     out, err = p.communicate()
     return dict(out=out.strip(), err=err.strip())

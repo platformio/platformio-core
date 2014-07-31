@@ -14,7 +14,7 @@ from platformio.downloader import FileDownloader
 from platformio.exception import (InvalidPackageVersion, NonSystemPackage,
                                   UnknownPackage)
 from platformio.unpacker import FileUnpacker
-from platformio.util import get_home_dir, get_system
+from platformio.util import get_home_dir, get_systype
 
 
 class PackageManager(object):
@@ -66,11 +66,11 @@ class PackageManager(object):
             raise UnknownPackage(name)
 
         # check system platform
-        system = get_system()
-        builds = ([b for b in manifest[name] if b['system'] == "all" or system
+        systype = get_systype()
+        builds = ([b for b in manifest[name] if b['system'] == "all" or systype
                    in b['system']])
         if not builds:
-            raise NonSystemPackage(name, system)
+            raise NonSystemPackage(name, systype)
 
         if version:
             for b in builds:

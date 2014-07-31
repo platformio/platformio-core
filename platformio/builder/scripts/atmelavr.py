@@ -12,7 +12,6 @@ from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
 
 from platformio.util import reset_serialport
 
-
 env = DefaultEnvironment()
 
 env.Replace(

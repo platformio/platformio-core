@@ -11,7 +11,6 @@ from os.path import join
 from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
                           DefaultEnvironment)
 
-
 env = DefaultEnvironment()
 
 env.Replace(
