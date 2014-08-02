@@ -70,9 +70,10 @@ def BuildDependentLibraries(env, src_dir):
     env.Append(CPPPATH=[join("$BUILD_DIR", l) for (l, _) in deplibs])
 
     for (libname, lsd_dir) in deplibs:
-        libs.append(
-            env.BuildLibrary(join("$BUILD_DIR", libname), join(lsd_dir,
-                                                               libname)))
+        lib = env.BuildLibrary(
+            join("$BUILD_DIR", libname), join(lsd_dir, libname))
+        env.Clean(libname, lib)
+        libs.append(lib)
     return libs
 
 
