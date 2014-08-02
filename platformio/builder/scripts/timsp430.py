@@ -33,7 +33,7 @@ env.Replace(
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
         "-Os",  # optimize for size
-        "-Wall",  # show warnings
+        # "-Wall",  # show warnings
         "-ffunction-sections",  # place each function in its own section
         "-fdata-sections",
         "-MMD",  # output dependancy info
