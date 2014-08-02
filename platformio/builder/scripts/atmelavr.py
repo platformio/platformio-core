@@ -99,13 +99,13 @@ env.Append(
     )
 )
 
-BUILT_LIBS = env.ProcessGeneral()
+CORELIBS = env.ProcessGeneral()
 
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(BUILT_LIBS + ["m"])
+target_elf = env.BuildFirmware(CORELIBS + ["m"])
 
 #
 # Target: Extract EEPROM data (from EEMEM directive) to .eep file
