@@ -284,6 +284,7 @@ To print all available commands and options:
       show         Show details about an installed platforms
       uninstall    Uninstall platforms
       update       Update installed platforms
+      upgrade      Upgrade PlatformIO to the latest version
 
 
 ``platformio init``
@@ -564,7 +565,7 @@ To uninstall platform:
 
 
 ``platformio update``
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 To check or update installed platforms:
 
@@ -601,6 +602,19 @@ To check or update installed platforms:
     Versions: Current=1, Latest=1 	 [Up-to-date]
     Updating framework-energiativa package:
     Versions: Current=1, Latest=1 	 [Up-to-date]
+
+
+``platformio upgrade``
+~~~~~~~~~~~~~~~~~~~~~~
+
+To check or upgrade PlatformIO to the latest version:
+
+.. code-block:: bash
+
+    $ platformio upgrade
+
+    # If you have problem with permissions try:
+    $ sudo platformio upgrade
 
 
 Questions & Bugs
