@@ -4,8 +4,8 @@ Release History
 1.0.0 (?)
 ---------
 
-0.5.0 (?)
----------
+0.5.0 (2014-08-04)
+------------------
 
 * Improved nested lookups for libraries
 * Disabled default warning flag "-Wall"
