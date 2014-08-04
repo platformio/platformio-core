@@ -15,6 +15,8 @@ Release History
   with external library (Adafruit CC3000)
 * Implemented ``platformio upgrade`` command and "auto-check" for the latest
   version (`issue #8 <https://github.com/ivankravets/platformio/issues/8>`_)
+* Fixed issue with "auto-reset" for Raspduino board (thanks [David Mills](https://github.com/g7uvw) for testing)
+* Fixed bug with nested libs building (thanks [Antonio Vanegas](https://github.com/hpsaturn) for testing)
 
 0.4.0 (2014-07-31)
 ------------------
