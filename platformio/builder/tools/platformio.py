@@ -86,7 +86,14 @@ def GetDependentLibraries(env, src_dir):
     for node in env.GlobCXXFiles(src_dir):
         env.ParseIncludesRecurive(regexp, node, includes)
     includes = sorted(includes.items(), key=lambda s: s[0])
-    return set([(i[1][1], i[1][2]) for i in includes])
+
+    result = []
+    for i in includes:
+        item = (i[1][1], i[1][2])
+        if item in result:
+            continue
+        result.append(item)
+    return result
 
 
 def ParseIncludesRecurive(env, regexp, source_file, includes):
