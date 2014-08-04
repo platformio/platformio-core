@@ -1,3 +1,0 @@
-[submodule "examples/arduino-adafruit-library/lib/Adafruit_CC3000"]
-	path = examples/arduino-adafruit-library/lib/Adafruit_CC3000
-	url = https://github.com/adafruit/Adafruit_CC3000_Library.git
