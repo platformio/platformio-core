@@ -26,8 +26,7 @@ PlatformIO
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_
 
 
-**PlatformIO** is a console tool to build code with different development
-platforms.
+**PlatformIO** is a cross-platform code builder and library manager.
 
 You have no need to install any *IDE* or compile any toolchains. *PlatformIO*
 has pre-built different development platforms including: compiler, debugger,
