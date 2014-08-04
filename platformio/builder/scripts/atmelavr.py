@@ -6,6 +6,7 @@
 """
 
 from os.path import join
+from time import sleep
 
 from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
                           DefaultEnvironment, Exit)
@@ -33,10 +34,10 @@ env.Replace(
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
         "-Os",  # optimize for size
-        "-Wall",  # show warnings
+        # "-Wall",  # show warnings
         "-ffunction-sections",  # place each function in its own section
         "-fdata-sections",
-        "-MMD",  # output dependancy info
+        "-MMD",  # output dependency info
         "-mmcu=$BOARD_MCU"
     ],
 
@@ -99,13 +100,31 @@ env.Append(
     )
 )
 
-BUILT_LIBS = env.ProcessGeneral()
+
+def reset_device():
+
+    def rpi_sysgpio(path, value):
+        with open(path, "w") as f:
+            f.write(str(value))
+
+    if env.subst("$BOARD") == "raspduino":
+        rpi_sysgpio("/sys/class/gpio/export", 18)
+        rpi_sysgpio("/sys/class/gpio/gpio18/direction", "out")
+        rpi_sysgpio("/sys/class/gpio/gpio18/value", 1)
+        sleep(0.1)
+        rpi_sysgpio("/sys/class/gpio/gpio18/value", 0)
+        rpi_sysgpio("/sys/class/gpio/unexport", 18)
+    else:
+        return reset_serialport(env.subst("$UPLOAD_PORT"))
+
+
+CORELIBS = env.ProcessGeneral()
 
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(BUILT_LIBS + ["m"])
+target_elf = env.BuildFirmware(CORELIBS + ["m"])
 
 #
 # Target: Extract EEPROM data (from EEMEM directive) to .eep file
@@ -128,8 +147,7 @@ else:
 #
 
 upload = env.Alias(["upload", "uploadlazy"], target_hex, [
-    lambda target, source, env: reset_serialport(env.subst("$UPLOAD_PORT")),
-    "$UPLOADHEXCMD"])
+    lambda target, source, env: reset_device(), "$UPLOADHEXCMD"])
 AlwaysBuild(upload)
 
 #
@@ -137,8 +155,7 @@ AlwaysBuild(upload)
 #
 
 uploadeep = env.Alias("uploadeep", target_eep, [
-    lambda target, source, env: reset_serialport(env.subst("$UPLOAD_PORT")),
-    "$UPLOADEEPCMD"])
+    lambda target, source, env: reset_device(), "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
 
 #

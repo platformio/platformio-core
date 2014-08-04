@@ -56,4 +56,5 @@ def cli(environment, target, upload_port):
         p = PlatformFactory().newPlatform(config.get(section, "platform"))
         result = p.run(variables, envtargets)
         secho(result['out'], fg="green")
-        secho(result['err'], fg="red")
+        secho(result['err'],
+              fg="red" if "Error" in result['err'] else "yellow")

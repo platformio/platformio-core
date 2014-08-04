@@ -1,15 +1,16 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import atexit
 import re
-from os import getenv, listdir, walk
-from os.path import isdir, isfile, join
+from os import getenv, listdir, remove, walk
+from os.path import basename, isdir, isfile, join
 
 from SCons.Script import SConscript, SConscriptChdir
 
 
 def ProcessGeneral(env):
-    libs = []
+    corelibs = []
     if "BUILD_FLAGS" in env:
         env.MergeFlags(env['BUILD_FLAGS'])
 
@@ -19,56 +20,31 @@ def ProcessGeneral(env):
     )
 
     if "FRAMEWORK" in env:
+        if env['FRAMEWORK'] in ("arduino", "energia"):
+            env.ConvertInotoCpp()
         SConscriptChdir(0)
-        libs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
-                                         "frameworks", "${FRAMEWORK}.py")),
-                          exports="env")
-    return libs
+        corelibs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
+                                             "frameworks", "${FRAMEWORK}.py")),
+                              exports="env")
+    return corelibs
 
 
-def BuildLibrary(env, variant_dir, library_dir):
-    lib = env.Clone()
-    vdirs = lib.VariantDirRecursive(variant_dir, library_dir)
-    return lib.Library(
-        lib.subst(variant_dir),
-        [lib.GlobCXXFiles(vdir) for vdir in vdirs]
-    )
-
-
-def BuildDependentLibraries(env, src_dir):
-    libs = []
-    for deplibfile in env.GetDependentLibraries(src_dir):
-        for lsd_dir in env['LIBSOURCE_DIRS']:
-            lsd_dir = env.subst(lsd_dir)
-            if not isdir(lsd_dir):
-                continue
-            for libname in listdir(lsd_dir):
-                if not isfile(join(lsd_dir, libname, deplibfile)):
-                    continue
-                _libbuild_dir = join("$BUILD_DIR", libname)
-                env.Append(CPPPATH=[_libbuild_dir])
-                libs.append(
-                    env.BuildLibrary(_libbuild_dir, join(lsd_dir, libname)))
-    return libs
-
-
-def BuildFirmware(env, libslist):
+def BuildFirmware(env, corelibs):
     src = env.Clone()
     vdirs = src.VariantDirRecursive(
         join("$BUILD_DIR", "src"), join("$PROJECT_DIR", "src"))
 
     # build source's dependent libs
+    deplibs = []
     for vdir in vdirs:
-        _libs = src.BuildDependentLibraries(vdir)
-        if _libs:
-            libslist += _libs
+        deplibs += src.BuildDependentLibraries(vdir)
 
     src.MergeFlags(getenv("PIOSRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
 
     return src.Program(
         join("$BUILD_DIR", "firmware"),
         [src.GlobCXXFiles(vdir) for vdir in vdirs],
-        LIBS=libslist,
+        LIBS=deplibs + corelibs,
         LIBPATH="$BUILD_DIR",
         PROGSUFFIX=".elf")
 
@@ -82,12 +58,59 @@ def GlobCXXFiles(env, path):
     return files
 
 
+def BuildLibrary(env, variant_dir, library_dir):
+    lib = env.Clone()
+    vdirs = lib.VariantDirRecursive(variant_dir, library_dir)
+    return lib.Library(
+        lib.subst(variant_dir),
+        [lib.GlobCXXFiles(vdir) for vdir in vdirs]
+    )
+
+
+def BuildDependentLibraries(env, src_dir):
+    libs = []
+    deplibs = env.GetDependentLibraries(src_dir)
+    env.Append(CPPPATH=[join("$BUILD_DIR", l) for (l, _) in deplibs])
+
+    for (libname, lsd_dir) in deplibs:
+        lib = env.BuildLibrary(
+            join("$BUILD_DIR", libname), join(lsd_dir, libname))
+        env.Clean(libname, lib)
+        libs.append(lib)
+    return libs
+
+
 def GetDependentLibraries(env, src_dir):
-    deplibs = []
-    regexp = re.compile(r"^#include\s+<([^>]+)>", re.M)
+    includes = {}
+    regexp = re.compile(r"^\s*#include\s+(?:\<|\")([^\>\"\']+)(?:\>|\")", re.M)
     for node in env.GlobCXXFiles(src_dir):
-        deplibs += regexp.findall(node.get_text_contents())
-    return deplibs
+        env.ParseIncludesRecurive(regexp, node, includes)
+    includes = sorted(includes.items(), key=lambda s: s[0])
+
+    result = []
+    for i in includes:
+        item = (i[1][1], i[1][2])
+        if item in result:
+            continue
+        result.append(item)
+    return result
+
+
+def ParseIncludesRecurive(env, regexp, source_file, includes):
+    matches = regexp.findall(source_file.get_text_contents())
+    for inc_name in matches:
+        if inc_name in includes:
+            continue
+        for lsd_dir in env['LIBSOURCE_DIRS']:
+            lsd_dir = env.subst(lsd_dir)
+            if not isdir(lsd_dir):
+                continue
+            for libname in listdir(lsd_dir):
+                inc_path = join(lsd_dir, libname, inc_name)
+                if not isfile(inc_path):
+                    continue
+                includes[inc_name] = (len(includes) + 1, libname, lsd_dir)
+                env.ParseIncludesRecurive(regexp, env.File(inc_path), includes)
 
 
 def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
@@ -135,17 +158,59 @@ def ParseBoardOptions(env, path, name):
         return data
 
 
+def ConvertInotoCpp(env):
+
+    def delete_tmpcpp(files):
+        for f in files:
+            remove(f)
+
+    tmpcpp = []
+
+    for item in env.Glob(join("$PROJECT_DIR", "src", "*.ino")):
+        cppfile = item.get_path()[:-3] + "cpp"
+        if isfile(cppfile):
+            continue
+        ino_contents = item.get_text_contents()
+
+        # fetch prototypes
+        regexp = re.compile(
+            r"""^(
+            (?:\s*[a-z_\d]+){1,2}       # return type
+            \s+[a-z_\d]+\s*             # name of prototype
+            \([a-z_,\.\*\&\s\d]+\)      # args
+            )\s*\{                      # must end with {
+            """,
+            re.X | re.M | re.I
+        )
+        prototypes = regexp.findall(ino_contents)
+        # print prototypes
+
+        # create new temporary C++ valid file
+        with open(cppfile, "w") as f:
+            f.write("#include <Arduino.h>\n")
+            if prototypes:
+                f.write("%s;\n" % ";\n".join(prototypes))
+            f.write("#line 1 \"%s\"\n" % basename(item.path))
+            f.write(ino_contents)
+        tmpcpp.append(cppfile)
+
+    if tmpcpp:
+        atexit.register(delete_tmpcpp, tmpcpp)
+
+
 def exists(_):
     return True
 
 
 def generate(env):
     env.AddMethod(ProcessGeneral)
-    env.AddMethod(BuildLibrary)
-    env.AddMethod(BuildDependentLibraries)
     env.AddMethod(BuildFirmware)
     env.AddMethod(GlobCXXFiles)
+    env.AddMethod(BuildLibrary)
+    env.AddMethod(BuildDependentLibraries)
     env.AddMethod(GetDependentLibraries)
+    env.AddMethod(ParseIncludesRecurive)
     env.AddMethod(VariantDirRecursive)
     env.AddMethod(ParseBoardOptions)
+    env.AddMethod(ConvertInotoCpp)
     return env

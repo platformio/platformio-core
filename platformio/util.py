@@ -53,7 +53,7 @@ def get_project_config():
 def get_platforms():
     platforms = []
     for p in listdir(join(get_source_dir(), "platforms")):
-        if p.startswith("_") or not p.endswith(".py"):
+        if p in ("__init__.py", "base.py") or not p.endswith(".py"):
             continue
         platforms.append(p[:-3])
     return platforms

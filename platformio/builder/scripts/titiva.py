@@ -37,7 +37,7 @@ env.Replace(
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
         "-Os",  # optimize for size
-        "-Wall",  # show warnings
+        # "-Wall",  # show warnings
         "-ffunction-sections",  # place each function in its own section
         "-fdata-sections",
         "-Wall",
@@ -89,13 +89,13 @@ env.Append(
     )
 )
 
-BUILT_LIBS = env.ProcessGeneral()
+CORELIBS = env.ProcessGeneral()
 
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(BUILT_LIBS + ["c", "gcc", "m"])
+target_elf = env.BuildFirmware(CORELIBS + ["c", "gcc", "m"])
 
 #
 # Target: Build the .bin file

@@ -1,16 +1,18 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import listdir
-from os.path import join
+from os import listdir, makedirs
+from os.path import getmtime, isdir, isfile, join
 from sys import exit as sys_exit
+from time import time
 from traceback import format_exc
 
-from click import command, MultiCommand, version_option
+from click import command, MultiCommand, secho, version_option
 
 from platformio import __version__
+from platformio.commands.upgrade import get_latest_version
 from platformio.exception import PlatformioException, UnknownCLICommand
-from platformio.util import get_source_dir
+from platformio.util import get_home_dir, get_source_dir
 
 
 class PlatformioCLI(MultiCommand):
@@ -40,8 +42,25 @@ def cli():
     pass
 
 
+def autocheck_latest_version():
+    check_interval = 3600 * 24 * 7  # 1 week
+    checkfile = join(get_home_dir(), ".pioupgrade")
+    if isfile(checkfile) and getmtime(checkfile) > (time() - check_interval):
+        return False
+    if not isdir(get_home_dir()):
+        makedirs(get_home_dir())
+    with open(checkfile, "w") as f:
+        f.write(str(time()))
+    return get_latest_version() != __version__
+
+
 def main():
     try:
+        if autocheck_latest_version():
+            secho("\nThere is a new version of PlatformIO available.\n"
+                  "Please upgrade it via `platformio upgrade` command.\n",
+                  fg="yellow")
+
         cli()
     except Exception as e:  # pylint: disable=W0703
         if isinstance(e, PlatformioException):

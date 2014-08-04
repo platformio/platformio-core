@@ -100,3 +100,8 @@ class UnknownEnvNames(PlatformioException):
 class GetSerialPortsError(PlatformioException):
 
     MESSAGE = "No implementation for your platform ('%s') available"
+
+
+class GetLatestVersionError(PlatformioException):
+
+    MESSAGE = "Can't retrieve latest PlatformIO version"

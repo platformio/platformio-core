@@ -26,8 +26,7 @@ PlatformIO
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_
 
 
-**PlatformIO** is a console tool to build code with different development
-platforms.
+**PlatformIO** is a cross-platform code builder and library manager.
 
 You have no need to install any *IDE* or compile any toolchains. *PlatformIO*
 has pre-built different development platforms including: compiler, debugger,
@@ -284,6 +283,7 @@ To print all available commands and options:
       show         Show details about an installed platforms
       uninstall    Uninstall platforms
       update       Update installed platforms
+      upgrade      Upgrade PlatformIO to the latest version
 
 
 ``platformio init``
@@ -564,7 +564,7 @@ To uninstall platform:
 
 
 ``platformio update``
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 To check or update installed platforms:
 
@@ -601,6 +601,19 @@ To check or update installed platforms:
     Versions: Current=1, Latest=1 	 [Up-to-date]
     Updating framework-energiativa package:
     Versions: Current=1, Latest=1 	 [Up-to-date]
+
+
+``platformio upgrade``
+~~~~~~~~~~~~~~~~~~~~~~
+
+To check or upgrade PlatformIO to the latest version:
+
+.. code-block:: bash
+
+    $ platformio upgrade
+
+    # If you have problem with permissions try:
+    $ sudo platformio upgrade
 
 
 Questions & Bugs

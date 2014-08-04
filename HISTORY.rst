@@ -4,6 +4,20 @@ Release History
 1.0.0 (?)
 ---------
 
+0.5.0 (2014-08-04)
+------------------
+
+* Improved nested lookups for libraries
+* Disabled default warning flag "-Wall"
+* Added auto-conversation from \*.ino to valid \*.cpp for Arduino/Energia
+  frameworks (`issue #7 <https://github.com/ivankravets/platformio/issues/7>`_)
+* Added `Arduino example <https://github.com/ivankravets/platformio/tree/develop/examples/arduino-adafruit-library>`_
+  with external library (Adafruit CC3000)
+* Implemented ``platformio upgrade`` command and "auto-check" for the latest
+  version (`issue #8 <https://github.com/ivankravets/platformio/issues/8>`_)
+* Fixed issue with "auto-reset" for Raspduino board (thanks [David Mills](https://github.com/g7uvw) for testing)
+* Fixed bug with nested libs building (thanks [Antonio Vanegas](https://github.com/hpsaturn) for testing)
+
 0.4.0 (2014-07-31)
 ------------------
 
