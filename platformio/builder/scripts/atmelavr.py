@@ -6,6 +6,7 @@
 """
 
 from os.path import join
+from time import sleep
 
 from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
                           DefaultEnvironment, Exit)
@@ -99,6 +100,24 @@ env.Append(
     )
 )
 
+
+def reset_device():
+
+    def rpi_sysgpio(path, value):
+        with open(path, "w") as f:
+            f.write(str(value))
+
+    if env.subst("$BOARD") == "raspduino":
+        rpi_sysgpio("/sys/class/gpio/export", 18)
+        rpi_sysgpio("/sys/class/gpio/gpio18/direction", "out")
+        rpi_sysgpio("/sys/class/gpio/gpio18/value", 1)
+        sleep(0.1)
+        rpi_sysgpio("/sys/class/gpio/gpio18/value", 0)
+        rpi_sysgpio("/sys/class/gpio/unexport", 18)
+    else:
+        return reset_serialport(env.subst("$UPLOAD_PORT"))
+
+
 CORELIBS = env.ProcessGeneral()
 
 #
@@ -128,8 +147,7 @@ else:
 #
 
 upload = env.Alias(["upload", "uploadlazy"], target_hex, [
-    lambda target, source, env: reset_serialport(env.subst("$UPLOAD_PORT")),
-    "$UPLOADHEXCMD"])
+    lambda target, source, env: reset_device(), "$UPLOADHEXCMD"])
 AlwaysBuild(upload)
 
 #
@@ -137,8 +155,7 @@ AlwaysBuild(upload)
 #
 
 uploadeep = env.Alias("uploadeep", target_eep, [
-    lambda target, source, env: reset_serialport(env.subst("$UPLOAD_PORT")),
-    "$UPLOADEEPCMD"])
+    lambda target, source, env: reset_device(), "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
 
 #
