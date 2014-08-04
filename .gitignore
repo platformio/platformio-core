@@ -5,3 +5,4 @@
 .sconsign.dblite
 examples/ide-eclipse/.metadata
 examples/ide-eclipse/RemoteSystemsTempFiles
+docs/_build/*
