@@ -1,13 +1,22 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+try:
+    from platformio.util import get_home_dir
+except ImportError:
+    import sys
+    for _path in sys.path:
+        if "platformio" in _path:
+            sys.path.insert(0, _path[:_path.rfind("platformio")-1])
+            break
+    from platformio.util import get_home_dir
+
 from os.path import isdir, join
 
 from SCons.Script import (DefaultEnvironment, Exit, SConscript,
                           SConscriptChdir, Variables)
 
-from platformio.util import (get_home_dir, get_pioenvs_dir, get_project_dir,
-                             get_source_dir)
+from platformio.util import get_pioenvs_dir, get_project_dir, get_source_dir
 
 # AllowSubstExceptions()
 
