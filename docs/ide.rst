@@ -21,6 +21,10 @@ Put to the project directory ``Makefile`` wrapper with contents:
 
 .. code-block:: make
 
+    # Uncomment lines below for Mac/Linux OS
+    #SHELL := /bin/bash
+    #PATH := /usr/local/bin:$(PATH)
+
     all:
         platformio run -t upload
 
