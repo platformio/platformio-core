@@ -1,0 +1,286 @@
+.. _projectconf:
+
+Project Configuration File
+==========================
+
+The Project configuration file is named ``platformio.ini``. This is a
+`INI-style <http://en.wikipedia.org/wiki/INI_file>`_ file.
+
+``platformio.ini`` has sections (each denoted by a ``[header]``) and
+key / value pairs within the sections. A sign ``#`` at the beginning of the
+line indicate a comment. Comment lines are ignored.
+
+The sections and their allowable values are described below.
+
+.. contents::
+
+[env:NAME]
+----------
+
+A section with ``env:`` prefix is used to define virtual environment with
+specific options that will be processed with :ref:`cmd_run` command. You can
+define unlimited numbers of environments.
+
+Each environment must have unique ``NAME``. The valid chars for ``NAME`` are
+
+* letters ``a-z``
+* numbers ``0-9``
+* special char ``_`` (underscore)
+
+For example, ``[env:hello_world]``.
+
+Options
+~~~~~~~
+
+``platform``
+^^^^^^^^^^^^
+
+:ref:`Platform <platforms>` type
+
+
+``framework``
+^^^^^^^^^^^^^
+
+See ``framework`` type in *Frameworks* section of :ref:`platforms`
+
+
+``board``
+^^^^^^^^^
+
+*PlatformIO* has pre-configured settings for most popular boards. You don't
+need to specify ``board_mcu``, ``board_f_cpu``, ``upload_protocol`` or
+``upload_speed`` options. Just define a ``board`` type and *PlatformIO* will
+pre-fill options described above with appropriate values.
+
+You can find the ``board`` type in *Boards* section of each :ref:`platforms`.
+
+
+``board_mcu``
+^^^^^^^^^^^^^
+
+``board_mcu`` is a microcontroller(MCU) type that is used by compiler to
+recognize MCU architecture. The correct type of ``board_mcu`` depends on
+platform library. For example, the list of ``board_mcu`` for "megaAVR Devices"
+is described `here <http://www.nongnu.org/avr-libc/user-manual/>`_.
+
+The full list of ``board_mcu`` for popular embedded platforms you can find in
+*Boards* section of :ref:`platforms`. See "Microcontroller" column.
+
+
+``board_f_cpu``
+^^^^^^^^^^^^^^^
+
+An option ``board_f_cpu`` is used to define MCU frequency (Hertz, Clock). A
+format of this option is ``C-like long integer`` value with ``L`` suffix. The
+1 Hertz is equal to ``1L``, then 16 Mhz (Mega Hertz) is equal to ``16000000L``.
+
+The full list of ``board_f_cpu`` for popular embedded platforms you can find in
+*Boards* section of :ref:`platforms`. See "Frequency" column.
+
+
+``upload_port``
+^^^^^^^^^^^^^^^
+
+This option is used by "uploader" tool to send firmware to the board via
+``upload_port``. For example,
+
+* ``/dev/ttyUSB0`` - Unix-based OS
+* ``COM3`` - Windows OS
+
+To print all available serial ports use :ref:`cmd_serialports` command.
+
+
+``upload_protocol``
+^^^^^^^^^^^^^^^^^^^
+
+A protocol that "uploader" tool uses to talk to the board.
+
+
+``upload_speed``
+^^^^^^^^^^^^^^^^
+
+A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
+which "uploader" tool uses when sending firmware to the board.
+
+
+``targets``
+^^^^^^^^^^^
+
+A list with targets which will be processed by :ref:`cmd_run` command by
+default. You can enter more then one target separated with "space".
+
+When no targets are defined, *PlatformIO* will build only sources by default.
+
+.. note::
+    This option is useful to enable "auto-uploading" after building operation
+    (``targets = upload``).
+
+
+``build_flags``
+^^^^^^^^^^^^^^^
+
+These flags/options control preprocessing, compilation, assembly and linking
+processes:
+
+.. list-table::
+    :header-rows:  1
+
+    * - Format
+      - Scope
+      - Description
+    * - ``Wp,option``
+      - CPPFLAGS
+      - Bypass the compiler driver and pass *option* directly  through to the
+        preprocessor
+    * - ``-D name``
+      - CPPDEFINES
+      - Predefine *name* as a macro, with definition 1.
+    * - ``-D name=definition``
+      - CPPDEFINES
+      - The contents of *definition* are tokenized and processed as if they
+        appeared during translation phase three in a ``#define`` directive.
+    * - ``-U name``
+      - CPPDEFINES
+      - Cancel any previous definition of *name*, either built in or provided
+        with a ``-D`` option.
+    * - ``-Wall``
+      - CCFLAGS
+      - Turns on all optional warnings which are desirable for normal code.
+    * - ``-Werror``
+      - CCFLAGS
+      - Make all warnings into hard errors. Source code which triggers warnings will be rejected.
+    * - ``-w``
+      - CCFLAGS
+      - Suppress all warnings, including those which GNU CPP issues by default.
+    * - ``-include file``
+      - CCFLAGS
+      - Process *file* as if ``#include "file"`` appeared as the first line of
+        the primary source file.
+    * - ``-Wa,option``
+      - ASFLAGS, CCFLAGS
+      - Pass *option* as an option to the assembler. If *option* contains
+        commas, it is split into multiple options at the commas.
+    * - ``-llibrary``
+      - LIBS
+      - Search the *library* named library when linking
+    * - ``-Ldir``
+      - LIBPATH
+      - Add directory *dir* to the list of directories to be searched for
+        ``-l``.
+    * - ``-Idir``
+      - CPPPATH
+      - Add the directory *dir* to the list of directories to be searched
+        for header files.
+
+Example:
+
+.. code-block::   ini
+
+    [env:specific_defines]
+    build_flags = -O2 -Dfoo -Dbar=1
+
+    [env:specific_inclibs]
+    build_flags = -I/opt/include -L/opt/lib -lfoo
+
+
+For more detailed information about available flags/options go to:
+
+* `Options to Request or Suppress Warnings
+  <https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html>`_
+* `Options for Debugging Your Program
+  <https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html>`_
+* `Options That Control Optimization
+  <https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html>`_
+* `Options Controlling the Preprocessor
+  <https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html>`_
+* `Passing Options to the Assembler
+  <https://gcc.gnu.org/onlinedocs/gcc/Assembler-Options.html>`_
+* `Options for Linking <https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html>`_
+* `Options for Directory Search
+  <https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html>`_
+
+
+``srcbuild_flags``
+^^^^^^^^^^^^^^^^^^
+
+This is option ``srcbuild_flags`` has the same behaviour like ``build_flags``
+but will be applied only for project source code from ``src`` directory.
+
+Examples
+--------
+
+1. :ref:`platform_atmelavr`: Arduino UNO board with auto pre-configured
+   ``board_*`` and ``upload_*`` options (use only ``board`` option) and Arduino
+   Wiring-based Framework
+
+.. code-block::   ini
+
+    [env:atmelavr_arduino_uno_board]
+    platform = atmelavr
+    framework = arduino
+    board = uno
+
+    upload_port = /dev/ ttyUSB0
+    # upload_port = COM3        # for Windows OS
+
+    # enable auto-uploading
+    targets = upload
+
+
+2. :ref:`platform_atmelavr`: Embedded board that is based on ATmega168 MCU with
+   "arduino" bootloader
+
+.. code-block::   ini
+
+    [env:atmelavr_atmega168_board]
+    platform = atmelavr
+    board_mcu = atmega168
+    board_f_cpu = 16000000L
+
+    upload_port = /dev/ttyUSB0
+    # upload_port = COM3        # for Windows OS
+    upload_protocol = arduino
+    upload_speed = 19200
+
+    # enable auto-uploading
+    targets = upload
+
+
+3. :ref:`platform_timsp430`: TI MSP430G2553 LaunchPad with auto pre-configured
+   ``board_*`` and ``upload_*`` options (use only ``board`` option) and Energia
+   Wiring-based Framework
+
+.. code-block::   ini
+
+    [env:timsp430_g2553_launchpad]
+    platform = timsp430
+    framework = energia
+    board = lpmsp430g2553
+
+
+4. :ref:`platform_timsp430`: Embedded board that is based on MSP430G2553 MCU
+
+.. code-block::   ini
+
+    [env:timsp430_g2553_board]
+    platform = timsp430
+    board_mcu = msp430g2553
+    board_f_cpu = 16000000L
+
+    upload_protocol = rf2500
+
+    # enable auto-uploading
+    targets = upload
+
+
+5. :ref:`platform_titiva`: TI Tiva C ARM Series TM4C123G LaunchPad with auto
+   pre-configured ``board_*`` and ``upload_*`` options (use only ``board``
+   option) and Energia Wiring-based Framework
+
+.. code-block::   ini
+
+    [env:titiva_tm4c1230c3pm_launchpad]
+    platform = titiva
+    framework = energia
+    board = lptm4c1230c3pm
+

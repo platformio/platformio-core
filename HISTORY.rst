@@ -1,8 +1,12 @@
 Release History
 ===============
 
-1.0.0 (?)
----------
+0.6.0 (2014-08-09)
+------------------
+
+* Implemented ``serialports monitor`` (`issue #10 <https://github.com/ivankravets/platformio/issues/10>`_)
+* Fixed an issue ``ImportError: No module named platformio.util`` (`issue #9 <https://github.com/ivankravets/platformio/issues/9>`_)
+* Fixed bug with auto-conversation from Arduino \*.ino to \*.cpp
 
 0.5.0 (2014-08-04)
 ------------------
@@ -15,8 +19,8 @@ Release History
   with external library (Adafruit CC3000)
 * Implemented ``platformio upgrade`` command and "auto-check" for the latest
   version (`issue #8 <https://github.com/ivankravets/platformio/issues/8>`_)
-* Fixed issue with "auto-reset" for Raspduino board (thanks [David Mills](https://github.com/g7uvw) for testing)
-* Fixed bug with nested libs building (thanks [Antonio Vanegas](https://github.com/hpsaturn) for testing)
+* Fixed an issue with "auto-reset" for Raspduino board
+* Fixed a bug with nested libs building
 
 0.4.0 (2014-07-31)
 ------------------
