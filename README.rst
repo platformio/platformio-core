@@ -23,8 +23,7 @@ PlatformIO
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Twitter <https://twitter.com/smartanthill>`_
 
-**PlatformIO** is a console tool to build code with different development
-platforms.
+**PlatformIO** is a cross-platform code builder and library manager.
 
 * `Quickstart <http://docs.platformio.ikravets.com/en/latest/quickstart.html>`_
 * `Installation <http://docs.platformio.ikravets.com/en/latest/installation.html>`_
@@ -70,14 +69,6 @@ It has support for many popular embedded platforms like these:
   (including `MSP430 LaunchPads <http://www.ti.com/ww/en/launchpad/launchpads-msp430.html>`_)
 * ``titiva`` `TI TIVA C <http://www.ti.com/lsds/ti/microcontroller/tiva_arm_cortex/c_series/overview.page>`_
   (including `TIVA C Series LaunchPads <http://www.ti.com/ww/en/launchpad/launchpads-connected.html>`_)
-
-
-Questions & Bugs
-----------------
-
-Please use the
-`issue tracker <https://github.com/ivankravets/platformio/issues>`_
-to ask questions or report bugs.
 
 
 Licence
