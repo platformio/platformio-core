@@ -17,7 +17,8 @@ PlatformIO
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
 
-`Documentation <http://docs.platformio.ikravets.com>`_ |
+`Documentation <http://docs.platformio.ikravets.com>`_ /
+`PDF <https://media.readthedocs.org/pdf/platformio/latest/platformio.pdf>`_ |
 `Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
 `Bugs/Questions <https://github.com/ivankravets/platformio/issues>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
