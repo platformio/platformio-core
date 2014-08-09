@@ -4,8 +4,13 @@ Release History
 1.0.0 (?)
 ---------
 
-0.5.0 (?)
+0.6.0 (?)
 ---------
+
+* Fixed an issue ``ImportError: No module named platformio.util`` (`issue #9 <https://github.com/ivankravets/platformio/issues/9>`_)
+
+0.5.0 (2014-08-04)
+------------------
 
 * Improved nested lookups for libraries
 * Disabled default warning flag "-Wall"
@@ -15,6 +20,8 @@ Release History
   with external library (Adafruit CC3000)
 * Implemented ``platformio upgrade`` command and "auto-check" for the latest
   version (`issue #8 <https://github.com/ivankravets/platformio/issues/8>`_)
+* Fixed an issue with "auto-reset" for Raspduino board
+* Fixed a bug with nested libs building
 
 0.4.0 (2014-07-31)
 ------------------

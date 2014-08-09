@@ -1,8 +1,8 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import listdir
-from os.path import getmtime, isfile, join
+from os import listdir, makedirs
+from os.path import getmtime, isdir, isfile, join
 from sys import exit as sys_exit
 from time import time
 from traceback import format_exc
@@ -47,6 +47,8 @@ def autocheck_latest_version():
     checkfile = join(get_home_dir(), ".pioupgrade")
     if isfile(checkfile) and getmtime(checkfile) > (time() - check_interval):
         return False
+    if not isdir(get_home_dir()):
+        makedirs(get_home_dir())
     with open(checkfile, "w") as f:
         f.write(str(time()))
     return get_latest_version() != __version__

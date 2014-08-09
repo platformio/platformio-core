@@ -8,8 +8,9 @@ from shutil import rmtree
 
 from click import echo, secho, style
 from requests import get
+from requests.utils import default_user_agent
 
-from platformio import __pkgmanifesturl__
+from platformio import __pkgmanifesturl__, __version__
 from platformio.downloader import FileDownloader
 from platformio.exception import (InvalidPackageVersion, NonSystemPackage,
                                   UnknownPackage)
@@ -29,7 +30,10 @@ class PackageManager(object):
         try:
             return PackageManager._cached_manifest
         except AttributeError:
-            PackageManager._cached_manifest = get(__pkgmanifesturl__).json()
+            headers = {"User-Agent": "PlatformIO/%s %s" % (
+                __version__, default_user_agent())}
+            PackageManager._cached_manifest = get(__pkgmanifesturl__,
+                                                  headers=headers).json()
         return PackageManager._cached_manifest
 
     @staticmethod
