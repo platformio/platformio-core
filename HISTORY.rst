@@ -8,6 +8,7 @@ Release History
 ---------
 
 * Fixed an issue ``ImportError: No module named platformio.util`` (`issue #9 <https://github.com/ivankravets/platformio/issues/9>`_)
+* Fixed bug with auto-conversation from Arduino \*.ino to \*.cpp
 
 0.5.0 (2014-08-04)
 ------------------

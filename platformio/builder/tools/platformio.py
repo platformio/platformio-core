@@ -177,7 +177,7 @@ def ConvertInotoCpp(env):
             r"""^(
             (?:\s*[a-z_\d]+){1,2}       # return type
             \s+[a-z_\d]+\s*             # name of prototype
-            \([a-z_,\.\*\&\s\d]+\)      # args
+            \([a-z_,\.\*\&\[\]\s\d]*\)  # args
             )\s*\{                      # must end with {
             """,
             re.X | re.M | re.I
