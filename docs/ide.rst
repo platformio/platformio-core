@@ -21,7 +21,7 @@ Put to the project directory ``Makefile`` wrapper with contents:
 
 .. code-block:: make
 
-    # Uncomment lines below for Mac/Linux OS
+    # Uncomment lines below if you have problems with $PATH
     #SHELL := /bin/bash
     #PATH := /usr/local/bin:$(PATH)
 

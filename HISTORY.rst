@@ -4,6 +4,7 @@ Release History
 0.6.0 (?)
 ---------
 
+* Implemented ``serialports monitor`` (`issue #10 <https://github.com/ivankravets/platformio/issues/10>`_)
 * Fixed an issue ``ImportError: No module named platformio.util`` (`issue #9 <https://github.com/ivankravets/platformio/issues/9>`_)
 * Fixed bug with auto-conversation from Arduino \*.ino to \*.cpp
 
