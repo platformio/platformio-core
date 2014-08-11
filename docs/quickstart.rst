@@ -36,6 +36,17 @@ Initialize new PlatformIO based project
     and setup environments in `platformio.ini` file.
     Then process project with `platformio run` command.
 
+
+Setup environments in ``platformio.ini``. For more examples go to
+:ref:`projectconf`
+
+.. code-block:: ini
+
+    # Simple and base environment
+    [env:mybaseenv]
+    platform = %INSTALLED_PLATFORM_NAME_HERE%
+
+
 Process the project's environments
 
 .. code-block:: bash
