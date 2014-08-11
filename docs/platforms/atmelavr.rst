@@ -299,8 +299,8 @@ More detailed information you can find here
 `Microduino boards <http://www.microduino.cc/wiki/index.php?title=Main_Page>`_.
 
 
-Miscellaneous
-~~~~~~~~~~~~~
+Raspduino
+~~~~~~~~~
 
 .. list-table::
     :header-rows:  1
@@ -318,3 +318,6 @@ Miscellaneous
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2 Kb
+
+More detailed information you can find in
+`Wiki <http://www.bitwizard.nl/wiki/index.php/Raspduino>`_.
