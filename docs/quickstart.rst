@@ -60,4 +60,8 @@ Process the project's environments
     $ platformio run --target clean
 
 
-For more detailed information please go to :ref:`userguide` sections.
+Further examples can be found in the ``examples/`` directory in the source
+distribution or `on the web <https://github.com/ivankravets/platformio/tree/develop/examples>`_.
+
+Also, for more detailed information as for commands please go to
+:ref:`userguide` sections.
