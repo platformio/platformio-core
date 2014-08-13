@@ -33,7 +33,7 @@ An alternative short version for *Mac/Linux* users:
 
 .. code-block:: bash
 
-    $ curl -L http://bit.ly/1lpanta | python
+    $ curl -L https://raw.githubusercontent.com/ivankravets/platformio/develop/scripts/get-platformio.py | python
 
 
 On *Windows OS* it may look like:
