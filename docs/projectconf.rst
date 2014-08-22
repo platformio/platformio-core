@@ -14,6 +14,24 @@ The sections and their allowable values are described below.
 
 .. contents::
 
+[platformio]
+------------
+
+A ``platformio`` section is used for overriding default configuration options
+
+Options
+~~~~~~~
+
+``home_dir``
+^^^^^^^^^^^^
+
+A PlatformIO's home directory that is used to store platforms tools chain,
+frameworks, libraries, service data and etc.
+
+
+A default value is user's home directory: *Unix* - ``~/.platformio``,
+Windows - ``%HOMEPATH%\.platformio``.
+
 [env:NAME]
 ----------
 

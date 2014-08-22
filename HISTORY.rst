@@ -4,6 +4,9 @@ Release History
 0.7.0 (?)
 ---------
 
+* Implemented new ``[platformio]`` section for Configuration File with ``home_dir``
+  option (`issue #14 <https://github.com/ivankravets/platformio/issues/14>`_)
+
 0.6.0 (2014-08-09)
 ------------------
 
