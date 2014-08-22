@@ -25,7 +25,7 @@ Options
 ``home_dir``
 ^^^^^^^^^^^^
 
-A PlatformIO's home directory that is used to store platforms tools chain,
+A *PlatformIO*'s home directory that is used to store platforms tools chain,
 frameworks, libraries, service data and etc.
 
 
