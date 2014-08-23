@@ -26,7 +26,6 @@ def get_systype():
 
 
 def get_home_dir():
-    home_dir = expanduser("~/.platformio")
     try:
         config = get_project_config()
         if (config.has_section("platformio") and
@@ -34,7 +33,7 @@ def get_home_dir():
             return config.get("platformio", "home_dir")
     except NotPlatformProject:
         pass
-    return home_dir
+    return expanduser("~/.platformio")
 
 
 def get_source_dir():
