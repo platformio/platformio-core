@@ -110,3 +110,12 @@ class GetLatestVersionError(PlatformioException):
 class APIRequestError(PlatformioException):
 
     MESSAGE = "[API] %s"
+
+
+class LibAlreadyInstalledError(PlatformioException):
+    pass
+
+
+class LibNotInstalledError(PlatformioException):
+
+    MESSAGE = "Library '%s' has not been installed yet"
