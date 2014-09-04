@@ -10,7 +10,7 @@ from platformio.pkgmanager import PackageManager
 from platformio.platforms.base import PlatformFactory
 
 
-@command("show", short_help="Show details about an installed platforms")
+@command("show", short_help="Show details about installed platforms")
 @argument("platform")
 def cli(platform):
     p = PlatformFactory().newPlatform(platform)
