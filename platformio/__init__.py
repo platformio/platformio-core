@@ -11,7 +11,7 @@ __url__ = "https://github.com/ivankravets/platformio"
 __author__ = "Ivan Kravets"
 __email__ = "me@ikravets.com"
 
-__license__ = "MIT Licence"
+__license__ = "MIT License"
 __copyright__ = "Copyright (C) 2014 Ivan Kravets"
 
 __pkgmanifesturl__ = "http://platformio.ikravets.com/packages/manifest.json"
