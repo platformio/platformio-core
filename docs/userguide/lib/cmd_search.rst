@@ -17,7 +17,7 @@ Description
 -----------
 
 Search for library over ``name``, ``description`` and ``keywords`` fields from
-the ``library.json`` file in the boolean mode.
+the :ref:`library_config` file in the boolean mode.
 
 The boolean search capability supports the following operators:
 
