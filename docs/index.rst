@@ -42,6 +42,7 @@ Contents
     installation
     projectconf
     platforms/index
+    librarymanager/index
     userguide/index
     ide
     history
