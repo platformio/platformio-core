@@ -22,8 +22,8 @@ different folders. In this case please use :ref:`libjson_include` field to
 specify the relative path to your library's source code.
 
 
-Source Code at GitHub
-^^^^^^^^^^^^^^^^^^^^^
+At GitHub
+^^^^^^^^^
 
 **Recommended**
 
@@ -53,8 +53,8 @@ Example:
         }
     }
 
-Source Code under CVS (SVN/GIT)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Under CVS (SVN/GIT)
+^^^^^^^^^^^^^^^^^^^
 
 |PIOAPICR| can operate with the library source code that is under *CVS* control.
 The list of **required** fields in :ref:`library_config` will look like:
@@ -86,8 +86,8 @@ Example:
         }
     }
 
-Source Code Archived (Zip, Tar.Gz)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Packed in achive (Zip, Tar.Gz)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can manually archive your library source code and host it in the *Internet*.
 Then you should specify additional fields, like :ref:`libjson_version` and
