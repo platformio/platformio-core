@@ -1,8 +1,6 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from urllib import quote
-
 from click import argument, echo, group, option, secho, style
 
 from platformio.exception import LibAlreadyInstalledError
@@ -16,9 +14,15 @@ def cli():
 
 
 @cli.command("search", short_help="Search for library")
+@option("-a", "--author", multiple=True)
+@option("-k", "--keyword", multiple=True)
 @argument("query")
-def lib_search(query):
-    result = get_api_result("/lib/search", dict(query=quote(query)))
+def lib_search(query, author, keyword):
+    for key, values in dict(author=author, keyword=keyword).iteritems():
+        for value in values:
+            query += ' %s:"%s"' % (key, value)
+
+    result = get_api_result("/lib/search", dict(query=query))
     secho("Found %d libraries:" % result['total'],
           fg="green" if result['total'] else "yellow")
     for item in result['items']:
