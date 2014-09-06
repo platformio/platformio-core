@@ -47,6 +47,11 @@ def lib_install(names, version=None):
             if lm.install(name, version):
                 secho("The library '%s' has been successfully installed!" %
                       name, fg="green")
+                info = lm.get_info(name)
+                if "dependencies" in info:
+                    secho("Installing dependencies:", fg="yellow")
+                    lib_install(info['dependencies'])
+
         except LibAlreadyInstalledError:
             secho("Already installed", fg="yellow")
 
