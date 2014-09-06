@@ -16,6 +16,7 @@ To print all available commands and options use:
 
     cmd_install
     cmd_list
+    cmd_register
     cmd_search
     cmd_show
     cmd_uninstall

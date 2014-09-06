@@ -17,4 +17,5 @@ You don't need to bother for finding the latest version of library. Due to
 .. toctree::
     :maxdepth: 2
 
+    create
     config
