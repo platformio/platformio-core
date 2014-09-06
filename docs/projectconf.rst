@@ -25,12 +25,20 @@ Options
 ``home_dir``
 ^^^^^^^^^^^^
 
-A *PlatformIO*'s home directory that is used to store platforms tools chain,
-frameworks, libraries, service data and etc.
-
+A ``$PIO_HOME_DIR`` is used to store platform tool chains, frameworks,
+external libraries, service data and etc.
 
 A default value is user's home directory: *Unix* - ``~/.platformio``,
 Windows - ``%HOMEPATH%\.platformio``.
+
+
+``lib_dir``
+^^^^^^^^^^^^
+
+This directory is used to store external libraries downloaded by
+:ref:`librarymanager`.
+
+A default value is ``$PIO_HOME_DIR/lib``.
 
 [env:NAME]
 ----------
