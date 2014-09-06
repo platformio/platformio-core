@@ -195,6 +195,7 @@ Pattern	Meaning
     * - ``[!seq]``
       - matches any character not in seq
 
+
 .. _libjson_exclude:
 
 ``exclude``
@@ -205,3 +206,24 @@ Pattern	Meaning
 
 Exclude the directories and files which will match with :ref:`libjson_exclude`
 patterns.
+
+
+.. _libjson_dependencies:
+
+``dependencies``
+----------------
+
+*Optional* | Type: ``Array``
+
+The list of dependent libraries. They will be installed automatically with
+:ref:`cmd_lib_install` command.
+
+Example:
+
+.. code-block:: javascript
+
+    "dependencies":
+    [
+        "Library-Foo",
+        "Library-Bar"
+    ]

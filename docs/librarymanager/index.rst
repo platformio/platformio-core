@@ -18,4 +18,3 @@ You don't need to bother for finding the latest version of library. Due to
     :maxdepth: 2
 
     config
-    User Guide <../userguide/lib/index>
