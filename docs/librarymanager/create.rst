@@ -4,7 +4,7 @@
 Creating Library
 ================
 
-*PlatformIO* :ref:`librarymanager` doesn't has any requirements to a library
+*PlatformIO* :ref:`librarymanager` doesn't have any requirements to a library
 source code structure. The only one requirement is library's manifest file -
 :ref:`library_config`. It can be located inside your library or in the another
 location where |PIOAPICR| will have *HTTP* access.
@@ -17,9 +17,9 @@ Source Code Location
 There are a several ways how to share your library with the whole world
 (see `examples <https://github.com/ivankravets/platformio-libmirror/tree/master/configs>`_).
 
-Also, you can hold a lot of libraries inside the one repository/archive in the
-different folders. In this case please use :ref:`libjson_include` field to
-specify the relative path to your library's source code.
+You can hold a lot of libraries (split into separated folders) inside the one
+repository/archive. In this case please use :ref:`libjson_include`
+field to specify the relative path to your library's source code.
 
 
 At GitHub
@@ -27,8 +27,8 @@ At GitHub
 
 **Recommended**
 
-If the library source code is located at `GitHub <https://github.com>`_, then
-you **need to specify** only these fields in :ref:`library_config`:
+If a library source code is located at `GitHub <https://github.com>`_, then
+you **need to specify** only these fields in the :ref:`library_config`:
 
 * :ref:`libjson_name`
 * :ref:`libjson_keywords`
@@ -36,7 +36,7 @@ you **need to specify** only these fields in :ref:`library_config`:
 * :ref:`libjson_repository`
 
 |PIOAPICR| will populate the rest fields, like :ref:`libjson_version` or
-:ref:`libjson_author` with actual information from *GitHub*.
+:ref:`libjson_author` with an actual information from *GitHub*.
 
 Example:
 
@@ -56,8 +56,8 @@ Example:
 Under CVS (SVN/GIT)
 ^^^^^^^^^^^^^^^^^^^
 
-|PIOAPICR| can operate with the library source code that is under *CVS* control.
-The list of **required** fields in :ref:`library_config` will look like:
+|PIOAPICR| can operate with a library source code that is under *CVS* control.
+The list of **required** fields in the :ref:`library_config` will look like:
 
 * :ref:`libjson_name`
 * :ref:`libjson_keywords`
@@ -86,13 +86,13 @@ Example:
         }
     }
 
-Packed in achive (Zip, Tar.Gz)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Packed into Archive
+^^^^^^^^^^^^^^^^^^^
 
-You can manually archive your library source code and host it in the *Internet*.
-Then you should specify additional fields, like :ref:`libjson_version` and
-:ref:`libjson_downloadurl`. The final list of **required** fields in
-:ref:`library_config` will look like:
+You can manually archive (*Zip, Tar.Gz*) your library source code and host it
+in the *Internet*. Then you should specify the additional fields,
+like :ref:`libjson_version` and :ref:`libjson_downloadurl`. The final list
+of **required** fields in the :ref:`library_config` will look like:
 
 * :ref:`libjson_name`
 * :ref:`libjson_keywords`
@@ -121,9 +121,10 @@ Then you should specify additional fields, like :ref:`libjson_version` and
 Register
 --------
 
-* The library must adhere to the :ref:`library_config` specification.
-* There must be public *HTTP* access to library :ref:`library_config` file.
+The registration requirements:
+
+* A library must adhere to the :ref:`library_config` specification.
+* There must be public *HTTP* access to the library :ref:`library_config` file.
 
 Now, you can :ref:`register <cmd_lib_register>` your library and allow others
 to :ref:`install <cmd_lib_install>` it.
-

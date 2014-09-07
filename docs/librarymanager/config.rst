@@ -3,15 +3,15 @@
 library.json
 ============
 
-Libraries are defined by a manifest file ``library.json``. This is a
-`JSON-style <http://en.wikipedia.org/wiki/JSON>`_ file. Any data in
-``library.json`` should be represented via
+*PlatformIO*-suitable library should be defined by a manifest file
+``library.json`` in a `JSON-style <http://en.wikipedia.org/wiki/JSON>`_.
+A data in ``library.json`` should be represented via
 `associative array <http://en.wikipedia.org/wiki/Associative_array>`_
 (name/value pairs). An order doesn't make a sense.
 
 The allowable fields (names from pairs) are described below. The fields
 (:ref:`libjson_name`, :ref:`libjson_description` and :ref:`libjson_keywords`)
-will be displayed in search/lookup results on the :ref:`cmd_lib_search`
+will be displayed in search results on the :ref:`cmd_lib_search`
 (*CLI*) and the *WebSite* that can be used to search for libraries.
 
 .. contents::
@@ -23,12 +23,12 @@ will be displayed in search/lookup results on the :ref:`cmd_lib_search`
 
 **Required** | Type: ``String`` | Max. Length: 50
 
-The name of the library.
+A name of the library.
 
 * Must be unique.
 * Should be slug style for simplicity, consistency and compatibility.
-  Example: Arduino-SPI
-* Title Case, Aa-z, can contain digits, can contain dash (but not start/end
+  Example: *Arduino-SPI*
+* Title Case, Aa-z, can contain digits and dashes (but not start/end
   with them).
 * Consecutive dashes are not allowed.
 
@@ -52,12 +52,12 @@ with it.
 
 **Required** | Type: ``String`` | Max. Length: 255
 
-The keyword should be lowercased, can contain a-z, digits and dash (but not
-start/end with them). A list from keywords can be specified with
-separator ``,``.
-
 Used for search by keyword. Helps make your library easier to discover without
 people needing to know its name.
+
+The keyword should be lowercased, can contain a-z, digits and dash (but not
+start/end with them). A list from the keywords can be specified with
+separator ``,``.
 
 
 .. _libjson_version:
@@ -68,9 +68,9 @@ people needing to know its name.
 *Required* if :ref:`libjson_repository` field is not defined | Type: ``String``
 | Max. Length: 20
 
-The version of the current library source code.
+A version of the current library source code.
 
-* Can contain a-z, digits, dots and dash.
+* Can contain a-z, digits, dots or dash.
 * `Semantic Versioning <http://semver.org>`_ is recommended.
 * A `CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_
   revision from the latest commit. Example: ``13`` (*SVN*) or first 10
@@ -78,8 +78,8 @@ The version of the current library source code.
 
 .. note::
     You can omit :ref:`libjson_version` field and define
-    :ref:`libjson_repository` field.  In this situation
-    *PlatformIO-API Crawler* will use the CVS-revision from the latest commit.
+    :ref:`libjson_repository` field. In this case
+    *PlatformIO-API Crawler* will use the *CVS*-revision from the latest commit.
 
 
 .. _libjson_author:
@@ -89,7 +89,7 @@ The version of the current library source code.
 
 *Required* if :ref:`libjson_repository` field is not defined | Type: ``Object``
 
-An author's contact information
+An author contact information
 
 * ``name`` Full name (**Required**)
 * ``email``
@@ -108,8 +108,8 @@ Example:
 
 .. note::
     You can omit :ref:`libjson_author` field and define
-    :ref:`libjson_repository` field. Only *GitHub-based* repository is
-    supported now. In this situation
+    :ref:`libjson_repository` field. The only *GitHub-based* repository is
+    supported now. In this case
     *PlatformIO-API Crawler* will use information from
     `GitHub API Users <https://developer.github.com/v3/users/>`_.
 
@@ -155,7 +155,7 @@ of archive (``.zip`` or ``.tar.gz``).
 
 If :ref:`libjson_include` field is a type of ``String``, then
 *PlatformIO-API Crawler* will recognize it like a "relative path inside
-repository/archive to library source code". See example below where only
+repository/archive to library source code". See example below where the only
 source code from the relative directory ``LibrarySourceCodeHere`` will be
 included.
 
@@ -204,7 +204,7 @@ Pattern	Meaning
 *Optional* | Type: ``String`` or ``Array`` |
 `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_
 
-Exclude the directories and files which will match with :ref:`libjson_exclude`
+Exclude the directories and files which match with :ref:`libjson_exclude`
 patterns.
 
 
@@ -215,7 +215,7 @@ patterns.
 
 *Optional* | Type: ``Array``
 
-The list of dependent libraries. They will be installed automatically with
+A list of dependent libraries. They will be installed automatically with
 :ref:`cmd_lib_install` command.
 
 Example:

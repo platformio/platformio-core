@@ -3,7 +3,7 @@
 Library Manager
 ===============
 
-*"The missing libraries manager for embedded platforms"*, - inspired by
+*"The missing library manager for embedded platforms"*, - inspired by
 `npm <https://www.npmjs.org>`_ and `bower <http://bower.io>`_ package managers
 for web.
 
