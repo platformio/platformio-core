@@ -1,8 +1,8 @@
 .. _library_create:
 .. |PIOAPICR| replace:: *PlatformIO-API Crawler*
 
-Create Library
-==============
+Creating Library
+================
 
 *PlatformIO* :ref:`librarymanager` doesn't has any requirements to a library
 source code structure. The only one requirement is library's manifest file -
