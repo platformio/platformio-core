@@ -86,8 +86,8 @@ Example:
         }
     }
 
-Packed into Archive
-^^^^^^^^^^^^^^^^^^^
+Self-hosted
+^^^^^^^^^^^
 
 You can manually archive (*Zip, Tar.Gz*) your library source code and host it
 in the *Internet*. Then you should specify the additional fields,
