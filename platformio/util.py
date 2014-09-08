@@ -8,7 +8,7 @@ from platform import system, uname
 from subprocess import PIPE, Popen
 from time import sleep
 
-from requests import get
+from requests import get, post
 from requests.exceptions import ConnectionError, HTTPError
 from requests.utils import default_user_agent
 from serial import Serial
@@ -114,13 +114,17 @@ def get_serialports():
     return[{"port": p, "description": d, "hwid": h} for p, d, h in comports()]
 
 
-def get_api_result(path, params=None):
+def get_api_result(path, params=None, data=None):
     result = None
     r = None
     try:
         headers = {"User-Agent": "PlatformIO/%s %s" % (
             __version__, default_user_agent())}
-        r = get(__apiurl__ + path, params=params, headers=headers)
+        if data:
+            r = post(__apiurl__ + path, params=params, data=data,
+                     headers=headers)
+        else:
+            r = get(__apiurl__ + path, params=params, headers=headers)
         result = r.json()
         r.raise_for_status()
     except HTTPError as e:

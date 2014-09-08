@@ -131,3 +131,12 @@ def lib_update():
 
         lib_uninstall([name])
         lib_install([name])
+
+
+@cli.command("register", short_help="Register new library")
+@argument("config_url")
+def lib_register(config_url):
+    result = get_api_result("/lib/register", data=dict(config_url=config_url))
+    if "message" in result and result['message']:
+        secho(result['message'], fg="green" if "successed" in result and
+              result['successed'] else "red")
