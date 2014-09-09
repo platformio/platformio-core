@@ -7,12 +7,12 @@ library.json
 ``library.json`` in a `JSON-style <http://en.wikipedia.org/wiki/JSON>`_.
 A data in ``library.json`` should be represented via
 `associative array <http://en.wikipedia.org/wiki/Associative_array>`_
-(name/value pairs). An order doesn't make a sense.
+(name/value pairs). An order doesn't matter.
 
 The allowable fields (names from pairs) are described below. The fields
 (:ref:`libjson_name`, :ref:`libjson_description` and :ref:`libjson_keywords`)
-will be displayed in search results on the :ref:`cmd_lib_search`
-(*CLI*) and the *WebSite* that can be used to search for libraries.
+will be displayed in the search results at the :ref:`cmd_lib_search` (*CLI*)
+and at the *WebSite*. Also, they can be used for searching for libraries.
 
 .. contents::
 
@@ -40,9 +40,9 @@ A name of the library.
 
 **Required** | Type: ``String`` | Max. Length: 255
 
-Help users identify and search for your library with a brief description.
-Describe the hardware devices (sensors, boards and etc.) which are suitable
-with it.
+The field helps users to identify and search for your library with a brief
+description. Describe the hardware devices (sensors, boards and etc.) which
+are suitable with it.
 
 
 .. _libjson_keywords:
@@ -52,12 +52,12 @@ with it.
 
 **Required** | Type: ``String`` | Max. Length: 255
 
-Used for search by keyword. Helps make your library easier to discover without
-people needing to know its name.
+Used for search by keyword. Helps to make your library easier to discover
+without people needing to know its name.
 
 The keyword should be lowercased, can contain a-z, digits and dash (but not
 start/end with them). A list from the keywords can be specified with
-separator ``,``.
+separator ``,``
 
 
 .. _libjson_version:
@@ -108,7 +108,7 @@ Example:
 
 .. note::
     You can omit :ref:`libjson_author` field and define
-    :ref:`libjson_repository` field. The only *GitHub-based* repository is
+    :ref:`libjson_repository` field. Only *GitHub-based* repository is
     supported now. In this case
     *PlatformIO-API Crawler* will use information from
     `GitHub API Users <https://developer.github.com/v3/users/>`_.
@@ -141,8 +141,8 @@ Example:
 
 *Required* if :ref:`libjson_repository` field is not defined | Type: ``String``
 
-The *HTTP URL* to archived source code of library. It should end with the type
-of archive (``.zip`` or ``.tar.gz``).
+It is the *HTTP URL* to the archived source code of library. It should end
+with the type of archive (``.zip`` or ``.tar.gz``).
 
 
 .. _libjson_include:
