@@ -1,6 +1,7 @@
 PlatformIO: A cross-platform code builder and library manager
 =============================================================
 
+`Website + Library Search <http://platformio.ikravets.com>`_ |
 `Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
 `Source Code <https://github.com/ivankravets/platformio>`_ |
 `Bugs/Questions <https://github.com/ivankravets/platformio/issues>`_ |
