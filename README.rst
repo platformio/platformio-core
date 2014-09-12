@@ -26,7 +26,7 @@ PlatformIO
 
 **PlatformIO** is a cross-platform code builder and library manager.
 
-* `Website + Libraries Search <http://platformio.ikravets.com>`_
+* `Website + Library Search <http://platformio.ikravets.com>`_
 * `Quickstart <http://docs.platformio.ikravets.com/en/latest/quickstart.html>`_
 * `Installation <http://docs.platformio.ikravets.com/en/latest/installation.html>`_
 * `Project Configuration File <http://docs.platformio.ikravets.com/en/latest/projectconf.html>`_
