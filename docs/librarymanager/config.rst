@@ -227,3 +227,21 @@ Example:
         "Library-Foo",
         "Library-Bar"
     ]
+
+
+.. _libjson_examples:
+
+``examples``
+----------------
+
+*Optional* | Type: ``String`` or ``Array`` |
+`Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_
+
+A list of example patterns. This field is predefined with default value:
+
+.. code-block:: javascript
+
+    "examples": [
+        "[Ee]xamples/*/*.ini",
+        "[Ee]xamples/*/*.pde"
+    ]
