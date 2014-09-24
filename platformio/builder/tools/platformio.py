@@ -165,8 +165,9 @@ def ConvertInotoCpp(env):
             remove(f)
 
     tmpcpp = []
-
-    for item in env.Glob(join("$PROJECT_DIR", "src", "*.ino")):
+    items = (env.Glob(join("$PROJECT_DIR", "src", "*.ino")) +
+             env.Glob(join("$PROJECT_DIR", "src", "*.pde")))
+    for item in items:
         cppfile = item.get_path()[:-3] + "cpp"
         if isfile(cppfile):
             continue

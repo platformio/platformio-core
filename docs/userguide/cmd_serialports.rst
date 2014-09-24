@@ -171,7 +171,7 @@ Diagnostics: suppress non-error messages, default ``Off``
 Examples
 ~~~~~~~~
 
-1. Show available option for command
+1. Show available options for *monitor*
 
 .. code-block:: bash
 

@@ -36,6 +36,17 @@ Initialize new PlatformIO based project
     and setup environments in `platformio.ini` file.
     Then process project with `platformio run` command.
 
+
+Setup environments in ``platformio.ini``. For more examples go to
+:ref:`projectconf`
+
+.. code-block:: ini
+
+    # Simple and base environment
+    [env:mybaseenv]
+    platform = %INSTALLED_PLATFORM_NAME_HERE%
+
+
 Process the project's environments
 
 .. code-block:: bash
@@ -49,4 +60,8 @@ Process the project's environments
     $ platformio run --target clean
 
 
-For more detailed information please go to :ref:`userguide` sections.
+Further examples can be found in the ``examples/`` directory in the source
+distribution or `on the web <https://github.com/ivankravets/platformio/tree/develop/examples>`_.
+
+Also, for more detailed information as for commands please go to
+:ref:`userguide` sections.

@@ -1,27 +1,23 @@
-.. _userguide:
+.. _userguide_lib:
 
-User Guide
-==========
+Library Manager
+===============
 
 To print all available commands and options use:
 
 .. code-block:: bash
 
-    $ platformio --help
-    $ platformio COMMAND --help
+    $ platformio lib --help
+    $ platformio lib COMMAND --help
 
 
 .. toctree::
     :maxdepth: 2
 
-    cmd_init
     cmd_install
-    platformio lib <lib/index>
     cmd_list
-    cmd_run
+    cmd_register
     cmd_search
-    cmd_serialports
     cmd_show
     cmd_uninstall
     cmd_update
-    cmd_upgrade

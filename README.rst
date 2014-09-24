@@ -17,8 +17,8 @@ PlatformIO
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
 
-`Documentation <http://docs.platformio.ikravets.com>`_ /
-`PDF <https://media.readthedocs.org/pdf/platformio/latest/platformio.pdf>`_ |
+`Website <http://platformio.ikravets.com>`_ |
+`Documentation <http://docs.platformio.ikravets.com>`_ |
 `Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
 `Bugs/Questions <https://github.com/ivankravets/platformio/issues>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
@@ -26,6 +26,7 @@ PlatformIO
 
 **PlatformIO** is a cross-platform code builder and library manager.
 
+* `Website + Library Search <http://platformio.ikravets.com>`_
 * `Quickstart <http://docs.platformio.ikravets.com/en/latest/quickstart.html>`_
 * `Installation <http://docs.platformio.ikravets.com/en/latest/installation.html>`_
 * `Project Configuration File <http://docs.platformio.ikravets.com/en/latest/projectconf.html>`_

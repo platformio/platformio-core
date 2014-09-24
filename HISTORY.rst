@@ -1,6 +1,13 @@
 Release History
 ===============
 
+0.7.0 (2014-09-24)
+------------------
+
+* Implemented new ``[platformio]`` section for Configuration File with ``home_dir``
+  option (`issue #14 <https://github.com/ivankravets/platformio/issues/14>`_)
+* Implemented *Library Manager* (`issue #6 <https://github.com/ivankravets/platformio/issues/6>`_)
+
 0.6.0 (2014-08-09)
 ------------------
 

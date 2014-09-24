@@ -27,13 +27,7 @@ Then run the following (which may require administrator access):
 
 .. code-block:: bash
 
-    $ python get-platformio.py
-
-An alternative short version for *Mac/Linux* users:
-
-.. code-block:: bash
-
-    $ curl -L http://bit.ly/1lpanta | python
+    $ [sudo] python get-platformio.py
 
 
 On *Windows OS* it may look like:
@@ -43,9 +37,11 @@ On *Windows OS* it may look like:
     C:\Python27\python.exe get-platformio.py
 
 .. warning::
-    If you have an error ``pkg_resources.DistributionNotFound`` try to
-    uninstall *PlatformIO* ``$ pip uninstall platformio``, then install it via
-    ``$ easy_install platformio``.
+    **Mac OS Users**: If you have an error ``pkg_resources.DistributionNotFound`` please
+    upgrade *SetupTools* package: ``$ [sudo] pip uninstall setuptools``
+    and ``$ [sudo] pip install setuptools``.
+    Then re-install *PlatformIO*: ``$ [sudo] pip uninstall platformio``
+    and ``$ [sudo] pip install platformio``.
 
 
 Full Guide

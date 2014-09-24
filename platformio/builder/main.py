@@ -16,7 +16,8 @@ from os.path import isdir, join
 from SCons.Script import (DefaultEnvironment, Exit, SConscript,
                           SConscriptChdir, Variables)
 
-from platformio.util import get_pioenvs_dir, get_project_dir, get_source_dir
+from platformio.util import (get_lib_dir, get_pioenvs_dir, get_project_dir,
+                             get_source_dir)
 
 # AllowSubstExceptions()
 
@@ -57,6 +58,7 @@ DefaultEnvironment(
     BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
     LIBSOURCE_DIRS=[
         join("$PROJECT_DIR", "lib"),
+        get_lib_dir(),
         join("$PLATFORMFW_DIR", "libraries"),
     ]
 )

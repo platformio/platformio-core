@@ -15,7 +15,7 @@ from platformio.exception import PlatformioException, UnknownCLICommand
 from platformio.util import get_home_dir, get_source_dir
 
 
-class PlatformioCLI(MultiCommand):
+class PlatformioCLI(MultiCommand):  # pylint: disable=R0904
 
     def list_commands(self, ctx):
         cmds = []

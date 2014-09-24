@@ -8,9 +8,14 @@ from platform import system, uname
 from subprocess import PIPE, Popen
 from time import sleep
 
+from requests import get, post
+from requests.exceptions import ConnectionError, HTTPError
+from requests.utils import default_user_agent
 from serial import Serial
 
-from platformio.exception import GetSerialPortsError, NotPlatformProject
+from platformio import __apiurl__, __version__
+from platformio.exception import (APIRequestError, GetSerialPortsError,
+                                  NotPlatformProject)
 
 try:
     from configparser import ConfigParser
@@ -26,7 +31,25 @@ def get_systype():
 
 
 def get_home_dir():
+    try:
+        config = get_project_config()
+        if (config.has_section("platformio") and
+                config.has_option("platformio", "home_dir")):
+            return config.get("platformio", "home_dir")
+    except NotPlatformProject:
+        pass
     return expanduser("~/.platformio")
+
+
+def get_lib_dir():
+    try:
+        config = get_project_config()
+        if (config.has_section("platformio") and
+                config.has_option("platformio", "lib_dir")):
+            return config.get("platformio", "lib_dir")
+    except NotPlatformProject:
+        pass
+    return join(get_home_dir(), "lib")
 
 
 def get_source_dir():
@@ -89,3 +112,31 @@ def get_serialports():
     else:
         raise GetSerialPortsError(os_name)
     return[{"port": p, "description": d, "hwid": h} for p, d, h in comports()]
+
+
+def get_api_result(path, params=None, data=None):
+    result = None
+    r = None
+    try:
+        headers = {"User-Agent": "PlatformIO/%s %s" % (
+            __version__, default_user_agent())}
+        if data:
+            r = post(__apiurl__ + path, params=params, data=data,
+                     headers=headers)
+        else:
+            r = get(__apiurl__ + path, params=params, headers=headers)
+        result = r.json()
+        r.raise_for_status()
+    except HTTPError as e:
+        if result and "errors" in result:
+            raise APIRequestError(result['errors'][0]['title'])
+        else:
+            raise APIRequestError(e)
+    except ConnectionError:
+        raise APIRequestError("Could not connect to PlatformIO API Service")
+    except ValueError:
+        raise APIRequestError("Invalid response: %s" % r.text)
+    finally:
+        if r:
+            r.close()
+    return result

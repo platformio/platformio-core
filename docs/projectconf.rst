@@ -14,6 +14,32 @@ The sections and their allowable values are described below.
 
 .. contents::
 
+[platformio]
+------------
+
+A ``platformio`` section is used for overriding default configuration options
+
+Options
+~~~~~~~
+
+``home_dir``
+^^^^^^^^^^^^
+
+A ``$PIO_HOME_DIR`` is used to store platform tool chains, frameworks,
+external libraries, service data and etc.
+
+A default value is user's home directory: *Unix* - ``~/.platformio``,
+Windows - ``%HOMEPATH%\.platformio``.
+
+
+``lib_dir``
+^^^^^^^^^^^^
+
+This directory is used to store external libraries downloaded by
+:ref:`librarymanager`.
+
+A default value is ``$PIO_HOME_DIR/lib``.
+
 [env:NAME]
 ----------
 
@@ -220,14 +246,51 @@ Examples
     framework = arduino
     board = uno
 
-    upload_port = /dev/ ttyUSB0
-    # upload_port = COM3        # for Windows OS
+    upload_port = /dev/ttyUSB0
+    # for Windows OS
+    # upload_port = COM3
 
     # enable auto-uploading
     targets = upload
 
 
-2. :ref:`platform_atmelavr`: Embedded board that is based on ATmega168 MCU with
+2. :ref:`platform_atmelavr`: Microduino Core (ATmega168P, 3.3V) board with
+   auto pre-configured ``board_*`` and ``upload_*`` options (use only
+   ``board`` option) and Arduino Wiring-based Framework
+
+.. code-block::   ini
+
+    [env:atmelavr_microduino_core_board]
+    platform = atmelavr
+    framework = arduino
+    board = 168pa8m
+
+    upload_port = /dev/ttyUSB0
+    # for Windows OS
+    # upload_port = COM3
+
+    # enable auto-uploading
+    targets = upload
+
+
+3. :ref:`platform_atmelavr`: Raspduino board with
+   auto pre-configured ``board_*`` and ``upload_*`` options (use only
+   ``board`` option) and Arduino Wiring-based Framework
+
+.. code-block::   ini
+
+    [env:atmelavr_raspduino_board]
+    platform = atmelavr
+    framework = arduino
+    board = raspduino
+
+    upload_port = /dev/ttyS0
+
+    # enable auto-uploading
+    targets = upload
+
+
+4. :ref:`platform_atmelavr`: Embedded board that is based on ATmega168 MCU with
    "arduino" bootloader
 
 .. code-block::   ini
@@ -238,7 +301,8 @@ Examples
     board_f_cpu = 16000000L
 
     upload_port = /dev/ttyUSB0
-    # upload_port = COM3        # for Windows OS
+    # for Windows OS
+    # upload_port = COM3
     upload_protocol = arduino
     upload_speed = 19200
 
@@ -246,7 +310,7 @@ Examples
     targets = upload
 
 
-3. :ref:`platform_timsp430`: TI MSP430G2553 LaunchPad with auto pre-configured
+5. :ref:`platform_timsp430`: TI MSP430G2553 LaunchPad with auto pre-configured
    ``board_*`` and ``upload_*`` options (use only ``board`` option) and Energia
    Wiring-based Framework
 
@@ -258,7 +322,7 @@ Examples
     board = lpmsp430g2553
 
 
-4. :ref:`platform_timsp430`: Embedded board that is based on MSP430G2553 MCU
+6. :ref:`platform_timsp430`: Embedded board that is based on MSP430G2553 MCU
 
 .. code-block::   ini
 
