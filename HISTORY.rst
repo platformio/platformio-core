@@ -4,6 +4,8 @@ Release History
 0.8.0 (?)
 ---------
 
+* Fixed bug with order for includes in conversation from INO/PDE to CPP
+
 
 0.7.0 (2014-09-24)
 ------------------

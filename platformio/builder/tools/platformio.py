@@ -173,22 +173,29 @@ def ConvertInotoCpp(env):
             continue
         ino_contents = item.get_text_contents()
 
-        # fetch prototypes
-        regexp = re.compile(
+        re_includes = re.compile(r"^(#include\s+(?:\<|\")[^\r\n]+)",
+                                 re.M | re.I)
+        includes = re_includes.findall(ino_contents)
+        prototypes = re.findall(
             r"""^(
             (?:\s*[a-z_\d]+){1,2}       # return type
             \s+[a-z_\d]+\s*             # name of prototype
             \([a-z_,\.\*\&\[\]\s\d]*\)  # args
             )\s*\{                      # must end with {
             """,
+            ino_contents,
             re.X | re.M | re.I
         )
-        prototypes = regexp.findall(ino_contents)
-        # print prototypes
+        # print includes, prototypes
+
+        # disable previous includes
+        ino_contents = re_includes.sub("//\g<1>", ino_contents)
 
         # create new temporary C++ valid file
         with open(cppfile, "w") as f:
             f.write("#include <Arduino.h>\n")
+            if includes:
+                f.write("%s\n" % "\n".join(includes))
             if prototypes:
                 f.write("%s;\n" % ";\n".join(prototypes))
             f.write("#line 1 \"%s\"\n" % basename(item.path))
