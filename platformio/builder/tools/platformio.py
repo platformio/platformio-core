@@ -189,7 +189,7 @@ def ConvertInotoCpp(env):
         # print includes, prototypes
 
         # disable previous includes
-        ino_contents = re_includes.sub("//\g<1>", ino_contents)
+        ino_contents = re_includes.sub(r"//\1", ino_contents)
 
         # create new temporary C++ valid file
         with open(cppfile, "w") as f:
