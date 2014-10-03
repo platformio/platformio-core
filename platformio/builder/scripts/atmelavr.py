@@ -11,7 +11,7 @@ from time import sleep
 from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
                           DefaultEnvironment, Exit)
 
-from platformio.util import reset_serialport
+from platformio.util import get_serialports, reset_serialport
 
 env = DefaultEnvironment()
 
@@ -164,9 +164,19 @@ AlwaysBuild(uploadeep)
 
 is_uptarget = (set(["upload", "uploadlazy", "uploadeep"]) &
                set(COMMAND_LINE_TARGETS))
-if is_uptarget and not env.subst("$UPLOAD_PORT"):
-    Exit("Please specify environment 'upload_port' or use global "
-         "--upload-port option.")
+
+if is_uptarget:
+    # try autodetect upload port
+    if "UPLOAD_PORT" not in env:
+        for item in get_serialports():
+            if "VID:PID" in item['hwid']:
+                print ("Auto-detected UPLOAD_PORT: %s" % item['port'])
+                env['UPLOAD_PORT'] = item['port']
+                break
+
+    if "UPLOAD_PORT" not in env:
+        Exit("Please specify environment 'upload_port' or use global "
+             "--upload-port option.")
 
 #
 # Setup default targets
