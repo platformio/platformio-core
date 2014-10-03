@@ -170,7 +170,7 @@ if is_uptarget:
     if "UPLOAD_PORT" not in env:
         for item in get_serialports():
             if "VID:PID" in item['hwid']:
-                print ("Auto-detected UPLOAD_PORT: %s" % item['port'])
+                print "Auto-detected UPLOAD_PORT: %s" % item['port']
                 env['UPLOAD_PORT'] = item['port']
                 break
 
