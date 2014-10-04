@@ -25,7 +25,10 @@ def cli(environment, target, upload_port):
         raise UnknownEnvNames(", ".join(unknown))
 
     for section in config.sections():
-        if section[:4] != "env:":
+        # skip main configuration section
+        if section == "platformio":
+            continue
+        elif section[:4] != "env:":
             raise InvalidEnvName(section)
 
         envname = section[4:]
