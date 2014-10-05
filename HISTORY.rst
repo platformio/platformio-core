@@ -6,6 +6,7 @@ Release History
 
 * Fixed bug with order for includes in conversation from INO/PDE to CPP
 * Automatic detection of port on upload (`issue #15 <https://github.com/ivankravets/platformio/issues/15>`_)
+* Fixed lib update crashing when no libs are installed (`issue #19 <https://github.com/ivankravets/platformio/issues/19>`_)
 
 
 0.7.0 (2014-09-24)

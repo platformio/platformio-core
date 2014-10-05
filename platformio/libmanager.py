@@ -33,6 +33,8 @@ class LibraryManager(object):
 
     def get_installed(self):
         items = []
+        if not isdir(self.lib_dir):
+            return items
         for item in listdir(self.lib_dir):
             conf_path = join(self.lib_dir, item, self.CONFIG_NAME)
             if isfile(conf_path):
