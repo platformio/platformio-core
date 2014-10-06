@@ -1,5 +1,5 @@
-PlatformIO: A cross-platform code builder and library manager
-=============================================================
+PlatformIO: A cross-platform code builder and library manager (Arduino, MSP430, ARM)
+====================================================================================
 
 `Website + Library Search <http://platformio.ikravets.com>`_ |
 `Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
