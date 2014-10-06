@@ -1,11 +1,12 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-VERSION = (0, 8, "0-dev")
+VERSION = (0, 7, 1)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
-__description__ = ("A cross-platform code builder and library manager")
+__description__ = ("A cross-platform code builder and library manager "
+                   "(Arduino, MSP430, ARM)")
 __url__ = "http://platformio.ikravets.com"
 
 __author__ = "Ivan Kravets"
