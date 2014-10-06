@@ -9,7 +9,7 @@ Library Manager
 
 *PlatformIO Library Manager* allows you to organize external embedded libraries.
 You can search for new libraries via :ref:`Command Line <cmd_lib_search>`
-or `WebSite <http://platformio.ikravets.com>`_ interfaces.
+or `WebSite <http://platformio.ikravets.com/#!/lib>`_ interfaces.
 
 You don't need to bother for finding the latest version of library. Due to
 :ref:`cmd_lib_update` command you will have up-to-date external libraries.

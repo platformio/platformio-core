@@ -140,9 +140,12 @@ def lib_show(name):
 @cli.command("update", short_help="Update installed libraries")
 def lib_update():
     lm = LibraryManager(get_lib_dir())
-    lib_names = lm.get_installed()
-    versions = get_api_result("/lib/version/" + ",".join(lib_names))
 
+    lib_names = lm.get_installed()
+    if not lib_names:
+        return
+
+    versions = get_api_result("/lib/version/" + ",".join(lib_names))
     for name in lib_names:
         info = lm.get_info(name)
 

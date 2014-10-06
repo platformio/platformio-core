@@ -73,16 +73,20 @@ def install_pip():
 
 
 def install_pypi_packages(packages):
-    for p in packages:
-        print (exec_python_cmd(["-m", "pip", "install", "-U"] + p.split()))
+    for pipargs in packages:
+        print (exec_python_cmd(["-m", "pip", "install", "-U"] + pipargs))
 
 
 def main():
     steps = [
         ("Fixing Windows %PATH% Environment", fix_winpython_pathenv, []),
         ("Installing Python Package Manager", install_pip, []),
-        ("Installing PlatformIO and dependencies", install_pypi_packages,
-         (["platformio", "--egg scons"],)),
+        ("Installing PlatformIO and dependencies", install_pypi_packages, [
+            [["platformio"], [
+                "--egg",
+                "http://sourceforge.net/projects/scons/files/latest/download"
+            ]]
+        ])
     ]
 
     if not IS_WINDOWS:
