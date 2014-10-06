@@ -24,8 +24,7 @@ PlatformIO
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Twitter <https://twitter.com/smartanthill>`_
 
-**PlatformIO** is a cross-platform code builder and library manager (Arduino, MSP430, ARM) 
-.
+**PlatformIO** is a cross-platform code builder and library manager (Arduino, MSP430, ARM).
 
 * `Website + Library Search <http://platformio.ikravets.com>`_
 * `Quickstart <http://docs.platformio.ikravets.com/en/latest/quickstart.html>`_
