@@ -55,14 +55,13 @@ class LibraryManager(object):
         if self.is_installed(name):
             raise LibAlreadyInstalledError()
 
-        _lib_dir = join(self.lib_dir, name)
-        if not isdir(_lib_dir):
-            makedirs(_lib_dir)
-
         dlinfo = get_api_result("/lib/download/" + name, dict(version=version)
                                 if version else None)
         try:
             dlpath = self.download(dlinfo['url'], gettempdir())
+            _lib_dir = join(self.lib_dir, name)
+            if not isdir(_lib_dir):
+                makedirs(_lib_dir)
             self.unpack(dlpath, _lib_dir)
         finally:
             remove(dlpath)
