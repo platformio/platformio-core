@@ -6,7 +6,7 @@ IDE Integration
 Arduino IDE
 -----------
 
-`Integration of PlatformIO library manager to Arduino IDE<http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
+`Integration of PlatformIO library manager to Arduino IDE <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
 
 Eclipse
 -------
@@ -15,7 +15,7 @@ Eclipse
 Energia IDE
 -----------
 
-`Integration of PlatformIO library manager to Energia IDE<http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
+`Integration of PlatformIO library manager to Energia IDE <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
 
 VIM
 ---
