@@ -5,7 +5,7 @@ Library Manager
 
 ..
 
-    *"The missing library manager for embedded platforms"* [#]_
+    *"A missing library manager for embedded platforms (Atmel AVR, MSP430 and ARM from TI)"* [#]_
 
 *PlatformIO Library Manager* allows you to organize external embedded libraries.
 You can search for new libraries via :ref:`Command Line <cmd_lib_search>`
