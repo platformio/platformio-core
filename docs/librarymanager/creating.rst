@@ -1,5 +1,5 @@
 .. _library_creating:
-.. |PIOAPICR| replace:: *PlatformIO-API Crawler*
+.. |PIOAPICR| replace:: *PlatformIO Library Registry Crawler*
 
 Creating Library
 ================
