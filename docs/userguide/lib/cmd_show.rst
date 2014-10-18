@@ -10,7 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio lib show NAME
+    platformio lib show ID
 
 
 Description
@@ -24,11 +24,14 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio lib show Arduino-XBee
-    Arduino-XBee
-    ------------
-    Author: Andrew Rapp <andrew.rapp@gmail.com>
-    Keywords: xbee, protocol, radio
-    Version: 0.5
+    # OneWire: http://platformio.ikravets.com/#!/lib/show/1
+    $ platformio lib show 1
+    OneWire
+    -------
+    Authors: Paul Stoffregen http://www.pjrc.com/teensy/td_libs_OneWire.html
+    Keywords: onewire, 1-wire, bus, sensor, temperature, ibutton
+    Frameworks: arduino
+    Platforms: atmelavr
+    Version: 2.2
 
-    Arduino library for communicating with XBees in API mode
+    Control devices (from Dallas Semiconductor) that use the One Wire protocol (DS18S20, DS18B20, DS2408 and etc)

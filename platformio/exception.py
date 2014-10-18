@@ -118,4 +118,9 @@ class LibAlreadyInstalledError(PlatformioException):
 
 class LibNotInstalledError(PlatformioException):
 
-    MESSAGE = "Library '%s' has not been installed yet"
+    MESSAGE = "Library #%d has not been installed yet"
+
+
+class LibInstallDependencyError(PlatformioException):
+
+    MESSAGE = "Error has been occurred for library dependency '%s'"

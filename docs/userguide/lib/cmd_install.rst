@@ -10,13 +10,14 @@ Usage
 
 .. code-block:: bash
 
-    platformio lib install [OPTIONS] [NAMES]
+    platformio lib install [OPTIONS] [LIBRARY_ID]
 
 
 Description
 -----------
 
-Install new library
+Install new library  by specified
+`PlatformIO Library Registry ID <http://platformio.ikravets.com/#!/lib>`_.
 
 Options
 -------
@@ -34,35 +35,38 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio lib install Arduino-IRremote
-    Installing Arduino-IRremote library:
+    # IRremote: http://platformio.ikravets.com/#!/lib/show/4
+    $ platformio lib install 4
+    Installing library [ 4 ]:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
-    The library 'Arduino-IRremote' has been successfully installed!
+    The library #4 'IRremote' has been successfully installed!
 
 
 2. Install specified version of library
 
 .. code-block:: bash
 
-    $ platformio lib install Arduino-XBee --version=0.5
-    Installing Arduino-XBee library:
+    # XBee: http://platformio.ikravets.com/#!/lib/show/6
+    $ platformio lib install 6 --version=0.5
+    Installing library [ 6 ]:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
-    The library 'Arduino-XBee' has been successfully installed!
+    The library #6 'XBee' has been successfully installed!
 
 
 3. Install library with dependencies
 
 .. code-block:: bash
 
-    $ platformio lib install Adafruit-Arduino-ST7735
-    Installing Adafruit-Arduino-ST7735 library:
+    # Adafruit-ST7735: http://platformio.ikravets.com/#!/lib/show/12
+    $ platformio lib install 12
+    Installing library [ 12 ]:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
-    The library 'Adafruit-Arduino-ST7735' has been successfully installed!
+    The library #12 'Adafruit-ST7735' has been successfully installed!
     Installing dependencies:
-    Installing Adafruit-Arduino-GFX library:
+    Installing library [ 13 ]:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
-    The library 'Adafruit-Arduino-GFX' has been successfully installed!
+    The library #13 'Adafruit-GFX' has been successfully installed!

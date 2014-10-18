@@ -4,6 +4,16 @@ Release History
 0.8.0 (?)
 ---------
 
+* Avoided trademark issues in ``library.json`` with new fields:
+  ``frameworks``, ``platforms`` and ``dependencies`` (`issue #17 <https://github.com/ivankravets/platformio/issues/17>`_)
+* Switched logic from "Library Name" to "Library Registry ID" for all
+  ``platformio lib`` commands (install, uninstall, update and etc.)
+* Renamed ``author`` field to ``authors`` and allowed to setup multiple authors
+  per library in ``library.json``
+* Added option to specify "maintainer" status in ``authors`` field
+* New filters/options for ``platformio lib search`` command: ``--framework``
+  and ``--platform``
+
 0.7.1 (2014-10-06)
 ------------------
 
