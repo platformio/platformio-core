@@ -159,10 +159,10 @@ def lib_list():
 
 
 @cli.command("show", short_help="Show details about installed libraries")
-@click.argument("id", type=click.INT)
-def lib_show(id):
+@click.argument("libid", type=click.INT)
+def lib_show(libid):
     lm = LibraryManager(get_lib_dir())
-    info = lm.get_info(id)
+    info = lm.get_info(libid)
     click.secho(info['name'], fg="cyan")
     click.echo("-" * len(info['name']))
 
@@ -175,7 +175,7 @@ def lib_show(id):
             if key == "email":
                 _data.append("<%s>" % author[key])
             elif key == "maintainer":
-                    _data.append("(maintainer)")
+                _data.append("(maintainer)")
             else:
                 _data.append(author[key])
         _authors.append(" ".join(_data))
@@ -206,8 +206,7 @@ def lib_update():
 
         click.echo("Updating  [ %s ] %s library:" % (
             click.style(id_, fg="yellow"),
-            click.style(info['name'], fg="cyan"))
-        )
+            click.style(info['name'], fg="cyan")))
 
         current_version = info['version']
         latest_version = versions[id_]
