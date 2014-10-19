@@ -2,7 +2,8 @@
 # See LICENSE for details.
 
 import json
-from os import listdir, makedirs, remove
+import re
+from os import listdir, makedirs, remove, rename
 from os.path import isdir, isfile, join
 from shutil import rmtree
 from tempfile import gettempdir
@@ -15,7 +16,7 @@ from platformio.util import get_api_result
 
 class LibraryManager(object):
 
-    CONFIG_NAME = "library.json"
+    CONFIG_NAME = ".library.json"
 
     def __init__(self, lib_dir):
         self.lib_dir = lib_dir
@@ -32,45 +33,54 @@ class LibraryManager(object):
         return fu.start()
 
     def get_installed(self):
-        items = []
+        items = {}
         if not isdir(self.lib_dir):
             return items
-        for item in listdir(self.lib_dir):
-            conf_path = join(self.lib_dir, item, self.CONFIG_NAME)
-            if isfile(conf_path):
-                items.append(item)
+        for dirname in listdir(self.lib_dir):
+            conf_path = join(self.lib_dir, dirname, self.CONFIG_NAME)
+            if not isfile(conf_path):
+                continue
+            with open(conf_path, "r") as f:
+                items[dirname] = json.load(f)
         return items
 
-    def get_info(self, name):
-        conf_path = join(self.lib_dir, name, self.CONFIG_NAME)
-        if not isfile(conf_path):
-            raise LibNotInstalledError(name)
-        with open(conf_path, "r") as f:
-            return json.load(f)
+    def get_info(self, id_):
+        for item in self.get_installed().values():
+            if "id" in item and item['id'] == id_:
+                return item
+        raise LibNotInstalledError(id_)
 
-    def is_installed(self, name):
-        return isfile(join(self.lib_dir, name, self.CONFIG_NAME))
+    def is_installed(self, id_):
+        try:
+            return int(self.get_info(id_)['id']) == id_
+        except LibNotInstalledError:
+            return False
 
-    def install(self, name, version=None):
-        if self.is_installed(name):
+    def install(self, id_, version=None):
+        if self.is_installed(id_):
             raise LibAlreadyInstalledError()
 
-        dlinfo = get_api_result("/lib/download/" + name, dict(version=version)
-                                if version else None)
+        dlinfo = get_api_result("/lib/download/" + str(id_),
+                                dict(version=version) if version else None)
+        dlpath = None
+        tmplib_dir = join(self.lib_dir, str(id_))
         try:
             dlpath = self.download(dlinfo['url'], gettempdir())
-            _lib_dir = join(self.lib_dir, name)
-            if not isdir(_lib_dir):
-                makedirs(_lib_dir)
-            self.unpack(dlpath, _lib_dir)
+            if not isdir(tmplib_dir):
+                makedirs(tmplib_dir)
+            self.unpack(dlpath, tmplib_dir)
         finally:
-            remove(dlpath)
+            if dlpath:
+                remove(dlpath)
 
-        return self.is_installed(name)
+        info = self.get_info(id_)
+        rename(tmplib_dir, join(self.lib_dir, "%s_ID%d" % (
+            re.sub(r"[^\da-z]+", "_", info['name'], flags=re.I), id_)))
+        return True
 
-    def uninstall(self, name):
-        if self.is_installed(name):
-            rmtree(join(self.lib_dir, name))
-            return True
-        else:
-            raise LibNotInstalledError(name)
+    def uninstall(self, id_):
+        for libdir, item in self.get_installed().iteritems():
+            if "id" in item and item['id'] == id_:
+                rmtree(join(self.lib_dir, libdir))
+                return True
+        raise LibNotInstalledError(id_)

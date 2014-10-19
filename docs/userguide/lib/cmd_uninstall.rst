@@ -10,7 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio lib uninstall NAME
+    platformio lib uninstall ID
 
 
 Description
@@ -24,8 +24,6 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio lib install Arduino-IRremote
-    Installing Arduino-IRremote library:
-    Downloading  [####################################]  100%
-    Unpacking  [####################################]  100%
-    The library 'Arduino-IRremote' has been successfully installed!
+    # XBee: http://platformio.ikravets.com/#!/lib/show/6
+    $ platformio lib uninstall 6
+    The library #6 'XBee' has been successfully uninstalled!

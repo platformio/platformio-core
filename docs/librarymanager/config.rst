@@ -1,4 +1,5 @@
 .. _library_config:
+.. |PIOAPICR| replace:: *PlatformIO Library Registry Crawler*
 
 library.json
 ============
@@ -10,9 +11,11 @@ A data in ``library.json`` should be represented via
 (name/value pairs). An order doesn't matter.
 
 The allowable fields (names from pairs) are described below. The fields
-(:ref:`libjson_name`, :ref:`libjson_description` and :ref:`libjson_keywords`)
+(:ref:`libjson_name`, :ref:`libjson_description`, :ref:`libjson_keywords`
+and :ref:`libjson_authors`)
 will be displayed in the search results at the :ref:`cmd_lib_search` (*CLI*)
-and at the *WebSite*. Also, they can be used for searching for libraries.
+and at the `WebSite <http://platformio.ikravets.com/#!/lib>`_.
+Also, they can be used for searching for libraries.
 
 .. contents::
 
@@ -60,57 +63,55 @@ start/end with them). A list from the keywords can be specified with
 separator ``,``
 
 
-.. _libjson_version:
+.. _libjson_authors:
 
-``version``
+``authors``
 -----------
 
-*Required* if :ref:`libjson_repository` field is not defined | Type: ``String``
-| Max. Length: 20
-
-A version of the current library source code.
-
-* Can contain a-z, digits, dots or dash.
-* `Semantic Versioning <http://semver.org>`_ is recommended.
-* A `CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_
-  revision from the latest commit. Example: ``13`` (*SVN*) or first 10
-  chars of *SHA* digest ``e4564b7da4`` (*Git*).
-
-.. note::
-    You can omit :ref:`libjson_version` field and define
-    :ref:`libjson_repository` field. In this case
-    *PlatformIO-API Crawler* will use the *CVS*-revision from the latest commit.
-
-
-.. _libjson_author:
-
-``author``
-----------
-
 *Required* if :ref:`libjson_repository` field is not defined | Type: ``Object``
+or ``Array``
 
 An author contact information
 
 * ``name`` Full name (**Required**)
 * ``email``
 * ``url`` An author's contact page
+* ``maintainer`` Specify "maintainer" status
 
-Example:
+Examples:
 
 .. code-block:: javascript
 
-    "author":
+    "authors":
     {
         "name": "John Smith",
         "email": "me@john-smith.com",
         "url": "http://www.john-smith/contact"
     }
 
+    ...
+
+    "authors":
+    [
+        {
+            "name": "John Smith",
+            "email": "me@john-smith.com",
+            "url": "http://www.john-smith/contact"
+        },
+        {
+            "name": "Andrew Smith",
+            "email": "me@andrew-smith.com",
+            "url": "http://www.andrew-smith/contact",
+            "maintainer": true
+        }
+    ]
+
+
 .. note::
-    You can omit :ref:`libjson_author` field and define
+    You can omit :ref:`libjson_authors` field and define
     :ref:`libjson_repository` field. Only *GitHub-based* repository is
     supported now. In this case
-    *PlatformIO-API Crawler* will use information from
+    |PIOAPICR| will use information from
     `GitHub API Users <https://developer.github.com/v3/users/>`_.
 
 
@@ -145,6 +146,28 @@ It is the *HTTP URL* to the archived source code of library. It should end
 with the type of archive (``.zip`` or ``.tar.gz``).
 
 
+.. _libjson_version:
+
+``version``
+-----------
+
+*Required* if :ref:`libjson_repository` field is not defined | Type: ``String``
+| Max. Length: 20
+
+A version of the current library source code.
+
+* Can contain a-z, digits, dots or dash.
+* `Semantic Versioning <http://semver.org>`_ is recommended.
+* A `CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_
+  revision from the latest commit. Example: ``13`` (*SVN*) or first 10
+  chars of *SHA* digest ``e4564b7da4`` (*Git*).
+
+.. note::
+    You can omit :ref:`libjson_version` field and define
+    :ref:`libjson_repository` field. In this case
+    |PIOAPICR| will use the *CVS*-revision from the latest commit.
+
+
 .. _libjson_include:
 
 ``include``
@@ -154,7 +177,7 @@ with the type of archive (``.zip`` or ``.tar.gz``).
 `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_
 
 If :ref:`libjson_include` field is a type of ``String``, then
-*PlatformIO-API Crawler* will recognize it like a "relative path inside
+|PIOAPICR| will recognize it like a "relative path inside
 repository/archive to library source code". See example below where the only
 source code from the relative directory ``LibrarySourceCodeHere`` will be
 included.
@@ -164,7 +187,7 @@ included.
     "include": "some/child/dir/LibrarySourceCodeHere"
 
 If :ref:`libjson_include` field is a type of ``Array``, then
-*PlatformIO-API Crawler* firstly will apply :ref:`libjson_exclude` filter and
+|PIOAPICR| firstly will apply :ref:`libjson_exclude` filter and
 then include only directories/files which match with :ref:`libjson_include`
 patterns.
 
@@ -207,16 +230,44 @@ Pattern	Meaning
 Exclude the directories and files which match with :ref:`libjson_exclude`
 patterns.
 
+.. _libjson_frameworks:
+
+``frameworks``
+--------------
+
+*Optional* | Type: ``String`` or ``Array``
+
+A list with compatible frameworks. The available framework types are defined in
+the :ref:`platforms` section.
+
+
+.. _libjson_platforms:
+
+``platforms``
+-------------
+
+*Optional* | Type: ``String`` or ``Array``
+
+A list with compatible platforms. The available platform types are
+defined in :ref:`platforms` section.
+
 
 .. _libjson_dependencies:
 
 ``dependencies``
 ----------------
 
-*Optional* | Type: ``Array``
+*Optional* | Type: ``Array`` or ``Object``
 
 A list of dependent libraries. They will be installed automatically with
 :ref:`cmd_lib_install` command.
+
+Allowed requirements for dependent library:
+
+* ``name`` | Type: ``String``
+* ``authors`` | Type: ``String`` or ``Array``
+* ``frameworks`` | Type: ``String`` or ``Array``
+* ``platforms`` | Type: ``String`` or ``Array``
 
 Example:
 
@@ -224,8 +275,18 @@ Example:
 
     "dependencies":
     [
-        "Library-Foo",
-        "Library-Bar"
+        {
+            "name": "Library-Foo",
+            "authors":
+            [
+                "Jhon Smith",
+                "Andrew Smith"
+            ]
+        },
+        {
+            "name": "Library-Bar",
+            "frameworks": "FrameworkFoo, FrameworkBar"
+        }
     ]
 
 
