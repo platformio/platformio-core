@@ -1,8 +1,8 @@
 Release History
 ===============
 
-0.8.0 (?)
----------
+0.8.0 (2014-10-19)
+------------------
 
 * Avoided trademark issues in ``library.json`` with new fields:
   ``frameworks``, ``platforms`` and ``dependencies`` (`issue #17 <https://github.com/ivankravets/platformio/issues/17>`_)
