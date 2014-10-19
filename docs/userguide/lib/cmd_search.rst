@@ -120,12 +120,11 @@ Examples
     [  1  ] OneWire          arduino, atmelavr     "Paul Stoffregen": Control devices (from Dallas Semiconductor) that use the One Wire protocol (DS18S20, DS18B20, DS2408 and etc)
     ...
 
-3. Search for Arduino-based "I2C" libraries. The ``+`` sign is here like ``AND``
-   operator.
+3. Search for Arduino-based "I2C" libraries operator.
 
 .. code-block:: bash
 
-    $ platformio lib search "+i2c" --framework=arduino
+    $ platformio lib search "i2c" --framework=arduino
     Found N libraries:
 
     [ ID  ] Name             Compatibility         "Authors": Description
@@ -185,5 +184,8 @@ Examples
 
     $ platformio lib search --framework=arduino "+(x10 xbee)"
     Found 2 libraries:
-    Arduino-X10           Sending X10 signals over AC power lines
-    Arduino-XBee          Arduino library for communicating with XBees in API mode
+
+    [ ID  ] Name             Compatibility         "Authors": Description
+    -------------------------------------------------------------------------------------
+    [ 36  ] X10              arduino, atmelavr     "Doug Clinton": Sending X10 signals over AC power lines (PL513, TW523 and etc)
+    [  6  ] XBee             arduino, atmelavr     "Andrew Rapp": Arduino library for communicating with XBees in API mode
