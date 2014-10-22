@@ -1,5 +1,5 @@
-.. _library_config:
 .. |PIOAPICR| replace:: *PlatformIO Library Registry Crawler*
+.. _library_config:
 
 library.json
 ============

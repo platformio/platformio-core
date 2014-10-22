@@ -36,7 +36,7 @@ you **need to specify** only these fields in the :ref:`library_config`:
 * :ref:`libjson_repository`
 
 |PIOAPICR| will populate the rest fields, like :ref:`libjson_version` or
-:ref:`libjson_author` with an actual information from *GitHub*.
+:ref:`libjson_authors` with an actual information from *GitHub*.
 
 Example:
 
@@ -62,7 +62,7 @@ The list of **required** fields in the :ref:`library_config` will look like:
 * :ref:`libjson_name`
 * :ref:`libjson_keywords`
 * :ref:`libjson_description`
-* :ref:`libjson_author`
+* :ref:`libjson_authors`
 * :ref:`libjson_repository`
 
 Example:
@@ -97,7 +97,7 @@ of **required** fields in the :ref:`library_config` will look like:
 * :ref:`libjson_name`
 * :ref:`libjson_keywords`
 * :ref:`libjson_description`
-* :ref:`libjson_author`
+* :ref:`libjson_authors`
 * :ref:`libjson_version`
 * :ref:`libjson_downloadurl`
 
