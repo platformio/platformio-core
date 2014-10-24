@@ -130,7 +130,7 @@ Example:
 
     "repository":
     {
-        "name": "git",
+        "type": "git",
         "url": "https://github.com/foo/bar.git"
     }
 
