@@ -22,7 +22,7 @@ PlatformIO
 `Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
 `Bugs/Questions <https://github.com/ivankravets/platformio/issues>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
-`Twitter <https://twitter.com/smartanthill>`_
+`Twitter <https://twitter.com/PlatformIOTool>`_
 
 **PlatformIO** is a cross-platform code builder and library manager for
 *Arduino, MSP430, ARM*.
