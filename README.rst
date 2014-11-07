@@ -51,7 +51,7 @@ where you can setup different environments with specific
 options: platform type, firmware uploading settings, pre-built framework
 and many more.
 
-.. image:: examples/platformio-examples.png
+.. image:: https://raw.githubusercontent.com/ivankravets/platformio/develop/examples/platformio-examples.png
     :target: https://raw.githubusercontent.com/ivankravets/platformio/develop/examples/platformio-examples.png
     :alt:  Examples
     :width: 730px
