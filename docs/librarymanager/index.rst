@@ -17,8 +17,8 @@ You don't need to bother for finding the latest version of library. Due to
 .. toctree::
     :maxdepth: 2
 
-    creating
     config
+    creating
     User Guide <../userguide/lib/index.rst>
 
 .. [#] Inspired by `npm <https://www.npmjs.org>`_ and `bower

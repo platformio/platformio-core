@@ -3,6 +3,10 @@
 Quickstart
 ==========
 
+.. note::
+    Please read `Get Started <http://platformio.ikravets.com/#!/get-started>`_
+    article from the official WebSite.
+
 First, :ref:`Install PlatformIO <installation>`.
 
 Print all available development platforms for installing

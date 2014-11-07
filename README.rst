@@ -17,21 +17,23 @@ PlatformIO
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
 
-`Website <http://platformio.ikravets.com>`_ |
+`Website + Library Search <http://platformio.ikravets.com>`_ |
 `Documentation <http://docs.platformio.ikravets.com>`_ |
 `Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
-`Bugs/Questions <https://github.com/ivankravets/platformio/issues>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Twitter <https://twitter.com/PlatformIOTool>`_
 
-**PlatformIO** is a cross-platform code builder and library manager for
-*Arduino, MSP430, ARM*.
+.. image:: https://raw.githubusercontent.com/ivankravets/platformio/develop/docs/_static/platformio-logo.png
+    :target: http://platformio.ikravets.com
 
-* `Website + Library Search <http://platformio.ikravets.com>`_
-* `Quickstart <http://docs.platformio.ikravets.com/en/latest/quickstart.html>`_
-* `Installation <http://docs.platformio.ikravets.com/en/latest/installation.html>`_
-* `Project Configuration File <http://docs.platformio.ikravets.com/en/latest/projectconf.html>`_
-* `Platforms & Embedded Boards <http://docs.platformio.ikravets.com/en/latest/platforms/index.html>`_
+`PlatformIO <http://platformio.ikravets.com>`_ is a cross-platform code builder
+and the missing library manager.
+
+* `Get Started <http://platformio.ikravets.com/#!/get-started>`_
+* `Web 2.0 Library Search <http://platformio.ikravets.com/#!/lib>`_
+* `Development Platforms <http://platformio.ikravets.com/#!/platforms>`_
+* `Embedded Boards <http://platformio.ikravets.com/#!/boards>`_
+* `Library Manager <http://docs.platformio.ikravets.com/en/latest/librarymanager/index.html>`_
 * `User Guide <http://docs.platformio.ikravets.com/en/latest/userguide/index.html>`_
 * `IDE Integration <http://docs.platformio.ikravets.com/en/latest/ide.html>`_
 * `Release History <http://docs.platformio.ikravets.com/en/latest/history.html>`_
@@ -50,7 +52,7 @@ options: platform type, firmware uploading settings, pre-built framework
 and many more.
 
 .. image:: examples/platformio-examples.png
-    :target: https://github.com/ivankravets/platformio/raw/develop/examples/platformio-examples.png
+    :target: https://raw.githubusercontent.com/ivankravets/platformio/develop/examples/platformio-examples.png
     :alt:  Examples
     :width: 730px
 
@@ -59,19 +61,18 @@ and many more.
 * Automatically analyse dependency
 * Reliably detect build changes
 * Build framework or library source code to static library
-* Build *ELF* (executable and linkable firmware)
-* Convert *ELF* to *HEX* or *BIN* file
-* Extract *EEPROM* data
 * Upload firmware to your device
+* Lookup for external libraries which are installed via
+  `Library Manager <http://docs.platformio.ikravets.com/en/latest/librarymanager/index.html>`_
 
 It has support for many popular embedded platforms like these:
 
-* ``atmelavr`` `Atmel AVR <http://en.wikipedia.org/wiki/Atmel_AVR>`_
-  (including `Arduino <http://www.arduino.cc>`_ based boards)
-* ``timsp430`` `TI MSP430 <http://www.ti.com/lsds/ti/microcontroller/16-bit_msp430/overview.page>`_
-  (including `MSP430 LaunchPads <http://www.ti.com/ww/en/launchpad/launchpads-msp430.html>`_)
-* ``titiva`` `TI TIVA C <http://www.ti.com/lsds/ti/microcontroller/tiva_arm_cortex/c_series/overview.page>`_
-  (including `TIVA C Series LaunchPads <http://www.ti.com/ww/en/launchpad/launchpads-connected.html>`_)
+* ``atmelavr`` `Atmel AVR <http://platformio.ikravets.com/#!/platforms/atmelavr>`_
+  (including Arduino-based boards)
+* ``timsp430`` `TI MSP430 <http://platformio.ikravets.com/#!/platforms/timsp430>`_
+  (including MSP430 LaunchPads)
+* ``titiva`` `TI TIVA C <http://platformio.ikravets.com/#!/platforms/titiva>`_
+  (including TIVA C Series LaunchPads)
 
 
 Licence

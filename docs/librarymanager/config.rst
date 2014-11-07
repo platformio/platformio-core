@@ -4,18 +4,17 @@
 library.json
 ============
 
-*PlatformIO*-suitable library should be defined by a manifest file
-``library.json`` in a `JSON-style <http://en.wikipedia.org/wiki/JSON>`_.
-A data in ``library.json`` should be represented via
-`associative array <http://en.wikipedia.org/wiki/Associative_array>`_
-(name/value pairs). An order doesn't matter.
+``library.json`` is a manifest file of development library.
 
-The allowable fields (names from pairs) are described below. The fields
-(:ref:`libjson_name`, :ref:`libjson_description`, :ref:`libjson_keywords`
-and :ref:`libjson_authors`)
-will be displayed in the search results at the :ref:`cmd_lib_search` (*CLI*)
-and at the `WebSite <http://platformio.ikravets.com/#!/lib>`_.
-Also, they can be used for searching for libraries.
+Initially it was
+developed for :ref:`librarymanager`, but later was accepted by worldwide embedded
+community like a **standard library specification**.
+
+A data in ``library.json`` should be represented
+in `JSON-style <http://en.wikipedia.org/wiki/JSON>`_ via
+`associative array <http://en.wikipedia.org/wiki/Associative_array>`_
+(name/value pairs). An order doesn't matter. The allowable fields
+(names from pairs) are described below.
 
 .. contents::
 
