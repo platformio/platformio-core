@@ -16,18 +16,30 @@ application in your *OS*:
   `Command Prompt <http://en.wikipedia.org/wiki/Command_Prompt>`_ (``cmd.exe``)
   application.
 
+Please *choose one of* the following installation:
 
-Super-Quick
------------
+
+Super-Quick (Mac / Linux)
+-------------------------
+
+To install or upgrade *PlatformIO* paste that at a *Terminal* prompt:
+
+.. code-block:: bash
+
+    python -c "$(curl -fsSL https://raw.githubusercontent.com/ivankravets/platformio/master/scripts/get-platformio.py)"
+
+
+Installer Script (Mac / Linux / Windows)
+----------------------------------------
 
 To install or upgrade *PlatformIO*, download
 `get-platformio.py <https://raw.githubusercontent.com/ivankravets/platformio/develop/scripts/get-platformio.py>`_ script.
 
-Then run the following (which may require administrator access):
+Then run the following (which may require administrator access ``sudo``):
 
 .. code-block:: bash
 
-    $ [sudo] python get-platformio.py
+    python get-platformio.py
 
 
 On *Windows OS* it may look like:
