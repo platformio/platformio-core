@@ -22,7 +22,8 @@ Please *choose one of* the following installation:
 Super-Quick (Mac / Linux)
 -------------------------
 
-To install or upgrade *PlatformIO* paste that at a *Terminal* prompt:
+To install or upgrade *PlatformIO* paste that at a *Terminal* prompt
+(may require administrator access ``sudo``):
 
 .. code-block:: bash
 
@@ -35,7 +36,7 @@ Installer Script (Mac / Linux / Windows)
 To install or upgrade *PlatformIO*, download
 `get-platformio.py <https://raw.githubusercontent.com/ivankravets/platformio/develop/scripts/get-platformio.py>`_ script.
 
-Then run the following (which may require administrator access ``sudo``):
+Then run the following (may require administrator access ``sudo``):
 
 .. code-block:: bash
 
