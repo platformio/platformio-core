@@ -38,41 +38,85 @@ and the missing library manager.
 * `IDE Integration <http://docs.platformio.ikravets.com/en/latest/ide.html>`_
 * `Release History <http://docs.platformio.ikravets.com/en/latest/history.html>`_
 
-You have no need to install any *IDE* or compile any tool chains. *PlatformIO*
+You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
 has pre-built different development platforms including: compiler, debugger,
 uploader (for embedded boards) and many other useful tools.
 
-**PlatformIO** allows developer to compile the same code with different
-platforms using only one command
+Use whenever. *Run everywhere.*
+-------------------------------
+*PlatformIO* is written in pure *Python* and **doesn't depend** on any
+additional libraries/tools from an operation system. It allows you to use
+*PlatformIO* beginning from *PC (Mac, Linux, Win)* and ending with credit-card
+sized computers (like *Raspberry Pi*).
+
+Embedded Development. *Easier Than Ever.*
+-----------------------------------------
+*PlatformIO* is well suited for embedded development and has pre-configured
+settings for most popular `Embedded Boards <http://platformio.ikravets.com/#!/boards>`_.
+
+* Colourful command-line output
+* Built-in `Serial Port Monitor <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
+* Configurable `build -flags/-options <http://docs.platformio.ikravets.com/en/latest/projectconf.html#build-flags>`_
+* Automatic **firmware uploading**
+* Integration with `development environments (IDE) <http://docs.platformio.ikravets.com/en/latest/ide.html>`_
+* Pre-built tool chains, frameworks for the popular `Hardware Platforms <http://platformio.ikravets.com/#!/platforms>`_
+
+.. image:: https://raw.githubusercontent.com/ivankravets/platformio-web/develop/app/images/platformio-embedded-development.png
+    :target: http://platformio.ikravets.com
+    :alt:  PlatformIO Embedded Development Process
+
+The Missing Library Manager. *It's here!*
+-----------------------------------------
+*PlatformIO Library Manager* is the missing library manager for development
+platforms which allows you to organize and have up-to-date external libraries.
+
+* Friendly `Command-Line Interface <http://docs.platformio.ikravets.com/en/latest/librarymanager/index.html>`_
+* Modern `Web 2.0 Library Search <http://platformio.ikravets.com/#!/lib>`_
+* Open Source `Library Registry API <https://github.com/ivankravets/platformio-api>`_
+* Library Crawler based on `library.json <http://docs.platformio.ikravets.com/en/latest/librarymanager/config.html>`_
+  specification
+* Library **dependency management**
+* Automatic library updating
+
+.. image:: https://raw.githubusercontent.com/ivankravets/platformio-web/develop/app/images/platformio-library-manager.png
+    :target: http://platformio.ikravets.com
+    :alt:  PlatformIO Library Manager Architecture
+
+Smart Code Builder. *Fast and Reliable.*
+----------------------------------------
+*PlatformIO Code Builder* is built-on a next-generation software construction
+tool named `SCons <http://www.scons.org/>`_. Think of *SCons* as an improved,
+cross-platform substitute for the classic *Make* utility.
+
+* Reliable, automatic *dependency analysis*
+* Reliable detection of *build changes*
+* Improved support for *parallel builds*
+* Ability to share *built files in a cache*
+* Lookup for external libraries which are installed via `Library Manager <http://docs.platformio.ikravets.com/en/latest/librarymanager/index.html>`_
+
+.. image:: https://raw.githubusercontent.com/ivankravets/platformio-web/develop/app/images/platformio-scons-builder.png
+    :target: http://platformio.ikravets.com
+    :alt:  PlatformIO Code Builder Architecture
+
+Single source code. *Multiple platforms.*
+-----------------------------------------
+*PlatformIO* allows developer to compile the same code with different
+development platforms using the *Only One Command*
 `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`_.
 This happens due to
-`Project Configuration File <http://docs.platformio.ikravets.com/en/latest/projectconf.html>`_
-where you can setup different environments with specific
-options: platform type, firmware uploading settings, pre-built framework
-and many more.
-
-.. image:: https://raw.githubusercontent.com/ivankravets/platformio/develop/examples/platformio-examples.png
-    :target: https://raw.githubusercontent.com/ivankravets/platformio/develop/examples/platformio-examples.png
-    :alt:  Examples
-    :width: 730px
-
-**PlatformIO** is well suited for **embedded development**. It can:
-
-* Automatically analyse dependency
-* Reliably detect build changes
-* Build framework or library source code to static library
-* Upload firmware to your device
-* Lookup for external libraries which are installed via
-  `Library Manager <http://docs.platformio.ikravets.com/en/latest/librarymanager/index.html>`_
+`Project Configuration File (platformio.ini) <http://docs.platformio.ikravets.com/en/latest/projectconf.html>`_
+where you can setup different environments with specific options (platform
+type, firmware uploading settings, pre-built framework, build flags and many
+more).
 
 It has support for many popular embedded platforms like these:
 
 * ``atmelavr`` `Atmel AVR <http://platformio.ikravets.com/#!/platforms/atmelavr>`_
-  (including Arduino-based boards)
+  (including *Arduino*-based boards, *Microduino, Raspduino, Teensy*)
 * ``timsp430`` `TI MSP430 <http://platformio.ikravets.com/#!/platforms/timsp430>`_
-  (including MSP430 LaunchPads)
+  (including *MSP430* LaunchPads)
 * ``titiva`` `TI TIVA C <http://platformio.ikravets.com/#!/platforms/titiva>`_
-  (including TIVA C Series LaunchPads)
+  (including *TIVA C* Series LaunchPads)
 
 
 Licence
@@ -81,4 +125,3 @@ Licence
 Copyright (C) 2014 Ivan Kravets
 
 Licenced under the MIT Licence.
-
