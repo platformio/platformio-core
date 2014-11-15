@@ -54,7 +54,7 @@ Embedded Development. *Easier Than Ever.*
 *PlatformIO* is well suited for embedded development and has pre-configured
 settings for most popular `Embedded Boards <http://platformio.ikravets.com/#!/boards>`_.
 
-* Colourful command-line output
+* Colourful `command-line output <https://raw.githubusercontent.com/ivankravets/platformio/develop/examples/platformio-examples.png>`_
 * Built-in `Serial Port Monitor <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
 * Configurable `build -flags/-options <http://docs.platformio.ikravets.com/en/latest/projectconf.html#build-flags>`_
 * Automatic **firmware uploading**
