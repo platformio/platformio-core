@@ -124,3 +124,8 @@ class LibNotInstalledError(PlatformioException):
 class LibInstallDependencyError(PlatformioException):
 
     MESSAGE = "Error has been occurred for library dependency '%s'"
+
+
+class BuildScriptNotFound(PlatformioException):
+
+    MESSAGE = "Invalid path '%s' to build script"

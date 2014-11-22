@@ -4,6 +4,7 @@ Release History
 0.9.0 (?)
 ---------
 
+* Refactored *Package Manager*
 * Download Manager: fixed SHA1 verification within *Cygwin Environment*
   (`issue #26 <https://github.com/ivankravets/platformio/issues/26>`_)
 

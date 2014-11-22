@@ -71,7 +71,7 @@ env.Replace(
         "-fsingle-precision-constant"
     ],
 
-    UPLOADER=join("$PLATFORMTOOLS_DIR", "lm4flash", "lm4flash"),
+    UPLOADER=join("$PIOPACKAGES_DIR", "tool-lm4flash", "lm4flash"),
     UPLOADCMD="$UPLOADER $SOURCES"
 )
 

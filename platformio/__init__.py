@@ -16,4 +16,3 @@ __license__ = "MIT License"
 __copyright__ = "Copyright (C) 2014 Ivan Kravets"
 
 __apiurl__ = "http://api.platformio.ikravets.com"
-__pkgmanifesturl__ = "http://dl.platformio.ikravets.com/packages/manifest.json"

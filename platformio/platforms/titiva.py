@@ -1,8 +1,6 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os.path import join
-
 from platformio.platforms.base import BasePlatform
 
 
@@ -15,19 +13,17 @@ class TitivaPlatform(BasePlatform):
     PACKAGES = {
 
         "toolchain-gccarmnoneeabi": {
-            "path": join("tools", "toolchain"),
             "alias": "toolchain",
             "default": True
         },
 
         "tool-lm4flash": {
-            "path": join("tools", "lm4flash"),
             "alias": "uploader",
             "default": True
         },
 
         "framework-energiativa": {
-            "path": join("frameworks", "energia"),
+            "alias": "framework",
             "default": True
         }
     }

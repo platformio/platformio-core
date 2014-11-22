@@ -8,7 +8,6 @@ from platformio.exception import (LibAlreadyInstalledError,
 from platformio.libmanager import LibraryManager
 from platformio.util import get_api_result, get_lib_dir
 
-
 LIBLIST_TPL = ("[{id:^14}] {name:<25} {compatibility:<30} "
                "\"{authornames}\": {description}")
 

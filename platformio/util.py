@@ -1,16 +1,15 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import json
 from os import name as os_name
-from os import getcwd, getenv, listdir, utime
-from os.path import dirname, expanduser, isfile, join, realpath
+from os import getcwd, getenv, makedirs, utime
+from os.path import dirname, expanduser, isdir, isfile, join, realpath
 from platform import system, uname
 from subprocess import PIPE, Popen
 from time import sleep
 
-from requests import get, post
-from requests.exceptions import ConnectionError, HTTPError
-from requests.utils import default_user_agent
+import requests
 from serial import Serial
 
 from platformio import __apiurl__, __version__
@@ -23,6 +22,28 @@ except ImportError:
     from ConfigParser import ConfigParser
 
 
+class AppState(object):
+
+    def __init__(self, path=None):
+        self.path = path
+        if not self.path:
+            self.path = join(get_home_dir(), "appstate.json")
+        self._state = {}
+
+    def __enter__(self):
+        try:
+            if isfile(self.path):
+                with open(self.path, "r") as fp:
+                    self._state = json.load(fp)
+        except ValueError:
+            self._state = {}
+        return self._state
+
+    def __exit__(self, type_, value, traceback):
+        with open(self.path, "w") as fp:
+            json.dump(self._state, fp)
+
+
 def get_systype():
     if system() == "Windows":
         return "windows"
@@ -31,14 +52,24 @@ def get_systype():
 
 
 def get_home_dir():
+    home_dir = None
+
     try:
         config = get_project_config()
         if (config.has_section("platformio") and
                 config.has_option("platformio", "home_dir")):
-            return config.get("platformio", "home_dir")
+            home_dir = config.get("platformio", "home_dir")
     except NotPlatformProject:
         pass
-    return expanduser("~/.platformio")
+
+    if not home_dir:
+        home_dir = expanduser("~/.platformio")
+
+    if not isdir(home_dir):
+        makedirs(home_dir)
+
+    assert isdir(home_dir)
+    return home_dir
 
 
 def get_lib_dir():
@@ -75,15 +106,6 @@ def get_project_config():
     cp = ConfigParser()
     cp.read(path)
     return cp
-
-
-def get_platforms():
-    platforms = []
-    for p in listdir(join(get_source_dir(), "platforms")):
-        if p in ("__init__.py", "base.py") or not p.endswith(".py"):
-            continue
-        platforms.append(p[:-3])
-    return platforms
 
 
 def change_filemtime(path, time):
@@ -123,20 +145,20 @@ def get_api_result(path, params=None, data=None):
     r = None
     try:
         headers = {"User-Agent": "PlatformIO/%s %s" % (
-            __version__, default_user_agent())}
+            __version__, requests.utils.default_user_agent())}
         if data:
-            r = post(__apiurl__ + path, params=params, data=data,
-                     headers=headers)
+            r = requests.post(__apiurl__ + path, params=params, data=data,
+                              headers=headers)
         else:
-            r = get(__apiurl__ + path, params=params, headers=headers)
+            r = requests.get(__apiurl__ + path, params=params, headers=headers)
         result = r.json()
         r.raise_for_status()
-    except HTTPError as e:
+    except requests.exceptions.HTTPError as e:
         if result and "errors" in result:
             raise APIRequestError(result['errors'][0]['title'])
         else:
             raise APIRequestError(e)
-    except ConnectionError:
+    except requests.exceptions.ConnectionError:
         raise APIRequestError(
             "Could not connect to PlatformIO Registry Service")
     except ValueError:

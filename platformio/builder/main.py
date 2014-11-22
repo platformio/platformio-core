@@ -11,10 +11,10 @@ except ImportError:
             break
     from platformio.util import get_home_dir
 
-from os.path import isdir, join
+from os.path import join
 
-from SCons.Script import (DefaultEnvironment, Exit, SConscript,
-                          SConscriptChdir, Variables)
+from SCons.Script import (DefaultEnvironment, SConscript, SConscriptChdir,
+                          Variables)
 
 from platformio.util import (get_lib_dir, get_pioenvs_dir, get_project_dir,
                              get_source_dir)
@@ -24,8 +24,16 @@ from platformio.util import (get_lib_dir, get_pioenvs_dir, get_project_dir,
 # allow common variables from INI file
 commonvars = Variables(None)
 commonvars.AddVariables(
+    ("BUILD_SCRIPT",),
     ("PIOENV",),
     ("PLATFORM",),
+
+    # package aliases
+    ("PIOPACKAGE_TOOLCHAIN",),
+    ("PIOPACKAGE_UPLOADER",),
+    ("PIOPACKAGE_FRAMEWORK",),
+
+    # options
     ("FRAMEWORK",),
     ("BUILD_FLAGS",),
     ("SRCBUILD_FLAGS",),
@@ -46,14 +54,13 @@ DefaultEnvironment(
     toolpath=[join("$PIOBUILDER_DIR", "tools")],
     variables=commonvars,
 
-    PIOBUILDER_DIR=join(get_source_dir(), "builder"),
+    PIOHOME_DIR=get_home_dir(),
     PROJECT_DIR=get_project_dir(),
     PIOENVS_DIR=get_pioenvs_dir(),
 
-    PLATFORMIOHOME_DIR=get_home_dir(),
-    PLATFORM_DIR=join("$PLATFORMIOHOME_DIR", "$PLATFORM"),
-    PLATFORMFW_DIR=join("$PLATFORM_DIR", "frameworks", "$FRAMEWORK"),
-    PLATFORMTOOLS_DIR=join("$PLATFORM_DIR", "tools"),
+    PIOBUILDER_DIR=join(get_source_dir(), "builder"),
+    PIOPACKAGES_DIR=join("$PIOHOME_DIR", "packages"),
+    PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_FRAMEWORK"),
 
     BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
     LIBSOURCE_DIRS=[
@@ -64,14 +71,10 @@ DefaultEnvironment(
 )
 
 env = DefaultEnvironment()
-
-if not isdir(env['PLATFORMIOHOME_DIR']):
-    Exit("You haven't installed any platforms yet. Please use "
-         "`platformio install` command")
-elif not isdir(env.subst("$PLATFORM_DIR")):
-    Exit("An '%s' platform hasn't been installed yet. Please use "
-         "`platformio install %s` command" % (env['PLATFORM'],
-                                              env['PLATFORM']))
+env.PrependENVPath(
+    "PATH",
+    env.subst(join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN", "bin"))
+)
 
 SConscriptChdir(0)
-SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "${PLATFORM}.py")))
+SConscript(env.subst("$BUILD_SCRIPT"))

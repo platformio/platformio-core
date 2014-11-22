@@ -14,11 +14,6 @@ def ProcessGeneral(env):
     if "BUILD_FLAGS" in env:
         env.MergeFlags(env['BUILD_FLAGS'])
 
-    env.PrependENVPath(
-        "PATH",
-        join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
-    )
-
     if "FRAMEWORK" in env:
         if env['FRAMEWORK'] in ("arduino", "energia"):
             env.ConvertInotoCpp()
