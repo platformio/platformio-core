@@ -27,6 +27,3 @@ class Timsp430Platform(BasePlatform):
             "default": True
         }
     }
-
-    def get_name(self):
-        return "timsp430"

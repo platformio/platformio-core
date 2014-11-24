@@ -28,9 +28,6 @@ class AtmelavrPlatform(BasePlatform):
         }
     }
 
-    def get_name(self):
-        return "atmelavr"
-
     def after_run(self, result):
         # fix STDERR "flash written" for avrdude
         if "flash written" in result['err']:

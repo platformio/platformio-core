@@ -8,18 +8,35 @@ from os.path import isfile, join
 from platformio.exception import (BuildScriptNotFound, PlatformNotInstalledYet,
                                   UnknownPackage, UnknownPlatform)
 from platformio.pkgmanager import PackageManager
-from platformio.util import AppState, exec_command, get_source_dir
+from platformio.util import (AppState, exec_command, get_home_dir,
+                             get_source_dir)
 
 
 class PlatformFactory(object):
 
     @staticmethod
+    def get_clsname(name):
+        return "%sPlatform" % name.title()
+
+    @staticmethod
     def get_platforms(installed=False):
         platforms = {}
-        for p in listdir(join(get_source_dir(), "platforms")):
-            if p in ("__init__.py", "base.py") or not p.endswith(".py"):
-                continue
-            platforms[p[:-3]] = join(get_source_dir(), "platforms", p)
+        for d in (get_home_dir(), get_source_dir()):
+            pdir = join(d, "platforms")
+            for p in listdir(pdir):
+                if p in ("__init__.py", "base.py") or not p.endswith(".py"):
+                    continue
+                name = p[:-3]
+                path = join(pdir, p)
+                try:
+                    isplatform = hasattr(
+                        PlatformFactory.load_module(name, path),
+                        PlatformFactory.get_clsname(name)
+                    )
+                    if isplatform:
+                        platforms[name] = path
+                except UnknownPlatform:
+                    pass
 
         if not installed:
             return platforms
@@ -32,19 +49,27 @@ class PlatformFactory(object):
         return installed_platforms
 
     @staticmethod
+    def load_module(name, path):
+        module = None
+        try:
+            module = load_source(
+                "platformio.platforms.%s" % name, path)
+        except ImportError:
+            raise UnknownPlatform(name)
+        return module
+
+    @staticmethod
     def newPlatform(name):
         platforms = PlatformFactory.get_platforms()
-        clsname = "%sPlatform" % name.title()
-        try:
-            assert name in platforms
-            mod = load_source(
-                "platformio.platforms.%s" % name, platforms[name])
-        except (AssertionError, ImportError):
+        if name not in platforms:
             raise UnknownPlatform(name)
 
-        obj = getattr(mod, clsname)()
-        assert isinstance(obj, BasePlatform)
-        return obj
+        _instance = getattr(
+            PlatformFactory.load_module(name, platforms[name]),
+            PlatformFactory.get_clsname(name)
+        )()
+        assert isinstance(_instance, BasePlatform)
+        return _instance
 
 
 class BasePlatform(object):
@@ -52,7 +77,7 @@ class BasePlatform(object):
     PACKAGES = {}
 
     def get_name(self):
-        raise NotImplementedError()
+        return self.__class__.__name__[:-8].lower()
 
     def get_build_script(self):
         builtin = join(get_source_dir(), "builder", "scripts", "%s.py" %
