@@ -162,7 +162,7 @@ class BasePlatform(object):
 
         pm = PackageManager()
         for name in self.get_packages().keys():
-            if not pm.is_installed(name):
+            if not pm.is_installed(name) or name in deppkgs:
                 continue
             pm.uninstall(name)
 

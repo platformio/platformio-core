@@ -41,7 +41,7 @@ class AppState(object):
 
     def __exit__(self, type_, value, traceback):
         with open(self.path, "w") as fp:
-            json.dump(self._state, fp)
+            json.dump(self._state, fp, indent=4)
 
 
 def get_systype():

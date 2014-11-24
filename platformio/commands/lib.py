@@ -79,15 +79,12 @@ def lib_search(query, **filters):
 
 
 @cli.command("install", short_help="Install library")
-@click.argument("ids", type=click.INT, nargs=-1, metavar="[LIBRARY_ID]")
+@click.argument("libid", type=click.INT, nargs=-1, metavar="[LIBRARY_ID]")
 @click.option("-v", "--version")
-def lib_install_cli(ids, version):
-    lib_install(ids, version)
-
-
-def lib_install(ids, version=None):
+@click.pass_context
+def lib_install(ctx, libid, version):
     lm = LibraryManager(get_lib_dir())
-    for id_ in ids:
+    for id_ in libid:
         click.echo(
             "Installing library [ %s ]:" % click.style(str(id_), fg="green"))
         try:
@@ -106,7 +103,7 @@ def lib_install(ids, version=None):
                     _dependencies = [_dependencies]
                 for item in _dependencies:
                     try:
-                        lib_install_dependency(item)
+                        lib_install_dependency(ctx, item)
                     except AssertionError:
                         raise LibInstallDependencyError(str(item))
 
@@ -114,7 +111,7 @@ def lib_install(ids, version=None):
             click.secho("Already installed", fg="yellow")
 
 
-def lib_install_dependency(data):
+def lib_install_dependency(ctx, data):
     assert isinstance(data, dict)
     query = []
     for key in data.keys():
@@ -129,18 +126,14 @@ def lib_install_dependency(data):
 
     result = get_api_result("/lib/search", dict(query=" ".join(query)))
     assert result['total'] == 1
-    lib_install([result['items'][0]['id']])
+    ctx.invoke(lib_install, libid=[result['items'][0]['id']])
 
 
 @cli.command("uninstall", short_help="Uninstall libraries")
-@click.argument("ids", type=click.INT, nargs=-1)
-def lib_uninstall_cli(ids):
-    lib_uninstall(ids)
-
-
-def lib_uninstall(ids):
+@click.argument("libid", type=click.INT, nargs=-1)
+def lib_uninstall(libid):
     lm = LibraryManager(get_lib_dir())
-    for id_ in ids:
+    for id_ in libid:
         info = lm.get_info(id_)
         if lm.uninstall(id_):
             click.secho("The library #%s '%s' has been successfully "
@@ -195,7 +188,8 @@ def lib_show(libid):
 
 
 @cli.command("update", short_help="Update installed libraries")
-def lib_update():
+@click.pass_context
+def lib_update(ctx):
     lm = LibraryManager(get_lib_dir())
 
     lib_ids = [str(item['id']) for item in lm.get_installed().values()]
@@ -226,8 +220,8 @@ def lib_update():
         else:
             click.echo("[%s]" % (click.style("Out-of-date", fg="red")))
 
-        lib_uninstall([int(id_)])
-        lib_install([int(id_)])
+        ctx.invoke(lib_uninstall, libid=[int(id_)])
+        ctx.invoke(lib_install, libid=[int(id_)])
 
 
 @cli.command("register", short_help="Register new library")
