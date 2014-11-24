@@ -90,7 +90,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio lib search ""
+    $ platformio lib search
     # Found N libraries:
     #
     # [ ID  ] Name             Compatibility         "Authors": Description
@@ -112,7 +112,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio lib search     "1-wire"
+    $ platformio lib search "1-wire"
     # Found N libraries:
     #
     # [ ID  ] Name             Compatibility         "Authors": Description
@@ -136,11 +136,10 @@ Examples
     # ...
 
 4. Search for `libraries by "web" and "http" keywords <http://platformio.ikravets.com/#!/lib/search?query=keyword%253A%2522web%2522%2520keyword%253A%2522http%2522&page=1>`_.
-   The ``""`` here is for "empty" query argument
 
 .. code-block:: bash
 
-    $ platformio lib search "" --keyword="web" --keyword="http"
+    $ platformio lib search --keyword="web" --keyword="http"
     # Found N libraries:
     #
     # [ ID  ] Name             Compatibility         "Authors": Description
@@ -153,7 +152,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio lib search "" --author="Adafruit Industries"
+    $ platformio lib search --author="Adafruit Industries"
     # Found N libraries:
     #
     # [ ID  ] Name             Compatibility         "Authors": Description

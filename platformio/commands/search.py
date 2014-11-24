@@ -7,7 +7,7 @@ from platformio.platforms.base import PlatformFactory
 
 
 @command("search", short_help="Search for development platforms")
-@argument("query")
+@argument("query", required=False)
 def cli(query):
     for platform in PlatformFactory.get_platforms().keys():
         p = PlatformFactory().newPlatform(platform)

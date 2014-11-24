@@ -46,8 +46,11 @@ def cli():
 @click.option("-k", "--keyword", multiple=True)
 @click.option("-f", "--framework", multiple=True)
 @click.option("-p", "--platform", multiple=True)
-@click.argument("query")
+@click.argument("query", required=False)
 def lib_search(query, **filters):
+    if not query:
+        query = ""
+
     for key, values in filters.iteritems():
         for value in values:
             query += ' %s:"%s"' % (key, value)
