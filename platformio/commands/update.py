@@ -11,7 +11,7 @@ def cli():
 
     installed_platforms = PlatformFactory.get_platforms(
         installed=True).keys()
-    installed_platforms = sorted(installed_platforms)
+    installed_platforms.sort()
 
     for platform in installed_platforms:
         echo("\nPlatform %s" % style(platform, fg="cyan"))

@@ -191,13 +191,7 @@ def lib_show(libid):
 @click.pass_context
 def lib_update(ctx):
     lm = LibraryManager(get_lib_dir())
-
-    lib_ids = [str(item['id']) for item in lm.get_installed().values()]
-    if not lib_ids:
-        return
-
-    versions = get_api_result("/lib/version/" + str(",".join(lib_ids)))
-    for id_ in lib_ids:
+    for id_, latest_version in (lm.get_latest_versions() or {}).items():
         info = lm.get_info(int(id_))
 
         click.echo("Updating  [ %s ] %s library:" % (
@@ -205,8 +199,6 @@ def lib_update(ctx):
             click.style(info['name'], fg="cyan")))
 
         current_version = info['version']
-        latest_version = versions[id_]
-
         if latest_version is None:
             click.secho("Unknown library", fg="red")
             continue

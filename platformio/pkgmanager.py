@@ -19,21 +19,19 @@ from platformio.util import get_api_result, get_home_dir, get_systype
 
 class PackageManager(object):
 
-    DBFILE_PATH = join(get_home_dir(), "installed.json")
-
     def __init__(self):
         self._package_dir = join(get_home_dir(), "packages")
         if not isdir(self._package_dir):
             makedirs(self._package_dir)
         assert isdir(self._package_dir)
 
-    @staticmethod
-    def get_manifest():
+    @classmethod
+    def get_manifest(cls):
         try:
-            return PackageManager._cached_manifest
+            return cls._cached_manifest
         except AttributeError:
-            PackageManager._cached_manifest = get_api_result("/packages")
-        return PackageManager._cached_manifest
+            cls._cached_manifest = get_api_result("/packages")
+        return cls._cached_manifest
 
     @staticmethod
     def download(url, dest_dir, sha1=None):
@@ -144,11 +142,11 @@ class PackageManager(object):
         data = self.get_installed()
         data[name] = {
             "version": version,
-            "time": time()
+            "time": int(time())
         }
-        self.update_appstate_instpkgs(data)
+        set_state_item("installed_packages", data)
 
     def _unregister(self, name):
         data = self.get_installed()
         del data[name]
-        self.update_appstate_instpkgs(data)
+        set_state_item("installed_packages", data)

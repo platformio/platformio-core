@@ -4,6 +4,8 @@ Release History
 0.9.0 (?)
 ---------
 
+* Added *Migration Manager* which simplifies process with upgrading to a
+  major release
 * Added *Telemetry Service* which should help us make *PlatformIO* better
 * Implemented *PlatformIO AppState Manager* which allow to have multiple
   ``.platformio`` states.
@@ -59,11 +61,11 @@ Release History
 * Added auto-conversation from \*.ino to valid \*.cpp for Arduino/Energia
   frameworks (`issue #7 <https://github.com/ivankravets/platformio/issues/7>`_)
 * Added `Arduino example <https://github.com/ivankravets/platformio/tree/develop/examples/arduino-adafruit-library>`_
-  with external library (Adafruit CC3000)
+  with external library (*Adafruit CC3000*)
 * Implemented `platformio upgrade <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_upgrade.html>`_
   command and "auto-check" for the latest
   version (`issue #8 <https://github.com/ivankravets/platformio/issues/8>`_)
-* Fixed an issue with "auto-reset" for Raspduino board
+* Fixed an issue with "auto-reset" for *Raspduino* board
 * Fixed a bug with nested libs building
 
 0.4.0 (2014-07-31)

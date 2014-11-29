@@ -1,21 +1,19 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import listdir, makedirs
-from os.path import getmtime, isdir, isfile, join
+from os import listdir
+from os.path import join
 from sys import exit as sys_exit
-from time import time
 from traceback import format_exc
 
-from click import command, MultiCommand, secho, version_option
+import click
 
-from platformio import __version__
-from platformio.commands.upgrade import get_latest_version
+from platformio import __version__, maintenance
 from platformio.exception import PlatformioException, UnknownCLICommand
-from platformio.util import get_home_dir, get_source_dir
+from platformio.util import get_source_dir
 
 
-class PlatformioCLI(MultiCommand):  # pylint: disable=R0904
+class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
 
     def list_commands(self, ctx):
         cmds = []
@@ -28,6 +26,7 @@ class PlatformioCLI(MultiCommand):  # pylint: disable=R0904
         return cmds
 
     def get_command(self, ctx, name):
+        mod = None
         try:
             mod = __import__("platformio.commands." + name,
                              None, None, ["cli"])
@@ -36,35 +35,27 @@ class PlatformioCLI(MultiCommand):  # pylint: disable=R0904
         return mod.cli
 
 
-@command(cls=PlatformioCLI)
-@version_option(__version__, prog_name="PlatformIO")
-def cli():
-    pass
+@click.command(cls=PlatformioCLI)
+@click.version_option(__version__, prog_name="PlatformIO")
+@click.pass_context
+def cli(ctx):
+    maintenance.on_platformio_start(ctx)
 
 
-def autocheck_latest_version():
-    check_interval = 3600 * 24 * 7  # 1 week
-    checkfile = join(get_home_dir(), ".pioupgrade")
-    if isfile(checkfile) and getmtime(checkfile) > (time() - check_interval):
-        return False
-    if not isdir(get_home_dir()):
-        makedirs(get_home_dir())
-    with open(checkfile, "w") as f:
-        f.write(str(time()))
-    return get_latest_version() != __version__
+@cli.resultcallback()
+@click.pass_context
+def process_result(ctx, result):
+    maintenance.on_platformio_end(ctx, result)
 
 
 def main():
     try:
-        if autocheck_latest_version():
-            secho("\nThere is a new version of PlatformIO available.\n"
-                  "Please upgrade it via `platformio upgrade` command.\n",
-                  fg="yellow")
-
-        cli()
+        cli(None)
     except Exception as e:  # pylint: disable=W0703
+        maintenance.on_platformio_exception(e)
         if isinstance(e, PlatformioException):
-            sys_exit("Error: " + str(e))
+            click.echo("Error: " + str(e))
+            sys_exit(1)
         else:
             print format_exc()
 

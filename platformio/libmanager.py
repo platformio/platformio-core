@@ -45,6 +45,20 @@ class LibraryManager(object):
                 items[dirname] = json.load(f)
         return items
 
+    def get_latest_versions(self):
+        lib_ids = [str(item['id']) for item in self.get_installed().values()]
+        if not lib_ids:
+            return None
+        return get_api_result("/lib/version/" + str(",".join(lib_ids)))
+
+    def get_outdated(self):
+        outdated = []
+        for id_, latest_version in (self.get_latest_versions() or {}).items():
+            info = self.get_info(int(id_))
+            if latest_version != info['version']:
+                outdated.append(info['name'])
+        return outdated
+
     def get_info(self, id_):
         for item in self.get_installed().values():
             if "id" in item and item['id'] == id_:

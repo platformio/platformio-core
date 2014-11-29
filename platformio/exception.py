@@ -139,3 +139,8 @@ class InvalidSettingName(PlatformioException):
 class InvalidSettingValue(PlatformioException):
 
     MESSAGE = "Invalid value '%s' for the setting '%s'"
+
+
+class UpgraderFailed(PlatformioException):
+
+    MESSAGE = "An error occurred while upgrading PlatformIO"
