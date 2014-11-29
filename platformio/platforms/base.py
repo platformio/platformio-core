@@ -3,13 +3,13 @@
 
 from imp import load_source
 from os import listdir
-from os.path import isfile, join
+from os.path import isdir, isfile, join
 
+from platformio.app import get_state_item, set_state_item
 from platformio.exception import (BuildScriptNotFound, PlatformNotInstalledYet,
                                   UnknownPackage, UnknownPlatform)
 from platformio.pkgmanager import PackageManager
-from platformio.util import (AppState, exec_command, get_home_dir,
-                             get_source_dir)
+from platformio.util import exec_command, get_home_dir, get_source_dir
 
 
 class PlatformFactory(object):
@@ -17,36 +17,6 @@ class PlatformFactory(object):
     @staticmethod
     def get_clsname(name):
         return "%sPlatform" % name.title()
-
-    @staticmethod
-    def get_platforms(installed=False):
-        platforms = {}
-        for d in (get_home_dir(), get_source_dir()):
-            pdir = join(d, "platforms")
-            for p in listdir(pdir):
-                if p in ("__init__.py", "base.py") or not p.endswith(".py"):
-                    continue
-                name = p[:-3]
-                path = join(pdir, p)
-                try:
-                    isplatform = hasattr(
-                        PlatformFactory.load_module(name, path),
-                        PlatformFactory.get_clsname(name)
-                    )
-                    if isplatform:
-                        platforms[name] = path
-                except UnknownPlatform:
-                    pass
-
-        if not installed:
-            return platforms
-
-        installed_platforms = {}
-        with AppState() as state:
-            for name in state.get("installed_platforms", []):
-                if name in platforms:
-                    installed_platforms[name] = platforms[name]
-        return installed_platforms
 
     @staticmethod
     def load_module(name, path):
@@ -58,15 +28,46 @@ class PlatformFactory(object):
             raise UnknownPlatform(name)
         return module
 
-    @staticmethod
-    def newPlatform(name):
-        platforms = PlatformFactory.get_platforms()
+    @classmethod
+    def get_platforms(cls, installed=False):
+        platforms = {}
+        for d in (get_home_dir(), get_source_dir()):
+            pdir = join(d, "platforms")
+            if not isdir(pdir):
+                continue
+            for p in listdir(pdir):
+                if p in ("__init__.py", "base.py") or not p.endswith(".py"):
+                    continue
+                name = p[:-3]
+                path = join(pdir, p)
+                try:
+                    isplatform = hasattr(
+                        cls.load_module(name, path),
+                        cls.get_clsname(name)
+                    )
+                    if isplatform:
+                        platforms[name] = path
+                except UnknownPlatform:
+                    pass
+
+        if not installed:
+            return platforms
+
+        installed_platforms = {}
+        for name in get_state_item("installed_platforms", []):
+            if name in platforms:
+                installed_platforms[name] = platforms[name]
+        return installed_platforms
+
+    @classmethod
+    def newPlatform(cls, name):
+        platforms = cls.get_platforms()
         if name not in platforms:
             raise UnknownPlatform(name)
 
         _instance = getattr(
-            PlatformFactory.load_module(name, platforms[name]),
-            PlatformFactory.get_clsname(name)
+            cls.load_module(name, platforms[name]),
+            cls.get_clsname(name)
         )()
         assert isinstance(_instance, BasePlatform)
         return _instance
@@ -137,11 +138,10 @@ class BasePlatform(object):
             pm.install(name)
 
         # register installed platform
-        with AppState() as state:
-            data = state.get("installed_platforms", [])
-            if self.get_name() not in data:
-                data.append(self.get_name())
-                state['installed_platforms'] = data
+        data = get_state_item("installed_platforms", [])
+        if self.get_name() not in data:
+            data.append(self.get_name())
+            set_state_item("installed_platforms", data)
 
         return len(requirements)
 
@@ -167,9 +167,8 @@ class BasePlatform(object):
             pm.uninstall(name)
 
         # unregister installed platform
-        with AppState() as state:
-            installed_platforms.remove(platform)
-            state['installed_platforms'] = installed_platforms
+        installed_platforms.remove(platform)
+        set_state_item("installed_platforms", installed_platforms)
 
         return True
 
@@ -177,6 +176,11 @@ class BasePlatform(object):
         pm = PackageManager()
         for name in self.get_installed_packages():
             pm.update(name)
+
+    def is_outdated(self):
+        pm = PackageManager()
+        obsolated = pm.get_outdated()
+        return not set(self.get_packages().keys()).isdisjoint(set(obsolated))
 
     def run(self, variables, targets):
         assert isinstance(variables, list)

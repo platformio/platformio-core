@@ -8,11 +8,13 @@ from time import time
 
 from click import echo, secho, style
 
+from platformio import telemetry
+from platformio.app import get_state_item, set_state_item
 from platformio.downloader import FileDownloader
 from platformio.exception import (InvalidPackageVersion, NonSystemPackage,
                                   UnknownPackage)
 from platformio.unpacker import FileUnpacker
-from platformio.util import AppState, get_api_result, get_home_dir, get_systype
+from platformio.util import get_api_result, get_home_dir, get_systype
 
 
 class PackageManager(object):
@@ -47,15 +49,14 @@ class PackageManager(object):
 
     @staticmethod
     def get_installed():
-        pkgs = {}
-        with AppState() as state:
-            pkgs = state.get("installed_packages", {})
-        return pkgs
+        return get_state_item("installed_packages", {})
 
-    @staticmethod
-    def update_appstate_instpkgs(data):
-        with AppState() as state:
-            state['installed_packages'] = data
+    def get_outdated(self):
+        outdated = []
+        for name, data in self.get_installed().items():
+            if data['version'] != self.get_info(name)['version']:
+                outdated.append(name)
+        return outdated
 
     def is_installed(self, name):
         return name in self.get_installed()

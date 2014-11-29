@@ -1,7 +1,6 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-import json
 from os import name as os_name
 from os import getcwd, getenv, makedirs, utime
 from os.path import dirname, expanduser, isdir, isfile, join, realpath
@@ -20,28 +19,6 @@ try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
-
-
-class AppState(object):
-
-    def __init__(self, path=None):
-        self.path = path
-        if not self.path:
-            self.path = join(get_home_dir(), "appstate.json")
-        self._state = {}
-
-    def __enter__(self):
-        try:
-            if isfile(self.path):
-                with open(self.path, "r") as fp:
-                    self._state = json.load(fp)
-        except ValueError:
-            self._state = {}
-        return self._state
-
-    def __exit__(self, type_, value, traceback):
-        with open(self.path, "w") as fp:
-            json.dump(self._state, fp, indent=4)
 
 
 def get_systype():

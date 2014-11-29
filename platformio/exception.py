@@ -129,3 +129,13 @@ class LibInstallDependencyError(PlatformioException):
 class BuildScriptNotFound(PlatformioException):
 
     MESSAGE = "Invalid path '%s' to build script"
+
+
+class InvalidSettingName(PlatformioException):
+
+    MESSAGE = "Invalid setting with the name '%s'"
+
+
+class InvalidSettingValue(PlatformioException):
+
+    MESSAGE = "Invalid value '%s' for the setting '%s'"
