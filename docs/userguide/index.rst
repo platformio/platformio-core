@@ -21,6 +21,7 @@ To print all available commands and options use:
     cmd_run
     cmd_search
     cmd_serialports
+    cmd_settings
     cmd_show
     cmd_uninstall
     cmd_update

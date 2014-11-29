@@ -4,6 +4,7 @@ Release History
 0.9.0 (?)
 ---------
 
+* Implemented `platformio settings <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_settings.html>`_ command
 * Added *Migration Manager* which simplifies process with upgrading to a
   major release
 * Added *Telemetry Service* which should help us make *PlatformIO* better
