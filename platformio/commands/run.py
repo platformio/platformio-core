@@ -3,6 +3,7 @@
 
 from click import command, echo, option, secho, style
 
+from platformio import telemetry
 from platformio.exception import (InvalidEnvName, ProjectEnvsNotAvaialable,
                                   UndefinedEnvPlatform, UnknownEnvNames)
 from platformio.platforms.base import PlatformFactory
@@ -37,6 +38,8 @@ def cli(environment, target, upload_port):
             continue
 
         echo("Processing %s environment:" % style(envname, fg="cyan"))
+
+        telemetry.on_run_environment(envname, config.items(section))
 
         variables = ["PIOENV=" + envname]
         if upload_port:

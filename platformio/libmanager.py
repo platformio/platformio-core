@@ -8,6 +8,7 @@ from os.path import isdir, isfile, join
 from shutil import rmtree
 from tempfile import gettempdir
 
+from platformio import telemetry
 from platformio.downloader import FileDownloader
 from platformio.exception import LibAlreadyInstalledError, LibNotInstalledError
 from platformio.unpacker import FileUnpacker
@@ -76,11 +77,21 @@ class LibraryManager(object):
         info = self.get_info(id_)
         rename(tmplib_dir, join(self.lib_dir, "%s_ID%d" % (
             re.sub(r"[^\da-z]+", "_", info['name'], flags=re.I), id_)))
+
+        telemetry.on_event(
+            category="LibraryManager", action="Install",
+            label="#%d %s" % (id_, info['name'])
+        )
+
         return True
 
     def uninstall(self, id_):
         for libdir, item in self.get_installed().iteritems():
             if "id" in item and item['id'] == id_:
                 rmtree(join(self.lib_dir, libdir))
+                telemetry.on_event(
+                    category="LibraryManager", action="Uninstall",
+                    label="#%d %s" % (id_, item['name'])
+                )
                 return True
         raise LibNotInstalledError(id_)

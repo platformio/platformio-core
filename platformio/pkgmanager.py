@@ -99,6 +99,9 @@ class PackageManager(object):
         # remove archive
         remove(dlpath)
 
+        telemetry.on_event(
+            category="PackageManager", action="Install", label=name)
+
     def uninstall(self, name):
         echo("Uninstalling %s package: \t" % style(name, fg="cyan"),
              nl=False)
@@ -110,6 +113,10 @@ class PackageManager(object):
         rmtree(join(self._package_dir, name))
         self._unregister(name)
         echo("[%s]" % style("OK", fg="green"))
+
+        # report usage
+        telemetry.on_event(
+            category="PackageManager", action="Uninstall", label=name)
 
     def update(self, name):
         echo("Updating %s package:" % style(name, fg="yellow"))
@@ -129,6 +136,9 @@ class PackageManager(object):
 
         self.uninstall(name)
         self.install(name)
+
+        telemetry.on_event(
+            category="PackageManager", action="Update", label=name)
 
     def _register(self, name, version):
         data = self.get_installed()
