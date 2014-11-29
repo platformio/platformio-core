@@ -21,6 +21,11 @@ Install new development platform
 
 .. code-block:: bash
 
+Does not work for Mac OS X 10.6.8; returns
+$ ./platformio install atmelavr
+Installing toolchain-atmelavr package:
+Error: The package 'toolchain-atmelavr' is not available for your system 'darwin_i386'
+
     $ platformio install PLATFORM
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
