@@ -5,6 +5,9 @@ Release History
 ---------
 
 * Implemented `platformio settings <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_settings.html>`_ command
+* Improved `platformio init <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_init.html>`_ command.
+  Added new option ``--project-dir`` where you can specify another path to
+  directory where new project will be initialized (`issue #31 <https://github.com/ivankravets/platformio/issues/31>`_)
 * Added *Migration Manager* which simplifies process with upgrading to a
   major release
 * Added *Telemetry Service* which should help us make *PlatformIO* better
