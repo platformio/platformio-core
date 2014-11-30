@@ -134,10 +134,10 @@ def on_command(ctx):  # pylint: disable=W0613
         resend_backuped_reports()
 
 
-def on_run_environment(name, options):  # pylint: disable=W0613
-    # on_event("RunEnv", "Name", name)
-    for opt, value in options:
-        on_event("RunEnv", opt.title(), value)
+def on_run_environment(options, targets):
+    opts = ["%s=%s" % (opt, value) for opt, value in sorted(options)]
+    targets = [t.title() for t in targets or ["run"]]
+    on_event("Env", " ".join(targets), " ".join(opts))
 
 
 def on_event(category, action, label=None, value=None, screen_name=None):

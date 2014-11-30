@@ -39,8 +39,6 @@ def cli(environment, target, upload_port):
 
         echo("Processing %s environment:" % style(envname, fg="cyan"))
 
-        telemetry.on_run_environment(envname, config.items(section))
-
         variables = ["PIOENV=" + envname]
         if upload_port:
             variables.append("UPLOAD_PORT=%s" % upload_port)
@@ -58,6 +56,8 @@ def cli(environment, target, upload_port):
 
         if not config.has_option(section, "platform"):
             raise UndefinedEnvPlatform(envname)
+
+        telemetry.on_run_environment(config.items(section), envtargets)
 
         p = PlatformFactory().newPlatform(config.get(section, "platform"))
         result = p.run(variables, envtargets)
