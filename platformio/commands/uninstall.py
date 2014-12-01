@@ -3,8 +3,6 @@
 
 from click import argument, command, secho
 
-from platformio.exception import PlatformNotInstalledYet
-from platformio.pkgmanager import PackageManager
 from platformio.platforms.base import PlatformFactory
 
 
@@ -13,10 +11,6 @@ from platformio.platforms.base import PlatformFactory
 def cli(platforms):
 
     for platform in platforms:
-
-        if platform not in PackageManager.get_installed():
-            raise PlatformNotInstalledYet(platform)
-
         p = PlatformFactory().newPlatform(platform)
         if p.uninstall():
             secho("The platform '%s' has been successfully "

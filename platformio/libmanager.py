@@ -8,6 +8,7 @@ from os.path import isdir, isfile, join
 from shutil import rmtree
 from tempfile import gettempdir
 
+from platformio import telemetry
 from platformio.downloader import FileDownloader
 from platformio.exception import LibAlreadyInstalledError, LibNotInstalledError
 from platformio.unpacker import FileUnpacker
@@ -44,6 +45,20 @@ class LibraryManager(object):
                 items[dirname] = json.load(f)
         return items
 
+    def get_latest_versions(self):
+        lib_ids = [str(item['id']) for item in self.get_installed().values()]
+        if not lib_ids:
+            return None
+        return get_api_result("/lib/version/" + str(",".join(lib_ids)))
+
+    def get_outdated(self):
+        outdated = []
+        for id_, latest_version in (self.get_latest_versions() or {}).items():
+            info = self.get_info(int(id_))
+            if latest_version != info['version']:
+                outdated.append(info['name'])
+        return outdated
+
     def get_info(self, id_):
         for item in self.get_installed().values():
             if "id" in item and item['id'] == id_:
@@ -76,11 +91,21 @@ class LibraryManager(object):
         info = self.get_info(id_)
         rename(tmplib_dir, join(self.lib_dir, "%s_ID%d" % (
             re.sub(r"[^\da-z]+", "_", info['name'], flags=re.I), id_)))
+
+        telemetry.on_event(
+            category="LibraryManager", action="Install",
+            label="#%d %s" % (id_, info['name'])
+        )
+
         return True
 
     def uninstall(self, id_):
         for libdir, item in self.get_installed().iteritems():
             if "id" in item and item['id'] == id_:
                 rmtree(join(self.lib_dir, libdir))
+                telemetry.on_event(
+                    category="LibraryManager", action="Uninstall",
+                    label="#%d %s" % (id_, item['name'])
+                )
                 return True
         raise LibNotInstalledError(id_)

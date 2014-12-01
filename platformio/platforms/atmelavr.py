@@ -1,8 +1,6 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os.path import join
-
 from platformio.platforms.base import BasePlatform
 
 
@@ -15,25 +13,20 @@ class AtmelavrPlatform(BasePlatform):
     PACKAGES = {
 
         "toolchain-atmelavr": {
-            "path": join("tools", "toolchain"),
             "alias": "toolchain",
             "default": True
         },
 
         "tool-avrdude": {
-            "path": join("tools", "avrdude"),
             "alias": "uploader",
             "default": True
         },
 
         "framework-arduinoavr": {
-            "path": join("frameworks", "arduino"),
+            "alias": "framework",
             "default": True
         }
     }
-
-    def get_name(self):
-        return "atmelavr"
 
     def after_run(self, result):
         # fix STDERR "flash written" for avrdude

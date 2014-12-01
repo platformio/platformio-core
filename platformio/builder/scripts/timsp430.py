@@ -51,7 +51,7 @@ env.Replace(
         "-Wl,-gc-sections,-u,main"
     ],
 
-    UPLOADER=join("$PLATFORMTOOLS_DIR", "mspdebug", "mspdebug"),
+    UPLOADER=join("$PIOPACKAGES_DIR", "tool-mspdebug", "mspdebug"),
     UPLOADERFLAGS=[
         "$UPLOAD_PROTOCOL" if system() != "Windows" else "tilib",
         "--force-reset"

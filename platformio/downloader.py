@@ -67,17 +67,17 @@ class FileDownloader(object):
 
         dlsha1 = None
         try:
-            res = check_output(["sha1sum", self._destination])
-            dlsha1 = res[:40]
+            dlsha1 = check_output(["sha1sum", self._destination])
         except OSError:
             try:
-                res = check_output(["shasum", "-a", "1", self._destination])
-                dlsha1 = res[:40]
+                dlsha1 = check_output(["shasum", "-a", "1", self._destination])
             except OSError:
                 pass
 
-        if dlsha1 and sha1 != dlsha1:
-            raise FDSHASumMismatch(dlsha1, self._fname, sha1)
+        if dlsha1:
+            dlsha1 = dlsha1[1:41] if dlsha1.startswith("\\") else dlsha1[:40]
+            if sha1 != dlsha1:
+                raise FDSHASumMismatch(dlsha1, self._fname, sha1)
 
     def _preserve_filemtime(self, lmdate):
         timedata = parsedate_tz(lmdate)

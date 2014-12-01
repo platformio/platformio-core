@@ -246,10 +246,6 @@ Examples
     framework = arduino
     board = uno
 
-    upload_port = /dev/ttyUSB0
-    # for Windows OS
-    # upload_port = COM3
-
     # enable auto-uploading
     targets = upload
 
@@ -264,10 +260,6 @@ Examples
     platform = atmelavr
     framework = arduino
     board = 168pa8m
-
-    upload_port = /dev/ttyUSB0
-    # for Windows OS
-    # upload_port = COM3
 
     # enable auto-uploading
     targets = upload

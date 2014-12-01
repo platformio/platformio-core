@@ -53,13 +53,13 @@ env.Replace(
         "-mmcu=$BOARD_MCU"
     ],
 
-    UPLOADER=join("$PLATFORMTOOLS_DIR", "avrdude", "avrdude"),
+    UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
     UPLOADERFLAGS=[
         "-V",  # do not verify
         "-q",  # suppress progress output
         "-D",  # disable auto erase for flash memory
         "-p", "$BOARD_MCU",
-        "-C", join("$PLATFORMTOOLS_DIR", "avrdude", "avrdude.conf"),
+        "-C", join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude.conf"),
         "-c", "$UPLOAD_PROTOCOL",
         "-b", "$UPLOAD_SPEED",
         "-P", "$UPLOAD_PORT"

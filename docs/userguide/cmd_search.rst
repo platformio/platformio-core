@@ -11,7 +11,7 @@ Usage
 .. code-block:: bash
 
     # Print all available development platforms
-    platformio search all
+    platformio search
 
     # Filter platforms by "Query"
     platformio search QUERY

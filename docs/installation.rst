@@ -3,31 +3,51 @@
 Installation
 ============
 
-*PlatformIO* is written in `Python <https://www.python.org>`_ and works with
-versions 2.6 and 2.7 on Unix/Linux, OS X, Windows and Credit-card ARM-based
-computers (Raspberry Pi).
+*PlatformIO* is written in `Python <http://python.org/download/>`_ and works
+on *Mac OS X*, *Linux*, *Windows OS* and Credit-card *ARM*-based
+computers (*Raspberry Pi*).
+
+System requirements
+-------------------
+
+* **Operating systems:**
+    * Mac OS X
+    * Linux
+    * Windows
+* `Python 2.6 or Python 2.7 <http://python.org/download/>`_
 
 All commands below should be executed in
 `Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_
-application in your *OS*:
+application:
 
-* *Unix/Linux/OS X* this is *Terminal* application.
+* *Mac OS X / Linux* this is *Terminal* application.
 * *Windows* this is
   `Command Prompt <http://en.wikipedia.org/wiki/Command_Prompt>`_ (``cmd.exe``)
   application.
 
+Please *choose one of* the following:
 
-Super-Quick
------------
+Super-Quick (Mac / Linux)
+-------------------------
 
-To install or upgrade *PlatformIO*, download
-`get-platformio.py <https://raw.githubusercontent.com/ivankravets/platformio/develop/scripts/get-platformio.py>`_ script.
-
-Then run the following (which may require administrator access):
+To install or upgrade *PlatformIO* paste that at a *Terminal* prompt
+(you might need to run ``sudo`` first):
 
 .. code-block:: bash
 
-    $ [sudo] python get-platformio.py
+    python -c "$(curl -fsSL https://raw.githubusercontent.com/ivankravets/platformio/master/scripts/get-platformio.py)"
+
+
+Installer Script (Mac / Linux / Windows)
+----------------------------------------
+
+To install or upgrade *PlatformIO*, download
+`get-platformio.py <https://raw.githubusercontent.com/ivankravets/platformio/develop/scripts/get-platformio.py>`_
+script. Then run the following (you might need to run ``sudo`` first):
+
+.. code-block:: bash
+
+    python get-platformio.py
 
 
 On *Windows OS* it may look like:

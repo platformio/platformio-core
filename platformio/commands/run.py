@@ -3,6 +3,7 @@
 
 from click import command, echo, option, secho, style
 
+from platformio import telemetry
 from platformio.exception import (InvalidEnvName, ProjectEnvsNotAvaialable,
                                   UndefinedEnvPlatform, UnknownEnvNames)
 from platformio.platforms.base import PlatformFactory
@@ -55,6 +56,8 @@ def cli(environment, target, upload_port):
 
         if not config.has_option(section, "platform"):
             raise UndefinedEnvPlatform(envname)
+
+        telemetry.on_run_environment(config.items(section), envtargets)
 
         p = PlatformFactory().newPlatform(config.get(section, "platform"))
         result = p.run(variables, envtargets)

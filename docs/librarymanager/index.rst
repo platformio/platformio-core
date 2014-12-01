@@ -5,11 +5,11 @@ Library Manager
 
 ..
 
-    *"A missing library manager for embedded platforms (Atmel AVR, MSP430 and ARM)"* [#]_
+    *"The missing library manager for development platforms"* [#]_
 
 *PlatformIO Library Manager* allows you to organize external embedded libraries.
-You can search for new libraries via :ref:`Command Line <cmd_lib_search>`
-or `WebSite <http://platformio.ikravets.com/#!/lib>`_ interfaces.
+You can search for new libraries via :ref:`Command Line interface <cmd_lib_search>`
+or `Web 2.0 Library Search <http://platformio.ikravets.com/#!/lib>`_.
 
 You don't need to bother for finding the latest version of library. Due to
 :ref:`cmd_lib_update` command you will have up-to-date external libraries.
@@ -17,8 +17,9 @@ You don't need to bother for finding the latest version of library. Due to
 .. toctree::
     :maxdepth: 2
 
-    creating
     config
+    creating
+    User Guide <../userguide/lib/index.rst>
 
 .. [#] Inspired by `npm <https://www.npmjs.org>`_ and `bower
     <http://bower.io>`_ package managers for web.

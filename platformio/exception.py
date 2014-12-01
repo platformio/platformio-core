@@ -124,3 +124,23 @@ class LibNotInstalledError(PlatformioException):
 class LibInstallDependencyError(PlatformioException):
 
     MESSAGE = "Error has been occurred for library dependency '%s'"
+
+
+class BuildScriptNotFound(PlatformioException):
+
+    MESSAGE = "Invalid path '%s' to build script"
+
+
+class InvalidSettingName(PlatformioException):
+
+    MESSAGE = "Invalid setting with the name '%s'"
+
+
+class InvalidSettingValue(PlatformioException):
+
+    MESSAGE = "Invalid value '%s' for the setting '%s'"
+
+
+class UpgraderFailed(PlatformioException):
+
+    MESSAGE = "An error occurred while upgrading PlatformIO"

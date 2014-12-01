@@ -2,15 +2,13 @@
 # See LICENSE for details.
 
 from os import name as os_name
-from os import getcwd, getenv, listdir, utime
-from os.path import dirname, expanduser, isfile, join, realpath
+from os import getcwd, getenv, makedirs, utime
+from os.path import dirname, expanduser, isdir, isfile, join, realpath
 from platform import system, uname
 from subprocess import PIPE, Popen
 from time import sleep
 
-from requests import get, post
-from requests.exceptions import ConnectionError, HTTPError
-from requests.utils import default_user_agent
+import requests
 from serial import Serial
 
 from platformio import __apiurl__, __version__
@@ -31,14 +29,24 @@ def get_systype():
 
 
 def get_home_dir():
+    home_dir = None
+
     try:
         config = get_project_config()
         if (config.has_section("platformio") and
                 config.has_option("platformio", "home_dir")):
-            return config.get("platformio", "home_dir")
+            home_dir = config.get("platformio", "home_dir")
     except NotPlatformProject:
         pass
-    return expanduser("~/.platformio")
+
+    if not home_dir:
+        home_dir = expanduser("~/.platformio")
+
+    if not isdir(home_dir):
+        makedirs(home_dir)
+
+    assert isdir(home_dir)
+    return home_dir
 
 
 def get_lib_dir():
@@ -77,15 +85,6 @@ def get_project_config():
     return cp
 
 
-def get_platforms():
-    platforms = []
-    for p in listdir(join(get_source_dir(), "platforms")):
-        if p in ("__init__.py", "base.py") or not p.endswith(".py"):
-            continue
-        platforms.append(p[:-3])
-    return platforms
-
-
 def change_filemtime(path, time):
     utime(path, (time, time))
 
@@ -121,22 +120,29 @@ def get_serialports():
 def get_api_result(path, params=None, data=None):
     result = None
     r = None
+
     try:
         headers = {"User-Agent": "PlatformIO/%s %s" % (
-            __version__, default_user_agent())}
-        if data:
-            r = post(__apiurl__ + path, params=params, data=data,
-                     headers=headers)
+            __version__, requests.utils.default_user_agent())}
+        # if packages - redirect to SF
+        if path == "/packages":
+            r = requests.get(
+                "https://sourceforge.net/projects/platformio-storage/files/"
+                "packages/manifest.json/download",
+                params=params, headers=headers)
+        elif data:
+            r = requests.post(__apiurl__ + path, params=params, data=data,
+                              headers=headers)
         else:
-            r = get(__apiurl__ + path, params=params, headers=headers)
+            r = requests.get(__apiurl__ + path, params=params, headers=headers)
         result = r.json()
         r.raise_for_status()
-    except HTTPError as e:
+    except requests.exceptions.HTTPError as e:
         if result and "errors" in result:
             raise APIRequestError(result['errors'][0]['title'])
         else:
             raise APIRequestError(e)
-    except ConnectionError:
+    except requests.exceptions.ConnectionError:
         raise APIRequestError(
             "Could not connect to PlatformIO Registry Service")
     except ValueError:

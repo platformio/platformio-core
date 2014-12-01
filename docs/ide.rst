@@ -6,19 +6,32 @@ IDE Integration
 Arduino IDE
 -----------
 
-`Integration of PlatformIO library manager to Arduino IDE <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
+.. image:: _static/ide-platformio-arduino.png
+    :target: http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides
+
+* `Integration of PlatformIO library manager to Arduino IDE <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
 
 Eclipse
 -------
-`Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
+
+
+.. image:: _static/ide-platformio-eclipse.png
+    :target: http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio
+
+* `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
 
 Energia IDE
 -----------
 
-`Integration of PlatformIO library manager to Energia IDE <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
+.. image:: _static/ide-platformio-energia.png
+    :target: http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides
+
+* `Integration of PlatformIO library manager to Energia IDE <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
 
 VIM
 ---
+
+.. image:: _static/ide-platformio-vim.png
 
 Recommended bundles:
 

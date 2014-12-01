@@ -1,29 +1,76 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os.path import join
-from shutil import rmtree
+from imp import load_source
+from os import listdir
+from os.path import isdir, isfile, join
 
-from platformio.exception import UnknownPackage, UnknownPlatform
+from platformio.app import get_state_item, set_state_item
+from platformio.exception import (BuildScriptNotFound, PlatformNotInstalledYet,
+                                  UnknownPackage, UnknownPlatform)
 from platformio.pkgmanager import PackageManager
-from platformio.util import exec_command, get_platforms, get_source_dir
+from platformio.util import exec_command, get_home_dir, get_source_dir
 
 
 class PlatformFactory(object):
 
     @staticmethod
-    def newPlatform(name):
-        clsname = "%sPlatform" % name.title()
+    def get_clsname(name):
+        return "%sPlatform" % name.title()
+
+    @staticmethod
+    def load_module(name, path):
+        module = None
         try:
-            assert name in get_platforms()
-            mod = __import__("platformio.platforms." + name.lower(),
-                             None, None, [clsname])
-        except (AssertionError, ImportError):
+            module = load_source(
+                "platformio.platforms.%s" % name, path)
+        except ImportError:
+            raise UnknownPlatform(name)
+        return module
+
+    @classmethod
+    def get_platforms(cls, installed=False):
+        platforms = {}
+        for d in (get_home_dir(), get_source_dir()):
+            pdir = join(d, "platforms")
+            if not isdir(pdir):
+                continue
+            for p in listdir(pdir):
+                if p in ("__init__.py", "base.py") or not p.endswith(".py"):
+                    continue
+                name = p[:-3]
+                path = join(pdir, p)
+                try:
+                    isplatform = hasattr(
+                        cls.load_module(name, path),
+                        cls.get_clsname(name)
+                    )
+                    if isplatform:
+                        platforms[name] = path
+                except UnknownPlatform:
+                    pass
+
+        if not installed:
+            return platforms
+
+        installed_platforms = {}
+        for name in get_state_item("installed_platforms", []):
+            if name in platforms:
+                installed_platforms[name] = platforms[name]
+        return installed_platforms
+
+    @classmethod
+    def newPlatform(cls, name):
+        platforms = cls.get_platforms()
+        if name not in platforms:
             raise UnknownPlatform(name)
 
-        obj = getattr(mod, clsname)()
-        assert isinstance(obj, BasePlatform)
-        return obj
+        _instance = getattr(
+            cls.load_module(name, platforms[name]),
+            cls.get_clsname(name)
+        )()
+        assert isinstance(_instance, BasePlatform)
+        return _instance
 
 
 class BasePlatform(object):
@@ -31,6 +78,13 @@ class BasePlatform(object):
     PACKAGES = {}
 
     def get_name(self):
+        return self.__class__.__name__[:-8].lower()
+
+    def get_build_script(self):
+        builtin = join(get_source_dir(), "builder", "scripts", "%s.py" %
+                       self.get_name())
+        if isfile(builtin):
+            return builtin
         raise NotImplementedError()
 
     def get_short_info(self):
@@ -40,6 +94,9 @@ class BasePlatform(object):
         else:
             raise NotImplementedError()
 
+    def get_packages(self):
+        return self.PACKAGES
+
     def get_pkg_alias(self, pkgname):
         return self.PACKAGES[pkgname].get("alias", None)
 
@@ -47,61 +104,115 @@ class BasePlatform(object):
         names = []
         for alias in aliases:
             name = alias
-            # lookup by packages alias
-            if name not in self.PACKAGES:
-                for _name, _opts in self.PACKAGES.items():
-                    if _opts.get("alias", None) == alias:
-                        name = _name
-                        break
+            # lookup by package aliases
+            for _name, _opts in self.get_packages().items():
+                if _opts.get("alias", None) == alias:
+                    name = _name
+                    break
             names.append(name)
         return names
+
+    def get_installed_packages(self):
+        pm = PackageManager()
+        return [n for n in self.get_packages().keys() if pm.is_installed(n)]
 
     def install(self, with_packages, without_packages, skip_default_packages):
         with_packages = set(self.pkg_aliases_to_names(with_packages))
         without_packages = set(self.pkg_aliases_to_names(without_packages))
 
         upkgs = with_packages | without_packages
-        ppkgs = set(self.PACKAGES.keys())
+        ppkgs = set(self.get_packages().keys())
         if not upkgs.issubset(ppkgs):
             raise UnknownPackage(", ".join(upkgs - ppkgs))
 
         requirements = []
-        for name, opts in self.PACKAGES.items():
+        for name, opts in self.get_packages().items():
             if name in without_packages:
                 continue
             elif (name in with_packages or (not skip_default_packages and
                                             opts['default'])):
-                requirements.append((name, opts['path']))
+                requirements.append(name)
 
-        pm = PackageManager(self.get_name())
-        for (package, path) in requirements:
-            pm.install(package, path)
+        pm = PackageManager()
+        for name in requirements:
+            pm.install(name)
+
+        # register installed platform
+        data = get_state_item("installed_platforms", [])
+        if self.get_name() not in data:
+            data.append(self.get_name())
+            set_state_item("installed_platforms", data)
+
         return len(requirements)
 
     def uninstall(self):
         platform = self.get_name()
-        pm = PackageManager(platform)
+        installed_platforms = PlatformFactory.get_platforms(
+            installed=True).keys()
 
-        for package, data in pm.get_installed(platform).items():
-            pm.uninstall(package, data['path'])
+        if platform not in installed_platforms:
+            raise PlatformNotInstalledYet(platform)
 
-        pm.unregister_platform(platform)
-        rmtree(pm.get_platform_dir())
+        deppkgs = set()
+        for item in installed_platforms:
+            if item == platform:
+                continue
+            p = PlatformFactory().newPlatform(item)
+            deppkgs = deppkgs.union(set(p.get_packages().keys()))
+
+        pm = PackageManager()
+        for name in self.get_packages().keys():
+            if not pm.is_installed(name) or name in deppkgs:
+                continue
+            pm.uninstall(name)
+
+        # unregister installed platform
+        installed_platforms.remove(platform)
+        set_state_item("installed_platforms", installed_platforms)
+
         return True
 
     def update(self):
-        platform = self.get_name()
-        pm = PackageManager(platform)
-        for package in pm.get_installed(platform).keys():
-            pm.update(package)
+        pm = PackageManager()
+        for name in self.get_installed_packages():
+            pm.update(name)
+
+    def is_outdated(self):
+        pm = PackageManager()
+        obsolated = pm.get_outdated()
+        return not set(self.get_packages().keys()).isdisjoint(set(obsolated))
 
     def run(self, variables, targets):
         assert isinstance(variables, list)
         assert isinstance(targets, list)
 
+        installed_platforms = PlatformFactory.get_platforms(
+            installed=True).keys()
+        installed_packages = PackageManager.get_installed()
+
+        if self.get_name() not in installed_platforms:
+            raise PlatformNotInstalledYet(self.get_name())
+
         if "clean" in targets:
             targets.remove("clean")
             targets.append("-c")
+
+        if not any([v.startswith("BUILD_SCRIPT=") for v in variables]):
+            variables.append("BUILD_SCRIPT=%s" % self.get_build_script())
+
+        for v in variables:
+            if not v.startswith("BUILD_SCRIPT="):
+                continue
+            _, path = v.split("=", 2)
+            if not isfile(path):
+                raise BuildScriptNotFound(path)
+
+        # append aliases of installed packages
+        for name, options in self.get_packages().items():
+            if name not in installed_packages:
+                continue
+            variables.append(
+                "PIOPACKAGE_%s=%s" % (options['alias'].upper(), name))
 
         result = exec_command([
             "scons",

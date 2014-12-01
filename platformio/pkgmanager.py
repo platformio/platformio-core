@@ -1,40 +1,37 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-import json
 from os import makedirs, remove
-from os.path import isdir, isfile, join
+from os.path import isdir, join
 from shutil import rmtree
+from time import time
 
 from click import echo, secho, style
-from requests import get
-from requests.utils import default_user_agent
 
-from platformio import __pkgmanifesturl__, __version__
+from platformio import telemetry
+from platformio.app import get_state_item, set_state_item
 from platformio.downloader import FileDownloader
 from platformio.exception import (InvalidPackageVersion, NonSystemPackage,
                                   UnknownPackage)
 from platformio.unpacker import FileUnpacker
-from platformio.util import get_home_dir, get_systype
+from platformio.util import get_api_result, get_home_dir, get_systype
 
 
 class PackageManager(object):
 
-    DBFILE_PATH = join(get_home_dir(), "installed.json")
+    def __init__(self):
+        self._package_dir = join(get_home_dir(), "packages")
+        if not isdir(self._package_dir):
+            makedirs(self._package_dir)
+        assert isdir(self._package_dir)
 
-    def __init__(self, platform_name):
-        self._platform_name = platform_name
-
-    @staticmethod
-    def get_manifest():
+    @classmethod
+    def get_manifest(cls):
         try:
-            return PackageManager._cached_manifest
+            return cls._cached_manifest
         except AttributeError:
-            headers = {"User-Agent": "PlatformIO/%s %s" % (
-                __version__, default_user_agent())}
-            PackageManager._cached_manifest = get(__pkgmanifesturl__,
-                                                  headers=headers).json()
-        return PackageManager._cached_manifest
+            cls._cached_manifest = get_api_result("/packages")
+        return cls._cached_manifest
 
     @staticmethod
     def download(url, dest_dir, sha1=None):
@@ -49,20 +46,18 @@ class PackageManager(object):
         return fu.start()
 
     @staticmethod
-    def get_installed(platform=None):
-        data = {}
-        if isfile(PackageManager.DBFILE_PATH):
-            with open(PackageManager.DBFILE_PATH) as fp:
-                data = json.load(fp)
-        return data.get(platform, None) if platform else data
+    def get_installed():
+        return get_state_item("installed_packages", {})
 
-    def get_platform_dir(self):
-        return join(get_home_dir(), self._platform_name)
+    def get_outdated(self):
+        outdated = []
+        for name, data in self.get_installed().items():
+            if data['version'] != self.get_info(name)['version']:
+                outdated.append(name)
+        return outdated
 
     def is_installed(self, name):
-        installed = self.get_installed()
-        return (self._platform_name in installed and name in
-                installed[self._platform_name])
+        return name in self.get_installed()
 
     def get_info(self, name, version=None):
         manifest = self.get_manifest()
@@ -84,35 +79,47 @@ class PackageManager(object):
         else:
             return sorted(builds, key=lambda s: s['version'])[-1]
 
-    def install(self, name, path):
+    def install(self, name):
         echo("Installing %s package:" % style(name, fg="cyan"))
 
         if self.is_installed(name):
             secho("Already installed", fg="yellow")
-            return
+            return False
 
         info = self.get_info(name)
-        pkg_dir = join(self.get_platform_dir(), path)
+        pkg_dir = join(self._package_dir, name)
         if not isdir(pkg_dir):
             makedirs(pkg_dir)
 
         dlpath = self.download(info['url'], pkg_dir, info['sha1'])
         if self.unpack(dlpath, pkg_dir):
-            self._register(name, info['version'], path)
+            self._register(name, info['version'])
         # remove archive
         remove(dlpath)
 
-    def uninstall(self, name, path):
+        telemetry.on_event(
+            category="PackageManager", action="Install", label=name)
+
+    def uninstall(self, name):
         echo("Uninstalling %s package: \t" % style(name, fg="cyan"),
              nl=False)
-        rmtree(join(self.get_platform_dir(), path))
+
+        if not self.is_installed(name):
+            secho("Not installed", fg="yellow")
+            return False
+
+        rmtree(join(self._package_dir, name))
         self._unregister(name)
         echo("[%s]" % style("OK", fg="green"))
+
+        # report usage
+        telemetry.on_event(
+            category="PackageManager", action="Uninstall", label=name)
 
     def update(self, name):
         echo("Updating %s package:" % style(name, fg="yellow"))
 
-        installed = self.get_installed(self._platform_name)
+        installed = self.get_installed()
         current_version = installed[name]['version']
         latest_version = self.get_info(name)['version']
 
@@ -125,36 +132,21 @@ class PackageManager(object):
         else:
             echo("[%s]" % (style("Out-of-date", fg="red")))
 
-        self.uninstall(name, installed[name]['path'])
-        self.install(name, installed[name]['path'])
+        self.uninstall(name)
+        self.install(name)
 
-    def register_platform(self, name):
-        data = self.get_installed()
-        if name not in data:
-            data[name] = {}
-        self._update_db(data)
-        return data
+        telemetry.on_event(
+            category="PackageManager", action="Update", label=name)
 
-    def unregister_platform(self, name):
+    def _register(self, name, version):
         data = self.get_installed()
-        del data[name]
-        self._update_db(data)
-
-    def _register(self, name, version, path):
-        data = self.get_installed()
-        if self._platform_name not in data:
-            data = self.register_platform(self._platform_name)
-        data[self._platform_name][name] = {
+        data[name] = {
             "version": version,
-            "path": path
+            "time": int(time())
         }
-        self._update_db(data)
+        set_state_item("installed_packages", data)
 
     def _unregister(self, name):
         data = self.get_installed()
-        del data[self._platform_name][name]
-        self._update_db(data)
-
-    def _update_db(self, data):
-        with open(self.DBFILE_PATH, "w") as fp:
-            json.dump(data, fp)
+        del data[name]
+        set_state_item("installed_packages", data)

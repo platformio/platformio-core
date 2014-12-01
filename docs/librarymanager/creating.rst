@@ -36,14 +36,14 @@ you **need to specify** only these fields in the :ref:`library_config`:
 * :ref:`libjson_repository`
 
 |PIOAPICR| will populate the rest fields, like :ref:`libjson_version` or
-:ref:`libjson_author` with an actual information from *GitHub*.
+:ref:`libjson_authors` with an actual information from *GitHub*.
 
 Example:
 
 .. code-block:: javascript
 
     {
-        "name": "Arduino-IRremote",
+        "name": "IRremote",
         "keywords": "infrared, ir, remote",
         "description": "Send and receive infrared signals with multiple protocols",
         "repository":
@@ -62,7 +62,7 @@ The list of **required** fields in the :ref:`library_config` will look like:
 * :ref:`libjson_name`
 * :ref:`libjson_keywords`
 * :ref:`libjson_description`
-* :ref:`libjson_author`
+* :ref:`libjson_authors`
 * :ref:`libjson_repository`
 
 Example:
@@ -70,10 +70,10 @@ Example:
 .. code-block:: javascript
 
     {
-        "name": "Arduino-XBee",
+        "name": "XBee",
         "keywords": "xbee, protocol, radio",
         "description": "Arduino library for communicating with XBees in API mode",
-        "author":
+        "authors":
         {
             "name": "Andrew Rapp",
             "email": "andrew.rapp@gmail.com",
@@ -97,17 +97,17 @@ of **required** fields in the :ref:`library_config` will look like:
 * :ref:`libjson_name`
 * :ref:`libjson_keywords`
 * :ref:`libjson_description`
-* :ref:`libjson_author`
+* :ref:`libjson_authors`
 * :ref:`libjson_version`
 * :ref:`libjson_downloadurl`
 
 .. code-block:: javascript
 
     {
-        "name": "Arduino-OneWire",
+        "name": "OneWire",
         "keywords": "onewire, 1-wire, bus, sensor, temperature, ibutton",
         "description": "Control devices (from Dallas Semiconductor) that use the One Wire protocol (DS18S20, DS18B20, DS2408 and etc)",
-        "author":
+        "authors":
         {
             "name": "Paul Stoffregen",
             "url": "http://www.pjrc.com/teensy/td_libs_OneWire.html"

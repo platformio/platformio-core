@@ -35,38 +35,38 @@ Examples
 
 .. code-block:: bash
 
-    # IRremote: http://platformio.ikravets.com/#!/lib/show/4
+    # IRremote: http://platformio.ikravets.com/#!/lib/show/4/IRremote
     $ platformio lib install 4
-    Installing library [ 4 ]:
-    Downloading  [####################################]  100%
-    Unpacking  [####################################]  100%
-    The library #4 'IRremote' has been successfully installed!
+    # Installing library [ 4 ]:
+    # Downloading  [####################################]  100%
+    # Unpacking  [####################################]  100%
+    # The library #4 'IRremote' has been successfully installed!
 
 
 2. Install specified version of library
 
 .. code-block:: bash
 
-    # XBee: http://platformio.ikravets.com/#!/lib/show/6
+    # XBee: http://platformio.ikravets.com/#!/lib/show/6/XBee
     $ platformio lib install 6 --version=0.5
-    Installing library [ 6 ]:
-    Downloading  [####################################]  100%
-    Unpacking  [####################################]  100%
-    The library #6 'XBee' has been successfully installed!
+    # Installing library [ 6 ]:
+    # Downloading  [####################################]  100%
+    # Unpacking  [####################################]  100%
+    # The library #6 'XBee' has been successfully installed!
 
 
 3. Install library with dependencies
 
 .. code-block:: bash
 
-    # Adafruit-ST7735: http://platformio.ikravets.com/#!/lib/show/12
+    # Adafruit-ST7735: http://platformio.ikravets.com/#!/lib/show/12/Adafruit-ST7735
     $ platformio lib install 12
-    Installing library [ 12 ]:
-    Downloading  [####################################]  100%
-    Unpacking  [####################################]  100%
-    The library #12 'Adafruit-ST7735' has been successfully installed!
-    Installing dependencies:
-    Installing library [ 13 ]:
-    Downloading  [####################################]  100%
-    Unpacking  [####################################]  100%
-    The library #13 'Adafruit-GFX' has been successfully installed!
+    # Installing library [ 12 ]:
+    # Downloading  [####################################]  100%
+    # Unpacking  [####################################]  100%
+    # The library #12 'Adafruit-ST7735' has been successfully installed!
+    # Installing dependencies:
+    # Installing library [ 13 ]:
+    # Downloading  [####################################]  100%
+    # Unpacking  [####################################]  100%
+    # The library #13 'Adafruit-GFX' has been successfully installed!

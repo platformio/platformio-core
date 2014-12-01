@@ -14,11 +14,6 @@ def ProcessGeneral(env):
     if "BUILD_FLAGS" in env:
         env.MergeFlags(env['BUILD_FLAGS'])
 
-    env.PrependENVPath(
-        "PATH",
-        join(env.subst("$PLATFORMTOOLS_DIR"), "toolchain", "bin")
-    )
-
     if "FRAMEWORK" in env:
         if env['FRAMEWORK'] in ("arduino", "energia"):
             env.ConvertInotoCpp()
@@ -72,9 +67,9 @@ def BuildDependentLibraries(env, src_dir):
     deplibs = env.GetDependentLibraries(src_dir)
     env.Append(CPPPATH=[join("$BUILD_DIR", l) for (l, _) in deplibs])
 
-    for (libname, lsd_dir) in deplibs:
+    for (libname, inc_dir) in deplibs:
         lib = env.BuildLibrary(
-            join("$BUILD_DIR", libname), join(lsd_dir, libname))
+            join("$BUILD_DIR", libname), inc_dir)
         env.Clean(libname, lib)
         libs.append(lib)
     return libs
@@ -98,19 +93,24 @@ def GetDependentLibraries(env, src_dir):
 
 def ParseIncludesRecurive(env, regexp, source_file, includes):
     matches = regexp.findall(source_file.get_text_contents())
-    for inc_name in matches:
-        if inc_name in includes:
+    for inc_fname in matches:
+        if inc_fname in includes:
             continue
         for lsd_dir in env['LIBSOURCE_DIRS']:
             lsd_dir = env.subst(lsd_dir)
             if not isdir(lsd_dir):
                 continue
             for libname in listdir(lsd_dir):
-                inc_path = join(lsd_dir, libname, inc_name)
-                if not isfile(inc_path):
+                inc_dir = join(lsd_dir, libname)
+                inc_file = join(inc_dir, inc_fname)
+                if not isfile(inc_file):
+                    # if source code is in "src" dir
+                    inc_dir = join(lsd_dir, libname, "src")
+                    inc_file = join(inc_dir, inc_fname)
+                if not isfile(inc_file):
                     continue
-                includes[inc_name] = (len(includes) + 1, libname, lsd_dir)
-                env.ParseIncludesRecurive(regexp, env.File(inc_path), includes)
+                includes[inc_fname] = (len(includes) + 1, libname, inc_dir)
+                env.ParseIncludesRecurive(regexp, env.File(inc_file), includes)
 
 
 def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
