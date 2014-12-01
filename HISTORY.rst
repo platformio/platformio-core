@@ -16,6 +16,8 @@ Release History
 * Refactored *Package Manager*
 * Download Manager: fixed SHA1 verification within *Cygwin Environment*
   (`issue #26 <https://github.com/ivankravets/platformio/issues/26>`_)
+* Fixed bug with code builder and built-in Arduino libraries
+  (`issue #28 <https://github.com/ivankravets/platformio/issues/28>`_)
 
 0.8.0 (2014-10-19)
 ------------------
