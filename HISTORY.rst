@@ -1,8 +1,8 @@
 Release History
 ===============
 
-0.9.0 (?)
----------
+0.9.0 (2014-12-01)
+------------------
 
 * Implemented `platformio settings <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_settings.html>`_ command
 * Improved `platformio init <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_init.html>`_ command.
