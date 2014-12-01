@@ -120,10 +120,17 @@ def get_serialports():
 def get_api_result(path, params=None, data=None):
     result = None
     r = None
+
     try:
         headers = {"User-Agent": "PlatformIO/%s %s" % (
             __version__, requests.utils.default_user_agent())}
-        if data:
+        # if packages - redirect to SF
+        if path == "/packages":
+            r = requests.get(
+                "https://sourceforge.net/projects/platformio-storage/files/"
+                "packages/manifest.json/download",
+                params=params, headers=headers)
+        elif data:
             r = requests.post(__apiurl__ + path, params=params, data=data,
                               headers=headers)
         else:
