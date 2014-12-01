@@ -130,7 +130,9 @@ def check_platformio_upgrade():
     app.set_state_item("last_check", last_check)
 
     latest_version = get_latest_version()
-    if latest_version == __version__:
+    if (latest_version == __version__ or
+            Upgrader.version_to_int(latest_version) <
+            Upgrader.version_to_int(__version__)):
         return
 
     click.secho("There is a new version %s of PlatformIO available.\n"
