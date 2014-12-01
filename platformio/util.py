@@ -128,8 +128,7 @@ def get_api_result(path, params=None, data=None):
         if path == "/packages":
             r = requests.get(
                 "https://sourceforge.net/projects/platformio-storage/files/"
-                "packages/manifest.json/download",
-                params=params, headers=headers)
+                "packages/manifest.json", params=params, headers=headers)
         elif data:
             r = requests.post(__apiurl__ + path, params=params, data=data,
                               headers=headers)
