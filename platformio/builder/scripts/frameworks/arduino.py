@@ -31,18 +31,19 @@ if "build.usb_product" in BOARD_OPTIONS:
 
 # include board variant
 env.VariantDir(
-    join("$BUILD_DIR", "variant"),
+    join("$BUILD_DIR", "FrameworkArduinoVariant"),
     join("$PLATFORMFW_DIR", "variants", BOARD_OPTIONS['build.variant'])
 )
 
 env.Append(
     CPPDEFINES=[
+        "ARDUINO_ARCH_AVR",  # @TODO Should be dynamic
         "ARDUINO=%d" % ARDUINO_VERSION,
         "ARDUINO_%s" % BOARD_OPTIONS['build.board']
     ] + ARDUINO_USBDEFINES,
     CPPPATH=[
-        join("$BUILD_DIR", "core"),
-        join("$BUILD_DIR", "variant")
+        join("$BUILD_DIR", "FrameworkArduino"),
+        join("$BUILD_DIR", "FrameworkArduinoVariant")
     ]
 )
 
@@ -63,7 +64,7 @@ libs = []
 #
 
 libs.append(env.BuildLibrary(
-    join("$BUILD_DIR", "core"),
+    join("$BUILD_DIR", "FrameworkArduino"),
     join("$PLATFORMFW_DIR", "cores", BOARD_OPTIONS['build.core'])
 ))
 

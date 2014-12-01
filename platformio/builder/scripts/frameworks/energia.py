@@ -22,7 +22,7 @@ ENERGIA_VERSION = int(
 
 # include board variant
 env.VariantDir(
-    join("$BUILD_DIR", "variant"),
+    join("$BUILD_DIR", "FrameworkEnergiaVariant"),
     join("$PLATFORMFW_DIR", "variants", BOARD_OPTIONS['build.variant'])
 )
 
@@ -32,8 +32,8 @@ env.Append(
         "ENERGIA=%d" % ENERGIA_VERSION
     ],
     CPPPATH=[
-        join("$BUILD_DIR", "core"),
-        join("$BUILD_DIR", "variant")
+        join("$BUILD_DIR", "FrameworkEnergia"),
+        join("$BUILD_DIR", "FrameworkEnergiaVariant")
     ]
 )
 
@@ -60,7 +60,7 @@ libs = []
 #
 
 libs.append(env.BuildLibrary(
-    join("$BUILD_DIR", "core"),
+    join("$BUILD_DIR", "FrameworkEnergia"),
     join("$PLATFORMFW_DIR", "cores", BOARD_OPTIONS['build.core'])
 ))
 
