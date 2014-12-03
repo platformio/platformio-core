@@ -63,7 +63,7 @@ class FDSHASumMismatch(PlatformioException):
 
 class NotPlatformProject(PlatformioException):
 
-    MESSAGE = "Not a PlatformIO project. Use `platformio init` command"
+    MESSAGE = "Not a PlatformIO project (%s). Use `platformio init` command"
 
 
 class UndefinedEnvPlatform(PlatformioException):

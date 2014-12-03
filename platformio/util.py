@@ -79,7 +79,7 @@ def get_pioenvs_dir():
 def get_project_config():
     path = join(get_project_dir(), "platformio.ini")
     if not isfile(path):
-        raise NotPlatformProject()
+        raise NotPlatformProject(get_project_dir())
     cp = ConfigParser()
     cp.read(path)
     return cp
