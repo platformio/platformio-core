@@ -26,7 +26,8 @@ class PlatformNotInstalledYet(PlatformioException):
 
 class UnknownCLICommand(PlatformioException):
 
-    MESSAGE = "Unknown command '%s'"
+    MESSAGE = ("Unknown command '%s'. Please use `platformio --help`"
+               " to see all available commands")
 
 
 class UnknownPackage(PlatformioException):
@@ -144,3 +145,12 @@ class InvalidSettingValue(PlatformioException):
 class UpgraderFailed(PlatformioException):
 
     MESSAGE = "An error occurred while upgrading PlatformIO"
+
+
+class SConsNotInstalled(PlatformioException):
+
+    MESSAGE = (
+        "The `scons` tool isn't installed properly. "
+        "Please use official installation procedure: "
+        "http://docs.platformio.ikravets.com/en/latest/installation.html"
+    )

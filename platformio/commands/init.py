@@ -29,7 +29,7 @@ def cli(project_dir):
         click.secho(
             "will be used for the new project.\n"
             "You can specify another project directory via\n"
-            "`platformio init -d %PATH_TO_PROJECT_DIR%` command.\n",
+            "`platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.\n",
             fg="yellow"
         )
 
