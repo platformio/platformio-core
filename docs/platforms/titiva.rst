@@ -28,7 +28,7 @@ Packages
       - uploader
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
     * - ``framework-energiativa``
-      -
+      - framework
       - See below in :ref:`titiva_frameworks`
 
 .. note::

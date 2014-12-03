@@ -13,7 +13,7 @@ Print all available development platforms for installing
 
 .. code-block:: bash
 
-    $ platformio search all
+    $ platformio search
     [ ... ]
 
 
@@ -33,16 +33,22 @@ Initialize new PlatformIO based project
 
 .. code-block:: bash
 
-    $ cd /path/to/empty/directory
     $ platformio init
-    Project has been initialized!
-    Please put your source code to `src` directory, external libraries to `lib`
-    and setup environments in `platformio.ini` file.
-    Then process project with `platformio run` command.
+    The current working directory *** will be used for the new project.
+    You can specify another project directory via
+    `platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.
+
+    The next files/directories will be created in ***
+    `platformio.ini` - Project Configuration File
+    `src` - a source directory. Put your source code here
+    `lib` - a directory for the project specific libraries
+    Do you want to continue? [y/N]: y
+    Project has been successfully initialized!
+    Now you can process it with `platformio run` command.
 
 
 Setup environments in ``platformio.ini``. For more examples go to
-:ref:`projectconf`
+:ref:`Project Configuration File <projectconf_examples>`
 
 .. code-block:: ini
 

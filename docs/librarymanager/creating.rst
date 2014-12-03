@@ -50,7 +50,9 @@ Example:
         {
             "type": "git",
             "url": "https://github.com/shirriff/Arduino-IRremote.git"
-        }
+        },
+        "frameworks": "arduino",
+        "platforms": "atmelavr"
     }
 
 Under CVS (SVN/GIT)
@@ -83,7 +85,9 @@ Example:
         {
             "type": "git",
             "url": "https://code.google.com/p/xbee-arduino/"
-        }
+        },
+        "frameworks": "arduino",
+        "platforms": "atmelavr"
     }
 
 Self-hosted
@@ -114,7 +118,9 @@ of **required** fields in the :ref:`library_config` will look like:
         },
         "version": "2.2",
         "downloadUrl": "http://www.pjrc.com/teensy/arduino_libraries/OneWire.zip",
-        "include": "OneWire"
+        "include": "OneWire",
+        "frameworks": "arduino",
+        "platforms": "atmelavr"
     }
 
 

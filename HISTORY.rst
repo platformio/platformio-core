@@ -1,11 +1,13 @@
 Release History
 ===============
 
-0.9.1 (2014-12-03)
-------------------
+0.9.1 (?)
+---------
 
-* Fixed "*OSError: [Errno 2] No such file or directory*" when PlatformIO isn't
-  installed properly
+* Fixed "*OSError: [Errno 2] No such file or directory*" for
+  `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`_
+  command when PlatformIO isn't installed properly
+* Improved main `documentation <http://docs.platformio.ikravets.com>`_
 * Fixed example for `Eclipse IDE with Tiva board <https://github.com/ivankravets/platformio/tree/develop/examples/ide-eclipse>`_
   (`issue #32 <https://github.com/ivankravets/platformio/issues/32>`_)
 

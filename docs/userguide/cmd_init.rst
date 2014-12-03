@@ -45,7 +45,7 @@ Examples
     $ platformio init
     The current working directory *** will be used for the new project.
     You can specify another project directory via
-    `platformio init -d %PATH_TO_PROJECT_DIR%` command.
+    `platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.
 
     The next files/directories will be created in ***
     platformio.ini - Project Configuration File
