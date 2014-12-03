@@ -59,7 +59,10 @@ def cli(environment, target, upload_port):
 
         telemetry.on_run_environment(config.items(section), envtargets)
 
-        p = PlatformFactory().newPlatform(config.get(section, "platform"))
+        if (platform not in PlatformFactory.get_platforms(installed=True) and
+                click.confirm("The platform '%s' has not been installed yet. "
+                              "Would you like to install it now?" % platform)):
+            ctx.invoke(cmd_install, platforms=[platform])
         result = p.run(variables, envtargets)
         secho(result['out'], fg="green")
         secho(result['err'],

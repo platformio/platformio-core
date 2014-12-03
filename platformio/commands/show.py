@@ -18,7 +18,11 @@ def cli(platform):
         installed=True).keys()
 
     if platform not in installed_platforms:
-        raise PlatformNotInstalledYet(platform)
+        if click.confirm("The platform '%s' has not been installed yet. "
+                         "Would you like to install it now?" % platform):
+            ctx.invoke(cmd_install, platforms=[platform])
+        else:
+            raise PlatformNotInstalledYet(platform)
 
     p = PlatformFactory().newPlatform(platform)
     echo("{name:<20} - {info}".format(name=style(p.get_name(), fg="cyan"),
