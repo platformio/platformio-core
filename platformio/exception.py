@@ -150,7 +150,7 @@ class UpgraderFailed(PlatformioException):
 class SConsNotInstalled(PlatformioException):
 
     MESSAGE = (
-        "The `scons` tool isn't installed properly. "
-        "Please use official installation procedure: "
+        "The PlatformIO and `scons` aren't installed properly. "
+        "Please use official installation manual: "
         "http://docs.platformio.ikravets.com/en/latest/installation.html"
     )

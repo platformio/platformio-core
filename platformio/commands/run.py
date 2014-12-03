@@ -1,43 +1,44 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from click import command, echo, option, secho, style
+import click
 
-from platformio import telemetry
-from platformio.exception import (InvalidEnvName, ProjectEnvsNotAvaialable,
-                                  UndefinedEnvPlatform, UnknownEnvNames)
+from platformio import exception, telemetry
+from platformio.commands.install import cli as cmd_install
 from platformio.platforms.base import PlatformFactory
 from platformio.util import get_project_config
 
 
-@command("run", short_help="Process project environments")
-@option("--environment", "-e", multiple=True, metavar="<environment>")
-@option("--target", "-t", multiple=True, metavar="<target>")
-@option("--upload-port", metavar="<upload port>")
-def cli(environment, target, upload_port):
+@click.command("run", short_help="Process project environments")
+@click.option("--environment", "-e", multiple=True, metavar="<environment>")
+@click.option("--target", "-t", multiple=True, metavar="<target>")
+@click.option("--upload-port", metavar="<upload port>")
+@click.pass_context
+def cli(ctx, environment, target, upload_port):
 
     config = get_project_config()
 
     if not config.sections():
-        raise ProjectEnvsNotAvaialable()
+        raise exception.ProjectEnvsNotAvaialable()
 
     unknown = set(environment) - set([s[4:] for s in config.sections()])
     if unknown:
-        raise UnknownEnvNames(", ".join(unknown))
+        raise exception.UnknownEnvNames(", ".join(unknown))
 
     for section in config.sections():
         # skip main configuration section
         if section == "platformio":
             continue
         elif section[:4] != "env:":
-            raise InvalidEnvName(section)
+            raise exception.InvalidEnvName(section)
 
         envname = section[4:]
         if environment and envname not in environment:
             # echo("Skipped %s environment" % style(envname, fg="yellow"))
             continue
 
-        echo("Processing %s environment:" % style(envname, fg="cyan"))
+        click.echo("Processing %s environment:" %
+                   click.style(envname, fg="cyan"))
 
         variables = ["PIOENV=" + envname]
         if upload_port:
@@ -55,7 +56,8 @@ def cli(environment, target, upload_port):
             envtargets = config.get(section, "targets").split()
 
         if not config.has_option(section, "platform"):
-            raise UndefinedEnvPlatform(envname)
+            raise exception.UndefinedEnvPlatform(envname)
+        platform = config.get(section, "platform")
 
         telemetry.on_run_environment(config.items(section), envtargets)
 
@@ -63,7 +65,9 @@ def cli(environment, target, upload_port):
                 click.confirm("The platform '%s' has not been installed yet. "
                               "Would you like to install it now?" % platform)):
             ctx.invoke(cmd_install, platforms=[platform])
+
+        p = PlatformFactory.newPlatform(platform)
         result = p.run(variables, envtargets)
-        secho(result['out'], fg="green")
-        secho(result['err'],
-              fg="red" if "Error" in result['err'] else "yellow")
+        click.secho(result['out'], fg="green")
+        click.secho(result['err'],
+                    fg="red" if "Error" in result['err'] else "yellow")

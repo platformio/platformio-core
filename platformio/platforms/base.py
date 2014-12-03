@@ -156,7 +156,7 @@ class BasePlatform(object):
         for item in installed_platforms:
             if item == platform:
                 continue
-            p = PlatformFactory().newPlatform(item)
+            p = PlatformFactory.newPlatform(item)
             deppkgs = deppkgs.union(set(p.get_packages().keys()))
 
         pm = PackageManager()

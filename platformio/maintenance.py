@@ -10,8 +10,8 @@ from time import time
 import click
 
 from platformio import __version__, app, telemetry
-from platformio.commands.install import cli as cli_install
-from platformio.commands.lib import lib_update as cli_libraries_update
+from platformio.commands.install import cli as cmd_install
+from platformio.commands.lib import lib_update as cmd_libraries_update
 from platformio.commands.update import cli as cli_platforms_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.exception import UpgraderFailed
@@ -75,7 +75,7 @@ class Upgrader(object):
                 remove(join(get_home_dir(), fname))
 
         if prev_platforms:
-            ctx.invoke(cli_install, platforms=prev_platforms)
+            ctx.invoke(cmd_install, platforms=prev_platforms)
 
         return True
 
@@ -156,7 +156,7 @@ def check_internal_updates(ctx, what):
     outdated_items = []
     if what == "platforms":
         for platform in PlatformFactory.get_platforms(installed=True).keys():
-            p = PlatformFactory().newPlatform(platform)
+            p = PlatformFactory.newPlatform(platform)
             if p.is_outdated():
                 outdated_items.append(platform)
     elif what == "libraries":
@@ -180,7 +180,7 @@ def check_internal_updates(ctx, what):
         if what == "platforms":
             ctx.invoke(cli_platforms_update)
         elif what == "libraries":
-            ctx.invoke(cli_libraries_update)
+            ctx.invoke(cmd_libraries_update)
         click.echo()
 
         telemetry.on_event(category="Auto", action="Update",
