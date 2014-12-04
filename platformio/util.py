@@ -22,8 +22,6 @@ except ImportError:
 
 
 def get_systype():
-    if system() == "Windows":
-        return "windows"
     data = uname()
     return ("%s_%s" % (data[0], data[4])).lower()
 

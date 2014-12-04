@@ -121,8 +121,8 @@ class PackageManager(object):
         current_version = installed[name]['version']
         latest_version = self.get_info(name)['version']
 
-        click.echo("Versions: Current=%d, Latest=%d \t " % (
-                   current_version, latest_version), nl=False)
+        click.echo("Versions: Current=%d, Latest=%d \t " %
+                   (current_version, latest_version), nl=False)
 
         if current_version == latest_version:
             click.echo("[%s]" % (click.style("Up-to-date", fg="green")))

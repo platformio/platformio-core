@@ -83,7 +83,7 @@ class ProjectInitialized(PlatformioException):
                "Process it with `platformio run` command")
 
 
-class ProjectEnvsNotAvaialable(PlatformioException):
+class ProjectEnvsNotAvailable(PlatformioException):
 
     MESSAGE = "Please setup environments in `platformio.ini` file."
 

@@ -135,9 +135,9 @@ def on_command(ctx):  # pylint: disable=W0613
 
 
 def on_run_environment(options, targets):
-    opts = ["%s=%s" % (opt, value) for opt, value in sorted(options)]
+    opts = ["%s=%s" % (opt, value) for opt, value in sorted(options.items())]
     targets = [t.title() for t in targets or ["run"]]
-    on_event("Env", " ".join(targets), " ".join(opts))
+    on_event("Env", " ".join(targets), "&".join(opts))
 
 
 def on_event(category, action, label=None, value=None, screen_name=None):
