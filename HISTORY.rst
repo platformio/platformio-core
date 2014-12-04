@@ -1,8 +1,8 @@
 Release History
 ===============
 
-0.9.1 (?)
----------
+0.9.1 (2014-12-05)
+------------------
 
 * Ask user to install platform (when it hasn't been installed yet) within
   `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`_
