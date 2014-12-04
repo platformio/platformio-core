@@ -13,6 +13,8 @@ Release History
   command when PlatformIO isn't installed properly
 * Fixed example for `Eclipse IDE with Tiva board <https://github.com/ivankravets/platformio/tree/develop/examples/ide-eclipse>`_
   (`issue #32 <https://github.com/ivankravets/platformio/issues/32>`_)
+* Upgraded `Eclipse Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples/ide-eclipse>`_
+  to latest *Luna* and *PlatformIO* releases
 
 0.9.0 (2014-12-01)
 ------------------
