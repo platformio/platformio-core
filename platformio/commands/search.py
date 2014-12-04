@@ -1,16 +1,16 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from click import argument, command, echo, style
+import click
 
 from platformio.platforms.base import PlatformFactory
 
 
-@command("search", short_help="Search for development platforms")
-@argument("query", required=False)
+@click.command("search", short_help="Search for development platforms")
+@click.argument("query", required=False)
 def cli(query):
     for platform in PlatformFactory.get_platforms().keys():
-        p = PlatformFactory().newPlatform(platform)
+        p = PlatformFactory.newPlatform(platform)
         name = p.get_name()
         shinfo = p.get_short_info()
 
@@ -21,5 +21,5 @@ def cli(query):
         if query and query.lower() not in search_data.lower():
             continue
 
-        echo("{name:<20} - {info}".format(name=style(name, fg="cyan"),
-                                          info=shinfo))
+        click.echo("{name:<20} - {info}".format(
+            name=click.style(name, fg="cyan"), info=shinfo))

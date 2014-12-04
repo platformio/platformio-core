@@ -6,13 +6,11 @@ from os.path import isdir, join
 from shutil import rmtree
 from time import time
 
-from click import echo, secho, style
+import click
 
-from platformio import telemetry
+from platformio import exception, telemetry
 from platformio.app import get_state_item, set_state_item
 from platformio.downloader import FileDownloader
-from platformio.exception import (InvalidPackageVersion, NonSystemPackage,
-                                  UnknownPackage)
 from platformio.unpacker import FileUnpacker
 from platformio.util import get_api_result, get_home_dir, get_systype
 
@@ -62,28 +60,28 @@ class PackageManager(object):
     def get_info(self, name, version=None):
         manifest = self.get_manifest()
         if name not in manifest:
-            raise UnknownPackage(name)
+            raise exception.UnknownPackage(name)
 
         # check system platform
         systype = get_systype()
         builds = ([b for b in manifest[name] if b['system'] == "all" or systype
                    in b['system']])
         if not builds:
-            raise NonSystemPackage(name, systype)
+            raise exception.NonSystemPackage(name, systype)
 
         if version:
             for b in builds:
                 if b['version'] == version:
                     return b
-            raise InvalidPackageVersion(name, version)
+            raise exception.InvalidPackageVersion(name, version)
         else:
             return sorted(builds, key=lambda s: s['version'])[-1]
 
     def install(self, name):
-        echo("Installing %s package:" % style(name, fg="cyan"))
+        click.echo("Installing %s package:" % click.style(name, fg="cyan"))
 
         if self.is_installed(name):
-            secho("Already installed", fg="yellow")
+            click.secho("Already installed", fg="yellow")
             return False
 
         info = self.get_info(name)
@@ -101,36 +99,36 @@ class PackageManager(object):
             category="PackageManager", action="Install", label=name)
 
     def uninstall(self, name):
-        echo("Uninstalling %s package: \t" % style(name, fg="cyan"),
-             nl=False)
+        click.echo("Uninstalling %s package: \t" %
+                   click.style(name, fg="cyan"), nl=False)
 
         if not self.is_installed(name):
-            secho("Not installed", fg="yellow")
+            click.secho("Not installed", fg="yellow")
             return False
 
         rmtree(join(self._package_dir, name))
         self._unregister(name)
-        echo("[%s]" % style("OK", fg="green"))
+        click.echo("[%s]" % click.style("OK", fg="green"))
 
         # report usage
         telemetry.on_event(
             category="PackageManager", action="Uninstall", label=name)
 
     def update(self, name):
-        echo("Updating %s package:" % style(name, fg="yellow"))
+        click.echo("Updating %s package:" % click.style(name, fg="yellow"))
 
         installed = self.get_installed()
         current_version = installed[name]['version']
         latest_version = self.get_info(name)['version']
 
-        echo("Versions: Current=%d, Latest=%d \t " % (
-            current_version, latest_version), nl=False)
+        click.echo("Versions: Current=%d, Latest=%d \t " %
+                   (current_version, latest_version), nl=False)
 
         if current_version == latest_version:
-            echo("[%s]" % (style("Up-to-date", fg="green")))
+            click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
             return True
         else:
-            echo("[%s]" % (style("Out-of-date", fg="red")))
+            click.echo("[%s]" % (click.style("Out-of-date", fg="red")))
 
         self.uninstall(name)
         self.install(name)

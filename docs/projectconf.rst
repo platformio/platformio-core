@@ -113,6 +113,9 @@ This option is used by "uploader" tool to send firmware to the board via
 * ``/dev/ttyUSB0`` - Unix-based OS
 * ``COM3`` - Windows OS
 
+If ``upload_port`` isn't specified, then *PlatformIO* will try to detect
+``upload_port`` automatically.
+
 To print all available serial ports use :ref:`cmd_serialports` command.
 
 
@@ -141,6 +144,8 @@ When no targets are defined, *PlatformIO* will build only sources by default.
     This option is useful to enable "auto-uploading" after building operation
     (``targets = upload``).
 
+
+.. _projectconf_build_flags:
 
 ``build_flags``
 ^^^^^^^^^^^^^^^
@@ -231,6 +236,8 @@ For more detailed information about available flags/options go to:
 
 This is option ``srcbuild_flags`` has the same behaviour like ``build_flags``
 but will be applied only for project source code from ``src`` directory.
+
+.. _projectconf_examples:
 
 Examples
 --------

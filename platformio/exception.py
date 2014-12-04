@@ -26,7 +26,8 @@ class PlatformNotInstalledYet(PlatformioException):
 
 class UnknownCLICommand(PlatformioException):
 
-    MESSAGE = "Unknown command '%s'"
+    MESSAGE = ("Unknown command '%s'. Please use `platformio --help`"
+               " to see all available commands")
 
 
 class UnknownPackage(PlatformioException):
@@ -63,7 +64,7 @@ class FDSHASumMismatch(PlatformioException):
 
 class NotPlatformProject(PlatformioException):
 
-    MESSAGE = "Not a PlatformIO project. Use `platformio init` command"
+    MESSAGE = "Not a PlatformIO project (%s). Use `platformio init` command"
 
 
 class UndefinedEnvPlatform(PlatformioException):
@@ -82,7 +83,7 @@ class ProjectInitialized(PlatformioException):
                "Process it with `platformio run` command")
 
 
-class ProjectEnvsNotAvaialable(PlatformioException):
+class ProjectEnvsNotAvailable(PlatformioException):
 
     MESSAGE = "Please setup environments in `platformio.ini` file."
 
@@ -144,3 +145,12 @@ class InvalidSettingValue(PlatformioException):
 class UpgraderFailed(PlatformioException):
 
     MESSAGE = "An error occurred while upgrading PlatformIO"
+
+
+class SConsNotInstalled(PlatformioException):
+
+    MESSAGE = (
+        "The PlatformIO and `scons` aren't installed properly. "
+        "Please use official installation manual: "
+        "http://docs.platformio.ikravets.com/en/latest/installation.html"
+    )

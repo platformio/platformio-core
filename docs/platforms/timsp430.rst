@@ -27,7 +27,7 @@ Packages
       - uploader
       - `MSPDebug <http://mspdebug.sourceforge.net>`_
     * - ``framework-energiamsp430``
-      -
+      - framework
       - See below in :ref:`timsp430_frameworks`
 
 

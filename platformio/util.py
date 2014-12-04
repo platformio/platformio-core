@@ -22,8 +22,6 @@ except ImportError:
 
 
 def get_systype():
-    if system() == "Windows":
-        return "windows"
     data = uname()
     return ("%s_%s" % (data[0], data[4])).lower()
 
@@ -79,7 +77,7 @@ def get_pioenvs_dir():
 def get_project_config():
     path = join(get_project_dir(), "platformio.ini")
     if not isfile(path):
-        raise NotPlatformProject()
+        raise NotPlatformProject(get_project_dir())
     cp = ConfigParser()
     cp.read(path)
     return cp
@@ -128,8 +126,7 @@ def get_api_result(path, params=None, data=None):
         if path == "/packages":
             r = requests.get(
                 "https://sourceforge.net/projects/platformio-storage/files/"
-                "packages/manifest.json/download",
-                params=params, headers=headers)
+                "packages/manifest.json", params=params, headers=headers)
         elif data:
             r = requests.post(__apiurl__ + path, params=params, data=data,
                               headers=headers)

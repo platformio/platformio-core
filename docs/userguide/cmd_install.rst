@@ -23,7 +23,7 @@ There are several predefined aliases for packages, such as:
 
 * ``toolchain``
 * ``uploader``
-
+* ``framework``
 
 Options
 -------

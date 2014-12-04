@@ -5,7 +5,7 @@ The detailed information and steps are described in this article:
 `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_.
 
 
-.. image:: http://www.ikravets.com/wp-content/uploads/2014/06/eclipse_build_arduino_pro5v-1024x822.png
+.. image:: http://www.ikravets.com/wp-content/uploads/2014/06/eclipse_platformio_build_arduino_uno.png
     :width: 850px
     :target: http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio
 

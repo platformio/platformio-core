@@ -19,6 +19,7 @@ Eclipse
     :target: http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio
 
 * `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
+* `More examples (TI MSP430, TI TIVA and etc) <https://github.com/ivankravets/platformio/tree/develop/examples/ide-eclipse>`_
 
 Energia IDE
 -----------

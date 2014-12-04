@@ -5,9 +5,8 @@ from imp import load_source
 from os import listdir
 from os.path import isdir, isfile, join
 
+from platformio import exception
 from platformio.app import get_state_item, set_state_item
-from platformio.exception import (BuildScriptNotFound, PlatformNotInstalledYet,
-                                  UnknownPackage, UnknownPlatform)
 from platformio.pkgmanager import PackageManager
 from platformio.util import exec_command, get_home_dir, get_source_dir
 
@@ -25,7 +24,7 @@ class PlatformFactory(object):
             module = load_source(
                 "platformio.platforms.%s" % name, path)
         except ImportError:
-            raise UnknownPlatform(name)
+            raise exception.UnknownPlatform(name)
         return module
 
     @classmethod
@@ -47,7 +46,7 @@ class PlatformFactory(object):
                     )
                     if isplatform:
                         platforms[name] = path
-                except UnknownPlatform:
+                except exception.UnknownPlatform:
                     pass
 
         if not installed:
@@ -63,7 +62,7 @@ class PlatformFactory(object):
     def newPlatform(cls, name):
         platforms = cls.get_platforms()
         if name not in platforms:
-            raise UnknownPlatform(name)
+            raise exception.UnknownPlatform(name)
 
         _instance = getattr(
             cls.load_module(name, platforms[name]),
@@ -123,7 +122,7 @@ class BasePlatform(object):
         upkgs = with_packages | without_packages
         ppkgs = set(self.get_packages().keys())
         if not upkgs.issubset(ppkgs):
-            raise UnknownPackage(", ".join(upkgs - ppkgs))
+            raise exception.UnknownPackage(", ".join(upkgs - ppkgs))
 
         requirements = []
         for name, opts in self.get_packages().items():
@@ -151,13 +150,13 @@ class BasePlatform(object):
             installed=True).keys()
 
         if platform not in installed_platforms:
-            raise PlatformNotInstalledYet(platform)
+            raise exception.PlatformNotInstalledYet(platform)
 
         deppkgs = set()
         for item in installed_platforms:
             if item == platform:
                 continue
-            p = PlatformFactory().newPlatform(item)
+            p = PlatformFactory.newPlatform(item)
             deppkgs = deppkgs.union(set(p.get_packages().keys()))
 
         pm = PackageManager()
@@ -191,7 +190,7 @@ class BasePlatform(object):
         installed_packages = PackageManager.get_installed()
 
         if self.get_name() not in installed_platforms:
-            raise PlatformNotInstalledYet(self.get_name())
+            raise exception.PlatformNotInstalledYet(self.get_name())
 
         if "clean" in targets:
             targets.remove("clean")
@@ -205,20 +204,23 @@ class BasePlatform(object):
                 continue
             _, path = v.split("=", 2)
             if not isfile(path):
-                raise BuildScriptNotFound(path)
+                raise exception.BuildScriptNotFound(path)
 
-        # append aliases of installed packages
+        # append aliases of the installed packages
         for name, options in self.get_packages().items():
             if name not in installed_packages:
                 continue
             variables.append(
                 "PIOPACKAGE_%s=%s" % (options['alias'].upper(), name))
 
-        result = exec_command([
-            "scons",
-            "-Q",
-            "-f", join(get_source_dir(), "builder", "main.py")
-        ] + variables + targets)
+        try:
+            result = exec_command([
+                "scons",
+                "-Q",
+                "-f", join(get_source_dir(), "builder", "main.py")
+            ] + variables + targets)
+        except OSError:
+            raise exception.SConsNotInstalled()
 
         return self.after_run(result)
 
