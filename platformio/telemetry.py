@@ -110,6 +110,9 @@ class MeasurementProtocol(TelemetryBase):
         self['cd3'] = " ".join(args)
 
     def send(self, hittype):
+        if not app.get_setting("enable_telemetry"):
+            return
+
         self['t'] = hittype
 
         # correct queue time
