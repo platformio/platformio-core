@@ -33,6 +33,15 @@ DEFAULT_SETTINGS = {
         "description": ("Shares commands, platforms and libraries usage"
                         " to help us make PlatformIO better (Yes/No)"),
         "value": True
+    },
+    "enable_prompts": {
+        "description": (
+            "Can PlatformIO communicate with you via prompts: "
+            "propose to install platforms which aren't installed yet, "
+            "paginate over library search results and etc.)? ATTENTION!!! "
+            "If you call PlatformIO like subprocess, "
+            "please disable prompts to avoid blocking (Yes/No)"),
+        "value": True
     }
 }
 

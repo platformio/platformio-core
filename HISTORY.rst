@@ -1,6 +1,16 @@
 Release History
 ===============
 
+0.9.2 (2014-12-10)
+------------------
+
+* Replaced "dark blue" by "cyan" colour for the texts (`issue #33 <https://github.com/ivankravets/platformio/issues/33>`_)
+* Added new setting `enable_prompts <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_settings.html>`_
+  and allowed to disable all *PlatformIO* prompts (useful for cloud compilers)
+  (`issue #34 <https://github.com/ivankravets/platformio/issues/34>`_)
+* Fixed compilation bug on *Windows* with installed *MSVC* (`issue #18 <https://github.com/ivankravets/platformio/issues/18>`_)
+
+
 0.9.1 (2014-12-05)
 ------------------
 

@@ -3,6 +3,7 @@
 
 import click
 
+from platformio import app
 from platformio.exception import (LibAlreadyInstalledError,
                                   LibInstallDependencyError)
 from platformio.libmanager import LibraryManager
@@ -69,7 +70,8 @@ def lib_search(query, **filters):
         if int(result['page'])*int(result['perpage']) >= int(result['total']):
             break
 
-        if click.confirm("Show next libraries?"):
+        if (app.get_setting("enable_prompts") and
+                click.confirm("Show next libraries?")):
             result = get_api_result(
                 "/lib/search",
                 dict(query=query, page=str(int(result['page']) + 1))

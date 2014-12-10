@@ -3,7 +3,7 @@
 
 import click
 
-from platformio import exception, telemetry
+from platformio import app, exception, telemetry
 from platformio.commands.install import cli as cmd_install
 from platformio.platforms.base import PlatformFactory
 from platformio.util import get_project_config
@@ -68,7 +68,8 @@ def process_environment(ctx, name, options, targets, upload_port):
 
     telemetry.on_run_environment(options, envtargets)
 
-    if (platform not in PlatformFactory.get_platforms(installed=True) and
+    if (app.get_setting("enable_prompts") and
+            platform not in PlatformFactory.get_platforms(installed=True) and
             click.confirm("The platform '%s' has not been installed yet. "
                           "Would you like to install it now?" % platform)):
         ctx.invoke(cmd_install, platforms=[platform])

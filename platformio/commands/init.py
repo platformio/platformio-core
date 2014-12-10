@@ -7,6 +7,7 @@ from shutil import copyfile
 
 import click
 
+from platformio import app
 from platformio.exception import ProjectInitialized
 from platformio.util import get_source_dir
 
@@ -25,7 +26,7 @@ def cli(project_dir):
 
     if project_dir == getcwd():
         click.secho("The current working directory", fg="yellow", nl=False)
-        click.secho(" %s " % project_dir, fg="blue", nl=False)
+        click.secho(" %s " % project_dir, fg="cyan", nl=False)
         click.secho(
             "will be used for the new project.\n"
             "You can specify another project directory via\n"
@@ -34,7 +35,7 @@ def cli(project_dir):
         )
 
     click.echo("The next files/directories will be created in %s" %
-               click.style(project_dir, fg="blue"))
+               click.style(project_dir, fg="cyan"))
     click.echo("%s - Project Configuration File" %
                click.style("platformio.ini", fg="cyan"))
     click.echo("%s - a source directory. Put your source code here" %
@@ -42,7 +43,8 @@ def cli(project_dir):
     click.echo("%s - a directory for the project specific libraries" %
                click.style("lib", fg="cyan"))
 
-    if click.confirm("Do you want to continue?"):
+    if (not app.get_setting("enable_prompts") or
+            click.confirm("Do you want to continue?")):
         for d in (src_dir, lib_dir):
             if not isdir(d):
                 makedirs(d)

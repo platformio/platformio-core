@@ -5,6 +5,7 @@ from datetime import datetime
 
 import click
 
+from platformio import app
 from platformio.commands.install import cli as cmd_install
 from platformio.exception import PlatformNotInstalledYet
 from platformio.pkgmanager import PackageManager
@@ -20,8 +21,9 @@ def cli(ctx, platform):
         installed=True).keys()
 
     if platform not in installed_platforms:
-        if click.confirm("The platform '%s' has not been installed yet. "
-                         "Would you like to install it now?" % platform):
+        if (app.get_setting("enable_prompts") and
+                click.confirm("The platform '%s' has not been installed yet. "
+                              "Would you like to install it now?" % platform)):
             ctx.invoke(cmd_install, platforms=[platform])
         else:
             raise PlatformNotInstalledYet(platform)

@@ -25,6 +25,11 @@ application:
   `Command Prompt <http://en.wikipedia.org/wiki/Command_Prompt>`_ (``cmd.exe``)
   application.
 
+.. warning::
+    If you are going to use *PlatformIO* for "*Cloud Compiling*", please
+    don't forget to turn off :ref:`enable_prompts <cmd_settings>` setting. It
+    will allow you to avoid blocking when call ``platformio`` like subprocess.
+
 Please *choose one of* the following:
 
 Super-Quick (Mac / Linux)
