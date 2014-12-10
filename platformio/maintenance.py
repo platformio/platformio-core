@@ -92,11 +92,11 @@ def after_upgrade(ctx):
         "- %s us on Twitter to stay up-to-date "
         "on the latest project news > %s" %
         (click.style("follow", fg="cyan"),
-         click.style("https://twitter.com/platformiotool", fg="blue"))
+         click.style("https://twitter.com/platformiotool", fg="cyan"))
     )
     click.echo("- %s us a star on GitHub > %s" % (
         click.style("give", fg="cyan"),
-        click.style("https://github.com/ivankravets/platformio", fg="blue")
+        click.style("https://github.com/ivankravets/platformio", fg="cyan")
     ))
     click.secho("Thanks a lot!\n", fg="green", blink=True)
 
@@ -138,10 +138,10 @@ def check_platformio_upgrade():
     click.secho("There is a new version %s of PlatformIO available.\n"
                 "Please upgrade it via " % latest_version,
                 fg="yellow", nl=False)
-    click.secho("`platformio upgrade`", fg="cyan", nl=False)
+    click.secho("platformio upgrade", fg="cyan", nl=False)
     click.secho(" command.\nChanges: ", fg="yellow", nl=False)
     click.secho("http://docs.platformio.ikravets.com/en/latest/history.html\n",
-                fg="blue")
+                fg="cyan")
 
 
 def check_internal_updates(ctx, what):
