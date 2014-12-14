@@ -15,11 +15,11 @@ Release History
 ------------------
 
 * Ask user to install platform (when it hasn't been installed yet) within
-  `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`_
+  `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`__
   and `platformio show <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_show.html>`_ commands
 * Improved main `documentation <http://docs.platformio.ikravets.com>`_
 * Fixed "*OSError: [Errno 2] No such file or directory*" within
-  `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`_
+  `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`__
   command when PlatformIO isn't installed properly
 * Fixed example for `Eclipse IDE with Tiva board <https://github.com/ivankravets/platformio/tree/develop/examples/ide-eclipse>`_
   (`issue #32 <https://github.com/ivankravets/platformio/issues/32>`_)
@@ -108,7 +108,7 @@ Release History
   environment option
 * Allowed to override some of settings via system environment variables
   such as: ``$PIOSRCBUILD_FLAGS`` and ``$PIOENVS_DIR``
-* Added ``--upload-port`` option for `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html#cmdoption--upload-port>`_ command
+* Added ``--upload-port`` option for `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html#cmdoption--upload-port>`__ command
 * Implemented (especially for `SmartAnthill <http://smartanthill.ikravets.com/>`_)
   `platformio run -t uploadlazy <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`_
   target (no dependencies to framework libs, ELF and etc.)

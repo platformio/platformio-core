@@ -120,7 +120,7 @@ Examples
     # [  1  ] OneWire          arduino, atmelavr     "Paul Stoffregen": Control devices (from Dallas Semiconductor) that use the One Wire protocol (DS18S20, DS18B20, DS2408 and etc)
     # ...
 
-3. Search for `Arduino-based "I2C" libraries <http://platformio.ikravets.com/#!/lib/search?query=framework%253Aarduino%2520i2c&page=1>`_
+3. Search for `Arduino-based "I2C" libraries <http://platformio.ikravets.com/#!/lib/search?query=framework%253Aarduino%2520i2c>`_
 
 .. code-block:: bash
 
@@ -135,7 +135,7 @@ Examples
     # [ 14  ] Adafruit-9DOF-Unified arduino, atmelavr     "Adafruit Industries": Unified sensor driver for the Adafruit 9DOF Breakout (L3GD20 / LSM303)
     # ...
 
-4. Search for `libraries by "web" and "http" keywords <http://platformio.ikravets.com/#!/lib/search?query=keyword%253A%2522web%2522%2520keyword%253A%2522http%2522&page=1>`_.
+4. Search for `libraries by "web" and "http" keywords <http://platformio.ikravets.com/#!/lib/search?query=keyword%253A%2522web%2522%2520keyword%253A%2522http%2522>`_.
 
 .. code-block:: bash
 
@@ -148,7 +148,7 @@ Examples
     # [ 17  ] Adafruit-CC3000  arduino, atmelavr     "Adafruit Industries": Library code for Adafruit's CC3000 Wi-Fi/WiFi breakouts
     # ...
 
-5. Search for `libraries from "Adafruit Industries" author <http://platformio.ikravets.com/#!/lib/search?query=author%253A%2522Adafruit%20Industries%2522>`_
+5. Search for `libraries by "Adafruit Industries" author <http://platformio.ikravets.com/#!/lib/search?query=author%253A%2522Adafruit%20Industries%2522>`_
 
 .. code-block:: bash
 
@@ -163,7 +163,7 @@ Examples
     # [ 26  ] Adafruit-LSM303DLHC-Unified arduino, atmelavr     "Adafruit Industries": Unified sensor driver for Adafruit's LSM303 Breakout (Accelerometer + Magnetometer)
     # ...
 
-6. Search for `libraries that are compatible with Dallas temperature sensors <http://platformio.ikravets.com/#!/lib/search?query=DS*>`_
+6. Search for `libraries which are compatible with Dallas temperature sensors <http://platformio.ikravets.com/#!/lib/search?query=DS*>`_
    like DS18B20, DS18S20 and etc.
 
 .. code-block:: bash
@@ -176,16 +176,38 @@ Examples
     # [  1  ] OneWire          arduino, atmelavr     "Paul Stoffregen": Control devices (from Dallas Semiconductor) that use the One Wire protocol (DS18S20, DS18B20, DS2408 and etc)
     # ...
 
-7. Search for `Arduino-based *X10* or *XBee* libraries <http://platformio.ikravets.com/#!/lib/search?query=framework%253Aarduino%2520%252B(x10%2520xbee)&page=1>`_.
+7. Search for `Energia-based *nRF24* or *HttpClient* libraries <http://platformio.ikravets.com/#!/lib/search?query=framework%253Aenergia%2520%252B(nRF24%2520HttpClient)>`_.
    The search query that is described below can be interpreted like
-   ``arduino x10 OR arduino xbee``
+   ``energia nRF24 OR energia HttpClient``
 
 .. code-block:: bash
 
-    $ platformio lib search "+(x10 xbee)" --framework="arduino"
+    $ platformio lib search "+(nRF24 HttpClient)" --framework="energia"
     # Found 2 libraries:
     #
     # [ ID  ] Name             Compatibility         "Authors": Description
     # -------------------------------------------------------------------------------------
-    # [ 36  ] X10              arduino, atmelavr     "Doug Clinton": Sending X10 signals over AC power lines (PL513, TW523 and etc)
-    # [  6  ] XBee             arduino, atmelavr     "Andrew Rapp": Arduino library for communicating with XBees in API mode
+    # [ 46  ] HttpClient       energia, timsp430, titiva "Zack Lalanne": HttpClient is a library to make it easier to interact with web servers
+    # [ 43  ] nRF24            energia, timsp430     "Eric": The nRF24L01 is a low-cost 2.4GHz ISM transceiver module. It supports a number of channel frequencies in the 2.4GHz band and a range of data rates.
+
+
+8. Search for the `all sensor libraries excluding temperature <http://platformio.ikravets.com/#!/lib/search?query=sensor%2520-temperature>`_.
+
+.. code-block:: bash
+
+    $ platformio lib search "sensor -temperature"
+    # Found N libraries:
+    #
+    # [ ID  ] Name             Compatibility         "Authors": Description
+    # -------------------------------------------------------------------------------------
+    # [ 31  ] Adafruit-Unified-Sensor arduino, atmelavr     "Adafruit Industries": Adafruit Unified Sensor Driver
+    # [ 10  ] I2Cdevlib-AK8975 arduino, atmelavr     "Jeff Rowberg": AK8975 is 3-axis electronic compass IC with high sensitive Hall sensor technology
+    # [ 14  ] Adafruit-9DOF-Unified arduino, atmelavr     "Adafruit Industries": Unified sensor driver for the Adafruit 9DOF Breakout (L3GD20 / LSM303)
+    # [ 23  ] Adafruit-L3GD20-Unified arduino, atmelavr     "Adafruit Industries": Unified sensor driver for the L3GD20 Gyroscope
+    # [ 26  ] Adafruit-LSM303DLHC-Unified arduino, atmelavr     "Adafruit Industries": Unified sensor driver for Adafruit's LSM303 Breakout (Accelerometer + Magnetometer)
+    # [ 33  ] Adafruit-TMP006  arduino, atmelavr     "Adafruit Industries": A library for the Adafruit TMP006 Infrared Thermopile Sensor
+    # [ 34  ] Adafruit-TSL2561-Unified arduino, atmelavr     "Adafruit Industries": Unified light sensor driver for Adafruit's TSL2561 breakouts
+    # [ 97  ] I2Cdevlib-BMA150 arduino, atmelavr     "Jeff Rowberg": The BMA150 is a triaxial, low-g acceleration sensor IC with digital output for consumer market applications
+    # [ 106 ] I2Cdevlib-MPR121 arduino, atmelavr     "Jeff Rowberg": The MPR121 is a 12-bit proximity capacitive touch sensor
+    # [ 111 ] I2Cdevlib-AK8975 energia, timsp430     "Jeff Rowberg": AK8975 is 3-axis electronic compass IC with high sensitive Hall sensor technology
+    # Show next libraries? [y/N]:
