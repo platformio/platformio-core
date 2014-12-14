@@ -172,7 +172,7 @@ class MPDataPusher(threading.Thread):
     def get_stack_data(self):
         return self._stack
 
-    def join(self, timeout=3):
+    def join(self, timeout=0.1):
         self._terminate = True
         self._event.set()
         self.http_session().close()
