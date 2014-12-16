@@ -3,9 +3,7 @@
 
 import click
 
-from platformio import app
-from platformio.exception import (LibAlreadyInstalledError,
-                                  LibInstallDependencyError)
+from platformio import app, exception
 from platformio.libmanager import LibraryManager
 from platformio.util import get_api_result, get_lib_dir
 
@@ -57,6 +55,19 @@ def lib_search(query, **filters):
             query += ' %s:"%s"' % (key, value)
 
     result = get_api_result("/lib/search", dict(query=query))
+    if result['total'] == 0:
+        click.secho(
+            "Nothing has been found by your request\n"
+            "Try a less-specific search or use truncation (or wildcard) "
+            "operator", fg="yellow", nl=False)
+        click.secho(" *", fg="green")
+        click.secho("For example: DS*, PCA*, DHT* and etc.\n", fg="yellow")
+        click.echo("For more examples and advanced search syntax, "
+                   "please use documentation:")
+        click.secho("http://docs.platformio.ikravets.com"
+                    "/en/latest/userguide/lib/cmd_search.html\n", fg="cyan")
+        return
+
     click.secho("Found %d libraries:\n" % result['total'],
                 fg="green" if result['total'] else "yellow")
 
@@ -107,9 +118,9 @@ def lib_install(ctx, libid, version):
                     try:
                         lib_install_dependency(ctx, item)
                     except AssertionError:
-                        raise LibInstallDependencyError(str(item))
+                        raise exception.LibInstallDependencyError(str(item))
 
-        except LibAlreadyInstalledError:
+        except exception.LibAlreadyInstalledError:
             click.secho("Already installed", fg="yellow")
 
 
@@ -155,7 +166,7 @@ def lib_list():
         echo_liblist_item(item)
 
 
-@cli.command("show", short_help="Show details about installed libraries")
+@cli.command("show", short_help="Show details about installed library")
 @click.argument("libid", type=click.INT)
 def lib_show(libid):
     lm = LibraryManager(get_lib_dir())
@@ -221,6 +232,10 @@ def lib_update(ctx):
 @cli.command("register", short_help="Register new library")
 @click.argument("config_url")
 def lib_register(config_url):
+    if (not config_url.startswith("http://") and not
+            config_url.startswith("https://")):
+        raise exception.InvalidLibConfURL(config_url)
+
     result = get_api_result("/lib/register", data=dict(config_url=config_url))
     if "message" in result and result['message']:
         click.secho(result['message'], fg="green" if "successed" in result and

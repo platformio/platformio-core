@@ -127,6 +127,11 @@ class LibInstallDependencyError(PlatformioException):
     MESSAGE = "Error has been occurred for library dependency '%s'"
 
 
+class InvalidLibConfURL(PlatformioException):
+
+    MESSAGE = "Invalid library config URL '%s'"
+
+
 class BuildScriptNotFound(PlatformioException):
 
     MESSAGE = "Invalid path '%s' to build script"
