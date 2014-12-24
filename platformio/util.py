@@ -126,7 +126,7 @@ def get_api_result(path, params=None, data=None):
         # if packages - redirect to SF
         if path == "/packages":
             r = requests.get(
-                "https://sourceforge.net/projects/platformio-storage/files/"
+                "http://sourceforge.net/projects/platformio-storage/files/"
                 "packages/manifest.json", params=params, headers=headers)
         elif data:
             r = requests.post(__apiurl__ + path, params=params, data=data,
