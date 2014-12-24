@@ -8,6 +8,7 @@ Release History
   via USB programmer (USBasp) to
   `atmelavr <http://docs.platformio.ikravets.com/en/latest/platforms/atmelavr.html>`_
   MCUs (`issue #35 <https://github.com/ivankravets/platformio/issues/35>`_)
+* Fixed urllib3's SSL warning under Python <= 2.7.2  (`issue #39 <https://github.com/ivankravets/platformio/issues/39>`_)
 
 0.9.2 (2014-12-10)
 ------------------

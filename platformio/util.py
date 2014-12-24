@@ -120,6 +120,7 @@ def get_api_result(path, params=None, data=None):
     r = None
 
     try:
+        requests.packages.urllib3.disable_warnings()
         headers = {"User-Agent": "PlatformIO/%s %s" % (
             __version__, requests.utils.default_user_agent())}
         # if packages - redirect to SF
