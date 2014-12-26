@@ -16,7 +16,7 @@ def ProcessGeneral(env):
 
     if "FRAMEWORK" in env:
         if env['FRAMEWORK'] in ("arduino", "energia"):
-            env.ConvertInotoCpp()
+            env.ConvertInoToCpp()
         SConscriptChdir(0)
         corelibs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
                                              "frameworks", "${FRAMEWORK}.py")),
@@ -29,7 +29,7 @@ def BuildFirmware(env, corelibs):
     vdirs = src.VariantDirRecursive(
         join("$BUILD_DIR", "src"), join("$PROJECT_DIR", "src"))
 
-    # build source's dependent libs
+    # build dependent libs
     deplibs = []
     for vdir in vdirs:
         deplibs += src.BuildDependentLibraries(vdir)
@@ -158,7 +158,7 @@ def ParseBoardOptions(env, path, name):
         return data
 
 
-def ConvertInotoCpp(env):
+def ConvertInoToCpp(env):
 
     def delete_tmpcpp(files):
         for f in files:
@@ -220,5 +220,5 @@ def generate(env):
     env.AddMethod(ParseIncludesRecurive)
     env.AddMethod(VariantDirRecursive)
     env.AddMethod(ParseBoardOptions)
-    env.AddMethod(ConvertInotoCpp)
+    env.AddMethod(ConvertInoToCpp)
     return env

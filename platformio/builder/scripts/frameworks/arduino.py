@@ -26,7 +26,8 @@ if "build.usb_product" in BOARD_OPTIONS:
     ARDUINO_USBDEFINES = [
         "USB_VID=%s" % BOARD_OPTIONS['build.vid'],
         "USB_PID=%s" % BOARD_OPTIONS['build.pid'],
-        "USB_PRODUCT=%s" % BOARD_OPTIONS['build.usb_product'].replace('"', "")
+        'USB_PRODUCT=\\"%s\\"' % BOARD_OPTIONS['build.usb_product'].replace(
+            '"', "")
     ]
 
 # include board variant
@@ -37,7 +38,7 @@ env.VariantDir(
 
 env.Append(
     CPPDEFINES=[
-        "ARDUINO_ARCH_AVR",  # @TODO Should be dynamic
+        "ARDUINO_ARCH_%s" % env.subst("$PLATFORM").upper()[-3:],
         "ARDUINO=%d" % ARDUINO_VERSION,
         "ARDUINO_%s" % BOARD_OPTIONS['build.board']
     ] + ARDUINO_USBDEFINES,
