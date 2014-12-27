@@ -12,10 +12,6 @@ from SCons.Script import Import, Return
 env = None
 Import("env")
 
-BOARD_OPTIONS = env.ParseBoardOptions(
-    join("$PLATFORMFW_DIR", "boards.txt"),
-    "${BOARD}"
-)
 ENERGIA_VERSION = int(
     open(join(env.subst("$PLATFORMFW_DIR"),
               "version.txt")).read().replace(".", "").strip())
@@ -23,7 +19,7 @@ ENERGIA_VERSION = int(
 # include board variant
 env.VariantDir(
     join("$BUILD_DIR", "FrameworkEnergiaVariant"),
-    join("$PLATFORMFW_DIR", "variants", BOARD_OPTIONS['build.variant'])
+    join("$PLATFORMFW_DIR", "variants", "${BOARD_OPTIONS['build']['variant']}")
 )
 
 env.Append(
@@ -37,31 +33,25 @@ env.Append(
     ]
 )
 
-if "BOARD_MCU" not in env:
-    env.Replace(BOARD_MCU=BOARD_OPTIONS['build.mcu'])
-if "BOARD_F_CPU" not in env:
-    env.Replace(BOARD_F_CPU=BOARD_OPTIONS['build.f_cpu'])
-if "UPLOAD_PROTOCOL" not in env and "upload.protocol" in BOARD_OPTIONS:
-    env.Replace(UPLOAD_PROTOCOL=BOARD_OPTIONS['upload.protocol'])
-
 # specific linker script for TIVA devices
-if "ldscript" in BOARD_OPTIONS:
+if "ldscript" in env.subst("${BOARD_OPTIONS['build']}"):
     env.Append(
-        LINKFLAGS=["-T", join("$PLATFORMFW_DIR", "cores",
-                              BOARD_OPTIONS['build.core'],
-                              BOARD_OPTIONS['ldscript'])]
+        LINKFLAGS=["-T", join(
+            "$PLATFORMFW_DIR", "cores",
+            "${BOARD_OPTIONS['build']['core']}",
+            "${BOARD_OPTIONS['build']['ldscript']}")]
     )
 
-
-libs = []
 
 #
 # Target: Build Core Library
 #
 
+libs = []
+
 libs.append(env.BuildLibrary(
     join("$BUILD_DIR", "FrameworkEnergia"),
-    join("$PLATFORMFW_DIR", "cores", BOARD_OPTIONS['build.core'])
+    join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
 ))
 
 Return("libs")

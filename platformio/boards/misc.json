@@ -1,0 +1,19 @@
+{
+    "raspduino": {
+        "build": {
+            "board": "AVR_RASPDUINO",
+            "core": "arduino",
+            "f_cpu": "16000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "name": "Raspduino",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 30720,
+            "protocol": "arduino",
+            "speed": 57600
+        }
+    }
+}

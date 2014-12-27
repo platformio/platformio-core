@@ -1,0 +1,60 @@
+# Copyright (C) Ivan Kravets <me@ikravets.com>
+# See LICENSE for details.
+
+import json
+
+import click
+
+from platformio.util import get_boards
+
+
+@click.command("list", short_help="Pre-configured Embedded Boards")
+@click.argument("query", required=False)
+def cli(query):
+
+    BOARDLIST_TPL = ("{type:<30} {mcu:<13} {frequency:<8} "
+                     " {flash:<7} {ram:<6} {name}")
+
+    grpboards = {}
+    for type_, data in get_boards().items():
+        if data['platform'] not in grpboards:
+            grpboards[data['platform']] = {}
+        grpboards[data['platform']][type_] = data
+
+    for (platform, boards) in grpboards.items():
+        if query:
+            search_data = json.dumps(boards).lower()
+            if query.lower() not in search_data.lower():
+                continue
+
+        click.echo("\nPlatform: %s" % platform)
+        click.echo("-" * 75)
+        click.echo(BOARDLIST_TPL.format(
+            type=click.style("Type", fg="cyan"), mcu="MCU",
+            frequency="Frequency", flash="Flash", ram="RAM", name="Name"))
+        click.echo("-" * 75)
+
+        for type_, data in sorted(boards.items(), key=lambda b: b[1]['name']):
+            if query:
+                search_data = "%s %s" % (type_, json.dumps(data).lower())
+                if query.lower() not in search_data.lower():
+                    continue
+
+            flash_size = ""
+            if "maximum_size" in data.get("upload", None):
+                flash_size = int(data['upload']['maximum_size'])
+                flash_size = "%dKb" % (flash_size / 1024)
+
+            ram_size = ""
+            if "maximum_ram_size" in data.get("upload", None):
+                ram_size = int(data['upload']['maximum_ram_size'])
+                if ram_size >= 1024:
+                    ram_size = "%dKb" % (ram_size / 1024)
+                else:
+                    ram_size = "%dB" % ram_size
+
+            click.echo(BOARDLIST_TPL.format(
+                type=click.style(type_, fg="cyan"), mcu=data['build']['mcu'],
+                frequency="%dMhz" % (int(data['build']['f_cpu'][:-1])
+                                     / 1000000),
+                flash=flash_size, ram=ram_size, name=data['name']))

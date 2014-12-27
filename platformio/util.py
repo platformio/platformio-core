@@ -1,15 +1,14 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import json
 from os import name as os_name
-from os import getcwd, getenv, makedirs, utime
+from os import getcwd, getenv, listdir, makedirs, utime
 from os.path import dirname, expanduser, isdir, isfile, join, realpath
 from platform import system, uname
 from subprocess import PIPE, Popen
-from time import sleep
 
 import requests
-from serial import Serial
 
 from platformio import __apiurl__, __version__
 from platformio.exception import (APIRequestError, GetSerialPortsError,
@@ -94,17 +93,6 @@ def exec_command(args):
     return dict(out=out.strip(), err=err.strip())
 
 
-def reset_serialport(port):
-    s = Serial(port)
-    s.flushInput()
-    s.setDTR(False)
-    s.setRTS(False)
-    sleep(0.1)
-    s.setDTR(True)
-    s.setRTS(True)
-    s.close()
-
-
 def get_serialports():
     if os_name == "nt":
         from serial.tools.list_ports_windows import comports
@@ -149,3 +137,19 @@ def get_api_result(path, params=None, data=None):
         if r:
             r.close()
     return result
+
+
+def get_boards(type_=None):
+    boards = {}
+    bdirs = [join(get_source_dir(), "boards")]
+    if isdir(join(get_home_dir(), "boards")):
+        bdirs.append(join(get_home_dir(), "boards"))
+
+    for bdir in bdirs:
+        for json_file in listdir(bdir):
+            if not json_file.endswith(".json"):
+                continue
+            with open(join(bdir, json_file)) as f:
+                boards.update(json.load(f))
+
+    return boards[type_] if type_ is not None else boards

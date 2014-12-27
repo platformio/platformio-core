@@ -11,7 +11,7 @@ from time import sleep
 from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
                           DefaultEnvironment, Exit)
 
-from platformio.util import get_serialports, reset_serialport
+from platformio.util import get_serialports
 
 env = DefaultEnvironment()
 
@@ -41,7 +41,10 @@ env.Replace(
         "-mmcu=$BOARD_MCU"
     ],
 
-    CXXFLAGS=["-fno-exceptions"],
+    CXXFLAGS=[
+        "-fno-exceptions",
+        "-fno-threadsafe-statics"
+    ],
 
     CPPDEFINES=[
         "F_CPU=$BOARD_F_CPU"
@@ -101,7 +104,7 @@ env.Append(
 )
 
 
-def reset_device():
+def before_upload():
 
     def rpi_sysgpio(path, value):
         with open(path, "w") as f:
@@ -115,7 +118,7 @@ def reset_device():
         rpi_sysgpio("/sys/class/gpio/gpio18/value", 0)
         rpi_sysgpio("/sys/class/gpio/unexport", 18)
     else:
-        return reset_serialport(env.subst("$UPLOAD_PORT"))
+        return env.FlushSerialBuffer("$UPLOAD_PORT")
 
 
 CORELIBS = env.ProcessGeneral()
@@ -147,7 +150,7 @@ else:
 #
 
 upload = env.Alias(["upload", "uploadlazy"], target_hex, [
-    lambda target, source, env: reset_device(), "$UPLOADHEXCMD"])
+    lambda target, source, env: before_upload(), "$UPLOADHEXCMD"])
 AlwaysBuild(upload)
 
 #
@@ -155,7 +158,7 @@ AlwaysBuild(upload)
 #
 
 uploadeep = env.Alias("uploadeep", target_eep, [
-    lambda target, source, env: reset_device(), "$UPLOADEEPCMD"])
+    lambda target, source, env: before_upload(), "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
 
 #

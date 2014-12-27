@@ -5,8 +5,10 @@ import atexit
 import re
 from os import getenv, listdir, remove, walk
 from os.path import basename, isdir, isfile, join
+from time import sleep
 
 from SCons.Script import SConscript, SConscriptChdir
+from serial import Serial
 
 
 def ProcessGeneral(env):
@@ -126,38 +128,6 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
     return variants
 
 
-def ParseBoardOptions(env, path, name):
-    path = env.subst(path)
-    name = env.subst(name)
-    if not isfile(path):
-        env.Exit("Invalid path to boards.txt -> %s" % path)
-
-    data = {}
-    with open(path) as f:
-        for line in f:
-            if not line.strip() or line[0] == "#":
-                continue
-
-            _group = line[:line.index(".")]
-            _cpu = name[len(_group):]
-            line = line[len(_group)+1:].strip()
-            if _group != name[:len(_group)]:
-                continue
-            elif "menu.cpu." in line:
-                if _cpu not in line:
-                    continue
-                else:
-                    line = line[len(_cpu)+10:]
-
-            if "=" in line:
-                opt, value = line.split("=", 1)
-                data[opt] = value
-    if not data:
-        env.Exit("Unknown Board '%s'" % name)
-    else:
-        return data
-
-
 def ConvertInoToCpp(env):
 
     def delete_tmpcpp(files):
@@ -206,6 +176,17 @@ def ConvertInoToCpp(env):
         atexit.register(delete_tmpcpp, tmpcpp)
 
 
+def FlushSerialBuffer(env, port):
+    s = Serial(env.subst(port))
+    s.flushInput()
+    s.setDTR(False)
+    s.setRTS(False)
+    sleep(0.1)
+    s.setDTR(True)
+    s.setRTS(True)
+    s.close()
+
+
 def exists(_):
     return True
 
@@ -219,6 +200,6 @@ def generate(env):
     env.AddMethod(GetDependentLibraries)
     env.AddMethod(ParseIncludesRecurive)
     env.AddMethod(VariantDirRecursive)
-    env.AddMethod(ParseBoardOptions)
     env.AddMethod(ConvertInoToCpp)
+    env.AddMethod(FlushSerialBuffer)
     return env

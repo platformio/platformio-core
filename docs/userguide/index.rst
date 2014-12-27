@@ -14,6 +14,7 @@ To print all available commands and options use:
 .. toctree::
     :maxdepth: 2
 
+    cmd_boards
     cmd_init
     cmd_install
     platformio lib <lib/index>

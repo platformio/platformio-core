@@ -4,6 +4,8 @@ Release History
 0.10.0 (?)
 ----------
 
+* Implemented `platformio boards <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_boards.html>`_
+  command (`issue #11 <https://github.com/ivankravets/platformio/issues/11>`_)
 * Added `example with uploading firmware <http://docs.platformio.ikravets.com/en/latest/projectconf.html#examples>`_
   via USB programmer (USBasp) to
   `atmelavr <http://docs.platformio.ikravets.com/en/latest/platforms/atmelavr.html>`_
