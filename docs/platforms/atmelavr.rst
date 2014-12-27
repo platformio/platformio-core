@@ -59,8 +59,9 @@ Boards
 ------
 
 .. note::
-   For more detailed ``board`` information please scroll tables below by
-   horizontal.
+    * You can list pre-configured boards by :ref:`cmd_boards` command
+    * For more detailed ``board`` information please scroll tables below by
+      horizontal.
 
 Arduino
 ~~~~~~~
