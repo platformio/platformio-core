@@ -219,6 +219,41 @@ More detailed information you can find here
 `Arduino boards <http://arduino.cc/en/Main/Products>`_.
 
 
+Engduino
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller ``board_mcu``
+      - Frequency ``board_f_cpu``
+      - Flash
+      - RAM
+    * - ``engduinov1``
+      - `EngduinoV1 <http://www.engduino.org>`_
+      - ATmega32u4 ``atmega32u4``
+      - 8 MHz ``8000000L``
+      - 32 Kb
+      - 2.5 Kb
+    * - ``engduinov2``
+      - `EngduinoV2 <http://www.engduino.org>`_
+      - ATmega32u4 ``atmega32u4``
+      - 8 MHz ``8000000L``
+      - 32 Kb
+      - 2.5 Kb
+    * - ``engduinov3``
+      - `EngduinoV3 <http://www.engduino.org>`_
+      - ATmega32u4 ``atmega32u4``
+      - 8 MHz ``8000000L``
+      - 32 Kb
+      - 2.5 Kb
+
+More detailed information you can find here
+`Engduino Site <http://www.engduino.org>`_.
+
+
 Microduino
 ~~~~~~~~~~
 
@@ -320,5 +355,5 @@ Raspduino
       - 32 Kb
       - 2 Kb
 
-More detailed information you can find in
+More detailed information you can find here
 `Wiki <http://www.bitwizard.nl/wiki/index.php/Raspduino>`_.
