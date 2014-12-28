@@ -58,7 +58,6 @@ env.Replace(
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
     UPLOADERFLAGS=[
-        "-V",  # do not verify
         "-q",  # suppress progress output
         "-D",  # disable auto erase for flash memory
         "-p", "$BOARD_MCU",
@@ -118,7 +117,19 @@ def before_upload():
         rpi_sysgpio("/sys/class/gpio/gpio18/value", 0)
         rpi_sysgpio("/sys/class/gpio/unexport", 18)
     else:
-        return env.FlushSerialBuffer("$UPLOAD_PORT")
+        upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
+
+        if not upload_options.get("disable_flushing", False):
+            env.FlushSerialBuffer("$UPLOAD_PORT")
+
+        before_ports = [i['port'] for i in get_serialports()]
+
+        if (upload_options.get("use_1200bps_touch", False) and
+                "UPLOAD_PORT" in env):
+            env.TouchSerialPort("$UPLOAD_PORT", 1200)
+
+        if upload_options.get("wait_for_upload_port", False):
+            env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
 
 
 CORELIBS = env.ProcessGeneral()
@@ -174,7 +185,7 @@ if is_uptarget:
         for item in get_serialports():
             if "VID:PID" in item['hwid']:
                 print "Auto-detected UPLOAD_PORT: %s" % item['port']
-                env['UPLOAD_PORT'] = item['port']
+                env.Replace(UPLOAD_PORT=item['port'])
                 break
 
     if "UPLOAD_PORT" not in env:

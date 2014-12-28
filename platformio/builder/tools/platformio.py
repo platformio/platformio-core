@@ -2,13 +2,16 @@
 # See LICENSE for details.
 
 import atexit
+import platform
 import re
 from os import getenv, listdir, remove, walk
 from os.path import basename, isdir, isfile, join
 from time import sleep
 
-from SCons.Script import SConscript, SConscriptChdir
+from SCons.Script import Exit, SConscript, SConscriptChdir
 from serial import Serial
+
+from platformio.util import get_serialports
 
 
 def ProcessGeneral(env):
@@ -187,6 +190,36 @@ def FlushSerialBuffer(env, port):
     s.close()
 
 
+def TouchSerialPort(env, port, baudrate):
+    s = Serial(port=env.subst(port), baudrate=baudrate)
+    s.close()
+    if platform.system() != "Darwin":
+        sleep(0.3)
+
+
+def WaitForNewSerialPort(env, before):
+    new_port = None
+    elapsed = 0
+    while elapsed < 10:
+        now = [i['port'] for i in get_serialports()]
+        diff = list(set(now) - set(before))
+        if diff:
+            new_port = diff[0]
+            break
+
+        before = now
+        sleep(0.25)
+        elapsed += 0.25
+
+    if not new_port:
+        Exit("Error: Couldn't find a board on the selected port. "
+             "Check that you have the correct port selected. "
+             "If it is correct, try pressing the board's reset "
+             "button after initiating the upload.")
+
+    return new_port
+
+
 def exists(_):
     return True
 
@@ -202,4 +235,6 @@ def generate(env):
     env.AddMethod(VariantDirRecursive)
     env.AddMethod(ConvertInoToCpp)
     env.AddMethod(FlushSerialBuffer)
+    env.AddMethod(TouchSerialPort)
+    env.AddMethod(WaitForNewSerialPort)
     return env
