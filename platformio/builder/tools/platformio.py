@@ -83,7 +83,8 @@ def BuildDependentLibraries(env, src_dir):
 def GetDependentLibraries(env, src_dir):
     includes = {}
     regexp = re.compile(r"^\s*#include\s+(?:\<|\")([^\>\"\']+)(?:\>|\")", re.M)
-    for node in env.GlobCXXFiles(src_dir):
+    nodes = env.GlobCXXFiles(src_dir) + env.Glob(join(src_dir, "*.h"))
+    for node in nodes:
         env.ParseIncludesRecurive(regexp, node, includes)
     includes = sorted(includes.items(), key=lambda s: s[0])
 
