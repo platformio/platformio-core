@@ -114,13 +114,13 @@
         "name": "Microduino Core USB (ATmega32U4@16M,5V)",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": "true",
+            "disable_flushing": true,
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
             "speed": 57600,
-            "use_1200bps_touch": "true",
-            "wait_for_upload_port": "true"
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
         }
     },
     "644pa16m": {

@@ -36,15 +36,14 @@ Examples
     ---------------------------------------------------------------------------
     Type                  MCU           Frequency  Flash   RAM    Name
     ---------------------------------------------------------------------------
-    bt                    atmega168     16Mhz     14Kb    1Kb    Arduino BT
     btatmega168           atmega168     16Mhz     14Kb    1Kb    Arduino BT ATmega168
-    btatmega328           atmega168     16Mhz     14Kb    1Kb    Arduino BT ATmega328
-    diecimila             atmega168     16Mhz     14Kb    1Kb    Arduino Duemilanove or Diecimila
+    btatmega328           atmega328p    16Mhz     28Kb    2Kb    Arduino BT ATmega328
     diecimilaatmega168    atmega168     16Mhz     14Kb    1Kb    Arduino Duemilanove or Diecimila ATmega168
-    diecimilaatmega328    atmega168     16Mhz     14Kb    1Kb    Arduino Duemilanove or Diecimila ATmega328
+    diecimilaatmega328    atmega328p    16Mhz     30Kb    2Kb    Arduino Duemilanove or Diecimila ATmega328
     esplora               atmega32u4    16Mhz     28Kb    2Kb    Arduino Esplora
     ethernet              atmega328p    16Mhz     31Kb    2Kb    Arduino Ethernet
     ...
+
 
 2. Show boards which are based on ``ATmega168`` MCU
 
@@ -56,14 +55,14 @@ Examples
     ---------------------------------------------------------------------------
     Type                  MCU           Frequency  Flash   RAM    Name
     ---------------------------------------------------------------------------
-    bt                    atmega168     16Mhz     14Kb    1Kb    Arduino BT
     btatmega168           atmega168     16Mhz     14Kb    1Kb    Arduino BT ATmega168
-    ...
-    pro                   atmega168     8Mhz      14Kb    1Kb    Arduino Pro or Pro Mini
-    ...
-    lilypad               atmega168     8Mhz      14Kb    1Kb    LilyPad Arduino
+    diecimilaatmega168    atmega168     16Mhz     14Kb    1Kb    Arduino Duemilanove or Diecimila ATmega168
+    miniatmega168         atmega168     16Mhz     14Kb    1Kb    Arduino Mini ATmega168
+    atmegangatmega168     atmega168     16Mhz     14Kb    1Kb    Arduino NG or older ATmega168
+    nanoatmega168         atmega168     16Mhz     14Kb    1Kb    Arduino Nano ATmega168
+    pro8MHzatmega168      atmega168     8Mhz      14Kb    1Kb    Arduino Pro or Pro Mini ATmega168 (3.3V, 8 MHz)
+    pro16MHzatmega168     atmega168     16Mhz     14Kb    1Kb    Arduino Pro or Pro Mini ATmega168 (5V, 16 MHz)
     lilypadatmega168      atmega168     8Mhz      14Kb    1Kb    LilyPad Arduino ATmega168
-    lilypadatmega328      atmega168     8Mhz      14Kb    1Kb    LilyPad Arduino ATmega328
     168pa16m              atmega168p    16Mhz     15Kb    1Kb    Microduino Core (Atmega168PA@16M,5V)
     168pa8m               atmega168p    8Mhz      15Kb    1Kb    Microduino Core (Atmega168PA@8M,3.3V)
 

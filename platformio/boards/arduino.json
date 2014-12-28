@@ -14,30 +14,13 @@
         "name": "LilyPad Arduino USB",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": "true",
+            "disable_flushing": true,
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
             "speed": 57600,
-            "use_1200bps_touch": "true",
-            "wait_for_upload_port": "true"
-        }
-    },
-    "atmegang": {
-        "build": {
-            "board": "AVR_NG",
-            "core": "arduino",
-            "f_cpu": "16000000L",
-            "mcu": "atmega8",
-            "variant": "standard"
-        },
-        "name": "Arduino NG or older",
-        "platform": "atmelavr",
-        "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 7168,
-            "protocol": "arduino",
-            "speed": 19200
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
         }
     },
     "atmegangatmega168": {
@@ -45,14 +28,14 @@
             "board": "AVR_NG",
             "core": "arduino",
             "f_cpu": "16000000L",
-            "mcu": "atmega8",
+            "mcu": "atmega168",
             "variant": "standard"
         },
         "name": "Arduino NG or older ATmega168",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 1024,
-            "maximum_size": 7168,
+            "maximum_size": 14336,
             "protocol": "arduino",
             "speed": 19200
         }
@@ -74,24 +57,6 @@
             "speed": 19200
         }
     },
-    "bt": {
-        "build": {
-            "board": "AVR_BT",
-            "core": "arduino",
-            "f_cpu": "16000000L",
-            "mcu": "atmega168",
-            "variant": "eightanaloginputs"
-        },
-        "name": "Arduino BT",
-        "platform": "atmelavr",
-        "upload": {
-            "disable_flushing": "true",
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
-            "protocol": "arduino",
-            "speed": 19200
-        }
-    },
     "btatmega168": {
         "build": {
             "board": "AVR_BT",
@@ -103,7 +68,7 @@
         "name": "Arduino BT ATmega168",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": "true",
+            "disable_flushing": true,
             "maximum_ram_size": 1024,
             "maximum_size": 14336,
             "protocol": "arduino",
@@ -115,32 +80,15 @@
             "board": "AVR_BT",
             "core": "arduino",
             "f_cpu": "16000000L",
-            "mcu": "atmega168",
+            "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
         "name": "Arduino BT ATmega328",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": "true",
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
-            "protocol": "arduino",
-            "speed": 19200
-        }
-    },
-    "diecimila": {
-        "build": {
-            "board": "AVR_DUEMILANOVE",
-            "core": "arduino",
-            "f_cpu": "16000000L",
-            "mcu": "atmega168",
-            "variant": "standard"
-        },
-        "name": "Arduino Duemilanove or Diecimila",
-        "platform": "atmelavr",
-        "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
+            "disable_flushing": true,
+            "maximum_ram_size": 2048,
+            "maximum_size": 28672,
             "protocol": "arduino",
             "speed": 19200
         }
@@ -167,16 +115,16 @@
             "board": "AVR_DUEMILANOVE",
             "core": "arduino",
             "f_cpu": "16000000L",
-            "mcu": "atmega168",
+            "mcu": "atmega328p",
             "variant": "standard"
         },
         "name": "Arduino Duemilanove or Diecimila ATmega328",
         "platform": "atmelavr",
         "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
+            "maximum_ram_size": 2048,
+            "maximum_size": 30720,
             "protocol": "arduino",
-            "speed": 19200
+            "speed": 57600
         }
     },
     "esplora": {
@@ -194,13 +142,13 @@
         "name": "Arduino Esplora",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": "true",
+            "disable_flushing": true,
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
             "speed": 57600,
-            "use_1200bps_touch": "true",
-            "wait_for_upload_port": "true"
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
         }
     },
     "ethernet": {
@@ -252,30 +200,13 @@
         "name": "Arduino Leonardo",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": "true",
+            "disable_flushing": true,
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
             "speed": 57600,
-            "use_1200bps_touch": "true",
-            "wait_for_upload_port": "true"
-        }
-    },
-    "lilypad": {
-        "build": {
-            "board": "AVR_LILYPAD",
-            "core": "arduino",
-            "f_cpu": "8000000L",
-            "mcu": "atmega168",
-            "variant": "standard"
-        },
-        "name": "LilyPad Arduino",
-        "platform": "atmelavr",
-        "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
-            "protocol": "arduino",
-            "speed": 19200
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
         }
     },
     "lilypadatmega168": {
@@ -300,31 +231,14 @@
             "board": "AVR_LILYPAD",
             "core": "arduino",
             "f_cpu": "8000000L",
-            "mcu": "atmega168",
+            "mcu": "atmega328p",
             "variant": "standard"
         },
         "name": "LilyPad Arduino ATmega328",
         "platform": "atmelavr",
         "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
-            "protocol": "arduino",
-            "speed": 19200
-        }
-    },
-    "mega": {
-        "build": {
-            "board": "AVR_MEGA",
-            "core": "arduino",
-            "f_cpu": "16000000L",
-            "mcu": "atmega1280",
-            "variant": "mega"
-        },
-        "name": "Arduino Mega or Mega 2560",
-        "platform": "atmelavr",
-        "upload": {
-            "maximum_ram_size": 8192,
-            "maximum_size": 126976,
+            "maximum_ram_size": 2048,
+            "maximum_size": 30720,
             "protocol": "arduino",
             "speed": 57600
         }
@@ -365,19 +279,19 @@
     },
     "megaatmega2560": {
         "build": {
-            "board": "AVR_MEGA",
+            "board": "AVR_MEGA2560",
             "core": "arduino",
             "f_cpu": "16000000L",
-            "mcu": "atmega1280",
+            "mcu": "atmega2560",
             "variant": "mega"
         },
         "name": "Arduino Mega or Mega 2560 ATmega2560 (Mega 2560)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 8192,
-            "maximum_size": 126976,
-            "protocol": "arduino",
-            "speed": 57600
+            "maximum_size": 253952,
+            "protocol": "wiring",
+            "speed": 115200
         }
     },
     "micro": {
@@ -395,30 +309,13 @@
         "name": "Arduino Micro",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": "true",
+            "disable_flushing": true,
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
             "speed": 57600,
-            "use_1200bps_touch": "true",
-            "wait_for_upload_port": "true"
-        }
-    },
-    "mini": {
-        "build": {
-            "board": "AVR_MINI",
-            "core": "arduino",
-            "f_cpu": "16000000L",
-            "mcu": "atmega168",
-            "variant": "eightanaloginputs"
-        },
-        "name": "Arduino Mini",
-        "platform": "atmelavr",
-        "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
-            "protocol": "arduino",
-            "speed": 19200
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
         }
     },
     "miniatmega168": {
@@ -443,33 +340,16 @@
             "board": "AVR_MINI",
             "core": "arduino",
             "f_cpu": "16000000L",
-            "mcu": "atmega168",
+            "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
         "name": "Arduino Mini ATmega328",
         "platform": "atmelavr",
         "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
+            "maximum_ram_size": 2048,
+            "maximum_size": 28672,
             "protocol": "arduino",
-            "speed": 19200
-        }
-    },
-    "nano": {
-        "build": {
-            "board": "AVR_NANO",
-            "core": "arduino",
-            "f_cpu": "16000000L",
-            "mcu": "atmega168",
-            "variant": "eightanaloginputs"
-        },
-        "name": "Arduino Nano",
-        "platform": "atmelavr",
-        "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
-            "protocol": "arduino",
-            "speed": 19200
+            "speed": 115200
         }
     },
     "nanoatmega168": {
@@ -494,40 +374,23 @@
             "board": "AVR_NANO",
             "core": "arduino",
             "f_cpu": "16000000L",
-            "mcu": "atmega168",
+            "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
         "name": "Arduino Nano ATmega328",
         "platform": "atmelavr",
         "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
+            "maximum_ram_size": 2048,
+            "maximum_size": 30720,
             "protocol": "arduino",
-            "speed": 19200
-        }
-    },
-    "pro": {
-        "build": {
-            "board": "AVR_PRO",
-            "core": "arduino",
-            "f_cpu": "8000000L",
-            "mcu": "atmega168",
-            "variant": "eightanaloginputs"
-        },
-        "name": "Arduino Pro or Pro Mini",
-        "platform": "atmelavr",
-        "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
-            "protocol": "arduino",
-            "speed": 19200
+            "speed": 57600
         }
     },
     "pro16MHzatmega168": {
         "build": {
             "board": "AVR_PRO",
             "core": "arduino",
-            "f_cpu": "8000000L",
+            "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
@@ -544,17 +407,17 @@
         "build": {
             "board": "AVR_PRO",
             "core": "arduino",
-            "f_cpu": "8000000L",
-            "mcu": "atmega168",
+            "f_cpu": "16000000L",
+            "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
         "name": "Arduino Pro or Pro Mini ATmega328 (5V, 16 MHz)",
         "platform": "atmelavr",
         "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
+            "maximum_ram_size": 2048,
+            "maximum_size": 30720,
             "protocol": "arduino",
-            "speed": 19200
+            "speed": 57600
         }
     },
     "pro8MHzatmega168": {
@@ -579,16 +442,16 @@
             "board": "AVR_PRO",
             "core": "arduino",
             "f_cpu": "8000000L",
-            "mcu": "atmega168",
+            "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
         "name": "Arduino Pro or Pro Mini ATmega328 (3.3V, 8 MHz)",
         "platform": "atmelavr",
         "upload": {
-            "maximum_ram_size": 1024,
-            "maximum_size": 14336,
+            "maximum_ram_size": 2048,
+            "maximum_size": 30720,
             "protocol": "arduino",
-            "speed": 19200
+            "speed": 57600
         }
     },
     "robotControl": {
@@ -606,13 +469,13 @@
         "name": "Arduino Robot Control",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": "true",
+            "disable_flushing": true,
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
             "speed": 57600,
-            "use_1200bps_touch": "true",
-            "wait_for_upload_port": "true"
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
         }
     },
     "robotMotor": {
@@ -630,13 +493,13 @@
         "name": "Arduino Robot Motor",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": "true",
+            "disable_flushing": true,
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
             "speed": 57600,
-            "use_1200bps_touch": "true",
-            "wait_for_upload_port": "true"
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
         }
     },
     "uno": {
@@ -671,14 +534,14 @@
         "name": "Arduino Yun",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": "true",
+            "disable_flushing": true,
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
             "speed": 57600,
-            "use_1200bps_touch": "true",
-            "via_ssh": "true",
-            "wait_for_upload_port": "true"
+            "use_1200bps_touch": true,
+            "via_ssh": true,
+            "wait_for_upload_port": true
         }
     }
 }
