@@ -197,7 +197,7 @@ def TouchSerialPort(env, port, baudrate):
         sleep(0.3)
 
 
-def WaitForNewSerialPort(env, before):
+def WaitForNewSerialPort(_, before):
     new_port = None
     elapsed = 0
     while elapsed < 10:
