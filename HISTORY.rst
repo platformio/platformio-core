@@ -10,6 +10,8 @@ Release History
   via USB programmer (USBasp) to
   `atmelavr <http://docs.platformio.ikravets.com/en/latest/platforms/atmelavr.html>`_
   MCUs (`issue #35 <https://github.com/ivankravets/platformio/issues/35>`_)
+* Automatic detection of port on `platformio serialports monitor <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
+  (`issue #37 <https://github.com/ivankravets/platformio/issues/37>`_)
 * Fixed urllib3's SSL warning under Python <= 2.7.2  (`issue #39 <https://github.com/ivankravets/platformio/issues/39>`_)
 * Fixed bug with Arduino's USB boards (`issue #40 <https://github.com/ivankravets/platformio/issues/40>`_)
 
