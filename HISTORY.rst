@@ -6,14 +6,17 @@ Release History
 
 * Implemented `platformio boards <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_boards.html>`_
   command (`issue #11 <https://github.com/ivankravets/platformio/issues/11>`_)
+* Added support of *Engduino* boards for
+  `atmelavr <http://docs.platformio.ikravets.com/en/latest/platforms/atmelavr.html#engduino>`__
+  platform (`issue #38 <https://github.com/ivankravets/platformio/issues/38>`_)
 * Added `example with uploading firmware <http://docs.platformio.ikravets.com/en/latest/projectconf.html#examples>`_
-  via USB programmer (USBasp) to
+  via USB programmer (USBasp) for
   `atmelavr <http://docs.platformio.ikravets.com/en/latest/platforms/atmelavr.html>`_
-  MCUs (`issue #35 <https://github.com/ivankravets/platformio/issues/35>`_)
+  *MCUs* (`issue #35 <https://github.com/ivankravets/platformio/issues/35>`_)
 * Automatic detection of port on `platformio serialports monitor <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
   (`issue #37 <https://github.com/ivankravets/platformio/issues/37>`_)
-* Fixed urllib3's SSL warning under Python <= 2.7.2  (`issue #39 <https://github.com/ivankravets/platformio/issues/39>`_)
-* Fixed bug with Arduino's USB boards (`issue #40 <https://github.com/ivankravets/platformio/issues/40>`_)
+* Fixed urllib3's *SSL* warning under Python <= 2.7.2  (`issue #39 <https://github.com/ivankravets/platformio/issues/39>`_)
+* Fixed bug with *Arduino USB* boards (`issue #40 <https://github.com/ivankravets/platformio/issues/40>`_)
 
 0.9.2 (2014-12-10)
 ------------------
