@@ -89,10 +89,16 @@ def GetDependentLibraries(env, src_dir):
 
     result = []
     for i in includes:
-        item = (i[1][1], i[1][2])
-        if item in result:
-            continue
-        result.append(item)
+        items = [(i[1][1], i[1][2])]
+
+        if isdir(join(items[0][1], "utility")):
+            items.append(("%sUtility" % items[0][0],
+                          join(items[0][1], "utility")))
+
+        for item in items:
+            if item in result:
+                continue
+            result.append(item)
     return result
 
 
