@@ -232,19 +232,19 @@ Engduino
       - Flash
       - RAM
     * - ``engduinov1``
-      - `EngduinoV1 <http://www.engduino.org>`_
+      - `Engduino 1 <http://www.engduino.org>`_
       - ATmega32u4 ``atmega32u4``
       - 8 MHz ``8000000L``
       - 32 Kb
       - 2.5 Kb
     * - ``engduinov2``
-      - `EngduinoV2 <http://www.engduino.org>`_
+      - `Engduino 2 <http://www.engduino.org>`_
       - ATmega32u4 ``atmega32u4``
       - 8 MHz ``8000000L``
       - 32 Kb
       - 2.5 Kb
     * - ``engduinov3``
-      - `EngduinoV3 <http://www.engduino.org>`_
+      - `Engduino 3 <http://www.engduino.org>`_
       - ATmega32u4 ``atmega32u4``
       - 8 MHz ``8000000L``
       - 32 Kb

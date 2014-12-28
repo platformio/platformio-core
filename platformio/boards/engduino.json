@@ -10,7 +10,7 @@
             "variant": "engduinov1",
             "vid": "0x1B4F"
         },
-        "name": "EngduinoV1",
+        "name": "Engduino 1",
         "platform": "atmelavr",
         "upload": {
             "disable_flushing": true,
@@ -33,7 +33,7 @@
             "variant": "engduinov2",
             "vid": "0x1B4F"
         },
-        "name": "EngduinoV2",
+        "name": "Engduino 2",
         "platform": "atmelavr",
         "upload": {
             "disable_flushing": true,
@@ -56,7 +56,7 @@
             "variant": "engduinov3",
             "vid": "0x1B4F"
         },
-        "name": "EngduinoV3",
+        "name": "Engduino 3",
         "platform": "atmelavr",
         "upload": {
             "disable_flushing": true,
