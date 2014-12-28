@@ -3,7 +3,6 @@
         "build": {
             "board": "AVR_LILYPAD_USB",
             "core": "arduino",
-            "extra_flags": "{build.usb_flags}",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
             "pid": "0x9208",
@@ -131,7 +130,6 @@
         "build": {
             "board": "AVR_ESPLORA",
             "core": "arduino",
-            "extra_flags": "{build.usb_flags}",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x803c",
@@ -189,7 +187,6 @@
         "build": {
             "board": "AVR_LEONARDO",
             "core": "arduino",
-            "extra_flags": "{build.usb_flags}",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8036",
@@ -298,7 +295,6 @@
         "build": {
             "board": "AVR_MICRO",
             "core": "arduino",
-            "extra_flags": "{build.usb_flags}",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8037",
@@ -458,7 +454,6 @@
         "build": {
             "board": "AVR_ROBOT_CONTROL",
             "core": "arduino",
-            "extra_flags": "{build.usb_flags}",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8038",
@@ -482,7 +477,6 @@
         "build": {
             "board": "AVR_ROBOT_MOTOR",
             "core": "arduino",
-            "extra_flags": "{build.usb_flags}",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8039",
@@ -523,7 +517,6 @@
         "build": {
             "board": "AVR_YUN",
             "core": "arduino",
-            "extra_flags": "{build.usb_flags}",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8041",
