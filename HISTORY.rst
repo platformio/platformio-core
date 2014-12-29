@@ -9,6 +9,9 @@ Release History
 * Added support of *Engduino* boards for
   `atmelavr <http://docs.platformio.ikravets.com/en/latest/platforms/atmelavr.html#engduino>`__
   platform (`issue #38 <https://github.com/ivankravets/platformio/issues/38>`_)
+* Added ``--board`` option to `platformio init <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_init.html>`_
+  command which allows to initialise project with the specified embedded boards
+  (`issue #21 <https://github.com/ivankravets/platformio/issues/21>`_)
 * Added `example with uploading firmware <http://docs.platformio.ikravets.com/en/latest/projectconf.html#examples>`_
   via USB programmer (USBasp) for
   `atmelavr <http://docs.platformio.ikravets.com/en/latest/platforms/atmelavr.html>`_

@@ -32,8 +32,27 @@ Options
 .. option::
     --project-dir, -d
 
-Specified path to the directory where *PlatformIO* will initialize new project.
+A path to the directory where *PlatformIO* will initialise new project.
 
+.. option::
+    --board, -b
+
+If you specify board ``type`` (you can pass multiple ``--board`` options), then
+*PlatformIO* will automatically generate environment for :ref:`projectconf` and
+pre-fill these data:
+
+* :ref:`projectconf_env_platform`
+* :ref:`projectconf_env_framework`
+* :ref:`projectconf_env_board`
+
+The full list with pre-configured boards is available here :ref:`platforms`.
+
+.. option::
+    --disable-auto-uploading
+
+If you initialise project with the specified ``--board``, then *PlatformIO*
+will create environment with enabled firmware auto-uploading. This option
+allows you to disable firmware auto-uploading by default.
 
 Examples
 --------
@@ -43,6 +62,7 @@ Examples
 .. code-block:: bash
 
     $ platformio init
+
     The current working directory *** will be used for the new project.
     You can specify another project directory via
     `platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.
@@ -61,6 +81,21 @@ Examples
 .. code-block:: bash
 
     $ platformio init -d %PATH_TO_DIR%
+
+    The next files/directories will be created in ***
+    platformio.ini - Project Configuration File
+    src - a source directory. Put your source code here
+    lib - a directory for the project specific libraries
+    Do you want to continue? [y/N]: y
+    Project has been successfully initialized!
+    Now you can process it with `platformio run` command.
+
+3. Initialise project for Arduino Uno
+
+.. code-block:: bash
+
+    $ platformio init --board uno
+
     The next files/directories will be created in ***
     platformio.ini - Project Configuration File
     src - a source directory. Put your source code here

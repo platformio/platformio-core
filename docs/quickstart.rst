@@ -7,33 +7,18 @@ Quickstart
     Please read `Get Started <http://platformio.ikravets.com/#!/get-started>`_
     article from the official WebSite.
 
-First, :ref:`Install PlatformIO <installation>`.
+1. :ref:`Install PlatformIO <installation>`.
 
-Print all available development platforms for installing
+2. Find board ``type`` from :ref:`platforms` (you can choose multiple board
+   types).
 
-.. code-block:: bash
-
-    $ platformio search
-    [ ... ]
-
-
-Install new development platform
+3. Initialize new PlatformIO based project with the pre-configured
+   environments for your boards:
 
 .. code-block:: bash
 
-    $ platformio install PLATFORM
-    Downloading  [####################################]  100%
-    Unpacking  [####################################]  100%
-    Installing .....
-    [ ... ]
-    The platform 'PLATFORM' has been successfully installed!
+    $ platformio init --board=TYPE1 --board=TYPE2
 
-
-Initialize new PlatformIO based project
-
-.. code-block:: bash
-
-    $ platformio init
     The current working directory *** will be used for the new project.
     You can specify another project directory via
     `platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.
@@ -46,29 +31,23 @@ Initialize new PlatformIO based project
     Project has been successfully initialized!
     Now you can process it with `platformio run` command.
 
+More detailed information about this command is here :ref:`cmd_init`.
 
-Setup environments in ``platformio.ini``. For more examples go to
-:ref:`Project Configuration File <projectconf_examples>`
-
-.. code-block:: ini
-
-    # Simple and base environment
-    [env:mybaseenv]
-    platform = %INSTALLED_PLATFORM_NAME_HERE%
-
-
-Process the project's environments
+4. Process the project's environments.
 
 .. code-block:: bash
 
     $ platformio run
 
-    # if embedded project then upload firmware
+    # if you don't have specified `targets = upload` option for environment,
+    # then you can upload firmware manually with this command:
     $ platformio run --target upload
 
     # clean project
     $ platformio run --target clean
 
+If you don't have installed required platforms, then *PlatformIO* will propose
+you to install them automatically.
 
 Further examples can be found in the ``examples/`` directory in the source
 distribution or `on the web <https://github.com/ivankravets/platformio/tree/develop/examples>`_.

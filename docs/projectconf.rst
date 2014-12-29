@@ -58,17 +58,23 @@ For example, ``[env:hello_world]``.
 Options
 ~~~~~~~
 
+.. _projectconf_env_platform:
+
 ``platform``
 ^^^^^^^^^^^^
 
 :ref:`Platform <platforms>` type
 
 
+.. _projectconf_env_framework:
+
 ``framework``
 ^^^^^^^^^^^^^
 
 See ``framework`` type in *Frameworks* section of :ref:`platforms`
 
+
+.. _projectconf_env_board:
 
 ``board``
 ^^^^^^^^^

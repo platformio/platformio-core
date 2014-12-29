@@ -30,6 +30,11 @@ class UnknownCLICommand(PlatformioException):
                " to see all available commands")
 
 
+class UnknownBoard(PlatformioException):
+
+    MESSAGE = "Unknown board type '%s'"
+
+
 class UnknownPackage(PlatformioException):
 
     MESSAGE = "Detected unknown package '%s'"
