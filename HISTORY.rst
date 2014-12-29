@@ -15,7 +15,8 @@ Release History
   *MCUs* (`issue #35 <https://github.com/ivankravets/platformio/issues/35>`_)
 * Automatic detection of port on `platformio serialports monitor <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
   (`issue #37 <https://github.com/ivankravets/platformio/issues/37>`_)
-* Fixed urllib3's *SSL* warning under Python <= 2.7.2  (`issue #39 <https://github.com/ivankravets/platformio/issues/39>`_)
+* Allowed auto-installation of platforms when prompts are disabled (`issue #43 <https://github.com/ivankravets/platformio/issues/43>`_)
+* Fixed urllib3's *SSL* warning under Python <= 2.7.2 (`issue #39 <https://github.com/ivankravets/platformio/issues/39>`_)
 * Fixed bug with *Arduino USB* boards (`issue #40 <https://github.com/ivankravets/platformio/issues/40>`_)
 
 0.9.2 (2014-12-10)
