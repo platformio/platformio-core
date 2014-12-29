@@ -8,7 +8,7 @@ The Project configuration file is named ``platformio.ini``. This is a
 
 ``platformio.ini`` has sections (each denoted by a ``[header]``) and
 key / value pairs within the sections. A sign ``#`` at the beginning of the
-line indicate a comment. Comment lines are ignored.
+line indicates a comment. Comment lines are ignored.
 
 The sections and their allowable values are described below.
 
