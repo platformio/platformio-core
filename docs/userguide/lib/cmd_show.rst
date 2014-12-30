@@ -24,7 +24,7 @@ Examples
 
 .. code-block:: bash
 
-    # OneWire: http://platformio.ikravets.com/#!/lib/show/1/OneWire
+    # OneWire: http://platformio.org/#!/lib/show/1/OneWire
     $ platformio lib show 1
     # OneWire
     # -------

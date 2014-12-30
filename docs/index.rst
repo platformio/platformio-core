@@ -2,9 +2,9 @@ PlatformIO: A cross-platform code builder and the missing library manager
 =========================================================================
 
 .. image:: _static/platformio-logo.png
-    :target: http://platformio.ikravets.com
+    :target: http://platformio.org
 
-`Website + Library Search <http://platformio.ikravets.com>`_ |
+`Website + Library Search <http://platformio.org>`_ |
 `Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
 `Source Code <https://github.com/ivankravets/platformio>`_ |
 `Issues <https://github.com/ivankravets/platformio/issues>`_ |

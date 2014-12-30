@@ -162,5 +162,5 @@ class SConsNotInstalled(PlatformioException):
     MESSAGE = (
         "The PlatformIO and `scons` aren't installed properly. "
         "Please use official installation manual: "
-        "http://docs.platformio.ikravets.com/en/latest/installation.html"
+        "http://docs.platformio.org/en/latest/installation.html"
     )

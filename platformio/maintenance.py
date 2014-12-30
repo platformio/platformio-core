@@ -140,7 +140,7 @@ def check_platformio_upgrade():
                 fg="yellow", nl=False)
     click.secho("platformio upgrade", fg="cyan", nl=False)
     click.secho(" command.\nChanges: ", fg="yellow", nl=False)
-    click.secho("http://docs.platformio.ikravets.com/en/latest/history.html\n",
+    click.secho("http://docs.platformio.org/en/latest/history.html\n",
                 fg="cyan")
 
 

@@ -4,7 +4,7 @@ Quickstart
 ==========
 
 .. note::
-    Please read `Get Started <http://platformio.ikravets.com/#!/get-started>`_
+    Please read `Get Started <http://platformio.org/#!/get-started>`_
     article from the official WebSite.
 
 1. :ref:`Install PlatformIO <installation>`.

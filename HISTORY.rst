@@ -4,19 +4,19 @@ Release History
 0.10.0 (?)
 ----------
 
-* Implemented `platformio boards <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_boards.html>`_
+* Implemented `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`_
   command (`issue #11 <https://github.com/ivankravets/platformio/issues/11>`_)
 * Added support of *Engduino* boards for
-  `atmelavr <http://docs.platformio.ikravets.com/en/latest/platforms/atmelavr.html#engduino>`__
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#engduino>`__
   platform (`issue #38 <https://github.com/ivankravets/platformio/issues/38>`_)
-* Added ``--board`` option to `platformio init <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_init.html>`_
+* Added ``--board`` option to `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`_
   command which allows to initialise project with the specified embedded boards
   (`issue #21 <https://github.com/ivankravets/platformio/issues/21>`_)
-* Added `example with uploading firmware <http://docs.platformio.ikravets.com/en/latest/projectconf.html#examples>`_
+* Added `example with uploading firmware <http://docs.platformio.org/en/latest/projectconf.html#examples>`_
   via USB programmer (USBasp) for
-  `atmelavr <http://docs.platformio.ikravets.com/en/latest/platforms/atmelavr.html>`_
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html>`_
   *MCUs* (`issue #35 <https://github.com/ivankravets/platformio/issues/35>`_)
-* Automatic detection of port on `platformio serialports monitor <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
+* Automatic detection of port on `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
   (`issue #37 <https://github.com/ivankravets/platformio/issues/37>`_)
 * Allowed auto-installation of platforms when prompts are disabled (`issue #43 <https://github.com/ivankravets/platformio/issues/43>`_)
 * Fixed urllib3's *SSL* warning under Python <= 2.7.2 (`issue #39 <https://github.com/ivankravets/platformio/issues/39>`_)
@@ -26,7 +26,7 @@ Release History
 ------------------
 
 * Replaced "dark blue" by "cyan" colour for the texts (`issue #33 <https://github.com/ivankravets/platformio/issues/33>`_)
-* Added new setting `enable_prompts <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_settings.html>`_
+* Added new setting `enable_prompts <http://docs.platformio.org/en/latest/userguide/cmd_settings.html>`_
   and allowed to disable all *PlatformIO* prompts (useful for cloud compilers)
   (`issue #34 <https://github.com/ivankravets/platformio/issues/34>`_)
 * Fixed compilation bug on *Windows* with installed *MSVC* (`issue #18 <https://github.com/ivankravets/platformio/issues/18>`_)
@@ -35,11 +35,11 @@ Release History
 ------------------
 
 * Ask user to install platform (when it hasn't been installed yet) within
-  `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`__
-  and `platformio show <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_show.html>`_ commands
-* Improved main `documentation <http://docs.platformio.ikravets.com>`_
+  `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
+  and `platformio show <http://docs.platformio.org/en/latest/userguide/cmd_show.html>`_ commands
+* Improved main `documentation <http://docs.platformio.org>`_
 * Fixed "*OSError: [Errno 2] No such file or directory*" within
-  `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`__
+  `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command when PlatformIO isn't installed properly
 * Fixed example for `Eclipse IDE with Tiva board <https://github.com/ivankravets/platformio/tree/develop/examples/ide-eclipse>`_
   (`issue #32 <https://github.com/ivankravets/platformio/issues/32>`_)
@@ -49,8 +49,8 @@ Release History
 0.9.0 (2014-12-01)
 ------------------
 
-* Implemented `platformio settings <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_settings.html>`_ command
-* Improved `platformio init <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_init.html>`_ command.
+* Implemented `platformio settings <http://docs.platformio.org/en/latest/userguide/cmd_settings.html>`_ command
+* Improved `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`_ command.
   Added new option ``--project-dir`` where you can specify another path to
   directory where new project will be initialized (`issue #31 <https://github.com/ivankravets/platformio/issues/31>`_)
 * Added *Migration Manager* which simplifies process with upgrading to a
@@ -67,18 +67,18 @@ Release History
 0.8.0 (2014-10-19)
 ------------------
 
-* Avoided trademark issues in `library.json <http://docs.platformio.ikravets.com/en/latest/librarymanager/config.html>`_
-  with the new fields: `frameworks <http://docs.platformio.ikravets.com/en/latest/librarymanager/config.html#frameworks>`_,
-  `platforms <http://docs.platformio.ikravets.com/en/latest/librarymanager/config.html#platforms>`_
-  and `dependencies <http://docs.platformio.ikravets.com/en/latest/librarymanager/config.html#dependencies>`_
+* Avoided trademark issues in `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`_
+  with the new fields: `frameworks <http://docs.platformio.org/en/latest/librarymanager/config.html#frameworks>`_,
+  `platforms <http://docs.platformio.org/en/latest/librarymanager/config.html#platforms>`_
+  and `dependencies <http://docs.platformio.org/en/latest/librarymanager/config.html#dependencies>`_
   (`issue #17 <https://github.com/ivankravets/platformio/issues/17>`_)
 * Switched logic from "Library Name" to "Library Registry ID" for all
-  `platformio lib <http://docs.platformio.ikravets.com/en/latest/userguide/lib/index.html>`_
+  `platformio lib <http://docs.platformio.org/en/latest/userguide/lib/index.html>`_
   commands (install, uninstall, update and etc.)
-* Renamed ``author`` field to `authors <http://docs.platformio.ikravets.com/en/latest/librarymanager/config.html#authors>`_
-  and allowed to setup multiple authors per library in `library.json <http://docs.platformio.ikravets.com/en/latest/librarymanager/config.html>`_
-* Added option to specify "maintainer" status in `authors <http://docs.platformio.ikravets.com/en/latest/librarymanager/config.html#authors>`_ field
-* New filters/options for `platformio lib search <http://docs.platformio.ikravets.com/en/latest/userguide/lib/cmd_search.html>`_
+* Renamed ``author`` field to `authors <http://docs.platformio.org/en/latest/librarymanager/config.html#authors>`_
+  and allowed to setup multiple authors per library in `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`_
+* Added option to specify "maintainer" status in `authors <http://docs.platformio.org/en/latest/librarymanager/config.html#authors>`_ field
+* New filters/options for `platformio lib search <http://docs.platformio.org/en/latest/userguide/lib/cmd_search.html>`_
   command: ``--framework`` and ``--platform``
 
 0.7.1 (2014-10-06)
@@ -92,15 +92,15 @@ Release History
 0.7.0 (2014-09-24)
 ------------------
 
-* Implemented new `[platformio] <http://docs.platformio.ikravets.com/en/latest/projectconf.html#platformio>`_
-  section for Configuration File with `home_dir <http://docs.platformio.ikravets.com/en/latest/projectconf.html#home-dir>`_
+* Implemented new `[platformio] <http://docs.platformio.org/en/latest/projectconf.html#platformio>`_
+  section for Configuration File with `home_dir <http://docs.platformio.org/en/latest/projectconf.html#home-dir>`_
   option (`issue #14 <https://github.com/ivankravets/platformio/issues/14>`_)
 * Implemented *Library Manager* (`issue #6 <https://github.com/ivankravets/platformio/issues/6>`_)
 
 0.6.0 (2014-08-09)
 ------------------
 
-* Implemented `platformio serialports monitor <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ (`issue #10 <https://github.com/ivankravets/platformio/issues/10>`_)
+* Implemented `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ (`issue #10 <https://github.com/ivankravets/platformio/issues/10>`_)
 * Fixed an issue ``ImportError: No module named platformio.util`` (`issue #9 <https://github.com/ivankravets/platformio/issues/9>`_)
 * Fixed bug with auto-conversation from Arduino \*.ino to \*.cpp
 
@@ -113,7 +113,7 @@ Release History
   frameworks (`issue #7 <https://github.com/ivankravets/platformio/issues/7>`_)
 * Added `Arduino example <https://github.com/ivankravets/platformio/tree/develop/examples/arduino-adafruit-library>`_
   with external library (*Adafruit CC3000*)
-* Implemented `platformio upgrade <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_upgrade.html>`_
+* Implemented `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`_
   command and "auto-check" for the latest
   version (`issue #8 <https://github.com/ivankravets/platformio/issues/8>`_)
 * Fixed an issue with "auto-reset" for *Raspduino* board
@@ -122,21 +122,21 @@ Release History
 0.4.0 (2014-07-31)
 ------------------
 
-* Implemented `platformio serialports <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_serialports.html>`_ command
+* Implemented `platformio serialports <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html>`_ command
 * Allowed to put special build flags only for ``src`` files via
-  `srcbuild_flags <http://docs.platformio.ikravets.com/en/latest/projectconf.html#srcbuild-flags>`_
+  `srcbuild_flags <http://docs.platformio.org/en/latest/projectconf.html#srcbuild-flags>`_
   environment option
 * Allowed to override some of settings via system environment variables
   such as: ``$PIOSRCBUILD_FLAGS`` and ``$PIOENVS_DIR``
-* Added ``--upload-port`` option for `platformio run <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html#cmdoption--upload-port>`__ command
+* Added ``--upload-port`` option for `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--upload-port>`__ command
 * Implemented (especially for `SmartAnthill <http://smartanthill.ikravets.com/>`_)
-  `platformio run -t uploadlazy <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_run.html>`_
+  `platformio run -t uploadlazy <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`_
   target (no dependencies to framework libs, ELF and etc.)
-* Allowed to skip default packages via `platformio install --skip-default-package <http://docs.platformio.ikravets.com/en/latest/userguide/cmd_install.html#cmdoption--skip-default>`_
+* Allowed to skip default packages via `platformio install --skip-default-package <http://docs.platformio.org/en/latest/userguide/cmd_install.html#cmdoption--skip-default>`_
   option
 * Added tools for *Raspberry Pi* platform
 * Added support for *Microduino* and *Raspduino* boards in
-  `atmelavr <http://docs.platformio.ikravets.com/en/latest/platforms/atmelavr.html>`_ platform
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html>`_ platform
 
 
 0.3.1 (2014-06-21)

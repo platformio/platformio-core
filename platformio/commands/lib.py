@@ -64,7 +64,7 @@ def lib_search(query, **filters):
         click.secho("For example: DS*, PCA*, DHT* and etc.\n", fg="yellow")
         click.echo("For more examples and advanced search syntax, "
                    "please use documentation:")
-        click.secho("http://docs.platformio.ikravets.com"
+        click.secho("http://docs.platformio.org"
                     "/en/latest/userguide/lib/cmd_search.html\n", fg="cyan")
         return
 
