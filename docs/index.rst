@@ -9,7 +9,7 @@ PlatformIO: A cross-platform code builder and the missing library manager
 `Source Code <https://github.com/ivankravets/platformio>`_ |
 `Issues <https://github.com/ivankravets/platformio/issues>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
-`Twitter <https://twitter.com/PlatformIOTool>`_
+`Twitter <https://twitter.com/PlatformIO_Org>`_
 
 You have no need to install any *IDE* or compile any tool chains. *PlatformIO*
 has pre-built different development platforms including: compiler, debugger,

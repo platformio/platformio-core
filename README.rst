@@ -21,7 +21,7 @@ PlatformIO
 `Documentation <http://docs.platformio.ikravets.com>`_ |
 `Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
-`Twitter <https://twitter.com/PlatformIOTool>`_
+`Twitter <https://twitter.com/PlatformIO_Org>`_
 
 .. image:: https://raw.githubusercontent.com/ivankravets/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.ikravets.com
