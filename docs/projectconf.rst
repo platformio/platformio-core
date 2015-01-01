@@ -8,7 +8,7 @@ The Project configuration file is named ``platformio.ini``. This is a
 
 ``platformio.ini`` has sections (each denoted by a ``[header]``) and
 key / value pairs within the sections. A sign ``#`` at the beginning of the
-line indicate a comment. Comment lines are ignored.
+line indicates a comment. Comment lines are ignored.
 
 The sections and their allowable values are described below.
 
@@ -58,17 +58,23 @@ For example, ``[env:hello_world]``.
 Options
 ~~~~~~~
 
+.. _projectconf_env_platform:
+
 ``platform``
 ^^^^^^^^^^^^
 
 :ref:`Platform <platforms>` type
 
 
+.. _projectconf_env_framework:
+
 ``framework``
 ^^^^^^^^^^^^^
 
 See ``framework`` type in *Frameworks* section of :ref:`platforms`
 
+
+.. _projectconf_env_board:
 
 ``board``
 ^^^^^^^^^
@@ -246,7 +252,7 @@ Examples
    ``board_*`` and ``upload_*`` options (use only ``board`` option) and Arduino
    Wiring-based Framework
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:atmelavr_arduino_uno_board]
     platform = atmelavr
@@ -261,7 +267,7 @@ Examples
    auto pre-configured ``board_*`` and ``upload_*`` options (use only
    ``board`` option) and Arduino Wiring-based Framework
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:atmelavr_microduino_core_board]
     platform = atmelavr
@@ -276,7 +282,7 @@ Examples
    auto pre-configured ``board_*`` and ``upload_*`` options (use only
    ``board`` option) and Arduino Wiring-based Framework
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:atmelavr_raspduino_board]
     platform = atmelavr
@@ -292,7 +298,7 @@ Examples
 4. :ref:`platform_atmelavr`: Embedded board that is based on ATmega168 MCU with
    "arduino" bootloader
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:atmelavr_atmega168_board]
     platform = atmelavr
@@ -309,11 +315,23 @@ Examples
     targets = upload
 
 
-5. :ref:`platform_timsp430`: TI MSP430G2553 LaunchPad with auto pre-configured
+5. Upload firmware via USB programmer (USBasp) to :ref:`platform_atmelavr`
+   microcontrollers
+
+.. code-block:: ini
+
+    [env:atmelavr_usbasp]
+    platform = atmelavr
+    framework = arduino
+    board = pro8MHzatmega328
+    upload_protocol = usbasp -B5
+
+
+6. :ref:`platform_timsp430`: TI MSP430G2553 LaunchPad with auto pre-configured
    ``board_*`` and ``upload_*`` options (use only ``board`` option) and Energia
    Wiring-based Framework
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:timsp430_g2553_launchpad]
     platform = timsp430
@@ -321,9 +339,9 @@ Examples
     board = lpmsp430g2553
 
 
-6. :ref:`platform_timsp430`: Embedded board that is based on MSP430G2553 MCU
+7. :ref:`platform_timsp430`: Embedded board that is based on MSP430G2553 MCU
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:timsp430_g2553_board]
     platform = timsp430
@@ -336,11 +354,11 @@ Examples
     targets = upload
 
 
-5. :ref:`platform_titiva`: TI Tiva C ARM Series TM4C123G LaunchPad with auto
+8. :ref:`platform_titiva`: TI Tiva C ARM Series TM4C123G LaunchPad with auto
    pre-configured ``board_*`` and ``upload_*`` options (use only ``board``
    option) and Energia Wiring-based Framework
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:titiva_tm4c1230c3pm_launchpad]
     platform = titiva

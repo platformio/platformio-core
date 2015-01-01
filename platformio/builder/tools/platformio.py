@@ -2,11 +2,16 @@
 # See LICENSE for details.
 
 import atexit
+import platform
 import re
 from os import getenv, listdir, remove, walk
 from os.path import basename, isdir, isfile, join
+from time import sleep
 
-from SCons.Script import SConscript, SConscriptChdir
+from SCons.Script import Exit, SConscript, SConscriptChdir
+from serial import Serial
+
+from platformio.util import get_serialports
 
 
 def ProcessGeneral(env):
@@ -16,7 +21,7 @@ def ProcessGeneral(env):
 
     if "FRAMEWORK" in env:
         if env['FRAMEWORK'] in ("arduino", "energia"):
-            env.ConvertInotoCpp()
+            env.ConvertInoToCpp()
         SConscriptChdir(0)
         corelibs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
                                              "frameworks", "${FRAMEWORK}.py")),
@@ -29,7 +34,7 @@ def BuildFirmware(env, corelibs):
     vdirs = src.VariantDirRecursive(
         join("$BUILD_DIR", "src"), join("$PROJECT_DIR", "src"))
 
-    # build source's dependent libs
+    # build dependent libs
     deplibs = []
     for vdir in vdirs:
         deplibs += src.BuildDependentLibraries(vdir)
@@ -78,16 +83,23 @@ def BuildDependentLibraries(env, src_dir):
 def GetDependentLibraries(env, src_dir):
     includes = {}
     regexp = re.compile(r"^\s*#include\s+(?:\<|\")([^\>\"\']+)(?:\>|\")", re.M)
-    for node in env.GlobCXXFiles(src_dir):
+    nodes = env.GlobCXXFiles(src_dir) + env.Glob(join(src_dir, "*.h"))
+    for node in nodes:
         env.ParseIncludesRecurive(regexp, node, includes)
     includes = sorted(includes.items(), key=lambda s: s[0])
 
     result = []
     for i in includes:
-        item = (i[1][1], i[1][2])
-        if item in result:
-            continue
-        result.append(item)
+        items = [(i[1][1], i[1][2])]
+
+        if isdir(join(items[0][1], "utility")):
+            items.append(("%sUtility" % items[0][0],
+                          join(items[0][1], "utility")))
+
+        for item in items:
+            if item in result:
+                continue
+            result.append(item)
     return result
 
 
@@ -126,39 +138,7 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
     return variants
 
 
-def ParseBoardOptions(env, path, name):
-    path = env.subst(path)
-    name = env.subst(name)
-    if not isfile(path):
-        env.Exit("Invalid path to boards.txt -> %s" % path)
-
-    data = {}
-    with open(path) as f:
-        for line in f:
-            if not line.strip() or line[0] == "#":
-                continue
-
-            _group = line[:line.index(".")]
-            _cpu = name[len(_group):]
-            line = line[len(_group)+1:].strip()
-            if _group != name[:len(_group)]:
-                continue
-            elif "menu.cpu." in line:
-                if _cpu not in line:
-                    continue
-                else:
-                    line = line[len(_cpu)+10:]
-
-            if "=" in line:
-                opt, value = line.split("=", 1)
-                data[opt] = value
-    if not data:
-        env.Exit("Unknown Board '%s'" % name)
-    else:
-        return data
-
-
-def ConvertInotoCpp(env):
+def ConvertInoToCpp(env):
 
     def delete_tmpcpp(files):
         for f in files:
@@ -206,6 +186,47 @@ def ConvertInotoCpp(env):
         atexit.register(delete_tmpcpp, tmpcpp)
 
 
+def FlushSerialBuffer(env, port):
+    s = Serial(env.subst(port))
+    s.flushInput()
+    s.setDTR(False)
+    s.setRTS(False)
+    sleep(0.1)
+    s.setDTR(True)
+    s.setRTS(True)
+    s.close()
+
+
+def TouchSerialPort(env, port, baudrate):
+    s = Serial(port=env.subst(port), baudrate=baudrate)
+    s.close()
+    if platform.system() != "Darwin":
+        sleep(0.3)
+
+
+def WaitForNewSerialPort(_, before):
+    new_port = None
+    elapsed = 0
+    while elapsed < 10:
+        now = [i['port'] for i in get_serialports()]
+        diff = list(set(now) - set(before))
+        if diff:
+            new_port = diff[0]
+            break
+
+        before = now
+        sleep(0.25)
+        elapsed += 0.25
+
+    if not new_port:
+        Exit("Error: Couldn't find a board on the selected port. "
+             "Check that you have the correct port selected. "
+             "If it is correct, try pressing the board's reset "
+             "button after initiating the upload.")
+
+    return new_port
+
+
 def exists(_):
     return True
 
@@ -219,6 +240,8 @@ def generate(env):
     env.AddMethod(GetDependentLibraries)
     env.AddMethod(ParseIncludesRecurive)
     env.AddMethod(VariantDirRecursive)
-    env.AddMethod(ParseBoardOptions)
-    env.AddMethod(ConvertInotoCpp)
+    env.AddMethod(ConvertInoToCpp)
+    env.AddMethod(FlushSerialBuffer)
+    env.AddMethod(TouchSerialPort)
+    env.AddMethod(WaitForNewSerialPort)
     return env

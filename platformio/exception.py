@@ -30,6 +30,11 @@ class UnknownCLICommand(PlatformioException):
                " to see all available commands")
 
 
+class UnknownBoard(PlatformioException):
+
+    MESSAGE = "Unknown board type '%s'"
+
+
 class UnknownPackage(PlatformioException):
 
     MESSAGE = "Detected unknown package '%s'"
@@ -127,6 +132,11 @@ class LibInstallDependencyError(PlatformioException):
     MESSAGE = "Error has been occurred for library dependency '%s'"
 
 
+class InvalidLibConfURL(PlatformioException):
+
+    MESSAGE = "Invalid library config URL '%s'"
+
+
 class BuildScriptNotFound(PlatformioException):
 
     MESSAGE = "Invalid path '%s' to build script"
@@ -152,5 +162,5 @@ class SConsNotInstalled(PlatformioException):
     MESSAGE = (
         "The PlatformIO and `scons` aren't installed properly. "
         "Please use official installation manual: "
-        "http://docs.platformio.ikravets.com/en/latest/installation.html"
+        "http://docs.platformio.org/en/latest/installation.html"
     )

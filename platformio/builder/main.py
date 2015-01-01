@@ -2,22 +2,20 @@
 # See LICENSE for details.
 
 try:
-    from platformio.util import get_home_dir
+    from platformio import util
 except ImportError:
     import sys
     for _path in sys.path:
         if "platformio" in _path:
             sys.path.insert(0, _path[:_path.rfind("platformio")-1])
             break
-    from platformio.util import get_home_dir
+    from platformio import util
 
 from os.path import join
 
 from SCons.Script import (DefaultEnvironment, SConscript, SConscriptChdir,
                           Variables)
 
-from platformio.util import (get_lib_dir, get_pioenvs_dir, get_project_dir,
-                             get_source_dir)
 
 # AllowSubstExceptions()
 
@@ -50,28 +48,43 @@ commonvars.AddVariables(
 )
 
 DefaultEnvironment(
-    # Temporary fix for the issue #18
-    tools=["default", "gcc", "g++", "ar", "gnulink", "platformio"],
+    tools=["gcc", "g++", "ar", "gnulink", "platformio"],
     toolpath=[join("$PIOBUILDER_DIR", "tools")],
     variables=commonvars,
 
-    PIOHOME_DIR=get_home_dir(),
-    PROJECT_DIR=get_project_dir(),
-    PIOENVS_DIR=get_pioenvs_dir(),
+    PIOHOME_DIR=util.get_home_dir(),
+    PROJECT_DIR=util.get_project_dir(),
+    PIOENVS_DIR=util.get_pioenvs_dir(),
 
-    PIOBUILDER_DIR=join(get_source_dir(), "builder"),
+    PIOBUILDER_DIR=join(util.get_source_dir(), "builder"),
     PIOPACKAGES_DIR=join("$PIOHOME_DIR", "packages"),
     PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_FRAMEWORK"),
 
     BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
     LIBSOURCE_DIRS=[
         join("$PROJECT_DIR", "lib"),
-        get_lib_dir(),
+        util.get_lib_dir(),
         join("$PLATFORMFW_DIR", "libraries"),
     ]
 )
 
 env = DefaultEnvironment()
+
+if "BOARD" in env:
+    try:
+        env.Replace(BOARD_OPTIONS=util.get_boards(env.subst("$BOARD")))
+    except KeyError:
+        env.Exit("Error: Unknown board '%s'" % env.subst("$BOARD"))
+
+    if "BOARD_MCU" not in env:
+        env.Replace(BOARD_MCU="${BOARD_OPTIONS['build']['mcu']}")
+    if "BOARD_F_CPU" not in env:
+        env.Replace(BOARD_F_CPU="${BOARD_OPTIONS['build']['f_cpu']}")
+    if "UPLOAD_PROTOCOL" not in env:
+        env.Replace(UPLOAD_PROTOCOL="${BOARD_OPTIONS['upload']['protocol']}")
+    if "UPLOAD_SPEED" not in env:
+        env.Replace(UPLOAD_SPEED="${BOARD_OPTIONS['upload']['speed']}")
+
 env.PrependENVPath(
     "PATH",
     env.subst(join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN", "bin"))

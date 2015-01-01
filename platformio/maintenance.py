@@ -92,7 +92,7 @@ def after_upgrade(ctx):
         "- %s us on Twitter to stay up-to-date "
         "on the latest project news > %s" %
         (click.style("follow", fg="cyan"),
-         click.style("https://twitter.com/platformiotool", fg="cyan"))
+         click.style("https://twitter.com/PlatformIO_Org", fg="cyan"))
     )
     click.echo("- %s us a star on GitHub > %s" % (
         click.style("give", fg="cyan"),
@@ -140,7 +140,7 @@ def check_platformio_upgrade():
                 fg="yellow", nl=False)
     click.secho("platformio upgrade", fg="cyan", nl=False)
     click.secho(" command.\nChanges: ", fg="yellow", nl=False)
-    click.secho("http://docs.platformio.ikravets.com/en/latest/history.html\n",
+    click.secho("http://docs.platformio.org/en/latest/history.html\n",
                 fg="cyan")
 
 

@@ -21,7 +21,7 @@ def cli(ctx, platform):
         installed=True).keys()
 
     if platform not in installed_platforms:
-        if (app.get_setting("enable_prompts") and
+        if (not app.get_setting("enable_prompts") or
                 click.confirm("The platform '%s' has not been installed yet. "
                               "Would you like to install it now?" % platform)):
             ctx.invoke(cmd_install, platforms=[platform])

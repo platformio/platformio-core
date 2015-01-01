@@ -68,10 +68,12 @@ def process_environment(ctx, name, options, targets, upload_port):
 
     telemetry.on_run_environment(options, envtargets)
 
-    if (app.get_setting("enable_prompts") and
-            platform not in PlatformFactory.get_platforms(installed=True) and
+    installed_platforms = PlatformFactory.get_platforms(
+        installed=True).keys()
+    if (platform not in installed_platforms and (
+            not app.get_setting("enable_prompts") or
             click.confirm("The platform '%s' has not been installed yet. "
-                          "Would you like to install it now?" % platform)):
+                          "Would you like to install it now?" % platform))):
         ctx.invoke(cmd_install, platforms=[platform])
 
     p = PlatformFactory.newPlatform(platform)

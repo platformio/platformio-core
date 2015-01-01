@@ -24,7 +24,7 @@ setup(
         # "SCons"
     ] + (["colorama"] if system() == "Windows" else []),
     packages=find_packages(),
-    package_data={"platformio": ["*.ini"]},
+    package_data={"platformio": ["projectconftpl.ini", "boards/*.json"]},
     entry_points={
         "console_scripts": [
             "platformio = platformio.__main__:main"

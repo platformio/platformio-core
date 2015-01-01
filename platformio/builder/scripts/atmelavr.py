@@ -11,7 +11,7 @@ from time import sleep
 from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
                           DefaultEnvironment, Exit)
 
-from platformio.util import get_serialports, reset_serialport
+from platformio.util import get_serialports
 
 env = DefaultEnvironment()
 
@@ -41,7 +41,10 @@ env.Replace(
         "-mmcu=$BOARD_MCU"
     ],
 
-    CXXFLAGS=["-fno-exceptions"],
+    CXXFLAGS=[
+        "-fno-exceptions",
+        "-fno-threadsafe-statics"
+    ],
 
     CPPDEFINES=[
         "F_CPU=$BOARD_F_CPU"
@@ -55,7 +58,6 @@ env.Replace(
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
     UPLOADERFLAGS=[
-        "-V",  # do not verify
         "-q",  # suppress progress output
         "-D",  # disable auto erase for flash memory
         "-p", "$BOARD_MCU",
@@ -101,7 +103,7 @@ env.Append(
 )
 
 
-def reset_device():
+def before_upload():
 
     def rpi_sysgpio(path, value):
         with open(path, "w") as f:
@@ -115,7 +117,19 @@ def reset_device():
         rpi_sysgpio("/sys/class/gpio/gpio18/value", 0)
         rpi_sysgpio("/sys/class/gpio/unexport", 18)
     else:
-        return reset_serialport(env.subst("$UPLOAD_PORT"))
+        upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
+
+        if not upload_options.get("disable_flushing", False):
+            env.FlushSerialBuffer("$UPLOAD_PORT")
+
+        before_ports = [i['port'] for i in get_serialports()]
+
+        if (upload_options.get("use_1200bps_touch", False) and
+                "UPLOAD_PORT" in env):
+            env.TouchSerialPort("$UPLOAD_PORT", 1200)
+
+        if upload_options.get("wait_for_upload_port", False):
+            env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
 
 
 CORELIBS = env.ProcessGeneral()
@@ -147,7 +161,7 @@ else:
 #
 
 upload = env.Alias(["upload", "uploadlazy"], target_hex, [
-    lambda target, source, env: reset_device(), "$UPLOADHEXCMD"])
+    lambda target, source, env: before_upload(), "$UPLOADHEXCMD"])
 AlwaysBuild(upload)
 
 #
@@ -155,7 +169,7 @@ AlwaysBuild(upload)
 #
 
 uploadeep = env.Alias("uploadeep", target_eep, [
-    lambda target, source, env: reset_device(), "$UPLOADEEPCMD"])
+    lambda target, source, env: before_upload(), "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
 
 #
@@ -171,7 +185,7 @@ if is_uptarget:
         for item in get_serialports():
             if "VID:PID" in item['hwid']:
                 print "Auto-detected UPLOAD_PORT: %s" % item['port']
-                env['UPLOAD_PORT'] = item['port']
+                env.Replace(UPLOAD_PORT=item['port'])
                 break
 
     if "UPLOAD_PORT" not in env:

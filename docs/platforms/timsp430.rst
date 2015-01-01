@@ -56,8 +56,9 @@ Boards
 ------
 
 .. note::
-   For more detailed ``board`` information please scroll table below by
-   horizontal.
+    * You can list pre-configured boards by :ref:`cmd_boards` command
+    * For more detailed ``board`` information please scroll tables below by
+      horizontal.
 
 .. list-table::
     :header-rows:  1

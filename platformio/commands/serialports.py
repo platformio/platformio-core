@@ -61,8 +61,15 @@ def serialports_list():
               "miniterm (menu), default=0x14")
 @click.option("--quiet", is_flag=True,
               help="Diagnostics: suppress non-error messages, default=Off")
-def serialports_monitor(**_):
+def serialports_monitor(**kwargs):
     sys.argv = sys.argv[3:]
+
+    if not kwargs['port']:
+        for item in get_serialports():
+            if "VID:PID" in item['hwid']:
+                sys.argv += ["--port", item['port']]
+                break
+
     try:
         miniterm.main()
     except:  # pylint: disable=W0702

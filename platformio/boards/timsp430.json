@@ -1,0 +1,107 @@
+{
+    "lpmsp430f5529": {
+        "build": {
+            "core": "msp430",
+            "f_cpu": "16000000L",
+            "mcu": "msp430f5529",
+            "variant": "launchpad_f5529"
+        },
+        "name": "LaunchPad w/ msp430f5529 (16MHz)",
+        "platform": "timsp430",
+        "upload": {
+            "maximum_ram_size": 1024,
+            "maximum_size": 131072,
+            "protocol": "tilib"
+        }
+    },
+    "lpmsp430f5529_25": {
+        "build": {
+            "core": "msp430",
+            "f_cpu": "25000000L",
+            "mcu": "msp430f5529",
+            "variant": "launchpad_f5529"
+        },
+        "name": "LaunchPad w/ msp430f5529 (25MHz)",
+        "platform": "timsp430",
+        "upload": {
+            "maximum_ram_size": 1024,
+            "maximum_size": 131072,
+            "protocol": "tilib"
+        }
+    },
+    "lpmsp430fr5739": {
+        "build": {
+            "core": "msp430",
+            "f_cpu": "16000000L",
+            "mcu": "msp430fr5739",
+            "variant": "fraunchpad"
+        },
+        "name": "FraunchPad w/ msp430fr5739",
+        "platform": "timsp430",
+        "upload": {
+            "maximum_ram_size": 1024,
+            "maximum_size": 15872,
+            "protocol": "rf2500"
+        }
+    },
+    "lpmsp430fr5969": {
+        "build": {
+            "core": "msp430",
+            "f_cpu": "8000000L",
+            "mcu": "msp430fr5969",
+            "variant": "launchpad_fr5969"
+        },
+        "name": "LaunchPad w/ msp430fr5969",
+        "platform": "timsp430",
+        "upload": {
+            "maximum_ram_size": 1024,
+            "maximum_size": 65536,
+            "protocol": "tilib"
+        }
+    },
+    "lpmsp430g2231": {
+        "build": {
+            "core": "msp430",
+            "f_cpu": "1000000L",
+            "mcu": "msp430g2231",
+            "variant": "launchpad"
+        },
+        "name": "LaunchPad w/ msp430g2231 (1MHz)",
+        "platform": "timsp430",
+        "upload": {
+            "maximum_ram_size": 128,
+            "maximum_size": 2048,
+            "protocol": "rf2500"
+        }
+    },
+    "lpmsp430g2452": {
+        "build": {
+            "core": "msp430",
+            "f_cpu": "16000000L",
+            "mcu": "msp430g2452",
+            "variant": "launchpad"
+        },
+        "name": "LaunchPad w/ msp430g2452 (16MHz)",
+        "platform": "timsp430",
+        "upload": {
+            "maximum_ram_size": 256,
+            "maximum_size": 8192,
+            "protocol": "rf2500"
+        }
+    },
+    "lpmsp430g2553": {
+        "build": {
+            "core": "msp430",
+            "f_cpu": "16000000L",
+            "mcu": "msp430g2553",
+            "variant": "launchpad"
+        },
+        "name": "LaunchPad w/ msp430g2553 (16MHz)",
+        "platform": "timsp430",
+        "upload": {
+            "maximum_ram_size": 512,
+            "maximum_size": 16384,
+            "protocol": "rf2500"
+        }
+    }
+}

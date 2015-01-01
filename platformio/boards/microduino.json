@@ -1,0 +1,160 @@
+{
+    "1284p16m": {
+        "build": {
+            "board": "AVR_MICRODUINO_CORE_PLUS",
+            "core": "arduino",
+            "f_cpu": "16000000L",
+            "mcu": "atmega1284p",
+            "variant": "plus"
+        },
+        "name": "Microduino Core+ (ATmega1284P@16M,5V)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 130048,
+            "protocol": "arduino",
+            "speed": 115200
+        }
+    },
+    "1284p8m": {
+        "build": {
+            "board": "AVR_MICRODUINO_CORE_PLUS",
+            "core": "arduino",
+            "f_cpu": "8000000L",
+            "mcu": "atmega1284p",
+            "variant": "plus"
+        },
+        "name": "Microduino Core+ (ATmega1284P@8M,3.3V)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 130048,
+            "protocol": "arduino",
+            "speed": 57600
+        }
+    },
+    "168pa16m": {
+        "build": {
+            "board": "AVR_MICRODUINO_CORE",
+            "core": "arduino",
+            "f_cpu": "16000000L",
+            "mcu": "atmega168p",
+            "variant": "standard"
+        },
+        "name": "Microduino Core (Atmega168PA@16M,5V)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 1024,
+            "maximum_size": 15872,
+            "protocol": "arduino",
+            "speed": 115200
+        }
+    },
+    "168pa8m": {
+        "build": {
+            "board": "AVR_MICRODUINO_CORE",
+            "core": "arduino",
+            "f_cpu": "8000000L",
+            "mcu": "atmega168p",
+            "variant": "standard"
+        },
+        "name": "Microduino Core (Atmega168PA@8M,3.3V)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 1024,
+            "maximum_size": 15872,
+            "protocol": "arduino",
+            "speed": 57600
+        }
+    },
+    "328p16m": {
+        "build": {
+            "board": "AVR_MICRODUINO_CORE",
+            "core": "arduino",
+            "f_cpu": "16000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "name": "Microduino Core (Atmega328P@16M,5V)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 32256,
+            "protocol": "arduino",
+            "speed": 115200
+        }
+    },
+    "328p8m": {
+        "build": {
+            "board": "AVR_MICRODUINO_CORE",
+            "core": "arduino",
+            "f_cpu": "8000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "name": "Microduino Core (Atmega328P@8M,3.3V)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 32256,
+            "protocol": "arduino",
+            "speed": 57600
+        }
+    },
+    "32u416m": {
+        "build": {
+            "board": "AVR_MICRODUINO_CORE_USB",
+            "core": "arduino",
+            "f_cpu": "16000000L",
+            "mcu": "atmega32u4",
+            "pid": "0x8036",
+            "variant": "32u4",
+            "vid": "0x2341"
+        },
+        "name": "Microduino Core USB (ATmega32U4@16M,5V)",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        }
+    },
+    "644pa16m": {
+        "build": {
+            "board": "AVR_MICRODUINO_CORE_PLUS",
+            "core": "arduino",
+            "f_cpu": "16000000L",
+            "mcu": "atmega644p",
+            "variant": "plus"
+        },
+        "name": "Microduino Core+ (Atmega644PA@16M,5V)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 4096,
+            "maximum_size": 64512,
+            "protocol": "arduino",
+            "speed": 115200
+        }
+    },
+    "644pa8m": {
+        "build": {
+            "board": "AVR_MICRODUINO_CORE_PLUS",
+            "core": "arduino",
+            "f_cpu": "8000000L",
+            "mcu": "atmega644p",
+            "variant": "plus"
+        },
+        "name": "Microduino Core+ (Atmega644PA@8M,3.3V)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 4096,
+            "maximum_size": 64512,
+            "protocol": "arduino",
+            "speed": 57600
+        }
+    }
+}
