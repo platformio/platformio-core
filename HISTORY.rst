@@ -1,8 +1,8 @@
 Release History
 ===============
 
-0.10.0 (?)
-----------
+0.10.0 (2015-01-01) Happy New Year!
+-----------------------------------
 
 * Implemented `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`_
   command (`issue #11 <https://github.com/ivankravets/platformio/issues/11>`_)
@@ -21,6 +21,7 @@ Release History
 * Allowed auto-installation of platforms when prompts are disabled (`issue #43 <https://github.com/ivankravets/platformio/issues/43>`_)
 * Fixed urllib3's *SSL* warning under Python <= 2.7.2 (`issue #39 <https://github.com/ivankravets/platformio/issues/39>`_)
 * Fixed bug with *Arduino USB* boards (`issue #40 <https://github.com/ivankravets/platformio/issues/40>`_)
+
 
 0.9.2 (2014-12-10)
 ------------------
