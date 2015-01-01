@@ -123,6 +123,6 @@ It has support for many popular embedded platforms like these:
 Licence
 -------
 
-Copyright (C) 2014 Ivan Kravets
+Copyright (C) 2014-2015 Ivan Kravets
 
 Licenced under the MIT Licence.
