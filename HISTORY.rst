@@ -1,8 +1,8 @@
 Release History
 ===============
 
-0.10.1 (?)
-----------
+0.10.1 (2015-01-02)
+-------------------
 
 * Added ``--json-output`` option to
   `platformio list <http://docs.platformio.org/en/latest/userguide/cmd_list.html>`__,
