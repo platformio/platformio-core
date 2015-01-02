@@ -17,7 +17,7 @@ from platformio.util import get_boards, get_source_dir
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
 @click.option("--board", "-b", multiple=True, metavar="TYPE")
-@click.option('--disable-auto-uploading', is_flag=True)
+@click.option("--disable-auto-uploading", is_flag=True)
 def cli(project_dir, board, disable_auto_uploading):
 
     project_file = join(project_dir, "platformio.ini")

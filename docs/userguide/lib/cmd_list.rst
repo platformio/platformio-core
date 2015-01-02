@@ -10,7 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio lib list
+    platformio lib list [OPTIONS]
 
 
 Description
@@ -18,6 +18,13 @@ Description
 
 List installed libraries
 
+Options
+~~~~~~~
+
+.. option::
+    --json-output
+
+Return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
 
 Examples
 --------

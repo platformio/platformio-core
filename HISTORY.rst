@@ -4,11 +4,19 @@ Release History
 0.10.1 (?)
 ----------
 
-* Fixed missing auto-uploading by default within `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
+* Added ``--json-output`` option to
+  `platformio list <http://docs.platformio.org/en/latest/userguide/cmd_list.html>`__,
+  `platformio serialports list <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html>`__ and
+  `platformio lib list <http://docs.platformio.org/en/latest/userguide/cmd_lib_list.html>`__
+  commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
+  (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
+* Fixed missing auto-uploading by default after `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
   command
 
-0.10.0 (2015-01-01) Happy New Year!
------------------------------------
+0.10.0 (2015-01-01)
+-------------------
+
+**Happy New Year!**
 
 * Implemented `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`_
   command (`issue #11 <https://github.com/ivankravets/platformio/issues/11>`_)
