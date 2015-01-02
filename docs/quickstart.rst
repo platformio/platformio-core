@@ -1,6 +1,6 @@
 .. _quickstart:
 
-QuickStart
+Quickstart
 ==========
 
 .. note::
