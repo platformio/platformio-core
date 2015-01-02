@@ -89,8 +89,8 @@ def fill_project_envs(project_file, board_types, disable_auto_uploading):
             content.append("framework = %s" % framework)
         content.append("board = %s" % type_)
 
-        content.append("%stargets = upload" % "# " if disable_auto_uploading
-                       else "")
+        content.append("%stargets = upload" % ("# " if disable_auto_uploading
+                       else ""))
 
     with open(project_file, "a") as f:
         f.write("\n".join(content))

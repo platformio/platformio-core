@@ -1,6 +1,12 @@
 Release History
 ===============
 
+0.10.1 (?)
+----------
+
+* Fixed missing auto-uploading by default within `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
+  command
+
 0.10.0 (2015-01-01) Happy New Year!
 -----------------------------------
 
@@ -9,7 +15,7 @@ Release History
 * Added support of *Engduino* boards for
   `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#engduino>`__
   platform (`issue #38 <https://github.com/ivankravets/platformio/issues/38>`_)
-* Added ``--board`` option to `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`_
+* Added ``--board`` option to `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
   command which allows to initialise project with the specified embedded boards
   (`issue #21 <https://github.com/ivankravets/platformio/issues/21>`_)
 * Added `example with uploading firmware <http://docs.platformio.org/en/latest/projectconf.html#examples>`_
@@ -21,7 +27,6 @@ Release History
 * Allowed auto-installation of platforms when prompts are disabled (`issue #43 <https://github.com/ivankravets/platformio/issues/43>`_)
 * Fixed urllib3's *SSL* warning under Python <= 2.7.2 (`issue #39 <https://github.com/ivankravets/platformio/issues/39>`_)
 * Fixed bug with *Arduino USB* boards (`issue #40 <https://github.com/ivankravets/platformio/issues/40>`_)
-
 
 0.9.2 (2014-12-10)
 ------------------
