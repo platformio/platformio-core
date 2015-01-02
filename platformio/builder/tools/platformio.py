@@ -35,9 +35,7 @@ def BuildFirmware(env, corelibs):
         join("$BUILD_DIR", "src"), join("$PROJECT_DIR", "src"))
 
     # build dependent libs
-    deplibs = []
-    for vdir in vdirs:
-        deplibs += src.BuildDependentLibraries(vdir)
+    deplibs = src.BuildDependentLibraries(vdirs)
 
     src.MergeFlags(getenv("PIOSRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
 
@@ -67,9 +65,9 @@ def BuildLibrary(env, variant_dir, library_dir):
     )
 
 
-def BuildDependentLibraries(env, src_dir):
+def BuildDependentLibraries(env, src_dirs):
     libs = []
-    deplibs = env.GetDependentLibraries(src_dir)
+    deplibs = env.GetDependentLibraries(src_dirs)
     env.Append(CPPPATH=[join("$BUILD_DIR", l) for (l, _) in deplibs])
 
     for (libname, inc_dir) in deplibs:
@@ -80,10 +78,15 @@ def BuildDependentLibraries(env, src_dir):
     return libs
 
 
-def GetDependentLibraries(env, src_dir):
+def GetDependentLibraries(env, src_dirs):
     includes = {}
+    nodes = []
     regexp = re.compile(r"^\s*#include\s+(?:\<|\")([^\>\"\']+)(?:\>|\")", re.M)
-    nodes = env.GlobCXXFiles(src_dir) + env.Glob(join(src_dir, "*.h"))
+
+    for item in src_dirs:
+        nodes += env.GlobCXXFiles(item)
+        nodes += env.Glob(join(item, "*.h"))
+
     for node in nodes:
         env.ParseIncludesRecurive(regexp, node, includes)
     includes = sorted(includes.items(), key=lambda s: s[0])
@@ -108,10 +111,12 @@ def ParseIncludesRecurive(env, regexp, source_file, includes):
     for inc_fname in matches:
         if inc_fname in includes:
             continue
+
         for lsd_dir in env['LIBSOURCE_DIRS']:
             lsd_dir = env.subst(lsd_dir)
             if not isdir(lsd_dir):
                 continue
+
             for libname in listdir(lsd_dir):
                 inc_dir = join(lsd_dir, libname)
                 inc_file = join(inc_dir, inc_fname)
@@ -121,6 +126,7 @@ def ParseIncludesRecurive(env, regexp, source_file, includes):
                     inc_file = join(inc_dir, inc_fname)
                 if not isfile(inc_file):
                     continue
+
                 includes[inc_fname] = (len(includes) + 1, libname, inc_dir)
                 env.ParseIncludesRecurive(regexp, env.File(inc_file), includes)
 

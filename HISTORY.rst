@@ -1,15 +1,29 @@
 Release History
 ===============
 
-0.10.0 (2015-01-01) Happy New Year!
------------------------------------
+0.10.1 (2015-01-02)
+-------------------
+
+* Added ``--json-output`` option to
+  `platformio list <http://docs.platformio.org/en/latest/userguide/cmd_list.html>`__,
+  `platformio serialports list <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html>`__ and
+  `platformio lib list <http://docs.platformio.org/en/latest/userguide/cmd_lib_list.html>`__
+  commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
+  (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
+* Fixed missing auto-uploading by default after `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
+  command
+
+0.10.0 (2015-01-01)
+-------------------
+
+**Happy New Year!**
 
 * Implemented `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`_
   command (`issue #11 <https://github.com/ivankravets/platformio/issues/11>`_)
 * Added support of *Engduino* boards for
   `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#engduino>`__
   platform (`issue #38 <https://github.com/ivankravets/platformio/issues/38>`_)
-* Added ``--board`` option to `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`_
+* Added ``--board`` option to `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
   command which allows to initialise project with the specified embedded boards
   (`issue #21 <https://github.com/ivankravets/platformio/issues/21>`_)
 * Added `example with uploading firmware <http://docs.platformio.org/en/latest/projectconf.html#examples>`_
@@ -21,7 +35,6 @@ Release History
 * Allowed auto-installation of platforms when prompts are disabled (`issue #43 <https://github.com/ivankravets/platformio/issues/43>`_)
 * Fixed urllib3's *SSL* warning under Python <= 2.7.2 (`issue #39 <https://github.com/ivankravets/platformio/issues/39>`_)
 * Fixed bug with *Arduino USB* boards (`issue #40 <https://github.com/ivankravets/platformio/issues/40>`_)
-
 
 0.9.2 (2014-12-10)
 ------------------

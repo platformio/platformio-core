@@ -9,15 +9,15 @@ Quickstart
 
 1. :ref:`Install PlatformIO <installation>`.
 
-2. Find board ``type`` from :ref:`platforms` (you can choose multiple board
-   types).
+2. Find board ``type`` on this :ref:`Embedded Boards <platforms>` page or
+   via :ref:`cmd_boards` command.
 
 3. Initialize new PlatformIO based project with the pre-configured
    environments for your boards:
 
 .. code-block:: bash
 
-    $ platformio init --board=TYPE1 --board=TYPE2
+    $ platformio init --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
 
     The current working directory *** will be used for the new project.
     You can specify another project directory via

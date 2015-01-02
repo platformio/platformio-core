@@ -154,9 +154,15 @@ def lib_uninstall(libid):
 
 
 @cli.command("list", short_help="List installed libraries")
-def lib_list():
+@click.option("--json-output", is_flag=True)
+def lib_list(json_output):
     lm = LibraryManager(get_lib_dir())
     items = lm.get_installed().values()
+
+    if json_output:
+        click.echo(items)
+        return
+
     if not items:
         return
 

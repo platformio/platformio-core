@@ -98,7 +98,7 @@ def after_upgrade(ctx):
         click.style("give", fg="cyan"),
         click.style("https://github.com/ivankravets/platformio", fg="cyan")
     ))
-    click.secho("Thanks a lot!\n", fg="green", blink=True)
+    click.secho("Thanks a lot!\n", fg="green")
 
     if not isdir(get_home_dir()):
         return

@@ -15,7 +15,12 @@ def cli():
 
 
 @cli.command("list", short_help="List Serial ports")
-def serialports_list():
+@click.option("--json-output", is_flag=True)
+def serialports_list(json_output):
+
+    if json_output:
+        click.echo(get_serialports())
+        return
 
     for item in get_serialports():
         click.secho(item['port'], fg="cyan")

@@ -13,13 +13,21 @@ Usage
 
 .. code-block:: bash
 
-    platformio serialports list
+    platformio serialports list [OPTIONS]
 
 
 Description
 ~~~~~~~~~~~
 
 List available `Serial Ports <http://en.wikipedia.org/wiki/Serial_port>`_
+
+Options
+~~~~~~~
+
+.. option::
+    --json-output
+
+Return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
 
 
 Examples
