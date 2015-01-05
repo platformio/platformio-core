@@ -1,6 +1,11 @@
 Release History
 ===============
 
+0.10.2 (2015-01-?)
+------------------
+
+* Fixed an issue with ``--json-output`` (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
+
 0.10.1 (2015-01-02)
 -------------------
 

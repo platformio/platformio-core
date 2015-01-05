@@ -1,11 +1,14 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import json
+
 import click
 
 from platformio import app, exception
 from platformio.libmanager import LibraryManager
 from platformio.util import get_api_result, get_lib_dir
+
 
 LIBLIST_TPL = ("[{id:^14}] {name:<25} {compatibility:<30} "
                "\"{authornames}\": {description}")
@@ -160,7 +163,7 @@ def lib_list(json_output):
     items = lm.get_installed().values()
 
     if json_output:
-        click.echo(items)
+        click.echo(json.dumps(items))
         return
 
     if not items:

@@ -1,6 +1,8 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import json
+
 import click
 
 from platformio.platforms.base import PlatformFactory
@@ -23,7 +25,7 @@ def cli(json_output):
         })
 
     if json_output:
-        click.echo(data)
+        click.echo(json.dumps(data))
     else:
         for item in data:
             click.echo("{name:<20} with packages: {pkgs}".format(
