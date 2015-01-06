@@ -250,6 +250,11 @@ Engduino
       - 32 Kb
       - 2.5 Kb
 
+.. note::
+    If you are going to use onboard sensors, please install
+    `Engduino library <http://platformio.org/#!/lib/show/123/EngduinoV3>`_
+    with the examples.
+
 More detailed information you can find here
 `Engduino Site <http://www.engduino.org>`_.
 

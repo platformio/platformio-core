@@ -1,6 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import json
 import sys
 
 import click
@@ -19,7 +20,7 @@ def cli():
 def serialports_list(json_output):
 
     if json_output:
-        click.echo(get_serialports())
+        click.echo(json.dumps(get_serialports()))
         return
 
     for item in get_serialports():

@@ -23,9 +23,19 @@ def cli():
             "newest version available." % __version__, fg="green"
         )
     else:
-        result = exec_command(["pip", "install", "--upgrade", "platformio"])
-        click.secho(result['out'], fg="green")
-        click.secho(result['err'], fg="red")
+        click.secho("Please wait while upgrading PlatformIO ...",
+                    fg="yellow")
+
+        pip_result = exec_command(["pip", "install", "--upgrade",
+                                   "platformio"])
+        pio_result = exec_command(["platformio", "--version"])
+
+        if last in pio_result['out'].strip():
+            click.secho("PlatformIO has been successfully upgraded to %s" %
+                        last, fg="green")
+        else:
+            click.secho(pip_result['out'], fg="green")
+            click.secho(pip_result['err'], fg="red")
 
 
 def get_latest_version():
