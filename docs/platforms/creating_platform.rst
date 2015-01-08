@@ -5,12 +5,14 @@ Creating Platform
 
 *PlatformIO* was developed like a tool which would build the same source code
 for the different development platforms via single command :ref:`cmd_run`
-without any dependent software or requirements. For this purpose *PlatformIO*
-uses own pre-configured platforms data: build scripts, tool chains, the
-settings for the most popular embedded boards and etc. These data are pre-built
-and packaged to the different ``packages``. It allows *PlatformIO* to
-have multiple development platforms which can use the same packages(tool chains,
-frameworks), but have different/own build scripts, uploader and etc.
+without any dependent software or requirements.
+
+For this purpose *PlatformIO* uses own pre-configured platforms data:
+build scripts, tool chains, the settings for the most popular embedded
+boards and etc. These data are pre-built and packaged to the different
+``packages``. It allows *PlatformIO* to have multiple development platforms
+which can use the same packages(tool chains, frameworks), but have
+different/own build scripts, uploader and etc.
 
 .. note::
     If you want to change some build flags for the existing
