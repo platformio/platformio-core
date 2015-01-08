@@ -12,8 +12,8 @@ Quickstart
 2. Find board ``type`` on this :ref:`Embedded Boards <platforms>` page or
    via :ref:`cmd_boards` command.
 
-3. Initialize new PlatformIO based project with the pre-configured
-   environments for your boards:
+3. Initialize new PlatformIO based project via :ref:`cmd_init` command with the
+   pre-configured environments for your boards:
 
 .. code-block:: bash
 
@@ -31,9 +31,12 @@ Quickstart
     Project has been successfully initialized!
     Now you can process it with `platformio run` command.
 
-More detailed information about this command is here :ref:`cmd_init`.
+Put your source code ``*.h, *.c, *.cpp or *.ino`` files to ``src`` directory.
 
 4. Process the project's environments.
+
+Change working directory to the project's root where is located
+:ref:`Project Configuration File (platformio.ini) <projectconf>` and run:
 
 .. code-block:: bash
 
