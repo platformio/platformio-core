@@ -22,6 +22,8 @@ A ``platformio`` section is used for overriding default configuration options
 Options
 ~~~~~~~
 
+.. _projectconf_pio_home_dir:
+
 ``home_dir``
 ^^^^^^^^^^^^
 

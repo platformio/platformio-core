@@ -17,3 +17,4 @@ MCU, upload protocol or etc. Please use ``board`` option.
     atmelavr
     timsp430
     titiva
+    creating_platform
