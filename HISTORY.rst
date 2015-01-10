@@ -1,6 +1,14 @@
 Release History
 ===============
 
+0.11.0 (2015-01-?)
+------------------
+
+* Added ``--json-output`` option to
+  `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`__
+  command which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
+  (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
+
 0.10.2 (2015-01-06)
 -------------------
 

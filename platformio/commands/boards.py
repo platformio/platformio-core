@@ -10,7 +10,19 @@ from platformio.util import get_boards
 
 @click.command("list", short_help="Pre-configured Embedded Boards")
 @click.argument("query", required=False)
-def cli(query):
+@click.option("--json-output", is_flag=True)
+def cli(query, json_output):
+
+    if json_output:
+        result = {}
+        for type_, data in get_boards().items():
+            if query:
+                search_data = "%s %s" % (type_, json.dumps(data).lower())
+                if query.lower() not in search_data.lower():
+                    continue
+            result[type_] = data
+        click.echo(json.dumps(result))
+        return
 
     BOARDLIST_TPL = ("{type:<30} {mcu:<13} {frequency:<8} "
                      " {flash:<7} {ram:<6} {name}")
