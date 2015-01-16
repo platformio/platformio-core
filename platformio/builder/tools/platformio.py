@@ -139,7 +139,10 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
         if not dirnames:
             continue
         for dn in dirnames:
-            env.VariantDir(join(variant_dir, dn), join(root, dn), duplicate)
+            source_dir = join(root, dn)
+            if ".git" in source_dir or ".svn" in source_dir:
+                continue
+            env.VariantDir(join(variant_dir, dn), source_dir, duplicate)
             variants.append(join(variant_dir, dn))
     return variants
 

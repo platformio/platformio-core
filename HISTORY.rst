@@ -8,6 +8,8 @@ Release History
   `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`__
   command which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
+* Fixed an issue with the libraries that are git repositories (`issue #49 <https://github.com/ivankravets/platformio/issues/49>`_)
+
 
 0.10.2 (2015-01-06)
 -------------------
