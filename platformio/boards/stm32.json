@@ -1,0 +1,32 @@
+{
+    "STM32F4DISCOVERY": {
+        "build": {
+            "core": "STM32F4",
+            "f_cpu": "1680000000L",
+            "ldscript": "STM32F407VGT6.ld",
+            "mcu": "cortex-m4",
+            "variant": "STM32F407VGT6"
+        },
+        "name": "STM32F4DISCOVERY (168 MHz)",
+        "platform": "stm32",
+        "upload": {
+            "maximum_ram_size": 131071,
+            "maximum_size": 1048575
+        }
+    },
+    "STM32VLDISCOVERY": {
+        "build": {
+            "core": "STM32F1",
+            "f_cpu": "240000000L",
+            "ldscript": "STM32F100RBT6.ld",
+            "mcu": "cortex-m3",
+            "variant": "STM32F100RBT6"
+        },
+        "name": "STM32VLDISCOVERY (24 MHz)",
+        "platform": "stm32",
+        "upload": {
+            "maximum_ram_size": 8192,
+            "maximum_size": 131072
+        }
+    }
+}
