@@ -91,6 +91,8 @@ if "BOARD" in env:
                 "$PIOHOME_DIR", "packages", "ldscripts",
                 "${BOARD_OPTIONS['build']['ldscript']}")]
         )
+    if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
+        env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))        
 
 env.PrependENVPath(
     "PATH",
