@@ -33,16 +33,6 @@ env.Append(
     ]
 )
 
-# specific linker script for TIVA devices
-if "ldscript" in env.subst("${BOARD_OPTIONS['build']}"):
-    env.Append(
-        LINKFLAGS=["-T", join(
-            "$PLATFORMFW_DIR", "cores",
-            "${BOARD_OPTIONS['build']['core']}",
-            "${BOARD_OPTIONS['build']['ldscript']}")]
-    )
-
-
 #
 # Target: Build Core Library
 #
