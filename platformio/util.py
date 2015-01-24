@@ -51,11 +51,10 @@ def get_lib_dir():
         config = get_project_config()
         if (config.has_section("platformio") and
                 config.has_option("platformio", "lib_dir")):
-            lib_dir = abspath(config.get("platformio", "lib_dir"))
+            lib_dir = config.get("platformio", "lib_dir")
             if lib_dir.startswith("~"):
-                return expanduser(lib_dir)
-            else:
-                return lib_dir
+                lib_dir = expanduser(lib_dir)
+            return abspath(lib_dir)
     except NotPlatformProject:
         pass
     return join(get_home_dir(), "lib")
