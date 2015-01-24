@@ -4,7 +4,7 @@
 import json
 from os import name as os_name
 from os import getcwd, getenv, listdir, makedirs, utime
-from os.path import dirname, expanduser, isdir, isfile, join, realpath, abspath
+from os.path import abspath, dirname, expanduser, isdir, isfile, join, realpath
 from platform import system, uname
 from subprocess import PIPE, Popen
 
