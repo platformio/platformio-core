@@ -7,3 +7,4 @@ examples/ide-eclipse/.metadata
 examples/ide-eclipse/RemoteSystemsTempFiles
 docs/_build
 dist
+/build/
