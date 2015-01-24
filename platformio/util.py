@@ -4,7 +4,7 @@
 import json
 from os import name as os_name
 from os import getcwd, getenv, listdir, makedirs, utime
-from os.path import dirname, expanduser, isdir, isfile, join, realpath
+from os.path import dirname, expanduser, isdir, isfile, join, realpath, abspath
 from platform import system, uname
 from subprocess import PIPE, Popen
 
@@ -51,7 +51,7 @@ def get_lib_dir():
         config = get_project_config()
         if (config.has_section("platformio") and
                 config.has_option("platformio", "lib_dir")):
-            lib_dir = config.get("platformio", "lib_dir")
+            lib_dir = abspath(config.get("platformio", "lib_dir"))
             if lib_dir.startswith("~"):
                 return expanduser(lib_dir)
             else:
