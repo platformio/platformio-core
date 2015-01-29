@@ -34,7 +34,7 @@ Packages
 --------
 
 *PlatformIO* has pre-built packages for the most popular operation systems:
-*Mac OS*, *Linux (+ARMv6)* and *Windows*.
+*Mac OS*, *Linux (+ARM)* and *Windows*.
 
 .. list-table::
     :header-rows:  1
