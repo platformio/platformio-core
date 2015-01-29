@@ -85,9 +85,12 @@ def change_filemtime(path, time):
     utime(path, (time, time))
 
 
-def exec_command(args):
-    use_shell = system() == "Windows"
-    p = Popen(args, stdout=PIPE, stderr=PIPE, shell=use_shell)
+def exec_command(*args, **kwargs):
+    kwargs['stdout'] = PIPE
+    kwargs['stderr'] = PIPE
+    kwargs['shell'] = system() == "Windows"
+
+    p = Popen(*args, **kwargs)
     out, err = p.communicate()
     return dict(out=out.strip(), err=err.strip())
 
