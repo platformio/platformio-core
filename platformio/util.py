@@ -37,7 +37,7 @@ def get_home_dir():
         pass
 
     if not home_dir:
-        home_dir = expanduser("~/.platformio")
+        home_dir = join(expanduser("~"), ".platformio")
 
     if not isdir(home_dir):
         makedirs(home_dir)
