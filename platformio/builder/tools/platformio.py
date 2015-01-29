@@ -4,8 +4,8 @@
 import atexit
 import platform
 import re
-from os import getenv, listdir, remove, walk
-from os.path import basename, isdir, isfile, join
+from os import getenv, listdir, remove, sep, walk
+from os.path import basename, dirname, isdir, isfile, join, normpath
 from time import sleep
 
 from SCons.Script import Exit, SConscript, SConscriptChdir
@@ -35,7 +35,7 @@ def BuildFirmware(env, corelibs):
         join("$BUILD_DIR", "src"), join("$PROJECT_DIR", "src"))
 
     # build dependent libs
-    deplibs = src.BuildDependentLibraries(vdirs)
+    deplibs = src.BuildDependentLibraries(join("$PROJECT_DIR", "src"))
 
     src.MergeFlags(getenv("PIOSRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
 
@@ -56,6 +56,20 @@ def GlobCXXFiles(env, path):
     return files
 
 
+def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
+    ignore_pattern = (".git", ".svn", "examples")
+    variants = []
+    src_dir = env.subst(src_dir)
+    for root, _, _ in walk(src_dir):
+        _src_dir = root
+        _var_dir = variant_dir + root.replace(src_dir, "")
+        if any([s in _src_dir.lower() for s in ignore_pattern]):
+            continue
+        env.VariantDir(_var_dir, _src_dir, duplicate)
+        variants.append(_var_dir)
+    return variants
+
+
 def BuildLibrary(env, variant_dir, library_dir):
     lib = env.Clone()
     vdirs = lib.VariantDirRecursive(variant_dir, library_dir)
@@ -65,86 +79,141 @@ def BuildLibrary(env, variant_dir, library_dir):
     )
 
 
-def BuildDependentLibraries(env, src_dirs):
-    libs = []
-    deplibs = env.GetDependentLibraries(src_dirs)
+def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
+
+    INCLUDES_RE = re.compile(r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")",
+                             re.M)
+    LIBSOURCE_DIRS = [env.subst(d) for d in env.get("LIBSOURCE_DIRS", [])]
+
+    # start internal prototypes
+
+    class IncludeFinder(object):
+
+        def __init__(self, base_dir, name, is_system=False):
+            self.base_dir = base_dir
+            self.name = name
+            self.is_system = is_system
+
+            self._inc_path = None
+            self._lib_dir = None
+            self._lib_name = None
+
+        def getIncPath(self):
+            return self._inc_path
+
+        def getLibDir(self):
+            return self._lib_dir
+
+        def getLibName(self):
+            return self._lib_name
+
+        def run(self):
+            if not self.is_system and self._find_in_local():
+                return True
+            return self._find_in_system()
+
+        def _find_in_local(self):
+            if isfile(join(self.base_dir, self.name)):
+                self._inc_path = join(self.base_dir, self.name)
+                return True
+            else:
+                return False
+
+        def _find_in_system(self):
+            for lsd_dir in LIBSOURCE_DIRS:
+                if not isdir(lsd_dir):
+                    continue
+
+                for ld in listdir(lsd_dir):
+                    inc_path = normpath(join(lsd_dir, ld, self.name))
+                    lib_dir = inc_path[:inc_path.index(sep, len(lsd_dir) + 1)]
+                    lib_name = basename(lib_dir)
+
+                    # ignore user's specified libs
+                    if "IGNORE_LIBS" in env and lib_name in env['IGNORE_LIBS']:
+                        continue
+
+                    if not isfile(inc_path):
+                        # if source code is in "src" dir
+                        lib_dir = join(lsd_dir, lib_name, "src")
+                        inc_path = join(lib_dir, self.name)
+
+                    if isfile(inc_path):
+                        self._lib_dir = lib_dir
+                        self._lib_name = lib_name
+                        self._inc_path = inc_path
+                        return True
+            return False
+
+    def _get_dep_libs(src_dir):
+        state = {
+            "paths": set(),
+            "libs": set(),
+            "ordered": set()
+        }
+        state = _process_src_dir(state, env.subst(src_dir))
+
+        result = []
+        for item in sorted(state['ordered'], key=lambda s: s[0]):
+            result.append((item[1], item[2]))
+        return result
+
+    def _process_src_dir(state, src_dir):
+        for root, _, _ in walk(src_dir):
+            for node in (env.GlobCXXFiles(root) +
+                         env.Glob(join(root, "*.h"))):
+                state = _parse_includes(state, node)
+        return state
+
+    def _parse_includes(state, node):
+        if node.path in state['paths']:
+            return state
+        else:
+            state['paths'].add(node.path)
+
+        skip_includes = ("arduino.h", "energia.h")
+        matches = INCLUDES_RE.findall(node.get_text_contents())
+        for (inc_type, inc_name) in matches:
+            base_dir = dirname(node.path)
+            if inc_name.lower() in skip_includes:
+                continue
+            if join(base_dir, inc_name) in state['paths']:
+                continue
+            else:
+                state['paths'].add(join(base_dir, inc_name))
+
+            finder = IncludeFinder(base_dir, inc_name, inc_type == "<")
+            if finder.run():
+                _lib_dir = finder.getLibDir()
+
+                if _lib_dir and _lib_dir not in state['libs']:
+                    state['ordered'].add((
+                        len(state['ordered']) + 1, finder.getLibName(),
+                        _lib_dir))
+
+                _parse_includes(state, env.File(finder.getIncPath()))
+
+                if _lib_dir and _lib_dir not in state['libs']:
+                    state['libs'].add(_lib_dir)
+                    state = _process_src_dir(state, _lib_dir)
+        return state
+
+    # end internal prototypes
+
+    deplibs = _get_dep_libs(src_dir)
     env.Append(CPPPATH=[join("$BUILD_DIR", l) for (l, _) in deplibs])
 
+    # add automatically "utility" dir from the lib (Arduino issue)
+    env.Append(CPPPATH=[join("$BUILD_DIR", l, "utility") for (l, ld) in deplibs
+                        if isdir(join(ld, "utility"))])
+
+    libs = []
     for (libname, inc_dir) in deplibs:
         lib = env.BuildLibrary(
             join("$BUILD_DIR", libname), inc_dir)
         env.Clean(libname, lib)
         libs.append(lib)
     return libs
-
-
-def GetDependentLibraries(env, src_dirs):
-    includes = {}
-    nodes = []
-    regexp = re.compile(r"^\s*#include\s+(?:\<|\")([^\>\"\']+)(?:\>|\")", re.M)
-
-    for item in src_dirs:
-        nodes += env.GlobCXXFiles(item)
-        nodes += env.Glob(join(item, "*.h"))
-
-    for node in nodes:
-        env.ParseIncludesRecurive(regexp, node, includes)
-    includes = sorted(includes.items(), key=lambda s: s[0])
-
-    result = []
-    for i in includes:
-        items = [(i[1][1], i[1][2])]
-
-        if isdir(join(items[0][1], "utility")):
-            items.append(("%sUtility" % items[0][0],
-                          join(items[0][1], "utility")))
-
-        for item in items:
-            if item in result:
-                continue
-            result.append(item)
-    return result
-
-
-def ParseIncludesRecurive(env, regexp, source_file, includes):
-    matches = regexp.findall(source_file.get_text_contents())
-    for inc_fname in matches:
-        if inc_fname in includes:
-            continue
-
-        for lsd_dir in env['LIBSOURCE_DIRS']:
-            lsd_dir = env.subst(lsd_dir)
-            if not isdir(lsd_dir):
-                continue
-
-            for libname in listdir(lsd_dir):
-                inc_dir = join(lsd_dir, libname)
-                inc_file = join(inc_dir, inc_fname)
-                if not isfile(inc_file):
-                    # if source code is in "src" dir
-                    inc_dir = join(lsd_dir, libname, "src")
-                    inc_file = join(inc_dir, inc_fname)
-                if not isfile(inc_file):
-                    continue
-
-                includes[inc_fname] = (len(includes) + 1, libname, inc_dir)
-                env.ParseIncludesRecurive(regexp, env.File(inc_file), includes)
-
-
-def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
-    # add root dir by default
-    variants = [variant_dir]
-    env.VariantDir(variant_dir, src_dir, duplicate)
-    for root, dirnames, _ in walk(env.subst(src_dir)):
-        if not dirnames:
-            continue
-        for dn in dirnames:
-            source_dir = join(root, dn)
-            if ".git" in source_dir or ".svn" in source_dir:
-                continue
-            env.VariantDir(join(variant_dir, dn), source_dir, duplicate)
-            variants.append(join(variant_dir, dn))
-    return variants
 
 
 def ConvertInoToCpp(env):
@@ -244,11 +313,9 @@ def generate(env):
     env.AddMethod(ProcessGeneral)
     env.AddMethod(BuildFirmware)
     env.AddMethod(GlobCXXFiles)
+    env.AddMethod(VariantDirRecursive)
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildDependentLibraries)
-    env.AddMethod(GetDependentLibraries)
-    env.AddMethod(ParseIncludesRecurive)
-    env.AddMethod(VariantDirRecursive)
     env.AddMethod(ConvertInoToCpp)
     env.AddMethod(FlushSerialBuffer)
     env.AddMethod(TouchSerialPort)

@@ -62,7 +62,7 @@ On *Windows OS* it may look like:
     C:\Python27\python.exe get-platformio.py
 
 .. warning::
-    **Mac OS Users**: If you have an error ``pkg_resources.DistributionNotFound`` please
+    If you have an error ``pkg_resources.DistributionNotFound`` please
     upgrade *SetupTools* package: ``$ [sudo] pip uninstall setuptools``
     and ``$ [sudo] pip install setuptools``.
     Then re-install *PlatformIO*: ``$ [sudo] pip uninstall platformio``

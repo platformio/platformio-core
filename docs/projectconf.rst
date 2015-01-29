@@ -245,6 +245,19 @@ For more detailed information about available flags/options go to:
 This is option ``srcbuild_flags`` has the same behaviour like ``build_flags``
 but will be applied only for project source code from ``src`` directory.
 
+``ignore_libs``
+^^^^^^^^^^^^^^^
+
+Specify libraries which should be ignored by ``Library Dependency Finder``
+
+Example:
+
+.. code-block::   ini
+
+    [env:ignore_some_libs]
+    ignore_libs = SPI,EngduinoV3_ID123
+
+
 .. _projectconf_examples:
 
 Examples

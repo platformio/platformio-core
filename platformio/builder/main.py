@@ -16,7 +16,6 @@ from os.path import join
 from SCons.Script import (DefaultEnvironment, SConscript, SConscriptChdir,
                           Variables)
 
-
 # AllowSubstExceptions()
 
 # allow common variables from INI file
@@ -35,6 +34,7 @@ commonvars.AddVariables(
     ("FRAMEWORK",),
     ("BUILD_FLAGS",),
     ("SRCBUILD_FLAGS",),
+    ("IGNORE_LIBS",),
 
     # board options
     ("BOARD",),
@@ -93,6 +93,9 @@ if "BOARD" in env:
         )
     if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
         env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))        
+
+if "IGNORE_LIBS" in env:
+    env['IGNORE_LIBS'] = [l.strip() for l in env['IGNORE_LIBS'].split(",")]
 
 env.PrependENVPath(
     "PATH",

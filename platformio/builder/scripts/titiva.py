@@ -8,7 +8,7 @@
 
 from os.path import join
 
-from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
 
 env = DefaultEnvironment()
