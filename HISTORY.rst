@@ -9,6 +9,8 @@ Release History
   command which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
 * Fixed an issue with the libraries that are git repositories (`issue #49 <https://github.com/ivankravets/platformio/issues/49>`_)
+* Allowed to ignore some libs from "Library Dependency Finder" via
+  `ignore_libs <http://docs.platformio.org/en/latest/projectconf.html#ignore-libs`_ option
 
 
 0.10.2 (2015-01-06)

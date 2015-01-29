@@ -16,7 +16,6 @@ from os.path import join
 from SCons.Script import (DefaultEnvironment, SConscript, SConscriptChdir,
                           Variables)
 
-
 # AllowSubstExceptions()
 
 # allow common variables from INI file
@@ -35,6 +34,7 @@ commonvars.AddVariables(
     ("FRAMEWORK",),
     ("BUILD_FLAGS",),
     ("SRCBUILD_FLAGS",),
+    ("IGNORE_LIBS",),
 
     # board options
     ("BOARD",),
@@ -84,6 +84,9 @@ if "BOARD" in env:
         env.Replace(UPLOAD_PROTOCOL="${BOARD_OPTIONS['upload']['protocol']}")
     if "UPLOAD_SPEED" not in env:
         env.Replace(UPLOAD_SPEED="${BOARD_OPTIONS['upload']['speed']}")
+
+if "IGNORE_LIBS" in env:
+    env['IGNORE_LIBS'] = [l.strip() for l in env['IGNORE_LIBS'].split(",")]
 
 env.PrependENVPath(
     "PATH",
