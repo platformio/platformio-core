@@ -1,16 +1,20 @@
 Release History
 ===============
 
-0.11.0 (2015-01-?)
-------------------
+0.11.0 (2015-?)
+---------------
 
+* Refactored *Library Dependency Finder* (issues
+  `#48 <https://github.com/ivankravets/platformio/issues/48>`_,
+  `#50 <https://github.com/ivankravets/platformio/issues/50>`_,
+  `#55 <https://github.com/ivankravets/platformio/issues/55>`_)
 * Added ``--json-output`` option to
   `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`__
   command which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
-* Fixed an issue with the libraries that are git repositories (`issue #49 <https://github.com/ivankravets/platformio/issues/49>`_)
-* Allowed to ignore some libs from "Library Dependency Finder" via
+* Allowed to ignore some libs from *Library Dependency Finder* via
   `ignore_libs <http://docs.platformio.org/en/latest/projectconf.html#ignore-libs`_ option
+* Fixed an issue with the libraries that are git repositories (`issue #49 <https://github.com/ivankravets/platformio/issues/49>`_)
 
 
 0.10.2 (2015-01-06)
