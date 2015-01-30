@@ -56,8 +56,10 @@ def GlobCXXFiles(env, path):
     return files
 
 
-def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
-    ignore_pattern = (".git", ".svn", "examples")
+def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
+                        ignore_pattern=None):
+    if not ignore_pattern:
+        ignore_pattern = (".git", ".svn")
     variants = []
     src_dir = env.subst(src_dir)
     for root, _, _ in walk(src_dir):
@@ -72,7 +74,8 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
 
 def BuildLibrary(env, variant_dir, library_dir):
     lib = env.Clone()
-    vdirs = lib.VariantDirRecursive(variant_dir, library_dir)
+    vdirs = lib.VariantDirRecursive(
+        variant_dir, library_dir, ignore_pattern=(".git", ".svn", "examples"))
     return lib.Library(
         lib.subst(variant_dir),
         [lib.GlobCXXFiles(vdir) for vdir in vdirs]
