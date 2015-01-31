@@ -53,8 +53,7 @@ env.Replace(
     LINKFLAGS=[
         "-Os",
         "-mmcu=$BOARD_MCU",
-        "-Wl,--gc-sections",
-        "-Wl,--start-group"
+        "-Wl,--gc-sections"
     ],
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),

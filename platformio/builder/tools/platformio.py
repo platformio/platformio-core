@@ -211,7 +211,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                         if isdir(join(ld, "utility"))])
 
     libs = []
-    for (libname, inc_dir) in deplibs:
+    for (libname, inc_dir) in reversed(deplibs):
         lib = env.BuildLibrary(
             join("$BUILD_DIR", libname), inc_dir)
         env.Clean(libname, lib)
