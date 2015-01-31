@@ -9,7 +9,7 @@ from os.path import join
 from time import sleep
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
-                          DefaultEnvironment, Exit)
+                          DefaultEnvironment)
 
 from platformio.util import get_serialports
 
