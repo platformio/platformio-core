@@ -190,8 +190,8 @@ if is_uptarget:
                 break
 
     if "UPLOAD_PORT" not in env:
-        Exit("Please specify environment 'upload_port' or use global "
-             "--upload-port option.")
+        print("WARNING!!! Please specify environment 'upload_port' or use "
+              "global --upload-port option.\n")
 
 #
 # Setup default targets
