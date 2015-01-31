@@ -65,7 +65,7 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
     for root, _, _ in walk(src_dir):
         _src_dir = root
         _var_dir = variant_dir + root.replace(src_dir, "")
-        if any([s in _src_dir.lower() for s in ignore_pattern]):
+        if any([s in _var_dir.lower() for s in ignore_pattern]):
             continue
         env.VariantDir(_var_dir, _src_dir, duplicate)
         variants.append(_var_dir)
