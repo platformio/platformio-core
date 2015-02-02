@@ -24,6 +24,7 @@ env.Replace(
     ARFLAGS=["rcs"],
 
     ASFLAGS=[
+        "-c",
         "-g",  # include debugging info (so errors include line numbers)
         "-x", "assembler-with-cpp",
         "-Wall",
