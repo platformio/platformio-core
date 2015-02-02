@@ -56,14 +56,16 @@ def GlobCXXFiles(env, path):
     return files
 
 
-def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
-    ignore_pattern = (".git", ".svn", "examples")
+def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
+                        ignore_pattern=None):
+    if not ignore_pattern:
+        ignore_pattern = (".git", ".svn")
     variants = []
     src_dir = env.subst(src_dir)
     for root, _, _ in walk(src_dir):
         _src_dir = root
         _var_dir = variant_dir + root.replace(src_dir, "")
-        if any([s in _src_dir.lower() for s in ignore_pattern]):
+        if any([s in _var_dir.lower() for s in ignore_pattern]):
             continue
         env.VariantDir(_var_dir, _src_dir, duplicate)
         variants.append(_var_dir)
@@ -72,7 +74,8 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True):
 
 def BuildLibrary(env, variant_dir, library_dir):
     lib = env.Clone()
-    vdirs = lib.VariantDirRecursive(variant_dir, library_dir)
+    vdirs = lib.VariantDirRecursive(
+        variant_dir, library_dir, ignore_pattern=(".git", ".svn", "examples"))
     return lib.Library(
         lib.subst(variant_dir),
         [lib.GlobCXXFiles(vdir) for vdir in vdirs]
@@ -208,7 +211,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                         if isdir(join(ld, "utility"))])
 
     libs = []
-    for (libname, inc_dir) in deplibs:
+    for (libname, inc_dir) in reversed(deplibs):
         lib = env.BuildLibrary(
             join("$BUILD_DIR", libname), inc_dir)
         env.Clean(libname, lib)

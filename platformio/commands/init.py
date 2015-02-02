@@ -30,8 +30,17 @@ def cli(project_dir, board, disable_auto_uploading):
     if board and not set(board).issubset(builtin_boards):
         raise UnknownBoard(", ".join(set(board).difference(builtin_boards)))
 
+    # ask about auto-uploading
+    if board and app.get_setting("enable_prompts"):
+        disable_auto_uploading = not click.confirm(
+            "\nWould you like to enable firmware auto-uploading when project "
+            "is successfully built using `platformio run` command? \n"
+            "Don't forget that you can upload firmware manually using "
+            "`platformio run --target upload` command."
+        )
+
     if project_dir == getcwd():
-        click.secho("The current working directory", fg="yellow", nl=False)
+        click.secho("\nThe current working directory", fg="yellow", nl=False)
         click.secho(" %s " % project_dir, fg="cyan", nl=False)
         click.secho(
             "will be used for the new project.\n"
@@ -42,15 +51,16 @@ def cli(project_dir, board, disable_auto_uploading):
 
     click.echo("The next files/directories will be created in %s" %
                click.style(project_dir, fg="cyan"))
-    click.echo("%s - Project Configuration File" %
+    click.echo("%s - Project Configuration File. |-> PLEASE EDIT ME <-|" %
                click.style("platformio.ini", fg="cyan"))
-    click.echo("%s - a source directory. Put your source code here" %
+    click.echo("%s - Put your source code here" %
                click.style("src", fg="cyan"))
-    click.echo("%s - a directory for the project specific libraries" %
+    click.echo("%s - Put here project specific or 3-rd party libraries" %
                click.style("lib", fg="cyan"))
 
     if (not app.get_setting("enable_prompts") or
             click.confirm("Do you want to continue?")):
+
         for d in (src_dir, lib_dir):
             if not isdir(d):
                 makedirs(d)
@@ -60,8 +70,13 @@ def cli(project_dir, board, disable_auto_uploading):
             if board:
                 fill_project_envs(project_file, board, disable_auto_uploading)
         click.secho(
-            "Project has been successfully initialized!\n"
-            "Now you can process it with `platformio run` command.",
+            "Project has been successfully initialized!\nUseful commands:\n"
+            "`platformio run` - process/build project from the current "
+            "directory\n"
+            "`platformio run --target upload` or `platformio run -t upload` "
+            "- upload firmware to embedded board\n"
+            "`platformio run --target clean` - clean project (remove compiled "
+            "files)",
             fg="green"
         )
     else:

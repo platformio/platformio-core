@@ -9,7 +9,7 @@ from os.path import join
 from time import sleep
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
-                          DefaultEnvironment, Exit)
+                          DefaultEnvironment)
 
 from platformio.util import get_serialports
 
@@ -52,8 +52,9 @@ env.Replace(
 
     LINKFLAGS=[
         "-Os",
+        "-mmcu=$BOARD_MCU",
         "-Wl,--gc-sections",
-        "-mmcu=$BOARD_MCU"
+        "-Wl,--start-group"
     ],
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
@@ -189,8 +190,8 @@ if is_uptarget:
                 break
 
     if "UPLOAD_PORT" not in env:
-        Exit("Please specify environment 'upload_port' or use global "
-             "--upload-port option.")
+        print("WARNING!!! Please specify environment 'upload_port' or use "
+              "global --upload-port option.\n")
 
 #
 # Setup default targets

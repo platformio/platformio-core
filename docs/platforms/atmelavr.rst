@@ -75,6 +75,34 @@ Arduino
       - Frequency ``board_f_cpu``
       - Flash
       - RAM
+    * - ``atmegangatmega168``
+      - `Arduino NG or older (ATmega168)
+        <http://arduino.cc/en/main/boards>`_
+      - ATmega168 ``atmega168``
+      - 16 MHz ``16000000L``
+      - 16 Kb
+      - 1 Kb
+    * - ``atmegangatmega8``
+      - `Arduino Arduino NG or older (ATmega8)
+        <http://arduino.cc/en/main/boards>`_
+      - ATmega8 ``atmega8``
+      - 16 MHz ``16000000L``
+      - 8 Kb
+      - 1 Kb
+    * - ``btatmega168``
+      - `Arduino BT (ATmega168)
+        <http://arduino.cc/en/main/boards>`_
+      - ATmega168 ``atmega168``
+      - 16 MHz ``16000000L``
+      - 16 Kb
+      - 1 Kb
+    * - ``btatmega328``
+      - `Arduino BT (ATmega328)
+        <http://arduino.cc/en/main/boards>`_
+      - ATmega328 ``atmega328``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2 Kb
     * - ``diecimilaatmega168``
       - `Arduino Diecimila or Duemilanove (ATmega168)
         <http://arduino.cc/en/Main/ArduinoBoardDiecimila>`_
@@ -86,6 +114,19 @@ Arduino
       - `Arduino Diecimila or Duemilanove (ATmega328)
         <http://arduino.cc/en/Main/ArduinoBoardDiecimila>`_
       - ATmega328 ``atmega328``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2 Kb
+    * - ``esplora``
+      - `Arduino Esplora <http://arduino.cc/en/Main/ArduinoBoardEsplora>`_
+      - ATmega32u4 ``atmega32u4``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2.5 Kb
+    * - ``ethernet``
+      - `Arduino Ethernet
+        <http://arduino.cc/en/Main/ArduinoBoardEthernet>`_
+      - ATmega328P ``atmega328p``
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2 Kb
@@ -123,6 +164,13 @@ Arduino
       - 8 MHz ``8000000L``
       - 32 Kb
       - 2 Kb
+    * - ``megaADK``
+      - `Arduino Mega ADK
+        <http://arduino.cc/en/Main/ArduinoBoardMegaADK>`_
+      - ATmega2560 ``atmega2560``
+      - 16 MHz ``16000000L``
+      - 256 Kb
+      - 8 Kb
     * - ``megaatmega1280``
       - `Arduino Mega (ATmega1280)
         <http://arduino.cc/en/Main/arduinoBoardMega>`_
@@ -133,13 +181,6 @@ Arduino
     * - ``megaatmega2560``
       - `Arduino Mega (ATmega2560)
         <http://arduino.cc/en/Main/arduinoBoardMega2560>`_
-      - ATmega2560 ``atmega2560``
-      - 16 MHz ``16000000L``
-      - 256 Kb
-      - 8 Kb
-    * - ``megaADK``
-      - `Arduino Mega ADK
-        <http://arduino.cc/en/Main/ArduinoBoardMegaADK>`_
       - ATmega2560 ``atmega2560``
       - 16 MHz ``16000000L``
       - 256 Kb
@@ -207,6 +248,20 @@ Arduino
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2 Kb
+    * - ``robotControl``
+      - `Arduino Robot Control
+        <http://arduino.cc/en/Main/Robot>`_
+      - ATmega32u4 ``atmega32u4``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2.5 Kb
+    * - ``robotMotor``
+      - `Arduino Robot Motor
+        <http://arduino.cc/en/Main/Robot>`_
+      - ATmega32u4 ``atmega32u4``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2.5 Kb
     * - ``uno``
       - `Arduino Uno
         <http://arduino.cc/en/Main/ArduinoBoardUno>`_
@@ -214,6 +269,13 @@ Arduino
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2 Kb
+    * - ``yun``
+      - `Arduino Yun
+        <http://arduino.cc/en/Main/ArduinoBoardYun>`_
+      - ATmega32u4 ``atmega32u4``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2.5 Kb
 
 More detailed information you can find here
 `Arduino boards <http://arduino.cc/en/Main/Products>`_.
