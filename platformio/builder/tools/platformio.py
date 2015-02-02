@@ -22,10 +22,12 @@ def ProcessGeneral(env):
     if "FRAMEWORK" in env:
         if env['FRAMEWORK'] in ("arduino", "energia"):
             env.ConvertInoToCpp()
-        SConscriptChdir(0)
-        corelibs = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts",
-                                             "frameworks", "${FRAMEWORK}.py")),
-                              exports="env")
+        for f in env['FRAMEWORK'].split(","):
+            SConscriptChdir(0)
+            corelibs = SConscript(
+                env.subst(join("$PIOBUILDER_DIR", "scripts",
+                               "frameworks", "%s.py" % f.strip().lower())),
+                exports="env")
     return corelibs
 
 
