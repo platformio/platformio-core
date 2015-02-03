@@ -24,10 +24,11 @@ def ProcessGeneral(env):
             env.ConvertInoToCpp()
         for f in env['FRAMEWORK'].split(","):
             SConscriptChdir(0)
-            corelibs = SConscript(
+            env, libs = SConscript(
                 env.subst(join("$PIOBUILDER_DIR", "scripts",
                                "frameworks", "%s.py" % f.strip().lower())),
                 exports="env")
+            corelibs += libs
     return corelibs
 
 

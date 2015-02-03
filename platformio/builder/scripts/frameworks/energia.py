@@ -54,4 +54,4 @@ libs.append(env.BuildLibrary(
     join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
 ))
 
-Return("libs")
+Return("env libs")
