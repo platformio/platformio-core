@@ -63,13 +63,14 @@ env.Replace(
         "-q",  # suppress progress output
         "-D",  # disable auto erase for flash memory
         "-p", "$BOARD_MCU",
-        "-C", join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude.conf"),
+        "-C", '"%s"' % join("$PIOPACKAGES_DIR",
+                            "tool-avrdude", "avrdude.conf"),
         "-c", "$UPLOAD_PROTOCOL",
         "-b", "$UPLOAD_SPEED",
         "-P", "$UPLOAD_PORT"
     ],
-    UPLOADHEXCMD="$UPLOADER $UPLOADERFLAGS -U flash:w:$SOURCES:i",
-    UPLOADEEPCMD="$UPLOADER $UPLOADERFLAGS -U eeprom:w:$SOURCES:i"
+    UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i',
+    UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
 )
 
 env.Append(
