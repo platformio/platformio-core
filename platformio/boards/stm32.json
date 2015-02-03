@@ -1,31 +1,49 @@
 {
-    "STM32F4DISCOVERY": {
+    "stm32f4discovery": {
         "build": {
-            "core": "STM32F4",
-            "f_cpu": "1680000000L",
-            "ldscript": "STM32F407VGT6.ld",
+            "core": "stm32",
+            "f_cpu": "168000000L",
+            "ldscript": "stm32f405x6.ld",
             "mcu": "cortex-m4",
-            "variant": "STM32F407VGT6"
+            "variant": "stm32f4",
+            "extra_flags": "-DSTM32F40_41xxx"
         },
-        "name": "STM32F4DISCOVERY (168 MHz)",
+        "name": "STM32F4Discovery (168 MHz) with digital accelerometer, digital microphone, audio DAC",
         "platform": "stm32",
         "upload": {
             "maximum_ram_size": 131071,
             "maximum_size": 1048575
         }
     },
-    "STM32VLDISCOVERY": {
+    "stm32ldiscovery": {
         "build": {
-            "core": "STM32F1",
-            "f_cpu": "240000000L",
-            "ldscript": "STM32F100RBT6.ld",
+            "core": "stm32",
+            "f_cpu": "32000000L",
+            "ldscript": "stm32l15xx6.ld",
             "mcu": "cortex-m3",
-            "variant": "STM32F100RBT6"
+            "variant": "stm32l1",
+            "extra_flags": "-DSTM32L1XX_MD"
         },
-        "name": "STM32VLDISCOVERY (24 MHz)",
+        "name": "STM32LDiscovery (32 MHz) ultra low-power development kit",
         "platform": "stm32",
         "upload": {
-            "maximum_ram_size": 8192,
+            "maximum_ram_size": 16384,
+            "maximum_size": 131072
+        }
+    },
+    "stm32f3discovery": {
+        "build": {
+            "core": "stm32",
+            "f_cpu": "72000000L",
+            "ldscript": "stm32f30xx.ld",
+            "mcu": "cortex-m4",
+            "variant": "stm32f3",
+            "extra_flags": "-DSTM32F303xC"
+        },
+        "name": "STM32F3Discovery (72 MHz) with accelerometer, gyroscope and e-compass",
+        "platform": "stm32",
+        "upload": {
+            "maximum_ram_size": 262144,
             "maximum_size": 131072
         }
     }
