@@ -4,11 +4,10 @@
 from platformio.platforms.base import BasePlatform
 
 
-class TitivaPlatform(BasePlatform):
+class Stm32Platform(BasePlatform):
 
     """
-        An embedded platform for TI TIVA C ARM microcontrollers
-        (with Energia Framework)
+        An embedded platform for STMicroelectronics ARM microcontrollers
     """
 
     PACKAGES = {
@@ -22,13 +21,20 @@ class TitivaPlatform(BasePlatform):
             "default": True
         },
 
-        "tool-lm4flash": {
+        "tool-stlink": {
             "alias": "uploader",
             "default": True
         },
 
-        "framework-energiativa": {
-            "alias": "framework",
+        "framework-cmsis": {
+            "default": True
+        },
+
+        "framework-spl": {
+            "default": True
+        },
+
+        "framework-opencm3": {
             "default": True
         }
     }

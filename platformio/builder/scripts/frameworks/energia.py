@@ -33,6 +33,11 @@ env.Append(
     ]
 )
 
+if env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "lm4f":
+    env.Append(
+        LINKFLAGS=["-Wl,--entry=ResetISR"]
+    )
+
 #
 # Target: Build Core Library
 #
