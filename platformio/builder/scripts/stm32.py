@@ -77,7 +77,7 @@ env.Append(
     ]
 )
 
-if (env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu")[-2:] == "m4"):
+if env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu")[-2:] == "m4":
     env.Append(
         ASFLAGS=[
             "-mfloat-abi=hard",
@@ -117,7 +117,6 @@ CORELIBS = env.ProcessGeneral()
 #
 
 target_elf = env.BuildFirmware(CORELIBS + ["c", "gcc", "m", "nosys"])
-print(target_elf)
 
 #
 # Target: Build the .bin file
