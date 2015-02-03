@@ -1,8 +1,8 @@
 {
     "LilyPadUSB": {
         "build": {
-            "board": "AVR_LILYPAD_USB",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_LILYPAD_USB",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
             "pid": "0x9208",
@@ -24,8 +24,8 @@
     },
     "atmegangatmega168": {
         "build": {
-            "board": "AVR_NG",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_NG",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "standard"
@@ -41,8 +41,8 @@
     },
     "atmegangatmega8": {
         "build": {
-            "board": "AVR_NG",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_NG",
             "f_cpu": "16000000L",
             "mcu": "atmega8",
             "variant": "standard"
@@ -58,8 +58,8 @@
     },
     "btatmega168": {
         "build": {
-            "board": "AVR_BT",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_BT",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
@@ -76,8 +76,8 @@
     },
     "btatmega328": {
         "build": {
-            "board": "AVR_BT",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_BT",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
@@ -94,8 +94,8 @@
     },
     "diecimilaatmega168": {
         "build": {
-            "board": "AVR_DUEMILANOVE",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_DUEMILANOVE",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "standard"
@@ -111,8 +111,8 @@
     },
     "diecimilaatmega328": {
         "build": {
-            "board": "AVR_DUEMILANOVE",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_DUEMILANOVE",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "standard"
@@ -128,8 +128,8 @@
     },
     "esplora": {
         "build": {
-            "board": "AVR_ESPLORA",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_ESPLORA",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x803c",
@@ -151,8 +151,8 @@
     },
     "ethernet": {
         "build": {
-            "board": "AVR_ETHERNET",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_ETHERNET",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "ethernet"
@@ -168,8 +168,8 @@
     },
     "fio": {
         "build": {
-            "board": "AVR_FIO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_FIO",
             "f_cpu": "8000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
@@ -185,8 +185,8 @@
     },
     "leonardo": {
         "build": {
-            "board": "AVR_LEONARDO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_LEONARDO",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8036",
@@ -208,8 +208,8 @@
     },
     "lilypadatmega168": {
         "build": {
-            "board": "AVR_LILYPAD",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_LILYPAD",
             "f_cpu": "8000000L",
             "mcu": "atmega168",
             "variant": "standard"
@@ -225,8 +225,8 @@
     },
     "lilypadatmega328": {
         "build": {
-            "board": "AVR_LILYPAD",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_LILYPAD",
             "f_cpu": "8000000L",
             "mcu": "atmega328p",
             "variant": "standard"
@@ -242,8 +242,8 @@
     },
     "megaADK": {
         "build": {
-            "board": "AVR_ADK",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_ADK",
             "f_cpu": "16000000L",
             "mcu": "atmega2560",
             "variant": "mega"
@@ -259,8 +259,8 @@
     },
     "megaatmega1280": {
         "build": {
-            "board": "AVR_MEGA",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_MEGA",
             "f_cpu": "16000000L",
             "mcu": "atmega1280",
             "variant": "mega"
@@ -276,8 +276,8 @@
     },
     "megaatmega2560": {
         "build": {
-            "board": "AVR_MEGA2560",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_MEGA2560",
             "f_cpu": "16000000L",
             "mcu": "atmega2560",
             "variant": "mega"
@@ -293,8 +293,8 @@
     },
     "micro": {
         "build": {
-            "board": "AVR_MICRO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_MICRO",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8037",
@@ -316,8 +316,8 @@
     },
     "miniatmega168": {
         "build": {
-            "board": "AVR_MINI",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_MINI",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
@@ -333,8 +333,8 @@
     },
     "miniatmega328": {
         "build": {
-            "board": "AVR_MINI",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_MINI",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
@@ -350,8 +350,8 @@
     },
     "nanoatmega168": {
         "build": {
-            "board": "AVR_NANO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_NANO",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
@@ -367,8 +367,8 @@
     },
     "nanoatmega328": {
         "build": {
-            "board": "AVR_NANO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_NANO",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
@@ -384,8 +384,8 @@
     },
     "pro16MHzatmega168": {
         "build": {
-            "board": "AVR_PRO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_PRO",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
@@ -401,8 +401,8 @@
     },
     "pro16MHzatmega328": {
         "build": {
-            "board": "AVR_PRO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_PRO",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
@@ -418,8 +418,8 @@
     },
     "pro8MHzatmega168": {
         "build": {
-            "board": "AVR_PRO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_PRO",
             "f_cpu": "8000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
@@ -435,8 +435,8 @@
     },
     "pro8MHzatmega328": {
         "build": {
-            "board": "AVR_PRO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_PRO",
             "f_cpu": "8000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
@@ -452,8 +452,8 @@
     },
     "robotControl": {
         "build": {
-            "board": "AVR_ROBOT_CONTROL",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_ROBOT_CONTROL",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8038",
@@ -475,8 +475,8 @@
     },
     "robotMotor": {
         "build": {
-            "board": "AVR_ROBOT_MOTOR",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_ROBOT_MOTOR",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8039",
@@ -498,8 +498,8 @@
     },
     "uno": {
         "build": {
-            "board": "AVR_UNO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_UNO",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "standard"
@@ -515,8 +515,8 @@
     },
     "yun": {
         "build": {
-            "board": "AVR_YUN",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_AVR_YUN",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8041",

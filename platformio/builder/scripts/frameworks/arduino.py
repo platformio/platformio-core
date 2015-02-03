@@ -35,8 +35,7 @@ env.VariantDir(
 env.Append(
     CPPDEFINES=[
         "ARDUINO_ARCH_%s" % env.subst("$PLATFORM").upper()[-3:],
-        "ARDUINO=%d" % ARDUINO_VERSION,
-        "ARDUINO_${BOARD_OPTIONS['build']['board']}"
+        "ARDUINO=%d" % ARDUINO_VERSION
     ] + ARDUINO_USBDEFINES,
     CPPPATH=[
         join("$BUILD_DIR", "FrameworkArduino"),
