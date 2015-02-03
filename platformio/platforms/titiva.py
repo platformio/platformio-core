@@ -5,6 +5,7 @@ from platformio.platforms.base import BasePlatform
 
 
 class TitivaPlatform(BasePlatform):
+
     """
         An embedded platform for TI TIVA C ARM microcontrollers
         (with Energia Framework)
@@ -14,6 +15,10 @@ class TitivaPlatform(BasePlatform):
 
         "toolchain-gccarmnoneeabi": {
             "alias": "toolchain",
+            "default": True
+        },
+
+        "ldscripts": {
             "default": True
         },
 
