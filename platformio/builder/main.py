@@ -7,7 +7,7 @@ except ImportError:
     import sys
     for _path in sys.path:
         if "platformio" in _path:
-            sys.path.insert(0, _path[:_path.rfind("platformio")-1])
+            sys.path.insert(0, _path[:_path.rfind("platformio") - 1])
             break
     from platformio import util
 
@@ -92,7 +92,7 @@ if "BOARD" in env:
                 "${BOARD_OPTIONS['build']['ldscript']}")]
         )
     if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
-        env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))        
+        env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
 
 if "IGNORE_LIBS" in env:
     env['IGNORE_LIBS'] = [l.strip() for l in env['IGNORE_LIBS'].split(",")]
