@@ -74,13 +74,18 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
     return variants
 
 
-def BuildLibrary(env, variant_dir, library_dir):
+def BuildLibrary(env, variant_dir, library_dir, ignore_files=None):
     lib = env.Clone()
     vdirs = lib.VariantDirRecursive(
         variant_dir, library_dir, ignore_pattern=(".git", ".svn", "examples"))
+    srcfiles = []
+    for vdir in vdirs:
+        for item in lib.GlobCXXFiles(vdir):
+            if not ignore_files or item.name not in ignore_files:
+                srcfiles.append(item)
     return lib.Library(
         lib.subst(variant_dir),
-        [lib.GlobCXXFiles(vdir) for vdir in vdirs]
+        srcfiles
     )
 
 
