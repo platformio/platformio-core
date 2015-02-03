@@ -51,7 +51,7 @@ class Upgrader(object):
             return True
 
         result = [True]
-        for v in (90, ):
+        for v in (90, 110):
             if self.from_version >= v:
                 continue
             result.append(getattr(self, "_upgrade_to_%d" % v)(ctx))
@@ -77,6 +77,12 @@ class Upgrader(object):
         if prev_platforms:
             ctx.invoke(cmd_install, platforms=prev_platforms)
 
+        return True
+
+    def _upgrade_to_110(self, ctx):  # pylint: disable=R0201
+        # install "ldscripts" package
+        if "titiva" in PlatformFactory.get_platforms().keys():
+            ctx.invoke(cmd_install, platforms=["titiva"])
         return True
 
 
