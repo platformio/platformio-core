@@ -208,7 +208,7 @@ class BasePlatform(object):
 
         # append aliases of the installed packages
         for name, options in self.get_packages().items():
-            if name not in installed_packages:
+            if "alias" not in options or name not in installed_packages:
                 continue
             variables.append(
                 "PIOPACKAGE_%s=%s" % (options['alias'].upper(), name))
