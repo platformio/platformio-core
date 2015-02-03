@@ -69,7 +69,6 @@ env.Append(
         "-nostartfiles",
         "-nostdlib",
         "-Wl,--gc-sections",
-        "-Wl,--entry=ResetISR",
         "-mthumb",
         "-mcpu=cortex-m4",
         "-mfloat-abi=hard",
