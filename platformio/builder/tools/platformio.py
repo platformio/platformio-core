@@ -16,6 +16,16 @@ from platformio.util import get_serialports
 
 def ProcessGeneral(env):
     corelibs = []
+    # specific linker script
+    if "ldscript" in env.get("BOARD_OPTIONS", {}).get("build", {}):
+        env.Append(
+            LINKFLAGS=["-T", join(
+                "$PIOHOME_DIR", "packages", "ldscripts",
+                "${BOARD_OPTIONS['build']['ldscript']}")]
+        )
+    if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
+        env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
+
     if "BUILD_FLAGS" in env:
         env.MergeFlags(env['BUILD_FLAGS'])
 

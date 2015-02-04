@@ -59,11 +59,6 @@ env.Replace(
         "F_CPU=$BOARD_F_CPU"
     ],
 
-    UPLOADER=join("$PIOPACKAGES_DIR", "tool-lm4flash", "lm4flash"),
-    UPLOADCMD="$UPLOADER $SOURCES"
-)
-
-env.Append(
     LINKFLAGS=[
         "-Os",
         "-nostartfiles",
@@ -74,7 +69,10 @@ env.Append(
         "-mfloat-abi=hard",
         "-mfpu=fpv4-sp-d16",
         "-fsingle-precision-constant"
-    ]
+    ],
+
+    UPLOADER=join("$PIOPACKAGES_DIR", "tool-lm4flash", "lm4flash"),
+    UPLOADCMD="$UPLOADER $SOURCES"
 )
 
 env.Append(

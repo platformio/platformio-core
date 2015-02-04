@@ -48,6 +48,20 @@ env.Replace(
         "-fno-exceptions"
     ],
 
+    CPPDEFINES=[
+        "F_CPU=$BOARD_F_CPU",
+        "${BOARD_OPTIONS['build']['variant'].upper()}"
+    ],
+
+    LINKFLAGS=[
+        "-Os",
+        "-nostartfiles",
+        "-nostdlib",
+        "-Wl,--gc-sections",
+        "-mthumb",
+        "-mcpu=${BOARD_OPTIONS['build']['mcu']}"
+    ],
+
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-stlink", "st-flash"),
     UPLOADERFLAGS=[
         "write",        # write in flash
@@ -56,25 +70,6 @@ env.Replace(
     ],
 
     UPLOADCMD="$UPLOADER $UPLOADERFLAGS"
-)
-
-
-env.Append(
-    CPPDEFINES=[
-        "F_CPU=$BOARD_F_CPU",
-        "${BOARD_OPTIONS['build']['variant'].upper()}"
-    ]
-)
-
-env.Append(
-    LINKFLAGS=[
-        "-Os",
-        "-nostartfiles",
-        "-nostdlib",
-        "-Wl,--gc-sections",
-        "-mthumb",
-        "-mcpu=${BOARD_OPTIONS['build']['mcu']}"
-    ]
 )
 
 if env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu")[-2:] == "m4":
