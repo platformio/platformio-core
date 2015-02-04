@@ -26,23 +26,28 @@ if "usb_product" in env.subst("${BOARD_OPTIONS['build']}"):
             "${BOARD_OPTIONS['build']['usb_product']}").replace('"', ""))
     ]
 
-# include board variant
-env.VariantDir(
-    join("$BUILD_DIR", "FrameworkArduinoVariant"),
-    join("$PLATFORMFW_DIR", "variants", "${BOARD_OPTIONS['build']['variant']}")
-)
-
 env.Append(
     CPPDEFINES=[
-        "ARDUINO_ARCH_%s" % env.subst("$PLATFORM").upper()[-3:],
         "ARDUINO=%d" % ARDUINO_VERSION
     ] + ARDUINO_USBDEFINES,
+
     CPPPATH=[
-        join("$BUILD_DIR", "FrameworkArduino"),
-        join("$BUILD_DIR", "FrameworkArduinoVariant")
+        join("$BUILD_DIR", "FrameworkArduino")
     ]
 )
 
+# include board variant
+if "variant" in env.get("BOARD_OPTIONS", {}).get("build", {}):
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkArduinoVariant"),
+        join("$PLATFORMFW_DIR", "variants",
+             "${BOARD_OPTIONS['build']['variant']}")
+    )
+    env.Append(
+        CPPPATH=[
+            join("$BUILD_DIR", "FrameworkArduinoVariant")
+        ]
+    )
 
 #
 # Target: Build Core Library
