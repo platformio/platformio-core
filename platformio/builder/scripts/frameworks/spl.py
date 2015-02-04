@@ -50,7 +50,7 @@ if "STM32F40_41xxx" in extra_flags:
 elif "STM32F303xC" in extra_flags:
     ignore_files += ["stm32f30x_hrtim.c"]
 elif "STM32L1XX_MD" in extra_flags:
-    ignore_files += ["stm32l1xx_flash_ramfunc.c"]  # removed warning
+    ignore_files += ["stm32l1xx_flash_ramfunc.c"]
 
 libs = []
 libs.append(envsafe.BuildLibrary(
