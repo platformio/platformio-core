@@ -5,11 +5,10 @@
     Builder for Teensy boards
 """
 
-from os.path import join
+from os.path import isfile, join
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
-
 
 env = DefaultEnvironment()
 
@@ -55,7 +54,7 @@ elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
         ASFLAGS=[
             "-mcpu=cortex-m4",
             "-mthumb",
-            #"-nostdlib"
+            # "-nostdlib"
         ],
 
         CXXFLAGS=[
@@ -68,7 +67,7 @@ elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
             "-mthumb",
             "-ffunction-sections",  # place each function in its own section
             "-fdata-sections",
-            #"-nostdlib"
+            # "-nostdlib"
         ],
 
         CPPDEFINES=[
@@ -79,29 +78,13 @@ elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
             "-mcpu=cortex-m4",
             "-mthumb",
             "-Wl,--gc-sections",
-            #"-nostartfiles",
-            #"-nostdlib",
+            # "-nostartfiles",
+            # "-nostdlib",
         ]
     )
 
 env.Append(
     BUILDERS=dict(
-        ElfToEep=Builder(
-            action=" ".join([
-                "$OBJCOPY",
-                "-O",
-                "ihex",
-                "-j",
-                ".eeprom",
-                '--set-section-flags=.eeprom="alloc,load"',
-                "--no-change-warnings",
-                "--change-section-lma",
-                ".eeprom=0",
-                "$SOURCES",
-                "$TARGET"]),
-            suffix=".eep"
-        ),
-
         ElfToHex=Builder(
             action=" ".join([
                 "$OBJCOPY",
@@ -133,13 +116,10 @@ env.Append(
 
     CPPDEFINES=[
         "F_CPU=$BOARD_F_CPU",
-        "USB_VID=null",
         "USB_PID=null",
         "USB_VID=null",
-        "TEENSYDUINO=120",
         "USB_SERIAL",
-        "LAYOUT_US_ENGLISH",
-        "__MK20DX256__"
+        "LAYOUT_US_ENGLISH"
     ],
 
     CXXFLAGS=[
@@ -149,16 +129,32 @@ env.Append(
 
     LINKFLAGS=[
         "-Os"
-    ],
-
-    UPLOADER=join(
-        "$PIOPACKAGES_DIR", "tool-teensy", "teensy_loader_cli"),
-    UPLOADERFLAGS=[
-
-    ],
-    UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i',
-    UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
+    ]
 )
+
+if isfile(env.subst(join(
+        "$PIOPACKAGES_DIR", "tool-teensy", "teensy_loader_cli"))):
+    env.Append(
+        UPLOADER=join("$PIOPACKAGES_DIR", "tool-teensy", "teensy_loader_cli"),
+        UPLOADERFLAGS=[
+            "-mmcu=$BOARD_MCU",
+            "-w",  # wait for device to apear
+            "-r",  # hard reboot if device not online
+            "-v"   # verbose output
+        ],
+        UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
+    )
+else:
+    env.Append(
+        UPLOADER=join(
+            "$PIOPACKAGES_DIR", "tool-teensy", "teensy_post_compile"),
+        UPLOADERFLAGS=[
+            "-file=firmware",
+            '-path="$BUILD_DIR"',
+            '-tools="%s"' % join("$PIOPACKAGES_DIR", "tool-teensy")
+        ],
+        UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS'
+    )
 
 CORELIBS = env.ProcessGeneral()
 
@@ -167,13 +163,6 @@ CORELIBS = env.ProcessGeneral()
 #
 
 target_elf = env.BuildFirmware(CORELIBS + ["m"])
-
-#
-# Target: Extract EEPROM data (from EEMEM directive) to .eep file
-#
-
-target_eep = env.Alias("eep", env.ElfToEep(join("$BUILD_DIR", "firmware"),
-                                           target_elf))
 
 #
 # Target: Build the .hex file
@@ -188,15 +177,8 @@ else:
 # Target: Upload by default .hex file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_hex, ("$UPLOADCMD"))
+upload = env.Alias(["upload", "uploadlazy"], target_hex, ("$UPLOADHEXCMD"))
 AlwaysBuild(upload)
-
-#
-# Target: Upload .eep file
-#
-
-uploadeep = env.Alias(["uploadeep"], target_eep, ("$UPLOADEEPCMD"))
-AlwaysBuild(uploadeep)
 
 #
 # Target: Define targets
