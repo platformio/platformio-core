@@ -5,7 +5,9 @@
     Builder for Teensy boards
 """
 
+import time
 from os.path import isfile, join
+from random import randint
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
@@ -32,7 +34,7 @@ if env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy":
         ],
 
         CPPDEFINES=[
-            "SERIALNUM=-1164905212"  # ?????
+            "SERIALNUM=-%d" % randint(1000000000, 2000000000)
         ],
 
         LINKFLAGS=[
@@ -71,7 +73,7 @@ elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
         ],
 
         CPPDEFINES=[
-            "TIME_T=1423046159"  # @TODO
+            "TIME_T=%d" % time.time()
         ],
 
         LINKFLAGS=[

@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 """
-    Build script for Android Framework (based on Wiring).
+    Build script for Arduino Framework (based on Wiring).
 """
 
 from os import listdir

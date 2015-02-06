@@ -1,10 +1,9 @@
 {
-    "teensy2": {
+    "teensy20": {
         "build": {
             "core": "teensy",
             "f_cpu": "16000000L",
-            "mcu": "atmega32u4",
-            "variant": "teensy2"
+            "mcu": "atmega32u4"
         },
         "name": "Teensy 2.0",
         "platform": "teensy",
@@ -14,14 +13,13 @@
         }
     },
 
-    "teensypp2": {
+    "teensy20pp": {
         "build": {
             "core": "teensy",
             "f_cpu": "16000000L",
-            "mcu": "at90usb1286",
-            "variant": "teensypp2"
+            "mcu": "at90usb1286"
         },
-        "name": "Teensy 2.0",
+        "name": "Teensy++ 2.0",
         "platform": "teensy",
         "upload": {
             "maximum_ram_size": 8192,
@@ -35,8 +33,7 @@
             "extra_flags": "-D__MK20DX128__",
             "f_cpu": "48000000L",
             "ldscript": "mk20dx128.ld",
-            "mcu": "mk20dx128",
-            "variant": "teensy30"
+            "mcu": "mk20dx128"
         },
         "name": "Teensy 3.0",
         "platform": "teensy",
@@ -52,8 +49,7 @@
             "extra_flags": "-D__MK20DX256__",
             "f_cpu": "72000000L",
             "ldscript": "mk20dx256.ld",
-            "mcu": "mk20dx256",
-            "variant": "teensy31"
+            "mcu": "mk20dx256"
         },
         "name": "Teensy 3.1",
         "platform": "teensy",
