@@ -14,6 +14,67 @@ env = None
 Import("env")
 BOARD_BUILDOPTS = env.get("BOARD_OPTIONS", {}).get("build", {})
 
+
+#
+# Atmel SAM platform
+#
+
+if env.get("BOARD_OPTIONS", {}).get("platform", None) == "sam":
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkCMSISInc"),
+        join("$PLATFORMFW_DIR", "system", "CMSIS", "CMSIS", "include")
+    )
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkLibSamInc"),
+        join("$PLATFORMFW_DIR", "system", "libsam")
+    )
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkDeviceInc"),
+        join("$PLATFORMFW_DIR", "system", "CMSIS", "Device", "ATMEL")
+    )
+    env.Append(
+        CPPPATH=[
+            join("$BUILD_DIR", "FrameworkCMSISInc"),
+            join("$BUILD_DIR", "FrameworkLibSamInc"),
+            join("$BUILD_DIR", "FrameworkDeviceInc")
+        ]
+    )
+    env.Append(
+        LINKFLAGS=[
+            "-T", join("$PIOHOME_DIR", "packages", "ldscripts",
+                       "${BOARD_OPTIONS['build']['ldscript']}")
+        ]
+    )
+
+#
+# Teensy platform
+#
+
+# Teensy 2.x Core
+if BOARD_BUILDOPTS.get("core", None) == "teensy":
+    # search relative includes in teensy directories
+    core_dir = join(env.get("PIOHOME_DIR"), "packages",
+                    "framework-arduinoteensy", "cores", "teensy")
+    for item in listdir(core_dir):
+        file_path = join(core_dir, item)
+        if not isfile(file_path):
+            continue
+        content = None
+        content_changed = False
+        with open(file_path) as fp:
+            content = fp.read()
+            if '#include "../' in content:
+                content_changed = True
+                content = content.replace('#include "../', '#include "')
+        if not content_changed:
+            continue
+        with open(file_path, "w") as fp:
+            fp.write(content)
+
+#
+# Miscellaneous
+#
+
 ARDUINO_VERSION = int(
     open(join(env.subst("$PLATFORMFW_DIR"),
               "version.txt")).read().replace(".", "").strip())
@@ -55,26 +116,6 @@ if "variant" in BOARD_BUILDOPTS:
             join("$BUILD_DIR", "FrameworkArduinoVariant")
         ]
     )
-
-if BOARD_BUILDOPTS.get("core", None) == "teensy":
-    # search relative includes in teensy directories
-    core_dir = join(env.get("PIOHOME_DIR"), "packages",
-                    "framework-arduinoteensy", "cores", "teensy")
-    for item in listdir(core_dir):
-        file_path = join(core_dir, item)
-        if not isfile(file_path):
-            continue
-        content = None
-        content_changed = False
-        with open(file_path) as fp:
-            content = fp.read()
-            if '#include "../' in content:
-                content_changed = True
-                content = content.replace('#include "../', '#include "')
-        if not content_changed:
-            continue
-        with open(file_path, "w") as fp:
-            fp.write(content)
 
 #
 # Target: Build Core Library
