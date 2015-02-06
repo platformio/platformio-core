@@ -550,7 +550,7 @@
             "ldscript": "sam3x8e.ld"
         },
         "name": "Arduino Due (Programming Port)",
-        "platform": "sam",
+        "platform": "atmelsam",
         "upload": {
             "disable_flushing": true,
             "maximum_ram_size": 524288,

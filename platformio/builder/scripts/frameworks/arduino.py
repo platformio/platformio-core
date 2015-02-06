@@ -19,7 +19,7 @@ BOARD_BUILDOPTS = env.get("BOARD_OPTIONS", {}).get("build", {})
 # Atmel SAM platform
 #
 
-if env.get("BOARD_OPTIONS", {}).get("platform", None) == "sam":
+if env.get("BOARD_OPTIONS", {}).get("platform", None) == "atmelsam":
     env.VariantDir(
         join("$BUILD_DIR", "FrameworkCMSISInc"),
         join("$PLATFORMFW_DIR", "system", "CMSIS", "CMSIS", "include")
