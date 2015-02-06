@@ -13,7 +13,6 @@ from SCons.Script import Import, Return
 
 from platformio.util import exec_command
 
-
 env = None
 Import("env")
 BOARD_BUILDOPTS = env.get("BOARD_OPTIONS", {}).get("build", {})

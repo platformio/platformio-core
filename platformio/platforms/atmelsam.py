@@ -4,7 +4,7 @@
 from platformio.platforms.base import BasePlatform
 
 
-class SamPlatform(BasePlatform):
+class AtmelsamPlatform(BasePlatform):
 
     """
         An embedded platform for Atmel SAM microcontrollers
