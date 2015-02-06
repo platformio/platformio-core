@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 """
-    Build script for Android Framework (based on Wiring).
+    Build script for Arduino Framework (based on Wiring).
 """
 
 from os.path import join
@@ -46,6 +46,33 @@ if "variant" in env.get("BOARD_OPTIONS", {}).get("build", {}):
     env.Append(
         CPPPATH=[
             join("$BUILD_DIR", "FrameworkArduinoVariant")
+        ]
+    )
+
+if env.get("BOARD_OPTIONS", {}).get("platform", None) == "sam":
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkCMSISInc"),
+        join("$PLATFORMFW_DIR", "system", "CMSIS", "CMSIS", "include")
+    )
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkLibSamInc"),
+        join("$PLATFORMFW_DIR", "system", "libsam")
+    )
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkDeviceInc"),
+        join("$PLATFORMFW_DIR", "system", "CMSIS", "Device", "ATMEL")
+    )
+    env.Append(
+        CPPPATH=[
+            join("$BUILD_DIR", "FrameworkCMSISInc"),
+            join("$BUILD_DIR", "FrameworkLibSamInc"),
+            join("$BUILD_DIR", "FrameworkDeviceInc")
+        ]
+    )
+    env.Append(
+        LINKFLAGS=[
+            "-T", join("$PIOHOME_DIR", "packages", "ldscripts",
+                       "${BOARD_OPTIONS['build']['ldscript']}")
         ]
     )
 

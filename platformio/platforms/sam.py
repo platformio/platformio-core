@@ -8,6 +8,7 @@ class SamPlatform(BasePlatform):
 
     """
         An embedded platform for Atmel SAM microcontrollers
+        (with Arduino Framework)
     """
 
     PACKAGES = {
@@ -26,7 +27,7 @@ class SamPlatform(BasePlatform):
             "default": True
         },
 
-        "tool-sam": {
+        "tool-bossac": {
             "alias": "uploader",
             "default": True
         }
