@@ -2,14 +2,15 @@
 # See LICENSE for details.
 
 """
-    Builder for STMicroelectronics
-    STM32 Series ARM microcontrollers.
+    Builder for Atmel SAM series of microcontrollers
 """
 
 from os.path import join
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
+
+from platformio.util import get_serialports
 
 env = DefaultEnvironment()
 
@@ -33,14 +34,14 @@ env.Replace(
     ],
 
     CCFLAGS=[
-        "-g",   # include debugging info (so errors include line numbers)
+        "-g",  # include debugging info (so errors include line numbers)
         "-Os",  # optimize for size
+        "-Wall",  # show warnings
         "-ffunction-sections",  # place each function in its own section
         "-fdata-sections",
-        "-Wall",
-        "-mthumb",
+        "-MMD",  # output dependency info
         "-mcpu=${BOARD_OPTIONS['build']['mcu']}",
-        "-MMD"  # output dependancy info
+        "-mthumb"
     ],
 
     CXXFLAGS=[
@@ -49,47 +50,28 @@ env.Replace(
     ],
 
     CPPDEFINES=[
-        "F_CPU=$BOARD_F_CPU",
-        "${BOARD_OPTIONS['build']['variant'].upper()}"
+        "F_CPU=$BOARD_F_CPU"
     ],
 
     LINKFLAGS=[
         "-Os",
-        "-nostartfiles",
-        "-nostdlib",
         "-Wl,--gc-sections",
-        "-mthumb",
-        "-mcpu=${BOARD_OPTIONS['build']['mcu']}"
+        "-mcpu=${BOARD_OPTIONS['build']['mcu']}",
+        "-mthumb"
     ],
 
-    UPLOADER=join("$PIOPACKAGES_DIR", "tool-stlink", "st-flash"),
+    UPLOADER=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_UPLOADER", "bossac"),
     UPLOADERFLAGS=[
-        "write",        # write in flash
-        "$SOURCES",     # firmware path to flash
-        "0x08000000"    # flash start adress
+        "--info",
+        "--debug",
+        "--port", "$UPLOAD_PORT",
+        "--erase",
+        "--write",
+        "--verify",
+        "--boot"
     ],
-
-    UPLOADCMD="$UPLOADER $UPLOADERFLAGS"
+    UPLOADBINCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
 )
-
-if env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu")[-2:] == "m4":
-    env.Append(
-        ASFLAGS=[
-            "-mfloat-abi=hard",
-            "-mfpu=fpv4-sp-d16",
-            "-fsingle-precision-constant"
-        ],
-        CCFLAGS=[
-            "-mfloat-abi=hard",
-            "-mfpu=fpv4-sp-d16",
-            "-fsingle-precision-constant"
-        ],
-        LINKFLAGS=[
-            "-mfloat-abi=hard",
-            "-mfpu=fpv4-sp-d16",
-            "-fsingle-precision-constant"
-        ]
-    )
 
 env.Append(
     BUILDERS=dict(
@@ -111,7 +93,7 @@ CORELIBS = env.ProcessGeneral()
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(CORELIBS + ["c", "gcc", "m", "nosys"])
+target_elf = env.BuildFirmware(CORELIBS + ["m", "gcc"])
 
 #
 # Target: Build the .bin file
@@ -126,11 +108,30 @@ else:
 # Target: Upload by default .bin file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_bin, ("$UPLOADCMD"))
+upload = env.Alias(["upload", "uploadlazy"], target_bin, ("$UPLOADBINCMD"))
 AlwaysBuild(upload)
 
 #
-# Target: Define targets
+# Check for $UPLOAD_PORT variable
+#
+
+is_uptarget = (set(["upload", "uploadlazy"]) & set(COMMAND_LINE_TARGETS))
+
+if is_uptarget:
+    # try autodetect upload port
+    if "UPLOAD_PORT" not in env:
+        for item in get_serialports():
+            if "VID:PID" in item['hwid']:
+                print "Auto-detected UPLOAD_PORT: %s" % item['port']
+                env.Replace(UPLOAD_PORT=item['port'])
+                break
+
+    if "UPLOAD_PORT" not in env:
+        print("WARNING!!! Please specify environment 'upload_port' or use "
+              "global --upload-port option.\n")
+
+#
+# Setup default targets
 #
 
 Default(target_bin)

@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 """
-    Build script for Android Framework (based on Wiring).
+    Build script for Arduino Framework (based on Wiring).
 """
 
 from os.path import join
@@ -26,24 +26,55 @@ if "usb_product" in env.subst("${BOARD_OPTIONS['build']}"):
             "${BOARD_OPTIONS['build']['usb_product']}").replace('"', ""))
     ]
 
-# include board variant
-env.VariantDir(
-    join("$BUILD_DIR", "FrameworkArduinoVariant"),
-    join("$PLATFORMFW_DIR", "variants", "${BOARD_OPTIONS['build']['variant']}")
-)
-
 env.Append(
     CPPDEFINES=[
-        "ARDUINO_ARCH_%s" % env.subst("$PLATFORM").upper()[-3:],
-        "ARDUINO=%d" % ARDUINO_VERSION,
-        "ARDUINO_${BOARD_OPTIONS['build']['board']}"
+        "ARDUINO=%d" % ARDUINO_VERSION
     ] + ARDUINO_USBDEFINES,
+
     CPPPATH=[
-        join("$BUILD_DIR", "FrameworkArduino"),
-        join("$BUILD_DIR", "FrameworkArduinoVariant")
+        join("$BUILD_DIR", "FrameworkArduino")
     ]
 )
 
+# include board variant
+if "variant" in env.get("BOARD_OPTIONS", {}).get("build", {}):
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkArduinoVariant"),
+        join("$PLATFORMFW_DIR", "variants",
+             "${BOARD_OPTIONS['build']['variant']}")
+    )
+    env.Append(
+        CPPPATH=[
+            join("$BUILD_DIR", "FrameworkArduinoVariant")
+        ]
+    )
+
+if env.get("BOARD_OPTIONS", {}).get("platform", None) == "sam":
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkCMSISInc"),
+        join("$PLATFORMFW_DIR", "system", "CMSIS", "CMSIS", "include")
+    )
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkLibSamInc"),
+        join("$PLATFORMFW_DIR", "system", "libsam")
+    )
+    env.VariantDir(
+        join("$BUILD_DIR", "FrameworkDeviceInc"),
+        join("$PLATFORMFW_DIR", "system", "CMSIS", "Device", "ATMEL")
+    )
+    env.Append(
+        CPPPATH=[
+            join("$BUILD_DIR", "FrameworkCMSISInc"),
+            join("$BUILD_DIR", "FrameworkLibSamInc"),
+            join("$BUILD_DIR", "FrameworkDeviceInc")
+        ]
+    )
+    env.Append(
+        LINKFLAGS=[
+            "-T", join("$PIOHOME_DIR", "packages", "ldscripts",
+                       "${BOARD_OPTIONS['build']['ldscript']}")
+        ]
+    )
 
 #
 # Target: Build Core Library
