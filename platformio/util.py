@@ -134,7 +134,7 @@ def get_api_result(path, params=None, data=None):
         raise APIRequestError(
             "Could not connect to PlatformIO Registry Service")
     except ValueError:
-        raise APIRequestError("Invalid response: %s" % r.text)
+        raise APIRequestError("Invalid response: %s" % r.text.encode("utf-8"))
     finally:
         if r:
             r.close()
