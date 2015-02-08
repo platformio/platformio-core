@@ -1,0 +1,3 @@
+[submodule "examples/atmelavr-and-arduino/arduino-adafruit-library/lib/Adafruit_CC3000_Library"]
+	path = examples/atmelavr-and-arduino/arduino-adafruit-library/lib/Adafruit_CC3000_Library
+	url = https://github.com/adafruit/Adafruit_CC3000_Library.git
