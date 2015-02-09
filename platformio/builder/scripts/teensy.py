@@ -22,6 +22,7 @@ if env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy":
         CXX="avr-g++",
         OBJCOPY="avr-objcopy",
         RANLIB="avr-ranlib",
+        SIZETOOL="avr-size",
 
         ARFLAGS=["rcs"],
 
@@ -39,7 +40,9 @@ if env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy":
 
         LINKFLAGS=[
             "-mmcu=$BOARD_MCU"
-        ]
+        ],
+
+        SIZEPRINTCMD='"$SIZETOOL" --mcu=$BOARD_MCU -C -d $SOURCES'
     )
 
 elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
@@ -50,6 +53,7 @@ elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
         CXX="arm-none-eabi-g++",
         OBJCOPY="arm-none-eabi-objcopy",
         RANLIB="arm-none-eabi-ranlib",
+        SIZETOOL="arm-none-eabi-size",
 
         ARFLAGS=["rcs"],
 
@@ -82,7 +86,9 @@ elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
             "-Wl,--gc-sections",
             # "-nostartfiles",
             # "-nostdlib",
-        ]
+        ],
+
+        SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES'
     )
 
 env.Append(
@@ -176,6 +182,13 @@ else:
     target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
+# Target: Print binary size
+#
+
+target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
+AlwaysBuild(target_size)
+
+#
 # Target: Upload by default .hex file
 #
 
@@ -186,4 +199,4 @@ AlwaysBuild(upload)
 # Target: Define targets
 #
 
-Default(target_hex)
+Default([target_hex, target_size])

@@ -20,6 +20,7 @@ env.Replace(
     CXX="arm-none-eabi-g++",
     OBJCOPY="arm-none-eabi-objcopy",
     RANLIB="arm-none-eabi-ranlib",
+    SIZETOOL="arm-none-eabi-size",
 
     ARFLAGS=["rcs"],
 
@@ -71,6 +72,8 @@ env.Replace(
         "-fsingle-precision-constant"
     ],
 
+    SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
+
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-lm4flash", "lm4flash"),
     UPLOADCMD="$UPLOADER $SOURCES"
 )
@@ -107,6 +110,13 @@ else:
     target_bin = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
+# Target: Print binary size
+#
+
+target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
+AlwaysBuild(target_size)
+
+#
 # Target: Upload firmware
 #
 
@@ -117,4 +127,4 @@ AlwaysBuild(upload)
 # Target: Define targets
 #
 
-Default(target_bin)
+Default([target_bin, target_size])

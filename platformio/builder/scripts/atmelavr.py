@@ -22,6 +22,7 @@ env.Replace(
     CXX="avr-g++",
     OBJCOPY="avr-objcopy",
     RANLIB="avr-ranlib",
+    SIZETOOL="avr-size",
 
     ARFLAGS=["rcs"],
 
@@ -57,6 +58,8 @@ env.Replace(
         "-Wl,--gc-sections",
         "-Wl,--start-group"
     ],
+
+    SIZEPRINTCMD='"$SIZETOOL" --mcu=$BOARD_MCU -C -d $SOURCES',
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
     UPLOADERFLAGS=[
@@ -160,6 +163,13 @@ else:
     target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
+# Target: Print binary size
+#
+
+target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
+AlwaysBuild(target_size)
+
+#
 # Target: Upload by default .hex file
 #
 
@@ -199,4 +209,4 @@ if is_uptarget:
 # Setup default targets
 #
 
-Default(target_hex)
+Default([target_hex, target_size])
