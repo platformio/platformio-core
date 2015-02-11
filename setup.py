@@ -20,7 +20,7 @@ setup(
     install_requires=[
         "click",
         "pyserial",
-        "requests",
+        "requests>=2.4.0",
         # "SCons"
     ] + (["colorama"] if system() == "Windows" else []),
     packages=find_packages(),

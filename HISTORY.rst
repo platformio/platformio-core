@@ -1,8 +1,8 @@
 Release History
 ===============
 
-0.11.0 (2015-?)
----------------
+1.0.0 (2015-?)
+--------------
 
 * Added support for *ARM*-based credit-card computers: `Raspberry Pi <http://www.raspberrypi.org>`_,
   `BeagleBoard <http://beagleboard.org>`_ and `CubieBoard <http://cubieboard.org>`_
@@ -20,6 +20,8 @@ Release History
 * Allowed to ignore some libs from *Library Dependency Finder* via
   `ignore_libs <http://docs.platformio.org/en/latest/projectconf.html#ignore-libs>`_ option
 * Fixed an issue with the libraries that are git repositories (`issue #49 <https://github.com/ivankravets/platformio/issues/49>`_)
+* Fixed `AttributeError: 'module' object has no attribute 'disable_warnings'`
+  when a version of `requests` package is less then 2.4.0
 
 
 0.10.2 (2015-01-06)
