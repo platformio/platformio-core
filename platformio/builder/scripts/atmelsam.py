@@ -21,6 +21,7 @@ env.Replace(
     CXX="arm-none-eabi-g++",
     OBJCOPY="arm-none-eabi-objcopy",
     RANLIB="arm-none-eabi-ranlib",
+    SIZETOOL="arm-none-eabi-size",
 
     ARFLAGS=["rcs"],
 
@@ -59,6 +60,8 @@ env.Replace(
         "-mcpu=${BOARD_OPTIONS['build']['mcu']}",
         "-mthumb"
     ],
+
+    SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
     UPLOADER=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_UPLOADER", "bossac"),
     UPLOADERFLAGS=[
@@ -105,6 +108,13 @@ else:
     target_bin = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
+# Target: Print binary size
+#
+
+target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
+AlwaysBuild(target_size)
+
+#
 # Target: Upload by default .bin file
 #
 
@@ -134,4 +144,4 @@ if is_uptarget:
 # Setup default targets
 #
 
-Default(target_bin)
+Default([target_bin, target_size])

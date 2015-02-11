@@ -21,6 +21,7 @@ env.Replace(
     CXX="msp430-g++",
     OBJCOPY="msp430-objcopy",
     RANLIB="msp430-ranlib",
+    SIZETOOL="msp430-size",
 
     ARFLAGS=["rcs"],
 
@@ -51,6 +52,8 @@ env.Replace(
         "-mmcu=$BOARD_MCU",
         "-Wl,-gc-sections,-u,main"
     ],
+
+    SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-mspdebug", "mspdebug"),
     UPLOADERFLAGS=[
@@ -94,6 +97,13 @@ else:
     target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
+# Target: Print binary size
+#
+
+target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
+AlwaysBuild(target_size)
+
+#
 # Target: Upload firmware
 #
 
@@ -104,4 +114,4 @@ AlwaysBuild(upload)
 # Target: Define targets
 #
 
-Default(target_hex)
+Default([target_hex, target_size])
