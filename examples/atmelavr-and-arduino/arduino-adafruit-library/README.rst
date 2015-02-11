@@ -81,5 +81,4 @@ Console Output
                            ^
     .pioenvs/arduino_uno/Adafruit_CC3000_Library/utility/sntp.cpp: In member function 'char sntp::GetNTPServerList(const char**, uint32_t*, int)':
     .pioenvs/arduino_uno/Adafruit_CC3000_Library/utility/sntp.cpp:360:25: warning: converting to non-pointer type 'uint32_t {aka long unsigned int}' from NULL [-Wconversion-null]
-      uint32_t    ntpServer= NULL;
-
+      uint32_t    ntpServer= NULL;          
