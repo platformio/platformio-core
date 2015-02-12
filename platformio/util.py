@@ -143,7 +143,7 @@ def get_api_result(path, params=None, data=None):
 def get_boards(type_=None):
     boards = {}
     try:
-        boards = get_boards._cache
+        boards = get_boards._cache  # pylint: disable=W0212
     except AttributeError:
         bdirs = [join(get_source_dir(), "boards")]
         if isdir(join(get_home_dir(), "boards")):
@@ -155,7 +155,7 @@ def get_boards(type_=None):
                     continue
                 with open(join(bdir, json_file)) as f:
                     boards.update(json.load(f))
-        get_boards._cache = boards
+        get_boards._cache = boards  # pylint: disable=W0212
 
     if type_ is None:
         return boards
