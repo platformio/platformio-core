@@ -14,7 +14,7 @@ from platformio.commands.install import cli as cmd_install
 from platformio.commands.lib import lib_update as cmd_libraries_update
 from platformio.commands.update import cli as cli_platforms_update
 from platformio.commands.upgrade import get_latest_version
-from platformio.exception import UpgraderFailed
+from platformio.exception import GetLatestVersionError, UpgraderFailed
 from platformio.libmanager import LibraryManager
 from platformio.platforms.base import PlatformFactory
 from platformio.util import get_home_dir, get_lib_dir
@@ -44,7 +44,10 @@ class Upgrader(object):
 
     @staticmethod
     def version_to_int(version):
-        return int(re.sub(r"[^\d]+", "", version))
+        intver = int(re.sub(r"[^\d]+", "", version))
+        if "dev" in version:
+            intver -= 1
+        return intver
 
     def run(self, ctx):
         if self.from_version > self.to_version:
@@ -106,13 +109,13 @@ def after_upgrade(ctx):
     ))
     click.secho("Thanks a lot!\n", fg="green")
 
-    if not isdir(get_home_dir()):
+    last_version = app.get_state_item("last_version", "0.0.0")
+    if last_version == "0.0.0":
         return
 
     click.secho("Please wait while upgrading PlatformIO ...",
                 fg="yellow")
 
-    last_version = app.get_state_item("last_version", "0.0.0")
     u = Upgrader(last_version, __version__)
     if u.run(ctx):
         app.set_state_item("last_version", __version__)
@@ -135,7 +138,12 @@ def check_platformio_upgrade():
     last_check['platformio_upgrade'] = int(time())
     app.set_state_item("last_check", last_check)
 
-    latest_version = get_latest_version()
+    try:
+        latest_version = get_latest_version()
+    except GetLatestVersionError:
+        click.secho("Failed to check for PlatformIO upgrades", fg="red")
+        return
+
     if (latest_version == __version__ or
             Upgrader.version_to_int(latest_version) <
             Upgrader.version_to_int(__version__)):

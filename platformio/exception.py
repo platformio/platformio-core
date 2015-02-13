@@ -110,7 +110,7 @@ class GetSerialPortsError(PlatformioException):
 
 class GetLatestVersionError(PlatformioException):
 
-    MESSAGE = "Can't retrieve latest PlatformIO version"
+    MESSAGE = "Can't retrieve the latest PlatformIO version"
 
 
 class APIRequestError(PlatformioException):
