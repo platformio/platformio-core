@@ -81,11 +81,9 @@ if "BOARD" in env:
     if "BOARD_F_CPU" not in env:
         env.Replace(BOARD_F_CPU="${BOARD_OPTIONS['build']['f_cpu']}")
     if "UPLOAD_PROTOCOL" not in env:
-        env.Replace(
-            UPLOAD_PROTOCOL="${BOARD_OPTIONS['upload'].get('protocol', None)}")
+        env.Replace(UPLOAD_PROTOCOL="${BOARD_OPTIONS['upload']['protocol']}")
     if "UPLOAD_SPEED" not in env:
-        env.Replace(
-            UPLOAD_SPEED="${BOARD_OPTIONS['upload'].get('speed', None)}")
+        env.Replace(UPLOAD_SPEED="${BOARD_OPTIONS['upload']['speed']}")
 
 if "IGNORE_LIBS" in env:
     env['IGNORE_LIBS'] = [l.strip() for l in env['IGNORE_LIBS'].split(",")]

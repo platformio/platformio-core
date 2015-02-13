@@ -10,7 +10,9 @@ from subprocess import PIPE, Popen
 
 import requests
 
-from platformio import __apiurl__, __version__, exception
+from platformio import __apiurl__, __version__
+from platformio.exception import (APIRequestError, GetSerialPortsError,
+                                  NotPlatformProject)
 
 try:
     from configparser import ConfigParser
@@ -31,7 +33,7 @@ def get_home_dir():
         if (config.has_section("platformio") and
                 config.has_option("platformio", "home_dir")):
             home_dir = config.get("platformio", "home_dir")
-    except exception.NotPlatformProject:
+    except NotPlatformProject:
         pass
 
     if not home_dir:
@@ -53,7 +55,7 @@ def get_lib_dir():
             if lib_dir.startswith("~"):
                 lib_dir = expanduser(lib_dir)
             return abspath(lib_dir)
-    except exception.NotPlatformProject:
+    except NotPlatformProject:
         pass
     return join(get_home_dir(), "lib")
 
@@ -73,7 +75,7 @@ def get_pioenvs_dir():
 def get_project_config():
     path = join(get_project_dir(), "platformio.ini")
     if not isfile(path):
-        raise exception.NotPlatformProject(get_project_dir())
+        raise NotPlatformProject(get_project_dir())
     cp = ConfigParser()
     cp.read(path)
     return cp
@@ -99,7 +101,7 @@ def get_serialports():
     elif os_name == "posix":
         from serial.tools.list_ports_posix import comports
     else:
-        raise exception.GetSerialPortsError(os_name)
+        raise GetSerialPortsError(os_name)
     return[{"port": p, "description": d, "hwid": h} for p, d, h in comports()]
 
 
@@ -125,15 +127,14 @@ def get_api_result(path, params=None, data=None):
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
         if result and "errors" in result:
-            raise exception.APIRequestError(result['errors'][0]['title'])
+            raise APIRequestError(result['errors'][0]['title'])
         else:
-            raise exception.APIRequestError(e)
+            raise APIRequestError(e)
     except requests.exceptions.ConnectionError:
-        raise exception.APIRequestError(
+        raise APIRequestError(
             "Could not connect to PlatformIO Registry Service")
     except ValueError:
-        raise exception.APIRequestError(
-            "Invalid response: %s" % r.text.encode("utf-8"))
+        raise APIRequestError("Invalid response: %s" % r.text.encode("utf-8"))
     finally:
         if r:
             r.close()
@@ -142,24 +143,15 @@ def get_api_result(path, params=None, data=None):
 
 def get_boards(type_=None):
     boards = {}
-    try:
-        boards = get_boards._cache  # pylint: disable=W0212
-    except AttributeError:
-        bdirs = [join(get_source_dir(), "boards")]
-        if isdir(join(get_home_dir(), "boards")):
-            bdirs.append(join(get_home_dir(), "boards"))
+    bdirs = [join(get_source_dir(), "boards")]
+    if isdir(join(get_home_dir(), "boards")):
+        bdirs.append(join(get_home_dir(), "boards"))
 
-        for bdir in bdirs:
-            for json_file in listdir(bdir):
-                if not json_file.endswith(".json"):
-                    continue
-                with open(join(bdir, json_file)) as f:
-                    boards.update(json.load(f))
-        get_boards._cache = boards  # pylint: disable=W0212
+    for bdir in bdirs:
+        for json_file in listdir(bdir):
+            if not json_file.endswith(".json"):
+                continue
+            with open(join(bdir, json_file)) as f:
+                boards.update(json.load(f))
 
-    if type_ is None:
-        return boards
-    else:
-        if type_ not in boards:
-            raise exception.UnknownBoard(type_)
-        return boards[type_]
+    return boards[type_] if type_ is not None else boards
