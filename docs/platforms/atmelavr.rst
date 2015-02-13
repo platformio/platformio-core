@@ -51,7 +51,7 @@ Frameworks
       - Name
       - Reference
     * - ``arduino``
-      - Arduino Wiring-based Framework (AVR Core, 1.5.x branch)
+      - Arduino Wiring-based Framework (AVR Core, 1.6 branch)
       - `Documentation <http://arduino.cc/en/Reference/HomePage>`_
 
 

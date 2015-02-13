@@ -67,7 +67,7 @@ Packages
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
     * - ``framework-arduinoavr``
       - framework
-      - `Arduino Wiring-based Framework (AVR Core, 1.5.x branch) <http://arduino.cc/en/Reference/HomePage>`_
+      - `Arduino Wiring-based Framework (AVR Core, 1.6 branch) <http://arduino.cc/en/Reference/HomePage>`_
     * - ``framework-energiamsp430``
       - framework
       - `Energia Wiring-based Framework (MSP430 Core) <http://energia.nu/reference/>`_

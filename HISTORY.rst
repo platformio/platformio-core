@@ -21,6 +21,7 @@ Release History
   `ignore_libs <http://docs.platformio.org/en/latest/projectconf.html#ignore-libs>`_ option
 * Output compiled size and static memory usage with `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command (`issue #59 <https://github.com/ivankravets/platformio/issues/59>`_)
+* Updated `framework-arduino` AVR & SAM to 1.6 stable version
 * Fixed an issue with the libraries that are git repositories (`issue #49 <https://github.com/ivankravets/platformio/issues/49>`_)
 * Fixed handling of assembly files (`issue #58 <https://github.com/ivankravets/platformio/issues/58>`_)
 * Fixed compiling error if space is in user's folder (`issue #56 <https://github.com/ivankravets/platformio/issues/56>`_)
