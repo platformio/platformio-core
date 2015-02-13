@@ -1,12 +1,14 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+from os.path import getmtime, join
+from shutil import rmtree
+
 import click
 
-from platformio import app, exception, telemetry
+from platformio import app, exception, telemetry, util
 from platformio.commands.install import cli as cmd_install
 from platformio.platforms.base import PlatformFactory
-from platformio.util import get_project_config
 
 
 @click.command("run", short_help="Process project environments")
@@ -16,7 +18,7 @@ from platformio.util import get_project_config
 @click.pass_context
 def cli(ctx, environment, target, upload_port):
 
-    config = get_project_config()
+    config = util.get_project_config()
 
     if not config.sections():
         raise exception.ProjectEnvsNotAvailable()
@@ -24,6 +26,11 @@ def cli(ctx, environment, target, upload_port):
     unknown = set(environment) - set([s[4:] for s in config.sections()])
     if unknown:
         raise exception.UnknownEnvNames(", ".join(unknown))
+
+    # remove ".pioenvs" if project config is modified
+    if (getmtime(join(util.get_project_dir(), "platformio.ini")) >
+            getmtime(util.get_pioenvs_dir())):
+        rmtree(util.get_pioenvs_dir())
 
     for section in config.sections():
         # skip main configuration section
