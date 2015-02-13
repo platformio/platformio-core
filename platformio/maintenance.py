@@ -81,7 +81,7 @@ class Upgrader(object):
 
     def _upgrade_to_110(self, ctx):  # pylint: disable=R0201
         # install "ldscripts" package
-        if "titiva" in PlatformFactory.get_platforms().keys():
+        if "titiva" in PlatformFactory.get_platforms(installed=True).keys():
             ctx.invoke(cmd_install, platforms=["titiva"])
         return True
 
