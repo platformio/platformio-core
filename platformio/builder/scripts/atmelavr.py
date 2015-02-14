@@ -55,8 +55,7 @@ env.Replace(
     LINKFLAGS=[
         "-Os",
         "-mmcu=$BOARD_MCU",
-        "-Wl,--gc-sections",
-        "-Wl,--start-group"
+        "-Wl,--gc-sections"
     ],
 
     SIZEPRINTCMD='"$SIZETOOL" --mcu=$BOARD_MCU -C -d $SOURCES',

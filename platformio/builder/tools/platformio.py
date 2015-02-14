@@ -43,21 +43,29 @@ def ProcessGeneral(env):
 
 
 def BuildFirmware(env, corelibs):
-    src = env.Clone()
-    vdirs = src.VariantDirRecursive(
+    firmenv = env.Clone()
+    vdirs = firmenv.VariantDirRecursive(
         join("$BUILD_DIR", "src"), join("$PROJECT_DIR", "src"))
 
     # build dependent libs
-    deplibs = src.BuildDependentLibraries(join("$PROJECT_DIR", "src"))
+    deplibs = firmenv.BuildDependentLibraries(join("$PROJECT_DIR", "src"))
+    if deplibs:
+        firmenv.Prepend(
+            _LIBFLAGS="-Wl,--start-group "
+        )
+        firmenv.Append(
+            _LIBFLAGS=" -Wl,--end-group "
+        )
 
-    src.MergeFlags(getenv("PIOSRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
+    firmenv.MergeFlags(getenv("PIOSRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
 
-    return src.Program(
+    return firmenv.Program(
         join("$BUILD_DIR", "firmware"),
-        [src.GlobCXXFiles(vdir) for vdir in vdirs],
+        [firmenv.GlobCXXFiles(vdir) for vdir in vdirs],
         LIBS=deplibs + corelibs,
         LIBPATH="$BUILD_DIR",
-        PROGSUFFIX=".elf")
+        PROGSUFFIX=".elf"
+    )
 
 
 def GlobCXXFiles(env, path):
