@@ -2,6 +2,7 @@
 # See LICENSE for details.
 
 import re
+import struct
 from os import remove
 from os.path import isdir, isfile, join
 from shutil import rmtree
@@ -42,26 +43,32 @@ class Upgrader(object):
         self.from_version = self.version_to_int(from_version)
         self.to_version = self.version_to_int(to_version)
 
+        self._upgraders = (
+            (self.version_to_int("0.9.0"), self._upgrade_to_0_9_0),
+            (self.version_to_int("1.0.0"), self._upgrade_to_1_0_0)
+        )
+
     @staticmethod
     def version_to_int(version):
-        intver = int(re.sub(r"[^\d]+", "", version))
-        if "dev" in version:
-            intver -= 1
-        return intver
+        match = re.match(r"(\d+)\.(\d+)\.(\d+)(\D+)?", version)
+        assert match is not None and len(match.groups()) is 4
+        verchrs = [chr(int(match.group(i))) for i in range(1, 4)]
+        verchrs.append(chr(255 if match.group(4) is None else 0))
+        return struct.unpack(">I", "".join(verchrs))
 
     def run(self, ctx):
         if self.from_version > self.to_version:
             return True
 
         result = [True]
-        for v in (90, 110):
-            if self.from_version >= v:
+        for item in self._upgraders:
+            if self.from_version >= item[0]:
                 continue
-            result.append(getattr(self, "_upgrade_to_%d" % v)(ctx))
+            result.append(item[1](ctx))
 
         return all(result)
 
-    def _upgrade_to_90(self, ctx):  # pylint: disable=R0201
+    def _upgrade_to_0_9_0(self, ctx):  # pylint: disable=R0201
         prev_platforms = []
 
         # remove platform's folder (obsoleted package structure)
@@ -82,7 +89,7 @@ class Upgrader(object):
 
         return True
 
-    def _upgrade_to_110(self, ctx):  # pylint: disable=R0201
+    def _upgrade_to_1_0_0(self, ctx):  # pylint: disable=R0201
         # install "ldscripts" package
         if "titiva" in PlatformFactory.get_platforms(installed=True).keys():
             ctx.invoke(cmd_install, platforms=["titiva"])
