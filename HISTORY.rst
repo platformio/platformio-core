@@ -6,7 +6,7 @@ Release History
 
 * Added support for *ARM*-based credit-card computers: `Raspberry Pi <http://www.raspberrypi.org>`_,
   `BeagleBoard <http://beagleboard.org>`_ and `CubieBoard <http://cubieboard.org>`_
-* Added new boards to `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`_
+* Added new boards to `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
   platform: *Arduino NG, Arduino BT, Arduino Esplora, Arduino Ethernet,
   Arduino Robot Control, Arduino Robot Motor and Arduino Yun*
 * Refactored *Library Dependency Finder* (issues

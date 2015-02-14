@@ -12,10 +12,13 @@ from SCons.Script import Import, Return
 env = None
 Import("env")
 
+env.Replace(
+    PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-cmsis")
+)
+
 env.VariantDir(
     join("$BUILD_DIR", "FrameworkCMSIS"),
-    join("$PIOPACKAGES_DIR", "framework-cmsis",
-         "cores", "${BOARD_OPTIONS['build']['core']}")
+    join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
 )
 
 env.Append(
@@ -34,8 +37,7 @@ envsafe = env.Clone()
 libs = []
 libs.append(envsafe.BuildLibrary(
     join("$BUILD_DIR", "FrameworkCMSISVariant"),
-    join("$PIOPACKAGES_DIR", "framework-cmsis", "variants",
-         "${BOARD_OPTIONS['build']['variant']}")
+    join("$PLATFORMFW_DIR", "variants", "${BOARD_OPTIONS['build']['variant']}")
 ))
 
 Return("env libs")

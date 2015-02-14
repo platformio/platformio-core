@@ -23,7 +23,6 @@ class Timsp430Platform(BasePlatform):
         },
 
         "framework-energiamsp430": {
-            "alias": "framework",
             "default": True
         }
     }

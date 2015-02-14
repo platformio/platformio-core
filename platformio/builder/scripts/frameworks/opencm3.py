@@ -15,6 +15,11 @@ from platformio.util import exec_command
 
 env = None
 Import("env")
+
+env.Replace(
+    PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-opencm3")
+)
+
 BOARD_BUILDOPTS = env.get("BOARD_OPTIONS", {}).get("build", {})
 
 
@@ -37,8 +42,7 @@ def find_ldscript(src_dir):
 
 
 def generate_nvic_files():
-    fw_dir = join(env.get("PIOHOME_DIR"), "packages", "framework-opencm3")
-
+    fw_dir = env.subst("$PLATFORMFW_DIR")
     for root, _, files in walk(join(fw_dir, "include", "libopencm3")):
         if "irq.json" not in files or isfile(join(root, "nvic.h")):
             continue
@@ -87,8 +91,7 @@ def get_source_files(src_dir):
                     mkdata[key].append(v)
 
     sources = []
-    lib_root = env.subst(
-        join(env.get("PIOHOME_DIR"), "packages", "framework-opencm3"))
+    lib_root = env.subst("$PLATFORMFW_DIR")
     for obj_file in mkdata['objs']:
         src_file = obj_file[:-1] + "c"
         for search_path in mkdata['vpath']:
@@ -105,15 +108,11 @@ def merge_ld_scripts(main_ld_file):
     def _include_callback(match):
         included_ld_file = match.group(1)
         # search included ld file in lib directories
-        for root, _, files in walk(join(
-                env.get("PIOHOME_DIR"), "packages",
-                "framework-opencm3", "lib")):
-
+        for root, _, files in walk(env.subst(join("$PLATFORMFW_DIR", "lib"))):
             if included_ld_file not in files:
                 continue
             with open(join(root, included_ld_file)) as fp:
                 return fp.read()
-
         return match.group(0)
 
     content = ""
@@ -135,7 +134,7 @@ if BOARD_BUILDOPTS.get("core") == "lm4f":
 
 env.VariantDir(
     join("$BUILD_DIR", "FrameworkOpenCM3Variant"),
-    join("$PIOPACKAGES_DIR", "framework-opencm3", "include")
+    join("$PLATFORMFW_DIR", "include")
 )
 
 env.Append(
@@ -145,8 +144,8 @@ env.Append(
     ]
 )
 
-root_dir = join(env.get("PIOHOME_DIR"), "packages", "framework-opencm3", "lib",
-                BOARD_BUILDOPTS.get("core"))
+root_dir = env.subst(
+    join("$PLATFORMFW_DIR", "lib", BOARD_BUILDOPTS.get("core")))
 if BOARD_BUILDOPTS.get("core") == "stm32":
     root_dir = join(root_dir, BOARD_BUILDOPTS.get("variant")[-2:])
 
@@ -161,7 +160,7 @@ env['LINKFLAGS'][env['LINKFLAGS'].index("-T") + 1] = ldscript_path
 libs = []
 env.VariantDir(
     join("$BUILD_DIR", "FrameworkOpenCM3"),
-    join(env.get("PIOHOME_DIR"), "packages", "framework-opencm3")
+    "$PLATFORMFW_DIR"
 )
 libs.append(env.Library(
     join("$BUILD_DIR", "FrameworkOpenCM3"),

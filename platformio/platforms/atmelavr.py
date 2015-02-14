@@ -23,7 +23,6 @@ class AtmelavrPlatform(BasePlatform):
         },
 
         "framework-arduinoavr": {
-            "alias": "framework",
             "default": True
         }
     }

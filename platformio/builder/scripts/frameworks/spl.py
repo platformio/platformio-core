@@ -12,10 +12,13 @@ from SCons.Script import Import, Return
 env = None
 Import("env")
 
+env.Replace(
+    PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-spl")
+)
+
 env.VariantDir(
     join("$BUILD_DIR", "FrameworkSPLInc"),
-    join("$PIOPACKAGES_DIR", "framework-spl",
-         "${BOARD_OPTIONS['build']['core']}",
+    join("$PLATFORMFW_DIR", "${BOARD_OPTIONS['build']['core']}",
          "variants", "${BOARD_OPTIONS['build']['variant']}", "inc")
 )
 
@@ -54,8 +57,7 @@ elif "STM32L1XX_MD" in extra_flags:
 libs = []
 libs.append(envsafe.BuildLibrary(
     join("$BUILD_DIR", "FrameworkSPL"),
-    join("$PIOPACKAGES_DIR", "framework-spl",
-         "${BOARD_OPTIONS['build']['core']}", "variants",
+    join("$PLATFORMFW_DIR", "${BOARD_OPTIONS['build']['core']}", "variants",
          "${BOARD_OPTIONS['build']['variant']}", "src"),
     ignore_files
 ))

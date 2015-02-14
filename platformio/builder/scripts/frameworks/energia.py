@@ -12,6 +12,10 @@ from SCons.Script import Import, Return
 env = None
 Import("env")
 
+env.Replace(
+    PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-energia${PLATFORM[2:]}")
+)
+
 ENERGIA_VERSION = int(
     open(join(env.subst("$PLATFORMFW_DIR"),
               "version.txt")).read().replace(".", "").strip())

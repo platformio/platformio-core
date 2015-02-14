@@ -27,7 +27,6 @@ class TeensyPlatform(BasePlatform):
         },
 
         "framework-arduinoteensy": {
-            "alias": "framework",
             "default": True
         }
     }

@@ -12,6 +12,13 @@ from SCons.Script import Import, Return
 
 env = None
 Import("env")
+
+env.Replace(
+    PLATFORMFW_DIR=join(
+        "$PIOPACKAGES_DIR",
+        "framework-arduino${PLATFORM.replace('atmel', '')}")
+)
+
 BOARD_BUILDOPTS = env.get("BOARD_OPTIONS", {}).get("build", {})
 
 

@@ -28,12 +28,10 @@ class TitivaPlatform(BasePlatform):
         },
 
         "framework-energiativa": {
-            "alias": "framework",
             "default": True
         },
 
         "framework-opencm3": {
-            "alias": "framework",
             "default": True
         }
     }

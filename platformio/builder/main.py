@@ -28,7 +28,6 @@ commonvars.AddVariables(
     # package aliases
     ("PIOPACKAGE_TOOLCHAIN",),
     ("PIOPACKAGE_UPLOADER",),
-    ("PIOPACKAGE_FRAMEWORK",),
 
     # options
     ("FRAMEWORK",),
@@ -58,7 +57,6 @@ DefaultEnvironment(
 
     PIOBUILDER_DIR=join(util.get_source_dir(), "builder"),
     PIOPACKAGES_DIR=join("$PIOHOME_DIR", "packages"),
-    PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_FRAMEWORK"),
 
     BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
     LIBSOURCE_DIRS=[

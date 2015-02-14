@@ -23,7 +23,6 @@ class AtmelsamPlatform(BasePlatform):
         },
 
         "framework-arduinosam": {
-            "alias": "framework",
             "default": True
         },
 
