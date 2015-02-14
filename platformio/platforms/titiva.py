@@ -8,7 +8,7 @@ class TitivaPlatform(BasePlatform):
 
     """
         An embedded platform for TI TIVA C ARM microcontrollers
-        (with Energia Framework)
+        (with Energia and OpenCM3 Frameworks)
     """
 
     PACKAGES = {
@@ -28,6 +28,11 @@ class TitivaPlatform(BasePlatform):
         },
 
         "framework-energiativa": {
+            "alias": "framework",
+            "default": True
+        },
+
+        "framework-opencm3": {
             "alias": "framework",
             "default": True
         }

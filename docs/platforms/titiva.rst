@@ -30,6 +30,9 @@ Packages
     * - ``framework-energiativa``
       - framework
       - See below in :ref:`titiva_frameworks`
+    * - ``framework-opencm3``
+      - framework
+      - See below in :ref:`titiva_frameworks`
 
 .. note::
     You can install ``titiva`` platform with these packages
@@ -50,6 +53,9 @@ Frameworks
     * - ``energia``
       - Energia Wiring-based Framework (LM4F Core)
       - `Documentation <http://energia.nu/reference/>`_
+    * - ``opencm3``
+      - libOpenCM3 Framework
+      - `Documentation <http://www.libopencm3.org>`_
 
 
 Boards
