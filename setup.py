@@ -18,7 +18,7 @@ setup(
     url=__url__,
     license=__license__,
     install_requires=[
-        "click",
+        "click>=3.0",
         "pyserial",
         "requests>=2.4.0",
         # "SCons"
