@@ -66,13 +66,13 @@ Packages
       - uploader
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
     * - ``framework-arduinoavr``
-      - framework
+      -
       - `Arduino Wiring-based Framework (AVR Core, 1.6 branch) <http://arduino.cc/en/Reference/HomePage>`_
     * - ``framework-energiamsp430``
-      - framework
+      -
       - `Energia Wiring-based Framework (MSP430 Core) <http://energia.nu/reference/>`_
     * - ``framework-energiativa``
-      - framework
+      -
       - `Energia Wiring-based Framework (LM4F Core)  <http://energia.nu/reference/>`_
 
 .. _platform_creating_manifest_file:
@@ -132,7 +132,6 @@ Example of the **test** platform (``test.py``):
             },
 
             "framework-baz": {
-                "alias": "framework",
                 "default": True
             }
         }

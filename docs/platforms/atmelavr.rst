@@ -30,7 +30,7 @@ Packages
       - uploader
       - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
     * - ``framework-arduinoavr``
-      - framework
+      -
       - See below in :ref:`atmelavr_frameworks`
 
 

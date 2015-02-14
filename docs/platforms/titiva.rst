@@ -28,10 +28,10 @@ Packages
       - uploader
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
     * - ``framework-energiativa``
-      - framework
+      -
       - See below in :ref:`titiva_frameworks`
     * - ``framework-opencm3``
-      - framework
+      -
       - See below in :ref:`titiva_frameworks`
 
 .. note::
@@ -52,10 +52,10 @@ Frameworks
       - Reference
     * - ``energia``
       - Energia Wiring-based Framework (LM4F Core)
-      - `Documentation <http://energia.nu/reference/>`_
+      - `Documentation <http://energia.nu/reference/>`__
     * - ``opencm3``
       - libOpenCM3 Framework
-      - `Documentation <http://www.libopencm3.org>`_
+      - `Documentation <http://www.libopencm3.org>`__
 
 
 Boards
