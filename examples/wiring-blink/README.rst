@@ -1,22 +1,21 @@
-Wiring Framework (Arduino + Energia) Blink Example
-==================================================
+How to buid PlatformIO based project
+====================================
 
-1. Download ``platformio``
-   `sources <https://github.com/ivankravets/platformio/archive/develop.zip>`_
-2. Extract ZIP archive
-3. Then run these commands:
+1. `Install PlatformIO <http://docs.platformio.org/en/latest/installation.html>`_
+2. Download `source code with examples <https://github.com/ivankravets/platformio/archive/develop.zip>`_
+3. Extract ZIP archive
+4. Run these commands:
 
 .. code-block:: bash
 
     # Change directory to example
-    $ cd platformio-develop/examples/wiring-blink/
-
-    # Install Atmel AVR development platform with Arduino Framework
-    # Install TI MSP430 development platform with Energia Framework
-    # Install TI TIVA development platform with Energia Framework
-    $ platformio install atmelavr timsp430 titiva
+    > cd platformio-develop/examples/wiring-blink
 
     # Process example project
-    $ platformio run
+    > platformio run
 
-.. image:: console-result.png
+    # Upload firmware
+    > platformio run --target upload
+
+    # Clean build files
+    > platformio run --target clean

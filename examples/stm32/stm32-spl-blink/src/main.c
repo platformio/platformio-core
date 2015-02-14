@@ -1,6 +1,17 @@
+#ifdef STM32L1
 #include <stm32l1xx_gpio.h>
 #include <stm32l1xx_rcc.h>
 #include <misc.h>
+#else
+#ifdef STM32F3
+#include <stm32f30x_gpio.h>
+#include <stm32f30x_rcc.h>
+#else
+#include <stm32f4xx_gpio.h>
+#include <stm32f4xx_rcc.h>
+#include <misc.h>
+#endif
+#endif
 
 /* timing is not guaranteed :) */
 void simple_delay(uint32_t us)

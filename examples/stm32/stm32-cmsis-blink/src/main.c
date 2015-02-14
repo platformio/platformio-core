@@ -1,4 +1,12 @@
+#ifdef STM32L1
 #include "stm32l1xx.h"
+#else
+#ifdef STM32F3
+#include "stm32f30x.h"
+#else
+#include "stm32f4xx.h"
+#endif
+#endif
 
 void ms_delay(int ms)
 {
@@ -8,7 +16,6 @@ void ms_delay(int ms)
          __asm("nop");
    }
 }
-
 
 //Alternates blue and green LEDs quickly
 int main(void)
@@ -21,7 +28,7 @@ int main(void)
 
     for (;;) {
        ms_delay(100);
-       GPIOB->ODR ^= (1 << 6);           // Toggle the pin 
-       GPIOB->ODR ^= (1 << 7);           // Toggle the pin 
+       GPIOB->ODR ^= (1 << 6);           // Toggle the pin
+       GPIOB->ODR ^= (1 << 7);           // Toggle the pin
     }
 }
