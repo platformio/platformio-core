@@ -1,7 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os.path import getmtime, join
+from os.path import getmtime, isdir, join
 from shutil import rmtree
 
 import click
@@ -28,9 +28,11 @@ def cli(ctx, environment, target, upload_port):
         raise exception.UnknownEnvNames(", ".join(unknown))
 
     # remove ".pioenvs" if project config is modified
-    if (getmtime(join(util.get_project_dir(), "platformio.ini")) >
-            getmtime(util.get_pioenvs_dir())):
-        rmtree(util.get_pioenvs_dir())
+    _pioenvs_dir = util.get_pioenvs_dir()
+    if (isdir(_pioenvs_dir) and
+            getmtime(join(util.get_project_dir(), "platformio.ini")) >
+            getmtime(_pioenvs_dir)):
+        rmtree(_pioenvs_dir)
 
     for section in config.sections():
         # skip main configuration section
