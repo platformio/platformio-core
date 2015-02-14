@@ -54,7 +54,7 @@ def main():
     except Exception as e:  # pylint: disable=W0703
         maintenance.on_platformio_exception(e)
         if isinstance(e, PlatformioException):
-            click.echo("Error: " + str(e))
+            click.echo("Error: " + str(e), err=True)
             sys_exit(1)
         else:
             print format_exc()
