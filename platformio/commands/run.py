@@ -1,8 +1,10 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+from datetime import datetime
 from os.path import getmtime, isdir, join
 from shutil import rmtree
+from time import time
 
 import click
 
@@ -46,16 +48,45 @@ def cli(ctx, environment, target, upload_port):
             # echo("Skipped %s environment" % style(envname, fg="yellow"))
             continue
 
-        click.echo("Processing %s environment:" %
-                   click.style(envname, fg="cyan"))
-
         options = {}
         for k, v in config.items(section):
             options[k] = v
+
         process_environment(ctx, envname, options, target, upload_port)
 
 
 def process_environment(ctx, name, options, targets, upload_port):
+    terminal_width, _ = click.get_terminal_size()
+    start_time = time()
+
+    click.echo("[%s] Processing %s (%s)" % (
+        datetime.now().strftime("%c"),
+        click.style(name, fg="cyan", bold=True),
+        ", ".join(["%s: %s" % (k, v) for k, v in options.iteritems()])
+    ))
+    click.secho("-" * terminal_width, bold=True)
+
+    result = _run_environment(ctx, name, options, targets, upload_port)
+    is_error = "Error" in result['err']
+
+    click.secho(result['out'], fg="green")
+    if result['err']:
+        click.secho(result['err'], err=True,
+                    fg="red" if is_error else "yellow")
+
+    summary_text = " Took %.2f seconds " % (time() - start_time)
+    half_line = "=" * ((terminal_width - len(summary_text) - 10) / 2)
+    click.echo("%s [%s]%s%s" % (
+        half_line,
+        (click.style(" ERROR ", fg="red", bold=True)
+         if is_error else click.style("SUCCESS", fg="green", bold=True)),
+        summary_text,
+        half_line
+    ), err=is_error)
+    click.echo()
+
+
+def _run_environment(ctx, name, options, targets, upload_port):
     variables = ["PIOENV=" + name]
     if upload_port:
         variables.append("UPLOAD_PORT=%s" % upload_port)
@@ -86,7 +117,4 @@ def process_environment(ctx, name, options, targets, upload_port):
         ctx.invoke(cmd_install, platforms=[platform])
 
     p = PlatformFactory.newPlatform(platform)
-    result = p.run(variables, envtargets)
-    click.secho(result['out'], fg="green")
-    click.secho(result['err'],
-                fg="red" if "Error" in result['err'] else "yellow")
+    return p.run(variables, envtargets)
