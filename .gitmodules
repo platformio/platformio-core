@@ -1,3 +1,6 @@
-[submodule "examples/atmelavr-and-arduino/arduino-adafruit-library/lib/Adafruit_CC3000_Library"]
-	path = examples/atmelavr-and-arduino/arduino-adafruit-library/lib/Adafruit_CC3000_Library
-	url = https://github.com/adafruit/Adafruit_CC3000_Library.git
+[submodule "examples/atmelavr-and-arduino/arduino-external-libs/lib/Adafruit-PCD8544-Nokia-5110-LCD-library"]
+	path = examples/atmelavr-and-arduino/arduino-external-libs/lib/Adafruit-PCD8544-Nokia-5110-LCD-library
+	url = https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library.git
+[submodule "examples/atmelavr-and-arduino/arduino-external-libs/lib/Adafruit-GFX-Library"]
+	path = examples/atmelavr-and-arduino/arduino-external-libs/lib/Adafruit-GFX-Library
+	url = https://github.com/adafruit/Adafruit-GFX-Library.git

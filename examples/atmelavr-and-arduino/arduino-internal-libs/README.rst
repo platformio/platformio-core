@@ -9,7 +9,7 @@ How to buid PlatformIO based project
 .. code-block:: bash
 
     # Change directory to example
-    > cd platformio-develop/examples/atmelavr-and-arduino/atmelavr-native-blink
+    > cd platformio-develop/examples/atmelavr-and-arduino/arduino-internal-libs
 
     # Process example project
     > platformio run

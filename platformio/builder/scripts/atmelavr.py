@@ -56,7 +56,7 @@ env.Replace(
         "-Os",
         "-mmcu=$BOARD_MCU",
         "-Wl,--gc-sections",
-        "-Wl,--start-group"
+        # "-Wl,--start-group"
     ],
 
     SIZEPRINTCMD='"$SIZETOOL" --mcu=$BOARD_MCU -C -d $SOURCES',
