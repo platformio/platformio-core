@@ -16,6 +16,8 @@ from os.path import join
 from SCons.Script import (DefaultEnvironment, SConscript, SConscriptChdir,
                           Variables)
 
+from platformio.exception import UnknownBoard
+
 # AllowSubstExceptions()
 
 # allow common variables from INI file
@@ -71,8 +73,8 @@ env = DefaultEnvironment()
 if "BOARD" in env:
     try:
         env.Replace(BOARD_OPTIONS=util.get_boards(env.subst("$BOARD")))
-    except KeyError:
-        env.Exit("Error: Unknown board '%s'" % env.subst("$BOARD"))
+    except UnknownBoard as e:
+        env.Exit("Error: %s" % str(e))
 
     if "BOARD_MCU" not in env:
         env.Replace(BOARD_MCU="${BOARD_OPTIONS['build']['mcu']}")
