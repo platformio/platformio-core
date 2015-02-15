@@ -28,6 +28,10 @@ class TeensyPlatform(BasePlatform):
 
         "framework-arduinoteensy": {
             "default": True
+        },
+
+        "tool-teensy": {
+            "default": True
         }
     }
 
