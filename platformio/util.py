@@ -2,11 +2,11 @@
 # See LICENSE for details.
 
 import json
-from os import name as os_name
-from os import getcwd, getenv, listdir, makedirs, utime
+import os
+import subprocess
 from os.path import abspath, dirname, expanduser, isdir, isfile, join, realpath
 from platform import system, uname
-from subprocess import PIPE, Popen
+from threading import Thread
 
 import requests
 
@@ -16,6 +16,39 @@ try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
+
+
+class AsyncPipe(Thread):
+
+    def __init__(self, outcallback=None):
+        Thread.__init__(self)
+        self.outcallback = outcallback
+
+        self._fd_read, self._fd_write = os.pipe()
+        self._pipe_reader = os.fdopen(self._fd_read)
+        self._buffer = []
+
+        self.start()
+
+    def get_buffer(self):
+        return self._buffer
+
+    def fileno(self):
+        return self._fd_write
+
+    def run(self):
+        for line in iter(self._pipe_reader.readline, ""):
+            line = line.strip()
+            self._buffer.append(line)
+            if self.outcallback:
+                self.outcallback(line)
+            else:
+                print line
+        self._pipe_reader.close()
+
+    def close(self):
+        os.close(self._fd_write)
+        self.join()
 
 
 def get_systype():
@@ -38,7 +71,7 @@ def get_home_dir():
         home_dir = join(expanduser("~"), ".platformio")
 
     if not isdir(home_dir):
-        makedirs(home_dir)
+        os.makedirs(home_dir)
 
     assert isdir(home_dir)
     return home_dir
@@ -63,11 +96,11 @@ def get_source_dir():
 
 
 def get_project_dir():
-    return getcwd()
+    return os.getcwd()
 
 
 def get_pioenvs_dir():
-    return getenv("PIOENVS_DIR", join(get_project_dir(), ".pioenvs"))
+    return os.getenv("PIOENVS_DIR", join(get_project_dir(), ".pioenvs"))
 
 
 def get_project_config():
@@ -80,26 +113,48 @@ def get_project_config():
 
 
 def change_filemtime(path, time):
-    utime(path, (time, time))
+    os.utime(path, (time, time))
 
 
 def exec_command(*args, **kwargs):
-    kwargs['stdout'] = PIPE
-    kwargs['stderr'] = PIPE
-    kwargs['shell'] = system() == "Windows"
+    result = {"out": None, "err": None}
+    default = dict(
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        shell=system() == "Windows"
+    )
+    default.update(kwargs)
+    kwargs = default
 
-    p = Popen(*args, **kwargs)
-    out, err = p.communicate()
-    return dict(out=out.strip(), err=err.strip())
+    p = subprocess.Popen(*args, **kwargs)
+    try:
+        result['out'], result['err'] = p.communicate()
+    except KeyboardInterrupt:
+        for s in ("stdout", "stderr"):
+            if isinstance(kwargs[s], AsyncPipe):
+                kwargs[s].close()
+        raise exception.AbortedByUser()
+
+    for s in ("stdout", "stderr"):
+        if isinstance(kwargs[s], AsyncPipe):
+            kwargs[s].close()
+            result[s[3:]] = "\n".join(kwargs[s].get_buffer())
+
+    for k, v in result.iteritems():
+        if not v:
+            continue
+        result[k].strip()
+
+    return result
 
 
 def get_serialports():
-    if os_name == "nt":
+    if os.name == "nt":
         from serial.tools.list_ports_windows import comports
-    elif os_name == "posix":
+    elif os.name == "posix":
         from serial.tools.list_ports_posix import comports
     else:
-        raise exception.GetSerialPortsError(os_name)
+        raise exception.GetSerialPortsError(os.name)
     return[{"port": p, "description": d, "hwid": h} for p, d, h in comports()]
 
 
@@ -150,7 +205,7 @@ def get_boards(type_=None):
             bdirs.append(join(get_home_dir(), "boards"))
 
         for bdir in bdirs:
-            for json_file in listdir(bdir):
+            for json_file in os.listdir(bdir):
                 if not json_file.endswith(".json"):
                     continue
                 with open(join(bdir, json_file)) as f:
