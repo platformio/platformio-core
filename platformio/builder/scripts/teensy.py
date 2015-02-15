@@ -5,7 +5,6 @@
     Builder for Teensy boards
 """
 
-import time
 from os.path import isfile, join
 from random import randint
 
@@ -74,10 +73,6 @@ elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
             "-ffunction-sections",  # place each function in its own section
             "-fdata-sections",
             # "-nostdlib"
-        ],
-
-        CPPDEFINES=[
-            "TIME_T=%d" % time.time()
         ],
 
         LINKFLAGS=[

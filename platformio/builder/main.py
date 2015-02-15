@@ -12,6 +12,7 @@ except ImportError:
     from platformio import util
 
 from os.path import join
+from time import time
 
 from SCons.Script import (DefaultEnvironment, SConscript, SConscriptChdir,
                           Variables)
@@ -52,6 +53,8 @@ DefaultEnvironment(
     tools=["gcc", "g++", "as", "ar", "gnulink", "platformio"],
     toolpath=[join("$PIOBUILDER_DIR", "tools")],
     variables=commonvars,
+
+    UNIX_TIME=int(time()),
 
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),
