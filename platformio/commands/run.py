@@ -36,6 +36,7 @@ def cli(ctx, environment, target, upload_port):
             getmtime(_pioenvs_dir)):
         rmtree(_pioenvs_dir)
 
+    _first_processing = True
     for section in config.sections():
         # skip main configuration section
         if section == "platformio":
@@ -54,6 +55,10 @@ def cli(ctx, environment, target, upload_port):
 
         process_environment(ctx, envname, options, target, upload_port)
 
+        if not _first_processing:
+            click.echo()
+        _first_processing = False
+
 
 def process_environment(ctx, name, options, targets, upload_port):
     terminal_width, _ = click.get_terminal_size()
@@ -67,12 +72,7 @@ def process_environment(ctx, name, options, targets, upload_port):
     click.secho("-" * terminal_width, bold=True)
 
     result = _run_environment(ctx, name, options, targets, upload_port)
-    is_error = "Error" in result['err']
-
-    click.secho(result['out'], fg="green")
-    if result['err']:
-        click.secho(result['err'], err=True,
-                    fg="red" if is_error else "yellow")
+    is_error = "error" in result['err'].lower()
 
     summary_text = " Took %.2f seconds " % (time() - start_time)
     half_line = "=" * ((terminal_width - len(summary_text) - 10) / 2)
@@ -83,7 +83,6 @@ def process_environment(ctx, name, options, targets, upload_port):
         summary_text,
         half_line
     ), err=is_error)
-    click.echo()
 
 
 def _run_environment(ctx, name, options, targets, upload_port):

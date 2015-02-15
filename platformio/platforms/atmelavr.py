@@ -27,9 +27,9 @@ class AtmelavrPlatform(BasePlatform):
         }
     }
 
-    def after_run(self, result):
+    def on_run_err(self, line):  # pylint: disable=R0201
         # fix STDERR "flash written" for avrdude
-        if "flash written" in result['err']:
-            result['out'] += "\n" + result['err']
-            result['err'] = ""
-        return result
+        if "flash written" in line:
+            self.on_run_out(line)
+        else:
+            BasePlatform.on_run_err(self, line)

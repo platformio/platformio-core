@@ -19,6 +19,9 @@ Release History
   (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
 * Allowed to ignore some libs from *Library Dependency Finder* via
   `ignore_libs <http://docs.platformio.org/en/latest/projectconf.html#ignore-libs>`_ option
+* Improved `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
+  command: asynchronous output for build process, timing and detailed
+  information about environment configuration (`issue #74 <https://github.com/ivankravets/platformio/issues/74>`_)
 * Output compiled size and static memory usage with `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command (`issue #59 <https://github.com/ivankravets/platformio/issues/59>`_)
 * Updated `framework-arduino` AVR & SAM to 1.6 stable version
