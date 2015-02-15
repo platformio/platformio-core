@@ -7,8 +7,7 @@ from shutil import copyfile
 
 import click
 
-from platformio import app
-from platformio.exception import ProjectInitialized, UnknownBoard
+from platformio import app, exception
 from platformio.util import get_boards, get_source_dir
 
 
@@ -24,11 +23,12 @@ def cli(project_dir, board, disable_auto_uploading):
     src_dir = join(project_dir, "src")
     lib_dir = join(project_dir, "lib")
     if all([isfile(project_file), isdir(src_dir), isdir(lib_dir)]):
-        raise ProjectInitialized()
+        raise exception.ProjectInitialized()
 
     builtin_boards = set(get_boards().keys())
     if board and not set(board).issubset(builtin_boards):
-        raise UnknownBoard(", ".join(set(board).difference(builtin_boards)))
+        raise exception.UnknownBoard(
+            ", ".join(set(board).difference(builtin_boards)))
 
     # ask about auto-uploading
     if board and app.get_setting("enable_prompts"):
@@ -80,7 +80,7 @@ def cli(project_dir, board, disable_auto_uploading):
             fg="green"
         )
     else:
-        click.secho("Aborted by user", fg="red")
+        raise exception.AbortedByUser()
 
 
 def fill_project_envs(project_file, board_types, disable_auto_uploading):

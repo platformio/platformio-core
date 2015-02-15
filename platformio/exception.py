@@ -13,6 +13,11 @@ class PlatformioException(Exception):
             return Exception.__str__(self)
 
 
+class AbortedByUser(PlatformioException):
+
+    MESSAGE = "Aborted by user"
+
+
 class UnknownPlatform(PlatformioException):
 
     MESSAGE = "Unknown platform '%s'"
