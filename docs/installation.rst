@@ -9,6 +9,8 @@ computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
 `BeagleBoard <http://beagleboard.org>`_,
 `CubieBoard <http://cubieboard.org>`_).
 
+.. contents::
+
 System requirements
 -------------------
 
