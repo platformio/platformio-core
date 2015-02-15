@@ -31,6 +31,7 @@ class TeensyPlatform(BasePlatform):
         },
 
         "tool-teensy": {
+            "alias": "uploader",
             "default": True
         }
     }
