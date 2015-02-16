@@ -213,16 +213,13 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
 
             finder = IncludeFinder(base_dir, inc_name, inc_type == "<")
             if finder.run():
-                _lib_dir = finder.getLibDir()
+                _parse_includes(state, env.File(finder.getIncPath()))
 
+                _lib_dir = finder.getLibDir()
                 if _lib_dir and _lib_dir not in state['libs']:
                     state['ordered'].add((
                         len(state['ordered']) + 1, finder.getLibName(),
                         _lib_dir))
-
-                _parse_includes(state, env.File(finder.getIncPath()))
-
-                if _lib_dir and _lib_dir not in state['libs']:
                     state['libs'].add(_lib_dir)
                     state = _process_src_dir(state, _lib_dir)
         return state
@@ -237,7 +234,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                         if isdir(join(ld, "utility"))])
 
     libs = []
-    for (libname, inc_dir) in reversed(deplibs):
+    for (libname, inc_dir) in deplibs:
         lib = env.BuildLibrary(
             join("$BUILD_DIR", libname), inc_dir)
         env.Clean(libname, lib)
