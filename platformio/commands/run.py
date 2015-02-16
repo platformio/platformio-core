@@ -36,7 +36,7 @@ def cli(ctx, environment, target, upload_port):
             getmtime(_pioenvs_dir)):
         rmtree(_pioenvs_dir)
 
-    _first_processing = True
+    _first_done = False
     for section in config.sections():
         # skip main configuration section
         if section == "platformio":
@@ -53,11 +53,11 @@ def cli(ctx, environment, target, upload_port):
         for k, v in config.items(section):
             options[k] = v
 
-        process_environment(ctx, envname, options, target, upload_port)
-
-        if not _first_processing:
+        if _first_done:
             click.echo()
-        _first_processing = False
+
+        process_environment(ctx, envname, options, target, upload_port)
+        _first_done = True
 
 
 def process_environment(ctx, name, options, targets, upload_port):
