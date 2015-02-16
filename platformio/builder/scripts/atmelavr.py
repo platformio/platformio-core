@@ -111,7 +111,7 @@ env.Append(
 )
 
 
-def before_upload(target, source, env):  # pylint: disable=W0613
+def before_upload(target, source, env):  # pylint: disable=W0613,W0621
 
     def _autodetect_upload_port():
         if "UPLOAD_PORT" not in env:
