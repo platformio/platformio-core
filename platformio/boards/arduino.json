@@ -553,8 +553,8 @@
         "platform": "atmelsam",
         "upload": {
             "disable_flushing": true,
-            "maximum_ram_size": 524288,
-            "maximum_size": 28672,
+            "maximum_ram_size": 28672,
+            "maximum_size": 524288,
             "protocol": "sam-ba",
             "speed": 57600,
             "use_1200bps_touch": true,

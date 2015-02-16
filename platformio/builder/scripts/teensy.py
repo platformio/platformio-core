@@ -6,7 +6,6 @@
 """
 
 from os.path import isfile, join
-from random import randint
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
@@ -31,10 +30,6 @@ if env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy":
 
         CPPFLAGS=[
             "-mmcu=$BOARD_MCU"
-        ],
-
-        CPPDEFINES=[
-            "SERIALNUM=-%d" % randint(1000000000, 2000000000)
         ],
 
         LINKFLAGS=[
