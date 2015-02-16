@@ -65,15 +65,18 @@ env.Replace(
         "-q",  # suppress progress output
         "-D",  # disable auto erase for flash memory
         "-p", "$BOARD_MCU",
-        "-C", '"%s"' % join("$PIOPACKAGES_DIR",
-                            "tool-avrdude", "avrdude.conf"),
-        "-c", "$UPLOAD_PROTOCOL",
-        "-b", "$UPLOAD_SPEED",
-        "-P", "$UPLOAD_PORT"
+        "-C",
+        '"%s"' % join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude.conf"),
+        "-c", "$UPLOAD_PROTOCOL"
     ],
     UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i',
     UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
 )
+
+if "UPLOAD_SPEED" in env:
+    env.Append(UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"])
+if env.subst("$UPLOAD_PROTOCOL") != "usbtiny":
+    env.Append(UPLOADERFLAGS=["-P", "$UPLOAD_PORT"])
 
 env.Append(
     BUILDERS=dict(
@@ -108,7 +111,7 @@ env.Append(
 )
 
 
-def before_upload():
+def before_upload(target, source, env_):  # pylint: disable=W0613
 
     def rpi_sysgpio(path, value):
         with open(path, "w") as f:
@@ -173,7 +176,7 @@ AlwaysBuild(target_size)
 #
 
 upload = env.Alias(["upload", "uploadlazy"], target_hex, [
-    lambda target, source, env: before_upload(), "$UPLOADHEXCMD"])
+    before_upload, "$UPLOADHEXCMD"])
 AlwaysBuild(upload)
 
 #
@@ -181,7 +184,7 @@ AlwaysBuild(upload)
 #
 
 uploadeep = env.Alias("uploadeep", target_eep, [
-    lambda target, source, env: before_upload(), "$UPLOADEEPCMD"])
+    before_upload, "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
 
 #
@@ -191,7 +194,7 @@ AlwaysBuild(uploadeep)
 is_uptarget = (set(["upload", "uploadlazy", "uploadeep"]) &
                set(COMMAND_LINE_TARGETS))
 
-if is_uptarget:
+if is_uptarget and env.subst("$UPLOAD_PROTOCOL") != "usbtiny":
     # try autodetect upload port
     if "UPLOAD_PORT" not in env:
         for item in get_serialports():
