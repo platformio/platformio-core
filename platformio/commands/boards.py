@@ -59,8 +59,8 @@ def cli(query, json_output):  # pylint: disable=R0912
 
             click.echo(BOARDLIST_TPL.format(
                 type=click.style(type_, fg="cyan"), mcu=data['build']['mcu'],
-                frequency="%dMhz" % (int(data['build']['f_cpu'][:-1])
-                                     / 1000000),
+                frequency="%dMhz" % (
+                    int(data['build']['f_cpu'][:-1]) / 1000000),
                 flash=flash_size, ram=ram_size, name=data['name']))
 
 
