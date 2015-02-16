@@ -1,10 +1,14 @@
+cache:
+    directories:
+        - $HOME/.platformio 
+
 language: python
 python: 2.7
 
 env:
     - TOX_ENV=py26
-    - TOX_ENV=lint    
-    - TOX_ENV=pytest     
+    - TOX_ENV=lint
+    - TOX_ENV=pytest
 
 install:
     - pip install tox
