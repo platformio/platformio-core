@@ -9,7 +9,7 @@ from os.path import join
 from time import sleep
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
-                          DefaultEnvironment)
+                          DefaultEnvironment, Exit)
 
 from platformio.util import get_serialports
 
@@ -111,19 +111,34 @@ env.Append(
 )
 
 
-def before_upload(target, source, env_):  # pylint: disable=W0613
+def before_upload(target, source, env):  # pylint: disable=W0613
 
-    def rpi_sysgpio(path, value):
+    def _autodetect_upload_port():
+        if "UPLOAD_PORT" not in env:
+            for item in get_serialports():
+                if "VID:PID" in item['hwid']:
+                    print "Auto-detected UPLOAD_PORT: %s" % item['port']
+                    env.Replace(UPLOAD_PORT=item['port'])
+                    break
+
+        if "UPLOAD_PORT" not in env:
+            Exit("Error: Please specify `upload_port` for environment or use "
+                 "global `--upload-port` option.\n")
+
+    def _rpi_sysgpio(path, value):
         with open(path, "w") as f:
             f.write(str(value))
 
+    if env.subst("$UPLOAD_PROTOCOL") != "usbtiny":
+        _autodetect_upload_port()
+
     if env.subst("$BOARD") == "raspduino":
-        rpi_sysgpio("/sys/class/gpio/export", 18)
-        rpi_sysgpio("/sys/class/gpio/gpio18/direction", "out")
-        rpi_sysgpio("/sys/class/gpio/gpio18/value", 1)
+        _rpi_sysgpio("/sys/class/gpio/export", 18)
+        _rpi_sysgpio("/sys/class/gpio/gpio18/direction", "out")
+        _rpi_sysgpio("/sys/class/gpio/gpio18/value", 1)
         sleep(0.1)
-        rpi_sysgpio("/sys/class/gpio/gpio18/value", 0)
-        rpi_sysgpio("/sys/class/gpio/unexport", 18)
+        _rpi_sysgpio("/sys/class/gpio/gpio18/value", 0)
+        _rpi_sysgpio("/sys/class/gpio/unexport", 18)
     else:
         upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
 
@@ -186,26 +201,6 @@ AlwaysBuild(upload)
 uploadeep = env.Alias("uploadeep", target_eep, [
     before_upload, "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
-
-#
-# Check for $UPLOAD_PORT variable
-#
-
-is_uptarget = (set(["upload", "uploadlazy", "uploadeep"]) &
-               set(COMMAND_LINE_TARGETS))
-
-if is_uptarget and env.subst("$UPLOAD_PROTOCOL") != "usbtiny":
-    # try autodetect upload port
-    if "UPLOAD_PORT" not in env:
-        for item in get_serialports():
-            if "VID:PID" in item['hwid']:
-                print "Auto-detected UPLOAD_PORT: %s" % item['port']
-                env.Replace(UPLOAD_PORT=item['port'])
-                break
-
-    if "UPLOAD_PORT" not in env:
-        print("WARNING!!! Please specify environment 'upload_port' or use "
-              "global --upload-port option.\n")
 
 #
 # Setup default targets
