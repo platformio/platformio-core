@@ -34,31 +34,38 @@ env.Replace(
         "-mcpu=${BOARD_OPTIONS['build']['mcu']}"
     ],
 
-    CCFLAGS=[
-        "-g",  # include debugging info (so errors include line numbers)
+    CPPFLAGS=[
+        "-g",   # include debugging info (so errors include line numbers)
         "-Os",  # optimize for size
-        "-Wall",  # show warnings
+        "-fdata-sections",
+        "-ffunction-sections",  # place each function in its own section
+        "-Wall",
+        "-MMD",  # output dependancy info
+        "-mcpu=${BOARD_OPTIONS['build']['mcu']}",
+        "-mthumb",
         "-ffunction-sections",  # place each function in its own section
         "-fdata-sections",
-        "-MMD",  # output dependency info
-        "-mcpu=${BOARD_OPTIONS['build']['mcu']}",
-        "-mthumb"
+        "-nostdlib"
     ],
 
     CXXFLAGS=[
         "-fno-rtti",
+        "-felide-constructors",
         "-fno-exceptions"
     ],
 
     CPPDEFINES=[
-        "F_CPU=$BOARD_F_CPU"
+        "F_CPU=$BOARD_F_CPU",
+        "printf=iprintf"
     ],
 
     LINKFLAGS=[
         "-Os",
         "-Wl,--gc-sections",
         "-mcpu=${BOARD_OPTIONS['build']['mcu']}",
-        "-mthumb"
+        "-mthumb",
+        "-Wl,--entry=Reset_Handler",
+        "-Wl,--start-group"
     ],
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
