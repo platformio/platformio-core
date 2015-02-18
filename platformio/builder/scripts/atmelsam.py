@@ -54,9 +54,9 @@ target_elf = env.BuildFirmware(["m", "gcc"] + CORELIBS)
 #
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_firmware = join("$BUILD_DIR", "firmware.bin")
+    target_firm = join("$BUILD_DIR", "firmware.bin")
 else:
-    target_firmware = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
+    target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Print binary size
@@ -70,7 +70,7 @@ AlwaysBuild(target_size)
 #
 
 upload = env.Alias(
-    ["upload", "uploadlazy"], target_firmware, ("$UPLOADBINCMD"))
+    ["upload", "uploadlazy"], target_firm, ("$UPLOADBINCMD"))
 AlwaysBuild(upload)
 
 #
@@ -96,4 +96,4 @@ if is_uptarget:
 # Setup default targets
 #
 
-Default([target_firmware, target_size])
+Default([target_firm, target_size])
