@@ -92,9 +92,9 @@ target_elf = env.BuildFirmware(["m"] + CORELIBS)
 #
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_frim = join("$BUILD_DIR", "firmware.hex")
+    target_firm = join("$BUILD_DIR", "firmware.hex")
 else:
-    target_frim = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+    target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Print binary size
@@ -107,11 +107,11 @@ AlwaysBuild(target_size)
 # Target: Upload firmware
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_frim, "$UPLOADCMD")
+upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
 AlwaysBuild(upload)
 
 #
 # Target: Define targets
 #
 
-Default([target_frim, target_size])
+Default([target_firm, target_size])
