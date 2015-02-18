@@ -7,113 +7,21 @@
 
 from os.path import isfile, join
 
-from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
-                          DefaultEnvironment)
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
+                          DefaultEnvironment, SConscript)
 
 env = DefaultEnvironment()
 
 if env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy":
-    env.Replace(
-        AR="avr-ar",
-        AS="avr-gcc",
-        CC="avr-gcc",
-        CXX="avr-g++",
-        OBJCOPY="avr-objcopy",
-        RANLIB="avr-ranlib",
-        SIZETOOL="avr-size",
-
-        ARFLAGS=["rcs"],
-
-        CXXFLAGS=[
-            "-std=c++0x"
-        ],
-
-        CPPFLAGS=[
-            "-mmcu=$BOARD_MCU"
-        ],
-
-        LINKFLAGS=[
-            "-mmcu=$BOARD_MCU"
-        ],
-
-        SIZEPRINTCMD='"$SIZETOOL" --mcu=$BOARD_MCU -C -d $SOURCES'
-    )
+    env = SConscript(env.subst(
+        join("$PIOBUILDER_DIR", "scripts", "baseavr.py")), exports="env")
 
 elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
-    env.Replace(
-        AR="arm-none-eabi-ar",
-        AS="arm-none-eabi-gcc",
-        CC="arm-none-eabi-gcc",
-        CXX="arm-none-eabi-g++",
-        OBJCOPY="arm-none-eabi-objcopy",
-        RANLIB="arm-none-eabi-ranlib",
-        SIZETOOL="arm-none-eabi-size",
-
-        ARFLAGS=["rcs"],
-
-        ASFLAGS=[
-            "-mcpu=cortex-m4",
-            "-mthumb",
-            # "-nostdlib"
-        ],
-
-        CXXFLAGS=[
-            "-std=gnu++0x",
-            "-fno-rtti",
-        ],
-
-        CPPFLAGS=[
-            "-mcpu=cortex-m4",
-            "-mthumb",
-            "-ffunction-sections",  # place each function in its own section
-            "-fdata-sections",
-            # "-nostdlib"
-        ],
-
-        LINKFLAGS=[
-            "-mcpu=cortex-m4",
-            "-mthumb",
-            "-Wl,--gc-sections",
-            # "-nostartfiles",
-            # "-nostdlib",
-        ],
-
-        SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES'
-    )
+    env = SConscript(env.subst(
+        join("$PIOBUILDER_DIR", "scripts", "basearm.py")), exports="env")
 
 env.Append(
-    BUILDERS=dict(
-        ElfToHex=Builder(
-            action=" ".join([
-                "$OBJCOPY",
-                "-O",
-                "ihex",
-                "-R",
-                ".eeprom",
-                "$SOURCES",
-                "$TARGET"]),
-            suffix=".hex"
-        )
-    ),
-
-    ASFLAGS=[
-        "-c",
-        "-g",  # include debugging info (so errors include line numbers)
-        "-x", "assembler-with-cpp",
-        "-Wall"
-    ],
-
-    CPPFLAGS=[
-        "-g",   # include debugging info (so errors include line numbers)
-        "-Os",  # optimize for size
-        "-fdata-sections",
-        "-ffunction-sections",  # place each function in its own section
-        "-Wall",
-        "-MMD"  # output dependancy info
-    ],
-
     CPPDEFINES=[
-        "F_CPU=$BOARD_F_CPU",
         "USB_PID=null",
         "USB_VID=null",
         "USB_SERIAL",
@@ -121,19 +29,15 @@ env.Append(
     ],
 
     CXXFLAGS=[
-        "-felide-constructors",
-        "-fno-exceptions"
-    ],
-
-    LINKFLAGS=[
-        "-Os"
+        "-std=gnu++0x"
     ]
 )
 
 if isfile(env.subst(join(
         "$PIOPACKAGES_DIR", "tool-teensy", "teensy_loader_cli"))):
     env.Append(
-        UPLOADER=join("$PIOPACKAGES_DIR", "tool-teensy", "teensy_loader_cli"),
+        UPLOADER=join(
+            "$PIOPACKAGES_DIR", "tool-teensy", "teensy_loader_cli"),
         UPLOADERFLAGS=[
             "-mmcu=$BOARD_MCU",
             "-w",  # wait for device to apear
@@ -159,16 +63,22 @@ CORELIBS = env.ProcessGeneral()
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(CORELIBS + ["m"])
+target_elf = env.BuildFirmware(["m"] + CORELIBS)
 
 #
-# Target: Build the .hex file
+# Target: Build the firmware file
 #
 
-if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_hex = join("$BUILD_DIR", "firmware.hex")
+if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu", ""):
+    if "uploadlazy" in COMMAND_LINE_TARGETS:
+        target_firm = join("$BUILD_DIR", "firmware.bin")
+    else:
+        target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
 else:
-    target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+    if "uploadlazy" in COMMAND_LINE_TARGETS:
+        target_firm = join("$BUILD_DIR", "firmware.hex")
+    else:
+        target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Print binary size
@@ -178,14 +88,14 @@ target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
 AlwaysBuild(target_size)
 
 #
-# Target: Upload by default .hex file
+# Target: Upload by default firmware file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_hex, ("$UPLOADHEXCMD"))
+upload = env.Alias(["upload", "uploadlazy"], target_firm, ("$UPLOADHEXCMD"))
 AlwaysBuild(upload)
 
 #
 # Target: Define targets
 #
 
-Default([target_hex, target_size])
+Default([target_firm, target_size])

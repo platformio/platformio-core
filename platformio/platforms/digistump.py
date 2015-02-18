@@ -49,7 +49,7 @@ class DigistumpPlatform(BasePlatform):
                 continue
             _, board = v.split("=")
             bdata = get_boards(board)
-            if bdata['build']['mcu'] == "cortex-m3":
+            if "cpu" in bdata['build']:
                 tpackage = "toolchain-gccarmnoneeabi"
                 tuploader = "tool-bossac"
             else:

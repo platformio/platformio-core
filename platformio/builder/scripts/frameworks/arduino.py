@@ -28,7 +28,7 @@ if env.get("PLATFORM") == "digistump":
     PLATFORMFW_DIR = join(
         "$PIOPACKAGES_DIR",
         "framework-arduino%s" % (
-            "sam" if BOARD_BUILDOPTS.get("mcu") == "cortex-m3" else "avr")
+            "sam" if BOARD_BUILDOPTS.get("cpu") == "cortex-m3" else "avr")
     )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
@@ -96,12 +96,6 @@ if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
             join("$BUILD_DIR", "FrameworkLibSam", "include"),
             join("$BUILD_DIR", "FrameworkDeviceInc"),
             join("$BUILD_DIR", "FrameworkDeviceInc", "sam3xa", "include")
-        ]
-    )
-    env.Append(
-        LINKFLAGS=[
-            "-T", join("$PIOHOME_DIR", "packages", "ldscripts",
-                       "${BOARD_OPTIONS['build']['ldscript']}")
         ]
     )
 

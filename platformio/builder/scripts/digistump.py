@@ -7,129 +7,16 @@
 
 from os.path import join
 
-from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
-                          DefaultEnvironment)
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
+                          DefaultEnvironment, SConscript)
 
 env = DefaultEnvironment()
 
-if env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu") != "cortex-m3":
+if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu", ""):
+    env = SConscript(
+        env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")),
+        exports="env")
     env.Replace(
-        AR="avr-ar",
-        AS="avr-gcc",
-        CC="avr-gcc",
-        CXX="avr-g++",
-        OBJCOPY="avr-objcopy",
-        RANLIB="avr-ranlib",
-        SIZETOOL="avr-size",
-
-        ARFLAGS=["rcs"],
-
-        CPPFLAGS=[
-            "-mmcu=$BOARD_MCU"
-        ],
-
-        LINKFLAGS=[
-            "-mmcu=$BOARD_MCU"
-        ],
-
-        SIZEPRINTCMD='"$SIZETOOL" --mcu=$BOARD_MCU -C -d $SOURCES'
-    )
-
-else:
-    env.Replace(
-        AR="arm-none-eabi-ar",
-        AS="arm-none-eabi-gcc",
-        CC="arm-none-eabi-gcc",
-        CXX="arm-none-eabi-g++",
-        OBJCOPY="arm-none-eabi-objcopy",
-        RANLIB="arm-none-eabi-ranlib",
-        SIZETOOL="arm-none-eabi-size",
-
-        ARFLAGS=["rcs"],
-
-        ASFLAGS=[
-            "-mcpu=${BOARD_OPTIONS['build']['mcu']}",
-            "-mthumb"
-            # "-nostdlib"
-        ],
-
-        CXXFLAGS=[
-            "-fno-rtti",
-        ],
-
-        CPPFLAGS=[
-            "-mcpu=${BOARD_OPTIONS['build']['mcu']}",
-            "-mthumb",
-            "-ffunction-sections",  # place each function in its own section
-            "-fdata-sections"
-            # "-nostdlib"
-        ],
-
-        CPPDEFINES=[
-            "printf=iprintf"
-        ],
-
-        LINKFLAGS=[
-            "-mcpu=cortex-m3",
-            "-mthumb",
-            "-Wl,--gc-sections",
-            "-Wl,--entry=Reset_Handler"
-            # "-nostartfiles",
-            # "-nostdlib",
-        ],
-
-        SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES'
-    )
-
-env.Append(
-    BUILDERS=dict(
-        ElfToHex=Builder(
-            action=" ".join([
-                "$OBJCOPY",
-                "-O",
-                "ihex",
-                "-R",
-                ".eeprom",
-                "$SOURCES",
-                "$TARGET"]),
-            suffix=".hex"
-        )
-    ),
-
-    ASFLAGS=[
-        "-c",
-        "-g",  # include debugging info (so errors include line numbers)
-        "-x", "assembler-with-cpp",
-        "-Wall"
-    ],
-
-    CPPFLAGS=[
-        "-g",   # include debugging info (so errors include line numbers)
-        "-Os",  # optimize for size
-        "-fdata-sections",
-        "-ffunction-sections",  # place each function in its own section
-        "-Wall",
-        "-MMD"  # output dependancy info
-    ],
-
-    CPPDEFINES=[
-        "F_CPU=$BOARD_F_CPU"
-    ],
-
-    CXXFLAGS=[
-        "-felide-constructors",
-        "-fno-exceptions"
-    ],
-
-    LINKFLAGS=[
-        "-Os",
-        "-Wl,--start-group"
-
-    ]
-)
-
-if env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu") == "cortex-m3":
-    env.Append(
         UPLOADER=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_UPLOADER", "bossac"),
         UPLOADERFLAGS=[
             "--info",
@@ -142,8 +29,21 @@ if env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu") == "cortex-m3":
         ],
         UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
     )
-else:
+
     env.Append(
+        CPPDEFINES=[
+            "printf=iprintf"
+        ],
+
+        LINKFLAGS=[
+            "-Wl,--entry=Reset_Handler",
+            "-Wl,--start-group"
+        ]
+    )
+else:
+    env = SConscript(env.subst(
+        join("$PIOBUILDER_DIR", "scripts", "baseavr.py")), exports="env")
+    env.Replace(
         UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
         UPLOADERFLAGS=[
             "-q",  # suppress progress output
@@ -164,16 +64,22 @@ CORELIBS = env.ProcessGeneral()
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(CORELIBS + ["m"])
+target_elf = env.BuildFirmware(["m"] + CORELIBS)
 
 #
-# Target: Build the .hex file
+# Target: Build the firmware file
 #
 
-if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_hex = join("$BUILD_DIR", "firmware.hex")
+if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu", ""):
+    if "uploadlazy" in COMMAND_LINE_TARGETS:
+        target_firm = join("$BUILD_DIR", "firmware.bin")
+    else:
+        target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
 else:
-    target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+    if "uploadlazy" in COMMAND_LINE_TARGETS:
+        target_firm = join("$BUILD_DIR", "firmware.hex")
+    else:
+        target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Print binary size
@@ -183,14 +89,14 @@ target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
 AlwaysBuild(target_size)
 
 #
-# Target: Upload by default .hex file
+# Target: Upload by default firmware file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_hex, ("$UPLOADCMD"))
+upload = env.Alias(["upload", "uploadlazy"], target_firm, ("$UPLOADCMD"))
 AlwaysBuild(upload)
 
 #
 # Target: Define targets
 #
 
-Default([target_hex, target_size])
+Default([target_firm, target_size])
