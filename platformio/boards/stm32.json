@@ -5,7 +5,8 @@
             "extra_flags": "-DSTM32F40_41xxx",
             "f_cpu": "168000000L",
             "ldscript": "stm32f405x6.ld",
-            "mcu": "cortex-m4",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f407vgt6",
             "variant": "stm32f4"            
         },
         "name": "STM32F4Discovery (168 MHz) with digital accelerometer, digital microphone, audio DAC",
@@ -21,7 +22,8 @@
             "extra_flags": "-DSTM32L1XX_MD",
             "f_cpu": "32000000L",
             "ldscript": "stm32l15xx6.ld",
-            "mcu": "cortex-m3",
+            "cpu": "cortex-m3",
+            "mcu": "stm32l152rbt6",
             "variant": "stm32l1"            
         },
         "name": "STM32LDiscovery (32 MHz) ultra low-power development kit",
@@ -37,7 +39,8 @@
             "extra_flags": "-DSTM32F303xC",
             "f_cpu": "72000000L",
             "ldscript": "stm32f30xx.ld",
-            "mcu": "cortex-m4",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f303vct6",
             "variant": "stm32f3"
         },
         "name": "STM32F3Discovery (72 MHz) with accelerometer, gyroscope and e-compass",
