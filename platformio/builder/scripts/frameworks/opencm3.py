@@ -154,8 +154,10 @@ merge_ld_scripts(ldscript_path)
 generate_nvic_files()
 
 # override ldscript by opencm3
-assert "-T" in env['LINKFLAGS']
-env['LINKFLAGS'][env['LINKFLAGS'].index("-T") + 1] = ldscript_path
+assert "LDSCRIPT_PATH" in env
+env.Replace(
+    LDSCRIPT_PATH=ldscript_path
+)
 
 libs = []
 env.VariantDir(
