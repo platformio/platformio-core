@@ -15,20 +15,13 @@ from platformio.util import get_serialports
 
 
 def ProcessGeneral(env):
-    corelibs = []
-    # specific linker script
-    if "ldscript" in env.get("BOARD_OPTIONS", {}).get("build", {}):
-        env.Append(
-            LINKFLAGS=["-T", join(
-                "$PIOHOME_DIR", "packages", "ldscripts",
-                "${BOARD_OPTIONS['build']['ldscript']}")]
-        )
     if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
         env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
 
     if "BUILD_FLAGS" in env:
         env.MergeFlags(env['BUILD_FLAGS'])
 
+    corelibs = []
     if "FRAMEWORK" in env:
         if env['FRAMEWORK'] in ("arduino", "energia"):
             env.ConvertInoToCpp()
@@ -49,20 +42,27 @@ def BuildFirmware(env, corelibs):
 
     # build dependent libs
     deplibs = firmenv.BuildDependentLibraries(join("$PROJECT_DIR", "src"))
-    if deplibs:
-        firmenv.Prepend(
-            _LIBFLAGS="-Wl,--start-group "
-        )
+
+    # append specified LD_SCRIPT
+    if "LDSCRIPT_PATH" in firmenv:
         firmenv.Append(
-            _LIBFLAGS=" -Wl,--end-group "
+            LINKFLAGS=["-T", "$LDSCRIPT_PATH"]
         )
+
+    # enable "cyclic reference" for linker
+    firmenv.Prepend(
+        _LIBFLAGS="-Wl,--start-group ",
+    )
+    firmenv.Append(
+        _LIBFLAGS=" -Wl,--end-group"
+    )
 
     firmenv.MergeFlags(getenv("PIOSRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
 
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),
         [firmenv.GlobCXXFiles(vdir) for vdir in vdirs],
-        LIBS=deplibs + corelibs,
+        LIBS=corelibs + deplibs,
         LIBPATH="$BUILD_DIR",
         PROGSUFFIX=".elf"
     )

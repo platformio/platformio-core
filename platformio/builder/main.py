@@ -89,6 +89,13 @@ if "BOARD" in env:
     if "UPLOAD_SPEED" not in env:
         env.Replace(
             UPLOAD_SPEED="${BOARD_OPTIONS['upload'].get('speed', None)}")
+    if "ldscript" in env.get("BOARD_OPTIONS", {}).get("build", {}):
+        env.Replace(
+            LDSCRIPT_PATH=join(
+                "$PIOHOME_DIR", "packages", "ldscripts",
+                "${BOARD_OPTIONS['build']['ldscript']}"
+            )
+        )
 
 if "IGNORE_LIBS" in env:
     env['IGNORE_LIBS'] = [l.strip() for l in env['IGNORE_LIBS'].split(",")]

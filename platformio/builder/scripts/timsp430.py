@@ -85,16 +85,16 @@ CORELIBS = env.ProcessGeneral()
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(CORELIBS + ["m"])
+target_elf = env.BuildFirmware(["m"] + CORELIBS)
 
 #
 # Target: Build the .hex
 #
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_hex = join("$BUILD_DIR", "firmware.hex")
+    target_frim = join("$BUILD_DIR", "firmware.hex")
 else:
-    target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+    target_frim = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Print binary size
@@ -107,11 +107,11 @@ AlwaysBuild(target_size)
 # Target: Upload firmware
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_hex, "$UPLOADCMD")
+upload = env.Alias(["upload", "uploadlazy"], target_frim, "$UPLOADCMD")
 AlwaysBuild(upload)
 
 #
 # Target: Define targets
 #
 
-Default([target_hex, target_size])
+Default([target_frim, target_size])

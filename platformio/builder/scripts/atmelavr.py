@@ -8,107 +8,10 @@
 from os.path import join
 from time import sleep
 
-from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
-                          DefaultEnvironment, Exit)
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
+                          DefaultEnvironment, Exit, SConscript)
 
 from platformio.util import get_serialports
-
-env = DefaultEnvironment()
-
-env.Replace(
-    AR="avr-ar",
-    AS="avr-gcc",
-    CC="avr-gcc",
-    CXX="avr-g++",
-    OBJCOPY="avr-objcopy",
-    RANLIB="avr-ranlib",
-    SIZETOOL="avr-size",
-
-    ARFLAGS=["rcs"],
-
-    ASFLAGS=[
-        "-c",
-        "-g",  # include debugging info (so errors include line numbers)
-        "-x", "assembler-with-cpp",
-        "-mmcu=$BOARD_MCU"
-    ],
-
-    CCFLAGS=[
-        "-g",  # include debugging info (so errors include line numbers)
-        "-Os",  # optimize for size
-        # "-Wall",  # show warnings
-        "-ffunction-sections",  # place each function in its own section
-        "-fdata-sections",
-        "-MMD",  # output dependency info
-        "-mmcu=$BOARD_MCU"
-    ],
-
-    CXXFLAGS=[
-        "-fno-exceptions",
-        "-fno-threadsafe-statics"
-    ],
-
-    CPPDEFINES=[
-        "F_CPU=$BOARD_F_CPU"
-    ],
-
-    LINKFLAGS=[
-        "-Os",
-        "-mmcu=$BOARD_MCU",
-        "-Wl,--gc-sections"
-    ],
-
-    SIZEPRINTCMD='"$SIZETOOL" --mcu=$BOARD_MCU -C -d $SOURCES',
-
-    UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
-    UPLOADERFLAGS=[
-        "-q",  # suppress progress output
-        "-D",  # disable auto erase for flash memory
-        "-p", "$BOARD_MCU",
-        "-C",
-        '"%s"' % join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude.conf"),
-        "-c", "$UPLOAD_PROTOCOL"
-    ],
-    UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i',
-    UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
-)
-
-if "UPLOAD_SPEED" in env:
-    env.Append(UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"])
-if env.subst("$UPLOAD_PROTOCOL") != "usbtiny":
-    env.Append(UPLOADERFLAGS=["-P", "$UPLOAD_PORT"])
-
-env.Append(
-    BUILDERS=dict(
-        ElfToEep=Builder(
-            action=" ".join([
-                "$OBJCOPY",
-                "-O",
-                "ihex",
-                "-j",
-                ".eeprom",
-                '--set-section-flags=.eeprom="alloc,load"',
-                "--no-change-warnings",
-                "--change-section-lma",
-                ".eeprom=0",
-                "$SOURCES",
-                "$TARGET"]),
-            suffix=".eep"
-        ),
-
-        ElfToHex=Builder(
-            action=" ".join([
-                "$OBJCOPY",
-                "-O",
-                "ihex",
-                "-R",
-                ".eeprom",
-                "$SOURCES",
-                "$TARGET"]),
-            suffix=".hex"
-        )
-    )
-)
 
 
 def before_upload(target, source, env):  # pylint: disable=W0613,W0621
@@ -155,13 +58,32 @@ def before_upload(target, source, env):  # pylint: disable=W0613,W0621
             env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
 
 
+env = DefaultEnvironment()
+env = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")),
+                 exports="env")
+
+env.Replace(
+    UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
+    UPLOADERFLAGS=[
+        "-q",  # suppress progress output
+        "-D",  # disable auto erase for flash memory
+        "-p", "$BOARD_MCU",
+        "-C",
+        '"%s"' % join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude.conf"),
+        "-c", "$UPLOAD_PROTOCOL"
+    ],
+
+    UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i',
+    UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
+)
+
 CORELIBS = env.ProcessGeneral()
 
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(CORELIBS + ["m"])
+target_elf = env.BuildFirmware(["m"] + CORELIBS)
 
 #
 # Target: Extract EEPROM data (from EEMEM directive) to .eep file
@@ -175,9 +97,9 @@ target_eep = env.Alias("eep", env.ElfToEep(join("$BUILD_DIR", "firmware"),
 #
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_hex = join("$BUILD_DIR", "firmware.hex")
+    target_firm = join("$BUILD_DIR", "firmware.hex")
 else:
-    target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+    target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Print binary size
@@ -190,7 +112,7 @@ AlwaysBuild(target_size)
 # Target: Upload by default .hex file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_hex, [
+upload = env.Alias(["upload", "uploadlazy"], target_firm, [
     before_upload, "$UPLOADHEXCMD"])
 AlwaysBuild(upload)
 
@@ -206,4 +128,4 @@ AlwaysBuild(uploadeep)
 # Setup default targets
 #
 
-Default([target_hex, target_size])
+Default([target_firm, target_size])
