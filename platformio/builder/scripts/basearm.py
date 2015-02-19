@@ -61,7 +61,7 @@ env.Replace(
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES'
 )
 
-if env.get("BOARD_OPTIONS", {}).get("build", {}).get("cpu")[-2:] == "m4":
+if env.get("BOARD_OPTIONS", {}).get("build", {}).get("cpu", "")[-2:] == "m4":
     env.Append(
         ASFLAGS=[
             "-mfloat-abi=hard",
@@ -90,6 +90,17 @@ env.Append(
                 "$SOURCES",
                 "$TARGET"]),
             suffix=".bin"
+        ),
+        ElfToHex=Builder(
+            action=" ".join([
+                "$OBJCOPY",
+                "-O",
+                "ihex",
+                "-R",
+                ".eeprom",
+                "$SOURCES",
+                "$TARGET"]),
+            suffix=".hex"
         )
     )
 )

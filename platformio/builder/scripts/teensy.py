@@ -69,16 +69,10 @@ target_elf = env.BuildFirmware(["m"] + CORELIBS)
 # Target: Build the firmware file
 #
 
-if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu", ""):
-    if "uploadlazy" in COMMAND_LINE_TARGETS:
-        target_firm = join("$BUILD_DIR", "firmware.bin")
-    else:
-        target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
+if "uploadlazy" in COMMAND_LINE_TARGETS:
+    target_firm = join("$BUILD_DIR", "firmware.hex")
 else:
-    if "uploadlazy" in COMMAND_LINE_TARGETS:
-        target_firm = join("$BUILD_DIR", "firmware.hex")
-    else:
-        target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+    target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Print binary size
