@@ -1,6 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import re
 from imp import load_source
 from os import listdir
 from os.path import isdir, isfile, join
@@ -76,6 +77,10 @@ class PlatformFactory(object):
 class BasePlatform(object):
 
     PACKAGES = {}
+    LINE_ERROR_RE = re.compile(r"(\s+error|error[:\s]+)", re.I)
+
+    def __init__(self):
+        self._found_error = False
 
     def get_name(self):
         return self.__class__.__name__[:-8].lower()
@@ -214,6 +219,7 @@ class BasePlatform(object):
             variables.append(
                 "PIOPACKAGE_%s=%s" % (options['alias'].upper(), name))
 
+        self._found_error = False
         try:
             result = util.exec_command(
                 [
@@ -227,9 +233,10 @@ class BasePlatform(object):
         except OSError:
             raise exception.SConsNotInstalled()
 
-        return self.after_run(result)
+        assert "returncode" in result
+        if self._found_error:
+            result['returncode'] = 1
 
-    def after_run(self, result):  # pylint: disable=R0201
         return result
 
     def on_run_out(self, line):  # pylint: disable=R0201
@@ -239,5 +246,7 @@ class BasePlatform(object):
         click.secho(line, fg=fg)
 
     def on_run_err(self, line):  # pylint: disable=R0201
-        click.secho(line, err=True,
-                    fg="red" if "error" in line.lower() else "yellow")
+        is_error = self.LINE_ERROR_RE.search(line) is not None
+        if is_error:
+            self._found_error = True
+        click.secho(line, err=True, fg="red" if is_error else "yellow")

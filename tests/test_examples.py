@@ -30,9 +30,8 @@ def test_run(platformio_setup, pioproject_dir):
         ["platformio", "run"],
         cwd=pioproject_dir
     )
-    output = "%s\n%s" % (result['out'], result['err'])
-    if "error" in output.lower():
-        pytest.fail(output)
+    if result['returncode'] != 0:
+        pytest.fail(result)
 
     # check .elf file
     pioenvs_dir = join(pioproject_dir, ".pioenvs")

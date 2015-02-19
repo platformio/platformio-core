@@ -13,6 +13,10 @@ class PlatformioException(Exception):
             return Exception.__str__(self)
 
 
+class ReturnErrorCode(PlatformioException):
+    pass
+
+
 class AbortedByUser(PlatformioException):
 
     MESSAGE = "Aborted by user"

@@ -31,6 +31,8 @@ Release History
 * Fixed compiling error if space is in user's folder (`issue #56 <https://github.com/ivankravets/platformio/issues/56>`_)
 * Fixed `AttributeError: 'module' object has no attribute 'disable_warnings'`
   when a version of `requests` package is less then 2.4.0
+* Fixed bug with invalid process's "return code" when PlatformIO has internal
+  error (`issue #81 <https://github.com/ivankravets/platformio/issues/81>`_)
 
 
 0.10.2 (2015-01-06)

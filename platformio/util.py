@@ -117,7 +117,12 @@ def change_filemtime(path, time):
 
 
 def exec_command(*args, **kwargs):
-    result = {"out": None, "err": None}
+    result = {
+        "out": None,
+        "err": None,
+        "returncode": None
+    }
+
     default = dict(
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -129,6 +134,7 @@ def exec_command(*args, **kwargs):
     p = subprocess.Popen(*args, **kwargs)
     try:
         result['out'], result['err'] = p.communicate()
+        result['returncode'] = p.returncode
     except KeyboardInterrupt:
         for s in ("stdout", "stderr"):
             if isinstance(kwargs[s], AsyncPipe):
@@ -141,9 +147,8 @@ def exec_command(*args, **kwargs):
             result[s[3:]] = "\n".join(kwargs[s].get_buffer())
 
     for k, v in result.iteritems():
-        if not v:
-            continue
-        result[k].strip()
+        if v and isinstance(v, basestring):
+            result[k].strip()
 
     return result
 

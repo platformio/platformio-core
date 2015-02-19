@@ -8,8 +8,7 @@ from traceback import format_exc
 
 import click
 
-from platformio import __version__, maintenance
-from platformio.exception import PlatformioException, UnknownCLICommand
+from platformio import __version__, exception, maintenance
 from platformio.util import get_source_dir
 
 
@@ -31,7 +30,7 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
             mod = __import__("platformio.commands." + name,
                              None, None, ["cli"])
         except ImportError:
-            raise UnknownCLICommand(name)
+            raise exception.UnknownCLICommand(name)
         return mod.cli
 
 
@@ -52,12 +51,13 @@ def main():
     try:
         cli(None)
     except Exception as e:  # pylint: disable=W0703
-        maintenance.on_platformio_exception(e)
-        if isinstance(e, PlatformioException):
-            click.echo("Error: " + str(e), err=True)
-            sys_exit(1)
-        else:
-            print format_exc()
+        if not isinstance(e, exception.ReturnErrorCode):
+            maintenance.on_platformio_exception(e)
+            if isinstance(e, exception.PlatformioException):
+                click.echo("Error: " + str(e), err=True)
+            else:
+                click.echo(format_exc(), err=True)
+        sys_exit(1)
 
 
 if __name__ == "__main__":

@@ -36,6 +36,7 @@ def cli(ctx, environment, target, upload_port):
             getmtime(_pioenvs_dir)):
         rmtree(_pioenvs_dir)
 
+    found_error = False
     _first_done = False
     for section in config.sections():
         # skip main configuration section
@@ -56,8 +57,12 @@ def cli(ctx, environment, target, upload_port):
         if _first_done:
             click.echo()
 
-        process_environment(ctx, envname, options, target, upload_port)
+        if not process_environment(ctx, envname, options, target, upload_port):
+            found_error = True
         _first_done = True
+
+    if found_error:
+        raise exception.ReturnErrorCode()
 
 
 def process_environment(ctx, name, options, targets, upload_port):
@@ -72,8 +77,8 @@ def process_environment(ctx, name, options, targets, upload_port):
     click.secho("-" * terminal_width, bold=True)
 
     result = _run_environment(ctx, name, options, targets, upload_port)
-    is_error = "error" in result['err'].lower()
 
+    is_error = result['returncode'] != 0
     summary_text = " Took %.2f seconds " % (time() - start_time)
     half_line = "=" * ((terminal_width - len(summary_text) - 10) / 2)
     click.echo("%s [%s]%s%s" % (
@@ -83,6 +88,8 @@ def process_environment(ctx, name, options, targets, upload_port):
         summary_text,
         half_line
     ), err=is_error)
+
+    return not is_error
 
 
 def _run_environment(ctx, name, options, targets, upload_port):
