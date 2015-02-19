@@ -12,7 +12,7 @@ from platformio.util import get_boards, get_source_dir
 
 
 @click.command("init", short_help="Initialize new PlatformIO based project")
-@click.option("--project-dir", "-d", default=getcwd(),
+@click.option("--project-dir", "-d", default=getcwd,
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
 @click.option("--board", "-b", multiple=True, metavar="TYPE")
@@ -93,13 +93,10 @@ def fill_project_envs(project_file, board_types, disable_auto_uploading):
             content.append("")
 
         data = builtin_boards[type_]
-        framework = data.get("build", {}).get("core", None)
-        if framework in ("msp430", "lm4f"):
-            framework = "energia"
-
+        # find default framework for board
+        framework = data.get("framework", None)
         content.append("[env:autogen_%s]" % type_)
         content.append("platform = %s" % data['platform'])
-
         if framework:
             content.append("framework = %s" % framework)
         content.append("board = %s" % type_)

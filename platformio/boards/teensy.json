@@ -5,6 +5,7 @@
             "f_cpu": "16000000L",
             "mcu": "atmega32u4"
         },
+        "framework": "arduino",
         "name": "Teensy 2.0",
         "platform": "teensy",
         "upload": {
@@ -19,6 +20,7 @@
             "f_cpu": "16000000L",
             "mcu": "at90usb1286"
         },
+        "framework": "arduino",
         "name": "Teensy++ 2.0",
         "platform": "teensy",
         "upload": {
@@ -36,6 +38,7 @@
             "mcu": "mk20dx128",
             "cpu": "cortex-m4"
         },
+        "framework": "arduino",
         "name": "Teensy 3.0",
         "platform": "teensy",
         "upload": {
@@ -53,6 +56,7 @@
             "mcu": "mk20dx256",
             "cpu": "cortex-m4"
         },
+        "framework": "arduino",
         "name": "Teensy 3.1",
         "platform": "teensy",
         "upload": {

@@ -7,6 +7,7 @@
             "mcu": "attiny85",
             "variant": "digispark_tiny"
         },
+        "framework": "arduino",
         "name": "Digispark (Default - 16.5mhz)",
         "platform": "digistump",
         "upload": {
@@ -26,6 +27,7 @@
             "mcu": "attiny167",
             "variant": "digispark_pro"
         },
+        "framework": "arduino",
         "name": "Digispark Pro (Default 16 Mhz)",
         "platform": "digistump",
         "upload": {
@@ -45,6 +47,7 @@
             "mcu": "attiny167",
             "variant": "digispark_pro32"
         },
+        "framework": "arduino",
         "name": "Digispark Pro (16 Mhz) (32 byte buffer)",
         "platform": "digistump",
         "upload": {
@@ -64,6 +67,7 @@
             "mcu": "attiny167",
             "variant": "digispark_pro64"
         },
+        "framework": "arduino",
         "name": "Digispark Pro (16 Mhz) (64 byte buffer)",
         "platform": "digistump",
         "upload": {
@@ -88,6 +92,7 @@
             "variant": "digispark_digix",
             "vid": "0x16D0"
         },
+        "framework": "arduino",
         "name": "Digistump DigiX",
         "platform": "digistump",
         "upload": {

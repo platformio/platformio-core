@@ -7,6 +7,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
+        "framework": "arduino",
         "name": "Raspduino",
         "platform": "atmelavr",
         "upload": {
