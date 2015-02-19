@@ -10,11 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    # Print all available development platforms
-    platformio search
-
-    # Filter platforms by "Query"
-    platformio search QUERY
+    platformio search QUERY [OPTIONS]
 
 
 Description
@@ -22,11 +18,33 @@ Description
 
 Search for development :ref:`Platforms <platforms>`
 
+Options
+~~~~~~~
+
+.. option::
+    --json-output
+
+Return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
+
 
 Examples
 --------
 
-1. Search for TI development platforms
+1. Print all available development platforms
+
+.. code-block:: bash
+
+    $ platformio search
+    atmelavr    - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
+    atmelsam    - An embedded platform for Atmel SAM microcontrollers (with Arduino Framework)
+    digistump   - An embedded platform for Digistump boards (with Arduino Framework)
+    stm32       - An embedded platform for STMicroelectronics ARM microcontrollers
+    teensy      - An embedded platform for Teensy boards (with Arduino Framework)
+    timsp430    - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
+    titiva      - An embedded platform for TI TIVA C ARM microcontrollers (with Energia and OpenCM3 Frameworks)
+    ...
+
+2. Search for TI development platforms
 
 .. code-block:: bash
 
@@ -34,9 +52,12 @@ Examples
     timsp430 - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
     titiva   - An embedded platform for TI TIVA C ARM microcontrollers (with Energia Framework)
 
-2. Search for development platforms which support "Arduino Framework"
+3. Search for development platforms which support "Arduino Framework"
 
 .. code-block:: bash
 
     $ platformio search arduino
-    atmelavr - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
+    atmelavr    - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
+    atmelsam    - An embedded platform for Atmel SAM microcontrollers (with Arduino Framework)
+    digistump   - An embedded platform for Digistump boards (with Arduino Framework)
+    teensy      - An embedded platform for Teensy boards (with Arduino Framework)
