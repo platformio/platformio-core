@@ -7,28 +7,7 @@ from shutil import rmtree
 
 import pytest
 
-from platformio import app
 from platformio.util import exec_command
-
-
-@pytest.fixture(scope="module")
-def platformio_setup(request):
-    prev_settings = dict(
-        enable_telemetry=None,
-        enable_prompts=None
-    )
-    for key, value in prev_settings.iteritems():
-        prev_settings[key] = app.get_setting(key)
-        # disable temporary
-        if prev_settings[key]:
-            app.set_setting(key, False)
-
-    def platformio_teardown():
-        # restore settings
-        for key, value in prev_settings.iteritems():
-            app.set_setting(key, value)
-
-    request.addfinalizer(platformio_teardown)
 
 
 def pytest_generate_tests(metafunc):
