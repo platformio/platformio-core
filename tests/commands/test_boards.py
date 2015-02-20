@@ -29,6 +29,12 @@ def test_board_json_output(platformio_setup):
     assert "teensy30" in boards
 
 
+def test_board_raw_output(platformio_setup):
+    result = runner.invoke(boards_cli, ["energia"])
+    validate_output(result)
+    assert "titiva" in result.output
+
+
 def test_board_options(platformio_setup):
     required_opts = set(
         ["build", "platform", "upload", "name"])
