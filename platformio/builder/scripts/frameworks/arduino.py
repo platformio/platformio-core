@@ -74,7 +74,7 @@ env.Append(
 if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
     env.VariantDir(
         join("$BUILD_DIR", "FrameworkCMSISInc"),
-        join("$PLATFORMFW_DIR", "system", "CMSIS", "CMSIS", "include")
+        join("$PLATFORMFW_DIR", "system", "CMSIS", "CMSIS", "Include")
     )
     env.VariantDir(
         join("$BUILD_DIR", "FrameworkDeviceInc"),
