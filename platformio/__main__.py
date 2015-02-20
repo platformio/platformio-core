@@ -53,10 +53,12 @@ def main():
     except Exception as e:  # pylint: disable=W0703
         if not isinstance(e, exception.ReturnErrorCode):
             maintenance.on_platformio_exception(e)
+            error_str = "Error: "
             if isinstance(e, exception.PlatformioException):
-                click.echo("Error: " + str(e), err=True)
+                error_str += str(e)
             else:
-                click.echo(format_exc(), err=True)
+                error_str += format_exc()
+            click.secho(error_str, fg="red", err=True)
         sys_exit(1)
 
 
