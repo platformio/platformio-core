@@ -3,23 +3,12 @@
 
 import json
 
-
-from click.testing import CliRunner
-
 from platformio.commands.search import cli
 
-runner = CliRunner()
 
-
-def validate_output(result):
-    assert result.exit_code == 0
-    assert not result.exception
-    assert "error" not in result.output.lower()
-
-
-def test_search_json_output():
-    result = runner.invoke(cli, ["arduino", "--json-output"])
-    validate_output(result)
+def test_search_json_output(clirunner, validate_cliresult):
+    result = clirunner.invoke(cli, ["arduino", "--json-output"])
+    validate_cliresult(result)
     search_result = json.loads(result.output)
     assert isinstance(search_result, list)
     assert len(search_result)
@@ -27,7 +16,7 @@ def test_search_json_output():
     assert "atmelsam" in platforms
 
 
-def test_search_raw_output():
-    result = runner.invoke(cli, ["arduino"])
-    validate_output(result)
+def test_search_raw_output(clirunner, validate_cliresult):
+    result = clirunner.invoke(cli, ["arduino"])
+    validate_cliresult(result)
     assert "digistump" in result.output

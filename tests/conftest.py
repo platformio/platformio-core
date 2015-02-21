@@ -1,12 +1,13 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-import pytest
+from click.testing import CliRunner
 
+import pytest
 from platformio import app
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def platformio_setup(request):
     prev_settings = dict(
         enable_telemetry=None,
@@ -24,3 +25,17 @@ def platformio_setup(request):
             app.set_setting(key, value)
 
     request.addfinalizer(platformio_teardown)
+
+
+@pytest.fixture(scope="session")
+def clirunner():
+    return CliRunner()
+
+
+@pytest.fixture(scope="session")
+def validate_cliresult():
+    def decorator(result):
+        assert result.exit_code == 0
+        assert not result.exception
+        assert "error" not in result.output.lower()
+    return decorator

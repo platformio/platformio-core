@@ -29,6 +29,5 @@ def validate_package(url):
 
 
 def test_package(package_data):
-    assert str(
-        package_data['version']) + ".tar.gz" in package_data['url']
+    assert package_data['url'].endswith("%d.tar.gz" % package_data['version'])
     validate_package(package_data['url'])

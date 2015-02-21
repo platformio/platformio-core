@@ -19,9 +19,11 @@ def pytest_generate_tests(metafunc):
         if "platformio.ini" not in files:
             continue
         project_dirs.append(root)
+    project_dirs.sort()
     metafunc.parametrize("pioproject_dir", project_dirs)
 
 
+@pytest.mark.examples
 def test_run(platformio_setup, pioproject_dir):
     if isdir(join(pioproject_dir, ".pioenvs")):
         rmtree(join(pioproject_dir, ".pioenvs"))

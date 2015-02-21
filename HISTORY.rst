@@ -9,6 +9,7 @@ Release History
 * Added new boards to `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
   platform: *Arduino NG, Arduino BT, Arduino Esplora, Arduino Ethernet,
   Arduino Robot Control, Arduino Robot Motor and Arduino Yun*
+* Covered code with tests (`issue #2 <https://github.com/ivankravets/platformio/issues/2>`_)
 * Refactored *Library Dependency Finder* (issues
   `#48 <https://github.com/ivankravets/platformio/issues/48>`_,
   `#50 <https://github.com/ivankravets/platformio/issues/50>`_,
