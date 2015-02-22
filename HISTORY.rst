@@ -14,6 +14,10 @@ Release History
   `#48 <https://github.com/ivankravets/platformio/issues/48>`_,
   `#50 <https://github.com/ivankravets/platformio/issues/50>`_,
   `#55 <https://github.com/ivankravets/platformio/issues/55>`_)
+* Added `src_dir <http://docs.platformio.org/en/latest/projectconf.html#src-dir>`__
+  option to ``[platformio]`` section of
+  `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  which allows to redefine location to project's source directory
 * Added ``--json-output`` option to
   `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`__
   and `platformio search <http://docs.platformio.org/en/latest/userguide/cmd_search.html>`__

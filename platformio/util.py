@@ -56,16 +56,22 @@ def get_systype():
     return ("%s_%s" % (data[0], data[4])).lower()
 
 
-def get_home_dir():
-    home_dir = None
-
+def _get_projconf_option_dir(option_name):
     try:
         config = get_project_config()
         if (config.has_section("platformio") and
-                config.has_option("platformio", "home_dir")):
-            home_dir = config.get("platformio", "home_dir")
+                config.has_option("platformio", option_name)):
+            option_dir = config.get("platformio", option_name)
+            if option_dir.startswith("~"):
+                option_dir = expanduser(option_dir)
+            return abspath(option_dir)
     except exception.NotPlatformProject:
         pass
+    return None
+
+
+def get_home_dir():
+    home_dir = _get_projconf_option_dir("home_dir")
 
     if not home_dir:
         home_dir = join(expanduser("~"), ".platformio")
@@ -78,17 +84,12 @@ def get_home_dir():
 
 
 def get_lib_dir():
-    try:
-        config = get_project_config()
-        if (config.has_section("platformio") and
-                config.has_option("platformio", "lib_dir")):
-            lib_dir = config.get("platformio", "lib_dir")
-            if lib_dir.startswith("~"):
-                lib_dir = expanduser(lib_dir)
-            return abspath(lib_dir)
-    except exception.NotPlatformProject:
-        pass
-    return join(get_home_dir(), "lib")
+    lib_dir = _get_projconf_option_dir("lib_dir")
+
+    if not lib_dir:
+        lib_dir = join(get_home_dir(), "lib")
+
+    return lib_dir
 
 
 def get_source_dir():
@@ -97,6 +98,15 @@ def get_source_dir():
 
 def get_project_dir():
     return os.getcwd()
+
+
+def get_projectsrc_dir():
+    src_dir = _get_projconf_option_dir("src_dir")
+
+    if not src_dir:
+        src_dir = join(get_project_dir(), "src")
+
+    return src_dir
 
 
 def get_pioenvs_dir():

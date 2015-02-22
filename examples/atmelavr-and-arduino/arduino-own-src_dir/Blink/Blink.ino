@@ -3,13 +3,6 @@
  * See LICENSE for details.
  */
 
-/**
-  Turns ON and OFF the Wiring compatible board LED,
-  with intervals of 1 second (1000 milliseconds)
-*/
-
-#include "Arduino.h"
-
 #ifndef LED_PIN
 #define LED_PIN 13  // Most Arduino boards already have a LED attached to pin 13 on the board itself
 #endif

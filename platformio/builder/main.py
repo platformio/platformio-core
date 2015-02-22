@@ -58,6 +58,7 @@ DefaultEnvironment(
 
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),
+    PROJECTSRC_DIR=util.get_projectsrc_dir(),
     PIOENVS_DIR=util.get_pioenvs_dir(),
 
     PIOBUILDER_DIR=join(util.get_source_dir(), "builder"),

@@ -38,10 +38,10 @@ def ProcessGeneral(env):
 def BuildFirmware(env, corelibs):
     firmenv = env.Clone()
     vdirs = firmenv.VariantDirRecursive(
-        join("$BUILD_DIR", "src"), join("$PROJECT_DIR", "src"))
+        join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR")
 
     # build dependent libs
-    deplibs = firmenv.BuildDependentLibraries(join("$PROJECT_DIR", "src"))
+    deplibs = firmenv.BuildDependentLibraries("$PROJECTSRC_DIR")
 
     # append specified LD_SCRIPT
     if "LDSCRIPT_PATH" in firmenv:
@@ -255,8 +255,8 @@ def ConvertInoToCpp(env):
             remove(f)
 
     tmpcpp = []
-    items = (env.Glob(join("$PROJECT_DIR", "src", "*.ino")) +
-             env.Glob(join("$PROJECT_DIR", "src", "*.pde")))
+    items = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
+             env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
     for item in items:
         cppfile = item.get_path()[:-3] + "cpp"
         if isfile(cppfile):
