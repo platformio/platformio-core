@@ -181,12 +181,8 @@ def get_api_result(path, params=None, data=None):
         requests.packages.urllib3.disable_warnings()
         headers = {"User-Agent": "PlatformIO/%s %s" % (
             __version__, requests.utils.default_user_agent())}
-        # if packages - redirect to SF
-        if path == "/packages":
-            r = requests.get(
-                "http://sourceforge.net/projects/platformio-storage/files/"
-                "packages/manifest.json", params=params, headers=headers)
-        elif data:
+
+        if data:
             r = requests.post(__apiurl__ + path, params=params, data=data,
                               headers=headers)
         else:
