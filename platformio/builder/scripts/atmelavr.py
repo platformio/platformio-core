@@ -34,6 +34,9 @@ def before_upload(target, source, env):  # pylint: disable=W0613,W0621
 
     if env.subst("$UPLOAD_PROTOCOL") != "usbtiny":
         _autodetect_upload_port()
+        env.Append(
+            UPLOADERFLAGS=["-P", "$UPLOAD_PORT"]
+        )
 
     if env.subst("$BOARD") == "raspduino":
         _rpi_sysgpio("/sys/class/gpio/export", 18)
@@ -42,7 +45,7 @@ def before_upload(target, source, env):  # pylint: disable=W0613,W0621
         sleep(0.1)
         _rpi_sysgpio("/sys/class/gpio/gpio18/value", 0)
         _rpi_sysgpio("/sys/class/gpio/unexport", 18)
-    else:
+    elif "UPLOAD_PORT" in env:
         upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
 
         if not upload_options.get("disable_flushing", False):
@@ -50,8 +53,7 @@ def before_upload(target, source, env):  # pylint: disable=W0613,W0621
 
         before_ports = [i['port'] for i in get_serialports()]
 
-        if (upload_options.get("use_1200bps_touch", False) and
-                "UPLOAD_PORT" in env):
+        if upload_options.get("use_1200bps_touch", False):
             env.TouchSerialPort("$UPLOAD_PORT", 1200)
 
         if upload_options.get("wait_for_upload_port", False):
@@ -65,7 +67,7 @@ env = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")),
 env.Replace(
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
     UPLOADERFLAGS=[
-        "-q",  # suppress progress output
+        "-v",
         "-D",  # disable auto erase for flash memory
         "-p", "$BOARD_MCU",
         "-C",
@@ -76,6 +78,11 @@ env.Replace(
     UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i',
     UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
 )
+
+if "UPLOAD_SPEED" in env:
+    env.Append(
+        UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"]
+    )
 
 CORELIBS = env.ProcessGeneral()
 
