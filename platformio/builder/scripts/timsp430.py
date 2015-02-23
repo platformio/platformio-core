@@ -23,14 +23,10 @@ env.Replace(
     RANLIB="msp430-ranlib",
     SIZETOOL="msp430-size",
 
-    ARFLAGS=["rcs"],
+    ASCOM=("$AS -o $TARGET -c -x assembler-with-cpp "
+           "$CFLAGS $CCFLAGS $_CCCOMCOM $SOURCES"),
 
-    ASFLAGS=[
-        "-c",
-        "-g",  # include debugging info (so errors include line numbers)
-        "-x", "-assembler-with-cpp",
-        "-mmcu=$BOARD_MCU"
-    ],
+    ARFLAGS=["rcs"],
 
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
