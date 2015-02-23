@@ -25,7 +25,8 @@ def validate_response(req):
 def validate_package(url):
     r = requests.head(url, allow_redirects=True)
     validate_response(r)
-    assert r.headers['Content-Type'] == "application/x-gzip"
+    assert r.headers['Content-Type'] in ("application/x-gzip",
+                                         "application/octet-stream")
 
 
 def test_package(package_data):
