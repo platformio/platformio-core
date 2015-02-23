@@ -9,7 +9,7 @@ How to buid PlatformIO based project
 .. code-block:: bash
 
     # Change directory to example
-    > cd platformio-develop/examples/digistump/digitstump-blink
+    > cd platformio-develop/examples/atmelavr-and-arduino/digitstump-mouse
 
     # Process example project
     > platformio run
