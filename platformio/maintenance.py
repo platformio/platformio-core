@@ -13,7 +13,7 @@ import click
 from platformio import __version__, app, telemetry
 from platformio.commands.install import cli as cmd_install
 from platformio.commands.lib import lib_update as cmd_libraries_update
-from platformio.commands.update import cli as cli_platforms_update
+from platformio.commands.update import cli as cli_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.exception import GetLatestVersionError, UpgraderFailed
 from platformio.libmanager import LibraryManager
@@ -90,9 +90,11 @@ class Upgrader(object):
         return True
 
     def _upgrade_to_1_0_0(self, ctx):  # pylint: disable=R0201
-        # install "ldscripts" package
-        if "titiva" in PlatformFactory.get_platforms(installed=True).keys():
-            ctx.invoke(cmd_install, platforms=["titiva"])
+        installed_platforms = PlatformFactory.get_platforms(
+            installed=True).keys()
+        if installed_platforms:
+            ctx.invoke(cmd_install, platforms=installed_platforms)
+        ctx.invoke(cli_update)
         return True
 
 
@@ -199,7 +201,7 @@ def check_internal_updates(ctx, what):
     else:
         click.secho("Please wait while updating %s ..." % what, fg="yellow")
         if what == "platforms":
-            ctx.invoke(cli_platforms_update)
+            ctx.invoke(cli_update)
         elif what == "libraries":
             ctx.invoke(cmd_libraries_update)
         click.echo()
