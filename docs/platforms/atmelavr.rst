@@ -29,6 +29,9 @@ Packages
     * - ``tool-avrdude``
       - uploader
       - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
+    * - ``tool-micronucleus``
+      - uploader
+      - `Micronucleus <https://github.com/micronucleus/micronucleus>`_
     * - ``framework-arduinoavr``
       -
       - See below in :ref:`atmelavr_frameworks`
@@ -280,6 +283,106 @@ Arduino
 More detailed information you can find here
 `Arduino boards <http://arduino.cc/en/Main/Products>`_.
 
+
+Adafruit
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller ``board_mcu``
+      - Frequency ``board_f_cpu``
+      - Flash
+      - RAM
+    * - ``flora8``
+      - `Adafruit Flora
+        <http://www.adafruit.com/product/659>`_
+      - ATmega32 ``atmega32u4``
+      - 8 MHz ``8000000L``
+      - 32 Kb
+      - 2.5 Kb
+    * - ``trinket3``
+      - `Adafruit Trinket 8MHz 3.3V LOGIC
+        <http://www.adafruit.com/products/1500>`_
+      - ATtiny85 ``attiny85``
+      - 8 MHz ``16000000L``
+      - 8 Kb
+      - 0.5 Kb
+    * - ``trinket5``
+      - `Adafruit Trinket 16MHz 5V LOGIC
+        <http://www.adafruit.com/products/1501>`_
+      - ATtiny85 ``ATtiny85``
+      - 16 MHz ``16000000L``
+      - 8 Kb
+      - 0.5 Kb
+    * - ``protrinket3``
+      - `Pro Trinket 3V/12MHz (USB)
+        <http://www.adafruit.com/products/2010>`_
+      - ATmega328 ``atmega328p``
+      - 12 MHz ``12000000L``
+      - 32 Kb
+      - 2 Kb
+    * - ``protrinket3ftdi``
+      - `Pro Trinket 3V/12MHz (FTDI)
+        <http://www.adafruit.com/products/2010>`_
+      - ATmega328 ``atmega328p``
+      - 12 MHz ``12000000L``
+      - 32 Kb
+      - 2 Kb
+    * - ``protrinket5``
+      - `Pro Trinket 5V/16MHz (USB)
+        <http://www.adafruit.com/products/2000>`_
+      - ATmega328 ``atmega328p``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2 Kb
+    * - ``protrinket5ftdi``
+      - `Pro Trinket 5V/16MHz (FTDI)
+        <http://www.adafruit.com/products/2000>`_
+      - ATmega328 ``atmega328p``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2 Kb  
+
+More detailed information you can find here
+`Adafruits boards <https://learn.adafruit.com/category/trinket>`_.
+
+
+Digispark
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller ``board_mcu``
+      - Frequency ``board_f_cpu``
+      - Flash
+      - RAM
+    * - ``digispark-tiny``
+      - `Digispark USB Development Board <http://digistump.com/products/1>`_
+      - ATtiny85 ``attiny85``
+      - 16 MHz ``16000000L``
+      - 8 Kb
+      - 0.5 Kb
+    * - ``digispark-pro``
+      - `Digispark Pro (Default 16 Mhz) <http://digistump.com/products/109>`_
+      - ATtiny167 ``attiny167``
+      - 16 MHz ``16000000L``
+      - 16 Kb
+      - 0.5 Kb
+    * - ``digispark-pro32``
+      - `Digispark Pro (16 Mhz) (32 byte buffer) <http://digistump.com/products/109>`_
+      - ATtiny167 ``attiny167``
+      - 16 Mhz ``16000000L``
+      - 16 kb
+      - 0.5 Kb 
+
+More detailed information you can find here
+`Digistump Development Boards <http://digistump.com/wiki/start>`_.
 
 Engduino
 ~~~~~~~~
