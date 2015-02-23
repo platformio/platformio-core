@@ -44,16 +44,10 @@ else:
     env = SConscript(env.subst(
         join("$PIOBUILDER_DIR", "scripts", "baseavr.py")), exports="env")
     env.Replace(
-        UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
+        UPLOADER=join("$PIOPACKAGES_DIR", "tool-micronucleus", "micronucleus"),
         UPLOADERFLAGS=[
-            "-q",  # suppress progress output
-            "-D",  # disable auto erase for flash memory
-            "-p", "$BOARD_MCU",
-            "-C", '"%s"' % join("$PIOPACKAGES_DIR",
-                                "tool-avrdude", "avrdude.conf"),
             "-c", "$UPLOAD_PROTOCOL",
-            "-b", "$UPLOAD_SPEED",
-            "-P", "$UPLOAD_PORT"
+            "--timeout", "60"
         ],
         UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i'
     )

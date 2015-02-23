@@ -30,7 +30,7 @@ class DigistumpPlatform(BasePlatform):
             "default": True
         },
 
-        "tool-avrdude": {
+        "tool-micronucleus": {
             "default": True
         },
 
@@ -54,7 +54,7 @@ class DigistumpPlatform(BasePlatform):
                 tuploader = "tool-bossac"
             else:
                 tpackage = "toolchain-atmelavr"
-                tuploader = "tool-avrdude"
+                tuploader = "tool-micronucleus"
             self.PACKAGES[tpackage]['alias'] = "toolchain"
             self.PACKAGES[tuploader]['alias'] = "uploader"
             break
