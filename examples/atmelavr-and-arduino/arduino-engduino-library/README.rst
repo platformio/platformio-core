@@ -9,7 +9,7 @@ How to buid PlatformIO based project
 .. code-block:: bash
 
     # Change directory to example
-    > cd platformio-develop/examples/atmelavr-and-arduino/ardiono-engduino-library
+    > cd platformio-develop/examples/atmelavr-and-arduino/arduino-engduino-library
 
     # Process example project
     > platformio run
