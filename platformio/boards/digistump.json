@@ -14,7 +14,7 @@
             "disable_flushing": false,
             "maximum_ram_size": 512,
             "maximum_size": 14844,
-            "protocol": "usb",
+            "protocol": "digispark",
             "use_1200bps_touch": false,
             "wait_for_upload_port": false
         }
@@ -34,7 +34,7 @@
             "disable_flushing": false,
             "maximum_ram_size": 512,
             "maximum_size": 14844,
-            "protocol": "usb",
+            "protocol": "digispark",
             "use_1200bps_touch": false,
             "wait_for_upload_port": false
         }
@@ -54,7 +54,7 @@
             "disable_flushing": false,
             "maximum_ram_size": 512,
             "maximum_size": 14844,
-            "protocol": "usb",
+            "protocol": "digispark",
             "use_1200bps_touch": false,
             "wait_for_upload_port": false
         }
@@ -74,7 +74,7 @@
             "disable_flushing": false,
             "maximum_ram_size": 512,
             "maximum_size": 14844,
-            "protocol": "usb",
+            "protocol": "digispark",
             "use_1200bps_touch": false,
             "wait_for_upload_port": false
         }

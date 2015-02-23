@@ -25,7 +25,9 @@ env.Replace(
         "--erase",
         "--write",
         "--verify",
-        "--boot"
+        "--boot",
+        "--reset"
+
     ],
     UPLOADBINCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
 )
