@@ -50,7 +50,7 @@ def BuildFirmware(env, corelibs):
 
     # enable "cyclic reference" for linker
     firmenv.Prepend(
-        _LIBFLAGS="-Wl,--start-group ",
+        _LIBFLAGS="-Wl,--start-group "
     )
     firmenv.Append(
         _LIBFLAGS=" -Wl,--end-group"

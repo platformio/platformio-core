@@ -18,16 +18,10 @@ env.Replace(
     RANLIB="arm-none-eabi-ranlib",
     SIZETOOL="arm-none-eabi-size",
 
-    ARFLAGS=["rcs"],
+    ASCOM=("$AS -o $TARGET -c -x assembler-with-cpp "
+           "$CFLAGS $CCFLAGS $_CCCOMCOM $SOURCES"),
 
-    ASFLAGS=[
-        "-c",
-        "-g",  # include debugging info (so errors include line numbers)
-        "-x", "assembler-with-cpp",
-        "-Wall",
-        "-mthumb",
-        "-mcpu=${BOARD_OPTIONS['build']['cpu']}"
-    ],
+    ARFLAGS=["rcs"],
 
     CPPFLAGS=[
         "-g",   # include debugging info (so errors include line numbers)
