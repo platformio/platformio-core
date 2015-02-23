@@ -5,10 +5,9 @@
     Base for ARM microcontrollers.
 """
 
-from SCons.Script import Builder, Import, Return
+from SCons.Script import Builder, DefaultEnvironment
 
-env = None
-Import("env")
+env = DefaultEnvironment()
 
 env.Replace(
     AR="arm-none-eabi-ar",
@@ -104,5 +103,3 @@ env.Append(
         )
     )
 )
-
-Return("env")

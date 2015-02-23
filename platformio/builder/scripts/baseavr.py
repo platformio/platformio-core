@@ -5,10 +5,9 @@
     Base for Atmel AVR series of microcontrollers
 """
 
-from SCons.Script import Builder, Import, Return
+from SCons.Script import Builder, DefaultEnvironment
 
-env = None
-Import("env")
+env = DefaultEnvironment()
 
 env.Replace(
     AR="avr-ar",
@@ -92,5 +91,3 @@ env.Append(
         )
     )
 )
-
-Return("env")

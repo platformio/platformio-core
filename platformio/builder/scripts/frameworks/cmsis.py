@@ -7,10 +7,9 @@
 
 from os.path import join
 
-from SCons.Script import Import, Return
+from SCons.Script import DefaultEnvironment, Return
 
-env = None
-Import("env")
+env = DefaultEnvironment()
 
 env.Replace(
     PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-cmsis")
@@ -40,4 +39,4 @@ libs.append(envsafe.BuildLibrary(
     join("$PLATFORMFW_DIR", "variants", "${BOARD_OPTIONS['build']['variant']}")
 ))
 
-Return("env libs")
+Return("libs")

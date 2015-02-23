@@ -13,12 +13,9 @@ from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
 env = DefaultEnvironment()
 
 if env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy":
-    env = SConscript(env.subst(
-        join("$PIOBUILDER_DIR", "scripts", "baseavr.py")), exports="env")
-
+    SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")))
 elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
-    env = SConscript(env.subst(
-        join("$PIOBUILDER_DIR", "scripts", "basearm.py")), exports="env")
+    SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
 env.Append(
     CPPDEFINES=[

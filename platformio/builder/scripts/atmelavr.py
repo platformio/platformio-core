@@ -54,8 +54,8 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
 
 env = DefaultEnvironment()
-env = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")),
-                 exports="env")
+
+SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")))
 
 env.Replace(
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),

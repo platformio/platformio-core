@@ -9,12 +9,11 @@ import re
 from os import listdir, sep, walk
 from os.path import isfile, join, normpath
 
-from SCons.Script import Import, Return
+from SCons.Script import DefaultEnvironment, Return
 
 from platformio.util import exec_command
 
-env = None
-Import("env")
+env = DefaultEnvironment()
 
 env.Replace(
     PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-opencm3")
@@ -169,4 +168,4 @@ libs.append(env.Library(
     get_source_files(root_dir)
 ))
 
-Return("env libs")
+Return("libs")

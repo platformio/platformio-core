@@ -18,10 +18,9 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
 env = DefaultEnvironment()
 
-if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu"):
-    env = SConscript(
-        env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")),
-        exports="env")
+if "cortex" in env.get("BOARD_OPTIONS", {}).get("build", {}).get("cpu", ""):
+    SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
+
     env.Replace(
         UPLOADER=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_UPLOADER", "bossac"),
         UPLOADERFLAGS=[
@@ -48,8 +47,8 @@ if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu"):
         ]
     )
 else:
-    env = SConscript(env.subst(
-        join("$PIOBUILDER_DIR", "scripts", "baseavr.py")), exports="env")
+    SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")))
+
     env.Replace(
         UPLOADER=join("$PIOPACKAGES_DIR", "tool-micronucleus", "micronucleus"),
         UPLOADERFLAGS=[
@@ -71,7 +70,7 @@ target_elf = env.BuildFirmware(["m"] + CORELIBS)
 # Target: Build the firmware file
 #
 
-if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu"):
+if "cortex" in env.get("BOARD_OPTIONS", {}).get("build", {}).get("cpu", ""):
     if "uploadlazy" in COMMAND_LINE_TARGETS:
         target_firm = join("$BUILD_DIR", "firmware.bin")
     else:
