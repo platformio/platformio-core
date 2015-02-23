@@ -9,7 +9,7 @@
         },
         "framework": "arduino",
         "name": "Digispark (Default - 16.5mhz)",
-        "platform": "digistump",
+        "platform": "atmelavr",
         "upload": {
             "disable_flushing": false,
             "maximum_ram_size": 512,
@@ -29,7 +29,7 @@
         },
         "framework": "arduino",
         "name": "Digispark Pro (Default 16 Mhz)",
-        "platform": "digistump",
+        "platform": "atmelavr",
         "upload": {
             "disable_flushing": false,
             "maximum_ram_size": 512,
@@ -49,7 +49,7 @@
         },
         "framework": "arduino",
         "name": "Digispark Pro (16 Mhz) (32 byte buffer)",
-        "platform": "digistump",
+        "platform": "atmelavr",
         "upload": {
             "disable_flushing": false,
             "maximum_ram_size": 512,
@@ -69,7 +69,7 @@
         },
         "framework": "arduino",
         "name": "Digispark Pro (16 Mhz) (64 byte buffer)",
-        "platform": "digistump",
+        "platform": "atmelavr",
         "upload": {
             "disable_flushing": false,
             "maximum_ram_size": 512,
@@ -94,7 +94,7 @@
         },
         "framework": "arduino",
         "name": "Digistump DigiX",
-        "platform": "digistump",
+        "platform": "atmelsam",
         "upload": {
             "disable_flushing": false,
             "maximum_ram_size": 28672,

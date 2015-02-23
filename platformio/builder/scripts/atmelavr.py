@@ -57,20 +57,31 @@ env = DefaultEnvironment()
 
 SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")))
 
-env.Replace(
-    UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
-    UPLOADERFLAGS=[
-        "-v",
-        "-D",  # disable auto erase for flash memory
-        "-p", "$BOARD_MCU",
-        "-C",
-        '"%s"' % join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude.conf"),
-        "-c", "$UPLOAD_PROTOCOL"
-    ],
+if "digispark" in env.get("BOARD_OPTIONS", {}).get("build", {}).get("core", ""):
+    env.Replace(
+        UPLOADER=join("$PIOPACKAGES_DIR", "tool-micronucleus", "micronucleus"),
+        UPLOADERFLAGS=[
+            "-c", "$UPLOAD_PROTOCOL",
+            "--timeout", "60"
+        ],
+        UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i'
+    )
 
-    UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i',
-    UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
-)
+else:
+    env.Replace(
+        UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
+        UPLOADERFLAGS=[
+            "-v",
+            "-D",  # disable auto erase for flash memory
+            "-p", "$BOARD_MCU",
+            "-C",
+            '"%s"' % join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude.conf"),
+            "-c", "$UPLOAD_PROTOCOL"
+        ],
+
+        UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i',
+        UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
+    )
 
 CORELIBS = env.ProcessGeneral()
 

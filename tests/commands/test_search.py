@@ -19,4 +19,4 @@ def test_search_json_output(clirunner, validate_cliresult):
 def test_search_raw_output(clirunner, validate_cliresult):
     result = clirunner.invoke(cli, ["arduino"])
     validate_cliresult(result)
-    assert "digistump" in result.output
+    assert "teensy" in result.output
