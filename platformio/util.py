@@ -146,14 +146,14 @@ def exec_command(*args, **kwargs):
         result['out'], result['err'] = p.communicate()
         result['returncode'] = p.returncode
     except KeyboardInterrupt:
+        raise exception.AbortedByUser()
+    finally:
         for s in ("stdout", "stderr"):
             if isinstance(kwargs[s], AsyncPipe):
                 kwargs[s].close()
-        raise exception.AbortedByUser()
 
     for s in ("stdout", "stderr"):
         if isinstance(kwargs[s], AsyncPipe):
-            kwargs[s].close()
             result[s[3:]] = "\n".join(kwargs[s].get_buffer())
 
     for k, v in result.iteritems():

@@ -1,6 +1,6 @@
 cache:
     directories:
-        - $HOME/.platformio 
+        - $HOME/.platformio
 
 language: python
 python:
@@ -9,7 +9,8 @@ python:
 env:
     - TOX_ENV=docs
     - TOX_ENV=lint
-    - TOX_ENV=py27       
+    - TOX_ENV=py26
+    - TOX_ENV=py27
 
 install:
     - pip install tox

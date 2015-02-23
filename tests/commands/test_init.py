@@ -40,13 +40,15 @@ def test_init_special_board(platformio_setup, clirunner, validate_cliresult):
         uno = util.get_boards("uno")
         config = util.get_project_config()
         expected_result = [
-            ('platform', uno['platform']),
-            ('framework', uno['framework']),
-            ('board', 'uno'),
-            ('targets', 'upload')
+            ("platform", str(uno['platform'])),
+            ("framework", str(uno['framework'])),
+            ("board", "uno"),
+            ("targets", "upload")
         ]
+
         assert config.has_section("env:autogen_uno")
-        assert config.items("env:autogen_uno") == expected_result
+        assert len(set(expected_result).symmetric_difference(
+            set(config.items("env:autogen_uno")))) == 0
 
 
 def test_init_disable_auto_uploading(platformio_setup, clirunner,
@@ -58,12 +60,13 @@ def test_init_disable_auto_uploading(platformio_setup, clirunner,
         validate_pioproject(getcwd())
         config = util.get_project_config()
         expected_result = [
-            ('platform', 'atmelavr'),
-            ('framework', 'arduino'),
-            ('board', 'uno')
+            ("platform", "atmelavr"),
+            ("framework", "arduino"),
+            ("board", "uno")
         ]
         assert config.has_section("env:autogen_uno")
-        assert config.items("env:autogen_uno") == expected_result
+        assert len(set(expected_result).symmetric_difference(
+            set(config.items("env:autogen_uno")))) == 0
 
 
 def test_init_incorrect_board(clirunner):
