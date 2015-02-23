@@ -37,7 +37,6 @@ Examples
     $ platformio search
     atmelavr    - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
     atmelsam    - An embedded platform for Atmel SAM microcontrollers (with Arduino Framework)
-    digistump   - An embedded platform for Digistump boards (with Arduino Framework)
     stm32       - An embedded platform for STMicroelectronics ARM microcontrollers
     teensy      - An embedded platform for Teensy boards (with Arduino Framework)
     timsp430    - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
@@ -59,5 +58,4 @@ Examples
     $ platformio search arduino
     atmelavr    - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
     atmelsam    - An embedded platform for Atmel SAM microcontrollers (with Arduino Framework)
-    digistump   - An embedded platform for Digistump boards (with Arduino Framework)
     teensy      - An embedded platform for Teensy boards (with Arduino Framework)

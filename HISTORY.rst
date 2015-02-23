@@ -4,11 +4,31 @@ Release History
 1.0.0 (2015-?)
 --------------
 
-* Added support for *ARM*-based credit-card computers: `Raspberry Pi <http://www.raspberrypi.org>`_,
-  `BeagleBoard <http://beagleboard.org>`_ and `CubieBoard <http://cubieboard.org>`_
-* Added new boards to `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+* Added support for *ARM*-based credit-card computers:
+  `Raspberry Pi <http://www.raspberrypi.org>`_,
+  `BeagleBone <http://beagleboard.org>`_ and `CubieBoard <http://cubieboard.org>`_
+* Added `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`_
+  development platform with supported boards: *Arduino Due and Digistump DigiX*
+  (`issue #71 <https://github.com/ivankravets/platformio/issues/71>`_)
+* Added `stm32 <http://docs.platformio.org/en/latest/platforms/stm32.html>`_
+  development platform with supported boards: *Discovery kit for STM32L151/152,
+  STM32F303xx, STM32F407/417 lines*
+  (`issue #73 <https://github.com/ivankravets/platformio/issues/73>`_)
+* Added `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`_
+  development platform with supported boards: *Teensy 2.x & 3.x*
+  (`issue #72 <https://github.com/ivankravets/platformio/issues/72>`_)
+* Added new *Arduino* boards to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
   platform: *Arduino NG, Arduino BT, Arduino Esplora, Arduino Ethernet,
   Arduino Robot Control, Arduino Robot Motor and Arduino Yun*
+* Added support for *Adafruit* boards to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform: *Adafruit Flora and Adafruit Trinkets*
+  (`issue #65 <https://github.com/ivankravets/platformio/issues/65>`_)
+* Added support for *Digispark* boards to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform: *Digispark USB Development Board and Digispark Pro*
+  (`issue #47 <https://github.com/ivankravets/platformio/issues/47>`_)
 * Covered code with tests (`issue #2 <https://github.com/ivankravets/platformio/issues/2>`_)
 * Refactored *Library Dependency Finder* (issues
   `#48 <https://github.com/ivankravets/platformio/issues/48>`_,
@@ -18,22 +38,28 @@ Release History
   option to ``[platformio]`` section of
   `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
   which allows to redefine location to project's source directory
+  (`issue #83 <https://github.com/ivankravets/platformio/issues/83>`_)
 * Added ``--json-output`` option to
   `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`__
   and `platformio search <http://docs.platformio.org/en/latest/userguide/cmd_search.html>`__
-  commands which allow to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
+  commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
 * Allowed to ignore some libs from *Library Dependency Finder* via
   `ignore_libs <http://docs.platformio.org/en/latest/projectconf.html#ignore-libs>`_ option
 * Improved `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command: asynchronous output for build process, timing and detailed
-  information about environment configuration (`issue #74 <https://github.com/ivankravets/platformio/issues/74>`_)
-* Output compiled size and static memory usage with `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
+  information about environment configuration
+  (`issue #74 <https://github.com/ivankravets/platformio/issues/74>`_)
+* Output compiled size and static memory usage with
+  `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command (`issue #59 <https://github.com/ivankravets/platformio/issues/59>`_)
 * Updated `framework-arduino` AVR & SAM to 1.6 stable version
-* Fixed an issue with the libraries that are git repositories (`issue #49 <https://github.com/ivankravets/platformio/issues/49>`_)
-* Fixed handling of assembly files (`issue #58 <https://github.com/ivankravets/platformio/issues/58>`_)
-* Fixed compiling error if space is in user's folder (`issue #56 <https://github.com/ivankravets/platformio/issues/56>`_)
+* Fixed an issue with the libraries that are git repositories
+  (`issue #49 <https://github.com/ivankravets/platformio/issues/49>`_)
+* Fixed handling of assembly files
+  (`issue #58 <https://github.com/ivankravets/platformio/issues/58>`_)
+* Fixed compiling error if space is in user's folder
+  (`issue #56 <https://github.com/ivankravets/platformio/issues/56>`_)
 * Fixed `AttributeError: 'module' object has no attribute 'disable_warnings'`
   when a version of `requests` package is less then 2.4.0
 * Fixed bug with invalid process's "return code" when PlatformIO has internal
@@ -43,8 +69,11 @@ Release History
 0.10.2 (2015-01-06)
 -------------------
 
-* Fixed an issue with ``--json-output`` (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
-* Fixed an exception during `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`__ under Windows OS (`issue #45 <https://github.com/ivankravets/platformio/issues/45>`_)
+* Fixed an issue with ``--json-output``
+  (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
+* Fixed an exception during
+  `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`__
+  under Windows OS (`issue #45 <https://github.com/ivankravets/platformio/issues/45>`_)
 
 0.10.1 (2015-01-02)
 -------------------
