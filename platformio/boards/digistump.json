@@ -13,7 +13,7 @@
         "upload": {
             "disable_flushing": false,
             "maximum_ram_size": 512,
-            "maximum_size": 14844,
+            "maximum_size": 6012,
             "protocol": "digispark",
             "use_1200bps_touch": false,
             "wait_for_upload_port": false

@@ -37,7 +37,7 @@
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
-            "maximum_size": 5310,
+            "maximum_size": 8192,
             "protocol": "usbtiny"
         }
     },
@@ -56,7 +56,7 @@
         "upload": {
             "maximum_ram_size": 512,
             "protocol": "usbtiny",
-            "maximum_size": 5310
+            "maximum_size": 8192
         }
     },
 

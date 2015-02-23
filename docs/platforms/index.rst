@@ -15,6 +15,9 @@ MCU, upload protocol or etc. Please use ``board`` option.
     :maxdepth: 2
 
     atmelavr
+    atmelsam
+    stm32
     timsp430
     titiva
+    teensy
     creating_platform
