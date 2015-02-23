@@ -7,10 +7,9 @@
 
 from os.path import join
 
-from SCons.Script import Import, Return
+from SCons.Script import DefaultEnvironment, Return
 
-env = None
-Import("env")
+env = DefaultEnvironment()
 
 env.Replace(
     PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-spl")
@@ -62,4 +61,4 @@ libs.append(envsafe.BuildLibrary(
     ignore_files
 ))
 
-Return("env libs")
+Return("libs")

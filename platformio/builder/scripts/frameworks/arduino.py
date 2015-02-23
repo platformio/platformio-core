@@ -8,10 +8,9 @@
 from os import listdir, walk
 from os.path import isfile, join
 
-from SCons.Script import Import, Return
+from SCons.Script import DefaultEnvironment, Return
 
-env = None
-Import("env")
+env = DefaultEnvironment()
 
 BOARD_OPTS = env.get("BOARD_OPTIONS", {})
 BOARD_BUILDOPTS = BOARD_OPTS.get("build", {})
@@ -179,4 +178,4 @@ if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
         join("$PLATFORMFW_DIR", "system", "libsam", "source")
     ))
 
-Return("env libs")
+Return("libs")

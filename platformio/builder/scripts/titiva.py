@@ -12,8 +12,8 @@ from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
                           DefaultEnvironment, SConscript)
 
 env = DefaultEnvironment()
-env = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")),
-                 exports="env")
+
+SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
 env.Replace(
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-lm4flash", "lm4flash"),

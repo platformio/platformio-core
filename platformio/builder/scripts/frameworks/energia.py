@@ -7,10 +7,9 @@
 
 from os.path import join
 
-from SCons.Script import Import, Return
+from SCons.Script import DefaultEnvironment, Return
 
-env = None
-Import("env")
+env = DefaultEnvironment()
 
 env.Replace(
     PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-energia${PLATFORM[2:]}")
@@ -53,4 +52,4 @@ libs.append(env.BuildLibrary(
     join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
 ))
 
-Return("env libs")
+Return("libs")

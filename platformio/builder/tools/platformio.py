@@ -27,11 +27,10 @@ def ProcessGeneral(env):
             env.ConvertInoToCpp()
         for f in env['FRAMEWORK'].split(","):
             SConscriptChdir(0)
-            env, libs = SConscript(
-                env.subst(join("$PIOBUILDER_DIR", "scripts",
-                               "frameworks", "%s.py" % f.strip().lower())),
-                exports="env")
-            corelibs += libs
+            corelibs += SConscript(
+                env.subst(join("$PIOBUILDER_DIR", "scripts", "frameworks",
+                               "%s.py" % f.strip().lower()))
+            )
     return corelibs
 
 
@@ -341,7 +340,7 @@ def AutodetectUploadPort(env):
     if "UPLOAD_PORT" not in env:
         for item in get_serialports():
             if "VID:PID" in item['hwid']:
-                print ("Auto-detected UPLOAD_PORT: %s" % item['port'])
+                print "Auto-detected UPLOAD_PORT: %s" % item['port']
                 env.Replace(UPLOAD_PORT=item['port'])
                 break
 
