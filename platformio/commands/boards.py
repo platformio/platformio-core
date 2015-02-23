@@ -25,7 +25,7 @@ def cli(query, json_output):  # pylint: disable=R0912
             grpboards[data['platform']] = {}
         grpboards[data['platform']][type_] = data
 
-    for (platform, boards) in grpboards.items():
+    for (platform, boards) in sorted(grpboards.items()):
         if query:
             search_data = json.dumps(boards).lower()
             if query.lower() not in search_data.lower():
