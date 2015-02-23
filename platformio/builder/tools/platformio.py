@@ -337,6 +337,19 @@ def WaitForNewSerialPort(_, before):
     return new_port
 
 
+def AutodetectUploadPort(env):
+    if "UPLOAD_PORT" not in env:
+        for item in get_serialports():
+            if "VID:PID" in item['hwid']:
+                print ("Auto-detected UPLOAD_PORT: %s" % item['port'])
+                env.Replace(UPLOAD_PORT=item['port'])
+                break
+
+    if "UPLOAD_PORT" not in env:
+        Exit("Error: Please specify `upload_port` for environment or use "
+             "global `--upload-port` option.\n")
+
+
 def exists(_):
     return True
 
@@ -352,4 +365,5 @@ def generate(env):
     env.AddMethod(FlushSerialBuffer)
     env.AddMethod(TouchSerialPort)
     env.AddMethod(WaitForNewSerialPort)
+    env.AddMethod(AutodetectUploadPort)
     return env

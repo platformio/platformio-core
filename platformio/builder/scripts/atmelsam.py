@@ -10,7 +10,10 @@ from os.path import join
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
                           DefaultEnvironment, SConscript)
 
-from platformio.util import get_serialports
+
+def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
+    env.AutodetectUploadPort()
+
 
 env = DefaultEnvironment()
 env = SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")),
@@ -27,9 +30,8 @@ env.Replace(
         "--verify",
         "--boot",
         "--reset"
-
     ],
-    UPLOADBINCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
+    UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
 )
 
 env.Append(
@@ -71,28 +73,9 @@ AlwaysBuild(target_size)
 # Target: Upload by default .bin file
 #
 
-upload = env.Alias(
-    ["upload", "uploadlazy"], target_firm, ("$UPLOADBINCMD"))
+upload = env.Alias(["upload", "uploadlazy"], target_firm,
+                   [BeforeUpload, "$UPLOADCMD"])
 AlwaysBuild(upload)
-
-#
-# Check for $UPLOAD_PORT variable
-#
-
-is_uptarget = (set(["upload", "uploadlazy"]) & set(COMMAND_LINE_TARGETS))
-
-if is_uptarget:
-    # try autodetect upload port
-    if "UPLOAD_PORT" not in env:
-        for item in get_serialports():
-            if "VID:PID" in item['hwid']:
-                print "Auto-detected UPLOAD_PORT: %s" % item['port']
-                env.Replace(UPLOAD_PORT=item['port'])
-                break
-
-    if "UPLOAD_PORT" not in env:
-        print("WARNING!!! Please specify environment 'upload_port' or use "
-              "global --upload-port option.\n")
 
 #
 # Setup default targets

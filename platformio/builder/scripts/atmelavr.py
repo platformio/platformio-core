@@ -9,31 +9,24 @@ from os.path import join
 from time import sleep
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
-                          DefaultEnvironment, Exit, SConscript)
+                          DefaultEnvironment, SConscript)
 
 from platformio.util import get_serialports
 
 
-def before_upload(target, source, env):  # pylint: disable=W0613,W0621
-
-    def _autodetect_upload_port():
-        if "UPLOAD_PORT" not in env:
-            for item in get_serialports():
-                if "VID:PID" in item['hwid']:
-                    print "Auto-detected UPLOAD_PORT: %s" % item['port']
-                    env.Replace(UPLOAD_PORT=item['port'])
-                    break
-
-        if "UPLOAD_PORT" not in env:
-            Exit("Error: Please specify `upload_port` for environment or use "
-                 "global `--upload-port` option.\n")
+def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
     def _rpi_sysgpio(path, value):
         with open(path, "w") as f:
             f.write(str(value))
 
-    if env.subst("$UPLOAD_PROTOCOL") != "usbtiny":
-        _autodetect_upload_port()
+    if "UPLOAD_SPEED" in env:
+        env.Append(
+            UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"]
+        )
+
+    if "usb" not in env.subst("$UPLOAD_PROTOCOL"):
+        env.AutodetectUploadPort()
         env.Append(
             UPLOADERFLAGS=["-P", "$UPLOAD_PORT"]
         )
@@ -79,11 +72,6 @@ env.Replace(
     UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
 )
 
-if "UPLOAD_SPEED" in env:
-    env.Append(
-        UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"]
-    )
-
 CORELIBS = env.ProcessGeneral()
 
 #
@@ -119,8 +107,8 @@ AlwaysBuild(target_size)
 # Target: Upload by default .hex file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_firm, [
-    before_upload, "$UPLOADHEXCMD"])
+upload = env.Alias(["upload", "uploadlazy"], target_firm,
+                   [BeforeUpload, "$UPLOADHEXCMD"])
 AlwaysBuild(upload)
 
 #
@@ -128,7 +116,7 @@ AlwaysBuild(upload)
 #
 
 uploadeep = env.Alias("uploadeep", target_eep, [
-    before_upload, "$UPLOADEEPCMD"])
+    BeforeUpload, "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
 
 #

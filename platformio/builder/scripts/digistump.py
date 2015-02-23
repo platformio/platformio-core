@@ -10,9 +10,15 @@ from os.path import join
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
                           DefaultEnvironment, SConscript)
 
+
+def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
+    if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu"):
+        env.AutodetectUploadPort()
+
+
 env = DefaultEnvironment()
 
-if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu", ""):
+if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu"):
     env = SConscript(
         env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")),
         exports="env")
@@ -25,7 +31,8 @@ if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu", ""):
             "--erase",
             "--write",
             "--verify",
-            "--boot"
+            "--boot",
+            "--reset"
         ],
         UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
     )
@@ -64,7 +71,7 @@ target_elf = env.BuildFirmware(["m"] + CORELIBS)
 # Target: Build the firmware file
 #
 
-if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu", ""):
+if "cortex" in env.get("BOARD_OPTIONS").get("build").get("cpu"):
     if "uploadlazy" in COMMAND_LINE_TARGETS:
         target_firm = join("$BUILD_DIR", "firmware.bin")
     else:
@@ -86,7 +93,8 @@ AlwaysBuild(target_size)
 # Target: Upload by default firmware file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_firm, ("$UPLOADCMD"))
+upload = env.Alias(["upload", "uploadlazy"], target_firm,
+                   [BeforeUpload, "$UPLOADCMD"])
 AlwaysBuild(upload)
 
 #
