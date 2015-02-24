@@ -25,7 +25,7 @@ Packages
         `GDB <http://www.gnu.org/software/gdb/>`_
     * - ``tool-bossac``
       - uploader
-      - `Bossac <https://sourceforge.net/projects/b-o-s-s-a/>`_
+      - `BOSSA CLI <https://sourceforge.net/projects/b-o-s-s-a/>`_
     * - ``framework-arduino``
       -
       - See below in :ref:`atmelsam_frameworks`
@@ -48,7 +48,7 @@ Frameworks
       - Name
       - Reference
     * - ``arduino``
-      - Arduino Wiring-based Framework
+      - Arduino Wiring-based Framework (SAM Core, 1.6)
       - `Documentation <http://arduino.cc/en/Reference/HomePage>`_
 
 

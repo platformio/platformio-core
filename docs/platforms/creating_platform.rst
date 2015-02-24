@@ -59,21 +59,48 @@ Packages
     * - ``tool-avrdude``
       - uploader
       - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
+    * - ``tool-bossac``
+      - uploader
+      - `BOSSA CLI <https://sourceforge.net/projects/b-o-s-s-a/>`_
+    * - ``tool-micronucleus``
+      - uploader
+      - `Micronucleus <https://github.com/micronucleus/micronucleus>`_
     * - ``tool-mspdebug``
       - uploader
       - `MSPDebug <http://mspdebug.sourceforge.net>`_
     * - ``tool-lm4flash``
       - uploader
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
+    * - ``tool-stlink``
+      - uploader
+      - `STLink <https://github.com/texane/stlink>`_
+    * - ``tool-teensy``
+      - uploader
+      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
     * - ``framework-arduinoavr``
       -
       - `Arduino Wiring-based Framework (AVR Core, 1.6 branch) <http://arduino.cc/en/Reference/HomePage>`_
+    * - ``framework-arduinosam``
+      -
+      - `Arduino Wiring-based Framework (SAM Core, 1.6 branch) <http://arduino.cc/en/Reference/HomePage>`_
+    * - ``framework-arduinoteensy``
+      -
+      - `Arduino Wiring-based Framework <http://arduino.cc/en/Reference/HomePage>`_
     * - ``framework-energiamsp430``
       -
       - `Energia Wiring-based Framework (MSP430 Core) <http://energia.nu/reference/>`_
     * - ``framework-energiativa``
       -
       - `Energia Wiring-based Framework (LM4F Core)  <http://energia.nu/reference/>`_
+    * - ``framework-cmsis``
+      -
+      - `Vendor-independent hardware abstraction layer for the Cortex-M processor series <http://www.arm.com/products/processors/cortex-m/cortex-microcontroller-software-interface-standard.php>`_
+    * - ``framework-spl``
+      -
+      - `Standard Peripheral Library for STM32 MCUs <http://www.st.com/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890>`_
+    * - ``framework-opencm3``
+      -
+      - `libOpenCM3 Framework <http://www.libopencm3.org>`_
 
 .. _platform_creating_manifest_file:
 

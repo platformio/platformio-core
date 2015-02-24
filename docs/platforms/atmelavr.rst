@@ -54,7 +54,7 @@ Frameworks
       - Name
       - Reference
     * - ``arduino``
-      - Arduino Wiring-based Framework (AVR Core, 1.6 branch)
+      - Arduino Wiring-based Framework (AVR Core, 1.6)
       - `Documentation <http://arduino.cc/en/Reference/HomePage>`_
 
 
@@ -299,7 +299,7 @@ Adafruit
     * - ``flora8``
       - `Adafruit Flora
         <http://www.adafruit.com/product/659>`_
-      - ATmega32 ``atmega32u4``
+      - ATmega32u4 ``atmega32u4``
       - 8 MHz ``8000000L``
       - 32 Kb
       - 2.5 Kb
@@ -307,7 +307,7 @@ Adafruit
       - `Adafruit Trinket 8MHz 3.3V LOGIC
         <http://www.adafruit.com/products/1500>`_
       - ATtiny85 ``attiny85``
-      - 8 MHz ``16000000L``
+      - 8 MHz ``8000000L``
       - 8 Kb
       - 0.5 Kb
     * - ``trinket5``
@@ -318,33 +318,33 @@ Adafruit
       - 8 Kb
       - 0.5 Kb
     * - ``protrinket3``
-      - `Pro Trinket 3V/12MHz (USB)
+      - `Adafruit Pro Trinket 3V/12MHz (USB)
         <http://www.adafruit.com/products/2010>`_
-      - ATmega328 ``atmega328p``
+      - ATmega328P ``atmega328p``
       - 12 MHz ``12000000L``
       - 32 Kb
       - 2 Kb
     * - ``protrinket3ftdi``
-      - `Pro Trinket 3V/12MHz (FTDI)
+      - `Adafruit Pro Trinket 3V/12MHz (FTDI)
         <http://www.adafruit.com/products/2010>`_
-      - ATmega328 ``atmega328p``
+      - ATmega328P ``atmega328p``
       - 12 MHz ``12000000L``
       - 32 Kb
       - 2 Kb
     * - ``protrinket5``
-      - `Pro Trinket 5V/16MHz (USB)
+      - `Adafruit Pro Trinket 5V/16MHz (USB)
         <http://www.adafruit.com/products/2000>`_
-      - ATmega328 ``atmega328p``
+      - ATmega328P ``atmega328p``
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2 Kb
     * - ``protrinket5ftdi``
-      - `Pro Trinket 5V/16MHz (FTDI)
+      - `Adafruit Pro Trinket 5V/16MHz (FTDI)
         <http://www.adafruit.com/products/2000>`_
-      - ATmega328 ``atmega328p``
+      - ATmega328P ``atmega328p``
       - 16 MHz ``16000000L``
       - 32 Kb
-      - 2 Kb  
+      - 2 Kb
 
 More detailed information you can find here
 `Adafruits boards <https://learn.adafruit.com/category/trinket>`_.
@@ -379,7 +379,7 @@ Digispark
       - ATtiny167 ``attiny167``
       - 16 Mhz ``16000000L``
       - 16 kb
-      - 0.5 Kb 
+      - 0.5  Kb
 
 More detailed information you can find here
 `Digistump Development Boards <http://digistump.com/wiki/start>`_.
