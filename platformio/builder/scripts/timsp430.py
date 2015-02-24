@@ -16,17 +16,16 @@ env = DefaultEnvironment()
 
 env.Replace(
     AR="msp430-ar",
-    AS="msp430-gcc",
+    AS="msp430-as",
     CC="msp430-gcc",
     CXX="msp430-g++",
     OBJCOPY="msp430-objcopy",
     RANLIB="msp430-ranlib",
     SIZETOOL="msp430-size",
 
-    ASCOM=("$AS -o $TARGET -c -x assembler-with-cpp "
-           "$CFLAGS $CCFLAGS $_CCCOMCOM $SOURCES"),
-
     ARFLAGS=["rcs"],
+
+    ASPPFLAGS=["-x", "assembler-with-cpp"],
 
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)

@@ -11,17 +11,16 @@ env = DefaultEnvironment()
 
 env.Replace(
     AR="arm-none-eabi-ar",
-    AS="arm-none-eabi-gcc",
+    AS="arm-none-eabi-as",
     CC="arm-none-eabi-gcc",
     CXX="arm-none-eabi-g++",
     OBJCOPY="arm-none-eabi-objcopy",
     RANLIB="arm-none-eabi-ranlib",
     SIZETOOL="arm-none-eabi-size",
 
-    ASCOM=("$AS -o $TARGET -c -x assembler-with-cpp "
-           "$CFLAGS $CCFLAGS $_CCCOMCOM $SOURCES"),
-
     ARFLAGS=["rcs"],
+
+    ASPPFLAGS=["-x", "assembler-with-cpp"],
 
     CPPFLAGS=[
         "-g",   # include debugging info (so errors include line numbers)
@@ -58,8 +57,7 @@ if env.get("BOARD_OPTIONS", {}).get("build", {}).get("cpu", "")[-2:] == "m4":
     env.Append(
         ASFLAGS=[
             "-mfloat-abi=hard",
-            "-mfpu=fpv4-sp-d16",
-            "-fsingle-precision-constant"
+            "-mfpu=fpv4-sp-d16"
         ],
         CCFLAGS=[
             "-mfloat-abi=hard",

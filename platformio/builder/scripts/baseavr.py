@@ -11,19 +11,18 @@ env = DefaultEnvironment()
 
 env.Replace(
     AR="avr-ar",
-    AS="avr-gcc",
+    AS="avr-as",
     CC="avr-gcc",
     CXX="avr-g++",
     OBJCOPY="avr-objcopy",
     RANLIB="avr-ranlib",
     SIZETOOL="avr-size",
 
-    ASCOM=("$AS -o $TARGET -c -x assembler-with-cpp "
-           "$CFLAGS $CCFLAGS $_CCCOMCOM $SOURCES"),
-
     ARFLAGS=["rcs"],
 
-    CCFLAGS=[
+    ASPPFLAGS=["-x", "assembler-with-cpp"],
+
+    CPPFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
         "-Os",  # optimize for size
         "-Wall",  # show warnings
@@ -33,13 +32,13 @@ env.Replace(
         "-mmcu=$BOARD_MCU"
     ],
 
+    CPPDEFINES=[
+        "F_CPU=$BOARD_F_CPU"
+    ],
+
     CXXFLAGS=[
         "-fno-exceptions",
         "-fno-threadsafe-statics"
-    ],
-
-    CPPDEFINES=[
-        "F_CPU=$BOARD_F_CPU"
     ],
 
     LINKFLAGS=[
