@@ -99,7 +99,8 @@ class Upgrader(object):
 
 
 def after_upgrade(ctx):
-    if app.get_state_item("last_version", None) == __version__:
+    last_version = app.get_state_item("last_version", "0.0.0")
+    if last_version == __version__:
         return
 
     # promotion
@@ -118,8 +119,8 @@ def after_upgrade(ctx):
     ))
     click.secho("Thanks a lot!\n", fg="green")
 
-    last_version = app.get_state_item("last_version", "0.0.0")
     if last_version == "0.0.0":
+        app.set_state_item("last_version", __version__)
         return
 
     click.secho("Please wait while upgrading PlatformIO ...",
