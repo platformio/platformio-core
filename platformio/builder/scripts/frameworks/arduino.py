@@ -52,7 +52,7 @@ if "usb_product" in BOARD_BUILDOPTS:
 
 if env.get("PLATFORM") == "teensy":
     ARDUINO_USBDEFINES += [
-        "ARDUINO=106",
+        "ARDUINO=10600",
         "TEENSYDUINO=%d" % ARDUINO_VERSION
     ]
 else:
