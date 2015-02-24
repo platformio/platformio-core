@@ -57,7 +57,8 @@ env = DefaultEnvironment()
 
 SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")))
 
-if "digispark" in env.get("BOARD_OPTIONS", {}).get("build", {}).get("core", ""):
+if "digispark" in env.get(
+        "BOARD_OPTIONS", {}).get("build", {}).get("core", ""):
     env.Replace(
         UPLOADER=join("$PIOPACKAGES_DIR", "tool-micronucleus", "micronucleus"),
         UPLOADERFLAGS=[
