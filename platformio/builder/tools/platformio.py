@@ -9,12 +9,20 @@ from os.path import basename, dirname, isdir, isfile, join, normpath
 from time import sleep
 
 from SCons.Script import Exit, SConscript, SConscriptChdir
+from SCons.Util import case_sensitive_suffixes
 from serial import Serial
 
 from platformio.util import get_serialports
 
 
 def ProcessGeneral(env):
+    # fix ASM handling under non-casitive OS
+    if not case_sensitive_suffixes('.s', '.S'):
+        env.Replace(
+            AS="$CC",
+            ASCOM="$ASPPCOM"
+        )
+
     if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
         env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
 

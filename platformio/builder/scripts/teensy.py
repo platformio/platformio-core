@@ -19,14 +19,13 @@ elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
 
 env.Append(
     CPPDEFINES=[
-        "USB_PID=null",
-        "USB_VID=null",
         "USB_SERIAL",
         "LAYOUT_US_ENGLISH"
     ],
 
     CXXFLAGS=[
-        "-std=gnu++0x"
+        "-std=gnu++0x",
+        "-felide-constructors"
     ]
 )
 
