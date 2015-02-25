@@ -28,8 +28,8 @@ Packages
         `SimulAVR <http://www.nongnu.org/simulavr/>`_
     * - ``tool-teensy``
       - uploader
-      - `Flash Programmer <https://www.pjrc.com/teensy/loader.html>`_
-    * - ``framework-arduino``
+      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
+    * - ``framework-arduinoteensy``
       -
       - See below in :ref:`teensy_frameworks`
 
@@ -73,26 +73,26 @@ Boards
       - Flash
       - RAM
     * - ``teensy20``
-      - `Teensy USB Board, Version 2.0 <https://www.pjrc.com/store/teensy.html>`_
-      - ATmega32 ``atmega32u4``
+      - `Teensy 2.0 <https://www.pjrc.com/store/teensy.html>`_
+      - ATmega32u4 ``atmega32u4``
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2.5 Kb
     * - ``teensy20pp``
-      - `Teensy++ USB Board, Version 2.0 <https://www.pjrc.com/store/teensypp.html>`_
+      - `Teensy++ 2.0 <https://www.pjrc.com/store/teensypp.html>`_
       - AT90USB1289 ``at90usb1286``
       - 16 MHz ``16000000L``
       - 128 Kb
       - 8 Kb
     * - ``teensy30``
-      - `Teensy USB Board, Version 3.0 <https://www.pjrc.com/store/teensy3.html>`_
-      - mk20dx128 ``cortex-m4``
+      - `Teensy 3.0 <https://www.pjrc.com/store/teensy3.html>`_
+      - MK20DX128 ``cortex-m4``
       - 48 Mhz ``48000000L``
       - 128 kb
       - 16 Kb
     * - ``teensy31``
-      - `Teensy USB Board, Version 3.1 <https://www.pjrc.com/store/teensy31.html>`_
-      - mk20dx256 ``cortex-m4``
+      - `Teensy 3.1 <https://www.pjrc.com/store/teensy31.html>`_
+      - MK20DX256 ``cortex-m4``
       - 72 Mhz ``72000000L``
       - 256 kb
       - 64 Kb
