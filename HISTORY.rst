@@ -12,7 +12,7 @@ Release History
   (`issue #71 <https://github.com/ivankravets/platformio/issues/71>`_)
 * Added `stm32 <http://docs.platformio.org/en/latest/platforms/stm32.html>`_
   development platform with supported boards: *Discovery kit for STM32L151/152,
-  STM32F303xx, STM32F407/417 lines*
+  STM32F303xx, STM32F407/417 lines* and `libOpenCM3 Framework <http://www.libopencm3.org>`_
   (`issue #73 <https://github.com/ivankravets/platformio/issues/73>`_)
 * Added `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`_
   development platform with supported boards: *Teensy 2.x & 3.x*
