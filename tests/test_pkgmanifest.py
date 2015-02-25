@@ -61,7 +61,7 @@ def test_package(package_data, sfpkglist):
 
     # check sha1 sum
     if sfpkglist is None:
-        return
+        return pytest.skip("SF is offline")
     pkgname = basename(package_data['url'])
     assert pkgname in sfpkglist
     assert package_data['sha1'] == sfpkglist.get(pkgname, {}).get("sha1")
