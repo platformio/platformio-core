@@ -31,9 +31,9 @@ Packages
       - See below in :ref:`atmelsam_frameworks`
 
 
-.. note::
-    You can install ``atmelsam`` platform with these packages
-    via :ref:`cmd_install` command.
+.. warning::
+    **Linux Users:** Don't forget to install "udev" rules file
+    `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
 .. _atmelsam_frameworks:

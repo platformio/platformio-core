@@ -34,9 +34,9 @@ Packages
       - See below in :ref:`teensy_frameworks`
 
 
-.. note::
-    You can install ``teensy`` platform with these packages
-    via :ref:`cmd_install` command.
+.. warning::
+    **Linux Users:** Don't forget to install "udev" rules file
+    `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
 .. _teensy_frameworks:
