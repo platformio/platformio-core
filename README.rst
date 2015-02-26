@@ -7,13 +7,13 @@ PlatformIO
 .. image:: https://gemnasium.com/ivankravets/platformio.png
     :target: https://gemnasium.com/ivankravets/platformio
     :alt: Dependency Status
-.. image:: https://pypip.in/version/platformio/badge.png
+.. image:: https://pypip.in/version/platformio/badge.png?style=flat
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
-.. image:: https://pypip.in/download/platformio/badge.png
+.. image:: https://pypip.in/download/platformio/badge.png?style=flat
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Downloads
-.. image:: https://pypip.in/license/platformio/badge.png
+.. image:: https://pypip.in/license/platformio/badge.png?style=flat
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
 
