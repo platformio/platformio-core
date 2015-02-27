@@ -110,7 +110,7 @@ where you can setup different environments with specific options (platform
 type, firmware uploading settings, pre-built framework, build flags and many
 more).
 
-It has support for many popular embedded platforms like these:
+It has support for the most popular embedded platforms:
 
 * ``atmelavr`` `Atmel AVR <http://platformio.org/#!/platforms/atmelavr>`_
   (including *Arduino*-based boards, *Microduino, Raspduino, Teensy*)
@@ -118,7 +118,7 @@ It has support for many popular embedded platforms like these:
   (including *Arduino*-based boards, *Digistump DigiX*)
 * ``stm32`` `STM32 <http://platformio.org/#!/platforms/stm32>`_
   (including *STM32 Discovery* Kits, CMSIS, SPL, libOpenCM3)
-* ``teensy`` `STM32 <http://platformio.org/#!/platforms/teensy>`_
+* ``teensy`` `Teensy <http://platformio.org/#!/platforms/teensy>`_
   (including *Teensy 2 and 3* USB boards)
 * ``timsp430`` `TI MSP430 <http://platformio.org/#!/platforms/timsp430>`_
   (including *MSP430* LaunchPads)
