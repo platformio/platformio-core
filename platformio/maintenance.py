@@ -2,6 +2,7 @@
 # See LICENSE for details.
 
 import re
+import struct
 from os import remove
 from os.path import isdir, isfile, join
 from shutil import rmtree
@@ -12,9 +13,9 @@ import click
 from platformio import __version__, app, telemetry
 from platformio.commands.install import cli as cmd_install
 from platformio.commands.lib import lib_update as cmd_libraries_update
-from platformio.commands.update import cli as cli_platforms_update
+from platformio.commands.update import cli as cli_update
 from platformio.commands.upgrade import get_latest_version
-from platformio.exception import UpgraderFailed
+from platformio.exception import GetLatestVersionError, UpgraderFailed
 from platformio.libmanager import LibraryManager
 from platformio.platforms.base import PlatformFactory
 from platformio.util import get_home_dir, get_lib_dir
@@ -42,23 +43,32 @@ class Upgrader(object):
         self.from_version = self.version_to_int(from_version)
         self.to_version = self.version_to_int(to_version)
 
+        self._upgraders = (
+            (self.version_to_int("0.9.0"), self._upgrade_to_0_9_0),
+            (self.version_to_int("1.0.0"), self._upgrade_to_1_0_0)
+        )
+
     @staticmethod
     def version_to_int(version):
-        return int(re.sub(r"[^\d]+", "", version))
+        match = re.match(r"(\d+)\.(\d+)\.(\d+)(\D+)?", version)
+        assert match is not None and len(match.groups()) is 4
+        verchrs = [chr(int(match.group(i))) for i in range(1, 4)]
+        verchrs.append(chr(255 if match.group(4) is None else 0))
+        return struct.unpack(">I", "".join(verchrs))
 
     def run(self, ctx):
         if self.from_version > self.to_version:
             return True
 
         result = [True]
-        for v in (90, ):
-            if self.from_version >= v:
+        for item in self._upgraders:
+            if self.from_version >= item[0]:
                 continue
-            result.append(getattr(self, "_upgrade_to_%d" % v)(ctx))
+            result.append(item[1](ctx))
 
         return all(result)
 
-    def _upgrade_to_90(self, ctx):  # pylint: disable=R0201
+    def _upgrade_to_0_9_0(self, ctx):  # pylint: disable=R0201
         prev_platforms = []
 
         # remove platform's folder (obsoleted package structure)
@@ -79,9 +89,18 @@ class Upgrader(object):
 
         return True
 
+    def _upgrade_to_1_0_0(self, ctx):  # pylint: disable=R0201
+        installed_platforms = PlatformFactory.get_platforms(
+            installed=True).keys()
+        if installed_platforms:
+            ctx.invoke(cmd_install, platforms=installed_platforms)
+        ctx.invoke(cli_update)
+        return True
+
 
 def after_upgrade(ctx):
-    if app.get_state_item("last_version", None) == __version__:
+    last_version = app.get_state_item("last_version", "0.0.0")
+    if last_version == __version__:
         return
 
     # promotion
@@ -100,13 +119,13 @@ def after_upgrade(ctx):
     ))
     click.secho("Thanks a lot!\n", fg="green")
 
-    if not isdir(get_home_dir()):
+    if last_version == "0.0.0":
+        app.set_state_item("last_version", __version__)
         return
 
     click.secho("Please wait while upgrading PlatformIO ...",
                 fg="yellow")
 
-    last_version = app.get_state_item("last_version", "0.0.0")
     u = Upgrader(last_version, __version__)
     if u.run(ctx):
         app.set_state_item("last_version", __version__)
@@ -129,7 +148,12 @@ def check_platformio_upgrade():
     last_check['platformio_upgrade'] = int(time())
     app.set_state_item("last_check", last_check)
 
-    latest_version = get_latest_version()
+    try:
+        latest_version = get_latest_version()
+    except GetLatestVersionError:
+        click.secho("Failed to check for PlatformIO upgrades", fg="red")
+        return
+
     if (latest_version == __version__ or
             Upgrader.version_to_int(latest_version) <
             Upgrader.version_to_int(__version__)):
@@ -178,7 +202,7 @@ def check_internal_updates(ctx, what):
     else:
         click.secho("Please wait while updating %s ..." % what, fg="yellow")
         if what == "platforms":
-            ctx.invoke(cli_platforms_update)
+            ctx.invoke(cli_update)
         elif what == "libraries":
             ctx.invoke(cmd_libraries_update)
         click.echo()

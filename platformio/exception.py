@@ -13,6 +13,15 @@ class PlatformioException(Exception):
             return Exception.__str__(self)
 
 
+class ReturnErrorCode(PlatformioException):
+    pass
+
+
+class AbortedByUser(PlatformioException):
+
+    MESSAGE = "Aborted by user"
+
+
 class UnknownPlatform(PlatformioException):
 
     MESSAGE = "Unknown platform '%s'"
@@ -110,7 +119,7 @@ class GetSerialPortsError(PlatformioException):
 
 class GetLatestVersionError(PlatformioException):
 
-    MESSAGE = "Can't retrieve latest PlatformIO version"
+    MESSAGE = "Can't retrieve the latest PlatformIO version"
 
 
 class APIRequestError(PlatformioException):

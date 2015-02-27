@@ -6,6 +6,7 @@
             "mcu": "msp430f5529",
             "variant": "launchpad_f5529"
         },
+        "framework": "energia",
         "name": "LaunchPad w/ msp430f5529 (16MHz)",
         "platform": "timsp430",
         "upload": {
@@ -21,6 +22,7 @@
             "mcu": "msp430f5529",
             "variant": "launchpad_f5529"
         },
+        "framework": "energia",
         "name": "LaunchPad w/ msp430f5529 (25MHz)",
         "platform": "timsp430",
         "upload": {
@@ -36,6 +38,7 @@
             "mcu": "msp430fr5739",
             "variant": "fraunchpad"
         },
+        "framework": "energia",
         "name": "FraunchPad w/ msp430fr5739",
         "platform": "timsp430",
         "upload": {
@@ -51,6 +54,7 @@
             "mcu": "msp430fr5969",
             "variant": "launchpad_fr5969"
         },
+        "framework": "energia",
         "name": "LaunchPad w/ msp430fr5969",
         "platform": "timsp430",
         "upload": {
@@ -66,6 +70,7 @@
             "mcu": "msp430g2231",
             "variant": "launchpad"
         },
+        "framework": "energia",
         "name": "LaunchPad w/ msp430g2231 (1MHz)",
         "platform": "timsp430",
         "upload": {
@@ -81,6 +86,7 @@
             "mcu": "msp430g2452",
             "variant": "launchpad"
         },
+        "framework": "energia",
         "name": "LaunchPad w/ msp430g2452 (16MHz)",
         "platform": "timsp430",
         "upload": {
@@ -96,6 +102,7 @@
             "mcu": "msp430g2553",
             "variant": "launchpad"
         },
+        "framework": "energia",
         "name": "LaunchPad w/ msp430g2553 (16MHz)",
         "platform": "timsp430",
         "upload": {

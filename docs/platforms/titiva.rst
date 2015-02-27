@@ -28,12 +28,15 @@ Packages
       - uploader
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
     * - ``framework-energiativa``
-      - framework
+      -
+      - See below in :ref:`titiva_frameworks`
+    * - ``framework-opencm3``
+      -
       - See below in :ref:`titiva_frameworks`
 
-.. note::
-    You can install ``titiva`` platform with these packages
-    via :ref:`cmd_install` command.
+.. warning::
+    **Linux Users:** Don't forget to install "udev" rules file
+    `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
 .. _titiva_frameworks:
@@ -49,7 +52,10 @@ Frameworks
       - Reference
     * - ``energia``
       - Energia Wiring-based Framework (LM4F Core)
-      - `Documentation <http://energia.nu/reference/>`_
+      - `Documentation <http://energia.nu/reference/>`__
+    * - ``opencm3``
+      - libOpenCM3 Framework
+      - `Documentation <http://www.libopencm3.org>`__
 
 
 Boards

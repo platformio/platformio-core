@@ -7,10 +7,13 @@
 
 from os.path import join
 
-from SCons.Script import Import, Return
+from SCons.Script import DefaultEnvironment, Return
 
-env = None
-Import("env")
+env = DefaultEnvironment()
+
+env.Replace(
+    PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-energia${PLATFORM[2:]}")
+)
 
 ENERGIA_VERSION = int(
     open(join(env.subst("$PLATFORMFW_DIR"),
@@ -33,15 +36,10 @@ env.Append(
     ]
 )
 
-# specific linker script for TIVA devices
-if "ldscript" in env.subst("${BOARD_OPTIONS['build']}"):
+if env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "lm4f":
     env.Append(
-        LINKFLAGS=["-T", join(
-            "$PLATFORMFW_DIR", "cores",
-            "${BOARD_OPTIONS['build']['core']}",
-            "${BOARD_OPTIONS['build']['ldscript']}")]
+        LINKFLAGS=["-Wl,--entry=ResetISR"]
     )
-
 
 #
 # Target: Build Core Library

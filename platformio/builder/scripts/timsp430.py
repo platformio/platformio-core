@@ -9,26 +9,23 @@
 from os.path import join
 from platform import system
 
-from SCons.Script import (AlwaysBuild, Builder, COMMAND_LINE_TARGETS, Default,
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
 
 env = DefaultEnvironment()
 
 env.Replace(
     AR="msp430-ar",
-    AS="msp430-gcc",
+    AS="msp430-as",
     CC="msp430-gcc",
     CXX="msp430-g++",
     OBJCOPY="msp430-objcopy",
     RANLIB="msp430-ranlib",
+    SIZETOOL="msp430-size",
 
     ARFLAGS=["rcs"],
 
-    ASFLAGS=[
-        "-g",  # include debugging info (so errors include line numbers)
-        "-x", "-assembler-with-cpp",
-        "-mmcu=$BOARD_MCU"
-    ],
+    ASPPFLAGS=["-x", "assembler-with-cpp"],
 
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
@@ -50,6 +47,8 @@ env.Replace(
         "-mmcu=$BOARD_MCU",
         "-Wl,-gc-sections,-u,main"
     ],
+
+    SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-mspdebug", "mspdebug"),
     UPLOADERFLAGS=[
@@ -81,26 +80,33 @@ CORELIBS = env.ProcessGeneral()
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(CORELIBS + ["m"])
+target_elf = env.BuildFirmware(["m"] + CORELIBS)
 
 #
 # Target: Build the .hex
 #
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_hex = join("$BUILD_DIR", "firmware.hex")
+    target_firm = join("$BUILD_DIR", "firmware.hex")
 else:
-    target_hex = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+    target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+
+#
+# Target: Print binary size
+#
+
+target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
+AlwaysBuild(target_size)
 
 #
 # Target: Upload firmware
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_hex, "$UPLOADCMD")
+upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
 AlwaysBuild(upload)
 
 #
 # Target: Define targets
 #
 
-Default(target_hex)
+Default([target_firm, target_size])

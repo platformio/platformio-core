@@ -3,18 +3,22 @@
 Installation
 ============
 
-*PlatformIO* is written in `Python <http://python.org/download/>`_ and works
-on *Mac OS X*, *Linux*, *Windows OS* and Credit-card *ARM*-based
-computers (*Raspberry Pi*).
+**PlatformIO** is written in `Python <https://www.python.org/downloads/>`_ and works
+on Mac OS X, Linux, Windows OS and *ARM*-based credit-card
+computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
+`BeagleBoard <http://beagleboard.org>`_,
+`CubieBoard <http://cubieboard.org>`_).
+
+.. contents::
 
 System requirements
 -------------------
 
 * **Operating systems:**
     * Mac OS X
-    * Linux
+    * Linux, +ARM
     * Windows
-* `Python 2.6 or Python 2.7 <http://python.org/download/>`_
+* `Python 2.6 or Python 2.7 <https://www.python.org/downloads/>`_
 
 All commands below should be executed in
 `Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_
@@ -36,7 +40,7 @@ Super-Quick (Mac / Linux)
 -------------------------
 
 To install or upgrade *PlatformIO* paste that at a *Terminal* prompt
-(you might need to run ``sudo`` first):
+(**you might need** to run ``sudo`` first):
 
 .. code-block:: bash
 
@@ -62,7 +66,7 @@ On *Windows OS* it may look like:
     C:\Python27\python.exe get-platformio.py
 
 .. warning::
-    **Mac OS Users**: If you have an error ``pkg_resources.DistributionNotFound`` please
+    If you have an error ``pkg_resources.DistributionNotFound`` please
     upgrade *SetupTools* package: ``$ [sudo] pip uninstall setuptools``
     and ``$ [sudo] pip install setuptools``.
     Then re-install *PlatformIO*: ``$ [sudo] pip uninstall platformio``
@@ -111,3 +115,24 @@ For upgrading the ``platformio`` to new version please use this command:
     $ pip install -U platformio
 
 
+Development Version
+-------------------
+
+.. warning::
+    We don't recommend to use ``develop`` version in production.
+
+1. If you had have already installed PlatformIO, please uninstall it:
+
+.. code-block:: bash
+
+    $ pip uninstall platformio
+
+2. Install the latest PlatformIO from the ``develop`` branch:
+
+.. code-block:: bash
+
+    $ pip install https://github.com/ivankravets/platformio/archive/develop.zip
+
+If you want to be up-to-date with the latest ``develop`` version of PlatformIO,
+then you need to perform step #2 each time if you see the new commits in
+`PlatformIO GitHub repository <https://github.com/ivankravets/platformio/commits/develop>`_.

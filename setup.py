@@ -18,9 +18,9 @@ setup(
     url=__url__,
     license=__license__,
     install_requires=[
-        "click",
+        "click>=3.0",
         "pyserial",
-        "requests",
+        "requests>=2.4.0",
         # "SCons"
     ] + (["colorama"] if system() == "Windows" else []),
     packages=find_packages(),
@@ -31,7 +31,7 @@ setup(
         ]
     },
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
@@ -41,5 +41,7 @@ setup(
         "Topic :: Software Development",
         "Topic :: Software Development :: Build Tools",
         "Topic :: Software Development :: Compilers"
-    ]
+    ],
+    keywords=("builder library manager atmel avr sam teensy stm32 "
+              "ti msp430 tiva mbed arduino opencm3")
 )

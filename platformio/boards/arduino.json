@@ -1,8 +1,8 @@
 {
     "LilyPadUSB": {
         "build": {
-            "board": "AVR_LILYPAD_USB",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LILYPAD_USB",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
             "pid": "0x9208",
@@ -10,6 +10,7 @@
             "variant": "leonardo",
             "vid": "0x1B4F"
         },
+        "framework": "arduino",
         "name": "LilyPad Arduino USB",
         "platform": "atmelavr",
         "upload": {
@@ -24,12 +25,13 @@
     },
     "atmegangatmega168": {
         "build": {
-            "board": "AVR_NG",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_NG",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "standard"
         },
+        "framework": "arduino",
         "name": "Arduino NG or older ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -41,12 +43,13 @@
     },
     "atmegangatmega8": {
         "build": {
-            "board": "AVR_NG",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_NG",
             "f_cpu": "16000000L",
             "mcu": "atmega8",
             "variant": "standard"
         },
+        "framework": "arduino",
         "name": "Arduino NG or older ATmega8",
         "platform": "atmelavr",
         "upload": {
@@ -58,12 +61,13 @@
     },
     "btatmega168": {
         "build": {
-            "board": "AVR_BT",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_BT",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino BT ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -76,12 +80,13 @@
     },
     "btatmega328": {
         "build": {
-            "board": "AVR_BT",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_BT",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino BT ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -94,12 +99,13 @@
     },
     "diecimilaatmega168": {
         "build": {
-            "board": "AVR_DUEMILANOVE",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_DUEMILANOVE",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "standard"
         },
+        "framework": "arduino",
         "name": "Arduino Duemilanove or Diecimila ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -111,12 +117,13 @@
     },
     "diecimilaatmega328": {
         "build": {
-            "board": "AVR_DUEMILANOVE",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_DUEMILANOVE",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "standard"
         },
+        "framework": "arduino",
         "name": "Arduino Duemilanove or Diecimila ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -128,8 +135,8 @@
     },
     "esplora": {
         "build": {
-            "board": "AVR_ESPLORA",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ESPLORA",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x803c",
@@ -137,6 +144,7 @@
             "variant": "leonardo",
             "vid": "0x2341"
         },
+        "framework": "arduino",
         "name": "Arduino Esplora",
         "platform": "atmelavr",
         "upload": {
@@ -151,12 +159,13 @@
     },
     "ethernet": {
         "build": {
-            "board": "AVR_ETHERNET",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ETHERNET",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "ethernet"
         },
+        "framework": "arduino",
         "name": "Arduino Ethernet",
         "platform": "atmelavr",
         "upload": {
@@ -168,12 +177,13 @@
     },
     "fio": {
         "build": {
-            "board": "AVR_FIO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_FIO",
             "f_cpu": "8000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino Fio",
         "platform": "atmelavr",
         "upload": {
@@ -185,8 +195,8 @@
     },
     "leonardo": {
         "build": {
-            "board": "AVR_LEONARDO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LEONARDO",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8036",
@@ -194,6 +204,7 @@
             "variant": "leonardo",
             "vid": "0x2341"
         },
+        "framework": "arduino",
         "name": "Arduino Leonardo",
         "platform": "atmelavr",
         "upload": {
@@ -208,12 +219,13 @@
     },
     "lilypadatmega168": {
         "build": {
-            "board": "AVR_LILYPAD",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LILYPAD",
             "f_cpu": "8000000L",
             "mcu": "atmega168",
             "variant": "standard"
         },
+        "framework": "arduino",
         "name": "LilyPad Arduino ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -225,12 +237,13 @@
     },
     "lilypadatmega328": {
         "build": {
-            "board": "AVR_LILYPAD",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LILYPAD",
             "f_cpu": "8000000L",
             "mcu": "atmega328p",
             "variant": "standard"
         },
+        "framework": "arduino",
         "name": "LilyPad Arduino ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -242,12 +255,13 @@
     },
     "megaADK": {
         "build": {
-            "board": "AVR_ADK",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ADK",
             "f_cpu": "16000000L",
             "mcu": "atmega2560",
             "variant": "mega"
         },
+        "framework": "arduino",
         "name": "Arduino Mega ADK",
         "platform": "atmelavr",
         "upload": {
@@ -259,12 +273,13 @@
     },
     "megaatmega1280": {
         "build": {
-            "board": "AVR_MEGA",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_MEGA",
             "f_cpu": "16000000L",
             "mcu": "atmega1280",
             "variant": "mega"
         },
+        "framework": "arduino",
         "name": "Arduino Mega or Mega 2560 ATmega1280",
         "platform": "atmelavr",
         "upload": {
@@ -276,12 +291,13 @@
     },
     "megaatmega2560": {
         "build": {
-            "board": "AVR_MEGA2560",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_MEGA2560",
             "f_cpu": "16000000L",
             "mcu": "atmega2560",
             "variant": "mega"
         },
+        "framework": "arduino",
         "name": "Arduino Mega or Mega 2560 ATmega2560 (Mega 2560)",
         "platform": "atmelavr",
         "upload": {
@@ -293,8 +309,8 @@
     },
     "micro": {
         "build": {
-            "board": "AVR_MICRO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_MICRO",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8037",
@@ -302,6 +318,7 @@
             "variant": "micro",
             "vid": "0x2341"
         },
+        "framework": "arduino",
         "name": "Arduino Micro",
         "platform": "atmelavr",
         "upload": {
@@ -316,12 +333,13 @@
     },
     "miniatmega168": {
         "build": {
-            "board": "AVR_MINI",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_MINI",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino Mini ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -333,12 +351,13 @@
     },
     "miniatmega328": {
         "build": {
-            "board": "AVR_MINI",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_MINI",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino Mini ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -350,12 +369,13 @@
     },
     "nanoatmega168": {
         "build": {
-            "board": "AVR_NANO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_NANO",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino Nano ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -367,12 +387,13 @@
     },
     "nanoatmega328": {
         "build": {
-            "board": "AVR_NANO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_NANO",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino Nano ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -384,12 +405,13 @@
     },
     "pro16MHzatmega168": {
         "build": {
-            "board": "AVR_PRO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_PRO",
             "f_cpu": "16000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino Pro or Pro Mini ATmega168 (5V, 16 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -401,12 +423,13 @@
     },
     "pro16MHzatmega328": {
         "build": {
-            "board": "AVR_PRO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_PRO",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino Pro or Pro Mini ATmega328 (5V, 16 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -418,12 +441,13 @@
     },
     "pro8MHzatmega168": {
         "build": {
-            "board": "AVR_PRO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_PRO",
             "f_cpu": "8000000L",
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino Pro or Pro Mini ATmega168 (3.3V, 8 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -435,12 +459,13 @@
     },
     "pro8MHzatmega328": {
         "build": {
-            "board": "AVR_PRO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_PRO",
             "f_cpu": "8000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
+        "framework": "arduino",
         "name": "Arduino Pro or Pro Mini ATmega328 (3.3V, 8 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -452,8 +477,8 @@
     },
     "robotControl": {
         "build": {
-            "board": "AVR_ROBOT_CONTROL",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ROBOT_CONTROL",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8038",
@@ -461,6 +486,7 @@
             "variant": "robot_control",
             "vid": "0x2341"
         },
+        "framework": "arduino",
         "name": "Arduino Robot Control",
         "platform": "atmelavr",
         "upload": {
@@ -475,8 +501,8 @@
     },
     "robotMotor": {
         "build": {
-            "board": "AVR_ROBOT_MOTOR",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ROBOT_MOTOR",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8039",
@@ -484,6 +510,7 @@
             "variant": "robot_motor",
             "vid": "0x2341"
         },
+        "framework": "arduino",
         "name": "Arduino Robot Motor",
         "platform": "atmelavr",
         "upload": {
@@ -498,12 +525,13 @@
     },
     "uno": {
         "build": {
-            "board": "AVR_UNO",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_UNO",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "standard"
         },
+        "framework": "arduino",
         "name": "Arduino Uno",
         "platform": "atmelavr",
         "upload": {
@@ -515,8 +543,8 @@
     },
     "yun": {
         "build": {
-            "board": "AVR_YUN",
             "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_YUN",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
             "pid": "0x8041",
@@ -524,6 +552,7 @@
             "variant": "yun",
             "vid": "0x2341"
         },
+        "framework": "arduino",
         "name": "Arduino Yun",
         "platform": "atmelavr",
         "upload": {
@@ -535,6 +564,32 @@
             "use_1200bps_touch": true,
             "via_ssh": true,
             "wait_for_upload_port": true
+        }
+    },
+    "due": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-D__SAM3X8E__ -DARDUINO_SAM_DUE -DARDUINO_ARCH_SAM",
+            "f_cpu": "84000000L",
+            "mcu": "at91sam3x8e",
+            "cpu": "cortex-m3",
+            "pid": "0x003e",
+            "usb_product": "Arduino Due",
+            "variant": "arduino_due_x",
+            "vid": "0x2341",
+            "ldscript": "sam3x8e.ld"
+        },
+        "framework": "arduino",
+        "name": "Arduino Due (Programming Port)",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 28672,
+            "maximum_size": 524288,
+            "protocol": "sam-ba",
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": false
         }
     }
 }

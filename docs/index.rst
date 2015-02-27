@@ -21,17 +21,31 @@ platforms using only one command :ref:`cmd_run`. This happens due to
 options: platform type, firmware uploading settings, pre-built framework
 and many more.
 
-Each platform consists of packages which are located in own repository.
-Due to :ref:`cmd_update` command you will have up-to-date development
-instruments.
+Embedded Development. *Easier Than Ever.*
+-----------------------------------------
 
-**PlatformIO** is well suited for **embedded development**. It can:
+* Colourful command-line output
+* Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>`
+* Configurable build :ref:`-flags/-options <projectconf_build_flags>`
+* Integration with :ref:`development environments (IDE) <ide>`
+* Pre-built tool chains, frameworks for the popular Hardware Platforms
 
-* Automatically analyse dependency
-* Reliably detect build changes
-* Build framework or library source code to static library
+Smart Code Builder. *Fast and Reliable.*
+----------------------------------------
+
+* Reliable, automatic dependency analysis and detection of build changes
+* Improved support for parallel builds
+* Ability to share built files in a cache
 * Lookup for external libraries which are installed via :ref:`librarymanager`
-* Upload firmware to your device
+
+The Missing Library Manager. *It's here!*
+-----------------------------------------
+
+* Friendly Command-Line Interface
+* Modern `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
+* Library dependency management
+* Automatic library updating
+* It runs on Windows, Mac OS X, and Linux (+ARM).
 
 
 Contents

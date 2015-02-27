@@ -1,0 +1,56 @@
+{
+    "stm32f4discovery": {
+        "build": {
+            "core": "stm32",
+            "extra_flags": "-DSTM32F40_41xxx",
+            "f_cpu": "168000000L",
+            "ldscript": "stm32f405x6.ld",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f407vgt6",
+            "variant": "stm32f4"            
+        },
+        "framework": "cmsis",
+        "name": "STM32F4Discovery (168 MHz) with digital accelerometer, digital microphone, audio DAC",
+        "platform": "stm32",
+        "upload": {
+            "maximum_ram_size": 131071,
+            "maximum_size": 1048575
+        }
+    },
+    "stm32ldiscovery": {
+        "build": {
+            "core": "stm32",
+            "extra_flags": "-DSTM32L1XX_MD",
+            "f_cpu": "32000000L",
+            "ldscript": "stm32l15xx6.ld",
+            "cpu": "cortex-m3",
+            "mcu": "stm32l152rbt6",
+            "variant": "stm32l1"            
+        },
+        "framework": "cmsis",
+        "name": "STM32LDiscovery (32 MHz) ultra low-power development kit",
+        "platform": "stm32",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 131072
+        }
+    },
+    "stm32f3discovery": {
+        "build": {
+            "core": "stm32",
+            "extra_flags": "-DSTM32F303xC",
+            "f_cpu": "72000000L",
+            "ldscript": "stm32f30xx.ld",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f303vct6",
+            "variant": "stm32f3"
+        },
+        "framework": "cmsis",
+        "name": "STM32F3Discovery (72 MHz) with accelerometer, gyroscope and e-compass",
+        "platform": "stm32",
+        "upload": {
+            "maximum_ram_size": 262144,
+            "maximum_size": 131072
+        }
+    }
+}

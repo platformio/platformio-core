@@ -4,7 +4,6 @@
 from email.utils import parsedate_tz
 from math import ceil
 from os.path import getsize, join
-from subprocess import check_output
 from time import mktime
 
 from click import progressbar
@@ -12,7 +11,7 @@ from requests import get
 
 from platformio.exception import (FDSHASumMismatch, FDSizeMismatch,
                                   FDUnrecognizedStatusCode)
-from platformio.util import change_filemtime
+from platformio.util import change_filemtime, exec_command
 
 
 class FileDownloader(object):
@@ -67,10 +66,12 @@ class FileDownloader(object):
 
         dlsha1 = None
         try:
-            dlsha1 = check_output(["sha1sum", self._destination])
+            result = exec_command(["sha1sum", self._destination])
+            dlsha1 = result['out']
         except OSError:
             try:
-                dlsha1 = check_output(["shasum", "-a", "1", self._destination])
+                result = exec_command(["shasum", "-a", "1", self._destination])
+                dlsha1 = result['out']
             except OSError:
                 pass
 

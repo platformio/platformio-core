@@ -90,7 +90,7 @@ class LibraryManager(object):
 
         info = self.get_info(id_)
         rename(tmplib_dir, join(self.lib_dir, "%s_ID%d" % (
-            re.sub(r"[^\da-z]+", "_", info['name'], flags=re.I), id_)))
+            re.sub(r"[^\da-zA-Z]+", "_", info['name']), id_)))
 
         telemetry.on_event(
             category="LibraryManager", action="Install",

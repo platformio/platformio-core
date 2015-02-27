@@ -19,8 +19,16 @@ The sections and their allowable values are described below.
 
 A ``platformio`` section is used for overriding default configuration options
 
+.. note::
+    Relative path is allowed for directory option:
+
+    * ``~`` will be expanded to user's home directory
+    * ``../`` or ``..\`` go up to one folder
+
 Options
 ~~~~~~~
+
+.. _projectconf_pio_home_dir:
 
 ``home_dir``
 ^^^^^^^^^^^^
@@ -31,14 +39,26 @@ external libraries, service data and etc.
 A default value is user's home directory: *Unix* - ``~/.platformio``,
 Windows - ``%HOMEPATH%\.platformio``.
 
-
 ``lib_dir``
-^^^^^^^^^^^^
+^^^^^^^^^^^
 
 This directory is used to store external libraries downloaded by
 :ref:`librarymanager`.
 
 A default value is ``$PIO_HOME_DIR/lib``.
+
+``src_dir``
+^^^^^^^^^^^
+
+The path to project's source directory. PlatformIO uses it for :ref:`cmd_run`
+command.
+
+A default value is ``$PROJECT_DIR/src``.
+
+.. note::
+    This option is useful for people who migrate from Arduino/Energia IDEs where
+    source directory should have the same name like the main source file.
+    See `example <https://github.com/ivankravets/platformio/tree/develop/examples/atmelavr-and-arduino/arduino-own-src_dir>`__ project with own source directory.
 
 [env:NAME]
 ----------
@@ -242,6 +262,19 @@ For more detailed information about available flags/options go to:
 
 This is option ``srcbuild_flags`` has the same behaviour like ``build_flags``
 but will be applied only for project source code from ``src`` directory.
+
+``ignore_libs``
+^^^^^^^^^^^^^^^
+
+Specify libraries which should be ignored by ``Library Dependency Finder``
+
+Example:
+
+.. code-block::   ini
+
+    [env:ignore_some_libs]
+    ignore_libs = SPI,EngduinoV3_ID123
+
 
 .. _projectconf_examples:
 

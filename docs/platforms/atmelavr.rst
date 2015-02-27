@@ -29,14 +29,17 @@ Packages
     * - ``tool-avrdude``
       - uploader
       - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
+    * - ``tool-micronucleus``
+      - uploader
+      - `Micronucleus <https://github.com/micronucleus/micronucleus>`_
     * - ``framework-arduinoavr``
-      - framework
+      -
       - See below in :ref:`atmelavr_frameworks`
 
 
-.. note::
-    You can install ``atmelavr`` platform with these packages
-    via :ref:`cmd_install` command.
+.. warning::
+    **Linux Users:** Don't forget to install "udev" rules file
+    `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
 .. _atmelavr_frameworks:
@@ -51,7 +54,7 @@ Frameworks
       - Name
       - Reference
     * - ``arduino``
-      - Arduino Wiring-based Framework (AVR Core, 1.5.x branch)
+      - Arduino Wiring-based Framework (AVR Core, 1.6)
       - `Documentation <http://arduino.cc/en/Reference/HomePage>`_
 
 
@@ -75,6 +78,34 @@ Arduino
       - Frequency ``board_f_cpu``
       - Flash
       - RAM
+    * - ``atmegangatmega168``
+      - `Arduino NG or older (ATmega168)
+        <http://arduino.cc/en/main/boards>`_
+      - ATmega168 ``atmega168``
+      - 16 MHz ``16000000L``
+      - 16 Kb
+      - 1 Kb
+    * - ``atmegangatmega8``
+      - `Arduino Arduino NG or older (ATmega8)
+        <http://arduino.cc/en/main/boards>`_
+      - ATmega8 ``atmega8``
+      - 16 MHz ``16000000L``
+      - 8 Kb
+      - 1 Kb
+    * - ``btatmega168``
+      - `Arduino BT (ATmega168)
+        <http://arduino.cc/en/main/boards>`_
+      - ATmega168 ``atmega168``
+      - 16 MHz ``16000000L``
+      - 16 Kb
+      - 1 Kb
+    * - ``btatmega328``
+      - `Arduino BT (ATmega328)
+        <http://arduino.cc/en/main/boards>`_
+      - ATmega328 ``atmega328``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2 Kb
     * - ``diecimilaatmega168``
       - `Arduino Diecimila or Duemilanove (ATmega168)
         <http://arduino.cc/en/Main/ArduinoBoardDiecimila>`_
@@ -86,6 +117,19 @@ Arduino
       - `Arduino Diecimila or Duemilanove (ATmega328)
         <http://arduino.cc/en/Main/ArduinoBoardDiecimila>`_
       - ATmega328 ``atmega328``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2 Kb
+    * - ``esplora``
+      - `Arduino Esplora <http://arduino.cc/en/Main/ArduinoBoardEsplora>`_
+      - ATmega32u4 ``atmega32u4``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2.5 Kb
+    * - ``ethernet``
+      - `Arduino Ethernet
+        <http://arduino.cc/en/Main/ArduinoBoardEthernet>`_
+      - ATmega328P ``atmega328p``
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2 Kb
@@ -123,6 +167,13 @@ Arduino
       - 8 MHz ``8000000L``
       - 32 Kb
       - 2 Kb
+    * - ``megaADK``
+      - `Arduino Mega ADK
+        <http://arduino.cc/en/Main/ArduinoBoardMegaADK>`_
+      - ATmega2560 ``atmega2560``
+      - 16 MHz ``16000000L``
+      - 256 Kb
+      - 8 Kb
     * - ``megaatmega1280``
       - `Arduino Mega (ATmega1280)
         <http://arduino.cc/en/Main/arduinoBoardMega>`_
@@ -133,13 +184,6 @@ Arduino
     * - ``megaatmega2560``
       - `Arduino Mega (ATmega2560)
         <http://arduino.cc/en/Main/arduinoBoardMega2560>`_
-      - ATmega2560 ``atmega2560``
-      - 16 MHz ``16000000L``
-      - 256 Kb
-      - 8 Kb
-    * - ``megaADK``
-      - `Arduino Mega ADK
-        <http://arduino.cc/en/Main/ArduinoBoardMegaADK>`_
       - ATmega2560 ``atmega2560``
       - 16 MHz ``16000000L``
       - 256 Kb
@@ -207,6 +251,20 @@ Arduino
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2 Kb
+    * - ``robotControl``
+      - `Arduino Robot Control
+        <http://arduino.cc/en/Main/Robot>`_
+      - ATmega32u4 ``atmega32u4``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2.5 Kb
+    * - ``robotMotor``
+      - `Arduino Robot Motor
+        <http://arduino.cc/en/Main/Robot>`_
+      - ATmega32u4 ``atmega32u4``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2.5 Kb
     * - ``uno``
       - `Arduino Uno
         <http://arduino.cc/en/Main/ArduinoBoardUno>`_
@@ -214,10 +272,117 @@ Arduino
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2 Kb
+    * - ``yun``
+      - `Arduino Yun
+        <http://arduino.cc/en/Main/ArduinoBoardYun>`_
+      - ATmega32u4 ``atmega32u4``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2.5 Kb
 
 More detailed information you can find here
 `Arduino boards <http://arduino.cc/en/Main/Products>`_.
 
+
+Adafruit
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller ``board_mcu``
+      - Frequency ``board_f_cpu``
+      - Flash
+      - RAM
+    * - ``flora8``
+      - `Adafruit Flora
+        <http://www.adafruit.com/product/659>`_
+      - ATmega32u4 ``atmega32u4``
+      - 8 MHz ``8000000L``
+      - 32 Kb
+      - 2.5 Kb
+    * - ``trinket3``
+      - `Adafruit Trinket 8MHz 3.3V LOGIC
+        <http://www.adafruit.com/products/1500>`_
+      - ATtiny85 ``attiny85``
+      - 8 MHz ``8000000L``
+      - 8 Kb
+      - 0.5 Kb
+    * - ``trinket5``
+      - `Adafruit Trinket 16MHz 5V LOGIC
+        <http://www.adafruit.com/products/1501>`_
+      - ATtiny85 ``ATtiny85``
+      - 16 MHz ``16000000L``
+      - 8 Kb
+      - 0.5 Kb
+    * - ``protrinket3``
+      - `Adafruit Pro Trinket 3V/12MHz (USB)
+        <http://www.adafruit.com/products/2010>`_
+      - ATmega328P ``atmega328p``
+      - 12 MHz ``12000000L``
+      - 32 Kb
+      - 2 Kb
+    * - ``protrinket3ftdi``
+      - `Adafruit Pro Trinket 3V/12MHz (FTDI)
+        <http://www.adafruit.com/products/2010>`_
+      - ATmega328P ``atmega328p``
+      - 12 MHz ``12000000L``
+      - 32 Kb
+      - 2 Kb
+    * - ``protrinket5``
+      - `Adafruit Pro Trinket 5V/16MHz (USB)
+        <http://www.adafruit.com/products/2000>`_
+      - ATmega328P ``atmega328p``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2 Kb
+    * - ``protrinket5ftdi``
+      - `Adafruit Pro Trinket 5V/16MHz (FTDI)
+        <http://www.adafruit.com/products/2000>`_
+      - ATmega328P ``atmega328p``
+      - 16 MHz ``16000000L``
+      - 32 Kb
+      - 2 Kb
+
+More detailed information you can find here
+`Adafruits boards <https://learn.adafruit.com/category/trinket>`_.
+
+
+Digispark
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller ``board_mcu``
+      - Frequency ``board_f_cpu``
+      - Flash
+      - RAM
+    * - ``digispark-tiny``
+      - `Digispark USB Development Board <http://digistump.com/products/1>`_
+      - ATtiny85 ``attiny85``
+      - 16 MHz ``16000000L``
+      - 8 Kb
+      - 0.5 Kb
+    * - ``digispark-pro``
+      - `Digispark Pro (Default 16 Mhz) <http://digistump.com/products/109>`_
+      - ATtiny167 ``attiny167``
+      - 16 MHz ``16000000L``
+      - 16 Kb
+      - 0.5 Kb
+    * - ``digispark-pro32``
+      - `Digispark Pro (16 Mhz) (32 byte buffer) <http://digistump.com/products/109>`_
+      - ATtiny167 ``attiny167``
+      - 16 Mhz ``16000000L``
+      - 16 kb
+      - 0.5  Kb
+
+More detailed information you can find here
+`Digistump Development Boards <http://digistump.com/wiki/start>`_.
 
 Engduino
 ~~~~~~~~
@@ -250,11 +415,6 @@ Engduino
       - 32 Kb
       - 2.5 Kb
 
-.. note::
-    If you are going to use onboard sensors, please install
-    `Engduino library <http://platformio.org/#!/lib/show/123/EngduinoV3>`_
-    with the examples.
-
 More detailed information you can find here
 `Engduino Site <http://www.engduino.org>`_.
 
@@ -273,63 +433,63 @@ Microduino
       - RAM
     * - ``168pa8m``
       - `Microduino Core (ATmega168P, 3.3V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
       - ATmega168P ``atmega168p``
       - 8 MHz ``8000000L``
       - 16 Kb
       - 1 Kb
     * - ``168pa16m``
       - `Microduino Core (ATmega168P, 5V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
       - ATmega168P ``atmega168p``
       - 16 MHz ``16000000L``
       - 16 Kb
       - 1 Kb
     * - ``328p8m``
       - `Microduino Core (ATmega328P, 3.3V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
       - ATmega328P ``atmega328p``
       - 8 MHz ``8000000L``
       - 32 Kb
       - 2 Kb
     * - ``328p16m``
       - `Microduino Core (ATmega328P, 5V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
       - ATmega328P ``atmega328p``
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2 Kb
     * - ``644pa8m``
       - `Microduino Core+ (ATmega644PA, 3.3V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
       - ATmega644PA ``atmega644p``
       - 8 MHz ``8000000L``
       - 64 Kb
       - 4 Kb
     * - ``644pa16m``
       - `Microduino Core+ (ATmega644PA, 5V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
       - ATmega644PA ``atmega644p``
       - 16 MHz ``16000000L``
       - 64 Kb
       - 4 Kb
     * - ``1284p8m``
       - `Microduino Core+ (Atmega1284P, 3.3V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
       - Atmega1284P ``atmega1284p``
       - 8 MHz ``8000000L``
       - 128 Kb
       - 16 Kb
     * - ``1284p16m``
       - `Microduino Core+ (Atmega1284P, 5V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
       - Atmega1284P ``atmega1284p``
       - 16 MHz ``16000000L``
       - 128 Kb
       - 16 Kb
     * - ``32u416m``
       - `Microduino-Core USB
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-CoreUSB>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-CoreUSB>`_
       - ATmega32u4 ``atmega32u4``
       - 16 MHz ``16000000L``
       - 32 Kb
@@ -337,7 +497,7 @@ Microduino
 
 
 More detailed information you can find here
-`Microduino boards <http://www.microduino.cc/wiki/index.php?title=Main_Page>`_.
+`Microduino boards <https://www.microduino.cc/wiki/index.php?title=Main_Page>`_.
 
 
 Raspduino

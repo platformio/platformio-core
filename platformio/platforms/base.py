@@ -1,14 +1,16 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import re
 from imp import load_source
 from os import listdir
 from os.path import isdir, isfile, join
 
-from platformio import exception
+import click
+
+from platformio import exception, util
 from platformio.app import get_state_item, set_state_item
 from platformio.pkgmanager import PackageManager
-from platformio.util import exec_command, get_home_dir, get_source_dir
 
 
 class PlatformFactory(object):
@@ -30,7 +32,7 @@ class PlatformFactory(object):
     @classmethod
     def get_platforms(cls, installed=False):
         platforms = {}
-        for d in (get_home_dir(), get_source_dir()):
+        for d in (util.get_home_dir(), util.get_source_dir()):
             pdir = join(d, "platforms")
             if not isdir(pdir):
                 continue
@@ -75,12 +77,16 @@ class PlatformFactory(object):
 class BasePlatform(object):
 
     PACKAGES = {}
+    LINE_ERROR_RE = re.compile(r"(\s+error|error[:\s]+)", re.I)
+
+    def __init__(self):
+        self._found_error = False
 
     def get_name(self):
         return self.__class__.__name__[:-8].lower()
 
     def get_build_script(self):
-        builtin = join(get_source_dir(), "builder", "scripts", "%s.py" %
+        builtin = join(util.get_source_dir(), "builder", "scripts", "%s.py" %
                        self.get_name())
         if isfile(builtin):
             return builtin
@@ -208,21 +214,39 @@ class BasePlatform(object):
 
         # append aliases of the installed packages
         for name, options in self.get_packages().items():
-            if name not in installed_packages:
+            if "alias" not in options or name not in installed_packages:
                 continue
             variables.append(
                 "PIOPACKAGE_%s=%s" % (options['alias'].upper(), name))
 
+        self._found_error = False
         try:
-            result = exec_command([
-                "scons",
-                "-Q",
-                "-f", join(get_source_dir(), "builder", "main.py")
-            ] + variables + targets)
+            result = util.exec_command(
+                [
+                    "scons",
+                    "-Q",
+                    "-f", join(util.get_source_dir(), "builder", "main.py")
+                ] + variables + targets,
+                stdout=util.AsyncPipe(self.on_run_out),
+                stderr=util.AsyncPipe(self.on_run_err)
+            )
         except OSError:
             raise exception.SConsNotInstalled()
 
-        return self.after_run(result)
+        assert "returncode" in result
+        if self._found_error:
+            result['returncode'] = 1
 
-    def after_run(self, result):  # pylint: disable=R0201
         return result
+
+    def on_run_out(self, line):  # pylint: disable=R0201
+        fg = None
+        if "is up to date" in line:
+            fg = "green"
+        click.secho(line, fg=fg)
+
+    def on_run_err(self, line):  # pylint: disable=R0201
+        is_error = self.LINE_ERROR_RE.search(line) is not None
+        if is_error:
+            self._found_error = True
+        click.secho(line, err=True, fg="red" if is_error else "yellow")

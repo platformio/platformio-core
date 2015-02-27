@@ -2,13 +2,14 @@
 # See LICENSE for details.
 
 import os
+import subprocess
 import sys
-from subprocess import check_output
+from platform import system
 from tempfile import NamedTemporaryFile
 
 
 CURINTERPRETER_PATH = os.path.normpath(sys.executable)
-IS_WINDOWS = sys.platform.startswith("win")
+IS_WINDOWS = system() == "Windows"
 
 
 def fix_winpython_pathenv():
@@ -51,8 +52,21 @@ def fix_winpython_pathenv():
     return True
 
 
+def exec_command(*args, **kwargs):
+    kwargs['stdout'] = subprocess.PIPE
+    kwargs['stderr'] = subprocess.PIPE
+    kwargs['shell'] = IS_WINDOWS
+
+    p = subprocess.Popen(*args, **kwargs)
+    out, err = p.communicate()
+
+    if p.returncode != 0:
+        raise Exception(err)
+    return out
+
+
 def exec_python_cmd(args):
-    return check_output([CURINTERPRETER_PATH] + args, shell=IS_WINDOWS).strip()
+    return exec_command([CURINTERPRETER_PATH] + args, shell=IS_WINDOWS).strip()
 
 
 def install_pip():
@@ -74,7 +88,10 @@ def install_pip():
 
 def install_pypi_packages(packages):
     for pipargs in packages:
-        print (exec_python_cmd(["-m", "pip", "install", "-U"] + pipargs))
+        print (exec_python_cmd([
+            "-m",
+            "pip.__main__" if sys.version_info < (2, 7, 0) else "pip",
+            "install", "-U"] + pipargs))
 
 
 def main():
@@ -113,10 +130,13 @@ def main():
                "successfully FINISHED! <==\n")
 
     try:
-        print (check_output("platformio", shell=IS_WINDOWS))
+        print (exec_command("platformio", shell=IS_WINDOWS))
     except:
         try:
-            print (exec_python_cmd(["-m", "platformio"]))
+            print (exec_python_cmd([
+                "-m",
+                "platformio.__main__" if sys.version_info < (2, 7, 0) else
+                "platformio"]))
         finally:
             print ("\n Please RESTART your Terminal Application and run "
                    "`platformio --help` command.")

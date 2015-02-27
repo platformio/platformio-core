@@ -1,12 +1,16 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+from datetime import datetime
+from os.path import getmtime, isdir, join
+from shutil import rmtree
+from time import time
+
 import click
 
-from platformio import app, exception, telemetry
+from platformio import app, exception, telemetry, util
 from platformio.commands.install import cli as cmd_install
 from platformio.platforms.base import PlatformFactory
-from platformio.util import get_project_config
 
 
 @click.command("run", short_help="Process project environments")
@@ -16,7 +20,7 @@ from platformio.util import get_project_config
 @click.pass_context
 def cli(ctx, environment, target, upload_port):
 
-    config = get_project_config()
+    config = util.get_project_config()
 
     if not config.sections():
         raise exception.ProjectEnvsNotAvailable()
@@ -25,6 +29,15 @@ def cli(ctx, environment, target, upload_port):
     if unknown:
         raise exception.UnknownEnvNames(", ".join(unknown))
 
+    # remove ".pioenvs" if project config is modified
+    _pioenvs_dir = util.get_pioenvs_dir()
+    if (isdir(_pioenvs_dir) and
+            getmtime(join(util.get_project_dir(), "platformio.ini")) >
+            getmtime(_pioenvs_dir)):
+        rmtree(_pioenvs_dir)
+
+    found_error = False
+    _first_done = False
     for section in config.sections():
         # skip main configuration section
         if section == "platformio":
@@ -37,16 +50,49 @@ def cli(ctx, environment, target, upload_port):
             # echo("Skipped %s environment" % style(envname, fg="yellow"))
             continue
 
-        click.echo("Processing %s environment:" %
-                   click.style(envname, fg="cyan"))
-
         options = {}
         for k, v in config.items(section):
             options[k] = v
-        process_environment(ctx, envname, options, target, upload_port)
+
+        if _first_done:
+            click.echo()
+
+        if not process_environment(ctx, envname, options, target, upload_port):
+            found_error = True
+        _first_done = True
+
+    if found_error:
+        raise exception.ReturnErrorCode()
 
 
 def process_environment(ctx, name, options, targets, upload_port):
+    terminal_width, _ = click.get_terminal_size()
+    start_time = time()
+
+    click.echo("[%s] Processing %s (%s)" % (
+        datetime.now().strftime("%c"),
+        click.style(name, fg="cyan", bold=True),
+        ", ".join(["%s: %s" % (k, v) for k, v in options.iteritems()])
+    ))
+    click.secho("-" * terminal_width, bold=True)
+
+    result = _run_environment(ctx, name, options, targets, upload_port)
+
+    is_error = result['returncode'] != 0
+    summary_text = " Took %.2f seconds " % (time() - start_time)
+    half_line = "=" * ((terminal_width - len(summary_text) - 10) / 2)
+    click.echo("%s [%s]%s%s" % (
+        half_line,
+        (click.style(" ERROR ", fg="red", bold=True)
+         if is_error else click.style("SUCCESS", fg="green", bold=True)),
+        summary_text,
+        half_line
+    ), err=is_error)
+
+    return not is_error
+
+
+def _run_environment(ctx, name, options, targets, upload_port):
     variables = ["PIOENV=" + name]
     if upload_port:
         variables.append("UPLOAD_PORT=%s" % upload_port)
@@ -77,7 +123,4 @@ def process_environment(ctx, name, options, targets, upload_port):
         ctx.invoke(cmd_install, platforms=[platform])
 
     p = PlatformFactory.newPlatform(platform)
-    result = p.run(variables, envtargets)
-    click.secho(result['out'], fg="green")
-    click.secho(result['err'],
-                fg="red" if "Error" in result['err'] else "yellow")
+    return p.run(variables, envtargets)

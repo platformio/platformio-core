@@ -10,7 +10,11 @@ from platformio.util import get_boards
 
 @click.command("list", short_help="Pre-configured Embedded Boards")
 @click.argument("query", required=False)
-def cli(query):
+@click.option("--json-output", is_flag=True)
+def cli(query, json_output):  # pylint: disable=R0912
+
+    if json_output:
+        return ouput_boards_json(query)
 
     BOARDLIST_TPL = ("{type:<30} {mcu:<13} {frequency:<8} "
                      " {flash:<7} {ram:<6} {name}")
@@ -21,7 +25,7 @@ def cli(query):
             grpboards[data['platform']] = {}
         grpboards[data['platform']][type_] = data
 
-    for (platform, boards) in grpboards.items():
+    for (platform, boards) in sorted(grpboards.items()):
         if query:
             search_data = json.dumps(boards).lower()
             if query.lower() not in search_data.lower():
@@ -55,6 +59,17 @@ def cli(query):
 
             click.echo(BOARDLIST_TPL.format(
                 type=click.style(type_, fg="cyan"), mcu=data['build']['mcu'],
-                frequency="%dMhz" % (int(data['build']['f_cpu'][:-1])
-                                     / 1000000),
+                frequency="%dMhz" % (
+                    int(data['build']['f_cpu'][:-1]) / 1000000),
                 flash=flash_size, ram=ram_size, name=data['name']))
+
+
+def ouput_boards_json(query):
+    result = {}
+    for type_, data in get_boards().items():
+        if query:
+            search_data = "%s %s" % (type_, json.dumps(data).lower())
+            if query.lower() not in search_data.lower():
+                continue
+        result[type_] = data
+    click.echo(json.dumps(result))

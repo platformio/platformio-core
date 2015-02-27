@@ -100,9 +100,9 @@ def set_setting(name, value):
     try:
         if "validator" in defdata:
             value = defdata['validator']()
-        elif (isinstance(defdata['value'], bool)
-              and not isinstance(value, bool)):
-            value = str(value).lower() in ("yes", "y", "1")
+        elif isinstance(defdata['value'], bool):
+            if not isinstance(value, bool):
+                value = str(value).lower() in ("yes", "y", "1")
         elif isinstance(defdata['value'], int):
             value = int(value)
     except Exception:

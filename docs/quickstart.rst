@@ -12,28 +12,37 @@ Quickstart
 2. Find board ``type`` on this :ref:`Embedded Boards <platforms>` page or
    via :ref:`cmd_boards` command.
 
-3. Initialize new PlatformIO based project with the pre-configured
-   environments for your boards:
+3. Initialize new PlatformIO based project via :ref:`cmd_init` command with the
+   pre-configured environments for your boards:
 
 .. code-block:: bash
 
     $ platformio init --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+
+    Would you like to enable firmware auto-uploading when project is successfully built using `platformio run` command?
+    Don't forget that you can upload firmware manually using `platformio run --target upload` command. [y/N]: y
 
     The current working directory *** will be used for the new project.
     You can specify another project directory via
     `platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.
 
     The next files/directories will be created in ***
-    `platformio.ini` - Project Configuration File
-    `src` - a source directory. Put your source code here
-    `lib` - a directory for the project specific libraries
+    platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
+    src - Put your source code here
+    lib - Put here project specific or 3-rd party libraries
     Do you want to continue? [y/N]: y
     Project has been successfully initialized!
-    Now you can process it with `platformio run` command.
+    Useful commands:
+    `platformio run` - process/build project from the current directory
+    `platformio run --target upload` or `platformio run -t upload` - upload firmware to embedded board
+    `platformio run --target clean` - clean project (remove compiled files)
 
-More detailed information about this command is here :ref:`cmd_init`.
+Put your source code ``*.h, *.c, *.cpp or *.ino`` files to ``src`` directory.
 
 4. Process the project's environments.
+
+Change working directory to the project's root where is located
+:ref:`Project Configuration File (platformio.ini) <projectconf>` and run:
 
 .. code-block:: bash
 

@@ -29,14 +29,17 @@ Examples
     ----------
     Package: toolchain-atmelavr
     Alias: toolchain
-    Location: /Users/ikravets/.platformio/atmelavr/tools/toolchain
     Version: 1
+    Installed: 2014-12-13 23:58:48
     ----------
     Package: tool-avrdude
-    Alias: uploader
-    Location: /Users/ikravets/.platformio/atmelavr/tools/avrdude
-    Version: 1
+    Version: 2
+    Installed: 2015-02-13 22:23:17
     ----------
     Package: framework-arduinoavr
-    Location: /Users/ikravets/.platformio/atmelavr/frameworks/arduino
+    Version: 12
+    Installed: 2015-02-23 20:57:40
+    ----------
+    Package: tool-micronucleus
     Version: 1
+    Installed: 2015-02-23 21:20:14

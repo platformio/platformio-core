@@ -3,6 +3,8 @@
 IDE Integration
 ===============
 
+.. contents::
+
 Arduino IDE
 -----------
 

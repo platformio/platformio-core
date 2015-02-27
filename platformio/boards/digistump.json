@@ -1,0 +1,107 @@
+{
+    "digispark-tiny": {
+        "build": {
+            "core": "digispark_tiny",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_DIGISPARK",
+            "f_cpu": "16000000L",
+            "mcu": "attiny85",
+            "variant": "digispark_tiny"
+        },
+        "framework": "arduino",
+        "name": "Digispark (Default - 16.5mhz)",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": false,
+            "maximum_ram_size": 512,
+            "maximum_size": 6012,
+            "protocol": "digispark",
+            "use_1200bps_touch": false,
+            "wait_for_upload_port": false
+        }
+    },
+    "digispark-pro": {
+        "build": {
+            "core": "digispark_pro",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_DIGISPARKPRO",
+            "f_cpu": "16000000L",
+            "mcu": "attiny167",
+            "variant": "digispark_pro"
+        },
+        "framework": "arduino",
+        "name": "Digispark Pro (Default 16 Mhz)",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": false,
+            "maximum_ram_size": 512,
+            "maximum_size": 14844,
+            "protocol": "digispark",
+            "use_1200bps_touch": false,
+            "wait_for_upload_port": false
+        }
+    },
+    "digispark-pro32": {
+        "build": {
+            "core": "digispark_pro",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_DIGISPARKPRO",
+            "f_cpu": "16000000L",
+            "mcu": "attiny167",
+            "variant": "digispark_pro32"
+        },
+        "framework": "arduino",
+        "name": "Digispark Pro (16 Mhz) (32 byte buffer)",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": false,
+            "maximum_ram_size": 512,
+            "maximum_size": 14844,
+            "protocol": "digispark",
+            "use_1200bps_touch": false,
+            "wait_for_upload_port": false
+        }
+    },
+    "digispark-pro64": {
+        "build": {
+            "core": "digispark_pro",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_DIGISPARKPRO",
+            "f_cpu": "16000000L",
+            "mcu": "attiny167",
+            "variant": "digispark_pro64"
+        },
+        "framework": "arduino",
+        "name": "Digispark Pro (16 Mhz) (64 byte buffer)",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": false,
+            "maximum_ram_size": 512,
+            "maximum_size": 14844,
+            "protocol": "digispark",
+            "use_1200bps_touch": false,
+            "wait_for_upload_port": false
+        }
+    },
+    "digix": {
+        "build": {
+            "core": "digispark_digix",
+            "extra_flags": "-w -D__SAM3X8E__ -DARDUINO_SAM_DIGIX -DARDUINO_ARCH_SAM",
+            "f_cpu": "84000000L",
+            "mcu": "at91sam3x8e",
+            "cpu": "cortex-m3",
+            "ldscript": "sam3x8e.ld",
+            "pid": "0x078A",
+            "usb_product": "Digistump DigiX",
+            "variant": "digispark_digix",
+            "vid": "0x16D0"
+        },
+        "framework": "arduino",
+        "name": "Digistump DigiX",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": false,
+            "maximum_ram_size": 28672,
+            "maximum_size": 524288,
+            "protocol": "sam-ba",
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        }
+    }
+}

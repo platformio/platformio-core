@@ -65,6 +65,8 @@ Examples
     Description: Silicon Labs CP210x USB to UART Bridge (COM3)
 
 
+.. _cmd_serialports_monitor:
+
 platformio serialports monitor
 ------------------------------
 

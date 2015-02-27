@@ -1,11 +1,83 @@
 Release History
 ===============
 
+1.0.0 (2015-02-27)
+------------------
+
+**PlatformIO 1.0 - recommended for production**
+
+* Changed development status from ``beta`` to ``Production/Stable``
+* Added support for *ARM*-based credit-card computers:
+  `Raspberry Pi <http://www.raspberrypi.org>`_,
+  `BeagleBone <http://beagleboard.org>`_ and `CubieBoard <http://cubieboard.org>`_
+* Added `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`_
+  development platform with supported boards: *Arduino Due and Digistump DigiX*
+  (`issue #71 <https://github.com/ivankravets/platformio/issues/71>`_)
+* Added `stm32 <http://docs.platformio.org/en/latest/platforms/stm32.html>`_
+  development platform with supported boards: *Discovery kit for STM32L151/152,
+  STM32F303xx, STM32F407/417 lines* and `libOpenCM3 Framework <http://www.libopencm3.org>`_
+  (`issue #73 <https://github.com/ivankravets/platformio/issues/73>`_)
+* Added `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`_
+  development platform with supported boards: *Teensy 2.x & 3.x*
+  (`issue #72 <https://github.com/ivankravets/platformio/issues/72>`_)
+* Added new *Arduino* boards to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform: *Arduino NG, Arduino BT, Arduino Esplora, Arduino Ethernet,
+  Arduino Robot Control, Arduino Robot Motor and Arduino Yun*
+* Added support for *Adafruit* boards to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform: *Adafruit Flora and Adafruit Trinkets*
+  (`issue #65 <https://github.com/ivankravets/platformio/issues/65>`_)
+* Added support for *Digispark* boards to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform: *Digispark USB Development Board and Digispark Pro*
+  (`issue #47 <https://github.com/ivankravets/platformio/issues/47>`_)
+* Covered code with tests (`issue #2 <https://github.com/ivankravets/platformio/issues/2>`_)
+* Refactored *Library Dependency Finder* (issues
+  `#48 <https://github.com/ivankravets/platformio/issues/48>`_,
+  `#50 <https://github.com/ivankravets/platformio/issues/50>`_,
+  `#55 <https://github.com/ivankravets/platformio/pull/55>`_)
+* Added `src_dir <http://docs.platformio.org/en/latest/projectconf.html#src-dir>`__
+  option to ``[platformio]`` section of
+  `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  which allows to redefine location to project's source directory
+  (`issue #83 <https://github.com/ivankravets/platformio/issues/83>`_)
+* Added ``--json-output`` option to
+  `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`__
+  and `platformio search <http://docs.platformio.org/en/latest/userguide/cmd_search.html>`__
+  commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
+  (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
+* Allowed to ignore some libs from *Library Dependency Finder* via
+  `ignore_libs <http://docs.platformio.org/en/latest/projectconf.html#ignore-libs>`_ option
+* Improved `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
+  command: asynchronous output for build process, timing and detailed
+  information about environment configuration
+  (`issue #74 <https://github.com/ivankravets/platformio/issues/74>`_)
+* Output compiled size and static memory usage with
+  `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
+  command (`issue #59 <https://github.com/ivankravets/platformio/issues/59>`_)
+* Updated `framework-arduino` AVR & SAM to 1.6 stable version
+* Fixed an issue with the libraries that are git repositories
+  (`issue #49 <https://github.com/ivankravets/platformio/issues/49>`_)
+* Fixed handling of assembly files
+  (`issue #58 <https://github.com/ivankravets/platformio/issues/58>`_)
+* Fixed compiling error if space is in user's folder
+  (`issue #56 <https://github.com/ivankravets/platformio/issues/56>`_)
+* Fixed `AttributeError: 'module' object has no attribute 'disable_warnings'`
+  when a version of `requests` package is less then 2.4.0
+* Fixed bug with invalid process's "return code" when PlatformIO has internal
+  error (`issue #81 <https://github.com/ivankravets/platformio/issues/81>`_)
+* Several bug fixes, increased stability and performance improvements
+
+
 0.10.2 (2015-01-06)
 -------------------
 
-* Fixed an issue with ``--json-output`` (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
-* Fixed an exception during `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`__ under Windows OS (`issue #45 <https://github.com/ivankravets/platformio/issues/45>`_)
+* Fixed an issue with ``--json-output``
+  (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
+* Fixed an exception during
+  `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`__
+  under Windows OS (`issue #45 <https://github.com/ivankravets/platformio/issues/45>`_)
 
 0.10.1 (2015-01-02)
 -------------------
@@ -13,7 +85,7 @@ Release History
 * Added ``--json-output`` option to
   `platformio list <http://docs.platformio.org/en/latest/userguide/cmd_list.html>`__,
   `platformio serialports list <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html>`__ and
-  `platformio lib list <http://docs.platformio.org/en/latest/userguide/cmd_lib_list.html>`__
+  `platformio lib list <http://docs.platformio.org/en/latest/userguide/lib/cmd_list.html>`__
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
 * Fixed missing auto-uploading by default after `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
@@ -62,7 +134,7 @@ Release History
   `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command when PlatformIO isn't installed properly
 * Fixed example for `Eclipse IDE with Tiva board <https://github.com/ivankravets/platformio/tree/develop/examples/ide-eclipse>`_
-  (`issue #32 <https://github.com/ivankravets/platformio/issues/32>`_)
+  (`issue #32 <https://github.com/ivankravets/platformio/pull/32>`_)
 * Upgraded `Eclipse Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples/ide-eclipse>`_
   to latest *Luna* and *PlatformIO* releases
 
@@ -131,7 +203,7 @@ Release History
 * Disabled default warning flag "-Wall"
 * Added auto-conversation from \*.ino to valid \*.cpp for Arduino/Energia
   frameworks (`issue #7 <https://github.com/ivankravets/platformio/issues/7>`_)
-* Added `Arduino example <https://github.com/ivankravets/platformio/tree/develop/examples/arduino-adafruit-library>`_
+* Added `Arduino example <https://github.com/ivankravets/platformio/tree/develop/examples/>`_
   with external library (*Adafruit CC3000*)
 * Implemented `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`_
   command and "auto-check" for the latest
@@ -149,7 +221,7 @@ Release History
 * Allowed to override some of settings via system environment variables
   such as: ``$PIOSRCBUILD_FLAGS`` and ``$PIOENVS_DIR``
 * Added ``--upload-port`` option for `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--upload-port>`__ command
-* Implemented (especially for `SmartAnthill <http://smartanthill.ikravets.com/>`_)
+* Implemented (especially for `SmartAnthill <http://docs.smartanthill.ikravets.com/>`_)
   `platformio run -t uploadlazy <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`_
   target (no dependencies to framework libs, ELF and etc.)
 * Allowed to skip default packages via `platformio install --skip-default-package <http://docs.platformio.org/en/latest/userguide/cmd_install.html#cmdoption--skip-default>`_
@@ -180,7 +252,7 @@ Release History
 
 * Resolved `issue #1 "Build referred libraries" <https://github.com/ivankravets/platformio/issues/1>`_
 * Renamed project's "libs" directory to "lib"
-* Added `arduino-internal-library <https://github.com/ivankravets/platformio/tree/develop/examples/arduino-internal-library>`_ example
+* Added `arduino-internal-library <https://github.com/ivankravets/platformio/tree/develop/examples/>`_ example
 * Changed to beta status
 
 

@@ -12,11 +12,7 @@ from platformio.util import exec_command
 @click.command("upgrade",
                short_help="Upgrade PlatformIO to the latest version")
 def cli():
-    try:
-        last = get_latest_version()
-    except:
-        raise GetLatestVersionError()
-
+    last = get_latest_version()
     if __version__ == last:
         return click.secho(
             "You're up-to-date!\nPlatformIO %s is currently the "
@@ -39,6 +35,9 @@ def cli():
 
 
 def get_latest_version():
-    pkgdata = requests.get(
-        "https://pypi.python.org/pypi/platformio/json").json()
-    return pkgdata['info']['version']
+    try:
+        pkgdata = requests.get(
+            "https://pypi.python.org/pypi/platformio/json").json()
+        return pkgdata['info']['version']
+    except:
+        raise GetLatestVersionError()
