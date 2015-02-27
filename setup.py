@@ -41,5 +41,7 @@ setup(
         "Topic :: Software Development",
         "Topic :: Software Development :: Build Tools",
         "Topic :: Software Development :: Compilers"
-    ]
+    ],
+    keywords=("builder library manager atmel avr sam teensy stm32 "
+              "ti msp430 tiva mbed arduino opencm3")
 )
