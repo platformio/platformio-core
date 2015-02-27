@@ -33,7 +33,7 @@ Release History
 * Refactored *Library Dependency Finder* (issues
   `#48 <https://github.com/ivankravets/platformio/issues/48>`_,
   `#50 <https://github.com/ivankravets/platformio/issues/50>`_,
-  `#55 <https://github.com/ivankravets/platformio/issues/55>`_)
+  `#55 <https://github.com/ivankravets/platformio/pull/55>`_)
 * Added `src_dir <http://docs.platformio.org/en/latest/projectconf.html#src-dir>`__
   option to ``[platformio]`` section of
   `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
@@ -81,7 +81,7 @@ Release History
 * Added ``--json-output`` option to
   `platformio list <http://docs.platformio.org/en/latest/userguide/cmd_list.html>`__,
   `platformio serialports list <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html>`__ and
-  `platformio lib list <http://docs.platformio.org/en/latest/userguide/cmd_lib_list.html>`__
+  `platformio lib list <http://docs.platformio.org/en/latest/userguide/lib/cmd_list.html>`__
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/ivankravets/platformio/issues/42>`_)
 * Fixed missing auto-uploading by default after `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
@@ -130,7 +130,7 @@ Release History
   `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command when PlatformIO isn't installed properly
 * Fixed example for `Eclipse IDE with Tiva board <https://github.com/ivankravets/platformio/tree/develop/examples/ide-eclipse>`_
-  (`issue #32 <https://github.com/ivankravets/platformio/issues/32>`_)
+  (`issue #32 <https://github.com/ivankravets/platformio/pull/32>`_)
 * Upgraded `Eclipse Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples/ide-eclipse>`_
   to latest *Luna* and *PlatformIO* releases
 
@@ -199,7 +199,7 @@ Release History
 * Disabled default warning flag "-Wall"
 * Added auto-conversation from \*.ino to valid \*.cpp for Arduino/Energia
   frameworks (`issue #7 <https://github.com/ivankravets/platformio/issues/7>`_)
-* Added `Arduino example <https://github.com/ivankravets/platformio/tree/develop/examples/arduino-adafruit-library>`_
+* Added `Arduino example <https://github.com/ivankravets/platformio/tree/develop/examples/>`_
   with external library (*Adafruit CC3000*)
 * Implemented `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`_
   command and "auto-check" for the latest
@@ -217,7 +217,7 @@ Release History
 * Allowed to override some of settings via system environment variables
   such as: ``$PIOSRCBUILD_FLAGS`` and ``$PIOENVS_DIR``
 * Added ``--upload-port`` option for `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--upload-port>`__ command
-* Implemented (especially for `SmartAnthill <http://smartanthill.ikravets.com/>`_)
+* Implemented (especially for `SmartAnthill <http://docs.smartanthill.ikravets.com/>`_)
   `platformio run -t uploadlazy <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`_
   target (no dependencies to framework libs, ELF and etc.)
 * Allowed to skip default packages via `platformio install --skip-default-package <http://docs.platformio.org/en/latest/userguide/cmd_install.html#cmdoption--skip-default>`_
@@ -248,7 +248,7 @@ Release History
 
 * Resolved `issue #1 "Build referred libraries" <https://github.com/ivankravets/platformio/issues/1>`_
 * Renamed project's "libs" directory to "lib"
-* Added `arduino-internal-library <https://github.com/ivankravets/platformio/tree/develop/examples/arduino-internal-library>`_ example
+* Added `arduino-internal-library <https://github.com/ivankravets/platformio/tree/develop/examples/>`_ example
 * Changed to beta status
 
 

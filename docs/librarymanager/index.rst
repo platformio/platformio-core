@@ -21,5 +21,5 @@ You don't need to bother for finding the latest version of library. Due to
     creating
     User Guide <../userguide/lib/index.rst>
 
-.. [#] Inspired by `npm <https://www.npmjs.org>`_ and `bower
+.. [#] Inspired by `npm <https://www.npmjs.com/>`_ and `bower
     <http://bower.io>`_ package managers for web.

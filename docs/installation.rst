@@ -3,7 +3,7 @@
 Installation
 ============
 
-**PlatformIO** is written in `Python <http://python.org/download/>`_ and works
+**PlatformIO** is written in `Python <https://www.python.org/downloads/>`_ and works
 on Mac OS X, Linux, Windows OS and *ARM*-based credit-card
 computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
 `BeagleBoard <http://beagleboard.org>`_,
@@ -18,7 +18,7 @@ System requirements
     * Mac OS X
     * Linux, +ARM
     * Windows
-* `Python 2.6 or Python 2.7 <http://python.org/download/>`_
+* `Python 2.6 or Python 2.7 <https://www.python.org/downloads/>`_
 
 All commands below should be executed in
 `Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_

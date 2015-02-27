@@ -433,63 +433,63 @@ Microduino
       - RAM
     * - ``168pa8m``
       - `Microduino Core (ATmega168P, 3.3V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
       - ATmega168P ``atmega168p``
       - 8 MHz ``8000000L``
       - 16 Kb
       - 1 Kb
     * - ``168pa16m``
       - `Microduino Core (ATmega168P, 5V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
       - ATmega168P ``atmega168p``
       - 16 MHz ``16000000L``
       - 16 Kb
       - 1 Kb
     * - ``328p8m``
       - `Microduino Core (ATmega328P, 3.3V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
       - ATmega328P ``atmega328p``
       - 8 MHz ``8000000L``
       - 32 Kb
       - 2 Kb
     * - ``328p16m``
       - `Microduino Core (ATmega328P, 5V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core>`_
       - ATmega328P ``atmega328p``
       - 16 MHz ``16000000L``
       - 32 Kb
       - 2 Kb
     * - ``644pa8m``
       - `Microduino Core+ (ATmega644PA, 3.3V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
       - ATmega644PA ``atmega644p``
       - 8 MHz ``8000000L``
       - 64 Kb
       - 4 Kb
     * - ``644pa16m``
       - `Microduino Core+ (ATmega644PA, 5V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
       - ATmega644PA ``atmega644p``
       - 16 MHz ``16000000L``
       - 64 Kb
       - 4 Kb
     * - ``1284p8m``
       - `Microduino Core+ (Atmega1284P, 3.3V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
       - Atmega1284P ``atmega1284p``
       - 8 MHz ``8000000L``
       - 128 Kb
       - 16 Kb
     * - ``1284p16m``
       - `Microduino Core+ (Atmega1284P, 5V)
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B>`_
       - Atmega1284P ``atmega1284p``
       - 16 MHz ``16000000L``
       - 128 Kb
       - 16 Kb
     * - ``32u416m``
       - `Microduino-Core USB
-        <http://www.microduino.cc/wiki/index.php?title=Microduino-CoreUSB>`_
+        <https://www.microduino.cc/wiki/index.php?title=Microduino-CoreUSB>`_
       - ATmega32u4 ``atmega32u4``
       - 16 MHz ``16000000L``
       - 32 Kb
@@ -497,7 +497,7 @@ Microduino
 
 
 More detailed information you can find here
-`Microduino boards <http://www.microduino.cc/wiki/index.php?title=Main_Page>`_.
+`Microduino boards <https://www.microduino.cc/wiki/index.php?title=Main_Page>`_.
 
 
 Raspduino
