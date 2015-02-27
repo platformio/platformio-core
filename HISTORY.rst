@@ -1,9 +1,12 @@
 Release History
 ===============
 
-1.0.0 (2015-?)
---------------
+1.0.0 (2015-02-27)
+------------------
 
+**PlatformIO 1.0 - recommended for production**
+
+* Changed development status from ``beta`` to ``Production/Stable``
 * Added support for *ARM*-based credit-card computers:
   `Raspberry Pi <http://www.raspberrypi.org>`_,
   `BeagleBone <http://beagleboard.org>`_ and `CubieBoard <http://cubieboard.org>`_
@@ -64,6 +67,7 @@ Release History
   when a version of `requests` package is less then 2.4.0
 * Fixed bug with invalid process's "return code" when PlatformIO has internal
   error (`issue #81 <https://github.com/ivankravets/platformio/issues/81>`_)
+* Several bug fixes, increased stability and performance improvements
 
 
 0.10.2 (2015-01-06)
