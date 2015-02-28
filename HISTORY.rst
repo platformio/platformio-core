@@ -1,7 +1,7 @@
 Release History
 ===============
 
-1.0.0 (2015-02-27)
+1.0.1 (2015-02-27)
 ------------------
 
 **PlatformIO 1.0 - recommended for production**
