@@ -1,6 +1,13 @@
 Release History
 ===============
 
+1.0.2 (2015-03-??)
+------------------
+
+* Fixed firmware uploading for
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  boards which work within ``usbtiny`` protocol
+
 1.0.1 (2015-02-27)
 ------------------
 

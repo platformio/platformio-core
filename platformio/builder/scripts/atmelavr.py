@@ -20,15 +20,13 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         with open(path, "w") as f:
             f.write(str(value))
 
-    if "UPLOAD_SPEED" in env:
-        env.Append(
-            UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"]
-        )
-
     if "usb" not in env.subst("$UPLOAD_PROTOCOL"):
         env.AutodetectUploadPort()
         env.Append(
-            UPLOADERFLAGS=["-P", "$UPLOAD_PORT"]
+            UPLOADERFLAGS=[
+                "-b", "$UPLOAD_SPEED",
+                "-P", "$UPLOAD_PORT"
+            ]
         )
 
     if env.subst("$BOARD") == "raspduino":
