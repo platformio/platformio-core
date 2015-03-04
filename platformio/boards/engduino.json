@@ -18,6 +18,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
@@ -42,6 +43,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
@@ -66,6 +68,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true

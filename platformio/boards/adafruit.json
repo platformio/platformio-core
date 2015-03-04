@@ -18,6 +18,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": false
@@ -55,8 +56,8 @@
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
-            "protocol": "usbtiny",
-            "maximum_size": 8192
+            "maximum_size": 8192,
+            "protocol": "usbtiny"     
         }
     },
 
@@ -74,8 +75,7 @@
         "upload": {
             "maximum_ram_size": 2048,
             "maximum_size": 28672,
-            "protocol": "usbtiny",
-            "speed": 115200
+            "protocol": "usbtiny"
         }
     },
 
@@ -93,8 +93,7 @@
         "upload": {
             "maximum_ram_size": 2048,
             "maximum_size": 28672,
-            "protocol": "usbtiny",
-            "speed": 115200
+            "protocol": "usbtiny"
         }
     },
     "protrinket3ftdi": {
@@ -112,6 +111,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 28672,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 115200
         }
     },
@@ -130,6 +130,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 28672,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 115200
         }
     }
