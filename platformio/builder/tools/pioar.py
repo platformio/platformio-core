@@ -8,6 +8,13 @@ from tempfile import mkstemp
 MAX_SOURCES_LENGTH = 8000  # Windows CLI has limit with command length to 8192
 
 
+def _remove_tmpfile(path):
+    try:
+        remove(path)
+    except WindowsError:
+        pass
+
+
 def _huge_sources_hook(sources):
     if len(str(sources)) < MAX_SOURCES_LENGTH:
         return sources
@@ -16,7 +23,7 @@ def _huge_sources_hook(sources):
     with open(tmp_file, "w") as f:
         f.write(str(sources).replace("\\", "/"))
 
-    atexit.register(remove, tmp_file)
+    atexit.register(_remove_tmpfile, tmp_file)
 
     return "@%s" % tmp_file
 
