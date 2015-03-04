@@ -30,9 +30,13 @@ application:
   application.
 
 .. warning::
-    If you are going to use *PlatformIO* for "*Cloud Compiling*", please
-    don't forget to turn off :ref:`enable_prompts <cmd_settings>` setting. It
-    will allow you to avoid blocking when call ``platformio`` like subprocess.
+    If you are going to run *PlatformIO* from **subprocess**, you **MUST
+    DISABLE** all prompts. It will allow you to avoid blocking.
+    There are 2 options:
+
+    - using environment variable :ref:`PLATFORMIO_SETTING_ENABLE_PROMPTS=false <envvar_PLATFORMIO_SETTING_ENABLE_PROMPTS>`
+    - disable global setting via :ref:`platformio setting enable_prompts false <cmd_settings>`
+      command.
 
 Please *choose one of* the following:
 

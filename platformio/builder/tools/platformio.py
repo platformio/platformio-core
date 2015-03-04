@@ -59,7 +59,7 @@ def BuildFirmware(env, corelibs):
         _LIBFLAGS=" -Wl,--end-group"
     )
 
-    firmenv.MergeFlags(getenv("PIOSRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
+    firmenv.MergeFlags(getenv("PLATFORMIO_SRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
 
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),

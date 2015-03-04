@@ -58,8 +58,7 @@ Change working directory to the project's root where is located
 If you don't have installed required platforms, then *PlatformIO* will propose
 you to install them automatically.
 
-Further examples can be found in the ``examples/`` directory in the source
-distribution or `on the web <https://github.com/ivankravets/platformio/tree/develop/examples>`_.
+Further examples can be found in `PlatformIO Repository <https://github.com/ivankravets/platformio/tree/develop/examples>`_.
 
 Also, for more detailed information as for commands please go to
 :ref:`userguide` sections.

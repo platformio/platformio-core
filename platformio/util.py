@@ -56,25 +56,29 @@ def get_systype():
     return ("%s_%s" % (data[0], data[4])).lower()
 
 
-def _get_projconf_option_dir(option_name):
+def _get_projconf_option_dir(name, default=None):
+    _env_name = "PLATFORMIO_%s" % name.upper()
+    if _env_name in os.environ:
+        return os.getenv(_env_name)
+
     try:
         config = get_project_config()
         if (config.has_section("platformio") and
-                config.has_option("platformio", option_name)):
-            option_dir = config.get("platformio", option_name)
+                config.has_option("platformio", name)):
+            option_dir = config.get("platformio", name)
             if option_dir.startswith("~"):
                 option_dir = expanduser(option_dir)
             return abspath(option_dir)
     except exception.NotPlatformProject:
         pass
-    return None
+    return default
 
 
 def get_home_dir():
-    home_dir = _get_projconf_option_dir("home_dir")
-
-    if not home_dir:
-        home_dir = join(expanduser("~"), ".platformio")
+    home_dir = _get_projconf_option_dir(
+        "home_dir",
+        join(expanduser("~"), ".platformio")
+    )
 
     if not isdir(home_dir):
         os.makedirs(home_dir)
@@ -84,12 +88,10 @@ def get_home_dir():
 
 
 def get_lib_dir():
-    lib_dir = _get_projconf_option_dir("lib_dir")
-
-    if not lib_dir:
-        lib_dir = join(get_home_dir(), "lib")
-
-    return lib_dir
+    return _get_projconf_option_dir(
+        "lib_dir",
+        join(get_home_dir(), "lib")
+    )
 
 
 def get_source_dir():
@@ -101,16 +103,17 @@ def get_project_dir():
 
 
 def get_projectsrc_dir():
-    src_dir = _get_projconf_option_dir("src_dir")
-
-    if not src_dir:
-        src_dir = join(get_project_dir(), "src")
-
-    return src_dir
+    return _get_projconf_option_dir(
+        "src_dir",
+        join(get_project_dir(), "src")
+    )
 
 
 def get_pioenvs_dir():
-    return os.getenv("PIOENVS_DIR", join(get_project_dir(), ".pioenvs"))
+    return _get_projconf_option_dir(
+        "envs_dir",
+        join(get_project_dir(), ".pioenvs")
+    )
 
 
 def get_project_config():

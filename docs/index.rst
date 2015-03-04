@@ -57,6 +57,7 @@ Contents
     quickstart
     installation
     projectconf
+    envvars
     platforms/index
     librarymanager/index
     userguide/index

@@ -2,6 +2,7 @@
 # See LICENSE for details.
 
 import json
+from os import environ, getenv
 from os.path import isfile, join
 
 from platformio import __version__
@@ -71,6 +72,24 @@ class State(object):
                 json.dump(self._state, fp)
 
 
+def sanitize_setting(name, value):
+    if name not in DEFAULT_SETTINGS:
+        raise InvalidSettingName(name)
+
+    defdata = DEFAULT_SETTINGS[name]
+    try:
+        if "validator" in defdata:
+            value = defdata['validator']()
+        elif isinstance(defdata['value'], bool):
+            if not isinstance(value, bool):
+                value = str(value).lower() in ("true", "yes", "y", "1")
+        elif isinstance(defdata['value'], int):
+            value = int(value)
+    except Exception:
+        raise InvalidSettingValue(value, name)
+    return value
+
+
 def get_state_item(name, default=None):
     with State() as data:
         return data.get(name, default)
@@ -82,8 +101,9 @@ def set_state_item(name, value):
 
 
 def get_setting(name):
-    if name not in DEFAULT_SETTINGS:
-        raise InvalidSettingName(name)
+    _env_name = "PLATFORMIO_SETTING_%s" % name.upper()
+    if _env_name in environ:
+        return sanitize_setting(name, getenv(_env_name))
 
     with State() as data:
         if "settings" in data and name in data['settings']:
@@ -93,25 +113,10 @@ def get_setting(name):
 
 
 def set_setting(name, value):
-    if name not in DEFAULT_SETTINGS:
-        raise InvalidSettingName(name)
-
-    defdata = DEFAULT_SETTINGS[name]
-    try:
-        if "validator" in defdata:
-            value = defdata['validator']()
-        elif isinstance(defdata['value'], bool):
-            if not isinstance(value, bool):
-                value = str(value).lower() in ("yes", "y", "1")
-        elif isinstance(defdata['value'], int):
-            value = int(value)
-    except Exception:
-        raise InvalidSettingValue(value, name)
-
     with State() as data:
         if "settings" not in data:
             data['settings'] = {}
-        data['settings'][name] = value
+        data['settings'][name] = sanitize_setting(name, value)
 
 
 def reset_settings():
