@@ -620,5 +620,31 @@
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         }
+    },
+    "dueUSB": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-D__SAM3X8E__ -DARDUINO_SAM_DUE -DARDUINO_ARCH_SAM",
+            "f_cpu": "84000000L",
+            "mcu": "at91sam3x8e",
+            "cpu": "cortex-m3",
+            "pid": "0x003e",
+            "usb_product": "Arduino Due",
+            "variant": "arduino_due_x",
+            "vid": "0x2341",
+            "ldscript": "sam3x8e.ld"
+        },
+        "framework": "arduino",
+        "name": "Arduino Due (USB Native Port)",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 28672,
+            "maximum_size": 524288,
+            "protocol": "sam-ba",
+            "require_upload_port" : true, 
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        }
     }
 }

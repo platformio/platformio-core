@@ -10,9 +10,32 @@ from os.path import join
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
                           DefaultEnvironment, SConscript)
 
+from platformio.util import get_serialports
+
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     env.AutodetectUploadPort()
+
+    board_type = env.subst("$BOARD")
+    env.Append(
+        UPLOADERFLAGS=[
+            "-U",
+            "true" if "usb" in board_type.lower(
+            ) or board_type == "digix" else "false"
+        ])
+
+    upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
+
+    if not upload_options.get("disable_flushing", False):
+        env.FlushSerialBuffer("$UPLOAD_PORT")
+
+    before_ports = [i['port'] for i in get_serialports()]
+
+    if upload_options.get("use_1200bps_touch", False):
+        env.TouchSerialPort("$UPLOAD_PORT", 1200)
+
+    if upload_options.get("wait_for_upload_port", False):
+        env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
 
 
 env = DefaultEnvironment()
