@@ -52,7 +52,7 @@ commonvars.AddVariables(
 DefaultEnvironment(
     tools=[
         "gcc", "g++", "as", "ar", "gnulink",
-        "platformio", "upload"
+        "platformio", "pioupload", "pioar"
     ],
     toolpath=[join("$PIOBUILDER_DIR", "tools")],
     variables=commonvars,

@@ -30,6 +30,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
     env.AutodetectUploadPort()
     env.Append(UPLOADERFLAGS=["-P", "$UPLOAD_PORT"])
+
     if env.subst("$BOARD") == "raspduino":
         _rpi_sysgpio("/sys/class/gpio/export", 18)
         _rpi_sysgpio("/sys/class/gpio/gpio18/direction", "out")
