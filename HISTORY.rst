@@ -4,9 +4,13 @@ Release History
 1.0.2 (2015-03-??)
 ------------------
 
+* Added support for *SainSmart* boards to
+  `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html#boards>`__
+  development platform
 * Fixed firmware uploading for
   `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
   boards which work within ``usbtiny`` protocol
+* Fixed uploading for *Digispark* board (`issue #106 <https://github.com/ivankravets/platformio/issues/106>`_)
 
 1.0.1 (2015-02-27)
 ------------------

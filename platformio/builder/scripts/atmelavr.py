@@ -27,6 +27,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
     if not upload_options.get("require_upload_port", False):
         return
+
     env.AutodetectUploadPort()
     env.Append(UPLOADERFLAGS=["-P", "$UPLOAD_PORT"])
     if env.subst("$BOARD") == "raspduino":

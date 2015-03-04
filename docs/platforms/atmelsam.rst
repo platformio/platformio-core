@@ -70,7 +70,13 @@ Boards
       - Flash
       - RAM
     * - ``due``
-      - `Arduino Due <http://arduino.cc/en/Main/arduinoBoardDue>`_
+      - `Arduino Due (Programming Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
+      - at91sam3x8e ``cortex-m3``
+      - 84 MHz ``84000000L``
+      - 512 Kb
+      - 32 Kb
+    * - ``dueUSB``
+      - `Arduino Due (USB Native Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
       - at91sam3x8e ``cortex-m3``
       - 84 MHz ``84000000L``
       - 512 Kb
@@ -80,6 +86,18 @@ Boards
       - at91sam3x8e ``cortex-m3``
       - 84 MHz ``84000000L``
       - 512 kb
+      - 32 Kb
+    * - ``sainSmartDue``
+      - `SainSmart Due (Programming Port) <http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html>`_
+      - at91sam3x8e ``cortex-m3``
+      - 84 MHz ``84000000L``
+      - 512 Kb
+      - 32 Kb
+    * - ``sainSmartDueUSB``
+      - `SainSmart Due (USB Native Port) <http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html>`_
+      - at91sam3x8e ``cortex-m3``
+      - 84 MHz ``84000000L``
+      - 512 Kb
       - 32 Kb
 
 More detailed information you can find here
