@@ -18,6 +18,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
@@ -38,6 +39,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 14336,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 19200
         }
     },
@@ -56,6 +58,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 7168,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 19200
         }
     },
@@ -75,6 +78,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 14336,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 19200
         }
     },
@@ -94,6 +98,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 28672,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 19200
         }
     },
@@ -112,6 +117,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 14336,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 19200
         }
     },
@@ -130,6 +136,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 30720,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 57600
         }
     },
@@ -152,6 +159,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
@@ -172,6 +180,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 32256,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 115200
         }
     },
@@ -190,6 +199,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 30720,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 57600
         }
     },
@@ -212,6 +222,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
@@ -232,6 +243,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 14336,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 19200
         }
     },
@@ -250,6 +262,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 30720,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 57600
         }
     },
@@ -268,6 +281,7 @@
             "maximum_ram_size": 8192,
             "maximum_size": 253952,
             "protocol": "wiring",
+            "require_upload_port" : true,
             "speed": 115200
         }
     },
@@ -286,6 +300,7 @@
             "maximum_ram_size": 8192,
             "maximum_size": 126976,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 57600
         }
     },
@@ -304,6 +319,7 @@
             "maximum_ram_size": 8192,
             "maximum_size": 253952,
             "protocol": "wiring",
+            "require_upload_port" : true,
             "speed": 115200
         }
     },
@@ -326,6 +342,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
@@ -346,6 +363,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 14336,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 19200
         }
     },
@@ -364,6 +382,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 28672,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 115200
         }
     },
@@ -382,6 +401,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 14336,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 19200
         }
     },
@@ -400,6 +420,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 30720,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 57600
         }
     },
@@ -418,6 +439,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 14336,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 19200
         }
     },
@@ -436,6 +458,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 30720,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 57600
         }
     },
@@ -454,6 +477,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 14336,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 19200
         }
     },
@@ -472,6 +496,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 30720,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 57600
         }
     },
@@ -494,6 +519,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
@@ -518,6 +544,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
@@ -538,6 +565,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 32256,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 115200
         }
     },
@@ -560,6 +588,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "via_ssh": true,
@@ -587,9 +616,9 @@
             "maximum_ram_size": 28672,
             "maximum_size": 524288,
             "protocol": "sam-ba",
-            "speed": 57600,
+            "require_upload_port" : true, 
             "use_1200bps_touch": true,
-            "wait_for_upload_port": false
+            "wait_for_upload_port": true
         }
     }
 }

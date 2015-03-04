@@ -11,12 +11,9 @@
         "name": "Digispark (Default - 16.5mhz)",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": false,
             "maximum_ram_size": 512,
             "maximum_size": 6012,
-            "protocol": "digispark",
-            "use_1200bps_touch": false,
-            "wait_for_upload_port": false
+            "protocol": "digispark"
         }
     },
     "digispark-pro": {
@@ -31,12 +28,9 @@
         "name": "Digispark Pro (Default 16 Mhz)",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": false,
             "maximum_ram_size": 512,
             "maximum_size": 14844,
-            "protocol": "digispark",
-            "use_1200bps_touch": false,
-            "wait_for_upload_port": false
+            "protocol": "digispark"
         }
     },
     "digispark-pro32": {
@@ -51,12 +45,9 @@
         "name": "Digispark Pro (16 Mhz) (32 byte buffer)",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": false,
             "maximum_ram_size": 512,
             "maximum_size": 14844,
-            "protocol": "digispark",
-            "use_1200bps_touch": false,
-            "wait_for_upload_port": false
+            "protocol": "digispark"
         }
     },
     "digispark-pro64": {
@@ -71,12 +62,9 @@
         "name": "Digispark Pro (16 Mhz) (64 byte buffer)",
         "platform": "atmelavr",
         "upload": {
-            "disable_flushing": false,
             "maximum_ram_size": 512,
             "maximum_size": 14844,
-            "protocol": "digispark",
-            "use_1200bps_touch": false,
-            "wait_for_upload_port": false
+            "protocol": "digispark"
         }
     },
     "digix": {
@@ -96,10 +84,11 @@
         "name": "Digistump DigiX",
         "platform": "atmelsam",
         "upload": {
-            "disable_flushing": false,
+            "disable_flushing": true,
             "maximum_ram_size": 28672,
             "maximum_size": 524288,
             "protocol": "sam-ba",
+            "require_upload_port" : true,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         }
