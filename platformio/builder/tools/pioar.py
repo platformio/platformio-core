@@ -11,7 +11,7 @@ MAX_SOURCES_LENGTH = 8000  # Windows CLI has limit with command length to 8192
 def _remove_tmpfile(path):
     try:
         remove(path)
-    except WindowsError:
+    except WindowsError:  # pylint: disable=E0602
         pass
 
 
