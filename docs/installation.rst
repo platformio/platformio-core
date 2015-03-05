@@ -32,11 +32,12 @@ application:
 .. warning::
     If you are going to run *PlatformIO* from **subprocess**, you **MUST
     DISABLE** all prompts. It will allow you to avoid blocking.
-    There are 2 options:
+    There are a few options:
 
-    - using environment variable :ref:`PLATFORMIO_SETTING_ENABLE_PROMPTS=false <envvar_PLATFORMIO_SETTING_ENABLE_PROMPTS>`
-    - disable global setting via :ref:`platformio setting enable_prompts false <cmd_settings>`
-      command.
+    - using environment variable :ref:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <envvar_PLATFORMIO_SETTING_ENABLE_PROMPTS>`
+    - disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
+    - masking under Continuous Integration system via environment variable
+      :ref:`CI=true <envvar_CI>`.
 
 Please *choose one of* the following:
 

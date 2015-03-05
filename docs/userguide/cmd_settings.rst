@@ -86,7 +86,9 @@ better.
 
 
 .. note::
-    You can override these settings using :ref:`envvars`.
+    * The ``Yes`` value is equl to: ``True``, ``Y``, ``1``.
+      The value is not case sensetive.
+    * You can override these settings using :ref:`envvars`.
 
 Examples
 ~~~~~~~~

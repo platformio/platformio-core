@@ -18,6 +18,19 @@ General
 PlatformIO uses *General* environment variables for the common
 operations/commands.
 
+.. _envvar_CI:
+
+CI
+~~
+
+PlatformIO handles ``CI`` variable which is setup by
+`Continuous Integration <http://en.wikipedia.org/wiki/Continuous_integration>`_
+(Travis, Circle and etc.) systems.
+Currently, PlatformIO uses it to disable prompts.
+
+In other words, ``CI=true`` automatically setup
+:ref:`PLATFORMIO_SETTING_ENABLE_PROMPTS=false <envvar_PLATFORMIO_SETTING_ENABLE_PROMPTS>`.
+
 .. _envvar_PLATFORMIO_HOME_DIR:
 
 PLATFORMIO_HOME_DIR

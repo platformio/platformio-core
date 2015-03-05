@@ -12,6 +12,8 @@ Release History
 * Added
   `Project Configuration <http://docs.platformio.org/en/latest/projectconf.html>`__
   option named `envs_dir <http://docs.platformio.org/en/latest/projectconf.html#envs-dir>`__
+* Disabled "prompts" automatically for *Continuous Integration* systems
+  (`issue #103 <https://github.com/ivankravets/platformio/issues/103>`_)
 * Fixed firmware uploading for
   `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
   boards which work within ``usbtiny`` protocol

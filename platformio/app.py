@@ -101,6 +101,10 @@ def set_state_item(name, value):
 
 
 def get_setting(name):
+    # disable prompts for Continuous Integration systems
+    if name == "enable_prompts" and getenv("CI", "").lower() == "true":
+        return False
+
     _env_name = "PLATFORMIO_SETTING_%s" % name.upper()
     if _env_name in environ:
         return sanitize_setting(name, getenv(_env_name))
