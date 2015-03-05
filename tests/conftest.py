@@ -1,28 +1,24 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+from os import environ
+
 from click.testing import CliRunner
 
 import pytest
-from platformio import app
 
 
 @pytest.fixture(scope="session")
 def platformio_setup(request):
-    prev_settings = dict(
-        enable_telemetry=None,
-        enable_prompts=None
-    )
-    for key, value in prev_settings.iteritems():
-        prev_settings[key] = app.get_setting(key)
-        # disable temporary
-        if prev_settings[key]:
-            app.set_setting(key, False)
+    pioenvvars = ("ENABLE_PROMPTS", "ENABLE_TELEMETRY")
+    for v in pioenvvars:
+        environ["PLATFORMIO_SETTING_%s" % v] = "No"
 
     def platformio_teardown():
-        # restore settings
-        for key, value in prev_settings.iteritems():
-            app.set_setting(key, value)
+        for v in pioenvvars:
+            _name = "PLATFORMIO_SETTING_%s" % v
+            if _name in environ:
+                del environ[_name]
 
     request.addfinalizer(platformio_teardown)
 

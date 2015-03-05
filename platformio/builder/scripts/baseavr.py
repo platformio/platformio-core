@@ -50,11 +50,6 @@ env.Replace(
     SIZEPRINTCMD='"$SIZETOOL" --mcu=$BOARD_MCU -C -d $SOURCES'
 )
 
-if "UPLOAD_SPEED" in env:
-    env.Append(UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"])
-if env.subst("$UPLOAD_PROTOCOL") != "usbtiny":
-    env.Append(UPLOADERFLAGS=["-P", "$UPLOAD_PORT"])
-
 env.Append(
     BUILDERS=dict(
         ElfToEep=Builder(

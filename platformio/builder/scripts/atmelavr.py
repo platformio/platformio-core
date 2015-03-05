@@ -20,16 +20,16 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         with open(path, "w") as f:
             f.write(str(value))
 
-    if "UPLOAD_SPEED" in env:
-        env.Append(
-            UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"]
-        )
+    upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
 
-    if "usb" not in env.subst("$UPLOAD_PROTOCOL"):
-        env.AutodetectUploadPort()
-        env.Append(
-            UPLOADERFLAGS=["-P", "$UPLOAD_PORT"]
-        )
+    if env.subst("$UPLOAD_SPEED"):
+        env.Append(UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"])
+
+    if not upload_options.get("require_upload_port", False):
+        return
+
+    env.AutodetectUploadPort()
+    env.Append(UPLOADERFLAGS=["-P", "$UPLOAD_PORT"])
 
     if env.subst("$BOARD") == "raspduino":
         _rpi_sysgpio("/sys/class/gpio/export", 18)
@@ -38,9 +38,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         sleep(0.1)
         _rpi_sysgpio("/sys/class/gpio/gpio18/value", 0)
         _rpi_sysgpio("/sys/class/gpio/unexport", 18)
-    elif "UPLOAD_PORT" in env:
-        upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
-
+    else:
         if not upload_options.get("disable_flushing", False):
             env.FlushSerialBuffer("$UPLOAD_PORT")
 
@@ -65,7 +63,7 @@ if "digispark" in env.get(
             "-c", "$UPLOAD_PROTOCOL",
             "--timeout", "60"
         ],
-        UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i'
+        UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
     )
 
 else:

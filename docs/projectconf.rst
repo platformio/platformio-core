@@ -1,7 +1,7 @@
 .. _projectconf:
 
-Project Configuration File
-==========================
+Project Configuration File ``platformio.ini``
+=============================================
 
 The Project configuration file is named ``platformio.ini``. This is a
 `INI-style <http://en.wikipedia.org/wiki/INI_file>`_ file.
@@ -33,11 +33,18 @@ Options
 ``home_dir``
 ^^^^^^^^^^^^
 
-A ``$PIO_HOME_DIR`` is used to store platform tool chains, frameworks,
-external libraries, service data and etc.
+Is used to store platform tool chains, frameworks, external libraries,
+service data and etc.
 
-A default value is user's home directory: *Unix* - ``~/.platformio``,
-Windows - ``%HOMEPATH%\.platformio``.
+A default value is User's home directory:
+
+* Unix ``~/.platformio``
+* Windows ``%HOMEPATH%\.platformio``
+
+This option can be overridden by global environment variable
+:ref:`envvar_PLATFORMIO_HOME_DIR`.
+
+.. _projectconf_pio_lib_dir:
 
 ``lib_dir``
 ^^^^^^^^^^^
@@ -45,20 +52,52 @@ Windows - ``%HOMEPATH%\.platformio``.
 This directory is used to store external libraries downloaded by
 :ref:`librarymanager`.
 
-A default value is ``$PIO_HOME_DIR/lib``.
+A default value is ``%home_dir%/lib``.
+
+This option can be overridden by global environment variable
+:ref:`envvar_PLATFORMIO_LIB_DIR`.
+
+.. _projectconf_pio_src_dir:
 
 ``src_dir``
 ^^^^^^^^^^^
 
-The path to project's source directory. PlatformIO uses it for :ref:`cmd_run`
+A path to project's source directory. PlatformIO uses it for :ref:`cmd_run`
 command.
 
-A default value is ``$PROJECT_DIR/src``.
+A default value is ``%project_dir%/src``.
+
+This option can be overridden by global environment variable
+:ref:`envvar_PLATFORMIO_SRC_DIR`.
 
 .. note::
     This option is useful for people who migrate from Arduino/Energia IDEs where
     source directory should have the same name like the main source file.
     See `example <https://github.com/ivankravets/platformio/tree/develop/examples/atmelavr-and-arduino/arduino-own-src_dir>`__ project with own source directory.
+
+.. _projectconf_pio_envs_dir:
+
+``envs_dir``
+^^^^^^^^^^^^
+
+*PlatformIO Builder* within :ref:`cmd_run` command uses this folder for project
+environments to store compiled object files, static libraries, firmwares and
+other cached information. It allows PlatformIO to build source code extremely
+fast!
+
+*You can delete this folder without any risk!* If you modify :ref:`projectconf`,
+then PlatformIO will remove this folder automatically. It will be created on the
+next build operation.
+
+A default value is ``%project_dir%/.pioenvs``.
+
+This option can be overridden by global environment variable
+:ref:`envvar_PLATFORMIO_ENVS_DIR`.
+
+.. note::
+    If you have any problems with building your Project environmets which
+    are defined in :ref:`projectconf`, then **TRY TO DELETE** this folder. In
+    this situation you will remove all cached files without any risk.
 
 [env:NAME]
 ----------
@@ -99,7 +138,7 @@ See ``framework`` type in *Frameworks* section of :ref:`platforms`
 ``board``
 ^^^^^^^^^
 
-*PlatformIO* has pre-configured settings for most popular boards. You don't
+*PlatformIO* has pre-configured settings for the most popular boards. You don't
 need to specify ``board_mcu``, ``board_f_cpu``, ``upload_protocol`` or
 ``upload_speed`` options. Just define a ``board`` type and *PlatformIO* will
 pre-fill options described above with appropriate values.
@@ -115,8 +154,8 @@ recognize MCU architecture. The correct type of ``board_mcu`` depends on
 platform library. For example, the list of ``board_mcu`` for "megaAVR Devices"
 is described `here <http://www.nongnu.org/avr-libc/user-manual/>`_.
 
-The full list of ``board_mcu`` for popular embedded platforms you can find in
-*Boards* section of :ref:`platforms`. See "Microcontroller" column.
+The full list of ``board_mcu`` for the popular embedded platforms you can find
+in *Boards* section of :ref:`platforms`. See "Microcontroller" column.
 
 
 ``board_f_cpu``
@@ -126,21 +165,21 @@ An option ``board_f_cpu`` is used to define MCU frequency (Hertz, Clock). A
 format of this option is ``C-like long integer`` value with ``L`` suffix. The
 1 Hertz is equal to ``1L``, then 16 Mhz (Mega Hertz) is equal to ``16000000L``.
 
-The full list of ``board_f_cpu`` for popular embedded platforms you can find in
-*Boards* section of :ref:`platforms`. See "Frequency" column.
+The full list of ``board_f_cpu`` for the popular embedded platforms you can
+find in *Boards* section of :ref:`platforms`. See "Frequency" column.
 
 
 ``upload_port``
 ^^^^^^^^^^^^^^^
 
-This option is used by "uploader" tool to send firmware to the board via
+This option is used by "uploader" tool when sending firmware to board via
 ``upload_port``. For example,
 
 * ``/dev/ttyUSB0`` - Unix-based OS
 * ``COM3`` - Windows OS
 
-If ``upload_port`` isn't specified, then *PlatformIO* will try to detect
-``upload_port`` automatically.
+If ``upload_port`` isn't specified, then *PlatformIO* will try to detect it
+automatically.
 
 To print all available serial ports use :ref:`cmd_serialports` command.
 
@@ -155,7 +194,7 @@ A protocol that "uploader" tool uses to talk to the board.
 ^^^^^^^^^^^^^^^^
 
 A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
-which "uploader" tool uses when sending firmware to the board.
+which "uploader" tool uses when sending firmware to board.
 
 
 ``targets``
@@ -256,12 +295,17 @@ For more detailed information about available flags/options go to:
 * `Options for Directory Search
   <https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html>`_
 
+.. _projectconf_srcbuild_flags:
 
 ``srcbuild_flags``
 ^^^^^^^^^^^^^^^^^^
 
-This is option ``srcbuild_flags`` has the same behaviour like ``build_flags``
-but will be applied only for project source code from ``src`` directory.
+An option ``srcbuild_flags`` has the same behaviour like ``build_flags``
+but will be applied only for the project source code from
+:ref:`projectconf_pio_src_dir` directory.
+
+This option can be overridden by global environment variable
+:ref:`envvar_PLATFORMIO_SRCBUILD_FLAGS`.
 
 ``ignore_libs``
 ^^^^^^^^^^^^^^^
@@ -280,6 +324,10 @@ Example:
 
 Examples
 --------
+
+.. note::
+    A full list with project examples can be found in
+    `PlatformIO Repository <https://github.com/ivankravets/platformio/tree/develop/examples>`_.
 
 1. :ref:`platform_atmelavr`: Arduino UNO board with auto pre-configured
    ``board_*`` and ``upload_*`` options (use only ``board`` option) and Arduino

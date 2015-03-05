@@ -17,7 +17,7 @@ MCU, upload protocol or etc. Please use ``board`` option.
     atmelavr
     atmelsam
     stm32
+    teensy
     timsp430
     titiva
-    teensy
     creating_platform

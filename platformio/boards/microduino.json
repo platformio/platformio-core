@@ -14,6 +14,7 @@
             "maximum_ram_size": 16384,
             "maximum_size": 130048,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 115200
         }
     },
@@ -32,6 +33,7 @@
             "maximum_ram_size": 16384,
             "maximum_size": 130048,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 57600
         }
     },
@@ -50,6 +52,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 15872,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 115200
         }
     },
@@ -68,6 +71,7 @@
             "maximum_ram_size": 1024,
             "maximum_size": 15872,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 57600
         }
     },
@@ -86,6 +90,7 @@
             "maximum_ram_size": 2048,
             "maximum_size": 32256,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 115200
         }
     },
@@ -103,6 +108,7 @@
         "upload": {
             "maximum_ram_size": 2048,
             "maximum_size": 32256,
+            "require_upload_port" : true,
             "protocol": "arduino",
             "speed": 57600
         }
@@ -125,6 +131,7 @@
             "maximum_ram_size": 2560,
             "maximum_size": 28672,
             "protocol": "avr109",
+            "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
@@ -145,6 +152,7 @@
             "maximum_ram_size": 4096,
             "maximum_size": 64512,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 115200
         }
     },
@@ -163,6 +171,7 @@
             "maximum_ram_size": 4096,
             "maximum_size": 64512,
             "protocol": "arduino",
+            "require_upload_port" : true,
             "speed": 57600
         }
     }

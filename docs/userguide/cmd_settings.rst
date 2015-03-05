@@ -23,6 +23,72 @@ Description
 
 Get/List existing settings
 
+Options
+~~~~~~~
+
+.. option:: auto_update_libraries
+
+:Default:   Yes
+:Values:    Yes/No
+
+Automatically update libraries.
+
+.. option:: auto_update_platforms
+
+:Default:   Yes
+:Values:    Yes/No
+
+Automatically update platforms.
+
+.. option:: check_libraries_interval
+
+:Default:   7
+:Values:    Days (Number)
+
+Check for the library updates interval.
+
+.. option:: check_platformio_interval
+
+:Default:   3
+:Values:    Days (Number)
+
+Check for the new PlatformIO interval.
+
+.. option:: check_platforms_interval
+
+:Default:   7
+:Values:    Days (Number)
+
+Check for the platform updates interval.
+
+.. option:: enable_prompts
+
+:Default:   Yes
+:Values:    Yes/No
+
+Can PlatformIO communicate with you via prompts?
+
+* propose to install platforms which aren't installed yet
+* paginate over library search results
+* and etc.
+
+.. warning::
+    If you are going to run *PlatformIO* from **subprocess**, you **MUST
+    DISABLE** all prompts. It will allow you to avoid blocking.
+
+.. option:: enable_telemetry
+
+:Default:   Yes
+:Values:    Yes/No
+
+Shares commands, platforms and libraries usage to help us make PlatformIO
+better.
+
+
+.. note::
+    * The ``Yes`` value is equl to: ``True``, ``Y``, ``1``.
+      The value is not case sensetive.
+    * You can override these settings using :ref:`envvars`.
 
 Examples
 ~~~~~~~~

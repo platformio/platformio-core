@@ -1,7 +1,25 @@
 Release History
 ===============
 
-1.0.0 (2015-02-27)
+1.1.0 (2015-03-05)
+------------------
+
+* Implemented ``PLATFORMIO_*`` environment variables
+  (`issue #102 <https://github.com/ivankravets/platformio/issues/102>`_)
+* Added support for *SainSmart* boards to
+  `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html#boards>`__
+  development platform
+* Added
+  `Project Configuration <http://docs.platformio.org/en/latest/projectconf.html>`__
+  option named `envs_dir <http://docs.platformio.org/en/latest/projectconf.html#envs-dir>`__
+* Disabled "prompts" automatically for *Continuous Integration* systems
+  (`issue #103 <https://github.com/ivankravets/platformio/issues/103>`_)
+* Fixed firmware uploading for
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  boards which work within ``usbtiny`` protocol
+* Fixed uploading for *Digispark* board (`issue #106 <https://github.com/ivankravets/platformio/issues/106>`_)
+
+1.0.1 (2015-02-27)
 ------------------
 
 **PlatformIO 1.0 - recommended for production**
@@ -219,7 +237,7 @@ Release History
   `srcbuild_flags <http://docs.platformio.org/en/latest/projectconf.html#srcbuild-flags>`_
   environment option
 * Allowed to override some of settings via system environment variables
-  such as: ``$PIOSRCBUILD_FLAGS`` and ``$PIOENVS_DIR``
+  such as: ``PLATFORMIO_SRCBUILD_FLAGS`` and ``PLATFORMIO_ENVS_DIR``
 * Added ``--upload-port`` option for `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--upload-port>`__ command
 * Implemented (especially for `SmartAnthill <http://docs.smartanthill.ikravets.com/>`_)
   `platformio run -t uploadlazy <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`_
