@@ -23,45 +23,63 @@ Description
 
 Get/List existing settings
 
-Options
-~~~~~~~
+Settings
+~~~~~~~~
 
-.. option:: auto_update_libraries
+.. _setting_auto_update_libraries:
+
+``auto_update_libraries``
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :Default:   Yes
 :Values:    Yes/No
 
 Automatically update libraries.
 
-.. option:: auto_update_platforms
+.. _setting_auto_update_platforms:
+
+``auto_update_platforms``
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :Default:   Yes
 :Values:    Yes/No
 
 Automatically update platforms.
 
-.. option:: check_libraries_interval
+.. _setting_check_libraries_interval:
+
+``check_libraries_interval``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :Default:   7
 :Values:    Days (Number)
 
 Check for the library updates interval.
 
-.. option:: check_platformio_interval
+.. _setting_check_platformio_interval:
+
+``check_platformio_interval``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :Default:   3
 :Values:    Days (Number)
 
 Check for the new PlatformIO interval.
 
-.. option:: check_platforms_interval
+.. _setting_check_platforms_interval:
+
+``check_platforms_interval``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :Default:   7
 :Values:    Days (Number)
 
 Check for the platform updates interval.
 
-.. option:: enable_prompts
+.. _setting_enable_prompts:
+
+``enable_prompts``
+^^^^^^^^^^^^^^^^^^
 
 :Default:   Yes
 :Values:    Yes/No
@@ -76,7 +94,10 @@ Can PlatformIO communicate with you via prompts?
     If you are going to run *PlatformIO* from **subprocess**, you **MUST
     DISABLE** all prompts. It will allow you to avoid blocking.
 
-.. option:: enable_telemetry
+.. _setting_enable_telemetry:
+
+``enable_telemetry``
+^^^^^^^^^^^^^^^^^^^^
 
 :Default:   Yes
 :Values:    Yes/No
