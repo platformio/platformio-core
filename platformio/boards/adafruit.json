@@ -34,7 +34,7 @@
             "variant": "tiny8"
         },
         "framework": "arduino",
-        "name": "Adafruit Trinket 8MHz",
+        "name": "Adafruit Trinket 3V/8MHz",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
@@ -52,7 +52,7 @@
             "variant": "tiny8"
         },
         "framework": "arduino",
-        "name": "Adafruit Trinket 16MHz",
+        "name": "Adafruit Trinket 5V/16MHz",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,

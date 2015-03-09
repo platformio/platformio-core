@@ -16,6 +16,9 @@ MCU, upload protocol or etc. Please use ``board`` option.
 
     atmelavr
     atmelsam
+    freescalekinetis
+    nordicnrf51
+    nxplpc
     ststm32
     teensy
     timsp430
