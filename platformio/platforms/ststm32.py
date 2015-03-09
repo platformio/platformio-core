@@ -4,10 +4,10 @@
 from platformio.platforms.base import BasePlatform
 
 
-class Stm32Platform(BasePlatform):
+class Ststm32Platform(BasePlatform):
 
     """
-        An embedded platform for STMicroelectronics ARM microcontrollers
+        An embedded platform for ST STM32 ARM microcontrollers
     """
 
     PACKAGES = {
@@ -35,6 +35,10 @@ class Stm32Platform(BasePlatform):
         },
 
         "framework-opencm3": {
+            "default": True
+        },
+
+        "framework-mbed": {
             "default": True
         }
     }
