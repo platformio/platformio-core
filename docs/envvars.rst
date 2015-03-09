@@ -85,36 +85,36 @@ Allows to override PlatformIO settings. You can manage them via
 PLATFORMIO_SETTING_AUTO_UPDATE_LIBRARIES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Allows to override setting :option:`auto_update_libraries`.
+Allows to override setting :ref:`setting_auto_update_libraries`.
 
 PLATFORMIO_SETTING_AUTO_UPDATE_PLATFORMS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Allows to override setting :option:`auto_update_platforms`.
+Allows to override setting :ref:`setting_auto_update_platforms`.
 
 PLATFORMIO_SETTING_CHECK_LIBRARIES_INTERVAL
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Allows to override setting :option:`check_libraries_interval`.
+Allows to override setting :ref:`setting_check_libraries_interval`.
 
 PLATFORMIO_SETTING_CHECK_PLATFORMIO_INTERVAL
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Allows to override setting :option:`check_platformio_interval`.
+Allows to override setting :ref:`setting_check_platformio_interval`.
 
 PLATFORMIO_SETTING_CHECK_PLATFORMS_INTERVAL
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Allows to override setting :option:`check_platforms_interval`.
+Allows to override setting :ref:`setting_check_platforms_interval`.
 
 .. _envvar_PLATFORMIO_SETTING_ENABLE_PROMPTS:
 
 PLATFORMIO_SETTING_ENABLE_PROMPTS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Allows to override setting :option:`enable_prompts`.
+Allows to override setting :ref:`setting_enable_prompts`.
 
 PLATFORMIO_SETTING_ENABLE_TELEMETRY
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Allows to override setting :option:`enable_telemetry`.
+Allows to override setting :ref:`setting_enable_telemetry`.
