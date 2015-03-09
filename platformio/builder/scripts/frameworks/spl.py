@@ -7,7 +7,7 @@
 
 from os.path import join
 
-from SCons.Script import DefaultEnvironment, Return
+from SCons.Script import DefaultEnvironment
 
 env = DefaultEnvironment()
 
@@ -61,4 +61,4 @@ libs.append(envsafe.BuildLibrary(
     ignore_files
 ))
 
-Return("libs")
+env.Append(LIBS=libs)

@@ -68,13 +68,11 @@ env.Append(
     ]
 )
 
-CORELIBS = env.ProcessGeneral()
-
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(["m", "gcc"] + CORELIBS)
+target_elf = env.BuildFirmware()
 
 #
 # Target: Build the .bin file

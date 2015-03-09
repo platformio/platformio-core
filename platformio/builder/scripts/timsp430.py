@@ -48,6 +48,8 @@ env.Replace(
         "-Wl,-gc-sections,-u,main"
     ],
 
+    LIBS=["m"],
+
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-mspdebug", "mspdebug"),
@@ -74,13 +76,11 @@ env.Append(
     )
 )
 
-CORELIBS = env.ProcessGeneral()
-
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(["m"] + CORELIBS)
+target_elf = env.BuildFirmware()
 
 #
 # Target: Build the .hex

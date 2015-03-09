@@ -10,7 +10,7 @@ from SCons.Script import SConscript, SConscriptChdir
 from SCons.Util import case_sensitive_suffixes
 
 
-def ProcessGeneral(env):
+def BuildFirmware(env):
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes('.s', '.S'):
         env.Replace(
@@ -24,20 +24,8 @@ def ProcessGeneral(env):
     if "BUILD_FLAGS" in env:
         env.MergeFlags(env['BUILD_FLAGS'])
 
-    corelibs = []
-    if "FRAMEWORK" in env:
-        if env['FRAMEWORK'] in ("arduino", "energia"):
-            env.ConvertInoToCpp()
-        for f in env['FRAMEWORK'].split(","):
-            SConscriptChdir(0)
-            corelibs += SConscript(
-                env.subst(join("$PIOBUILDER_DIR", "scripts", "frameworks",
-                               "%s.py" % f.strip().lower()))
-            )
-    return corelibs
+    env.BuildFramework()
 
-
-def BuildFirmware(env, corelibs):
     firmenv = env.Clone()
     vdirs = firmenv.VariantDirRecursive(
         join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR")
@@ -59,12 +47,15 @@ def BuildFirmware(env, corelibs):
         _LIBFLAGS=" -Wl,--end-group"
     )
 
-    firmenv.MergeFlags(getenv("PLATFORMIO_SRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
+    _srcbuild_flags = getenv("PLATFORMIO_SRCBUILD_FLAGS",
+                             env.subst("$SRCBUILD_FLAGS"))
+    if _srcbuild_flags:
+        firmenv.MergeFlags(_srcbuild_flags)
 
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),
         [firmenv.GlobCXXFiles(vdir) for vdir in vdirs],
-        LIBS=corelibs + deplibs,
+        LIBS=env.get("LIBS") + deplibs,
         LIBPATH="$BUILD_DIR",
         PROGSUFFIX=".elf"
     )
@@ -93,6 +84,21 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
         env.VariantDir(_var_dir, _src_dir, duplicate)
         variants.append(_var_dir)
     return variants
+
+
+def BuildFramework(env):
+    if "FRAMEWORK" not in env:
+        return
+
+    if env['FRAMEWORK'].lower() in ("arduino", "energia"):
+        env.ConvertInoToCpp()
+
+    for f in env['FRAMEWORK'].split(","):
+        SConscriptChdir(0)
+        SConscript(
+            env.subst(join("$PIOBUILDER_DIR", "scripts", "frameworks",
+                           "%s.py" % f.strip().lower()))
+        )
 
 
 def BuildLibrary(env, variant_dir, library_dir, ignore_files=None):
@@ -303,10 +309,10 @@ def exists(_):
 
 
 def generate(env):
-    env.AddMethod(ProcessGeneral)
     env.AddMethod(BuildFirmware)
     env.AddMethod(GlobCXXFiles)
     env.AddMethod(VariantDirRecursive)
+    env.AddMethod(BuildFramework)
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildDependentLibraries)
     env.AddMethod(ConvertInoToCpp)

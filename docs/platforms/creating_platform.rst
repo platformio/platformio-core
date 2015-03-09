@@ -217,6 +217,8 @@ base template of ``test-builder.py``.
 
         CPPDEFINES=["DEFINE_1", "DEFINE=2", "DEFINE_N"],
 
+        LIBS=["additional", "libs", "here"],
+
         UPLOADER=join("$PIOPACKAGES_DIR", "tool-bar", "uploader"),
         UPLOADCMD="$UPLOADER $SOURCES"
     )
@@ -238,12 +240,10 @@ base template of ``test-builder.py``.
     # The source code of "platformio-build-tool" is here
     # https://github.com/ivankravets/platformio/blob/develop/platformio/builder/tools/platformio.py
 
-    CORELIBS = env.ProcessGeneral()
-
     #
     # Target: Build executable and linkable firmware
     #
-    target_elf = env.BuildFirmware(CORELIBS + ["additional", "libs", "here"])
+    target_elf = env.BuildFirmware()
 
     #
     # Target: Build the .bin file

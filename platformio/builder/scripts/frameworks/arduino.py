@@ -8,7 +8,7 @@
 from os import listdir, walk
 from os.path import isfile, join
 
-from SCons.Script import DefaultEnvironment, Return
+from SCons.Script import DefaultEnvironment
 
 env = DefaultEnvironment()
 
@@ -178,4 +178,4 @@ if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
         join("$PLATFORMFW_DIR", "system", "libsam", "source")
     ))
 
-Return("libs")
+env.Append(LIBS=libs)

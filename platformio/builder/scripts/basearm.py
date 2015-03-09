@@ -50,16 +50,15 @@ env.Replace(
         "-mcpu=${BOARD_OPTIONS['build']['cpu']}"
     ],
 
+    LIBS=["c", "gcc", "m"],
+
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES'
 )
 
-if env.get("BOARD_OPTIONS", {}).get("build", {}).get("cpu", "")[-2:] == "m4":
+if env.get("BOARD_OPTIONS", {}).get("build", {}).get(
+        "cpu", "")[-2:] == "m4" and env.get("BOARD") != "frdm_k20d50m":
     env.Append(
-        ASFLAGS=[
-            "-mfloat-abi=hard",
-            "-mfpu=fpv4-sp-d16"
-        ],
-        CCFLAGS=[
+        CPPFLAGS=[
             "-mfloat-abi=hard",
             "-mfpu=fpv4-sp-d16",
             "-fsingle-precision-constant"

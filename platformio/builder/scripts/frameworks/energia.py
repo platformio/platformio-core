@@ -7,7 +7,7 @@
 
 from os.path import join
 
-from SCons.Script import DefaultEnvironment, Return
+from SCons.Script import DefaultEnvironment
 
 env = DefaultEnvironment()
 
@@ -52,4 +52,4 @@ libs.append(env.BuildLibrary(
     join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
 ))
 
-Return("libs")
+env.Append(LIBS=libs)
