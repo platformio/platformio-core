@@ -53,13 +53,11 @@ else:
         UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS'
     )
 
-CORELIBS = env.ProcessGeneral()
-
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(["m"] + CORELIBS)
+target_elf = env.BuildFirmware()
 
 #
 # Target: Build the firmware file

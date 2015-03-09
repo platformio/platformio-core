@@ -82,13 +82,11 @@ else:
         UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
     )
 
-CORELIBS = env.ProcessGeneral()
-
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(["m"] + CORELIBS)
+target_elf = env.BuildFirmware()
 
 #
 # Target: Extract EEPROM data (from EEMEM directive) to .eep file

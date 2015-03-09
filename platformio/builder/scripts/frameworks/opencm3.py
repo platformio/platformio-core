@@ -9,7 +9,7 @@ import re
 from os import listdir, sep, walk
 from os.path import isfile, join, normpath
 
-from SCons.Script import DefaultEnvironment, Return
+from SCons.Script import DefaultEnvironment
 
 from platformio.util import exec_command
 
@@ -168,4 +168,4 @@ libs.append(env.Library(
     get_source_files(root_dir)
 ))
 
-Return("libs")
+env.Append(LIBS=libs)

@@ -44,7 +44,7 @@ def test_board_options(platformio_setup, clirunner, validate_cliresult):
 def test_board_ldscripts(platformio_setup, clirunner, validate_cliresult):
     result = clirunner.invoke(
         install_cli, [
-            "stm32",
+            "ststm32",
             "--skip-default-package",
             "--with-package=ldscripts"
         ])

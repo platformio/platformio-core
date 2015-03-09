@@ -1,0 +1,184 @@
+{
+    "lpc1768": {
+        "build": {
+            "f_cpu": "96000000L",
+            "cpu": "cortex-m3",
+            "mcu": "lpc1768"       
+        },
+        "framework": "mbed",
+        "name": "mbed LPC1768",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 524288
+        }
+    },
+    "lpc11u24": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0",
+            "mcu": "lpc11u24"       
+        },
+        "framework": "mbed",
+        "name": "mbed LPC11U24",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 8192,
+            "maximum_size": 32768
+        }
+    },
+    "lpc4088": {
+        "build": {
+            "f_cpu": "120000000L",
+            "cpu": "cortex-m4",
+            "mcu": "lpc4088"       
+        },
+        "framework": "mbed",
+        "name": "EA LPC4088 QuickStart Board",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 98304,
+            "maximum_size": 524288
+        }
+    },
+    "dipcortexm0": {
+        "build": {
+            "f_cpu": "50000000L",
+            "cpu": "cortex-m0",
+            "mcu": "lpc11u24"       
+        },
+        "framework": "mbed",
+        "name": "DipCortex M0",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 8192,
+            "maximum_size": 32768
+        }
+    },
+    "blueboard_lpc11u24": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0",
+            "mcu": "lpc11u24"       
+        },
+        "framework": "mbed",
+        "name": "BlueBoard-LPC11U24",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 8192,
+            "maximum_size": 32768
+        }
+    },
+    "seeeduinoArchPro": {
+        "build": {
+            "f_cpu": "96000000L",
+            "cpu": "cortex-m3",
+            "mcu": "lpc1768"       
+        },
+        "framework": "mbed",
+        "name": "Seeeduino-Arch-Pro",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 524288
+        }
+    },
+    "ubloxc027": {
+        "build": {
+            "f_cpu": "96000000L",
+            "cpu": "cortex-m3",
+            "mcu": "lpc1768"       
+        },
+        "framework": "mbed",
+        "name": "u-blox C027",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 524288
+        }
+    },
+    "lpc1114fn28": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0",
+            "mcu": "lpc1114fn28"       
+        },
+        "framework": "mbed",
+        "name": "mbed LPC1114FN28",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 4096,
+            "maximum_size": 32768
+        }
+    },
+    "lpc11u35": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0",
+            "mcu": "lpc11u35"       
+        },
+        "framework": "mbed",
+        "name": "EA LPC11U35 QuickStart Board",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 10240,
+            "maximum_size": 65536
+        }
+    },
+    "lpc11u35_501": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0",
+            "mcu": "lpc11u35"       
+        },
+        "framework": "mbed",
+        "name": "TG-LPC11U35-501",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 10240,
+            "maximum_size": 65536
+        }
+    },
+    "lpc1549": {
+        "build": {
+            "f_cpu": "72000000L",
+            "cpu": "cortex-m3",
+            "mcu": "lpc1549"       
+        },
+        "framework": "mbed",
+        "name": "LPCXpresso1549",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 36864,
+            "maximum_size": 262144
+        }
+    },
+    "mbuino": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0",
+            "mcu": "lpc11u24"       
+        },
+        "framework": "mbed",
+        "name": "Outrageous Circuits mBuino",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 8192,
+            "maximum_size": 32768
+        }
+    },
+    "lpc4088_dm": {
+        "build": {
+            "f_cpu": "120000000L",
+            "cpu": "cortex-m4",
+            "mcu": "lpc4088"       
+        },
+        "framework": "mbed",
+        "name": "EA LPC4088 Display Module",
+        "platform": "nxplpc",
+        "upload": {
+            "maximum_ram_size": 98304,
+            "maximum_size": 524288
+        }
+    }
+}
