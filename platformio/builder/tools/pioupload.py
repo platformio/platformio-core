@@ -7,7 +7,7 @@ from time import sleep
 from SCons.Script import Exit
 from serial import Serial
 
-from platformio.util import get_serialports
+from platformio.util import get_logicaldisks, get_serialports
 
 
 def FlushSerialBuffer(env, port):
@@ -52,16 +52,28 @@ def WaitForNewSerialPort(_, before):
 
 
 def AutodetectUploadPort(env):
-    if "UPLOAD_PORT" not in env:
+    if "UPLOAD_PORT" in env:
+        return
+
+    if env.subst("$FRAMEWORK") == "mbed":
+        for item in get_logicaldisks():
+            if not item['name'] or "mbed" != item['name'].lower():
+                continue
+            print "Auto-detected UPLOAD_PORT: %s" % item['disk']
+            env.Replace(UPLOAD_PORT=item['disk'])
+            break
+    else:
         for item in get_serialports():
-            if "VID:PID" in item['hwid']:
-                print "Auto-detected UPLOAD_PORT: %s" % item['port']
-                env.Replace(UPLOAD_PORT=item['port'])
-                break
+            if "VID:PID" not in item['hwid']:
+                continue
+            print "Auto-detected UPLOAD_PORT: %s" % item['port']
+            env.Replace(UPLOAD_PORT=item['port'])
+            break
 
     if "UPLOAD_PORT" not in env:
         Exit("Error: Please specify `upload_port` for environment or use "
-             "global `--upload-port` option.\n")
+             "global `--upload-port` option.\n"
+             "For the some development platforms it can be USB flash drive\n")
 
 
 def exists(_):

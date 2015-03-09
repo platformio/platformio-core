@@ -3,8 +3,10 @@
 
 import json
 import os
+import re
 import subprocess
-from os.path import abspath, dirname, expanduser, isdir, isfile, join, realpath
+from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
+                     join, realpath)
 from platform import system, uname
 from threading import Thread
 
@@ -173,7 +175,30 @@ def get_serialports():
         from serial.tools.list_ports_posix import comports
     else:
         raise exception.GetSerialPortsError(os.name)
-    return[{"port": p, "description": d, "hwid": h} for p, d, h in comports()]
+    return [{"port": p, "description": d, "hwid": h} for p, d, h in comports()]
+
+
+def get_logicaldisks():
+    disks = []
+    if system() == "Windows":
+        result = exec_command(
+            ["wmic", "logicaldisk", "get", "name,VolumeName"]).get("out")
+        disknamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
+        for line in result.split("\n"):
+            match = disknamere.match(line.strip())
+            if not match:
+                continue
+            disks.append({"disk": match.group(1), "name": match.group(2)})
+    else:
+        result = exec_command(["df"]).get("out")
+        disknamere = re.compile(r"\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
+        for line in result.split("\n"):
+            match = disknamere.search(line.strip())
+            if not match:
+                continue
+            disks.append({"disk": match.group(1),
+                          "name": basename(match.group(1))})
+    return disks
 
 
 def get_api_result(path, params=None, data=None):
