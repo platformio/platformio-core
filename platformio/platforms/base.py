@@ -12,6 +12,86 @@ from platformio import exception, util
 from platformio.app import get_state_item, set_state_item
 from platformio.pkgmanager import PackageManager
 
+PLATFORM_PACKAGES = {
+
+    "framework-arduinoavr": [
+        ("Arduino Wiring-based Framework (AVR Core, 1.6)",
+         "http://arduino.cc/en/Reference/HomePage")
+    ],
+    "framework-arduinosam": [
+        ("Arduino Wiring-based Framework (SAM Core, 1.6)",
+         "http://arduino.cc/en/Reference/HomePage")
+    ],
+    "framework-arduinoteensy": [
+        ("Arduino Wiring-based Framework",
+         "http://arduino.cc/en/Reference/HomePage")
+    ],
+    "framework-energiamsp430": [
+        ("Energia Wiring-based Framework (MSP430 Core)",
+         "http://energia.nu/reference/")
+    ],
+    "framework-energiativa": [
+        ("Energia Wiring-based Framework (LM4F Core)",
+         "http://energia.nu/reference/")
+    ],
+    "framework-cmsis": [
+        ("Vendor-independent hardware abstraction layer for the Cortex-M "
+         "processor series",
+         "http://www.arm.com/products/processors/"
+         "cortex-m/cortex-microcontroller-software-interface-standard.php")
+    ],
+    "framework-spl": [
+        ("Standard Peripheral Library for STM32 MCUs",
+         "http://www.st.com"
+         "/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890")
+    ],
+    "framework-opencm3": [
+        ("libOpenCM3 Framework", "http://www.libopencm3.org/")
+    ],
+    "framework-mbed": [
+        ("mbed Framework", "http://mbed.org")
+    ],
+    "ldscripts": [
+        ("Linker Scripts",
+         "https://sourceware.org/binutils/docs/ld/Scripts.html")
+    ],
+    "toolchain-atmelavr": [
+        ("avr-gcc", "https://gcc.gnu.org/wiki/avr-gcc"),
+        ("GDB", "http://www.gnu.org/software/gdb/"),
+        ("AVaRICE", "http://avarice.sourceforge.net/"),
+        ("SimulAVR", "http://www.nongnu.org/simulavr/")
+    ],
+    "toolchain-gccarmnoneeabi": [
+        ("gcc-arm-embedded", "https://launchpad.net/gcc-arm-embedded"),
+        ("GDB", "http://www.gnu.org/software/gdb/")
+    ],
+    "toolchain-timsp430": [
+        ("msp-gcc", "http://sourceforge.net/projects/mspgcc/"),
+        ("GDB", "http://www.gnu.org/software/gdb/")
+    ],
+    "tool-avrdude": [
+        ("AVRDUDE", "http://www.nongnu.org/avrdude/")
+    ],
+    "tool-micronucleus": [
+        ("Micronucleus", "https://github.com/micronucleus/micronucleus")
+    ],
+    "tool-bossac": [
+        ("BOSSA CLI", "https://sourceforge.net/projects/b-o-s-s-a/")
+    ],
+    "tool-stlink": [
+        ("ST-Link", "https://github.com/texane/stlink")
+    ],
+    "tool-teensy": [
+        ("Teensy Loader", "https://www.pjrc.com/teensy/loader.html")
+    ],
+    "tool-lm4flash": [
+        ("Flash Programmer", "http://www.ti.com/tool/lmflashprogrammer")
+    ],
+    "tool-mspdebug": [
+        ("MSPDebug", "http://mspdebug.sourceforge.net/")
+    ]
+}
+
 
 class PlatformFactory(object):
 

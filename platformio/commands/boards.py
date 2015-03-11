@@ -16,7 +16,7 @@ def cli(query, json_output):  # pylint: disable=R0912
     if json_output:
         return ouput_boards_json(query)
 
-    BOARDLIST_TPL = ("{type:<30} {mcu:<13} {frequency:<8} "
+    BOARDLIST_TPL = ("{type:<30} {mcu:<14} {frequency:<8} "
                      " {flash:<7} {ram:<6} {name}")
 
     grpboards = {}

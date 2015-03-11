@@ -3,10 +3,11 @@
 Platform ``atmelsam``
 =====================
 
-`Atmel® | SMART <http://www.atmel.com/products/microcontrollers/arm/default.aspx>`_
-offers Flash- based ARM® products based on the ARM Cortex-®M0+, Cortex-M3 and
-Cortex-M4 architectures, ranging from 8KB to 2MB of Flash including a rich
-peripheral and feature mix.
+Atmel | SMART offers Flash- based ARM products based on the ARM
+Cortex-M0+, Cortex-M3 and Cortex-M4 architectures, ranging from 8KB
+to 2MB of Flash including a rich peripheral and feature mix.
+
+http://www.atmel.com/products/microcontrollers/arm/default.aspx
 
 .. contents::
 
@@ -17,39 +18,24 @@ Packages
     :header-rows:  1
 
     * - Name
-      - Alias
       - Contents
-    * - ``toolchain-gccarmnoneeabi``
-      - toolchain
-      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_,
-        `GDB <http://www.gnu.org/software/gdb/>`_
-    * - ``tool-bossac``
-      - uploader
-      - `BOSSA CLI <https://sourceforge.net/projects/b-o-s-s-a/>`_
-    * - ``framework-arduino``
-      -
-      - See below in :ref:`atmelsam_frameworks`
 
+    * - ``framework-arduinosam``
+      - `Arduino Wiring-based Framework (SAM Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
+
+    * - ``ldscripts``
+      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
+
+    * - ``toolchain-gccarmnoneeabi``
+      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
+    * - ``tool-bossac``
+      - `BOSSA CLI <https://sourceforge.net/projects/b-o-s-s-a/>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
-
-.. _atmelsam_frameworks:
-
-Frameworks
-----------
-
-.. list-table::
-    :header-rows:  1
-
-    * - Type ``framework``
-      - Name
-      - Reference
-    * - ``arduino``
-      - Arduino Wiring-based Framework (SAM Core, 1.6)
-      - `Documentation <http://arduino.cc/en/Reference/HomePage>`_
 
 
 Boards
@@ -60,45 +46,76 @@ Boards
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
+Arduino
+~~~~~~~
+
 .. list-table::
     :header-rows:  1
 
     * - Type ``board``
       - Name
-      - Microcontroller ``board_mcu``
-      - Frequency ``board_f_cpu``
+      - Microcontroller
+      - Frequency
       - Flash
       - RAM
+
     * - ``due``
       - `Arduino Due (Programming Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
-      - at91sam3x8e ``cortex-m3``
-      - 84 MHz ``84000000L``
-      - 512 Kb
-      - 32 Kb
-    * - ``dueUSB``
-      - `Arduino Due (USB Native Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
-      - at91sam3x8e ``cortex-m3``
-      - 84 MHz ``84000000L``
-      - 512 Kb
-      - 32 Kb
-    * - ``digix``
-      - `Digistump DigiX <http://digistump.com/products/50>`_
-      - at91sam3x8e ``cortex-m3``
-      - 84 MHz ``84000000L``
-      - 512 kb
-      - 32 Kb
-    * - ``sainSmartDue``
-      - `SainSmart Due (Programming Port) <http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html>`_
-      - at91sam3x8e ``cortex-m3``
-      - 84 MHz ``84000000L``
-      - 512 Kb
-      - 32 Kb
-    * - ``sainSmartDueUSB``
-      - `SainSmart Due (USB Native Port) <http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html>`_
-      - at91sam3x8e ``cortex-m3``
-      - 84 MHz ``84000000L``
+      - AT91SAM3X8E
+      - 84 MHz
       - 512 Kb
       - 32 Kb
 
-More detailed information you can find here
-`Atmel SMART ARM-based MCUs <http://www.atmel.com/products/microcontrollers/arm/default.aspx>`_.
+    * - ``dueUSB``
+      - `Arduino Due (USB Native Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
+      - AT91SAM3X8E
+      - 84 MHz
+      - 512 Kb
+      - 32 Kb
+
+Digistump
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``digix``
+      - `Digistump DigiX <http://digistump.com/products/50>`_
+      - AT91SAM3X8E
+      - 84 MHz
+      - 512 Kb
+      - 28 Kb
+
+SainSmart
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``sainSmartDue``
+      - `SainSmart Due (Programming Port) <http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html>`_
+      - AT91SAM3X8E
+      - 84 MHz
+      - 512 Kb
+      - 32 Kb
+
+    * - ``sainSmartDueUSB``
+      - `SainSmart Due (USB Native Port) <http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html>`_
+      - AT91SAM3X8E
+      - 84 MHz
+      - 512 Kb
+      - 32 Kb

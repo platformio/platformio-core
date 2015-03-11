@@ -2,14 +2,19 @@
 # See LICENSE for details.
 
 """
-    Build script for OpenCM3 Framework.
+The libopencm3 framework aims to create a free/libre/open-source
+firmware library for various ARM Cortex-M0(+)/M3/M4 microcontrollers,
+including ST STM32, Ti Tiva and Stellaris, NXP LPC 11xx, 13xx, 15xx,
+17xx parts, Atmel SAM3, Energy Micro EFM32 and others.
+
+http://www.libopencm3.org/wiki/Main_Page
 """
 
 import re
 from os import listdir, sep, walk
 from os.path import isfile, join, normpath
 
-from SCons.Script import DefaultEnvironment, Return
+from SCons.Script import DefaultEnvironment
 
 from platformio.util import exec_command
 
@@ -168,4 +173,4 @@ libs.append(env.Library(
     get_source_files(root_dir)
 ))
 
-Return("libs")
+env.Append(LIBS=libs)

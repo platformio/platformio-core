@@ -2,13 +2,17 @@
 # See LICENSE for details.
 
 """
-    Build script for Arduino Framework (based on Wiring).
+Arduino Framework allows writing cross-platform software to control
+devices attached to a wide range of Arduino boards to create all
+kinds of creative coding, interactive objects, spaces or physical experiences.
+
+http://arduino.cc/en/Reference/HomePage
 """
 
 from os import listdir, walk
 from os.path import isfile, join
 
-from SCons.Script import DefaultEnvironment, Return
+from SCons.Script import DefaultEnvironment
 
 env = DefaultEnvironment()
 
@@ -146,7 +150,6 @@ if BOARD_BUILDOPTS.get("core", None) == "teensy":
 # Target: Build Core Library
 #
 
-
 libs = []
 
 if "variant" in BOARD_BUILDOPTS:
@@ -178,4 +181,4 @@ if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
         join("$PLATFORMFW_DIR", "system", "libsam", "source")
     ))
 
-Return("libs")
+env.Append(LIBS=libs)

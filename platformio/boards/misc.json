@@ -7,7 +7,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Raspduino",
         "platform": "atmelavr",
         "upload": {
@@ -16,7 +16,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "http://www.bitwizard.nl/wiki/index.php/Raspduino",
+        "vendor": "BitWizard"
     },
     "sainSmartDue": {
         "build": {
@@ -31,18 +33,20 @@
             "vid": "0x2341",
             "ldscript": "sam3x8e.ld"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "SainSmart Due (Programming Port)",
         "platform": "atmelsam",
         "upload": {
             "disable_flushing": true,
-            "maximum_ram_size": 28672,
+            "maximum_ram_size": 32768,
             "maximum_size": 524288,
             "protocol": "sam-ba",
-            "require_upload_port" : true, 
+            "require_upload_port" : true,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html",
+        "vendor": "SainSmart"
     },
     "sainSmartDueUSB": {
         "build": {
@@ -57,17 +61,19 @@
             "vid": "0x2341",
             "ldscript": "sam3x8e.ld"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "SainSmart Due (USB Native Port)",
         "platform": "atmelsam",
         "upload": {
             "disable_flushing": true,
-            "maximum_ram_size": 28672,
+            "maximum_ram_size": 32768,
             "maximum_size": 524288,
             "protocol": "sam-ba",
-            "require_upload_port" : true, 
+            "require_upload_port" : true,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html",
+        "vendor": "SainSmart"
     }
 }

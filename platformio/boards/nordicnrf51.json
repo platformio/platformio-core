@@ -1,0 +1,116 @@
+{
+    "nrf51_mkit": {
+        "build": {
+            "f_cpu": "16000000L",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822"
+        },
+        "frameworks": ["mbed"],
+        "name": "Nordic nRF51822-mKIT",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 131072
+        },
+        "url": "http://developer.mbed.org/platforms/Nordic-nRF51822/",
+        "vendor": "Nordic"
+    },
+    "hrm1017": {
+        "build": {
+            "f_cpu": "16000000L",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822"
+        },
+        "frameworks": ["mbed"],
+        "name": "Switch Science mbed HRM1017",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/mbed-HRM1017/",
+        "vendor": "Switch Science"
+    },
+    "redBearLab": {
+        "build": {
+            "f_cpu": "16000000L",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822"
+        },
+        "frameworks": ["mbed"],
+        "name": "RedBearLab nRF51822",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/RedBearLab-nRF51822/",
+        "vendor": "RedBearLab"
+    },
+    "nrf51_dk": {
+        "build": {
+            "f_cpu": "32000000L",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822"
+        },
+        "frameworks": ["mbed"],
+        "name": "Nordic nRF51-DK",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/Nordic-nRF51-DK/",
+        "vendor": "Nordic"
+    },
+    "redBearLabBLENano": {
+        "build": {
+            "f_cpu": "16000000L",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822"
+        },
+        "frameworks": ["mbed"],
+        "name": "RedBearLab BLE Nano",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/RedBearLab-BLE-Nano/",
+        "vendor": "RedBearLab"
+    },
+    "nrf51_dongle": {
+        "build": {
+            "f_cpu": "32000000L",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822"
+        },
+        "frameworks": ["mbed"],
+        "name": "Nordic nRF51-Dongle",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/Nordic-nRF51-Dongle/",
+        "vendor": "Nordic"
+    }
+    ,
+    "wallBotBLE": {
+        "build": {
+            "f_cpu": "16000000L",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822"
+        },
+        "frameworks": ["mbed"],
+        "name": "JKSoft Wallbot BLE",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 131072
+        },
+        "url": "https://developer.mbed.org/platforms/JKSoft-Wallbot-BLE/",
+        "vendor": "JKSoft"
+    }
+
+}
