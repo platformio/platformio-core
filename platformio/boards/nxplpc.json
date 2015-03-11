@@ -5,13 +5,15 @@
             "cpu": "cortex-m3",
             "mcu": "lpc1768"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "mbed LPC1768",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 32768,
             "maximum_size": 524288
-        }
+        },
+        "url": "http://developer.mbed.org/platforms/mbed-LPC1768/",
+        "vendor": "NXP"
     },
     "lpc11u24": {
         "build": {
@@ -19,13 +21,15 @@
             "cpu": "cortex-m0",
             "mcu": "lpc11u24"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "mbed LPC11U24",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 8192,
             "maximum_size": 32768
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/mbed-LPC11U24/",
+        "vendor": "NXP"
     },
     "lpc4088": {
         "build": {
@@ -33,13 +37,15 @@
             "cpu": "cortex-m4",
             "mcu": "lpc4088"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "EA LPC4088 QuickStart Board",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 98304,
             "maximum_size": 524288
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/EA-LPC4088/",
+        "vendor": "Embedded Artists"
     },
     "dipcortexm0": {
         "build": {
@@ -47,13 +53,15 @@
             "cpu": "cortex-m0",
             "mcu": "lpc11u24"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "DipCortex M0",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 8192,
             "maximum_size": 32768
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/DipCortex-M0/",
+        "vendor": "Solder Splash Labs"
     },
     "blueboard_lpc11u24": {
         "build": {
@@ -61,13 +69,15 @@
             "cpu": "cortex-m0",
             "mcu": "lpc11u24"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "BlueBoard-LPC11U24",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 8192,
             "maximum_size": 32768
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/BlueBoard-LPC11U24/",
+        "vendor": "NGX Technologies"
     },
     "seeeduinoArchPro": {
         "build": {
@@ -75,13 +85,15 @@
             "cpu": "cortex-m3",
             "mcu": "lpc1768"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "Seeeduino-Arch-Pro",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 32768,
             "maximum_size": 524288
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/Seeeduino-Arch-Pro/",
+        "vendor": "SeeedStudio"
     },
     "ubloxc027": {
         "build": {
@@ -89,13 +101,15 @@
             "cpu": "cortex-m3",
             "mcu": "lpc1768"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "u-blox C027",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 32768,
             "maximum_size": 524288
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/u-blox-C027/",
+        "vendor": "u-blox"
     },
     "lpc1114fn28": {
         "build": {
@@ -103,13 +117,15 @@
             "cpu": "cortex-m0",
             "mcu": "lpc1114fn28"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "mbed LPC1114FN28",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 4096,
             "maximum_size": 32768
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/LPC1114FN28/",
+        "vendor": "Switch Science"
     },
     "lpc11u35": {
         "build": {
@@ -117,13 +133,15 @@
             "cpu": "cortex-m0",
             "mcu": "lpc11u35"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "EA LPC11U35 QuickStart Board",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 10240,
             "maximum_size": 65536
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/EA-LPC11U35/",
+        "vendor": "Embedded Artists"
     },
     "lpc11u35_501": {
         "build": {
@@ -131,13 +149,15 @@
             "cpu": "cortex-m0",
             "mcu": "lpc11u35"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "TG-LPC11U35-501",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 10240,
             "maximum_size": 65536
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/TG-LPC11U35-501/",
+        "vendor": "CQ Publishing"
     },
     "lpc1549": {
         "build": {
@@ -145,13 +165,15 @@
             "cpu": "cortex-m3",
             "mcu": "lpc1549"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "LPCXpresso1549",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 36864,
             "maximum_size": 262144
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/LPCXpresso1549/",
+        "vendor": "NXP"
     },
     "mbuino": {
         "build": {
@@ -159,13 +181,15 @@
             "cpu": "cortex-m0",
             "mcu": "lpc11u24"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "Outrageous Circuits mBuino",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 8192,
             "maximum_size": 32768
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/Outrageous-Circuits-mBuino/",
+        "vendor": "Outrageous Circuits"
     },
     "lpc4088_dm": {
         "build": {
@@ -173,12 +197,14 @@
             "cpu": "cortex-m4",
             "mcu": "lpc4088"       
         },
-        "framework": "mbed",
+        "frameworks": "mbed",
         "name": "EA LPC4088 Display Module",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 98304,
             "maximum_size": 524288
-        }
+        },
+        "url": "https://developer.mbed.org/platforms/EA-LPC4088-Display-Module/",
+        "vendor": "Embedded Artists"
     }
 }
