@@ -24,7 +24,7 @@ def cli(query, json_output):
         if query == "all":
             query = ""
 
-        search_data = "%s %s" % (name, info)
+        search_data = "%s %s %s" % (name, info, p.get_installed_packages())
         if query and query.lower() not in search_data.lower():
             continue
 
