@@ -3,7 +3,13 @@
 Platform ``teensy``
 ===================
 
-`Teensy <https://www.pjrc.com/teensy/>`_ is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard "Mini-B" USB cable and a PC or Macintosh with a USB port.
+Teensy is a complete USB-based microcontroller development system, in
+a very small footprint, capable of implementing many types of projects.
+All programming is done via the USB port. No special programmer is
+needed, only a standard "Mini-B" USB cable and a PC or Macintosh with
+a USB port.
+
+https://www.pjrc.com/teensy
 
 .. contents::
 
@@ -14,45 +20,27 @@ Packages
     :header-rows:  1
 
     * - Name
-      - Alias
       - Contents
-    * - ``toolchain-gccarmnoneeabi``
-      - toolchain
-      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_,
-        `GDB <http://www.gnu.org/software/gdb/>`_
-    * - ``toolchain-atmelavr``
-      - toolchain
-      - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_,
-        `GDB <http://www.gnu.org/software/gdb/>`_,
-        `AVaRICE <http://avarice.sourceforge.net>`_,
-        `SimulAVR <http://www.nongnu.org/simulavr/>`_
-    * - ``tool-teensy``
-      - uploader
-      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
-    * - ``framework-arduinoteensy``
-      -
-      - See below in :ref:`teensy_frameworks`
 
+    * - ``toolchain-atmelavr``
+      - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
+
+    * - ``ldscripts``
+      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
+
+    * - ``framework-arduinoteensy``
+      - `Arduino Wiring-based Framework <http://arduino.cc/en/Reference/HomePage>`_
+
+    * - ``toolchain-gccarmnoneeabi``
+      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
+    * - ``tool-teensy``
+      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
-
-.. _teensy_frameworks:
-
-Frameworks
-----------
-
-.. list-table::
-    :header-rows:  1
-
-    * - Type ``framework``
-      - Name
-      - Reference
-    * - ``arduino``
-      - Arduino Wiring-based Framework
-      - `Documentation <http://arduino.cc/en/Reference/HomePage>`_
 
 
 Boards
@@ -63,39 +51,47 @@ Boards
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
+Teensy
+~~~~~~
+
 .. list-table::
     :header-rows:  1
 
     * - Type ``board``
       - Name
-      - Microcontroller ``board_mcu``
-      - Frequency ``board_f_cpu``
+      - Microcontroller
+      - Frequency
       - Flash
       - RAM
+
     * - ``teensy20``
       - `Teensy 2.0 <https://www.pjrc.com/store/teensy.html>`_
-      - ATmega32u4 ``atmega32u4``
-      - 16 MHz ``16000000L``
+      - ATMEGA32U4
+      - 16 MHz
       - 32 Kb
       - 2.5 Kb
+      
+
     * - ``teensy20pp``
       - `Teensy++ 2.0 <https://www.pjrc.com/store/teensypp.html>`_
-      - AT90USB1289 ``at90usb1286``
-      - 16 MHz ``16000000L``
+      - AT90USB1286
+      - 16 MHz
       - 128 Kb
       - 8 Kb
+      
+
     * - ``teensy30``
       - `Teensy 3.0 <https://www.pjrc.com/store/teensy3.html>`_
-      - MK20DX128 ``cortex-m4``
-      - 48 Mhz ``48000000L``
-      - 128 kb
+      - MK20DX128
+      - 48 MHz
+      - 128 Kb
       - 16 Kb
+      
+
     * - ``teensy31``
       - `Teensy 3.1 <https://www.pjrc.com/store/teensy31.html>`_
-      - MK20DX256 ``cortex-m4``
-      - 72 Mhz ``72000000L``
-      - 256 kb
+      - MK20DX256
+      - 72 MHz
+      - 256 Kb
       - 64 Kb
-
-More detailed information you can find here
-`Teensy USB Development Boards <https://www.pjrc.com/teensy/>`_.
+      
