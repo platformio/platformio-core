@@ -7,14 +7,16 @@
             "mcu": "attiny85",
             "variant": "digispark_tiny"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Digispark (Default - 16 MHz)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
             "maximum_size": 6012,
             "protocol": "digispark"
-        }
+        },
+        "url": "http://digistump.com/products/1",
+        "vendor": "Digistump"
     },
     "digispark-pro": {
         "build": {
@@ -24,14 +26,16 @@
             "mcu": "attiny167",
             "variant": "digispark_pro"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Digispark Pro (Default 16 MHz)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
             "maximum_size": 14844,
             "protocol": "digispark"
-        }
+        },
+        "url": "http://digistump.com/products/109",
+        "vendor": "Digistump"
     },
     "digispark-pro32": {
         "build": {
@@ -41,14 +45,16 @@
             "mcu": "attiny167",
             "variant": "digispark_pro32"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Digispark Pro (16 MHz) (32 byte buffer)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
             "maximum_size": 14844,
             "protocol": "digispark"
-        }
+        },
+        "url": "http://digistump.com/products/109",
+        "vendor": "Digistump"
     },
     "digispark-pro64": {
         "build": {
@@ -58,14 +64,16 @@
             "mcu": "attiny167",
             "variant": "digispark_pro64"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Digispark Pro (16 MHz) (64 byte buffer)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
             "maximum_size": 14844,
             "protocol": "digispark"
-        }
+        },
+        "url": "http://digistump.com/products/109",
+        "vendor": "Digistump"
     },
     "digix": {
         "build": {
@@ -80,7 +88,7 @@
             "variant": "digispark_digix",
             "vid": "0x16D0"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Digistump DigiX",
         "platform": "atmelsam",
         "upload": {
@@ -91,6 +99,8 @@
             "require_upload_port" : true,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://digistump.com/products/50",
+        "vendor": "Digistump"
     }
 }

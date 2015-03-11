@@ -7,7 +7,7 @@
             "mcu": "atmega1284p",
             "variant": "plus"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Microduino Core+ (ATmega1284P@16M,5V)",
         "platform": "atmelavr",
         "upload": {
@@ -16,7 +16,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 115200
-        }
+        },
+        "url": "https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B",
+        "vendor": "Microduino"
     },
     "1284p8m": {
         "build": {
@@ -26,7 +28,7 @@
             "mcu": "atmega1284p",
             "variant": "plus"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Microduino Core+ (ATmega1284P@8M,3.3V)",
         "platform": "atmelavr",
         "upload": {
@@ -35,7 +37,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B",
+        "vendor": "Microduino"
     },
     "168pa16m": {
         "build": {
@@ -45,7 +49,7 @@
             "mcu": "atmega168p",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Microduino Core (Atmega168PA@16M,5V)",
         "platform": "atmelavr",
         "upload": {
@@ -54,7 +58,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 115200
-        }
+        },
+        "url": "https://www.microduino.cc/wiki/index.php?title=Microduino-Core",
+        "vendor": "Microduino"
     },
     "168pa8m": {
         "build": {
@@ -64,7 +70,7 @@
             "mcu": "atmega168p",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Microduino Core (Atmega168PA@8M,3.3V)",
         "platform": "atmelavr",
         "upload": {
@@ -73,7 +79,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "https://www.microduino.cc/wiki/index.php?title=Microduino-Core",
+        "vendor": "Microduino"
     },
     "328p16m": {
         "build": {
@@ -83,7 +91,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Microduino Core (Atmega328P@16M,5V)",
         "platform": "atmelavr",
         "upload": {
@@ -92,7 +100,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 115200
-        }
+        },
+        "url": "https://www.microduino.cc/wiki/index.php?title=Microduino-Core",
+        "vendor": "Microduino"
     },
     "328p8m": {
         "build": {
@@ -102,7 +112,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Microduino Core (Atmega328P@8M,3.3V)",
         "platform": "atmelavr",
         "upload": {
@@ -111,7 +121,9 @@
             "require_upload_port" : true,
             "protocol": "arduino",
             "speed": 57600
-        }
+        },
+        "url": "https://www.microduino.cc/wiki/index.php?title=Microduino-Core",
+        "vendor": "Microduino"
     },
     "32u416m": {
         "build": {
@@ -123,7 +135,7 @@
             "variant": "32u4",
             "vid": "0x2341"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Microduino Core USB (ATmega32U4@16M,5V)",
         "platform": "atmelavr",
         "upload": {
@@ -135,7 +147,9 @@
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "https://www.microduino.cc/wiki/index.php?title=Microduino-CoreUSB",
+        "vendor": "Microduino"
     },
     "644pa16m": {
         "build": {
@@ -145,7 +159,7 @@
             "mcu": "atmega644p",
             "variant": "plus"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Microduino Core+ (Atmega644PA@16M,5V)",
         "platform": "atmelavr",
         "upload": {
@@ -154,7 +168,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 115200
-        }
+        },
+        "url": "https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B",
+        "vendor": "Microduino"
     },
     "644pa8m": {
         "build": {
@@ -164,7 +180,7 @@
             "mcu": "atmega644p",
             "variant": "plus"
         },
-        "framework": "arduino",
+        "frameworks": "arduino",
         "name": "Microduino Core+ (Atmega644PA@8M,3.3V)",
         "platform": "atmelavr",
         "upload": {
@@ -173,6 +189,8 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "https://www.microduino.cc/wiki/index.php?title=Microduino-Core%2B",
+        "vendor": "Microduino"
     }
 }
