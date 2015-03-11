@@ -7,7 +7,14 @@ from platformio.platforms.base import BasePlatform
 class Nordicnrf51Platform(BasePlatform):
 
     """
-        An embedded platform for Nordic nRF51 series ARM microcontrollers
+    The Nordic nRF51 Series is a family of highly flexible,
+    multi-protocol, system-on-chip (SoC) devices for ultra-low power
+    wireless applications. nRF51 Series devices support a range of
+    protocol stacks including Bluetooth Smart (previously called
+    Bluetooth low energy), ANT and proprietary 2.4GHz protocols such as
+    Gazell.
+
+    https://www.nordicsemi.com/eng/Products/nRF51-Series-SoC
     """
 
     PACKAGES = {

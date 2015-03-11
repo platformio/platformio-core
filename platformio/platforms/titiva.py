@@ -7,8 +7,12 @@ from platformio.platforms.base import BasePlatform
 class TitivaPlatform(BasePlatform):
 
     """
-        An embedded platform for TI TIVA C ARM microcontrollers
-        (with Energia and OpenCM3 Frameworks)
+    Texas Instruments TM4C12x MCUs offer the industrys most popular
+    ARM Cortex-M4 core with scalable memory and package options, unparalleled
+    connectivity peripherals, advanced application functions, industry-leading
+    analog integration, and extensive software solutions.
+
+    http://www.ti.com/lsds/ti/microcontrollers_16-bit_32-bit/c2000_performance/control_automation/tm4c12x/overview.page
     """
 
     PACKAGES = {

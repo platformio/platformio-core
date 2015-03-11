@@ -2,7 +2,13 @@
 # See LICENSE for details.
 
 """
-    Build script for Energia Framework (based on Wiring).
+Energia framework enables pretty much anyone to start easily creating
+microcontroller-based projects and applications. Its easy-to-use libraries
+and functions provide developers of all experience levels to start
+blinking LEDs, buzzing buzzers and sensing sensors more quickly than ever
+before.
+
+http://energia.nu/reference/
 """
 
 from os.path import join

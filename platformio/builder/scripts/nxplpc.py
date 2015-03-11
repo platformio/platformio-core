@@ -16,7 +16,7 @@ def UploadToDisk(target, source, env):  # pylint: disable=W0613,W0621
     env.AutodetectUploadPort()
     copyfile(join(env.subst("$BUILD_DIR"), "firmware.bin"),
              join(env.subst("$UPLOAD_PORT"), "firmware.bin"))
-    print ("Firmware has been successfully uploaded.\n" +
+    print ("Firmware has been successfully uploaded.\n"
            "Please restart your board.")
 
 env = DefaultEnvironment()

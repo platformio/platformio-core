@@ -2,7 +2,15 @@
 # See LICENSE for details.
 
 """
-    Build script for Mbed Framework
+The mbed framework The mbed SDK has been designed to provide enough
+hardware abstraction to be intuitive and concise, yet powerful enough to
+build complex projects. It is built on the low-level ARM CMSIS APIs,
+allowing you to code down to the metal if needed. In addition to RTOS,
+USB and Networking libraries, a cookbook of hundreds of reusable
+peripheral and module libraries have been built on top of the SDK by
+the mbed Developer Community.
+
+http://mbed.org/
 """
 
 import xml.etree.ElementTree as ElementTree
@@ -123,17 +131,17 @@ for lib_path in eixdata.get("CPPPATH"):
 
 
 #
-# Target: Build MBED Library
+# Target: Build mbed Library
 #
 
 libs = [l for l in eixdata.get("STDLIBS", []) if l not in env.get("LIBS")]
 
 env.VariantDir(
-    join("$BUILD_DIR", "FrameworkMBED"),
+    join("$BUILD_DIR", "FrameworkMbed"),
     join("$PLATFORMFW_DIR", "core")
 )
 libs.append(env.Library(
-    join("$BUILD_DIR", "FrameworkMBED"),
+    join("$BUILD_DIR", "FrameworkMbed"),
     get_source_files(eixdata.get("FILES", []))
 ))
 

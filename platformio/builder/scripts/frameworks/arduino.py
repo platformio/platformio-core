@@ -2,7 +2,11 @@
 # See LICENSE for details.
 
 """
-    Build script for Arduino Framework (based on Wiring).
+Arduino Framework allows writing cross-platform software to control
+devices attached to a wide range of Arduino boards to create all
+kinds of creative coding, interactive objects, spaces or physical experiences.
+
+http://arduino.cc/en/Reference/HomePage
 """
 
 from os import listdir, walk
@@ -145,7 +149,6 @@ if BOARD_BUILDOPTS.get("core", None) == "teensy":
 #
 # Target: Build Core Library
 #
-
 
 libs = []
 

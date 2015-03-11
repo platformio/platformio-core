@@ -2,7 +2,15 @@
 # See LICENSE for details.
 
 """
-    Build script for CMSIS Framework.
+The ARM Cortex Microcontroller Software Interface Standard (CMSIS) is a
+vendor-independent hardware abstraction layer for the Cortex-M processor
+series and specifies debugger interfaces. The CMSIS enables consistent and
+simple software interfaces to the processor for interface peripherals,
+real-time operating systems, and middleware. It simplifies software
+re-use, reducing the learning curve for new microcontroller developers
+and cutting the time-to-market for devices.
+
+http://www.arm.com/products/processors/cortex-m/cortex-microcontroller-software-interface-standard.php
 """
 
 from os.path import join
