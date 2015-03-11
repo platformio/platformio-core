@@ -6,7 +6,7 @@ import re
 from os import getenv, listdir, remove, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath
 
-from SCons.Script import SConscript, SConscriptChdir
+from SCons.Script import Exit, SConscript, SConscriptChdir
 from SCons.Util import case_sensitive_suffixes
 
 
@@ -94,11 +94,16 @@ def BuildFramework(env):
         env.ConvertInoToCpp()
 
     for f in env['FRAMEWORK'].split(","):
-        SConscriptChdir(0)
-        SConscript(
-            env.subst(join("$PIOBUILDER_DIR", "scripts", "frameworks",
-                           "%s.py" % f.strip().lower()))
-        )
+        framework = f.strip().lower()
+        if framework in env.get("BOARD_OPTIONS", {}).get("frameworks"):
+            SConscriptChdir(0)
+            SConscript(
+                env.subst(join("$PIOBUILDER_DIR", "scripts", "frameworks",
+                               "%s.py" % framework))
+            )
+        else:
+            Exit("Error: This board doesn't support %s framework!" %
+                 framework)
 
 
 def BuildLibrary(env, variant_dir, library_dir, ignore_files=None):
