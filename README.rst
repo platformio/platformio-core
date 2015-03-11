@@ -59,7 +59,7 @@ settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 * Configurable `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
 * Automatic **firmware uploading**
 * Integration with `development environments (IDE) <http://docs.platformio.org/en/latest/ide.html>`_
-* Ready for **cloud compilers**
+* Ready for **Cloud Compiling** and **Continuous Integration**
 * Pre-built tool chains, frameworks for the popular `Hardware Platforms <http://platformio.org/#!/platforms>`_
 
 .. image:: https://raw.githubusercontent.com/ivankravets/platformio-web/develop/app/images/platformio-embedded-development.png
