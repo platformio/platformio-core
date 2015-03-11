@@ -62,7 +62,7 @@ CQ Publishing
       - 48 MHz
       - 64 Kb
       - 10 Kb
-      
+
 Embedded Artists
 ~~~~~~~~~~~~~~~~
 
@@ -82,7 +82,6 @@ Embedded Artists
       - 48 MHz
       - 64 Kb
       - 10 Kb
-      
 
     * - ``lpc4088``
       - `EA LPC4088 QuickStart Board <https://developer.mbed.org/platforms/EA-LPC4088/>`_
@@ -90,7 +89,6 @@ Embedded Artists
       - 120 MHz
       - 512 Kb
       - 96 Kb
-      
 
     * - ``lpc4088_dm``
       - `EA LPC4088 Display Module <https://developer.mbed.org/platforms/EA-LPC4088-Display-Module/>`_
@@ -98,7 +96,7 @@ Embedded Artists
       - 120 MHz
       - 512 Kb
       - 96 Kb
-      
+
 NGX Technologies
 ~~~~~~~~~~~~~~~~
 
@@ -118,7 +116,7 @@ NGX Technologies
       - 48 MHz
       - 32 Kb
       - 8 Kb
-      
+
 NXP
 ~~~
 
@@ -138,7 +136,6 @@ NXP
       - 48 MHz
       - 32 Kb
       - 8 Kb
-      
 
     * - ``lpc1549``
       - `LPCXpresso1549 <https://developer.mbed.org/platforms/LPCXpresso1549/>`_
@@ -146,7 +143,6 @@ NXP
       - 72 MHz
       - 256 Kb
       - 36 Kb
-      
 
     * - ``lpc1768``
       - `mbed LPC1768 <http://developer.mbed.org/platforms/mbed-LPC1768/>`_
@@ -154,7 +150,7 @@ NXP
       - 96 MHz
       - 512 Kb
       - 32 Kb
-      
+
 Outrageous Circuits
 ~~~~~~~~~~~~~~~~~~~
 
@@ -174,7 +170,7 @@ Outrageous Circuits
       - 48 MHz
       - 32 Kb
       - 8 Kb
-      
+
 SeeedStudio
 ~~~~~~~~~~~
 
@@ -194,7 +190,7 @@ SeeedStudio
       - 96 MHz
       - 512 Kb
       - 32 Kb
-      
+
 Solder Splash Labs
 ~~~~~~~~~~~~~~~~~~
 
@@ -214,7 +210,7 @@ Solder Splash Labs
       - 50 MHz
       - 32 Kb
       - 8 Kb
-      
+
 Switch Science
 ~~~~~~~~~~~~~~
 
@@ -234,7 +230,7 @@ Switch Science
       - 48 MHz
       - 32 Kb
       - 4 Kb
-      
+
 u-blox
 ~~~~~~
 
@@ -254,4 +250,3 @@ u-blox
       - 96 MHz
       - 512 Kb
       - 32 Kb
-      

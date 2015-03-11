@@ -77,7 +77,6 @@ ST
       - 48 MHz
       - 64 Kb
       - 8 Kb
-      
 
     * - ``disco_f100rb``
       - `STM32VLDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF250863>`_
@@ -85,7 +84,6 @@ ST
       - 24 MHz
       - 128 Kb
       - 8 Kb
-      
 
     * - ``disco_f303vc``
       - `STM32F3DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF254044>`_
@@ -93,7 +91,6 @@ ST
       - 72 MHz
       - 256 Kb
       - 48 Kb
-      
 
     * - ``disco_f334c8``
       - `32F3348DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF260318>`_
@@ -101,7 +98,6 @@ ST
       - 72 MHz
       - 64 Kb
       - 16 Kb
-      
 
     * - ``disco_f401vc``
       - `32F401CDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259098>`_
@@ -109,7 +105,6 @@ ST
       - 84 MHz
       - 256 Kb
       - 64 Kb
-      
 
     * - ``disco_f407vg``
       - `STM32F4DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF252419>`_
@@ -117,7 +112,6 @@ ST
       - 168 MHz
       - 1024 Kb
       - 128 Kb
-      
 
     * - ``disco_f429zi``
       - `32F429IDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259090>`_
@@ -125,7 +119,6 @@ ST
       - 180 MHz
       - 2048 Kb
       - 256 Kb
-      
 
     * - ``disco_l152rb``
       - `STM32LDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF258515>`_
@@ -133,7 +126,6 @@ ST
       - 32 MHz
       - 128 Kb
       - 16 Kb
-      
 
     * - ``nucleo_f030r8``
       - `ST Nucleo F030R8 <https://developer.mbed.org/platforms/ST-Nucleo-F030R8/>`_
@@ -141,7 +133,6 @@ ST
       - 48 MHz
       - 64 Kb
       - 8 Kb
-      
 
     * - ``nucleo_f070rb``
       - `ST Nucleo F070RB <https://developer.mbed.org/platforms/ST-Nucleo-F070RB/>`_
@@ -149,7 +140,6 @@ ST
       - 48 MHz
       - 128 Kb
       - 16 Kb
-      
 
     * - ``nucleo_f072rb``
       - `ST Nucleo F072RB <https://developer.mbed.org/platforms/ST-Nucleo-F072RB/>`_
@@ -157,7 +147,6 @@ ST
       - 48 MHz
       - 128 Kb
       - 16 Kb
-      
 
     * - ``nucleo_f091rc``
       - `ST Nucleo F091RC <https://developer.mbed.org/platforms/ST-Nucleo-F091RC/>`_
@@ -165,7 +154,6 @@ ST
       - 48 MHz
       - 256 Kb
       - 32 Kb
-      
 
     * - ``nucleo_f103rb``
       - `ST Nucleo F103RB <https://developer.mbed.org/platforms/ST-Nucleo-F103RB/>`_
@@ -173,7 +161,6 @@ ST
       - 72 MHz
       - 128 Kb
       - 20 Kb
-      
 
     * - ``nucleo_f302r8``
       - `ST Nucleo F302R8 <https://developer.mbed.org/platforms/ST-Nucleo-F302R8/>`_
@@ -181,7 +168,6 @@ ST
       - 72 MHz
       - 64 Kb
       - 16 Kb
-      
 
     * - ``nucleo_f334r8``
       - `ST Nucleo F334R8 <https://developer.mbed.org/platforms/ST-Nucleo-F334R8/>`_
@@ -189,7 +175,6 @@ ST
       - 72 MHz
       - 64 Kb
       - 16 Kb
-      
 
     * - ``nucleo_f401re``
       - `ST Nucleo F401RE <https://developer.mbed.org/platforms/ST-Nucleo-F401RE/>`_
@@ -197,7 +182,6 @@ ST
       - 84 MHz
       - 512 Kb
       - 96 Kb
-      
 
     * - ``nucleo_f411re``
       - `ST Nucleo F411RE <https://developer.mbed.org/platforms/ST-Nucleo-F411RE/>`_
@@ -205,7 +189,6 @@ ST
       - 100 MHz
       - 512 Kb
       - 128 Kb
-      
 
     * - ``nucleo_l053r8``
       - `ST Nucleo L053R8 <https://developer.mbed.org/platforms/ST-Nucleo-L053R8/>`_
@@ -213,7 +196,6 @@ ST
       - 48 MHz
       - 64 Kb
       - 8 Kb
-      
 
     * - ``nucleo_l152re``
       - `ST Nucleo L152RE <https://developer.mbed.org/platforms/ST-Nucleo-L152RE/>`_
@@ -221,4 +203,3 @@ ST
       - 32 MHz
       - 512 Kb
       - 80 Kb
-      

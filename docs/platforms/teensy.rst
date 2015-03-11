@@ -70,7 +70,6 @@ Teensy
       - 16 MHz
       - 32 Kb
       - 2.5 Kb
-      
 
     * - ``teensy20pp``
       - `Teensy++ 2.0 <https://www.pjrc.com/store/teensypp.html>`_
@@ -78,7 +77,6 @@ Teensy
       - 16 MHz
       - 128 Kb
       - 8 Kb
-      
 
     * - ``teensy30``
       - `Teensy 3.0 <https://www.pjrc.com/store/teensy3.html>`_
@@ -86,7 +84,6 @@ Teensy
       - 48 MHz
       - 128 Kb
       - 16 Kb
-      
 
     * - ``teensy31``
       - `Teensy 3.1 <https://www.pjrc.com/store/teensy31.html>`_
@@ -94,4 +91,3 @@ Teensy
       - 72 MHz
       - 256 Kb
       - 64 Kb
-      

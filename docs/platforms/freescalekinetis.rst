@@ -60,7 +60,6 @@ Freescale
       - 48 MHz
       - 128 Kb
       - 16 Kb
-      
 
     * - ``frdm_k22f``
       - `Freescale Kinetis FRDM-K22F <https://developer.mbed.org/platforms/FRDM-K22F/>`_
@@ -68,7 +67,6 @@ Freescale
       - 120 MHz
       - 512 Kb
       - 128 Kb
-      
 
     * - ``frdm_k64f``
       - `Freescale Kinetis FRDM-K64F <https://developer.mbed.org/platforms/FRDM-K64F/>`_
@@ -76,7 +74,6 @@ Freescale
       - 120 MHz
       - 1024 Kb
       - 256 Kb
-      
 
     * - ``frdm_kl05z``
       - `Freescale Kinetis FRDM-KL05Z <https://developer.mbed.org/platforms/FRDM-KL05Z/>`_
@@ -84,7 +81,6 @@ Freescale
       - 48 MHz
       - 32 Kb
       - 4 Kb
-      
 
     * - ``frdm_kl25z``
       - `Freescale Kinetis FRDM-KL25Z <https://developer.mbed.org/platforms/KL25Z/>`_
@@ -92,7 +88,6 @@ Freescale
       - 48 MHz
       - 128 Kb
       - 16 Kb
-      
 
     * - ``frdm_kl46z``
       - `Freescale Kinetis FRDM-KL46Z <https://developer.mbed.org/platforms/FRDM-KL46Z/>`_
@@ -100,4 +95,3 @@ Freescale
       - 48 MHz
       - 256 Kb
       - 32 Kb
-      

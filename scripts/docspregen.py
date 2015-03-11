@@ -36,27 +36,24 @@ def generate_boards(boards):
         for type_, data in board.iteritems():
             assert type_ in util.get_boards()
             board_ram = float(data['upload']['maximum_ram_size']) / 1024
-            lines.append(
-                """
+            lines.append("""
     * - ``{type}``
       - `{name} <{url}>`_
       - {mcu}
       - {f_cpu:d} MHz
       - {rom} Kb
-      - {ram} Kb
-      """.format(
-                    type=type_,
-                    name=data['name'],
-                    url=data['url'],
-                    mcu=data['build']['mcu'].upper(),
-                    f_cpu=int((data['build']['f_cpu'][:-1])) / 1000000,
-                    ram=int(board_ram) if board_ram % 1 == 0 else board_ram,
-                    rom=_round_memory_size(
-                        data['upload']['maximum_size'] / 1024)
-                )
-            )
+      - {ram} Kb""".format(
+                type=type_,
+                name=data['name'],
+                url=data['url'],
+                mcu=data['build']['mcu'].upper(),
+                f_cpu=int((data['build']['f_cpu'][:-1])) / 1000000,
+                ram=int(board_ram) if board_ram % 1 == 0 else board_ram,
+                rom=_round_memory_size(
+                    data['upload']['maximum_size'] / 1024)
+            ))
 
-    return "\n".join(lines)
+    return "\n".join(lines + [""])
 
 
 def generate_packages(packages):

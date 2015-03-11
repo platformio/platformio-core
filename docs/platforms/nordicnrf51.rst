@@ -62,7 +62,7 @@ JKSoft
       - 16 MHz
       - 128 Kb
       - 16 Kb
-      
+
 Nordic
 ~~~~~~
 
@@ -82,7 +82,6 @@ Nordic
       - 32 MHz
       - 256 Kb
       - 32 Kb
-      
 
     * - ``nrf51_dongle``
       - `Nordic nRF51-Dongle <https://developer.mbed.org/platforms/Nordic-nRF51-Dongle/>`_
@@ -90,7 +89,6 @@ Nordic
       - 32 MHz
       - 256 Kb
       - 32 Kb
-      
 
     * - ``nrf51_mkit``
       - `Nordic nRF51822-mKIT <http://developer.mbed.org/platforms/Nordic-nRF51822/>`_
@@ -98,7 +96,7 @@ Nordic
       - 16 MHz
       - 128 Kb
       - 16 Kb
-      
+
 RedBearLab
 ~~~~~~~~~~
 
@@ -118,7 +116,6 @@ RedBearLab
       - 16 MHz
       - 256 Kb
       - 16 Kb
-      
 
     * - ``redBearLabBLENano``
       - `RedBearLab BLE Nano <https://developer.mbed.org/platforms/RedBearLab-BLE-Nano/>`_
@@ -126,7 +123,7 @@ RedBearLab
       - 16 MHz
       - 256 Kb
       - 16 Kb
-      
+
 Switch Science
 ~~~~~~~~~~~~~~
 
@@ -146,4 +143,3 @@ Switch Science
       - 16 MHz
       - 256 Kb
       - 16 Kb
-      

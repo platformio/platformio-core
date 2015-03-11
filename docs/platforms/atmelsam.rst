@@ -65,7 +65,6 @@ Arduino
       - 84 MHz
       - 512 Kb
       - 32 Kb
-      
 
     * - ``dueUSB``
       - `Arduino Due (USB Native Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
@@ -73,7 +72,7 @@ Arduino
       - 84 MHz
       - 512 Kb
       - 32 Kb
-      
+
 Digistump
 ~~~~~~~~~
 
@@ -93,7 +92,7 @@ Digistump
       - 84 MHz
       - 512 Kb
       - 28 Kb
-      
+
 SainSmart
 ~~~~~~~~~
 
@@ -113,7 +112,6 @@ SainSmart
       - 84 MHz
       - 512 Kb
       - 32 Kb
-      
 
     * - ``sainSmartDueUSB``
       - `SainSmart Due (USB Native Port) <http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html>`_
@@ -121,4 +119,3 @@ SainSmart
       - 84 MHz
       - 512 Kb
       - 32 Kb
-      

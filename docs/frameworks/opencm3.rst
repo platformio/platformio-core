@@ -32,7 +32,6 @@ ST
       - 72 MHz
       - 256 Kb
       - 48 Kb
-      
 
     * - ``disco_f407vg``
       - `STM32F4DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF252419>`_
@@ -40,7 +39,6 @@ ST
       - 168 MHz
       - 1024 Kb
       - 128 Kb
-      
 
     * - ``disco_l152rb``
       - `STM32LDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF258515>`_
@@ -48,7 +46,7 @@ ST
       - 32 MHz
       - 128 Kb
       - 16 Kb
-      
+
 TI
 ~~
 
@@ -68,7 +66,6 @@ TI
       - 80 MHz
       - 256 Kb
       - 32 Kb
-      
 
     * - ``lptm4c1230c3pm``
       - `LaunchPad (Tiva C) w/ tm4c123 (80MHz) <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c123gxl.html>`_
@@ -76,7 +73,6 @@ TI
       - 80 MHz
       - 256 Kb
       - 32 Kb
-      
 
     * - ``lptm4c1294ncpdt``
       - `LaunchPad (Tiva C) w/ tm4c129 (120MHz) <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c1294xl.html>`_
@@ -84,4 +80,3 @@ TI
       - 120 MHz
       - 1024 Kb
       - 256 Kb
-      

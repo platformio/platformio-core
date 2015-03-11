@@ -674,7 +674,7 @@
             "maximum_ram_size": 32768,
             "maximum_size": 524288,
             "protocol": "sam-ba",
-            "require_upload_port" : true, 
+            "require_upload_port" : true,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         },
@@ -702,7 +702,7 @@
             "maximum_ram_size": 32768,
             "maximum_size": 524288,
             "protocol": "sam-ba",
-            "require_upload_port" : true, 
+            "require_upload_port" : true,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         },
