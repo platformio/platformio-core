@@ -257,3 +257,40 @@ def get_boards(type_=None):
         if type_ not in boards:
             raise exception.UnknownBoard(type_)
         return boards[type_]
+
+
+def get_frameworks(type_=None):
+    frameworks = {}
+
+    try:
+        frameworks = get_frameworks._cache  # pylint: disable=W0212
+    except AttributeError:
+        frameworks_path = join(
+            get_source_dir(), "builder", "scripts", "frameworks")
+
+        frameworks_list = [f[:-3] for f in os.listdir(frameworks_path)
+                           if not f.startswith("__") and f.endswith(".py")]
+        for _type in frameworks_list:
+            script_path = join(frameworks_path, "%s.py" % _type)
+            with open(script_path) as f:
+                fcontent = f.read()
+                assert '"""' in fcontent
+                _doc_start = fcontent.index('"""') + 3
+                fdoc = fcontent[
+                    _doc_start:fcontent.index('"""', _doc_start)].strip()
+                description = " ".join(fdoc.split("\n")[:-2])
+                frameworks[_type] = {
+                    "description": description,
+                    "url": fdoc.split("\n")[-1].strip(),
+                    "script": script_path
+                }
+        get_frameworks._cache = frameworks  # pylint: disable=W0212
+
+    if type_ is None:
+        return frameworks
+    else:
+        if type_ not in frameworks:
+            raise exception.UnknownFramework(type_)
+        return frameworks[type_]
+
+    return frameworks
