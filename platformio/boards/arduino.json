@@ -10,7 +10,7 @@
             "variant": "leonardo",
             "vid": "0x1B4F"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "LilyPad Arduino USB",
         "platform": "atmelavr",
         "upload": {
@@ -34,7 +34,7 @@
             "mcu": "atmega168",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino NG or older ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -55,7 +55,7 @@
             "mcu": "atmega8",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino NG or older ATmega8",
         "platform": "atmelavr",
         "upload": {
@@ -76,7 +76,7 @@
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino BT ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -98,7 +98,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino BT ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -120,7 +120,7 @@
             "mcu": "atmega168",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Duemilanove or Diecimila ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -141,7 +141,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Duemilanove or Diecimila ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -165,7 +165,7 @@
             "variant": "leonardo",
             "vid": "0x2341"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Esplora",
         "platform": "atmelavr",
         "upload": {
@@ -189,7 +189,7 @@
             "mcu": "atmega328p",
             "variant": "ethernet"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Ethernet",
         "platform": "atmelavr",
         "upload": {
@@ -210,7 +210,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Fio",
         "platform": "atmelavr",
         "upload": {
@@ -234,7 +234,7 @@
             "variant": "leonardo",
             "vid": "0x2341"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Leonardo",
         "platform": "atmelavr",
         "upload": {
@@ -258,7 +258,7 @@
             "mcu": "atmega168",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "LilyPad Arduino ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -279,7 +279,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "LilyPad Arduino ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -300,7 +300,7 @@
             "mcu": "atmega2560",
             "variant": "mega"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Mega ADK",
         "platform": "atmelavr",
         "upload": {
@@ -321,7 +321,7 @@
             "mcu": "atmega1280",
             "variant": "mega"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Mega or Mega 2560 ATmega1280",
         "platform": "atmelavr",
         "upload": {
@@ -342,7 +342,7 @@
             "mcu": "atmega2560",
             "variant": "mega"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Mega or Mega 2560 ATmega2560 (Mega 2560)",
         "platform": "atmelavr",
         "upload": {
@@ -366,7 +366,7 @@
             "variant": "micro",
             "vid": "0x2341"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Micro",
         "platform": "atmelavr",
         "upload": {
@@ -390,7 +390,7 @@
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Mini ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -411,7 +411,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Mini ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -432,7 +432,7 @@
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Nano ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -453,7 +453,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Nano ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -474,7 +474,7 @@
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Pro or Pro Mini ATmega168 (5V, 16 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -495,7 +495,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Pro or Pro Mini ATmega328 (5V, 16 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -516,7 +516,7 @@
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Pro or Pro Mini ATmega168 (3.3V, 8 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -537,7 +537,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Pro or Pro Mini ATmega328 (3.3V, 8 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -561,7 +561,7 @@
             "variant": "robot_control",
             "vid": "0x2341"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Robot Control",
         "platform": "atmelavr",
         "upload": {
@@ -588,7 +588,7 @@
             "variant": "robot_motor",
             "vid": "0x2341"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Robot Motor",
         "platform": "atmelavr",
         "upload": {
@@ -612,7 +612,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Uno",
         "platform": "atmelavr",
         "upload": {
@@ -636,7 +636,7 @@
             "variant": "yun",
             "vid": "0x2341"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Yun",
         "platform": "atmelavr",
         "upload": {
@@ -666,7 +666,7 @@
             "vid": "0x2341",
             "ldscript": "sam3x8e.ld"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Due (Programming Port)",
         "platform": "atmelsam",
         "upload": {
@@ -694,7 +694,7 @@
             "vid": "0x2341",
             "ldscript": "sam3x8e.ld"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Due (USB Native Port)",
         "platform": "atmelsam",
         "upload": {

@@ -10,7 +10,7 @@
             "variant": "engduinov1",
             "vid": "0x1B4F"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Engduino 1",
         "platform": "atmelavr",
         "upload": {
@@ -37,7 +37,7 @@
             "variant": "engduinov2",
             "vid": "0x1B4F"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Engduino 2",
         "platform": "atmelavr",
         "upload": {
@@ -64,7 +64,7 @@
             "variant": "engduinov3",
             "vid": "0x1B4F"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Engduino 3",
         "platform": "atmelavr",
         "upload": {

@@ -3,9 +3,9 @@
         "build": {
             "f_cpu": "16000000L",
             "cpu": "cortex-m0",
-            "mcu": "nrf51822"         
+            "mcu": "nrf51822"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "Nordic nRF51822-mKIT",
         "platform": "nordicnrf51",
         "upload": {
@@ -19,9 +19,9 @@
         "build": {
             "f_cpu": "16000000L",
             "cpu": "cortex-m0",
-            "mcu": "nrf51822"         
+            "mcu": "nrf51822"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "Switch Science mbed HRM1017",
         "platform": "nordicnrf51",
         "upload": {
@@ -35,9 +35,9 @@
         "build": {
             "f_cpu": "16000000L",
             "cpu": "cortex-m0",
-            "mcu": "nrf51822"         
+            "mcu": "nrf51822"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "RedBearLab nRF51822",
         "platform": "nordicnrf51",
         "upload": {
@@ -51,9 +51,9 @@
         "build": {
             "f_cpu": "32000000L",
             "cpu": "cortex-m0",
-            "mcu": "nrf51822"         
+            "mcu": "nrf51822"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "Nordic nRF51-DK",
         "platform": "nordicnrf51",
         "upload": {
@@ -67,9 +67,9 @@
         "build": {
             "f_cpu": "16000000L",
             "cpu": "cortex-m0",
-            "mcu": "nrf51822"         
+            "mcu": "nrf51822"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "RedBearLab BLE Nano",
         "platform": "nordicnrf51",
         "upload": {
@@ -83,9 +83,9 @@
         "build": {
             "f_cpu": "32000000L",
             "cpu": "cortex-m0",
-            "mcu": "nrf51822"         
+            "mcu": "nrf51822"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "Nordic nRF51-Dongle",
         "platform": "nordicnrf51",
         "upload": {
@@ -100,9 +100,9 @@
         "build": {
             "f_cpu": "16000000L",
             "cpu": "cortex-m0",
-            "mcu": "nrf51822"         
+            "mcu": "nrf51822"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "JKSoft Wallbot BLE",
         "platform": "nordicnrf51",
         "upload": {

@@ -3,9 +3,9 @@
         "build": {
             "f_cpu": "48000000L",
             "cpu": "cortex-m0plus",
-            "mcu": "mkl25z128vlk4"  
+            "mcu": "mkl25z128vlk4"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "Freescale Kinetis FRDM-KL25Z",
         "platform": "freescalekinetis",
         "upload": {
@@ -19,9 +19,9 @@
         "build": {
             "f_cpu": "48000000L",
             "cpu": "cortex-m0plus",
-            "mcu": "mkl46z256vll4"  
+            "mcu": "mkl46z256vll4"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "Freescale Kinetis FRDM-KL46Z",
         "platform": "freescalekinetis",
         "upload": {
@@ -35,9 +35,9 @@
         "build": {
             "f_cpu": "120000000L",
             "cpu": "cortex-m4",
-            "mcu": "mk64fn1m0vll12"  
+            "mcu": "mk64fn1m0vll12"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "Freescale Kinetis FRDM-K64F",
         "platform": "freescalekinetis",
         "upload": {
@@ -51,9 +51,9 @@
         "build": {
             "f_cpu": "48000000L",
             "cpu": "cortex-m0plus",
-            "mcu": "mkl05z32vfm4"  
+            "mcu": "mkl05z32vfm4"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "Freescale Kinetis FRDM-KL05Z",
         "platform": "freescalekinetis",
         "upload": {
@@ -67,9 +67,9 @@
         "build": {
             "f_cpu": "48000000L",
             "cpu": "cortex-m4",
-            "mcu": "mk20dx128vlh5"  
+            "mcu": "mk20dx128vlh5"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "Freescale Kinetis FRDM-K20D50M",
         "platform": "freescalekinetis",
         "upload": {
@@ -84,9 +84,9 @@
         "build": {
             "f_cpu": "120000000L",
             "cpu": "cortex-m4",
-            "mcu": "mk22fn512vlh12"  
+            "mcu": "mk22fn512vlh12"
         },
-        "frameworks": "mbed",
+        "frameworks": ["mbed"],
         "name": "Freescale Kinetis FRDM-K22F",
         "platform": "freescalekinetis",
         "upload": {

@@ -8,7 +8,7 @@
             "mcu": "lplm4f120h5qr",
             "variant": "stellarpad"
         },
-        "frameworks": "energia,opencm3",
+        "frameworks": ["energia", "opencm3"],
         "name": "LaunchPad (Stellaris) w/ lm4f120 (80MHz)",
         "platform": "titiva",
         "upload": {
@@ -27,7 +27,7 @@
             "mcu": "lptm4c1230c3pm",
             "variant": "stellarpad"
         },
-        "frameworks": "energia,opencm3",
+        "frameworks": ["energia", "opencm3"],
         "name": "LaunchPad (Tiva C) w/ tm4c123 (80MHz)",
         "platform": "titiva",
         "upload": {
@@ -46,7 +46,7 @@
             "mcu": "lptm4c1294ncpdt",
             "variant": "launchpad_129"
         },
-        "frameworks": "energia,opencm3",
+        "frameworks": ["energia", "opencm3"],
         "name": "LaunchPad (Tiva C) w/ tm4c129 (120MHz)",
         "platform": "titiva",
         "upload": {

@@ -7,7 +7,7 @@
             "mcu": "attiny85",
             "variant": "digispark_tiny"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Digispark (Default - 16 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -26,7 +26,7 @@
             "mcu": "attiny167",
             "variant": "digispark_pro"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Digispark Pro (Default 16 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -45,7 +45,7 @@
             "mcu": "attiny167",
             "variant": "digispark_pro32"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Digispark Pro (16 MHz) (32 byte buffer)",
         "platform": "atmelavr",
         "upload": {
@@ -64,7 +64,7 @@
             "mcu": "attiny167",
             "variant": "digispark_pro64"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Digispark Pro (16 MHz) (64 byte buffer)",
         "platform": "atmelavr",
         "upload": {
@@ -88,7 +88,7 @@
             "variant": "digispark_digix",
             "vid": "0x16D0"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Digistump DigiX",
         "platform": "atmelsam",
         "upload": {

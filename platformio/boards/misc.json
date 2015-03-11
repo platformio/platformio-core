@@ -7,7 +7,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Raspduino",
         "platform": "atmelavr",
         "upload": {
@@ -33,7 +33,7 @@
             "vid": "0x2341",
             "ldscript": "sam3x8e.ld"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "SainSmart Due (Programming Port)",
         "platform": "atmelsam",
         "upload": {
@@ -41,7 +41,7 @@
             "maximum_ram_size": 32768,
             "maximum_size": 524288,
             "protocol": "sam-ba",
-            "require_upload_port" : true, 
+            "require_upload_port" : true,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         },
@@ -61,7 +61,7 @@
             "vid": "0x2341",
             "ldscript": "sam3x8e.ld"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "SainSmart Due (USB Native Port)",
         "platform": "atmelsam",
         "upload": {
@@ -69,7 +69,7 @@
             "maximum_ram_size": 32768,
             "maximum_size": 524288,
             "protocol": "sam-ba",
-            "require_upload_port" : true, 
+            "require_upload_port" : true,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         },

@@ -7,7 +7,7 @@
             "mcu": "atmega1284p",
             "variant": "plus"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Microduino Core+ (ATmega1284P@16M,5V)",
         "platform": "atmelavr",
         "upload": {
@@ -28,7 +28,7 @@
             "mcu": "atmega1284p",
             "variant": "plus"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Microduino Core+ (ATmega1284P@8M,3.3V)",
         "platform": "atmelavr",
         "upload": {
@@ -49,7 +49,7 @@
             "mcu": "atmega168p",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Microduino Core (Atmega168PA@16M,5V)",
         "platform": "atmelavr",
         "upload": {
@@ -70,7 +70,7 @@
             "mcu": "atmega168p",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Microduino Core (Atmega168PA@8M,3.3V)",
         "platform": "atmelavr",
         "upload": {
@@ -91,7 +91,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Microduino Core (Atmega328P@16M,5V)",
         "platform": "atmelavr",
         "upload": {
@@ -112,7 +112,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Microduino Core (Atmega328P@8M,3.3V)",
         "platform": "atmelavr",
         "upload": {
@@ -135,7 +135,7 @@
             "variant": "32u4",
             "vid": "0x2341"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Microduino Core USB (ATmega32U4@16M,5V)",
         "platform": "atmelavr",
         "upload": {
@@ -159,7 +159,7 @@
             "mcu": "atmega644p",
             "variant": "plus"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Microduino Core+ (Atmega644PA@16M,5V)",
         "platform": "atmelavr",
         "upload": {
@@ -180,7 +180,7 @@
             "mcu": "atmega644p",
             "variant": "plus"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Microduino Core+ (Atmega644PA@8M,3.3V)",
         "platform": "atmelavr",
         "upload": {
