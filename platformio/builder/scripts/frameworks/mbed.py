@@ -84,7 +84,7 @@ def get_source_files(flist):
     for f in flist:
         if f['type'] == "h" or not f['name'].startswith("mbed"):
             continue
-        files.append(join("$BUILD_DIR", "FrameworkMBED", f['name'][5:]))
+        files.append(join("$BUILD_DIR", "FrameworkMbed", f['name'][5:]))
     return files
 
 
