@@ -25,7 +25,7 @@ Release History
 **PlatformIO 1.0 - recommended for production**
 
 * Changed development status from ``beta`` to ``Production/Stable``
-* Added support for *ARM*-based credit-card computers:
+* Added support for *ARM*-based credit-card sized computers:
   `Raspberry Pi <http://www.raspberrypi.org>`_,
   `BeagleBone <http://beagleboard.org>`_ and `CubieBoard <http://cubieboard.org>`_
 * Added `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`_

@@ -47,7 +47,9 @@ Use whenever. *Run everywhere.*
 *PlatformIO* is written in pure *Python* and **doesn't depend** on any
 additional libraries/tools from an operation system. It allows you to use
 *PlatformIO* beginning from *PC (Mac, Linux, Win)* and ending with credit-card
-sized computers (like *Raspberry Pi*).
+sized computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
+`BeagleBone <http://beagleboard.org>`_,
+`CubieBoard <http://cubieboard.org>`_).
 
 Embedded Development. *Easier Than Ever.*
 -----------------------------------------
