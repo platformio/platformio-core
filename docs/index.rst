@@ -58,7 +58,7 @@ Contents
     installation
     projectconf
     envvars
-    platforms/index
+    Platforms & Boards <platforms/index>
     frameworks/index
     librarymanager/index
     userguide/index

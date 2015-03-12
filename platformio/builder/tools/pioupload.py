@@ -2,6 +2,8 @@
 # See LICENSE for details.
 
 import platform
+from os.path import join
+from shutil import copyfile
 from time import sleep
 
 from SCons.Script import Exit
@@ -56,10 +58,12 @@ def AutodetectUploadPort(env):
         return
 
     if env.subst("$FRAMEWORK") == "mbed":
+        msdlabels = ("mbed", "nucleo", "frdm")
         for item in get_logicaldisks():
-            if not item['name'] or "mbed" != item['name'].lower():
+            if (not item['name'] or
+                    not any([l in item['name'].lower() for l in msdlabels])):
                 continue
-            print "Auto-detected UPLOAD_PORT: %s" % item['disk']
+            print "Auto-detected UPLOAD_PORT/DISK: %s" % item['disk']
             env.Replace(UPLOAD_PORT=item['disk'])
             break
     else:
@@ -76,6 +80,14 @@ def AutodetectUploadPort(env):
              "For the some development platforms it can be USB flash drive\n")
 
 
+def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
+    env.AutodetectUploadPort()
+    copyfile(join(env.subst("$BUILD_DIR"), "firmware.bin"),
+             join(env.subst("$UPLOAD_PORT"), "firmware.bin"))
+    print ("Firmware has been successfully uploaded.\n"
+           "Please restart your board.")
+
+
 def exists(_):
     return True
 
@@ -85,4 +97,5 @@ def generate(env):
     env.AddMethod(TouchSerialPort)
     env.AddMethod(WaitForNewSerialPort)
     env.AddMethod(AutodetectUploadPort)
+    env.AddMethod(UploadToDisk)
     return env

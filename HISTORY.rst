@@ -1,6 +1,28 @@
 Release History
 ===============
 
+1.2.0 (2015-03-??)
+------------------
+
+* Initial support of `mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+  framework (only core SDK)
+* Added `freescalekinetis <http://docs.platformio.org/en/latest/platforms/freescalekinetis.html>`_
+  development platform with Freescale Kinetis Freedom boards
+* Added `nordicnrf51 <http://docs.platformio.org/en/latest/platforms/nordicnrf51.html>`_
+  development platform with supported boards from *JKSoft, Nordic, RedBearLab,
+  Switch Science*
+* Added `nxplpc <http://docs.platformio.org/en/latest/platforms/nxplpc.html>`_
+  development platform with supported boards from *CQ Publishing, Embedded
+  Artists, NGX Technologies, NXP, Outrageous Circuits, SeeedStudio,
+  Solder Splash Labs, Switch Science, u-blox*
+* Added support for *ST Nucleo* boards to
+  `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
+  development platform
+* Created new `Frameworks <http://docs.platformio.org/en/latest/frameworks/index.html>`__
+  page in documentation
+* Renamed ``stm32`` development platform to
+  `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
+
 1.1.0 (2015-03-05)
 ------------------
 
@@ -31,7 +53,7 @@ Release History
 * Added `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`_
   development platform with supported boards: *Arduino Due and Digistump DigiX*
   (`issue #71 <https://github.com/ivankravets/platformio/issues/71>`_)
-* Added `stm32 <http://docs.platformio.org/en/latest/platforms/stm32.html>`_
+* Added `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
   development platform with supported boards: *Discovery kit for STM32L151/152,
   STM32F303xx, STM32F407/417 lines* and `libOpenCM3 Framework <http://www.libopencm3.org>`_
   (`issue #73 <https://github.com/ivankravets/platformio/issues/73>`_)
