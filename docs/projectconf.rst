@@ -122,7 +122,7 @@ Options
 ``platform``
 ^^^^^^^^^^^^
 
-:ref:`Platform <platforms>` type
+:ref:`Platform <platforms>` type.
 
 
 .. _projectconf_env_framework:
@@ -130,7 +130,9 @@ Options
 ``framework``
 ^^^^^^^^^^^^^
 
-See ``framework`` type in *Frameworks* section of :ref:`platforms`
+:ref:`Framework <frameworks>` type.
+
+The multiple frameworks are allowed, split them with comma ``,`` separator.
 
 
 .. _projectconf_env_board:
