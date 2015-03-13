@@ -9,18 +9,10 @@ from os.path import basename, dirname, isdir, isfile, join, normpath
 from SCons.Script import Exit, SConscript, SConscriptChdir
 from SCons.Util import case_sensitive_suffixes
 
-from platformio import __version__
+from platformio.util import pioversion_to_intstr
 
 
 def BuildFirmware(env):
-
-    def _append_pioversion():
-        vermatch = re.match(r"^([\d\.]+)", __version__)
-        assert vermatch
-        intparts = [int(i) for i in vermatch.group(1).split(".")[:3]]
-        firmenv.Append(
-            CPPDEFINES=["PLATFORMIO={:02d}{:02d}{:02d}".format(*intparts)]
-        )
 
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes('.s', '.S'):
@@ -63,7 +55,10 @@ def BuildFirmware(env):
     if _srcbuild_flags:
         firmenv.MergeFlags(_srcbuild_flags)
 
-    _append_pioversion()
+    firmenv.Append(
+        CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
+            *pioversion_to_intstr())]
+    )
 
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),

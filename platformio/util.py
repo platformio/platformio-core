@@ -58,6 +58,12 @@ def get_systype():
     return ("%s_%s" % (data[0], data[4])).lower()
 
 
+def pioversion_to_intstr():
+    vermatch = re.match(r"^([\d\.]+)", __version__)
+    assert vermatch
+    return [int(i) for i in vermatch.group(1).split(".")[:3]]
+
+
 def _get_projconf_option_dir(name, default=None):
     _env_name = "PLATFORMIO_%s" % name.upper()
     if _env_name in os.environ:
