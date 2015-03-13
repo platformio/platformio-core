@@ -169,7 +169,7 @@ def lib_list(json_output):
         return
 
     echo_liblist_header()
-    for item in items:
+    for item in sorted(items, key=lambda i: i['id']):
         item['authornames'] = [i['name'] for i in item['authors']]
         echo_liblist_item(item)
 
