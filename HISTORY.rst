@@ -20,6 +20,8 @@ Release History
   development platform
 * Created new `Frameworks <http://docs.platformio.org/en/latest/frameworks/index.html>`__
   page in documentation
+* Automatically append define ``-DPLATFORMIO=%version%`` to builder
+  (`issue #105 <https://github.com/ivankravets/platformio/issues/105>`_)
 * Renamed ``stm32`` development platform to
   `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
 
