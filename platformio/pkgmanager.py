@@ -28,7 +28,7 @@ class PackageManager(object):
         try:
             return cls._cached_manifest
         except AttributeError:
-            cls._cached_manifest = get_api_result("/packages")
+            cls._cached_manifest = get_api_result("/packages/manifest")
         return cls._cached_manifest
 
     @staticmethod
