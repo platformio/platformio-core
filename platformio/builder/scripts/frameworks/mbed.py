@@ -60,6 +60,8 @@ def parse_eix_file(filename):
         ("CPPDEFINES", "./Target/Source/Symbols/Symbol"),
         ("FILES", "./Target/Files/File"),
         ("LINKFLAGS", "./Target/Source/LD/Switch"),
+        ("OBJFILES", "./Target/Source/Addobjects/Addobject"),
+        ("LIBPATH", "./Target/Linker/Librarypaths/Librarypath"),
         ("STDLIBS", "./Target/Source/Syslibs/Library"),
         ("LDSCRIPT_PATH", "./Target/Source/Scriptfile"),
         ("CPPPATH", "./Target/Compiler/Includepaths/Includepath")
@@ -79,15 +81,6 @@ def parse_eix_file(filename):
     return result
 
 
-def get_source_files(flist):
-    files = []
-    for f in flist:
-        if f['type'] == "h" or not f['name'].startswith("mbed"):
-            continue
-        files.append(join("$BUILD_DIR", "FrameworkMbed", f['name'][5:]))
-    return files
-
-
 def get_build_flags(data):
     flags = {}
     cflags = set(data.get("CFLAGS", []))
@@ -105,14 +98,16 @@ eixdata = parse_eix_file(
     join(env.subst("$PLATFORMFW_DIR"), "variant", variant, "%s.eix" % variant))
 
 build_flags = get_build_flags(eixdata)
+variant_dir = join("$PLATFORMFW_DIR", "variant", variant)
+
 env.Replace(
     CPPFLAGS=build_flags.get("CPPFLAGS", []),
     CFLAGS=build_flags.get("CFLAGS", []),
     CXXFLAGS=build_flags.get("CXXFLAGS", []),
     LINKFLAGS=eixdata.get("LINKFLAGS", []),
     CPPDEFINES=[define for define in eixdata.get("CPPDEFINES", [])],
-    LDSCRIPT_PATH=normpath(join(
-        "$PLATFORMFW_DIR", "core", eixdata.get("LDSCRIPT_PATH")[0][5:]))
+    LDSCRIPT_PATH=normpath(
+        join(variant_dir, eixdata.get("LDSCRIPT_PATH")[0]))
 )
 
 # Hook for K64F and K22F
@@ -123,12 +118,16 @@ if board_type in ("frdm_k22f", "frdm_k64f"):
 
 for lib_path in eixdata.get("CPPPATH"):
     _vdir = join("$BUILD_DIR", "FrameworkMbedInc%d" % crc32(lib_path))
-    env.VariantDir(
-        _vdir,
-        join("$PLATFORMFW_DIR", "core", lib_path[5:])
-    )
+    env.VariantDir(_vdir, join(variant_dir, lib_path))
     env.Append(CPPPATH=[_vdir])
 
+
+env.Append(
+    LIBPATH=[join(variant_dir, lib_path)
+             for lib_path in eixdata.get("LIBPATH", [])
+             if lib_path.startswith("mbed")],
+    LIBS=["mbed"]
+)
 
 #
 # Target: Build mbed Library
@@ -136,13 +135,10 @@ for lib_path in eixdata.get("CPPPATH"):
 
 libs = [l for l in eixdata.get("STDLIBS", []) if l not in env.get("LIBS")]
 
-env.VariantDir(
-    join("$BUILD_DIR", "FrameworkMbed"),
-    join("$PLATFORMFW_DIR", "core")
-)
 libs.append(env.Library(
     join("$BUILD_DIR", "FrameworkMbed"),
-    get_source_files(eixdata.get("FILES", []))
+    [join(variant_dir, f)
+     for f in eixdata.get("OBJFILES", [])]
 ))
 
 env.Append(LIBS=libs)
