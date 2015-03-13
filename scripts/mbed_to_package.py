@@ -1,64 +1,67 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import getcwd, mkdir, makedirs, listdir
-from os.path import isfile, isdir, join
-from shutil import copy2, rmtree, copytree
+import argparse
+import zipfile
+from os import getcwd, listdir, makedirs, mkdir, rename
+from os.path import isdir, isfile, join
+from shutil import move, rmtree
 from sys import exit as sys_exit
 from sys import path
-import zipfile
-
-
-MBED_DIR = "/home/valeros/mbed-master"
-OUTPUT_DIR = "/home/valeros/mbed-framework"
-CORE_DIR = join(OUTPUT_DIR, "core")
-VARIANT_DIR = join(OUTPUT_DIR, "variant")
 
 path.append("..")
-path.append(MBED_DIR)
-from workspace_tools.export import gccarm
+
 from platformio.util import exec_command
 
 
-def _unzip_generated_file(mcu):
+def _unzip_generated_file(mbed_dir, output_dir, mcu):
     filename = join(
-        MBED_DIR, "build", "export", "MBED_A1_emblocks_%s.zip" % mcu)
-    variant_dir = join(VARIANT_DIR, mcu)
+        mbed_dir, "build", "export", "MBED_A1_emblocks_%s.zip" % mcu)
+    variant_dir = join(output_dir, "variant", mcu)
     if isfile(filename):
         print "Processing board: %s" % mcu
         with zipfile.ZipFile(filename) as zfile:
             mkdir(variant_dir)
-            file_data = zfile.read("MBED_A1/MBED_A1.eix")
-            with open(join(variant_dir, "%s.eix" % mcu), "w") as f:
-                f.write(file_data)
+            zfile.extractall(variant_dir)
+            for f in listdir(join(variant_dir, "MBED_A1")):
+                if not f.lower().startswith("mbed"):
+                    continue
+                move(join(variant_dir, "MBED_A1", f), variant_dir)
+            rename(join(variant_dir, "MBED_A1.eix"),
+                   join(variant_dir, "%s.eix" % mcu))
+            rmtree(join(variant_dir, "MBED_A1"))
     else:
         print "Warning! Skipped board: %s" % mcu
 
 
-def main():
+def main(mbed_dir, output_dir):
     print "Starting..."
-    if isdir(OUTPUT_DIR):
-        rmtree(OUTPUT_DIR)
-        print "Delete previous framework dir"
-    makedirs(VARIANT_DIR)
-    # copy MBED library
-    mbedlib_dir = join(MBED_DIR, "libraries", "mbed")
-    for item in listdir(mbedlib_dir):
-        src = join(mbedlib_dir, item)
-        dst = join(CORE_DIR, item)
-        if isdir(src):
-            copytree(src, dst)
-        else:
-            copy2(src, dst)
+
+    path.append(mbed_dir)
+    from workspace_tools.export import gccarm
+
+    if isdir(output_dir):
+        print "Deleting previous framework dir..."
+        rmtree(output_dir)
+
+    makedirs(join(output_dir, "variant"))
     # make .eix files
     for mcu in set(gccarm.GccArm.TARGETS):
         exec_command(
-            ["python", join(MBED_DIR, "workspace_tools", "project.py"),
-             "--mcu", mcu, "-i", "emblocks", "-p", "0"], cwd=getcwd()
+            ["python", join(mbed_dir, "workspace_tools", "build.py"),
+             "--mcu", mcu, "-t", "GCC_ARM"], cwd=getcwd()
         )
-        _unzip_generated_file(mcu)
+        exec_command(
+            ["python", join(mbed_dir, "workspace_tools", "project.py"),
+             "--mcu", mcu, "-i", "emblocks", "-p", "0", "-b"], cwd=getcwd()
+        )
+        _unzip_generated_file(mbed_dir, output_dir, mcu)
     print "Complete!"
 
 
 if __name__ == "__main__":
-    sys_exit(main())
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mbed', help="The path to mbed framework")
+    parser.add_argument('--output', help="The path to output directory")
+    args = vars(parser.parse_args())
+    sys_exit(main(args["mbed"], args["output"]))
