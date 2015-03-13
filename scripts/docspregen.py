@@ -9,7 +9,7 @@ from sys import path
 path.append("..")
 
 from platformio import util
-from platformio.platforms.base import PLATFORM_PACKAGES, PlatformFactory
+from platformio.platforms.base import PlatformFactory, get_packages
 
 
 def generate_boards(boards):
@@ -59,6 +59,7 @@ def generate_boards(boards):
 
 
 def generate_packages(packages):
+    allpackages = get_packages()
     lines = []
     lines.append(""".. list-table::
     :header-rows:  1
@@ -66,10 +67,10 @@ def generate_packages(packages):
     * - Name
       - Contents""")
     for type_, data in packages.iteritems():
-        assert type_ in PLATFORM_PACKAGES
+        assert type_ in allpackages
         contitems = [
             "`%s <%s>`_" % (name, url)
-            for name, url in PLATFORM_PACKAGES[type_]
+            for name, url in allpackages[type_]
         ]
         lines.append("""
     * - ``{type_}``

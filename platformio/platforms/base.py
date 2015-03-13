@@ -93,6 +93,10 @@ PLATFORM_PACKAGES = {
 }
 
 
+def get_packages():
+    return PLATFORM_PACKAGES
+
+
 class PlatformFactory(object):
 
     @staticmethod
