@@ -44,7 +44,8 @@ Boards
 ------
 
 .. note::
-    * You can list pre-configured boards by :ref:`cmd_boards` command
+    * You can list pre-configured boards by :ref:`cmd_boards` command or
+      `PlatformIO Web 2.0 <http://platformio.org/#!/boards>`_ site
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
