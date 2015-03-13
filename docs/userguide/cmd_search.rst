@@ -35,27 +35,72 @@ Examples
 .. code-block:: bash
 
     $ platformio search
-    atmelavr    - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
-    atmelsam    - An embedded platform for Atmel SAM microcontrollers (with Arduino Framework)
-    stm32       - An embedded platform for STMicroelectronics ARM microcontrollers
-    teensy      - An embedded platform for Teensy boards (with Arduino Framework)
-    timsp430    - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
-    titiva      - An embedded platform for TI TIVA C ARM microcontrollers (with Energia and OpenCM3 Frameworks)
-    ...
+    atmelavr (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    --------
+    Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance...
+
+    atmelsam (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    --------
+    Atmel | SMART offers Flash- based ARM products based on the ...
+
+    freescalekinetis (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    ----------------
+    Freescale Kinetis Microcontrollers is family of multiple hardware- and ...
+
+    nordicnrf51 (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    -----------
+    The Nordic nRF51 Series is a family of highly flexible, multi-protocol ...
+
+    nxplpc (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    ------
+    The NXP LPC is a family of 32-bit microcontroller integrated circuits ...
+
+    ststm32 (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    -------
+    The STM32 family of 32-bit Flash MCUs based on the ARM Cortex-M ...
+
+    teensy (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    ------
+    Teensy is a complete USB-based microcontroller development syste ...
+
+    timsp430 (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    --------
+    MSP430 microcontrollers (MCUs) from Texas Instruments (TI) are ...
+
+    titiva (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    ------
+    Texas Instruments TM4C12x MCUs offer the industrys most popular ...
 
 2. Search for TI development platforms
 
 .. code-block:: bash
 
     $ platformio search ti
-    timsp430 - An embedded platform for TI MSP430 microcontrollers (with Energia Framework)
-    titiva   - An embedded platform for TI TIVA C ARM microcontrollers (with Energia Framework)
+    timsp430 (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    --------
+    MSP430 microcontrollers (MCUs) from Texas Instruments (TI) are ...
 
-3. Search for development platforms which support "Arduino Framework"
+    titiva (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    ------
+    Texas Instruments TM4C12x MCUs offer the industrys most popular ...
+
+3. Search for development platforms which support "mbed Framework"
 
 .. code-block:: bash
 
-    $ platformio search arduino
-    atmelavr    - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
-    atmelsam    - An embedded platform for Atmel SAM microcontrollers (with Arduino Framework)
-    teensy      - An embedded platform for Teensy boards (with Arduino Framework)
+    $ platformio search mbed
+    freescalekinetis (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    ----------------
+    Freescale Kinetis Microcontrollers is family of multiple hardware- and ...
+
+    nordicnrf51 (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    -----------
+    The Nordic nRF51 Series is a family of highly flexible, multi-protocol ...
+
+    nxplpc (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    ------
+    The NXP LPC is a family of 32-bit microcontroller integrated circuits ...
+
+    ststm32 (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
+    -------
+    The STM32 family of 32-bit Flash MCUs based on the ARM Cortex-M ...

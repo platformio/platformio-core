@@ -24,18 +24,23 @@ def cli(query, json_output):
         if query == "all":
             query = ""
 
-        search_data = "%s %s %s" % (name, info, p.get_installed_packages())
+        search_data = "%s %s %s" % (name, info, p.get_packages())
         if query and query.lower() not in search_data.lower():
             continue
 
         data.append({
             "name": name,
-            "info": info
+            "info": info,
+            "packages": p.get_packages()
         })
 
     if json_output:
         click.echo(json.dumps(data))
     else:
         for item in data:
-            click.echo("{name:<20} - {info}".format(
-                name=click.style(item['name'], fg="cyan"), info=item['info']))
+            click.secho(item['name'], fg="cyan", nl=False)
+            click.echo(" (available packages: %s)" % ", ".join(
+                p.get_packages().keys()))
+            click.secho("-" * len(item['name']), fg="cyan")
+            click.echo(item['info'])
+            click.echo()
