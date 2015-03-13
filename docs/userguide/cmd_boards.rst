@@ -45,7 +45,46 @@ Examples
     ...
 
 
-2. Show boards which are based on ``ATmega168`` MCU
+2. Show mbed-enabled boards
+
+.. code-block:: bash
+
+    $ platformio boards mbed
+
+    Platform: freescalekinetis
+    ---------------------------------------------------------------------------
+    Type                  MCU            Frequency  Flash   RAM    Name
+    ---------------------------------------------------------------------------
+    frdm_k20d50m          mk20dx128vlh5  48Mhz     128Kb   16Kb   Freescale Kinetis FRDM-K20D50M
+    frdm_k22f             mk22fn512vlh12 120Mhz    512Kb   128Kb  Freescale Kinetis FRDM-K22F
+    ...
+
+    Platform: nordicnrf51
+    ---------------------------------------------------------------------------
+    Type                  MCU            Frequency  Flash   RAM    Name
+    ---------------------------------------------------------------------------
+    wallBotBLE            nrf51822       16Mhz     128Kb   16Kb   JKSoft Wallbot BLE
+    nrf51_dk              nrf51822       32Mhz     256Kb   32Kb   Nordic nRF51-DK
+    ...
+
+    Platform: nxplpc
+    ---------------------------------------------------------------------------
+    Type                  MCU            Frequency  Flash   RAM    Name
+    ---------------------------------------------------------------------------
+    blueboard_lpc11u24    lpc11u24       48Mhz     32Kb    8Kb    BlueBoard-LPC11U24
+    dipcortexm0           lpc11u24       50Mhz     32Kb    8Kb    DipCortex M0
+    lpc11u35              lpc11u35       48Mhz     64Kb    10Kb   EA LPC11U35 QuickStart Board
+    ...
+
+    Platform: ststm32
+    ---------------------------------------------------------------------------
+    Type                  MCU            Frequency  Flash   RAM    Name
+    ---------------------------------------------------------------------------
+    disco_f401vc          stm32f401vct6  84Mhz     256Kb   64Kb   32F401CDISCOVERY
+    nucleo_f030r8         stm32f030r8t6  48Mhz     64Kb    8Kb    ST Nucleo F030R8
+    ...
+
+3. Show boards which are based on ``ATmega168`` MCU
 
 .. code-block:: bash
 
@@ -66,7 +105,7 @@ Examples
     168pa16m              atmega168p    16Mhz     15Kb    1Kb    Microduino Core (Atmega168PA@16M,5V)
     168pa8m               atmega168p    8Mhz      15Kb    1Kb    Microduino Core (Atmega168PA@8M,3.3V)
 
-3. Show boards by :ref:`platform_timsp430`
+4. Show boards by :ref:`platform_timsp430`
 
 .. code-block:: bash
 
