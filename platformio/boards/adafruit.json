@@ -1,7 +1,7 @@
 {
     "flora8": {
         "build": {
-            "core": "arduino",
+            "core": ["arduino"],
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
@@ -10,7 +10,7 @@
             "variant": "flora",
             "vid": "0x239A"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Adafruit Flora",
         "platform": "atmelavr",
         "upload": {
@@ -29,13 +29,13 @@
 
     "trinket3": {
         "build": {
-            "core": "arduino",
+            "core": ["arduino"],
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "8000000L",
             "mcu": "attiny85",
             "variant": "tiny8"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Adafruit Trinket 3V/8MHz",
         "platform": "atmelavr",
         "upload": {
@@ -49,19 +49,19 @@
 
     "trinket5": {
         "build": {
-            "core": "arduino",
+            "core": ["arduino"],
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "16000000L",
             "mcu": "attiny85",
             "variant": "tiny8"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Adafruit Trinket 5V/16MHz",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
             "maximum_size": 8192,
-            "protocol": "usbtiny"     
+            "protocol": "usbtiny"
         },
         "url": "http://www.adafruit.com/products/1501",
         "vendor": "Adafruit"
@@ -69,13 +69,13 @@
 
     "protrinket3": {
         "build": {
-            "core": "arduino",
+            "core": ["arduino"],
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "12000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Pro Trinket 3V/12MHz (USB)",
         "platform": "atmelavr",
         "upload": {
@@ -89,13 +89,13 @@
 
     "protrinket5": {
         "build": {
-            "core": "arduino",
+            "core": ["arduino"],
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Pro Trinket 5V/16MHz (USB)",
         "platform": "atmelavr",
         "upload": {
@@ -108,19 +108,19 @@
     },
     "protrinket3ftdi": {
         "build": {
-            "core": "arduino",
+            "core": ["arduino"],
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Pro Trinket 3V/12MHz (FTDI)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 2048,
             "maximum_size": 28672,
-            "protocol": "arduino",
+            "protocol": ["arduino"],
             "require_upload_port" : true,
             "speed": 115200
         },
@@ -129,19 +129,19 @@
     },
     "protrinket5ftdi": {
         "build": {
-            "core": "arduino",
+            "core": ["arduino"],
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": "arduino",
+        "frameworks": ["arduino"],
         "name": "Pro Trinket 5V/16MHz (USB)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 2048,
             "maximum_size": 28672,
-            "protocol": "arduino",
+            "protocol": ["arduino"],
             "require_upload_port" : true,
             "speed": 115200
         },
