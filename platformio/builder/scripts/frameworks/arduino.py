@@ -29,11 +29,16 @@ BOARD_BUILDOPTS = BOARD_OPTS.get("build", {})
 PLATFORMFW_DIR = join("$PIOPACKAGES_DIR",
                       "framework-arduino${PLATFORM.replace('atmel', '')}")
 
-if env.get("PLATFORM") == "digistump":
+if "digispark" in BOARD_BUILDOPTS.get("core"):
     PLATFORMFW_DIR = join(
         "$PIOPACKAGES_DIR",
         "framework-arduino%s" % (
             "sam" if BOARD_BUILDOPTS.get("cpu") == "cortex-m3" else "avr")
+    )
+elif env.get("PLATFORM") == "timsp430":
+    PLATFORMFW_DIR = join(
+        "$PIOPACKAGES_DIR",
+        "framework-arduinomsp430"
     )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)

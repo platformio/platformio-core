@@ -26,6 +26,10 @@ PLATFORM_PACKAGES = {
         ("Arduino Wiring-based Framework",
          "http://arduino.cc/en/Reference/HomePage")
     ],
+    "framework-arduinomsp430": [
+        ("Arduino Wiring-based Framework (MSP430 Core)",
+         "http://arduino.cc/en/Reference/HomePage")
+    ],
     "framework-energiamsp430": [
         ("Energia Wiring-based Framework (MSP430 Core)",
          "http://energia.nu/reference/")
