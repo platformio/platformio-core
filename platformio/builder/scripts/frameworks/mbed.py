@@ -125,8 +125,7 @@ for lib_path in eixdata.get("CPPPATH"):
 env.Append(
     LIBPATH=[join(variant_dir, lib_path)
              for lib_path in eixdata.get("LIBPATH", [])
-             if lib_path.startswith("mbed")],
-    LIBS=["mbed"]
+             if lib_path.startswith("mbed")]
 )
 
 #
@@ -134,6 +133,7 @@ env.Append(
 #
 
 libs = [l for l in eixdata.get("STDLIBS", []) if l not in env.get("LIBS")]
+libs.append("mbed")
 
 libs.append(env.Library(
     join("$BUILD_DIR", "FrameworkMbed"),
