@@ -26,6 +26,10 @@ PLATFORM_PACKAGES = {
         ("Arduino Wiring-based Framework",
          "http://arduino.cc/en/Reference/HomePage")
     ],
+    "framework-arduinomsp430": [
+        ("Arduino Wiring-based Framework (MSP430 Core)",
+         "http://arduino.cc/en/Reference/HomePage")
+    ],
     "framework-energiamsp430": [
         ("Energia Wiring-based Framework (MSP430 Core)",
          "http://energia.nu/reference/")
@@ -45,7 +49,7 @@ PLATFORM_PACKAGES = {
          "http://www.st.com"
          "/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890")
     ],
-    "framework-opencm3": [
+    "framework-libopencm3": [
         ("libOpenCM3 Framework", "http://www.libopencm3.org/")
     ],
     "framework-mbed": [
