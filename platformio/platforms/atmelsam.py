@@ -34,3 +34,6 @@ class AtmelsamPlatform(BasePlatform):
             "default": True
         }
     }
+
+    def get_name(self):
+        return "Atmel SAM"

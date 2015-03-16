@@ -100,17 +100,17 @@ def get_packages():
 class PlatformFactory(object):
 
     @staticmethod
-    def get_clsname(name):
-        return "%sPlatform" % name.title()
+    def get_clsname(type_):
+        return "%sPlatform" % type_.title()
 
     @staticmethod
-    def load_module(name, path):
+    def load_module(type_, path):
         module = None
         try:
             module = load_source(
-                "platformio.platforms.%s" % name, path)
+                "platformio.platforms.%s" % type_, path)
         except ImportError:
-            raise exception.UnknownPlatform(name)
+            raise exception.UnknownPlatform(type_)
         return module
 
     @classmethod
@@ -123,15 +123,15 @@ class PlatformFactory(object):
             for p in listdir(pdir):
                 if p in ("__init__.py", "base.py") or not p.endswith(".py"):
                     continue
-                name = p[:-3]
+                type_ = p[:-3]
                 path = join(pdir, p)
                 try:
                     isplatform = hasattr(
-                        cls.load_module(name, path),
-                        cls.get_clsname(name)
+                        cls.load_module(type_, path),
+                        cls.get_clsname(type_)
                     )
                     if isplatform:
-                        platforms[name] = path
+                        platforms[type_] = path
                 except exception.UnknownPlatform:
                     pass
 
@@ -139,20 +139,20 @@ class PlatformFactory(object):
             return platforms
 
         installed_platforms = {}
-        for name in get_state_item("installed_platforms", []):
-            if name in platforms:
-                installed_platforms[name] = platforms[name]
+        for type_ in get_state_item("installed_platforms", []):
+            if type_ in platforms:
+                installed_platforms[type_] = platforms[type_]
         return installed_platforms
 
     @classmethod
-    def newPlatform(cls, name):
+    def newPlatform(cls, type_):
         platforms = cls.get_platforms()
-        if name not in platforms:
-            raise exception.UnknownPlatform(name)
+        if type_ not in platforms:
+            raise exception.UnknownPlatform(type_)
 
         _instance = getattr(
-            cls.load_module(name, platforms[name]),
-            cls.get_clsname(name)
+            cls.load_module(type_, platforms[type_]),
+            cls.get_clsname(type_)
         )()
         assert isinstance(_instance, BasePlatform)
         return _instance
@@ -166,12 +166,15 @@ class BasePlatform(object):
     def __init__(self):
         self._found_error = False
 
-    def get_name(self):
+    def get_type(self):
         return self.__class__.__name__[:-8].lower()
+
+    def get_name(self):
+        return self.get_type().title()
 
     def get_build_script(self):
         builtin = join(util.get_source_dir(), "builder", "scripts", "%s.py" %
-                       self.get_name())
+                       self.get_type())
         if isfile(builtin):
             return builtin
         raise NotImplementedError()
@@ -235,14 +238,14 @@ class BasePlatform(object):
 
         # register installed platform
         data = get_state_item("installed_platforms", [])
-        if self.get_name() not in data:
-            data.append(self.get_name())
+        if self.get_type() not in data:
+            data.append(self.get_type())
             set_state_item("installed_platforms", data)
 
         return len(requirements)
 
     def uninstall(self):
-        platform = self.get_name()
+        platform = self.get_type()
         installed_platforms = PlatformFactory.get_platforms(
             installed=True).keys()
 
@@ -286,8 +289,8 @@ class BasePlatform(object):
             installed=True).keys()
         installed_packages = PackageManager.get_installed()
 
-        if self.get_name() not in installed_platforms:
-            raise exception.PlatformNotInstalledYet(self.get_name())
+        if self.get_type() not in installed_platforms:
+            raise exception.PlatformNotInstalledYet(self.get_type())
 
         if "clean" in targets:
             targets.remove("clean")

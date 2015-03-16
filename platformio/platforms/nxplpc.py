@@ -28,3 +28,6 @@ class NxplpcPlatform(BasePlatform):
             "default": True
         }
     }
+
+    def get_name(self):
+        return "NXP LPC"

@@ -26,3 +26,6 @@ class FreescalekinetisPlatform(BasePlatform):
             "default": True
         }
     }
+
+    def get_name(self):
+        return "Freescale Kinetis"

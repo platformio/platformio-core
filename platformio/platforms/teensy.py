@@ -41,6 +41,9 @@ class TeensyPlatform(BasePlatform):
         }
     }
 
+    def get_name(self):
+        return "Teensy"
+
     def run(self, variables, targets):
         for v in variables:
             if "BOARD=" not in v:
