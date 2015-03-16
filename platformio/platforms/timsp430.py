@@ -29,6 +29,10 @@ class Timsp430Platform(BasePlatform):
 
         "framework-energiamsp430": {
             "default": True
+        },
+
+        "framework-arduinomsp430": {
+            "default": True
         }
     }
 

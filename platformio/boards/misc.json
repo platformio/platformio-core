@@ -75,5 +75,44 @@
         },
         "url": "http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html",
         "vendor": "SainSmart"
+    },
+    "panStampAVR": {
+        "build": {
+            "core": "panstamp",
+            "extra_flags": "-DPANSTAMP_AVR",
+            "f_cpu": "8000000L",
+            "mcu": "atmega328p",
+            "variant": "panstamp"
+        },
+        "frameworks": ["arduino"],
+        "name": "PanStamp AVR",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 32256,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 57600
+        },
+        "url": "http://www.panstamp.com/product/panstamp-avr/",
+        "vendor": "PanStamp"
+    },
+    "panStampNRG": {
+        "build": {
+            "core": "panstamp",
+            "f_cpu": "12000000L",
+            "mcu": "cc430f5137",
+            "variant": "panstamp_nrg_1.1"
+        },
+        "frameworks": ["arduino"],
+        "name": "PanStamp NRG 1.1",
+        "platform": "timsp430",
+        "upload": {
+            "maximum_ram_size": 4096,
+            "maximum_size": 32640,
+            "protocol": "flash-bsl"
+        },
+        "url": "http://www.panstamp.com/product/197/",
+        "vendor": "PanStamp"
     }
 }
