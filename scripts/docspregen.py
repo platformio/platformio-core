@@ -99,9 +99,13 @@ def generate_platform(name):
     lines.append("=" * len(_title))
 
     p = PlatformFactory.newPlatform(name)
-    lines.extend([l.strip() for l in p.__doc__.split("\n")])
+    lines.append(p.get_description())
+    lines.append("""
+For more detailed information please visit `vendor site <%s>`_.""" %
+                 p.get_vendor_url())
 
-    lines.append(""".. contents::""")
+    lines.append("""
+.. contents::""")
     lines.append("""
 Packages
 --------
@@ -153,8 +157,9 @@ def generate_framework(name, data):
     lines.append(_title)
     lines.append("=" * len(_title))
     lines.append(data['description'])
-    lines.append("""\n.. contents::""")
     lines.append("""
+.. contents::
+
 Boards
 ------
 

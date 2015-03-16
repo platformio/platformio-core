@@ -2,15 +2,9 @@
 
 Platform ``ststm32``
 ====================
+The STM32 family of 32-bit Flash MCUs based on the ARM Cortex-M processor is designed to offer new degrees of freedom to MCU users. It offers a 32-bit product range that combines very high performance, real-time capabilities, digital signal processing, and low-power, low-voltage operation, while maintaining full integration and ease of development.
 
-The STM32 family of 32-bit Flash MCUs based on the ARM Cortex-M
-processor is designed to offer new degrees of freedom to MCU users.
-It offers a 32-bit product range that combines very high performance,
-real-time capabilities, digital signal processing, and low-power,
-low-voltage operation, while maintaining full integration and ease of
-development.
-
-http://www.st.com/web/en/catalog/mmc/FM141/SC1169?sc=stm32
+For more detailed information please visit `vendor site <http://www.st.com/web/en/catalog/mmc/FM141/SC1169?sc=stm32>`_.
 
 .. contents::
 

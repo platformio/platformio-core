@@ -2,15 +2,9 @@
 
 Platform ``nordicnrf51``
 ========================
+The Nordic nRF51 Series is a family of highly flexible, multi-protocol, system-on-chip (SoC) devices for ultra-low power wireless applications. nRF51 Series devices support a range of protocol stacks including Bluetooth Smart (previously called Bluetooth low energy), ANT and proprietary 2.4GHz protocols such as Gazell.
 
-The Nordic nRF51 Series is a family of highly flexible,
-multi-protocol, system-on-chip (SoC) devices for ultra-low power
-wireless applications. nRF51 Series devices support a range of
-protocol stacks including Bluetooth Smart (previously called
-Bluetooth low energy), ANT and proprietary 2.4GHz protocols such as
-Gazell.
-
-https://www.nordicsemi.com/eng/Products/nRF51-Series-SoC
+For more detailed information please visit `vendor site <https://www.nordicsemi.com/eng/Products/nRF51-Series-SoC>`_.
 
 .. contents::
 

@@ -176,10 +176,17 @@ class BasePlatform(object):
             return builtin
         raise NotImplementedError()
 
-    def get_short_info(self):
+    def get_description(self):
         if self.__doc__:
-            doclines = [l.strip() for l in self.__doc__.splitlines()]
-            return " ".join(doclines).strip()
+            doclines = [l.strip() for l in self.__doc__.splitlines() if
+                        l.strip()]
+            return " ".join(doclines[:-1]).strip()
+        else:
+            raise NotImplementedError()
+
+    def get_vendor_url(self):
+        if self.__doc__ and "http" in self.__doc__:
+            return self.__doc__[self.__doc__.index("http"):].strip()
         else:
             raise NotImplementedError()
 
