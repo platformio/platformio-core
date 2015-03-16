@@ -35,7 +35,7 @@ class TitivaPlatform(BasePlatform):
             "default": True
         },
 
-        "framework-opencm3": {
+        "framework-libopencm3": {
             "default": True
         }
     }

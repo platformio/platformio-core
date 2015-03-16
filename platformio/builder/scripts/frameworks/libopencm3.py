@@ -21,7 +21,7 @@ from platformio.util import exec_command
 env = DefaultEnvironment()
 
 env.Replace(
-    PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-opencm3")
+    PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-libopencm3")
 )
 
 BOARD_BUILDOPTS = env.get("BOARD_OPTIONS", {}).get("build", {})
@@ -101,7 +101,7 @@ def get_source_files(src_dir):
         for search_path in mkdata['vpath']:
             src_path = normpath(join(src_dir, search_path, src_file))
             if isfile(src_path):
-                sources.append(join("$BUILD_DIR", "FrameworkOpenCM3",
+                sources.append(join("$BUILD_DIR", "FrameworkLibOpenCM3",
                                     src_path.replace(lib_root + sep, "")))
                 break
     return sources
@@ -137,14 +137,14 @@ if BOARD_BUILDOPTS.get("core") == "lm4f":
     )
 
 env.VariantDir(
-    join("$BUILD_DIR", "FrameworkOpenCM3Variant"),
+    join("$BUILD_DIR", "FrameworkLibOpenCM3Variant"),
     join("$PLATFORMFW_DIR", "include")
 )
 
 env.Append(
     CPPPATH=[
-        join("$BUILD_DIR", "FrameworkOpenCM3"),
-        join("$BUILD_DIR", "FrameworkOpenCM3Variant")
+        join("$BUILD_DIR", "FrameworkLibOpenCM3"),
+        join("$BUILD_DIR", "FrameworkLibOpenCM3Variant")
     ]
 )
 
@@ -157,7 +157,7 @@ ldscript_path = find_ldscript(root_dir)
 merge_ld_scripts(ldscript_path)
 generate_nvic_files()
 
-# override ldscript by opencm3
+# override ldscript by libopencm3
 assert "LDSCRIPT_PATH" in env
 env.Replace(
     LDSCRIPT_PATH=ldscript_path
@@ -165,11 +165,11 @@ env.Replace(
 
 libs = []
 env.VariantDir(
-    join("$BUILD_DIR", "FrameworkOpenCM3"),
+    join("$BUILD_DIR", "FrameworkLibOpenCM3"),
     "$PLATFORMFW_DIR"
 )
 libs.append(env.Library(
-    join("$BUILD_DIR", "FrameworkOpenCM3"),
+    join("$BUILD_DIR", "FrameworkLibOpenCM3"),
     get_source_files(root_dir)
 ))
 

@@ -45,7 +45,7 @@ PLATFORM_PACKAGES = {
          "http://www.st.com"
          "/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890")
     ],
-    "framework-opencm3": [
+    "framework-libopencm3": [
         ("libOpenCM3 Framework", "http://www.libopencm3.org/")
     ],
     "framework-mbed": [
