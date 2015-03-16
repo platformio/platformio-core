@@ -2,6 +2,8 @@
 # See LICENSE for details.
 
 """
+mbed
+
 The mbed framework The mbed SDK has been designed to provide enough
 hardware abstraction to be intuitive and concise, yet powerful enough to
 build complex projects. It is built on the low-level ARM CMSIS APIs,

@@ -2,6 +2,8 @@
 # See LICENSE for details.
 
 """
+CMSIS
+
 The ARM Cortex Microcontroller Software Interface Standard (CMSIS) is a
 vendor-independent hardware abstraction layer for the Cortex-M processor
 series and specifies debugger interfaces. The CMSIS enables consistent and
