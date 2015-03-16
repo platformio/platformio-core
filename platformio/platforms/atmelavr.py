@@ -37,6 +37,9 @@ class AtmelavrPlatform(BasePlatform):
         }
     }
 
+    def get_name(self):
+        return "Atmel AVR"
+
     def on_run_err(self, line):  # pylint: disable=R0201
         # fix STDERR "flash written" for avrdude
         if "avrdude" in line:

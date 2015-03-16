@@ -28,3 +28,6 @@ class Nordicnrf51Platform(BasePlatform):
             "default": True
         }
     }
+
+    def get_name(self):
+        return "Nordic nRF51"

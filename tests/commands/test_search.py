@@ -12,7 +12,7 @@ def test_search_json_output(clirunner, validate_cliresult):
     search_result = json.loads(result.output)
     assert isinstance(search_result, list)
     assert len(search_result)
-    platforms = [item['name'] for item in search_result]
+    platforms = [item['type'] for item in search_result]
     assert "atmelsam" in platforms
 
 

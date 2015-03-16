@@ -2,6 +2,8 @@
 # See LICENSE for details.
 
 """
+Energia
+
 Energia framework enables pretty much anyone to start easily creating
 microcontroller-based projects and applications. Its easy-to-use libraries
 and functions provide developers of all experience levels to start

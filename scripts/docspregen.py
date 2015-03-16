@@ -103,7 +103,6 @@ def generate_platform(name):
     lines.append("""
 For more detailed information please visit `vendor site <%s>`_.""" %
                  p.get_vendor_url())
-
     lines.append("""
 .. contents::""")
     lines.append("""
@@ -146,17 +145,20 @@ def update_platform_docs():
             f.write(generate_platform(name))
 
 
-def generate_framework(name, data):
-    print "Processing framework: %s" % name
+def generate_framework(type_, data):
+    print "Processing framework: %s" % type_
     lines = []
 
-    lines.append(".. _framework_%s:" % name)
+    lines.append(".. _framework_%s:" % type_)
     lines.append("")
 
-    _title = "Framework ``%s``" % name
+    _title = "Framework ``%s``" % type_
     lines.append(_title)
     lines.append("=" * len(_title))
     lines.append(data['description'])
+    lines.append("""
+For more detailed information please visit `vendor site <%s>`_.""" %
+                 data['url'])
     lines.append("""
 .. contents::
 
@@ -173,7 +175,7 @@ Boards
     for board, data in util.get_boards().items():
         frameworks = data['frameworks']
         vendor = data['vendor']
-        if name in frameworks:
+        if type_ in frameworks:
             if vendor in vendors:
                 vendors[vendor].append({board: data})
             else:

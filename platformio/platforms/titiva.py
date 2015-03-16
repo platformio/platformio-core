@@ -39,3 +39,6 @@ class TitivaPlatform(BasePlatform):
             "default": True
         }
     }
+
+    def get_name(self):
+        return "TI TIVA"
