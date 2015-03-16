@@ -19,7 +19,9 @@ Release History
   `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
   development platform
 * Created new `Frameworks <http://docs.platformio.org/en/latest/frameworks/index.html>`__
-  page in documentation
+  page in documentation and added to `PlatformIO Web Site <http://platformio.org>`_
+  (`issue #115 <https://github.com/ivankravets/platformio/issues/115>`_)
+* Introduced online `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
 * Automatically append define ``-DPLATFORMIO=%version%`` to builder
   (`issue #105 <https://github.com/ivankravets/platformio/issues/105>`_)
 * Renamed ``stm32`` development platform to
