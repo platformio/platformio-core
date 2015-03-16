@@ -49,3 +49,6 @@ class Ststm32Platform(BasePlatform):
             "default": True
         }
     }
+
+    def get_name(self):
+        return "ST STM32"

@@ -284,10 +284,11 @@ def get_frameworks(type_=None):
                 _doc_start = fcontent.index('"""') + 3
                 fdoc = fcontent[
                     _doc_start:fcontent.index('"""', _doc_start)].strip()
-                description = " ".join(fdoc.split("\n")[:-2])
+                doclines = [l.strip() for l in fdoc.splitlines() if l.strip()]
                 frameworks[_type] = {
-                    "description": description,
-                    "url": fdoc.split("\n")[-1].strip(),
+                    "name": doclines[0],
+                    "description": " ".join(doclines[1:-1]),
+                    "url": doclines[-1],
                     "script": script_path
                 }
         get_frameworks._cache = frameworks  # pylint: disable=W0212

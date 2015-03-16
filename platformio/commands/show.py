@@ -30,7 +30,7 @@ def cli(ctx, platform):
 
     p = PlatformFactory.newPlatform(platform)
     click.echo("{name:<20} - {description} [ {url} ]".format(
-        name=click.style(p.get_name(), fg="cyan"),
+        name=click.style(p.get_type(), fg="cyan"),
         description=p.get_description(), url=p.get_vendor_url()))
 
     installed_packages = PackageManager.get_installed()
