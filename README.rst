@@ -32,6 +32,7 @@ and the missing library manager.
 * `Get Started <http://platformio.org/#!/get-started>`_
 * `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
 * `Development Platforms <http://platformio.org/#!/platforms>`_
+* `Frameworks <http://platformio.org/#!/frameworks>`_
 * `Embedded Boards <http://platformio.org/#!/boards>`_
 * `Library Manager <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
 * `User Guide <http://docs.platformio.org/en/latest/userguide/index.html>`_
@@ -114,18 +115,24 @@ more).
 
 It has support for the most popular embedded platforms:
 
-* ``atmelavr`` `Atmel AVR <http://platformio.org/#!/platforms/atmelavr>`_
-  (including *Arduino*-based boards, *Microduino, Raspduino, Teensy*)
-* ``atmelsam`` `Atmel SAM <http://platformio.org/#!/platforms/atmelsam>`_
-  (including *Arduino*-based boards, *Digistump DigiX*)
-* ``stm32`` `STM32 <http://platformio.org/#!/platforms/stm32>`_
-  (including *STM32 Discovery* Kits, CMSIS, SPL, libOpenCM3)
-* ``teensy`` `Teensy <http://platformio.org/#!/platforms/teensy>`_
-  (including *Teensy 2 and 3* USB boards)
-* ``timsp430`` `TI MSP430 <http://platformio.org/#!/platforms/timsp430>`_
-  (including *MSP430* LaunchPads)
-* ``titiva`` `TI TIVA C <http://platformio.org/#!/platforms/titiva>`_
-  (including *TIVA C* Series LaunchPads)
+* `Atmel AVR <http://platformio.org/#!/platforms/atmelavr>`_
+* `Atmel SAM <http://platformio.org/#!/platforms/atmelsam>`_
+* `Freescale Kinetis <http://platformio.org/#!/platforms/freescalekinetis>`_
+* `Nordic nRF51 <http://platformio.org/#!/platforms/nordicnrf51>`_
+* `NXP LPC. <http://platformio.org/#!/platforms/nxplpc>`_
+* `ST STM32 <http://platformio.org/#!/platforms/ststm32>`_
+* `Teensy <http://platformio.org/#!/platforms/teensy>`_
+* `TI MSP430 <http://platformio.org/#!/platforms/timsp430>`_
+* `TI TIVA C <http://platformio.org/#!/platforms/titiva>`_
+
+Frameworks:
+
+* `Arduino <http://platformio.org/#!/frameworks/arduino>`_
+* `CMSIS <http://platformio.org/#!/frameworks/cmsis>`_
+* `libOpenCM3 <http://platformio.org/#!/frameworks/libopencm3>`_
+* `Energia <http://platformio.org/#!/frameworks/energia>`_
+* `SPL <http://platformio.org/#!/frameworks/spl>`_
+* `mbed <http://platformio.org/#!/frameworks/mbed>`_
 
 
 Licence
