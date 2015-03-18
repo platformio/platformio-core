@@ -22,10 +22,12 @@ Release History
   page in documentation and added to `PlatformIO Web Site <http://platformio.org>`_
   (`issue #115 <https://github.com/ivankravets/platformio/issues/115>`_)
 * Introduced online `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
-* Automatically append define ``-DPLATFORMIO=%version%`` to builder
-  (`issue #105 <https://github.com/ivankravets/platformio/issues/105>`_)
+* Automatically append define ``-DPLATFORMIO=%version%`` to
+  builder (`issue #105 <https://github.com/ivankravets/platformio/issues/105>`_)
 * Renamed ``stm32`` development platform to
   `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
+* Fixed uploading for `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`__
+  development platform
 
 1.1.0 (2015-03-05)
 ------------------
@@ -54,7 +56,7 @@ Release History
 * Added support for *ARM*-based credit-card sized computers:
   `Raspberry Pi <http://www.raspberrypi.org>`_,
   `BeagleBone <http://beagleboard.org>`_ and `CubieBoard <http://cubieboard.org>`_
-* Added `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`_
+* Added `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`__
   development platform with supported boards: *Arduino Due and Digistump DigiX*
   (`issue #71 <https://github.com/ivankravets/platformio/issues/71>`_)
 * Added `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__

@@ -43,7 +43,7 @@
             "protocol": "sam-ba",
             "require_upload_port" : true,
             "use_1200bps_touch": true,
-            "wait_for_upload_port": true
+            "wait_for_upload_port": false
         },
         "url": "http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html",
         "vendor": "SainSmart"

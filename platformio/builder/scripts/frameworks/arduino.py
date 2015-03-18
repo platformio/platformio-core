@@ -97,7 +97,7 @@ if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
 
     env.VariantDir(
         join("$BUILD_DIR", "FrameworkArduinoInc"),
-        join("$PLATFORMFW_DIR", "cores", "digix")
+        join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
     )
     env.Append(
         CPPPATH=[
@@ -178,14 +178,19 @@ libs.append(envsafe.BuildLibrary(
 ))
 
 if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
+
+    env.Append(
+        LIBPATH=[
+            join("$PLATFORMFW_DIR", "variants",
+                 "${BOARD_OPTIONS['build']['variant']}")
+        ]
+    )
+
     envsafe.Append(
         CFLAGS=[
             "-std=gnu99"
         ]
     )
-    libs.append(envsafe.BuildLibrary(
-        join("$BUILD_DIR", "SamLib"),
-        join("$PLATFORMFW_DIR", "system", "libsam", "source")
-    ))
+    libs.append("sam_sam3x8e_gcc_rel")
 
 env.Append(LIBS=libs)

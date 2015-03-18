@@ -1,7 +1,6 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-import platform
 from os.path import join
 from shutil import copyfile
 from time import sleep
@@ -25,9 +24,9 @@ def FlushSerialBuffer(env, port):
 
 def TouchSerialPort(env, port, baudrate):
     s = Serial(port=env.subst(port), baudrate=baudrate)
+    s.setDTR(False)
     s.close()
-    if platform.system() != "Darwin":
-        sleep(0.3)
+    sleep(0.4)
 
 
 def WaitForNewSerialPort(_, before):
