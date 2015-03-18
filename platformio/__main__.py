@@ -7,6 +7,7 @@ from sys import exit as sys_exit
 from traceback import format_exc
 
 import click
+import requests
 
 from platformio import __version__, exception, maintenance
 from platformio.util import get_source_dir
@@ -49,6 +50,10 @@ def process_result(ctx, result):
 
 def main():
     try:
+        # https://urllib3.readthedocs.org
+        # /en/latest/security.html#insecureplatformwarning
+        requests.packages.urllib3.disable_warnings()
+
         cli(None)
     except Exception as e:  # pylint: disable=W0703
         if not isinstance(e, exception.ReturnErrorCode):

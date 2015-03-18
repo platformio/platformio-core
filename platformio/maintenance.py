@@ -9,7 +9,6 @@ from shutil import rmtree
 from time import time
 
 import click
-import requests
 
 from platformio import __version__, app, telemetry
 from platformio.commands.install import cli as cmd_install
@@ -23,10 +22,6 @@ from platformio.util import get_home_dir, get_lib_dir
 
 
 def on_platformio_start(ctx):
-    # https://urllib3.readthedocs.org
-    # /en/latest/security.html#insecureplatformwarning
-    requests.packages.urllib3.disable_warnings()
-
     telemetry.on_command(ctx)
     after_upgrade(ctx)
     check_platformio_upgrade()
