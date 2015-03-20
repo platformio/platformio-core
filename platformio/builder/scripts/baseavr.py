@@ -47,6 +47,8 @@ env.Replace(
         "-Wl,--gc-sections"
     ],
 
+    LIBS=["m"],
+
     SIZEPRINTCMD='"$SIZETOOL" --mcu=$BOARD_MCU -C -d $SOURCES'
 )
 

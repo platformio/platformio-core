@@ -94,11 +94,11 @@ def fill_project_envs(project_file, board_types, disable_auto_uploading):
 
         data = builtin_boards[type_]
         # find default framework for board
-        framework = data.get("framework", None)
+        frameworks = data.get("frameworks")
         content.append("[env:autogen_%s]" % type_)
         content.append("platform = %s" % data['platform'])
-        if framework:
-            content.append("framework = %s" % framework)
+        if frameworks:
+            content.append("framework = %s" % frameworks[0])
         content.append("board = %s" % type_)
 
         content.append("%stargets = upload" % ("# " if disable_auto_uploading

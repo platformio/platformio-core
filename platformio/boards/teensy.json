@@ -5,13 +5,15 @@
             "f_cpu": "16000000L",
             "mcu": "atmega32u4"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Teensy 2.0",
         "platform": "teensy",
         "upload": {
             "maximum_ram_size": 2560,
             "maximum_size": 32256
-        }
+        },
+        "url": "https://www.pjrc.com/store/teensy.html",
+        "vendor": "Teensy"
     },
 
     "teensy20pp": {
@@ -20,13 +22,15 @@
             "f_cpu": "16000000L",
             "mcu": "at90usb1286"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Teensy++ 2.0",
         "platform": "teensy",
         "upload": {
             "maximum_ram_size": 8192,
             "maximum_size": 130048
-        }
+        },
+        "url": "https://www.pjrc.com/store/teensypp.html",
+        "vendor": "Teensy"
     },
 
     "teensy30": {
@@ -38,13 +42,15 @@
             "mcu": "mk20dx128",
             "cpu": "cortex-m4"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Teensy 3.0",
         "platform": "teensy",
         "upload": {
             "maximum_ram_size": 16384,
             "maximum_size": 131072
-        }
+        },
+        "url": "https://www.pjrc.com/store/teensy3.html",
+        "vendor": "Teensy"
     },
 
     "teensy31": {
@@ -56,12 +62,14 @@
             "mcu": "mk20dx256",
             "cpu": "cortex-m4"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Teensy 3.1",
         "platform": "teensy",
         "upload": {
             "maximum_ram_size": 65536,
             "maximum_size": 262144
-        }
+        },
+        "url": "https://www.pjrc.com/store/teensy31.html",
+        "vendor": "Teensy"
     }
 }

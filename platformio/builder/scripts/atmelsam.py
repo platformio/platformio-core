@@ -5,7 +5,7 @@
     Builder for Atmel SAM series of microcontrollers
 """
 
-from os.path import join
+from os.path import basename, join
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
                           DefaultEnvironment, SConscript)
@@ -20,8 +20,8 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     env.Append(
         UPLOADERFLAGS=[
             "-U",
-            "true" if "usb" in board_type.lower(
-            ) or board_type == "digix" else "false"
+            "true" if ("usb" in board_type.lower(
+            ) or board_type == "digix") else "false"
         ])
 
     upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
@@ -37,6 +37,10 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     if upload_options.get("wait_for_upload_port", False):
         env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
 
+    # use only port name for BOSSA
+    if "/" in env.subst("$UPLOAD_PORT"):
+        env.Replace(UPLOAD_PORT=basename(env.subst("$UPLOAD_PORT")))
+
 
 env = DefaultEnvironment()
 
@@ -46,7 +50,6 @@ env.Replace(
     UPLOADER=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_UPLOADER", "bossac"),
     UPLOADERFLAGS=[
         "--info",
-        "--debug",
         "--port", "$UPLOAD_PORT",
         "--erase",
         "--write",
@@ -59,7 +62,9 @@ env.Replace(
 
 env.Append(
     CPPDEFINES=[
-        "printf=iprintf"
+        "printf=iprintf",
+        "USBCON",
+        'USB_MANUFACTURER="PlatformIO"'
     ],
 
     LINKFLAGS=[
@@ -68,13 +73,11 @@ env.Append(
     ]
 )
 
-CORELIBS = env.ProcessGeneral()
-
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(["m", "gcc"] + CORELIBS)
+target_elf = env.BuildFirmware()
 
 #
 # Target: Build the .bin file

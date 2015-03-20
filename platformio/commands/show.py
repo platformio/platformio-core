@@ -12,7 +12,7 @@ from platformio.pkgmanager import PackageManager
 from platformio.platforms.base import PlatformFactory
 
 
-@click.command("show", short_help="Show details about installed platforms")
+@click.command("show", short_help="Show details about installed platform")
 @click.argument("platform")
 @click.pass_context
 def cli(ctx, platform):
@@ -29,8 +29,9 @@ def cli(ctx, platform):
             raise PlatformNotInstalledYet(platform)
 
     p = PlatformFactory.newPlatform(platform)
-    click.echo("{name:<20} - {info}".format(
-        name=click.style(p.get_name(), fg="cyan"), info=p.get_short_info()))
+    click.echo("{name:<20} - {description} [ {url} ]".format(
+        name=click.style(p.get_type(), fg="cyan"),
+        description=p.get_description(), url=p.get_vendor_url()))
 
     installed_packages = PackageManager.get_installed()
     for name in p.get_installed_packages():

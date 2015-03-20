@@ -44,6 +44,11 @@ class UnknownBoard(PlatformioException):
     MESSAGE = "Unknown board type '%s'"
 
 
+class UnknownFramework(PlatformioException):
+
+    MESSAGE = "Unknown framework '%s'"
+
+
 class UnknownPackage(PlatformioException):
 
     MESSAGE = "Detected unknown package '%s'"

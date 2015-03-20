@@ -99,7 +99,7 @@ def main():
         ("Fixing Windows %PATH% Environment", fix_winpython_pathenv, []),
         ("Installing Python Package Manager", install_pip, []),
         ("Installing PlatformIO and dependencies", install_pypi_packages, [
-            [["platformio"], [
+            [["setuptools"], ["platformio"], [
                 "--egg",
                 "http://sourceforge.net/projects/scons/files/latest/download"
             ]]

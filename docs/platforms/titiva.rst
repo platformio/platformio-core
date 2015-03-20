@@ -2,12 +2,9 @@
 
 Platform ``titiva``
 ===================
+Texas Instruments TM4C12x MCUs offer the industrys most popular ARM Cortex-M4 core with scalable memory and package options, unparalleled connectivity peripherals, advanced application functions, industry-leading analog integration, and extensive software solutions.
 
-`Texas Instruments TM4C12x MCUs <http://www.ti.com/lsds/ti/microcontrollers_16-bit_32-bit/c2000_performance/control_automation/tm4c12x/overview.page>`_
-offer the industry’s most popular ARM®
-Cortex®-M4 core with scalable memory and package options, unparalleled
-connectivity peripherals, advanced application functions, industry-leading
-analog integration, and extensive software solutions.
+For more detailed information please visit `vendor site <http://www.ti.com/lsds/ti/microcontrollers_16-bit_32-bit/c2000_performance/control_automation/tm4c12x/overview.page>`_.
 
 .. contents::
 
@@ -18,83 +15,82 @@ Packages
     :header-rows:  1
 
     * - Name
-      - Alias
       - Contents
+
+    * - ``ldscripts``
+      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
+
+    * - ``framework-libopencm3``
+      - `libOpenCM3 Framework <http://www.libopencm3.org/>`_
+
     * - ``toolchain-gccarmnoneeabi``
-      - toolchain
-      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded/>`_,
-        `GDB <http://www.gnu.org/software/gdb/>`_
+      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
     * - ``tool-lm4flash``
-      - uploader
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
+
     * - ``framework-energiativa``
-      -
-      - See below in :ref:`titiva_frameworks`
-    * - ``framework-opencm3``
-      -
-      - See below in :ref:`titiva_frameworks`
+      - `Energia Wiring-based Framework (LM4F Core) <http://energia.nu/reference/>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
-.. _titiva_frameworks:
 
 Frameworks
 ----------
-
 .. list-table::
     :header-rows:  1
 
-    * - Type ``framework``
-      - Name
-      - Reference
-    * - ``energia``
-      - Energia Wiring-based Framework (LM4F Core)
-      - `Documentation <http://energia.nu/reference/>`__
-    * - ``opencm3``
-      - libOpenCM3 Framework
-      - `Documentation <http://www.libopencm3.org>`__
+    * - Name
+      - Description
 
+    * - :ref:`framework_energia`
+      - Energia framework enables pretty much anyone to start easily creating microcontroller-based projects and applications. Its easy-to-use libraries and functions provide developers of all experience levels to start blinking LEDs, buzzing buzzers and sensing sensors more quickly than ever before.
+
+    * - :ref:`framework_libopencm3`
+      - The libOpenCM3 framework aims to create a free/libre/open-source firmware library for various ARM Cortex-M0(+)/M3/M4 microcontrollers, including ST STM32, Ti Tiva and Stellaris, NXP LPC 11xx, 13xx, 15xx, 17xx parts, Atmel SAM3, Energy Micro EFM32 and others.
 
 Boards
 ------
 
 .. note::
-    * You can list pre-configured boards by :ref:`cmd_boards` command
+    * You can list pre-configured boards by :ref:`cmd_boards` command or
+      `PlatformIO Boards Explorer <http://platformio.org/#!/boards>`_
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
+
+TI
+~~
 
 .. list-table::
     :header-rows:  1
 
     * - Type ``board``
       - Name
-      - Microcontroller ``board_mcu``
-      - Frequency ``board_f_cpu``
+      - Microcontroller
+      - Frequency
       - Flash
       - RAM
-    * - ``lplm4f120h5qr``
-      - `Stellaris LM4F120 LaunchPad <http://www.ti.com/tool/ek-lm4f120xl>`_
-      - LM4F120H5QR ``cortex-m4``
-      - 80 MHz ``80000000L``
-      - 256 Kb
-      - 32 Kb
-    * - ``lptm4c1230c3pm``
-      - `Tiva C Series TM4C123G LaunchPad
-        <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c123gxl.html>`_
-      - TM4C123GH6PM ``cortex-m4``
-      - 80 MHz ``80000000L``
-      - 256 Kb
-      - 32 Kb
-    * - ``lptm4c1294ncpdt``
-      - `Tiva C Series TM4C1294 Connected LaunchPad
-        <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c1294xl.html>`_
-      - TM4C1294NCPDT ``cortex-m4``
-      - 120 Mhz ``120000000L``
-      - 1 Mb
-      - 256 Kb
 
-More detailed information you can find here
-`TIVA C Series LaunchPads <http://www.ti.com/ww/en/launchpad/launchpads-connected.html>`_.
+    * - ``lplm4f120h5qr``
+      - `LaunchPad (Stellaris) w/ lm4f120 (80MHz) <http://www.ti.com/tool/ek-lm4f120xl>`_
+      - LPLM4F120H5QR
+      - 80 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``lptm4c1230c3pm``
+      - `LaunchPad (Tiva C) w/ tm4c123 (80MHz) <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c123gxl.html>`_
+      - LPTM4C1230C3PM
+      - 80 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``lptm4c1294ncpdt``
+      - `LaunchPad (Tiva C) w/ tm4c129 (120MHz) <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c1294xl.html>`_
+      - LPTM4C1294NCPDT
+      - 120 MHz
+      - 1024 Kb
+      - 256 Kb

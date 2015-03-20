@@ -6,11 +6,14 @@ import re
 from os import getenv, listdir, remove, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath
 
-from SCons.Script import SConscript, SConscriptChdir
+from SCons.Script import Exit, SConscript, SConscriptChdir
 from SCons.Util import case_sensitive_suffixes
 
+from platformio.util import pioversion_to_intstr
 
-def ProcessGeneral(env):
+
+def BuildFirmware(env):
+
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes('.s', '.S'):
         env.Replace(
@@ -24,20 +27,8 @@ def ProcessGeneral(env):
     if "BUILD_FLAGS" in env:
         env.MergeFlags(env['BUILD_FLAGS'])
 
-    corelibs = []
-    if "FRAMEWORK" in env:
-        if env['FRAMEWORK'] in ("arduino", "energia"):
-            env.ConvertInoToCpp()
-        for f in env['FRAMEWORK'].split(","):
-            SConscriptChdir(0)
-            corelibs += SConscript(
-                env.subst(join("$PIOBUILDER_DIR", "scripts", "frameworks",
-                               "%s.py" % f.strip().lower()))
-            )
-    return corelibs
+    env.BuildFramework()
 
-
-def BuildFirmware(env, corelibs):
     firmenv = env.Clone()
     vdirs = firmenv.VariantDirRecursive(
         join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR")
@@ -59,13 +50,21 @@ def BuildFirmware(env, corelibs):
         _LIBFLAGS=" -Wl,--end-group"
     )
 
-    firmenv.MergeFlags(getenv("PLATFORMIO_SRCBUILD_FLAGS", "$SRCBUILD_FLAGS"))
+    _srcbuild_flags = getenv("PLATFORMIO_SRCBUILD_FLAGS",
+                             env.subst("$SRCBUILD_FLAGS"))
+    if _srcbuild_flags:
+        firmenv.MergeFlags(_srcbuild_flags)
+
+    firmenv.Append(
+        CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
+            *pioversion_to_intstr())]
+    )
 
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),
         [firmenv.GlobCXXFiles(vdir) for vdir in vdirs],
-        LIBS=corelibs + deplibs,
-        LIBPATH="$BUILD_DIR",
+        LIBS=env.get("LIBS", []) + deplibs,
+        LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"],
         PROGSUFFIX=".elf"
     )
 
@@ -93,6 +92,26 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
         env.VariantDir(_var_dir, _src_dir, duplicate)
         variants.append(_var_dir)
     return variants
+
+
+def BuildFramework(env):
+    if "FRAMEWORK" not in env:
+        return
+
+    if env['FRAMEWORK'].lower() in ("arduino", "energia"):
+        env.ConvertInoToCpp()
+
+    for f in env['FRAMEWORK'].split(","):
+        framework = f.strip().lower()
+        if framework in env.get("BOARD_OPTIONS", {}).get("frameworks"):
+            SConscriptChdir(0)
+            SConscript(
+                env.subst(join("$PIOBUILDER_DIR", "scripts", "frameworks",
+                               "%s.py" % framework))
+            )
+        else:
+            Exit("Error: This board doesn't support %s framework!" %
+                 framework)
 
 
 def BuildLibrary(env, variant_dir, library_dir, ignore_files=None):
@@ -157,7 +176,11 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
 
                 for ld in listdir(lsd_dir):
                     inc_path = normpath(join(lsd_dir, ld, self.name))
-                    lib_dir = inc_path[:inc_path.index(sep, len(lsd_dir) + 1)]
+                    try:
+                        lib_dir = inc_path[:inc_path.index(
+                            sep, len(lsd_dir) + 1)]
+                    except ValueError:
+                        continue
                     lib_name = basename(lib_dir)
 
                     # ignore user's specified libs
@@ -265,9 +288,6 @@ def ConvertInoToCpp(env):
             continue
         ino_contents = item.get_text_contents()
 
-        re_includes = re.compile(r"^(#include\s+(?:\<|\")[^\r\n]+)",
-                                 re.M | re.I)
-        includes = re_includes.findall(ino_contents)
         prototypes = re.findall(
             r"""^(
             (?:\s*[a-z_\d]+){1,2}       # return type
@@ -278,19 +298,15 @@ def ConvertInoToCpp(env):
             ino_contents,
             re.X | re.M | re.I
         )
-        # print includes, prototypes
-
-        # disable previous includes
-        ino_contents = re_includes.sub(r"//\1", ino_contents)
+        prototypes = [p.strip() for p in prototypes]
+        # print prototypes
 
         # create new temporary C++ valid file
         with open(cppfile, "w") as f:
             f.write("#include <Arduino.h>\n")
-            if includes:
-                f.write("%s\n" % "\n".join(includes))
             if prototypes:
                 f.write("%s;\n" % ";\n".join(prototypes))
-            f.write("#line 1 \"%s\"\n" % basename(item.path))
+            f.write('#line 1 "%s"\n' % basename(item.path))
             f.write(ino_contents)
         tmpcpp.append(cppfile)
 
@@ -303,10 +319,10 @@ def exists(_):
 
 
 def generate(env):
-    env.AddMethod(ProcessGeneral)
     env.AddMethod(BuildFirmware)
     env.AddMethod(GlobCXXFiles)
     env.AddMethod(VariantDirRecursive)
+    env.AddMethod(BuildFramework)
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildDependentLibraries)
     env.AddMethod(ConvertInoToCpp)

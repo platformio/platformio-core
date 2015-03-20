@@ -41,7 +41,7 @@ def test_init_special_board(platformio_setup, clirunner, validate_cliresult):
         config = util.get_project_config()
         expected_result = [
             ("platform", str(uno['platform'])),
-            ("framework", str(uno['framework'])),
+            ("framework", str(uno['frameworks'][0])),
             ("board", "uno"),
             ("targets", "upload")
         ]

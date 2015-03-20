@@ -8,13 +8,15 @@
             "mcu": "lplm4f120h5qr",
             "variant": "stellarpad"
         },
-        "framework": "energia",
+        "frameworks": ["energia", "libopencm3"],
         "name": "LaunchPad (Stellaris) w/ lm4f120 (80MHz)",
         "platform": "titiva",
         "upload": {
             "maximum_ram_size": 32768,
             "maximum_size": 262144
-        }
+        },
+        "url": "http://www.ti.com/tool/ek-lm4f120xl",
+        "vendor": "TI"
     },
     "lptm4c1230c3pm": {
         "build": {
@@ -25,13 +27,15 @@
             "mcu": "lptm4c1230c3pm",
             "variant": "stellarpad"
         },
-        "framework": "energia",
+        "frameworks": ["energia", "libopencm3"],
         "name": "LaunchPad (Tiva C) w/ tm4c123 (80MHz)",
         "platform": "titiva",
         "upload": {
             "maximum_ram_size": 32768,
             "maximum_size": 262144
-        }
+        },
+        "url": "http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c123gxl.html",
+        "vendor": "TI"
     },
     "lptm4c1294ncpdt": {
         "build": {
@@ -42,12 +46,14 @@
             "mcu": "lptm4c1294ncpdt",
             "variant": "launchpad_129"
         },
-        "framework": "energia",
+        "frameworks": ["energia", "libopencm3"],
         "name": "LaunchPad (Tiva C) w/ tm4c129 (120MHz)",
         "platform": "titiva",
         "upload": {
             "maximum_ram_size": 262144,
             "maximum_size": 1048576
-        }
+        },
+        "url": "http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c1294xl.html",
+        "vendor": "TI"
     }
 }

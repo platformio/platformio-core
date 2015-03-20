@@ -10,7 +10,7 @@
             "variant": "leonardo",
             "vid": "0x1B4F"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "LilyPad Arduino USB",
         "platform": "atmelavr",
         "upload": {
@@ -22,7 +22,9 @@
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardLilyPadUSB",
+        "vendor": "Arduino"
     },
     "atmegangatmega168": {
         "build": {
@@ -32,7 +34,7 @@
             "mcu": "atmega168",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino NG or older ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -41,7 +43,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 19200
-        }
+        },
+        "url": "http://arduino.cc/en/main/boards",
+        "vendor": "Arduino"
     },
     "atmegangatmega8": {
         "build": {
@@ -51,7 +55,7 @@
             "mcu": "atmega8",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino NG or older ATmega8",
         "platform": "atmelavr",
         "upload": {
@@ -60,7 +64,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 19200
-        }
+        },
+        "url": "http://arduino.cc/en/main/boards",
+        "vendor": "Arduino"
     },
     "btatmega168": {
         "build": {
@@ -70,7 +76,7 @@
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino BT ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -80,7 +86,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 19200
-        }
+        },
+        "url": "http://arduino.cc/en/main/boards",
+        "vendor": "Arduino"
     },
     "btatmega328": {
         "build": {
@@ -90,7 +98,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino BT ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -100,7 +108,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 19200
-        }
+        },
+        "url": "http://arduino.cc/en/main/boards",
+        "vendor": "Arduino"
     },
     "diecimilaatmega168": {
         "build": {
@@ -110,7 +120,7 @@
             "mcu": "atmega168",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Duemilanove or Diecimila ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -119,7 +129,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 19200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardDiecimila",
+        "vendor": "Arduino"
     },
     "diecimilaatmega328": {
         "build": {
@@ -129,7 +141,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Duemilanove or Diecimila ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -138,7 +150,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardDiecimila",
+        "vendor": "Arduino"
     },
     "esplora": {
         "build": {
@@ -151,7 +165,7 @@
             "variant": "leonardo",
             "vid": "0x2341"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Esplora",
         "platform": "atmelavr",
         "upload": {
@@ -163,7 +177,9 @@
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardEsplora",
+        "vendor": "Arduino"
     },
     "ethernet": {
         "build": {
@@ -173,7 +189,7 @@
             "mcu": "atmega328p",
             "variant": "ethernet"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Ethernet",
         "platform": "atmelavr",
         "upload": {
@@ -182,7 +198,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 115200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardEthernet",
+        "vendor": "Arduino"
     },
     "fio": {
         "build": {
@@ -192,7 +210,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Fio",
         "platform": "atmelavr",
         "upload": {
@@ -201,7 +219,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardFio",
+        "vendor": "Arduino"
     },
     "leonardo": {
         "build": {
@@ -214,7 +234,7 @@
             "variant": "leonardo",
             "vid": "0x2341"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Leonardo",
         "platform": "atmelavr",
         "upload": {
@@ -226,7 +246,9 @@
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://arduino.cc/en/Main/arduinoBoardLeonardo",
+        "vendor": "Arduino"
     },
     "lilypadatmega168": {
         "build": {
@@ -236,7 +258,7 @@
             "mcu": "atmega168",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "LilyPad Arduino ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -245,7 +267,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 19200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardLilyPad",
+        "vendor": "Arduino"
     },
     "lilypadatmega328": {
         "build": {
@@ -255,7 +279,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "LilyPad Arduino ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -264,7 +288,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardLilyPad",
+        "vendor": "Arduino"
     },
     "megaADK": {
         "build": {
@@ -274,7 +300,7 @@
             "mcu": "atmega2560",
             "variant": "mega"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Mega ADK",
         "platform": "atmelavr",
         "upload": {
@@ -283,7 +309,9 @@
             "protocol": "wiring",
             "require_upload_port" : true,
             "speed": 115200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardMegaADK",
+        "vendor": "Arduino"
     },
     "megaatmega1280": {
         "build": {
@@ -293,7 +321,7 @@
             "mcu": "atmega1280",
             "variant": "mega"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Mega or Mega 2560 ATmega1280",
         "platform": "atmelavr",
         "upload": {
@@ -302,7 +330,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "http://arduino.cc/en/Main/arduinoBoardMega",
+        "vendor": "Arduino"
     },
     "megaatmega2560": {
         "build": {
@@ -312,7 +342,7 @@
             "mcu": "atmega2560",
             "variant": "mega"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Mega or Mega 2560 ATmega2560 (Mega 2560)",
         "platform": "atmelavr",
         "upload": {
@@ -321,7 +351,9 @@
             "protocol": "wiring",
             "require_upload_port" : true,
             "speed": 115200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/arduinoBoardMega2560",
+        "vendor": "Arduino"
     },
     "micro": {
         "build": {
@@ -334,7 +366,7 @@
             "variant": "micro",
             "vid": "0x2341"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Micro",
         "platform": "atmelavr",
         "upload": {
@@ -346,7 +378,9 @@
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardMicro",
+        "vendor": "Arduino"
     },
     "miniatmega168": {
         "build": {
@@ -356,7 +390,7 @@
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Mini ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -365,7 +399,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 19200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardMini",
+        "vendor": "Arduino"
     },
     "miniatmega328": {
         "build": {
@@ -375,7 +411,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Mini ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -384,7 +420,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 115200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardMini",
+        "vendor": "Arduino"
     },
     "nanoatmega168": {
         "build": {
@@ -394,7 +432,7 @@
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Nano ATmega168",
         "platform": "atmelavr",
         "upload": {
@@ -403,7 +441,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 19200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardNano",
+        "vendor": "Arduino"
     },
     "nanoatmega328": {
         "build": {
@@ -413,7 +453,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Nano ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -422,7 +462,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardNano",
+        "vendor": "Arduino"
     },
     "pro16MHzatmega168": {
         "build": {
@@ -432,7 +474,7 @@
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Pro or Pro Mini ATmega168 (5V, 16 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -441,7 +483,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 19200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardProMini",
+        "vendor": "Arduino"
     },
     "pro16MHzatmega328": {
         "build": {
@@ -451,7 +495,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Pro or Pro Mini ATmega328 (5V, 16 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -460,7 +504,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardProMini",
+        "vendor": "Arduino"
     },
     "pro8MHzatmega168": {
         "build": {
@@ -470,7 +516,7 @@
             "mcu": "atmega168",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Pro or Pro Mini ATmega168 (3.3V, 8 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -479,7 +525,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 19200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardProMini",
+        "vendor": "Arduino"
     },
     "pro8MHzatmega328": {
         "build": {
@@ -489,7 +537,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Pro or Pro Mini ATmega328 (3.3V, 8 MHz)",
         "platform": "atmelavr",
         "upload": {
@@ -498,7 +546,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 57600
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardProMini",
+        "vendor": "Arduino"
     },
     "robotControl": {
         "build": {
@@ -511,7 +561,7 @@
             "variant": "robot_control",
             "vid": "0x2341"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Robot Control",
         "platform": "atmelavr",
         "upload": {
@@ -523,7 +573,9 @@
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://arduino.cc/en/Main/Robot",
+        "vendor": "Arduino"
     },
     "robotMotor": {
         "build": {
@@ -536,7 +588,7 @@
             "variant": "robot_motor",
             "vid": "0x2341"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Robot Motor",
         "platform": "atmelavr",
         "upload": {
@@ -548,7 +600,9 @@
             "speed": 57600,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://arduino.cc/en/Main/Robot",
+        "vendor": "Arduino"
     },
     "uno": {
         "build": {
@@ -558,7 +612,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Uno",
         "platform": "atmelavr",
         "upload": {
@@ -567,7 +621,9 @@
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 115200
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardUno",
+        "vendor": "Arduino"
     },
     "yun": {
         "build": {
@@ -580,7 +636,7 @@
             "variant": "yun",
             "vid": "0x2341"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Yun",
         "platform": "atmelavr",
         "upload": {
@@ -593,7 +649,9 @@
             "use_1200bps_touch": true,
             "via_ssh": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://arduino.cc/en/Main/ArduinoBoardYun",
+        "vendor": "Arduino"
     },
     "due": {
         "build": {
@@ -608,18 +666,20 @@
             "vid": "0x2341",
             "ldscript": "sam3x8e.ld"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Due (Programming Port)",
         "platform": "atmelsam",
         "upload": {
             "disable_flushing": true,
-            "maximum_ram_size": 28672,
+            "maximum_ram_size": 32768,
             "maximum_size": 524288,
             "protocol": "sam-ba",
-            "require_upload_port" : true, 
+            "require_upload_port" : true,
             "use_1200bps_touch": true,
-            "wait_for_upload_port": true
-        }
+            "wait_for_upload_port": false
+        },
+        "url": "http://arduino.cc/en/Main/arduinoBoardDue",
+        "vendor": "Arduino"
     },
     "dueUSB": {
         "build": {
@@ -634,17 +694,19 @@
             "vid": "0x2341",
             "ldscript": "sam3x8e.ld"
         },
-        "framework": "arduino",
+        "frameworks": ["arduino"],
         "name": "Arduino Due (USB Native Port)",
         "platform": "atmelsam",
         "upload": {
             "disable_flushing": true,
-            "maximum_ram_size": 28672,
+            "maximum_ram_size": 32768,
             "maximum_size": 524288,
             "protocol": "sam-ba",
-            "require_upload_port" : true, 
+            "require_upload_port" : true,
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
-        }
+        },
+        "url": "http://arduino.cc/en/Main/arduinoBoardDue",
+        "vendor": "Arduino"
     }
 }

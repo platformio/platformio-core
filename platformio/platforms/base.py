@@ -12,21 +12,109 @@ from platformio import exception, util
 from platformio.app import get_state_item, set_state_item
 from platformio.pkgmanager import PackageManager
 
+PLATFORM_PACKAGES = {
+
+    "framework-arduinoavr": [
+        ("Arduino Wiring-based Framework (AVR Core, 1.6)",
+         "http://arduino.cc/en/Reference/HomePage")
+    ],
+    "framework-arduinosam": [
+        ("Arduino Wiring-based Framework (SAM Core, 1.6)",
+         "http://arduino.cc/en/Reference/HomePage")
+    ],
+    "framework-arduinoteensy": [
+        ("Arduino Wiring-based Framework",
+         "http://arduino.cc/en/Reference/HomePage")
+    ],
+    "framework-arduinomsp430": [
+        ("Arduino Wiring-based Framework (MSP430 Core)",
+         "http://arduino.cc/en/Reference/HomePage")
+    ],
+    "framework-energiamsp430": [
+        ("Energia Wiring-based Framework (MSP430 Core)",
+         "http://energia.nu/reference/")
+    ],
+    "framework-energiativa": [
+        ("Energia Wiring-based Framework (LM4F Core)",
+         "http://energia.nu/reference/")
+    ],
+    "framework-cmsis": [
+        ("Vendor-independent hardware abstraction layer for the Cortex-M "
+         "processor series",
+         "http://www.arm.com/products/processors/"
+         "cortex-m/cortex-microcontroller-software-interface-standard.php")
+    ],
+    "framework-spl": [
+        ("Standard Peripheral Library for STM32 MCUs",
+         "http://www.st.com"
+         "/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890")
+    ],
+    "framework-libopencm3": [
+        ("libOpenCM3 Framework", "http://www.libopencm3.org/")
+    ],
+    "framework-mbed": [
+        ("mbed Framework", "http://mbed.org")
+    ],
+    "ldscripts": [
+        ("Linker Scripts",
+         "https://sourceware.org/binutils/docs/ld/Scripts.html")
+    ],
+    "toolchain-atmelavr": [
+        ("avr-gcc", "https://gcc.gnu.org/wiki/avr-gcc"),
+        ("GDB", "http://www.gnu.org/software/gdb/"),
+        ("AVaRICE", "http://avarice.sourceforge.net/"),
+        ("SimulAVR", "http://www.nongnu.org/simulavr/")
+    ],
+    "toolchain-gccarmnoneeabi": [
+        ("gcc-arm-embedded", "https://launchpad.net/gcc-arm-embedded"),
+        ("GDB", "http://www.gnu.org/software/gdb/")
+    ],
+    "toolchain-timsp430": [
+        ("msp-gcc", "http://sourceforge.net/projects/mspgcc/"),
+        ("GDB", "http://www.gnu.org/software/gdb/")
+    ],
+    "tool-avrdude": [
+        ("AVRDUDE", "http://www.nongnu.org/avrdude/")
+    ],
+    "tool-micronucleus": [
+        ("Micronucleus", "https://github.com/micronucleus/micronucleus")
+    ],
+    "tool-bossac": [
+        ("BOSSA CLI", "https://sourceforge.net/projects/b-o-s-s-a/")
+    ],
+    "tool-stlink": [
+        ("ST-Link", "https://github.com/texane/stlink")
+    ],
+    "tool-teensy": [
+        ("Teensy Loader", "https://www.pjrc.com/teensy/loader.html")
+    ],
+    "tool-lm4flash": [
+        ("Flash Programmer", "http://www.ti.com/tool/lmflashprogrammer")
+    ],
+    "tool-mspdebug": [
+        ("MSPDebug", "http://mspdebug.sourceforge.net/")
+    ]
+}
+
+
+def get_packages():
+    return PLATFORM_PACKAGES
+
 
 class PlatformFactory(object):
 
     @staticmethod
-    def get_clsname(name):
-        return "%sPlatform" % name.title()
+    def get_clsname(type_):
+        return "%sPlatform" % type_.title()
 
     @staticmethod
-    def load_module(name, path):
+    def load_module(type_, path):
         module = None
         try:
             module = load_source(
-                "platformio.platforms.%s" % name, path)
+                "platformio.platforms.%s" % type_, path)
         except ImportError:
-            raise exception.UnknownPlatform(name)
+            raise exception.UnknownPlatform(type_)
         return module
 
     @classmethod
@@ -39,15 +127,15 @@ class PlatformFactory(object):
             for p in listdir(pdir):
                 if p in ("__init__.py", "base.py") or not p.endswith(".py"):
                     continue
-                name = p[:-3]
+                type_ = p[:-3]
                 path = join(pdir, p)
                 try:
                     isplatform = hasattr(
-                        cls.load_module(name, path),
-                        cls.get_clsname(name)
+                        cls.load_module(type_, path),
+                        cls.get_clsname(type_)
                     )
                     if isplatform:
-                        platforms[name] = path
+                        platforms[type_] = path
                 except exception.UnknownPlatform:
                     pass
 
@@ -55,20 +143,20 @@ class PlatformFactory(object):
             return platforms
 
         installed_platforms = {}
-        for name in get_state_item("installed_platforms", []):
-            if name in platforms:
-                installed_platforms[name] = platforms[name]
+        for type_ in get_state_item("installed_platforms", []):
+            if type_ in platforms:
+                installed_platforms[type_] = platforms[type_]
         return installed_platforms
 
     @classmethod
-    def newPlatform(cls, name):
+    def newPlatform(cls, type_):
         platforms = cls.get_platforms()
-        if name not in platforms:
-            raise exception.UnknownPlatform(name)
+        if type_ not in platforms:
+            raise exception.UnknownPlatform(type_)
 
         _instance = getattr(
-            cls.load_module(name, platforms[name]),
-            cls.get_clsname(name)
+            cls.load_module(type_, platforms[type_]),
+            cls.get_clsname(type_)
         )()
         assert isinstance(_instance, BasePlatform)
         return _instance
@@ -82,20 +170,30 @@ class BasePlatform(object):
     def __init__(self):
         self._found_error = False
 
-    def get_name(self):
+    def get_type(self):
         return self.__class__.__name__[:-8].lower()
+
+    def get_name(self):
+        return self.get_type().title()
 
     def get_build_script(self):
         builtin = join(util.get_source_dir(), "builder", "scripts", "%s.py" %
-                       self.get_name())
+                       self.get_type())
         if isfile(builtin):
             return builtin
         raise NotImplementedError()
 
-    def get_short_info(self):
+    def get_description(self):
         if self.__doc__:
-            doclines = [l.strip() for l in self.__doc__.splitlines()]
-            return " ".join(doclines).strip()
+            doclines = [l.strip() for l in self.__doc__.splitlines() if
+                        l.strip()]
+            return " ".join(doclines[:-1]).strip()
+        else:
+            raise NotImplementedError()
+
+    def get_vendor_url(self):
+        if self.__doc__ and "http" in self.__doc__:
+            return self.__doc__[self.__doc__.index("http"):].strip()
         else:
             raise NotImplementedError()
 
@@ -144,14 +242,14 @@ class BasePlatform(object):
 
         # register installed platform
         data = get_state_item("installed_platforms", [])
-        if self.get_name() not in data:
-            data.append(self.get_name())
+        if self.get_type() not in data:
+            data.append(self.get_type())
             set_state_item("installed_platforms", data)
 
         return len(requirements)
 
     def uninstall(self):
-        platform = self.get_name()
+        platform = self.get_type()
         installed_platforms = PlatformFactory.get_platforms(
             installed=True).keys()
 
@@ -195,8 +293,8 @@ class BasePlatform(object):
             installed=True).keys()
         installed_packages = PackageManager.get_installed()
 
-        if self.get_name() not in installed_platforms:
-            raise exception.PlatformNotInstalledYet(self.get_name())
+        if self.get_type() not in installed_platforms:
+            raise exception.PlatformNotInstalledYet(self.get_type())
 
         if "clean" in targets:
             targets.remove("clean")

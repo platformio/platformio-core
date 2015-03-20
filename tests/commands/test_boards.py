@@ -34,9 +34,9 @@ def test_board_options(platformio_setup, clirunner, validate_cliresult):
     search_result = json.loads(result.output)
     assert isinstance(search_result, list)
     assert len(search_result)
-    platforms = [item['name'] for item in search_result]
+    platforms = [item['type'] for item in search_result]
 
-    for name, opts in util.get_boards().iteritems():
+    for _, opts in util.get_boards().iteritems():
         assert required_opts.issubset(set(opts))
         assert opts['platform'] in platforms
 
@@ -44,7 +44,7 @@ def test_board_options(platformio_setup, clirunner, validate_cliresult):
 def test_board_ldscripts(platformio_setup, clirunner, validate_cliresult):
     result = clirunner.invoke(
         install_cli, [
-            "stm32",
+            "ststm32",
             "--skip-default-package",
             "--with-package=ldscripts"
         ])

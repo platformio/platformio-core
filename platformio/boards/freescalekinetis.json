@@ -1,0 +1,114 @@
+{
+    "frdm_kl25z": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0plus",
+            "mcu": "mkl25z128vlk4"
+        },
+        "frameworks": ["mbed"],
+        "name": "Freescale Kinetis FRDM-KL25Z",
+        "platform": "freescalekinetis",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 131072
+        },
+        "url": "https://developer.mbed.org/platforms/KL25Z/",
+        "vendor": "Freescale"
+    },
+    "frdm_kl46z": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0plus",
+            "mcu": "mkl46z256vll4"
+        },
+        "frameworks": ["mbed"],
+        "name": "Freescale Kinetis FRDM-KL46Z",
+        "platform": "freescalekinetis",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/FRDM-KL46Z/",
+        "vendor": "Freescale"
+    },
+    "frdm_k64f": {
+        "build": {
+            "f_cpu": "120000000L",
+            "cpu": "cortex-m4",
+            "mcu": "mk64fn1m0vll12"
+        },
+        "frameworks": ["mbed"],
+        "name": "Freescale Kinetis FRDM-K64F",
+        "platform": "freescalekinetis",
+        "upload": {
+            "maximum_ram_size": 262144,
+            "maximum_size": 1048576
+        },
+        "url": "https://developer.mbed.org/platforms/FRDM-K64F/",
+        "vendor": "Freescale"
+    },
+    "frdm_kl05z": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0plus",
+            "mcu": "mkl05z32vfm4"
+        },
+        "frameworks": ["mbed"],
+        "name": "Freescale Kinetis FRDM-KL05Z",
+        "platform": "freescalekinetis",
+        "upload": {
+            "maximum_ram_size": 4096,
+            "maximum_size": 32768
+        },
+        "url": "https://developer.mbed.org/platforms/FRDM-KL05Z/",
+        "vendor": "Freescale"
+    },
+    "frdm_k20d50m": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m4",
+            "mcu": "mk20dx128vlh5"
+        },
+        "frameworks": ["mbed"],
+        "name": "Freescale Kinetis FRDM-K20D50M",
+        "platform": "freescalekinetis",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 131072
+        },
+        "url": "https://developer.mbed.org/platforms/FRDM-K20D50M/",
+        "vendor": "Freescale"
+    },
+    "frdm_k22f": {
+        "build": {
+            "f_cpu": "120000000L",
+            "cpu": "cortex-m4",
+            "mcu": "mk22fn512vlh12"
+        },
+        "frameworks": ["mbed"],
+        "name": "Freescale Kinetis FRDM-K22F",
+        "platform": "freescalekinetis",
+        "upload": {
+            "maximum_ram_size": 131072,
+            "maximum_size": 524288
+        },
+        "url": "https://developer.mbed.org/platforms/FRDM-K22F/",
+        "vendor": "Freescale"
+    },
+    "IBMEthernetKit": {
+        "build": {
+            "f_cpu": "120000000L",
+            "cpu": "cortex-m4",
+            "mcu": "mk64fn1m0vll12"
+        },
+        "frameworks": ["mbed"],
+        "name": "Ethernet IoT Starter Kit",
+        "platform": "freescalekinetis",
+        "upload": {
+            "maximum_ram_size": 262144,
+            "maximum_size": 1048576
+        },
+        "url": "http://developer.mbed.org/platforms/IBMEthernetKit/",
+        "vendor": "Freescale"
+    }
+}

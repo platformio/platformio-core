@@ -3,8 +3,10 @@
 
 import json
 import os
+import re
 import subprocess
-from os.path import abspath, dirname, expanduser, isdir, isfile, join, realpath
+from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
+                     join, realpath)
 from platform import system, uname
 from threading import Thread
 
@@ -54,6 +56,12 @@ class AsyncPipe(Thread):
 def get_systype():
     data = uname()
     return ("%s_%s" % (data[0], data[4])).lower()
+
+
+def pioversion_to_intstr():
+    vermatch = re.match(r"^([\d\.]+)", __version__)
+    assert vermatch
+    return [int(i) for i in vermatch.group(1).split(".")[:3]]
 
 
 def _get_projconf_option_dir(name, default=None):
@@ -173,7 +181,30 @@ def get_serialports():
         from serial.tools.list_ports_posix import comports
     else:
         raise exception.GetSerialPortsError(os.name)
-    return[{"port": p, "description": d, "hwid": h} for p, d, h in comports()]
+    return [{"port": p, "description": d, "hwid": h} for p, d, h in comports()]
+
+
+def get_logicaldisks():
+    disks = []
+    if system() == "Windows":
+        result = exec_command(
+            ["wmic", "logicaldisk", "get", "name,VolumeName"]).get("out")
+        disknamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
+        for line in result.split("\n"):
+            match = disknamere.match(line.strip())
+            if not match:
+                continue
+            disks.append({"disk": match.group(1), "name": match.group(2)})
+    else:
+        result = exec_command(["df"]).get("out")
+        disknamere = re.compile(r"\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
+        for line in result.split("\n"):
+            match = disknamere.search(line.strip())
+            if not match:
+                continue
+            disks.append({"disk": match.group(1),
+                          "name": basename(match.group(1))})
+    return disks
 
 
 def get_api_result(path, params=None, data=None):
@@ -181,7 +212,6 @@ def get_api_result(path, params=None, data=None):
     r = None
 
     try:
-        requests.packages.urllib3.disable_warnings()
         headers = {"User-Agent": "PlatformIO/%s %s" % (
             __version__, requests.utils.default_user_agent())}
 
@@ -232,3 +262,41 @@ def get_boards(type_=None):
         if type_ not in boards:
             raise exception.UnknownBoard(type_)
         return boards[type_]
+
+
+def get_frameworks(type_=None):
+    frameworks = {}
+
+    try:
+        frameworks = get_frameworks._cache  # pylint: disable=W0212
+    except AttributeError:
+        frameworks_path = join(
+            get_source_dir(), "builder", "scripts", "frameworks")
+
+        frameworks_list = [f[:-3] for f in os.listdir(frameworks_path)
+                           if not f.startswith("__") and f.endswith(".py")]
+        for _type in frameworks_list:
+            script_path = join(frameworks_path, "%s.py" % _type)
+            with open(script_path) as f:
+                fcontent = f.read()
+                assert '"""' in fcontent
+                _doc_start = fcontent.index('"""') + 3
+                fdoc = fcontent[
+                    _doc_start:fcontent.index('"""', _doc_start)].strip()
+                doclines = [l.strip() for l in fdoc.splitlines() if l.strip()]
+                frameworks[_type] = {
+                    "name": doclines[0],
+                    "description": " ".join(doclines[1:-1]),
+                    "url": doclines[-1],
+                    "script": script_path
+                }
+        get_frameworks._cache = frameworks  # pylint: disable=W0212
+
+    if type_ is None:
+        return frameworks
+    else:
+        if type_ not in frameworks:
+            raise exception.UnknownFramework(type_)
+        return frameworks[type_]
+
+    return frameworks

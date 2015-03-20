@@ -28,7 +28,7 @@ Embedded Development. *Easier Than Ever.*
 * Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>`
 * Configurable build :ref:`-flags/-options <projectconf_build_flags>`
 * Integration with :ref:`development environments (IDE) <ide>`
-* Pre-built tool chains, frameworks for the popular Hardware Platforms
+* Pre-built tool chains, :ref:`frameworks` for the popular Hardware Platforms
 
 Smart Code Builder. *Fast and Reliable.*
 ----------------------------------------
@@ -58,7 +58,8 @@ Contents
     installation
     projectconf
     envvars
-    platforms/index
+    Platforms & Boards <platforms/index>
+    frameworks/index
     librarymanager/index
     userguide/index
     ide

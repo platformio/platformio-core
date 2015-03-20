@@ -8,8 +8,13 @@ from platformio.util import get_boards
 class AtmelavrPlatform(BasePlatform):
 
     """
-        An embedded platform for Atmel AVR microcontrollers
-        (with Arduino Framework)
+    Atmel AVR 8- and 32-bit MCUs deliver a unique combination of
+    performance, power efficiency and design flexibility. Optimized to
+    speed time to market-and easily adapt to new ones-they are based on
+    the industrys most code-efficient architecture for C and assembly
+    programming.
+
+    http://www.atmel.com/products/microcontrollers/avr/default.aspx
     """
 
     PACKAGES = {
@@ -31,6 +36,9 @@ class AtmelavrPlatform(BasePlatform):
             "default": True
         }
     }
+
+    def get_name(self):
+        return "Atmel AVR"
 
     def on_run_err(self, line):  # pylint: disable=R0201
         # fix STDERR "flash written" for avrdude

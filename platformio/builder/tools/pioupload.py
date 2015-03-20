@@ -1,13 +1,14 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-import platform
+from os.path import join
+from shutil import copyfile
 from time import sleep
 
 from SCons.Script import Exit
 from serial import Serial
 
-from platformio.util import get_serialports
+from platformio.util import get_logicaldisks, get_serialports
 
 
 def FlushSerialBuffer(env, port):
@@ -23,9 +24,9 @@ def FlushSerialBuffer(env, port):
 
 def TouchSerialPort(env, port, baudrate):
     s = Serial(port=env.subst(port), baudrate=baudrate)
+    s.setDTR(False)
     s.close()
-    if platform.system() != "Darwin":
-        sleep(0.3)
+    sleep(0.4)
 
 
 def WaitForNewSerialPort(_, before):
@@ -52,16 +53,38 @@ def WaitForNewSerialPort(_, before):
 
 
 def AutodetectUploadPort(env):
-    if "UPLOAD_PORT" not in env:
+    if "UPLOAD_PORT" in env:
+        return
+
+    if env.subst("$FRAMEWORK") == "mbed":
+        msdlabels = ("mbed", "nucleo", "frdm")
+        for item in get_logicaldisks():
+            if (not item['name'] or
+                    not any([l in item['name'].lower() for l in msdlabels])):
+                continue
+            print "Auto-detected UPLOAD_PORT/DISK: %s" % item['disk']
+            env.Replace(UPLOAD_PORT=item['disk'])
+            break
+    else:
         for item in get_serialports():
-            if "VID:PID" in item['hwid']:
-                print "Auto-detected UPLOAD_PORT: %s" % item['port']
-                env.Replace(UPLOAD_PORT=item['port'])
-                break
+            if "VID:PID" not in item['hwid']:
+                continue
+            print "Auto-detected UPLOAD_PORT: %s" % item['port']
+            env.Replace(UPLOAD_PORT=item['port'])
+            break
 
     if "UPLOAD_PORT" not in env:
         Exit("Error: Please specify `upload_port` for environment or use "
-             "global `--upload-port` option.\n")
+             "global `--upload-port` option.\n"
+             "For the some development platforms it can be USB flash drive\n")
+
+
+def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
+    env.AutodetectUploadPort()
+    copyfile(join(env.subst("$BUILD_DIR"), "firmware.bin"),
+             join(env.subst("$UPLOAD_PORT"), "firmware.bin"))
+    print ("Firmware has been successfully uploaded.\n"
+           "Please restart your board.")
 
 
 def exists(_):
@@ -73,4 +96,5 @@ def generate(env):
     env.AddMethod(TouchSerialPort)
     env.AddMethod(WaitForNewSerialPort)
     env.AddMethod(AutodetectUploadPort)
+    env.AddMethod(UploadToDisk)
     return env

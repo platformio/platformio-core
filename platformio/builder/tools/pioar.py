@@ -1,29 +1,21 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-import atexit
-from os import remove
-from tempfile import mkstemp
+from hashlib import md5
+from os.path import join
+from tempfile import gettempdir
 
 MAX_SOURCES_LENGTH = 8000  # Windows CLI has limit with command length to 8192
 
 
-def _remove_tmpfile(path):
-    try:
-        remove(path)
-    except WindowsError:  # pylint: disable=E0602
-        pass
-
-
 def _huge_sources_hook(sources):
-    if len(str(sources)) < MAX_SOURCES_LENGTH:
+    _sources = str(sources).replace("\\", "/")
+    if len(str(_sources)) < MAX_SOURCES_LENGTH:
         return sources
 
-    _, tmp_file = mkstemp()
+    tmp_file = join(gettempdir(), "pioarargs-%s" % md5(_sources).hexdigest())
     with open(tmp_file, "w") as f:
-        f.write(str(sources).replace("\\", "/"))
-
-    atexit.register(_remove_tmpfile, tmp_file)
+        f.write(_sources)
 
     return "@%s" % tmp_file
 

@@ -2,8 +2,7 @@
 # See LICENSE for details.
 
 """
-    Builder for STMicroelectronics
-    STM32 Series ARM microcontrollers.
+    Builder for Nordic nRF51 series ARM microcontrollers.
 """
 
 from os.path import join
@@ -15,36 +14,11 @@ env = DefaultEnvironment()
 
 SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
-env.Replace(
-    UPLOADER=join("$PIOPACKAGES_DIR", "tool-stlink", "st-flash"),
-    UPLOADERFLAGS=[
-        "write",        # write in flash
-        "$SOURCES",     # firmware path to flash
-        "0x08000000"    # flash start adress
-    ],
-
-    UPLOADCMD="$UPLOADER $UPLOADERFLAGS"
-)
-
-
-env.Append(
-    CPPDEFINES=[
-        "${BOARD_OPTIONS['build']['variant'].upper()}"
-    ],
-
-    LINKFLAGS=[
-        "-nostartfiles",
-        "-nostdlib"
-    ]
-)
-
-CORELIBS = env.ProcessGeneral()
-
 #
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware(["c", "gcc", "m", "nosys"] + CORELIBS)
+target_elf = env.BuildFirmware()
 
 #
 # Target: Build the .bin file
@@ -66,7 +40,7 @@ AlwaysBuild(target_size)
 # Target: Upload by default .bin file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
+upload = env.Alias(["upload", "uploadlazy"], target_firm, env.UploadToDisk)
 AlwaysBuild(upload)
 
 #

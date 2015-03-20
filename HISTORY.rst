@@ -1,6 +1,38 @@
 Release History
 ===============
 
+1.2.0 (2015-03-20)
+------------------
+
+* Added full support of `mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+  framework including libraries: *RTOS, Ethernet, DSP, FAT, USB*.
+* Added `freescalekinetis <http://docs.platformio.org/en/latest/platforms/freescalekinetis.html>`_
+  development platform with Freescale Kinetis Freedom boards
+* Added `nordicnrf51 <http://docs.platformio.org/en/latest/platforms/nordicnrf51.html>`_
+  development platform with supported boards from *JKSoft, Nordic, RedBearLab,
+  Switch Science*
+* Added `nxplpc <http://docs.platformio.org/en/latest/platforms/nxplpc.html>`_
+  development platform with supported boards from *CQ Publishing, Embedded
+  Artists, NGX Technologies, NXP, Outrageous Circuits, SeeedStudio,
+  Solder Splash Labs, Switch Science, u-blox*
+* Added support for *ST Nucleo* boards to
+  `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
+  development platform
+* Created new `Frameworks <http://docs.platformio.org/en/latest/frameworks/index.html>`__
+  page in documentation and added to `PlatformIO Web Site <http://platformio.org>`_
+  (`issue #115 <https://github.com/ivankravets/platformio/issues/115>`_)
+* Introduced online `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+* Automatically append define ``-DPLATFORMIO=%version%`` to
+  builder (`issue #105 <https://github.com/ivankravets/platformio/issues/105>`_)
+* Renamed ``stm32`` development platform to
+  `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
+* Renamed ``opencm3`` framework to
+  `libopencm3 <http://docs.platformio.org/en/latest/frameworks/libopencm3.html>`__
+* Fixed uploading for `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`__
+  development platform
+* Fixed re-arranging the ``*.ino/pde`` files when converting to ``*.cpp``
+  (`issue #100 <https://github.com/ivankravets/platformio/issues/100>`_)
+
 1.1.0 (2015-03-05)
 ------------------
 
@@ -25,13 +57,13 @@ Release History
 **PlatformIO 1.0 - recommended for production**
 
 * Changed development status from ``beta`` to ``Production/Stable``
-* Added support for *ARM*-based credit-card computers:
+* Added support for *ARM*-based credit-card sized computers:
   `Raspberry Pi <http://www.raspberrypi.org>`_,
   `BeagleBone <http://beagleboard.org>`_ and `CubieBoard <http://cubieboard.org>`_
-* Added `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`_
+* Added `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`__
   development platform with supported boards: *Arduino Due and Digistump DigiX*
   (`issue #71 <https://github.com/ivankravets/platformio/issues/71>`_)
-* Added `stm32 <http://docs.platformio.org/en/latest/platforms/stm32.html>`_
+* Added `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
   development platform with supported boards: *Discovery kit for STM32L151/152,
   STM32F303xx, STM32F407/417 lines* and `libOpenCM3 Framework <http://www.libopencm3.org>`_
   (`issue #73 <https://github.com/ivankravets/platformio/issues/73>`_)

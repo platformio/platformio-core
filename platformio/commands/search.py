@@ -18,24 +18,29 @@ def cli(query, json_output):
     platforms.sort()
     for platform in platforms:
         p = PlatformFactory.newPlatform(platform)
-        name = p.get_name()
-        info = p.get_short_info()
+        type_ = p.get_type()
+        description = p.get_description()
 
         if query == "all":
             query = ""
 
-        search_data = "%s %s" % (name, info)
+        search_data = "%s %s %s" % (type_, description, p.get_packages())
         if query and query.lower() not in search_data.lower():
             continue
 
         data.append({
-            "name": name,
-            "info": info
+            "type": type_,
+            "description": description,
+            "packages": p.get_packages()
         })
 
     if json_output:
         click.echo(json.dumps(data))
     else:
         for item in data:
-            click.echo("{name:<20} - {info}".format(
-                name=click.style(item['name'], fg="cyan"), info=item['info']))
+            click.secho(item['type'], fg="cyan", nl=False)
+            click.echo(" (available packages: %s)" % ", ".join(
+                p.get_packages().keys()))
+            click.secho("-" * len(item['type']), fg="cyan")
+            click.echo(item['description'])
+            click.echo()

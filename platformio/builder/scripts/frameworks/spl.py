@@ -2,12 +2,19 @@
 # See LICENSE for details.
 
 """
-    Build script for SPL Framework
+SPL
+
+The ST Standard Peripheral Library provides a set of functions for
+handling the peripherals on the STM32 Cortex-M3 family.
+The idea is to save the user (the new user, in particular) having to deal
+directly with the registers.
+
+http://www.st.com/web/en/catalog/tools/FM147/CL1794/SC961/SS1743?sc=stm32embeddedsoftware
 """
 
 from os.path import join
 
-from SCons.Script import DefaultEnvironment, Return
+from SCons.Script import DefaultEnvironment
 
 env = DefaultEnvironment()
 
@@ -61,4 +68,4 @@ libs.append(envsafe.BuildLibrary(
     ignore_files
 ))
 
-Return("libs")
+env.Append(LIBS=libs)

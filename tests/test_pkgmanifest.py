@@ -29,7 +29,7 @@ def sfpkglist():
 def pytest_generate_tests(metafunc):
     if "package_data" not in metafunc.fixturenames:
         return
-    pkgs_manifest = get_api_result("/packages")
+    pkgs_manifest = get_api_result("/packages/manifest")
     assert isinstance(pkgs_manifest, dict)
     packages = []
     for _, variants in pkgs_manifest.iteritems():

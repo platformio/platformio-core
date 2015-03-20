@@ -2,13 +2,19 @@
 # See LICENSE for details.
 
 """
-    Build script for Arduino Framework (based on Wiring).
+Arduino
+
+Arduino Framework allows writing cross-platform software to control
+devices attached to a wide range of Arduino boards to create all
+kinds of creative coding, interactive objects, spaces or physical experiences.
+
+http://arduino.cc/en/Reference/HomePage
 """
 
 from os import listdir, walk
 from os.path import isfile, join
 
-from SCons.Script import DefaultEnvironment, Return
+from SCons.Script import DefaultEnvironment
 
 env = DefaultEnvironment()
 
@@ -23,11 +29,16 @@ BOARD_BUILDOPTS = BOARD_OPTS.get("build", {})
 PLATFORMFW_DIR = join("$PIOPACKAGES_DIR",
                       "framework-arduino${PLATFORM.replace('atmel', '')}")
 
-if env.get("PLATFORM") == "digistump":
+if "digispark" in BOARD_BUILDOPTS.get("core"):
     PLATFORMFW_DIR = join(
         "$PIOPACKAGES_DIR",
         "framework-arduino%s" % (
             "sam" if BOARD_BUILDOPTS.get("cpu") == "cortex-m3" else "avr")
+    )
+elif env.get("PLATFORM") == "timsp430":
+    PLATFORMFW_DIR = join(
+        "$PIOPACKAGES_DIR",
+        "framework-arduinomsp430"
     )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
@@ -86,7 +97,7 @@ if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
 
     env.VariantDir(
         join("$BUILD_DIR", "FrameworkArduinoInc"),
-        join("$PLATFORMFW_DIR", "cores", "digix")
+        join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
     )
     env.Append(
         CPPPATH=[
@@ -146,7 +157,6 @@ if BOARD_BUILDOPTS.get("core", None) == "teensy":
 # Target: Build Core Library
 #
 
-
 libs = []
 
 if "variant" in BOARD_BUILDOPTS:
@@ -168,14 +178,19 @@ libs.append(envsafe.BuildLibrary(
 ))
 
 if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
+
+    env.Append(
+        LIBPATH=[
+            join("$PLATFORMFW_DIR", "variants",
+                 "${BOARD_OPTIONS['build']['variant']}")
+        ]
+    )
+
     envsafe.Append(
         CFLAGS=[
             "-std=gnu99"
         ]
     )
-    libs.append(envsafe.BuildLibrary(
-        join("$BUILD_DIR", "SamLib"),
-        join("$PLATFORMFW_DIR", "system", "libsam", "source")
-    ))
+    libs.append("sam_sam3x8e_gcc_rel")
 
-Return("libs")
+env.Append(LIBS=libs)
