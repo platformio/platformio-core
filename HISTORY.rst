@@ -1,7 +1,7 @@
 Release History
 ===============
 
-1.2.0 (2015-03-??)
+1.2.0 (2015-03-20)
 ------------------
 
 * Added full support of `mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
