@@ -11,7 +11,7 @@ from sys import path
 
 path.append("..")
 
-from platformio.util import exec_command
+from platformio.util import exec_command, get_home_dir
 
 
 def _unzip_generated_file(mbed_dir, output_dir, mcu):
@@ -19,7 +19,6 @@ def _unzip_generated_file(mbed_dir, output_dir, mcu):
         mbed_dir, "build", "export", "MBED_A1_emblocks_%s.zip" % mcu)
     variant_dir = join(output_dir, "variant", mcu)
     if isfile(filename):
-        print "Processing board: %s" % mcu
         with zipfile.ZipFile(filename) as zfile:
             mkdir(variant_dir)
             zfile.extractall(variant_dir)
@@ -34,6 +33,33 @@ def _unzip_generated_file(mbed_dir, output_dir, mcu):
         print "Warning! Skipped board: %s" % mcu
 
 
+def buildlib(mbed_dir, mcu, lib="mbed"):
+    build_command = [
+        "python",
+        join(mbed_dir, "workspace_tools", "build.py"),
+        "--mcu", mcu,
+        "-t", "GCC_ARM"
+    ]
+    if lib is not "mbed":
+        build_command.append(lib)
+    build_result = exec_command(build_command, cwd=getcwd())
+    if build_result['returncode'] != 0:
+        print "*     %s doesn't support %s library!" % (mcu, lib)
+
+
+def copylibs(mbed_dir, output_dir):
+    libs = ["dsp", "fat", "net", "rtos", "usb", "usb_host"]
+    libs_dir = join(output_dir, "libs")
+    makedirs(libs_dir)
+
+    print "Moving generated libraries to framework dir..."
+    for lib in libs:
+        if lib == "net":
+            move(join(mbed_dir, "build", lib, "eth"), libs_dir)
+            continue
+        move(join(mbed_dir, "build", lib), libs_dir)
+
+
 def main(mbed_dir, output_dir):
     print "Starting..."
 
@@ -44,18 +70,34 @@ def main(mbed_dir, output_dir):
         print "Deleting previous framework dir..."
         rmtree(output_dir)
 
+    settings_file = join(mbed_dir, "workspace_tools", "private_settings.py")
+    if not isfile(settings_file):
+        with open(settings_file, "w") as f:
+            f.write("GCC_ARM_PATH = '%s'" %
+                    join(get_home_dir(), "packages", "toolchain-gccarmnoneeabi",
+                         "bin"))
+
     makedirs(join(output_dir, "variant"))
-    # make .eix files
+    mbed_libs = ["--rtos", "--dsp", "--fat", "--eth", "--usb", "--usb_host"]
+
     for mcu in set(gccarm.GccArm.TARGETS):
-        exec_command(
-            ["python", join(mbed_dir, "workspace_tools", "build.py"),
-             "--mcu", mcu, "-t", "GCC_ARM"], cwd=getcwd()
-        )
-        exec_command(
+        print "Processing board: %s" % mcu
+        buildlib(mbed_dir, mcu)
+        for lib in mbed_libs:
+            buildlib(mbed_dir, mcu, lib)
+        result = exec_command(
             ["python", join(mbed_dir, "workspace_tools", "project.py"),
              "--mcu", mcu, "-i", "emblocks", "-p", "0", "-b"], cwd=getcwd()
         )
+        if result['returncode'] != 0:
+            print "Unable to build the project for %s" % mcu
+            continue
         _unzip_generated_file(mbed_dir, output_dir, mcu)
+    copylibs(mbed_dir, output_dir)
+
+    with open(join(output_dir, "boards.txt"), "w") as fp:
+        fp.write("\n".join(sorted(listdir(join(output_dir, "variant")))))
+
     print "Complete!"
 
 

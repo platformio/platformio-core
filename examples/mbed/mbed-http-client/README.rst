@@ -9,7 +9,7 @@ How to build PlatformIO based project
 .. code-block:: bash
 
     # Change directory to example
-    > cd platformio-develop/examples/atmelavr-and-arduino/digitstump-mouse
+    > cd platformio-develop/examples/mbed/mbed-http-client
 
     # Process example project
     > platformio run

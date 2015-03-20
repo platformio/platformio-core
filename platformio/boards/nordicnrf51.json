@@ -94,8 +94,7 @@
         },
         "url": "https://developer.mbed.org/platforms/Nordic-nRF51-Dongle/",
         "vendor": "Nordic"
-    }
-    ,
+    },
     "wallBotBLE": {
         "build": {
             "f_cpu": "16000000L",
@@ -111,6 +110,21 @@
         },
         "url": "https://developer.mbed.org/platforms/JKSoft-Wallbot-BLE/",
         "vendor": "JKSoft"
+    },
+    "seeedTinyBLE": {
+        "build": {
+            "f_cpu": "16000000L",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822"
+        },
+        "frameworks": ["mbed"],
+        "name": "Seeed Tiny BLE",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 262144
+        },
+        "url": "http://developer.mbed.org/platforms/Seeed-Tiny-BLE/",
+        "vendor": "SeeedStudio"
     }
-
 }
