@@ -4,8 +4,8 @@ Release History
 1.2.0 (2015-03-??)
 ------------------
 
-* Initial support of `mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
-  framework (only core SDK)
+* Added full support of `mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+  framework including libraries: *RTOS, Ethernet, DSP, FAT, USB*.
 * Added `freescalekinetis <http://docs.platformio.org/en/latest/platforms/freescalekinetis.html>`_
   development platform with Freescale Kinetis Freedom boards
 * Added `nordicnrf51 <http://docs.platformio.org/en/latest/platforms/nordicnrf51.html>`_
@@ -26,8 +26,12 @@ Release History
   builder (`issue #105 <https://github.com/ivankravets/platformio/issues/105>`_)
 * Renamed ``stm32`` development platform to
   `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
+* Renamed ``opencm3`` framework to
+  `libopencm3 <http://docs.platformio.org/en/latest/frameworks/libopencm3.html>`__
 * Fixed uploading for `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`__
   development platform
+* Fixed re-arranging the ``*.ino/pde`` files when converting to ``*.cpp``
+  (`issue #100 <https://github.com/ivankravets/platformio/issues/100>`_)
 
 1.1.0 (2015-03-05)
 ------------------
