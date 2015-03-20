@@ -1,5 +1,5 @@
-How to buid PlatformIO based project
-====================================
+How to build PlatformIO based project
+=====================================
 
 1. `Install PlatformIO <http://docs.platformio.org/en/latest/installation.html>`_
 2. Download `source code with examples <https://github.com/ivankravets/platformio/archive/develop.zip>`_
