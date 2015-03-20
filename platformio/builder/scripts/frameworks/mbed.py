@@ -15,11 +15,13 @@ the mbed Developer Community.
 http://mbed.org/
 """
 
+import re
 import xml.etree.ElementTree as ElementTree
 from binascii import crc32
-from os.path import join, normpath
+from os import walk
+from os.path import basename, isfile, join, normpath
 
-from SCons.Script import DefaultEnvironment
+from SCons.Script import DefaultEnvironment, Exit
 
 env = DefaultEnvironment()
 
@@ -41,9 +43,10 @@ MBED_VARIANTS = {
     "lpc11u35": "LPC11U35_401",
     "mbuino": "LPC11U24",
     "nrf51_mkit": "NRF51822",
-    "redBearLab": "NRF51822",
+    "seeedTinyBLE": "SEEED_TINY_BLE",
+    "redBearLab": "RBLAB_NRF51822",
     "nrf51-dt": "NRF51_DK",
-    "redBearLabBLENano": "NRF51822",
+    "redBearLabBLENano": "RBLAB_NRF51822",
     "wallBotBLE": "NRF51822",
     "frdm_kl25z": "KL25Z",
     "frdm_kl46z": "KL46Z",
@@ -52,6 +55,86 @@ MBED_VARIANTS = {
     "frdm_k20d50m": "K20D50M",
     "frdm_k22f": "K22F"
 }
+
+MBED_LIBS_MAP = {
+    "dsp": {"ar": ["dsp", "cmsis_dsp"]},
+    "eth": {"ar": ["eth"], "deps": ["rtos"]},
+    "fat": {"ar": ["fat"]},
+    "rtos": {"ar": ["rtos", "rtx"]},
+    "usb": {"ar": ["USBDevice"]},
+    "usb_host": {"ar": ["USBHost"]}
+}
+
+
+def get_mbedlib_includes():
+    result = []
+    for lib in MBED_LIBS_MAP.keys():
+        includes = []
+        lib_dir = join(env.subst("$PLATFORMFW_DIR"), "libs", lib)
+        for _, _, files in walk(lib_dir):
+            for libfile in files:
+                if libfile.endswith(".h"):
+                    includes.append(libfile)
+        result.append((lib, set(includes)))
+    return result
+
+
+def get_used_mbedlibs():
+    re_includes = re.compile(r"^(#include\s+(?:\<|\")([^\r\n\"]+))",
+                             re.M | re.I)
+    srcincs = []
+    for root, _, files in walk(env.get("PROJECTSRC_DIR")):
+        for pfile in files:
+            if not any([pfile.endswith(ext) for ext in (".h", ".c", ".cpp")]):
+                continue
+            with open(join(root, pfile)) as fp:
+                srcincs.extend([i[1] for i in re_includes.findall(fp.read())])
+    srcincs = set(srcincs)
+
+    result = {}
+    for libname, libincs in get_mbedlib_includes():
+        if libincs & srcincs and libname not in result:
+            result[libname] = MBED_LIBS_MAP[libname]
+
+    return result
+
+
+def add_mbedlib(libname, libar):
+    if libar in env.get("LIBS"):
+        return
+
+    lib_dir = join(env.subst("$PLATFORMFW_DIR"), "libs", libname)
+    if not isfile(join(lib_dir, "TARGET_%s" % variant,
+                       "TOOLCHAIN_GCC_ARM", "lib%s.a" % libar)):
+        Exit("Error: %s board doesn't support %s library!" %
+             (env.get("BOARD"), libname))
+
+    env.Append(
+        LIBPATH=[
+            join(env.subst("$PLATFORMFW_DIR"), "libs", libname,
+                 "TARGET_%s" % variant, "TOOLCHAIN_GCC_ARM")
+        ],
+        LIBS=[libar]
+    )
+
+    sysincdirs = (
+        "eth",
+        "include",
+        "ipv4",
+        "lwip-eth",
+        "lwip-sys"
+    )
+
+    for root, _, files in walk(lib_dir):
+        if (not any(f.endswith(".h") for f in files) and
+                basename(root) not in sysincdirs):
+            continue
+        var_dir = join("$BUILD_DIR", "FrameworkMbed%sInc%d" %
+                       (libname.upper(), crc32(root)))
+        if var_dir in env.get("CPPPATH"):
+            continue
+        env.VariantDir(var_dir, root)
+        env.Append(CPPPATH=[var_dir])
 
 
 def parse_eix_file(filename):
@@ -93,6 +176,7 @@ def get_build_flags(data):
     flags['CFLAGS'] = list(cflags - cppflags)
     return flags
 
+
 board_type = env.subst("$BOARD")
 variant = MBED_VARIANTS[
     board_type] if board_type in MBED_VARIANTS else board_type.upper()
@@ -123,7 +207,6 @@ for lib_path in eixdata.get("CPPPATH"):
     env.VariantDir(_vdir, join(variant_dir, lib_path))
     env.Append(CPPPATH=[_vdir])
 
-
 env.Append(
     LIBPATH=[join(variant_dir, lib_path)
              for lib_path in eixdata.get("LIBPATH", [])
@@ -135,7 +218,7 @@ env.Append(
 #
 
 libs = [l for l in eixdata.get("STDLIBS", []) if l not in env.get("LIBS")]
-libs.append("mbed")
+libs.extend(["mbed", "c", "gcc"])
 
 libs.append(env.Library(
     join("$BUILD_DIR", "FrameworkMbed"),
@@ -144,3 +227,12 @@ libs.append(env.Library(
 ))
 
 env.Append(LIBS=libs)
+
+for _libname, _libdata in get_used_mbedlibs().iteritems():
+    for _libar in _libdata['ar']:
+        add_mbedlib(_libname, _libar)
+    if "deps" not in _libdata:
+        continue
+    for libdep in _libdata['deps']:
+        for _libar in MBED_LIBS_MAP[libdep]['ar']:
+            add_mbedlib(libdep, _libar)
