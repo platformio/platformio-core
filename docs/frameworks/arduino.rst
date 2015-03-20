@@ -8,6 +8,26 @@ For more detailed information please visit `vendor site <http://arduino.cc/en/Re
 
 .. contents::
 
+Platforms
+---------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description
+
+    * - :ref:`platform_atmelavr`
+      - Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.
+
+    * - :ref:`platform_atmelsam`
+      - Atmel | SMART offers Flash- based ARM products based on the ARM Cortex-M0+, Cortex-M3 and Cortex-M4 architectures, ranging from 8KB to 2MB of Flash including a rich peripheral and feature mix.
+
+    * - :ref:`platform_teensy`
+      - Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard "Mini-B" USB cable and a PC or Macintosh with a USB port.
+
+    * - :ref:`platform_timsp430`
+      - MSP430 microcontrollers (MCUs) from Texas Instruments (TI) are 16-bit, RISC-based, mixed-signal processors designed for ultra-low power. These MCUs offer the lowest power consumption and the perfect mix of integrated peripherals for thousands of applications.
+
 Boards
 ------
 
@@ -484,6 +504,33 @@ Microduino
       - ATMEGA644P
       - 8 MHz
       - 64 Kb
+      - 4 Kb
+
+PanStamp
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``panStampAVR``
+      - `PanStamp AVR <http://www.panstamp.com/product/panstamp-avr/>`_
+      - ATMEGA328P
+      - 8 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``panStampNRG``
+      - `PanStamp NRG 1.1 <http://www.panstamp.com/product/197/>`_
+      - CC430F5137
+      - 12 MHz
+      - 32 Kb
       - 4 Kb
 
 SainSmart

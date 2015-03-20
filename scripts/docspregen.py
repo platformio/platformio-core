@@ -12,6 +12,14 @@ from platformio import util
 from platformio.platforms.base import PlatformFactory, get_packages
 
 
+def is_compat_platform_and_framework(platform, framework):
+    p = PlatformFactory.newPlatform(platform)
+    for pkg in p.get_packages().keys():
+        if pkg.startswith("framework-%s" % framework):
+            return True
+    return False
+
+
 def generate_boards(boards):
 
     def _round_memory_size(size):
@@ -110,6 +118,26 @@ Packages
 --------
 """)
     lines.append(generate_packages(p.get_packages()))
+
+    lines.append("""
+Frameworks
+----------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description""")
+
+    _frameworks = util.get_frameworks()
+    for framework in sorted(_frameworks.keys()):
+        if not is_compat_platform_and_framework(name, framework):
+            continue
+        lines.append("""
+    * - :ref:`framework_{type_}`
+      - {description}""".format(
+            type_=framework,
+            description=_frameworks[framework]['description']))
+
     lines.append("""
 Boards
 ------
@@ -140,7 +168,8 @@ Boards
 def update_platform_docs():
     for name in PlatformFactory.get_platforms().keys():
         rst_path = join(
-            dirname(realpath(__file__)), "..", "docs", "platforms", "%s.rst" % name)
+            dirname(realpath(__file__)), "..", "docs", "platforms",
+            "%s.rst" % name)
         with open(rst_path, "w") as f:
             f.write(generate_platform(name))
 
@@ -157,11 +186,31 @@ def generate_framework(type_, data):
     lines.append("=" * len(_title))
     lines.append(data['description'])
     lines.append("""
-For more detailed information please visit `vendor site <%s>`_.""" %
-                 data['url'])
-    lines.append("""
-.. contents::
+For more detailed information please visit `vendor site <%s>`_.
+""" % data['url'])
 
+    lines.append(".. contents::")
+
+    lines.append("""
+Platforms
+---------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description""")
+
+    for platform in sorted(PlatformFactory.get_platforms().keys()):
+        if not is_compat_platform_and_framework(platform, type_):
+            continue
+        p = PlatformFactory.newPlatform(platform)
+        lines.append("""
+    * - :ref:`platform_{type_}`
+      - {description}""".format(
+            type_=platform,
+            description=p.get_description()))
+
+    lines.append("""
 Boards
 ------
 

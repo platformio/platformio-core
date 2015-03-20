@@ -17,6 +17,9 @@ Packages
     * - Name
       - Contents
 
+    * - ``framework-libopencm3``
+      - `libOpenCM3 Framework <http://www.libopencm3.org/>`_
+
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
@@ -32,9 +35,6 @@ Packages
     * - ``framework-mbed``
       - `mbed Framework <http://mbed.org>`_
 
-    * - ``framework-opencm3``
-      - `libOpenCM3 Framework <http://www.libopencm3.org/>`_
-
     * - ``ldscripts``
       - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
 
@@ -43,6 +43,26 @@ Packages
     `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
+
+Frameworks
+----------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description
+
+    * - :ref:`framework_cmsis`
+      - The ARM Cortex Microcontroller Software Interface Standard (CMSIS) is a vendor-independent hardware abstraction layer for the Cortex-M processor series and specifies debugger interfaces. The CMSIS enables consistent and simple software interfaces to the processor for interface peripherals, real-time operating systems, and middleware. It simplifies software re-use, reducing the learning curve for new microcontroller developers and cutting the time-to-market for devices.
+
+    * - :ref:`framework_libopencm3`
+      - The libOpenCM3 framework aims to create a free/libre/open-source firmware library for various ARM Cortex-M0(+)/M3/M4 microcontrollers, including ST STM32, Ti Tiva and Stellaris, NXP LPC 11xx, 13xx, 15xx, 17xx parts, Atmel SAM3, Energy Micro EFM32 and others.
+
+    * - :ref:`framework_mbed`
+      - The mbed framework The mbed SDK has been designed to provide enough hardware abstraction to be intuitive and concise, yet powerful enough to build complex projects. It is built on the low-level ARM CMSIS APIs, allowing you to code down to the metal if needed. In addition to RTOS, USB and Networking libraries, a cookbook of hundreds of reusable peripheral and module libraries have been built on top of the SDK by the mbed Developer Community.
+
+    * - :ref:`framework_spl`
+      - The ST Standard Peripheral Library provides a set of functions for handling the peripherals on the STM32 Cortex-M3 family. The idea is to save the user (the new user, in particular) having to deal directly with the registers.
 
 Boards
 ------
@@ -163,6 +183,13 @@ ST
       - 72 MHz
       - 64 Kb
       - 16 Kb
+
+    * - ``nucleo_f303re``
+      - `ST Nucleo F303RE <http://developer.mbed.org/platforms/ST-Nucleo-F303RE/>`_
+      - STM32F303RET6
+      - 72 MHz
+      - 512 Kb
+      - 64 Kb
 
     * - ``nucleo_f334r8``
       - `ST Nucleo F334R8 <https://developer.mbed.org/platforms/ST-Nucleo-F334R8/>`_

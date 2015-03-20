@@ -20,14 +20,14 @@ Packages
     * - ``ldscripts``
       - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
 
+    * - ``framework-libopencm3``
+      - `libOpenCM3 Framework <http://www.libopencm3.org/>`_
+
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
     * - ``tool-lm4flash``
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
-
-    * - ``framework-opencm3``
-      - `libOpenCM3 Framework <http://www.libopencm3.org/>`_
 
     * - ``framework-energiativa``
       - `Energia Wiring-based Framework (LM4F Core) <http://energia.nu/reference/>`_
@@ -37,6 +37,20 @@ Packages
     `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
+
+Frameworks
+----------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description
+
+    * - :ref:`framework_energia`
+      - Energia framework enables pretty much anyone to start easily creating microcontroller-based projects and applications. Its easy-to-use libraries and functions provide developers of all experience levels to start blinking LEDs, buzzing buzzers and sensing sensors more quickly than ever before.
+
+    * - :ref:`framework_libopencm3`
+      - The libOpenCM3 framework aims to create a free/libre/open-source firmware library for various ARM Cortex-M0(+)/M3/M4 microcontrollers, including ST STM32, Ti Tiva and Stellaris, NXP LPC 11xx, 13xx, 15xx, 17xx parts, Atmel SAM3, Energy Micro EFM32 and others.
 
 Boards
 ------

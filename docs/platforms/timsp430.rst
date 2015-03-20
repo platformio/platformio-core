@@ -26,11 +26,28 @@ Packages
     * - ``framework-energiamsp430``
       - `Energia Wiring-based Framework (MSP430 Core) <http://energia.nu/reference/>`_
 
+    * - ``framework-arduinomsp430``
+      - `Arduino Wiring-based Framework (MSP430 Core) <http://arduino.cc/en/Reference/HomePage>`_
+
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
+
+Frameworks
+----------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description
+
+    * - :ref:`framework_arduino`
+      - Arduino Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
+
+    * - :ref:`framework_energia`
+      - Energia framework enables pretty much anyone to start easily creating microcontroller-based projects and applications. Its easy-to-use libraries and functions provide developers of all experience levels to start blinking LEDs, buzzing buzzers and sensing sensors more quickly than ever before.
 
 Boards
 ------
@@ -40,6 +57,26 @@ Boards
       `PlatformIO Boards Explorer <http://platformio.org/#!/boards>`_
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
+
+PanStamp
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``panStampNRG``
+      - `PanStamp NRG 1.1 <http://www.panstamp.com/product/197/>`_
+      - CC430F5137
+      - 12 MHz
+      - 32 Kb
+      - 4 Kb
 
 TI
 ~~

@@ -1,12 +1,26 @@
-.. _framework_opencm3:
+.. _framework_libopencm3:
 
-Framework ``opencm3``
-=====================
+Framework ``libopencm3``
+========================
 The libOpenCM3 framework aims to create a free/libre/open-source firmware library for various ARM Cortex-M0(+)/M3/M4 microcontrollers, including ST STM32, Ti Tiva and Stellaris, NXP LPC 11xx, 13xx, 15xx, 17xx parts, Atmel SAM3, Energy Micro EFM32 and others.
 
 For more detailed information please visit `vendor site <http://www.libopencm3.org/wiki/Main_Page>`_.
 
 .. contents::
+
+Platforms
+---------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description
+
+    * - :ref:`platform_ststm32`
+      - The STM32 family of 32-bit Flash MCUs based on the ARM Cortex-M processor is designed to offer new degrees of freedom to MCU users. It offers a 32-bit product range that combines very high performance, real-time capabilities, digital signal processing, and low-power, low-voltage operation, while maintaining full integration and ease of development.
+
+    * - :ref:`platform_titiva`
+      - Texas Instruments TM4C12x MCUs offer the industrys most popular ARM Cortex-M4 core with scalable memory and package options, unparalleled connectivity peripherals, advanced application functions, industry-leading analog integration, and extensive software solutions.
 
 Boards
 ------

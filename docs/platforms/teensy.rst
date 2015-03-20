@@ -38,6 +38,17 @@ Packages
 
 
 
+Frameworks
+----------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description
+
+    * - :ref:`framework_arduino`
+      - Arduino Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
+
 Boards
 ------
 

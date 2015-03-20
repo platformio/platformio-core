@@ -29,6 +29,17 @@ Packages
 
 
 
+Frameworks
+----------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description
+
+    * - :ref:`framework_mbed`
+      - The mbed framework The mbed SDK has been designed to provide enough hardware abstraction to be intuitive and concise, yet powerful enough to build complex projects. It is built on the low-level ARM CMSIS APIs, allowing you to code down to the metal if needed. In addition to RTOS, USB and Networking libraries, a cookbook of hundreds of reusable peripheral and module libraries have been built on top of the SDK by the mbed Developer Community.
+
 Boards
 ------
 
@@ -50,6 +61,13 @@ Freescale
       - Frequency
       - Flash
       - RAM
+
+    * - ``IBMEthernetKit``
+      - `Ethernet IoT Starter Kit <http://developer.mbed.org/platforms/IBMEthernetKit/>`_
+      - MK64FN1M0VLL12
+      - 120 MHz
+      - 1024 Kb
+      - 256 Kb
 
     * - ``frdm_k20d50m``
       - `Freescale Kinetis FRDM-K20D50M <https://developer.mbed.org/platforms/FRDM-K20D50M/>`_

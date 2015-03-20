@@ -9,6 +9,6 @@ Frameworks
     arduino
     cmsis
     energia
+    libopencm3
     mbed
-    opencm3
     spl
