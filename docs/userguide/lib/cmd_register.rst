@@ -10,7 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio lib regiter [HTTP_URL_TO_LIBRARY.JSON]
+    platformio lib register [HTTP_URL_TO_LIBRARY.JSON]
 
 
 Description
