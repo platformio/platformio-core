@@ -1,6 +1,13 @@
 Release History
 ===============
 
+1.3.0 (2015-??-??)
+------------------
+
+* Improved handling of multi-file ``*.ino/pde`` sketches
+  (`issue #130 <https://github.com/ivankravets/platformio/issues/130>`_)
+
+
 1.2.0 (2015-03-20)
 ------------------
 

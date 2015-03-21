@@ -1,7 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-VERSION = (1, 2, 0)
+VERSION = (1, 3, "0.dev0")
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
