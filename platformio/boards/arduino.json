@@ -11,7 +11,7 @@
             "vid": "0x1B4F"
         },
         "frameworks": ["arduino"],
-        "name": "LilyPad Arduino USB",
+        "name": "Arduino LilyPad USB",
         "platform": "atmelavr",
         "upload": {
             "disable_flushing": true,
@@ -259,7 +259,7 @@
             "variant": "standard"
         },
         "frameworks": ["arduino"],
-        "name": "LilyPad Arduino ATmega168",
+        "name": "Arduino LilyPad ATmega168",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 1024,
@@ -280,7 +280,7 @@
             "variant": "standard"
         },
         "frameworks": ["arduino"],
-        "name": "LilyPad Arduino ATmega328",
+        "name": "Arduino LilyPad ATmega328",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 2048,

@@ -8,7 +8,7 @@
             "variant": "digispark_tiny"
         },
         "frameworks": ["arduino"],
-        "name": "Digispark (Default - 16 MHz)",
+        "name": "Digistump Digispark (Default - 16 MHz)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
@@ -27,7 +27,7 @@
             "variant": "digispark_pro"
         },
         "frameworks": ["arduino"],
-        "name": "Digispark Pro (Default 16 MHz)",
+        "name": "Digistump Digispark Pro (Default 16 MHz)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
@@ -46,7 +46,7 @@
             "variant": "digispark_pro32"
         },
         "frameworks": ["arduino"],
-        "name": "Digispark Pro (16 MHz) (32 byte buffer)",
+        "name": "Digistump Digispark Pro (16 MHz) (32 byte buffer)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,
@@ -65,7 +65,7 @@
             "variant": "digispark_pro64"
         },
         "frameworks": ["arduino"],
-        "name": "Digispark Pro (16 MHz) (64 byte buffer)",
+        "name": "Digistump Digispark Pro (16 MHz) (64 byte buffer)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 512,

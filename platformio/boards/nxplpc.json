@@ -6,7 +6,7 @@
             "mcu": "lpc1768"
         },
         "frameworks": ["mbed"],
-        "name": "mbed LPC1768",
+        "name": "NXP mbed LPC1768",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 32768,
@@ -22,7 +22,7 @@
             "mcu": "lpc11u24"
         },
         "frameworks": ["mbed"],
-        "name": "mbed LPC11U24",
+        "name": "NXP mbed LPC11U24",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 8192,
@@ -38,7 +38,7 @@
             "mcu": "lpc4088"
         },
         "frameworks": ["mbed"],
-        "name": "EA LPC4088 QuickStart Board",
+        "name": "Embedded Artists LPC4088 QuickStart Board",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 98304,
@@ -54,7 +54,7 @@
             "mcu": "lpc11u24"
         },
         "frameworks": ["mbed"],
-        "name": "DipCortex M0",
+        "name": "Solder Splash Labs DipCortex M0",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 8192,
@@ -70,7 +70,7 @@
             "mcu": "lpc11u24"
         },
         "frameworks": ["mbed"],
-        "name": "BlueBoard-LPC11U24",
+        "name": "NGX Technologies BlueBoard-LPC11U24",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 8192,
@@ -86,7 +86,7 @@
             "mcu": "lpc1768"
         },
         "frameworks": ["mbed"],
-        "name": "Seeeduino-Arch-Pro",
+        "name": "SeeedStudio Seeeduino-Arch-Pro",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 32768,
@@ -118,7 +118,7 @@
             "mcu": "lpc1114fn28"
         },
         "frameworks": ["mbed"],
-        "name": "mbed LPC1114FN28",
+        "name": "Switch Science mbed LPC1114FN28",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 4096,
@@ -134,7 +134,7 @@
             "mcu": "lpc11u35"
         },
         "frameworks": ["mbed"],
-        "name": "EA LPC11U35 QuickStart Board",
+        "name": "Embedded Artists LPC11U35 QuickStart Board",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 10240,
@@ -150,7 +150,7 @@
             "mcu": "lpc11u35"
         },
         "frameworks": ["mbed"],
-        "name": "TG-LPC11U35-501",
+        "name": "CQ Publishing TG-LPC11U35-501",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 10240,
@@ -166,7 +166,7 @@
             "mcu": "lpc1549"
         },
         "frameworks": ["mbed"],
-        "name": "LPCXpresso1549",
+        "name": "NXP LPCXpresso1549",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 36864,
@@ -198,7 +198,7 @@
             "mcu": "lpc4088"
         },
         "frameworks": ["mbed"],
-        "name": "EA LPC4088 Display Module",
+        "name": "Embedded Artists LPC4088 Display Module",
         "platform": "nxplpc",
         "upload": {
             "maximum_ram_size": 98304,
