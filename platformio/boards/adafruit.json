@@ -1,7 +1,7 @@
 {
     "flora8": {
         "build": {
-            "core": ["arduino"],
+            "core": "arduino",
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
@@ -29,7 +29,7 @@
 
     "trinket3": {
         "build": {
-            "core": ["arduino"],
+            "core": "arduino",
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "8000000L",
             "mcu": "attiny85",
@@ -49,7 +49,7 @@
 
     "trinket5": {
         "build": {
-            "core": ["arduino"],
+            "core": "arduino",
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "16000000L",
             "mcu": "attiny85",
@@ -69,7 +69,7 @@
 
     "protrinket3": {
         "build": {
-            "core": ["arduino"],
+            "core": "arduino",
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "12000000L",
             "mcu": "atmega328p",
@@ -89,7 +89,7 @@
 
     "protrinket5": {
         "build": {
-            "core": ["arduino"],
+            "core": "arduino",
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
@@ -108,7 +108,7 @@
     },
     "protrinket3ftdi": {
         "build": {
-            "core": ["arduino"],
+            "core": "arduino",
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
@@ -120,7 +120,7 @@
         "upload": {
             "maximum_ram_size": 2048,
             "maximum_size": 28672,
-            "protocol": ["arduino"],
+            "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 115200
         },
@@ -129,7 +129,7 @@
     },
     "protrinket5ftdi": {
         "build": {
-            "core": ["arduino"],
+            "core": "arduino",
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
@@ -141,7 +141,7 @@
         "upload": {
             "maximum_ram_size": 2048,
             "maximum_size": 28672,
-            "protocol": ["arduino"],
+            "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 115200
         },
