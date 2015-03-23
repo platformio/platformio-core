@@ -71,7 +71,7 @@ DefaultEnvironment(
     LIBSOURCE_DIRS=[
         join("$PROJECT_DIR", "lib"),
         util.get_lib_dir(),
-        join("$PLATFORMFW_DIR", "libraries"),
+        join("$PLATFORMFW_DIR", "libraries")
     ]
 )
 

@@ -12,7 +12,7 @@ http://arduino.cc/en/Reference/HomePage
 """
 
 from os import listdir, walk
-from os.path import isfile, join
+from os.path import isdir, isfile, join
 
 from SCons.Script import DefaultEnvironment
 
@@ -20,6 +20,7 @@ env = DefaultEnvironment()
 
 BOARD_OPTS = env.get("BOARD_OPTIONS", {})
 BOARD_BUILDOPTS = BOARD_OPTS.get("build", {})
+BOARD_CORELIBDIRNAME = BOARD_BUILDOPTS.get("core")
 
 #
 # Determine framework directory
@@ -30,6 +31,7 @@ PLATFORMFW_DIR = join("$PIOPACKAGES_DIR",
                       "framework-arduino${PLATFORM.replace('atmel', '')}")
 
 if "digispark" in BOARD_BUILDOPTS.get("core"):
+    BOARD_CORELIBDIRNAME = "digispark"
     PLATFORMFW_DIR = join(
         "$PIOPACKAGES_DIR",
         "framework-arduino%s" % (
@@ -42,6 +44,21 @@ elif env.get("PLATFORM") == "timsp430":
     )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
+
+#
+# Lookup for specific core's libraries
+#
+
+if isdir(join(env.subst("$PLATFORMFW_DIR"), "libraries", "__cores__",
+              BOARD_CORELIBDIRNAME)):
+    lib_dirs = env.get("LIBSOURCE_DIRS")
+    lib_dirs.insert(
+        lib_dirs.index(join("$PLATFORMFW_DIR", "libraries")),
+        join(PLATFORMFW_DIR, "libraries", "__cores__", BOARD_CORELIBDIRNAME)
+    )
+    env.Replace(
+        LIBSOURCE_DIRS=lib_dirs
+    )
 
 #
 # Base
