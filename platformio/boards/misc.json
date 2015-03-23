@@ -20,6 +20,7 @@
         "url": "http://www.bitwizard.nl/wiki/index.php/Raspduino",
         "vendor": "BitWizard"
     },
+
     "sainSmartDue": {
         "build": {
             "core": "arduino",
@@ -76,6 +77,7 @@
         "url": "http://www.sainsmart.com/arduino/control-boards/sainsmart-due-atmel-sam3x8e-arm-cortex-m3-board-black.html",
         "vendor": "SainSmart"
     },
+
     "panStampAVR": {
         "build": {
             "core": "panstamp",
@@ -97,6 +99,7 @@
         "url": "http://www.panstamp.com/product/panstamp-avr/",
         "vendor": "PanStamp"
     },
+
     "panStampNRG": {
         "build": {
             "core": "panstamp",
@@ -114,5 +117,114 @@
         },
         "url": "http://www.panstamp.com/product/197/",
         "vendor": "PanStamp"
+    },
+    "reprap_rambo": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_RAMBO",
+            "f_cpu": "16000000L",
+            "mcu": "atmega2560",
+            "variant": "rambo"
+        },
+        "frameworks": ["arduino"],
+        "name": "RepRap RAMBo",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 8192,
+            "maximum_size": 258048,
+            "protocol": "wiring",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://reprap.org/wiki/Rambo",
+        "vendor": "RepRap"
+    },
+
+    "sanguino_atmega1284p": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_SANGUINO",
+            "f_cpu": "16000000L",
+            "mcu": "atmega1284p",
+            "variant": "sanguino"
+        },
+        "frameworks": ["arduino"],
+        "name": "Sanguino ATmega1284p (16MHz)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 131072,
+            "protocol": "stk500",
+            "require_upload_port" : true,
+            "speed": 57600
+        },
+        "url": "https://code.google.com/p/sanguino/",
+        "vendor": "Sanguino"
+    },
+
+    "sanguino_atmega12848m": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_SANGUINO",
+            "f_cpu": "8000000L",
+            "mcu": "atmega1284p",
+            "variant": "sanguino"
+        },
+        "frameworks": ["arduino"],
+        "name": "Sanguino ATmega1284p (8MHz)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 131072,
+            "protocol": "stk500",
+            "require_upload_port" : true,
+            "speed": 19200
+        },
+        "url": "https://code.google.com/p/sanguino/",
+        "vendor": "Sanguino"
+    },
+
+    "sanguino_atmega1284m": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_SANGUINO",
+            "f_cpu": "20000000L",
+            "mcu": "atmega1284p",
+            "variant": "sanguino"
+        },
+        "frameworks": ["arduino"],
+        "name": "Sanguino ATmega1284p (20MHz)",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 131072,
+            "protocol": "stk500",
+            "require_upload_port" : true,
+            "speed": 19200
+        },
+        "url": "https://code.google.com/p/sanguino/",
+        "vendor": "Sanguino"
+    },
+
+    "sanguino_atmega644p": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_SANGUINO",
+            "f_cpu": "16000000L",
+            "mcu": "atmega644p",
+            "variant": "sanguino"
+        },
+        "frameworks": ["arduino"],
+        "name": "Sanguino ATmega644P",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 4096,
+            "maximum_size": 63488,
+            "protocol": "stk500",
+            "require_upload_port" : true,
+            "speed": 57600
+        },
+        "url": "https://code.google.com/p/sanguino/",
+        "vendor": "Sanguino"
     }
 }
