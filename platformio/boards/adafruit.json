@@ -76,7 +76,7 @@
             "variant": "eightanaloginputs"
         },
         "frameworks": ["arduino"],
-        "name": "Pro Trinket 3V/12MHz (USB)",
+        "name": "Adafruit Pro Trinket 3V/12MHz (USB)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 2048,
@@ -96,7 +96,7 @@
             "variant": "eightanaloginputs"
         },
         "frameworks": ["arduino"],
-        "name": "Pro Trinket 5V/16MHz (USB)",
+        "name": "Adafruit Pro Trinket 5V/16MHz (USB)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 2048,
@@ -115,7 +115,7 @@
             "variant": "eightanaloginputs"
         },
         "frameworks": ["arduino"],
-        "name": "Pro Trinket 3V/12MHz (FTDI)",
+        "name": "Adafruit Pro Trinket 3V/12MHz (FTDI)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 2048,
@@ -136,7 +136,7 @@
             "variant": "eightanaloginputs"
         },
         "frameworks": ["arduino"],
-        "name": "Pro Trinket 5V/16MHz (USB)",
+        "name": "Adafruit Pro Trinket 5V/16MHz (USB)",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 2048,

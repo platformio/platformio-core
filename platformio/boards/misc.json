@@ -8,7 +8,7 @@
             "variant": "standard"
         },
         "frameworks": ["arduino"],
-        "name": "Raspduino",
+        "name": "BitWizard Raspduino",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 2048,

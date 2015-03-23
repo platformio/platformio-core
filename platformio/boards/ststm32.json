@@ -10,7 +10,7 @@
             "variant": "stm32f4"
         },
         "frameworks": ["cmsis", "spl", "libopencm3", "mbed"],
-        "name": "STM32F4DISCOVERY",
+        "name": "ST STM32F4DISCOVERY",
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 131072,
@@ -30,7 +30,7 @@
             "variant": "stm32l1"
         },
         "frameworks": ["cmsis","spl","libopencm3"],
-        "name": "STM32LDISCOVERY",
+        "name": "ST STM32LDISCOVERY",
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 16384,
@@ -50,7 +50,7 @@
             "variant": "stm32f3"
         },
         "frameworks": ["cmsis", "spl", "libopencm3", "mbed"],
-        "name": "STM32F3DISCOVERY",
+        "name": "ST STM32F3DISCOVERY",
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 49152,
@@ -66,7 +66,7 @@
             "mcu": "stm32f100rbt6"
         },
         "frameworks": ["mbed"],
-        "name": "STM32VLDISCOVERY",
+        "name": "ST STM32VLDISCOVERY",
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 8192,
@@ -82,7 +82,7 @@
             "mcu": "stm32f051r8t6"
         },
         "frameworks": ["mbed"],
-        "name": "STM32F0DISCOVERY",
+        "name": "ST STM32F0DISCOVERY",
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 8192,
@@ -98,7 +98,7 @@
             "mcu": "stm32f334c8t6"
         },
         "frameworks": ["mbed"],
-        "name": "32F3348DISCOVERY",
+        "name": "ST 32F3348DISCOVERY",
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 16384,
@@ -114,7 +114,7 @@
             "mcu": "stm32f401vct6"
         },
         "frameworks": ["mbed"],
-        "name": "32F401CDISCOVERY",
+        "name": "ST 32F401CDISCOVERY",
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 65536,
@@ -130,7 +130,7 @@
             "mcu": "stm32f429zit6"
         },
         "frameworks": ["mbed"],
-        "name": "32F429IDISCOVERY",
+        "name": "ST 32F429IDISCOVERY",
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 262144,
