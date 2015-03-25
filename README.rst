@@ -1,8 +1,8 @@
 PlatformIO
 ==========
 
-.. image:: https://travis-ci.org/ivankravets/platformio.svg?branch=develop
-    :target: https://travis-ci.org/ivankravets/platformio
+.. image:: https://travis-ci.org/platformio/platformio.svg?branch=develop
+    :target: https://travis-ci.org/profile/platformio
     :alt: Build Status
 .. image:: https://gemnasium.com/ivankravets/platformio.png
     :target: https://gemnasium.com/ivankravets/platformio
@@ -19,11 +19,11 @@ PlatformIO
 
 `Website + Library Search <http://platformio.org>`_ |
 `Documentation <http://docs.platformio.org>`_ |
-`Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
+`Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_
 
-.. image:: https://raw.githubusercontent.com/ivankravets/platformio/develop/docs/_static/platformio-logo.png
+.. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
 
 `PlatformIO <http://platformio.org>`_ is a cross-platform code builder
@@ -57,7 +57,7 @@ Embedded Development. *Easier Than Ever.*
 *PlatformIO* is well suited for embedded development and has pre-configured
 settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 
-* Colourful `command-line output <https://raw.githubusercontent.com/ivankravets/platformio/develop/examples/platformio-examples.png>`_
+* Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
 * Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
 * Configurable `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
 * Automatic **firmware uploading**

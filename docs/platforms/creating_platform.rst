@@ -238,7 +238,7 @@ base template of ``test-builder.py``.
     )
 
     # The source code of "platformio-build-tool" is here
-    # https://github.com/ivankravets/platformio/blob/develop/platformio/builder/tools/platformio.py
+    # https://github.com/platformio/platformio/blob/develop/platformio/builder/tools/platformio.py
 
     #
     # Target: Build executable and linkable firmware
