@@ -265,9 +265,11 @@ base template of ``test-builder.py``.
 Please look into the examples with built-in scripts for the popular
 platforms:
 
-* `atmelavr.py <https://github.com/ivankravets/platformio/blob/develop/platformio/builder/scripts/atmelavr.py>`_
-* `timsp430.py <https://github.com/ivankravets/platformio/blob/develop/platformio/builder/scripts/timsp430.py>`_
-* `titiva.py <https://github.com/ivankravets/platformio/blob/develop/platformio/builder/scripts/titiva.py>`_
+* `baseavr.py <https://github.com/platformio/platformio/blob/develop/platformio/builder/scripts/baseavr.py>`_
+* `basearm.py <https://github.com/platformio/platformio/blob/develop/platformio/builder/scripts/basearm.py>`_
+* `atmelavr.py <https://github.com/platformio/platformio/blob/develop/platformio/builder/scripts/atmelavr.py>`_
+* `timsp430.py <https://github.com/platformio/platformio/blob/develop/platformio/builder/scripts/timsp430.py>`_
+* `ststm32.py <https://github.com/platformio/platformio/blob/develop/platformio/builder/scripts/ststm32.py>`_
 
 .. _platform_creating_installation:
 
