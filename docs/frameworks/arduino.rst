@@ -57,28 +57,28 @@ Adafruit
       - 2.5 Kb
 
     * - ``protrinket3``
-      - `Pro Trinket 3V/12MHz (USB) <http://www.adafruit.com/products/2010>`_
+      - `Adafruit Pro Trinket 3V/12MHz (USB) <http://www.adafruit.com/products/2010>`_
       - ATMEGA328P
       - 12 MHz
       - 32 Kb
       - 2 Kb
 
     * - ``protrinket3ftdi``
-      - `Pro Trinket 3V/12MHz (FTDI) <http://www.adafruit.com/products/2010>`_
+      - `Adafruit Pro Trinket 3V/12MHz (FTDI) <http://www.adafruit.com/products/2010>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
       - 2 Kb
 
     * - ``protrinket5``
-      - `Pro Trinket 5V/16MHz (USB) <http://www.adafruit.com/products/2000>`_
+      - `Adafruit Pro Trinket 5V/16MHz (USB) <http://www.adafruit.com/products/2000>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
       - 2 Kb
 
     * - ``protrinket5ftdi``
-      - `Pro Trinket 5V/16MHz (USB) <http://www.adafruit.com/products/2000>`_
+      - `Adafruit Pro Trinket 5V/16MHz (USB) <http://www.adafruit.com/products/2000>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
@@ -112,7 +112,7 @@ Arduino
       - RAM
 
     * - ``LilyPadUSB``
-      - `LilyPad Arduino USB <http://arduino.cc/en/Main/ArduinoBoardLilyPadUSB>`_
+      - `Arduino LilyPad USB <http://arduino.cc/en/Main/ArduinoBoardLilyPadUSB>`_
       - ATMEGA32U4
       - 8 MHz
       - 32 Kb
@@ -203,14 +203,14 @@ Arduino
       - 2.5 Kb
 
     * - ``lilypadatmega168``
-      - `LilyPad Arduino ATmega168 <http://arduino.cc/en/Main/ArduinoBoardLilyPad>`_
+      - `Arduino LilyPad ATmega168 <http://arduino.cc/en/Main/ArduinoBoardLilyPad>`_
       - ATMEGA168
       - 8 MHz
       - 16 Kb
       - 1 Kb
 
     * - ``lilypadatmega328``
-      - `LilyPad Arduino ATmega328 <http://arduino.cc/en/Main/ArduinoBoardLilyPad>`_
+      - `Arduino LilyPad ATmega328 <http://arduino.cc/en/Main/ArduinoBoardLilyPad>`_
       - ATMEGA328P
       - 8 MHz
       - 32 Kb
@@ -342,7 +342,7 @@ BitWizard
       - RAM
 
     * - ``raspduino``
-      - `Raspduino <http://www.bitwizard.nl/wiki/index.php/Raspduino>`_
+      - `BitWizard Raspduino <http://www.bitwizard.nl/wiki/index.php/Raspduino>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
@@ -362,28 +362,28 @@ Digistump
       - RAM
 
     * - ``digispark-pro``
-      - `Digispark Pro (Default 16 MHz) <http://digistump.com/products/109>`_
+      - `Digistump Digispark Pro (Default 16 MHz) <http://digistump.com/products/109>`_
       - ATTINY167
       - 16 MHz
       - 16 Kb
       - 0.5 Kb
 
     * - ``digispark-pro32``
-      - `Digispark Pro (16 MHz) (32 byte buffer) <http://digistump.com/products/109>`_
+      - `Digistump Digispark Pro (16 MHz) (32 byte buffer) <http://digistump.com/products/109>`_
       - ATTINY167
       - 16 MHz
       - 16 Kb
       - 0.5 Kb
 
     * - ``digispark-pro64``
-      - `Digispark Pro (16 MHz) (64 byte buffer) <http://digistump.com/products/109>`_
+      - `Digistump Digispark Pro (16 MHz) (64 byte buffer) <http://digistump.com/products/109>`_
       - ATTINY167
       - 16 MHz
       - 16 Kb
       - 0.5 Kb
 
     * - ``digispark-tiny``
-      - `Digispark (Default - 16 MHz) <http://digistump.com/products/1>`_
+      - `Digistump Digispark (Default - 16 MHz) <http://digistump.com/products/1>`_
       - ATTINY85
       - 16 MHz
       - 8 Kb

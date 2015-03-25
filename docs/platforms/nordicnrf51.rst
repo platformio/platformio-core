@@ -144,7 +144,7 @@ SeeedStudio
       - RAM
 
     * - ``seeedTinyBLE``
-      - `Seeed Tiny BLE <http://developer.mbed.org/platforms/Seeed-Tiny-BLE/>`_
+      - `SeeedStudio Seeed Tiny BLE <http://developer.mbed.org/platforms/Seeed-Tiny-BLE/>`_
       - NRF51822
       - 16 MHz
       - 256 Kb
