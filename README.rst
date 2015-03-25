@@ -23,6 +23,9 @@ PlatformIO
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_
 
+*Atmel AVR & SAM, Freescale Kinetis, Nordic nRF51, NXP LPC, ST STM32,
+TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
+
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
 
