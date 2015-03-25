@@ -7,6 +7,11 @@ Release History
 * Moved PlatformIO source code and repositories from Ivan Kravets's account
   to `PlatformIO Organisation <https://github.com/platformio>`_
   (`issue #138 <https://github.com/platformio/platformio/issues/138>`_)
+* Added support for new Arduino based boards by *SparkFun, RepRap, Sanguino* to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform
+  (`issue #127 <https://github.com/platformio/platformio/issues/127>`_,
+  `issue #131 <https://github.com/platformio/platformio/issues/131>`_)
 * Improved handling of multi-file ``*.ino/pde`` sketches
   (`issue #130 <https://github.com/platformio/platformio/issues/130>`_)
 

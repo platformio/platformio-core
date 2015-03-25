@@ -533,6 +533,26 @@ PanStamp
       - 32 Kb
       - 4 Kb
 
+RepRap
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``reprap_rambo``
+      - `RepRap RAMBo <http://reprap.org/wiki/Rambo>`_
+      - ATMEGA2560
+      - 16 MHz
+      - 256 Kb
+      - 8 Kb
+
 SainSmart
 ~~~~~~~~~
 
@@ -559,6 +579,116 @@ SainSmart
       - 84 MHz
       - 512 Kb
       - 32 Kb
+
+Sanguino
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``sanguino_atmega12848m``
+      - `Sanguino ATmega1284p (8MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA1284P
+      - 8 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``sanguino_atmega1284m``
+      - `Sanguino ATmega1284p (20MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA1284P
+      - 20 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``sanguino_atmega1284p``
+      - `Sanguino ATmega1284p (16MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA1284P
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``sanguino_atmega644p``
+      - `Sanguino ATmega644P <https://code.google.com/p/sanguino/>`_
+      - ATMEGA644P
+      - 16 MHz
+      - 64 Kb
+      - 4 Kb
+
+SparkFun
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``sparkfun_fiov3``
+      - `SparkFun Fio V3 3.3V/8MHz <https://www.sparkfun.com/products/11520>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``sparkfun_makeymakey``
+      - `SparkFun Makey Makey <https://www.sparkfun.com/products/11511>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``sparkfun_megamini``
+      - `SparkFun Mega Pro Mini 3.3V <https://www.sparkfun.com/products/10743>`_
+      - ATMEGA2560
+      - 8 MHz
+      - 256 Kb
+      - 8 Kb
+
+    * - ``sparkfun_megapro16MHz``
+      - `SparkFun Mega Pro 5V/16MHz <https://www.sparkfun.com/products/11007>`_
+      - ATMEGA2560
+      - 16 MHz
+      - 256 Kb
+      - 8 Kb
+
+    * - ``sparkfun_megapro8MHz``
+      - `SparkFun Mega Pro 3.3V/8MHz <https://www.sparkfun.com/products/10744>`_
+      - ATMEGA2560
+      - 8 MHz
+      - 256 Kb
+      - 8 Kb
+
+    * - ``sparkfun_promicro16``
+      - `SparkFun Pro Micro 5V/16MHz <https://www.sparkfun.com/products/12640>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``sparkfun_promicro8``
+      - `SparkFun Pro Micro 3.3V/8MHz <https://www.sparkfun.com/products/12587>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``sparkfun_redboard``
+      - `SparkFun RedBoard <https://www.sparkfun.com/products/12757>`_
+      - ATMEGA328P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
 
 Teensy
 ~~~~~~
