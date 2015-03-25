@@ -14,7 +14,7 @@ This software can be used with:
 * :ref:`platform_titiva`
 * :ref:`framework_energia`
 
-Refer to the `Energia Getting Started <hhttp://energia.nu/guide/>`_
+Refer to the `Energia Getting Started <http://energia.nu/guide/>`_
 page for Installation instructions.
 
 Integration
