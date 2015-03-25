@@ -12,8 +12,14 @@ Release History
   platform
   (`issue #127 <https://github.com/platformio/platformio/issues/127>`_,
   `issue #131 <https://github.com/platformio/platformio/issues/131>`_)
+* Added integration instructions for `Visual Studio <http://docs.platformio.org/en/latest/ide/visualstudio.html>`_
+  and `Sublime Text <http://docs.platformio.org/en/latest/ide/sublimetext.html>`_ IDEs
 * Improved handling of multi-file ``*.ino/pde`` sketches
   (`issue #130 <https://github.com/platformio/platformio/issues/130>`_)
+* Fixed wrong insertion of function prototypes converting ``*.ino/pde``
+  (`issue #137 <https://github.com/platformio/platformio/issues/137>`_,
+  `issue #140 <https://github.com/platformio/platformio/issues/140>`_)
+
 
 
 1.2.0 (2015-03-20)

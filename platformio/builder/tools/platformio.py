@@ -273,7 +273,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
     return libs
 
 
-def ConvertInoToCpp(env):
+class InoToCPPConverter(object):
 
     PROTOTYPE_RE = re.compile(
         r"""^(
@@ -287,40 +287,87 @@ def ConvertInoToCpp(env):
 
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
 
+    STRIPCOMMENTS_RE = re.compile(r"(/\*.*?\*/|//[^\r\n]*$)", re.M | re.S)
+
+    def __init__(self, nodes):
+        self.nodes = nodes
+
+    def is_main_node(self, contents):
+        return self.DETECTMAIN_RE.search(contents)
+
+    @staticmethod
+    def _replace_comments_callback(match):
+        if "\n" in match.group(1):
+            return "\n" * match.group(1).count("\n")
+        else:
+            return " "
+
+    def append_prototypes(self, fname, contents, prototypes):
+        contents = self.STRIPCOMMENTS_RE.sub(self._replace_comments_callback,
+                                             contents)
+        result = []
+        is_appended = False
+        linenum = 0
+        for line in contents.splitlines():
+            linenum += 1
+            line = line.strip()
+
+            if not is_appended and line and not line.startswith("#"):
+                is_appended = True
+                result.append("%s;" % ";\n".join(prototypes))
+                result.append('#line %d "%s"' % (linenum, fname))
+
+            result.append(line)
+
+        return result
+
+    def convert(self):
+        prototypes = []
+        data = []
+        for node in self.nodes:
+            ino_contents = node.get_text_contents()
+            prototypes += self.PROTOTYPE_RE.findall(ino_contents)
+
+            item = (basename(node.get_path()), ino_contents)
+            if self.is_main_node(ino_contents):
+                data = [item] + data
+            else:
+                data.append(item)
+
+        if not data:
+            return None
+
+        result = ["#include <Arduino.h>"]
+        is_first = True
+
+        for name, contents in data:
+            if is_first and prototypes:
+                result += self.append_prototypes(name, contents, prototypes)
+            else:
+                result.append('#line 1 "%s"' % name)
+                result.append(contents)
+            is_first = False
+
+        return "\n".join(result)
+
+
+def ConvertInoToCpp(env):
+
     def delete_tmpcpp_file(file_):
         remove(file_)
 
-    def is_main_ino(contents):
-        return DETECTMAIN_RE.search(contents)
-
     ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
                  env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
-    prototypes = []
-    data = []
-    for node in ino_nodes:
-        ino_contents = node.get_text_contents()
-        prototypes += PROTOTYPE_RE.findall(ino_contents)
 
-        item = (basename(node.get_path()), ino_contents)
-        if is_main_ino(ino_contents):
-            data = [item] + data
-        else:
-            data.append(item)
+    c = InoToCPPConverter(ino_nodes)
+    data = c.convert()
 
     if not data:
         return
 
-    # create new temporary C++ valid file
     tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "piomain.cpp")
     with open(tmpcpp_file, "w") as f:
-        f.write("#include <Arduino.h>\n")
-
-        if prototypes:
-            f.write("%s;" % ";\n".join(prototypes))
-
-        for name, contents in data:
-            f.write('\n#line 1 "%s"\n' % name)
-            f.write(contents)
+        f.write(data)
 
     atexit.register(delete_tmpcpp_file, tmpcpp_file)
 
