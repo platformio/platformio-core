@@ -4,12 +4,14 @@ PlatformIO: A cross-platform code builder and the missing library manager
 .. image:: _static/platformio-logo.png
     :target: http://platformio.org
 
-`Website + Library Search <http://platformio.org>`_ |
-`Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
-`Source Code <https://github.com/platformio/platformio>`_ |
-`Issues <https://github.com/platformio/platformio/issues>`_ |
-`Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
-`Twitter <https://twitter.com/PlatformIO_Org>`_
+* `Website <http://platformio.org>`_
+* `Web 2.0 Library Search <http://platformio.org/#!/lib>`_ |
+  `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+* `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_
+* `Source Code <https://github.com/platformio/platformio>`_ |
+  `Issues <https://github.com/platformio/platformio/issues>`_
+* `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
+  `Twitter <https://twitter.com/PlatformIO_Org>`_
 
 You have no need to install any *IDE* or compile any tool chains. *PlatformIO*
 has pre-built different development platforms including: compiler, debugger,

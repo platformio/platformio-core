@@ -33,7 +33,7 @@ and the missing library manager.
 * `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
 * `Development Platforms <http://platformio.org/#!/platforms>`_
 * `Frameworks <http://platformio.org/#!/frameworks>`_
-* `Embedded Boards <http://platformio.org/#!/boards>`_
+* `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
 * `Library Manager <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
 * `User Guide <http://docs.platformio.org/en/latest/userguide/index.html>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_
