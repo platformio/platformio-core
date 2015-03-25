@@ -65,7 +65,7 @@ settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 * Ready for **Cloud Compiling** and **Continuous Integration**
 * Pre-built tool chains, frameworks for the popular `Hardware Platforms <http://platformio.org/#!/platforms>`_
 
-.. image:: https://raw.githubusercontent.com/ivankravets/platformio-web/develop/app/images/platformio-embedded-development.png
+.. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-embedded-development.png
     :target: http://platformio.org
     :alt:  PlatformIO Embedded Development Process
 
@@ -76,13 +76,13 @@ platforms which allows you to organize and have up-to-date external libraries.
 
 * Friendly `Command-Line Interface <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
 * Modern `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
-* Open Source `Library Registry API <https://github.com/ivankravets/platformio-api>`_
+* Open Source `Library Registry API <https://github.com/platformio/platformio-api>`_
 * Library Crawler based on `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`_
   specification
 * Library **dependency management**
 * Automatic library updating
 
-.. image:: https://raw.githubusercontent.com/ivankravets/platformio-web/develop/app/images/platformio-library-manager.png
+.. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-library-manager.png
     :target: http://platformio.org
     :alt:  PlatformIO Library Manager Architecture
 
@@ -98,7 +98,7 @@ cross-platform substitute for the classic *Make* utility.
 * Ability to share *built files in a cache*
 * Lookup for external libraries which are installed via `Library Manager <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
 
-.. image:: https://raw.githubusercontent.com/ivankravets/platformio-web/develop/app/images/platformio-scons-builder.png
+.. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-scons-builder.png
     :target: http://platformio.org
     :alt:  PlatformIO Code Builder Architecture
 

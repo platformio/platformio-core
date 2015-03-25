@@ -15,7 +15,7 @@ Source Code Location
 --------------------
 
 There are a several ways how to share your library with the whole world
-(see `examples <https://github.com/ivankravets/platformio-libmirror/tree/master/configs>`_).
+(see `examples <https://github.com/platformio/platformio-libmirror/tree/master/configs>`_).
 
 You can hold a lot of libraries (split into separated folders) inside one of
 the repository/archive. In this case please use :ref:`libjson_include`

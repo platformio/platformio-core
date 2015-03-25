@@ -6,7 +6,7 @@ PlatformIO: A cross-platform code builder and the missing library manager
 
 `Website + Library Search <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
-`Source Code <https://github.com/ivankravets/platformio>`_ |
+`Source Code <https://github.com/platformio/platformio>`_ |
 `Issues <https://github.com/platformio/platformio/issues>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_

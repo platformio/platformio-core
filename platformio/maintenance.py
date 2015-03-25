@@ -115,7 +115,7 @@ def after_upgrade(ctx):
     )
     click.echo("- %s us a star on GitHub > %s" % (
         click.style("give", fg="cyan"),
-        click.style("https://github.com/ivankravets/platformio", fg="cyan")
+        click.style("https://github.com/platformio/platformio", fg="cyan")
     ))
     click.secho("Thanks a lot!\n", fg="green")
 
