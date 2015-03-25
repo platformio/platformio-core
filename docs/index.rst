@@ -68,4 +68,5 @@ Contents
     librarymanager/index
     userguide/index
     ide
+    articles
     history

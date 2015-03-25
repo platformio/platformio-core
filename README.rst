@@ -40,6 +40,7 @@ and the missing library manager.
 * `Library Manager <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
 * `User Guide <http://docs.platformio.org/en/latest/userguide/index.html>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_
+* `Articles about us <http://docs.platformio.org/en/latest/articles.html>`_
 * `Release History <http://docs.platformio.org/en/latest/history.html>`_
 
 You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
