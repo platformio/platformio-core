@@ -14,6 +14,7 @@ TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
 * `Source Code <https://github.com/platformio/platformio>`_ |
   `Issues <https://github.com/platformio/platformio/issues>`_
 * `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
+  `Reddit <http://www.reddit.com/r/platformio/>`_ |
   `Twitter <https://twitter.com/PlatformIO_Org>`_
 
 You have no need to install any *IDE* or compile any tool chains. *PlatformIO*
