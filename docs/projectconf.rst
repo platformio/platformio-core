@@ -73,7 +73,7 @@ This option can be overridden by global environment variable
 .. note::
     This option is useful for people who migrate from Arduino/Energia IDEs where
     source directory should have the same name like the main source file.
-    See `example <https://github.com/ivankravets/platformio/tree/develop/examples/atmelavr-and-arduino/arduino-own-src_dir>`__ project with own source directory.
+    See `example <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino/arduino-own-src_dir>`__ project with own source directory.
 
 .. _projectconf_pio_envs_dir:
 
@@ -329,7 +329,7 @@ Examples
 
 .. note::
     A full list with project examples can be found in
-    `PlatformIO Repository <https://github.com/ivankravets/platformio/tree/develop/examples>`_.
+    `PlatformIO Repository <https://github.com/platformio/platformio/tree/develop/examples>`_.
 
 1. :ref:`platform_atmelavr`: Arduino UNO board with auto pre-configured
    ``board_*`` and ``upload_*`` options (use only ``board`` option) and Arduino

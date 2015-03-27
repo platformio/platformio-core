@@ -25,7 +25,7 @@ Packages
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
 
@@ -144,7 +144,7 @@ SeeedStudio
       - RAM
 
     * - ``seeedTinyBLE``
-      - `Seeed Tiny BLE <http://developer.mbed.org/platforms/Seeed-Tiny-BLE/>`_
+      - `SeeedStudio Seeed Tiny BLE <http://developer.mbed.org/platforms/Seeed-Tiny-BLE/>`_
       - NRF51822
       - 16 MHz
       - 256 Kb

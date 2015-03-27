@@ -1,15 +1,20 @@
 PlatformIO: A cross-platform code builder and the missing library manager
 =========================================================================
 
+*Atmel AVR & SAM, Freescale Kinetis, Nordic nRF51, NXP LPC, ST STM32,
+TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
+
 .. image:: _static/platformio-logo.png
     :target: http://platformio.org
 
-`Website + Library Search <http://platformio.org>`_ |
-`Project Examples <https://github.com/ivankravets/platformio/tree/develop/examples>`_ |
-`Source Code <https://github.com/ivankravets/platformio>`_ |
-`Issues <https://github.com/ivankravets/platformio/issues>`_ |
-`Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
-`Twitter <https://twitter.com/PlatformIO_Org>`_
+* `Website <http://platformio.org>`_
+* `Web 2.0 Library Search <http://platformio.org/#!/lib>`_ |
+  `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+* `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_
+* `Source Code <https://github.com/platformio/platformio>`_ |
+  `Issues <https://github.com/platformio/platformio/issues>`_
+* `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
+  `Twitter <https://twitter.com/PlatformIO_Org>`_
 
 You have no need to install any *IDE* or compile any tool chains. *PlatformIO*
 has pre-built different development platforms including: compiler, debugger,
@@ -63,4 +68,5 @@ Contents
     librarymanager/index
     userguide/index
     ide
+    articles
     history

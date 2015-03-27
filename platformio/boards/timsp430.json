@@ -7,7 +7,7 @@
             "variant": "launchpad_f5529"
         },
         "frameworks": ["energia"],
-        "name": "LaunchPad w/ msp430f5529 (16MHz)",
+        "name": "TI LaunchPad w/ msp430f5529 (16MHz)",
         "platform": "timsp430",
         "upload": {
             "maximum_ram_size": 1024,
@@ -25,7 +25,7 @@
             "variant": "launchpad_f5529"
         },
         "frameworks": ["energia"],
-        "name": "LaunchPad w/ msp430f5529 (25MHz)",
+        "name": "TI LaunchPad w/ msp430f5529 (25MHz)",
         "platform": "timsp430",
         "upload": {
             "maximum_ram_size": 1024,
@@ -43,7 +43,7 @@
             "variant": "fraunchpad"
         },
         "frameworks": ["energia"],
-        "name": "FraunchPad w/ msp430fr5739",
+        "name": "TI FraunchPad w/ msp430fr5739",
         "platform": "timsp430",
         "upload": {
             "maximum_ram_size": 1024,
@@ -61,7 +61,7 @@
             "variant": "launchpad_fr5969"
         },
         "frameworks": ["energia"],
-        "name": "LaunchPad w/ msp430fr5969",
+        "name": "TI LaunchPad w/ msp430fr5969",
         "platform": "timsp430",
         "upload": {
             "maximum_ram_size": 1024,
@@ -79,7 +79,7 @@
             "variant": "launchpad"
         },
         "frameworks": ["energia"],
-        "name": "LaunchPad w/ msp430g2231 (1 MHz)",
+        "name": "TI LaunchPad w/ msp430g2231 (1 MHz)",
         "platform": "timsp430",
         "upload": {
             "maximum_ram_size": 128,
@@ -97,7 +97,7 @@
             "variant": "launchpad"
         },
         "frameworks": ["energia"],
-        "name": "LaunchPad w/ msp430g2452 (16MHz)",
+        "name": "TI LaunchPad w/ msp430g2452 (16MHz)",
         "platform": "timsp430",
         "upload": {
             "maximum_ram_size": 256,
@@ -115,7 +115,7 @@
             "variant": "launchpad"
         },
         "frameworks": ["energia"],
-        "name": "LaunchPad w/ msp430g2553 (16MHz)",
+        "name": "TI LaunchPad w/ msp430g2553 (16MHz)",
         "platform": "timsp430",
         "upload": {
             "maximum_ram_size": 512,

@@ -123,7 +123,7 @@ def main():
     if is_error:
         print ("The installation process has been FAILED!\n"
                "Please report about this problem here\n"
-               "< https://github.com/ivankravets/platformio/issues >")
+               "< https://github.com/platformio/platformio/issues >")
         return
     else:
         print ("\n ==> Installation process has been "

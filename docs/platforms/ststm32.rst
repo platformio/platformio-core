@@ -40,7 +40,7 @@ Packages
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
 
@@ -87,56 +87,56 @@ ST
       - RAM
 
     * - ``disco_f051r8``
-      - `STM32F0DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF253215>`_
+      - `ST STM32F0DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF253215>`_
       - STM32F051R8T6
       - 48 MHz
       - 64 Kb
       - 8 Kb
 
     * - ``disco_f100rb``
-      - `STM32VLDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF250863>`_
+      - `ST STM32VLDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF250863>`_
       - STM32F100RBT6
       - 24 MHz
       - 128 Kb
       - 8 Kb
 
     * - ``disco_f303vc``
-      - `STM32F3DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF254044>`_
+      - `ST STM32F3DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF254044>`_
       - STM32F303VCT6
       - 72 MHz
       - 256 Kb
       - 48 Kb
 
     * - ``disco_f334c8``
-      - `32F3348DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF260318>`_
+      - `ST 32F3348DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF260318>`_
       - STM32F334C8T6
       - 72 MHz
       - 64 Kb
       - 16 Kb
 
     * - ``disco_f401vc``
-      - `32F401CDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259098>`_
+      - `ST 32F401CDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259098>`_
       - STM32F401VCT6
       - 84 MHz
       - 256 Kb
       - 64 Kb
 
     * - ``disco_f407vg``
-      - `STM32F4DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF252419>`_
+      - `ST STM32F4DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF252419>`_
       - STM32F407VGT6
       - 168 MHz
       - 1024 Kb
       - 128 Kb
 
     * - ``disco_f429zi``
-      - `32F429IDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259090>`_
+      - `ST 32F429IDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259090>`_
       - STM32F429ZIT6
       - 180 MHz
       - 2048 Kb
       - 256 Kb
 
     * - ``disco_l152rb``
-      - `STM32LDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF258515>`_
+      - `ST STM32LDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF258515>`_
       - STM32L152RBT6
       - 32 MHz
       - 128 Kb

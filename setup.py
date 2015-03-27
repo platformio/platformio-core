@@ -42,7 +42,7 @@ setup(
         "Topic :: Software Development :: Build Tools",
         "Topic :: Software Development :: Compilers"
     ],
-    keywords=("builder library manager atmel avr sam freescale kinetis nordic"
-              "nrf51 nxp lpc st stm32 ti msp430 tiva teensy arduino mbed"
+    keywords=("builder library manager atmel avr sam freescale kinetis nordic "
+              "nrf51 nxp lpc st stm32 ti msp430 tiva teensy arduino mbed "
               "libopencm3")
 )

@@ -9,7 +9,7 @@
             "variant": "stellarpad"
         },
         "frameworks": ["energia", "libopencm3"],
-        "name": "LaunchPad (Stellaris) w/ lm4f120 (80MHz)",
+        "name": "TI LaunchPad (Stellaris) w/ lm4f120 (80MHz)",
         "platform": "titiva",
         "upload": {
             "maximum_ram_size": 32768,
@@ -28,7 +28,7 @@
             "variant": "stellarpad"
         },
         "frameworks": ["energia", "libopencm3"],
-        "name": "LaunchPad (Tiva C) w/ tm4c123 (80MHz)",
+        "name": "TI LaunchPad (Tiva C) w/ tm4c123 (80MHz)",
         "platform": "titiva",
         "upload": {
             "maximum_ram_size": 32768,
@@ -47,7 +47,7 @@
             "variant": "launchpad_129"
         },
         "frameworks": ["energia", "libopencm3"],
-        "name": "LaunchPad (Tiva C) w/ tm4c129 (120MHz)",
+        "name": "TI LaunchPad (Tiva C) w/ tm4c129 (120MHz)",
         "platform": "titiva",
         "upload": {
             "maximum_ram_size": 262144,

@@ -25,6 +25,9 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     if env.subst("$UPLOAD_SPEED"):
         env.Append(UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"])
 
+    if "micronucleus" in env['UPLOADER']:
+        print "Please unplug/plug device ..."
+
     if not upload_options.get("require_upload_port", False):
         return
 

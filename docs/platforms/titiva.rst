@@ -34,7 +34,7 @@ Packages
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
 
@@ -75,21 +75,21 @@ TI
       - RAM
 
     * - ``lplm4f120h5qr``
-      - `LaunchPad (Stellaris) w/ lm4f120 (80MHz) <http://www.ti.com/tool/ek-lm4f120xl>`_
+      - `TI LaunchPad (Stellaris) w/ lm4f120 (80MHz) <http://www.ti.com/tool/ek-lm4f120xl>`_
       - LPLM4F120H5QR
       - 80 MHz
       - 256 Kb
       - 32 Kb
 
     * - ``lptm4c1230c3pm``
-      - `LaunchPad (Tiva C) w/ tm4c123 (80MHz) <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c123gxl.html>`_
+      - `TI LaunchPad (Tiva C) w/ tm4c123 (80MHz) <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c123gxl.html>`_
       - LPTM4C1230C3PM
       - 80 MHz
       - 256 Kb
       - 32 Kb
 
     * - ``lptm4c1294ncpdt``
-      - `LaunchPad (Tiva C) w/ tm4c129 (120MHz) <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c1294xl.html>`_
+      - `TI LaunchPad (Tiva C) w/ tm4c129 (120MHz) <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c1294xl.html>`_
       - LPTM4C1294NCPDT
       - 120 MHz
       - 1024 Kb

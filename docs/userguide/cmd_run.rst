@@ -42,7 +42,7 @@ Upload port of embedded board. To print all available ports use
 Examples
 --------
 
-1. Process `Wiring Blink Example <https://github.com/ivankravets/platformio/tree/develop/examples/wiring-blink>`_
+1. Process `Wiring Blink Example <https://github.com/platformio/platformio/tree/develop/examples/wiring-blink>`_
 
 .. code-block::   bash
 

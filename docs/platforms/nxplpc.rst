@@ -25,7 +25,7 @@ Packages
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
 
@@ -63,7 +63,7 @@ CQ Publishing
       - RAM
 
     * - ``lpc11u35_501``
-      - `TG-LPC11U35-501 <https://developer.mbed.org/platforms/TG-LPC11U35-501/>`_
+      - `CQ Publishing TG-LPC11U35-501 <https://developer.mbed.org/platforms/TG-LPC11U35-501/>`_
       - LPC11U35
       - 48 MHz
       - 64 Kb
@@ -83,21 +83,21 @@ Embedded Artists
       - RAM
 
     * - ``lpc11u35``
-      - `EA LPC11U35 QuickStart Board <https://developer.mbed.org/platforms/EA-LPC11U35/>`_
+      - `Embedded Artists LPC11U35 QuickStart Board <https://developer.mbed.org/platforms/EA-LPC11U35/>`_
       - LPC11U35
       - 48 MHz
       - 64 Kb
       - 10 Kb
 
     * - ``lpc4088``
-      - `EA LPC4088 QuickStart Board <https://developer.mbed.org/platforms/EA-LPC4088/>`_
+      - `Embedded Artists LPC4088 QuickStart Board <https://developer.mbed.org/platforms/EA-LPC4088/>`_
       - LPC4088
       - 120 MHz
       - 512 Kb
       - 96 Kb
 
     * - ``lpc4088_dm``
-      - `EA LPC4088 Display Module <https://developer.mbed.org/platforms/EA-LPC4088-Display-Module/>`_
+      - `Embedded Artists LPC4088 Display Module <https://developer.mbed.org/platforms/EA-LPC4088-Display-Module/>`_
       - LPC4088
       - 120 MHz
       - 512 Kb
@@ -117,7 +117,7 @@ NGX Technologies
       - RAM
 
     * - ``blueboard_lpc11u24``
-      - `BlueBoard-LPC11U24 <https://developer.mbed.org/platforms/BlueBoard-LPC11U24/>`_
+      - `NGX Technologies BlueBoard-LPC11U24 <https://developer.mbed.org/platforms/BlueBoard-LPC11U24/>`_
       - LPC11U24
       - 48 MHz
       - 32 Kb
@@ -137,21 +137,21 @@ NXP
       - RAM
 
     * - ``lpc11u24``
-      - `mbed LPC11U24 <https://developer.mbed.org/platforms/mbed-LPC11U24/>`_
+      - `NXP mbed LPC11U24 <https://developer.mbed.org/platforms/mbed-LPC11U24/>`_
       - LPC11U24
       - 48 MHz
       - 32 Kb
       - 8 Kb
 
     * - ``lpc1549``
-      - `LPCXpresso1549 <https://developer.mbed.org/platforms/LPCXpresso1549/>`_
+      - `NXP LPCXpresso1549 <https://developer.mbed.org/platforms/LPCXpresso1549/>`_
       - LPC1549
       - 72 MHz
       - 256 Kb
       - 36 Kb
 
     * - ``lpc1768``
-      - `mbed LPC1768 <http://developer.mbed.org/platforms/mbed-LPC1768/>`_
+      - `NXP mbed LPC1768 <http://developer.mbed.org/platforms/mbed-LPC1768/>`_
       - LPC1768
       - 96 MHz
       - 512 Kb
@@ -191,7 +191,7 @@ SeeedStudio
       - RAM
 
     * - ``seeeduinoArchPro``
-      - `Seeeduino-Arch-Pro <https://developer.mbed.org/platforms/Seeeduino-Arch-Pro/>`_
+      - `SeeedStudio Seeeduino-Arch-Pro <https://developer.mbed.org/platforms/Seeeduino-Arch-Pro/>`_
       - LPC1768
       - 96 MHz
       - 512 Kb
@@ -211,7 +211,7 @@ Solder Splash Labs
       - RAM
 
     * - ``dipcortexm0``
-      - `DipCortex M0 <https://developer.mbed.org/platforms/DipCortex-M0/>`_
+      - `Solder Splash Labs DipCortex M0 <https://developer.mbed.org/platforms/DipCortex-M0/>`_
       - LPC11U24
       - 50 MHz
       - 32 Kb
@@ -231,7 +231,7 @@ Switch Science
       - RAM
 
     * - ``lpc1114fn28``
-      - `mbed LPC1114FN28 <https://developer.mbed.org/platforms/LPC1114FN28/>`_
+      - `Switch Science mbed LPC1114FN28 <https://developer.mbed.org/platforms/LPC1114FN28/>`_
       - LPC1114FN28
       - 48 MHz
       - 32 Kb

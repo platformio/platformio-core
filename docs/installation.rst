@@ -49,14 +49,14 @@ To install or upgrade *PlatformIO* paste that at a *Terminal* prompt
 
 .. code-block:: bash
 
-    python -c "$(curl -fsSL https://raw.githubusercontent.com/ivankravets/platformio/master/scripts/get-platformio.py)"
+    python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
 
 
 Installer Script (Mac / Linux / Windows)
 ----------------------------------------
 
 To install or upgrade *PlatformIO*, download
-`get-platformio.py <https://raw.githubusercontent.com/ivankravets/platformio/develop/scripts/get-platformio.py>`_
+`get-platformio.py <https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py>`_
 script. Then run the following (you might need to run ``sudo`` first):
 
 .. code-block:: bash
@@ -136,8 +136,8 @@ Development Version
 
 .. code-block:: bash
 
-    $ pip install https://github.com/ivankravets/platformio/archive/develop.zip
+    $ pip install https://github.com/platformio/platformio/archive/develop.zip
 
 If you want to be up-to-date with the latest ``develop`` version of PlatformIO,
 then you need to perform step #2 each time if you see the new commits in
-`PlatformIO GitHub repository <https://github.com/ivankravets/platformio/commits/develop>`_.
+`PlatformIO GitHub repository <https://github.com/platformio/platformio/commits/develop>`_.

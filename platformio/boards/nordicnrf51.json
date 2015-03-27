@@ -118,7 +118,7 @@
             "mcu": "nrf51822"
         },
         "frameworks": ["mbed"],
-        "name": "Seeed Tiny BLE",
+        "name": "SeeedStudio Seeed Tiny BLE",
         "platform": "nordicnrf51",
         "upload": {
             "maximum_ram_size": 16384,

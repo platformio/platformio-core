@@ -273,45 +273,103 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
     return libs
 
 
+class InoToCPPConverter(object):
+
+    PROTOTYPE_RE = re.compile(
+        r"""^(
+        (?:\s*[a-z_\d]+){1,2}       # return type
+        \s+[a-z_\d]+\s*             # name of prototype
+        \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
+        )\s*\{                      # must end with {
+        """,
+        re.X | re.M | re.I
+    )
+
+    DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
+
+    STRIPCOMMENTS_RE = re.compile(r"(/\*.*?\*/|//[^\r\n]*$)", re.M | re.S)
+
+    def __init__(self, nodes):
+        self.nodes = nodes
+
+    def is_main_node(self, contents):
+        return self.DETECTMAIN_RE.search(contents)
+
+    @staticmethod
+    def _replace_comments_callback(match):
+        if "\n" in match.group(1):
+            return "\n" * match.group(1).count("\n")
+        else:
+            return " "
+
+    def append_prototypes(self, fname, contents, prototypes):
+        contents = self.STRIPCOMMENTS_RE.sub(self._replace_comments_callback,
+                                             contents)
+        result = []
+        is_appended = False
+        linenum = 0
+        for line in contents.splitlines():
+            linenum += 1
+            line = line.strip()
+
+            if not is_appended and line and not line.startswith("#"):
+                is_appended = True
+                result.append("%s;" % ";\n".join(prototypes))
+                result.append('#line %d "%s"' % (linenum, fname))
+
+            result.append(line)
+
+        return result
+
+    def convert(self):
+        prototypes = []
+        data = []
+        for node in self.nodes:
+            ino_contents = node.get_text_contents()
+            prototypes += self.PROTOTYPE_RE.findall(ino_contents)
+
+            item = (basename(node.get_path()), ino_contents)
+            if self.is_main_node(ino_contents):
+                data = [item] + data
+            else:
+                data.append(item)
+
+        if not data:
+            return None
+
+        result = ["#include <Arduino.h>"]
+        is_first = True
+
+        for name, contents in data:
+            if is_first and prototypes:
+                result += self.append_prototypes(name, contents, prototypes)
+            else:
+                result.append('#line 1 "%s"' % name)
+                result.append(contents)
+            is_first = False
+
+        return "\n".join(result)
+
+
 def ConvertInoToCpp(env):
 
-    def delete_tmpcpp(files):
-        for f in files:
-            remove(f)
+    def delete_tmpcpp_file(file_):
+        remove(file_)
 
-    tmpcpp = []
-    items = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
-             env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
-    for item in items:
-        cppfile = item.get_path()[:-3] + "cpp"
-        if isfile(cppfile):
-            continue
-        ino_contents = item.get_text_contents()
+    ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
+                 env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
 
-        prototypes = re.findall(
-            r"""^(
-            (?:\s*[a-z_\d]+){1,2}       # return type
-            \s+[a-z_\d]+\s*             # name of prototype
-            \([a-z_,\.\*\&\[\]\s\d]*\)  # args
-            )\s*\{                      # must end with {
-            """,
-            ino_contents,
-            re.X | re.M | re.I
-        )
-        prototypes = [p.strip() for p in prototypes]
-        # print prototypes
+    c = InoToCPPConverter(ino_nodes)
+    data = c.convert()
 
-        # create new temporary C++ valid file
-        with open(cppfile, "w") as f:
-            f.write("#include <Arduino.h>\n")
-            if prototypes:
-                f.write("%s;\n" % ";\n".join(prototypes))
-            f.write('#line 1 "%s"\n' % basename(item.path))
-            f.write(ino_contents)
-        tmpcpp.append(cppfile)
+    if not data:
+        return
 
-    if tmpcpp:
-        atexit.register(delete_tmpcpp, tmpcpp)
+    tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "piomain.cpp")
+    with open(tmpcpp_file, "w") as f:
+        f.write(data)
+
+    atexit.register(delete_tmpcpp_file, tmpcpp_file)
 
 
 def exists(_):

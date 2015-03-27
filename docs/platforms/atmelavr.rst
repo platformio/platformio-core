@@ -31,7 +31,7 @@ Packages
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
 
@@ -76,28 +76,28 @@ Adafruit
       - 2.5 Kb
 
     * - ``protrinket3``
-      - `Pro Trinket 3V/12MHz (USB) <http://www.adafruit.com/products/2010>`_
+      - `Adafruit Pro Trinket 3V/12MHz (USB) <http://www.adafruit.com/products/2010>`_
       - ATMEGA328P
       - 12 MHz
       - 32 Kb
       - 2 Kb
 
     * - ``protrinket3ftdi``
-      - `Pro Trinket 3V/12MHz (FTDI) <http://www.adafruit.com/products/2010>`_
+      - `Adafruit Pro Trinket 3V/12MHz (FTDI) <http://www.adafruit.com/products/2010>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
       - 2 Kb
 
     * - ``protrinket5``
-      - `Pro Trinket 5V/16MHz (USB) <http://www.adafruit.com/products/2000>`_
+      - `Adafruit Pro Trinket 5V/16MHz (USB) <http://www.adafruit.com/products/2000>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
       - 2 Kb
 
     * - ``protrinket5ftdi``
-      - `Pro Trinket 5V/16MHz (USB) <http://www.adafruit.com/products/2000>`_
+      - `Adafruit Pro Trinket 5V/16MHz (USB) <http://www.adafruit.com/products/2000>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
@@ -131,7 +131,7 @@ Arduino
       - RAM
 
     * - ``LilyPadUSB``
-      - `LilyPad Arduino USB <http://arduino.cc/en/Main/ArduinoBoardLilyPadUSB>`_
+      - `Arduino LilyPad USB <http://arduino.cc/en/Main/ArduinoBoardLilyPadUSB>`_
       - ATMEGA32U4
       - 8 MHz
       - 32 Kb
@@ -208,14 +208,14 @@ Arduino
       - 2.5 Kb
 
     * - ``lilypadatmega168``
-      - `LilyPad Arduino ATmega168 <http://arduino.cc/en/Main/ArduinoBoardLilyPad>`_
+      - `Arduino LilyPad ATmega168 <http://arduino.cc/en/Main/ArduinoBoardLilyPad>`_
       - ATMEGA168
       - 8 MHz
       - 16 Kb
       - 1 Kb
 
     * - ``lilypadatmega328``
-      - `LilyPad Arduino ATmega328 <http://arduino.cc/en/Main/ArduinoBoardLilyPad>`_
+      - `Arduino LilyPad ATmega328 <http://arduino.cc/en/Main/ArduinoBoardLilyPad>`_
       - ATMEGA328P
       - 8 MHz
       - 32 Kb
@@ -347,7 +347,7 @@ BitWizard
       - RAM
 
     * - ``raspduino``
-      - `Raspduino <http://www.bitwizard.nl/wiki/index.php/Raspduino>`_
+      - `BitWizard Raspduino <http://www.bitwizard.nl/wiki/index.php/Raspduino>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
@@ -367,28 +367,28 @@ Digistump
       - RAM
 
     * - ``digispark-pro``
-      - `Digispark Pro (Default 16 MHz) <http://digistump.com/products/109>`_
+      - `Digistump Digispark Pro (Default 16 MHz) <http://digistump.com/products/109>`_
       - ATTINY167
       - 16 MHz
       - 16 Kb
       - 0.5 Kb
 
     * - ``digispark-pro32``
-      - `Digispark Pro (16 MHz) (32 byte buffer) <http://digistump.com/products/109>`_
+      - `Digistump Digispark Pro (16 MHz) (32 byte buffer) <http://digistump.com/products/109>`_
       - ATTINY167
       - 16 MHz
       - 16 Kb
       - 0.5 Kb
 
     * - ``digispark-pro64``
-      - `Digispark Pro (16 MHz) (64 byte buffer) <http://digistump.com/products/109>`_
+      - `Digistump Digispark Pro (16 MHz) (64 byte buffer) <http://digistump.com/products/109>`_
       - ATTINY167
       - 16 MHz
       - 16 Kb
       - 0.5 Kb
 
     * - ``digispark-tiny``
-      - `Digispark (Default - 16 MHz) <http://digistump.com/products/1>`_
+      - `Digistump Digispark (Default - 16 MHz) <http://digistump.com/products/1>`_
       - ATTINY85
       - 16 MHz
       - 8 Kb
@@ -521,5 +521,135 @@ PanStamp
       - `PanStamp AVR <http://www.panstamp.com/product/panstamp-avr/>`_
       - ATMEGA328P
       - 8 MHz
+      - 32 Kb
+      - 2 Kb
+
+RepRap
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``reprap_rambo``
+      - `RepRap RAMBo <http://reprap.org/wiki/Rambo>`_
+      - ATMEGA2560
+      - 16 MHz
+      - 256 Kb
+      - 8 Kb
+
+Sanguino
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``sanguino_atmega12848m``
+      - `Sanguino ATmega1284p (8MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA1284P
+      - 8 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``sanguino_atmega1284m``
+      - `Sanguino ATmega1284p (20MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA1284P
+      - 20 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``sanguino_atmega1284p``
+      - `Sanguino ATmega1284p (16MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA1284P
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``sanguino_atmega644p``
+      - `Sanguino ATmega644P <https://code.google.com/p/sanguino/>`_
+      - ATMEGA644P
+      - 16 MHz
+      - 64 Kb
+      - 4 Kb
+
+SparkFun
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``sparkfun_fiov3``
+      - `SparkFun Fio V3 3.3V/8MHz <https://www.sparkfun.com/products/11520>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``sparkfun_makeymakey``
+      - `SparkFun Makey Makey <https://www.sparkfun.com/products/11511>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``sparkfun_megamini``
+      - `SparkFun Mega Pro Mini 3.3V <https://www.sparkfun.com/products/10743>`_
+      - ATMEGA2560
+      - 8 MHz
+      - 256 Kb
+      - 8 Kb
+
+    * - ``sparkfun_megapro16MHz``
+      - `SparkFun Mega Pro 5V/16MHz <https://www.sparkfun.com/products/11007>`_
+      - ATMEGA2560
+      - 16 MHz
+      - 256 Kb
+      - 8 Kb
+
+    * - ``sparkfun_megapro8MHz``
+      - `SparkFun Mega Pro 3.3V/8MHz <https://www.sparkfun.com/products/10744>`_
+      - ATMEGA2560
+      - 8 MHz
+      - 256 Kb
+      - 8 Kb
+
+    * - ``sparkfun_promicro16``
+      - `SparkFun Pro Micro 5V/16MHz <https://www.sparkfun.com/products/12640>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``sparkfun_promicro8``
+      - `SparkFun Pro Micro 3.3V/8MHz <https://www.sparkfun.com/products/12587>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``sparkfun_redboard``
+      - `SparkFun RedBoard <https://www.sparkfun.com/products/12757>`_
+      - ATMEGA328P
+      - 16 MHz
       - 32 Kb
       - 2 Kb

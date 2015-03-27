@@ -31,7 +31,7 @@ Packages
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/ivankravets/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
 
 
@@ -92,49 +92,49 @@ TI
       - RAM
 
     * - ``lpmsp430f5529``
-      - `LaunchPad w/ msp430f5529 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430f5529lp.html>`_
+      - `TI LaunchPad w/ msp430f5529 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430f5529lp.html>`_
       - MSP430F5529
       - 16 MHz
       - 128 Kb
       - 1 Kb
 
     * - ``lpmsp430f5529_25``
-      - `LaunchPad w/ msp430f5529 (25MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430f5529lp.html>`_
+      - `TI LaunchPad w/ msp430f5529 (25MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430f5529lp.html>`_
       - MSP430F5529
       - 25 MHz
       - 128 Kb
       - 1 Kb
 
     * - ``lpmsp430fr5739``
-      - `FraunchPad w/ msp430fr5739 <http://www.ti.com/tool/msp-exp430fr5739>`_
+      - `TI FraunchPad w/ msp430fr5739 <http://www.ti.com/tool/msp-exp430fr5739>`_
       - MSP430FR5739
       - 16 MHz
       - 16 Kb
       - 1 Kb
 
     * - ``lpmsp430fr5969``
-      - `LaunchPad w/ msp430fr5969 <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430fr5969.html>`_
+      - `TI LaunchPad w/ msp430fr5969 <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430fr5969.html>`_
       - MSP430FR5969
       - 8 MHz
       - 64 Kb
       - 1 Kb
 
     * - ``lpmsp430g2231``
-      - `LaunchPad w/ msp430g2231 (1 MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
+      - `TI LaunchPad w/ msp430g2231 (1 MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
       - MSP430G2231
       - 1 MHz
       - 2 Kb
       - 0.125 Kb
 
     * - ``lpmsp430g2452``
-      - `LaunchPad w/ msp430g2452 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
+      - `TI LaunchPad w/ msp430g2452 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
       - MSP430G2452
       - 16 MHz
       - 8 Kb
       - 0.25 Kb
 
     * - ``lpmsp430g2553``
-      - `LaunchPad w/ msp430g2553 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
+      - `TI LaunchPad w/ msp430g2553 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
       - MSP430G2553
       - 16 MHz
       - 16 Kb
