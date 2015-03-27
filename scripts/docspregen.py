@@ -244,7 +244,46 @@ def update_framework_docs():
             f.write(generate_framework(name, data))
 
 
+def update_create_platform_doc():
+    allpackages = get_packages()
+    lines = []
+    lines.append(""".. _platform_creating_packages:
+
+Packages
+--------
+
+*PlatformIO* has pre-built packages for the most popular operation systems:
+*Mac OS*, *Linux (+ARM)* and *Windows*.
+
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Contents""")
+    for type_, data in sorted(allpackages.iteritems()):
+        contitems = [
+            "`%s <%s>`_" % (name, url)
+            for name, url in allpackages[type_]
+        ]
+        lines.append("""
+    * - ``{type_}``
+      - {contents}""".format(
+            type_=type_,
+            contents=", ".join(contitems)))
+
+    with open(join(util.get_source_dir(), "..", "docs", "platforms",
+                   "creating_platform.rst"), "r+") as fp:
+        content = fp.read()
+        fp.seek(0, 0)
+        fp.write(
+            content[:content.index(".. _platform_creating_packages:")] +
+            "\n".join(lines) + "\n\n" +
+            content[content.index(".. _platform_creating_manifest_file:"):]
+        )
+
+
 def main():
+    update_create_platform_doc()
     update_platform_docs()
     update_framework_docs()
 

@@ -14,8 +14,8 @@ except ImportError:
 from os.path import join
 from time import time
 
-from SCons.Script import (DefaultEnvironment, SConscript, SConscriptChdir,
-                          Variables)
+from SCons.Script import (DefaultEnvironment, Exit, SConscript,
+                          SConscriptChdir, Variables)
 
 from platformio.exception import UnknownBoard
 
@@ -100,6 +100,13 @@ if "BOARD" in env:
                 "${BOARD_OPTIONS['build']['ldscript']}"
             )
         )
+
+    if env['PLATFORM'] != env.get("BOARD_OPTIONS", {}).get("platform"):
+        Exit("Error: '%s' platform doesn't support this board. "
+             "Use '%s' platform instead." % (
+                 env['PLATFORM'],
+                 env.get("BOARD_OPTIONS", {}).get("platform")))
+
 
 if "IGNORE_LIBS" in env:
     env['IGNORE_LIBS'] = [l.strip() for l in env['IGNORE_LIBS'].split(",")]
