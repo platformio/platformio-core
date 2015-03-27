@@ -40,67 +40,70 @@ Packages
     :header-rows:  1
 
     * - Name
-      - Alias
       - Contents
-    * - ``toolchain-gccarmnoneeabi``
-      - toolchain
-      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded/>`_,
-        `GDB <http://www.gnu.org/software/gdb/>`_
-    * - ``toolchain-atmelavr``
-      - toolchain
-      - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_,
-        `GDB <http://www.gnu.org/software/gdb/>`_,
-        `AVaRICE <http://avarice.sourceforge.net>`_,
-        `SimulAVR <http://www.nongnu.org/simulavr/>`_
-    * - ``toolchain-timsp430``
-      - toolchain
-      - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_,
-        `GDB <http://www.gnu.org/software/gdb/>`_
-    * - ``tool-avrdude``
-      - uploader
-      - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
-    * - ``tool-bossac``
-      - uploader
-      - `BOSSA CLI <https://sourceforge.net/projects/b-o-s-s-a/>`_
-    * - ``tool-micronucleus``
-      - uploader
-      - `Micronucleus <https://github.com/micronucleus/micronucleus>`_
-    * - ``tool-mspdebug``
-      - uploader
-      - `MSPDebug <http://mspdebug.sourceforge.net>`_
-    * - ``tool-lm4flash``
-      - uploader
-      - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
-    * - ``tool-stlink``
-      - uploader
-      - `STLink <https://github.com/texane/stlink>`_
-    * - ``tool-teensy``
-      - uploader
-      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
+
     * - ``framework-arduinoavr``
-      -
-      - `Arduino Wiring-based Framework (AVR Core, 1.6 branch) <http://arduino.cc/en/Reference/HomePage>`_
+      - `Arduino Wiring-based Framework (AVR Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
+
+    * - ``framework-arduinomsp430``
+      - `Arduino Wiring-based Framework (MSP430 Core) <http://arduino.cc/en/Reference/HomePage>`_
+
     * - ``framework-arduinosam``
-      -
-      - `Arduino Wiring-based Framework (SAM Core, 1.6 branch) <http://arduino.cc/en/Reference/HomePage>`_
+      - `Arduino Wiring-based Framework (SAM Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
+
     * - ``framework-arduinoteensy``
-      -
       - `Arduino Wiring-based Framework <http://arduino.cc/en/Reference/HomePage>`_
-    * - ``framework-energiamsp430``
-      -
-      - `Energia Wiring-based Framework (MSP430 Core) <http://energia.nu/reference/>`_
-    * - ``framework-energiativa``
-      -
-      - `Energia Wiring-based Framework (LM4F Core)  <http://energia.nu/reference/>`_
+
     * - ``framework-cmsis``
-      -
       - `Vendor-independent hardware abstraction layer for the Cortex-M processor series <http://www.arm.com/products/processors/cortex-m/cortex-microcontroller-software-interface-standard.php>`_
+
+    * - ``framework-energiamsp430``
+      - `Energia Wiring-based Framework (MSP430 Core) <http://energia.nu/reference/>`_
+
+    * - ``framework-energiativa``
+      - `Energia Wiring-based Framework (LM4F Core) <http://energia.nu/reference/>`_
+
+    * - ``framework-libopencm3``
+      - `libOpenCM3 Framework <http://www.libopencm3.org/>`_
+
+    * - ``framework-mbed``
+      - `mbed Framework <http://mbed.org>`_
+
     * - ``framework-spl``
-      -
       - `Standard Peripheral Library for STM32 MCUs <http://www.st.com/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890>`_
-    * - ``framework-opencm3``
-      -
-      - `libOpenCM3 Framework <http://www.libopencm3.org>`_
+
+    * - ``ldscripts``
+      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
+
+    * - ``tool-avrdude``
+      - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
+
+    * - ``tool-bossac``
+      - `BOSSA CLI <https://sourceforge.net/projects/b-o-s-s-a/>`_
+
+    * - ``tool-lm4flash``
+      - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
+
+    * - ``tool-micronucleus``
+      - `Micronucleus <https://github.com/micronucleus/micronucleus>`_
+
+    * - ``tool-mspdebug``
+      - `MSPDebug <http://mspdebug.sourceforge.net/>`_
+
+    * - ``tool-stlink``
+      - `ST-Link <https://github.com/texane/stlink>`_
+
+    * - ``tool-teensy``
+      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
+
+    * - ``toolchain-atmelavr``
+      - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
+
+    * - ``toolchain-gccarmnoneeabi``
+      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
+    * - ``toolchain-timsp430``
+      - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. _platform_creating_manifest_file:
 
