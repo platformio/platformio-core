@@ -174,7 +174,7 @@ A version of the current library source code.
 
 *Optional* | Type: ``String`` | Max. Length: 255
 
-Home page of library (if different from :ref:`libjson_repository` url).
+Home page of library (if is different from :ref:`libjson_repository` url).
 
 
 .. _libjson_include:
