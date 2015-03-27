@@ -1,11 +1,11 @@
 Release History
 ===============
 
-1.3.0 (2015-??-??)
+1.3.0 (2015-03-27)
 ------------------
 
-* Moved PlatformIO source code and repositories from Ivan Kravets's account
-  to `PlatformIO Organisation <https://github.com/platformio>`_
+* Moved PlatformIO source code and repositories from `Ivan Kravets <https://github.com/ivankravets>`_
+  account to `PlatformIO Organisation <https://github.com/platformio>`_
   (`issue #138 <https://github.com/platformio/platformio/issues/138>`_)
 * Added support for new Arduino based boards by *SparkFun, RepRap, Sanguino* to
   `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
