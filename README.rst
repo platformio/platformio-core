@@ -42,11 +42,13 @@ and the missing library manager.
 * `User Guide <http://docs.platformio.org/en/latest/userguide/index.html>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_
 * `Articles about us <http://docs.platformio.org/en/latest/articles.html>`_
+* `FAQ <http://docs.platformio.org/en/latest/faq.html>`_
 * `Release History <http://docs.platformio.org/en/latest/history.html>`_
 
 You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
-has pre-built different development platforms including: compiler, debugger,
-uploader (for embedded boards) and many other useful tools.
+has pre-built different development platforms and pre-configured settings for
+the most popular embedded boards. For further details, please
+refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
 
 Use whenever. *Run everywhere.*
 -------------------------------

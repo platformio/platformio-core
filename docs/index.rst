@@ -17,15 +17,10 @@ TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
   `Reddit <http://www.reddit.com/r/platformio/>`_ |
   `Twitter <https://twitter.com/PlatformIO_Org>`_
 
-You have no need to install any *IDE* or compile any tool chains. *PlatformIO*
-has pre-built different development platforms including: compiler, debugger,
-uploader (for embedded) and many other useful tools.
-
-**PlatformIO** allows developer to compile the same code with different
-platforms using only one command :ref:`cmd_run`. This happens due to
-:ref:`projectconf` where you can setup different environments with specific
-options: platform type, firmware uploading settings, pre-built framework
-and many more.
+You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
+has pre-built different development platforms and pre-configured settings for
+the most popular embedded boards. For further details, please
+refer to :ref:`faq_what_is_platformio`
 
 Embedded Development. *Easier Than Ever.*
 -----------------------------------------
@@ -70,4 +65,5 @@ Contents
     userguide/index
     ide
     articles
+    FAQ <faq>
     history
