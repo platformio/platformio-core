@@ -2,7 +2,7 @@ PlatformIO
 ==========
 
 .. image:: https://travis-ci.org/platformio/platformio.svg?branch=develop
-    :target: https://travis-ci.org/profile/platformio
+    :target: https://travis-ci.org/platformio/platformio
     :alt: Build Status
 .. image:: https://gemnasium.com/ivankravets/platformio.png
     :target: https://gemnasium.com/ivankravets/platformio
