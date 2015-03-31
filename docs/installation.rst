@@ -30,19 +30,23 @@ application:
   application.
 
 .. warning::
-    If you are going to run *PlatformIO* from **subprocess**, you **MUST
-    DISABLE** all prompts. It will allow you to avoid blocking.
-    There are a few options:
+    If you are going to run *PlatformIO* from **subprocess**, you
+    :ref:`MUST DISABLE <faq_troubleshooting_pioblocksprompt>` all prompts.
+    It will allow you to avoid blocking.
 
-    - using environment variable :ref:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <envvar_PLATFORMIO_SETTING_ENABLE_PROMPTS>`
-    - disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
-    - masking under Continuous Integration system via environment variable
-      :ref:`CI=true <envvar_CI>`.
 
-Please *choose one of* the following:
+Troubleshooting
+---------------
+
+For further details, frequently questions, please refer to :ref:`faq`.
+
+Installation Methods
+--------------------
+
+Please *choose one of* the following installation methods:
 
 Super-Quick (Mac / Linux)
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To install or upgrade *PlatformIO* paste that at a *Terminal* prompt
 (**you might need** to run ``sudo`` first):
@@ -53,7 +57,7 @@ To install or upgrade *PlatformIO* paste that at a *Terminal* prompt
 
 
 Installer Script (Mac / Linux / Windows)
-----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To install or upgrade *PlatformIO*, download
 `get-platformio.py <https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py>`_
@@ -70,16 +74,8 @@ On *Windows OS* it may look like:
 
     C:\Python27\python.exe get-platformio.py
 
-.. warning::
-    If you have an error ``pkg_resources.DistributionNotFound`` please
-    upgrade *SetupTools* package: ``$ [sudo] pip uninstall setuptools``
-    and ``$ [sudo] pip install setuptools``.
-    Then re-install *PlatformIO*: ``$ [sudo] pip uninstall platformio``
-    and ``$ [sudo] pip install platformio``.
-
-
 Full Guide
-----------
+~~~~~~~~~~
 
 1. Check a ``python`` version (only 2.6-2.7 is supported):
 
@@ -121,7 +117,7 @@ For upgrading the ``platformio`` to new version please use this command:
 
 
 Development Version
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 .. warning::
     We don't recommend to use ``develop`` version in production.

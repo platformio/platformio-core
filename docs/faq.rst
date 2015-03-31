@@ -55,14 +55,47 @@ the project developed using PlatformIO is as follows:
 * Users develop code and PlatformIO makes sure that it is compiled, prepared
   and uploaded to all the boards of interest.
 
+.. _faq_troubleshooting:
 
 Troubleshooting
 ---------------
 
+.. _faq_troubleshooting_pioblocksprompt:
+
+PlatformIO blocks command execution using user propmt
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are going to run *PlatformIO* from **subprocess**, you **MUST
+DISABLE** all prompts. It will allow you to avoid blocking.
+There are a few options:
+
+- using environment variable :ref:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <envvar_PLATFORMIO_SETTING_ENABLE_PROMPTS>`
+- disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
+- masking under Continuous Integration system via environment variable
+  :ref:`CI=true <envvar_CI>`.
+
+
+Windows: ``UnicodeDecodeError: 'ascii' codec can't decode byte``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Answered in `issue #143 <https://github.com/platformio/platformio/issues/143>`_.
+
 Serial does not work with panStampAVR board
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Answered in an
-`issue #144 <https://github.com/platformio/platformio/issues/144>`_.
+Answered in `issue #144 <https://github.com/platformio/platformio/issues/144>`_.
 
 
+An error ``pkg_resources.DistributionNotFound``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Please upgrade *SetupTools* package:
+
+.. code-block:: bash
+
+    $ [sudo] pip uninstall setuptools
+    $ [sudo] pip install setuptools
+
+    # Then re-install PlatformIO
+    $ [sudo] pip uninstall platformio
+    $ [sudo] pip install platformio
