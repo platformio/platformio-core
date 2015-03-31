@@ -78,12 +78,12 @@ There are a few options:
 Windows: ``UnicodeDecodeError: 'ascii' codec can't decode byte``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Answered in `issue #143 <https://github.com/platformio/platformio/issues/143>`_.
+Answered in `issue #143 <https://github.com/platformio/platformio/issues/143#issuecomment-88060906>`_.
 
 Serial does not work with panStampAVR board
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Answered in `issue #144 <https://github.com/platformio/platformio/issues/144>`_.
+Answered in `issue #144 <https://github.com/platformio/platformio/issues/144#issuecomment-87388038>`_.
 
 
 An error ``pkg_resources.DistributionNotFound``
