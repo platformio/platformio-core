@@ -1,0 +1,24 @@
+version: '{build}'
+build: off
+environment:
+  global:
+    # https://packaging.python.org/en/latest/appveyor.html
+    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\ci\\appveyor-with-compiler.cmd"
+  matrix:
+    - TOXENV: "py27"
+      TOXPYTHON: "C:\\Python27-x64\\python.exe"
+      WINDOWS_SDK_VERSION: "v7.0"
+      PYTHON_HOME: "C:\\Python27-x64"
+      PYTHON_VERSION: "2.7"
+      PYTHON_ARCH: "64"
+init:
+  - "ECHO %TOXENV%"
+  - ps: "ls C:\\Python*"
+install:
+  # https://packaging.python.org/en/latest/appveyor.html
+  - "powershell ci\\appveyor-bootstrap.ps1"
+test_script:
+  - "%PYTHON_HOME%\\Scripts\\tox --version"
+  - "%PYTHON_HOME%\\Scripts\\pip --version"
+  - "scons --version"
+  - "%WITH_COMPILER% %PYTHON_HOME%\\Scripts\\tox"
