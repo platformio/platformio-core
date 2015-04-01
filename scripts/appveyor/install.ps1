@@ -78,9 +78,10 @@ function InstallPackage ($python_home, $pkg) {
 }
 
 function main () {
-    InstallPython $env:PYTHON_VERSION $env:PYTHON_ARCH $env:PYTHON
-    InstallPip $env:PYTHON
-    InstallPackage $env:PYTHON wheel
+    InstallPython $env:PYTHON_VERSION $env:PYTHON_ARCH $env:PYTHON_HOME
+    InstallPip $env:PYTHON_HOME
+    InstallPackage $env:PYTHON_HOME setuptools
+    InstallPackage $env:PYTHON_HOME tox
 }
 
 main
