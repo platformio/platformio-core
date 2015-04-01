@@ -2,8 +2,7 @@ version: '{build}'
 build: off
 environment:
   global:
-    # https://packaging.python.org/en/latest/appveyor.html
-    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\ci\\appveyor-with-compiler.cmd"
+    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\scripts\\appveyor\\run_with_compiler.cmd"
   matrix:
     - TOXENV: "py27"
       TOXPYTHON: "C:\\Python27-x64\\python.exe"
@@ -15,8 +14,7 @@ init:
   - "ECHO %TOXENV%"
   - ps: "ls C:\\Python*"
 install:
-  # https://packaging.python.org/en/latest/appveyor.html
-  - "powershell ci\\appveyor-bootstrap.ps1"
+  - "powershell scripts\\appveyor\\install.ps1"
 test_script:
   - "%PYTHON_HOME%\\Scripts\\tox --version"
   - "%PYTHON_HOME%\\Scripts\\pip --version"
