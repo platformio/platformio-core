@@ -17,5 +17,4 @@ install:
 test_script:
   - "%PYTHON_HOME%\\Scripts\\tox --version"
   - "%PYTHON_HOME%\\Scripts\\pip --version"
-  - "scons --version"
   - "%WITH_COMPILER% %PYTHON_HOME%\\Scripts\\tox"
