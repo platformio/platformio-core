@@ -13,6 +13,7 @@ init:
   - "ECHO %TOXENV%"
   - ps: "ls C:\\Python*"
 install:
+  - "git submodule update --init --recursive"
   - "powershell scripts\\appveyor\\install.ps1"
 test_script:
   - "%PYTHON_HOME%\\Scripts\\tox --version"
