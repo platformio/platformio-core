@@ -42,6 +42,14 @@ elif env.get("PLATFORM") == "timsp430":
         "$PIOPACKAGES_DIR",
         "framework-arduinomsp430"
     )
+elif env.get("PLATFORM") == "espressif":
+    PLATFORMFW_DIR = join(
+        "$PIOPACKAGES_DIR",
+        "framework-arduinoespressif"
+    )
+    env.Append(
+        CPPPATH=[join("$PLATFORMFW_DIR", "sdk", "include")]
+    )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
 
@@ -209,5 +217,11 @@ if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
         ]
     )
     libs.append("sam_sam3x8e_gcc_rel")
+
+elif env.get("PLATFORM") == "espressif":
+    env.Append(
+        LIBPATH=[join("$PLATFORMFW_DIR", "sdk", "lib")]
+    )
+    libs.extend(["hal", "phy", "net80211", "lwip", "wpa", "main", "pp"])
 
 env.Append(LIBS=libs)
