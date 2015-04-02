@@ -62,7 +62,7 @@ Troubleshooting
 
 .. _faq_troubleshooting_pioblocksprompt:
 
-PlatformIO blocks command execution using user propmt
+PlatformIO blocks command execution using user prompt
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you are going to run *PlatformIO* from **subprocess**, you **MUST
