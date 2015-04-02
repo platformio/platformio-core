@@ -30,6 +30,10 @@ PLATFORM_PACKAGES = {
         ("Arduino Wiring-based Framework (MSP430 Core)",
          "http://arduino.cc/en/Reference/HomePage")
     ],
+    "framework-arduinoespressif": [
+        ("Arduino Wiring-based Framework (ESP8266 Core)",
+         "https://github.com/esp8266/Arduino")
+    ],
     "framework-energiamsp430": [
         ("Energia Wiring-based Framework (MSP430 Core)",
          "http://energia.nu/reference/")
@@ -55,6 +59,9 @@ PLATFORM_PACKAGES = {
     "framework-mbed": [
         ("mbed Framework", "http://mbed.org")
     ],
+    "sdk-esp8266": [
+        ("ESP8266 SDK", "http://bbs.espressif.com")
+    ],
     "ldscripts": [
         ("Linker Scripts",
          "https://sourceware.org/binutils/docs/ld/Scripts.html")
@@ -67,6 +74,10 @@ PLATFORM_PACKAGES = {
     ],
     "toolchain-gccarmnoneeabi": [
         ("gcc-arm-embedded", "https://launchpad.net/gcc-arm-embedded"),
+        ("GDB", "http://www.gnu.org/software/gdb/")
+    ],
+    "toolchain-xtensa": [
+        ("xtensa-gcc", "https://github.com/jcmvbkbc/gcc-xtensa"),
         ("GDB", "http://www.gnu.org/software/gdb/")
     ],
     "toolchain-timsp430": [
@@ -93,6 +104,9 @@ PLATFORM_PACKAGES = {
     ],
     "tool-mspdebug": [
         ("MSPDebug", "http://mspdebug.sourceforge.net/")
+    ],
+    "tool-esptool": [
+        ("esptool-ck", "https://github.com/igrr/esptool-ck")
     ]
 }
 
