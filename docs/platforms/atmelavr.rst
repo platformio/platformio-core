@@ -333,6 +333,26 @@ Arduino
       - 32 Kb
       - 2.5 Kb
 
+BQ
+~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``zumbt328``
+      - `BQ ZUM BT-328 board <http://www.bq.com/gb/products/zum.html>`_
+      - ATMEGA328P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
 BitWizard
 ~~~~~~~~~
 
@@ -427,6 +447,53 @@ Engduino
       - 8 MHz
       - 32 Kb
       - 2.5 Kb
+
+LightUp
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``lightup``
+      - `LightUp <https://www.lightup.io/>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+LowPowerLab
+~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``moteino``
+      - `LowPowerLab Moteino <https://lowpowerlab.com/shop/moteino-r4>`_
+      - ATMEGA328P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``moteinomega``
+      - `LowPowerLab MoteinoMEGA <http://lowpowerlab.com/blog/2014/08/09/moteinomega-available-now/>`_
+      - ATMEGA1284P
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
 
 Microduino
 ~~~~~~~~~~
@@ -524,6 +591,40 @@ PanStamp
       - 32 Kb
       - 2 Kb
 
+RedBearLab
+~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``blend``
+      - `RedBearLab Blend <http://redbearlab.com/blend/>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``blendmicro16``
+      - `RedBearLab Blend Micro 3.3V/16MHz (overclock) <http://redbearlab.com/blendmicro/>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``blendmicro8``
+      - `RedBearLab Blend Micro 3.3V/8MHz <http://redbearlab.com/blendmicro/>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
 RepRap
 ~~~~~~
 
@@ -598,6 +699,13 @@ SparkFun
       - Flash
       - RAM
 
+    * - ``sparkfun_digitalsandbox``
+      - `SparkFun Digital Sandbox <https://www.sparkfun.com/products/12651>`_
+      - ATMEGA328P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
     * - ``sparkfun_fiov3``
       - `SparkFun Fio V3 3.3V/8MHz <https://www.sparkfun.com/products/11520>`_
       - ATMEGA32U4
@@ -653,3 +761,64 @@ SparkFun
       - 16 MHz
       - 32 Kb
       - 2 Kb
+
+    * - ``uview``
+      - `SparkFun MicroView <https://www.sparkfun.com/products/12923>`_
+      - ATMEGA328P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
+TinyCircuits
+~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``tinyduino``
+      - `TinyCircuits TinyDuino Processor Board <https://tiny-circuits.com/tinyduino-processor-board.html>`_
+      - ATMEGA328P
+      - 8 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``tinylily``
+      - `TinyCircuits TinyLily Mini Processor <https://tiny-circuits.com/tiny-lily-mini-processor.html>`_
+      - ATMEGA328P
+      - 8 MHz
+      - 32 Kb
+      - 2 Kb
+
+WickedDevice
+~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``wildfirev2``
+      - `WickedDevice WildFire v2 [stk500] <http://shop.wickeddevice.com/resources/wildfire/#arduinoidesetup>`_
+      - ATMEGA1284P
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``wildfirev3``
+      - `WickedDevice WildFire v3 [optiboot] <http://shop.wickeddevice.com/resources/wildfire/>`_
+      - ATMEGA1284P
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
