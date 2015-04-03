@@ -1,6 +1,17 @@
 Release History
 ===============
 
+1.4.0 (2015-??-??)
+------------------
+
+* Integrated PlatformIO with AppVeyor Windows based Continuous Integration system
+  (`issue #149 <https://github.com/platformio/platformio/issues/149>`_)
+* Added support for new Arduino based boards by *SparkFun, BQ, LightUp,
+  LowPowerLab, RedBearLab, TinyCircuits, WickedDevice* to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform
+
+
 1.3.0 (2015-03-27)
 ------------------
 
