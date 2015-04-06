@@ -26,7 +26,14 @@ env.Append(
     CXXFLAGS=[
         "-std=gnu++0x",
         "-felide-constructors"
-    ]
+    ],
+
+    LINKFLAGS=[
+        "-Wl,--gc-sections,--relax,--defsym=__rtc_localtime=$UNIX_TIME",
+        "--specs=nano.specs"
+    ],
+
+    LIBS=["m"]
 )
 
 if isfile(env.subst(join(
