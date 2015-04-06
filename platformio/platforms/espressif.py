@@ -21,6 +21,10 @@ class EspressifPlatform(BasePlatform):
             "default": True
         },
 
+        "ldscripts": {
+            "default": True
+        },
+
         "tool-esptool": {
             "alias": "uploader",
             "default": True
