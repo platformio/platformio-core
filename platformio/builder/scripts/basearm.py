@@ -45,9 +45,10 @@ env.Replace(
 
     LINKFLAGS=[
         "-Os",
-        "-Wl,--gc-sections",
+        "-Wl,--gc-sections,--relax",
         "-mthumb",
-        "-mcpu=${BOARD_OPTIONS['build']['cpu']}"
+        "-mcpu=${BOARD_OPTIONS['build']['cpu']}",
+        "--specs=nano.specs"
     ],
 
     LIBS=["c", "gcc", "m"],

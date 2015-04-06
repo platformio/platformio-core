@@ -16,6 +16,9 @@ if env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy":
     SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")))
 elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
     SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
+    env.Append(
+        LINKFLAGS=["-Wl,--defsym=__rtc_localtime=$UNIX_TIME"]
+    )
 
 env.Append(
     CPPDEFINES=[
@@ -26,14 +29,7 @@ env.Append(
     CXXFLAGS=[
         "-std=gnu++0x",
         "-felide-constructors"
-    ],
-
-    LINKFLAGS=[
-        "-Wl,--gc-sections,--relax,--defsym=__rtc_localtime=$UNIX_TIME",
-        "--specs=nano.specs"
-    ],
-
-    LIBS=["m"]
+    ]
 )
 
 if isfile(env.subst(join(

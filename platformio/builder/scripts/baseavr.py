@@ -44,7 +44,7 @@ env.Replace(
     LINKFLAGS=[
         "-Os",
         "-mmcu=$BOARD_MCU",
-        "-Wl,--gc-sections"
+        "-Wl,--gc-sections,--relax"
     ],
 
     LIBS=["m"],
