@@ -846,6 +846,13 @@ Teensy
       - 256 Kb
       - 64 Kb
 
+    * - ``teensylc``
+      - `Teensy LC <https://www.pjrc.com/store/teensylc.html>`_
+      - MKL26Z64
+      - 48 MHz
+      - 62 Kb
+      - 8 Kb
+
 TinyCircuits
 ~~~~~~~~~~~~
 

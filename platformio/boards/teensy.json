@@ -71,5 +71,25 @@
         },
         "url": "https://www.pjrc.com/store/teensy31.html",
         "vendor": "Teensy"
+    },
+
+    "teensylc": {
+        "build": {
+            "core": "teensy3",
+            "extra_flags": "-D__MKL26Z64__",
+            "f_cpu": "48000000L",
+            "ldscript": "mkl26z64.ld",
+            "mcu": "mkl26z64",
+            "cpu": "cortex-m0plus"
+        },
+        "frameworks": ["arduino"],
+        "name": "Teensy LC",
+        "platform": "teensy",
+        "upload": {
+            "maximum_ram_size": "8192",
+            "maximum_size": "63488"
+        },
+        "url": "https://www.pjrc.com/store/teensylc.html",
+        "vendor": "Teensy"
     }
 }
