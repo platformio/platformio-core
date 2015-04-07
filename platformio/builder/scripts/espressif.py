@@ -35,6 +35,7 @@ env.Replace(
         "-Wpointer-arith",
         "-Wno-implicit-function-declaration",
         "-Wl,-EL",
+        "-fno-inline-functions",
         "-nostdlib"
     ],
 
@@ -57,6 +58,11 @@ env.Replace(
         "ICACHE_FLASH"
     ],
 
+    CPPPATH=[
+        join("$PIOPACKAGES_DIR", "sdk-esp8266", "include"),
+        "$PROJECTSRC_DIR"
+    ],
+
     LINKFLAGS=[
         "-nostdlib",
         "-Wl,--no-check-section",
@@ -64,7 +70,8 @@ env.Replace(
         "-Wl,-static"
     ],
 
-    LIBS=["c", "gcc"],
+    LIBPATH=[join("$PIOPACKAGES_DIR", "sdk-esp8266", "lib")],
+    LIBS=["c", "gcc", "hal", "phy", "net80211", "lwip", "wpa", "main", "pp"],
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
@@ -101,26 +108,6 @@ env.Append(
         )
     )
 )
-
-#
-# Configure SDK
-#
-
-if "FRAMEWORK" not in env:
-    env.Append(
-        CPPPATH=[
-            join("$PIOPACKAGES_DIR", "sdk-esp8266", "include"),
-            "$PROJECTSRC_DIR"
-        ],
-        LIBPATH=[join("$PIOPACKAGES_DIR", "sdk-esp8266", "lib")],
-        LIBS=["at", "json", "lwip", "main", "net80211", "phy", "pp",
-              "smartconfig", "ssl", "upgrade", "wpa"]
-    )
-    env.Replace(
-        LDSCRIPT_PATH=join(
-            "$PIOPACKAGES_DIR", "sdk-esp8266", "ld", "eagle.app.v6.ld")
-    )
-
 
 #
 # Target: Build executable and linkable firmware
