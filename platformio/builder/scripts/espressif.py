@@ -58,20 +58,15 @@ env.Replace(
         "ICACHE_FLASH"
     ],
 
-    CPPPATH=[
-        join("$PIOPACKAGES_DIR", "sdk-esp8266", "include"),
-        "$PROJECTSRC_DIR"
-    ],
-
     LINKFLAGS=[
         "-nostdlib",
-        "-Wl,--no-check-section",
+        "-Wl,--no-check-sections",
         "-u", "call_user_start",
         "-Wl,-static"
     ],
 
-    LIBPATH=[join("$PIOPACKAGES_DIR", "sdk-esp8266", "lib")],
-    LIBS=["c", "gcc", "hal", "phy", "net80211", "lwip", "wpa", "main", "pp"],
+    LIBPATH=[join("$PLATFORMFW_DIR", "sdk", "lib")],
+    LIBS=["hal", "phy", "net80211", "lwip", "wpa", "main", "pp", "c", "gcc"],
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
