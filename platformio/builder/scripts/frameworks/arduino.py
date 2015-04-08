@@ -42,6 +42,10 @@ elif env.get("PLATFORM") == "timsp430":
         "$PIOPACKAGES_DIR",
         "framework-arduinomsp430"
     )
+elif env.get("PLATFORM") == "espressif":
+    env.Prepend(
+        CPPPATH=[join("$PLATFORMFW_DIR", "sdk", "include")]
+    )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
 
