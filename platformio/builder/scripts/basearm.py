@@ -56,21 +56,6 @@ env.Replace(
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES'
 )
 
-if env.get("BOARD_OPTIONS", {}).get("build", {}).get(
-        "cpu", "")[-2:] == "m4" and env.get("BOARD") != "frdm_k20d50m":
-    env.Append(
-        CPPFLAGS=[
-            "-mfloat-abi=hard",
-            "-mfpu=fpv4-sp-d16",
-            "-fsingle-precision-constant"
-        ],
-        LINKFLAGS=[
-            "-mfloat-abi=hard",
-            "-mfpu=fpv4-sp-d16",
-            "-fsingle-precision-constant"
-        ]
-    )
-
 env.Append(
     BUILDERS=dict(
         ElfToBin=Builder(
