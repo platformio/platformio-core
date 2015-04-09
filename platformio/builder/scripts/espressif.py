@@ -5,7 +5,9 @@
     Builder for Espressif MCUs
 """
 
+import os
 from os.path import join
+from platform import system
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
@@ -65,44 +67,58 @@ env.Replace(
         "-Wl,-static"
     ],
 
-    LIBPATH=[join("$PLATFORMFW_DIR", "sdk", "lib")],
-    LIBS=["hal", "phy", "net80211", "lwip", "wpa", "main", "pp", "c", "gcc"],
-
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
-    UPLOADER=join("$PIOPACKAGES_DIR", "tool-esptool", "esptool"),
+    UPLOADER=join("$PIOPACKAGES_DIR", "tool-esptool", "esptool.py"),
     UPLOADERFLAGS=[
-        "-vv",
-        "-cd", "none",
-        "-cb", "$UPLOAD_SPEED",
-        "-cp", "$UPLOAD_PORT",
-        "-ca", "0x00000",
-        "-cf", "${SOURCES[0]}",
-        "-ca", "0x40000",
-        "-cf", "${SOURCES[1]}"
+        "--port", "$UPLOAD_PORT",
+        "--baud", "$UPLOAD_SPEED",
+        "write_flash",
+        "0x00000", join("$BUILD_DIR", "firmware.elf-0x00000.bin"),
+        "0x40000", join("$BUILD_DIR", "firmware.elf-0x40000.bin")
     ],
-    UPLOADCMD='$UPLOADER $UPLOADERFLAGS'
+    UPLOADCMD='python $UPLOADER $UPLOADERFLAGS'
 )
 
 env.Append(
     BUILDERS=dict(
         ElfToBin=Builder(
             action=" ".join([
-                "$UPLOADER",
-                "-eo", "$SOURCES",
-                "-bo", "${TARGETS[0]}",
-                "-bs", ".text",
-                "-bs", ".data",
-                "-bs", ".rodata",
-                "-bc", "-ec",
-                "-eo", "$SOURCES",
-                "-es", ".irom0.text", "${TARGETS[1]}",
-                "-ec", "-v"
+                "python", "$UPLOADER", "elf2image", "$SOURCES"
             ]),
             suffix=".bin"
         )
     )
 )
+
+if system() == "Windows":
+    paths = []
+    for path in os.environ['PATH'].split(";"):
+        if "python" in path.lower():
+            paths.append(path)
+
+    env.AppendENVPath(
+        "PATH", ";".join(paths)
+    )
+
+#
+# Configure SDK
+#
+
+if "FRAMEWORK" not in env:
+    env.Append(
+        CPPPATH=[
+            join("$PIOPACKAGES_DIR", "sdk-esp8266", "include"),
+            "$PROJECTSRC_DIR"
+        ],
+        LIBPATH=[join("$PIOPACKAGES_DIR", "sdk-esp8266", "lib")]
+    )
+    env.Replace(
+        LDSCRIPT_PATH=join(
+            "$PIOPACKAGES_DIR", "sdk-esp8266", "ld", "eagle.app.v6.ld"),
+        LIBS=["c", "gcc", "phy", "pp", "net80211", "lwip", "wpa", "main",
+              "json", "upgrade", "smartconfig", "at", "ssl"]
+    )
 
 #
 # Target: Build executable and linkable firmware
@@ -117,9 +133,7 @@ target_elf = env.BuildFirmware()
 if "uploadlazy" in COMMAND_LINE_TARGETS:
     target_firm = join("$BUILD_DIR", "firmware.bin")
 else:
-    target_firm = env.ElfToBin(
-        [join("$BUILD_DIR", "firmware_00000"),
-         join("$BUILD_DIR", "firmware_40000")], target_elf)
+    target_firm = env.ElfToBin(target_elf)
 
 #
 # Target: Print binary size
