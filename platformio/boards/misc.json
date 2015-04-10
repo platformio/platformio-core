@@ -493,5 +493,33 @@
         },
         "url": "http://www.bq.com/gb/products/zum.html",
         "vendor": "BQ"
+    },
+
+    "quirkbot": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DQUIRKBOT",
+            "f_cpu": "8000000L",
+            "mcu": "atmega32u4",
+            "variant" : "quirkbot",
+            "vid": "0xf055",
+            "pid": "0xf055",
+            "usb_product": "Quirkbot"
+        },
+        "frameworks": ["arduino"],
+        "name": "Quirkbot",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "http://quirkbot.com",
+        "vendor": "Quirkbot"
     }
 }
