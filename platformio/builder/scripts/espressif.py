@@ -5,9 +5,7 @@
     Builder for Espressif MCUs
 """
 
-import os
 from os.path import join
-from platform import system
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
@@ -69,37 +67,39 @@ env.Replace(
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
-    UPLOADER=join("$PIOPACKAGES_DIR", "tool-esptool", "esptool.py"),
+    UPLOADER=join("$PIOPACKAGES_DIR", "tool-esptool", "esptool"),
     UPLOADERFLAGS=[
-        "--port", "$UPLOAD_PORT",
-        "--baud", "$UPLOAD_SPEED",
-        "write_flash",
-        "0x00000", join("$BUILD_DIR", "firmware.elf-0x00000.bin"),
-        "0x40000", join("$BUILD_DIR", "firmware.elf-0x40000.bin")
+        "-vv",
+        "-cd", "none",
+        "-cb", "$UPLOAD_SPEED",
+        "-cp", "$UPLOAD_PORT",
+        "-ca", "0x00000",
+        "-cf", "${SOURCES[0]}",
+        "-ca", "0x40000",
+        "-cf", "${SOURCES[1]}"
     ],
-    UPLOADCMD='python $UPLOADER $UPLOADERFLAGS'
+    UPLOADCMD='$UPLOADER $UPLOADERFLAGS'
 )
 
 env.Append(
     BUILDERS=dict(
         ElfToBin=Builder(
             action=" ".join([
-                "python", "$UPLOADER", "elf2image", "$SOURCES"
+                "$UPLOADER",
+                "-eo", "$SOURCES",
+                "-bo", "${TARGETS[0]}",
+                "-bs", ".text",
+                "-bs", ".data",
+                "-bs", ".rodata",
+                "-bc", "-ec",
+                "-eo", "$SOURCES",
+                "-es", ".irom0.text", "${TARGETS[1]}",
+                "-ec", "-v"
             ]),
             suffix=".bin"
         )
     )
 )
-
-if system() == "Windows":
-    paths = []
-    for path in os.environ['PATH'].split(";"):
-        if "python" in path.lower():
-            paths.append(path)
-
-    env.AppendENVPath(
-        "PATH", ";".join(paths)
-    )
 
 #
 # Configure SDK
@@ -133,7 +133,10 @@ target_elf = env.BuildFirmware()
 if "uploadlazy" in COMMAND_LINE_TARGETS:
     target_firm = join("$BUILD_DIR", "firmware.bin")
 else:
-    target_firm = env.ElfToBin(target_elf)
+    target_firm = env.ElfToBin(
+        [join("$BUILD_DIR", "firmware_00000"),
+         join("$BUILD_DIR", "firmware_40000")], target_elf)
+
 
 #
 # Target: Print binary size
