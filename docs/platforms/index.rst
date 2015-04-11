@@ -16,6 +16,7 @@ MCU, upload protocol or etc. Please use ``board`` option.
 
     atmelavr
     atmelsam
+    espressif
     freescalekinetis
     nordicnrf51
     nxplpc

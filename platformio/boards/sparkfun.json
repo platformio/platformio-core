@@ -187,5 +187,48 @@
         },
         "url": "https://www.sparkfun.com/products/10743",
         "vendor": "SparkFun"
+    },
+    "sparkfun_digitalsandbox": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_UNO",
+            "f_cpu": "16000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "frameworks": ["arduino"],
+        "name": "SparkFun Digital Sandbox",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 32256,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "https://www.sparkfun.com/products/12651",
+        "vendor": "SparkFun"
+    },
+
+    "uview": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_UNO",
+            "f_cpu": "16000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "frameworks": ["arduino"],
+        "name": "SparkFun MicroView",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 32256,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "https://www.sparkfun.com/products/12923",
+        "vendor": "SparkFun"
     }
 }

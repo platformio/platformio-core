@@ -45,6 +45,9 @@ Packages
     * - ``framework-arduinoavr``
       - `Arduino Wiring-based Framework (AVR Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
 
+    * - ``framework-arduinoespressif``
+      - `Arduino Wiring-based Framework (ESP8266 Core) <https://github.com/esp8266/Arduino>`_
+
     * - ``framework-arduinomsp430``
       - `Arduino Wiring-based Framework (MSP430 Core) <http://arduino.cc/en/Reference/HomePage>`_
 
@@ -75,11 +78,17 @@ Packages
     * - ``ldscripts``
       - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
 
+    * - ``sdk-esp8266``
+      - `ESP8266 SDK <http://bbs.espressif.com>`_
+
     * - ``tool-avrdude``
       - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
 
     * - ``tool-bossac``
       - `BOSSA CLI <https://sourceforge.net/projects/b-o-s-s-a/>`_
+
+    * - ``tool-esptool``
+      - `esptool-ck <https://github.com/igrr/esptool-ck>`_
 
     * - ``tool-lm4flash``
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
@@ -104,6 +113,9 @@ Packages
 
     * - ``toolchain-timsp430``
       - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
+    * - ``toolchain-xtensa``
+      - `xtensa-gcc <https://github.com/jcmvbkbc/gcc-xtensa>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. _platform_creating_manifest_file:
 

@@ -45,30 +45,16 @@ env.Replace(
 
     LINKFLAGS=[
         "-Os",
-        "-Wl,--gc-sections",
+        "-Wl,--gc-sections,--relax",
         "-mthumb",
-        "-mcpu=${BOARD_OPTIONS['build']['cpu']}"
+        "-mcpu=${BOARD_OPTIONS['build']['cpu']}",
+        "--specs=nano.specs"
     ],
 
     LIBS=["c", "gcc", "m"],
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES'
 )
-
-if env.get("BOARD_OPTIONS", {}).get("build", {}).get(
-        "cpu", "")[-2:] == "m4" and env.get("BOARD") != "frdm_k20d50m":
-    env.Append(
-        CPPFLAGS=[
-            "-mfloat-abi=hard",
-            "-mfpu=fpv4-sp-d16",
-            "-fsingle-precision-constant"
-        ],
-        LINKFLAGS=[
-            "-mfloat-abi=hard",
-            "-mfpu=fpv4-sp-d16",
-            "-fsingle-precision-constant"
-        ]
-    )
 
 env.Append(
     BUILDERS=dict(

@@ -167,6 +167,16 @@ A version of the current library source code.
     |PIOAPICR| will use the *CVS*-revision from the latest commit.
 
 
+.. _libjson_url:
+
+``url``
+-------
+
+*Optional* | Type: ``String`` | Max. Length: 255
+
+Home page of library (if is different from :ref:`libjson_repository` url).
+
+
 .. _libjson_include:
 
 ``include``

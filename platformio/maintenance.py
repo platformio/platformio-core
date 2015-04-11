@@ -10,12 +10,11 @@ from time import time
 
 import click
 
-from platformio import __version__, app, telemetry
+from platformio import __version__, app, exception, telemetry
 from platformio.commands.install import cli as cmd_install
 from platformio.commands.lib import lib_update as cmd_libraries_update
 from platformio.commands.update import cli as cli_update
 from platformio.commands.upgrade import get_latest_version
-from platformio.exception import GetLatestVersionError, UpgraderFailed
 from platformio.libmanager import LibraryManager
 from platformio.platforms.base import PlatformFactory
 from platformio.util import get_home_dir, get_lib_dir
@@ -24,9 +23,14 @@ from platformio.util import get_home_dir, get_lib_dir
 def on_platformio_start(ctx):
     telemetry.on_command(ctx)
     after_upgrade(ctx)
-    check_platformio_upgrade()
-    check_internal_updates(ctx, "platforms")
-    check_internal_updates(ctx, "libraries")
+
+    try:
+        check_platformio_upgrade()
+        check_internal_updates(ctx, "platforms")
+        check_internal_updates(ctx, "libraries")
+    except (exception.GetLatestVersionError, exception.APIRequestError):
+        click.secho("Failed to check for PlatformIO upgrades. "
+                    "Please check your Internet connection.", fg="red")
 
 
 def on_platformio_end(ctx, result):  # pylint: disable=W0613
@@ -135,7 +139,7 @@ def after_upgrade(ctx):
         telemetry.on_event(category="Auto", action="Upgrade",
                            label="%s > %s" % (last_version, __version__))
     else:
-        raise UpgraderFailed()
+        raise exception.UpgraderFailed()
     click.echo("")
 
 
@@ -148,12 +152,7 @@ def check_platformio_upgrade():
     last_check['platformio_upgrade'] = int(time())
     app.set_state_item("last_check", last_check)
 
-    try:
-        latest_version = get_latest_version()
-    except GetLatestVersionError:
-        click.secho("Failed to check for PlatformIO upgrades", fg="red")
-        return
-
+    latest_version = get_latest_version()
     if (latest_version == __version__ or
             Upgrader.version_to_int(latest_version) <
             Upgrader.version_to_int(__version__)):

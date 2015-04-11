@@ -1,6 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+from glob import glob
 from os import listdir, walk
 from os.path import dirname, getsize, isdir, isfile, join, normpath
 from shutil import rmtree
@@ -39,12 +40,11 @@ def test_run(platformio_setup, pioproject_dir):
     pioenvs_dir = join(pioproject_dir, ".pioenvs")
     for item in listdir(pioenvs_dir):
         assert isfile(join(pioenvs_dir, item, "firmware.elf"))
-        # check .hex or .bin file
-        bin_file = join(pioenvs_dir, item, "firmware.bin")
-        hex_file = join(pioenvs_dir, item, "firmware.hex")
-        if not isfile(bin_file):
-            if not isfile(hex_file):
-                pytest.fail("Missed firmware file")
-            assert getsize(hex_file) > 0
-        else:
-            assert getsize(bin_file) > 0
+        # check .hex or .bin files
+        firmwares = []
+        for ext in ("bin", "hex"):
+            firmwares += glob(join(pioenvs_dir, item, "firmware*.%s" % ext))
+        if not firmwares:
+            pytest.fail("Missed firmware file")
+        for firmware in firmwares:
+            assert getsize(firmware) > 0

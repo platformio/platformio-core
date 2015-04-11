@@ -98,3 +98,10 @@ Teensy
       - 72 MHz
       - 256 Kb
       - 64 Kb
+
+    * - ``teensylc``
+      - `Teensy LC <http://www.pjrc.com/teensy/teensyLC.html>`_
+      - MKL26Z64
+      - 48 MHz
+      - 64 Kb
+      - 8 Kb

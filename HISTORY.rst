@@ -1,6 +1,31 @@
 Release History
 ===============
 
+1.4.0 (2015-04-11)
+------------------
+
+* Added `espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`_
+  development platform with ESP01 board
+* Integrated PlatformIO with AppVeyor Windows based Continuous Integration system
+  (`issue #149 <https://github.com/platformio/platformio/issues/149>`_)
+* Added support for Teensy LC board to
+  `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`__
+  platform
+* Added support for new Arduino based boards by *SparkFun, BQ, LightUp,
+  LowPowerLab, Quirkbot, RedBearLab, TinyCircuits, WickedDevice* to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform
+* Upgraded `Arduino Framework <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__ to
+  1.6.3 version (`issue #156 <https://github.com/platformio/platformio/issues/156>`_)
+* Upgraded `Energia Framework <http://docs.platformio.org/en/latest/frameworks/energia.html>`__ to
+  0101E0015 version (`issue #146 <https://github.com/platformio/platformio/issues/146>`_)
+* Upgraded `Arduino Framework with Teensy Core <http://docs.platformio.org/en/latest/frameworks/arduino.html>`_ to
+  1.22 version (`issue #162 <https://github.com/platformio/platformio/issues/162>`_,
+  `issue #170 <https://github.com/platformio/platformio/issues/170>`_)
+* Fixed exceptions with PlatformIO auto-updates when Internet connection isn't
+  active
+
+
 1.3.0 (2015-03-27)
 ------------------
 

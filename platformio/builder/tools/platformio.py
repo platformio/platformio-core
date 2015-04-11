@@ -63,7 +63,7 @@ def BuildFirmware(env):
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),
         [firmenv.GlobCXXFiles(vdir) for vdir in vdirs],
-        LIBS=env.get("LIBS", []) + deplibs,
+        LIBS=list(env.get("LIBS", []) + deplibs)[::-1],
         LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"],
         PROGSUFFIX=".elf"
     )

@@ -226,5 +226,300 @@
         },
         "url": "https://code.google.com/p/sanguino/",
         "vendor": "Sanguino"
+    },
+
+    "tinyduino": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LILYPAD",
+            "f_cpu": "8000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "frameworks": ["arduino"],
+        "name": "TinyCircuits TinyDuino Processor Board",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 30720,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 57600
+        },
+        "url": "https://tiny-circuits.com/tinyduino-processor-board.html",
+        "vendor": "TinyCircuits"
+    },
+
+    "wildfirev3": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "f_cpu": "16000000L",
+            "mcu": "atmega1284p",
+            "variant": "wildfirev3"
+        },
+        "frameworks": ["arduino"],
+        "name": "WickedDevice WildFire v3 [optiboot]",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 130048,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://shop.wickeddevice.com/resources/wildfire/",
+        "vendor": "WickedDevice"
+    },
+
+    "wildfirev2": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "f_cpu": "16000000L",
+            "mcu": "atmega1284p",
+            "variant": "wildfirev2"
+        },
+        "frameworks": ["arduino"],
+        "name": "WickedDevice WildFire v2 [stk500]",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 122878,
+            "protocol": "wiring",
+            "require_upload_port" : true,
+            "speed": 38400
+        },
+        "url": "http://shop.wickeddevice.com/resources/wildfire/#arduinoidesetup",
+        "vendor": "WickedDevice"
+    },
+
+    "blend": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "f_cpu": "16000000L",
+            "mcu": "atmega32u4",
+            "pid": "0x8036",
+            "usb_product": "RedBearLab Blend",
+            "variant": "leonardo",
+            "vid": "0x2341"
+        },
+        "frameworks": ["arduino"],
+        "name": "RedBearLab Blend",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "http://redbearlab.com/blend/",
+        "vendor": "RedBearLab"
+    },
+
+    "blendmicro8": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "f_cpu": "8000000L",
+            "mcu": "atmega32u4",
+            "pid": "0x2404",
+            "usb_product": "RedBearLab Blend",
+            "variant": "micro",
+            "vid": "0x03EB"
+        },
+        "frameworks": ["arduino"],
+        "name": "RedBearLab Blend Micro 3.3V/8MHz",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "http://redbearlab.com/blendmicro/",
+        "vendor": "RedBearLab"
+    },
+
+    "blendmicro16": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "f_cpu": "16000000L",
+            "mcu": "atmega32u4",
+            "pid": "0x2404",
+            "usb_product": "RedBearLab Blend",
+            "variant": "micro",
+            "vid": "0x03EB"
+        },
+        "frameworks": ["arduino"],
+        "name": "RedBearLab Blend Micro 3.3V/16MHz (overclock)",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "http://redbearlab.com/blendmicro/",
+        "vendor": "RedBearLab"
+    },
+
+    "tinylily": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LILYPAD",
+            "f_cpu": "8000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "frameworks": ["arduino"],
+        "name": "TinyCircuits TinyLily Mini Processor",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 30720,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 57600
+        },
+        "url": "https://tiny-circuits.com/tiny-lily-mini-processor.html",
+        "vendor": "TinyCircuits"
+    },
+
+    "lightup": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_LEONARDO",
+            "f_cpu": "8000000L",
+            "mcu": "atmega32u4",
+            "pid": "0x6096",
+            "usb_product": "LightUp",
+            "variant": "leonardo",
+            "vid": "0x1d50"
+        },
+        "frameworks": ["arduino"],
+        "name": "LightUp",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "https://www.lightup.io/",
+        "vendor": "LightUp"
+    },
+
+    "moteino": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_MOTEINO",
+            "f_cpu": "16000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "frameworks": ["arduino"],
+        "name": "LowPowerLab Moteino",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 31744,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "https://lowpowerlab.com/shop/moteino-r4",
+        "vendor": "LowPowerLab"
+    },
+
+    "moteinomega": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_MOTEINOMEGA",
+            "f_cpu": "16000000L",
+            "mcu": "atmega1284p",
+            "variant": "moteinoMega"
+        },
+        "frameworks": ["arduino"],
+        "name": "LowPowerLab MoteinoMEGA",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 130048,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://lowpowerlab.com/blog/2014/08/09/moteinomega-available-now/",
+        "vendor": "LowPowerLab"
+    },
+
+    "zumbt328": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_BT",
+            "f_cpu": "16000000L",
+            "mcu": "atmega328p",
+            "variant": "eightanaloginputs"
+        },
+        "frameworks": ["arduino"],
+        "name": "BQ ZUM BT-328 board",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2048,
+            "maximum_size": 28672,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 19200
+        },
+        "url": "http://www.bq.com/gb/products/zum.html",
+        "vendor": "BQ"
+    },
+
+    "quirkbot": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DQUIRKBOT",
+            "f_cpu": "8000000L",
+            "mcu": "atmega32u4",
+            "variant" : "quirkbot",
+            "vid": "0xf055",
+            "pid": "0xf055",
+            "usb_product": "Quirkbot"
+        },
+        "frameworks": ["arduino"],
+        "name": "Quirkbot",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "http://quirkbot.com",
+        "vendor": "Quirkbot"
     }
 }

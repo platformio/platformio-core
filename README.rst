@@ -2,8 +2,11 @@ PlatformIO
 ==========
 
 .. image:: https://travis-ci.org/platformio/platformio.svg?branch=develop
-    :target: https://travis-ci.org/profile/platformio
-    :alt: Build Status
+    :target: https://travis-ci.org/platformio/platformio
+    :alt: Travis.CI Build Status
+.. image:: https://ci.appveyor.com/api/projects/status/ee26e58de798rctd/branch/develop?svg=true
+    :target: https://ci.appveyor.com/project/ivankravets/platformio
+    :alt: AppVeyor.CI Build Status    
 .. image:: https://gemnasium.com/ivankravets/platformio.png
     :target: https://gemnasium.com/ivankravets/platformio
     :alt: Dependency Status
@@ -21,6 +24,7 @@ PlatformIO
 `Documentation <http://docs.platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
+`Reddit <http://www.reddit.com/r/platformio/>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_
 
 *Atmel AVR & SAM, Freescale Kinetis, Nordic nRF51, NXP LPC, ST STM32,
@@ -41,11 +45,13 @@ and the missing library manager.
 * `User Guide <http://docs.platformio.org/en/latest/userguide/index.html>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_
 * `Articles about us <http://docs.platformio.org/en/latest/articles.html>`_
+* `FAQ <http://docs.platformio.org/en/latest/faq.html>`_
 * `Release History <http://docs.platformio.org/en/latest/history.html>`_
 
 You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
-has pre-built different development platforms including: compiler, debugger,
-uploader (for embedded boards) and many other useful tools.
+has pre-built different development platforms and pre-configured settings for
+the most popular embedded boards. For further details, please
+refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
 
 Use whenever. *Run everywhere.*
 -------------------------------
