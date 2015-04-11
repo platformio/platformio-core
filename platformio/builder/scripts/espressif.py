@@ -65,9 +65,6 @@ env.Replace(
         "-Wl,-static"
     ],
 
-    LIBPATH=[join("$PLATFORMFW_DIR", "sdk", "lib")],
-    LIBS=["hal", "phy", "net80211", "lwip", "wpa", "main", "pp", "c", "gcc"],
-
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-esptool", "esptool"),
@@ -105,6 +102,25 @@ env.Append(
 )
 
 #
+# Configure SDK
+#
+
+if "FRAMEWORK" not in env:
+    env.Append(
+        CPPPATH=[
+            join("$PIOPACKAGES_DIR", "sdk-esp8266", "include"),
+            "$PROJECTSRC_DIR"
+        ],
+        LIBPATH=[join("$PIOPACKAGES_DIR", "sdk-esp8266", "lib")]
+    )
+    env.Replace(
+        LDSCRIPT_PATH=join(
+            "$PIOPACKAGES_DIR", "sdk-esp8266", "ld", "eagle.app.v6.ld"),
+        LIBS=["c", "gcc", "phy", "pp", "net80211", "lwip", "wpa", "main",
+              "json", "upgrade", "smartconfig", "at", "ssl"]
+    )
+
+#
 # Target: Build executable and linkable firmware
 #
 
@@ -120,6 +136,7 @@ else:
     target_firm = env.ElfToBin(
         [join("$BUILD_DIR", "firmware_00000"),
          join("$BUILD_DIR", "firmware_40000")], target_elf)
+
 
 #
 # Target: Print binary size

@@ -16,8 +16,7 @@
             "maximum_size": 524288,
             "protocol": "arduino",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "https://nurdspace.nl/ESP8266",
         "vendor": "Espressif"
