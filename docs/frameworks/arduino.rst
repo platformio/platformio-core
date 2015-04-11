@@ -22,6 +22,9 @@ Platforms
     * - :ref:`platform_atmelsam`
       - Atmel | SMART offers Flash- based ARM products based on the ARM Cortex-M0+, Cortex-M3 and Cortex-M4 architectures, ranging from 8KB to 2MB of Flash including a rich peripheral and feature mix.
 
+    * - :ref:`platform_espressif`
+      - Espressif Systems is a privately held fabless semiconductor company. They provide wireless communications and Wi-Fi chips which are widely used in mobile devices and the Internet of Things applications.
+
     * - :ref:`platform_teensy`
       - Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard "Mini-B" USB cable and a PC or Macintosh with a USB port.
 
@@ -450,6 +453,26 @@ Engduino
       - 32 Kb
       - 2.5 Kb
 
+Espressif
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``esp01``
+      - `Espressif ESP8266 board <https://nurdspace.nl/ESP8266>`_
+      - ESP8266
+      - 80 MHz
+      - 512 Kb
+      - 32 Kb
+
 LightUp
 ~~~~~~~
 
@@ -599,6 +622,26 @@ PanStamp
       - 12 MHz
       - 32 Kb
       - 4 Kb
+
+Quirkbot
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``quirkbot``
+      - `Quirkbot <http://quirkbot.com>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
 
 RedBearLab
 ~~~~~~~~~~
@@ -845,6 +888,13 @@ Teensy
       - 72 MHz
       - 256 Kb
       - 64 Kb
+
+    * - ``teensylc``
+      - `Teensy LC <http://www.pjrc.com/teensy/teensyLC.html>`_
+      - MKL26Z64
+      - 48 MHz
+      - 64 Kb
+      - 8 Kb
 
 TinyCircuits
 ~~~~~~~~~~~~

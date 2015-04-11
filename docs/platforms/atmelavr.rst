@@ -591,6 +591,26 @@ PanStamp
       - 32 Kb
       - 2 Kb
 
+Quirkbot
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``quirkbot``
+      - `Quirkbot <http://quirkbot.com>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
 RedBearLab
 ~~~~~~~~~~
 
