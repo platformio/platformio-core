@@ -6,7 +6,7 @@ __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
 __description__ = ("A cross-platform code builder and the missing library "
-                   "manager (Atmel AVR & SAM, Freescale Kinetis, "
+                   "manager (Atmel AVR & SAM, Espressif, Freescale Kinetis, "
                    "Nordic nRF51, NXP LPC, ST STM32, TI MSP430 & Tiva, "
                    "Teensy, Arduino, mbed, libOpenCM3, etc.)")
 __url__ = "http://platformio.org"

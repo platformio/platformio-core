@@ -6,7 +6,7 @@ PlatformIO
     :alt: Travis.CI Build Status
 .. image:: https://ci.appveyor.com/api/projects/status/ee26e58de798rctd/branch/develop?svg=true
     :target: https://ci.appveyor.com/project/ivankravets/platformio
-    :alt: AppVeyor.CI Build Status    
+    :alt: AppVeyor.CI Build Status
 .. image:: https://gemnasium.com/ivankravets/platformio.png
     :target: https://gemnasium.com/ivankravets/platformio
     :alt: Dependency Status
@@ -27,8 +27,8 @@ PlatformIO
 `Reddit <http://www.reddit.com/r/platformio/>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_
 
-*Atmel AVR & SAM, Freescale Kinetis, Nordic nRF51, NXP LPC, ST STM32,
-TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
+*Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
+ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
@@ -127,6 +127,7 @@ It has support for the most popular embedded platforms:
 
 * `Atmel AVR <http://platformio.org/#!/platforms/atmelavr>`_
 * `Atmel SAM <http://platformio.org/#!/platforms/atmelsam>`_
+* `Espressif <http://platformio.org/#!/platforms/espressif>`_
 * `Freescale Kinetis <http://platformio.org/#!/platforms/freescalekinetis>`_
 * `Nordic nRF51 <http://platformio.org/#!/platforms/nordicnrf51>`_
 * `NXP LPC. <http://platformio.org/#!/platforms/nxplpc>`_
