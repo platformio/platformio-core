@@ -1,0 +1,21 @@
+{
+	"build_systems":
+    [
+        {
+			"name": "PlatformIO",
+			"cmd": ["platformio", "run"],
+		    "working_dir": "${project_path:${folder}}",
+			"variants":
+		    [
+		        {
+		            "name": "Clean",
+		            "cmd": ["platformio", "run", "-t", "clean"]
+		        },
+		        {
+		            "name": "Upload",
+		            "cmd": ["platformio", "run", "-t", "upload"]
+		        }
+		    ]
+		}
+    ]
+}
