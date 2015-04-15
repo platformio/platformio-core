@@ -9,6 +9,7 @@ IDE Integration
     ide/arduino
     ide/eclipse
     ide/energia
+    ide/qtcreator
     ide/sublimetext
     ide/vim
     ide/visualstudio
