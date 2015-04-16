@@ -1,6 +1,15 @@
 Release History
 ===============
 
+2.0.0 (2015-??-??)
+------------------
+
+* Added global ``-f, --force`` option which will force to accept any
+  confirmation prompts (`issue #152 <https://github.com/platformio/platformio/issues/152>`_)
+* Allowed to choose which library to update
+  (`issue #168 <https://github.com/platformio/platformio/issues/168>`_)
+
+
 1.4.0 (2015-04-11)
 ------------------
 

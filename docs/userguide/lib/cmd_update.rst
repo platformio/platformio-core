@@ -10,7 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio lib update
+    platformio lib update [LIBRARY_ID]
 
 
 Description
@@ -21,6 +21,8 @@ Check or update installed libraries
 
 Examples
 --------
+
+1. Update all installed libraries
 
 .. code-block:: bash
 
@@ -36,8 +38,23 @@ Examples
     # Updating  [ 13 ] Adafruit-GFX library:
     # Versions: Current=a9e5bc4707, Latest=a9e5bc4707 	 [Up-to-date]
     # Updating  [ 1 ] OneWire library:
-    # Versions: Current=2.2, Latest=2.2 	 [Up-to-date]
+    # Versions: Current=2.2, Latest=2.2 	             [Up-to-date]
     # Updating  [ 4 ] IRremote library:
     # Versions: Current=f2dafe5030, Latest=f2dafe5030 	 [Up-to-date]
     # Updating  [ 14 ] Adafruit-9DOF-Unified library:
     # Versions: Current=b2f07242ac, Latest=b2f07242ac 	 [Up-to-date]
+
+2. Update specified libraries
+
+.. code-block:: bash
+
+    $ platformio lib update 1 59
+    # Updating  [ 1 ] OneWire library:
+    # Versions: Current=2.2, Latest=2.2 	             [Up-to-date]
+    # Updating [ 59 ] USB-Host-Shield-20 library:
+    # Versions: Current=fcab83dcb3, Latest=c61f9ce1c2 	 [Out-of-date]
+    # The library #59 'USB-Host-Shield-20' has been successfully uninstalled!
+    # Installing library [ 59 ]:
+    # Downloading  [####################################]  100%
+    # Unpacking  [####################################]  100%
+    # The library #59 'USB-Host-Shield-20' has been successfully installed!

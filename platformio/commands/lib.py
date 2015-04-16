@@ -209,13 +209,18 @@ def lib_show(libid):
 
 
 @cli.command("update", short_help="Update installed libraries")
+@click.argument("libid", type=click.INT, nargs=-1, required=False,
+                metavar="[LIBRARY_ID]")
 @click.pass_context
-def lib_update(ctx):
+def lib_update(ctx, libid):
     lm = LibraryManager(get_lib_dir())
     for id_, latest_version in (lm.get_latest_versions() or {}).items():
+        if libid and int(id_) not in libid:
+            continue
+
         info = lm.get_info(int(id_))
 
-        click.echo("Updating  [ %s ] %s library:" % (
+        click.echo("Updating [ %s ] %s library:" % (
             click.style(id_, fg="yellow"),
             click.style(info['name'], fg="cyan")))
 
