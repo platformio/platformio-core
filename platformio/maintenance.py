@@ -20,7 +20,8 @@ from platformio.platforms.base import PlatformFactory
 from platformio.util import get_home_dir, get_lib_dir
 
 
-def on_platformio_start(ctx):
+def on_platformio_start(ctx, force):
+    app.set_session_var("force_option", force)
     telemetry.on_command(ctx)
     after_upgrade(ctx)
 

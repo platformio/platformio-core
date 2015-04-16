@@ -37,14 +37,16 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
 
 @click.command(cls=PlatformioCLI)
 @click.version_option(__version__, prog_name="PlatformIO")
+@click.option("--force", "-f", is_flag=True,
+              help="Force to accept any confirmation prompts")
 @click.pass_context
-def cli(ctx):
-    maintenance.on_platformio_start(ctx)
+def cli(ctx, force):
+    maintenance.on_platformio_start(ctx, force)
 
 
 @cli.resultcallback()
 @click.pass_context
-def process_result(ctx, result):
+def process_result(ctx, result, force):  # pylint: disable=W0613
     maintenance.on_platformio_end(ctx, result)
 
 
@@ -54,7 +56,7 @@ def main():
         # /en/latest/security.html#insecureplatformwarning
         requests.packages.urllib3.disable_warnings()
 
-        cli(None)
+        cli(None, None)
     except Exception as e:  # pylint: disable=W0703
         if not isinstance(e, exception.ReturnErrorCode):
             maintenance.on_platformio_exception(e)
