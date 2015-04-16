@@ -86,8 +86,8 @@ Serial does not work with panStampAVR board
 Answered in `issue #144 <https://github.com/platformio/platformio/issues/144#issuecomment-87388038>`_.
 
 
-An error ``pkg_resources.DistributionNotFound``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PlatformIO: command not found || An error ``pkg_resources.DistributionNotFound``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 
 Please upgrade *SetupTools* package:
 
