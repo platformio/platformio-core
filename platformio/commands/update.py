@@ -3,18 +3,14 @@
 
 import click
 
-from platformio.platforms.base import PlatformFactory
+from platformio.commands.lib import lib_update as cmd_lib_update
+from platformio.commands.platforms import \
+    platforms_update as cmd_platforms_update
 
 
-@click.command("update", short_help="Update installed platforms")
-def cli():
-
-    installed_platforms = PlatformFactory.get_platforms(
-        installed=True).keys()
-    installed_platforms.sort()
-
-    for platform in installed_platforms:
-        click.echo("\nPlatform %s" % click.style(platform, fg="cyan"))
-        click.echo("--------")
-        p = PlatformFactory.newPlatform(platform)
-        p.update()
+@click.command("update",
+               short_help="Update installed Platforms, Packages and Libraries")
+@click.pass_context
+def cli(ctx):
+    ctx.invoke(cmd_platforms_update)
+    ctx.invoke(cmd_lib_update)

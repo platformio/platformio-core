@@ -9,7 +9,8 @@ from time import time
 import click
 
 from platformio import app, exception, telemetry, util
-from platformio.commands.install import cli as cmd_install
+from platformio.commands.platforms import \
+    platforms_install as cmd_platforms_install
 from platformio.platforms.base import PlatformFactory
 
 
@@ -120,7 +121,7 @@ def _run_environment(ctx, name, options, targets, upload_port):
             not app.get_setting("enable_prompts") or
             click.confirm("The platform '%s' has not been installed yet. "
                           "Would you like to install it now?" % platform))):
-        ctx.invoke(cmd_install, platforms=[platform])
+        ctx.invoke(cmd_platforms_install, platforms=[platform])
 
     p = PlatformFactory.newPlatform(platform)
     return p.run(variables, envtargets)

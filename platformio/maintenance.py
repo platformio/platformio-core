@@ -11,9 +11,11 @@ from time import time
 import click
 
 from platformio import __version__, app, exception, telemetry
-from platformio.commands.install import cli as cmd_install
 from platformio.commands.lib import lib_update as cmd_libraries_update
-from platformio.commands.update import cli as cli_update
+from platformio.commands.platforms import \
+    platforms_install as cmd_platforms_install
+from platformio.commands.platforms import \
+    platforms_update as cmd_platforms_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.libmanager import LibraryManager
 from platformio.platforms.base import PlatformFactory
@@ -90,7 +92,7 @@ class Upgrader(object):
                 remove(join(get_home_dir(), fname))
 
         if prev_platforms:
-            ctx.invoke(cmd_install, platforms=prev_platforms)
+            ctx.invoke(cmd_platforms_install, platforms=prev_platforms)
 
         return True
 
@@ -98,8 +100,7 @@ class Upgrader(object):
         installed_platforms = PlatformFactory.get_platforms(
             installed=True).keys()
         if installed_platforms:
-            ctx.invoke(cmd_install, platforms=installed_platforms)
-        ctx.invoke(cli_update)
+            ctx.invoke(cmd_platforms_install, platforms=installed_platforms)
         return True
 
 
@@ -134,6 +135,8 @@ def after_upgrade(ctx):
     u = Upgrader(last_version, __version__)
     if u.run(ctx):
         app.set_state_item("last_version", __version__)
+        ctx.invoke(cmd_platforms_update)
+
         click.secho("PlatformIO has been successfully upgraded to %s!\n" %
                     __version__, fg="green")
 
@@ -195,14 +198,14 @@ def check_internal_updates(ctx, what):
 
     if not app.get_setting("auto_update_" + what):
         click.secho("Please update them via ", fg="yellow", nl=False)
-        click.secho("`platformio %supdate`" %
-                    ("lib " if what == "libraries" else ""),
+        click.secho("`platformio %s update`" %
+                    ("lib" if what == "libraries" else "platforms"),
                     fg="cyan", nl=False)
         click.secho(" command.\n", fg="yellow")
     else:
         click.secho("Please wait while updating %s ..." % what, fg="yellow")
         if what == "platforms":
-            ctx.invoke(cli_update)
+            ctx.invoke(cmd_platforms_update)
         elif what == "libraries":
             ctx.invoke(cmd_libraries_update)
         click.echo()
