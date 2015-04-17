@@ -24,11 +24,11 @@ DEFAULT_SETTINGS = {
     },
     "auto_update_platforms": {
         "description": "Automatically update platforms (Yes/No)",
-        "value": True
+        "value": False
     },
     "auto_update_libraries": {
         "description": "Automatically update libraries (Yes/No)",
-        "value": True
+        "value": False
     },
     "enable_telemetry": {
         "description": ("Shares commands, platforms and libraries usage"

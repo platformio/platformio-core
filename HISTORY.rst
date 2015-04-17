@@ -8,6 +8,8 @@ Release History
   confirmation prompts (`issue #152 <https://github.com/platformio/platformio/issues/152>`_)
 * Allowed to choose which library to update
   (`issue #168 <https://github.com/platformio/platformio/issues/168>`_)
+* Disabled automatic updates by default for platforms, packages and libraries
+  (`issue #171 <https://github.com/platformio/platformio/issues/171>`_)
 
 
 1.4.0 (2015-04-11)
