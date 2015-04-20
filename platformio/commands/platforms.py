@@ -90,7 +90,7 @@ def platforms_search(query, json_output):
         for item in data:
             click.secho(item['type'], fg="cyan", nl=False)
             click.echo(" (available packages: %s)" % ", ".join(
-                p.get_packages().keys()))
+                item.get("packages").keys()))
             click.echo("-" * terminal_width)
             click.echo(item['description'])
             click.echo()

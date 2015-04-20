@@ -119,7 +119,7 @@ class PlatformFactory(object):
 
     @staticmethod
     def get_clsname(type_):
-        return "%sPlatform" % type_.title()
+        return "%s%sPlatform" % (type_.upper()[0], type_.lower()[1:])
 
     @staticmethod
     def load_module(type_, path):
@@ -134,24 +134,30 @@ class PlatformFactory(object):
     @classmethod
     def get_platforms(cls, installed=False):
         platforms = {}
-        for d in (util.get_home_dir(), util.get_source_dir()):
-            pdir = join(d, "platforms")
-            if not isdir(pdir):
-                continue
-            for p in listdir(pdir):
-                if p in ("__init__.py", "base.py") or not p.endswith(".py"):
+
+        try:
+            platforms = cls.get_platforms_cache
+        except AttributeError:
+            for d in (util.get_home_dir(), util.get_source_dir()):
+                pdir = join(d, "platforms")
+                if not isdir(pdir):
                     continue
-                type_ = p[:-3]
-                path = join(pdir, p)
-                try:
-                    isplatform = hasattr(
-                        cls.load_module(type_, path),
-                        cls.get_clsname(type_)
-                    )
-                    if isplatform:
-                        platforms[type_] = path
-                except exception.UnknownPlatform:
-                    pass
+                for p in listdir(pdir):
+                    if (p in ("__init__.py", "base.py") or not
+                            p.endswith(".py")):
+                        continue
+                    type_ = p[:-3]
+                    path = join(pdir, p)
+                    try:
+                        isplatform = hasattr(
+                            cls.load_module(type_, path),
+                            cls.get_clsname(type_)
+                        )
+                        if isplatform:
+                            platforms[type_] = path
+                    except exception.UnknownPlatform:
+                        pass
+            cls.get_platforms_cache = platforms
 
         if not installed:
             return platforms
