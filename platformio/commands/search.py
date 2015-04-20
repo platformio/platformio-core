@@ -40,7 +40,7 @@ def cli(query, json_output):
         for item in data:
             click.secho(item['type'], fg="cyan", nl=False)
             click.echo(" (available packages: %s)" % ", ".join(
-                p.get_packages().keys()))
+                item.get("packages").keys()))
             click.secho("-" * len(item['type']), fg="cyan")
             click.echo(item['description'])
             click.echo()
