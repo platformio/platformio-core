@@ -1,6 +1,10 @@
 PlatformIO
 ==========
 
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/platformio/platformio
+   :target: https://gitter.im/platformio/platformio?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 .. image:: https://travis-ci.org/platformio/platformio.svg?branch=develop
     :target: https://travis-ci.org/platformio/platformio
     :alt: Travis.CI Build Status
