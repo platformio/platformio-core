@@ -19,6 +19,9 @@ PlatformIO
 .. image:: https://pypip.in/license/platformio/badge.png?style=flat
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/platformio/platformio
+   :target: https://gitter.im/platformio/platformio?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge    
 
 `Website + Library Search <http://platformio.org>`_ |
 `Documentation <http://docs.platformio.org>`_ |
