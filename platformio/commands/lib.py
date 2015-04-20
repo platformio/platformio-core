@@ -21,7 +21,9 @@ def echo_liblist_header():
         authornames="Authors",
         description="Description"
     ))
-    click.echo("-" * 85)
+
+    terminal_width, _ = click.get_terminal_size()
+    click.echo("-" * terminal_width)
 
 
 def echo_liblist_item(item):

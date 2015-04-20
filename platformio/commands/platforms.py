@@ -86,11 +86,12 @@ def platforms_search(query, json_output):
     if json_output:
         click.echo(json.dumps(data))
     else:
+        terminal_width, _ = click.get_terminal_size()
         for item in data:
             click.secho(item['type'], fg="cyan", nl=False)
             click.echo(" (available packages: %s)" % ", ".join(
                 p.get_packages().keys()))
-            click.secho("-" * len(item['type']), fg="cyan")
+            click.echo("-" * terminal_width)
             click.echo(item['description'])
             click.echo()
 

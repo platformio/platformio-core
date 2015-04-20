@@ -193,6 +193,10 @@ def check_internal_updates(ctx, what):
     if not outdated_items:
         return
 
+    terminal_width, _ = click.get_terminal_size()
+
+    click.echo("")
+    click.echo("*" * terminal_width)
     click.secho("There are the new updates for %s (%s)" %
                 (what, ", ".join(outdated_items)), fg="yellow")
 
@@ -201,7 +205,7 @@ def check_internal_updates(ctx, what):
         click.secho("`platformio %s update`" %
                     ("lib" if what == "libraries" else "platforms"),
                     fg="cyan", nl=False)
-        click.secho(" command.\n", fg="yellow")
+        click.secho(" command.", fg="yellow")
     else:
         click.secho("Please wait while updating %s ..." % what, fg="yellow")
         if what == "platforms":
@@ -212,3 +216,6 @@ def check_internal_updates(ctx, what):
 
         telemetry.on_event(category="Auto", action="Update",
                            label=what.title())
+
+    click.echo("*" * terminal_width)
+    click.echo("")
