@@ -31,7 +31,7 @@ def BuildFirmware(env):
 
     firmenv = env.Clone()
     vdirs = firmenv.VariantDirRecursive(
-        join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR")
+        join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR", duplicate=False)
 
     # build dependent libs
     deplibs = firmenv.BuildDependentLibraries("$PROJECTSRC_DIR")
@@ -365,7 +365,7 @@ def ConvertInoToCpp(env):
     if not data:
         return
 
-    tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "piomain.cpp")
+    tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "tmp_ino_to.cpp")
     with open(tmpcpp_file, "w") as f:
         f.write(data)
 
