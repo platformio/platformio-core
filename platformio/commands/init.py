@@ -11,7 +11,7 @@ from platformio import app, exception
 from platformio.util import get_boards, get_source_dir
 
 
-def validate_boards(ctx, param, value):
+def validate_boards(ctx, param, value):  # pylint: disable=W0613
     unknown_boards = set(value) - set(get_boards().keys())
     try:
         assert not unknown_boards
@@ -29,7 +29,7 @@ def validate_boards(ctx, param, value):
 @click.option("--board", "-b", multiple=True, metavar="TYPE",
               callback=validate_boards)
 @click.option("--disable-auto-uploading", is_flag=True)
-def cli(project_dir, board, disable_auto_uploading, ide):
+def cli(project_dir, board, disable_auto_uploading):
 
     project_file = join(project_dir, "platformio.ini")
     src_dir = join(project_dir, "src")
