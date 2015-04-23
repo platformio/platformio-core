@@ -132,32 +132,33 @@ class PlatformFactory(object):
         return module
 
     @classmethod
-    def get_platforms(cls, installed=False):
+    @util.memoized
+    def _lookup_platforms(cls):
         platforms = {}
-
-        try:
-            platforms = cls.get_platforms_cache
-        except AttributeError:
-            for d in (util.get_home_dir(), util.get_source_dir()):
-                pdir = join(d, "platforms")
-                if not isdir(pdir):
+        for d in (util.get_home_dir(), util.get_source_dir()):
+            pdir = join(d, "platforms")
+            if not isdir(pdir):
+                continue
+            for p in listdir(pdir):
+                if (p in ("__init__.py", "base.py") or not
+                        p.endswith(".py")):
                     continue
-                for p in listdir(pdir):
-                    if (p in ("__init__.py", "base.py") or not
-                            p.endswith(".py")):
-                        continue
-                    type_ = p[:-3]
-                    path = join(pdir, p)
-                    try:
-                        isplatform = hasattr(
-                            cls.load_module(type_, path),
-                            cls.get_clsname(type_)
-                        )
-                        if isplatform:
-                            platforms[type_] = path
-                    except exception.UnknownPlatform:
-                        pass
-            cls.get_platforms_cache = platforms
+                type_ = p[:-3]
+                path = join(pdir, p)
+                try:
+                    isplatform = hasattr(
+                        cls.load_module(type_, path),
+                        cls.get_clsname(type_)
+                    )
+                    if isplatform:
+                        platforms[type_] = path
+                except exception.UnknownPlatform:
+                    pass
+        return platforms
+
+    @classmethod
+    def get_platforms(cls, installed=False):
+        platforms = cls._lookup_platforms()
 
         if not installed:
             return platforms
