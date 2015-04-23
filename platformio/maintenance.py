@@ -109,8 +109,12 @@ def after_upgrade(ctx):
     if last_version == __version__:
         return
 
+    terminal_width, _ = click.get_terminal_size()
+
     # promotion
-    click.echo("\nIf you like %s, please:" % (
+    click.echo("")
+    click.echo("*" * terminal_width)
+    click.echo("If you like %s, please:" % (
         click.style("PlatformIO", fg="cyan")
     ))
     click.echo(
@@ -123,7 +127,13 @@ def after_upgrade(ctx):
         click.style("give", fg="cyan"),
         click.style("https://github.com/platformio/platformio", fg="cyan")
     ))
-    click.secho("Thanks a lot!\n", fg="green")
+    click.echo("- %s for the new features/issues on Bountysource > %s" % (
+        click.style("vote", fg="cyan"),
+        click.style("https://www.bountysource.com/teams/platformio/issues",
+                    fg="cyan")
+    ))
+    click.echo("*" * terminal_width)
+    click.echo("")
 
     if last_version == "0.0.0":
         app.set_state_item("last_version", __version__)
@@ -162,13 +172,19 @@ def check_platformio_upgrade():
             Upgrader.version_to_int(__version__)):
         return
 
+    terminal_width, _ = click.get_terminal_size()
+
+    click.echo("")
+    click.echo("*" * terminal_width)
     click.secho("There is a new version %s of PlatformIO available.\n"
                 "Please upgrade it via " % latest_version,
                 fg="yellow", nl=False)
     click.secho("platformio upgrade", fg="cyan", nl=False)
     click.secho(" command.\nChanges: ", fg="yellow", nl=False)
-    click.secho("http://docs.platformio.org/en/latest/history.html\n",
+    click.secho("http://docs.platformio.org/en/latest/history.html",
                 fg="cyan")
+    click.echo("*" * terminal_width)
+    click.echo("")
 
 
 def check_internal_updates(ctx, what):
