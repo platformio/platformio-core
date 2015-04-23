@@ -29,7 +29,8 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
 @click.option("--board", "-b", multiple=True, metavar="TYPE",
               callback=validate_boards)
 @click.option("--disable-auto-uploading", is_flag=True)
-def cli(project_dir, board, disable_auto_uploading):
+@click.option("--env-prefix", default="autogen_")
+def cli(project_dir, board, disable_auto_uploading, env_prefix):
 
     # ask about auto-uploading
     if board and app.get_setting("enable_prompts"):
@@ -78,7 +79,8 @@ def cli(project_dir, board, disable_auto_uploading):
                  project_file)
 
     if board:
-        fill_project_envs(project_file, board, disable_auto_uploading)
+        fill_project_envs(
+            project_file, board, disable_auto_uploading, env_prefix)
 
     click.secho(
         "\nProject has been successfully initialized!\nUseful commands:\n"
@@ -92,7 +94,8 @@ def cli(project_dir, board, disable_auto_uploading):
     )
 
 
-def fill_project_envs(project_file, board_types, disable_auto_uploading):
+def fill_project_envs(project_file, board_types, disable_auto_uploading,
+                      env_prefix):
     builtin_boards = get_boards()
     content = []
     used_envs = []
@@ -103,7 +106,7 @@ def fill_project_envs(project_file, board_types, disable_auto_uploading):
 
     for type_ in board_types:
         data = builtin_boards[type_]
-        env_name = "[env:autogen_%s]" % type_
+        env_name = "[env:%s%s]" % (env_prefix, type_)
 
         if env_name in used_envs:
             continue
@@ -121,5 +124,9 @@ def fill_project_envs(project_file, board_types, disable_auto_uploading):
         content.append("%stargets = upload" % ("# " if disable_auto_uploading
                                                else ""))
 
+    if not content:
+        return
+
     with open(project_file, "a") as f:
+        content.append("")
         f.write("\n".join(content))

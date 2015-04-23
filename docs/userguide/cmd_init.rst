@@ -54,6 +54,14 @@ If you initialise project with the specified ``--board``, then *PlatformIO*
 will create environment with enabled firmware auto-uploading. This option
 allows you to disable firmware auto-uploading by default.
 
+.. option::
+    --env-prefix
+
+An environment prefix which will be used with pair in board type. The default
+value is ``autogen_``. For example, the default environment name for
+``teensy_31`` board will be ``[env:autogen_teensy_31]``.
+
+
 Examples
 --------
 

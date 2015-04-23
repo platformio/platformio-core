@@ -16,6 +16,8 @@ Release History
   (`issue #167 <https://github.com/platformio/platformio/issues/167>`_)
 * Allowed to choose which library to update
   (`issue #168 <https://github.com/platformio/platformio/issues/168>`_)
+* Allowed to specify `platformio init --env-prefix <http://docs.platformio.org/en/latest/userguide/cmd_init.html#cmdoption--env-prefix>`__ when initialise/update project
+  (`issue #182 <https://github.com/platformio/platformio/issues/182>`_)
 * Disabled automatic updates by default for platforms, packages and libraries
   (`issue #171 <https://github.com/platformio/platformio/issues/171>`_)
 * Fixed bug with creating copies of source files
