@@ -11,6 +11,9 @@ Release History
   (`issue #174 <https://github.com/platformio/platformio/issues/174>`_)
 * Added global ``-f, --force`` option which will force to accept any
   confirmation prompts (`issue #152 <https://github.com/platformio/platformio/issues/152>`_)
+* Allowed to add more boards to existing
+  `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  (`issue #167 <https://github.com/platformio/platformio/issues/167>`_)
 * Allowed to choose which library to update
   (`issue #168 <https://github.com/platformio/platformio/issues/168>`_)
 * Disabled automatic updates by default for platforms, packages and libraries

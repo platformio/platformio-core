@@ -96,12 +96,6 @@ class UnsupportedArchiveType(PlatformioException):
     MESSAGE = "Can not unpack file '%s'"
 
 
-class ProjectInitialized(PlatformioException):
-
-    MESSAGE = ("Project is already initialized. "
-               "Process it with `platformio run` command")
-
-
 class ProjectEnvsNotAvailable(PlatformioException):
 
     MESSAGE = "Please setup environments in `platformio.ini` file."
