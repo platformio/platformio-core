@@ -51,8 +51,7 @@ class ProjectGenerator(object):
         for tpl_path in self.get_tpls():
             file_name = basename(tpl_path)[:-4]
             with open(join(self.project_dir, file_name), "w") as f:
-                print tpl_path
-                f.write(self._render_tpl(tpl_path))
+                f.write(self._render_tpl(tpl_path).encode("utf8"))
 
     def _render_tpl(self, tpl_path):
         content = ""
