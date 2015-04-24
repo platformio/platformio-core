@@ -131,7 +131,7 @@ def platforms_show(ctx, platform):
 
 
 @cli.command("uninstall", short_help="Uninstall platforms")
-@click.argument("platforms", nargs=-1)
+@click.argument("platforms", nargs=-1, required=True)
 def platforms_uninstall(platforms):
 
     for platform in platforms:
