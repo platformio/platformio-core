@@ -40,8 +40,9 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
     def _handle_obsolate_command(self, name):
         if name in ("install", "list", "search", "show", "uninstall"):
             click.secho(
-                "Warning! `platformio %s` command is obsoleted! Please use "
-                "`platformio platforms %s`" % (name, name),
+                "Warning! `platformio %s` command is obsoleted and will be "
+                "removed in the next release! Please use "
+                "`platformio platforms %s` instead." % (name, name),
                 fg="red"
             )
             from platformio.commands import platforms
