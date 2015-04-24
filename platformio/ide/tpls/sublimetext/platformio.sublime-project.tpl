@@ -7,7 +7,7 @@
 				"platformio",
 				"run"
 			],
-			"name": "{{project_name}}",
+			"name": "PlatformIO",
 			"variants":
 			[
 				{
