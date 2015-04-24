@@ -18,7 +18,7 @@ def cli():
 
 
 @cli.command("install", short_help="Install new platforms")
-@click.argument("platforms", nargs=-1)
+@click.argument("platforms", nargs=-1, required=True)
 @click.option("--with-package", multiple=True, metavar="<package>")
 @click.option("--without-package", multiple=True, metavar="<package>")
 @click.option("--skip-default-package", is_flag=True)
