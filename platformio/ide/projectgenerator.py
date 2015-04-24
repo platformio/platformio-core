@@ -37,6 +37,12 @@ class ProjectGenerator(object):
     def get_project_name(self):
         return basename(self.project_dir)
 
+    def get_includes(self):
+        return []
+
+    def get_srcfiles(self):
+        return []
+
     def get_tpls(self):
         tpls_dir = join(util.get_source_dir(), "ide", "tpls", self.ide)
         return glob(join(tpls_dir, ".*.tpl")) + glob(join(tpls_dir, "*.tpl"))
@@ -45,6 +51,7 @@ class ProjectGenerator(object):
         for tpl_path in self.get_tpls():
             file_name = basename(tpl_path)[:-4]
             with open(join(self.project_dir, file_name), "w") as f:
+                print tpl_path
                 f.write(self._render_tpl(tpl_path))
 
     def _render_tpl(self, tpl_path):
@@ -57,7 +64,9 @@ class ProjectGenerator(object):
         data = self.get_project_env()
 
         data.update({
-            "project_name": self.get_project_name()
+            "project_name": self.get_project_name(),
+            "includes": self.get_includes(),
+            "srcfiles": self.get_srcfiles()
         })
 
         return data
