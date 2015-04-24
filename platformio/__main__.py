@@ -31,8 +31,22 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
             mod = __import__("platformio.commands." + name,
                              None, None, ["cli"])
         except ImportError:
-            raise exception.UnknownCLICommand(name)
+            try:
+                return self._handle_obsolate_command(name)
+            except AttributeError:
+                raise exception.UnknownCLICommand(name)
         return mod.cli
+
+    def _handle_obsolate_command(self, name):
+        if name in ("install", "list", "search", "show", "uninstall"):
+            click.secho(
+                "Warning! `platformio %s` command is obsoleted! Please use "
+                "`platformio platforms %s`" % (name, name),
+                fg="red"
+            )
+            from platformio.commands import platforms
+            return getattr(platforms, "platforms_" + name)
+        raise AttributeError()
 
 
 @click.command(cls=PlatformioCLI)
