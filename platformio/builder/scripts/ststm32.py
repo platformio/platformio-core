@@ -15,7 +15,7 @@ env = DefaultEnvironment()
 
 SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
-if "gdb" in env['UPLOAD_PROTOCOL']:
+if env['UPLOAD_PROTOCOL'] == "gdb":
     if not isfile(join(env.subst("$PROJECT_DIR"), "upload.gdb")):
         Exit(
             "You are using GDB as firmware uploader. "
