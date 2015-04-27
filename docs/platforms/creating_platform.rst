@@ -301,12 +301,14 @@ Installation
 Now, you can use ``test`` for the :ref:`projectconf_env_platform` option in
 :ref:`projectconf`.
 
-Examples
---------
+Example
+-------
 
-Create :ref:`platform_ststm32` based platform which uses GDB for uploading
+Let's use the real example which was requested by our user in `issue 175 <https://github.com/platformio/platformio/issues/175>`_. Need to add support for uploading firmware using GDB to
+:ref:`platform_ststm32`.
 
-First of all, we need to create new folder ``platforms`` :ref:`projectconf_pio_home_dir` and copy there two files:
+First of all, need to create new folder ``platforms`` in :ref:`projectconf_pio_home_dir`
+and copy there two files:
 
 1. Platform manifest file ``ststm32gdb.py`` with the next content:
 
@@ -411,7 +413,5 @@ First of all, we need to create new folder ``platforms`` :ref:`projectconf_pio_h
 
     Default([target_firm, target_size])
 
-You should see ``ststm32gdb`` platform in :ref:`platformio search <cmd_search>` command output.
-Now, you can install new platform via :ref:`platformio install ststm32gdb <cmd_install>` command.
-
-For more detailed information how to use this platform please follow to `issue 175 <https://github.com/platformio/platformio/issues/175>`_
+Now, we should see ``ststm32gdb`` platform using :ref:`cmd_search` command output
+and can install it via :ref:`platformio platforms install ststm32gdb <cmd_install>` command.
