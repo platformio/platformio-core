@@ -96,7 +96,7 @@ class MeasurementProtocol(TelemetryBase):
         if not args:
             return
 
-        if args[0] in ("lib", "serialports", "settings"):
+        if args[0] in ("lib", "platforms", "serialports", "settings"):
             cmd_path = args[:2]
         else:
             cmd_path = args[:1]
