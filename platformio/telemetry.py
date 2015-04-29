@@ -12,8 +12,7 @@ from time import time
 import click
 import requests
 
-from platformio import __version__, app
-from platformio.util import exec_command, get_systype
+from platformio import __version__, app, util
 
 
 class TelemetryBase(object):
@@ -77,7 +76,7 @@ class MeasurementProtocol(TelemetryBase):
         dpdata.append("Click/%s" % click.__version__)
         # dpdata.append("Requests/%s" % requests.__version__)
         try:
-            result = exec_command(["scons", "--version"])
+            result = util.exec_command(["scons", "--version"])
             match = re.search(r"engine: v([\d\.]+)", result['out'])
             if match:
                 dpdata.append("SCons/%s" % match.group(1))
@@ -86,7 +85,7 @@ class MeasurementProtocol(TelemetryBase):
         self['an'] = " ".join(dpdata)
 
     def _prefill_custom_data(self):
-        self['cd1'] = get_systype()
+        self['cd1'] = util.get_systype()
         self['cd2'] = "Python/%s %s" % (platform.python_version(),
                                         platform.platform())
         self['cd4'] = 1 if app.get_setting("enable_prompts") else 0
@@ -155,6 +154,7 @@ class MPDataPusher(threading.Thread):
                 r = self.http_session().post(
                     "https://ssl.google-analytics.com/collect",
                     data=data,
+                    headers=util.get_request_defheaders(),
                     timeout=3
                 )
                 r.raise_for_status()

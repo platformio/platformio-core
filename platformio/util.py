@@ -242,19 +242,22 @@ def get_logicaldisks():
     return disks
 
 
+def get_request_defheaders():
+    return {"User-Agent": "PlatformIO/%s %s" % (
+        __version__, requests.utils.default_user_agent())}
+
+
 def get_api_result(path, params=None, data=None):
     result = None
     r = None
 
     try:
-        headers = {"User-Agent": "PlatformIO/%s %s" % (
-            __version__, requests.utils.default_user_agent())}
-
         if data:
             r = requests.post(__apiurl__ + path, params=params, data=data,
-                              headers=headers)
+                              headers=get_request_defheaders())
         else:
-            r = requests.get(__apiurl__ + path, params=params, headers=headers)
+            r = requests.get(__apiurl__ + path, params=params,
+                             headers=get_request_defheaders())
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
