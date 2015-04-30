@@ -1,7 +1,7 @@
-.. _cmd_show:
+.. _cmd_platforms_show:
 
-platformio show
-===============
+platformio platforms show
+=========================
 
 .. contents::
 
@@ -10,7 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio show PLATFORM
+    platformio platforms show PLATFORM
 
 
 Description
@@ -24,7 +24,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio show atmelavr
+    $ platformio platforms show atmelavr
     atmelavr    - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
     ----------
     Package: toolchain-atmelavr

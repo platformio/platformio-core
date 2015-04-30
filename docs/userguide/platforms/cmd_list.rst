@@ -1,7 +1,7 @@
-.. _cmd_list:
+.. _cmd_platforms_list:
 
-platformio list
-===============
+platformio platforms list
+=========================
 
 .. contents::
 
@@ -10,7 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio list [OPTIONS]
+    platformio platforms list [OPTIONS]
 
 
 Description
@@ -31,7 +31,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio list
+    $ platformio platforms list
     atmelavr    with packages: toolchain-atmelavr, tool-avrdude, framework-arduinoavr, tool-micronucleus
     atmelsam    with packages: framework-arduinosam, ldscripts, toolchain-gccarmnoneeabi, tool-bossac
     freescalekinetis with packages: framework-mbed, toolchain-gccarmnoneeabi

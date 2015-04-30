@@ -16,14 +16,10 @@ To print all available commands and options use:
 
     cmd_boards
     cmd_init
-    cmd_install
     platformio lib <lib/index>
-    cmd_list
+    platformio platforms <platforms/index>
     cmd_run
-    cmd_search
     cmd_serialports
     cmd_settings
-    cmd_show
-    cmd_uninstall
     cmd_update
     cmd_upgrade

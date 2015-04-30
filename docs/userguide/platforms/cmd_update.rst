@@ -1,7 +1,7 @@
-.. _cmd_update:
+.. _cmd_platforms_update:
 
-platformio update
-=================
+platformio platforms update
+===========================
 
 .. contents::
 
@@ -10,14 +10,13 @@ Usage
 
 .. code-block:: bash
 
-    platformio update
+    platformio platforms update
 
 
 Description
 -----------
 
-Check or update installed :ref:`Platforms <platforms>` and
-:ref:`Libraries <librarymanager>`
+Check or update installed :ref:`Platforms <platforms>`
 
 
 Examples
@@ -25,7 +24,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio update
+    $ platformio platforms update
 
     Platform atmelavr
     --------

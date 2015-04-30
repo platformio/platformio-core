@@ -1,7 +1,7 @@
-.. _cmd_install:
+.. _cmd_platforms_install:
 
-platformio install
-==================
+platformio platforms install
+============================
 
 .. contents::
 
@@ -10,7 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio install [OPTIONS] [PLATFORMS]
+    platformio platforms install [OPTIONS] [PLATFORMS]
 
 
 Description
@@ -50,7 +50,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio install timsp430
+    $ platformio platforms install timsp430
     Installing toolchain-timsp430 package:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
@@ -68,7 +68,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio install timsp430 --skip-default-package --with-package=uploader
+    $ platformio platforms install timsp430 --skip-default-package --with-package=uploader
     Installing tool-mspdebug package:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
