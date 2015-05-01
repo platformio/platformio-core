@@ -11,6 +11,9 @@ Release History
   (`issue #174 <https://github.com/platformio/platformio/issues/174>`_)
 * Added global ``-f, --force`` option which will force to accept any
   confirmation prompts (`issue #152 <https://github.com/platformio/platformio/issues/152>`_)
+* Added library dependencies using ``install_libs`` option in
+  `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html#install-libs>`__
+  (`issue #134 <https://github.com/platformio/platformio/issues/134>`_)
 * Allowed to add more boards to existing
   `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
   (`issue #167 <https://github.com/platformio/platformio/issues/167>`_)

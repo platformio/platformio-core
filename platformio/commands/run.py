@@ -9,8 +9,10 @@ from time import time
 import click
 
 from platformio import app, exception, telemetry, util
+from platformio.commands.lib import lib_install as cmd_lib_install
 from platformio.commands.platforms import \
     platforms_install as cmd_platforms_install
+from platformio.libmanager import LibraryManager
 from platformio.platforms.base import PlatformFactory
 
 
@@ -115,6 +117,16 @@ def _run_environment(ctx, name, options, targets, upload_port):
 
     telemetry.on_run_environment(options, envtargets)
 
+    # install platform and libs dependencies
+    _autoinstall_env_platform(ctx, platform)
+    if "install_libs" in options:
+        _autoinstall_env_libs(ctx, options['install_libs'])
+
+    p = PlatformFactory.newPlatform(platform)
+    return p.run(variables, envtargets)
+
+
+def _autoinstall_env_platform(ctx, platform):
     installed_platforms = PlatformFactory.get_platforms(
         installed=True).keys()
     if (platform not in installed_platforms and (
@@ -123,5 +135,21 @@ def _run_environment(ctx, name, options, targets, upload_port):
                           "Would you like to install it now?" % platform))):
         ctx.invoke(cmd_platforms_install, platforms=[platform])
 
-    p = PlatformFactory.newPlatform(platform)
-    return p.run(variables, envtargets)
+
+def _autoinstall_env_libs(ctx, libids_list):
+    require_libs = [int(l.strip()) for l in libids_list.split(",")]
+    installed_libs = [
+        l['id'] for l in LibraryManager().get_installed().values()
+    ]
+
+    not_intalled_libs = set(require_libs) - set(installed_libs)
+    if not require_libs or not not_intalled_libs:
+        return
+
+    if (not app.get_setting("enable_prompts") or
+            click.confirm(
+                "The libraries with IDs '%s' have not been installed yet. "
+                "Would you like to install them now?" %
+                ", ".join([str(i) for i in not_intalled_libs])
+            )):
+        ctx.invoke(cmd_lib_install, libid=not_intalled_libs)

@@ -309,6 +309,22 @@ but will be applied only for the project source code from
 This option can be overridden by global environment variable
 :ref:`envvar_PLATFORMIO_SRCBUILD_FLAGS`.
 
+``install_libs``
+^^^^^^^^^^^^^^^^
+
+Specify dependent libraries which should be installed before environment
+process. The only library IDs are allowed. Multiple libraries can be passed
+using comma ``,`` sign.
+
+You can obtain library IDs using :ref:`cmd_lib_search` command.
+
+Example:
+
+.. code-block::   ini
+
+    [env:depends_on_some_libs]
+    install_libs = 1,13,19
+
 ``ignore_libs``
 ^^^^^^^^^^^^^^^
 
