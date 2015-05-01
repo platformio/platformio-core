@@ -8,11 +8,10 @@ from os.path import isdir, isfile, join
 from shutil import rmtree
 from tempfile import gettempdir
 
-from platformio import telemetry
+from platformio import telemetry, util
 from platformio.downloader import FileDownloader
 from platformio.exception import LibAlreadyInstalledError, LibNotInstalledError
 from platformio.unpacker import FileUnpacker
-from platformio.util import get_api_result, get_lib_dir
 
 
 class LibraryManager(object):
@@ -20,7 +19,7 @@ class LibraryManager(object):
     CONFIG_NAME = ".library.json"
 
     def __init__(self, lib_dir=None):
-        self.lib_dir = lib_dir or get_lib_dir()
+        self.lib_dir = lib_dir or util.get_lib_dir()
 
     @staticmethod
     def download(url, dest_dir):
@@ -33,6 +32,7 @@ class LibraryManager(object):
         fu = FileUnpacker(pkgpath, dest_dir)
         return fu.start()
 
+    @util.memoized
     def get_installed(self):
         items = {}
         if not isdir(self.lib_dir):
@@ -49,7 +49,7 @@ class LibraryManager(object):
         lib_ids = [str(item['id']) for item in self.get_installed().values()]
         if not lib_ids:
             return None
-        return get_api_result("/lib/version/" + str(",".join(lib_ids)))
+        return util.get_api_result("/lib/version/" + str(",".join(lib_ids)))
 
     def get_outdated(self):
         outdated = []
@@ -75,8 +75,10 @@ class LibraryManager(object):
         if self.is_installed(id_):
             raise LibAlreadyInstalledError()
 
-        dlinfo = get_api_result("/lib/download/" + str(id_),
-                                dict(version=version) if version else None)
+        dlinfo = util.get_api_result(
+            "/lib/download/" + str(id_),
+            dict(version=version) if version else None
+        )
         dlpath = None
         tmplib_dir = join(self.lib_dir, str(id_))
         try:
