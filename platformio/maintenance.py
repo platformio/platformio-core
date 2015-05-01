@@ -203,7 +203,7 @@ def check_internal_updates(ctx, what):
             if p.is_outdated():
                 outdated_items.append(platform)
     elif what == "libraries":
-        lm = LibraryManager(get_lib_dir())
+        lm = LibraryManager()
         outdated_items = lm.get_outdated()
 
     if not outdated_items:

@@ -12,15 +12,15 @@ from platformio import telemetry
 from platformio.downloader import FileDownloader
 from platformio.exception import LibAlreadyInstalledError, LibNotInstalledError
 from platformio.unpacker import FileUnpacker
-from platformio.util import get_api_result
+from platformio.util import get_api_result, get_lib_dir
 
 
 class LibraryManager(object):
 
     CONFIG_NAME = ".library.json"
 
-    def __init__(self, lib_dir):
-        self.lib_dir = lib_dir
+    def __init__(self, lib_dir=None):
+        self.lib_dir = lib_dir or get_lib_dir()
 
     @staticmethod
     def download(url, dest_dir):
