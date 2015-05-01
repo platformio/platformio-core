@@ -32,7 +32,6 @@ class LibraryManager(object):
         fu = FileUnpacker(pkgpath, dest_dir)
         return fu.start()
 
-    @util.memoized
     def get_installed(self):
         items = {}
         if not isdir(self.lib_dir):

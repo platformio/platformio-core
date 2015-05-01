@@ -132,7 +132,6 @@ class PlatformFactory(object):
         return module
 
     @classmethod
-    @util.memoized
     def _lookup_platforms(cls):
         platforms = {}
         for d in (util.get_home_dir(), util.get_source_dir()):
