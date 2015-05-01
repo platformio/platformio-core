@@ -226,7 +226,7 @@ processes:
     * - Format
       - Scope
       - Description
-    * - ``Wp,option``
+    * - ``-Wp,option``
       - CPPFLAGS
       - Bypass the compiler driver and pass *option* directly  through to the
         preprocessor
