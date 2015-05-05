@@ -220,15 +220,10 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
         return state
 
     def _parse_includes(state, node):
-        if node.path in state['paths']:
-            return state
-        else:
-            state['paths'].add(node.path)
-
         skip_includes = ("arduino.h", "energia.h")
         matches = INCLUDES_RE.findall(node.get_text_contents())
         for (inc_type, inc_name) in matches:
-            base_dir = dirname(node.path)
+            base_dir = dirname(node.get_abspath())
             if inc_name.lower() in skip_includes:
                 continue
             if join(base_dir, inc_name) in state['paths']:
