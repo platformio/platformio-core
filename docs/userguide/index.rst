@@ -3,13 +3,42 @@
 User Guide
 ==========
 
-To print all available commands and options use:
+.. contents::
+
+Usage
+-----
+
+.. code-block:: bash
+
+    platformio [OPTIONS] COMMAND
+
+Options
+-------
+
+.. option::
+    --force, - f
+
+Force to accept any confirmation prompts. This option allows to avoid an issue
+with :ref:`faq_troubleshooting_pioblocksprompt`
+
+.. option::
+    --version
+
+Show the version of PlatformIO
+
+.. option::
+    --help
+
+Show help for the available options and commands
 
 .. code-block:: bash
 
     $ platformio --help
     $ platformio COMMAND --help
 
+
+Commands
+--------
 
 .. toctree::
     :maxdepth: 2
