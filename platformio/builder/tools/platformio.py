@@ -131,9 +131,11 @@ def BuildLibrary(env, variant_dir, library_dir, ignore_files=None):
 
 def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
 
-    INCLUDES_RE = re.compile(r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")",
-                             re.M)
+    INCLUDES_RE = re.compile(
+        r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")", re.M)
     LIBSOURCE_DIRS = [env.subst(d) for d in env.get("LIBSOURCE_DIRS", [])]
+    USE_LIBS = [l.strip() for l in env.get("USE_LIBS", "").split(",")
+                if l.strip()]
 
     # start internal prototypes
 
@@ -174,7 +176,10 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                 if not isdir(lsd_dir):
                     continue
 
-                for ld in listdir(lsd_dir):
+                for ld in USE_LIBS + listdir(lsd_dir):
+                    if not isdir(join(lsd_dir, ld)):
+                        continue
+
                     inc_path = normpath(join(lsd_dir, ld, self.name))
                     try:
                         lib_dir = inc_path[:inc_path.index(
@@ -205,6 +210,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
             "libs": set(),
             "ordered": set()
         }
+
         state = _process_src_dir(state, env.subst(src_dir))
 
         result = []

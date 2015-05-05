@@ -325,6 +325,19 @@ Example:
     [env:depends_on_some_libs]
     install_libs = 1,13,19
 
+``use_libs``
+^^^^^^^^^^^^
+
+Specify libraries which should be used by ``Library Dependency Finder`` with
+the highest priority.
+
+Example:
+
+.. code-block::   ini
+
+    [env:libs_with_highest_priority]
+    use_libs = OneWire_ID1
+
 ``ignore_libs``
 ^^^^^^^^^^^^^^^
 

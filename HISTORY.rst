@@ -11,11 +11,17 @@ Release History
   (`issue #174 <https://github.com/platformio/platformio/issues/174>`_)
 * Added global ``-f, --force`` option which will force to accept any
   confirmation prompts (`issue #152 <https://github.com/platformio/platformio/issues/152>`_)
-* Added library dependencies using ``install_libs`` option in
-  `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html#install-libs>`__
+* Allowed to add library dependencies for build environment using
+  `install_libs <http://docs.platformio.org/en/latest/projectconf.html#install-libs>`_
+  option in ``platformio.ini``
   (`issue #134 <https://github.com/platformio/platformio/issues/134>`_)
-* Allowed to add more boards to existing
-  `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+* Allowed to specify libraries which are compatible with build environment using
+  `use_libs <http://docs.platformio.org/en/latest/projectconf.html#use-libs>`_
+  option in ``platformio.ini``
+  (`issue #148 <https://github.com/platformio/platformio/issues/148>`_)
+* Allowed to add more boards to PlatformIO project with
+  `platformio init --board <http://docs.platformio.org/en/latest/userguide/cmd_init.html#cmdoption--board>`__
+  command
   (`issue #167 <https://github.com/platformio/platformio/issues/167>`_)
 * Allowed to choose which library to update
   (`issue #168 <https://github.com/platformio/platformio/issues/168>`_)
@@ -45,8 +51,9 @@ Release History
   1.6.3 version (`issue #156 <https://github.com/platformio/platformio/issues/156>`_)
 * Upgraded `Energia Framework <http://docs.platformio.org/en/latest/frameworks/energia.html>`__ to
   0101E0015 version (`issue #146 <https://github.com/platformio/platformio/issues/146>`_)
-* Upgraded `Arduino Framework with Teensy Core <http://docs.platformio.org/en/latest/frameworks/arduino.html>`_ to
-  1.22 version (`issue #162 <https://github.com/platformio/platformio/issues/162>`_,
+* Upgraded `Arduino Framework with Teensy Core <http://docs.platformio.org/en/latest/frameworks/arduino.html>`_
+  to 1.22 version
+  (`issue #162 <https://github.com/platformio/platformio/issues/162>`_,
   `issue #170 <https://github.com/platformio/platformio/issues/170>`_)
 * Fixed exceptions with PlatformIO auto-updates when Internet connection isn't
   active
