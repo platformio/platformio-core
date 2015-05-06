@@ -32,7 +32,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
 @click.option("--ide",
               type=click.Choice(ProjectGenerator.get_supported_ides()))
 @click.option("--disable-auto-uploading", is_flag=True)
-@click.option("--env-prefix", default="autogen_")
+@click.option("--env-prefix", default="")
 def cli(project_dir, board, ide, disable_auto_uploading, env_prefix):
 
     # ask about auto-uploading
