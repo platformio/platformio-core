@@ -39,6 +39,12 @@ Process specified targets
 Upload port of embedded board. To print all available ports use
 :ref:`cmd_serialports` command
 
+.. option::
+    --build-dir
+
+Specify the path to project directory. By default, ``--build-dir`` is equal to
+current working directory (``CWD``).
+
 Examples
 --------
 

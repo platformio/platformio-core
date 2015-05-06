@@ -11,6 +11,9 @@ Release History
   (`issue #174 <https://github.com/platformio/platformio/issues/174>`_)
 * Added global ``-f, --force`` option which will force to accept any
   confirmation prompts (`issue #152 <https://github.com/platformio/platformio/issues/152>`_)
+* Allowed to run project with `platformio run --project-dir <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--project-dir>`_ option without changing the current working
+  directory
+  (`issue #192 <https://github.com/platformio/platformio/issues/192>`_)
 * Allowed to add library dependencies for build environment using
   `install_libs <http://docs.platformio.org/en/latest/projectconf.html#install-libs>`_
   option in ``platformio.ini``

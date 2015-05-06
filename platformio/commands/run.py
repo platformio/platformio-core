@@ -2,6 +2,7 @@
 # See LICENSE for details.
 
 from datetime import datetime
+from os import chdir, getcwd
 from os.path import getmtime, isdir, join
 from shutil import rmtree
 from time import time
@@ -20,52 +21,60 @@ from platformio.platforms.base import PlatformFactory
 @click.option("--environment", "-e", multiple=True, metavar="<environment>")
 @click.option("--target", "-t", multiple=True, metavar="<target>")
 @click.option("--upload-port", metavar="<upload port>")
+@click.option("--project-dir", default=getcwd,
+              type=click.Path(exists=True, file_okay=False, dir_okay=True,
+                              writable=True, resolve_path=True))
 @click.pass_context
-def cli(ctx, environment, target, upload_port):
+def cli(ctx, environment, target, upload_port, project_dir):
+    initial_cwd = getcwd()
+    chdir(project_dir)
+    try:
+        config = util.get_project_config()
 
-    config = util.get_project_config()
+        if not config.sections():
+            raise exception.ProjectEnvsNotAvailable()
 
-    if not config.sections():
-        raise exception.ProjectEnvsNotAvailable()
+        unknown = set(environment) - set([s[4:] for s in config.sections()])
+        if unknown:
+            raise exception.UnknownEnvNames(", ".join(unknown))
 
-    unknown = set(environment) - set([s[4:] for s in config.sections()])
-    if unknown:
-        raise exception.UnknownEnvNames(", ".join(unknown))
+        # remove ".pioenvs" if project config is modified
+        _pioenvs_dir = util.get_pioenvs_dir()
+        if (isdir(_pioenvs_dir) and
+                getmtime(join(util.get_project_dir(), "platformio.ini")) >
+                getmtime(_pioenvs_dir)):
+            rmtree(_pioenvs_dir)
 
-    # remove ".pioenvs" if project config is modified
-    _pioenvs_dir = util.get_pioenvs_dir()
-    if (isdir(_pioenvs_dir) and
-            getmtime(join(util.get_project_dir(), "platformio.ini")) >
-            getmtime(_pioenvs_dir)):
-        rmtree(_pioenvs_dir)
+        found_error = False
+        _first_done = False
+        for section in config.sections():
+            # skip main configuration section
+            if section == "platformio":
+                continue
+            elif section[:4] != "env:":
+                raise exception.InvalidEnvName(section)
 
-    found_error = False
-    _first_done = False
-    for section in config.sections():
-        # skip main configuration section
-        if section == "platformio":
-            continue
-        elif section[:4] != "env:":
-            raise exception.InvalidEnvName(section)
+            envname = section[4:]
+            if environment and envname not in environment:
+                # echo("Skipped %s environment" % style(envname, fg="yellow"))
+                continue
 
-        envname = section[4:]
-        if environment and envname not in environment:
-            # echo("Skipped %s environment" % style(envname, fg="yellow"))
-            continue
+            options = {}
+            for k, v in config.items(section):
+                options[k] = v
 
-        options = {}
-        for k, v in config.items(section):
-            options[k] = v
+            if _first_done:
+                click.echo()
 
-        if _first_done:
-            click.echo()
+            if not process_environment(
+                    ctx, envname, options, target, upload_port):
+                found_error = True
+            _first_done = True
 
-        if not process_environment(ctx, envname, options, target, upload_port):
-            found_error = True
-        _first_done = True
-
-    if found_error:
-        raise exception.ReturnErrorCode()
+        if found_error:
+            raise exception.ReturnErrorCode()
+    finally:
+        chdir(initial_cwd)
 
 
 def process_environment(ctx, name, options, targets, upload_port):
