@@ -15,7 +15,9 @@ class ProjectGenerator(object):
     def __init__(self, project_dir, ide):
         self.project_dir = project_dir
         self.ide = ide
-        self._tplvars = self._gather_tplvars()
+        self._tplvars = {}
+
+        self._gather_tplvars()
 
     @staticmethod
     def get_supported_ides():
@@ -60,12 +62,10 @@ class ProjectGenerator(object):
         return bottle.template(content, **self._tplvars)
 
     def _gather_tplvars(self):
-        data = self.get_project_env()
+        self._tplvars.update(self.get_project_env())
 
-        data.update({
+        self._tplvars.update({
             "project_name": self.get_project_name(),
             "includes": self.get_includes(),
             "srcfiles": self.get_srcfiles()
         })
-
-        return data
