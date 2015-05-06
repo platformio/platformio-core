@@ -37,7 +37,8 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
                 raise exception.UnknownCLICommand(name)
         return mod.cli
 
-    def _handle_obsolate_command(self, name):
+    @staticmethod
+    def _handle_obsolate_command(name):
         if name in ("install", "list", "search", "show", "uninstall"):
             click.secho(
                 "Warning! `platformio %s` command is obsoleted and will be "

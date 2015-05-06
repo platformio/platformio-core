@@ -19,7 +19,7 @@ from platformio.commands.platforms import \
 from platformio.commands.upgrade import get_latest_version
 from platformio.libmanager import LibraryManager
 from platformio.platforms.base import PlatformFactory
-from platformio.util import get_home_dir, get_lib_dir
+from platformio.util import get_home_dir
 
 
 def on_platformio_start(ctx, force):

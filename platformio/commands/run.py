@@ -45,39 +45,42 @@ def cli(ctx, environment, target, upload_port, project_dir):
                 getmtime(_pioenvs_dir)):
             rmtree(_pioenvs_dir)
 
-        found_error = False
-        _first_done = False
+        results = []
         for section in config.sections():
-            # skip main configuration section
-            if section == "platformio":
-                continue
-            elif section[:4] != "env:":
-                raise exception.InvalidEnvName(section)
-
-            envname = section[4:]
-            if environment and envname not in environment:
-                # echo("Skipped %s environment" % style(envname, fg="yellow"))
-                continue
-
-            options = {}
-            for k, v in config.items(section):
-                options[k] = v
-
-            if _first_done:
+            if results and results[-1] is not None:
                 click.echo()
 
-            if not process_environment(
-                    ctx, envname, options, target, upload_port):
-                found_error = True
-            _first_done = True
+            results.append(_process_conf_section(
+                ctx, config, section, environment, target, upload_port))
 
-        if found_error:
+        if not all([r for r in results if r is not None]):
             raise exception.ReturnErrorCode()
     finally:
         chdir(initial_cwd)
 
 
-def process_environment(ctx, name, options, targets, upload_port):
+def _process_conf_section(ctx, config, section,  # pylint: disable=R0913
+                          environment, target, upload_port):
+    # skip main configuration section
+    if section == "platformio":
+        return None
+
+    if section[:4] != "env:":
+        raise exception.InvalidEnvName(section)
+
+    envname = section[4:]
+    if environment and envname not in environment:
+        # echo("Skipped %s environment" % style(envname, fg="yellow"))
+        return None
+
+    options = {}
+    for k, v in config.items(section):
+        options[k] = v
+
+    return _process_environment(ctx, envname, options, target, upload_port)
+
+
+def _process_environment(ctx, name, options, targets, upload_port):
     terminal_width, _ = click.get_terminal_size()
     start_time = time()
 
