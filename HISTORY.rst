@@ -4,9 +4,6 @@ Release History
 1.5.0 (2015-05-??)
 ------------------
 
-* Created `PlatformIO gitter.im <https://gitter.im/platformio/platformio>`_
-  room
-  (`issue #174 <https://github.com/platformio/platformio/issues/174>`_)
 * Added GDB as alternative uploader to `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__ platform
   (`issue #175 <https://github.com/platformio/platformio/issues/174>`_)
 * Added `examples <https://github.com/platformio/platformio/tree/develop/examples>`__
@@ -14,6 +11,9 @@ Release History
   (`issue #154 <https://github.com/platformio/platformio/issues/154>`_)
 * Fixed parsing of includes for PlatformIO Library Dependency Finder
   (`issue #189 <https://github.com/platformio/platformio/issues/189>`_)
+* Fixed cancelling any previous definition of name, either built in or provided
+  with a ``-D`` option
+  (`issue #191 <https://github.com/platformio/platformio/issues/191>`_)
 
 1.4.0 (2015-04-11)
 ------------------

@@ -15,18 +15,13 @@ from platformio.util import pioversion_to_intstr
 def BuildFirmware(env):
 
     # fix ASM handling under non-casitive OS
-    if not case_sensitive_suffixes('.s', '.S'):
+    if not case_sensitive_suffixes(".s", ".S"):
         env.Replace(
             AS="$CC",
             ASCOM="$ASPPCOM"
         )
 
-    if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
-        env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
-
-    if "BUILD_FLAGS" in env:
-        env.MergeFlags(env['BUILD_FLAGS'])
-
+    env.ProcessFlags()
     env.BuildFramework()
 
     firmenv = env.Clone()
@@ -67,6 +62,22 @@ def BuildFirmware(env):
         LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"],
         PROGSUFFIX=".elf"
     )
+
+
+def ProcessFlags(env):
+    if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
+        env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
+
+    if "BUILD_FLAGS" in env:
+        env.MergeFlags(env['BUILD_FLAGS'])
+
+    # Cancel any previous definition of name, either built in or
+    # provided with a -D option // Issue #191
+    undefines = [f for f in env.get("CCFLAGS", []) if f.startswith("-U")]
+    if undefines:
+        for undef in undefines:
+            env['CCFLAGS'].remove(undef)
+        env.Append(_CPPDEFFLAGS=" %s" % " ".join(undefines))
 
 
 def GlobCXXFiles(env, path):
@@ -373,6 +384,7 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(BuildFirmware)
+    env.AddMethod(ProcessFlags)
     env.AddMethod(GlobCXXFiles)
     env.AddMethod(VariantDirRecursive)
     env.AddMethod(BuildFramework)
