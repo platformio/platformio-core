@@ -41,6 +41,11 @@ easily.
     which can be a path to directory, file or
     `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_.
 
+.. note::
+    You can omit ``SRC`` argument and set path (multiple paths are allowed
+    denoting with ``:``) to
+    ``PLATFORMIO_CI_SRC`` `Environment variable <http://en.wikipedia.org/wiki/Environment_variable>`_
+
 Options
 -------
 
