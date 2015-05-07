@@ -40,17 +40,20 @@ class ProjectGenerator(object):
     def get_project_name(self):
         return basename(self.project_dir)
 
-    def get_includes(self):
+    @staticmethod
+    def get_includes():
         return []
 
-    def get_srcfiles(self):
+    @staticmethod
+    def get_srcfiles():
         result = []
         for root, _, files in walk(util.get_projectsrc_dir()):
             for f in files:
                 result.append(join(root, f))
         return result
 
-    def get_defines(self):
+    @staticmethod
+    def get_defines():
         return []
 
     def get_tpls(self):
