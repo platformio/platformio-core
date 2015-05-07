@@ -44,6 +44,7 @@ Commands
     :maxdepth: 2
 
     cmd_boards
+    cmd_ci
     cmd_init
     platformio lib <lib/index>
     platformio platforms <platforms/index>

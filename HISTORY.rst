@@ -4,9 +4,11 @@ Release History
 2.0.0 (2015-??-??)
 ------------------
 
-* Implemented PlatformIO CLI 2.0: "platform" related commands have been
+* PlatformIO CLI 2.0: "platform" related commands have been
   moved to ``platformio platforms`` subcommand
   (`issue #158 <https://github.com/platformio/platformio/issues/158>`_)
+* PlatformIO as Continuous Integration (CI) tool for embedded projects
+  (`issue #108 <https://github.com/platformio/platformio/issues/108>`_)
 * Created `PlatformIO gitter.im <https://gitter.im/platformio/platformio>`_ room
   (`issue #174 <https://github.com/platformio/platformio/issues/174>`_)
 * Added global ``-f, --force`` option which will force to accept any

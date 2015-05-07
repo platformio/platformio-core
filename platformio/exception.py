@@ -165,6 +165,15 @@ class UpgraderFailed(PlatformioException):
     MESSAGE = "An error occurred while upgrading PlatformIO"
 
 
+class CIBuildEnvsEmpty(PlatformioException):
+
+    MESSAGE = (
+        "Can't find PlatformIO build environments.\nPlease specify `--board` "
+        "or path to `platformio.ini` with predefined environments using "
+        "`--project-conf` option"
+    )
+
+
 class SConsNotInstalled(PlatformioException):
 
     MESSAGE = (
