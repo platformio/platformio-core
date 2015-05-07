@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 from glob import glob
-from os import listdir
+from os import listdir, walk
 from os.path import basename, isdir, join
 
 import bottle
@@ -32,6 +32,7 @@ class ProjectGenerator(object):
         for section in config.sections():
             if not section.startswith("env:"):
                 continue
+            data['env_name'] = section[4:]
             for k, v in config.items(section):
                 data[k] = v
         return data
@@ -43,6 +44,13 @@ class ProjectGenerator(object):
         return []
 
     def get_srcfiles(self):
+        result = []
+        for root, _, files in walk(util.get_projectsrc_dir()):
+            for f in files:
+                result.append(join(root, f))
+        return result
+
+    def get_defines(self):
         return []
 
     def get_tpls(self):
@@ -67,5 +75,7 @@ class ProjectGenerator(object):
         self._tplvars.update({
             "project_name": self.get_project_name(),
             "includes": self.get_includes(),
-            "srcfiles": self.get_srcfiles()
+            "srcfiles": self.get_srcfiles(),
+            "defines": self.get_defines(),
+            "project_dir": self.project_dir
         })

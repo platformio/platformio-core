@@ -38,14 +38,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>platformio --force run</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>platformio --force run --target clean</NMakeCleanCommandLine>
-    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>$(HOMEDRIVE)$(HOMEPATH)\.platformio\packages\toolchain-atmelavr\avr\include;$(HOMEDRIVE)$(HOMEPATH)\.platformio\packages\framework-arduinoavr\cores\arduino;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakePreprocessorDefinitions>{{";".join(defines)}}</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath>{{";".join(includes)}}</NMakeIncludeSearchPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>platformio run</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>platformio run -t clean</NMakeCleanCommandLine>
-    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>$(HOMEDRIVE)$(HOMEPATH)\.platformio\packages\toolchain-atmelavr\avr\include;$(HOMEDRIVE)$(HOMEPATH)\.platformio\packages\framework-arduinoavr\cores\arduino;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakePreprocessorDefinitions>{";".join(defines)}}</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath>{{";".join(includes)}}</NMakeIncludeSearchPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
@@ -54,7 +54,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="platformio.ini" />
-    <None Include="src\blink.pde" />
+    % for file in srcfiles:
+    <None Include="{{file}}" />
+    % end
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
