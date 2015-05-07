@@ -5,15 +5,20 @@ else {
     HOMEDIR += $$(PWD)
 }
 
-INCLUDEPATH += "$$HOMEDIR/.platformio/packages/framework-arduinoavr/cores/arduino"
-INCLUDEPATH += "$$HOMEDIR/.platformio/packages/toolchain-atmelavr/avr/include"
+% for include in includes:
+INCLUDEPATH += "{{include}}"
+% end
 
 win32:INCLUDEPATH ~= s,/,\\,g
 
-# DEFINES += __AVR_ATmega328__
+% for define in defines:
+DEFINES += "{{define}}"
+% end
 
 OTHER_FILES += \
     platformio.ini
 
 SOURCES += \
-    src/main.c
+	% for file in srcfiles:
+    {{file}}
+    % end
