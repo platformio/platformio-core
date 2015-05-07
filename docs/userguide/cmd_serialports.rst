@@ -24,6 +24,8 @@ List available `Serial Ports <http://en.wikipedia.org/wiki/Serial_port>`_
 Options
 ~~~~~~~
 
+.. program:: platformio serialports list
+
 .. option::
     --json-output
 
@@ -98,6 +100,8 @@ To control *monitor* please use these "hot keys":
 
 Options
 ~~~~~~~
+
+.. program:: platformio serialports monitor
 
 .. option::
     -p, --port

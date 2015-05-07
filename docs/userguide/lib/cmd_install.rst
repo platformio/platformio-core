@@ -22,6 +22,8 @@ Install new library  by specified
 Options
 -------
 
+.. program:: platformio lib install
+
 .. option::
     -v, --version
 

@@ -21,6 +21,8 @@ Search for development :ref:`Platforms <platforms>`
 Options
 ~~~~~~~
 
+.. program:: platformio platforms search
+
 .. option::
     --json-output
 

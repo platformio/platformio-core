@@ -15,6 +15,8 @@ Usage
 Options
 -------
 
+.. program:: platformio
+
 .. option::
     --force, - f
 

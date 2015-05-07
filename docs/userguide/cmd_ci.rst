@@ -47,7 +47,7 @@ Options
 .. program:: platformio ci
 
 .. option::
-    -l, --lib
+    --lib, -l
 
 Source code which will be copied to ``%build_dir%/lib`` directly.
 

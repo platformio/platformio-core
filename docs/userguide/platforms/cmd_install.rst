@@ -27,6 +27,8 @@ There are several predefined aliases for packages, such as:
 Options
 -------
 
+.. program:: platformio platforms install
+
 .. option::
     --with-package
 

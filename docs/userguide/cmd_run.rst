@@ -22,6 +22,8 @@ Process environments which are defined in :ref:`projectconf` file
 Options
 -------
 
+.. program:: platformio run
+
 .. option::
     -e, --environment
 

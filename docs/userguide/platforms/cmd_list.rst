@@ -21,6 +21,8 @@ List installed :ref:`Platforms <platforms>`
 Options
 ~~~~~~~
 
+.. program:: platformio platforms list
+
 .. option::
     --json-output
 
