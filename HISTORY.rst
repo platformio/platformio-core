@@ -11,6 +11,8 @@ Release History
   (`issue #154 <https://github.com/platformio/platformio/issues/154>`_)
 * Fixed parsing of includes for PlatformIO Library Dependency Finder
   (`issue #189 <https://github.com/platformio/platformio/issues/189>`_)
+* Fixed handling symbolic links within source code directory
+  (`issue #190 <https://github.com/platformio/platformio/issues/190>`_)
 * Fixed cancelling any previous definition of name, either built in or provided
   with a ``-D`` option
   (`issue #191 <https://github.com/platformio/platformio/issues/191>`_)

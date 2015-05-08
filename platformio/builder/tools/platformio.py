@@ -95,7 +95,7 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
         ignore_pattern = (".git", ".svn")
     variants = []
     src_dir = env.subst(src_dir)
-    for root, _, _ in walk(src_dir):
+    for root, _, _ in walk(src_dir, followlinks=True):
         _src_dir = root
         _var_dir = variant_dir + root.replace(src_dir, "")
         if any([s in _var_dir.lower() for s in ignore_pattern]):
@@ -224,7 +224,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
         return result
 
     def _process_src_dir(state, src_dir):
-        for root, _, _ in walk(src_dir):
+        for root, _, _ in walk(src_dir, followlinks=True):
             for node in (env.GlobCXXFiles(root) +
                          env.Glob(join(root, "*.h"))):
                 state = _parse_includes(state, node)
