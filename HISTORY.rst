@@ -9,6 +9,8 @@ Release History
 * Added `examples <https://github.com/platformio/platformio/tree/develop/examples>`__
   with preconfigured IDE projects
   (`issue #154 <https://github.com/platformio/platformio/issues/154>`_)
+* Fixed firmware uploading under Linux OS for Arduino Leonardo board
+  (`issue #178 <https://github.com/platformio/platformio/issues/178>`_)
 * Fixed parsing of includes for PlatformIO Library Dependency Finder
   (`issue #189 <https://github.com/platformio/platformio/issues/189>`_)
 * Fixed handling symbolic links within source code directory
