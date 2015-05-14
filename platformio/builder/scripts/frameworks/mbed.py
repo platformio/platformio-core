@@ -179,7 +179,8 @@ def get_build_flags(data):
 
 
 def _mbed_whole_archive_hook(flags):
-    if not isinstance(flags, list):
+    if (not isinstance(flags, list) or
+            env.get("BOARD_OPTIONS", {}).get("platform") != "ststm32"):
         return flags
 
     for pos, flag in enumerate(flags[:]):
