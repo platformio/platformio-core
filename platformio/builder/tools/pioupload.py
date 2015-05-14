@@ -28,7 +28,7 @@ def TouchSerialPort(env, port, baudrate):
         try:
             s = Serial(env.subst(port))
             s.close()
-        except:
+        except:  # pylint: disable=W0702
             pass
     s = Serial(port=env.subst(port), baudrate=baudrate)
     s.setDTR(False)
