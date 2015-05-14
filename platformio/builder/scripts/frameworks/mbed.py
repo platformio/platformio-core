@@ -190,12 +190,6 @@ def _mbed_whole_archive_hook(flags):
     return flags
 
 
-env.Replace(
-    _mbed_whole_archive_hook=_mbed_whole_archive_hook,
-    _LIBFLAGS="${_mbed_whole_archive_hook(%s)}" % env.get("_LIBFLAGS")[2:-1]
-)
-
-
 board_type = env.subst("$BOARD")
 variant = MBED_VARIANTS[
     board_type] if board_type in MBED_VARIANTS else board_type.upper()
