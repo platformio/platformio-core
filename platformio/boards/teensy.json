@@ -62,7 +62,7 @@
             "mcu": "mk20dx256",
             "cpu": "cortex-m4"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "mbed"],
         "name": "Teensy 3.1",
         "platform": "teensy",
         "upload": {

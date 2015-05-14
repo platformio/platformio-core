@@ -53,7 +53,8 @@ MBED_VARIANTS = {
     "frdm_k64f": "K64F",
     "frdm_kl05z": "KL05Z",
     "frdm_k20d50m": "K20D50M",
-    "frdm_k22f": "K22F"
+    "frdm_k22f": "K22F",
+    "teensy31": "TEENSY3_1"
 }
 
 MBED_LIBS_MAP = {
