@@ -4,6 +4,9 @@ Release History
 1.5.0 (2015-05-??)
 ------------------
 
+* Added support of `Framework mbed <http://platformio.org/#!/frameworks/mbed>`_
+  for Teensy 3.1
+  (`issue #183 <https://github.com/platformio/platformio/issues/183>`_)
 * Added GDB as alternative uploader to `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__ platform
   (`issue #175 <https://github.com/platformio/platformio/issues/174>`_)
 * Added `examples <https://github.com/platformio/platformio/tree/develop/examples>`__
