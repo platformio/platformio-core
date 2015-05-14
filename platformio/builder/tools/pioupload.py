@@ -2,6 +2,7 @@
 # See LICENSE for details.
 
 from os.path import join
+from platform import system
 from shutil import copyfile
 from time import sleep
 
@@ -23,6 +24,12 @@ def FlushSerialBuffer(env, port):
 
 
 def TouchSerialPort(env, port, baudrate):
+    if system() == "Linux":
+        try:
+            s = Serial(env.subst(port))
+            s.close()
+        except:
+            pass
     s = Serial(port=env.subst(port), baudrate=baudrate)
     s.setDTR(False)
     s.close()
