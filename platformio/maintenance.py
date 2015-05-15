@@ -11,16 +11,19 @@ from time import time
 import click
 
 from platformio import __version__, app, exception, telemetry
-from platformio.commands.install import cli as cmd_install
 from platformio.commands.lib import lib_update as cmd_libraries_update
-from platformio.commands.update import cli as cli_update
+from platformio.commands.platforms import \
+    platforms_install as cmd_platforms_install
+from platformio.commands.platforms import \
+    platforms_update as cmd_platforms_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.libmanager import LibraryManager
 from platformio.platforms.base import PlatformFactory
-from platformio.util import get_home_dir, get_lib_dir
+from platformio.util import get_home_dir
 
 
-def on_platformio_start(ctx):
+def on_platformio_start(ctx, force):
+    app.set_session_var("force_option", force)
     telemetry.on_command(ctx)
     after_upgrade(ctx)
 
@@ -89,7 +92,7 @@ class Upgrader(object):
                 remove(join(get_home_dir(), fname))
 
         if prev_platforms:
-            ctx.invoke(cmd_install, platforms=prev_platforms)
+            ctx.invoke(cmd_platforms_install, platforms=prev_platforms)
 
         return True
 
@@ -97,8 +100,7 @@ class Upgrader(object):
         installed_platforms = PlatformFactory.get_platforms(
             installed=True).keys()
         if installed_platforms:
-            ctx.invoke(cmd_install, platforms=installed_platforms)
-        ctx.invoke(cli_update)
+            ctx.invoke(cmd_platforms_install, platforms=installed_platforms)
         return True
 
 
@@ -107,8 +109,12 @@ def after_upgrade(ctx):
     if last_version == __version__:
         return
 
+    terminal_width, _ = click.get_terminal_size()
+
     # promotion
-    click.echo("\nIf you like %s, please:" % (
+    click.echo("")
+    click.echo("*" * terminal_width)
+    click.echo("If you like %s, please:" % (
         click.style("PlatformIO", fg="cyan")
     ))
     click.echo(
@@ -121,7 +127,13 @@ def after_upgrade(ctx):
         click.style("give", fg="cyan"),
         click.style("https://github.com/platformio/platformio", fg="cyan")
     ))
-    click.secho("Thanks a lot!\n", fg="green")
+    click.echo("- %s for the new features/issues on Bountysource > %s" % (
+        click.style("vote", fg="cyan"),
+        click.style("https://www.bountysource.com/teams/platformio/issues",
+                    fg="cyan")
+    ))
+    click.echo("*" * terminal_width)
+    click.echo("")
 
     if last_version == "0.0.0":
         app.set_state_item("last_version", __version__)
@@ -133,6 +145,8 @@ def after_upgrade(ctx):
     u = Upgrader(last_version, __version__)
     if u.run(ctx):
         app.set_state_item("last_version", __version__)
+        ctx.invoke(cmd_platforms_update)
+
         click.secho("PlatformIO has been successfully upgraded to %s!\n" %
                     __version__, fg="green")
 
@@ -158,13 +172,19 @@ def check_platformio_upgrade():
             Upgrader.version_to_int(__version__)):
         return
 
+    terminal_width, _ = click.get_terminal_size()
+
+    click.echo("")
+    click.echo("*" * terminal_width)
     click.secho("There is a new version %s of PlatformIO available.\n"
                 "Please upgrade it via " % latest_version,
                 fg="yellow", nl=False)
     click.secho("platformio upgrade", fg="cyan", nl=False)
     click.secho(" command.\nChanges: ", fg="yellow", nl=False)
-    click.secho("http://docs.platformio.org/en/latest/history.html\n",
+    click.secho("http://docs.platformio.org/en/latest/history.html",
                 fg="cyan")
+    click.echo("*" * terminal_width)
+    click.echo("")
 
 
 def check_internal_updates(ctx, what):
@@ -183,28 +203,35 @@ def check_internal_updates(ctx, what):
             if p.is_outdated():
                 outdated_items.append(platform)
     elif what == "libraries":
-        lm = LibraryManager(get_lib_dir())
+        lm = LibraryManager()
         outdated_items = lm.get_outdated()
 
     if not outdated_items:
         return
 
+    terminal_width, _ = click.get_terminal_size()
+
+    click.echo("")
+    click.echo("*" * terminal_width)
     click.secho("There are the new updates for %s (%s)" %
                 (what, ", ".join(outdated_items)), fg="yellow")
 
     if not app.get_setting("auto_update_" + what):
         click.secho("Please update them via ", fg="yellow", nl=False)
-        click.secho("`platformio %supdate`" %
-                    ("lib " if what == "libraries" else ""),
+        click.secho("`platformio %s update`" %
+                    ("lib" if what == "libraries" else "platforms"),
                     fg="cyan", nl=False)
-        click.secho(" command.\n", fg="yellow")
+        click.secho(" command.", fg="yellow")
     else:
         click.secho("Please wait while updating %s ..." % what, fg="yellow")
         if what == "platforms":
-            ctx.invoke(cli_update)
+            ctx.invoke(cmd_platforms_update)
         elif what == "libraries":
             ctx.invoke(cmd_libraries_update)
         click.echo()
 
         telemetry.on_event(category="Auto", action="Update",
                            label=what.title())
+
+    click.echo("*" * terminal_width)
+    click.echo("")

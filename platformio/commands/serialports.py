@@ -25,7 +25,7 @@ def serialports_list(json_output):
 
     for item in get_serialports():
         click.secho(item['port'], fg="cyan")
-        click.echo("----------")
+        click.echo("-" * len(item['port']))
         click.echo("Hardware ID: %s" % item['hwid'])
         click.echo("Description: %s" % item['description'])
         click.echo("")

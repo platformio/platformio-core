@@ -18,6 +18,7 @@ def cli(query, json_output):  # pylint: disable=R0912
 
     BOARDLIST_TPL = ("{type:<30} {mcu:<14} {frequency:<8} "
                      " {flash:<7} {ram:<6} {name}")
+    terminal_width, _ = click.get_terminal_size()
 
     grpboards = {}
     for type_, data in get_boards().items():
@@ -31,12 +32,14 @@ def cli(query, json_output):  # pylint: disable=R0912
             if query.lower() not in search_data.lower():
                 continue
 
-        click.echo("\nPlatform: %s" % platform)
-        click.echo("-" * 75)
+        click.echo("")
+        click.echo("Platform: ", nl=False)
+        click.secho(platform, bold=True)
+        click.echo("-" * terminal_width)
         click.echo(BOARDLIST_TPL.format(
             type=click.style("Type", fg="cyan"), mcu="MCU",
             frequency="Frequency", flash="Flash", ram="RAM", name="Name"))
-        click.echo("-" * 75)
+        click.echo("-" * terminal_width)
 
         for type_, data in sorted(boards.items(), key=lambda b: b[1]['name']):
             if query:

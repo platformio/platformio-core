@@ -6,7 +6,8 @@ import re
 from os import getenv, listdir, remove, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath
 
-from SCons.Script import Exit, SConscript, SConscriptChdir
+from SCons.Script import (COMMAND_LINE_TARGETS, Exit, SConscript,
+                          SConscriptChdir)
 from SCons.Util import case_sensitive_suffixes
 
 from platformio.util import pioversion_to_intstr
@@ -26,7 +27,7 @@ def BuildFirmware(env):
 
     firmenv = env.Clone()
     vdirs = firmenv.VariantDirRecursive(
-        join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR")
+        join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR", duplicate=False)
 
     # build dependent libs
     deplibs = firmenv.BuildDependentLibraries("$PROJECTSRC_DIR")
@@ -54,6 +55,10 @@ def BuildFirmware(env):
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
             *pioversion_to_intstr())]
     )
+
+    if "envdump" in COMMAND_LINE_TARGETS:
+        print env.Dump()
+        Exit()
 
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),
@@ -142,9 +147,11 @@ def BuildLibrary(env, variant_dir, library_dir, ignore_files=None):
 
 def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
 
-    INCLUDES_RE = re.compile(r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")",
-                             re.M)
+    INCLUDES_RE = re.compile(
+        r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")", re.M)
     LIBSOURCE_DIRS = [env.subst(d) for d in env.get("LIBSOURCE_DIRS", [])]
+    USE_LIBS = [l.strip() for l in env.get("USE_LIBS", "").split(",")
+                if l.strip()]
 
     # start internal prototypes
 
@@ -185,7 +192,10 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                 if not isdir(lsd_dir):
                     continue
 
-                for ld in listdir(lsd_dir):
+                for ld in USE_LIBS + listdir(lsd_dir):
+                    if not isdir(join(lsd_dir, ld)):
+                        continue
+
                     inc_path = normpath(join(lsd_dir, ld, self.name))
                     try:
                         lib_dir = inc_path[:inc_path.index(
@@ -216,6 +226,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
             "libs": set(),
             "ordered": set()
         }
+
         state = _process_src_dir(state, env.subst(src_dir))
 
         result = []
@@ -371,7 +382,7 @@ def ConvertInoToCpp(env):
     if not data:
         return
 
-    tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "piomain.cpp")
+    tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "tmp_ino_to.cpp")
     with open(tmpcpp_file, "w") as f:
         f.write(data)
 

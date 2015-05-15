@@ -119,7 +119,7 @@ class PlatformFactory(object):
 
     @staticmethod
     def get_clsname(type_):
-        return "%sPlatform" % type_.title()
+        return "%s%sPlatform" % (type_.upper()[0], type_.lower()[1:])
 
     @staticmethod
     def load_module(type_, path):
@@ -132,14 +132,16 @@ class PlatformFactory(object):
         return module
 
     @classmethod
-    def get_platforms(cls, installed=False):
+    @util.memoized
+    def _lookup_platforms(cls):
         platforms = {}
         for d in (util.get_home_dir(), util.get_source_dir()):
             pdir = join(d, "platforms")
             if not isdir(pdir):
                 continue
             for p in listdir(pdir):
-                if p in ("__init__.py", "base.py") or not p.endswith(".py"):
+                if (p in ("__init__.py", "base.py") or not
+                        p.endswith(".py")):
                     continue
                 type_ = p[:-3]
                 path = join(pdir, p)
@@ -152,6 +154,11 @@ class PlatformFactory(object):
                         platforms[type_] = path
                 except exception.UnknownPlatform:
                     pass
+        return platforms
+
+    @classmethod
+    def get_platforms(cls, installed=False):
+        platforms = cls._lookup_platforms()
 
         if not installed:
             return platforms

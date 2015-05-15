@@ -294,9 +294,124 @@ Installation
 1. Create ``platforms`` directory in :ref:`projectconf_pio_home_dir` if it
    doesn't exists.
 2. Copy ``test.py`` and ``test-builder.py`` files to ``platforms`` directory.
-3. Search available platforms via :ref:`cmd_search` command. You should see
+3. Search available platforms via :ref:`cmd_platforms_search` command. You should see
    ``test`` platform.
-4. Install ``test`` platform via :ref:`cmd_install` command.
+4. Install ``test`` platform via :ref:`cmd_platforms_install` command.
 
 Now, you can use ``test`` for the :ref:`projectconf_env_platform` option in
 :ref:`projectconf`.
+
+Example
+-------
+
+Let's use the real example which was requested by our user in `issue 175 <https://github.com/platformio/platformio/issues/175>`_. Need to add support for uploading firmware using GDB to
+:ref:`platform_ststm32`.
+
+First of all, need to create new folder ``platforms`` in :ref:`projectconf_pio_home_dir`
+and copy there two files:
+
+1. Platform manifest file ``ststm32gdb.py`` with the next content:
+
+.. code-block:: python
+
+    import os
+
+    from platformio.platforms.ststm32 import Ststm32Platform
+
+
+    class Ststm32gdbPlatform(Ststm32Platform):
+
+        """
+        ST STM32 using GDB as uploader
+
+        http://www.st.com/web/en/catalog/mmc/FM141/SC1169?sc=stm32
+        """
+
+        def get_build_script(self):
+
+            return os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                "ststm32gdb-builder.py"
+            )
+
+2. Build script file ``ststm32gdb-builder.py`` with the next content:
+
+.. code-block:: python
+
+    """
+        Builder for ST STM32 Series ARM microcontrollers with GDB upload.
+    """
+
+    from os.path import join
+
+    from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
+                              DefaultEnvironment, SConscript)
+
+
+    env = DefaultEnvironment()
+
+    SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
+
+    env.Replace(
+        UPLOADER=join(
+            "$PIOPACKAGES_DIR", "toolchain-gccarmnoneeabi",
+            "bin", "arm-none-eabi-gdb"
+        ),
+        UPLOADERFLAGS=[
+            join("$BUILD_DIR", "firmware.elf"),
+            "-batch",
+            "-x", join("$PROJECT_DIR", "upload.gdb")
+        ],
+
+        UPLOADCMD="$UPLOADER $UPLOADERFLAGS"
+    )
+
+    env.Append(
+        CPPDEFINES=[
+            "${BOARD_OPTIONS['build']['variant'].upper()}"
+        ],
+
+        LINKFLAGS=[
+            "-nostartfiles",
+            "-nostdlib"
+        ]
+    )
+
+    #
+    # Target: Build executable and linkable firmware
+    #
+
+    target_elf = env.BuildFirmware()
+
+    #
+    # Target: Build the .bin file
+    #
+
+    if "uploadlazy" in COMMAND_LINE_TARGETS:
+        target_firm = join("$BUILD_DIR", "firmware.bin")
+    else:
+        target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
+
+    #
+    # Target: Print binary size
+    #
+
+    target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
+    AlwaysBuild(target_size)
+
+    #
+    # Target: Upload by default .bin file
+    #
+
+    upload = env.Alias(
+        ["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
+    AlwaysBuild(upload)
+
+    #
+    # Target: Define targets
+    #
+
+    Default([target_firm, target_size])
+
+Now, we should see ``ststm32gdb`` platform using :ref:`cmd_platforms_search` command output
+and can install it via :ref:`platformio platforms install ststm32gdb <cmd_platforms_install>` command.

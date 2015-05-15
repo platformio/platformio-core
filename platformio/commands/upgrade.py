@@ -4,9 +4,8 @@
 import click
 import requests
 
-from platformio import __version__
+from platformio import __version__, util
 from platformio.exception import GetLatestVersionError
-from platformio.util import exec_command
 
 
 @click.command("upgrade",
@@ -22,9 +21,9 @@ def cli():
         click.secho("Please wait while upgrading PlatformIO ...",
                     fg="yellow")
 
-        pip_result = exec_command(["pip", "install", "--upgrade",
-                                   "platformio"])
-        pio_result = exec_command(["platformio", "--version"])
+        pip_result = util.exec_command(["pip", "install", "--upgrade",
+                                        "platformio"])
+        pio_result = util.exec_command(["platformio", "--version"])
 
         if last in pio_result['out'].strip():
             click.secho("PlatformIO has been successfully upgraded to %s" %
@@ -37,7 +36,9 @@ def cli():
 def get_latest_version():
     try:
         pkgdata = requests.get(
-            "https://pypi.python.org/pypi/platformio/json").json()
+            "https://pypi.python.org/pypi/platformio/json",
+            headers=util.get_request_defheaders()
+        ).json()
         return pkgdata['info']['version']
     except:
         raise GetLatestVersionError()

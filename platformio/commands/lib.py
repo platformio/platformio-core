@@ -7,7 +7,7 @@ import click
 
 from platformio import app, exception
 from platformio.libmanager import LibraryManager
-from platformio.util import get_api_result, get_lib_dir
+from platformio.util import get_api_result
 
 LIBLIST_TPL = ("[{id:^14}] {name:<25} {compatibility:<30} "
                "\"{authornames}\": {description}")
@@ -21,7 +21,9 @@ def echo_liblist_header():
         authornames="Authors",
         description="Description"
     ))
-    click.echo("-" * 85)
+
+    terminal_width, _ = click.get_terminal_size()
+    click.echo("-" * terminal_width)
 
 
 def echo_liblist_item(item):
@@ -98,7 +100,7 @@ def lib_search(query, **filters):
 @click.option("-v", "--version")
 @click.pass_context
 def lib_install(ctx, libid, version):
-    lm = LibraryManager(get_lib_dir())
+    lm = LibraryManager()
     for id_ in libid:
         click.echo(
             "Installing library [ %s ]:" % click.style(str(id_), fg="green"))
@@ -147,7 +149,7 @@ def lib_install_dependency(ctx, data):
 @cli.command("uninstall", short_help="Uninstall libraries")
 @click.argument("libid", type=click.INT, nargs=-1)
 def lib_uninstall(libid):
-    lm = LibraryManager(get_lib_dir())
+    lm = LibraryManager()
     for id_ in libid:
         info = lm.get_info(id_)
         if lm.uninstall(id_):
@@ -158,7 +160,7 @@ def lib_uninstall(libid):
 @cli.command("list", short_help="List installed libraries")
 @click.option("--json-output", is_flag=True)
 def lib_list(json_output):
-    lm = LibraryManager(get_lib_dir())
+    lm = LibraryManager()
     items = lm.get_installed().values()
 
     if json_output:
@@ -177,7 +179,7 @@ def lib_list(json_output):
 @cli.command("show", short_help="Show details about installed library")
 @click.argument("libid", type=click.INT)
 def lib_show(libid):
-    lm = LibraryManager(get_lib_dir())
+    lm = LibraryManager()
     info = lm.get_info(libid)
     click.secho(info['name'], fg="cyan")
     click.echo("-" * len(info['name']))
@@ -209,13 +211,18 @@ def lib_show(libid):
 
 
 @cli.command("update", short_help="Update installed libraries")
+@click.argument("libid", type=click.INT, nargs=-1, required=False,
+                metavar="[LIBRARY_ID]")
 @click.pass_context
-def lib_update(ctx):
-    lm = LibraryManager(get_lib_dir())
+def lib_update(ctx, libid):
+    lm = LibraryManager()
     for id_, latest_version in (lm.get_latest_versions() or {}).items():
+        if libid and int(id_) not in libid:
+            continue
+
         info = lm.get_info(int(id_))
 
-        click.echo("Updating  [ %s ] %s library:" % (
+        click.echo("Updating [ %s ] %s library:" % (
             click.style(id_, fg="yellow"),
             click.style(info['name'], fg="cyan")))
 

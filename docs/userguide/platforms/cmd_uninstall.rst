@@ -1,7 +1,7 @@
-.. _cmd_uninstall:
+.. _cmd_platforms_uninstall:
 
-platformio uninstall
-====================
+platformio platforms uninstall
+==============================
 
 .. contents::
 
@@ -10,7 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio uninstall PLATFORM
+    platformio platforms uninstall PLATFORM
 
 
 Description
@@ -24,7 +24,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio uninstall timsp430
+    $ platformio platforms uninstall timsp430
     Uninstalling toolchain-timsp430 package:        [OK]
     Uninstalling tool-mspdebug package:             [OK]
     Uninstalling framework-energiamsp430 package:   [OK]

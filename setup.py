@@ -18,13 +18,21 @@ setup(
     url=__url__,
     license=__license__,
     install_requires=[
+        "bottle",
         "click>=3.0",
         "pyserial",
         "requests>=2.4.0",
         # "SCons"
     ] + (["colorama"] if system() == "Windows" else []),
     packages=find_packages(),
-    package_data={"platformio": ["projectconftpl.ini", "boards/*.json"]},
+    package_data={
+        "platformio": [
+            "projectconftpl.ini",
+            "boards/*.json",
+            "ide/tpls/*/.*.tpl",
+            "ide/tpls/*/*.tpl"
+        ]
+    },
     entry_points={
         "console_scripts": [
             "platformio = platformio.__main__:main"

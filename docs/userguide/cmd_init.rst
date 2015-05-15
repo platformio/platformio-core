@@ -29,6 +29,8 @@ This command will create:
 Options
 -------
 
+.. program:: platformio init
+
 .. option::
     --project-dir, -d
 
@@ -50,9 +52,19 @@ The full list with pre-configured boards is available here :ref:`platforms`.
 .. option::
     --disable-auto-uploading
 
-If you initialise project with the specified ``--board``, then *PlatformIO*
+If you initialise project with the specified
+:option:`platformio init --board``, then *PlatformIO*
 will create environment with enabled firmware auto-uploading. This option
 allows you to disable firmware auto-uploading by default.
+
+.. option::
+    --env-prefix
+
+An environment prefix which will be used with pair in board type.
+
+For example, the default environment name for ``teensy_31`` board will
+be ``[env:teensy_31]``.
+
 
 Examples
 --------

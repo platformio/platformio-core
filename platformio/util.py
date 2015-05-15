@@ -1,6 +1,8 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import collections
+import functools
 import json
 import os
 import re
@@ -51,6 +53,39 @@ class AsyncPipe(Thread):
     def close(self):
         os.close(self._fd_write)
         self.join()
+
+
+class memoized(object):
+    '''
+    Decorator. Caches a function's return value each time it is called.
+    If called later with the same arguments, the cached value is returned
+    (not reevaluated).
+    https://wiki.python.org/moin/PythonDecoratorLibrary#Memoize
+    '''
+
+    def __init__(self, func):
+        self.func = func
+        self.cache = {}
+
+    def __call__(self, *args):
+        if not isinstance(args, collections.Hashable):
+            # uncacheable. a list, for instance.
+            # better to not cache than blow up.
+            return self.func(*args)
+        if args in self.cache:
+            return self.cache[args]
+        else:
+            value = self.func(*args)
+            self.cache[args] = value
+            return value
+
+    def __repr__(self):
+        '''Return the function's docstring.'''
+        return self.func.__doc__
+
+    def __get__(self, obj, objtype):
+        '''Support instance methods.'''
+        return functools.partial(self.__call__, obj)
 
 
 def get_systype():
@@ -207,19 +242,22 @@ def get_logicaldisks():
     return disks
 
 
+def get_request_defheaders():
+    return {"User-Agent": "PlatformIO/%s %s" % (
+        __version__, requests.utils.default_user_agent())}
+
+
 def get_api_result(path, params=None, data=None):
     result = None
     r = None
 
     try:
-        headers = {"User-Agent": "PlatformIO/%s %s" % (
-            __version__, requests.utils.default_user_agent())}
-
         if data:
             r = requests.post(__apiurl__ + path, params=params, data=data,
-                              headers=headers)
+                              headers=get_request_defheaders())
         else:
-            r = requests.get(__apiurl__ + path, params=params, headers=headers)
+            r = requests.get(__apiurl__ + path, params=params,
+                             headers=get_request_defheaders())
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -239,22 +277,24 @@ def get_api_result(path, params=None, data=None):
     return result
 
 
-def get_boards(type_=None):
+@memoized
+def _lookup_boards():
     boards = {}
-    try:
-        boards = get_boards._cache  # pylint: disable=W0212
-    except AttributeError:
-        bdirs = [join(get_source_dir(), "boards")]
-        if isdir(join(get_home_dir(), "boards")):
-            bdirs.append(join(get_home_dir(), "boards"))
+    bdirs = [join(get_source_dir(), "boards")]
+    if isdir(join(get_home_dir(), "boards")):
+        bdirs.append(join(get_home_dir(), "boards"))
 
-        for bdir in bdirs:
-            for json_file in os.listdir(bdir):
-                if not json_file.endswith(".json"):
-                    continue
-                with open(join(bdir, json_file)) as f:
-                    boards.update(json.load(f))
-        get_boards._cache = boards  # pylint: disable=W0212
+    for bdir in bdirs:
+        for json_file in os.listdir(bdir):
+            if not json_file.endswith(".json"):
+                continue
+            with open(join(bdir, json_file)) as f:
+                boards.update(json.load(f))
+    return boards
+
+
+def get_boards(type_=None):
+    boards = _lookup_boards()
 
     if type_ is None:
         return boards
@@ -264,33 +304,34 @@ def get_boards(type_=None):
         return boards[type_]
 
 
-def get_frameworks(type_=None):
+@memoized
+def _lookup_frameworks():
     frameworks = {}
+    frameworks_path = join(
+        get_source_dir(), "builder", "scripts", "frameworks")
 
-    try:
-        frameworks = get_frameworks._cache  # pylint: disable=W0212
-    except AttributeError:
-        frameworks_path = join(
-            get_source_dir(), "builder", "scripts", "frameworks")
+    frameworks_list = [f[:-3] for f in os.listdir(frameworks_path)
+                       if not f.startswith("__") and f.endswith(".py")]
+    for _type in frameworks_list:
+        script_path = join(frameworks_path, "%s.py" % _type)
+        with open(script_path) as f:
+            fcontent = f.read()
+            assert '"""' in fcontent
+            _doc_start = fcontent.index('"""') + 3
+            fdoc = fcontent[
+                _doc_start:fcontent.index('"""', _doc_start)].strip()
+            doclines = [l.strip() for l in fdoc.splitlines() if l.strip()]
+            frameworks[_type] = {
+                "name": doclines[0],
+                "description": " ".join(doclines[1:-1]),
+                "url": doclines[-1],
+                "script": script_path
+            }
+    return frameworks
 
-        frameworks_list = [f[:-3] for f in os.listdir(frameworks_path)
-                           if not f.startswith("__") and f.endswith(".py")]
-        for _type in frameworks_list:
-            script_path = join(frameworks_path, "%s.py" % _type)
-            with open(script_path) as f:
-                fcontent = f.read()
-                assert '"""' in fcontent
-                _doc_start = fcontent.index('"""') + 3
-                fdoc = fcontent[
-                    _doc_start:fcontent.index('"""', _doc_start)].strip()
-                doclines = [l.strip() for l in fdoc.splitlines() if l.strip()]
-                frameworks[_type] = {
-                    "name": doclines[0],
-                    "description": " ".join(doclines[1:-1]),
-                    "url": doclines[-1],
-                    "script": script_path
-                }
-        get_frameworks._cache = frameworks  # pylint: disable=W0212
+
+def get_frameworks(type_=None):
+    frameworks = _lookup_frameworks()
 
     if type_ is None:
         return frameworks

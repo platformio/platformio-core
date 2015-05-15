@@ -5,13 +5,15 @@ import json
 from os.path import isfile, join
 
 from platformio import util
-from platformio.commands.boards import cli as boards_cli
-from platformio.commands.install import cli as install_cli
-from platformio.commands.search import cli as search_cli
+from platformio.commands.boards import cli as cmd_boards
+from platformio.commands.platforms import \
+    platforms_install as cmd_platforms_install
+from platformio.commands.platforms import \
+    platforms_search as cmd_platforms_search
 
 
 def test_board_json_output(platformio_setup, clirunner, validate_cliresult):
-    result = clirunner.invoke(boards_cli, ["cortex", "--json-output"])
+    result = clirunner.invoke(cmd_boards, ["cortex", "--json-output"])
     validate_cliresult(result)
     boards = json.loads(result.output)
     assert isinstance(boards, dict)
@@ -19,7 +21,7 @@ def test_board_json_output(platformio_setup, clirunner, validate_cliresult):
 
 
 def test_board_raw_output(platformio_setup, clirunner, validate_cliresult):
-    result = clirunner.invoke(boards_cli, ["energia"])
+    result = clirunner.invoke(cmd_boards, ["energia"])
     validate_cliresult(result)
     assert "titiva" in result.output
 
@@ -29,7 +31,7 @@ def test_board_options(platformio_setup, clirunner, validate_cliresult):
         ["build", "platform", "upload", "name"])
 
     # fetch available platforms
-    result = clirunner.invoke(search_cli, ["--json-output"])
+    result = clirunner.invoke(cmd_platforms_search, ["--json-output"])
     validate_cliresult(result)
     search_result = json.loads(result.output)
     assert isinstance(search_result, list)
@@ -43,7 +45,7 @@ def test_board_options(platformio_setup, clirunner, validate_cliresult):
 
 def test_board_ldscripts(platformio_setup, clirunner, validate_cliresult):
     result = clirunner.invoke(
-        install_cli, [
+        cmd_platforms_install, [
             "ststm32",
             "--skip-default-package",
             "--with-package=ldscripts"

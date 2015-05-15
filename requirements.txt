@@ -1,4 +1,5 @@
 click==4.0
+bottle=0.12.8
 colorama==0.3.3
 pyserial==2.7
 requests==2.7.0
