@@ -47,6 +47,21 @@ Upload port of embedded board. To print all available ports use
 Specify the path to project directory. By default, ``--build-dir`` is equal to
 current working directory (``CWD``).
 
+.. option::
+    -v, --verbose
+
+Shows details about the results of processing environments. Each instance of
+``--verbose`` on the command line increases the verbosity level by one, so if
+you need more details on the output, specify it twice.
+
+There 3 levels of verbosity:
+
+1. ``-v`` - output errors only
+2. ``-vv`` - output errors and warnings
+3. ``-vvv`` - output errors, warnings and additional information
+
+By default, verbosity level is set to 3 (maximum information).
+
 Examples
 --------
 

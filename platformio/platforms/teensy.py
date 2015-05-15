@@ -44,7 +44,7 @@ class TeensyPlatform(BasePlatform):
     def get_name(self):
         return "Teensy"
 
-    def run(self, variables, targets):
+    def run(self, variables, targets, verbose):
         for v in variables:
             if "BOARD=" not in v:
                 continue
@@ -56,4 +56,4 @@ class TeensyPlatform(BasePlatform):
                 tpackage = "toolchain-gccarmnoneeabi"
             self.PACKAGES[tpackage]['alias'] = "toolchain"
             break
-        return BasePlatform.run(self, variables, targets)
+        return BasePlatform.run(self, variables, targets, verbose)

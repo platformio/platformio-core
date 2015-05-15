@@ -24,8 +24,10 @@ from platformio.platforms.base import PlatformFactory
 @click.option("--project-dir", default=getcwd,
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
+@click.option("--verbose", "-v", count=True, default=3)
 @click.pass_context
-def cli(ctx, environment, target, upload_port, project_dir):
+def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
+        project_dir, verbose):
     initial_cwd = getcwd()
     chdir(project_dir)
     try:
@@ -47,98 +49,111 @@ def cli(ctx, environment, target, upload_port, project_dir):
 
         results = []
         for section in config.sections():
-            if results and results[-1] is not None:
+            # skip main configuration section
+            if section == "platformio":
+                continue
+
+            if not section.startswith("env:"):
+                raise exception.InvalidEnvName(section)
+
+            envname = section[4:]
+            if environment and envname not in environment:
+                # echo("Skipped %s environment" % style(envname, fg="yellow"))
+                continue
+
+            if results:
                 click.echo()
 
-            results.append(_process_conf_section(
-                ctx, config, section, environment, target, upload_port))
+            options = {}
+            for k, v in config.items(section):
+                options[k] = v
 
-        if not all([r for r in results if r is not None]):
+            ep = EnvironmentProcessor(
+                ctx, envname, options, target, upload_port, verbose)
+            results.append(ep.process())
+
+        if not all(results):
             raise exception.ReturnErrorCode()
     finally:
         chdir(initial_cwd)
 
 
-def _process_conf_section(ctx, config, section,  # pylint: disable=R0913
-                          environment, target, upload_port):
-    # skip main configuration section
-    if section == "platformio":
-        return None
+class EnvironmentProcessor(object):
 
-    if section[:4] != "env:":
-        raise exception.InvalidEnvName(section)
+    def __init__(self, cmd_ctx, name, options,  # pylint: disable=R0913
+                 targets, upload_port, verbose):
+        self.cmd_ctx = cmd_ctx
+        self.name = name
+        self.options = options
+        self.targets = targets
+        self.upload_port = upload_port
+        self.verbose_level = int(verbose)
 
-    envname = section[4:]
-    if environment and envname not in environment:
-        # echo("Skipped %s environment" % style(envname, fg="yellow"))
-        return None
+    def process(self):
+        terminal_width, _ = click.get_terminal_size()
+        start_time = time()
 
-    options = {}
-    for k, v in config.items(section):
-        options[k] = v
+        click.echo("[%s] Processing %s (%s)" % (
+            datetime.now().strftime("%c"),
+            click.style(self.name, fg="cyan", bold=True),
+            ", ".join(["%s: %s" % (k, v) for k, v in self.options.iteritems()])
+        ))
+        click.secho("-" * terminal_width, bold=True)
 
-    return _process_environment(ctx, envname, options, target, upload_port)
+        result = self._run()
 
+        is_error = result['returncode'] != 0
+        summary_text = " Took %.2f seconds " % (time() - start_time)
+        half_line = "=" * ((terminal_width - len(summary_text) - 10) / 2)
+        click.echo("%s [%s]%s%s" % (
+            half_line,
+            (click.style(" ERROR ", fg="red", bold=True)
+             if is_error else click.style("SUCCESS", fg="green", bold=True)),
+            summary_text,
+            half_line
+        ), err=is_error)
 
-def _process_environment(ctx, name, options, targets, upload_port):
-    terminal_width, _ = click.get_terminal_size()
-    start_time = time()
+        return not is_error
 
-    click.echo("[%s] Processing %s (%s)" % (
-        datetime.now().strftime("%c"),
-        click.style(name, fg="cyan", bold=True),
-        ", ".join(["%s: %s" % (k, v) for k, v in options.iteritems()])
-    ))
-    click.secho("-" * terminal_width, bold=True)
+    def _get_build_variables(self):
+        variables = ["PIOENV=" + self.name]
+        if self.upload_port:
+            variables.append("UPLOAD_PORT=%s" % self.upload_port)
+        for k, v in self.options.items():
+            k = k.upper()
+            if k == "TARGETS" or (k == "UPLOAD_PORT" and self.upload_port):
+                continue
+            variables.append("%s=%s" % (k.upper(), v))
+        return variables
 
-    result = _run_environment(ctx, name, options, targets, upload_port)
+    def _get_build_targets(self):
+        targets = []
+        if self.targets:
+            targets = [t for t in self.targets]
+        elif "targets" in self.options:
+            targets = self.options['targets'].split()
+        return targets
 
-    is_error = result['returncode'] != 0
-    summary_text = " Took %.2f seconds " % (time() - start_time)
-    half_line = "=" * ((terminal_width - len(summary_text) - 10) / 2)
-    click.echo("%s [%s]%s%s" % (
-        half_line,
-        (click.style(" ERROR ", fg="red", bold=True)
-         if is_error else click.style("SUCCESS", fg="green", bold=True)),
-        summary_text,
-        half_line
-    ), err=is_error)
+    def _run(self):
+        if "platform" not in self.options:
+            raise exception.UndefinedEnvPlatform(self.name)
 
-    return not is_error
+        platform = self.options['platform']
+        build_vars = self._get_build_variables()
+        build_targets = self._get_build_targets()
 
+        telemetry.on_run_environment(self.options, build_targets)
 
-def _run_environment(ctx, name, options, targets, upload_port):
-    variables = ["PIOENV=" + name]
-    if upload_port:
-        variables.append("UPLOAD_PORT=%s" % upload_port)
-    for k, v in options.items():
-        k = k.upper()
-        if k == "TARGETS" or (k == "UPLOAD_PORT" and upload_port):
-            continue
-        variables.append("%s=%s" % (k.upper(), v))
+        # install platform and libs dependencies
+        _autoinstall_platform(self.cmd_ctx, platform)
+        if "install_libs" in self.options:
+            _autoinstall_libs(self.cmd_ctx, self.options['install_libs'])
 
-    envtargets = []
-    if targets:
-        envtargets = [t for t in targets]
-    elif "targets" in options:
-        envtargets = options['targets'].split()
-
-    if "platform" not in options:
-        raise exception.UndefinedEnvPlatform(name)
-    platform = options['platform']
-
-    telemetry.on_run_environment(options, envtargets)
-
-    # install platform and libs dependencies
-    _autoinstall_env_platform(ctx, platform)
-    if "install_libs" in options:
-        _autoinstall_env_libs(ctx, options['install_libs'])
-
-    p = PlatformFactory.newPlatform(platform)
-    return p.run(variables, envtargets)
+        p = PlatformFactory.newPlatform(platform)
+        return p.run(build_vars, build_targets, self.verbose_level)
 
 
-def _autoinstall_env_platform(ctx, platform):
+def _autoinstall_platform(ctx, platform):
     installed_platforms = PlatformFactory.get_platforms(
         installed=True).keys()
     if (platform not in installed_platforms and (
@@ -148,7 +163,7 @@ def _autoinstall_env_platform(ctx, platform):
         ctx.invoke(cmd_platforms_install, platforms=[platform])
 
 
-def _autoinstall_env_libs(ctx, libids_list):
+def _autoinstall_libs(ctx, libids_list):
     require_libs = [int(l.strip()) for l in libids_list.split(",")]
     installed_libs = [
         l['id'] for l in LibraryManager().get_installed().values()

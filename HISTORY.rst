@@ -11,26 +11,27 @@ Release History
   (`issue #108 <https://github.com/platformio/platformio/issues/108>`_)
 * Created `PlatformIO gitter.im <https://gitter.im/platformio/platformio>`_ room
   (`issue #174 <https://github.com/platformio/platformio/issues/174>`_)
-* Added global ``-f, --force`` option which will force to accept any
+* Global ``-f, --force`` option which will force to accept any
   confirmation prompts (`issue #152 <https://github.com/platformio/platformio/issues/152>`_)
-* Allowed to run project with `platformio run --project-dir <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--project-dir>`_ option without changing the current working
+* Run project with `platformio run --project-dir <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--project-dir>`_ option without changing the current working
   directory
   (`issue #192 <https://github.com/platformio/platformio/issues/192>`_)
-* Allowed to add library dependencies for build environment using
+* Control verbosity of `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-v>`_ command via ``-v/--verbose`` option
+* Add library dependencies for build environment using
   `install_libs <http://docs.platformio.org/en/latest/projectconf.html#install-libs>`_
   option in ``platformio.ini``
   (`issue #134 <https://github.com/platformio/platformio/issues/134>`_)
-* Allowed to specify libraries which are compatible with build environment using
+* Specify libraries which are compatible with build environment using
   `use_libs <http://docs.platformio.org/en/latest/projectconf.html#use-libs>`_
   option in ``platformio.ini``
   (`issue #148 <https://github.com/platformio/platformio/issues/148>`_)
-* Allowed to add more boards to PlatformIO project with
+* Add more boards to PlatformIO project with
   `platformio init --board <http://docs.platformio.org/en/latest/userguide/cmd_init.html#cmdoption--board>`__
   command
   (`issue #167 <https://github.com/platformio/platformio/issues/167>`_)
-* Allowed to choose which library to update
+* Choose which library to update
   (`issue #168 <https://github.com/platformio/platformio/issues/168>`_)
-* Allowed to specify `platformio init --env-prefix <http://docs.platformio.org/en/latest/userguide/cmd_init.html#cmdoption--env-prefix>`__ when initialise/update project
+* Specify `platformio init --env-prefix <http://docs.platformio.org/en/latest/userguide/cmd_init.html#cmdoption--env-prefix>`__ when initialise/update project
   (`issue #182 <https://github.com/platformio/platformio/issues/182>`_)
 * Disabled automatic updates by default for platforms, packages and libraries
   (`issue #171 <https://github.com/platformio/platformio/issues/171>`_)

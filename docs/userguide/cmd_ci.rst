@@ -106,6 +106,14 @@ Don't remove :option:`platformio ci --build-dir` after build process.
 
 Buid project using pre-configured :ref:`projectconf`.
 
+.. option::
+    -v, --verbose
+
+Shows details about the results of processing environments. More details
+:option:`platformio run --verbose`
+
+By default, verbosity level is set to 1 (only errors will be printed).
+
 Examples
 --------
 
