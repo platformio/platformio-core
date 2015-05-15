@@ -1,7 +1,7 @@
 Release History
 ===============
 
-1.5.0 (2015-05-??)
+1.5.0 (2015-05-15)
 ------------------
 
 * Added support of `Framework mbed <http://platformio.org/#!/frameworks/mbed>`_
