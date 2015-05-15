@@ -3,7 +3,7 @@
 
 from glob import glob
 from os import environ, makedirs, remove
-from os.path import basename, isdir, isfile, join
+from os.path import abspath, basename, isdir, isfile, join
 from shutil import copyfile, copytree, rmtree
 from tempfile import mkdtemp
 
@@ -104,6 +104,7 @@ def _copy_contents(dst_dir, contents):
     }
 
     for path in contents:
+        path = abspath(path)
         if isdir(path):
             items['dirs'].add(path)
         elif isfile(path):
@@ -133,6 +134,7 @@ def _exclude_contents(dst_dir, patterns):
     for p in patterns:
         contents += glob(join(dst_dir, p))
     for path in contents:
+        path = abspath(path)
         if isdir(path):
             rmtree(path)
         elif isfile(path):
