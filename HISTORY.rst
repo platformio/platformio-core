@@ -1,6 +1,29 @@
 Release History
 ===============
 
+1.5.0 (2015-05-15)
+------------------
+
+* Added support of `Framework mbed <http://platformio.org/#!/frameworks/mbed>`_
+  for Teensy 3.1
+  (`issue #183 <https://github.com/platformio/platformio/issues/183>`_)
+* Added GDB as alternative uploader to `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__ platform
+  (`issue #175 <https://github.com/platformio/platformio/issues/174>`_)
+* Added `examples <https://github.com/platformio/platformio/tree/develop/examples>`__
+  with preconfigured IDE projects
+  (`issue #154 <https://github.com/platformio/platformio/issues/154>`_)
+* Fixed firmware uploading under Linux OS for Arduino Leonardo board
+  (`issue #178 <https://github.com/platformio/platformio/issues/178>`_)
+* Fixed invalid "mbed" firmware for Nucleo F411RE
+  (`issue #185 <https://github.com/platformio/platformio/issues/185>`_)
+* Fixed parsing of includes for PlatformIO Library Dependency Finder
+  (`issue #189 <https://github.com/platformio/platformio/issues/189>`_)
+* Fixed handling symbolic links within source code directory
+  (`issue #190 <https://github.com/platformio/platformio/issues/190>`_)
+* Fixed cancelling any previous definition of name, either built in or provided
+  with a ``-D`` option
+  (`issue #191 <https://github.com/platformio/platformio/issues/191>`_)
+
 1.4.0 (2015-04-11)
 ------------------
 

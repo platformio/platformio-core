@@ -40,6 +40,7 @@ if isfile(env.subst(join(
         UPLOADERFLAGS=[
             "-mmcu=$BOARD_MCU",
             "-w",  # wait for device to apear
+            "-s",  # soft reboot if device not online
             "-v"   # verbose output
         ],
         UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'

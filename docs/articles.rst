@@ -9,6 +9,7 @@ Articles about us
 
 Here are recent articles about PlatformIO:
 
+* April 17, 2015 - **Michael Ball** - `PlatformIO - A Cross-Platform Code Builder and Missing Library Manager <http://arduino-pi.blogspot.com.es/2015/04/platformio-cross-platform-code-builder.html>`_
 * March 23, 2015 - **Atmel** - `Cross-board and cross-vendor embedded development with PlatformIO <http://blog.atmel.com/2015/03/23/cross-board-and-cross-vendor-embedded-development-with-platformio/>`_
 * March 22, 2015 - **Mark VandeWettering** - `Discovered a new tool for embedded development: PlatformIO <http://brainwagon.org/2015/03/22/discovered-a-new-tool-for-embedded-development-platformio/>`_
 * October 7, 2014 - **Ivan Kravets** - `Integration of PlatformIO library manager to Arduino and Energia IDEs <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_

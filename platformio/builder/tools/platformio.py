@@ -15,18 +15,13 @@ from platformio.util import pioversion_to_intstr
 def BuildFirmware(env):
 
     # fix ASM handling under non-casitive OS
-    if not case_sensitive_suffixes('.s', '.S'):
+    if not case_sensitive_suffixes(".s", ".S"):
         env.Replace(
             AS="$CC",
             ASCOM="$ASPPCOM"
         )
 
-    if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
-        env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
-
-    if "BUILD_FLAGS" in env:
-        env.MergeFlags(env['BUILD_FLAGS'])
-
+    env.ProcessFlags()
     env.BuildFramework()
 
     firmenv = env.Clone()
@@ -69,6 +64,22 @@ def BuildFirmware(env):
     )
 
 
+def ProcessFlags(env):
+    if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
+        env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
+
+    if "BUILD_FLAGS" in env:
+        env.MergeFlags(env['BUILD_FLAGS'])
+
+    # Cancel any previous definition of name, either built in or
+    # provided with a -D option // Issue #191
+    undefines = [f for f in env.get("CCFLAGS", []) if f.startswith("-U")]
+    if undefines:
+        for undef in undefines:
+            env['CCFLAGS'].remove(undef)
+        env.Append(_CPPDEFFLAGS=" %s" % " ".join(undefines))
+
+
 def GlobCXXFiles(env, path):
     files = []
     for suff in ["*.c", "*.cpp", "*.S"]:
@@ -84,7 +95,7 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
         ignore_pattern = (".git", ".svn")
     variants = []
     src_dir = env.subst(src_dir)
-    for root, _, _ in walk(src_dir):
+    for root, _, _ in walk(src_dir, followlinks=True):
         _src_dir = root
         _var_dir = variant_dir + root.replace(src_dir, "")
         if any([s in _var_dir.lower() for s in ignore_pattern]):
@@ -213,22 +224,17 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
         return result
 
     def _process_src_dir(state, src_dir):
-        for root, _, _ in walk(src_dir):
+        for root, _, _ in walk(src_dir, followlinks=True):
             for node in (env.GlobCXXFiles(root) +
                          env.Glob(join(root, "*.h"))):
                 state = _parse_includes(state, node)
         return state
 
     def _parse_includes(state, node):
-        if node.path in state['paths']:
-            return state
-        else:
-            state['paths'].add(node.path)
-
         skip_includes = ("arduino.h", "energia.h")
         matches = INCLUDES_RE.findall(node.get_text_contents())
         for (inc_type, inc_name) in matches:
-            base_dir = dirname(node.path)
+            base_dir = dirname(node.get_abspath())
             if inc_name.lower() in skip_includes:
                 continue
             if join(base_dir, inc_name) in state['paths']:
@@ -378,6 +384,7 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(BuildFirmware)
+    env.AddMethod(ProcessFlags)
     env.AddMethod(GlobCXXFiles)
     env.AddMethod(VariantDirRecursive)
     env.AddMethod(BuildFramework)
