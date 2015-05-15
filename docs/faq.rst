@@ -69,6 +69,7 @@ If you are going to run *PlatformIO* from **subprocess**, you **MUST
 DISABLE** all prompts. It will allow you to avoid blocking.
 There are a few options:
 
+- using :option:`platformio --force` option before each command
 - using environment variable :ref:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <envvar_PLATFORMIO_SETTING_ENABLE_PROMPTS>`
 - disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
 - masking under Continuous Integration system via environment variable
@@ -87,7 +88,7 @@ Answered in `issue #144 <https://github.com/platformio/platformio/issues/144#iss
 
 
 PlatformIO: command not found || An error ``pkg_resources.DistributionNotFound``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Please upgrade *SetupTools* package:
 
