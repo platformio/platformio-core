@@ -32,12 +32,12 @@ Options
 .. program:: platformio init
 
 .. option::
-    --project-dir, -d
+    -d, --project-dir
 
 A path to the directory where *PlatformIO* will initialise new project.
 
 .. option::
-    --board, -b
+    -b, --board
 
 If you specify board ``type`` (you can pass multiple ``--board`` options), then
 *PlatformIO* will automatically generate environment for :ref:`projectconf` and
@@ -53,7 +53,7 @@ The full list with pre-configured boards is available here :ref:`platforms`.
     --disable-auto-uploading
 
 If you initialise project with the specified
-:option:`platformio init --board``, then *PlatformIO*
+:option:`platformio init --board`, then *PlatformIO*
 will create environment with enabled firmware auto-uploading. This option
 allows you to disable firmware auto-uploading by default.
 

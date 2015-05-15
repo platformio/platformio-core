@@ -52,7 +52,7 @@ Options
 .. program:: platformio ci
 
 .. option::
-    --lib, -l
+    -l, --lib
 
 Source code which will be copied to ``%build_dir%/lib`` directly.
 
@@ -78,7 +78,7 @@ For example, exclude from project ``src`` directory:
     platformio ci --exclude=src/examples --exclude=src/foo/*.h [SRC]
 
 .. option::
-    --board, -b
+    -b, --board
 
 Build project with automatically pre-generated environments based on board
 settings.
