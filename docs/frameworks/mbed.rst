@@ -527,6 +527,26 @@ Switch Science
       - 32 Kb
       - 4 Kb
 
+Teensy
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``teensy31``
+      - `Teensy 3.1 <https://www.pjrc.com/store/teensy31.html>`_
+      - MK20DX256
+      - 72 MHz
+      - 256 Kb
+      - 64 Kb
+
 u-blox
 ~~~~~~
 

@@ -27,6 +27,40 @@ Boards
       `PlatformIO Boards Explorer <http://platformio.org/#!/boards>`_
     * For more detailed ``board`` information please scroll tables below by horizontal.
 
+Armstrap
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``armstrap_eagle1024``
+      - `Armstrap Eagle 1024 <http://docs.armstrap.org/en/latest/hardware-overview.html>`_
+      - STM32F417VGT6
+      - 168 MHz
+      - 1024 Kb
+      - 192 Kb
+
+    * - ``armstrap_eagle2048``
+      - `Armstrap Eagle 2048 <http://docs.armstrap.org/en/latest/hardware-overview.html>`_
+      - STM32F427VIT6
+      - 168 MHz
+      - 2048 Kb
+      - 256 Kb
+
+    * - ``armstrap_eagle512``
+      - `Armstrap Eagle 512 <http://docs.armstrap.org/en/latest/hardware-overview.html>`_
+      - STM32F407VET6
+      - 168 MHz
+      - 512 Kb
+      - 192 Kb
+
 ST
 ~~
 
