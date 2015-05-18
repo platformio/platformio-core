@@ -3,7 +3,8 @@
 
 from email.utils import parsedate_tz
 from math import ceil
-from os.path import environ, getsize, join
+from os import environ
+from os.path import getsize, join
 from time import mktime
 
 import click
