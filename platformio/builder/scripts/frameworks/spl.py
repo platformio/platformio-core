@@ -55,6 +55,8 @@ extra_flags = env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags")
 ignore_files = []
 if "STM32F40_41xxx" in extra_flags:
     ignore_files += ["stm32f4xx_fmc.c"]
+if "STM32F427_437xx" in extra_flags:
+    ignore_files += ["stm32f4xx_fsmc.c"]
 elif "STM32F303xC" in extra_flags:
     ignore_files += ["stm32f30x_hrtim.c"]
 elif "STM32L1XX_MD" in extra_flags:

@@ -330,5 +330,65 @@
         },
         "url": "https://developer.mbed.org/platforms/ST-Nucleo-L152RE/",
         "vendor": "ST"
+    },
+    "armstrap_eagle512": {
+        "build": {
+            "core": "stm32",
+            "extra_flags": "-DSTM32F40_41xxx",
+            "f_cpu": "168000000L",
+            "ldscript": "armstrap_eagle_512.ld",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f407vet6",
+            "variant": "stm32f4"
+        },
+        "frameworks": ["cmsis", "spl"],
+        "name": "Armstrap Eagle 512",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 196608,
+            "maximum_size": 524288
+        },
+        "url": "http://docs.armstrap.org/en/latest/hardware-overview.html",
+        "vendor": "Armstrap"
+    },
+    "armstrap_eagle1024": {
+        "build": {
+            "core": "stm32",
+            "extra_flags": "-DSTM32F40_41xxx",
+            "f_cpu": "168000000L",
+            "ldscript": "armstrap_eagle_1024.ld",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f417vgt6",
+            "variant": "stm32f4"
+        },
+        "frameworks": ["cmsis", "spl"],
+        "name": "Armstrap Eagle 1024",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 196608,
+            "maximum_size": 1048576
+        },
+        "url": "http://docs.armstrap.org/en/latest/hardware-overview.html",
+        "vendor": "Armstrap"
+    },
+    "armstrap_eagle2048": {
+        "build": {
+            "core": "stm32",
+            "extra_flags": "-DSTM32F427_437xx",
+            "f_cpu": "168000000L",
+            "ldscript": "armstrap_eagle_2048.ld",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f427vit6",
+            "variant": "stm32f4"
+        },
+        "frameworks": ["cmsis", "spl"],
+        "name": "Armstrap Eagle 2048",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 262144,
+            "maximum_size": 2091752
+        },
+        "url": "http://docs.armstrap.org/en/latest/hardware-overview.html",
+        "vendor": "Armstrap"
     }
 }
