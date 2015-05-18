@@ -1,8 +1,9 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import stat
 from glob import glob
-from os import environ, makedirs, remove
+from os import chmod, environ, makedirs, remove
 from os.path import abspath, basename, isdir, isfile, join
 from shutil import copyfile, copytree, rmtree
 from tempfile import mkdtemp
@@ -90,7 +91,10 @@ def cli(ctx, src, lib, exclude, board,  # pylint: disable=R0913
         ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)
     finally:
         if not keep_build_dir:
-            rmtree(build_dir, ignore_errors=True)
+            rmtree(
+                build_dir, onerror=lambda action, name, exc:
+                (chmod(name, stat.S_IWRITE), remove(name))
+            )
 
 
 def _clean_dir(dirpath):
