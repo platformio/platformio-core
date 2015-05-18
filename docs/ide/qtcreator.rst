@@ -10,7 +10,7 @@ This software can be used with:
 * all availalbe :ref:`platforms`
 * all availalbe :ref:`frameworks`
 
-Refer to the `Sublime Text Documentation <http://doc.qt.io/qtcreator/>`_
+Refer to the `Qt-creator Manual <http://doc.qt.io/qtcreator/>`_
 page for more detailed information.
 
 .. contents::
@@ -33,7 +33,7 @@ Secondly, we need to configure project with PlatformIO source code builder (clic
 
 .. image:: ../_static/ide-platformio-qtcreator-3.png
 
-Thirdly, we need to add directories with header files using project file. Please fill this file with the next contents:
+Thirdly, change project file by adding path to directories with header files. Please edit project file to match the following contents:
 
 .. code-block:: none
 
@@ -55,8 +55,8 @@ First program in Qt Creator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Simple "Blink" project will consist from two files:
-
-1. Main "C" source file named ``main.c`` must be located in the ``src`` directory.
+1. In the console, navigate to the root of your project folder and initialize platformio project with ``platformio init`` 
+2. The main "C" source file named ``main.c`` must be located in the ``src`` directory.
 Let's create new text file named ``main.c`` using ``Menu: New File or Project → General → Text File``:
 
 .. image:: ../_static/ide-platformio-qtcreator-5.png
@@ -81,11 +81,11 @@ Copy the source code which is described below to file ``main.c``.
       delay(1000);               // wait for a second
     }
 
-2. Project Configuration File named ``platformio.ini`` must be located in the project root directory.
+3. Locate the project configuration file named ``platformio.ini`` at the root of the project directory and open it.
 
 .. image:: ../_static/ide-platformio-qtcreator-6.png
 
-Copy the source code which is described below to it.
+Edit the content to match the code described below.
 
 .. code-block:: none
 
