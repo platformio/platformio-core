@@ -90,7 +90,10 @@ def cli(ctx, src, lib, exclude, board,  # pylint: disable=R0913
         ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)
     finally:
         if not keep_build_dir:
-            rmtree(build_dir)
+            try:
+                rmtree(build_dir)
+            except WindowsError:
+                pass
 
 
 def _clean_dir(dirpath):
