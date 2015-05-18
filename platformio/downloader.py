@@ -3,11 +3,11 @@
 
 from email.utils import parsedate_tz
 from math import ceil
-from os.path import getsize, join
+from os.path import environ, getsize, join
 from time import mktime
 
-from click import progressbar
-from requests import get
+import click
+import requests
 
 from platformio import util
 from platformio.exception import (FDSHASumMismatch, FDSizeMismatch,
@@ -27,8 +27,8 @@ class FileDownloader(object):
             self.set_destination(join(dest_dir, self._fname))
         self._progressbar = None
 
-        self._request = get(url, stream=True,
-                            headers=util.get_request_defheaders())
+        self._request = requests.get(url, stream=True,
+                                     headers=util.get_request_defheaders())
         if self._request.status_code != 200:
             raise FDUnrecognizedStatusCode(self._request.status_code, url)
 
@@ -49,9 +49,14 @@ class FileDownloader(object):
         f = open(self._destination, "wb")
         chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
 
-        with progressbar(length=chunks, label="Downloading") as pb:
-            for _ in pb:
+        if environ.get("CI") == "true":
+            click.echo("Downloading...")
+            for _ in range(0, chunks):
                 f.write(next(itercontent))
+        else:
+            with click.progressbar(length=chunks, label="Downloading") as pb:
+                for _ in pb:
+                    f.write(next(itercontent))
         f.close()
         self._request.close()
 
