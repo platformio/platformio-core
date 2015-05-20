@@ -63,6 +63,7 @@ Contents
     frameworks/index
     librarymanager/index
     userguide/index
+    ci/index
     ide
     articles
     FAQ <faq>
