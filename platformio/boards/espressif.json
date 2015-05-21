@@ -2,11 +2,11 @@
     "esp01": {
         "build": {
             "core": "esp8266",
-            "extra_flags": "-DARDUINO_ESP8266_ESP01 -DARDUINO_ARCH_ESP8266",
+            "extra_flags": "-DARDUINO_ESP8266_ESP01 -DARDUINO_ARCH_ESP8266 -DESP8266",
             "f_cpu": "80000000L",
-            "ldscript": "esp8266.ld",
+            "ldscript": "esp8266.flash.512k.ld",
             "mcu": "esp8266",
-            "variant": "esp01"
+            "variant": "generic"
         },
         "frameworks": ["arduino"],
         "name": "Espressif ESP8266 board",
