@@ -52,7 +52,7 @@ class ProjectGenerator(object):
         output = result['out']
         try:
             start_index = output.index('\n{"includes":')
-            stop_index = output.rindex('}\n')
+            stop_index = output.rindex('}')
             return json.loads(output[start_index + 1:stop_index + 1])
         except ValueError:
             pass
