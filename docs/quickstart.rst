@@ -9,8 +9,8 @@ Quickstart
 
 1. :ref:`Install PlatformIO <installation>`.
 
-2. Find board ``type`` on this :ref:`Embedded Boards <platforms>` page or
-   via :ref:`cmd_boards` command.
+2. Find board ``type`` using `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+   or via :ref:`cmd_boards` command.
 
 3. Initialize new PlatformIO based project via :ref:`cmd_init` command with the
    pre-configured environments for your boards:

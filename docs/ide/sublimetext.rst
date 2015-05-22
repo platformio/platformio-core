@@ -7,8 +7,8 @@ The `Sublime Text <http://www.sublimetext.com/>`_ is a cross-platform text and s
 
 This software can be used with:
 
-* all availalbe :ref:`platforms`
-* all availalbe :ref:`frameworks`
+* all available :ref:`platforms`
+* all available :ref:`frameworks`
 
 Refer to the `Sublime Text Documentation <http://docs.sublimetext.info/en/latest>`_
 page for more detailed information.
@@ -18,11 +18,27 @@ page for more detailed information.
 Integration
 -----------
 
+Project Generator
+^^^^^^^^^^^^^^^^^
+
+Since PlatformIO 2.0 you can generate Eclipse compatible project using
+:option:`platformio init --ide` command:
+
+.. code-block:: shell
+
+    platformio init --ide sublimetext
+
+Then import this project via ``Project > Open Project...`` and specify root
+directory where is located :ref:`projectconf`.
+
+Manual Integration
+^^^^^^^^^^^^^^^^^^
+
 Initial configuration
-^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~
 
 First of all, we need to create "New Build System" with name "PlatformIO"
-from ``Menu: Tools → Build System → New Build System`` and fill it like
+from ``Menu: Tools > Build System > New Build System`` and fill it like
 described below:
 
 .. code-block:: bash
@@ -48,16 +64,16 @@ Secondly, we need to select "PlatformIO" Build System from a list:
 .. image:: ../_static/ide-sublime-text-platformio-newproject-2.png
 
 After that, we can use the necessary commands from
-``Menu: Tools → Command Palette`` or with ``Ctrl+Shift+P`` (Windows/Linux)
+``Menu: Tools > Command Palette`` or with ``Ctrl+Shift+P`` (Windows/Linux)
 ``Cmd+Shift+P`` (Mac) shortcut.
 
 .. image:: ../_static/ide-sublime-text-platformio-newproject-3.png
 
 Command Hotkeys
-~~~~~~~~~~~~~~~
+'''''''''''''''
 
 Sublime Text allows to bind own hotkey per command. Let's setup them
-for PlatformIO commands using shortcut ``Menu: Preferences → Key-Bindings - User``:
+for PlatformIO commands using shortcut ``Menu: Preferences > Key-Bindings - User``:
 
 .. image:: ../_static/ide-sublime-text-platformio-newproject-4.png
 
@@ -76,12 +92,12 @@ In this case, the final code will look like:
     ]
 
 First program in Sublime Text
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Simple "Blink" project will consist from two files:
 
 1. Main "C" source file named ``main.c`` must be located in the ``src`` directory.
-Let's create new file named ``main.c`` using ``Menu: File → New File`` or shortcut ``Ctrl+N`` (Windows/Linux) ``Cmd+N`` (Mac) with the next contents:
+Let's create new file named ``main.c`` using ``Menu: File > New File`` or shortcut ``Ctrl+N`` (Windows/Linux) ``Cmd+N`` (Mac) with the next contents:
 
 .. code-block:: c
 
@@ -124,6 +140,6 @@ Copy the source code which is described below to it.
 Conclusion
 ----------
 
-Taking everything into account, we can open project directory in Sublime Text using ``Menu: File → Open Folder`` and build it with shortcut ``Ctrl+B`` (Windows/Linux) or ``Cmd+B`` (Mac), clean project with shortcut ``F11`` and upload firmware to target with shortcut ``F12``.
+Taking everything into account, we can open project directory in Sublime Text using ``Menu: File > Open Folder`` and build it with shortcut ``Ctrl+B`` (Windows/Linux) or ``Cmd+B`` (Mac), clean project with shortcut ``F11`` and upload firmware to target with shortcut ``F12``.
 
 .. image:: ../_static/ide-sublime-text-platformio-newproject-5.png

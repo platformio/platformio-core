@@ -7,8 +7,8 @@ The `Microsoft Visual Studio (Free) <http://visualstudio.com/free>`_ is an integ
 
 This software can be used with:
 
-* all availalbe :ref:`platforms`
-* all availalbe :ref:`frameworks`
+* all available :ref:`platforms`
+* all available :ref:`frameworks`
 
 Refer to the `Visual Studio Documentation <https://msdn.microsoft.com/library/vstudio>`_
 page for more detailed information.
@@ -18,10 +18,26 @@ page for more detailed information.
 Integration
 -----------
 
-Setup New Project
+Project Generator
 ^^^^^^^^^^^^^^^^^
 
-First of all, let's create new project from Visual Studio Start Page: ``Start → New Project`` or using ``Menu: File → New → Project``, then select project with ``Makefile`` type (``Visual C++ → General → Makefile Project``), fill ``Project name``, ``Solution name``, ``Location`` fields and press OK button.
+Since PlatformIO 2.0 you can generate Eclipse compatible project using
+:option:`platformio init --ide` command:
+
+.. code-block:: shell
+
+    platformio init --ide visualstudio
+
+Then import this project via ``File > Import ...`` and specify root directory
+where is located :ref:`projectconf`.
+
+Manual Integration
+^^^^^^^^^^^^^^^^^^
+
+Setup New Project
+~~~~~~~~~~~~~~~~~
+
+First of all, let's create new project from Visual Studio Start Page: ``Start > New Project`` or using ``Menu: File > New > Project``, then select project with ``Makefile`` type (``Visual C++ > General > Makefile Project``), fill ``Project name``, ``Solution name``, ``Location`` fields and press OK button.
 
 .. image:: ../_static/ide-vs-platformio-newproject.png
 
@@ -37,7 +53,7 @@ Release Configuration is the same as Debug, so on the next step we check "Same a
 
 .. image:: ../_static/ide-vs-platformio-newproject-3.png
 
-Thirdly, we need to add directories with header files using project properties (right click on the project name or ``Alt-Enter`` shortcut) and add two directories to ``Configuration Properties → NMake → Include Search Path``:
+Thirdly, we need to add directories with header files using project properties (right click on the project name or ``Alt-Enter`` shortcut) and add two directories to ``Configuration Properties > NMake > Include Search Path``:
 
 .. code-block:: none
 
@@ -47,12 +63,12 @@ Thirdly, we need to add directories with header files using project properties (
 .. image:: ../_static/ide-vs-platformio-newproject-5.png
 
 First program in Visual Studio
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Simple "Blink" project will consist from two files:
 
 1. Main "C" source file named ``main.c`` must be located in the ``src`` directory.
-Let's create new file named ``main.c`` using ``Menu: File → New File`` or shortcut ``Ctrl+N``:
+Let's create new file named ``main.c`` using ``Menu: File > New File`` or shortcut ``Ctrl+N``:
 
 .. image:: ../_static/ide-vs-platformio-newproject-6.png
 
@@ -103,6 +119,6 @@ Copy the source code which is described below to it.
 Conclusion
 ----------
 
-Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build → Build Solution``:
+Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build Solution``:
 
 .. image:: ../_static/ide-vs-platformio-newproject-8.png

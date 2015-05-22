@@ -24,23 +24,23 @@ different :ref:`platforms`.
 Integration
 -----------
 
-Please put ``circle.yml`` to the root directory of the GitHub repository.
+Put ``circle.yml`` to the root directory of the GitHub repository.
 
 .. code-block:: yaml
 
     machine:
-
         environment:
             - PLATFORMIO_CI_SRC=path/to/source/file.c
             - PLATFORMIO_CI_SRC=path/to/source/file.ino
             - PLATFORMIO_CI_SRC=path/to/source/directory
 
-        dependencies:
-          pre:
-            - python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+    dependencies:
+        pre:
+            - sudo apt-get install python2.7-dev
+            - sudo python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
 
-        test:
-          override:
+    test:
+        override:
             - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
 
 
@@ -56,18 +56,17 @@ Examples
 .. code-block:: yaml
 
     machine:
-      environment:
-        PLATFORMIO_CI_SRC: examples/Bluetooth/PS3SPP/PS3SPP.ino
-        PLATFORMIO_CI_SRC: examples/pl2303/pl2303_gps/pl2303_gps.ino
+        environment:
+            PLATFORMIO_CI_SRC: examples/Bluetooth/PS3SPP/PS3SPP.ino
+            PLATFORMIO_CI_SRC: examples/pl2303/pl2303_gps/pl2303_gps.ino
 
     dependencies:
-      pre:
-        - sudo apt-get install python2.7-dev
-        - python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
-        - sudo pip install --egg http://sourceforge.net/projects/scons/files/latest/download
-        - wget https://github.com/xxxajk/spi4teensy3/archive/master.zip -O /tmp/spi4teensy3.zip
-        - unzip /tmp/spi4teensy3.zip -d /tmp
+        pre:
+            - sudo apt-get install python2.7-dev
+            - sudo python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+            - wget https://github.com/xxxajk/spi4teensy3/archive/master.zip -O /tmp/spi4teensy3.zip
+            - unzip /tmp/spi4teensy3.zip -d /tmp
 
     test:
-      override:
-        - platformio ci --lib="." --lib="/tmp/spi4teensy3-master" --board=uno --board=teensy31 --board=due
+        override:
+            - platformio ci --lib="." --lib="/tmp/spi4teensy3-master" --board=uno --board=teensy31 --board=due

@@ -9,8 +9,8 @@ standalone application in a graphical user interface.
 
 This software can be used with:
 
-* all availalbe :ref:`platforms`
-* all availalbe :ref:`frameworks`
+* all available :ref:`platforms`
+* all available :ref:`frameworks`
 
 Integration
 -----------

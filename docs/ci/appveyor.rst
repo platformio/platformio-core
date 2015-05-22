@@ -4,7 +4,9 @@ AppVeyor
 ========
 
 `AppVeyor <http://www.appveyor.com/about>`_ is an open-source hosted,
-distributed continuous integration service used to build and test projects hosted at `GitHub <http://en.wikipedia.org/wiki/GitHub>`_ on Windows family systems.
+distributed continuous integration service used to build and test projects
+hosted at `GitHub <http://en.wikipedia.org/wiki/GitHub>`_ on Windows family
+systems.
 
 AppVeyor is configured by adding a file named ``appveyor.yml``, which is a
 `YAML <http://en.wikipedia.org/wiki/YAML>`_ format text file, to the root
@@ -23,32 +25,7 @@ different :ref:`platforms`.
 Integration
 -----------
 
-Please put ``appveyor.yml`` to the root directory of the GitHub repository.
-
-.. code-block:: yaml
-
-    build: off
-    environment:
-        matrix:
-            - PLATFORMIO_CI_SRC=pathto\\source\\file.c
-            - PLATFORMIO_CI_SRC=pathto\\source\\file.ino
-            - PLATFORMIO_CI_SRC=pathto\\source\\directory
-
-        install:
-            cmd: python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
-
-        script:
-            - platformio ci --lib="." --lib="c:\spi4teensy" --board=uno --board=teensy31 --board=due'
-
-
-For more details as for PlatformIO build process please look into :ref:`cmd_ci`
-command.
-
-Examples
---------
-
-1. Integration for `USB_Host_Shield_2.0 <https://github.com/felis/USB_Host_Shield_2.0>`_
-   project. The ``appveyor.yml`` configuration file:
+Put ``appveyor.yml`` to the root directory of the GitHub repository.
 
 .. code-block:: yaml
 
@@ -57,8 +34,9 @@ Examples
         global:
             WITH_COMPILER: "cmd /E:ON /V:ON /C .\\scripts\\appveyor\\run_with_compiler.cmd"
         matrix:
-            - PLATFORMIO_CI_SRC: "examples\\Bluetooth\\PS3SPP\\PS3SPP.ino"
-              PLATFORMIO_CI_SRC: "examples\\pl2303\\pl2303_gps\\pl2303_gps.ino"
+            - PLATFORMIO_CI_SRC: "path\\to\\source\\file.c"
+              PLATFORMIO_CI_SRC: "path\\to\\source\\file.ino"
+              PLATFORMIO_CI_SRC: "path\\to\\source\\directory"
               WINDOWS_SDK_VERSION: "v7.0"
               PYTHON_HOME: "C:\\Python27-x64"
               PYTHON_VERSION: "2.7"
@@ -68,14 +46,16 @@ Examples
           - "powershell scripts\\appveyor\\install.ps1"
         before_test:
           - cmd: SET PATH=%PATH%;%PYTHON_HOME%;%PYTHON_HOME%\Scripts
-          - cmd: git clone https://github.com/xxxajk/spi4teensy3.git c:\spi4teensy
         test_script:
-          - "%PYTHON_HOME%\\Scripts\\pip --version"
-          - '%WITH_COMPILER% %PYTHON_HOME%\\Scripts\\platformio ci --lib="." --lib="c:\spi4teensy" --board=uno --board=teensy31 --board=due'
+          - '%WITH_COMPILER% %PYTHON_HOME%\\Scripts\\platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N'
 
-The ``install.ps1`` script file:
 
-.. code-block:: none
+Then create ``scripts/appveyor`` folder and put these 2 scripts (they are the
+same for the all projects, don't need to modify them):
+
+1. ``scripts/appveyor/install.ps1``:
+
+.. code-block:: PowerShell
 
     $BASE_URL = "https://www.python.org/ftp/python/"
     $GET_PIP_URL = "https://bootstrap.pypa.io/get-pip.py"
@@ -148,7 +128,7 @@ The ``install.ps1`` script file:
 
     function InstallPackage ($python_home, $pkg) {
         $pip_path = $python_home + "/Scripts/pip.exe"
-        & $pip_path install $pkg
+        & $pip_path install -U $pkg
     }
 
     function InstallScons ($python_home) {
@@ -162,14 +142,15 @@ The ``install.ps1`` script file:
         InstallPython $env:PYTHON_VERSION $env:PYTHON_ARCH $env:PYTHON_HOME
         InstallPip $env:PYTHON_HOME
         InstallPackage $env:PYTHON_HOME setuptools
+        InstallPackage $env:PYTHON_HOME platformio
         InstallScons $env:PYTHON_HOME
     }
 
     main
 
-The ``run_with_compiler.cmd`` script file:
+2. ``scripts/appveyor/run_with_compiler.cmd``:
 
-.. code-block:: none
+.. code-block:: guess
 
     @ECHO OFF
 
@@ -199,3 +180,34 @@ The ``run_with_compiler.cmd`` script file:
         ECHO Executing: %COMMAND_TO_RUN%
         call %COMMAND_TO_RUN% || EXIT 1
     )
+
+For more details as for PlatformIO build process please look into :ref:`cmd_ci`
+command.
+
+Examples
+--------
+
+1. Integration for `USB_Host_Shield_2.0 <https://github.com/felis/USB_Host_Shield_2.0>`_
+   project. The ``appveyor.yml`` configuration file:
+
+.. code-block:: yaml
+
+    build: off
+    environment:
+        global:
+            WITH_COMPILER: "cmd /E:ON /V:ON /C .\\scripts\\appveyor\\run_with_compiler.cmd"
+        matrix:
+            - PLATFORMIO_CI_SRC: "examples\\Bluetooth\\PS3SPP\\PS3SPP.ino"
+              PLATFORMIO_CI_SRC: "examples\\pl2303\\pl2303_gps\\pl2303_gps.ino"
+              WINDOWS_SDK_VERSION: "v7.0"
+              PYTHON_HOME: "C:\\Python27-x64"
+              PYTHON_VERSION: "2.7"
+              PYTHON_ARCH: "64"
+        install:
+          - "git submodule update --init --recursive"
+          - "powershell scripts\\appveyor\\install.ps1"
+        before_test:
+          - cmd: SET PATH=%PATH%;%PYTHON_HOME%;%PYTHON_HOME%\Scripts
+          - cmd: git clone https://github.com/xxxajk/spi4teensy3.git c:\spi4teensy
+        test_script:
+          - '%WITH_COMPILER% %PYTHON_HOME%\\Scripts\\platformio ci --lib="." --lib="c:\spi4teensy" --board=uno --board=teensy31 --board=due'

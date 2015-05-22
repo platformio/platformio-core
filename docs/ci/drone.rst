@@ -62,7 +62,7 @@ Examples
 
 .. code-block:: bash
 
-    pip install --egg http://sourceforge.net/projects/scons/files/latest/download
+    python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
     wget https://github.com/xxxajk/spi4teensy3/archive/master.zip -O /tmp/spi4teensy3.zip
     unzip /tmp/spi4teensy3.zip -d /tmp
     platformio ci --lib="." --lib="/tmp/spi4teensy3-master" --board=uno --board=teensy31 --board=due
