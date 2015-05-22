@@ -4,7 +4,7 @@ Release History
 2.0.0 (2015-05-22)
 ------------------
 
-*Made in `Paradise <https://twitter.com/ikravets/status/592356377185619969>`_*
+*Made in* `Paradise <https://twitter.com/ikravets/status/592356377185619969>`_
 
 * PlatformIO as `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
   (CI) tool for embedded projects
