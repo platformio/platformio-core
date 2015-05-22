@@ -1,7 +1,7 @@
 Release History
 ===============
 
-2.0.0 (2015-??-??)
+2.0.0 (2015-05-22)
 ------------------
 
 * PlatformIO as :ref:`ci` (CI) tool for embedded projects
