@@ -46,6 +46,7 @@ and the missing library manager.
 * `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
 * `Library Manager <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
 * `User Guide <http://docs.platformio.org/en/latest/userguide/index.html>`_
+* `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_
 * `Articles about us <http://docs.platformio.org/en/latest/articles.html>`_
 * `FAQ <http://docs.platformio.org/en/latest/faq.html>`_
@@ -75,7 +76,7 @@ settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 * Configurable `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
 * Automatic **firmware uploading**
 * Integration with `development environments (IDE) <http://docs.platformio.org/en/latest/ide.html>`_
-* Ready for **Cloud Compiling** and **Continuous Integration**
+* Ready for **Cloud Compiling** and `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
 * Pre-built tool chains, frameworks for the popular `Hardware Platforms <http://platformio.org/#!/platforms>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-embedded-development.png
