@@ -90,7 +90,10 @@ class memoized(object):
 
 def get_systype():
     data = uname()
-    return ("%s_%s" % (data[0], data[4])).lower()
+    systype = data[0]
+    if data[4]:
+        systype += "_" + data[4]
+    return systype.lower()
 
 
 def pioversion_to_intstr():
