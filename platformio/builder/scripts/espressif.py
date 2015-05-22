@@ -43,6 +43,8 @@ env.Replace(
         "-Os",  # optimize for size
         "-mlongcalls",
         "-mtext-section-literals",
+        "-falign-functions=4",
+        "-U__STRICT_ANSI__",
         "-MMD"  # output dependancy info
     ],
 
@@ -70,12 +72,12 @@ env.Replace(
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-esptool", "esptool"),
     UPLOADERFLAGS=[
         "-vv",
-        "-cd", "none",
+        "-cd", "ck",
         "-cb", "$UPLOAD_SPEED",
         "-cp", "$UPLOAD_PORT",
         "-ca", "0x00000",
         "-cf", "${SOURCES[0]}",
-        "-ca", "0x40000",
+        "-ca", "0x10000",
         "-cf", "${SOURCES[1]}"
     ],
     UPLOADCMD='$UPLOADER $UPLOADERFLAGS'
@@ -88,6 +90,9 @@ env.Append(
                 "$UPLOADER",
                 "-eo", "$SOURCES",
                 "-bo", "${TARGETS[0]}",
+                "-bm", "qio",
+                "-bf", "40",
+                "-bz", "512K",
                 "-bs", ".text",
                 "-bs", ".data",
                 "-bs", ".rodata",
@@ -135,7 +140,7 @@ if "uploadlazy" in COMMAND_LINE_TARGETS:
 else:
     target_firm = env.ElfToBin(
         [join("$BUILD_DIR", "firmware_00000"),
-         join("$BUILD_DIR", "firmware_40000")], target_elf)
+         join("$BUILD_DIR", "firmware_10000")], target_elf)
 
 
 #

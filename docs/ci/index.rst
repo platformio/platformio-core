@@ -17,4 +17,8 @@ easily.
 .. toctree::
     :maxdepth: 2
 
+    appveyor
+    circleci
+    drone
+    shippable
     travis
