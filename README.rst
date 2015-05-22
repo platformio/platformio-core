@@ -133,7 +133,7 @@ It has support for the most popular embedded platforms:
 * `Espressif <http://platformio.org/#!/platforms/espressif>`_
 * `Freescale Kinetis <http://platformio.org/#!/platforms/freescalekinetis>`_
 * `Nordic nRF51 <http://platformio.org/#!/platforms/nordicnrf51>`_
-* `NXP LPC. <http://platformio.org/#!/platforms/nxplpc>`_
+* `NXP LPC <http://platformio.org/#!/platforms/nxplpc>`_
 * `ST STM32 <http://platformio.org/#!/platforms/ststm32>`_
 * `Teensy <http://platformio.org/#!/platforms/teensy>`_
 * `TI MSP430 <http://platformio.org/#!/platforms/timsp430>`_
