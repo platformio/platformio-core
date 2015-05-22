@@ -134,7 +134,7 @@ def add_mbedlib(libname, libar):
                        (libname.upper(), crc32(root)))
         if var_dir in env.get("CPPPATH"):
             continue
-        env.VariantDir(var_dir, root)
+        env.VariantDirWrap(var_dir, root)
         env.Append(CPPPATH=[var_dir])
 
 
@@ -221,7 +221,7 @@ if board_type in ("frdm_k22f", "frdm_k64f"):
 
 for lib_path in eixdata.get("CPPPATH"):
     _vdir = join("$BUILD_DIR", "FrameworkMbedInc%d" % crc32(lib_path))
-    env.VariantDir(_vdir, join(variant_dir, lib_path))
+    env.VariantDirWrap(_vdir, join(variant_dir, lib_path))
     env.Append(CPPPATH=[_vdir])
 
 env.Append(

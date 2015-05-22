@@ -47,7 +47,7 @@ class AtmelavrPlatform(BasePlatform):
         else:
             BasePlatform.on_run_err(self, line)
 
-    def run(self, variables, targets):
+    def run(self, variables, targets, verbose):
         for v in variables:
             if "BOARD=" not in v:
                 continue
@@ -58,4 +58,4 @@ class AtmelavrPlatform(BasePlatform):
                 tuploader = "tool-micronucleus"
             self.PACKAGES[tuploader]['alias'] = "uploader"
             break
-        return BasePlatform.run(self, variables, targets)
+        return BasePlatform.run(self, variables, targets, verbose)

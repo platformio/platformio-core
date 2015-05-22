@@ -16,7 +16,8 @@ Usage
 Description
 -----------
 
-Check or update installed :ref:`Platforms <platforms>`
+Check or update installed :ref:`Platforms <platforms>` and
+:ref:`Libraries <librarymanager>`
 
 
 Examples

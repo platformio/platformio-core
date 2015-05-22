@@ -46,8 +46,8 @@ elif env.get("PLATFORM") == "espressif":
     env.Prepend(
         CPPPATH=[join("$PLATFORMFW_DIR", "sdk", "include")],
         LIBPATH=[join("$PLATFORMFW_DIR", "sdk", "lib")],
-        LIBS=["hal", "phy", "net80211", "lwip",
-              "wpa", "main", "pp", "c", "gcc"]
+        LIBS=["smartconfig", "pp", "main", "wpa", "lwip",
+              "net80211", "phy", "hal", "gcc", "m"]
     )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
@@ -106,20 +106,20 @@ env.Append(
 #
 
 if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
-    env.VariantDir(
+    env.VariantDirWrap(
         join("$BUILD_DIR", "FrameworkCMSISInc"),
         join("$PLATFORMFW_DIR", "system", "CMSIS", "CMSIS", "Include")
     )
-    env.VariantDir(
+    env.VariantDirWrap(
         join("$BUILD_DIR", "FrameworkDeviceInc"),
         join("$PLATFORMFW_DIR", "system", "CMSIS", "Device", "ATMEL")
     )
-    env.VariantDir(
+    env.VariantDirWrap(
         join("$BUILD_DIR", "FrameworkLibSam"),
         join("$PLATFORMFW_DIR", "system", "libsam")
     )
 
-    env.VariantDir(
+    env.VariantDirWrap(
         join("$BUILD_DIR", "FrameworkArduinoInc"),
         join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
     )

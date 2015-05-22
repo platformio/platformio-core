@@ -7,10 +7,10 @@ The `Qt Creator <https://github.com/qtproject/qt-creator>`_ is an open source cr
 
 This software can be used with:
 
-* all availalbe :ref:`platforms`
-* all availalbe :ref:`frameworks`
+* all available :ref:`platforms`
+* all available :ref:`frameworks`
 
-Refer to the `Sublime Text Documentation <http://doc.qt.io/qtcreator/>`_
+Refer to the `Qt-creator Manual <http://doc.qt.io/qtcreator/>`_
 page for more detailed information.
 
 .. contents::
@@ -18,10 +18,26 @@ page for more detailed information.
 Integration
 -----------
 
-Setup New Project
+Project Generator
 ^^^^^^^^^^^^^^^^^
 
-First of all, let's create new project from Qt Creator Start Page: ``New Project`` or using ``Menu: File → New File or Project``, then select project with ``Empty Qt Project`` type (``Other Project → Empty Qt Project``), fill ``Name``, ``Create in``.
+Since PlatformIO 2.0 you can generate Eclipse compatible project using
+:option:`platformio init --ide` command:
+
+.. code-block:: shell
+
+    platformio init --ide qtcreator
+
+Then import this project via ``File > New File or Project > Import Project``
+and specify root directory where is located :ref:`projectconf`.
+
+Manual Integration
+^^^^^^^^^^^^^^^^^^
+
+Setup New Project
+~~~~~~~~~~~~~~~~~
+
+First of all, let's create new project from Qt Creator Start Page: ``New Project`` or using ``Menu: File > New File or Project``, then select project with ``Empty Qt Project`` type (``Other Project > Empty Qt Project``), fill ``Name``, ``Create in``.
 
 .. image:: ../_static/ide-platformio-qtcreator-1.png
 
@@ -33,7 +49,7 @@ Secondly, we need to configure project with PlatformIO source code builder (clic
 
 .. image:: ../_static/ide-platformio-qtcreator-3.png
 
-Thirdly, we need to add directories with header files using project file. Please fill this file with the next contents:
+Thirdly, change project file by adding path to directories with header files. Please edit project file to match the following contents:
 
 .. code-block:: none
 
@@ -52,12 +68,12 @@ Thirdly, we need to add directories with header files using project file. Please
 .. image:: ../_static/ide-platformio-qtcreator-4.png
 
 First program in Qt Creator
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Simple "Blink" project will consist from two files:
-
-1. Main "C" source file named ``main.c`` must be located in the ``src`` directory.
-Let's create new text file named ``main.c`` using ``Menu: New File or Project → General → Text File``:
+1. In the console, navigate to the root of your project folder and initialize platformio project with ``platformio init``
+2. The main "C" source file named ``main.c`` must be located in the ``src`` directory.
+Let's create new text file named ``main.c`` using ``Menu: New File or Project > General > Text File``:
 
 .. image:: ../_static/ide-platformio-qtcreator-5.png
 
@@ -81,11 +97,11 @@ Copy the source code which is described below to file ``main.c``.
       delay(1000);               // wait for a second
     }
 
-2. Project Configuration File named ``platformio.ini`` must be located in the project root directory.
+3. Locate the project configuration file named ``platformio.ini`` at the root of the project directory and open it.
 
 .. image:: ../_static/ide-platformio-qtcreator-6.png
 
-Copy the source code which is described below to it.
+Edit the content to match the code described below.
 
 .. code-block:: none
 
@@ -108,6 +124,6 @@ Copy the source code which is described below to it.
 Conclusion
 ----------
 
-Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build → Build All``:
+Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build All``:
 
 .. image:: ../_static/ide-platformio-qtcreator-7.png

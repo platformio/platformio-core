@@ -1,13 +1,13 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import chmod
+from os import chmod, environ
 from os.path import join, splitext
 from tarfile import open as tarfile_open
 from time import mktime
 from zipfile import ZipFile
 
-from click import progressbar
+import click
 
 from platformio.exception import UnsupportedArchiveType
 from platformio.util import change_filemtime
@@ -81,7 +81,13 @@ class FileUnpacker(object):
             raise UnsupportedArchiveType(archpath)
 
     def start(self):
-        with progressbar(self._unpacker.get_items(), label="Unpacking") as pb:
-            for item in pb:
+        if environ.get("CI") == "true":
+            click.echo("Unpacking...")
+            for item in self._unpacker.get_items():
                 self._unpacker.extract_item(item, self._dest_dir)
+        else:
+            with click.progressbar(self._unpacker.get_items(),
+                                   label="Unpacking") as pb:
+                for item in pb:
+                    self._unpacker.extract_item(item, self._dest_dir)
         return True

@@ -29,13 +29,15 @@ This command will create:
 Options
 -------
 
+.. program:: platformio init
+
 .. option::
-    --project-dir, -d
+    -d, --project-dir
 
 A path to the directory where *PlatformIO* will initialise new project.
 
 .. option::
-    --board, -b
+    -b, --board
 
 If you specify board ``type`` (you can pass multiple ``--board`` options), then
 *PlatformIO* will automatically generate environment for :ref:`projectconf` and
@@ -48,11 +50,30 @@ pre-fill these data:
 The full list with pre-configured boards is available here :ref:`platforms`.
 
 .. option::
+    --ide
+
+Initialise PlatformIO project for the specified IDE which can be imported later
+via "Import Project" functionality.
+
+A list with supported IDE is available within ``platformio init --help`` command.
+Also, please look into :ref:`ide` page.
+
+.. option::
     --disable-auto-uploading
 
-If you initialise project with the specified ``--board``, then *PlatformIO*
+If you initialise project with the specified
+:option:`platformio init --board`, then *PlatformIO*
 will create environment with enabled firmware auto-uploading. This option
 allows you to disable firmware auto-uploading by default.
+
+.. option::
+    --env-prefix
+
+An environment prefix which will be used with pair in board type.
+
+For example, the default environment name for ``teensy_31`` board will
+be ``[env:teensy_31]``.
+
 
 Examples
 --------

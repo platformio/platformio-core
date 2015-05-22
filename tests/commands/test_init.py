@@ -46,9 +46,9 @@ def test_init_special_board(platformio_setup, clirunner, validate_cliresult):
             ("targets", "upload")
         ]
 
-        assert config.has_section("env:autogen_uno")
+        assert config.has_section("env:uno")
         assert len(set(expected_result).symmetric_difference(
-            set(config.items("env:autogen_uno")))) == 0
+            set(config.items("env:uno")))) == 0
 
 
 def test_init_disable_auto_uploading(platformio_setup, clirunner,
@@ -64,11 +64,13 @@ def test_init_disable_auto_uploading(platformio_setup, clirunner,
             ("framework", "arduino"),
             ("board", "uno")
         ]
-        assert config.has_section("env:autogen_uno")
+        assert config.has_section("env:uno")
         assert len(set(expected_result).symmetric_difference(
-            set(config.items("env:autogen_uno")))) == 0
+            set(config.items("env:uno")))) == 0
 
 
 def test_init_incorrect_board(clirunner):
     result = clirunner.invoke(cli, ["-b", "missed_board"])
-    assert isinstance(result.exception, exception.UnknownBoard)
+    assert result.exit_code == 2
+    assert 'Error: Invalid value for "--board" / "-b"' in result.output
+    assert isinstance(result.exception, SystemExit)

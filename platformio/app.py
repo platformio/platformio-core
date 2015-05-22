@@ -24,11 +24,11 @@ DEFAULT_SETTINGS = {
     },
     "auto_update_platforms": {
         "description": "Automatically update platforms (Yes/No)",
-        "value": True
+        "value": False
     },
     "auto_update_libraries": {
         "description": "Automatically update libraries (Yes/No)",
-        "value": True
+        "value": False
     },
     "enable_telemetry": {
         "description": ("Shares commands, platforms and libraries usage"
@@ -44,6 +44,11 @@ DEFAULT_SETTINGS = {
             "please disable prompts to avoid blocking (Yes/No)"),
         "value": True
     }
+}
+
+
+SESSION_VARS = {
+    "force_option": False
 }
 
 
@@ -101,9 +106,12 @@ def set_state_item(name, value):
 
 
 def get_setting(name):
-    # disable prompts for Continuous Integration systems
-    if name == "enable_prompts" and getenv("CI", "").lower() == "true":
-        return False
+    if name == "enable_prompts":
+        # disable prompts for Continuous Integration systems
+        # and when global "--force" option is set
+        if any([getenv("CI", "").lower() == "true",
+                get_session_var("force_option")]):
+            return False
 
     _env_name = "PLATFORMIO_SETTING_%s" % name.upper()
     if _env_name in environ:
@@ -127,3 +135,12 @@ def reset_settings():
     with State() as data:
         if "settings" in data:
             del data['settings']
+
+
+def get_session_var(name, default=None):
+    return SESSION_VARS.get(name, default)
+
+
+def set_session_var(name, value):
+    assert name in SESSION_VARS
+    SESSION_VARS[name] = value

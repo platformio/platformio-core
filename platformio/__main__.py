@@ -31,20 +31,38 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
             mod = __import__("platformio.commands." + name,
                              None, None, ["cli"])
         except ImportError:
-            raise exception.UnknownCLICommand(name)
+            try:
+                return self._handle_obsolate_command(name)
+            except AttributeError:
+                raise exception.UnknownCLICommand(name)
         return mod.cli
+
+    @staticmethod
+    def _handle_obsolate_command(name):
+        if name in ("install", "list", "search", "show", "uninstall"):
+            click.secho(
+                "Warning! `platformio %s` command is obsoleted and will be "
+                "removed in the next release! Please use "
+                "`platformio platforms %s` instead." % (name, name),
+                fg="red"
+            )
+            from platformio.commands import platforms
+            return getattr(platforms, "platforms_" + name)
+        raise AttributeError()
 
 
 @click.command(cls=PlatformioCLI)
 @click.version_option(__version__, prog_name="PlatformIO")
+@click.option("--force", "-f", is_flag=True,
+              help="Force to accept any confirmation prompts")
 @click.pass_context
-def cli(ctx):
-    maintenance.on_platformio_start(ctx)
+def cli(ctx, force):
+    maintenance.on_platformio_start(ctx, force)
 
 
 @cli.resultcallback()
 @click.pass_context
-def process_result(ctx, result):
+def process_result(ctx, result, force):  # pylint: disable=W0613
     maintenance.on_platformio_end(ctx, result)
 
 
@@ -54,7 +72,7 @@ def main():
         # /en/latest/security.html#insecureplatformwarning
         requests.packages.urllib3.disable_warnings()
 
-        cli(None)
+        cli(None, None)
     except Exception as e:  # pylint: disable=W0703
         if not isinstance(e, exception.ReturnErrorCode):
             maintenance.on_platformio_exception(e)

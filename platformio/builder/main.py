@@ -37,6 +37,7 @@ commonvars.AddVariables(
     ("BUILD_FLAGS",),
     ("SRCBUILD_FLAGS",),
     ("IGNORE_LIBS",),
+    ("USE_LIBS",),
 
     # board options
     ("BOARD",),

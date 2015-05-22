@@ -96,12 +96,6 @@ class UnsupportedArchiveType(PlatformioException):
     MESSAGE = "Can not unpack file '%s'"
 
 
-class ProjectInitialized(PlatformioException):
-
-    MESSAGE = ("Project is already initialized. "
-               "Process it with `platformio run` command")
-
-
 class ProjectEnvsNotAvailable(PlatformioException):
 
     MESSAGE = "Please setup environments in `platformio.ini` file."
@@ -169,6 +163,15 @@ class InvalidSettingValue(PlatformioException):
 class UpgraderFailed(PlatformioException):
 
     MESSAGE = "An error occurred while upgrading PlatformIO"
+
+
+class CIBuildEnvsEmpty(PlatformioException):
+
+    MESSAGE = (
+        "Can't find PlatformIO build environments.\nPlease specify `--board` "
+        "or path to `platformio.ini` with predefined environments using "
+        "`--project-conf` option"
+    )
 
 
 class SConsNotInstalled(PlatformioException):

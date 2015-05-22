@@ -8,28 +8,24 @@ from time import time
 
 import click
 
-from platformio import exception, telemetry
+from platformio import exception, telemetry, util
 from platformio.app import get_state_item, set_state_item
 from platformio.downloader import FileDownloader
 from platformio.unpacker import FileUnpacker
-from platformio.util import get_api_result, get_home_dir, get_systype
 
 
 class PackageManager(object):
 
     def __init__(self):
-        self._package_dir = join(get_home_dir(), "packages")
+        self._package_dir = join(util.get_home_dir(), "packages")
         if not isdir(self._package_dir):
             makedirs(self._package_dir)
         assert isdir(self._package_dir)
 
     @classmethod
+    @util.memoized
     def get_manifest(cls):
-        try:
-            return cls._cached_manifest
-        except AttributeError:
-            cls._cached_manifest = get_api_result("/packages/manifest")
-        return cls._cached_manifest
+        return util.get_api_result("/packages/manifest")
 
     @staticmethod
     def download(url, dest_dir, sha1=None):
@@ -63,7 +59,7 @@ class PackageManager(object):
             raise exception.UnknownPackage(name)
 
         # check system platform
-        systype = get_systype()
+        systype = util.get_systype()
         builds = ([b for b in manifest[name] if b['system'] == "all" or systype
                    in b['system']])
         if not builds:

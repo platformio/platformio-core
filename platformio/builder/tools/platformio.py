@@ -2,11 +2,13 @@
 # See LICENSE for details.
 
 import atexit
+import json
 import re
 from os import getenv, listdir, remove, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath
 
-from SCons.Script import Exit, SConscript, SConscriptChdir
+from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
+                          SConscript, SConscriptChdir)
 from SCons.Util import case_sensitive_suffixes
 
 from platformio.util import pioversion_to_intstr
@@ -26,7 +28,7 @@ def BuildFirmware(env):
 
     firmenv = env.Clone()
     vdirs = firmenv.VariantDirRecursive(
-        join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR")
+        join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR", duplicate=False)
 
     # build dependent libs
     deplibs = firmenv.BuildDependentLibraries("$PROJECTSRC_DIR")
@@ -54,6 +56,19 @@ def BuildFirmware(env):
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
             *pioversion_to_intstr())]
     )
+
+    if "envdump" in COMMAND_LINE_TARGETS:
+        print env.Dump()
+        Exit()
+
+    if "idedata" in COMMAND_LINE_TARGETS:
+        _data = {"defines": [], "includes": []}
+        for item in env.get("VARIANT_DIRS", []):
+            _data['includes'].append(env.subst(item[1]))
+        for item in env.get("CPPDEFINES", []):
+            _data['defines'].append(env.subst(item))
+        print json.dumps(_data)
+        Exit()
 
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),
@@ -89,6 +104,11 @@ def GlobCXXFiles(env, path):
     return files
 
 
+def VariantDirWrap(env, variant_dir, src_dir, duplicate=True):
+    DefaultEnvironment().Append(VARIANT_DIRS=[(variant_dir, src_dir)])
+    env.VariantDir(variant_dir, src_dir, duplicate)
+
+
 def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
                         ignore_pattern=None):
     if not ignore_pattern:
@@ -100,7 +120,7 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
         _var_dir = variant_dir + root.replace(src_dir, "")
         if any([s in _var_dir.lower() for s in ignore_pattern]):
             continue
-        env.VariantDir(_var_dir, _src_dir, duplicate)
+        env.VariantDirWrap(_var_dir, _src_dir, duplicate)
         variants.append(_var_dir)
     return variants
 
@@ -142,9 +162,11 @@ def BuildLibrary(env, variant_dir, library_dir, ignore_files=None):
 
 def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
 
-    INCLUDES_RE = re.compile(r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")",
-                             re.M)
+    INCLUDES_RE = re.compile(
+        r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")", re.M)
     LIBSOURCE_DIRS = [env.subst(d) for d in env.get("LIBSOURCE_DIRS", [])]
+    USE_LIBS = [l.strip() for l in env.get("USE_LIBS", "").split(",")
+                if l.strip()]
 
     # start internal prototypes
 
@@ -185,7 +207,10 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                 if not isdir(lsd_dir):
                     continue
 
-                for ld in listdir(lsd_dir):
+                for ld in USE_LIBS + listdir(lsd_dir):
+                    if not isdir(join(lsd_dir, ld)):
+                        continue
+
                     inc_path = normpath(join(lsd_dir, ld, self.name))
                     try:
                         lib_dir = inc_path[:inc_path.index(
@@ -216,6 +241,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
             "libs": set(),
             "ordered": set()
         }
+
         state = _process_src_dir(state, env.subst(src_dir))
 
         result = []
@@ -371,7 +397,7 @@ def ConvertInoToCpp(env):
     if not data:
         return
 
-    tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "piomain.cpp")
+    tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "tmp_ino_to.cpp")
     with open(tmpcpp_file, "w") as f:
         f.write(data)
 
@@ -386,6 +412,7 @@ def generate(env):
     env.AddMethod(BuildFirmware)
     env.AddMethod(ProcessFlags)
     env.AddMethod(GlobCXXFiles)
+    env.AddMethod(VariantDirWrap)
     env.AddMethod(VariantDirRecursive)
     env.AddMethod(BuildFramework)
     env.AddMethod(BuildLibrary)

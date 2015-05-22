@@ -1,7 +1,7 @@
-.. _cmd_search:
+.. _cmd_platforms_search:
 
-platformio search
-=================
+platformio platforms search
+===========================
 
 .. contents::
 
@@ -10,7 +10,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio search QUERY [OPTIONS]
+    platformio platforms search QUERY [OPTIONS]
 
 
 Description
@@ -20,6 +20,8 @@ Search for development :ref:`Platforms <platforms>`
 
 Options
 ~~~~~~~
+
+.. program:: platformio platforms search
 
 .. option::
     --json-output
@@ -34,7 +36,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio search
+    $ platformio platforms search
     atmelavr (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
     --------
     Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance...
@@ -75,7 +77,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio search ti
+    $ platformio platforms search ti
     timsp430 (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
     --------
     MSP430 microcontrollers (MCUs) from Texas Instruments (TI) are ...
@@ -88,7 +90,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio search mbed
+    $ platformio platforms search mbed
     freescalekinetis (available packages: ldscripts, toolchain-gccarmnoneeabi, tool-lm4flash, framework-opencm3, framework-energiativa)
     ----------------
     Freescale Kinetis Microcontrollers is family of multiple hardware- and ...

@@ -28,7 +28,7 @@ ENERGIA_VERSION = int(
               "version.txt")).read().replace(".", "").strip())
 
 # include board variant
-env.VariantDir(
+env.VariantDirWrap(
     join("$BUILD_DIR", "FrameworkEnergiaVariant"),
     join("$PLATFORMFW_DIR", "variants", "${BOARD_OPTIONS['build']['variant']}")
 )

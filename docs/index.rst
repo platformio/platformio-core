@@ -1,7 +1,7 @@
 PlatformIO: A cross-platform code builder and the missing library manager
 =========================================================================
 
-*Atmel AVR & SAM, Freescale Kinetis, Nordic nRF51, NXP LPC, ST STM32,
+*Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC, ST STM32,
 TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
 
 .. image:: _static/platformio-logo.png
@@ -29,6 +29,7 @@ Embedded Development. *Easier Than Ever.*
 * Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>`
 * Configurable build :ref:`-flags/-options <projectconf_build_flags>`
 * Integration with :ref:`development environments (IDE) <ide>`
+* Ready for Cloud Compiling and :ref:`ci`
 * Pre-built tool chains, :ref:`frameworks` for the popular Hardware Platforms
 
 Smart Code Builder. *Fast and Reliable.*
@@ -63,6 +64,7 @@ Contents
     frameworks/index
     librarymanager/index
     userguide/index
+    ci/index
     ide
     articles
     FAQ <faq>

@@ -21,6 +21,8 @@ List installed libraries
 Options
 ~~~~~~~
 
+.. program:: platformio lib list
+
 .. option::
     --json-output
 

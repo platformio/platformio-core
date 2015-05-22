@@ -4,11 +4,13 @@ Articles about us
 =================
 
 .. note::
-	If you've writeen article about PlatformIO and would like it listed on
+	If you've written article about PlatformIO and would like it listed on
 	this page, `please edit this page <https://github.com/platformio/platformio/blob/develop/docs/articles.rst>`_.
 
 Here are recent articles about PlatformIO:
 
+* May 11, 2015 - **IT Hare** - `From Web Developer to Embedded One: Interview with Ivan Kravets, The Guy Behind PlatformIO. Part II <http://ithare.com/from-web-developer-to-embedded-one-interview-with-ivan-kravets-the-guy-behind-platformio-part-ii/>`_
+* May 4, 2015 - **IT Hare** - `From Web Developer to Embedded One: Interview with Ivan Kravets, The Guy Behind PlatformIO. Part I <http://ithare.com/from-web-development-to-embedded-one-interview-with-ivan-kravets-the-guy-behind-platformio-part-i/>`_
 * April 17, 2015 - **Michael Ball** - `PlatformIO - A Cross-Platform Code Builder and Missing Library Manager <http://arduino-pi.blogspot.com.es/2015/04/platformio-cross-platform-code-builder.html>`_
 * March 23, 2015 - **Atmel** - `Cross-board and cross-vendor embedded development with PlatformIO <http://blog.atmel.com/2015/03/23/cross-board-and-cross-vendor-embedded-development-with-platformio/>`_
 * March 22, 2015 - **Mark VandeWettering** - `Discovered a new tool for embedded development: PlatformIO <http://brainwagon.org/2015/03/22/discovered-a-new-tool-for-embedded-development-platformio/>`_

@@ -61,6 +61,8 @@ For more detail information please go to
 Options
 -------
 
+.. program:: platformio lib search
+
 .. option::
     -a, --author
 

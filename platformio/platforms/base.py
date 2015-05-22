@@ -119,7 +119,7 @@ class PlatformFactory(object):
 
     @staticmethod
     def get_clsname(type_):
-        return "%sPlatform" % type_.title()
+        return "%s%sPlatform" % (type_.upper()[0], type_.lower()[1:])
 
     @staticmethod
     def load_module(type_, path):
@@ -132,14 +132,16 @@ class PlatformFactory(object):
         return module
 
     @classmethod
-    def get_platforms(cls, installed=False):
+    @util.memoized
+    def _lookup_platforms(cls):
         platforms = {}
         for d in (util.get_home_dir(), util.get_source_dir()):
             pdir = join(d, "platforms")
             if not isdir(pdir):
                 continue
             for p in listdir(pdir):
-                if p in ("__init__.py", "base.py") or not p.endswith(".py"):
+                if (p in ("__init__.py", "base.py") or not
+                        p.endswith(".py")):
                     continue
                 type_ = p[:-3]
                 path = join(pdir, p)
@@ -152,6 +154,11 @@ class PlatformFactory(object):
                         platforms[type_] = path
                 except exception.UnknownPlatform:
                     pass
+        return platforms
+
+    @classmethod
+    def get_platforms(cls, installed=False):
+        platforms = cls._lookup_platforms()
 
         if not installed:
             return platforms
@@ -183,6 +190,12 @@ class BasePlatform(object):
 
     def __init__(self):
         self._found_error = False
+        self._last_echo_line = None
+
+        # 1 = errors
+        # 2 = 1 + warnings
+        # 3 = 2 + others
+        self._verbose_level = 3
 
     def get_type(self):
         return self.__class__.__name__[:-8].lower()
@@ -299,9 +312,11 @@ class BasePlatform(object):
         obsolated = pm.get_outdated()
         return not set(self.get_packages().keys()).isdisjoint(set(obsolated))
 
-    def run(self, variables, targets):
+    def run(self, variables, targets, verbose):
         assert isinstance(variables, list)
         assert isinstance(targets, list)
+
+        self._verbose_level = int(verbose)
 
         installed_platforms = PlatformFactory.get_platforms(
             installed=True).keys()
@@ -349,16 +364,34 @@ class BasePlatform(object):
         if self._found_error:
             result['returncode'] = 1
 
+        if self._last_echo_line == ".":
+            click.echo("")
+
         return result
 
-    def on_run_out(self, line):  # pylint: disable=R0201
-        fg = None
-        if "is up to date" in line:
-            fg = "green"
-        click.secho(line, fg=fg)
+    def on_run_out(self, line):
+        self._echo_line(line, level=3)
 
-    def on_run_err(self, line):  # pylint: disable=R0201
+    def on_run_err(self, line):
         is_error = self.LINE_ERROR_RE.search(line) is not None
         if is_error:
             self._found_error = True
-        click.secho(line, err=True, fg="red" if is_error else "yellow")
+        self._echo_line(line, level=1 if is_error else 2)
+
+    def _echo_line(self, line, level):
+        assert 1 <= level <= 3
+
+        fg = ("red", "yellow", None)[level - 1]
+        if level == 3 and "is up to date" in line:
+            fg = "green"
+
+        if level > self._verbose_level:
+            click.secho(".", fg=fg, err=level < 3, nl=False)
+            self._last_echo_line = "."
+            return
+
+        if self._last_echo_line == ".":
+            click.echo("")
+        self._last_echo_line = line
+
+        click.secho(line, fg=fg, err=level < 3)

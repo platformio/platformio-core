@@ -16,6 +16,7 @@ def cli():
 def settings_get(name):
 
     list_tpl = "{name:<40} {value:<35} {description}"
+    terminal_width, _ = click.get_terminal_size()
 
     click.echo(list_tpl.format(
         name=click.style("Name", fg="cyan"),
@@ -23,7 +24,7 @@ def settings_get(name):
                click.style(" [Default]", fg="yellow")),
         description="Description"
     ))
-    click.echo("-" * 90)
+    click.echo("-" * terminal_width)
 
     for _name, _data in sorted(app.DEFAULT_SETTINGS.items()):
         if name and name != _name:

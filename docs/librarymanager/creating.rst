@@ -134,3 +134,4 @@ The registration requirements:
 
 Now, you can :ref:`register <cmd_lib_register>` your library and allow others
 to :ref:`install <cmd_lib_install>` it.
+
