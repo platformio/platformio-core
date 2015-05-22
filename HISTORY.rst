@@ -4,7 +4,10 @@ Release History
 2.0.0 (2015-05-22)
 ------------------
 
-* PlatformIO as :ref:`ci` (CI) tool for embedded projects
+*Made in `Paradise <https://twitter.com/ikravets/status/592356377185619969>`_*
+
+* PlatformIO as `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
+  (CI) tool for embedded projects
   (`issue #108 <https://github.com/platformio/platformio/issues/108>`_)
 * Initialise PlatformIO project for the specified IDE
   (`issue #151 <https://github.com/platformio/platformio/issues/151>`_)
