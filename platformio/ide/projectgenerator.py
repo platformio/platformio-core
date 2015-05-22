@@ -50,10 +50,10 @@ class ProjectGenerator(object):
             return None
 
         output = result['out']
-        start_index = output.index('---\n{"includes":')
-        stop_index = output.index('}\n===')
         try:
-            return json.loads(output[start_index+4:stop_index+1])
+            start_index = output.index('\n{"includes":')
+            stop_index = output.rindex('}\n')
+            return json.loads(output[start_index + 1:stop_index + 1])
         except ValueError:
             pass
 
