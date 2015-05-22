@@ -4,15 +4,18 @@ Release History
 2.0.0 (2015-??-??)
 ------------------
 
+* PlatformIO as :ref:`ci` (CI) tool for embedded projects
+  (`issue #108 <https://github.com/platformio/platformio/issues/108>`_)
+* Initialise PlatformIO project for the specified IDE
+  (`issue #151 <https://github.com/platformio/platformio/issues/151>`_)
 * PlatformIO CLI 2.0: "platform" related commands have been
   moved to ``platformio platforms`` subcommand
   (`issue #158 <https://github.com/platformio/platformio/issues/158>`_)
-* PlatformIO as Continuous Integration (CI) tool for embedded projects
-  (`issue #108 <https://github.com/platformio/platformio/issues/108>`_)
 * Created `PlatformIO gitter.im <https://gitter.im/platformio/platformio>`_ room
   (`issue #174 <https://github.com/platformio/platformio/issues/174>`_)
 * Global ``-f, --force`` option which will force to accept any
-  confirmation prompts (`issue #152 <https://github.com/platformio/platformio/issues/152>`_)
+  confirmation prompts
+  (`issue #152 <https://github.com/platformio/platformio/issues/152>`_)
 * Run project with `platformio run --project-dir <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--project-dir>`_ option without changing the current working
   directory
   (`issue #192 <https://github.com/platformio/platformio/issues/192>`_)
@@ -33,6 +36,11 @@ Release History
   (`issue #168 <https://github.com/platformio/platformio/issues/168>`_)
 * Specify `platformio init --env-prefix <http://docs.platformio.org/en/latest/userguide/cmd_init.html#cmdoption--env-prefix>`__ when initialise/update project
   (`issue #182 <https://github.com/platformio/platformio/issues/182>`_)
+* Added new Armstrap boards
+  (`issue #204 <https://github.com/platformio/platformio/issues/204>`_)
+* Updated SDK for `espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  development platform to v1.1
+  (`issue #179 <https://github.com/platformio/platformio/issues/179>`_)
 * Disabled automatic updates by default for platforms, packages and libraries
   (`issue #171 <https://github.com/platformio/platformio/issues/171>`_)
 * Fixed bug with creating copies of source files

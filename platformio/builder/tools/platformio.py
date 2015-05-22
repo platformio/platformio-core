@@ -2,12 +2,13 @@
 # See LICENSE for details.
 
 import atexit
+import json
 import re
 from os import getenv, listdir, remove, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath
 
-from SCons.Script import (COMMAND_LINE_TARGETS, Exit, SConscript,
-                          SConscriptChdir)
+from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
+                          SConscript, SConscriptChdir)
 from SCons.Util import case_sensitive_suffixes
 
 from platformio.util import pioversion_to_intstr
@@ -60,6 +61,15 @@ def BuildFirmware(env):
         print env.Dump()
         Exit()
 
+    if "idedata" in COMMAND_LINE_TARGETS:
+        _data = {"defines": [], "includes": []}
+        for item in env.get("VARIANT_DIRS", []):
+            _data['includes'].append(env.subst(item[1]))
+        for item in env.get("CPPDEFINES", []):
+            _data['defines'].append(env.subst(item))
+        print json.dumps(_data)
+        Exit()
+
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),
         [firmenv.GlobCXXFiles(vdir) for vdir in vdirs],
@@ -94,6 +104,11 @@ def GlobCXXFiles(env, path):
     return files
 
 
+def VariantDirWrap(env, variant_dir, src_dir, duplicate=True):
+    DefaultEnvironment().Append(VARIANT_DIRS=[(variant_dir, src_dir)])
+    env.VariantDir(variant_dir, src_dir, duplicate)
+
+
 def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
                         ignore_pattern=None):
     if not ignore_pattern:
@@ -105,7 +120,7 @@ def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
         _var_dir = variant_dir + root.replace(src_dir, "")
         if any([s in _var_dir.lower() for s in ignore_pattern]):
             continue
-        env.VariantDir(_var_dir, _src_dir, duplicate)
+        env.VariantDirWrap(_var_dir, _src_dir, duplicate)
         variants.append(_var_dir)
     return variants
 
@@ -397,6 +412,7 @@ def generate(env):
     env.AddMethod(BuildFirmware)
     env.AddMethod(ProcessFlags)
     env.AddMethod(GlobCXXFiles)
+    env.AddMethod(VariantDirWrap)
     env.AddMethod(VariantDirRecursive)
     env.AddMethod(BuildFramework)
     env.AddMethod(BuildLibrary)

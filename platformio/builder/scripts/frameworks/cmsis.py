@@ -25,7 +25,7 @@ env.Replace(
     PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-cmsis")
 )
 
-env.VariantDir(
+env.VariantDirWrap(
     join("$BUILD_DIR", "FrameworkCMSIS"),
     join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
 )

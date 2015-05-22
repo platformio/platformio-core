@@ -22,7 +22,7 @@ env.Replace(
     PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-spl")
 )
 
-env.VariantDir(
+env.VariantDirWrap(
     join("$BUILD_DIR", "FrameworkSPLInc"),
     join("$PLATFORMFW_DIR", "${BOARD_OPTIONS['build']['core']}",
          "variants", "${BOARD_OPTIONS['build']['variant']}", "inc")

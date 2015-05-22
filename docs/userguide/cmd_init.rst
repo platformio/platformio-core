@@ -50,6 +50,14 @@ pre-fill these data:
 The full list with pre-configured boards is available here :ref:`platforms`.
 
 .. option::
+    --ide
+
+Initialise PlatformIO project for the specified IDE which can be imported later
+via "Import Project" functionality.
+
+A list with supported IDE is available within ``platformio init --help`` command.
+
+.. option::
     --disable-auto-uploading
 
 If you initialise project with the specified

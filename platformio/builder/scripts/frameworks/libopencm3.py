@@ -138,7 +138,7 @@ if BOARD_BUILDOPTS.get("core") == "lm4f":
         CPPDEFINES=["LM4F"]
     )
 
-env.VariantDir(
+env.VariantDirWrap(
     join("$BUILD_DIR", "FrameworkLibOpenCM3Variant"),
     join("$PLATFORMFW_DIR", "include")
 )
@@ -166,7 +166,7 @@ env.Replace(
 )
 
 libs = []
-env.VariantDir(
+env.VariantDirWrap(
     join("$BUILD_DIR", "FrameworkLibOpenCM3"),
     "$PLATFORMFW_DIR"
 )

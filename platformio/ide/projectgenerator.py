@@ -1,6 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import json
 from glob import glob
 from os import listdir, walk
 from os.path import basename, isdir, join
@@ -37,12 +38,29 @@ class ProjectGenerator(object):
                 data[k] = v
         return data
 
+    @util.memoized
+    def get_project_build_data(self):
+        envdata = self.get_project_env()
+        if "env_name" not in envdata:
+            return None
+        result = util.exec_command(
+            ["platformio", "run", "-t", "idedata", "-e", envdata['env_name']]
+        )
+        if result['returncode'] != 0 or '{"includes":' not in result['out']:
+            return None
+
+        output = result['out']
+        start_index = output.index('---\n{"includes":')
+        stop_index = output.index('}\n===')
+        try:
+            return json.loads(output[start_index+4:stop_index+1])
+        except ValueError:
+            pass
+
+        return None
+
     def get_project_name(self):
         return basename(self.project_dir)
-
-    @staticmethod
-    def get_includes():
-        return []
 
     @staticmethod
     def get_srcfiles():
@@ -51,10 +69,6 @@ class ProjectGenerator(object):
             for f in files:
                 result.append(join(root, f))
         return result
-
-    @staticmethod
-    def get_defines():
-        return []
 
     def get_tpls(self):
         tpls_dir = join(util.get_source_dir(), "ide", "tpls", self.ide)
@@ -75,10 +89,14 @@ class ProjectGenerator(object):
     def _gather_tplvars(self):
         self._tplvars.update(self.get_project_env())
 
+        build_data = self.get_project_build_data()
+
         self._tplvars.update({
             "project_name": self.get_project_name(),
-            "includes": self.get_includes(),
+            "includes": (build_data['includes']
+                         if build_data and "includes" in build_data else []),
+            "defines": (build_data['defines']
+                        if build_data and "defines" in build_data else []),
             "srcfiles": self.get_srcfiles(),
-            "defines": self.get_defines(),
             "project_dir": self.project_dir
         })
