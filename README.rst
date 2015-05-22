@@ -4,7 +4,7 @@ PlatformIO
 .. image:: https://travis-ci.org/platformio/platformio.svg?branch=develop
     :target: https://travis-ci.org/platformio/platformio
     :alt: Travis.CI Build Status
-.. image:: https://ci.appveyor.com/api/projects/status/ee26e58de798rctd/branch/develop?svg=true
+.. image:: https://ci.appveyor.com/api/projects/status/dku0h2rutfj0ctls/branch/develop?svg=true
     :target: https://ci.appveyor.com/project/ivankravets/platformio
     :alt: AppVeyor.CI Build Status
 .. image:: https://gemnasium.com/platformio/platformio.png
