@@ -309,8 +309,8 @@ class InoToCPPConverter(object):
 
     PROTOTYPE_RE = re.compile(
         r"""^(
-        (?:\s*[a-z_\d]+){1,2}       # return type
-        \s+[a-z_\d]+\s*             # name of prototype
+        (\s*[a-z_\d]+){1,2}         # return type
+        (\s+[a-z_\d]+\s*)           # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*\{                      # must end with {
         """,
@@ -333,6 +333,15 @@ class InoToCPPConverter(object):
             return "\n" * match.group(1).count("\n")
         else:
             return " "
+
+    def _parse_prototypes(self, contents):
+        prototypes = []
+        reserved_keywords = set(["if", "else", "while"])
+        for item in self.PROTOTYPE_RE.findall(contents):
+            if set([item[1].strip(), item[2].strip()]) & reserved_keywords:
+                continue
+            prototypes.append(item[0])
+        return prototypes
 
     def append_prototypes(self, fname, contents, prototypes):
         contents = self.STRIPCOMMENTS_RE.sub(self._replace_comments_callback,
@@ -358,7 +367,7 @@ class InoToCPPConverter(object):
         data = []
         for node in self.nodes:
             ino_contents = node.get_text_contents()
-            prototypes += self.PROTOTYPE_RE.findall(ino_contents)
+            prototypes += self._parse_prototypes(ino_contents)
 
             item = (basename(node.get_path()), ino_contents)
             if self.is_main_node(ino_contents):
