@@ -101,8 +101,8 @@ def ProcessFlags(env):
 
 def GlobCXXFiles(env, path):
     files = []
-    for suff in ["*.c", "*.cpp", "*.S"]:
-        _list = env.Glob(join(path, suff))
+    for suff in ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]:
+        _list = env.Glob(join(path, "*.%s" % suff))
         if _list:
             files += _list
     return files
