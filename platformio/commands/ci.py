@@ -3,7 +3,7 @@
 
 import stat
 from glob import glob
-from os import chmod, environ, makedirs, remove
+from os import chmod, getenv, makedirs, remove
 from os.path import abspath, basename, isdir, isfile, join
 from shutil import copyfile, copytree, rmtree
 from tempfile import mkdtemp
@@ -59,7 +59,7 @@ def cli(ctx, src, lib, exclude, board,  # pylint: disable=R0913
         build_dir, keep_build_dir, project_conf, verbose):
 
     if not src:
-        src = environ.get("PLATFORMIO_CI_SRC", "").split(":")
+        src = getenv("PLATFORMIO_CI_SRC", "").split(":")
     if not src:
         raise click.BadParameter("Missing argument 'src'")
 

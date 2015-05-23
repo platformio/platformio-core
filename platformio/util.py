@@ -175,6 +175,10 @@ def change_filemtime(path, time):
     os.utime(path, (time, time))
 
 
+def is_ci():
+    return os.getenv("CI", "").lower() == "true"
+
+
 def exec_command(*args, **kwargs):
     result = {
         "out": None,
@@ -248,7 +252,7 @@ def get_logicaldisks():
 def get_request_defheaders():
     return {"User-Agent": "PlatformIO/%s CI/%d %s" % (
         __version__,
-        1 if os.environ.get("CI", "").lower() == "true" else 0,
+        1 if is_ci() else 0,
         requests.utils.default_user_agent()
     )}
 
