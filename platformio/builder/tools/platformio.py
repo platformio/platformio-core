@@ -319,7 +319,8 @@ class InoToCPPConverter(object):
 
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
 
-    STRIPCOMMENTS_RE = re.compile(r"(/\*.*?\*/|//[^\r\n]*$)", re.M | re.S)
+    STRIPCOMMENTS_RE = re.compile(r"(/\*.*?\*/|(^|\s+)//[^\r\n]*$)",
+                                  re.M | re.S)
 
     def __init__(self, nodes):
         self.nodes = nodes
