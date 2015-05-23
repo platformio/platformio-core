@@ -270,6 +270,9 @@ processes:
       - Add the directory *dir* to the list of directories to be searched
         for header files.
 
+This option can be set by global environment variable
+:ref:`envvar_PLATFORMIO_BUILD_FLAGS`.
+
 Example:
 
 .. code-block::   ini
@@ -306,7 +309,7 @@ An option ``srcbuild_flags`` has the same behaviour like ``build_flags``
 but will be applied only for the project source code from
 :ref:`projectconf_pio_src_dir` directory.
 
-This option can be overridden by global environment variable
+This option can be set by global environment variable
 :ref:`envvar_PLATFORMIO_SRCBUILD_FLAGS`.
 
 ``install_libs``

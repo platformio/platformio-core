@@ -36,44 +36,46 @@ In other words, ``CI=true`` automatically setup
 PLATFORMIO_HOME_DIR
 ~~~~~~~~~~~~~~~~~~~
 
-Allows to override :ref:`projectconf` option
-:ref:`projectconf_pio_home_dir`.
+Allows to override :ref:`projectconf` option :ref:`projectconf_pio_home_dir`.
 
 .. _envvar_PLATFORMIO_LIB_DIR:
 
 PLATFORMIO_LIB_DIR
 ~~~~~~~~~~~~~~~~~~
 
-Allows to override :ref:`projectconf` option
-:ref:`projectconf_pio_lib_dir`.
+Allows to override :ref:`projectconf` option :ref:`projectconf_pio_lib_dir`.
 
 .. _envvar_PLATFORMIO_SRC_DIR:
 
 PLATFORMIO_SRC_DIR
 ~~~~~~~~~~~~~~~~~~
 
-Allows to override :ref:`projectconf` option
-:ref:`projectconf_pio_src_dir`.
+Allows to override :ref:`projectconf` option :ref:`projectconf_pio_src_dir`.
 
 .. _envvar_PLATFORMIO_ENVS_DIR:
 
 PLATFORMIO_ENVS_DIR
 ~~~~~~~~~~~~~~~~~~~
 
-Allows to override :ref:`projectconf` option
-:ref:`projectconf_pio_envs_dir`.
+Allows to override :ref:`projectconf` option :ref:`projectconf_pio_envs_dir`.
 
 
 Builder
 -------
+
+.. _envvar_PLATFORMIO_BUILD_FLAGS:
+
+PLATFORMIO_BUILD_FLAGS
+~~~~~~~~~~~~~~~~~~~~~~
+
+Allows to set :ref:`projectconf` option :ref:`projectconf_build_flags`.
 
 .. _envvar_PLATFORMIO_SRCBUILD_FLAGS:
 
 PLATFORMIO_SRCBUILD_FLAGS
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Allows to override :ref:`projectconf` option
-:ref:`projectconf_srcbuild_flags`.
+Allows to set :ref:`projectconf` option :ref:`projectconf_srcbuild_flags`.
 
 Settings
 --------

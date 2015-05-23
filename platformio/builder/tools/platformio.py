@@ -47,10 +47,11 @@ def BuildFirmware(env):
         _LIBFLAGS=" -Wl,--end-group"
     )
 
-    _srcbuild_flags = getenv("PLATFORMIO_SRCBUILD_FLAGS",
-                             env.subst("$SRCBUILD_FLAGS"))
-    if _srcbuild_flags:
-        firmenv.MergeFlags(_srcbuild_flags)
+    # Handle SRCBUILD_FLAGS
+    if getenv("PLATFORMIO_SRCBUILD_FLAGS", None):
+        firmenv.MergeFlags(getenv("PLATFORMIO_SRCBUILD_FLAGS"))
+    if "SRCBUILD_FLAGS" in env:
+        firmenv.MergeFlags(env['SRCBUILD_FLAGS'])
 
     firmenv.Append(
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
@@ -83,6 +84,9 @@ def ProcessFlags(env):
     if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
         env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
 
+    # Handle BUILD_FLAGS
+    if getenv("PLATFORMIO_BUILD_FLAGS", None):
+        env.MergeFlags(getenv("PLATFORMIO_BUILD_FLAGS"))
     if "BUILD_FLAGS" in env:
         env.MergeFlags(env['BUILD_FLAGS'])
 

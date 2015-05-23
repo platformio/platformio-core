@@ -4,6 +4,8 @@ Release History
 2.0.1 (2015-??-??)
 ------------------
 
+* Handle new environment variable
+  `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-flags>`_
 * Pass to API requests information about Continuous Integration system. This
   information will be used by PlatformIO-API.
 * Fixed bug with converting ``*.ino`` to ``*.cpp``
