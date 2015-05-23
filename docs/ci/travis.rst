@@ -63,20 +63,8 @@ Examples
 
     env:
         - PLATFORMIO_CI_SRC=examples/acm/acm_terminal
-        - PLATFORMIO_CI_SRC=examples/adk/term_time
-        - PLATFORMIO_CI_SRC=examples/Bluetooth/WiiUProController
-        - PLATFORMIO_CI_SRC=examples/board_qc
-        - PLATFORMIO_CI_SRC=examples/cdc_XR21B1411/XR_terminal
+        - PLATFORMIO_CI_SRC=examples/Bluetooth/WiiIRCamera PLATFORMIO_BUILD_FLAGS="-DWIICAMERA"
         - PLATFORMIO_CI_SRC=examples/ftdi/USBFTDILoopback
-        - PLATFORMIO_CI_SRC=examples/HID/le3dp
-        - PLATFORMIO_CI_SRC=examples/HID/USBHIDJoystick
-        - PLATFORMIO_CI_SRC=examples/hub_demo
-        - PLATFORMIO_CI_SRC=examples/max_LCD
-        - PLATFORMIO_CI_SRC=examples/pl2303/pl2303_xbee_terminal
-        - PLATFORMIO_CI_SRC=examples/PS3USB
-        - PLATFORMIO_CI_SRC=examples/PS4USB
-        - PLATFORMIO_CI_SRC=examples/PSBuzz
-        - PLATFORMIO_CI_SRC=examples/USB_desc
         - PLATFORMIO_CI_SRC=examples/Xbox/XBOXUSB
         # - ...
 
@@ -89,7 +77,6 @@ Examples
         - platformio lib install 416 417
 
     script:
-        - if [[ $PLATFORMIO_CI_SRC == *"WiiIRCamera"* ]]; then sed -i -- 's/#define ENABLE_WII_IR_CAMERA 0/#define ENABLE_WII_IR_CAMERA 1/g' ./settings.h; fi
         - platformio ci --board=uno --board=teensy31 --board=due --lib="."
 
 * Configuration file: https://github.com/felis/USB_Host_Shield_2.0/blob/master/.travis.yml
