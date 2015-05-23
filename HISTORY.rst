@@ -4,6 +4,8 @@ Release History
 2.0.1 (2015-??-??)
 ------------------
 
+* Pass to API requests information about Continuous Integration system. This
+  information will be used by PlatformIO-API.
 * Fixed bug with converting ``*.ino`` to ``*.cpp``
 
 2.0.0 (2015-05-22)

@@ -246,8 +246,11 @@ def get_logicaldisks():
 
 
 def get_request_defheaders():
-    return {"User-Agent": "PlatformIO/%s %s" % (
-        __version__, requests.utils.default_user_agent())}
+    return {"User-Agent": "PlatformIO/%s CI/%d %s" % (
+        __version__,
+        1 if os.environ.get("CI", "").lower() == "true" else 0,
+        requests.utils.default_user_agent()
+    )}
 
 
 def get_api_result(path, params=None, data=None):
