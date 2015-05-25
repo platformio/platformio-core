@@ -74,7 +74,7 @@ def BuildFirmware(env):
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),
         [firmenv.GlobCXXFiles(vdir) for vdir in vdirs],
-        LIBS=list(env.get("LIBS", []) + deplibs)[::-1],
+        LIBS=env.get("LIBS", []) + deplibs,
         LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"],
         PROGSUFFIX=".elf"
     )
@@ -288,17 +288,15 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
     # end internal prototypes
 
     deplibs = _get_dep_libs(src_dir)
-    env.Prepend(
-        CPPPATH=[join("$BUILD_DIR", l) for (l, _) in deplibs]
-    )
-
-    # add automatically "utility" dir from the lib (Arduino issue)
-    env.Prepend(
-        CPPPATH=[
-            join("$BUILD_DIR", l, "utility") for (l, ld) in deplibs
-            if isdir(join(ld, "utility"))
-        ]
-    )
+    for l, ld in deplibs:
+        env.Append(
+            CPPPATH=[join("$BUILD_DIR", l)]
+        )
+        # add automatically "utility" dir from the lib (Arduino issue)
+        if isdir(join(ld, "utility")):
+            env.Append(
+                CPPPATH=[join("$BUILD_DIR", l, "utility")]
+            )
 
     libs = []
     for (libname, inc_dir) in deplibs:
