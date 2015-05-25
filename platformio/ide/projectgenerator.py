@@ -26,16 +26,16 @@ class ProjectGenerator(object):
         return [d for d in listdir(tpls_dir)
                 if isdir(join(tpls_dir, d))]
 
-    @staticmethod
-    def get_project_env():
+    def get_project_env(self):
         data = {}
-        config = util.get_project_config()
-        for section in config.sections():
-            if not section.startswith("env:"):
-                continue
-            data['env_name'] = section[4:]
-            for k, v in config.items(section):
-                data[k] = v
+        with util.cd(self.project_dir):
+            config = util.get_project_config()
+            for section in config.sections():
+                if not section.startswith("env:"):
+                    continue
+                data['env_name'] = section[4:]
+                for k, v in config.items(section):
+                    data[k] = v
         return data
 
     @util.memoized

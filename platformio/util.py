@@ -55,6 +55,18 @@ class AsyncPipe(Thread):
         self.join()
 
 
+class cd:
+    def __init__(self, new_path):
+        self.new_path = new_path
+        self.prev_path = os.getcwd()
+
+    def __enter__(self):
+        os.chdir(self.new_path)
+
+    def __exit__(self, etype, value, traceback):
+        os.chdir(self.prev_path)
+
+
 class memoized(object):
     '''
     Decorator. Caches a function's return value each time it is called.
