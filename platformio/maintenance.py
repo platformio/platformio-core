@@ -3,6 +3,7 @@
 
 import re
 import struct
+import sys
 from os import remove
 from os.path import isdir, isfile, join
 from shutil import rmtree
@@ -25,6 +26,11 @@ from platformio.util import get_home_dir
 def on_platformio_start(ctx, force):
     app.set_session_var("force_option", force)
     telemetry.on_command(ctx)
+
+    # skip any check operations when upgrade process
+    if len(sys.argv) > 1 and sys.argv[1] == "upgrade":
+        return
+
     after_upgrade(ctx)
 
     try:
