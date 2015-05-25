@@ -50,11 +50,11 @@ described below:
         [
             {
                 "name": "Clean",
-                "cmd": ["platformio", "run", "-t", "clean"]
+                "cmd": ["platformio", "--force", "run", "--target", "clean"]
             },
             {
                 "name": "Upload",
-                "cmd": ["platformio", "run", "-t", "upload"]
+                "cmd": ["platformio", "--force", "run", "--target", "upload"]
             }
         ]
     }
