@@ -189,7 +189,8 @@ def exec_command(*args, **kwargs):
     default = dict(
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        shell=system() == "Windows"
+        shell=system() == "Windows",
+        env=os.environ
     )
     default.update(kwargs)
     kwargs = default
