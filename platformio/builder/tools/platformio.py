@@ -289,12 +289,12 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
 
     deplibs = _get_dep_libs(src_dir)
     for l, ld in deplibs:
-        env.Prepend(
+        env.Append(
             CPPPATH=[join("$BUILD_DIR", l)]
         )
         # add automatically "utility" dir from the lib (Arduino issue)
         if isdir(join(ld, "utility")):
-            env.Prepend(
+            env.Append(
                 CPPPATH=[join("$BUILD_DIR", l, "utility")]
             )
 
