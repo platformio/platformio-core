@@ -176,7 +176,7 @@ def change_filemtime(path, time):
 
 
 def is_ci():
-    return os.getenv("CI", "").lower() == "true"
+    return os.environ.get("CI", "").lower() == "true"
 
 
 def exec_command(*args, **kwargs):
@@ -189,8 +189,7 @@ def exec_command(*args, **kwargs):
     default = dict(
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        shell=system() == "Windows",
-        env=os.environ
+        shell=system() == "Windows"
     )
     default.update(kwargs)
     kwargs = default
