@@ -28,8 +28,8 @@ Since PlatformIO 2.0 you can generate Eclipse compatible project using
 
     platformio init --ide visualstudio
 
-Then import this project via ``File > Import ...`` and specify root directory
-where is located :ref:`projectconf`.
+Then import this project via ``File->Open->Project/Solution`` and specify root
+directory where is located :ref:`projectconf`.
 
 Manual Integration
 ^^^^^^^^^^^^^^^^^^
