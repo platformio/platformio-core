@@ -55,7 +55,7 @@ class AsyncPipe(Thread):
         self.join()
 
 
-class cd:
+class cd(object):
     def __init__(self, new_path):
         self.new_path = new_path
         self.prev_path = os.getcwd()
