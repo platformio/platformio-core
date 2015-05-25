@@ -176,7 +176,7 @@ def change_filemtime(path, time):
 
 
 def is_ci():
-    return os.environ.get("CI", "").lower() == "true"
+    return os.getenv("CI", "").lower() == "true"
 
 
 def exec_command(*args, **kwargs):
