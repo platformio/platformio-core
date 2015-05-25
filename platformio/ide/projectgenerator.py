@@ -44,7 +44,8 @@ class ProjectGenerator(object):
         if "env_name" not in envdata:
             return None
         result = util.exec_command(
-            ["platformio", "run", "-t", "idedata", "-e", envdata['env_name']]
+            ["platformio", "run", "-t", "idedata", "-e", envdata['env_name'],
+             "--project-dir", self.project_dir]
         )
         if result['returncode'] != 0 or '{"includes":' not in result['out']:
             return None

@@ -4,6 +4,7 @@
 import atexit
 import json
 import re
+from glob import glob
 from os import getenv, listdir, remove, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath
 
@@ -66,6 +67,10 @@ def BuildFirmware(env):
         _data = {"defines": [], "includes": []}
         for item in env.get("VARIANT_DIRS", []):
             _data['includes'].append(env.subst(item[1]))
+        for item in glob(env.subst(
+                join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN",
+                     "*", "include"))):
+            _data['includes'].append(item)
         for item in env.get("CPPDEFINES", []):
             _data['defines'].append(env.subst(item))
         print json.dumps(_data)
