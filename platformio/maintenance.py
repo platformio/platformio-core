@@ -28,7 +28,9 @@ def on_platformio_start(ctx, force):
     telemetry.on_command(ctx)
 
     # skip any check operations when upgrade process
-    if len(sys.argv) > 1 and sys.argv[1] == "upgrade":
+    args = [str(s).lower() for s in sys.argv[1:]
+            if not str(s).startswith("-")]
+    if len(args) > 1 and args[1] == "upgrade":
         return
 
     after_upgrade(ctx)
