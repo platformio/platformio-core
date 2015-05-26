@@ -8,10 +8,12 @@ Release History
   `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-flags>`_
 * Pass to API requests information about Continuous Integration system. This
   information will be used by PlatformIO-API.
-* Use ``include`` directories from toolchain when exporting project for IDE
+* Use ``include`` directories from toolchain when initialising project for IDE
   (`issue #210 <https://github.com/platformio/platformio/issues/210>`_)
 * Updated `Arduino Framework <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__ to
   1.6.4 version (`issue #212 <https://github.com/platformio/platformio/issues/212>`_)
+* Handle Atmel AVR Symbols when initialising project for IDE
+  (`issue #216 <https://github.com/platformio/platformio/issues/216>`_)
 * Fixed bug with converting ``*.ino`` to ``*.cpp``
 
 2.0.0 (2015-05-22)

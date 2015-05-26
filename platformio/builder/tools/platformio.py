@@ -64,16 +64,7 @@ def BuildFirmware(env):
         Exit()
 
     if "idedata" in COMMAND_LINE_TARGETS:
-        _data = {"defines": [], "includes": []}
-        for item in env.get("VARIANT_DIRS", []):
-            _data['includes'].append(env.subst(item[1]))
-        for item in glob(env.subst(
-                join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN",
-                     "*", "include"))):
-            _data['includes'].append(item)
-        for item in env.get("CPPDEFINES", []):
-            _data['defines'].append(env.subst(item))
-        print json.dumps(_data)
+        print json.dumps(env.DumpIDEData())
         Exit()
 
     return firmenv.Program(
@@ -421,6 +412,38 @@ def ConvertInoToCpp(env):
     atexit.register(delete_tmpcpp_file, tmpcpp_file)
 
 
+def DumpIDEData(env):
+    data = {
+        "defines": [],
+        "includes": []
+    }
+
+    # includes from framework and libs
+    for item in env.get("VARIANT_DIRS", []):
+        data['includes'].append(env.subst(item[1]))
+
+    # includes from toolchain
+    for item in glob(env.subst(
+            join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN",
+                 "*", "include"))):
+        data['includes'].append(item)
+
+    # global symbols
+    for item in env.get("CPPDEFINES", []):
+        data['defines'].append(env.subst(item))
+
+    # special symbol for Atmel AVR MCU
+    board = env.get("BOARD_OPTIONS", {})
+    if board and board['platform'] == "atmelavr":
+        data['defines'].append(
+            "__AVR_%s__" % board['build']['mcu'].upper()
+            .replace("ATMEGA", "ATmega")
+            .replace("ATTINY", "ATtiny")
+        )
+
+    return data
+
+
 def exists(_):
     return True
 
@@ -435,4 +458,5 @@ def generate(env):
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildDependentLibraries)
     env.AddMethod(ConvertInoToCpp)
+    env.AddMethod(DumpIDEData)
     return env
