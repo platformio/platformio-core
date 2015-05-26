@@ -278,7 +278,10 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                         len(state['ordered']) + 1, finder.getLibName(),
                         _lib_dir))
                     state['libs'].add(_lib_dir)
-                    state = _process_src_dir(state, _lib_dir)
+
+                    if getenv("PLATFORMIO_LDF_CYCLIC",
+                              env.subst("$LDF_CYCLIC")).lower() == "true":
+                        state = _process_src_dir(state, _lib_dir)
         return state
 
     # end internal prototypes
