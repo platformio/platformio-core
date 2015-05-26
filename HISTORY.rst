@@ -19,6 +19,8 @@ Release History
 * Handle Atmel AVR Symbols when initialising project for IDE
   (`issue #216 <https://github.com/platformio/platformio/issues/216>`_)
 * Fixed bug with converting ``*.ino`` to ``*.cpp``
+* Fixed failing with ``platformio init --ide eclipse`` without boards
+  (`issue #217 <https://github.com/platformio/platformio/issues/217>`_)
 
 2.0.0 (2015-05-22)
 ------------------
@@ -102,7 +104,7 @@ Release History
   `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`__
   platform
 * Added support for new Arduino based boards by *SparkFun, BQ, LightUp,
-  LowPowerLab, Quirkbot, RedBearLab, TinyCircuits, WickedDevice* to
+  LowPowerLab, Quirkbot, RedBearLab, TinyCircuits* to
   `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
   platform
 * Upgraded `Arduino Framework <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__ to
