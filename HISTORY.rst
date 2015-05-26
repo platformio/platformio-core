@@ -10,6 +10,10 @@ Release History
   information will be used by PlatformIO-API.
 * Use ``include`` directories from toolchain when initialising project for IDE
   (`issue #210 <https://github.com/platformio/platformio/issues/210>`_)
+* Added support for new WildFire boards from
+  `Wicked Device <http://wickeddevice.com>`_ to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform
 * Updated `Arduino Framework <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__ to
   1.6.4 version (`issue #212 <https://github.com/platformio/platformio/issues/212>`_)
 * Handle Atmel AVR Symbols when initialising project for IDE
