@@ -102,7 +102,7 @@ class MeasurementProtocol(TelemetryBase):
             cmd_path = args[:1]
 
         self['screen_name'] = " ".join([p.title() for p in cmd_path])
-        self['cd3'] = " ".join(args)
+        self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
 
     def send(self, hittype):
         if not app.get_setting("enable_telemetry"):
