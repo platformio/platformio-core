@@ -21,12 +21,13 @@ Integration
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
-Since PlatformIO 2.0 you can generate Eclipse compatible project using
-:option:`platformio init --ide` command:
+Since PlatformIO 2.0 you can generate Qt Creator compatible project using
+:option:`platformio init --ide` command. Please choose board type using
+:ref:`cmd_boards` command and run:
 
 .. code-block:: shell
 
-    platformio init --ide qtcreator
+    platformio init --ide qtcreator --board %TYPE%
 
 Then import this project via ``File > New File or Project > Import Project``
 and specify root directory where is located :ref:`projectconf`.

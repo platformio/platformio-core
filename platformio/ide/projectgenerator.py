@@ -27,7 +27,7 @@ class ProjectGenerator(object):
                 if isdir(join(tpls_dir, d))]
 
     def get_project_env(self):
-        data = {}
+        data = {"env_name": "PlatformIO"}
         with util.cd(self.project_dir):
             config = util.get_project_config()
             for section in config.sections():

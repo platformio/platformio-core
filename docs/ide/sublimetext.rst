@@ -21,12 +21,13 @@ Integration
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
-Since PlatformIO 2.0 you can generate Eclipse compatible project using
-:option:`platformio init --ide` command:
+Since PlatformIO 2.0 you can generate Sublime Text compatible project using
+:option:`platformio init --ide` command. Please choose board type using
+:ref:`cmd_boards` command and run:
 
 .. code-block:: shell
 
-    platformio init --ide sublimetext
+    platformio init --ide sublimetext --board %TYPE%
 
 Then import this project via ``Project > Open Project...`` and specify root
 directory where is located :ref:`projectconf`.
@@ -44,7 +45,7 @@ described below:
 .. code-block:: bash
 
     {
-        "cmd": ["platformio", "run"],
+        "cmd": ["platformio", "--force", "run"],
         "working_dir": "${project_path:${folder}}",
         "variants":
         [

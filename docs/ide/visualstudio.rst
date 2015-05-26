@@ -21,12 +21,13 @@ Integration
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
-Since PlatformIO 2.0 you can generate Eclipse compatible project using
-:option:`platformio init --ide` command:
+Since PlatformIO 2.0 you can generate Visual Studio compatible project using
+:option:`platformio init --ide` command. Please choose board type using
+:ref:`cmd_boards` command and run:
 
 .. code-block:: shell
 
-    platformio init --ide visualstudio
+    platformio init --ide visualstudio --board %TYPE%
 
 Then import this project via ``File->Open->Project/Solution`` and specify root
 directory where is located :ref:`projectconf`.

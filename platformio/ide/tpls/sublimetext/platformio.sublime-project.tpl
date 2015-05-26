@@ -5,6 +5,7 @@
 			"cmd":
 			[
 				"platformio",
+				"--force",
 				"run"
 			],
 			"name": "PlatformIO",
