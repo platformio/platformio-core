@@ -139,7 +139,7 @@ class PlatformFactory(object):
             pdir = join(d, "platforms")
             if not isdir(pdir):
                 continue
-            for p in listdir(pdir):
+            for p in sorted(listdir(pdir)):
                 if (p in ("__init__.py", "base.py") or not
                         p.endswith(".py")):
                     continue

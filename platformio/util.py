@@ -307,7 +307,7 @@ def _lookup_boards():
         bdirs.append(join(get_home_dir(), "boards"))
 
     for bdir in bdirs:
-        for json_file in os.listdir(bdir):
+        for json_file in sorted(os.listdir(bdir)):
             if not json_file.endswith(".json"):
                 continue
             with open(join(bdir, json_file)) as f:

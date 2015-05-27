@@ -23,8 +23,8 @@ class ProjectGenerator(object):
     @staticmethod
     def get_supported_ides():
         tpls_dir = join(util.get_source_dir(), "ide", "tpls")
-        return [d for d in listdir(tpls_dir)
-                if isdir(join(tpls_dir, d))]
+        return sorted([d for d in listdir(tpls_dir)
+                       if isdir(join(tpls_dir, d))])
 
     def get_project_env(self):
         data = {"env_name": "PlatformIO"}

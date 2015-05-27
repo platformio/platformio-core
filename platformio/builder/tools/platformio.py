@@ -207,7 +207,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                 if not isdir(lsd_dir):
                     continue
 
-                for ld in USE_LIBS + listdir(lsd_dir):
+                for ld in USE_LIBS + sorted(listdir(lsd_dir)):
                     if not isdir(join(lsd_dir, ld)):
                         continue
 
