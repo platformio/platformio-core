@@ -1,7 +1,7 @@
 Release History
 ===============
 
-2.0.1 (2015-??-??)
+2.0.1 (2015-05-27)
 ------------------
 
 * Handle new environment variables
