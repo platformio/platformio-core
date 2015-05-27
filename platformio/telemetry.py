@@ -4,9 +4,9 @@
 import atexit
 import platform
 import re
+import sys
 import threading
 import uuid
-from sys import argv as sys_argv
 from time import time
 
 import click
@@ -91,7 +91,8 @@ class MeasurementProtocol(TelemetryBase):
         self['cd4'] = 1 if app.get_setting("enable_prompts") else 0
 
     def _prefill_screen_name(self):
-        args = [str(s).lower() for s in sys_argv[1:]]
+        args = [str(s).lower() for s in sys.argv[1:]
+                if not str(s).startswith("-")]
         if not args:
             return
 
@@ -101,7 +102,7 @@ class MeasurementProtocol(TelemetryBase):
             cmd_path = args[:1]
 
         self['screen_name'] = " ".join([p.title() for p in cmd_path])
-        self['cd3'] = " ".join(args)
+        self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
 
     def send(self, hittype):
         if not app.get_setting("enable_telemetry"):

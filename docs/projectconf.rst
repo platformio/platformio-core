@@ -270,6 +270,9 @@ processes:
       - Add the directory *dir* to the list of directories to be searched
         for header files.
 
+This option can be set by global environment variable
+:ref:`envvar_PLATFORMIO_BUILD_FLAGS`.
+
 Example:
 
 .. code-block::   ini
@@ -306,7 +309,7 @@ An option ``srcbuild_flags`` has the same behaviour like ``build_flags``
 but will be applied only for the project source code from
 :ref:`projectconf_pio_src_dir` directory.
 
-This option can be overridden by global environment variable
+This option can be set by global environment variable
 :ref:`envvar_PLATFORMIO_SRCBUILD_FLAGS`.
 
 ``install_libs``
@@ -328,7 +331,7 @@ Example:
 ``use_libs``
 ^^^^^^^^^^^^
 
-Specify libraries which should be used by ``Library Dependency Finder`` with
+Specify libraries which should be used by ``Library Dependency Finder (LDF)`` with
 the highest priority.
 
 Example:
@@ -341,7 +344,7 @@ Example:
 ``ignore_libs``
 ^^^^^^^^^^^^^^^
 
-Specify libraries which should be ignored by ``Library Dependency Finder``
+Specify libraries which should be ignored by ``Library Dependency Finder (LDF)``
 
 Example:
 
@@ -349,6 +352,30 @@ Example:
 
     [env:ignore_some_libs]
     ignore_libs = SPI,EngduinoV3_ID123
+
+.. _projectconf_ldf_cyclic:
+
+``ldf_cyclic``
+^^^^^^^^^^^^^^
+
+Control cyclic (recursive) behaviour for ``Library Dependency Finder (LDF)``.
+By default, this option is turned OFF (``ldf_cyclic=False``) and means, that
+``LDF`` will find only libraries which are included in source files from the
+project :ref:`projectconf_pio_src_dir`.
+
+If you want to enable cyclic (recursive, nested) search, please set this option
+to ``True``. Founded library will be treated like a new source files and
+``LDF`` will search dependencies for it.
+
+This option can be set by global environment variable
+:ref:`envvar_PLATFORMIO_LDF_CYCLIC`.
+
+Example:
+
+.. code-block::   ini
+
+    [env:libs_with_enabled_ldf_cyclic]
+    ldf_cyclic = True
 
 
 .. _projectconf_examples:

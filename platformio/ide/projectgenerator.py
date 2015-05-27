@@ -26,16 +26,16 @@ class ProjectGenerator(object):
         return [d for d in listdir(tpls_dir)
                 if isdir(join(tpls_dir, d))]
 
-    @staticmethod
-    def get_project_env():
-        data = {}
-        config = util.get_project_config()
-        for section in config.sections():
-            if not section.startswith("env:"):
-                continue
-            data['env_name'] = section[4:]
-            for k, v in config.items(section):
-                data[k] = v
+    def get_project_env(self):
+        data = {"env_name": "PlatformIO"}
+        with util.cd(self.project_dir):
+            config = util.get_project_config()
+            for section in config.sections():
+                if not section.startswith("env:"):
+                    continue
+                data['env_name'] = section[4:]
+                for k, v in config.items(section):
+                    data[k] = v
         return data
 
     @util.memoized
@@ -44,7 +44,8 @@ class ProjectGenerator(object):
         if "env_name" not in envdata:
             return None
         result = util.exec_command(
-            ["platformio", "run", "-t", "idedata", "-e", envdata['env_name']]
+            ["platformio", "run", "-t", "idedata", "-e", envdata['env_name'],
+             "--project-dir", self.project_dir]
         )
         if result['returncode'] != 0 or '{"includes":' not in result['out']:
             return None

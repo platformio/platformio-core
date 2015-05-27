@@ -53,6 +53,8 @@ env.Append(
         "${BOARD_OPTIONS['build']['variant'].upper()}"
     ],
 
+    LIBS=["stdc++", "nosys"],
+
     LINKFLAGS=[
         "-nostartfiles",
         "-nostdlib"

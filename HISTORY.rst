@@ -1,10 +1,35 @@
 Release History
 ===============
 
+2.0.1 (2015-??-??)
+------------------
+
+* Handle new environment variables
+  `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-flags>`_
+  and `PLATFORMIO_LDF_CYCLIC <http://docs.platformio.org/en/latest/envvars.html#platformio-ldf-cyclic>`_
+* Pass to API requests information about Continuous Integration system. This
+  information will be used by PlatformIO-API.
+* Use ``include`` directories from toolchain when initialising project for IDE
+  (`issue #210 <https://github.com/platformio/platformio/issues/210>`_)
+* Added support for new WildFire boards from
+  `Wicked Device <http://wickeddevice.com>`_ to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform
+* Updated `Arduino Framework <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__ to
+  1.6.4 version (`issue #212 <https://github.com/platformio/platformio/issues/212>`_)
+* Handle Atmel AVR Symbols when initialising project for IDE
+  (`issue #216 <https://github.com/platformio/platformio/issues/216>`_)
+* Fixed bug with converting ``*.ino`` to ``*.cpp``
+* Fixed failing with ``platformio init --ide eclipse`` without boards
+  (`issue #217 <https://github.com/platformio/platformio/issues/217>`_)
+
 2.0.0 (2015-05-22)
 ------------------
 
-* PlatformIO as :ref:`ci` (CI) tool for embedded projects
+*Made in* `Paradise <https://twitter.com/ikravets/status/592356377185619969>`_
+
+* PlatformIO as `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
+  (CI) tool for embedded projects
   (`issue #108 <https://github.com/platformio/platformio/issues/108>`_)
 * Initialise PlatformIO project for the specified IDE
   (`issue #151 <https://github.com/platformio/platformio/issues/151>`_)
@@ -80,7 +105,7 @@ Release History
   `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`__
   platform
 * Added support for new Arduino based boards by *SparkFun, BQ, LightUp,
-  LowPowerLab, Quirkbot, RedBearLab, TinyCircuits, WickedDevice* to
+  LowPowerLab, Quirkbot, RedBearLab, TinyCircuits* to
   `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
   platform
 * Upgraded `Arduino Framework <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__ to

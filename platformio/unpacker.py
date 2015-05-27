@@ -1,7 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os import chmod, environ
+from os import chmod
 from os.path import join, splitext
 from tarfile import open as tarfile_open
 from time import mktime
@@ -9,8 +9,8 @@ from zipfile import ZipFile
 
 import click
 
+from platformio import util
 from platformio.exception import UnsupportedArchiveType
-from platformio.util import change_filemtime
 
 
 class ArchiveBase(object):
@@ -51,7 +51,7 @@ class ZIPArchive(ArchiveBase):
 
     @staticmethod
     def preserve_mtime(item, dest_dir):
-        change_filemtime(
+        util.change_filemtime(
             join(dest_dir, item.filename),
             mktime(list(item.date_time) + [0]*3)
         )
@@ -81,7 +81,7 @@ class FileUnpacker(object):
             raise UnsupportedArchiveType(archpath)
 
     def start(self):
-        if environ.get("CI") == "true":
+        if util.is_ci():
             click.echo("Unpacking...")
             for item in self._unpacker.get_items():
                 self._unpacker.extract_item(item, self._dest_dir)

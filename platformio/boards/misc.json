@@ -250,50 +250,6 @@
         "vendor": "TinyCircuits"
     },
 
-    "wildfirev3": {
-        "build": {
-            "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR",
-            "f_cpu": "16000000L",
-            "mcu": "atmega1284p",
-            "variant": "wildfirev3"
-        },
-        "frameworks": ["arduino"],
-        "name": "WickedDevice WildFire v3 [optiboot]",
-        "platform": "atmelavr",
-        "upload": {
-            "maximum_ram_size": 16384,
-            "maximum_size": 130048,
-            "protocol": "arduino",
-            "require_upload_port" : true,
-            "speed": 115200
-        },
-        "url": "http://shop.wickeddevice.com/resources/wildfire/",
-        "vendor": "WickedDevice"
-    },
-
-    "wildfirev2": {
-        "build": {
-            "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR",
-            "f_cpu": "16000000L",
-            "mcu": "atmega1284p",
-            "variant": "wildfirev2"
-        },
-        "frameworks": ["arduino"],
-        "name": "WickedDevice WildFire v2 [stk500]",
-        "platform": "atmelavr",
-        "upload": {
-            "maximum_ram_size": 16384,
-            "maximum_size": 122878,
-            "protocol": "wiring",
-            "require_upload_port" : true,
-            "speed": 38400
-        },
-        "url": "http://shop.wickeddevice.com/resources/wildfire/#arduinoidesetup",
-        "vendor": "WickedDevice"
-    },
-
     "blend": {
         "build": {
             "core": "arduino",
@@ -521,5 +477,49 @@
         },
         "url": "http://quirkbot.com",
         "vendor": "Quirkbot"
+    },
+
+    "wildfirev2": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_MEGA",
+            "f_cpu": "16000000L",
+            "mcu": "atmega1284p",
+            "variant": "wildfirev2"
+        },
+        "frameworks": ["arduino"],
+        "name": "Wicked Device WildFire V2",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 122878,
+            "protocol": "wiring",
+            "require_upload_port" : true,
+            "speed": 38400
+        },
+        "url": "http://shop.wickeddevice.com/resources/wildfire/",
+        "vendor": "Wicked Device"
+    },
+
+    "wildfirev3": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_MEGA",
+            "f_cpu": "16000000L",
+            "mcu": "atmega1284p",
+            "variant": "wildfirev3"
+        },
+        "frameworks": ["arduino"],
+        "name": "Wicked Device WildFire V3",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 130048,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://shop.wickeddevice.com/resources/wildfire/",
+        "vendor": "Wicked Device"
     }
 }

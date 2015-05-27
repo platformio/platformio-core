@@ -4,6 +4,7 @@
 import atexit
 import json
 import re
+from glob import glob
 from os import getenv, listdir, remove, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath
 
@@ -47,10 +48,11 @@ def BuildFirmware(env):
         _LIBFLAGS=" -Wl,--end-group"
     )
 
-    _srcbuild_flags = getenv("PLATFORMIO_SRCBUILD_FLAGS",
-                             env.subst("$SRCBUILD_FLAGS"))
-    if _srcbuild_flags:
-        firmenv.MergeFlags(_srcbuild_flags)
+    # Handle SRCBUILD_FLAGS
+    if getenv("PLATFORMIO_SRCBUILD_FLAGS", None):
+        firmenv.MergeFlags(getenv("PLATFORMIO_SRCBUILD_FLAGS"))
+    if "SRCBUILD_FLAGS" in env:
+        firmenv.MergeFlags(env['SRCBUILD_FLAGS'])
 
     firmenv.Append(
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
@@ -62,18 +64,13 @@ def BuildFirmware(env):
         Exit()
 
     if "idedata" in COMMAND_LINE_TARGETS:
-        _data = {"defines": [], "includes": []}
-        for item in env.get("VARIANT_DIRS", []):
-            _data['includes'].append(env.subst(item[1]))
-        for item in env.get("CPPDEFINES", []):
-            _data['defines'].append(env.subst(item))
-        print json.dumps(_data)
+        print json.dumps(env.DumpIDEData())
         Exit()
 
     return firmenv.Program(
         join("$BUILD_DIR", "firmware"),
         [firmenv.GlobCXXFiles(vdir) for vdir in vdirs],
-        LIBS=list(env.get("LIBS", []) + deplibs)[::-1],
+        LIBS=env.get("LIBS", []) + deplibs,
         LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"],
         PROGSUFFIX=".elf"
     )
@@ -83,6 +80,9 @@ def ProcessFlags(env):
     if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
         env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
 
+    # Handle BUILD_FLAGS
+    if getenv("PLATFORMIO_BUILD_FLAGS", None):
+        env.MergeFlags(getenv("PLATFORMIO_BUILD_FLAGS"))
     if "BUILD_FLAGS" in env:
         env.MergeFlags(env['BUILD_FLAGS'])
 
@@ -97,8 +97,8 @@ def ProcessFlags(env):
 
 def GlobCXXFiles(env, path):
     files = []
-    for suff in ["*.c", "*.cpp", "*.S"]:
-        _list = env.Glob(join(path, suff))
+    for suff in ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]:
+        _list = env.Glob(join(path, "*.%s" % suff))
         if _list:
             files += _list
     return files
@@ -278,23 +278,24 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                         len(state['ordered']) + 1, finder.getLibName(),
                         _lib_dir))
                     state['libs'].add(_lib_dir)
-                    state = _process_src_dir(state, _lib_dir)
+
+                    if getenv("PLATFORMIO_LDF_CYCLIC",
+                              env.subst("$LDF_CYCLIC")).lower() == "true":
+                        state = _process_src_dir(state, _lib_dir)
         return state
 
     # end internal prototypes
 
     deplibs = _get_dep_libs(src_dir)
-    env.Prepend(
-        CPPPATH=[join("$BUILD_DIR", l) for (l, _) in deplibs]
-    )
-
-    # add automatically "utility" dir from the lib (Arduino issue)
-    env.Prepend(
-        CPPPATH=[
-            join("$BUILD_DIR", l, "utility") for (l, ld) in deplibs
-            if isdir(join(ld, "utility"))
-        ]
-    )
+    for l, ld in deplibs:
+        env.Append(
+            CPPPATH=[join("$BUILD_DIR", l)]
+        )
+        # add automatically "utility" dir from the lib (Arduino issue)
+        if isdir(join(ld, "utility")):
+            env.Append(
+                CPPPATH=[join("$BUILD_DIR", l, "utility")]
+            )
 
     libs = []
     for (libname, inc_dir) in deplibs:
@@ -309,8 +310,8 @@ class InoToCPPConverter(object):
 
     PROTOTYPE_RE = re.compile(
         r"""^(
-        (?:\s*[a-z_\d]+){1,2}       # return type
-        \s+[a-z_\d]+\s*             # name of prototype
+        (\s*[a-z_\d]+){1,2}         # return type
+        (\s+[a-z_\d]+\s*)           # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*\{                      # must end with {
         """,
@@ -319,7 +320,8 @@ class InoToCPPConverter(object):
 
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
 
-    STRIPCOMMENTS_RE = re.compile(r"(/\*.*?\*/|//[^\r\n]*$)", re.M | re.S)
+    STRIPCOMMENTS_RE = re.compile(r"(/\*.*?\*/|(^|\s+)//[^\r\n]*$)",
+                                  re.M | re.S)
 
     def __init__(self, nodes):
         self.nodes = nodes
@@ -333,6 +335,15 @@ class InoToCPPConverter(object):
             return "\n" * match.group(1).count("\n")
         else:
             return " "
+
+    def _parse_prototypes(self, contents):
+        prototypes = []
+        reserved_keywords = set(["if", "else", "while"])
+        for item in self.PROTOTYPE_RE.findall(contents):
+            if set([item[1].strip(), item[2].strip()]) & reserved_keywords:
+                continue
+            prototypes.append(item[0])
+        return prototypes
 
     def append_prototypes(self, fname, contents, prototypes):
         contents = self.STRIPCOMMENTS_RE.sub(self._replace_comments_callback,
@@ -358,7 +369,7 @@ class InoToCPPConverter(object):
         data = []
         for node in self.nodes:
             ino_contents = node.get_text_contents()
-            prototypes += self.PROTOTYPE_RE.findall(ino_contents)
+            prototypes += self._parse_prototypes(ino_contents)
 
             item = (basename(node.get_path()), ino_contents)
             if self.is_main_node(ino_contents):
@@ -404,6 +415,38 @@ def ConvertInoToCpp(env):
     atexit.register(delete_tmpcpp_file, tmpcpp_file)
 
 
+def DumpIDEData(env):
+    data = {
+        "defines": [],
+        "includes": []
+    }
+
+    # includes from framework and libs
+    for item in env.get("VARIANT_DIRS", []):
+        data['includes'].append(env.subst(item[1]))
+
+    # includes from toolchain
+    for item in glob(env.subst(
+            join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN",
+                 "*", "include"))):
+        data['includes'].append(item)
+
+    # global symbols
+    for item in env.get("CPPDEFINES", []):
+        data['defines'].append(env.subst(item))
+
+    # special symbol for Atmel AVR MCU
+    board = env.get("BOARD_OPTIONS", {})
+    if board and board['platform'] == "atmelavr":
+        data['defines'].append(
+            "__AVR_%s__" % board['build']['mcu'].upper()
+            .replace("ATMEGA", "ATmega")
+            .replace("ATTINY", "ATtiny")
+        )
+
+    return data
+
+
 def exists(_):
     return True
 
@@ -418,4 +461,5 @@ def generate(env):
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildDependentLibraries)
     env.AddMethod(ConvertInoToCpp)
+    env.AddMethod(DumpIDEData)
     return env

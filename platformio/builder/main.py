@@ -38,6 +38,7 @@ commonvars.AddVariables(
     ("SRCBUILD_FLAGS",),
     ("IGNORE_LIBS",),
     ("USE_LIBS",),
+    ("LDF_CYCLIC",),
 
     # board options
     ("BOARD",),

@@ -44,6 +44,8 @@ Please put ``.travis.yml`` to the root directory of the GitHub repository.
         - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
 
 
+Then see step 1, 2, and step 4 here: http://docs.travis-ci.com/user/getting-started/
+
 For more details as for PlatformIO build process please look into :ref:`cmd_ci`
 command.
 
@@ -60,13 +62,22 @@ Examples
         - "2.7"
 
     env:
-        - PLATFORMIO_CI_SRC=examples/Bluetooth/PS3SPP/PS3SPP.ino
-        - PLATFORMIO_CI_SRC=examples/pl2303/pl2303_gps/pl2303_gps.ino
+        - PLATFORMIO_CI_SRC=examples/acm/acm_terminal
+        - PLATFORMIO_CI_SRC=examples/Bluetooth/WiiIRCamera PLATFORMIO_BUILD_FLAGS="-DWIICAMERA"
+        - PLATFORMIO_CI_SRC=examples/ftdi/USBFTDILoopback
+        - PLATFORMIO_CI_SRC=examples/Xbox/XBOXUSB
+        # - ...
 
     install:
         - python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
-        - wget https://github.com/xxxajk/spi4teensy3/archive/master.zip -O /tmp/spi4teensy3.zip
-        - unzip /tmp/spi4teensy3.zip -d /tmp
+
+        # Libraries from PlatformIO Library Registry
+        # http://platformio.org/#!/lib/show/416/TinyGPS
+        # http://platformio.org/#!/lib/show/417/SPI4Teensy3
+        - platformio lib install 416 417
 
     script:
-        - platformio ci --lib="." --lib="/tmp/spi4teensy3-master" --board=uno --board=teensy31 --board=due
+        - platformio ci --board=uno --board=teensy31 --board=due --lib="."
+
+* Configuration file: https://github.com/felis/USB_Host_Shield_2.0/blob/master/.travis.yml
+* Build History: https://travis-ci.org/felis/USB_Host_Shield_2.0

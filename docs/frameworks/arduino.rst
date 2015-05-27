@@ -923,8 +923,8 @@ TinyCircuits
       - 32 Kb
       - 2 Kb
 
-WickedDevice
-~~~~~~~~~~~~
+Wicked Device
+~~~~~~~~~~~~~
 
 .. list-table::
     :header-rows:  1
@@ -937,14 +937,14 @@ WickedDevice
       - RAM
 
     * - ``wildfirev2``
-      - `WickedDevice WildFire v2 [stk500] <http://shop.wickeddevice.com/resources/wildfire/#arduinoidesetup>`_
+      - `Wicked Device WildFire V2 <http://shop.wickeddevice.com/resources/wildfire/>`_
       - ATMEGA1284P
       - 16 MHz
       - 128 Kb
       - 16 Kb
 
     * - ``wildfirev3``
-      - `WickedDevice WildFire v3 [optiboot] <http://shop.wickeddevice.com/resources/wildfire/>`_
+      - `Wicked Device WildFire V3 <http://shop.wickeddevice.com/resources/wildfire/>`_
       - ATMEGA1284P
       - 16 MHz
       - 128 Kb

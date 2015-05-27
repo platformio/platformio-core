@@ -55,6 +55,18 @@ class AsyncPipe(Thread):
         self.join()
 
 
+class cd(object):
+    def __init__(self, new_path):
+        self.new_path = new_path
+        self.prev_path = os.getcwd()
+
+    def __enter__(self):
+        os.chdir(self.new_path)
+
+    def __exit__(self, etype, value, traceback):
+        os.chdir(self.prev_path)
+
+
 class memoized(object):
     '''
     Decorator. Caches a function's return value each time it is called.
@@ -175,6 +187,10 @@ def change_filemtime(path, time):
     os.utime(path, (time, time))
 
 
+def is_ci():
+    return os.getenv("CI", "").lower() == "true"
+
+
 def exec_command(*args, **kwargs):
     result = {
         "out": None,
@@ -246,8 +262,11 @@ def get_logicaldisks():
 
 
 def get_request_defheaders():
-    return {"User-Agent": "PlatformIO/%s %s" % (
-        __version__, requests.utils.default_user_agent())}
+    return {"User-Agent": "PlatformIO/%s CI/%d %s" % (
+        __version__,
+        1 if is_ci() else 0,
+        requests.utils.default_user_agent()
+    )}
 
 
 def get_api_result(path, params=None, data=None):

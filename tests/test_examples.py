@@ -30,8 +30,7 @@ def test_run(platformio_setup, pioproject_dir):
         rmtree(join(pioproject_dir, ".pioenvs"))
 
     result = exec_command(
-        ["platformio", "run"],
-        cwd=pioproject_dir
+        ["platformio", "--force", "run", "--project-dir", pioproject_dir]
     )
     if result['returncode'] != 0:
         pytest.fail(result)

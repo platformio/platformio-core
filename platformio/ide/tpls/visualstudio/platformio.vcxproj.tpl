@@ -43,7 +43,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>platformio run</NMakeBuildCommandLine>
-    <NMakeCleanCommandLine>platformio run -t clean</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>platformio run --target clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>{";".join(defines)}}</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath>{{";".join(includes)}}</NMakeIncludeSearchPath>
   </PropertyGroup>

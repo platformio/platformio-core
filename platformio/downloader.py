@@ -3,7 +3,6 @@
 
 from email.utils import parsedate_tz
 from math import ceil
-from os import environ
 from os.path import getsize, join
 from time import mktime
 
@@ -50,7 +49,7 @@ class FileDownloader(object):
         f = open(self._destination, "wb")
         chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
 
-        if environ.get("CI") == "true":
+        if util.is_ci():
             click.echo("Downloading...")
             for _ in range(0, chunks):
                 f.write(next(itercontent))

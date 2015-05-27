@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 from datetime import datetime
-from os import chdir, getcwd
+from os import getcwd
 from os.path import getmtime, isdir, join
 from shutil import rmtree
 from time import time
@@ -28,9 +28,7 @@ from platformio.platforms.base import PlatformFactory
 @click.pass_context
 def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
         project_dir, verbose):
-    initial_cwd = getcwd()
-    chdir(project_dir)
-    try:
+    with util.cd(project_dir):
         config = util.get_project_config()
 
         if not config.sections():
@@ -74,8 +72,6 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
 
         if not all(results):
             raise exception.ReturnErrorCode()
-    finally:
-        chdir(initial_cwd)
 
 
 class EnvironmentProcessor(object):
