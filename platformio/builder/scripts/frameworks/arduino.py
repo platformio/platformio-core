@@ -161,7 +161,7 @@ if BOARD_BUILDOPTS.get("core", None) == "teensy":
     # search relative includes in teensy directories
     core_dir = join(env.get("PIOHOME_DIR"), "packages",
                     "framework-arduinoteensy", "cores", "teensy")
-    for item in listdir(core_dir):
+    for item in sorted(listdir(core_dir)):
         file_path = join(core_dir, item)
         if not isfile(file_path):
             continue

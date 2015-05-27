@@ -32,7 +32,7 @@ BOARD_BUILDOPTS = env.get("BOARD_OPTIONS", {}).get("build", {})
 def find_ldscript(src_dir):
     ldscript = None
     matches = []
-    for item in listdir(src_dir):
+    for item in sorted(listdir(src_dir)):
         _path = join(src_dir, item)
         if not isfile(_path) or not item.endswith(".ld"):
             continue

@@ -36,7 +36,7 @@ class LibraryManager(object):
         items = {}
         if not isdir(self.lib_dir):
             return items
-        for dirname in listdir(self.lib_dir):
+        for dirname in sorted(listdir(self.lib_dir)):
             conf_path = join(self.lib_dir, dirname, self.CONFIG_NAME)
             if not isfile(conf_path):
                 continue

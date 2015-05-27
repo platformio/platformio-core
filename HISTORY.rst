@@ -1,6 +1,11 @@
 Release History
 ===============
 
+2.0.2 (2015-05-27)
+------------------
+
+* Fixed libraries order for "Library Dependency Finder" under Linux OS
+
 2.0.1 (2015-05-27)
 ------------------
 
