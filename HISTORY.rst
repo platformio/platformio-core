@@ -1,6 +1,12 @@
 Release History
 ===============
 
+2.0.3 (2015-??-??)
+------------------
+
+* Fixed resolving of C/C++ std libs by Eclipse IDE
+  (`issue #220 <https://github.com/platformio/platformio/issues/220>`_)
+
 2.0.2 (2015-05-27)
 ------------------
 
