@@ -4,7 +4,8 @@ Release History
 2.0.3 (2015-??-??)
 ------------------
 
-* Integrate PlatformIO with `Circle CI <https://circleci.com/about>`_
+* Integrate PlatformIO with `Circle CI <https://circleci.com>`_ and
+  `Shippable CI <https://shippable.com>`_
 * Fixed resolving of C/C++ std libs by Eclipse IDE
   (`issue #220 <https://github.com/platformio/platformio/issues/220>`_)
 * Fixed "ConnectionError" when PlatformIO SF Storage is off-line

@@ -10,6 +10,9 @@ PlatformIO
 .. image:: https://circleci.com/gh/platformio/platformio/tree/develop.svg?style=svg
     :target: https://circleci.com/gh/platformio/platformio/tree/develop
     :alt: Circle.CI Build Status
+.. image:: https://api.shippable.com/projects/555b0ceeedd7f2c052f3c2d0/badge?branchName=develop
+    :target: https://app.shippable.com/projects/555b0ceeedd7f2c052f3c2d0
+    :alt: Shippable Build Status
 .. image:: https://gemnasium.com/platformio/platformio.png
     :target: https://gemnasium.com/platformio/platformio
     :alt: Dependency Status
