@@ -30,9 +30,9 @@ Put ``circle.yml`` to the root directory of the GitHub repository.
 
     machine:
         environment:
-            - PLATFORMIO_CI_SRC=path/to/source/file.c
-            - PLATFORMIO_CI_SRC=path/to/source/file.ino
-            - PLATFORMIO_CI_SRC=path/to/source/directory
+            PLATFORMIO_CI_SRC: path/to/source/file.c
+            PLATFORMIO_CI_SRC: path/to/source/file.ino
+            PLATFORMIO_CI_SRC: path/to/source/directory
 
     dependencies:
         pre:
