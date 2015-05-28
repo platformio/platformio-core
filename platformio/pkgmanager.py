@@ -2,11 +2,12 @@
 # See LICENSE for details.
 
 from os import makedirs, remove
-from os.path import isdir, join
+from os.path import basename, isdir, isfile, join
 from shutil import rmtree
 from time import time
 
 import click
+import requests
 
 from platformio import exception, telemetry, util
 from platformio.app import get_state_item, set_state_item
@@ -85,7 +86,17 @@ class PackageManager(object):
         if not isdir(pkg_dir):
             makedirs(pkg_dir)
 
-        dlpath = self.download(info['url'], pkg_dir, info['sha1'])
+        dlpath = None
+        try:
+            dlpath = self.download(info['url'], pkg_dir, info['sha1'])
+        except requests.exceptions.ConnectionError:
+            if info['url'].startswith("http://sourceforge.net"):
+                dlpath = self.download(
+                    "http://dl.platformio.org/packages/%s" %
+                    basename(info['url']), pkg_dir, info['sha1'])
+
+        assert isfile(dlpath)
+
         if self.unpack(dlpath, pkg_dir):
             self._register(name, info['version'])
         # remove archive
