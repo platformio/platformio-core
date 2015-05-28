@@ -7,6 +7,9 @@ PlatformIO
 .. image:: https://ci.appveyor.com/api/projects/status/dku0h2rutfj0ctls/branch/develop?svg=true
     :target: https://ci.appveyor.com/project/ivankravets/platformio
     :alt: AppVeyor.CI Build Status
+.. image:: https://circleci.com/gh/platformio/platformio/tree/develop.svg?style=svg
+    :target: https://circleci.com/gh/platformio/platformio/tree/develop
+    :alt: Circle.CI Build Status
 .. image:: https://gemnasium.com/platformio/platformio.png
     :target: https://gemnasium.com/platformio/platformio
     :alt: Dependency Status
