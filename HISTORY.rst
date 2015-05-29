@@ -8,9 +8,13 @@ Release History
   `Shippable CI <https://shippable.com>`_
 * Disabled "nano.specs" for ARM-based platforms
   (`issue #219 <https://github.com/platformio/platformio/issues/219>`_)
+* Fixed "ConnectionError" when PlatformIO SF Storage is off-line
 * Fixed resolving of C/C++ std libs by Eclipse IDE
   (`issue #220 <https://github.com/platformio/platformio/issues/220>`_)
-* Fixed "ConnectionError" when PlatformIO SF Storage is off-line
+* Fixed firmware uploading using USB programmer (USBasp) for
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html>`_
+  platform
+  (`issue #221 <https://github.com/platformio/platformio/issues/221>`_)
 
 2.0.2 (2015-05-27)
 ------------------

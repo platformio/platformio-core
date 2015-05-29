@@ -20,13 +20,17 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         with open(path, "w") as f:
             f.write(str(value))
 
+    if "micronucleus" in env['UPLOADER']:
+        print "Please unplug/plug device ..."
+
     upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
+
+    if "usb" in env.subst("$UPLOAD_PROTOCOL"):
+        upload_options['require_upload_port'] = False
+        env.Replace(UPLOAD_SPEED=None)
 
     if env.subst("$UPLOAD_SPEED"):
         env.Append(UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"])
-
-    if "micronucleus" in env['UPLOADER']:
-        print "Please unplug/plug device ..."
 
     if not upload_options.get("require_upload_port", False):
         return
