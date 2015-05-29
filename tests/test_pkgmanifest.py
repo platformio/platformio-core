@@ -54,14 +54,18 @@ def test_package(package_data, sfpkglist):
     assert package_data['url'].endswith("%d.tar.gz" % package_data['version'])
 
     # check content type and that file exists
-    r = requests.head(package_data['url'], allow_redirects=True)
+    try:
+        r = requests.head(package_data['url'], allow_redirects=True)
+    except requests.exceptions.ConnectionError:
+        return pytest.skip("SF is off-line")
+
     validate_response(r)
     assert r.headers['Content-Type'] in ("application/x-gzip",
                                          "application/octet-stream")
 
     # check sha1 sum
     if sfpkglist is None:
-        return pytest.skip("SF is offline")
+        return pytest.skip("SF is off-line")
     pkgname = basename(package_data['url'])
     assert pkgname in sfpkglist
     assert package_data['sha1'] == sfpkglist.get(pkgname, {}).get("sha1")
