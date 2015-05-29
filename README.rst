@@ -7,22 +7,22 @@ PlatformIO
 .. image:: https://ci.appveyor.com/api/projects/status/dku0h2rutfj0ctls/branch/develop?svg=true
     :target: https://ci.appveyor.com/project/ivankravets/platformio
     :alt: AppVeyor.CI Build Status
-.. image:: https://circleci.com/gh/platformio/platformio/tree/develop.svg?style=svg
-    :target: https://circleci.com/gh/platformio/platformio/tree/develop
-    :alt: Circle.CI Build Status
 .. image:: https://api.shippable.com/projects/555b0ceeedd7f2c052f3c2d0/badge?branchName=develop
     :target: https://app.shippable.com/projects/555b0ceeedd7f2c052f3c2d0
     :alt: Shippable Build Status
+.. image:: https://circleci.com/gh/platformio/platformio/tree/develop.svg?style=svg
+    :target: https://circleci.com/gh/platformio/platformio/tree/develop
+    :alt: Circle.CI Build Status    
 .. image:: https://gemnasium.com/platformio/platformio.png
     :target: https://gemnasium.com/platformio/platformio
     :alt: Dependency Status
-.. image:: https://pypip.in/version/platformio/badge.png?style=flat
+.. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
-.. image:: https://pypip.in/download/platformio/badge.png?style=flat
+.. image:: https://img.shields.io/pypi/dm/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Downloads
-.. image:: https://pypip.in/license/platformio/badge.png?style=flat
+.. image:: https://img.shields.io/pypi/l/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
 .. image:: https://badges.gitter.im/Join%20Chat.svg
