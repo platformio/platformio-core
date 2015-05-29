@@ -6,6 +6,8 @@ Release History
 
 * Integrate PlatformIO with `Circle CI <https://circleci.com>`_ and
   `Shippable CI <https://shippable.com>`_
+* Disabled "nano.specs" for ARM-based platforms
+  (`issue #219 <https://github.com/platformio/platformio/issues/219>`_)
 * Fixed resolving of C/C++ std libs by Eclipse IDE
   (`issue #220 <https://github.com/platformio/platformio/issues/220>`_)
 * Fixed "ConnectionError" when PlatformIO SF Storage is off-line

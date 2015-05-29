@@ -47,8 +47,7 @@ env.Replace(
         "-Os",
         "-Wl,--gc-sections,--relax",
         "-mthumb",
-        "-mcpu=${BOARD_OPTIONS['build']['cpu']}",
-        "--specs=nano.specs"
+        "-mcpu=${BOARD_OPTIONS['build']['cpu']}"
     ],
 
     LIBS=["c", "gcc", "m"],
