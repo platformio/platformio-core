@@ -6,6 +6,7 @@ Release History
 
 * Integrate PlatformIO with `Circle CI <https://circleci.com>`_ and
   `Shippable CI <https://shippable.com>`_
+* Described in documentation how to `create/register own board <http://docs.platformio.org/en/latest/platforms/creating_board.html>`_ for PlatformIO
 * Disabled "nano.specs" for ARM-based platforms
   (`issue #219 <https://github.com/platformio/platformio/issues/219>`_)
 * Fixed "ConnectionError" when PlatformIO SF Storage is off-line

@@ -25,3 +25,4 @@ MCU, upload protocol or etc. Please use ``board`` option.
     timsp430
     titiva
     creating_platform
+    creating_board
