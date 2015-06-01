@@ -78,7 +78,6 @@ else:
         UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
         UPLOADERFLAGS=[
             "-v",
-            "-D",  # disable auto erase for flash memory
             "-p", "$BOARD_MCU",
             "-C",
             '"%s"' % join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude.conf"),
