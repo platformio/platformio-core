@@ -37,7 +37,8 @@ PlatformIO
 `Twitter <https://twitter.com/PlatformIO_Org>`_
 
 *Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
-ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
+Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
+libOpenCM3, etc.*
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
@@ -142,6 +143,7 @@ It has support for the most popular embedded platforms:
 * `Nordic nRF51 <http://platformio.org/#!/platforms/nordicnrf51>`_
 * `NXP LPC <http://platformio.org/#!/platforms/nxplpc>`_
 * `ST STM32 <http://platformio.org/#!/platforms/ststm32>`_
+* `Silicon Labs EFM32 <http://platformio.org/#!/platforms/siliconlabsefm32>`_
 * `Teensy <http://platformio.org/#!/platforms/teensy>`_
 * `TI MSP430 <http://platformio.org/#!/platforms/timsp430>`_
 * `TI TIVA C <http://platformio.org/#!/platforms/titiva>`_
