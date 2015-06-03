@@ -1,7 +1,7 @@
 Release History
 ===============
 
-2.1.0 (2015-??-??)
+2.1.0 (2015-06-03)
 ------------------
 
 * Added Silicon Labs EFM32 `siliconlabsefm32 <http://docs.platformio.org/en/latest/platforms/siliconlabsefm32.html>`_
