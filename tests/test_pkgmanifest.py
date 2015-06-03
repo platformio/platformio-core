@@ -56,7 +56,7 @@ def test_package(package_data, sfpkglist):
     # check content type and that file exists
     try:
         r = requests.head(package_data['url'], allow_redirects=True)
-        if r.status_code == 504:
+        if 500 <= r.status_code <= 599:
             raise requests.exceptions.ConnectionError()
     except requests.exceptions.ConnectionError:
         return pytest.skip("SF is off-line")
