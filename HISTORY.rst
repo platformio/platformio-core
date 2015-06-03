@@ -1,6 +1,25 @@
 Release History
 ===============
 
+2.1.0 (2015-06-03)
+------------------
+
+* Added Silicon Labs EFM32 `siliconlabsefm32 <http://docs.platformio.org/en/latest/platforms/siliconlabsefm32.html>`_
+  development platform
+  (`issue #226 <https://github.com/platformio/platformio/issues/226>`_)
+* Integrate PlatformIO with `Circle CI <https://circleci.com>`_ and
+  `Shippable CI <https://shippable.com>`_
+* Described in documentation how to `create/register own board <http://docs.platformio.org/en/latest/platforms/creating_board.html>`_ for PlatformIO
+* Disabled "nano.specs" for ARM-based platforms
+  (`issue #219 <https://github.com/platformio/platformio/issues/219>`_)
+* Fixed "ConnectionError" when PlatformIO SF Storage is off-line
+* Fixed resolving of C/C++ std libs by Eclipse IDE
+  (`issue #220 <https://github.com/platformio/platformio/issues/220>`_)
+* Fixed firmware uploading using USB programmer (USBasp) for
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html>`_
+  platform
+  (`issue #221 <https://github.com/platformio/platformio/issues/221>`_)
+
 2.0.2 (2015-05-27)
 ------------------
 

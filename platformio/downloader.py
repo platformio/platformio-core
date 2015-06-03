@@ -25,8 +25,11 @@ class FileDownloader(object):
         self._destination = self._fname
         if dest_dir:
             self.set_destination(join(dest_dir, self._fname))
-        self._progressbar = None
 
+        self._progressbar = None
+        self._request = None
+
+        # make connection
         self._request = requests.get(url, stream=True,
                                      headers=util.get_request_defheaders())
         if self._request.status_code != 200:
@@ -93,4 +96,5 @@ class FileDownloader(object):
         util.change_filemtime(self._destination, lmtime)
 
     def __del__(self):
-        self._request.close()
+        if self._request:
+            self._request.close()

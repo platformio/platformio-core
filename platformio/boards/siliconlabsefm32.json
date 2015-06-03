@@ -1,0 +1,86 @@
+{
+    "efm32wg_stk3800": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m4",
+            "mcu": "efm32wg990f256"
+        },
+        "frameworks": ["mbed"],
+        "name": "Silicon Labs EFM32WG-STK3800 (Wonder Gecko)",
+        "platform": "siliconlabsefm32",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/EFM32-Wonder-Gecko/",
+        "vendor": "Silicon Labs"
+    },
+
+    "efm32gg_stk3700": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m3",
+            "mcu": "efm32gg990f1024"
+        },
+        "frameworks": ["mbed"],
+        "name": "Silicon Labs EFM32GG-STK3700 (Giant Gecko)",
+        "platform": "siliconlabsefm32",
+        "upload": {
+            "maximum_ram_size": 131072,
+            "maximum_size": 1048576
+        },
+        "url": "https://developer.mbed.org/platforms/EFM32-Giant-Gecko/",
+        "vendor": "Silicon Labs"
+    },
+
+    "efm32lg_stk3600": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m3",
+            "mcu": "efm32lg990f256"
+        },
+        "frameworks": ["mbed"],
+        "name": "Silicon Labs EFM32LG-STK3600 (Leopard Gecko)",
+        "platform": "siliconlabsefm32",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/EFM32-Leopard-Gecko/",
+        "vendor": "Silicon Labs"
+    },
+
+    "efm32zg_stk3200": {
+        "build": {
+            "f_cpu": "24000000L",
+            "cpu": "cortex-m0plus",
+            "mcu": "efm2zg222f32"
+        },
+        "frameworks": ["mbed"],
+        "name": "Silicon Labs EFM32ZG-STK3200 (Zero Gecko)",
+        "platform": "siliconlabsefm32",
+        "upload": {
+            "maximum_ram_size": 4096,
+            "maximum_size": 32768
+        },
+        "url": "https://developer.mbed.org/platforms/EFM32-Zero-Gecko/",
+        "vendor": "Silicon Labs"
+    },
+
+    "efm32hg_stk3400": {
+        "build": {
+            "f_cpu": "24000000L",
+            "cpu": "cortex-m3",
+            "mcu": "efm32hg322f64"
+        },
+        "frameworks": ["mbed"],
+        "name": "Silicon Labs SLSTK3400A USB-enabled (Happy Gecko)",
+        "platform": "siliconlabsefm32",
+        "upload": {
+            "maximum_ram_size": 8192,
+            "maximum_size": 65536
+        },
+        "url": "https://developer.mbed.org/platforms/EFM32-Happy-Gecko/",
+        "vendor": "Silicon Labs"
+    }
+}

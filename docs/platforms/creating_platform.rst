@@ -292,7 +292,7 @@ Installation
 ------------
 
 1. Create ``platforms`` directory in :ref:`projectconf_pio_home_dir` if it
-   doesn't exists.
+   doesn't exist.
 2. Copy ``test.py`` and ``test-builder.py`` files to ``platforms`` directory.
 3. Search available platforms via :ref:`cmd_platforms_search` command. You should see
    ``test`` platform.

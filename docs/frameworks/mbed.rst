@@ -25,6 +25,9 @@ Platforms
     * - :ref:`platform_nxplpc`
       - The NXP LPC is a family of 32-bit microcontroller integrated circuits by NXP Semiconductors. The LPC chips are grouped into related series that are based around the same 32-bit ARM processor core, such as the Cortex-M4F, Cortex-M3, Cortex-M0+, or Cortex-M0. Internally, each microcontroller consists of the processor core, static RAM memory, flash memory, debugging interface, and various peripherals.
 
+    * - :ref:`platform_siliconlabsefm32`
+      - Silicon Labs EFM32 Gecko 32-bit microcontroller (MCU) family includes devices that offer flash memory configurations up to 256 kB, 32 kB of RAM and CPU speeds up to 48 MHz. Based on the powerful ARM Cortex-M core, the Gecko family features innovative low energy techniques, short wake-up time from energy saving modes and a wide selection of peripherals, making it ideal for battery operated applications and other systems requiring high performance and low-energy consumption.
+
     * - :ref:`platform_ststm32`
       - The STM32 family of 32-bit Flash MCUs based on the ARM Cortex-M processor is designed to offer new degrees of freedom to MCU users. It offers a 32-bit product range that combines very high performance, real-time capabilities, digital signal processing, and low-power, low-voltage operation, while maintaining full integration and ease of development.
 
@@ -479,6 +482,54 @@ SeeedStudio
       - 96 MHz
       - 512 Kb
       - 32 Kb
+
+Silicon Labs
+~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``efm32gg_stk3700``
+      - `Silicon Labs EFM32GG-STK3700 (Giant Gecko) <https://developer.mbed.org/platforms/EFM32-Giant-Gecko/>`_
+      - EFM32GG990F1024
+      - 48 MHz
+      - 1024 Kb
+      - 128 Kb
+
+    * - ``efm32hg_stk3400``
+      - `Silicon Labs SLSTK3400A USB-enabled (Happy Gecko) <https://developer.mbed.org/platforms/EFM32-Happy-Gecko/>`_
+      - EFM32HG322F64
+      - 24 MHz
+      - 64 Kb
+      - 8 Kb
+
+    * - ``efm32lg_stk3600``
+      - `Silicon Labs EFM32LG-STK3600 (Leopard Gecko) <https://developer.mbed.org/platforms/EFM32-Leopard-Gecko/>`_
+      - EFM32LG990F256
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``efm32wg_stk3800``
+      - `Silicon Labs EFM32WG-STK3800 (Wonder Gecko) <https://developer.mbed.org/platforms/EFM32-Wonder-Gecko/>`_
+      - EFM32WG990F256
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``efm32zg_stk3200``
+      - `Silicon Labs EFM32ZG-STK3200 (Zero Gecko) <https://developer.mbed.org/platforms/EFM32-Zero-Gecko/>`_
+      - EFM2ZG222F32
+      - 24 MHz
+      - 32 Kb
+      - 4 Kb
 
 Solder Splash Labs
 ~~~~~~~~~~~~~~~~~~

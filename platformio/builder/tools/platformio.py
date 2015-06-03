@@ -426,10 +426,14 @@ def DumpIDEData(env):
         data['includes'].append(env.subst(item[1]))
 
     # includes from toolchain
-    for item in glob(env.subst(
-            join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN",
-                 "*", "include"))):
-        data['includes'].append(item)
+    toolchain_dir = env.subst(
+        join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
+    toolchain_incglobs = [
+        join(toolchain_dir, "*", "include"),
+        join(toolchain_dir, "lib", "gcc", "*", "*", "include")
+    ]
+    for g in toolchain_incglobs:
+        data['includes'].extend(glob(g))
 
     # global symbols
     for item in env.get("CPPDEFINES", []):
