@@ -20,6 +20,7 @@ MCU, upload protocol or etc. Please use ``board`` option.
     freescalekinetis
     nordicnrf51
     nxplpc
+    siliconlabsefm32
     ststm32
     teensy
     timsp430

@@ -1,9 +1,12 @@
 Release History
 ===============
 
-2.0.3 (2015-??-??)
+2.1.0 (2015-??-??)
 ------------------
 
+* Added Silicon Labs EFM32 `siliconlabsefm32 <http://docs.platformio.org/en/latest/platforms/siliconlabsefm32.html>`_
+  development platform
+  (`issue #226 <https://github.com/platformio/platformio/issues/226>`_)
 * Integrate PlatformIO with `Circle CI <https://circleci.com>`_ and
   `Shippable CI <https://shippable.com>`_
 * Described in documentation how to `create/register own board <http://docs.platformio.org/en/latest/platforms/creating_board.html>`_ for PlatformIO
