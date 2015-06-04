@@ -176,30 +176,30 @@ def _autoinstall_libs(ctx, libids_list):
 
 
 def _clean_pioenvs_dir():
-        pioenvs_dir = util.get_pioenvs_dir()
-        structhash_file = join(pioenvs_dir, "structure.hash")
-        proj_hash = calculate_project_hash()
+    pioenvs_dir = util.get_pioenvs_dir()
+    structhash_file = join(pioenvs_dir, "structure.hash")
+    proj_hash = calculate_project_hash()
 
-        # if project's config is modified
-        if isdir(pioenvs_dir):
-            if (getmtime(join(util.get_project_dir(), "platformio.ini")) >
-                    getmtime(pioenvs_dir)):
-                rmtree(pioenvs_dir)
+    # if project's config is modified
+    if isdir(pioenvs_dir):
+        if (getmtime(join(util.get_project_dir(), "platformio.ini")) >
+                getmtime(pioenvs_dir)):
+            rmtree(pioenvs_dir)
 
-        # check project structure
-        if isdir(pioenvs_dir):
-            if isfile(structhash_file):
-                with open(structhash_file) as f:
-                    if f.read() == proj_hash:
-                        return
-                    else:
-                        rmtree(pioenvs_dir)
+    # check project structure
+    if isdir(pioenvs_dir):
+        if isfile(structhash_file):
+            with open(structhash_file) as f:
+                if f.read() == proj_hash:
+                    return
+                else:
+                    rmtree(pioenvs_dir)
 
-        if not isdir(pioenvs_dir):
-            makedirs(pioenvs_dir)
+    if not isdir(pioenvs_dir):
+        makedirs(pioenvs_dir)
 
-        with open(structhash_file, "w") as f:
-            f.write(proj_hash)
+    with open(structhash_file, "w") as f:
+        f.write(proj_hash)
 
 
 def calculate_project_hash():
