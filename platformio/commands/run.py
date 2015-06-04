@@ -2,8 +2,9 @@
 # See LICENSE for details.
 
 from datetime import datetime
-from os import getcwd
-from os.path import getmtime, isdir, join
+from hashlib import sha1
+from os import getcwd, makedirs, walk
+from os.path import getmtime, isdir, isfile, join
 from shutil import rmtree
 from time import time
 
@@ -38,12 +39,8 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
         if unknown:
             raise exception.UnknownEnvNames(", ".join(unknown))
 
-        # remove ".pioenvs" if project config is modified
-        _pioenvs_dir = util.get_pioenvs_dir()
-        if (isdir(_pioenvs_dir) and
-                getmtime(join(util.get_project_dir(), "platformio.ini")) >
-                getmtime(_pioenvs_dir)):
-            rmtree(_pioenvs_dir)
+        # clean obsolete .pioenvs dir
+        _clean_pioenvs_dir()
 
         results = []
         for section in config.sections():
@@ -176,3 +173,43 @@ def _autoinstall_libs(ctx, libids_list):
                 ", ".join([str(i) for i in not_intalled_libs])
             )):
         ctx.invoke(cmd_lib_install, libid=not_intalled_libs)
+
+
+def _clean_pioenvs_dir():
+        pioenvs_dir = util.get_pioenvs_dir()
+        structhash_file = join(pioenvs_dir, "structure.hash")
+        proj_hash = calculate_project_hash()
+
+        # if project's config is modified
+        if isdir(pioenvs_dir):
+            if (getmtime(join(util.get_project_dir(), "platformio.ini")) >
+                    getmtime(pioenvs_dir)):
+                rmtree(pioenvs_dir)
+
+        # check project structure
+        if isdir(pioenvs_dir):
+            if isfile(structhash_file):
+                with open(structhash_file) as f:
+                    if f.read() == proj_hash:
+                        return
+                    else:
+                        rmtree(pioenvs_dir)
+
+        if not isdir(pioenvs_dir):
+            makedirs(pioenvs_dir)
+
+        with open(structhash_file, "w") as f:
+            f.write(proj_hash)
+
+
+def calculate_project_hash():
+    structure = []
+    for d in (util.get_projectsrc_dir(), util.get_projectlib_dir()):
+        if not isdir(d):
+            continue
+        for root, _, files in walk(d):
+            for f in files:
+                path = join(root, f)
+                if not any([s in path for s in (".git", ".svn")]):
+                    structure.append(path)
+    return sha1(",".join(sorted(structure))).hexdigest() if structure else ""

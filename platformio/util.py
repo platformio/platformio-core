@@ -167,6 +167,10 @@ def get_projectsrc_dir():
     )
 
 
+def get_projectlib_dir():
+    return join(get_project_dir(), "lib")
+
+
 def get_pioenvs_dir():
     return _get_projconf_option_dir(
         "envs_dir",

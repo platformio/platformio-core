@@ -63,6 +63,7 @@ DefaultEnvironment(
 
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),
+    PROJECTLIB_DIR=util.get_projectlib_dir(),
     PROJECTSRC_DIR=util.get_projectsrc_dir(),
     PIOENVS_DIR=util.get_pioenvs_dir(),
 
@@ -71,7 +72,7 @@ DefaultEnvironment(
 
     BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
     LIBSOURCE_DIRS=[
-        join("$PROJECT_DIR", "lib"),
+        "$PROJECTLIB_DIR",
         util.get_lib_dir(),
         join("$PLATFORMFW_DIR", "libraries")
     ]

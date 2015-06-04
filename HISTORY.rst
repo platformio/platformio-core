@@ -4,7 +4,7 @@ Release History
 2.1.1 (2015-??-??)
 ------------------
 
-*
+* Improved detection of build changes
 
 2.1.0 (2015-06-03)
 ------------------
