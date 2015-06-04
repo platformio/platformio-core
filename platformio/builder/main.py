@@ -11,7 +11,7 @@ except ImportError:
             break
     from platformio import util
 
-from os.path import join
+from os.path import isfile, join
 from time import time
 
 from SCons.Script import (DefaultEnvironment, Exit, SConscript,
@@ -97,9 +97,11 @@ if "BOARD" in env:
             UPLOAD_SPEED="${BOARD_OPTIONS['upload'].get('speed', None)}")
     if "ldscript" in env.get("BOARD_OPTIONS", {}).get("build", {}):
         env.Replace(
-            LDSCRIPT_PATH=join(
-                "$PIOHOME_DIR", "packages", "ldscripts",
-                "${BOARD_OPTIONS['build']['ldscript']}"
+            LDSCRIPT_PATH=(
+                env['BOARD_OPTIONS']['build']['ldscript']
+                if isfile(env['BOARD_OPTIONS']['build']['ldscript'])
+                else join("$PIOHOME_DIR", "packages", "ldscripts",
+                          "${BOARD_OPTIONS['build']['ldscript']}")
             )
         )
 
