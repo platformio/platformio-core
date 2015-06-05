@@ -184,7 +184,7 @@ def _clean_pioenvs_dir():
     if (isdir(pioenvs_dir) and
             getmtime(join(util.get_project_dir(), "platformio.ini")) >
             getmtime(pioenvs_dir)):
-            rmtree(pioenvs_dir)
+        rmtree(pioenvs_dir)
 
     # check project structure
     if isdir(pioenvs_dir) and isfile(structhash_file):
