@@ -181,19 +181,17 @@ def _clean_pioenvs_dir():
     proj_hash = calculate_project_hash()
 
     # if project's config is modified
-    if isdir(pioenvs_dir):
-        if (getmtime(join(util.get_project_dir(), "platformio.ini")) >
-                getmtime(pioenvs_dir)):
+    if (isdir(pioenvs_dir) and
+            getmtime(join(util.get_project_dir(), "platformio.ini")) >
+            getmtime(pioenvs_dir)):
             rmtree(pioenvs_dir)
 
     # check project structure
-    if isdir(pioenvs_dir):
-        if isfile(structhash_file):
-            with open(structhash_file) as f:
-                if f.read() == proj_hash:
-                    return
-                else:
-                    rmtree(pioenvs_dir)
+    if isdir(pioenvs_dir) and isfile(structhash_file):
+        with open(structhash_file) as f:
+            if f.read() == proj_hash:
+                return
+        rmtree(pioenvs_dir)
 
     if not isdir(pioenvs_dir):
         makedirs(pioenvs_dir)
