@@ -5,6 +5,8 @@ Release History
 ------------------
 
 * Improved detection of build changes
+* Avoided ``LibInstallDependencyError`` when more then 1 library is found
+  (`issue #229 <https://github.com/platformio/platformio/issues/229>`_)
 
 2.1.0 (2015-06-03)
 ------------------
