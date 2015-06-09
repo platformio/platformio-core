@@ -69,18 +69,25 @@ def AutodetectUploadPort(env):
             if (not item['name'] or
                     not any([l in item['name'].lower() for l in msdlabels])):
                 continue
-            print "Auto-detected UPLOAD_PORT/DISK: %s" % item['disk']
             env.Replace(UPLOAD_PORT=item['disk'])
             break
     else:
+        board_build_opts = env.get("BOARD_OPTIONS", {}).get("build", {})
+        board_hwid = ("%s:%s" % (
+            board_build_opts.get("vid"),
+            board_build_opts.get("pid")
+        )).replace("0x", "")
+
         for item in get_serialports():
             if "VID:PID" not in item['hwid']:
                 continue
-            print "Auto-detected UPLOAD_PORT: %s" % item['port']
             env.Replace(UPLOAD_PORT=item['port'])
-            break
+            if board_hwid in item['hwid']:
+                break
 
-    if "UPLOAD_PORT" not in env:
+    if "UPLOAD_PORT" in env:
+        print "Auto-detected UPLOAD_PORT/DISK: %s" % env['UPLOAD_PORT']
+    else:
         Exit("Error: Please specify `upload_port` for environment or use "
              "global `--upload-port` option.\n"
              "For the some development platforms it can be USB flash drive\n")

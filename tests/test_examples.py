@@ -38,6 +38,8 @@ def test_run(platformio_setup, pioproject_dir):
     # check .elf file
     pioenvs_dir = join(pioproject_dir, ".pioenvs")
     for item in listdir(pioenvs_dir):
+        if not isdir(item):
+            continue
         assert isfile(join(pioenvs_dir, item, "firmware.elf"))
         # check .hex or .bin files
         firmwares = []

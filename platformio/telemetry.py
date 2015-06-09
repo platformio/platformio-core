@@ -12,7 +12,7 @@ from time import time
 import click
 import requests
 
-from platformio import __version__, app, util
+from platformio import __version__, app, exception, util
 
 
 class TelemetryBase(object):
@@ -219,9 +219,11 @@ def on_event(category, action, label=None, value=None, screen_name=None):
 
 
 def on_exception(e):
+    if isinstance(e, exception.AbortedByUser):
+        return
     mp = MeasurementProtocol()
     mp['exd'] = "%s: %s" % (type(e).__name__, e)
-    mp['exf'] = 1
+    mp['exf'] = int(not isinstance(e, exception.PlatformioException))
     mp.send("exception")
 
 

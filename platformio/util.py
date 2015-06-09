@@ -167,6 +167,10 @@ def get_projectsrc_dir():
     )
 
 
+def get_projectlib_dir():
+    return join(get_project_dir(), "lib")
+
+
 def get_pioenvs_dir():
     return _get_projconf_option_dir(
         "envs_dir",
@@ -263,9 +267,7 @@ def get_logicaldisks():
 
 def get_request_defheaders():
     return {"User-Agent": "PlatformIO/%s CI/%d %s" % (
-        __version__,
-        1 if is_ci() else 0,
-        requests.utils.default_user_agent()
+        __version__, int(is_ci()), requests.utils.default_user_agent()
     )}
 
 

@@ -142,8 +142,23 @@ def lib_install_dependency(ctx, data):
             query.append('+"%s"' % data[key])
 
     result = get_api_result("/lib/search", dict(query=" ".join(query)))
-    assert result['total'] == 1
-    ctx.invoke(lib_install, libid=[result['items'][0]['id']])
+    assert result['total'] > 0
+
+    if result['total'] == 1 or not app.get_setting("enable_prompts"):
+        ctx.invoke(lib_install, libid=[result['items'][0]['id']])
+    else:
+        click.secho(
+            "Conflict: More then one dependent libraries have been found "
+            "by request %s:" % json.dumps(data), fg="red")
+
+        echo_liblist_header()
+        for item in result['items']:
+            echo_liblist_item(item)
+
+        deplib_id = click.prompt(
+            "Please choose one dependent library ID",
+            type=click.Choice([str(i['id']) for i in result['items']]))
+        ctx.invoke(lib_install, libid=[int(deplib_id)])
 
 
 @cli.command("uninstall", short_help="Uninstall libraries")
