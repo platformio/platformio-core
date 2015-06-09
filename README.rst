@@ -29,7 +29,7 @@ PlatformIO
    :alt: Join the chat at https://gitter.im/platformio/platformio
    :target: https://gitter.im/platformio/platformio
 .. image:: https://www.openhub.net/p/platformio/widgets/project_thin_badge.gif
-   :target: https://www.openhub.net/p/platformio  
+   :target: https://www.openhub.net/p/platformio
 
 `Website + Library Search <http://platformio.org>`_ |
 `Documentation <http://docs.platformio.org>`_ |
