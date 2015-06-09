@@ -1,7 +1,7 @@
 Release History
 ===============
 
-2.1.1 (2015-??-??)
+2.1.1 (2015-06-09)
 ------------------
 
 * Automatically detect upload port using VID:PID board settings
