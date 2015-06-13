@@ -30,7 +30,7 @@ class UnknownPlatform(PlatformioException):
 class PlatformNotInstalledYet(PlatformioException):
 
     MESSAGE = ("The platform '%s' has not been installed yet. "
-               "Use `platformio install` command")
+               "Use `platformio platforms install` command")
 
 
 class UnknownCLICommand(PlatformioException):
