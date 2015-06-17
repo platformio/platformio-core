@@ -1,7 +1,7 @@
 Release History
 ===============
 
-2.1.2 (2015-??-??)
+2.2.0 (2015-??-??)
 ------------------
 
 * Allow to specify library compatibility with the all platforms/frameworks using
