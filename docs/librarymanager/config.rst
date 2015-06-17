@@ -249,6 +249,12 @@ patterns.
 A list with compatible frameworks. The available framework types are defined in
 the :ref:`platforms` section.
 
+If the library is compatible with the all frameworks, then you can use ``*``
+symbol:
+
+.. code-block:: javascript
+
+    "frameworks": "*"
 
 .. _libjson_platforms:
 
@@ -259,6 +265,13 @@ the :ref:`platforms` section.
 
 A list with compatible platforms. The available platform types are
 defined in :ref:`platforms` section.
+
+If the library is compatible with the all platforms, then you can use ``*``
+symbol:
+
+.. code-block:: javascript
+
+    "platforms": "*"
 
 
 .. _libjson_dependencies:

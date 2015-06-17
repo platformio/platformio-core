@@ -1,6 +1,13 @@
 Release History
 ===============
 
+2.1.2 (2015-??-??)
+------------------
+
+* Allow to specify library compatibility with the all platforms/frameworks using
+  ``*`` symbol in
+  `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
+
 2.1.1 (2015-06-09)
 ------------------
 
