@@ -35,9 +35,10 @@ def BuildFirmware(env):
     deplibs = firmenv.BuildDependentLibraries("$PROJECTSRC_DIR")
 
     # append specified LD_SCRIPT
-    if "LDSCRIPT_PATH" in firmenv:
+    if ("LDSCRIPT_PATH" in firmenv and
+            not any(["-Wl,-T" in f for f in firmenv['LINKFLAGS']])):
         firmenv.Append(
-            LINKFLAGS=["-T", "$LDSCRIPT_PATH"]
+            LINKFLAGS=["-Wl,-T", "$LDSCRIPT_PATH"]
         )
 
     # enable "cyclic reference" for linker

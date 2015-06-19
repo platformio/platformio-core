@@ -226,10 +226,6 @@ processes:
     * - Format
       - Scope
       - Description
-    * - ``-Wp,option``
-      - CPPFLAGS
-      - Bypass the compiler driver and pass *option* directly  through to the
-        preprocessor
     * - ``-D name``
       - CPPDEFINES
       - Predefine *name* as a macro, with definition 1.
@@ -241,6 +237,10 @@ processes:
       - CPPDEFINES
       - Cancel any previous definition of *name*, either built in or provided
         with a ``-D`` option.
+    * - ``-Wp,option``
+      - CPPFLAGS
+      - Bypass the compiler driver and pass *option* directly  through to the
+        preprocessor
     * - ``-Wall``
       - CCFLAGS
       - Turns on all optional warnings which are desirable for normal code.
@@ -254,9 +254,17 @@ processes:
       - CCFLAGS
       - Process *file* as if ``#include "file"`` appeared as the first line of
         the primary source file.
+    * - ``-Idir``
+      - CPPPATH
+      - Add the directory *dir* to the list of directories to be searched
+        for header files.
     * - ``-Wa,option``
       - ASFLAGS, CCFLAGS
       - Pass *option* as an option to the assembler. If *option* contains
+        commas, it is split into multiple options at the commas.
+    * - ``-Wl,option``
+      - LINKFLAGS
+      - Pass *option* as an option to the linker. If *option* contains
         commas, it is split into multiple options at the commas.
     * - ``-llibrary``
       - LIBS
@@ -265,10 +273,6 @@ processes:
       - LIBPATH
       - Add directory *dir* to the list of directories to be searched for
         ``-l``.
-    * - ``-Idir``
-      - CPPPATH
-      - Add the directory *dir* to the list of directories to be searched
-        for header files.
 
 This option can be set by global environment variable
 :ref:`envvar_PLATFORMIO_BUILD_FLAGS`.
@@ -278,10 +282,13 @@ Example:
 .. code-block::   ini
 
     [env:specific_defines]
-    build_flags = -O2 -Dfoo -Dbar=1
+    build_flags = -Dfoo -Dbar=1
 
     [env:specific_inclibs]
     build_flags = -I/opt/include -L/opt/lib -lfoo
+
+    [env:specific_ld_script]
+    build_flags = -Wl,-T/path/to/ld_script.ld
 
 
 For more detailed information about available flags/options go to:
