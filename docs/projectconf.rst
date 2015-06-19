@@ -384,6 +384,43 @@ Example:
     [env:libs_with_enabled_ldf_cyclic]
     ldf_cyclic = True
 
+.. _projectconf_extra_script:
+
+``extra_script``
+^^^^^^^^^^^^^^^^
+
+Allows to launch extra script using `SCons <http://www.scons.org>`_ software
+construction tool. For more details please follow to "Construction Environments"
+section of
+`SCons documentation <http://www.scons.org/doc/production/HTML/scons-user.html#chap-environments>`_.
+
+This option can be set by global environment variable
+:ref:`envvar_PLATFORMIO_EXTRA_SCRIPT`.
+
+Example, specify own upload command for :ref:`platform_atmelavr`:
+
+``platformio.ini``:
+
+.. code-block:: ini
+
+    [env:env_with_specific_extra_script]
+    platform = atmelavr
+    extra_script = /path/to/extra_script.py
+
+``extra_script.py``:
+
+.. code-block:: python
+
+    from SCons.Script import DefaultEnvironment
+
+    env = DefaultEnvironment()
+
+    env.Replace(UPLOADHEXCMD='"$UPLOADER" --uploader --flags')
+
+    # uncomment line below to see environment variables
+    # print env.Dump()
+
+See built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
 
 .. _projectconf_examples:
 

@@ -2,14 +2,12 @@
 # See LICENSE for details.
 
 import atexit
-import json
 import re
 from glob import glob
 from os import getenv, listdir, remove, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath
 
-from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
-                          SConscript, SConscriptChdir)
+from SCons.Script import DefaultEnvironment, Exit, SConscript
 from SCons.Util import case_sensitive_suffixes
 
 from platformio.util import pioversion_to_intstr
@@ -27,50 +25,41 @@ def BuildFirmware(env):
     env.ProcessFlags()
     env.BuildFramework()
 
-    firmenv = env.Clone()
-    vdirs = firmenv.VariantDirRecursive(
+    vdirs = env.VariantDirRecursive(
         join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR", duplicate=False)
 
     # build dependent libs
-    deplibs = firmenv.BuildDependentLibraries("$PROJECTSRC_DIR")
+    deplibs = env.BuildDependentLibraries("$PROJECTSRC_DIR")
 
     # append specified LD_SCRIPT
-    if ("LDSCRIPT_PATH" in firmenv and
-            not any(["-Wl,-T" in f for f in firmenv['LINKFLAGS']])):
-        firmenv.Append(
+    if ("LDSCRIPT_PATH" in env and
+            not any(["-Wl,-T" in f for f in env['LINKFLAGS']])):
+        env.Append(
             LINKFLAGS=["-Wl,-T", "$LDSCRIPT_PATH"]
         )
 
     # enable "cyclic reference" for linker
-    firmenv.Prepend(
+    env.Prepend(
         _LIBFLAGS="-Wl,--start-group "
     )
-    firmenv.Append(
+    env.Append(
         _LIBFLAGS=" -Wl,--end-group"
     )
 
     # Handle SRCBUILD_FLAGS
     if getenv("PLATFORMIO_SRCBUILD_FLAGS", None):
-        firmenv.MergeFlags(getenv("PLATFORMIO_SRCBUILD_FLAGS"))
+        env.MergeFlags(getenv("PLATFORMIO_SRCBUILD_FLAGS"))
     if "SRCBUILD_FLAGS" in env:
-        firmenv.MergeFlags(env['SRCBUILD_FLAGS'])
+        env.MergeFlags(env['SRCBUILD_FLAGS'])
 
-    firmenv.Append(
+    env.Append(
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
             *pioversion_to_intstr())]
     )
 
-    if "envdump" in COMMAND_LINE_TARGETS:
-        print env.Dump()
-        Exit()
-
-    if "idedata" in COMMAND_LINE_TARGETS:
-        print json.dumps(env.DumpIDEData())
-        Exit()
-
-    return firmenv.Program(
+    return env.Program(
         join("$BUILD_DIR", "firmware"),
-        [firmenv.GlobCXXFiles(vdir) for vdir in vdirs],
+        [env.GlobCXXFiles(vdir) for vdir in vdirs],
         LIBS=env.get("LIBS", []) + deplibs,
         LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"],
         PROGSUFFIX=".elf"
@@ -136,7 +125,6 @@ def BuildFramework(env):
     for f in env['FRAMEWORK'].split(","):
         framework = f.strip().lower()
         if framework in env.get("BOARD_OPTIONS", {}).get("frameworks"):
-            SConscriptChdir(0)
             SConscript(
                 env.subst(join("$PIOBUILDER_DIR", "scripts", "frameworks",
                                "%s.py" % framework))

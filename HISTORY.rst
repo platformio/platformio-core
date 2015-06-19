@@ -4,10 +4,13 @@ Release History
 2.2.0 (2015-??-??)
 ------------------
 
-* Allowed to specify own path to the linker script (ld) using
-  `build_flags <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`__ option
+* Launch own extra script before firmware building/uploading processes
+  (`issue #239 <https://github.com/platformio/platformio/issues/239>`_)
+* Specify own path to the linker script (ld) using
+  `build_flags <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`__
+  option
   (`issue #233 <https://github.com/platformio/platformio/issues/233>`_)
-* Allowed to specify library compatibility with the all platforms/frameworks
+* Specify library compatibility with the all platforms/frameworks
   using ``*`` symbol in
   `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
 * Fixed ``stk500v2_command(): command failed``

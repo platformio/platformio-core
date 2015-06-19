@@ -11,11 +11,13 @@ except ImportError:
             break
     from platformio import util
 
+import json
+from os import getenv
 from os.path import isfile, join
 from time import time
 
-from SCons.Script import (DefaultEnvironment, Exit, SConscript,
-                          SConscriptChdir, Variables)
+from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
+                          SConscript, SConscriptChdir, Variables)
 
 from platformio.exception import UnknownBoard
 
@@ -25,6 +27,7 @@ from platformio.exception import UnknownBoard
 commonvars = Variables(None)
 commonvars.AddVariables(
     ("BUILD_SCRIPT",),
+    ("EXTRA_SCRIPT",),
     ("PIOENV",),
     ("PLATFORM",),
 
@@ -123,3 +126,14 @@ env.PrependENVPath(
 
 SConscriptChdir(0)
 SConscript(env.subst("$BUILD_SCRIPT"))
+
+if getenv("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT", None)):
+    SConscript(getenv("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")))
+
+if "envdump" in COMMAND_LINE_TARGETS:
+    print env.Dump()
+    Exit()
+
+if "idedata" in COMMAND_LINE_TARGETS:
+    print json.dumps(env.DumpIDEData())
+    Exit()

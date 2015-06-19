@@ -84,6 +84,13 @@ PLATFORMIO_LDF_CYCLIC
 
 Allows to set :ref:`projectconf` option :ref:`projectconf_ldf_cyclic`.
 
+.. _envvar_PLATFORMIO_EXTRA_SCRIPT:
+
+PLATFORMIO_EXTRA_SCRIPT
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Allows to set :ref:`projectconf` option :ref:`projectconf_extra_script`.
+
 Settings
 --------
 
