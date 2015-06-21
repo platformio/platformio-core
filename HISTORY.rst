@@ -16,6 +16,11 @@ Release History
 * Fixed ``stk500v2_command(): command failed``
   (`issue #238 <https://github.com/platformio/platformio/issues/238>`_)
 
+2.1.2 (2015-06-21)
+------------------
+
+* Fixed broken link to SCons installer
+
 2.1.1 (2015-06-09)
 ------------------
 
