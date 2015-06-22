@@ -75,7 +75,7 @@ DefaultEnvironment(
     PIOPACKAGES_DIR=join("$PIOHOME_DIR", "packages"),
 
     BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
-    BUILDSRC_DIR=join("$BUILD_DIR", "ProjectSrc"),
+    BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     LIBSOURCE_DIRS=[
         "$PROJECTLIB_DIR",
         util.get_lib_dir(),
