@@ -4,6 +4,9 @@ Release History
 2.2.0 (2015-??-??)
 ------------------
 
+* Allowed to exclude/include source files from build process using
+  `src_filter <http://docs.platformio.org/en/latest/projectconf.html#src-filter>`__
+  (`issue #240 <https://github.com/platformio/platformio/issues/240>`_)
 * Launch own extra script before firmware building/uploading processes
   (`issue #239 <https://github.com/platformio/platformio/issues/239>`_)
 * Specify own path to the linker script (ld) using

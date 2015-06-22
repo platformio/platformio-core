@@ -77,6 +77,13 @@ PLATFORMIO_SRCBUILD_FLAGS
 
 Allows to set :ref:`projectconf` option :ref:`projectconf_srcbuild_flags`.
 
+.. _envvar_PLATFORMIO_SRC_FILTER:
+
+PLATFORMIO_SRC_FILTER
+~~~~~~~~~~~~~~~~~~~~~
+
+Allows to set :ref:`projectconf` option :ref:`projectconf_src_filter`.
+
 .. _envvar_PLATFORMIO_LDF_CYCLIC:
 
 PLATFORMIO_LDF_CYCLIC

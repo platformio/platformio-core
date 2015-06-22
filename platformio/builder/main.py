@@ -39,6 +39,7 @@ commonvars.AddVariables(
     ("FRAMEWORK",),
     ("BUILD_FLAGS",),
     ("SRCBUILD_FLAGS",),
+    ("SRC_FILTER",),
     ("IGNORE_LIBS",),
     ("USE_LIBS",),
     ("LDF_CYCLIC",),
@@ -57,7 +58,7 @@ commonvars.AddVariables(
 DefaultEnvironment(
     tools=[
         "gcc", "g++", "as", "ar", "gnulink",
-        "platformio", "pioupload", "pioar"
+        "platformio", "pioupload", "pioar", "piomisc"
     ],
     toolpath=[join("$PIOBUILDER_DIR", "tools")],
     variables=commonvars,
@@ -74,6 +75,7 @@ DefaultEnvironment(
     PIOPACKAGES_DIR=join("$PIOHOME_DIR", "packages"),
 
     BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
+    BUILDSRC_DIR=join("$BUILD_DIR", "ProjectSrc"),
     LIBSOURCE_DIRS=[
         "$PROJECTLIB_DIR",
         util.get_lib_dir(),

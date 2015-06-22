@@ -319,6 +319,28 @@ but will be applied only for the project source code from
 This option can be set by global environment variable
 :ref:`envvar_PLATFORMIO_SRCBUILD_FLAGS`.
 
+.. _projectconf_src_filter:
+
+``src_filter``
+^^^^^^^^^^^^^^
+
+This option allows to specify which source files should be included/excluded
+from build process. Filter supports 2 templates:
+
+* ``+<PATH>`` include template
+* ``-<PATH>`` exclude template
+
+``PATH`` MAST BE related from :ref:`projectconf_pio_src_dir`. All patterns will
+be applied in theirs order.
+`GLOB Patterns <http://en.wikipedia.org/wiki/Glob_(programming)>`_ are allowed.
+
+By default, ``src_filter`` is predefined to
+``+<*> -<.git/> -<svn/> -<examples/>``, which means "includes ALL files, then
+exclude ``.git`` and ``svn`` repository folders and exclude ``examples`` folder.
+
+This option can be set by global environment variable
+:ref:`envvar_PLATFORMIO_SRC_FILTER`.
+
 ``install_libs``
 ^^^^^^^^^^^^^^^^
 
