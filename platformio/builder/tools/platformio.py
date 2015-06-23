@@ -115,6 +115,8 @@ def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
 
     def _match_sources(src_dir, src_filter):
         matches = set()
+        # correct fs directory separator
+        src_filter = src_filter.replace("/", sep).replace("\\", sep)
         for (action, pattern) in SRC_FILTER_PATTERNS_RE.findall(src_filter):
             items = set()
             for item in glob(join(src_dir, pattern)):
