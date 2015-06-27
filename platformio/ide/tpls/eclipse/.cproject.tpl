@@ -24,7 +24,11 @@
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1624502120" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.239157887" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									% for include in includes:
+                                    % if include.startswith(user_home_dir):
+									<listOptionValue builtIn="false" value="${HOME}{{include.replace(user_home_dir, '')}}"/>
+                                    % else:
 									<listOptionValue builtIn="false" value="{{include}}"/>
+									% end
 									% end
 								</option>
 								<option id="org.eclipse.cdt.build.core.settings.holder.symbols.922107295" name="Symbols" superClass="org.eclipse.cdt.build.core.settings.holder.symbols" valueType="definedSymbols">
@@ -37,7 +41,11 @@
 							<tool id="org.eclipse.cdt.build.core.settings.holder.54121539" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1096940598" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									% for include in includes:
+                                    % if include.startswith(user_home_dir):
+									<listOptionValue builtIn="false" value="${HOME}{{include.replace(user_home_dir, '')}}"/>
+                                    % else:
 									<listOptionValue builtIn="false" value="{{include}}"/>
+									% end
 									% end
 								</option>
 								<option id="org.eclipse.cdt.build.core.settings.holder.symbols.1198905600" name="Symbols" superClass="org.eclipse.cdt.build.core.settings.holder.symbols" valueType="definedSymbols">
@@ -50,7 +58,11 @@
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1310559623" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.41298875" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									% for include in includes:
+                                    % if include.startswith(user_home_dir):
+									<listOptionValue builtIn="false" value="${HOME}{{include.replace(user_home_dir, '')}}"/>
+                                    % else:
 									<listOptionValue builtIn="false" value="{{include}}"/>
+									% end
 									% end
 								</option>
 								<option id="org.eclipse.cdt.build.core.settings.holder.symbols.884639970" name="Symbols" superClass="org.eclipse.cdt.build.core.settings.holder.symbols" valueType="definedSymbols">

@@ -6,7 +6,11 @@ else {
 }
 
 % for include in includes:
+% if include.startswith(user_home_dir):
+INCLUDEPATH += "${HOME}{{include.replace(user_home_dir, "")}}"
+% else:
 INCLUDEPATH += "{{include}}"
+% end
 % end
 
 win32:INCLUDEPATH ~= s,/,\\,g
