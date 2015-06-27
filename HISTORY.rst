@@ -20,6 +20,8 @@ Release History
   (`issue #238 <https://github.com/platformio/platformio/issues/238>`_)
 * Fixed IDE project generator when board is specified
   (`issue #242 <https://github.com/platformio/platformio/issues/242>`_)
+* Fixed relative path for includes when generating project for IDE
+  (`issue #243 <https://github.com/platformio/platformio/issues/243>`_)
 
 2.1.2 (2015-06-21)
 ------------------

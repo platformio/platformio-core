@@ -27,11 +27,13 @@ Embedded Development. *Easier Than Ever.*
 -----------------------------------------
 
 * Colourful command-line output
-* Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>`
-* Configurable build :ref:`-flags/-options <projectconf_build_flags>`
-* Integration with :ref:`development environments (IDE) <ide>`
-* Ready for Cloud Compiling and :ref:`ci`
-* Pre-built tool chains, :ref:`frameworks` for the popular Hardware Platforms
+* :ref:`IDE Integration <ide>` with *Arduino, Eclipse, Energia, Qt Creator,
+  Sublime Text, Vim, Visual Studio*
+* :ref:`ci` with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
+* Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>` and
+  configurable build :ref:`-flags/-options <projectconf_build_flags>`
+* Pre-built tool chains, :ref:`frameworks` for the
+  :ref:`Development Platforms <platforms>`
 
 Smart Code Builder. *Fast and Reliable.*
 ----------------------------------------

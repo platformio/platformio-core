@@ -81,11 +81,13 @@ Embedded Development. *Easier Than Ever.*
 settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 
 * Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
-* Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
-* Configurable `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
+* `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_ with
+  *Arduino, Eclipse, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
+* `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
+  with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
+* Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable
+  `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
 * Automatic **firmware uploading**
-* Integration with `development environments (IDE) <http://docs.platformio.org/en/latest/ide.html>`_
-* Ready for **Cloud Compiling** and `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
 * Pre-built tool chains, frameworks for the popular `Hardware Platforms <http://platformio.org/#!/platforms>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-embedded-development.png
