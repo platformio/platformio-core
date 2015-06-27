@@ -18,6 +18,8 @@ Release History
   `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
 * Fixed ``stk500v2_command(): command failed``
   (`issue #238 <https://github.com/platformio/platformio/issues/238>`_)
+* Fixed IDE project generator when board is specified
+  (`issue #242 <https://github.com/platformio/platformio/issues/242>`_)
 
 2.1.2 (2015-06-21)
 ------------------

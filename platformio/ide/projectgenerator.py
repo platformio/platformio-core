@@ -13,9 +13,10 @@ from platformio import util
 
 class ProjectGenerator(object):
 
-    def __init__(self, project_dir, ide):
+    def __init__(self, project_dir, ide, board=None):
         self.project_dir = project_dir
         self.ide = ide
+        self.board = board
         self._tplvars = {}
 
         self._gather_tplvars()
@@ -26,6 +27,7 @@ class ProjectGenerator(object):
         return sorted([d for d in listdir(tpls_dir)
                        if isdir(join(tpls_dir, d))])
 
+    @util.memoized
     def get_project_env(self):
         data = {"env_name": "PlatformIO"}
         with util.cd(self.project_dir):
@@ -33,9 +35,11 @@ class ProjectGenerator(object):
             for section in config.sections():
                 if not section.startswith("env:"):
                     continue
-                data['env_name'] = section[4:]
+                data = {"env_name": section[4:]}
                 for k, v in config.items(section):
                     data[k] = v
+                if self.board and self.board == data.get("board"):
+                    break
         return data
 
     @util.memoized

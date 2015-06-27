@@ -141,6 +141,8 @@ def DumpIDEData(env):
 
     # global symbols
     for item in env.get("CPPDEFINES", []):
+        if isinstance(item, list):
+            item = "=".join(item)
         data['defines'].append(env.subst(item))
 
     # special symbol for Atmel AVR MCU
