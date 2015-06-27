@@ -122,18 +122,12 @@ Development Version
 .. warning::
     We don't recommend to use ``develop`` version in production.
 
-1. If you had have already installed PlatformIO, please uninstall it:
-
-.. code-block:: bash
-
-    $ pip uninstall platformio
-
-2. Install the latest PlatformIO from the ``develop`` branch:
+Install the latest PlatformIO from the ``develop`` branch:
 
 .. code-block:: bash
 
     $ pip install https://github.com/platformio/platformio/archive/develop.zip
 
 If you want to be up-to-date with the latest ``develop`` version of PlatformIO,
-then you need to perform step #2 each time if you see the new commits in
-`PlatformIO GitHub repository <https://github.com/platformio/platformio/commits/develop>`_.
+then you need to re-install PlatformIO each time if you see the new commits in
+`PlatformIO GitHub repository (branch: develop) <https://github.com/platformio/platformio/commits/develop>`_.
