@@ -4,7 +4,7 @@
 import json
 from glob import glob
 from os import listdir, walk
-from os.path import basename, isdir, join
+from os.path import abspath, basename, expanduser, isdir, join, relpath
 
 import bottle
 
@@ -67,12 +67,12 @@ class ProjectGenerator(object):
     def get_project_name(self):
         return basename(self.project_dir)
 
-    @staticmethod
-    def get_srcfiles():
+    def get_srcfiles(self):
         result = []
-        for root, _, files in walk(util.get_projectsrc_dir()):
-            for f in files:
-                result.append(join(root, f))
+        with util.cd(self.project_dir):
+            for root, _, files in walk(util.get_projectsrc_dir()):
+                for f in files:
+                    result.append(relpath(join(root, f)))
         return result
 
     def get_tpls(self):

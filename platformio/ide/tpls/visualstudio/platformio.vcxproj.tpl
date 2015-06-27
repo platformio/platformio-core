@@ -49,16 +49,23 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <Text Include="readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="platformio.ini" />
-    % for file in srcfiles:
-    <None Include="{{file}}" />
-    % end
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <None Include="platformio.ini" />
+  </ItemGroup>
+  % for file in srcfiles:
+  <ItemGroup>
+    % if any([file.endswith(".%s" % e) for e in ("h", "hh", "hpp", "inc")]):
+    <ClInclude Include="{{file}}">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    % else:
+    <ClCompile Include="{{file}}">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    %end
+  </ItemGroup>
+  % end
 </Project>
