@@ -300,8 +300,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                         _lib_dir))
                     state['libs'].add(_lib_dir)
 
-                    if getenv("PLATFORMIO_LDF_CYCLIC",
-                              env.subst("$LDF_CYCLIC")).lower() == "true":
+                    if env.subst("$LIB_DFCYCLIC").lower() == "true":
                         state = _process_src_dir(state, _lib_dir)
         return state
 

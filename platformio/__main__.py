@@ -44,7 +44,7 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
                 "Warning! `platformio %s` command is obsoleted and will be "
                 "removed in the next release! Please use "
                 "`platformio platforms %s` instead." % (name, name),
-                fg="red"
+                fg="yellow"
             )
             from platformio.commands import platforms
             return getattr(platforms, "platforms_" + name)

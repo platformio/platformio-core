@@ -84,13 +84,6 @@ PLATFORMIO_SRC_FILTER
 
 Allows to set :ref:`projectconf` option :ref:`projectconf_src_filter`.
 
-.. _envvar_PLATFORMIO_LDF_CYCLIC:
-
-PLATFORMIO_LDF_CYCLIC
-~~~~~~~~~~~~~~~~~~~~~
-
-Allows to set :ref:`projectconf` option :ref:`projectconf_ldf_cyclic`.
-
 .. _envvar_PLATFORMIO_EXTRA_SCRIPT:
 
 PLATFORMIO_EXTRA_SCRIPT

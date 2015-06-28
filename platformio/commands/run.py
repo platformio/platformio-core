@@ -73,6 +73,10 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
 
 class EnvironmentProcessor(object):
 
+    RENAMED_OPTIONS = {
+        "LDF_CYCLIC": "LIB_DFCYCLIC"
+    }
+
     def __init__(self, cmd_ctx, name, options,  # pylint: disable=R0913
                  targets, upload_port, verbose):
         self.cmd_ctx = cmd_ctx
@@ -114,9 +118,21 @@ class EnvironmentProcessor(object):
             variables.append("UPLOAD_PORT=%s" % self.upload_port)
         for k, v in self.options.items():
             k = k.upper()
+
+            # process obsolete options
+            if k in self.RENAMED_OPTIONS:
+                click.secho(
+                    "Warning! `%s` option is obsoleted and will be "
+                    "removed in the next release! Please use "
+                    "`%s` instead." % (
+                        k.lower(), self.RENAMED_OPTIONS[k].lower()),
+                    fg="yellow"
+                )
+                k = self.RENAMED_OPTIONS[k]
+
             if k == "TARGETS" or (k == "UPLOAD_PORT" and self.upload_port):
                 continue
-            variables.append("%s=%s" % (k.upper(), v))
+            variables.append("%s=%s" % (k, v))
         return variables
 
     def _get_build_targets(self):

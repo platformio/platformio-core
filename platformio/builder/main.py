@@ -42,7 +42,7 @@ commonvars.AddVariables(
     ("SRC_FILTER",),
     ("IGNORE_LIBS",),
     ("USE_LIBS",),
-    ("LDF_CYCLIC",),
+    ("LIB_DFCYCLIC",),
 
     # board options
     ("BOARD",),

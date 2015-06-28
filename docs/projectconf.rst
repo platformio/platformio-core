@@ -382,13 +382,11 @@ Example:
     [env:ignore_some_libs]
     ignore_libs = SPI,EngduinoV3_ID123
 
-.. _projectconf_ldf_cyclic:
-
-``ldf_cyclic``
+``lib_dfcyclic``
 ^^^^^^^^^^^^^^
 
 Control cyclic (recursive) behaviour for ``Library Dependency Finder (LDF)``.
-By default, this option is turned OFF (``ldf_cyclic=False``) and means, that
+By default, this option is turned OFF (``lib_dfcyclic=False``) and means, that
 ``LDF`` will find only libraries which are included in source files from the
 project :ref:`projectconf_pio_src_dir`.
 
@@ -396,15 +394,12 @@ If you want to enable cyclic (recursive, nested) search, please set this option
 to ``True``. Founded library will be treated like a new source files and
 ``LDF`` will search dependencies for it.
 
-This option can be set by global environment variable
-:ref:`envvar_PLATFORMIO_LDF_CYCLIC`.
-
 Example:
 
 .. code-block::   ini
 
     [env:libs_with_enabled_ldf_cyclic]
-    ldf_cyclic = True
+    lib_dfcyclic = True
 
 .. _projectconf_extra_script:
 
