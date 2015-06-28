@@ -49,11 +49,11 @@ def BuildFirmware(env):
         _LIBFLAGS=" -Wl,--end-group"
     )
 
-    # Handle SRCBUILD_FLAGS
-    if getenv("PLATFORMIO_SRCBUILD_FLAGS", None):
-        env.MergeFlags(getenv("PLATFORMIO_SRCBUILD_FLAGS"))
-    if "SRCBUILD_FLAGS" in env:
-        env.MergeFlags(env['SRCBUILD_FLAGS'])
+    # Handle SRC_BUILD_FLAGS
+    if getenv("PLATFORMIO_SRC_BUILD_FLAGS", None):
+        env.MergeFlags(getenv("PLATFORMIO_SRC_BUILD_FLAGS"))
+    if "SRC_BUILD_FLAGS" in env:
+        env.MergeFlags(env['SRC_BUILD_FLAGS'])
 
     env.Append(
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(

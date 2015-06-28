@@ -465,10 +465,10 @@ Release History
 
 * Implemented `platformio serialports <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html>`_ command
 * Allowed to put special build flags only for ``src`` files via
-  `srcbuild_flags <http://docs.platformio.org/en/latest/projectconf.html#srcbuild-flags>`_
+  `src_build_flags <http://docs.platformio.org/en/latest/projectconf.html#src_build-flags>`_
   environment option
 * Allowed to override some of settings via system environment variables
-  such as: ``PLATFORMIO_SRCBUILD_FLAGS`` and ``PLATFORMIO_ENVS_DIR``
+  such as: ``PLATFORMIO_SRC_BUILD_FLAGS`` and ``PLATFORMIO_ENVS_DIR``
 * Added ``--upload-port`` option for `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--upload-port>`__ command
 * Implemented (especially for `SmartAnthill <http://docs.smartanthill.ikravets.com/>`_)
   `platformio run -t uploadlazy <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`_

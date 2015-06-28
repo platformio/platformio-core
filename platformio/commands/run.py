@@ -77,7 +77,8 @@ class EnvironmentProcessor(object):
         "INSTALL_LIBS": "LIB_INSTALL",
         "IGNORE_LIBS": "LIB_IGNORE",
         "USE_LIBS": "LIB_USE",
-        "LDF_CYCLIC": "LIB_DFCYCLIC"
+        "LDF_CYCLIC": "LIB_DFCYCLIC",
+        "SRCBUILD_FLAGS": "SRC_BUILD_FLAGS"
     }
 
     def __init__(self, cmd_ctx, name, options,  # pylint: disable=R0913

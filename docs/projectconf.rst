@@ -145,7 +145,8 @@ need to specify ``board_mcu``, ``board_f_cpu``, ``upload_protocol`` or
 ``upload_speed`` options. Just define a ``board`` type and *PlatformIO* will
 pre-fill options described above with appropriate values.
 
-You can find the ``board`` type in *Boards* section of each :ref:`platforms`.
+You can find the ``board`` type in *Boards* section of each :ref:`platforms` or
+using `PlatformIO Embedded Boards Explorer <http://platformio.org/#!/boards>`_.
 
 
 ``board_mcu``
@@ -197,20 +198,6 @@ A protocol that "uploader" tool uses to talk to the board.
 
 A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
 which "uploader" tool uses when sending firmware to board.
-
-
-``targets``
-^^^^^^^^^^^
-
-A list with targets which will be processed by :ref:`cmd_run` command by
-default. You can enter more then one target separated with "space".
-
-When no targets are defined, *PlatformIO* will build only sources by default.
-
-.. note::
-    This option is useful to enable "auto-uploading" after building operation
-    (``targets = upload``).
-
 
 .. _projectconf_build_flags:
 
@@ -307,17 +294,17 @@ For more detailed information about available flags/options go to:
 * `Options for Directory Search
   <https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html>`_
 
-.. _projectconf_srcbuild_flags:
+.. _projectconf_src_build_flags:
 
-``srcbuild_flags``
-^^^^^^^^^^^^^^^^^^
+``src_build_flags``
+^^^^^^^^^^^^^^^^^^^
 
-An option ``srcbuild_flags`` has the same behaviour like ``build_flags``
+An option ``src_build_flags`` has the same behaviour like ``build_flags``
 but will be applied only for the project source code from
 :ref:`projectconf_pio_src_dir` directory.
 
 This option can be set by global environment variable
-:ref:`envvar_PLATFORMIO_SRCBUILD_FLAGS`.
+:ref:`envvar_PLATFORMIO_SRC_BUILD_FLAGS`.
 
 .. _projectconf_src_filter:
 
@@ -438,6 +425,18 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
     # print env.Dump()
 
 See built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
+
+``targets``
+^^^^^^^^^^^
+
+A list with targets which will be processed by :ref:`cmd_run` command by
+default. You can enter more then one target separated with "space".
+
+When no targets are defined, *PlatformIO* will build only sources by default.
+
+.. note::
+    This option is useful to enable "auto-uploading" after building operation
+    (``targets = upload``).
 
 .. _projectconf_examples:
 
