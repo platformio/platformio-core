@@ -432,11 +432,25 @@ See built-in examples of `PlatformIO build scripts <https://github.com/platformi
 A list with targets which will be processed by :ref:`cmd_run` command by
 default. You can enter more then one target separated with "space".
 
-When no targets are defined, *PlatformIO* will build only sources by default.
+Pre-built targets:
 
-.. note::
-    This option is useful to enable "auto-uploading" after building operation
-    (``targets = upload``).
+* ``clean`` delete compiled object files, libraries and firmware binaries
+* ``upload`` enable "auto-uploading" for embedded platforms after building
+  operation
+* ``envdump`` dump current build environment
+
+**Tip!** You can use these targets like an option to
+:option:`platformio run --target` command. For example:
+
+.. code-block:: bash
+
+    # clean project
+    platformio run -t clean
+
+    # dump curent build environment
+    platformio run --target envdump
+
+When no targets are defined, *PlatformIO* will build only sources by default.
 
 .. _projectconf_examples:
 
