@@ -75,7 +75,8 @@ class EnvironmentProcessor(object):
 
     RENAMED_OPTIONS = {
         "LDF_CYCLIC": "LIB_DFCYCLIC",
-        "IGNORE_LIBS": "LIB_IGNORE"
+        "IGNORE_LIBS": "LIB_IGNORE",
+        "USE_LIBS": "LIB_USE"
     }
 
     def __init__(self, cmd_ctx, name, options,  # pylint: disable=R0913

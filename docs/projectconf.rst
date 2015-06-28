@@ -352,23 +352,23 @@ You can obtain library IDs using :ref:`cmd_lib_search` command.
 
 Example:
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:depends_on_some_libs]
     install_libs = 1,13,19
 
-``use_libs``
-^^^^^^^^^^^^
+``lib_use``
+^^^^^^^^^^^
 
 Specify libraries which should be used by ``Library Dependency Finder (LDF)`` with
 the highest priority.
 
 Example:
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:libs_with_highest_priority]
-    use_libs = OneWire_ID1
+    lib_use = OneWire_ID1,SPI
 
 ``lib_ignore``
 ^^^^^^^^^^^^^^
@@ -377,7 +377,7 @@ Specify libraries which should be ignored by ``Library Dependency Finder (LDF)``
 
 Example:
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:ignore_some_libs]
     lib_ignore = SPI,EngduinoV3_ID123
@@ -396,7 +396,7 @@ to ``True``. Founded library will be treated like a new source files and
 
 Example:
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:libs_with_enabled_ldf_cyclic]
     lib_dfcyclic = True

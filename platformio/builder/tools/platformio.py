@@ -186,8 +186,6 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
     INCLUDES_RE = re.compile(
         r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")", re.M)
     LIBSOURCE_DIRS = [env.subst(d) for d in env.get("LIBSOURCE_DIRS", [])]
-    USE_LIBS = [l.strip() for l in env.get("USE_LIBS", "").split(",")
-                if l.strip()]
 
     # start internal prototypes
 
@@ -228,7 +226,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                 if not isdir(lsd_dir):
                     continue
 
-                for ld in USE_LIBS + sorted(listdir(lsd_dir)):
+                for ld in env.get("LIB_USE", []) + sorted(listdir(lsd_dir)):
                     if not isdir(join(lsd_dir, ld)):
                         continue
 

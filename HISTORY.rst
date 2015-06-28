@@ -109,7 +109,7 @@ Release History
   option in ``platformio.ini``
   (`issue #134 <https://github.com/platformio/platformio/issues/134>`_)
 * Specify libraries which are compatible with build environment using
-  `use_libs <http://docs.platformio.org/en/latest/projectconf.html#use-libs>`_
+  `lib_use <http://docs.platformio.org/en/latest/projectconf.html#lib-use>`_
   option in ``platformio.ini``
   (`issue #148 <https://github.com/platformio/platformio/issues/148>`_)
 * Add more boards to PlatformIO project with
