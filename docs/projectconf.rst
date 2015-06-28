@@ -370,8 +370,8 @@ Example:
     [env:libs_with_highest_priority]
     use_libs = OneWire_ID1
 
-``ignore_libs``
-^^^^^^^^^^^^^^^
+``lib_ignore``
+^^^^^^^^^^^^^^
 
 Specify libraries which should be ignored by ``Library Dependency Finder (LDF)``
 
@@ -380,10 +380,10 @@ Example:
 .. code-block::   ini
 
     [env:ignore_some_libs]
-    ignore_libs = SPI,EngduinoV3_ID123
+    lib_ignore = SPI,EngduinoV3_ID123
 
 ``lib_dfcyclic``
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 Control cyclic (recursive) behaviour for ``Library Dependency Finder (LDF)``.
 By default, this option is turned OFF (``lib_dfcyclic=False``) and means, that

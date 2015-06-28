@@ -241,7 +241,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                     lib_name = basename(lib_dir)
 
                     # ignore user's specified libs
-                    if "IGNORE_LIBS" in env and lib_name in env['IGNORE_LIBS']:
+                    if lib_name in env.get("LIB_IGNORE", []):
                         continue
 
                     if not isfile(inc_path):

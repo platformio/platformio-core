@@ -40,7 +40,7 @@ commonvars.AddVariables(
     ("BUILD_FLAGS",),
     ("SRCBUILD_FLAGS",),
     ("SRC_FILTER",),
-    ("IGNORE_LIBS",),
+    ("LIB_IGNORE",),
     ("USE_LIBS",),
     ("LIB_DFCYCLIC",),
 
@@ -118,8 +118,8 @@ if "BOARD" in env:
                  env.get("BOARD_OPTIONS", {}).get("platform")))
 
 
-if "IGNORE_LIBS" in env:
-    env['IGNORE_LIBS'] = [l.strip() for l in env['IGNORE_LIBS'].split(",")]
+if "LIB_IGNORE" in env:
+    env['LIB_IGNORE'] = [l.strip() for l in env['LIB_IGNORE'].split(",")]
 
 env.PrependENVPath(
     "PATH",

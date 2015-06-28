@@ -74,7 +74,8 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
 class EnvironmentProcessor(object):
 
     RENAMED_OPTIONS = {
-        "LDF_CYCLIC": "LIB_DFCYCLIC"
+        "LDF_CYCLIC": "LIB_DFCYCLIC",
+        "IGNORE_LIBS": "LIB_IGNORE"
     }
 
     def __init__(self, cmd_ctx, name, options,  # pylint: disable=R0913

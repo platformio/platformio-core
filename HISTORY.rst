@@ -297,7 +297,7 @@ Release History
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/platformio/platformio/issues/42>`_)
 * Allowed to ignore some libs from *Library Dependency Finder* via
-  `ignore_libs <http://docs.platformio.org/en/latest/projectconf.html#ignore-libs>`_ option
+  `lib_ignore <http://docs.platformio.org/en/latest/projectconf.html#lib-ignore>`_ option
 * Improved `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command: asynchronous output for build process, timing and detailed
   information about environment configuration
