@@ -105,7 +105,7 @@ Release History
   (`issue #192 <https://github.com/platformio/platformio/issues/192>`_)
 * Control verbosity of `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-v>`_ command via ``-v/--verbose`` option
 * Add library dependencies for build environment using
-  `install_libs <http://docs.platformio.org/en/latest/projectconf.html#install-libs>`_
+  `lib_install <http://docs.platformio.org/en/latest/projectconf.html#lib-install>`_
   option in ``platformio.ini``
   (`issue #134 <https://github.com/platformio/platformio/issues/134>`_)
 * Specify libraries which are compatible with build environment using

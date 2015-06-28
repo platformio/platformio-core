@@ -86,7 +86,7 @@ class Upgrader(object):
     def _upgrade_to_0_9_0(self, ctx):  # pylint: disable=R0201
         prev_platforms = []
 
-        # remove platform's folder (obsoleted package structure)
+        # remove platform's folder (obsolete package structure)
         for name in PlatformFactory.get_platforms().keys():
             pdir = join(get_home_dir(), name)
             if not isdir(pdir):
