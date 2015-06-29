@@ -1,5 +1,8 @@
-PlatformIO: A cross-platform code builder and the missing library manager
-=========================================================================
+PlatformIO is a cross-platform code builder and the missing library manager
+===========================================================================
+
+**Ready for embedded development, IDE and Continuous integration, Arduino and
+MBED compatible**
 
 *Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,

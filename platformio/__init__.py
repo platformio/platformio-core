@@ -1,14 +1,15 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-VERSION = (2, 2, "0.dev6")
+VERSION = (2, 2, "0a1")
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
-__description__ = ("A cross-platform code builder and the missing library "
-                   "manager (Atmel AVR & SAM, Espressif, Freescale Kinetis, "
-                   "Nordic nRF51, NXP LPC, Silicon Labs EFM32, ST STM32, "
-                   "TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc)")
+__description__ = (
+    "Cross-platform code builder and the missing library manager "
+    "(Ready for embedded development, IDE and Continuous integration, "
+    "Arduino and MBED compatible)"
+)
 __url__ = "http://platformio.org"
 
 __author__ = "Ivan Kravets"

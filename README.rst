@@ -38,15 +38,16 @@ PlatformIO
 `Reddit <http://www.reddit.com/r/platformio/>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_
 
-*Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
-Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
-libOpenCM3, etc.*
-
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
 
 `PlatformIO <http://platformio.org>`_ is a cross-platform code builder
-and the missing library manager.
+and the missing library manager (Ready for embedded development, IDE and
+Continuous integration, Arduino and MBED compatible).
+
+*Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
+Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
+libOpenCM3, etc.*
 
 * `Get Started <http://platformio.org/#!/get-started>`_
 * `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
