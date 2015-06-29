@@ -39,13 +39,13 @@
     <NMakeBuildCommandLine>platformio --force run</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>platformio --force run --target clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>{{";".join(defines)}}</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>{{";".join(["$(HOMEPATH)%s" % i.replace(user_home_dir, "") if i.startswith(user_home_dir) else i for i in includes])}}</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>{{";".join(["$(HOMEDRIVE)$(HOMEPATH)%s" % i.replace(user_home_dir, "") if i.startswith(user_home_dir) else i for i in includes])}}</NMakeIncludeSearchPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>platformio run</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>platformio run --target clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>{";".join(defines)}}</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>{{";".join(["$(HOMEPATH)%s" % i.replace(user_home_dir, "") if i.startswith(user_home_dir) else i for i in includes])}}</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>{{";".join(["$(HOMEDRIVE)$(HOMEPATH)%s" % i.replace(user_home_dir, "") if i.startswith(user_home_dir) else i for i in includes])}}</NMakeIncludeSearchPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
