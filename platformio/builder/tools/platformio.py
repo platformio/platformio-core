@@ -141,8 +141,8 @@ def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
 
     for item in _match_sources(src_dir, src_filter or SRC_DEFAULT_FILTER):
         _reldir = dirname(item)
-        _src_dir = join(src_dir, _reldir)
-        _var_dir = join(variant_dir, _reldir)
+        _src_dir = join(src_dir, _reldir) if _reldir else src_dir
+        _var_dir = join(variant_dir, _reldir) if _reldir else variant_dir
 
         if _var_dir not in variants:
             variants.append(_var_dir)
@@ -173,11 +173,11 @@ def BuildFramework(env):
                  framework)
 
 
-def BuildLibrary(env, variant_dir, library_dir, src_filter=None):
+def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     lib = env.Clone()
     return lib.Library(
         lib.subst(variant_dir),
-        lib.LookupSources(variant_dir, library_dir, src_filter=src_filter)
+        lib.LookupSources(variant_dir, src_dir, src_filter=src_filter)
     )
 
 
