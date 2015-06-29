@@ -123,4 +123,4 @@ Conclusion
 Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build Solution``:
 
 .. image:: ../_static/ide-vs-platformio-newproject-8.png
-    :target: ../_static/ide-vs-platformio-newproject-8.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-8.png

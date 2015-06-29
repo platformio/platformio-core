@@ -35,7 +35,7 @@ and specify root directory where is located :ref:`projectconf`.
 After import, we need to delete default build and clean steps and configure project with PlatformIO source code builder (click on Projects label on left menu or ``Ctrl+5`` shortcut):
 
 .. image:: ../_static/ide-platformio-qtcreator-3.png
-    :target: ../_static/ide-platformio-qtcreator-3.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-3.png
 
 Manual Integration
 ^^^^^^^^^^^^^^^^^^
@@ -46,7 +46,7 @@ Setup New Project
 First of all, let's create new project from Qt Creator Start Page: ``New Project`` or using ``Menu: File > New File or Project``, then select project with ``Empty Qt Project`` type (``Other Project > Empty Qt Project``), fill ``Name``, ``Create in``.
 
 .. image:: ../_static/ide-platformio-qtcreator-1.png
-    :target: ../_static/ide-platformio-qtcreator-1.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-1.png
 
 On the next steps select any available kit and click Finish button.
 
@@ -55,7 +55,7 @@ On the next steps select any available kit and click Finish button.
 Secondly, we need to delete default build and clean steps and configure project with PlatformIO source code builder (click on Projects label on left menu or ``Ctrl+5`` shortcut):
 
 .. image:: ../_static/ide-platformio-qtcreator-3.png
-    :target: ../_static/ide-platformio-qtcreator-3.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-3.png
 
 Thirdly, change project file by adding path to directories with header files. Please edit project file to match the following contents:
 
@@ -72,7 +72,7 @@ Thirdly, change project file by adding path to directories with header files. Pl
     INCLUDEPATH += "$${HOMEDIR}/.platformio/packages/toolchain-atmelavr/avr/include"
 
 .. image:: ../_static/ide-platformio-qtcreator-4.png
-    :target: ../_static/ide-platformio-qtcreator-4.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-4.png
 
 First program in Qt Creator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -83,7 +83,7 @@ Simple "Blink" project will consist from two files:
 Let's create new text file named ``main.c`` using ``Menu: New File or Project > General > Text File``:
 
 .. image:: ../_static/ide-platformio-qtcreator-5.png
-    :target: ../_static/ide-platformio-qtcreator-5.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-5.png
 
 Copy the source code which is described below to file ``main.c``.
 
@@ -108,7 +108,7 @@ Copy the source code which is described below to file ``main.c``.
 3. Locate the project configuration file named ``platformio.ini`` at the root of the project directory and open it.
 
 .. image:: ../_static/ide-platformio-qtcreator-6.png
-    :target: ../_static/ide-platformio-qtcreator-6.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-6.png
 
 Edit the content to match the code described below.
 
@@ -136,5 +136,5 @@ Conclusion
 Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build All``:
 
 .. image:: ../_static/ide-platformio-qtcreator-7.png
-    :target: ../_static/ide-platformio-qtcreator-7.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-7.png
 
