@@ -16,12 +16,21 @@ Release History
 * Specify library compatibility with the all platforms/frameworks
   using ``*`` symbol in
   `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
+* Added support for new embedded boards: *ST 32L0538DISCOVERY and Delta DFCM-NNN40*
+  to `Framework mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+* Updated packages for
+  `Framework Arduino (AVR, SAM, Espressif and Teensy cores <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__,
+  `Framework mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__,
+  `Espressif ESP8266 SDK <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  (`issue #246 <https://github.com/platformio/platformio/issues/246>`_)
 * Fixed ``stk500v2_command(): command failed``
   (`issue #238 <https://github.com/platformio/platformio/issues/238>`_)
 * Fixed IDE project generator when board is specified
   (`issue #242 <https://github.com/platformio/platformio/issues/242>`_)
 * Fixed relative path for includes when generating project for IDE
   (`issue #243 <https://github.com/platformio/platformio/issues/243>`_)
+* Fixed ESP8266 native SDK exception
+  (`issue #245 <https://github.com/platformio/platformio/issues/245>`_)
 
 2.1.2 (2015-06-21)
 ------------------

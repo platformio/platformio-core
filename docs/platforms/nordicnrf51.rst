@@ -49,6 +49,26 @@ Boards
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
+Delta
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``dfcm_nnn40``
+      - `Delta DFCM-NNN40 <https://developer.mbed.org/platforms/Delta-DFCM-NNN40/>`_
+      - NRF51822
+      - 32 MHz
+      - 256 Kb
+      - 32 Kb
+
 JKSoft
 ~~~~~~
 
