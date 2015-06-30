@@ -126,5 +126,21 @@
         },
         "url": "http://developer.mbed.org/platforms/Seeed-Tiny-BLE/",
         "vendor": "SeeedStudio"
+    },
+    "dfcm_nnn40": {
+        "build": {
+            "f_cpu": "32000000L",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822"
+        },
+        "frameworks": ["mbed"],
+        "name": "Delta DFCM-NNN40",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/Delta-DFCM-NNN40/",
+        "vendor": "Delta"
     }
 }
