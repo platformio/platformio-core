@@ -32,9 +32,6 @@ env.Replace(
 )
 
 MBED_VARIANTS = {
-    "stm32f3discovery": "DISCO_F303VC",
-    "stm32f4discovery": "DISCO_F407VG",
-    "stm32f429discovery": "DISCO_F429ZI",
     "blueboard_lpc11u24": "LPC11U24",
     "dipcortexm0": "LPC11U24",
     "seeeduinoArchPro": "ARCH_PRO",
@@ -54,7 +51,8 @@ MBED_VARIANTS = {
     "frdm_kl05z": "KL05Z",
     "frdm_k20d50m": "K20D50M",
     "frdm_k22f": "K22F",
-    "teensy31": "TEENSY3_1"
+    "teensy31": "TEENSY3_1",
+    "dfcm_nnn40": "DELTA_DFCM_NNN40"
 }
 
 MBED_LIBS_MAP = {

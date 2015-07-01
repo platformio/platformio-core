@@ -4,7 +4,7 @@
 import stat
 from glob import glob
 from os import chmod, getenv, makedirs, remove
-from os.path import abspath, basename, isdir, isfile, join
+from os.path import abspath, basename, expanduser, isdir, isfile, join
 from shutil import copyfile, copytree, rmtree
 from tempfile import mkdtemp
 
@@ -19,8 +19,12 @@ from platformio.util import get_boards
 
 def validate_path(ctx, param, value):  # pylint: disable=W0613
     invalid_path = None
-    for p in value:
-        if not glob(p):
+    value = list(value)
+    for i, p in enumerate(value):
+        if p.startswith("~"):
+            value[i] = expanduser(p)
+        value[i] = abspath(value[i])
+        if not glob(value[i]):
             invalid_path = p
             break
     try:
@@ -109,7 +113,6 @@ def _copy_contents(dst_dir, contents):
     }
 
     for path in contents:
-        path = abspath(path)
         if isdir(path):
             items['dirs'].add(path)
         elif isfile(path):

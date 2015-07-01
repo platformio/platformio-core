@@ -4,7 +4,7 @@
 import json
 from glob import glob
 from os import listdir, walk
-from os.path import basename, isdir, join
+from os.path import abspath, basename, expanduser, isdir, join, relpath
 
 import bottle
 
@@ -13,9 +13,10 @@ from platformio import util
 
 class ProjectGenerator(object):
 
-    def __init__(self, project_dir, ide):
+    def __init__(self, project_dir, ide, board=None):
         self.project_dir = project_dir
         self.ide = ide
+        self.board = board
         self._tplvars = {}
 
         self._gather_tplvars()
@@ -26,6 +27,7 @@ class ProjectGenerator(object):
         return sorted([d for d in listdir(tpls_dir)
                        if isdir(join(tpls_dir, d))])
 
+    @util.memoized
     def get_project_env(self):
         data = {"env_name": "PlatformIO"}
         with util.cd(self.project_dir):
@@ -33,9 +35,11 @@ class ProjectGenerator(object):
             for section in config.sections():
                 if not section.startswith("env:"):
                     continue
-                data['env_name'] = section[4:]
+                data = {"env_name": section[4:]}
                 for k, v in config.items(section):
                     data[k] = v
+                if self.board and self.board == data.get("board"):
+                    break
         return data
 
     @util.memoized
@@ -63,12 +67,12 @@ class ProjectGenerator(object):
     def get_project_name(self):
         return basename(self.project_dir)
 
-    @staticmethod
-    def get_srcfiles():
+    def get_srcfiles(self):
         result = []
-        for root, _, files in walk(util.get_projectsrc_dir()):
-            for f in files:
-                result.append(join(root, f))
+        with util.cd(self.project_dir):
+            for root, _, files in walk(util.get_projectsrc_dir()):
+                for f in files:
+                    result.append(relpath(join(root, f)))
         return result
 
     def get_tpls(self):
@@ -99,5 +103,6 @@ class ProjectGenerator(object):
             "defines": (build_data['defines']
                         if build_data and "defines" in build_data else []),
             "srcfiles": self.get_srcfiles(),
+            "user_home_dir": abspath(expanduser("~")),
             "project_dir": self.project_dir
         })

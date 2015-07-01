@@ -142,11 +142,11 @@ ST
       - 48 Kb
 
     * - ``disco_f334c8``
-      - `ST 32F3348DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF260318>`_
+      - `ST 32F3348DISCOVERY <http://www.st.com/web/en/catalog/tools/PF260318>`_
       - STM32F334C8T6
       - 72 MHz
       - 64 Kb
-      - 16 Kb
+      - 12 Kb
 
     * - ``disco_f401vc``
       - `ST 32F401CDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259098>`_
@@ -168,6 +168,13 @@ ST
       - 180 MHz
       - 2048 Kb
       - 256 Kb
+
+    * - ``disco_l053c8``
+      - `ST 32L0538DISCOVERY <http://www.st.com/web/en/catalog/tools/PF260319>`_
+      - STM32L053C8T6
+      - 32 MHz
+      - 64 Kb
+      - 8 Kb
 
     * - ``disco_l152rb``
       - `ST STM32LDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF258515>`_

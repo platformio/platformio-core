@@ -29,7 +29,7 @@ Integration
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
-SSince PlatformIO 2.0 you can generate Eclipse compatible project using
+Since PlatformIO 2.0 you can generate Eclipse compatible project using
 :option:`platformio init --ide` command. Please choose board type using
 :ref:`cmd_boards` command and run:
 
@@ -52,4 +52,4 @@ Screenshot
 ----------
 
 .. image:: ../_static/ide-platformio-eclipse.png
-	:target: http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-    eclipse-ideplatformio
+    :target: http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio

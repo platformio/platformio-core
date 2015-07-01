@@ -30,7 +30,10 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         env.Replace(UPLOAD_SPEED=None)
 
     if env.subst("$UPLOAD_SPEED"):
-        env.Append(UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"])
+        env.Append(UPLOADERFLAGS=[
+            "-b", "$UPLOAD_SPEED",
+            "-D"
+        ])
 
     if not upload_options.get("require_upload_port", False):
         return

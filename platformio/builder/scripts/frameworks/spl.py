@@ -38,10 +38,7 @@ env.Append(
 envsafe = env.Clone()
 
 envsafe.Append(
-    CPPPATH=[
-        join("$BUILD_DIR", "src")
-    ],
-
+    CPPPATH=["$BUILDSRC_DIR"],
     CPPDEFINES=[
         "USE_STDPERIPH_DRIVER"
     ]
@@ -52,22 +49,22 @@ envsafe.Append(
 #
 
 extra_flags = env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags")
-ignore_files = []
+src_filter_patterns = ["+<*>"]
 if "STM32F40_41xxx" in extra_flags:
-    ignore_files += ["stm32f4xx_fmc.c"]
+    src_filter_patterns += ["-<stm32f4xx_fmc.c>"]
 if "STM32F427_437xx" in extra_flags:
-    ignore_files += ["stm32f4xx_fsmc.c"]
+    src_filter_patterns += ["-<stm32f4xx_fsmc.c>"]
 elif "STM32F303xC" in extra_flags:
-    ignore_files += ["stm32f30x_hrtim.c"]
+    src_filter_patterns += ["-<stm32f30x_hrtim.c>"]
 elif "STM32L1XX_MD" in extra_flags:
-    ignore_files += ["stm32l1xx_flash_ramfunc.c"]
+    src_filter_patterns += ["-<stm32l1xx_flash_ramfunc.c>"]
 
 libs = []
 libs.append(envsafe.BuildLibrary(
     join("$BUILD_DIR", "FrameworkSPL"),
     join("$PLATFORMFW_DIR", "${BOARD_OPTIONS['build']['core']}", "variants",
          "${BOARD_OPTIONS['build']['variant']}", "src"),
-    ignore_files
+    src_filter=" ".join(src_filter_patterns)
 ))
 
 env.Append(LIBS=libs)

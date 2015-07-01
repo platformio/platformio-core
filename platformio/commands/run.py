@@ -73,11 +73,19 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
 
 class EnvironmentProcessor(object):
 
+    RENAMED_OPTIONS = {
+        "INSTALL_LIBS": "LIB_INSTALL",
+        "IGNORE_LIBS": "LIB_IGNORE",
+        "USE_LIBS": "LIB_USE",
+        "LDF_CYCLIC": "LIB_DFCYCLIC",
+        "SRCBUILD_FLAGS": "SRC_BUILD_FLAGS"
+    }
+
     def __init__(self, cmd_ctx, name, options,  # pylint: disable=R0913
                  targets, upload_port, verbose):
         self.cmd_ctx = cmd_ctx
         self.name = name
-        self.options = options
+        self.options = self._validate_options(options)
         self.targets = targets
         self.upload_port = upload_port
         self.verbose_level = int(verbose)
@@ -108,6 +116,23 @@ class EnvironmentProcessor(object):
 
         return not is_error
 
+    def _validate_options(self, options):
+        result = {}
+        for k, v in options.items():
+            _k = k.upper()
+            # process obsolete options
+            if _k in self.RENAMED_OPTIONS:
+                click.secho(
+                    "Warning! `%s` option is deprecated and will be "
+                    "removed in the next release! Please use "
+                    "`%s` instead." % (
+                        k, self.RENAMED_OPTIONS[_k].lower()),
+                    fg="yellow"
+                )
+                k = self.RENAMED_OPTIONS[_k].lower()
+            result[k] = v
+        return result
+
     def _get_build_variables(self):
         variables = ["PIOENV=" + self.name]
         if self.upload_port:
@@ -116,7 +141,7 @@ class EnvironmentProcessor(object):
             k = k.upper()
             if k == "TARGETS" or (k == "UPLOAD_PORT" and self.upload_port):
                 continue
-            variables.append("%s=%s" % (k.upper(), v))
+            variables.append("%s=%s" % (k, v))
         return variables
 
     def _get_build_targets(self):
@@ -139,8 +164,8 @@ class EnvironmentProcessor(object):
 
         # install platform and libs dependencies
         _autoinstall_platform(self.cmd_ctx, platform)
-        if "install_libs" in self.options:
-            _autoinstall_libs(self.cmd_ctx, self.options['install_libs'])
+        if "lib_install" in self.options:
+            _autoinstall_libs(self.cmd_ctx, self.options['lib_install'])
 
         p = PlatformFactory.newPlatform(platform)
         return p.run(build_vars, build_targets, self.verbose_level)

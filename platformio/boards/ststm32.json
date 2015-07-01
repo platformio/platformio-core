@@ -390,5 +390,37 @@
         },
         "url": "http://docs.armstrap.org/en/latest/hardware-overview.html",
         "vendor": "Armstrap"
+    },
+    "disco_l053c8": {
+        "build": {
+            "f_cpu": "32000000L",
+            "cpu": "cortex-m0plus",
+            "mcu": "stm32l053c8t6"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST 32L0538DISCOVERY",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 8192,
+            "maximum_size": 65536
+        },
+        "url": "http://www.st.com/web/en/catalog/tools/PF260319",
+        "vendor": "ST"
+    },
+    "disco_f334c8": {
+        "build": {
+            "f_cpu": "72000000L",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f334c8t6"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST 32F3348DISCOVERY",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 12288,
+            "maximum_size": 65536
+        },
+        "url": "http://www.st.com/web/en/catalog/tools/PF260318",
+        "vendor": "ST"
     }
 }

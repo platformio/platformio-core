@@ -11,11 +11,13 @@ except ImportError:
             break
     from platformio import util
 
+import json
+from os import getenv
 from os.path import isfile, join
 from time import time
 
-from SCons.Script import (DefaultEnvironment, Exit, SConscript,
-                          SConscriptChdir, Variables)
+from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
+                          SConscript, SConscriptChdir, Variables)
 
 from platformio.exception import UnknownBoard
 
@@ -25,6 +27,7 @@ from platformio.exception import UnknownBoard
 commonvars = Variables(None)
 commonvars.AddVariables(
     ("BUILD_SCRIPT",),
+    ("EXTRA_SCRIPT",),
     ("PIOENV",),
     ("PLATFORM",),
 
@@ -35,10 +38,11 @@ commonvars.AddVariables(
     # options
     ("FRAMEWORK",),
     ("BUILD_FLAGS",),
-    ("SRCBUILD_FLAGS",),
-    ("IGNORE_LIBS",),
-    ("USE_LIBS",),
-    ("LDF_CYCLIC",),
+    ("SRC_BUILD_FLAGS",),
+    ("SRC_FILTER",),
+    ("LIB_DFCYCLIC",),
+    ("LIB_IGNORE",),
+    ("LIB_USE",),
 
     # board options
     ("BOARD",),
@@ -54,7 +58,7 @@ commonvars.AddVariables(
 DefaultEnvironment(
     tools=[
         "gcc", "g++", "as", "ar", "gnulink",
-        "platformio", "pioupload", "pioar"
+        "platformio", "pioupload", "pioar", "piomisc"
     ],
     toolpath=[join("$PIOBUILDER_DIR", "tools")],
     variables=commonvars,
@@ -71,6 +75,7 @@ DefaultEnvironment(
     PIOPACKAGES_DIR=join("$PIOHOME_DIR", "packages"),
 
     BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
+    BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     LIBSOURCE_DIRS=[
         "$PROJECTLIB_DIR",
         util.get_lib_dir(),
@@ -113,8 +118,10 @@ if "BOARD" in env:
                  env.get("BOARD_OPTIONS", {}).get("platform")))
 
 
-if "IGNORE_LIBS" in env:
-    env['IGNORE_LIBS'] = [l.strip() for l in env['IGNORE_LIBS'].split(",")]
+for opt in ("LIB_IGNORE", "LIB_USE"):
+    if opt not in env:
+        continue
+    env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
 
 env.PrependENVPath(
     "PATH",
@@ -123,3 +130,14 @@ env.PrependENVPath(
 
 SConscriptChdir(0)
 SConscript(env.subst("$BUILD_SCRIPT"))
+
+if getenv("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT", None)):
+    SConscript(getenv("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")))
+
+if "envdump" in COMMAND_LINE_TARGETS:
+    print env.Dump()
+    Exit()
+
+if "idedata" in COMMAND_LINE_TARGETS:
+    print json.dumps(env.DumpIDEData())
+    Exit()

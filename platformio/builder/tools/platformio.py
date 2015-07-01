@@ -1,18 +1,22 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-import atexit
-import json
 import re
 from glob import glob
-from os import getenv, listdir, remove, sep, walk
+from os import getenv, listdir, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath
 
-from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
-                          SConscript, SConscriptChdir)
+from SCons.Script import DefaultEnvironment, Exit, SConscript
 from SCons.Util import case_sensitive_suffixes
 
 from platformio.util import pioversion_to_intstr
+
+
+SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
+SRC_HEADER_EXT = ["h", "hpp"]
+SRC_DEFAULT_FILTER = " ".join([
+    "+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep, "-<examples%s>" % sep
+])
 
 
 def BuildFirmware(env):
@@ -27,49 +31,41 @@ def BuildFirmware(env):
     env.ProcessFlags()
     env.BuildFramework()
 
-    firmenv = env.Clone()
-    vdirs = firmenv.VariantDirRecursive(
-        join("$BUILD_DIR", "src"), "$PROJECTSRC_DIR", duplicate=False)
-
     # build dependent libs
-    deplibs = firmenv.BuildDependentLibraries("$PROJECTSRC_DIR")
+    deplibs = env.BuildDependentLibraries("$PROJECTSRC_DIR")
 
     # append specified LD_SCRIPT
-    if "LDSCRIPT_PATH" in firmenv:
-        firmenv.Append(
-            LINKFLAGS=["-T", "$LDSCRIPT_PATH"]
+    if ("LDSCRIPT_PATH" in env and
+            not any(["-Wl,-T" in f for f in env['LINKFLAGS']])):
+        env.Append(
+            LINKFLAGS=["-Wl,-T", "$LDSCRIPT_PATH"]
         )
 
     # enable "cyclic reference" for linker
-    firmenv.Prepend(
+    env.Prepend(
         _LIBFLAGS="-Wl,--start-group "
     )
-    firmenv.Append(
+    env.Append(
         _LIBFLAGS=" -Wl,--end-group"
     )
 
-    # Handle SRCBUILD_FLAGS
-    if getenv("PLATFORMIO_SRCBUILD_FLAGS", None):
-        firmenv.MergeFlags(getenv("PLATFORMIO_SRCBUILD_FLAGS"))
-    if "SRCBUILD_FLAGS" in env:
-        firmenv.MergeFlags(env['SRCBUILD_FLAGS'])
+    # Handle SRC_BUILD_FLAGS
+    if getenv("PLATFORMIO_SRC_BUILD_FLAGS", None):
+        env.MergeFlags(getenv("PLATFORMIO_SRC_BUILD_FLAGS"))
+    if "SRC_BUILD_FLAGS" in env:
+        env.MergeFlags(env['SRC_BUILD_FLAGS'])
 
-    firmenv.Append(
+    env.Append(
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
             *pioversion_to_intstr())]
     )
 
-    if "envdump" in COMMAND_LINE_TARGETS:
-        print env.Dump()
-        Exit()
-
-    if "idedata" in COMMAND_LINE_TARGETS:
-        print json.dumps(env.DumpIDEData())
-        Exit()
-
-    return firmenv.Program(
+    return env.Program(
         join("$BUILD_DIR", "firmware"),
-        [firmenv.GlobCXXFiles(vdir) for vdir in vdirs],
+        env.LookupSources(
+            "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
+            src_filter=getenv("PLATFORMIO_SRC_FILTER",
+                              env.get("SRC_FILTER", None))),
         LIBS=env.get("LIBS", []) + deplibs,
         LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"],
         PROGSUFFIX=".elf"
@@ -95,13 +91,13 @@ def ProcessFlags(env):
         env.Append(_CPPDEFFLAGS=" %s" % " ".join(undefines))
 
 
-def GlobCXXFiles(env, path):
-    files = []
-    for suff in ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]:
-        _list = env.Glob(join(path, "*.%s" % suff))
-        if _list:
-            files += _list
-    return files
+def IsFileWithExt(env, file_, ext):  # pylint: disable=W0613
+    if basename(file_).startswith("."):
+        return False
+    for e in ext:
+        if file_.endswith(".%s" % e):
+            return True
+    return False
 
 
 def VariantDirWrap(env, variant_dir, src_dir, duplicate=True):
@@ -109,20 +105,53 @@ def VariantDirWrap(env, variant_dir, src_dir, duplicate=True):
     env.VariantDir(variant_dir, src_dir, duplicate)
 
 
-def VariantDirRecursive(env, variant_dir, src_dir, duplicate=True,
-                        ignore_pattern=None):
-    if not ignore_pattern:
-        ignore_pattern = (".git", ".svn")
+def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
+
+    SRC_FILTER_PATTERNS_RE = re.compile(r"(\+|\-)<([^>]+)>")
+
+    def _append_build_item(items, item, src_dir):
+        if env.IsFileWithExt(item, SRC_BUILD_EXT + SRC_HEADER_EXT):
+            items.add(item.replace(src_dir + sep, ""))
+
+    def _match_sources(src_dir, src_filter):
+        matches = set()
+        # correct fs directory separator
+        src_filter = src_filter.replace("/", sep).replace("\\", sep)
+        for (action, pattern) in SRC_FILTER_PATTERNS_RE.findall(src_filter):
+            items = set()
+            for item in glob(join(src_dir, pattern)):
+                if isdir(item):
+                    for root, _, files in walk(item, followlinks=True):
+                        for f in files:
+                            _append_build_item(items, join(root, f), src_dir)
+                else:
+                    _append_build_item(items, item, src_dir)
+            if action == "+":
+                matches |= items
+            else:
+                matches -= items
+        return sorted(list(matches))
+
+    sources = []
     variants = []
+
     src_dir = env.subst(src_dir)
-    for root, _, _ in walk(src_dir, followlinks=True):
-        _src_dir = root
-        _var_dir = variant_dir + root.replace(src_dir, "")
-        if any([s in _var_dir.lower() for s in ignore_pattern]):
-            continue
-        env.VariantDirWrap(_var_dir, _src_dir, duplicate)
-        variants.append(_var_dir)
-    return variants
+    if src_dir.endswith(sep):
+        src_dir = src_dir[:-1]
+
+    for item in _match_sources(src_dir, src_filter or SRC_DEFAULT_FILTER):
+        _reldir = dirname(item)
+        _src_dir = join(src_dir, _reldir) if _reldir else src_dir
+        _var_dir = join(variant_dir, _reldir) if _reldir else variant_dir
+
+        if _var_dir not in variants:
+            variants.append(_var_dir)
+            env.VariantDirWrap(_var_dir, _src_dir, duplicate)
+
+        if env.IsFileWithExt(item, SRC_BUILD_EXT):
+            sources.append(env.File(join(_var_dir, basename(item))))
+
+    return sources
 
 
 def BuildFramework(env):
@@ -135,7 +164,6 @@ def BuildFramework(env):
     for f in env['FRAMEWORK'].split(","):
         framework = f.strip().lower()
         if framework in env.get("BOARD_OPTIONS", {}).get("frameworks"):
-            SConscriptChdir(0)
             SConscript(
                 env.subst(join("$PIOBUILDER_DIR", "scripts", "frameworks",
                                "%s.py" % framework))
@@ -145,18 +173,11 @@ def BuildFramework(env):
                  framework)
 
 
-def BuildLibrary(env, variant_dir, library_dir, ignore_files=None):
+def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     lib = env.Clone()
-    vdirs = lib.VariantDirRecursive(
-        variant_dir, library_dir, ignore_pattern=(".git", ".svn", "examples"))
-    srcfiles = []
-    for vdir in vdirs:
-        for item in lib.GlobCXXFiles(vdir):
-            if not ignore_files or item.name not in ignore_files:
-                srcfiles.append(item)
     return lib.Library(
         lib.subst(variant_dir),
-        srcfiles
+        lib.LookupSources(variant_dir, src_dir, src_filter=src_filter)
     )
 
 
@@ -165,8 +186,6 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
     INCLUDES_RE = re.compile(
         r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")", re.M)
     LIBSOURCE_DIRS = [env.subst(d) for d in env.get("LIBSOURCE_DIRS", [])]
-    USE_LIBS = [l.strip() for l in env.get("USE_LIBS", "").split(",")
-                if l.strip()]
 
     # start internal prototypes
 
@@ -207,7 +226,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                 if not isdir(lsd_dir):
                     continue
 
-                for ld in USE_LIBS + sorted(listdir(lsd_dir)):
+                for ld in env.get("LIB_USE", []) + sorted(listdir(lsd_dir)):
                     if not isdir(join(lsd_dir, ld)):
                         continue
 
@@ -220,7 +239,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                     lib_name = basename(lib_dir)
 
                     # ignore user's specified libs
-                    if "IGNORE_LIBS" in env and lib_name in env['IGNORE_LIBS']:
+                    if lib_name in env.get("LIB_IGNORE", []):
                         continue
 
                     if not isfile(inc_path):
@@ -250,10 +269,10 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
         return result
 
     def _process_src_dir(state, src_dir):
-        for root, _, _ in walk(src_dir, followlinks=True):
-            for node in (env.GlobCXXFiles(root) +
-                         env.Glob(join(root, "*.h"))):
-                state = _parse_includes(state, node)
+        for root, _, files in walk(src_dir, followlinks=True):
+            for f in files:
+                if env.IsFileWithExt(f, SRC_BUILD_EXT + SRC_HEADER_EXT):
+                    state = _parse_includes(state, env.File(join(root, f)))
         return state
 
     def _parse_includes(state, node):
@@ -279,8 +298,7 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
                         _lib_dir))
                     state['libs'].add(_lib_dir)
 
-                    if getenv("PLATFORMIO_LDF_CYCLIC",
-                              env.subst("$LDF_CYCLIC")).lower() == "true":
+                    if env.subst("$LIB_DFCYCLIC").lower() == "true":
                         state = _process_src_dir(state, _lib_dir)
         return state
 
@@ -306,151 +324,6 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
     return libs
 
 
-class InoToCPPConverter(object):
-
-    PROTOTYPE_RE = re.compile(
-        r"""^(
-        (\s*[a-z_\d]+){1,2}         # return type
-        (\s+[a-z_\d]+\s*)           # name of prototype
-        \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
-        )\s*\{                      # must end with {
-        """,
-        re.X | re.M | re.I
-    )
-
-    DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
-
-    STRIPCOMMENTS_RE = re.compile(r"(/\*.*?\*/|(^|\s+)//[^\r\n]*$)",
-                                  re.M | re.S)
-
-    def __init__(self, nodes):
-        self.nodes = nodes
-
-    def is_main_node(self, contents):
-        return self.DETECTMAIN_RE.search(contents)
-
-    @staticmethod
-    def _replace_comments_callback(match):
-        if "\n" in match.group(1):
-            return "\n" * match.group(1).count("\n")
-        else:
-            return " "
-
-    def _parse_prototypes(self, contents):
-        prototypes = []
-        reserved_keywords = set(["if", "else", "while"])
-        for item in self.PROTOTYPE_RE.findall(contents):
-            if set([item[1].strip(), item[2].strip()]) & reserved_keywords:
-                continue
-            prototypes.append(item[0])
-        return prototypes
-
-    def append_prototypes(self, fname, contents, prototypes):
-        contents = self.STRIPCOMMENTS_RE.sub(self._replace_comments_callback,
-                                             contents)
-        result = []
-        is_appended = False
-        linenum = 0
-        for line in contents.splitlines():
-            linenum += 1
-            line = line.strip()
-
-            if not is_appended and line and not line.startswith("#"):
-                is_appended = True
-                result.append("%s;" % ";\n".join(prototypes))
-                result.append('#line %d "%s"' % (linenum, fname))
-
-            result.append(line)
-
-        return result
-
-    def convert(self):
-        prototypes = []
-        data = []
-        for node in self.nodes:
-            ino_contents = node.get_text_contents()
-            prototypes += self._parse_prototypes(ino_contents)
-
-            item = (basename(node.get_path()), ino_contents)
-            if self.is_main_node(ino_contents):
-                data = [item] + data
-            else:
-                data.append(item)
-
-        if not data:
-            return None
-
-        result = ["#include <Arduino.h>"]
-        is_first = True
-
-        for name, contents in data:
-            if is_first and prototypes:
-                result += self.append_prototypes(name, contents, prototypes)
-            else:
-                result.append('#line 1 "%s"' % name)
-                result.append(contents)
-            is_first = False
-
-        return "\n".join(result)
-
-
-def ConvertInoToCpp(env):
-
-    def delete_tmpcpp_file(file_):
-        remove(file_)
-
-    ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
-                 env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
-
-    c = InoToCPPConverter(ino_nodes)
-    data = c.convert()
-
-    if not data:
-        return
-
-    tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "tmp_ino_to.cpp")
-    with open(tmpcpp_file, "w") as f:
-        f.write(data)
-
-    atexit.register(delete_tmpcpp_file, tmpcpp_file)
-
-
-def DumpIDEData(env):
-    data = {
-        "defines": [],
-        "includes": []
-    }
-
-    # includes from framework and libs
-    for item in env.get("VARIANT_DIRS", []):
-        data['includes'].append(env.subst(item[1]))
-
-    # includes from toolchain
-    toolchain_dir = env.subst(
-        join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
-    toolchain_incglobs = [
-        join(toolchain_dir, "*", "include"),
-        join(toolchain_dir, "lib", "gcc", "*", "*", "include")
-    ]
-    for g in toolchain_incglobs:
-        data['includes'].extend(glob(g))
-
-    # global symbols
-    for item in env.get("CPPDEFINES", []):
-        data['defines'].append(env.subst(item))
-
-    # special symbol for Atmel AVR MCU
-    board = env.get("BOARD_OPTIONS", {})
-    if board and board['platform'] == "atmelavr":
-        data['defines'].append(
-            "__AVR_%s__" % board['build']['mcu'].upper()
-            .replace("ATMEGA", "ATmega")
-            .replace("ATTINY", "ATtiny")
-        )
-
-    return data
-
-
 def exists(_):
     return True
 
@@ -458,12 +331,10 @@ def exists(_):
 def generate(env):
     env.AddMethod(BuildFirmware)
     env.AddMethod(ProcessFlags)
-    env.AddMethod(GlobCXXFiles)
+    env.AddMethod(IsFileWithExt)
     env.AddMethod(VariantDirWrap)
-    env.AddMethod(VariantDirRecursive)
+    env.AddMethod(LookupSources)
     env.AddMethod(BuildFramework)
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildDependentLibraries)
-    env.AddMethod(ConvertInoToCpp)
-    env.AddMethod(DumpIDEData)
     return env

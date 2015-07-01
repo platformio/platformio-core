@@ -145,7 +145,8 @@ need to specify ``board_mcu``, ``board_f_cpu``, ``upload_protocol`` or
 ``upload_speed`` options. Just define a ``board`` type and *PlatformIO* will
 pre-fill options described above with appropriate values.
 
-You can find the ``board`` type in *Boards* section of each :ref:`platforms`.
+You can find the ``board`` type in *Boards* section of each :ref:`platforms` or
+using `PlatformIO Embedded Boards Explorer <http://platformio.org/#!/boards>`_.
 
 
 ``board_mcu``
@@ -198,20 +199,6 @@ A protocol that "uploader" tool uses to talk to the board.
 A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
 which "uploader" tool uses when sending firmware to board.
 
-
-``targets``
-^^^^^^^^^^^
-
-A list with targets which will be processed by :ref:`cmd_run` command by
-default. You can enter more then one target separated with "space".
-
-When no targets are defined, *PlatformIO* will build only sources by default.
-
-.. note::
-    This option is useful to enable "auto-uploading" after building operation
-    (``targets = upload``).
-
-
 .. _projectconf_build_flags:
 
 ``build_flags``
@@ -226,10 +213,6 @@ processes:
     * - Format
       - Scope
       - Description
-    * - ``-Wp,option``
-      - CPPFLAGS
-      - Bypass the compiler driver and pass *option* directly  through to the
-        preprocessor
     * - ``-D name``
       - CPPDEFINES
       - Predefine *name* as a macro, with definition 1.
@@ -241,6 +224,10 @@ processes:
       - CPPDEFINES
       - Cancel any previous definition of *name*, either built in or provided
         with a ``-D`` option.
+    * - ``-Wp,option``
+      - CPPFLAGS
+      - Bypass the compiler driver and pass *option* directly  through to the
+        preprocessor
     * - ``-Wall``
       - CCFLAGS
       - Turns on all optional warnings which are desirable for normal code.
@@ -254,9 +241,17 @@ processes:
       - CCFLAGS
       - Process *file* as if ``#include "file"`` appeared as the first line of
         the primary source file.
+    * - ``-Idir``
+      - CPPPATH
+      - Add the directory *dir* to the list of directories to be searched
+        for header files.
     * - ``-Wa,option``
       - ASFLAGS, CCFLAGS
       - Pass *option* as an option to the assembler. If *option* contains
+        commas, it is split into multiple options at the commas.
+    * - ``-Wl,option``
+      - LINKFLAGS
+      - Pass *option* as an option to the linker. If *option* contains
         commas, it is split into multiple options at the commas.
     * - ``-llibrary``
       - LIBS
@@ -265,10 +260,6 @@ processes:
       - LIBPATH
       - Add directory *dir* to the list of directories to be searched for
         ``-l``.
-    * - ``-Idir``
-      - CPPPATH
-      - Add the directory *dir* to the list of directories to be searched
-        for header files.
 
 This option can be set by global environment variable
 :ref:`envvar_PLATFORMIO_BUILD_FLAGS`.
@@ -278,10 +269,13 @@ Example:
 .. code-block::   ini
 
     [env:specific_defines]
-    build_flags = -O2 -Dfoo -Dbar=1
+    build_flags = -Dfoo -Dbar=1
 
     [env:specific_inclibs]
     build_flags = -I/opt/include -L/opt/lib -lfoo
+
+    [env:specific_ld_script]
+    build_flags = -Wl,-T/path/to/ld_script.ld
 
 
 For more detailed information about available flags/options go to:
@@ -300,20 +294,42 @@ For more detailed information about available flags/options go to:
 * `Options for Directory Search
   <https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html>`_
 
-.. _projectconf_srcbuild_flags:
+.. _projectconf_src_build_flags:
 
-``srcbuild_flags``
-^^^^^^^^^^^^^^^^^^
+``src_build_flags``
+^^^^^^^^^^^^^^^^^^^
 
-An option ``srcbuild_flags`` has the same behaviour like ``build_flags``
+An option ``src_build_flags`` has the same behaviour like ``build_flags``
 but will be applied only for the project source code from
 :ref:`projectconf_pio_src_dir` directory.
 
 This option can be set by global environment variable
-:ref:`envvar_PLATFORMIO_SRCBUILD_FLAGS`.
+:ref:`envvar_PLATFORMIO_SRC_BUILD_FLAGS`.
 
-``install_libs``
-^^^^^^^^^^^^^^^^
+.. _projectconf_src_filter:
+
+``src_filter``
+^^^^^^^^^^^^^^
+
+This option allows to specify which source files should be included/excluded
+from build process. Filter supports 2 templates:
+
+* ``+<PATH>`` include template
+* ``-<PATH>`` exclude template
+
+``PATH`` MAST BE related from :ref:`projectconf_pio_src_dir`. All patterns will
+be applied in theirs order.
+`GLOB Patterns <http://en.wikipedia.org/wiki/Glob_(programming)>`_ are allowed.
+
+By default, ``src_filter`` is predefined to
+``+<*> -<.git/> -<svn/> -<examples/>``, which means "includes ALL files, then
+exclude ``.git`` and ``svn`` repository folders and exclude ``examples`` folder.
+
+This option can be set by global environment variable
+:ref:`envvar_PLATFORMIO_SRC_FILTER`.
+
+``lib_install``
+^^^^^^^^^^^^^^^
 
 Specify dependent libraries which should be installed before environment
 process. The only library IDs are allowed. Multiple libraries can be passed
@@ -323,43 +339,41 @@ You can obtain library IDs using :ref:`cmd_lib_search` command.
 
 Example:
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:depends_on_some_libs]
-    install_libs = 1,13,19
+    lib_install = 1,13,19
 
-``use_libs``
-^^^^^^^^^^^^
+``lib_use``
+^^^^^^^^^^^
 
 Specify libraries which should be used by ``Library Dependency Finder (LDF)`` with
 the highest priority.
 
 Example:
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:libs_with_highest_priority]
-    use_libs = OneWire_ID1
+    lib_use = OneWire_ID1,SPI
 
-``ignore_libs``
-^^^^^^^^^^^^^^^
+``lib_ignore``
+^^^^^^^^^^^^^^
 
 Specify libraries which should be ignored by ``Library Dependency Finder (LDF)``
 
 Example:
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:ignore_some_libs]
-    ignore_libs = SPI,EngduinoV3_ID123
+    lib_ignore = SPI,EngduinoV3_ID123
 
-.. _projectconf_ldf_cyclic:
-
-``ldf_cyclic``
-^^^^^^^^^^^^^^
+``lib_dfcyclic``
+^^^^^^^^^^^^^^^^
 
 Control cyclic (recursive) behaviour for ``Library Dependency Finder (LDF)``.
-By default, this option is turned OFF (``ldf_cyclic=False``) and means, that
+By default, this option is turned OFF (``lib_dfcyclic=False``) and means, that
 ``LDF`` will find only libraries which are included in source files from the
 project :ref:`projectconf_pio_src_dir`.
 
@@ -367,16 +381,76 @@ If you want to enable cyclic (recursive, nested) search, please set this option
 to ``True``. Founded library will be treated like a new source files and
 ``LDF`` will search dependencies for it.
 
-This option can be set by global environment variable
-:ref:`envvar_PLATFORMIO_LDF_CYCLIC`.
-
 Example:
 
-.. code-block::   ini
+.. code-block:: ini
 
     [env:libs_with_enabled_ldf_cyclic]
-    ldf_cyclic = True
+    lib_dfcyclic = True
 
+.. _projectconf_extra_script:
+
+``extra_script``
+^^^^^^^^^^^^^^^^
+
+Allows to launch extra script using `SCons <http://www.scons.org>`_ software
+construction tool. For more details please follow to "Construction Environments"
+section of
+`SCons documentation <http://www.scons.org/doc/production/HTML/scons-user.html#chap-environments>`_.
+
+This option can be set by global environment variable
+:ref:`envvar_PLATFORMIO_EXTRA_SCRIPT`.
+
+Example, specify own upload command for :ref:`platform_atmelavr`:
+
+``platformio.ini``:
+
+.. code-block:: ini
+
+    [env:env_with_specific_extra_script]
+    platform = atmelavr
+    extra_script = /path/to/extra_script.py
+
+``extra_script.py``:
+
+.. code-block:: python
+
+    from SCons.Script import DefaultEnvironment
+
+    env = DefaultEnvironment()
+
+    env.Replace(UPLOADHEXCMD='"$UPLOADER" --uploader --flags')
+
+    # uncomment line below to see environment variables
+    # print env.Dump()
+
+See built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
+
+``targets``
+^^^^^^^^^^^
+
+A list with targets which will be processed by :ref:`cmd_run` command by
+default. You can enter more then one target separated with "space".
+
+Pre-built targets:
+
+* ``clean`` delete compiled object files, libraries and firmware binaries
+* ``upload`` enable "auto-uploading" for embedded platforms after building
+  operation
+* ``envdump`` dump current build environment
+
+**Tip!** You can use these targets like an option to
+:option:`platformio run --target` command. For example:
+
+.. code-block:: bash
+
+    # clean project
+    platformio run -t clean
+
+    # dump curent build environment
+    platformio run --target envdump
+
+When no targets are defined, *PlatformIO* will build only sources by default.
 
 .. _projectconf_examples:
 

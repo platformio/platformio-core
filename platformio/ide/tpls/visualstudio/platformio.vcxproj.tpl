@@ -39,26 +39,33 @@
     <NMakeBuildCommandLine>platformio --force run</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>platformio --force run --target clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>{{";".join(defines)}}</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>{{";".join(includes)}}</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>{{";".join(["$(HOMEDRIVE)$(HOMEPATH)%s" % i.replace(user_home_dir, "") if i.startswith(user_home_dir) else i for i in includes])}}</NMakeIncludeSearchPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>platformio run</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>platformio run --target clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>{";".join(defines)}}</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>{{";".join(includes)}}</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>{{";".join(["$(HOMEDRIVE)$(HOMEPATH)%s" % i.replace(user_home_dir, "") if i.startswith(user_home_dir) else i for i in includes])}}</NMakeIncludeSearchPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <Text Include="readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="platformio.ini" />
-    % for file in srcfiles:
-    <None Include="{{file}}" />
-    % end
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <None Include="platformio.ini" />
+  </ItemGroup>
+  % for file in srcfiles:
+  <ItemGroup>
+    % if any([file.endswith(".%s" % e) for e in ("h", "hh", "hpp", "inc")]):
+    <ClInclude Include="{{file}}">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    % else:
+    <ClCompile Include="{{file}}">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    %end
+  </ItemGroup>
+  % end
 </Project>

@@ -38,15 +38,16 @@ PlatformIO
 `Reddit <http://www.reddit.com/r/platformio/>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_
 
-*Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
-Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
-libOpenCM3, etc.*
-
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
 
 `PlatformIO <http://platformio.org>`_ is a cross-platform code builder
-and the missing library manager.
+and the missing library manager (Ready for embedded development, IDE and
+Continuous integration, Arduino and MBED compatible).
+
+*Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
+Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
+libOpenCM3, etc.*
 
 * `Get Started <http://platformio.org/#!/get-started>`_
 * `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
@@ -81,11 +82,13 @@ Embedded Development. *Easier Than Ever.*
 settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 
 * Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
-* Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
-* Configurable `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
+* `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_ with
+  *Arduino, Eclipse, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
+* `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
+  with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
+* Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable
+  `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
 * Automatic **firmware uploading**
-* Integration with `development environments (IDE) <http://docs.platformio.org/en/latest/ide.html>`_
-* Ready for **Cloud Compiling** and `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
 * Pre-built tool chains, frameworks for the popular `Hardware Platforms <http://platformio.org/#!/platforms>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-embedded-development.png

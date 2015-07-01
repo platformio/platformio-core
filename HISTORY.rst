@@ -1,11 +1,41 @@
 Release History
 ===============
 
+2.2.0 (2015-07-01)
+------------------
+
+* Allowed to exclude/include source files from build process using
+  `src_filter <http://docs.platformio.org/en/latest/projectconf.html#src-filter>`__
+  (`issue #240 <https://github.com/platformio/platformio/issues/240>`_)
+* Launch own extra script before firmware building/uploading processes
+  (`issue #239 <https://github.com/platformio/platformio/issues/239>`_)
+* Specify own path to the linker script (ld) using
+  `build_flags <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`__
+  option
+  (`issue #233 <https://github.com/platformio/platformio/issues/233>`_)
+* Specify library compatibility with the all platforms/frameworks
+  using ``*`` symbol in
+  `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
+* Added support for new embedded boards: *ST 32L0538DISCOVERY and Delta DFCM-NNN40*
+  to `Framework mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+* Updated packages for
+  `Framework Arduino (AVR, SAM, Espressif and Teensy cores <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__,
+  `Framework mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__,
+  `Espressif ESP8266 SDK <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  (`issue #246 <https://github.com/platformio/platformio/issues/246>`_)
+* Fixed ``stk500v2_command(): command failed``
+  (`issue #238 <https://github.com/platformio/platformio/issues/238>`_)
+* Fixed IDE project generator when board is specified
+  (`issue #242 <https://github.com/platformio/platformio/issues/242>`_)
+* Fixed relative path for includes when generating project for IDE
+  (`issue #243 <https://github.com/platformio/platformio/issues/243>`_)
+* Fixed ESP8266 native SDK exception
+  (`issue #245 <https://github.com/platformio/platformio/issues/245>`_)
+
 2.1.2 (2015-06-21)
 ------------------
 
 * Fixed broken link to SCons installer
-
 
 2.1.1 (2015-06-09)
 ------------------
@@ -43,9 +73,8 @@ Release History
 2.0.1 (2015-05-27)
 ------------------
 
-* Handle new environment variables
+* Handle new environment variable
   `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-flags>`_
-  and `PLATFORMIO_LDF_CYCLIC <http://docs.platformio.org/en/latest/envvars.html#platformio-ldf-cyclic>`_
 * Pass to API requests information about Continuous Integration system. This
   information will be used by PlatformIO-API.
 * Use ``include`` directories from toolchain when initialising project for IDE
@@ -85,11 +114,11 @@ Release History
   (`issue #192 <https://github.com/platformio/platformio/issues/192>`_)
 * Control verbosity of `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-v>`_ command via ``-v/--verbose`` option
 * Add library dependencies for build environment using
-  `install_libs <http://docs.platformio.org/en/latest/projectconf.html#install-libs>`_
+  `lib_install <http://docs.platformio.org/en/latest/projectconf.html#lib-install>`_
   option in ``platformio.ini``
   (`issue #134 <https://github.com/platformio/platformio/issues/134>`_)
 * Specify libraries which are compatible with build environment using
-  `use_libs <http://docs.platformio.org/en/latest/projectconf.html#use-libs>`_
+  `lib_use <http://docs.platformio.org/en/latest/projectconf.html#lib-use>`_
   option in ``platformio.ini``
   (`issue #148 <https://github.com/platformio/platformio/issues/148>`_)
 * Add more boards to PlatformIO project with
@@ -277,7 +306,7 @@ Release History
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/platformio/platformio/issues/42>`_)
 * Allowed to ignore some libs from *Library Dependency Finder* via
-  `ignore_libs <http://docs.platformio.org/en/latest/projectconf.html#ignore-libs>`_ option
+  `lib_ignore <http://docs.platformio.org/en/latest/projectconf.html#lib-ignore>`_ option
 * Improved `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command: asynchronous output for build process, timing and detailed
   information about environment configuration
@@ -445,10 +474,10 @@ Release History
 
 * Implemented `platformio serialports <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html>`_ command
 * Allowed to put special build flags only for ``src`` files via
-  `srcbuild_flags <http://docs.platformio.org/en/latest/projectconf.html#srcbuild-flags>`_
+  `src_build_flags <http://docs.platformio.org/en/latest/projectconf.html#src_build-flags>`_
   environment option
 * Allowed to override some of settings via system environment variables
-  such as: ``PLATFORMIO_SRCBUILD_FLAGS`` and ``PLATFORMIO_ENVS_DIR``
+  such as: ``PLATFORMIO_SRC_BUILD_FLAGS`` and ``PLATFORMIO_ENVS_DIR``
 * Added ``--upload-port`` option for `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--upload-port>`__ command
 * Implemented (especially for `SmartAnthill <http://docs.smartanthill.ikravets.com/>`_)
   `platformio run -t uploadlazy <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`_

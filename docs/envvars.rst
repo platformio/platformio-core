@@ -70,19 +70,26 @@ PLATFORMIO_BUILD_FLAGS
 
 Allows to set :ref:`projectconf` option :ref:`projectconf_build_flags`.
 
-.. _envvar_PLATFORMIO_SRCBUILD_FLAGS:
+.. _envvar_PLATFORMIO_SRC_BUILD_FLAGS:
 
-PLATFORMIO_SRCBUILD_FLAGS
-~~~~~~~~~~~~~~~~~~~~~~~~~
+PLATFORMIO_SRC_BUILD_FLAGS
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Allows to set :ref:`projectconf` option :ref:`projectconf_srcbuild_flags`.
+Allows to set :ref:`projectconf` option :ref:`projectconf_src_build_flags`.
 
-.. _envvar_PLATFORMIO_LDF_CYCLIC:
+.. _envvar_PLATFORMIO_SRC_FILTER:
 
-PLATFORMIO_LDF_CYCLIC
+PLATFORMIO_SRC_FILTER
 ~~~~~~~~~~~~~~~~~~~~~
 
-Allows to set :ref:`projectconf` option :ref:`projectconf_ldf_cyclic`.
+Allows to set :ref:`projectconf` option :ref:`projectconf_src_filter`.
+
+.. _envvar_PLATFORMIO_EXTRA_SCRIPT:
+
+PLATFORMIO_EXTRA_SCRIPT
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Allows to set :ref:`projectconf` option :ref:`projectconf_extra_script`.
 
 Settings
 --------

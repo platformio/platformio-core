@@ -86,7 +86,7 @@ def cli(project_dir, board, ide, disable_auto_uploading, env_prefix):
             project_file, board, disable_auto_uploading, env_prefix)
 
     if ide:
-        pg = ProjectGenerator(project_dir, ide)
+        pg = ProjectGenerator(project_dir, ide, board[0] if board else None)
         pg.generate()
 
     click.secho(

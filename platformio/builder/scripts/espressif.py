@@ -77,7 +77,7 @@ env.Replace(
         "-cp", "$UPLOAD_PORT",
         "-ca", "0x00000",
         "-cf", "${SOURCES[0]}",
-        "-ca", "0x10000",
+        "-ca", "0x40000" if "FRAMEWORK" not in env else "0x10000",
         "-cf", "${SOURCES[1]}"
     ],
     UPLOADCMD='$UPLOADER $UPLOADERFLAGS'
@@ -140,7 +140,8 @@ if "uploadlazy" in COMMAND_LINE_TARGETS:
 else:
     target_firm = env.ElfToBin(
         [join("$BUILD_DIR", "firmware_00000"),
-         join("$BUILD_DIR", "firmware_10000")], target_elf)
+         join("$BUILD_DIR", "firmware_%s" %
+              ("40000" if "FRAMEWORK" not in env else "10000"))], target_elf)
 
 
 #

@@ -100,3 +100,9 @@ Please upgrade *SetupTools* package:
     # Then re-install PlatformIO
     $ [sudo] pip uninstall platformio
     $ [sudo] pip install platformio
+
+ARM toolchain: ``cc1plus: error while loading shared libraries``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See related answers for
+`error while loading shared libraries <https://github.com/platformio/platformio/issues?utf8=✓&q=error+while+loading+shared+libraries>`_.
