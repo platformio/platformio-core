@@ -1,7 +1,7 @@
 Release History
 ===============
 
-2.2.0 (2015-??-??)
+2.2.0 (2015-07-01)
 ------------------
 
 * Allowed to exclude/include source files from build process using
