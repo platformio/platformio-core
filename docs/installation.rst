@@ -64,6 +64,7 @@ To install or upgrade *PlatformIO*, download
 script. Then run the following (you might need to run ``sudo`` first):
 
 .. code-block:: bash
+
     # change directory to folder where is located downloaded "get-platformio.py"
     cd /path/to/dir/where/is/installer/script
     
