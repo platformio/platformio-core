@@ -64,7 +64,10 @@ To install or upgrade *PlatformIO*, download
 script. Then run the following (you might need to run ``sudo`` first):
 
 .. code-block:: bash
-
+    # change directory to folder where is located downloaded "get-platformio.py"
+    cd /path/to/dir/where/is/installer/script
+    
+    # run it
     python get-platformio.py
 
 
@@ -72,6 +75,10 @@ On *Windows OS* it may look like:
 
 .. code-block:: bash
 
+    # change directory to folder where is located downloaded "get-platformio.py"
+    cd C:\path\to\dir\where\is\installer\script
+    
+    # run it
     C:\Python27\python.exe get-platformio.py
 
 Full Guide
