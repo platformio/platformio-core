@@ -1,6 +1,12 @@
 Release History
 ===============
 
+2.2.1 (2015-??-??)
+------------------
+
+* Fixed incorrect arguments handling for `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ command
+  (`issue #248 <https://github.com/platformio/platformio/issues/248>`_)
+
 2.2.0 (2015-07-01)
 ------------------
 
