@@ -34,6 +34,12 @@ application:
     :ref:`MUST DISABLE <faq_troubleshooting_pioblocksprompt>` all prompts.
     It will allow you to avoid blocking.
 
+.. note::
+    **Linux Users:** Don't forget to install "udev" rules file
+    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+
+    **Windows Users:** Please check that you have correctly installed USB driver
+    from board manufacturer
 
 Troubleshooting
 ---------------
@@ -67,7 +73,7 @@ script. Then run the following (you might need to run ``sudo`` first):
 
     # change directory to folder where is located downloaded "get-platformio.py"
     cd /path/to/dir/where/is/installer/script
-    
+
     # run it
     python get-platformio.py
 
@@ -78,7 +84,7 @@ On *Windows OS* it may look like:
 
     # change directory to folder where is located downloaded "get-platformio.py"
     cd C:\path\to\dir\where\is\installer\script
-    
+
     # run it
     C:\Python27\python.exe get-platformio.py
 
