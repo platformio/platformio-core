@@ -136,7 +136,11 @@ target_elf = env.BuildFirmware()
 #
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_firm = join("$BUILD_DIR", "firmware.bin")
+    target_firm = [
+        join("$BUILD_DIR", "firmware_00000.bin"),
+        join("$BUILD_DIR", "firmware_%s.bin" %
+             ("40000" if "FRAMEWORK" not in env else "10000"))
+    ]
 else:
     target_firm = env.ElfToBin(
         [join("$BUILD_DIR", "firmware_00000"),
