@@ -2,8 +2,7 @@
 # See LICENSE for details.
 
 import json
-from glob import glob
-from os import listdir, walk
+from os import listdir, makedirs, walk
 from os.path import abspath, basename, expanduser, isdir, join, relpath
 
 import bottle
@@ -76,14 +75,26 @@ class ProjectGenerator(object):
         return result
 
     def get_tpls(self):
+        tpls = []
         tpls_dir = join(util.get_source_dir(), "ide", "tpls", self.ide)
-        return glob(join(tpls_dir, ".*.tpl")) + glob(join(tpls_dir, "*.tpl"))
+        for root, _, files in walk(tpls_dir):
+            for f in files:
+                if f.endswith(".tpl"):
+                    tpls.append((
+                        root.replace(tpls_dir, ""), join(root, f)))
+        return tpls
 
     def generate(self):
-        for tpl_path in self.get_tpls():
-            file_name = basename(tpl_path)[:-4]
-            with open(join(self.project_dir, file_name), "w") as f:
-                f.write(self._render_tpl(tpl_path).encode("utf8"))
+        for _relpath, _path in self.get_tpls():
+            tpl_dir = self.project_dir
+            if _relpath:
+                tpl_dir = join(self.project_dir, _relpath)[1:]
+                if not isdir(tpl_dir):
+                    makedirs(tpl_dir)
+
+            file_name = basename(_path)[:-4]
+            with open(join(tpl_dir, file_name), "w") as f:
+                f.write(self._render_tpl(_path).encode("utf8"))
 
     def _render_tpl(self, tpl_path):
         content = ""
