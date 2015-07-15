@@ -4,6 +4,10 @@ Release History
 2.2.1 (2015-??-??)
 ------------------
 
+* Project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
+  (`issue #132 <https://github.com/platformio/platformio/issues/132>`_)
+* Updated ``tool-bossac`` package to 1.5 version for `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`__ platform
+  (`issue #251 <https://github.com/platformio/platformio/issues/251>`_)
 * Fixed incorrect arguments handling for `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ command
   (`issue #248 <https://github.com/platformio/platformio/issues/248>`_)
 
