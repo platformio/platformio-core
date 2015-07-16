@@ -33,12 +33,16 @@ Since PlatformIO 2.0 you can generate CLion compatible project using
 
     platformio init --ide clion --board %TYPE%
 
-Then import this project from start menu or via ``File > Import Project>`` and specify root directory where is located.
-
-:ref:`projectconf`
+Then import this project from start menu or via ``File > Import Project>`` and
+specify root directory where is located.
 
 .. warning::
-    CLion is still in the development stage, so some of the features probably will not work with PlatformIO
+    CLion is still in the development stage, so some of the features (like,
+    auto-complete) probably will not work with PlatformIO. See
+    `CLion issue #CPP-3977 <https://youtrack.jetbrains.com/issue/CPP-3977>`_.
+
+    Active discussion located in
+    `PlatformIO issue #132 <https://github.com/platformio/platformio/issues/132>`_.
 
 Screenshot
 ----------
