@@ -122,7 +122,7 @@ if "FRAMEWORK" not in env:
         LDSCRIPT_PATH=join(
             "$PIOPACKAGES_DIR", "sdk-esp8266", "ld", "eagle.app.v6.ld"),
         LIBS=["c", "gcc", "phy", "pp", "net80211", "lwip", "wpa", "main",
-              "json", "upgrade", "smartconfig", "at", "ssl"]
+              "json", "upgrade", "smartconfig", "pwm", "at", "ssl"]
     )
 
 #
