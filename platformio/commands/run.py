@@ -192,8 +192,7 @@ def _autoinstall_platform(ctx, platform, targets):
             cmd_options['with_package'] = ["uploader"]
 
     elif (platform in installed_platforms and
-          set(p.pkg_aliases_to_names(["toolchain"])) <=
-          set(p.get_installed_packages())):
+          set(p.get_default_packages()) <= set(p.get_installed_packages())):
         return
 
     if (not app.get_setting("enable_prompts") or
