@@ -1,7 +1,7 @@
 Release History
 ===============
 
-2.2.1 (2015-??-??)
+2.2.1 (2015-07-17)
 ------------------
 
 * Project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
