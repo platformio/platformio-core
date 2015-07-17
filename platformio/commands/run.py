@@ -193,7 +193,7 @@ def _autoinstall_platform(ctx, platform, targets):
 
     elif (set(p.pkg_aliases_to_names(["toolchain"])) <=
           set(p.get_installed_packages())):
-            return
+        return
 
     if (not app.get_setting("enable_prompts") or
             click.confirm("The platform '%s' has not been installed yet. "
