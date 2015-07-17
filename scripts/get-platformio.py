@@ -100,9 +100,7 @@ def main():
         ("Installing Python Package Manager", install_pip, []),
         ("Installing PlatformIO and dependencies", install_pypi_packages, [
             [["setuptools"], ["platformio"], [
-                "--egg",
-                "http://sourceforge.net/projects/platformio-storage/files/"
-                "scons.zip/download"
+                "--egg", "http://dl.platformio.org/scons.zip"
             ]]
         ])
     ]

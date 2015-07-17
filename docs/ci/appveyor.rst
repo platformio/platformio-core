@@ -134,7 +134,7 @@ same for the all projects, don't need to modify them):
     function InstallScons ($python_home) {
         Write-Host "Start installing Scons"
         $pip_path = $python_home + "/Scripts/pip.exe"
-        & $pip_path install --egg "http://sourceforge.net/projects/scons/files/latest/download"
+        & $pip_path install --egg "http://dl.platformio.org/scons.zip"
         Write-Host "Scons installed"
     }
 
