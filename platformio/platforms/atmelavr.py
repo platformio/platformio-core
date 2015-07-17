@@ -25,10 +25,12 @@ class AtmelavrPlatform(BasePlatform):
         },
 
         "tool-avrdude": {
+            "alias": "uploader",
             "default": True
         },
 
         "tool-micronucleus": {
+            "alias": "uploader",
             "default": True
         },
 
@@ -51,11 +53,11 @@ class AtmelavrPlatform(BasePlatform):
         for v in variables:
             if "BOARD=" not in v:
                 continue
-            tuploader = "tool-avrdude"
+            disable_tool = "tool-micronucleus"
             _, board = v.split("=")
             bdata = get_boards(board)
             if "digispark" in bdata['build']['core']:
-                tuploader = "tool-micronucleus"
-            self.PACKAGES[tuploader]['alias'] = "uploader"
+                disable_tool = "tool-avrdude"
+            del self.PACKAGES[disable_tool]['alias']
             break
         return BasePlatform.run(self, variables, targets, verbose)

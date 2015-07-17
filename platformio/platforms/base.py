@@ -242,6 +242,10 @@ class BasePlatform(object):
             names.append(name)
         return names
 
+    def get_default_packages(self):
+        return [k for k, v in self.get_packages().items()
+                if v.get("default", False)]
+
     def get_installed_packages(self):
         pm = PackageManager()
         return [n for n in self.get_packages().keys() if pm.is_installed(n)]

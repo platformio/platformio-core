@@ -68,7 +68,7 @@ def serialports_list(json_output):
 @click.option("--quiet", is_flag=True,
               help="Diagnostics: suppress non-error messages, default=Off")
 def serialports_monitor(**kwargs):
-    sys.argv = sys.argv[3:]
+    sys.argv = sys.argv[2:]
 
     if not kwargs['port']:
         for item in get_serialports():

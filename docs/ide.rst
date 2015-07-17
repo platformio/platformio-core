@@ -7,6 +7,7 @@ IDE Integration
     :maxdepth: 2
 
     ide/arduino
+    ide/clion
     ide/eclipse
     ide/energia
     ide/qtcreator

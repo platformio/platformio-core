@@ -6,7 +6,8 @@ from glob import glob
 from os import getenv, listdir, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath
 
-from SCons.Script import DefaultEnvironment, Exit, SConscript
+from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
+                          SConscript)
 from SCons.Util import case_sensitive_suffixes
 
 from platformio.util import pioversion_to_intstr
@@ -155,7 +156,7 @@ def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
 
 
 def BuildFramework(env):
-    if "FRAMEWORK" not in env:
+    if "FRAMEWORK" not in env or "uploadlazy" in COMMAND_LINE_TARGETS:
         return
 
     if env['FRAMEWORK'].lower() in ("arduino", "energia"):
