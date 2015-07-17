@@ -191,7 +191,8 @@ def _autoinstall_platform(ctx, platform, targets):
         if upload_tools:
             cmd_options['with_package'] = ["uploader"]
 
-    elif (set(p.pkg_aliases_to_names(["toolchain"])) <=
+    elif (platform in installed_platforms and
+          set(p.pkg_aliases_to_names(["toolchain"])) <=
           set(p.get_installed_packages())):
         return
 
