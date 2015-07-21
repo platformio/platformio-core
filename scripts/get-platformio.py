@@ -9,7 +9,7 @@ from tempfile import NamedTemporaryFile
 
 
 CURINTERPRETER_PATH = os.path.normpath(sys.executable)
-IS_WINDOWS = system() == "Windows"
+IS_WINDOWS = system().lower() == "windows"
 
 
 def fix_winpython_pathenv():
@@ -61,12 +61,12 @@ def exec_command(*args, **kwargs):
     out, err = p.communicate()
 
     if p.returncode != 0:
-        raise Exception(err)
+        raise Exception("\n".join([out, err]))
     return out
 
 
 def exec_python_cmd(args):
-    return exec_command([CURINTERPRETER_PATH] + args, shell=IS_WINDOWS).strip()
+    return exec_command([CURINTERPRETER_PATH] + args).strip()
 
 
 def install_pip():
@@ -89,8 +89,7 @@ def install_pip():
 def install_pypi_packages(packages):
     for pipargs in packages:
         print (exec_python_cmd([
-            "-m",
-            "pip.__main__" if sys.version_info < (2, 7, 0) else "pip",
+            "-m", "pip.__main__" if sys.version_info < (2, 7, 0) else "pip",
             "install", "-U"] + pipargs))
 
 
@@ -110,14 +109,27 @@ def main():
 
     is_error = False
     for s in steps:
+        if is_error:
+            break
         print ("\n==> %s ..." % s[0])
         try:
             s[1](*s[2])
             print ("[SUCCESS]")
         except Exception, e:
             is_error = True
-            print (e)
+            print (str(e))
             print ("[FAILURE]")
+            if "Permission denied" in str(e) and not IS_WINDOWS:
+                print ("""
+-----------------
+Permission denied
+-----------------
+
+You need the `sudo` permission to install Python packages. Try
+
+$ sudo python -c "$(curl -fsSL
+https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+""")
 
     if is_error:
         print ("The installation process has been FAILED!\n"
@@ -129,16 +141,25 @@ def main():
                "successfully FINISHED! <==\n")
 
     try:
-        print (exec_command("platformio", shell=IS_WINDOWS))
+        print (exec_command("platformio"))
     except:
         try:
             print (exec_python_cmd([
                 "-m",
                 "platformio.__main__" if sys.version_info < (2, 7, 0) else
                 "platformio"]))
-        finally:
-            print ("\n Please RESTART your Terminal Application and run "
-                   "`platformio --help` command.")
+        except:
+            pass
+    finally:
+        print ("""
+
+----------------------------------------
+Please RESTART your Terminal Application
+----------------------------------------
+
+Then run `platformio --help` command.
+
+""")
 
 
 if __name__ == "__main__":
