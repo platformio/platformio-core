@@ -1,6 +1,13 @@
 Release History
 ===============
 
+2.2.2 (2015-??-??)
+------------------
+
+* Disable project auto-clean while building/uploading firmware using
+  `platformio run --disable-auto-clean <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--disable-auto-clean>`_ option
+  (`issue #255 <https://github.com/platformio/platformio/issues/255>`_)
+
 2.2.1 (2015-07-17)
 ------------------
 

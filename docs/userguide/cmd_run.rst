@@ -62,6 +62,12 @@ There 3 levels of verbosity:
 
 By default, verbosity level is set to 3 (maximum information).
 
+.. option::
+    --disable-auto-clean
+
+Disable auto-clean of :ref:`projectconf_pio_envs_dir` when :ref:`projectconf`
+or :ref:`projectconf_pio_src_dir` (project structure) have been modified.
+
 Examples
 --------
 
