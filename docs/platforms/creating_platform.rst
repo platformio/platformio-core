@@ -145,6 +145,8 @@ Example of the **test** platform (``test.py``):
 
 .. code-block:: python
 
+    import os
+
     from platformio.platforms.base import BasePlatform
 
     class TestPlatform(BasePlatform):
