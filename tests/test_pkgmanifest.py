@@ -52,18 +52,24 @@ def validate_package(url, sfpkglist):
 
 def test_package(package_data, sfpkglist):
     assert package_data['url'].endswith("%d.tar.gz" % package_data['version'])
+    sf_package = "sourceforge.net" in package_data['url']
 
     # check content type and that file exists
     try:
         r = requests.head(package_data['url'], allow_redirects=True)
         if 500 <= r.status_code <= 599:
             raise requests.exceptions.ConnectionError()
-    except requests.exceptions.ConnectionError:
-        return pytest.skip("SF is off-line")
+    except requests.exceptions.ConnectionError as e:
+        if sf_package:
+            return pytest.skip("SF is off-line")
+        raise Exception(e)
 
     validate_response(r)
     assert r.headers['Content-Type'] in ("application/x-gzip",
                                          "application/octet-stream")
+
+    if not sf_package:
+        return
 
     # check sha1 sum
     if sfpkglist is None:
