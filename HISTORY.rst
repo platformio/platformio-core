@@ -5,6 +5,8 @@ Release History
 ------------------
 
 * Integration with `Atom IDE <http://docs.platformio.org/en/latest/ide/atom.html>`__
+* Support for off-line/unpublished/private libraries
+  (`issue #260 <https://github.com/platformio/platformio/issues/260>`_)
 * Disable project auto-clean while building/uploading firmware using
   `platformio run --disable-auto-clean <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--disable-auto-clean>`_ option
   (`issue #255 <https://github.com/platformio/platformio/issues/255>`_)

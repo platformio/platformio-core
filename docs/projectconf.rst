@@ -57,6 +57,11 @@ A default value is ``%home_dir%/lib``.
 This option can be overridden by global environment variable
 :ref:`envvar_PLATFORMIO_LIB_DIR`.
 
+.. note::
+    You can put here your own/private libraries. The source code of each
+    library should be placed in separate directory. For example,
+    ``%lib_dir%/private_lib/[here are source files]``.
+
 .. _projectconf_pio_src_dir:
 
 ``src_dir``
