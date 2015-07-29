@@ -7,9 +7,6 @@ PlatformIO
 .. image:: https://ci.appveyor.com/api/projects/status/dku0h2rutfj0ctls/branch/develop?svg=true
     :target: https://ci.appveyor.com/project/ivankravets/platformio
     :alt: AppVeyor.CI Build Status
-.. image:: https://api.shippable.com/projects/555b0ceeedd7f2c052f3c2d0/badge?branchName=develop
-    :target: https://app.shippable.com/projects/555b0ceeedd7f2c052f3c2d0
-    :alt: Shippable Build Status
 .. image:: https://circleci.com/gh/platformio/platformio/tree/develop.svg?style=svg
     :target: https://circleci.com/gh/platformio/platformio/tree/develop
     :alt: Circle.CI Build Status
