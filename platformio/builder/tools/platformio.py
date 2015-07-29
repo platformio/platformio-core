@@ -43,7 +43,7 @@ def BuildFirmware(env):
         )
 
     # enable "cyclic reference" for linker
-    if deplibs:
+    if env.get("LIBS", deplibs):
         env.Prepend(
             _LIBFLAGS="-Wl,--start-group "
         )
