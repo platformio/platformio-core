@@ -7,6 +7,7 @@ import re
 import sys
 import threading
 import uuid
+from os import getenv
 from time import time
 
 import click
@@ -197,6 +198,32 @@ def _finalize():
 def on_command(ctx):  # pylint: disable=W0613
     mp = MeasurementProtocol()
     mp.send("screenview")
+    if util.is_ci():
+        measure_ci()
+
+
+def measure_ci():
+    event = {
+        "category": "CI",
+        "action": "NoName",
+        "label": None
+    }
+
+    envmap = {
+        "APPVEYOR": {"label": getenv("APPVEYOR_REPO_NAME")},
+        "CIRCLECI": {"label": "%s/%s" % (getenv("CIRCLE_PROJECT_USERNAME"),
+                                         getenv("CIRCLE_PROJECT_REPONAME"))},
+        "TRAVIS": {"label": getenv("TRAVIS_REPO_SLUG")},
+        "SHIPPABLE": {"label": getenv("REPO_NAME")},
+        "DRONE": {"label": getenv("DRONE_REPO_SLUG")}
+    }
+
+    for key, value in envmap.iteritems():
+        if getenv(key, "").lower() != "true":
+            continue
+        event.update({"action": key, "label": value['label']})
+
+    on_event(**event)
 
 
 def on_run_environment(options, targets):

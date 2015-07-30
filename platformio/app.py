@@ -7,7 +7,7 @@ from os.path import isfile, join
 
 from platformio import __version__
 from platformio.exception import InvalidSettingName, InvalidSettingValue
-from platformio.util import get_home_dir
+from platformio.util import get_home_dir, is_ci
 
 DEFAULT_SETTINGS = {
     "check_platformio_interval": {
@@ -109,8 +109,7 @@ def get_setting(name):
     if name == "enable_prompts":
         # disable prompts for Continuous Integration systems
         # and when global "--force" option is set
-        if any([getenv("CI", "").lower() == "true",
-                get_session_var("force_option")]):
+        if any([is_ci(), get_session_var("force_option")]):
             return False
 
     _env_name = "PLATFORMIO_SETTING_%s" % name.upper()
