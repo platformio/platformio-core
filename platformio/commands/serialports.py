@@ -7,6 +7,7 @@ import sys
 import click
 from serial.tools import miniterm
 
+from platformio.exception import PlatformioException
 from platformio.util import get_serialports
 
 
@@ -59,12 +60,12 @@ def serialports_list(json_output):
 # 1: escape non-printable characters, do newlines as unusual
 # 2: escape non-printable characters, newlines too
 # 3: hex dump everything""")
-@click.option("--exit-char", type=int, default=0x1d,
+@click.option("--exit-char", type=int, default=29,
               help="ASCII code of special character that is used to exit the "
-              "application, default=0x1d")
-@click.option("--menu-char", type=int, default=0x14,
+              "application, default=19 (DEC)")
+@click.option("--menu-char", type=int, default=20,
               help="ASCII code of special character that is used to control "
-              "miniterm (menu), default=0x14")
+              "miniterm (menu), default=20 (DEC)")
 @click.option("--quiet", is_flag=True,
               help="Diagnostics: suppress non-error messages, default=Off")
 def serialports_monitor(**kwargs):
@@ -78,5 +79,5 @@ def serialports_monitor(**kwargs):
 
     try:
         miniterm.main()
-    except:  # pylint: disable=W0702
-        pass
+    except Exception as e:  # pylint: disable=W0702
+        raise PlatformioException(str(e))

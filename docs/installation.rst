@@ -55,11 +55,11 @@ Super-Quick (Mac / Linux)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To install or upgrade *PlatformIO* paste that at a *Terminal* prompt
-(**you might need** to run ``sudo`` first):
+(**you MIGHT need** to run ``sudo`` first, just for installation):
 
 .. code-block:: bash
 
-    python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+    [sudo] python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
 
 
 Installer Script (Mac / Linux / Windows)
@@ -67,12 +67,13 @@ Installer Script (Mac / Linux / Windows)
 
 To install or upgrade *PlatformIO*, download
 `get-platformio.py <https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py>`_
-script. Then run the following (you might need to run ``sudo`` first):
+script. Then run the following (**you MIGHT need** to run ``sudo`` first,
+just for installation):
 
 .. code-block:: bash
 
     # change directory to folder where is located downloaded "get-platformio.py"
-    cd /path/to/dir/where/is/installer/script
+    cd /path/to/dir/where/is/located/get-platformio.py/script
 
     # run it
     python get-platformio.py
@@ -83,7 +84,7 @@ On *Windows OS* it may look like:
 .. code-block:: bash
 
     # change directory to folder where is located downloaded "get-platformio.py"
-    cd C:\path\to\dir\where\is\installer\script
+    cd C:\path\to\dir\where\is\located\get-platformio.py\script
 
     # run it
     C:\Python27\python.exe get-platformio.py

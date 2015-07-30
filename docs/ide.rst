@@ -7,6 +7,7 @@ IDE Integration
     :maxdepth: 2
 
     ide/arduino
+    ide/atom
     ide/clion
     ide/eclipse
     ide/energia

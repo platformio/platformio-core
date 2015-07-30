@@ -9,6 +9,7 @@ Articles about us
 
 Here are recent articles about PlatformIO:
 
+* Jul 20, 2015 - **Eli Fatsi** - `Arduino Development in Atom Editor <http://viget.com/extend/arduino-development-in-atom-editor>`_
 * Jun 02, 2015 - **Alejandro Guirao Rodriguez** - `Discovering PlatformIO: The RaspberryPi / Arduino combo kit is a winner option when prototyping an IoT-style project <http://lekum.org/posts/discovering-platformio.html>`_
 * May 11, 2015 - **IT Hare** - `From Web Developer to Embedded One: Interview with Ivan Kravets, The Guy Behind PlatformIO. Part II <http://ithare.com/from-web-developer-to-embedded-one-interview-with-ivan-kravets-the-guy-behind-platformio-part-ii/>`_
 * May 4, 2015 - **IT Hare** - `From Web Developer to Embedded One: Interview with Ivan Kravets, The Guy Behind PlatformIO. Part I <http://ithare.com/from-web-development-to-embedded-one-interview-with-ivan-kravets-the-guy-behind-platformio-part-i/>`_

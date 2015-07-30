@@ -1,14 +1,30 @@
 Release History
 ===============
 
-2.2.1 (2015-??-??)
+2.2.2 (2015-07-30)
+------------------
+
+* Integration with `Atom IDE <http://docs.platformio.org/en/latest/ide/atom.html>`__
+* Support for off-line/unpublished/private libraries
+  (`issue #260 <https://github.com/platformio/platformio/issues/260>`_)
+* Disable project auto-clean while building/uploading firmware using
+  `platformio run --disable-auto-clean <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--disable-auto-clean>`_ option
+  (`issue #255 <https://github.com/platformio/platformio/issues/255>`_)
+* Show internal errors from "Miniterm" using `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`__ command
+  (`issue #257 <https://github.com/platformio/platformio/issues/257>`_)
+* Fixed `platformio serialports monitor --help <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`__ information with HEX char for hotkeys
+  (`issue #253 <https://github.com/platformio/platformio/issues/253>`_)
+* Handle "OSError: [Errno 13] Permission denied" for PlatformIO installer script
+  (`issue #254 <https://github.com/platformio/platformio/issues/254>`_)
+
+2.2.1 (2015-07-17)
 ------------------
 
 * Project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
   (`issue #132 <https://github.com/platformio/platformio/issues/132>`_)
 * Updated ``tool-bossac`` package to 1.5 version for `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`__ platform
-* Updated ``sdk-esp8266`` package for `espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__ platform
   (`issue #251 <https://github.com/platformio/platformio/issues/251>`_)
+* Updated ``sdk-esp8266`` package for `espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__ platform
 * Fixed incorrect arguments handling for `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ command
   (`issue #248 <https://github.com/platformio/platformio/issues/248>`_)
 

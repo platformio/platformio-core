@@ -82,7 +82,8 @@ def main():
             else:
                 error_str += format_exc()
             click.secho(error_str, fg="red", err=True)
-        sys_exit(1)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

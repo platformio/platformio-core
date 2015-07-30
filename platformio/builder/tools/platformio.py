@@ -43,12 +43,13 @@ def BuildFirmware(env):
         )
 
     # enable "cyclic reference" for linker
-    env.Prepend(
-        _LIBFLAGS="-Wl,--start-group "
-    )
-    env.Append(
-        _LIBFLAGS=" -Wl,--end-group"
-    )
+    if env.get("LIBS", deplibs):
+        env.Prepend(
+            _LIBFLAGS="-Wl,--start-group "
+        )
+        env.Append(
+            _LIBFLAGS=" -Wl,--end-group"
+        )
 
     # Handle SRC_BUILD_FLAGS
     if getenv("PLATFORMIO_SRC_BUILD_FLAGS", None):

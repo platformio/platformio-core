@@ -26,9 +26,10 @@ from platformio.platforms.base import PlatformFactory
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
 @click.option("--verbose", "-v", count=True, default=3)
+@click.option("--disable-auto-clean", is_flag=True)
 @click.pass_context
 def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
-        project_dir, verbose):
+        project_dir, verbose, disable_auto_clean):
     with util.cd(project_dir):
         config = util.get_project_config()
 
@@ -40,7 +41,8 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
             raise exception.UnknownEnvNames(", ".join(unknown))
 
         # clean obsolete .pioenvs dir
-        _clean_pioenvs_dir()
+        if not disable_auto_clean:
+            _clean_pioenvs_dir()
 
         results = []
         for section in config.sections():
