@@ -7,6 +7,7 @@ import sys
 import click
 from serial.tools import miniterm
 
+from platformio.exception import PlatformioException
 from platformio.util import get_serialports
 
 
@@ -78,5 +79,5 @@ def serialports_monitor(**kwargs):
 
     try:
         miniterm.main()
-    except:  # pylint: disable=W0702
-        pass
+    except Exception as e:  # pylint: disable=W0702
+        raise PlatformioException(str(e))
