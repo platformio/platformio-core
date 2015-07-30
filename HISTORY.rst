@@ -1,7 +1,7 @@
 Release History
 ===============
 
-2.2.2 (2015-??-??)
+2.2.2 (2015-07-30)
 ------------------
 
 * Integration with `Atom IDE <http://docs.platformio.org/en/latest/ide/atom.html>`__
