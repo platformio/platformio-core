@@ -19,6 +19,7 @@ libOpenCM3, etc.*
   `Issues <https://github.com/platformio/platformio/issues>`_
 * `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
   `Reddit <http://www.reddit.com/r/platformio/>`_ |
+  `Facebook <https://www.facebook.com/platformio>`_ |  
   `Twitter <https://twitter.com/PlatformIO_Org>`_
 
 You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
