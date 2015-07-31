@@ -33,6 +33,7 @@ PlatformIO
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Reddit <http://www.reddit.com/r/platformio/>`_ |
+`Facebook <https://www.facebook.com/platformio>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
