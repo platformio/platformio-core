@@ -33,7 +33,16 @@ Process specified environments
 .. option::
     -t, --target
 
-Process specified targets
+Process specified targets.
+
+Pre-built targets:
+
+* ``clean`` delete compiled object files, libraries and firmware/program binaries
+* ``upload`` enable "auto-uploading" for embedded platforms after building
+  operation
+* ``uploadlazy`` upload existing firmware without project rebuilding
+* ``envdump`` dump current build environment
+* ``size`` print the size of the sections in a firmware/program
 
 .. option::
     --upload-port
