@@ -7,6 +7,8 @@ from glob import glob
 from os import remove
 from os.path import basename, join
 
+from platformio.util import exec_command
+
 
 class InoToCPPConverter(object):
 
@@ -157,6 +159,20 @@ def DumpIDEData(env):
     return data
 
 
+def getCompilerType(env):
+    try:
+        result = exec_command([env.subst("$CC"), "-v"], env=env['ENV'])
+    except OSError:
+        return None
+    if result['returncode'] != 0:
+        return None
+    output = "".join([result['out'], result['err']]).lower()
+    for type_ in ("clang", "gcc"):
+        if type_ in output:
+            return type_
+    return None
+
+
 def exists(_):
     return True
 
@@ -164,4 +180,5 @@ def exists(_):
 def generate(env):
     env.AddMethod(ConvertInoToCpp)
     env.AddMethod(DumpIDEData)
+    env.AddMethod(getCompilerType)
     return env
