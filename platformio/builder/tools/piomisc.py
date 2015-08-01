@@ -4,7 +4,7 @@
 import atexit
 import re
 from glob import glob
-from os import remove
+from os import environ, remove
 from os.path import basename, join
 
 from platformio.util import exec_command
@@ -161,7 +161,9 @@ def DumpIDEData(env):
 
 def getCompilerType(env):
     try:
-        result = exec_command([env.subst("$CC"), "-v"], env=env['ENV'])
+        sysenv = environ.copy()
+        sysenv['PATH'] = str(env['ENV']['PATH'])
+        result = exec_command([env.subst("$CC"), "-v"], env=sysenv)
     except OSError:
         return None
     if result['returncode'] != 0:
