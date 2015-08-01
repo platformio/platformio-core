@@ -63,14 +63,13 @@ def BuildFirmware(env):
     )
 
     return env.Program(
-        join("$BUILD_DIR", "firmware"),
+        join("$BUILD_DIR", env.subst("$PROGNAME")),
         env.LookupSources(
             "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
             src_filter=getenv("PLATFORMIO_SRC_FILTER",
                               env.get("SRC_FILTER", None))),
         LIBS=env.get("LIBS", []) + deplibs,
-        LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"],
-        PROGSUFFIX=".elf"
+        LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"]
     )
 
 

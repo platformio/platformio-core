@@ -80,7 +80,10 @@ env.Replace(
         "-ca", "0x40000" if "FRAMEWORK" not in env else "0x10000",
         "-cf", "${SOURCES[1]}"
     ],
-    UPLOADCMD='$UPLOADER $UPLOADERFLAGS'
+    UPLOADCMD='$UPLOADER $UPLOADERFLAGS',
+
+    PROGNAME="firmware",
+    PROGSUFFIX=".elf"
 )
 
 env.Append(
