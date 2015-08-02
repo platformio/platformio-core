@@ -159,7 +159,7 @@ def DumpIDEData(env):
     return data
 
 
-def getCompilerType(env):
+def GetCompilerType(env):
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
@@ -182,5 +182,5 @@ def exists(_):
 def generate(env):
     env.AddMethod(ConvertInoToCpp)
     env.AddMethod(DumpIDEData)
-    env.AddMethod(getCompilerType)
+    env.AddMethod(GetCompilerType)
     return env

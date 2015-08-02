@@ -20,7 +20,7 @@ SRC_DEFAULT_FILTER = " ".join([
 ])
 
 
-def BuildFirmware(env):
+def BuildProgram(env):
 
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes(".s", ".S"):
@@ -43,7 +43,7 @@ def BuildFirmware(env):
         )
 
     # enable "cyclic reference" for linker
-    if env.get("LIBS", deplibs) and env.getCompilerType() == "gcc":
+    if env.get("LIBS", deplibs) and env.GetCompilerType() == "gcc":
         env.Prepend(
             _LIBFLAGS="-Wl,--start-group "
         )
@@ -330,7 +330,7 @@ def exists(_):
 
 
 def generate(env):
-    env.AddMethod(BuildFirmware)
+    env.AddMethod(BuildProgram)
     env.AddMethod(ProcessFlags)
     env.AddMethod(IsFileWithExt)
     env.AddMethod(VariantDirWrap)

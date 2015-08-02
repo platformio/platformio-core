@@ -132,7 +132,7 @@ if "FRAMEWORK" not in env:
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware()
+target_elf = env.BuildProgram()
 
 #
 # Target: Build the .hex
