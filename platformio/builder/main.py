@@ -123,10 +123,13 @@ for opt in ("LIB_IGNORE", "LIB_USE"):
         continue
     env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
 
-env.PrependENVPath(
-    "PATH",
-    env.subst(join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN", "bin"))
-)
+# restore process $PATH
+env['ENV']['PATH'] = getenv("PATH")
+if env.subst("$PIOPACKAGE_TOOLCHAIN"):
+    env.PrependENVPath(
+        "PATH",
+        env.subst(join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN", "bin"))
+    )
 
 SConscriptChdir(0)
 SConscript(env.subst("$BUILD_SCRIPT"))
