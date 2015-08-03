@@ -67,6 +67,7 @@ DefaultEnvironment(
     ENV=environ,
 
     UNIX_TIME=int(time()),
+    PROGNAME="program",
 
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),

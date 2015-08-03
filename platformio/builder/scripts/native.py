@@ -11,9 +11,7 @@ env = DefaultEnvironment()
 
 env.Replace(
 
-    SIZEPRINTCMD="size $SOURCES",
-
-    PROGNAME="program"
+    SIZEPRINTCMD="size $SOURCES"
 )
 
 #
