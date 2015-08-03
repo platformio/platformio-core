@@ -1,6 +1,13 @@
 Release History
 ===============
 
+2.3.0 (2015-??-??)
+------------------
+
+* Added `native <http://docs.platformio.org/en/latest/platforms/native.html>`_
+  development platform
+  (`issue #263 <https://github.com/platformio/platformio/issues/263>`_)
+
 2.2.2 (2015-07-30)
 ------------------
 
