@@ -27,7 +27,7 @@ SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware()
+target_elf = env.BuildProgram()
 
 #
 # Target: Build the .bin file

@@ -200,7 +200,7 @@ Build Script
 
 Platform's build script is based on a next-generation build tool named
 `SCons <http://www.scons.org>`_. PlatformIO has own built-in firmware builder
-``env.BuildFirmware`` with the nested libraries search. Please look into a
+``env.BuildProgram`` with the nested libraries search. Please look into a
 base template of ``test-builder.py``.
 
 .. code-block:: python
@@ -260,7 +260,7 @@ base template of ``test-builder.py``.
     #
     # Target: Build executable and linkable firmware
     #
-    target_elf = env.BuildFirmware()
+    target_elf = env.BuildProgram()
 
     #
     # Target: Build the .bin file
@@ -383,7 +383,7 @@ and copy there two files:
     # Target: Build executable and linkable firmware
     #
 
-    target_elf = env.BuildFirmware()
+    target_elf = env.BuildProgram()
 
     #
     # Target: Build the .bin file

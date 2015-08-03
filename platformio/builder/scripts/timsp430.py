@@ -57,7 +57,10 @@ env.Replace(
         "$UPLOAD_PROTOCOL" if system() != "Windows" else "tilib",
         "--force-reset"
     ],
-    UPLOADCMD='$UPLOADER $UPLOADERFLAGS "prog $SOURCES"'
+    UPLOADCMD='$UPLOADER $UPLOADERFLAGS "prog $SOURCES"',
+
+    PROGNAME="firmware",
+    PROGSUFFIX=".elf"
 )
 
 env.Append(
@@ -80,7 +83,7 @@ env.Append(
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware()
+target_elf = env.BuildProgram()
 
 #
 # Target: Build the .hex

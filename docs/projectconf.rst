@@ -435,14 +435,8 @@ See built-in examples of `PlatformIO build scripts <https://github.com/platformi
 ^^^^^^^^^^^
 
 A list with targets which will be processed by :ref:`cmd_run` command by
-default. You can enter more then one target separated with "space".
-
-Pre-built targets:
-
-* ``clean`` delete compiled object files, libraries and firmware binaries
-* ``upload`` enable "auto-uploading" for embedded platforms after building
-  operation
-* ``envdump`` dump current build environment
+default. You can enter more then one target separated with "space". Which
+targets are supported is described in :option:`platformio run --target`.
 
 **Tip!** You can use these targets like an option to
 :option:`platformio run --target` command. For example:
