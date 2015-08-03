@@ -12,7 +12,7 @@ except ImportError:
     from platformio import util
 
 import json
-from os import getenv
+from os import environ
 from os.path import isfile, join
 from time import time
 
@@ -62,6 +62,9 @@ DefaultEnvironment(
     ],
     toolpath=[join("$PIOBUILDER_DIR", "tools")],
     variables=commonvars,
+
+    # Propagating External Environment
+    ENV=environ,
 
     UNIX_TIME=int(time()),
 
@@ -123,8 +126,6 @@ for opt in ("LIB_IGNORE", "LIB_USE"):
         continue
     env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
 
-# restore process $PATH
-env['ENV']['PATH'] = getenv("PATH")
 if env.subst("$PIOPACKAGE_TOOLCHAIN"):
     env.PrependENVPath(
         "PATH",
@@ -134,8 +135,8 @@ if env.subst("$PIOPACKAGE_TOOLCHAIN"):
 SConscriptChdir(0)
 SConscript(env.subst("$BUILD_SCRIPT"))
 
-if getenv("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT", None)):
-    SConscript(getenv("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")))
+if environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT", None)):
+    SConscript(environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")))
 
 if "envdump" in COMMAND_LINE_TARGETS:
     print env.Dump()
