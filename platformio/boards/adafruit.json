@@ -47,6 +47,26 @@
         "vendor": "Adafruit"
     },
 
+    "gemma": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_GEMMA",
+            "f_cpu": "8000000L",
+            "mcu": "attiny85",
+            "variant": "gemma"
+        },
+        "frameworks": ["arduino"],
+        "name": "Adafruit Gemma",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 512,
+            "maximum_size": 8192,
+            "protocol": "usbtiny"
+        },
+        "url": "http://www.adafruit.com/products/1222",
+        "vendor": "Adafruit"
+    },
+
     "trinket5": {
         "build": {
             "core": "arduino",
