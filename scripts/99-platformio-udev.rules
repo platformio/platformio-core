@@ -1,7 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-# UDEV Rules for PlatformIO supproted boards, http://platformio.org/#!/boards
+# UDEV Rules for PlatformIO supported boards, http://platformio.org/#!/boards
 #
 # The latest version of this file may be found at:
 # 	https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules
