@@ -90,7 +90,8 @@ def AutodetectUploadPort(env):
     else:
         Exit("Error: Please specify `upload_port` for environment or use "
              "global `--upload-port` option.\n"
-             "For the some development platforms it can be USB flash drive\n")
+             "For some development platforms this can be a USB flash drive "
+             "(i.e. /media/<user>/<device name>)\n")
 
 
 def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
