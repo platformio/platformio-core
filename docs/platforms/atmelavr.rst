@@ -78,6 +78,13 @@ Adafruit
       - 32 Kb
       - 2.5 Kb
 
+    * - ``gemma``
+      - `Adafruit Gemma <http://www.adafruit.com/products/1222>`_
+      - ATTINY85
+      - 8 MHz
+      - 8 Kb
+      - 0.5 Kb
+
     * - ``protrinket3``
       - `Adafruit Pro Trinket 3V/12MHz (USB) <http://www.adafruit.com/products/2010>`_
       - ATMEGA328P
