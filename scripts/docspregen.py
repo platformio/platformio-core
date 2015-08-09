@@ -66,7 +66,7 @@ def generate_boards(boards):
     return "\n".join(lines + [""])
 
 
-def generate_packages(packages):
+def generate_packages(packages, is_embedded):
     if not packages:
         return
     allpackages = get_packages()
@@ -92,7 +92,8 @@ Packages
             type_=type_,
             contents=", ".join(contitems)))
 
-    lines.append("""
+    if is_embedded:
+        lines.append("""
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
@@ -101,6 +102,7 @@ Packages
     from board manufacturer
 
 """)
+
     return "\n".join(lines)
 
 
@@ -126,7 +128,7 @@ For more detailed information please visit `vendor site <%s>`_.""" %
     #
     # Packages
     #
-    _packages_content = generate_packages(p.get_packages())
+    _packages_content = generate_packages(p.get_packages(), p.is_embedded())
     if _packages_content:
         lines.append(_packages_content)
 

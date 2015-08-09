@@ -111,6 +111,9 @@ Packages
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
+    * - ``toolchain-gccmingw32``
+      - `MinGW <http://www.mingw.org>`_
+
     * - ``toolchain-timsp430``
       - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 

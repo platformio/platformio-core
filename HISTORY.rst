@@ -4,9 +4,15 @@ Release History
 2.3.0 (2015-??-??)
 ------------------
 
-* Added `native <http://docs.platformio.org/en/latest/platforms/native.html>`_
+* Added
+  `native <http://docs.platformio.org/en/latest/platforms/native.html>`__,
+  `windows_x86 <http://docs.platformio.org/en/latest/platforms/windows_x86.html>`__
   development platform
   (`issue #263 <https://github.com/platformio/platformio/issues/263>`_)
+* Added support for Adafruit Gemma board to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform
+  (`pull #256 <https://github.com/platformio/platformio/pull/256>`_)
 
 2.2.2 (2015-07-30)
 ------------------

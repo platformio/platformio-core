@@ -90,6 +90,9 @@ PLATFORM_PACKAGES = {
     "tool-micronucleus": [
         ("Micronucleus", "https://github.com/micronucleus/micronucleus")
     ],
+    "toolchain-gccmingw32": [
+        ("MinGW", "http://www.mingw.org")
+    ],
     "tool-bossac": [
         ("BOSSA CLI", "https://sourceforge.net/projects/b-o-s-s-a/")
     ],
@@ -223,6 +226,12 @@ class BasePlatform(object):
             return self.__doc__[self.__doc__.index("http"):].strip()
         else:
             raise NotImplementedError()
+
+    def is_embedded(self):
+        for name, opts in self.get_packages().items():
+            if name == "framework-mbed" or opts.get("alias") == "uploader":
+                return True
+        return False
 
     def get_packages(self):
         return self.PACKAGES

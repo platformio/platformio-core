@@ -5,12 +5,11 @@
     Builder for native platform
 """
 
-from SCons.Script import DefaultEnvironment, AlwaysBuild, Default
+from SCons.Script import AlwaysBuild, Default, DefaultEnvironment
 
 env = DefaultEnvironment()
 
 env.Replace(
-
     SIZEPRINTCMD="size $SOURCES"
 )
 

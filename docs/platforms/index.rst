@@ -36,6 +36,7 @@ Desktop
     :maxdepth: 2
 
     native
+    windows_x86
 
 Own Platform/Board
 ------------------
