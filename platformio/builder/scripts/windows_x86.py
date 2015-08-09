@@ -13,20 +13,25 @@ from platformio.util import get_systype
 env = DefaultEnvironment()
 
 env.Replace(
-    SIZEPRINTCMD="size $SOURCES",
+    AR="$_MINGWPREFIX-ar",
+    AS="$_MINGWPREFIX-as",
+    CC="$_MINGWPREFIX-gcc",
+    CXX="$_MINGWPREFIX-g++",
+    OBJCOPY="$_MINGWPREFIX-objcopy",
+    RANLIB="$_MINGWPREFIX-ranlib",
+    SIZETOOL="$_MINGWPREFIX-size",
+
+    SIZEPRINTCMD='"$SIZETOOL" $SOURCES',
     PROGSUFFIX=".exe"
 )
 
 if get_systype() == "darwin_x86_64":
     env.Replace(
-        AR="i586-mingw32-ar",
-        AS="i586-mingw32-as",
-        CC="i586-mingw32-gcc",
-        CXX="i586-mingw32-g++",
-        OBJCOPY="i586-mingw32-objcopy",
-        RANLIB="i586-mingw32-ranlib",
-        SIZETOOL="i586-mingw32-size",
-        SIZEPRINTCMD='"$SIZETOOL" $SOURCES'
+        _MINGWPREFIX="i586-mingw32"
+    )
+elif get_systype() in ("linux_x86_64", "linux_i686"):
+    env.Replace(
+        _MINGWPREFIX="i686-w64-mingw32"
     )
 
 #
