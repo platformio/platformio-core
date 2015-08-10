@@ -9,7 +9,6 @@ from SCons.Script import AlwaysBuild, Default, DefaultEnvironment
 
 from platformio.util import get_systype
 
-
 env = DefaultEnvironment()
 
 env.Replace(

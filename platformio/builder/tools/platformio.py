@@ -12,7 +12,6 @@ from SCons.Util import case_sensitive_suffixes
 
 from platformio.util import pioversion_to_intstr
 
-
 SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_DEFAULT_FILTER = " ".join([
