@@ -6,8 +6,11 @@ Release History
 
 * Added
   `native <http://docs.platformio.org/en/latest/platforms/native.html>`__,
+  `linux_arm <http://docs.platformio.org/en/latest/platforms/linux_arm.html>`__,
+  `linux_i686 <http://docs.platformio.org/en/latest/platforms/linux_i686.html>`__,
+  `linux_x86_64 <http://docs.platformio.org/en/latest/platforms/linux_x86_64.html>`__,
   `windows_x86 <http://docs.platformio.org/en/latest/platforms/windows_x86.html>`__
-  development platform
+  development platforms
   (`issue #263 <https://github.com/platformio/platformio/issues/263>`_)
 * Added support for Adafruit Gemma board to
   `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__

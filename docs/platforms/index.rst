@@ -36,6 +36,9 @@ Desktop
     :maxdepth: 2
 
     native
+    linux_arm
+    linux_i686
+    linux_x86_64
     windows_x86
 
 Own Platform/Board

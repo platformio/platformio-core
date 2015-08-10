@@ -76,6 +76,19 @@ PLATFORM_PACKAGES = {
         ("gcc-arm-embedded", "https://launchpad.net/gcc-arm-embedded"),
         ("GDB", "http://www.gnu.org/software/gdb/")
     ],
+    "toolchain-gccarmlinuxgnueabi": [
+        ("GCC for Linux ARM GNU EABI", "https://gcc.gnu.org"),
+        ("GDB", "http://www.gnu.org/software/gdb/")
+    ],
+    "toolchain-gccmingw32": [
+        ("MinGW", "http://www.mingw.org")
+    ],
+    "toolchain-gcclinux32": [
+        ("GCC for Linux i686", "https://gcc.gnu.org")
+    ],
+    "toolchain-gcclinux64": [
+        ("GCC for Linux x86_64", "https://gcc.gnu.org")
+    ],
     "toolchain-xtensa": [
         ("xtensa-gcc", "https://github.com/jcmvbkbc/gcc-xtensa"),
         ("GDB", "http://www.gnu.org/software/gdb/")
@@ -89,9 +102,6 @@ PLATFORM_PACKAGES = {
     ],
     "tool-micronucleus": [
         ("Micronucleus", "https://github.com/micronucleus/micronucleus")
-    ],
-    "toolchain-gccmingw32": [
-        ("MinGW", "http://www.mingw.org")
     ],
     "tool-bossac": [
         ("BOSSA CLI", "https://sourceforge.net/projects/b-o-s-s-a/")
