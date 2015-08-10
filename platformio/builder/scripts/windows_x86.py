@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 """
-    Builder for Windows x86
+    Builder for Windows x86 / 32bit
 """
 
 from SCons.Script import AlwaysBuild, Default, DefaultEnvironment
@@ -13,13 +13,14 @@ from platformio.util import get_systype
 env = DefaultEnvironment()
 
 env.Replace(
-    AR="$_MINGWPREFIX-ar",
-    AS="$_MINGWPREFIX-as",
-    CC="$_MINGWPREFIX-gcc",
-    CXX="$_MINGWPREFIX-g++",
-    OBJCOPY="$_MINGWPREFIX-objcopy",
-    RANLIB="$_MINGWPREFIX-ranlib",
-    SIZETOOL="$_MINGWPREFIX-size",
+    _BINPREFIX="",
+    AR="${_BINPREFIX}ar",
+    AS="${_BINPREFIX}as",
+    CC="${_BINPREFIX}gcc",
+    CXX="${_BINPREFIX}g++",
+    OBJCOPY="${_BINPREFIX}objcopy",
+    RANLIB="${_BINPREFIX}ranlib",
+    SIZETOOL="${_BINPREFIX}size",
 
     SIZEPRINTCMD='"$SIZETOOL" $SOURCES',
     PROGSUFFIX=".exe"
@@ -27,11 +28,11 @@ env.Replace(
 
 if get_systype() == "darwin_x86_64":
     env.Replace(
-        _MINGWPREFIX="i586-mingw32"
+        _BINPREFIX="i586-mingw32-"
     )
 elif get_systype() in ("linux_x86_64", "linux_i686"):
     env.Replace(
-        _MINGWPREFIX="i686-w64-mingw32"
+        _BINPREFIX="i686-w64-mingw32-"
     )
 
 #
