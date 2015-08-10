@@ -4,11 +4,12 @@ Articles about us
 =================
 
 .. note::
-	If you've written article about PlatformIO and would like it listed on
-	this page, `please edit this page <https://github.com/platformio/platformio/blob/develop/docs/articles.rst>`_.
+    If you've written article about PlatformIO and would like it listed on
+    this page, `please edit this page <https://github.com/platformio/platformio/blob/develop/docs/articles.rst>`_.
 
 Here are recent articles about PlatformIO:
 
+* Aug 01, 2015 - **Russell Davis** - `PlatformIO on the Raspberry Pi <http://www.russelldavis.org/2015/08/01/platformio-on-the-raspberry-pi/>`_
 * Jul 20, 2015 - **Eli Fatsi** - `Arduino Development in Atom Editor <http://viget.com/extend/arduino-development-in-atom-editor>`_
 * Jun 02, 2015 - **Alejandro Guirao Rodriguez** - `Discovering PlatformIO: The RaspberryPi / Arduino combo kit is a winner option when prototyping an IoT-style project <http://lekum.org/posts/discovering-platformio.html>`_
 * May 11, 2015 - **IT Hare** - `From Web Developer to Embedded One: Interview with Ivan Kravets, The Guy Behind PlatformIO. Part II <http://ithare.com/from-web-developer-to-embedded-one-interview-with-ivan-kravets-the-guy-behind-platformio-part-ii/>`_
