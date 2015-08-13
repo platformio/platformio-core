@@ -70,10 +70,10 @@ DISABLE** all prompts. It will allow you to avoid blocking.
 There are a few options:
 
 - using :option:`platformio --force` option before each command
-- using environment variable :ref:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <envvar_PLATFORMIO_SETTING_ENABLE_PROMPTS>`
+- using environment variable :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <PLATFORMIO_SETTING_ENABLE_PROMPTS>`
 - disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
 - masking under Continuous Integration system via environment variable
-  :ref:`CI=true <envvar_CI>`.
+  :envvar:`CI=true <CI>`.
 
 
 Windows: ``UnicodeDecodeError: 'ascii' codec can't decode byte``

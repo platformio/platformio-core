@@ -42,7 +42,7 @@ A default value is User's home directory:
 * Windows ``%HOMEPATH%\.platformio``
 
 This option can be overridden by global environment variable
-:ref:`envvar_PLATFORMIO_HOME_DIR`.
+:envvar:`PLATFORMIO_HOME_DIR`.
 
 .. _projectconf_pio_lib_dir:
 
@@ -55,7 +55,7 @@ This directory is used to store external libraries downloaded by
 A default value is ``%home_dir%/lib``.
 
 This option can be overridden by global environment variable
-:ref:`envvar_PLATFORMIO_LIB_DIR`.
+:envvar:`PLATFORMIO_LIB_DIR`.
 
 .. note::
     You can put here your own/private libraries. The source code of each
@@ -73,7 +73,7 @@ command.
 A default value is ``%project_dir%/src``.
 
 This option can be overridden by global environment variable
-:ref:`envvar_PLATFORMIO_SRC_DIR`.
+:envvar:`PLATFORMIO_SRC_DIR`.
 
 .. note::
     This option is useful for people who migrate from Arduino/Energia IDEs where
@@ -97,7 +97,7 @@ next build operation.
 A default value is ``%project_dir%/.pioenvs``.
 
 This option can be overridden by global environment variable
-:ref:`envvar_PLATFORMIO_ENVS_DIR`.
+:envvar:`PLATFORMIO_ENVS_DIR`.
 
 .. note::
     If you have any problems with building your Project environmets which
@@ -267,7 +267,7 @@ processes:
         ``-l``.
 
 This option can be set by global environment variable
-:ref:`envvar_PLATFORMIO_BUILD_FLAGS`.
+:envvar:`PLATFORMIO_BUILD_FLAGS`.
 
 Example:
 
@@ -309,7 +309,7 @@ but will be applied only for the project source code from
 :ref:`projectconf_pio_src_dir` directory.
 
 This option can be set by global environment variable
-:ref:`envvar_PLATFORMIO_SRC_BUILD_FLAGS`.
+:envvar:`PLATFORMIO_SRC_BUILD_FLAGS`.
 
 .. _projectconf_src_filter:
 
@@ -331,7 +331,7 @@ By default, ``src_filter`` is predefined to
 exclude ``.git`` and ``svn`` repository folders and exclude ``examples`` folder.
 
 This option can be set by global environment variable
-:ref:`envvar_PLATFORMIO_SRC_FILTER`.
+:envvar:`PLATFORMIO_SRC_FILTER`.
 
 ``lib_install``
 ^^^^^^^^^^^^^^^
@@ -404,7 +404,7 @@ section of
 `SCons documentation <http://www.scons.org/doc/production/HTML/scons-user.html#chap-environments>`_.
 
 This option can be set by global environment variable
-:ref:`envvar_PLATFORMIO_EXTRA_SCRIPT`.
+:envvar:`PLATFORMIO_EXTRA_SCRIPT`.
 
 Example, specify own upload command for :ref:`platform_atmelavr`:
 
