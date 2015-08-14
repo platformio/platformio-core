@@ -211,6 +211,9 @@ env.Replace(
         join(variant_dir, eixdata.get("LDSCRIPT_PATH")[0]))
 )
 
+# restore external build flags
+env.ProcessFlags()
+
 # Hook for K64F and K22F
 if board_type in ("frdm_k22f", "frdm_k64f"):
     env.Append(
