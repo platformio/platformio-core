@@ -16,12 +16,15 @@ PlatformIO
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
-.. image:: https://img.shields.io/pypi/dm/platformio.svg
-    :target: https://pypi.python.org/pypi/platformio/
-    :alt: Downloads
 .. image:: https://img.shields.io/pypi/l/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
-    :alt:  License
+    :alt:  License    
+.. image:: https://img.shields.io/pypi/dm/platformio.svg
+    :target: https://pypi.python.org/pypi/platformio/
+    :alt: PyPi Downloads
+.. image:: https://img.shields.io/sourceforge/dm/platformio-storage.svg
+    :target: https://sourceforge.net/projects/platformio-storage/
+    :alt: Packages Downloads
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/platformio/platformio
    :target: https://gitter.im/platformio/platformio
