@@ -65,7 +65,7 @@ To install or upgrade *PlatformIO* paste that at a *Terminal* prompt
 Installer Script (Mac / Linux / Windows)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To install or upgrade *PlatformIO*, download
+To install or upgrade *PlatformIO*, download (save as...)
 `get-platformio.py <https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py>`_
 script. Then run the following (**you MIGHT need** to run ``sudo`` first,
 just for installation):
