@@ -115,5 +115,6 @@ class ProjectGenerator(object):
                         if build_data and "defines" in build_data else []),
             "srcfiles": self.get_srcfiles(),
             "user_home_dir": abspath(expanduser("~")),
-            "project_dir": self.project_dir
+            "project_dir": self.project_dir,
+            "systype": util.get_systype()
         })

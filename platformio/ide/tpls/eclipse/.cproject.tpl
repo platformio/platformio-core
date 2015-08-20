@@ -25,7 +25,11 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.239157887" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									% for include in includes:
                                     % if include.startswith(user_home_dir):
+                                    % if "windows" in systype:
+									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
+									% else:
 									<listOptionValue builtIn="false" value="${HOME}{{include.replace(user_home_dir, '')}}"/>
+									% end
                                     % else:
 									<listOptionValue builtIn="false" value="{{include}}"/>
 									% end
@@ -42,7 +46,11 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1096940598" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									% for include in includes:
                                     % if include.startswith(user_home_dir):
+                                    % if "windows" in systype:
+									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
+									% else:
 									<listOptionValue builtIn="false" value="${HOME}{{include.replace(user_home_dir, '')}}"/>
+                                    % end
                                     % else:
 									<listOptionValue builtIn="false" value="{{include}}"/>
 									% end
@@ -59,7 +67,11 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.41298875" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									% for include in includes:
                                     % if include.startswith(user_home_dir):
+                                    % if "windows" in systype:
+									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
+									% else:
 									<listOptionValue builtIn="false" value="${HOME}{{include.replace(user_home_dir, '')}}"/>
+                                    % end
                                     % else:
 									<listOptionValue builtIn="false" value="{{include}}"/>
 									% end
