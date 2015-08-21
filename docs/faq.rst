@@ -75,6 +75,28 @@ There are a few options:
 - masking under Continuous Integration system via environment variable
   :envvar:`CI=true <CI>`.
 
+.. _faq_troubleshooting_pionotfoundinpath:
+
+Program ``platformio`` not found in PATH
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Where is ``platformio`` binary installed? Run this command in Terminal
+
+.. code-block:: bash
+
+    # for Unix
+    which platformio
+    echo $PATH
+
+    # for Windows OS
+    where platformio
+    echo %PATH%
+
+For example, ``which platformio`` is equal to ``/usr/local/bin/platformio``,
+then `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_
+should contain ``/usr/local/bin`` directory.
+
+Answered in `issue #272 <https://github.com/platformio/platformio/issues/272#issuecomment-133372487>`_.
 
 Windows: ``UnicodeDecodeError: 'ascii' codec can't decode byte``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

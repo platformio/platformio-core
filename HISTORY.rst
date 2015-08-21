@@ -19,6 +19,8 @@ Release History
 * Updated ``tool-teensy`` for `Teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`__
   platform
   (`issue #268 <https://github.com/platformio/platformio/issues/268>`_)
+* Added answer to FAQ when `Program "platformio" not found in PATH <http://docs.platformio.org/en/latest/faq.html#faq-troubleshooting-pionotfoundinpath>`_
+  (`issue #272 <https://github.com/platformio/platformio/issues/272>`_)
 * Fixed includes list for Windows OS when generating project for `Eclipse IDE <http://docs.platformio.org/en/latest/ide/eclipse.html>`__
   (`issue #270 <https://github.com/platformio/platformio/issues/270>`_)
 * Fixed ``AttributeError: 'module' object has no attribute 'packages'``

@@ -15,6 +15,11 @@ This software can be used with:
 Integration
 -----------
 
+.. note::
+    Please verify that folder where is located ``platformio`` program is added
+    to `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_ environment
+    variable. See FAQ: :ref:`faq_troubleshooting_pionotfoundinpath`.
+
 Recommended bundles:
 
 * Syntax highlight - `Arduino-syntax-file <https://github.com/vim-scripts/Arduino-syntax-file>`_
