@@ -62,7 +62,7 @@ def cli(project_dir, board, ide, disable_auto_uploading, env_prefix):
                click.style("platformio.ini", fg="cyan"))
     click.echo("%s - Put your source code here" %
                click.style("src", fg="cyan"))
-    click.echo("%s - Put here project specific or 3-rd party libraries" %
+    click.echo("%s - Put here project specific (private) libraries" %
                click.style("lib", fg="cyan"))
 
     if (app.get_setting("enable_prompts") and

@@ -29,7 +29,7 @@ Quickstart
     The next files/directories will be created in ***
     platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
     src - Put your source code here
-    lib - Put here project specific or 3-rd party libraries
+    lib - Put here project specific (private) libraries
     Do you want to continue? [y/N]: y
     Project has been successfully initialized!
     Useful commands:
