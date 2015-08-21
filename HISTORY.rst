@@ -16,6 +16,13 @@ Release History
   `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
   platform
   (`pull #256 <https://github.com/platformio/platformio/pull/256>`_)
+* Updated ``tool-teensy`` for `Teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`__
+  platform
+  (`issue #268 <https://github.com/platformio/platformio/issues/268>`_)
+* Fixed includes list for Windows OS when generating project for `Eclipse IDE <http://docs.platformio.org/en/latest/ide/eclipse.html>`__
+  (`issue #270 <https://github.com/platformio/platformio/issues/270>`_)
+* Fixed ``AttributeError: 'module' object has no attribute 'packages'``
+  (`issue #252 <https://github.com/platformio/platformio/issues/252>`_)
 
 2.2.2 (2015-07-30)
 ------------------

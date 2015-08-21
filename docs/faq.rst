@@ -101,6 +101,11 @@ Please upgrade *SetupTools* package:
     $ [sudo] pip uninstall platformio
     $ [sudo] pip install platformio
 
+Windows: ``AttributeError: 'module' object has no attribute 'packages'``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Answered in `issue #252 <https://github.com/platformio/platformio/issues/252#issuecomment-127072039>`_.
+
 ARM toolchain: ``cc1plus: error while loading shared libraries``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

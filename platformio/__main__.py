@@ -70,7 +70,16 @@ def main():
     try:
         # https://urllib3.readthedocs.org
         # /en/latest/security.html#insecureplatformwarning
-        requests.packages.urllib3.disable_warnings()
+        try:
+            requests.packages.urllib3.disable_warnings()
+        except AttributeError:
+            click.secho(
+                "Invalid installation of Python `requests` package`. See "
+                "< https://github.com/platformio/platformio/issues/252 >",
+                fg="red", err=True
+            )
+            return 1
+
 
         cli(None, None)
     except Exception as e:  # pylint: disable=W0703
