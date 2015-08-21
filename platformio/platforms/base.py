@@ -384,8 +384,8 @@ class BasePlatform(object):
             raise exception.SConsNotInstalled()
 
         assert "returncode" in result
-        if self._found_error:
-            result['returncode'] = 1
+        # if self._found_error:
+        #     result['returncode'] = 1
 
         if self._last_echo_line == ".":
             click.echo("")
