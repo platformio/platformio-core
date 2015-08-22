@@ -96,7 +96,9 @@ For example, ``which platformio`` is equal to ``/usr/local/bin/platformio``,
 then `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_
 should contain ``/usr/local/bin`` directory.
 
-Answered in `issue #272 <https://github.com/platformio/platformio/issues/272#issuecomment-133372487>`_.
+**Unix Users**: You can make "symlinks" from ``platformio`` and ``scons``
+programs to the ``bin`` directory which is included in ``$PATH``. For example,
+see `issue #272 <https://github.com/platformio/platformio/issues/272#issuecomment-133626112>`_.
 
 Windows: ``UnicodeDecodeError: 'ascii' codec can't decode byte``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
