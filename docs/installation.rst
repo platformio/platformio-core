@@ -22,40 +22,21 @@ System requirements
 
 All commands below should be executed in
 `Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_
-application:
+application (Terminal):
 
-* *Mac OS X / Linux* this is *Terminal* application.
-* *Windows* this is
-  `Command Prompt <http://en.wikipedia.org/wiki/Command_Prompt>`_ (``cmd.exe``)
-  application.
+* Mac OS X / Linux – *Terminal* application
+* Windows – ``cmd.exe`` application.
 
-Troubleshooting
----------------
-
-.. warning::
-    If you are going to run *PlatformIO* from **subprocess**, you
-    :ref:`MUST DISABLE <faq_troubleshooting_pioblocksprompt>` all prompts.
-    It will allow you to avoid blocking.
-
-.. note::
-    **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
-
-    **Windows Users:** Please check that you have correctly installed USB driver
-    from board manufacturer
-
-For further details, frequently questions, please refer to :ref:`faq`.
-
-Installation Methods
+Installation options
 --------------------
 
-.. note::
-    **Windows Users**: `Download the latest Python 2.7.x
+.. warning::
+    **Windows OS**: Please `Download the latest Python 2.7.x
     <https://www.python.org/downloads/>`_ and install it.
-    *DON'T FORGET* to select ``Add python.exe to Path`` feature in installation
-    dialog on "Customize" stage.
+    **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
+    "Customize" stage.
 
-Please *choose one of* the following installation methods:
+Please *choose one of* the following installation options:
 
 Python Package Manager
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -159,3 +140,20 @@ Install the latest PlatformIO from the ``develop`` branch:
 If you want to be up-to-date with the latest ``develop`` version of PlatformIO,
 then you need to re-install PlatformIO each time if you see the new commits in
 `PlatformIO GitHub repository (branch: develop) <https://github.com/platformio/platformio/commits/develop>`_.
+
+Troubleshooting
+---------------
+
+.. warning::
+    If you are going to run *PlatformIO* from **subprocess**, you
+    :ref:`MUST DISABLE <faq_troubleshooting_pioblocksprompt>` all prompts.
+    It will allow you to avoid blocking.
+
+.. note::
+    **Linux OS**: Don't forget to install "udev" rules file
+    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+
+    **Windows OS**: Please check that you have correctly installed USB driver
+    from board manufacturer
+
+For further details, frequently questions, please refer to :ref:`faq`.
