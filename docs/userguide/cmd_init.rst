@@ -26,6 +26,10 @@ This command will create:
 * ``lib`` - a directory for the project specific (private) libraries.
   PlatformIO will compile them to static libraries and link to executable file
 
+.. note::
+    The source code of each library should be placed in separate directory.
+    For example, ``lib/private_lib/[here are source files]``.
+
 Options
 -------
 
@@ -70,9 +74,9 @@ allows you to disable firmware auto-uploading by default.
     --env-prefix
 
 An environment prefix which will be used with pair in board type.
-
 For example, the default environment name for ``teensy_31`` board will
 be ``[env:teensy_31]``.
+
 
 
 Examples

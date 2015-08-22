@@ -77,6 +77,18 @@ def cli(project_dir, board, ide, disable_auto_uploading, env_prefix):
         if not isdir(d):
             makedirs(d)
 
+    if not isfile(join(lib_dir, "readme.txt")):
+        with open(join(lib_dir, "readme.txt"), "w") as f:
+            f.write("""
+Documentation: http://docs.platformio.org/en/latest/userguide/cmd_init.html
+
+This directory is intended for the project specific (private) libraries.
+PlatformIO will compile them to static libraries and link to executable file.
+
+The source code of each library should be placed in separate directory.
+For example, "lib/private_lib/[here are source files]".
+""")
+
     if not isfile(project_file):
         copyfile(join(get_source_dir(), "projectconftpl.ini"),
                  project_file)
