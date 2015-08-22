@@ -1,8 +1,11 @@
 Release History
 ===============
 
+PlatformIO 2.0
+--------------
+
 2.3.0 (2015-??-??)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Added
   `native <http://docs.platformio.org/en/latest/platforms/native.html>`__,
@@ -30,7 +33,7 @@ Release History
   (`issue #252 <https://github.com/platformio/platformio/issues/252>`_)
 
 2.2.2 (2015-07-30)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Integration with `Atom IDE <http://docs.platformio.org/en/latest/ide/atom.html>`__
 * Support for off-line/unpublished/private libraries
@@ -46,7 +49,7 @@ Release History
   (`issue #254 <https://github.com/platformio/platformio/issues/254>`_)
 
 2.2.1 (2015-07-17)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
   (`issue #132 <https://github.com/platformio/platformio/issues/132>`_)
@@ -57,7 +60,7 @@ Release History
   (`issue #248 <https://github.com/platformio/platformio/issues/248>`_)
 
 2.2.0 (2015-07-01)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Allowed to exclude/include source files from build process using
   `src_filter <http://docs.platformio.org/en/latest/projectconf.html#src-filter>`__
@@ -88,12 +91,12 @@ Release History
   (`issue #245 <https://github.com/platformio/platformio/issues/245>`_)
 
 2.1.2 (2015-06-21)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Fixed broken link to SCons installer
 
 2.1.1 (2015-06-09)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Automatically detect upload port using VID:PID board settings
   (`issue #231 <https://github.com/platformio/platformio/issues/231>`_)
@@ -102,7 +105,7 @@ Release History
   (`issue #229 <https://github.com/platformio/platformio/issues/229>`_)
 
 2.1.0 (2015-06-03)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Added Silicon Labs EFM32 `siliconlabsefm32 <http://docs.platformio.org/en/latest/platforms/siliconlabsefm32.html>`_
   development platform
@@ -121,12 +124,12 @@ Release History
   (`issue #221 <https://github.com/platformio/platformio/issues/221>`_)
 
 2.0.2 (2015-05-27)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Fixed libraries order for "Library Dependency Finder" under Linux OS
 
 2.0.1 (2015-05-27)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Handle new environment variable
   `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-flags>`_
@@ -147,7 +150,7 @@ Release History
   (`issue #217 <https://github.com/platformio/platformio/issues/217>`_)
 
 2.0.0 (2015-05-22)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 *Made in* `Paradise <https://twitter.com/ikravets/status/592356377185619969>`_
 
@@ -194,8 +197,11 @@ Release History
 * Fixed bug with creating copies of source files
   (`issue #177 <https://github.com/platformio/platformio/issues/177>`_)
 
+PlatformIO 1.0
+--------------
+
 1.5.0 (2015-05-15)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Added support of `Framework mbed <http://platformio.org/#!/frameworks/mbed>`_
   for Teensy 3.1
@@ -218,7 +224,7 @@ Release History
   (`issue #191 <https://github.com/platformio/platformio/issues/191>`_)
 
 1.4.0 (2015-04-11)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Added `espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`_
   development platform with ESP01 board
@@ -244,7 +250,7 @@ Release History
 
 
 1.3.0 (2015-03-27)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Moved PlatformIO source code and repositories from `Ivan Kravets <https://github.com/ivankravets>`_
   account to `PlatformIO Organisation <https://github.com/platformio>`_
@@ -265,7 +271,7 @@ Release History
 
 
 1.2.0 (2015-03-20)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Added full support of `mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
   framework including libraries: *RTOS, Ethernet, DSP, FAT, USB*.
@@ -297,7 +303,7 @@ Release History
   (`issue #100 <https://github.com/platformio/platformio/issues/100>`_)
 
 1.1.0 (2015-03-05)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Implemented ``PLATFORMIO_*`` environment variables
   (`issue #102 <https://github.com/platformio/platformio/issues/102>`_)
@@ -315,7 +321,7 @@ Release History
 * Fixed uploading for *Digispark* board (`issue #106 <https://github.com/platformio/platformio/issues/106>`_)
 
 1.0.1 (2015-02-27)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 **PlatformIO 1.0 - recommended for production**
 
@@ -382,9 +388,11 @@ Release History
   error (`issue #81 <https://github.com/platformio/platformio/issues/81>`_)
 * Several bug fixes, increased stability and performance improvements
 
+PlatformIO 0.0
+--------------
 
 0.10.2 (2015-01-06)
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 * Fixed an issue with ``--json-output``
   (`issue #42 <https://github.com/platformio/platformio/issues/42>`_)
@@ -393,7 +401,7 @@ Release History
   under Windows OS (`issue #45 <https://github.com/platformio/platformio/issues/45>`_)
 
 0.10.1 (2015-01-02)
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 * Added ``--json-output`` option to
   `platformio list <http://docs.platformio.org/en/latest/userguide/cmd_list.html>`__,
@@ -405,7 +413,7 @@ Release History
   command
 
 0.10.0 (2015-01-01)
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 **Happy New Year!**
 
@@ -428,7 +436,7 @@ Release History
 * Fixed bug with *Arduino USB* boards (`issue #40 <https://github.com/platformio/platformio/issues/40>`_)
 
 0.9.2 (2014-12-10)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Replaced "dark blue" by "cyan" colour for the texts (`issue #33 <https://github.com/platformio/platformio/issues/33>`_)
 * Added new setting `enable_prompts <http://docs.platformio.org/en/latest/userguide/cmd_settings.html>`_
@@ -437,7 +445,7 @@ Release History
 * Fixed compilation bug on *Windows* with installed *MSVC* (`issue #18 <https://github.com/platformio/platformio/issues/18>`_)
 
 0.9.1 (2014-12-05)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Ask user to install platform (when it hasn't been installed yet) within
   `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
@@ -452,7 +460,7 @@ Release History
   to latest *Luna* and *PlatformIO* releases
 
 0.9.0 (2014-12-01)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Implemented `platformio settings <http://docs.platformio.org/en/latest/userguide/cmd_settings.html>`_ command
 * Improved `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`_ command.
@@ -470,7 +478,7 @@ Release History
   (`issue #28 <https://github.com/platformio/platformio/issues/28>`_)
 
 0.8.0 (2014-10-19)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Avoided trademark issues in `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`_
   with the new fields: `frameworks <http://docs.platformio.org/en/latest/librarymanager/config.html#frameworks>`_,
@@ -487,7 +495,7 @@ Release History
   command: ``--framework`` and ``--platform``
 
 0.7.1 (2014-10-06)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Fixed bug with order for includes in conversation from INO/PDE to CPP
 * Automatic detection of port on upload (`issue #15 <https://github.com/platformio/platformio/issues/15>`_)
@@ -495,7 +503,7 @@ Release History
 
 
 0.7.0 (2014-09-24)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Implemented new `[platformio] <http://docs.platformio.org/en/latest/projectconf.html#platformio>`_
   section for Configuration File with `home_dir <http://docs.platformio.org/en/latest/projectconf.html#home-dir>`_
@@ -503,14 +511,14 @@ Release History
 * Implemented *Library Manager* (`issue #6 <https://github.com/platformio/platformio/issues/6>`_)
 
 0.6.0 (2014-08-09)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Implemented `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ (`issue #10 <https://github.com/platformio/platformio/issues/10>`_)
 * Fixed an issue ``ImportError: No module named platformio.util`` (`issue #9 <https://github.com/platformio/platformio/issues/9>`_)
 * Fixed bug with auto-conversation from Arduino \*.ino to \*.cpp
 
 0.5.0 (2014-08-04)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Improved nested lookups for libraries
 * Disabled default warning flag "-Wall"
@@ -525,7 +533,7 @@ Release History
 * Fixed a bug with nested libs building
 
 0.4.0 (2014-07-31)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Implemented `platformio serialports <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html>`_ command
 * Allowed to put special build flags only for ``src`` files via
@@ -545,13 +553,13 @@ Release History
 
 
 0.3.1 (2014-06-21)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Fixed auto-installer for Windows OS (bug with %PATH% customisations)
 
 
 0.3.0 (2014-06-21)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Allowed to pass multiple "SomePlatform" to install/uninstall commands
 * Added "IDE Integration" section to README with Eclipse project examples
@@ -561,7 +569,7 @@ Release History
 
 
 0.2.0 (2014-06-15)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Resolved `issue #1 "Build referred libraries" <https://github.com/platformio/platformio/issues/1>`_
 * Renamed project's "libs" directory to "lib"
@@ -570,6 +578,6 @@ Release History
 
 
 0.1.0 (2014-06-13)
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Birth! First alpha release
