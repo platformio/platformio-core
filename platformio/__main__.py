@@ -80,7 +80,6 @@ def main():
             )
             return 1
 
-
         cli(None, None)
     except Exception as e:  # pylint: disable=W0703
         if not isinstance(e, exception.ReturnErrorCode):

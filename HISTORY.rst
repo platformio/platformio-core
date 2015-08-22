@@ -12,6 +12,9 @@ Release History
   `windows_x86 <http://docs.platformio.org/en/latest/platforms/windows_x86.html>`__
   development platforms
   (`issue #263 <https://github.com/platformio/platformio/issues/263>`_)
+* Simplified `installation <http://docs.platformio.org/en/latest/installation.html>`__
+  process of PlatformIO
+  (`issue #274 <https://github.com/platformio/platformio/issues/274>`_)
 * Added support for Adafruit Gemma board to
   `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
   platform

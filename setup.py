@@ -22,7 +22,7 @@ setup(
         "click>=3.0",
         "pyserial",
         "requests>=2.4.0",
-        # "SCons"
+        "SCons"
     ] + (["colorama"] if system() == "Windows" else []),
     packages=find_packages(),
     package_data={

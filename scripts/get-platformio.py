@@ -87,21 +87,17 @@ def install_pip():
 
 
 def install_pypi_packages(packages):
-    for pipargs in packages:
-        print (exec_python_cmd([
-            "-m", "pip.__main__" if sys.version_info < (2, 7, 0) else "pip",
-            "install", "-U"] + pipargs))
+    print (exec_python_cmd([
+        "-m", "pip.__main__" if sys.version_info < (2, 7, 0) else "pip",
+        "install", "-U"] + packages))
 
 
 def main():
     steps = [
         ("Fixing Windows %PATH% Environment", fix_winpython_pathenv, []),
         ("Installing Python Package Manager", install_pip, []),
-        ("Installing PlatformIO and dependencies", install_pypi_packages, [
-            [["setuptools"], ["platformio"], [
-                "--egg", "http://dl.platformio.org/scons.zip"
-            ]]
-        ])
+        ("Installing PlatformIO and dependencies", install_pypi_packages,
+         [["setuptools", "platformio"]])
     ]
 
     if not IS_WINDOWS:
