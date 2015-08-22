@@ -9,7 +9,7 @@ env:
     - TOX_ENV=py27
 
 install:
-	- pip install -U pip setuptools
+    - pip install -U pip setuptools
     - pip install tox
 
 script:
