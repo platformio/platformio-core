@@ -13,6 +13,7 @@ checkout:
 
 dependencies:
     pre:
+        - pip install -U pip setuptools
         - pip install tox
 
 test:
