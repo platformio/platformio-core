@@ -41,7 +41,8 @@ Please *choose one of* the following installation options:
 Python Package Manager
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Run the following (**MAY require** administrator access ``sudo``):
+Run the following using `pip <https://pip.pypa.io>`_
+(**MAY require** administrator access ``sudo``):
 
 .. code-block:: bash
 
