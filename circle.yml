@@ -8,7 +8,7 @@ machine:
         TOX_ENV: py27
 
     pre:
-        - pip install -U pip setuptools
+        - sudo pip install -U setuptools
 
 checkout:
     post:
