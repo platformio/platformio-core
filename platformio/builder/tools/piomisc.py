@@ -135,8 +135,8 @@ def DumpIDEData(env):
     toolchain_dir = env.subst(
         join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
     toolchain_incglobs = [
-        join(toolchain_dir, "*", "include"),
-        join(toolchain_dir, "lib", "gcc", "*", "*", "include")
+        join(toolchain_dir, "*", "include*"),
+        join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
     ]
     for g in toolchain_incglobs:
         data['includes'].extend(glob(g))

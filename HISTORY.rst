@@ -29,6 +29,8 @@ PlatformIO 2.0
   (`issue #272 <https://github.com/platformio/platformio/issues/272>`_)
 * Generate "readme.txt" for project "lib" directory
   (`issue #273 <https://github.com/platformio/platformio/issues/273>`_)
+* Use toolchain's includes pattern ``include*`` for Project Generator
+  (`issue #277 <https://github.com/platformio/platformio/issues/277>`_)
 * Fixed includes list for Windows OS when generating project for `Eclipse IDE <http://docs.platformio.org/en/latest/ide/eclipse.html>`__
   (`issue #270 <https://github.com/platformio/platformio/issues/270>`_)
 * Fixed ``AttributeError: 'module' object has no attribute 'packages'``
