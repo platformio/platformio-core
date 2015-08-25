@@ -135,7 +135,7 @@ Install the latest PlatformIO from the ``develop`` branch:
 
 .. code-block:: bash
 
-    pip install -U pip setuptools scons
+    pip install -U pip setuptools
     pip install -U https://github.com/platformio/platformio/archive/develop.zip
 
 If you want to be up-to-date with the latest ``develop`` version of PlatformIO,
