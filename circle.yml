@@ -7,13 +7,15 @@ machine:
         TOX_ENV: py26
         TOX_ENV: py27
 
+    pre:
+        - pip install -U pip setuptools
+
 checkout:
     post:
         - git submodule update --init
 
 dependencies:
     pre:
-        - pip install -U pip setuptools
         - pip install tox
 
 test:
