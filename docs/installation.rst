@@ -47,7 +47,7 @@ Run the following using `pip <https://pip.pypa.io>`_
 .. code-block:: bash
 
     pip install --upgrade pip setuptools scons
-    pip install platformio
+    pip install -U platformio
 
 If your computer does not recognize ``pip`` command, try to install it first
 using `these instructions <https://pip.pypa.io/en/latest/installing.html>`_.
