@@ -7,9 +7,6 @@ machine:
         TOX_ENV: py26
         TOX_ENV: py27
 
-    pre:
-        - sudo pip install -U setuptools
-
 checkout:
     post:
         - git submodule update --init
