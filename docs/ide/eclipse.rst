@@ -49,7 +49,8 @@ into Workspace > Next`` and specify root directory where is located
 Manual Integration
 ^^^^^^^^^^^^^^^^^^
 
-More detailed information is located in PlatformIO blog: `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_.
+* `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
+* `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
 
 `More examples (TI MSP430, TI TIVA, etc.) <https://github.com/platformio/platformio/tree/develop/examples/ide-eclipse>`_
 

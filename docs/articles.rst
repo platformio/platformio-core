@@ -12,6 +12,7 @@ Here are recent articles about PlatformIO:
 2015
 ^^^^
 
+* Sep 01, 2015 - **Thomas P. Weldon, Ph.D.** - `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
 * Aug 01, 2015 - **Russell Davis** - `PlatformIO on the Raspberry Pi <http://www.russelldavis.org/2015/08/01/platformio-on-the-raspberry-pi/>`_
 * Jul 25, 2015 - **DinoTools** - `Erste Schritte mit PlatformIO (German) <https://www.dinotools.de/2015/07/25/erste-schritte-mit-platformio/>`_
 * Jul 20, 2015 - **Eli Fatsi** - `Arduino Development in Atom Editor <http://viget.com/extend/arduino-development-in-atom-editor>`_
@@ -28,6 +29,6 @@ Here are recent articles about PlatformIO:
 2014
 ^^^^
 
-* October 7, 2014 - **Ivan Kravets** - `Integration of PlatformIO library manager to Arduino and Energia IDEs <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
-* June 20, 2014 - **Ivan Kravets** - `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
-* June 17, 2014 - **Ivan Kravets** - `How was PlatformIO born or why I love Python World <http://www.ikravets.com/computer-life/programming/2014/06/17/how-was-platformio-born-or-why-i-love-python-world>`_
+* October 7, 2014 - **Ivan Kravets, Ph.D.** - `Integration of PlatformIO library manager to Arduino and Energia IDEs <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
+* June 20, 2014 - **Ivan Kravets, Ph.D.** - `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
+* June 17, 2014 - **Ivan Kravets, Ph.D.** - `How was PlatformIO born or why I love Python World <http://www.ikravets.com/computer-life/programming/2014/06/17/how-was-platformio-born-or-why-i-love-python-world>`_
