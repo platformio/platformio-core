@@ -31,6 +31,11 @@ Integration
     to `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_ environment
     variable. See FAQ: :ref:`faq_troubleshooting_pionotfoundinpath`.
 
+    What is more, you can update Eclipse ``$PATH`` variable. In Eclipse IDE make
+    right click on the created project ("Project Explorer"):
+    ``Properties > C/C++ Build > Environment > PATH > Edit``
+    and set to ``/usr/local/bin:/bin:/usr/bin:/usr/sbin:/sbin``.
+
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
