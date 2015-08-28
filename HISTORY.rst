@@ -15,6 +15,8 @@ PlatformIO 2.0
   `windows_x86 <http://docs.platformio.org/en/latest/platforms/windows_x86.html>`__
   development platforms
   (`issue #263 <https://github.com/platformio/platformio/issues/263>`_)
+* Added `PlatformIO Demo <http://docs.platformio.org/en/latest/demo.html>`_
+  page to documentation
 * Simplified `installation <http://docs.platformio.org/en/latest/installation.html>`__
   process of PlatformIO
   (`issue #274 <https://github.com/platformio/platformio/issues/274>`_)

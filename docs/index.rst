@@ -64,6 +64,7 @@ Contents
     :caption: Getting Started
     :maxdepth: 2
 
+    demo
     installation
     quickstart
     userguide/index
