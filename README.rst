@@ -49,6 +49,9 @@ Continuous integration, Arduino and MBED compatible).
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
 libOpenCM3, etc.*
 
+.. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-demo-wiring.gif
+    :target: http://platformio.org
+
 * `Get Started <http://platformio.org/#!/get-started>`_
 * `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
 * `Development Platforms <http://platformio.org/#!/platforms>`_
