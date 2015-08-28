@@ -15,7 +15,7 @@ Used in demo
 
 1. Source code of `Wiring Blink <https://github.com/platformio/platformio/tree/develop/examples/wiring-blink>`_
 2. :ref:`cmd_run` command
-3. :option:`platformio run -t upload` command.
+3. :ref:`platformio run -t upload <cmd_run>` command.
 
 Platform Manager
 ----------------
