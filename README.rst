@@ -18,7 +18,7 @@ PlatformIO
     :alt: Latest Version
 .. image:: https://img.shields.io/pypi/l/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
-    :alt:  License    
+    :alt:  License
 .. image:: https://img.shields.io/pypi/dm/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: PyPi Downloads
@@ -28,12 +28,11 @@ PlatformIO
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/platformio/platformio
    :target: https://gitter.im/platformio/platformio
-.. image:: https://www.openhub.net/p/platformio/widgets/project_thin_badge.gif
-   :target: https://www.openhub.net/p/platformio
 
-`Website + Library Search <http://platformio.org>`_ |
-`Documentation <http://docs.platformio.org>`_ |
+`Home & Demo <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
+`Code <https://github.com/platformio/platformio>`_ |
+`Docs <http://docs.platformio.org>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Reddit <http://www.reddit.com/r/platformio/>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
