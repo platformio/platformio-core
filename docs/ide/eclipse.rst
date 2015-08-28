@@ -34,7 +34,8 @@ Integration
     What is more, you can update Eclipse ``$PATH`` variable. In Eclipse IDE make
     right click on the created project ("Project Explorer"):
     ``Properties > C/C++ Build > Environment > PATH > Edit``
-    and set to ``/usr/local/bin:/bin:/usr/bin:/usr/sbin:/sbin``.
+    and set to ``/usr/local/bin:/bin:/usr/bin:/usr/sbin:/sbin``. If ``PATH``
+    variable doesn't exists, please ``Add`` it.
 
 Project Generator
 ^^^^^^^^^^^^^^^^^
