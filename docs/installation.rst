@@ -41,16 +41,25 @@ Please *choose one of* the following installation options:
 Python Package Manager
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Paste each command at a Terminal prompt and run using `pip <https://pip.pypa.io>`_
-(**MAY require** administrator access ``sudo``):
+The latest stable version of PlatformIO may be done via
+`pip <https://pip.pypa.io>`_ as follows:
 
 .. code-block:: bash
 
-    pip install --upgrade pip setuptools
-    pip install scons platformio
+    # update dependent packages to the latest versions
+    pip install -U pip setuptools
 
-If your computer does not recognize ``pip`` command, try to install it first
-using `these instructions <https://pip.pypa.io/en/latest/installing.html>`_.
+    # install the latest version of PlatformIO
+    pip install -U scons platformio
+
+Note that you may run into permissions issues running these commands. You have
+a few options here:
+
+* Run with ``sudo`` to install PlatformIO and dependencies globally
+* Specify the `pip install --user <https://pip.pypa.io/en/stable/user_guide.html#user-installs>`_
+  option to install local to your user
+* Run the command in a `virtualenv <https://virtualenv.pypa.io>`_ local to a
+  specific project working set.
 
 Installer Script
 ~~~~~~~~~~~~~~~~
@@ -113,8 +122,8 @@ Full Guide
 
 .. code-block:: bash
 
-    pip install --upgrade pip setuptools
-    pip install scons platformio
+    pip install -U pip setuptools
+    pip install -U scons platformio
 
 If your computer does not recognize ``pip`` command, try to install it first
 using `these instructions <https://pip.pypa.io/en/latest/installing.html>`_.
@@ -123,7 +132,7 @@ For upgrading ``platformio`` to the latest version:
 
 .. code-block:: bash
 
-    pip install --upgrade platformio
+    pip install -U platformio
 
 Development Version
 ~~~~~~~~~~~~~~~~~~~
