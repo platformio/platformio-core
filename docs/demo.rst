@@ -45,6 +45,6 @@ Used in demo
 4. :ref:`platformio lib search -f mbed <cmd_lib_search>` command
 5. :ref:`platformio lib search -k rf <cmd_lib_search>` command
 6. :ref:`platformio lib search radiohead <cmd_lib_search>` command
-7. :ref:`platformio lib install 124 --version "1.4.0" <cmd_lib_install>` command
+7. :ref:`platformio lib install 124 --version "1.40" <cmd_lib_install>` command
 8. :ref:`platformio lib show 124 <cmd_lib_show>` command
 9. :ref:`cmd_lib_update` command.
