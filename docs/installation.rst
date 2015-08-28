@@ -46,8 +46,8 @@ Paste each command at a Terminal prompt and run using `pip <https://pip.pypa.io>
 
 .. code-block:: bash
 
-    pip install --upgrade pip setuptools scons
-    pip install platformio
+    pip install --upgrade pip setuptools
+    pip install scons platformio
 
 If your computer does not recognize ``pip`` command, try to install it first
 using `these instructions <https://pip.pypa.io/en/latest/installing.html>`_.
@@ -113,8 +113,8 @@ Full Guide
 
 .. code-block:: bash
 
-    pip install --upgrade pip setuptools scons
-    pip install platformio
+    pip install --upgrade pip setuptools
+    pip install scons platformio
 
 If your computer does not recognize ``pip`` command, try to install it first
 using `these instructions <https://pip.pypa.io/en/latest/installing.html>`_.
