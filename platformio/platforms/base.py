@@ -1,9 +1,10 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import os
 import re
+import sys
 from imp import load_source
-from os import listdir
 from os.path import isdir, isfile, join
 
 import click
@@ -152,7 +153,7 @@ class PlatformFactory(object):
             pdir = join(d, "platforms")
             if not isdir(pdir):
                 continue
-            for p in sorted(listdir(pdir)):
+            for p in sorted(os.listdir(pdir)):
                 if (p in ("__init__.py", "base.py") or not
                         p.endswith(".py")):
                     continue
@@ -371,6 +372,20 @@ class BasePlatform(object):
 
         self._found_error = False
         try:
+            # test that SCons is installed correctly
+            try:
+                r = util.exec_command(["scons", "--version"])
+                assert r['returncode'] == 0
+            except (OSError, AssertionError):
+                for p in sys.path:
+                    try:
+                        r = util.exec_command([join(p, "scons"), "--version"])
+                        assert r['returncode'] == 0
+                        os.environ['PATH'] += os.pathsep + p
+                        break
+                    except (OSError, AssertionError):
+                        pass
+
             result = util.exec_command(
                 [
                     "scons",

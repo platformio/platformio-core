@@ -5,11 +5,19 @@ try:
     from platformio import util
 except ImportError:
     import sys
-    for _path in sys.path:
-        if "platformio" in _path:
-            sys.path.insert(0, _path[:_path.rfind("platformio") - 1])
+    for p in sys.path:
+        _new_path = None
+        if not p.endswith("site-packages") and "site-packages" in p:
+            _new_path = p[:p.rfind("site-packages") + 13]
+        elif "platformio" in p:
+            _new_path = p[:p.rfind("platformio") - 1]
+        if _new_path and _new_path not in sys.path:
+            sys.path.insert(0, _new_path)
+        try:
+            from platformio import util
             break
-    from platformio import util
+        except ImportError:
+            pass
 
 import json
 from os import environ
