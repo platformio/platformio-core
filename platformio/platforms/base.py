@@ -373,18 +373,7 @@ class BasePlatform(object):
         self._found_error = False
         try:
             # test that SCons is installed correctly
-            try:
-                r = util.exec_command(["scons", "--version"])
-                assert r['returncode'] == 0
-            except (OSError, AssertionError):
-                for p in sys.path:
-                    try:
-                        r = util.exec_command([join(p, "scons"), "--version"])
-                        assert r['returncode'] == 0
-                        os.environ['PATH'] += os.pathsep + p
-                        break
-                    except (OSError, AssertionError):
-                        pass
+            assert self.test_scons()
 
             result = util.exec_command(
                 [
@@ -395,7 +384,7 @@ class BasePlatform(object):
                 stdout=util.AsyncPipe(self.on_run_out),
                 stderr=util.AsyncPipe(self.on_run_err)
             )
-        except OSError:
+        except (OSError, AssertionError):
             raise exception.SConsNotInstalled()
 
         assert "returncode" in result
@@ -406,6 +395,23 @@ class BasePlatform(object):
             click.echo("")
 
         return result
+
+    @staticmethod
+    def test_scons():
+        try:
+            r = util.exec_command(["scons", "--version"])
+            assert r['returncode'] == 0
+            return True
+        except (OSError, AssertionError):
+            for p in sys.path:
+                try:
+                    r = util.exec_command([join(p, "scons"), "--version"])
+                    assert r['returncode'] == 0
+                    os.environ['PATH'] += os.pathsep + p
+                    return True
+                except (OSError, AssertionError):
+                    pass
+        return False
 
     def on_run_out(self, line):
         self._echo_line(line, level=3)
