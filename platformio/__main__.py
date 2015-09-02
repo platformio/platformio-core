@@ -51,7 +51,8 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
         raise AttributeError()
 
 
-@click.command(cls=PlatformioCLI)
+@click.command(cls=PlatformioCLI,
+               context_settings=dict(help_option_names=["-h", "--help"]))
 @click.version_option(__version__, prog_name="PlatformIO")
 @click.option("--force", "-f", is_flag=True,
               help="Force to accept any confirmation prompts")
