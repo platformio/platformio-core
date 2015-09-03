@@ -211,8 +211,8 @@ def on_command():
     if util.is_ci():
         measure_ci()
 
-    if app.get_session_var("calller_id"):
-        measure_caller(app.get_session_var("calller_id"))
+    if app.get_session_var("caller_id"):
+        measure_caller(app.get_session_var("caller_id"))
 
 
 def measure_ci():
