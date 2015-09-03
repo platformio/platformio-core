@@ -99,7 +99,9 @@ class MeasurementProtocol(TelemetryBase):
     def _prefill_screen_name(self):
         self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
 
-        ctx_args = app.get_session_var("command_ctx").args or []
+        if not app.get_session_var("command_ctx"):
+            return
+        ctx_args = app.get_session_var("command_ctx").args
         args = [str(s).lower() for s in ctx_args if not str(s).startswith("-")]
         if not args:
             return
