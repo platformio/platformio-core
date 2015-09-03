@@ -100,6 +100,17 @@ class memoized(object):
         return functools.partial(self.__call__, obj)
 
 
+def singleton(cls):
+    """ From PEP-318 http://www.python.org/dev/peps/pep-0318/#examples """
+    _instances = {}
+
+    def get_instance(*args, **kwargs):
+        if cls not in _instances:
+            _instances[cls] = cls(*args, **kwargs)
+        return _instances[cls]
+    return get_instance
+
+
 def get_systype():
     data = uname()
     systype = data[0]

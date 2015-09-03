@@ -5,6 +5,8 @@ import json
 from os import environ, getenv
 from os.path import isfile, join
 
+from lockfile import LockFile
+
 from platformio import __version__
 from platformio.exception import InvalidSettingName, InvalidSettingValue
 from platformio.util import get_home_dir, is_ci
@@ -48,7 +50,9 @@ DEFAULT_SETTINGS = {
 
 
 SESSION_VARS = {
-    "force_option": False
+    "command_ctx": None,
+    "force_option": False,
+    "caller_id": None
 }
 
 
@@ -59,22 +63,30 @@ class State(object):
         if not self.path:
             self.path = join(get_home_dir(), "appstate.json")
         self._state = {}
+        self._prev_state = {}
+        self._lock = None
 
     def __enter__(self):
         try:
             if isfile(self.path):
+                self._lock = LockFile(self.path)
+                self._lock.acquire()
                 with open(self.path, "r") as fp:
                     self._state = json.load(fp)
         except ValueError:
             self._state = {}
+        self._prev_state = self._state.copy()
         return self._state
 
     def __exit__(self, type_, value, traceback):
-        with open(self.path, "w") as fp:
-            if "dev" in __version__:
-                json.dump(self._state, fp, indent=4)
-            else:
-                json.dump(self._state, fp)
+        if self._prev_state != self._state:
+            with open(self.path, "w") as fp:
+                if "dev" in __version__:
+                    json.dump(self._state, fp, indent=4)
+                else:
+                    json.dump(self._state, fp)
+        if self._lock:
+            self._lock.release()
 
 
 def sanitize_setting(name, value):
