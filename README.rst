@@ -10,9 +10,9 @@ PlatformIO
 .. image:: https://circleci.com/gh/platformio/platformio/tree/develop.svg?style=svg
     :target: https://circleci.com/gh/platformio/platformio/tree/develop
     :alt: Circle.CI Build Status
-.. image:: https://gemnasium.com/platformio/platformio.png
-    :target: https://gemnasium.com/platformio/platformio
-    :alt: Dependency Status
+.. image:: https://requires.io/github/platformio/platformio/requirements.svg?branch=develop
+    :target: https://requires.io/github/platformio/platformio/requirements/?branch=develop
+    :alt: Requirements Status
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
