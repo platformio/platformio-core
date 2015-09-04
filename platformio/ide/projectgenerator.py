@@ -3,6 +3,7 @@
 
 import json
 import os
+import re
 from os.path import abspath, basename, expanduser, isdir, join, relpath
 
 import bottle
@@ -88,7 +89,7 @@ class ProjectGenerator(object):
                     continue
                 _relpath = root.replace(tpls_dir, "")
                 if _relpath.startswith(os.sep):
-                    _relpath = _relpath[len(os.sep):]
+                    _relpath = _relpath[1:]
                 tpls.append((_relpath, join(root, f)))
         return tpls
 
@@ -119,7 +120,12 @@ class ProjectGenerator(object):
             "user_home_dir": abspath(expanduser("~")),
             "project_dir": self.project_dir,
             "systype": util.get_systype(),
-            "platformio_path": util.where_is_program("platformio"),
+            "platformio_path": self._fix_os_path(
+                util.where_is_program("platformio")),
             "env_pathsep": os.pathsep,
-            "env_path": os.getenv("PATH")
+            "env_path": self._fix_os_path(os.getenv("PATH"))
         })
+
+    @staticmethod
+    def _fix_os_path(path):
+        return re.sub(r"[\\]+", "\\\\", path)

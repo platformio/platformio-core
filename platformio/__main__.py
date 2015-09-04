@@ -75,12 +75,9 @@ def main():
         try:
             requests.packages.urllib3.disable_warnings()
         except AttributeError:
-            click.secho(
+            raise exception.PlatformioException(
                 "Invalid installation of Python `requests` package`. See "
-                "< https://github.com/platformio/platformio/issues/252 >",
-                fg="red", err=True
-            )
-            return 1
+                "< https://github.com/platformio/platformio/issues/252 >")
 
         cli(None, None, None)
     except Exception as e:  # pylint: disable=W0703

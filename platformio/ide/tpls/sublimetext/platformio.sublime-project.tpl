@@ -8,7 +8,7 @@
 				"-f", "-c", "sublimetext",
 				"run"
 			],
-			"path": "{{env_path}}"
+			"path": "{{env_path}}",
 			"name": "PlatformIO",
 			"variants":
 			[
