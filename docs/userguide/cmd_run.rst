@@ -51,10 +51,10 @@ Upload port of embedded board. To print all available ports use
 :ref:`cmd_serialports` command
 
 .. option::
-    --build-dir
+    -d, --project-dir
 
-Specify the path to project directory. By default, ``--build-dir`` is equal to
-current working directory (``CWD``).
+Specify the path to project directory. By default, ``--project-dir`` is equal
+to current working directory (``CWD``).
 
 .. option::
     -v, --verbose
