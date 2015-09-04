@@ -47,10 +47,16 @@ Manual Integration
 * `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
 * `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
 
-`More examples (TI MSP430, TI TIVA, etc.) <https://github.com/platformio/platformio/tree/develop/examples/ide-eclipse>`_
-
 Screenshot
 ----------
 
 .. image:: ../_static/ide-platformio-eclipse.png
     :target: http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio
+
+Examples
+--------
+
+"Blink" Project
+^^^^^^^^^^^^^^^
+
+Source code of `Eclipse "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/eclipse>`_.

@@ -465,9 +465,9 @@ PlatformIO 0.0
 * Fixed "*OSError: [Errno 2] No such file or directory*" within
   `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command when PlatformIO isn't installed properly
-* Fixed example for `Eclipse IDE with Tiva board <https://github.com/platformio/platformio/tree/develop/examples/ide-eclipse>`_
+* Fixed example for `Eclipse IDE with Tiva board <https://github.com/platformio/platformio/tree/develop/examples/ide/eclipse>`_
   (`issue #32 <https://github.com/platformio/platformio/pull/32>`_)
-* Upgraded `Eclipse Project Examples <https://github.com/platformio/platformio/tree/develop/examples/ide-eclipse>`_
+* Upgraded `Eclipse Project Examples <https://github.com/platformio/platformio/tree/develop/examples/ide/eclipse>`_
   to latest *Luna* and *PlatformIO* releases
 
 0.9.0 (2014-12-01)

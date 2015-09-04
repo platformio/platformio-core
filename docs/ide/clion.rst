@@ -55,3 +55,11 @@ Screenshot
 
 .. image:: ../_static/ide-platformio-clion.png
     :target: http://docs.platformio.org/en/latest/_static/ide-platformio-clion.png
+
+Examples
+--------
+
+"Blink" Project
+^^^^^^^^^^^^^^^
+
+Source code of `CLion "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/clion>`_.

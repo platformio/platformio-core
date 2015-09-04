@@ -123,9 +123,20 @@ Copy the source code which is described below to it.
 
 
 Conclusion
-----------
+~~~~~~~~~~
 
-Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build Solution``:
+Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build Solution``.
+
+Screenshot
+----------
 
 .. image:: ../_static/ide-vs-platformio-newproject-8.png
     :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-8.png
+
+Examples
+--------
+
+"Blink" Project
+^^^^^^^^^^^^^^^
+
+Source code of `Visual Studio "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/visualstudio>`_.

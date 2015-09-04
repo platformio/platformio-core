@@ -37,7 +37,9 @@ Since PlatformIO 2.0 you can generate Qt Creator compatible project using
 Then import this project via ``File > New File or Project > Import Project``
 and specify root directory where is located :ref:`projectconf`.
 
-After import, we need to delete default build and clean steps and configure project with PlatformIO source code builder (click on Projects label on left menu or ``Ctrl+5`` shortcut):
+After import need to delete default "build" & "clean" steps and configure
+project with PlatformIO source code builder (click on Projects label on left
+menu or ``Ctrl+5`` shortcut):
 
 .. image:: ../_static/ide-platformio-qtcreator-3.png
     :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-3.png
@@ -134,12 +136,21 @@ Edit the content to match the code described below.
     framework = arduino
     board = uno
 
-
 Conclusion
-----------
+~~~~~~~~~~
 
-Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build All``:
+Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build All``.
+
+Screenshot
+----------
 
 .. image:: ../_static/ide-platformio-qtcreator-7.png
     :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-7.png
 
+Examples
+--------
+
+"Blink" Project
+^^^^^^^^^^^^^^^
+
+Source code of `Qt Creator "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/qtcreator>`_.

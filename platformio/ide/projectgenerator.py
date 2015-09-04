@@ -120,12 +120,12 @@ class ProjectGenerator(object):
             "user_home_dir": abspath(expanduser("~")),
             "project_dir": self.project_dir,
             "systype": util.get_systype(),
-            "platformio_path": self._fix_os_path(
-                util.where_is_program("platformio")),
+            "platformio_path": util.where_is_program("platformio"),
             "env_pathsep": os.pathsep,
             "env_path": self._fix_os_path(os.getenv("PATH"))
         })
 
     @staticmethod
     def _fix_os_path(path):
-        return re.sub(r"[\\]+", "\\\\", path)
+        return (re.sub(r"[\\]+", '\\' * 4, path) if "windows" in
+                util.get_systype() else path)
