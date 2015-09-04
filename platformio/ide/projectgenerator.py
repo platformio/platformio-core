@@ -2,7 +2,7 @@
 # See LICENSE for details.
 
 import json
-from os import listdir, makedirs, walk
+import os
 from os.path import abspath, basename, expanduser, isdir, join, relpath
 
 import bottle
@@ -23,7 +23,7 @@ class ProjectGenerator(object):
     @staticmethod
     def get_supported_ides():
         tpls_dir = join(util.get_source_dir(), "ide", "tpls")
-        return sorted([d for d in listdir(tpls_dir)
+        return sorted([d for d in os.listdir(tpls_dir)
                        if isdir(join(tpls_dir, d))])
 
     @util.memoized
@@ -43,25 +43,30 @@ class ProjectGenerator(object):
 
     @util.memoized
     def get_project_build_data(self):
+        data = {
+            "defines": [],
+            "includes": [],
+            "cxx_path": None
+        }
         envdata = self.get_project_env()
         if "env_name" not in envdata:
-            return None
+            return data
         result = util.exec_command(
             ["platformio", "run", "-t", "idedata", "-e", envdata['env_name'],
              "--project-dir", self.project_dir]
         )
-        if result['returncode'] != 0 or '{"includes":' not in result['out']:
-            return None
+        if result['returncode'] != 0 or '"includes":' not in result['out']:
+            return data
 
         output = result['out']
         try:
-            start_index = output.index('\n{"includes":')
+            start_index = output.index('\n{"')
             stop_index = output.rindex('}')
-            return json.loads(output[start_index + 1:stop_index + 1])
+            data = json.loads(output[start_index + 1:stop_index + 1])
         except ValueError:
             pass
 
-        return None
+        return data
 
     def get_project_name(self):
         return basename(self.project_dir)
@@ -69,7 +74,7 @@ class ProjectGenerator(object):
     def get_srcfiles(self):
         result = []
         with util.cd(self.project_dir):
-            for root, _, files in walk(util.get_projectsrc_dir()):
+            for root, _, files in os.walk(util.get_projectsrc_dir()):
                 for f in files:
                     result.append(relpath(join(root, f)))
         return result
@@ -77,20 +82,23 @@ class ProjectGenerator(object):
     def get_tpls(self):
         tpls = []
         tpls_dir = join(util.get_source_dir(), "ide", "tpls", self.ide)
-        for root, _, files in walk(tpls_dir):
+        for root, _, files in os.walk(tpls_dir):
             for f in files:
-                if f.endswith(".tpl"):
-                    tpls.append((
-                        root.replace(tpls_dir, ""), join(root, f)))
+                if not f.endswith(".tpl"):
+                    continue
+                _relpath = root.replace(tpls_dir, "")
+                if _relpath.startswith(os.sep):
+                    _relpath = _relpath[len(os.sep):]
+                tpls.append((_relpath, join(root, f)))
         return tpls
 
     def generate(self):
         for _relpath, _path in self.get_tpls():
             tpl_dir = self.project_dir
             if _relpath:
-                tpl_dir = join(self.project_dir, _relpath)[1:]
+                tpl_dir = join(self.project_dir, _relpath)
                 if not isdir(tpl_dir):
-                    makedirs(tpl_dir)
+                    os.makedirs(tpl_dir)
 
             file_name = basename(_path)[:-4]
             with open(join(tpl_dir, file_name), "w") as f:
@@ -104,17 +112,14 @@ class ProjectGenerator(object):
 
     def _gather_tplvars(self):
         self._tplvars.update(self.get_project_env())
-
-        build_data = self.get_project_build_data()
-
+        self._tplvars.update(self.get_project_build_data())
         self._tplvars.update({
             "project_name": self.get_project_name(),
-            "includes": (build_data['includes']
-                         if build_data and "includes" in build_data else []),
-            "defines": (build_data['defines']
-                        if build_data and "defines" in build_data else []),
             "srcfiles": self.get_srcfiles(),
             "user_home_dir": abspath(expanduser("~")),
             "project_dir": self.project_dir,
-            "systype": util.get_systype()
+            "systype": util.get_systype(),
+            "platformio_path": util.where_is_program("platformio"),
+            "env_pathsep": os.pathsep,
+            "env_path": os.getenv("PATH")
         })

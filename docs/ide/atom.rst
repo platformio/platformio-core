@@ -20,11 +20,6 @@ page for more detailed information.
 Integration
 -----------
 
-.. note::
-    Please verify that folder where is located ``platformio`` program is added
-    to `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_ environment
-    variable. See FAQ: :ref:`faq_troubleshooting_pionotfoundinpath`.
-
 Using `Atom Packages <https://atom.io/docs/v1.0.2/using-atom-atom-packages>`_
 please install `platomformio <https://atom.io/packages/platomformio>`_ package.
 

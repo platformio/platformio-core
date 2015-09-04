@@ -35,10 +35,10 @@ Put to the project directory ``Makefile`` wrapper with contents:
     #PATH := /usr/local/bin:$(PATH)
 
     all:
-        platformio --force run --target upload
+        platformio -f -c vim run --target upload
 
     clean:
-        platformio --force run --target clean
+        platformio -f -c vim run --target clean
 
 
 Now, in VIM ``cd /path/to/this/project`` and press ``Ctrl+B`` or ``Cmd+B``

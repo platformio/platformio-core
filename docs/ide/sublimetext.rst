@@ -18,11 +18,6 @@ page for more detailed information.
 Integration
 -----------
 
-.. note::
-    Please verify that folder where is located ``platformio`` program is added
-    to `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_ environment
-    variable. See FAQ: :ref:`faq_troubleshooting_pionotfoundinpath`.
-
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
@@ -40,6 +35,11 @@ directory where is located :ref:`projectconf`.
 Manual Integration
 ^^^^^^^^^^^^^^^^^^
 
+.. note::
+    Please verify that folder where is located ``platformio`` program is added
+    to `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_ environment
+    variable. See FAQ: :ref:`faq_troubleshooting_pionotfoundinpath`.
+
 Initial configuration
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -50,17 +50,17 @@ described below:
 .. code-block:: bash
 
     {
-        "cmd": ["platformio", "--force", "run"],
+        "cmd": ["platformio", "-f", "-c", "sublimetext", "run"],
         "working_dir": "${project_path:${folder}}",
         "variants":
         [
             {
                 "name": "Clean",
-                "cmd": ["platformio", "--force", "run", "--target", "clean"]
+                "cmd": ["platformio", "-f", "-c", "sublimetext", "run", "--target", "clean"]
             },
             {
                 "name": "Upload",
-                "cmd": ["platformio", "--force", "run", "--target", "upload"]
+                "cmd": ["platformio", "-f", "-c", "sublimetext", "run", "--target", "upload"]
             }
         ]
     }

@@ -7,7 +7,7 @@ from glob import glob
 from os import environ, remove
 from os.path import basename, join
 
-from platformio.util import exec_command
+from platformio.util import exec_command, where_is_program
 
 
 class InoToCPPConverter(object):
@@ -122,7 +122,9 @@ def ConvertInoToCpp(env):
 def DumpIDEData(env):
     data = {
         "defines": [],
-        "includes": []
+        "includes": [],
+        "cxx_path": where_is_program(
+            env.subst("$CXX"), env.subst("${ENV['PATH']}"))
     }
 
     # includes from framework and libs

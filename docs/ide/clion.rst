@@ -22,11 +22,6 @@ page for more detailed information.
 Integration
 -----------
 
-.. note::
-    Please verify that folder where is located ``platformio`` program is added
-    to `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_ environment
-    variable. See FAQ: :ref:`faq_troubleshooting_pionotfoundinpath`.
-
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
@@ -40,6 +35,12 @@ Since PlatformIO 2.0 you can generate CLion compatible project using
 
 Then import this project from start menu or via ``File > Import Project>`` and
 specify root directory where is located :ref:`projectconf`.
+
+There are 3 predefined targets for building:
+
+* ``PLATFORMIO_BUILD`` - build project without auto-uploading
+* ``PLATFORMIO_UPLOAD`` - build and upload (if no errors)
+* ``PLATFORMIO_CLEAN`` - clean compiled objects and etc.
 
 .. warning::
     CLion is still in the development stage, so some of the features (like,

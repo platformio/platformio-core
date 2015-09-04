@@ -20,14 +20,12 @@ PlatformIO 2.0
 * Simplified `installation <http://docs.platformio.org/en/latest/installation.html>`__
   process of PlatformIO
   (`issue #274 <https://github.com/platformio/platformio/issues/274>`_)
-* Added support for Adafruit Gemma board to
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
-  platform
-  (`pull #256 <https://github.com/platformio/platformio/pull/256>`_)
+* Significantly improved `Project Generator <http://docs.platformio.org/en/latest/userguide/cmd_init.html#cmdoption-platformio-init--ide>`__ which allows to integrate with `the most popular
+  IDE <http://docs.platformio.org/en/latest/ide.html>`__
 * Added short ``-h`` help option for PlatformIO and sub-commands
 * Updated `mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
   framework
-* Updated ``tool-teensy`` for `Teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`__
+* Updated ``tool-teensy`` package for `Teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`__
   platform
   (`issue #268 <https://github.com/platformio/platformio/issues/268>`_)
 * Added FAQ answer when `Program "platformio" not found in PATH <http://docs.platformio.org/en/latest/faq.html#faq-troubleshooting-pionotfoundinpath>`_
@@ -36,6 +34,10 @@ PlatformIO 2.0
   (`issue #273 <https://github.com/platformio/platformio/issues/273>`_)
 * Use toolchain's includes pattern ``include*`` for Project Generator
   (`issue #277 <https://github.com/platformio/platformio/issues/277>`_)
+* Added support for Adafruit Gemma board to
+  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  platform
+  (`pull #256 <https://github.com/platformio/platformio/pull/256>`_)
 * Fixed includes list for Windows OS when generating project for `Eclipse IDE <http://docs.platformio.org/en/latest/ide/eclipse.html>`__
   (`issue #270 <https://github.com/platformio/platformio/issues/270>`_)
 * Fixed ``AttributeError: 'module' object has no attribute 'packages'``

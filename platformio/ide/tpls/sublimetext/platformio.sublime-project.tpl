@@ -5,9 +5,10 @@
 			"cmd":
 			[
 				"platformio",
-				"--force",
+				"-f", "-c", "sublimetext",
 				"run"
 			],
+			"path": "{{env_path}}"
 			"name": "PlatformIO",
 			"variants":
 			[
@@ -15,7 +16,7 @@
 					"cmd":
 					[
 						"platformio",
-						"--force",
+						"-f", "-c", "sublimetext",
 						"run",
 						"--target",
 						"clean"
@@ -26,7 +27,7 @@
 					"cmd":
 					[
 						"platformio",
-						"--force",
+						"-f", "-c", "sublimetext",
 						"run",
 						"--target",
 						"upload"
