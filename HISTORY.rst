@@ -25,6 +25,8 @@ PlatformIO 2.0
   platform
   (`pull #256 <https://github.com/platformio/platformio/pull/256>`_)
 * Added short ``-h`` help option for PlatformIO and sub-commands
+* Updated `mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+  framework
 * Updated ``tool-teensy`` for `Teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`__
   platform
   (`issue #268 <https://github.com/platformio/platformio/issues/268>`_)
