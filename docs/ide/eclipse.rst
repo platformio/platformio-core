@@ -37,19 +37,31 @@ Since PlatformIO 2.0 you can generate Eclipse compatible project using
 
     platformio init --ide eclipse --board %TYPE%
 
-Then import this project via ``File > Import... > General > Existing Projects
-into Workspace > Next`` and specify root directory where is located
-:ref:`projectconf`.
+Then:
+
+1. Import this project via
+   ``Menu: File > Import... > General > Existing Projects into Workspace > Next``
+   and specify root directory where is located :ref:`projectconf`
+2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
+3. Build project: ``Menu: Project > Build Project``.
+
 
 Manual Integration
 ^^^^^^^^^^^^^^^^^^
 
-More detailed information is located in PlatformIO blog: `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_.
-
-`More examples (TI MSP430, TI TIVA, etc.) <https://github.com/platformio/platformio/tree/develop/examples/ide-eclipse>`_
+* `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
+* `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
 
 Screenshot
 ----------
 
 .. image:: ../_static/ide-platformio-eclipse.png
     :target: http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio
+
+Examples
+--------
+
+"Blink" Project
+^^^^^^^^^^^^^^^
+
+Source code of `Eclipse "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/eclipse>`_.

@@ -4,8 +4,10 @@
 import atexit
 import re
 from glob import glob
-from os import remove
+from os import environ, remove
 from os.path import basename, join
+
+from platformio.util import exec_command, where_is_program
 
 
 class InoToCPPConverter(object):
@@ -120,7 +122,9 @@ def ConvertInoToCpp(env):
 def DumpIDEData(env):
     data = {
         "defines": [],
-        "includes": []
+        "includes": [],
+        "cxx_path": where_is_program(
+            env.subst("$CXX"), env.subst("${ENV['PATH']}"))
     }
 
     # includes from framework and libs
@@ -133,8 +137,8 @@ def DumpIDEData(env):
     toolchain_dir = env.subst(
         join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
     toolchain_incglobs = [
-        join(toolchain_dir, "*", "include"),
-        join(toolchain_dir, "lib", "gcc", "*", "*", "include")
+        join(toolchain_dir, "*", "include*"),
+        join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
     ]
     for g in toolchain_incglobs:
         data['includes'].extend(glob(g))
@@ -157,6 +161,22 @@ def DumpIDEData(env):
     return data
 
 
+def GetCompilerType(env):
+    try:
+        sysenv = environ.copy()
+        sysenv['PATH'] = str(env['ENV']['PATH'])
+        result = exec_command([env.subst("$CC"), "-v"], env=sysenv)
+    except OSError:
+        return None
+    if result['returncode'] != 0:
+        return None
+    output = "".join([result['out'], result['err']]).lower()
+    for type_ in ("clang", "gcc"):
+        if type_ in output:
+            return type_
+    return None
+
+
 def exists(_):
     return True
 
@@ -164,4 +184,5 @@ def exists(_):
 def generate(env):
     env.AddMethod(ConvertInoToCpp)
     env.AddMethod(DumpIDEData)
+    env.AddMethod(GetCompilerType)
     return env

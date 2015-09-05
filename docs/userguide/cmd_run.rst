@@ -33,7 +33,16 @@ Process specified environments
 .. option::
     -t, --target
 
-Process specified targets
+Process specified targets.
+
+Pre-built targets:
+
+* ``clean`` delete compiled object files, libraries and firmware/program binaries
+* ``upload`` enable "auto-uploading" for embedded platforms after building
+  operation
+* ``uploadlazy`` upload existing firmware without project rebuilding
+* ``envdump`` dump current build environment
+* ``size`` print the size of the sections in a firmware/program
 
 .. option::
     --upload-port
@@ -42,10 +51,10 @@ Upload port of embedded board. To print all available ports use
 :ref:`cmd_serialports` command
 
 .. option::
-    --build-dir
+    -d, --project-dir
 
-Specify the path to project directory. By default, ``--build-dir`` is equal to
-current working directory (``CWD``).
+Specify the path to project directory. By default, ``--project-dir`` is equal
+to current working directory (``CWD``).
 
 .. option::
     -v, --verbose

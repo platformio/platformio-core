@@ -4,8 +4,7 @@
 import click
 import requests
 
-from platformio import __version__, util
-from platformio.exception import GetLatestVersionError
+from platformio import __version__, exception, util
 
 
 @click.command("upgrade",
@@ -21,16 +20,46 @@ def cli():
         click.secho("Please wait while upgrading PlatformIO ...",
                     fg="yellow")
 
-        pip_result = util.exec_command(["pip", "install", "--upgrade",
-                                        "platformio"])
-        pio_result = util.exec_command(["platformio", "--version"])
+        cmds = (
+            ["pip", "install", "--upgrade", "pip", "setuptools"],
+            ["pip", "install", "--upgrade", "platformio"],
+            ["platformio", "--version"]
+        )
 
-        if last in pio_result['out'].strip():
-            click.secho("PlatformIO has been successfully upgraded to %s" %
-                        last, fg="green")
-        else:
-            click.secho(pip_result['out'], fg="green")
-            click.secho(pip_result['err'], fg="red")
+        cmd = None
+        r = None
+        try:
+            for cmd in cmds:
+                r = None
+                r = util.exec_command(cmd)
+                assert r['returncode'] == 0
+            assert last in r['out'].strip()
+            click.secho(
+                "PlatformIO has been successfully upgraded to %s" % last,
+                fg="green")
+            click.echo("Release notes: ", nl=False)
+            click.secho("http://docs.platformio.org/en/latest/history.html",
+                        fg="cyan")
+        except (OSError, AssertionError) as e:
+            if not r:
+                raise exception.PlatformioException(
+                    "\n".join([str(cmd), str(e)]))
+            if ("Permission denied" in r['err'] and
+                    "windows" not in util.get_systype()):
+                click.secho("""
+-----------------
+Permission denied
+-----------------
+You need the `sudo` permission to install Python packages. Try
+
+> sudo platformio upgrade
+
+WARNING! Don't use `sudo` for the rest PlatformIO commands.
+""", fg="yellow", err=True)
+                raise exception.ReturnErrorCode()
+            else:
+                raise exception.PlatformioException(
+                    "\n".join([str(cmd), r['out'], r['err']]))
 
 
 def get_latest_version():
@@ -41,4 +70,4 @@ def get_latest_version():
         ).json()
         return pkgdata['info']['version']
     except:
-        raise GetLatestVersionError()
+        raise exception.GetLatestVersionError()

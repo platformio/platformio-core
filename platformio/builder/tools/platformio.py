@@ -12,7 +12,6 @@ from SCons.Util import case_sensitive_suffixes
 
 from platformio.util import pioversion_to_intstr
 
-
 SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_DEFAULT_FILTER = " ".join([
@@ -20,7 +19,7 @@ SRC_DEFAULT_FILTER = " ".join([
 ])
 
 
-def BuildFirmware(env):
+def BuildProgram(env):
 
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes(".s", ".S"):
@@ -43,7 +42,7 @@ def BuildFirmware(env):
         )
 
     # enable "cyclic reference" for linker
-    if env.get("LIBS", deplibs):
+    if env.get("LIBS", deplibs) and env.GetCompilerType() == "gcc":
         env.Prepend(
             _LIBFLAGS="-Wl,--start-group "
         )
@@ -63,14 +62,13 @@ def BuildFirmware(env):
     )
 
     return env.Program(
-        join("$BUILD_DIR", "firmware"),
+        join("$BUILD_DIR", env.subst("$PROGNAME")),
         env.LookupSources(
             "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
             src_filter=getenv("PLATFORMIO_SRC_FILTER",
                               env.get("SRC_FILTER", None))),
         LIBS=env.get("LIBS", []) + deplibs,
-        LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"],
-        PROGSUFFIX=".elf"
+        LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"]
     )
 
 
@@ -331,7 +329,7 @@ def exists(_):
 
 
 def generate(env):
-    env.AddMethod(BuildFirmware)
+    env.AddMethod(BuildProgram)
     env.AddMethod(ProcessFlags)
     env.AddMethod(IsFileWithExt)
     env.AddMethod(VariantDirWrap)

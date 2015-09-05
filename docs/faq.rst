@@ -70,11 +70,35 @@ DISABLE** all prompts. It will allow you to avoid blocking.
 There are a few options:
 
 - using :option:`platformio --force` option before each command
-- using environment variable :ref:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <envvar_PLATFORMIO_SETTING_ENABLE_PROMPTS>`
+- using environment variable :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <PLATFORMIO_SETTING_ENABLE_PROMPTS>`
 - disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
 - masking under Continuous Integration system via environment variable
-  :ref:`CI=true <envvar_CI>`.
+  :envvar:`CI=true <CI>`.
 
+.. _faq_troubleshooting_pionotfoundinpath:
+
+Program ``platformio`` not found in PATH
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Where is ``platformio`` binary installed? Run this command in Terminal
+
+.. code-block:: bash
+
+    # for Unix
+    which platformio
+    echo $PATH
+
+    # for Windows OS
+    where platformio
+    echo %PATH%
+
+For example, ``which platformio`` is equal to ``/usr/local/bin/platformio``,
+then `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_
+should contain ``/usr/local/bin`` directory.
+
+**Unix Users**: You can make "symlinks" from ``platformio`` and ``scons``
+programs to the ``bin`` directory which is included in ``$PATH``. For example,
+see `issue #272 <https://github.com/platformio/platformio/issues/272#issuecomment-133626112>`_.
 
 Windows: ``UnicodeDecodeError: 'ascii' codec can't decode byte``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -100,6 +124,11 @@ Please upgrade *SetupTools* package:
     # Then re-install PlatformIO
     $ [sudo] pip uninstall platformio
     $ [sudo] pip install platformio
+
+Windows: ``AttributeError: 'module' object has no attribute 'packages'``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Answered in `issue #252 <https://github.com/platformio/platformio/issues/252#issuecomment-127072039>`_.
 
 ARM toolchain: ``cc1plus: error while loading shared libraries``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

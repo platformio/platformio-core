@@ -1,9 +1,10 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
+import os
 import re
+import sys
 from imp import load_source
-from os import listdir
 from os.path import isdir, isfile, join
 
 import click
@@ -76,6 +77,19 @@ PLATFORM_PACKAGES = {
         ("gcc-arm-embedded", "https://launchpad.net/gcc-arm-embedded"),
         ("GDB", "http://www.gnu.org/software/gdb/")
     ],
+    "toolchain-gccarmlinuxgnueabi": [
+        ("GCC for Linux ARM GNU EABI", "https://gcc.gnu.org"),
+        ("GDB", "http://www.gnu.org/software/gdb/")
+    ],
+    "toolchain-gccmingw32": [
+        ("MinGW", "http://www.mingw.org")
+    ],
+    "toolchain-gcclinux32": [
+        ("GCC for Linux i686", "https://gcc.gnu.org")
+    ],
+    "toolchain-gcclinux64": [
+        ("GCC for Linux x86_64", "https://gcc.gnu.org")
+    ],
     "toolchain-xtensa": [
         ("xtensa-gcc", "https://github.com/jcmvbkbc/gcc-xtensa"),
         ("GDB", "http://www.gnu.org/software/gdb/")
@@ -139,7 +153,7 @@ class PlatformFactory(object):
             pdir = join(d, "platforms")
             if not isdir(pdir):
                 continue
-            for p in sorted(listdir(pdir)):
+            for p in sorted(os.listdir(pdir)):
                 if (p in ("__init__.py", "base.py") or not
                         p.endswith(".py")):
                     continue
@@ -223,6 +237,12 @@ class BasePlatform(object):
             return self.__doc__[self.__doc__.index("http"):].strip()
         else:
             raise NotImplementedError()
+
+    def is_embedded(self):
+        for name, opts in self.get_packages().items():
+            if name == "framework-mbed" or opts.get("alias") == "uploader":
+                return True
+        return False
 
     def get_packages(self):
         return self.PACKAGES
@@ -352,6 +372,9 @@ class BasePlatform(object):
 
         self._found_error = False
         try:
+            # test that SCons is installed correctly
+            assert self.test_scons()
+
             result = util.exec_command(
                 [
                     "scons",
@@ -361,17 +384,34 @@ class BasePlatform(object):
                 stdout=util.AsyncPipe(self.on_run_out),
                 stderr=util.AsyncPipe(self.on_run_err)
             )
-        except OSError:
+        except (OSError, AssertionError):
             raise exception.SConsNotInstalled()
 
         assert "returncode" in result
-        if self._found_error:
-            result['returncode'] = 1
+        # if self._found_error:
+        #     result['returncode'] = 1
 
         if self._last_echo_line == ".":
             click.echo("")
 
         return result
+
+    @staticmethod
+    def test_scons():
+        try:
+            r = util.exec_command(["scons", "--version"])
+            assert r['returncode'] == 0
+            return True
+        except (OSError, AssertionError):
+            for p in sys.path:
+                try:
+                    r = util.exec_command([join(p, "scons"), "--version"])
+                    assert r['returncode'] == 0
+                    os.environ['PATH'] += os.pathsep + p
+                    return True
+                except (OSError, AssertionError):
+                    pass
+        return False
 
     def on_run_out(self, line):
         self._echo_line(line, level=3)

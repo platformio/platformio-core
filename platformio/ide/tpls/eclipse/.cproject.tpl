@@ -19,13 +19,17 @@
 					<folderInfo id="0.910961921." name="/" resourcePath="">
 						<toolChain id="org.eclipse.cdt.build.core.prefbase.toolchain.952979152" name="No ToolChain" resourceTypeBasedDiscovery="false" superClass="org.eclipse.cdt.build.core.prefbase.toolchain">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="org.eclipse.cdt.build.core.prefbase.toolchain.952979152.52310970" name=""/>
-							<builder cleanBuildTarget="--force run --target clean" command="platformio" id="org.eclipse.cdt.build.core.settings.default.builder.1519453406" incrementalBuildTarget="--force run" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="org.eclipse.cdt.build.core.settings.default.builder"/>
+							<builder cleanBuildTarget="-f -c eclipse run --target clean" command="platformio" id="org.eclipse.cdt.build.core.settings.default.builder.1519453406" incrementalBuildTarget="-f -c eclipse run" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="org.eclipse.cdt.build.core.settings.default.builder"/>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.libs.1409095472" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs"/>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1624502120" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.239157887" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									% for include in includes:
                                     % if include.startswith(user_home_dir):
+                                    % if "windows" in systype:
+									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
+									% else:
 									<listOptionValue builtIn="false" value="${HOME}{{include.replace(user_home_dir, '')}}"/>
+									% end
                                     % else:
 									<listOptionValue builtIn="false" value="{{include}}"/>
 									% end
@@ -42,7 +46,11 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1096940598" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									% for include in includes:
                                     % if include.startswith(user_home_dir):
+                                    % if "windows" in systype:
+									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
+									% else:
 									<listOptionValue builtIn="false" value="${HOME}{{include.replace(user_home_dir, '')}}"/>
+                                    % end
                                     % else:
 									<listOptionValue builtIn="false" value="{{include}}"/>
 									% end
@@ -59,7 +67,11 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.41298875" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									% for include in includes:
                                     % if include.startswith(user_home_dir):
+                                    % if "windows" in systype:
+									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
+									% else:
 									<listOptionValue builtIn="false" value="${HOME}{{include.replace(user_home_dir, '')}}"/>
+                                    % end
                                     % else:
 									<listOptionValue builtIn="false" value="{{include}}"/>
 									% end

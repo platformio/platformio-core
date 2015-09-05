@@ -62,7 +62,7 @@ def cli(project_dir, board, ide, disable_auto_uploading, env_prefix):
                click.style("platformio.ini", fg="cyan"))
     click.echo("%s - Put your source code here" %
                click.style("src", fg="cyan"))
-    click.echo("%s - Put here project specific or 3-rd party libraries" %
+    click.echo("%s - Put here project specific (private) libraries" %
                click.style("lib", fg="cyan"))
 
     if (app.get_setting("enable_prompts") and
@@ -76,6 +76,18 @@ def cli(project_dir, board, ide, disable_auto_uploading, env_prefix):
     for d in (src_dir, lib_dir):
         if not isdir(d):
             makedirs(d)
+
+    if not isfile(join(lib_dir, "readme.txt")):
+        with open(join(lib_dir, "readme.txt"), "w") as f:
+            f.write("""
+Documentation: http://docs.platformio.org/en/latest/userguide/cmd_init.html
+
+This directory is intended for the project specific (private) libraries.
+PlatformIO will compile them to static libraries and link to executable file.
+
+The source code of each library should be placed in separate directory.
+For example, "lib/private_lib/[here are source files]".
+""")
 
     if not isfile(project_file):
         copyfile(join(get_source_dir(), "projectconftpl.ini"),

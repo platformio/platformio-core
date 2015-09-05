@@ -19,6 +19,7 @@ libOpenCM3, etc.*
   `Issues <https://github.com/platformio/platformio/issues>`_
 * `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
   `Reddit <http://www.reddit.com/r/platformio/>`_ |
+  `Facebook <https://www.facebook.com/platformio>`_ |
   `Twitter <https://twitter.com/PlatformIO_Org>`_
 
 You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
@@ -60,18 +61,40 @@ Contents
 --------
 
 .. toctree::
+    :caption: Getting Started
     :maxdepth: 2
 
-    quickstart
+    demo
     installation
+    quickstart
+    userguide/index
+
+.. toctree::
+    :caption: Configuration
+    :maxdepth: 2
+
     projectconf
     envvars
+
+.. toctree::
+    :caption: Instruments
+    :maxdepth: 2
+
     Platforms & Boards <platforms/index>
     frameworks/index
+
+.. toctree::
+    :caption: Integration
+    :maxdepth: 2
+
     librarymanager/index
-    userguide/index
     ci/index
     ide
+
+.. toctree::
+    :caption: Miscellaneous
+    :maxdepth: 2
+
     articles
     FAQ <faq>
     history

@@ -3,7 +3,6 @@
 
 import re
 import struct
-import sys
 from os import remove
 from os.path import isdir, isfile, join
 from shutil import rmtree
@@ -23,14 +22,14 @@ from platformio.platforms.base import PlatformFactory
 from platformio.util import get_home_dir
 
 
-def on_platformio_start(ctx, force):
+def on_platformio_start(ctx, force, caller):
+    app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
-    telemetry.on_command(ctx)
+    app.set_session_var("caller_id", caller)
+    telemetry.on_command()
 
-    # skip any check operations when upgrade process
-    args = [str(s).lower() for s in sys.argv[1:]
-            if not str(s).startswith("-")]
-    if len(args) > 1 and args[1] == "upgrade":
+    # skip any check operations when upgrade command
+    if len(ctx.args or []) and ctx.args[0] == "upgrade":
         return
 
     after_upgrade(ctx)

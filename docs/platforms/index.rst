@@ -11,6 +11,9 @@ Also it has pre-configured settings for most popular **Embedded Platform
 Boards**. You have no need to specify in :ref:`projectconf` type or frequency of
 MCU, upload protocol or etc. Please use ``board`` option.
 
+Embedded
+--------
+
 .. toctree::
     :maxdepth: 2
 
@@ -25,5 +28,24 @@ MCU, upload protocol or etc. Please use ``board`` option.
     teensy
     timsp430
     titiva
+
+Desktop
+-------
+
+.. toctree::
+    :maxdepth: 2
+
+    native
+    linux_arm
+    linux_i686
+    linux_x86_64
+    windows_x86
+
+Own Platform/Board
+------------------
+
+.. toctree::
+    :maxdepth: 2
+
     creating_platform
     creating_board

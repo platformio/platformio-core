@@ -23,7 +23,6 @@ Integration
 More detailed information is located in PlatformIO blog:
 `Integration of PlatformIO library manager to Arduino IDE <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_.
 
-
 Screenshot
 ----------
 

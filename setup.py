@@ -19,10 +19,11 @@ setup(
     license=__license__,
     install_requires=[
         "bottle",
-        "click>=3.0",
+        "click>=3.2",
+        "lockfile",
         "pyserial",
         "requests>=2.4.0",
-        # "SCons"
+        "SCons"
     ] + (["colorama"] if system() == "Windows" else []),
     packages=find_packages(),
     package_data={
@@ -30,7 +31,9 @@ setup(
             "projectconftpl.ini",
             "boards/*.json",
             "ide/tpls/*/.*.tpl",
-            "ide/tpls/*/*.tpl"
+            "ide/tpls/*/*.tpl",
+            "ide/tpls/*/*/*.tpl",
+            "ide/tpls/*/.*/*.tpl"
         ]
     },
     entry_points={

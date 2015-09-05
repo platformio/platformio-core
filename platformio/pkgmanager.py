@@ -89,7 +89,8 @@ class PackageManager(object):
         dlpath = None
         try:
             dlpath = self.download(info['url'], pkg_dir, info['sha1'])
-        except requests.exceptions.ConnectionError:
+        except (requests.exceptions.ConnectionError,
+                exception.FDUnrecognizedStatusCode):
             if info['url'].startswith("http://sourceforge.net"):
                 dlpath = self.download(
                     "http://dl.platformio.org/packages/%s" %

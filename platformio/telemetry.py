@@ -3,17 +3,20 @@
 
 import atexit
 import platform
+import Queue
 import re
 import sys
 import threading
 import uuid
+from collections import deque
 from os import getenv
-from time import time
+from time import sleep, time
 
 import click
 import requests
 
 from platformio import __version__, app, exception, util
+from platformio.ide.projectgenerator import ProjectGenerator
 
 
 class TelemetryBase(object):
@@ -75,7 +78,8 @@ class MeasurementProtocol(TelemetryBase):
         # gather dependent packages
         dpdata = []
         dpdata.append("Click/%s" % click.__version__)
-        # dpdata.append("Requests/%s" % requests.__version__)
+        if app.get_session_var("caller_id"):
+            dpdata.append("Caller/%s" % app.get_session_var("caller_id"))
         try:
             result = util.exec_command(["scons", "--version"])
             match = re.search(r"engine: v([\d\.]+)", result['out'])
@@ -89,21 +93,23 @@ class MeasurementProtocol(TelemetryBase):
         self['cd1'] = util.get_systype()
         self['cd2'] = "Python/%s %s" % (platform.python_version(),
                                         platform.platform())
-        self['cd4'] = 1 if app.get_setting("enable_prompts") else 0
+        self['cd4'] = (1 if app.get_setting("enable_prompts") or
+                       app.get_session_var("caller_id") else 0)
 
     def _prefill_screen_name(self):
-        args = [str(s).lower() for s in sys.argv[1:]
-                if not str(s).startswith("-")]
+        self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
+
+        if not app.get_session_var("command_ctx"):
+            return
+        ctx_args = app.get_session_var("command_ctx").args
+        args = [str(s).lower() for s in ctx_args if not str(s).startswith("-")]
         if not args:
             return
-
         if args[0] in ("lib", "platforms", "serialports", "settings"):
             cmd_path = args[:2]
         else:
             cmd_path = args[:1]
-
         self['screen_name'] = " ".join([p.title() for p in cmd_path])
-        self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
 
     def send(self, hittype):
         if not app.get_setting("enable_telemetry"):
@@ -115,91 +121,100 @@ class MeasurementProtocol(TelemetryBase):
         if "qt" in self._params and isinstance(self['qt'], float):
             self['qt'] = int((time() - self['qt']) * 1000)
 
-        MPDataPusher.get_instance().push(self._params)
+        MPDataPusher().push(self._params)
 
 
-class MPDataPusher(threading.Thread):
+@util.singleton
+class MPDataPusher(object):
 
-    @classmethod
-    def get_instance(cls):
-        try:
-            return cls._thinstance
-        except AttributeError:
-            cls._event = threading.Event()
-            cls._thinstance = cls()
-            cls._thinstance.start()
-        return cls._thinstance
-
-    @classmethod
-    def http_session(cls):
-        try:
-            return cls._http_session
-        except AttributeError:
-            cls._http_session = requests.Session()
-        return cls._http_session
+    MAX_WORKERS = 5
 
     def __init__(self):
-        threading.Thread.__init__(self)
-        self._terminate = False
-        self._server_online = False
-        self._stack = []
+        self._queue = Queue.LifoQueue()
+        self._failedque = deque()
+        self._http_session = requests.Session()
+        self._http_offline = False
+        self._workers = []
 
-    def run(self):
-        while not self._terminate:
-            self._event.wait()
-            if self._terminate or not self._stack:
-                return
-            self._event.clear()
+    def push(self, item):
+        # if network is off-line
+        if self._http_offline:
+            if "qt" not in item:
+                item['qt'] = time()
+            self._failedque.append(item)
+            return
 
-            data = self._stack.pop()
-            try:
-                r = self.http_session().post(
-                    "https://ssl.google-analytics.com/collect",
-                    data=data,
-                    headers=util.get_request_defheaders(),
-                    timeout=3
-                )
-                r.raise_for_status()
-                self._server_online = True
-            except:  # pylint: disable=W0702
-                self._server_online = False
-                self._stack.append(data)
+        self._queue.put(item)
+        self._tune_workers()
 
-    def push(self, data):
-        self._stack.append(data)
-        self._event.set()
+    def in_wait(self):
+        return self._queue.unfinished_tasks
 
-    def is_server_online(self):
-        return self._server_online
+    def get_items(self):
+        items = list(self._failedque)
+        try:
+            while True:
+                items.append(self._queue.get_nowait())
+        except Queue.Empty:
+            pass
+        return items
 
-    def get_stack_data(self):
-        return self._stack
+    def _tune_workers(self):
+        for i, w in enumerate(self._workers):
+            if not w.is_alive():
+                del self._workers[i]
 
-    def join(self, timeout=0.1):
-        self._terminate = True
-        self._event.set()
-        self.http_session().close()
-        threading.Thread.join(self, timeout)
+        need_nums = min(self._queue.qsize(), self.MAX_WORKERS)
+        active_nums = len(self._workers)
+        if need_nums <= active_nums:
+            return
+
+        for i in range(need_nums - active_nums):
+            t = threading.Thread(target=self._worker)
+            t.daemon = True
+            t.start()
+            self._workers.append(t)
+
+    def _worker(self):
+        while True:
+            item = self._queue.get()
+            _item = item.copy()
+            if "qt" not in _item:
+                _item['qt'] = time()
+            self._failedque.append(_item)
+            if self._send_data(item):
+                self._failedque.remove(_item)
+            else:
+                self._http_offline = True
+            self._queue.task_done()
+
+    def _send_data(self, data):
+        result = False
+        try:
+            r = self._http_session.post(
+                "https://ssl.google-analytics.com/collect",
+                data=data,
+                headers=util.get_request_defheaders(),
+                timeout=2
+            )
+            r.raise_for_status()
+            result = True
+        except:  # pylint: disable=W0702
+            pass
+        return result
 
 
-@atexit.register
-def _finalize():
-    MAX_RESEND_REPORTS = 10
-    mpdp = MPDataPusher.get_instance()
-    backup_reports(mpdp.get_stack_data())
+def on_command():
+    resend_backuped_reports()
 
-    resent_nums = 0
-    while mpdp.is_server_online() and resent_nums < MAX_RESEND_REPORTS:
-        if not resend_backuped_report():
-            break
-        resent_nums += 1
-
-
-def on_command(ctx):  # pylint: disable=W0613
     mp = MeasurementProtocol()
     mp.send("screenview")
+
     if util.is_ci():
         measure_ci()
+
+    if app.get_session_var("caller_id"):
+        measure_caller(app.get_session_var("caller_id"))
 
 
 def measure_ci():
@@ -223,6 +238,18 @@ def measure_ci():
             continue
         event.update({"action": key, "label": value['label']})
 
+    on_event(**event)
+
+
+def measure_caller(calller_id):
+    calller_id = str(calller_id)[:20].lower()
+    event = {
+        "category": "Caller",
+        "action": "Misc",
+        "label": calller_id
+    }
+    if calller_id in ProjectGenerator.get_supported_ides():
+        event['action'] = "IDE"
     on_event(**event)
 
 
@@ -254,16 +281,28 @@ def on_exception(e):
     mp.send("exception")
 
 
-def backup_reports(data):
-    if not data:
+@atexit.register
+def _finalize():
+    timeout = 1000  # msec
+    elapsed = 0
+    while elapsed < timeout:
+        if not MPDataPusher().in_wait():
+            break
+        sleep(0.2)
+        elapsed += 200
+    backup_reports(MPDataPusher().get_items())
+
+
+def backup_reports(items):
+    if not items:
         return
 
-    KEEP_MAX_REPORTS = 1000
+    KEEP_MAX_REPORTS = 100
     tm = app.get_state_item("telemetry", {})
     if "backup" not in tm:
         tm['backup'] = []
 
-    for params in data:
+    for params in items:
         # skip static options
         for key in params.keys():
             if key in ("v", "tid", "cid", "cd1", "cd2", "sr", "an"):
@@ -277,21 +316,21 @@ def backup_reports(data):
 
         tm['backup'].append(params)
 
-    tm['backup'] = tm['backup'][KEEP_MAX_REPORTS*-1:]
+    tm['backup'] = tm['backup'][KEEP_MAX_REPORTS * -1:]
     app.set_state_item("telemetry", tm)
 
 
-def resend_backuped_report():
+def resend_backuped_reports():
     tm = app.get_state_item("telemetry", {})
     if "backup" not in tm or not tm['backup']:
         return False
 
-    report = tm['backup'].pop()
+    for report in tm['backup']:
+        mp = MeasurementProtocol()
+        for key, value in report.items():
+            mp[key] = value
+        mp.send(report['t'])
+
+    # clean
+    tm['backup'] = []
     app.set_state_item("telemetry", tm)
-
-    mp = MeasurementProtocol()
-    for key, value in report.items():
-        mp[key] = value
-    mp.send(report['t'])
-
-    return True

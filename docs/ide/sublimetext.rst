@@ -29,11 +29,22 @@ Since PlatformIO 2.0 you can generate Sublime Text compatible project using
 
     platformio init --ide sublimetext --board %TYPE%
 
-Then import this project via ``Project > Open Project...`` and specify root
-directory where is located :ref:`projectconf`.
+Then:
+
+1. Import project via ``Menu: Project > Open Project...`` and select
+   ``platformio.sublime-project`` from the folder where is located :ref:`projectconf`
+2. Select PlatformIO as build system: ``Menu: Tools > Build System > PlatformIO``
+3. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
+4. Build project: ``Menu: Tools > Build``.
+
 
 Manual Integration
 ^^^^^^^^^^^^^^^^^^
+
+.. note::
+    Please verify that folder where is located ``platformio`` program is added
+    to `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_ environment
+    variable. See FAQ: :ref:`faq_troubleshooting_pionotfoundinpath`.
 
 Initial configuration
 ~~~~~~~~~~~~~~~~~~~~~
@@ -45,17 +56,17 @@ described below:
 .. code-block:: bash
 
     {
-        "cmd": ["platformio", "--force", "run"],
+        "cmd": ["platformio", "-f", "-c", "sublimetext", "run"],
         "working_dir": "${project_path:${folder}}",
         "variants":
         [
             {
                 "name": "Clean",
-                "cmd": ["platformio", "--force", "run", "--target", "clean"]
+                "cmd": ["platformio", "-f", "-c", "sublimetext", "run", "--target", "clean"]
             },
             {
                 "name": "Upload",
-                "cmd": ["platformio", "--force", "run", "--target", "upload"]
+                "cmd": ["platformio", "-f", "-c", "sublimetext", "run", "--target", "upload"]
             }
         ]
     }
@@ -139,8 +150,19 @@ Copy the source code which is described below to it.
     board = uno
 
 Conclusion
-----------
+~~~~~~~~~~
 
 Taking everything into account, we can open project directory in Sublime Text using ``Menu: File > Open Folder`` and build it with shortcut ``Ctrl+B`` (Windows/Linux) or ``Cmd+B`` (Mac), clean project with shortcut ``F11`` and upload firmware to target with shortcut ``F12``.
 
+Screenshot
+----------
+
 .. image:: ../_static/ide-sublime-text-platformio-newproject-5.png
+
+Examples
+--------
+
+"Blink" Project
+^^^^^^^^^^^^^^^
+
+Source code of `Sublime Text "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/sublimetext>`_.

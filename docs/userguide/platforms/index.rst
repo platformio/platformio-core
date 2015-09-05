@@ -1,7 +1,7 @@
 .. _userguide_platforms:
 
-Platforms Manager
-=================
+Platform Manager
+================
 
 To print all available commands and options use:
 

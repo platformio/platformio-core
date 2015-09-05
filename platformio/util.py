@@ -100,6 +100,17 @@ class memoized(object):
         return functools.partial(self.__call__, obj)
 
 
+def singleton(cls):
+    """ From PEP-318 http://www.python.org/dev/peps/pep-0318/#examples """
+    _instances = {}
+
+    def get_instance(*args, **kwargs):
+        if cls not in _instances:
+            _instances[cls] = cls(*args, **kwargs)
+        return _instances[cls]
+    return get_instance
+
+
 def get_systype():
     data = uname()
     systype = data[0]
@@ -365,3 +376,29 @@ def get_frameworks(type_=None):
         return frameworks[type_]
 
     return frameworks
+
+
+def where_is_program(program, envpath=None):
+    env = os.environ
+    if envpath:
+        env['PATH'] = envpath
+
+    # try OS's built-in commands
+    try:
+        result = exec_command(
+            ["where" if "windows" in get_systype() else "which", program],
+            env=env
+        )
+        if result['returncode'] == 0 and isfile(result['out'].strip()):
+            return result['out'].strip()
+    except OSError:
+        pass
+
+    # look up in $PATH
+    for bin_dir in env.get("PATH", "").split(os.pathsep):
+        if isfile(join(bin_dir, program)):
+            return join(bin_dir, program)
+        elif isfile(join(bin_dir, "%s.exe" % program)):
+            return join(bin_dir, "%s.exe" % program)
+
+    return program

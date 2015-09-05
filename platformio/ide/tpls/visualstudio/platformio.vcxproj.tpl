@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Path>{{env_path}}</Path>
+  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -36,8 +39,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>platformio --force run</NMakeBuildCommandLine>
-    <NMakeCleanCommandLine>platformio --force run --target clean</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>platformio -f -c visualstudio run</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>platformio -f -c visualstudio run --target clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>{{";".join(defines)}}</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath>{{";".join(["$(HOMEDRIVE)$(HOMEPATH)%s" % i.replace(user_home_dir, "") if i.startswith(user_home_dir) else i for i in includes])}}</NMakeIncludeSearchPath>
   </PropertyGroup>

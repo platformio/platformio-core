@@ -95,7 +95,7 @@ else:
 # Target: Build executable and linkable firmware
 #
 
-target_elf = env.BuildFirmware()
+target_elf = env.BuildProgram()
 
 #
 # Target: Extract EEPROM data (from EEMEM directive) to .eep file

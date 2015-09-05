@@ -18,57 +18,69 @@ System requirements
     * Mac OS X
     * Linux, +ARM
     * Windows
-* `Python 2.6 or Python 2.7 <https://www.python.org/downloads/>`_
+* Python 2.6.x or Python 2.7.x(recommended)
 
 All commands below should be executed in
 `Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_
-application:
+application (Terminal):
 
-* *Mac OS X / Linux* this is *Terminal* application.
-* *Windows* this is
-  `Command Prompt <http://en.wikipedia.org/wiki/Command_Prompt>`_ (``cmd.exe``)
-  application.
+* Mac OS X / Linux – *Terminal* application
+* Windows – ``cmd.exe`` application.
 
-.. warning::
-    If you are going to run *PlatformIO* from **subprocess**, you
-    :ref:`MUST DISABLE <faq_troubleshooting_pioblocksprompt>` all prompts.
-    It will allow you to avoid blocking.
-
-.. note::
-    **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
-
-    **Windows Users:** Please check that you have correctly installed USB driver
-    from board manufacturer
-
-Troubleshooting
----------------
-
-For further details, frequently questions, please refer to :ref:`faq`.
-
-Installation Methods
+Installation options
 --------------------
 
-Please *choose one of* the following installation methods:
+.. warning::
+    **Windows OS**: Please `Download the latest Python 2.7.x
+    <https://www.python.org/downloads/>`_ and install it.
+    **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
+    "Customize" stage.
 
-Super-Quick (Mac / Linux)
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Please *choose one of* the following installation options:
 
-To install or upgrade *PlatformIO* paste that at a *Terminal* prompt
-(**you MIGHT need** to run ``sudo`` first, just for installation):
+Python Package Manager
+~~~~~~~~~~~~~~~~~~~~~~
+
+The latest stable version of PlatformIO may be done via
+`pip <https://pip.pypa.io>`_ as follows:
 
 .. code-block:: bash
 
-    [sudo] python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+    # update dependent packages to the latest versions
+    pip install -U pip setuptools
+
+    # install the latest version of PlatformIO
+    pip install -U scons platformio
+
+Note that you may run into permissions issues running these commands. You have
+a few options here:
+
+* Run with ``sudo`` to install PlatformIO and dependencies globally
+* Specify the `pip install --user <https://pip.pypa.io/en/stable/user_guide.html#user-installs>`_
+  option to install local to your user
+* Run the command in a `virtualenv <https://virtualenv.pypa.io>`_ local to a
+  specific project working set.
+
+Installer Script
+~~~~~~~~~~~~~~~~
+
+Super-Quick (Mac / Linux)
+'''''''''''''''''''''''''
+
+To install or upgrade *PlatformIO* paste that at a *Terminal* prompt
+(**MAY require** administrator access ``sudo``):
+
+.. code-block:: bash
+
+    python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
 
 
-Installer Script (Mac / Linux / Windows)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Local Download (Mac / Linux / Windows)
+''''''''''''''''''''''''''''''''''''''
 
-To install or upgrade *PlatformIO*, download
+To install or upgrade *PlatformIO*, download (save as...)
 `get-platformio.py <https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py>`_
-script. Then run the following (**you MIGHT need** to run ``sudo`` first,
-just for installation):
+script. Then run the following (**MAY require** administrator access ``sudo``):
 
 .. code-block:: bash
 
@@ -96,9 +108,9 @@ Full Guide
 
 .. code-block:: bash
 
-    $ python --version
+    python --version
 
-*Windows OS* Users only:
+*Windows Users* only:
 
     * `Download Python 2.7 <https://www.python.org/downloads/>`_ and install it.
     * Add to PATH system variable ``;C:\Python27;C:\Python27\Scripts;`` and
@@ -106,30 +118,21 @@ Full Guide
        article `How to set the path and environment variables in Windows
        <http://www.computerhope.com/issues/ch000549.htm>`_.
 
-
-2. Check a ``pip`` tool for installing and managing *Python* packages:
+2. Install a ``platformio`` and related packages:
 
 .. code-block:: bash
 
-    $ pip search platformio
-
-You should see short information about ``platformio`` package.
+    pip install -U pip setuptools
+    pip install -U scons platformio
 
 If your computer does not recognize ``pip`` command, try to install it first
 using `these instructions <https://pip.pypa.io/en/latest/installing.html>`_.
 
-3. Install a ``platformio`` and related packages:
+For upgrading ``platformio`` to the latest version:
 
 .. code-block:: bash
 
-    $ pip install platformio && pip install --egg scons
-
-For upgrading the ``platformio`` to new version please use this command:
-
-.. code-block:: bash
-
-    $ pip install -U platformio
-
+    pip install -U platformio
 
 Development Version
 ~~~~~~~~~~~~~~~~~~~
@@ -141,8 +144,26 @@ Install the latest PlatformIO from the ``develop`` branch:
 
 .. code-block:: bash
 
-    $ pip install https://github.com/platformio/platformio/archive/develop.zip
+    pip install -U pip setuptools
+    pip install -U https://github.com/platformio/platformio/archive/develop.zip
 
 If you want to be up-to-date with the latest ``develop`` version of PlatformIO,
 then you need to re-install PlatformIO each time if you see the new commits in
 `PlatformIO GitHub repository (branch: develop) <https://github.com/platformio/platformio/commits/develop>`_.
+
+Troubleshooting
+---------------
+
+.. warning::
+    If you are going to run *PlatformIO* from **subprocess**, you
+    :ref:`MUST DISABLE <faq_troubleshooting_pioblocksprompt>` all prompts.
+    It will allow you to avoid blocking.
+
+.. note::
+    **Linux OS**: Don't forget to install "udev" rules file
+    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+
+    **Windows OS**: Please check that you have correctly installed USB driver
+    from board manufacturer
+
+For further details, frequently questions, please refer to :ref:`faq`.

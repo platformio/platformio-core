@@ -7,7 +7,8 @@ import sys
 import click
 from serial.tools import miniterm
 
-from platformio.exception import PlatformioException
+from platformio import app
+from platformio.exception import MinitermException
 from platformio.util import get_serialports
 
 
@@ -69,7 +70,7 @@ def serialports_list(json_output):
 @click.option("--quiet", is_flag=True,
               help="Diagnostics: suppress non-error messages, default=Off")
 def serialports_monitor(**kwargs):
-    sys.argv = sys.argv[2:]
+    sys.argv = app.get_session_var("command_ctx").args[1:]
 
     if not kwargs['port']:
         for item in get_serialports():
@@ -80,4 +81,4 @@ def serialports_monitor(**kwargs):
     try:
         miniterm.main()
     except Exception as e:  # pylint: disable=W0702
-        raise PlatformioException(str(e))
+        raise MinitermException("Miniterm: %s" % e)

@@ -18,6 +18,11 @@ page for more detailed information.
 Integration
 -----------
 
+.. note::
+    Please verify that folder where is located ``platformio`` program is added
+    to `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_ environment
+    variable. See FAQ: :ref:`faq_troubleshooting_pionotfoundinpath`.
+
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
@@ -29,8 +34,12 @@ Since PlatformIO 2.0 you can generate Visual Studio compatible project using
 
     platformio init --ide visualstudio --board %TYPE%
 
-Then import this project via ``File->Open->Project/Solution`` and specify root
-directory where is located :ref:`projectconf`.
+Then:
+
+1. Import this project via ``Menu: File > Open > Project/Solution``
+   and specify root directory where is located :ref:`projectconf`
+2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
+3. Build project: ``Menu: Build > Build Solution``.
 
 Manual Integration
 ^^^^^^^^^^^^^^^^^^
@@ -118,9 +127,20 @@ Copy the source code which is described below to it.
 
 
 Conclusion
-----------
+~~~~~~~~~~
 
-Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build Solution``:
+Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build Solution``.
+
+Screenshot
+----------
 
 .. image:: ../_static/ide-vs-platformio-newproject-8.png
     :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-8.png
+
+Examples
+--------
+
+"Blink" Project
+^^^^^^^^^^^^^^^
+
+Source code of `Visual Studio "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/visualstudio>`_.

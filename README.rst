@@ -10,29 +10,32 @@ PlatformIO
 .. image:: https://circleci.com/gh/platformio/platformio/tree/develop.svg?style=svg
     :target: https://circleci.com/gh/platformio/platformio/tree/develop
     :alt: Circle.CI Build Status
-.. image:: https://gemnasium.com/platformio/platformio.png
-    :target: https://gemnasium.com/platformio/platformio
-    :alt: Dependency Status
+.. image:: https://requires.io/github/platformio/platformio/requirements.svg?branch=develop
+    :target: https://requires.io/github/platformio/platformio/requirements/?branch=develop
+    :alt: Requirements Status
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
-.. image:: https://img.shields.io/pypi/dm/platformio.svg
-    :target: https://pypi.python.org/pypi/platformio/
-    :alt: Downloads
 .. image:: https://img.shields.io/pypi/l/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
+.. image:: https://img.shields.io/pypi/dm/platformio.svg
+    :target: https://pypi.python.org/pypi/platformio/
+    :alt: PyPi Downloads
+.. image:: https://img.shields.io/sourceforge/dm/platformio-storage.svg
+    :target: https://sourceforge.net/projects/platformio-storage/
+    :alt: Packages Downloads
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/platformio/platformio
    :target: https://gitter.im/platformio/platformio
-.. image:: https://www.openhub.net/p/platformio/widgets/project_thin_badge.gif
-   :target: https://www.openhub.net/p/platformio
 
-`Website + Library Search <http://platformio.org>`_ |
-`Documentation <http://docs.platformio.org>`_ |
+`Home & Demo <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
+`Code <https://github.com/platformio/platformio>`_ |
+`Documentation <http://docs.platformio.org>`_ ||
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Reddit <http://www.reddit.com/r/platformio/>`_ |
+`Facebook <https://www.facebook.com/platformio>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
@@ -45,6 +48,9 @@ Continuous integration, Arduino and MBED compatible).
 *Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
 libOpenCM3, etc.*
+
+.. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-demo-wiring.gif
+    :target: http://platformio.org
 
 * `Get Started <http://platformio.org/#!/get-started>`_
 * `Web 2.0 Library Search <http://platformio.org/#!/lib>`_

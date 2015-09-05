@@ -18,7 +18,7 @@ Options
 .. program:: platformio
 
 .. option::
-    --force, - f
+    --force, -f
 
 Force to accept any confirmation prompts. This option allows to avoid an issue
 with :ref:`faq_troubleshooting_pioblocksprompt`
@@ -29,7 +29,7 @@ with :ref:`faq_troubleshooting_pioblocksprompt`
 Show the version of PlatformIO
 
 .. option::
-    --help
+    --help, -h
 
 Show help for the available options and commands
 

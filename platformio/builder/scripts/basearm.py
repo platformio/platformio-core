@@ -52,7 +52,10 @@ env.Replace(
 
     LIBS=["c", "gcc", "m"],
 
-    SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES'
+    SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
+
+    PROGNAME="firmware",
+    PROGSUFFIX=".elf"
 )
 
 env.Append(

@@ -33,8 +33,18 @@ Since PlatformIO 2.0 you can generate CLion compatible project using
 
     platformio init --ide clion --board %TYPE%
 
-Then import this project from start menu or via ``File > Import Project>`` and
-specify root directory where is located :ref:`projectconf`.
+Then:
+
+1. Import this project via ``Menu: File > Import Project``
+   and specify root directory where is located :ref:`projectconf`
+2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
+3. Build project: ``Menu: Run > Build``.
+
+There are 3 predefined targets for building:
+
+* ``PLATFORMIO_BUILD`` - build project without auto-uploading
+* ``PLATFORMIO_UPLOAD`` - build and upload (if no errors)
+* ``PLATFORMIO_CLEAN`` - clean compiled objects and etc.
 
 .. warning::
     CLion is still in the development stage, so some of the features (like,
@@ -49,3 +59,11 @@ Screenshot
 
 .. image:: ../_static/ide-platformio-clion.png
     :target: http://docs.platformio.org/en/latest/_static/ide-platformio-clion.png
+
+Examples
+--------
+
+"Blink" Project
+^^^^^^^^^^^^^^^
+
+Source code of `CLion "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/clion>`_.

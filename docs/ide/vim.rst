@@ -15,6 +15,11 @@ This software can be used with:
 Integration
 -----------
 
+.. note::
+    Please verify that folder where is located ``platformio`` program is added
+    to `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_ environment
+    variable. See FAQ: :ref:`faq_troubleshooting_pionotfoundinpath`.
+
 Recommended bundles:
 
 * Syntax highlight - `Arduino-syntax-file <https://github.com/vim-scripts/Arduino-syntax-file>`_
@@ -30,10 +35,10 @@ Put to the project directory ``Makefile`` wrapper with contents:
     #PATH := /usr/local/bin:$(PATH)
 
     all:
-        platformio --force run --target upload
+        platformio -f -c vim run --target upload
 
     clean:
-        platformio --force run --target clean
+        platformio -f -c vim run --target clean
 
 
 Now, in VIM ``cd /path/to/this/project`` and press ``Ctrl+B`` or ``Cmd+B``

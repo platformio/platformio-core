@@ -108,8 +108,20 @@ Packages
     * - ``toolchain-atmelavr``
       - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
 
+    * - ``toolchain-gccarmlinuxgnueabi``
+      - `GCC for Linux ARM GNU EABI <https://gcc.gnu.org>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
+    * - ``toolchain-gcclinux32``
+      - `GCC for Linux i686 <https://gcc.gnu.org>`_
+
+    * - ``toolchain-gcclinux64``
+      - `GCC for Linux x86_64 <https://gcc.gnu.org>`_
+
+    * - ``toolchain-gccmingw32``
+      - `MinGW <http://www.mingw.org>`_
 
     * - ``toolchain-timsp430``
       - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_, `GDB <http://www.gnu.org/software/gdb/>`_
@@ -200,7 +212,7 @@ Build Script
 
 Platform's build script is based on a next-generation build tool named
 `SCons <http://www.scons.org>`_. PlatformIO has own built-in firmware builder
-``env.BuildFirmware`` with the nested libraries search. Please look into a
+``env.BuildProgram`` with the nested libraries search. Please look into a
 base template of ``test-builder.py``.
 
 .. code-block:: python
@@ -260,7 +272,7 @@ base template of ``test-builder.py``.
     #
     # Target: Build executable and linkable firmware
     #
-    target_elf = env.BuildFirmware()
+    target_elf = env.BuildProgram()
 
     #
     # Target: Build the .bin file
@@ -383,7 +395,7 @@ and copy there two files:
     # Target: Build executable and linkable firmware
     #
 
-    target_elf = env.BuildFirmware()
+    target_elf = env.BuildProgram()
 
     #
     # Target: Build the .bin file

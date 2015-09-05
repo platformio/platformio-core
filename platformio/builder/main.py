@@ -5,14 +5,22 @@ try:
     from platformio import util
 except ImportError:
     import sys
-    for _path in sys.path:
-        if "platformio" in _path:
-            sys.path.insert(0, _path[:_path.rfind("platformio") - 1])
+    for p in sys.path:
+        _new_path = None
+        if not p.endswith("site-packages") and "site-packages" in p:
+            _new_path = p[:p.rfind("site-packages") + 13]
+        elif "platformio" in p:
+            _new_path = p[:p.rfind("platformio") - 1]
+        if _new_path and _new_path not in sys.path:
+            sys.path.insert(0, _new_path)
+        try:
+            from platformio import util
             break
-    from platformio import util
+        except ImportError:
+            pass
 
 import json
-from os import getenv
+from os import environ
 from os.path import isfile, join
 from time import time
 
@@ -63,7 +71,11 @@ DefaultEnvironment(
     toolpath=[join("$PIOBUILDER_DIR", "tools")],
     variables=commonvars,
 
+    # Propagating External Environment
+    ENV=environ,
+
     UNIX_TIME=int(time()),
+    PROGNAME="program",
 
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),
@@ -123,16 +135,17 @@ for opt in ("LIB_IGNORE", "LIB_USE"):
         continue
     env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
 
-env.PrependENVPath(
-    "PATH",
-    env.subst(join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN", "bin"))
-)
+if env.subst("$PIOPACKAGE_TOOLCHAIN"):
+    env.PrependENVPath(
+        "PATH",
+        env.subst(join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN", "bin"))
+    )
 
 SConscriptChdir(0)
 SConscript(env.subst("$BUILD_SCRIPT"))
 
-if getenv("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT", None)):
-    SConscript(getenv("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")))
+if environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT", None)):
+    SConscript(environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")))
 
 if "envdump" in COMMAND_LINE_TARGETS:
     print env.Dump()

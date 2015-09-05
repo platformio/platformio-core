@@ -66,9 +66,15 @@ def generate_boards(boards):
     return "\n".join(lines + [""])
 
 
-def generate_packages(packages):
+def generate_packages(packages, is_embedded):
+    if not packages:
+        return
     allpackages = get_packages()
     lines = []
+    lines.append("""
+Packages
+--------
+""")
     lines.append(""".. list-table::
     :header-rows:  1
 
@@ -86,7 +92,8 @@ def generate_packages(packages):
             type_=type_,
             contents=", ".join(contitems)))
 
-    lines.append("""
+    if is_embedded:
+        lines.append("""
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
@@ -95,6 +102,7 @@ def generate_packages(packages):
     from board manufacturer
 
 """)
+
     return "\n".join(lines)
 
 
@@ -116,13 +124,30 @@ For more detailed information please visit `vendor site <%s>`_.""" %
                  p.get_vendor_url())
     lines.append("""
 .. contents::""")
-    lines.append("""
-Packages
---------
-""")
-    lines.append(generate_packages(p.get_packages()))
 
-    lines.append("""
+    #
+    # Packages
+    #
+    _packages_content = generate_packages(p.get_packages(), p.is_embedded())
+    if _packages_content:
+        lines.append(_packages_content)
+
+    #
+    # Frameworks
+    #
+    _frameworks = util.get_frameworks()
+    _frameworks_lines = []
+    for framework in sorted(_frameworks.keys()):
+        if not is_compat_platform_and_framework(name, framework):
+            continue
+        _frameworks_lines.append("""
+    * - :ref:`framework_{type_}`
+      - {description}""".format(
+            type_=framework,
+            description=_frameworks[framework]['description']))
+
+    if _frameworks_lines:
+        lines.append("""
 Frameworks
 ----------
 .. list-table::
@@ -130,18 +155,23 @@ Frameworks
 
     * - Name
       - Description""")
+        lines.extend(_frameworks_lines)
 
-    _frameworks = util.get_frameworks()
-    for framework in sorted(_frameworks.keys()):
-        if not is_compat_platform_and_framework(name, framework):
-            continue
+    #
+    # Boards
+    #
+    vendors = {}
+    for board, data in util.get_boards().items():
+        platform = data['platform']
+        vendor = data['vendor']
+        if name in platform:
+            if vendor in vendors:
+                vendors[vendor].append({board: data})
+            else:
+                vendors[vendor] = [{board: data}]
+
+    if vendors:
         lines.append("""
-    * - :ref:`framework_{type_}`
-      - {description}""".format(
-            type_=framework,
-            description=_frameworks[framework]['description']))
-
-    lines.append("""
 Boards
 ------
 
@@ -152,19 +182,11 @@ Boards
       horizontal.
 """)
 
-    vendors = {}
-    for board, data in util.get_boards().items():
-        platform = data['platform']
-        vendor = data['vendor']
-        if name in platform:
-            if vendor in vendors:
-                vendors[vendor].append({board: data})
-            else:
-                vendors[vendor] = [{board: data}]
     for vendor, boards in sorted(vendors.iteritems()):
         lines.append(str(vendor))
         lines.append("~" * len(vendor))
         lines.append(generate_boards(boards))
+
     return "\n".join(lines)
 
 

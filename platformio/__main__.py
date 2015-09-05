@@ -51,18 +51,20 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
         raise AttributeError()
 
 
-@click.command(cls=PlatformioCLI)
+@click.command(cls=PlatformioCLI,
+               context_settings=dict(help_option_names=["-h", "--help"]))
 @click.version_option(__version__, prog_name="PlatformIO")
 @click.option("--force", "-f", is_flag=True,
-              help="Force to accept any confirmation prompts")
+              help="Force to accept any confirmation prompts.")
+@click.option("--caller", "-c", help="Caller ID (service).")
 @click.pass_context
-def cli(ctx, force):
-    maintenance.on_platformio_start(ctx, force)
+def cli(ctx, force, caller):
+    maintenance.on_platformio_start(ctx, force, caller)
 
 
 @cli.resultcallback()
 @click.pass_context
-def process_result(ctx, result, force):  # pylint: disable=W0613
+def process_result(ctx, result, force, caller):  # pylint: disable=W0613
     maintenance.on_platformio_end(ctx, result)
 
 
@@ -70,9 +72,14 @@ def main():
     try:
         # https://urllib3.readthedocs.org
         # /en/latest/security.html#insecureplatformwarning
-        requests.packages.urllib3.disable_warnings()
+        try:
+            requests.packages.urllib3.disable_warnings()
+        except AttributeError:
+            raise exception.PlatformioException(
+                "Invalid installation of Python `requests` package`. See "
+                "< https://github.com/platformio/platformio/issues/252 >")
 
-        cli(None, None)
+        cli(None, None, None)
     except Exception as e:  # pylint: disable=W0703
         if not isinstance(e, exception.ReturnErrorCode):
             maintenance.on_platformio_exception(e)
