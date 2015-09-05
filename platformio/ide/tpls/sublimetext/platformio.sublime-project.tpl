@@ -8,7 +8,6 @@
 				"-f", "-c", "sublimetext",
 				"run"
 			],
-			"path": "{{env_path}}",
 			"name": "PlatformIO",
 			"variants":
 			[
@@ -35,7 +34,9 @@
 					"name": "Upload"
 				}
 			],
-			"working_dir": "${project_path:${folder}}"
+			"working_dir": "${project_path:${folder}}",
+			"selector": "source.c, source.c++",
+			"path": "{{env_path}}"
 		}
 	],
 	"folders":

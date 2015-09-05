@@ -37,9 +37,43 @@ Since PlatformIO 2.0 you can generate Qt Creator compatible project using
 Then import this project via ``File > New File or Project > Import Project``
 and specify root directory where is located :ref:`projectconf`.
 
-After import need to delete default "build" & "clean" steps and configure
-project with PlatformIO source code builder (click on Projects label on left
-menu or ``Ctrl+5`` shortcut):
+
+Then:
+
+1. Import project via ``File > Open File or Project`` and select
+   ``platformio.pro`` from the folder where is located :ref:`projectconf`
+2. Select default desktop kit and click on ``Configure Project`` (``Projects``
+   mode, left panel)
+3. Set ``General > Build directory`` to the project directory where
+   is located :ref:`projectconf`
+4. Remove all items from ``Build Steps``, click on
+   ``Build Steps > Add Build Step > Custom Process Step`` and set:
+
+   * **Command**: ``platformio``
+   * **Arguments**: ``-f -c qtcreator run``
+   * **Working directory**: ``%{buildDir}``
+
+5. Remove all items from ``Clean Steps``, click on
+   ``Clean Steps > Add Clean Step > Custom Process Step`` and set:
+
+   * **Command**: ``platformio``
+   * **Arguments**: ``-f -c qtcreator run --target clean``
+   * **Working directory**: ``%{buildDir}``
+
+6. Update ``PATH`` in ``Build Environment > PATH > EDIT`` with the result of
+   this command (paste in Terminal):
+
+.. code-block:: shell
+
+    # Linux, Mac
+    echo $PATH
+
+    # Windows
+    echo %PATH%
+
+7. Switch to ``Edit`` mode (left panel) and open source file from ``src``
+   directory (``*.c, *.cpp, *.ino, etc.``)
+8. Build project: ``Menu: Build > Build All``.
 
 .. image:: ../_static/ide-platformio-qtcreator-3.png
     :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-3.png

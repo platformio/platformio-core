@@ -33,8 +33,12 @@ Since PlatformIO 2.0 you can generate CLion compatible project using
 
     platformio init --ide clion --board %TYPE%
 
-Then import this project from start menu or via ``File > Import Project>`` and
-specify root directory where is located :ref:`projectconf`.
+Then:
+
+1. Import this project via ``Menu: File > Import Project``
+   and specify root directory where is located :ref:`projectconf`
+2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
+3. Build project: ``Menu: Run > Build``.
 
 There are 3 predefined targets for building:
 

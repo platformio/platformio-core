@@ -34,8 +34,12 @@ Since PlatformIO 2.0 you can generate Visual Studio compatible project using
 
     platformio init --ide visualstudio --board %TYPE%
 
-Then import this project via ``File->Open->Project/Solution`` and specify root
-directory where is located :ref:`projectconf`.
+Then:
+
+1. Import this project via ``Menu: File > Open > Project/Solution``
+   and specify root directory where is located :ref:`projectconf`
+2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
+3. Build project: ``Menu: Build > Build Solution``.
 
 Manual Integration
 ^^^^^^^^^^^^^^^^^^

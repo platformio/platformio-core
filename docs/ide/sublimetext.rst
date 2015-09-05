@@ -29,8 +29,14 @@ Since PlatformIO 2.0 you can generate Sublime Text compatible project using
 
     platformio init --ide sublimetext --board %TYPE%
 
-Then import this project via ``Project > Open Project...`` and specify root
-directory where is located :ref:`projectconf`.
+Then:
+
+1. Import project via ``Menu: Project > Open Project...`` and select
+   ``platformio.sublime-project`` from the folder where is located :ref:`projectconf`
+2. Select PlatformIO as build system: ``Menu: Tools > Build System > PlatformIO``
+3. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
+4. Build project: ``Menu: Tools > Build``.
+
 
 Manual Integration
 ^^^^^^^^^^^^^^^^^^

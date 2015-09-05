@@ -34,7 +34,8 @@
 					"name": "Upload"
 				}
 			],
-			"working_dir": "${project_path:${folder}}"
+			"working_dir": "${project_path:${folder}}",
+			"selector": "source.c, source.c++"
 		}
 	],
 	"folders":

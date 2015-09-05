@@ -1,3 +1,5 @@
+#include "Arduino.h"
+
 // Most Arduino boards already have a LED attached to pin 13 on the board itself
 #define LED_PIN 13
 

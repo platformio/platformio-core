@@ -93,8 +93,8 @@ class MeasurementProtocol(TelemetryBase):
         self['cd1'] = util.get_systype()
         self['cd2'] = "Python/%s %s" % (platform.python_version(),
                                         platform.platform())
-        self['cd4'] = (1 if app.get_setting("enable_prompts") and
-                       not app.get_session_var("caller_id") else 0)
+        self['cd4'] = (1 if app.get_setting("enable_prompts") or
+                       app.get_session_var("caller_id") else 0)
 
     def _prefill_screen_name(self):
         self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
