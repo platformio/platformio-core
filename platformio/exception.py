@@ -17,6 +17,10 @@ class ReturnErrorCode(PlatformioException):
     pass
 
 
+class MinitermException(PlatformioException):
+    pass
+
+
 class AbortedByUser(PlatformioException):
 
     MESSAGE = "Aborted by user"
