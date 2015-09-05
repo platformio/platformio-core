@@ -34,10 +34,6 @@ Since PlatformIO 2.0 you can generate Qt Creator compatible project using
 
     platformio init --ide qtcreator --board %TYPE%
 
-Then import this project via ``File > New File or Project > Import Project``
-and specify root directory where is located :ref:`projectconf`.
-
-
 Then:
 
 1. Import project via ``File > Open File or Project`` and select
