@@ -50,7 +50,7 @@ The latest stable version of PlatformIO may be done via
     pip install -U pip setuptools
 
     # install the latest version of PlatformIO
-    pip install -U scons platformio
+    pip install -U platformio
 
 Note that you may run into permissions issues running these commands. You have
 a few options here:
@@ -113,17 +113,14 @@ Full Guide
 *Windows Users* only:
 
     * `Download Python 2.7 <https://www.python.org/downloads/>`_ and install it.
-    * Add to PATH system variable ``;C:\Python27;C:\Python27\Scripts;`` and
-       reopen *Command Prompt* (``cmd.exe``) application. Please read this
-       article `How to set the path and environment variables in Windows
-       <http://www.computerhope.com/issues/ch000549.htm>`_.
+    * Add to PATH system variable ``;C:\Python27;C:\Python27\Scripts;`` and reopen *Command Prompt* (``cmd.exe``) application. Please read this article `How to set the path and environment variables in Windows <http://www.computerhope.com/issues/ch000549.htm>`_.
 
 2. Install a ``platformio`` and related packages:
 
 .. code-block:: bash
 
     pip install -U pip setuptools
-    pip install -U scons platformio
+    pip install -U platformio
 
 If your computer does not recognize ``pip`` command, try to install it first
 using `these instructions <https://pip.pypa.io/en/latest/installing.html>`_.
