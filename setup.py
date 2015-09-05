@@ -31,7 +31,9 @@ setup(
             "projectconftpl.ini",
             "boards/*.json",
             "ide/tpls/*/.*.tpl",
-            "ide/tpls/*/*.tpl"
+            "ide/tpls/*/*.tpl",
+            "ide/tpls/*/*/*.tpl",
+            "ide/tpls/*/.*/*.tpl"
         ]
     },
     entry_points={
