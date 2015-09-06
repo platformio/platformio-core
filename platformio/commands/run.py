@@ -174,8 +174,7 @@ class EnvironmentProcessor(object):
 
 
 def _autoinstall_platform(ctx, platform, targets):
-    installed_platforms = PlatformFactory.get_platforms(
-        installed=True).keys()
+    installed_platforms = PlatformFactory.get_platforms(installed=True).keys()
     cmd_options = {}
     p = PlatformFactory.newPlatform(platform)
 
