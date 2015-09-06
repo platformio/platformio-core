@@ -8,7 +8,10 @@ from shutil import copyfile
 import click
 
 from platformio import app, exception
+from platformio.commands.platforms import \
+    platforms_install as cli_platforms_install
 from platformio.ide.projectgenerator import ProjectGenerator
+from platformio.platforms.base import PlatformFactory
 from platformio.util import get_boards, get_source_dir
 
 
@@ -33,7 +36,9 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
               type=click.Choice(ProjectGenerator.get_supported_ides()))
 @click.option("--disable-auto-uploading", is_flag=True)
 @click.option("--env-prefix", default="")
-def cli(project_dir, board, ide, disable_auto_uploading, env_prefix):
+@click.pass_context
+def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
+        disable_auto_uploading, env_prefix):
 
     # ask about auto-uploading
     if board and app.get_setting("enable_prompts"):
@@ -95,7 +100,7 @@ For example, "lib/private_lib/[here are source files]".
 
     if board:
         fill_project_envs(
-            project_file, board, disable_auto_uploading, env_prefix)
+            ctx, project_file, board, disable_auto_uploading, env_prefix)
 
     if ide:
         pg = ProjectGenerator(project_dir, ide, board[0] if board else None)
@@ -113,11 +118,12 @@ For example, "lib/private_lib/[here are source files]".
     )
 
 
-def fill_project_envs(project_file, board_types, disable_auto_uploading,
+def fill_project_envs(ctx, project_file, board_types, disable_auto_uploading,
                       env_prefix):
     builtin_boards = get_boards()
     content = []
     used_envs = []
+    used_platforms = []
 
     with open(project_file) as f:
         used_envs = [l.strip() for l in f.read().splitlines() if
@@ -125,6 +131,7 @@ def fill_project_envs(project_file, board_types, disable_auto_uploading,
 
     for type_ in board_types:
         data = builtin_boards[type_]
+        used_platforms.append(data['platform'])
         env_name = "[env:%s%s]" % (env_prefix, type_)
 
         if env_name in used_envs:
@@ -143,9 +150,21 @@ def fill_project_envs(project_file, board_types, disable_auto_uploading,
         content.append("%stargets = upload" % ("# " if disable_auto_uploading
                                                else ""))
 
+    _install_dependent_platforms(ctx, used_platforms)
+
     if not content:
         return
 
     with open(project_file, "a") as f:
         content.append("")
         f.write("\n".join(content))
+
+
+def _install_dependent_platforms(ctx, platforms):
+    installed_platforms = PlatformFactory.get_platforms(installed=True).keys()
+    if set(platforms) <= set(installed_platforms):
+        return
+    ctx.invoke(
+        cli_platforms_install,
+        platforms=list(set(platforms) - set(installed_platforms))
+    )

@@ -4,6 +4,12 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.3.1 (2015-09-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed critical issue when `platformio init --ide <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__ command hangs PlatformIO
+  (`issue #283 <https://github.com/platformio/platformio/issues/283>`_)
+
 2.3.0 (2015-09-05)
 ~~~~~~~~~~~~~~~~~~
 
