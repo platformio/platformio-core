@@ -4,6 +4,7 @@
 import os
 import re
 import sys
+from glob import glob
 from imp import load_source
 from os.path import isdir, isfile, join
 
@@ -400,6 +401,22 @@ class BasePlatform(object):
     def test_scons():
         try:
             r = util.exec_command(["scons", "--version"])
+            if "ImportError: No module named SCons.Script" in r['err']:
+                _PYTHONPATH = []
+                for p in sys.path:
+                    if not p.endswith("-packages"):
+                        continue
+                    for item in glob(join(p, "scons*")):
+                        if isdir(join(item, "SCons")) and item not in sys.path:
+                            _PYTHONPATH.append(item)
+                            sys.path.insert(0, item)
+                if _PYTHONPATH:
+                    _PYTHONPATH = str(os.pathsep).join(_PYTHONPATH)
+                    if os.getenv("PYTHONPATH"):
+                        os.environ['PYTHONPATH'] += os.pathsep + _PYTHONPATH
+                    else:
+                        os.environ['PYTHONPATH'] = _PYTHONPATH
+                    r = util.exec_command(["scons", "--version"])
             assert r['returncode'] == 0
             return True
         except (OSError, AssertionError):

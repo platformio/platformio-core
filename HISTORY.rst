@@ -4,6 +4,11 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.3.2 (2015-09-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed `SConsNotInstalled` error for Linux Debian-based distributives
+
 2.3.1 (2015-09-06)
 ~~~~~~~~~~~~~~~~~~
 

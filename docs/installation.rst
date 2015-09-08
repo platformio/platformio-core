@@ -47,7 +47,7 @@ The latest stable version of PlatformIO may be done via
 .. code-block:: bash
 
     # update dependent packages to the latest versions
-    pip install -U pip setuptools
+    pip install -U pip setuptools virtualenv
 
     # install the latest version of PlatformIO
     pip install -U platformio

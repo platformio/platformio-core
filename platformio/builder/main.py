@@ -6,13 +6,16 @@ try:
 except ImportError:
     import sys
     for p in sys.path:
-        _new_path = None
-        if not p.endswith("site-packages") and "site-packages" in p:
-            _new_path = p[:p.rfind("site-packages") + 13]
-        elif "platformio" in p:
-            _new_path = p[:p.rfind("platformio") - 1]
-        if _new_path and _new_path not in sys.path:
-            sys.path.insert(0, _new_path)
+        _new_paths = []
+        for item in ("dist-packages", "site-packages"):
+            if not p.endswith(item) and item in p:
+                _new_paths.append(p[:p.rfind(item) + len(item)])
+        if "platformio" in p:
+            _new_paths.append(p[:p.rfind("platformio") - 1])
+
+        for _p in _new_paths:
+            if _p not in sys.path:
+                sys.path.insert(0, _p)
         try:
             from platformio import util
             break
