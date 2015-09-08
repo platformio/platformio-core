@@ -21,7 +21,7 @@ def cli():
                     fg="yellow")
 
         cmds = (
-            ["pip", "install", "--upgrade", "pip", "setuptools"],
+            ["pip", "install", "--upgrade", "pip", "setuptools", "virtualenv"],
             ["pip", "install", "--upgrade", "platformio"],
             ["platformio", "--version"]
         )

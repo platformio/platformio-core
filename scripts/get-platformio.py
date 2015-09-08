@@ -97,7 +97,7 @@ def main():
         ("Fixing Windows %PATH% Environment", fix_winpython_pathenv, []),
         ("Installing Python Package Manager", install_pip, []),
         ("Installing PlatformIO and dependencies", install_pypi_packages,
-         [["setuptools", "platformio"]])
+         [["setuptools", "virtualenv", "platformio"]])
     ]
 
     if not IS_WINDOWS:
