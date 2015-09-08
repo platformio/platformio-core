@@ -90,8 +90,32 @@ Documentation: http://docs.platformio.org/en/latest/userguide/cmd_init.html
 This directory is intended for the project specific (private) libraries.
 PlatformIO will compile them to static libraries and link to executable file.
 
-The source code of each library should be placed in separate directory.
-For example, "lib/private_lib/[here are source files]".
+The source code of each library should be placed in separate directory, like
+"lib/private_lib/[here are source files]".
+
+For example, the library is named "Foo" and source code is placed to `lib/Foo`
+directory:
+
+* lib
+|--
+  | Foo
+  --
+    | Foo.h
+    | Foo.cpp
+
+Then in your project (within `src` directory) you should use:
+
+#include <Foo.h>
+
+// rest H/C/CPP code
+
+PlatformIO will find your library automatically, configure path to includes for
+preprocessor and build it.
+
+See additional options for PlatformIO Library Dependency Finder `lib_*`:
+
+http://docs.platformio.org/en/latest/projectconf.html#lib-install
+
 """)
 
     if not isfile(project_file):
