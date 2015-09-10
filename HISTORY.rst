@@ -7,6 +7,7 @@ PlatformIO 2.0
 2.3.2 (2015-09-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Allowed PlatformIO to be run within Cygwin environment
 * Allowed to use ST-Link uploader for mbed-based projects
 * Explained how to use ``lib`` directory from the PlatformIO based project in
   ``readme.txt`` which will be automatically generated using

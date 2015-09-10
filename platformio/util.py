@@ -114,6 +114,8 @@ def singleton(cls):
 def get_systype():
     data = uname()
     systype = data[0]
+    if "cygwin" in systype.lower():
+        systype = "windows"
     if data[4]:
         systype += "_" + data[4]
     return systype.lower()
