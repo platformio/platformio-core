@@ -8,6 +8,9 @@ PlatformIO 2.0
 ~~~~~~~~~~~~~~~~~~
 
 * Allowed to use ST-Link uploader for mbed-based projects
+* Found solution for "pip/scons error: option --single-version-externally-managed not
+  recognized" when install PlatformIO using ``pip`` package manager
+  (`issue #279 <https://github.com/platformio/platformio/issues/279>`_)
 * Fixed `SConsNotInstalled` error for Linux Debian-based distributives
 
 2.3.1 (2015-09-06)

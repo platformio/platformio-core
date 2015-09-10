@@ -75,6 +75,27 @@ There are a few options:
 - masking under Continuous Integration system via environment variable
   :envvar:`CI=true <CI>`.
 
+PlatformIO and ``scons`` aren't installed properly
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Try these solutions:
+
+1. Upgrade SCons via `pip <https://pip.pypa.io>`_
+
+.. code-block:: bash
+
+    [sudo] pip uninstall scons
+    [sudo] pip install scons
+
+2. Install PlatformIO using :ref:`installation_installer_script`.
+
+.. _faq_troubleshooting_sconssingverextmanaged:
+
+PIP & SCons Error: option --single-version-externally-managed not recognized
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Answered in `issue #279 <https://github.com/platformio/platformio/issues/279>`_.
+
 .. _faq_troubleshooting_pionotfoundinpath:
 
 Program ``platformio`` not found in PATH
@@ -100,8 +121,8 @@ should contain ``/usr/local/bin`` directory.
 programs to the ``bin`` directory which is included in ``$PATH``. For example,
 see `issue #272 <https://github.com/platformio/platformio/issues/272#issuecomment-133626112>`_.
 
-Windows: ``UnicodeDecodeError: 'ascii' codec can't decode byte``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Windows UnicodeDecodeError: 'ascii' codec can't decode byte
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Answered in `issue #143 <https://github.com/platformio/platformio/issues/143#issuecomment-88060906>`_.
 
@@ -118,20 +139,20 @@ Please upgrade *SetupTools* package:
 
 .. code-block:: bash
 
-    $ [sudo] pip uninstall setuptools
-    $ [sudo] pip install setuptools
+    [sudo] pip uninstall setuptools
+    [sudo] pip install setuptools
 
     # Then re-install PlatformIO
-    $ [sudo] pip uninstall platformio
-    $ [sudo] pip install platformio
+    [sudo] pip uninstall platformio
+    [sudo] pip install platformio
 
-Windows: ``AttributeError: 'module' object has no attribute 'packages'``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Windows AttributeError: 'module' object has no attribute 'packages'
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Answered in `issue #252 <https://github.com/platformio/platformio/issues/252#issuecomment-127072039>`_.
 
-ARM toolchain: ``cc1plus: error while loading shared libraries``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ARM toolchain: cc1plus: error while loading shared libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 See related answers for
 `error while loading shared libraries <https://github.com/platformio/platformio/issues?utf8=✓&q=error+while+loading+shared+libraries>`_.
