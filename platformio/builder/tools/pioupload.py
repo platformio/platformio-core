@@ -2,14 +2,13 @@
 # See LICENSE for details.
 
 from os.path import join
-from platform import system
 from shutil import copyfile
 from time import sleep
 
 from SCons.Script import Exit
 from serial import Serial
 
-from platformio.util import get_logicaldisks, get_serialports
+from platformio.util import get_logicaldisks, get_serialports, get_systype
 
 
 def FlushSerialBuffer(env, port):
@@ -24,7 +23,7 @@ def FlushSerialBuffer(env, port):
 
 
 def TouchSerialPort(env, port, baudrate):
-    if system() == "Linux":
+    if "windows" not in get_systype():
         try:
             s = Serial(env.subst(port))
             s.close()
