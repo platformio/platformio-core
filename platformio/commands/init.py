@@ -85,32 +85,38 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
     if not isfile(join(lib_dir, "readme.txt")):
         with open(join(lib_dir, "readme.txt"), "w") as f:
             f.write("""
-Documentation: http://docs.platformio.org/en/latest/userguide/cmd_init.html
-
 This directory is intended for the project specific (private) libraries.
 PlatformIO will compile them to static libraries and link to executable file.
 
 The source code of each library should be placed in separate directory, like
 "lib/private_lib/[here are source files]".
 
-For example, the library is named "Foo" and source code is placed to `lib/Foo`
-directory:
+For example, see how can be organised `Foo` and `Bar` libraries:
 
-* lib
-|--
-  | Foo
-  --
-    | Foo.h
-    | Foo.cpp
+|--lib
+|  |--Bar
+|  |  |--docs
+|  |  |--examples
+|  |  |--src
+|  |     |- Bar.c
+|  |     |- Bar.h
+|  |--Foo
+|  |  |- Foo.c
+|  |  |- Foo.h
+|  |- readme.txt --> THIS FILE
+|- platformio.ini
+|--src
+   |- main.c
 
-Then in your project (within `src` directory) you should use:
+Then in `src/main.c` you should use:
 
 #include <Foo.h>
+#include <Bar.h>
 
 // rest H/C/CPP code
 
-PlatformIO will find your library automatically, configure path to includes for
-preprocessor and build it.
+PlatformIO will find your libraries automatically, configure preprocessor's
+include paths and build them.
 
 See additional options for PlatformIO Library Dependency Finder `lib_*`:
 

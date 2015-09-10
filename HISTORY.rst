@@ -8,6 +8,11 @@ PlatformIO 2.0
 ~~~~~~~~~~~~~~~~~~
 
 * Allowed to use ST-Link uploader for mbed-based projects
+* Explained how to use ``lib`` directory from the PlatformIO based project in
+  ``readme.txt`` which will be automatically generated using
+  `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
+  command
+  (`issue #273 <https://github.com/platformio/platformio/issues/273>`_)
 * Found solution for "pip/scons error: option --single-version-externally-managed not
   recognized" when install PlatformIO using ``pip`` package manager
   (`issue #279 <https://github.com/platformio/platformio/issues/279>`_)
