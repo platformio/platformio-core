@@ -182,6 +182,25 @@ class SConsNotInstalled(PlatformioException):
 
     MESSAGE = (
         "The PlatformIO and `scons` aren't installed properly. "
-        "Please use official installation manual: "
+        "More details in FAQ/Troubleshooting section: "
+        "http://docs.platformio.org/en/latest/faq.html"
+    )
+
+
+class PlatformioUpgradeError(PlatformioException):
+
+    MESSAGE = (
+        "%s \n\n"
+        "1. Please report this issue here: "
+        "https://github.com/platformio/platformio/issues \n"
+        "2. Try different installation/upgrading steps: "
         "http://docs.platformio.org/en/latest/installation.html"
+    )
+
+
+class CygwinEnvDetected(PlatformioException):
+
+    MESSAGE = (
+        "PlatformIO does not work within Cygwin environment. "
+        "Use native Terminal instead."
     )

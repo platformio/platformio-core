@@ -49,8 +49,11 @@ The latest stable version of PlatformIO may be done via
     # update dependent packages to the latest versions
     pip install -U pip setuptools
 
-    # install the latest version of PlatformIO
+    # install/upgrade the latest version of PlatformIO
     pip install -U platformio
+
+.. warning::
+    Known Issue: :ref:`faq_troubleshooting_sconssingverextmanaged`
 
 Note that you may run into permissions issues running these commands. You have
 a few options here:
@@ -60,6 +63,8 @@ a few options here:
   option to install local to your user
 * Run the command in a `virtualenv <https://virtualenv.pypa.io>`_ local to a
   specific project working set.
+
+.. _installation_installer_script:
 
 Installer Script
 ~~~~~~~~~~~~~~~~
@@ -134,9 +139,6 @@ For upgrading ``platformio`` to the latest version:
 Development Version
 ~~~~~~~~~~~~~~~~~~~
 
-.. warning::
-    We don't recommend to use ``develop`` version in production.
-
 Install the latest PlatformIO from the ``develop`` branch:
 
 .. code-block:: bash
@@ -163,4 +165,5 @@ Troubleshooting
     **Windows OS**: Please check that you have correctly installed USB driver
     from board manufacturer
 
-For further details, frequently questions, please refer to :ref:`faq`.
+For further details, frequently questions, known issues, please
+refer to :ref:`faq`.

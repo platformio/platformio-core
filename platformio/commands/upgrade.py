@@ -42,7 +42,7 @@ def cli():
                         fg="cyan")
         except (OSError, AssertionError) as e:
             if not r:
-                raise exception.PlatformioException(
+                raise exception.PlatformioUpgradeError(
                     "\n".join([str(cmd), str(e)]))
             if ("Permission denied" in r['err'] and
                     "windows" not in util.get_systype()):
@@ -58,7 +58,7 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
 """, fg="yellow", err=True)
                 raise exception.ReturnErrorCode()
             else:
-                raise exception.PlatformioException(
+                raise exception.PlatformioUpgradeError(
                     "\n".join([str(cmd), r['out'], r['err']]))
 
 

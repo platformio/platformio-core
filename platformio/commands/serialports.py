@@ -81,4 +81,4 @@ def serialports_monitor(**kwargs):
     try:
         miniterm.main()
     except Exception as e:  # pylint: disable=W0702
-        raise MinitermException("Miniterm: %s" % e)
+        raise MinitermException(e)

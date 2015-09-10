@@ -56,7 +56,10 @@ def cli(query, json_output):  # pylint: disable=R0912
             if "maximum_ram_size" in data.get("upload", None):
                 ram_size = int(data['upload']['maximum_ram_size'])
                 if ram_size >= 1024:
-                    ram_size = "%dKb" % (ram_size / 1024)
+                    if ram_size % 1024:
+                        ram_size = "%.1fKb" % (ram_size / 1024.0)
+                    else:
+                        ram_size = "%dKb" % (ram_size / 1024)
                 else:
                     ram_size = "%dB" % ram_size
 

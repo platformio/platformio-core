@@ -113,10 +113,9 @@ def singleton(cls):
 
 def get_systype():
     data = uname()
-    systype = data[0]
-    if data[4]:
-        systype += "_" + data[4]
-    return systype.lower()
+    type_ = data[0].lower()
+    arch = data[4].lower() if data[4] else ""
+    return "%s_%s" % (type_, arch) if arch else type_
 
 
 def pioversion_to_intstr():

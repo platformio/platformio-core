@@ -20,7 +20,7 @@ setup(
     install_requires=[
         "bottle",
         "click>=3.2",
-        "lockfile",
+        "lockfile>=0.9.1",
         "pyserial",
         "requests>=2.4.0",
         "SCons"
