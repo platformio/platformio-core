@@ -4,7 +4,7 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.3.2 (2015-09-??)
+2.3.2 (2015-09-10)
 ~~~~~~~~~~~~~~~~~~
 
 * Allowed to use ST-Link uploader for mbed-based projects
