@@ -7,6 +7,7 @@ PlatformIO 2.0
 2.3.2 (2015-09-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Allowed to use ST-Link uploader for mbed-based projects
 * Fixed `SConsNotInstalled` error for Linux Debian-based distributives
 
 2.3.1 (2015-09-06)

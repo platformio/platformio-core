@@ -15,7 +15,7 @@ env = DefaultEnvironment()
 
 SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
-if env['UPLOAD_PROTOCOL'] == "gdb":
+if env.get("UPLOAD_PROTOCOL") == "gdb":
     if not isfile(join(env.subst("$PROJECT_DIR"), "upload.gdb")):
         Exit(
             "You are using GDB as firmware uploader. "
@@ -50,7 +50,8 @@ else:
 
 env.Append(
     CPPDEFINES=[
-        "${BOARD_OPTIONS['build']['variant'].upper()}"
+        env.get("BOARD_OPTIONS", {}).get(
+            "build", {}).get("variant", "").upper()
     ],
 
     LIBS=["stdc++", "nosys"],
@@ -87,8 +88,9 @@ AlwaysBuild(target_size)
 # Target: Upload by default .bin file
 #
 
-disable_msd = (platform.system() == "Darwin" and
-               platform.release().startswith("14."))
+disable_msd = (
+    (platform.system() == "Darwin" and platform.release().startswith("14.")) or
+    "UPLOAD_PROTOCOL" in env)
 if "mbed" in env.subst("$FRAMEWORK") and not disable_msd:
     upload = env.Alias(["upload", "uploadlazy"],
                        target_firm, env.UploadToDisk)

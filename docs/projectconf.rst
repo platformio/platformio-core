@@ -475,39 +475,7 @@ Examples
     targets = upload
 
 
-2. :ref:`platform_atmelavr`: Microduino Core (ATmega168P, 3.3V) board with
-   auto pre-configured ``board_*`` and ``upload_*`` options (use only
-   ``board`` option) and Arduino Wiring-based Framework
-
-.. code-block:: ini
-
-    [env:atmelavr_microduino_core_board]
-    platform = atmelavr
-    framework = arduino
-    board = 168pa8m
-
-    # enable auto-uploading
-    targets = upload
-
-
-3. :ref:`platform_atmelavr`: Raspduino board with
-   auto pre-configured ``board_*`` and ``upload_*`` options (use only
-   ``board`` option) and Arduino Wiring-based Framework
-
-.. code-block:: ini
-
-    [env:atmelavr_raspduino_board]
-    platform = atmelavr
-    framework = arduino
-    board = raspduino
-
-    upload_port = /dev/ttyS0
-
-    # enable auto-uploading
-    targets = upload
-
-
-4. :ref:`platform_atmelavr`: Embedded board that is based on ATmega168 MCU with
+2. :ref:`platform_atmelavr`: Embedded board that is based on ATmega168 MCU with
    "arduino" bootloader
 
 .. code-block:: ini
@@ -527,7 +495,7 @@ Examples
     targets = upload
 
 
-5. Upload firmware via USB programmer (USBasp) to :ref:`platform_atmelavr`
+3. Upload firmware via USB programmer (USBasp) to :ref:`platform_atmelavr`
    microcontrollers
 
 .. code-block:: ini
@@ -536,44 +504,25 @@ Examples
     platform = atmelavr
     framework = arduino
     board = pro8MHzatmega328
-    upload_protocol = usbasp -B5
+    upload_protocol = usbasp -  B5
 
 
-6. :ref:`platform_timsp430`: TI MSP430G2553 LaunchPad with auto pre-configured
-   ``board_*`` and ``upload_*`` options (use only ``board`` option) and Energia
-   Wiring-based Framework
-
-.. code-block:: ini
-
-    [env:timsp430_g2553_launchpad]
-    platform = timsp430
-    framework = energia
-    board = lpmsp430g2553
-
-
-7. :ref:`platform_timsp430`: Embedded board that is based on MSP430G2553 MCU
+4. :ref:`platform_ststm32`: Upload firmware using GDB script ``upload.gdb``,
+   `issue #175 <https://github.com/platformio/platformio/issues/175>`_
 
 .. code-block:: ini
 
-    [env:timsp430_g2553_board]
-    platform = timsp430
-    board_mcu = msp430g2553
-    board_f_cpu = 16000000L
+    [env:st_via_gdb]
+    platform = ststm32
+    board = armstrap_eagle512
+    upload_protocol = gdb
 
-    upload_protocol = rf2500
-
-    # enable auto-uploading
-    targets = upload
-
-
-8. :ref:`platform_titiva`: TI Tiva C ARM Series TM4C123G LaunchPad with auto
-   pre-configured ``board_*`` and ``upload_*`` options (use only ``board``
-   option) and Energia Wiring-based Framework
+5. :ref:`platform_ststm32`: Upload firmware using ST-Link instead mbed's media
+   disk
 
 .. code-block:: ini
 
-    [env:titiva_tm4c1230c3pm_launchpad]
-    platform = titiva
-    framework = energia
-    board = lptm4c1230c3pm
-
+    [env:stlink_for_mbed]
+    platform = ststm32
+    board = disco_f100rb
+    upload_protocol = stlink
