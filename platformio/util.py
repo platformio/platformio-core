@@ -116,13 +116,8 @@ def get_systype():
     type_ = data[0].lower()
     arch = data[4].lower() if data[4] else ""
 
-    # use native Windows binaries for Cygwin
     if "cygwin" in type_:
-        if arch == "i686":
-            arch = "x86"
-        elif arch == "x86_64":
-            arch = "amd64"
-        type_ = "windows"
+        raise exception.CygwinEnvDetected()
 
     return "%s_%s" % (type_, arch) if arch else type_
 

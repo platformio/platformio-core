@@ -196,3 +196,11 @@ class PlatformioUpgradeError(PlatformioException):
         "2. Try different installation/upgrading steps: "
         "http://docs.platformio.org/en/latest/installation.html"
     )
+
+
+class CygwinEnvDetected(PlatformioException):
+
+    MESSAGE = (
+        "PlatformIO does not work within Cygwin environment. "
+        "Use native Terminal instead."
+    )
