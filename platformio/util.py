@@ -115,10 +115,6 @@ def get_systype():
     data = uname()
     type_ = data[0].lower()
     arch = data[4].lower() if data[4] else ""
-
-    if "cygwin" in type_:
-        raise exception.CygwinEnvDetected()
-
     return "%s_%s" % (type_, arch) if arch else type_
 
 

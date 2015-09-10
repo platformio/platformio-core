@@ -3,6 +3,7 @@
 
 from os import listdir
 from os.path import join
+from platform import system
 from sys import exit as sys_exit
 from traceback import format_exc
 
@@ -70,6 +71,9 @@ def process_result(ctx, result, force, caller):  # pylint: disable=W0613
 
 def main():
     try:
+        if "cygwin" in system().lower():
+            raise exception.CygwinEnvDetected()
+
         # https://urllib3.readthedocs.org
         # /en/latest/security.html#insecureplatformwarning
         try:
