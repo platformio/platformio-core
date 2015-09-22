@@ -631,7 +631,7 @@ PanStamp
       - 4 Kb
 
 Punch Through
-~~~~~~~~
+~~~~~~~~~~~~~
 
 .. list-table::
     :header-rows:  1
