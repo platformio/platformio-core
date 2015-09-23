@@ -156,3 +156,8 @@ ARM toolchain: cc1plus: error while loading shared libraries
 
 See related answers for
 `error while loading shared libraries <https://github.com/platformio/platformio/issues?utf8=✓&q=error+while+loading+shared+libraries>`_.
+
+Archlinux: libncurses.so.5: cannot open shared object file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Answered in `issue #291 <https://github.com/platformio/platformio/issues/291>`_.
