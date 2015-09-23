@@ -601,26 +601,6 @@ PanStamp
       - 32 Kb
       - 2 Kb
 
-Punch Through
-~~~~~~~~~~~~~
-
-.. list-table::
-    :header-rows:  1
-
-    * - Type ``board``
-      - Name
-      - Microcontroller
-      - Frequency
-      - Flash
-      - RAM
-
-    * - ``lightblue-bean``
-      - `LightBlue Bean <http://punchthrough.com/bean>`_
-      - ATMEGA32U4
-      - 8 MHz
-      - 32 Kb
-      - 2 Kb
-
 Quirkbot
 ~~~~~~~~
 
