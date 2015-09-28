@@ -4,12 +4,13 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.3.3 (2015-09-??)
+2.3.3 (2015-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for LightBlue Bean board
+  (`pull #292 <https://github.com/platformio/platformio/pull/292>`_)
 * Fixed broken lock file for "appstate" storage
   (`issue #288 <https://github.com/platformio/platformio/issues/288>`_)
-
 
 2.3.2 (2015-09-10)
 ~~~~~~~~~~~~~~~~~~
