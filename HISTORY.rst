@@ -9,6 +9,8 @@ PlatformIO 2.0
 
 * Added support for LightBlue Bean board
   (`pull #292 <https://github.com/platformio/platformio/pull/292>`_)
+* Added support for ST Nucleo F446RE board
+  (`pull #293 <https://github.com/platformio/platformio/pull/293>`_)
 * Fixed broken lock file for "appstate" storage
   (`issue #288 <https://github.com/platformio/platformio/issues/288>`_)
 
