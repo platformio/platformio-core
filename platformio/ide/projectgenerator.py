@@ -125,6 +125,7 @@ class ProjectGenerator(object):
             "env_pathsep": os.pathsep,
             "env_path": self._fix_os_path(os.getenv("PATH"))
         })
+        print self._tplvars
 
     @staticmethod
     def _fix_os_path(path):

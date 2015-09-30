@@ -41,13 +41,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>platformio -f -c visualstudio run</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>platformio -f -c visualstudio run --target clean</NMakeCleanCommandLine>
-    <NMakePreprocessorDefinitions>{{";".join(defines)}}</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>{{!";".join(defines)}}</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath>{{";".join(["$(HOMEDRIVE)$(HOMEPATH)%s" % i.replace(user_home_dir, "") if i.startswith(user_home_dir) else i for i in includes])}}</NMakeIncludeSearchPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>platformio run</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>platformio run --target clean</NMakeCleanCommandLine>
-    <NMakePreprocessorDefinitions>{";".join(defines)}}</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>{{!";".join(defines)}}</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath>{{";".join(["$(HOMEDRIVE)$(HOMEPATH)%s" % i.replace(user_home_dir, "") if i.startswith(user_home_dir) else i for i in includes])}}</NMakeIncludeSearchPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
