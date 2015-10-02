@@ -32,6 +32,11 @@ def cli():
             for cmd in cmds:
                 r = None
                 r = util.exec_command(cmd)
+
+                # try pip with disabled cache
+                if r['returncode'] != 0 and cmd[0] == "pip":
+                    r = util.exec_command(["pip", "--no-cache-dir"] + cmd[1:])
+
                 assert r['returncode'] == 0
             assert last in r['out'].strip()
             click.secho(
