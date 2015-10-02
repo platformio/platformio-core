@@ -13,6 +13,8 @@ PlatformIO 2.0
   (`pull #293 <https://github.com/platformio/platformio/pull/293>`_)
 * Fixed broken lock file for "appstate" storage
   (`issue #288 <https://github.com/platformio/platformio/issues/288>`_)
+* Fixed ESP8266 compile errors about RAM size when adding 1 library
+  (`issue #296 <https://github.com/platformio/platformio/issues/296>`_)
 
 2.3.2 (2015-09-10)
 ~~~~~~~~~~~~~~~~~~
