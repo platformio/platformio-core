@@ -31,7 +31,7 @@ env.Replace(
     ASPPFLAGS=["-x", "assembler-with-cpp"],
 
     CFLAGS=[
-        "-std=c99",
+        "-std=gnu99",
         "-Wpointer-arith",
         "-Wno-implicit-function-declaration",
         "-Wl,-EL",
@@ -76,9 +76,7 @@ env.Replace(
         "-cb", "$UPLOAD_SPEED",
         "-cp", "$UPLOAD_PORT",
         "-ca", "0x00000",
-        "-cf", "${SOURCES[0]}",
-        "-ca", "0x40000" if "FRAMEWORK" not in env else "0x10000",
-        "-cf", "${SOURCES[1]}"
+        "-cf", "$SOURCE"
     ],
     UPLOADCMD='$UPLOADER $UPLOADERFLAGS',
 
@@ -86,23 +84,35 @@ env.Replace(
     PROGSUFFIX=".elf"
 )
 
+if "FRAMEWORK" in env:
+    env.Append(
+        LINKFLAGS=[
+            "-Wl,-wrap,system_restart_local",
+            "-Wl,-wrap,register_chipv6_phy"
+        ]
+    )
+
 env.Append(
     BUILDERS=dict(
         ElfToBin=Builder(
             action=" ".join([
                 "$UPLOADER",
+                "-eo", join("$PLATFORMFW_DIR", "bootloaders",
+                            "eboot", "eboot.elf"),
+                "-bo", "$TARGET",
+                "-bm", "dio",
+                "-bf", "${BOARD_OPTIONS['build']['f_cpu'][:2]}",
+                "-bz", str(int(env.get("BOARD_OPTIONS", {}).get(
+                    "upload", {}).get("maximum_size") / 1024)) + "K",
+                "-bs", ".text",
+                "-bp", "4096",
+                "-ec",
                 "-eo", "$SOURCES",
-                "-bo", "${TARGETS[0]}",
-                "-bm", "qio",
-                "-bf", "40",
-                "-bz", "512K",
+                "-bs", ".irom0.text",
                 "-bs", ".text",
                 "-bs", ".data",
                 "-bs", ".rodata",
-                "-bc", "-ec",
-                "-eo", "$SOURCES",
-                "-es", ".irom0.text", "${TARGETS[1]}",
-                "-ec", "-v"
+                "-bc", "-ec"
             ]),
             suffix=".bin"
         )
@@ -119,13 +129,43 @@ if "FRAMEWORK" not in env:
             join("$PIOPACKAGES_DIR", "sdk-esp8266", "include"),
             "$PROJECTSRC_DIR"
         ],
-        LIBPATH=[join("$PIOPACKAGES_DIR", "sdk-esp8266", "lib")]
+        LIBPATH=[join("$PIOPACKAGES_DIR", "sdk-esp8266", "lib")],
+        BUILDERS=dict(
+            ElfToBin=Builder(
+                action=" ".join([
+                    "$UPLOADER",
+                    "-eo", "$SOURCES",
+                    "-bo", "${TARGETS[0]}",
+                    "-bm", "qio",
+                    "-bf", "40",
+                    "-bz", "512K",
+                    "-bs", ".text",
+                    "-bs", ".data",
+                    "-bs", ".rodata",
+                    "-bc", "-ec",
+                    "-eo", "$SOURCES",
+                    "-es", ".irom0.text", "${TARGETS[1]}",
+                    "-ec", "-v"
+                ]),
+                suffix=".bin"
+            )
+        )
     )
     env.Replace(
         LDSCRIPT_PATH=join(
             "$PIOPACKAGES_DIR", "sdk-esp8266", "ld", "eagle.app.v6.ld"),
         LIBS=["c", "gcc", "phy", "pp", "net80211", "lwip", "wpa", "main",
-              "json", "upgrade", "smartconfig", "pwm", "at", "ssl"]
+              "json", "upgrade", "smartconfig", "pwm", "at", "ssl"],
+        UPLOADERFLAGS=[
+            "-vv",
+            "-cd", "ck",
+            "-cb", "$UPLOAD_SPEED",
+            "-cp", "$UPLOAD_PORT",
+            "-ca", "0x00000",
+            "-cf", "${SOURCES[0]}",
+            "-ca", "0x40000",
+            "-cf", "${SOURCES[1]}"
+        ]
     )
 
 #
@@ -139,17 +179,20 @@ target_elf = env.BuildProgram()
 #
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_firm = [
-        join("$BUILD_DIR", "firmware_00000.bin"),
-        join("$BUILD_DIR", "firmware_%s.bin" %
-             ("40000" if "FRAMEWORK" not in env else "10000"))
-    ]
+    if "FRAMEWORK" not in env:
+        target_firm = [
+            join("$BUILD_DIR", "firmware_00000.bin"),
+            join("$BUILD_DIR", "firmware_40000.bin")
+        ]
+    else:
+        target_firm = join("$BUILD_DIR", "firmware.bin")
 else:
-    target_firm = env.ElfToBin(
-        [join("$BUILD_DIR", "firmware_00000"),
-         join("$BUILD_DIR", "firmware_%s" %
-              ("40000" if "FRAMEWORK" not in env else "10000"))], target_elf)
-
+    if "FRAMEWORK" not in env:
+        target_firm = env.ElfToBin(
+            [join("$BUILD_DIR", "firmware_00000"),
+             join("$BUILD_DIR", "firmware_40000")], target_elf)
+    else:
+        target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Print binary size

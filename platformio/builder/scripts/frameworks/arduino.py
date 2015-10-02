@@ -47,7 +47,7 @@ elif env.get("PLATFORM") == "espressif":
         CPPPATH=[join("$PLATFORMFW_DIR", "sdk", "include")],
         LIBPATH=[join("$PLATFORMFW_DIR", "sdk", "lib")],
         LIBS=["smartconfig", "pp", "main", "wpa", "lwip",
-              "net80211", "phy", "hal", "gcc", "m"]
+              "net80211", "wps", "crypto", "phy", "hal", "gcc", "m"]
     )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
