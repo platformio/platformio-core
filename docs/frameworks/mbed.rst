@@ -469,6 +469,13 @@ ST
       - 512 Kb
       - 128 Kb
 
+    * - ``nucleo_f446re``
+      - `ST Nucleo F446RE <https://developer.mbed.org/platforms/ST-Nucleo-F446RE/>`_
+      - STM32F446RET6
+      - 180 MHz
+      - 512 Kb
+      - 128 Kb
+
     * - ``nucleo_l053r8``
       - `ST Nucleo L053R8 <https://developer.mbed.org/platforms/ST-Nucleo-L053R8/>`_
       - STM32L053R8T6

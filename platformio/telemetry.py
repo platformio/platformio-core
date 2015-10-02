@@ -248,7 +248,7 @@ def measure_caller(calller_id):
         "action": "Misc",
         "label": calller_id
     }
-    if calller_id in ProjectGenerator.get_supported_ides():
+    if calller_id in (["atom", "vim"] + ProjectGenerator.get_supported_ides()):
         event['action'] = "IDE"
     on_event(**event)
 

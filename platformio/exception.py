@@ -87,7 +87,9 @@ class FDSHASumMismatch(PlatformioException):
 
 class NotPlatformProject(PlatformioException):
 
-    MESSAGE = "Not a PlatformIO project (%s). Use `platformio init` command"
+    MESSAGE = "Not a PlatformIO project. `platformio.ini` file has not been "\
+        "found in current working directory (%s). To initialize new project "\
+        "please use `platformio init` command"
 
 
 class UndefinedEnvPlatform(PlatformioException):

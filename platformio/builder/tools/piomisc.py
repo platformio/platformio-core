@@ -147,7 +147,7 @@ def DumpIDEData(env):
     for item in env.get("CPPDEFINES", []):
         if isinstance(item, list):
             item = "=".join(item)
-        data['defines'].append(env.subst(item))
+        data['defines'].append(env.subst(item).replace('\\"', '"'))
 
     # special symbol for Atmel AVR MCU
     board = env.get("BOARD_OPTIONS", {})

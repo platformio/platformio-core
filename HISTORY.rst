@@ -4,6 +4,18 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.3.3 (2015-10-02)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for LightBlue Bean board
+  (`pull #292 <https://github.com/platformio/platformio/pull/292>`_)
+* Added support for ST Nucleo F446RE board
+  (`pull #293 <https://github.com/platformio/platformio/pull/293>`_)
+* Fixed broken lock file for "appstate" storage
+  (`issue #288 <https://github.com/platformio/platformio/issues/288>`_)
+* Fixed ESP8266 compile errors about RAM size when adding 1 library
+  (`issue #296 <https://github.com/platformio/platformio/issues/296>`_)
+
 2.3.2 (2015-09-10)
 ~~~~~~~~~~~~~~~~~~
 
@@ -16,6 +28,8 @@ PlatformIO 2.0
 * Found solution for "pip/scons error: option --single-version-externally-managed not
   recognized" when install PlatformIO using ``pip`` package manager
   (`issue #279 <https://github.com/platformio/platformio/issues/279>`_)
+* Fixed firmware uploading to Arduino Leonardo board using Mac OS
+  (`issue #287 <https://github.com/platformio/platformio/issues/287>`_)
 * Fixed `SConsNotInstalled` error for Linux Debian-based distributives
 
 2.3.1 (2015-09-06)

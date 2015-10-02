@@ -1,0 +1,22 @@
+{
+    "lightblue-bean": {
+        "name": "LightBlue Bean",
+        "vendor": "Punch Through",
+        "url": "https://punchthrough.com/bean",
+
+        "platform": "atmelavr",
+        "frameworks": ["arduino"],
+
+        "build": {
+            "core": "bean",
+            "variant": "bean",
+            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "mcu": "atmega328p",
+            "f_cpu": "8000000L"
+        },
+        "upload": {
+            "maximum_size": 32256,
+            "maximum_ram_size": 2048
+        }
+    }
+}

@@ -13,7 +13,7 @@ include_directories("{{include}}")
 % end
 
 % for define in defines:
-add_definitions(-D{{define}})
+add_definitions(-D{{!define}})
 % end
 
 add_custom_target(

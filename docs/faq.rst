@@ -60,23 +60,11 @@ the project developed using PlatformIO is as follows:
 Troubleshooting
 ---------------
 
-.. _faq_troubleshooting_pioblocksprompt:
-
-PlatformIO blocks command execution using user prompt
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you are going to run *PlatformIO* from **subprocess**, you **MUST
-DISABLE** all prompts. It will allow you to avoid blocking.
-There are a few options:
-
-- using :option:`platformio --force` option before each command
-- using environment variable :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <PLATFORMIO_SETTING_ENABLE_PROMPTS>`
-- disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
-- masking under Continuous Integration system via environment variable
-  :envvar:`CI=true <CI>`.
+Installation
+~~~~~~~~~~~~
 
 PlatformIO and ``scons`` aren't installed properly
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Try these solutions:
 
@@ -92,9 +80,29 @@ Try these solutions:
 .. _faq_troubleshooting_sconssingverextmanaged:
 
 PIP & SCons Error: option --single-version-externally-managed not recognized
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Answered in `issue #279 <https://github.com/platformio/platformio/issues/279>`_.
+
+[Errno 1] Operation not permitted
+'''''''''''''''''''''''''''''''''
+
+Answered in `issue #295 <https://github.com/platformio/platformio/issues/295#issuecomment-143772005>`_.
+
+.. _faq_troubleshooting_pioblocksprompt:
+
+PlatformIO blocks command execution using user prompt
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are going to run *PlatformIO* from **subprocess**, you **MUST
+DISABLE** all prompts. It will allow you to avoid blocking.
+There are a few options:
+
+- using :option:`platformio --force` option before each command
+- using environment variable :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <PLATFORMIO_SETTING_ENABLE_PROMPTS>`
+- disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
+- masking under Continuous Integration system via environment variable
+  :envvar:`CI=true <CI>`.
 
 .. _faq_troubleshooting_pionotfoundinpath:
 
@@ -156,3 +164,8 @@ ARM toolchain: cc1plus: error while loading shared libraries
 
 See related answers for
 `error while loading shared libraries <https://github.com/platformio/platformio/issues?utf8=✓&q=error+while+loading+shared+libraries>`_.
+
+Archlinux: libncurses.so.5: cannot open shared object file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Answered in `issue #291 <https://github.com/platformio/platformio/issues/291>`_.

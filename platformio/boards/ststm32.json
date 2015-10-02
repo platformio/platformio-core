@@ -299,6 +299,22 @@
         "url": "https://developer.mbed.org/platforms/ST-Nucleo-F411RE/",
         "vendor": "ST"
     },
+    "nucleo_f446re": {
+        "build": {
+            "f_cpu": "180000000L",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f446ret6"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST Nucleo F446RE",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 131072,
+            "maximum_size": 524288
+        },
+        "url": "https://developer.mbed.org/platforms/ST-Nucleo-F446RE/",
+        "vendor": "ST"
+    },
     "nucleo_l053r8": {
         "build": {
             "f_cpu": "48000000L",

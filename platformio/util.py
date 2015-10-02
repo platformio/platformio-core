@@ -249,7 +249,8 @@ def get_serialports():
         from serial.tools.list_ports_posix import comports
     else:
         raise exception.GetSerialPortsError(os.name)
-    return [{"port": p, "description": d, "hwid": h} for p, d, h in comports()]
+    return [{"port": p, "description": d, "hwid": h}
+            for p, d, h in comports() if p]
 
 
 def get_logicaldisks():

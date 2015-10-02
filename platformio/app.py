@@ -3,7 +3,8 @@
 
 import json
 from os import environ, getenv
-from os.path import isfile, join
+from os.path import getmtime, isfile, join
+from time import time
 
 from lockfile import LockFile
 
@@ -68,9 +69,8 @@ class State(object):
 
     def __enter__(self):
         try:
+            self._lock_state_file()
             if isfile(self.path):
-                self._lock = LockFile(self.path)
-                self._lock.acquire()
                 with open(self.path, "r") as fp:
                     self._state = json.load(fp)
         except ValueError:
@@ -85,6 +85,18 @@ class State(object):
                     json.dump(self._state, fp, indent=4)
                 else:
                     json.dump(self._state, fp)
+        self._unlock_state_file()
+
+    def _lock_state_file(self):
+        self._lock = LockFile(self.path)
+
+        if (self._lock.is_locked() and
+                (time() - getmtime(self._lock.lock_file)) > 10):
+            self._lock.break_lock()
+
+        self._lock.acquire()
+
+    def _unlock_state_file(self):
         if self._lock:
             self._lock.release()
 
