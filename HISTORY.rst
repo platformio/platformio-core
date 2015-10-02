@@ -4,7 +4,7 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.3.3 (2015-??-??)
+2.3.3 (2015-10-02)
 ~~~~~~~~~~~~~~~~~~
 
 * Added support for LightBlue Bean board
