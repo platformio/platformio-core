@@ -104,17 +104,17 @@ class UnsupportedArchiveType(PlatformioException):
 
 class ProjectEnvsNotAvailable(PlatformioException):
 
-    MESSAGE = "Please setup environments in `platformio.ini` file."
+    MESSAGE = "Please setup environments in `platformio.ini` file"
 
 
 class InvalidEnvName(PlatformioException):
 
-    MESSAGE = "Invalid environment '%s'. The name must start " "with 'env:'."
+    MESSAGE = "Invalid environment '%s'. The name must start with 'env:'"
 
 
 class UnknownEnvNames(PlatformioException):
 
-    MESSAGE = "Unknown environment names '%s'."
+    MESSAGE = "Unknown environment names '%s'. Valid names are '%s'"
 
 
 class GetSerialPortsError(PlatformioException):

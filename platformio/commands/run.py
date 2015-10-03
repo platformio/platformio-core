@@ -36,9 +36,12 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
         if not config.sections():
             raise exception.ProjectEnvsNotAvailable()
 
-        unknown = set(environment) - set([s[4:] for s in config.sections()])
+        known = set([s[4:] for s in config.sections()
+                     if s.startswith("env:")])
+        unknown = set(environment) - known
         if unknown:
-            raise exception.UnknownEnvNames(", ".join(unknown))
+            raise exception.UnknownEnvNames(
+                ", ".join(unknown), ", ".join(known))
 
         # clean obsolete .pioenvs dir
         if not disable_auto_clean:
