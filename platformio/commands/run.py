@@ -45,7 +45,10 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
 
         # clean obsolete .pioenvs dir
         if not disable_auto_clean:
-            _clean_pioenvs_dir()
+            try:
+                _clean_pioenvs_dir(util.get_pioenvs_dir())
+            except Exception:
+                raise exception.CleanPioenvsDirError(util.get_pioenvs_dir())
 
         results = []
         for section in config.sections():
@@ -224,8 +227,7 @@ def _autoinstall_libs(ctx, libids_list):
         ctx.invoke(cmd_lib_install, libid=not_intalled_libs)
 
 
-def _clean_pioenvs_dir():
-    pioenvs_dir = util.get_pioenvs_dir()
+def _clean_pioenvs_dir(pioenvs_dir):
     structhash_file = join(pioenvs_dir, "structure.hash")
     proj_hash = calculate_project_hash()
 

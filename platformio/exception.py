@@ -33,14 +33,14 @@ class UnknownPlatform(PlatformioException):
 
 class PlatformNotInstalledYet(PlatformioException):
 
-    MESSAGE = ("The platform '%s' has not been installed yet. "
-               "Use `platformio platforms install` command")
+    MESSAGE = "The platform '%s' has not been installed yet. "\
+        "Use `platformio platforms install` command"
 
 
 class UnknownCLICommand(PlatformioException):
 
-    MESSAGE = ("Unknown command '%s'. Please use `platformio --help`"
-               " to see all available commands")
+    MESSAGE = "Unknown command '%s'. Please use `platformio --help`"\
+        " to see all available commands"
 
 
 class UnknownBoard(PlatformioException):
@@ -75,14 +75,14 @@ class FDUnrecognizedStatusCode(PlatformioException):
 
 class FDSizeMismatch(PlatformioException):
 
-    MESSAGE = ("The size (%d bytes) of downloaded file '%s' "
-               "is not equal to remote size (%d bytes)")
+    MESSAGE = "The size (%d bytes) of downloaded file '%s' "\
+        "is not equal to remote size (%d bytes)"
 
 
 class FDSHASumMismatch(PlatformioException):
 
-    MESSAGE = ("The 'sha1' sum '%s' of downloaded file '%s' "
-               "is not equal to remote '%s'")
+    MESSAGE = "The 'sha1' sum '%s' of downloaded file '%s' "\
+        "is not equal to remote '%s'"
 
 
 class NotPlatformProject(PlatformioException):
@@ -117,6 +117,12 @@ class UnknownEnvNames(PlatformioException):
     MESSAGE = "Unknown environment names '%s'. Valid names are '%s'"
 
 
+class CleanPioenvsDirError(PlatformioException):
+
+    MESSAGE = "Can not remove temporary directory `%s`. "\
+        "Please remove it manually"
+
+
 class GetSerialPortsError(PlatformioException):
 
     MESSAGE = "No implementation for your platform ('%s') available"
@@ -124,7 +130,7 @@ class GetSerialPortsError(PlatformioException):
 
 class GetLatestVersionError(PlatformioException):
 
-    MESSAGE = "Can't retrieve the latest PlatformIO version"
+    MESSAGE = "Can not retrieve the latest PlatformIO version"
 
 
 class APIRequestError(PlatformioException):
@@ -173,36 +179,28 @@ class UpgraderFailed(PlatformioException):
 
 class CIBuildEnvsEmpty(PlatformioException):
 
-    MESSAGE = (
-        "Can't find PlatformIO build environments.\nPlease specify `--board` "
-        "or path to `platformio.ini` with predefined environments using "
-        "`--project-conf` option"
-    )
+    MESSAGE = "Can't find PlatformIO build environments.\n"\
+        "Please specify `--board` or path to `platformio.ini` with "\
+        "predefined environments using `--project-conf` option"
 
 
 class SConsNotInstalled(PlatformioException):
 
-    MESSAGE = (
-        "The PlatformIO and `scons` aren't installed properly. "
-        "More details in FAQ/Troubleshooting section: "
+    MESSAGE = "The PlatformIO and `scons` aren't installed properly. "\
+        "More details in FAQ/Troubleshooting section: "\
         "http://docs.platformio.org/en/latest/faq.html"
-    )
 
 
 class PlatformioUpgradeError(PlatformioException):
 
-    MESSAGE = (
-        "%s \n\n"
-        "1. Please report this issue here: "
-        "https://github.com/platformio/platformio/issues \n"
-        "2. Try different installation/upgrading steps: "
+    MESSAGE = "%s \n\n"\
+        "1. Please report this issue here: "\
+        "https://github.com/platformio/platformio/issues \n"\
+        "2. Try different installation/upgrading steps: "\
         "http://docs.platformio.org/en/latest/installation.html"
-    )
 
 
 class CygwinEnvDetected(PlatformioException):
 
-    MESSAGE = (
-        "PlatformIO does not work within Cygwin environment. "
+    MESSAGE = "PlatformIO does not work within Cygwin environment. "\
         "Use native Terminal instead."
-    )
