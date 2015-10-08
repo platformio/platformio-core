@@ -32,12 +32,12 @@ PlatformIO
 `Home & Demo <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
 `Source Code <https://github.com/platformio>`_ |
-`Documentation <http://docs.platformio.org>`_
-
+`Documentation <http://docs.platformio.org>`_ ||
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
-`Reddit <http://www.reddit.com/r/platformio/>`_ |
+`Twitter <https://twitter.com/PlatformIO_Org>`_ |
+`Hackaday <https://hackaday.io/project/7980-platformio>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
-`Twitter <https://twitter.com/PlatformIO_Org>`_
+`Reddit <http://www.reddit.com/r/platformio/>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
