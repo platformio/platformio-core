@@ -31,8 +31,9 @@ PlatformIO
 
 `Home & Demo <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
-`Code <https://github.com/platformio/platformio>`_ |
-`Documentation <http://docs.platformio.org>`_ ||
+`Source Code <https://github.com/platformio>`_ |
+`Documentation <http://docs.platformio.org>`_
+
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Reddit <http://www.reddit.com/r/platformio/>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
