@@ -1,4 +1,25 @@
 {
+    "ardhat": {
++        "build": {
++            "core": "arduino",
++            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_ARDHAT",
++            "f_cpu": "16000000L",
++            "mcu": "atmega328p",
++            "variant": "standard"
++        },
++        "frameworks": ["arduino"],
++        "name": "ubIQio Ardhat",
++        "platform": "atmelavr",
++        "upload": {
++            "maximum_ram_size": 2048,
++            "maximum_size": 32256,
++            "protocol": "arduino",
++            "require_upload_port" : true,
++            "speed": 115200
++        },
++        "url": "http://ardhat.com",
++        "vendor": "ubIQio"
++    },
     "raspduino": {
         "build": {
             "core": "arduino",
