@@ -184,10 +184,12 @@ def check_platformio_upgrade():
     click.echo("")
     click.echo("*" * terminal_width)
     click.secho("There is a new version %s of PlatformIO available.\n"
-                "Please upgrade it via " % latest_version,
+                "Please upgrade it via `" % latest_version,
                 fg="yellow", nl=False)
     click.secho("platformio upgrade", fg="cyan", nl=False)
-    click.secho(" command.\nChanges: ", fg="yellow", nl=False)
+    click.secho("` or `", fg="yellow", nl=False)
+    click.secho("pip install -U platformio", fg="cyan", nl=False)
+    click.secho("` command.\nChanges: ", fg="yellow", nl=False)
     click.secho("http://docs.platformio.org/en/latest/history.html",
                 fg="cyan")
     click.echo("*" * terminal_width)
