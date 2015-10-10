@@ -872,3 +872,23 @@ Wicked Device
       - 16 MHz
       - 128 Kb
       - 16 Kb
+
+ubIQio
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``ardhat``
+      - `ubIQio Ardhat <http://ardhat.com>`_
+      - ATMEGA328P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
