@@ -4,6 +4,12 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.3.4 (2015-10-??)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for ubIQio Ardhat board
+  (`pull #302 <https://github.com/platformio/platformio/pull/302>`_)
+
 2.3.3 (2015-10-02)
 ~~~~~~~~~~~~~~~~~~
 
