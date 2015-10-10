@@ -77,6 +77,6 @@ Espressif
     * - ``esp01``
       - `Espressif ESP8266 board <https://nurdspace.nl/ESP8266>`_
       - ESP8266
-      - 80 MHz
+      - 40 MHz
       - 512 Kb
       - 32 Kb

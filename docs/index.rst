@@ -18,9 +18,10 @@ libOpenCM3, etc.*
 * `Source Code <https://github.com/platformio/platformio>`_ |
   `Issues <https://github.com/platformio/platformio/issues>`_
 * `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
-  `Reddit <http://www.reddit.com/r/platformio/>`_ |
+  `Twitter <https://twitter.com/PlatformIO_Org>`_ |
+  `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
   `Facebook <https://www.facebook.com/platformio>`_ |
-  `Twitter <https://twitter.com/PlatformIO_Org>`_
+  `Reddit <http://www.reddit.com/r/platformio/>`_
 
 You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
 has pre-built different development platforms and pre-configured settings for
