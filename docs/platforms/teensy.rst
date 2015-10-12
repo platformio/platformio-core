@@ -17,20 +17,23 @@ Packages
     * - Name
       - Contents
 
+    * - ``framework-arduinoteensy``
+      - `Arduino Wiring-based Framework <http://arduino.cc/en/Reference/HomePage>`_
+
+    * - ``tool-teensy``
+      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
+
+    * - ``toolchain-gccarmnoneeabi``
+      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
+    * - ``framework-mbed``
+      - `mbed Framework <http://mbed.org>`_
+
     * - ``toolchain-atmelavr``
       - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
 
     * - ``ldscripts``
       - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
-
-    * - ``framework-arduinoteensy``
-      - `Arduino Wiring-based Framework <http://arduino.cc/en/Reference/HomePage>`_
-
-    * - ``toolchain-gccarmnoneeabi``
-      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
-
-    * - ``tool-teensy``
-      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
@@ -51,6 +54,9 @@ Frameworks
 
     * - :ref:`framework_arduino`
       - Arduino Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
+
+    * - :ref:`framework_mbed`
+      - The mbed framework The mbed SDK has been designed to provide enough hardware abstraction to be intuitive and concise, yet powerful enough to build complex projects. It is built on the low-level ARM CMSIS APIs, allowing you to code down to the metal if needed. In addition to RTOS, USB and Networking libraries, a cookbook of hundreds of reusable peripheral and module libraries have been built on top of the SDK by the mbed Developer Community.
 
 Boards
 ------

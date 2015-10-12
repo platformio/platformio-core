@@ -9,6 +9,10 @@ PlatformIO 2.0
 
 * Added support for ubIQio Ardhat board
   (`pull #302 <https://github.com/platformio/platformio/pull/302>`_)
+* Fixed missing of `framework-mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`_
+  package for `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`_
+  platform
+  (`issue #305 <https://github.com/platformio/platformio/issues/305>`_)
 
 2.3.3 (2015-10-02)
 ~~~~~~~~~~~~~~~~~~
