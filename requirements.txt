@@ -1,7 +1,7 @@
 bottle==0.12.8
 click==5.1
 colorama==0.3.3
-lockfile==0.10.2
+lockfile==0.11.0
 pyserial==2.7
-requests==2.8.0
+requests==2.8.1
 scons==2.3.6
