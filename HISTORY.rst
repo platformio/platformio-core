@@ -7,6 +7,9 @@ PlatformIO 2.0
 2.3.4 (2015-10-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Full support of `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`_
+  including code auto-completion
+  (`issue #132 <https://github.com/platformio/platformio/issues/132>`_)
 * Added support for ubIQio Ardhat board
   (`pull #302 <https://github.com/platformio/platformio/pull/302>`_)
 * Use Teensy CLI Loader for upload of .hex files on Mac OS X

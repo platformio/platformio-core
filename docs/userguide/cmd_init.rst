@@ -22,7 +22,7 @@ Initialize new PlatformIO based project.
 This command will create:
 
 * :ref:`projectconf`
-* ``src`` - a source directory. Put your source code here
+* ``src`` - a source directory. Put your source files here
 * ``lib`` - a directory for the project specific (private) libraries.
   PlatformIO will compile them to static libraries and link to executable file
 
@@ -94,7 +94,7 @@ Examples
 
     The next files/directories will be created in ***
     platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
-    src - Put your source code here
+    src - Put your source files here
     lib - Put here project specific (private) libraries
     Do you want to continue? [y/N]: y
     Project has been successfully initialized!
@@ -112,7 +112,7 @@ Examples
 
     The next files/directories will be created in ***
      platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
-    src - Put your source code here
+    src - Put your source files here
     lib - Put here project specific (private) libraries
     Do you want to continue? [y/N]: y
     Project has been successfully initialized!
@@ -136,7 +136,7 @@ Examples
 
     The next files/directories will be created in ***
     platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
-    src - Put your source code here
+    src - Put your source files here
     lib - Put here project specific (private) libraries
     Do you want to continue? [y/N]: y
     Project has been successfully initialized!

@@ -8,7 +8,7 @@ set(PLATFORMIO_CMD "{{platformio_path}}")
 % if include.startswith(user_home_dir):
 include_directories("$ENV{HOME}{{include.replace(user_home_dir, '').replace("\\", "/")}}")
 % else:
-include_directories("{{include}}")
+include_directories("{{include.replace("\\", "/")}}")
 % end
 % end
 
@@ -33,3 +33,13 @@ add_custom_target(
     COMMAND ${PLATFORMIO_CMD} -f -c clion run --target clean
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+% if main_src_file:
+add_executable({{project_name}} {{main_src_file}})
+% else:
+#
+# To enable code auto-completion, please specify path 
+# to main source file (*.c, *.cpp) and uncomment line below
+#
+# add_executable({{project_name}} src/main_change_me.cpp)
+% end

@@ -58,7 +58,7 @@
   <ItemGroup>
     <None Include="platformio.ini" />
   </ItemGroup>
-  % for file in srcfiles:
+  % for file in src_files:
   <ItemGroup>
     % if any([file.endswith(".%s" % e) for e in ("h", "hh", "hpp", "inc")]):
     <ClInclude Include="{{file}}">

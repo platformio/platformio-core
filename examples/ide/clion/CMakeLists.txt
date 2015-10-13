@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.2)
-project(PlatformIO)
+project(clion)
 
-set(PLATFORMIO_CMD platformio)
+set(ENV{PATH} "/Volumes/SOFT/Projects/GitHub/platformio/origin/.tox/develop/bin:/usr/local/opt/pyenv/shims:/Users/ikravets/.pyenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin")
+set(PLATFORMIO_CMD "/Volumes/SOFT/Projects/GitHub/platformio/origin/.tox/develop/bin/platformio")
 
 include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoavr/variants/standard")
 include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoavr/cores/arduino")
@@ -14,7 +15,7 @@ add_definitions(-DF_CPU=16000000L)
 add_definitions(-DARDUINO_ARCH_AVR)
 add_definitions(-DARDUINO_AVR_UNO)
 add_definitions(-DARDUINO=10605)
-add_definitions(-DPLATFORMIO=020300)
+add_definitions(-DPLATFORMIO=020304)
 add_definitions(-D__AVR_ATmega328P__)
 
 add_custom_target(
@@ -34,3 +35,5 @@ add_custom_target(
     COMMAND ${PLATFORMIO_CMD} -f -c clion run --target clean
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+add_executable(clion src/blink.cpp)

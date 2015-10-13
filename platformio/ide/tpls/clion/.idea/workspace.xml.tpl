@@ -47,7 +47,7 @@
           </provider>
         </entry>
       </file>
-      % for file in srcfiles:
+      % for file in src_files:
       <file leaf-file-name="{{file}}" pinned="false" current-in-tab="false">
     <entry file="file://$PROJECT_DIR/${{file}}">
           <provider selected="true" editor-type-id="text-editor">

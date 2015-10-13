@@ -21,6 +21,6 @@ OTHER_FILES += \
     platformio.ini
 
 SOURCES += \
-	% for file in srcfiles:
+	% for file in src_files:
     {{file}}
     % end

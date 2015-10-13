@@ -28,7 +28,7 @@ Quickstart
 
     The next files/directories will be created in ***
     platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
-    src - Put your source code here
+    src - Put your source files here
     lib - Put here project specific (private) libraries
     Do you want to continue? [y/N]: y
     Project has been successfully initialized!
@@ -37,7 +37,7 @@ Quickstart
     `platformio run --target upload` or `platformio run -t upload` - upload firmware to embedded board
     `platformio run --target clean` - clean project (remove compiled files)
 
-Put your source code ``*.h, *.c, *.cpp or *.ino`` files to ``src`` directory.
+Put your source files ``*.h, *.c, *.cpp or *.ino`` to ``src`` directory.
 
 4. Process the project's environments.
 
