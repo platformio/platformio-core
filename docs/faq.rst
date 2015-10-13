@@ -56,8 +56,8 @@ the project developed using PlatformIO is as follows:
 * Users develop code and PlatformIO makes sure that it is compiled, prepared
   and uploaded to all the boards of interest.
 
-Commands completion in Terminal
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Command completion in Terminal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Bash completion
 '''''''''''''''
@@ -68,6 +68,21 @@ Bash completion for `platformio` subcommands you need to put into your `.bashrc`
 .. code-block:: bash
 
     eval "$(_PLATFORMIO_COMPLETE=source platformio)"
+
+ZSH completion
+''''''''''''''
+
+To enable ``zsh`` completion please run these commands:
+
+.. code-block: bash
+
+    autoload bashcompinit && bashcompinit
+    eval "$(_PLATFORMIO_COMPLETE=source platformio)"
+
+.. note::
+
+    For permanent command completion you need to place commands above to
+    ``~/.bashrc`` or ``~/.zshrc`` file.
 
 .. _faq_troubleshooting:
 
@@ -88,6 +103,9 @@ Try these solutions:
 
     [sudo] pip uninstall scons
     [sudo] pip install scons
+
+    # if you have "error: option --single-version-externally-managed not recognized", then
+    [sudo] pip install --egg scons
 
 2. Install PlatformIO using :ref:`installation_installer_script`.
 

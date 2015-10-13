@@ -10,6 +10,7 @@ PlatformIO 2.0
 * Full support of `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`_
   including code auto-completion
   (`issue #132 <https://github.com/platformio/platformio/issues/132>`_)
+* PlatformIO `command completion in Terminal <http://docs.platformio.org/en/latest/faq.html#command-completion-in-terminal>`_ for ``bash`` and ``zsh``
 * Added support for ubIQio Ardhat board
   (`pull #302 <https://github.com/platformio/platformio/pull/302>`_)
 * Use Teensy CLI Loader for upload of .hex files on Mac OS X
