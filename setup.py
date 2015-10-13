@@ -6,7 +6,21 @@ from platform import system
 from setuptools import find_packages, setup
 
 from platformio import (__author__, __description__, __email__, __license__,
-                        __title__, __url__, __version__)
+                        __title__, __url__, __version__, util)
+
+install_requires = [
+    "bottle",
+    "click>=3.2",
+    "lockfile>=0.9.1",
+    "pyserial<3",
+    "requests>=2.4.0"
+]
+
+if system() == "Windows":
+    install_requires.append("colorama")
+
+if (not util.test_scons() and not util.install_scons()) or util.scons_in_pip():
+    install_requires.append("scons")
 
 setup(
     name=__title__,
@@ -17,14 +31,7 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
-    install_requires=[
-        "bottle",
-        "click>=3.2",
-        "lockfile>=0.9.1",
-        "pyserial",
-        "requests>=2.4.0",
-        "SCons"
-    ] + (["colorama"] if system() == "Windows" else []),
+    install_requires=install_requires,
     packages=find_packages(),
     package_data={
         "platformio": [

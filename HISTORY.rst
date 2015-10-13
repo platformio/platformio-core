@@ -13,9 +13,11 @@ PlatformIO 2.0
 * PlatformIO `command completion in Terminal <http://docs.platformio.org/en/latest/faq.html#command-completion-in-terminal>`_ for ``bash`` and ``zsh``
 * Added support for ubIQio Ardhat board
   (`pull #302 <https://github.com/platformio/platformio/pull/302>`_)
+* Install SCons automatically and avoid ``error: option --single-version-externally-managed not recognized``
+  (`issue #279 <https://github.com/platformio/platformio/issues/279>`_)
 * Use Teensy CLI Loader for upload of .hex files on Mac OS X
   (`issue #306 <https://github.com/platformio/platformio/issues/306>`_)
-* Fixed missing of `framework-mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`_
+* Fixed missing `framework-mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`_
   package for `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`_
   platform
   (`issue #305 <https://github.com/platformio/platformio/issues/305>`_)

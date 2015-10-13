@@ -3,8 +3,6 @@
 
 import os
 import re
-import sys
-from glob import glob
 from imp import load_source
 from os.path import isdir, isfile, join
 
@@ -374,7 +372,7 @@ class BasePlatform(object):
         self._found_error = False
         try:
             # test that SCons is installed correctly
-            assert self.test_scons()
+            assert util.test_scons()
 
             result = util.exec_command(
                 [
@@ -396,39 +394,6 @@ class BasePlatform(object):
             click.echo("")
 
         return result
-
-    @staticmethod
-    def test_scons():
-        try:
-            r = util.exec_command(["scons", "--version"])
-            if "ImportError: No module named SCons.Script" in r['err']:
-                _PYTHONPATH = []
-                for p in sys.path:
-                    if not p.endswith("-packages"):
-                        continue
-                    for item in glob(join(p, "scons*")):
-                        if isdir(join(item, "SCons")) and item not in sys.path:
-                            _PYTHONPATH.append(item)
-                            sys.path.insert(0, item)
-                if _PYTHONPATH:
-                    _PYTHONPATH = str(os.pathsep).join(_PYTHONPATH)
-                    if os.getenv("PYTHONPATH"):
-                        os.environ['PYTHONPATH'] += os.pathsep + _PYTHONPATH
-                    else:
-                        os.environ['PYTHONPATH'] = _PYTHONPATH
-                    r = util.exec_command(["scons", "--version"])
-            assert r['returncode'] == 0
-            return True
-        except (OSError, AssertionError):
-            for p in sys.path:
-                try:
-                    r = util.exec_command([join(p, "scons"), "--version"])
-                    assert r['returncode'] == 0
-                    os.environ['PATH'] += os.pathsep + p
-                    return True
-                except (OSError, AssertionError):
-                    pass
-        return False
 
     def on_run_out(self, line):
         self._echo_line(line, level=3)
