@@ -74,7 +74,7 @@ ZSH completion
 
 To enable ``zsh`` completion please run these commands:
 
-.. code-block: bash
+.. code-block:: bash
 
     autoload bashcompinit && bashcompinit
     eval "$(_PLATFORMIO_COMPLETE=source platformio)"
