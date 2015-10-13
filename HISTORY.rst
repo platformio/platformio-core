@@ -4,7 +4,7 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.3.4 (2015-10-??)
+2.3.4 (2015-10-13)
 ~~~~~~~~~~~~~~~~~~
 
 * Full support of `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`_
