@@ -47,11 +47,19 @@ There are 3 predefined targets for building:
 * ``PLATFORMIO_CLEAN`` - clean compiled objects and etc.
 
 .. warning::
-    CLion is still in the development stage, so some of the features (like,
-    auto-complete) probably will not work with PlatformIO. See
-    `CLion issue #CPP-3977 <https://youtrack.jetbrains.com/issue/CPP-3977>`_.
+    PlatformIO generates empty project by default and **code auto-completion
+    will not work!** To enable auto-completion please choose one of:
 
-    Active discussion located in
+    * Add source files ``*.c, *.cpp, etc`` to ``src`` directory and re-initialize
+      project with command above
+    * Manually correct ``add_executable`` command in ``CMakeLists.txt`` file
+      (will be created in project directory after initialization).
+
+    ``*.ino`` file isn't acceptable for ``add_executable`` command. You should
+    convert it manually to ``*.cpp``. See `project example <https://github.com/platformio/platformio/tree/develop/examples/ide/clion>`_.
+
+    More info `CLion issue #CPP-3977 <https://youtrack.jetbrains.com/issue/CPP-3977>`_.
+    Active discussion is located in
     `PlatformIO issue #132 <https://github.com/platformio/platformio/issues/132>`_.
 
 Screenshot

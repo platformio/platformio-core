@@ -3,5 +3,5 @@ click==5.1
 colorama==0.3.3
 lockfile==0.10.2
 pyserial==2.7
-requests==2.7.0
+requests==2.8.0
 scons==2.3.6

@@ -7,6 +7,7 @@ import re
 from os.path import abspath, basename, expanduser, isdir, join, relpath
 
 import bottle
+import click
 
 from platformio import util
 
@@ -72,13 +73,21 @@ class ProjectGenerator(object):
     def get_project_name(self):
         return basename(self.project_dir)
 
-    def get_srcfiles(self):
+    def get_src_files(self):
         result = []
         with util.cd(self.project_dir):
             for root, _, files in os.walk(util.get_projectsrc_dir()):
                 for f in files:
                     result.append(relpath(join(root, f)))
         return result
+
+    @staticmethod
+    def get_main_src_file(src_files):
+        for f in src_files:
+            for ext in ("c", "cpp"):
+                if f.endswith(".%s" % ext):
+                    return f
+        return None
 
     def get_tpls(self):
         tpls = []
@@ -112,11 +121,23 @@ class ProjectGenerator(object):
         return bottle.template(content, **self._tplvars)
 
     def _gather_tplvars(self):
+        src_files = self.get_src_files()
+        main_src_file = self.get_main_src_file(src_files)
+
+        if not main_src_file and self.ide == "clion":
+            click.secho(
+                "Warning! Can not find main source file (*.c, *.cpp). So, "
+                "code auto-completion is disabled. Please add source files "
+                "to `src` directory and re-initialize project or edit "
+                "`CMakeLists.txt` file manually (`add_executable` command).",
+                fg="yellow")
+
         self._tplvars.update(self.get_project_env())
         self._tplvars.update(self.get_project_build_data())
         self._tplvars.update({
             "project_name": self.get_project_name(),
-            "srcfiles": self.get_srcfiles(),
+            "src_files": src_files,
+            "main_src_file": main_src_file,
             "user_home_dir": abspath(expanduser("~")),
             "project_dir": self.project_dir,
             "systype": util.get_systype(),

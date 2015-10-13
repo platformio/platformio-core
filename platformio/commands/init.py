@@ -65,7 +65,7 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
                click.style(project_dir, fg="cyan"))
     click.echo("%s - Project Configuration File. |-> PLEASE EDIT ME <-|" %
                click.style("platformio.ini", fg="cyan"))
-    click.echo("%s - Put your source code here" %
+    click.echo("%s - Put your source files here" %
                click.style("src", fg="cyan"))
     click.echo("%s - Put here project specific (private) libraries" %
                click.style("lib", fg="cyan"))

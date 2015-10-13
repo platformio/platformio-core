@@ -35,6 +35,10 @@ class TeensyPlatform(BasePlatform):
             "default": True
         },
 
+        "framework-mbed": {
+            "default": True
+        },
+
         "tool-teensy": {
             "alias": "uploader",
             "default": True

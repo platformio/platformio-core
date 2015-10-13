@@ -24,13 +24,14 @@ between team members, regardless of operating system they prefer to work with.
 Beyond that, PlatformIO can be run not only on commonly used desktops/laptops
 but also on the servers without X Window System. While PlatformIO itself is a
 console application, it can be used in combination with one's favorite
-:ref:`ide` or text editor such as :ref:`ide_arduino`, :ref:`ide_eclipse`,
-:ref:`ide_visualstudio`, :ref:`ide_vim`,  :ref:`ide_sublimetext`, etc.
+:ref:`ide` or text editor such as :ref:`ide_arduino`, :ref:`ide_atom`,
+:ref:`ide_clion`, :ref:`ide_eclipse`, :ref:`ide_qtcreator`,
+:ref:`ide_sublimetext`, :ref:`ide_vim`, :ref:`ide_visualstudio`, etc.
 
 Alright, so PlatformIO can run on different operating systems. But more
 importantly, from development perspective at least, is a list of supported
-boards and MCUs. To keep things short: PlatformIO supports over 100
-:ref:`Embedded Boards <platforms>` and all major
+boards and MCUs. To keep things short: PlatformIO supports over 150+
+`Embedded Boards <http://platformio.org/#!/boards>`_ and all major
 :ref:`Development Platforms <platforms>`.
 
 PlatformIO allows users to:
@@ -55,6 +56,34 @@ the project developed using PlatformIO is as follows:
 * Users develop code and PlatformIO makes sure that it is compiled, prepared
   and uploaded to all the boards of interest.
 
+Command completion in Terminal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Bash completion
+'''''''''''''''
+
+Bash completion support will complete subcommands and parameters. To enable
+Bash completion for `platformio` subcommands you need to put into your `.bashrc`:
+
+.. code-block:: bash
+
+    eval "$(_PLATFORMIO_COMPLETE=source platformio)"
+
+ZSH completion
+''''''''''''''
+
+To enable ``zsh`` completion please run these commands:
+
+.. code-block:: bash
+
+    autoload bashcompinit && bashcompinit
+    eval "$(_PLATFORMIO_COMPLETE=source platformio)"
+
+.. note::
+
+    For permanent command completion you need to place commands above to
+    ``~/.bashrc`` or ``~/.zshrc`` file.
+
 .. _faq_troubleshooting:
 
 Troubleshooting
@@ -74,6 +103,9 @@ Try these solutions:
 
     [sudo] pip uninstall scons
     [sudo] pip install scons
+
+    # if you have "error: option --single-version-externally-managed not recognized", then
+    [sudo] pip install --egg scons
 
 2. Install PlatformIO using :ref:`installation_installer_script`.
 
