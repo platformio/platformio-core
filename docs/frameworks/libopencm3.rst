@@ -64,6 +64,13 @@ ST
       - 128 Kb
       - 16 Kb
 
+    * - ``nucleo_f103rb``
+      - `ST Nucleo F103RB <https://developer.mbed.org/platforms/ST-Nucleo-F103RB/>`_
+      - STM32F103RBT6
+      - 72 MHz
+      - 128 Kb
+      - 20 Kb
+
 TI
 ~~
 

@@ -4,6 +4,13 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.4.0 (2015-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Added `libOpenCM3 <http://docs.platformio.org/en/latest/frameworks/libopencm3.html>`_
+  framework for Nucleo F103RB board
+  (`issue #309 <https://github.com/platformio/platformio/issues/309>`_)
+
 2.3.4 (2015-10-13)
 ~~~~~~~~~~~~~~~~~~
 
