@@ -21,6 +21,8 @@ containing the build results (showing success or failure), or by posting a
 message on an IRC channel. It can be configured to build project on a range of
 different :ref:`platforms`.
 
+.. contents::
+
 Integration
 -----------
 

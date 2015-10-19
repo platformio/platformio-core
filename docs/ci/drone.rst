@@ -20,6 +20,8 @@ the way it has been configured to do so — for example, by sending an email
 containing the build results (showing success or failure). It can be
 configured to build project on a range of different :ref:`platforms`.
 
+.. contents::
+
 Integration
 -----------
 

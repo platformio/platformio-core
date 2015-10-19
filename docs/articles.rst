@@ -12,7 +12,7 @@ Here are recent articles about PlatformIO:
 2015
 ^^^^
 
-* Oct 18, 2015 - **Nico Coetzee** - `First Arduino I2C Experience with PaltformIO <https://electronicventurer.wordpress.com/2015/10/18/first-arduino-i2c-experience/>`_
+* Oct 18, 2015 - **Nico Coetzee** - `First Arduino I2C Experience with PlatformIO <https://electronicventurer.wordpress.com/2015/10/18/first-arduino-i2c-experience/>`_
 * Sep 01, 2015 - **Thomas P. Weldon, Ph.D.** - `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
 * Aug 01, 2015 - **Russell Davis** - `PlatformIO on the Raspberry Pi <http://www.russelldavis.org/2015/08/01/platformio-on-the-raspberry-pi/>`_
 * Jul 25, 2015 - **DinoTools** - `Erste Schritte mit PlatformIO (German) <https://www.dinotools.de/2015/07/25/erste-schritte-mit-platformio/>`_
