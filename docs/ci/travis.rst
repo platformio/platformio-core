@@ -143,8 +143,7 @@ Instead of ``--board`` option, please use :option:`platformio ci --project-conf`
 Examples
 --------
 
-1. Integration for `USB_Host_Shield_2.0 <https://github.com/felis/USB_Host_Shield_2.0>`_
-   project. The ``.travis.yml`` configuration file:
+1. Custom build flags
 
 .. code-block:: yaml
 
@@ -180,3 +179,74 @@ Examples
 
 * Configuration file: https://github.com/felis/USB_Host_Shield_2.0/blob/master/.travis.yml
 * Build History: https://travis-ci.org/felis/USB_Host_Shield_2.0
+
+2. Dependency on external libraries
+
+.. code-block:: yaml
+
+    language: python
+    python:
+        - "2.7"
+
+    # Cache PlatformIO packages using Travis CI container-based infrastructure
+    sudo: false
+    cache:
+        directories:
+            - "~/.platformio"
+
+    env:
+        - PLATFORMIO_CI_SRC=examples/backSoon/backSoon.ino
+        - PLATFORMIO_CI_SRC=examples/etherNode/etherNode.ino
+        # -
+
+    install:
+        - pip install -U platformio
+
+        - wget https://github.com/jcw/jeelib/archive/master.zip -O /tmp/jeelib.zip
+        - unzip /tmp/jeelib.zip -d /tmp
+
+        - wget https://github.com/Rodot/Gamebuino/archive/master.zip  -O /tmp/gamebuino.zip
+        - unzip /tmp/gamebuino.zip -d /tmp
+
+    script:
+        - platformio ci --lib="." --lib="/tmp/jeelib-master" --lib="/tmp/Gamebuino-master/libraries/tinyFAT" --board=uno --board=megaatmega2560
+
+* Configuration file: https://github.com/jcw/ethercard/blob/master/.travis.yml
+* Build History: https://travis-ci.org/jcw/ethercard
+
+3. Dynamic testing of the boards
+
+.. code-block:: yaml
+
+    language: python
+    python:
+        - "2.7"
+
+    # Cache PlatformIO packages using Travis CI container-based infrastructure
+    sudo: false
+    cache:
+        directories:
+            - "~/.platformio"
+
+    env:
+        - PLATFORMIO_CI_SRC=examples/TimeArduinoDue PLATFORMIO_CI_BOARDS_ARGS="--board=due"
+        - PLATFORMIO_CI_SRC=examples/TimeGPS
+        - PLATFORMIO_CI_SRC=examples/TimeNTP
+        - PLATFORMIO_CI_SRC=examples/TimeTeensy3 PLATFORMIO_CI_BOARDS_ARGS="--board=teensy31"
+        # - ...
+
+    install:
+        - pip install -U platformio
+        - rm -rf ./linux
+
+        #
+        # Libraries from PlatformIO Library Registry:
+        #
+        # http://platformio.org/#!/lib/show/416/TinyGPS
+        - platformio lib install 416 421 422
+
+    script:
+        - if [[ $PLATFORMIO_CI_BOARDS_ARGS ]]; then bash -c 'platformio ci --lib="." $PLATFORMIO_CI_BOARDS_ARGS'; else bash -c 'platformio ci --lib="." --board=uno --board=teensy20pp'; fi
+
+* Configuration file: https://github.com/ivankravets/Time/blob/master/.travis.yml
+* Build History: https://travis-ci.org/ivankravets/Time
