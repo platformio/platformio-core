@@ -16,10 +16,6 @@ from platformio.util import get_serialports
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
-    def _rpi_sysgpio(path, value):
-        with open(path, "w") as f:
-            f.write(str(value))
-
     if "micronucleus" in env['UPLOADER']:
         print "Please unplug/plug device ..."
 
@@ -35,13 +31,18 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
             "-D"
         ])
 
-    if not upload_options.get("require_upload_port", False):
+    if upload_options and not upload_options.get("require_upload_port", False):
         return
 
     env.AutodetectUploadPort()
     env.Append(UPLOADERFLAGS=["-P", "$UPLOAD_PORT"])
 
     if env.subst("$BOARD") == "raspduino":
+
+        def _rpi_sysgpio(path, value):
+            with open(path, "w") as f:
+                f.write(str(value))
+
         _rpi_sysgpio("/sys/class/gpio/export", 18)
         _rpi_sysgpio("/sys/class/gpio/gpio18/direction", "out")
         _rpi_sysgpio("/sys/class/gpio/gpio18/value", 1)
