@@ -18,7 +18,9 @@ PlatformIO 2.0
 * Fixed handling of upload port when ``board`` option is not specified in
   `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
   (`issue #313 <https://github.com/platformio/platformio/issues/313>`_)
-
+* Fixed firmware uploading for `nordicrf51 <http://docs.platformio.org/en/latest/platforms/nordicnrf51.html>`__
+  development platform
+  (`issue #316 <https://github.com/platformio/platformio/issues/316>`_)
 
 2.3.4 (2015-10-13)
 ~~~~~~~~~~~~~~~~~~

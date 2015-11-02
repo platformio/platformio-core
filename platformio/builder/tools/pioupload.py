@@ -1,7 +1,7 @@
 # Copyright (C) Ivan Kravets <me@ikravets.com>
 # See LICENSE for details.
 
-from os.path import join
+from os.path import join, isfile
 from shutil import copyfile
 from time import sleep
 
@@ -95,8 +95,11 @@ def AutodetectUploadPort(env):
 
 def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
     env.AutodetectUploadPort()
-    copyfile(join(env.subst("$BUILD_DIR"), "firmware.bin"),
-             join(env.subst("$UPLOAD_PORT"), "firmware.bin"))
+    for ext in ("bin", "hex"):
+        fpath = join(env.subst("$BUILD_DIR"), "firmware.%s" % ext)
+        if not isfile(fpath):
+            continue
+        copyfile(fpath, join(env.subst("$UPLOAD_PORT"), "firmware.%s" % ext))
     print ("Firmware has been successfully uploaded.\n"
            "Please restart your board.")
 

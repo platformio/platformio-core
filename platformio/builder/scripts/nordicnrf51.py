@@ -25,9 +25,9 @@ target_elf = env.BuildProgram()
 #
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_firm = join("$BUILD_DIR", "firmware.bin")
+    target_firm = join("$BUILD_DIR", "firmware.hex")
 else:
-    target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
+    target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Print binary size
