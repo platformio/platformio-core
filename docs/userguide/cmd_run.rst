@@ -38,8 +38,9 @@ Process specified targets.
 Pre-built targets:
 
 * ``clean`` delete compiled object files, libraries and firmware/program binaries
-* ``upload`` enable "auto-uploading" for embedded platforms after building
-  operation
+* ``upload`` firmware "auto-uploading" for embedded platforms
+* ``program`` firmware "auto-uploading" for embedded platforms using external
+  programmer (available only for :ref:`platform_atmelavr`)
 * ``uploadlazy`` upload existing firmware without project rebuilding
 * ``envdump`` dump current build environment
 * ``size`` print the size of the sections in a firmware/program

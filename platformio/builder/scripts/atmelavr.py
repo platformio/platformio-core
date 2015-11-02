@@ -26,10 +26,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         env.Replace(UPLOAD_SPEED=None)
 
     if env.subst("$UPLOAD_SPEED"):
-        env.Append(UPLOADERFLAGS=[
-            "-b", "$UPLOAD_SPEED",
-            "-D"
-        ])
+        env.Append(UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"])
 
     if upload_options and not upload_options.get("require_upload_port", False):
         return
@@ -87,9 +84,9 @@ else:
             '"%s"' % join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude.conf"),
             "-c", "$UPLOAD_PROTOCOL"
         ],
-
-        UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i',
-        UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
+        UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -D -U flash:w:$SOURCES:i',
+        UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i',
+        PROGRAMHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i'
     )
 
 #
@@ -133,9 +130,15 @@ AlwaysBuild(upload)
 # Target: Upload .eep file
 #
 
-uploadeep = env.Alias("uploadeep", target_eep, [
-    BeforeUpload, "$UPLOADEEPCMD"])
+uploadeep = env.Alias("uploadeep", target_eep, [BeforeUpload, "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
+
+#
+# Target: Upload firmware using external programmer
+#
+
+program = env.Alias("program", target_firm, [BeforeUpload, "$PROGRAMHEXCMD"])
+AlwaysBuild(program)
 
 #
 # Setup default targets

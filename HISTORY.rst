@@ -12,6 +12,9 @@ PlatformIO 2.0
   (`issue #309 <https://github.com/platformio/platformio/issues/309>`_)
 * Added support for Espressif ESP8266 ESP-12E board (NodeMCU)
   (`issue #310 <https://github.com/platformio/platformio/issues/310>`_)
+* Upload firmware using external programmer via `platformio run --target program <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-t>`__
+  target
+  (`issue #311 <https://github.com/platformio/platformio/issues/311>`_)
 * Fixed handling of upload port when ``board`` option is not specified in
   `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
   (`issue #313 <https://github.com/platformio/platformio/issues/313>`_)
