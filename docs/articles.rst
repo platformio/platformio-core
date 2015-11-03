@@ -20,6 +20,7 @@ Here are recent articles about PlatformIO:
 * Jul 14, 2015 - **ElbinarIO** - `Programar para Arduino y otros microcontroladores desde la linea de comandos (Spanish) <http://elbinario.net/2015/07/14/programar-para-arduino-y-otros-microcontroladores-desde-la-linea-de-comandos/>`_
 * Jul 11, 2015 - **TrojanC** - `Learning Arduino GitHub Repository <http://www.trojanc.co.za/2015/07/11/learning-arduino-github-repository/>`_
 * Jun 02, 2015 - **Alejandro Guirao Rodriguez** - `Discovering PlatformIO: The RaspberryPi / Arduino combo kit is a winner option when prototyping an IoT-style project <http://lekum.org/posts/discovering-platformio/index.html>`_
+* May 17, 2015 - **S.S(caad1229)** - `Arduino development at the command line: VIM + PlatformIO (Japan) <http://qiita.com/caad1229/items/7b5fb47f034ae6e0baf2>`_
 * May 11, 2015 - **IT Hare** - `From Web Developer to Embedded One: Interview with Ivan Kravets, The Guy Behind PlatformIO. Part II <http://ithare.com/from-web-developer-to-embedded-one-interview-with-ivan-kravets-the-guy-behind-platformio-part-ii/>`_
 * May 4, 2015 - **IT Hare** - `From Web Developer to Embedded One: Interview with Ivan Kravets, The Guy Behind PlatformIO. Part I <http://ithare.com/from-web-development-to-embedded-one-interview-with-ivan-kravets-the-guy-behind-platformio-part-i/>`_
 * April 17, 2015 - **Michael Ball** - `PlatformIO - A Cross-Platform Code Builder and Missing Library Manager <http://arduino-pi.blogspot.com.es/2015/04/platformio-cross-platform-code-builder.html>`_
