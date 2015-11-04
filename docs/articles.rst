@@ -15,7 +15,7 @@ Here are recent articles about PlatformIO:
 * Oct 18, 2015 - **Nico Coetzee** - `First Arduino I2C Experience with PlatformIO <https://electronicventurer.wordpress.com/2015/10/18/first-arduino-i2c-experience/>`_
 * Sep 01, 2015 - **Thomas P. Weldon, Ph.D.** - `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
 * Aug 01, 2015 - **Russell Davis** - `PlatformIO on the Raspberry Pi <http://www.russelldavis.org/2015/08/01/platformio-on-the-raspberry-pi/>`_
-* Jul 25, 2015 - **DinoTools** - `Erste Schritte mit PlatformIO (Getting Started with PlatformIO, German) <https://www.dinotools.de/2015/07/25/erste-schritte-mit-platformio/>`_
+* Jul 25, 2015 - **DinoTools** - `Erste Schritte mit PlatformIO (Getting Started with PlatformIO, Germany) <https://www.dinotools.de/2015/07/25/erste-schritte-mit-platformio/>`_
 * Jul 20, 2015 - **Eli Fatsi** - `Arduino Development in Atom Editor <http://viget.com/extend/arduino-development-in-atom-editor>`_
 * Jul 14, 2015 - **ElbinarIO** - `Programar para Arduino y otros microcontroladores desde la linea de comandos (Program Arguino and other microcontrollers from the command line, Spain) <http://elbinario.net/2015/07/14/programar-para-arduino-y-otros-microcontroladores-desde-la-linea-de-comandos/>`_
 * Jul 11, 2015 - **TrojanC** - `Learning Arduino GitHub Repository <http://www.trojanc.co.za/2015/07/11/learning-arduino-github-repository/>`_
