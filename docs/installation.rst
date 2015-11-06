@@ -41,7 +41,7 @@ Please *choose one of* the following installation options:
 Python Package Manager
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The latest stable version of PlatformIO may be done via
+The latest stable version of PlatformIO may be installed/upgraded via
 `pip <https://pip.pypa.io>`_ as follows:
 
 .. code-block:: bash
@@ -51,9 +51,6 @@ The latest stable version of PlatformIO may be done via
 
     # install/upgrade the latest version of PlatformIO
     pip install -U platformio
-
-.. warning::
-    Known Issue: :ref:`faq_troubleshooting_sconssingverextmanaged`
 
 Note that you may run into permissions issues running these commands. You have
 a few options here:

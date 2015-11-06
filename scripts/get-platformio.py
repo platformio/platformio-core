@@ -62,11 +62,11 @@ def exec_command(*args, **kwargs):
 
     if p.returncode != 0:
         raise Exception("\n".join([out, err]))
-    return out
+    return out.strip()
 
 
 def exec_python_cmd(args):
-    return exec_command([CURINTERPRETER_PATH] + args).strip()
+    return exec_command([CURINTERPRETER_PATH] + args)
 
 
 def install_pip():
@@ -86,18 +86,20 @@ def install_pip():
         os.unlink(f.name)
 
 
-def install_pypi_packages(packages):
-    print (exec_python_cmd([
-        "-m", "pip.__main__" if sys.version_info < (2, 7, 0) else "pip",
-        "install", "-U"] + packages))
+def install_platformio():
+    cmd = ["-m", "pip.__main__" if sys.version_info < (2, 7, 0) else "pip"]
+    try:
+        print (exec_python_cmd(cmd + ["install", "-U", "platformio"]))
+    except Exception:
+        print (exec_python_cmd(
+            cmd + ["--no-cache-dir", "install", "-U", "platformio"]))
 
 
 def main():
     steps = [
-        ("Fixing Windows %PATH% Environment", fix_winpython_pathenv, []),
-        ("Installing Python Package Manager", install_pip, []),
-        ("Installing PlatformIO and dependencies", install_pypi_packages,
-         [["setuptools", "platformio"]])
+        ("Fixing Windows %PATH% Environment", fix_winpython_pathenv),
+        ("Installing Python Package Manager", install_pip),
+        ("Installing PlatformIO and dependencies", install_platformio)
     ]
 
     if not IS_WINDOWS:
@@ -109,7 +111,7 @@ def main():
             break
         print ("\n==> %s ..." % s[0])
         try:
-            s[1](*s[2])
+            s[1]()
             print ("[SUCCESS]")
         except Exception, e:
             is_error = True

@@ -92,8 +92,8 @@ Troubleshooting
 Installation
 ~~~~~~~~~~~~
 
-PlatformIO and ``scons`` aren't installed properly
-''''''''''''''''''''''''''''''''''''''''''''''''''
+PlatformIO and SCons aren't installed properly
+''''''''''''''''''''''''''''''''''''''''''''''
 
 Try these solutions:
 
@@ -104,7 +104,7 @@ Try these solutions:
     [sudo] pip uninstall scons
     [sudo] pip install scons
 
-    # if you have "error: option --single-version-externally-managed not recognized", then
+    # or if you have "error: option --single-version-externally-managed not recognized"
     [sudo] pip install --egg scons
 
 2. Install PlatformIO using :ref:`installation_installer_script`.

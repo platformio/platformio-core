@@ -21,6 +21,8 @@ PlatformIO 2.0
 * Fixed firmware uploading for `nordicrf51 <http://docs.platformio.org/en/latest/platforms/nordicnrf51.html>`__
   development platform
   (`issue #316 <https://github.com/platformio/platformio/issues/316>`_)
+* Fixed installation on Mac OS X El Capitan
+  (`issue #312 <https://github.com/platformio/platformio/issues/312>`_)
 
 2.3.4 (2015-10-13)
 ~~~~~~~~~~~~~~~~~~
