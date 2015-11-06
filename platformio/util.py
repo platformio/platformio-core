@@ -243,11 +243,9 @@ def exec_command(*args, **kwargs):
 
 
 def get_serialports():
-    if os.name == "nt":
-        from serial.tools.list_ports_windows import comports
-    elif os.name == "posix":
-        from serial.tools.list_ports_posix import comports
-    else:
+    try:
+        from serial.tools.list_ports import comports
+    except ImportError:
         raise exception.GetSerialPortsError(os.name)
     return [{"port": p, "description": d, "hwid": h}
             for p, d, h in comports() if p]
