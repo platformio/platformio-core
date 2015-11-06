@@ -140,30 +140,41 @@ Set initial ``RTS`` line state, default ``0``
 Set initial ``DTR`` line state, default ``0``
 
 .. option::
-    --echo
+    --encoding
 
-Enable local echo, default ``Off``
+Set the encoding for the serial port (e.g. ``hexlify``, ``Latin1``, ``UTF-8``),
+default ``UTF-8``.
 
-.. option::
-    --cr
-
-Do not send ``CR+LF``, send ``R`` only, default ``Off``
+**NEW**: Available in Miniterm/PySerial 3.0
 
 .. option::
-    --lf
+    -f, --filter
 
-Do not send ``CR+LF``, send ``LF`` only, default ``Off``
+Add text transformation. Available filters:
+
+* ``colorize`` Apply different colors for received and echo
+* ``debug`` Print what is sent and received
+* ``default`` Remove typical terminal control codes from input
+* ``direct`` Do-nothing: forward all data unchanged
+* ``nocontrol`` Remove all control codes, incl. CR+LF
+* ``printable`` Show decimal code for all non-ASCII characters and replace
+  most control codes
+
+**NEW**: Available in Miniterm/PySerial 3.0
 
 .. option::
-    -d, --debug
+    --eol
 
-Debug received data (escape non-printable chars). ``--debug`` can be given
-multiple times:
+End of line mode (``CR``, ``LF`` or ``CRLF``), default ``CRLF``
 
-0. just print what is received
-1. escape non-printable characters, do newlines as unusual
-2. escape non-printable characters, newlines too
-3. hex dump everything
+**NEW**: Available in Miniterm/PySerial 3.0
+
+.. option::
+    --raw
+
+Do not apply any encodings/transformations
+
+**NEW**: Available in Miniterm/PySerial 3.0
 
 .. option::
     --exit-char
@@ -181,6 +192,43 @@ default ``0x14``
     ---quiet
 
 Diagnostics: suppress non-error messages, default ``Off``
+
+
+.. option::
+    --echo
+
+Enable local echo, default ``Off``
+
+**REMOVED**: Is not available in Miniterm/PySerial 3.0
+
+.. option::
+    --cr
+
+Do not send ``CR+LF``, send ``R`` only, default ``Off``
+
+**REMOVED**: Is not available in Miniterm/PySerial 3.0
+
+.. option::
+    --lf
+
+Do not send ``CR+LF``, send ``LF`` only, default ``Off``
+
+**REMOVED**: Is not available in Miniterm/PySerial 3.0
+
+.. option::
+    -d, --debug
+
+Debug received data (escape non-printable chars). ``--debug`` can be given
+multiple times:
+
+0. just print what is received
+1. escape non-printable characters, do newlines as unusual
+2. escape non-printable characters, newlines too
+3. hex dump everything
+
+**REMOVED**: Is not available in Miniterm/PySerial 3.0.
+See :option:`platformio serialports monitor --encoding` and
+:option:`platformio serialports monitor --filter` options.
 
 Examples
 ~~~~~~~~
@@ -201,21 +249,17 @@ Examples
       --rts [0|1]           Set initial RTS line state, default=0
       --dtr [0|1]           Set initial DTR line state, default=0
       --echo                Enable local echo, default=Off
-      --cr                  Do not send CR+LF, send CR only, default=Off
-      --lf                  Do not send CR+LF, send LF only, default=Off
-      -d, --debug           Debug received data (escape non-printable chars)
-                            --debug can be given multiple times:
-                            0: just print what is received
-                            1: escape non-printable characters, do newlines as
-                               unusual
-                            2: escape non-printable characters, newlines too
-                            3: hex dump everything
+      --encoding TEXT       Set the encoding for the serial port (e.g. hexlify,
+                            Latin1, UTF-8), default: UTF-8
+      -f, --filter TEXT     Add text transformation
+      --eol [CR|LF|CRLF]    End of line mode, default=CRLF
+      --raw                 Do not apply any encodings/transformations
       --exit-char INTEGER   ASCII code of special character that is used to exit
-                            the application, default=0x1d
+                            the application, default=29 (DEC)
       --menu-char INTEGER   ASCII code of special character that is used to
-                            control miniterm (menu), default=0x14
+                            control miniterm (menu), default=20 (DEC)
       --quiet               Diagnostics: suppress non-error messages, default=Off
-      --help                Show this message and exit.
+      -h, --help            Show this message and exit.
 
 2. Communicate with serial device and print help inside terminal
 

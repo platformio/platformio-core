@@ -12,7 +12,7 @@ install_requires = [
     "bottle",
     "click>=3.2",
     "lockfile>=0.9.1",
-    "pyserial<3",
+    "pyserial",
     "requests>=2.4.0"
 ]
 

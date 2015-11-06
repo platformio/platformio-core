@@ -12,6 +12,8 @@ PlatformIO 2.0
   (`issue #309 <https://github.com/platformio/platformio/issues/309>`_)
 * Added support for Espressif ESP8266 ESP-12E board (NodeMCU)
   (`issue #310 <https://github.com/platformio/platformio/issues/310>`_)
+* Added support for pySerial 3.0
+  (`issue #307 <https://github.com/platformio/platformio/issues/307>`_)
 * Upload firmware using external programmer via `platformio run --target program <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-t>`__
   target
   (`issue #311 <https://github.com/platformio/platformio/issues/311>`_)
