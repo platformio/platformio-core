@@ -51,10 +51,10 @@ AlwaysBuild(target_size)
 # Target: Upload by default .bin file
 #
 
-if "mbed" in env.subst("$FRAMEWORK"):
-    upload = env.Alias(["upload", "uploadlazy"], target_firm, env.UploadToDisk)
-else:
+if env.subst("$BOARD") == "rfduino":
     upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
+else:
+    upload = env.Alias(["upload", "uploadlazy"], target_firm, env.UploadToDisk)
 AlwaysBuild(upload)
 
 #
