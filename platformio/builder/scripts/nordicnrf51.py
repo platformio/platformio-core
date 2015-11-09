@@ -18,7 +18,7 @@ if env.subst("$BOARD") == "rfduino":
     env.Append(
         CPPFLAGS=["-fno-builtin"],
         LINKFLAGS=["--specs=nano.specs"]
-    ),
+    )
     env.Replace(
         UPLOADER=join("$PIOPACKAGES_DIR", "tool-rfdloader", "rfdloader"),
         UPLOADERFLAGS=["-q", "$UPLOAD_PORT", "$SOURCES"],

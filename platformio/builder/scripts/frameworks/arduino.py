@@ -60,10 +60,12 @@ elif env.get("PLATFORM") == "nordicnrf51":
             join("$PLATFORMFW_DIR", "system", "RFduino"),
             join("$PLATFORMFW_DIR", "system", "RFduino", "include")
         ],
-        LIBPATH=[join(
-            "$PLATFORMFW_DIR",
-            "variants",
-            "${BOARD_OPTIONS['build']['variant']}")
+        LIBPATH=[
+            join(
+                "$PLATFORMFW_DIR",
+                "variants",
+                "${BOARD_OPTIONS['build']['variant']}"
+            )
         ],
         LIBS=["RFduino", "RFduinoBLE", "RFduinoGZLL", "RFduinoSystem"]
     )
