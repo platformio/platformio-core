@@ -14,6 +14,17 @@ env = DefaultEnvironment()
 
 SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
+if env.subst("$BOARD") == "rfduino":
+    env.Append(
+        CPPFLAGS=["-fno-builtin"],
+        LINKFLAGS=["--specs=nano.specs"]
+    ),
+    env.Replace(
+        UPLOADER=join("$PIOPACKAGES_DIR", "tool-rfdloader", "rfdloader"),
+        UPLOADERFLAGS=["-q", "$UPLOAD_PORT", "$SOURCES"],
+        UPLOADCMD="$UPLOADER $UPLOADERFLAGS"
+    )
+
 #
 # Target: Build executable and linkable firmware
 #
@@ -40,7 +51,10 @@ AlwaysBuild(target_size)
 # Target: Upload by default .bin file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_firm, env.UploadToDisk)
+if "mbed" in env.subst("$FRAMEWORK"):
+    upload = env.Alias(["upload", "uploadlazy"], target_firm, env.UploadToDisk)
+else:
+    upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
 AlwaysBuild(upload)
 
 #

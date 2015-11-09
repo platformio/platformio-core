@@ -49,6 +49,21 @@ elif env.get("PLATFORM") == "espressif":
         LIBS=["smartconfig", "pp", "main", "wpa", "lwip",
               "net80211", "wps", "crypto", "phy", "hal", "gcc", "m"]
     )
+elif env.get("PLATFORM") == "nordicnrf51":
+    PLATFORMFW_DIR = join(
+        "$PIOPACKAGES_DIR",
+        "framework-arduinonordicnrf51"
+    )
+    env.Prepend(
+        CPPPATH=[
+            join("$PLATFORMFW_DIR", "system", "CMSIS", "CMSIS", "Include"),
+            join("$PLATFORMFW_DIR", "system", "RFduino"),
+            join("$PLATFORMFW_DIR", "system", "RFduino", "include")
+        ],
+        LIBPATH=[join("$PLATFORMFW_DIR", "variants", "${BOARD_OPTIONS['build']['variant']}")],
+        LIBS=["RFduino", "RFduinoBLE", "RFduinoGZLL", "RFduinoSystem"]
+    )
+
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
 
