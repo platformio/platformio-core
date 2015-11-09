@@ -26,6 +26,10 @@ class Nordicnrf51Platform(BasePlatform):
 
         "framework-mbed": {
             "default": True
+        },
+
+        "framework-arduinonordicnrf51": {
+            "default": False
         }
     }
 
