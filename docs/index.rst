@@ -1,5 +1,5 @@
-PlatformIO is a cross-platform code builder and the missing library manager
-===========================================================================
+PlatformIO is an open-source cross-platform code builder and the missing library manager
+========================================================================================
 
 **Ready for embedded development, IDE and Continuous integration, Arduino and
 MBED compatible**
