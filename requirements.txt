@@ -4,4 +4,4 @@ colorama==0.3.3
 lockfile==0.11.0
 pyserial==2.7
 requests==2.8.1
-scons==2.3.6
+scons==2.4.1
