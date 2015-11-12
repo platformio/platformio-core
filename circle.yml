@@ -10,6 +10,7 @@ machine:
 checkout:
     post:
         - git submodule update --init
+        - pip install -U pip setuptools virtualenv
 
 dependencies:
     pre:
