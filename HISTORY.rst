@@ -27,6 +27,9 @@ PlatformIO 2.0
   (`issue #316 <https://github.com/platformio/platformio/issues/316>`_)
 * Fixed installation on Mac OS X El Capitan
   (`issue #312 <https://github.com/platformio/platformio/issues/312>`_)
+* Fixed project generator for CLion IDE under Windows OS with invalid path to
+  executable
+  (`issue #326 <https://github.com/platformio/platformio/issues/326>`_)
 
 2.3.4 (2015-10-13)
 ~~~~~~~~~~~~~~~~~~

@@ -35,7 +35,7 @@ add_custom_target(
 )
 
 % if main_src_file:
-add_executable({{project_name}} {{main_src_file}})
+add_executable({{project_name}} {{main_src_file.replace("\\", "/")}})
 % else:
 #
 # To enable code auto-completion, please specify path 
