@@ -14,6 +14,8 @@ PlatformIO 2.0
   (`issue #310 <https://github.com/platformio/platformio/issues/310>`_)
 * Added support for pySerial 3.0
   (`issue #307 <https://github.com/platformio/platformio/issues/307>`_)
+* Updated Arduino AVR/SAM frameworks to 1.6.6
+  (`issue #321 <https://github.com/platformio/platformio/issues/321>`_)
 * Upload firmware using external programmer via `platformio run --target program <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-t>`__
   target
   (`issue #311 <https://github.com/platformio/platformio/issues/311>`_)
