@@ -177,16 +177,19 @@ class MPDataPusher(object):
 
     def _worker(self):
         while True:
-            item = self._queue.get()
-            _item = item.copy()
-            if "qt" not in _item:
-                _item['qt'] = time()
-            self._failedque.append(_item)
-            if self._send_data(item):
-                self._failedque.remove(_item)
-            else:
-                self._http_offline = True
-            self._queue.task_done()
+            try:
+                item = self._queue.get()
+                _item = item.copy()
+                if "qt" not in _item:
+                    _item['qt'] = time()
+                self._failedque.append(_item)
+                if self._send_data(item):
+                    self._failedque.remove(_item)
+                else:
+                    self._http_offline = True
+                self._queue.task_done()
+            except:  # pylint: disable=W0702
+                pass
 
     def _send_data(self, data):
         result = False
