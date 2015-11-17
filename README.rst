@@ -32,7 +32,7 @@ PlatformIO
 `Home & Demo <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
 `Source Code <https://github.com/platformio>`_ |
-`Documentation <http://docs.platformio.org>`_ ||
+`Documentation <http://docs.platformio.org>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_ |
 `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
@@ -43,8 +43,8 @@ PlatformIO
     :target: http://platformio.org
 
 `PlatformIO <http://platformio.org>`_ is an open-source cross-platform code
-builder and the missing library manager (Ready for embedded development, IDE
-and Continuous integration, Arduino and MBED compatible).
+builder and library manager.  For embedded development, IDE
+and Continuous integration.  Arduino and MBED compatible.
 
 *Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
@@ -66,15 +66,15 @@ libOpenCM3, etc.*
 * `FAQ <http://docs.platformio.org/en/latest/faq.html>`_
 * `Release History <http://docs.platformio.org/en/latest/history.html>`_
 
-You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
-has pre-built different development platforms and pre-configured settings for
+You have **no need** to install any *IDE* or compile any toolchains. *PlatformIO*
+has pre-built development platforms and pre-configured settings for
 the most popular embedded boards. For further details, please
 refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
 
 Use whenever. *Run everywhere.*
 -------------------------------
 *PlatformIO* is written in pure *Python* and **doesn't depend** on any
-additional libraries/tools from an operation system. It allows you to use
+additional libraries/tools from an operating system. It allows you to use
 *PlatformIO* beginning from *PC (Mac, Linux, Win)* and ending with credit-card
 sized computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
 `BeagleBone <http://beagleboard.org>`_,
@@ -134,8 +134,8 @@ cross-platform substitute for the classic *Make* utility.
 
 Single source code. *Multiple platforms.*
 -----------------------------------------
-*PlatformIO* allows developer to compile the same code with different
-development platforms using the *Only One Command*
+*PlatformIO* allows the developer to compile the same code with different
+development platforms using only *One Command*
 `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`_.
 This happens due to
 `Project Configuration File (platformio.ini) <http://docs.platformio.org/en/latest/projectconf.html>`_
