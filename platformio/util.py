@@ -247,8 +247,13 @@ def get_serialports():
         from serial.tools.list_ports import comports
     except ImportError:
         raise exception.GetSerialPortsError(os.name)
-    return [{"port": p, "description": d, "hwid": h}
-            for p, d, h in comports() if p]
+    result = [{"port": p, "description": d, "hwid": h}
+              for p, d, h in comports() if p]
+    # fix for PySerial
+    if not result and system() == "Darwin":
+        for p in glob("/dev/tty.*"):
+            result.append({"port": p, "description": "", "hwid": ""})
+    return result
 
 
 def get_logicaldisks():

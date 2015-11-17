@@ -30,6 +30,8 @@ PlatformIO 2.0
 * Fixed project generator for CLion IDE under Windows OS with invalid path to
   executable
   (`issue #326 <https://github.com/platformio/platformio/issues/326>`_)
+* Fixed empty list with serial ports on Mac OS X
+  (`issue #294 <https://github.com/platformio/platformio/issues/294>`_)
 
 2.3.4 (2015-10-13)
 ~~~~~~~~~~~~~~~~~~
