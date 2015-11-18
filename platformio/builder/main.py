@@ -29,6 +29,7 @@ except ImportError:
                 sys.path.insert(0, _p)
         try:
             from platformio import util
+            import lockfile  # NOQA pylint: disable=unused-import
             break
         except ImportError:
             pass
