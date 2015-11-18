@@ -170,6 +170,7 @@ Frameworks:
 Licence
 -------
 
-Copyright (C) 2014-2015 Ivan Kravets
+Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
 
-Licenced under the MIT Licence.
+The PlatformIO is licensed under the permissive Apache 2.0 licence,
+so you can use it in both commercial and personal projects with confidence.
