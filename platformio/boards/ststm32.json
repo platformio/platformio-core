@@ -205,11 +205,14 @@
     },
     "nucleo_f103rb": {
         "build": {
+            "core": "stm32",
             "f_cpu": "72000000L",
+            "ldscript": "stm32f103xb.ld",
             "cpu": "cortex-m3",
-            "mcu": "stm32f103rbt6"
+            "mcu": "stm32f103rbt6",
+            "variant": "stm32f1"
         },
-        "frameworks": ["mbed"],
+        "frameworks": ["mbed","libopencm3"],
         "name": "ST Nucleo F103RB",
         "platform": "ststm32",
         "upload": {

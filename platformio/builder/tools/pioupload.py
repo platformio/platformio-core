@@ -1,7 +1,18 @@
-# Copyright (C) Ivan Kravets <me@ikravets.com>
-# See LICENSE for details.
+# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-from os.path import join
+from os.path import join, isfile
 from shutil import copyfile
 from time import sleep
 
@@ -95,8 +106,11 @@ def AutodetectUploadPort(env):
 
 def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
     env.AutodetectUploadPort()
-    copyfile(join(env.subst("$BUILD_DIR"), "firmware.bin"),
-             join(env.subst("$UPLOAD_PORT"), "firmware.bin"))
+    for ext in ("bin", "hex"):
+        fpath = join(env.subst("$BUILD_DIR"), "firmware.%s" % ext)
+        if not isfile(fpath):
+            continue
+        copyfile(fpath, join(env.subst("$UPLOAD_PORT"), "firmware.%s" % ext))
     print ("Firmware has been successfully uploaded.\n"
            "Please restart your board.")
 

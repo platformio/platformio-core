@@ -1,5 +1,16 @@
-# Copyright (C) Ivan Kravets <me@ikravets.com>
-# See LICENSE for details.
+# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 """
     Builder for Nordic nRF51 series ARM microcontrollers.
@@ -25,9 +36,9 @@ target_elf = env.BuildProgram()
 #
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
-    target_firm = join("$BUILD_DIR", "firmware.bin")
+    target_firm = join("$BUILD_DIR", "firmware.hex")
 else:
-    target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
+    target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 
 #
 # Target: Print binary size

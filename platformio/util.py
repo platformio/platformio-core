@@ -1,5 +1,16 @@
-# Copyright (C) Ivan Kravets <me@ikravets.com>
-# See LICENSE for details.
+# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import collections
 import functools
@@ -243,14 +254,17 @@ def exec_command(*args, **kwargs):
 
 
 def get_serialports():
-    if os.name == "nt":
-        from serial.tools.list_ports_windows import comports
-    elif os.name == "posix":
-        from serial.tools.list_ports_posix import comports
-    else:
+    try:
+        from serial.tools.list_ports import comports
+    except ImportError:
         raise exception.GetSerialPortsError(os.name)
-    return [{"port": p, "description": d, "hwid": h}
-            for p, d, h in comports() if p]
+    result = [{"port": p, "description": d, "hwid": h}
+              for p, d, h in comports() if p]
+    # fix for PySerial
+    if not result and system() == "Darwin":
+        for p in glob("/dev/tty.*"):
+            result.append({"port": p, "description": "", "hwid": ""})
+    return result
 
 
 def get_logicaldisks():

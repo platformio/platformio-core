@@ -4,6 +4,37 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.3.5 (2015-11-18)
+~~~~~~~~~~~~~~~~~~
+
+* Added support of `libOpenCM3 <http://docs.platformio.org/en/latest/frameworks/libopencm3.html>`_
+  framework for Nucleo F103RB board
+  (`issue #309 <https://github.com/platformio/platformio/issues/309>`_)
+* Added support for Espressif ESP8266 ESP-12E board (NodeMCU)
+  (`issue #310 <https://github.com/platformio/platformio/issues/310>`_)
+* Added support for pySerial 3.0
+  (`issue #307 <https://github.com/platformio/platformio/issues/307>`_)
+* Updated Arduino AVR/SAM frameworks to 1.6.6
+  (`issue #321 <https://github.com/platformio/platformio/issues/321>`_)
+* Upload firmware using external programmer via `platformio run --target program <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-t>`__
+  target
+  (`issue #311 <https://github.com/platformio/platformio/issues/311>`_)
+* Fixed handling of upload port when ``board`` option is not specified in
+  `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  (`issue #313 <https://github.com/platformio/platformio/issues/313>`_)
+* Fixed firmware uploading for `nordicrf51 <http://docs.platformio.org/en/latest/platforms/nordicnrf51.html>`__
+  development platform
+  (`issue #316 <https://github.com/platformio/platformio/issues/316>`_)
+* Fixed installation on Mac OS X El Capitan
+  (`issue #312 <https://github.com/platformio/platformio/issues/312>`_)
+* Fixed project generator for CLion IDE under Windows OS with invalid path to
+  executable
+  (`issue #326 <https://github.com/platformio/platformio/issues/326>`_)
+* Fixed empty list with serial ports on Mac OS X
+  (`isge #294 <https://github.com/platformio/platformio/issues/294>`_)
+* Fixed compilation error ``TWI_Disable not declared`` for Arduino Due board
+  (`issue #329 <https://github.com/platformio/platformio/issues/329>`_)
+
 2.3.4 (2015-10-13)
 ~~~~~~~~~~~~~~~~~~
 

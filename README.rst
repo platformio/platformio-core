@@ -42,9 +42,9 @@ PlatformIO
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
 
-`PlatformIO <http://platformio.org>`_ is a cross-platform code builder
-and the missing library manager (Ready for embedded development, IDE and
-Continuous integration, Arduino and MBED compatible).
+`PlatformIO <http://platformio.org>`_ is an open-source cross-platform code
+builder and the missing library manager (Ready for embedded development, IDE
+and Continuous integration, Arduino and MBED compatible).
 
 *Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
@@ -170,6 +170,7 @@ Frameworks:
 Licence
 -------
 
-Copyright (C) 2014-2015 Ivan Kravets
+Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
 
-Licenced under the MIT Licence.
+The PlatformIO is licensed under the permissive Apache 2.0 licence,
+so you can use it in both commercial and personal projects with confidence.

@@ -1,5 +1,16 @@
-# Copyright (C) Ivan Kravets <me@ikravets.com>
-# See LICENSE for details.
+# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 """
     Builder for Atmel AVR series of microcontrollers
@@ -16,10 +27,6 @@ from platformio.util import get_serialports
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
-    def _rpi_sysgpio(path, value):
-        with open(path, "w") as f:
-            f.write(str(value))
-
     if "micronucleus" in env['UPLOADER']:
         print "Please unplug/plug device ..."
 
@@ -30,18 +37,20 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         env.Replace(UPLOAD_SPEED=None)
 
     if env.subst("$UPLOAD_SPEED"):
-        env.Append(UPLOADERFLAGS=[
-            "-b", "$UPLOAD_SPEED",
-            "-D"
-        ])
+        env.Append(UPLOADERFLAGS=["-b", "$UPLOAD_SPEED"])
 
-    if not upload_options.get("require_upload_port", False):
+    if upload_options and not upload_options.get("require_upload_port", False):
         return
 
     env.AutodetectUploadPort()
     env.Append(UPLOADERFLAGS=["-P", "$UPLOAD_PORT"])
 
     if env.subst("$BOARD") == "raspduino":
+
+        def _rpi_sysgpio(path, value):
+            with open(path, "w") as f:
+                f.write(str(value))
+
         _rpi_sysgpio("/sys/class/gpio/export", 18)
         _rpi_sysgpio("/sys/class/gpio/gpio18/direction", "out")
         _rpi_sysgpio("/sys/class/gpio/gpio18/value", 1)
@@ -86,9 +95,9 @@ else:
             '"%s"' % join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude.conf"),
             "-c", "$UPLOAD_PROTOCOL"
         ],
-
-        UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i',
-        UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i'
+        UPLOADHEXCMD='"$UPLOADER" $UPLOADERFLAGS -D -U flash:w:$SOURCES:i',
+        UPLOADEEPCMD='"$UPLOADER" $UPLOADERFLAGS -U eeprom:w:$SOURCES:i',
+        PROGRAMHEXCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i'
     )
 
 #
@@ -132,9 +141,15 @@ AlwaysBuild(upload)
 # Target: Upload .eep file
 #
 
-uploadeep = env.Alias("uploadeep", target_eep, [
-    BeforeUpload, "$UPLOADEEPCMD"])
+uploadeep = env.Alias("uploadeep", target_eep, [BeforeUpload, "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
+
+#
+# Target: Upload firmware using external programmer
+#
+
+program = env.Alias("program", target_firm, [BeforeUpload, "$PROGRAMHEXCMD"])
+AlwaysBuild(program)
 
 #
 # Setup default targets
