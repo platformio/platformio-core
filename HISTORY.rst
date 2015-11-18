@@ -4,7 +4,7 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.4.0 (2015-??-??)
+2.3.5 (2015-11-18)
 ~~~~~~~~~~~~~~~~~~
 
 * Added support of `libOpenCM3 <http://docs.platformio.org/en/latest/frameworks/libopencm3.html>`_
