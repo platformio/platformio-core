@@ -31,7 +31,9 @@ PlatformIO 2.0
   executable
   (`issue #326 <https://github.com/platformio/platformio/issues/326>`_)
 * Fixed empty list with serial ports on Mac OS X
-  (`issue #294 <https://github.com/platformio/platformio/issues/294>`_)
+  (`isge #294 <https://github.com/platformio/platformio/issues/294>`_)
+* Fixed compilation error ``TWI_Disable not declared`` for Arduino Due board
+  (`issue #329 <https://github.com/platformio/platformio/issues/329>`_)
 
 2.3.4 (2015-10-13)
 ~~~~~~~~~~~~~~~~~~
