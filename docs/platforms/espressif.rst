@@ -1,3 +1,14 @@
+..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 .. _platform_espressif:
 
 Platform ``espressif``
@@ -75,8 +86,15 @@ Espressif
       - RAM
 
     * - ``esp01``
-      - `Espressif ESP8266 board <https://nurdspace.nl/ESP8266>`_
+      - `Espressif ESP8266 ESP-01 board <https://nurdspace.nl/ESP8266>`_
       - ESP8266
       - 40 MHz
+      - 512 Kb
+      - 32 Kb
+
+    * - ``esp12e``
+      - `Espressif ESP8266 ESP-12E board (NodeMCU) <https://nurdspace.nl/ESP8266>`_
+      - ESP8266
+      - 80 MHz
       - 512 Kb
       - 32 Kb

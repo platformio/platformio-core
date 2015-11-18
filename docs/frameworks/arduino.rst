@@ -474,9 +474,16 @@ Espressif
       - RAM
 
     * - ``esp01``
-      - `Espressif ESP8266 board <https://nurdspace.nl/ESP8266>`_
+      - `Espressif ESP8266 ESP-01 board <https://nurdspace.nl/ESP8266>`_
       - ESP8266
       - 40 MHz
+      - 512 Kb
+      - 32 Kb
+
+    * - ``esp12e``
+      - `Espressif ESP8266 ESP-12E board (NodeMCU) <https://nurdspace.nl/ESP8266>`_
+      - ESP8266
+      - 80 MHz
       - 512 Kb
       - 32 Kb
 
