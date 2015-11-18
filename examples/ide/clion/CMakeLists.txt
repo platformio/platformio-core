@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(clion)
 
-set(ENV{PATH} "/Volumes/SOFT/Projects/GitHub/platformio/origin/.tox/develop/bin:/usr/local/opt/pyenv/shims:/Users/ikravets/.pyenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin")
-set(PLATFORMIO_CMD "/Volumes/SOFT/Projects/GitHub/platformio/origin/.tox/develop/bin/platformio")
+set(PLATFORMIO_CMD platformio)
 
 include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoavr/variants/standard")
 include_directories("$ENV{HOME}/.platformio/packages/framework-arduinoavr/cores/arduino")
