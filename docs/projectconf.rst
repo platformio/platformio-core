@@ -530,6 +530,8 @@ Then upload firmware using :option:`platformio run --target program`
     board = armstrap_eagle512
     upload_protocol = gdb
 
+Also, take a look at this article `Armstrap Eagle and PlatformIO <http://isobit.io/2015/08/08/armstrap.html>`_.
+
 5. :ref:`platform_ststm32`: Upload firmware using ST-Link instead mbed's media
    disk
 
