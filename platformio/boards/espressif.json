@@ -35,7 +35,7 @@
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 32768,
-            "maximum_size": 524288,
+            "maximum_size": 4194304,
             "protocol": "arduino",
             "require_upload_port" : true,
             "speed": 115200
