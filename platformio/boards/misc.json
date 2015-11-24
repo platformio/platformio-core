@@ -434,7 +434,7 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_MOTEINOMEGA",
             "f_cpu": "16000000L",
             "mcu": "atmega1284p",
-            "variant": "moteinoMega"
+            "variant": "moteinomega"
         },
         "frameworks": ["arduino"],
         "name": "LowPowerLab MoteinoMEGA",
