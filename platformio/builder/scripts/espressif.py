@@ -103,6 +103,8 @@ if "FRAMEWORK" in env:
         ]
     )
 
+_board_max_rom = int(
+    env.get("BOARD_OPTIONS", {}).get("upload", {}).get("maximum_size", 0))
 env.Append(
     BUILDERS=dict(
         ElfToBin=Builder(
@@ -113,8 +115,9 @@ env.Append(
                 "-bo", "$TARGET",
                 "-bm", "dio",
                 "-bf", "${BOARD_OPTIONS['build']['f_cpu'][:2]}",
-                "-bz", str(int(env.get("BOARD_OPTIONS", {}).get(
-                    "upload", {}).get("maximum_size") / 1024)) + "K",
+                "-bz",
+                "%dK" % (_board_max_rom / 1024) if _board_max_rom < 1048576
+                else "%dM" % (_board_max_rom / 1048576),
                 "-bs", ".text",
                 "-bp", "4096",
                 "-ec",

@@ -7,6 +7,9 @@ PlatformIO 2.0
 2.3.6 (2015-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Fixed ESP-12E flash size
+  (`pull #333 <https://github.com/platformio/platformio/pull/333>`_)
+
 2.3.5 (2015-11-18)
 ~~~~~~~~~~~~~~~~~~
 
