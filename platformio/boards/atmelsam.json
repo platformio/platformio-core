@@ -1,0 +1,50 @@
+{
+    "samr21_xpro": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0plus",
+            "mcu": "atsamr21g18a"
+        },
+        "frameworks": ["mbed"],
+        "name": "Atmel ATSAMR21-XPRO",
+        "platform": "atmelsam",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/SAMR21-XPRO/",
+        "vendor": "Atmel"
+    },
+    "saml21_xpro_b": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0plus",
+            "mcu": "atsaml21j18b"
+        },
+        "frameworks": ["mbed"],
+        "name": "Atmel SAML21-XPRO-B",
+        "platform": "atmelsam",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/SAML21-XPRO/",
+        "vendor": "Atmel"
+    },
+    "samd21_xpro": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0plus",
+            "mcu": "atsamd21j18a"
+        },
+        "frameworks": ["mbed"],
+        "name": "Atmel SAMD21-XPRO",
+        "platform": "atmelsam",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/SAMD21-XPRO/",
+        "vendor": "Atmel"
+    }
+}

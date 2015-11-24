@@ -54,7 +54,7 @@ MBED_VARIANTS = {
     "seeedTinyBLE": "SEEED_TINY_BLE",
     "redBearLab": "RBLAB_NRF51822",
     "nrf51-dt": "NRF51_DK",
-    "redBearLabBLENano": "RBLAB_NRF51822",
+    "redBearLabBLENano": "RBLAB_BLENANO",
     "wallBotBLE": "NRF51822",
     "frdm_kl25z": "KL25Z",
     "frdm_kl46z": "KL46Z",
@@ -63,7 +63,10 @@ MBED_VARIANTS = {
     "frdm_k20d50m": "K20D50M",
     "frdm_k22f": "K22F",
     "teensy31": "TEENSY3_1",
-    "dfcm_nnn40": "DELTA_DFCM_NNN40"
+    "dfcm_nnn40": "DELTA_DFCM_NNN40",
+    "samr21_xpro": "SAMR21G18A",
+    "saml21_xpro_b": "SAML21J18A",
+    "samd21_xpro": "SAMD21J18A"
 }
 
 MBED_LIBS_MAP = {
