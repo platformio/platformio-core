@@ -17,6 +17,7 @@ PlatformIO 2.0
   (`pull #333 <https://github.com/platformio/platformio/pull/333>`_)
 * Fixed configuration for LowPowerLab MoteinoMEGA board
   (`issue #335 <https://github.com/platformio/platformio/issues/335>`_)
+* Fixed "LockFailed: failed to create appstate.json.lock" error for Windows
 
 2.3.5 (2015-11-18)
 ~~~~~~~~~~~~~~~~~~
