@@ -37,7 +37,7 @@ different :ref:`platforms`.
 Integration
 -----------
 
-Please make sure to read Circle CI `Getting Started <hhttps://circleci.com/docs/getting-started>`_
+Please make sure to read Circle CI `Getting Started <https://circleci.com/docs/getting-started>`_
 guide first.
 
 .. code-block:: yaml
