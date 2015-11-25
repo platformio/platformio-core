@@ -37,49 +37,169 @@ different :ref:`platforms`.
 Integration
 -----------
 
-Put ``circle.yml`` to the root directory of the GitHub repository.
+Please make sure to read Circle CI `Getting Started <hhttps://circleci.com/docs/getting-started>`_
+guide first.
+
+.. code-block:: yaml
+
+    dependencies:
+        pre:
+            # Install the latest stable PlatformIO
+            - sudo pip install -U platformio
+
+    test:
+        override:
+            - platformio ci path/to/test/file.c --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+            - platformio ci examples/file.ino --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+            - platformio ci path/to/test/directory --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+
+
+For more details as for PlatformIO build process please look into :ref:`cmd_ci`.
+
+Project as a library
+~~~~~~~~~~~~~~~~~~~~
+
+When project is written as a library (where own examples or testing code use
+it), please use ``--lib="."`` option for :ref:`cmd_ci` command
+
+.. code-block:: yaml
+
+    script:
+        - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+
+Library dependecies
+~~~~~~~~~~~~~~~~~~~
+
+There 2 options to test source code with dependent libraries:
+
+Install dependent library using :ref:`librarymanager`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: yaml
+
+    dependencies:
+        pre:
+            # Install the latest stable PlatformIO
+            - sudo pip install -U platformio
+
+            # OneWire Library with ID=1 http://platformio.org/#!/lib/show/1/OneWire
+            - platformio lib install 1
+
+    test:
+        override:
+            - platformio ci path/to/test/file.c --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+
+Manually download dependent library and include in build process via ``--lib`` option
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: yaml
+
+    dependencies:
+        pre:
+            # Install the latest stable PlatformIO
+            - sudo pip install -U platformio
+
+            # download library to the temporary directory
+            - wget https://github.com/PaulStoffregen/OneWire/archive/master.zip -O /tmp/onewire_source.zip
+            - unzip /tmp/onewire_source.zip -d /tmp/
+
+    test:
+        override:
+            - platformio ci path/to/test/file.c --lib="/tmp/OneWire-master" --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+
+Custom Build Flags
+~~~~~~~~~~~~~~~~~~
+
+PlatformIO allows to specify own build flags using :envvar:`PLATFORMIO_BUILD_FLAGS` environment
 
 .. code-block:: yaml
 
     machine:
         environment:
-            PLATFORMIO_CI_SRC: path/to/source/file.c
-            PLATFORMIO_CI_SRC: path/to/source/file.ino
-            PLATFORMIO_CI_SRC: path/to/source/directory
+            PLATFORMIO_BUILD_FLAGS: -D SPECIFIC_MACROS -I/extra/inc
 
-    dependencies:
-        pre:
-            - sudo apt-get install python2.7-dev
-            - sudo python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+
+For the more details, please follow to
+:ref:`available build flags/options <projectconf_build_flags>`.
+
+
+Advanced configuration
+~~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO allows to configure multiple build environments for the single
+source code using :ref:`projectconf`.
+
+Instead of ``--board`` option, please use :option:`platformio ci --project-conf`
+
+.. code-block:: yaml
 
     test:
         override:
-            - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
-
-
-For more details as for PlatformIO build process please look into :ref:`cmd_ci`
-command.
+            - platformio ci path/to/test/file.c --project-conf=/path/to/platoformio.ini
 
 Examples
 --------
 
-1. Integration for `USB_Host_Shield_2.0 <https://github.com/felis/USB_Host_Shield_2.0>`_
-   project. The ``circle.yml`` configuration file:
+1. Custom build flags
 
 .. code-block:: yaml
 
-    machine:
-        environment:
-            PLATFORMIO_CI_SRC: examples/Bluetooth/PS3SPP/PS3SPP.ino
-            PLATFORMIO_CI_SRC: examples/pl2303/pl2303_gps/pl2303_gps.ino
-
     dependencies:
+        cache_directories:
+            - "~/.platformio"
+
         pre:
-            - sudo apt-get install python2.7-dev
-            - sudo python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
-            - wget https://github.com/xxxajk/spi4teensy3/archive/master.zip -O /tmp/spi4teensy3.zip
-            - unzip /tmp/spi4teensy3.zip -d /tmp
+            - sudo pip install -U platformio
+
+            # pre-install PlatformIO development platforms, they will be cached
+            - platformio platforms install atmelavr atmelsam teensy
+
+            #
+            # Libraries from PlatformIO Library Registry:
+            #
+            # http://platformio.org/#!/lib/show/416/TinyGPS
+            # http://platformio.org/#!/lib/show/417/SPI4Teensy3
+            - platformio lib install 416 417
 
     test:
         override:
-            - platformio ci --lib="." --lib="/tmp/spi4teensy3-master" --board=uno --board=teensy31 --board=due
+            - platformio ci examples/acm/acm_terminal --board=uno --board=teensy31 --board=due --lib="."
+            - platformio ci examples/adk/adk_barcode --board=uno --board=teensy31 --board=due --lib="."
+            - platformio ci examples/adk/ArduinoBlinkLED --board=uno --board=teensy31 --board=due --lib="."
+            - platformio ci examples/adk/demokit_20 --board=uno --board=teensy31 --board=due --lib="."
+            # ...
+            - platformio ci examples/Xbox/XBOXUSB --board=uno --board=teensy31 --board=due --lib="."
+
+* Configuration file: https://github.com/ivankravets/USB_Host_Shield_2.0/blob/master/circle.yml
+* Build History: https://circleci.com/gh/ivankravets/USB_Host_Shield_2.0/tree/master
+
+2. Dependency on external libraries
+
+.. code-block:: yaml
+
+    dependencies:
+        pre:
+            # Install the latest stable PlatformIO
+            - sudo pip install -U platformio
+
+            # download dependent libraries
+            - wget https://github.com/jcw/jeelib/archive/master.zip -O /tmp/jeelib.zip
+            - unzip /tmp/jeelib.zip -d /tmp
+
+            - wget https://github.com/Rodot/Gamebuino/archive/master.zip  -O /tmp/gamebuino.zip
+            - unzip /tmp/gamebuino.zip -d /tmp
+
+    test:
+        override:
+            -  platformio ci examples/backSoon/backSoon.ino --lib="." --lib="/tmp/jeelib-master" --lib="/tmp/Gamebuino-master/libraries/tinyFAT" --board=uno --board=megaatmega2560
+            -  platformio ci examples/etherNode/etherNode.ino --lib="." --lib="/tmp/jeelib-master" --lib="/tmp/Gamebuino-master/libraries/tinyFAT" --board=uno --board=megaatmega2560
+            -  platformio ci examples/getDHCPandDNS/getDHCPandDNS.ino --lib="." --lib="/tmp/jeelib-master" --lib="/tmp/Gamebuino-master/libraries/tinyFAT" --board=uno --board=megaatmega2560
+            -  platformio ci examples/getStaticIP/getStaticIP.ino --lib="." --lib="/tmp/jeelib-master" --lib="/tmp/Gamebuino-master/libraries/tinyFAT" --board=uno --board=megaatmega2560
+            # ...
+            -  platformio ci examples/twitter/twitter.ino --lib="." --lib="/tmp/jeelib-master" --lib="/tmp/Gamebuino-master/libraries/tinyFAT" --board=uno --board=megaatmega2560
+            -  platformio ci examples/udpClientSendOnly/udpClientSendOnly.ino --lib="." --lib="/tmp/jeelib-master" --lib="/tmp/Gamebuino-master/libraries/tinyFAT" --board=uno --board=megaatmega2560
+            -  platformio ci examples/udpListener/udpListener.ino --lib="." --lib="/tmp/jeelib-master" --lib="/tmp/Gamebuino-master/libraries/tinyFAT" --board=uno --board=megaatmega2560
+            -  platformio ci examples/webClient/webClient.ino --lib="." --lib="/tmp/jeelib-master" --lib="/tmp/Gamebuino-master/libraries/tinyFAT" --board=uno --board=megaatmega2560
+
+* Configuration file: hhttps://github.com/ivankravets/ethercard/blob/master/circle.yaml
+* Build History: https://circleci.com/gh/ivankravets/ethercard/tree/master
