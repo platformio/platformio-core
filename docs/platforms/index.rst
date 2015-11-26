@@ -52,8 +52,8 @@ Desktop
     linux_x86_64
     windows_x86
 
-Own Platform/Board
-------------------
+Custom Platform & Board
+-----------------------
 
 .. toctree::
     :maxdepth: 2
