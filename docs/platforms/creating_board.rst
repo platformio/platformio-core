@@ -11,8 +11,8 @@
 
 .. _board_creating:
 
-Creating Board
-==============
+Custom Board
+============
 
 *PlatformIO* has pre-built settings for the most popular embedded boards. This
 list is available:
