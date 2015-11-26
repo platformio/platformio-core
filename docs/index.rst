@@ -19,9 +19,6 @@ MBED compatible**
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
 libOpenCM3, etc.*
 
-.. image:: _static/platformio-logo.png
-    :target: http://platformio.org
-
 * `Website <http://platformio.org>`_
 * `Web 2.0 Library Search <http://platformio.org/#!/lib>`_ |
   `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
