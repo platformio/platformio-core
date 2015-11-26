@@ -75,7 +75,10 @@ env.Replace(
         "-nostdlib",
         "-Wl,--no-check-sections",
         "-u", "call_user_start",
-        "-Wl,-static"
+        "-Wl,-static",
+        "-Wl,--gc-sections",
+        "-Wl,-wrap,system_restart_local",
+        "-Wl,-wrap,register_chipv6_phy"
     ],
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
