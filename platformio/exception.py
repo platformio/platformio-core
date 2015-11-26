@@ -149,11 +149,11 @@ class APIRequestError(PlatformioException):
     MESSAGE = "[API] %s"
 
 
-class LibAlreadyInstalledError(PlatformioException):
+class LibAlreadyInstalled(PlatformioException):
     pass
 
 
-class LibNotInstalledError(PlatformioException):
+class LibNotInstalled(PlatformioException):
 
     MESSAGE = "Library #%d has not been installed yet"
 
@@ -183,11 +183,6 @@ class InvalidSettingValue(PlatformioException):
     MESSAGE = "Invalid value '%s' for the setting '%s'"
 
 
-class UpgraderFailed(PlatformioException):
-
-    MESSAGE = "An error occurred while upgrading PlatformIO"
-
-
 class CIBuildEnvsEmpty(PlatformioException):
 
     MESSAGE = "Can't find PlatformIO build environments.\n"\
@@ -195,20 +190,20 @@ class CIBuildEnvsEmpty(PlatformioException):
         "predefined environments using `--project-conf` option"
 
 
-class SConsNotInstalled(PlatformioException):
+class SConsNotInstalledError(PlatformioException):
 
     MESSAGE = "The PlatformIO and `scons` aren't installed properly. "\
         "More details in FAQ/Troubleshooting section: "\
         "http://docs.platformio.org/en/latest/faq.html"
 
 
-class PlatformioUpgradeError(PlatformioException):
+class UpgradeError(PlatformioException):
 
-    MESSAGE = "%s \n\n"\
-        "1. Please report this issue here: "\
-        "https://github.com/platformio/platformio/issues \n"\
-        "2. Try different installation/upgrading steps: "\
-        "http://docs.platformio.org/en/latest/installation.html"
+    MESSAGE = """%s
+
+* Try different installation/upgrading steps:
+  http://docs.platformio.org/en/latest/installation.html
+"""
 
 
 class CygwinEnvDetected(PlatformioException):

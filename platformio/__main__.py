@@ -103,6 +103,19 @@ def main():
                 error_str += str(e)
             else:
                 error_str += format_exc()
+
+            error_str += """
+============================================================
+
+An unexpected error occurred. Further steps:
+
+* Verify that you have the latest version of PlatformIO using
+  `platformio upgrade` command
+* Report this problem to the developers
+  https://github.com/platformio/platformio/issues
+
+============================================================
+"""
             click.secho(error_str, fg="red", err=True)
         return 1
     return 0

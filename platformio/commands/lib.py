@@ -135,7 +135,7 @@ def lib_install(ctx, libid, version):
                     except AssertionError:
                         raise exception.LibInstallDependencyError(str(item))
 
-        except exception.LibAlreadyInstalledError:
+        except exception.LibAlreadyInstalled:
             click.secho("Already installed", fg="yellow")
 
 
