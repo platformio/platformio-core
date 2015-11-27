@@ -15,7 +15,7 @@
 import re
 from glob import glob
 from os import getenv, listdir, sep, walk
-from os.path import basename, dirname, isdir, isfile, join, normpath
+from os.path import basename, dirname, isdir, isfile, join, normpath, realpath
 
 from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
                           SConscript)
@@ -39,7 +39,11 @@ def BuildProgram(env):
             ASCOM="$ASPPCOM"
         )
 
-    env.ProcessFlags()
+    env.ProcessFlags([
+        env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags", None),
+        env.get("BUILD_FLAGS"),
+        getenv("PLATFORMIO_BUILD_FLAGS", None),
+    ])
     env.BuildFramework()
 
     # build dependent libs
@@ -62,10 +66,10 @@ def BuildProgram(env):
         )
 
     # Handle SRC_BUILD_FLAGS
-    if getenv("PLATFORMIO_SRC_BUILD_FLAGS", None):
-        env.MergeFlags(getenv("PLATFORMIO_SRC_BUILD_FLAGS"))
-    if "SRC_BUILD_FLAGS" in env:
-        env.MergeFlags(env['SRC_BUILD_FLAGS'])
+    env.ProcessFlags([
+        env.get("SRC_BUILD_FLAGS"),
+        getenv("PLATFORMIO_SRC_BUILD_FLAGS", None),
+    ])
 
     env.Append(
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
@@ -83,15 +87,15 @@ def BuildProgram(env):
     )
 
 
-def ProcessFlags(env):
-    if "extra_flags" in env.get("BOARD_OPTIONS", {}).get("build", {}):
-        env.MergeFlags(env.subst("${BOARD_OPTIONS['build']['extra_flags']}"))
+def ProcessFlags(env, flags):
+    for f in flags:
+        if f:
+            env.MergeFlags(f)
 
-    # Handle BUILD_FLAGS
-    if getenv("PLATFORMIO_BUILD_FLAGS", None):
-        env.MergeFlags(getenv("PLATFORMIO_BUILD_FLAGS"))
-    if "BUILD_FLAGS" in env:
-        env.MergeFlags(env['BUILD_FLAGS'])
+    # fix relative CPPPATH
+    for i, p in enumerate(env.get("CPPPATH", [])):
+        if isdir(p):
+            env['CPPPATH'][i] = realpath(p)
 
     # Cancel any previous definition of name, either built in or
     # provided with a -D option // Issue #191
