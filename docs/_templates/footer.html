@@ -1,24 +1,7 @@
-{% extends "!layout.html" %}
-{%- set extra_css_files = ["_static/extra.css"]  %}
+{% extends "!footer.html" %}
 
-{% block sidebartitle %}
-   {% if theme_display_version %}
-    {%- set nav_version = version %}
-    {% if READTHEDOCS and current_version %}
-      {%- set nav_version = current_version %}
-    {% endif %}
-    {% if nav_version %}
-      <div class="version">
-        {{ nav_version }}
-      </div>
-    {% endif %}
-  {% endif %}
-
-  {% include "searchbox.html" %}
-{% endblock %}
-
-{% block footer %}
-
+{% block extrafooter %}
+<link rel="stylesheet" href="_static/extra.css" type="text/css" />
 <header id="pionav" class="navbar navbar-inverse navbar-fixed-top">
   <div class="container container-fluid">
     <div class="navbar-header">
@@ -44,5 +27,5 @@
     </nav>
   </div>
 </header>
-
+{{ super() }}
 {% endblock %}
