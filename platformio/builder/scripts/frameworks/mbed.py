@@ -29,7 +29,7 @@ http://mbed.org/
 import re
 import xml.etree.ElementTree as ElementTree
 from binascii import crc32
-from os import walk
+from os import getenv, walk
 from os.path import basename, isfile, join, normpath
 
 from SCons.Script import DefaultEnvironment, Exit
@@ -226,7 +226,11 @@ env.Replace(
 )
 
 # restore external build flags
-env.ProcessFlags()
+env.ProcessFlags([
+    env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags", None),
+    env.get("BUILD_FLAGS"),
+    getenv("PLATFORMIO_BUILD_FLAGS", None),
+])
 
 # Hook for K64F and K22F
 if board_type in ("frdm_k22f", "frdm_k64f"):
