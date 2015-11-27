@@ -38,7 +38,7 @@ application (Terminal):
 * Mac OS X / Linux – *Terminal* application
 * Windows – ``cmd.exe`` application.
 
-Installation options
+Installation Methods
 --------------------
 
 .. warning::
@@ -47,10 +47,10 @@ Installation options
     **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
     "Customize" stage.
 
-Please *choose one of* the following installation options:
+Please *choose ONE of* the following methods:
 
-Python Package Manager
-~~~~~~~~~~~~~~~~~~~~~~
+a) Python Package Manager
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The latest stable version of PlatformIO may be installed/upgraded via
 `pip <https://pip.pypa.io>`_ as follows:
@@ -74,8 +74,8 @@ a few options here:
 
 .. _installation_installer_script:
 
-Installer Script
-~~~~~~~~~~~~~~~~
+b) Installer Script
+~~~~~~~~~~~~~~~~~~~
 
 Super-Quick (Mac / Linux)
 '''''''''''''''''''''''''
@@ -114,8 +114,8 @@ On *Windows OS* it may look like:
     # run it
     C:\Python27\python.exe get-platformio.py
 
-Full Guide
-~~~~~~~~~~
+c) Full Guide
+~~~~~~~~~~~~~
 
 1. Check a ``python`` version (only 2.6-2.7 is supported):
 
@@ -144,8 +144,8 @@ For upgrading ``platformio`` to the latest version:
 
     pip install -U platformio
 
-Development Version
-~~~~~~~~~~~~~~~~~~~
+d) Development Version
+~~~~~~~~~~~~~~~~~~~~~~
 
 Install the latest PlatformIO from the ``develop`` branch:
 
