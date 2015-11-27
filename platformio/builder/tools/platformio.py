@@ -40,9 +40,9 @@ def BuildProgram(env):
         )
 
     env.ProcessFlags([
-        env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags", None),
+        env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags"),
         env.get("BUILD_FLAGS"),
-        getenv("PLATFORMIO_BUILD_FLAGS", None),
+        getenv("PLATFORMIO_BUILD_FLAGS"),
     ])
     env.BuildFramework()
 
@@ -67,8 +67,8 @@ def BuildProgram(env):
 
     # Handle SRC_BUILD_FLAGS
     env.ProcessFlags([
-        env.get("SRC_BUILD_FLAGS"),
-        getenv("PLATFORMIO_SRC_BUILD_FLAGS", None),
+        env.get("SRC_BUILD_FLAGS", None),
+        getenv("PLATFORMIO_SRC_BUILD_FLAGS"),
     ])
 
     env.Append(
@@ -81,7 +81,7 @@ def BuildProgram(env):
         env.LookupSources(
             "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
             src_filter=getenv("PLATFORMIO_SRC_FILTER",
-                              env.get("SRC_FILTER", None))),
+                              env.get("SRC_FILTER"))),
         LIBS=env.get("LIBS", []) + deplibs,
         LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"]
     )
@@ -90,7 +90,7 @@ def BuildProgram(env):
 def ProcessFlags(env, flags):
     for f in flags:
         if f:
-            env.MergeFlags(f)
+            env.MergeFlags(str(f))
 
     # fix relative CPPPATH
     for i, p in enumerate(env.get("CPPPATH", [])):
@@ -99,7 +99,7 @@ def ProcessFlags(env, flags):
 
     # Cancel any previous definition of name, either built in or
     # provided with a -D option // Issue #191
-    undefines = [f for f in env.get("CCFLAGS", []) if f.startswith("-U")]
+    undefines = [u for u in env.get("CCFLAGS", []) if u.startswith("-U")]
     if undefines:
         for undef in undefines:
             env['CCFLAGS'].remove(undef)

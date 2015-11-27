@@ -227,9 +227,9 @@ env.Replace(
 
 # restore external build flags
 env.ProcessFlags([
-    env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags", None),
+    env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags"),
     env.get("BUILD_FLAGS"),
-    getenv("PLATFORMIO_BUILD_FLAGS", None),
+    getenv("PLATFORMIO_BUILD_FLAGS"),
 ])
 
 # Hook for K64F and K22F
