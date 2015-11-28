@@ -72,7 +72,7 @@ setup(
         "Topic :: Software Development :: Compilers"
     ],
     keywords=(
-        "builder library manager embedded development ide continuous "
+        "iot builder library manager embedded development ide continuous "
         "integration atmel avr sam espressif esp freescale kinetis nordic "
         "nrf51 nxp lpc silicon labs efm32 st stm32 ti msp430 tiva teensy "
         "arduino mbed libopencm3"

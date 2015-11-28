@@ -24,8 +24,8 @@ General
 What is PlatformIO?
 ~~~~~~~~~~~~~~~~~~~
 
-`PlatformIO <http://platformio.org>`_ is an open-source cross-platform code
-builder and the missing library manager.
+`PlatformIO <http://platformio.org>`_ is an open source ecosystem for IoT
+development.
 
 PlatformIO is independent from the platform, in which it is running. In fact,
 the only requirement is Python, which exists pretty much everywhere. What this

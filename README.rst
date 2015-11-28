@@ -42,9 +42,20 @@ PlatformIO
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
 
-`PlatformIO <http://platformio.org>`_ is an open-source cross-platform code
-builder and library manager.  For embedded development, IDE
-and Continuous integration.  Arduino and MBED compatible.
+`PlatformIO <http://platformio.org>`_ is an open source ecosystem for IoT
+development. Cross-platform, IDE and Continuous integration, Arduino and MBED
+compatible. Ready for Cloud compiling.
+
+* **Development Platforms** - Embedded and Desktop development platforms with
+  pre-built toolchains, debuggers, uploaders and frameworks which work under
+  popular host OS: Mac, Windows, Linux (+ARM)
+* **Embedded Boards** - Rapid Embedded Programming, IDE and Continuous
+  Integration in a few steps with PlatformIO thanks to built-in project
+  generator for the most popular embedded boards and IDE
+* **Library Manager** - Hundreds Popular Libraries are organized into single
+  Web 2.0 platform: list by categories, keywords, authors, compatible
+  platforms and frameworks; learn via examples; be up-to-date with the latest
+  version
 
 *Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
@@ -66,11 +77,6 @@ libOpenCM3, etc.*
 * `FAQ <http://docs.platformio.org/en/latest/faq.html>`_
 * `Release History <http://docs.platformio.org/en/latest/history.html>`_
 
-You have **no need** to install any *IDE* or compile any toolchains. *PlatformIO*
-has pre-built development platforms and pre-configured settings for
-the most popular embedded boards. For further details, please
-refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
-
 Use whenever. *Run everywhere.*
 -------------------------------
 *PlatformIO* is written in pure *Python* and **doesn't depend** on any
@@ -88,7 +94,7 @@ settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 * Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_ with
   *Arduino, Eclipse, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
-* `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
+* Cloud compiling and `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
   with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
 * Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable
   `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
@@ -166,6 +172,7 @@ Frameworks:
 * `SPL <http://platformio.org/#!/frameworks/spl>`_
 * `mbed <http://platformio.org/#!/frameworks/mbed>`_
 
+For further details, please refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
 
 Licence
 -------

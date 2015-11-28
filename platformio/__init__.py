@@ -17,9 +17,9 @@ __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
 __description__ = (
-    "An open-source cross-platform code builder and the missing library "
-    "manager (Ready for embedded development, IDE and Continuous integration, "
-    "Arduino and MBED compatible)"
+    "An open source ecosystem for IoT development. Cross-platform, IDE and "
+    "Continuous integration, Arduino and MBED compatible. "
+    "Ready for Cloud compiling"
 )
 __url__ = "http://platformio.org"
 

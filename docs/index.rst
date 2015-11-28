@@ -9,15 +9,26 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-PlatformIO is an open-source cross-platform code builder and the missing library manager
-========================================================================================
+PlatformIO is an open source ecosystem for IoT development
+==========================================================
 
-**Ready for embedded development, IDE and Continuous integration, Arduino and
-MBED compatible**
+**Cross-platform, IDE and Continuous integration, Arduino and MBED
+compatible. Ready for Cloud compiling.**
+
+* **Development Platforms** - Embedded and Desktop development platforms with
+  pre-built toolchains, debuggers, uploaders and frameworks which work under
+  popular host OS: Mac, Windows, Linux (+ARM)
+* **Embedded Boards** - Rapid Embedded Programming, IDE and Continuous
+  Integration in a few steps with PlatformIO thanks to built-in project
+  generator for the most popular embedded boards and IDE
+* **Library Manager** - Hundreds Popular Libraries are organized into single
+  Web 2.0 platform: list by categories, keywords, authors, compatible
+  platforms and frameworks; learn via examples; be up-to-date with the latest
+  version
 
 *Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
-libOpenCM3, etc.*
+libOpenCM3, etc.**
 
 * `Website <http://platformio.org>`_
 * `Web 2.0 Library Search <http://platformio.org/#!/lib>`_ |
@@ -31,18 +42,13 @@ libOpenCM3, etc.*
   `Facebook <https://www.facebook.com/platformio>`_ |
   `Reddit <http://www.reddit.com/r/platformio/>`_
 
-You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
-has pre-built different development platforms and pre-configured settings for
-the most popular embedded boards. For further details, please
-refer to :ref:`faq_what_is_platformio`
-
 Embedded Development. *Easier Than Ever.*
 -----------------------------------------
 
 * Colourful command-line output
 * :ref:`IDE Integration <ide>` with *Arduino, Eclipse, Energia, Qt Creator,
   Sublime Text, Vim, Visual Studio*
-* :ref:`ci` with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
+* Cloud compiling and  :ref:`ci` with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
 * Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>` and
   configurable build :ref:`-flags/-options <projectconf_build_flags>`
 * Pre-built tool chains, :ref:`frameworks` for the
@@ -65,6 +71,7 @@ The Missing Library Manager. *It's here!*
 * Automatic library updating
 * It runs on Windows, Mac OS X, and Linux (+ARM).
 
+For further details, please refer to :ref:`faq_what_is_platformio`
 
 Contents
 --------
