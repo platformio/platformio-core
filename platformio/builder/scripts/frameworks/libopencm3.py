@@ -23,6 +23,8 @@ including ST STM32, Ti Tiva and Stellaris, NXP LPC 11xx, 13xx, 15xx,
 http://www.libopencm3.org/wiki/Main_Page
 """
 
+from __future__ import absolute_import
+
 import re
 from os import listdir, sep, walk
 from os.path import isfile, join, normpath

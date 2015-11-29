@@ -64,7 +64,7 @@ class ZIPArchive(ArchiveBase):
     def preserve_mtime(item, dest_dir):
         util.change_filemtime(
             join(dest_dir, item.filename),
-            mktime(list(item.date_time) + [0]*3)
+            mktime(list(item.date_time) + [0] * 3)
         )
 
     def get_items(self):

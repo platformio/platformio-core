@@ -24,7 +24,6 @@ from platformio import __version__
 from platformio.exception import InvalidSettingName, InvalidSettingValue
 from platformio.util import get_home_dir, is_ci
 
-
 DEFAULT_SETTINGS = {
     "check_platformio_interval": {
         "description": "Check for the new PlatformIO interval (days)",
