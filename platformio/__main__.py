@@ -103,8 +103,7 @@ def main():
                 error_str += str(e)
             else:
                 error_str += format_exc()
-
-            error_str += """
+                error_str += """
 ============================================================
 
 An unexpected error occurred. Further steps:
