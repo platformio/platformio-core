@@ -56,6 +56,8 @@ env.Replace(
         "-mtext-section-literals",
         "-falign-functions=4",
         "-U__STRICT_ANSI__",
+        "-ffunction-sections",
+        "-fdata-sections",
         "-MMD"  # output dependancy info
     ],
 
@@ -75,7 +77,8 @@ env.Replace(
         "-nostdlib",
         "-Wl,--no-check-sections",
         "-u", "call_user_start",
-        "-Wl,-static"
+        "-Wl,-static",
+        "-Wl,--gc-sections"
     ],
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',

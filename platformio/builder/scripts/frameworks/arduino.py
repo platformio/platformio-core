@@ -55,10 +55,10 @@ elif env.get("PLATFORM") == "timsp430":
     )
 elif env.get("PLATFORM") == "espressif":
     env.Prepend(
-        CPPPATH=[join("$PLATFORMFW_DIR", "sdk", "include")],
-        LIBPATH=[join("$PLATFORMFW_DIR", "sdk", "lib")],
+        CPPPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "include")],
+        LIBPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "lib")],
         LIBS=["smartconfig", "pp", "main", "wpa", "lwip",
-              "net80211", "wps", "crypto", "phy", "hal", "gcc", "m"]
+              "net80211", "wps", "crypto", "phy", "hal", "axtls", "gcc", "m"]
     )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
