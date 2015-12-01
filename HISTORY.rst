@@ -4,6 +4,11 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.4.1 (2015-12-??)
+~~~~~~~~~~~~~~~~~~
+
+* Restored ``PLATFORMIO`` macros with the current version
+
 2.4.0 (2015-12-01)
 ~~~~~~~~~~~~~~~~~~
 

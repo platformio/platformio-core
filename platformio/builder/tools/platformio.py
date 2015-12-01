@@ -23,6 +23,8 @@ from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
                           SConscript)
 from SCons.Util import case_sensitive_suffixes
 
+from platformio.util import pioversion_to_intstr
+
 SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_DEFAULT_FILTER = " ".join([
@@ -70,6 +72,11 @@ def BuildProgram(env):
         env.get("SRC_BUILD_FLAGS", None),
         getenv("PLATFORMIO_SRC_BUILD_FLAGS"),
     ])
+
+    env.Append(
+        CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
+            *pioversion_to_intstr())]
+    )
 
     return env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")),

@@ -114,12 +114,6 @@ DefaultEnvironment(
 
 env = DefaultEnvironment()
 
-# Append PlatformIO version
-env.Append(
-    CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
-        *util.pioversion_to_intstr())]
-)
-
 if "BOARD" in env:
     try:
         env.Replace(BOARD_OPTIONS=util.get_boards(env.subst("$BOARD")))
