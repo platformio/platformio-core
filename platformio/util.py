@@ -27,6 +27,7 @@ from threading import Thread
 
 from platformio import __apiurl__, __version__, exception
 
+# pylint: disable=wrong-import-order
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -67,6 +68,7 @@ class AsyncPipe(Thread):
 
 
 class cd(object):
+
     def __init__(self, new_path):
         self.new_path = new_path
         self.prev_path = os.getcwd()

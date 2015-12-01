@@ -23,10 +23,14 @@ Here are recent articles about PlatformIO:
 2015
 ^^^^
 
+* Nov 29, 2015 - **Keith Hughes** - `Using PlatformIO for Embedded Projects <http://smartspacestuff.blogspot.com/2015/11/using-platformio-for-embedded-projects.html>`_
+* Nov 22, 2015 - **Michał Seroczyński** - `Using PlatformIO to get started with Arduino in CLion IDE <http://www.ches.pl/using-platformio-get-started-arduino-clion-ide/>`_
 * Nov 09, 2015 - **ÁLvaro García Gómez** - `Programar con Arduino "The good way" (Programming with Arduino "The good way", Spanish) <http://congdegnu.es/2015/11/09/programar-con-arduino-the-good-way/>`_
 * Nov 06, 2015 - **nocd5** - `PlatformIOでmbedをオフラインビルドしSTM32 Nucleoボードでmrubyを使う (Use mruby in the offline build for STM32 Nucleo board with mbed and PlatformIO, Japanese) <http://qiita.com/nocd5/items/d5fda776240f7e7c17eb>`_
 * Oct 18, 2015 - **Nico Coetzee** - `First Arduino I2C Experience with PlatformIO <https://electronicventurer.wordpress.com/2015/10/18/first-arduino-i2c-experience/>`_
+* Oct 01, 2015 - **Mistan** - `Compile and Upload Arduino Sketch with PlatformIO for Raspberry Pi Running Arch Linux <http://tech.memoryimprintstudio.com/code-building-for-arduino-with-platformio-for-raspberry-pi-with-arch-linux/>`_
 * Sep 01, 2015 - **Thomas P. Weldon, Ph.D.** - `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
+* Aug 08, 2015 - **Josh Glendenning** - `Armstrap Eagle and PlatformIO <http://isobit.io/2015/08/08/armstrap.html>`_
 * Aug 01, 2015 - **Russell Davis** - `PlatformIO on the Raspberry Pi <http://www.russelldavis.org/2015/08/01/platformio-on-the-raspberry-pi/>`_
 * Jul 25, 2015 - **DinoTools** - `Erste Schritte mit PlatformIO (Getting Started with PlatformIO, German) <https://www.dinotools.de/2015/07/25/erste-schritte-mit-platformio/>`_
 * Jul 20, 2015 - **Eli Fatsi** - `Arduino Development in Atom Editor <http://viget.com/extend/arduino-development-in-atom-editor>`_

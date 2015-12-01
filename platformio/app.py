@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+from copy import deepcopy
 from os import environ, getenv
 from os.path import getmtime, isfile, join
 from time import time
@@ -70,13 +71,14 @@ SESSION_VARS = {
 
 class State(object):
 
-    def __init__(self, path=None):
+    def __init__(self, path=None, lock=False):
         self.path = path
+        self.lock = lock
         if not self.path:
             self.path = join(get_home_dir(), "appstate.json")
         self._state = {}
         self._prev_state = {}
-        self._lock = None
+        self._lockfile = None
 
     def __enter__(self):
         try:
@@ -86,7 +88,7 @@ class State(object):
                     self._state = json.load(fp)
         except ValueError:
             self._state = {}
-        self._prev_state = self._state.copy()
+        self._prev_state = deepcopy(self._state)
         return self._state
 
     def __exit__(self, type_, value, traceback):
@@ -99,17 +101,19 @@ class State(object):
         self._unlock_state_file()
 
     def _lock_state_file(self):
-        self._lock = LockFile(self.path)
+        if not self.lock:
+            return
+        self._lockfile = LockFile(self.path)
 
-        if (self._lock.is_locked() and
-                (time() - getmtime(self._lock.lock_file)) > 10):
-            self._lock.break_lock()
+        if (self._lockfile.is_locked() and
+                (time() - getmtime(self._lockfile.lock_file)) > 10):
+            self._lockfile.break_lock()
 
-        self._lock.acquire()
+        self._lockfile.acquire()
 
     def _unlock_state_file(self):
-        if self._lock:
-            self._lock.release()
+        if self._lockfile:
+            self._lockfile.release()
 
 
 def sanitize_setting(name, value):
@@ -136,7 +140,7 @@ def get_state_item(name, default=None):
 
 
 def set_state_item(name, value):
-    with State() as data:
+    with State(lock=True) as data:
         data[name] = value
 
 
@@ -159,14 +163,14 @@ def get_setting(name):
 
 
 def set_setting(name, value):
-    with State() as data:
+    with State(lock=True) as data:
         if "settings" not in data:
             data['settings'] = {}
         data['settings'][name] = sanitize_setting(name, value)
 
 
 def reset_settings():
-    with State() as data:
+    with State(lock=True) as data:
         if "settings" in data:
             del data['settings']
 

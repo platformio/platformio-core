@@ -56,6 +56,8 @@ env.Replace(
         "-mtext-section-literals",
         "-falign-functions=4",
         "-U__STRICT_ANSI__",
+        "-ffunction-sections",
+        "-fdata-sections",
         "-MMD"  # output dependancy info
     ],
 
@@ -75,7 +77,8 @@ env.Replace(
         "-nostdlib",
         "-Wl,--no-check-sections",
         "-u", "call_user_start",
-        "-Wl,-static"
+        "-Wl,-static",
+        "-Wl,--gc-sections"
     ],
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
@@ -103,6 +106,8 @@ if "FRAMEWORK" in env:
         ]
     )
 
+_board_max_rom = int(
+    env.get("BOARD_OPTIONS", {}).get("upload", {}).get("maximum_size", 0))
 env.Append(
     BUILDERS=dict(
         ElfToBin=Builder(
@@ -113,8 +118,9 @@ env.Append(
                 "-bo", "$TARGET",
                 "-bm", "dio",
                 "-bf", "${BOARD_OPTIONS['build']['f_cpu'][:2]}",
-                "-bz", str(int(env.get("BOARD_OPTIONS", {}).get(
-                    "upload", {}).get("maximum_size") / 1024)) + "K",
+                "-bz",
+                "%dK" % (_board_max_rom / 1024) if _board_max_rom < 1048576
+                else "%dM" % (_board_max_rom / 1048576),
                 "-bs", ".text",
                 "-bp", "4096",
                 "-ec",

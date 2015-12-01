@@ -11,8 +11,8 @@
 
 .. _platform_creating:
 
-Creating Platform
-=================
+Custom Platform
+===============
 
 *PlatformIO* was developed like a tool which would build the same source code
 for the different development platforms via single command :ref:`cmd_run`

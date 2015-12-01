@@ -4,6 +4,25 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.4.0 (2015-12-01)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for the new boards: Atmel ATSAMR21-XPRO, Atmel SAML21-XPRO-B,
+  Atmel SAMD21-XPRO, ST 32F469IDISCOVERY, ST 32L476GDISCOVERY, ST Nucleo F031K6,
+  ST Nucleo F042K6, ST Nucleo F303K8 and ST Nucleo L476RG
+* Updated Arduino core for Espressif platform to 2.0.0
+  (`issue #345 <https://github.com/platformio/platformio/issues/345>`_)
+* Added to FAQ explanation of `Can not compile a library that compiles without issue
+  with Arduino IDE <http://docs.platformio.org/en/latest/faq.html#building>`_
+  (`issue #331 <https://github.com/platformio/platformio/issues/331>`_)
+* Fixed ESP-12E flash size
+  (`pull #333 <https://github.com/platformio/platformio/pull/333>`_)
+* Fixed configuration for LowPowerLab MoteinoMEGA board
+  (`issue #335 <https://github.com/platformio/platformio/issues/335>`_)
+* Fixed "LockFailed: failed to create appstate.json.lock" error for Windows
+* Fixed relative include path for preprocessor using ``build_flags``
+  (`issue #271 <https://github.com/platformio/platformio/issues/271>`_)
+
 2.3.5 (2015-11-18)
 ~~~~~~~~~~~~~~~~~~
 

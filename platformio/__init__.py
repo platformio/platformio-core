@@ -12,14 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION = (2, 3, 5)
+VERSION = (2, 4, 0)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
 __description__ = (
-    "An open-source cross-platform code builder and the missing library "
-    "manager (Ready for embedded development, IDE and Continuous integration, "
-    "Arduino and MBED compatible)"
+    "An open source ecosystem for IoT development. "
+    "Cross-platform code builder and library manager. "
+    "Continuous and IDE integration. "
+    "Arduino and MBED compatible. Ready for Cloud compiling."
 )
 __url__ = "http://platformio.org"
 

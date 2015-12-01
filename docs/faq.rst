@@ -24,8 +24,8 @@ General
 What is PlatformIO?
 ~~~~~~~~~~~~~~~~~~~
 
-`PlatformIO <http://platformio.org>`_ is an open-source cross-platform code
-builder and the missing library manager.
+`PlatformIO <http://platformio.org>`_ is an open source ecosystem for IoT
+development.
 
 PlatformIO is independent from the platform, in which it is running. In fact,
 the only requirement is Python, which exists pretty much everywhere. What this
@@ -132,25 +132,15 @@ Answered in `issue #279 <https://github.com/platformio/platformio/issues/279>`_.
 
 Answered in `issue #295 <https://github.com/platformio/platformio/issues/295#issuecomment-143772005>`_.
 
-.. _faq_troubleshooting_pioblocksprompt:
+Windows AttributeError: 'module' object has no attribute 'packages'
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-PlatformIO blocks command execution using user prompt
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you are going to run *PlatformIO* from **subprocess**, you **MUST
-DISABLE** all prompts. It will allow you to avoid blocking.
-There are a few options:
-
-- using :option:`platformio --force` option before each command
-- using environment variable :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <PLATFORMIO_SETTING_ENABLE_PROMPTS>`
-- disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
-- masking under Continuous Integration system via environment variable
-  :envvar:`CI=true <CI>`.
+Answered in `issue #252 <https://github.com/platformio/platformio/issues/252#issuecomment-127072039>`_.
 
 .. _faq_troubleshooting_pionotfoundinpath:
 
 Program ``platformio`` not found in PATH
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+''''''''''''''''''''''''''''''''''''''''
 
 Where is ``platformio`` binary installed? Run this command in Terminal
 
@@ -173,18 +163,12 @@ programs to the ``bin`` directory which is included in ``$PATH``. For example,
 see `issue #272 <https://github.com/platformio/platformio/issues/272#issuecomment-133626112>`_.
 
 Windows UnicodeDecodeError: 'ascii' codec can't decode byte
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Answered in `issue #143 <https://github.com/platformio/platformio/issues/143#issuecomment-88060906>`_.
 
-Serial does not work with panStampAVR board
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Answered in `issue #144 <https://github.com/platformio/platformio/issues/144#issuecomment-87388038>`_.
-
-
-PlatformIO: command not found || An error ``pkg_resources.DistributionNotFound``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PlatformIO: command not found || An error "pkg_resources.DistributionNotFound"
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Please upgrade *SetupTools* package:
 
@@ -197,18 +181,45 @@ Please upgrade *SetupTools* package:
     [sudo] pip uninstall platformio
     [sudo] pip install platformio
 
-Windows AttributeError: 'module' object has no attribute 'packages'
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Miscellaneous
+~~~~~~~~~~~~~
 
-Answered in `issue #252 <https://github.com/platformio/platformio/issues/252#issuecomment-127072039>`_.
+.. _faq_troubleshooting_pioblocksprompt:
+
+PlatformIO blocks command execution using user prompt
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+If you are going to run *PlatformIO* from **subprocess**, you **MUST
+DISABLE** all prompts. It will allow you to avoid blocking.
+There are a few options:
+
+- using :option:`platformio --force` option before each command
+- using environment variable :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <PLATFORMIO_SETTING_ENABLE_PROMPTS>`
+- disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
+- masking under Continuous Integration system via environment variable
+  :envvar:`CI=true <CI>`.
+
+Serial does not work with panStampAVR board
+'''''''''''''''''''''''''''''''''''''''''''
+
+Answered in `issue #144 <https://github.com/platformio/platformio/issues/144#issuecomment-87388038>`_.
+
+Building
+~~~~~~~~
+
+Can not compile a library that compiles without issue with Arduino IDE
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+* `#298: Unable to use Souliss library <https://github.com/platformio/platformio/issues/298>`_
+* `#331: Unable to use MySensors library <https://github.com/platformio/platformio/issues/331>`_
 
 ARM toolchain: cc1plus: error while loading shared libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 See related answers for
 `error while loading shared libraries <https://github.com/platformio/platformio/issues?utf8=✓&q=error+while+loading+shared+libraries>`_.
 
 Archlinux: libncurses.so.5: cannot open shared object file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Answered in `issue #291 <https://github.com/platformio/platformio/issues/291>`_.

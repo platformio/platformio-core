@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=wrong-import-position,wrong-import-order,unused-import
+
 try:
     from platformio import util
 except ImportError:
@@ -29,7 +31,7 @@ except ImportError:
                 sys.path.insert(0, _p)
         try:
             from platformio import util
-            import lockfile  # NOQA pylint: disable=unused-import
+            import lockfile  # NOQA
             break
         except ImportError:
             pass
@@ -111,6 +113,12 @@ DefaultEnvironment(
 )
 
 env = DefaultEnvironment()
+
+# Append PlatformIO version
+env.Append(
+    CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
+        *util.pioversion_to_intstr())]
+)
 
 if "BOARD" in env:
     try:

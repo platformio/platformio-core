@@ -56,6 +56,10 @@ Now, in VIM ``cd /path/to/this/project`` and press ``Ctrl+B`` or ``Cmd+B``
 (Mac). *PlatformIO* should compile your source code from the ``src`` directory,
 make firmware and upload it.
 
+.. note::
+    If hotkey doesn't work for you, try to add this line
+    ``nnoremap <C-b> :make<CR>`` to ``~/.vimrc``
+
 Screenshot
 ----------
 

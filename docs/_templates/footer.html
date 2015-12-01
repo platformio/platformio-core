@@ -1,0 +1,31 @@
+{% extends "!footer.html" %}
+
+{% block extrafooter %}
+<link rel="stylesheet" href="{{ pathto('_static/extra.css', 1) }}" type="text/css" />
+<header id="pionav" class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="http://platformio.org/"></i> PlatformIO</a>
+    </div>
+
+    <nav role="navigation">
+      <div>
+        <ul class="nav navbar-nav">
+          <li><a href="http://platformio.org/#!/get-started"><i class="fa fa-rocket fa-lg"></i> Get Started</a></li>
+          <li><a href="http://platformio.org/#!/platforms"><i class="fa fa-laptop fa-lg"></i> Platforms</a></li>
+          <li><a href="http://platformio.org/#!/frameworks"><i class="fa fa-cogs fa-lg"></i> Frameworks</a></li>
+          <li><a href="http://platformio.org/#!/boards"><i class="fa fa-gamepad fa-lg"></i> Boards</a></li>
+          <li ><a href="http://platformio.org/#!/lib"><i class="fa fa-code fa-lg"></i> Libraries</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="http://platformio.org/#!/who-uses"><i class="fa fa-heart-o fa-lg"></i> Who uses</a></li>
+          <li class="active"><a href="http://docs.platformio.org/"><i class="fa fa-book fa-lg"></i> Docs</a></li>
+        </ul>
+      </div>
+
+    </nav>
+  </div>
+</header>
+{{ super() }}
+{% endblock %}

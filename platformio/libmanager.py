@@ -21,7 +21,7 @@ from tempfile import gettempdir
 
 from platformio import telemetry, util
 from platformio.downloader import FileDownloader
-from platformio.exception import LibAlreadyInstalledError, LibNotInstalledError
+from platformio.exception import LibAlreadyInstalled, LibNotInstalled
 from platformio.unpacker import FileUnpacker
 
 
@@ -73,17 +73,17 @@ class LibraryManager(object):
         for item in self.get_installed().values():
             if "id" in item and item['id'] == id_:
                 return item
-        raise LibNotInstalledError(id_)
+        raise LibNotInstalled(id_)
 
     def is_installed(self, id_):
         try:
             return int(self.get_info(id_)['id']) == id_
-        except LibNotInstalledError:
+        except LibNotInstalled:
             return False
 
     def install(self, id_, version=None):
         if self.is_installed(id_):
-            raise LibAlreadyInstalledError()
+            raise LibAlreadyInstalled()
 
         dlinfo = util.get_api_result(
             "/lib/download/" + str(id_),
@@ -120,4 +120,4 @@ class LibraryManager(object):
                     label="#%d %s" % (id_, item['name'])
                 )
                 return True
-        raise LibNotInstalledError(id_)
+        raise LibNotInstalled(id_)

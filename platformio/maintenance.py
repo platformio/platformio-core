@@ -145,11 +145,6 @@ def after_upgrade(ctx):
         click.style("give", fg="cyan"),
         click.style("https://github.com/platformio/platformio", fg="cyan")
     ))
-    click.echo("- %s for the new features/issues on Bountysource > %s" % (
-        click.style("vote", fg="cyan"),
-        click.style("https://www.bountysource.com/teams/platformio/issues",
-                    fg="cyan")
-    ))
     click.echo("*" * terminal_width)
     click.echo("")
 
@@ -171,7 +166,7 @@ def after_upgrade(ctx):
         telemetry.on_event(category="Auto", action="Upgrade",
                            label="%s > %s" % (last_version, __version__))
     else:
-        raise exception.UpgraderFailed()
+        raise exception.UpgradeError("Auto upgrading...")
     click.echo("")
 
 

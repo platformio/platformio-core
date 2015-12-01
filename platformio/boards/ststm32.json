@@ -441,5 +441,101 @@
         },
         "url": "http://www.st.com/web/en/catalog/tools/PF260318",
         "vendor": "ST"
+    },
+    "disco_f469ni": {
+        "build": {
+            "f_cpu": "180000000L",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f469nih6"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST 32F469IDISCOVERY",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 393216,
+            "maximum_size": 1048576
+        },
+        "url": "http://www.st.com/web/catalog/tools/FM116/CL1620/SC959/SS1532/LN1848/PF262395",
+        "vendor": "ST"
+    },
+    "disco_l476vg": {
+        "build": {
+            "f_cpu": "80000000L",
+            "cpu": "cortex-m4",
+            "mcu": "stm32l476vgt6"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST 32L476GDISCOVERY",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 131072,
+            "maximum_size": 1048576
+        },
+        "url": "http://www.st.com/web/catalog/tools/FM116/CL1620/SC959/SS1532/LN1848/PF261635",
+        "vendor": "ST"
+    },
+    "nucleo_f031k6": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0",
+            "mcu": "stm32f031k6t6"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST Nucleo F031K6",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 4096,
+            "maximum_size": 32768
+        },
+        "url": "https://developer.mbed.org/platforms/ST-Nucleo-F031K6/",
+        "vendor": "ST"
+    },
+    "nucleo_f042k6": {
+        "build": {
+            "f_cpu": "48000000L",
+            "cpu": "cortex-m0",
+            "mcu": "stm32f042k6t6"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST Nucleo F042K6",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 6144,
+            "maximum_size": 32768
+        },
+        "url": "https://developer.mbed.org/platforms/ST-Nucleo-F042K6/",
+        "vendor": "ST"
+    },
+    "nucleo_f303k8": {
+        "build": {
+            "f_cpu": "72000000L",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f303k8t6"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST Nucleo F303K8",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 65536
+        },
+        "url": "https://developer.mbed.org/platforms/ST-Nucleo-F303K8/",
+        "vendor": "ST"
+    },
+    "nucleo_l476rg": {
+        "build": {
+            "f_cpu": "80000000L",
+            "cpu": "cortex-m4",
+            "mcu": "stm32l476rgt6"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST Nucleo L476RG",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 131072,
+            "maximum_size": 1048576
+        },
+        "url": "https://developer.mbed.org/platforms/ST-Nucleo-L476RG/",
+        "vendor": "ST"
     }
 }

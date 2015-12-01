@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os.path import join, isfile
+from __future__ import absolute_import
+
+from os.path import isfile, join
 from shutil import copyfile
 from time import sleep
 

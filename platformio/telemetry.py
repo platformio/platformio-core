@@ -291,7 +291,10 @@ def on_exception(e):
         return
     mp = MeasurementProtocol()
     mp['exd'] = "%s: %s" % (type(e).__name__, e)
-    mp['exf'] = int(not isinstance(e, exception.PlatformioException))
+    mp['exf'] = int(any([
+        not isinstance(e, exception.PlatformioException),
+        "Error" in e.__class__.__name__
+    ]))
     mp.send("exception")
 
 

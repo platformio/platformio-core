@@ -32,7 +32,7 @@ PlatformIO
 `Home & Demo <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
 `Source Code <https://github.com/platformio>`_ |
-`Documentation <http://docs.platformio.org>`_ ||
+`Documentation <http://docs.platformio.org>`_ |
 `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_ |
 `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
@@ -42,9 +42,20 @@ PlatformIO
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
 
-`PlatformIO <http://platformio.org>`_ is an open-source cross-platform code
-builder and the missing library manager (Ready for embedded development, IDE
-and Continuous integration, Arduino and MBED compatible).
+`PlatformIO <http://platformio.org>`_ is an open source ecosystem for IoT
+development. Cross-platform code builder and library manager. Continuous and
+IDE integration. Arduino and MBED compatible. Ready for Cloud compiling.
+
+* **Development Platforms** - Embedded and Desktop development platforms with
+  pre-built toolchains, debuggers, uploaders and frameworks which work under
+  popular host OS: Mac, Windows, Linux (+ARM)
+* **Embedded Boards** - Rapid Embedded Programming, IDE and Continuous
+  Integration in a few steps with PlatformIO thanks to built-in project
+  generator for the most popular embedded boards and IDE
+* **Library Manager** - Hundreds Popular Libraries are organized into single
+  Web 2.0 platform: list by categories, keywords, authors, compatible
+  platforms and frameworks; learn via examples; be up-to-date with the latest
+  version
 
 *Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
@@ -66,15 +77,10 @@ libOpenCM3, etc.*
 * `FAQ <http://docs.platformio.org/en/latest/faq.html>`_
 * `Release History <http://docs.platformio.org/en/latest/history.html>`_
 
-You have **no need** to install any *IDE* or compile any tool chains. *PlatformIO*
-has pre-built different development platforms and pre-configured settings for
-the most popular embedded boards. For further details, please
-refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
-
 Use whenever. *Run everywhere.*
 -------------------------------
 *PlatformIO* is written in pure *Python* and **doesn't depend** on any
-additional libraries/tools from an operation system. It allows you to use
+additional libraries/tools from an operating system. It allows you to use
 *PlatformIO* beginning from *PC (Mac, Linux, Win)* and ending with credit-card
 sized computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
 `BeagleBone <http://beagleboard.org>`_,
@@ -88,7 +94,7 @@ settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 * Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_ with
   *Arduino, Eclipse, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
-* `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
+* Cloud compiling and `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
   with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
 * Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable
   `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
@@ -134,8 +140,8 @@ cross-platform substitute for the classic *Make* utility.
 
 Single source code. *Multiple platforms.*
 -----------------------------------------
-*PlatformIO* allows developer to compile the same code with different
-development platforms using the *Only One Command*
+*PlatformIO* allows the developer to compile the same code with different
+development platforms using only *One Command*
 `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`_.
 This happens due to
 `Project Configuration File (platformio.ini) <http://docs.platformio.org/en/latest/projectconf.html>`_
@@ -166,6 +172,7 @@ Frameworks:
 * `SPL <http://platformio.org/#!/frameworks/spl>`_
 * `mbed <http://platformio.org/#!/frameworks/mbed>`_
 
+For further details, please refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
 
 Licence
 -------
