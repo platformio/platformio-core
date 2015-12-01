@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION = (2, 3, "6.dev3")
+VERSION = (2, 4, "b1")
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"

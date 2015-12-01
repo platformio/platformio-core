@@ -4,12 +4,14 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.3.6 (2015-??-??)
+2.4.0 (2015-??-??)
 ~~~~~~~~~~~~~~~~~~
 
 * Added support for the new boards: Atmel ATSAMR21-XPRO, Atmel SAML21-XPRO-B,
   Atmel SAMD21-XPRO, ST 32F469IDISCOVERY, ST 32L476GDISCOVERY, ST Nucleo F031K6,
   ST Nucleo F042K6, ST Nucleo F303K8 and ST Nucleo L476RG
+* Updated Arduino core for Espressif platform to 2.0.0
+  (`issue #345 <https://github.com/platformio/platformio/issues/345>`_)
 * Added to FAQ explanation of `Can not compile a library that compiles without issue
   with Arduino IDE <http://docs.platformio.org/en/latest/faq.html#building>`_
   (`issue #331 <https://github.com/platformio/platformio/issues/331>`_)
