@@ -4,7 +4,7 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.4.0 (2015-??-??)
+2.4.0 (2015-12-01)
 ~~~~~~~~~~~~~~~~~~
 
 * Added support for the new boards: Atmel ATSAMR21-XPRO, Atmel SAML21-XPRO-B,
