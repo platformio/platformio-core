@@ -100,10 +100,17 @@ Contents
     frameworks/index
 
 .. toctree::
+    :caption: Library Manager
+    :maxdepth: 2
+
+    User Guide <userguide/lib/index.rst>
+    librarymanager/config
+    librarymanager/creating
+
+.. toctree::
     :caption: Integration
     :maxdepth: 2
 
-    librarymanager/index
     ci/index
     ide
 

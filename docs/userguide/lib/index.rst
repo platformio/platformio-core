@@ -9,10 +9,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _userguide_lib:
+.. _librarymanager:
 
 Library Manager
 ===============
+
+*PlatformIO Library Manager* allows you to organize external embedded libraries.
+You can search for new libraries via
+
+* :ref:`Command Line interface <cmd_lib_search>`
+* `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
+
+You don't need to bother for finding the latest version of library. Due to
+:ref:`cmd_lib_update` command you will have up-to-date external libraries.
 
 To print all available commands and options use:
 
