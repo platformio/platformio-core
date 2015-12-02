@@ -23,6 +23,8 @@ This software can be used with:
 * all available :ref:`platforms`
 * all available :ref:`frameworks`
 
+.. contents::
+
 Integration
 -----------
 
@@ -59,6 +61,13 @@ make firmware and upload it.
 .. note::
     If hotkey doesn't work for you, try to add this line
     ``nnoremap <C-b> :make<CR>`` to ``~/.vimrc``
+
+Articles / Manuals
+------------------
+
+* `コマンドラインでArduino開発 : vim + platformio (Arduino development at the command line: VIM + PlatformIO, Japanese) <http://qiita.com/caad1229/items/7b5fb47f034ae6e0baf2>`_
+
+See a full list with :ref:`articles`.
 
 Screenshot
 ----------

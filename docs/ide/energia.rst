@@ -28,11 +28,20 @@ This software can be used with:
 Refer to the `Energia Getting Started <http://energia.nu/guide/>`_
 page for Installation instructions.
 
+.. contents::
+
 Integration
 -----------
 
 More detailed information is located in PlatformIO blog:
 `Integration of PlatformIO library manager to Energia IDE <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_.
+
+Articles / Manuals
+------------------
+
+* `Integration of PlatformIO library manager to Arduino and Energia IDEs <http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides>`_
+
+See the full list with :ref:`articles`.
 
 Screenshot
 -----------

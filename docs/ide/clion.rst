@@ -73,6 +73,14 @@ There are 3 predefined targets for building:
     Active discussion is located in
     `PlatformIO issue #132 <https://github.com/platformio/platformio/issues/132>`_.
 
+Articles / Manuals
+------------------
+
+* `Using PlatformIO to get started with Arduino in CLion IDE <http://www.ches.pl/using-platformio-get-started-arduino-clion-ide/>`_
+* `Programar con Arduino "The good way" (Programming with Arduino "The good way", Spanish) <http://congdegnu.es/2015/11/09/programar-con-arduino-the-good-way/>`_
+
+See a full list with :ref:`articles`.
+
 Screenshot
 ----------
 
