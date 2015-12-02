@@ -9,26 +9,18 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _userguide_lib:
+.. _librarymanager:
 
 Library Manager
 ===============
 
-To print all available commands and options use:
+*PlatformIO Library Manager* allows you to organize external embedded libraries.
+You can search for new libraries via
 
-.. code-block:: bash
+* :ref:`Command Line interface <cmd_lib_search>`
+* `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
 
-    $ platformio lib --help
-    $ platformio lib COMMAND --help
+You don't need to bother for finding the latest version of library. Due to
+:ref:`cmd_lib_update` command you will have up-to-date external libraries.
 
-
-.. toctree::
-    :maxdepth: 2
-
-    cmd_install
-    cmd_list
-    cmd_register
-    cmd_search
-    cmd_show
-    cmd_uninstall
-    cmd_update
+.. image:: ../_static/platformio-demo-lib.gif

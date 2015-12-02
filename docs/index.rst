@@ -103,6 +103,7 @@ Contents
     :caption: Library Manager
     :maxdepth: 2
 
+    Quickstart <librarymanager/index>
     User Guide <userguide/lib/index.rst>
     librarymanager/config
     librarymanager/creating
