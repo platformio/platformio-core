@@ -58,6 +58,11 @@ There are 3 predefined targets for building:
 * ``PLATFORMIO_CLEAN`` - clean compiled objects and etc.
 
 .. warning::
+    The libraries which are added, installed or used in the project
+    after generating process wont be reflected in IDE. To fix it you
+    need to reinitialize project using :ref:`cmd_init` (repeat it).
+
+.. warning::
     PlatformIO generates empty project by default and **code auto-completion
     will not work!** To enable auto-completion please choose one of:
 
