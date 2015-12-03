@@ -4,6 +4,13 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.4.2 (2015-12-??)
+~~~~~~~~~~~~~~~~~~
+
+* Removed prompt with "auto-uploading" from `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
+  command and added ``--enable-auto-uploading`` option
+  (`issue #352 <https://github.com/platformio/platformio/issues/352>`_)
+
 2.4.1 (2015-12-01)
 ~~~~~~~~~~~~~~~~~~
 

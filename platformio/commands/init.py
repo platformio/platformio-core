@@ -45,21 +45,11 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
               callback=validate_boards)
 @click.option("--ide",
               type=click.Choice(ProjectGenerator.get_supported_ides()))
-@click.option("--disable-auto-uploading", is_flag=True)
+@click.option("--enable-auto-uploading", is_flag=True)
 @click.option("--env-prefix", default="")
 @click.pass_context
 def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
-        disable_auto_uploading, env_prefix):
-
-    # ask about auto-uploading
-    if board and app.get_setting("enable_prompts"):
-        disable_auto_uploading = not click.confirm(
-            "Would you like to enable firmware auto-uploading when project "
-            "is successfully built using `platformio run` command? \n"
-            "Don't forget that you can upload firmware manually using "
-            "`platformio run --target upload` command."
-        )
-        click.echo("")
+        enable_auto_uploading, env_prefix):
 
     if project_dir == getcwd():
         click.secho("\nThe current working directory", fg="yellow", nl=False)
@@ -141,7 +131,7 @@ http://docs.platformio.org/en/latest/projectconf.html#lib-install
 
     if board:
         fill_project_envs(
-            ctx, project_file, board, disable_auto_uploading, env_prefix)
+            ctx, project_file, board, enable_auto_uploading, env_prefix)
 
     if ide:
         pg = ProjectGenerator(project_dir, ide, board[0] if board else None)
@@ -154,12 +144,13 @@ http://docs.platformio.org/en/latest/projectconf.html#lib-install
         "`platformio run --target upload` or `platformio run -t upload` "
         "- upload firmware to embedded board\n"
         "`platformio run --target clean` - clean project (remove compiled "
-        "files)",
+        "files)\n"
+        "`platformio run --help` - additional information",
         fg="green"
     )
 
 
-def fill_project_envs(ctx, project_file, board_types, disable_auto_uploading,
+def fill_project_envs(ctx, project_file, board_types, enable_auto_uploading,
                       env_prefix):
     builtin_boards = get_boards()
     content = []
@@ -188,8 +179,8 @@ def fill_project_envs(ctx, project_file, board_types, disable_auto_uploading,
             content.append("framework = %s" % frameworks[0])
 
         content.append("board = %s" % type_)
-        content.append("%stargets = upload" % ("# " if disable_auto_uploading
-                                               else ""))
+        if enable_auto_uploading:
+            content.append("targets = upload")
 
     _install_dependent_platforms(ctx, used_platforms)
 
