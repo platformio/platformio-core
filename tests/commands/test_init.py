@@ -16,7 +16,7 @@ from os import makedirs, getcwd
 from os.path import getsize, isdir, isfile, join
 
 from platformio.commands.init import cli
-from platformio import exception, util
+from platformio import util
 
 
 def validate_pioproject(pioproject_dir):
@@ -53,8 +53,7 @@ def test_init_special_board(platformio_setup, clirunner, validate_cliresult):
         expected_result = [
             ("platform", str(uno['platform'])),
             ("framework", str(uno['frameworks'][0])),
-            ("board", "uno"),
-            ("targets", "upload")
+            ("board", "uno")
         ]
 
         assert config.has_section("env:uno")
@@ -66,14 +65,15 @@ def test_init_disable_auto_uploading(platformio_setup, clirunner,
                                      validate_cliresult):
     with clirunner.isolated_filesystem():
         result = clirunner.invoke(cli,
-                                  ["-b", "uno", "--disable-auto-uploading"])
+                                  ["-b", "uno", "--enable-auto-uploading"])
         validate_cliresult(result)
         validate_pioproject(getcwd())
         config = util.get_project_config()
         expected_result = [
             ("platform", "atmelavr"),
             ("framework", "arduino"),
-            ("board", "uno")
+            ("board", "uno"),
+            ("targets", "upload")
         ]
         assert config.has_section("env:uno")
         assert len(set(expected_result).symmetric_difference(
