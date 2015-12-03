@@ -61,8 +61,8 @@ def test_init_special_board(platformio_setup, clirunner, validate_cliresult):
             set(config.items("env:uno")))) == 0
 
 
-def test_init_disable_auto_uploading(platformio_setup, clirunner,
-                                     validate_cliresult):
+def test_init_enable_auto_uploading(platformio_setup, clirunner,
+                                    validate_cliresult):
     with clirunner.isolated_filesystem():
         result = clirunner.invoke(cli,
                                   ["-b", "uno", "--enable-auto-uploading"])
