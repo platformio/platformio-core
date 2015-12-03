@@ -336,6 +336,6 @@ A list of example patterns. This field is predefined with default value:
 .. code-block:: javascript
 
     "examples": [
-        "[Ee]xamples/*/*.ini",
+        "[Ee]xamples/*/*.ino",
         "[Ee]xamples/*/*.pde"
     ]
