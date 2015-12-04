@@ -4,9 +4,12 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.4.2 (2015-12-??)
+2.5.0 (2015-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Generate `.travis.yml <http://docs.platformio.org/en/latest/ci/travis.html>`__
+  CI config for embedded projects by default
+  (`issue #354 <https://github.com/platformio/platformio/issues/354>`_)
 * Removed prompt with "auto-uploading" from `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
   command and added ``--enable-auto-uploading`` option
   (`issue #352 <https://github.com/platformio/platformio/issues/352>`_)

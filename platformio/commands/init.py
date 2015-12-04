@@ -83,47 +83,8 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
         if not isdir(d):
             makedirs(d)
 
-    if not isfile(join(lib_dir, "readme.txt")):
-        with open(join(lib_dir, "readme.txt"), "w") as f:
-            f.write("""
-This directory is intended for the project specific (private) libraries.
-PlatformIO will compile them to static libraries and link to executable file.
-
-The source code of each library should be placed in separate directory, like
-"lib/private_lib/[here are source files]".
-
-For example, see how can be organised `Foo` and `Bar` libraries:
-
-|--lib
-|  |--Bar
-|  |  |--docs
-|  |  |--examples
-|  |  |--src
-|  |     |- Bar.c
-|  |     |- Bar.h
-|  |--Foo
-|  |  |- Foo.c
-|  |  |- Foo.h
-|  |- readme.txt --> THIS FILE
-|- platformio.ini
-|--src
-   |- main.c
-
-Then in `src/main.c` you should use:
-
-#include <Foo.h>
-#include <Bar.h>
-
-// rest H/C/CPP code
-
-PlatformIO will find your libraries automatically, configure preprocessor's
-include paths and build them.
-
-See additional options for PlatformIO Library Dependency Finder `lib_*`:
-
-http://docs.platformio.org/en/latest/projectconf.html#lib-install
-
-""")
+    init_lib_readme(lib_dir)
+    init_ci_conf(project_dir)
 
     if not isfile(project_file):
         copyfile(join(get_source_dir(), "projectconftpl.ini"),
@@ -200,3 +161,91 @@ def _install_dependent_platforms(ctx, platforms):
         cli_platforms_install,
         platforms=list(set(platforms) - set(installed_platforms))
     )
+
+
+def init_lib_readme(lib_dir):
+    if isfile(join(lib_dir, "readme.txt")):
+        return
+    with open(join(lib_dir, "readme.txt"), "w") as f:
+        f.write("""
+This directory is intended for the project specific (private) libraries.
+PlatformIO will compile them to static libraries and link to executable file.
+
+The source code of each library should be placed in separate directory, like
+"lib/private_lib/[here are source files]".
+
+For example, see how can be organised `Foo` and `Bar` libraries:
+
+|--lib
+|  |--Bar
+|  |  |--docs
+|  |  |--examples
+|  |  |--src
+|  |     |- Bar.c
+|  |     |- Bar.h
+|  |--Foo
+|  |  |- Foo.c
+|  |  |- Foo.h
+|  |- readme.txt --> THIS FILE
+|- platformio.ini
+|--src
+   |- main.c
+
+Then in `src/main.c` you should use:
+
+#include <Foo.h>
+#include <Bar.h>
+
+// rest H/C/CPP code
+
+PlatformIO will find your libraries automatically, configure preprocessor's
+include paths and build them.
+
+See additional options for PlatformIO Library Dependency Finder `lib_*`:
+
+http://docs.platformio.org/en/latest/projectconf.html#lib-install
+
+""")
+
+
+def init_ci_conf(project_dir):
+    if isfile(join(project_dir, ".travis.yml")):
+        return
+    with open(join(project_dir, ".travis.yml"), "w") as f:
+        f.write("""# Continuous Integration (CI) is the practice, in software
+# engineering, of merging all developer working copies with a shared mainline
+# several times a day < http://docs.platformio.org/en/latest/ci/index.html >
+#
+# Documentation:
+#
+# * Travis CI Embedded Builds with PlatformIO
+#   < https://docs.travis-ci.com/user/integration/platformio/ >
+#
+# * PlatformIO integration with Travis CI
+#   < http://docs.platformio.org/en/latest/ci/travis.html >
+#
+# * User Guide for `platformio ci` command
+#   < http://docs.platformio.org/en/latest/userguide/cmd_ci.html >
+#
+
+language: python
+python:
+    - "2.7"
+
+# Cache PlatformIO packages using Travis CI container-based infrastructure
+sudo: false
+cache:
+    directories:
+        - "~/.platformio"
+
+env:
+    - PLATFORMIO_CI_SRC=path/to/test/file.c
+    - PLATFORMIO_CI_SRC=examples/file.ino
+    - PLATFORMIO_CI_SRC=path/to/test/directory
+
+install:
+    - pip install -U platformio
+
+script:
+    - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+""")
