@@ -436,7 +436,8 @@ class BasePlatform(object):
 
         click.secho(line, fg=fg, err=level < 3)
 
-    def get_job_nums(self):
+    @staticmethod
+    def get_job_nums():
         try:
             return cpu_count()
         except NotImplementedError:
