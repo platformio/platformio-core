@@ -7,6 +7,7 @@ PlatformIO 2.0
 2.5.0 (2015-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Improved code builder for parallel builds (up to 4 times faster than before)
 * Generate `.travis.yml <http://docs.platformio.org/en/latest/ci/travis.html>`__
   CI config for embedded projects by default
   (`issue #354 <https://github.com/platformio/platformio/issues/354>`_)
