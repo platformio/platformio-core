@@ -9,7 +9,7 @@ PlatformIO 2.0
 
 * Improved code builder for parallel builds (up to 4 times faster than before)
 * Generate `.travis.yml <http://docs.platformio.org/en/latest/ci/travis.html>`__
-  CI config for embedded projects by default
+  CI and `.gitignore` files for embedded projects by default
   (`issue #354 <https://github.com/platformio/platformio/issues/354>`_)
 * Removed prompt with "auto-uploading" from `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
   command and added ``--enable-auto-uploading`` option

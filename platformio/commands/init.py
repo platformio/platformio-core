@@ -85,6 +85,7 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
 
     init_lib_readme(lib_dir)
     init_ci_conf(project_dir)
+    init_cvs_ignore(project_dir)
 
     if not isfile(project_file):
         copyfile(join(get_source_dir(), "projectconftpl.ini"),
@@ -249,3 +250,10 @@ install:
 script:
     - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
 """)
+
+
+def init_cvs_ignore(project_dir):
+    if isfile(join(project_dir, ".gitignore")):
+        return
+    with open(join(project_dir, ".gitignore"), "w") as f:
+        f.write(".pioevs")
