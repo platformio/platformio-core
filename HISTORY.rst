@@ -14,6 +14,8 @@ PlatformIO 2.0
 * Removed prompt with "auto-uploading" from `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
   command and added ``--enable-auto-uploading`` option
   (`issue #352 <https://github.com/platformio/platformio/issues/352>`_)
+* Fixed incorrect behaviour of `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`__
+  in pair with PySerial 3.0
 
 2.4.1 (2015-12-01)
 ~~~~~~~~~~~~~~~~~~
