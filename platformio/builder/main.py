@@ -41,8 +41,7 @@ from os import environ
 from os.path import isfile, join
 from time import time
 
-from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
-                          SConscript, SConscriptChdir, Variables)
+from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, Variables
 
 from platformio.exception import UnknownBoard
 
@@ -141,10 +140,10 @@ if "BOARD" in env:
         )
 
     if env['PLATFORM'] != env.get("BOARD_OPTIONS", {}).get("platform"):
-        Exit("Error: '%s' platform doesn't support this board. "
-             "Use '%s' platform instead." % (
-                 env['PLATFORM'],
-                 env.get("BOARD_OPTIONS", {}).get("platform")))
+        env.Exit(
+            "Error: '%s' platform doesn't support this board. "
+            "Use '%s' platform instead." % (
+                env['PLATFORM'], env.get("BOARD_OPTIONS", {}).get("platform")))
 
 
 for opt in ("LIB_IGNORE", "LIB_USE"):
@@ -158,16 +157,18 @@ if env.subst("$PIOPACKAGE_TOOLCHAIN"):
         env.subst(join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN", "bin"))
     )
 
-SConscriptChdir(0)
-SConscript(env.subst("$BUILD_SCRIPT"))
+env.SConscriptChdir(0)
+env.SConsignFile(join("$PIOENVS_DIR", ".sconsign.dblite"))
+env.SConscript("$BUILD_SCRIPT")
 
-if environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT", None)):
-    SConscript(environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")))
+if environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")):
+    env.SConscript(
+        environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")))
 
 if "envdump" in COMMAND_LINE_TARGETS:
     print env.Dump()
-    Exit()
+    env.Exit()
 
 if "idedata" in COMMAND_LINE_TARGETS:
     print json.dumps(env.DumpIDEData())
-    Exit()
+    env.Exit()
