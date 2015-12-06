@@ -239,16 +239,11 @@ cache:
     directories:
         - "~/.platformio"
 
-env:
-    - PLATFORMIO_CI_SRC=path/to/test/file.c
-    - PLATFORMIO_CI_SRC=examples/file.ino
-    - PLATFORMIO_CI_SRC=path/to/test/directory
-
 install:
     - pip install -U platformio
 
 script:
-    - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+    - platformio run
 """)
 
 
