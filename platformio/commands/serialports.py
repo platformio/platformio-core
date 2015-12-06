@@ -101,7 +101,6 @@ if int(PYSERIAL_VERSION[0]) == 3:
                 sys.argv.extend([k, str(v)])
 
         try:
-            print kwargs
             miniterm.main(  # pylint: disable=E1123
                 default_port=kwargs['port'],
                 default_baudrate=kwargs['baud'],
