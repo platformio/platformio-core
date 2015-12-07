@@ -48,12 +48,6 @@ class PlatformNotInstalledYet(PlatformioException):
         "Use `platformio platforms install` command"
 
 
-class UnknownCLICommand(PlatformioException):
-
-    MESSAGE = "Unknown command '%s'. Please use `platformio --help`"\
-        " to see all available commands"
-
-
 class UnknownBoard(PlatformioException):
 
     MESSAGE = "Unknown board type '%s'"

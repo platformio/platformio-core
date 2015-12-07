@@ -46,7 +46,7 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
             try:
                 return self._handle_obsolate_command(name)
             except AttributeError:
-                raise exception.UnknownCLICommand(name)
+                raise click.UsageError('No such command "%s"' % name, ctx)
         return mod.cli
 
     @staticmethod
