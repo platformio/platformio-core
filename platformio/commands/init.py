@@ -228,22 +228,56 @@ def init_ci_conf(project_dir):
 # * User Guide for `platformio ci` command
 #   < http://docs.platformio.org/en/latest/userguide/cmd_ci.html >
 #
+#
+# Please choice one of the following templates (proposed below) and uncomment
+# it (remove "# " before each line) or use own configuration according to the
+# Travis CI documentation (see above).
+#
 
-language: python
-python:
-    - "2.7"
 
-# Cache PlatformIO packages using Travis CI container-based infrastructure
-sudo: false
-cache:
-    directories:
-        - "~/.platformio"
+#
+# Template #1: General project. Test it using existing `platformio.ini`.
+#
 
-install:
-    - pip install -U platformio
+# language: python
+# python:
+#     - "2.7"
+#
+# sudo: false
+# cache:
+#     directories:
+#         - "~/.platformio"
+#
+# install:
+#     - pip install -U platformio
+#
+# script:
+#     - platformio run
 
-script:
-    - platformio run
+
+#
+# Template #2: The project is intended to by used as a library with examples
+#
+
+# language: python
+# python:
+#     - "2.7"
+#
+# sudo: false
+# cache:
+#     directories:
+#         - "~/.platformio"
+#
+# env:
+#     - PLATFORMIO_CI_SRC=path/to/test/file.c
+#     - PLATFORMIO_CI_SRC=examples/file.ino
+#     - PLATFORMIO_CI_SRC=path/to/test/directory
+#
+# install:
+#     - pip install -U platformio
+#
+# script:
+#     - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
 """)
 
 

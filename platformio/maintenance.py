@@ -141,8 +141,8 @@ def after_upgrade(ctx):
         (click.style("follow", fg="cyan"),
          click.style("https://twitter.com/PlatformIO_Org", fg="cyan"))
     )
-    click.echo("- %s us a star on GitHub > %s" % (
-        click.style("give", fg="cyan"),
+    click.echo("- %s it on GitHub! > %s" % (
+        click.style("star", fg="cyan"),
         click.style("https://github.com/platformio/platformio", fg="cyan")
     ))
     click.echo("*" * terminal_width)

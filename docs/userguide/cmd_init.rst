@@ -27,7 +27,7 @@ Usage
 Description
 -----------
 
-Initialize new PlatformIO based project.
+Initialize new PlatformIO based project or update existing with new data.
 
 
 This command will create:
@@ -36,6 +36,8 @@ This command will create:
 * ``src`` - a source directory. Put your source files here
 * ``lib`` - a directory for the project specific (private) libraries.
   PlatformIO will compile them to static libraries and link to executable file
+* ``.travis.yml`` configuration file (template) for Continuous Integration
+  with :ref:`ci_travis`
 
 .. note::
     The source code of each library should be placed in separate directory.
