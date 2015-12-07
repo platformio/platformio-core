@@ -26,13 +26,16 @@ the mbed Developer Community.
 http://mbed.org/
 """
 
+from __future__ import print_function
+
 import re
+import sys
 import xml.etree.ElementTree as ElementTree
 from binascii import crc32
 from os import getenv, walk
 from os.path import basename, isfile, join, normpath
 
-from SCons.Script import DefaultEnvironment, Exit
+from SCons.Script import DefaultEnvironment
 
 env = DefaultEnvironment()
 
@@ -119,8 +122,9 @@ def add_mbedlib(libname, libar):
     lib_dir = join(env.subst("$PLATFORMFW_DIR"), "libs", libname)
     if not isfile(join(lib_dir, "TARGET_%s" % variant,
                        "TOOLCHAIN_GCC_ARM", "lib%s.a" % libar)):
-        Exit("Error: %s board doesn't support %s library!" %
-             (env.get("BOARD"), libname))
+        print (
+            "Warning: %s board doesn't have native support for '%s' library!" %
+            (env.get("BOARD"), libname), file=sys.stderr)
 
     env.Append(
         LIBPATH=[
