@@ -125,6 +125,7 @@ def add_mbedlib(libname, libar):
         print (
             "Warning: %s board doesn't have native support for '%s' library!" %
             (env.get("BOARD"), libname), file=sys.stderr)
+        return
 
     env.Append(
         LIBPATH=[
