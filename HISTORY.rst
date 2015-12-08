@@ -4,7 +4,7 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.5.0 (2015-12-??)
+2.5.0 (2015-12-08)
 ~~~~~~~~~~~~~~~~~~
 
 * Improved code builder for parallel builds (up to 4 times faster than before)
