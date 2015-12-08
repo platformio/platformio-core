@@ -20,12 +20,12 @@ from os.path import abspath, basename, expanduser, isdir, join, relpath
 import bottle
 import click
 
-from platformio import util
+from platformio import exception, util
 
 
 class ProjectGenerator(object):
 
-    def __init__(self, project_dir, ide, board=None):
+    def __init__(self, project_dir, ide, board):
         self.project_dir = project_dir
         self.ide = ide
         self.board = board
@@ -50,7 +50,7 @@ class ProjectGenerator(object):
                 data = {"env_name": section[4:]}
                 for k, v in config.items(section):
                     data[k] = v
-                if self.board and self.board == data.get("board"):
+                if self.board == data.get("board"):
                     break
         return data
 
@@ -68,16 +68,15 @@ class ProjectGenerator(object):
             ["platformio", "-f", "run", "-t", "idedata",
              "-e", envdata['env_name'], "-d", self.project_dir]
         )
+
         if result['returncode'] != 0 or '"includes":' not in result['out']:
-            return data
+            raise exception.PlatformioException(
+                "\n".join([result['out'], result['err']]))
 
         output = result['out']
-        try:
-            start_index = output.index('\n{"')
-            stop_index = output.rindex('}')
-            data = json.loads(output[start_index + 1:stop_index + 1])
-        except ValueError:
-            pass
+        start_index = output.index('\n{"')
+        stop_index = output.rindex('}')
+        data = json.loads(output[start_index + 1:stop_index + 1])
 
         return data
 

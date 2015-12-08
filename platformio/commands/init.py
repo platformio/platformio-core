@@ -93,10 +93,24 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
 
     if board:
         fill_project_envs(
-            ctx, project_file, board, enable_auto_uploading, env_prefix)
+            ctx, project_file, board, enable_auto_uploading, env_prefix,
+            ide is not None
+        )
 
     if ide:
-        pg = ProjectGenerator(project_dir, ide, board[0] if board else None)
+        if not board:
+            raise exception.BoardNotDefined()
+        if len(board) > 1:
+            click.secho(
+                "Warning! You have initialised project with more than 1 board"
+                " for the specified IDE.\n"
+                "However, the IDE features (code autocompletion, syntax lint)"
+                " have been configured for the first board '%s' from your list"
+                " '%s'." % (board[0], ", ".join(board)),
+                fg="yellow"
+            )
+        pg = ProjectGenerator(
+            project_dir, ide, board[0])
         pg.generate()
 
     click.secho(
@@ -113,7 +127,7 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
 
 
 def fill_project_envs(ctx, project_file, board_types, enable_auto_uploading,
-                      env_prefix):
+                      env_prefix, force_download):
     builtin_boards = get_boards()
     content = []
     used_envs = []
@@ -144,7 +158,8 @@ def fill_project_envs(ctx, project_file, board_types, enable_auto_uploading,
         if enable_auto_uploading:
             content.append("targets = upload")
 
-    _install_dependent_platforms(ctx, used_platforms)
+    if force_download and used_platforms:
+        _install_dependent_platforms(ctx, used_platforms)
 
     if not content:
         return
