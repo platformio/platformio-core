@@ -159,7 +159,7 @@ def lib_install_dependency(ctx, data):
         ctx.invoke(lib_install, libid=[result['items'][0]['id']])
     else:
         click.secho(
-            "Conflict: More then one dependent libraries have been found "
+            "Conflict: More than one dependent libraries have been found "
             "by request %s:" % json.dumps(data), fg="red")
 
         echo_liblist_header()

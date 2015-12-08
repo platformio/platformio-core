@@ -450,7 +450,7 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 ^^^^^^^^^^^
 
 A list with targets which will be processed by :ref:`cmd_run` command by
-default. You can enter more then one target separated with "space". Which
+default. You can enter more than one target separated with "space". Which
 targets are supported is described in :option:`platformio run --target`.
 
 **Tip!** You can use these targets like an option to
