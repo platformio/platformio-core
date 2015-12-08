@@ -440,13 +440,17 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
     # uncomment line below to see environment variables
     # print env.Dump()
 
-See built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
+
+* see built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
+* take a look on related users questions: `#351 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_,
+  `#236 <https://github.com/platformio/platformio/issues/236#issuecomment-112038284>`_,
+  `#247 <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_
 
 ``targets``
 ^^^^^^^^^^^
 
 A list with targets which will be processed by :ref:`cmd_run` command by
-default. You can enter more then one target separated with "space". Which
+default. You can enter more than one target separated with "space". Which
 targets are supported is described in :option:`platformio run --target`.
 
 **Tip!** You can use these targets like an option to

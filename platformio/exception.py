@@ -48,10 +48,11 @@ class PlatformNotInstalledYet(PlatformioException):
         "Use `platformio platforms install` command"
 
 
-class UnknownCLICommand(PlatformioException):
+class BoardNotDefined(PlatformioException):
 
-    MESSAGE = "Unknown command '%s'. Please use `platformio --help`"\
-        " to see all available commands"
+    MESSAGE = "You need to specify board type using `-b` or `--board` "\
+        "option. Supported boards list is available via "\
+        " `platformio boards` command"
 
 
 class UnknownBoard(PlatformioException):
@@ -201,6 +202,7 @@ class UpgradeError(PlatformioException):
 
     MESSAGE = """%s
 
+* Upgrade using `pip install -U platformio`
 * Try different installation/upgrading steps:
   http://docs.platformio.org/en/latest/installation.html
 """

@@ -4,6 +4,19 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.5.0 (2015-12-08)
+~~~~~~~~~~~~~~~~~~
+
+* Improved code builder for parallel builds (up to 4 times faster than before)
+* Generate `.travis.yml <http://docs.platformio.org/en/latest/ci/travis.html>`__
+  CI and `.gitignore` files for embedded projects by default
+  (`issue #354 <https://github.com/platformio/platformio/issues/354>`_)
+* Removed prompt with "auto-uploading" from `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
+  command and added ``--enable-auto-uploading`` option
+  (`issue #352 <https://github.com/platformio/platformio/issues/352>`_)
+* Fixed incorrect behaviour of `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`__
+  in pair with PySerial 3.0
+
 2.4.1 (2015-12-01)
 ~~~~~~~~~~~~~~~~~~
 
@@ -219,7 +232,7 @@ PlatformIO 2.0
 * Automatically detect upload port using VID:PID board settings
   (`issue #231 <https://github.com/platformio/platformio/issues/231>`_)
 * Improved detection of build changes
-* Avoided ``LibInstallDependencyError`` when more then 1 library is found
+* Avoided ``LibInstallDependencyError`` when more than 1 library is found
   (`issue #229 <https://github.com/platformio/platformio/issues/229>`_)
 
 2.1.0 (2015-06-03)

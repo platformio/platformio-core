@@ -45,21 +45,11 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
               callback=validate_boards)
 @click.option("--ide",
               type=click.Choice(ProjectGenerator.get_supported_ides()))
-@click.option("--disable-auto-uploading", is_flag=True)
+@click.option("--enable-auto-uploading", is_flag=True)
 @click.option("--env-prefix", default="")
 @click.pass_context
 def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
-        disable_auto_uploading, env_prefix):
-
-    # ask about auto-uploading
-    if board and app.get_setting("enable_prompts"):
-        disable_auto_uploading = not click.confirm(
-            "Would you like to enable firmware auto-uploading when project "
-            "is successfully built using `platformio run` command? \n"
-            "Don't forget that you can upload firmware manually using "
-            "`platformio run --target upload` command."
-        )
-        click.echo("")
+        enable_auto_uploading, env_prefix):
 
     if project_dir == getcwd():
         click.secho("\nThe current working directory", fg="yellow", nl=False)
@@ -93,9 +83,108 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
         if not isdir(d):
             makedirs(d)
 
-    if not isfile(join(lib_dir, "readme.txt")):
-        with open(join(lib_dir, "readme.txt"), "w") as f:
-            f.write("""
+    init_lib_readme(lib_dir)
+    init_ci_conf(project_dir)
+    init_cvs_ignore(project_dir)
+
+    if not isfile(project_file):
+        copyfile(join(get_source_dir(), "projectconftpl.ini"),
+                 project_file)
+
+    if board:
+        fill_project_envs(
+            ctx, project_file, board, enable_auto_uploading, env_prefix,
+            ide is not None
+        )
+
+    if ide:
+        if not board:
+            raise exception.BoardNotDefined()
+        if len(board) > 1:
+            click.secho(
+                "Warning! You have initialised project with more than 1 board"
+                " for the specified IDE.\n"
+                "However, the IDE features (code autocompletion, syntax lint)"
+                " have been configured for the first board '%s' from your list"
+                " '%s'." % (board[0], ", ".join(board)),
+                fg="yellow"
+            )
+        pg = ProjectGenerator(
+            project_dir, ide, board[0])
+        pg.generate()
+
+    click.secho(
+        "\nProject has been successfully initialized!\nUseful commands:\n"
+        "`platformio run` - process/build project from the current "
+        "directory\n"
+        "`platformio run --target upload` or `platformio run -t upload` "
+        "- upload firmware to embedded board\n"
+        "`platformio run --target clean` - clean project (remove compiled "
+        "files)\n"
+        "`platformio run --help` - additional information",
+        fg="green"
+    )
+
+
+def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
+        ctx, project_file, board_types, enable_auto_uploading,
+        env_prefix, force_download):
+    builtin_boards = get_boards()
+    content = []
+    used_envs = []
+    used_platforms = []
+
+    with open(project_file) as f:
+        used_envs = [l.strip() for l in f.read().splitlines() if
+                     l.strip().startswith("[env:")]
+
+    for type_ in board_types:
+        data = builtin_boards[type_]
+        used_platforms.append(data['platform'])
+        env_name = "[env:%s%s]" % (env_prefix, type_)
+
+        if env_name in used_envs:
+            continue
+
+        content.append("")
+        content.append(env_name)
+        content.append("platform = %s" % data['platform'])
+
+        # find default framework for board
+        frameworks = data.get("frameworks")
+        if frameworks:
+            content.append("framework = %s" % frameworks[0])
+
+        content.append("board = %s" % type_)
+        if enable_auto_uploading:
+            content.append("targets = upload")
+
+    if force_download and used_platforms:
+        _install_dependent_platforms(ctx, used_platforms)
+
+    if not content:
+        return
+
+    with open(project_file, "a") as f:
+        content.append("")
+        f.write("\n".join(content))
+
+
+def _install_dependent_platforms(ctx, platforms):
+    installed_platforms = PlatformFactory.get_platforms(installed=True).keys()
+    if set(platforms) <= set(installed_platforms):
+        return
+    ctx.invoke(
+        cli_platforms_install,
+        platforms=list(set(platforms) - set(installed_platforms))
+    )
+
+
+def init_lib_readme(lib_dir):
+    if isfile(join(lib_dir, "readme.txt")):
+        return
+    with open(join(lib_dir, "readme.txt"), "w") as f:
+        f.write("""
 This directory is intended for the project specific (private) libraries.
 PlatformIO will compile them to static libraries and link to executable file.
 
@@ -135,77 +224,81 @@ http://docs.platformio.org/en/latest/projectconf.html#lib-install
 
 """)
 
-    if not isfile(project_file):
-        copyfile(join(get_source_dir(), "projectconftpl.ini"),
-                 project_file)
 
-    if board:
-        fill_project_envs(
-            ctx, project_file, board, disable_auto_uploading, env_prefix)
-
-    if ide:
-        pg = ProjectGenerator(project_dir, ide, board[0] if board else None)
-        pg.generate()
-
-    click.secho(
-        "\nProject has been successfully initialized!\nUseful commands:\n"
-        "`platformio run` - process/build project from the current "
-        "directory\n"
-        "`platformio run --target upload` or `platformio run -t upload` "
-        "- upload firmware to embedded board\n"
-        "`platformio run --target clean` - clean project (remove compiled "
-        "files)",
-        fg="green"
-    )
-
-
-def fill_project_envs(ctx, project_file, board_types, disable_auto_uploading,
-                      env_prefix):
-    builtin_boards = get_boards()
-    content = []
-    used_envs = []
-    used_platforms = []
-
-    with open(project_file) as f:
-        used_envs = [l.strip() for l in f.read().splitlines() if
-                     l.strip().startswith("[env:")]
-
-    for type_ in board_types:
-        data = builtin_boards[type_]
-        used_platforms.append(data['platform'])
-        env_name = "[env:%s%s]" % (env_prefix, type_)
-
-        if env_name in used_envs:
-            continue
-
-        content.append("")
-        content.append(env_name)
-        content.append("platform = %s" % data['platform'])
-
-        # find default framework for board
-        frameworks = data.get("frameworks")
-        if frameworks:
-            content.append("framework = %s" % frameworks[0])
-
-        content.append("board = %s" % type_)
-        content.append("%stargets = upload" % ("# " if disable_auto_uploading
-                                               else ""))
-
-    _install_dependent_platforms(ctx, used_platforms)
-
-    if not content:
+def init_ci_conf(project_dir):
+    if isfile(join(project_dir, ".travis.yml")):
         return
+    with open(join(project_dir, ".travis.yml"), "w") as f:
+        f.write("""# Continuous Integration (CI) is the practice, in software
+# engineering, of merging all developer working copies with a shared mainline
+# several times a day < http://docs.platformio.org/en/latest/ci/index.html >
+#
+# Documentation:
+#
+# * Travis CI Embedded Builds with PlatformIO
+#   < https://docs.travis-ci.com/user/integration/platformio/ >
+#
+# * PlatformIO integration with Travis CI
+#   < http://docs.platformio.org/en/latest/ci/travis.html >
+#
+# * User Guide for `platformio ci` command
+#   < http://docs.platformio.org/en/latest/userguide/cmd_ci.html >
+#
+#
+# Please choice one of the following templates (proposed below) and uncomment
+# it (remove "# " before each line) or use own configuration according to the
+# Travis CI documentation (see above).
+#
 
-    with open(project_file, "a") as f:
-        content.append("")
-        f.write("\n".join(content))
+
+#
+# Template #1: General project. Test it using existing `platformio.ini`.
+#
+
+# language: python
+# python:
+#     - "2.7"
+#
+# sudo: false
+# cache:
+#     directories:
+#         - "~/.platformio"
+#
+# install:
+#     - pip install -U platformio
+#
+# script:
+#     - platformio run
 
 
-def _install_dependent_platforms(ctx, platforms):
-    installed_platforms = PlatformFactory.get_platforms(installed=True).keys()
-    if set(platforms) <= set(installed_platforms):
+#
+# Template #2: The project is intended to by used as a library with examples
+#
+
+# language: python
+# python:
+#     - "2.7"
+#
+# sudo: false
+# cache:
+#     directories:
+#         - "~/.platformio"
+#
+# env:
+#     - PLATFORMIO_CI_SRC=path/to/test/file.c
+#     - PLATFORMIO_CI_SRC=examples/file.ino
+#     - PLATFORMIO_CI_SRC=path/to/test/directory
+#
+# install:
+#     - pip install -U platformio
+#
+# script:
+#     - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+""")
+
+
+def init_cvs_ignore(project_dir):
+    if isfile(join(project_dir, ".gitignore")):
         return
-    ctx.invoke(
-        cli_platforms_install,
-        platforms=list(set(platforms) - set(installed_platforms))
-    )
+    with open(join(project_dir, ".gitignore"), "w") as f:
+        f.write(".pioevs")

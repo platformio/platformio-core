@@ -27,7 +27,7 @@ Usage
 Description
 -----------
 
-Initialize new PlatformIO based project.
+Initialize new PlatformIO based project or update existing with new data.
 
 
 This command will create:
@@ -36,6 +36,8 @@ This command will create:
 * ``src`` - a source directory. Put your source files here
 * ``lib`` - a directory for the project specific (private) libraries.
   PlatformIO will compile them to static libraries and link to executable file
+* ``.travis.yml`` configuration file (template) for Continuous Integration
+  with :ref:`ci_travis`
 
 .. note::
     The source code of each library should be placed in separate directory.
@@ -74,12 +76,11 @@ A list with supported IDE is available within ``platformio init --help`` command
 Also, please look into :ref:`ide` page.
 
 .. option::
-    --disable-auto-uploading
+    --enable-auto-uploading
 
 If you initialise project with the specified
 :option:`platformio init --board`, then *PlatformIO*
-will create environment with enabled firmware auto-uploading. This option
-allows you to disable firmware auto-uploading by default.
+will create environment with enabled firmware auto-uploading.
 
 .. option::
     --env-prefix
@@ -137,9 +138,6 @@ Examples
 .. code-block:: bash
 
     $ platformio init --board uno
-
-    Would you like to enable firmware auto-uploading when project is successfully built using `platformio run` command?
-    Don't forget that you can upload firmware manually using `platformio run --target upload` command. [y/N]: y
 
     The current working directory *** will be used for the new project.
     You can specify another project directory via

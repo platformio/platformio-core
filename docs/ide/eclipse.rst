@@ -37,9 +37,6 @@ page for more detailed information.
 Integration
 -----------
 
-Project Generator
-^^^^^^^^^^^^^^^^^
-
 Since PlatformIO 2.0 you can generate Eclipse compatible project using
 :option:`platformio init --ide` command. Please choose board type using
 :ref:`cmd_boards` command and run:
@@ -56,12 +53,19 @@ Then:
 2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
 3. Build project: ``Menu: Project > Build Project``.
 
+.. warning::
+    The libraries which are added, installed or used in the project
+    after generating process wont be reflected in IDE. To fix it you
+    need to reinitialize project using :ref:`cmd_init` (repeat it).
 
-Manual Integration
-^^^^^^^^^^^^^^^^^^
+Articles / Manuals
+------------------
 
 * `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
 * `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
+* `Learning Arduino GitHub Repository <http://www.trojanc.co.za/2015/07/11/learning-arduino-github-repository/>`_
+
+See a full list with :ref:`articles`.
 
 Screenshot
 ----------

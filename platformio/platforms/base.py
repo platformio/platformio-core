@@ -15,6 +15,7 @@
 import os
 import re
 from imp import load_source
+from multiprocessing import cpu_count
 from os.path import isdir, isfile, join
 
 import click
@@ -389,6 +390,8 @@ class BasePlatform(object):
                 [
                     "scons",
                     "-Q",
+                    "-j %d" % self.get_job_nums(),
+                    "--warn=no-no-parallel-support",
                     "-f", join(util.get_source_dir(), "builder", "main.py")
                 ] + variables + targets,
                 stdout=util.AsyncPipe(self.on_run_out),
@@ -432,3 +435,10 @@ class BasePlatform(object):
         self._last_echo_line = line
 
         click.secho(line, fg=fg, err=level < 3)
+
+    @staticmethod
+    def get_job_nums():
+        try:
+            return cpu_count()
+        except NotImplementedError:
+            return 1

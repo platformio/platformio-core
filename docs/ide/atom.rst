@@ -34,6 +34,13 @@ Integration
 Using `Atom Packages <https://atom.io/docs/v1.0.2/using-atom-atom-packages>`_
 please install `platomformio <https://atom.io/packages/platomformio>`_ package.
 
+Articles / Manuals
+------------------
+
+* `Arduino Development in Atom Editor <http://viget.com/extend/arduino-development-in-atom-editor>`_
+
+See a full list with :ref:`articles`.
+
 Screenshot
 ----------
 

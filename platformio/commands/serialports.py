@@ -57,10 +57,10 @@ if int(PYSERIAL_VERSION[0]) == 3:
                   help="Enable RTS/CTS flow control, default=Off")
     @click.option("--xonxoff", is_flag=True,
                   help="Enable software flow control, default=Off")
-    @click.option("--rts", default="0", type=click.Choice(["0", "1"]),
-                  help="Set initial RTS line state, default=0")
-    @click.option("--dtr", default="0", type=click.Choice(["0", "1"]),
-                  help="Set initial DTR line state, default=0")
+    @click.option("--rts", default=None, type=click.Choice(["0", "1"]),
+                  help="Set initial RTS line state")
+    @click.option("--dtr", default=None, type=click.Choice(["0", "1"]),
+                  help="Set initial DTR line state")
     @click.option("--encoding", default="UTF-8",
                   help="Set the encoding for the serial port (e.g. hexlify, "
                   "Latin1, UTF-8), default: UTF-8")

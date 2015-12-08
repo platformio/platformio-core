@@ -58,6 +58,11 @@ There are 3 predefined targets for building:
 * ``PLATFORMIO_CLEAN`` - clean compiled objects and etc.
 
 .. warning::
+    The libraries which are added, installed or used in the project
+    after generating process wont be reflected in IDE. To fix it you
+    need to reinitialize project using :ref:`cmd_init` (repeat it).
+
+.. warning::
     PlatformIO generates empty project by default and **code auto-completion
     will not work!** To enable auto-completion please choose one of:
 
@@ -72,6 +77,14 @@ There are 3 predefined targets for building:
     More info `CLion issue #CPP-3977 <https://youtrack.jetbrains.com/issue/CPP-3977>`_.
     Active discussion is located in
     `PlatformIO issue #132 <https://github.com/platformio/platformio/issues/132>`_.
+
+Articles / Manuals
+------------------
+
+* `Using PlatformIO to get started with Arduino in CLion IDE <http://www.ches.pl/using-platformio-get-started-arduino-clion-ide/>`_
+* `Programar con Arduino "The good way" (Programming with Arduino "The good way", Spanish) <http://congdegnu.es/2015/11/09/programar-con-arduino-the-good-way/>`_
+
+See a full list with :ref:`articles`.
 
 Screenshot
 ----------

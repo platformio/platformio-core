@@ -32,7 +32,6 @@ def cli():
                     fg="yellow")
 
         cmds = (
-            ["pip", "install", "--upgrade", "pip", "setuptools"],
             ["pip", "install", "--upgrade", "platformio"],
             ["platformio", "--version"]
         )
@@ -60,7 +59,11 @@ def cli():
             if not r:
                 raise exception.UpgradeError(
                     "\n".join([str(cmd), str(e)]))
-            if ("Permission denied" in r['err'] and
+            permission_errors = (
+                "permission denied",
+                "not permitted"
+            )
+            if (any([m in r['err'].lower() for m in permission_errors]) and
                     "windows" not in util.get_systype()):
                 click.secho("""
 -----------------
@@ -68,7 +71,7 @@ Permission denied
 -----------------
 You need the `sudo` permission to install Python packages. Try
 
-> sudo platformio upgrade
+> sudo pip install -U platformio
 
 WARNING! Don't use `sudo` for the rest PlatformIO commands.
 """, fg="yellow", err=True)

@@ -14,6 +14,13 @@
 Travis CI
 =========
 
+.. image:: ../_static/ci-travis-logo.png
+    :target: https://docs.travis-ci.com/user/integration/platformio/
+
+
+**Travis CI** `officially supports <https://docs.travis-ci.com/user/integration/platformio/>`_
+**PlatformIO for Embedded Builds.**
+
 `Travis CI <http://en.wikipedia.org/wiki/Travis_CI>`_ is an open-source hosted,
 distributed continuous integration service used to build and test projects
 hosted at `GitHub <http://en.wikipedia.org/wiki/GitHub>`_.

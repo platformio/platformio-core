@@ -14,10 +14,6 @@
 Library Manager
 ===============
 
-..
-
-    *"The missing library manager for development platforms"* [#]_
-
 *PlatformIO Library Manager* allows you to organize external embedded libraries.
 You can search for new libraries via
 
@@ -27,12 +23,4 @@ You can search for new libraries via
 You don't need to bother for finding the latest version of library. Due to
 :ref:`cmd_lib_update` command you will have up-to-date external libraries.
 
-.. toctree::
-    :maxdepth: 2
-
-    config
-    creating
-    User Guide <../userguide/lib/index.rst>
-
-.. [#] Inspired by `npm <https://www.npmjs.com/>`_ and `bower
-    <http://bower.io>`_ package managers for web.
+.. image:: ../_static/platformio-demo-lib.gif
