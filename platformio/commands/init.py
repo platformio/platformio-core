@@ -126,8 +126,9 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
     )
 
 
-def fill_project_envs(ctx, project_file, board_types, enable_auto_uploading,
-                      env_prefix, force_download):
+def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
+        ctx, project_file, board_types, enable_auto_uploading,
+        env_prefix, force_download):
     builtin_boards = get_boards()
     content = []
     used_envs = []
