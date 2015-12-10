@@ -103,22 +103,42 @@ Troubleshooting
 Installation
 ~~~~~~~~~~~~
 
-PlatformIO and SCons aren't installed properly
-''''''''''''''''''''''''''''''''''''''''''''''
+PlatformIO and ``SCons`` aren't installed properly
+''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Try these solutions:
+PlatformIO depends on awesome and irreplaceable software construction tool
+named `SCons <http://www.scons.org>`_. PlatformIO Code Builder uses it to build
+single source code for the multiple embedded platforms.
 
-1. Upgrade SCons via `pip <https://pip.pypa.io>`_
+When you install PlatformIO it tries to find ``scons`` program in your OS. If
+SCons is installed in your system, then PlatformIO will use it. Otherwise,
+PlatformIO tries to install it automatically using ``pip install scons``. So, if
+you are here, then it means that PlatformIO could not install it for you.
+Let fix it manually.
+
+1. Need to cleanup all previous SCons installations using `pip <https://pip.pypa.io>`_
 
 .. code-block:: bash
 
     [sudo] pip uninstall scons
+
+
+2. Try to install it manually
+
+.. code-block:: bash
+
     [sudo] pip install scons
 
     # or if you have "error: option --single-version-externally-managed not recognized"
     [sudo] pip install --egg scons
 
-2. Install PlatformIO using :ref:`installation_installer_script`.
+3. If it didn't help you, try system OS package manager
+
+   * **Mac OS X** using `brew <http://brew.sh>`_ run ``brew install scons``
+   * **Linux** using ``apt`` run ``[sudo] apt-get install scons``
+
+To identify that SCons is installed in your system run ``scons -v``.
+
 
 .. _faq_troubleshooting_sconssingverextmanaged:
 
@@ -139,8 +159,8 @@ Answered in `issue #252 <https://github.com/platformio/platformio/issues/252#iss
 
 .. _faq_troubleshooting_pionotfoundinpath:
 
-Program ``platformio`` not found in PATH
-''''''''''''''''''''''''''''''''''''''''
+Program "platformio" not found in PATH
+''''''''''''''''''''''''''''''''''''''
 
 Where is ``platformio`` binary installed? Run this command in Terminal
 
