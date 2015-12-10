@@ -426,6 +426,7 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
     [env:env_with_specific_extra_script]
     platform = atmelavr
     extra_script = /path/to/extra_script.py
+    custom_option = hello
 
 ``extra_script.py``:
 
@@ -435,14 +436,17 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 
     env = DefaultEnvironment()
 
-    env.Replace(UPLOADHEXCMD='"$UPLOADER" --uploader --flags')
+    env.Replace(UPLOADHEXCMD='"$UPLOADER" ${ARGUMENTS.get("custom_option")} --uploader --flags')
 
     # uncomment line below to see environment variables
     # print env.Dump()
+    # print ARGUMENTS
 
 
 * see built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
-* take a look on related users questions: `#351 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_,
+* take a look on the multiple snippets/answers for the user questions:
+  `#365 <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_,
+  `#351 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_,
   `#236 <https://github.com/platformio/platformio/issues/236#issuecomment-112038284>`_,
   `#247 <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_
 
