@@ -96,6 +96,40 @@ Arduino
       - 512 Kb
       - 32 Kb
 
+Atmel
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``samd21_xpro``
+      - `Atmel SAMD21-XPRO <https://developer.mbed.org/platforms/SAMD21-XPRO/>`_
+      - ATSAMD21J18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``saml21_xpro_b``
+      - `Atmel SAML21-XPRO-B <https://developer.mbed.org/platforms/SAML21-XPRO/>`_
+      - ATSAML21J18B
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``samr21_xpro``
+      - `Atmel ATSAMR21-XPRO <https://developer.mbed.org/platforms/SAMR21-XPRO/>`_
+      - ATSAMR21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
 Digistump
 ~~~~~~~~~
 
