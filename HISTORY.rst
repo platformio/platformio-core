@@ -4,6 +4,12 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.5.1 (2015-12-??)
+~~~~~~~~~~~~~~~~~~
+
+* Handle ``upload_flags`` option in `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`_
+  (`issue #368 <https://github.com/platformio/platformio/issues/368>`_)
+
 2.5.0 (2015-12-08)
 ~~~~~~~~~~~~~~~~~~
 
