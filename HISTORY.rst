@@ -7,7 +7,11 @@ PlatformIO 2.0
 2.5.1 (2015-12-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Handle ``upload_flags`` option in `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`_
+* Implemented Over The Air (OTA) upgrades for `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  development platform.
+  (`issue #365 <https://github.com/platformio/platformio/issues/365>`_)
+* Added support for Espressif ESP8266 ESP-01-1MB board (ready for OTA)
+* Handle ``upload_flags`` option in `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
   (`issue #368 <https://github.com/platformio/platformio/issues/368>`_)
 
 2.5.0 (2015-12-08)

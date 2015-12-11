@@ -21,6 +21,28 @@
         "url": "https://nurdspace.nl/ESP8266",
         "vendor": "Espressif"
     },
+    "esp01_1m": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DARDUINO_ESP8266_ESP01 -DARDUINO_ARCH_ESP8266 -DESP8266",
+            "f_cpu": "80000000L",
+            "ldscript": "esp8266.flash.1m128.ld",
+            "mcu": "esp8266",
+            "variant": "generic"
+        },
+        "frameworks": ["arduino"],
+        "name": "Espressif ESP8266 ESP-01-1MB board",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 1048576,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "https://nurdspace.nl/ESP8266",
+        "vendor": "Espressif"
+    },
     "esp12e": {
         "build": {
             "core": "esp8266",
