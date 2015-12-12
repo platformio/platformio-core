@@ -34,10 +34,11 @@
         if ($('#pionav').css('display') !== 'block') {
             return;
         }
-        window.setTimeout('$(window).scrollTop($(window).scrollTop() - 50);', 50);
-        $(window).on('hashchange', function(e){
+        function fixScroll() {
             $(window).scrollTop($(window).scrollTop() - 50);
-        });
+        }
+        window.setTimeout(fixScroll, 50);
+        $(window).on('hashchange', function(e){fixScroll();});
     });  
   };
 
