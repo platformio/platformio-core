@@ -13,6 +13,7 @@ PlatformIO 2.0
 * Added support for Espressif ESP8266 ESP-01-1MB board (ready for OTA)
 * Handle ``upload_flags`` option in `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
   (`issue #368 <https://github.com/platformio/platformio/issues/368>`_)
+* Improved PlatformIO installation on the Mac OS X El Capitan
 
 2.5.0 (2015-12-08)
 ~~~~~~~~~~~~~~~~~~

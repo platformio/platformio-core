@@ -52,23 +52,17 @@ Please *choose ONE of* the following methods:
 a) Python Package Manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The latest stable version of PlatformIO may be installed/upgraded via
+The latest stable version of PlatformIO may be installed or upgraded via
 `pip <https://pip.pypa.io>`_ as follows:
 
 .. code-block:: bash
 
-    # update dependent packages to the latest versions
-    pip install -U pip setuptools
-
-    # install/upgrade the latest version of PlatformIO
     pip install -U platformio
 
 Note that you may run into permissions issues running these commands. You have
 a few options here:
 
 * Run with ``sudo`` to install PlatformIO and dependencies globally
-* Specify the `pip install --user <https://pip.pypa.io/en/stable/user_guide.html#user-installs>`_
-  option to install local to your user
 * Run the command in a `virtualenv <https://virtualenv.pypa.io>`_ local to a
   specific project working set.
 
@@ -132,7 +126,6 @@ c) Full Guide
 
 .. code-block:: bash
 
-    pip install -U pip setuptools
     pip install -U platformio
 
 If your computer does not recognize ``pip`` command, try to install it first
@@ -151,12 +144,19 @@ Install the latest PlatformIO from the ``develop`` branch:
 
 .. code-block:: bash
 
-    pip install -U pip setuptools
     pip install -U https://github.com/platformio/platformio/archive/develop.zip
 
 If you want to be up-to-date with the latest ``develop`` version of PlatformIO,
 then you need to re-install PlatformIO each time if you see the new commits in
 `PlatformIO GitHub repository (branch: develop) <https://github.com/platformio/platformio/commits/develop>`_.
+
+To revert to the latest stable version
+
+.. code-block:: bash
+
+    pip uninstall platformio
+    pip install -U platformio
+
 
 Troubleshooting
 ---------------
