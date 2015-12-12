@@ -129,8 +129,10 @@ Let fix it manually.
 
     [sudo] pip install scons
 
-    # or if you have "error: option --single-version-externally-managed not recognized"
-    [sudo] pip install --egg scons
+    # If you have errors:
+    # * error: option --single-version-externally-managed not recognized
+    # * OSError: [Errno 1] Operation not permitted: '/System/Library/Frameworks/Python.framework/Versions/2.7/man'
+    [sudo] pip install --egg scons --install-option="--no-install-man"
 
 3. If it didn't help you, try system OS package manager
 
