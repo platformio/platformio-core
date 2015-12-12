@@ -13,35 +13,17 @@
 # limitations under the License.
 
 from os import chdir, getcwd, readlink, remove, symlink, walk
-from os.path import exists, islink, join, split
+from os.path import exists, islink, join, relpath
 from sys import exit as sys_exit
 
 
-def get_symrelpath(root, sympath, ending=None):
-    head, tail = split(sympath)
-
-    if ending:
-        ending = join(tail, ending)
-        relpath = join("..", ending)
-    else:
-        relpath = tail
-        ending = tail
-
-    if exists(join(root, relpath)):
-        return relpath
-    elif head:
-        return get_symrelpath(root, head, ending)
-    else:
-        raise Exception()
-
-
 def fix_symlink(root, fname, brokenlink):
+    print root, fname, brokenlink
     prevcwd = getcwd()
-    symrelpath = get_symrelpath(root, brokenlink)
 
     chdir(root)
     remove(fname)
-    symlink(symrelpath, fname)
+    symlink(relpath(brokenlink, root), fname)
     chdir(prevcwd)
 
 
