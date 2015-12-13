@@ -196,6 +196,7 @@ This option is used by "uploader" tool when sending firmware to board via
 
 * ``/dev/ttyUSB0`` - Unix-based OS
 * ``COM3`` - Windows OS
+* ``192.168.0.13`` - IP address when using OTA
 
 If ``upload_port`` isn't specified, then *PlatformIO* will try to detect it
 automatically.
