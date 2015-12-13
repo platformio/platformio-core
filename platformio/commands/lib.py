@@ -64,6 +64,8 @@ def cli():
 def lib_search(query, **filters):
     if not query:
         query = []
+    if not isinstance(query, list):
+        query = list(query)
 
     for key, values in filters.iteritems():
         for value in values:
