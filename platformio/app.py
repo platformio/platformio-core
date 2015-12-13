@@ -46,8 +46,11 @@ DEFAULT_SETTINGS = {
         "value": False
     },
     "enable_telemetry": {
-        "description": ("Shares commands, platforms and libraries usage"
-                        " to help us make PlatformIO better (Yes/No)"),
+        "description": (
+            "Share diagnostics and usage information (PlatformIO fatal "
+            "errors/exceptions, platforms, boards, frameworks, commands) "
+            "to help us make PlatformIO better. We DO NOT share PRIVATE "
+            "information (Yes/No)"),
         "value": True
     },
     "enable_prompts": {

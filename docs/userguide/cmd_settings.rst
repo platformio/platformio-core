@@ -113,8 +113,12 @@ Can PlatformIO communicate with you via prompts?
 :Default:   Yes
 :Values:    Yes/No
 
-Shares commands, platforms and libraries usage to help us make PlatformIO
-better.
+Share diagnostics and usage information (PlatformIO fatal errors/exceptions,
+platforms, boards, frameworks, commands) to help us make PlatformIO better.
+The `source code for telemetry service <https://github.com/platformio/platformio/blob/develop/platformio/telemetry.py>`_
+is open source. You can make sure that we DO NOT share PRIVATE information or
+source code of your project. All information shares anonymously. Thanks a lot
+that live this setting enabled.
 
 
 .. note::
@@ -138,7 +142,7 @@ Examples
     check_platformio_interval       3                 Check for the new PlatformIO interval (days)
     check_platforms_interval        7                 Check for the platform updates interval (days)
     enable_prompts                  Yes               Can PlatformIO communicate with you via prompts: propose to install platforms which aren't installed yet, paginate over library search results and etc.)? ATTENTION!!! If you call PlatformIO like subprocess, please disable prompts to avoid blocking (Yes/No)
-    enable_telemetry                Yes               Shares commands, platforms and libraries usage to help us make PlatformIO better (Yes/No)
+    enable_telemetry                Yes               Share diagnostics and usage information (PlatformIO fatal errors/exceptions, platforms, boards, frameworks, commands) to help us make PlatformIO better (Yes/No)
 
 
 2. Show specified setting
