@@ -32,7 +32,21 @@
 						"upload"
 					],
 					"name": "Upload"
+				},
+					{
+					"cmd":
+					[
+						"platformio",
+						"-f", "-c", "sublimetext",
+						"run",
+						"--target",
+						"upload",
+						"--upload-port",
+						"192.168.0.1"
+					],
+					"name": "Upload OTA"
 				}
+
 			],
 			"working_dir": "${project_path:${folder}}",
 			"selector": "source.c, source.c++",
