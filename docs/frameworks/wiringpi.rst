@@ -19,6 +19,17 @@ For more detailed information please visit `vendor site <http://wiringpi.com>`_.
 
 .. contents::
 
+Platforms
+---------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description
+
+    * - :ref:`platform_linux_arm`
+      - Linux ARM is a Unix-like and mostly POSIX-compliant computer operating system (OS) assembled under the model of free and open-source software development and distribution. Using host OS (Mac OS X, Linux ARM) you can build native application for Linux ARM platform.
+
 Boards
 ------
 

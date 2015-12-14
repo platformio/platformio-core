@@ -28,5 +28,62 @@ Packages
     * - Name
       - Contents
 
+    * - ``framework-wiringpi``
+      - `GPIO Interface library for the Raspberry Pi <http://wiringpi.com>`_
+
     * - ``toolchain-gccarmlinuxgnueabi``
       - `GCC for Linux ARM GNU EABI <https://gcc.gnu.org>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
+Frameworks
+----------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description
+
+    * - :ref:`framework_wiringpi`
+      - WiringPi is a GPIO access library written in C for the BCM2835 used in the Raspberry Pi. It's designed to be familiar to people who have used the Arduino "wiring" system.
+
+Boards
+------
+
+.. note::
+    * You can list pre-configured boards by :ref:`cmd_boards` command or
+      `PlatformIO Boards Explorer <http://platformio.org/#!/boards>`_
+    * For more detailed ``board`` information please scroll tables below by
+      horizontal.
+
+Raspberry Pi
+~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``raspberrypi_1b``
+      - `Raspberry Pi 1 Model B <https://www.raspberrypi.org>`_
+      - BCM2835
+      - 700 MHz
+      - 524288 Kb
+      - 524288 Kb
+
+    * - ``raspberrypi_2b``
+      - `Raspberry Pi 2 Model B <https://www.raspberrypi.org>`_
+      - BCM2836
+      - 900 MHz
+      - 1048576 Kb
+      - 1048576 Kb
+
+    * - ``raspberrypi_zero``
+      - `Raspberry Pi Zero <https://www.raspberrypi.org>`_
+      - BCM2835
+      - 1000 MHz
+      - 524288 Kb
+      - 524288 Kb

@@ -86,6 +86,9 @@ Packages
     * - ``framework-spl``
       - `Standard Peripheral Library for STM32 MCUs <http://www.st.com/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890>`_
 
+    * - ``framework-wiringpi``
+      - `GPIO Interface library for the Raspberry Pi <http://wiringpi.com>`_
+
     * - ``ldscripts``
       - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
 
@@ -440,3 +443,4 @@ and copy there two files:
 
 Now, we should see ``ststm32gdb`` platform using :ref:`cmd_platforms_search` command output
 and can install it via :ref:`platformio platforms install ststm32gdb <cmd_platforms_install>` command.
+

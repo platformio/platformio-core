@@ -7,7 +7,7 @@
         },
         "frameworks": ["wiringpi"],
         "name": "Raspberry Pi 1 Model B",
-        "platform": "native",
+        "platform": "linux_arm",
         "upload": {
             "maximum_ram_size": 536870912,
             "maximum_size": 536870912
@@ -25,7 +25,7 @@
         },
         "frameworks": ["wiringpi"],
         "name": "Raspberry Pi 2 Model B",
-        "platform": "native",
+        "platform": "linux_arm",
         "upload": {
             "maximum_ram_size": 1073741824,
             "maximum_size": 1073741824
@@ -42,7 +42,7 @@
         },
         "frameworks": ["wiringpi"],
         "name": "Raspberry Pi Zero",
-        "platform": "native",
+        "platform": "linux_arm",
         "upload": {
             "maximum_ram_size": 536870912,
             "maximum_size": 536870912
