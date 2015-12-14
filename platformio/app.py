@@ -47,10 +47,8 @@ DEFAULT_SETTINGS = {
     },
     "enable_telemetry": {
         "description": (
-            "Share diagnostics and usage information (PlatformIO fatal "
-            "errors/exceptions, platforms, boards, frameworks, commands) "
-            "to help us make PlatformIO better. We DO NOT share PRIVATE "
-            "information (Yes/No)"),
+            "Telemetry service <http://docs.platformio.org/en/latest/"
+            "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
         "value": True
     },
     "enable_prompts": {
