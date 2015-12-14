@@ -4,9 +4,12 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.5.1 (2015-12-??)
+2.6.0 (2015-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for Raspberry Pi `WiringPi <http://docs.platformio.org/en/latest/frameworks/wiringpi.html>`__
+  framework
+  (`issue #372 <https://github.com/platformio/platformio/issues/372>`_)
 * Implemented Over The Air (OTA) upgrades for `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
   development platform.
   (`issue #365 <https://github.com/platformio/platformio/issues/365>`_)

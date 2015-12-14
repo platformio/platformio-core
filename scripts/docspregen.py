@@ -226,6 +226,18 @@ def generate_framework(type_, data):
     print "Processing framework: %s" % type_
     lines = []
 
+    lines.append("""..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+""")
+
     lines.append(".. _framework_%s:" % type_)
     lines.append("")
 
@@ -248,15 +260,19 @@ Platforms
     * - Name
       - Description""")
 
+    _found_platform = False
     for platform in sorted(PlatformFactory.get_platforms().keys()):
         if not is_compat_platform_and_framework(platform, type_):
             continue
+        _found_platform = True
         p = PlatformFactory.newPlatform(platform)
         lines.append("""
     * - :ref:`platform_{type_}`
       - {description}""".format(
             type_=platform,
             description=p.get_description()))
+    if not _found_platform:
+        del lines[-1]
 
     lines.append("""
 Boards

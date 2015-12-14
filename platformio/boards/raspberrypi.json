@@ -1,0 +1,53 @@
+{
+    "raspberrypi_1b": {
+        "build": {
+            "extra_flags": "-DRASPBERRYPI -DRASPBERRYPI1",
+            "f_cpu": "700000000L",
+            "mcu": "bcm2835"
+        },
+        "frameworks": ["wiringpi"],
+        "name": "Raspberry Pi 1 Model B",
+        "platform": "native",
+        "upload": {
+            "maximum_ram_size": 536870912,
+            "maximum_size": 536870912
+        },
+        "url": "https://www.raspberrypi.org",
+        "vendor": "Raspberry Pi"
+    },
+
+    "raspberrypi_2b": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DRASPBERRYPI -DRASPBERRYPI2",
+            "f_cpu": "900000000L",
+            "mcu": "bcm2836"
+        },
+        "frameworks": ["wiringpi"],
+        "name": "Raspberry Pi 2 Model B",
+        "platform": "native",
+        "upload": {
+            "maximum_ram_size": 1073741824,
+            "maximum_size": 1073741824
+        },
+        "url": "https://www.raspberrypi.org",
+        "vendor": "Raspberry Pi"
+    },
+
+    "raspberrypi_zero": {
+        "build": {
+            "extra_flags": "-DRASPBERRYPI -DRASPBERRYPIZERO",
+            "f_cpu": "1000000000L",
+            "mcu": "bcm2835"
+        },
+        "frameworks": ["wiringpi"],
+        "name": "Raspberry Pi Zero",
+        "platform": "native",
+        "upload": {
+            "maximum_ram_size": 536870912,
+            "maximum_size": 536870912
+        },
+        "url": "https://www.raspberrypi.org",
+        "vendor": "Raspberry Pi"
+    }
+}

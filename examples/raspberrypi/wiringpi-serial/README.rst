@@ -9,18 +9,21 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _frameworks:
+How to build PlatformIO based project
+=====================================
 
-Frameworks
-==========
+1. `Install PlatformIO <http://docs.platformio.org/en/latest/installation.html>`_
+2. Download `source code with examples <https://github.com/platformio/platformio/archive/develop.zip>`_
+3. Extract ZIP archive
+4. Run these commands:
 
-.. toctree::
-    :maxdepth: 2
+.. code-block:: bash
 
-    arduino
-    cmsis
-    energia
-    libopencm3
-    mbed
-    spl
-    wiringpi
+    # Change directory to example
+    > cd platformio-develop/examples/raspberrypi/wiringpi-serial
+
+    # Process example project
+    > platformio run
+
+    # Run program
+    > .pioenvs/raspberrypi_2b/program

@@ -28,7 +28,7 @@ def pytest_generate_tests(metafunc):
     example_dirs = normpath(join(dirname(__file__), "..", "examples"))
     project_dirs = []
     for root, _, files in walk(example_dirs):
-        if "platformio.ini" not in files:
+        if "platformio.ini" not in files or ".skiptest" in files:
             continue
         project_dirs.append(root)
     project_dirs.sort()

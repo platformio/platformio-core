@@ -9,13 +9,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _platform_native:
+.. _framework_wiringpi:
 
-Platform ``native``
-===================
-Native development platform is intended to be used for desktop OS. This platform uses built-in tool chains (preferable based on GCC), frameworks, libs from particular OS where it will be run.
+Framework ``wiringpi``
+======================
+WiringPi is a GPIO access library written in C for the BCM2835 used in the Raspberry Pi. It's designed to be familiar to people who have used the Arduino "wiring" system.
 
-For more detailed information please visit `vendor site <http://platformio.org/#!/platforms/native>`_.
+For more detailed information please visit `vendor site <http://wiringpi.com>`_.
 
 .. contents::
 
@@ -25,8 +25,7 @@ Boards
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
       `PlatformIO Boards Explorer <http://platformio.org/#!/boards>`_
-    * For more detailed ``board`` information please scroll tables below by
-      horizontal.
+    * For more detailed ``board`` information please scroll tables below by horizontal.
 
 Raspberry Pi
 ~~~~~~~~~~~~
