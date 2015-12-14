@@ -19,7 +19,7 @@ class PlatformioException(Exception):
 
     def __str__(self):  # pragma: no cover
         if self.MESSAGE:
-            return self.MESSAGE % self.args
+            return self.MESSAGE.format(*self.args)
         else:
             return Exception.__str__(self)
 
@@ -39,13 +39,13 @@ class AbortedByUser(PlatformioException):
 
 class UnknownPlatform(PlatformioException):
 
-    MESSAGE = "Unknown platform '%s'"
+    MESSAGE = "Unknown platform '{0}'"
 
 
 class PlatformNotInstalledYet(PlatformioException):
 
-    MESSAGE = "The platform '%s' has not been installed yet. "\
-        "Use `platformio platforms install` command"
+    MESSAGE = "The platform '{0}' has not been installed yet. "\
+        "Use `platformio platforms install {0}` command"
 
 
 class BoardNotDefined(PlatformioException):
@@ -57,61 +57,61 @@ class BoardNotDefined(PlatformioException):
 
 class UnknownBoard(PlatformioException):
 
-    MESSAGE = "Unknown board type '%s'"
+    MESSAGE = "Unknown board type '{0}'"
 
 
 class UnknownFramework(PlatformioException):
 
-    MESSAGE = "Unknown framework '%s'"
+    MESSAGE = "Unknown framework '{0}'"
 
 
 class UnknownPackage(PlatformioException):
 
-    MESSAGE = "Detected unknown package '%s'"
+    MESSAGE = "Detected unknown package '{0}'"
 
 
 class InvalidPackageVersion(PlatformioException):
 
-    MESSAGE = "The package '%s' with version '%d' does not exist"
+    MESSAGE = "The package '{0}' with version '{1:d}' does not exist"
 
 
 class NonSystemPackage(PlatformioException):
 
-    MESSAGE = "The package '%s' is not available for your system '%s'"
+    MESSAGE = "The package '{0}' is not available for your system '{1}'"
 
 
 class FDUnrecognizedStatusCode(PlatformioException):
 
-    MESSAGE = "Got an unrecognized status code '%s' when downloaded %s"
+    MESSAGE = "Got an unrecognized status code '{0}' when downloaded {1}"
 
 
 class FDSizeMismatch(PlatformioException):
 
-    MESSAGE = "The size (%d bytes) of downloaded file '%s' "\
-        "is not equal to remote size (%d bytes)"
+    MESSAGE = "The size ({0:d} bytes) of downloaded file '{1}' "\
+        "is not equal to remote size ({2:d} bytes)"
 
 
 class FDSHASumMismatch(PlatformioException):
 
-    MESSAGE = "The 'sha1' sum '%s' of downloaded file '%s' "\
-        "is not equal to remote '%s'"
+    MESSAGE = "The 'sha1' sum '{0}' of downloaded file '{1}' "\
+        "is not equal to remote '{2}'"
 
 
 class NotPlatformProject(PlatformioException):
 
     MESSAGE = "Not a PlatformIO project. `platformio.ini` file has not been "\
-        "found in current working directory (%s). To initialize new project "\
+        "found in current working directory ({0}). To initialize new project "\
         "please use `platformio init` command"
 
 
 class UndefinedEnvPlatform(PlatformioException):
 
-    MESSAGE = "Please specify platform for '%s' environment"
+    MESSAGE = "Please specify platform for '{0}' environment"
 
 
 class UnsupportedArchiveType(PlatformioException):
 
-    MESSAGE = "Can not unpack file '%s'"
+    MESSAGE = "Can not unpack file '{0}'"
 
 
 class ProjectEnvsNotAvailable(PlatformioException):
@@ -121,23 +121,23 @@ class ProjectEnvsNotAvailable(PlatformioException):
 
 class InvalidEnvName(PlatformioException):
 
-    MESSAGE = "Invalid environment '%s'. The name must start with 'env:'"
+    MESSAGE = "Invalid environment '{0}'. The name must start with 'env:'"
 
 
 class UnknownEnvNames(PlatformioException):
 
-    MESSAGE = "Unknown environment names '%s'. Valid names are '%s'"
+    MESSAGE = "Unknown environment names '{0}'. Valid names are '{1}'"
 
 
 class CleanPioenvsDirError(PlatformioException):
 
-    MESSAGE = "Can not remove temporary directory `%s`. "\
+    MESSAGE = "Can not remove temporary directory `{0}`. "\
         "Please remove it manually"
 
 
 class GetSerialPortsError(PlatformioException):
 
-    MESSAGE = "No implementation for your platform ('%s') available"
+    MESSAGE = "No implementation for your platform ('{0}') available"
 
 
 class GetLatestVersionError(PlatformioException):
@@ -147,7 +147,7 @@ class GetLatestVersionError(PlatformioException):
 
 class APIRequestError(PlatformioException):
 
-    MESSAGE = "[API] %s"
+    MESSAGE = "[API] {0}"
 
 
 class LibAlreadyInstalled(PlatformioException):
@@ -156,32 +156,32 @@ class LibAlreadyInstalled(PlatformioException):
 
 class LibNotInstalled(PlatformioException):
 
-    MESSAGE = "Library #%d has not been installed yet"
+    MESSAGE = "Library #{0:d} has not been installed yet"
 
 
 class LibInstallDependencyError(PlatformioException):
 
-    MESSAGE = "Error has been occurred for library dependency '%s'"
+    MESSAGE = "Error has been occurred for library dependency '{0}'"
 
 
 class InvalidLibConfURL(PlatformioException):
 
-    MESSAGE = "Invalid library config URL '%s'"
+    MESSAGE = "Invalid library config URL '{0}'"
 
 
 class BuildScriptNotFound(PlatformioException):
 
-    MESSAGE = "Invalid path '%s' to build script"
+    MESSAGE = "Invalid path '{0}' to build script"
 
 
 class InvalidSettingName(PlatformioException):
 
-    MESSAGE = "Invalid setting with the name '%s'"
+    MESSAGE = "Invalid setting with the name '{0}'"
 
 
 class InvalidSettingValue(PlatformioException):
 
-    MESSAGE = "Invalid value '%s' for the setting '%s'"
+    MESSAGE = "Invalid value '{0}' for the setting '{1}'"
 
 
 class CIBuildEnvsEmpty(PlatformioException):
@@ -200,7 +200,7 @@ class SConsNotInstalledError(PlatformioException):
 
 class UpgradeError(PlatformioException):
 
-    MESSAGE = """%s
+    MESSAGE = """{0}
 
 * Upgrade using `pip install -U platformio`
 * Try different installation/upgrading steps:
