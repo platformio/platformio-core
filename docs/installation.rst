@@ -57,6 +57,10 @@ The latest stable version of PlatformIO may be installed or upgraded via
 
 .. code-block:: bash
 
+    # update package installer
+    pip install -U pip setuptools
+
+    # install or upgrade PlatformIO
     pip install -U platformio
 
 Note that you may run into permissions issues running these commands. You have
@@ -126,6 +130,10 @@ c) Full Guide
 
 .. code-block:: bash
 
+    # update package installer
+    pip install -U pip setuptools
+
+    # install or upgrade PlatformIO
     pip install -U platformio
 
 If your computer does not recognize ``pip`` command, try to install it first
@@ -144,6 +152,10 @@ Install the latest PlatformIO from the ``develop`` branch:
 
 .. code-block:: bash
 
+    # update package installer
+    pip install -U pip setuptools
+
+    # install the latest development version of PlatformIO
     pip install -U https://github.com/platformio/platformio/archive/develop.zip
 
 If you want to be up-to-date with the latest ``develop`` version of PlatformIO,
