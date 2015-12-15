@@ -9,7 +9,7 @@
             "mcu": "stm32f407vgt6",
             "variant": "stm32f407xx"
         },
-        "frameworks": ["cmsis", "spl", "libopencm3", "mbed"],
+        "frameworks": ["mbed", "cmsis", "spl", "libopencm3"],
         "name": "ST STM32F4DISCOVERY",
         "platform": "ststm32",
         "upload": {
@@ -49,7 +49,7 @@
             "mcu": "stm32f303vct6",
             "variant": "stm32f303xc"
         },
-        "frameworks": ["cmsis", "spl", "libopencm3", "mbed"],
+        "frameworks": ["mbed", "cmsis", "spl", "libopencm3"],
         "name": "ST STM32F3DISCOVERY",
         "platform": "ststm32",
         "upload": {
