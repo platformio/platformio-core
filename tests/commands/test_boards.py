@@ -65,6 +65,7 @@ def test_board_ldscripts(platformio_setup, clirunner, validate_cliresult):
     ldscripts_path = join(util.get_home_dir(), "packages", "ldscripts")
     for _, opts in util.get_boards().iteritems():
         if opts['build'].get("ldscript"):
-            if "libopencm3" in opts['frameworks']:
+            frameworks = opts['frameworks']
+            if any(fw in frameworks for fw in ["libopencm3", "mbed"]):
                 continue
             assert isfile(join(ldscripts_path, opts['build'].get("ldscript")))
