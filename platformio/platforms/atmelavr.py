@@ -36,22 +36,31 @@ class AtmelavrPlatform(BasePlatform):
         },
 
         "tool-avrdude": {
-            "alias": "uploader",
-            "default": True
+            "alias": "uploader"
         },
 
         "tool-micronucleus": {
-            "alias": "uploader",
-            "default": True
+            "alias": "uploader"
         },
 
         "framework-arduinoavr": {
-            "default": True
+            "alias": "framework"
         }
     }
 
     def get_name(self):
         return "Atmel AVR"
+
+    def configure_default_packages(self, envoptions, targets):
+        if envoptions.get("board"):
+            board = get_boards(envoptions.get("board"))
+            disable_tool = "tool-micronucleus"
+            if "digispark" in board['build']['core']:
+                disable_tool = "tool-avrdude"
+            del self.PACKAGES[disable_tool]['alias']
+
+        return BasePlatform.configure_default_packages(
+            self, envoptions, targets)
 
     def on_run_err(self, line):  # pylint: disable=R0201
         # fix STDERR "flash written" for avrdude
@@ -59,16 +68,3 @@ class AtmelavrPlatform(BasePlatform):
             self.on_run_out(line)
         else:
             BasePlatform.on_run_err(self, line)
-
-    def run(self, variables, targets, verbose):
-        for v in variables:
-            if "BOARD=" not in v:
-                continue
-            disable_tool = "tool-micronucleus"
-            _, board = v.split("=")
-            bdata = get_boards(board)
-            if "digispark" in bdata['build']['core']:
-                disable_tool = "tool-avrdude"
-            del self.PACKAGES[disable_tool]['alias']
-            break
-        return BasePlatform.run(self, variables, targets, verbose)

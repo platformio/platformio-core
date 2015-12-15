@@ -39,7 +39,7 @@ class Siliconlabsefm32Platform(BasePlatform):
         },
 
         "framework-mbed": {
-            "default": True
+            "alias": "framework"
         }
     }
 

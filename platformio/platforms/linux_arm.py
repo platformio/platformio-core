@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from platformio import exception, util
 from platformio.platforms.base import BasePlatform
-from platformio.util import get_systype
 
 
 class Linux_armPlatform(BasePlatform):
@@ -34,10 +34,26 @@ class Linux_armPlatform(BasePlatform):
         "toolchain-gccarmlinuxgnueabi": {
             "alias": "toolchain",
             "default": True
+        },
+
+        "framework-wiringpi": {
+            "alias": "framework"
         }
     }
 
     def __init__(self):
-        if "linux_arm" in get_systype():
+        if "linux_arm" in util.get_systype():
             del self.PACKAGES['toolchain-gccarmlinuxgnueabi']
         BasePlatform.__init__(self)
+
+    def configure_default_packages(self, envoptions, targets):
+        if (envoptions.get("framework") == "wiringpi" and
+                "linux_arm" not in util.get_systype()):
+            raise exception.PlatformioException(
+                "PlatformIO does not support temporary cross-compilation "
+                "for WiringPi framework. Please run PlatformIO directly on "
+                "Raspberry Pi"
+            )
+
+        return BasePlatform.configure_default_packages(
+            self, envoptions, targets)

@@ -37,12 +37,11 @@ class AtmelsamPlatform(BasePlatform):
         },
 
         "framework-arduinosam": {
-            "default": True
+            "alias": "framework"
         },
 
         "tool-bossac": {
-            "alias": "uploader",
-            "default": True
+            "alias": "uploader"
         }
     }
 

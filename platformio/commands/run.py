@@ -181,42 +181,12 @@ class EnvironmentProcessor(object):
 
         telemetry.on_run_environment(self.options, build_targets)
 
-        # install platform and libs dependencies
-        _autoinstall_platform(self.cmd_ctx, platform, build_targets)
+        # install dependent libraries
         if "lib_install" in self.options:
             _autoinstall_libs(self.cmd_ctx, self.options['lib_install'])
 
         p = PlatformFactory.newPlatform(platform)
         return p.run(build_vars, build_targets, self.verbose_level)
-
-
-def _autoinstall_platform(ctx, platform, targets):
-    installed_platforms = PlatformFactory.get_platforms(installed=True).keys()
-    cmd_options = {}
-    p = PlatformFactory.newPlatform(platform)
-
-    if "uploadlazy" in targets:
-        upload_tools = p.pkg_aliases_to_names(["uploader"])
-
-        # platform without uploaders
-        if not upload_tools and platform in installed_platforms:
-            return
-        # uploaders are already installed
-        if set(upload_tools) <= set(p.get_installed_packages()):
-            return
-
-        cmd_options['skip_default_package'] = True
-        if upload_tools:
-            cmd_options['with_package'] = ["uploader"]
-
-    elif (platform in installed_platforms and
-          set(p.get_default_packages()) <= set(p.get_installed_packages())):
-        return
-
-    if (not app.get_setting("enable_prompts") or
-            click.confirm("The platform '%s' has not been installed yet. "
-                          "Would you like to install it now?" % platform)):
-        ctx.invoke(cmd_platforms_install, platforms=[platform], **cmd_options)
 
 
 def _autoinstall_libs(ctx, libids_list):

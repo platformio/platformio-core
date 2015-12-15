@@ -40,24 +40,23 @@ class Ststm32Platform(BasePlatform):
         },
 
         "tool-stlink": {
-            "alias": "uploader",
-            "default": True
+            "alias": "uploader"
         },
 
         "framework-cmsis": {
-            "default": True
+            "alias": "framework"
         },
 
         "framework-spl": {
-            "default": True
+            "alias": "framework"
         },
 
         "framework-libopencm3": {
-            "default": True
+            "alias": "framework"
         },
 
         "framework-mbed": {
-            "default": True
+            "alias": "framework"
         }
     }
 

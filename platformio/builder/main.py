@@ -57,6 +57,7 @@ commonvars.AddVariables(
 
     # package aliases
     ("PIOPACKAGE_TOOLCHAIN",),
+    ("PIOPACKAGE_FRAMEWORK",),
     ("PIOPACKAGE_UPLOADER",),
 
     # options

@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.6.0 (2015-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Install only required packages depending on build environment
+  (`issue #308 <https://github.com/platformio/platformio/issues/308>`_)
 * Added support for Raspberry Pi `WiringPi <http://docs.platformio.org/en/latest/frameworks/wiringpi.html>`__
   framework
   (`issue #372 <https://github.com/platformio/platformio/issues/372>`_)
