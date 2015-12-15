@@ -34,13 +34,24 @@ env.Replace(
 )
 
 env.VariantDirWrap(
-    join("$BUILD_DIR", "FrameworkSPLInc"),
+    join("$BUILD_DIR", "FrameworkCMSIS"),
     join("$PLATFORMFW_DIR", "${BOARD_OPTIONS['build']['core']}",
-         "variants", "${BOARD_OPTIONS['build']['variant']}", "inc")
+         "cmsis", "cores", "${BOARD_OPTIONS['build']['core']}")
+)
+
+env.VariantDirWrap(
+    join("$BUILD_DIR", "FrameworkSPLInc"),
+    join(
+        "$PLATFORMFW_DIR", "${BOARD_OPTIONS['build']['core']}", "spl",
+        "variants", env.subst("${BOARD_OPTIONS['build']['variant']}")[0:7],
+        "inc"
+    )
 )
 
 env.Append(
     CPPPATH=[
+        join("$BUILD_DIR", "FrameworkCMSIS"),
+        join("$BUILD_DIR", "FrameworkCMSISVariant"),
         join("$BUILD_DIR", "FrameworkSPLInc"),
         join("$BUILD_DIR", "FrameworkSPL")
     ]
@@ -71,10 +82,20 @@ elif "STM32L1XX_MD" in extra_flags:
     src_filter_patterns += ["-<stm32l1xx_flash_ramfunc.c>"]
 
 libs = []
+
+libs.append(envsafe.BuildLibrary(
+    join("$BUILD_DIR", "FrameworkCMSISVariant"),
+    join(
+        "$PLATFORMFW_DIR", "${BOARD_OPTIONS['build']['core']}", "cmsis",
+        "variants", env.subst("${BOARD_OPTIONS['build']['variant']}")[0:7]
+    )
+))
+
 libs.append(envsafe.BuildLibrary(
     join("$BUILD_DIR", "FrameworkSPL"),
-    join("$PLATFORMFW_DIR", "${BOARD_OPTIONS['build']['core']}", "variants",
-         "${BOARD_OPTIONS['build']['variant']}", "src"),
+    join("$PLATFORMFW_DIR", "${BOARD_OPTIONS['build']['core']}",
+         "spl", "variants",
+         env.subst("${BOARD_OPTIONS['build']['variant']}")[0:7], "src"),
     src_filter=" ".join(src_filter_patterns)
 ))
 

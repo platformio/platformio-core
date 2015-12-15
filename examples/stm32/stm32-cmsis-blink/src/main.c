@@ -6,7 +6,7 @@
 	#define ENABLE_GPIO_CLOCK (RCC->AHBENR |= RCC_AHBENR_GPIOBEN)
 	#define GPIOMODER ((GPIO_MODER_MODER7_0|GPIO_MODER_MODER6_0))
 #elif STM32F3
-	#include "stm32f30x.h"
+	#include "stm32f3xx.h"
 	#define LEDPORT (GPIOE)
 	#define LED1 (8)
 	#define LED2 (9)

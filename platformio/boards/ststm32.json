@@ -2,12 +2,12 @@
     "disco_f407vg": {
         "build": {
             "core": "stm32",
-            "extra_flags": "-DSTM32F40_41xxx",
+            "extra_flags": "-DSTM32F4 -DSTM32F407xx -DSTM32F40_41xxx",
             "f_cpu": "168000000L",
             "ldscript": "stm32f405x6.ld",
             "cpu": "cortex-m4",
             "mcu": "stm32f407vgt6",
-            "variant": "stm32f4"
+            "variant": "stm32f407xx"
         },
         "frameworks": ["cmsis", "spl", "libopencm3", "mbed"],
         "name": "ST STM32F4DISCOVERY",
@@ -22,14 +22,14 @@
     "disco_l152rb": {
         "build": {
             "core": "stm32",
-            "extra_flags": "-DSTM32L1XX_MD",
+            "extra_flags": "-DSTM32L1 -DSTM32L152xB -DSTM32L1XX_MD",
             "f_cpu": "32000000L",
             "ldscript": "stm32l15xx6.ld",
             "cpu": "cortex-m3",
             "mcu": "stm32l152rbt6",
-            "variant": "stm32l1"
+            "variant": "stm32l152xb"
         },
-        "frameworks": ["cmsis","spl","libopencm3"],
+        "frameworks": ["cmsis", "spl", "libopencm3"],
         "name": "ST STM32LDISCOVERY",
         "platform": "ststm32",
         "upload": {
@@ -42,12 +42,12 @@
     "disco_f303vc": {
         "build": {
             "core": "stm32",
-            "extra_flags": "-DSTM32F303xC",
+            "extra_flags": "-DSTM32F3 -DSTM32F303xC",
             "f_cpu": "72000000L",
             "ldscript": "stm32f30xx.ld",
             "cpu": "cortex-m4",
             "mcu": "stm32f303vct6",
-            "variant": "stm32f3"
+            "variant": "stm32f303xc"
         },
         "frameworks": ["cmsis", "spl", "libopencm3", "mbed"],
         "name": "ST STM32F3DISCOVERY",
@@ -272,11 +272,15 @@
     },
     "nucleo_f401re": {
         "build": {
+            "core": "stm32",
+            "extra_flags": "-DSTM32F4 -DSTM32F401xE",
             "f_cpu": "84000000L",
+            "ldscript": "stm32f401xe.ld",
             "cpu": "cortex-m4",
-            "mcu": "stm32f401ret6"
+            "mcu": "stm32f401ret6",
+            "variant": "stm32f401xe"
         },
-        "frameworks": ["mbed"],
+        "frameworks": ["cmsis", "mbed"],
         "name": "ST Nucleo F401RE",
         "platform": "ststm32",
         "upload": {
