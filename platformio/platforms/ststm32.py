@@ -62,3 +62,10 @@ class Ststm32Platform(BasePlatform):
 
     def get_name(self):
         return "ST STM32"
+
+    def configure_default_packages(self, envoptions, targets):
+        if envoptions.get("framework") == "cmsis":
+            self.PACKAGES['framework-mbed']['default'] = True
+
+        return BasePlatform.configure_default_packages(
+            self, envoptions, targets)
