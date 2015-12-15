@@ -26,7 +26,7 @@ and cutting the time-to-market for devices.
 http://www.arm.com/products/processors/cortex-m/cortex-microcontroller-software-interface-standard.php
 """
 
-from os.path import join
+from os.path import isfile, join
 
 from SCons.Script import DefaultEnvironment
 
@@ -44,6 +44,7 @@ env.VariantDirWrap(
 env.Append(
     CPPPATH=[
         join("$BUILD_DIR", "FrameworkCMSIS"),
+        join("$BUILD_DIR", "FrameworkCMSISCommon"),
         join("$BUILD_DIR", "FrameworkCMSISVariant")
     ]
 )
@@ -54,10 +55,39 @@ envsafe = env.Clone()
 # Target: Build Core Library
 #
 
+# use mbed ldscript with bootloader section
+ldscript = env.get("BOARD_OPTIONS", {}).get("build", {}).get("ldscript")
+if not isfile(join(env.subst("$PIOPACKAGES_DIR"), "ldscripts", ldscript)):
+    if "mbed" in env.get("BOARD_OPTIONS", {}).get("frameworks", {}):
+        env.Append(
+            LINKFLAGS=[
+                "-Wl,-T",
+                join(
+                    "$PIOPACKAGES_DIR", "framework-mbed", "variant",
+                    env.subst("$BOARD").upper(), "mbed",
+                    "TARGET_%s" % env.subst(
+                        "$BOARD").upper(), "TOOLCHAIN_GCC_ARM",
+                    "%s.ld" % ldscript.upper()[:-3]
+                )
+            ]
+        )
+
 libs = []
 libs.append(envsafe.BuildLibrary(
     join("$BUILD_DIR", "FrameworkCMSISVariant"),
-    join("$PLATFORMFW_DIR", "variants", "${BOARD_OPTIONS['build']['variant']}")
+    join(
+        "$PLATFORMFW_DIR", "variants",
+        env.subst("${BOARD_OPTIONS['build']['variant']}")[0:7],
+        "${BOARD_OPTIONS['build']['variant']}"
+    )
+))
+
+libs.append(envsafe.BuildLibrary(
+    join("$BUILD_DIR", "FrameworkCMSISCommon"),
+    join(
+        "$PLATFORMFW_DIR", "variants",
+        env.subst("${BOARD_OPTIONS['build']['variant']}")[0:7], "common"
+    )
 ))
 
 env.Append(LIBS=libs)
