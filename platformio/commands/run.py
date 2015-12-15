@@ -23,8 +23,6 @@ import click
 
 from platformio import app, exception, telemetry, util
 from platformio.commands.lib import lib_install as cmd_lib_install
-from platformio.commands.platforms import \
-    platforms_install as cmd_platforms_install
 from platformio.libmanager import LibraryManager
 from platformio.platforms.base import PlatformFactory
 
