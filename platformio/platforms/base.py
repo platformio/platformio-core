@@ -375,7 +375,7 @@ class BasePlatform(object):
                     # skip all packages, allow only upload tools
                     self.PACKAGES[_name]['default'] = False
 
-    def install_default_packages(self, targets):
+    def _install_default_packages(self):
         installed_platforms = PlatformFactory.get_platforms(
             installed=True).keys()
 
@@ -403,7 +403,7 @@ class BasePlatform(object):
             envoptions[_name.lower()] = _value
 
         self.configure_default_packages(envoptions, targets)
-        self.install_default_packages(targets)
+        self._install_default_packages()
 
         self._verbose_level = int(verbose)
 
