@@ -30,9 +30,6 @@ Quickstart
 
     $ platformio init --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
 
-    Would you like to enable firmware auto-uploading when project is successfully built using `platformio run` command?
-    Don't forget that you can upload firmware manually using `platformio run --target upload` command. [y/N]: y
-
     The current working directory *** will be used for the new project.
     You can specify another project directory via
     `platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.
@@ -66,10 +63,9 @@ Change working directory to the project's root where is located
     # clean project
     $ platformio run --target clean
 
-If you don't have installed required platforms, then *PlatformIO* will propose
-you to install them automatically.
 
-Further examples can be found in `PlatformIO Repository <https://github.com/platformio/platformio/tree/develop/examples>`_.
+Useful links:
 
-Also, for more detailed information as for commands please go to
-:ref:`userguide` sections.
+* `Project examples <https://github.com/platformio/platformio/tree/develop/examples>`_
+* :ref:`userguide` for PlatformIO commands
+* `Quickstart for Espressif ESP8266 <https://github.com/esp8266/Arduino/blob/master/doc/platformio.md>`_
