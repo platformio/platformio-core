@@ -366,8 +366,7 @@ class BasePlatform(object):
                     self.PACKAGES[pkg_name]['default'] = True
 
         # enable upload tools for upload targets
-        if (set(["upload", "uploadlazy", "uploadeep", "program"])
-                & set(targets)):
+        if any(["upload" in t for t in targets] + ["program" in targets]):
             for _name, _opts in self.PACKAGES.iteritems():
                 if _opts.get("alias") == "uploader":
                     self.PACKAGES[_name]['default'] = True
