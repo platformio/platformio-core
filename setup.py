@@ -74,6 +74,7 @@ setup(
     keywords=[
         "iot", "build tool", "compiler", "builder", "library manager",
         "embedded", "ci", "continuous integration", "arduino", "mbed",
-        "framework", "ide", "ide integration", "library.json"
+        "framework", "ide", "ide integration", "library.json", "make", "cmake",
+        "makefile", "mk"
     ]
 )

@@ -57,6 +57,7 @@ commonvars.AddVariables(
 
     # package aliases
     ("PIOPACKAGE_TOOLCHAIN",),
+    ("PIOPACKAGE_FRAMEWORK",),
     ("PIOPACKAGE_UPLOADER",),
 
     # options
@@ -76,7 +77,8 @@ commonvars.AddVariables(
     # upload options
     ("UPLOAD_PORT",),
     ("UPLOAD_PROTOCOL",),
-    ("UPLOAD_SPEED",)
+    ("UPLOAD_SPEED",),
+    ("UPLOAD_FLAGS",)
 )
 
 DefaultEnvironment(
@@ -160,6 +162,9 @@ if env.subst("$PIOPACKAGE_TOOLCHAIN"):
 env.SConscriptChdir(0)
 env.SConsignFile(join("$PIOENVS_DIR", ".sconsign.dblite"))
 env.SConscript("$BUILD_SCRIPT")
+
+if "UPLOAD_FLAGS" in env:
+    env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
 
 if environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")):
     env.SConscript(

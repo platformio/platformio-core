@@ -16,6 +16,7 @@
     Builder for Espressif MCUs
 """
 
+import socket
 from os.path import join
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
@@ -98,14 +99,6 @@ env.Replace(
     PROGSUFFIX=".elf"
 )
 
-if "FRAMEWORK" in env:
-    env.Append(
-        LINKFLAGS=[
-            "-Wl,-wrap,system_restart_local",
-            "-Wl,-wrap,register_chipv6_phy"
-        ]
-    )
-
 _board_max_rom = int(
     env.get("BOARD_OPTIONS", {}).get("upload", {}).get("maximum_size", 0))
 env.Append(
@@ -136,11 +129,32 @@ env.Append(
     )
 )
 
-#
-# Configure SDK
-#
+if "FRAMEWORK" in env:
+    env.Append(
+        LINKFLAGS=[
+            "-Wl,-wrap,system_restart_local",
+            "-Wl,-wrap,register_chipv6_phy"
+        ]
+    )
 
-if "FRAMEWORK" not in env:
+    # Handle uploading via OTA
+    try:
+        if env.get("UPLOAD_PORT") and socket.inet_aton(env.get("UPLOAD_PORT")):
+            env.Replace(
+                UPLOADEROTA=join("$PLATFORMFW_DIR", "tools", "espota.py"),
+                UPLOADERFLAGS=[
+                    "--debug",
+                    "--progress",
+                    "-i", "$UPLOAD_PORT",
+                    "-f", "$SOURCE"
+                ],
+                UPLOADCMD='$UPLOADEROTA $UPLOADERFLAGS'
+            )
+    except socket.error:
+        pass
+
+# Configure native SDK
+else:
     env.Append(
         CPPPATH=[
             join("$PIOPACKAGES_DIR", "sdk-esp8266", "include"),

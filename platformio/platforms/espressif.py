@@ -42,13 +42,19 @@ class EspressifPlatform(BasePlatform):
         },
 
         "sdk-esp8266": {
-            "default": True
         },
 
         "framework-arduinoespressif": {
-            "default": True
+            "alias": "framework"
         }
     }
 
     def get_name(self):
         return "Espressif"
+
+    def configure_default_packages(self, envoptions, targets):
+        if not envoptions.get("framework"):
+            self.PACKAGES['sdk-esp8266']['default'] = True
+
+        return BasePlatform.configure_default_packages(
+            self, envoptions, targets)

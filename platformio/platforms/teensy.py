@@ -31,11 +31,9 @@ class TeensyPlatform(BasePlatform):
     PACKAGES = {
 
         "toolchain-atmelavr": {
-            "default": True
         },
 
         "toolchain-gccarmnoneeabi": {
-            "default": True
         },
 
         "ldscripts": {
@@ -43,32 +41,30 @@ class TeensyPlatform(BasePlatform):
         },
 
         "framework-arduinoteensy": {
-            "default": True
+            "alias": "framework"
         },
 
         "framework-mbed": {
-            "default": True
+            "alias": "framework"
         },
 
         "tool-teensy": {
-            "alias": "uploader",
-            "default": True
+            "alias": "uploader"
         }
     }
 
     def get_name(self):
         return "Teensy"
 
-    def run(self, variables, targets, verbose):
-        for v in variables:
-            if "BOARD=" not in v:
-                continue
-            _, board = v.split("=")
-            bdata = get_boards(board)
-            if bdata['build']['core'] == "teensy":
-                tpackage = "toolchain-atmelavr"
+    def configure_default_packages(self, envoptions, targets):
+        if envoptions.get("board"):
+            board = get_boards(envoptions.get("board"))
+            if board['build']['core'] == "teensy":
+                name = "toolchain-atmelavr"
             else:
-                tpackage = "toolchain-gccarmnoneeabi"
-            self.PACKAGES[tpackage]['alias'] = "toolchain"
-            break
-        return BasePlatform.run(self, variables, targets, verbose)
+                name = "toolchain-gccarmnoneeabi"
+            self.PACKAGES[name]['alias'] = "toolchain"
+            self.PACKAGES[name]['default'] = True
+
+        return BasePlatform.configure_default_packages(
+            self, envoptions, targets)

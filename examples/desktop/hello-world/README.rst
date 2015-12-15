@@ -25,5 +25,5 @@ How to build PlatformIO based project
     # Process example project
     > platformio run
 
-    # Clean build files
-    > platformio run --target clean
+    # Run program
+    > .pioenvs/native/program

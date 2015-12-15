@@ -20,7 +20,7 @@ from os.path import isdir, isfile, join
 
 import click
 
-from platformio import exception, util
+from platformio import app, exception, util
 from platformio.app import get_state_item, set_state_item
 from platformio.pkgmanager import PackageManager
 
@@ -70,6 +70,9 @@ PLATFORM_PACKAGES = {
     ],
     "framework-mbed": [
         ("mbed Framework", "http://mbed.org")
+    ],
+    "framework-wiringpi": [
+        ("GPIO Interface library for the Raspberry Pi", "http://wiringpi.com")
     ],
     "sdk-esp8266": [
         ("ESP8266 SDK", "http://bbs.espressif.com")
@@ -258,8 +261,8 @@ class BasePlatform(object):
     def get_packages(self):
         return self.PACKAGES
 
-    def get_pkg_alias(self, pkgname):
-        return self.PACKAGES[pkgname].get("alias", None)
+    def get_package_alias(self, pkgname):
+        return self.PACKAGES[pkgname].get("alias")
 
     def pkg_aliases_to_names(self, aliases):
         names = []
@@ -267,10 +270,12 @@ class BasePlatform(object):
             name = alias
             # lookup by package aliases
             for _name, _opts in self.get_packages().items():
-                if _opts.get("alias", None) == alias:
-                    name = _name
-                    break
-            names.append(name)
+                if _opts.get("alias") == alias:
+                    name = None
+                    names.append(_name)
+            # if alias is the right name
+            if name:
+                names.append(name)
         return names
 
     def get_default_packages(self):
@@ -281,9 +286,12 @@ class BasePlatform(object):
         pm = PackageManager()
         return [n for n in self.get_packages().keys() if pm.is_installed(n)]
 
-    def install(self, with_packages, without_packages, skip_default_packages):
-        with_packages = set(self.pkg_aliases_to_names(with_packages))
-        without_packages = set(self.pkg_aliases_to_names(without_packages))
+    def install(self, with_packages=None, without_packages=None,
+                skip_default_packages=False):
+        with_packages = set(
+            self.pkg_aliases_to_names(with_packages or []))
+        without_packages = set(
+            self.pkg_aliases_to_names(without_packages or []))
 
         upkgs = with_packages | without_packages
         ppkgs = set(self.get_packages().keys())
@@ -295,7 +303,7 @@ class BasePlatform(object):
             if name in without_packages:
                 continue
             elif (name in with_packages or (not skip_default_packages and
-                                            opts['default'])):
+                                            opts.get("default"))):
                 requirements.append(name)
 
         pm = PackageManager()
@@ -347,34 +355,73 @@ class BasePlatform(object):
         obsolated = pm.get_outdated()
         return not set(self.get_packages().keys()).isdisjoint(set(obsolated))
 
+    def configure_default_packages(self, envoptions, targets):
+        # enbale used frameworks
+        for pkg_name in self.pkg_aliases_to_names(["framework"]):
+            for framework in envoptions.get("framework", "").split(","):
+                framework = framework.lower().strip()
+                if not framework:
+                    continue
+                if framework in pkg_name:
+                    self.PACKAGES[pkg_name]['default'] = True
+
+        # enable upload tools for upload targets
+        if any(["upload" in t for t in targets] + ["program" in targets]):
+            for _name, _opts in self.PACKAGES.iteritems():
+                if _opts.get("alias") == "uploader":
+                    self.PACKAGES[_name]['default'] = True
+                elif "uploadlazy" in targets:
+                    # skip all packages, allow only upload tools
+                    self.PACKAGES[_name]['default'] = False
+
+    def _install_default_packages(self):
+        installed_platforms = PlatformFactory.get_platforms(
+            installed=True).keys()
+
+        if (self.get_type() in installed_platforms and
+                set(self.get_default_packages()) <=
+                set(self.get_installed_packages())):
+            return True
+
+        if (not app.get_setting("enable_prompts") or
+                self.get_type() in installed_platforms or
+                click.confirm(
+                    "The platform '%s' has not been installed yet. "
+                    "Would you like to install it now?" % self.get_type())):
+            return self.install()
+        else:
+            raise exception.PlatformNotInstalledYet(self.get_type())
+
     def run(self, variables, targets, verbose):
         assert isinstance(variables, list)
         assert isinstance(targets, list)
 
+        envoptions = {}
+        for v in variables:
+            _name, _value = v.split("=", 1)
+            envoptions[_name.lower()] = _value
+
+        self.configure_default_packages(envoptions, targets)
+        self._install_default_packages()
+
         self._verbose_level = int(verbose)
-
-        installed_platforms = PlatformFactory.get_platforms(
-            installed=True).keys()
-        installed_packages = PackageManager.get_installed()
-
-        if self.get_type() not in installed_platforms:
-            raise exception.PlatformNotInstalledYet(self.get_type())
 
         if "clean" in targets:
             targets.remove("clean")
             targets.append("-c")
 
-        if not any([v.startswith("BUILD_SCRIPT=") for v in variables]):
+        if "build_script" not in envoptions:
             variables.append("BUILD_SCRIPT=%s" % self.get_build_script())
 
         for v in variables:
             if not v.startswith("BUILD_SCRIPT="):
                 continue
-            _, path = v.split("=", 2)
+            _, path = v.split("=", 1)
             if not isfile(path):
                 raise exception.BuildScriptNotFound(path)
 
         # append aliases of the installed packages
+        installed_packages = PackageManager.get_installed()
         for name, options in self.get_packages().items():
             if "alias" not in options or name not in installed_packages:
                 continue

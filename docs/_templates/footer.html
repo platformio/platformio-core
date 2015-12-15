@@ -27,5 +27,30 @@
     </nav>
   </div>
 </header>
+<script>
+(function() {
+  var runMyCode = function($) {
+    $(window).ready(function() {
+        if ($('#pionav').css('display') !== 'block') {
+            return;
+        }
+        function fixScroll() {
+            $(window).scrollTop($(window).scrollTop() - 50);
+        }
+        window.setTimeout(fixScroll, 50);
+        $(window).on('hashchange', function(e){fixScroll();});
+    });  
+  };
+
+  var timer = function() {
+    if (window.jQuery) {
+      runMyCode(window.jQuery);
+    } else {
+      window.setTimeout(timer, 50);
+    }
+  };
+  timer();
+})();
+</script>
 {{ super() }}
 {% endblock %}

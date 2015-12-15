@@ -166,7 +166,7 @@ env.Append(
 root_dir = env.subst(
     join("$PLATFORMFW_DIR", "lib", BOARD_BUILDOPTS.get("core")))
 if BOARD_BUILDOPTS.get("core") == "stm32":
-    root_dir = join(root_dir, BOARD_BUILDOPTS.get("variant")[-2:])
+    root_dir = join(root_dir, BOARD_BUILDOPTS.get("variant")[5:7])
 
 ldscript_path = find_ldscript(root_dir)
 merge_ld_scripts(ldscript_path)

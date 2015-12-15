@@ -23,3 +23,4 @@ Frameworks
     libopencm3
     mbed
     spl
+    wiringpi

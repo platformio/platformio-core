@@ -4,6 +4,25 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.6.0 (2015-12-15)
+~~~~~~~~~~~~~~~~~~
+
+* Install only required packages depending on build environment
+  (`issue #308 <https://github.com/platformio/platformio/issues/308>`_)
+* Added support for Raspberry Pi `WiringPi <http://docs.platformio.org/en/latest/frameworks/wiringpi.html>`__
+  framework
+  (`issue #372 <https://github.com/platformio/platformio/issues/372>`_)
+* Implemented Over The Air (OTA) upgrades for `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  development platform.
+  (`issue #365 <https://github.com/platformio/platformio/issues/365>`_)
+* Updated `CMSIS framework <http://docs.platformio.org/en/latest/frameworks/cmsis.html>`__
+  and added CMSIS support for Nucleo F401RE board
+  (`issue #373 <https://github.com/platformio/platformio/issues/373>`_)
+* Added support for Espressif ESP8266 ESP-01-1MB board (ready for OTA)
+* Handle ``upload_flags`` option in `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  (`issue #368 <https://github.com/platformio/platformio/issues/368>`_)
+* Improved PlatformIO installation on the Mac OS X El Capitan
+
 2.5.0 (2015-12-08)
 ~~~~~~~~~~~~~~~~~~
 

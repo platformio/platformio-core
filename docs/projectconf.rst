@@ -196,6 +196,7 @@ This option is used by "uploader" tool when sending firmware to board via
 
 * ``/dev/ttyUSB0`` - Unix-based OS
 * ``COM3`` - Windows OS
+* ``192.168.0.13`` - IP address when using OTA
 
 If ``upload_port`` isn't specified, then *PlatformIO* will try to detect it
 automatically.
@@ -214,6 +215,12 @@ A protocol that "uploader" tool uses to talk to the board.
 
 A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
 which "uploader" tool uses when sending firmware to board.
+
+``upload_flags``
+^^^^^^^^^^^^^^^^
+
+Extra flags for uploader. Will be added to the end of uploader command. If you
+need to override uploader command or base flags please use :ref:`projectconf_extra_script`.
 
 .. _projectconf_build_flags:
 
@@ -426,6 +433,7 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
     [env:env_with_specific_extra_script]
     platform = atmelavr
     extra_script = /path/to/extra_script.py
+    custom_option = hello
 
 ``extra_script.py``:
 
@@ -435,14 +443,17 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 
     env = DefaultEnvironment()
 
-    env.Replace(UPLOADHEXCMD='"$UPLOADER" --uploader --flags')
+    env.Replace(UPLOADHEXCMD='"$UPLOADER" ${ARGUMENTS.get("custom_option")} --uploader --flags')
 
     # uncomment line below to see environment variables
     # print env.Dump()
+    # print ARGUMENTS
 
 
 * see built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
-* take a look on related users questions: `#351 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_,
+* take a look on the multiple snippets/answers for the user questions:
+  `#365 <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_,
+  `#351 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_,
   `#236 <https://github.com/platformio/platformio/issues/236#issuecomment-112038284>`_,
   `#247 <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_
 

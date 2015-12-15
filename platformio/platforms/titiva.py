@@ -38,16 +38,15 @@ class TitivaPlatform(BasePlatform):
         },
 
         "tool-lm4flash": {
-            "alias": "uploader",
-            "default": True
+            "alias": "uploader"
         },
 
         "framework-energiativa": {
-            "default": True
+            "alias": "framework"
         },
 
         "framework-libopencm3": {
-            "default": True
+            "alias": "framework"
         }
     }
 

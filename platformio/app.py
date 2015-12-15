@@ -46,8 +46,9 @@ DEFAULT_SETTINGS = {
         "value": False
     },
     "enable_telemetry": {
-        "description": ("Shares commands, platforms and libraries usage"
-                        " to help us make PlatformIO better (Yes/No)"),
+        "description": (
+            "Telemetry service <http://docs.platformio.org/en/latest/"
+            "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
         "value": True
     },
     "enable_prompts": {

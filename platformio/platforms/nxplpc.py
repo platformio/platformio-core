@@ -36,7 +36,7 @@ class NxplpcPlatform(BasePlatform):
         },
 
         "framework-mbed": {
-            "default": True
+            "alias": "framework"
         }
     }
 

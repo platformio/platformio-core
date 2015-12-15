@@ -40,7 +40,8 @@ def on_platformio_start(ctx, force, caller):
     telemetry.on_command()
 
     # skip any check operations when upgrade command
-    if len(ctx.args or []) and ctx.args[0] == "upgrade":
+    ctx_args = ctx.args or []
+    if ctx_args and (ctx.args[0] == "upgrade" or "--json-output" in ctx_args):
         return
 
     after_upgrade(ctx)

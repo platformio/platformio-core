@@ -366,7 +366,8 @@ def test_scons():
 def install_scons():
     r = exec_command(["pip", "install", "-U", "scons"])
     if r['returncode'] != 0:
-        r = exec_command(["pip", "install", "--egg", "scons"])
+        r = exec_command(["pip", "install", "--egg", "scons",
+                          '--install-option="--no-install-man"'])
     return r['returncode'] == 0
 
 

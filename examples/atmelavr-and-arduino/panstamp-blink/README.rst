@@ -27,6 +27,3 @@ How to build PlatformIO based project
 
     # Upload firmware
     > platformio run --target upload
-
-    # Clean build files
-    > platformio run --target clean

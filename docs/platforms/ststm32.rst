@@ -183,6 +183,13 @@ ST
       - 2048 Kb
       - 256 Kb
 
+    * - ``disco_f469ni``
+      - `ST 32F469IDISCOVERY <http://www.st.com/web/catalog/tools/FM116/CL1620/SC959/SS1532/LN1848/PF262395>`_
+      - STM32F469NIH6
+      - 180 MHz
+      - 1024 Kb
+      - 384 Kb
+
     * - ``disco_l053c8``
       - `ST 32L0538DISCOVERY <http://www.st.com/web/en/catalog/tools/PF260319>`_
       - STM32L053C8T6
@@ -197,12 +204,33 @@ ST
       - 128 Kb
       - 16 Kb
 
+    * - ``disco_l476vg``
+      - `ST 32L476GDISCOVERY <http://www.st.com/web/catalog/tools/FM116/CL1620/SC959/SS1532/LN1848/PF261635>`_
+      - STM32L476VGT6
+      - 80 MHz
+      - 1024 Kb
+      - 128 Kb
+
     * - ``nucleo_f030r8``
       - `ST Nucleo F030R8 <https://developer.mbed.org/platforms/ST-Nucleo-F030R8/>`_
       - STM32F030R8T6
       - 48 MHz
       - 64 Kb
       - 8 Kb
+
+    * - ``nucleo_f031k6``
+      - `ST Nucleo F031K6 <https://developer.mbed.org/platforms/ST-Nucleo-F031K6/>`_
+      - STM32F031K6T6
+      - 48 MHz
+      - 32 Kb
+      - 4 Kb
+
+    * - ``nucleo_f042k6``
+      - `ST Nucleo F042K6 <https://developer.mbed.org/platforms/ST-Nucleo-F042K6/>`_
+      - STM32F042K6T6
+      - 48 MHz
+      - 32 Kb
+      - 6 Kb
 
     * - ``nucleo_f070rb``
       - `ST Nucleo F070RB <https://developer.mbed.org/platforms/ST-Nucleo-F070RB/>`_
@@ -235,6 +263,13 @@ ST
     * - ``nucleo_f302r8``
       - `ST Nucleo F302R8 <https://developer.mbed.org/platforms/ST-Nucleo-F302R8/>`_
       - STM32F302R8T6
+      - 72 MHz
+      - 64 Kb
+      - 16 Kb
+
+    * - ``nucleo_f303k8``
+      - `ST Nucleo F303K8 <https://developer.mbed.org/platforms/ST-Nucleo-F303K8/>`_
+      - STM32F303K8T6
       - 72 MHz
       - 64 Kb
       - 16 Kb
@@ -287,3 +322,10 @@ ST
       - 32 MHz
       - 512 Kb
       - 80 Kb
+
+    * - ``nucleo_l476rg``
+      - `ST Nucleo L476RG <https://developer.mbed.org/platforms/ST-Nucleo-L476RG/>`_
+      - STM32L476RGT6
+      - 80 MHz
+      - 1024 Kb
+      - 128 Kb

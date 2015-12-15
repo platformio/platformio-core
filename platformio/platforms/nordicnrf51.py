@@ -36,7 +36,7 @@ class Nordicnrf51Platform(BasePlatform):
         },
 
         "framework-mbed": {
-            "default": True
+            "alias": "framework"
         }
     }
 

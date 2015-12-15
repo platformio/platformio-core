@@ -60,16 +60,18 @@ def cli():
 @click.option("-k", "--keyword", multiple=True)
 @click.option("-f", "--framework", multiple=True)
 @click.option("-p", "--platform", multiple=True)
-@click.argument("query", required=False)
+@click.argument("query", required=False, nargs=-1)
 def lib_search(query, **filters):
     if not query:
-        query = ""
+        query = []
+    if not isinstance(query, list):
+        query = list(query)
 
     for key, values in filters.iteritems():
         for value in values:
-            query += ' %s:"%s"' % (key, value)
+            query.append('%s:"%s"' % (key, value))
 
-    result = get_api_result("/lib/search", dict(query=query))
+    result = get_api_result("/lib/search", dict(query=" ".join(query)))
     if result['total'] == 0:
         click.secho(
             "Nothing has been found by your request\n"
@@ -100,7 +102,7 @@ def lib_search(query, **filters):
                 click.confirm("Show next libraries?")):
             result = get_api_result(
                 "/lib/search",
-                dict(query=query, page=str(int(result['page']) + 1))
+                dict(query=" ".join(query), page=str(int(result['page']) + 1))
             )
         else:
             break

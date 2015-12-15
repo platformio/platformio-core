@@ -301,4 +301,4 @@ def init_cvs_ignore(project_dir):
     if isfile(join(project_dir, ".gitignore")):
         return
     with open(join(project_dir, ".gitignore"), "w") as f:
-        f.write(".pioevs")
+        f.write(".pioenvs")

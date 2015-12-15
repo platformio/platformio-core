@@ -34,16 +34,15 @@ class Timsp430Platform(BasePlatform):
         },
 
         "tool-mspdebug": {
-            "alias": "uploader",
-            "default": True
+            "alias": "uploader"
         },
 
         "framework-energiamsp430": {
-            "default": True
+            "alias": "framework"
         },
 
         "framework-arduinomsp430": {
-            "default": True
+            "alias": "framework"
         }
     }
 

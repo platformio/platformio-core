@@ -15,11 +15,17 @@
 library.json
 ============
 
-``library.json`` is a manifest file of development library.
+``library.json`` is a manifest file of development library. It allows developers
+to keep project in own structure and define:
 
-Initially it was
-developed for :ref:`librarymanager`, but later was accepted by worldwide embedded
-community like a **standard library specification**.
+* location of source code
+* examples list
+* compatible frameworks and platforms
+* library dependencies
+
+PlatformIO Library Crawler uses ``library.json`` manifest to extract
+source code from developer's location and keeps cleaned library in own
+Libraries Storage.
 
 A data in ``library.json`` should be represented
 in `JSON-style <http://en.wikipedia.org/wiki/JSON>`_ via

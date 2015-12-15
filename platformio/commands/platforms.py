@@ -38,8 +38,11 @@ def platforms_install(platforms, with_package, without_package,
     for platform in platforms:
         p = PlatformFactory.newPlatform(platform)
         if p.install(with_package, without_package, skip_default_package):
-            click.secho("The platform '%s' has been successfully installed!" %
-                        platform, fg="green")
+            click.secho(
+                "The platform '%s' has been successfully installed!\n"
+                "The rest of packages will be installed automatically "
+                "depending on your build environment." % platform,
+                fg="green")
 
 
 @cli.command("list", short_help="List installed platforms")
@@ -131,7 +134,7 @@ def platforms_show(ctx, platform):
     installed_packages = PackageManager.get_installed()
     for name in p.get_installed_packages():
         data = installed_packages[name]
-        pkgalias = p.get_pkg_alias(name)
+        pkgalias = p.get_package_alias(name)
         click.echo("----------")
         click.echo("Package: %s" % click.style(name, fg="yellow"))
         if pkgalias:
