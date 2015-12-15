@@ -4,7 +4,7 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.6.0 (2015-12-??)
+2.6.0 (2015-12-15)
 ~~~~~~~~~~~~~~~~~~
 
 * Install only required packages depending on build environment
