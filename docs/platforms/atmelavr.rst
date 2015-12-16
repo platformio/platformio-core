@@ -368,7 +368,7 @@ BQ
       - RAM
 
     * - ``zumbt328``
-      - `BQ ZUM BT-328 board <http://www.bq.com/gb/products/zum.html>`_
+      - `BQ ZUM BT-328 <http://www.bq.com/gb/products/zum.html>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb

@@ -363,7 +363,7 @@ BQ
       - RAM
 
     * - ``zumbt328``
-      - `BQ ZUM BT-328 board <http://www.bq.com/gb/products/zum.html>`_
+      - `BQ ZUM BT-328 <http://www.bq.com/gb/products/zum.html>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
@@ -485,21 +485,14 @@ Espressif
       - RAM
 
     * - ``esp01``
-      - `Espressif ESP8266 ESP-01 board <https://nurdspace.nl/ESP8266>`_
+      - `Espressif Generic ESP8266 ESP-01 <https://nurdspace.nl/ESP8266>`_
       - ESP8266
       - 80 MHz
       - 512 Kb
       - 32 Kb
 
-    * - ``esp01_1m``
-      - `Espressif ESP8266 ESP-01-1MB board <https://nurdspace.nl/ESP8266>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 32 Kb
-
     * - ``esp12e``
-      - `Espressif ESP8266 ESP-12E board (NodeMCU) <https://nurdspace.nl/ESP8266>`_
+      - `Espressif NodeMCU (ESP-12 Module) <https://nurdspace.nl/ESP8266>`_
       - ESP8266
       - 80 MHz
       - 4096 Kb

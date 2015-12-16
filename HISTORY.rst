@@ -4,6 +4,13 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.6.1 (2015-12-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed reset method for Espressif NodeMCU (ESP-12E Module)
+  (`issue #380 <https://github.com/platformio/platformio/issues/380>`_)
+
+
 2.6.0 (2015-12-15)
 ~~~~~~~~~~~~~~~~~~
 

@@ -87,7 +87,7 @@ env.Replace(
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-esptool", "esptool"),
     UPLOADERFLAGS=[
         "-vv",
-        "-cd", "ck",
+        "-cd", "${BOARD_OPTIONS['upload']['resetmethod']}",
         "-cb", "$UPLOAD_SPEED",
         "-cp", "$UPLOAD_PORT",
         "-ca", "0x00000",
