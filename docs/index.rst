@@ -71,7 +71,8 @@ The Missing Library Manager. *It's here!*
 * Automatic library updating
 * It runs on Windows, Mac OS X, and Linux (+ARM).
 
-For further details, please refer to :ref:`faq_what_is_platformio`
+For further details, please refer to
+:ref:`What is PlatformIO? How does it work? <faq_what_is_platformio>`
 
 Contents
 --------
