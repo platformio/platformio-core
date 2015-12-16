@@ -90,7 +90,6 @@ env.Replace(
         "-cd", "${BOARD_OPTIONS['upload']['resetmethod']}",
         "-cb", "$UPLOAD_SPEED",
         "-cp", "$UPLOAD_PORT",
-        "-ca", "0x00000",
         "-cf", "$SOURCE"
     ],
     UPLOADCMD='$UPLOADER $UPLOADERFLAGS',
