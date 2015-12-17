@@ -78,7 +78,9 @@ def BuildProgram(env):
 
     env.Append(
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
-            *pioversion_to_intstr())]
+            *pioversion_to_intstr())],
+        LIBS=deplibs,
+        LIBPATH=["$BUILD_DIR"]
     )
 
     return env.Program(
@@ -86,9 +88,7 @@ def BuildProgram(env):
         env.LookupSources(
             "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
             src_filter=getenv("PLATFORMIO_SRC_FILTER",
-                              env.get("SRC_FILTER"))),
-        LIBS=env.get("LIBS", []) + deplibs,
-        LIBPATH=env.get("LIBPATH", []) + ["$BUILD_DIR"]
+                              env.get("SRC_FILTER")))
     )
 
 

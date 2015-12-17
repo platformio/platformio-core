@@ -7,6 +7,10 @@ PlatformIO 2.0
 2.6.1 (2015-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Created public `platformio-pkg-ldscripts <https://github.com/platformio/platformio-pkg-ldscripts.git>`_
+  repository for LD scripts. Moved common configuration for ESP8266 MCU to
+  ``esp8266.flash.common.ld``
+  (`issue #379 <https://github.com/platformio/platformio/issues/379>`_)
 * Fixed reset method for Espressif NodeMCU (ESP-12E Module)
   (`issue #380 <https://github.com/platformio/platformio/issues/380>`_)
 
