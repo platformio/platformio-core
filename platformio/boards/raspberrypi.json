@@ -18,7 +18,6 @@
 
     "raspberrypi_2b": {
         "build": {
-            "core": "esp8266",
             "extra_flags": "-DRASPBERRYPI -DRASPBERRYPI2",
             "f_cpu": "900000000L",
             "mcu": "bcm2836"

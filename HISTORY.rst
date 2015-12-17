@@ -7,6 +7,11 @@ PlatformIO 2.0
 2.6.1 (2015-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for the new ESP8266-based boards (SparkFun ESP8266 Thing,
+  NodeMCU 0.9 & 1.0, Olimex MOD-WIFI-ESP8266(-DEV), Adafruit HUZZAH ESP8266,
+  ESPino, SweetPea ESP-210, WeMos D1, WeMos D1 mini) to
+  `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  development platform
 * Created public `platformio-pkg-ldscripts <https://github.com/platformio/platformio-pkg-ldscripts.git>`_
   repository for LD scripts. Moved common configuration for ESP8266 MCU to
   ``esp8266.flash.common.ld``
