@@ -72,8 +72,155 @@ Boards
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
+Adafruit
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``huzzah``
+      - `Adafruit HUZZAH ESP8266 <https://www.adafruit.com/products/2471>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+ESPino
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``espino``
+      - `ESPino <http://www.espino.io>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
 Espressif
 ~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``esp01``
+      - `Espressif Generic ESP8266 ESP-01 <https://nurdspace.nl/ESP8266>`_
+      - ESP8266
+      - 80 MHz
+      - 512 Kb
+      - 80 Kb
+
+    * - ``esp12e``
+      - `Espressif ESP8266 ESP-12E <https://nurdspace.nl/ESP8266>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+NodeMCU
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``nodemcu``
+      - `NodeMCU 0.9 & 1.0 <http://www.nodemcu.com/>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+Olimex
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``modwifi``
+      - `Olimex MOD-WIFI-ESP8266(-DEV) <https://www.olimex.com/Products/IoT/MOD-WIFI-ESP8266-DEV/open-source-hardware>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+SparkFun
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``thing``
+      - `SparkFun ESP8266 Thing <https://www.sparkfun.com/products/13231>`_
+      - ESP8266
+      - 80 MHz
+      - 512 Kb
+      - 80 Kb
+
+SweetPea
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``esp210``
+      - `SweetPea ESP-210 <http://wiki.sweetpeas.se/index.php?title=ESP-210>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+WeMos
+~~~~~
 
 .. list-table::
     :header-rows:  1
@@ -97,62 +244,6 @@ Espressif
       - ESP8266
       - 80 MHz
       - 1024 Kb
-      - 80 Kb
-
-    * - ``esp01``
-      - `Espressif Generic ESP8266 ESP-01 <https://nurdspace.nl/ESP8266>`_
-      - ESP8266
-      - 80 MHz
-      - 512 Kb
-      - 80 Kb
-
-    * - ``esp12e``
-      - `Espressif ESP8266 ESP-12E <https://nurdspace.nl/ESP8266>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``esp210``
-      - `SweetPea ESP-210 <http://wiki.sweetpeas.se/index.php?title=ESP-210>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``espino``
-      - `ESPino <http://www.espino.io>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``huzzah``
-      - `Adafruit HUZZAH ESP8266 <https://www.adafruit.com/products/2471>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``modwifi``
-      - `Olimex MOD-WIFI-ESP8266(-DEV) <https://www.olimex.com/Products/IoT/MOD-WIFI-ESP8266-DEV/open-source-hardware>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``nodemcu``
-      - `NodeMCU 0.9 & 1.0 <http://www.nodemcu.com/>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``thing``
-      - `SparkFun ESP8266 Thing <https://www.sparkfun.com/products/13231>`_
-      - ESP8266
-      - 80 MHz
-      - 512 Kb
       - 80 Kb
 
 .. include:: espressif_extra.rst
