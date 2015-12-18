@@ -176,6 +176,7 @@ is described `here <http://www.nongnu.org/avr-libc/user-manual/>`_.
 The full list of ``board_mcu`` for the popular embedded platforms you can find
 in *Boards* section of :ref:`platforms`. See "Microcontroller" column.
 
+.. _projectconf_board_f_cpu:
 
 ``board_f_cpu``
 ^^^^^^^^^^^^^^^
@@ -209,6 +210,7 @@ To print all available serial ports use :ref:`cmd_serialports` command.
 
 A protocol that "uploader" tool uses to talk to the board.
 
+.. _projectconf_upload_speed:
 
 ``upload_speed``
 ^^^^^^^^^^^^^^^^

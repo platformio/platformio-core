@@ -4,6 +4,30 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.6.1 (2015-12-18)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for the new ESP8266-based boards (SparkFun ESP8266 Thing,
+  NodeMCU 0.9 & 1.0, Olimex MOD-WIFI-ESP8266(-DEV), Adafruit HUZZAH ESP8266,
+  ESPino, SweetPea ESP-210, WeMos D1, WeMos D1 mini) to
+  `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  development platform
+* Created public `platformio-pkg-ldscripts <https://github.com/platformio/platformio-pkg-ldscripts.git>`_
+  repository for LD scripts. Moved common configuration for ESP8266 MCU to
+  ``esp8266.flash.common.ld``
+  (`issue #379 <https://github.com/platformio/platformio/issues/379>`_)
+* Improved documentation for `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  development platform: OTA update, custom Flash Size, Upload Speed and CPU
+  frequency
+* Fixed reset method for Espressif NodeMCU (ESP-12E Module)
+  (`issue #380 <https://github.com/platformio/platformio/issues/380>`_)
+* Fixed issue with code builder when build path contains spaces
+  (`issue #387 <https://github.com/platformio/platformio/issues/387>`_)
+* Fixed project generator for Eclipse IDE and "duplicate path entries found
+  in project path"
+  (`issue #383 <https://github.com/platformio/platformio/issues/383>`_)
+
+
 2.6.0 (2015-12-15)
 ~~~~~~~~~~~~~~~~~~
 

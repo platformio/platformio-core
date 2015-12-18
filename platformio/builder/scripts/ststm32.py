@@ -41,10 +41,11 @@ if env.subst("$UPLOAD_PROTOCOL") == "gdb":
         UPLOADERFLAGS=[
             join("$BUILD_DIR", "firmware.elf"),
             "-batch",
-            "-x", join("$PROJECT_DIR", "upload.gdb")
+            "-x",
+            '"%s"' % join("$PROJECT_DIR", "upload.gdb")
         ],
 
-        UPLOADCMD="$UPLOADER $UPLOADERFLAGS"
+        UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS'
     )
 else:
     env.Replace(
@@ -55,7 +56,7 @@ else:
             "0x08000000"    # flash start adress
         ],
 
-        UPLOADCMD="$UPLOADER $UPLOADERFLAGS"
+        UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS'
     )
 
 

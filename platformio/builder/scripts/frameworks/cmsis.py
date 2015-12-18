@@ -61,7 +61,7 @@ if not isfile(join(env.subst("$PIOPACKAGES_DIR"), "ldscripts", ldscript)):
     if "mbed" in env.get("BOARD_OPTIONS", {}).get("frameworks", {}):
         env.Append(
             LINKFLAGS=[
-                "-Wl,-T",
+                '-Wl,-T"%s"' %
                 join(
                     "$PIOPACKAGES_DIR", "framework-mbed", "variant",
                     env.subst("$BOARD").upper(), "mbed",

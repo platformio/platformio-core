@@ -459,7 +459,7 @@
             "variant": "eightanaloginputs"
         },
         "frameworks": ["arduino"],
-        "name": "BQ ZUM BT-328 board",
+        "name": "BQ ZUM BT-328",
         "platform": "atmelavr",
         "upload": {
             "disable_flushing": true,

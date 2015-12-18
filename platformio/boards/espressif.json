@@ -2,67 +2,230 @@
     "esp01": {
         "build": {
             "core": "esp8266",
-            "extra_flags": "-DARDUINO_ESP8266_ESP01 -DARDUINO_ARCH_ESP8266 -DESP8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP01",
             "f_cpu": "80000000L",
-            "ldscript": "esp8266.flash.512k.ld",
+            "ldscript": "esp8266.flash.512k64.ld",
             "mcu": "esp8266",
             "variant": "generic"
         },
         "frameworks": ["arduino"],
-        "name": "Espressif ESP8266 ESP-01 board",
+        "name": "Espressif Generic ESP8266 ESP-01",
         "platform": "espressif",
         "upload": {
-            "maximum_ram_size": 32768,
+            "maximum_ram_size": 81920,
             "maximum_size": 524288,
-            "protocol": "arduino",
+            "resetmethod": "ck",
             "require_upload_port" : true,
             "speed": 115200
         },
         "url": "https://nurdspace.nl/ESP8266",
         "vendor": "Espressif"
     },
-    "esp01_1m": {
-        "build": {
-            "core": "esp8266",
-            "extra_flags": "-DARDUINO_ESP8266_ESP01 -DARDUINO_ARCH_ESP8266 -DESP8266",
-            "f_cpu": "80000000L",
-            "ldscript": "esp8266.flash.1m128.ld",
-            "mcu": "esp8266",
-            "variant": "generic"
-        },
-        "frameworks": ["arduino"],
-        "name": "Espressif ESP8266 ESP-01-1MB board",
-        "platform": "espressif",
-        "upload": {
-            "maximum_ram_size": 32768,
-            "maximum_size": 1048576,
-            "protocol": "arduino",
-            "require_upload_port" : true,
-            "speed": 115200
-        },
-        "url": "https://nurdspace.nl/ESP8266",
-        "vendor": "Espressif"
-    },
+
     "esp12e": {
         "build": {
             "core": "esp8266",
-            "extra_flags": "-DARDUINO_ESP8266_ESP12 -DARDUINO_ARCH_ESP8266 -DESP8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
             "f_cpu": "80000000L",
             "ldscript": "esp8266.flash.4m.ld",
             "mcu": "esp8266",
             "variant": "nodemcu"
         },
         "frameworks": ["arduino"],
-        "name": "Espressif ESP8266 ESP-12E board (NodeMCU)",
+        "name": "Espressif ESP8266 ESP-12E",
         "platform": "espressif",
         "upload": {
-            "maximum_ram_size": 32768,
-            "maximum_size": 4194304,
-            "protocol": "arduino",
+            "maximum_ram_size": 81920,
+            "maximum_size": 1048576,
+            "resetmethod": "nodemcu",
             "require_upload_port" : true,
             "speed": 115200
         },
         "url": "https://nurdspace.nl/ESP8266",
+        "vendor": "Espressif"
+    },
+
+    "nodemcu": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
+            "f_cpu": "80000000L",
+            "ldscript": "esp8266.flash.4m.ld",
+            "mcu": "esp8266",
+            "variant": "nodemcu"
+        },
+        "frameworks": ["arduino"],
+        "name": "NodeMCU 0.9 & 1.0",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 1048576,
+            "resetmethod": "nodemcu",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://www.nodemcu.com/",
+        "vendor": "Espressif"
+    },
+
+    "huzzah": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
+            "f_cpu": "80000000L",
+            "ldscript": "esp8266.flash.4m.ld",
+            "mcu": "esp8266",
+            "variant": "adafruit"
+        },
+        "frameworks": ["arduino"],
+        "name": "Adafruit HUZZAH ESP8266",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 1048576,
+            "resetmethod": "nodemcu",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "https://www.adafruit.com/products/2471",
+        "vendor": "Espressif"
+    },
+
+    "modwifi": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_MOD_WIFI_ESP8266",
+            "f_cpu": "80000000L",
+            "ldscript": "esp8266.flash.2m.ld",
+            "mcu": "esp8266",
+            "variant": "generic"
+        },
+        "frameworks": ["arduino"],
+        "name": "Olimex MOD-WIFI-ESP8266(-DEV)",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 1048576,
+            "resetmethod": "ck",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "https://www.olimex.com/Products/IoT/MOD-WIFI-ESP8266-DEV/open-source-hardware",
+        "vendor": "Espressif"
+    },
+
+    "thing": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_THING",
+            "f_cpu": "80000000L",
+            "ldscript": "esp8266.flash.512k64.ld",
+            "mcu": "esp8266",
+            "variant": "thing"
+        },
+        "frameworks": ["arduino"],
+        "name": "SparkFun ESP8266 Thing",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 524288,
+            "resetmethod": "nodemcu",
+            "require_upload_port" : true,
+            "speed": 921600
+        },
+        "url": "https://www.sparkfun.com/products/13231",
+        "vendor": "Espressif"
+    },
+
+    "esp210": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP210",
+            "f_cpu": "80000000L",
+            "ldscript": "esp8266.flash.4m.ld",
+            "mcu": "esp8266",
+            "variant": "generic"
+        },
+        "frameworks": ["arduino"],
+        "name": "SweetPea ESP-210",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 1048576,
+            "resetmethod": "ck",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://wiki.sweetpeas.se/index.php?title=ESP-210",
+        "vendor": "Espressif"
+    },
+
+    "d1": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
+            "f_cpu": "80000000L",
+            "ldscript": "esp8266.flash.4m.ld",
+            "mcu": "esp8266",
+            "variant": "d1"
+        },
+        "frameworks": ["arduino"],
+        "name": "WeMos D1",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 1048576,
+            "resetmethod": "nodemcu",
+            "require_upload_port" : true,
+            "speed": 460800
+        },
+        "url": "http://www.wemos.cc/wiki/doku.php?id=en:d1",
+        "vendor": "Espressif"
+    },
+
+    "d1_mini": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
+            "f_cpu": "80000000L",
+            "ldscript": "esp8266.flash.4m.ld",
+            "mcu": "esp8266",
+            "variant": "d1_mini"
+        },
+        "frameworks": ["arduino"],
+        "name": "WeMos D1 mini",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 1048576,
+            "resetmethod": "nodemcu",
+            "require_upload_port" : true,
+            "speed": 460800
+        },
+        "url": "http://www.wemos.cc/wiki/doku.php?id=en:d1_mini",
+        "vendor": "Espressif"
+    },
+
+    "espino": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
+            "f_cpu": "80000000L",
+            "ldscript": "esp8266.flash.4m1m.ld",
+            "mcu": "esp8266",
+            "variant": "espino"
+        },
+        "frameworks": ["arduino"],
+        "name": "ESPino",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 1048576,
+            "resetmethod": "ck",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://www.espino.io",
         "vendor": "Espressif"
     }
 }

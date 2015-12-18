@@ -363,7 +363,7 @@ BQ
       - RAM
 
     * - ``zumbt328``
-      - `BQ ZUM BT-328 board <http://www.bq.com/gb/products/zum.html>`_
+      - `BQ ZUM BT-328 <http://www.bq.com/gb/products/zum.html>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
@@ -484,26 +484,75 @@ Espressif
       - Flash
       - RAM
 
-    * - ``esp01``
-      - `Espressif ESP8266 ESP-01 board <https://nurdspace.nl/ESP8266>`_
-      - ESP8266
-      - 80 MHz
-      - 512 Kb
-      - 32 Kb
-
-    * - ``esp01_1m``
-      - `Espressif ESP8266 ESP-01-1MB board <https://nurdspace.nl/ESP8266>`_
+    * - ``d1``
+      - `WeMos D1 <http://www.wemos.cc/wiki/doku.php?id=en:d1>`_
       - ESP8266
       - 80 MHz
       - 1024 Kb
-      - 32 Kb
+      - 80 Kb
 
-    * - ``esp12e``
-      - `Espressif ESP8266 ESP-12E board (NodeMCU) <https://nurdspace.nl/ESP8266>`_
+    * - ``d1_mini``
+      - `WeMos D1 mini <http://www.wemos.cc/wiki/doku.php?id=en:d1_mini>`_
       - ESP8266
       - 80 MHz
-      - 4096 Kb
-      - 32 Kb
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``esp01``
+      - `Espressif Generic ESP8266 ESP-01 <https://nurdspace.nl/ESP8266>`_
+      - ESP8266
+      - 80 MHz
+      - 512 Kb
+      - 80 Kb
+
+    * - ``esp12e``
+      - `Espressif ESP8266 ESP-12E <https://nurdspace.nl/ESP8266>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``esp210``
+      - `SweetPea ESP-210 <http://wiki.sweetpeas.se/index.php?title=ESP-210>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``espino``
+      - `ESPino <http://www.espino.io>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``huzzah``
+      - `Adafruit HUZZAH ESP8266 <https://www.adafruit.com/products/2471>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``modwifi``
+      - `Olimex MOD-WIFI-ESP8266(-DEV) <https://www.olimex.com/Products/IoT/MOD-WIFI-ESP8266-DEV/open-source-hardware>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``nodemcu``
+      - `NodeMCU 0.9 & 1.0 <http://www.nodemcu.com/>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``thing``
+      - `SparkFun ESP8266 Thing <https://www.sparkfun.com/products/13231>`_
+      - ESP8266
+      - 80 MHz
+      - 512 Kb
+      - 80 Kb
 
 LightUp
 ~~~~~~~

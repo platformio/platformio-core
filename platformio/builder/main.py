@@ -114,6 +114,7 @@ DefaultEnvironment(
 )
 
 env = DefaultEnvironment()
+env.Prepend(LIBPATH=[join("$PIOPACKAGES_DIR", "ldscripts")])
 
 if "BOARD" in env:
     try:

@@ -245,3 +245,8 @@ Archlinux: libncurses.so.5: cannot open shared object file
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 Answered in `issue #291 <https://github.com/platformio/platformio/issues/291>`_.
+
+Monitoring a serial port breaks upload
+''''''''''''''''''''''''''''''''''''''
+
+Answered in `issue #384 <https://github.com/platformio/platformio/issues/384>`_.

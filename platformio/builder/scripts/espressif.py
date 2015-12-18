@@ -87,13 +87,12 @@ env.Replace(
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-esptool", "esptool"),
     UPLOADERFLAGS=[
         "-vv",
-        "-cd", "ck",
+        "-cd", "${BOARD_OPTIONS['upload']['resetmethod']}",
         "-cb", "$UPLOAD_SPEED",
         "-cp", "$UPLOAD_PORT",
-        "-ca", "0x00000",
         "-cf", "$SOURCE"
     ],
-    UPLOADCMD='$UPLOADER $UPLOADERFLAGS',
+    UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS',
 
     PROGNAME="firmware",
     PROGSUFFIX=".elf"
@@ -105,9 +104,10 @@ env.Append(
     BUILDERS=dict(
         ElfToBin=Builder(
             action=" ".join([
-                "$UPLOADER",
-                "-eo", join("$PLATFORMFW_DIR", "bootloaders",
-                            "eboot", "eboot.elf"),
+                '"$UPLOADER"',
+                "-eo",
+                '"%s"' % join("$PLATFORMFW_DIR", "bootloaders",
+                              "eboot", "eboot.elf"),
                 "-bo", "$TARGET",
                 "-bm", "dio",
                 "-bf", "${BOARD_OPTIONS['build']['f_cpu'][:2]}",
@@ -148,7 +148,7 @@ if "FRAMEWORK" in env:
                     "-i", "$UPLOAD_PORT",
                     "-f", "$SOURCE"
                 ],
-                UPLOADCMD='$UPLOADEROTA $UPLOADERFLAGS'
+                UPLOADCMD='"$UPLOADEROTA" $UPLOADERFLAGS'
             )
     except socket.error:
         pass
@@ -164,7 +164,7 @@ else:
         BUILDERS=dict(
             ElfToBin=Builder(
                 action=" ".join([
-                    "$UPLOADER",
+                    '"$UPLOADER"',
                     "-eo", "$SOURCES",
                     "-bo", "${TARGETS[0]}",
                     "-bm", "qio",
