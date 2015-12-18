@@ -95,7 +95,7 @@ Contents
 
 .. toctree::
     :caption: Instruments
-    :maxdepth: 2
+    :maxdepth: 3
 
     Platforms & Boards <platforms/index>
     frameworks/index

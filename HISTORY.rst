@@ -16,6 +16,9 @@ PlatformIO 2.0
   repository for LD scripts. Moved common configuration for ESP8266 MCU to
   ``esp8266.flash.common.ld``
   (`issue #379 <https://github.com/platformio/platformio/issues/379>`_)
+* Improved documentation for `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  development platform: OTA update, custom Flash Size, Upload Speed and CPU
+  frequency
 * Fixed reset method for Espressif NodeMCU (ESP-12E Module)
   (`issue #380 <https://github.com/platformio/platformio/issues/380>`_)
 * Fixed issue with code builder when build path contains spaces
