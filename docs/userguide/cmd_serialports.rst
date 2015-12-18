@@ -191,13 +191,13 @@ Do not apply any encodings/transformations
     --exit-char
 
 ASCII code of special character that is used to exit the application,
-default ``0x1d``
+default ``29`` (DEC)
 
 .. option::
     --menu-char
 
 ASCII code of special character that is used to control miniterm (menu),
-default ``0x14``
+default ``20`` (DEC)
 
 .. option::
     ---quiet
