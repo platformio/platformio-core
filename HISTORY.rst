@@ -23,6 +23,9 @@ PlatformIO 2.0
   (`issue #380 <https://github.com/platformio/platformio/issues/380>`_)
 * Fixed issue with code builder when build path contains spaces
   (`issue #387 <https://github.com/platformio/platformio/issues/387>`_)
+* Fixed project generator for Eclipse IDE and "duplicate path entries found
+  in project path"
+  (`issue #383 <https://github.com/platformio/platformio/issues/383>`_)
 
 
 2.6.0 (2015-12-15)
