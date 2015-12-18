@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from math import ceil
-from os.path import dirname, join, realpath
+from os.path import dirname, isfile, join, realpath
 from sys import exit as sys_exit
 from sys import path
 
@@ -215,11 +215,13 @@ Boards
 
 def update_platform_docs():
     for name in PlatformFactory.get_platforms().keys():
-        rst_path = join(
-            dirname(realpath(__file__)), "..", "docs", "platforms",
-            "%s.rst" % name)
+        platforms_dir = join(dirname(realpath(__file__)),
+                             "..", "docs", "platforms")
+        rst_path = join(platforms_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
             f.write(generate_platform(name))
+            if isfile(join(platforms_dir, "%s_extra.rst" % name)):
+                f.write("\n.. include:: %s_extra.rst\n" % name)
 
 
 def generate_framework(type_, data):
@@ -302,10 +304,13 @@ Boards
 
 def update_framework_docs():
     for name, data in util.get_frameworks().items():
-        rst_path = join(util.get_source_dir(), "..", "docs", "frameworks",
-                        "%s.rst" % name)
+        frameworks_dir = join(dirname(realpath(__file__)),
+                              "..", "docs", "frameworks")
+        rst_path = join(frameworks_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
             f.write(generate_framework(name, data))
+            if isfile(join(frameworks_dir, "%s_extra.rst" % name)):
+                f.write("\n.. include:: %s_extra.rst\n" % name)
 
 
 def update_create_platform_doc():
