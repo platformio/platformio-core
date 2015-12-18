@@ -28,7 +28,7 @@ SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
 env.Replace(
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-lm4flash", "lm4flash"),
-    UPLOADCMD="$UPLOADER $SOURCES"
+    UPLOADCMD='"$UPLOADER" $SOURCES'
 )
 
 env.Append(

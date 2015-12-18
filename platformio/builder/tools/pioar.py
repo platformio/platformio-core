@@ -26,9 +26,13 @@ def _huge_sources_hook(sources):
 
     tmp_file = join(gettempdir(), "pioarargs-%s" % md5(_sources).hexdigest())
     with open(tmp_file, "w") as f:
-        f.write(_sources)
+        # fix space in paths
+        for line in _sources.split(".o "):
+            if not line.endswith(".o"):
+                line += ".o"
+            f.write('"%s" ' % line)
 
-    return "@%s" % tmp_file
+    return '@"%s"' % tmp_file
 
 
 def exists(_):
