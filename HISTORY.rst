@@ -4,7 +4,7 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.6.1 (2015-12-??)
+2.6.1 (2015-12-18)
 ~~~~~~~~~~~~~~~~~~
 
 * Added support for the new ESP8266-based boards (SparkFun ESP8266 Thing,
