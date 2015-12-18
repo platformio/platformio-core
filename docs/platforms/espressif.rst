@@ -154,3 +154,5 @@ Espressif
       - 80 MHz
       - 512 Kb
       - 80 Kb
+
+.. include:: espressif_extra.rst
