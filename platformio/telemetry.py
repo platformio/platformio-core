@@ -22,6 +22,7 @@ import uuid
 from collections import deque
 from os import getenv
 from time import sleep, time
+from traceback import format_exc
 
 import click
 import requests
@@ -289,12 +290,13 @@ def on_event(category, action, label=None, value=None, screen_name=None):
 def on_exception(e):
     if isinstance(e, exception.AbortedByUser):
         return
-    mp = MeasurementProtocol()
-    mp['exd'] = "%s: %s" % (type(e).__name__, e)
-    mp['exf'] = int(any([
+    is_crash = any([
         not isinstance(e, exception.PlatformioException),
         "Error" in e.__class__.__name__
-    ]))
+    ])
+    mp = MeasurementProtocol()
+    mp['exd'] = "%s: %s" % (type(e).__name__, format_exc() if is_crash else e)
+    mp['exf'] = 1 if is_crash else 0
     mp.send("exception")
 
 

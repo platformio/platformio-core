@@ -109,7 +109,11 @@ def main():
 An unexpected error occurred. Further steps:
 
 * Verify that you have the latest version of PlatformIO using
-  `platformio upgrade` command
+  `pip install -U platformio` command
+
+* Try to find answer in FAQ Troubleshooting section
+  http://docs.platformio.org/en/latest/faq.html
+
 * Report this problem to the developers
   https://github.com/platformio/platformio/issues
 
