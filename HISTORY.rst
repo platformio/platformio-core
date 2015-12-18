@@ -4,6 +4,12 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.6.2 (2015-12-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed ``ChunkedEncodingError`` when SF connection is broken
+  (`issue #356 <https://github.com/platformio/platformio/issues/356>`_)
+
 2.6.1 (2015-12-18)
 ~~~~~~~~~~~~~~~~~~
 

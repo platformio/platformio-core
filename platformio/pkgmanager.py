@@ -101,6 +101,7 @@ class PackageManager(object):
         try:
             dlpath = self.download(info['url'], pkg_dir, info['sha1'])
         except (requests.exceptions.ConnectionError,
+                requests.exceptions.ChunkedEncodingError,
                 exception.FDUnrecognizedStatusCode, StopIteration):
             if info['url'].startswith("http://sourceforge.net"):
                 dlpath = self.download(
