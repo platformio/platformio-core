@@ -4,6 +4,12 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.6.3 (2015-12-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed invalid ROM size for ESP8266-based boards
+  (`issue #396 <https://github.com/platformio/platformio/issues/396>`_)
+
 2.6.2 (2015-12-21)
 ~~~~~~~~~~~~~~~~~~
 
