@@ -65,7 +65,7 @@
             "speed": 115200
         },
         "url": "http://www.nodemcu.com/",
-        "vendor": "Espressif"
+        "vendor": "NodeMCU"
     },
 
     "huzzah": {
@@ -88,7 +88,7 @@
             "speed": 115200
         },
         "url": "https://www.adafruit.com/products/2471",
-        "vendor": "Espressif"
+        "vendor": "Adafruit"
     },
 
     "modwifi": {
@@ -111,7 +111,7 @@
             "speed": 115200
         },
         "url": "https://www.olimex.com/Products/IoT/MOD-WIFI-ESP8266-DEV/open-source-hardware",
-        "vendor": "Espressif"
+        "vendor": "Olimex"
     },
 
     "thing": {
@@ -134,7 +134,7 @@
             "speed": 921600
         },
         "url": "https://www.sparkfun.com/products/13231",
-        "vendor": "Espressif"
+        "vendor": "SparkFun"
     },
 
     "esp210": {
@@ -157,7 +157,7 @@
             "speed": 115200
         },
         "url": "http://wiki.sweetpeas.se/index.php?title=ESP-210",
-        "vendor": "Espressif"
+        "vendor": "SweetPea"
     },
 
     "d1": {
@@ -180,7 +180,7 @@
             "speed": 460800
         },
         "url": "http://www.wemos.cc/wiki/doku.php?id=en:d1",
-        "vendor": "Espressif"
+        "vendor": "WeMos"
     },
 
     "d1_mini": {
@@ -203,7 +203,7 @@
             "speed": 460800
         },
         "url": "http://www.wemos.cc/wiki/doku.php?id=en:d1_mini",
-        "vendor": "Espressif"
+        "vendor": "WeMos"
     },
 
     "espino": {
@@ -226,6 +226,6 @@
             "speed": 115200
         },
         "url": "http://www.espino.io",
-        "vendor": "Espressif"
+        "vendor": "ESPino"
     }
 }

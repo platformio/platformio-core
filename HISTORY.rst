@@ -4,6 +4,14 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.6.2 (2015-12-21)
+~~~~~~~~~~~~~~~~~~
+
+* Removed ``SCons`` from requirements list. PlatformIO will try to install it
+  automatically, otherwise users need to install it manually
+* Fixed ``ChunkedEncodingError`` when SF connection is broken
+  (`issue #356 <https://github.com/platformio/platformio/issues/356>`_)
+
 2.6.1 (2015-12-18)
 ~~~~~~~~~~~~~~~~~~
 

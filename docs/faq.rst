@@ -41,7 +41,7 @@ console application, it can be used in combination with one's favorite
 
 Alright, so PlatformIO can run on different operating systems. But more
 importantly, from development perspective at least, is a list of supported
-boards and MCUs. To keep things short: PlatformIO supports over 150+
+boards and MCUs. To keep things short: PlatformIO supports approximately 200
 `Embedded Boards <http://platformio.org/#!/boards>`_ and all major
 :ref:`Development Platforms <platforms>`.
 
@@ -103,8 +103,8 @@ Troubleshooting
 Installation
 ~~~~~~~~~~~~
 
-PlatformIO and ``SCons`` aren't installed properly
-''''''''''''''''''''''''''''''''''''''''''''''''''
+``SCons`` is not installed in your system
+'''''''''''''''''''''''''''''''''''''''''
 
 PlatformIO depends on awesome and irreplaceable software construction tool
 named `SCons <http://www.scons.org>`_. PlatformIO Code Builder uses it to build

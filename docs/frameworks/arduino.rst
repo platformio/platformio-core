@@ -77,6 +77,13 @@ Adafruit
       - 8 Kb
       - 0.5 Kb
 
+    * - ``huzzah``
+      - `Adafruit HUZZAH ESP8266 <https://www.adafruit.com/products/2471>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
     * - ``protrinket3``
       - `Adafruit Pro Trinket 3V/12MHz (USB) <http://www.adafruit.com/products/2010>`_
       - ATMEGA328P
@@ -437,6 +444,26 @@ Digistump
       - 512 Kb
       - 28 Kb
 
+ESPino
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``espino``
+      - `ESPino <http://www.espino.io>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
 Engduino
 ~~~~~~~~
 
@@ -484,20 +511,6 @@ Espressif
       - Flash
       - RAM
 
-    * - ``d1``
-      - `WeMos D1 <http://www.wemos.cc/wiki/doku.php?id=en:d1>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``d1_mini``
-      - `WeMos D1 mini <http://www.wemos.cc/wiki/doku.php?id=en:d1_mini>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
     * - ``esp01``
       - `Espressif Generic ESP8266 ESP-01 <https://nurdspace.nl/ESP8266>`_
       - ESP8266
@@ -510,48 +523,6 @@ Espressif
       - ESP8266
       - 80 MHz
       - 1024 Kb
-      - 80 Kb
-
-    * - ``esp210``
-      - `SweetPea ESP-210 <http://wiki.sweetpeas.se/index.php?title=ESP-210>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``espino``
-      - `ESPino <http://www.espino.io>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``huzzah``
-      - `Adafruit HUZZAH ESP8266 <https://www.adafruit.com/products/2471>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``modwifi``
-      - `Olimex MOD-WIFI-ESP8266(-DEV) <https://www.olimex.com/Products/IoT/MOD-WIFI-ESP8266-DEV/open-source-hardware>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``nodemcu``
-      - `NodeMCU 0.9 & 1.0 <http://www.nodemcu.com/>`_
-      - ESP8266
-      - 80 MHz
-      - 1024 Kb
-      - 80 Kb
-
-    * - ``thing``
-      - `SparkFun ESP8266 Thing <https://www.sparkfun.com/products/13231>`_
-      - ESP8266
-      - 80 MHz
-      - 512 Kb
       - 80 Kb
 
 LightUp
@@ -676,6 +647,46 @@ Microduino
       - 8 MHz
       - 64 Kb
       - 4 Kb
+
+NodeMCU
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``nodemcu``
+      - `NodeMCU 0.9 & 1.0 <http://www.nodemcu.com/>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+Olimex
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``modwifi``
+      - `Olimex MOD-WIFI-ESP8266(-DEV) <https://www.olimex.com/Products/IoT/MOD-WIFI-ESP8266-DEV/open-source-hardware>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
 
 PanStamp
 ~~~~~~~~
@@ -942,12 +953,39 @@ SparkFun
       - 32 Kb
       - 2 Kb
 
+    * - ``thing``
+      - `SparkFun ESP8266 Thing <https://www.sparkfun.com/products/13231>`_
+      - ESP8266
+      - 80 MHz
+      - 512 Kb
+      - 80 Kb
+
     * - ``uview``
       - `SparkFun MicroView <https://www.sparkfun.com/products/12923>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
       - 2 Kb
+
+SweetPea
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``esp210``
+      - `SweetPea ESP-210 <http://wiki.sweetpeas.se/index.php?title=ESP-210>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
 
 Teensy
 ~~~~~~
@@ -1023,6 +1061,33 @@ TinyCircuits
       - 8 MHz
       - 32 Kb
       - 2 Kb
+
+WeMos
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``d1``
+      - `WeMos D1 <http://www.wemos.cc/wiki/doku.php?id=en:d1>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``d1_mini``
+      - `WeMos D1 mini <http://www.wemos.cc/wiki/doku.php?id=en:d1_mini>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
 
 Wicked Device
 ~~~~~~~~~~~~~

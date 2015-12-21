@@ -49,9 +49,10 @@ Then:
 1. Import this project via ``Menu: File > Import Project``
    and specify root directory where is located :ref:`projectconf`
 2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
-3. Build project: ``Menu: Run > Build``.
+3. Build project (*DO NOT RUN*): ``Menu: Run > Build``.
 
-There are 3 predefined targets for building:
+There are 3 predefined targets for building (*NOT FOR RUNNING*, see marks on
+the screenshot below):
 
 * ``PLATFORMIO_BUILD`` - build project without auto-uploading
 * ``PLATFORMIO_UPLOAD`` - build and upload (if no errors)

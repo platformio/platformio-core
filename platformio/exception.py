@@ -193,9 +193,10 @@ class CIBuildEnvsEmpty(PlatformioException):
 
 class SConsNotInstalledError(PlatformioException):
 
-    MESSAGE = "The PlatformIO and `scons` aren't installed properly. "\
+    MESSAGE = "SCons is not installed in your system. "\
         "More details in FAQ/Troubleshooting section: "\
-        "http://docs.platformio.org/en/latest/faq.html"
+        "http://docs.platformio.org/en/latest/faq.html"\
+        "#scons-is-not-installed-in-your-system"
 
 
 class UpgradeError(PlatformioException):

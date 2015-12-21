@@ -30,7 +30,9 @@ install_requires = [
 if system() == "Windows":
     install_requires.append("colorama")
 
-if (not util.test_scons() and not util.install_scons()) or util.scons_in_pip():
+if not util.test_scons():
+    util.install_scons()
+elif util.scons_in_pip():
     install_requires.append("scons")
 
 setup(
