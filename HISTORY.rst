@@ -4,7 +4,7 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.6.2 (2015-12-??)
+2.6.2 (2015-12-21)
 ~~~~~~~~~~~~~~~~~~
 
 * Removed ``SCons`` from requirements list. PlatformIO will try to install it
