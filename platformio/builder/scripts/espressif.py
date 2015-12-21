@@ -28,7 +28,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     env.AutodetectUploadPort()
 
 
-def _get_flash_size(env):
+def _get_flash_size(env):  # pylint: disable=redefined-outer-name
     # use board's flash size by default
     board_max_size = int(
         env.get("BOARD_OPTIONS", {}).get("upload", {}).get("maximum_size", 0))
