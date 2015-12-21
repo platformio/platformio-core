@@ -103,8 +103,8 @@ Troubleshooting
 Installation
 ~~~~~~~~~~~~
 
-PlatformIO and ``SCons`` aren't installed properly
-''''''''''''''''''''''''''''''''''''''''''''''''''
+``SCons`` is not installed in your system
+'''''''''''''''''''''''''''''''''''''''''
 
 PlatformIO depends on awesome and irreplaceable software construction tool
 named `SCons <http://www.scons.org>`_. PlatformIO Code Builder uses it to build
