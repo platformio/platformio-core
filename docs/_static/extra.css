@@ -29,7 +29,8 @@ nav {
   margin-right: auto;
   margin-left: auto;
 }
-@media (min-width: 768px) {
+
+@media (min-width: 992px) {
   #pionav {
     display: block !important;
   }
@@ -39,11 +40,7 @@ nav {
   .wy-nav-side {
     top: 50px;
   }
-  .container {
-    width: 750px;
-  }
-}
-@media (min-width: 992px) {
+
   .container {
     width: 970px;
   }
@@ -94,6 +91,7 @@ nav {
   position: relative;
   display: block;
   padding: 10px 15px;
+  font-size: 14px;
 }
 .nav > li > a:hover,
 .nav > li > a:focus {
@@ -102,6 +100,9 @@ nav {
 }
 .nav > li > a > img {
   max-width: none;
+}
+.nav > li > a > i {
+  margin-right: 5px;
 }
 
 .navbar {
