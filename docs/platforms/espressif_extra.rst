@@ -12,6 +12,8 @@
 OTA update
 ----------
 
+Firstly, please read `What is OTA? How to use it? <https://github.com/esp8266/Arduino/blob/master/doc/ota_updates/ota_updates.md>`_
+
 There are 2 options:
 
 * Directly specify :option:`platformio run --upload-port` in command line

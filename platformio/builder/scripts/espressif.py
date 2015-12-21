@@ -16,6 +16,7 @@
     Builder for Espressif MCUs
 """
 
+import re
 import socket
 from os.path import join
 
@@ -27,9 +28,32 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     env.AutodetectUploadPort()
 
 
+def _get_flash_size(env):  # pylint: disable=redefined-outer-name
+    # use board's flash size by default
+    board_max_size = int(
+        env.get("BOARD_OPTIONS", {}).get("upload", {}).get("maximum_size", 0))
+
+    # check if user overrides
+    for f in env.get("LINKFLAGS", []):
+        if "-Wl,-T" not in f:
+            continue
+        match = re.search(r"-Wl,-T.*\.flash\.(\d+)(m|k).*\.ld", env.subst(f))
+        if not match:
+            continue
+        if match.group(2) == "k":
+            board_max_size = int(match.group(1)) * 1024
+        elif match.group(2) == "m":
+            board_max_size = int(match.group(1)) * 1024 * 1024
+
+    return ("%dK" % (board_max_size / 1024) if board_max_size < 1048576
+            else "%dM" % (board_max_size / 1048576))
+
+
 env = DefaultEnvironment()
 
 env.Replace(
+    __get_flash_size=_get_flash_size,
+
     AR="xtensa-lx106-elf-ar",
     AS="xtensa-lx106-elf-as",
     CC="xtensa-lx106-elf-gcc",
@@ -98,8 +122,6 @@ env.Replace(
     PROGSUFFIX=".elf"
 )
 
-_board_max_rom = int(
-    env.get("BOARD_OPTIONS", {}).get("upload", {}).get("maximum_size", 0))
 env.Append(
     BUILDERS=dict(
         ElfToBin=Builder(
@@ -111,9 +133,7 @@ env.Append(
                 "-bo", "$TARGET",
                 "-bm", "dio",
                 "-bf", "${BOARD_OPTIONS['build']['f_cpu'][:2]}",
-                "-bz",
-                "%dK" % (_board_max_rom / 1024) if _board_max_rom < 1048576
-                else "%dM" % (_board_max_rom / 1048576),
+                "-bz", "${__get_flash_size(__env__)}",
                 "-bs", ".text",
                 "-bp", "4096",
                 "-ec",

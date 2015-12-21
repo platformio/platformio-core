@@ -4,6 +4,13 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.6.3 (2015-12-21)
+~~~~~~~~~~~~~~~~~~
+
+* Restored support for Espressif ESP8266 ESP-01 1MB board (ready for OTA)
+* Fixed invalid ROM size for ESP8266-based boards
+  (`issue #396 <https://github.com/platformio/platformio/issues/396>`_)
+
 2.6.2 (2015-12-21)
 ~~~~~~~~~~~~~~~~~~
 

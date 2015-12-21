@@ -89,7 +89,7 @@ Adafruit
       - `Adafruit HUZZAH ESP8266 <https://www.adafruit.com/products/2471>`_
       - ESP8266
       - 80 MHz
-      - 1024 Kb
+      - 4096 Kb
       - 80 Kb
 
 ESPino
@@ -109,7 +109,7 @@ ESPino
       - `ESPino <http://www.espino.io>`_
       - ESP8266
       - 80 MHz
-      - 1024 Kb
+      - 4096 Kb
       - 80 Kb
 
 Espressif
@@ -126,17 +126,24 @@ Espressif
       - RAM
 
     * - ``esp01``
-      - `Espressif Generic ESP8266 ESP-01 <https://nurdspace.nl/ESP8266>`_
+      - `Espressif Generic ESP8266 ESP-01 512k <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
       - ESP8266
       - 80 MHz
       - 512 Kb
       - 80 Kb
 
-    * - ``esp12e``
-      - `Espressif ESP8266 ESP-12E <https://nurdspace.nl/ESP8266>`_
+    * - ``esp01_1m``
+      - `Espressif Generic ESP8266 ESP-01 1M <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
       - ESP8266
       - 80 MHz
       - 1024 Kb
+      - 80 Kb
+
+    * - ``esp12e``
+      - `Espressif ESP8266 ESP-12E <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
       - 80 Kb
 
 NodeMCU
@@ -156,7 +163,7 @@ NodeMCU
       - `NodeMCU 0.9 & 1.0 <http://www.nodemcu.com/>`_
       - ESP8266
       - 80 MHz
-      - 1024 Kb
+      - 4096 Kb
       - 80 Kb
 
 Olimex
@@ -176,7 +183,7 @@ Olimex
       - `Olimex MOD-WIFI-ESP8266(-DEV) <https://www.olimex.com/Products/IoT/MOD-WIFI-ESP8266-DEV/open-source-hardware>`_
       - ESP8266
       - 80 MHz
-      - 1024 Kb
+      - 2048 Kb
       - 80 Kb
 
 SparkFun
@@ -216,7 +223,7 @@ SweetPea
       - `SweetPea ESP-210 <http://wiki.sweetpeas.se/index.php?title=ESP-210>`_
       - ESP8266
       - 80 MHz
-      - 1024 Kb
+      - 4096 Kb
       - 80 Kb
 
 WeMos
@@ -236,14 +243,14 @@ WeMos
       - `WeMos D1 <http://www.wemos.cc/wiki/doku.php?id=en:d1>`_
       - ESP8266
       - 80 MHz
-      - 1024 Kb
+      - 4096 Kb
       - 80 Kb
 
     * - ``d1_mini``
       - `WeMos D1 mini <http://www.wemos.cc/wiki/doku.php?id=en:d1_mini>`_
       - ESP8266
       - 80 MHz
-      - 1024 Kb
+      - 4096 Kb
       - 80 Kb
 
 .. include:: espressif_extra.rst

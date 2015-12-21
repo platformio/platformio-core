@@ -9,7 +9,7 @@
             "variant": "generic"
         },
         "frameworks": ["arduino"],
-        "name": "Espressif Generic ESP8266 ESP-01",
+        "name": "Espressif Generic ESP8266 ESP-01 512k",
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 81920,
@@ -18,7 +18,30 @@
             "require_upload_port" : true,
             "speed": 115200
         },
-        "url": "https://nurdspace.nl/ESP8266",
+        "url": "http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family",
+        "vendor": "Espressif"
+    },
+
+    "esp01_1m": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP01",
+            "f_cpu": "80000000L",
+            "ldscript": "esp8266.flash.1m256.ld",
+            "mcu": "esp8266",
+            "variant": "generic"
+        },
+        "frameworks": ["arduino"],
+        "name": "Espressif Generic ESP8266 ESP-01 1M",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 1048576,
+            "resetmethod": "ck",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family",
         "vendor": "Espressif"
     },
 
@@ -36,12 +59,12 @@
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 81920,
-            "maximum_size": 1048576,
+            "maximum_size": 4194304,
             "resetmethod": "nodemcu",
             "require_upload_port" : true,
             "speed": 115200
         },
-        "url": "https://nurdspace.nl/ESP8266",
+        "url": "http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family",
         "vendor": "Espressif"
     },
 
@@ -59,7 +82,7 @@
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 81920,
-            "maximum_size": 1048576,
+            "maximum_size": 4194304,
             "resetmethod": "nodemcu",
             "require_upload_port" : true,
             "speed": 115200
@@ -82,7 +105,7 @@
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 81920,
-            "maximum_size": 1048576,
+            "maximum_size": 4194304,
             "resetmethod": "nodemcu",
             "require_upload_port" : true,
             "speed": 115200
@@ -105,7 +128,7 @@
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 81920,
-            "maximum_size": 1048576,
+            "maximum_size": 2097152,
             "resetmethod": "ck",
             "require_upload_port" : true,
             "speed": 115200
@@ -151,7 +174,7 @@
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 81920,
-            "maximum_size": 1048576,
+            "maximum_size": 4194304,
             "resetmethod": "ck",
             "require_upload_port" : true,
             "speed": 115200
@@ -174,7 +197,7 @@
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 81920,
-            "maximum_size": 1048576,
+            "maximum_size": 4194304,
             "resetmethod": "nodemcu",
             "require_upload_port" : true,
             "speed": 460800
@@ -197,7 +220,7 @@
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 81920,
-            "maximum_size": 1048576,
+            "maximum_size": 4194304,
             "resetmethod": "nodemcu",
             "require_upload_port" : true,
             "speed": 460800
@@ -220,7 +243,7 @@
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 81920,
-            "maximum_size": 1048576,
+            "maximum_size": 4194304,
             "resetmethod": "ck",
             "require_upload_port" : true,
             "speed": 115200
