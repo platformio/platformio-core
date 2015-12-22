@@ -23,6 +23,10 @@ Here are recent articles about PlatformIO:
 2015
 ^^^^
 
+* Dec 22, 2015 - **Jan Penninkhof** - `Over-the-Air ESP8266 programming using PlatformIO <http://www.penninkhof.com/2015/12/1610-over-the-air-esp8266-programming-using-platformio/>`_
+* Dec 15, 2015 - **stastaka** - `PlatformIOでカスタムボードを使う (Use a custom board for PlatformIO, Japanese) <http://qiita.com/stastaka/items/a6a50dbbb2933bd78bdd>`_
+* Dec 08, 2015 - **Piotr Król** - `Using PlatformIO with TI MSP430 LunchPads <http://blog.3mdeb.com/2015/12/08/using-platformio-with-ti-msp430-lunchpads/>`_
+* Dec 01, 2015 - **Michał Seroczyński** - `Push Notification from Arduino Yún with motion sensor <http://www.ches.pl/push-from-yun-1/>`_
 * Dec 01, 2015 - **JetBrains CLion Blog** - `C++ Annotated: Fall 2015. Arduino Support in CLion using PlatformIO <http://blog.jetbrains.com/clion/2015/12/cpp-annotated-fall-2015/>`_
 * Dec 01, 2015 - **Tateno Yuichi** - `ESP8266 を CUI で開発する (Develop a ESP8266 in CUI, Japanese) <http://jaywiggins.com/platformio/arduino/avr/es8266/2015/09/30/platformio-investigation/>`_
 * Nov 29, 2015 - **Keith Hughes** - `Using PlatformIO for Embedded Projects <http://smartspacestuff.blogspot.com/2015/11/using-platformio-for-embedded-projects.html>`_
@@ -31,6 +35,7 @@ Here are recent articles about PlatformIO:
 * Nov 06, 2015 - **nocd5** - `PlatformIOでmbedをオフラインビルドしSTM32 Nucleoボードでmrubyを使う (Use mruby in the offline build for STM32 Nucleo board with mbed and PlatformIO, Japanese) <http://qiita.com/nocd5/items/d5fda776240f7e7c17eb>`_
 * Oct 21, 2015 - **Vittorio Zaccaria** - `Using a cheap STM32 Nucleo to teach remote sensor monitoring <http://www.vittoriozaccaria.net/blog/2015/10/21/using-a-cheap-stm32-nucleo-to-teach-remote-sensor-monitoring.html>`_
 * Oct 18, 2015 - **Nico Coetzee** - `First Arduino I2C Experience with PlatformIO <https://electronicventurer.wordpress.com/2015/10/18/first-arduino-i2c-experience/>`_
+* Oct 10, 2015 - **Floyd Hilton** - `Programming Arduino with Atom <http://floydhilton.com/software/career/2015/10/10/Arduino_with_Atom.html>`_
 * Oct 01, 2015 - **Mistan** - `Compile and Upload Arduino Sketch with PlatformIO for Raspberry Pi Running Arch Linux <http://tech.memoryimprintstudio.com/code-building-for-arduino-with-platformio-for-raspberry-pi-with-arch-linux/>`_
 * Sep 30, 2015 - **Jay Wiggins** - `PlatformIO Investigation <http://jaywiggins.com/platformio/arduino/avr/es8266/2015/09/30/platformio-investigation/>`_
 * Sep 01, 2015 - **Thomas P. Weldon, Ph.D.** - `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
