@@ -136,8 +136,9 @@ Let fix it manually.
 
 3. If it didn't help you, try system OS package manager
 
-   * **Mac OS X** using `brew <http://brew.sh>`_ run ``brew install scons``
-   * **Linux** using ``apt`` run ``[sudo] apt-get install scons``
+   * **Mac OS X** using `SCons Mac OS X Installer <https://github.com/rviney/scons-mac-installer>`_
+     or `brew <http://brew.sh>`_ (``brew install scons``)
+   * **Linux** ``[sudo] apt-get install scons`` or ``[sudo] yum install scons``
 
 To identify that SCons is installed in your system run ``scons -v``.
 

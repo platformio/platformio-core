@@ -15,6 +15,8 @@
 import os
 import subprocess
 import sys
+from glob import glob
+from os.path import isdir, join
 from platform import system
 from tempfile import NamedTemporaryFile
 
@@ -64,16 +66,79 @@ def fix_winpython_pathenv():
 
 
 def exec_command(*args, **kwargs):
+    result = {
+        "out": None,
+        "err": None,
+        "returncode": None
+    }
+
     kwargs['stdout'] = subprocess.PIPE
     kwargs['stderr'] = subprocess.PIPE
     kwargs['shell'] = IS_WINDOWS
 
     p = subprocess.Popen(*args, **kwargs)
-    out, err = p.communicate()
+    result['out'], result['err'] = p.communicate()
+    result['returncode'] = p.returncode
 
-    if p.returncode != 0:
-        raise Exception("\n".join([out, err]))
-    return out.strip()
+    for k, v in result.iteritems():
+        if v and isinstance(v, basestring):
+            result[k].strip()
+
+    return result
+
+
+def print_exec_result(result):
+    if result['returncode'] == 0:
+        print (result['out'])
+    else:
+        raise Exception("\n".join([result['out'], result['err']]))
+
+
+def test_scons():
+    try:
+        r = exec_command(["scons", "--version"])
+        if "ImportError: No module named SCons.Script" in r['err']:
+            _PYTHONPATH = []
+            for p in sys.path:
+                if not p.endswith("-packages"):
+                    continue
+                for item in glob(join(p, "scons*")):
+                    if isdir(join(item, "SCons")) and item not in sys.path:
+                        _PYTHONPATH.append(item)
+                        sys.path.insert(0, item)
+            if _PYTHONPATH:
+                _PYTHONPATH = str(os.pathsep).join(_PYTHONPATH)
+                if os.getenv("PYTHONPATH"):
+                    os.environ['PYTHONPATH'] += os.pathsep + _PYTHONPATH
+                else:
+                    os.environ['PYTHONPATH'] = _PYTHONPATH
+                r = exec_command(["scons", "--version"])
+        assert r['returncode'] == 0
+        return True
+    except (OSError, AssertionError):
+        for p in sys.path:
+            try:
+                r = exec_command([join(p, "scons"), "--version"])
+                assert r['returncode'] == 0
+                os.environ['PATH'] += os.pathsep + p
+                return True
+            except (OSError, AssertionError):
+                pass
+    return False
+
+
+def install_scons():
+    cmds = (
+        ["pip", "install", "-U", "scons"],
+        ["pip", "install", "--egg", "scons",
+         '--install-option="--no-install-man"'],
+        ["easy_install", "scons"]
+    )
+    for cmd in cmds:
+        r = exec_command(cmd)
+        if r['returncode'] == 0:
+            return True
+    return False
 
 
 def exec_python_cmd(args):
@@ -92,18 +157,26 @@ def install_pip():
     f.close()
 
     try:
-        print (exec_python_cmd([f.name]))
+        r = exec_python_cmd([f.name])
     finally:
         os.unlink(f.name)
 
+    print_exec_result(r)
+
 
 def install_platformio():
+    r = None
     cmd = ["-m", "pip.__main__" if sys.version_info < (2, 7, 0) else "pip"]
     try:
-        print (exec_python_cmd(cmd + ["install", "-U", "platformio"]))
-    except Exception:
-        print (exec_python_cmd(
-            cmd + ["--no-cache-dir", "install", "-U", "platformio"]))
+        r = exec_python_cmd(cmd + ["install", "-U", "platformio"])
+        assert r['returncode'] == 0
+    except AssertionError:
+        r = exec_python_cmd(
+            cmd + ["--no-cache-dir", "install", "-U", "platformio"])
+    if r:
+        print_exec_result(r)
+        if not test_scons():
+            install_scons()
 
 
 def main():
@@ -128,7 +201,13 @@ def main():
             is_error = True
             print (str(e))
             print ("[FAILURE]")
-            if "Permission denied" in str(e) and not IS_WINDOWS:
+
+            permission_errors = (
+                "permission denied",
+                "not permitted"
+            )
+            if (any([m in str(e).lower() for m in permission_errors]) and not
+                    IS_WINDOWS):
                 print ("""
 -----------------
 Permission denied
@@ -150,10 +229,10 @@ https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platf
                "successfully FINISHED! <==\n")
 
     try:
-        print (exec_command("platformio"))
+        print_exec_result(exec_command("platformio"))
     except:
         try:
-            print (exec_python_cmd([
+            print_exec_result(exec_python_cmd([
                 "-m",
                 "platformio.__main__" if sys.version_info < (2, 7, 0) else
                 "platformio"]))
