@@ -64,3 +64,15 @@ Used in demo
 7. :ref:`platformio lib install 124 --version "1.40" <cmd_lib_install>` command
 8. :ref:`platformio lib show 124 <cmd_lib_show>` command
 9. :ref:`cmd_lib_update` command.
+
+Over-the-Air update for ESP8266
+-------------------------------
+
+.. image:: _static/platformio-demo-ota-esp8266.jpg
+    :target: https://www.youtube.com/watch?v=lXchL3hpDO4
+
+Used in demo
+~~~~~~~~~~~~
+
+1. :ref:`cmd_run` command
+2. :ref:`platformio run -t upload <cmd_run>` command.
