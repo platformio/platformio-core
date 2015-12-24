@@ -27,11 +27,15 @@ from platformio.util import get_serialports
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
+    if "program" in COMMAND_LINE_TARGETS:
+        return
+
     if "micronucleus" in env['UPLOADER']:
         print "Please unplug/plug device ..."
 
     upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
 
+    # Deprecated: compatibility with old projects. Use `program` instead
     if "usb" in env.subst("$UPLOAD_PROTOCOL"):
         upload_options['require_upload_port'] = False
         env.Replace(UPLOAD_SPEED=None)

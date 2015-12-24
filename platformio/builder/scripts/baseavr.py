@@ -39,7 +39,7 @@ env.Replace(
         "-Wall",  # show warnings
         "-ffunction-sections",  # place each function in its own section
         "-fdata-sections",
-        "-MMD",  # output dependency info
+        # "-MMD",  # output dependency info
         "-mmcu=$BOARD_MCU"
     ],
 

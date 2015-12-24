@@ -2,7 +2,7 @@
     "flora8": {
         "build": {
             "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_FLORA8",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
             "usb_product": "Adafruit Flora",
@@ -21,16 +21,92 @@
             "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
-            "wait_for_upload_port": false
+            "wait_for_upload_port": true
         },
         "url": "http://www.adafruit.com/product/659",
+        "vendor": "Adafruit"
+    },
+
+    "bluefruitmicro": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_BLUEFRUITMICRO",
+            "f_cpu": "8000000L",
+            "mcu": "atmega32u4",
+            "usb_product": "Bluefruit Micro",
+            "pid": "0x800A",
+            "variant": "bluefruitmicro",
+            "vid": "0x239A"
+        },
+        "frameworks": ["arduino"],
+        "name": "Adafruit Bluefruit Micro",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "https://www.adafruit.com/products/2661",
+        "vendor": "Adafruit"
+    },
+
+    "gemma": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_GEMMA",
+            "f_cpu": "8000000L",
+            "mcu": "attiny85",
+            "variant": "tiny8"
+        },
+        "frameworks": ["arduino"],
+        "name": "Adafruit Gemma",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 512,
+            "maximum_size": 8192,
+            "protocol": "usbtiny"
+        },
+        "url": "http://www.adafruit.com/products/1222",
+        "vendor": "Adafruit"
+    },
+
+    "feather32u4": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_FEATHER32U4",
+            "f_cpu": "8000000L",
+            "mcu": "atmega32u4",
+            "usb_product": "Feather 32u4",
+            "pid": "0x800C",
+            "variant": "feather32u4",
+            "vid": "0x239C"
+        },
+        "frameworks": ["arduino"],
+        "name": "Adafruit Feather",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "https://learn.adafruit.com/adafruit-feather-32u4-bluefruit-le/",
         "vendor": "Adafruit"
     },
 
     "trinket3": {
         "build": {
             "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_TRINKET3",
             "f_cpu": "8000000L",
             "mcu": "attiny85",
             "variant": "tiny8"
@@ -47,30 +123,10 @@
         "vendor": "Adafruit"
     },
 
-    "gemma": {
-        "build": {
-            "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_GEMMA",
-            "f_cpu": "8000000L",
-            "mcu": "attiny85",
-            "variant": "gemma"
-        },
-        "frameworks": ["arduino"],
-        "name": "Adafruit Gemma",
-        "platform": "atmelavr",
-        "upload": {
-            "maximum_ram_size": 512,
-            "maximum_size": 8192,
-            "protocol": "usbtiny"
-        },
-        "url": "http://www.adafruit.com/products/1222",
-        "vendor": "Adafruit"
-    },
-
     "trinket5": {
         "build": {
             "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_TRINKET5",
             "f_cpu": "16000000L",
             "mcu": "attiny85",
             "variant": "tiny8"
@@ -87,10 +143,32 @@
         "vendor": "Adafruit"
     },
 
+    "metro": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_METRO",
+            "f_cpu": "16000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "frameworks": ["arduino"],
+        "name": "Adafruit Metro",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 32256,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "https://www.adafruit.com/products/2466",
+        "vendor": "Adafruit"
+    },
+
     "protrinket3": {
         "build": {
             "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_PROTRINKET3",
             "f_cpu": "12000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
@@ -110,7 +188,7 @@
     "protrinket5": {
         "build": {
             "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_PROTRINKET5",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
@@ -129,7 +207,7 @@
     "protrinket3ftdi": {
         "build": {
             "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_PROTRINKET3FTDI",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
@@ -150,7 +228,7 @@
     "protrinket5ftdi": {
         "build": {
             "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_PROTRINKET5FTDI",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"

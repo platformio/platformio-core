@@ -4,6 +4,12 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.6.4 (2015-12-??)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for the new Adafruit boards Bluefruit Micro and Feather
+  (`issue #403 <https://github.com/platformio/platformio/issues/403>`_)
+
 2.6.3 (2015-12-21)
 ~~~~~~~~~~~~~~~~~~
 
