@@ -741,3 +741,5 @@ u-blox
       - 96 MHz
       - 512 Kb
       - 32 Kb
+
+.. include:: mbed_extra.rst
