@@ -924,3 +924,5 @@ ubIQio
       - 16 MHz
       - 32 Kb
       - 2 Kb
+
+.. include:: atmelavr_extra.rst
