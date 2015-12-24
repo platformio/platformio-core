@@ -33,16 +33,15 @@ page for more detailed information.
 Integration
 -----------
 
-Project Generator
-^^^^^^^^^^^^^^^^^
-
-Since PlatformIO 2.0 you can generate CLion compatible project using
-:option:`platformio init --ide` command. Please choose board type using
-:ref:`cmd_boards` command and run:
+Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
     platformio init --ide clion --board %TYPE%
+
+    # For example, generate project for Arduino UNO
+    platformio init --ide clion --board uno
 
 Then:
 
@@ -82,10 +81,11 @@ the screenshot below):
 Articles / Manuals
 ------------------
 
-* `Using PlatformIO to get started with Arduino in CLion IDE <http://www.ches.pl/using-platformio-get-started-arduino-clion-ide/>`_
-* `Programar con Arduino "The good way" (Programming with Arduino "The good way", Spanish) <http://congdegnu.es/2015/11/09/programar-con-arduino-the-good-way/>`_
+* Dec 01, 2015 - **JetBrains CLion Blog** - `C++ Annotated: Fall 2015. Arduino Support in CLion using PlatformIO <http://blog.jetbrains.com/clion/2015/12/cpp-annotated-fall-2015/>`_
+* Nov 22, 2015 - **Michał Seroczyński** - `Using PlatformIO to get started with Arduino in CLion IDE <http://www.ches.pl/using-platformio-get-started-arduino-clion-ide/>`_
+* Nov 09, 2015 - **ÁLvaro García Gómez** - `Programar con Arduino "The good way" (Programming with Arduino "The good way", Spanish) <http://congdegnu.es/2015/11/09/programar-con-arduino-the-good-way/>`_
 
-See a full list with :ref:`articles`.
+See more :ref:`articles`.
 
 Screenshot
 ----------

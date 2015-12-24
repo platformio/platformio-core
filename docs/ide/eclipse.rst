@@ -37,13 +37,15 @@ page for more detailed information.
 Integration
 -----------
 
-Since PlatformIO 2.0 you can generate Eclipse compatible project using
-:option:`platformio init --ide` command. Please choose board type using
-:ref:`cmd_boards` command and run:
+Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
     platformio init --ide eclipse --board %TYPE%
+
+    # For example, generate project for Arduino UNO
+    platformio init --ide eclipse --board uno
 
 Then:
 
@@ -61,9 +63,9 @@ Then:
 Articles / Manuals
 ------------------
 
-* `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
-* `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
-* `Learning Arduino GitHub Repository <http://www.trojanc.co.za/2015/07/11/learning-arduino-github-repository/>`_
+* Sep 01, 2015 - **Thomas P. Weldon, Ph.D.** - `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
+* Jul 11, 2015 - **TrojanC** - `Learning Arduino GitHub Repository <http://www.trojanc.co.za/2015/07/11/learning-arduino-github-repository/>`_
+* June 20, 2014 - **Ivan Kravets, Ph.D.** - `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
 
 See a full list with :ref:`articles`.
 
