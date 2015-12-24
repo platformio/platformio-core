@@ -39,18 +39,18 @@ env.Replace(
         "-Wall",  # show warnings
         "-ffunction-sections",  # place each function in its own section
         "-fdata-sections",
-        # "-MMD",  # output dependency info
         "-mmcu=$BOARD_MCU"
     ],
 
-    CPPDEFINES=[
-        "F_CPU=$BOARD_F_CPU"
-    ],
+    CFLAGS=["-std=gnu11"],
 
     CXXFLAGS=[
+        "-std=gnu++11",
         "-fno-exceptions",
         "-fno-threadsafe-statics"
     ],
+
+    CPPDEFINES=["F_CPU=$BOARD_F_CPU"],
 
     LINKFLAGS=[
         "-Os",

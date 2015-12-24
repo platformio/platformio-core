@@ -63,6 +63,20 @@ Adafruit
       - Flash
       - RAM
 
+    * - ``bluefruitmicro``
+      - `Adafruit Bluefruit Micro <https://www.adafruit.com/products/2661>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``feather32u4``
+      - `Adafruit Feather <https://learn.adafruit.com/adafruit-feather-32u4-bluefruit-le/>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
     * - ``flora8``
       - `Adafruit Flora <http://www.adafruit.com/product/659>`_
       - ATMEGA32U4
@@ -83,6 +97,13 @@ Adafruit
       - 80 MHz
       - 4096 Kb
       - 80 Kb
+
+    * - ``metro``
+      - `Adafruit Metro <https://www.adafruit.com/products/2466>`_
+      - ATMEGA328P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
 
     * - ``protrinket3``
       - `Adafruit Pro Trinket 3V/12MHz (USB) <http://www.adafruit.com/products/2010>`_

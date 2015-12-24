@@ -9,6 +9,7 @@ PlatformIO 2.0
 
 * Added support for the new Adafruit boards Bluefruit Micro and Feather
   (`issue #403 <https://github.com/platformio/platformio/issues/403>`_)
+* Updated Arduino framework for Atmel AVR development platform to 1.6.7
 
 2.6.3 (2015-12-21)
 ~~~~~~~~~~~~~~~~~~
