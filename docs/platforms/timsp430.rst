@@ -153,3 +153,5 @@ TI
       - 16 MHz
       - 16 Kb
       - 0.5 Kb
+
+.. include:: timsp430_extra.rst

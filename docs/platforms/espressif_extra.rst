@@ -128,6 +128,14 @@ Demo
 .. image:: ../_static/platformio-demo-ota-esp8266.jpg
     :target: https://www.youtube.com/watch?v=lXchL3hpDO4
 
+Articles
+--------
+
+* Dec 22, 2015 - **Jan Penninkhof** - `Over-the-Air ESP8266 programming using PlatformIO <http://www.penninkhof.com/2015/12/1610-over-the-air-esp8266-programming-using-platformio/>`_
+* Dec 01, 2015 - **Tateno Yuichi** - `ESP8266 を CUI で開発する (Develop a ESP8266 in CUI, Japanese) <http://jaywiggins.com/platformio/arduino/avr/es8266/2015/09/30/platformio-investigation/>`_
+
+See more :ref:`articles`.
+
 Examples
 --------
 

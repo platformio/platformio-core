@@ -329,3 +329,5 @@ ST
       - 80 MHz
       - 1024 Kb
       - 128 Kb
+
+.. include:: ststm32_extra.rst

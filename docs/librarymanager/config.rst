@@ -25,7 +25,7 @@ to keep project in own structure and define:
 
 PlatformIO Library Crawler uses ``library.json`` manifest to extract
 source code from developer's location and keeps cleaned library in own
-Libraries Storage.
+Library Storage.
 
 A data in ``library.json`` should be represented
 in `JSON-style <http://en.wikipedia.org/wiki/JSON>`_ via

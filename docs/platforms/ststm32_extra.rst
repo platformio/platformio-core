@@ -12,11 +12,9 @@
 Articles
 --------
 
-* Dec 15, 2015 - **stastaka** - `PlatformIOでカスタムボードを使う (Use a custom board for PlatformIO, Japanese) <http://qiita.com/stastaka/items/a6a50dbbb2933bd78bdd>`_
-http://congdegnu.es/2015/11/09/programar-con-arduino-the-good-way/>`_
 * Nov 06, 2015 - **nocd5** - `PlatformIOでmbedをオフラインビルドしSTM32 Nucleoボードでmrubyを使う (Use mruby in the offline build for STM32 Nucleo board with mbed and PlatformIO, Japanese) <http://qiita.com/nocd5/items/d5fda776240f7e7c17eb>`_
 * Oct 21, 2015 - **Vittorio Zaccaria** - `Using a cheap STM32 Nucleo to teach remote sensor monitoring <http://www.vittoriozaccaria.net/blog/2015/10/21/using-a-cheap-stm32-nucleo-to-teach-remote-sensor-monitoring.html>`_
-* Sep 01, 2015 - **Thomas P. Weldon, Ph.D.** - `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
+* Aug 08, 2015 - **Josh Glendenning** - `Armstrap Eagle and PlatformIO <http://isobit.io/2015/08/08/armstrap.html>`_
 
 See more :ref:`articles`.
 
@@ -24,10 +22,8 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for MBED framework <https://github.com/platformio/platformio/tree/develop/examples/mbed>`_.
+`Examples for ST STM32 platform <https://github.com/platformio/platformio/tree/develop/examples/stm32>`_.
 
-* `Blink <https://github.com/platformio/platformio/tree/develop/examples/mbed/mbed-blink>`_
-* `DSP <https://github.com/platformio/platformio/tree/develop/examples/mbed/mbed-dsp>`_
-* `HTTP Client <https://github.com/platformio/platformio/tree/develop/examples/mbed/mbed-http-client>`_
-* `RTOS <https://github.com/platformio/platformio/tree/develop/examples/mbed/mbed-rtos>`_
-* `Serial <https://github.com/platformio/platformio/tree/develop/examples/mbed/mbed-serial>`_
+* `CMSIS Blink <https://github.com/platformio/platformio/tree/develop/examples/stm32/stm32-cmsis-blink>`_
+* `libOpenCM3 Blink <https://github.com/platformio/platformio/tree/develop/examples/stm32/stm32-opencm3-blink>`_
+* `SPL Blink <https://github.com/platformio/platformio/tree/develop/examples/stm32/stm32-spl-blink>`_

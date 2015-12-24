@@ -86,6 +86,19 @@ Configuration for the programmers:
         upload_port = SERIAL_PORT_HERE
         upload_speed = 19200
 
+Articles
+--------
+
+* Dec 01, 2015 - **Michał Seroczyński** - `Push Notification from Arduino Yún with motion sensor <http://www.ches.pl/push-from-yun-1/>`_
+* Nov 29, 2015 - **Keith Hughes** - `Using PlatformIO for Embedded Projects <http://smartspacestuff.blogspot.com/2015/11/using-platformio-for-embedded-projects.html>`_
+* Nov 22, 2015 - **Michał Seroczyński** - `Using PlatformIO to get started with Arduino in CLion IDE <http://www.ches.pl/using-platformio-get-started-arduino-clion-ide/>`_
+* Nov 09, 2015 - **ÁLvaro García Gómez** - `Programar con Arduino "The good way" (Programming with Arduino "The good way", Spanish) <http://congdegnu.es/2015/11/09/programar-con-arduino-the-good-way/>`_
+* Oct 18, 2015 - **Nico Coetzee** - `First Arduino I2C Experience with PlatformIO <https://electronicventurer.wordpress.com/2015/10/18/first-arduino-i2c-experience/>`_
+* Oct 10, 2015 - **Floyd Hilton** - `Programming Arduino with Atom <http://floydhilton.com/software/career/2015/10/10/Arduino_with_Atom.html>`_
+* June 20, 2014 - **Ivan Kravets, Ph.D.** - `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
+
+See more :ref:`articles`.
+
 Examples
 --------
 
