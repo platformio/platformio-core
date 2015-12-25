@@ -14,7 +14,7 @@
 Quickstart
 ==========
 
-.. note::
+.. hint::
     Please read `Get Started <http://platformio.org/#!/get-started>`_
     article from the official WebSite.
 

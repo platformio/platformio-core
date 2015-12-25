@@ -44,7 +44,7 @@ Options
 ``home_dir``
 ^^^^^^^^^^^^
 
-Is used to store platform tool chains, frameworks, external libraries,
+Is used to store platform toolchains, frameworks, external libraries,
 service data and etc.
 
 A default value is User's home directory:
@@ -398,7 +398,7 @@ Example:
 ^^^^^^^^^^^^^^^^
 
 Control cyclic (recursive) behaviour for ``Library Dependency Finder (LDF)``.
-By default, this option is turned OFF (``lib_dfcyclic=False``) and means, that
+By default, this option is turned OFF (``lib_dfcyclic=False``) and means that
 ``LDF`` will find only libraries which are included in source files from the
 project :ref:`projectconf_pio_src_dir`.
 
@@ -453,7 +453,7 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 
 
 * see built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
-* take a look on the multiple snippets/answers for the user questions:
+* take a look at the multiple snippets/answers for the user questions:
   `#365 <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_,
   `#351 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_,
   `#236 <https://github.com/platformio/platformio/issues/236#issuecomment-112038284>`_,

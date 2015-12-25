@@ -25,27 +25,26 @@ computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
 System requirements
 -------------------
 
-* **Operating systems:**
-    * Mac OS X
-    * Linux, +ARM
-    * Windows
-* Python 2.6.x or Python 2.7.x(recommended)
+:Operating System: Mac OS X, Linux (+ARM) or Windows
+:Python Interpreter:
 
-All commands below should be executed in
-`Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_
-application (Terminal):
+    Python 2.6 or 2.7. Python 2.7 is recommended
 
-* Mac OS X / Linux – *Terminal* application
-* Windows – ``cmd.exe`` application.
+    .. attention::
+        **Windows Users**: Please `Download the latest Python 2.7.x
+        <https://www.python.org/downloads/>`_ and install it.
+        **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
+        "Customize" stage.
+
+:Terminal Application:
+
+    All commands below should be executed in
+    `Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_
+    application (Terminal). For Mac OS X and Linux OS - *Terminal* application,
+    for Windows OS – ``cmd.exe`` application.
 
 Installation Methods
 --------------------
-
-.. warning::
-    **Windows OS**: Please `Download the latest Python 2.7.x
-    <https://www.python.org/downloads/>`_ and install it.
-    **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
-    "Customize" stage.
 
 Please *choose ONE of* the following methods:
 

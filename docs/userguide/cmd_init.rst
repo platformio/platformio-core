@@ -73,7 +73,7 @@ Initialise PlatformIO project for the specified IDE which can be imported later
 via "Import Project" functionality.
 
 A list with supported IDE is available within ``platformio init --help`` command.
-Also, please look into :ref:`ide` page.
+Also, please take a look at :ref:`ide` page.
 
 .. option::
     --enable-auto-uploading
