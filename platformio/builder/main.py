@@ -111,12 +111,7 @@ if "BOARD" in env:
             UPLOAD_SPEED="${BOARD_OPTIONS['upload'].get('speed', None)}")
     if "ldscript" in env.get("BOARD_OPTIONS", {}).get("build", {}):
         env.Replace(
-            LDSCRIPT_PATH=(
-                env['BOARD_OPTIONS']['build']['ldscript']
-                if isfile(env['BOARD_OPTIONS']['build']['ldscript'])
-                else join("$PIOHOME_DIR", "packages", "ldscripts",
-                          "${BOARD_OPTIONS['build']['ldscript']}")
-            )
+            LDSCRIPT_PATH="${BOARD_OPTIONS['build']['ldscript']}"
         )
 
     if env['PLATFORM'] != env.get("BOARD_OPTIONS", {}).get("platform"):

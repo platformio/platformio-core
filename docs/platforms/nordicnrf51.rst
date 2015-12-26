@@ -31,8 +31,14 @@ Packages
     * - ``framework-mbed``
       - `mbed Framework <http://mbed.org>`_
 
+    * - ``tool-rfdloader``
+      - `rfdloader <https://github.com/RFduino/RFduino>`_
+
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
+    * - ``framework-arduinonordicnrf51``
+      - `Arduino Wiring-based Framework (RFDuino Core) <https://github.com/RFduino/RFduino>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
@@ -50,6 +56,9 @@ Frameworks
 
     * - Name
       - Description
+
+    * - :ref:`framework_arduino`
+      - Arduino Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
 
     * - :ref:`framework_mbed`
       - The mbed framework The mbed SDK has been designed to provide enough hardware abstraction to be intuitive and concise, yet powerful enough to build complex projects. It is built on the low-level ARM CMSIS APIs, allowing you to code down to the metal if needed. In addition to RTOS, USB and Networking libraries, a cookbook of hundreds of reusable peripheral and module libraries have been built on top of the SDK by the mbed Developer Community.
@@ -136,6 +145,26 @@ Nordic
       - 16 MHz
       - 128 Kb
       - 16 Kb
+
+RFduino
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``rfduino``
+      - `RFduino <http://www.rfduino.com/product/rfd22102-rfduino-dip/index.html>`_
+      - NRF51822
+      - 16 MHz
+      - 128 Kb
+      - 8 Kb
 
 RedBearLab
 ~~~~~~~~~~

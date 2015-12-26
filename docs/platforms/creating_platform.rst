@@ -62,6 +62,9 @@ Packages
     * - ``framework-arduinomsp430``
       - `Arduino Wiring-based Framework (MSP430 Core) <http://arduino.cc/en/Reference/HomePage>`_
 
+    * - ``framework-arduinonordicnrf51``
+      - `Arduino Wiring-based Framework (RFDuino Core) <https://github.com/RFduino/RFduino>`_
+
     * - ``framework-arduinosam``
       - `Arduino Wiring-based Framework (SAM Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
 
@@ -112,6 +115,9 @@ Packages
 
     * - ``tool-mspdebug``
       - `MSPDebug <http://mspdebug.sourceforge.net/>`_
+
+    * - ``tool-rfdloader``
+      - `rfdloader <https://github.com/RFduino/RFduino>`_
 
     * - ``tool-scons``
       - `SCons software construction tool <http://www.scons.org>`_

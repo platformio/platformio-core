@@ -12,6 +12,8 @@ PlatformIO 2.0
   PlatformIO. ``pip install platformio`` rocks!
 * Added support for the new Adafruit boards Bluefruit Micro and Feather
   (`issue #403 <https://github.com/platformio/platformio/issues/403>`_)
+* Added support for RFDuino
+  (`issue #319 <https://github.com/platformio/platformio/issues/319>`_)
 * Updated Arduino framework for Atmel AVR development platform to 1.6.7
 * Documented `firmware uploading for Atmel AVR development platform using
   Programmers <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-using-programmer>`_:

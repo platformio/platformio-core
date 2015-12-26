@@ -142,5 +142,25 @@
         },
         "url": "https://developer.mbed.org/platforms/Delta-DFCM-NNN40/",
         "vendor": "Delta"
+    },
+    "rfduino": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-D__RFduino__",
+            "f_cpu": "16000000L",
+            "ldscript": "RFduino.ld",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822",
+            "variant": "rfduino"
+        },
+        "frameworks": ["arduino"],
+        "name": "RFduino",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 8192,
+            "maximum_size": 131072
+        },
+        "url": "http://www.rfduino.com/product/rfd22102-rfduino-dip/index.html",
+        "vendor": "RFduino"
     }
 }

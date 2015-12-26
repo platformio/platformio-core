@@ -47,6 +47,10 @@ PLATFORM_PACKAGES = {
         ("Arduino Wiring-based Framework (ESP8266 Core)",
          "https://github.com/esp8266/Arduino")
     ],
+    "framework-arduinonordicnrf51": [
+        ("Arduino Wiring-based Framework (RFDuino Core)",
+         "https://github.com/RFduino/RFduino")
+    ],
     "framework-energiamsp430": [
         ("Energia Wiring-based Framework (MSP430 Core)",
          "http://energia.nu/reference/")
@@ -139,6 +143,9 @@ PLATFORM_PACKAGES = {
     ],
     "tool-esptool": [
         ("esptool-ck", "https://github.com/igrr/esptool-ck")
+    ],
+    "tool-rfdloader": [
+        ("rfdloader", "https://github.com/RFduino/RFduino")
     ]
 }
 
