@@ -12,11 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 from setuptools import find_packages, setup
 
 from platformio import (__author__, __description__, __email__, __license__,
-                        __title__, __url__, __version__, util)
+                        __title__, __url__, __version__)
 
 
 setup(
