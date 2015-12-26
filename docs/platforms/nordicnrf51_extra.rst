@@ -15,4 +15,4 @@ Examples
 All project examples are located in PlatformIO repository
 `Examples for Nordic nRF51 platform <https://github.com/platformio/platformio/tree/develop/examples/nordicnrf51>`_.
 
-* `RFDuino iBeacon <https://github.com/platformio/platformio/tree/develop/examples/nordicnrf51/rfduino-ibeacon>`_
+* `RFduino iBeacon <https://github.com/platformio/platformio/tree/develop/examples/nordicnrf51/rfduino-ibeacon>`_

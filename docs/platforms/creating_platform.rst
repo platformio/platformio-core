@@ -63,7 +63,7 @@ Packages
       - `Arduino Wiring-based Framework (MSP430 Core) <http://arduino.cc/en/Reference/HomePage>`_
 
     * - ``framework-arduinonordicnrf51``
-      - `Arduino Wiring-based Framework (RFDuino Core) <https://github.com/RFduino/RFduino>`_
+      - `Arduino Wiring-based Framework (RFduino Core) <https://github.com/RFduino/RFduino>`_
 
     * - ``framework-arduinosam``
       - `Arduino Wiring-based Framework (SAM Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_

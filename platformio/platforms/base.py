@@ -48,7 +48,7 @@ PLATFORM_PACKAGES = {
          "https://github.com/esp8266/Arduino")
     ],
     "framework-arduinonordicnrf51": [
-        ("Arduino Wiring-based Framework (RFDuino Core)",
+        ("Arduino Wiring-based Framework (RFduino Core)",
          "https://github.com/RFduino/RFduino")
     ],
     "framework-energiamsp430": [

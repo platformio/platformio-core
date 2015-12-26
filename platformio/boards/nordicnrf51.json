@@ -151,7 +151,7 @@
             "ldscript": "RFduino.ld",
             "cpu": "cortex-m0",
             "mcu": "nrf51822",
-            "variant": "rfduino"
+            "variant": "RFduino"
         },
         "frameworks": ["arduino"],
         "name": "RFduino",
