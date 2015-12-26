@@ -113,6 +113,9 @@ Packages
     * - ``tool-mspdebug``
       - `MSPDebug <http://mspdebug.sourceforge.net/>`_
 
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
     * - ``tool-stlink``
       - `ST-Link <https://github.com/texane/stlink>`_
 

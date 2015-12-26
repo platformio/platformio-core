@@ -12,30 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=wrong-import-position,wrong-import-order,unused-import
-
-try:
-    from platformio import util
-except ImportError:
-    import sys
-    for p in sys.path:
-        _new_paths = []
-        for item in ("dist-packages", "site-packages"):
-            if not p.endswith(item) and item in p:
-                _new_paths.append(p[:p.rfind(item) + len(item)])
-        if "platformio" in p:
-            _new_paths.append(p[:p.rfind("platformio") - 1])
-
-        for _p in _new_paths:
-            if _p not in sys.path:
-                sys.path.insert(0, _p)
-        try:
-            from platformio import util
-            import lockfile  # NOQA
-            break
-        except ImportError:
-            pass
-
 import json
 from os import environ
 from os.path import isfile, join
@@ -43,6 +19,7 @@ from time import time
 
 from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, Variables
 
+from platformio import util
 from platformio.exception import UnknownBoard
 
 # AllowSubstExceptions()

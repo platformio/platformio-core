@@ -191,14 +191,6 @@ class CIBuildEnvsEmpty(PlatformioException):
         "predefined environments using `--project-conf` option"
 
 
-class SConsNotInstalledError(PlatformioException):
-
-    MESSAGE = "SCons is not installed in your system. "\
-        "More details in FAQ/Troubleshooting section: "\
-        "http://docs.platformio.org/en/latest/faq.html"\
-        "#scons-is-not-installed-in-your-system"
-
-
 class UpgradeError(PlatformioException):
 
     MESSAGE = """{0}

@@ -15,8 +15,6 @@
 import os
 import subprocess
 import sys
-from glob import glob
-from os.path import isdir, join
 from platform import system
 from tempfile import NamedTemporaryFile
 
@@ -94,53 +92,6 @@ def print_exec_result(result):
         raise Exception("\n".join([result['out'], result['err']]))
 
 
-def test_scons():
-    try:
-        r = exec_command(["scons", "--version"])
-        if "ImportError: No module named SCons.Script" in r['err']:
-            _PYTHONPATH = []
-            for p in sys.path:
-                if not p.endswith("-packages"):
-                    continue
-                for item in glob(join(p, "scons*")):
-                    if isdir(join(item, "SCons")) and item not in sys.path:
-                        _PYTHONPATH.append(item)
-                        sys.path.insert(0, item)
-            if _PYTHONPATH:
-                _PYTHONPATH = str(os.pathsep).join(_PYTHONPATH)
-                if os.getenv("PYTHONPATH"):
-                    os.environ['PYTHONPATH'] += os.pathsep + _PYTHONPATH
-                else:
-                    os.environ['PYTHONPATH'] = _PYTHONPATH
-                r = exec_command(["scons", "--version"])
-        assert r['returncode'] == 0
-        return True
-    except (OSError, AssertionError):
-        for p in sys.path:
-            try:
-                r = exec_command([join(p, "scons"), "--version"])
-                assert r['returncode'] == 0
-                os.environ['PATH'] += os.pathsep + p
-                return True
-            except (OSError, AssertionError):
-                pass
-    return False
-
-
-def install_scons():
-    cmds = (
-        ["pip", "install", "-U", "scons"],
-        ["pip", "install", "--egg", "scons",
-         '--install-option="--no-install-man"'],
-        ["easy_install", "scons"]
-    )
-    for cmd in cmds:
-        r = exec_command(cmd)
-        if r['returncode'] == 0:
-            return True
-    return False
-
-
 def exec_python_cmd(args):
     return exec_command([CURINTERPRETER_PATH] + args)
 
@@ -175,8 +126,6 @@ def install_platformio():
             cmd + ["--no-cache-dir", "install", "-U", "platformio"])
     if r:
         print_exec_result(r)
-        if not test_scons():
-            install_scons()
 
 
 def main():

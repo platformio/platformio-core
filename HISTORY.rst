@@ -4,9 +4,12 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.6.4 (2015-12-??)
+2.7.0 (2015-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Moved SCons to PlatformIO packages. PlatformIO does not require SCons to be
+  installed in your system. Significantly simplified installation process of
+  PlatformIO. ``pip install platformio`` rocks!
 * Added support for the new Adafruit boards Bluefruit Micro and Feather
   (`issue #403 <https://github.com/platformio/platformio/issues/403>`_)
 * Updated Arduino framework for Atmel AVR development platform to 1.6.7

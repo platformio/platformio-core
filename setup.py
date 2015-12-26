@@ -12,28 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platform import system
 
 from setuptools import find_packages, setup
 
 from platformio import (__author__, __description__, __email__, __license__,
                         __title__, __url__, __version__, util)
 
-install_requires = [
-    "bottle",
-    "click>=3.2,<6",
-    "lockfile>=0.9.1",
-    "pyserial",
-    "requests>=2.4.0"
-]
-
-if system() == "Windows":
-    install_requires.append("colorama")
-
-if not util.test_scons():
-    util.install_scons()
-elif util.scons_in_pip():
-    install_requires.append("scons")
 
 setup(
     name=__title__,
@@ -44,7 +28,14 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
-    install_requires=install_requires,
+    install_requires=[
+        "bottle",
+        "click>=3.2,<6",
+        "lockfile>=0.9.1",
+        "pyserial",
+        "requests>=2.4.0",
+        "colorama"
+    ],
     packages=find_packages(),
     package_data={
         "platformio": [
