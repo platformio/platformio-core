@@ -14,7 +14,7 @@
 
 import json
 from os import environ
-from os.path import isfile, join
+from os.path import join
 from time import time
 
 from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, Variables

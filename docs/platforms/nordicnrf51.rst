@@ -232,3 +232,5 @@ Switch Science
       - 16 MHz
       - 256 Kb
       - 16 Kb
+
+.. include:: nordicnrf51_extra.rst
