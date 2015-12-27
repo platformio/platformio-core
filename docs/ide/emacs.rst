@@ -74,3 +74,4 @@ Screenshot
 ----------
 
 .. image:: ../_static/ide-platformio-emacs.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-emacs.png
