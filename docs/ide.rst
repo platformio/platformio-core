@@ -21,6 +21,7 @@ IDE Integration
     ide/atom
     ide/clion
     ide/eclipse
+    ide/emacs
     ide/energia
     ide/qtcreator
     ide/sublimetext
