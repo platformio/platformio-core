@@ -23,6 +23,7 @@ from :ref:`projectconf`
 
     upload_speed = 9600
 
+.. _platform_espressif_customflash:
 
 Custom Flash Size
 -----------------
@@ -39,8 +40,6 @@ The list with preconfigured LD scripts is located in public repository
 * ``esp8266.flash.2m.ld`` 2M (1M SPIFFS)
 * ``esp8266.flash.4m1.ld`` 4M (1M SPIFFS)
 * ``esp8266.flash.4m.ld`` 4M (3M SPIFFS)
-* ``esp8266.flash.8m.ld`` 8M (7M SPIFFS)
-* ``esp8266.flash.16m.ld`` 16M (15M SPIFFS)
 
 To override default LD script please use :ref:`projectconf_build_flags` from
 :ref:`projectconf`.
@@ -49,6 +48,18 @@ To override default LD script please use :ref:`projectconf_build_flags` from
 
     [env:myenv]
     build_flags = -Wl,-Tesp8266.flash.4m.ld
+
+.. _platform_espressif_uploadfs:
+
+Uploading files to file system SPIFFS
+-------------------------------------
+
+1. Put files to :ref:`projectconf_pio_data_dir`
+2. Run target ``uploadfs`` via  :option:`platformio run --target` command.
+
+By default, will be used default LD Script for the board where is specified
+SPIFFS flash data (start, end, page, block). You can override it using
+:ref:`platform_espressif_customflash`.
 
 Over-the-Air (OTA) update
 -------------------------

@@ -146,6 +146,10 @@ PLATFORM_PACKAGES = {
     ],
     "tool-rfdloader": [
         ("rfdloader", "https://github.com/RFduino/RFduino")
+    ],
+    "tool-mkspiffs": [
+        ("Tool to build and unpack SPIFFS images",
+         "https://github.com/igrr/mkspiffs")
     ]
 }
 

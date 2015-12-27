@@ -41,6 +41,10 @@ class EspressifPlatform(BasePlatform):
             "default": True
         },
 
+        "tool-mkspiffs": {
+            "alias": "uploader"
+        },
+
         "sdk-esp8266": {
         },
 

@@ -53,6 +53,7 @@ Pre-built targets:
 * ``program`` firmware "auto-uploading" for embedded platforms using external
   programmer (available only for :ref:`platform_atmelavr`)
 * ``uploadlazy`` upload existing firmware without project rebuilding
+* ``uploadfs`` :ref:`platform_espressif_uploadfs`
 * ``envdump`` dump current build environment
 * ``size`` print the size of the sections in a firmware/program
 

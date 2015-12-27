@@ -200,6 +200,13 @@ def get_pioenvs_dir():
     )
 
 
+def get_projectdata_dir():
+    return _get_projconf_option_dir(
+        "data_dir",
+        join(get_project_dir(), "data")
+    )
+
+
 def get_project_config():
     path = join(get_project_dir(), "platformio.ini")
     if not isfile(path):

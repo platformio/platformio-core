@@ -10,6 +10,8 @@ PlatformIO 2.0
 * Moved SCons to PlatformIO packages. PlatformIO does not require SCons to be
   installed in your system. Significantly simplified installation process of
   PlatformIO. ``pip install platformio`` rocks!
+* Implemented uploading files to file system SPIFFS for ESP8266
+  (`issue #382 <https://github.com/platformio/platformio/issues/382>`_)
 * Added support for the new Adafruit boards Bluefruit Micro and Feather
   (`issue #403 <https://github.com/platformio/platformio/issues/403>`_)
 * Added support for RFDuino

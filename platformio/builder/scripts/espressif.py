@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=redefined-outer-name
+
 """
     Builder for Espressif MCUs
 """
@@ -24,22 +26,14 @@ from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
 
 
-def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
-    env.AutodetectUploadPort()
-
-
-def _get_flash_size(env):  # pylint: disable=redefined-outer-name
+def _get_flash_size(env):
     # use board's flash size by default
     board_max_size = int(
         env.get("BOARD_OPTIONS", {}).get("upload", {}).get("maximum_size", 0))
 
-    # check if user overrides
-    for f in env.get("LINKFLAGS", []):
-        if "-Wl,-T" not in f:
-            continue
-        match = re.search(r"-Wl,-T.*\.flash\.(\d+)(m|k).*\.ld", env.subst(f))
-        if not match:
-            continue
+    # check if user overrides LD Script
+    match = re.search(r"\.flash\.(\d+)(m|k).*\.ld", env.GetActualLDScript())
+    if match:
         if match.group(2) == "k":
             board_max_size = int(match.group(1)) * 1024
         elif match.group(2) == "m":
@@ -106,9 +100,13 @@ env.Replace(
         "-Wl,--gc-sections"
     ],
 
-    SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
+    #
+    # Upload
+    #
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-esptool", "esptool"),
+    UPLOADEROTA=join("$PLATFORMFW_DIR", "tools", "espota.py"),
+
     UPLOADERFLAGS=[
         "-vv",
         "-cd", "${BOARD_OPTIONS['upload']['resetmethod']}",
@@ -116,7 +114,27 @@ env.Replace(
         "-cp", "$UPLOAD_PORT",
         "-cf", "$SOURCE"
     ],
+    UPLOADERFSFLAGS=[
+        "$UPLOADERFLAGS",
+        "-ca", "${int(SPIFFS_START, 16)}"
+    ],
+    UPLOADEROTAFLAGS=[
+        "--debug",
+        "--progress",
+        "-i", "$UPLOAD_PORT",
+        "-f", "$SOURCE"
+    ],
+
     UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS',
+    UPLOADFSCMD='"$UPLOADER" $UPLOADERFSFLAGS',
+    UPLOADOTACMD='"$UPLOADEROTA" $UPLOADEROTAFLAGS',
+
+    #
+    # Misc
+    #
+
+    MKSPIFFSTOOL=join("$PIOPACKAGES_DIR", "tool-mkspiffs", "mkspiffs"),
+    SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
     PROGNAME="firmware",
     PROGSUFFIX=".elf"
@@ -149,6 +167,48 @@ env.Append(
     )
 )
 
+
+#
+# SPIFFS
+#
+
+def _fetch_spiffs_size(target, source, env):
+    spiffs_re = re.compile(
+        r"PROVIDE\s*\(\s*_SPIFFS_(\w+)\s*=\s*(0x[\dA-F]+)\s*\)")
+    with open(env.GetActualLDScript()) as f:
+        for line in f.readlines():
+            match = spiffs_re.search(line)
+            if not match:
+                continue
+            env["SPIFFS_%s" % match.group(1).upper()] = match.group(2)
+
+    assert all([k in env for k in ["SPIFFS_START", "SPIFFS_END", "SPIFFS_PAGE",
+                                   "SPIFFS_BLOCK"]])
+    return (target, source)
+
+
+env.Append(
+    BUILDERS=dict(
+        DataToBin=Builder(
+            action=" ".join([
+                '"$MKSPIFFSTOOL"',
+                "-c", "$SOURCES",
+                "-p", "${int(SPIFFS_PAGE, 16)}",
+                "-b", "${int(SPIFFS_BLOCK, 16)}",
+                "-s", "${int(SPIFFS_END, 16) - int(SPIFFS_START, 16)}",
+                "$TARGET"
+            ]),
+            emitter=_fetch_spiffs_size,
+            source_factory=env.Dir,
+            suffix=".bin"
+        )
+    )
+)
+
+#
+# Framework and SDK specific configuration
+#
+
 if "FRAMEWORK" in env:
     env.Append(
         LINKFLAGS=[
@@ -161,14 +221,7 @@ if "FRAMEWORK" in env:
     try:
         if env.get("UPLOAD_PORT") and socket.inet_aton(env.get("UPLOAD_PORT")):
             env.Replace(
-                UPLOADEROTA=join("$PLATFORMFW_DIR", "tools", "espota.py"),
-                UPLOADERFLAGS=[
-                    "--debug",
-                    "--progress",
-                    "-i", "$UPLOAD_PORT",
-                    "-f", "$SOURCE"
-                ],
-                UPLOADCMD='"$UPLOADEROTA" $UPLOADERFLAGS'
+                UPLOADCMD="$UPLOADOTACMD"
             )
     except socket.error:
         pass
@@ -256,9 +309,21 @@ AlwaysBuild(target_size)
 # Target: Upload firmware
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_firm,
-                   [BeforeUpload, "$UPLOADCMD"])
-AlwaysBuild(upload)
+target_upload = env.Alias(
+    ["upload", "uploadlazy"], target_firm,
+    [lambda target, source, env: env.AutodetectUploadPort(), "$UPLOADCMD"])
+env.AlwaysBuild(target_upload)
+
+#
+# Target: Upload SPIFFS image
+#
+
+target_mkspiffs = env.DataToBin(join("$BUILD_DIR", "spiffs_image"),
+                                "$PROJECTDATA_DIR")
+target_uploadfs = env.Alias(
+    "uploadfs", target_mkspiffs,
+    [lambda target, source, env: env.AutodetectUploadPort(), "$UPLOADFSCMD"])
+env.AlwaysBuild(target_mkspiffs, target_uploadfs)
 
 #
 # Target: Define targets

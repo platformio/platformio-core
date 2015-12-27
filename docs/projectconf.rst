@@ -115,6 +115,18 @@ This option can be overridden by global environment variable
     are defined in :ref:`projectconf`, then **TRY TO DELETE** this folder. In
     this situation you will remove all cached files without any risk.
 
+.. _projectconf_pio_data_dir:
+
+``data_dir``
+^^^^^^^^^^^^
+
+Data directory to store contents and :ref:`platform_espressif_uploadfs`.
+
+A default value is ``%project_dir%/data``.
+
+This option can be overridden by global environment variable
+:envvar:`PLATFORMIO_DATA_DIR`.
+
 [env:NAME]
 ----------
 
@@ -463,8 +475,9 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 ^^^^^^^^^^^
 
 A list with targets which will be processed by :ref:`cmd_run` command by
-default. You can enter more than one target separated with "space". Which
-targets are supported is described in :option:`platformio run --target`.
+default. You can enter more than one target separated with "space".
+
+The list with available targets is located in :option:`platformio run --target`.
 
 **Tip!** You can use these targets like an option to
 :option:`platformio run --target` command. For example:

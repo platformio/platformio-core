@@ -113,6 +113,9 @@ Packages
     * - ``tool-micronucleus``
       - `Micronucleus <https://github.com/micronucleus/micronucleus>`_
 
+    * - ``tool-mkspiffs``
+      - `Tool to build and unpack SPIFFS images <https://github.com/igrr/mkspiffs>`_
+
     * - ``tool-mspdebug``
       - `MSPDebug <http://mspdebug.sourceforge.net/>`_
 

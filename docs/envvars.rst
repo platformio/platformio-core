@@ -55,6 +55,10 @@ Allows to override :ref:`projectconf` option :ref:`projectconf_pio_src_dir`.
 
 Allows to override :ref:`projectconf` option :ref:`projectconf_pio_envs_dir`.
 
+.. envvar:: PLATFORMIO_DATA_DIR
+
+Allows to override :ref:`projectconf` option :ref:`projectconf_pio_data_dir`.
+
 
 Builder
 -------
