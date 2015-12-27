@@ -1,3 +1,4 @@
+.pioenvs
 CMakeCache.txt
 CMakeFiles/
 MakeFile

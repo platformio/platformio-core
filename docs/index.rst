@@ -46,7 +46,7 @@ Embedded Development. *Easier Than Ever.*
 -----------------------------------------
 
 * Colourful command-line output
-* :ref:`IDE Integration <ide>` with *Arduino, Eclipse, Energia, Qt Creator,
+* :ref:`IDE Integration <ide>` with *Arduino, Eclipse, Emacs, Energia, Qt Creator,
   Sublime Text, Vim, Visual Studio*
 * Cloud compiling and  :ref:`ci` with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
 * Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>` and

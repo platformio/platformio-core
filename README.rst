@@ -93,7 +93,7 @@ settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 
 * Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_ with
-  *Arduino, Eclipse, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
+  *Arduino, Eclipse, Emacs, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
 * Cloud compiling and `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
   with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
 * Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable

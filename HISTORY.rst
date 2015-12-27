@@ -14,6 +14,9 @@ PlatformIO 2.0
   (`issue #403 <https://github.com/platformio/platformio/issues/403>`_)
 * Added support for RFDuino
   (`issue #319 <https://github.com/platformio/platformio/issues/319>`_)
+* Project generator for `Emacs <http://docs.platformio.org/en/latest/ide/emacs.html>`__
+  text editor
+  (`pull #404 <https://github.com/platformio/platformio/pull/404>`_)
 * Updated Arduino framework for Atmel AVR development platform to 1.6.7
 * Documented `firmware uploading for Atmel AVR development platform using
   Programmers <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-using-programmer>`_:
