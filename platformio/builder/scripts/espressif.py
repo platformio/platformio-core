@@ -318,8 +318,10 @@ env.AlwaysBuild(target_upload)
 # Target: Upload SPIFFS image
 #
 
-target_mkspiffs = env.DataToBin(join("$BUILD_DIR", "spiffs_image"),
-                                "$PROJECTDATA_DIR")
+target_mkspiffs = None
+if "uploadfs" in COMMAND_LINE_TARGETS:
+    target_mkspiffs = env.DataToBin(join("$BUILD_DIR", "spiffs_image"),
+                                    "$PROJECTDATA_DIR")
 target_uploadfs = env.Alias(
     "uploadfs", target_mkspiffs,
     [lambda target, source, env: env.AutodetectUploadPort(), "$UPLOADFSCMD"])
