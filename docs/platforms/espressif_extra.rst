@@ -28,6 +28,10 @@ from :ref:`projectconf`
 Custom Flash Size
 -----------------
 
+.. warning::
+    Please make sure to read `ESP8266 Flash layout <https://github.com/esp8266/Arduino/blob/master/doc/filesystem.md#flash-layout>`_
+    information first.
+
 The list with preconfigured LD scripts is located in public repository
 `platformio-pkg-ldscripts <https://github.com/platformio/platformio-pkg-ldscripts>`_.
 
@@ -53,6 +57,10 @@ To override default LD script please use :ref:`projectconf_build_flags` from
 
 Uploading files to file system SPIFFS
 -------------------------------------
+
+.. warning::
+    Please make sure to read `ESP8266 Flash layout <https://github.com/esp8266/Arduino/blob/master/doc/filesystem.md#flash-layout>`_
+    information first.
 
 1. Put files to :ref:`projectconf_pio_data_dir`
 2. Run target ``uploadfs`` via  :option:`platformio run --target` command.
