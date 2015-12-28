@@ -116,7 +116,7 @@ env.Replace(
     ],
     UPLOADERFSFLAGS=[
         "$UPLOADERFLAGS",
-        "-ca", "${int(SPIFFS_START, 16) & 0xFFFFFF}"
+        "-ca", "$SPIFFS_START"
     ],
     UPLOADEROTAFLAGS=[
         "--debug",
@@ -184,6 +184,18 @@ def _fetch_spiffs_size(target, source, env):
 
     assert all([k in env for k in ["SPIFFS_START", "SPIFFS_END", "SPIFFS_PAGE",
                                    "SPIFFS_BLOCK"]])
+
+    # esptool flash starts from 0
+    for k in ("SPIFFS_START", "SPIFFS_END"):
+        _value = 0
+        if int(env[k], 16) < 0x40300000:
+            _value = int(env[k], 16) & 0xFFFFF
+        else:
+            _value = int(env[k], 16) & 0xFFFFFF
+            _value -= 0x200000  # esptool offset
+
+        env[k] = hex(_value)
+
     return (target, source)
 
 
