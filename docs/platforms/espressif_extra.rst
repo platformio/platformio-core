@@ -62,7 +62,7 @@ Uploading files to file system SPIFFS
     Please make sure to read `ESP8266 Flash layout <https://github.com/esp8266/Arduino/blob/master/doc/filesystem.md#flash-layout>`_
     information first.
 
-1. Put files to :ref:`projectconf_pio_data_dir`
+1. Create :ref:`projectconf_pio_data_dir` and put files here
 2. Run target ``uploadfs`` via  :option:`platformio run --target` command.
 
 By default, will be used default LD Script for the board where is specified

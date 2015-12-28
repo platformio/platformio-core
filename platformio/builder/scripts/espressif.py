@@ -116,7 +116,7 @@ env.Replace(
     ],
     UPLOADERFSFLAGS=[
         "$UPLOADERFLAGS",
-        "-ca", "${int(SPIFFS_START, 16)}"
+        "-ca", "${int(SPIFFS_START, 16) & 0xFFFFFF}"
     ],
     UPLOADEROTAFLAGS=[
         "--debug",
