@@ -62,7 +62,7 @@ There are 4 predefined targets for building.
 * ``platformio_build``  - Build project without auto-uploading.     (``C-c i b``)
 * ``platformio_upload`` - Build and upload (if no errors).          (``C-c i u``)
 * ``platformio_clean``  - Clean compiled objects.                   (``C-c i c``)
-* ``platformio_update`` - Update installed platforms and libraries. (``C-C i d``)
+* ``platformio_update`` - Update installed platforms and libraries. (``C-c i d``)
 
 .. warning::
     The libraries which are added, installed or used in the project
