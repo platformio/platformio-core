@@ -28,7 +28,7 @@ integration. Arduino and MBED compatible. Ready for Cloud compiling.**
 
 *Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
-libOpenCM3, etc.**
+libOpenCM3, etc.*
 
 * `Website <http://platformio.org>`_
 * `Web 2.0 Library Search <http://platformio.org/#!/lib>`_ |
