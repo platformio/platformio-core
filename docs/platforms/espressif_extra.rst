@@ -42,7 +42,7 @@ The list with preconfigured LD scripts is located in public repository
 * ``esp8266.flash.1m256.ld`` 1M (256K SPIFFS)
 * ``esp8266.flash.1m512.ld`` 1M (512K SPIFFS)
 * ``esp8266.flash.2m.ld`` 2M (1M SPIFFS)
-* ``esp8266.flash.4m1.ld`` 4M (1M SPIFFS)
+* ``esp8266.flash.4m1m.ld`` 4M (1M SPIFFS)
 * ``esp8266.flash.4m.ld`` 4M (3M SPIFFS)
 
 To override default LD script please use :ref:`projectconf_build_flags` from

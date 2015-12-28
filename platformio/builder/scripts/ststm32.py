@@ -20,7 +20,7 @@ import platform
 from os.path import isfile, join
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
-                          DefaultEnvironment, Exit, SConscript)
+                          DefaultEnvironment, SConscript)
 
 env = DefaultEnvironment()
 
@@ -28,8 +28,8 @@ SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
 if env.subst("$UPLOAD_PROTOCOL") == "gdb":
     if not isfile(join(env.subst("$PROJECT_DIR"), "upload.gdb")):
-        Exit(
-            "You are using GDB as firmware uploader. "
+        env.Exit(
+            "Error: You are using GDB as firmware uploader. "
             "Please specify upload commands in upload.gdb "
             "file in project directory!"
         )

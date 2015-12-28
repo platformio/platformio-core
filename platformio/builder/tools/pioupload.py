@@ -18,10 +18,8 @@ from os.path import isfile, join
 from shutil import copyfile
 from time import sleep
 
-from SCons.Script import Exit
-from serial import Serial
-
 from platformio.util import get_logicaldisks, get_serialports, get_systype
+from serial import Serial
 
 
 def FlushSerialBuffer(env, port):
@@ -48,7 +46,7 @@ def TouchSerialPort(env, port, baudrate):
     sleep(0.4)
 
 
-def WaitForNewSerialPort(_, before):
+def WaitForNewSerialPort(env, before):
     new_port = None
     elapsed = 0
     while elapsed < 10:
@@ -63,10 +61,10 @@ def WaitForNewSerialPort(_, before):
         elapsed += 0.25
 
     if not new_port:
-        Exit("Error: Couldn't find a board on the selected port. "
-             "Check that you have the correct port selected. "
-             "If it is correct, try pressing the board's reset "
-             "button after initiating the upload.")
+        env.Exit("Error: Couldn't find a board on the selected port. "
+                 "Check that you have the correct port selected. "
+                 "If it is correct, try pressing the board's reset "
+                 "button after initiating the upload.")
 
     return new_port
 
@@ -100,10 +98,10 @@ def AutodetectUploadPort(env):
     if "UPLOAD_PORT" in env:
         print "Auto-detected UPLOAD_PORT/DISK: %s" % env['UPLOAD_PORT']
     else:
-        Exit("Error: Please specify `upload_port` for environment or use "
-             "global `--upload-port` option.\n"
-             "For some development platforms this can be a USB flash drive "
-             "(i.e. /media/<user>/<device name>)\n")
+        env.Exit("Error: Please specify `upload_port` for environment or use "
+                 "global `--upload-port` option.\n"
+                 "For some development platforms this can be a USB flash "
+                 "drive (i.e. /media/<user>/<device name>)\n")
 
 
 def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
@@ -113,8 +111,8 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
         if not isfile(fpath):
             continue
         copyfile(fpath, join(env.subst("$UPLOAD_PORT"), "firmware.%s" % ext))
-    print ("Firmware has been successfully uploaded.\n"
-           "Please restart your board.")
+    print("Firmware has been successfully uploaded.\n"
+          "Please restart your board.")
 
 
 def exists(_):

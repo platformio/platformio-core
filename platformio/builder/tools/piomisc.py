@@ -191,6 +191,7 @@ def GetCompilerType(env):
 
 
 def GetActualLDScript(env):
+    script = None
     for f in env.get("LINKFLAGS", []):
         if f.startswith("-Wl,-T"):
             script = env.subst(f[6:].replace('"', "").strip())
@@ -200,6 +201,11 @@ def GetActualLDScript(env):
                 path = join(env.subst(d), script)
                 if isfile(path):
                     return path
+
+    if script:
+        env.Exit("Error: Could not find '%s' LD script in LDPATH '%s'" % (
+            script, env.subst("$LIBPATH")))
+
     return None
 
 
