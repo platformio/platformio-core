@@ -66,7 +66,7 @@ Uploading files to file system SPIFFS
 2. Run target ``uploadfs`` via  :option:`platformio run --target` command.
 
 By default, will be used default LD Script for the board where is specified
-SPIFFS flash data (start, end, page, block). You can override it using
+SPIFFS offsets (start, end, page, block). You can override it using
 :ref:`platform_espressif_customflash`.
 
 Over-the-Air (OTA) update
