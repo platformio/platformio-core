@@ -18,8 +18,9 @@ from os.path import isfile, join
 from shutil import copyfile
 from time import sleep
 
-from platformio.util import get_logicaldisks, get_serialports, get_systype
 from serial import Serial
+
+from platformio.util import get_logicaldisks, get_serialports, get_systype
 
 
 def FlushSerialBuffer(env, port):
