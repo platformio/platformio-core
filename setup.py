@@ -12,11 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+
 from setuptools import find_packages, setup
 
 from platformio import (__author__, __description__, __email__, __license__,
                         __title__, __url__, __version__)
 
+install_requires = [
+    "bottle<0.13",
+    "click>=3.2,<6",
+    "lockfile>=0.9.1,<0.13",
+    "requests>=2.4.0,<3",
+    "colorama"
+]
+
+if sys.version_info < (2, 7, 0):
+    install_requires.append("pyserial<3")
+else:
+    install_requires.append("pyserial<4")
 
 setup(
     name=__title__,
@@ -27,14 +41,7 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
-    install_requires=[
-        "bottle<0.13",
-        "click>=3.2,<6",
-        "lockfile>=0.9.1,<0.13",
-        "pyserial<4",
-        "requests>=2.4.0,<3",
-        "colorama"
-    ],
+    install_requires=install_requires,
     packages=find_packages(),
     package_data={
         "platformio": [
