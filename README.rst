@@ -28,6 +28,9 @@ PlatformIO
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/platformio/platformio
    :target: https://gitter.im/platformio/platformio
+.. image:: http://img.shields.io/paypal/donate.png?color=yellow
+   :alt: Donate to PlatformIO Organisation
+   :target: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=me%40ikravets%2ecom&item_name=PlatformIO&item_number=GitHub&currency_code=USD
 
 `Home & Demo <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
