@@ -15,7 +15,6 @@
 import atexit
 import platform
 import Queue
-import re
 import sys
 import threading
 import uuid
@@ -48,6 +47,13 @@ class TelemetryBase(object):
         if name in self._params:
             del self._params[name]
 
+    def get_cid(self):
+        cid = app.get_state_item("cid")
+        if not cid:
+            cid = self.MACHINE_ID
+            app.set_state_item("cid", cid)
+        return cid
+
     def send(self, hittype):
         raise NotImplementedError()
 
@@ -67,7 +73,7 @@ class MeasurementProtocol(TelemetryBase):
         TelemetryBase.__init__(self)
         self['v'] = 1
         self['tid'] = self.TRACKING_ID
-        self['cid'] = self.MACHINE_ID
+        self['cid'] = self.get_cid()
 
         self['sr'] = "%dx%d" % click.get_terminal_size()
         self._prefill_screen_name()
@@ -92,13 +98,6 @@ class MeasurementProtocol(TelemetryBase):
         dpdata.append("Click/%s" % click.__version__)
         if app.get_session_var("caller_id"):
             dpdata.append("Caller/%s" % app.get_session_var("caller_id"))
-        try:
-            result = util.exec_command(["scons", "--version"])
-            match = re.search(r"engine: v([\d\.]+)", result['out'])
-            if match:
-                dpdata.append("SCons/%s" % match.group(1))
-        except:  # pylint: disable=W0702
-            pass
         self['an'] = " ".join(dpdata)
 
     def _prefill_custom_data(self):
@@ -197,26 +196,25 @@ class MPDataPusher(object):
                 self._failedque.append(_item)
                 if self._send_data(item):
                     self._failedque.remove(_item)
-                else:
-                    self._http_offline = True
                 self._queue.task_done()
             except:  # pylint: disable=W0702
                 pass
 
     def _send_data(self, data):
-        result = False
+        if self._http_offline:
+            return False
         try:
             r = self._http_session.post(
                 "https://ssl.google-analytics.com/collect",
                 data=data,
                 headers=util.get_request_defheaders(),
-                timeout=2
+                timeout=1
             )
             r.raise_for_status()
-            result = True
+            return True
         except:  # pylint: disable=W0702
-            pass
-        return result
+            self._http_offline = True
+        return False
 
 
 def on_command():
