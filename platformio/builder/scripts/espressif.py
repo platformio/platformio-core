@@ -111,23 +111,23 @@ env.Replace(
         "-vv",
         "-cd", "${BOARD_OPTIONS['upload']['resetmethod']}",
         "-cb", "$UPLOAD_SPEED",
-        "-cp", "$UPLOAD_PORT",
-        "-cf", "$SOURCE"
+        "-cp", "$UPLOAD_PORT"
     ],
     UPLOADERFSFLAGS=[
         "$UPLOADERFLAGS",
+        "$UPLOAD_FLAGS",
         "-ca", "$SPIFFS_START"
     ],
     UPLOADEROTAFLAGS=[
         "--debug",
         "--progress",
         "-i", "$UPLOAD_PORT",
-        "-f", "$SOURCE"
+        "$UPLOAD_FLAGS"
     ],
 
-    UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS',
-    UPLOADFSCMD='"$UPLOADER" $UPLOADERFSFLAGS',
-    UPLOADOTACMD='"$UPLOADEROTA" $UPLOADEROTAFLAGS',
+    UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS -cf $SOURCE',
+    UPLOADFSCMD='"$UPLOADER" $UPLOADERFSFLAGS -cf $SOURCE',
+    UPLOADOTACMD='"$UPLOADEROTA" $UPLOADEROTAFLAGS -f $SOURCE',
 
     #
     # Misc
