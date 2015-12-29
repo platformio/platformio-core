@@ -28,11 +28,11 @@ setup(
     url=__url__,
     license=__license__,
     install_requires=[
-        "bottle",
+        "bottle<0.13",
         "click>=3.2,<6",
-        "lockfile>=0.9.1",
-        "pyserial",
-        "requests>=2.4.0",
+        "lockfile>=0.9.1,<0.13",
+        "pyserial<4",
+        "requests>=2.4.0,<3",
         "colorama"
     ],
     packages=find_packages(),

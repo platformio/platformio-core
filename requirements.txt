@@ -1,7 +1,0 @@
-bottle==0.12.9
-click==5.1
-colorama==0.3.3
-lockfile==0.12.2
-pyserial==2.7
-requests==2.8.1
-scons==2.4.1
