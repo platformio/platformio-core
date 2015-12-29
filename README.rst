@@ -28,7 +28,7 @@ PlatformIO
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/platformio/platformio
    :target: https://gitter.im/platformio/platformio
-.. image:: http://img.shields.io/paypal/donate.png?color=yellow
+.. image:: https://img.shields.io/PlatformIO/donate.png?color=yellow
    :alt: Support PlatformIO Team
    :target: https://www.bountysource.com/teams/platformio
 
