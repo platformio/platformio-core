@@ -19,7 +19,6 @@
 """
 
 import re
-import socket
 from os.path import join
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
@@ -116,7 +115,7 @@ env.Replace(
     UPLOADEROTAFLAGS=[
         "--debug",
         "--progress",
-        "-i", '"$UPLOAD_PORT"',
+        "-i", "$UPLOAD_PORT",
         "$UPLOAD_FLAGS"
     ],
 
@@ -230,15 +229,12 @@ if "FRAMEWORK" in env:
     )
 
     # Handle uploading via OTA
-    try:
-        if (env.get("UPLOAD_PORT") and (
-                env.get("UPLOAD_PORT").endswith(".local") or
-                socket.inet_aton(env.get("UPLOAD_PORT")))):
-            env.Replace(
-                UPLOADCMD="$UPLOADOTACMD"
-            )
-    except socket.error:
-        pass
+    ota_port = None
+    if env.get("UPLOAD_PORT"):
+        ota_port = re.match(r"((([0-9]{1,3}\.){3}[0-9]{1,3})|.+\.local)$",
+                            env.get("UPLOAD_PORT"))
+    if ota_port:
+        env.Replace(UPLOADCMD="$UPLOADOTACMD")
 
 # Configure native SDK
 else:
