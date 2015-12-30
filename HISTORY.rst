@@ -26,7 +26,7 @@ PlatformIO 2.0
   Programmers <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-using-programmer>`_:
   AVR ISP, AVRISP mkII, USBtinyISP, USBasp, Parallel Programmer and Arduino as ISP
 * Fixed issue with current Python interpreter for Python-based tools
-  (`pull #417 <https://github.com/platformio/platformio/pull/417>`_)
+  (`issue #417 <https://github.com/platformio/platformio/issue/417>`_)
 
 2.6.3 (2015-12-21)
 ~~~~~~~~~~~~~~~~~~
