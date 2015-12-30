@@ -150,18 +150,6 @@ Example:
         "url": "https://github.com/foo/bar.git"
     }
 
-
-.. _libjson_downloadurl:
-
-``downloadUrl``
----------------
-
-*Required* if :ref:`libjson_repository` field is not defined | Type: ``String``
-
-It is the *HTTP URL* to the archived source code of library. It should end
-with the type of archive (``.zip`` or ``.tar.gz``).
-
-
 .. _libjson_version:
 
 ``version``
@@ -183,6 +171,27 @@ A version of the current library source code.
     :ref:`libjson_repository` field. In this case
     |PIOAPICR| will use the *CVS*-revision from the latest commit.
 
+Example:
+
+.. code-block:: javascript
+
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/foo/bar.git"
+    },
+    "version": "1.0.0"
+
+.. _libjson_downloadurl:
+
+``downloadUrl``
+---------------
+
+*Required* if :ref:`libjson_repository` field is not defined | Type: ``String``
+
+It is the *HTTP URL* to the archived source code of library. It should end
+with the type of archive (``.zip`` or ``.tar.gz``).
+
 Example with fixed release/tag on GitHub:
 
 .. code-block:: javascript
@@ -190,7 +199,6 @@ Example with fixed release/tag on GitHub:
     "version": "1.0.0",
     "downloadUrl": "https://github.com/foo/bar/archive/v1.0.0.tar.gz",
     "include": "bar-1.0.0"
-
 
 See more ``library.json`` :ref:`library_creating_examples`.
 
