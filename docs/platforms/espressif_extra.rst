@@ -74,6 +74,8 @@ By default, will be used default LD Script for the board where is specified
 SPIFFS offsets (start, end, page, block). You can override it using
 :ref:`platform_espressif_customflash`.
 
+Active discussion is located in `issue #382 <https://github.com/platformio/platformio/issues/382>`_.
+
 .. _platform_espressif_ota:
 
 Over-the-Air (OTA) update
