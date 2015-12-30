@@ -4,8 +4,10 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.7.0 (2015-12-??)
+2.7.0 (2015-12-30)
 ~~~~~~~~~~~~~~~~~~
+
+**Happy New Year!**
 
 * Moved SCons to PlatformIO packages. PlatformIO does not require SCons to be
   installed in your system. Significantly simplified installation process of
