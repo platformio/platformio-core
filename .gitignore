@@ -2,6 +2,5 @@
 *.pyc
 .pioenvs
 .tox
-.sconsign.dblite
 docs/_build
 dist

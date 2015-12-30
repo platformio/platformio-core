@@ -28,6 +28,9 @@ PlatformIO
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/platformio/platformio
    :target: https://gitter.im/platformio/platformio
+.. image:: https://img.shields.io/PlatformIO/donate.png?color=yellow
+   :alt: Support PlatformIO Team
+   :target: https://www.bountysource.com/teams/platformio
 
 `Home & Demo <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
@@ -93,7 +96,7 @@ settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 
 * Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_ with
-  *Arduino, Eclipse, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
+  *Arduino, Eclipse, Emacs, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
 * Cloud compiling and `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
   with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
 * Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable

@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+import sys
+
 import click
 import requests
 
@@ -32,7 +35,8 @@ def cli():
                     fg="yellow")
 
         cmds = (
-            ["pip", "install", "--upgrade", "platformio"],
+            [os.path.normpath(sys.executable),
+             "-m", "pip", "install", "--upgrade", "platformio"],
             ["platformio", "--version"]
         )
 
@@ -44,8 +48,9 @@ def cli():
                 r = util.exec_command(cmd)
 
                 # try pip with disabled cache
-                if r['returncode'] != 0 and cmd[0] == "pip":
-                    r = util.exec_command(["pip", "--no-cache-dir"] + cmd[1:])
+                if r['returncode'] != 0 and cmd[0] != "platformio":
+                    cmd.insert(3, "--no-cache-dir")
+                    r = util.exec_command(cmd)
 
                 assert r['returncode'] == 0
             assert last in r['out'].strip()

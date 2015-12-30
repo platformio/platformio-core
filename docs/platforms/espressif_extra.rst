@@ -9,8 +9,76 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-OTA update
-----------
+Custom CPU Frequency or Upload Speed
+------------------------------------
+
+See :ref:`projectconf_board_f_cpu` and :ref:`projectconf_upload_speed` options
+from :ref:`projectconf`
+
+.. code-block:: ini
+
+    [env:myenv]
+    # set frequency to 40MHz
+    board_f_cpu = 40000000L
+
+    upload_speed = 9600
+
+.. _platform_espressif_customflash:
+
+Custom Flash Size
+-----------------
+
+.. warning::
+    Please make sure to read `ESP8266 Flash layout <https://github.com/esp8266/Arduino/blob/master/doc/filesystem.md#flash-layout>`_
+    information first.
+
+The list with preconfigured LD scripts is located in public repository
+`platformio-pkg-ldscripts <https://github.com/platformio/platformio-pkg-ldscripts>`_.
+
+* ``esp8266.flash.512k0.ld`` 512K (no SPIFFS)
+* ``esp8266.flash.512k64.ld`` 512K (64K SPIFFS)
+* ``esp8266.flash.1m64.ld`` 1M (64K SPIFFS)
+* ``esp8266.flash.1m128.ld`` 1M (128K SPIFFS)
+* ``esp8266.flash.1m256.ld`` 1M (256K SPIFFS)
+* ``esp8266.flash.1m512.ld`` 1M (512K SPIFFS)
+* ``esp8266.flash.2m.ld`` 2M (1M SPIFFS)
+* ``esp8266.flash.4m1m.ld`` 4M (1M SPIFFS)
+* ``esp8266.flash.4m.ld`` 4M (3M SPIFFS)
+
+To override default LD script please use :ref:`projectconf_build_flags` from
+:ref:`projectconf`.
+
+.. code-block:: ini
+
+    [env:myenv]
+    build_flags = -Wl,-Tesp8266.flash.4m.ld
+
+.. _platform_espressif_uploadfs:
+
+Uploading files to file system SPIFFS
+-------------------------------------
+
+.. warning::
+    Please make sure to read `ESP8266 Flash layout <https://github.com/esp8266/Arduino/blob/master/doc/filesystem.md#flash-layout>`_
+    information first.
+
+1. Create :ref:`projectconf_pio_data_dir` and put files here
+2. Run target ``uploadfs`` via  :option:`platformio run --target` command.
+
+To upload SPIFFS image using OTA update please specify ``upload_port`` /
+``--upload-port`` as IP address or DNS name (``*.local``). For the details
+please follow to :ref:`platform_espressif_ota`.
+
+By default, will be used default LD Script for the board where is specified
+SPIFFS offsets (start, end, page, block). You can override it using
+:ref:`platform_espressif_customflash`.
+
+Active discussion is located in `issue #382 <https://github.com/platformio/platformio/issues/382>`_.
+
+.. _platform_espressif_ota:
+
+Over-the-Air (OTA) update
+-------------------------
 
 Firstly, please read `What is OTA? How to use it? <https://github.com/esp8266/Arduino/blob/master/doc/ota_updates/ota_updates.md>`_
 
@@ -20,7 +88,7 @@ There are 2 options:
 
 .. code-block:: bash
 
-    platformio run --target upload --upload-port IP_ADDRESS_HERE
+    platformio run --target upload --upload-port IP_ADDRESS_HERE or DNS_NAME.local
 
 * Specify ``upload_port`` option in :ref:`projectconf`
 
@@ -28,7 +96,12 @@ There are 2 options:
 
    [env:myenv]
    ...
-   upload_port = IP_ADDRESS_HERE
+   upload_port = IP_ADDRESS_HERE or DNS_NAME.local
+
+For example,
+
+* ``platformio run -t upload --upload-port 192.168.0.255``
+* ``platformio run -t upload --upload-port myesp8266.local``
 
 Authentication and upload options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -81,46 +154,19 @@ For the full list with available options please run
         -d, --debug         Show debug output. And override loglevel with debug.
         -r, --progress      Show progress output. Does not work for ArduinoIDE
 
-Custom CPU Frequency and Upload Speed
--------------------------------------
+Demo
+~~~~
 
-See :ref:`projectconf_board_f_cpu` and :ref:`projectconf_upload_speed` options
-from :ref:`projectconf`
+.. image:: ../_static/platformio-demo-ota-esp8266.jpg
+    :target: https://www.youtube.com/watch?v=lXchL3hpDO4
 
-.. code-block:: ini
+Articles
+--------
 
-    [env:myenv]
-    # set frequency to 40MHz
-    board_f_cpu = 40000000L
+* Dec 22, 2015 - **Jan Penninkhof** - `Over-the-Air ESP8266 programming using PlatformIO <http://www.penninkhof.com/2015/12/1610-over-the-air-esp8266-programming-using-platformio/>`_
+* Dec 01, 2015 - **Tateno Yuichi** - `ESP8266 を CUI で開発する (Develop a ESP8266 in CUI, Japanese) <http://jaywiggins.com/platformio/arduino/avr/es8266/2015/09/30/platformio-investigation/>`_
 
-    upload_speed = 9600
-
-
-Custom Flash Size
------------------
-
-The list with preconfigured LD scripts is located in public repository
-`platformio-pkg-ldscripts <https://github.com/platformio/platformio-pkg-ldscripts>`_.
-
-* ``esp8266.flash.512k0.ld`` 512K (no SPIFFS)
-* ``esp8266.flash.512k64.ld`` 512K (64K SPIFFS)
-* ``esp8266.flash.1m64.ld`` 1M (64K SPIFFS)
-* ``esp8266.flash.1m128.ld`` 1M (128K SPIFFS)
-* ``esp8266.flash.1m256.ld`` 1M (256K SPIFFS)
-* ``esp8266.flash.1m512.ld`` 1M (512K SPIFFS)
-* ``esp8266.flash.2m.ld`` 2M (1M SPIFFS)
-* ``esp8266.flash.4m1.ld`` 4M (1M SPIFFS)
-* ``esp8266.flash.4m.ld`` 4M (3M SPIFFS)
-* ``esp8266.flash.8m.ld`` 8M (7M SPIFFS)
-* ``esp8266.flash.16m.ld`` 16M (15M SPIFFS)
-
-To override default LD script please use :ref:`projectconf_build_flags` from
-:ref:`projectconf`.
-
-.. code-block:: ini
-
-    [env:myenv]
-    build_flags = -Wl,-Tesp8266.flash.4m.ld
+See more :ref:`articles`.
 
 Examples
 --------

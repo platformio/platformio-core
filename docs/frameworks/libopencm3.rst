@@ -115,3 +115,5 @@ TI
       - 120 MHz
       - 1024 Kb
       - 256 Kb
+
+.. include:: libopencm3_extra.rst

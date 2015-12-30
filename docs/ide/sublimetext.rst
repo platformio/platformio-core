@@ -32,13 +32,15 @@ Integration
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
-Since PlatformIO 2.0 you can generate Sublime Text compatible project using
-:option:`platformio init --ide` command. Please choose board type using
-:ref:`cmd_boards` command and run:
+Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
     platformio init --ide sublimetext --board %TYPE%
+
+    # For example, generate project for Arduino UNO
+    platformio init --ide sublimetext --board uno
 
 Then:
 

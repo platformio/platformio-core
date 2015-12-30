@@ -19,11 +19,9 @@ from glob import glob
 from os import getenv, listdir, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath, realpath
 
-from SCons.Script import (COMMAND_LINE_TARGETS, DefaultEnvironment, Exit,
-                          SConscript)
-from SCons.Util import case_sensitive_suffixes
-
 from platformio.util import pioversion_to_intstr
+from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, SConscript
+from SCons.Util import case_sensitive_suffixes
 
 SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
@@ -183,7 +181,7 @@ def BuildFrameworks(env, frameworks):
         if board_frameworks:
             frameworks.insert(0, board_frameworks[0])
         else:
-            Exit("Error: Please specify board type")
+            env.Exit("Error: Please specify board type")
 
     for f in frameworks:
         if f in ("arduino", "energia"):
@@ -193,7 +191,7 @@ def BuildFrameworks(env, frameworks):
             SConscript(env.subst(
                 join("$PIOBUILDER_DIR", "scripts", "frameworks", "%s.py" % f)))
         else:
-            Exit("Error: This board doesn't support %s framework!" % f)
+            env.Exit("Error: This board doesn't support %s framework!" % f)
 
 
 def BuildLibrary(env, variant_dir, src_dir, src_filter=None):

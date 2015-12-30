@@ -112,3 +112,5 @@ ST
       - 84 MHz
       - 512 Kb
       - 96 Kb
+
+.. include:: cmsis_extra.rst

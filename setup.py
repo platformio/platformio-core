@@ -12,28 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platform import system
+import sys
 
 from setuptools import find_packages, setup
 
 from platformio import (__author__, __description__, __email__, __license__,
-                        __title__, __url__, __version__, util)
+                        __title__, __url__, __version__)
 
 install_requires = [
-    "bottle",
+    "bottle<0.13",
     "click>=3.2,<6",
-    "lockfile>=0.9.1",
-    "pyserial",
-    "requests>=2.4.0"
+    "lockfile>=0.9.1,<0.13",
+    "requests>=2.4.0,<3",
+    "colorama"
 ]
 
-if system() == "Windows":
-    install_requires.append("colorama")
-
-if not util.test_scons():
-    util.install_scons()
-elif util.scons_in_pip():
-    install_requires.append("scons")
+if sys.version_info < (2, 7, 0):
+    install_requires.append("pyserial<3")
+else:
+    install_requires.append("pyserial<4")
 
 setup(
     name=__title__,

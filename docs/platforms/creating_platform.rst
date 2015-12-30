@@ -19,10 +19,10 @@ for the different development platforms via single command :ref:`cmd_run`
 without any dependent software or requirements.
 
 For this purpose *PlatformIO* uses own pre-configured platforms data:
-build scripts, tool chains, the settings for the most popular embedded
+build scripts, toolchains, the settings for the most popular embedded
 boards and etc. These data are pre-built and packaged to the different
 ``packages``. It allows *PlatformIO* to have multiple development platforms
-which can use the same packages(tool chains, frameworks), but have
+which can use the same packages(toolchains, frameworks), but have
 different/own build scripts, uploader and etc.
 
 .. note::
@@ -61,6 +61,9 @@ Packages
 
     * - ``framework-arduinomsp430``
       - `Arduino Wiring-based Framework (MSP430 Core) <http://arduino.cc/en/Reference/HomePage>`_
+
+    * - ``framework-arduinonordicnrf51``
+      - `Arduino Wiring-based Framework (RFduino Core) <https://github.com/RFduino/RFduino>`_
 
     * - ``framework-arduinosam``
       - `Arduino Wiring-based Framework (SAM Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
@@ -110,8 +113,17 @@ Packages
     * - ``tool-micronucleus``
       - `Micronucleus <https://github.com/micronucleus/micronucleus>`_
 
+    * - ``tool-mkspiffs``
+      - `Tool to build and unpack SPIFFS images <https://github.com/igrr/mkspiffs>`_
+
     * - ``tool-mspdebug``
       - `MSPDebug <http://mspdebug.sourceforge.net/>`_
+
+    * - ``tool-rfdloader``
+      - `rfdloader <https://github.com/RFduino/RFduino>`_
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
 
     * - ``tool-stlink``
       - `ST-Link <https://github.com/texane/stlink>`_

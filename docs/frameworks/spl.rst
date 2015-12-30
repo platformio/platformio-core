@@ -105,3 +105,5 @@ ST
       - 32 MHz
       - 128 Kb
       - 16 Kb
+
+.. include:: spl_extra.rst

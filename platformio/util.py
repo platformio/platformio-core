@@ -18,7 +18,6 @@ import json
 import os
 import re
 import subprocess
-import sys
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, realpath)
@@ -201,6 +200,13 @@ def get_pioenvs_dir():
     )
 
 
+def get_projectdata_dir():
+    return _get_projconf_option_dir(
+        "data_dir",
+        join(get_project_dir(), "data")
+    )
+
+
 def get_project_config():
     path = join(get_project_dir(), "platformio.ini")
     if not isfile(path):
@@ -328,54 +334,6 @@ def get_api_result(path, params=None, data=None):
         if r:
             r.close()
     return result
-
-
-def test_scons():
-    try:
-        r = exec_command(["scons", "--version"])
-        if "ImportError: No module named SCons.Script" in r['err']:
-            _PYTHONPATH = []
-            for p in sys.path:
-                if not p.endswith("-packages"):
-                    continue
-                for item in glob(join(p, "scons*")):
-                    if isdir(join(item, "SCons")) and item not in sys.path:
-                        _PYTHONPATH.append(item)
-                        sys.path.insert(0, item)
-            if _PYTHONPATH:
-                _PYTHONPATH = str(os.pathsep).join(_PYTHONPATH)
-                if os.getenv("PYTHONPATH"):
-                    os.environ['PYTHONPATH'] += os.pathsep + _PYTHONPATH
-                else:
-                    os.environ['PYTHONPATH'] = _PYTHONPATH
-                r = exec_command(["scons", "--version"])
-        assert r['returncode'] == 0
-        return True
-    except (OSError, AssertionError):
-        for p in sys.path:
-            try:
-                r = exec_command([join(p, "scons"), "--version"])
-                assert r['returncode'] == 0
-                os.environ['PATH'] += os.pathsep + p
-                return True
-            except (OSError, AssertionError):
-                pass
-    return False
-
-
-def install_scons():
-    r = exec_command(["pip", "install", "-U", "scons"])
-    if r['returncode'] != 0:
-        r = exec_command(["pip", "install", "--egg", "scons",
-                          '--install-option="--no-install-man"'])
-    return r['returncode'] == 0
-
-
-def scons_in_pip():
-    r = exec_command(["pip", "list"])
-    if r['returncode'] != 0:
-        return False
-    return "scons (" in r['out'].lower()
 
 
 @memoized

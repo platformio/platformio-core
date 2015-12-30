@@ -25,7 +25,7 @@ to keep project in own structure and define:
 
 PlatformIO Library Crawler uses ``library.json`` manifest to extract
 source code from developer's location and keeps cleaned library in own
-Libraries Storage.
+Library Storage.
 
 A data in ``library.json`` should be represented
 in `JSON-style <http://en.wikipedia.org/wiki/JSON>`_ via
@@ -183,6 +183,16 @@ A version of the current library source code.
     :ref:`libjson_repository` field. In this case
     |PIOAPICR| will use the *CVS*-revision from the latest commit.
 
+Example with fixed release/tag on GitHub:
+
+.. code-block:: javascript
+
+    "version": "1.0.0",
+    "downloadUrl": "https://github.com/foo/bar/archive/v1.0.0.tar.gz",
+    "include": "bar-1.0.0"
+
+
+See more ``library.json`` :ref:`library_creating_examples`.
 
 .. _libjson_url:
 
@@ -244,6 +254,7 @@ Pattern	Meaning
     * - ``[!seq]``
       - matches any character not in seq
 
+See more ``library.json`` :ref:`library_creating_examples`.
 
 .. _libjson_exclude:
 
@@ -328,6 +339,8 @@ Example:
         }
     ]
 
+
+See more ``library.json`` :ref:`library_creating_examples`.
 
 .. _libjson_examples:
 

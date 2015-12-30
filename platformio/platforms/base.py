@@ -14,6 +14,7 @@
 
 import os
 import re
+import sys
 from imp import load_source
 from multiprocessing import cpu_count
 from os.path import isdir, isfile, join
@@ -45,6 +46,10 @@ PLATFORM_PACKAGES = {
     "framework-arduinoespressif": [
         ("Arduino Wiring-based Framework (ESP8266 Core)",
          "https://github.com/esp8266/Arduino")
+    ],
+    "framework-arduinonordicnrf51": [
+        ("Arduino Wiring-based Framework (RFduino Core)",
+         "https://github.com/RFduino/RFduino")
     ],
     "framework-energiamsp430": [
         ("Energia Wiring-based Framework (MSP430 Core)",
@@ -112,6 +117,9 @@ PLATFORM_PACKAGES = {
         ("msp-gcc", "http://sourceforge.net/projects/mspgcc/"),
         ("GDB", "http://www.gnu.org/software/gdb/")
     ],
+    "tool-scons": [
+        ("SCons software construction tool", "http://www.scons.org")
+    ],
     "tool-avrdude": [
         ("AVRDUDE", "http://www.nongnu.org/avrdude/")
     ],
@@ -135,6 +143,13 @@ PLATFORM_PACKAGES = {
     ],
     "tool-esptool": [
         ("esptool-ck", "https://github.com/igrr/esptool-ck")
+    ],
+    "tool-rfdloader": [
+        ("rfdloader", "https://github.com/RFduino/RFduino")
+    ],
+    "tool-mkspiffs": [
+        ("Tool to build and unpack SPIFFS images",
+         "https://github.com/igrr/mkspiffs")
     ]
 }
 
@@ -365,6 +380,9 @@ class BasePlatform(object):
                 if framework in pkg_name:
                     self.PACKAGES[pkg_name]['default'] = True
 
+        # append SCons tool
+        self.PACKAGES['tool-scons'] = {"default": True}
+
         # enable upload tools for upload targets
         if any(["upload" in t for t in targets] + ["program" in targets]):
             for _name, _opts in self.PACKAGES.iteritems():
@@ -429,24 +447,7 @@ class BasePlatform(object):
                 "PIOPACKAGE_%s=%s" % (options['alias'].upper(), name))
 
         self._found_error = False
-        try:
-            # test that SCons is installed correctly
-            assert util.test_scons()
-
-            result = util.exec_command(
-                [
-                    "scons",
-                    "-Q",
-                    "-j %d" % self.get_job_nums(),
-                    "--warn=no-no-parallel-support",
-                    "-f", join(util.get_source_dir(), "builder", "main.py")
-                ] + variables + targets,
-                stdout=util.AsyncPipe(self.on_run_out),
-                stderr=util.AsyncPipe(self.on_run_err)
-            )
-        except (OSError, AssertionError):
-            raise exception.SConsNotInstalledError()
-
+        result = self._run_scons(variables, targets)
         assert "returncode" in result
         # if self._found_error:
         #     result['returncode'] = 1
@@ -454,6 +455,32 @@ class BasePlatform(object):
         if self._last_echo_line == ".":
             click.echo("")
 
+        return result
+
+    def _run_scons(self, variables, targets):
+        # pass current PYTHONPATH to SCons
+        if "PYTHONPATH" in os.environ:
+            _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
+        else:
+            _PYTHONPATH = []
+        for p in os.sys.path:
+            if p not in _PYTHONPATH:
+                _PYTHONPATH.append(p)
+        os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
+
+        result = util.exec_command(
+            [
+                os.path.normpath(sys.executable),
+                join(util.get_home_dir(), "packages", "tool-scons",
+                     "script", "scons"),
+                "-Q",
+                "-j %d" % self.get_job_nums(),
+                "--warn=no-no-parallel-support",
+                "-f", join(util.get_source_dir(), "builder", "main.py")
+            ] + variables + targets,
+            stdout=util.AsyncPipe(self.on_run_out),
+            stderr=util.AsyncPipe(self.on_run_err)
+        )
         return result
 
     def on_run_out(self, line):

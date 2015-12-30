@@ -36,6 +36,9 @@ Platforms
     * - :ref:`platform_espressif`
       - Espressif Systems is a privately held fabless semiconductor company. They provide wireless communications and Wi-Fi chips which are widely used in mobile devices and the Internet of Things applications.
 
+    * - :ref:`platform_nordicnrf51`
+      - The Nordic nRF51 Series is a family of highly flexible, multi-protocol, system-on-chip (SoC) devices for ultra-low power wireless applications. nRF51 Series devices support a range of protocol stacks including Bluetooth Smart (previously called Bluetooth low energy), ANT and proprietary 2.4GHz protocols such as Gazell.
+
     * - :ref:`platform_teensy`
       - Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard "Mini-B" USB cable and a PC or Macintosh with a USB port.
 
@@ -63,6 +66,20 @@ Adafruit
       - Flash
       - RAM
 
+    * - ``bluefruitmicro``
+      - `Adafruit Bluefruit Micro <https://www.adafruit.com/products/2661>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``feather32u4``
+      - `Adafruit Feather <https://learn.adafruit.com/adafruit-feather-32u4-bluefruit-le/>`_
+      - ATMEGA32U4
+      - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
     * - ``flora8``
       - `Adafruit Flora <http://www.adafruit.com/product/659>`_
       - ATMEGA32U4
@@ -83,6 +100,13 @@ Adafruit
       - 80 MHz
       - 4096 Kb
       - 80 Kb
+
+    * - ``metro``
+      - `Adafruit Metro <https://www.adafruit.com/products/2466>`_
+      - ATMEGA328P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
 
     * - ``protrinket3``
       - `Adafruit Pro Trinket 3V/12MHz (USB) <http://www.adafruit.com/products/2010>`_
@@ -761,6 +785,26 @@ Quirkbot
       - 8 MHz
       - 32 Kb
       - 2.5 Kb
+
+RFduino
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``rfduino``
+      - `RFduino <http://www.rfduino.com/product/rfd22102-rfduino-dip/index.html>`_
+      - NRF51822
+      - 16 MHz
+      - 128 Kb
+      - 8 Kb
 
 RedBearLab
 ~~~~~~~~~~

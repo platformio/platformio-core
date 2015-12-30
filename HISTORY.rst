@@ -4,6 +4,30 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.7.0 (2015-12-30)
+~~~~~~~~~~~~~~~~~~
+
+**Happy New Year!**
+
+* Moved SCons to PlatformIO packages. PlatformIO does not require SCons to be
+  installed in your system. Significantly simplified installation process of
+  PlatformIO. ``pip install platformio`` rocks!
+* Implemented uploading files to file system of ESP8266 SPIFFS (including OTA)
+  (`issue #382 <https://github.com/platformio/platformio/issues/382>`_)
+* Added support for the new Adafruit boards Bluefruit Micro and Feather
+  (`issue #403 <https://github.com/platformio/platformio/issues/403>`_)
+* Added support for RFDuino
+  (`issue #319 <https://github.com/platformio/platformio/issues/319>`_)
+* Project generator for `Emacs <http://docs.platformio.org/en/latest/ide/emacs.html>`__
+  text editor
+  (`pull #404 <https://github.com/platformio/platformio/pull/404>`_)
+* Updated Arduino framework for Atmel AVR development platform to 1.6.7
+* Documented `firmware uploading for Atmel AVR development platform using
+  Programmers <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-using-programmer>`_:
+  AVR ISP, AVRISP mkII, USBtinyISP, USBasp, Parallel Programmer and Arduino as ISP
+* Fixed issue with current Python interpreter for Python-based tools
+  (`pull #417 <https://github.com/platformio/platformio/pull/417>`_)
+
 2.6.3 (2015-12-21)
 ~~~~~~~~~~~~~~~~~~
 

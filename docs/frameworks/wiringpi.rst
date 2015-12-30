@@ -71,3 +71,5 @@ Raspberry Pi
       - 1000 MHz
       - 524288 Kb
       - 524288 Kb
+
+.. include:: wiringpi_extra.rst

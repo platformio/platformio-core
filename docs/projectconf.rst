@@ -44,7 +44,7 @@ Options
 ``home_dir``
 ^^^^^^^^^^^^
 
-Is used to store platform tool chains, frameworks, external libraries,
+Is used to store platform toolchains, frameworks, external libraries,
 service data and etc.
 
 A default value is User's home directory:
@@ -114,6 +114,18 @@ This option can be overridden by global environment variable
     If you have any problems with building your Project environmets which
     are defined in :ref:`projectconf`, then **TRY TO DELETE** this folder. In
     this situation you will remove all cached files without any risk.
+
+.. _projectconf_pio_data_dir:
+
+``data_dir``
+^^^^^^^^^^^^
+
+Data directory to store contents and :ref:`platform_espressif_uploadfs`.
+
+A default value is ``%project_dir%/data``.
+
+This option can be overridden by global environment variable
+:envvar:`PLATFORMIO_DATA_DIR`.
 
 [env:NAME]
 ----------
@@ -398,7 +410,7 @@ Example:
 ^^^^^^^^^^^^^^^^
 
 Control cyclic (recursive) behaviour for ``Library Dependency Finder (LDF)``.
-By default, this option is turned OFF (``lib_dfcyclic=False``) and means, that
+By default, this option is turned OFF (``lib_dfcyclic=False``) and means that
 ``LDF`` will find only libraries which are included in source files from the
 project :ref:`projectconf_pio_src_dir`.
 
@@ -453,7 +465,7 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 
 
 * see built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
-* take a look on the multiple snippets/answers for the user questions:
+* take a look at the multiple snippets/answers for the user questions:
   `#365 <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_,
   `#351 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_,
   `#236 <https://github.com/platformio/platformio/issues/236#issuecomment-112038284>`_,
@@ -463,8 +475,9 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 ^^^^^^^^^^^
 
 A list with targets which will be processed by :ref:`cmd_run` command by
-default. You can enter more than one target separated with "space". Which
-targets are supported is described in :option:`platformio run --target`.
+default. You can enter more than one target separated with "space".
+
+The list with available targets is located in :option:`platformio run --target`.
 
 **Tip!** You can use these targets like an option to
 :option:`platformio run --target` command. For example:
@@ -532,9 +545,11 @@ Examples
     platform = atmelavr
     framework = arduino
     board = pro8MHzatmega328
-    upload_protocol = usbasp -B5
+    upload_protocol = usbasp
+    upload_flags = -Pusb -B5
 
-Then upload firmware using :option:`platformio run --target program`
+Then upload firmware using :option:`platformio run --target program`. To use
+other programmers see :ref:`atmelavr_upload_via_programmer`.
 
 
 4. :ref:`platform_ststm32`: Upload firmware using GDB script ``upload.gdb``,

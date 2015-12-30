@@ -18,7 +18,7 @@ import atexit
 import re
 from glob import glob
 from os import environ, remove
-from os.path import basename, join
+from os.path import basename, isfile, join
 
 from platformio.util import exec_command, where_is_program
 
@@ -190,6 +190,25 @@ def GetCompilerType(env):
     return None
 
 
+def GetActualLDScript(env):
+    script = None
+    for f in env.get("LINKFLAGS", []):
+        if f.startswith("-Wl,-T"):
+            script = env.subst(f[6:].replace('"', "").strip())
+            if isfile(script):
+                return script
+            for d in env.get("LIBPATH", []):
+                path = join(env.subst(d), script)
+                if isfile(path):
+                    return path
+
+    if script:
+        env.Exit("Error: Could not find '%s' LD script in LDPATH '%s'" % (
+            script, env.subst("$LIBPATH")))
+
+    return None
+
+
 def exists(_):
     return True
 
@@ -198,4 +217,5 @@ def generate(env):
     env.AddMethod(ConvertInoToCpp)
     env.AddMethod(DumpIDEData)
     env.AddMethod(GetCompilerType)
+    env.AddMethod(GetActualLDScript)
     return env

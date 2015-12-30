@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION = (2, 6, 3)
+import sys
+
+VERSION = (2, 7, 0)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -31,3 +33,10 @@ __license__ = "Apache Software License"
 __copyright__ = "Copyright 2014-2015 Ivan Kravets"
 
 __apiurl__ = "http://api.platformio.org"
+
+
+if sys.version_info >= (3, 0, 0):
+    msg = ("PlatformIO version %s does not run under Python version %s.\n"
+           "Python 3 is not yet supported.\n")
+    sys.stderr.write(msg % (__version__, sys.version.split()[0]))
+    sys.exit(1)

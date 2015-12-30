@@ -50,7 +50,7 @@ Please fill all fields for your project in the Drone control panel:
 
 .. code-block:: bash
 
-    python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+    pip install -U platformio
     platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
 
 .. image:: ../_static/droneci-platformio-integration-1.png
@@ -75,7 +75,7 @@ Examples
 
 .. code-block:: bash
 
-    python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+    pip install -U platformio
     wget https://github.com/xxxajk/spi4teensy3/archive/master.zip -O /tmp/spi4teensy3.zip
     unzip /tmp/spi4teensy3.zip -d /tmp
     platformio ci --lib="." --lib="/tmp/spi4teensy3-master" --board=uno --board=teensy31 --board=due

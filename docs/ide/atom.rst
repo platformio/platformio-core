@@ -37,9 +37,9 @@ please install `platomformio <https://atom.io/packages/platomformio>`_ package.
 Articles / Manuals
 ------------------
 
-* `Arduino Development in Atom Editor <http://viget.com/extend/arduino-development-in-atom-editor>`_
+* Jul 20, 2015 - **Eli Fatsi** - `Arduino Development in Atom Editor <http://viget.com/extend/arduino-development-in-atom-editor>`_
 
-See a full list with :ref:`articles`.
+See more :ref:`articles`.
 
 Screenshot
 ----------

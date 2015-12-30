@@ -37,8 +37,22 @@ class Nordicnrf51Platform(BasePlatform):
 
         "framework-mbed": {
             "alias": "framework"
+        },
+
+        "framework-arduinonordicnrf51": {
+            "alias": "framework"
+        },
+
+        "tool-rfdloader": {
         }
     }
 
     def get_name(self):
         return "Nordic nRF51"
+
+    def configure_default_packages(self, envoptions, targets):
+        if envoptions.get("board") == "rfduino":
+            self.PACKAGES['tool-rfdloader']['alias'] = "uploader"
+
+        return BasePlatform.configure_default_packages(
+            self, envoptions, targets)
