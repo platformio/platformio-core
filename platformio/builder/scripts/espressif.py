@@ -116,7 +116,7 @@ env.Replace(
     UPLOADEROTAFLAGS=[
         "--debug",
         "--progress",
-        "-i", "$UPLOAD_PORT",
+        "-i", '"$UPLOAD_PORT"',
         "$UPLOAD_FLAGS"
     ],
 
