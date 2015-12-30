@@ -89,7 +89,7 @@ There are 2 options:
 
 .. code-block:: bash
 
-    platformio run --target upload --upload-port IP_ADDRESS_HERE or DNS_NAME.local
+    platformio run --target upload --upload-port IP_ADDRESS_HERE or mDNS_NAME.local
 
 * Specify ``upload_port`` option in :ref:`projectconf`
 
@@ -97,7 +97,7 @@ There are 2 options:
 
    [env:myenv]
    ...
-   upload_port = IP_ADDRESS_HERE or DNS_NAME.local
+   upload_port = IP_ADDRESS_HERE or mDNS_NAME.local
 
 For example,
 
