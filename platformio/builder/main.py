@@ -13,8 +13,9 @@
 # limitations under the License.
 
 import json
+import sys
 from os import environ
-from os.path import join
+from os.path import join, normpath
 from time import time
 
 from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, Variables
@@ -88,7 +89,9 @@ DefaultEnvironment(
         "$PROJECTLIB_DIR",
         util.get_lib_dir(),
         join("$PLATFORMFW_DIR", "libraries")
-    ]
+    ],
+
+    PYTHONEXE=normpath(sys.executable)
 )
 
 env = DefaultEnvironment()

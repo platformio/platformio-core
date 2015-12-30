@@ -10,7 +10,7 @@ PlatformIO 2.0
 * Moved SCons to PlatformIO packages. PlatformIO does not require SCons to be
   installed in your system. Significantly simplified installation process of
   PlatformIO. ``pip install platformio`` rocks!
-* Implemented uploading files to file system SPIFFS for ESP8266
+* Implemented uploading files to file system of ESP8266 SPIFFS (including OTA)
   (`issue #382 <https://github.com/platformio/platformio/issues/382>`_)
 * Added support for the new Adafruit boards Bluefruit Micro and Feather
   (`issue #403 <https://github.com/platformio/platformio/issues/403>`_)
@@ -23,6 +23,8 @@ PlatformIO 2.0
 * Documented `firmware uploading for Atmel AVR development platform using
   Programmers <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-using-programmer>`_:
   AVR ISP, AVRISP mkII, USBtinyISP, USBasp, Parallel Programmer and Arduino as ISP
+* Fixed issue with current Python interpreter for Python-based tools
+  (`pull #417 <https://github.com/platformio/platformio/pull/417>`_)
 
 2.6.3 (2015-12-21)
 ~~~~~~~~~~~~~~~~~~

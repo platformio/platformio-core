@@ -115,12 +115,12 @@ env.Replace(
     UPLOADEROTAFLAGS=[
         "--debug",
         "--progress",
-        "-i", '"$UPLOAD_PORT"',
+        "-i", "$UPLOAD_PORT",
         "$UPLOAD_FLAGS"
     ],
 
     UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS -cf $SOURCE',
-    UPLOADOTACMD='"$UPLOADEROTA" $UPLOADEROTAFLAGS -f $SOURCE',
+    UPLOADOTACMD='"$PYTHONEXE" "$UPLOADEROTA" $UPLOADEROTAFLAGS -f $SOURCE',
 
     #
     # Misc
