@@ -113,11 +113,6 @@ env.Replace(
         "-cb", "$UPLOAD_SPEED",
         "-cp", "$UPLOAD_PORT"
     ],
-    UPLOADERFSFLAGS=[
-        "$UPLOADERFLAGS",
-        "$UPLOAD_FLAGS",
-        "-ca", "$SPIFFS_START"
-    ],
     UPLOADEROTAFLAGS=[
         "--debug",
         "--progress",
@@ -126,7 +121,6 @@ env.Replace(
     ],
 
     UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS -cf $SOURCE',
-    UPLOADFSCMD='"$UPLOADER" $UPLOADERFSFLAGS -cf $SOURCE',
     UPLOADOTACMD='"$UPLOADEROTA" $UPLOADEROTAFLAGS -f $SOURCE',
 
     #
@@ -217,6 +211,13 @@ env.Append(
     )
 )
 
+if "uploadfs" in COMMAND_LINE_TARGETS:
+    env.Append(
+        UPLOADERFLAGS=[
+            "-ca", "$SPIFFS_START"
+        ]
+    )
+
 #
 # Framework and SDK specific configuration
 #
@@ -291,10 +292,15 @@ else:
 target_elf = env.BuildProgram()
 
 #
-# Target: Build the .hex
+# Target: Build the .hex or SPIFFS image
 #
 
-if "uploadlazy" in COMMAND_LINE_TARGETS:
+if set(["uploadfs", "uploadfsota"]) & set(COMMAND_LINE_TARGETS):
+    target_firm = env.DataToBin(
+        join("$BUILD_DIR", "spiffs"), "$PROJECTDATA_DIR")
+    AlwaysBuild(target_firm)
+
+elif "uploadlazy" in COMMAND_LINE_TARGETS:
     if "FRAMEWORK" not in env:
         target_firm = [
             join("$BUILD_DIR", "firmware_00000.bin"),
@@ -318,26 +324,14 @@ target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
 AlwaysBuild(target_size)
 
 #
-# Target: Upload firmware
+# Target: Upload firmware or SPIFFS image
 #
 
 target_upload = env.Alias(
-    ["upload", "uploadlazy"], target_firm,
+    ["upload", "uploadlazy", "uploadfs"], target_firm,
     [lambda target, source, env: env.AutodetectUploadPort(), "$UPLOADCMD"])
 env.AlwaysBuild(target_upload)
 
-#
-# Target: Upload SPIFFS image
-#
-
-target_mkspiffs = None
-if "uploadfs" in COMMAND_LINE_TARGETS:
-    target_mkspiffs = env.DataToBin(join("$BUILD_DIR", "spiffs_image"),
-                                    "$PROJECTDATA_DIR")
-target_uploadfs = env.Alias(
-    "uploadfs", target_mkspiffs,
-    [lambda target, source, env: env.AutodetectUploadPort(), "$UPLOADFSCMD"])
-env.AlwaysBuild(target_mkspiffs, target_uploadfs)
 
 #
 # Target: Define targets

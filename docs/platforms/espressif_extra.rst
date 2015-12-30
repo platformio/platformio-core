@@ -65,9 +65,16 @@ Uploading files to file system SPIFFS
 1. Create :ref:`projectconf_pio_data_dir` and put files here
 2. Run target ``uploadfs`` via  :option:`platformio run --target` command.
 
+To upload SPIFFS image using OTA update please specify ``upload_port`` /
+``--upload-port`` as IP address. For the details please follow to
+:ref:`platform_espressif_ota`. For example, ``platformio run -t uploadfs
+--upload_port 192.168.0.255``.
+
 By default, will be used default LD Script for the board where is specified
 SPIFFS offsets (start, end, page, block). You can override it using
 :ref:`platform_espressif_customflash`.
+
+.. _platform_espressif_ota:
 
 Over-the-Air (OTA) update
 -------------------------
