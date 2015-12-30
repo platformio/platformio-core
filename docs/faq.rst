@@ -103,53 +103,6 @@ Troubleshooting
 Installation
 ~~~~~~~~~~~~
 
-``SCons`` is not installed in your system
-'''''''''''''''''''''''''''''''''''''''''
-
-PlatformIO depends on awesome and irreplaceable software construction tool
-named `SCons <http://www.scons.org>`_. PlatformIO Code Builder uses it to build
-single source code for the multiple embedded platforms.
-
-When you install PlatformIO it tries to find ``scons`` program in your OS. If
-SCons is installed in your system, then PlatformIO will use it. Otherwise,
-PlatformIO tries to install it automatically using ``pip install scons``. So, if
-you are here, then it means that PlatformIO could not install it for you.
-Let fix it manually.
-
-1. Need to cleanup all previous SCons installations using `pip <https://pip.pypa.io>`_
-
-.. code-block:: bash
-
-    [sudo] pip uninstall scons
-
-
-2. Try to install it manually
-
-.. code-block:: bash
-
-    [sudo] pip install scons
-
-    # If you have errors:
-    # * error: option --single-version-externally-managed not recognized
-    # * OSError: [Errno 1] Operation not permitted: '/System/Library/Frameworks/Python.framework/Versions/2.7/man'
-    [sudo] pip install --egg scons --install-option="--no-install-man"
-
-3. If it didn't help you, try system OS package manager
-
-   * **Mac OS X** using `SCons Mac OS X Installer <https://github.com/rviney/scons-mac-installer>`_
-     or `brew <http://brew.sh>`_ (``brew install scons``)
-   * **Linux** ``[sudo] apt-get install scons`` or ``[sudo] yum install scons``
-
-To identify that SCons is installed in your system run ``scons -v``.
-
-
-.. _faq_troubleshooting_sconssingverextmanaged:
-
-PIP & SCons Error: option --single-version-externally-managed not recognized
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-Answered in `issue #279 <https://github.com/platformio/platformio/issues/279>`_.
-
 [Errno 1] Operation not permitted
 '''''''''''''''''''''''''''''''''
 
@@ -181,8 +134,8 @@ For example, ``which platformio`` is equal to ``/usr/local/bin/platformio``,
 then `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_
 should contain ``/usr/local/bin`` directory.
 
-**Unix Users**: You can make "symlinks" from ``platformio`` and ``scons``
-programs to the ``bin`` directory which is included in ``$PATH``. For example,
+**Unix Users**: You can make "symlinks" from ``platformio`` program to the
+``bin`` directory which is included in ``$PATH``. For example,
 see `issue #272 <https://github.com/platformio/platformio/issues/272#issuecomment-133626112>`_.
 
 Windows UnicodeDecodeError: 'ascii' codec can't decode byte

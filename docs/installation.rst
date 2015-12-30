@@ -34,7 +34,7 @@ System requirements
         **Windows Users**: Please `Download the latest Python 2.7.x
         <https://www.python.org/downloads/>`_ and install it.
         **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
-        "Customize" stage.
+        "Customize" stage, otherwise ``pip`` command will not be available.
 
 :Terminal Application:
 
@@ -56,18 +56,19 @@ The latest stable version of PlatformIO may be installed or upgraded via
 
 .. code-block:: bash
 
-    # update package installer
-    pip install -U pip setuptools
-
-    # install or upgrade PlatformIO
     pip install -U platformio
 
 Note that you may run into permissions issues running these commands. You have
 a few options here:
 
 * Run with ``sudo`` to install PlatformIO and dependencies globally
+* Specify the `pip install --user <https://pip.pypa.io/en/stable/user_guide.html#user-installs>`_
+  option to install local to your user
 * Run the command in a `virtualenv <https://virtualenv.pypa.io>`_ local to a
   specific project working set.
+
+If ``pip`` command is not available or you have problems with it try
+:ref:`installation_installer_script`.
 
 .. _installation_installer_script:
 
@@ -129,10 +130,6 @@ c) Full Guide
 
 .. code-block:: bash
 
-    # update package installer
-    pip install -U pip setuptools
-
-    # install or upgrade PlatformIO
     pip install -U platformio
 
 If your computer does not recognize ``pip`` command, try to install it first
@@ -151,8 +148,8 @@ Install the latest PlatformIO from the ``develop`` branch:
 
 .. code-block:: bash
 
-    # update package installer
-    pip install -U pip setuptools
+    # uninstall existing version
+    pip uninstall platformio
 
     # install the latest development version of PlatformIO
     pip install -U https://github.com/platformio/platformio/archive/develop.zip

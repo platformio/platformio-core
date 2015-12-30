@@ -143,7 +143,6 @@ same for the all projects, don't need to modify them):
         InstallPython $env:PYTHON_VERSION $env:PYTHON_ARCH $env:PYTHON_HOME
         InstallPip $env:PYTHON_HOME
         InstallPackage $env:PYTHON_HOME setuptools
-        InstallPackage $env:PYTHON_HOME scons
         InstallPackage $env:PYTHON_HOME platformio
     }
 

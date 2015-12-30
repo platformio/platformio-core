@@ -55,7 +55,7 @@ GitHub repository.
         - PLATFORMIO_CI_SRC=path/to/source/directory
 
     install:
-        - python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+        - pip install -U platformio
 
     script:
         - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
@@ -81,7 +81,7 @@ Examples
         - PLATFORMIO_CI_SRC=examples/pl2303/pl2303_gps/pl2303_gps.ino
 
     install:
-        - python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+        - pip install -U platformio
         - wget https://github.com/xxxajk/spi4teensy3/archive/master.zip -O /tmp/spi4teensy3.zip
         - unzip /tmp/spi4teensy3.zip -d /tmp
 
