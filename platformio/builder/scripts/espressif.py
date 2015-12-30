@@ -213,9 +213,8 @@ env.Append(
 
 if "uploadfs" in COMMAND_LINE_TARGETS:
     env.Append(
-        UPLOADERFLAGS=[
-            "-ca", "$SPIFFS_START"
-        ]
+        UPLOADERFLAGS=["-ca", "$SPIFFS_START"],
+        UPLOADEROTAFLAGS=["-s"]
     )
 
 #
