@@ -231,7 +231,9 @@ if "FRAMEWORK" in env:
 
     # Handle uploading via OTA
     try:
-        if env.get("UPLOAD_PORT") and socket.inet_aton(env.get("UPLOAD_PORT")):
+        if (env.get("UPLOAD_PORT") and (
+                env.get("UPLOAD_PORT").endswith(".local") or
+                socket.inet_aton(env.get("UPLOAD_PORT")))):
             env.Replace(
                 UPLOADCMD="$UPLOADOTACMD"
             )

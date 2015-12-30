@@ -66,9 +66,8 @@ Uploading files to file system SPIFFS
 2. Run target ``uploadfs`` via  :option:`platformio run --target` command.
 
 To upload SPIFFS image using OTA update please specify ``upload_port`` /
-``--upload-port`` as IP address. For the details please follow to
-:ref:`platform_espressif_ota`. For example, ``platformio run -t uploadfs
---upload_port 192.168.0.255``.
+``--upload-port`` as IP address or DNS name (``*.local``). For the details
+please follow to :ref:`platform_espressif_ota`.
 
 By default, will be used default LD Script for the board where is specified
 SPIFFS offsets (start, end, page, block). You can override it using
@@ -89,7 +88,7 @@ There are 2 options:
 
 .. code-block:: bash
 
-    platformio run --target upload --upload-port IP_ADDRESS_HERE
+    platformio run --target upload --upload-port IP_ADDRESS_HERE or DNS_NAME.local
 
 * Specify ``upload_port`` option in :ref:`projectconf`
 
@@ -97,7 +96,12 @@ There are 2 options:
 
    [env:myenv]
    ...
-   upload_port = IP_ADDRESS_HERE
+   upload_port = IP_ADDRESS_HERE or DNS_NAME.local
+
+For example,
+
+* ``platformio run -t upload --upload-port 192.168.0.255``
+* ``platformio run -t upload --upload-port myesp8266.local``
 
 Authentication and upload options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
