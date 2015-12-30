@@ -21,23 +21,45 @@ Usage
 
 .. code-block:: bash
 
-    # Print all available pre-configured embedded boards
-    platformio boards
-
-    # Filter boards by "Query"
-    platformio boards QUERY
-
+    platformio boards [OPTIONS] [FILTER]
 
 Description
 -----------
 
 List pre-configured Embedded Boards
 
+Options
+~~~~~~~
+
+.. program:: platformio boards
+
+.. option::
+    --json-output
+
+Return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
 
 Examples
 --------
 
-1. Show Arduino-based boards
+1. Show all available pre-configured embedded boards
+
+.. code-block:: bash
+
+    $ platformio boards
+
+    Platform: atmelavr
+    ---------------------------------------------------------------------------
+    Type                  MCU           Frequency  Flash   RAM    Name
+    ---------------------------------------------------------------------------
+    btatmega168           atmega168     16Mhz     14Kb    1Kb    Arduino BT ATmega168
+    btatmega328           atmega328p    16Mhz     28Kb    2Kb    Arduino BT ATmega328
+    diecimilaatmega168    atmega168     16Mhz     14Kb    1Kb    Arduino Duemilanove or Diecimila ATmega168
+    diecimilaatmega328    atmega328p    16Mhz     30Kb    2Kb    Arduino Duemilanove or Diecimila ATmega328
+    esplora               atmega32u4    16Mhz     28Kb    2Kb    Arduino Esplora
+    ethernet              atmega328p    16Mhz     31Kb    2Kb    Arduino Ethernet
+    ...
+
+2. Filter Arduino-based boards
 
 .. code-block:: bash
 
@@ -56,7 +78,7 @@ Examples
     ...
 
 
-2. Show mbed-enabled boards
+3. Filter mbed-enabled boards
 
 .. code-block:: bash
 
@@ -95,7 +117,7 @@ Examples
     nucleo_f030r8         stm32f030r8t6  48Mhz     64Kb    8Kb    ST Nucleo F030R8
     ...
 
-3. Show boards which are based on ``ATmega168`` MCU
+4. Filter boards which are based on ``ATmega168`` MCU
 
 .. code-block:: bash
 
@@ -116,7 +138,7 @@ Examples
     168pa16m              atmega168p    16Mhz     15Kb    1Kb    Microduino Core (Atmega168PA@16M,5V)
     168pa8m               atmega168p    8Mhz      15Kb    1Kb    Microduino Core (Atmega168PA@8M,3.3V)
 
-4. Show boards by :ref:`platform_timsp430`
+5. Show boards by :ref:`platform_timsp430`
 
 .. code-block:: bash
 
@@ -133,4 +155,3 @@ Examples
     lpmsp430g2231         msp430g2231   1Mhz      2Kb     128B   LaunchPad w/ msp430g2231 (1MHz)
     lpmsp430g2452         msp430g2452   16Mhz     8Kb     256B   LaunchPad w/ msp430g2452 (16MHz)
     lpmsp430g2553         msp430g2553   16Mhz     16Kb    512B   LaunchPad w/ msp430g2553 (16MHz)
-
