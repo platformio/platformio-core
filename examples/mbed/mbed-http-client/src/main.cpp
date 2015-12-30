@@ -14,7 +14,7 @@ int main()
 
     //GET data
     printf("\nTrying to fetch page...\n");
-    int ret = http.get("http://mbed.org/media/uploads/donatien/hello.txt", str, 128);
+    int ret = http.get("https://developer.mbed.org/media/uploads/donatien/hello.txt", str, 128);
     if (!ret)
     {
       printf("Page fetched successfully - read %d characters\n", strlen(str));
