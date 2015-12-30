@@ -231,8 +231,9 @@ if "FRAMEWORK" in env:
     # Handle uploading via OTA
     ota_port = None
     if env.get("UPLOAD_PORT"):
-        ota_port = re.match(r"((([0-9]{1,3}\.){3}[0-9]{1,3})|.+\.local)$",
-                            env.get("UPLOAD_PORT"))
+        ota_port = re.match(
+            r"\"?((([0-9]{1,3}\.){3}[0-9]{1,3})|.+\.local)\"?$",
+            env.get("UPLOAD_PORT"))
     if ota_port:
         env.Replace(UPLOADCMD="$UPLOADOTACMD")
 
