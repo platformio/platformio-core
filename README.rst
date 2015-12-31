@@ -177,6 +177,25 @@ Frameworks:
 
 For further details, please refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
 
+Contributing
+------------
+
+1. Fork the repository on GitHub.
+2. Make a branch off of ``develop``
+3. Run ``pip install tox``
+4. Go to the root of project where is located ``tox.ini`` and run ``tox -e develop``
+5. Activate current development environment:
+
+   * Windows: ``.tox\develop\Scripts\activate``
+   * Bash/ZSH: ``source .tox/develop/bin/activate``
+   * Fish: ``source .tox/bin/activate.fish``
+
+6. Make changes to code, documentation, etc.
+7. Lint source code ``tox -e lint``
+8. Run the tests ``tox -e py27``
+9. Commit changes to your forked repository
+10. Submit a Pull Request on GitHub.
+
 Licence
 -------
 
