@@ -32,6 +32,17 @@
 						"upload"
 					],
 					"name": "Upload"
+				},
+				{
+					"cmd":
+					[
+						"platformio",
+						"-f", "-c", "sublimetext",
+						"run",
+						"--target",
+						"uploadfs"
+					],
+					"name": "Upload SPIFFS"
 				}
 			],
 			"working_dir": "${project_path:${folder}}",
