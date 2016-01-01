@@ -9,6 +9,8 @@ PlatformIO 2.0
 
 * Fixed uploading of EEPROM data using ``uploadeep`` target for Atmel AVR
   development platform
+* Fixed project generator for CLion IDE
+  (`issue #422 <https://github.com/platformio/platformio/issues/422>`_)
 
 2.7.0 (2015-12-30)
 ~~~~~~~~~~~~~~~~~~
