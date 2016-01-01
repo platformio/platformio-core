@@ -7,6 +7,12 @@ PlatformIO 2.0
 2.7.0 (2015-12-30)
 ~~~~~~~~~~~~~~~~~~
 
+* Fixed uploading of EEPROM data using ``uploadeep`` target for Atmel AVR
+  development platform
+
+2.7.0 (2015-12-30)
+~~~~~~~~~~~~~~~~~~
+
 **Happy New Year!**
 
 * Moved SCons to PlatformIO packages. PlatformIO does not require SCons to be

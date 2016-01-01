@@ -111,13 +111,6 @@ else:
 target_elf = env.BuildProgram()
 
 #
-# Target: Extract EEPROM data (from EEMEM directive) to .eep file
-#
-
-target_eep = env.Alias("eep", env.ElfToEep(join("$BUILD_DIR", "firmware"),
-                                           target_elf))
-
-#
 # Target: Build the .hex file
 #
 
@@ -142,10 +135,13 @@ upload = env.Alias(["upload", "uploadlazy"], target_firm,
 AlwaysBuild(upload)
 
 #
-# Target: Upload .eep file
+# Target: Upload EEPROM data (from EEMEM directive)
 #
 
-uploadeep = env.Alias("uploadeep", target_eep, [BeforeUpload, "$UPLOADEEPCMD"])
+uploadeep = env.Alias(
+    "uploadeep",
+    env.ElfToEep(join("$BUILD_DIR", "firmware"), target_elf),
+    [BeforeUpload, "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
 
 #
