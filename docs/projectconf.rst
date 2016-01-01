@@ -81,7 +81,8 @@ This option can be overridden by global environment variable
 A path to project's source directory. PlatformIO uses it for :ref:`cmd_run`
 command.
 
-A default value is ``%project_dir%/src``.
+A default value is ``src`` which means that folder is located in the root of
+project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_SRC_DIR`.
@@ -105,7 +106,8 @@ fast!
 then PlatformIO will remove this folder automatically. It will be created on the
 next build operation.
 
-A default value is ``%project_dir%/.pioenvs``.
+A default value is ``.pioenvs`` which means that folder is located in the root of
+project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_ENVS_DIR`.
@@ -122,7 +124,8 @@ This option can be overridden by global environment variable
 
 Data directory to store contents and :ref:`platform_espressif_uploadfs`.
 
-A default value is ``%project_dir%/data``.
+A default value is ``data`` which means that folder is located in the root of
+project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_DATA_DIR`.
