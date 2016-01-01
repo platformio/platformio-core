@@ -95,7 +95,8 @@ def lib_search(query, **filters):
         for item in result['items']:
             echo_liblist_item(item)
 
-        if int(result['page']) * int(result['perpage']) >= int(result['total']):
+        if (int(result['page']) * int(result['perpage']) >=
+                int(result['total'])):
             break
 
         if (app.get_setting("enable_prompts") and
