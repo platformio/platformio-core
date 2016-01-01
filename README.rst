@@ -172,6 +172,7 @@ Frameworks:
 * `CMSIS <http://platformio.org/#!/frameworks/cmsis>`_
 * `libOpenCM3 <http://platformio.org/#!/frameworks/libopencm3>`_
 * `Energia <http://platformio.org/#!/frameworks/energia>`_
+* `Simba <http://platformio.org/#!/frameworks/simba>`_
 * `SPL <http://platformio.org/#!/frameworks/spl>`_
 * `mbed <http://platformio.org/#!/frameworks/mbed>`_
 
