@@ -4,7 +4,7 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.7.0 (2015-12-30)
+2.7.1 (2016-01-??)
 ~~~~~~~~~~~~~~~~~~
 
 * Fixed uploading of EEPROM data using ``uploadeep`` target for Atmel AVR
