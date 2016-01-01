@@ -25,6 +25,11 @@ How to build PlatformIO based project
     # Process example project
     > platformio run
 
-    # Upload firmware
+    # Upload firmware from all environments
     > platformio run --target upload
 
+    # Process specific environment
+    > platformio run -e uno
+
+    # Upload firmware from specific environment
+    > platformio run --target upload
