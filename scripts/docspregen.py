@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -121,7 +121,7 @@ def generate_platform(name):
     print "Processing platform: %s" % name
     lines = []
 
-    lines.append("""..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+    lines.append("""..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -228,7 +228,7 @@ def generate_framework(type_, data):
     print "Processing framework: %s" % type_
     lines = []
 
-    lines.append("""..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+    lines.append("""..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at

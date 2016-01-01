@@ -199,7 +199,7 @@ Contributing
 Licence
 -------
 
-Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 
 The PlatformIO is licensed under the permissive Apache 2.0 licence,
 so you can use it in both commercial and personal projects with confidence.

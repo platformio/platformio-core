@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ def UploadToDisk(target, source, env):  # pylint: disable=W0613,W0621
     env.AutodetectUploadPort()
     copyfile(join(env.subst("$BUILD_DIR"), "firmware.bin"),
              join(env.subst("$UPLOAD_PORT"), "firmware.bin"))
-    print ("Firmware has been successfully uploaded.\n"
-           "Please restart your board.")
+    print("Firmware has been successfully uploaded.\n"
+          "Please restart your board.")
 
 env = DefaultEnvironment()
 

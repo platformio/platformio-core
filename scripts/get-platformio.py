@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ def exec_command(*args, **kwargs):
 
 def print_exec_result(result):
     if result['returncode'] == 0:
-        print (result['out'])
+        print(result['out'])
     else:
         raise Exception("\n".join([result['out'], result['err']]))
 
@@ -142,14 +142,14 @@ def main():
     for s in steps:
         if is_error:
             break
-        print ("\n==> %s ..." % s[0])
+        print("\n==> %s ..." % s[0])
         try:
             s[1]()
-            print ("[SUCCESS]")
+            print("[SUCCESS]")
         except Exception, e:
             is_error = True
-            print (str(e))
-            print ("[FAILURE]")
+            print(str(e))
+            print("[FAILURE]")
 
             permission_errors = (
                 "permission denied",
@@ -169,13 +169,13 @@ https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platf
 """)
 
     if is_error:
-        print ("The installation process has been FAILED!\n"
-               "Please report about this problem here\n"
-               "< https://github.com/platformio/platformio/issues >")
+        print("The installation process has been FAILED!\n"
+              "Please report about this problem here\n"
+              "< https://github.com/platformio/platformio/issues >")
         return
     else:
-        print ("\n ==> Installation process has been "
-               "successfully FINISHED! <==\n")
+        print("\n ==> Installation process has been "
+              "successfully FINISHED! <==\n")
 
     try:
         print_exec_result(exec_command("platformio"))

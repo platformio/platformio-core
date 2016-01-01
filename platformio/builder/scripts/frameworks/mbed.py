@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ def add_mbedlib(libname, libar):
     lib_dir = join(env.subst("$PLATFORMFW_DIR"), "libs", libname)
     if not isfile(join(lib_dir, "TARGET_%s" % variant,
                        "TOOLCHAIN_GCC_ARM", "lib%s.a" % libar)):
-        print (
+        print(
             "Warning: %s board doesn't have native support for '%s' library!" %
             (env.get("BOARD"), libname), file=sys.stderr)
         return
