@@ -75,8 +75,8 @@ class ProjectGenerator(object):
 
         output = result['out']
         start_index = output.index('{"')
-        stop_index = output.rindex('}')
-        data = json.loads(output[start_index + 1:stop_index + 1])
+        stop_index = output.rindex('}') + 1
+        data = json.loads(output[start_index:stop_index])
 
         return data
 
