@@ -82,7 +82,7 @@ Screenshot
 Cross-platform `Blink Project <http://platformio.org/#!/get-started#blink-project-example>`_.
 
 .. image:: ../_static/ide-platformio-eclipse.png
-    :target: http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-eclipse.png
 
 Examples
 --------
