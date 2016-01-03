@@ -14,6 +14,8 @@ PlatformIO 2.0
   development platform
 * Fixed project generator for CLion IDE
   (`issue #422 <https://github.com/platformio/platformio/issues/422>`_)
+* Fixed package ``shasum`` validation on Mac OS X 10.11.2
+  (`issue #429 <https://github.com/platformio/platformio/issues/429>`_)
 
 2.7.0 (2015-12-30)
 ~~~~~~~~~~~~~~~~~~
