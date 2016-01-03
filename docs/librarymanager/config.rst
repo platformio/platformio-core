@@ -162,13 +162,12 @@ A version of the current library source code.
 
 * Can contain a-z, digits, dots or dash.
 * `Semantic Versioning <http://semver.org>`_ IS RECOMMENDED.
-* A `CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_
-  revision from the latest commit.
 
 If :ref:`libjson_version` field is not defined and :ref:`libjson_repository`
-field is defined, then |PIOAPICR| will use the *CVS*-revision from the latest
-commit as "current version". For example, ``13`` (*SVN*) or first 10 chars of
-*SHA* digest ``e4564b7da4`` (*Git*).
+field is defined, then |PIOAPICR| will use the
+`CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>` revision from
+the latest commit as "current version". For example, ``13`` (*SVN*) or first
+10 chars of *SHA* digest ``e4564b7da4`` (*Git*).
 
 If :ref:`libjson_version` and :ref:`libjson_repository` fields are defined,
 then :ref:`libjson_version` has HIGHER PRIORITY. We recommend to use
