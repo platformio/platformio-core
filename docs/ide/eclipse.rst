@@ -53,7 +53,14 @@ Then:
    ``Menu: File > Import... > General > Existing Projects into Workspace > Next``
    and specify root directory where is located :ref:`projectconf`
 2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
-3. Build project: ``Menu: Project > Build Project``.
+3. Build project using ``Menu: Project > Build Project`` or preconfigured
+   Make Targets (see screenshot below):
+
+   + ``PlatformIO: Build``
+   + ``PlatformIO: Clean``
+   + ``PlatformIO: Upload``
+   + ``PlatformIO: Upload using Programmer`` see :ref:`atmelavr_upload_via_programmer`
+   + ``PlatformIO: Upload SPIFFS image`` see :ref:`platform_espressif_uploadfs`
 
 .. warning::
     The libraries which are added, installed or used in the project
@@ -71,6 +78,8 @@ See a full list with :ref:`articles`.
 
 Screenshot
 ----------
+
+Cross-platform `Blink Project <http://platformio.org/#!/get-started#blink-project-example>`_.
 
 .. image:: ../_static/ide-platformio-eclipse.png
     :target: http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio
