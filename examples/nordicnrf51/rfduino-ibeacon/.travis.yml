@@ -14,7 +14,7 @@
 #   < http://docs.platformio.org/en/latest/userguide/cmd_ci.html >
 #
 #
-# Please choice one of the following templates (proposed below) and uncomment
+# Please choose one of the following templates (proposed below) and uncomment
 # it (remove "# " before each line) or use own configuration according to the
 # Travis CI documentation (see above).
 #
