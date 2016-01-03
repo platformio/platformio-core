@@ -1,5 +1,5 @@
 % for include in includes:
--I"{{include}}"
+-I{{include}}
 % end
 % for define in defines:
 -D{{define}}
