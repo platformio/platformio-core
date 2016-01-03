@@ -40,6 +40,18 @@ add_custom_target(
 )
 
 add_custom_target(
+    platformio_programmer_upload ALL
+    COMMAND ${PLATFORMIO_CMD} -f -c emacs run --target program
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_custom_target(
+    platformio_spiffs_upload ALL
+    COMMAND ${PLATFORMIO_CMD} -f -c emacs run --target uploadfs
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_custom_target(
     platformio_update ALL
     COMMAND ${PLATFORMIO_CMD} -f -c emacs update
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

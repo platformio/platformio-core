@@ -57,12 +57,14 @@ command and generate project via :option:`platformio init --ide` command:
     cmake .
 
 
-There are 4 predefined targets for building.
+There are 6 predefined targets for building.
 
-* ``platformio_build``  - Build project without auto-uploading.     (``C-c i b``)
-* ``platformio_upload`` - Build and upload (if no errors).          (``C-c i u``)
-* ``platformio_clean``  - Clean compiled objects.                   (``C-c i c``)
-* ``platformio_update`` - Update installed platforms and libraries. (``C-c i d``)
+* ``platformio_build``  - Build project without auto-uploading.        (``C-c i b``)
+* ``platformio_upload`` - Build and upload (if no errors).             (``C-c i u``)
+* ``platformio_programmer_upload`` - Build and upload using external programmer (if no errors). (``C-c i p``)
+* ``platformio_spiffs_upload``  - Upload files to file system SPIFFS). (``C-c i s``)
+* ``platformio_clean``  - Clean compiled objects.                      (``C-c i c``)
+* ``platformio_update`` - Update installed platforms and libraries.    (``C-c i d``)
 
 .. warning::
     The libraries which are added, installed or used in the project
