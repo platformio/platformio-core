@@ -161,15 +161,25 @@ Example:
 A version of the current library source code.
 
 * Can contain a-z, digits, dots or dash.
-* `Semantic Versioning <http://semver.org>`_ is recommended.
+* `Semantic Versioning <http://semver.org>`_ IS RECOMMENDED.
 * A `CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_
-  revision from the latest commit. Example: ``13`` (*SVN*) or first 10
-  chars of *SHA* digest ``e4564b7da4`` (*Git*).
+  revision from the latest commit.
+
+If :ref:`libjson_version` field is not defined and :ref:`libjson_repository`
+field is defined, then |PIOAPICR| will use the *CVS*-revision from the latest
+commit as "current version". For example, ``13`` (*SVN*) or first 10 chars of
+*SHA* digest ``e4564b7da4`` (*Git*).
+
+If :ref:`libjson_version` and :ref:`libjson_repository` fields are defined,
+then :ref:`libjson_version` has HIGHER PRIORITY. We recommend to use
+:ref:`libjson_version` field and specify the real release version. In other
+case, users will receive updates for library with each new commit to
+:ref:`libjson_repository`.
 
 .. note::
-    You can omit :ref:`libjson_version` field and define
-    :ref:`libjson_repository` field. In this case
-    |PIOAPICR| will use the *CVS*-revision from the latest commit.
+    |PIOAPICR| updates library only if:
+        - the :ref:`libjson_version` is changed
+        - ``library.json`` is modified
 
 Example:
 
