@@ -28,9 +28,6 @@ PlatformIO
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/platformio/platformio
    :target: https://gitter.im/platformio/platformio
-.. image:: https://img.shields.io/donate/PlatformIO.png?color=yellow
-   :alt: Support PlatformIO Team
-   :target: https://www.bountysource.com/teams/platformio
 
 `Home & Demo <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
