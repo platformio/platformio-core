@@ -51,7 +51,7 @@ env.Replace(
     AS="xtensa-lx106-elf-as",
     CC="xtensa-lx106-elf-gcc",
     CXX="xtensa-lx106-elf-g++",
-    OBJCOPY="xtensa-lx106-elf-objcopy",
+    OBJCOPY=join("$PIOPACKAGES_DIR", "tool-esptool", "esptool"),
     RANLIB="xtensa-lx106-elf-ranlib",
     SIZETOOL="xtensa-lx106-elf-size",
 
@@ -137,7 +137,7 @@ env.Append(
     BUILDERS=dict(
         ElfToBin=Builder(
             action=" ".join([
-                '"$UPLOADER"',
+                '"$OBJCOPY"',
                 "-eo",
                 '"%s"' % join("$PLATFORMFW_DIR", "bootloaders",
                               "eboot", "eboot.elf"),
@@ -248,7 +248,7 @@ else:
         BUILDERS=dict(
             ElfToBin=Builder(
                 action=" ".join([
-                    '"$UPLOADER"',
+                    '"$OBJCOPY"',
                     "-eo", "$SOURCES",
                     "-bo", "${TARGETS[0]}",
                     "-bm", "qio",
