@@ -16,6 +16,8 @@ PlatformIO 2.0
   (`issue #422 <https://github.com/platformio/platformio/issues/422>`_)
 * Fixed package ``shasum`` validation on Mac OS X 10.11.2
   (`issue #429 <https://github.com/platformio/platformio/issues/429>`_)
+* Fixed CMakeLists.txt ``add_executable`` has only one source file
+  (`issue #421 <https://github.com/platformio/platformio/issues/421>`_)
 
 2.7.0 (2015-12-30)
 ~~~~~~~~~~~~~~~~~~
