@@ -28,7 +28,12 @@ if env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy":
 elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
     SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
     env.Append(
-        LINKFLAGS=["-Wl,--defsym=__rtc_localtime=$UNIX_TIME"]
+        LINKFLAGS=[
+            "-Wl,--defsym=__rtc_localtime=$UNIX_TIME"
+        ],
+        CPPFLAGS=[
+            "-fsingle-precision-constant"
+        ]
     )
 
 env.Append(

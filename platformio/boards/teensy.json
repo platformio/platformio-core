@@ -63,7 +63,7 @@
             "cpu": "cortex-m4"
         },
         "frameworks": ["arduino", "mbed"],
-        "name": "Teensy 3.1",
+        "name": "Teensy 3.1 / 3.2",
         "platform": "teensy",
         "upload": {
             "maximum_ram_size": 65536,

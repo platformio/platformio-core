@@ -42,10 +42,7 @@ env.Replace(
         "-mmcu=$BOARD_MCU"
     ],
 
-    CFLAGS=["-std=gnu11"],
-
     CXXFLAGS=[
-        "-std=gnu++11",
         "-fno-exceptions",
         "-fno-threadsafe-statics"
     ],

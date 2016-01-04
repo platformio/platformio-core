@@ -78,7 +78,7 @@
             "variant": "nodemcu"
         },
         "frameworks": ["arduino"],
-        "name": "NodeMCU 0.9 & 1.0",
+        "name": "NodeMCU 0.9 / 1.0",
         "platform": "espressif",
         "upload": {
             "maximum_ram_size": 81920,

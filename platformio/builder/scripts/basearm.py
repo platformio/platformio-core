@@ -41,8 +41,7 @@ env.Replace(
         "-Wall",
         "-mthumb",
         "-mcpu=${BOARD_OPTIONS['build']['cpu']}",
-        "-nostdlib",
-        "-MMD"  # output dependancy info
+        "-nostdlib"
     ],
 
     CXXFLAGS=[

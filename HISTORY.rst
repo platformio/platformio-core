@@ -10,6 +10,8 @@ PlatformIO 2.0
 * Added generic targets to Eclipse IDE: Build, Clean, Upload, Upload SPIFFS
   image, Upload using Programmer
   (`issue #427 <https://github.com/platformio/platformio/issues/427>`_)
+* Updated Teensy Arduino Framework to 1.26
+  (`issue #434 <https://github.com/platformio/platformio/issues/434>`_)
 * Fixed uploading of EEPROM data using ``uploadeep`` target for Atmel AVR
   development platform
 * Fixed project generator for CLion IDE

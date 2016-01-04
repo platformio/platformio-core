@@ -78,6 +78,16 @@ env = DefaultEnvironment()
 
 SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")))
 
+env.Append(
+    CFLAGS=[
+        "-std=gnu11"
+    ],
+
+    CXXFLAGS=[
+        "-std=gnu++11"
+    ]
+)
+
 if "digispark" in env.get(
         "BOARD_OPTIONS", {}).get("build", {}).get("core", ""):
     env.Replace(
