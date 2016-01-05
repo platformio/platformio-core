@@ -20,6 +20,11 @@ Articles about us
 
 Here are recent articles about PlatformIO:
 
+2016
+^^^^
+
+* Jan 05, 2016 - **Julien Rodrigues** - `Internet Of Things: The IDE scandal <https://medium.com/@jrodrigues/internet-of-things-the-ide-scandal-5ddb8fc9d918>`_
+
 2015
 ^^^^
 
