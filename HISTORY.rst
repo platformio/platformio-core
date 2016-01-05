@@ -7,8 +7,9 @@ PlatformIO 2.0
 2.7.1 (2016-01-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Added generic targets to Eclipse IDE: Build, Clean, Upload, Upload SPIFFS
-  image, Upload using Programmer
+* Added generic targets for Eclipse IDE, Emacs, Sublime Text: Build, Clean,
+  Upload, Upload SPIFFS image, Upload using Programmer, Update installed
+  platforms and libraries
   (`issue #427 <https://github.com/platformio/platformio/issues/427>`_)
 * Updated Teensy Arduino Framework to 1.26
   (`issue #434 <https://github.com/platformio/platformio/issues/434>`_)

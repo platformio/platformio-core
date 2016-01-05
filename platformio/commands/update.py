@@ -24,4 +24,5 @@ from platformio.commands.platforms import \
 @click.pass_context
 def cli(ctx):
     ctx.invoke(cmd_platforms_update)
+    click.echo()
     ctx.invoke(cmd_lib_update)

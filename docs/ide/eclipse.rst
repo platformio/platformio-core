@@ -56,11 +56,17 @@ Then:
 3. Build project using ``Menu: Project > Build Project`` or preconfigured
    Make Targets (see screenshot below):
 
-   + ``PlatformIO: Build``
-   + ``PlatformIO: Clean``
-   + ``PlatformIO: Upload``
+   + ``PlatformIO: Build`` - Build project without auto-uploading
+   + ``PlatformIO: Clean`` - Clean compiled objects.
+   + ``PlatformIO: Upload`` - Build and upload (if no errors)
    + ``PlatformIO: Upload using Programmer`` see :ref:`atmelavr_upload_via_programmer`
    + ``PlatformIO: Upload SPIFFS image`` see :ref:`platform_espressif_uploadfs`
+   + ``PlatformIO: Update platforms and libraries`` - Update installed platforms and libraries
+
+If you have some problems with unresolved includes, defines, etc., then
+
+* Restart Eclipse IDE
+* Rebuild index using ``Menu: Project > C/C++ Index > Rebuild``.
 
 .. warning::
     The libraries which are added, installed or used in the project
