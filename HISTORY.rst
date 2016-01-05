@@ -7,7 +7,8 @@ PlatformIO 2.0
 2.7.1 (2016-01-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Added generic targets for CLion, Eclipse IDE, Emacs, Sublime Text, VIM: Build,
+* Generate default targets for `supported IDE <http://docs.platformio.org/en/latest/ide.html>`__
+  (CLion, Eclipse IDE, Emacs, Sublime Text, VIM): Build,
   Clean, Upload, Upload SPIFFS image, Upload using Programmer, Update installed
   platforms and libraries
   (`issue #427 <https://github.com/platformio/platformio/issues/427>`_)
