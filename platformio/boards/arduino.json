@@ -658,7 +658,7 @@
             "core": "arduino",
             "extra_flags": "-D__SAM3X8E__ -DARDUINO_SAM_DUE -DARDUINO_ARCH_SAM",
             "f_cpu": "84000000L",
-            "mcu": "at91sam3x8e",
+            "mcu": "sam3x8e",
             "cpu": "cortex-m3",
             "pid": "0x003e",
             "usb_product": "Arduino Due",
@@ -686,7 +686,7 @@
             "core": "arduino",
             "extra_flags": "-D__SAM3X8E__ -DARDUINO_SAM_DUE -DARDUINO_ARCH_SAM",
             "f_cpu": "84000000L",
-            "mcu": "at91sam3x8e",
+            "mcu": "sam3x8e",
             "cpu": "cortex-m3",
             "pid": "0x003e",
             "usb_product": "Arduino Due",
@@ -707,6 +707,62 @@
             "wait_for_upload_port": true
         },
         "url": "http://arduino.cc/en/Main/arduinoBoardDue",
+        "vendor": "Arduino"
+    },
+    "zero": {
+        "build": {
+            "core": "arduino_zero",
+            "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "pid": "0x804d",
+            "usb_product": "Arduino Zero",
+            "variant": "arduino_zero",
+            "vid": "0x2341",
+            "ldscript": "flash_with_bootloader.ld"
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino Zero (Programming Port)",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "sam-ba",
+            "require_upload_port" : false,
+            "use_1200bps_touch": false,
+            "wait_for_upload_port": false
+        },
+        "url": "https://www.arduino.cc/en/Main/ArduinoBoardZero",
+        "vendor": "Arduino"
+    },
+    "zeroUSB": {
+        "build": {
+            "core": "arduino_zero",
+            "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "pid": "0x804d",
+            "usb_product": "Arduino Zero",
+            "variant": "arduino_zero",
+            "vid": "0x2341",
+            "ldscript": "flash_with_bootloader.ld"
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino Zero (USB Native Port)",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "sam-ba",
+            "require_upload_port" : true,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "https://www.arduino.cc/en/Main/ArduinoBoardZero",
         "vendor": "Arduino"
     }
 }

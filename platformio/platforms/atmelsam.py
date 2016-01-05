@@ -42,6 +42,10 @@ class AtmelsamPlatform(BasePlatform):
 
         "tool-bossac": {
             "alias": "uploader"
+        },
+
+        "tool-openocd": {
+            "alias": "uploader"
         }
     }
 
