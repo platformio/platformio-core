@@ -48,10 +48,32 @@ Put to the project directory ``Makefile`` wrapper with contents:
     #PATH := /usr/local/bin:$(PATH)
 
     all:
+        platformio -f -c vim run
+
+    upload:
         platformio -f -c vim run --target upload
 
     clean:
         platformio -f -c vim run --target clean
+
+    program:
+        platformio -f -c vim run --target program
+
+    uploadfs:
+        platformio -f -c vim run --target uploadfs
+
+    update:
+        platformio -f -c vim update
+
+
+Pre-defined targets:
+
++ ``Build`` - Build project without auto-uploading
++ ``Clean`` - Clean compiled objects.
++ ``Upload`` - Build and upload (if no errors)
++ ``Upload using Programmer`` see :ref:`atmelavr_upload_via_programmer`
++ ``Upload SPIFFS image`` see :ref:`platform_espressif_uploadfs`
++ ``Update platforms and libraries`` - Update installed platforms and libraries via :ref:`cmd_update`.
 
 
 Now, in VIM ``cd /path/to/this/project`` and press ``Ctrl+B`` or ``Cmd+B``

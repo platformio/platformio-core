@@ -58,7 +58,7 @@ the screenshot below):
 * ``PLATFORMIO_CLEAN`` - Clean compiled objects.
 * ``PLATFORMIO_PROGRAM`` - Build and upload using external programmer (if no errors), see :ref:`atmelavr_upload_via_programmer`.
 * ``PLATFORMIO_UPLOADFS`` - Upload files to file system SPIFFS, see :ref:`platform_espressif_uploadfs`.
-* ``PLATFORMIO_UPDATE`` - Update installed platforms and libraries.
+* ``PLATFORMIO_UPDATE`` - Update installed platforms and libraries via :ref:`cmd_update`.
 
 .. warning::
     The libraries which are added, installed or used in the project
