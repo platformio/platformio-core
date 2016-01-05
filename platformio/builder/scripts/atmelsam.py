@@ -58,7 +58,7 @@ env = DefaultEnvironment()
 
 SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
-if "zero" == env.subst("$BOARD"):
+if env.subst("$BOARD") == "zero":
     env.Replace(
         UPLOADER=join("$PIOPACKAGES_DIR", "tool-openocd", "bin", "openocd"),
         UPLOADERFLAGS=[
@@ -160,7 +160,7 @@ AlwaysBuild(target_size)
 # Target: Upload by default .bin file
 #
 
-if "zero" == env.subst("$BOARD"):
+if env.subst("$BOARD") == "zero":
     upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
 else:
     upload = env.Alias(["upload", "uploadlazy"], target_firm,
