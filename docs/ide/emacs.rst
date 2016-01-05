@@ -40,7 +40,7 @@ An Emacs minor mode has been written to facilitate building and uploading from w
 It can be installed from the MELPA repository using ``M-x package-install``.
 See the MELPA `Getting Started <https://melpa.org/#/getting-started>`_ page for more information.
 
-Setup instructions for the minor mode can be found at the `Github page <https://github.com/ZachMassia/platformio-mode>`_.
+Setup instructions and an example config can be found at the `Github page <https://github.com/ZachMassia/platformio-mode>`_.
 
 Code completion can optionally be provided by installing `irony-mode <https://github.com/Sarcasm/irony-mode>`_
 
@@ -54,7 +54,6 @@ command and generate project via :option:`platformio init --ide` command:
 .. code-block:: shell
 
     platformio init --ide emacs --board %TYPE%
-    cmake .
 
 
 There are 6 predefined targets for building.
