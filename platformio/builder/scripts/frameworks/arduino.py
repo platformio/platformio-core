@@ -168,7 +168,22 @@ if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
             join("$BUILD_DIR", "FrameworkLibSam"),
             join("$BUILD_DIR", "FrameworkLibSam", "include"),
             join("$BUILD_DIR", "FrameworkDeviceInc"),
-            join("$BUILD_DIR", "FrameworkDeviceInc", "sam3xa", "include")
+            join(
+                "$BUILD_DIR",
+                "FrameworkDeviceInc",
+                "${BOARD_OPTIONS['build']['mcu'][3:]}",
+                "include"
+            )
+        ],
+
+        LIBPATH=[
+            join(
+                "$PLATFORMFW_DIR",
+                "variants",
+                "${BOARD_OPTIONS['build']['variant']}",
+                "linker_scripts",
+                "gcc"
+            )
         ]
     )
 
@@ -235,12 +250,24 @@ if "variant" in BOARD_BUILDOPTS:
     ))
 
 envsafe = env.Clone()
+
+if "zero" in env.subst("$BOARD"):
+    envsafe.Append(
+        CFLAGS=[
+            "-std=gnu11"
+        ],
+
+        CXXFLAGS=[
+            "-std=gnu++11",
+        ]
+    )
+
 libs.append(envsafe.BuildLibrary(
     join("$BUILD_DIR", "FrameworkArduino"),
     join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
 ))
 
-if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
+if "due" in env.subst("$BOARD"):
     env.Append(
         LIBPATH=[
             join("$PLATFORMFW_DIR", "variants",

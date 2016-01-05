@@ -28,12 +28,13 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     env.AutodetectUploadPort()
 
     board_type = env.subst("$BOARD")
-    env.Append(
-        UPLOADERFLAGS=[
-            "-U",
-            "true" if ("usb" in board_type.lower(
-            ) or board_type == "digix") else "false"
-        ])
+    if "zero" not in board_type:
+        env.Append(
+            UPLOADERFLAGS=[
+                "-U",
+                "true" if ("usb" in board_type.lower(
+                ) or board_type == "digix") else "false"
+            ])
 
     upload_options = env.get("BOARD_OPTIONS", {}).get("upload", {})
 
@@ -57,32 +58,81 @@ env = DefaultEnvironment()
 
 SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
-env.Replace(
-    UPLOADER=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_UPLOADER", "bossac"),
-    UPLOADERFLAGS=[
-        "--info",
-        "--port", "$UPLOAD_PORT",
-        "--erase",
-        "--write",
-        "--verify",
-        "--boot",
-        "--reset"
-    ],
-    UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
-)
+if "zero" == env.subst("$BOARD"):
+    env.Replace(
+        UPLOADER=join("$PIOPACKAGES_DIR", "tool-openocd", "bin", "openocd"),
+        UPLOADERFLAGS=[
+            "-d2",
+            "-s",
+            join(
+                "$PIOPACKAGES_DIR",
+                "tool-openocd", "share", "openocd", "scripts"),
+            "-f",
+            join(
+                "$PLATFORMFW_DIR", "variants",
+                "${BOARD_OPTIONS['build']['variant']}", "openocd_scripts",
+                "${BOARD_OPTIONS['build']['variant']}.cfg"
+            ),
+            "-c", "\"telnet_port", "disabled;",
+            "program", "{{$SOURCES}}",
+            "verify", "reset", "0x00002000;", "shutdown\""
+        ],
+        UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS'
+    )
+else:
+    env.Replace(
+        UPLOADER=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_UPLOADER", "bossac"),
+        UPLOADERFLAGS=[
+            "--info",
+            "--port", "$UPLOAD_PORT",
+            "--erase",
+            "--write",
+            "--verify",
+            "--reset",
+            "--debug"
+        ],
+        UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
+    )
 
 env.Append(
     CPPDEFINES=[
-        "printf=iprintf",
         "USBCON",
         'USB_MANUFACTURER="PlatformIO"'
-    ],
-
-    LINKFLAGS=[
-        "-Wl,--entry=Reset_Handler",
-        "-Wl,--start-group"
     ]
 )
+
+
+if "due" in env.subst("$BOARD"):
+    env.Append(
+        CPPDEFINES=[
+            "printf=iprintf"
+        ],
+
+        LINKFLAGS=[
+            "-Wl,--entry=Reset_Handler",
+            "-Wl,--start-group"
+        ],
+
+        UPLOADERFLAGS=[
+            "--boot",
+        ]
+
+    )
+elif "zero" in env.subst("$BOARD"):
+    env.Append(
+        CPPFLAGS=[
+            "--param", "max-inline-insns-single=500"
+        ],
+
+        CXXFLAGS=[
+            "-fno-threadsafe-statics"
+        ],
+
+        LINKFLAGS=[
+            "--specs=nosys.specs",
+            "--specs=nano.specs"
+        ]
+    )
 
 #
 # Target: Build executable and linkable firmware
@@ -110,8 +160,12 @@ AlwaysBuild(target_size)
 # Target: Upload by default .bin file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_firm,
-                   [BeforeUpload, "$UPLOADCMD"])
+if "zero" == env.subst("$BOARD"):
+    upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
+else:
+    upload = env.Alias(["upload", "uploadlazy"], target_firm,
+                       [BeforeUpload, "$UPLOADCMD"])
+
 AlwaysBuild(upload)
 
 #
