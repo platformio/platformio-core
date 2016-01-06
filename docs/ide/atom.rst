@@ -31,8 +31,28 @@ page for more detailed information.
 Integration
 -----------
 
-Using `Atom Packages <https://atom.io/docs/v1.0.2/using-atom-atom-packages>`_
-please install `platomformio <https://atom.io/packages/platomformio>`_ package.
+There is Atom based `platomformio <https://atom.io/packages/platomformio>`_
+package which can be installed `Using Atom Packages <https://atom.io/docs/v1.0.2/using-atom-atom-packages>`_.
+
+If you have ``clang`` installed in your system (is installed by default in Mac
+OS X), you can enable completions using
+`autocomplete-clang <https://github.com/yasuyuky/autocomplete-clang>`_ package.
+This package requires ``.clang_complete`` file and PlatformIO can generate it.
+
+Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+command and generate project via :option:`platformio init --ide` command:
+
+.. code-block:: shell
+
+    platformio init --ide atom --board %TYPE%
+
+    # For example, generate project for Arduino UNO
+    platformio init --ide atom --board uno
+
+.. warning::
+    The libraries which are added, installed or used in the project
+    after generating process wont be reflected in IDE. To fix it you
+    need to reinitialize project using :ref:`cmd_init` (repeat it).
 
 Articles / Manuals
 ------------------

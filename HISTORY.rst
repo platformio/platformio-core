@@ -9,6 +9,7 @@ PlatformIO 2.0
 
 * Initial support for Arduino Zero board
   (`issue #356 <https://github.com/platformio/platformio/issues/356>`_)
+* Added support for completions to Atom text editor using ``.clang_complete``
 * Generate default targets for `supported IDE <http://docs.platformio.org/en/latest/ide.html>`__
   (CLion, Eclipse IDE, Emacs, Sublime Text, VIM): Build,
   Clean, Upload, Upload SPIFFS image, Upload using Programmer, Update installed
