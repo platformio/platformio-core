@@ -4,15 +4,17 @@ Release History
 PlatformIO 2.0
 --------------
 
-2.7.1 (2016-01-??)
+2.7.1 (2016-01-06)
 ~~~~~~~~~~~~~~~~~~
 
+* Initial support for Arduino Zero board
+  (`issue #356 <https://github.com/platformio/platformio/issues/356>`_)
 * Generate default targets for `supported IDE <http://docs.platformio.org/en/latest/ide.html>`__
   (CLion, Eclipse IDE, Emacs, Sublime Text, VIM): Build,
   Clean, Upload, Upload SPIFFS image, Upload using Programmer, Update installed
   platforms and libraries
   (`issue #427 <https://github.com/platformio/platformio/issues/427>`_)
-* Updated Teensy Arduino Framework to 1.26
+* Updated Teensy Arduino Framework to 1.27
   (`issue #434 <https://github.com/platformio/platformio/issues/434>`_)
 * Fixed uploading of EEPROM data using ``uploadeep`` target for Atmel AVR
   development platform
