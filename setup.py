@@ -24,13 +24,12 @@ install_requires = [
     "click>=3.2,<6",
     "lockfile>=0.9.1,<0.13",
     "requests>=2.4.0,<3",
-    "colorama"
+    "colorama",
+    "pyserial<4"
 ]
 
 if sys.version_info < (2, 7, 0):
-    install_requires.append("pyserial<3")
-else:
-    install_requires.append("pyserial<4")
+    install_requires[-1] = "pyserial<3"
 
 setup(
     name=__title__,
