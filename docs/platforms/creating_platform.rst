@@ -119,6 +119,9 @@ Packages
     * - ``tool-mspdebug``
       - `MSPDebug <http://mspdebug.sourceforge.net/>`_
 
+    * - ``tool-openocd``
+      - `OpenOCD <http://openocd.org>`_
+
     * - ``tool-rfdloader``
       - `rfdloader <https://github.com/RFduino/RFduino>`_
 

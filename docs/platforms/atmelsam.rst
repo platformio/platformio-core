@@ -34,6 +34,9 @@ Packages
     * - ``ldscripts``
       - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
 
+    * - ``tool-openocd``
+      - `OpenOCD <http://openocd.org>`_
+
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
@@ -84,16 +87,30 @@ Arduino
 
     * - ``due``
       - `Arduino Due (Programming Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
-      - AT91SAM3X8E
+      - SAM3X8E
       - 84 MHz
       - 512 Kb
       - 32 Kb
 
     * - ``dueUSB``
       - `Arduino Due (USB Native Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
-      - AT91SAM3X8E
+      - SAM3X8E
       - 84 MHz
       - 512 Kb
+      - 32 Kb
+
+    * - ``zero``
+      - `Arduino Zero (Programming Port) <https://www.arduino.cc/en/Main/ArduinoBoardZero>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``zeroUSB``
+      - `Arduino Zero (USB Native Port) <https://www.arduino.cc/en/Main/ArduinoBoardZero>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
       - 32 Kb
 
 Atmel

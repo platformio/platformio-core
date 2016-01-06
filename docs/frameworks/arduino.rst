@@ -214,14 +214,14 @@ Arduino
 
     * - ``due``
       - `Arduino Due (Programming Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
-      - AT91SAM3X8E
+      - SAM3X8E
       - 84 MHz
       - 512 Kb
       - 32 Kb
 
     * - ``dueUSB``
       - `Arduino Due (USB Native Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
-      - AT91SAM3X8E
+      - SAM3X8E
       - 84 MHz
       - 512 Kb
       - 32 Kb
@@ -379,6 +379,20 @@ Arduino
       - 16 MHz
       - 32 Kb
       - 2.5 Kb
+
+    * - ``zero``
+      - `Arduino Zero (Programming Port) <https://www.arduino.cc/en/Main/ArduinoBoardZero>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``zeroUSB``
+      - `Arduino Zero (USB Native Port) <https://www.arduino.cc/en/Main/ArduinoBoardZero>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
 
 BQ
 ~~
@@ -693,7 +707,7 @@ NodeMCU
       - RAM
 
     * - ``nodemcu``
-      - `NodeMCU 0.9 & 1.0 <http://www.nodemcu.com/>`_
+      - `NodeMCU 0.9 / 1.0 <http://www.nodemcu.com/>`_
       - ESP8266
       - 80 MHz
       - 4096 Kb
@@ -1073,7 +1087,7 @@ Teensy
       - 16 Kb
 
     * - ``teensy31``
-      - `Teensy 3.1 <https://www.pjrc.com/store/teensy31.html>`_
+      - `Teensy 3.1 / 3.2 <https://www.pjrc.com/store/teensy31.html>`_
       - MK20DX256
       - 72 MHz
       - 256 Kb

@@ -163,7 +163,7 @@ NodeMCU
       - RAM
 
     * - ``nodemcu``
-      - `NodeMCU 0.9 & 1.0 <http://www.nodemcu.com/>`_
+      - `NodeMCU 0.9 / 1.0 <http://www.nodemcu.com/>`_
       - ESP8266
       - 80 MHz
       - 4096 Kb
