@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -95,7 +95,8 @@ def lib_search(query, **filters):
         for item in result['items']:
             echo_liblist_item(item)
 
-        if int(result['page'])*int(result['perpage']) >= int(result['total']):
+        if (int(result['page']) * int(result['perpage']) >=
+                int(result['total'])):
             break
 
         if (app.get_setting("enable_prompts") and

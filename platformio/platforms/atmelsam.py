@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,6 +41,10 @@ class AtmelsamPlatform(BasePlatform):
         },
 
         "tool-bossac": {
+            "alias": "uploader"
+        },
+
+        "tool-openocd": {
             "alias": "uploader"
         }
     }

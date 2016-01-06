@@ -4,6 +4,27 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.7.1 (2016-01-06)
+~~~~~~~~~~~~~~~~~~
+
+* Initial support for Arduino Zero board
+  (`issue #356 <https://github.com/platformio/platformio/issues/356>`_)
+* Generate default targets for `supported IDE <http://docs.platformio.org/en/latest/ide.html>`__
+  (CLion, Eclipse IDE, Emacs, Sublime Text, VIM): Build,
+  Clean, Upload, Upload SPIFFS image, Upload using Programmer, Update installed
+  platforms and libraries
+  (`issue #427 <https://github.com/platformio/platformio/issues/427>`_)
+* Updated Teensy Arduino Framework to 1.27
+  (`issue #434 <https://github.com/platformio/platformio/issues/434>`_)
+* Fixed uploading of EEPROM data using ``uploadeep`` target for Atmel AVR
+  development platform
+* Fixed project generator for CLion IDE
+  (`issue #422 <https://github.com/platformio/platformio/issues/422>`_)
+* Fixed package ``shasum`` validation on Mac OS X 10.11.2
+  (`issue #429 <https://github.com/platformio/platformio/issues/429>`_)
+* Fixed CMakeLists.txt ``add_executable`` has only one source file
+  (`issue #421 <https://github.com/platformio/platformio/issues/421>`_)
+
 2.7.0 (2015-12-30)
 ~~~~~~~~~~~~~~~~~~
 
@@ -26,7 +47,7 @@ PlatformIO 2.0
   Programmers <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-using-programmer>`_:
   AVR ISP, AVRISP mkII, USBtinyISP, USBasp, Parallel Programmer and Arduino as ISP
 * Fixed issue with current Python interpreter for Python-based tools
-  (`pull #417 <https://github.com/platformio/platformio/pull/417>`_)
+  (`issue #417 <https://github.com/platformio/platformio/issue/417>`_)
 
 2.6.3 (2015-12-21)
 ~~~~~~~~~~~~~~~~~~

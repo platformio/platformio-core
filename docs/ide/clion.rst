@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -50,12 +50,15 @@ Then:
 2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
 3. Build project (*DO NOT RUN*): ``Menu: Run > Build``.
 
-There are 3 predefined targets for building (*NOT FOR RUNNING*, see marks on
+There are 6 predefined targets for building (*NOT FOR RUNNING*, see marks on
 the screenshot below):
 
-* ``PLATFORMIO_BUILD`` - build project without auto-uploading
-* ``PLATFORMIO_UPLOAD`` - build and upload (if no errors)
-* ``PLATFORMIO_CLEAN`` - clean compiled objects and etc.
+* ``PLATFORMIO_BUILD`` - Build project without auto-uploading
+* ``PLATFORMIO_UPLOAD`` - Build and upload (if no errors).
+* ``PLATFORMIO_CLEAN`` - Clean compiled objects.
+* ``PLATFORMIO_PROGRAM`` - Build and upload using external programmer (if no errors), see :ref:`atmelavr_upload_via_programmer`.
+* ``PLATFORMIO_UPLOADFS`` - Upload files to file system SPIFFS, see :ref:`platform_espressif_uploadfs`.
+* ``PLATFORMIO_UPDATE`` - Update installed platforms and libraries via :ref:`cmd_update`.
 
 .. warning::
     The libraries which are added, installed or used in the project

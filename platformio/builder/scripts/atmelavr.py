@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -78,6 +78,16 @@ env = DefaultEnvironment()
 
 SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "baseavr.py")))
 
+env.Append(
+    CFLAGS=[
+        "-std=gnu11"
+    ],
+
+    CXXFLAGS=[
+        "-std=gnu++11"
+    ]
+)
+
 if "digispark" in env.get(
         "BOARD_OPTIONS", {}).get("build", {}).get("core", ""):
     env.Replace(
@@ -111,13 +121,6 @@ else:
 target_elf = env.BuildProgram()
 
 #
-# Target: Extract EEPROM data (from EEMEM directive) to .eep file
-#
-
-target_eep = env.Alias("eep", env.ElfToEep(join("$BUILD_DIR", "firmware"),
-                                           target_elf))
-
-#
 # Target: Build the .hex file
 #
 
@@ -142,10 +145,13 @@ upload = env.Alias(["upload", "uploadlazy"], target_firm,
 AlwaysBuild(upload)
 
 #
-# Target: Upload .eep file
+# Target: Upload EEPROM data (from EEMEM directive)
 #
 
-uploadeep = env.Alias("uploadeep", target_eep, [BeforeUpload, "$UPLOADEEPCMD"])
+uploadeep = env.Alias(
+    "uploadeep",
+    env.ElfToEep(join("$BUILD_DIR", "firmware"), target_elf),
+    [BeforeUpload, "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
 
 #

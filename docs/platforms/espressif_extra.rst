@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -62,12 +62,13 @@ Uploading files to file system SPIFFS
     Please make sure to read `ESP8266 Flash layout <https://github.com/esp8266/Arduino/blob/master/doc/filesystem.md#flash-layout>`_
     information first.
 
-1. Create :ref:`projectconf_pio_data_dir` and put files here
-2. Run target ``uploadfs`` via  :option:`platformio run --target` command.
+1. Initialise project :ref:`cmd_init` (if you have not initialized yet)
+2. Create :ref:`projectconf_pio_data_dir` and put files here
+3. Run target ``uploadfs`` using  :option:`platformio run --target` command.
 
 To upload SPIFFS image using OTA update please specify ``upload_port`` /
-``--upload-port`` as IP address or DNS name (``*.local``). For the details
-please follow to :ref:`platform_espressif_ota`.
+``--upload-port`` as IP address or mDNS host name (ending with the ``*.local``).
+For the details please follow to :ref:`platform_espressif_ota`.
 
 By default, will be used default LD Script for the board where is specified
 SPIFFS offsets (start, end, page, block). You can override it using
@@ -88,7 +89,7 @@ There are 2 options:
 
 .. code-block:: bash
 
-    platformio run --target upload --upload-port IP_ADDRESS_HERE or DNS_NAME.local
+    platformio run --target upload --upload-port IP_ADDRESS_HERE or mDNS_NAME.local
 
 * Specify ``upload_port`` option in :ref:`projectconf`
 
@@ -96,7 +97,7 @@ There are 2 options:
 
    [env:myenv]
    ...
-   upload_port = IP_ADDRESS_HERE or DNS_NAME.local
+   upload_port = IP_ADDRESS_HERE or mDNS_NAME.local
 
 For example,
 

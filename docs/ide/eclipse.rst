@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -53,7 +53,20 @@ Then:
    ``Menu: File > Import... > General > Existing Projects into Workspace > Next``
    and specify root directory where is located :ref:`projectconf`
 2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
-3. Build project: ``Menu: Project > Build Project``.
+3. Build project using ``Menu: Project > Build Project`` or preconfigured
+   Make Targets (see screenshot below):
+
+   + ``PlatformIO: Build`` - Build project without auto-uploading
+   + ``PlatformIO: Clean`` - Clean compiled objects.
+   + ``PlatformIO: Upload`` - Build and upload (if no errors)
+   + ``PlatformIO: Upload using Programmer`` see :ref:`atmelavr_upload_via_programmer`
+   + ``PlatformIO: Upload SPIFFS image`` see :ref:`platform_espressif_uploadfs`
+   + ``PlatformIO: Update platforms and libraries`` - Update installed platforms and libraries via :ref:`cmd_update`.
+
+If you have some problems with unresolved includes, defines, etc., then
+
+* Restart Eclipse IDE
+* Rebuild index using ``Menu: Project > C/C++ Index > Rebuild``.
 
 .. warning::
     The libraries which are added, installed or used in the project
@@ -72,8 +85,10 @@ See a full list with :ref:`articles`.
 Screenshot
 ----------
 
+Cross-platform `Blink Project <http://platformio.org/#!/get-started#blink-project-example>`_.
+
 .. image:: ../_static/ide-platformio-eclipse.png
-    :target: http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-eclipse.png
 
 Examples
 --------

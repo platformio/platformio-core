@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -25,6 +25,11 @@ How to build PlatformIO based project
     # Process example project
     > platformio run
 
-    # Upload firmware
+    # Upload firmware from all environments
     > platformio run --target upload
 
+    # Process specific environment
+    > platformio run -e uno
+
+    # Upload firmware from specific environment
+    > platformio run --target upload

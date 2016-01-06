@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -40,7 +40,7 @@ An Emacs minor mode has been written to facilitate building and uploading from w
 It can be installed from the MELPA repository using ``M-x package-install``.
 See the MELPA `Getting Started <https://melpa.org/#/getting-started>`_ page for more information.
 
-Setup instructions for the minor mode can be found at the `Github page <https://github.com/ZachMassia/platformio-mode>`_.
+Setup instructions and an example config can be found at the `Github page <https://github.com/ZachMassia/platformio-mode>`_.
 
 Code completion can optionally be provided by installing `irony-mode <https://github.com/Sarcasm/irony-mode>`_
 
@@ -54,15 +54,16 @@ command and generate project via :option:`platformio init --ide` command:
 .. code-block:: shell
 
     platformio init --ide emacs --board %TYPE%
-    cmake .
 
 
-There are 4 predefined targets for building.
+There are 6 predefined targets for building.
 
-* ``platformio_build``  - Build project without auto-uploading.     (``C-c i b``)
-* ``platformio_upload`` - Build and upload (if no errors).          (``C-c i u``)
-* ``platformio_clean``  - Clean compiled objects.                   (``C-c i c``)
-* ``platformio_update`` - Update installed platforms and libraries. (``C-c i d``)
+* ``platformio_build``  - Build project without auto-uploading.        (``C-c i b``)
+* ``platformio_clean``  - Clean compiled objects.                      (``C-c i c``)
+* ``platformio_upload`` - Build and upload (if no errors).             (``C-c i u``)
+* ``platformio_programmer_upload`` - Build and upload using external programmer (if no errors, see :ref:`atmelavr_upload_via_programmer`). (``C-c i p``)
+* ``platformio_spiffs_upload``  - Upload files to file system SPIFFS (see :ref:`platform_espressif_uploadfs`). (``C-c i s``)
+* ``platformio_update`` - Update installed platforms and libraries.    (``C-c i d``)
 
 .. warning::
     The libraries which are added, installed or used in the project

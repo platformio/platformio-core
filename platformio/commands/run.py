@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -201,8 +201,7 @@ def _autoinstall_libs(ctx, libids_list):
             click.confirm(
                 "The libraries with IDs '%s' have not been installed yet. "
                 "Would you like to install them now?" %
-                ", ".join([str(i) for i in not_intalled_libs])
-            )):
+                ", ".join([str(i) for i in not_intalled_libs]))):
         ctx.invoke(cmd_lib_install, libid=not_intalled_libs)
 
 

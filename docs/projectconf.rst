@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -18,8 +18,8 @@ The Project configuration file is named ``platformio.ini``. This is a
 `INI-style <http://en.wikipedia.org/wiki/INI_file>`_ file.
 
 ``platformio.ini`` has sections (each denoted by a ``[header]``) and
-key / value pairs within the sections. A sign ``#`` at the beginning of the
-line indicates a comment. Comment lines are ignored.
+key / value pairs within the sections. Lines beginning with ``#`` or ``;``
+are ignored and may be used to provide comments.
 
 The sections and their allowable values are described below.
 
@@ -81,7 +81,8 @@ This option can be overridden by global environment variable
 A path to project's source directory. PlatformIO uses it for :ref:`cmd_run`
 command.
 
-A default value is ``%project_dir%/src``.
+A default value is ``src`` which means that folder is located in the root of
+project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_SRC_DIR`.
@@ -105,7 +106,8 @@ fast!
 then PlatformIO will remove this folder automatically. It will be created on the
 next build operation.
 
-A default value is ``%project_dir%/.pioenvs``.
+A default value is ``.pioenvs`` which means that folder is located in the root of
+project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_ENVS_DIR`.
@@ -122,7 +124,8 @@ This option can be overridden by global environment variable
 
 Data directory to store contents and :ref:`platform_espressif_uploadfs`.
 
-A default value is ``%project_dir%/data``.
+A default value is ``data`` which means that folder is located in the root of
+project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_DATA_DIR`.

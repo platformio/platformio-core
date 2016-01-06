@@ -2,13 +2,15 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" assignedExecutableTargets="true" buildAllGenerated="true">
     <generated>
-      <config projectName="{{project_name}}" targetName="PLATFORMIO_CLEAN" />
-      <config projectName="{{project_name}}" targetName="PLATFORMIO_RUN" />
       <config projectName="{{project_name}}" targetName="PLATFORMIO" />
       <config projectName="{{project_name}}" targetName="{{project_name}}" />
-      <config projectName="{{project_name}}" targetName="DEBUG" />
       <config projectName="{{project_name}}" targetName="PLATFORMIO_BUILD" />
       <config projectName="{{project_name}}" targetName="PLATFORMIO_UPLOAD" />
+      <config projectName="{{project_name}}" targetName="PLATFORMIO_CLEAN" />
+      <config projectName="{{project_name}}" targetName="PLATFORMIO_PROGRAM" />
+      <config projectName="{{project_name}}" targetName="PLATFORMIO_UPLOADFS" />
+      <config projectName="{{project_name}}" targetName="PLATFORMIO_UPDATE_ALL" />
+      <config projectName="{{project_name}}" targetName="DEBUG" />
     </generated>
   </component>
   <component name="CMakeSettings" AUTO_RELOAD="true" GENERATION_PASS_SYSTEM_ENVIRONMENT="true">
@@ -187,11 +189,26 @@
       <envs />
       <method />
     </configuration>
-    <list size="4">
+    <configuration default="false" name="PLATFORMIO_UPLOADFS" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS="FALSE" PROJECT_NAME="{{project_name}}" TARGET_NAME="PLATFORMIO_UPLOADFS" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="PLATFORMIO_PROGRAM" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS="FALSE" PROJECT_NAME="{{project_name}}" TARGET_NAME="PLATFORMIO_PROGRAM" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="PLATFORMIO_UPDATE" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS="FALSE" PROJECT_NAME="{{project_name}}" TARGET_NAME="PLATFORMIO_UPDATE_ALL" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <list size="7">
       <item index="0" class="java.lang.String" itemvalue="Application.Build All" />
       <item index="1" class="java.lang.String" itemvalue="Application.PLATFORMIO_BUILD" />
-      <item index="2" class="java.lang.String" itemvalue="Application.PLATFORMIO_CLEAN" />
       <item index="3" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPLOAD" />
+      <item index="2" class="java.lang.String" itemvalue="Application.PLATFORMIO_CLEAN" />
+      <item index="5" class="java.lang.String" itemvalue="Application.PLATFORMIO_PROGRAM" />
+      <item index="4" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPLOADFS" />
+      <item index="6" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPDATE" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />

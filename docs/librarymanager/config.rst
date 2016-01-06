@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -150,18 +150,6 @@ Example:
         "url": "https://github.com/foo/bar.git"
     }
 
-
-.. _libjson_downloadurl:
-
-``downloadUrl``
----------------
-
-*Required* if :ref:`libjson_repository` field is not defined | Type: ``String``
-
-It is the *HTTP URL* to the archived source code of library. It should end
-with the type of archive (``.zip`` or ``.tar.gz``).
-
-
 .. _libjson_version:
 
 ``version``
@@ -173,15 +161,45 @@ with the type of archive (``.zip`` or ``.tar.gz``).
 A version of the current library source code.
 
 * Can contain a-z, digits, dots or dash.
-* `Semantic Versioning <http://semver.org>`_ is recommended.
-* A `CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_
-  revision from the latest commit. Example: ``13`` (*SVN*) or first 10
-  chars of *SHA* digest ``e4564b7da4`` (*Git*).
+* `Semantic Versioning <http://semver.org>`_ IS RECOMMENDED.
+
+If :ref:`libjson_version` field is not defined and :ref:`libjson_repository`
+field is defined, then |PIOAPICR| will use the
+`CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>` revision from
+the latest commit as "current version". For example, ``13`` (*SVN*) or first
+10 chars of *SHA* digest ``e4564b7da4`` (*Git*).
+
+If :ref:`libjson_version` and :ref:`libjson_repository` fields are defined,
+then :ref:`libjson_version` has HIGHER PRIORITY. We recommend to use
+:ref:`libjson_version` field and specify the real release version. In other
+case, users will receive updates for library with each new commit to
+:ref:`libjson_repository`.
 
 .. note::
-    You can omit :ref:`libjson_version` field and define
-    :ref:`libjson_repository` field. In this case
-    |PIOAPICR| will use the *CVS*-revision from the latest commit.
+    |PIOAPICR| updates library only if:
+        - the :ref:`libjson_version` is changed
+        - ``library.json`` is modified
+
+Example:
+
+.. code-block:: javascript
+
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/foo/bar.git"
+    },
+    "version": "1.0.0"
+
+.. _libjson_downloadurl:
+
+``downloadUrl``
+---------------
+
+*Required* if :ref:`libjson_repository` field is not defined | Type: ``String``
+
+It is the *HTTP URL* to the archived source code of library. It should end
+with the type of archive (``.zip`` or ``.tar.gz``).
 
 Example with fixed release/tag on GitHub:
 
@@ -190,7 +208,6 @@ Example with fixed release/tag on GitHub:
     "version": "1.0.0",
     "downloadUrl": "https://github.com/foo/bar/archive/v1.0.0.tar.gz",
     "include": "bar-1.0.0"
-
 
 See more ``library.json`` :ref:`library_creating_examples`.
 

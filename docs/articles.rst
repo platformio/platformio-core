@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -19,6 +19,11 @@ Articles about us
     this page, `please edit this page <https://github.com/platformio/platformio/blob/develop/docs/articles.rst>`_.
 
 Here are recent articles about PlatformIO:
+
+2016
+^^^^
+
+* Jan 05, 2016 - **Julien Rodrigues** - `Internet Of Things: The IDE scandal <https://medium.com/@jrodrigues/internet-of-things-the-ide-scandal-5ddb8fc9d918>`_
 
 2015
 ^^^^

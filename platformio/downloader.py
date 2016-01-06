@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -88,12 +88,12 @@ class FileDownloader(object):
         try:
             result = util.exec_command(["sha1sum", self._destination])
             dlsha1 = result['out']
-        except OSError:
+        except (OSError, ValueError):
             try:
                 result = util.exec_command(
                     ["shasum", "-a", "1", self._destination])
                 dlsha1 = result['out']
-            except OSError:
+            except (OSError, ValueError):
                 pass
 
         if dlsha1:

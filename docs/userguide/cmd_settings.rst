@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -113,12 +113,19 @@ Can PlatformIO communicate with you via prompts?
 :Default:   Yes
 :Values:    Yes/No
 
-Share diagnostics and usage information (PlatformIO fatal errors/exceptions,
-platforms, boards, frameworks, commands) to help us make PlatformIO better.
-The `source code for telemetry service <https://github.com/platformio/platformio/blob/develop/platformio/telemetry.py>`_
-is open source. You can make sure that we DO NOT share PRIVATE information or
-source code of your project. All information shares anonymously. Thanks a lot
-that live this setting enabled.
+Share diagnostics and usage information to help us make PlatformIO better:
+
+* PlatformIO errors/exceptions
+* The name of used platforms, boards, frameworks (for example, "espressif", "arduino", "uno", etc.)
+* The name of commands (for example, "run", "lib list", etc.)
+* The type of IDE (for example, "atom", "eclipse", etc.)
+
+This gives us a sense of what parts of the PlatformIO is most important.
+
+The source code of telemetry service is `open source <https://github.com/platformio/platformio/blob/develop/platformio/telemetry.py>`_. You can make sure that we DO NOT share PRIVATE information or
+source code of your project. All information shares anonymously.
+
+Thanks a lot that keep this setting enabled.
 
 
 .. note::

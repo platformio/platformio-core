@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -58,6 +58,10 @@ The latest stable version of PlatformIO may be installed or upgraded via
 
     pip install -U platformio
 
+If ``pip`` command is not available run ``easy_install pip`` or use
+:ref:`installation_installer_script` which will install ``pip`` and
+``platformio`` automatically.
+
 Note that you may run into permissions issues running these commands. You have
 a few options here:
 
@@ -66,9 +70,6 @@ a few options here:
   option to install local to your user
 * Run the command in a `virtualenv <https://virtualenv.pypa.io>`_ local to a
   specific project working set.
-
-If ``pip`` command is not available or you have problems with it try
-:ref:`installation_installer_script`.
 
 .. _installation_installer_script:
 

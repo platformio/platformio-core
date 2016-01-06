@@ -1,4 +1,4 @@
-..  Copyright 2014-2015 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -50,6 +50,15 @@ Then:
 3. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
 4. Build project: ``Menu: Tools > Build``.
 
+Also, you can access to all pre-configured targets via
+``Menu: Tools > Builds With...`` (ST3)
+
++ ``PlatformIO - Build`` - Build project without auto-uploading
++ ``PlatformIO - Clean`` - Clean compiled objects.
++ ``PlatformIO - Upload`` - Build and upload (if no errors)
++ ``PlatformIO - Upload using Programmer`` see :ref:`atmelavr_upload_via_programmer`
++ ``PlatformIO - Upload SPIFFS image`` see :ref:`platform_espressif_uploadfs`
++ ``PlatformIO - Update platforms and libraries`` - Update installed platforms and libraries via :ref:`cmd_update`.
 
 Manual Integration
 ^^^^^^^^^^^^^^^^^^
