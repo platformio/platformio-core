@@ -4,6 +4,12 @@ Release History
 PlatformIO 2.0
 --------------
 
+2.7.2 (2016-01-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed builder for mbed framework and ST STM32 platform
+
+
 2.7.1 (2016-01-06)
 ~~~~~~~~~~~~~~~~~~
 
