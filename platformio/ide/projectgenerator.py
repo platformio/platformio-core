@@ -18,7 +18,7 @@ import re
 from os.path import abspath, basename, expanduser, isdir, join, relpath
 
 import bottle
-import click
+import click  # pylint: disable=wrong-import-order
 
 from platformio import exception, util
 
