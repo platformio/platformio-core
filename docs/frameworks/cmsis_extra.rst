@@ -9,6 +9,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
+Articles
+--------
+
+* Jan 11, 2016 - **David Mills, Ph.D.** - `STM NUCLEOF401RE TIMER IO <http://webshed.org/wiki/STM_NUCLEOF401RE_TIMER_IO>`_
+
+See more :ref:`articles`.
+
 Examples
 --------
 
