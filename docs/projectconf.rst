@@ -445,6 +445,13 @@ which "uploader" tool uses when sending firmware to board.
 Extra flags for uploader. Will be added to the end of uploader command. If you
 need to override uploader command or base flags please use :ref:`projectconf_extra_script`.
 
+.. _projectconf_upload_resetmethod:
+
+``upload_resetmethod``
+^^^^^^^^^^^^^^^^^^^^^^
+
+Specify reset method for "uploader" tool. This option isn't available for all
+development platforms. The only :ref:`platform_espressif` supports it.
 
 Library options
 ~~~~~~~~~~~~~~~

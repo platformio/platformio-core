@@ -302,12 +302,15 @@ def on_exception(e):
 def _finalize():
     timeout = 1000  # msec
     elapsed = 0
-    while elapsed < timeout:
-        if not MPDataPusher().in_wait():
-            break
-        sleep(0.2)
-        elapsed += 200
-    backup_reports(MPDataPusher().get_items())
+    try:
+        while elapsed < timeout:
+            if not MPDataPusher().in_wait():
+                break
+            sleep(0.2)
+            elapsed += 200
+        backup_reports(MPDataPusher().get_items())
+    except KeyboardInterrupt:
+        pass
 
 
 def backup_reports(items):

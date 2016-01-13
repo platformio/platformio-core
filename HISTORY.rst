@@ -9,7 +9,8 @@ PlatformIO 2.0
 
 * Added SPL-Framework support for Nucleo F401RE board
   (`issue #453 <https://github.com/platformio/platformio/issues/453>`_)
-* Explained in documentation how to `overwrite upload reset method <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-reset-method>`_
+* Added ``upload_resetmethod`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  and allowed to `change default upload reset method <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-reset-method>`_
   for Espressif development platform
   (`issue #444 <https://github.com/platformio/platformio/issues/444>`_)
 * Fixed builder for mbed framework and ST STM32 platform

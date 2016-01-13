@@ -23,6 +23,19 @@ from :ref:`projectconf`
 
     upload_speed = 9600
 
+Custom Reset Method
+-------------------
+
+See :ref:`projectconf_upload_resetmethod` option from :ref:`projectconf`
+
+.. code-block:: ini
+
+    [env:esp12e]
+    platform = espressif
+    framework = arduino
+    board = esp12e
+    upload_resetmethod = ck
+
 .. _platform_espressif_customflash:
 
 Custom Flash Size
@@ -52,34 +65,6 @@ To override default LD script please use :ref:`projectconf_build_flags` from
 
     [env:myenv]
     build_flags = -Wl,-Tesp8266.flash.4m.ld
-
-Custom Reset Method
--------------------
-
-To overwrite predefined reset method for uploading please use :ref:`projectconf_extra_script`.
-For example, default reset method for ``esp12e`` board is ``nodemcu``. Let's
-overwrite it to ``ck``:
-
-* :ref:`projectconf`
-
-    .. code-block:: ini
-
-        [env:esp12e]
-        platform = espressif
-        framework = arduino
-        board = esp12e
-        extra_script = extra_script.py
-
-
-* ``extra_script.py`` should be located on the same level as :ref:`projectconf`
-
-    .. code-block:: python
-
-        from SCons.Script import DefaultEnvironment
-
-        env = DefaultEnvironment()
-        env['BOARD_OPTIONS']['upload']['resetmethod'] = 'ck'
-
 
 .. _platform_espressif_uploadfs:
 

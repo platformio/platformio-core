@@ -56,7 +56,8 @@ commonvars.AddVariables(
     ("UPLOAD_PORT",),
     ("UPLOAD_PROTOCOL",),
     ("UPLOAD_SPEED",),
-    ("UPLOAD_FLAGS",)
+    ("UPLOAD_FLAGS",),
+    ("UPLOAD_RESETMETHOD",)
 )
 
 DefaultEnvironment(
@@ -103,16 +104,16 @@ if "BOARD" in env:
     except UnknownBoard as e:
         env.Exit("Error: %s" % str(e))
 
-    if "BOARD_MCU" not in env:
-        env.Replace(BOARD_MCU="${BOARD_OPTIONS['build']['mcu']}")
-    if "BOARD_F_CPU" not in env:
-        env.Replace(BOARD_F_CPU="${BOARD_OPTIONS['build']['f_cpu']}")
-    if "UPLOAD_PROTOCOL" not in env:
-        env.Replace(
-            UPLOAD_PROTOCOL="${BOARD_OPTIONS['upload'].get('protocol', None)}")
-    if "UPLOAD_SPEED" not in env:
-        env.Replace(
-            UPLOAD_SPEED="${BOARD_OPTIONS['upload'].get('speed', None)}")
+    for k in commonvars.keys():
+        if (k in env or
+                not any([k.startswith("BOARD_"), k.startswith("UPLOAD_")])):
+            continue
+        _opt, _val = k.lower().split("_", 1)
+        if _opt == "board":
+            _opt = "build"
+        if _val in env['BOARD_OPTIONS'][_opt]:
+            env.Replace(**{k: "${BOARD_OPTIONS['%s']['%s']}" % (_opt, _val)})
+
     if "ldscript" in env.get("BOARD_OPTIONS", {}).get("build", {}):
         env.Replace(
             LDSCRIPT_PATH="${BOARD_OPTIONS['build']['ldscript']}"
