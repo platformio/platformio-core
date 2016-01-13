@@ -56,9 +56,9 @@ To override default LD script please use :ref:`projectconf_build_flags` from
 Custom Reset Method
 -------------------
 
-To overwrite predefined reset method for uploading please use :ref:`projectconf_extra_script`.
+To change the default reset method for uploading please use :ref:`projectconf`.
 For example, default reset method for ``esp12e`` board is ``nodemcu``. Let's
-overwrite it to ``ck``:
+change it to ``ck``:
 
 * :ref:`projectconf`
 
@@ -68,19 +68,8 @@ overwrite it to ``ck``:
         platform = espressif
         framework = arduino
         board = esp12e
-        extra_script = extra_script.py
-
-
-* ``extra_script.py`` should be located on the same level as :ref:`projectconf`
-
-    .. code-block:: python
-
-        from SCons.Script import DefaultEnvironment
-
-        env = DefaultEnvironment()
-        env['BOARD_OPTIONS']['upload']['resetmethod'] = 'ck'
-
-
+        upload_resetmethod = ck
+        
 .. _platform_espressif_uploadfs:
 
 Uploading files to file system SPIFFS
