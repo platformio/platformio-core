@@ -35,8 +35,7 @@ def cli():
                     fg="yellow")
 
         cmds = (
-            [os.path.normpath(sys.executable),
-             "-m", "pip", "install", "--upgrade", "platformio"],
+            ["pip", "install", "--upgrade", "platformio"],
             ["platformio", "--version"]
         )
 
@@ -44,11 +43,12 @@ def cli():
         r = None
         try:
             for cmd in cmds:
+                cmd = [os.path.normpath(sys.executable), "-m"] + cmd
                 r = None
                 r = util.exec_command(cmd)
 
                 # try pip with disabled cache
-                if r['returncode'] != 0 and cmd[0] != "platformio":
+                if r['returncode'] != 0 and cmd[2] == "pip":
                     cmd.insert(3, "--no-cache-dir")
                     r = util.exec_command(cmd)
 
