@@ -23,7 +23,7 @@ directly with the registers.
 http://www.st.com/web/en/catalog/tools/FM147/CL1794/SC961/SS1743?sc=stm32embeddedsoftware
 """
 
-from os.path import join
+from os.path import isfile, join
 
 from SCons.Script import DefaultEnvironment
 
@@ -69,6 +69,23 @@ envsafe.Append(
 #
 # Target: Build SPL Library
 #
+
+# use mbed ldscript with bootloader section
+ldscript = env.get("BOARD_OPTIONS", {}).get("build", {}).get("ldscript")
+if not isfile(join(env.subst("$PIOPACKAGES_DIR"), "ldscripts", ldscript)):
+    if "mbed" in env.get("BOARD_OPTIONS", {}).get("frameworks", {}):
+        env.Append(
+            LINKFLAGS=[
+                '-Wl,-T"%s"' %
+                join(
+                    "$PIOPACKAGES_DIR", "framework-mbed", "variant",
+                    env.subst("$BOARD").upper(), "mbed",
+                    "TARGET_%s" % env.subst(
+                        "$BOARD").upper(), "TOOLCHAIN_GCC_ARM",
+                    "%s.ld" % ldscript.upper()[:-3]
+                )
+            ]
+        )
 
 extra_flags = env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags")
 src_filter_patterns = ["+<*>"]
