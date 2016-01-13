@@ -56,6 +56,7 @@ commonvars.AddVariables(
     ("UPLOAD_PORT",),
     ("UPLOAD_PROTOCOL",),
     ("UPLOAD_SPEED",),
+    ("UPLOAD_RESETMETHOD",),
     ("UPLOAD_FLAGS",)
 )
 
@@ -113,6 +114,9 @@ if "BOARD" in env:
     if "UPLOAD_SPEED" not in env:
         env.Replace(
             UPLOAD_SPEED="${BOARD_OPTIONS['upload'].get('speed', None)}")
+    if "UPLOAD_RESETMETHOD" not in env:
+        env.Replace(
+            UPLOAD_RESETMETHOD="${BOARD_OPTIONS['upload'].get('resetmethod', None)}")
     if "ldscript" in env.get("BOARD_OPTIONS", {}).get("build", {}):
         env.Replace(
             LDSCRIPT_PATH="${BOARD_OPTIONS['build']['ldscript']}"
