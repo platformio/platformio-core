@@ -25,8 +25,8 @@ The sections and their allowable values are described below.
 
 .. contents::
 
-[platformio]
-------------
+Section ``[platformio]``
+------------------------
 
 A ``platformio`` section is used for overriding default configuration options
 
@@ -130,8 +130,10 @@ project.
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_DATA_DIR`.
 
-[env:NAME]
 ----------
+
+Section ``[env:NAME]``
+----------------------
 
 A section with ``env:`` prefix is used to define virtual environment with
 specific options that will be processed with :ref:`cmd_run` command. You can
@@ -145,8 +147,8 @@ Each environment must have unique ``NAME``. The valid chars for ``NAME`` are
 
 For example, ``[env:hello_world]``.
 
-Options
-~~~~~~~
+General options
+~~~~~~~~~~~~~~~
 
 .. _projectconf_env_platform:
 
@@ -165,7 +167,6 @@ Options
 
 The multiple frameworks are allowed, split them with comma ``,`` separator.
 
-
 .. _projectconf_env_board:
 
 ``board``
@@ -179,6 +180,9 @@ pre-fill options described above with appropriate values.
 You can find the ``board`` type in *Boards* section of each :ref:`platforms` or
 using `PlatformIO Embedded Boards Explorer <http://platformio.org/#!/boards>`_.
 
+
+Board options
+~~~~~~~~~~~~~
 
 ``board_mcu``
 ^^^^^^^^^^^^^
@@ -204,40 +208,8 @@ The full list of ``board_f_cpu`` for the popular embedded platforms you can
 find in *Boards* section of :ref:`platforms`. See "Frequency" column.
 
 
-``upload_port``
-^^^^^^^^^^^^^^^
-
-This option is used by "uploader" tool when sending firmware to board via
-``upload_port``. For example,
-
-* ``/dev/ttyUSB0`` - Unix-based OS
-* ``COM3`` - Windows OS
-* ``192.168.0.13`` - IP address when using OTA
-
-If ``upload_port`` isn't specified, then *PlatformIO* will try to detect it
-automatically.
-
-To print all available serial ports use :ref:`cmd_serialports` command.
-
-
-``upload_protocol``
-^^^^^^^^^^^^^^^^^^^
-
-A protocol that "uploader" tool uses to talk to the board.
-
-.. _projectconf_upload_speed:
-
-``upload_speed``
-^^^^^^^^^^^^^^^^
-
-A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
-which "uploader" tool uses when sending firmware to board.
-
-``upload_flags``
-^^^^^^^^^^^^^^^^
-
-Extra flags for uploader. Will be added to the end of uploader command. If you
-need to override uploader command or base flags please use :ref:`projectconf_extra_script`.
+Building options
+~~~~~~~~~~~~~~~~
 
 .. _projectconf_build_flags:
 
@@ -368,66 +340,6 @@ exclude ``.git`` and ``svn`` repository folders and exclude ``examples`` folder.
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_SRC_FILTER`.
 
-``lib_install``
-^^^^^^^^^^^^^^^
-
-Specify dependent libraries which should be installed before environment
-process. The only library IDs are allowed. Multiple libraries can be passed
-using comma ``,`` sign.
-
-You can obtain library IDs using :ref:`cmd_lib_search` command.
-
-Example:
-
-.. code-block:: ini
-
-    [env:depends_on_some_libs]
-    lib_install = 1,13,19
-
-``lib_use``
-^^^^^^^^^^^
-
-Specify libraries which should be used by ``Library Dependency Finder (LDF)`` with
-the highest priority.
-
-Example:
-
-.. code-block:: ini
-
-    [env:libs_with_highest_priority]
-    lib_use = OneWire_ID1,SPI
-
-``lib_ignore``
-^^^^^^^^^^^^^^
-
-Specify libraries which should be ignored by ``Library Dependency Finder (LDF)``
-
-Example:
-
-.. code-block:: ini
-
-    [env:ignore_some_libs]
-    lib_ignore = SPI,EngduinoV3_ID123
-
-``lib_dfcyclic``
-^^^^^^^^^^^^^^^^
-
-Control cyclic (recursive) behaviour for ``Library Dependency Finder (LDF)``.
-By default, this option is turned OFF (``lib_dfcyclic=False``) and means that
-``LDF`` will find only libraries which are included in source files from the
-project :ref:`projectconf_pio_src_dir`.
-
-If you want to enable cyclic (recursive, nested) search, please set this option
-to ``True``. Founded library will be treated like a new source files and
-``LDF`` will search dependencies for it.
-
-Example:
-
-.. code-block:: ini
-
-    [env:libs_with_enabled_ldf_cyclic]
-    lib_dfcyclic = True
-
 .. _projectconf_extra_script:
 
 ``extra_script``
@@ -495,6 +407,110 @@ The list with available targets is located in :option:`platformio run --target`.
 
 When no targets are defined, *PlatformIO* will build only sources by default.
 
+
+Uploading options
+~~~~~~~~~~~~~~~~~
+
+``upload_port``
+^^^^^^^^^^^^^^^
+
+This option is used by "uploader" tool when sending firmware to board via
+``upload_port``. For example,
+
+* ``/dev/ttyUSB0`` - Unix-based OS
+* ``COM3`` - Windows OS
+* ``192.168.0.13`` - IP address when using OTA
+
+If ``upload_port`` isn't specified, then *PlatformIO* will try to detect it
+automatically.
+
+To print all available serial ports use :ref:`cmd_serialports` command.
+
+``upload_protocol``
+^^^^^^^^^^^^^^^^^^^
+
+A protocol that "uploader" tool uses to talk to the board.
+
+.. _projectconf_upload_speed:
+
+``upload_speed``
+^^^^^^^^^^^^^^^^
+
+A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
+which "uploader" tool uses when sending firmware to board.
+
+``upload_flags``
+^^^^^^^^^^^^^^^^
+
+Extra flags for uploader. Will be added to the end of uploader command. If you
+need to override uploader command or base flags please use :ref:`projectconf_extra_script`.
+
+
+Library options
+~~~~~~~~~~~~~~~
+
+``lib_install``
+^^^^^^^^^^^^^^^
+
+Specify dependent libraries which should be installed before environment
+process. The only library IDs are allowed. Multiple libraries can be passed
+using comma ``,`` sign.
+
+You can obtain library IDs using :ref:`cmd_lib_search` command.
+
+Example:
+
+.. code-block:: ini
+
+    [env:depends_on_some_libs]
+    lib_install = 1,13,19
+
+``lib_use``
+^^^^^^^^^^^
+
+Specify libraries which should be used by ``Library Dependency Finder (LDF)`` with
+the highest priority.
+
+Example:
+
+.. code-block:: ini
+
+    [env:libs_with_highest_priority]
+    lib_use = OneWire_ID1,SPI
+
+``lib_ignore``
+^^^^^^^^^^^^^^
+
+Specify libraries which should be ignored by ``Library Dependency Finder (LDF)``
+
+Example:
+
+.. code-block:: ini
+
+    [env:ignore_some_libs]
+    lib_ignore = SPI,EngduinoV3_ID123
+
+``lib_dfcyclic``
+^^^^^^^^^^^^^^^^
+
+Control cyclic (recursive) behaviour for ``Library Dependency Finder (LDF)``.
+By default, this option is turned OFF (``lib_dfcyclic=False``) and means that
+``LDF`` will find only libraries which are included in source files from the
+project :ref:`projectconf_pio_src_dir`.
+
+If you want to enable cyclic (recursive, nested) search, please set this option
+to ``True``. Founded library will be treated like a new source files and
+``LDF`` will search dependencies for it.
+
+Example:
+
+.. code-block:: ini
+
+    [env:libs_with_enabled_ldf_cyclic]
+    lib_dfcyclic = True
+
+-----------
+
 .. _projectconf_examples:
 
 Examples
@@ -551,8 +567,8 @@ Examples
     upload_protocol = usbasp
     upload_flags = -Pusb -B5
 
-Then upload firmware using :option:`platformio run --target program`. To use
-other programmers see :ref:`atmelavr_upload_via_programmer`.
+Then upload firmware using target ``program`` for :option:`platformio run --target`.
+command. To use other programmers see :ref:`atmelavr_upload_via_programmer`.
 
 
 4. :ref:`platform_ststm32`: Upload firmware using GDB script ``upload.gdb``,
