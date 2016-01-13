@@ -106,4 +106,11 @@ ST
       - 128 Kb
       - 16 Kb
 
+    * - ``nucleo_f401re``
+      - `ST Nucleo F401RE <https://developer.mbed.org/platforms/ST-Nucleo-F401RE/>`_
+      - STM32F401RET6
+      - 84 MHz
+      - 512 Kb
+      - 96 Kb
+
 .. include:: spl_extra.rst
