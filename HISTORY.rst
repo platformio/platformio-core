@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.7.2 (2016-01-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added ``pio`` command line alias for ``platformio`` command
+  (`issue #447 <https://github.com/platformio/platformio/issues/447>`_)
 * Added SPL-Framework support for Nucleo F401RE board
   (`issue #453 <https://github.com/platformio/platformio/issues/453>`_)
 * Added ``upload_resetmethod`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
