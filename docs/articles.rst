@@ -23,7 +23,7 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
-* Jan 11, 2016 - **Dr. David Mills** - `STM NUCLEOF401RE TIMER IO <http://webshed.org/wiki/STM_NUCLEOF401RE_TIMER_IO>`_
+* Jan 11, 2016 - **David Mills, Ph.D.** - `STM NUCLEOF401RE TIMER IO <http://webshed.org/wiki/STM_NUCLEOF401RE_TIMER_IO>`_
 * Jan 05, 2016 - **Julien Rodrigues** - `Internet Of Things: The IDE scandal <https://medium.com/@jrodrigues/internet-of-things-the-ide-scandal-5ddb8fc9d918>`_
 
 2015

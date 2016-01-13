@@ -1,8 +1,9 @@
 {% extends "!footer.html" %}
 
 {% block extrafooter %}
-<link rel="stylesheet" href="{{ pathto('_static/extra.css', 1) }}" type="text/css" />
+<link rel="stylesheet" href="{{ pathto('_static/extra.css', 2) }}" type="text/css" />
 <header id="pionav" class="navbar navbar-inverse navbar-fixed-top">
+    <a href="http://iotawards.postscapes.com/2015-16/best-iot-software-and-tools#vote" target="_blank" class="top-banner"> PlatformIO is nominated for the year's best Software and Tools in the 2015/16 IoT Awards <i class="fa fa-trophy fa-2x"></i> Please vote for us!</a>
   <div class="container container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="http://platformio.org/"></i> PlatformIO</a>
@@ -35,7 +36,7 @@
             return;
         }
         function fixScroll() {
-            $(window).scrollTop($(window).scrollTop() - 50);
+            $(window).scrollTop($(window).scrollTop() - 100);
         }
         window.setTimeout(fixScroll, 50);
         $(window).on('hashchange', function(e){fixScroll();});
