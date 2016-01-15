@@ -191,7 +191,7 @@ PlatformIO will compile them to static libraries and link to executable file.
 The source code of each library should be placed in separate directory, like
 "lib/private_lib/[here are source files]".
 
-For example, see how can be organised `Foo` and `Bar` libraries:
+For example, see how can be organized `Foo` and `Bar` libraries:
 
 |--lib
 |  |--Bar
