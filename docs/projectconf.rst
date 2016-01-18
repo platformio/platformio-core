@@ -381,10 +381,11 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 
 * see built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
 * take a look at the multiple snippets/answers for the user questions:
-  `#365 <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_,
-  `#351 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_,
-  `#236 <https://github.com/platformio/platformio/issues/236#issuecomment-112038284>`_,
-  `#247 <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_
+
+  - `#462 Split C/C++ build flags <https://github.com/platformio/platformio/issues/462#issuecomment-172667342>`_
+  - `#365 Extra configuration for ESP8266 uploader <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_
+  - `#351 Specific reset method for ESP8266 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_
+  - `#247 Specific options for avrdude <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_.
 
 ``targets``
 ^^^^^^^^^^^
