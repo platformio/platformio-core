@@ -18,9 +18,9 @@ import json
 import os
 import re
 import subprocess
+import sys
 from glob import glob
-from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
-                     join, realpath)
+from os.path import abspath, basename, dirname, expanduser, isdir, isfile, join
 from platform import system, uname
 from threading import Thread
 
@@ -175,7 +175,13 @@ def get_lib_dir():
 
 
 def get_source_dir():
-    return dirname(realpath(__file__))
+    curpath = abspath(__file__)
+    if not isfile(curpath):
+        for p in sys.path:
+            if isfile(join(p, __file__)):
+                curpath = join(p, __file__)
+                break
+    return dirname(curpath)
 
 
 def get_project_dir():

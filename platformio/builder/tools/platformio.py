@@ -19,9 +19,10 @@ from glob import glob
 from os import getenv, listdir, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath, realpath
 
-from platformio.util import pioversion_to_intstr
 from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, SConscript
 from SCons.Util import case_sensitive_suffixes
+
+from platformio.util import pioversion_to_intstr
 
 SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]

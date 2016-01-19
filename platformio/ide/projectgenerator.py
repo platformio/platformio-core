@@ -15,12 +15,14 @@
 import json
 import os
 import re
-from os.path import abspath, basename, expanduser, isdir, join, relpath
+import sys
+from os.path import (abspath, basename, expanduser, isdir, join, normpath,
+                     relpath)
 
 import bottle
 import click  # pylint: disable=wrong-import-order
 
-from platformio import exception, util
+from platformio import app, exception, util
 
 
 class ProjectGenerator(object):
@@ -64,10 +66,12 @@ class ProjectGenerator(object):
         envdata = self.get_project_env()
         if "env_name" not in envdata:
             return data
-        result = util.exec_command(
-            ["platformio", "-f", "run", "-t", "idedata",
-             "-e", envdata['env_name'], "-d", self.project_dir]
-        )
+        cmd = [normpath(sys.executable), "-m", "platformio", "-f"]
+        if app.get_session_var("caller_id"):
+            cmd.extend(["-c", app.get_session_var("caller_id")])
+        cmd.extend(["run", "-t", "idedata", "-e", envdata['env_name']])
+        cmd.extend(["-d", self.project_dir])
+        result = util.exec_command(cmd)
 
         if result['returncode'] != 0 or '"includes":' not in result['out']:
             raise exception.PlatformioException(
