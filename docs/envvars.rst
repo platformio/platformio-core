@@ -39,6 +39,11 @@ Currently, PlatformIO uses it to disable prompts.
 In other words, ``CI=true`` automatically setup
 :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS=false <PLATFORMIO_SETTING_ENABLE_PROMPTS>`.
 
+.. envvar:: PLATFORMIO_FORCE_COLOR
+
+Force to output color ANSI-codes even if the output is a ``pipe`` (not a ``tty``).
+The possible values are ``true`` and ``false``. Default is ``PLATFORMIO_FORCE_COLOR=false``.
+
 .. envvar:: PLATFORMIO_HOME_DIR
 
 Allows to override :ref:`projectconf` option :ref:`projectconf_pio_home_dir`.

@@ -15,6 +15,9 @@ PlatformIO 2.0
   and allowed to `change default upload reset method <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-reset-method>`_
   for Espressif development platform
   (`issue #444 <https://github.com/platformio/platformio/issues/444>`_)
+* Allowed to force to output color ANSI-codes even if the output is a ``pipe``
+  (not a ``tty``)
+  (`issue #465 <https://github.com/platformio/platformio/issues/465>`_)
 * Set 1Mb SPIFFS for Espressif boards by default
   (`issue #458 <https://github.com/platformio/platformio/issues/458>`_)
 * Fixed builder for mbed framework and ST STM32 platform

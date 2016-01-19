@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import listdir
+from os import getenv, listdir
 from os.path import join
 from platform import system
 from sys import exit as sys_exit
@@ -93,6 +93,14 @@ def main():
             raise exception.PlatformioException(
                 "Invalid installation of Python `requests` package`. See "
                 "< https://github.com/platformio/platformio/issues/252 >")
+
+        # handle PLATFORMIO_FORCE_COLOR
+        if str(getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
+            try:
+                # pylint: disable=protected-access
+                click._compat.isatty = lambda stream: True
+            except:  # pylint: disable=bare-except
+                pass
 
         cli(None, None, None)
     except Exception as e:  # pylint: disable=W0703
