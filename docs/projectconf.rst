@@ -334,7 +334,7 @@ be applied in theirs order.
 `GLOB Patterns <http://en.wikipedia.org/wiki/Glob_(programming)>`_ are allowed.
 
 By default, ``src_filter`` is predefined to
-``+<*> -<.git/> -<svn/> -<examples/>``, which means "includes ALL files, then
+``+<*> -<.git/> -<svn/> -<example*/>``, which means "includes ALL files, then
 exclude ``.git`` and ``svn`` repository folders and exclude ``examples`` folder.
 
 This option can be set by global environment variable
