@@ -1,5 +1,5 @@
-Release History
-===============
+Release Notes
+=============
 
 PlatformIO 2.0
 --------------

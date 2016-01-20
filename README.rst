@@ -75,7 +75,7 @@ libOpenCM3, etc.*
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_
 * `Articles about us <http://docs.platformio.org/en/latest/articles.html>`_
 * `FAQ <http://docs.platformio.org/en/latest/faq.html>`_
-* `Release History <http://docs.platformio.org/en/latest/history.html>`_
+* `Release Notes <http://docs.platformio.org/en/latest/history.html>`_
 
 Use whenever. *Run everywhere.*
 -------------------------------
