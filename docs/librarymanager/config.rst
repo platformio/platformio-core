@@ -165,7 +165,7 @@ A version of the current library source code.
 
 If :ref:`libjson_version` field is not defined and :ref:`libjson_repository`
 field is defined, then |PIOAPICR| will use the
-`CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>` revision from
+`CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_ revision from
 the latest commit as "current version". For example, ``13`` (*SVN*) or first
 10 chars of *SHA* digest ``e4564b7da4`` (*Git*).
 
