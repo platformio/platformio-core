@@ -169,7 +169,7 @@ dash. `Semantic Versioning <http://semver.org>`_ IS RECOMMENDED.
 :Case 1:
 
     :ref:`libjson_version` and :ref:`libjson_repository` fields are defined.
-    The :ref:`libjson_repository` hosted on GitHub or Bitbucket.
+    The :ref:`libjson_repository` is hosted on GitHub or Bitbucket.
 
     |PIOAPICR| will lookup for release tag named as value of :ref:`libjson_version`
     or with ``v`` prefix (you do not need to pass this ``v`` prefix to the
