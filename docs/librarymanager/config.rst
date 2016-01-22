@@ -138,7 +138,12 @@ Examples:
 
 *Required* if :ref:`libjson_downloadurl` field is not defined | Type: ``Object``
 
-The repository in which the source code can be found.
+The repository in which the source code can be found. The field consists for the
+next items:
+
+* ``type``
+* ``url``
+* ``branch`` if isn't specified, default branch will be used.
 
 Example:
 
