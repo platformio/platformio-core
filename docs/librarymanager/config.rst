@@ -143,7 +143,8 @@ next items:
 
 * ``type``
 * ``url``
-* ``branch`` if is not specified, default branch will be used.
+* ``branch`` if is not specified, default branch will be used. This field will
+  be ignored if tag/release exists with the value of :ref:`libjson_version`.
 
 Example:
 
@@ -181,8 +182,10 @@ dash. `Semantic Versioning <http://semver.org>`_ IS RECOMMENDED.
     and :ref:`libjson_repository` does not contain tag/release with value of
     :ref:`libjson_version`.
 
-    |PIOAPICR| will use the latest source code and link it with specified
-    :ref:`libjson_version`. If you push new commits to :ref:`libjson_repository`
+    |PIOAPICR| will use the latest source code from :ref:`libjson_repository`
+    and link it with specified :ref:`libjson_version`. If :ref:`libjson_repository`
+    ``branch`` is not specified, then default branch will be used.
+    Also, if you push new commits to :ref:`libjson_repository`
     and do not update :ref:`libjson_version` field, the library will not be
     updated until you change the :ref:`libjson_version`.
 
@@ -194,7 +197,8 @@ dash. `Semantic Versioning <http://semver.org>`_ IS RECOMMENDED.
     |PIOAPICR| will use the
     `CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_ revision from
     the latest commit as "current version". For example, ``13`` (*SVN*) or first
-    10 chars of *SHA* digest ``e4564b7da4`` (*Git*).
+    10 chars of *SHA* digest ``e4564b7da4`` (*Git*). If :ref:`libjson_repository`
+    ``branch`` is not specified, then default branch will be used.
 
     We recommend to use :ref:`libjson_version` field and specify the real release
     version and make appropriate target in the :ref:`libjson_repository`. In other
@@ -226,6 +230,11 @@ Example:
 
 It is the *HTTP URL* to the archived source code of library. It should end
 with the type of archive (``.zip`` or ``.tar.gz``).
+
+.. note::
+
+    :ref:`libjson_downloadurl` has higher priority than
+    :ref:`libjson_repository`.
 
 Example with fixed release/tag on GitHub:
 
