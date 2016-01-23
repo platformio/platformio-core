@@ -14,10 +14,6 @@
 PlatformIO IDE for Atom
 =======================
 
-`Atom <https://atom.io>`_ is a text editor that's modern, approachable,
-yet hackable to the core—a tool you can customize to do anything but also use
-productively without ever touching a config file.
-
 PlatformIO IDE for `Atom <https://atom.io>`_ is the missing integrated
 development environment which provides comprehensive facilities
 for IoT development:
@@ -33,6 +29,10 @@ for IoT development:
 * C/C++ `Code Linter <https://en.wikipedia.org/wiki/Lint_(software)>`_
 * Library Manager
 * Built-in Terminal
+
+Atom is a text editor that's modern, approachable,
+yet hackable to the core—a tool you can customize to do anything but also use
+productively without ever touching a config file.
 
 .. contents::
 
