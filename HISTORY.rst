@@ -4,9 +4,12 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.7.2 (2016-01-??)
+2.8.0 (2016-01-??)
 ~~~~~~~~~~~~~~~~~~
 
+* `PlatformIO IDE <http://docs.platformio.org/en/latest/ide/atom.html>`_ for
+  Atom
+  (`issue #470 <https://github.com/platformio/platformio/issues/470>`_)
 * Added ``pio`` command line alias for ``platformio`` command
   (`issue #447 <https://github.com/platformio/platformio/issues/447>`_)
 * Added SPL-Framework support for Nucleo F401RE board

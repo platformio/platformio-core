@@ -11,69 +11,92 @@
 
 .. _ide_atom:
 
-Atom
-====
+PlatformIO IDE for Atom
+=======================
 
 `Atom <https://atom.io>`_ is a text editor that's modern, approachable,
 yet hackable to the core—a tool you can customize to do anything but also use
 productively without ever touching a config file.
 
-This software can be used with:
+PlatformIO IDE for `Atom <https://atom.io>`_ is the missing integrated
+development environment which provides comprehensive facilities
+for IoT development:
 
-* all available :ref:`platforms`
-* all available :ref:`frameworks`
+* Cross-platform builder without external dependencies to the system
+  software:
 
-Refer to the `Atom Documentation <https://atom.io/docs>`_
-page for more detailed information.
+    - 200+ embedded boards
+    - 15+ development platforms
+    - 10+ frameworks
+
+* C/C++ `Intelligent code completion <https://en.wikipedia.org/wiki/Intelligent_code_completion>`_
+* C/C++ `Code Linter <https://en.wikipedia.org/wiki/Lint_(software)>`_
+* Library Manager
+* Built-in Terminal
 
 .. contents::
 
-Integration
------------
+Requirements
+------------
 
-There is Atom based `platomformio <https://atom.io/packages/platomformio>`_
-package which can be installed `Using Atom Packages <https://atom.io/docs/v1.0.2/using-atom-atom-packages>`_.
+The only one requirement is `Python Interpreter <https://www.python.org>`_.
+PlatformIO is written in Python and works on Mac OS X, Linux, Windows OS and
+ARM-based credit-card sized computers (Raspberry Pi, BeagleBone, CubieBoard).
 
-If you have ``clang`` installed in your system (is installed by default in Mac
-OS X), you can enable completions using
-`autocomplete-clang <https://github.com/yasuyuky/autocomplete-clang>`_ package.
-This package requires ``.clang_complete`` file and PlatformIO can generate it.
+.. attention::
+    **Windows Users**: Please `Download the latest Python 2.7.x
+    <https://www.python.org/downloads/>`_ and install it.
+    **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
+    "Customize" stage, otherwise ``python`` command will not be available.
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
-command and generate project via :option:`platformio init --ide` command:
+Installation
+------------
 
-.. code-block:: shell
+1. Download and install `Atom <https://atom.io>`_ text editor
+2. Install `platformio-ide <https://atom.io/packages/platformio-ide>`_ package
+   using:
 
-    platformio init --ide atom --board %TYPE%
+   - **Mac OS X**: ``Menu: Atom > Preferences > Install``
+   - **Other OS**: ``Menu: File > Settings > Install``
 
-    # For example, generate project for Arduino UNO
-    platformio init --ide atom --board uno
+User Guide
+----------
 
-.. warning::
-    The libraries which are added, installed or used in the project
-    after generating process wont be reflected in IDE. To fix it you
-    need to reinitialize project using :ref:`cmd_init` (repeat it).
+Building / Uploading / etc.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Articles / Manuals
-------------------
+* ``cmd-alt-b`` / ``ctrl-alt-b`` / ``f9`` builds project without auto-uploading.
+* ``cmd-alt-u`` / ``ctrl-alt-u`` builds and uploads (if no errors).
+* ``cmd-alt-c`` / ``ctrl-alt-c`` cleans compiled objects.
+* ``cmd-alt-t`` / ``ctrl-alt-t`` / ``f7`` run other targets (Upload using Programmer, Upload SPIFFS image, Update platforms and libraries).
+* ``cmd-alt-g`` / ``ctrl-alt-g`` / ``f4`` cycles through causes of build error.
+* ``cmd-alt-h`` / ``ctrl-alt-h`` / ``shift-f4`` goes to the first build error.
+* ``cmd-alt-v`` / ``ctrl-alt-v`` / ``f8`` toggles the build panel.
+* ``escape`` terminates build / closes the build window.
 
-* Jan 16, 2016 - **Dani Eichhorn** - `ESP8266 Arduino IDE Alternative: PlatformIO <http://blog.squix.ch/2016/01/esp8266-arduino-ide-alternative.html>`_
-* Dec 22, 2015 - **Jan Penninkhof** - `Over-the-Air ESP8266 programming using PlatformIO <http://www.penninkhof.com/2015/12/1610-over-the-air-esp8266-programming-using-platformio/>`_
-* Jul 20, 2015 - **Eli Fatsi** - `Arduino Development in Atom Editor <http://viget.com/extend/arduino-development-in-atom-editor>`_
+More details `Atom Build package <https://atom.io/packages/build>`_.
 
-See more :ref:`articles`.
+Code completion and Linting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the code completion
+and linting. To check that ``clang`` is available in your system, please open
+Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
+
+- **Mac OS X**: Install the latest Xcode along with the latest Command Line Tools
+  (they are installed automatically when you run ``clang`` in Terminal for the
+  first time, or manually by running ``xcode-select --install``
+- **Windows**: Download the latest `Clang for Windows <http://llvm.org/releases/download.html>`_.
+  Please select "Add to PATH" option on the installation step.
+- **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
+- **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
+
+**Warning**: If you have previously generated PlatformIO project you need to
+reinitialize it using ``Menu: PlatformIO > Initialize new Project (or update existing)``
+and specify for the which board should be activated Code completion and Linter.
 
 Screenshot
 ----------
 
-Building
-^^^^^^^^
-
-.. image:: ../_static/ide-platformio-atom-1.gif
-    :target: https://atom.io/packages/platomformio
-
-Uploading
-^^^^^^^^^
-
-.. image:: ../_static/ide-platformio-atom-2.gif
-    :target: https://atom.io/packages/platomformio
+.. image:: ../_static/ide-atom-platformio.png
+    :target: ../_static/ide-atom-platformio.png
