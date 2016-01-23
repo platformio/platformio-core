@@ -99,4 +99,4 @@ Screenshot
 ----------
 
 .. image:: ../_static/ide-atom-platformio.png
-    :target: ../_static/ide-atom-platformio.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png
