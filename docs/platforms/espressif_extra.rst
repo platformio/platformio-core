@@ -109,7 +109,6 @@ There are 2 options:
 .. code-block:: ini
 
    [env:myenv]
-   ...
    upload_port = IP_ADDRESS_HERE or mDNS_NAME.local
 
 For example,

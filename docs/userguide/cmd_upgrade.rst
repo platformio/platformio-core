@@ -36,7 +36,7 @@ Examples
 .. code-block:: bash
 
     $ platformio upgrade
-    You're up-to-date!
+    You are up-to-date!
     PlatformIO x.x.x is currently the newest version available.
 
     # If you have problem with permissions try:
