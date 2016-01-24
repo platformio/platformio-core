@@ -34,6 +34,11 @@ Atom is a source code editor that's modern, approachable,
 yet hackable to the core—a tool you can customize to do anything but also use
 productively without ever touching a config file.
 
+.. warning::
+
+    PlatformIO IDE is **in beta testing**. Please report all issues to
+    `PlatformIO IDE issues tracker <https://github.com/platformio/platformio-atom-ide/issues>`_.
+
 .. contents::
 
 Requirements
@@ -43,27 +48,39 @@ The only one requirement is `Python Interpreter <https://www.python.org>`_.
 PlatformIO is written in Python and works on Mac OS X, Linux, Windows OS and
 ARM-based credit-card sized computers (Raspberry Pi, BeagleBone, CubieBoard).
 
-.. attention::
-    **Windows Users**: Please `Download the latest Python 2.7.x
-    <https://www.python.org/downloads/>`_ and install it.
-    **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
-    "Customize" stage, otherwise ``python`` command will not be available.
-
 Installation
 ------------
 
-1. Download and install `Atom <https://atom.io>`_ text editor
-2. Install `platformio-ide <https://atom.io/packages/platformio-ide>`_ package
-   using:
+:Python:
 
-   - **Mac OS X**: ``Menu: Atom > Preferences > Install``
-   - **Other OS**: ``Menu: File > Settings > Install``
+    Python is installed on Mac OS X and Linux OS by default. The only **Windows Users**
+    should install it manually. Please `Download the latest Python 2.7.x <https://www.python.org/downloads/>`_
+    and install it. **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
+    "Customize" stage, otherwise ``python`` command will not be available.
+
+:Atom: Download and install `Atom <https://atom.io>`_ source code editor
+
+:PlatformIO IDE:
+
+    Install `platformio-ide <https://atom.io/packages/platformio-ide>`_ package
+    using:
+
+        - **Mac OS X**: ``Menu: Atom > Preferences > Install``
+        - **Other OS**: ``Menu: File > Settings > Install``
 
 User Guide
 ----------
 
+.. image:: ../_static/ide-atom-platformio.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png
+
+Menu item ``PlatformIO``
+~~~~~~~~~~~~~~~~~~~~~~~~
+
 `platformio-ide <https://atom.io/packages/platformio-ide>`_ package adds to Atom
 new menu item named ``Menu: PlatformIO`` (after ``Menu: Help`` item).
+
+.. image:: ../_static/ide-atom-platformio-menu-item.png
 
 Building / Uploading / etc.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,8 +115,15 @@ Terminal and run ``clang --version``. If ``clang`` is not installed, then instal
 reinitialize it using ``Menu: PlatformIO > Initialize new Project (or update existing)``
 and specify for the which board should be activated Code completion and Linter.
 
-Screenshot
-----------
+Serial Monitor
+~~~~~~~~~~~~~~
 
-.. image:: ../_static/ide-atom-platformio.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png
+Serial Monitor has not been implemented yet. Please take a look at
+`temporary solution, issue #13 <https://github.com/platformio/platformio-atom-ide/issues/13>`_.
+
+Install Shell Commands
+~~~~~~~~~~~~~~~~~~~~~~
+
+To install ``platformio`` and ``pio`` shell commands please use ``Menu:
+PlatformIO > Install Shell Commands``. It will allow you to call PlatformIO from
+other process, terminals and etc.
