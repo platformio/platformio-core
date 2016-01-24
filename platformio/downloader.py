@@ -20,7 +20,7 @@ from time import mktime
 import click
 import requests
 
-from platformio import util
+from platformio import app, util
 from platformio.exception import (FDSHASumMismatch, FDSizeMismatch,
                                   FDUnrecognizedStatusCode)
 
@@ -63,7 +63,7 @@ class FileDownloader(object):
         f = open(self._destination, "wb")
         chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
 
-        if util.is_ci():
+        if app.is_disabled_progressbar():
             click.echo("Downloading...")
             for _ in range(0, chunks):
                 f.write(next(itercontent))

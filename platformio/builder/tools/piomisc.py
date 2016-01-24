@@ -114,7 +114,10 @@ class InoToCPPConverter(object):
 def ConvertInoToCpp(env):
 
     def delete_tmpcpp_file(file_):
-        remove(file_)
+        try:
+            remove(file_)
+        except WindowsError:
+            pass
 
     ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
                  env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
