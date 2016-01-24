@@ -30,7 +30,7 @@ for IoT development:
 * Library Manager
 * Built-in Terminal
 
-Atom is a text editor that's modern, approachable,
+Atom is a source code editor that's modern, approachable,
 yet hackable to the core—a tool you can customize to do anything but also use
 productively without ever touching a config file.
 
@@ -61,6 +61,9 @@ Installation
 
 User Guide
 ----------
+
+`platformio-ide <https://atom.io/packages/platformio-ide>`_ package adds to Atom
+new menu item named ``Menu: PlatformIO`` (after ``Menu: Help`` item).
 
 Building / Uploading / etc.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

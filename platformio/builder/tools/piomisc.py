@@ -116,7 +116,7 @@ def ConvertInoToCpp(env):
     def delete_tmpcpp_file(file_):
         try:
             remove(file_)
-        except WindowsError:
+        except WindowsError:  # pylint: disable=undefined-variable
             pass
 
     ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +

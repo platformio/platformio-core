@@ -186,7 +186,4 @@ def set_session_var(name, value):
 
 
 def is_disabled_progressbar():
-    # tmp hook
-    if get_session_var("caller_id") == "atom":
-        return True
     return is_ci() or getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"
