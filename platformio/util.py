@@ -272,7 +272,8 @@ def get_serialports():
         from serial.tools.list_ports import comports
     except ImportError:
         raise exception.GetSerialPortsError(os.name)
-    result = [{"port": p, "description": d, "hwid": h}
+    result = [{"port": p, "description": unicode(d, errors='ignore'),
+               "hwid": h}
               for p, d, h in comports() if p]
     # fix for PySerial
     if not result and system() == "Darwin":
