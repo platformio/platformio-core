@@ -25,10 +25,10 @@ for IoT development:
     - 15+ development platforms
     - 10+ frameworks
 
-* C/C++ `Intelligent code completion <https://en.wikipedia.org/wiki/Intelligent_code_completion>`_
-* C/C++ `Code Linter <https://en.wikipedia.org/wiki/Lint_(software)>`_
-* Library Manager
-* Built-in Terminal
+* C/C++ Intelligent code completion
+* C/C++ Linting using PlatformIO's platform dependent GCC toolchains
+* Library Manager for the hundreds popular libraries
+* Built-in Terminal for PlatformIO CLI (``pio``, ``platformio``)
 
 Atom is a source code editor that's modern, approachable,
 yet hackable to the core—a tool you can customize to do anything but also use
@@ -97,11 +97,11 @@ Building / Uploading / etc.
 
 More details `Atom Build package <https://atom.io/packages/build>`_.
 
-Code completion and Linting
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Code completion
+~~~~~~~~~~~~~~~
 
-PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the code completion
-and linting. To check that ``clang`` is available in your system, please open
+PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the code completion.
+To check that ``clang`` is available in your system, please open
 Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
 
 - **Mac OS X**: Install the latest Xcode along with the latest Command Line Tools
@@ -112,15 +112,23 @@ Terminal and run ``clang --version``. If ``clang`` is not installed, then instal
 - **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
 - **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
 
-**Warning**: If you have previously generated PlatformIO project you need to
-reinitialize it using ``Menu: PlatformIO > Initialize new Project (or update existing)``
-and specify for the which board should be activated Code completion and Linter.
+.. warning::
+    The libraries which are added, installed or used in the project
+    after initializing process will not be reflected in code completion. To fix
+    it you need to reinitialize project using ``Menu: PlatformIO > Initialize new Project (or update existing)``.
 
-Serial Monitor
-~~~~~~~~~~~~~~
+Code linter
+~~~~~~~~~~~
 
-Serial Monitor has not been implemented yet. Please take a look at
-`temporary solution, issue #13 <https://github.com/platformio/platformio-atom-ide/issues/13>`_.
+PlatformIO IDE uses PlatformIO's pre-built GCC toolchains for code linting. You
+can customize it in ``.gcc-flags.json`` which will be generated for the selected
+board in the project directory using
+``Menu: PlatformIO > Initialize new Project (or update existing)``.
+
+.. warning::
+    The libraries which are added, installed or used in the project
+    after initializing process will not be reflected in code linter. To fix
+    it you need to reinitialize project using ``Menu: PlatformIO > Initialize new Project (or update existing)``.
 
 Install Shell Commands
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -128,3 +136,8 @@ Install Shell Commands
 To install ``platformio`` and ``pio`` shell commands please use ``Menu:
 PlatformIO > Install Shell Commands``. It will allow you to call PlatformIO from
 other process, terminals and etc.
+
+Known issues
+~~~~~~~~~~~~
+
+* Built-in Terminal doesn't support ``STDIN`` interaction
