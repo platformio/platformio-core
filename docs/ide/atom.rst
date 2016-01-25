@@ -108,7 +108,7 @@ Terminal and run ``clang --version``. If ``clang`` is not installed, then instal
   (they are installed automatically when you run ``clang`` in Terminal for the
   first time, or manually by running ``xcode-select --install``
 - **Windows**: Download the latest `Clang for Windows <http://llvm.org/releases/download.html>`_.
-  Please select "Add to PATH" option on the installation step.
+  Please select "Add LLVM to the system PATH" option on the installation step.
 - **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
 - **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
 
