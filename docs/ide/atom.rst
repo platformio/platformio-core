@@ -66,7 +66,8 @@ Installation
     using:
 
         - **Mac OS X**: ``Menu: Atom > Preferences > Install``
-        - **Other OS**: ``Menu: File > Settings > Install``
+        - **Windows**: ``Menu: File > Settings > Install``
+        - **Linux**: ``Menu: Edit > Preferences > Install``
 
 User Guide
 ----------
