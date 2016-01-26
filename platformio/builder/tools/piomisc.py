@@ -17,8 +17,8 @@ from __future__ import absolute_import
 import atexit
 import re
 from glob import glob
-from os import environ, remove
-from os.path import basename, isfile, join
+from os import environ, listdir, remove
+from os.path import basename, isdir, isfile, join
 
 from platformio.util import exec_command, where_is_program
 
@@ -143,11 +143,31 @@ def DumpIDEData(env):
             env.subst("$CXX"), env.subst("${ENV['PATH']}"))
     }
 
-    # includes from framework and libs
+    # includes from used framework and libs
     for item in env.get("VARIANT_DIRS", []):
         if "$BUILDSRC_DIR" in item[0]:
             continue
         data['includes'].append(env.subst(item[1]))
+
+    # custom includes
+    for item in env.get("CPPPATH", []):
+        if item.startswith("$BUILD_DIR"):
+            continue
+        data['includes'].append(env.subst(item))
+
+    # installed libs
+    for d in env.get("LIBSOURCE_DIRS", []):
+        lsd_dir = env.subst(d)
+        for name in env.get("LIB_USE", []) + sorted(listdir(lsd_dir)):
+            if not isdir(join(lsd_dir, name)):
+                continue
+            # ignore user's specified libs
+            if name in env.get("LIB_IGNORE", []):
+                continue
+            if isdir(join(lsd_dir, name, "src")):
+                data['includes'].append(join(lsd_dir, name, "src"))
+            else:
+                data['includes'].append(join(lsd_dir, name))
 
     # includes from toolchain
     toolchain_dir = env.subst(

@@ -24,6 +24,7 @@ PlatformIO 2.0
 * Set 1Mb SPIFFS for Espressif boards by default
   (`issue #458 <https://github.com/platformio/platformio/issues/458>`_)
 * Exclude ``test*`` folder by default from build process
+* Generate project for IDEs with information about installed libraries
 * Fixed builder for mbed framework and ST STM32 platform
 
 
