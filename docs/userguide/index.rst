@@ -22,6 +22,9 @@ Usage
 .. code-block:: bash
 
     platformio [OPTIONS] COMMAND
+    pio [OPTIONS] COMMAND
+
+    # "pio" is the alias of "platformio" command
 
 Options
 -------

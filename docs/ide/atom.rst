@@ -28,7 +28,7 @@ for IoT development:
 * C/C++ Intelligent code completion
 * C/C++ Smart code linter
 * Library Manager for the hundreds popular libraries
-* Built-in Terminal which allows to run PlatformIO CLI (``pio``, ``platformio``)
+* Built-in Terminal with :ref:`PlatformIO CLI <userguide>` (``pio``, ``platformio``)
 
 Atom is a source code editor that's modern, approachable,
 yet hackable to the core—a tool you can customize to do anything but also use
