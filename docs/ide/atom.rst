@@ -143,6 +143,10 @@ Serial Monitor
 Serial Monitor was temporary disabled in PlatformIO IDE 0.2.1. See
 `issue #17 <https://github.com/platformio/platformio-atom-ide/issues/17>`_.
 
+Temporary solution is to ``Menu: PlatformIO > Install Shell Commands`` and use
+:ref:`cmd_serialports_monitor` from system Terminal application (not built-in in
+PlatformIO IDE).
+
 Known issues
 ~~~~~~~~~~~~
 
