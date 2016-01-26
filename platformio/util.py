@@ -272,9 +272,18 @@ def get_serialports():
         from serial.tools.list_ports import comports
     except ImportError:
         raise exception.GetSerialPortsError(os.name)
-    result = [{"port": p, "description": unicode(d, errors='ignore'),
-               "hwid": h}
-              for p, d, h in comports() if p]
+
+    result = []
+    for p, d, h in comports():
+        if not p:
+            continue
+        if "windows" in get_systype():
+            try:
+                d = unicode(d, errors="ignore")
+            except TypeError:
+                pass
+        result.append({"port": p, "description": d, "hwid": h})
+
     # fix for PySerial
     if not result and system() == "Darwin":
         for p in glob("/dev/tty.*"):
