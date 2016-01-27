@@ -135,7 +135,7 @@ def ConvertInoToCpp(env):
     atexit.register(delete_tmpcpp_file, tmpcpp_file)
 
 
-def DumpIDEData(env):
+def DumpIDEData(env):  # pylint: disable=too-many-branches
     data = {
         "defines": [],
         "includes": [],
