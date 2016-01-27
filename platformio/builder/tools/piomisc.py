@@ -135,66 +135,75 @@ def ConvertInoToCpp(env):
     atexit.register(delete_tmpcpp_file, tmpcpp_file)
 
 
-def DumpIDEData(env):  # pylint: disable=too-many-branches
-    data = {
-        "defines": [],
-        "includes": [],
+def DumpIDEData(env):
+
+    def get_includes():
+        includes = []
+        # includes from used framework and libs
+        for item in env.get("VARIANT_DIRS", []):
+            if "$BUILDSRC_DIR" in item[0]:
+                continue
+            includes.append(env.subst(item[1]))
+
+        # custom includes
+        for item in env.get("CPPPATH", []):
+            if item.startswith("$BUILD_DIR"):
+                continue
+            includes.append(env.subst(item))
+
+        # installed libs
+        for d in env.get("LIBSOURCE_DIRS", []):
+            lsd_dir = env.subst(d)
+            for name in env.get("LIB_USE", []) + sorted(listdir(lsd_dir)):
+                if not isdir(join(lsd_dir, name)):
+                    continue
+                # ignore user's specified libs
+                if name in env.get("LIB_IGNORE", []):
+                    continue
+                include = (
+                    join(lsd_dir, name, "src")
+                    if isdir(join(lsd_dir, name, "src"))
+                    else join(lsd_dir, name)
+                )
+                if include not in includes:
+                    includes.append(include)
+
+        # includes from toolchain
+        toolchain_dir = env.subst(
+            join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
+        toolchain_incglobs = [
+            join(toolchain_dir, "*", "include*"),
+            join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
+        ]
+        for g in toolchain_incglobs:
+            includes.extend(glob(g))
+
+        return includes
+
+    def get_defines():
+        defines = []
+        # global symbols
+        for item in env.get("CPPDEFINES", []):
+            if isinstance(item, list):
+                item = "=".join(item)
+            defines.append(env.subst(item).replace('\\"', '"'))
+
+        # special symbol for Atmel AVR MCU
+        board = env.get("BOARD_OPTIONS", {})
+        if board and board['platform'] == "atmelavr":
+            defines.append(
+                "__AVR_%s__" % board['build']['mcu'].upper()
+                .replace("ATMEGA", "ATmega")
+                .replace("ATTINY", "ATtiny")
+            )
+        return defines
+
+    return {
+        "defines": get_defines(),
+        "includes": get_includes(),
         "cxx_path": where_is_program(
             env.subst("$CXX"), env.subst("${ENV['PATH']}"))
     }
-
-    # includes from used framework and libs
-    for item in env.get("VARIANT_DIRS", []):
-        if "$BUILDSRC_DIR" in item[0]:
-            continue
-        data['includes'].append(env.subst(item[1]))
-
-    # custom includes
-    for item in env.get("CPPPATH", []):
-        if item.startswith("$BUILD_DIR"):
-            continue
-        data['includes'].append(env.subst(item))
-
-    # installed libs
-    for d in env.get("LIBSOURCE_DIRS", []):
-        lsd_dir = env.subst(d)
-        for name in env.get("LIB_USE", []) + sorted(listdir(lsd_dir)):
-            if not isdir(join(lsd_dir, name)):
-                continue
-            # ignore user's specified libs
-            if name in env.get("LIB_IGNORE", []):
-                continue
-            if isdir(join(lsd_dir, name, "src")):
-                data['includes'].append(join(lsd_dir, name, "src"))
-            else:
-                data['includes'].append(join(lsd_dir, name))
-
-    # includes from toolchain
-    toolchain_dir = env.subst(
-        join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
-    toolchain_incglobs = [
-        join(toolchain_dir, "*", "include*"),
-        join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
-    ]
-    for g in toolchain_incglobs:
-        data['includes'].extend(glob(g))
-
-    # global symbols
-    for item in env.get("CPPDEFINES", []):
-        if isinstance(item, list):
-            item = "=".join(item)
-        data['defines'].append(env.subst(item).replace('\\"', '"'))
-
-    # special symbol for Atmel AVR MCU
-    board = env.get("BOARD_OPTIONS", {})
-    if board and board['platform'] == "atmelavr":
-        data['defines'].append(
-            "__AVR_%s__" % board['build']['mcu'].upper()
-            .replace("ATMEGA", "ATmega")
-            .replace("ATTINY", "ATtiny")
-        )
-
-    return data
 
 
 def GetCompilerType(env):
