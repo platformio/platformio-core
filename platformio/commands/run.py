@@ -57,7 +57,12 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
             try:
                 _clean_pioenvs_dir(util.get_pioenvs_dir())
             except Exception:
-                raise exception.CleanPioenvsDirError(util.get_pioenvs_dir())
+                click.secho(
+                    "Can not remove temporary directory `%s`. Please remove "
+                    "`.pioenvs` directory from the project manually to avoid "
+                    "build issues" % util.get_pioenvs_dir(),
+                    fg="yellow"
+                )
 
         results = []
         for section in config.sections():

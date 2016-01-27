@@ -129,12 +129,6 @@ class UnknownEnvNames(PlatformioException):
     MESSAGE = "Unknown environment names '{0}'. Valid names are '{1}'"
 
 
-class CleanPioenvsDirError(PlatformioException):
-
-    MESSAGE = "Can not remove temporary directory `{0}`. "\
-        "Please remove it manually"
-
-
 class GetSerialPortsError(PlatformioException):
 
     MESSAGE = "No implementation for your platform ('{0}') available"
