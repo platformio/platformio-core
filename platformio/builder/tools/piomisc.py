@@ -137,6 +137,8 @@ def ConvertInoToCpp(env):
 
 def DumpIDEData(env):
 
+    BOARD_CORE = env.get("BOARD_OPTIONS", {}).get("build", {}).get("core")
+
     def get_includes():
         includes = []
         # includes from used framework and libs
@@ -154,19 +156,7 @@ def DumpIDEData(env):
         # installed libs
         for d in env.get("LIBSOURCE_DIRS", []):
             lsd_dir = env.subst(d)
-            for name in env.get("LIB_USE", []) + sorted(listdir(lsd_dir)):
-                if not isdir(join(lsd_dir, name)):
-                    continue
-                # ignore user's specified libs
-                if name in env.get("LIB_IGNORE", []):
-                    continue
-                include = (
-                    join(lsd_dir, name, "src")
-                    if isdir(join(lsd_dir, name, "src"))
-                    else join(lsd_dir, name)
-                )
-                if include not in includes:
-                    includes.append(include)
+            _append_lib_includes(lsd_dir, includes)
 
         # includes from toolchain
         toolchain_dir = env.subst(
@@ -179,6 +169,25 @@ def DumpIDEData(env):
             includes.extend(glob(g))
 
         return includes
+
+    def _append_lib_includes(libs_dir, includes):
+        for name in env.get("LIB_USE", []) + sorted(listdir(libs_dir)):
+            if not isdir(join(libs_dir, name)):
+                continue
+            # ignore user's specified libs
+            if name in env.get("LIB_IGNORE", []):
+                continue
+            if name == "__cores__" and isdir(join(libs_dir, name, BOARD_CORE)):
+                return _append_lib_includes(
+                    join(libs_dir, name, BOARD_CORE), includes)
+
+            include = (
+                join(libs_dir, name, "src")
+                if isdir(join(libs_dir, name, "src"))
+                else join(libs_dir, name)
+            )
+            if include not in includes:
+                includes.append(include)
 
     def get_defines():
         defines = []
