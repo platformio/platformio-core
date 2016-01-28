@@ -4,7 +4,7 @@
 """
 
 from os.path import join
-from SCons.Script import AlwaysBuild, Builder, Default, DefaultEnvironment, Glob
+from SCons.Script import AlwaysBuild, Builder, DefaultEnvironment, Glob
 
 env = DefaultEnvironment()
 env.Replace(PROGNAME="firmware")
@@ -16,17 +16,19 @@ src_files = Glob(total)
 
 PCFs = join(src_dir, '*.pcf')
 PCF = Glob(PCFs)
-print("PCF: {}".format(PCF[0]))
+print "PCF: {}".format(PCF[0])
 
 bin_dir = join('$PIOPACKAGES_DIR', 'toolchain-icestorm', 'bin')
 
 # -- Builder 1 (.v --> .blif)
-synth = Builder(action=join(bin_dir, 'yosys') + ' -p \"synth_ice40 -blif $TARGET\" $SOURCES',
+synth = Builder(action=join(bin_dir, 'yosys') +
+                ' -p \"synth_ice40 -blif $TARGET\" $SOURCES',
                 suffix='.blif',
                 src_suffix='.v')
 
 # -- Builder 2 (.blif --> .asc)
-pnr = Builder(action=join(bin_dir, 'arachne-pnr') + ' -d 1k -o $TARGET -p {} $SOURCE'.format(PCF[0]),
+pnr = Builder(action=join(bin_dir, 'arachne-pnr') +
+              ' -d 1k -o $TARGET -p {} $SOURCE'.format(PCF[0]),
               suffix='.asc',
               src_suffix='.blif')
 
