@@ -171,6 +171,8 @@ def DumpIDEData(env):
         return includes
 
     def _append_lib_includes(libs_dir, includes):
+        if not isdir(libs_dir):
+            return
         for name in env.get("LIB_USE", []) + sorted(listdir(libs_dir)):
             if not isdir(join(libs_dir, name)):
                 continue
