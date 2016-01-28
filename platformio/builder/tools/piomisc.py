@@ -177,9 +177,11 @@ def DumpIDEData(env):
             # ignore user's specified libs
             if name in env.get("LIB_IGNORE", []):
                 continue
-            if name == "__cores__" and isdir(join(libs_dir, name, BOARD_CORE)):
-                return _append_lib_includes(
-                    join(libs_dir, name, BOARD_CORE), includes)
+            if name == "__cores__":
+                if isdir(join(libs_dir, name, BOARD_CORE)):
+                    _append_lib_includes(
+                        join(libs_dir, name, BOARD_CORE), includes)
+                return
 
             include = (
                 join(libs_dir, name, "src")
