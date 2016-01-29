@@ -205,7 +205,7 @@ format of this option is ``C-like long integer`` value with ``L`` suffix. The
 1 Hertz is equal to ``1L``, then 16 Mhz (Mega Hertz) is equal to ``16000000L``.
 
 The full list of ``board_f_cpu`` for the popular embedded platforms you can
-find in *Boards* section of :ref:`platforms`. See "Frequency" column. You can 
+find in *Boards* section of :ref:`platforms`. See "Frequency" column. You can
 overclock a board by specifying a ``board_f_cpu`` value other than the default.
 
 
@@ -335,8 +335,9 @@ be applied in theirs order.
 `GLOB Patterns <http://en.wikipedia.org/wiki/Glob_(programming)>`_ are allowed.
 
 By default, ``src_filter`` is predefined to
-``+<*> -<.git/> -<svn/> -<example*/>``, which means "includes ALL files, then
-exclude ``.git`` and ``svn`` repository folders and exclude ``examples`` folder.
+``+<*> -<.git/> -<svn/> -<example/> -<examples/> -<test/> -<tests/>``,
+which means "includes ALL files, then
+exclude ``.git`` and ``svn`` repository folders, ``example`` ... folder.
 
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_SRC_FILTER`.
