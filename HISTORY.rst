@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.8.2 (2016-01-??)
+2.8.2 (2016-01-29)
 ~~~~~~~~~~~~~~~~~~
 
 * Corrected RAM size for NXP LPC1768 based boards
