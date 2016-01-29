@@ -83,12 +83,18 @@ def BuildProgram(env):
         LIBPATH=["$BUILD_DIR"]
     )
 
+    sources = env.LookupSources(
+        "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
+        src_filter=getenv("PLATFORMIO_SRC_FILTER", env.get("SRC_FILTER")))
+
+    if not sources:
+        env.Exit(
+            "Error: Nothing to build. Please put your source code files "
+            "to '%s' folder" % env.subst("$PROJECTSRC_DIR"))
+
     return env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")),
-        env.LookupSources(
-            "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
-            src_filter=getenv("PLATFORMIO_SRC_FILTER",
-                              env.get("SRC_FILTER")))
+        sources
     )
 
 
