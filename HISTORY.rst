@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.8.2 (2016-01-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Corrected RAM size for NXP LPC1768 based boards
+  (`issue #484 <https://github.com/platformio/platformio/issues/484>`_)
 * Exclude only ``test`` and ``tests`` folders from build process
 * Reverted ``-Wl,-whole-archive`` hook for ST STM32 and mbed
 

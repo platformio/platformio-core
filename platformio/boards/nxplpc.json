@@ -9,7 +9,7 @@
         "name": "NXP mbed LPC1768",
         "platform": "nxplpc",
         "upload": {
-            "maximum_ram_size": 32768,
+            "maximum_ram_size": 65536,
             "maximum_size": 524288
         },
         "url": "http://developer.mbed.org/platforms/mbed-LPC1768/",
@@ -105,7 +105,7 @@
         "name": "u-blox C027",
         "platform": "nxplpc",
         "upload": {
-            "maximum_ram_size": 32768,
+            "maximum_ram_size": 65536,
             "maximum_size": 524288
         },
         "url": "https://developer.mbed.org/platforms/u-blox-C027/",
