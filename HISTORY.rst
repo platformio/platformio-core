@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.8.0 (2016-01-??)
+2.8.0 (2016-01-29)
 ~~~~~~~~~~~~~~~~~~
 
 * `PlatformIO IDE <http://docs.platformio.org/en/latest/ide/atom.html>`_ for
