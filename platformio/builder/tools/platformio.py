@@ -87,7 +87,7 @@ def BuildProgram(env):
         "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
         src_filter=getenv("PLATFORMIO_SRC_FILTER", env.get("SRC_FILTER")))
 
-    if not sources:
+    if not sources and not COMMAND_LINE_TARGETS:
         env.Exit(
             "Error: Nothing to build. Please put your source code files "
             "to '%s' folder" % env.subst("$PROJECTSRC_DIR"))
