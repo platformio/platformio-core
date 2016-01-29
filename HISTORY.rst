@@ -4,6 +4,11 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.8.2 (2016-01-??)
+~~~~~~~~~~~~~~~~~~
+
+* Exclude only ``test`` and ``tests`` folders from build process
+
 2.8.1 (2016-01-29)
 ~~~~~~~~~~~~~~~~~~
 

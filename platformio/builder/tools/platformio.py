@@ -28,7 +28,7 @@ SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_DEFAULT_FILTER = " ".join([
     "+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep, "-<example*%s>" % sep,
-    "-<test*%s>" % sep
+    "-<test%s>" % sep, "-<tests%s>" % sep
 ])
 
 
