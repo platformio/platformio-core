@@ -8,6 +8,7 @@ PlatformIO 2.0
 ~~~~~~~~~~~~~~~~~~
 
 * Exclude only ``test`` and ``tests`` folders from build process
+* Reverted ``-Wl,-whole-archive`` hook for ST STM32 and mbed
 
 2.8.1 (2016-01-29)
 ~~~~~~~~~~~~~~~~~~
