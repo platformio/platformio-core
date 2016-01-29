@@ -4,6 +4,11 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.8.1 (2016-01-29)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed a bug with Project Initialization in PlatformIO IDE
+
 2.8.0 (2016-01-29)
 ~~~~~~~~~~~~~~~~~~
 
