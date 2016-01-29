@@ -342,7 +342,8 @@ def get_api_result(path, params=None, data=None):
             raise exception.APIRequestError(e)
     except requests.exceptions.ConnectionError:
         raise exception.APIRequestError(
-            "Could not connect to PlatformIO Registry Service")
+            "Could not connect to PlatformIO Registry Service. "
+            "Please try later.")
     except ValueError:
         raise exception.APIRequestError(
             "Invalid response: %s" % r.text.encode("utf-8"))
