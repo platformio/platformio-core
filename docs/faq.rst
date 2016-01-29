@@ -79,6 +79,7 @@ Bash completion for `platformio` subcommands you need to put into your `.bashrc`
 .. code-block:: bash
 
     eval "$(_PLATFORMIO_COMPLETE=source platformio)"
+    eval "$(_PLATFORMIO_COMPLETE=source pio)"
 
 ZSH completion
 ''''''''''''''
@@ -89,6 +90,7 @@ To enable ``zsh`` completion please run these commands:
 
     autoload bashcompinit && bashcompinit
     eval "$(_PLATFORMIO_COMPLETE=source platformio)"
+    eval "$(_PLATFORMIO_COMPLETE=source pio)"
 
 .. note::
 

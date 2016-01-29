@@ -35,10 +35,10 @@ nav {
     display: block !important;
   }
   body {
-    padding-top: 50px;
+    padding-top: 100px;
   }
   .wy-nav-side {
-    top: 50px;
+    top: 100px;
   }
 
   .container {
@@ -252,4 +252,27 @@ nav {
 
 .navbar-header .navbar-brand {
   color: #e0e0e0;
+}
+
+/* Misc */
+
+.top-banner {
+  display: block;
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  background-color: #0275d8;
+}
+
+.top-banner:hover {
+  color: #fff;
+  text-decoration: none;
+  background-color: #025ebb;
+}
+
+.top-banner:visited {
+  color: #fff;
+  text-decoration: none;
 }

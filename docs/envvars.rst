@@ -34,10 +34,20 @@ operations/commands.
 PlatformIO handles ``CI`` variable which is setup by
 `Continuous Integration <http://en.wikipedia.org/wiki/Continuous_integration>`_
 (Travis, Circle and etc.) systems.
-Currently, PlatformIO uses it to disable prompts.
+PlatformIO uses it to disable prompts and progress bars. In other words,
+``CI=true`` automatically setup :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS` to
+``false`` and :envvar:`PLATFORMIO_DISABLE_PROGRESSBAR` to ``true``.
 
-In other words, ``CI=true`` automatically setup
-:envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS=false <PLATFORMIO_SETTING_ENABLE_PROMPTS>`.
+.. envvar:: PLATFORMIO_FORCE_COLOR
+
+Force to output color ANSI-codes even if the output is a ``pipe`` (not a ``tty``).
+The possible values are ``true`` and ``false``. Default is ``PLATFORMIO_FORCE_COLOR=false``.
+
+.. envvar:: PLATFORMIO_DISABLE_PROGRESSBAR
+
+Disable progress bar for package/library downloader and uploader. This is
+useful when calling PlatformIO from subprocess and output is a ``pipe`` (not a ``tty``).
+The possible values are ``true`` and ``false``. Default is ``PLATFORMIO_DISABLE_PROGRESSBAR=false``.
 
 .. envvar:: PLATFORMIO_HOME_DIR
 

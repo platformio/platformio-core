@@ -98,6 +98,8 @@ class MeasurementProtocol(TelemetryBase):
         dpdata.append("Click/%s" % click.__version__)
         if app.get_session_var("caller_id"):
             dpdata.append("Caller/%s" % app.get_session_var("caller_id"))
+        if getenv("PLATFORMIO_IDE"):
+            dpdata.append("IDE/%s" % getenv("PLATFORMIO_IDE"))
         self['an'] = " ".join(dpdata)
 
     def _prefill_custom_data(self):
@@ -302,12 +304,15 @@ def on_exception(e):
 def _finalize():
     timeout = 1000  # msec
     elapsed = 0
-    while elapsed < timeout:
-        if not MPDataPusher().in_wait():
-            break
-        sleep(0.2)
-        elapsed += 200
-    backup_reports(MPDataPusher().get_items())
+    try:
+        while elapsed < timeout:
+            if not MPDataPusher().in_wait():
+                break
+            sleep(0.2)
+            elapsed += 200
+        backup_reports(MPDataPusher().get_items())
+    except KeyboardInterrupt:
+        pass
 
 
 def backup_reports(items):

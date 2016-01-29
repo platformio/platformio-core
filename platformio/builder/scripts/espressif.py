@@ -42,10 +42,17 @@ def _get_flash_size(env):
             else "%dM" % (board_max_size / 1048576))
 
 
+def _get_board_f_cpu(env):
+    f_cpu = env.subst("$BOARD_F_CPU")
+    f_cpu = str(f_cpu).replace("L", "")
+    return int(int(f_cpu) / 1000000)
+
+
 env = DefaultEnvironment()
 
 env.Replace(
     __get_flash_size=_get_flash_size,
+    __get_board_f_cpu=_get_board_f_cpu,
 
     AR="xtensa-lx106-elf-ar",
     AS="xtensa-lx106-elf-as",
@@ -108,7 +115,7 @@ env.Replace(
 
     UPLOADERFLAGS=[
         "-vv",
-        "-cd", "${BOARD_OPTIONS['upload']['resetmethod']}",
+        "-cd", "$UPLOAD_RESETMETHOD",
         "-cb", "$UPLOAD_SPEED",
         "-cp", "$UPLOAD_PORT"
     ],
@@ -143,7 +150,7 @@ env.Append(
                               "eboot", "eboot.elf"),
                 "-bo", "$TARGET",
                 "-bm", "dio",
-                "-bf", "${BOARD_OPTIONS['build']['f_cpu'][:2]}",
+                "-bf", "${__get_board_f_cpu(__env__)}",
                 "-bz", "${__get_flash_size(__env__)}",
                 "-bs", ".text",
                 "-bp", "4096",

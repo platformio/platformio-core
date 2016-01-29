@@ -19,14 +19,16 @@ from glob import glob
 from os import getenv, listdir, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath, realpath
 
-from platformio.util import pioversion_to_intstr
 from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, SConscript
 from SCons.Util import case_sensitive_suffixes
+
+from platformio.util import pioversion_to_intstr
 
 SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_DEFAULT_FILTER = " ".join([
-    "+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep, "-<examples%s>" % sep
+    "+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep, "-<example*%s>" % sep,
+    "-<test*%s>" % sep
 ])
 
 
@@ -81,12 +83,18 @@ def BuildProgram(env):
         LIBPATH=["$BUILD_DIR"]
     )
 
+    sources = env.LookupSources(
+        "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
+        src_filter=getenv("PLATFORMIO_SRC_FILTER", env.get("SRC_FILTER")))
+
+    if not sources:
+        env.Exit(
+            "Error: Nothing to build. Please put your source code files "
+            "to '%s' folder" % env.subst("$PROJECTSRC_DIR"))
+
     return env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")),
-        env.LookupSources(
-            "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
-            src_filter=getenv("PLATFORMIO_SRC_FILTER",
-                              env.get("SRC_FILTER")))
+        sources
     )
 
 

@@ -20,6 +20,13 @@ computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
 `BeagleBone <http://beagleboard.org>`_,
 `CubieBoard <http://cubieboard.org>`_).
 
+.. note::
+    We are glad to announce official :ref:`ide_atom` which provides
+    comprehensive facilities for IoT development: built-in PlatformIO CLI tool,
+    Terminal and other instruments.
+
+    Try :ref:`ide_atom` for free now!
+
 .. contents::
 
 System requirements

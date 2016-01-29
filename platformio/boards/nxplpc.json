@@ -89,7 +89,7 @@
         "name": "SeeedStudio Seeeduino-Arch-Pro",
         "platform": "nxplpc",
         "upload": {
-            "maximum_ram_size": 32768,
+            "maximum_ram_size": 65536,
             "maximum_size": 524288
         },
         "url": "https://developer.mbed.org/platforms/Seeeduino-Arch-Pro/",

@@ -14,7 +14,7 @@
 
 import re
 import struct
-from os import remove
+from os import getenv, remove
 from os.path import isdir, isfile, join
 from shutil import rmtree
 from time import time
@@ -142,10 +142,17 @@ def after_upgrade(ctx):
         (click.style("follow", fg="cyan"),
          click.style("https://twitter.com/PlatformIO_Org", fg="cyan"))
     )
-    click.echo("- %s it on GitHub! > %s" % (
+    click.echo("- %s it on GitHub > %s" % (
         click.style("star", fg="cyan"),
         click.style("https://github.com/platformio/platformio", fg="cyan")
     ))
+
+    if not getenv("PLATFORMIO_IDE"):
+        click.echo("- %s PlatformIO IDE for IoT development > %s" % (
+            click.style("try", fg="cyan"),
+            click.style("http://platformio.org/", fg="cyan")
+        ))
+
     click.echo("*" * terminal_width)
     click.echo("")
 

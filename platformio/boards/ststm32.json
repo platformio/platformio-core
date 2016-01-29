@@ -273,14 +273,14 @@
     "nucleo_f401re": {
         "build": {
             "core": "stm32",
-            "extra_flags": "-DSTM32F4 -DSTM32F401xE",
+            "extra_flags": "-DSTM32F4 -DSTM32F401xE -DSTM32F40_41xxx",
             "f_cpu": "84000000L",
             "ldscript": "stm32f401xe.ld",
             "cpu": "cortex-m4",
             "mcu": "stm32f401ret6",
             "variant": "stm32f401xe"
         },
-        "frameworks": ["cmsis", "mbed"],
+        "frameworks": ["mbed", "cmsis", "spl"],
         "name": "ST Nucleo F401RE",
         "platform": "ststm32",
         "upload": {

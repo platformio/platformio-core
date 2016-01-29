@@ -148,7 +148,7 @@ Examples
     check_libraries_interval        7                 Check for the library updates interval (days)
     check_platformio_interval       3                 Check for the new PlatformIO interval (days)
     check_platforms_interval        7                 Check for the platform updates interval (days)
-    enable_prompts                  Yes               Can PlatformIO communicate with you via prompts: propose to install platforms which aren't installed yet, paginate over library search results and etc.)? ATTENTION!!! If you call PlatformIO like subprocess, please disable prompts to avoid blocking (Yes/No)
+    enable_prompts                  Yes               Can PlatformIO communicate with you via prompts ...
     enable_telemetry                Yes               Telemetry service (Yes/No)
 
 

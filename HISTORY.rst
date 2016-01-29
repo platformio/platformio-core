@@ -1,14 +1,39 @@
-Release History
-===============
+Release Notes
+=============
 
 PlatformIO 2.0
 --------------
+
+2.8.0 (2016-01-29)
+~~~~~~~~~~~~~~~~~~
+
+* `PlatformIO IDE <http://docs.platformio.org/en/latest/ide/atom.html>`_ for
+  Atom
+  (`issue #470 <https://github.com/platformio/platformio/issues/470>`_)
+* Added ``pio`` command line alias for ``platformio`` command
+  (`issue #447 <https://github.com/platformio/platformio/issues/447>`_)
+* Added SPL-Framework support for Nucleo F401RE board
+  (`issue #453 <https://github.com/platformio/platformio/issues/453>`_)
+* Added ``upload_resetmethod`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  and allowed to `change default upload reset method <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-reset-method>`_
+  for Espressif development platform
+  (`issue #444 <https://github.com/platformio/platformio/issues/444>`_)
+* Allowed to force output of color ANSI-codes or to disable progress bar even
+  if the output is a ``pipe`` (not a ``tty``) using `Environment variables <http://docs.platformio.org/en/latest/envvars.html>`__
+  (`issue #465 <https://github.com/platformio/platformio/issues/465>`_)
+* Set 1Mb SPIFFS for Espressif boards by default
+  (`issue #458 <https://github.com/platformio/platformio/issues/458>`_)
+* Exclude ``test*`` folder by default from build process
+* Generate project for IDEs with information about installed libraries
+* Fixed builder for mbed framework and ST STM32 platform
+
 
 2.7.1 (2016-01-06)
 ~~~~~~~~~~~~~~~~~~
 
 * Initial support for Arduino Zero board
   (`issue #356 <https://github.com/platformio/platformio/issues/356>`_)
+* Added support for completions to Atom text editor using ``.clang_complete``
 * Generate default targets for `supported IDE <http://docs.platformio.org/en/latest/ide.html>`__
   (CLion, Eclipse IDE, Emacs, Sublime Text, VIM): Build,
   Clean, Upload, Upload SPIFFS image, Upload using Programmer, Update installed

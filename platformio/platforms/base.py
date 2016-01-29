@@ -129,6 +129,9 @@ PLATFORM_PACKAGES = {
     "tool-bossac": [
         ("BOSSA CLI", "https://sourceforge.net/projects/b-o-s-s-a/")
     ],
+    "tool-openocd": [
+        ("OpenOCD", "http://openocd.org")
+    ],
     "tool-stlink": [
         ("ST-Link", "https://github.com/texane/stlink")
     ],

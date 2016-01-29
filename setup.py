@@ -54,6 +54,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
+            "pio = platformio.__main__:main",
             "platformio = platformio.__main__:main"
         ]
     },
@@ -70,7 +71,7 @@ setup(
         "Topic :: Software Development :: Compilers"
     ],
     keywords=[
-        "iot", "build tool", "compiler", "builder", "library manager",
+        "iot", "ide", "build", "compile", "library manager",
         "embedded", "ci", "continuous integration", "arduino", "mbed",
         "esp8266", "framework", "ide", "ide integration", "library.json",
         "make", "cmake", "makefile", "mk"

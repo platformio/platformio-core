@@ -17,8 +17,8 @@ from __future__ import absolute_import
 import atexit
 import re
 from glob import glob
-from os import environ, remove
-from os.path import basename, isfile, join
+from os import environ, listdir, remove
+from os.path import basename, isdir, isfile, join
 
 from platformio.util import exec_command, where_is_program
 
@@ -114,7 +114,10 @@ class InoToCPPConverter(object):
 def ConvertInoToCpp(env):
 
     def delete_tmpcpp_file(file_):
-        remove(file_)
+        try:
+            remove(file_)
+        except WindowsError:  # pylint: disable=undefined-variable
+            pass
 
     ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
                  env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
@@ -133,45 +136,87 @@ def ConvertInoToCpp(env):
 
 
 def DumpIDEData(env):
-    data = {
-        "defines": [],
-        "includes": [],
+
+    BOARD_CORE = env.get("BOARD_OPTIONS", {}).get("build", {}).get("core")
+
+    def get_includes():
+        includes = []
+        # includes from used framework and libs
+        for item in env.get("VARIANT_DIRS", []):
+            if "$BUILDSRC_DIR" in item[0]:
+                continue
+            includes.append(env.subst(item[1]))
+
+        # custom includes
+        for item in env.get("CPPPATH", []):
+            if item.startswith("$BUILD_DIR"):
+                continue
+            includes.append(env.subst(item))
+
+        # installed libs
+        for d in env.get("LIBSOURCE_DIRS", []):
+            lsd_dir = env.subst(d)
+            _append_lib_includes(lsd_dir, includes)
+
+        # includes from toolchain
+        toolchain_dir = env.subst(
+            join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
+        toolchain_incglobs = [
+            join(toolchain_dir, "*", "include*"),
+            join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
+        ]
+        for g in toolchain_incglobs:
+            includes.extend(glob(g))
+
+        return includes
+
+    def _append_lib_includes(libs_dir, includes):
+        if not isdir(libs_dir):
+            return
+        for name in env.get("LIB_USE", []) + sorted(listdir(libs_dir)):
+            if not isdir(join(libs_dir, name)):
+                continue
+            # ignore user's specified libs
+            if name in env.get("LIB_IGNORE", []):
+                continue
+            if name == "__cores__":
+                if isdir(join(libs_dir, name, BOARD_CORE)):
+                    _append_lib_includes(
+                        join(libs_dir, name, BOARD_CORE), includes)
+                return
+
+            include = (
+                join(libs_dir, name, "src")
+                if isdir(join(libs_dir, name, "src"))
+                else join(libs_dir, name)
+            )
+            if include not in includes:
+                includes.append(include)
+
+    def get_defines():
+        defines = []
+        # global symbols
+        for item in env.get("CPPDEFINES", []):
+            if isinstance(item, list):
+                item = "=".join(item)
+            defines.append(env.subst(item).replace('\\"', '"'))
+
+        # special symbol for Atmel AVR MCU
+        board = env.get("BOARD_OPTIONS", {})
+        if board and board['platform'] == "atmelavr":
+            defines.append(
+                "__AVR_%s__" % board['build']['mcu'].upper()
+                .replace("ATMEGA", "ATmega")
+                .replace("ATTINY", "ATtiny")
+            )
+        return defines
+
+    return {
+        "defines": get_defines(),
+        "includes": get_includes(),
         "cxx_path": where_is_program(
             env.subst("$CXX"), env.subst("${ENV['PATH']}"))
     }
-
-    # includes from framework and libs
-    for item in env.get("VARIANT_DIRS", []):
-        if "$BUILDSRC_DIR" in item[0]:
-            continue
-        data['includes'].append(env.subst(item[1]))
-
-    # includes from toolchain
-    toolchain_dir = env.subst(
-        join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
-    toolchain_incglobs = [
-        join(toolchain_dir, "*", "include*"),
-        join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
-    ]
-    for g in toolchain_incglobs:
-        data['includes'].extend(glob(g))
-
-    # global symbols
-    for item in env.get("CPPDEFINES", []):
-        if isinstance(item, list):
-            item = "=".join(item)
-        data['defines'].append(env.subst(item).replace('\\"', '"'))
-
-    # special symbol for Atmel AVR MCU
-    board = env.get("BOARD_OPTIONS", {})
-    if board and board['platform'] == "atmelavr":
-        data['defines'].append(
-            "__AVR_%s__" % board['build']['mcu'].upper()
-            .replace("ATMEGA", "ATmega")
-            .replace("ATTINY", "ATtiny")
-        )
-
-    return data
 
 
 def GetCompilerType(env):

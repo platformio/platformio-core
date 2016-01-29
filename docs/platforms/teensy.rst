@@ -113,7 +113,7 @@ Teensy
       - 16 Kb
 
     * - ``teensy31``
-      - `Teensy 3.1 <https://www.pjrc.com/store/teensy31.html>`_
+      - `Teensy 3.1 / 3.2 <https://www.pjrc.com/store/teensy31.html>`_
       - MK20DX256
       - 72 MHz
       - 256 Kb

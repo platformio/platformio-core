@@ -138,7 +138,13 @@ Examples:
 
 *Required* if :ref:`libjson_downloadurl` field is not defined | Type: ``Object``
 
-The repository in which the source code can be found.
+The repository in which the source code can be found. The field consists for the
+next items:
+
+* ``type``
+* ``url``
+* ``branch`` if is not specified, default branch will be used. This field will
+  be ignored if tag/release exists with the value of :ref:`libjson_version`.
 
 Example:
 
@@ -158,22 +164,46 @@ Example:
 *Required* if :ref:`libjson_repository` field is not defined | Type: ``String``
 | Max. Length: 20
 
-A version of the current library source code.
+A version of the current library source code. Can contain a-z, digits, dots or
+dash. `Semantic Versioning <http://semver.org>`_ IS RECOMMENDED.
 
-* Can contain a-z, digits, dots or dash.
-* `Semantic Versioning <http://semver.org>`_ IS RECOMMENDED.
+:Case 1:
 
-If :ref:`libjson_version` field is not defined and :ref:`libjson_repository`
-field is defined, then |PIOAPICR| will use the
-`CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>` revision from
-the latest commit as "current version". For example, ``13`` (*SVN*) or first
-10 chars of *SHA* digest ``e4564b7da4`` (*Git*).
+    :ref:`libjson_version` and :ref:`libjson_repository` fields are defined.
+    The :ref:`libjson_repository` is hosted on GitHub or Bitbucket.
 
-If :ref:`libjson_version` and :ref:`libjson_repository` fields are defined,
-then :ref:`libjson_version` has HIGHER PRIORITY. We recommend to use
-:ref:`libjson_version` field and specify the real release version. In other
-case, users will receive updates for library with each new commit to
-:ref:`libjson_repository`.
+    |PIOAPICR| will lookup for release tag named as value of :ref:`libjson_version`
+    or with ``v`` prefix (you do not need to pass this ``v`` prefix to the
+    :ref:`libjson_version` field).
+
+:Case 2:
+
+    :ref:`libjson_version` and :ref:`libjson_repository` fields are defined
+    and :ref:`libjson_repository` does not contain tag/release with value of
+    :ref:`libjson_version`.
+
+    |PIOAPICR| will use the latest source code from :ref:`libjson_repository`
+    and link it with specified :ref:`libjson_version`. If :ref:`libjson_repository`
+    ``branch`` is not specified, then default branch will be used.
+    Also, if you push new commits to :ref:`libjson_repository`
+    and do not update :ref:`libjson_version` field, the library will not be
+    updated until you change the :ref:`libjson_version`.
+
+:Case 3:
+
+    :ref:`libjson_version` field is not defined and :ref:`libjson_repository`
+    field is defined.
+
+    |PIOAPICR| will use the
+    `CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_ revision from
+    the latest commit as "current version". For example, ``13`` (*SVN*) or first
+    10 chars of *SHA* digest ``e4564b7da4`` (*Git*). If :ref:`libjson_repository`
+    ``branch`` is not specified, then default branch will be used.
+
+    We recommend to use :ref:`libjson_version` field and specify the real release
+    version and make appropriate target in the :ref:`libjson_repository`. In other
+    case, users will receive updates for library with each new commit to
+    :ref:`libjson_repository`.
 
 .. note::
     |PIOAPICR| updates library only if:
@@ -200,6 +230,11 @@ Example:
 
 It is the *HTTP URL* to the archived source code of library. It should end
 with the type of archive (``.zip`` or ``.tar.gz``).
+
+.. note::
+
+    :ref:`libjson_downloadurl` has higher priority than
+    :ref:`libjson_repository`.
 
 Example with fixed release/tag on GitHub:
 
@@ -372,6 +407,9 @@ A list of example patterns. This field is predefined with default value:
 .. code-block:: javascript
 
     "examples": [
+        "[Ee]xamples/*/*.c",
+        "[Ee]xamples/*/*.cpp",
+        "[Ee]xamples/*/*.h",
         "[Ee]xamples/*/*.ino",
         "[Ee]xamples/*/*.pde"
     ]

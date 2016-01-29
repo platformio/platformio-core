@@ -195,20 +195,6 @@ def get_build_flags(data):
     return flags
 
 
-def _mbed_whole_archive_hook(flags):
-    if (not isinstance(flags, list) or
-            env.get("BOARD_OPTIONS", {}).get("platform") != "ststm32"):
-        return flags
-
-    for pos, flag in enumerate(flags[:]):
-        if isinstance(flag, basestring):
-            continue
-        flags.insert(pos, "-Wl,-whole-archive")
-        flags.insert(pos + 2, "-Wl,-no-whole-archive")
-
-    return flags
-
-
 board_type = env.subst("$BOARD")
 variant = MBED_VARIANTS[
     board_type] if board_type in MBED_VARIANTS else board_type.upper()
@@ -219,8 +205,6 @@ build_flags = get_build_flags(eixdata)
 variant_dir = join("$PLATFORMFW_DIR", "variant", variant)
 
 env.Replace(
-    _mbed_whole_archive_hook=_mbed_whole_archive_hook,
-    _LIBFLAGS="${_mbed_whole_archive_hook(%s)}" % env.get("_LIBFLAGS")[2:-1],
     CPPFLAGS=build_flags.get("CPPFLAGS", []),
     CFLAGS=build_flags.get("CFLAGS", []),
     CXXFLAGS=build_flags.get("CXXFLAGS", []),
@@ -267,7 +251,7 @@ libs.append(env.Library(
      for f in eixdata.get("OBJFILES", [])]
 ))
 
-env.Append(LIBS=libs)
+env.Prepend(LIBS=libs)
 
 for _libname, _libdata in get_used_mbedlibs().iteritems():
     for _libar in _libdata['ar']:

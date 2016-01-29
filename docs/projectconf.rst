@@ -25,8 +25,8 @@ The sections and their allowable values are described below.
 
 .. contents::
 
-[platformio]
-------------
+Section ``[platformio]``
+------------------------
 
 A ``platformio`` section is used for overriding default configuration options
 
@@ -130,8 +130,10 @@ project.
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_DATA_DIR`.
 
-[env:NAME]
 ----------
+
+Section ``[env:NAME]``
+----------------------
 
 A section with ``env:`` prefix is used to define virtual environment with
 specific options that will be processed with :ref:`cmd_run` command. You can
@@ -145,8 +147,8 @@ Each environment must have unique ``NAME``. The valid chars for ``NAME`` are
 
 For example, ``[env:hello_world]``.
 
-Options
-~~~~~~~
+General options
+~~~~~~~~~~~~~~~
 
 .. _projectconf_env_platform:
 
@@ -165,7 +167,6 @@ Options
 
 The multiple frameworks are allowed, split them with comma ``,`` separator.
 
-
 .. _projectconf_env_board:
 
 ``board``
@@ -179,6 +180,9 @@ pre-fill options described above with appropriate values.
 You can find the ``board`` type in *Boards* section of each :ref:`platforms` or
 using `PlatformIO Embedded Boards Explorer <http://platformio.org/#!/boards>`_.
 
+
+Board options
+~~~~~~~~~~~~~
 
 ``board_mcu``
 ^^^^^^^^^^^^^
@@ -201,43 +205,12 @@ format of this option is ``C-like long integer`` value with ``L`` suffix. The
 1 Hertz is equal to ``1L``, then 16 Mhz (Mega Hertz) is equal to ``16000000L``.
 
 The full list of ``board_f_cpu`` for the popular embedded platforms you can
-find in *Boards* section of :ref:`platforms`. See "Frequency" column.
+find in *Boards* section of :ref:`platforms`. See "Frequency" column. You can 
+overclock a board by specifying a ``board_f_cpu`` value other than the default.
 
 
-``upload_port``
-^^^^^^^^^^^^^^^
-
-This option is used by "uploader" tool when sending firmware to board via
-``upload_port``. For example,
-
-* ``/dev/ttyUSB0`` - Unix-based OS
-* ``COM3`` - Windows OS
-* ``192.168.0.13`` - IP address when using OTA
-
-If ``upload_port`` isn't specified, then *PlatformIO* will try to detect it
-automatically.
-
-To print all available serial ports use :ref:`cmd_serialports` command.
-
-
-``upload_protocol``
-^^^^^^^^^^^^^^^^^^^
-
-A protocol that "uploader" tool uses to talk to the board.
-
-.. _projectconf_upload_speed:
-
-``upload_speed``
-^^^^^^^^^^^^^^^^
-
-A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
-which "uploader" tool uses when sending firmware to board.
-
-``upload_flags``
-^^^^^^^^^^^^^^^^
-
-Extra flags for uploader. Will be added to the end of uploader command. If you
-need to override uploader command or base flags please use :ref:`projectconf_extra_script`.
+Building options
+~~~~~~~~~~~~~~~~
 
 .. _projectconf_build_flags:
 
@@ -362,11 +335,128 @@ be applied in theirs order.
 `GLOB Patterns <http://en.wikipedia.org/wiki/Glob_(programming)>`_ are allowed.
 
 By default, ``src_filter`` is predefined to
-``+<*> -<.git/> -<svn/> -<examples/>``, which means "includes ALL files, then
+``+<*> -<.git/> -<svn/> -<example*/>``, which means "includes ALL files, then
 exclude ``.git`` and ``svn`` repository folders and exclude ``examples`` folder.
 
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_SRC_FILTER`.
+
+.. _projectconf_extra_script:
+
+``extra_script``
+^^^^^^^^^^^^^^^^
+
+Allows to launch extra script using `SCons <http://www.scons.org>`_ software
+construction tool. For more details please follow to "Construction Environments"
+section of
+`SCons documentation <http://www.scons.org/doc/production/HTML/scons-user.html#chap-environments>`_.
+
+This option can be set by global environment variable
+:envvar:`PLATFORMIO_EXTRA_SCRIPT`.
+
+Example, specify own upload command for :ref:`platform_atmelavr`:
+
+``platformio.ini``:
+
+.. code-block:: ini
+
+    [env:env_with_specific_extra_script]
+    platform = atmelavr
+    extra_script = /path/to/extra_script.py
+    custom_option = hello
+
+``extra_script.py``:
+
+.. code-block:: python
+
+    from SCons.Script import DefaultEnvironment
+
+    env = DefaultEnvironment()
+
+    env.Replace(UPLOADHEXCMD='"$UPLOADER" ${ARGUMENTS.get("custom_option")} --uploader --flags')
+
+    # uncomment line below to see environment variables
+    # print env.Dump()
+    # print ARGUMENTS
+
+
+* see built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
+* take a look at the multiple snippets/answers for the user questions:
+
+  - `#462 Split C/C++ build flags <https://github.com/platformio/platformio/issues/462#issuecomment-172667342>`_
+  - `#365 Extra configuration for ESP8266 uploader <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_
+  - `#351 Specific reset method for ESP8266 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_
+  - `#247 Specific options for avrdude <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_.
+
+``targets``
+^^^^^^^^^^^
+
+A list with targets which will be processed by :ref:`cmd_run` command by
+default. You can enter more than one target separated with "space".
+
+The list with available targets is located in :option:`platformio run --target`.
+
+**Tip!** You can use these targets like an option to
+:option:`platformio run --target` command. For example:
+
+.. code-block:: bash
+
+    # clean project
+    platformio run -t clean
+
+    # dump curent build environment
+    platformio run --target envdump
+
+When no targets are defined, *PlatformIO* will build only sources by default.
+
+
+Uploading options
+~~~~~~~~~~~~~~~~~
+
+``upload_port``
+^^^^^^^^^^^^^^^
+
+This option is used by "uploader" tool when sending firmware to board via
+``upload_port``. For example,
+
+* ``/dev/ttyUSB0`` - Unix-based OS
+* ``COM3`` - Windows OS
+* ``192.168.0.13`` - IP address when using OTA
+
+If ``upload_port`` isn't specified, then *PlatformIO* will try to detect it
+automatically.
+
+To print all available serial ports use :ref:`cmd_serialports` command.
+
+``upload_protocol``
+^^^^^^^^^^^^^^^^^^^
+
+A protocol that "uploader" tool uses to talk to the board.
+
+.. _projectconf_upload_speed:
+
+``upload_speed``
+^^^^^^^^^^^^^^^^
+
+A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
+which "uploader" tool uses when sending firmware to board.
+
+``upload_flags``
+^^^^^^^^^^^^^^^^
+
+Extra flags for uploader. Will be added to the end of uploader command. If you
+need to override uploader command or base flags please use :ref:`projectconf_extra_script`.
+
+.. _projectconf_upload_resetmethod:
+
+``upload_resetmethod``
+^^^^^^^^^^^^^^^^^^^^^^
+
+Specify reset method for "uploader" tool. This option isn't available for all
+development platforms. The only :ref:`platform_espressif` supports it.
+
+Library options
+~~~~~~~~~~~~~~~
 
 ``lib_install``
 ^^^^^^^^^^^^^^^
@@ -428,72 +518,7 @@ Example:
     [env:libs_with_enabled_ldf_cyclic]
     lib_dfcyclic = True
 
-.. _projectconf_extra_script:
-
-``extra_script``
-^^^^^^^^^^^^^^^^
-
-Allows to launch extra script using `SCons <http://www.scons.org>`_ software
-construction tool. For more details please follow to "Construction Environments"
-section of
-`SCons documentation <http://www.scons.org/doc/production/HTML/scons-user.html#chap-environments>`_.
-
-This option can be set by global environment variable
-:envvar:`PLATFORMIO_EXTRA_SCRIPT`.
-
-Example, specify own upload command for :ref:`platform_atmelavr`:
-
-``platformio.ini``:
-
-.. code-block:: ini
-
-    [env:env_with_specific_extra_script]
-    platform = atmelavr
-    extra_script = /path/to/extra_script.py
-    custom_option = hello
-
-``extra_script.py``:
-
-.. code-block:: python
-
-    from SCons.Script import DefaultEnvironment
-
-    env = DefaultEnvironment()
-
-    env.Replace(UPLOADHEXCMD='"$UPLOADER" ${ARGUMENTS.get("custom_option")} --uploader --flags')
-
-    # uncomment line below to see environment variables
-    # print env.Dump()
-    # print ARGUMENTS
-
-
-* see built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
-* take a look at the multiple snippets/answers for the user questions:
-  `#365 <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_,
-  `#351 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_,
-  `#236 <https://github.com/platformio/platformio/issues/236#issuecomment-112038284>`_,
-  `#247 <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_
-
-``targets``
-^^^^^^^^^^^
-
-A list with targets which will be processed by :ref:`cmd_run` command by
-default. You can enter more than one target separated with "space".
-
-The list with available targets is located in :option:`platformio run --target`.
-
-**Tip!** You can use these targets like an option to
-:option:`platformio run --target` command. For example:
-
-.. code-block:: bash
-
-    # clean project
-    platformio run -t clean
-
-    # dump curent build environment
-    platformio run --target envdump
-
-When no targets are defined, *PlatformIO* will build only sources by default.
+-----------
 
 .. _projectconf_examples:
 
@@ -551,8 +576,8 @@ Examples
     upload_protocol = usbasp
     upload_flags = -Pusb -B5
 
-Then upload firmware using :option:`platformio run --target program`. To use
-other programmers see :ref:`atmelavr_upload_via_programmer`.
+Then upload firmware using target ``program`` for :option:`platformio run --target`.
+command. To use other programmers see :ref:`atmelavr_upload_via_programmer`.
 
 
 4. :ref:`platform_ststm32`: Upload firmware using GDB script ``upload.gdb``,

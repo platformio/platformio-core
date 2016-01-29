@@ -183,3 +183,7 @@ def get_session_var(name, default=None):
 def set_session_var(name, value):
     assert name in SESSION_VARS
     SESSION_VARS[name] = value
+
+
+def is_disabled_progressbar():
+    return is_ci() or getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"

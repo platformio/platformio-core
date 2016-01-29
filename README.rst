@@ -28,6 +28,10 @@ PlatformIO
 .. image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/platformio/platformio
    :target: https://gitter.im/platformio/platformio
+.. image:: https://img.shields.io/donate/PlatformIO.png?color=yellow
+   :alt: Donate for PlatformIO.Org
+   :target: https://www.liqpay.com/api/3/checkout?data=eyJ2ZXJzaW9uIjozLCJhY3Rpb24iOiJwYXlkb25hdGUiLCJwdWJsaWNfa2V5IjoiaTc0NzkxMDA2NjIxIiwiYW1vdW50IjoiMSIsImN1cnJlbmN5IjoiVVNEIiwiZGVzY3JpcHRpb24iOiJEb25hdGlvbiBmb3IgUGxhdGZvcm1JTy5PcmciLCJ0eXBlIjoiZG9uYXRlIiwibGFuZ3VhZ2UiOiJlbiJ9&signature=XYvETjqlpoFhoFtxUJlF6hQyS7Y%3D
+
 
 `Home & Demo <http://platformio.org>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
@@ -75,7 +79,7 @@ libOpenCM3, etc.*
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_
 * `Articles about us <http://docs.platformio.org/en/latest/articles.html>`_
 * `FAQ <http://docs.platformio.org/en/latest/faq.html>`_
-* `Release History <http://docs.platformio.org/en/latest/history.html>`_
+* `Release Notes <http://docs.platformio.org/en/latest/history.html>`_
 
 Use whenever. *Run everywhere.*
 -------------------------------
@@ -93,7 +97,7 @@ settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 
 * Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_ with
-  *Arduino, Eclipse, Emacs, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
+  *Arduino, Atom, Eclipse, Emacs, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
 * Cloud compiling and `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
   with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
 * Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable
@@ -171,6 +175,7 @@ Frameworks:
 * `Energia <http://platformio.org/#!/frameworks/energia>`_
 * `SPL <http://platformio.org/#!/frameworks/spl>`_
 * `mbed <http://platformio.org/#!/frameworks/mbed>`_
+* `WiringPi <http://platformio.org/#!/frameworks/wiringpi>`_
 
 For further details, please refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
 

@@ -17,8 +17,8 @@ IDE Integration
 .. toctree::
     :maxdepth: 2
 
-    ide/arduino
     ide/atom
+    ide/arduino
     ide/clion
     ide/eclipse
     ide/emacs
