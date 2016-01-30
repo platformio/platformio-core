@@ -14,11 +14,9 @@
 PlatformIO IDE for Atom
 =======================
 
-PlatformIO IDE for `Atom <https://atom.io>`_ is the missing integrated
-development environment which provides comprehensive facilities
-for IoT development:
+PlatformIO IDE is the next generation integrated development environment for IoT:
 
-* Cross-platform builder without external dependencies to the system
+* Cross-platform code builder without external dependencies to the system
   software:
 
     - 200+ embedded boards
@@ -26,15 +24,18 @@ for IoT development:
     - 10+ frameworks
 
 * C/C++ Intelligent code completion
-* C/C++ Smart code linter and super-fast coding
+* C/C++ Smart code linter for super-fast coding
 * Library Manager for the hundreds popular libraries
-* Multi-projects workflow, multiple panes and themes support with dark and light colors
+* Multi-projects workflow with multiple panes
+* Multiple panes
+* Themes support with dark and light colors
 * Serial Port Monitor
-* Built-in Terminal with :ref:`PlatformIO CLI <userguide>` (``pio``, ``platformio``)
+* Built-in Terminal with :ref:`PlatformIO CLI <userguide>` tool (``pio``, ``platformio``)
 
-Atom is a source code editor that's modern, approachable,
-yet hackable to the core—a tool you can customize to do anything but also use
-productively without ever touching a config file.
+PlatformIO IDE is based on GitHub's `Atom <https://atom.io>`_ source
+code editor that's modern, approachable, yet hackable to the core—a tool you
+can customize to do anything but also use productively without ever touching a
+config file.
 
 
 .. contents::
@@ -86,15 +87,15 @@ Each button contains hint (delay mouse on it).
 * PlatformIO: Upload
 * PlatformIO: Clean
 * Toggle build panel
-* |
+* ||
 * New File
 * Add/Open Project Folder...
 * Find in Project...
-* |
+* ||
 * Terminal
 * Serial Ports
 * Serial Monitor
-* |
+* ||
 * Settings
 * PlatformIO Documentation
 
