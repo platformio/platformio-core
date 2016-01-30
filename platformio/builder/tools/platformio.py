@@ -185,7 +185,7 @@ def BuildFrameworks(env, frameworks):
     if not frameworks or "uploadlazy" in COMMAND_LINE_TARGETS:
         return
 
-    board_frameworks = env.get("BOARD_OPTIONS", {}).get("frameworks")
+    board_frameworks = env.get("BOARD_OPTIONS", {}).get("frameworks", [])
     if frameworks == ["platformio"]:
         if board_frameworks:
             frameworks.insert(0, board_frameworks[0])
