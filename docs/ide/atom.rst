@@ -26,8 +26,10 @@ for IoT development:
     - 10+ frameworks
 
 * C/C++ Intelligent code completion
-* C/C++ Smart code linter
+* C/C++ Smart code linter and super-fast coding
 * Library Manager for the hundreds popular libraries
+* Multi-projects workflow, multiple panes and themes support with dark and light colors
+* Serial Port Monitor
 * Built-in Terminal with :ref:`PlatformIO CLI <userguide>` (``pio``, ``platformio``)
 
 Atom is a source code editor that's modern, approachable,
@@ -81,6 +83,7 @@ Each button contains hint (delay mouse on it).
 .. image:: ../_static/ide-atom-platformio-toolbar.png
 
 * PlatformIO: Build
+* PlatformIO: Upload
 * PlatformIO: Clean
 * Toggle build panel
 * |
@@ -94,6 +97,31 @@ Each button contains hint (delay mouse on it).
 * |
 * Settings
 * PlatformIO Documentation
+
+.. _ide_atom_quickstart:
+
+Quickstart
+~~~~~~~~~~
+
+:Step 1:
+
+    Create empty directory for the future project. Add it to PlatformIO IDE
+    using (folder) button on the Toolbar or ``Menu: File > Add Project
+    Folder...``
+
+:Step 2:
+
+    Initialize new PlatformIO based project using ``Menu: PlatformIO >
+    Initialize new Project (or update existing)`` and select boards.
+    Put your source code ``*.h, *.c, *.cpp, *.S, *.ino, etc``. files to ``src``
+    directory.
+
+:Step 3:
+
+    Process the project environments. More details :ref:`ide_atom_building_targets`.
+
+
+.. _ide_atom_building_targets:
 
 Building / Uploading / Targets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
