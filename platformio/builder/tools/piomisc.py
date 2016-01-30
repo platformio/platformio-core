@@ -214,6 +214,9 @@ def DumpIDEData(env):
     return {
         "defines": get_defines(),
         "includes": get_includes(),
+        "cc_flags": env.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
+        "cxx_flags": env.subst(
+            "$SHCXXFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
         "cxx_path": where_is_program(
             env.subst("$CXX"), env.subst("${ENV['PATH']}"))
     }
