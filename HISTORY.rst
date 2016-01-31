@@ -8,6 +8,8 @@ PlatformIO 2.0
 ~~~~~~~~~~~~~~~~~~
 
 * Better integration of PlatformIO Builder with PlatformIO IDE Linter
+* Fixed issue with removing temporary file while converting ``*.ino`` to
+  ``*.cpp``
 
 2.8.2 (2016-01-29)
 ~~~~~~~~~~~~~~~~~~
