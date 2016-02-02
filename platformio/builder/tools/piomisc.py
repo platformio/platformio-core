@@ -116,8 +116,10 @@ def ConvertInoToCpp(env):
     def delete_tmpcpp_file(file_):
         try:
             remove(file_)
-        except WindowsError:  # pylint: disable=undefined-variable
-            pass
+        except:  # pylint: disable=bare-except
+            if isfile(file_):
+                print ("Warning: Could not remove temporary file '%s'. "
+                       "Please remove it manually." % file_)
 
     ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
                  env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
@@ -214,6 +216,9 @@ def DumpIDEData(env):
     return {
         "defines": get_defines(),
         "includes": get_includes(),
+        "cc_flags": env.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
+        "cxx_flags": env.subst(
+            "$SHCXXFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
         "cxx_path": where_is_program(
             env.subst("$CXX"), env.subst("${ENV['PATH']}"))
     }

@@ -35,7 +35,6 @@ This command will create:
 * :ref:`projectconf`
 * ``src`` - a source directory. Put your source files here
 * ``lib`` - a directory for the project specific (private) libraries.
-  PlatformIO will compile them to static libraries and link to executable file
 * ``.travis.yml`` configuration file (template) for Continuous Integration
   with :ref:`ci_travis`
 

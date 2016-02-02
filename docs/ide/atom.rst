@@ -14,11 +14,9 @@
 PlatformIO IDE for Atom
 =======================
 
-PlatformIO IDE for `Atom <https://atom.io>`_ is the missing integrated
-development environment which provides comprehensive facilities
-for IoT development:
+PlatformIO IDE is the next generation integrated development environment for IoT:
 
-* Cross-platform builder without external dependencies to the system
+* Cross-platform code builder without external dependencies to the system
   software:
 
     - 200+ embedded boards
@@ -26,48 +24,41 @@ for IoT development:
     - 10+ frameworks
 
 * C/C++ Intelligent code completion
-* C/C++ Smart code linter
+* C/C++ Smart code linter for super-fast coding
 * Library Manager for the hundreds popular libraries
-* Built-in Terminal with :ref:`PlatformIO CLI <userguide>` (``pio``, ``platformio``)
+* Multi-projects workflow with multiple panes
+* Multiple panes
+* Themes support with dark and light colors
+* Serial Port Monitor
+* Built-in Terminal with :ref:`PlatformIO CLI <userguide>` tool (``pio``, ``platformio``)
 
-Atom is a source code editor that's modern, approachable,
-yet hackable to the core—a tool you can customize to do anything but also use
-productively without ever touching a config file.
+PlatformIO IDE is based on GitHub's `Atom <https://atom.io>`_ source
+code editor that's modern, approachable, yet hackable to the core; a tool you
+can customize to do anything but also use productively without ever touching a
+config file.
 
-.. warning::
-
-    PlatformIO IDE is **in beta testing**. Please report all issues to
-    `PlatformIO IDE issues tracker <https://github.com/platformio/platformio-atom-ide/issues>`_.
 
 .. contents::
-
-Requirements
-------------
-
-The only one requirement is `Python Interpreter <https://www.python.org>`_.
-PlatformIO is written in Python and works on Mac OS X, Linux, Windows OS and
-ARM-based credit-card sized computers (Raspberry Pi, BeagleBone, CubieBoard).
 
 Installation
 ------------
 
-:Python:
+1. Download and install Atom source code editor
 
-    Python is installed on Mac OS X and Linux OS by default. The only **Windows Users**
-    should install it manually. Please `Download the latest Python 2.7.x <https://www.python.org/downloads/>`_
-    and install it. **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
-    "Customize" stage, otherwise ``python`` command will not be available.
+    - `Download for Mac <https://atom.io/download/mac>`_
+    - `Download for Windows <https://atom.io/download/windows>`_
+    - `Download .deb <https://atom.io/download/deb>`_
+    - `Download .rpm <https://atom.io/download/rpm>`_
+    - `Other platforms <https://github.com/atom/atom/releases/latest>`_
 
-:Atom: Download and install `Atom <https://atom.io>`_ source code editor
 
-:PlatformIO IDE:
+2. Open Atom Package Manager and search for `platformio-ide <https://atom.io/packages/platformio-ide>`_
 
-    Install `platformio-ide <https://atom.io/packages/platformio-ide>`_ package
-    using:
+    - **Mac OS X**: ``Menu: Atom > Preferences > Install``
+    - **Windows**: ``Menu: File > Settings > Install``
+    - **Linux**: ``Menu: Edit > Preferences > Install``
 
-        - **Mac OS X**: ``Menu: Atom > Preferences > Install``
-        - **Windows**: ``Menu: File > Settings > Install``
-        - **Linux**: ``Menu: Edit > Preferences > Install``
+.. image:: ../_static/ide-atom-platformio-install.png
 
 User Guide
 ----------
@@ -83,8 +74,58 @@ new menu item named ``Menu: PlatformIO`` (after ``Menu: Help`` item).
 
 .. image:: ../_static/ide-atom-platformio-menu-item.png
 
-Building / Uploading / etc.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PlatformIO Toolbar
+~~~~~~~~~~~~~~~~~~
+
+
+PlatformIO IDE Toolbar contains the quick access button to the popular commands.
+Each button contains hint (delay mouse on it).
+
+.. image:: ../_static/ide-atom-platformio-toolbar.png
+
+* PlatformIO: Build
+* PlatformIO: Upload
+* PlatformIO: Clean
+* Toggle build panel
+* ||
+* New File
+* Add/Open Project Folder...
+* Find in Project...
+* ||
+* Terminal
+* Serial Ports
+* Serial Monitor
+* ||
+* Settings
+* PlatformIO Documentation
+
+.. _ide_atom_quickstart:
+
+Quickstart
+~~~~~~~~~~
+
+:Step 1:
+
+    Create empty directory for the future project. Add it to PlatformIO IDE
+    using (folder) button on the Toolbar or ``Menu: File > Add Project
+    Folder...``
+
+:Step 2:
+
+    Initialize new PlatformIO based project using ``Menu: PlatformIO >
+    Initialize new Project (or update existing)`` and select boards.
+    Put your source code ``*.h, *.c, *.cpp, *.S, *.ino, etc``. files to ``src``
+    directory.
+
+:Step 3:
+
+    Process the project environments. More details :ref:`ide_atom_building_targets`.
+
+
+.. _ide_atom_building_targets:
+
+Building / Uploading / Targets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * ``cmd-alt-b`` / ``ctrl-alt-b`` / ``f9`` builds project without auto-uploading.
 * ``cmd-alt-u`` / ``ctrl-alt-u`` builds and uploads (if no errors).
@@ -113,39 +154,35 @@ Terminal and run ``clang --version``. If ``clang`` is not installed, then instal
 - **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
 
 .. warning::
-    The libraries which are added, installed or used in the project
-    after initializing process will not be reflected in code completion. To fix
-    it you need to reinitialize project using ``Menu: PlatformIO > Initialize new Project (or update existing)``.
+    The libraries which are added/installed after initializing process will
+    not be reflected in code linter. You need ``Menu: PlatformIO >
+    Rebuild C/C++ Project Index (Autocomplete, Linter)``.
 
 Code linter
 ~~~~~~~~~~~
 
-PlatformIO IDE uses PlatformIO's pre-built GCC toolchains for code linting. You
-can customize it in ``.gcc-flags.json`` which will be generated for the selected
-board in the project directory using
+PlatformIO IDE uses PlatformIO's pre-built GCC toolchains for code linting. The
+settings for Linter are located in ``.gcc-flags.json``. This file will be
+automatically created and preconfigured when you initialize project using
 ``Menu: PlatformIO > Initialize new Project (or update existing)``.
 
 .. warning::
-    The libraries which are added, installed or used in the project
-    after initializing process will not be reflected in code linter. To fix
-    it you need to reinitialize project using ``Menu: PlatformIO > Initialize new Project (or update existing)``.
+    The libraries which are added/installed after initializing process will
+    not be reflected in code linter. You need ``Menu: PlatformIO >
+    Rebuild C/C++ Project Index (Autocomplete, Linter)``.
+
+
+.. error::
+    If you have error like ``linter-gcc: Executable not found`` and
+    ``"***/.platformio/packages/toolchain-atmelavr/bin/avr-g++" not found``
+    please ``Menu: PlatformIO > Initialize new Project (or update existing)``.
 
 Install Shell Commands
 ~~~~~~~~~~~~~~~~~~~~~~
 
 To install ``platformio`` and ``pio`` shell commands please use ``Menu:
 PlatformIO > Install Shell Commands``. It will allow you to call PlatformIO from
-other process, terminals and etc.
-
-Serial Monitor
-~~~~~~~~~~~~~~
-
-Serial Monitor was temporary disabled in PlatformIO IDE 0.2.1. See
-`issue #17 <https://github.com/platformio/platformio-atom-ide/issues/17>`_.
-
-Temporary solution is to ``Menu: PlatformIO > Install Shell Commands`` and use
-:ref:`cmd_serialports_monitor` from system Terminal application (not built-in in
-PlatformIO IDE).
+other process, terminal and etc.
 
 Known issues
 ~~~~~~~~~~~~
