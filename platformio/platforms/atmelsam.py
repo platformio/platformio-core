@@ -40,6 +40,10 @@ class AtmelsamPlatform(BasePlatform):
             "alias": "framework"
         },
 
+        "framework-mbed": {
+            "alias": "framework"
+        },
+
         "tool-bossac": {
             "alias": "uploader"
         },

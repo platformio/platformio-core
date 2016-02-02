@@ -10,6 +10,8 @@ PlatformIO 2.0
 * Better integration of PlatformIO Builder with PlatformIO IDE Linter
 * Fixed issue with removing temporary file while converting ``*.ino`` to
   ``*.cpp``
+* Fixed missing dependency (mbed framework) for Atmel SAM development platform
+  (`issue #487 <https://github.com/platformio/platformio/issues/487>`_)
 
 2.8.2 (2016-01-29)
 ~~~~~~~~~~~~~~~~~~
