@@ -2,5 +2,5 @@
 -I{{include}}
 % end
 % for define in defines:
--D{{define}}
+-D{{!define}}
 % end
