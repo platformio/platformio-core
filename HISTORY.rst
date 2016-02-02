@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.8.3 (2016-??-??)
+2.8.3 (2016-02-02)
 ~~~~~~~~~~~~~~~~~~
 
 * Better integration of PlatformIO Builder with PlatformIO IDE Linter
