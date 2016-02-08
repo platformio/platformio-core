@@ -259,7 +259,7 @@
             "f_cpu": "80000000L",
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
-            "variant": "generic"
+            "variant": "nodemcu"
         },
         "frameworks": ["arduino"],
         "name": "ESP-WROOM-02",
@@ -267,7 +267,7 @@
         "upload": {
             "maximum_ram_size": 51200,
             "maximum_size": 4194304,
-            "resetmethod": "ck",
+            "resetmethod": "nodemcu",
             "require_upload_port" : true,
             "speed": 115200
         },
