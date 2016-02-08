@@ -119,11 +119,19 @@ if "BOARD" in env:
             LDSCRIPT_PATH="${BOARD_OPTIONS['build']['ldscript']}"
         )
 
-    if env['PLATFORM'] != env.get("BOARD_OPTIONS", {}).get("platform"):
-        env.Exit(
-            "Error: '%s' platform doesn't support this board. "
-            "Use '%s' platform instead." % (
-                env['PLATFORM'], env.get("BOARD_OPTIONS", {}).get("platform")))
+    supported_platforms = env.get("BOARD_OPTIONS", {}).get("platform")
+    if isinstance(supported_platforms, list):
+        if env['PLATFORM'] not in supported_platforms:
+            env.Exit(
+                "Error: '%s' platform doesn't support this board. "
+                "Use one of following platform instead: '%s'." % (
+                    env['PLATFORM'], "', '".join(supported_platforms)))
+    else:
+        if env['PLATFORM'] != supported_platforms:
+            env.Exit(
+                "Error: '%s' platform doesn't support this board. "
+                "Use '%s' platform instead." % (
+                    env['PLATFORM'], supported_platforms))
 
 
 for opt in ("LIB_IGNORE", "LIB_USE"):
