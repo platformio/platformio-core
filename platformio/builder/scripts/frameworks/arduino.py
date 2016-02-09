@@ -281,4 +281,4 @@ if "due" in env.subst("$BOARD"):
     )
     libs.append("sam_sam3x8e_gcc_rel")
 
-env.Append(LIBS=libs)
+env.Prepend(LIBS=libs)
