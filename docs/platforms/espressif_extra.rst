@@ -26,16 +26,37 @@ Custom FLASH Frequency
 See :ref:`projectconf_board_f_flash` option from :ref:`projectconf`. Possible
 values:
 
-* 20000000L
-* 26000000L
-* 40000000L
-* 80000000L
+* ``20000000L``
+* ``26000000L``
+* ``40000000L``
+* ``80000000L``
 
 .. code-block:: ini
 
     [env:myenv]
     # set frequency to 80MHz
     board_f_flash = 80000000L
+
+Custom FLASH Mode
+-----------------
+
+Flash chip interface mode. This parameter is stored in the binary image
+header, along with the flash size and flash frequency. The ROM bootloader
+in the ESP chip uses the value of these parameters in order to know how to
+talk to the flash chip.
+
+See :ref:`projectconf_board_flash_mode` option from :ref:`projectconf`. Possible
+values:
+
+* ``qio``
+* ``qout``
+* ``dio``
+* ``dout``
+
+.. code-block:: ini
+
+    [env:myenv]
+    board_flash_mode = qio
 
 Custom Reset Method
 -------------------

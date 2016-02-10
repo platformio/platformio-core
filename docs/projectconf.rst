@@ -220,6 +220,14 @@ format of this option is ``C-like long integer`` value with ``L`` suffix. The
 This option isn't available for the all development platforms. The only
 :ref:`platform_espressif` supports it.
 
+.. _projectconf_board_flash_mode:
+
+``board_flash_mode``
+^^^^^^^^^^^^^^^^^^^^
+
+Flash chip interface mode. This option isn't available for the all development
+platforms. The only :ref:`platform_espressif` supports it.
+
 Building options
 ~~~~~~~~~~~~~~~~
 
