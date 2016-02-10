@@ -10,6 +10,8 @@ PlatformIO 2.0
 * Fixed issue with ``CPPDEFINES`` which contain space and break PlatformIO
   IDE Linter
   (`IDE issue #34 <https://github.com/platformio/platformio-atom-ide/issues/34>`_)
+* Fixed unable to link C++ standard library to Espressif platform build
+  (`issue #503 <https://github.com/platformio/platformio/issues/503>`_)
 
 2.8.3 (2016-02-02)
 ~~~~~~~~~~~~~~~~~~
