@@ -228,6 +228,7 @@ def DumpIDEData(env):
     # https://github.com/platformio/platformio-atom-ide/issues/34
     _new_defines = []
     for item in env_.get("CPPDEFINES", []):
+        item = item.replace('\\"', '"')
         if " " in item:
             _new_defines.append(item.replace(" ", "\\\\ "))
         else:
