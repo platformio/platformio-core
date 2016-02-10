@@ -215,14 +215,7 @@ def DumpIDEData(env):
 
     env_ = env.Clone()
 
-    # TODO tmp fix https://github.com/platformio/platformio-atom-ide/issues/34
-    _new_defines = []
-    for item in env_.get("CPPDEFINES", []):
-        if " " not in item:
-            _new_defines.append(item)
-    env_.Replace(CPPDEFINES=_new_defines)
-
-    return {
+    data = {
         "defines": get_defines(env_),
         "includes": get_includes(env_),
         "cc_flags": env_.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
@@ -231,6 +224,23 @@ def DumpIDEData(env):
         "cxx_path": where_is_program(
             env_.subst("$CXX"), env_.subst("${ENV['PATH']}"))
     }
+
+    # https://github.com/platformio/platformio-atom-ide/issues/34
+    _new_defines = []
+    for item in env_.get("CPPDEFINES", []):
+        if " " in item:
+            _new_defines.append(item.replace(" ", "\\\\ "))
+        else:
+            _new_defines.append(item)
+    env_.Replace(CPPDEFINES=_new_defines)
+
+    data.update({
+        "cc_flags": env_.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
+        "cxx_flags": env_.subst(
+            "$SHCXXFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS")
+    })
+
+    return data
 
 
 def GetCompilerType(env):

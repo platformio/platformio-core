@@ -7,7 +7,7 @@ PlatformIO 2.0
 2.8.4 (2016-02-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Temporary disabled ``CPPDEFINES`` which contain space and break PlatformIO
+* Fixed issue with ``CPPDEFINES`` which contain space and break PlatformIO
   IDE Linter
   (`IDE issue #34 <https://github.com/platformio/platformio-atom-ide/issues/34>`_)
 
