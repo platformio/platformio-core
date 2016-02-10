@@ -52,6 +52,7 @@ commonvars.AddVariables(
     ("BOARD_MCU",),
     ("BOARD_F_CPU",),
     ("BOARD_F_FLASH",),
+    ("BOARD_FLASH_MODE",),
 
     # upload options
     ("UPLOAD_PORT",),

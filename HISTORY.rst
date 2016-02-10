@@ -8,9 +8,12 @@ PlatformIO 2.0
 ~~~~~~~~~~~~~~~~~~
 
 * Added ``board_f_flash`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
-  which allows to specify `custom flash frequency <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-flash-frequency>`_
+  which allows to specify `custom flash chip frequency <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-flash-frequency>`_
   for Espressif development platform
   (`issue #501 <https://github.com/platformio/platformio/issues/501>`_)
+* Added ``board_flash_mode`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  which allows to specify `custom flash chip mode <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-flash-mode>`_
+  for Espressif development platform
 * Fixed issue with ``CPPDEFINES`` which contain space and break PlatformIO
   IDE Linter
   (`IDE issue #34 <https://github.com/platformio/platformio-atom-ide/issues/34>`_)

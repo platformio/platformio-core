@@ -149,7 +149,7 @@ env.Append(
                 '"%s"' % join("$PLATFORMFW_DIR", "bootloaders",
                               "eboot", "eboot.elf"),
                 "-bo", "$TARGET",
-                "-bm", "dio",
+                "-bm", "$BOARD_FLASH_MODE",
                 "-bf", "${__get_board_f_flash(__env__)}",
                 "-bz", "${__get_flash_size(__env__)}",
                 "-bs", ".text",
