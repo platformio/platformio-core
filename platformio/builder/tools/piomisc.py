@@ -27,7 +27,7 @@ class InoToCPPConverter(object):
 
     PROTOTYPE_RE = re.compile(
         r"""^(
-        (\s*[a-z_\d]+){1,2}         # return type
+        (\s*[a-z_\d]+\*?){1,2}      # return type
         (\s+[a-z_\d]+\s*)           # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*\{                      # must end with {

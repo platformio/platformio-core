@@ -23,6 +23,9 @@ PlatformIO 2.0
   (`IDE issue #34 <https://github.com/platformio/platformio-atom-ide/issues/34>`_)
 * Fixed unable to link C++ standard library to Espressif platform build
   (`issue #503 <https://github.com/platformio/platformio/issues/503>`_)
+* Fixed issue with pointer (``char* myfunc()``) while converting from ``*.ino``
+  to ``*.cpp``
+  (`issue #506 <https://github.com/platformio/platformio/issues/506>`_)
 
 2.8.3 (2016-02-02)
 ~~~~~~~~~~~~~~~~~~
