@@ -169,7 +169,7 @@ NXP
       - LPC1768
       - 96 MHz
       - 512 Kb
-      - 32 Kb
+      - 64 Kb
 
 Outrageous Circuits
 ~~~~~~~~~~~~~~~~~~~
@@ -209,7 +209,7 @@ SeeedStudio
       - LPC1768
       - 96 MHz
       - 512 Kb
-      - 32 Kb
+      - 64 Kb
 
 Solder Splash Labs
 ~~~~~~~~~~~~~~~~~~
@@ -269,4 +269,4 @@ u-blox
       - LPC1768
       - 96 MHz
       - 512 Kb
-      - 32 Kb
+      - 64 Kb

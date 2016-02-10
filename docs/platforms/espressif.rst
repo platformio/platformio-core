@@ -95,6 +95,26 @@ Adafruit
       - 4096 Kb
       - 80 Kb
 
+Doit
+~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``espduino``
+      - `ESPDuino (ESP-13 Module) <https://www.tindie.com/products/doit/espduinowifi-uno-r3/>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
 ESPino
 ~~~~~~
 
@@ -149,6 +169,27 @@ Espressif
       - 4096 Kb
       - 80 Kb
 
+    * - ``esp_wroom_02``
+      - `ESP-WROOM-02 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 50 Kb
+
+    * - ``espresso_lite_v1``
+      - `ESPresso Lite 1.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
+    * - ``espresso_lite_v2``
+      - `ESPresso Lite 2.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
 NodeMCU
 ~~~~~~~
 
@@ -163,7 +204,14 @@ NodeMCU
       - RAM
 
     * - ``nodemcu``
-      - `NodeMCU 0.9 / 1.0 <http://www.nodemcu.com/>`_
+      - `NodeMCU 0.9 (ESP-12 Module) <http://www.nodemcu.com/>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
+    * - ``nodemcuv2``
+      - `NodeMCU 1.0 (ESP-12E Module) <http://www.nodemcu.com/>`_
       - ESP8266
       - 80 MHz
       - 4096 Kb
@@ -209,6 +257,13 @@ SparkFun
       - 512 Kb
       - 80 Kb
 
+    * - ``thingdev``
+      - `SparkFun ESP8266 Thing Dev <https://www.sparkfun.com/products/13231>`_
+      - ESP8266
+      - 80 MHz
+      - 512 Kb
+      - 80 Kb
+
 SweetPea
 ~~~~~~~~
 
@@ -229,6 +284,26 @@ SweetPea
       - 4096 Kb
       - 80 Kb
 
+ThaiEasyElec
+~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``espinotee``
+      - `ThaiEasyElec ESPino <http://www.thaieasyelec.com/products/wireless-modules/wifi-modules/espino-wifi-development-board-detail.html>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
 WeMos
 ~~~~~
 
@@ -243,14 +318,14 @@ WeMos
       - RAM
 
     * - ``d1``
-      - `WeMos D1 <http://www.wemos.cc/wiki/doku.php?id=en:d1>`_
+      - `WeMos D1(Retired) <http://www.wemos.cc/wiki/doku.php?id=en:d1>`_
       - ESP8266
       - 80 MHz
       - 4096 Kb
       - 80 Kb
 
     * - ``d1_mini``
-      - `WeMos D1 mini <http://www.wemos.cc/wiki/doku.php?id=en:d1_mini>`_
+      - `WeMos D1 R2 & mini <http://www.wemos.cc/wiki/doku.php?id=en:d1_mini>`_
       - ESP8266
       - 80 MHz
       - 4096 Kb

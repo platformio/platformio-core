@@ -7,6 +7,10 @@ PlatformIO 2.0
 2.8.4 (2016-02-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for the new ESP8266-based boards (ESPDuino, ESP-WROOM-02,
+  ESPresso Lite 1.0 & 2.0, SparkFun ESP8266 Thing Dev, ThaiEasyElec ESPino) to
+  `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  development platform
 * Added ``board_f_flash`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
   which allows to specify `custom flash chip frequency <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-flash-frequency>`_
   for Espressif development platform
