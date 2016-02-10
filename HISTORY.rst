@@ -7,6 +7,10 @@ PlatformIO 2.0
 2.8.4 (2016-02-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added ``board_f_flash`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  which allows to specify `custom flash frequency <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-flash-frequency>`_
+  for Espressif development platform
+  (`issue #501 <https://github.com/platformio/platformio/issues/501>`_)
 * Fixed issue with ``CPPDEFINES`` which contain space and break PlatformIO
   IDE Linter
   (`IDE issue #34 <https://github.com/platformio/platformio-atom-ide/issues/34>`_)
@@ -46,7 +50,7 @@ PlatformIO 2.0
 * Added SPL-Framework support for Nucleo F401RE board
   (`issue #453 <https://github.com/platformio/platformio/issues/453>`_)
 * Added ``upload_resetmethod`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
-  and allowed to `change default upload reset method <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-reset-method>`_
+  which allows to specify `custom upload reset method <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-reset-method>`_
   for Espressif development platform
   (`issue #444 <https://github.com/platformio/platformio/issues/444>`_)
 * Allowed to force output of color ANSI-codes or to disable progress bar even

@@ -4,6 +4,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP01",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.512k64.ld",
             "mcu": "esp8266",
             "variant": "generic"
@@ -27,6 +28,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP01",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.1m256.ld",
             "mcu": "esp8266",
             "variant": "generic"
@@ -50,6 +52,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
             "variant": "nodemcu"
@@ -73,6 +76,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
             "variant": "nodemcu"
@@ -96,6 +100,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
             "variant": "adafruit"
@@ -119,6 +124,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_MOD_WIFI_ESP8266",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.2m.ld",
             "mcu": "esp8266",
             "variant": "generic"
@@ -142,6 +148,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_THING",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.512k64.ld",
             "mcu": "esp8266",
             "variant": "thing"
@@ -165,6 +172,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP210",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
             "variant": "generic"
@@ -188,6 +196,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
             "variant": "d1"
@@ -211,6 +220,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
             "variant": "d1_mini"
@@ -234,6 +244,7 @@
             "core": "esp8266",
             "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
             "f_cpu": "80000000L",
+            "f_flash": "40000000L",
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
             "variant": "espino"
