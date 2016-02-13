@@ -55,8 +55,8 @@ Installation Methods
 
 Please *choose ONE of* the following methods:
 
-a) Python Package Manager
-~~~~~~~~~~~~~~~~~~~~~~~~~
+a) Python Package Manager ``pip``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The latest stable version of PlatformIO may be installed or upgraded via
 `pip <https://pip.pypa.io>`_ as follows:
