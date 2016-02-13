@@ -30,7 +30,7 @@ PlatformIO
    :target: https://gitter.im/platformio/platformio
 .. image:: https://img.shields.io/donate/PlatformIO.png?color=yellow
    :alt: Donate for PlatformIO.Org
-   :target: https://www.liqpay.com/api/3/checkout?data=eyJ2ZXJzaW9uIjozLCJhY3Rpb24iOiJwYXlkb25hdGUiLCJwdWJsaWNfa2V5IjoiaTc0NzkxMDA2NjIxIiwiYW1vdW50IjoiMSIsImN1cnJlbmN5IjoiVVNEIiwiZGVzY3JpcHRpb24iOiJEb25hdGlvbiBmb3IgUGxhdGZvcm1JTy5PcmciLCJ0eXBlIjoiZG9uYXRlIiwibGFuZ3VhZ2UiOiJlbiJ9&signature=XYvETjqlpoFhoFtxUJlF6hQyS7Y%3D
+   :target: http://platformio.org/donate/
 
 
 `Home & Demo <http://platformio.org>`_ |
