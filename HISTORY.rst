@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.8.4 (2016-02-??)
+2.8.4 (2016-02-17)
 ~~~~~~~~~~~~~~~~~~
 
 * Added support for the new ESP8266-based boards (ESPDuino, ESP-WROOM-02,
