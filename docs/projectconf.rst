@@ -433,6 +433,8 @@ When no targets are defined, *PlatformIO* will build only sources by default.
 Uploading options
 ~~~~~~~~~~~~~~~~~
 
+.. _projectconf_upload_port:
+
 ``upload_port``
 ^^^^^^^^^^^^^^^
 
@@ -448,6 +450,9 @@ automatically.
 
 To print all available serial ports use :ref:`cmd_serialports` command.
 
+This option can be set by global environment variable
+:envvar:`PLATFORMIO_UPLOAD_PORT`.
+
 ``upload_protocol``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -461,11 +466,16 @@ A protocol that "uploader" tool uses to talk to the board.
 A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
 which "uploader" tool uses when sending firmware to board.
 
+.. _projectconf_upload_flags:
+
 ``upload_flags``
 ^^^^^^^^^^^^^^^^
 
 Extra flags for uploader. Will be added to the end of uploader command. If you
 need to override uploader command or base flags please use :ref:`projectconf_extra_script`.
+
+This option can be set by global environment variable
+:envvar:`PLATFORMIO_UPLOAD_FLAGS`.
 
 .. _projectconf_upload_resetmethod:
 

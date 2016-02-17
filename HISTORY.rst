@@ -18,6 +18,10 @@ PlatformIO 2.0
 * Added ``board_flash_mode`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
   which allows to specify `custom flash chip mode <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-flash-mode>`_
   for Espressif development platform
+* Handle new environment variables
+  `PLATFORMIO_UPLOAD_PORT <http://docs.platformio.org/en/latest/envvars.html#platformio-upload-port>`_
+  and `PLATFORMIO_UPLOAD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-upload-flags>`_
+  (`IDE issue #518 <https://github.com/platformio/platformio/issues/518>`_)
 * Fixed issue with ``CPPDEFINES`` which contain space and break PlatformIO
   IDE Linter
   (`IDE issue #34 <https://github.com/platformio/platformio-atom-ide/issues/34>`_)

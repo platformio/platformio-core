@@ -139,6 +139,13 @@ if env.subst("$PIOPACKAGE_TOOLCHAIN"):
         env.subst(join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN", "bin"))
     )
 
+# handle custom variable from system environment
+for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPT",
+            "UPLOAD_PORT", "UPLOAD_FLAGS"):
+    k = "PLATFORMIO_%s" % var
+    if environ.get(k):
+        env[var] = environ.get(k)
+
 env.SConscriptChdir(0)
 env.SConsignFile(join("$PIOENVS_DIR", ".sconsign.dblite"))
 env.SConscript("$BUILD_SCRIPT")
@@ -146,9 +153,8 @@ env.SConscript("$BUILD_SCRIPT")
 if "UPLOAD_FLAGS" in env:
     env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
 
-if environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")):
-    env.SConscript(
-        environ.get("PLATFORMIO_EXTRA_SCRIPT", env.get("EXTRA_SCRIPT")))
+if env.get("EXTRA_SCRIPT"):
+    env.SConscript(env.get("EXTRA_SCRIPT"))
 
 if "envdump" in COMMAND_LINE_TARGETS:
     print env.Dump()

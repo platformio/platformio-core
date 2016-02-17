@@ -32,7 +32,7 @@ import re
 import sys
 import xml.etree.ElementTree as ElementTree
 from binascii import crc32
-from os import getenv, walk
+from os import walk
 from os.path import basename, isfile, join, normpath
 
 from SCons.Script import DefaultEnvironment
@@ -233,8 +233,7 @@ env.Replace(
 # restore external build flags
 env.ProcessFlags([
     env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags"),
-    env.get("BUILD_FLAGS"),
-    getenv("PLATFORMIO_BUILD_FLAGS"),
+    env.get("BUILD_FLAGS")
 ])
 
 # Hook for K64F and K22F
