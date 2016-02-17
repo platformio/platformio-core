@@ -21,7 +21,7 @@ PlatformIO 2.0
 * Handle new environment variables
   `PLATFORMIO_UPLOAD_PORT <http://docs.platformio.org/en/latest/envvars.html#platformio-upload-port>`_
   and `PLATFORMIO_UPLOAD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-upload-flags>`_
-  (`IDE issue #518 <https://github.com/platformio/platformio/issues/518>`_)
+  (`issue #518 <https://github.com/platformio/platformio/issues/518>`_)
 * Fixed issue with ``CPPDEFINES`` which contain space and break PlatformIO
   IDE Linter
   (`IDE issue #34 <https://github.com/platformio/platformio-atom-ide/issues/34>`_)
