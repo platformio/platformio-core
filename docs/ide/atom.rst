@@ -43,7 +43,7 @@ config file.
 Installation
 ------------
 
-1. Download and install Atom source code editor
+1. Download and install Atom text editor
 
     - `Download for Mac <https://atom.io/download/mac>`_
     - `Download for Windows <https://atom.io/download/windows>`_
