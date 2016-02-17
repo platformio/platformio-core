@@ -59,7 +59,7 @@ a) Python Package Manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The latest stable version of PlatformIO may be installed or upgraded via
-`pip <https://pip.pypa.io>`_ as follows:
+Python Package Manager (`pip <https://pip.pypa.io>`_) as follows:
 
 .. code-block:: bash
 

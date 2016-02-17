@@ -27,6 +27,9 @@ Platforms
     * - Name
       - Description
 
+    * - :ref:`platform_atmelsam`
+      - Atmel | SMART offers Flash- based ARM products based on the ARM Cortex-M0+, Cortex-M3 and Cortex-M4 architectures, ranging from 8KB to 2MB of Flash including a rich peripheral and feature mix.
+
     * - :ref:`platform_freescalekinetis`
       - Freescale Kinetis Microcontrollers is family of multiple hardware- and software-compatible ARM Cortex-M0+, Cortex-M4 and Cortex-M7-based MCU series. Kinetis MCUs offer exceptional low-power performance, scalability and feature integration.
 
@@ -295,7 +298,7 @@ NXP
       - LPC1768
       - 96 MHz
       - 512 Kb
-      - 32 Kb
+      - 64 Kb
 
 Nordic
 ~~~~~~
@@ -605,7 +608,7 @@ SeeedStudio
       - LPC1768
       - 96 MHz
       - 512 Kb
-      - 32 Kb
+      - 64 Kb
 
 Silicon Labs
 ~~~~~~~~~~~~
@@ -740,6 +743,6 @@ u-blox
       - LPC1768
       - 96 MHz
       - 512 Kb
-      - 32 Kb
+      - 64 Kb
 
 .. include:: mbed_extra.rst

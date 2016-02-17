@@ -146,12 +146,15 @@ def after_upgrade(ctx):
         click.style("star", fg="cyan"),
         click.style("https://github.com/platformio/platformio", fg="cyan")
     ))
-
     if not getenv("PLATFORMIO_IDE"):
         click.echo("- %s PlatformIO IDE for IoT development > %s" % (
             click.style("try", fg="cyan"),
             click.style("http://platformio.org/", fg="cyan")
         ))
+    click.echo("- %s to keep PlatformIO alive! > %s" % (
+        click.style("donate", fg="cyan"),
+        click.style("http://platformio.org/donate/", fg="cyan")
+    ))
 
     click.echo("*" * terminal_width)
     click.echo("")
@@ -200,10 +203,16 @@ def check_platformio_upgrade():
     click.secho("There is a new version %s of PlatformIO available.\n"
                 "Please upgrade it via `" % latest_version,
                 fg="yellow", nl=False)
-    click.secho("platformio upgrade", fg="cyan", nl=False)
-    click.secho("` or `", fg="yellow", nl=False)
-    click.secho("pip install -U platformio", fg="cyan", nl=False)
-    click.secho("` command.\nChanges: ", fg="yellow", nl=False)
+    if getenv("PLATFORMIO_IDE"):
+        click.secho("PlatformIO IDE Menu: Upgrade PlatformIO",
+                    fg="cyan", nl=False)
+        click.secho("`.", fg="yellow")
+    else:
+        click.secho("platformio upgrade", fg="cyan", nl=False)
+        click.secho("` or `", fg="yellow", nl=False)
+        click.secho("pip install -U platformio", fg="cyan", nl=False)
+        click.secho("` command.", fg="yellow")
+    click.secho("Changes: ", fg="yellow", nl=False)
     click.secho("http://docs.platformio.org/en/latest/history.html",
                 fg="cyan")
     click.echo("*" * terminal_width)

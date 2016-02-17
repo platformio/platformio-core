@@ -208,6 +208,25 @@ The full list of ``board_f_cpu`` for the popular embedded platforms you can
 find in *Boards* section of :ref:`platforms`. See "Frequency" column. You can
 overclock a board by specifying a ``board_f_cpu`` value other than the default.
 
+.. _projectconf_board_f_flash:
+
+``board_f_flash``
+^^^^^^^^^^^^^^^^^
+
+An option ``board_f_flash`` is used to define FLASH chip frequency (Hertz, Clock). A
+format of this option is ``C-like long integer`` value with ``L`` suffix. The
+1 Hertz is equal to ``1L``, then 40 Mhz (Mega Hertz) is equal to ``40000000L``.
+
+This option isn't available for the all development platforms. The only
+:ref:`platform_espressif` supports it.
+
+.. _projectconf_board_flash_mode:
+
+``board_flash_mode``
+^^^^^^^^^^^^^^^^^^^^
+
+Flash chip interface mode. This option isn't available for the all development
+platforms. The only :ref:`platform_espressif` supports it.
 
 Building options
 ~~~~~~~~~~~~~~~~
@@ -414,6 +433,8 @@ When no targets are defined, *PlatformIO* will build only sources by default.
 Uploading options
 ~~~~~~~~~~~~~~~~~
 
+.. _projectconf_upload_port:
+
 ``upload_port``
 ^^^^^^^^^^^^^^^
 
@@ -429,6 +450,9 @@ automatically.
 
 To print all available serial ports use :ref:`cmd_serialports` command.
 
+This option can be set by global environment variable
+:envvar:`PLATFORMIO_UPLOAD_PORT`.
+
 ``upload_protocol``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -442,11 +466,16 @@ A protocol that "uploader" tool uses to talk to the board.
 A connection speed (`baud rate <http://en.wikipedia.org/wiki/Baud>`_)
 which "uploader" tool uses when sending firmware to board.
 
+.. _projectconf_upload_flags:
+
 ``upload_flags``
 ^^^^^^^^^^^^^^^^
 
 Extra flags for uploader. Will be added to the end of uploader command. If you
 need to override uploader command or base flags please use :ref:`projectconf_extra_script`.
+
+This option can be set by global environment variable
+:envvar:`PLATFORMIO_UPLOAD_FLAGS`.
 
 .. _projectconf_upload_resetmethod:
 

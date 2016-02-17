@@ -70,8 +70,8 @@ Allows to override :ref:`projectconf` option :ref:`projectconf_pio_envs_dir`.
 Allows to override :ref:`projectconf` option :ref:`projectconf_pio_data_dir`.
 
 
-Builder
--------
+Building
+--------
 
 .. envvar:: PLATFORMIO_BUILD_FLAGS
 
@@ -88,6 +88,18 @@ Allows to set :ref:`projectconf` option :ref:`projectconf_src_filter`.
 .. envvar:: PLATFORMIO_EXTRA_SCRIPT
 
 Allows to set :ref:`projectconf` option :ref:`projectconf_extra_script`.
+
+
+Uploading
+---------
+
+.. envvar:: PLATFORMIO_UPLOAD_PORT
+
+Allows to set :ref:`projectconf` option :ref:`projectconf_upload_port`.
+
+.. envvar:: PLATFORMIO_UPLOAD_FLAGS
+
+Allows to set :ref:`projectconf` option :ref:`projectconf_upload_flags`.
 
 
 Settings

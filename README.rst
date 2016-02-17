@@ -30,18 +30,18 @@ PlatformIO
    :target: https://gitter.im/platformio/platformio
 .. image:: https://img.shields.io/donate/PlatformIO.png?color=yellow
    :alt: Donate for PlatformIO.Org
-   :target: https://www.liqpay.com/api/3/checkout?data=eyJ2ZXJzaW9uIjozLCJhY3Rpb24iOiJwYXlkb25hdGUiLCJwdWJsaWNfa2V5IjoiaTc0NzkxMDA2NjIxIiwiYW1vdW50IjoiMSIsImN1cnJlbmN5IjoiVVNEIiwiZGVzY3JpcHRpb24iOiJEb25hdGlvbiBmb3IgUGxhdGZvcm1JTy5PcmciLCJ0eXBlIjoiZG9uYXRlIiwibGFuZ3VhZ2UiOiJlbiJ9&signature=XYvETjqlpoFhoFtxUJlF6hQyS7Y%3D
+   :target: http://platformio.org/#!/donate
 
 
 `Home & Demo <http://platformio.org>`_ |
+`PlatformIO IDE <http://platformio.org/#!/platformio-ide>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
-`Source Code <https://github.com/platformio>`_ |
-`Documentation <http://docs.platformio.org>`_ |
-`Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
+`Docs <http://docs.platformio.org>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_ |
-`Hackaday <https://hackaday.io/project/7980-platformio>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
-`Reddit <http://www.reddit.com/r/platformio/>`_
+`Hackaday <https://hackaday.io/project/7980-platformio>`_ |
+`Donate <http://platformio.org/#!/donate>`_ |
+`Contact Us <http://platformio.org/#!/contact>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
@@ -50,6 +50,11 @@ PlatformIO
 development. Cross-platform code builder and library manager. Continuous and
 IDE integration. Arduino and MBED compatible. Ready for Cloud compiling.
 
+* **PlatformIO IDE** - The next generation integrated development environment for IoT.
+  C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
+  Multi-projects workflow with Multiple Panes. Themes Support with dark and light colors.
+  Built-in Terminal with PlatformIO CLI tool and support for the powerful Serial Port Monitor.
+  All advanced instruments without leaving your favourite development environment.
 * **Development Platforms** - Embedded and Desktop development platforms with
   pre-built toolchains, debuggers, uploaders and frameworks which work under
   popular host OS: Mac, Windows, Linux (+ARM)
@@ -59,7 +64,7 @@ IDE integration. Arduino and MBED compatible. Ready for Cloud compiling.
 * **Library Manager** - Hundreds Popular Libraries are organized into single
   Web 2.0 platform: list by categories, keywords, authors, compatible
   platforms and frameworks; learn via examples; be up-to-date with the latest
-  version
+  version.
 
 *Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
@@ -68,6 +73,7 @@ libOpenCM3, etc.*
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-demo-wiring.gif
     :target: http://platformio.org
 
+* `PlatformIO IDE <http://platformio.org/#!/platformio-ide>`_
 * `Get Started <http://platformio.org/#!/get-started>`_
 * `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
 * `Development Platforms <http://platformio.org/#!/platforms>`_

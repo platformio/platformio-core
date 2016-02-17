@@ -27,7 +27,7 @@ class InoToCPPConverter(object):
 
     PROTOTYPE_RE = re.compile(
         r"""^(
-        (\s*[a-z_\d]+){1,2}         # return type
+        (\s*[a-z_\d]+\*?){1,2}      # return type
         (\s+[a-z_\d]+\s*)           # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*\{                      # must end with {
@@ -141,27 +141,27 @@ def DumpIDEData(env):
 
     BOARD_CORE = env.get("BOARD_OPTIONS", {}).get("build", {}).get("core")
 
-    def get_includes():
+    def get_includes(env_):
         includes = []
         # includes from used framework and libs
-        for item in env.get("VARIANT_DIRS", []):
+        for item in env_.get("VARIANT_DIRS", []):
             if "$BUILDSRC_DIR" in item[0]:
                 continue
-            includes.append(env.subst(item[1]))
+            includes.append(env_.subst(item[1]))
 
         # custom includes
-        for item in env.get("CPPPATH", []):
+        for item in env_.get("CPPPATH", []):
             if item.startswith("$BUILD_DIR"):
                 continue
-            includes.append(env.subst(item))
+            includes.append(env_.subst(item))
 
         # installed libs
-        for d in env.get("LIBSOURCE_DIRS", []):
-            lsd_dir = env.subst(d)
-            _append_lib_includes(lsd_dir, includes)
+        for d in env_.get("LIBSOURCE_DIRS", []):
+            lsd_dir = env_.subst(d)
+            _append_lib_includes(env_, lsd_dir, includes)
 
         # includes from toolchain
-        toolchain_dir = env.subst(
+        toolchain_dir = env_.subst(
             join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
         toolchain_incglobs = [
             join(toolchain_dir, "*", "include*"),
@@ -172,19 +172,19 @@ def DumpIDEData(env):
 
         return includes
 
-    def _append_lib_includes(libs_dir, includes):
+    def _append_lib_includes(env_, libs_dir, includes):
         if not isdir(libs_dir):
             return
-        for name in env.get("LIB_USE", []) + sorted(listdir(libs_dir)):
+        for name in env_.get("LIB_USE", []) + sorted(listdir(libs_dir)):
             if not isdir(join(libs_dir, name)):
                 continue
             # ignore user's specified libs
-            if name in env.get("LIB_IGNORE", []):
+            if name in env_.get("LIB_IGNORE", []):
                 continue
             if name == "__cores__":
                 if isdir(join(libs_dir, name, BOARD_CORE)):
                     _append_lib_includes(
-                        join(libs_dir, name, BOARD_CORE), includes)
+                        env_, join(libs_dir, name, BOARD_CORE), includes)
                 return
 
             include = (
@@ -195,16 +195,16 @@ def DumpIDEData(env):
             if include not in includes:
                 includes.append(include)
 
-    def get_defines():
+    def get_defines(env_):
         defines = []
         # global symbols
-        for item in env.get("CPPDEFINES", []):
+        for item in env_.get("CPPDEFINES", []):
             if isinstance(item, list):
                 item = "=".join(item)
-            defines.append(env.subst(item).replace('\\"', '"'))
+            defines.append(env_.subst(item).replace('\\"', '"'))
 
         # special symbol for Atmel AVR MCU
-        board = env.get("BOARD_OPTIONS", {})
+        board = env_.get("BOARD_OPTIONS", {})
         if board and board['platform'] == "atmelavr":
             defines.append(
                 "__AVR_%s__" % board['build']['mcu'].upper()
@@ -213,15 +213,35 @@ def DumpIDEData(env):
             )
         return defines
 
-    return {
-        "defines": get_defines(),
-        "includes": get_includes(),
-        "cc_flags": env.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
-        "cxx_flags": env.subst(
+    env_ = env.Clone()
+
+    data = {
+        "defines": get_defines(env_),
+        "includes": get_includes(env_),
+        "cc_flags": env_.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
+        "cxx_flags": env_.subst(
             "$SHCXXFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
         "cxx_path": where_is_program(
-            env.subst("$CXX"), env.subst("${ENV['PATH']}"))
+            env_.subst("$CXX"), env_.subst("${ENV['PATH']}"))
     }
+
+    # https://github.com/platformio/platformio-atom-ide/issues/34
+    _new_defines = []
+    for item in env_.get("CPPDEFINES", []):
+        item = item.replace('\\"', '"')
+        if " " in item:
+            _new_defines.append(item.replace(" ", "\\\\ "))
+        else:
+            _new_defines.append(item)
+    env_.Replace(CPPDEFINES=_new_defines)
+
+    data.update({
+        "cc_flags": env_.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
+        "cxx_flags": env_.subst(
+            "$SHCXXFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS")
+    })
+
+    return data
 
 
 def GetCompilerType(env):

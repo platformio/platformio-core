@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 import re
 from glob import glob
-from os import getenv, listdir, sep, walk
+from os import listdir, sep, walk
 from os.path import basename, dirname, isdir, isfile, join, normpath, realpath
 
 from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, SConscript
@@ -44,8 +44,7 @@ def BuildProgram(env):
 
     env.ProcessFlags([
         env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags"),
-        env.get("BUILD_FLAGS"),
-        getenv("PLATFORMIO_BUILD_FLAGS"),
+        env.get("BUILD_FLAGS")
     ])
 
     if env.get("FRAMEWORK"):
@@ -72,10 +71,7 @@ def BuildProgram(env):
         )
 
     # Handle SRC_BUILD_FLAGS
-    env.ProcessFlags([
-        env.get("SRC_BUILD_FLAGS", None),
-        getenv("PLATFORMIO_SRC_BUILD_FLAGS"),
-    ])
+    env.ProcessFlags([env.get("SRC_BUILD_FLAGS", None)])
 
     env.Append(
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
@@ -86,7 +82,7 @@ def BuildProgram(env):
 
     sources = env.LookupSources(
         "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
-        src_filter=getenv("PLATFORMIO_SRC_FILTER", env.get("SRC_FILTER")))
+        src_filter=env.get("SRC_FILTER"))
 
     if not sources and not COMMAND_LINE_TARGETS:
         env.Exit(

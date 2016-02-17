@@ -42,17 +42,17 @@ def _get_flash_size(env):
             else "%dM" % (board_max_size / 1048576))
 
 
-def _get_board_f_cpu(env):
-    f_cpu = env.subst("$BOARD_F_CPU")
-    f_cpu = str(f_cpu).replace("L", "")
-    return int(int(f_cpu) / 1000000)
+def _get_board_f_flash(env):
+    frequency = env.subst("$BOARD_F_FLASH")
+    frequency = str(frequency).replace("L", "")
+    return int(int(frequency) / 1000000)
 
 
 env = DefaultEnvironment()
 
 env.Replace(
     __get_flash_size=_get_flash_size,
-    __get_board_f_cpu=_get_board_f_cpu,
+    __get_board_f_flash=_get_board_f_flash,
 
     AR="xtensa-lx106-elf-ar",
     AS="xtensa-lx106-elf-as",
@@ -149,8 +149,8 @@ env.Append(
                 '"%s"' % join("$PLATFORMFW_DIR", "bootloaders",
                               "eboot", "eboot.elf"),
                 "-bo", "$TARGET",
-                "-bm", "dio",
-                "-bf", "${__get_board_f_cpu(__env__)}",
+                "-bm", "$BOARD_FLASH_MODE",
+                "-bf", "${__get_board_f_flash(__env__)}",
                 "-bz", "${__get_flash_size(__env__)}",
                 "-bs", ".text",
                 "-bp", "4096",

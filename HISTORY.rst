@@ -4,6 +4,33 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.8.4 (2016-02-17)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for the new ESP8266-based boards (ESPDuino, ESP-WROOM-02,
+  ESPresso Lite 1.0 & 2.0, SparkFun ESP8266 Thing Dev, ThaiEasyElec ESPino) to
+  `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  development platform
+* Added ``board_f_flash`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  which allows to specify `custom flash chip frequency <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-flash-frequency>`_
+  for Espressif development platform
+  (`issue #501 <https://github.com/platformio/platformio/issues/501>`_)
+* Added ``board_flash_mode`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  which allows to specify `custom flash chip mode <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-flash-mode>`_
+  for Espressif development platform
+* Handle new environment variables
+  `PLATFORMIO_UPLOAD_PORT <http://docs.platformio.org/en/latest/envvars.html#platformio-upload-port>`_
+  and `PLATFORMIO_UPLOAD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-upload-flags>`_
+  (`IDE issue #518 <https://github.com/platformio/platformio/issues/518>`_)
+* Fixed issue with ``CPPDEFINES`` which contain space and break PlatformIO
+  IDE Linter
+  (`IDE issue #34 <https://github.com/platformio/platformio-atom-ide/issues/34>`_)
+* Fixed unable to link C++ standard library to Espressif platform build
+  (`issue #503 <https://github.com/platformio/platformio/issues/503>`_)
+* Fixed issue with pointer (``char* myfunc()``) while converting from ``*.ino``
+  to ``*.cpp``
+  (`issue #506 <https://github.com/platformio/platformio/issues/506>`_)
+
 2.8.3 (2016-02-02)
 ~~~~~~~~~~~~~~~~~~
 
@@ -37,7 +64,7 @@ PlatformIO 2.0
 * Added SPL-Framework support for Nucleo F401RE board
   (`issue #453 <https://github.com/platformio/platformio/issues/453>`_)
 * Added ``upload_resetmethod`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
-  and allowed to `change default upload reset method <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-reset-method>`_
+  which allows to specify `custom upload reset method <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-reset-method>`_
   for Espressif development platform
   (`issue #444 <https://github.com/platformio/platformio/issues/444>`_)
 * Allowed to force output of color ANSI-codes or to disable progress bar even
