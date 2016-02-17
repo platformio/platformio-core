@@ -153,7 +153,7 @@ def after_upgrade(ctx):
         ))
     click.echo("- %s to keep PlatformIO alive! > %s" % (
         click.style("donate", fg="cyan"),
-        click.style("http://platformio.org/donate/", fg="cyan")
+        click.style("http://platformio.org/#!/donate", fg="cyan")
     ))
 
     click.echo("*" * terminal_width)
