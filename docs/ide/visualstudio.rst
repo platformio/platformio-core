@@ -14,6 +14,8 @@
 Visual Studio
 =============
 
+.. include:: _platformio_ide_extra.rst
+
 The `Microsoft Visual Studio (Free) <http://visualstudio.com/free>`_ is an integrated development environment (IDE) from Microsoft. Visual Studio includes a code editor supporting IntelliSense (the code completion component) as well as code refactoring.
 
 This software can be used with:

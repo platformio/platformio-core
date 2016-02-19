@@ -14,11 +14,19 @@
 Quickstart
 ==========
 
-.. hint::
+.. note::
     Please read `Get Started <http://platformio.org/#!/get-started>`_
-    article from the official WebSite.
+    from the official WebSite.
 
-1. :ref:`Install PlatformIO <installation>`.
+PlatformIO IDE
+--------------
+
+Please follow to the Quickstart section of :ref:`ide_atom`.
+
+PlatformIO CLI
+--------------
+
+1. :ref:`Install PlatformIO CLI <installation>`.
 
 2. Find board ``type`` using `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
    or via :ref:`cmd_boards` command.

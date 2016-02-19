@@ -14,6 +14,8 @@
 CLion
 =====
 
+.. include:: _platformio_ide_extra.rst
+
 The `CLion <https://www.jetbrains.com/clion/>`_ is a cross-platform C/C++ IDE
 for Linux, OS X, and Windows integrated with the CMake build system. The
 initial version will support the GCC and Clang compilers and GDB debugger.

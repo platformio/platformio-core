@@ -32,6 +32,7 @@ PlatformIO IDE is the next generation integrated development environment for IoT
 * Serial Port Monitor
 * Built-in Terminal with :ref:`PlatformIO CLI <userguide>` tool (``pio``, ``platformio``)
 
+
 PlatformIO IDE is based on GitHub's `Atom <https://atom.io>`_ source
 code editor that's modern, approachable, yet hackable to the core; a tool you
 can customize to do anything but also use productively without ever touching a
@@ -216,6 +217,11 @@ source files:
 
 There are two solutions:
 
+.. contents::
+    :local:
+
+.. _ide_atom_knownissues_sclarduino_manually:
+
 Convert Arduino file to C++ manually
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -236,7 +242,7 @@ For example, we have the next ``Demo.ino`` file:
 
 Let's convert it to  ``Demo.cpp``:
 
-1. Add ``#include <Arduino.h>`` at the top of file
+1. Add ``#include <Arduino.h>`` at the top of the source file
 2. Declare each custom function (excluding built-in, such as ``setup`` and ``loop``)
    before it will be called.
 
@@ -258,3 +264,26 @@ The final ``Demo.cpp``:
 
     void someFunction(int num) {
     }
+
+Force Arduino file as C++
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To force Smart Code Linter to use Arduino files as C++ please
+
+1. Open ``.gcc-flags.json`` file from the Initialized/Imported project. Add
+   ``-x c`` option at the beginning to ``gccDefaultCFlags`` and ``gccDefaultCppFlags``
+   fields:
+
+.. code-block:: json
+
+    {
+      "execPath": "...",
+      "gccDefaultCFlags": "-x c -fsyntax-only ...",
+      "gccDefaultCppFlags": "-x c -fsyntax-only ...",
+      "gccErrorLimit": 15,
+      "gccIncludePaths": "...",
+      "gccSuppressWarnings": false
+    }
+
+2. Perform all steps from :ref:`ide_atom_knownissues_sclarduino_manually`
+   (without renaming to ``.cpp``).

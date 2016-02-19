@@ -14,6 +14,8 @@
 Arduino
 =======
 
+.. include:: _platformio_ide_extra.rst
+
 The open-source `Arduino Software (IDE) <http://arduino.cc/en/main/software>`_
 makes it easy to write code and upload it to the board. It runs on *Windows,
 Mac OS X, and Linux*. The environment is written in *Java* and based on

@@ -14,6 +14,8 @@
 Eclipse
 =======
 
+.. include:: _platformio_ide_extra.rst
+
 The `Eclipse CDT (C/C++ Development Tooling) <https://eclipse.org/cdt/>`_
 Project provides a fully functional C and C++ Integrated Development
 Environment based on the Eclipse platform. Features include: support for

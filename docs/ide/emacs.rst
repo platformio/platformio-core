@@ -14,6 +14,8 @@
 Emacs
 =====
 
+.. include:: _platformio_ide_extra.rst
+
 GNU Emacs is an extensible, customizable text editor - and more. At its core is
 an interpreter for Emacs Lisp, a dialect of the
 `Lisp programming language <http://en.wikipedia.org/wiki/Lisp_programming_language>`_

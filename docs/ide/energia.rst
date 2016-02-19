@@ -14,6 +14,8 @@
 Energia
 =======
 
+.. include:: _platformio_ide_extra.rst
+
 The open-source `Energia Software (IDE) <http://energia.nu>`_
 makes it easy to write code and upload it to the board. It runs on *Windows,
 Mac OS X, and Linux*. The environment is written in *Java* and based on
