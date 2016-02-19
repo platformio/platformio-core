@@ -43,12 +43,30 @@ config file.
 Installation
 ------------
 
-1. Download and install Atom text editor
+PlatformIO IDE is the next generation integrated development environment for IoT.
+It's built on top of `GitHub's Atom "hackable" text editor <https://atom.io>`_.
+If you have already Atom installed, please install `PlatformIO IDE for Atom package <https://atom.io/packages/platformio-ide>`_.
 
-    - `Download for Mac <https://atom.io/download/mac>`_
-    - `Download for Windows <https://atom.io/download/windows>`_
-    - `Download .deb <https://atom.io/download/deb>`_
-    - `Download .rpm <https://atom.io/download/rpm>`_
+Automatic Installation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Please download PlatformIO IDE for Atom bundle with built-in auto installer
+(be patient and let the installation complete)
+
+- `Download PlatformIO IDE for Mac <https://sourceforge.net/projects/platformio-storage/files/ide-bundles/platformio-atom-windows.exe/download>`_
+- `Download PlatformIO IDE for Windows <https://sourceforge.net/projects/platformio-storage/files/ide-bundles/platformio-atom-mac.zip/download>`_
+- `Download PlatformIO IDE .deb <https://sourceforge.net/projects/platformio-storage/files/ide-bundles/platformio-atom-linux-amd64.deb/download>`_
+- `Download PlatformIO IDE .rpm <https://sourceforge.net/projects/platformio-storage/files/ide-bundles/platformio-atom-linux-amd64.rpm/download>`_
+
+Manual Installation
+~~~~~~~~~~~~~~~~~~~
+
+1. Download and install the latest Atom text editor
+
+    - `Download Atom for Mac <https://atom.io/download/mac>`_
+    - `Download Atom for Windows <https://atom.io/download/windows>`_
+    - `Download Atom .deb <https://atom.io/download/deb>`_
+    - `Download Atom .rpm <https://atom.io/download/rpm>`_
     - `Other platforms <https://github.com/atom/atom/releases/latest>`_
 
 
@@ -86,13 +104,13 @@ Each button contains hint (delay mouse on it).
 * PlatformIO: Build
 * PlatformIO: Upload
 * PlatformIO: Clean
-* Toggle build panel
 * ||
-* New File
+* Initialize new PlatformIO Project or update existing...
 * Add/Open Project Folder...
 * Find in Project...
 * ||
 * Terminal
+* Library Manager
 * Serial Ports
 * Serial Monitor
 * ||
@@ -106,14 +124,11 @@ Quickstart
 
 :Step 1:
 
-    Create empty directory for the future project. Add it to PlatformIO IDE
-    using (folder) button on the Toolbar or ``Menu: File > Add Project
-    Folder...``
+    Initialize new PlatformIO based project using button on the Toolbar or
+    ``Menu: PlatformIO > Initialize new PlatformIO Project or update existing...``.
 
 :Step 2:
 
-    Initialize new PlatformIO based project using ``Menu: PlatformIO >
-    Initialize new Project (or update existing)`` and select boards.
     Put your source code ``*.h, *.c, *.cpp, *.S, *.ino, etc``. files to ``src``
     directory.
 
@@ -138,10 +153,10 @@ Building / Uploading / Targets
 
 More details `Atom Build package <https://atom.io/packages/build>`_.
 
-Code completion
-~~~~~~~~~~~~~~~
+Intelligent Code Autocompletion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the code completion.
+PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
 To check that ``clang`` is available in your system, please open
 Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
 
@@ -158,13 +173,15 @@ Terminal and run ``clang --version``. If ``clang`` is not installed, then instal
     not be reflected in code linter. You need ``Menu: PlatformIO >
     Rebuild C/C++ Project Index (Autocomplete, Linter)``.
 
-Code linter
-~~~~~~~~~~~
+.. _ide_atom_smart_code_linter:
 
-PlatformIO IDE uses PlatformIO's pre-built GCC toolchains for code linting. The
-settings for Linter are located in ``.gcc-flags.json``. This file will be
+Smart Code Linter
+~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE uses PlatformIO's pre-built GCC toolchains for Smart Code Linter. The
+configuration data are located in ``.gcc-flags.json``. This file will be
 automatically created and preconfigured when you initialize project using
-``Menu: PlatformIO > Initialize new Project (or update existing)``.
+``Menu: PlatformIO > Initialize new PlatformIO Project or update existing...``.
 
 .. warning::
     The libraries which are added/installed after initializing process will
@@ -175,7 +192,7 @@ automatically created and preconfigured when you initialize project using
 .. error::
     If you have error like ``linter-gcc: Executable not found`` and
     ``"***/.platformio/packages/toolchain-atmelavr/bin/avr-g++" not found``
-    please ``Menu: PlatformIO > Initialize new Project (or update existing)``.
+    please ``Menu: PlatformIO > Initialize new PlatformIO Project or update existing...``.
 
 Install Shell Commands
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -185,6 +202,59 @@ PlatformIO > Install Shell Commands``. It will allow you to call PlatformIO from
 other process, terminal and etc.
 
 Known issues
-~~~~~~~~~~~~
+------------
 
-* Built-in Terminal doesn't support ``STDIN`` interaction
+Smart Code Linter is disabled for Arduino files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:ref:`ide_atom_smart_code_linter` is disabled by default for Arduino files
+(``*.ino`` and ``.pde``) because they  are not valid C/C++ based
+source files:
+
+1. Missing includes such as ``#include <Arduino.h>``
+2. Function declarations are omitted.
+
+There are two solutions:
+
+Convert Arduino file to C++ manually
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For example, we have the next ``Demo.ino`` file:
+
+.. code-block:: c++
+
+    void function setup () {
+        someFunction(13);
+    }
+
+    void function loop() {
+        delay(1000);
+    }
+
+    void someFunction(int num) {
+    }
+
+Let's convert it to  ``Demo.cpp``:
+
+1. Add ``#include <Arduino.h>`` at the top of file
+2. Declare each custom function (excluding built-in, such as ``setup`` and ``loop``)
+   before it will be called.
+
+The final ``Demo.cpp``:
+
+.. code-block:: c++
+
+    #include <Arduino.h>
+
+    void someFunction(int num);
+
+    void function setup () {
+        someFunction(13);
+    }
+
+    void function loop() {
+        delay(1000);
+    }
+
+    void someFunction(int num) {
+    }
