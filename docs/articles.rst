@@ -23,6 +23,7 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
+* Feb 19, 2016 - **Embedds** - `Develop easier with PlatformIO ecosystem <http://www.embedds.com/develop-easier-with-platformio-ecosystem/>`_
 * Jan 24, 2016 - **Sergey Prilukin** - `How to use IntelliJ IDEA to develop and upload software for micro controllers like Arduino <http://jandevblog.blogspot.com/2016/01/how-to-use-intellij-idea-to-develop-and.html>`_
 * Jan 16, 2016 - **Dani Eichhorn** - `ESP8266 Arduino IDE Alternative: PlatformIO <http://blog.squix.ch/2016/01/esp8266-arduino-ide-alternative.html>`_
 * Jan 11, 2016 - **David Mills, Ph.D.** - `STM NUCLEOF401RE TIMER IO <http://webshed.org/wiki/STM_NUCLEOF401RE_TIMER_IO>`_
