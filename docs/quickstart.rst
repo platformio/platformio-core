@@ -26,7 +26,7 @@ Please follow to the Quickstart section of :ref:`ide_atom`.
 PlatformIO CLI
 --------------
 
-1. :ref:`Install PlatformIO CLI <installation>`.
+1. `Install PlatformIO CLI <installation.html>`_.
 
 2. Find board ``type`` using `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
    or via :ref:`cmd_boards` command.
