@@ -23,11 +23,10 @@ PlatformIO IDE is the next generation integrated development environment for IoT
     - 15+ development platforms
     - 10+ frameworks
 
-* C/C++ Intelligent code completion
-* C/C++ Smart code linter for super-fast coding
+* C/C++ Intelligent Code Completion
+* C/C++ Smart Code Linter for rapid professional development
 * Library Manager for the hundreds popular libraries
 * Multi-projects workflow with multiple panes
-* Multiple panes
 * Themes support with dark and light colors
 * Serial Port Monitor
 * Built-in Terminal with :ref:`PlatformIO CLI <userguide>` tool (``pio``, ``platformio``)
@@ -71,7 +70,7 @@ Manual Installation
     - `Other platforms <https://github.com/atom/atom/releases/latest>`_
 
 
-2. Open Atom Package Manager and search for `platformio-ide <https://atom.io/packages/platformio-ide>`_
+2. Open Atom Package Manager and install `platformio-ide <https://atom.io/packages/platformio-ide>`_ Atom package
 
     - **Mac OS X**: ``Menu: Atom > Preferences > Install``
     - **Windows**: ``Menu: File > Settings > Install``
@@ -179,8 +178,9 @@ Terminal and run ``clang --version``. If ``clang`` is not installed, then instal
 Smart Code Linter
 ~~~~~~~~~~~~~~~~~
 
-PlatformIO IDE uses PlatformIO's pre-built GCC toolchains for Smart Code Linter. The
-configuration data are located in ``.gcc-flags.json``. This file will be
+PlatformIO IDE uses PlatformIO's pre-built GCC toolchains for Smart Code Linter
+and rapid professional development.
+The configuration data are located in ``.gcc-flags.json``. This file will be
 automatically created and preconfigured when you initialize project using
 ``Menu: PlatformIO > Initialize new PlatformIO Project or update existing...``.
 
@@ -270,16 +270,15 @@ Force Arduino file as C++
 
 To force Smart Code Linter to use Arduino files as C++ please
 
-1. Open ``.gcc-flags.json`` file from the Initialized/Imported project. Add
-   ``-x c`` option at the beginning to ``gccDefaultCFlags`` and ``gccDefaultCppFlags``
-   fields:
+1. Open ``.gcc-flags.json`` file from the Initialized/Imported project and add
+   ``-x c++`` flag at the beginning of the value of ``gccDefaultCppFlags`` field:
 
 .. code-block:: json
 
     {
       "execPath": "...",
-      "gccDefaultCFlags": "-x c -fsyntax-only ...",
-      "gccDefaultCppFlags": "-x c -fsyntax-only ...",
+      "gccDefaultCFlags": "...",
+      "gccDefaultCppFlags": "-x c++ -fsyntax-only ...",
       "gccErrorLimit": 15,
       "gccIncludePaths": "...",
       "gccSuppressWarnings": false
