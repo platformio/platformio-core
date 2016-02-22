@@ -53,8 +53,8 @@ Automatic Installation
 Please download PlatformIO IDE for Atom bundle with built-in auto installer
 (be patient and let the installation complete)
 
-- `Download PlatformIO IDE for Mac <http://dl.platformio.org/ide-bundles/platformio-atom-windows.exe>`_
-- `Download PlatformIO IDE for Windows <http://dl.platformio.org/ide-bundles/platformio-atom-mac.zip>`_
+- `Download PlatformIO IDE for Mac <http://dl.platformio.org/ide-bundles/platformio-atom-mac.zip>`_
+- `Download PlatformIO IDE for Windows <http://dl.platformio.org/ide-bundles/platformio-atom-windows.exe>`_
 - `Download PlatformIO IDE .deb <http://dl.platformio.org/ide-bundles/platformio-atom-linux-amd64.deb>`_
 - `Download PlatformIO IDE .rpm <http://dl.platformio.org/ide-bundles/platformio-atom-linux-amd64.rpm>`_
 
