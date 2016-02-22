@@ -31,9 +31,12 @@ env.Replace(
 
     ARFLAGS=["rcs"],
 
-    ASPPFLAGS=["-x", "assembler-with-cpp"],
+    ASFLAGS=[
+        "-x", "assembler-with-cpp",
+        "$CCFLAGS"
+    ],
 
-    CPPFLAGS=[
+    CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
         "-Os",  # optimize for size
         "-Wall",  # show warnings

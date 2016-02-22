@@ -64,7 +64,10 @@ env.Replace(
 
     ARFLAGS=["rcs"],
 
-    ASPPFLAGS=["-x", "assembler-with-cpp"],
+    ASFLAGS=[
+        "-x", "assembler-with-cpp",
+        "$CCFLAGS"
+    ],
 
     CFLAGS=[
         "-std=gnu99",
@@ -75,7 +78,7 @@ env.Replace(
         "-nostdlib"
     ],
 
-    CPPFLAGS=[
+    CCFLAGS=[
         "-Os",  # optimize for size
         "-mlongcalls",
         "-mtext-section-literals",

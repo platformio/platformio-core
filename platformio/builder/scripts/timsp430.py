@@ -36,7 +36,10 @@ env.Replace(
 
     ARFLAGS=["rcs"],
 
-    ASPPFLAGS=["-x", "assembler-with-cpp"],
+    ASFLAGS=[
+        "-x", "assembler-with-cpp",
+        "$CCFLAGS"
+    ],
 
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)

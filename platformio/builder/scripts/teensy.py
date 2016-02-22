@@ -31,7 +31,7 @@ elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
         LINKFLAGS=[
             "-Wl,--defsym=__rtc_localtime=$UNIX_TIME"
         ],
-        CPPFLAGS=[
+        CCFLAGS=[
             "-fsingle-precision-constant"
         ]
     )

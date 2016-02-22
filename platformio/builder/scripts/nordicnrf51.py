@@ -27,7 +27,7 @@ SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
 
 if env.subst("$BOARD") == "rfduino":
     env.Append(
-        CPPFLAGS=["-fno-builtin"],
+        CCFLAGS=["-fno-builtin"],
         LINKFLAGS=["--specs=nano.specs"]
     )
     env.Replace(
