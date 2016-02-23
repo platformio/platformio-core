@@ -14,8 +14,6 @@
 Qt Creator
 ==========
 
-.. include:: _platformio_ide_extra.rst
-
 The `Qt Creator <https://github.com/qtproject/qt-creator>`_ is an open source cross-platform integrated development environment. The editor includes such features as syntax highlighting for various languages, project manager, integrated version control systems, rapid code navigation tools and code autocompletion.
 
 This software can be used with:

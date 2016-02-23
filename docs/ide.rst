@@ -18,7 +18,6 @@ IDE Integration
     :maxdepth: 2
 
     ide/atom
-    ide/arduino
     ide/clion
     ide/eclipse
     ide/emacs
