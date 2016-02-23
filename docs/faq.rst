@@ -35,8 +35,8 @@ between team members, regardless of operating system they prefer to work with.
 Beyond that, PlatformIO can be run not only on commonly used desktops/laptops
 but also on the servers without X Window System. While PlatformIO itself is a
 console application, it can be used in combination with one's favorite
-:ref:`ide` or text editor such as :ref:`ide_arduino`, :ref:`ide_atom`,
-:ref:`ide_clion`, :ref:`ide_eclipse`, :ref:`ide_qtcreator`,
+:ref:`ide` or text editor such as :ref:`ide_atom`, :ref:`ide_clion`,
+:ref:`ide_eclipse`, :ref:`ide_emacs`, :ref:`ide_qtcreator`,
 :ref:`ide_sublimetext`, :ref:`ide_vim`, :ref:`ide_visualstudio`, etc.
 
 Alright, so PlatformIO can run on different operating systems. But more
