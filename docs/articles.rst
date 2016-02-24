@@ -24,6 +24,7 @@ Here are recent articles about PlatformIO:
 ^^^^
 
 * Feb 23, 2016 - **Ptarmigan Labs** - `ESP8266 Over The Air updating – what are the options? <https://ptarmiganlabs.com/blog/2016/02/23/esp8266-over-the-air-updating-what-are-the-options/>`_
+* Feb 22, 2016 - **Grzegorz Hołdys** - `How to Integrate PlatformIO with Netbeans <http://www.instructables.com/id/How-to-Integrate-PlatformIO-With-Netbeans/>`_
 * Feb 19, 2016 - **Embedds** - `Develop easier with PlatformIO ecosystem <http://www.embedds.com/develop-easier-with-platformio-ecosystem/>`_
 * Jan 24, 2016 - **Sergey Prilukin** - `How to use IntelliJ IDEA to develop and upload software for micro controllers like Arduino <http://jandevblog.blogspot.com/2016/01/how-to-use-intellij-idea-to-develop-and.html>`_
 * Jan 16, 2016 - **Dani Eichhorn** - `ESP8266 Arduino IDE Alternative: PlatformIO <http://blog.squix.ch/2016/01/esp8266-arduino-ide-alternative.html>`_
