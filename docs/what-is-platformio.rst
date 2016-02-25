@@ -38,6 +38,11 @@ It’s been successfully used with other IDE’s like Eclipse or Visual Studio.
 Recently they’ve released a version with built in IDE based on Atom text editor", -
 [Embedds]_.
 
+Awards
+------
+
+PlatformIO was nominated for the year's `best Software and Tools in the 2015/16 IoT Awards <http://iotawards.postscapes.com/2015-16/best-iot-software-and-tools>`_.
+
 Problematic
 -----------
 

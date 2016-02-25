@@ -22,7 +22,7 @@ General
 What is PlatformIO?
 ~~~~~~~~~~~~~~~~~~~
 
-Please refer to :ref:`what_is_pio`.
+Please refer to :ref:`what_is_pio`
 
 
 Command completion in Terminal
