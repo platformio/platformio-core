@@ -72,16 +72,21 @@ The Missing Library Manager. *It's here!*
 * It runs on Windows, Mac OS X, and Linux (+ARM).
 
 For further details, please refer to
-:ref:`What is PlatformIO? How does it work? <faq_what_is_platformio>`
+:ref:`What is PlatformIO? How does it work? <what_is_pio>`
 
 Contents
 --------
 
 .. toctree::
+    :maxdepth: 2
+
+    what-is-platformio
+    demo
+
+.. toctree::
     :caption: Getting Started
     :maxdepth: 2
 
-    demo
     installation
     quickstart
     userguide/index
