@@ -19,12 +19,6 @@ an interpreter for Emacs Lisp, a dialect of the
 `Lisp programming language <http://en.wikipedia.org/wiki/Lisp_programming_language>`_
 with extensions to support text editing.
 
-
-This software can be used with:
-
-* all available :ref:`platforms`
-* all available :ref:`frameworks`
-
 Refer to the `Emacs Documentation <https://www.gnu.org/software/emacs/#Manuals>`_
 page for more detailed information.
 

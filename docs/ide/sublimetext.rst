@@ -16,11 +16,6 @@ Sublime Text
 
 The `Sublime Text <http://www.sublimetext.com/>`_ is a cross-platform text and source code editor, with a Python application programming interface (API). Sublime Text is proprietary software. Its functionality is extendable with plugins. Most of the extending packages have free-software licenses and are community-built and maintained. Sublime Text lacks graphical setting dialogues and is entirely configured by editing text files.
 
-This software can be used with:
-
-* all available :ref:`platforms`
-* all available :ref:`frameworks`
-
 Refer to the `Sublime Text Documentation <http://docs.sublimetext.info/en/latest>`_
 page for more detailed information.
 
