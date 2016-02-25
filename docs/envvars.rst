@@ -77,6 +77,20 @@ Building
 
 Allows to set :ref:`projectconf` option :ref:`projectconf_build_flags`.
 
+Examples:
+
+.. code-block:: bash
+
+    # Unix:
+    export PLATFORMIO_BUILD_FLAGS=-DFOO
+    export PLATFORMIO_BUILD_FLAGS="-DFOO -DBAR=1 -DFLOAT_VALUE=1.23457e+07"
+    export PLATFORMIO_BUILD_FLAGS="'-DWIFI_PASS=\"My password\"' '-DWIFI_SSID=\"My ssid name\"'"
+
+    # Windows:
+    SET PLATFORMIO_BUILD_FLAGS=-DFOO
+    SET PLATFORMIO_BUILD_FLAGS=-DFOO -DBAR=1 -DFLOAT_VALUE=1.23457e+07
+    SET PLATFORMIO_BUILD_FLAGS='-DWIFI_PASS="My password"' '-DWIFI_SSID="My ssid name"'
+
 .. envvar:: PLATFORMIO_SRC_BUILD_FLAGS
 
 Allows to set :ref:`projectconf` option :ref:`projectconf_src_build_flags`.

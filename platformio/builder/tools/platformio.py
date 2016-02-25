@@ -96,17 +96,19 @@ def BuildProgram(env):
 
 
 def ProcessFlags(env, flags):
-    parsed_flags = env.ParseFlags(flags)
-    for flag in parsed_flags.pop("CPPDEFINES"):
-        if isinstance(flag, list):
-            env.Append(
-                CPPDEFINES=[
-                    '-D%s=\\"%s\\"' % (flag[0], flag[1])
-                ]
-            )
-        else:
-            env.Append(CPPDEFINES=flag)
-    env.Append(**parsed_flags)
+    for f in flags:
+        if not f:
+            continue
+        parsed_flags = env.ParseFlags(str(f))
+        print parsed_flags
+        for flag in parsed_flags.pop("CPPDEFINES"):
+            if not isinstance(flag, list):
+                env.Append(CPPDEFINES=flag)
+                continue
+            if '\"' in flag[1]:
+                flag[1] = flag[1].replace('\"', '\\\"')
+            env.Append(CPPDEFINES=[flag])
+        env.Append(**parsed_flags)
 
     # fix relative CPPPATH
     for i, p in enumerate(env.get("CPPPATH", [])):
