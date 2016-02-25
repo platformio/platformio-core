@@ -100,7 +100,6 @@ def ProcessFlags(env, flags):
         if not f:
             continue
         parsed_flags = env.ParseFlags(str(f))
-        print parsed_flags
         for flag in parsed_flags.pop("CPPDEFINES"):
             if not isinstance(flag, list):
                 env.Append(CPPDEFINES=flag)

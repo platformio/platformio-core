@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.8.5 (2016-02-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Improved handling of String-based ``CPPDEFINES`` passed to extra ``build_flags``
+  (`issue #526 <https://github.com/platformio/platformio/issues/526>`_)
 * Fixed issue with incorrect handling of user's build flags where the base flags
   were passed after user's flags to GCC compiler
   (`issue #528 <https://github.com/platformio/platformio/issues/528>`_)
