@@ -19,7 +19,7 @@ What is PlatformIO?
 Press about PlatformIO
 ----------------------
 
-"Different microcontrollers normally have different developing tools [*]_.
+"Different microcontrollers normally have different developing tools .
 For instance Arduino rely on Arduino IDE. Few more advanced users set up different
 graphical interfaces like Eclipse for better project management. Sometimes
 it may be hard to keep up with different microcontrollers and tools. You
@@ -35,7 +35,8 @@ work in organizing and managing hundreds of libraries that can be included
 in to your project. Also lots of examples allow you to start developing
 quickly. PlatformIO initially was developed with Command line philosophy.
 It’s been successfully used with other IDE’s like Eclipse or Visual Studio.
-Recently they’ve released a version with built in IDE based on Atom text editor".
+Recently they’ve released a version with built in IDE based on Atom text editor", -
+[Embedds]_.
 
 Problematic
 -----------
@@ -72,7 +73,8 @@ boards and MCUs. To keep things short: PlatformIO supports approximately 200
 `Embedded Boards <http://platformio.org/#!/boards>`_ and all major
 :ref:`Development Platforms <platforms>`.
 
-PlatformIO allows users to:
+User SHOULD have a choise
+-------------------------
 
 * Decide which operation system they want to run development process on.
   You can even use one OS at home and another at work.
@@ -95,4 +97,4 @@ the project developed using PlatformIO is as follows:
   and uploaded to all the boards of interest.
 
 
-.. [*] Embedds.com: `Develop easier with PlatformIO ecosystem <http://www.embedds.com/develop-easier-with-platformio-ecosystem/>`_
+.. [Embedds] Embedds.com: `Develop easier with PlatformIO ecosystem <http://www.embedds.com/develop-easier-with-platformio-ecosystem/>`_
