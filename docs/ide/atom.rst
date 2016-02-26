@@ -53,10 +53,10 @@ Automatic Installation
 Please download PlatformIO IDE for Atom bundle with built-in auto installer
 (be patient and let the installation complete)
 
-- `Download PlatformIO IDE for Windows <https://bintray.com/artifact/download/platformio/ide-bundles/platformio-atom-windows.exe>`_
-- `Download PlatformIO IDE for Mac <https://bintray.com/artifact/download/platformio/ide-bundles/platformio-atom-mac.zip>`_
-- `Download PlatformIO IDE .deb <https://bintray.com/artifact/download/platformio/ide-bundles/platformio-atom-linux-x86_64.deb>`_
-- `Download PlatformIO IDE .rpm <https://bintray.com/artifact/download/platformio/ide-bundles/platformio-atom-linux-x86_64.rpm>`_
+- `Download PlatformIO IDE for Windows <https://dl.bintray.com/platformio/ide-bundles/platformio-atom-windows.exe>`_
+- `Download PlatformIO IDE for Mac <https://dl.bintray.com/platformio/ide-bundles/platformio-atom-mac.zip>`_
+- `Download PlatformIO IDE .deb <https://dl.bintray.com/platformio/ide-bundles/platformio-atom-linux-x86_64.deb>`_
+- `Download PlatformIO IDE .rpm <https://dl.bintray.com/platformio/ide-bundles/platformio-atom-linux-x86_64.rpm>`_
 
 Manual Installation
 ~~~~~~~~~~~~~~~~~~~
@@ -337,7 +337,7 @@ Convert Arduino file to C++ manually
 
 For example, we have the next ``Demo.ino`` file:
 
-.. code-block:: c++
+.. code-block:: cpp
 
     void function setup () {
         someFunction(13);
@@ -358,7 +358,7 @@ Let's convert it to  ``Demo.cpp``:
 
 The final ``Demo.cpp``:
 
-.. code-block:: c++
+.. code-block:: cpp
 
     #include <Arduino.h>
 
