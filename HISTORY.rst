@@ -7,6 +7,9 @@ PlatformIO 2.0
 2.8.5 (2016-02-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for the ESP8266 ESP-07 board to
+  `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  (`issue #527 <https://github.com/platformio/platformio/issues/527>`_)
 * Improved handling of String-based ``CPPDEFINES`` passed to extra ``build_flags``
   (`issue #526 <https://github.com/platformio/platformio/issues/526>`_)
 * Fixed issue with incorrect handling of user's build flags where the base flags
