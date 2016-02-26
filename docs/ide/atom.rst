@@ -86,9 +86,9 @@ This tutorial introduces you to the basics of PlatformIO IDE workflow and shows 
 Launching
 ~~~~~~~~~
 
-PlatformIO IDE is built on top of GitHub's Atom "hackable" text editor. 
-After installtion please run one of ``Atom.exe``,  ``Atom.app`` or ``atom`` 
-application depending on the OS. 
+PlatformIO IDE is built on top of GitHub's Atom "hackable" text editor.
+After installtion please run one of ``Atom.exe``,  ``Atom.app`` or ``atom``
+application depending on the OS.
 
 Setting Up the Project
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -167,7 +167,7 @@ PlatformIO IDE proposes different ways to process project (build, clean, upload 
 
 To upload firmware to the board run ``Upload``.
 
-6. What is more, you can run specific target or process project environment 
+6. What is more, you can run specific target or process project environment
    using ``Menu: PlatformIO > Run other target...``
    or call targets list from the status bar (bottom, left corner):
 
@@ -396,3 +396,10 @@ To force Smart Code Linter to use Arduino files as C++ please
 
 2. Perform all steps from :ref:`ide_atom_knownissues_sclarduino_manually`
    (without renaming to ``.cpp``).
+
+Articles / Manuals
+------------------
+
+* Feb 25, 2016 - **NutDIY** - `PlatformIO Blink On Nodemcu Dev Kit V1.0 (ESP 12-E) <http://nutdiy.blogspot.com/2016/02/platformio-blink-on-nodemcu-dev-kit-v10.html>`_
+
+See a full list with :ref:`articles`.
