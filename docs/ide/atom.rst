@@ -78,11 +78,140 @@ Manual Installation
 
 .. image:: ../_static/ide-atom-platformio-install.png
 
+Quickstart
+----------
+
+This tutorial introduces you to the basics of PlatformIO IDE workflow and shows you a creation process of a simple "Blink" example. After finishing you will have a general understanding of how to work with projects in the IDE.
+
+Launching
+~~~~~~~~~
+
+PlatformIO IDE is built on top of GitHub's Atom "hackable" text editor. 
+After installtion please run one of ``Atom.exe``,  ``Atom.app`` or ``atom`` 
+application depending on the OS. 
+
+Setting Up the Project
+~~~~~~~~~~~~~~~~~~~~~~
+
+1. To create a new project choose ``Menu: PlatformIO > Initialize new Project or update existing`` or press the corresponding icon in the PlatformIO toolbar as shown in the image below:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-1.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-1.png
+
+2. In the "New Project Menu" choose desired boards (more than one board is allowed) and select a project directory. Then press "Initialize" button:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-2.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-2.png
+
+3. If everything is fine, you should see the success message and project tree in the left panel:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-3.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-3.png
+
+4. Now, let's create the first project source file: right-click on the folder ``src`` and choose ``New File``:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-4.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-4.png
+
+Enter filename ``main.cpp``:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-5.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-5.png
+
+Copy the next source code to the just created file ``main.cpp``:
+
+.. code-block:: cpp
+
+    /**
+     * Blink
+     * Turns on an LED on for one second,
+     * then off for one second, repeatedly.
+     */
+    #include "Arduino.h"
+
+    void setup()
+    {
+      // initialize LED digital pin as an output.
+      pinMode(LED_BUILTIN, OUTPUT);
+    }
+
+    void loop()
+    {
+      // turn the LED on (HIGH is the voltage level)
+      digitalWrite(LED_BUILTIN, HIGH);
+      // wait for a second
+      delay(1000);
+      // turn the LED off by making the voltage LOW
+      digitalWrite(LED_BUILTIN, LOW);
+       // wait for a second
+      delay(1000);
+    }
+
+Process Project
+~~~~~~~~~~~~~~~
+
+PlatformIO IDE proposes different ways to process project (build, clean, upload firmware, run other targets) using:
+
+    - :ref:`atom_ide_platformio_toolbar`
+    - :ref:`atom_ide_platformio_menu`
+    - :ref:`ide_atom_building_targets` and hotkeys
+
+.. image:: ../_static/ide-atom-platformio-quick-start-6.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-6.png
+
+5. Run ``Build`` and you should see green "success" result in the building
+   panel:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-7.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-7.png
+
+To upload firmware to the board run ``Upload``.
+
+6. What is more, you can run specific target or process project environment 
+   using ``Menu: PlatformIO > Run other target...``
+   or call targets list from the status bar (bottom, left corner):
+
+.. image:: ../_static/ide-atom-platformio-quick-start-8.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-8.png
+
+And select desired target:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-9.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-9.png
+
+7. To run built-in terminal interface choose ``Menu: PlatformIO > Terminal`` or press the corresponding icon in the PlatformIO toolbar:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-10.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-10.png
+
+It provides you fast access to all set of powerful PlatformIO CLI commands:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-11.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-11.png
+
+8. To run built-in "Serial Monitor" choose ``Menu: PlatformIO > Serial Monitor`` or press the corresponding icon in the PlatformIO toolbar:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-12.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-12.png
+
+It has several settings to adjust your connection:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-13.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-13.png
+
+And allows you to communicate with your board in an easy way:
+
+.. image:: ../_static/ide-atom-platformio-quick-start-14.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-14.png
+
+
 User Guide
 ----------
 
 .. image:: ../_static/ide-atom-platformio.png
     :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png
+
+.. _atom_ide_platformio_menu:
 
 Menu item ``PlatformIO``
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -92,9 +221,10 @@ new menu item named ``Menu: PlatformIO`` (after ``Menu: Help`` item).
 
 .. image:: ../_static/ide-atom-platformio-menu-item.png
 
+.. _atom_ide_platformio_toolbar:
+
 PlatformIO Toolbar
 ~~~~~~~~~~~~~~~~~~
-
 
 PlatformIO IDE Toolbar contains the quick access button to the popular commands.
 Each button contains hint (delay mouse on it).
@@ -116,26 +246,6 @@ Each button contains hint (delay mouse on it).
 * ||
 * Settings
 * PlatformIO Documentation
-
-.. _ide_atom_quickstart:
-
-Quickstart
-~~~~~~~~~~
-
-:Step 1:
-
-    Initialize new PlatformIO based project using button on the Toolbar or
-    ``Menu: PlatformIO > Initialize new PlatformIO Project or update existing...``.
-
-:Step 2:
-
-    Put your source code ``*.h, *.c, *.cpp, *.S, *.ino, etc``. files to ``src``
-    directory.
-
-:Step 3:
-
-    Process the project environments. More details :ref:`ide_atom_building_targets`.
-
 
 .. _ide_atom_building_targets:
 
