@@ -29,7 +29,28 @@ for details.
 Integration
 -----------
 
-Please follow to `How to Integrate PlatformIO with Netbeans <http://www.instructables.com/id/How-to-Integrate-PlatformIO-With-Netbeans/>`_ instructions.
+Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+command and generate project via :option:`platformio init --ide` command:
+
+.. code-block:: shell
+
+    platformio init --ide netbeans --board %TYPE%
+
+    # For example, generate project for Arduino UNO
+    platformio init --ide netbeans --board uno
+
+Then:
+
+1. Open this project via ``Menu: File > Open Project...``
+2. Add new files to ``src`` directory (``*.c, *.cpp, *.ino, etc.``) via
+   right-click on ``src`` folder in the "Projects" pane
+3. Build project using ``Menu: Run > Build Project``
+4. Upload firmware using ``Menu: Run > Run Project``
+
+.. warning::
+    The libraries which are added, installed or used in the project
+    after generating process wont be reflected in IDE. To fix it you
+    need to reinitialize project using :ref:`cmd_init` (repeat it).
 
 Articles / Manuals
 ------------------
@@ -41,5 +62,5 @@ See the full list with :ref:`articles`.
 Screenshot
 -----------
 
-.. image:: ../_static/ide-platformio-netbeans.jpg
-    :target: http://www.instructables.com/id/How-to-Integrate-PlatformIO-With-Netbeans/
+.. image:: ../_static/ide-platformio-netbeans.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-platformio-netbeans.png

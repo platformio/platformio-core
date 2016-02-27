@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.8.5 (2016-02-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Project generator for `NetBeans IDE <http://docs.platformio.org/en/latest/ide/netbeans.html>`__
+  (`issue #541 <https://github.com/platformio/platformio/issues/541>`_)
 * Added support for the ESP8266 ESP-07 board to
   `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
   (`issue #527 <https://github.com/platformio/platformio/issues/527>`_)
