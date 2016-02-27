@@ -22,7 +22,7 @@ PlatformIO
 .. image:: https://img.shields.io/pypi/dm/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: PyPi Downloads
-.. image:: https://badges.gitter.im/Join%20Chat.svg
+.. image:: https://img.shields.io/gitter/join%20chat.png
    :alt: Join the chat at https://gitter.im/platformio/platformio
    :target: https://gitter.im/platformio/platformio
 .. image:: https://img.shields.io/donate/PlatformIO.png?color=yellow
