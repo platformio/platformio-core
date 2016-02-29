@@ -102,6 +102,7 @@ env.Replace(
     ],
 
     LINKFLAGS=[
+        "-Os",
         "-nostdlib",
         "-Wl,--no-check-sections",
         "-u", "call_user_start",

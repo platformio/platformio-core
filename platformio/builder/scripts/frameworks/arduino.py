@@ -57,7 +57,7 @@ elif env.get("PLATFORM") == "espressif":
     env.Prepend(
         CPPPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "include")],
         LIBPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "lib")],
-        LIBS=["smartconfig", "pp", "main", "wpa", "lwip",
+        LIBS=["mesh", "wpa2", "smartconfig", "pp", "main", "wpa", "lwip",
               "net80211", "wps", "crypto", "phy", "hal", "axtls", "gcc", "m"]
     )
 elif env.get("PLATFORM") == "nordicnrf51":
