@@ -14,7 +14,7 @@
     <conf name="Default" type="0">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <platform>{{4 if "darwin" in systype else 2 if "linux" in systype else 1}}</platform>
+        <platform>{{4 if "darwin" in systype else 2 if "linux" in systype else 3}}</platform>
       </toolsSet>
       <compile>
         <compiledirpicklist>
