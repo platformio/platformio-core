@@ -9,6 +9,11 @@ PlatformIO 2.0
 
 * Project generator for `NetBeans IDE <http://docs.platformio.org/en/latest/ide/netbeans.html>`__
   (`issue #541 <https://github.com/platformio/platformio/issues/541>`_)
+* Created package for Homebrew Mac OS X Package Manager: ``brew install
+  platformio``
+  (`issue #395 <https://github.com/platformio/platformio/issues/395>`_)
+* Updated Arduino core for Espressif platform to 2.1.0
+  (`issue #544 <https://github.com/platformio/platformio/issues/544>`_)
 * Added support for the ESP8266 ESP-07 board to
   `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
   (`issue #527 <https://github.com/platformio/platformio/issues/527>`_)
