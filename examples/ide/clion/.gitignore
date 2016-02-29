@@ -1,2 +1,2 @@
 .pioenvs
-CMakeListsLocal.txt
+CMakeListsPrivate.txt

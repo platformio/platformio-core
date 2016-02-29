@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(clion)
 
-include(CMakeListsLocal.txt)
+include(CMakeListsPrivate.txt)
 
 add_definitions(-DF_CPU=16000000L)
 add_definitions(-DARDUINO_ARCH_AVR)

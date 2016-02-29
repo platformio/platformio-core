@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project({{project_name}})
 
-include(CMakeListsLocal.txt)
+include(CMakeListsPrivate.txt)
 
 % for define in defines:
 add_definitions(-D{{!define}})
