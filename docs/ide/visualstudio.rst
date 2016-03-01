@@ -90,14 +90,14 @@ First program in Visual Studio
 
 Simple "Blink" project will consist from two files:
 
-1. Main "C" source file named ``main.c`` must be located in the ``src`` directory.
-Let's create new file named ``main.c`` using ``Menu: File > New File`` or shortcut ``Ctrl+N``:
+1. Main "C++" source file named ``main.cpp`` must be located in the ``src`` directory.
+Let's create new file named ``main.cpp`` using ``Menu: File > New File`` or shortcut ``Ctrl+N``:
 
 .. image:: ../_static/ide-vs-platformio-newproject-6.png
 
-Copy the source code which is described below to file ``main.c``.
+Copy the source code which is described below to file ``main.cpp``.
 
-.. code-block:: c
+.. code-block:: cpp
 
     #include "Arduino.h"
     #define WLED    13  // Most Arduino boards already have an LED attached to pin 13 on the board itself
@@ -149,6 +149,18 @@ Screenshot
 
 .. image:: ../_static/ide-vs-platformio-newproject-8.png
     :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-8.png
+
+
+.. warning::
+    When the IntelliSense parser finds a GCC-specific definition,
+    it defines it as an error but it will not create any compilation problems.
+    To resolve this problem provide an IntelliSense-friendly definition of problematic
+    GCC constructs and make sure that the GCC will ignore such definitions or disable IntelliSense
+    error reporting at all.
+    See details in `issue #543 <https://github.com/platformio/platformio/issues/543>`_
+
+.. image:: ../_static/ide-vs-platformio-newproject-9.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-9.png
 
 Examples
 --------
