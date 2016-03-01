@@ -78,8 +78,8 @@ Manual Installation
 
 .. image:: ../_static/ide-atom-platformio-install.png
 
-Quickstart
-----------
+Quick Start
+-----------
 
 This tutorial introduces you to the basics of PlatformIO IDE workflow and shows you a creation process of a simple "Blink" example. After finishing you will have a general understanding of how to work with projects in the IDE.
 
@@ -87,7 +87,7 @@ Launching
 ~~~~~~~~~
 
 PlatformIO IDE is built on top of GitHub's Atom "hackable" text editor.
-After installtion please run one of ``Atom.exe``,  ``Atom.app`` or ``atom``
+After installation please run one of ``Atom.exe``,  ``Atom.app`` or ``atom``
 application depending on the OS.
 
 Setting Up the Project
@@ -207,9 +207,6 @@ And allows you to communicate with your board in an easy way:
 
 User Guide
 ----------
-
-.. image:: ../_static/ide-atom-platformio.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png
 
 .. _atom_ide_platformio_menu:
 
@@ -400,6 +397,13 @@ To force Smart Code Linter to use Arduino files as C++ please
 Articles / Manuals
 ------------------
 
-* Feb 25, 2016 - **NutDIY** - `PlatformIO Blink On Nodemcu Dev Kit V1.0 (ESP 12-E) <http://nutdiy.blogspot.com/2016/02/platformio-blink-on-nodemcu-dev-kit-v10.html>`_
+* Feb 28, 2016 - **Alex Bloggt** - `PlatformIO vorgestellt (Introduction to PlatformIO IDE, German) <https://alexbloggt.com/platformio-vorgestellt/>`_
+* Feb 25, 2016 - **NutDIY** - `PlatformIO Blink On Nodemcu Dev Kit V1.0 (Thai) <http://nutdiy.blogspot.com/2016/02/platformio-blink-on-nodemcu-dev-kit-v10.html>`_
 
 See a full list with :ref:`articles`.
+
+Screenshot
+----------
+
+.. image:: ../_static/ide-atom-platformio.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png
