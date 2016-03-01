@@ -256,9 +256,10 @@ def GetCompilerType(env):
     if result['returncode'] != 0:
         return None
     output = "".join([result['out'], result['err']]).lower()
-    for type_ in ("clang", "gcc"):
-        if type_ in output:
-            return type_
+    if "clang" in output and "LLVM" in output:
+        return "clang"
+    elif "gcc" in output:
+        return "gcc"
     return None
 
 

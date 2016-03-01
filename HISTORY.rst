@@ -27,6 +27,8 @@ PlatformIO 2.0
 * Fixed issue with Project Generator when optional build flags were passed using
   system environment variables: `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-flags>`__
   or `PLATFORMIO_BUILD_SRC_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-src-flags>`__
+* Fixed invalid detecting of compiler type
+  (`issue #550 <https://github.com/platformio/platformio/issues/550>`_)
 
 
 2.8.4 (2016-02-17)
