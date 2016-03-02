@@ -78,6 +78,9 @@ Manual Installation
 
 .. image:: ../_static/ide-atom-platformio-install.png
 
+
+.. _atom_ide_quickstart:
+
 Quick Start
 -----------
 
