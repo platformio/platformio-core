@@ -36,7 +36,8 @@ System requirements
         **Windows Users**: Please `Download the latest Python 2.7.x
         <https://www.python.org/downloads/>`_ and install it.
         **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
-        "Customize" stage, otherwise ``pip`` command will not be available.
+        "Customize" stage, otherwise Python Package Manager ``pip`` command
+        will not be available.
 
 :Terminal Application:
 
@@ -117,6 +118,17 @@ On *Windows OS* it may look like:
 
     # run it
     C:\Python27\python.exe get-platformio.py
+
+
+Mac OS X Homebrew
+~~~~~~~~~~~~~~~~~
+
+The latest stable version of PlatformIO may be installed or upgraded via
+Mac OS X Homebrew Packages Manager (`brew <http://brew.sh/>`_) as follows:
+
+.. code-block:: bash
+
+    brew install platformio
 
 Full Guide
 ~~~~~~~~~~

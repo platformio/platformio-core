@@ -13,8 +13,7 @@
     We are proud to present our official `PlatformIO IDE <http://platformio.org/#!/platformio-ide>`_ -
     The next generation integrated development environment for IoT.
 
-    * Cross-platform code builder without external dependencies to the system
-      software:
+    * Cross-platform build system without external dependencies to the OS software:
 
         - 200+ embedded boards
         - 15+ development platforms

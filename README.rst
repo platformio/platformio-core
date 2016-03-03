@@ -45,7 +45,7 @@ PlatformIO
     :target: http://platformio.org
 
 `PlatformIO <http://platformio.org>`_ is an open source ecosystem for IoT
-development. Cross-platform code builder and library manager. Continuous and
+development. Cross-platform build system and library manager. Continuous and
 IDE integration. Arduino and MBED compatible. Ready for Cloud compiling.
 
 * **PlatformIO IDE** - The next generation integrated development environment for IoT.
@@ -130,7 +130,7 @@ platforms which allows you to organize and have up-to-date external libraries.
     :target: http://platformio.org
     :alt:  PlatformIO Library Manager Architecture
 
-Smart Code Builder. *Fast and Reliable.*
+Smart Build System. *Fast and Reliable.*
 ----------------------------------------
 *PlatformIO Code Builder* is built-on a next-generation software construction
 tool named `SCons <http://www.scons.org/>`_. Think of *SCons* as an improved,
@@ -144,7 +144,7 @@ cross-platform substitute for the classic *Make* utility.
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-scons-builder.png
     :target: http://platformio.org
-    :alt:  PlatformIO Code Builder Architecture
+    :alt:  PlatformIO Build System Architecture
 
 Single source code. *Multiple platforms.*
 -----------------------------------------

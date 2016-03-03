@@ -102,7 +102,7 @@ On the next steps select any available kit and click Finish button.
 
 .. image:: ../_static/ide-platformio-qtcreator-2.png
 
-Secondly, we need to delete default build and clean steps and configure project with PlatformIO source code builder (click on Projects label on left menu or ``Ctrl+5`` shortcut):
+Secondly, we need to delete default build and clean steps and configure project with PlatformIO Build System (click on Projects label on left menu or ``Ctrl+5`` shortcut):
 
 .. image:: ../_static/ide-platformio-qtcreator-3.png
     :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-3.png

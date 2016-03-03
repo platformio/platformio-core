@@ -64,7 +64,7 @@ First of all, let's create new project from Visual Studio Start Page: ``Start > 
 
 .. image:: ../_static/ide-vs-platformio-newproject.png
 
-Secondly, we need to configure project with PlatformIO source code builder:
+Secondly, we need to configure project with PlatformIO Build System:
 
 .. image:: ../_static/ide-vs-platformio-newproject-2.png
 

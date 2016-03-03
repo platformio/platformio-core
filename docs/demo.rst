@@ -17,7 +17,7 @@ Demo & Projects
 .. contents::
 
 Project Examples
-^^^^^^^^^^^^^^^^
+----------------
 
 Preconfigured demo projects are located in `PlatformIO GitHub <https://github.com/platformio/platformio/tree/develop/examples>`_ repository.
 
