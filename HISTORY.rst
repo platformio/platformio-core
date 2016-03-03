@@ -29,6 +29,8 @@ PlatformIO 2.0
   or `PLATFORMIO_BUILD_SRC_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-src-flags>`__
 * Fixed invalid detecting of compiler type
   (`issue #550 <https://github.com/platformio/platformio/issues/550>`_)
+* Fixed issue with updating package which was deleted manually by user
+  (`issue #555 <https://github.com/platformio/platformio/issues/555>`_)
 
 
 2.8.4 (2016-02-17)
