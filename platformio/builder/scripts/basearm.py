@@ -31,10 +31,7 @@ env.Replace(
 
     ARFLAGS=["rcs"],
 
-    ASFLAGS=[
-        "-x", "assembler-with-cpp",
-        env.subst("$CCFLAGS")
-    ],
+    ASFLAGS=["-x", "assembler-with-cpp"],
 
     CCFLAGS=[
         "-g",   # include debugging info (so errors include line numbers)
@@ -71,7 +68,10 @@ env.Replace(
     PROGSUFFIX=".elf"
 )
 
+
 env.Append(
+    ASFLAGS=env.get("CCFLAGS", [])[:],
+
     BUILDERS=dict(
         ElfToBin=Builder(
             action=" ".join([

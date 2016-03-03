@@ -64,10 +64,7 @@ env.Replace(
 
     ARFLAGS=["rcs"],
 
-    ASFLAGS=[
-        "-x", "assembler-with-cpp",
-        env.subst("$CCFLAGS")
-    ],
+    ASFLAGS=["-x", "assembler-with-cpp"],
 
     CFLAGS=[
         "-std=gnu99",
@@ -145,6 +142,8 @@ env.Replace(
 )
 
 env.Append(
+    ASFLAGS=env.get("CCFLAGS", [])[:],
+
     BUILDERS=dict(
         ElfToBin=Builder(
             action=" ".join([
