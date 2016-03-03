@@ -38,7 +38,7 @@ env.Replace(
 
     ASFLAGS=[
         "-x", "assembler-with-cpp",
-        "$CCFLAGS"
+        env.subst("$CCFLAGS")
     ],
 
     CCFLAGS=[
