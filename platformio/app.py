@@ -18,7 +18,7 @@ from os import environ, getenv
 from os.path import getmtime, isfile, join
 from time import time
 
-from lockfile import LockFile
+from lockfile import FileLock
 
 from platformio import __version__
 from platformio.exception import InvalidSettingName, InvalidSettingValue
@@ -104,7 +104,7 @@ class State(object):
     def _lock_state_file(self):
         if not self.lock:
             return
-        self._lockfile = LockFile(self.path)
+        self._lockfile = FileLock(self.path)
 
         if (self._lockfile.is_locked() and
                 (time() - getmtime(self._lockfile.lock_file)) > 10):
