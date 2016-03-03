@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.8.5 (2016-02-??)
+2.8.5 (2016-03-??)
 ~~~~~~~~~~~~~~~~~~
 
 * Project generator for `NetBeans IDE <http://docs.platformio.org/en/latest/ide/netbeans.html>`__
@@ -31,6 +31,10 @@ PlatformIO 2.0
   (`issue #550 <https://github.com/platformio/platformio/issues/550>`_)
 * Fixed issue with updating package which was deleted manually by user
   (`issue #555 <https://github.com/platformio/platformio/issues/555>`_)
+* Fixed incorrect parsing of GCC ``-include`` flag
+  (`issue #552 <https://github.com/platformio/platformio/issues/552>`_)
+
+-include
 
 
 2.8.4 (2016-02-17)
