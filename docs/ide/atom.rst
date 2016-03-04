@@ -85,8 +85,8 @@ Quick Start
 
 This tutorial introduces you to the basics of PlatformIO IDE workflow and shows you a creation process of a simple "Blink" example. After finishing you will have a general understanding of how to work with projects in the IDE.
 
-Launching
-~~~~~~~~~
+Launch
+~~~~~~
 
 PlatformIO IDE is built on top of GitHub's Atom "hackable" text editor.
 After installation please run one of ``Atom.exe``,  ``Atom.app`` or ``atom``
