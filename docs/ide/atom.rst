@@ -83,34 +83,44 @@ Manual Installation
 Quick Start
 -----------
 
-This tutorial introduces you to the basics of PlatformIO IDE workflow and shows you a creation process of a simple "Blink" example. After finishing you will have a general understanding of how to work with projects in the IDE.
+This tutorial introduces you to the basics of PlatformIO IDE workflow and shows
+you a creation process of a simple "Blink" example. After finishing you will
+have a general understanding of how to work with projects in the IDE.
 
 Launch
 ~~~~~~
 
-PlatformIO IDE is built on top of GitHub's Atom "hackable" text editor.
-After installation please run one of ``Atom.exe``,  ``Atom.app`` or ``atom``
-application depending on the OS.
+After installation, you launch PlatformIO IDE by opening Atom. Once Atom is
+open, PlatformIO IDE auto installer will continue to install dependent packages
+and PlatformIO CLI. Please be patient and let the installation complete. In the
+final result PlatformIO IDE will ask you to reload Atom window to apply
+installed components. Please click on ``Reload Now``. After it PlatformIO IDE is
+ready for using. Happy coding!
 
 Setting Up the Project
 ~~~~~~~~~~~~~~~~~~~~~~
 
-1. To create a new project choose ``Menu: PlatformIO > Initialize new Project or update existing`` or press the corresponding icon in the PlatformIO toolbar as shown in the image below:
+1. To create a new project choose
+   ``Menu: PlatformIO > Initialize new Project or update existing`` or press
+   the corresponding icon in the PlatformIO toolbar as shown in the image below:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-1.png
     :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-1.png
 
-2. In the "New Project Menu" choose desired boards (more than one board is allowed) and select a project directory. Then press "Initialize" button:
+2. In the "New Project Menu" choose desired boards (more than one board is
+   allowed) and select a project directory. Then press "Initialize" button:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-2.png
     :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-2.png
 
-3. If everything is fine, you should see the success message and project tree in the left panel:
+3. If everything is fine, you should see the success message and project tree
+   in the left panel:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-3.png
     :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-3.png
 
-4. Now, let's create the first project source file: right-click on the folder ``src`` and choose ``New File``:
+4. Now, let's create the first project source file: right-click on the folder
+   ``src`` and choose ``New File``:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-4.png
     :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-4.png
@@ -152,7 +162,8 @@ Copy the next source code to the just created file ``main.cpp``:
 Process Project
 ~~~~~~~~~~~~~~~
 
-PlatformIO IDE proposes different ways to process project (build, clean, upload firmware, run other targets) using:
+PlatformIO IDE proposes different ways to process project (build, clean,
+upload firmware, run other targets) using:
 
     - :ref:`atom_ide_platformio_toolbar`
     - :ref:`atom_ide_platformio_menu`
@@ -181,7 +192,8 @@ And select desired target:
 .. image:: ../_static/ide-atom-platformio-quick-start-9.png
     :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-9.png
 
-7. To run built-in terminal interface choose ``Menu: PlatformIO > Terminal`` or press the corresponding icon in the PlatformIO toolbar:
+7. To run built-in terminal interface choose ``Menu: PlatformIO > Terminal`` or
+   press the corresponding icon in the PlatformIO toolbar:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-10.png
     :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-10.png
@@ -191,7 +203,8 @@ It provides you fast access to all set of powerful PlatformIO CLI commands:
 .. image:: ../_static/ide-atom-platformio-quick-start-11.png
     :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-11.png
 
-8. To run built-in "Serial Monitor" choose ``Menu: PlatformIO > Serial Monitor`` or press the corresponding icon in the PlatformIO toolbar:
+8. To run built-in "Serial Monitor" choose ``Menu: PlatformIO > Serial Monitor``
+   or press the corresponding icon in the PlatformIO toolbar:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-12.png
     :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-12.png
