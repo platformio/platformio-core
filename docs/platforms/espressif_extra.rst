@@ -215,6 +215,27 @@ Demo
 .. image:: ../_static/platformio-demo-ota-esp8266.jpg
     :target: https://www.youtube.com/watch?v=lXchL3hpDO4
 
+
+Using Arduino Framework with Staging version
+--------------------------------------------
+
+1.  Clone/Copy `main repository <https://github.com/esp8266/Arduino>`_ to
+    :ref:`projectconf_pio_home_dir` + ``packages/framework-arduinoespressif``
+    and create new file ``packages/framework-arduinoespressif/version.txt``
+    with the new version (for example, ``2.2.0``).
+2.  Try to build project
+3.  If you see build errors, then try to build this project using the same
+    ``stage`` on Arduino IDE
+4.  If it works with Arduino IDE but doesn't work with PlatformIO, then please
+    `open new issue <https://github.com/platformio/platformio/issues>`_ with
+    attached information:
+
+    - test project/files
+    - detailed log of build process from Arduino IDE (please copy it from
+      console to http://pastebin.com)
+    - detailed log of build process from PlatformIO Build System (
+      please copy it from console to http://pastebin.com)
+
 Articles
 --------
 
