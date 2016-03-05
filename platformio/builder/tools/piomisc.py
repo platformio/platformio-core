@@ -213,14 +213,15 @@ def DumpIDEData(env):
             )
         return defines
 
+    LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
+    LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
     env_ = env.Clone()
 
     data = {
         "defines": get_defines(env_),
         "includes": get_includes(env_),
-        "cc_flags": env_.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
-        "cxx_flags": env_.subst(
-            "$SHCXXFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
+        "cc_flags": env_.subst(LINTCCOM),
+        "cxx_flags": env_.subst(LINTCXXCOM),
         "cxx_path": where_is_program(
             env_.subst("$CXX"), env_.subst("${ENV['PATH']}"))
     }
@@ -238,9 +239,8 @@ def DumpIDEData(env):
     env_.Replace(CPPDEFINES=_new_defines)
 
     data.update({
-        "cc_flags": env_.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
-        "cxx_flags": env_.subst(
-            "$SHCXXFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS")
+        "cc_flags": env_.subst(LINTCCOM),
+        "cxx_flags": env_.subst(LINTCXXCOM)
     })
 
     return data
