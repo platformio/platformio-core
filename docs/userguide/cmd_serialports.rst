@@ -95,7 +95,7 @@ Description
 ~~~~~~~~~~~
 
 This is a console application that provides a small terminal
-application. It is based on `Miniterm <http://pyserial.sourceforge.net/examples.html#miniterm>`_
+application. It is based on `Miniterm <https://pythonhosted.org/pyserial/examples.html#miniterm>`_
 and itself does not implement any terminal features such
 as *VT102* compatibility. However it inherits these features from the terminal
 it is run. For example on GNU/Linux running from an *xterm* it will support the
