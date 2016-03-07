@@ -150,18 +150,6 @@ Screenshot
 .. image:: ../_static/ide-vs-platformio-newproject-8.png
     :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-8.png
 
-
-.. warning::
-    When the IntelliSense parser finds a GCC-specific definition,
-    it defines it as an error but it will not create any compilation problems.
-    To resolve this problem provide an IntelliSense-friendly definition of problematic
-    GCC constructs and make sure that the GCC will ignore such definitions or disable IntelliSense
-    error reporting at all.
-    See details in `issue #543 <https://github.com/platformio/platformio/issues/543>`_
-
-.. image:: ../_static/ide-vs-platformio-newproject-9.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-9.png
-
 Examples
 --------
 
@@ -169,3 +157,25 @@ Examples
 ^^^^^^^^^^^^^^^
 
 Source code of `Visual Studio "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/visualstudio>`_.
+
+Known issues
+------------
+
+IntelliSense Errors
+^^^^^^^^^^^^^^^^^^^
+
+VS Studio does not allow to specify for project other toolchain which will
+be used by IntelliSense. In this case, IntelliSense does not understand
+GCC-specific definitions.
+
+However, these errors does not have any influence on PlatformIO Build
+System. It means that you can ignore them and rely on PlatformIO Build System
+messages which will be shown in output console after build.
+
+Nevertheless, you can provide an IntelliSense-friendly definition of problematic
+GCC constructs and make sure that the GCC will ignore such definitions or
+disable IntelliSense error reporting at all.
+See details in `issue #543 <https://github.com/platformio/platformio/issues/543>`_
+
+.. image:: ../_static/ide-vs-platformio-newproject-9.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-9.png

@@ -34,9 +34,6 @@ PlatformIO 2.0
 * Fixed incorrect parsing of GCC ``-include`` flag
   (`issue #552 <https://github.com/platformio/platformio/issues/552>`_)
 
--include
-
-
 2.8.4 (2016-02-17)
 ~~~~~~~~~~~~~~~~~~
 
