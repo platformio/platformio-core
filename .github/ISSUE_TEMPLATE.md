@@ -8,10 +8,10 @@ What kind of issue is this?
       already exists! Don’t send pull requests to implement new features without first getting our
       support. Sometimes we leave features out on purpose to keep the project small.  
       
-- [ ] PlatformIO IDE. All issues related to PlatformIO IDE should be reported to apropriate repository
+- [ ] PlatformIO IDE. All issues related to PlatformIO IDE should be reported to appropriate repository
       https://github.com/platformio/platformio-atom-ide/issues
 
-- [ ] Bug report. If you’ve found a bug, please provide the next information required below and delete this text above line.
+- [ ] Bug report. If you’ve found a bug, please provide information below.
 
 ------------------------------------------------------------------
 
