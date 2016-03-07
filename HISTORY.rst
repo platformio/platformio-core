@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.8.5 (2016-03-??)
+2.8.5 (2016-03-07)
 ~~~~~~~~~~~~~~~~~~
 
 * Project generator for `NetBeans IDE <http://docs.platformio.org/en/latest/ide/netbeans.html>`__
