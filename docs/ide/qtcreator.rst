@@ -16,11 +16,6 @@ Qt Creator
 
 The `Qt Creator <https://github.com/qtproject/qt-creator>`_ is an open source cross-platform integrated development environment. The editor includes such features as syntax highlighting for various languages, project manager, integrated version control systems, rapid code navigation tools and code autocompletion.
 
-This software can be used with:
-
-* all available :ref:`platforms`
-* all available :ref:`frameworks`
-
 Refer to the `Qt-creator Manual <http://doc.qt.io/qtcreator/>`_
 page for more detailed information.
 
@@ -107,7 +102,7 @@ On the next steps select any available kit and click Finish button.
 
 .. image:: ../_static/ide-platformio-qtcreator-2.png
 
-Secondly, we need to delete default build and clean steps and configure project with PlatformIO source code builder (click on Projects label on left menu or ``Ctrl+5`` shortcut):
+Secondly, we need to delete default build and clean steps and configure project with PlatformIO Build System (click on Projects label on left menu or ``Ctrl+5`` shortcut):
 
 .. image:: ../_static/ide-platformio-qtcreator-3.png
     :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-3.png

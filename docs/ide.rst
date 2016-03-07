@@ -18,11 +18,10 @@ IDE Integration
     :maxdepth: 2
 
     ide/atom
-    ide/arduino
     ide/clion
     ide/eclipse
     ide/emacs
-    ide/energia
+    ide/netbeans
     ide/qtcreator
     ide/sublimetext
     ide/vim

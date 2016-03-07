@@ -24,11 +24,6 @@ with syntax highlighting, folding and hyperlink navigation, source code
 refactoring and code generation, visual debugging tools, including memory,
 registers, and disassembly viewers.
 
-This software can be used with:
-
-* all available :ref:`platforms`
-* all available :ref:`frameworks`
-
 Refer to the `CDT Documentation <https://eclipse.org/cdt/documentation.php>`_
 page for more detailed information.
 

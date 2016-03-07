@@ -213,14 +213,15 @@ def DumpIDEData(env):
             )
         return defines
 
+    LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
+    LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
     env_ = env.Clone()
 
     data = {
         "defines": get_defines(env_),
         "includes": get_includes(env_),
-        "cc_flags": env_.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
-        "cxx_flags": env_.subst(
-            "$SHCXXFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
+        "cc_flags": env_.subst(LINTCCOM),
+        "cxx_flags": env_.subst(LINTCXXCOM),
         "cxx_path": where_is_program(
             env_.subst("$CXX"), env_.subst("${ENV['PATH']}"))
     }
@@ -228,6 +229,8 @@ def DumpIDEData(env):
     # https://github.com/platformio/platformio-atom-ide/issues/34
     _new_defines = []
     for item in env_.get("CPPDEFINES", []):
+        if isinstance(item, list):
+            item = "=".join(item)
         item = item.replace('\\"', '"')
         if " " in item:
             _new_defines.append(item.replace(" ", "\\\\ "))
@@ -236,9 +239,8 @@ def DumpIDEData(env):
     env_.Replace(CPPDEFINES=_new_defines)
 
     data.update({
-        "cc_flags": env_.subst("$SHCFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS"),
-        "cxx_flags": env_.subst(
-            "$SHCXXFLAGS $SHCCFLAGS $CPPFLAGS $_CPPDEFFLAGS")
+        "cc_flags": env_.subst(LINTCCOM),
+        "cxx_flags": env_.subst(LINTCXXCOM)
     })
 
     return data
@@ -254,9 +256,10 @@ def GetCompilerType(env):
     if result['returncode'] != 0:
         return None
     output = "".join([result['out'], result['err']]).lower()
-    for type_ in ("clang", "gcc"):
-        if type_ in output:
-            return type_
+    if "clang" in output and "LLVM" in output:
+        return "clang"
+    elif "gcc" in output:
+        return "gcc"
     return None
 
 

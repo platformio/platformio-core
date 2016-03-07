@@ -64,7 +64,7 @@ Frameworks
       - Description
 
     * - :ref:`framework_arduino`
-      - Arduino Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
+      - Arduino Wiring-based Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
 
 Boards
 ------
@@ -160,6 +160,13 @@ Espressif
       - ESP8266
       - 80 MHz
       - 1024 Kb
+      - 80 Kb
+
+    * - ``esp07``
+      - `Espressif Generic ESP8266 ESP-07 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family#esp-07>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
       - 80 Kb
 
     * - ``esp12e``

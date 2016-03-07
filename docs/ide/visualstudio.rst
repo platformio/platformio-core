@@ -16,11 +16,6 @@ Visual Studio
 
 The `Microsoft Visual Studio (Free) <http://visualstudio.com/free>`_ is an integrated development environment (IDE) from Microsoft. Visual Studio includes a code editor supporting IntelliSense (the code completion component) as well as code refactoring.
 
-This software can be used with:
-
-* all available :ref:`platforms`
-* all available :ref:`frameworks`
-
 Refer to the `Visual Studio Documentation <https://msdn.microsoft.com/library/vstudio>`_
 page for more detailed information.
 
@@ -69,7 +64,7 @@ First of all, let's create new project from Visual Studio Start Page: ``Start > 
 
 .. image:: ../_static/ide-vs-platformio-newproject.png
 
-Secondly, we need to configure project with PlatformIO source code builder:
+Secondly, we need to configure project with PlatformIO Build System:
 
 .. image:: ../_static/ide-vs-platformio-newproject-2.png
 
@@ -95,14 +90,14 @@ First program in Visual Studio
 
 Simple "Blink" project will consist from two files:
 
-1. Main "C" source file named ``main.c`` must be located in the ``src`` directory.
-Let's create new file named ``main.c`` using ``Menu: File > New File`` or shortcut ``Ctrl+N``:
+1. Main "C++" source file named ``main.cpp`` must be located in the ``src`` directory.
+Let's create new file named ``main.cpp`` using ``Menu: File > New File`` or shortcut ``Ctrl+N``:
 
 .. image:: ../_static/ide-vs-platformio-newproject-6.png
 
-Copy the source code which is described below to file ``main.c``.
+Copy the source code which is described below to file ``main.cpp``.
 
-.. code-block:: c
+.. code-block:: cpp
 
     #include "Arduino.h"
     #define WLED    13  // Most Arduino boards already have an LED attached to pin 13 on the board itself
@@ -162,3 +157,25 @@ Examples
 ^^^^^^^^^^^^^^^
 
 Source code of `Visual Studio "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/visualstudio>`_.
+
+Known issues
+------------
+
+IntelliSense Errors
+^^^^^^^^^^^^^^^^^^^
+
+VS Studio does not allow to specify for project other toolchain which will
+be used by IntelliSense. In this case, IntelliSense does not understand
+GCC-specific definitions.
+
+However, these errors does not have any influence on PlatformIO Build
+System. It means that you can ignore them and rely on PlatformIO Build System
+messages which will be shown in output console after build.
+
+Nevertheless, you can provide an IntelliSense-friendly definition of problematic
+GCC constructs and make sure that the GCC will ignore such definitions or
+disable IntelliSense error reporting at all.
+See details in `issue #543 <https://github.com/platformio/platformio/issues/543>`_
+
+.. image:: ../_static/ide-vs-platformio-newproject-9.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-9.png

@@ -18,7 +18,7 @@ from shutil import copyfile
 
 import click
 
-from platformio import app, exception
+from platformio import app, exception, util
 from platformio.commands.platforms import \
     platforms_install as cli_platforms_install
 from platformio.ide.projectgenerator import ProjectGenerator
@@ -75,26 +75,12 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
             not click.confirm("Do you want to continue?")):
         raise exception.AbortedByUser()
 
-    project_file = join(project_dir, "platformio.ini")
-    src_dir = join(project_dir, "src")
-    lib_dir = join(project_dir, "lib")
-
-    for d in (src_dir, lib_dir):
-        if not isdir(d):
-            makedirs(d)
-
-    init_lib_readme(lib_dir)
-    init_ci_conf(project_dir)
-    init_cvs_ignore(project_dir)
-
-    if not isfile(project_file):
-        copyfile(join(get_source_dir(), "projectconftpl.ini"),
-                 project_file)
+    init_base_project(project_dir)
 
     if board:
         fill_project_envs(
-            ctx, project_file, board, enable_auto_uploading, env_prefix,
-            ide is not None
+            ctx, join(project_dir, "platformio.ini"), board,
+            enable_auto_uploading, env_prefix, ide is not None
         )
 
     if ide:
@@ -126,58 +112,26 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
     )
 
 
-def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
-        ctx, project_file, board_types, enable_auto_uploading,
-        env_prefix, force_download):
-    builtin_boards = get_boards()
-    content = []
-    used_envs = []
-    used_platforms = []
+def init_base_project(project_dir):
+    platformio_ini = join(project_dir, "platformio.ini")
+    if not isfile(platformio_ini):
+        copyfile(join(get_source_dir(), "projectconftpl.ini"),
+                 platformio_ini)
 
-    with open(project_file) as f:
-        used_envs = [l.strip() for l in f.read().splitlines() if
-                     l.strip().startswith("[env:")]
+    lib_dir = join(project_dir, "lib")
+    src_dir = join(project_dir, "src")
+    with util.cd(project_dir):
+        config = util.get_project_config()
+        if config.has_option("platformio", "src_dir"):
+            src_dir = join(project_dir, config.get("platformio", "src_dir"))
 
-    for type_ in board_types:
-        data = builtin_boards[type_]
-        used_platforms.append(data['platform'])
-        env_name = "[env:%s%s]" % (env_prefix, type_)
+    for d in (src_dir, lib_dir):
+        if not isdir(d):
+            makedirs(d)
 
-        if env_name in used_envs:
-            continue
-
-        content.append("")
-        content.append(env_name)
-        content.append("platform = %s" % data['platform'])
-
-        # find default framework for board
-        frameworks = data.get("frameworks")
-        if frameworks:
-            content.append("framework = %s" % frameworks[0])
-
-        content.append("board = %s" % type_)
-        if enable_auto_uploading:
-            content.append("targets = upload")
-
-    if force_download and used_platforms:
-        _install_dependent_platforms(ctx, used_platforms)
-
-    if not content:
-        return
-
-    with open(project_file, "a") as f:
-        content.append("")
-        f.write("\n".join(content))
-
-
-def _install_dependent_platforms(ctx, platforms):
-    installed_platforms = PlatformFactory.get_platforms(installed=True).keys()
-    if set(platforms) <= set(installed_platforms):
-        return
-    ctx.invoke(
-        cli_platforms_install,
-        platforms=list(set(platforms) - set(installed_platforms))
-    )
+    init_lib_readme(lib_dir)
+    init_ci_conf(project_dir)
+    init_cvs_ignore(project_dir)
 
 
 def init_lib_readme(lib_dir):
@@ -302,3 +256,57 @@ def init_cvs_ignore(project_dir):
         return
     with open(join(project_dir, ".gitignore"), "w") as f:
         f.write(".pioenvs")
+
+
+def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
+        ctx, platformio_ini, board_types, enable_auto_uploading,
+        env_prefix, force_download):
+    builtin_boards = get_boards()
+    content = []
+    used_envs = []
+    used_platforms = []
+
+    with open(platformio_ini) as f:
+        used_envs = [l.strip() for l in f.read().splitlines() if
+                     l.strip().startswith("[env:")]
+
+    for type_ in board_types:
+        data = builtin_boards[type_]
+        used_platforms.append(data['platform'])
+        env_name = "[env:%s%s]" % (env_prefix, type_)
+
+        if env_name in used_envs:
+            continue
+
+        content.append("")
+        content.append(env_name)
+        content.append("platform = %s" % data['platform'])
+
+        # find default framework for board
+        frameworks = data.get("frameworks")
+        if frameworks:
+            content.append("framework = %s" % frameworks[0])
+
+        content.append("board = %s" % type_)
+        if enable_auto_uploading:
+            content.append("targets = upload")
+
+    if force_download and used_platforms:
+        _install_dependent_platforms(ctx, used_platforms)
+
+    if not content:
+        return
+
+    with open(platformio_ini, "a") as f:
+        content.append("")
+        f.write("\n".join(content))
+
+
+def _install_dependent_platforms(ctx, platforms):
+    installed_platforms = PlatformFactory.get_platforms(installed=True).keys()
+    if set(platforms) <= set(installed_platforms):
+        return
+    ctx.invoke(
+        cli_platforms_install,
+        platforms=list(set(platforms) - set(installed_platforms))
+    )

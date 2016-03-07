@@ -120,7 +120,7 @@ if "due" in env.subst("$BOARD"):
     )
 elif "zero" in env.subst("$BOARD"):
     env.Append(
-        CPPFLAGS=[
+        CCFLAGS=[
             "--param", "max-inline-insns-single=500"
         ],
 

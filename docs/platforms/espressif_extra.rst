@@ -171,7 +171,7 @@ You can pass additional options/flags to OTA uploader using
 
 Available flags
 
-* ``--port=ESP_PORT`` ESP8266 ota Port. Default 8266
+* ``--port=ESP_PORT`` ESP8266 OTA Port. Default 8266
 * ``--auth=AUTH`` Set authentication password
 * ``--spiffs`` Use this option to transmit a SPIFFS image and do not flash
   the module
@@ -215,9 +215,32 @@ Demo
 .. image:: ../_static/platformio-demo-ota-esp8266.jpg
     :target: https://www.youtube.com/watch?v=lXchL3hpDO4
 
+
+Using Arduino Framework with Staging version
+--------------------------------------------
+
+1.  Clone/Copy `main repository <https://github.com/esp8266/Arduino>`_ to
+    :ref:`projectconf_pio_home_dir` + ``packages/framework-arduinoespressif``
+    and create new file ``packages/framework-arduinoespressif/version.txt``
+    with the new version (for example, ``2.2.0``).
+2.  Try to build project
+3.  If you see build errors, then try to build this project using the same
+    ``stage`` on Arduino IDE
+4.  If it works with Arduino IDE but doesn't work with PlatformIO, then please
+    `open new issue <https://github.com/platformio/platformio/issues>`_ with
+    attached information:
+
+    - test project/files
+    - detailed log of build process from Arduino IDE (please copy it from
+      console to http://pastebin.com)
+    - detailed log of build process from PlatformIO Build System (
+      please copy it from console to http://pastebin.com)
+
 Articles
 --------
 
+* Feb 25, 2016 - **NutDIY** - `PlatformIO Blink On Nodemcu Dev Kit V1.0 (ESP 12-E) <http://nutdiy.blogspot.com/2016/02/platformio-blink-on-nodemcu-dev-kit-v10.html>`_
+* Feb 23, 2016 - **Ptarmigan Labs** - `ESP8266 Over The Air updating – what are the options? <https://ptarmiganlabs.com/blog/2016/02/23/esp8266-over-the-air-updating-what-are-the-options/>`_
 * Jan 16, 2016 - **Dani Eichhorn** - `ESP8266 Arduino IDE Alternative: PlatformIO <http://blog.squix.ch/2016/01/esp8266-arduino-ide-alternative.html>`_
 * Dec 22, 2015 - **Jan Penninkhof** - `Over-the-Air ESP8266 programming using PlatformIO <http://www.penninkhof.com/2015/12/1610-over-the-air-esp8266-programming-using-platformio/>`_
 * Dec 01, 2015 - **Tateno Yuichi** - `ESP8266 を CUI で開発する (Develop a ESP8266 in CUI, Japanese) <http://jaywiggins.com/platformio/arduino/avr/es8266/2015/09/30/platformio-investigation/>`_

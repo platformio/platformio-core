@@ -4,6 +4,39 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.8.5 (2016-03-07)
+~~~~~~~~~~~~~~~~~~
+
+* Project generator for `NetBeans IDE <http://docs.platformio.org/en/latest/ide/netbeans.html>`__
+  (`issue #541 <https://github.com/platformio/platformio/issues/541>`_)
+* Created package for Homebrew Mac OS X Package Manager: ``brew install
+  platformio``
+  (`issue #395 <https://github.com/platformio/platformio/issues/395>`_)
+* Updated Arduino core for Espressif platform to 2.1.0
+  (`issue #544 <https://github.com/platformio/platformio/issues/544>`_)
+* Added support for the ESP8266 ESP-07 board to
+  `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  (`issue #527 <https://github.com/platformio/platformio/issues/527>`_)
+* Improved handling of String-based ``CPPDEFINES`` passed to extra ``build_flags``
+  (`issue #526 <https://github.com/platformio/platformio/issues/526>`_)
+* Generate appropriate project for CLion IDE and CVS
+  (`issue #523 <https://github.com/platformio/platformio/issues/523>`_)
+* Use ``src_dir`` directory from `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  when initializing project otherwise create base ``src`` directory
+  (`issue #536 <https://github.com/platformio/platformio/issues/536>`_)
+* Fixed issue with incorrect handling of user's build flags where the base flags
+  were passed after user's flags to GCC compiler
+  (`issue #528 <https://github.com/platformio/platformio/issues/528>`_)
+* Fixed issue with Project Generator when optional build flags were passed using
+  system environment variables: `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-flags>`__
+  or `PLATFORMIO_BUILD_SRC_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-src-flags>`__
+* Fixed invalid detecting of compiler type
+  (`issue #550 <https://github.com/platformio/platformio/issues/550>`_)
+* Fixed issue with updating package which was deleted manually by user
+  (`issue #555 <https://github.com/platformio/platformio/issues/555>`_)
+* Fixed incorrect parsing of GCC ``-include`` flag
+  (`issue #552 <https://github.com/platformio/platformio/issues/552>`_)
+
 2.8.4 (2016-02-17)
 ~~~~~~~~~~~~~~~~~~
 
@@ -21,7 +54,7 @@ PlatformIO 2.0
 * Handle new environment variables
   `PLATFORMIO_UPLOAD_PORT <http://docs.platformio.org/en/latest/envvars.html#platformio-upload-port>`_
   and `PLATFORMIO_UPLOAD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-upload-flags>`_
-  (`IDE issue #518 <https://github.com/platformio/platformio/issues/518>`_)
+  (`issue #518 <https://github.com/platformio/platformio/issues/518>`_)
 * Fixed issue with ``CPPDEFINES`` which contain space and break PlatformIO
   IDE Linter
   (`IDE issue #34 <https://github.com/platformio/platformio-atom-ide/issues/34>`_)

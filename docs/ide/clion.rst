@@ -20,12 +20,7 @@ initial version will support the GCC and Clang compilers and GDB debugger.
 Clion includes such features as a smart editor, code quality assurance,
 automated refactorings, project manager, integrated version control systems.
 
-This software can be used with:
-
-* all available :ref:`platforms`
-* all available :ref:`frameworks`
-
-Refer to the `CDT Documentation <https://www.jetbrains.com/clion/documentation/>`_
+Refer to the `CLion Documentation <https://www.jetbrains.com/clion/documentation/>`_
 page for more detailed information.
 
 .. contents::

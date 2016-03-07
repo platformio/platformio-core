@@ -256,6 +256,20 @@ nav {
 
 /* Misc */
 
+.wy-side-scroll .wy-side-nav-search .icon,
+.wy-side-scroll .wy-side-nav-search .version {
+  display: none;
+  visibility: none;
+}
+
+.navbar-header .navbar-brand {
+  color: #e0e0e0;
+  background: url("../_static/platformio-logo-xs.png") no-repeat;
+  background-position: 5px 0;
+  padding-left: 50px;
+  font-weight: 500;
+}
+
 .top-banner {
   display: block;
   padding: 10px 20px;

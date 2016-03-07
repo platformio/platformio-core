@@ -95,7 +95,7 @@ class MeasurementProtocol(TelemetryBase):
 
         # gather dependent packages
         dpdata = []
-        dpdata.append("Click/%s" % click.__version__)
+        dpdata.append("PlatformIO/%s" % __version__)
         if app.get_session_var("caller_id"):
             dpdata.append("Caller/%s" % app.get_session_var("caller_id"))
         if getenv("PLATFORMIO_IDE"):

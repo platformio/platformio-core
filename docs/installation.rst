@@ -14,18 +14,13 @@
 Installation
 ============
 
+.. include:: /ide/_platformio_ide_extra.rst
+
 **PlatformIO** is written in `Python <https://www.python.org/downloads/>`_ and
 works on Mac OS X, Linux, Windows OS and *ARM*-based credit-card sized
 computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
 `BeagleBone <http://beagleboard.org>`_,
 `CubieBoard <http://cubieboard.org>`_).
-
-.. note::
-    We are glad to announce official :ref:`ide_atom` which provides
-    comprehensive facilities for IoT development: built-in PlatformIO CLI tool,
-    Terminal and other instruments.
-
-    Try :ref:`ide_atom` for free now!
 
 .. contents::
 
@@ -41,7 +36,8 @@ System requirements
         **Windows Users**: Please `Download the latest Python 2.7.x
         <https://www.python.org/downloads/>`_ and install it.
         **DON'T FORGET** to select ``Add python.exe to Path`` feature on the
-        "Customize" stage, otherwise ``pip`` command will not be available.
+        "Customize" stage, otherwise Python Package Manager ``pip`` command
+        will not be available.
 
 :Terminal Application:
 
@@ -55,8 +51,11 @@ Installation Methods
 
 Please *choose ONE of* the following methods:
 
-a) Python Package Manager
-~~~~~~~~~~~~~~~~~~~~~~~~~
+.. contents::
+    :local:
+
+Python Package Manager
+~~~~~~~~~~~~~~~~~~~~~~
 
 The latest stable version of PlatformIO may be installed or upgraded via
 Python Package Manager (`pip <https://pip.pypa.io>`_) as follows:
@@ -80,8 +79,8 @@ a few options here:
 
 .. _installation_installer_script:
 
-b) Installer Script
-~~~~~~~~~~~~~~~~~~~
+Installer Script
+~~~~~~~~~~~~~~~~
 
 Super-Quick (Mac / Linux)
 '''''''''''''''''''''''''
@@ -120,8 +119,19 @@ On *Windows OS* it may look like:
     # run it
     C:\Python27\python.exe get-platformio.py
 
-c) Full Guide
-~~~~~~~~~~~~~
+
+Mac OS X Homebrew
+~~~~~~~~~~~~~~~~~
+
+The latest stable version of PlatformIO may be installed or upgraded via
+Mac OS X Homebrew Packages Manager (`brew <http://brew.sh/>`_) as follows:
+
+.. code-block:: bash
+
+    brew install platformio
+
+Full Guide
+~~~~~~~~~~
 
 1. Check a ``python`` version (only 2.6-2.7 is supported):
 
@@ -149,8 +159,8 @@ For upgrading ``platformio`` to the latest version:
 
     pip install -U platformio
 
-d) Development Version
-~~~~~~~~~~~~~~~~~~~~~~
+Development Version
+~~~~~~~~~~~~~~~~~~~
 
 Install the latest PlatformIO from the ``develop`` branch:
 

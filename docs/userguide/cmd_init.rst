@@ -33,14 +33,11 @@ Initialize new PlatformIO based project or update existing with new data.
 This command will create:
 
 * :ref:`projectconf`
-* ``src`` - a source directory. Put your source files here
-* ``lib`` - a directory for the project specific (private) libraries.
-* ``.travis.yml`` configuration file (template) for Continuous Integration
-  with :ref:`ci_travis`
-
-.. note::
-    The source code of each library should be placed in separate directory.
-    For example, ``lib/private_lib/[here are source files]``.
+* ``src`` directory where you should place source code
+  (``*.h, *.c, *.cpp, *.S, *.ino, etc.``)
+* ``lib`` directory can be used for the project specific (private) libraries.
+  More details are located in ``lib/readme.txt`` file.
+* Miscellaneous files for CVS and :ref:`ci` support.
 
 Options
 -------

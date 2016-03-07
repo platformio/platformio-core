@@ -12,9 +12,14 @@
 PlatformIO is an open source ecosystem for IoT development
 ==========================================================
 
-**Cross-platform code builder and library manager. Continuous and IDE
+**Cross-platform build system and library manager. Continuous and IDE
 integration. Arduino and MBED compatible. Ready for Cloud compiling.**
 
+* **PlatformIO IDE** - The next generation integrated development environment for IoT.
+  C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
+  Multi-projects workflow with Multiple Panes. Themes Support with dark and light colors.
+  Built-in Terminal with PlatformIO CLI tool and support for the powerful Serial Port Monitor.
+  All advanced instruments without leaving your favourite development environment.
 * **Development Platforms** - Embedded and Desktop development platforms with
   pre-built toolchains, debuggers, uploaders and frameworks which work under
   popular host OS: Mac, Windows, Linux (+ARM)
@@ -38,8 +43,8 @@ libOpenCM3, etc.*
   `Issues <https://github.com/platformio/platformio/issues>`_
 * `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
   `Twitter <https://twitter.com/PlatformIO_Org>`_ |
-  `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
   `Facebook <https://www.facebook.com/platformio>`_ |
+  `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
   `Reddit <http://www.reddit.com/r/platformio/>`_
 
 Embedded Development. *Easier Than Ever.*
@@ -54,7 +59,7 @@ Embedded Development. *Easier Than Ever.*
 * Pre-built toolchains, :ref:`frameworks` for the
   :ref:`Development Platforms <platforms>`
 
-Smart Code Builder. *Fast and Reliable.*
+Smart Build System. *Fast and Reliable.*
 ----------------------------------------
 
 * Reliable, automatic dependency analysis and detection of build changes
@@ -72,16 +77,21 @@ The Missing Library Manager. *It's here!*
 * It runs on Windows, Mac OS X, and Linux (+ARM).
 
 For further details, please refer to
-:ref:`What is PlatformIO? How does it work? <faq_what_is_platformio>`
+:ref:`What is PlatformIO? How does it work? <what_is_pio>`
 
 Contents
 --------
 
 .. toctree::
+    :maxdepth: 2
+
+    what-is-platformio
+    demo
+
+.. toctree::
     :caption: Getting Started
     :maxdepth: 2
 
-    demo
     installation
     quickstart
     userguide/index

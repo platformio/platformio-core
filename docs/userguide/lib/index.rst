@@ -21,6 +21,7 @@ To print all available commands and options use:
     $ platformio lib --help
     $ platformio lib COMMAND --help
 
+.. image:: ../../_static/platformio-demo-lib.gif
 
 .. toctree::
     :maxdepth: 2

@@ -301,7 +301,10 @@ Example:
 .. code-block::   ini
 
     [env:specific_defines]
-    build_flags = -Dfoo -Dbar=1
+    build_flags = -DFOO -DBAR=1 -DFLOAT_VALUE=1.23457e+07
+
+    [env:string_defines]
+    build_flags = '-DHELLO="World!"' '-DWIFI_PASS="My password"'
 
     [env:specific_inclibs]
     build_flags = -I/opt/include -L/opt/lib -lfoo

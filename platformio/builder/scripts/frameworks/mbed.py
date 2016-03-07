@@ -188,10 +188,10 @@ def get_build_flags(data):
     flags = {}
     cflags = set(data.get("CFLAGS", []))
     cxxflags = set(data.get("CXXFLAGS", []))
-    cppflags = set(cflags & cxxflags)
-    flags['CPPFLAGS'] = list(cppflags)
-    flags['CXXFLAGS'] = list(cxxflags - cppflags)
-    flags['CFLAGS'] = list(cflags - cppflags)
+    ccflags = set(cflags & cxxflags)
+    flags['CCFLAGS'] = list(ccflags)
+    flags['CXXFLAGS'] = list(cxxflags - ccflags)
+    flags['CFLAGS'] = list(cflags - ccflags)
     return flags
 
 
@@ -221,7 +221,7 @@ variant_dir = join("$PLATFORMFW_DIR", "variant", variant)
 env.Replace(
     _mbed_whole_archive_hook=_mbed_whole_archive_hook,
     _LIBFLAGS="${_mbed_whole_archive_hook(%s)}" % env.get("_LIBFLAGS")[2:-1],
-    CPPFLAGS=build_flags.get("CPPFLAGS", []),
+    CCFLAGS=build_flags.get("CCFLAGS", []),
     CFLAGS=build_flags.get("CFLAGS", []),
     CXXFLAGS=build_flags.get("CXXFLAGS", []),
     LINKFLAGS=eixdata.get("LINKFLAGS", []),

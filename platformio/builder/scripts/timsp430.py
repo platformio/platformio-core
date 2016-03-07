@@ -36,7 +36,7 @@ env.Replace(
 
     ARFLAGS=["rcs"],
 
-    ASPPFLAGS=["-x", "assembler-with-cpp"],
+    ASFLAGS=["-x", "assembler-with-cpp"],
 
     CCFLAGS=[
         "-g",  # include debugging info (so errors include line numbers)
@@ -74,6 +74,8 @@ env.Replace(
 )
 
 env.Append(
+    ASFLAGS=env.get("CCFLAGS", [])[:],
+
     BUILDERS=dict(
         ElfToHex=Builder(
             action=" ".join([

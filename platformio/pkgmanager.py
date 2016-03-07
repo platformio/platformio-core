@@ -103,7 +103,7 @@ class PackageManager(object):
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.ChunkedEncodingError,
                 exception.FDUnrecognizedStatusCode, StopIteration):
-            if info['url'].startswith("http://sourceforge.net"):
+            if not info['url'].startswith("http://dl.platformio.org"):
                 dlpath = self.download(
                     "http://dl.platformio.org/packages/%s" %
                     basename(info['url']), pkg_dir, info['sha1'])
@@ -126,7 +126,8 @@ class PackageManager(object):
             click.secho("Not installed", fg="yellow")
             return False
 
-        rmtree(join(self._package_dir, name))
+        if isdir(join(self._package_dir, name)):
+            rmtree(join(self._package_dir, name))
         self._unregister(name)
         click.echo("[%s]" % click.style("OK", fg="green"))
 

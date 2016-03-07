@@ -15,8 +15,8 @@
 """
 Arduino
 
-Arduino Framework allows writing cross-platform software to control
-devices attached to a wide range of Arduino boards to create all
+Arduino Wiring-based Framework allows writing cross-platform software to
+control devices attached to a wide range of Arduino boards to create all
 kinds of creative coding, interactive objects, spaces or physical experiences.
 
 http://arduino.cc/en/Reference/HomePage
@@ -57,7 +57,7 @@ elif env.get("PLATFORM") == "espressif":
     env.Prepend(
         CPPPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "include")],
         LIBPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "lib")],
-        LIBS=["smartconfig", "pp", "main", "wpa", "lwip",
+        LIBS=["mesh", "wpa2", "smartconfig", "pp", "main", "wpa", "lwip",
               "net80211", "wps", "crypto", "phy", "hal", "axtls", "gcc", "m"]
     )
 elif env.get("PLATFORM") == "nordicnrf51":

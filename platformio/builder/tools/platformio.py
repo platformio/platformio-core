@@ -97,17 +97,31 @@ def BuildProgram(env):
 
 def ProcessFlags(env, flags):
     for f in flags:
-        if f:
-            env.MergeFlags(str(f))
+        if not f:
+            continue
+        parsed_flags = env.ParseFlags(str(f))
+        for flag in parsed_flags.pop("CPPDEFINES"):
+            if not isinstance(flag, list):
+                env.Append(CPPDEFINES=flag)
+                continue
+            if '\"' in flag[1]:
+                flag[1] = flag[1].replace('\"', '\\\"')
+            env.Append(CPPDEFINES=[flag])
+        env.Append(**parsed_flags)
 
     # fix relative CPPPATH
     for i, p in enumerate(env.get("CPPPATH", [])):
         if isdir(p):
             env['CPPPATH'][i] = realpath(p)
+    # fix relative path for "-include"
+    for i, f in enumerate(env.get("CCFLAGS", [])):
+        if isinstance(f, tuple) and f[0] == "-include":
+            env['CCFLAGS'][i] = (f[0], env.File(realpath(f[1].get_path())))
 
     # Cancel any previous definition of name, either built in or
     # provided with a -D option // Issue #191
-    undefines = [u for u in env.get("CCFLAGS", []) if u.startswith("-U")]
+    undefines = [u for u in env.get("CCFLAGS", [])
+                 if isinstance(u, basestring) and u.startswith("-U")]
     if undefines:
         for undef in undefines:
             env['CCFLAGS'].remove(undef)

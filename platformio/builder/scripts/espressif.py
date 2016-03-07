@@ -64,7 +64,7 @@ env.Replace(
 
     ARFLAGS=["rcs"],
 
-    ASPPFLAGS=["-x", "assembler-with-cpp"],
+    ASFLAGS=["-x", "assembler-with-cpp"],
 
     CFLAGS=[
         "-std=gnu99",
@@ -75,7 +75,7 @@ env.Replace(
         "-nostdlib"
     ],
 
-    CPPFLAGS=[
+    CCFLAGS=[
         "-Os",  # optimize for size
         "-mlongcalls",
         "-mtext-section-literals",
@@ -99,6 +99,7 @@ env.Replace(
     ],
 
     LINKFLAGS=[
+        "-Os",
         "-nostdlib",
         "-Wl,--no-check-sections",
         "-u", "call_user_start",
@@ -141,6 +142,8 @@ env.Replace(
 )
 
 env.Append(
+    ASFLAGS=env.get("CCFLAGS", [])[:],
+
     BUILDERS=dict(
         ElfToBin=Builder(
             action=" ".join([
