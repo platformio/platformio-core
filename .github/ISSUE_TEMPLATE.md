@@ -13,6 +13,8 @@ What kind of issue is this?
 
 - [ ] Bug report. If you’ve found a bug, please provide information below.
 
+*You can erase any parts of this template not applicable to your Issue.*
+
 ------------------------------------------------------------------
 
 ### Configuration
