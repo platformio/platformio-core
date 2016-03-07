@@ -19,6 +19,9 @@ The `Qt Creator <https://github.com/qtproject/qt-creator>`_ is an open source cr
 Refer to the `Qt-creator Manual <http://doc.qt.io/qtcreator/>`_
 page for more detailed information.
 
+.. image:: ../_static/ide-platformio-qtcreator-7.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-7.png
+
 .. contents::
 
 Integration
@@ -183,12 +186,6 @@ Conclusion
 ~~~~~~~~~~
 
 Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build All``.
-
-Screenshot
-----------
-
-.. image:: ../_static/ide-platformio-qtcreator-7.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-qtcreator-7.png
 
 Examples
 --------

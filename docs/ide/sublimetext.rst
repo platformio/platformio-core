@@ -19,6 +19,8 @@ The `Sublime Text <http://www.sublimetext.com/>`_ is a cross-platform text and s
 Refer to the `Sublime Text Documentation <http://docs.sublimetext.info/en/latest>`_
 page for more detailed information.
 
+.. image:: ../_static/ide-sublime-text-platformio-newproject-5.png
+
 .. contents::
 
 Integration
@@ -170,11 +172,6 @@ Conclusion
 ~~~~~~~~~~
 
 Taking everything into account, we can open project directory in Sublime Text using ``Menu: File > Open Folder`` and build it with shortcut ``Ctrl+B`` (Windows/Linux) or ``Cmd+B`` (Mac), clean project with shortcut ``F11`` and upload firmware to target with shortcut ``F12``.
-
-Screenshot
-----------
-
-.. image:: ../_static/ide-sublime-text-platformio-newproject-5.png
 
 Examples
 --------

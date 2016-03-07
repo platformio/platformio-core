@@ -24,6 +24,9 @@ Maven and Java EE with PrimeFaces; and improvements to PHP and C/C++ support.
 Refer to the `C/C++ Application Learning Trail <https://netbeans.org/kb/trails/cnd.html>`_
 for details.
 
+.. image:: ../_static/ide-platformio-netbeans.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-platformio-netbeans.png
+
 .. contents::
 
 Integration
@@ -58,9 +61,3 @@ Articles / Manuals
 * Feb 22, 2016 - **Grzegorz Hołdys** - `How to Integrate PlatformIO with Netbeans <http://www.instructables.com/id/How-to-Integrate-PlatformIO-With-Netbeans/>`_
 
 See the full list with :ref:`articles`.
-
-Screenshot
------------
-
-.. image:: ../_static/ide-platformio-netbeans.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-platformio-netbeans.png

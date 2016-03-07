@@ -36,6 +36,8 @@ code editor that's modern, approachable, yet hackable to the core; a tool you
 can customize to do anything but also use productively without ever touching a
 config file.
 
+.. image:: ../_static/ide-atom-platformio.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png
 
 .. contents::
 
@@ -417,9 +419,3 @@ Articles / Manuals
 * Feb 25, 2016 - **NutDIY** - `PlatformIO Blink On Nodemcu Dev Kit V1.0 (Thai) <http://nutdiy.blogspot.com/2016/02/platformio-blink-on-nodemcu-dev-kit-v10.html>`_
 
 See a full list with :ref:`articles`.
-
-Screenshot
-----------
-
-.. image:: ../_static/ide-atom-platformio.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png

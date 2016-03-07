@@ -22,6 +22,9 @@ with extensions to support text editing.
 Refer to the `Emacs Documentation <https://www.gnu.org/software/emacs/#Manuals>`_
 page for more detailed information.
 
+.. image:: ../_static/ide-platformio-emacs.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-emacs.png
+
 .. contents::
 
 Integration
@@ -63,10 +66,3 @@ There are 6 predefined targets for building.
     The libraries which are added, installed or used in the project
     after generating process wont be reflected in IDE. To fix it you
     need to reinitialize project using :ref:`cmd_init` (repeat it).
-
-
-Screenshot
-----------
-
-.. image:: ../_static/ide-platformio-emacs.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-emacs.png
