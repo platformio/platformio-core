@@ -255,7 +255,6 @@ Each button contains hint (delay mouse on it).
 * ||
 * Terminal
 * Library Manager
-* Serial Ports
 * Serial Monitor
 * ||
 * Settings
@@ -275,7 +274,7 @@ Building / Uploading / Targets
 * ``cmd-alt-v`` / ``ctrl-alt-v`` / ``f8`` toggles the build panel.
 * ``escape`` terminates build / closes the build window.
 
-More details `Atom Build package <https://atom.io/packages/build>`_.
+More options ``Menu: PlatformIO > Settings > Build``.
 
 Intelligent Code Autocompletion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
