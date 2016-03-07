@@ -21,7 +21,7 @@ from time import time
 
 import click
 
-from platformio import __version__, app, exception, telemetry
+from platformio import __version__, app, exception, telemetry, util
 from platformio.commands.lib import lib_update as cmd_libraries_update
 from platformio.commands.platforms import \
     platforms_install as cmd_platforms_install
@@ -46,6 +46,8 @@ def on_platformio_start(ctx, force, caller):
 
     after_upgrade(ctx)
 
+
+def on_platformio_end(ctx, result):  # pylint: disable=W0613
     try:
         check_platformio_upgrade()
         check_internal_updates(ctx, "platforms")
@@ -53,10 +55,6 @@ def on_platformio_start(ctx, force, caller):
     except (exception.GetLatestVersionError, exception.APIRequestError):
         click.secho("Failed to check for PlatformIO upgrades. "
                     "Please check your Internet connection.", fg="red")
-
-
-def on_platformio_end(ctx, result):  # pylint: disable=W0613
-    pass
 
 
 def on_platformio_exception(e):
@@ -149,12 +147,13 @@ def after_upgrade(ctx):
     if not getenv("PLATFORMIO_IDE"):
         click.echo("- %s PlatformIO IDE for IoT development > %s" % (
             click.style("try", fg="cyan"),
-            click.style("http://platformio.org/", fg="cyan")
+            click.style("http://platformio.org/#!/platformio-ide", fg="cyan")
         ))
-    click.echo("- %s to keep PlatformIO alive! > %s" % (
-        click.style("donate", fg="cyan"),
-        click.style("http://platformio.org/#!/donate", fg="cyan")
-    ))
+    if not util.is_ci():
+        click.echo("- %s to keep PlatformIO alive! > %s" % (
+            click.style("donate", fg="cyan"),
+            click.style("http://platformio.org/#!/donate", fg="cyan")
+        ))
 
     click.echo("*" * terminal_width)
     click.echo("")
