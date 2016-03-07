@@ -21,6 +21,9 @@ PlatformIO 2.0
   (`issue #526 <https://github.com/platformio/platformio/issues/526>`_)
 * Generate appropriate project for CLion IDE and CVS
   (`issue #523 <https://github.com/platformio/platformio/issues/523>`_)
+* Use ``src_dir`` directory from `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  when initializing project otherwise create base ``src`` directory
+  (`issue #536 <https://github.com/platformio/platformio/issues/536>`_)
 * Fixed issue with incorrect handling of user's build flags where the base flags
   were passed after user's flags to GCC compiler
   (`issue #528 <https://github.com/platformio/platformio/issues/528>`_)
