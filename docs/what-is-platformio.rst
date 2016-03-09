@@ -78,7 +78,7 @@ boards and MCUs. To keep things short: PlatformIO supports approximately 200
 `Embedded Boards <http://platformio.org/#!/boards>`_ and all major
 :ref:`Development Platforms <platforms>`.
 
-User SHOULD have a choise
+User SHOULD have a choice
 -------------------------
 
 * Decide which operation system they want to run development process on.
