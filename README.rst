@@ -31,7 +31,7 @@ PlatformIO
 
 
 `Home <http://platformio.org>`_ |
-`PlatformIO IDE <http://platformio.org/#!/platformio-ide>`_ |
+`IDE <http://platformio.org/#!/platformio-ide>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
 `Docs <http://docs.platformio.org>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_ |
