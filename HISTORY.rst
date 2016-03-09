@@ -4,6 +4,12 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.8.6 (2016-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Launched `PlatformIO Community Forums <http://community.platformio.org>`_
+  (`issue #530 <https://github.com/platformio/platformio/issues/530>`_)
+
 2.8.5 (2016-03-07)
 ~~~~~~~~~~~~~~~~~~
 

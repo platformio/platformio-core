@@ -45,7 +45,7 @@ libOpenCM3, etc.*
   `Twitter <https://twitter.com/PlatformIO_Org>`_ |
   `Facebook <https://www.facebook.com/platformio>`_ |
   `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
-  `Reddit <http://www.reddit.com/r/platformio/>`_
+  `Forums <http://community.platformio.org>`_
 
 Embedded Development. *Easier Than Ever.*
 -----------------------------------------
