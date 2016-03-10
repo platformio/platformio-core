@@ -247,10 +247,10 @@ Examples
             - "~/.platformio"
 
     env:
-        - PLATFORMIO_CI_SRC=examples/TimeArduinoDue PLATFORMIO_CI_BOARDS_ARGS="--board=due"
+        - PLATFORMIO_CI_SRC=examples/TimeArduinoDue PLATFORMIO_CI_EXTRA_ARGS="--board=due"
         - PLATFORMIO_CI_SRC=examples/TimeGPS
         - PLATFORMIO_CI_SRC=examples/TimeNTP
-        - PLATFORMIO_CI_SRC=examples/TimeTeensy3 PLATFORMIO_CI_BOARDS_ARGS="--board=teensy31"
+        - PLATFORMIO_CI_SRC=examples/TimeTeensy3 PLATFORMIO_CI_EXTRA_ARGS="--board=teensy31"
         # - ...
 
     install:
@@ -264,7 +264,7 @@ Examples
         - platformio lib install 416 421 422
 
     script:
-        - platformio ci --lib="." --board=moteino $PLATFORMIO_CI_EXTRA_ARGS
+        - platformio ci --lib="." --board=uno --board=teensy20pp $PLATFORMIO_CI_EXTRA_ARGS
 
 * Configuration file: https://github.com/ivankravets/Time/blob/master/.travis.yml
 * Build History: https://travis-ci.org/ivankravets/Time
