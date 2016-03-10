@@ -264,7 +264,7 @@ Examples
         - platformio lib install 416 421 422
 
     script:
-        - if [[ $PLATFORMIO_CI_BOARDS_ARGS ]]; then bash -c 'platformio ci --lib="." $PLATFORMIO_CI_BOARDS_ARGS'; else bash -c 'platformio ci --lib="." --board=uno --board=teensy20pp'; fi
+        - platformio ci --lib="." --board=moteino $PLATFORMIO_CI_EXTRA_ARGS
 
 * Configuration file: https://github.com/ivankravets/Time/blob/master/.travis.yml
 * Build History: https://travis-ci.org/ivankravets/Time
