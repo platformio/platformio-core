@@ -195,18 +195,27 @@ def get_build_flags(data):
     return flags
 
 
-def _mbed_whole_archive_hook(flags):
-    if (not isinstance(flags, list) or
+def _mbed_whole_archive_hook(libs):
+    if (not isinstance(libs, list) or
             env.get("BOARD_OPTIONS", {}).get("platform") != "ststm32"):
-        return flags
+        return libs
 
-    for pos, flag in enumerate(flags[:]):
-        if isinstance(flag, basestring):
-            continue
-        flags.insert(pos, "-Wl,-whole-archive")
-        flags.insert(pos + 2, "-Wl,-no-whole-archive")
+    _dynlibs = []
+    _stlibs = []
+    for l in libs:
+        if isinstance(l, basestring):
+            _stlibs.append(l)
+        else:
+            _dynlibs.append(l)
 
-    return flags
+    libs = []
+    if _dynlibs:
+        libs.append("-Wl,-whole-archive")
+        libs.extend(_dynlibs)
+        libs.append("-Wl,-no-whole-archive")
+    libs.extend(_stlibs)
+
+    return libs
 
 
 board_type = env.subst("$BOARD")
