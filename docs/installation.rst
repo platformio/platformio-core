@@ -162,6 +162,11 @@ For upgrading ``platformio`` to the latest version:
 Development Version
 ~~~~~~~~~~~~~~~~~~~
 
+.. warning::
+    If you use :ref:`ide_atom`, please enable development version via
+    ``Menu PlatformIO: Settings > PlatformIO IDE > Use development version of
+    PlatformIO``.
+
 Install the latest PlatformIO from the ``develop`` branch:
 
 .. code-block:: bash
