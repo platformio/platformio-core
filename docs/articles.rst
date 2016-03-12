@@ -23,6 +23,7 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
+* Mar 12, 2016 - **Richard Arthurs** - `Getting Started With PlatformIO <http://richarthurs.com/2016/03/12/platformio-review-and-first-thoughts/>`_
 * Mar 07, 2016 - **Joran Jessurun** - `Nieuwe wereld met PlatformIO (New world with PlatformIO, Dutch) <http://blog.wisclub.nl/#post178>`_
 * Mar 05, 2016 - **brichacek.net** - `PlatformIO – otevřený ekosystém pro vývoj IoT (PlatformIO – an open source ecosystem for IoT development, Czech) <http://blog.brichacek.net/platformio-otevreny-ekosystem-pro-vyvoj-iot/>`_
 * Mar 04, 2016 - **Ricardo Vega** - `Programa tu Arduino desde Atom (Program your Arduino from Atom, Spanish) <http://ricveal.com/blog/programa-arduino-desde-atom/>`_
