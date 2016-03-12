@@ -75,7 +75,7 @@ console application, it can be used in combination with one's favorite
 Alright, so PlatformIO can run on different operating systems. But more
 importantly, from development perspective at least, is a list of supported
 boards and MCUs. To keep things short: PlatformIO supports approximately 200
-`Embedded Boards <http://platformio.org/#!/boards>`_ and all major
+`Embedded Boards <http://platformio.org/boards>`_ and all major
 :ref:`Development Platforms <platforms>`.
 
 User SHOULD have a choice

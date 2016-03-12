@@ -36,8 +36,8 @@ Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
 libOpenCM3, etc.*
 
 * `Website <http://platformio.org>`_
-* `Web 2.0 Library Search <http://platformio.org/#!/lib>`_ |
-  `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+* `Web 2.0 Library Search <http://platformio.org/lib>`_ |
+  `Embedded Boards Explorer <http://platformio.org/boards>`_
 * `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_
 * `Source Code <https://github.com/platformio/platformio>`_ |
   `Issues <https://github.com/platformio/platformio/issues>`_
@@ -71,7 +71,7 @@ The Missing Library Manager. *It's here!*
 -----------------------------------------
 
 * Friendly Command-Line Interface
-* Modern `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
+* Modern `Web 2.0 Library Search <http://platformio.org/lib>`_
 * Library dependency management
 * Automatic library updating
 * It runs on Windows, Mac OS X, and Linux (+ARM).

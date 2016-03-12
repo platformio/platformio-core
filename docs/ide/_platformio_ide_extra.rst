@@ -10,7 +10,7 @@
     limitations under the License.
 
 .. note::
-    We are proud to present our official `PlatformIO IDE <http://platformio.org/#!/platformio-ide>`_ -
+    We are proud to present our official `PlatformIO IDE <http://platformio.org/platformio-ide>`_ -
     The next generation integrated development environment for IoT.
 
     * Cross-platform build system without external dependencies to the OS software:
@@ -28,4 +28,4 @@
     * Serial Port Monitor
     * Built-in Terminal with :ref:`PlatformIO CLI <userguide>` tool (``pio``, ``platformio``)
 
-    `Install PlatformIO IDE <http://platformio.org/#!/platformio-ide>`_.
+    `Install PlatformIO IDE <http://platformio.org/platformio-ide>`_.

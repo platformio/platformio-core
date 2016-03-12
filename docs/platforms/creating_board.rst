@@ -17,7 +17,7 @@ Custom Board
 *PlatformIO* has pre-built settings for the most popular embedded boards. This
 list is available:
 
-* `Embedded Boards Explorer <http://platformio.org/#!/boards>`_ (Web)
+* `Embedded Boards Explorer <http://platformio.org/boards>`_ (Web)
 * :ref:`cmd_boards` (CLI command)
 
 Nevertheless, PlatformIO allows to create own board or override existing

@@ -105,7 +105,7 @@ Install dependent library using :ref:`librarymanager`
         #
         # Libraries from PlatformIO Library Registry:
         #
-        # http://platformio.org/#!/lib/show/1/OneWire
+        # http://platformio.org/lib/show/1/OneWire
         platformio lib install 1
 
 Manually download dependent library and include in build process via ``--lib`` option
@@ -188,8 +188,8 @@ Examples
         #
         # Libraries from PlatformIO Library Registry:
         #
-        # http://platformio.org/#!/lib/show/416/TinyGPS
-        # http://platformio.org/#!/lib/show/417/SPI4Teensy3
+        # http://platformio.org/lib/show/416/TinyGPS
+        # http://platformio.org/lib/show/417/SPI4Teensy3
         - platformio lib install 416 417
 
     script:
@@ -260,7 +260,7 @@ Examples
         #
         # Libraries from PlatformIO Library Registry:
         #
-        # http://platformio.org/#!/lib/show/416/TinyGPS
+        # http://platformio.org/lib/show/416/TinyGPS
         - platformio lib install 416 421 422
 
     script:

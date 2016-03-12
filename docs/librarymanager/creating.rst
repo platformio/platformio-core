@@ -152,6 +152,6 @@ to :ref:`install <cmd_lib_install>` it.
 Examples
 --------
 
-* `GitHub + fixed release <http://platformio.org/#!/lib/show/552/ACNoblex>`_
-* `Dependencies by author and framework <http://platformio.org/#!/lib/show/3/PID-AutoTune>`_
+* `GitHub + fixed release <http://platformio.org/lib/show/552/ACNoblex>`_
+* `Dependencies by author and framework <http://platformio.org/lib/show/3/PID-AutoTune>`_
 * `Multiple libraries in the one repository <https://github.com/jrowberg/i2cdevlib/tree/master/Arduino>`_

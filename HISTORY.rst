@@ -553,7 +553,7 @@ PlatformIO 1.0
 1.5.0 (2015-05-15)
 ~~~~~~~~~~~~~~~~~~
 
-* Added support of `Framework mbed <http://platformio.org/#!/frameworks/mbed>`_
+* Added support of `Framework mbed <http://platformio.org/frameworks/mbed>`_
   for Teensy 3.1
   (`issue #183 <https://github.com/platformio/platformio/issues/183>`_)
 * Added GDB as alternative uploader to `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__ platform
@@ -640,7 +640,7 @@ PlatformIO 1.0
 * Created new `Frameworks <http://docs.platformio.org/en/latest/frameworks/index.html>`__
   page in documentation and added to `PlatformIO Web Site <http://platformio.org>`_
   (`issue #115 <https://github.com/platformio/platformio/issues/115>`_)
-* Introduced online `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+* Introduced online `Embedded Boards Explorer <http://platformio.org/boards>`_
 * Automatically append define ``-DPLATFORMIO=%version%`` to
   builder (`issue #105 <https://github.com/platformio/platformio/issues/105>`_)
 * Renamed ``stm32`` development platform to

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# UDEV Rules for PlatformIO supported boards, http://platformio.org/#!/boards
+# UDEV Rules for PlatformIO supported boards, http://platformio.org/boards
 #
 # The latest version of this file may be found at:
 # 	https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules
