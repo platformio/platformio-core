@@ -48,8 +48,51 @@ PlatformIO IDE is the next generation integrated development environment for IoT
 It's built on top of `GitHub's Atom "hackable" text editor <https://atom.io>`_.
 If you have already Atom installed, please install `PlatformIO IDE for Atom package <https://atom.io/packages/platformio-ide>`_.
 
+.. note::
+    You don't need to install PlatformIO CLI seprately to system.
+    PlatformIO CLI is built into PlatformIO IDE and you will be able to use it
+    within PlatformIO IDE Terminal.
+
+1. Python Interpreter
+~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE is based on PlatformIO CLI which is written in
+`Python <https://www.python.org/downloads/>`_. Python is installed by default
+on the all popular OS except Windows.
+
+**Windows Users**, please `Download the latest Python 2.7.x <https://www.python.org/downloads/>`_
+and install it. **DON'T FORGET** to select ``Add python.exe to Path`` feature
+on the "Customize" stage, otherwise ``python`` command will not be available.
+
+.. image:: ../_static/python-installer-add-path.png
+
+.. _ide_atom_installation_clang:
+
+2. Clang for Intelligent Code Autocompletion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
+To check that ``clang`` is available in your system, please open
+Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
+
+- **Mac OS X**: Install the latest Xcode along with the latest Command Line Tools
+  (they are installed automatically when you run ``clang`` in Terminal for the
+  first time, or manually by running ``xcode-select --install``
+- **Windows**: Download the latest `Clang for Windows <http://llvm.org/releases/download.html>`_.
+  Please select "Add LLVM to the system PATH" option on the installation step.
+- **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
+- **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
+
+.. warning::
+    The libraries which are added/installed after initializing process will
+    not be reflected in code linter. You need ``Menu: PlatformIO >
+    Rebuild C/C++ Project Index (Autocomplete, Linter)``.
+
+3. IDE Installation
+~~~~~~~~~~~~~~~~~~~
+
 Automatic Installation
-~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^
 
 Please download PlatformIO IDE for Atom bundle with built-in auto installer
 (be patient and let the installation complete)
@@ -60,17 +103,9 @@ Please download PlatformIO IDE for Atom bundle with built-in auto installer
 - `Download PlatformIO IDE .rpm <https://dl.bintray.com/platformio/ide-bundles/platformio-atom-linux-x86_64.rpm>`_
 
 Manual Installation
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
-1. Download and install the latest Atom text editor
-
-    - `Download Atom for Mac <https://atom.io/download/mac>`_
-    - `Download Atom for Windows <https://atom.io/download/windows>`_
-    - `Download Atom .deb <https://atom.io/download/deb>`_
-    - `Download Atom .rpm <https://atom.io/download/rpm>`_
-    - `Other platforms <https://github.com/atom/atom/releases/latest>`_
-
-
+1. Download and install the `latest Atom text editor <https://atom.io>`_.
 2. Open Atom Package Manager and install `platformio-ide <https://atom.io/packages/platformio-ide>`_ Atom package
 
     - **Mac OS X**: ``Menu: Atom > Preferences > Install``
@@ -280,16 +315,8 @@ Intelligent Code Autocompletion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
-To check that ``clang`` is available in your system, please open
-Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
-
-- **Mac OS X**: Install the latest Xcode along with the latest Command Line Tools
-  (they are installed automatically when you run ``clang`` in Terminal for the
-  first time, or manually by running ``xcode-select --install``
-- **Windows**: Download the latest `Clang for Windows <http://llvm.org/releases/download.html>`_.
-  Please select "Add LLVM to the system PATH" option on the installation step.
-- **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
-- **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
+To install it or check if it exists, please follow to step
+:ref:`ide_atom_installation_clang` from Installation guide.
 
 .. warning::
     The libraries which are added/installed after initializing process will
