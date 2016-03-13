@@ -53,42 +53,7 @@ If you have already Atom installed, please install `PlatformIO IDE for Atom pack
     PlatformIO CLI is built into PlatformIO IDE and you will be able to use it
     within PlatformIO IDE Terminal.
 
-1. Python Interpreter
-~~~~~~~~~~~~~~~~~~~~~
-
-PlatformIO IDE is based on PlatformIO CLI which is written in
-`Python <https://www.python.org/downloads/>`_. Python is installed by default
-on the all popular OS except Windows.
-
-**Windows Users**, please `Download the latest Python 2.7.x <https://www.python.org/downloads/>`_
-and install it. **DON'T FORGET** to select ``Add python.exe to Path`` feature
-on the "Customize" stage, otherwise ``python`` command will not be available.
-
-.. image:: ../_static/python-installer-add-path.png
-
-.. _ide_atom_installation_clang:
-
-2. Clang for Intelligent Code Autocompletion
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
-To check that ``clang`` is available in your system, please open
-Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
-
-- **Mac OS X**: Install the latest Xcode along with the latest Command Line Tools
-  (they are installed automatically when you run ``clang`` in Terminal for the
-  first time, or manually by running ``xcode-select --install``
-- **Windows**: Download the latest `Clang for Windows <http://llvm.org/releases/download.html>`_.
-  Please select "Add LLVM to the system PATH" option on the installation step.
-- **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
-- **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
-
-.. warning::
-    The libraries which are added/installed after initializing process will
-    not be reflected in code linter. You need ``Menu: PlatformIO >
-    Rebuild C/C++ Project Index (Autocomplete, Linter)``.
-
-3. IDE Installation
+1. IDE Installation
 ~~~~~~~~~~~~~~~~~~~
 
 Automatic Installation
@@ -114,6 +79,40 @@ Manual Installation
 
 .. image:: ../_static/ide-atom-platformio-install.png
 
+2. Python Interpreter
+~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE is based on PlatformIO CLI which is written in
+`Python <https://www.python.org/downloads/>`_. Python is installed by default
+on the all popular OS except Windows.
+
+**Windows Users**, please `Download the latest Python 2.7.x <https://www.python.org/downloads/>`_
+and install it. **DON'T FORGET** to select ``Add python.exe to Path`` feature
+on the "Customize" stage, otherwise ``python`` command will not be available.
+
+.. image:: ../_static/python-installer-add-path.png
+
+.. _ide_atom_installation_clang:
+
+3. Clang for Intelligent Code Autocompletion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
+To check that ``clang`` is available in your system, please open
+Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
+
+- **Mac OS X**: Install the latest Xcode along with the latest Command Line Tools
+  (they are installed automatically when you run ``clang`` in Terminal for the
+  first time, or manually by running ``xcode-select --install``
+- **Windows**: Download the latest `Clang for Windows <http://llvm.org/releases/download.html>`_.
+  Please select "Add LLVM to the system PATH" option on the installation step.
+- **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
+- **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
+
+.. warning::
+    The libraries which are added/installed after initializing process will
+    not be reflected in code linter. You need ``Menu: PlatformIO >
+    Rebuild C/C++ Project Index (Autocomplete, Linter)``.
 
 .. _atom_ide_quickstart:
 

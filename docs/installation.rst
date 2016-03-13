@@ -39,6 +39,8 @@ System requirements
         "Customize" stage, otherwise Python Package Manager ``pip`` command
         will not be available.
 
+        .. image:: _static/python-installer-add-path.png
+
 :Terminal Application:
 
     All commands below should be executed in
@@ -48,6 +50,12 @@ System requirements
 
 Installation Methods
 --------------------
+
+.. note::
+    You don't need to install PlatformIO CLI if you are going to use
+    :ref:`ide_atom`. PlatformIO CLI is built into PlatformIO IDE and you will be
+    able to use it within PlatformIO IDE Terminal.
+
 
 Please *choose ONE of* the following methods:
 
