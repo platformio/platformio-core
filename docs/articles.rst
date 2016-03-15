@@ -23,6 +23,7 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
+* Mar 12, 2016 - **Peter Marks** - `PlatformIO, the Arduino IDE for programmers <http://blog.marxy.org/2016/03/platformio-arduino-ide-for-programmers.html>`_
 * Mar 12, 2016 - **Richard Arthurs** - `Getting Started With PlatformIO <http://richarthurs.com/2016/03/12/platformio-review-and-first-thoughts/>`_
 * Mar 07, 2016 - **Joran Jessurun** - `Nieuwe wereld met PlatformIO (New world with PlatformIO, Dutch) <http://blog.wisclub.nl/#post178>`_
 * Mar 05, 2016 - **brichacek.net** - `PlatformIO – otevřený ekosystém pro vývoj IoT (PlatformIO – an open source ecosystem for IoT development, Czech) <http://blog.brichacek.net/platformio-otevreny-ekosystem-pro-vyvoj-iot/>`_
