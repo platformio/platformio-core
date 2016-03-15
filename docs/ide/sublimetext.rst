@@ -19,12 +19,25 @@ The `Sublime Text <http://www.sublimetext.com/>`_ is a cross-platform text and s
 Refer to the `Sublime Text Documentation <http://docs.sublimetext.info/en/latest>`_
 page for more detailed information.
 
-.. image:: ../_static/ide-sublime-text-platformio-newproject-5.png
+.. image:: ../_static/ide-sublime-text-deviot.gif
+    :target: https://github.com/gepd/Deviot
 
 .. contents::
 
 Integration
 -----------
+
+Deviot Plugin
+^^^^^^^^^^^^^
+
+We are glad to inform you about awesome Sublime Text plugin for IoT development
+named `Deviot <https://github.com/gepd/Deviot>`_. It is based on
+PlatformIO CLI and will automatically install it for you. Please visit `official
+Deviot page <https://github.com/gepd/Deviot>`_ for the further installation
+steps and documentation.
+
+.. image:: ../_static/ide-sublime-text-deviot.gif
+    :target: https://github.com/gepd/Deviot
 
 Project Generator
 ^^^^^^^^^^^^^^^^^
