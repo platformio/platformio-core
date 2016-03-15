@@ -12,6 +12,8 @@ PlatformIO 2.0
 * Fixed multiple definition errors for ST STM32 development platform and mbed
   framework
   (`issue #571 <https://github.com/platformio/platformio/issues/571>`_)
+* Fixed invalid board parameters (reset method and baudrate) for a few
+  ESP8266 based boards
 
 2.8.5 (2016-03-07)
 ~~~~~~~~~~~~~~~~~~
