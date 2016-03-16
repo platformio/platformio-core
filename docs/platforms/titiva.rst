@@ -47,8 +47,9 @@ Packages
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
-    **Windows Users:** Please check that you have correctly installed USB driver
-    from board manufacturer
+
+    **Windows Users:** Please check that you have correctly installed USB
+    driver from board manufacturer
 
 
 

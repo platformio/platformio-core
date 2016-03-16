@@ -77,7 +77,7 @@ def generate_boards(boards):
     return "\n".join(lines + [""])
 
 
-def generate_packages(packages, is_embedded):
+def generate_packages(platform, packages, is_embedded):
     if not packages:
         return
     allpackages = get_packages()
@@ -108,12 +108,22 @@ Packages
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
-
-    **Windows Users:** Please check that you have correctly installed USB driver
-    from board manufacturer
+""")
+        if platform == "teensy":
+            lines.append("""
+    **Windows Users:** Teensy programming uses only Windows built-in HID
+    drivers. When Teensy is programmed to act as a USB Serial device,
+    Windows XP, Vista, 7 and 8 require `this serial driver
+    <http://www.pjrc.com/teensy/serial_install.exe>`_
+    is needed to access the COM port your program uses. No special driver
+    installation is necessary on Windows 10.
+""")
+        else:
+            lines.append("""
+    **Windows Users:** Please check that you have correctly installed USB
+    driver from board manufacturer
 
 """)
-
     return "\n".join(lines)
 
 
@@ -151,7 +161,7 @@ For more detailed information please visit `vendor site <%s>`_.""" %
     #
     # Packages
     #
-    _packages_content = generate_packages(p.get_packages(), p.is_embedded())
+    _packages_content = generate_packages(name, p.get_packages(), p.is_embedded())
     if _packages_content:
         lines.append(_packages_content)
 
