@@ -9,20 +9,12 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-Articles
---------
-
-* Dec 08, 2015 - **Piotr Król** - `Using PlatformIO with TI MSP430 LunchPads <http://blog.3mdeb.com/2015/12/08/using-platformio-with-ti-msp430-lunchpads/>`_
-
-See more :ref:`articles`.
-
 Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for TI MSP430 platform <https://github.com/platformio/platformio/tree/develop/examples/timsp430>`_.
+`Examples for Teensy platform <https://github.com/platformio/platformio/tree/develop/examples/teensy>`_.
 
-* `Energia blink <https://github.com/platformio/platformio/tree/develop/examples/timsp430/timsp430-energia-blink>`_
-* `Native blink <https://github.com/platformio/platformio/tree/develop/examples/timsp430/timsp430-native-blink>`_
 * `Wiring Blink <https://github.com/platformio/platformio/tree/develop/examples/wiring-blink>`_
-* `PanStamp blink <https://github.com/platformio/platformio/tree/develop/examples/timsp430/panstamp-blink>`_
+* `HID Mouse <https://github.com/platformio/platformio/tree/develop/examples/teensy/teensy-hid-usb-mouse>`_
+* `Chat Server <https://github.com/platformio/platformio/tree/develop/examples/teensy/teensy-internal-libs>`_

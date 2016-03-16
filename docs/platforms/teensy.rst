@@ -129,3 +129,5 @@ Teensy
       - 48 MHz
       - 64 Kb
       - 8 Kb
+
+.. include:: teensy_extra.rst

@@ -109,3 +109,5 @@ TI
       - 120 MHz
       - 1024 Kb
       - 256 Kb
+
+.. include:: titiva_extra.rst
