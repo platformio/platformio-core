@@ -241,7 +241,7 @@
         "upload": {
             "maximum_ram_size": 81920,
             "maximum_size": 4194304,
-            "resetmethod": "nodemcu",
+            "resetmethod": "ck",
             "require_upload_port" : true,
             "speed": 115200
         },
