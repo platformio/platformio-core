@@ -541,5 +541,21 @@
         },
         "url": "https://developer.mbed.org/platforms/ST-Nucleo-L476RG/",
         "vendor": "ST"
+    },
+    "seeedArchMax": {
+        "build": {
+            "f_cpu": "168000000L",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f407vet6"
+        },
+        "frameworks": ["mbed"],
+        "name": "SeeedStudio Arch Max",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 196608,
+            "maximum_size": 524288
+        },
+        "url": "https://developer.mbed.org/platforms/Seeed-Arch-Max/",
+        "vendor": "SeeedStudio"
     }
 }

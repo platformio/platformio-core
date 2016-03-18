@@ -49,6 +49,7 @@ MBED_VARIANTS = {
     "blueboard_lpc11u24": "LPC11U24",
     "dipcortexm0": "LPC11U24",
     "seeeduinoArchPro": "ARCH_PRO",
+    "seeedArchMax": "ARCH_MAX",
     "ubloxc027": "UBLOX_C027",
     "lpc1114fn28": "LPC1114",
     "lpc11u35": "LPC11U35_401",
@@ -266,7 +267,7 @@ env.Append(
 # Target: Build mbed Library
 #
 
-libs = [l for l in eixdata.get("STDLIBS", []) if l not in env.get("LIBS")]
+libs = [l for l in eixdata.get("STDLIBS", []) if l not in env.get("LIBS", [])]
 libs.extend(["mbed", "c", "gcc"])
 
 libs.append(env.Library(
