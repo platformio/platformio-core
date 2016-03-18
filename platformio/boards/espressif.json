@@ -220,8 +220,8 @@
             "require_upload_port" : true,
             "speed": 115200
         },
-        "url": "http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family",
-        "vendor": "Espressif"
+        "url": "http://www.espert.co",
+        "vendor": "ESPert"
     },
 
     "espresso_lite_v2": {
@@ -245,8 +245,8 @@
             "require_upload_port" : true,
             "speed": 115200
         },
-        "url": "http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family",
-        "vendor": "Espressif"
+        "url": "http://www.espert.co",
+        "vendor": "ESPert"
     },
 
     "modwifi": {
