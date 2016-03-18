@@ -120,10 +120,9 @@ def init_base_project(project_dir):
 
     lib_dir = join(project_dir, "lib")
     src_dir = join(project_dir, "src")
-    with util.cd(project_dir):
-        config = util.get_project_config()
-        if config.has_option("platformio", "src_dir"):
-            src_dir = join(project_dir, config.get("platformio", "src_dir"))
+    config = util.get_project_config(platformio_ini)
+    if config.has_option("platformio", "src_dir"):
+        src_dir = join(project_dir, config.get("platformio", "src_dir"))
 
     for d in (src_dir, lib_dir):
         if not isdir(d):
@@ -263,23 +262,25 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
         env_prefix, force_download):
     builtin_boards = get_boards()
     content = []
-    used_envs = []
+    used_boards = []
     used_platforms = []
 
-    with open(platformio_ini) as f:
-        used_envs = [l.strip() for l in f.read().splitlines() if
-                     l.strip().startswith("[env:")]
+    config = util.get_project_config(platformio_ini)
+    for section in config.sections():
+        if not all([section.startswith("env:"),
+                    config.has_option(section, "board")]):
+            continue
+        used_boards.append(config.get(section, "board"))
 
     for type_ in board_types:
         data = builtin_boards[type_]
         used_platforms.append(data['platform'])
-        env_name = "[env:%s%s]" % (env_prefix, type_)
 
-        if env_name in used_envs:
+        if type_ in used_boards:
             continue
 
         content.append("")
-        content.append(env_name)
+        content.append("[env:%s%s]" % (env_prefix, type_))
         content.append("platform = %s" % data['platform'])
 
         # find default framework for board

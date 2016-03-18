@@ -213,12 +213,13 @@ def get_projectdata_dir():
     )
 
 
-def get_project_config():
-    path = join(get_project_dir(), "platformio.ini")
-    if not isfile(path):
+def get_project_config(ini_path=None):
+    if not ini_path:
+        ini_path = join(get_project_dir(), "platformio.ini")
+    if not isfile(ini_path):
         raise exception.NotPlatformProject(get_project_dir())
     cp = ConfigParser()
-    cp.read(path)
+    cp.read(ini_path)
     return cp
 
 
