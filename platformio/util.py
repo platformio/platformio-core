@@ -337,11 +337,11 @@ def get_api_result(path, params=None, data=None, skipdns=False):
         if data:
             r = requests.post(
                 url + path, params=params, data=data, headers=headers,
-                timeout=(3, 13)
+                timeout=(5, 13)
             )
         else:
             r = requests.get(
-                url + path, params=params, headers=headers, timeout=(3, 13))
+                url + path, params=params, headers=headers, timeout=(5, 13))
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -349,7 +349,8 @@ def get_api_result(path, params=None, data=None, skipdns=False):
             raise exception.APIRequestError(result['errors'][0]['title'])
         else:
             raise exception.APIRequestError(e)
-    except requests.exceptions.ConnectionError:
+    except (requests.exceptions.ConnectionError,
+            requests.exceptions.ConnectTimeout):
         if not skipdns:
             return get_api_result(path, params, data, skipdns=True)
         raise exception.APIRequestError(
