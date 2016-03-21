@@ -23,7 +23,6 @@ from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, splitdrive)
 from platform import system, uname
-from tempfile import TemporaryFile
 from threading import Thread
 
 from platformio import __apiip__, __apiurl__, __version__, exception
@@ -162,17 +161,14 @@ def get_home_dir():
         join(expanduser("~"), ".platformio")
     )
 
-    if not isdir(home_dir):
+    if "windows" in get_systype():
         try:
-            home_dir.encode("utf8")  # test ASCII
-            os.makedirs(home_dir)
-            f = TemporaryFile(dir=home_dir)
-            f.close()
-        except (OSError, UnicodeDecodeError, WindowsError):
-            if "windows" in get_systype():
-                home_dir = splitdrive(home_dir)[0] + "\.platformio"
-                if not isdir(home_dir):
-                    os.makedirs(home_dir)
+            home_dir.encode("utf8")
+        except UnicodeDecodeError:
+            home_dir = splitdrive(home_dir)[0] + "\.platformio"
+
+    if not isdir(home_dir):
+        os.makedirs(home_dir)
 
     assert isdir(home_dir)
     return home_dir
