@@ -38,7 +38,7 @@ src_sim = ["{}".format(f) for f in v_nodes]
 list_tb = [f for f in src_sim if f[-5:].upper() == "_TB.V"]
 
 if len(list_tb) > 1:
-    print("---> WARNING: More than one testbenches used")
+    print "---> WARNING: More than one testbenches used"
 
 # -- Error checking
 try:
@@ -50,7 +50,7 @@ except IndexError:
 
 if 'sim' in COMMAND_LINE_TARGETS:
     if testbench is None:
-        print("ERROR!!! NO testbench found for simulation")
+        print "ERROR!!! NO testbench found for simulation"
         Exit(1)
 
     # -- Simulation name
@@ -67,7 +67,7 @@ TARGET_SIM = join(env.subst('$BUILD_DIR'), SIMULNAME)
 src_synth = [f for f in src_sim if f not in list_tb]
 
 # -- For debugging
-print("Testbench: {}".format(testbench))
+print "Testbench: {}".format(testbench)
 
 # -- Get the PCF file
 src_dir = env.subst('$PROJECTSRC_DIR')
@@ -77,11 +77,11 @@ PCF_list = Glob(PCFs)
 try:
     PCF = PCF_list[0]
 except IndexError:
-    print("\n--------> ERROR: no .pcf file found <----------\n")
+    print "\n--------> ERROR: no .pcf file found <----------\n"
     Exit(2)
 
 # -- Debug
-print("----> PCF Found: {}".format(PCF))
+print "----> PCF Found: {}".format(PCF)
 
 # -- Builder 1 (.v --> .blif)
 synth = Builder(action='yosys -p \"synth_ice40 -blif {}.blif\" \
