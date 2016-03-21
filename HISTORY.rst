@@ -9,6 +9,7 @@ PlatformIO 2.0
 
 * Launched `PlatformIO Community Forums <http://community.platformio.org>`_
   (`issue #530 <https://github.com/platformio/platformio/issues/530>`_)
+* Disable progress bar for download operations when prompts are disabled
 * Fixed multiple definition errors for ST STM32 development platform and mbed
   framework
   (`issue #571 <https://github.com/platformio/platformio/issues/571>`_)
