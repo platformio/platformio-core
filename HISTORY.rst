@@ -15,6 +15,7 @@ PlatformIO 2.0
 * Updated "Teensy Loader CLI" and fixed uploading of large .hex files
   (`issue #568 <https://github.com/platformio/platformio/issues/568>`_)
 * Better handling of used boards when re-initialize/update project
+* Improved support for non-Unicode user profiles for Windows OS
 * Disabled progress bar for download operations when prompts are disabled
 * Fixed multiple definition errors for ST STM32 development platform and mbed
   framework

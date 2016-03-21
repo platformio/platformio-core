@@ -20,8 +20,10 @@ import re
 import subprocess
 import sys
 from glob import glob
-from os.path import abspath, basename, dirname, expanduser, isdir, isfile, join
+from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
+                     join, splitdrive)
 from platform import system, uname
+from tempfile import TemporaryFile
 from threading import Thread
 
 from platformio import __apiip__, __apiurl__, __version__, exception
@@ -161,7 +163,15 @@ def get_home_dir():
     )
 
     if not isdir(home_dir):
-        os.makedirs(home_dir)
+        try:
+            os.makedirs(home_dir)
+            f = TemporaryFile(dir=home_dir)
+            f.close()
+        except (OSError, WindowsError):
+            if "windows" in get_systype():
+                home_dir = splitdrive(home_dir)[0] + "\.platformio"
+                if not isdir(home_dir):
+                    os.makedirs(home_dir)
 
     assert isdir(home_dir)
     return home_dir
