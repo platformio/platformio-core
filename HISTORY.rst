@@ -9,7 +9,12 @@ PlatformIO 2.0
 
 * Launched `PlatformIO Community Forums <http://community.platformio.org>`_
   (`issue #530 <https://github.com/platformio/platformio/issues/530>`_)
+* Added support for ARM mbed-enabled board Seed Arch Max (STM32F407VET6)
+  (`issue #572 <https://github.com/platformio/platformio/issues/572>`_)
 * Improved DNS lookup for PlatformIO API
+* Updated "Teensy Loader CLI" and fixed uploading of large .hex files
+  (`issue #568 <https://github.com/platformio/platformio/issues/568>`_)
+* Better handling of used boards when re-initialize/update project
 * Disabled progress bar for download operations when prompts are disabled
 * Fixed multiple definition errors for ST STM32 development platform and mbed
   framework
