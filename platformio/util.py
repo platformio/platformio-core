@@ -24,7 +24,7 @@ from os.path import abspath, basename, dirname, expanduser, isdir, isfile, join
 from platform import system, uname
 from threading import Thread
 
-from platformio import __apiurl__, __version__, exception
+from platformio import __apiip__, __apiurl__, __version__, exception
 
 # pylint: disable=wrong-import-order
 try:
@@ -322,18 +322,26 @@ def get_request_defheaders():
     )}
 
 
-def get_api_result(path, params=None, data=None):
+def get_api_result(path, params=None, data=None, skipdns=False):
     import requests
     result = None
     r = None
 
+    headers = get_request_defheaders()
+    url = __apiurl__
+    if skipdns:
+        url = "http://%s" % __apiip__
+        headers['host'] = __apiurl__[__apiurl__.index("://")+3:]
+
     try:
         if data:
-            r = requests.post(__apiurl__ + path, params=params, data=data,
-                              headers=get_request_defheaders())
+            r = requests.post(
+                url + path, params=params, data=data, headers=headers,
+                timeout=(3, 13)
+            )
         else:
-            r = requests.get(__apiurl__ + path, params=params,
-                             headers=get_request_defheaders())
+            r = requests.get(
+                url + path, params=params, headers=headers, timeout=(3, 13))
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -342,6 +350,8 @@ def get_api_result(path, params=None, data=None):
         else:
             raise exception.APIRequestError(e)
     except requests.exceptions.ConnectionError:
+        if not skipdns:
+            return get_api_result(path, params, data, skipdns=True)
         raise exception.APIRequestError(
             "Could not connect to PlatformIO Registry Service. "
             "Please try later.")
