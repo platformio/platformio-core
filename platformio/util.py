@@ -168,7 +168,7 @@ def get_home_dir():
             os.makedirs(home_dir)
             f = TemporaryFile(dir=home_dir)
             f.close()
-        except (AssertionError, OSError, WindowsError):
+        except (OSError, UnicodeDecodeError, WindowsError):
             if "windows" in get_systype():
                 home_dir = splitdrive(home_dir)[0] + "\.platformio"
                 if not isdir(home_dir):
