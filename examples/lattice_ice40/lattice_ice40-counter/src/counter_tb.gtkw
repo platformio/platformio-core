@@ -1,0 +1,24 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Sun Jan 31 16:34:34 2016
+[*]
+[dumpfile] "/home/obijuan/develop/Platformio-FPGA/examples/lattice_ice40/lattice_ice40_counter/simulation.vcd"
+[dumpfile_mtime] "Sun Jan 31 16:33:04 2016"
+[dumpfile_size] 9956
+[savefile] "/home/obijuan/develop/Platformio-FPGA/examples/lattice_ice40/lattice_ice40_counter/src/simulation.gtkw"
+[timestart] 0
+[size] 1000 600
+[pos] 918 413
+*-8.616491 110 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] counter_tb.
+[sst_width] 223
+[signals_width] 176
+[sst_expanded] 1
+[sst_vpaned_height] 160
+@28
+counter_tb.clk
+counter_tb.CONT0.rstn
+@22
+counter_tb.leds[4:0]
+[pattern_trace] 1
+[pattern_trace] 0
