@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.8.6 (2016-??-??)
+2.8.6 (2016-03-22)
 ~~~~~~~~~~~~~~~~~~
 
 * Launched `PlatformIO Community Forums <http://community.platformio.org>`_
@@ -21,8 +21,8 @@ PlatformIO 2.0
 * Better handling of used boards when re-initialize/update project
 * Improved support for non-Unicode user profiles for Windows OS
 * Disabled progress bar for download operations when prompts are disabled
-* Fixed multiple definition errors for ST STM32 development platform and mbed
-  framework
+* Fixed multiple definition errors for ST STM32 development platform and
+  ARM mbed framework
   (`issue #571 <https://github.com/platformio/platformio/issues/571>`_)
 * Fixed invalid board parameters (reset method and baudrate) for a few
   ESP8266 based boards
