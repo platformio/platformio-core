@@ -331,4 +331,24 @@ ST
       - 1024 Kb
       - 128 Kb
 
+SeeedStudio
+~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``seeedArchMax``
+      - `SeeedStudio Arch Max <https://developer.mbed.org/platforms/Seeed-Arch-Max/>`_
+      - STM32F407VET6
+      - 168 MHz
+      - 512 Kb
+      - 192 Kb
+
 .. include:: ststm32_extra.rst

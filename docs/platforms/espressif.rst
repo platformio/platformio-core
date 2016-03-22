@@ -116,6 +116,33 @@ Doit
       - 4096 Kb
       - 80 Kb
 
+ESPert
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``espresso_lite_v1``
+      - `ESPresso Lite 1.0 <http://www.espert.co>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
+    * - ``espresso_lite_v2``
+      - `ESPresso Lite 2.0 <http://www.espert.co>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
 ESPino
 ~~~~~~
 
@@ -183,20 +210,6 @@ Espressif
       - 80 MHz
       - 4096 Kb
       - 50 Kb
-
-    * - ``espresso_lite_v1``
-      - `ESPresso Lite 1.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
-      - ESP8266
-      - 80 MHz
-      - 4096 Kb
-      - 80 Kb
-
-    * - ``espresso_lite_v2``
-      - `ESPresso Lite 2.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
-      - ESP8266
-      - 80 MHz
-      - 4096 Kb
-      - 80 Kb
 
 NodeMCU
 ~~~~~~~

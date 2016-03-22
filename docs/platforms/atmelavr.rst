@@ -741,17 +741,10 @@ Sanguino
       - Flash
       - RAM
 
-    * - ``sanguino_atmega12848m``
+    * - ``sanguino_atmega1284_8m``
       - `Sanguino ATmega1284p (8MHz) <https://code.google.com/p/sanguino/>`_
       - ATMEGA1284P
       - 8 MHz
-      - 128 Kb
-      - 16 Kb
-
-    * - ``sanguino_atmega1284m``
-      - `Sanguino ATmega1284p (20MHz) <https://code.google.com/p/sanguino/>`_
-      - ATMEGA1284P
-      - 20 MHz
       - 128 Kb
       - 16 Kb
 
@@ -762,10 +755,31 @@ Sanguino
       - 128 Kb
       - 16 Kb
 
+    * - ``sanguino_atmega644``
+      - `Sanguino ATmega644 or ATmega644A (16 MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA644
+      - 16 MHz
+      - 64 Kb
+      - 4 Kb
+
+    * - ``sanguino_atmega644_8m``
+      - `Sanguino ATmega644 or ATmega644A (8 MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA644
+      - 8 MHz
+      - 64 Kb
+      - 4 Kb
+
     * - ``sanguino_atmega644p``
-      - `Sanguino ATmega644P <https://code.google.com/p/sanguino/>`_
+      - `Sanguino ATmega644P or ATmega644PA (16 MHz) <https://code.google.com/p/sanguino/>`_
       - ATMEGA644P
       - 16 MHz
+      - 64 Kb
+      - 4 Kb
+
+    * - ``sanguino_atmega644p_8m``
+      - `Sanguino ATmega644P or ATmega644PA (8 MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA644P
+      - 8 MHz
       - 64 Kb
       - 4 Kb
 

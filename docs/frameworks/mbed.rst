@@ -596,6 +596,13 @@ SeeedStudio
       - Flash
       - RAM
 
+    * - ``seeedArchMax``
+      - `SeeedStudio Arch Max <https://developer.mbed.org/platforms/Seeed-Arch-Max/>`_
+      - STM32F407VET6
+      - 168 MHz
+      - 512 Kb
+      - 192 Kb
+
     * - ``seeedTinyBLE``
       - `SeeedStudio Seeed Tiny BLE <http://developer.mbed.org/platforms/Seeed-Tiny-BLE/>`_
       - NRF51822

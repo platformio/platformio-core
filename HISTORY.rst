@@ -12,8 +12,12 @@ PlatformIO 2.0
 * Added support for ARM mbed-enabled board Seed Arch Max (STM32F407VET6)
   (`issue #572 <https://github.com/platformio/platformio/issues/572>`_)
 * Improved DNS lookup for PlatformIO API
+* Updated Arduino Wiring-based framework to the latest version for
+  Atmel AVR/SAM development platforms
 * Updated "Teensy Loader CLI" and fixed uploading of large .hex files
   (`issue #568 <https://github.com/platformio/platformio/issues/568>`_)
+* Updated the support for Sanguino Boards
+  (`issue #586 <https://github.com/platformio/platformio/issues/586>`_)
 * Better handling of used boards when re-initialize/update project
 * Improved support for non-Unicode user profiles for Windows OS
 * Disabled progress bar for download operations when prompts are disabled
