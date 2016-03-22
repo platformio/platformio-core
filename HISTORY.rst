@@ -26,6 +26,9 @@ PlatformIO 2.0
   (`issue #571 <https://github.com/platformio/platformio/issues/571>`_)
 * Fixed invalid board parameters (reset method and baudrate) for a few
   ESP8266 based boards
+* Fixed "KeyError: 'content-length'" in PlatformIO Download Manager
+  (`issue #591 <https://github.com/platformio/platformio/issues/591>`_)
+
 
 2.8.5 (2016-03-07)
 ~~~~~~~~~~~~~~~~~~

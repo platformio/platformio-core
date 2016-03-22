@@ -309,7 +309,7 @@ Intelligent Code Autocompletion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
-To install it or check if it exists, please follow to step
+To install it or check if it is already installed, please follow to step
 :ref:`ide_atom_installation_clang` from Installation guide.
 
 .. warning::

@@ -56,18 +56,21 @@ class FileDownloader(object):
         return self._request.headers['last-modified']
 
     def get_size(self):
+        if "content-length" not in self._request.headers:
+            return -1
         return int(self._request.headers['content-length'])
 
     def start(self):
         itercontent = self._request.iter_content(chunk_size=self.CHUNK_SIZE)
         f = open(self._destination, "wb")
-        chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
 
-        if app.is_disabled_progressbar():
+        if app.is_disabled_progressbar() or self.get_size() == -1:
             click.echo("Downloading...")
-            for _ in range(0, chunks):
-                f.write(next(itercontent))
+            for chunk in itercontent:
+                if chunk:
+                    f.write(chunk)
         else:
+            chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
             with click.progressbar(length=chunks, label="Downloading") as pb:
                 for _ in pb:
                     f.write(next(itercontent))
@@ -78,7 +81,7 @@ class FileDownloader(object):
 
     def verify(self, sha1=None):
         _dlsize = getsize(self._destination)
-        if _dlsize != self.get_size():
+        if self.get_size() != -1 and _dlsize != self.get_size():
             raise FDSizeMismatch(_dlsize, self._fname, self.get_size())
 
         if not sha1:
