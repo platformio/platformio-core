@@ -60,7 +60,7 @@ Board Identifier
 ----------------
 
 :ref:`cmd_init` command requires to specify board identifier (ID/TYPE). It can
-be found using `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+be found using `Embedded Boards Explorer <http://platformio.org/boards>`_
 or :ref:`cmd_boards` command. For example, using :ref:`cmd_boards` let's try
 to find Teensy boards:
 

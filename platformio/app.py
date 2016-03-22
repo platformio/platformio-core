@@ -186,4 +186,5 @@ def set_session_var(name, value):
 
 
 def is_disabled_progressbar():
-    return is_ci() or getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"
+    return (not get_setting("enable_prompts") or
+            getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true")

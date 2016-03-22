@@ -49,6 +49,7 @@ MBED_VARIANTS = {
     "blueboard_lpc11u24": "LPC11U24",
     "dipcortexm0": "LPC11U24",
     "seeeduinoArchPro": "ARCH_PRO",
+    "seeedArchMax": "ARCH_MAX",
     "ubloxc027": "UBLOX_C027",
     "lpc1114fn28": "LPC1114",
     "lpc11u35": "LPC11U35_401",
@@ -195,18 +196,27 @@ def get_build_flags(data):
     return flags
 
 
-def _mbed_whole_archive_hook(flags):
-    if (not isinstance(flags, list) or
+def _mbed_whole_archive_hook(libs):
+    if (not isinstance(libs, list) or
             env.get("BOARD_OPTIONS", {}).get("platform") != "ststm32"):
-        return flags
+        return libs
 
-    for pos, flag in enumerate(flags[:]):
-        if isinstance(flag, basestring):
-            continue
-        flags.insert(pos, "-Wl,-whole-archive")
-        flags.insert(pos + 2, "-Wl,-no-whole-archive")
+    _dynlibs = []
+    _stlibs = []
+    for l in libs:
+        if isinstance(l, basestring):
+            _stlibs.append(l)
+        else:
+            _dynlibs.append(l)
 
-    return flags
+    libs = []
+    if _dynlibs:
+        libs.append("-Wl,-whole-archive")
+        libs.extend(_dynlibs)
+        libs.append("-Wl,-no-whole-archive")
+    libs.extend(_stlibs)
+
+    return libs
 
 
 board_type = env.subst("$BOARD")
@@ -257,7 +267,7 @@ env.Append(
 # Target: Build mbed Library
 #
 
-libs = [l for l in eixdata.get("STDLIBS", []) if l not in env.get("LIBS")]
+libs = [l for l in eixdata.get("STDLIBS", []) if l not in env.get("LIBS", [])]
 libs.extend(["mbed", "c", "gcc"])
 
 libs.append(env.Library(

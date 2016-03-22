@@ -18,7 +18,7 @@ Library Manager
 You can search for new libraries via
 
 * :ref:`Command Line interface <cmd_lib_search>`
-* `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
+* `Web 2.0 Library Search <http://platformio.org/lib>`_
 
 You don't need to bother for finding the latest version of library. Due to
 :ref:`cmd_lib_update` command you will have up-to-date external libraries.

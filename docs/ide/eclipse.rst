@@ -27,12 +27,15 @@ registers, and disassembly viewers.
 Refer to the `CDT Documentation <https://eclipse.org/cdt/documentation.php>`_
 page for more detailed information.
 
+.. image:: ../_static/ide-platformio-eclipse.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-eclipse.png
+
 .. contents::
 
 Integration
 -----------
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
@@ -76,14 +79,6 @@ Articles / Manuals
 * June 20, 2014 - **Ivan Kravets, Ph.D.** - `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
 
 See a full list with :ref:`articles`.
-
-Screenshot
-----------
-
-Cross-platform `Blink Project <http://platformio.org/#!/get-started#blink-project-example>`_.
-
-.. image:: ../_static/ide-platformio-eclipse.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-eclipse.png
 
 Examples
 --------

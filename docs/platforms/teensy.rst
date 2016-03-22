@@ -13,7 +13,7 @@
 
 Platform ``teensy``
 ===================
-Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard "Mini-B" USB cable and a PC or Macintosh with a USB port.
+Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard USB cable and a PC or Macintosh with a USB port.
 
 For more detailed information please visit `vendor site <https://www.pjrc.com/teensy>`_.
 
@@ -50,9 +50,13 @@ Packages
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
-    **Windows Users:** Please check that you have correctly installed USB driver
-    from board manufacturer
 
+    **Windows Users:** Teensy programming uses only Windows built-in HID
+    drivers. When Teensy is programmed to act as a USB Serial device,
+    Windows XP, Vista, 7 and 8 require `this serial driver
+    <http://www.pjrc.com/teensy/serial_install.exe>`_
+    is needed to access the COM port your program uses. No special driver
+    installation is necessary on Windows 10.
 
 
 Frameworks
@@ -74,7 +78,7 @@ Boards
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/#!/boards>`_
+      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
@@ -125,3 +129,5 @@ Teensy
       - 48 MHz
       - 64 Kb
       - 8 Kb
+
+.. include:: teensy_extra.rst

@@ -23,12 +23,15 @@ automated refactorings, project manager, integrated version control systems.
 Refer to the `CLion Documentation <https://www.jetbrains.com/clion/documentation/>`_
 page for more detailed information.
 
+.. image:: ../_static/ide-platformio-clion.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-clion.png
+
 .. contents::
 
 Integration
 -----------
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
@@ -84,12 +87,6 @@ Articles / Manuals
 * Nov 09, 2015 - **ÁLvaro García Gómez** - `Programar con Arduino "The good way" (Programming with Arduino "The good way", Spanish) <http://congdegnu.es/2015/11/09/programar-con-arduino-the-good-way/>`_
 
 See more :ref:`articles`.
-
-Screenshot
-----------
-
-.. image:: ../_static/ide-platformio-clion.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-clion.png
 
 Examples
 --------

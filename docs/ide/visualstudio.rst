@@ -19,6 +19,9 @@ The `Microsoft Visual Studio (Free) <http://visualstudio.com/free>`_ is an integ
 Refer to the `Visual Studio Documentation <https://msdn.microsoft.com/library/vstudio>`_
 page for more detailed information.
 
+.. image:: ../_static/ide-vs-platformio-newproject-8.png
+    :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-8.png
+
 .. contents::
 
 Integration
@@ -32,7 +35,7 @@ Integration
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
@@ -143,12 +146,6 @@ Conclusion
 ~~~~~~~~~~
 
 Taking everything into account, we can build project with shortcut ``Ctrl+Shift+B`` or using ``Menu: Build > Build Solution``.
-
-Screenshot
-----------
-
-.. image:: ../_static/ide-vs-platformio-newproject-8.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-8.png
 
 Examples
 --------

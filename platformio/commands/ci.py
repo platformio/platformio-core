@@ -131,11 +131,11 @@ def _copy_contents(dst_dir, contents):
     dst_dir_name = basename(dst_dir)
 
     if dst_dir_name == "src" and len(items['dirs']) == 1:
-        copytree(list(items['dirs']).pop(), dst_dir)
+        copytree(list(items['dirs']).pop(), dst_dir, symlinks=True)
     else:
         makedirs(dst_dir)
         for d in items['dirs']:
-            copytree(d, join(dst_dir, basename(d)))
+            copytree(d, join(dst_dir, basename(d)), symlinks=True)
 
     if not items['files']:
         return

@@ -22,24 +22,25 @@ PlatformIO
 .. image:: https://img.shields.io/pypi/dm/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: PyPi Downloads
-.. image:: https://img.shields.io/chat/on%20gitter.png
+.. image:: https://img.shields.io/community/PlatformIO.png
    :alt: Join the chat at https://gitter.im/platformio/platformio
-   :target: https://gitter.im/platformio/platformio
+   :target: http://community.platformio.org
 .. image:: https://img.shields.io/donate/PlatformIO.png?color=yellow
    :alt: Donate for PlatformIO.Org
-   :target: http://platformio.org/#!/donate
+   :target: http://platformio.org/donate
 
 
-`Home & Demo <http://platformio.org>`_ |
-`PlatformIO IDE <http://platformio.org/#!/platformio-ide>`_ |
+`Home <http://platformio.org>`_ |
+`IDE <http://platformio.org/platformio-ide>`_ |
 `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
 `Docs <http://docs.platformio.org>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
 `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
 `Bintray <https://bintray.com/platformio>`_ |
-`Donate <http://platformio.org/#!/donate>`_ |
-`Contact Us <http://platformio.org/#!/contact>`_
+`Community <http://community.platformio.org>`_ |
+`Donate <http://platformio.org/donate>`_ |
+`Contact Us <http://platformio.org/contact>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
@@ -71,12 +72,12 @@ libOpenCM3, etc.*
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-demo-wiring.gif
     :target: http://platformio.org
 
-* `PlatformIO IDE <http://platformio.org/#!/platformio-ide>`_
-* `Get Started <http://platformio.org/#!/get-started>`_
-* `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
-* `Development Platforms <http://platformio.org/#!/platforms>`_
-* `Frameworks <http://platformio.org/#!/frameworks>`_
-* `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+* `PlatformIO IDE <http://platformio.org/platformio-ide>`_
+* `Get Started <http://platformio.org/get-started>`_
+* `Web 2.0 Library Search <http://platformio.org/lib>`_
+* `Development Platforms <http://platformio.org/platforms>`_
+* `Frameworks <http://platformio.org/frameworks>`_
+* `Embedded Boards Explorer <http://platformio.org/boards>`_
 * `Library Manager <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
 * `User Guide <http://docs.platformio.org/en/latest/userguide/index.html>`_
 * `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
@@ -97,7 +98,7 @@ sized computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
 Embedded Development. *Easier Than Ever.*
 -----------------------------------------
 *PlatformIO* is well suited for embedded development and has pre-configured
-settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
+settings for most popular `Embedded Boards <http://platformio.org/boards>`_.
 
 * Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
 * `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_ with
@@ -107,7 +108,7 @@ settings for most popular `Embedded Boards <http://platformio.org/#!/boards>`_.
 * Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable
   `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
 * Automatic **firmware uploading**
-* Pre-built tool chains, frameworks for the popular `Hardware Platforms <http://platformio.org/#!/platforms>`_
+* Pre-built tool chains, frameworks for the popular `Hardware Platforms <http://platformio.org/platforms>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-embedded-development.png
     :target: http://platformio.org
@@ -119,7 +120,7 @@ The Missing Library Manager. *It's here!*
 platforms which allows you to organize and have up-to-date external libraries.
 
 * Friendly `Command-Line Interface <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
-* Modern `Web 2.0 Library Search <http://platformio.org/#!/lib>`_
+* Modern `Web 2.0 Library Search <http://platformio.org/lib>`_
 * Open Source `Library Registry API <https://github.com/platformio/platformio-api>`_
 * Library Crawler based on `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`_
   specification
@@ -159,27 +160,27 @@ more).
 
 It has support for the most popular embedded platforms:
 
-* `Atmel AVR <http://platformio.org/#!/platforms/atmelavr>`_
-* `Atmel SAM <http://platformio.org/#!/platforms/atmelsam>`_
-* `Espressif <http://platformio.org/#!/platforms/espressif>`_
-* `Freescale Kinetis <http://platformio.org/#!/platforms/freescalekinetis>`_
-* `Nordic nRF51 <http://platformio.org/#!/platforms/nordicnrf51>`_
-* `NXP LPC <http://platformio.org/#!/platforms/nxplpc>`_
-* `ST STM32 <http://platformio.org/#!/platforms/ststm32>`_
-* `Silicon Labs EFM32 <http://platformio.org/#!/platforms/siliconlabsefm32>`_
-* `Teensy <http://platformio.org/#!/platforms/teensy>`_
-* `TI MSP430 <http://platformio.org/#!/platforms/timsp430>`_
-* `TI TIVA C <http://platformio.org/#!/platforms/titiva>`_
+* `Atmel AVR <http://platformio.org/platforms/atmelavr>`_
+* `Atmel SAM <http://platformio.org/platforms/atmelsam>`_
+* `Espressif <http://platformio.org/platforms/espressif>`_
+* `Freescale Kinetis <http://platformio.org/platforms/freescalekinetis>`_
+* `Nordic nRF51 <http://platformio.org/platforms/nordicnrf51>`_
+* `NXP LPC <http://platformio.org/platforms/nxplpc>`_
+* `ST STM32 <http://platformio.org/platforms/ststm32>`_
+* `Silicon Labs EFM32 <http://platformio.org/platforms/siliconlabsefm32>`_
+* `Teensy <http://platformio.org/platforms/teensy>`_
+* `TI MSP430 <http://platformio.org/platforms/timsp430>`_
+* `TI TIVA C <http://platformio.org/platforms/titiva>`_
 
 Frameworks:
 
-* `Arduino <http://platformio.org/#!/frameworks/arduino>`_
-* `CMSIS <http://platformio.org/#!/frameworks/cmsis>`_
-* `libOpenCM3 <http://platformio.org/#!/frameworks/libopencm3>`_
-* `Energia <http://platformio.org/#!/frameworks/energia>`_
-* `SPL <http://platformio.org/#!/frameworks/spl>`_
-* `mbed <http://platformio.org/#!/frameworks/mbed>`_
-* `WiringPi <http://platformio.org/#!/frameworks/wiringpi>`_
+* `Arduino <http://platformio.org/frameworks/arduino>`_
+* `CMSIS <http://platformio.org/frameworks/cmsis>`_
+* `libOpenCM3 <http://platformio.org/frameworks/libopencm3>`_
+* `Energia <http://platformio.org/frameworks/energia>`_
+* `SPL <http://platformio.org/frameworks/spl>`_
+* `mbed <http://platformio.org/frameworks/mbed>`_
+* `WiringPi <http://platformio.org/frameworks/wiringpi>`_
 
 For further details, please refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
 

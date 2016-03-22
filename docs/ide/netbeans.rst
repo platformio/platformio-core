@@ -21,15 +21,19 @@ also has a range of new tools for HTML5/JavaScript, in particular for Node.js,
 KnockoutJS, and AngularJS; enhancements that further improve its support for
 Maven and Java EE with PrimeFaces; and improvements to PHP and C/C++ support.
 
-Refer to the `C/C++ Application Learning Trail <https://netbeans.org/kb/trails/cnd.html>`_
-for details.
+NetBeans IDE can be downloaded from `here <https://netbeans.org/downloads/>`_.
+Just make sure you download the C/C++ version (or if you already use NetBeans,
+install the C/C++ development plugins).
+
+.. image:: ../_static/ide-platformio-netbeans.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-platformio-netbeans.png
 
 .. contents::
 
 Integration
 -----------
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
@@ -58,9 +62,3 @@ Articles / Manuals
 * Feb 22, 2016 - **Grzegorz Hołdys** - `How to Integrate PlatformIO with Netbeans <http://www.instructables.com/id/How-to-Integrate-PlatformIO-With-Netbeans/>`_
 
 See the full list with :ref:`articles`.
-
-Screenshot
------------
-
-.. image:: ../_static/ide-platformio-netbeans.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-platformio-netbeans.png

@@ -26,7 +26,7 @@ class Linux_i686Platform(BasePlatform):
         Using host OS (Mac OS X or Linux 32-bit) you can build native
         application for Linux i686 platform.
 
-        http://platformio.org/#!/platforms/linux_i686
+        http://platformio.org/platforms/linux_i686
     """
 
     PACKAGES = {

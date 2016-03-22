@@ -4,6 +4,32 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.8.6 (2016-03-22)
+~~~~~~~~~~~~~~~~~~
+
+* Launched `PlatformIO Community Forums <http://community.platformio.org>`_
+  (`issue #530 <https://github.com/platformio/platformio/issues/530>`_)
+* Added support for ARM mbed-enabled board Seed Arch Max (STM32F407VET6)
+  (`issue #572 <https://github.com/platformio/platformio/issues/572>`_)
+* Improved DNS lookup for PlatformIO API
+* Updated Arduino Wiring-based framework to the latest version for
+  Atmel AVR/SAM development platforms
+* Updated "Teensy Loader CLI" and fixed uploading of large .hex files
+  (`issue #568 <https://github.com/platformio/platformio/issues/568>`_)
+* Updated the support for Sanguino Boards
+  (`issue #586 <https://github.com/platformio/platformio/issues/586>`_)
+* Better handling of used boards when re-initialize/update project
+* Improved support for non-Unicode user profiles for Windows OS
+* Disabled progress bar for download operations when prompts are disabled
+* Fixed multiple definition errors for ST STM32 development platform and
+  ARM mbed framework
+  (`issue #571 <https://github.com/platformio/platformio/issues/571>`_)
+* Fixed invalid board parameters (reset method and baudrate) for a few
+  ESP8266 based boards
+* Fixed "KeyError: 'content-length'" in PlatformIO Download Manager
+  (`issue #591 <https://github.com/platformio/platformio/issues/591>`_)
+
+
 2.8.5 (2016-03-07)
 ~~~~~~~~~~~~~~~~~~
 
@@ -544,7 +570,7 @@ PlatformIO 1.0
 1.5.0 (2015-05-15)
 ~~~~~~~~~~~~~~~~~~
 
-* Added support of `Framework mbed <http://platformio.org/#!/frameworks/mbed>`_
+* Added support of `Framework mbed <http://platformio.org/frameworks/mbed>`_
   for Teensy 3.1
   (`issue #183 <https://github.com/platformio/platformio/issues/183>`_)
 * Added GDB as alternative uploader to `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__ platform
@@ -631,7 +657,7 @@ PlatformIO 1.0
 * Created new `Frameworks <http://docs.platformio.org/en/latest/frameworks/index.html>`__
   page in documentation and added to `PlatformIO Web Site <http://platformio.org>`_
   (`issue #115 <https://github.com/platformio/platformio/issues/115>`_)
-* Introduced online `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+* Introduced online `Embedded Boards Explorer <http://platformio.org/boards>`_
 * Automatically append define ``-DPLATFORMIO=%version%`` to
   builder (`issue #105 <https://github.com/platformio/platformio/issues/105>`_)
 * Renamed ``stm32`` development platform to

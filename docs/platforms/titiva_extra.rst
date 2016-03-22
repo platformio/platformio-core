@@ -12,7 +12,7 @@
 Articles
 --------
 
-* Dec 08, 2015 - **Piotr Król** - `Using PlatformIO with TI MSP430 LunchPads <http://blog.3mdeb.com/2015/12/08/using-platformio-with-ti-msp430-lunchpads/>`_
+* Mar 12, 2016 - **Richard Arthurs** - `Getting Started With PlatformIO <http://richarthurs.com/2016/03/12/platformio-review-and-first-thoughts/>`_
 
 See more :ref:`articles`.
 
@@ -20,9 +20,8 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for TI MSP430 platform <https://github.com/platformio/platformio/tree/develop/examples/timsp430>`_.
+`Examples for TI TIVA platform <https://github.com/platformio/platformio/tree/develop/examples/titiva>`_.
 
-* `Energia blink <https://github.com/platformio/platformio/tree/develop/examples/timsp430/timsp430-energia-blink>`_
-* `Native blink <https://github.com/platformio/platformio/tree/develop/examples/timsp430/timsp430-native-blink>`_
-* `Wiring Blink <https://github.com/platformio/platformio/tree/develop/examples/wiring-blink>`_
-* `PanStamp blink <https://github.com/platformio/platformio/tree/develop/examples/timsp430/panstamp-blink>`_
+* `Energia blink <https://github.com/platformio/platformio/tree/develop/examples/titiva/titiva-energia-blink>`_
+* `Native blink <https://github.com/platformio/platformio/tree/develop/examples/titiva/titiva-native-blink>`_
+* `OpenCM3 Blink <https://github.com/platformio/platformio/tree/develop/examples/titiva/titiva-opencm3-blink>`_

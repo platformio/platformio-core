@@ -28,7 +28,7 @@ Description
 -----------
 
 Install new library  by specified
-`PlatformIO Library Registry ID <http://platformio.org/#!/lib>`_.
+`PlatformIO Library Registry ID <http://platformio.org/lib>`_.
 
 Options
 -------
@@ -48,7 +48,7 @@ Examples
 
 .. code-block:: bash
 
-    # IRremote: http://platformio.org/#!/lib/show/4/IRremote
+    # IRremote: http://platformio.org/lib/show/4/IRremote
     $ platformio lib install 4
     # Installing library [ 4 ]:
     # Downloading  [####################################]  100%
@@ -60,7 +60,7 @@ Examples
 
 .. code-block:: bash
 
-    # XBee: http://platformio.org/#!/lib/show/6/XBee
+    # XBee: http://platformio.org/lib/show/6/XBee
     $ platformio lib install 6 --version=0.5
     # Installing library [ 6 ]:
     # Downloading  [####################################]  100%
@@ -72,7 +72,7 @@ Examples
 
 .. code-block:: bash
 
-    # Adafruit-ST7735: http://platformio.org/#!/lib/show/12/Adafruit-ST7735
+    # Adafruit-ST7735: http://platformio.org/lib/show/12/Adafruit-ST7735
     $ platformio lib install 12
     # Installing library [ 12 ]:
     # Downloading  [####################################]  100%

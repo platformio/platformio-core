@@ -19,15 +19,30 @@ The `Sublime Text <http://www.sublimetext.com/>`_ is a cross-platform text and s
 Refer to the `Sublime Text Documentation <http://docs.sublimetext.info/en/latest>`_
 page for more detailed information.
 
+.. image:: ../_static/ide-sublime-text-deviot.gif
+    :target: https://github.com/gepd/Deviot
+
 .. contents::
 
 Integration
 -----------
 
+Deviot Plugin
+^^^^^^^^^^^^^
+
+We are glad to inform you about awesome Sublime Text plugin for IoT development
+named `Deviot <https://github.com/gepd/Deviot>`_. It is based on
+PlatformIO CLI and will automatically install it for you. Please visit `official
+Deviot page <https://github.com/gepd/Deviot>`_ for the further installation
+steps and documentation.
+
+.. image:: ../_static/ide-sublime-text-deviot.gif
+    :target: https://github.com/gepd/Deviot
+
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/#!/boards>`_
+Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
@@ -170,11 +185,6 @@ Conclusion
 ~~~~~~~~~~
 
 Taking everything into account, we can open project directory in Sublime Text using ``Menu: File > Open Folder`` and build it with shortcut ``Ctrl+B`` (Windows/Linux) or ``Cmd+B`` (Mac), clean project with shortcut ``F11`` and upload firmware to target with shortcut ``F12``.
-
-Screenshot
-----------
-
-.. image:: ../_static/ide-sublime-text-platformio-newproject-5.png
 
 Examples
 --------

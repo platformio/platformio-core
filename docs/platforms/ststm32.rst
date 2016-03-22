@@ -53,8 +53,9 @@ Packages
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
-    **Windows Users:** Please check that you have correctly installed USB driver
-    from board manufacturer
+
+    **Windows Users:** Please check that you have correctly installed USB
+    driver from board manufacturer
 
 
 
@@ -83,7 +84,7 @@ Boards
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/#!/boards>`_
+      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
@@ -329,5 +330,25 @@ ST
       - 80 MHz
       - 1024 Kb
       - 128 Kb
+
+SeeedStudio
+~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``seeedArchMax``
+      - `SeeedStudio Arch Max <https://developer.mbed.org/platforms/Seeed-Arch-Max/>`_
+      - STM32F407VET6
+      - 168 MHz
+      - 512 Kb
+      - 192 Kb
 
 .. include:: ststm32_extra.rst

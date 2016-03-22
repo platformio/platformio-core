@@ -26,7 +26,7 @@ class Linux_armPlatform(BasePlatform):
         Using host OS (Mac OS X, Linux ARM) you can build native application
         for Linux ARM platform.
 
-        http://platformio.org/#!/platforms/linux_arm
+        http://platformio.org/platforms/linux_arm
     """
 
     PACKAGES = {

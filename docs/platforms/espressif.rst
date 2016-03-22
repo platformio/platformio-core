@@ -50,8 +50,9 @@ Packages
     **Linux Users:** Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
-    **Windows Users:** Please check that you have correctly installed USB driver
-    from board manufacturer
+
+    **Windows Users:** Please check that you have correctly installed USB
+    driver from board manufacturer
 
 
 
@@ -71,7 +72,7 @@ Boards
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/#!/boards>`_
+      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
@@ -110,6 +111,33 @@ Doit
 
     * - ``espduino``
       - `ESPDuino (ESP-13 Module) <https://www.tindie.com/products/doit/espduinowifi-uno-r3/>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
+ESPert
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``espresso_lite_v1``
+      - `ESPresso Lite 1.0 <http://www.espert.co>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
+    * - ``espresso_lite_v2``
+      - `ESPresso Lite 2.0 <http://www.espert.co>`_
       - ESP8266
       - 80 MHz
       - 4096 Kb
@@ -182,20 +210,6 @@ Espressif
       - 80 MHz
       - 4096 Kb
       - 50 Kb
-
-    * - ``espresso_lite_v1``
-      - `ESPresso Lite 1.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
-      - ESP8266
-      - 80 MHz
-      - 4096 Kb
-      - 80 Kb
-
-    * - ``espresso_lite_v2``
-      - `ESPresso Lite 2.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
-      - ESP8266
-      - 80 MHz
-      - 4096 Kb
-      - 80 Kb
 
 NodeMCU
 ~~~~~~~

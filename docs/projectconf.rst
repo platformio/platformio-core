@@ -97,7 +97,7 @@ This option can be overridden by global environment variable
 ``envs_dir``
 ^^^^^^^^^^^^
 
-*PlatformIO Builder* within :ref:`cmd_run` command uses this folder for project
+This is a cache directory. *PlatformIO Build System* uses this folder for project
 environments to store compiled object files, static libraries, firmwares and
 other cached information. It allows PlatformIO to build source code extremely
 fast!
@@ -178,7 +178,7 @@ need to specify ``board_mcu``, ``board_f_cpu``, ``upload_protocol`` or
 pre-fill options described above with appropriate values.
 
 You can find the ``board`` type in *Boards* section of each :ref:`platforms` or
-using `PlatformIO Embedded Boards Explorer <http://platformio.org/#!/boards>`_.
+using `PlatformIO Embedded Boards Explorer <http://platformio.org/boards>`_.
 
 
 Board options

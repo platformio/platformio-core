@@ -36,6 +36,8 @@ code editor that's modern, approachable, yet hackable to the core; a tool you
 can customize to do anything but also use productively without ever touching a
 config file.
 
+.. image:: ../_static/ide-atom-platformio.png
+    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png
 
 .. contents::
 
@@ -46,30 +48,22 @@ PlatformIO IDE is the next generation integrated development environment for IoT
 It's built on top of `GitHub's Atom "hackable" text editor <https://atom.io>`_.
 If you have already Atom installed, please install `PlatformIO IDE for Atom package <https://atom.io/packages/platformio-ide>`_.
 
-Automatic Installation
-~~~~~~~~~~~~~~~~~~~~~~
+.. note::
+    You don't need to install PlatformIO CLI seprately to system.
+    PlatformIO CLI is built into PlatformIO IDE and you will be able to use it
+    within PlatformIO IDE Terminal.
 
-Please download PlatformIO IDE for Atom bundle with built-in auto installer
-(be patient and let the installation complete)
-
-- `Download PlatformIO IDE for Windows <https://dl.bintray.com/platformio/ide-bundles/platformio-atom-windows.exe>`_
-- `Download PlatformIO IDE for Mac <https://dl.bintray.com/platformio/ide-bundles/platformio-atom-mac.zip>`_
-- `Download PlatformIO IDE .deb <https://dl.bintray.com/platformio/ide-bundles/platformio-atom-linux-x86_64.deb>`_
-- `Download PlatformIO IDE .rpm <https://dl.bintray.com/platformio/ide-bundles/platformio-atom-linux-x86_64.rpm>`_
-
-Manual Installation
+1. IDE Installation
 ~~~~~~~~~~~~~~~~~~~
 
-1. Download and install the latest Atom text editor
+.. note::
+    If you don't have Atom installed yet, we propose to download
+    `PlatformIO IDE for Atom bundle <http://platformio.org/platformio-ide>`_
+    with built-in auto installer (optional).
 
-    - `Download Atom for Mac <https://atom.io/download/mac>`_
-    - `Download Atom for Windows <https://atom.io/download/windows>`_
-    - `Download Atom .deb <https://atom.io/download/deb>`_
-    - `Download Atom .rpm <https://atom.io/download/rpm>`_
-    - `Other platforms <https://github.com/atom/atom/releases/latest>`_
-
-
-2. Open Atom Package Manager and install `platformio-ide <https://atom.io/packages/platformio-ide>`_ Atom package
+1. Download and install the `latest official Atom text editor <https://atom.io>`_.
+2. Open Atom Package Manager and install `platformio-ide <https://atom.io/packages/platformio-ide>`_
+   Atom package (be patient and let the installation complete)
 
     - **Mac OS X**: ``Menu: Atom > Preferences > Install``
     - **Windows**: ``Menu: File > Settings > Install``
@@ -77,6 +71,43 @@ Manual Installation
 
 .. image:: ../_static/ide-atom-platformio-install.png
 
+2. Python Interpreter
+~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE is based on PlatformIO CLI which is written in
+`Python <https://www.python.org/downloads/>`_. Python is installed by default
+on the all popular OS except Windows.
+
+**Windows Users**, please `Download the latest Python 2.7.x <https://www.python.org/downloads/>`_
+and install it. **DON'T FORGET** to select ``Add python.exe to Path`` feature
+on the "Customize" stage, otherwise ``python`` command will not be available.
+
+.. image:: ../_static/python-installer-add-path.png
+
+.. _ide_atom_installation_clang:
+
+3. Clang for Intelligent Code Autocompletion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
+To check that ``clang`` is available in your system, please open
+Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
+
+- **Mac OS X**: Install the latest Xcode along with the latest Command Line Tools
+  (they are installed automatically when you run ``clang`` in Terminal for the
+  first time, or manually by running ``xcode-select --install``
+- **Windows**: Download the latest `Clang for Windows <http://llvm.org/releases/download.html>`_.
+  Please select "Add LLVM to the system PATH" option on the installation step.
+
+  .. image:: ../_static/clang-installer-add-path.png
+
+- **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
+- **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
+
+.. warning::
+    The libraries which are added/installed after initializing process will
+    not be reflected in code linter. You need ``Menu: PlatformIO >
+    Rebuild C/C++ Project Index (Autocomplete, Linter)``.
 
 .. _atom_ide_quickstart:
 
@@ -253,7 +284,6 @@ Each button contains hint (delay mouse on it).
 * ||
 * Terminal
 * Library Manager
-* Serial Ports
 * Serial Monitor
 * ||
 * Settings
@@ -273,22 +303,14 @@ Building / Uploading / Targets
 * ``cmd-alt-v`` / ``ctrl-alt-v`` / ``f8`` toggles the build panel.
 * ``escape`` terminates build / closes the build window.
 
-More details `Atom Build package <https://atom.io/packages/build>`_.
+More options ``Menu: PlatformIO > Settings > Build``.
 
 Intelligent Code Autocompletion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
-To check that ``clang`` is available in your system, please open
-Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
-
-- **Mac OS X**: Install the latest Xcode along with the latest Command Line Tools
-  (they are installed automatically when you run ``clang`` in Terminal for the
-  first time, or manually by running ``xcode-select --install``
-- **Windows**: Download the latest `Clang for Windows <http://llvm.org/releases/download.html>`_.
-  Please select "Add LLVM to the system PATH" option on the installation step.
-- **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
-- **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
+To install it or check if it is already installed, please follow to step
+:ref:`ide_atom_installation_clang` from Installation guide.
 
 .. warning::
     The libraries which are added/installed after initializing process will
@@ -412,14 +434,10 @@ To force Smart Code Linter to use Arduino files as C++ please
 Articles / Manuals
 ------------------
 
-* Feb 28, 2016 - **Alex Bloggt** - `PlatformIO vorgestellt (Introduction to PlatformIO IDE, German) <https://alexbloggt.com/platformio-vorgestellt/>`_
+* Mar 12, 2016 - **Peter Marks** - `PlatformIO, the Arduino IDE for programmers <http://blog.marxy.org/2016/03/platformio-arduino-ide-for-programmers.html>`_
+* Mar 05, 2016 - **brichacek.net** - `PlatformIO – otevřený ekosystém pro vývoj IoT (PlatformIO – an open source ecosystem for IoT development, Czech) <http://blog.brichacek.net/platformio-otevreny-ekosystem-pro-vyvoj-iot/>`_
 * Mar 04, 2016 - **Ricardo Vega** - `Programa tu Arduino desde Atom (Program your Arduino from Atom, Spanish) <http://ricveal.com/blog/programa-arduino-desde-atom/>`_
+* Feb 28, 2016 - **Alex Bloggt** - `PlatformIO vorgestellt (Introduction to PlatformIO IDE, German) <https://alexbloggt.com/platformio-vorgestellt/>`_
 * Feb 25, 2016 - **NutDIY** - `PlatformIO Blink On Nodemcu Dev Kit V1.0 (Thai) <http://nutdiy.blogspot.com/2016/02/platformio-blink-on-nodemcu-dev-kit-v10.html>`_
 
 See a full list with :ref:`articles`.
-
-Screenshot
-----------
-
-.. image:: ../_static/ide-atom-platformio.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png

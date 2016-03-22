@@ -46,14 +46,14 @@ Platforms
       - The STM32 family of 32-bit Flash MCUs based on the ARM Cortex-M processor is designed to offer new degrees of freedom to MCU users. It offers a 32-bit product range that combines very high performance, real-time capabilities, digital signal processing, and low-power, low-voltage operation, while maintaining full integration and ease of development.
 
     * - :ref:`platform_teensy`
-      - Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard "Mini-B" USB cable and a PC or Macintosh with a USB port.
+      - Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard USB cable and a PC or Macintosh with a USB port.
 
 Boards
 ------
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/#!/boards>`_
+      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by horizontal.
 
 Atmel
@@ -595,6 +595,13 @@ SeeedStudio
       - Frequency
       - Flash
       - RAM
+
+    * - ``seeedArchMax``
+      - `SeeedStudio Arch Max <https://developer.mbed.org/platforms/Seeed-Arch-Max/>`_
+      - STM32F407VET6
+      - 168 MHz
+      - 512 Kb
+      - 192 Kb
 
     * - ``seeedTinyBLE``
       - `SeeedStudio Seeed Tiny BLE <http://developer.mbed.org/platforms/Seeed-Tiny-BLE/>`_

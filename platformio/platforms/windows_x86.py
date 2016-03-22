@@ -23,7 +23,7 @@ class Windows_x86Platform(BasePlatform):
         Using host OS (Windows, Linux 32/64 or Mac OS X) you can build native
         application for Windows x86 platform.
 
-        http://platformio.org/#!/platforms/windows_x86
+        http://platformio.org/platforms/windows_x86
     """
 
     PACKAGES = {

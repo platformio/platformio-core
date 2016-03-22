@@ -26,7 +26,7 @@ class Linux_x86_64Platform(BasePlatform):
         Using host OS (Mac OS X or Linux 64-bit) you can build native
         application for Linux x86_64 platform.
 
-        http://platformio.org/#!/platforms/linux_i686
+        http://platformio.org/platforms/linux_i686
     """
 
     PACKAGES = {

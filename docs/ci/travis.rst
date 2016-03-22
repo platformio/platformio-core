@@ -105,7 +105,7 @@ Install dependent library using :ref:`librarymanager`
         #
         # Libraries from PlatformIO Library Registry:
         #
-        # http://platformio.org/#!/lib/show/1/OneWire
+        # http://platformio.org/lib/show/1/OneWire
         platformio lib install 1
 
 Manually download dependent library and include in build process via ``--lib`` option
@@ -188,8 +188,8 @@ Examples
         #
         # Libraries from PlatformIO Library Registry:
         #
-        # http://platformio.org/#!/lib/show/416/TinyGPS
-        # http://platformio.org/#!/lib/show/417/SPI4Teensy3
+        # http://platformio.org/lib/show/416/TinyGPS
+        # http://platformio.org/lib/show/417/SPI4Teensy3
         - platformio lib install 416 417
 
     script:
@@ -247,10 +247,10 @@ Examples
             - "~/.platformio"
 
     env:
-        - PLATFORMIO_CI_SRC=examples/TimeArduinoDue PLATFORMIO_CI_BOARDS_ARGS="--board=due"
+        - PLATFORMIO_CI_SRC=examples/TimeArduinoDue PLATFORMIO_CI_EXTRA_ARGS="--board=due"
         - PLATFORMIO_CI_SRC=examples/TimeGPS
         - PLATFORMIO_CI_SRC=examples/TimeNTP
-        - PLATFORMIO_CI_SRC=examples/TimeTeensy3 PLATFORMIO_CI_BOARDS_ARGS="--board=teensy31"
+        - PLATFORMIO_CI_SRC=examples/TimeTeensy3 PLATFORMIO_CI_EXTRA_ARGS="--board=teensy31"
         # - ...
 
     install:
@@ -260,11 +260,11 @@ Examples
         #
         # Libraries from PlatformIO Library Registry:
         #
-        # http://platformio.org/#!/lib/show/416/TinyGPS
+        # http://platformio.org/lib/show/416/TinyGPS
         - platformio lib install 416 421 422
 
     script:
-        - if [[ $PLATFORMIO_CI_BOARDS_ARGS ]]; then bash -c 'platformio ci --lib="." $PLATFORMIO_CI_BOARDS_ARGS'; else bash -c 'platformio ci --lib="." --board=uno --board=teensy20pp'; fi
+        - platformio ci --lib="." --board=uno --board=teensy20pp $PLATFORMIO_CI_EXTRA_ARGS
 
 * Configuration file: https://github.com/ivankravets/Time/blob/master/.travis.yml
 * Build History: https://travis-ci.org/ivankravets/Time

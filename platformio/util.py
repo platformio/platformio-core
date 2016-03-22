@@ -20,11 +20,12 @@ import re
 import subprocess
 import sys
 from glob import glob
-from os.path import abspath, basename, dirname, expanduser, isdir, isfile, join
+from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
+                     join, splitdrive)
 from platform import system, uname
 from threading import Thread
 
-from platformio import __apiurl__, __version__, exception
+from platformio import __apiip__, __apiurl__, __version__, exception
 
 # pylint: disable=wrong-import-order
 try:
@@ -160,6 +161,12 @@ def get_home_dir():
         join(expanduser("~"), ".platformio")
     )
 
+    if "windows" in get_systype():
+        try:
+            home_dir.encode("utf8")
+        except UnicodeDecodeError:
+            home_dir = splitdrive(home_dir)[0] + "\.platformio"
+
     if not isdir(home_dir):
         os.makedirs(home_dir)
 
@@ -213,12 +220,13 @@ def get_projectdata_dir():
     )
 
 
-def get_project_config():
-    path = join(get_project_dir(), "platformio.ini")
-    if not isfile(path):
+def get_project_config(ini_path=None):
+    if not ini_path:
+        ini_path = join(get_project_dir(), "platformio.ini")
+    if not isfile(ini_path):
         raise exception.NotPlatformProject(get_project_dir())
     cp = ConfigParser()
-    cp.read(path)
+    cp.read(ini_path)
     return cp
 
 
@@ -321,18 +329,26 @@ def get_request_defheaders():
     )}
 
 
-def get_api_result(path, params=None, data=None):
+def get_api_result(path, params=None, data=None, skipdns=False):
     import requests
     result = None
     r = None
 
+    headers = get_request_defheaders()
+    url = __apiurl__
+    if skipdns:
+        url = "http://%s" % __apiip__
+        headers['host'] = __apiurl__[__apiurl__.index("://")+3:]
+
     try:
         if data:
-            r = requests.post(__apiurl__ + path, params=params, data=data,
-                              headers=get_request_defheaders())
+            r = requests.post(
+                url + path, params=params, data=data, headers=headers,
+                timeout=(5, 13)
+            )
         else:
-            r = requests.get(__apiurl__ + path, params=params,
-                             headers=get_request_defheaders())
+            r = requests.get(
+                url + path, params=params, headers=headers, timeout=(5, 13))
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -340,7 +356,10 @@ def get_api_result(path, params=None, data=None):
             raise exception.APIRequestError(result['errors'][0]['title'])
         else:
             raise exception.APIRequestError(e)
-    except requests.exceptions.ConnectionError:
+    except (requests.exceptions.ConnectionError,
+            requests.exceptions.ConnectTimeout):
+        if not skipdns:
+            return get_api_result(path, params, data, skipdns=True)
         raise exception.APIRequestError(
             "Could not connect to PlatformIO Registry Service. "
             "Please try later.")

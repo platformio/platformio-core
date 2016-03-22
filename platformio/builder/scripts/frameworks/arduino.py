@@ -251,6 +251,11 @@ if "variant" in BOARD_BUILDOPTS:
 
 envsafe = env.Clone()
 
+if BOARD_BUILDOPTS.get("core", None) == "teensy3":
+    libs.append("arm_cortex%sl_math" % (
+        "M4" if BOARD_BUILDOPTS.get("cpu") == "cortex-m4" else "M0")
+    )
+
 if "zero" in env.subst("$BOARD"):
     envsafe.Append(
         CFLAGS=[

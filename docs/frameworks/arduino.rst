@@ -40,7 +40,7 @@ Platforms
       - The Nordic nRF51 Series is a family of highly flexible, multi-protocol, system-on-chip (SoC) devices for ultra-low power wireless applications. nRF51 Series devices support a range of protocol stacks including Bluetooth Smart (previously called Bluetooth low energy), ANT and proprietary 2.4GHz protocols such as Gazell.
 
     * - :ref:`platform_teensy`
-      - Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard "Mini-B" USB cable and a PC or Macintosh with a USB port.
+      - Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard USB cable and a PC or Macintosh with a USB port.
 
     * - :ref:`platform_timsp430`
       - MSP430 microcontrollers (MCUs) from Texas Instruments (TI) are 16-bit, RISC-based, mixed-signal processors designed for ultra-low power. These MCUs offer the lowest power consumption and the perfect mix of integrated peripherals for thousands of applications.
@@ -50,7 +50,7 @@ Boards
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/#!/boards>`_
+      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by horizontal.
 
 Adafruit
@@ -502,6 +502,33 @@ Doit
       - 4096 Kb
       - 80 Kb
 
+ESPert
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``espresso_lite_v1``
+      - `ESPresso Lite 1.0 <http://www.espert.co>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
+    * - ``espresso_lite_v2``
+      - `ESPresso Lite 2.0 <http://www.espert.co>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
 ESPino
 ~~~~~~
 
@@ -603,20 +630,6 @@ Espressif
       - 80 MHz
       - 4096 Kb
       - 50 Kb
-
-    * - ``espresso_lite_v1``
-      - `ESPresso Lite 1.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
-      - ESP8266
-      - 80 MHz
-      - 4096 Kb
-      - 80 Kb
-
-    * - ``espresso_lite_v2``
-      - `ESPresso Lite 2.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
-      - ESP8266
-      - 80 MHz
-      - 4096 Kb
-      - 80 Kb
 
 LightUp
 ~~~~~~~
@@ -969,17 +982,10 @@ Sanguino
       - Flash
       - RAM
 
-    * - ``sanguino_atmega12848m``
+    * - ``sanguino_atmega1284_8m``
       - `Sanguino ATmega1284p (8MHz) <https://code.google.com/p/sanguino/>`_
       - ATMEGA1284P
       - 8 MHz
-      - 128 Kb
-      - 16 Kb
-
-    * - ``sanguino_atmega1284m``
-      - `Sanguino ATmega1284p (20MHz) <https://code.google.com/p/sanguino/>`_
-      - ATMEGA1284P
-      - 20 MHz
       - 128 Kb
       - 16 Kb
 
@@ -990,10 +996,31 @@ Sanguino
       - 128 Kb
       - 16 Kb
 
+    * - ``sanguino_atmega644``
+      - `Sanguino ATmega644 or ATmega644A (16 MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA644
+      - 16 MHz
+      - 64 Kb
+      - 4 Kb
+
+    * - ``sanguino_atmega644_8m``
+      - `Sanguino ATmega644 or ATmega644A (8 MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA644
+      - 8 MHz
+      - 64 Kb
+      - 4 Kb
+
     * - ``sanguino_atmega644p``
-      - `Sanguino ATmega644P <https://code.google.com/p/sanguino/>`_
+      - `Sanguino ATmega644P or ATmega644PA (16 MHz) <https://code.google.com/p/sanguino/>`_
       - ATMEGA644P
       - 16 MHz
+      - 64 Kb
+      - 4 Kb
+
+    * - ``sanguino_atmega644p_8m``
+      - `Sanguino ATmega644P or ATmega644PA (8 MHz) <https://code.google.com/p/sanguino/>`_
+      - ATMEGA644P
+      - 8 MHz
       - 64 Kb
       - 4 Kb
 
