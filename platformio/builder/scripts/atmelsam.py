@@ -102,7 +102,7 @@ env.Append(
 )
 
 
-if "due" in env.subst("$BOARD"):
+if "sam3x8e" in env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu", None):
     env.Append(
         CPPDEFINES=[
             "printf=iprintf"
