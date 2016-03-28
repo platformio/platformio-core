@@ -4,6 +4,12 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.8.7 (2016-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed broken compilation for Atmel SAMD based boards except Arduino Due
+  (`issue #598 <https://github.com/platformio/platformio/issues/598>`_)
+
 2.8.6 (2016-03-22)
 ~~~~~~~~~~~~~~~~~~
 
