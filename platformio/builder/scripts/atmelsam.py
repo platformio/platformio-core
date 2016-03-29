@@ -96,7 +96,8 @@ else:
 
 env.Append(
     CXXFLAGS=[
-        "-fno-threadsafe-statics"
+        "-fno-threadsafe-statics",
+        "-std=gnu++11"
     ],
 
     CPPDEFINES=[
