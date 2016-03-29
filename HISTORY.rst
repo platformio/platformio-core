@@ -7,6 +7,9 @@ PlatformIO 2.0
 2.8.7 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Don't check OS type for ARM mbed-enabled boards and ST STM32 development
+  platform before uploading to disk
+  (`issue #596 <https://github.com/platformio/platformio/issues/596>`_)
 * Fixed broken compilation for Atmel SAMD based boards except Arduino Due
   (`issue #598 <https://github.com/platformio/platformio/issues/598>`_)
 
