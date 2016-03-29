@@ -95,6 +95,10 @@ else:
     )
 
 env.Append(
+    CXXFLAGS=[
+        "-fno-threadsafe-statics"
+    ],
+
     CPPDEFINES=[
         "USBCON",
         'USB_MANUFACTURER="PlatformIO"'
@@ -122,10 +126,6 @@ elif "zero" in env.subst("$BOARD"):
     env.Append(
         CCFLAGS=[
             "--param", "max-inline-insns-single=500"
-        ],
-
-        CXXFLAGS=[
-            "-fno-threadsafe-statics"
         ],
 
         LINKFLAGS=[
