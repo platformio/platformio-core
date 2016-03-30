@@ -7,12 +7,12 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<MakeCommands>
-			<Build command="platformio -f -c codeblocks run" />
-			<CompileFile command="platformio -f -c codeblocks run" />
-			<Clean command="platformio -f -c codeblocks run -t clean" />
-			<DistClean command="platformio -f -c codeblocks run -t clean" />
+			<Build command="{{platformio_path}} -f -c codeblocks run" />
+			<CompileFile command="{{platformio_path}} -f -c codeblocks run" />
+			<Clean command="{{platformio_path}} -f -c codeblocks run -t clean" />
+			<DistClean command="{{platformio_path}} -f -c codeblocks run -t clean" />
 			<AskRebuildNeeded command="1" />
-			<SilentBuild command="platformio -f -c codeblocks run &gt; $(CMD_NULL)" />
+			<SilentBuild command="{{platformio_path}} -f -c codeblocks run &gt; $(CMD_NULL)" />
 		</MakeCommands>
 		<Build>
 			<Target title="Debug">
@@ -20,12 +20,12 @@
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<MakeCommands>
-					<Build command="platformio -f -c codeblocks run" />
-					<CompileFile command="platformio -f -c codeblocks run" />
-					<Clean command="platformio -f -c codeblocks run -t clean" />
-					<DistClean command="platformio -f -c codeblocks run -t clean" />
+					<Build command="{{platformio_path}} -f -c codeblocks run" />
+					<CompileFile command="{{platformio_path}} -f -c codeblocks run" />
+					<Clean command="{{platformio_path}} -f -c codeblocks run -t clean" />
+					<DistClean command="{{platformio_path}} -f -c codeblocks run -t clean" />
 					<AskRebuildNeeded command="1" />
-					<SilentBuild command="platformio -f -c codeblocks run &gt; $(CMD_NULL)" />
+					<SilentBuild command="{{platformio_path}} -f -c codeblocks run &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 			<Target title="Release">
@@ -33,12 +33,12 @@
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<MakeCommands>
-					<Build command="platformio -f -c codeblocks run" />
-					<CompileFile command="platformio -f -c codeblocks run" />
-					<Clean command="platformio -f -c codeblocks run -t clean" />
-					<DistClean command="platformio -f -c codeblocks run -t clean" />
+					<Build command="{{platformio_path}} -f -c codeblocks run" />
+					<CompileFile command="{{platformio_path}} -f -c codeblocks run" />
+					<Clean command="{{platformio_path}} -f -c codeblocks run -t clean" />
+					<DistClean command="{{platformio_path}} -f -c codeblocks run -t clean" />
 					<AskRebuildNeeded command="1" />
-					<SilentBuild command="platformio -f -c codeblocks run &gt; $(CMD_NULL)" />
+					<SilentBuild command="{{platformio_path}} -f -c codeblocks run &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 		</Build>
@@ -50,6 +50,7 @@
 			<Add directory="{{include.replace("\\", "/")}}"/>
 			% end		
 		</Compiler>
+		<Unit filename="platformio.ini" />
 		% for file in src_files:
 		<Unit filename="{{file.replace("\\", "/")}}"></Unit>
 		% end
