@@ -256,16 +256,6 @@ if BOARD_BUILDOPTS.get("core", None) == "teensy3":
         "M4" if BOARD_BUILDOPTS.get("cpu") == "cortex-m4" else "M0")
     )
 
-if "zero" in env.subst("$BOARD"):
-    envsafe.Append(
-        CFLAGS=[
-            "-std=gnu11"
-        ],
-
-        CXXFLAGS=[
-            "-std=gnu++11",
-        ]
-    )
 
 libs.append(envsafe.BuildLibrary(
     join("$BUILD_DIR", "FrameworkArduino"),
@@ -279,11 +269,7 @@ if "sam3x8e" in BOARD_BUILDOPTS.get("mcu", None):
                  "${BOARD_OPTIONS['build']['variant']}")
         ]
     )
-    envsafe.Append(
-        CFLAGS=[
-            "-std=gnu99"
-        ]
-    )
+
     libs.append("sam_sam3x8e_gcc_rel")
 
 env.Prepend(LIBS=libs)

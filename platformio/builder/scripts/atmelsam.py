@@ -95,13 +95,26 @@ else:
     )
 
 env.Append(
+    CFLAGS=[
+        "-std=gnu11",
+        "--param", "max-inline-insns-single=500"
+    ],
+
     CXXFLAGS=[
+        "-std=gnu++11",
         "-fno-threadsafe-statics"
     ],
 
     CPPDEFINES=[
         "USBCON",
         'USB_MANUFACTURER="PlatformIO"'
+    ],
+
+    LINKFLAGS=[
+        "-Wl,--check-sections",
+        "-Wl,--unresolved-symbols=report-all",
+        "-Wl,--warn-common",
+        "-Wl,--warn-section-align"
     ]
 )
 
@@ -124,10 +137,6 @@ if "sam3x8e" in env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu", None):
     )
 elif "zero" in env.subst("$BOARD"):
     env.Append(
-        CCFLAGS=[
-            "--param", "max-inline-insns-single=500"
-        ],
-
         LINKFLAGS=[
             "--specs=nosys.specs",
             "--specs=nano.specs"
