@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.8.7 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Forced ``-std=gnu++11`` for Atmel SAM development platform
+  (`issue #601 <https://github.com/platformio/platformio/issues/601>`_)
 * Don't check OS type for ARM mbed-enabled boards and ST STM32 development
   platform before uploading to disk
   (`issue #596 <https://github.com/platformio/platformio/issues/596>`_)
