@@ -16,8 +16,11 @@
 		</MakeCommands>
 		<Build>
 			<Target title="Debug">
-				<Option type="1" />
+				<Option type="4" />
 				<Option compiler="gcc" />
+				<Option parameters="-f -c codeblocks run -t upload" />
+				<Option host_application="{{platformio_path}}" />
+				<Option run_host_application_in_terminal="1" />
 				<Option use_console_runner="0" />
 				<MakeCommands>
 					<Build command="{{platformio_path}} -f -c codeblocks run" />
@@ -29,8 +32,11 @@
 				</MakeCommands>
 			</Target>
 			<Target title="Release">
-				<Option type="1" />
+				<Option type="4" />
 				<Option compiler="gcc" />
+				<Option parameters="-f -c codeblocks run -t upload" />
+				<Option host_application="{{platformio_path}}" />
+				<Option run_host_application_in_terminal="1" />
 				<Option use_console_runner="0" />
 				<MakeCommands>
 					<Build command="{{platformio_path}} -f -c codeblocks run" />
