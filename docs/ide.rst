@@ -19,6 +19,7 @@ IDE Integration
 
     ide/atom
     ide/clion
+    ide/codeblocks
     ide/eclipse
     ide/emacs
     ide/netbeans
