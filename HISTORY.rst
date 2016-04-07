@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.8.7 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Project generator for `CodeBlocks IDE <http://docs.platformio.org/en/latest/ide/codeblocks.html>`__
+  (`issue #600 <https://github.com/platformio/platformio/issues/600>`_)
 * Forced ``-std=gnu++11`` for Atmel SAM development platform
   (`issue #601 <https://github.com/platformio/platformio/issues/601>`_)
 * Don't check OS type for ARM mbed-enabled boards and ST STM32 development
