@@ -254,16 +254,21 @@ else:
             join("$PIOPACKAGES_DIR", "sdk-esp8266", "include"),
             "$PROJECTSRC_DIR"
         ],
-        LIBPATH=[join("$PIOPACKAGES_DIR", "sdk-esp8266", "lib")],
+
+        LIBPATH=[
+            join("$PIOPACKAGES_DIR", "sdk-esp8266", "lib"),
+            join("$PIOPACKAGES_DIR", "sdk-esp8266", "ld")
+        ],
+
         BUILDERS=dict(
             ElfToBin=Builder(
                 action=" ".join([
                     '"$OBJCOPY"',
                     "-eo", "$SOURCES",
                     "-bo", "${TARGETS[0]}",
-                    "-bm", "qio",
-                    "-bf", "40",
-                    "-bz", "512K",
+                    "-bm", "$BOARD_FLASH_MODE",
+                    "-bf", "${__get_board_f_flash(__env__)}",
+                    "-bz", "${__get_flash_size(__env__)}",
                     "-bs", ".text",
                     "-bs", ".data",
                     "-bs", ".rodata",
@@ -277,20 +282,24 @@ else:
         )
     )
     env.Replace(
-        LDSCRIPT_PATH=join(
-            "$PIOPACKAGES_DIR", "sdk-esp8266", "ld", "eagle.app.v6.ld"),
-        LIBS=["c", "gcc", "phy", "pp", "net80211", "lwip", "wpa", "main",
-              "json", "upgrade", "smartconfig", "pwm", "at", "ssl"],
+        LIBS=[
+            "c", "gcc", "phy", "pp", "net80211", "lwip", "wpa", "wpa2",
+            "main", "wps", "crypto", "json", "ssl", "pwm", "upgrade",
+            "smartconfig", "airkiss", "at"
+        ],
+
         UPLOADERFLAGS=[
             "-vv",
-            "-cd", "ck",
+            "-cd", "$UPLOAD_RESETMETHOD",
             "-cb", "$UPLOAD_SPEED",
             "-cp", "$UPLOAD_PORT",
             "-ca", "0x00000",
             "-cf", "${SOURCES[0]}",
             "-ca", "0x40000",
             "-cf", "${SOURCES[1]}"
-        ]
+        ],
+
+        UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS',
     )
 
 #
