@@ -93,7 +93,8 @@ PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Au
 To check that ``clang`` is available in your system, please open
 Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
 
-- **Mac OS X**: Install the latest Xcode along with the latest Command Line Tools
+- **Mac OS X**: `Install the latest Xcode <https://itunes.apple.com/en/app/xcode/id497799835>`_
+  along with the latest Command Line Tools
   (they are installed automatically when you run ``clang`` in Terminal for the
   first time, or manually by running ``xcode-select --install``
 - **Windows**: Download the latest `Clang for Windows <http://llvm.org/releases/download.html>`_.
