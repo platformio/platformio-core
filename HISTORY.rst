@@ -4,11 +4,15 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.8.7 (2016-??-??)
+2.9.0 (2016-04-??)
 ~~~~~~~~~~~~~~~~~~
 
 * Project generator for `CodeBlocks IDE <http://docs.platformio.org/en/latest/ide/codeblocks.html>`__
   (`issue #600 <https://github.com/platformio/platformio/issues/600>`_)
+* Updated native SDK for ESP8266 to 1.5
+  (`issue #366 <https://github.com/platformio/platformio/issues/366>`_)
+* Automatically reboot Teensy board after upload when Teensy Loader GUI is used
+  (`issue #609 <https://github.com/platformio/platformio/issues/609>`_)
 * Forced ``-std=gnu++11`` for Atmel SAM development platform
   (`issue #601 <https://github.com/platformio/platformio/issues/601>`_)
 * Don't check OS type for ARM mbed-enabled boards and ST STM32 development
