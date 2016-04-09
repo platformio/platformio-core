@@ -103,7 +103,8 @@ AlwaysBuild(target_size)
 # Target: Upload by default firmware file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_firm,
+upload = env.Alias(
+    ["upload", "uploadlazy"], target_firm,
     ["$UPLOADHEXCMD"] + (["$REBOOTER"] if "REBOOTER" in env else []))
 AlwaysBuild(upload)
 
