@@ -51,8 +51,7 @@ class LibraryManager(object):
             conf_path = join(self.lib_dir, dirname, self.CONFIG_NAME)
             if not isfile(conf_path):
                 continue
-            with open(conf_path, "r") as f:
-                items[dirname] = json.load(f)
+            items[dirname] = util.load_json(conf_path)
         return items
 
     def get_latest_versions(self):

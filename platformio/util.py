@@ -124,6 +124,11 @@ def singleton(cls):
     return get_instance
 
 
+def load_json(file_path):
+        with open(file_path, "r") as f:
+            return json.load(f)
+
+
 def get_systype():
     data = uname()
     type_ = data[0].lower()
@@ -343,21 +348,19 @@ def get_api_result(path, params=None, data=None, skipdns=False):
     try:
         if data:
             r = requests.post(
-                url + path, params=params, data=data, headers=headers,
-                timeout=(5, 13)
-            )
+                url + path, params=params, data=data, headers=headers)
         else:
-            r = requests.get(
-                url + path, params=params, headers=headers, timeout=(5, 13))
-        result = r.json()
+            r = requests.get(url + path, params=params, headers=headers)
         r.raise_for_status()
+        result = r.json()
     except requests.exceptions.HTTPError as e:
         if result and "errors" in result:
             raise exception.APIRequestError(result['errors'][0]['title'])
         else:
             raise exception.APIRequestError(e)
     except (requests.exceptions.ConnectionError,
-            requests.exceptions.ConnectTimeout):
+            requests.exceptions.ConnectTimeout,
+            requests.exceptions.ReadTimeout):
         if not skipdns:
             return get_api_result(path, params, data, skipdns=True)
         raise exception.APIRequestError(
@@ -383,8 +386,7 @@ def _lookup_boards():
         for json_file in sorted(os.listdir(bdir)):
             if not json_file.endswith(".json"):
                 continue
-            with open(join(bdir, json_file)) as f:
-                boards.update(json.load(f))
+            boards.update(load_json(join(bdir, json_file)))
     return boards
 
 
