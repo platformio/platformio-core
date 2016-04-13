@@ -24,7 +24,7 @@ PlatformIO
     :alt: PyPi Downloads
 .. image:: https://img.shields.io/community/PlatformIO.png
    :alt: Join the chat at https://gitter.im/platformio/platformio
-   :target: http://community.platformio.org
+   :target: https://community.platformio.org
 .. image:: https://img.shields.io/donate/PlatformIO.png?color=yellow
    :alt: Donate for PlatformIO.Org
    :target: http://platformio.org/donate
@@ -38,7 +38,7 @@ PlatformIO
 `Facebook <https://www.facebook.com/platformio>`_ |
 `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
 `Bintray <https://bintray.com/platformio>`_ |
-`Community <http://community.platformio.org>`_ |
+`Community <https://community.platformio.org>`_ |
 `Donate <http://platformio.org/donate>`_ |
 `Contact Us <http://platformio.org/contact>`_
 

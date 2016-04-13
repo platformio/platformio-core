@@ -2,7 +2,7 @@ What kind of issue is this?
 
 - [ ] Question. This issue tracker is not the place for questions. If you want to ask how to do
       something, or to understand why something isn't working the way you expect it to, use
-      our Community Forums http://community.platformio.org
+      our Community Forums https://community.platformio.org
 
 - [ ] Feature Request. Start by telling us what problem you’re trying to solve. Often a solution
       already exists! Don’t send pull requests to implement new features without first getting our

@@ -24,7 +24,7 @@ PlatformIO 2.0
 2.8.6 (2016-03-22)
 ~~~~~~~~~~~~~~~~~~
 
-* Launched `PlatformIO Community Forums <http://community.platformio.org>`_
+* Launched `PlatformIO Community Forums <https://community.platformio.org>`_
   (`issue #530 <https://github.com/platformio/platformio/issues/530>`_)
 * Added support for ARM mbed-enabled board Seed Arch Max (STM32F407VET6)
   (`issue #572 <https://github.com/platformio/platformio/issues/572>`_)
