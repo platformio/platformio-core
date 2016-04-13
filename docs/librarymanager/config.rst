@@ -201,7 +201,7 @@ dash. `Semantic Versioning <http://semver.org>`_ IS RECOMMENDED.
     ``branch`` is not specified, then default branch will be used.
 
     We recommend to use :ref:`libjson_version` field and specify the real release
-    version and make appropriate target in the :ref:`libjson_repository`. In other
+    version and make appropriate tag in the :ref:`libjson_repository`. In other
     case, users will receive updates for library with each new commit to
     :ref:`libjson_repository`.
 
