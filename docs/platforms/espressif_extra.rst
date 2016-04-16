@@ -137,7 +137,7 @@ Active discussion is located in `issue #382 <https://github.com/platformio/platf
 Over-the-Air (OTA) update
 -------------------------
 
-Firstly, please read `What is OTA? How to use it? <https://github.com/esp8266/Arduino/blob/master/doc/ota_updates/ota_updates.md>`_
+Firstly, please read `What is OTA? How to use it? <https://github.com/esp8266/Arduino/blob/master/doc/ota_updates/readme.md>`_
 
 There are 2 options:
 

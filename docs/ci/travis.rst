@@ -106,7 +106,7 @@ Install dependent library using :ref:`librarymanager`
         # Libraries from PlatformIO Library Registry:
         #
         # http://platformio.org/lib/show/1/OneWire
-        platformio lib install 1
+        - platformio lib install 1
 
 Manually download dependent library and include in build process via ``--lib`` option
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -117,8 +117,8 @@ Manually download dependent library and include in build process via ``--lib`` o
         - pip install -U platformio
 
         # download library to the temporary directory
-        wget https://github.com/PaulStoffregen/OneWire/archive/master.zip -O /tmp/onewire_source.zip
-        unzip /tmp/onewire_source.zip -d /tmp/
+        - wget https://github.com/PaulStoffregen/OneWire/archive/master.zip -O /tmp/onewire_source.zip
+        - unzip /tmp/onewire_source.zip -d /tmp/
 
     script:
         - platformio ci --lib="/tmp/OneWire-master" --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
@@ -137,8 +137,7 @@ PlatformIO allows to specify own build flags using :envvar:`PLATFORMIO_BUILD_FLA
 
     install:
         - pip install -U platformio
-
-        export PLATFORMIO_BUILD_FLAGS=-D GLOBAL_MACROS_FOR_ALL_TEST_ENV
+        - export PLATFORMIO_BUILD_FLAGS="-D GLOBAL_MACROS_FOR_ALL_TEST_ENV"
 
 
 For the more details, please follow to
