@@ -15,7 +15,7 @@ PlatformIO is an open source ecosystem for IoT development
 **Cross-platform build system and library manager. Continuous and IDE
 integration. Arduino and MBED compatible. Ready for Cloud compiling.**
 
-* **PlatformIO IDE** - The next generation integrated development environment for IoT.
+* **PlatformIO IDE** - The next-generation integrated development environment for IoT.
   C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
   Multi-projects workflow with Multiple Panes. Themes Support with dark and light colors.
   Built-in Terminal with PlatformIO CLI tool and support for the powerful Serial Port Monitor.
