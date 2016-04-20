@@ -23,9 +23,10 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
+* Apr 16, 2016 - **Sathittham Sangthong** - `[PlatformIO] มาลองเล่น PlatformIO แทน Arduino IDE กัน (Let's play together with PlatformIO IDE [alternative to Arduino IDE], Thai) <http://www.sathittham.com/platformio/platformio-ide/>`_
 * Apr 11, 2016 - **Matjaz Trcek** - `Top 5 Arduino integrated development environments <https://codeandunicorns.com/top-5-arduino-integrated-development-environments-ide/>`_
 * Apr 06, 2016 - **Aleks** - `PlatformIO ausprobiert (Tried PlatformIO, German) <http://5volt-junkie.net/platformio/>`_
-* Mar 30, 2016 - **Brandon Cannaday** - `Getting Started with PlatformIO and ESP8266 NodeMcu <https://www.getstructure.io/blog/getting-started-with-platformio-esp8266-nodemcu>`_
+* Mar 30, 2016 - **Brandon Cannaday** - `Getting Started with PlatformIO and ESP8266 NodeMcu <https://www.losant.com/blog/getting-started-with-platformio-esp8266-nodemcu>`_
 * Mar 29, 2016 - **Pablo Peñalve** - `PlatformIO + Geany + Raspberry PI, Spanish <http://ret-catriel.blogspot.com/2016/03/framework-platformio-geany-raspberry-pi.html>`_
 * Mar 24, 2016 - **NAzT** - `PlatformIO และการปรับแต่ง เพื่อใช้สำหรับพัฒนา Arduino Library (PlatformIO and advanced development for Arduino Library, Thai) <https://cmmakerclub.com/tools-2/config-platformio-for-arduino-framework-developer/>`_
 * Mar 16, 2016 - **Jakub Skořepa** - `Instalace PlatformIO (PlatformIO IDE Installation, Czech) <http://ok1kvk.cz/clanek/2016/instalace-platformio/>`_
