@@ -432,6 +432,17 @@ To force Smart Code Linter to use Arduino files as C++ please
 2. Perform all steps from :ref:`ide_atom_knownissues_sclarduino_manually`
    (without renaming to ``.cpp``).
 
+.. _ide_atom_faq:
+
+Frequently Asked Questions
+--------------------------
+
+Automatically save on build
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want automatically save all edited files when triggering a build, please follow to
+``Menu: PlatformIO > Settings > Build`` and check ``Automatically save on build``.
+
 Articles / Manuals
 ------------------
 

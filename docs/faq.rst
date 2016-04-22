@@ -59,6 +59,11 @@ To enable ``zsh`` completion please run these commands:
     For permanent command completion you need to place commands above to
     ``~/.bashrc`` or ``~/.zshrc`` file.
 
+PlatformIO IDE
+--------------
+
+Please refer to :ref:`PlatformIO IDE Frequently Asked Questions <ide_atom_faq>`.
+
 .. _faq_troubleshooting:
 
 Troubleshooting
@@ -89,8 +94,7 @@ Where is ``platformio`` binary installed? Run this command in Terminal
     # for Unix
     which platformio
     echo $PATH
-
-    # for Windows OS
+ Windows OS
     where platformio
     echo %PATH%
 
