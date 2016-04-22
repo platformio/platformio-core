@@ -443,6 +443,18 @@ Automatically save on build
 If you want automatically save all edited files when triggering a build, please follow to
 ``Menu: PlatformIO > Settings > Build`` and check ``Automatically save on build``.
 
+Jump to Declaration
+~~~~~~~~~~~~~~~~~~~
+
+Click on a function/include, press ``F3`` and you will be taken directly to
+the declaration for that function.
+
+Code Formatting
+~~~~~~~~~~~~~~~
+
+You need to install `atom-beautify <https://atom.io/packages/atom-beautify>`_
+package and `C/C++ Uncrustify Code Beautifier <http://sourceforge.net/projects/uncrustify/>`_.
+
 Articles / Manuals
 ------------------
 
