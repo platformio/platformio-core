@@ -16,7 +16,6 @@
     Builder for ST STM32 Series ARM microcontrollers.
 """
 
-import platform
 from os.path import isfile, join
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,

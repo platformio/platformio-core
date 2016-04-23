@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import re
 from os import listdir, makedirs, remove, rename
 from os.path import isdir, isfile, join
