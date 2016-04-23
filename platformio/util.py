@@ -125,8 +125,8 @@ def singleton(cls):
 
 
 def load_json(file_path):
-        with open(file_path, "r") as f:
-            return json.load(f)
+    with open(file_path, "r") as f:
+        return json.load(f)
 
 
 def get_systype():
@@ -170,7 +170,7 @@ def get_home_dir():
         try:
             home_dir.encode("utf8")
         except UnicodeDecodeError:
-            home_dir = splitdrive(home_dir)[0] + "\.platformio"
+            home_dir = splitdrive(home_dir)[0] + "\\.platformio"
 
     if not isdir(home_dir):
         os.makedirs(home_dir)
