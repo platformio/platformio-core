@@ -270,6 +270,19 @@ nav {
   font-weight: 500;
 }
 
+.navbar .github-corner {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  display: none;
+}
+
+@media screen and (min-width: 992px) {
+  .navbar .github-corner {
+    display: block;
+  }
+}
+
 .top-banner {
   display: block;
   padding: 10px 20px;
