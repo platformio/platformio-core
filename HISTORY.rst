@@ -9,6 +9,11 @@ PlatformIO 2.0
 
 * Project generator for `CodeBlocks IDE <http://docs.platformio.org/en/latest/ide/codeblocks.html>`__
   (`issue #600 <https://github.com/platformio/platformio/issues/600>`_)
+* PlatformIO Library Registry in JSON format! Implemented
+  ``--json-output`` and ``--page`` options for
+  `platformio lib search <http://docs.platformio.org/en/latest/userguide/lib/cmd_search.html>`__
+  command
+  (`issue #604 <https://github.com/platformio/platformio/issues/604>`_)
 * Updated native SDK for ESP8266 to 1.5
   (`issue #366 <https://github.com/platformio/platformio/issues/366>`_)
 * Automatically reboot Teensy board after upload when Teensy Loader GUI is used
