@@ -16,6 +16,8 @@ PlatformIO 2.0
   (`issue #604 <https://github.com/platformio/platformio/issues/604>`_)
 * Updated native SDK for ESP8266 to 1.5
   (`issue #366 <https://github.com/platformio/platformio/issues/366>`_)
+* Automatically add ``-DUSB_MANUFACTURER`` with vendor's name
+  (`issue #631 <https://github.com/platformio/platformio/issues/631>`_)
 * Automatically reboot Teensy board after upload when Teensy Loader GUI is used
   (`issue #609 <https://github.com/platformio/platformio/issues/609>`_)
 * Forced ``-std=gnu++11`` for Atmel SAM development platform
@@ -37,7 +39,7 @@ PlatformIO 2.0
 * Updated Arduino Wiring-based framework to the latest version for
   Atmel AVR/SAM development platforms
 * Updated "Teensy Loader CLI" and fixed uploading of large .hex files
-  (`issue #568 <https://github.com/platformio/platformio/issues/568>`_)
+  (`issue #568 <https://github.com/platformio/platformio/issues/56 pf8>`_)
 * Updated the support for Sanguino Boards
   (`issue #586 <https://github.com/platformio/platformio/issues/586>`_)
 * Better handling of used boards when re-initialize/update project

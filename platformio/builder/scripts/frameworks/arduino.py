@@ -121,7 +121,9 @@ if "usb_product" in BOARD_BUILDOPTS:
         "USB_VID=${BOARD_OPTIONS['build']['vid']}",
         "USB_PID=${BOARD_OPTIONS['build']['pid']}",
         'USB_PRODUCT=\\"%s\\"' % (env.subst(
-            "${BOARD_OPTIONS['build']['usb_product']}").replace('"', ""))
+            "${BOARD_OPTIONS['build']['usb_product']}").replace('"', "")),
+        'USB_MANUFACTURER=\\"%s\\"' % (env.subst(
+            "${BOARD_OPTIONS['vendor']}").replace('"', ""))
     ]
 
 if env.get("PLATFORM") == "teensy":
