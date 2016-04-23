@@ -39,7 +39,7 @@ PlatformIO 2.0
 * Updated Arduino Wiring-based framework to the latest version for
   Atmel AVR/SAM development platforms
 * Updated "Teensy Loader CLI" and fixed uploading of large .hex files
-  (`issue #568 <https://github.com/platformio/platformio/issues/56 pf8>`_)
+  (`issue #568 <https://github.com/platformio/platformio/issues/568>`_)
 * Updated the support for Sanguino Boards
   (`issue #586 <https://github.com/platformio/platformio/issues/586>`_)
 * Better handling of used boards when re-initialize/update project
