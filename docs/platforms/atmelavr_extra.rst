@@ -52,6 +52,15 @@ Configuration for the programmers:
         framework = arduino
         upload_protocol = usbtiny
 
+*   ArduinoISP
+
+    .. code-block:: ini
+
+        [env:myenv]
+        platform = atmelavr
+        framework = arduino
+        upload_protocol = arduinoisp
+
 *   USBasp
 
     .. code-block:: ini
