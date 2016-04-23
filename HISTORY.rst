@@ -838,9 +838,9 @@ PlatformIO 0.0
 * Fixed "*OSError: [Errno 2] No such file or directory*" within
   `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command when PlatformIO isn't installed properly
-* Fixed example for `Eclipse IDE with Tiva board <https://github.com/platformio/platformio/tree/develop/examples/ide/eclipse>`_
+* Fixed example for `Eclipse IDE with Tiva board <https://github.com/platformio/platformio-examples/tree/develop/ide/eclipse>`_
   (`issue #32 <https://github.com/platformio/platformio/pull/32>`_)
-* Upgraded `Eclipse Project Examples <https://github.com/platformio/platformio/tree/develop/examples/ide/eclipse>`_
+* Upgraded `Eclipse Project Examples <https://github.com/platformio/platformio-examples/tree/develop/ide/eclipse>`_
   to latest *Luna* and *PlatformIO* releases
 
 0.9.0 (2014-12-01)
@@ -908,7 +908,7 @@ PlatformIO 0.0
 * Disabled default warning flag "-Wall"
 * Added auto-conversation from \*.ino to valid \*.cpp for Arduino/Energia
   frameworks (`issue #7 <https://github.com/platformio/platformio/issues/7>`_)
-* Added `Arduino example <https://github.com/platformio/platformio/tree/develop/examples/>`_
+* Added `Arduino example <https://github.com/platformio/platformio-examples/tree/develop/>`_
   with external library (*Adafruit CC3000*)
 * Implemented `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`_
   command and "auto-check" for the latest
@@ -957,7 +957,7 @@ PlatformIO 0.0
 
 * Resolved `issue #1 "Build referred libraries" <https://github.com/platformio/platformio/issues/1>`_
 * Renamed project's "libs" directory to "lib"
-* Added `arduino-internal-library <https://github.com/platformio/platformio/tree/develop/examples/>`_ example
+* Added `arduino-internal-library <https://github.com/platformio/platformio-examples/tree/develop/>`_ example
 * Changed to beta status
 
 

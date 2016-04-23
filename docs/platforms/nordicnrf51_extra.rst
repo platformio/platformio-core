@@ -13,6 +13,6 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for Nordic nRF51 platform <https://github.com/platformio/platformio/tree/develop/examples/nordicnrf51>`_.
+`Examples for Nordic nRF51 platform <https://github.com/platformio/platformio-examples/tree/develop/nordicnrf51>`_.
 
-* `RFduino iBeacon <https://github.com/platformio/platformio/tree/develop/examples/nordicnrf51/rfduino-ibeacon>`_
+* `RFduino iBeacon <https://github.com/platformio/platformio-examples/tree/develop/nordicnrf51/rfduino-ibeacon>`_

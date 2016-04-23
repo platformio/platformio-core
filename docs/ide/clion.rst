@@ -73,7 +73,7 @@ the screenshot below):
       (will be created in project directory after initialization).
 
     ``*.ino`` file isn't acceptable for ``add_executable`` command. You should
-    convert it manually to ``*.cpp``. See `project example <https://github.com/platformio/platformio/tree/develop/examples/ide/clion>`_.
+    convert it manually to ``*.cpp``. See `project example <https://github.com/platformio/platformio-examples/tree/develop/ide/clion>`_.
 
     More info `CLion issue #CPP-3977 <https://youtrack.jetbrains.com/issue/CPP-3977>`_.
     Active discussion is located in
@@ -94,4 +94,4 @@ Examples
 "Blink" Project
 ^^^^^^^^^^^^^^^
 
-Source code of `CLion "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/clion>`_.
+Source code of `CLion "Blink" Project <https://github.com/platformio/platformio-examples/tree/develop/ide/clion>`_.

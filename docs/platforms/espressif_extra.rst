@@ -253,8 +253,8 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for Espressif platform <https://github.com/platformio/platformio/tree/develop/examples/espressif>`_.
+`Examples for Espressif platform <https://github.com/platformio/platformio-examples/tree/develop/espressif>`_.
 
-* `Native SDK <https://github.com/platformio/platformio/tree/develop/examples/espressif/esp8266-native>`_
-* `WebServer <https://github.com/platformio/platformio/tree/develop/examples/espressif/esp8266-webserver>`_
-* `WiFiScan <https://github.com/platformio/platformio/tree/develop/examples/espressif/esp8266-wifiscan>`_
+* `Native SDK <https://github.com/platformio/platformio-examples/tree/develop/espressif/esp8266-native>`_
+* `WebServer <https://github.com/platformio/platformio-examples/tree/develop/espressif/esp8266-webserver>`_
+* `WiFiScan <https://github.com/platformio/platformio-examples/tree/develop/espressif/esp8266-wifiscan>`_

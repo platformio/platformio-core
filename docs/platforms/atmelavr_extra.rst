@@ -112,13 +112,13 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for Atmel AVR platform <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino>`_.
+`Examples for Atmel AVR platform <https://github.com/platformio/platformio-examples/tree/develop/atmelavr-and-arduino>`_.
 
-* `Wiring Blink <https://github.com/platformio/platformio/tree/develop/examples/wiring-blink>`_
-* `Arduino with external libraries <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino/arduino-external-libs>`_
-* `Arduino with internal libraries <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino/arduino-internal-libs>`_
-* `Project uses source file name for "src" directory (Arduino project structure) <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino/arduino-own-src_dir>`_
-* `Atmel AVR Native blink <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino/atmelavr-native-blink>`_
-* `Digitstump Mouse <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino/digitstump-mouse>`_
-* `Engduino magnetometer <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino/engduino-magnetometer>`_
-* `PanStamp blink <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino/panstamp-blink>`_
+* `Wiring Blink <https://github.com/platformio/platformio-examples/tree/develop/wiring-blink>`_
+* `Arduino with external libraries <https://github.com/platformio/platformio-examples/tree/develop/atmelavr-and-arduino/arduino-external-libs>`_
+* `Arduino with internal libraries <https://github.com/platformio/platformio-examples/tree/develop/atmelavr-and-arduino/arduino-internal-libs>`_
+* `Project uses source file name for "src" directory (Arduino project structure) <https://github.com/platformio/platformio-examples/tree/develop/atmelavr-and-arduino/arduino-own-src_dir>`_
+* `Atmel AVR Native blink <https://github.com/platformio/platformio-examples/tree/develop/atmelavr-and-arduino/atmelavr-native-blink>`_
+* `Digitstump Mouse <https://github.com/platformio/platformio-examples/tree/develop/atmelavr-and-arduino/digitstump-mouse>`_
+* `Engduino magnetometer <https://github.com/platformio/platformio-examples/tree/develop/atmelavr-and-arduino/engduino-magnetometer>`_
+* `PanStamp blink <https://github.com/platformio/platformio-examples/tree/develop/atmelavr-and-arduino/panstamp-blink>`_

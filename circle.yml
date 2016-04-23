@@ -4,7 +4,7 @@ machine:
 
 checkout:
     post:
-        - git submodule update --init
+        - git submodule update --init --recursive
         - pip install -U pip setuptools virtualenv
 
 dependencies:

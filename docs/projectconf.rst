@@ -90,7 +90,7 @@ This option can be overridden by global environment variable
 .. note::
     This option is useful for people who migrate from Arduino/Energia IDEs where
     source directory should have the same name like the main source file.
-    See `example <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino/arduino-own-src_dir>`__ project with own source directory.
+    See `example <https://github.com/platformio/platformio-examples/tree/develop/atmelavr-and-arduino/arduino-own-src_dir>`__ project with own source directory.
 
 .. _projectconf_pio_envs_dir:
 

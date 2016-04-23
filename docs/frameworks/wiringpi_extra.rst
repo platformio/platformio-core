@@ -13,7 +13,7 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for WiringPi framework <https://github.com/platformio/platformio/tree/develop/examples/raspberrypi>`_.
+`Examples for WiringPi framework <https://github.com/platformio/platformio-examples/tree/develop/raspberrypi>`_.
 
-* `Blink <https://github.com/platformio/platformio/tree/develop/examples/raspberrypi/wiringpi-blink>`_
-* `Serial <https://github.com/platformio/platformio/tree/develop/examples/raspberrypi/wiringpi-serial>`_
+* `Blink <https://github.com/platformio/platformio-examples/tree/develop/raspberrypi/wiringpi-blink>`_
+* `Serial <https://github.com/platformio/platformio-examples/tree/develop/raspberrypi/wiringpi-serial>`_

@@ -93,7 +93,7 @@ or :ref:`projectconf_pio_src_dir` (project structure) have been modified.
 Examples
 --------
 
-1. Process `Wiring Blink Example <https://github.com/platformio/platformio/tree/develop/examples/wiring-blink>`_
+1. Process `Wiring Blink Example <https://github.com/platformio/platformio-examples/tree/develop/wiring-blink>`_
 
 .. code-block::   bash
 

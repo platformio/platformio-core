@@ -23,10 +23,10 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for MBED framework <https://github.com/platformio/platformio/tree/develop/examples/mbed>`_.
+`Examples for MBED framework <https://github.com/platformio/platformio-examples/tree/develop/mbed>`_.
 
-* `Blink <https://github.com/platformio/platformio/tree/develop/examples/mbed/mbed-blink>`_
-* `DSP <https://github.com/platformio/platformio/tree/develop/examples/mbed/mbed-dsp>`_
-* `HTTP Client <https://github.com/platformio/platformio/tree/develop/examples/mbed/mbed-http-client>`_
-* `RTOS <https://github.com/platformio/platformio/tree/develop/examples/mbed/mbed-rtos>`_
-* `Serial <https://github.com/platformio/platformio/tree/develop/examples/mbed/mbed-serial>`_
+* `Blink <https://github.com/platformio/platformio-examples/tree/develop/mbed/mbed-blink>`_
+* `DSP <https://github.com/platformio/platformio-examples/tree/develop/mbed/mbed-dsp>`_
+* `HTTP Client <https://github.com/platformio/platformio-examples/tree/develop/mbed/mbed-http-client>`_
+* `RTOS <https://github.com/platformio/platformio-examples/tree/develop/mbed/mbed-rtos>`_
+* `Serial <https://github.com/platformio/platformio-examples/tree/develop/mbed/mbed-serial>`_

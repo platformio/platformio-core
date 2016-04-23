@@ -1,21 +1,22 @@
 language: python
 python:
-  "2.7"
+  - "2.7"
 
 env:
-  TOX_ENV=docs
-  TOX_ENV=lint
-  TOX_ENV=py26
-  TOX_ENV=py27
+  - TOX_ENV=docs
+  - TOX_ENV=lint
+  - TOX_ENV=py26
+  - TOX_ENV=py27
 
 install:
-  pip install -U pip setuptools tox
+  - git submodule update --init --recursive
+  - pip install -U pip setuptools tox
 
 script:
-  tox -e $TOX_ENV
+  - tox -e $TOX_ENV
 
 notifications:
   slack:
-    secure: uEU56hHACLxq6iRRZ0JeAl/MPADqQWMZZAsZB9IOnXaRUd0Pa6lT2CicJXhVlsEEbNRqR2u5LbcQ4R0nvAKPjYgglDlDet4RfhP+YIqLX2v2dv3B5q8cITsKMUUediv4fybdO/nmvQSImq5nqRQQsXKAwTAJZooIwS3F5Dsg+eE=
+    secure: ksQmXOP5NVsf8IgoDuxD68Q/YNwDpZuwq0V29h2dxYCr38oYdAkq/Os4LSCs0X6P0cQFf6nC1hM/d+cAvU+SmzcHGxEceHNEGCg3/TAj+68KIwooPU93Lfq1zwdfteZWxANjKlCQy4+wZliHLhL8fvCYgfJww/6qKmqSYleBNM=
     on_failure: always
     on_success: change
