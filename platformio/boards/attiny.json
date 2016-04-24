@@ -1,0 +1,78 @@
+{
+  "attiny45internal1mhz": {
+    "build": {
+      "core": "arduino",
+      "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ATTINY45",
+      "f_cpu": "1000000L",
+      "mcu": "attiny45",
+      "variant": "tiny8"
+    },
+    "frameworks": ["arduino"],
+    "name": "ATTiny45 (Generic, 1MHz Internal)",
+    "platform": "atmelavr",
+    "upload": {
+      "maximum_ram_size": 512,
+      "maximum_size": 4096,
+      "protocol": "usbtiny"
+    },
+    "url": "http://highlowtech.org/?p=1695",
+    "vendor": "Generic ATTiny"
+  },
+  "attiny45internal8mhz": {
+    "build": {
+      "core": "arduino",
+      "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ATTINY45",
+      "f_cpu": "8000000L",
+      "mcu": "attiny45",
+      "variant": "tiny8"
+    },
+    "frameworks": ["arduino"],
+    "name": "ATTiny45 (Generic, 8MHz Internal)",
+    "platform": "atmelavr",
+    "upload": {
+      "maximum_ram_size": 512,
+      "maximum_size": 4096,
+      "protocol": "usbtiny"
+    },
+    "url": "http://highlowtech.org/?p=1695",
+    "vendor": "Generic ATTiny"
+  },
+  "attiny85internal1mhz": {
+    "build": {
+      "core": "arduino",
+      "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ATTINY85",
+      "f_cpu": "1000000L",
+      "mcu": "attiny85",
+      "variant": "tiny8"
+    },
+    "frameworks": ["arduino"],
+    "name": "ATTiny85 (Generic, 1MHz Internal)",
+    "platform": "atmelavr",
+    "upload": {
+      "maximum_ram_size": 512,
+      "maximum_size": 8192,
+      "protocol": "usbtiny"
+    },
+    "url": "http://highlowtech.org/?p=1695",
+    "vendor": "Generic ATTiny"
+  },
+  "attiny85internal8mhz": {
+    "build": {
+      "core": "arduino",
+      "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ATTINY85",
+      "f_cpu": "8000000L",
+      "mcu": "attiny85",
+      "variant": "tiny8"
+    },
+    "frameworks": ["arduino"],
+    "name": "ATTiny85 (Generic, 8MHz Internal)",
+    "platform": "atmelavr",
+    "upload": {
+      "maximum_ram_size": 512,
+      "maximum_size": 8192,
+      "protocol": "usbtiny"
+    },
+    "url": "http://highlowtech.org/?p=1695",
+    "vendor": "Generic ATTiny"
+  }
+}
