@@ -88,7 +88,7 @@ def AutodetectUploadPort(env):
             if "VID:PID" not in item['hwid']:
                 continue
             env.Replace(UPLOAD_PORT=item['port'])
-            for hwid in board_build_opts.get("hwid"):
+            for hwid in board_build_opts.get("hwid", []):
                 board_hwid = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
                 if board_hwid in item['hwid']:
                     break
