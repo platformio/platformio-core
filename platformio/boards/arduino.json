@@ -5,10 +5,12 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LILYPAD_USB",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
-            "pid": "0x9208",
             "usb_product": "LilyPad USB",
             "variant": "leonardo",
-            "vid": "0x1B4F"
+            "hwid": [
+              ["0x1B4F", "0x9207"],
+              ["0x1B4F", "0x9208"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino LilyPad USB",
@@ -160,10 +162,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ESPLORA",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x803c",
             "usb_product": "Arduino Esplora",
             "variant": "leonardo",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x003C"],
+              ["0x2341", "0x803C"],
+              ["0x2A03", "0x003C"],
+              ["0x2A03", "0x803C"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Esplora",
@@ -229,10 +235,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LEONARDO",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8036",
             "usb_product": "Arduino Leonardo",
             "variant": "leonardo",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x0036"],
+              ["0x2341", "0x8036"],
+              ["0x2A03", "0x0036"],
+              ["0x2A03", "0x8036"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Leonardo",
@@ -361,10 +371,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_MICRO",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8037",
             "usb_product": "Arduino Micro",
             "variant": "micro",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x0037"],
+              ["0x2341", "0x8037"],
+              ["0x2A03", "0x0037"],
+              ["0x2A03", "0x8037"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Micro",
@@ -556,10 +570,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ROBOT_CONTROL",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8038",
             "usb_product": "Robot Control",
             "variant": "robot_control",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x0038"],
+              ["0x2341", "0x8038"],
+              ["0x2A03", "0x0038"],
+              ["0x2A03", "0x8038"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Robot Control",
@@ -583,10 +601,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ROBOT_MOTOR",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8039",
             "usb_product": "Robot Motor",
             "variant": "robot_motor",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x0039"],
+              ["0x2341", "0x8039"],
+              ["0x2A03", "0x0039"],
+              ["0x2A03", "0x8039"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Robot Motor",
@@ -631,10 +653,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_YUN",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8041",
             "usb_product": "Arduino Yun",
             "variant": "yun",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x0041"],
+              ["0x2341", "0x8041"],
+              ["0x2A03", "0x0041"],
+              ["0x2A03", "0x8041"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Yun",
@@ -660,11 +686,13 @@
             "f_cpu": "84000000L",
             "mcu": "sam3x8e",
             "cpu": "cortex-m3",
-            "pid": "0x003e",
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
-            "vid": "0x2341",
-            "ldscript": "sam3x8e.ld"
+            "ldscript": "sam3x8e.ld",
+            "hwid": [
+              ["0x2341", "0x003D"],
+              ["0x2A03", "0x003D"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Due (Programming Port)",
@@ -688,11 +716,13 @@
             "f_cpu": "84000000L",
             "mcu": "sam3x8e",
             "cpu": "cortex-m3",
-            "pid": "0x003e",
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
-            "vid": "0x2341",
-            "ldscript": "sam3x8e.ld"
+            "ldscript": "sam3x8e.ld",
+            "hwid": [
+              ["0x2341", "0x003E"],
+              ["0x2A03", "0x003E"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Due (USB Native Port)",
@@ -716,11 +746,13 @@
             "f_cpu": "48000000L",
             "mcu": "samd21g18a",
             "cpu": "cortex-m0plus",
-            "pid": "0x804d",
             "usb_product": "Arduino Zero",
             "variant": "arduino_zero",
-            "vid": "0x2341",
-            "ldscript": "flash_with_bootloader.ld"
+            "ldscript": "flash_with_bootloader.ld",
+            "hwid": [
+              ["0x2341", "0x804D"],
+              ["0x03EB", "0x2157"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Zero (Programming Port)",
@@ -744,11 +776,14 @@
             "f_cpu": "48000000L",
             "mcu": "samd21g18a",
             "cpu": "cortex-m0plus",
-            "pid": "0x804d",
             "usb_product": "Arduino Zero",
             "variant": "arduino_zero",
-            "vid": "0x2341",
-            "ldscript": "flash_with_bootloader.ld"
+            "ldscript": "flash_with_bootloader.ld",
+            "hwid": [
+              ["0x2341", "0x804D"],
+              ["0x2341", "0x004D"],
+              ["0x2341", "0x824D"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Zero (USB Native Port)",

@@ -6,9 +6,10 @@
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
             "usb_product": "Adafruit Flora",
-            "pid": "0x8004",
             "variant": "flora",
-            "vid": "0x239A"
+            "hwid": [
+              ["0x239A", "0x8004"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Adafruit Flora",
@@ -34,9 +35,10 @@
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
             "usb_product": "Bluefruit Micro",
-            "pid": "0x800A",
             "variant": "bluefruitmicro",
-            "vid": "0x239A"
+            "hwid": [
+              ["0x239A", "0x800A"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Adafruit Bluefruit Micro",
@@ -82,9 +84,10 @@
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
             "usb_product": "Feather 32u4",
-            "pid": "0x800C",
             "variant": "feather32u4",
-            "vid": "0x239C"
+            "hwid": [
+              ["0x239A", "0x800C"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Adafruit Feather",

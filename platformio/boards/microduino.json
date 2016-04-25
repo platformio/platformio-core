@@ -131,9 +131,10 @@
             "core": "arduino",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8036",
             "variant": "32u4",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x8036"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Microduino Core USB (ATmega32U4@16M,5V)",

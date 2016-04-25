@@ -26,10 +26,12 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_PROMICRO16",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x9206",
             "usb_product": "SparkFun Pro Micro",
             "variant": "sparkfun_promicro",
-            "vid": "0x1B4F"
+            "hwid": [
+                ["0x1B4F", "0x9205"],
+                ["0x1B4F", "0x9206"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "SparkFun Pro Micro 5V/16MHz",
@@ -53,10 +55,12 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_PROMICRO8",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
-            "pid": "0x9204",
             "usb_product": "SparkFun Pro Micro",
             "variant": "sparkfun_promicro",
-            "vid": "0x1B4F"
+            "hwid": [
+                ["0x1B4F", "0x9203"],
+                ["0x1B4F", "0x9204"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "SparkFun Pro Micro 3.3V/8MHz",
@@ -80,10 +84,12 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_FIOV3",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
-            "pid": "0xF101",
             "usb_product": "SparkFun Fio v3",
             "variant": "sparkfun_promicro",
-            "vid": "0x1B4F"
+            "hwid": [
+                ["0x1B4F", "0xF100"],
+                ["0x1B4F", "0xF101"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "SparkFun Fio V3 3.3V/8MHz",
@@ -107,10 +113,12 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_MAKEYMAKEY",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x2B75",
             "usb_product": "SparkFun MaKey",
             "variant": "sparkfun_promicro",
-            "vid": "0x1B4F"
+            "hwid": [
+                ["0x1B4F", "0x2B74"],
+                ["0x1B4F", "0x2B75"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "SparkFun Makey Makey",

@@ -50,11 +50,12 @@
             "f_cpu": "84000000L",
             "mcu": "at91sam3x8e",
             "cpu": "cortex-m3",
-            "pid": "0x003e",
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
-            "vid": "0x2341",
-            "ldscript": "sam3x8e.ld"
+            "ldscript": "sam3x8e.ld",
+            "hwid": [
+              ["0x2341", "0x003E"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "SainSmart Due (Programming Port)",
@@ -78,11 +79,12 @@
             "f_cpu": "84000000L",
             "mcu": "at91sam3x8e",
             "cpu": "cortex-m3",
-            "pid": "0x003e",
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
-            "vid": "0x2341",
-            "ldscript": "sam3x8e.ld"
+            "ldscript": "sam3x8e.ld",
+            "hwid": [
+              ["0x2341", "0x003E"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "SainSmart Due (USB Native Port)",
@@ -322,10 +324,11 @@
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8036",
             "usb_product": "RedBearLab Blend",
             "variant": "leonardo",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x8036"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "RedBearLab Blend",
@@ -350,10 +353,11 @@
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
-            "pid": "0x2404",
             "usb_product": "RedBearLab Blend",
             "variant": "micro",
-            "vid": "0x03EB"
+            "hwid": [
+              ["0x03EB", "0x2404"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "RedBearLab Blend Micro 3.3V/8MHz",
@@ -378,10 +382,11 @@
             "extra_flags": "-DARDUINO_ARCH_AVR",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x2404",
             "usb_product": "RedBearLab Blend",
             "variant": "micro",
-            "vid": "0x03EB"
+            "hwid": [
+              ["0x03EB", "0x2404"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "RedBearLab Blend Micro 3.3V/16MHz (overclock)",
@@ -428,10 +433,11 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_LEONARDO",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
-            "pid": "0x6096",
             "usb_product": "LightUp",
             "variant": "leonardo",
-            "vid": "0x1d50"
+            "hwid": [
+              ["0x1d50", "0x6096"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "LightUp",
@@ -524,9 +530,13 @@
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
             "variant" : "quirkbot",
-            "vid": "0xf055",
-            "pid": "0xf055",
-            "usb_product": "Quirkbot"
+            "usb_product": "Quirkbot",
+            "hwid": [
+              ["0x2886", "0xf004"],
+              ["0x2886", "0xf005"],
+              ["0x2886", "0xf006"],
+              ["0x2886", "0xf007"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Quirkbot",

@@ -118,8 +118,8 @@ ARDUINO_VERSION = int(
 ARDUINO_USBDEFINES = []
 if "usb_product" in BOARD_BUILDOPTS:
     ARDUINO_USBDEFINES = [
-        "USB_VID=${BOARD_OPTIONS['build']['vid']}",
-        "USB_PID=${BOARD_OPTIONS['build']['pid']}",
+        "USB_VID=${BOARD_OPTIONS['build']['hwid'][0][0]}",
+        "USB_PID=${BOARD_OPTIONS['build']['hwid'][0][1]}",
         'USB_PRODUCT=\\"%s\\"' % (env.subst(
             "${BOARD_OPTIONS['build']['usb_product']}").replace('"', "")),
         'USB_MANUFACTURER=\\"%s\\"' % (env.subst(

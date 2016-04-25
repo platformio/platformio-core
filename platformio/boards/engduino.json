@@ -5,10 +5,11 @@
             "core": "arduino",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
-            "pid": "0x9208",
             "usb_product": "EngduinoV1",
             "variant": "engduinov1",
-            "vid": "0x1B4F"
+            "hwid": [
+              ["0x1B4F", "0x9208"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Engduino 1",
@@ -32,10 +33,11 @@
             "core": "arduino",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
-            "pid": "0x9208",
             "usb_product": "EngduinoV2",
             "variant": "engduinov2",
-            "vid": "0x1B4F"
+            "hwid": [
+              ["0x1B4F", "0x9208"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Engduino 2",
@@ -59,10 +61,11 @@
             "core": "arduino",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
-            "pid": "0x9208",
             "usb_product": "EngduinoV3",
             "variant": "engduinov3",
-            "vid": "0x1B4F"
+            "hwid": [
+              ["0x1B4F", "0x9208"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Engduino 3",
