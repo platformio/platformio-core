@@ -95,9 +95,14 @@ else:
     )
 
 env.Append(
+
+    CCFLAGS=[
+        "--param", "max-inline-insns-single=500",
+        "-MMD"
+    ],
+
     CFLAGS=[
-        "-std=gnu11",
-        "--param", "max-inline-insns-single=500"
+        "-std=gnu11"
     ],
 
     CXXFLAGS=[
