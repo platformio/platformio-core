@@ -33,21 +33,26 @@ from platformio.platforms.base import PlatformFactory
 from platformio.util import get_home_dir
 
 
+def in_silence(ctx):
+    ctx_args = ctx.args or []
+    return (ctx_args and
+            (ctx.args[0] == "upgrade" or "--json-output" in ctx_args))
+
+
 def on_platformio_start(ctx, force, caller):
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
     app.set_session_var("caller_id", caller)
     telemetry.on_command()
 
-    # skip any check operations when upgrade command
-    ctx_args = ctx.args or []
-    if ctx_args and (ctx.args[0] == "upgrade" or "--json-output" in ctx_args):
-        return
-
-    after_upgrade(ctx)
+    if not in_silence(ctx):
+        after_upgrade(ctx)
 
 
 def on_platformio_end(ctx, result):  # pylint: disable=W0613
+    if in_silence(ctx):
+        return
+
     try:
         check_platformio_upgrade()
         check_internal_updates(ctx, "platforms")
