@@ -32,7 +32,7 @@ if env.subst("$BOARD") == "rfduino":
     )
     env.Replace(
         UPLOADER=join("$PIOPACKAGES_DIR", "tool-rfdloader", "rfdloader"),
-        UPLOADERFLAGS=["-q", "$UPLOAD_PORT"],
+        UPLOADERFLAGS=["-q", '"$UPLOAD_PORT"'],
         UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
     )
 

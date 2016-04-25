@@ -47,7 +47,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         return
 
     env.AutodetectUploadPort()
-    env.Append(UPLOADERFLAGS=["-P", "$UPLOAD_PORT"])
+    env.Append(UPLOADERFLAGS=["-P", '"$UPLOAD_PORT"'])
 
     if env.subst("$BOARD") == "raspduino":
 

@@ -118,7 +118,7 @@ env.Replace(
         "-vv",
         "-cd", "$UPLOAD_RESETMETHOD",
         "-cb", "$UPLOAD_SPEED",
-        "-cp", "$UPLOAD_PORT"
+        "-cp", '"$UPLOAD_PORT"'
     ],
     UPLOADEROTAFLAGS=[
         "--debug",
@@ -292,7 +292,7 @@ else:
             "-vv",
             "-cd", "$UPLOAD_RESETMETHOD",
             "-cb", "$UPLOAD_SPEED",
-            "-cp", "$UPLOAD_PORT",
+            "-cp", '"$UPLOAD_PORT"',
             "-ca", "0x00000",
             "-cf", "${SOURCES[0]}",
             "-ca", "0x40000",

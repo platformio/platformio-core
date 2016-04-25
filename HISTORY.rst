@@ -29,6 +29,7 @@ PlatformIO 2.0
   (`issue #596 <https://github.com/platformio/platformio/issues/596>`_)
 * Fixed broken compilation for Atmel SAMD based boards except Arduino Due
   (`issue #598 <https://github.com/platformio/platformio/issues/598>`_)
+* Fixed firmware uploading using serial port with spaces in the path
 
 2.8.6 (2016-03-22)
 ~~~~~~~~~~~~~~~~~~

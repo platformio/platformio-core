@@ -84,7 +84,7 @@ else:
         UPLOADER=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_UPLOADER", "bossac"),
         UPLOADERFLAGS=[
             "--info",
-            "--port", "$UPLOAD_PORT",
+            "--port", '"$UPLOAD_PORT"',
             "--erase",
             "--write",
             "--verify",
