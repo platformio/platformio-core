@@ -59,6 +59,9 @@ Packages
     * - ``framework-arduinoespressif``
       - `Arduino Wiring-based Framework (ESP8266 Core) <https://github.com/esp8266/Arduino>`_
 
+    * - ``framework-arduinomicrochippic32``
+      - `Arduino Wiring-based Framework (PIC32 Core) <https://github.com/chipKIT32/chipKIT-core>`_
+
     * - ``framework-arduinomsp430``
       - `Arduino Wiring-based Framework (MSP430 Core) <http://arduino.cc/en/Reference/HomePage>`_
 
@@ -122,6 +125,9 @@ Packages
     * - ``tool-openocd``
       - `OpenOCD <http://openocd.org>`_
 
+    * - ``tool-pic32prog``
+      - `pic32prog <https://github.com/sergev/pic32prog>`_
+
     * - ``tool-rfdloader``
       - `rfdloader <https://github.com/RFduino/RFduino>`_
 
@@ -154,6 +160,9 @@ Packages
 
     * - ``toolchain-icestorm``
       - `GCC for FPGA IceStorm <http://www.clifford.at/icestorm/>`_
+
+    * - ``toolchain-microchippic32``
+      - `GCC for Microchip PIC32 <https://github.com/chipKIT32/chipKIT-cxx>`_
 
     * - ``toolchain-timsp430``
       - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_, `GDB <http://www.gnu.org/software/gdb/>`_

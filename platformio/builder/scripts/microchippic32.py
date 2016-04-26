@@ -140,6 +140,18 @@ env.Append(
 target_elf = env.BuildProgram()
 
 #
+# Hook: Fix option for LD script
+#
+
+_new_linkflags = []
+for f in env['LINKFLAGS']:
+    if not f.startswith("-Wl,-T"):
+        _new_linkflags.append(f)
+    else:
+        _new_linkflags.append("-Wl,--script=%s" % f[6:])
+env.Replace(LINKFLAGS=_new_linkflags)
+
+#
 # Target: Build the .hex
 #
 

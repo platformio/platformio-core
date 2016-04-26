@@ -507,7 +507,7 @@
         "build": {
             "core": "pic32",
             "extra_flags": "-D_BOARD_WIFIRE_",
-            "f_cpu": "200000000UL",
+            "f_cpu": "200000000L",
             "ldscript": "MZ-application-32MZ2048ECX.ld",
             "mcu": "32MZ2048ECG100",
             "variant": "WiFire"
@@ -531,7 +531,7 @@
         "build": {
             "core": "pic32",
             "extra_flags": "-D_BOARD_OPENSCOPE_",
-            "f_cpu": "200000000UL",
+            "f_cpu": "200000000L",
             "ldscript": "MZ-application-32MZ2048ECX.ld",
             "mcu": "32MZ2048EFG124",
             "variant": "OpenScope"
