@@ -73,6 +73,26 @@ Boards
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
+BBC
+~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``bbcmicrobit``
+      - `BBC micro:bit <https://developer.mbed.org/platforms/Microbit/>`_
+      - NRF51822
+      - 16 MHz
+      - 256 Kb
+      - 16 Kb
+
 Delta
 ~~~~~
 

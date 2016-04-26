@@ -631,6 +631,61 @@ Espressif
       - 4096 Kb
       - 50 Kb
 
+Generic ATTiny
+~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``attiny24``
+      - `Generic ATTiny24 <http://www.atmel.com/devices/ATTINY24.aspx>`_
+      - ATTINY24
+      - 8 MHz
+      - 2 Kb
+      - 0.125 Kb
+
+    * - ``attiny25``
+      - `Generic ATTiny25 <http://www.atmel.com/devices/ATTINY25.aspx>`_
+      - ATTINY25
+      - 8 MHz
+      - 2 Kb
+      - 0.125 Kb
+
+    * - ``attiny44``
+      - `Generic ATTiny44 <http://www.atmel.com/devices/ATTINY44.aspx>`_
+      - ATTINY44
+      - 8 MHz
+      - 4 Kb
+      - 0.25 Kb
+
+    * - ``attiny45``
+      - `Generic ATTiny45 <http://www.atmel.com/devices/ATTINY45.aspx>`_
+      - ATTINY45
+      - 8 MHz
+      - 4 Kb
+      - 0.25 Kb
+
+    * - ``attiny84``
+      - `Generic ATTiny84 <http://www.atmel.com/devices/ATTINY84.aspx>`_
+      - ATTINY84
+      - 8 MHz
+      - 8 Kb
+      - 0.5 Kb
+
+    * - ``attiny85``
+      - `Generic ATTiny85 <http://www.atmel.com/devices/ATTINY85.aspx>`_
+      - ATTINY85
+      - 8 MHz
+      - 8 Kb
+      - 0.5 Kb
+
 LightUp
 ~~~~~~~
 

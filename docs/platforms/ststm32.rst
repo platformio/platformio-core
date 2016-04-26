@@ -88,6 +88,26 @@ Boards
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
+96Boards
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``b96b_f446ve``
+      - `96Boards B96B-F446VE <https://developer.mbed.org/platforms/ST-B96B-F446VE/>`_
+      - STM32F446VET6
+      - 168 MHz
+      - 512 Kb
+      - 128 Kb
+
 Armstrap
 ~~~~~~~~
 
@@ -296,6 +316,13 @@ ST
       - 512 Kb
       - 96 Kb
 
+    * - ``nucleo_f410rb``
+      - `ST Nucleo F410RB <https://developer.mbed.org/platforms/ST-Nucleo-F410RB/>`_
+      - STM32F410RBT6
+      - 100 MHz
+      - 128 Kb
+      - 32 Kb
+
     * - ``nucleo_f411re``
       - `ST Nucleo F411RE <https://developer.mbed.org/platforms/ST-Nucleo-F411RE/>`_
       - STM32F411RET6
@@ -316,6 +343,13 @@ ST
       - 48 MHz
       - 64 Kb
       - 8 Kb
+
+    * - ``nucleo_l073rz``
+      - `ST Nucleo L073RZ <https://developer.mbed.org/platforms/ST-Nucleo-L073RZ/>`_
+      - STM32L073RZ
+      - 32 MHz
+      - 192 Kb
+      - 20 Kb
 
     * - ``nucleo_l152re``
       - `ST Nucleo L152RE <https://developer.mbed.org/platforms/ST-Nucleo-L152RE/>`_
