@@ -47,6 +47,10 @@ PLATFORM_PACKAGES = {
         ("Arduino Wiring-based Framework (ESP8266 Core)",
          "https://github.com/esp8266/Arduino")
     ],
+    "framework-arduinomicrochippic32": [
+        ("Arduino Wiring-based Framework (PIC32 Core)",
+         "https://github.com/chipKIT32/chipKIT-core")
+    ],
     "framework-arduinonordicnrf51": [
         ("Arduino Wiring-based Framework (RFduino Core)",
          "https://github.com/RFduino/RFduino")
@@ -120,6 +124,9 @@ PLATFORM_PACKAGES = {
     "toolchain-icestorm": [
         ("GCC for FPGA IceStorm", "http://www.clifford.at/icestorm/")
     ],
+    "toolchain-microchippic32": [
+        ("GCC for Microchip PIC32", "https://github.com/chipKIT32/chipKIT-cxx")
+    ],
     "tool-scons": [
         ("SCons software construction tool", "http://www.scons.org")
     ],
@@ -156,7 +163,10 @@ PLATFORM_PACKAGES = {
     "tool-mkspiffs": [
         ("Tool to build and unpack SPIFFS images",
          "https://github.com/igrr/mkspiffs")
-    ]
+    ],
+    "tool-pic32prog": [
+        ("pic32prog", "https://github.com/sergev/pic32prog")
+    ],
 }
 
 

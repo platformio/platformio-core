@@ -97,6 +97,23 @@ elif env.get("PLATFORM") == "nordicnrf51":
         LIBS=["RFduino", "RFduinoBLE", "RFduinoGZLL", "RFduinoSystem"]
     )
 
+elif env.get("PLATFORM") == "microchippic32":
+    PLATFORMFW_DIR = join(
+        "$PIOPACKAGES_DIR",
+        "framework-arduinomicrochippic32"
+    )
+    env.Prepend(
+        LIBPATH=[
+            join(
+                "$PLATFORMFW_DIR", "cores",
+                "${BOARD_OPTIONS['build']['core']}"
+            ),
+            join(
+                "$PLATFORMFW_DIR", "variants",
+                "${BOARD_OPTIONS['build']['variant']}"
+            )
+        ]
+    )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
 
