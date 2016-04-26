@@ -31,7 +31,7 @@ TARGET = join(env['BUILD_DIR'], env['PROGNAME'])
 # -- Get a list of all the verilog files in the src folfer, in ASCII, with
 # -- the full path. All these files are used for the simulation
 v_nodes = Glob(join(env['PROJECTSRC_DIR'], '*.v'))
-src_sim = ["{}".format(f) for f in v_nodes]
+src_sim = [str(f) for f in v_nodes]
 
 # --------- Get the Testbench file (there should be only 1)
 # -- Create a list with all the files finished in _tb.v. It should contain
@@ -68,7 +68,7 @@ TARGET_SIM = join(env.subst('$BUILD_DIR'), SIMULNAME)
 src_synth = [f for f in src_sim if f not in list_tb]
 
 # -- For debugging
-print "Testbench: {}".format(testbench)
+print "Testbench: %s" % testbench
 
 # -- Get the PCF file
 src_dir = env.subst('$PROJECTSRC_DIR')
@@ -82,17 +82,17 @@ except IndexError:
     Exit(2)
 
 # -- Debug
-print "----> PCF Found: {}".format(PCF)
+print "----> PCF Found: %s" % PCF
 
 # -- Builder 1 (.v --> .blif)
-synth = Builder(action='yosys -p \"synth_ice40 -blif {}.blif\" \
-                        $SOURCES'.format(TARGET),
+synth = Builder(action='yosys -p \"synth_ice40 -blif %s.blif\" \
+                        $SOURCES' % TARGET,
                 suffix='.blif',
                 src_suffix='.v')
 
 # -- Builder 2 (.blif --> .asc)
-pnr = Builder(action='arachne-pnr -d 1k -o $TARGET -p {} \
-                      $SOURCE'.format(PCF),
+pnr = Builder(action='arachne-pnr -d 1k -o $TARGET -p %s \
+                      $SOURCE' % PCF,
               suffix='.asc',
               src_suffix='.blif')
 
@@ -136,7 +136,7 @@ out = simenv.IVerilog(TARGET_SIM, src_sim)
 vcd_file = simenv.VCD(SIMULNAME, out)
 
 waves = simenv.Alias('sim', vcd_file, 'gtkwave ' +
-                     join(env['PROJECT_DIR'], "{} ".format(vcd_file[0])) +
+                     join(env['PROJECT_DIR'], "%s " % vcd_file[0]) +
                      join(env['PROJECTSRC_DIR'], SIMULNAME) +
                      '.gtkw')
 AlwaysBuild(waves)
