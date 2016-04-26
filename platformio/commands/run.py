@@ -242,6 +242,6 @@ def calculate_project_hash():
         for root, _, files in walk(d):
             for f in files:
                 path = join(root, f)
-                if not any([s in path for s in (".git", ".svn")]):
+                if not any([s in path for s in (".git", ".svn", ".pioenvs")]):
                     structure.append(path)
     return sha1(",".join(sorted(structure))).hexdigest() if structure else ""
