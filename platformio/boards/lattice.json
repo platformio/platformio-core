@@ -1,0 +1,45 @@
+{
+    "icestick": {
+        "build": {
+            "core": "icestick",
+            "f_cpu": "12000000L",
+            "cpu": "fpga",
+            "mcu": "ice40hx1k",
+            "variant": "1k",
+            "hwid": [
+              ["0x0403", "0x6010"]
+            ]
+        },
+        "frameworks": ["icestorm"],
+        "name": "Lattice iCEstick FPGA Evaluation Kit",
+        "platform": "lattice_ice40",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 32768
+        },
+        "url": "http://www.latticesemi.com/icestick",
+        "vendor": "Lattice"
+    },
+
+    "icezum": {
+        "build": {
+            "core": "icezum",
+            "f_cpu": "12000000L",
+            "cpu": "fpga",
+            "mcu": "ice40hx1k",
+            "variant": "1k",
+            "hwid": [
+              ["0x0403", "0x6010"]
+            ]
+        },
+        "frameworks": ["icestorm"],
+        "name": "BQ IceZUM Alhambra FPGA",
+        "platform": "lattice_ice40",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 32768
+        },
+        "url": "https://github.com/bqlabs/icezum/wiki",
+        "vendor": "BQ"
+    }
+}

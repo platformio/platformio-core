@@ -152,6 +152,9 @@ Packages
     * - ``toolchain-gccmingw32``
       - `MinGW <http://www.mingw.org>`_
 
+    * - ``toolchain-icestorm``
+      - `GCC for FPGA IceStorm <http://www.clifford.at/icestorm/>`_
+
     * - ``toolchain-timsp430``
       - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 

@@ -117,6 +117,9 @@ PLATFORM_PACKAGES = {
         ("msp-gcc", "http://sourceforge.net/projects/mspgcc/"),
         ("GDB", "http://www.gnu.org/software/gdb/")
     ],
+    "toolchain-icestorm": [
+        ("GCC for FPGA IceStorm", "http://www.clifford.at/icestorm/")
+    ],
     "tool-scons": [
         ("SCons software construction tool", "http://www.scons.org")
     ],

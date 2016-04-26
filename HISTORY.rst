@@ -9,6 +9,10 @@ PlatformIO 2.0
 
 * Project generator for `CodeBlocks IDE <http://docs.platformio.org/en/latest/ide/codeblocks.html>`__
   (`issue #600 <https://github.com/platformio/platformio/issues/600>`_)
+* New `Lattice iCE40 FPGA <http://docs.platformio.org/en/latest/platforms/lattice_ice40.html>`__
+  development platform for Lattice iCEstick FPGA Evaluation Kit and BQ IceZUM
+  Alhambra FPGA
+  (`issue #480 <https://github.com/platformio/platformio/issues/480>`_)
 * PlatformIO Library Registry in JSON format! Implemented
   ``--json-output`` and ``--page`` options for
   `platformio lib search <http://docs.platformio.org/en/latest/userguide/lib/cmd_search.html>`__
