@@ -55,11 +55,20 @@ elif env.get("PLATFORM") == "timsp430":
     )
 elif env.get("PLATFORM") == "espressif":
     env.Prepend(
-        CPPPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "include")],
+        CPPPATH=[
+            join("$PLATFORMFW_DIR", "tools", "sdk", "include"),
+            join("$PLATFORMFW_DIR", "tools", "sdk", "lwip", "include")
+        ],
         LIBPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "lib")],
         LIBS=["mesh", "wpa2", "smartconfig", "pp", "main", "wpa", "lwip",
               "net80211", "wps", "crypto", "phy", "hal", "axtls", "gcc", "m"]
     )
+    env.VariantDirWrap(
+        join("$BUILD_DIR", "generic"),
+        join("$PIOPACKAGES_DIR", "framework-arduinoespressif",
+             "variants", "generic")
+    )
+
 elif env.get("PLATFORM") == "nordicnrf51":
     PLATFORMFW_DIR = join(
         "$PIOPACKAGES_DIR",
