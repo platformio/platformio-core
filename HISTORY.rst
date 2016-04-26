@@ -34,6 +34,8 @@ PlatformIO 2.0
   (`issue #631 <https://github.com/platformio/platformio/issues/631>`_)
 * Automatically reboot Teensy board after upload when Teensy Loader GUI is used
   (`issue #609 <https://github.com/platformio/platformio/issues/609>`_)
+* Refactored source code converter from ``*.ino`` to ``*.cpp``
+  (`issue #610 <https://github.com/platformio/platformio/issues/610>`_)
 * Forced ``-std=gnu++11`` for Atmel SAM development platform
   (`issue #601 <https://github.com/platformio/platformio/issues/601>`_)
 * Don't check OS type for ARM mbed-enabled boards and ST STM32 development
