@@ -70,7 +70,8 @@ MBED_VARIANTS = {
     "dfcm_nnn40": "DELTA_DFCM_NNN40",
     "samr21_xpro": "SAMR21G18A",
     "saml21_xpro_b": "SAML21J18A",
-    "samd21_xpro": "SAMD21J18A"
+    "samd21_xpro": "SAMD21J18A",
+    "bbcmicrobit": "NRF51822"
 }
 
 MBED_LIBS_MAP = {
