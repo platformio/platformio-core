@@ -36,6 +36,7 @@ Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
 libOpenCM3, etc.*
 
 * `Website <http://platformio.org>`_
+* :ref:`ide_atom`
 * `Web 2.0 Library Search <http://platformio.org/lib>`_ |
   `Embedded Boards Explorer <http://platformio.org/boards>`_
 * `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_

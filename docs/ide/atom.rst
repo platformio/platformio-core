@@ -53,7 +53,20 @@ If you have already Atom installed, please install `PlatformIO IDE for Atom pack
     PlatformIO CLI is built into PlatformIO IDE and you will be able to use it
     within PlatformIO IDE Terminal.
 
-1. IDE Installation
+1. Python Interpreter
+~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE is based on PlatformIO CLI which is written in
+`Python <https://www.python.org/downloads/>`_. Python is installed by default
+on the all popular OS except Windows.
+
+**Windows Users**, please `Download the latest Python 2.7.x <https://www.python.org/downloads/>`_
+and install it. **DON'T FORGET** to select ``Add python.exe to Path`` feature
+on the "Customize" stage, otherwise ``python`` command will not be available.
+
+.. image:: ../_static/python-installer-add-path.png
+
+2. IDE Installation
 ~~~~~~~~~~~~~~~~~~~
 
 .. note::
@@ -70,19 +83,6 @@ If you have already Atom installed, please install `PlatformIO IDE for Atom pack
     - **Linux**: ``Menu: Edit > Preferences > Install``
 
 .. image:: ../_static/ide-atom-platformio-install.png
-
-2. Python Interpreter
-~~~~~~~~~~~~~~~~~~~~~
-
-PlatformIO IDE is based on PlatformIO CLI which is written in
-`Python <https://www.python.org/downloads/>`_. Python is installed by default
-on the all popular OS except Windows.
-
-**Windows Users**, please `Download the latest Python 2.7.x <https://www.python.org/downloads/>`_
-and install it. **DON'T FORGET** to select ``Add python.exe to Path`` feature
-on the "Customize" stage, otherwise ``python`` command will not be available.
-
-.. image:: ../_static/python-installer-add-path.png
 
 .. _ide_atom_installation_clang:
 
