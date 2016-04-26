@@ -32,6 +32,7 @@ Embedded
     atmelsam
     espressif
     freescalekinetis
+    lattice_ice40
     nordicnrf51
     nxplpc
     siliconlabsefm32
