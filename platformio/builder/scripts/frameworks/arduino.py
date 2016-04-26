@@ -272,7 +272,7 @@ libs.append(envsafe.BuildLibrary(
     join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
 ))
 
-if "sam3x8e" in BOARD_BUILDOPTS.get("mcu", None):
+if "sam3x8e" in BOARD_BUILDOPTS.get("mcu", ""):
     env.Append(
         LIBPATH=[
             join("$PLATFORMFW_DIR", "variants",
