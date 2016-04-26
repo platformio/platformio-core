@@ -162,5 +162,21 @@
         },
         "url": "http://www.rfduino.com/product/rfd22102-rfduino-dip/index.html",
         "vendor": "RFduino"
+    },
+    "bbcmicrobit": {
+        "build": {
+            "f_cpu": "16000000L",
+            "cpu": "cortex-m0",
+            "mcu": "nrf51822"
+        },
+        "frameworks": ["mbed"],
+        "name": "BBC micro:bit",
+        "platform": "nordicnrf51",
+        "upload": {
+            "maximum_ram_size": 16384,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/Microbit/",
+        "vendor": "BBC"
     }
 }
