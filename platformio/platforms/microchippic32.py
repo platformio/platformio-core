@@ -28,7 +28,7 @@ class Microchippic32Platform(BasePlatform):
 
     PACKAGES = {
 
-        "toolchain-gccmicrochippic32": {
+        "toolchain-microchippic32": {
             "alias": "toolchain",
             "default": True
         },
