@@ -53,7 +53,8 @@ class InoToCPPConverter(object):
             prototypes.append((file_path, match.start(), match.group(1)))
         return prototypes
 
-    def append_prototypes(self, contents, prototypes):
+    @staticmethod
+    def append_prototypes(contents, prototypes):
         result = []
         if not prototypes:
             return result
