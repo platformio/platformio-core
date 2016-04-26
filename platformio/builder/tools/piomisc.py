@@ -18,7 +18,7 @@ import atexit
 import re
 from glob import glob
 from os import environ, listdir, remove
-from os.path import basename, isdir, isfile, join
+from os.path import isdir, isfile, join
 
 from platformio.util import exec_command, where_is_program
 
