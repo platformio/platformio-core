@@ -13,6 +13,9 @@ PlatformIO 2.0
   development platform for Lattice iCEstick FPGA Evaluation Kit and BQ IceZUM
   Alhambra FPGA
   (`issue #480 <https://github.com/platformio/platformio/issues/480>`_)
+* Added support for `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__
+  development platform
+  (`issue #438 <https://github.com/platformio/platformio/issues/438>`_)
 * Updated Arduino core for Espressif platform to 2.2.0
   (`issue #627 <https://github.com/platformio/platformio/issues/627>`_)
 * New boards for `ARM mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__

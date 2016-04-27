@@ -73,10 +73,7 @@ env.Replace(
         "-mprocessor=$BOARD_MCU",
         "-mno-peripheral-libs",
         "-nostartfiles",
-        "-Wl,--gc-sections",
-        "-Wl,--script=chipKIT-application-COMMON%s.ld" % (
-            "-MZ" if "MZ" in env.get("BOARD_OPTIONS", {}).get(
-                "build", {}).get("mcu") else "")
+        "-Wl,--gc-sections"
     ],
 
     LIBS=["m"],
@@ -149,7 +146,15 @@ for f in env['LINKFLAGS']:
         _new_linkflags.append(f)
     else:
         _new_linkflags.append("-Wl,--script=%s" % f[6:])
+
 env.Replace(LINKFLAGS=_new_linkflags)
+env.Append(
+    LINKFLAGS=[
+        "-Wl,--script=chipKIT-application-COMMON%s.ld" % (
+            "-MZ" if "MZ" in env.get("BOARD_OPTIONS", {}).get(
+                "build", {}).get("mcu") else "")
+    ]
+)
 
 #
 # Target: Build the .hex

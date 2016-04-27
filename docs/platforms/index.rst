@@ -33,6 +33,7 @@ Embedded
     espressif
     freescalekinetis
     lattice_ice40
+    microchippic32
     nordicnrf51
     nxplpc
     siliconlabsefm32
