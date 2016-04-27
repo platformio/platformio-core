@@ -341,6 +341,17 @@ but will be applied only for the project source code from
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_SRC_BUILD_FLAGS`.
 
+``build_unflags``
+^^^^^^^^^^^^^^^^^
+
+Remove base/initial flags which were set by development platform.
+
+.. code-block:: ini
+
+   [env:unflags]
+   build_unflags = -Os -std=gnu++11
+   build_flags = -O2
+
 .. _projectconf_src_filter:
 
 ``src_filter``

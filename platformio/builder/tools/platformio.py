@@ -42,10 +42,14 @@ def BuildProgram(env):
             ASCOM="$ASPPCOM"
         )
 
+    # process extra flags from board
     env.ProcessFlags([
-        env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags"),
-        env.get("BUILD_FLAGS")
+        env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags")
     ])
+    # remove base flags
+    env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
+    # apply user flags
+    env.ProcessFlags([env.get("BUILD_FLAGS")])
 
     if env.get("FRAMEWORK"):
         env.BuildFrameworks([
@@ -126,6 +130,15 @@ def ProcessFlags(env, flags):
         for undef in undefines:
             env['CCFLAGS'].remove(undef)
         env.Append(_CPPDEFFLAGS=" %s" % " ".join(undefines))
+
+
+def ProcessUnFlags(env, flags):
+    if not flags:
+        return
+    for var, values in env.ParseFlags(flags).items():
+        for v in values:
+            if v in env[var]:
+                env[var].remove(v)
 
 
 def IsFileWithExt(env, file_, ext):  # pylint: disable=W0613
@@ -371,6 +384,7 @@ def exists(_):
 def generate(env):
     env.AddMethod(BuildProgram)
     env.AddMethod(ProcessFlags)
+    env.AddMethod(ProcessUnFlags)
     env.AddMethod(IsFileWithExt)
     env.AddMethod(VariantDirWrap)
     env.AddMethod(LookupSources)

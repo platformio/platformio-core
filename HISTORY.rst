@@ -16,23 +16,27 @@ PlatformIO 2.0
 * Added support for `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__
   development platform
   (`issue #438 <https://github.com/platformio/platformio/issues/438>`_)
-* Updated Arduino core for Espressif platform to 2.2.0
-  (`issue #627 <https://github.com/platformio/platformio/issues/627>`_)
 * New boards for `ARM mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
   framework: ST Nucleo F410RB, ST Nucleo L073RZ and BBC micro:bit
 * Added support for Generic ATTiny boards: ATTiny24, ATTiny25, ATTiny45 and
   ATTiny85
 * Added support for `TI MSP430 <http://docs.platformio.org/en/latest/platforms/timsp430.html>`__
   boards: TI LaunchPad w/ msp430fr4133 and TI LaunchPad w/ msp430fr6989
+* Updated Arduino core for Espressif platform to 2.2.0
+  (`issue #627 <https://github.com/platformio/platformio/issues/627>`_)
+* Updated native SDK for ESP8266 to 1.5
+  (`issue #366 <https://github.com/platformio/platformio/issues/366>`_)
 * PlatformIO Library Registry in JSON format! Implemented
   ``--json-output`` and ``--page`` options for
   `platformio lib search <http://docs.platformio.org/en/latest/userguide/lib/cmd_search.html>`__
   command
   (`issue #604 <https://github.com/platformio/platformio/issues/604>`_)
+* Allowed to unflag(remove) base/initial flags using
+  `build_unflags <http://docs.platformio.org/en/latest/projectconf.html#build-unflags>`__
+  option
+  (`issue #559 <https://github.com/platformio/platformio/issues/559>`_)
 * Allowed multiple VID/PID pairs when detecting serial ports
   (`issue #632 <https://github.com/platformio/platformio/issues/632>`_)
-* Updated native SDK for ESP8266 to 1.5
-  (`issue #366 <https://github.com/platformio/platformio/issues/366>`_)
 * Automatically add ``-DUSB_MANUFACTURER`` with vendor's name
   (`issue #631 <https://github.com/platformio/platformio/issues/631>`_)
 * Automatically reboot Teensy board after upload when Teensy Loader GUI is used
