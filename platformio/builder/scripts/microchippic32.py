@@ -82,8 +82,8 @@ env.Replace(
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-pic32prog", "pic32prog"),
     UPLOADERFLAGS=[
-        "-d", '"$UPLOAD_PORT"'
-        "-b", "$UPLOAD_SPEED",
+        "-d", '"$UPLOAD_PORT"',
+        "-b", "$UPLOAD_SPEED"
     ],
     UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES',
 
