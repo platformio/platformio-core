@@ -66,27 +66,9 @@ on the "Customize" stage, otherwise ``python`` command will not be available.
 
 .. image:: ../_static/python-installer-add-path.png
 
-2. IDE Installation
-~~~~~~~~~~~~~~~~~~~
-
-.. note::
-    If you don't have Atom installed yet, we propose to download
-    `PlatformIO IDE for Atom bundle <http://platformio.org/platformio-ide>`_
-    with built-in auto installer (optional).
-
-1. Download and install the `latest official Atom text editor <https://atom.io>`_.
-2. Open Atom Package Manager and install `platformio-ide <https://atom.io/packages/platformio-ide>`_
-   Atom package (be patient and let the installation complete)
-
-    - **Mac OS X**: ``Menu: Atom > Preferences > Install``
-    - **Windows**: ``Menu: File > Settings > Install``
-    - **Linux**: ``Menu: Edit > Preferences > Install``
-
-.. image:: ../_static/ide-atom-platformio-install.png
-
 .. _ide_atom_installation_clang:
 
-3. Clang for Intelligent Code Autocompletion
+2. Clang for Intelligent Code Autocompletion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
@@ -109,6 +91,24 @@ Terminal and run ``clang --version``. If ``clang`` is not installed, then instal
     The libraries which are added/installed after initializing process will
     not be reflected in code linter. You need ``Menu: PlatformIO >
     Rebuild C/C++ Project Index (Autocomplete, Linter)``.
+
+3. IDE Installation
+~~~~~~~~~~~~~~~~~~~
+
+.. note::
+    If you don't have Atom installed yet, we propose to download
+    `PlatformIO IDE for Atom bundle <http://platformio.org/platformio-ide>`_
+    with built-in auto installer (optional).
+
+- Download and install the `latest official Atom text editor <https://atom.io>`_.
+- Open Atom Package Manager and install `platformio-ide <https://atom.io/packages/platformio-ide>`_
+   Atom package (be patient and let the installation complete)
+
+    - **Mac OS X**: ``Menu: Atom > Preferences > Install``
+    - **Windows**: ``Menu: File > Settings > Install``
+    - **Linux**: ``Menu: Edit > Preferences > Install``
+
+.. image:: ../_static/ide-atom-platformio-install.png
 
 .. _atom_ide_quickstart:
 
