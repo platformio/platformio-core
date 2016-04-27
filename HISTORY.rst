@@ -10,14 +10,14 @@ PlatformIO 2.0
 * Project generator for `CodeBlocks IDE <http://docs.platformio.org/en/latest/ide/codeblocks.html>`__
   (`issue #600 <https://github.com/platformio/platformio/issues/600>`_)
 * New `Lattice iCE40 FPGA <http://docs.platformio.org/en/latest/platforms/lattice_ice40.html>`__
-  development platform for Lattice iCEstick FPGA Evaluation Kit and BQ IceZUM
-  Alhambra FPGA
+  development platform with support for Lattice iCEstick FPGA Evaluation
+  Kit and BQ IceZUM Alhambra FPGA
   (`issue #480 <https://github.com/platformio/platformio/issues/480>`_)
 * New `Intel ARC 32-bit <http://docs.platformio.org/en/latest/platforms/intel_arc32.html>`_
   development platform with support for Arduino/Genuino 101 board
   (`issue #535 <https://github.com/platformio/platformio/issues/535>`_)
-* Added support for `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__
-  development platform
+* New `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__
+  development platform with support for 20+ different PIC32 based boards
   (`issue #438 <https://github.com/platformio/platformio/issues/438>`_)
 * New boards for `ARM mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
   framework: ST Nucleo F410RB, ST Nucleo L073RZ and BBC micro:bit
