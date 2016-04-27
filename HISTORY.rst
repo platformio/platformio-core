@@ -31,6 +31,9 @@ PlatformIO 2.0
   `platformio lib search <http://docs.platformio.org/en/latest/userguide/lib/cmd_search.html>`__
   command
   (`issue #604 <https://github.com/platformio/platformio/issues/604>`_)
+* Allowed to specify default environments `env_default <http://docs.platformio.org/en/latest/projectconf.html#env-default>`__
+  which should be processed by default with ``platformio run`` command
+  (`issue #576 <https://github.com/platformio/platformio/issues/576>`_)
 * Allowed to unflag(remove) base/initial flags using
   `build_unflags <http://docs.platformio.org/en/latest/projectconf.html#build-unflags>`__
   option

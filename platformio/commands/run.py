@@ -64,6 +64,12 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
                     fg="yellow"
                 )
 
+        env_default = None
+        if config.has_option("platformio", "env_default"):
+            env_default = [
+                e.strip()
+                for e in config.get("platformio", "env_default").split(",")]
+
         results = []
         for section in config.sections():
             # skip main configuration section
@@ -74,7 +80,8 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
                 raise exception.InvalidEnvName(section)
 
             envname = section[4:]
-            if environment and envname not in environment:
+            if ((environment and envname not in environment) or
+                    (env_default and envname not in env_default)):
                 # echo("Skipped %s environment" % style(envname, fg="yellow"))
                 continue
 

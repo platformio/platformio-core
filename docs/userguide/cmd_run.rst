@@ -38,7 +38,10 @@ Options
 .. option::
     -e, --environment
 
-Process specified environments
+Process specified environments.
+
+You can also specify which environments should be processed by default using
+:ref:`projectconf_pio_env_default`.
 
 
 .. option::
