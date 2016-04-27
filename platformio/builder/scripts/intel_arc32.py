@@ -107,7 +107,7 @@ env.Replace(
         "-Wl,--no-whole-archive"
     ],
 
-    LIBS=["c",  "m", "gcc"],
+    LIBS=["c", "m", "gcc"],
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 

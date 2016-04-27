@@ -121,7 +121,7 @@ elif "intel" in env.get("PLATFORM"):
         "framework-arduinointel"
     )
 
-    if "arc32" == BOARD_CORELIBDIRNAME:
+    if BOARD_CORELIBDIRNAME == "arc32":
         env.Prepend(
             CPPPATH=[
                 join("$PLATFORMFW_DIR", "system",
