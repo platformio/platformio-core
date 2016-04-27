@@ -59,6 +59,9 @@ Packages
     * - ``framework-arduinoespressif``
       - `Arduino Wiring-based Framework (ESP8266 Core) <https://github.com/esp8266/Arduino>`_
 
+    * - ``framework-arduinointel``
+      - `Arduino Wiring-based Framework (Intel ARC Core) <https://github.com/01org/corelibs-arduino101>`_
+
     * - ``framework-arduinomicrochippic32``
       - `Arduino Wiring-based Framework (PIC32 Core) <https://github.com/chipKIT32/chipKIT-core>`_
 
@@ -100,6 +103,9 @@ Packages
 
     * - ``sdk-esp8266``
       - `ESP8266 SDK <http://bbs.espressif.com>`_
+
+    * - ``tool-arduino101load``
+      - `Genuino101 uploader <https://github.com/01org/intel-arduino-tools>`_
 
     * - ``tool-avrdude``
       - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
@@ -160,6 +166,9 @@ Packages
 
     * - ``toolchain-icestorm``
       - `GCC for FPGA IceStorm <http://www.clifford.at/icestorm/>`_
+
+    * - ``toolchain-intelarc32``
+      - `GCC for Intel ARC <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain>`_
 
     * - ``toolchain-microchippic32``
       - `GCC for Microchip PIC32 <https://github.com/chipKIT32/chipKIT-cxx>`_

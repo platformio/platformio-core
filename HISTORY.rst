@@ -13,6 +13,9 @@ PlatformIO 2.0
   development platform for Lattice iCEstick FPGA Evaluation Kit and BQ IceZUM
   Alhambra FPGA
   (`issue #480 <https://github.com/platformio/platformio/issues/480>`_)
+* New `Intel ARC 32-bit <http://docs.platformio.org/en/latest/platforms/intel_arc32.html>`_
+  development platform with support for Arduino/Genuino 101 board
+  (`issue #535 <https://github.com/platformio/platformio/issues/535>`_)
 * Added support for `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__
   development platform
   (`issue #438 <https://github.com/platformio/platformio/issues/438>`_)

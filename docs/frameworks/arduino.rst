@@ -36,6 +36,9 @@ Platforms
     * - :ref:`platform_espressif`
       - Espressif Systems is a privately held fabless semiconductor company. They provide wireless communications and Wi-Fi chips which are widely used in mobile devices and the Internet of Things applications.
 
+    * - :ref:`platform_intel_arc32`
+      - ARC embedded processors are a family of 32-bit CPUs that are widely used in SoC devices for storage, home, mobile, automotive, and Internet of Things applications.
+
     * - :ref:`platform_microchippic32`
       - Microchip's 32-bit portfolio with the MIPS microAptiv or M4K core offer high performance microcontrollers, and all the tools needed to develop your embedded projects. PIC32 MCUs gives your application the processing power, memory and peripherals your design needs!
 
@@ -846,6 +849,26 @@ Generic ATTiny
       - 8 MHz
       - 8 Kb
       - 0.5 Kb
+
+Intel
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``genuino101``
+      - `Arduino/Genuino 101 <https://www.arduino.cc/en/Main/ArduinoBoard101>`_
+      - ARCV2EM
+      - 32 MHz
+      - 192 Kb
+      - 80 Kb
 
 LightUp
 ~~~~~~~
