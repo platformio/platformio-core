@@ -51,6 +51,10 @@ PLATFORM_PACKAGES = {
         ("Arduino Wiring-based Framework (PIC32 Core)",
          "https://github.com/chipKIT32/chipKIT-core")
     ],
+    "framework-arduinointel": [
+        ("Arduino Wiring-based Framework (Intel ARC Core)",
+         "https://github.com/01org/corelibs-arduino101")
+    ],
     "framework-arduinonordicnrf51": [
         ("Arduino Wiring-based Framework (RFduino Core)",
          "https://github.com/RFduino/RFduino")
@@ -127,6 +131,10 @@ PLATFORM_PACKAGES = {
     "toolchain-microchippic32": [
         ("GCC for Microchip PIC32", "https://github.com/chipKIT32/chipKIT-cxx")
     ],
+    "toolchain-intelarc32": [
+        ("GCC for Intel ARC",
+         "https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain")
+    ],
     "tool-scons": [
         ("SCons software construction tool", "http://www.scons.org")
     ],
@@ -167,6 +175,9 @@ PLATFORM_PACKAGES = {
     "tool-pic32prog": [
         ("pic32prog", "https://github.com/sergev/pic32prog")
     ],
+    "tool-arduino101load": [
+        ("Genuino101 uploader", "https://github.com/01org/intel-arduino-tools")
+    ]
 }
 
 
