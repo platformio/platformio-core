@@ -11,6 +11,7 @@ env:
 install:
   - git submodule update --init --recursive
   - pip install -U pip setuptools tox
+  - sudo apt-get install -qq lib32z1 lib32ncurses5 lib32bz2-1.0 # temporarily
 
 script:
   - tox -e $TOX_ENV
