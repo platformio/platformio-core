@@ -115,6 +115,41 @@ elif env.get("PLATFORM") == "microchippic32":
         ]
     )
 
+elif "intel" in env.get("PLATFORM"):
+    PLATFORMFW_DIR = join(
+        "$PIOPACKAGES_DIR",
+        "framework-arduinointel"
+    )
+
+    if "arc32" == BOARD_CORELIBDIRNAME:
+        env.Prepend(
+            CPPPATH=[
+                join("$PLATFORMFW_DIR", "system",
+                     "libarc32_arduino101", "drivers"),
+                join("$PLATFORMFW_DIR", "system",
+                     "libarc32_arduino101", "common"),
+                join("$PLATFORMFW_DIR", "system",
+                     "libarc32_arduino101", "framework", "include"),
+                join("$PLATFORMFW_DIR", "system",
+                     "libarc32_arduino101", "bootcode"),
+                join("$BUILD_DIR", "IntelDrivers")
+            ]
+        )
+
+    env.Prepend(
+        LIBPATH=[
+            join(
+                "$PLATFORMFW_DIR", "variants",
+                "${BOARD_OPTIONS['build']['variant']}"
+            ),
+            join(
+                "$PLATFORMFW_DIR", "variants",
+                "${BOARD_OPTIONS['build']['variant']}",
+                "linker_scripts"
+            )
+        ]
+    )
+
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
 
 #
@@ -283,6 +318,8 @@ if BOARD_BUILDOPTS.get("core", None) == "teensy3":
     libs.append("arm_cortex%sl_math" % (
         "M4" if BOARD_BUILDOPTS.get("cpu") == "cortex-m4" else "M0"))
 
+if env.subst("$BOARD") == "genuino101":
+    libs.append("libarc32drv_arduino101")
 
 libs.append(envsafe.BuildLibrary(
     join("$BUILD_DIR", "FrameworkArduino"),
