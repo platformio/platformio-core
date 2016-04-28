@@ -23,8 +23,9 @@ PlatformIO 2.0
   (`issue #412 <https://github.com/platformio/platformio/issues/412>`_)
 * New boards for `ARM mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
   framework: ST Nucleo F410RB, ST Nucleo L073RZ and BBC micro:bit
-* Added support for Generic ATTiny boards: ATTiny24, ATTiny25, ATTiny45 and
-  ATTiny85
+* Added support for Generic ATTiny boards: ATTiny13, ATTiny24, ATTiny25,
+  ATTiny45 and ATTiny85
+  (`issue #636 <https://github.com/platformio/platformio/issues/636>`_)
 * Added support for `TI MSP430 <http://docs.platformio.org/en/latest/platforms/timsp430.html>`__
   boards: TI LaunchPad w/ msp430fr4133 and TI LaunchPad w/ msp430fr6989
 * Updated Arduino core for Espressif platform to 2.2.0

@@ -599,6 +599,27 @@
         "vendor": "Wicked Device"
     },
 
+    "attiny13": {
+        "build": {
+            "core": "core13",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ATTINY13",
+            "f_cpu": "9600000L",
+            "mcu": "attiny13"
+        },
+        "frameworks": ["arduino"],
+        "name": "Generic ATTiny13",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 64,
+            "maximum_size": 1024,
+            "protocol": "arduinoisp",
+            "require_upload_port" : true,
+            "speed": 19200
+        },
+        "url": "http://www.atmel.com/devices/ATTINY13.aspx",
+        "vendor": "Generic ATTiny"
+    },
+
     "attiny24": {
         "build": {
             "core": "arduino",
