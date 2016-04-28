@@ -31,4 +31,5 @@ env.Replace(
     PLATFORMFW_DIR=join("$PIOPACKAGES_DIR", "framework-simba")
 )
 
-SConscript([env.subst(join("$PLATFORMFW_DIR", "make", "platformio.sconscript"))])
+SConscript(
+    [env.subst(join("$PLATFORMFW_DIR", "make", "platformio.sconscript"))])
