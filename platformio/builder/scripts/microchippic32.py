@@ -18,7 +18,8 @@
 
 from os.path import join
 
-from SCons.Script import (AlwaysBuild, Builder, Default, DefaultEnvironment)
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
+                          DefaultEnvironment)
 
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
