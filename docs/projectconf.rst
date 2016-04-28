@@ -90,7 +90,7 @@ This option can be overridden by global environment variable
 .. note::
     This option is useful for people who migrate from Arduino/Energia IDEs where
     source directory should have the same name like the main source file.
-    See `example <https://github.com/platformio/platformio/tree/develop/examples/atmelavr-and-arduino/arduino-own-src_dir>`__ project with own source directory.
+    See `example <https://github.com/platformio/platformio-examples/tree/develop/atmelavr-and-arduino/arduino-own-src_dir>`__ project with own source directory.
 
 .. _projectconf_pio_envs_dir:
 
@@ -129,6 +129,45 @@ project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_DATA_DIR`.
+
+.. _projectconf_pio_env_default:
+
+``env_default``
+^^^^^^^^^^^^^^^
+
+:ref:`cmd_run` command processes all environments ``[env:***]`` by default
+if :option:`platformio run --environment` option is not specified.
+:ref:`projectconf_pio_env_default` allows to define environments which
+should be processed by default.
+
+Multiple environments are allowed if they are separated with ``,`` (comma).
+For example.
+
+.. code-block:: ini
+
+    [platformio]
+    env_default = uno, nodemcu
+
+    [env:uno]
+    platform = atmelavr
+    framework = arduino
+    board = uno
+
+    [env:nodemcu]
+    platform = espressif
+    framework = arduino
+    board = nodemcu
+
+    [env:teensy31]
+    platform = teensy
+    framework = arduino
+    board = teensy31
+
+    [env:lpmsp430g2553]
+    platform = timsp430
+    framework = energia
+    board = lpmsp430g2553
+    build_flags = -D LED_BUILTIN=RED_LED
 
 ----------
 
@@ -340,6 +379,17 @@ but will be applied only for the project source code from
 
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_SRC_BUILD_FLAGS`.
+
+``build_unflags``
+^^^^^^^^^^^^^^^^^
+
+Remove base/initial flags which were set by development platform.
+
+.. code-block:: ini
+
+   [env:unflags]
+   build_unflags = -Os -std=gnu++11
+   build_flags = -O2
 
 .. _projectconf_src_filter:
 

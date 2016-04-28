@@ -83,10 +83,11 @@
             "mcu": "at91sam3x8e",
             "cpu": "cortex-m3",
             "ldscript": "sam3x8e.ld",
-            "pid": "0x078A",
             "usb_product": "Digistump DigiX",
             "variant": "digispark_digix",
-            "vid": "0x16D0"
+            "hwid": [
+              ["0x16D0", "0x078A"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Digistump DigiX",

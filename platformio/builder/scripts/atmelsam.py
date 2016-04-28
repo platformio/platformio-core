@@ -84,7 +84,7 @@ else:
         UPLOADER=join("$PIOPACKAGES_DIR", "$PIOPACKAGE_UPLOADER", "bossac"),
         UPLOADERFLAGS=[
             "--info",
-            "--port", "$UPLOAD_PORT",
+            "--port", '"$UPLOAD_PORT"',
             "--erase",
             "--write",
             "--verify",
@@ -95,14 +95,36 @@ else:
     )
 
 env.Append(
+
+    CCFLAGS=[
+        "--param", "max-inline-insns-single=500",
+        "-MMD"
+    ],
+
+    CFLAGS=[
+        "-std=gnu11"
+    ],
+
+    CXXFLAGS=[
+        "-std=gnu++11",
+        "-fno-threadsafe-statics"
+    ],
+
     CPPDEFINES=[
         "USBCON",
         'USB_MANUFACTURER="PlatformIO"'
+    ],
+
+    LINKFLAGS=[
+        "-Wl,--check-sections",
+        "-Wl,--unresolved-symbols=report-all",
+        "-Wl,--warn-common",
+        "-Wl,--warn-section-align"
     ]
 )
 
 
-if "due" in env.subst("$BOARD"):
+if "sam3x8e" in env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu", None):
     env.Append(
         CPPDEFINES=[
             "printf=iprintf"
@@ -120,14 +142,6 @@ if "due" in env.subst("$BOARD"):
     )
 elif "zero" in env.subst("$BOARD"):
     env.Append(
-        CCFLAGS=[
-            "--param", "max-inline-insns-single=500"
-        ],
-
-        CXXFLAGS=[
-            "-fno-threadsafe-statics"
-        ],
-
         LINKFLAGS=[
             "--specs=nosys.specs",
             "--specs=nano.specs"

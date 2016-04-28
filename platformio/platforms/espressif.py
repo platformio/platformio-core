@@ -50,6 +50,10 @@ class EspressifPlatform(BasePlatform):
 
         "framework-arduinoespressif": {
             "alias": "framework"
+        },
+
+        "framework-simba": {
+            "alias": "framework"
         }
     }
 

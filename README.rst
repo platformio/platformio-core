@@ -7,9 +7,6 @@ PlatformIO
 .. image:: https://ci.appveyor.com/api/projects/status/dku0h2rutfj0ctls/branch/develop?svg=true
     :target: https://ci.appveyor.com/project/ivankravets/platformio
     :alt: AppVeyor.CI Build Status
-.. image:: https://circleci.com/gh/platformio/platformio/tree/develop.svg?style=svg
-    :target: https://circleci.com/gh/platformio/platformio/tree/develop
-    :alt: Circle.CI Build Status
 .. image:: https://requires.io/github/platformio/platformio/requirements.svg?branch=develop
     :target: https://requires.io/github/platformio/platformio/requirements/?branch=develop
     :alt: Requirements Status
@@ -24,7 +21,7 @@ PlatformIO
     :alt: PyPi Downloads
 .. image:: https://img.shields.io/community/PlatformIO.png
    :alt: Join the chat at https://gitter.im/platformio/platformio
-   :target: http://community.platformio.org
+   :target: https://community.platformio.org
 .. image:: https://img.shields.io/donate/PlatformIO.png?color=yellow
    :alt: Donate for PlatformIO.Org
    :target: http://platformio.org/donate
@@ -38,7 +35,7 @@ PlatformIO
 `Facebook <https://www.facebook.com/platformio>`_ |
 `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
 `Bintray <https://bintray.com/platformio>`_ |
-`Community <http://community.platformio.org>`_ |
+`Community <https://community.platformio.org>`_ |
 `Donate <http://platformio.org/donate>`_ |
 `Contact Us <http://platformio.org/contact>`_
 
@@ -49,7 +46,7 @@ PlatformIO
 development. Cross-platform build system and library manager. Continuous and
 IDE integration. Arduino and MBED compatible. Ready for Cloud compiling.
 
-* **PlatformIO IDE** - The next generation integrated development environment for IoT.
+* **PlatformIO IDE** - The next-generation integrated development environment for IoT.
   C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
   Multi-projects workflow with Multiple Panes. Themes Support with dark and light colors.
   Built-in Terminal with PlatformIO CLI tool and support for the powerful Serial Port Monitor.
@@ -176,10 +173,11 @@ Frameworks:
 
 * `Arduino <http://platformio.org/frameworks/arduino>`_
 * `CMSIS <http://platformio.org/frameworks/cmsis>`_
-* `libOpenCM3 <http://platformio.org/frameworks/libopencm3>`_
 * `Energia <http://platformio.org/frameworks/energia>`_
-* `SPL <http://platformio.org/frameworks/spl>`_
+* `libOpenCM3 <http://platformio.org/frameworks/libopencm3>`_
 * `mbed <http://platformio.org/frameworks/mbed>`_
+* `Simba <http://platformio.org/frameworks/simba>`_
+* `SPL <http://platformio.org/frameworks/spl>`_
 * `WiringPi <http://platformio.org/frameworks/wiringpi>`_
 
 For further details, please refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_

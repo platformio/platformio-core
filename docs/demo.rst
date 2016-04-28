@@ -29,7 +29,7 @@ Preconfigured demo projects are located in `PlatformIO GitHub <https://github.co
 Used in demo
 ~~~~~~~~~~~~
 
-1. Source code of `Wiring Blink Example <https://github.com/platformio/platformio/tree/develop/examples/wiring-blink>`_
+1. Source code of `Wiring Blink Example <https://github.com/platformio/platformio-examples/tree/develop/wiring-blink>`_
 2. :ref:`cmd_run` command
 3. :ref:`platformio run -t upload <cmd_run>` command.
 

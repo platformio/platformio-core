@@ -14,7 +14,7 @@
 PlatformIO IDE for Atom
 =======================
 
-PlatformIO IDE is the next generation integrated development environment for IoT:
+PlatformIO IDE is the next-generation integrated development environment for IoT:
 
 * Cross-platform build system without external dependencies to the OS software:
 
@@ -44,7 +44,7 @@ config file.
 Installation
 ------------
 
-PlatformIO IDE is the next generation integrated development environment for IoT.
+PlatformIO IDE is the next-generation integrated development environment for IoT.
 It's built on top of `GitHub's Atom "hackable" text editor <https://atom.io>`_.
 If you have already Atom installed, please install `PlatformIO IDE for Atom package <https://atom.io/packages/platformio-ide>`_.
 
@@ -53,25 +53,7 @@ If you have already Atom installed, please install `PlatformIO IDE for Atom pack
     PlatformIO CLI is built into PlatformIO IDE and you will be able to use it
     within PlatformIO IDE Terminal.
 
-1. IDE Installation
-~~~~~~~~~~~~~~~~~~~
-
-.. note::
-    If you don't have Atom installed yet, we propose to download
-    `PlatformIO IDE for Atom bundle <http://platformio.org/platformio-ide>`_
-    with built-in auto installer (optional).
-
-1. Download and install the `latest official Atom text editor <https://atom.io>`_.
-2. Open Atom Package Manager and install `platformio-ide <https://atom.io/packages/platformio-ide>`_
-   Atom package (be patient and let the installation complete)
-
-    - **Mac OS X**: ``Menu: Atom > Preferences > Install``
-    - **Windows**: ``Menu: File > Settings > Install``
-    - **Linux**: ``Menu: Edit > Preferences > Install``
-
-.. image:: ../_static/ide-atom-platformio-install.png
-
-2. Python Interpreter
+1. Python Interpreter
 ~~~~~~~~~~~~~~~~~~~~~
 
 PlatformIO IDE is based on PlatformIO CLI which is written in
@@ -86,14 +68,15 @@ on the "Customize" stage, otherwise ``python`` command will not be available.
 
 .. _ide_atom_installation_clang:
 
-3. Clang for Intelligent Code Autocompletion
+2. Clang for Intelligent Code Autocompletion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
 To check that ``clang`` is available in your system, please open
 Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
 
-- **Mac OS X**: Install the latest Xcode along with the latest Command Line Tools
+- **Mac OS X**: `Install the latest Xcode <https://developer.apple.com/xcode/download/>`_
+  along with the latest Command Line Tools
   (they are installed automatically when you run ``clang`` in Terminal for the
   first time, or manually by running ``xcode-select --install``
 - **Windows**: Download the latest `Clang for Windows <http://llvm.org/releases/download.html>`_.
@@ -108,6 +91,24 @@ Terminal and run ``clang --version``. If ``clang`` is not installed, then instal
     The libraries which are added/installed after initializing process will
     not be reflected in code linter. You need ``Menu: PlatformIO >
     Rebuild C/C++ Project Index (Autocomplete, Linter)``.
+
+3. IDE Installation
+~~~~~~~~~~~~~~~~~~~
+
+.. note::
+    If you don't have Atom installed yet, we propose to download
+    `PlatformIO IDE for Atom bundle <http://platformio.org/platformio-ide>`_
+    with built-in auto installer (optional).
+
+- Download and install the `latest official Atom text editor <https://atom.io>`_.
+- Open Atom Package Manager and install `platformio-ide <https://atom.io/packages/platformio-ide>`_
+   Atom package (be patient and let the installation complete)
+
+    - **Mac OS X**: ``Menu: Atom > Preferences > Install``
+    - **Windows**: ``Menu: File > Settings > Install``
+    - **Linux**: ``Menu: Edit > Preferences > Install``
+
+.. image:: ../_static/ide-atom-platformio-install.png
 
 .. _atom_ide_quickstart:
 
@@ -431,9 +432,37 @@ To force Smart Code Linter to use Arduino files as C++ please
 2. Perform all steps from :ref:`ide_atom_knownissues_sclarduino_manually`
    (without renaming to ``.cpp``).
 
+.. _ide_atom_faq:
+
+Frequently Asked Questions
+--------------------------
+
+Automatically save on build
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want automatically save all edited files when triggering a build, please follow to
+``Menu: PlatformIO > Settings > Build`` and check ``Automatically save on build``.
+
+Jump to Declaration
+~~~~~~~~~~~~~~~~~~~
+
+Click on a function/include, press ``F3`` and you will be taken directly to
+the declaration for that function.
+
+Code Formatting
+~~~~~~~~~~~~~~~
+
+You need to install `atom-beautify <https://atom.io/packages/atom-beautify>`_
+package and `C/C++ Uncrustify Code Beautifier <http://sourceforge.net/projects/uncrustify/>`_.
+
 Articles / Manuals
 ------------------
 
+* Apr 23, 2016 - **Al Williams** - `Hackaday: Atomic Arduino (and Other) Development <http://hackaday.com/2016/04/23/atomic-arduino-and-other-development/>`_
+* Apr 16, 2016 - **Sathittham Sangthong** - `[PlatformIO] มาลองเล่น PlatformIO แทน Arduino IDE กัน (Let's play together with PlatformIO IDE [alternative to Arduino IDE], Thai) <http://www.sathittham.com/platformio/platformio-ide/>`_
+* Apr 11, 2016 - **Matjaz Trcek** - `Top 5 Arduino integrated development environments <https://codeandunicorns.com/top-5-arduino-integrated-development-environments-ide/>`_
+* Apr 06, 2016 - **Aleks** - `PlatformIO ausprobiert (Tried PlatformIO, German) <http://5volt-junkie.net/platformio/>`_
+* Mar 30, 2016 - **Brandon Cannaday** - `Getting Started with PlatformIO and ESP8266 NodeMcu <https://www.getstructure.io/blog/getting-started-with-platformio-esp8266-nodemcu>`_
 * Mar 12, 2016 - **Peter Marks** - `PlatformIO, the Arduino IDE for programmers <http://blog.marxy.org/2016/03/platformio-arduino-ide-for-programmers.html>`_
 * Mar 05, 2016 - **brichacek.net** - `PlatformIO – otevřený ekosystém pro vývoj IoT (PlatformIO – an open source ecosystem for IoT development, Czech) <http://blog.brichacek.net/platformio-otevreny-ekosystem-pro-vyvoj-iot/>`_
 * Mar 04, 2016 - **Ricardo Vega** - `Programa tu Arduino desde Atom (Program your Arduino from Atom, Spanish) <http://ricveal.com/blog/programa-arduino-desde-atom/>`_

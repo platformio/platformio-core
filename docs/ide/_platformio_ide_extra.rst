@@ -11,7 +11,7 @@
 
 .. note::
     We are proud to present our official `PlatformIO IDE <http://platformio.org/platformio-ide>`_ -
-    The next generation integrated development environment for IoT.
+    The next-generation integrated development environment for IoT.
 
     * Cross-platform build system without external dependencies to the OS software:
 

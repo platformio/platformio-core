@@ -59,6 +59,12 @@ Packages
     * - ``framework-arduinoespressif``
       - `Arduino Wiring-based Framework (ESP8266 Core) <https://github.com/esp8266/Arduino>`_
 
+    * - ``framework-arduinointel``
+      - `Arduino Wiring-based Framework (Intel ARC Core) <https://github.com/01org/corelibs-arduino101>`_
+
+    * - ``framework-arduinomicrochippic32``
+      - `Arduino Wiring-based Framework (PIC32 Core) <https://github.com/chipKIT32/chipKIT-core>`_
+
     * - ``framework-arduinomsp430``
       - `Arduino Wiring-based Framework (MSP430 Core) <http://arduino.cc/en/Reference/HomePage>`_
 
@@ -86,6 +92,9 @@ Packages
     * - ``framework-mbed``
       - `mbed Framework <http://mbed.org>`_
 
+    * - ``framework-simba``
+      - `Simba Framework <https://github.com/eerimoq/simba>`_
+
     * - ``framework-spl``
       - `Standard Peripheral Library for STM32 MCUs <http://www.st.com/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890>`_
 
@@ -97,6 +106,9 @@ Packages
 
     * - ``sdk-esp8266``
       - `ESP8266 SDK <http://bbs.espressif.com>`_
+
+    * - ``tool-arduino101load``
+      - `Genuino101 uploader <https://github.com/01org/intel-arduino-tools>`_
 
     * - ``tool-avrdude``
       - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
@@ -121,6 +133,9 @@ Packages
 
     * - ``tool-openocd``
       - `OpenOCD <http://openocd.org>`_
+
+    * - ``tool-pic32prog``
+      - `pic32prog <https://github.com/sergev/pic32prog>`_
 
     * - ``tool-rfdloader``
       - `rfdloader <https://github.com/RFduino/RFduino>`_
@@ -151,6 +166,15 @@ Packages
 
     * - ``toolchain-gccmingw32``
       - `MinGW <http://www.mingw.org>`_
+
+    * - ``toolchain-icestorm``
+      - `GCC for FPGA IceStorm <http://www.clifford.at/icestorm/>`_
+
+    * - ``toolchain-intelarc32``
+      - `GCC for Intel ARC <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain>`_
+
+    * - ``toolchain-microchippic32``
+      - `GCC for Microchip PIC32 <https://github.com/chipKIT32/chipKIT-cxx>`_
 
     * - ``toolchain-timsp430``
       - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_, `GDB <http://www.gnu.org/software/gdb/>`_

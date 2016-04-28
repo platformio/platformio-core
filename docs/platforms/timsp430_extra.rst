@@ -20,9 +20,9 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for TI MSP430 platform <https://github.com/platformio/platformio/tree/develop/examples/timsp430>`_.
+`Examples for TI MSP430 platform <https://github.com/platformio/platformio-examples/tree/develop/timsp430>`_.
 
-* `Energia blink <https://github.com/platformio/platformio/tree/develop/examples/timsp430/timsp430-energia-blink>`_
-* `Native blink <https://github.com/platformio/platformio/tree/develop/examples/timsp430/timsp430-native-blink>`_
-* `Wiring Blink <https://github.com/platformio/platformio/tree/develop/examples/wiring-blink>`_
-* `PanStamp blink <https://github.com/platformio/platformio/tree/develop/examples/timsp430/panstamp-blink>`_
+* `Energia blink <https://github.com/platformio/platformio-examples/tree/develop/timsp430/timsp430-energia-blink>`_
+* `Native blink <https://github.com/platformio/platformio-examples/tree/develop/timsp430/timsp430-native-blink>`_
+* `Wiring Blink <https://github.com/platformio/platformio-examples/tree/develop/wiring-blink>`_
+* `PanStamp blink <https://github.com/platformio/platformio-examples/tree/develop/timsp430/panstamp-blink>`_

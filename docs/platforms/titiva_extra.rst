@@ -20,8 +20,8 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for TI TIVA platform <https://github.com/platformio/platformio/tree/develop/examples/titiva>`_.
+`Examples for TI TIVA platform <https://github.com/platformio/platformio-examples/tree/develop/titiva>`_.
 
-* `Energia blink <https://github.com/platformio/platformio/tree/develop/examples/titiva/titiva-energia-blink>`_
-* `Native blink <https://github.com/platformio/platformio/tree/develop/examples/titiva/titiva-native-blink>`_
-* `OpenCM3 Blink <https://github.com/platformio/platformio/tree/develop/examples/titiva/titiva-opencm3-blink>`_
+* `Energia blink <https://github.com/platformio/platformio-examples/tree/develop/titiva/titiva-energia-blink>`_
+* `Native blink <https://github.com/platformio/platformio-examples/tree/develop/titiva/titiva-native-blink>`_
+* `OpenCM3 Blink <https://github.com/platformio/platformio-examples/tree/develop/titiva/titiva-opencm3-blink>`_

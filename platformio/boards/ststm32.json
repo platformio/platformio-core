@@ -542,6 +542,38 @@
         "url": "https://developer.mbed.org/platforms/ST-Nucleo-L476RG/",
         "vendor": "ST"
     },
+    "nucleo_f410rb": {
+        "build": {
+            "f_cpu": "100000000L",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f410rbt6"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST Nucleo F410RB",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 131072
+        },
+        "url": "https://developer.mbed.org/platforms/ST-Nucleo-F410RB/",
+        "vendor": "ST"
+    },
+    "nucleo_l073rz": {
+        "build": {
+            "f_cpu": "32000000L",
+            "cpu": "cortex-m0plus",
+            "mcu": "stm32l073rz"
+        },
+        "frameworks": ["mbed"],
+        "name": "ST Nucleo L073RZ",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 20480,
+            "maximum_size": 196608
+        },
+        "url": "https://developer.mbed.org/platforms/ST-Nucleo-L073RZ/",
+        "vendor": "ST"
+    },
     "seeedArchMax": {
         "build": {
             "f_cpu": "168000000L",
@@ -557,5 +589,21 @@
         },
         "url": "https://developer.mbed.org/platforms/Seeed-Arch-Max/",
         "vendor": "SeeedStudio"
+    },
+    "b96b_f446ve": {
+        "build": {
+            "f_cpu": "168000000L",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f446vet6"
+        },
+        "frameworks": ["mbed"],
+        "name": "96Boards B96B-F446VE",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 131072,
+            "maximum_size": 524288
+        },
+        "url": "https://developer.mbed.org/platforms/ST-B96B-F446VE/",
+        "vendor": "96Boards"
     }
 }

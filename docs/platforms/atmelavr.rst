@@ -34,6 +34,9 @@ Packages
     * - ``tool-avrdude``
       - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
 
+    * - ``framework-simba``
+      - `Simba Framework <https://github.com/eerimoq/simba>`_
+
     * - ``framework-arduinoavr``
       - `Arduino Wiring-based Framework (AVR Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
 
@@ -60,6 +63,9 @@ Frameworks
 
     * - :ref:`framework_arduino`
       - Arduino Wiring-based Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
+
+    * - :ref:`framework_simba`
+      - Simba is an RTOS and build framework. It aims to make embedded programming easy and portable.
 
 Boards
 ------
@@ -491,6 +497,68 @@ Engduino
       - 32 Kb
       - 2.5 Kb
 
+Generic ATTiny
+~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``attiny13``
+      - `Generic ATTiny13 <http://www.atmel.com/devices/ATTINY13.aspx>`_
+      - ATTINY13
+      - 9 MHz
+      - 1 Kb
+      - 0.0625 Kb
+
+    * - ``attiny24``
+      - `Generic ATTiny24 <http://www.atmel.com/devices/ATTINY24.aspx>`_
+      - ATTINY24
+      - 8 MHz
+      - 2 Kb
+      - 0.125 Kb
+
+    * - ``attiny25``
+      - `Generic ATTiny25 <http://www.atmel.com/devices/ATTINY25.aspx>`_
+      - ATTINY25
+      - 8 MHz
+      - 2 Kb
+      - 0.125 Kb
+
+    * - ``attiny44``
+      - `Generic ATTiny44 <http://www.atmel.com/devices/ATTINY44.aspx>`_
+      - ATTINY44
+      - 8 MHz
+      - 4 Kb
+      - 0.25 Kb
+
+    * - ``attiny45``
+      - `Generic ATTiny45 <http://www.atmel.com/devices/ATTINY45.aspx>`_
+      - ATTINY45
+      - 8 MHz
+      - 4 Kb
+      - 0.25 Kb
+
+    * - ``attiny84``
+      - `Generic ATTiny84 <http://www.atmel.com/devices/ATTINY84.aspx>`_
+      - ATTINY84
+      - 8 MHz
+      - 8 Kb
+      - 0.5 Kb
+
+    * - ``attiny85``
+      - `Generic ATTiny85 <http://www.atmel.com/devices/ATTINY85.aspx>`_
+      - ATTINY85
+      - 8 MHz
+      - 8 Kb
+      - 0.5 Kb
+
 LightUp
 ~~~~~~~
 
@@ -537,6 +605,61 @@ LowPowerLab
       - 16 MHz
       - 128 Kb
       - 16 Kb
+
+Mcudude
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``mightycore1284``
+      - `MightyCore ATmega1284 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA1284P
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``mightycore16``
+      - `MightyCore ATmega16 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA16
+      - 16 MHz
+      - 16 Kb
+      - 1 Kb
+
+    * - ``mightycore164``
+      - `MightyCore ATmega164 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA164P
+      - 16 MHz
+      - 16 Kb
+      - 1 Kb
+
+    * - ``mightycore32``
+      - `MightyCore ATmega32 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA32
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``mightycore324``
+      - `MightyCore ATmega324 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA324P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``mightycore644``
+      - `MightyCore ATmega644 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA644P
+      - 16 MHz
+      - 64 Kb
+      - 4 Kb
 
 Microduino
 ~~~~~~~~~~

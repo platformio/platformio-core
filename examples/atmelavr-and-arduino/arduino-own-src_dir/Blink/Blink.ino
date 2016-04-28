@@ -1,7 +1,4 @@
-/**
- * Copyright (C) Ivan Kravets <me@ikravets.com>
- * See LICENSE for details.
- */
+#include <Arduino.h>
 
 #ifndef LED_PIN
 #define LED_PIN 13  // Most Arduino boards already have a LED attached to pin 13 on the board itself

@@ -10,7 +10,7 @@
             "mcu": "esp8266",
             "variant": "generic"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Espressif Generic ESP8266 ESP-01 512k",
         "platform": "espressif",
         "upload": {
@@ -35,7 +35,7 @@
             "mcu": "esp8266",
             "variant": "generic"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Espressif Generic ESP8266 ESP-01 1M",
         "platform": "espressif",
         "upload": {
@@ -85,7 +85,7 @@
             "mcu": "esp8266",
             "variant": "nodemcu"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Espressif ESP8266 ESP-12E",
         "platform": "espressif",
         "upload": {
@@ -127,7 +127,7 @@
     "nodemcu": {
         "build": {
             "core": "esp8266",
-            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_NODEMCU",
             "f_cpu": "80000000L",
             "f_flash": "40000000L",
             "flash_mode": "qio",
@@ -135,7 +135,7 @@
             "mcu": "esp8266",
             "variant": "nodemcu"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "NodeMCU 0.9 (ESP-12 Module)",
         "platform": "espressif",
         "upload": {
@@ -152,7 +152,7 @@
     "nodemcuv2": {
         "build": {
             "core": "esp8266",
-            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_NODEMCU",
             "f_cpu": "80000000L",
             "f_flash": "40000000L",
             "flash_mode": "dio",
@@ -160,7 +160,7 @@
             "mcu": "esp8266",
             "variant": "nodemcu"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "NodeMCU 1.0 (ESP-12E Module)",
         "platform": "espressif",
         "upload": {
@@ -185,7 +185,7 @@
             "mcu": "esp8266",
             "variant": "adafruit"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Adafruit HUZZAH ESP8266",
         "platform": "espressif",
         "upload": {
@@ -352,7 +352,7 @@
     "d1": {
         "build": {
             "core": "esp8266",
-            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_NODEMCU",
             "f_cpu": "80000000L",
             "f_flash": "40000000L",
             "flash_mode": "dio",
@@ -377,7 +377,7 @@
     "d1_mini": {
         "build": {
             "core": "esp8266",
-            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_ESP12",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_NODEMCU",
             "f_cpu": "80000000L",
             "f_flash": "40000000L",
             "flash_mode": "dio",

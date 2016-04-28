@@ -23,6 +23,14 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
+* Apr 23, 2016 - **Al Williams** - `Hackaday: Atomic Arduino (and Other) Development <http://hackaday.com/2016/04/23/atomic-arduino-and-other-development/>`_
+* Apr 16, 2016 - **Sathittham Sangthong** - `[PlatformIO] มาลองเล่น PlatformIO แทน Arduino IDE กัน (Let's play together with PlatformIO IDE [alternative to Arduino IDE], Thai) <http://www.sathittham.com/platformio/platformio-ide/>`_
+* Apr 11, 2016 - **Matjaz Trcek** - `Top 5 Arduino integrated development environments <https://codeandunicorns.com/top-5-arduino-integrated-development-environments-ide/>`_
+* Apr 06, 2016 - **Aleks** - `PlatformIO ausprobiert (Tried PlatformIO, German) <http://5volt-junkie.net/platformio/>`_
+* Mar 30, 2016 - **Brandon Cannaday** - `Getting Started with PlatformIO and ESP8266 NodeMcu <https://www.losant.com/blog/getting-started-with-platformio-esp8266-nodemcu>`_
+* Mar 29, 2016 - **Pablo Peñalve** - `PlatformIO + Geany + Raspberry PI, Spanish <http://ret-catriel.blogspot.com/2016/03/framework-platformio-geany-raspberry-pi.html>`_
+* Mar 24, 2016 - **NAzT** - `PlatformIO และการปรับแต่ง เพื่อใช้สำหรับพัฒนา Arduino Library (PlatformIO and advanced development for Arduino Library, Thai) <https://cmmakerclub.com/tools-2/config-platformio-for-arduino-framework-developer/>`_
+* Mar 16, 2016 - **Jakub Skořepa** - `Instalace PlatformIO (PlatformIO IDE Installation, Czech) <http://ok1kvk.cz/clanek/2016/instalace-platformio/>`_
 * Mar 12, 2016 - **Peter Marks** - `PlatformIO, the Arduino IDE for programmers <http://blog.marxy.org/2016/03/platformio-arduino-ide-for-programmers.html>`_
 * Mar 12, 2016 - **Richard Arthurs** - `Getting Started With PlatformIO <http://richarthurs.com/2016/03/12/platformio-review-and-first-thoughts/>`_
 * Mar 07, 2016 - **Joran Jessurun** - `Nieuwe wereld met PlatformIO (New world with PlatformIO, Dutch) <http://blog.wisclub.nl/#post178>`_
@@ -33,6 +41,7 @@ Here are recent articles about PlatformIO:
 * Feb 23, 2016 - **Ptarmigan Labs** - `ESP8266 Over The Air updating – what are the options? <https://ptarmiganlabs.com/blog/2016/02/23/esp8266-over-the-air-updating-what-are-the-options/>`_
 * Feb 22, 2016 - **Grzegorz Hołdys** - `How to Integrate PlatformIO with Netbeans <http://www.instructables.com/id/How-to-Integrate-PlatformIO-With-Netbeans/>`_
 * Feb 19, 2016 - **Embedds** - `Develop easier with PlatformIO ecosystem <http://www.embedds.com/develop-easier-with-platformio-ecosystem/>`_
+* Feb 13, 2016 - **Robert Cudmore** - `Programming an arduino with PlatformIO <http://blog.cudmore.io/post/2016/02/13/Programming-an-arduino-with-platformio/>`_
 * Jan 24, 2016 - **Sergey Prilukin** - `How to use IntelliJ IDEA to develop and upload software for micro controllers like Arduino <http://jandevblog.blogspot.com/2016/01/how-to-use-intellij-idea-to-develop-and.html>`_
 * Jan 16, 2016 - **Dani Eichhorn** - `ESP8266 Arduino IDE Alternative: PlatformIO <http://blog.squix.ch/2016/01/esp8266-arduino-ide-alternative.html>`_
 * Jan 11, 2016 - **David Mills, Ph.D.** - `STM NUCLEOF401RE TIMER IO <http://webshed.org/wiki/STM_NUCLEOF401RE_TIMER_IO>`_

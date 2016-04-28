@@ -14,7 +14,7 @@
 
 import sys
 
-VERSION = (2, 8, 6)
+VERSION = (2, 9, 0)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -33,7 +33,7 @@ __license__ = "Apache Software License"
 __copyright__ = "Copyright 2014-2016 Ivan Kravets"
 
 __apiurl__ = "http://api.platformio.org"
-__apiip__ = "178.62.159.183"
+__apiip__ = "198.7.57.247"
 
 
 if sys.version_info >= (3, 0, 0):

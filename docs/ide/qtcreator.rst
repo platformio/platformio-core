@@ -193,4 +193,4 @@ Examples
 "Blink" Project
 ^^^^^^^^^^^^^^^
 
-Source code of `Qt Creator "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/qtcreator>`_.
+Source code of `Qt Creator "Blink" Project <https://github.com/platformio/platformio-examples/tree/develop/ide/qtcreator>`_.

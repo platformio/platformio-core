@@ -28,6 +28,7 @@ The sketch demonstrates iBecaon from an RFduino
  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+#include <Arduino.h>
 #include <RFduinoBLE.h>
 
 // pin 3 on the RGB shield is the green led
@@ -39,7 +40,7 @@ void setup() {
 
   // do iBeacon advertising
   RFduinoBLE.iBeacon = true;
-  
+
   // start the BLE stack
   RFduinoBLE.begin();
 }
@@ -53,7 +54,7 @@ void RFduinoBLE_onAdvertisement(bool start)
 {
   // turn the green led on if we start advertisement, and turn it
   // off if we stop advertisement
-  
+
   if (start)
     digitalWrite(led, HIGH);
   else

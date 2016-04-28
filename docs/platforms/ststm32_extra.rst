@@ -22,8 +22,8 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for ST STM32 platform <https://github.com/platformio/platformio/tree/develop/examples/stm32>`_.
+`Examples for ST STM32 platform <https://github.com/platformio/platformio-examples/tree/develop/stm32>`_.
 
-* `CMSIS Blink <https://github.com/platformio/platformio/tree/develop/examples/stm32/stm32-cmsis-blink>`_
-* `libOpenCM3 Blink <https://github.com/platformio/platformio/tree/develop/examples/stm32/stm32-opencm3-blink>`_
-* `SPL Blink <https://github.com/platformio/platformio/tree/develop/examples/stm32/stm32-spl-blink>`_
+* `CMSIS Blink <https://github.com/platformio/platformio-examples/tree/develop/stm32/stm32-cmsis-blink>`_
+* `libOpenCM3 Blink <https://github.com/platformio/platformio-examples/tree/develop/stm32/stm32-opencm3-blink>`_
+* `SPL Blink <https://github.com/platformio/platformio-examples/tree/develop/stm32/stm32-spl-blink>`_

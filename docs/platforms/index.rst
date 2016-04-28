@@ -32,6 +32,9 @@ Embedded
     atmelsam
     espressif
     freescalekinetis
+    intel_arc32
+    lattice_ice40
+    microchippic32
     nordicnrf51
     nxplpc
     siliconlabsefm32

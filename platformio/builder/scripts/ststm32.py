@@ -16,7 +16,6 @@
     Builder for ST STM32 Series ARM microcontrollers.
 """
 
-import platform
 from os.path import isfile, join
 
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
@@ -100,10 +99,7 @@ AlwaysBuild(target_size)
 # Target: Upload by default .bin file
 #
 
-disable_msd = (
-    (platform.system() == "Darwin" and platform.release().startswith("14.")) or
-    env.subst("$UPLOAD_PROTOCOL"))
-if "mbed" in env.subst("$FRAMEWORK") and not disable_msd:
+if "mbed" in env.subst("$FRAMEWORK") and not env.subst("$UPLOAD_PROTOCOL"):
     upload = env.Alias(["upload", "uploadlazy"],
                        target_firm, env.UploadToDisk)
 else:

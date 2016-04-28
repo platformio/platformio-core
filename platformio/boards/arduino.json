@@ -5,10 +5,12 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LILYPAD_USB",
             "f_cpu": "8000000L",
             "mcu": "atmega32u4",
-            "pid": "0x9208",
             "usb_product": "LilyPad USB",
             "variant": "leonardo",
-            "vid": "0x1B4F"
+            "hwid": [
+              ["0x1B4F", "0x9207"],
+              ["0x1B4F", "0x9208"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino LilyPad USB",
@@ -160,10 +162,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ESPLORA",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x803c",
             "usb_product": "Arduino Esplora",
             "variant": "leonardo",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x003C"],
+              ["0x2341", "0x803C"],
+              ["0x2A03", "0x003C"],
+              ["0x2A03", "0x803C"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Esplora",
@@ -178,7 +184,7 @@
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         },
-        "url": "http://arduino.cc/en/Main/ArduinoBoardEsplora",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-esplora",
         "vendor": "Arduino"
     },
     "ethernet": {
@@ -199,7 +205,7 @@
             "require_upload_port" : true,
             "speed": 115200
         },
-        "url": "http://arduino.cc/en/Main/ArduinoBoardEthernet",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-ethernet",
         "vendor": "Arduino"
     },
     "fio": {
@@ -229,10 +235,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LEONARDO",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8036",
             "usb_product": "Arduino Leonardo",
             "variant": "leonardo",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x0036"],
+              ["0x2341", "0x8036"],
+              ["0x2A03", "0x0036"],
+              ["0x2A03", "0x8036"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Leonardo",
@@ -247,7 +257,36 @@
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         },
-        "url": "http://arduino.cc/en/Main/arduinoBoardLeonardo",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-leonardo",
+        "vendor": "Arduino"
+    },
+    "leonardoeth": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LEONARDO",
+            "f_cpu": "16000000L",
+            "mcu": "atmega32u4",
+            "usb_product": "Arduino Leonardo ETH",
+            "variant": "leonardo",
+            "hwid": [
+              ["0x2A03", "0x8040"],
+              ["0x2A03", "0x0040"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino Leonardo ETH",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-leonardo-eth",
         "vendor": "Arduino"
     },
     "lilypadatmega168": {
@@ -310,7 +349,7 @@
             "require_upload_port" : true,
             "speed": 115200
         },
-        "url": "http://arduino.cc/en/Main/ArduinoBoardMegaADK",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-mega-adk",
         "vendor": "Arduino"
     },
     "megaatmega1280": {
@@ -331,7 +370,7 @@
             "require_upload_port" : true,
             "speed": 57600
         },
-        "url": "http://arduino.cc/en/Main/arduinoBoardMega",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-mega-2560",
         "vendor": "Arduino"
     },
     "megaatmega2560": {
@@ -342,7 +381,7 @@
             "mcu": "atmega2560",
             "variant": "mega"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Arduino Mega or Mega 2560 ATmega2560 (Mega 2560)",
         "platform": "atmelavr",
         "upload": {
@@ -352,7 +391,7 @@
             "require_upload_port" : true,
             "speed": 115200
         },
-        "url": "http://arduino.cc/en/Main/arduinoBoardMega2560",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-mega-2560",
         "vendor": "Arduino"
     },
     "micro": {
@@ -361,10 +400,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_MICRO",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8037",
             "usb_product": "Arduino Micro",
             "variant": "micro",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x0037"],
+              ["0x2341", "0x8037"],
+              ["0x2A03", "0x0037"],
+              ["0x2A03", "0x8037"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Micro",
@@ -379,7 +422,7 @@
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         },
-        "url": "http://arduino.cc/en/Main/ArduinoBoardMicro",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-micro",
         "vendor": "Arduino"
     },
     "miniatmega168": {
@@ -442,7 +485,7 @@
             "require_upload_port" : true,
             "speed": 19200
         },
-        "url": "http://arduino.cc/en/Main/ArduinoBoardNano",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-nano",
         "vendor": "Arduino"
     },
     "nanoatmega328": {
@@ -453,7 +496,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Arduino Nano ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -463,7 +506,7 @@
             "require_upload_port" : true,
             "speed": 57600
         },
-        "url": "http://arduino.cc/en/Main/ArduinoBoardNano",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-nano",
         "vendor": "Arduino"
     },
     "pro16MHzatmega168": {
@@ -556,10 +599,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ROBOT_CONTROL",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8038",
             "usb_product": "Robot Control",
             "variant": "robot_control",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x0038"],
+              ["0x2341", "0x8038"],
+              ["0x2A03", "0x0038"],
+              ["0x2A03", "0x8038"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Robot Control",
@@ -574,7 +621,7 @@
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         },
-        "url": "http://arduino.cc/en/Main/Robot",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-robot",
         "vendor": "Arduino"
     },
     "robotMotor": {
@@ -583,10 +630,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ROBOT_MOTOR",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8039",
             "usb_product": "Robot Motor",
             "variant": "robot_motor",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x0039"],
+              ["0x2341", "0x8039"],
+              ["0x2A03", "0x0039"],
+              ["0x2A03", "0x8039"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Robot Motor",
@@ -601,7 +652,7 @@
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         },
-        "url": "http://arduino.cc/en/Main/Robot",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-robot",
         "vendor": "Arduino"
     },
     "uno": {
@@ -610,9 +661,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_UNO",
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
-            "variant": "standard"
+            "variant": "standard",
+            "hwid": [
+              ["0x2341", "0x0043"],
+              ["0x2341", "0x0001"],
+              ["0x2A03", "0x0043"]
+            ]
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Arduino Uno",
         "platform": "atmelavr",
         "upload": {
@@ -622,7 +678,7 @@
             "require_upload_port" : true,
             "speed": 115200
         },
-        "url": "http://arduino.cc/en/Main/ArduinoBoardUno",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-uno",
         "vendor": "Arduino"
     },
     "yun": {
@@ -631,10 +687,14 @@
             "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_YUN",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "pid": "0x8041",
             "usb_product": "Arduino Yun",
             "variant": "yun",
-            "vid": "0x2341"
+            "hwid": [
+              ["0x2341", "0x0041"],
+              ["0x2341", "0x8041"],
+              ["0x2A03", "0x0041"],
+              ["0x2A03", "0x8041"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Yun",
@@ -650,8 +710,98 @@
             "via_ssh": true,
             "wait_for_upload_port": true
         },
-        "url": "http://arduino.cc/en/Main/ArduinoBoardYun",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-yun",
         "vendor": "Arduino"
+    },
+    "yunmini": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_YUN",
+            "f_cpu": "16000000L",
+            "mcu": "atmega32u4",
+            "usb_product": "Arduino Yun Mini",
+            "variant": "yun",
+            "hwid": [
+              ["0x2A03", "0x8050"],
+              ["0x2A03", "0x0050"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino Yun Mini",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "via_ssh": true,
+            "wait_for_upload_port": true
+        },
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-yun-mini",
+        "vendor": "Arduino"
+    },
+    "chiwawa": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_YUN",
+            "f_cpu": "16000000L",
+            "mcu": "atmega32u4",
+            "usb_product": "Arduino Industrial 101",
+            "variant": "yun",
+            "hwid": [
+              ["0x2A03", "0x8056"],
+              ["0x2A03", "0x0056"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino Industrial 101",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "via_ssh": true,
+            "wait_for_upload_port": true
+        },
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-industrial-101",
+        "vendor": "Arduino"
+    },
+    "one": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_YUN",
+            "f_cpu": "16000000L",
+            "mcu": "atmega32u4",
+            "usb_product": "Linino One",
+            "variant": "yun",
+            "hwid": [
+              ["0x2A03", "0x8001"],
+              ["0x2A03", "0x0001"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Linino One",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "via_ssh": true,
+            "wait_for_upload_port": true
+        },
+        "url": "http://www.linino.org/portfolio/linino-one/",
+        "vendor": "Linino"
     },
     "due": {
         "build": {
@@ -660,13 +810,15 @@
             "f_cpu": "84000000L",
             "mcu": "sam3x8e",
             "cpu": "cortex-m3",
-            "pid": "0x003e",
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
-            "vid": "0x2341",
-            "ldscript": "sam3x8e.ld"
+            "ldscript": "sam3x8e.ld",
+            "hwid": [
+              ["0x2341", "0x003D"],
+              ["0x2A03", "0x003D"]
+            ]
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Arduino Due (Programming Port)",
         "platform": "atmelsam",
         "upload": {
@@ -678,7 +830,7 @@
             "use_1200bps_touch": true,
             "wait_for_upload_port": false
         },
-        "url": "http://arduino.cc/en/Main/arduinoBoardDue",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-due",
         "vendor": "Arduino"
     },
     "dueUSB": {
@@ -688,11 +840,13 @@
             "f_cpu": "84000000L",
             "mcu": "sam3x8e",
             "cpu": "cortex-m3",
-            "pid": "0x003e",
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
-            "vid": "0x2341",
-            "ldscript": "sam3x8e.ld"
+            "ldscript": "sam3x8e.ld",
+            "hwid": [
+              ["0x2341", "0x003E"],
+              ["0x2A03", "0x003E"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Due (USB Native Port)",
@@ -706,7 +860,7 @@
             "use_1200bps_touch": true,
             "wait_for_upload_port": true
         },
-        "url": "http://arduino.cc/en/Main/arduinoBoardDue",
+        "url": "http://www.arduino.org/products/boards/4-arduino-boards/arduino-due",
         "vendor": "Arduino"
     },
     "zero": {
@@ -716,11 +870,13 @@
             "f_cpu": "48000000L",
             "mcu": "samd21g18a",
             "cpu": "cortex-m0plus",
-            "pid": "0x804d",
             "usb_product": "Arduino Zero",
             "variant": "arduino_zero",
-            "vid": "0x2341",
-            "ldscript": "flash_with_bootloader.ld"
+            "ldscript": "flash_with_bootloader.ld",
+            "hwid": [
+              ["0x2341", "0x804D"],
+              ["0x03EB", "0x2157"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Zero (Programming Port)",
@@ -744,11 +900,14 @@
             "f_cpu": "48000000L",
             "mcu": "samd21g18a",
             "cpu": "cortex-m0plus",
-            "pid": "0x804d",
             "usb_product": "Arduino Zero",
             "variant": "arduino_zero",
-            "vid": "0x2341",
-            "ldscript": "flash_with_bootloader.ld"
+            "ldscript": "flash_with_bootloader.ld",
+            "hwid": [
+              ["0x2341", "0x804D"],
+              ["0x2341", "0x004D"],
+              ["0x2341", "0x824D"]
+            ]
         },
         "frameworks": ["arduino"],
         "name": "Arduino Zero (USB Native Port)",

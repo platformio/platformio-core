@@ -38,7 +38,10 @@ Options
 .. option::
     -e, --environment
 
-Process specified environments
+Process specified environments.
+
+You can also specify which environments should be processed by default using
+:ref:`projectconf_pio_env_default`.
 
 
 .. option::
@@ -93,7 +96,7 @@ or :ref:`projectconf_pio_src_dir` (project structure) have been modified.
 Examples
 --------
 
-1. Process `Wiring Blink Example <https://github.com/platformio/platformio/tree/develop/examples/wiring-blink>`_
+1. Process `Wiring Blink Example <https://github.com/platformio/platformio-examples/tree/develop/wiring-blink>`_
 
 .. code-block::   bash
 

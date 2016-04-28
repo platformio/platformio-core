@@ -118,7 +118,8 @@ Uploading files to file system SPIFFS
     information first.
 
 1. Initialise project :ref:`cmd_init` (if you have not initialized yet)
-2. Create :ref:`projectconf_pio_data_dir` and put files here
+2. Create ``data`` folder (it should be on the same level as ``src`` folder)
+   and put files here. Also, you can specify own location for :ref:`projectconf_pio_data_dir`
 3. Run target ``uploadfs`` using  :option:`platformio run --target` command.
 
 To upload SPIFFS image using OTA update please specify ``upload_port`` /
@@ -136,7 +137,7 @@ Active discussion is located in `issue #382 <https://github.com/platformio/platf
 Over-the-Air (OTA) update
 -------------------------
 
-Firstly, please read `What is OTA? How to use it? <https://github.com/esp8266/Arduino/blob/master/doc/ota_updates/ota_updates.md>`_
+Firstly, please read `What is OTA? How to use it? <https://github.com/esp8266/Arduino/blob/master/doc/ota_updates/readme.md>`_
 
 There are 2 options:
 
@@ -252,8 +253,8 @@ Examples
 --------
 
 All project examples are located in PlatformIO repository
-`Examples for Espressif platform <https://github.com/platformio/platformio/tree/develop/examples/espressif>`_.
+`Examples for Espressif platform <https://github.com/platformio/platformio-examples/tree/develop/espressif>`_.
 
-* `Native SDK <https://github.com/platformio/platformio/tree/develop/examples/espressif/esp8266-native>`_
-* `WebServer <https://github.com/platformio/platformio/tree/develop/examples/espressif/esp8266-webserver>`_
-* `WiFiScan <https://github.com/platformio/platformio/tree/develop/examples/espressif/esp8266-wifiscan>`_
+* `Native SDK <https://github.com/platformio/platformio-examples/tree/develop/espressif/esp8266-native>`_
+* `WebServer <https://github.com/platformio/platformio-examples/tree/develop/espressif/esp8266-webserver>`_
+* `WiFiScan <https://github.com/platformio/platformio-examples/tree/develop/espressif/esp8266-wifiscan>`_

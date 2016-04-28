@@ -86,4 +86,4 @@ Examples
 "Blink" Project
 ^^^^^^^^^^^^^^^
 
-Source code of `Eclipse "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/eclipse>`_.
+Source code of `Eclipse "Blink" Project <https://github.com/platformio/platformio-examples/tree/develop/ide/eclipse>`_.

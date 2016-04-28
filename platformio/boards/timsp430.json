@@ -124,5 +124,41 @@
         },
         "url": "http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html",
         "vendor": "TI"
+    },
+    "lpmsp430fr4133": {
+        "build": {
+            "core": "msp430",
+            "f_cpu": "16000000L",
+            "mcu": "msp430g2553",
+            "variant": "launchpad_fr4133"
+        },
+        "frameworks": ["energia"],
+        "name": "TI LaunchPad w/ msp430fr4133",
+        "platform": "timsp430",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 15360,
+            "protocol": "tilib"
+        },
+        "url": "http://www.ti.com/tool/msp-exp430fr4133",
+        "vendor": "TI"
+    },
+    "lpmsp430fr6989": {
+        "build": {
+            "core": "msp430",
+            "f_cpu": "16000000L",
+            "mcu": "msp430g2553",
+            "variant": "launchpad_fr6989"
+        },
+        "frameworks": ["energia"],
+        "name": "TI LaunchPad w/ msp430fr6989",
+        "platform": "timsp430",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 130048,
+            "protocol": "tilib"
+        },
+        "url": "http://www.ti.com/tool/msp-exp430fr6989",
+        "vendor": "TI"
     }
 }

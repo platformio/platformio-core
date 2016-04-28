@@ -192,4 +192,4 @@ Examples
 "Blink" Project
 ^^^^^^^^^^^^^^^
 
-Source code of `Sublime Text "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/sublimetext>`_.
+Source code of `Sublime Text "Blink" Project <https://github.com/platformio/platformio-examples/tree/develop/ide/sublimetext>`_.

@@ -96,6 +96,17 @@ Filter libraries by specified framework
 
 Filter libraries by specified keyword
 
+.. option::
+    --json-output
+
+Return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
+
+.. option::
+   --page
+
+Manually paginate through search results. This option is useful in pair with
+``--json-output``.
+
 Examples
 --------
 

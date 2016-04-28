@@ -36,6 +36,12 @@ Platforms
     * - :ref:`platform_espressif`
       - Espressif Systems is a privately held fabless semiconductor company. They provide wireless communications and Wi-Fi chips which are widely used in mobile devices and the Internet of Things applications.
 
+    * - :ref:`platform_intel_arc32`
+      - ARC embedded processors are a family of 32-bit CPUs that are widely used in SoC devices for storage, home, mobile, automotive, and Internet of Things applications.
+
+    * - :ref:`platform_microchippic32`
+      - Microchip's 32-bit portfolio with the MIPS microAptiv or M4K core offer high performance microcontrollers, and all the tools needed to develop your embedded projects. PIC32 MCUs gives your application the processing power, memory and peripherals your design needs!
+
     * - :ref:`platform_nordicnrf51`
       - The Nordic nRF51 Series is a family of highly flexible, multi-protocol, system-on-chip (SoC) devices for ultra-low power wireless applications. nRF51 Series devices support a range of protocol stacks including Bluetooth Smart (previously called Bluetooth low energy), ANT and proprietary 2.4GHz protocols such as Gazell.
 
@@ -52,6 +58,26 @@ Boards
     * You can list pre-configured boards by :ref:`cmd_boards` command or
       `PlatformIO Boards Explorer <http://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by horizontal.
+
+4DSystems
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``picadillo_35t``
+      - `4DSystems PICadillo 35T <http://www.4dsystems.com.au/product/Picadillo_35T/>`_
+      - 32MX795F512L
+      - 80 MHz
+      - 512 Kb
+      - 128 Kb
 
 Adafruit
 ~~~~~~~~
@@ -434,6 +460,117 @@ BitWizard
       - 32 Kb
       - 2 Kb
 
+Digilent
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``cerebot32mx4``
+      - `Digilent Cerebot 32MX4 <http://store.digilentinc.com/cerebot-32mx4-limited-time-see-chipkit-pro-mx4/>`_
+      - 32MX460F512L
+      - 80 MHz
+      - 512 Kb
+      - 32 Kb
+
+    * - ``cerebot32mx7``
+      - `Digilent Cerebot 32MX7 <http://www.microchip.com/Developmenttools/ProductDetails.aspx?PartNO=TDGL004>`_
+      - 32MX795F512L
+      - 80 MHz
+      - 512 Kb
+      - 128 Kb
+
+    * - ``chipkit_cmod``
+      - `Digilent chipKIT Cmod <http://store.digilentinc.com/chipkit-cmod-breadboardable-mz-microcontroller-board/>`_
+      - 32MX150F128D
+      - 40 MHz
+      - 128 Kb
+      - 32 Kb
+
+    * - ``chipkit_dp32``
+      - `Digilent chipKIT DP32 <http://store.digilentinc.com/chipkit-dp32-dip-package-prototyping-microcontroller-board/>`_
+      - 32MX250F128B
+      - 40 MHz
+      - 128 Kb
+      - 32 Kb
+
+    * - ``chipkit_mx3``
+      - `Digilent chipKIT MX3 <http://store.digilentinc.com/chipkit-mx3-microcontroller-board-with-pmod-headers/>`_
+      - 32MX320F128H
+      - 80 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``chipkit_pro_mx4``
+      - `Digilent chipKIT Pro MX4 <http://store.digilentinc.com/chipkit-pro-mx4-embedded-systems-trainer-board/>`_
+      - 32MX460F512L
+      - 80 MHz
+      - 512 Kb
+      - 32 Kb
+
+    * - ``chipkit_pro_mx7``
+      - `Digilent chipKIT Pro MX7 <http://store.digilentinc.com/chipkit-pro-mx7-advanced-peripherals-embedded-systems-trainer-board/>`_
+      - 32MX795F512L
+      - 80 MHz
+      - 512 Kb
+      - 128 Kb
+
+    * - ``chipkit_uc32``
+      - `Digilent chipKIT uC32 <http://store.digilentinc.com/chipkit-uc32-basic-microcontroller-board-with-uno-r3-headers/>`_
+      - 32MX340F512H
+      - 80 MHz
+      - 512 Kb
+      - 32 Kb
+
+    * - ``chipkit_wf32``
+      - `Digilent chipKIT WF32 <http://store.digilentinc.com/chipkit-wf32-wifi-enabled-microntroller-board-with-uno-r3-headers/>`_
+      - 32MX695F512L
+      - 80 MHz
+      - 512 Kb
+      - 128 Kb
+
+    * - ``chipkit_wifire``
+      - `Digilent chipKIT WiFire <http://store.digilentinc.com/chipkit-wi-fire-wifi-enabled-mz-microcontroller-board/>`_
+      - 32MZ2048ECG100
+      - 200 MHz
+      - 2048 Kb
+      - 512 Kb
+
+    * - ``mega_pic32``
+      - `Digilent chipKIT MAX32 <http://store.digilentinc.com/chipkit-max32-microcontroller-board-with-mega-r3-headers/>`_
+      - 32MX795F512L
+      - 80 MHz
+      - 512 Kb
+      - 128 Kb
+
+    * - ``openbci``
+      - `Digilent OpenScope <http://store.digilentinc.com/>`_
+      - 32MX250F128B
+      - 40 MHz
+      - 128 Kb
+      - 32 Kb
+
+    * - ``openscope``
+      - `Digilent OpenScope <http://store.digilentinc.com/>`_
+      - 32MZ2048EFG124
+      - 200 MHz
+      - 2048 Kb
+      - 512 Kb
+
+    * - ``uno_pic32``
+      - `Digilent chipKIT UNO32 <http://store.digilentinc.com/chipkit-uno32-basic-microcontroller-board-retired-see-chipkit-uc32/>`_
+      - 32MX320F128H
+      - 80 MHz
+      - 128 Kb
+      - 16 Kb
+
 Digistump
 ~~~~~~~~~
 
@@ -631,6 +768,115 @@ Espressif
       - 4096 Kb
       - 50 Kb
 
+Fubarino
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``fubarino_mini``
+      - `Fubarino Mini <http://fubarino.org/mini/>`_
+      - 32MX250F128D
+      - 48 MHz
+      - 128 Kb
+      - 32 Kb
+
+    * - ``fubarino_sd``
+      - `Fubarino SD (1.5) <http://fubarino.org/sd/index.html>`_
+      - 32MX795F512H
+      - 80 MHz
+      - 512 Kb
+      - 128 Kb
+
+Generic ATTiny
+~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``attiny13``
+      - `Generic ATTiny13 <http://www.atmel.com/devices/ATTINY13.aspx>`_
+      - ATTINY13
+      - 9 MHz
+      - 1 Kb
+      - 0.0625 Kb
+
+    * - ``attiny24``
+      - `Generic ATTiny24 <http://www.atmel.com/devices/ATTINY24.aspx>`_
+      - ATTINY24
+      - 8 MHz
+      - 2 Kb
+      - 0.125 Kb
+
+    * - ``attiny25``
+      - `Generic ATTiny25 <http://www.atmel.com/devices/ATTINY25.aspx>`_
+      - ATTINY25
+      - 8 MHz
+      - 2 Kb
+      - 0.125 Kb
+
+    * - ``attiny44``
+      - `Generic ATTiny44 <http://www.atmel.com/devices/ATTINY44.aspx>`_
+      - ATTINY44
+      - 8 MHz
+      - 4 Kb
+      - 0.25 Kb
+
+    * - ``attiny45``
+      - `Generic ATTiny45 <http://www.atmel.com/devices/ATTINY45.aspx>`_
+      - ATTINY45
+      - 8 MHz
+      - 4 Kb
+      - 0.25 Kb
+
+    * - ``attiny84``
+      - `Generic ATTiny84 <http://www.atmel.com/devices/ATTINY84.aspx>`_
+      - ATTINY84
+      - 8 MHz
+      - 8 Kb
+      - 0.5 Kb
+
+    * - ``attiny85``
+      - `Generic ATTiny85 <http://www.atmel.com/devices/ATTINY85.aspx>`_
+      - ATTINY85
+      - 8 MHz
+      - 8 Kb
+      - 0.5 Kb
+
+Intel
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``genuino101``
+      - `Arduino/Genuino 101 <https://www.arduino.cc/en/Main/ArduinoBoard101>`_
+      - ARCV2EM
+      - 32 MHz
+      - 192 Kb
+      - 80 Kb
+
 LightUp
 ~~~~~~~
 
@@ -677,6 +923,61 @@ LowPowerLab
       - 16 MHz
       - 128 Kb
       - 16 Kb
+
+Mcudude
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``mightycore1284``
+      - `MightyCore ATmega1284 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA1284P
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``mightycore16``
+      - `MightyCore ATmega16 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA16
+      - 16 MHz
+      - 16 Kb
+      - 1 Kb
+
+    * - ``mightycore164``
+      - `MightyCore ATmega164 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA164P
+      - 16 MHz
+      - 16 Kb
+      - 1 Kb
+
+    * - ``mightycore32``
+      - `MightyCore ATmega32 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA32
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``mightycore324``
+      - `MightyCore ATmega324 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA324P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``mightycore644``
+      - `MightyCore ATmega644 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA644P
+      - 16 MHz
+      - 64 Kb
+      - 4 Kb
 
 Microduino
 ~~~~~~~~~~
@@ -800,6 +1101,40 @@ Olimex
       - 80 MHz
       - 2048 Kb
       - 80 Kb
+
+    * - ``pinguino32``
+      - `Olimex PIC32-PINGUINO <https://www.olimex.com/Products/Duino/PIC32/PIC32-PINGUINO/open-source-hardware>`_
+      - 32MX440F256H
+      - 80 MHz
+      - 256 Kb
+      - 32 Kb
+
+PONTECH
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``quick240_usb``
+      - `PONTECH quicK240 <http://quick240.com/quicki/>`_
+      - 32MX795F512L
+      - 80 MHz
+      - 512 Kb
+      - 128 Kb
+
+    * - ``usbono_pic32``
+      - `PONTECH UAV100 <http://www.pontech.com/productdisplay/uav100>`_
+      - 32MX440F512H
+      - 80 MHz
+      - 512 Kb
+      - 32 Kb
 
 PanStamp
 ~~~~~~~~
@@ -1024,6 +1359,26 @@ Sanguino
       - 64 Kb
       - 4 Kb
 
+SeeedStudio
+~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``cui32stem``
+      - `SeeedStudio CUI32stem <http://www.seeedstudio.com/wiki/CUI32Stem>`_
+      - 32MX795F512H
+      - 80 MHz
+      - 512 Kb
+      - 128 Kb
+
 SparkFun
 ~~~~~~~~
 
@@ -1236,6 +1591,33 @@ TinyCircuits
       - 32 Kb
       - 2 Kb
 
+UBW32
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``ubw32_mx460``
+      - `UBW32 MX460 <http://www.schmalzhaus.com/UBW32/>`_
+      - 32MX460F512L
+      - 80 MHz
+      - 512 Kb
+      - 32 Kb
+
+    * - ``ubw32_mx795``
+      - `UBW32 MX795 <http://www.schmalzhaus.com/UBW32/>`_
+      - 32MX795F512L
+      - 80 MHz
+      - 512 Kb
+      - 128 Kb
+
 WeMos
 ~~~~~
 
@@ -1289,6 +1671,26 @@ Wicked Device
       - 16 MHz
       - 128 Kb
       - 16 Kb
+
+element14
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``chipkit_pi``
+      - `Element14 chipKIT Pi <http://www.element14.com/community/community/knode/dev_platforms_kits/element14_dev_kits/microchip-chipkit/chipkit_pi>`_
+      - 32MX250F128B
+      - 40 MHz
+      - 128 Kb
+      - 32 Kb
 
 ubIQio
 ~~~~~~

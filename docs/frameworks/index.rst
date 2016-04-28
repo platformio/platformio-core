@@ -22,5 +22,6 @@ Frameworks
     energia
     libopencm3
     mbed
+    simba
     spl
     wiringpi

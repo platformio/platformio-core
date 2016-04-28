@@ -70,7 +70,8 @@ MBED_VARIANTS = {
     "dfcm_nnn40": "DELTA_DFCM_NNN40",
     "samr21_xpro": "SAMR21G18A",
     "saml21_xpro_b": "SAML21J18A",
-    "samd21_xpro": "SAMD21J18A"
+    "samd21_xpro": "SAMD21J18A",
+    "bbcmicrobit": "NRF51822"
 }
 
 MBED_LIBS_MAP = {
@@ -196,27 +197,27 @@ def get_build_flags(data):
     return flags
 
 
-def _mbed_whole_archive_hook(libs):
-    if (not isinstance(libs, list) or
+def _mbed_whole_archive_hook(libs_):
+    if (not isinstance(libs_, list) or
             env.get("BOARD_OPTIONS", {}).get("platform") != "ststm32"):
-        return libs
+        return libs_
 
     _dynlibs = []
     _stlibs = []
-    for l in libs:
-        if isinstance(l, basestring):
-            _stlibs.append(l)
+    for l_ in libs_:
+        if isinstance(l_, basestring):
+            _stlibs.append(l_)
         else:
-            _dynlibs.append(l)
+            _dynlibs.append(l_)
 
-    libs = []
+    libs_ = []
     if _dynlibs:
-        libs.append("-Wl,-whole-archive")
-        libs.extend(_dynlibs)
-        libs.append("-Wl,-no-whole-archive")
-    libs.extend(_stlibs)
+        libs_.append("-Wl,-whole-archive")
+        libs_.extend(_dynlibs)
+        libs_.append("-Wl,-no-whole-archive")
+    libs_.extend(_stlibs)
 
-    return libs
+    return libs_
 
 
 board_type = env.subst("$BOARD")

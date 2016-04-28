@@ -84,17 +84,14 @@ def AutodetectUploadPort(env):
             break
     else:
         board_build_opts = env.get("BOARD_OPTIONS", {}).get("build", {})
-        board_hwid = ("%s:%s" % (
-            board_build_opts.get("vid"),
-            board_build_opts.get("pid")
-        )).replace("0x", "")
-
         for item in get_serialports():
             if "VID:PID" not in item['hwid']:
                 continue
             env.Replace(UPLOAD_PORT=item['port'])
-            if board_hwid in item['hwid']:
-                break
+            for hwid in board_build_opts.get("hwid", []):
+                board_hwid = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
+                if board_hwid in item['hwid']:
+                    break
 
     if "UPLOAD_PORT" in env:
         print "Auto-detected UPLOAD_PORT/DISK: %s" % env['UPLOAD_PORT']

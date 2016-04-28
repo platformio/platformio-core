@@ -55,11 +55,20 @@ elif env.get("PLATFORM") == "timsp430":
     )
 elif env.get("PLATFORM") == "espressif":
     env.Prepend(
-        CPPPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "include")],
+        CPPPATH=[
+            join("$PLATFORMFW_DIR", "tools", "sdk", "include"),
+            join("$PLATFORMFW_DIR", "tools", "sdk", "lwip", "include")
+        ],
         LIBPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "lib")],
         LIBS=["mesh", "wpa2", "smartconfig", "pp", "main", "wpa", "lwip",
               "net80211", "wps", "crypto", "phy", "hal", "axtls", "gcc", "m"]
     )
+    env.VariantDirWrap(
+        join("$BUILD_DIR", "generic"),
+        join("$PIOPACKAGES_DIR", "framework-arduinoespressif",
+             "variants", "generic")
+    )
+
 elif env.get("PLATFORM") == "nordicnrf51":
     PLATFORMFW_DIR = join(
         "$PIOPACKAGES_DIR",
@@ -88,6 +97,58 @@ elif env.get("PLATFORM") == "nordicnrf51":
         LIBS=["RFduino", "RFduinoBLE", "RFduinoGZLL", "RFduinoSystem"]
     )
 
+elif env.get("PLATFORM") == "microchippic32":
+    PLATFORMFW_DIR = join(
+        "$PIOPACKAGES_DIR",
+        "framework-arduinomicrochippic32"
+    )
+    env.Prepend(
+        LIBPATH=[
+            join(
+                "$PLATFORMFW_DIR", "cores",
+                "${BOARD_OPTIONS['build']['core']}"
+            ),
+            join(
+                "$PLATFORMFW_DIR", "variants",
+                "${BOARD_OPTIONS['build']['variant']}"
+            )
+        ]
+    )
+
+elif "intel" in env.get("PLATFORM"):
+    PLATFORMFW_DIR = join(
+        "$PIOPACKAGES_DIR",
+        "framework-arduinointel"
+    )
+
+    if BOARD_CORELIBDIRNAME == "arc32":
+        env.Prepend(
+            CPPPATH=[
+                join("$PLATFORMFW_DIR", "system",
+                     "libarc32_arduino101", "drivers"),
+                join("$PLATFORMFW_DIR", "system",
+                     "libarc32_arduino101", "common"),
+                join("$PLATFORMFW_DIR", "system",
+                     "libarc32_arduino101", "framework", "include"),
+                join("$PLATFORMFW_DIR", "system",
+                     "libarc32_arduino101", "bootcode"),
+                join("$BUILD_DIR", "IntelDrivers")
+            ]
+        )
+
+    env.Prepend(
+        LIBPATH=[
+            join(
+                "$PLATFORMFW_DIR", "variants",
+                "${BOARD_OPTIONS['build']['variant']}"
+            ),
+            join(
+                "$PLATFORMFW_DIR", "variants",
+                "${BOARD_OPTIONS['build']['variant']}",
+                "linker_scripts"
+            )
+        ]
+    )
 
 env.Replace(PLATFORMFW_DIR=PLATFORMFW_DIR)
 
@@ -118,10 +179,12 @@ ARDUINO_VERSION = int(
 ARDUINO_USBDEFINES = []
 if "usb_product" in BOARD_BUILDOPTS:
     ARDUINO_USBDEFINES = [
-        "USB_VID=${BOARD_OPTIONS['build']['vid']}",
-        "USB_PID=${BOARD_OPTIONS['build']['pid']}",
+        "USB_VID=${BOARD_OPTIONS['build']['hwid'][0][0]}",
+        "USB_PID=${BOARD_OPTIONS['build']['hwid'][0][1]}",
         'USB_PRODUCT=\\"%s\\"' % (env.subst(
-            "${BOARD_OPTIONS['build']['usb_product']}").replace('"', ""))
+            "${BOARD_OPTIONS['build']['usb_product']}").replace('"', "")),
+        'USB_MANUFACTURER=\\"%s\\"' % (env.subst(
+            "${BOARD_OPTIONS['vendor']}").replace('"', ""))
     ]
 
 if env.get("PLATFORM") == "teensy":
@@ -253,37 +316,24 @@ envsafe = env.Clone()
 
 if BOARD_BUILDOPTS.get("core", None) == "teensy3":
     libs.append("arm_cortex%sl_math" % (
-        "M4" if BOARD_BUILDOPTS.get("cpu") == "cortex-m4" else "M0")
-    )
+        "M4" if BOARD_BUILDOPTS.get("cpu") == "cortex-m4" else "M0"))
 
-if "zero" in env.subst("$BOARD"):
-    envsafe.Append(
-        CFLAGS=[
-            "-std=gnu11"
-        ],
-
-        CXXFLAGS=[
-            "-std=gnu++11",
-        ]
-    )
+if env.subst("$BOARD") == "genuino101":
+    libs.append("libarc32drv_arduino101")
 
 libs.append(envsafe.BuildLibrary(
     join("$BUILD_DIR", "FrameworkArduino"),
     join("$PLATFORMFW_DIR", "cores", "${BOARD_OPTIONS['build']['core']}")
 ))
 
-if "due" in env.subst("$BOARD"):
+if "sam3x8e" in BOARD_BUILDOPTS.get("mcu", ""):
     env.Append(
         LIBPATH=[
             join("$PLATFORMFW_DIR", "variants",
                  "${BOARD_OPTIONS['build']['variant']}")
         ]
     )
-    envsafe.Append(
-        CFLAGS=[
-            "-std=gnu99"
-        ]
-    )
+
     libs.append("sam_sam3x8e_gcc_rel")
 
 env.Prepend(LIBS=libs)

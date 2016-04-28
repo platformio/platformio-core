@@ -65,6 +65,8 @@ if isfile(env.subst(join(
     )
 else:
     env.Append(
+        REBOOTER=join(
+            "$PIOPACKAGES_DIR", "tool-teensy", "teensy_reboot"),
         UPLOADER=join(
             "$PIOPACKAGES_DIR", "tool-teensy", "teensy_post_compile"),
         UPLOADERFLAGS=[
@@ -101,7 +103,9 @@ AlwaysBuild(target_size)
 # Target: Upload by default firmware file
 #
 
-upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADHEXCMD")
+upload = env.Alias(
+    ["upload", "uploadlazy"], target_firm,
+    ["$UPLOADHEXCMD"] + (["$REBOOTER"] if "REBOOTER" in env else []))
 AlwaysBuild(upload)
 
 #

@@ -42,6 +42,7 @@ commonvars.AddVariables(
     ("FRAMEWORK",),
     ("BUILD_FLAGS",),
     ("SRC_BUILD_FLAGS",),
+    ("BUILD_UNFLAGS",),
     ("SRC_FILTER",),
     ("LIB_DFCYCLIC",),
     ("LIB_IGNORE",),

@@ -4,10 +4,75 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.9.0 (2016-04-28)
+~~~~~~~~~~~~~~~~~~
+
+* Project generator for `CodeBlocks IDE <http://docs.platformio.org/en/latest/ide/codeblocks.html>`__
+  (`issue #600 <https://github.com/platformio/platformio/issues/600>`_)
+* New `Lattice iCE40 FPGA <http://docs.platformio.org/en/latest/platforms/lattice_ice40.html>`__
+  development platform with support for Lattice iCEstick FPGA Evaluation
+  Kit and BQ IceZUM Alhambra FPGA
+  (`issue #480 <https://github.com/platformio/platformio/issues/480>`_)
+* New `Intel ARC 32-bit <http://docs.platformio.org/en/latest/platforms/intel_arc32.html>`_
+  development platform with support for Arduino/Genuino 101 board
+  (`issue #535 <https://github.com/platformio/platformio/issues/535>`_)
+* New `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__
+  development platform with support for 20+ different PIC32 based boards
+  (`issue #438 <https://github.com/platformio/platformio/issues/438>`_)
+* New RTOS and build Framework named `Simba <http://docs.platformio.org/en/latest/frameworks/simba.html>`__
+  (`issue #412 <https://github.com/platformio/platformio/issues/412>`_)
+* New boards for `ARM mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+  framework: ST Nucleo F410RB, ST Nucleo L073RZ and BBC micro:bit
+* Added support for Arduino.Org boards: Arduino Leonardo ETH, Arduino Yun Mini,
+  Arduino Industrial 101 and Linino One
+  (`issue #472 <https://github.com/platformio/platformio/issues/472>`_)
+* Added support for Generic ATTiny boards: ATTiny13, ATTiny24, ATTiny25,
+  ATTiny45 and ATTiny85
+  (`issue #636 <https://github.com/platformio/platformio/issues/636>`_)
+* Added support for MightyCore boards: ATmega1284, ATmega644, ATmega324,
+  ATmega164, ATmega32, ATmega16 and ATmega8535
+  (`issue #585 <https://github.com/platformio/platformio/issues/585>`_)
+* Added support for `TI MSP430 <http://docs.platformio.org/en/latest/platforms/timsp430.html>`__
+  boards: TI LaunchPad w/ msp430fr4133 and TI LaunchPad w/ msp430fr6989
+* Updated Arduino core for Espressif platform to 2.2.0
+  (`issue #627 <https://github.com/platformio/platformio/issues/627>`_)
+* Updated native SDK for ESP8266 to 1.5
+  (`issue #366 <https://github.com/platformio/platformio/issues/366>`_)
+* PlatformIO Library Registry in JSON format! Implemented
+  ``--json-output`` and ``--page`` options for
+  `platformio lib search <http://docs.platformio.org/en/latest/userguide/lib/cmd_search.html>`__
+  command
+  (`issue #604 <https://github.com/platformio/platformio/issues/604>`_)
+* Allowed to specify default environments `env_default <http://docs.platformio.org/en/latest/projectconf.html#env-default>`__
+  which should be processed by default with ``platformio run`` command
+  (`issue #576 <https://github.com/platformio/platformio/issues/576>`_)
+* Allowed to unflag(remove) base/initial flags using
+  `build_unflags <http://docs.platformio.org/en/latest/projectconf.html#build-unflags>`__
+  option
+  (`issue #559 <https://github.com/platformio/platformio/issues/559>`_)
+* Allowed multiple VID/PID pairs when detecting serial ports
+  (`issue #632 <https://github.com/platformio/platformio/issues/632>`_)
+* Automatically add ``-DUSB_MANUFACTURER`` with vendor's name
+  (`issue #631 <https://github.com/platformio/platformio/issues/631>`_)
+* Automatically reboot Teensy board after upload when Teensy Loader GUI is used
+  (`issue #609 <https://github.com/platformio/platformio/issues/609>`_)
+* Refactored source code converter from ``*.ino`` to ``*.cpp``
+  (`issue #610 <https://github.com/platformio/platformio/issues/610>`_)
+* Forced ``-std=gnu++11`` for Atmel SAM development platform
+  (`issue #601 <https://github.com/platformio/platformio/issues/601>`_)
+* Don't check OS type for ARM mbed-enabled boards and ST STM32 development
+  platform before uploading to disk
+  (`issue #596 <https://github.com/platformio/platformio/issues/596>`_)
+* Fixed broken compilation for Atmel SAMD based boards except Arduino Due
+  (`issue #598 <https://github.com/platformio/platformio/issues/598>`_)
+* Fixed firmware uploading using serial port with spaces in the path
+* Fixed cache system when project's root directory is used as ``src_dir``
+  (`issue #635 <https://github.com/platformio/platformio/issues/635>`_)
+
 2.8.6 (2016-03-22)
 ~~~~~~~~~~~~~~~~~~
 
-* Launched `PlatformIO Community Forums <http://community.platformio.org>`_
+* Launched `PlatformIO Community Forums <https://community.platformio.org>`_
   (`issue #530 <https://github.com/platformio/platformio/issues/530>`_)
 * Added support for ARM mbed-enabled board Seed Arch Max (STM32F407VET6)
   (`issue #572 <https://github.com/platformio/platformio/issues/572>`_)
@@ -821,9 +886,9 @@ PlatformIO 0.0
 * Fixed "*OSError: [Errno 2] No such file or directory*" within
   `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
   command when PlatformIO isn't installed properly
-* Fixed example for `Eclipse IDE with Tiva board <https://github.com/platformio/platformio/tree/develop/examples/ide/eclipse>`_
+* Fixed example for `Eclipse IDE with Tiva board <https://github.com/platformio/platformio-examples/tree/develop/ide/eclipse>`_
   (`issue #32 <https://github.com/platformio/platformio/pull/32>`_)
-* Upgraded `Eclipse Project Examples <https://github.com/platformio/platformio/tree/develop/examples/ide/eclipse>`_
+* Upgraded `Eclipse Project Examples <https://github.com/platformio/platformio-examples/tree/develop/ide/eclipse>`_
   to latest *Luna* and *PlatformIO* releases
 
 0.9.0 (2014-12-01)
@@ -891,7 +956,7 @@ PlatformIO 0.0
 * Disabled default warning flag "-Wall"
 * Added auto-conversation from \*.ino to valid \*.cpp for Arduino/Energia
   frameworks (`issue #7 <https://github.com/platformio/platformio/issues/7>`_)
-* Added `Arduino example <https://github.com/platformio/platformio/tree/develop/examples/>`_
+* Added `Arduino example <https://github.com/platformio/platformio-examples/tree/develop/>`_
   with external library (*Adafruit CC3000*)
 * Implemented `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`_
   command and "auto-check" for the latest
@@ -940,7 +1005,7 @@ PlatformIO 0.0
 
 * Resolved `issue #1 "Build referred libraries" <https://github.com/platformio/platformio/issues/1>`_
 * Renamed project's "libs" directory to "lib"
-* Added `arduino-internal-library <https://github.com/platformio/platformio/tree/develop/examples/>`_ example
+* Added `arduino-internal-library <https://github.com/platformio/platformio-examples/tree/develop/>`_ example
 * Changed to beta status
 
 

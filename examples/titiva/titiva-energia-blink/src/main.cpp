@@ -3,7 +3,7 @@
  * See LICENSE for details.
  */
 
-#include "Energia.h"
+#include <Energia.h>
 
 void setup()
 {

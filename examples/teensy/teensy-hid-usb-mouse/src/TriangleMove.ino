@@ -6,6 +6,8 @@
    This example code is in the public domain.
 */
 
+#include <Arduino.h>
+
 void setup() { } // no setup needed
 void loop() {
   int i;

@@ -18,7 +18,7 @@ import atexit
 import re
 from glob import glob
 from os import environ, listdir, remove
-from os.path import basename, isdir, isfile, join
+from os.path import isdir, isfile, join
 
 from platformio.util import exec_command, where_is_program
 
@@ -37,47 +37,35 @@ class InoToCPPConverter(object):
 
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
 
-    STRIPCOMMENTS_RE = re.compile(r"(/\*.*?\*/|^\s*//[^\r\n]*$)",
-                                  re.M | re.S)
-
     def __init__(self, nodes):
         self.nodes = nodes
 
     def is_main_node(self, contents):
         return self.DETECTMAIN_RE.search(contents)
 
-    @staticmethod
-    def _replace_comments_callback(match):
-        if "\n" in match.group(1):
-            return "\n" * match.group(1).count("\n")
-        else:
-            return " "
-
-    def _parse_prototypes(self, contents):
+    def _parse_prototypes(self, file_path, contents):
         prototypes = []
         reserved_keywords = set(["if", "else", "while"])
-        for item in self.PROTOTYPE_RE.findall(contents):
-            if set([item[1].strip(), item[2].strip()]) & reserved_keywords:
+        for match in self.PROTOTYPE_RE.finditer(contents):
+            if (set([match.group(2).strip(), match.group(3).strip()]) &
+                    reserved_keywords):
                 continue
-            prototypes.append(item[0])
+            prototypes.append((file_path, match.start(), match.group(1)))
         return prototypes
 
-    def append_prototypes(self, fname, contents, prototypes):
-        contents = self.STRIPCOMMENTS_RE.sub(self._replace_comments_callback,
-                                             contents)
+    @staticmethod
+    def append_prototypes(contents, prototypes):
         result = []
-        is_appended = False
-        linenum = 0
-        for line in contents.splitlines():
-            linenum += 1
-            line = line.strip()
+        if not prototypes:
+            return result
 
-            if not is_appended and line and not line.startswith("#"):
-                is_appended = True
-                result.append("%s;" % ";\n".join(prototypes))
-                result.append('#line %d "%s"' % (linenum, fname))
-
-            result.append(line)
+        first_pos = prototypes[0][1]
+        result.append(contents[:first_pos].strip())
+        result.append("%s;" % ";\n".join([p[2] for p in prototypes]))
+        result.append('#line %d "%s"' % (
+            contents.count("\n", 0, first_pos + len(prototypes[0][2])) + 1,
+            prototypes[0][0].replace("\\", "/")))
+        result.append(contents[first_pos:].strip())
 
         return result
 
@@ -86,9 +74,9 @@ class InoToCPPConverter(object):
         data = []
         for node in self.nodes:
             ino_contents = node.get_text_contents()
-            prototypes += self._parse_prototypes(ino_contents)
+            prototypes += self._parse_prototypes(node.get_path(), ino_contents)
 
-            item = (basename(node.get_path()), ino_contents)
+            item = (node.get_path(), ino_contents)
             if self.is_main_node(ino_contents):
                 data = [item] + data
             else:
@@ -99,12 +87,12 @@ class InoToCPPConverter(object):
 
         result = ["#include <Arduino.h>"]
         is_first = True
+        for file_path, contents in data:
+            result.append('#line 1 "%s"' % file_path.replace("\\", "/"))
 
-        for name, contents in data:
             if is_first and prototypes:
-                result += self.append_prototypes(name, contents, prototypes)
+                result += self.append_prototypes(contents, prototypes)
             else:
-                result.append('#line 1 "%s"' % name)
                 result.append(contents)
             is_first = False
 

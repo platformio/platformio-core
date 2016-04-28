@@ -153,7 +153,7 @@ Examples
 "Blink" Project
 ^^^^^^^^^^^^^^^
 
-Source code of `Visual Studio "Blink" Project <https://github.com/platformio/platformio/tree/develop/examples/ide/visualstudio>`_.
+Source code of `Visual Studio "Blink" Project <https://github.com/platformio/platformio-examples/tree/develop/ide/visualstudio>`_.
 
 Known issues
 ------------

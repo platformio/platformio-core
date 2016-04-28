@@ -1,0 +1,3 @@
+[submodule "atmelavr-and-arduino/arduino-external-libs/lib/OneWire"]
+	path = atmelavr-and-arduino/arduino-external-libs/lib/OneWire
+	url = https://github.com/PaulStoffregen/OneWire.git

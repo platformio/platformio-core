@@ -74,6 +74,6 @@ setup(
         "iot", "ide", "build", "compile", "library manager",
         "embedded", "ci", "continuous integration", "arduino", "mbed",
         "esp8266", "framework", "ide", "ide integration", "library.json",
-        "make", "cmake", "makefile", "mk"
+        "make", "cmake", "makefile", "mk", "pic32", "fpga"
     ]
 )
