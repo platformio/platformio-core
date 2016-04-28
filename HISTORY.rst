@@ -23,6 +23,9 @@ PlatformIO 2.0
   (`issue #412 <https://github.com/platformio/platformio/issues/412>`_)
 * New boards for `ARM mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
   framework: ST Nucleo F410RB, ST Nucleo L073RZ and BBC micro:bit
+* Added support for Arduino.Org boards: Arduino Leonardo ETH, Arduino Yun Mini,
+  Arduino Industrial 101 and Linino One
+  (`issue #472 <https://github.com/platformio/platformio/issues/472>`_)
 * Added support for Generic ATTiny boards: ATTiny13, ATTiny24, ATTiny25,
   ATTiny45 and ATTiny85
   (`issue #636 <https://github.com/platformio/platformio/issues/636>`_)
