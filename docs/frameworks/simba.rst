@@ -78,28 +78,28 @@ Arduino
       - RAM
 
     * - ``due``
-      - `Arduino Due (Programming Port) <http://arduino.cc/en/Main/arduinoBoardDue>`_
+      - `Arduino Due (Programming Port) <http://www.arduino.org/products/boards/4-arduino-boards/arduino-due>`_
       - SAM3X8E
       - 84 MHz
       - 512 Kb
       - 32 Kb
 
     * - ``megaatmega2560``
-      - `Arduino Mega or Mega 2560 ATmega2560 (Mega 2560) <http://arduino.cc/en/Main/arduinoBoardMega2560>`_
+      - `Arduino Mega or Mega 2560 ATmega2560 (Mega 2560) <http://www.arduino.org/products/boards/4-arduino-boards/arduino-mega-2560>`_
       - ATMEGA2560
       - 16 MHz
       - 256 Kb
       - 8 Kb
 
     * - ``nanoatmega328``
-      - `Arduino Nano ATmega328 <http://arduino.cc/en/Main/ArduinoBoardNano>`_
+      - `Arduino Nano ATmega328 <http://www.arduino.org/products/boards/4-arduino-boards/arduino-nano>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
       - 2 Kb
 
     * - ``uno``
-      - `Arduino Uno <http://arduino.cc/en/Main/ArduinoBoardUno>`_
+      - `Arduino Uno <http://www.arduino.org/products/boards/4-arduino-boards/arduino-uno>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb

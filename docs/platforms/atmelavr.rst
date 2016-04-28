@@ -214,6 +214,13 @@ Arduino
       - 32 Kb
       - 2 Kb
 
+    * - ``chiwawa``
+      - `Arduino Industrial 101 <http://www.arduino.org/products/boards/4-arduino-boards/arduino-industrial-101>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
     * - ``diecimilaatmega168``
       - `Arduino Duemilanove or Diecimila ATmega168 <http://arduino.cc/en/Main/ArduinoBoardDiecimila>`_
       - ATMEGA168
@@ -229,14 +236,14 @@ Arduino
       - 2 Kb
 
     * - ``esplora``
-      - `Arduino Esplora <http://arduino.cc/en/Main/ArduinoBoardEsplora>`_
+      - `Arduino Esplora <http://www.arduino.org/products/boards/4-arduino-boards/arduino-esplora>`_
       - ATMEGA32U4
       - 16 MHz
       - 32 Kb
       - 2.5 Kb
 
     * - ``ethernet``
-      - `Arduino Ethernet <http://arduino.cc/en/Main/ArduinoBoardEthernet>`_
+      - `Arduino Ethernet <http://www.arduino.org/products/boards/4-arduino-boards/arduino-ethernet>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
@@ -250,7 +257,14 @@ Arduino
       - 2 Kb
 
     * - ``leonardo``
-      - `Arduino Leonardo <http://arduino.cc/en/Main/arduinoBoardLeonardo>`_
+      - `Arduino Leonardo <http://www.arduino.org/products/boards/4-arduino-boards/arduino-leonardo>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``leonardoeth``
+      - `Arduino Leonardo ETH <http://www.arduino.org/products/boards/4-arduino-boards/arduino-leonardo-eth>`_
       - ATMEGA32U4
       - 16 MHz
       - 32 Kb
@@ -271,28 +285,28 @@ Arduino
       - 2 Kb
 
     * - ``megaADK``
-      - `Arduino Mega ADK <http://arduino.cc/en/Main/ArduinoBoardMegaADK>`_
+      - `Arduino Mega ADK <http://www.arduino.org/products/boards/4-arduino-boards/arduino-mega-adk>`_
       - ATMEGA2560
       - 16 MHz
       - 256 Kb
       - 8 Kb
 
     * - ``megaatmega1280``
-      - `Arduino Mega or Mega 2560 ATmega1280 <http://arduino.cc/en/Main/arduinoBoardMega>`_
+      - `Arduino Mega or Mega 2560 ATmega1280 <http://www.arduino.org/products/boards/4-arduino-boards/arduino-mega-2560>`_
       - ATMEGA1280
       - 16 MHz
       - 128 Kb
       - 8 Kb
 
     * - ``megaatmega2560``
-      - `Arduino Mega or Mega 2560 ATmega2560 (Mega 2560) <http://arduino.cc/en/Main/arduinoBoardMega2560>`_
+      - `Arduino Mega or Mega 2560 ATmega2560 (Mega 2560) <http://www.arduino.org/products/boards/4-arduino-boards/arduino-mega-2560>`_
       - ATMEGA2560
       - 16 MHz
       - 256 Kb
       - 8 Kb
 
     * - ``micro``
-      - `Arduino Micro <http://arduino.cc/en/Main/ArduinoBoardMicro>`_
+      - `Arduino Micro <http://www.arduino.org/products/boards/4-arduino-boards/arduino-micro>`_
       - ATMEGA32U4
       - 16 MHz
       - 32 Kb
@@ -313,14 +327,14 @@ Arduino
       - 2 Kb
 
     * - ``nanoatmega168``
-      - `Arduino Nano ATmega168 <http://arduino.cc/en/Main/ArduinoBoardNano>`_
+      - `Arduino Nano ATmega168 <http://www.arduino.org/products/boards/4-arduino-boards/arduino-nano>`_
       - ATMEGA168
       - 16 MHz
       - 16 Kb
       - 1 Kb
 
     * - ``nanoatmega328``
-      - `Arduino Nano ATmega328 <http://arduino.cc/en/Main/ArduinoBoardNano>`_
+      - `Arduino Nano ATmega328 <http://www.arduino.org/products/boards/4-arduino-boards/arduino-nano>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
@@ -355,28 +369,35 @@ Arduino
       - 2 Kb
 
     * - ``robotControl``
-      - `Arduino Robot Control <http://arduino.cc/en/Main/Robot>`_
+      - `Arduino Robot Control <http://www.arduino.org/products/boards/4-arduino-boards/arduino-robot>`_
       - ATMEGA32U4
       - 16 MHz
       - 32 Kb
       - 2.5 Kb
 
     * - ``robotMotor``
-      - `Arduino Robot Motor <http://arduino.cc/en/Main/Robot>`_
+      - `Arduino Robot Motor <http://www.arduino.org/products/boards/4-arduino-boards/arduino-robot>`_
       - ATMEGA32U4
       - 16 MHz
       - 32 Kb
       - 2.5 Kb
 
     * - ``uno``
-      - `Arduino Uno <http://arduino.cc/en/Main/ArduinoBoardUno>`_
+      - `Arduino Uno <http://www.arduino.org/products/boards/4-arduino-boards/arduino-uno>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb
       - 2 Kb
 
     * - ``yun``
-      - `Arduino Yun <http://arduino.cc/en/Main/ArduinoBoardYun>`_
+      - `Arduino Yun <http://www.arduino.org/products/boards/4-arduino-boards/arduino-yun>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+    * - ``yunmini``
+      - `Arduino Yun Mini <http://www.arduino.org/products/boards/4-arduino-boards/arduino-yun-mini>`_
       - ATMEGA32U4
       - 16 MHz
       - 32 Kb
@@ -576,6 +597,26 @@ LightUp
       - `LightUp <https://www.lightup.io/>`_
       - ATMEGA32U4
       - 8 MHz
+      - 32 Kb
+      - 2.5 Kb
+
+Linino
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``one``
+      - `Linino One <http://www.linino.org/portfolio/linino-one/>`_
+      - ATMEGA32U4
+      - 16 MHz
       - 32 Kb
       - 2.5 Kb
 
