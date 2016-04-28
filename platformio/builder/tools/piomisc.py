@@ -64,7 +64,7 @@ class InoToCPPConverter(object):
         result.append("%s;" % ";\n".join([p[2] for p in prototypes]))
         result.append('#line %d "%s"' % (
             contents.count("\n", 0, first_pos + len(prototypes[0][2])) + 1,
-            prototypes[0][0]))
+            prototypes[0][0].replace("\\", "/")))
         result.append(contents[first_pos:].strip())
 
         return result
@@ -88,7 +88,7 @@ class InoToCPPConverter(object):
         result = ["#include <Arduino.h>"]
         is_first = True
         for file_path, contents in data:
-            result.append('#line 1 "%s"' % file_path)
+            result.append('#line 1 "%s"' % file_path.replace("\\", "/"))
 
             if is_first and prototypes:
                 result += self.append_prototypes(contents, prototypes)
