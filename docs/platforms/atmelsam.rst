@@ -34,6 +34,9 @@ Packages
     * - ``framework-arduinosam``
       - `Arduino Wiring-based Framework (SAM Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
 
+    * - ``framework-simba``
+      - `Simba Framework <https://github.com/eerimoq/simba>`_
+
     * - ``tool-openocd``
       - `OpenOCD <http://openocd.org>`_
 
@@ -69,6 +72,9 @@ Frameworks
 
     * - :ref:`framework_mbed`
       - The mbed framework The mbed SDK has been designed to provide enough hardware abstraction to be intuitive and concise, yet powerful enough to build complex projects. It is built on the low-level ARM CMSIS APIs, allowing you to code down to the metal if needed. In addition to RTOS, USB and Networking libraries, a cookbook of hundreds of reusable peripheral and module libraries have been built on top of the SDK by the mbed Developer Community.
+
+    * - :ref:`framework_simba`
+      - Simba is an RTOS and build framework. It aims to make embedded programming easy and portable.
 
 Boards
 ------

@@ -34,6 +34,9 @@ Packages
     * - ``tool-avrdude``
       - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
 
+    * - ``framework-simba``
+      - `Simba Framework <https://github.com/eerimoq/simba>`_
+
     * - ``framework-arduinoavr``
       - `Arduino Wiring-based Framework (AVR Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
 
@@ -60,6 +63,9 @@ Frameworks
 
     * - :ref:`framework_arduino`
       - Arduino Wiring-based Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
+
+    * - :ref:`framework_simba`
+      - Simba is an RTOS and build framework. It aims to make embedded programming easy and portable.
 
 Boards
 ------

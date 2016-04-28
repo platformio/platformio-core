@@ -9,19 +9,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _frameworks:
+Examples
+--------
 
-Frameworks
-==========
+All project examples are located in PlatformIO repository
+`Examples for Simba framework <https://github.com/platformio/platformio-examples/tree/develop/examples/simba>`_.
 
-.. toctree::
-    :maxdepth: 2
-
-    arduino
-    cmsis
-    energia
-    libopencm3
-    mbed
-    simba
-    spl
-    wiringpi
+* `Blink <https://github.com/platformio/platformio-examples/tree/develop/simba/blink>`_

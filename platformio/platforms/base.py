@@ -87,6 +87,9 @@ PLATFORM_PACKAGES = {
     "framework-wiringpi": [
         ("GPIO Interface library for the Raspberry Pi", "http://wiringpi.com")
     ],
+    "framework-simba": [
+        ("Simba Framework", "https://github.com/eerimoq/simba")
+    ],
     "sdk-esp8266": [
         ("ESP8266 SDK", "http://bbs.espressif.com")
     ],

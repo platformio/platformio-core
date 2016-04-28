@@ -173,10 +173,11 @@ Frameworks:
 
 * `Arduino <http://platformio.org/frameworks/arduino>`_
 * `CMSIS <http://platformio.org/frameworks/cmsis>`_
-* `libOpenCM3 <http://platformio.org/frameworks/libopencm3>`_
 * `Energia <http://platformio.org/frameworks/energia>`_
-* `SPL <http://platformio.org/frameworks/spl>`_
+* `libOpenCM3 <http://platformio.org/frameworks/libopencm3>`_
 * `mbed <http://platformio.org/frameworks/mbed>`_
+* `Simba <http://platformio.org/frameworks/simba>`_
+* `SPL <http://platformio.org/frameworks/spl>`_
 * `WiringPi <http://platformio.org/frameworks/wiringpi>`_
 
 For further details, please refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_

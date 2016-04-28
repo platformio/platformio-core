@@ -45,6 +45,10 @@ class AtmelavrPlatform(BasePlatform):
 
         "framework-arduinoavr": {
             "alias": "framework"
+        },
+
+        "framework-simba": {
+            "alias": "framework"
         }
     }
 

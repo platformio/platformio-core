@@ -352,7 +352,7 @@
             "mcu": "atmega2560",
             "variant": "mega"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Arduino Mega or Mega 2560 ATmega2560 (Mega 2560)",
         "platform": "atmelavr",
         "upload": {
@@ -467,7 +467,7 @@
             "mcu": "atmega328p",
             "variant": "eightanaloginputs"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Arduino Nano ATmega328",
         "platform": "atmelavr",
         "upload": {
@@ -634,7 +634,7 @@
             "mcu": "atmega328p",
             "variant": "standard"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Arduino Uno",
         "platform": "atmelavr",
         "upload": {
@@ -694,7 +694,7 @@
               ["0x2A03", "0x003D"]
             ]
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Arduino Due (Programming Port)",
         "platform": "atmelsam",
         "upload": {

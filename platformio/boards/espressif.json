@@ -10,7 +10,7 @@
             "mcu": "esp8266",
             "variant": "generic"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Espressif Generic ESP8266 ESP-01 512k",
         "platform": "espressif",
         "upload": {
@@ -35,7 +35,7 @@
             "mcu": "esp8266",
             "variant": "generic"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Espressif Generic ESP8266 ESP-01 1M",
         "platform": "espressif",
         "upload": {
@@ -85,7 +85,7 @@
             "mcu": "esp8266",
             "variant": "nodemcu"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Espressif ESP8266 ESP-12E",
         "platform": "espressif",
         "upload": {
@@ -135,7 +135,7 @@
             "mcu": "esp8266",
             "variant": "nodemcu"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "NodeMCU 0.9 (ESP-12 Module)",
         "platform": "espressif",
         "upload": {
@@ -160,7 +160,7 @@
             "mcu": "esp8266",
             "variant": "nodemcu"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "NodeMCU 1.0 (ESP-12E Module)",
         "platform": "espressif",
         "upload": {
@@ -185,7 +185,7 @@
             "mcu": "esp8266",
             "variant": "adafruit"
         },
-        "frameworks": ["arduino"],
+        "frameworks": ["arduino", "simba"],
         "name": "Adafruit HUZZAH ESP8266",
         "platform": "espressif",
         "upload": {
