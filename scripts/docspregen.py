@@ -34,6 +34,9 @@ def is_compat_platform_and_framework(platform, framework):
 def generate_boards(boards):
 
     def _round_memory_size(size):
+        if size == 1:
+            return 1;
+
         size = ceil(size)
         for b in (64, 32, 16, 8, 4, 2, 1):
             if b < size:

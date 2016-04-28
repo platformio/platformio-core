@@ -26,6 +26,9 @@ PlatformIO 2.0
 * Added support for Generic ATTiny boards: ATTiny13, ATTiny24, ATTiny25,
   ATTiny45 and ATTiny85
   (`issue #636 <https://github.com/platformio/platformio/issues/636>`_)
+* Added support for MightyCore boards: ATmega1284, ATmega644, ATmega324,
+  ATmega164, ATmega32, ATmega16 and ATmega8535
+  (`issue #585 <https://github.com/platformio/platformio/issues/585>`_)
 * Added support for `TI MSP430 <http://docs.platformio.org/en/latest/platforms/timsp430.html>`__
   boards: TI LaunchPad w/ msp430fr4133 and TI LaunchPad w/ msp430fr6989
 * Updated Arduino core for Espressif platform to 2.2.0

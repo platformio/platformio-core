@@ -510,6 +510,13 @@ Generic ATTiny
       - Flash
       - RAM
 
+    * - ``attiny13``
+      - `Generic ATTiny13 <http://www.atmel.com/devices/ATTINY13.aspx>`_
+      - ATTINY13
+      - 9 MHz
+      - 1 Kb
+      - 0.0625 Kb
+
     * - ``attiny24``
       - `Generic ATTiny24 <http://www.atmel.com/devices/ATTINY24.aspx>`_
       - ATTINY24
@@ -598,6 +605,61 @@ LowPowerLab
       - 16 MHz
       - 128 Kb
       - 16 Kb
+
+Mcudude
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``mightycore1284``
+      - `MightyCore ATmega1284 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA1284P
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``mightycore16``
+      - `MightyCore ATmega16 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA16
+      - 16 MHz
+      - 16 Kb
+      - 1 Kb
+
+    * - ``mightycore164``
+      - `MightyCore ATmega164 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA164P
+      - 16 MHz
+      - 16 Kb
+      - 1 Kb
+
+    * - ``mightycore32``
+      - `MightyCore ATmega32 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA32
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``mightycore324``
+      - `MightyCore ATmega324 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA324P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``mightycore644``
+      - `MightyCore ATmega644 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA644P
+      - 16 MHz
+      - 64 Kb
+      - 4 Kb
 
 Microduino
 ~~~~~~~~~~
