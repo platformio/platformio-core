@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.9.0 (2016-04-??)
+2.9.0 (2016-04-28)
 ~~~~~~~~~~~~~~~~~~
 
 * Project generator for `CodeBlocks IDE <http://docs.platformio.org/en/latest/ide/codeblocks.html>`__
