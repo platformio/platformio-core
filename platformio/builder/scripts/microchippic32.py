@@ -18,14 +18,11 @@
 
 from os.path import join
 
-from SCons.Script import (
-    COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default, DefaultEnvironment)
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
+                          DefaultEnvironment)
 
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
-
-    if "program" in COMMAND_LINE_TARGETS:
-        return
 
     env.AutodetectUploadPort()
     env.Prepend(UPLOADERFLAGS=["-d", '"$UPLOAD_PORT"'])
