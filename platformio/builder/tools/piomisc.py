@@ -59,8 +59,7 @@ class InoToCPPConverter(object):
             return result
 
         prototype_names = set(
-            [p['match'].group(3).strip() for p in prototypes
-             if p['path'] == file_path])
+            [p['match'].group(3).strip() for p in prototypes])
         split_pos = prototypes[0]['match'].start()
         for item in prototypes:
             if item['path'] == file_path:
