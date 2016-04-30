@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.9.1 (2016-04-??)
+2.9.1 (2016-04-30)
 ~~~~~~~~~~~~~~~~~~
 
 * Handle prototype pointers while converting ``*.ino`` to ``.cpp``
