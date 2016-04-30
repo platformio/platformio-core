@@ -34,8 +34,8 @@ class InoToCPPConverter(object):
         """,
         re.X | re.M | re.I
     )
-
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
+    PROTOPTRS_TPLRE = r"\([^&\(]*&(%s)[^\)]*\)"
 
     def __init__(self, nodes):
         self.nodes = nodes
@@ -50,22 +50,33 @@ class InoToCPPConverter(object):
             if (set([match.group(2).strip(), match.group(3).strip()]) &
                     reserved_keywords):
                 continue
-            prototypes.append((file_path, match.start(), match.group(1)))
+            prototypes.append({"path": file_path, "match": match})
         return prototypes
 
-    @staticmethod
-    def append_prototypes(contents, prototypes):
+    def append_prototypes(self, contents, prototypes):
         result = []
         if not prototypes:
             return result
 
-        first_pos = prototypes[0][1]
-        result.append(contents[:first_pos].strip())
-        result.append("%s;" % ";\n".join([p[2] for p in prototypes]))
+        split_pos = prototypes[0]['match'].start()
+        prototype_names = set(
+            [p['match'].group(3).strip() for p in prototypes])
+
+        match_ptrs = re.search(
+            self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),
+            contents[:split_pos],
+            re.M
+        )
+        if match_ptrs:
+            split_pos = contents.rfind("\n", 0, match_ptrs.start())
+
+        result.append(contents[:split_pos].strip())
+        result.append("%s;" %
+                      ";\n".join([p['match'].group(1) for p in prototypes]))
         result.append('#line %d "%s"' % (
-            contents.count("\n", 0, first_pos + len(prototypes[0][2])) + 1,
-            prototypes[0][0].replace("\\", "/")))
-        result.append(contents[first_pos:].strip())
+            contents.count("\n", 0, split_pos) + 2,
+            prototypes[0]['path'].replace("\\", "/")))
+        result.append(contents[split_pos:].strip())
 
         return result
 
