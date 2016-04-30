@@ -36,5 +36,8 @@ class Lattice_ice40Platform(BasePlatform):
         }
     }
 
+    def get_name(self):
+        return "Lattice iCE40"
+
     def is_embedded(self):
         return True

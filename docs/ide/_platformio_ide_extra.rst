@@ -15,8 +15,8 @@
 
     * Cross-platform build system without external dependencies to the OS software:
 
-        - 200+ embedded boards
-        - 15+ development platforms
+        - 250+ embedded boards
+        - 20+ development platforms
         - 10+ frameworks
 
     * C/C++ Intelligent code completion
