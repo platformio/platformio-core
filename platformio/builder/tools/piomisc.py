@@ -53,14 +53,18 @@ class InoToCPPConverter(object):
             prototypes.append({"path": file_path, "match": match})
         return prototypes
 
-    def append_prototypes(self, contents, prototypes):
+    def append_prototypes(self, file_path, contents, prototypes):
         result = []
         if not prototypes:
             return result
 
-        split_pos = prototypes[0]['match'].start()
         prototype_names = set(
             [p['match'].group(3).strip() for p in prototypes])
+        split_pos = prototypes[0]['match'].start()
+        for item in prototypes:
+            if item['path'] == file_path:
+                split_pos = item['match'].start()
+                break
 
         match_ptrs = re.search(
             self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),
@@ -74,8 +78,7 @@ class InoToCPPConverter(object):
         result.append("%s;" %
                       ";\n".join([p['match'].group(1) for p in prototypes]))
         result.append('#line %d "%s"' % (
-            contents.count("\n", 0, split_pos) + 2,
-            prototypes[0]['path'].replace("\\", "/")))
+            contents.count("\n", 0, split_pos) + 2, file_path))
         result.append(contents[split_pos:].strip())
 
         return result
@@ -102,7 +105,8 @@ class InoToCPPConverter(object):
             result.append('#line 1 "%s"' % file_path.replace("\\", "/"))
 
             if is_first and prototypes:
-                result += self.append_prototypes(contents, prototypes)
+                result += self.append_prototypes(
+                    file_path, contents, prototypes)
             else:
                 result.append(contents)
             is_first = False
