@@ -7,7 +7,7 @@ PlatformIO 2.0
 2.9.1 (2016-04-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Handle pointer to the prototypes while converting ``*.ino`` to ``.cpp``
+* Handle prototype pointers while converting ``*.ino`` to ``.cpp``
   (`issue #639 <https://github.com/platformio/platformio/issues/639>`_)
 
 2.9.0 (2016-04-28)
