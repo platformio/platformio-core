@@ -78,7 +78,8 @@ class InoToCPPConverter(object):
         result.append("%s;" %
                       ";\n".join([p['match'].group(1) for p in prototypes]))
         result.append('#line %d "%s"' % (
-            contents.count("\n", 0, split_pos) + 2, file_path))
+            contents.count("\n", 0, split_pos) + 2,
+            file_path.replace("\\", "/")))
         result.append(contents[split_pos:].strip())
 
         return result
