@@ -605,5 +605,21 @@
         },
         "url": "https://developer.mbed.org/platforms/ST-B96B-F446VE/",
         "vendor": "96Boards"
+    },
+    "mts_mdot_f411re": {
+        "build": {
+            "f_cpu": "100000000L",
+            "cpu": "cortex-m4",
+            "mcu": "stm32f411ret6"
+        },
+        "frameworks": ["mbed"],
+        "name": "MultiTech mDot",
+        "platform": "ststm32",
+        "upload": {
+            "maximum_ram_size": 131072,
+            "maximum_size": 524288
+        },
+        "url": "https://developer.mbed.org/platforms/MTS-mDot-F411/",
+        "vendor": "MultiTech"
     }
 }
