@@ -62,9 +62,9 @@ IDE integration. Arduino and MBED compatible. Ready for Cloud compiling.
   platforms and frameworks; learn via examples; be up-to-date with the latest
   version.
 
-*Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
-Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
-libOpenCM3, etc.*
+*Atmel AVR & SAM, Espressif, Freescale Kinetis, Intel ARC32, Lattice iCE40,
+Microchip PIC32, Nordic nRF51, NXP LPC, Silicon Labs EFM32, ST STM32,
+TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-demo-wiring.gif
     :target: http://platformio.org

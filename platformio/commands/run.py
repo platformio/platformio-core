@@ -81,7 +81,8 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
 
             envname = section[4:]
             if ((environment and envname not in environment) or
-                    (env_default and envname not in env_default)):
+                    (not environment and env_default and
+                     envname not in env_default)):
                 # echo("Skipped %s environment" % style(envname, fg="yellow"))
                 continue
 

@@ -4,6 +4,11 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.9.2 (2016-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed bug with ``env_default`` when ``pio run -e`` is used
+
 2.9.1 (2016-04-30)
 ~~~~~~~~~~~~~~~~~~
 
