@@ -161,6 +161,9 @@ It has support for the most popular embedded platforms:
 * `Atmel SAM <http://platformio.org/platforms/atmelsam>`_
 * `Espressif <http://platformio.org/platforms/espressif>`_
 * `Freescale Kinetis <http://platformio.org/platforms/freescalekinetis>`_
+* `Intel ARC32 <http://platformio.org/platforms/intel_arc32>`_
+* `Lattice iCE40 <http://platformio.org/platforms/lattice_ice40>`_
+* `Microchip PIC32 <http://platformio.org/platforms/microchippic32>`_
 * `Nordic nRF51 <http://platformio.org/platforms/nordicnrf51>`_
 * `NXP LPC <http://platformio.org/platforms/nxplpc>`_
 * `ST STM32 <http://platformio.org/platforms/ststm32>`_
