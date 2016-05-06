@@ -15,7 +15,7 @@ Quick Start
 ===========
 
 .. note::
-    If you are looking for a Qucik Start for PlatformIO IDE please follow to
+    If you are looking for a Quick Start for PlatformIO IDE please follow to
     :ref:`PlatformIO IDE Quick Start <atom_ide_quickstart>` page.
 
 This tutorial introduces you to the basics of PlatformIO Command Line Interface
