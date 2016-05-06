@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.9.2 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for Silicon Labs SLSTK3401A (Pearl Gecko) and
+  MultiTech mDot F411 ARM mbed based boards
 * Added support for MightyCore ATmega8535 board
   (`issue #585 <https://github.com/platformio/platformio/issues/585>`_)
 * Use HTTP mirror for Package Manager in a case with SSL errors

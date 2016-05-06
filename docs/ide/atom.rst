@@ -437,6 +437,14 @@ To force Smart Code Linter to use Arduino files as C++ please
 Frequently Asked Questions
 --------------------------
 
+Keep build panel visible
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE hides build panel on success by default. Nevertheless, you can
+keep it visible all time. Please follow to
+``Menu: PlatformIO > Settings > Build`` and set ``Panel Visibility`` to
+``Keep Visible``.
+
 Automatically save on build
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
