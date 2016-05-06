@@ -82,5 +82,22 @@
         },
         "url": "https://developer.mbed.org/platforms/EFM32-Happy-Gecko/",
         "vendor": "Silicon Labs"
+    },
+
+    "efm32pg_stk3401": {
+        "build": {
+            "f_cpu": "40000000L",
+            "cpu": "cortex-m4",
+            "mcu": "efm32pg1b200f256"
+        },
+        "frameworks": ["mbed"],
+        "name": "Silicon Labs SLSTK3401A (Pearl Gecko)",
+        "platform": "siliconlabsefm32",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144
+        },
+        "url": "https://developer.mbed.org/platforms/EFM32-Pearl-Gecko/",
+        "vendor": "Silicon Labs"
     }
 }
