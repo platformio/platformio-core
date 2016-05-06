@@ -23,10 +23,13 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
+* May 05, 2016 - **Ivan Kravets, Ph.D. / Eclipse Virtual IoT Meetup** - `PlatformIO: a cross-platform IoT solution to build them all! <http://www.meetup.com/Virtual-IoT/events/229964142/>`_
 * Apr 23, 2016 - **Al Williams** - `Hackaday: Atomic Arduino (and Other) Development <http://hackaday.com/2016/04/23/atomic-arduino-and-other-development/>`_
 * Apr 16, 2016 - **Sathittham Sangthong** - `[PlatformIO] มาลองเล่น PlatformIO แทน Arduino IDE กัน (Let's play together with PlatformIO IDE [alternative to Arduino IDE], Thai) <http://www.sathittham.com/platformio/platformio-ide/>`_
+* Apr 15, 2016 - **Daniel Eichhorn** - `ESP8266: Offline Debugging with the Platformio Environment <http://blog.squix.ch/2016/04/esp8266-offline-debugging-with.html>`_
 * Apr 11, 2016 - **Matjaz Trcek** - `Top 5 Arduino integrated development environments <https://codeandunicorns.com/top-5-arduino-integrated-development-environments-ide/>`_
 * Apr 06, 2016 - **Aleks** - `PlatformIO ausprobiert (Tried PlatformIO, German) <http://5volt-junkie.net/platformio/>`_
+* Apr 02, 2016 - **Diego Pinto** - `Você tem coragem de abandonar a IDE do Arduino? PlatformIO + Atom (Do you dare to leave the Arduino IDE? PlatformIO + Atom, Portuguese) <http://www.clubemaker.com.br/?rota=artigo/81>`_
 * Mar 30, 2016 - **Brandon Cannaday** - `Getting Started with PlatformIO and ESP8266 NodeMcu <https://www.losant.com/blog/getting-started-with-platformio-esp8266-nodemcu>`_
 * Mar 29, 2016 - **Pablo Peñalve** - `PlatformIO + Geany + Raspberry PI, Spanish <http://ret-catriel.blogspot.com/2016/03/framework-platformio-geany-raspberry-pi.html>`_
 * Mar 24, 2016 - **NAzT** - `PlatformIO และการปรับแต่ง เพื่อใช้สำหรับพัฒนา Arduino Library (PlatformIO and advanced development for Arduino Library, Thai) <https://cmmakerclub.com/tools-2/config-platformio-for-arduino-framework-developer/>`_

@@ -71,9 +71,18 @@ If you have some problems with unresolved includes, defines, etc., then
     after generating process wont be reflected in IDE. To fix it you
     need to reinitialize project using :ref:`cmd_init` (repeat it).
 
+Live Integration
+----------------
+
+Eclipse Virtual IoT Meetup: `PlatformIO: a cross-platform IoT solution to build them all! <http://www.meetup.com/Virtual-IoT/events/229964142/>`_
+
+.. image:: ../_static/ide-eclipse-virtualiot.jpg
+    :target: https://www.youtube.com/watch?v=6t7UbX812Yw
+
 Articles / Manuals
 ------------------
 
+* May 05, 2016 - **Ivan Kravets, Ph.D. / Eclipse Virtual IoT Meetup** - `PlatformIO: a cross-platform IoT solution to build them all! <http://www.meetup.com/Virtual-IoT/events/229964142/>`_
 * Sep 01, 2015 - **Thomas P. Weldon, Ph.D.** - `Improvised MBED FRDM-K64F Eclipse/PlatformIO Setup and Software Installation <http://thomasweldon.com/tpw/courses/embeddsp/p00pcFrdmK64_eclipsePlatformioSetup.html>`_
 * Jul 11, 2015 - **TrojanC** - `Learning Arduino GitHub Repository <http://www.trojanc.co.za/2015/07/11/learning-arduino-github-repository/>`_
 * June 20, 2014 - **Ivan Kravets, Ph.D.** - `Building and debugging Atmel AVR (Arduino-based) project using Eclipse IDE+PlatformIO <http://www.ikravets.com/computer-life/programming/2014/06/20/building-and-debugging-atmel-avr-arduino-based-project-using-eclipse-ideplatformio>`_
