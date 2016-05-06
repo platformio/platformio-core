@@ -129,5 +129,27 @@
         },
         "url": "https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board",
         "vendor": "Mcudude"
+    },
+
+    "mightycore8535": {
+        "build": {
+            "core": "MightyCore",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ATmega8535",
+            "f_cpu": "16000000L",
+            "mcu": "atmega16",
+            "variant": "mightycore"
+        },
+        "frameworks": ["arduino"],
+        "name": "MightyCore ATmega8535",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 512,
+            "maximum_size": 7680,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board",
+        "vendor": "Mcudude"
     }
 }
