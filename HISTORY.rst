@@ -14,6 +14,8 @@ PlatformIO 2.0
 * Use HTTP mirror for Package Manager in a case with SSL errors
   (`issue #645 <https://github.com/platformio/platformio/issues/645>`_)
 * Fixed bug with ``env_default`` when ``pio run -e`` is used
+* Fixed issue with ``src_filter`` option for Windows OS
+  (`issue #652 <https://github.com/platformio/platformio/issues/652>`_)
 
 2.9.1 (2016-04-30)
 ~~~~~~~~~~~~~~~~~~

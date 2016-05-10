@@ -164,14 +164,14 @@ class EnvironmentProcessor(object):
         return result
 
     def _get_build_variables(self):
-        variables = ["PIOENV=" + self.name]
+        variables = {"pioenv": self.name}
         if self.upload_port:
-            variables.append("UPLOAD_PORT=%s" % self.upload_port)
+            variables['upload_port'] = self.upload_port
         for k, v in self.options.items():
-            k = k.upper()
-            if k == "TARGETS" or (k == "UPLOAD_PORT" and self.upload_port):
+            k = k.lower()
+            if k == "targets" or (k == "upload_port" and self.upload_port):
                 continue
-            variables.append("%s=%s" % (k, v))
+            variables[k] = v
         return variables
 
     def _get_build_targets(self):
