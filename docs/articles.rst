@@ -24,6 +24,7 @@ Here are recent articles about PlatformIO:
 ^^^^
 
 * May 05, 2016 - **Ivan Kravets, Ph.D. / Eclipse Virtual IoT Meetup** - `PlatformIO: a cross-platform IoT solution to build them all! <http://www.meetup.com/Virtual-IoT/events/229964142/>`_
+* May 01, 2016 - **Pedro Minatel** - `PlatformIO – Uma alternativa ao Arduino IDE (PlatformIO - An alternative to the Arduino IDE, Portuguese) <http://pedrominatel.com.br/ferramentas/platformio-uma-alternativa-ao-arduino-ide/>`_
 * Apr 23, 2016 - **Al Williams** - `Hackaday: Atomic Arduino (and Other) Development <http://hackaday.com/2016/04/23/atomic-arduino-and-other-development/>`_
 * Apr 16, 2016 - **Sathittham Sangthong** - `[PlatformIO] มาลองเล่น PlatformIO แทน Arduino IDE กัน (Let's play together with PlatformIO IDE [alternative to Arduino IDE], Thai) <http://www.sathittham.com/platformio/platformio-ide/>`_
 * Apr 15, 2016 - **Daniel Eichhorn** - `ESP8266: Offline Debugging with the Platformio Environment <http://blog.squix.ch/2016/04/esp8266-offline-debugging-with.html>`_
