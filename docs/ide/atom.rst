@@ -445,6 +445,11 @@ keep it visible all time. Please follow to
 ``Menu: PlatformIO > Settings > Build`` and set ``Panel Visibility`` to
 ``Keep Visible``.
 
+Key-bindings (toggle panel):
+
+* ``cmd+alt+v`` - Mac OS X
+* ``ctrl+alt+v`` - Windows/Linux
+
 Automatically save on build
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
