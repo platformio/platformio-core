@@ -14,7 +14,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 131072,
-            "maximum_size": 1048576
+            "maximum_size": 1048576,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF252419",
         "vendor": "ST"
@@ -34,7 +35,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 16384,
-            "maximum_size": 131072
+            "maximum_size": 131072,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF258515",
         "vendor": "ST"
@@ -54,7 +56,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 49152,
-            "maximum_size": 262144
+            "maximum_size": 262144,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF254044",
         "vendor": "ST"
@@ -70,7 +73,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 8192,
-            "maximum_size": 131072
+            "maximum_size": 131072,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF250863",
         "vendor": "ST"
@@ -86,7 +90,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 8192,
-            "maximum_size": 65536
+            "maximum_size": 65536,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF253215",
         "vendor": "ST"
@@ -102,7 +107,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 16384,
-            "maximum_size": 65536
+            "maximum_size": 65536,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF260318",
         "vendor": "ST"
@@ -118,7 +124,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 65536,
-            "maximum_size": 262144
+            "maximum_size": 262144,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259098",
         "vendor": "ST"
@@ -134,7 +141,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 262144,
-            "maximum_size": 2097152
+            "maximum_size": 2097152,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259090",
         "vendor": "ST"
@@ -425,7 +433,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 8192,
-            "maximum_size": 65536
+            "maximum_size": 65536,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/en/catalog/tools/PF260319",
         "vendor": "ST"
@@ -441,7 +450,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 12288,
-            "maximum_size": 65536
+            "maximum_size": 65536,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/en/catalog/tools/PF260318",
         "vendor": "ST"
@@ -457,7 +467,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 393216,
-            "maximum_size": 1048576
+            "maximum_size": 1048576,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/catalog/tools/FM116/CL1620/SC959/SS1532/LN1848/PF262395",
         "vendor": "ST"
@@ -473,7 +484,8 @@
         "platform": "ststm32",
         "upload": {
             "maximum_ram_size": 131072,
-            "maximum_size": 1048576
+            "maximum_size": 1048576,
+            "protocol": "stlink"
         },
         "url": "http://www.st.com/web/catalog/tools/FM116/CL1620/SC959/SS1532/LN1848/PF261635",
         "vendor": "ST"
