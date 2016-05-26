@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -27,7 +27,7 @@ different/own build scripts, uploader and etc.
 
 .. note::
     If you want to change some build flags for the existing
-    :ref:`Platforms <platforms>`, you don't need to create (or duplicate) own
+    :ref:`platforms`, you don't need to create (or duplicate) own
     development platforms! Please use :ref:`projectconf_build_flags` option.
 
 **Step-by-Step Manual**
@@ -361,9 +361,9 @@ Installation
 1. Create ``platforms`` directory in :ref:`projectconf_pio_home_dir` if it
    doesn't exist.
 2. Copy ``test.py`` and ``test-builder.py`` files to ``platforms`` directory.
-3. Search available platforms via :ref:`cmd_platforms_search` command. You should see
+3. Search available platforms via :ref:`cmd_platform_search` command. You should see
    ``test`` platform.
-4. Install ``test`` platform via :ref:`cmd_platforms_install` command.
+4. Install ``test`` platform via :ref:`cmd_platform_install` command.
 
 Now, you can use ``test`` for the :ref:`projectconf_env_platform` option in
 :ref:`projectconf`.
@@ -480,6 +480,6 @@ and copy there two files:
 
     Default([target_firm, target_size])
 
-Now, we should see ``ststm32gdb`` platform using :ref:`cmd_platforms_search` command output
-and can install it via :ref:`platformio platforms install ststm32gdb <cmd_platforms_install>` command.
+Now, we should see ``ststm32gdb`` platform using :ref:`cmd_platform_search` command output
+and can install it via :ref:`platformio platform install ststm32gdb <cmd_platform_install>` command.
 

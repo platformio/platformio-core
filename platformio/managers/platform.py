@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,251 +18,234 @@ import re
 import sys
 from imp import load_source
 from multiprocessing import cpu_count
-from os.path import isdir, isfile, join
+from os.path import basename, dirname, isdir, isfile, join
 
 import click
+import semantic_version
 
-from platformio import app, exception, util
-from platformio.app import get_state_item, set_state_item
-from platformio.pkgmanager import PackageManager
-
-PLATFORM_PACKAGES = {
-
-    "framework-arduinoavr": [
-        ("Arduino Wiring-based Framework (AVR Core, 1.6)",
-         "http://arduino.cc/en/Reference/HomePage")
-    ],
-    "framework-arduinosam": [
-        ("Arduino Wiring-based Framework (SAM Core, 1.6)",
-         "http://arduino.cc/en/Reference/HomePage")
-    ],
-    "framework-arduinoteensy": [
-        ("Arduino Wiring-based Framework",
-         "http://arduino.cc/en/Reference/HomePage")
-    ],
-    "framework-arduinomsp430": [
-        ("Arduino Wiring-based Framework (MSP430 Core)",
-         "http://arduino.cc/en/Reference/HomePage")
-    ],
-    "framework-arduinoespressif": [
-        ("Arduino Wiring-based Framework (ESP8266 Core)",
-         "https://github.com/esp8266/Arduino")
-    ],
-    "framework-arduinomicrochippic32": [
-        ("Arduino Wiring-based Framework (PIC32 Core)",
-         "https://github.com/chipKIT32/chipKIT-core")
-    ],
-    "framework-arduinointel": [
-        ("Arduino Wiring-based Framework (Intel ARC Core)",
-         "https://github.com/01org/corelibs-arduino101")
-    ],
-    "framework-arduinonordicnrf51": [
-        ("Arduino Wiring-based Framework (RFduino Core)",
-         "https://github.com/RFduino/RFduino")
-    ],
-    "framework-energiamsp430": [
-        ("Energia Wiring-based Framework (MSP430 Core)",
-         "http://energia.nu/reference/")
-    ],
-    "framework-energiativa": [
-        ("Energia Wiring-based Framework (LM4F Core)",
-         "http://energia.nu/reference/")
-    ],
-    "framework-cmsis": [
-        ("Vendor-independent hardware abstraction layer for the Cortex-M "
-         "processor series",
-         "http://www.arm.com/products/processors/"
-         "cortex-m/cortex-microcontroller-software-interface-standard.php")
-    ],
-    "framework-spl": [
-        ("Standard Peripheral Library for STM32 MCUs",
-         "http://www.st.com"
-         "/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890")
-    ],
-    "framework-libopencm3": [
-        ("libOpenCM3 Framework", "http://www.libopencm3.org/")
-    ],
-    "framework-mbed": [
-        ("mbed Framework", "http://mbed.org")
-    ],
-    "framework-wiringpi": [
-        ("GPIO Interface library for the Raspberry Pi", "http://wiringpi.com")
-    ],
-    "framework-simba": [
-        ("Simba Framework", "https://github.com/eerimoq/simba")
-    ],
-    "sdk-esp8266": [
-        ("ESP8266 SDK", "http://bbs.espressif.com")
-    ],
-    "ldscripts": [
-        ("Linker Scripts",
-         "https://sourceware.org/binutils/docs/ld/Scripts.html")
-    ],
-    "toolchain-atmelavr": [
-        ("avr-gcc", "https://gcc.gnu.org/wiki/avr-gcc"),
-        ("GDB", "http://www.gnu.org/software/gdb/"),
-        ("AVaRICE", "http://avarice.sourceforge.net/"),
-        ("SimulAVR", "http://www.nongnu.org/simulavr/")
-    ],
-    "toolchain-gccarmnoneeabi": [
-        ("gcc-arm-embedded", "https://launchpad.net/gcc-arm-embedded"),
-        ("GDB", "http://www.gnu.org/software/gdb/")
-    ],
-    "toolchain-gccarmlinuxgnueabi": [
-        ("GCC for Linux ARM GNU EABI", "https://gcc.gnu.org"),
-        ("GDB", "http://www.gnu.org/software/gdb/")
-    ],
-    "toolchain-gccmingw32": [
-        ("MinGW", "http://www.mingw.org")
-    ],
-    "toolchain-gcclinux32": [
-        ("GCC for Linux i686", "https://gcc.gnu.org")
-    ],
-    "toolchain-gcclinux64": [
-        ("GCC for Linux x86_64", "https://gcc.gnu.org")
-    ],
-    "toolchain-xtensa": [
-        ("xtensa-gcc", "https://github.com/jcmvbkbc/gcc-xtensa"),
-        ("GDB", "http://www.gnu.org/software/gdb/")
-    ],
-    "toolchain-timsp430": [
-        ("msp-gcc", "http://sourceforge.net/projects/mspgcc/"),
-        ("GDB", "http://www.gnu.org/software/gdb/")
-    ],
-    "toolchain-icestorm": [
-        ("GCC for FPGA IceStorm", "http://www.clifford.at/icestorm/")
-    ],
-    "toolchain-microchippic32": [
-        ("GCC for Microchip PIC32", "https://github.com/chipKIT32/chipKIT-cxx")
-    ],
-    "toolchain-intelarc32": [
-        ("GCC for Intel ARC",
-         "https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain")
-    ],
-    "tool-scons": [
-        ("SCons software construction tool", "http://www.scons.org")
-    ],
-    "tool-avrdude": [
-        ("AVRDUDE", "http://www.nongnu.org/avrdude/")
-    ],
-    "tool-micronucleus": [
-        ("Micronucleus", "https://github.com/micronucleus/micronucleus")
-    ],
-    "tool-bossac": [
-        ("BOSSA CLI", "https://sourceforge.net/projects/b-o-s-s-a/")
-    ],
-    "tool-openocd": [
-        ("OpenOCD", "http://openocd.org")
-    ],
-    "tool-stlink": [
-        ("ST-Link", "https://github.com/texane/stlink")
-    ],
-    "tool-teensy": [
-        ("Teensy Loader", "https://www.pjrc.com/teensy/loader.html")
-    ],
-    "tool-lm4flash": [
-        ("Flash Programmer", "http://www.ti.com/tool/lmflashprogrammer")
-    ],
-    "tool-mspdebug": [
-        ("MSPDebug", "http://mspdebug.sourceforge.net/")
-    ],
-    "tool-esptool": [
-        ("esptool-ck", "https://github.com/igrr/esptool-ck")
-    ],
-    "tool-rfdloader": [
-        ("rfdloader", "https://github.com/RFduino/RFduino")
-    ],
-    "tool-mkspiffs": [
-        ("Tool to build and unpack SPIFFS images",
-         "https://github.com/igrr/mkspiffs")
-    ],
-    "tool-pic32prog": [
-        ("pic32prog", "https://github.com/sergev/pic32prog")
-    ],
-    "tool-arduino101load": [
-        ("Genuino101 uploader", "https://github.com/01org/intel-arduino-tools")
-    ]
-}
+from platformio import exception, util
+from platformio.managers.package import PackageManager
 
 
-def get_packages():
-    return PLATFORM_PACKAGES
+class PlatformManager(PackageManager):
+
+    def __init__(self):
+        PackageManager.__init__(
+            self,
+            join(util.get_home_dir(), "platforms"),
+            ["http://dl.platformio.org/misc/platforms_manifest.json"]
+        )
+
+    @staticmethod
+    def get_manifest_name():
+        return "platform.json"
+
+    def find_best_platform(self, name, requirements=None):
+        best = None
+        for manifest in self.get_installed():
+            if manifest['name'] != name:
+                continue
+            elif requirements and not semantic_version.match(
+                    requirements, manifest['version']):
+                continue
+            elif (not best or semantic_version.compare(
+                    manifest['version'], best['version']) == 1):
+                best = manifest
+        return best
+
+    def install(self,  # pylint: disable=too-many-arguments,arguments-differ
+                name, requirements=None, with_packages=None,
+                without_packages=None, skip_default_packages=False):
+        PackageManager.install(self, name, requirements)
+        return PlatformFactory.newPlatform(
+            name, requirements).install_packages(
+                with_packages, without_packages, skip_default_packages)
+
+    def uninstall(self,  # pylint: disable=arguments-differ
+                  name, requirements=None):
+        if PlatformFactory.newPlatform(
+                name, requirements).uninstall_packages():
+            return PackageManager.uninstall(self, name, requirements)
+        return False
+
+    def update(self, name, version):
+        raise NotImplementedError()
+
+    def is_outdated(self, name, version):
+        raise NotImplementedError()
+
+    def get_installed_boards(self):
+        boards = []
+        for manifest in self.get_installed():
+            p = PlatformFactory.newPlatform(manifest['_manifest_path'])
+            for id_, config in p.get_boards().items():
+                manifest = config.get_manifest().copy()
+                manifest['id'] = id_
+                manifest['platform'] = p.get_name()
+                boards.append(manifest)
+        return boards
+
+    @staticmethod
+    @util.memoized
+    def get_registered_boards():
+        boards = util.get_api_result("/boards")
+        for item in boards:
+            # @TODO remove type from API
+            item['id'] = item['type']
+            del item['type']
+        return boards
 
 
 class PlatformFactory(object):
 
     @staticmethod
-    def get_clsname(type_):
-        return "%s%sPlatform" % (type_.upper()[0], type_.lower()[1:])
+    def get_clsname(name):
+        return "%s%sPlatform" % (name.upper()[0], name.lower()[1:])
 
     @staticmethod
-    def load_module(type_, path):
+    def load_module(name, path):
         module = None
         try:
             module = load_source(
-                "platformio.platforms.%s" % type_, path)
+                "platformio.managers.platform.%s" % name, path)
         except ImportError:
-            raise exception.UnknownPlatform(type_)
+            raise exception.UnknownPlatform(name)
         return module
 
     @classmethod
-    @util.memoized
-    def _lookup_platforms(cls):
-        platforms = {}
-        for d in (util.get_home_dir(), util.get_source_dir()):
-            pdir = join(d, "platforms")
-            if not isdir(pdir):
-                continue
-            for p in sorted(os.listdir(pdir)):
-                if (p in ("__init__.py", "base.py") or not
-                        p.endswith(".py")):
-                    continue
-                type_ = p[:-3]
-                path = join(pdir, p)
-                try:
-                    isplatform = hasattr(
-                        cls.load_module(type_, path),
-                        cls.get_clsname(type_)
-                    )
-                    if isplatform:
-                        platforms[type_] = path
-                except exception.UnknownPlatform:
-                    pass
-        return platforms
+    def newPlatform(cls, name, requirements=None):
+        platform_dir = None
+        if name.endswith("platform.json") and isfile(name):
+            platform_dir = dirname(name)
+            name = util.load_json(name)['name']
+        else:
+            _manifest = PlatformManager().find_best_platform(
+                name, requirements)
+            if _manifest:
+                platform_dir = dirname(_manifest['_manifest_path'])
+        if not platform_dir:
+            raise exception.UnknownPlatform(
+                name if not requirements else "%s@%s" % (name, requirements))
 
-    @classmethod
-    def get_platforms(cls, installed=False):
-        platforms = cls._lookup_platforms()
+        platform_cls = None
+        if isfile(join(platform_dir, "platform.py")):
+            platform_cls = getattr(
+                cls.load_module(name, join(platform_dir, "platform.py")),
+                cls.get_clsname(name)
+            )
+        else:
+            platform_cls = type(
+                str(cls.get_clsname(name)), (BasePlatform,), {})
 
-        if not installed:
-            return platforms
-
-        installed_platforms = {}
-        for type_ in get_state_item("installed_platforms", []):
-            if type_ in platforms:
-                installed_platforms[type_] = platforms[type_]
-        return installed_platforms
-
-    @classmethod
-    def newPlatform(cls, type_):
-        platforms = cls.get_platforms()
-        if type_ not in platforms:
-            raise exception.UnknownPlatform(type_)
-
-        _instance = getattr(
-            cls.load_module(type_, platforms[type_]),
-            cls.get_clsname(type_)
-        )()
+        _instance = platform_cls(join(platform_dir, "platform.json"))
         assert isinstance(_instance, BasePlatform)
         return _instance
 
 
-class BasePlatform(object):
+class PlatformPackagesMixin(object):
 
-    PACKAGES = {}
+    def get_installed_packages(self):
+        items = {}
+        installed = self.pm.get_installed()
+        for name, opts in self.get_packages().items():
+            manifest = None
+            for p in installed:
+                if (p['name'] != name or not semantic_version.match(
+                        opts['version'], p['version'])):
+                    continue
+                elif (not manifest or semantic_version.compare(
+                        p['version'], manifest['version']) == 1):
+                    manifest = p
+            if manifest:
+                items[name] = manifest
+        return items
+
+    def install_packages(self, with_packages=None, without_packages=None,
+                         skip_default_packages=False, silent=False):
+        with_packages = set(
+            self.pkg_types_to_names(with_packages or []))
+        without_packages = set(
+            self.pkg_types_to_names(without_packages or []))
+
+        upkgs = with_packages | without_packages
+        ppkgs = set(self.get_packages().keys())
+        if not upkgs.issubset(ppkgs):
+            raise exception.UnknownPackage(", ".join(upkgs - ppkgs))
+
+        for name, opts in self.get_packages().items():
+            if name in without_packages:
+                continue
+            elif (name in with_packages or
+                  not (skip_default_packages or opts.get("optional", False))):
+                self.pm.install(name, opts.get("version"), silent=silent)
+
+        return True
+
+    def uninstall_packages(self):
+        deppkgs = set()
+        for manifest in PlatformManager().get_installed():
+            if manifest['name'] == self.get_name():
+                continue
+            p = PlatformFactory.newPlatform(
+                manifest['name'], manifest['version'])
+            for pkgname, pkgmanifest in p.get_installed_packages().items():
+                deppkgs.add((pkgname, pkgmanifest['version']))
+
+        for manifest in self.pm.get_installed():
+            if manifest['name'] not in self.get_packages().keys():
+                continue
+            if (manifest['name'], manifest['version']) not in deppkgs:
+                self.pm.uninstall(manifest['name'], manifest['version'])
+        return True
+
+    def update_packages(self):
+        outdated = None
+        for pkgname, pkgmanifest in self.get_installed_packages().items():
+            requirements = self.get_packages()[pkgname]['version']
+            latest_version = self.pm.get_latest_version(
+                pkgname, requirements)
+            if (not latest_version or
+                    pkgmanifest['version'] == latest_version):
+                continue
+
+            # check other platforms
+            keep_versions = set([latest_version])
+            for pfmanifest in PlatformManager().get_installed():
+                if pfmanifest['name'] == self.get_name():
+                    continue
+                p = PlatformFactory.newPlatform(
+                    pfmanifest['name'], pfmanifest['version'])
+                if pkgname not in p.get_packages():
+                    continue
+                keep_versions.add(p.pm.get_latest_version(
+                    pkgname, p.get_packages()[pkgname]['version']))
+
+            outdated = self.pm.update(
+                pkgname, requirements, keep_versions)
+        return outdated
+
+    def are_outdated_packages(self):
+        for name, opts in self.get_installed_packages().items():
+            if (opts['version'] != self.pm.get_latest_version(
+                    name, self.get_packages()[name].get("version"))):
+                return True
+        return False
+
+
+class BasePlatform(PlatformPackagesMixin):
+
+    _BOARDS_CACHE = {}
+
     LINE_ERROR_RE = re.compile(r"(\s+error|error[:\s]+)", re.I)
 
-    def __init__(self):
+    def __init__(self, manifest_path):
+        self._BOARDS_CACHE = {}
+        self.manifest_path = manifest_path
+        self.manifest = util.load_json(manifest_path)
+
+        self.pm = PackageManager(
+            repositories=self.manifest.get("packageRepositories"))
+
         self._found_error = False
         self._last_echo_line = None
 
@@ -271,182 +254,125 @@ class BasePlatform(object):
         # 3 = 2 + others
         self._verbose_level = 3
 
-    def get_type(self):
-        return self.__class__.__name__[:-8].lower()
-
     def get_name(self):
-        return self.get_type().title()
+        return self.manifest['name']
 
-    def get_build_script(self):
-        builtin = join(util.get_source_dir(), "builder", "scripts", "%s.py" %
-                       self.get_type())
-        if isfile(builtin):
-            return builtin
-        raise NotImplementedError()
+    def get_title(self):
+        return self.manifest['title']
 
     def get_description(self):
-        if self.__doc__:
-            doclines = [l.strip() for l in self.__doc__.splitlines() if
-                        l.strip()]
-            return " ".join(doclines[:-1]).strip()
-        else:
-            raise NotImplementedError()
+        return self.manifest['description']
 
-    def get_vendor_url(self):
-        if self.__doc__ and "http" in self.__doc__:
-            return self.__doc__[self.__doc__.index("http"):].strip()
-        else:
-            raise NotImplementedError()
+    def get_version(self):
+        return self.manifest['version']
+
+    def get_manifest(self):
+        return self.manifest
+
+    def get_dir(self):
+        return dirname(self.manifest_path)
+
+    def get_build_script(self):
+        main_script = join(self.get_dir(), "builder", "main.py")
+        if isfile(main_script):
+            return main_script
+        raise NotImplementedError()
 
     def is_embedded(self):
-        for name, opts in self.get_packages().items():
-            if name == "framework-mbed" or opts.get("alias") == "uploader":
+        for opts in self.get_packages().values():
+            if opts.get("type") == "uploader":
                 return True
         return False
 
+    def get_boards(self, id_=None):
+        if id_ is None:
+            boards_dir = join(self.get_dir(), "boards")
+            if not isdir(boards_dir):
+                return {}
+            for item in sorted(os.listdir(boards_dir)):
+                _id = item[:-5]
+                if _id in self._BOARDS_CACHE:
+                    continue
+                self._BOARDS_CACHE[_id] = PlatformBoardConfig(
+                    join(self.get_dir(), "boards", item)
+                )
+        else:
+            if id_ not in self._BOARDS_CACHE:
+                self._BOARDS_CACHE[id_] = PlatformBoardConfig(
+                    join(self.get_dir(), "boards", "%s.json" % id_)
+                )
+        return self._BOARDS_CACHE[id_] if id_ else self._BOARDS_CACHE
+
+    def board_config(self, id_):
+        return self.get_boards(id_)
+
     def get_packages(self):
-        return self.PACKAGES
+        return self.manifest.get("packages", {})
 
-    def get_package_alias(self, pkgname):
-        return self.PACKAGES[pkgname].get("alias")
+    def get_frameworks(self):
+        return self.get_manifest().get("frameworks")
 
-    def pkg_aliases_to_names(self, aliases):
+    def get_package_dir(self, name):
+        packages = self.get_installed_packages()
+        if name not in packages:
+            return None
+        return dirname(packages[name]['_manifest_path'])
+
+    def get_package_version(self, name):
+        packages = self.get_installed_packages()
+        if name not in packages:
+            return None
+        return packages[name]['version']
+
+    def get_package_type(self, name):
+        return self.get_packages()[name].get("type")
+
+    def pkg_types_to_names(self, types):
         names = []
-        for alias in aliases:
-            name = alias
-            # lookup by package aliases
+        for type_ in types:
+            name = type_
+            # lookup by package types
             for _name, _opts in self.get_packages().items():
-                if _opts.get("alias") == alias:
+                if _opts.get("type") == type_:
                     name = None
                     names.append(_name)
-            # if alias is the right name
+            # if type is the right name
             if name:
                 names.append(name)
         return names
 
-    def get_default_packages(self):
-        return [k for k, v in self.get_packages().items()
-                if v.get("default", False)]
-
-    def get_installed_packages(self):
-        pm = PackageManager()
-        return [n for n in self.get_packages().keys() if pm.is_installed(n)]
-
-    def install(self, with_packages=None, without_packages=None,
-                skip_default_packages=False):
-        with_packages = set(
-            self.pkg_aliases_to_names(with_packages or []))
-        without_packages = set(
-            self.pkg_aliases_to_names(without_packages or []))
-
-        upkgs = with_packages | without_packages
-        ppkgs = set(self.get_packages().keys())
-        if not upkgs.issubset(ppkgs):
-            raise exception.UnknownPackage(", ".join(upkgs - ppkgs))
-
-        requirements = []
-        for name, opts in self.get_packages().items():
-            if name in without_packages:
-                continue
-            elif (name in with_packages or (not skip_default_packages and
-                                            opts.get("default"))):
-                requirements.append(name)
-
-        pm = PackageManager()
-        for name in requirements:
-            pm.install(name)
-
-        # register installed platform
-        data = get_state_item("installed_platforms", [])
-        if self.get_type() not in data:
-            data.append(self.get_type())
-            set_state_item("installed_platforms", data)
-
-        return len(requirements)
-
-    def uninstall(self):
-        platform = self.get_type()
-        installed_platforms = PlatformFactory.get_platforms(
-            installed=True).keys()
-
-        if platform not in installed_platforms:
-            raise exception.PlatformNotInstalledYet(platform)
-
-        deppkgs = set()
-        for item in installed_platforms:
-            if item == platform:
-                continue
-            p = PlatformFactory.newPlatform(item)
-            deppkgs = deppkgs.union(set(p.get_packages().keys()))
-
-        pm = PackageManager()
-        for name in self.get_packages().keys():
-            if not pm.is_installed(name) or name in deppkgs:
-                continue
-            pm.uninstall(name)
-
-        # unregister installed platform
-        installed_platforms.remove(platform)
-        set_state_item("installed_platforms", installed_platforms)
-
-        return True
-
-    def update(self):
-        pm = PackageManager()
-        for name in self.get_installed_packages():
-            pm.update(name)
-
-    def is_outdated(self):
-        pm = PackageManager()
-        obsolated = pm.get_outdated()
-        return not set(self.get_packages().keys()).isdisjoint(set(obsolated))
-
     def configure_default_packages(self, variables, targets):
         # enbale used frameworks
-        for pkg_name in self.pkg_aliases_to_names(["framework"]):
-            for framework in variables.get("framework", "").split(","):
-                framework = framework.lower().strip()
-                if not framework:
-                    continue
-                if framework in pkg_name:
-                    self.PACKAGES[pkg_name]['default'] = True
+        frameworks = self.get_frameworks()
+        for framework in variables.get("framework", "").split(","):
+            framework = framework.lower().strip()
+            if not framework or framework not in frameworks:
+                continue
+            _pkg_name = frameworks[framework]['package']
+            self.get_packages()[_pkg_name]['optional'] = False
 
         # append SCons tool
-        self.PACKAGES['tool-scons'] = {"default": True}
+        self.get_packages()['tool-scons'] = {
+            "version": self.manifest.get("engines", {}).get(
+                "scons", ">=2.3.0,<2.5.0"),
+            "optional": False
+        }
 
         # enable upload tools for upload targets
         if any(["upload" in t for t in targets] + ["program" in targets]):
-            for _name, _opts in self.PACKAGES.iteritems():
-                if _opts.get("alias") == "uploader":
-                    self.PACKAGES[_name]['default'] = True
+            for _name, _opts in self.get_packages().iteritems():
+                if _opts.get("type") == "uploader":
+                    self.get_packages()[_name]['optional'] = False
                 elif "uploadlazy" in targets:
                     # skip all packages, allow only upload tools
-                    self.PACKAGES[_name]['default'] = False
-
-    def _install_default_packages(self):
-        installed_platforms = PlatformFactory.get_platforms(
-            installed=True).keys()
-
-        if (self.get_type() in installed_platforms and
-                set(self.get_default_packages()) <=
-                set(self.get_installed_packages())):
-            return True
-
-        if (not app.get_setting("enable_prompts") or
-                self.get_type() in installed_platforms or
-                click.confirm(
-                    "The platform '%s' has not been installed yet. "
-                    "Would you like to install it now?" % self.get_type())):
-            return self.install()
-        else:
-            raise exception.PlatformNotInstalledYet(self.get_type())
+                    self.get_packages()[_name]['optional'] = True
 
     def run(self, variables, targets, verbose):
         assert isinstance(variables, dict)
         assert isinstance(targets, list)
 
         self.configure_default_packages(variables, targets)
-        self._install_default_packages()
+        self.install_packages(silent=True)
 
         self._verbose_level = int(verbose)
 
@@ -454,17 +380,12 @@ class BasePlatform(object):
             targets.remove("clean")
             targets.append("-c")
 
+        variables['platform_manifest'] = self.manifest_path
+
         if "build_script" not in variables:
             variables['build_script'] = self.get_build_script()
         if not isfile(variables['build_script']):
             raise exception.BuildScriptNotFound(variables['build_script'])
-
-        # append aliases of the installed packages
-        installed_packages = PackageManager.get_installed()
-        for name, options in self.get_packages().items():
-            if "alias" not in options or name not in installed_packages:
-                continue
-            variables['piopackage_%s' % options['alias']] = name
 
         self._found_error = False
         result = self._run_scons(variables, targets)
@@ -542,3 +463,34 @@ class BasePlatform(object):
             return cpu_count()
         except NotImplementedError:
             return 1
+
+
+class PlatformBoardConfig(object):
+
+    def __init__(self, manifest_path):
+        if not isfile(manifest_path):
+            raise exception.UnknownBoard(basename(manifest_path[:-5]))
+        self.manifest_path = manifest_path
+        self.manifest = util.load_json(manifest_path)
+
+    def get(self, path, default=None):
+        try:
+            value = self.manifest
+            for k in path.split("."):
+                value = value[k]
+            return value
+        except KeyError:
+            if default is not None:
+                return default
+            else:
+                raise KeyError("Invalid board option '%s'" % path)
+
+    def __contains__(self, key):
+        try:
+            self.get(key)
+            return True
+        except KeyError:
+            return False
+
+    def get_manifest(self):
+        return self.manifest

@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,21 +19,26 @@ from shutil import copyfile
 import click
 
 from platformio import app, exception, util
-from platformio.commands.platforms import \
-    platforms_install as cli_platforms_install
+from platformio.commands.platform import \
+    platform_install as cli_platform_install
 from platformio.ide.projectgenerator import ProjectGenerator
-from platformio.platforms.base import PlatformFactory
-from platformio.util import get_boards, get_source_dir
+from platformio.managers.platform import PlatformManager
 
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
-    unknown_boards = set(value) - set(get_boards().keys())
+    pm = PlatformManager()
+    # check installed boards
+    known_boards = set([b['id'] for b in pm.get_installed_boards()])
+    # if boards are not listed as installed, check registered boards
+    if set(value) - known_boards:
+        known_boards = set([b['id'] for b in pm.get_registered_boards()])
+    unknown_boards = set(value) - known_boards
     try:
         assert not unknown_boards
         return value
     except AssertionError:
         raise click.BadParameter(
-            "%s. Please search for the board types using "
+            "%s. Please search for the board ID using "
             "`platformio boards` command" % ", ".join(unknown_boards))
 
 
@@ -41,7 +46,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
 @click.option("--project-dir", "-d", default=getcwd,
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
-@click.option("--board", "-b", multiple=True, metavar="TYPE",
+@click.option("--board", "-b", multiple=True, metavar="ID",
               callback=validate_boards)
 @click.option("--ide",
               type=click.Choice(ProjectGenerator.get_supported_ides()))
@@ -90,9 +95,9 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
             click.secho(
                 "Warning! You have initialised project with more than 1 board"
                 " for the specified IDE.\n"
-                "However, the IDE features (code autocompletion, syntax lint)"
-                " have been configured for the first board '%s' from your list"
-                " '%s'." % (board[0], ", ".join(board)),
+                "However, the IDE features (code autocompletion, syntax "
+                "linter) have been configured for the first board '%s' from "
+                "your list '%s'." % (board[0], ", ".join(board)),
                 fg="yellow"
             )
         pg = ProjectGenerator(
@@ -115,7 +120,7 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
 def init_base_project(project_dir):
     platformio_ini = join(project_dir, "platformio.ini")
     if not isfile(platformio_ini):
-        copyfile(join(get_source_dir(), "projectconftpl.ini"),
+        copyfile(join(util.get_source_dir(), "projectconftpl.ini"),
                  platformio_ini)
 
     lib_dir = join(project_dir, "lib")
@@ -246,7 +251,7 @@ def init_ci_conf(project_dir):
 #     - pip install -U platformio
 #
 # script:
-#     - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+#     - platformio ci --lib="." --board=ID_1 --board=ID_2 --board=ID_N
 """)
 
 
@@ -258,9 +263,9 @@ def init_cvs_ignore(project_dir):
 
 
 def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
-        ctx, platformio_ini, board_types, enable_auto_uploading,
+        ctx, platformio_ini, board_ids, enable_auto_uploading,
         env_prefix, force_download):
-    builtin_boards = get_boards()
+    installed_boards = PlatformManager().get_installed_boards()
     content = []
     used_boards = []
     used_platforms = []
@@ -272,23 +277,30 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
             continue
         used_boards.append(config.get(section, "board"))
 
-    for type_ in board_types:
-        data = builtin_boards[type_]
-        used_platforms.append(data['platform'])
+    for id_ in board_ids:
+        manifest = None
+        for boards in (
+                installed_boards, PlatformManager.get_registered_boards()):
+            for b in boards:
+                if b['id'] == id_:
+                    manifest = b
+                    break
+        assert manifest is not None
 
-        if type_ in used_boards:
+        used_platforms.append(manifest['platform'])
+        if id_ in used_boards:
             continue
 
         content.append("")
-        content.append("[env:%s%s]" % (env_prefix, type_))
-        content.append("platform = %s" % data['platform'])
+        content.append("[env:%s%s]" % (env_prefix, id_))
+        content.append("platform = %s" % manifest['platform'])
 
         # find default framework for board
-        frameworks = data.get("frameworks")
+        frameworks = manifest.get("frameworks")
         if frameworks:
             content.append("framework = %s" % frameworks[0])
 
-        content.append("board = %s" % type_)
+        content.append("board = %s" % id_)
         if enable_auto_uploading:
             content.append("targets = upload")
 
@@ -304,10 +316,11 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
 
 
 def _install_dependent_platforms(ctx, platforms):
-    installed_platforms = PlatformFactory.get_platforms(installed=True).keys()
+    installed_platforms = [
+        p['name'] for p in PlatformManager().get_installed()]
     if set(platforms) <= set(installed_platforms):
         return
     ctx.invoke(
-        cli_platforms_install,
+        cli_platform_install,
         platforms=list(set(platforms) - set(installed_platforms))
     )

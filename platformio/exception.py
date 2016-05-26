@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ class BoardNotDefined(PlatformioException):
 
 class UnknownBoard(PlatformioException):
 
-    MESSAGE = "Unknown board type '{0}'"
+    MESSAGE = "Unknown board ID '{0}'"
 
 
 class UnknownFramework(PlatformioException):
@@ -70,9 +70,16 @@ class UnknownPackage(PlatformioException):
     MESSAGE = "Detected unknown package '{0}'"
 
 
-class InvalidPackageVersion(PlatformioException):
+class UndefinedPackageVersion(PlatformioException):
 
-    MESSAGE = "The package '{0}' with version '{1:d}' does not exist"
+    MESSAGE = "Can not find package '{0}' with version requirements '{1}'"\
+        " for your system '{2}'"
+
+
+class PackageInstallError(PlatformioException):
+
+    MESSAGE = "Can not install package '{0}' with version requirements '{1}' "\
+        "for your system '{2}'"
 
 
 class NonSystemPackage(PlatformioException):

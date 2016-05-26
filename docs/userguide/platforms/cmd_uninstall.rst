@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -9,10 +9,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _cmd_platforms_uninstall:
+.. _cmd_platform_uninstall:
 
-platformio platforms uninstall
-==============================
+platformio platform uninstall
+=============================
 
 .. contents::
 
@@ -21,13 +21,13 @@ Usage
 
 .. code-block:: bash
 
-    platformio platforms uninstall PLATFORM
+    platformio platform uninstall PLATFORM
 
 
 Description
 -----------
 
-Uninstall specified :ref:`Platforms <platforms>`
+Uninstall specified :ref:`platforms`
 
 
 Examples
@@ -35,7 +35,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio platforms uninstall timsp430
+    $ platformio platform uninstall timsp430
     Uninstalling toolchain-timsp430 package:        [OK]
     Uninstalling tool-mspdebug package:             [OK]
     Uninstalling framework-energiamsp430 package:   [OK]

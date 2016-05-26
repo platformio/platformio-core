@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -83,14 +83,16 @@ def AutodetectUploadPort(env):
             env.Replace(UPLOAD_PORT=item['disk'])
             break
     else:
-        board_build_opts = env.get("BOARD_OPTIONS", {}).get("build", {})
+        board_hwids = []
+        if "BOARD" in env and "build.hwids" in env.BoardConfig():
+            board_hwids = env.BoardConfig().get("build.hwids")
         for item in get_serialports():
             if "VID:PID" not in item['hwid']:
                 continue
             env.Replace(UPLOAD_PORT=item['port'])
-            for hwid in board_build_opts.get("hwid", []):
-                board_hwid = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
-                if board_hwid in item['hwid']:
+            for hwid in board_hwids:
+                hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
+                if hwid_str in item['hwid']:
                     break
 
     if "UPLOAD_PORT" in env:

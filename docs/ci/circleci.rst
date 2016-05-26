@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -152,7 +152,7 @@ Examples
             - sudo pip install -U platformio
 
             # pre-install PlatformIO development platforms, they will be cached
-            - platformio platforms install atmelavr atmelsam teensy
+            - platformio platform install atmelavr atmelsam teensy
 
             #
             # Libraries from PlatformIO Library Registry:

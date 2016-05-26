@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -194,7 +194,7 @@ General options
 ``platform``
 ^^^^^^^^^^^^
 
-:ref:`Platform <platforms>` type.
+:ref:`platforms` name.
 
 
 .. _projectconf_env_framework:
@@ -202,7 +202,7 @@ General options
 ``framework``
 ^^^^^^^^^^^^^
 
-:ref:`Framework <frameworks>` type.
+:ref:`frameworks` name.
 
 The multiple frameworks are allowed, split them with comma ``,`` separator.
 

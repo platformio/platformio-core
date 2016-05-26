@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -76,7 +76,7 @@ Alright, so PlatformIO can run on different operating systems. But more
 importantly, from development perspective at least, is a list of supported
 boards and MCUs. To keep things short: PlatformIO supports approximately 200
 `Embedded Boards <http://platformio.org/boards>`_ and all major
-:ref:`Development Platforms <platforms>`.
+:ref:`platforms`.
 
 User SHOULD have a choice
 -------------------------

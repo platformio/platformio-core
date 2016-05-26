@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -51,15 +51,9 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
 
     @staticmethod
     def _handle_obsolate_command(name):
-        if name in ("install", "list", "search", "show", "uninstall"):
-            click.secho(
-                "Warning! `platformio %s` command is deprecated and will be "
-                "removed in the next release! Please use "
-                "`platformio platforms %s` instead." % (name, name),
-                fg="yellow"
-            )
-            from platformio.commands import platforms
-            return getattr(platforms, "platforms_" + name)
+        if name == "platforms":
+            from platformio.commands import platform
+            return platform.cli
         raise AttributeError()
 
 

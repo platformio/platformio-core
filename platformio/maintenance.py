@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,23 +14,19 @@
 
 import re
 import struct
-from os import getenv, remove
-from os.path import isdir, isfile, join
-from shutil import rmtree
+from os import getenv
 from time import time
 
 import click
 
 from platformio import __version__, app, exception, telemetry, util
 from platformio.commands.lib import lib_update as cmd_libraries_update
-from platformio.commands.platforms import \
-    platforms_install as cmd_platforms_install
-from platformio.commands.platforms import \
-    platforms_update as cmd_platforms_update
+from platformio.commands.platform import \
+    platform_install as cmd_platform_install
+from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.libmanager import LibraryManager
-from platformio.platforms.base import PlatformFactory
-from platformio.util import get_home_dir
+from platformio.managers.platform import PlatformManager
 
 
 def in_silence(ctx):
@@ -72,10 +68,9 @@ class Upgrader(object):
         self.from_version = self.version_to_int(from_version)
         self.to_version = self.version_to_int(to_version)
 
-        self._upgraders = (
-            (self.version_to_int("0.9.0"), self._upgrade_to_0_9_0),
-            (self.version_to_int("1.0.0"), self._upgrade_to_1_0_0)
-        )
+        self._upgraders = [
+            (self.version_to_int("3.0.0"), self._upgrade_to_3_0_0)
+        ]
 
     @staticmethod
     def version_to_int(version):
@@ -91,38 +86,16 @@ class Upgrader(object):
 
         result = [True]
         for item in self._upgraders:
-            if self.from_version >= item[0]:
+            if self.from_version >= item[0] or self.to_version < item[0]:
                 continue
             result.append(item[1](ctx))
 
         return all(result)
 
-    def _upgrade_to_0_9_0(self, ctx):  # pylint: disable=R0201
-        prev_platforms = []
-
-        # remove platform's folder (obsolete package structure)
-        for name in PlatformFactory.get_platforms().keys():
-            pdir = join(get_home_dir(), name)
-            if not isdir(pdir):
-                continue
-            prev_platforms.append(name)
-            rmtree(pdir)
-
-        # remove unused files
-        for fname in (".pioupgrade", "installed.json"):
-            if isfile(join(get_home_dir(), fname)):
-                remove(join(get_home_dir(), fname))
-
-        if prev_platforms:
-            ctx.invoke(cmd_platforms_install, platforms=prev_platforms)
-
-        return True
-
-    def _upgrade_to_1_0_0(self, ctx):  # pylint: disable=R0201
-        installed_platforms = PlatformFactory.get_platforms(
-            installed=True).keys()
+    def _upgrade_to_3_0_0(self, ctx):  # pylint: disable=R0201
+        installed_platforms = app.get_state_item("installed_platforms", [])
         if installed_platforms:
-            ctx.invoke(cmd_platforms_install, platforms=installed_platforms)
+            ctx.invoke(cmd_platform_install, platforms=installed_platforms)
         return True
 
 
@@ -131,10 +104,28 @@ def after_upgrade(ctx):
     if last_version == __version__:
         return
 
-    terminal_width, _ = click.get_terminal_size()
+    if last_version == "0.0.0":
+        app.set_state_item("last_version", __version__)
+    else:
+        click.secho("Please wait while upgrading PlatformIO ...",
+                    fg="yellow")
 
-    # promotion
-    click.echo("")
+        u = Upgrader(last_version, __version__)
+        if u.run(ctx):
+            app.set_state_item("last_version", __version__)
+            ctx.invoke(cmd_platform_update, only_packages=True)
+
+            click.secho("PlatformIO has been successfully upgraded to %s!\n" %
+                        __version__, fg="green")
+
+            telemetry.on_event(category="Auto", action="Upgrade",
+                               label="%s > %s" % (last_version, __version__))
+        else:
+            raise exception.UpgradeError("Auto upgrading...")
+        click.echo("")
+
+    # PlatformIO banner
+    terminal_width, _ = click.get_terminal_size()
     click.echo("*" * terminal_width)
     click.echo("If you like %s, please:" % (
         click.style("PlatformIO", fg="cyan")
@@ -161,27 +152,6 @@ def after_upgrade(ctx):
         ))
 
     click.echo("*" * terminal_width)
-    click.echo("")
-
-    if last_version == "0.0.0":
-        app.set_state_item("last_version", __version__)
-        return
-
-    click.secho("Please wait while upgrading PlatformIO ...",
-                fg="yellow")
-
-    u = Upgrader(last_version, __version__)
-    if u.run(ctx):
-        app.set_state_item("last_version", __version__)
-        ctx.invoke(cmd_platforms_update)
-
-        click.secho("PlatformIO has been successfully upgraded to %s!\n" %
-                    __version__, fg="green")
-
-        telemetry.on_event(category="Auto", action="Upgrade",
-                           label="%s > %s" % (last_version, __version__))
-    else:
-        raise exception.UpgradeError("Auto upgrading...")
     click.echo("")
 
 
@@ -234,10 +204,11 @@ def check_internal_updates(ctx, what):
 
     outdated_items = []
     if what == "platforms":
-        for platform in PlatformFactory.get_platforms(installed=True).keys():
-            p = PlatformFactory.newPlatform(platform)
-            if p.is_outdated():
-                outdated_items.append(platform)
+        pm = PlatformManager()
+        for manifest in pm.get_installed():
+            if pm.is_outdated(manifest['name'], manifest['version']):
+                outdated_items.append(
+                    "%s@%s" % (manifest['name'], manifest['version']))
     elif what == "libraries":
         lm = LibraryManager()
         outdated_items = lm.get_outdated()
@@ -255,13 +226,13 @@ def check_internal_updates(ctx, what):
     if not app.get_setting("auto_update_" + what):
         click.secho("Please update them via ", fg="yellow", nl=False)
         click.secho("`platformio %s update`" %
-                    ("lib" if what == "libraries" else "platforms"),
+                    ("lib" if what == "libraries" else "platform"),
                     fg="cyan", nl=False)
         click.secho(" command.", fg="yellow")
     else:
         click.secho("Please wait while updating %s ..." % what, fg="yellow")
         if what == "platforms":
-            ctx.invoke(cmd_platforms_update)
+            ctx.invoke(cmd_platform_update)
         elif what == "libraries":
             ctx.invoke(cmd_libraries_update)
         click.echo()

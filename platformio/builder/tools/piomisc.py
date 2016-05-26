@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ from glob import glob
 from os import environ, listdir, remove
 from os.path import isdir, isfile, join
 
-from platformio.util import exec_command, where_is_program
+from platformio import util
 
 
 class InoToCPPConverter(object):
@@ -143,8 +143,6 @@ def ConvertInoToCpp(env):
 
 def DumpIDEData(env):
 
-    BOARD_CORE = env.get("BOARD_OPTIONS", {}).get("build", {}).get("core")
-
     def get_includes(env_):
         includes = []
         # includes from used framework and libs
@@ -164,15 +162,18 @@ def DumpIDEData(env):
             lsd_dir = env_.subst(d)
             _append_lib_includes(env_, lsd_dir, includes)
 
-        # includes from toolchain
-        toolchain_dir = env_.subst(
-            join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
-        toolchain_incglobs = [
-            join(toolchain_dir, "*", "include*"),
-            join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
-        ]
-        for g in toolchain_incglobs:
-            includes.extend(glob(g))
+        # includes from toolchains
+        p = env.DevPlatform()
+        for name in p.get_installed_packages().keys():
+            if p.get_package_type(name) != "toolchain":
+                continue
+            toolchain_dir = p.get_package_dir(name)
+            toolchain_incglobs = [
+                join(toolchain_dir, "*", "include*"),
+                join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
+            ]
+            for g in toolchain_incglobs:
+                includes.extend(glob(g))
 
         return includes
 
@@ -186,9 +187,10 @@ def DumpIDEData(env):
             if name in env_.get("LIB_IGNORE", []):
                 continue
             if name == "__cores__":
-                if isdir(join(libs_dir, name, BOARD_CORE)):
+                board_core = env_.BoardConfig().get("build.core")
+                if isdir(join(libs_dir, name, board_core)):
                     _append_lib_includes(
-                        env_, join(libs_dir, name, BOARD_CORE), includes)
+                        env_, join(libs_dir, name, board_core), includes)
                 return
 
             include = (
@@ -208,10 +210,9 @@ def DumpIDEData(env):
             defines.append(env_.subst(item).replace('\\"', '"'))
 
         # special symbol for Atmel AVR MCU
-        board = env_.get("BOARD_OPTIONS", {})
-        if board and board['platform'] == "atmelavr":
+        if env.subst("$PLATFORM") == "atmelavr":
             defines.append(
-                "__AVR_%s__" % board['build']['mcu'].upper()
+                "__AVR_%s__" % env.BoardConfig().get("build.mcu").upper()
                 .replace("ATMEGA", "ATmega")
                 .replace("ATTINY", "ATtiny")
             )
@@ -226,7 +227,7 @@ def DumpIDEData(env):
         "includes": get_includes(env_),
         "cc_flags": env_.subst(LINTCCOM),
         "cxx_flags": env_.subst(LINTCXXCOM),
-        "cxx_path": where_is_program(
+        "cxx_path": util.where_is_program(
             env_.subst("$CXX"), env_.subst("${ENV['PATH']}"))
     }
 
@@ -254,7 +255,7 @@ def GetCompilerType(env):
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
-        result = exec_command([env.subst("$CC"), "-v"], env=sysenv)
+        result = util.exec_command([env.subst("$CC"), "-v"], env=sysenv)
     except OSError:
         return None
     if result['returncode'] != 0:

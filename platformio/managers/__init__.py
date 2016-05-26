@@ -11,17 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import click
-
-from platformio.commands.lib import lib_update as cmd_lib_update
-from platformio.commands.platform import platform_update as cmd_platform_update
-
-
-@click.command("update",
-               short_help="Update installed Platforms, Packages and Libraries")
-@click.pass_context
-def cli(ctx):
-    ctx.invoke(cmd_platform_update)
-    click.echo()
-    ctx.invoke(cmd_lib_update)

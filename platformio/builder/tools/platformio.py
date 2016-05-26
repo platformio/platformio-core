@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,9 +43,8 @@ def BuildProgram(env):
         )
 
     # process extra flags from board
-    env.ProcessFlags([
-        env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags")
-    ])
+    if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
+        env.ProcessFlags([env.BoardConfig().get("build.extra_flags")])
     # remove base flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
     # apply user flags
@@ -208,20 +207,21 @@ def BuildFrameworks(env, frameworks):
     if not frameworks or "uploadlazy" in COMMAND_LINE_TARGETS:
         return
 
-    board_frameworks = env.get("BOARD_OPTIONS", {}).get("frameworks", [])
+    board_frameworks = []
+    if "BOARD" in env:
+        board_frameworks = env.BoardConfig().get("frameworks", [])
     if frameworks == ["platformio"]:
         if board_frameworks:
             frameworks.insert(0, board_frameworks[0])
         else:
-            env.Exit("Error: Please specify board type")
+            env.Exit("Error: Please specify `board` in `platformio.ini`")
 
     for f in frameworks:
         if f in ("arduino", "energia"):
             env.ConvertInoToCpp()
 
         if f in board_frameworks:
-            SConscript(env.subst(
-                join("$PIOBUILDER_DIR", "scripts", "frameworks", "%s.py" % f)))
+            SConscript(env.GetFrameworkScript(f))
         else:
             env.Exit("Error: This board doesn't support %s framework!" % f)
 

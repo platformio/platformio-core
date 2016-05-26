@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 import sys
 
-VERSION = (2, 9, "2.dev0")
+VERSION = (3, 0, "0.dev0")
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"

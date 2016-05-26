@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+PlatformIO 3.0
+--------------
+
+3.0.0 (2016-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Decentralized architecture for development platforms: "platform.json",
+  semantic versioning, package dependencies, embedded board configs, isolated
+  build scripts
+  (`issue #479 <https://github.com/platformio/platformio/issues/479>`_)
+
 PlatformIO 2.0
 --------------
 

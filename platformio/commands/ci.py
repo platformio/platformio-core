@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import click
 
 from platformio import app
 from platformio.commands.init import cli as cmd_init
+from platformio.commands.init import validate_boards
 from platformio.commands.run import cli as cmd_run
 from platformio.exception import CIBuildEnvsEmpty
-from platformio.util import get_boards
 
 
 def validate_path(ctx, param, value):  # pylint: disable=W0613
@@ -45,22 +45,12 @@ def validate_path(ctx, param, value):  # pylint: disable=W0613
         raise click.BadParameter("Found invalid path: %s" % invalid_path)
 
 
-def validate_boards(ctx, param, value):  # pylint: disable=W0613
-    unknown_boards = set(value) - set(get_boards().keys())
-    try:
-        assert not unknown_boards
-        return value
-    except AssertionError:
-        raise click.BadParameter(
-            "%s. Please search for the board types using "
-            "`platformio boards` command" % ", ".join(unknown_boards))
-
-
 @click.command("ci", short_help="Continuous Integration")
 @click.argument("src", nargs=-1, callback=validate_path)
 @click.option("--lib", "-l", multiple=True, callback=validate_path)
 @click.option("--exclude", multiple=True)
-@click.option("--board", "-b", multiple=True, callback=validate_boards)
+@click.option("--board", "-b", multiple=True, metavar="ID",
+              callback=validate_boards)
 @click.option("--build-dir", default=mkdtemp,
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))

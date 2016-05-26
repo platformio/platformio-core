@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -373,32 +373,6 @@ def get_api_result(path, params=None, data=None, skipdns=False):
         if r:
             r.close()
     return result
-
-
-@memoized
-def _lookup_boards():
-    boards = {}
-    bdirs = [join(get_source_dir(), "boards")]
-    if isdir(join(get_home_dir(), "boards")):
-        bdirs.append(join(get_home_dir(), "boards"))
-
-    for bdir in bdirs:
-        for json_file in sorted(os.listdir(bdir)):
-            if not json_file.endswith(".json"):
-                continue
-            boards.update(load_json(join(bdir, json_file)))
-    return boards
-
-
-def get_boards(type_=None):
-    boards = _lookup_boards()
-
-    if type_ is None:
-        return boards
-    else:
-        if type_ not in boards:
-            raise exception.UnknownBoard(type_)
-        return boards[type_]
 
 
 @memoized

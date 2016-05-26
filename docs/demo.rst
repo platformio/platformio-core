@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -41,11 +41,11 @@ Platform Manager
 Used in demo
 ~~~~~~~~~~~~
 
-1. :ref:`userguide_platforms`
-2. :ref:`cmd_platforms_list` command
-3. :ref:`platformio platforms search avr <cmd_platforms_search>` command
-4. :ref:`platformio platforms show teensy <cmd_platforms_show>` command
-5. :ref:`cmd_platforms_update` command.
+1. :ref:`userguide_platform`
+2. :ref:`cmd_platform_list` command
+3. :ref:`platformio platform search avr <cmd_platform_search>` command
+4. :ref:`platformio platform show teensy <cmd_platform_show>` command
+5. :ref:`cmd_platform_update` command.
 
 Library Manager
 ---------------

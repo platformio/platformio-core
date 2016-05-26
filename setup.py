@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ install_requires = [
     "click>=3.2,<6",
     "lockfile>=0.9.1,<0.13",
     "requests>=2.4.0,<3",
+    "semantic_version>=2.5.0",
     "colorama",
     "pyserial<4"
 ]
@@ -45,7 +46,6 @@ setup(
     package_data={
         "platformio": [
             "projectconftpl.ini",
-            "boards/*.json",
             "ide/tpls/*/.*.tpl",
             "ide/tpls/*/*.tpl",
             "ide/tpls/*/*/*.tpl",

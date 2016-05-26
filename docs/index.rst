@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -58,7 +58,7 @@ Embedded Development. *Easier Than Ever.*
 * Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>` and
   configurable build :ref:`-flags/-options <projectconf_build_flags>`
 * Pre-built toolchains, :ref:`frameworks` for the
-  :ref:`Development Platforms <platforms>`
+  :ref:`platforms`
 
 Smart Build System. *Fast and Reliable.*
 ----------------------------------------
@@ -108,7 +108,7 @@ Contents
     :caption: Instruments
     :maxdepth: 3
 
-    Platforms & Boards <platforms/index>
+    platforms/index
     frameworks/index
 
 .. toctree::

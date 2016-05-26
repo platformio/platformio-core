@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -9,10 +9,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _cmd_platforms_install:
+.. _cmd_platform_install:
 
-platformio platforms install
-============================
+platformio platform install
+===========================
 
 .. contents::
 
@@ -21,13 +21,13 @@ Usage
 
 .. code-block:: bash
 
-    platformio platforms install [OPTIONS] [PLATFORMS]
+    platformio platform install [OPTIONS] [PLATFORMS]
 
 
 Description
 -----------
 
-Install pre-built development :ref:`Platforms <platforms>` with related
+Install pre-built development :ref:`platforms` with related
 packages.
 
 There are several predefined aliases for packages, such as:
@@ -38,7 +38,7 @@ There are several predefined aliases for packages, such as:
 Options
 -------
 
-.. program:: platformio platforms install
+.. program:: platformio platform install
 
 .. option::
     --with-package
@@ -63,7 +63,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio platforms install timsp430
+    $ platformio platform install timsp430
     Installing toolchain-timsp430 package:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
@@ -81,7 +81,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio platforms install timsp430 --skip-default-package --with-package=uploader
+    $ platformio platform install timsp430 --skip-default-package --with-package=uploader
     Installing tool-mspdebug package:
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%

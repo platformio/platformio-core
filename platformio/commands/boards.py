@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,30 +16,30 @@ import json
 
 import click
 
-from platformio.util import get_boards
+from platformio.managers.platform import PlatformManager
 
 
-@click.command("list", short_help="Pre-configured Embedded Boards")
+@click.command("boards", short_help="Pre-configured Embedded Boards")
 @click.argument("query", required=False)
+@click.option("--installed", is_flag=True)
 @click.option("--json-output", is_flag=True)
-def cli(query, json_output):  # pylint: disable=R0912
-
+def cli(query, installed, json_output):  # pylint: disable=R0912
     if json_output:
-        return ouput_boards_json(query)
+        return _ouput_boards_json(query, installed)
 
     BOARDLIST_TPL = ("{type:<30} {mcu:<14} {frequency:<8} "
                      " {flash:<7} {ram:<6} {name}")
     terminal_width, _ = click.get_terminal_size()
 
     grpboards = {}
-    for type_, data in get_boards().items():
-        if data['platform'] not in grpboards:
-            grpboards[data['platform']] = {}
-        grpboards[data['platform']][type_] = data
+    for board in _get_boards(installed):
+        if board['platform'] not in grpboards:
+            grpboards[board['platform']] = []
+        grpboards[board['platform']].append(board)
 
-    for (platform, boards) in sorted(grpboards.items()):
+    for (platform, pboards) in sorted(grpboards.items()):
         if query:
-            search_data = json.dumps(boards).lower()
+            search_data = json.dumps(pboards).lower()
             if query.lower() not in search_data.lower():
                 continue
 
@@ -48,45 +48,56 @@ def cli(query, json_output):  # pylint: disable=R0912
         click.secho(platform, bold=True)
         click.echo("-" * terminal_width)
         click.echo(BOARDLIST_TPL.format(
-            type=click.style("Type", fg="cyan"), mcu="MCU",
+            type=click.style("ID", fg="cyan"), mcu="MCU",
             frequency="Frequency", flash="Flash", ram="RAM", name="Name"))
         click.echo("-" * terminal_width)
 
-        for type_, data in sorted(boards.items(), key=lambda b: b[1]['name']):
+        for board in sorted(pboards, key=lambda b: b['id']):
             if query:
-                search_data = "%s %s" % (type_, json.dumps(data).lower())
+                search_data = "%s %s" % (
+                    board['id'], json.dumps(board).lower())
                 if query.lower() not in search_data.lower():
                     continue
 
-            flash_size = ""
-            if "maximum_size" in data.get("upload", None):
-                flash_size = int(data['upload']['maximum_size'])
-                flash_size = "%dkB" % (flash_size / 1024)
+            flash_size = "%dkB" % (board['rom'] / 1024)
 
-            ram_size = ""
-            if "maximum_ram_size" in data.get("upload", None):
-                ram_size = int(data['upload']['maximum_ram_size'])
-                if ram_size >= 1024:
-                    if ram_size % 1024:
-                        ram_size = "%.1fkB" % (ram_size / 1024.0)
-                    else:
-                        ram_size = "%dkB" % (ram_size / 1024)
+            ram_size = board['ram']
+            if ram_size >= 1024:
+                if ram_size % 1024:
+                    ram_size = "%.1fkB" % (ram_size / 1024.0)
                 else:
-                    ram_size = "%dB" % ram_size
+                    ram_size = "%dkB" % (ram_size / 1024)
+            else:
+                ram_size = "%dB" % ram_size
 
             click.echo(BOARDLIST_TPL.format(
-                type=click.style(type_, fg="cyan"), mcu=data['build']['mcu'],
-                frequency="%dMhz" % (
-                    int(data['build']['f_cpu'][:-1]) / 1000000),
-                flash=flash_size, ram=ram_size, name=data['name']))
+                type=click.style(board['id'], fg="cyan"),
+                mcu=board['mcu'],
+                frequency="%dMhz" % (board['fcpu'] / 1000000),
+                flash=flash_size, ram=ram_size, name=board['name']))
 
 
-def ouput_boards_json(query):
-    result = {}
-    for type_, data in get_boards().items():
+def _get_boards(installed=False):
+    boards = PlatformManager.get_registered_boards()
+    if installed:
+        _installed_boards = [
+            "%s:%s" % (b['platform'], b['id'])
+            for b in PlatformManager().get_installed_boards()
+        ]
+        _new_boards = []
+        for board in boards:
+            key = "%s:%s" % (board['platform'], board['id'])
+            if key in _installed_boards:
+                _new_boards.append(board)
+        boards = _new_boards
+    return boards
+
+def _ouput_boards_json(query, installed=False):
+    result = []
+    for board in _get_boards(installed):
         if query:
-            search_data = "%s %s" % (type_, json.dumps(data).lower())
+            search_data = "%s %s" % (board['id'], json.dumps(board).lower())
             if query.lower() not in search_data.lower():
                 continue
-        result[type_] = data
+        result.append(board)
     click.echo(json.dumps(result))

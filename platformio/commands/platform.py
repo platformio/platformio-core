@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,19 +13,60 @@
 # limitations under the License.
 
 import json
-from datetime import datetime
 
 import click
 
-from platformio import app
-from platformio.exception import PlatformNotInstalledYet
-from platformio.pkgmanager import PackageManager
-from platformio.platforms.base import PlatformFactory
+from platformio import app, exception, util
+from platformio.managers.platform import PlatformFactory, PlatformManager
 
 
-@click.group(short_help="Platforms and Packages Manager")
+@click.group(short_help="Platform Manager")
 def cli():
     pass
+
+
+def _print_platforms(platforms):
+    for platform in platforms:
+        click.echo("{name} ~ {title}".format(
+            name=click.style(platform['name'], fg="cyan"),
+            title=platform['title']))
+        click.echo("=" * (3 + len(platform['name'] + platform['title'])))
+        click.echo(platform['description'])
+        click.echo()
+        click.echo("Home: %s" %
+                   "http://platformio.org/platforms/" + platform['name'])
+        if platform['packages']:
+            click.echo("Packages: %s" % ", ".join(platform['packages']))
+        if "version" in platform:
+            click.echo("Version: " + platform['version'])
+        click.echo()
+
+
+@cli.command("search", short_help="Search for development platforms")
+@click.argument("query", required=False)
+@click.option("--json-output", is_flag=True)
+def platform_search(query, json_output):
+    platforms = []
+    for platform in util.get_api_result("/platforms"):
+        if query == "all":
+            query = ""
+
+        search_data = json.dumps(platform)
+        if query and query.lower() not in search_data.lower():
+            continue
+
+        # @TODO update API with NAME/TITLE
+        platforms.append({
+            "name": platform['type'],
+            "title": platform['name'],
+            "description": platform['description'],
+            "packages": platform['packages']
+        })
+
+    if json_output:
+        click.echo(json.dumps(platforms))
+    else:
+        _print_platforms(platforms)
 
 
 @cli.command("install", short_help="Install new platforms")
@@ -33,11 +74,15 @@ def cli():
 @click.option("--with-package", multiple=True, metavar="<package>")
 @click.option("--without-package", multiple=True, metavar="<package>")
 @click.option("--skip-default-package", is_flag=True)
-def platforms_install(platforms, with_package, without_package,
-                      skip_default_package):
+def platform_install(platforms, with_package, without_package,
+                     skip_default_package):
     for platform in platforms:
-        p = PlatformFactory.newPlatform(platform)
-        if p.install(with_package, without_package, skip_default_package):
+        _platform = platform
+        _version = None
+        if "@" in platform:
+            _platform, _version = platform.rsplit("@", 1)
+        if PlatformManager().install(_platform, _version, with_package,
+                                     without_package, skip_default_package):
             click.secho(
                 "The platform '%s' has been successfully installed!\n"
                 "The rest of packages will be installed automatically "
@@ -47,123 +92,96 @@ def platforms_install(platforms, with_package, without_package,
 
 @cli.command("list", short_help="List installed platforms")
 @click.option("--json-output", is_flag=True)
-def platforms_list(json_output):
-
-    installed_platforms = PlatformFactory.get_platforms(
-        installed=True).keys()
-    installed_platforms.sort()
-
-    data = []
-    for platform in installed_platforms:
-        p = PlatformFactory.newPlatform(platform)
-        data.append({
-            "name": platform,
-            "packages": p.get_installed_packages()
+def platform_list(json_output):
+    platforms = []
+    for manifest in PlatformManager().get_installed():
+        p = PlatformFactory.newPlatform(manifest['_manifest_path'])
+        platforms.append({
+            "name": p.get_name(),
+            "title": p.get_title(),
+            "description": p.get_description(),
+            "version": p.get_version(),
+            "packages": p.get_installed_packages().keys()
         })
 
     if json_output:
-        click.echo(json.dumps(data))
+        click.echo(json.dumps(platforms))
     else:
-        for item in data:
-            click.echo("{name:<20} with packages: {pkgs}".format(
-                name=click.style(item['name'], fg="cyan"),
-                pkgs=", ".join(item['packages'])
-            ))
+        _print_platforms(platforms)
 
 
-@cli.command("search", short_help="Search for development platforms")
-@click.argument("query", required=False)
-@click.option("--json-output", is_flag=True)
-def platforms_search(query, json_output):
-
-    data = []
-    platforms = PlatformFactory.get_platforms().keys()
-    platforms.sort()
-    for platform in platforms:
-        p = PlatformFactory.newPlatform(platform)
-        type_ = p.get_type()
-        description = p.get_description()
-
-        if query == "all":
-            query = ""
-
-        search_data = "%s %s %s" % (type_, description, p.get_packages())
-        if query and query.lower() not in search_data.lower():
-            continue
-
-        data.append({
-            "type": type_,
-            "description": description,
-            "packages": p.get_packages()
-        })
-
-    if json_output:
-        click.echo(json.dumps(data))
-    else:
-        terminal_width, _ = click.get_terminal_size()
-        for item in data:
-            click.secho(item['type'], fg="cyan", nl=False)
-            click.echo(" (available packages: %s)" % ", ".join(
-                item.get("packages").keys()))
-            click.echo("-" * terminal_width)
-            click.echo(item['description'])
-            click.echo()
-
-
-@cli.command("show", short_help="Show details about installed platform")
+@cli.command("show", short_help="Show details about installed Platform")
 @click.argument("platform")
 @click.pass_context
-def platforms_show(ctx, platform):
-
-    installed_platforms = PlatformFactory.get_platforms(
-        installed=True).keys()
-
-    if platform not in installed_platforms:
+def platform_show(ctx, platform):
+    try:
+        p = PlatformFactory.newPlatform(platform)
+    except exception.UnknownPlatform:
         if (not app.get_setting("enable_prompts") or
                 click.confirm("The platform '%s' has not been installed yet. "
                               "Would you like to install it now?" % platform)):
-            ctx.invoke(platforms_install, platforms=[platform])
+            ctx.invoke(platform_install, platforms=[platform])
         else:
-            raise PlatformNotInstalledYet(platform)
+            raise exception.PlatformNotInstalledYet(platform)
 
-    p = PlatformFactory.newPlatform(platform)
-    click.echo("{name:<20} - {description} [ {url} ]".format(
-        name=click.style(p.get_type(), fg="cyan"),
-        description=p.get_description(), url=p.get_vendor_url()))
+    click.echo("{name} ~ {title}".format(
+        name=click.style(p.get_name(), fg="cyan"), title=p.get_title()))
+    click.echo("=" * (3 + len(p.get_name() + p.get_title())))
+    click.echo(p.get_manifest().get("description"))
+    click.echo()
+    click.echo("Version: %s" % p.get_version())
+    if "homepage" in p.get_manifest():
+        click.echo("Home: %s" % p.get_manifest().get("homepage"))
+    if "license" in p.get_manifest():
+        click.echo("License: %s" % p.get_manifest().get("license").get("type"))
+    if "frameworks" in p.get_manifest():
+        click.echo("Frameworks: %s" %
+                   ", ".join(p.get_manifest().get("frameworks").keys()))
 
-    installed_packages = PackageManager.get_installed()
-    for name in p.get_installed_packages():
-        data = installed_packages[name]
-        pkgalias = p.get_package_alias(name)
-        click.echo("----------")
-        click.echo("Package: %s" % click.style(name, fg="yellow"))
-        if pkgalias:
-            click.echo("Alias: %s" % pkgalias)
-        click.echo("Version: %d" % int(data['version']))
-        click.echo("Installed: %s" % datetime.fromtimestamp(
-            data['time']).strftime("%Y-%m-%d %H:%M:%S"))
+    if not p.get_packages():
+        return
+
+    installed_pkgs = p.get_installed_packages()
+    for name, opts in p.get_packages().items():
+        click.echo()
+        click.echo("Package %s" % click.style(name, fg="yellow"))
+        click.echo("-" * (8 + len(name)))
+        if p.get_package_type(name):
+            click.echo("Type: %s" % p.get_package_type(name))
+        click.echo("Requirements: %s" % opts.get("version"))
+        click.echo("Installed: %s" % (
+            "Yes" if name in installed_pkgs else "No (optional)"))
+        if name in installed_pkgs:
+            for key, value in installed_pkgs[name].items():
+                if key in ("url", "version", "description"):
+                    click.echo("%s: %s" % (key.title(), value))
 
 
 @cli.command("uninstall", short_help="Uninstall platforms")
 @click.argument("platforms", nargs=-1, required=True)
-def platforms_uninstall(platforms):
-
+def platform_uninstall(platforms):
     for platform in platforms:
-        p = PlatformFactory.newPlatform(platform)
-        if p.uninstall():
+        _platform = platform
+        _version = None
+        if "@" in platform:
+            _platform, _version = platform.rsplit("@", 1)
+        if PlatformManager().uninstall(_platform, _version):
             click.secho("The platform '%s' has been successfully "
                         "uninstalled!" % platform, fg="green")
 
 
-@cli.command("update", short_help="Update installed Platforms and Packages")
-def platforms_update():
-
-    installed_platforms = PlatformFactory.get_platforms(
-        installed=True).keys()
-    installed_platforms.sort()
-
-    for platform in installed_platforms:
-        click.echo("\nPlatform %s" % click.style(platform, fg="cyan"))
+@cli.command("update", short_help="Update installed Platforms")
+@click.option("--only-packages", is_flag=True)
+def platform_update(only_packages):
+    for manifest in PlatformManager().get_installed():
+        click.echo("Platform %s @ %s" % (
+            click.style(manifest['name'], fg="cyan"), manifest['version']))
         click.echo("--------")
-        p = PlatformFactory.newPlatform(platform)
-        p.update()
+        if only_packages:
+            status = PlatformFactory.newPlatform(
+                manifest['name'], manifest['version']).update_packages()
+            if status is None:
+                click.secho("Packages are up-to-date", fg="green")
+        else:
+            PlatformManager().update(manifest['name'], manifest['version'])
+        click.echo()
