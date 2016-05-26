@@ -56,9 +56,9 @@ class PlatformManager(PackageManager):
     def install(self,  # pylint: disable=too-many-arguments,arguments-differ
                 name, requirements=None, with_packages=None,
                 without_packages=None, skip_default_packages=False):
-        PackageManager.install(self, name, requirements)
+        manifest_path = PackageManager.install(self, name, requirements)
         return PlatformFactory.newPlatform(
-            name, requirements).install_packages(
+            manifest_path, requirements).install_packages(
                 with_packages, without_packages, skip_default_packages)
 
     def uninstall(self,  # pylint: disable=arguments-differ

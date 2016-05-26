@@ -21,14 +21,17 @@ Usage
 
 .. code-block:: bash
 
+    # install platform by name
     platformio platform install [OPTIONS] [PLATFORMS]
+
+    # install platform from local directory
+    platformio platform install [OPTIONS] [file:///local/path/to/platform/dir]
 
 
 Description
 -----------
 
-Install pre-built development :ref:`platforms` with related
-packages.
+Install development :ref:`platforms` and dependent packages.
 
 There are several predefined aliases for packages, such as:
 

@@ -14,7 +14,7 @@
 
 import os
 from os.path import dirname, isdir, isfile, join
-from shutil import rmtree
+from shutil import copyfile, copytree, rmtree
 
 import click
 import requests
@@ -42,6 +42,10 @@ class PackageManager(object):
         PackageManager._INSTALLED_CACHE = {}
 
     @staticmethod
+    def get_manifest_name():
+        return "package.json"
+
+    @staticmethod
     def download(url, dest_dir, sha1=None):
         fd = FileDownloader(url, dest_dir)
         fd.start()
@@ -50,13 +54,56 @@ class PackageManager(object):
         return fd.get_filepath()
 
     @staticmethod
-    def unpack(pkgpath, dest_dir):
-        fu = FileUnpacker(pkgpath, dest_dir)
+    def unpack(source_path, dest_dir):
+        fu = FileUnpacker(source_path, dest_dir)
         return fu.start()
 
-    @staticmethod
-    def get_manifest_name():
-        return "package.json"
+    def check_structure(self, pkg_dir):
+        if isfile(join(pkg_dir, self.get_manifest_name())):
+            return True
+
+        for root, _, files in os.walk(pkg_dir):
+            if self.get_manifest_name() not in files:
+                continue
+            # copy contents to the root of package directory
+            for item in os.listdir(root):
+                item_path = join(root, item)
+                if isfile(item_path):
+                    copyfile(item_path, join(pkg_dir, item))
+                elif isdir(item_path):
+                    copytree(item_path, join(pkg_dir, item), symlinks=True)
+            # remove not used contents
+            while True:
+                rmtree(root)
+                root = dirname(root)
+                if root == pkg_dir:
+                    break
+            break
+
+        if isfile(join(pkg_dir, self.get_manifest_name())):
+            return True
+
+        raise exception.PlatformioException(
+            "Could not find '%s' manifest file in the package" %
+            self.get_manifest_name())
+
+    def make_pkg_dir(self, name, version):
+        pkg_dir = join(self.package_dir, name)
+        if isfile(join(pkg_dir, self.get_manifest_name())):
+            _manifest = util.load_json(
+                join(pkg_dir, self.get_manifest_name()))
+            if (_manifest['name'] == name and
+                    _manifest['version'] != version):
+                pkg_dir = join(
+                    self.package_dir, "%s@%s" % (name, version))
+
+        # remove previous/not-satisfied package
+        if isdir(pkg_dir):
+            rmtree(pkg_dir)
+        os.makedirs(pkg_dir)
+        assert isdir(pkg_dir)
+
+        return pkg_dir
 
     @staticmethod
     def max_satisfying_version(versions, requirements=None):
@@ -114,7 +161,8 @@ class PackageManager(object):
     def install(self, name, requirements, silent=False, trigger_event=True):
         installed = self.is_installed(name, requirements)
         if not installed or not silent:
-            click.echo("Installing package %s @ %s:" % (
+            click.echo("Installing %s %s @ %s:" % (
+                self.get_manifest_name().split(".")[0],
                 click.style(name, fg="cyan"),
                 requirements if requirements else "latest"))
         if installed:
@@ -122,18 +170,24 @@ class PackageManager(object):
                 click.secho("Already installed", fg="yellow")
             return
 
-        if not self._install_from_piorepo(name, requirements):
+        manifest_path = None
+        if name.startswith("file://"):
+            manifest_path = self._install_from_local_dir(name[7:])
+        else:
+            manifest_path = self._install_from_piorepo(name, requirements)
+        if not isfile(manifest_path):
             raise exception.PackageInstallError(
-                name, requirements, util.get_systype())
+                name, requirements or "latest", util.get_systype())
 
         self.reset_cache()
         if trigger_event:
             telemetry.on_event(
                 category="PackageManager", action="Install", label=name)
 
+        return manifest_path
+
     def _install_from_piorepo(self, name, requirements):
         pkg_dir = None
-        success = False
         pkgdata = None
         versions = None
         for versions in PackageRepoIterator(name, self.repositories):
@@ -142,26 +196,17 @@ class PackageManager(object):
             if not pkgdata:
                 continue
 
-            pkg_dir = join(self.package_dir, name)
-            if isfile(join(pkg_dir, self.get_manifest_name())):
-                pkg_dir = join(
-                    self.package_dir, "%s@%s" % (name, pkgdata['version']))
-
-            # remove previous/not-satisfied package
-            if isdir(pkg_dir):
-                rmtree(pkg_dir)
-            os.makedirs(pkg_dir)
-
+            pkg_dir = self.make_pkg_dir(name, pkgdata['version'])
             try:
                 dlpath = self.download(
                     pkgdata['url'], pkg_dir, pkgdata.get("sha1"))
                 assert isfile(dlpath)
                 self.unpack(dlpath, pkg_dir)
-                success = True
+                self.check_structure(pkg_dir)
                 break
             except Exception as e:  # pylint: disable=broad-except
                 click.secho("Warning! Package Mirror: %s" % e, fg="yellow")
-                click.secho("Looking for other Package Mirror...", fg="yellow")
+                click.secho("Looking for another mirror...", fg="yellow")
             finally:
                 if dlpath and isfile(dlpath):
                     os.remove(dlpath)
@@ -170,12 +215,26 @@ class PackageManager(object):
             raise exception.UnknownPackage(name)
         elif not pkgdata:
             raise exception.UndefinedPackageVersion(
-                name, requirements, util.get_systype())
+                name, requirements or "latest", util.get_systype())
 
-        return success
+        return join(pkg_dir, self.get_manifest_name())
+
+    def _install_from_local_dir(self, local_dir):
+        if not isfile(join(local_dir, self.get_manifest_name())):
+            raise exception.InvalidLocalPackage(
+                local_dir, self.get_manifest_name())
+
+        manifest = util.load_json(join(local_dir, self.get_manifest_name()))
+        assert set(["name", "version"]) <= set(manifest.keys())
+        pkg_dir = self.make_pkg_dir(manifest['name'], manifest['version'])
+        rmtree(pkg_dir)
+        copytree(local_dir, pkg_dir, symlinks=True)
+
+        return join(pkg_dir, self.get_manifest_name())
 
     def uninstall(self, name, requirements=None, trigger_event=True):
-        click.echo("Uninstalling package %s @ %s: \t" % (
+        click.echo("Uninstalling %s %s @ %s: \t" % (
+            self.get_manifest_name().split(".")[0],
             click.style(name, fg="cyan"),
             requirements if requirements else "latest"), nl=False)
         found = False
@@ -201,7 +260,8 @@ class PackageManager(object):
                 category="PackageManager", action="Uninstall", label=name)
 
     def update(self, name, requirements=None, keep_versions=None):
-        click.echo("Updating package %s @ %s:" % (
+        click.echo("Updating %s %s @ %s:" % (
+            self.get_manifest_name().split(".")[0],
             click.style(name, fg="yellow"),
             requirements if requirements else "latest"))
 

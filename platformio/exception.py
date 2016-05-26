@@ -70,6 +70,11 @@ class UnknownPackage(PlatformioException):
     MESSAGE = "Detected unknown package '{0}'"
 
 
+class InvalidLocalPackage(PlatformioException):
+
+    MESSAGE = "Invalid local package '{0}'. Can not find manifest '{1}'"
+
+
 class UndefinedPackageVersion(PlatformioException):
 
     MESSAGE = "Can not find package '{0}' with version requirements '{1}'"\

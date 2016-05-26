@@ -53,7 +53,7 @@ class FileDownloader(object):
         return self._destination
 
     def get_lmtime(self):
-        return self._request.headers['last-modified']
+        return self._request.headers.get("last-modified")
 
     def get_size(self):
         if "content-length" not in self._request.headers:
@@ -77,7 +77,8 @@ class FileDownloader(object):
         f.close()
         self._request.close()
 
-        self._preserve_filemtime(self.get_lmtime())
+        if self.get_lmtime():
+            self._preserve_filemtime(self.get_lmtime())
 
     def verify(self, sha1=None):
         _dlsize = getsize(self._destination)
