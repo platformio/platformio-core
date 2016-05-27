@@ -309,7 +309,14 @@ class BasePlatform(PlatformPackagesMixin):
         return self.get_boards(id_)
 
     def get_packages(self):
-        return self.manifest.get("packages", {})
+        packages = self.manifest.get("packages", {})
+        if "tool-scons" not in packages:
+            packages['tool-scons'] = {
+                "version": self.manifest.get("engines", {}).get(
+                    "scons", ">=2.3.0,<2.6.0"),
+                "optional": False
+            }
+        return packages
 
     def get_frameworks(self):
         return self.get_manifest().get("frameworks")
@@ -352,13 +359,6 @@ class BasePlatform(PlatformPackagesMixin):
                 continue
             _pkg_name = frameworks[framework]['package']
             self.get_packages()[_pkg_name]['optional'] = False
-
-        # append SCons tool
-        self.get_packages()['tool-scons'] = {
-            "version": self.manifest.get("engines", {}).get(
-                "scons", ">=2.3.0,<2.5.0"),
-            "optional": False
-        }
 
         # enable upload tools for upload targets
         if any(["upload" in t for t in targets] + ["program" in targets]):
@@ -413,8 +413,7 @@ class BasePlatform(PlatformPackagesMixin):
 
         cmd = [
             os.path.normpath(sys.executable),
-            join(util.get_home_dir(), "packages", "tool-scons",
-                 "script", "scons"),
+            join(self.get_package_dir("tool-scons"), "script", "scons"),
             "-Q",
             "-j %d" % self.get_job_nums(),
             "--warn=no-no-parallel-support",
