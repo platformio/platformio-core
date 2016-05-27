@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import os
-from os.path import dirname, isdir, isfile, join
+from os.path import dirname, isdir, isfile, islink, join
 from shutil import copyfile, copytree, rmtree
 
 import click
@@ -246,7 +246,11 @@ class PackageManager(object):
                 continue
             found = True
             if isfile(manifest['_manifest_path']):
-                rmtree(dirname(manifest['_manifest_path']))
+                pkg_dir = dirname(manifest['_manifest_path'])
+                if islink(pkg_dir):
+                    os.unlink(pkg_dir)
+                else:
+                    rmtree(pkg_dir)
 
         if not found:
             click.secho("Not installed", fg="yellow")
