@@ -72,6 +72,8 @@ class PlatformManager(PackageManager):
         raise NotImplementedError()
 
     def is_outdated(self, name, version):
+        # @TODO disable auto-update temporary
+        return False
         raise NotImplementedError()
 
     def get_installed_boards(self):
