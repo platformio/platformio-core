@@ -659,7 +659,7 @@ PlatformIO 1.0
   (`issue #183 <https://github.com/platformio/platformio/issues/183>`_)
 * Added GDB as alternative uploader to `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__ platform
   (`issue #175 <https://github.com/platformio/platformio/issues/174>`_)
-* Added `examples <https://github.com/platformio/platformio/tree/develop/examples>`__
+* Added `examples <https://github.com/platformio/platformio-examples/tree/develop>`__
   with preconfigured IDE projects
   (`issue #154 <https://github.com/platformio/platformio/issues/154>`_)
 * Fixed firmware uploading under Linux OS for Arduino Leonardo board

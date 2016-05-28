@@ -610,7 +610,7 @@ Examples
 
 .. note::
     A full list with project examples can be found in
-    `PlatformIO Repository <https://github.com/platformio/platformio/tree/develop/examples>`_.
+    `PlatformIO Repository <https://github.com/platformio/platformio-examples/tree/develop>`_.
 
 1. :ref:`platform_atmelavr`: Arduino UNO board with auto pre-configured
    ``board_*`` and ``upload_*`` options (use only ``board`` option) and Arduino

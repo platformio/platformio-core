@@ -256,5 +256,5 @@ Arduino Uno:
 Further Reading
 ---------------
 
-* `Project examples <https://github.com/platformio/platformio/tree/develop/examples>`_
+* `Project examples <https://github.com/platformio/platformio-examples/tree/develop>`_
 * :ref:`userguide` for PlatformIO CLI commands
