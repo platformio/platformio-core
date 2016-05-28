@@ -23,6 +23,8 @@ import click
 
 from platformio import app, exception, telemetry, util
 from platformio.commands.lib import lib_install as cmd_lib_install
+from platformio.commands.platform import \
+    platform_install as cmd_platform_install
 from platformio.libmanager import LibraryManager
 from platformio.managers.platform import PlatformFactory
 
@@ -186,7 +188,6 @@ class EnvironmentProcessor(object):
         if "platform" not in self.options:
             raise exception.UndefinedEnvPlatform(self.name)
 
-        platform = self.options['platform']
         build_vars = self._get_build_variables()
         build_targets = self._get_build_targets()
 
@@ -196,7 +197,17 @@ class EnvironmentProcessor(object):
         if "lib_install" in self.options:
             _autoinstall_libs(self.cmd_ctx, self.options['lib_install'])
 
-        p = PlatformFactory.newPlatform(platform)
+        platform = self.options['platform']
+        version = None
+        if "@" in platform:
+            platform, version = platform.rsplit("@", 1)
+
+        try:
+            p = PlatformFactory.newPlatform(platform)
+        except exception.UnknownPlatform:
+            self.cmd_ctx.invoke(cmd_platform_install, platforms=[platform])
+            p = PlatformFactory.newPlatform(platform)
+
         return p.run(build_vars, build_targets, self.verbose_level)
 
 

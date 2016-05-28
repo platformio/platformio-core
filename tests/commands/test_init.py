@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 from os import makedirs, getcwd
 from os.path import getsize, isdir, isfile, join
 
 from platformio.commands.init import cli
+from platformio.commands.boards import cli as cmd_boards
 from platformio import util
 
 
@@ -48,11 +50,14 @@ def test_init_special_board(platformio_setup, clirunner, validate_cliresult):
         validate_cliresult(result)
         validate_pioproject(getcwd())
 
-        uno = util.get_boards("uno")
+        result = clirunner.invoke(cmd_boards, ["Arduino Uno", "--json-output"])
+        validate_cliresult(result)
+        boards = json.loads(result.output)
+
         config = util.get_project_config()
         expected_result = [
-            ("platform", str(uno['platform'])),
-            ("framework", str(uno['frameworks'][0])),
+            ("platform", str(boards[0]['platform'])),
+            ("framework", str(boards[0]['frameworks'][0])),
             ("board", "uno")
         ]
 

@@ -14,14 +14,14 @@
 
 import json
 
-from platformio.commands.platforms import \
-    platforms_list as cmd_platforms_list
-from platformio.commands.platforms import \
-    platforms_search as cmd_platforms_search
+from platformio.commands.platform import \
+    platform_list as cmd_platform_list
+from platformio.commands.platform import \
+    platform_search as cmd_platform_search
 
 
 def test_list_json_output(clirunner, validate_cliresult):
-    result = clirunner.invoke(cmd_platforms_list, ["--json-output"])
+    result = clirunner.invoke(cmd_platform_list, ["--json-output"])
     validate_cliresult(result)
     list_result = json.loads(result.output)
     assert isinstance(list_result, list)
@@ -31,23 +31,23 @@ def test_list_json_output(clirunner, validate_cliresult):
 
 
 def test_list_raw_output(clirunner, validate_cliresult):
-    result = clirunner.invoke(cmd_platforms_list)
+    result = clirunner.invoke(cmd_platform_list)
     validate_cliresult(result)
     assert "teensy" in result.output
 
 
 def test_search_json_output(clirunner, validate_cliresult):
-    result = clirunner.invoke(cmd_platforms_search,
+    result = clirunner.invoke(cmd_platform_search,
                               ["arduino", "--json-output"])
     validate_cliresult(result)
     search_result = json.loads(result.output)
     assert isinstance(search_result, list)
     assert len(search_result)
-    platforms = [item['type'] for item in search_result]
+    platforms = [item['name'] for item in search_result]
     assert "atmelsam" in platforms
 
 
 def test_search_raw_output(clirunner, validate_cliresult):
-    result = clirunner.invoke(cmd_platforms_search, ["arduino"])
+    result = clirunner.invoke(cmd_platform_search, ["arduino"])
     validate_cliresult(result)
     assert "teensy" in result.output

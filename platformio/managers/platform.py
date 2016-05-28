@@ -125,6 +125,7 @@ class PlatformFactory(object):
                 name, requirements)
             if _manifest:
                 platform_dir = dirname(_manifest['_manifest_path'])
+
         if not platform_dir:
             raise exception.UnknownPlatform(
                 name if not requirements else "%s@%s" % (name, requirements))

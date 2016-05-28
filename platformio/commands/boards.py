@@ -92,6 +92,7 @@ def _get_boards(installed=False):
         boards = _new_boards
     return boards
 
+
 def _ouput_boards_json(query, installed=False):
     result = []
     for board in _get_boards(installed):
