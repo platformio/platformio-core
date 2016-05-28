@@ -39,7 +39,7 @@ libOpenCM3, etc.*
 * :ref:`ide_atom`
 * `Web 2.0 Library Search <http://platformio.org/lib>`_ |
   `Embedded Boards Explorer <http://platformio.org/boards>`_
-* `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_
+* `Project Examples <https://github.com/platformio/platformio-examples/tree/develop>`_
 * `Source Code <https://github.com/platformio/platformio>`_ |
   `Issues <https://github.com/platformio/platformio/issues>`_
 * `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
