@@ -33,7 +33,7 @@ class PlatformManager(PackageManager):
         PackageManager.__init__(
             self,
             join(util.get_home_dir(), "platforms"),
-            ["http://dl.platformio.org/misc/platforms_manifest.json"]
+            ["http://dl.platformio.org/platforms/manifest.json"]
         )
 
     @staticmethod
@@ -68,7 +68,8 @@ class PlatformManager(PackageManager):
             return PackageManager.uninstall(self, name, requirements)
         return False
 
-    def update(self, name, version):
+    def update(self,  # pylint: disable=arguments-differ
+               name, version):
         raise NotImplementedError()
 
     def is_outdated(self, name, version):
@@ -235,11 +236,110 @@ class PlatformPackagesMixin(object):
         return False
 
 
-class BasePlatform(PlatformPackagesMixin):
-
-    _BOARDS_CACHE = {}
+class PlatformRunMixin(object):
 
     LINE_ERROR_RE = re.compile(r"(\s+error|error[:\s]+)", re.I)
+
+    def run(self, variables, targets, verbose):
+        assert isinstance(variables, dict)
+        assert isinstance(targets, list)
+
+        self.configure_default_packages(variables, targets)
+        self.install_packages(silent=True)
+
+        self._verbose_level = int(verbose)
+
+        if "clean" in targets:
+            targets.remove("clean")
+            targets.append("-c")
+
+        variables['platform_manifest'] = self.manifest_path
+
+        if "build_script" not in variables:
+            variables['build_script'] = self.get_build_script()
+        if not isfile(variables['build_script']):
+            raise exception.BuildScriptNotFound(variables['build_script'])
+
+        self._found_error = False
+        result = self._run_scons(variables, targets)
+        assert "returncode" in result
+        # if self._found_error:
+        #     result['returncode'] = 1
+
+        if self._last_echo_line == ".":
+            click.echo("")
+
+        return result
+
+    def _run_scons(self, variables, targets):
+        # pass current PYTHONPATH to SCons
+        if "PYTHONPATH" in os.environ:
+            _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
+        else:
+            _PYTHONPATH = []
+        for p in os.sys.path:
+            if p not in _PYTHONPATH:
+                _PYTHONPATH.append(p)
+        os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
+
+        cmd = [
+            os.path.normpath(sys.executable),
+            join(self.get_package_dir("tool-scons"), "script", "scons"),
+            "-Q",
+            "-j %d" % self.get_job_nums(),
+            "--warn=no-no-parallel-support",
+            "-f", join(util.get_source_dir(), "builder", "main.py")
+        ] + targets
+
+        # encode and append variables
+        for key, value in variables.items():
+            cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
+
+        result = util.exec_command(
+            cmd,
+            stdout=util.AsyncPipe(self.on_run_out),
+            stderr=util.AsyncPipe(self.on_run_err)
+        )
+        return result
+
+    def on_run_out(self, line):
+        self._echo_line(line, level=3)
+
+    def on_run_err(self, line):
+        is_error = self.LINE_ERROR_RE.search(line) is not None
+        if is_error:
+            self._found_error = True
+        self._echo_line(line, level=1 if is_error else 2)
+
+    def _echo_line(self, line, level):
+        assert 1 <= level <= 3
+
+        fg = ("red", "yellow", None)[level - 1]
+        if level == 3 and "is up to date" in line:
+            fg = "green"
+
+        if level > self._verbose_level:
+            click.secho(".", fg=fg, err=level < 3, nl=False)
+            self._last_echo_line = "."
+            return
+
+        if self._last_echo_line == ".":
+            click.echo("")
+        self._last_echo_line = line
+
+        click.secho(line, fg=fg, err=level < 3)
+
+    @staticmethod
+    def get_job_nums():
+        try:
+            return cpu_count()
+        except NotImplementedError:
+            return 1
+
+
+class BasePlatform(PlatformPackagesMixin, PlatformRunMixin):
+
+    _BOARDS_CACHE = {}
 
     def __init__(self, manifest_path):
         self._BOARDS_CACHE = {}
@@ -369,102 +469,6 @@ class BasePlatform(PlatformPackagesMixin):
                 elif "uploadlazy" in targets:
                     # skip all packages, allow only upload tools
                     self.get_packages()[_name]['optional'] = True
-
-    def run(self, variables, targets, verbose):
-        assert isinstance(variables, dict)
-        assert isinstance(targets, list)
-
-        self.configure_default_packages(variables, targets)
-        self.install_packages(silent=True)
-
-        self._verbose_level = int(verbose)
-
-        if "clean" in targets:
-            targets.remove("clean")
-            targets.append("-c")
-
-        variables['platform_manifest'] = self.manifest_path
-
-        if "build_script" not in variables:
-            variables['build_script'] = self.get_build_script()
-        if not isfile(variables['build_script']):
-            raise exception.BuildScriptNotFound(variables['build_script'])
-
-        self._found_error = False
-        result = self._run_scons(variables, targets)
-        assert "returncode" in result
-        # if self._found_error:
-        #     result['returncode'] = 1
-
-        if self._last_echo_line == ".":
-            click.echo("")
-
-        return result
-
-    def _run_scons(self, variables, targets):
-        # pass current PYTHONPATH to SCons
-        if "PYTHONPATH" in os.environ:
-            _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
-        else:
-            _PYTHONPATH = []
-        for p in os.sys.path:
-            if p not in _PYTHONPATH:
-                _PYTHONPATH.append(p)
-        os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
-
-        cmd = [
-            os.path.normpath(sys.executable),
-            join(self.get_package_dir("tool-scons"), "script", "scons"),
-            "-Q",
-            "-j %d" % self.get_job_nums(),
-            "--warn=no-no-parallel-support",
-            "-f", join(util.get_source_dir(), "builder", "main.py")
-        ] + targets
-
-        # encode and append variables
-        for key, value in variables.items():
-            cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
-
-        result = util.exec_command(
-            cmd,
-            stdout=util.AsyncPipe(self.on_run_out),
-            stderr=util.AsyncPipe(self.on_run_err)
-        )
-        return result
-
-    def on_run_out(self, line):
-        self._echo_line(line, level=3)
-
-    def on_run_err(self, line):
-        is_error = self.LINE_ERROR_RE.search(line) is not None
-        if is_error:
-            self._found_error = True
-        self._echo_line(line, level=1 if is_error else 2)
-
-    def _echo_line(self, line, level):
-        assert 1 <= level <= 3
-
-        fg = ("red", "yellow", None)[level - 1]
-        if level == 3 and "is up to date" in line:
-            fg = "green"
-
-        if level > self._verbose_level:
-            click.secho(".", fg=fg, err=level < 3, nl=False)
-            self._last_echo_line = "."
-            return
-
-        if self._last_echo_line == ".":
-            click.echo("")
-        self._last_echo_line = line
-
-        click.secho(line, fg=fg, err=level < 3)
-
-    @staticmethod
-    def get_job_nums():
-        try:
-            return cpu_count()
-        except NotImplementedError:
-            return 1
 
 
 class PlatformBoardConfig(object):

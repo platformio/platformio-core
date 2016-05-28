@@ -286,7 +286,7 @@ class PackageManager(object):
                 continue
             if (not current or semantic_version.compare(
                     manifest['version'], current['version']) == 1):
-                    current = manifest
+                current = manifest
 
         if current is None:
             return

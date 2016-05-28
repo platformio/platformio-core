@@ -203,10 +203,10 @@ class EnvironmentProcessor(object):
             platform, version = platform.rsplit("@", 1)
 
         try:
-            p = PlatformFactory.newPlatform(platform)
+            p = PlatformFactory.newPlatform(platform, version)
         except exception.UnknownPlatform:
             self.cmd_ctx.invoke(cmd_platform_install, platforms=[platform])
-            p = PlatformFactory.newPlatform(platform)
+            p = PlatformFactory.newPlatform(platform, version)
 
         return p.run(build_vars, build_targets, self.verbose_level)
 
