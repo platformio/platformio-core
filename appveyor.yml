@@ -7,6 +7,7 @@ environment:
 install:
   - cmd: git submodule update --init --recursive
   - cmd: SET PATH=%PATH%;C:\Python27\Scripts
+  - cmd: pip install tox
 
 test_script:
   - cmd: tox
