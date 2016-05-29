@@ -49,9 +49,8 @@ def BoardConfig(env, board=None):
 
 def GetFrameworkScript(env, framework):
     p = env.DevPlatform()
-    frameworks = p.get_frameworks()
-    assert frameworks and framework in frameworks
-    script_path = env.subst(frameworks[framework]['script'])
+    assert p.frameworks and framework in p.frameworks
+    script_path = env.subst(p.frameworks[framework]['script'])
     if not isfile(script_path):
         script_path = join(p.get_dir(), script_path)
     return script_path

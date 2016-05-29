@@ -36,33 +36,61 @@ class PlatformManager(PackageManager):
             ["http://dl.platformio.org/platforms/manifest.json"]
         )
 
-    @staticmethod
-    def get_manifest_name():
+    @property
+    def manifest_name(self):
         return "platform.json"
 
     def install(self,  # pylint: disable=too-many-arguments,arguments-differ
                 name, requirements=None, with_packages=None,
                 without_packages=None, skip_default_packages=False):
         manifest_path = PackageManager.install(self, name, requirements)
-        return PlatformFactory.newPlatform(
+        PlatformFactory.newPlatform(
             manifest_path, requirements).install_packages(
                 with_packages, without_packages, skip_default_packages)
+        self.cleanup_packages()
+        return True
 
     def uninstall(self,  # pylint: disable=arguments-differ
                   name, requirements=None):
-        if PlatformFactory.newPlatform(
-                name, requirements).uninstall_packages():
-            return PackageManager.uninstall(self, name, requirements)
-        return False
+        PackageManager.uninstall(self, name, requirements)
+        self.cleanup_packages()
+        return True
 
     def update(self,  # pylint: disable=arguments-differ
-               name, version):
-        raise NotImplementedError()
+               name, requirements=None, only_packages=False):
+        if not only_packages:
+            PackageManager.update(self, name)
+        PlatformFactory.newPlatform(
+            name, requirements).update_packages()
+        self.cleanup_packages()
+        return True
 
-    def is_outdated(self, name, version):
-        # @TODO disable auto-update temporary
-        return False
-        raise NotImplementedError()
+    def is_outdated(self, name, requirements=None):
+        p = PlatformFactory.newPlatform(name, requirements)
+        return (p.are_outdated_packages() or
+                p.version != self.get_latest_repo_version(name, requirements))
+
+    def cleanup_packages(self):
+        self.reset_cache()
+        deppkgs = {}
+        for manifest in PlatformManager().get_installed():
+            p = PlatformFactory.newPlatform(
+                manifest['name'], manifest['version'])
+            for pkgname, pkgmanifest in p.get_installed_packages().items():
+                if pkgname not in deppkgs:
+                    deppkgs[pkgname] = set()
+                deppkgs[pkgname].add(pkgmanifest['version'])
+
+        pm = PackageManager()
+        for manifest in pm.get_installed():
+            if manifest['name'] not in deppkgs:
+                continue
+            if manifest['version'] not in deppkgs[manifest['name']]:
+                pm.uninstall(
+                    manifest['name'], manifest['version'], trigger_event=False)
+
+        self.reset_cache()
+        return True
 
     def get_installed_boards(self):
         boards = []
@@ -71,7 +99,7 @@ class PlatformManager(PackageManager):
             for id_, config in p.get_boards().items():
                 manifest = config.get_manifest().copy()
                 manifest['id'] = id_
-                manifest['platform'] = p.get_name()
+                manifest['platform'] = p.name
                 boards.append(manifest)
         return boards
 
@@ -138,7 +166,7 @@ class PlatformPackagesMixin(object):
     def get_installed_packages(self):
         items = {}
         installed = self.pm.get_installed()
-        for name, opts in self.get_packages().items():
+        for name, opts in self.packages.items():
             manifest = None
             for p in installed:
                 if (p['name'] != name or not semantic_version.match(
@@ -159,11 +187,11 @@ class PlatformPackagesMixin(object):
             self.pkg_types_to_names(without_packages or []))
 
         upkgs = with_packages | without_packages
-        ppkgs = set(self.get_packages().keys())
+        ppkgs = set(self.packages.keys())
         if not upkgs.issubset(ppkgs):
             raise exception.UnknownPackage(", ".join(upkgs - ppkgs))
 
-        for name, opts in self.get_packages().items():
+        for name, opts in self.packages.items():
             if name in without_packages:
                 continue
             elif (name in with_packages or
@@ -172,53 +200,14 @@ class PlatformPackagesMixin(object):
 
         return True
 
-    def uninstall_packages(self):
-        deppkgs = set()
-        for manifest in PlatformManager().get_installed():
-            if manifest['name'] == self.get_name():
-                continue
-            p = PlatformFactory.newPlatform(
-                manifest['name'], manifest['version'])
-            for pkgname, pkgmanifest in p.get_installed_packages().items():
-                deppkgs.add((pkgname, pkgmanifest['version']))
-
-        for manifest in self.pm.get_installed():
-            if manifest['name'] not in self.get_packages().keys():
-                continue
-            if (manifest['name'], manifest['version']) not in deppkgs:
-                self.pm.uninstall(manifest['name'], manifest['version'])
-        return True
-
     def update_packages(self):
-        outdated = None
-        for pkgname, pkgmanifest in self.get_installed_packages().items():
-            requirements = self.get_packages()[pkgname]['version']
-            latest_version = self.pm.get_latest_version(
-                pkgname, requirements)
-            if (not latest_version or
-                    pkgmanifest['version'] == latest_version):
-                continue
-
-            # check other platforms
-            keep_versions = set([latest_version])
-            for pfmanifest in PlatformManager().get_installed():
-                if pfmanifest['name'] == self.get_name():
-                    continue
-                p = PlatformFactory.newPlatform(
-                    pfmanifest['name'], pfmanifest['version'])
-                if pkgname not in p.get_packages():
-                    continue
-                keep_versions.add(p.pm.get_latest_version(
-                    pkgname, p.get_packages()[pkgname]['version']))
-
-            outdated = self.pm.update(
-                pkgname, requirements, keep_versions)
-        return outdated
+        for name in self.get_installed_packages().keys():
+            self.pm.update(name, self.packages[name]['version'])
 
     def are_outdated_packages(self):
         for name, opts in self.get_installed_packages().items():
-            if (opts['version'] != self.pm.get_latest_version(
-                    name, self.get_packages()[name].get("version"))):
+            if (opts['version'] != self.pm.get_latest_repo_version(
+                    name, self.packages[name].get("version"))):
                 return True
         return False
 
@@ -331,10 +320,10 @@ class BasePlatform(PlatformPackagesMixin, PlatformRunMixin):
     def __init__(self, manifest_path):
         self._BOARDS_CACHE = {}
         self.manifest_path = manifest_path
-        self.manifest = util.load_json(manifest_path)
+        self._manifest = util.load_json(manifest_path)
 
         self.pm = PackageManager(
-            repositories=self.manifest.get("packageRepositories"))
+            repositories=self._manifest.get("packageRepositories"))
 
         self._found_error = False
         self._last_echo_line = None
@@ -344,20 +333,48 @@ class BasePlatform(PlatformPackagesMixin, PlatformRunMixin):
         # 3 = 2 + others
         self._verbose_level = 3
 
-    def get_name(self):
-        return self.manifest['name']
+    @property
+    def name(self):
+        return self._manifest['name']
 
-    def get_title(self):
-        return self.manifest['title']
+    @property
+    def title(self):
+        return self._manifest['title']
 
-    def get_description(self):
-        return self.manifest['description']
+    @property
+    def description(self):
+        return self._manifest['description']
 
-    def get_version(self):
-        return self.manifest['version']
+    @property
+    def version(self):
+        return self._manifest['version']
 
-    def get_manifest(self):
-        return self.manifest
+    @property
+    def homepage(self):
+        return self._manifest.get("homepage")
+
+    @property
+    def license(self):
+        return self._manifest.get("license")
+
+    @property
+    def frameworks(self):
+        return self._manifest.get("frameworks")
+
+    @property
+    def manifest(self):
+        return self._manifest
+
+    @property
+    def packages(self):
+        packages = self._manifest.get("packages", {})
+        if "tool-scons" not in packages:
+            packages['tool-scons'] = {
+                "version": self._manifest.get("engines", {}).get(
+                    "scons", ">=2.3.0,<2.6.0"),
+                "optional": False
+            }
+        return packages
 
     def get_dir(self):
         return dirname(self.manifest_path)
@@ -369,7 +386,7 @@ class BasePlatform(PlatformPackagesMixin, PlatformRunMixin):
         raise NotImplementedError()
 
     def is_embedded(self):
-        for opts in self.get_packages().values():
+        for opts in self.packages.values():
             if opts.get("type") == "uploader":
                 return True
         return False
@@ -396,19 +413,6 @@ class BasePlatform(PlatformPackagesMixin, PlatformRunMixin):
     def board_config(self, id_):
         return self.get_boards(id_)
 
-    def get_packages(self):
-        packages = self.manifest.get("packages", {})
-        if "tool-scons" not in packages:
-            packages['tool-scons'] = {
-                "version": self.manifest.get("engines", {}).get(
-                    "scons", ">=2.3.0,<2.6.0"),
-                "optional": False
-            }
-        return packages
-
-    def get_frameworks(self):
-        return self.get_manifest().get("frameworks")
-
     def get_package_dir(self, name):
         packages = self.get_installed_packages()
         if name not in packages:
@@ -422,14 +426,14 @@ class BasePlatform(PlatformPackagesMixin, PlatformRunMixin):
         return packages[name]['version']
 
     def get_package_type(self, name):
-        return self.get_packages()[name].get("type")
+        return self.packages[name].get("type")
 
     def pkg_types_to_names(self, types):
         names = []
         for type_ in types:
             name = type_
             # lookup by package types
-            for _name, _opts in self.get_packages().items():
+            for _name, _opts in self.packages.items():
                 if _opts.get("type") == type_:
                     name = None
                     names.append(_name)
@@ -440,22 +444,21 @@ class BasePlatform(PlatformPackagesMixin, PlatformRunMixin):
 
     def configure_default_packages(self, variables, targets):
         # enbale used frameworks
-        frameworks = self.get_frameworks()
         for framework in variables.get("framework", "").split(","):
             framework = framework.lower().strip()
-            if not framework or framework not in frameworks:
+            if not framework or framework not in self.frameworks:
                 continue
-            _pkg_name = frameworks[framework]['package']
-            self.get_packages()[_pkg_name]['optional'] = False
+            _pkg_name = self.frameworks[framework]['package']
+            self.packages[_pkg_name]['optional'] = False
 
         # enable upload tools for upload targets
         if any(["upload" in t for t in targets] + ["program" in targets]):
-            for _name, _opts in self.get_packages().iteritems():
+            for _name, _opts in self.packages.iteritems():
                 if _opts.get("type") == "uploader":
-                    self.get_packages()[_name]['optional'] = False
+                    self.packages[_name]['optional'] = False
                 elif "uploadlazy" in targets:
                     # skip all packages, allow only upload tools
-                    self.get_packages()[_name]['optional'] = True
+                    self.packages[_name]['optional'] = True
 
 
 class PlatformBoardConfig(object):
@@ -464,11 +467,11 @@ class PlatformBoardConfig(object):
         if not isfile(manifest_path):
             raise exception.UnknownBoard(basename(manifest_path[:-5]))
         self.manifest_path = manifest_path
-        self.manifest = util.load_json(manifest_path)
+        self._manifest = util.load_json(manifest_path)
 
     def get(self, path, default=None):
         try:
-            value = self.manifest
+            value = self._manifest
             for k in path.split("."):
                 value = value[k]
             return value
@@ -486,4 +489,4 @@ class PlatformBoardConfig(object):
             return False
 
     def get_manifest(self):
-        return self.manifest
+        return self._manifest

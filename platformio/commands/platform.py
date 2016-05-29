@@ -97,10 +97,10 @@ def platform_list(json_output):
     for manifest in PlatformManager().get_installed():
         p = PlatformFactory.newPlatform(manifest['_manifest_path'])
         platforms.append({
-            "name": p.get_name(),
-            "title": p.get_title(),
-            "description": p.get_description(),
-            "version": p.get_version(),
+            "name": p.name,
+            "title": p.title,
+            "description": p.description,
+            "version": p.version,
             "packages": p.get_installed_packages().keys()
         })
 
@@ -125,24 +125,23 @@ def platform_show(ctx, platform):
             raise exception.PlatformNotInstalledYet(platform)
 
     click.echo("{name} ~ {title}".format(
-        name=click.style(p.get_name(), fg="cyan"), title=p.get_title()))
-    click.echo("=" * (3 + len(p.get_name() + p.get_title())))
-    click.echo(p.get_manifest().get("description"))
+        name=click.style(p.name, fg="cyan"), title=p.title))
+    click.echo("=" * (3 + len(p.name + p.title)))
+    click.echo(p.description)
     click.echo()
-    click.echo("Version: %s" % p.get_version())
-    if "homepage" in p.get_manifest():
-        click.echo("Home: %s" % p.get_manifest().get("homepage"))
-    if "license" in p.get_manifest():
-        click.echo("License: %s" % p.get_manifest().get("license").get("type"))
-    if "frameworks" in p.get_manifest():
-        click.echo("Frameworks: %s" %
-                   ", ".join(p.get_manifest().get("frameworks").keys()))
+    click.echo("Version: %s" % p.version)
+    if p.homepage:
+        click.echo("Home: %s" % p.homepage)
+    if p.license:
+        click.echo("License: %s" % p.license.get("type"))
+    if p.frameworks:
+        click.echo("Frameworks: %s" % ", ".join(p.frameworks.keys()))
 
-    if not p.get_packages():
+    if not p.packages:
         return
 
     installed_pkgs = p.get_installed_packages()
-    for name, opts in p.get_packages().items():
+    for name, opts in p.packages.items():
         click.echo()
         click.echo("Package %s" % click.style(name, fg="yellow"))
         click.echo("-" * (8 + len(name)))
@@ -173,15 +172,11 @@ def platform_uninstall(platforms):
 @cli.command("update", short_help="Update installed Platforms")
 @click.option("--only-packages", is_flag=True)
 def platform_update(only_packages):
-    for manifest in PlatformManager().get_installed():
+    pm = PlatformManager()
+    for manifest in pm.get_installed():
         click.echo("Platform %s @ %s" % (
             click.style(manifest['name'], fg="cyan"), manifest['version']))
         click.echo("--------")
-        if only_packages:
-            status = PlatformFactory.newPlatform(
-                manifest['name'], manifest['version']).update_packages()
-            if status is None:
-                click.secho("Packages are up-to-date", fg="green")
-        else:
-            PlatformManager().update(manifest['name'], manifest['version'])
+        pm.update(manifest['name'], manifest['version'],
+                  only_packages=only_packages)
         click.echo()
