@@ -1,4 +1,0 @@
-{
-  "tests/commands/test_platforms.py::test_list_json_output": true, 
-  "tests/test_pkgmanifest.py::test_package[package_data120]": true
-}
