@@ -129,7 +129,7 @@
         "build": {
             "core": "msp430",
             "f_cpu": "16000000L",
-            "mcu": "msp430g2553",
+            "mcu": "msp430fr4133",
             "variant": "launchpad_fr4133"
         },
         "frameworks": ["energia"],
@@ -147,7 +147,7 @@
         "build": {
             "core": "msp430",
             "f_cpu": "16000000L",
-            "mcu": "msp430g2553",
+            "mcu": "msp430fr6989",
             "variant": "launchpad_fr6989"
         },
         "frameworks": ["energia"],

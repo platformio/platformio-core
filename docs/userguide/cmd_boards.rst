@@ -155,3 +155,4 @@ Examples
     lpmsp430g2231         msp430g2231   1Mhz      2Kb     128B   LaunchPad w/ msp430g2231 (1MHz)
     lpmsp430g2452         msp430g2452   16Mhz     8Kb     256B   LaunchPad w/ msp430g2452 (16MHz)
     lpmsp430g2553         msp430g2553   16Mhz     16Kb    512B   LaunchPad w/ msp430g2553 (16MHz)
+    lpmsp430fr6989        msp430fr6989  16Mhz     16Kb    512B   LaunchPad w/ msp430fr6989(16MHz)
