@@ -40,19 +40,6 @@ class PlatformManager(PackageManager):
     def get_manifest_name():
         return "platform.json"
 
-    def find_best_platform(self, name, requirements=None):
-        best = None
-        for manifest in self.get_installed():
-            if manifest['name'] != name:
-                continue
-            elif requirements and not semantic_version.match(
-                    requirements, manifest['version']):
-                continue
-            elif (not best or semantic_version.compare(
-                    manifest['version'], best['version']) == 1):
-                best = manifest
-        return best
-
     def install(self,  # pylint: disable=too-many-arguments,arguments-differ
                 name, requirements=None, with_packages=None,
                 without_packages=None, skip_default_packages=False):
@@ -122,7 +109,7 @@ class PlatformFactory(object):
             platform_dir = dirname(name)
             name = util.load_json(name)['name']
         else:
-            _manifest = PlatformManager().find_best_platform(
+            _manifest = PlatformManager().max_satisfying_version(
                 name, requirements)
             if _manifest:
                 platform_dir = dirname(_manifest['_manifest_path'])

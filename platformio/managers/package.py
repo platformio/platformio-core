@@ -106,7 +106,7 @@ class PackageManager(object):
         return pkg_dir
 
     @staticmethod
-    def max_satisfying_version(versions, requirements=None):
+    def max_satisfying_repo_version(versions, requirements=None):
         item = None
         systype = util.get_systype()
         if requirements is not None:
@@ -123,6 +123,19 @@ class PackageManager(object):
                     v['version'], item['version']) == 1:
                 item = v
         return item
+
+    def max_satisfying_version(self, name, requirements=None):
+        best = None
+        for manifest in self.get_installed():
+            if manifest['name'] != name:
+                continue
+            elif requirements and not semantic_version.match(
+                    requirements, manifest['version']):
+                continue
+            elif (not best or semantic_version.compare(
+                    manifest['version'], best['version']) == 1):
+                best = manifest
+        return best
 
     def get_installed(self):
         if self.package_dir in PackageManager._INSTALLED_CACHE:
@@ -153,7 +166,7 @@ class PackageManager(object):
 
     def get_latest_version(self, name, requirements):
         for versions in PackageRepoIterator(name, self.repositories):
-            pkgdata = self.max_satisfying_version(versions, requirements)
+            pkgdata = self.max_satisfying_repo_version(versions, requirements)
             if pkgdata:
                 return pkgdata['version']
         return None
@@ -168,7 +181,8 @@ class PackageManager(object):
         if installed:
             if not silent:
                 click.secho("Already installed", fg="yellow")
-            return
+            return self.max_satisfying_version(
+                name, requirements).get("_manifest_path")
 
         manifest_path = None
         if name.startswith("file://"):
@@ -192,7 +206,7 @@ class PackageManager(object):
         versions = None
         for versions in PackageRepoIterator(name, self.repositories):
             dlpath = None
-            pkgdata = self.max_satisfying_version(versions, requirements)
+            pkgdata = self.max_satisfying_repo_version(versions, requirements)
             if not pkgdata:
                 continue
 
