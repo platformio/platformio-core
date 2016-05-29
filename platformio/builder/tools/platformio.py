@@ -80,6 +80,7 @@ def BuildProgram(env):
     env.Append(
         CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
             *pioversion_to_intstr())],
+        CPPPATH=["$PROJECTSRC_DIR"],
         LIBS=deplibs,
         LIBPATH=["$BUILD_DIR"]
     )
