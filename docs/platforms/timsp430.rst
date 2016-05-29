@@ -122,7 +122,7 @@ TI
 
     * - ``lpmsp430fr4133``
       - `TI LaunchPad w/ msp430fr4133 <http://www.ti.com/tool/msp-exp430fr4133>`_
-      - MSP430G2553
+      - MSP430FR4133
       - 16 MHz
       - 16 Kb
       - 2 Kb
@@ -143,7 +143,7 @@ TI
 
     * - ``lpmsp430fr6989``
       - `TI LaunchPad w/ msp430fr6989 <http://www.ti.com/tool/msp-exp430fr6989>`_
-      - MSP430G2553
+      - MSP430FR6989
       - 16 MHz
       - 128 Kb
       - 2 Kb
