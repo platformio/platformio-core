@@ -20,6 +20,7 @@ PlatformIO 2.0
 
 * Simplified documentation for `Continuous Integration with AppVeyor <http://docs.platformio.org/en/latest/ci/appveyor.html>`__
   (`issue #671 <https://github.com/platformio/platformio/issues/671>`_)
+* Automatically add source directory to ``CPPPATH`` of Build System
 * Added support for Silicon Labs SLSTK3401A (Pearl Gecko) and
   MultiTech mDot F411 ARM mbed based boards
 * Added support for MightyCore ATmega8535 board
