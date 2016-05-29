@@ -98,6 +98,13 @@ Silicon Labs
       - 256 Kb
       - 32 Kb
 
+    * - ``efm32pg_stk3401``
+      - `Silicon Labs SLSTK3401A (Pearl Gecko) <https://developer.mbed.org/platforms/EFM32-Pearl-Gecko/>`_
+      - EFM32PG1B200F256
+      - 40 MHz
+      - 256 Kb
+      - 32 Kb
+
     * - ``efm32wg_stk3800``
       - `Silicon Labs EFM32WG-STK3800 (Wonder Gecko) <https://developer.mbed.org/platforms/EFM32-Wonder-Gecko/>`_
       - EFM32WG990F256

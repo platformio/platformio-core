@@ -571,13 +571,6 @@ Digilent
       - 512 Kb
       - 128 Kb
 
-    * - ``openbci``
-      - `Digilent OpenScope <http://store.digilentinc.com/>`_
-      - 32MX250F128B
-      - 40 MHz
-      - 128 Kb
-      - 32 Kb
-
     * - ``openscope``
       - `Digilent OpenScope <http://store.digilentinc.com/>`_
       - 32MZ2048EFG124
@@ -1020,6 +1013,13 @@ Mcudude
       - 64 Kb
       - 4 Kb
 
+    * - ``mightycore8535``
+      - `MightyCore ATmega8535 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA16
+      - 16 MHz
+      - 8 Kb
+      - 0.5 Kb
+
 Microduino
 ~~~~~~~~~~
 
@@ -1148,6 +1148,26 @@ Olimex
       - 32MX440F256H
       - 80 MHz
       - 256 Kb
+      - 32 Kb
+
+OpenBCI
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``openbci``
+      - `OpenBCI 32bit <http://shop.openbci.com/>`_
+      - 32MX250F128B
+      - 40 MHz
+      - 128 Kb
       - 32 Kb
 
 PONTECH
