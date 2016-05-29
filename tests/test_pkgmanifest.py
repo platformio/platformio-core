@@ -38,7 +38,7 @@ def validate_response(req):
 
 
 def test_package(package_data):
-    assert package_data['url'].endswith("%d.tar.gz" % package_data['version'])
+    assert package_data['url'].endswith(".tar.gz")
 
     r = requests.head(package_data['url'], allow_redirects=True)
     validate_response(r)

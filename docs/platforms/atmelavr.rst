@@ -702,6 +702,13 @@ Mcudude
       - 64 Kb
       - 4 Kb
 
+    * - ``mightycore8535``
+      - `MightyCore ATmega8535 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA16
+      - 16 MHz
+      - 8 Kb
+      - 0.5 Kb
+
 Microduino
 ~~~~~~~~~~
 
