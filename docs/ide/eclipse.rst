@@ -40,6 +40,18 @@ command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
+    # check python version for 2.6 or 2.7
+    python -v 
+    
+    # install PlatformIO 
+    pip install -U platformio
+    pip install --upgrade pip
+    sudo python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+    
+    # check install succeeded
+    which pio
+    pio boards "Adrino"
+    
     platformio init --ide eclipse --board %TYPE%
 
     # For example, generate project for Arduino UNO
