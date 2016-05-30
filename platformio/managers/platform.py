@@ -154,10 +154,10 @@ class PlatformFactory(object):
             )
         else:
             platform_cls = type(
-                str(cls.get_clsname(name)), (BasePlatform,), {})
+                str(cls.get_clsname(name)), (PlatformBase,), {})
 
         _instance = platform_cls(join(platform_dir, "platform.json"))
-        assert isinstance(_instance, BasePlatform)
+        assert isinstance(_instance, PlatformBase)
         return _instance
 
 
@@ -313,7 +313,7 @@ class PlatformRunMixin(object):
             return 1
 
 
-class BasePlatform(PlatformPackagesMixin, PlatformRunMixin):
+class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 
     _BOARDS_CACHE = {}
 
@@ -459,6 +459,12 @@ class BasePlatform(PlatformPackagesMixin, PlatformRunMixin):
                 elif "uploadlazy" in targets:
                     # skip all packages, allow only upload tools
                     self.packages[_name]['optional'] = True
+
+        if "test" in targets and "tool-unity" not in self.packages:
+            self.packages['tool-unity'] = {
+                "version": "~1.20302.0",
+                "optional": False
+            }
 
 
 class PlatformBoardConfig(object):
