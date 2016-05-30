@@ -88,6 +88,9 @@ def BuildProgram(env):
         "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
         src_filter=env.get("SRC_FILTER"))
 
+    if "test" in COMMAND_LINE_TARGETS:
+        sources.extend(env.ProcessTest())
+
     if not sources and not COMMAND_LINE_TARGETS:
         env.Exit(
             "Error: Nothing to build. Please put your source code files "

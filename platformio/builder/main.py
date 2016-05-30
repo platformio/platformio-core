@@ -62,7 +62,7 @@ commonvars.AddVariables(
 DefaultEnvironment(
     tools=[
         "gcc", "g++", "as", "ar", "gnulink",
-        "platformio", "devplatform", "pioupload", "pioar", "piomisc"
+        "platformio", "devplatform", "piotest", "pioupload", "pioar", "piomisc"
     ],
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
     variables=commonvars,
@@ -77,11 +77,13 @@ DefaultEnvironment(
     PROJECT_DIR=util.get_project_dir(),
     PROJECTLIB_DIR=util.get_projectlib_dir(),
     PROJECTSRC_DIR=util.get_projectsrc_dir(),
+    PROJECTTEST_DIR=util.get_projecttest_dir(),
     PROJECTDATA_DIR=util.get_projectdata_dir(),
     PIOENVS_DIR=util.get_pioenvs_dir(),
 
     BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
+    BUILDTEST_DIR=join("$BUILD_DIR", "test"),
     LIBSOURCE_DIRS=[
         "$PROJECTLIB_DIR",
         util.get_lib_dir()

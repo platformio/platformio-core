@@ -207,6 +207,13 @@ def get_projectsrc_dir():
     )
 
 
+def get_projecttest_dir():
+    return _get_projconf_option_dir(
+        "test_dir",
+        join(get_project_dir(), "test")
+    )
+
+
 def get_projectlib_dir():
     return join(get_project_dir(), "lib")
 
