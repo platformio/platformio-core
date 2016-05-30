@@ -196,6 +196,31 @@ General options
 
 :ref:`platforms` name.
 
+PlatformIO allows to use specific platform versions using
+`Semantic Versioning <http://semver.org>`_ (X.Y.Z=MAJOR.MINOR.PATCH).
+Version specifications can take any of the following forms:
+
+* ``0.1.2``: an exact version number. Use only this exact version
+* ``^0.1.2``: any compatible version (exact version for ``0.x.x`` versions
+* ``~0.1.2``: any version with the same major and minor versions, and an
+  equal or greater patch version
+* ``>0.1.2``: any version greater than ``0.1.2``. ``>=``, ``<``, and ``<=``
+  are also possible
+* ``>0.1.0,!=0.2.0,<0.3.0``: any version greater than ``0.1.0``, not equal to
+  ``0.2.0`` and less than ``0.3.0``
+
+Examples:
+
+.. code-block:: ini
+
+    [env:the_latest_version]
+    platform = atmelavr
+
+    [env:specific_major_version]
+    platform = atmelavr@^0.1.2
+
+    [env:specific_major_and_minor_version]
+    platform = atmelavr@~0.1.2
 
 .. _projectconf_env_framework:
 

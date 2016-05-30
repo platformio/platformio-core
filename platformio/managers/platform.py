@@ -44,25 +44,26 @@ class PlatformManager(PackageManager):
                 name, requirements=None, with_packages=None,
                 without_packages=None, skip_default_packages=False):
         manifest_path = PackageManager.install(self, name, requirements)
-        PlatformFactory.newPlatform(
-            manifest_path, requirements).install_packages(
-                with_packages, without_packages, skip_default_packages)
-        self.cleanup_packages()
+        p = PlatformFactory.newPlatform(manifest_path, requirements)
+        p.install_packages(
+            with_packages, without_packages, skip_default_packages)
+        self.cleanup_packages(p.packages.keys())
         return True
 
     def uninstall(self,  # pylint: disable=arguments-differ
                   name, requirements=None):
+        p = PlatformFactory.newPlatform(name, requirements)
         PackageManager.uninstall(self, name, requirements)
-        self.cleanup_packages()
+        self.cleanup_packages(p.packages.keys())
         return True
 
     def update(self,  # pylint: disable=arguments-differ
                name, requirements=None, only_packages=False):
         if not only_packages:
             PackageManager.update(self, name)
-        PlatformFactory.newPlatform(
-            name, requirements).update_packages()
-        self.cleanup_packages()
+        p = PlatformFactory.newPlatform(name, requirements)
+        p.update_packages()
+        self.cleanup_packages(p.packages.keys())
         return True
 
     def is_outdated(self, name, requirements=None):
@@ -70,7 +71,7 @@ class PlatformManager(PackageManager):
         return (p.are_outdated_packages() or
                 p.version != self.get_latest_repo_version(name, requirements))
 
-    def cleanup_packages(self):
+    def cleanup_packages(self, names):
         self.reset_cache()
         deppkgs = {}
         for manifest in PlatformManager().get_installed():
@@ -83,9 +84,10 @@ class PlatformManager(PackageManager):
 
         pm = PackageManager()
         for manifest in pm.get_installed():
-            if manifest['name'] not in deppkgs:
+            if manifest['name'] not in names:
                 continue
-            if manifest['version'] not in deppkgs[manifest['name']]:
+            if (manifest['name'] not in deppkgs or
+                    manifest['version'] not in deppkgs[manifest['name']]):
                 pm.uninstall(
                     manifest['name'], manifest['version'], trigger_event=False)
 

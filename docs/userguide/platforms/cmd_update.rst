@@ -46,75 +46,53 @@ Examples
 .. code-block:: bash
 
     $ platformio platform update
-
-    Platform atmelavr
+    Platform atmelavr @ 0.0.0
     --------
-    Updating toolchain-atmelavr package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating tool-avrdude package:
-    Versions: Current=2, Latest=2    [Up-to-date]
-    Updating framework-arduinoavr package:
-    Versions: Current=12, Latest=12    [Up-to-date]
-    Updating tool-micronucleus package:
-    Versions: Current=1, Latest=1    [Up-to-date]
+    Updating platform atmelavr @ latest:
+    Versions: Current=0.0.0, Latest=0.0.0    [Up-to-date]
+    Updating package framework-arduinoavr @ ~1.10608.0:
+    Versions: Current=1.10608.0, Latest=1.10608.0    [Up-to-date]
+    Updating package toolchain-atmelavr @ ~1.40801.0:
+    Versions: Current=1.40801.0, Latest=1.40801.0    [Up-to-date]
+    Updating package framework-simba @ ~1.500.0:
+    Versions: Current=1.500.0, Latest=1.500.0    [Up-to-date]
+    Updating package tool-scons @ >=2.3.0,<2.6.0:
+    Versions: Current=2.5.0, Latest=2.5.0    [Up-to-date]
 
-    Platform atmelsam
+    Platform atmelsam @ 0.0.0
     --------
-    Updating framework-arduinosam package:
-    Versions: Current=3, Latest=3    [Up-to-date]
-    Updating ldscripts package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating toolchain-gccarmnoneeabi package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating tool-bossac package:
-    Versions: Current=1, Latest=1    [Up-to-date]
+    Updating platform atmelsam @ latest:
+    Versions: Current=0.0.0, Latest=0.0.0    [Up-to-date]
+    Updating package toolchain-gccarmnoneeabi @ >=1.40803.0,<1.40805.0:
+    Versions: Current=1.40804.0, Latest=1.40804.0    [Up-to-date]
+    Updating package framework-arduinosam @ ~1.10607.0:
+    Versions: Current=1.10607.0, Latest=1.10607.0    [Up-to-date]
+    Updating package framework-simba @ ~1.500.0:
+    Versions: Current=1.500.0, Latest=1.500.0    [Up-to-date]
+    Updating package framework-mbed @ ~1.117.0:
+    Versions: Current=1.117.0, Latest=1.117.0    [Up-to-date]
+    Updating package tool-scons @ >=2.3.0,<2.6.0:
+    Versions: Current=2.5.0, Latest=2.5.0    [Up-to-date]
+    Updating package tool-bossac @ ~1.10500.0:
+    Versions: Current=1.10500.0, Latest=1.10500.0    [Up-to-date]
 
-    Platform stm32
+    Platform espressif @ 0.0.0
     --------
-    Updating toolchain-gccarmnoneeabi package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating tool-stlink package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating framework-spl package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating framework-cmsis package:
-    Versions: Current=2, Latest=2    [Up-to-date]
-    Updating framework-opencm3 package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating ldscripts package:
-    Versions: Current=1, Latest=1    [Up-to-date]
+    Updating platform espressif @ latest:
+    Versions: Current=0.0.0, Latest=0.0.0    [Up-to-date]
+    Updating package tool-scons @ >=2.3.0,<2.6.0:
+    Versions: Current=2.5.0, Latest=2.5.0    [Up-to-date]
+    Updating package toolchain-xtensa @ ~1.40802.0:
+    Versions: Current=1.40802.0, Latest=1.40802.0    [Up-to-date]
+    Updating package framework-simba @ ~1.500.0:
+    Versions: Current=1.500.0, Latest=1.500.0    [Up-to-date]
+    Updating package tool-esptool @ ~1.408.0:
+    Versions: Current=1.408.0, Latest=1.408.0    [Up-to-date]
+    Updating package tool-mkspiffs @ ~1.102.0:
+    Versions: Current=1.102.0, Latest=1.102.0    [Up-to-date]
+    Updating package framework-arduinoespressif @ ~1.20200.0:
+    Versions: Current=1.20200.0, Latest=1.20200.0    [Up-to-date]
+    Updating package sdk-esp8266 @ ~1.10502.0:
+    Versions: Current=1.10502.0, Latest=1.10502.0    [Up-to-date]
 
-    Platform teensy
-    --------
-    Updating toolchain-atmelavr package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating ldscripts package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating framework-arduinoteensy package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating toolchain-gccarmnoneeabi package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating tool-teensy package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-
-    Platform timsp430
-    --------
-    Updating toolchain-timsp430 package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating tool-mspdebug package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating framework-energiamsp430 package:
-    Versions: Current=2, Latest=2    [Up-to-date]
-
-    Platform titiva
-    --------
-    Updating ldscripts package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating toolchain-gccarmnoneeabi package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating tool-lm4flash package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating framework-opencm3 package:
-    Versions: Current=1, Latest=1    [Up-to-date]
-    Updating framework-energiativa package:
-    Versions: Current=4, Latest=4    [Up-to-date]
+    ...

@@ -23,6 +23,9 @@ Usage
 
     platformio platform uninstall PLATFORM
 
+    # uninstall specific platform version using Semantic Versioning
+    platformio platform uninstall PLATFORM@X.Y.Z
+
 
 Description
 -----------
@@ -35,8 +38,8 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio platform uninstall timsp430
-    Uninstalling toolchain-timsp430 package:        [OK]
-    Uninstalling tool-mspdebug package:             [OK]
-    Uninstalling framework-energiamsp430 package:   [OK]
-    The platform 'timsp430' has been successfully uninstalled!
+    $ platformio platform uninstall atmelavr
+    Uninstalling platform atmelavr @ latest:    [OK]
+    Uninstalling package tool-scons @ 2.5.0:    [OK]
+    Uninstalling package toolchain-atmelavr @ 1.40801.0:    [OK]
+    The platform 'atmelavr' has been successfully uninstalled!
