@@ -113,7 +113,11 @@ def after_upgrade(ctx):
         u = Upgrader(last_version, __version__)
         if u.run(ctx):
             app.set_state_item("last_version", __version__)
-            ctx.invoke(cmd_platform_update, only_packages=True)
+
+            # patch development platforms
+            pm = PlatformManager()
+            for manifest in pm.get_installed():
+                pm.update(manifest['name'], "~" + manifest['version'])
 
             click.secho("PlatformIO has been successfully upgraded to %s!\n" %
                         __version__, fg="green")

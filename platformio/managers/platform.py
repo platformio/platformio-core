@@ -60,7 +60,7 @@ class PlatformManager(PackageManager):
     def update(self,  # pylint: disable=arguments-differ
                name, requirements=None, only_packages=False):
         if not only_packages:
-            PackageManager.update(self, name)
+            PackageManager.update(self, name, requirements)
         p = PlatformFactory.newPlatform(name, requirements)
         p.update_packages()
         self.cleanup_packages(p.packages.keys())
