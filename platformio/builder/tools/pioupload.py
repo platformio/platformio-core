@@ -105,11 +105,13 @@ def AutodetectUploadPort(env):
 
 def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
     env.AutodetectUploadPort()
+    progname = env.subst("$PROGNAME")
     for ext in ("bin", "hex"):
-        fpath = join(env.subst("$BUILD_DIR"), "firmware.%s" % ext)
+        fpath = join(env.subst("$BUILD_DIR"), "%s.%s" % (progname, ext))
         if not isfile(fpath):
             continue
-        copyfile(fpath, join(env.subst("$UPLOAD_PORT"), "firmware.%s" % ext))
+        copyfile(fpath, join(
+            env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
     print("Firmware has been successfully uploaded.\n"
           "Please restart your board.")
 
