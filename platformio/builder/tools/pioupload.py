@@ -54,7 +54,6 @@ def WaitForNewSerialPort(env):
     elapsed = 0
     while elapsed < 10:
         now = [i['port'] for i in get_serialports(use_grep=True)]
-        print 45, now
         diff = list(set(now) - set(before))
         if diff:
             new_port = diff[0]

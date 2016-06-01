@@ -22,8 +22,6 @@ from time import sleep
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
                           DefaultEnvironment, SConscript)
 
-from platformio.util import get_serialports
-
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
 
