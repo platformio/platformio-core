@@ -283,9 +283,9 @@ def exec_command(*args, **kwargs):
 def get_serialports(use_grep=False):
 
     def _grep_serial_ports():
-        assert "Windows" != system()
+        assert system() != "Windows"
         result = []
-        if "Linux" == system():
+        if system() == "Linux":
             patterns = ["/dev/%s*" % p for p in (
                 "ttyS", "ttyUSB", "ttyACM", "ttyAMA", "rfcomm", "ttyO")]
         else:
@@ -295,7 +295,7 @@ def get_serialports(use_grep=False):
                 result.append({"port": port, "description": "", "hwid": ""})
         return result
 
-    if use_grep and "Windows" != system():
+    if use_grep and system() != "Windows":
         return _grep_serial_ports()
 
     try:
@@ -307,7 +307,7 @@ def get_serialports(use_grep=False):
     for p, d, h in comports():
         if not p:
             continue
-        if "Windows" == system():
+        if system() == "Windows":
             try:
                 d = unicode(d, errors="ignore")
             except TypeError:
@@ -315,7 +315,7 @@ def get_serialports(use_grep=False):
         result.append({"port": p, "description": d, "hwid": h})
 
     # fix for PySerial
-    if not result and "Windows" != system():
+    if not result and system() != "Windows":
         result = _grep_serial_ports()
 
     return result
