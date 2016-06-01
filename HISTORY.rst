@@ -16,6 +16,7 @@ PlatformIO 2.0
   (`issue #585 <https://github.com/platformio/platformio/issues/585>`_)
 * Use HTTP mirror for Package Manager in a case with SSL errors
   (`issue #645 <https://github.com/platformio/platformio/issues/645>`_)
+* Improved firmware uploading to Arduino Leonardo based boards
 * Fixed bug with ``env_default`` when ``pio run -e`` is used
 * Fixed issue with ``src_filter`` option for Windows OS
   (`issue #652 <https://github.com/platformio/platformio/issues/652>`_)
