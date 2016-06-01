@@ -14,6 +14,10 @@
 Frequently Asked Questions
 ==========================
 
+.. note::
+   We have a big database with `Frequently Asked Questions in our Community Forums <https://community.platformio.org/c/faq>`_.
+   Please have a look at it.
+
 .. contents::
 
 General
