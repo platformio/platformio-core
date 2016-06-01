@@ -289,7 +289,7 @@ def get_serialports(use_grep=False):
             patterns = ["/dev/%s*" % p for p in (
                 "ttyS", "ttyUSB", "ttyACM", "ttyAMA", "rfcomm", "ttyO")]
         else:
-            patterns = ["/dev/tty.*"]
+            patterns = ["/dev/tty.*", "/dev/cu.*"]
         for pattern in patterns:
             for port in glob(pattern):
                 result.append({"port": port, "description": "", "hwid": ""})
