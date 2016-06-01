@@ -27,7 +27,7 @@ Here are recent articles about PlatformIO:
 * May 29, 2016 - **Chris Synan** - `Reverse Engineer RF Remote Controller for IoT! <http://www.instructables.com/id/Reverse-Engineer-RF-Remote-Controller-for-IoT/?ALLSTEPS>`_
 * May 26, 2016 - **Charlie Key** - `7 Best Developer Tools To Build Your NEXT Internet of Things Application <https://www.losant.com/blog/7-best-developer-tools-to-build-your-next-internet-of-things-application>`_
 * May 22, 2016 - **Pedro Minatel** - `Estação meteorológica com ESP8266 (Weather station with ESP8266, Portuguese) <http://pedrominatel.com.br/esp8266/estacao-meteorologica-com-esp8266/>`_
-* May 16, 2016 - **Pedro Minatel** - `Controle remoto WiFi com ESP8266 (Remote WiFi with ESP8266, Portuguese) <http://pedrominatel.com.br/esp8266/controle-remoto-wifi-com-esp8266/>`_
+* May 16, 2016 - **Pedro Minatel** - `Controle remoto WiFi com ESP8266 (WiFi remote control using ESP8266, Portuguese) <http://pedrominatel.com.br/esp8266/controle-remoto-wifi-com-esp8266/>`_
 * May 11, 2016 - **Jo Vandeginste** - `Using PlatformIO to compile for Jeelabs' Jeenode Micro <http://jovandeginste.github.io/2016/05/11/using-platformio-to-compile-for-jeelabs-jeenode-micro.html>`_
 * May 08, 2016 - **Radoslaw Bob** - `Touch controlled buzzer (Nodemcu ESP8266) <https://gettoknowthebob.wordpress.com/2016/05/08/touch-controlled-buzzer-nodemcu-esp8266/>`_
 * May 06, 2016 - **Jean Roux** - `The IoT building blocks I use for my home-automation projects <http://iotplay.blogspot.fr/2016/05/the-components-i-use-for-my-projects.html/>`_
