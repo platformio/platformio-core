@@ -325,7 +325,7 @@ def get_serialports(use_grep=False):
         result.append({"port": p, "description": d, "hwid": h})
 
     # fix for PySerial
-    if not result and not use_grep:
+    if not result and not use_grep and system() == "Darwin":
         result = _grep_serial_ports()
 
     return result

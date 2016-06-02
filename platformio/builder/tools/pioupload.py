@@ -47,8 +47,7 @@ def TouchSerialPort(env, port, baudrate):
     sleep(0.4)
 
 
-def WaitForNewSerialPort(env):
-    before = [i['port'] for i in get_serialports(use_grep=True)]
+def WaitForNewSerialPort(env, before):
     sleep(0.5)
     new_port = None
     elapsed = 0
