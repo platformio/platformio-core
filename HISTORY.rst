@@ -28,7 +28,9 @@ PlatformIO 2.0
 * Fixed issue with ARM mbed framework and multiple definition errors
   on FRDM-KL46Z board
   (`issue #641 <https://github.com/platformio/platformio/issues/641>`_)
-
+* Fixed issue with ARM mbed framework when abstract class breaks compile
+  for LPC1768
+  (`issue #666 <https://github.com/platformio/platformio/issues/666>`_)
 
 2.9.1 (2016-04-30)
 ~~~~~~~~~~~~~~~~~~
