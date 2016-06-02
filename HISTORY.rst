@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.9.2 (2016-??-??)
+2.9.2 (2016-06-02)
 ~~~~~~~~~~~~~~~~~~
 
 * Simplified `Continuous Integration with AppVeyor <http://docs.platformio.org/en/latest/ci/appveyor.html>`__
