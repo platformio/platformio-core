@@ -57,8 +57,7 @@ Embedded Development. *Easier Than Ever.*
 * Cloud compiling and  :ref:`ci` with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
 * Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>` and
   configurable build :ref:`-flags/-options <projectconf_build_flags>`
-* Pre-built toolchains, :ref:`frameworks` for the
-  :ref:`platforms`
+* Pre-built toolchains, :ref:`frameworks` for the :ref:`platforms`
 
 Smart Build System. *Fast and Reliable.*
 ----------------------------------------
@@ -109,7 +108,10 @@ Contents
     :maxdepth: 3
 
     platforms/index
+    platforms/embedded_boards
     frameworks/index
+    platforms/creating_platform
+    platforms/creating_board
 
 .. toctree::
     :caption: Library Manager

@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ def generate_boards(boards):
 
     def _round_memory_size(size):
         if size == 1:
-            return 1;
+            return 1
 
         size = ceil(size)
         for b in (64, 32, 16, 8, 4, 2, 1):
@@ -134,7 +134,7 @@ def generate_platform(name):
     print "Processing platform: %s" % name
     lines = []
 
-    lines.append("""..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+    lines.append("""..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -241,7 +241,7 @@ def generate_framework(type_, data):
     print "Processing framework: %s" % type_
     lines = []
 
-    lines.append("""..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+    lines.append("""..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -364,10 +364,65 @@ Packages
         )
 
 
+def update_embedded_boards():
+    lines = []
+
+    lines.append("""..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+""")
+
+    lines.append(".. _embedded_boards:")
+    lines.append("")
+
+    lines.append("Embedded Boards")
+    lines.append("===============")
+
+    lines.append("""
+Rapid Embedded Development, Continuous and IDE integration in a few
+steps with PlatformIO thanks to built-in project generator for the most
+popular embedded boards and IDE.
+
+* You can list pre-configured boards using :ref:`cmd_boards` command or
+  `PlatformIO Boards Explorer <http://platformio.org/boards>`_
+* For more detailed ``board`` information please scroll tables below by
+  horizontal.
+""")
+
+    lines.append(".. contents::")
+    lines.append("")
+
+    vendors = {}
+    for board, data in util.get_boards().items():
+        vendor = data['vendor']
+        if vendor in vendors:
+            vendors[vendor].append({board: data})
+        else:
+            vendors[vendor] = [{board: data}]
+
+    for vendor, boards in sorted(vendors.iteritems()):
+        lines.append(str(vendor))
+        lines.append("~" * len(vendor))
+        lines.append(generate_boards(boards))
+
+    emboards_rst = join(dirname(realpath(__file__)),
+                        "..", "docs", "platforms", "embedded_boards.rst")
+    with open(emboards_rst, "w") as f:
+        f.write("\n".join(lines))
+
+
 def main():
     update_create_platform_doc()
     update_platform_docs()
     update_framework_docs()
+    update_embedded_boards()
 
 if __name__ == "__main__":
     sys_exit(main())

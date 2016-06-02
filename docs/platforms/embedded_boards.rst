@@ -9,55 +9,21 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _framework_arduino:
+.. _embedded_boards:
 
-Framework ``arduino``
-=====================
-Arduino Wiring-based Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
+Embedded Boards
+===============
 
-For more detailed information please visit `vendor site <http://arduino.cc/en/Reference/HomePage>`_.
+Rapid Embedded Development, Continuous and IDE integration in a few
+steps with PlatformIO thanks to built-in project generator for the most
+popular embedded boards and IDE.
+
+* You can list pre-configured boards using :ref:`cmd_boards` command or
+  `PlatformIO Boards Explorer <http://platformio.org/boards>`_
+* For more detailed ``board`` information please scroll tables below by
+  horizontal.
 
 .. contents::
-
-Platforms
----------
-.. list-table::
-    :header-rows:  1
-
-    * - Name
-      - Description
-
-    * - :ref:`platform_atmelavr`
-      - Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.
-
-    * - :ref:`platform_atmelsam`
-      - Atmel | SMART offers Flash- based ARM products based on the ARM Cortex-M0+, Cortex-M3 and Cortex-M4 architectures, ranging from 8KB to 2MB of Flash including a rich peripheral and feature mix.
-
-    * - :ref:`platform_espressif`
-      - Espressif Systems is a privately held fabless semiconductor company. They provide wireless communications and Wi-Fi chips which are widely used in mobile devices and the Internet of Things applications.
-
-    * - :ref:`platform_intel_arc32`
-      - ARC embedded processors are a family of 32-bit CPUs that are widely used in SoC devices for storage, home, mobile, automotive, and Internet of Things applications.
-
-    * - :ref:`platform_microchippic32`
-      - Microchip's 32-bit portfolio with the MIPS microAptiv or M4K core offer high performance microcontrollers, and all the tools needed to develop your embedded projects. PIC32 MCUs gives your application the processing power, memory and peripherals your design needs!
-
-    * - :ref:`platform_nordicnrf51`
-      - The Nordic nRF51 Series is a family of highly flexible, multi-protocol, system-on-chip (SoC) devices for ultra-low power wireless applications. nRF51 Series devices support a range of protocol stacks including Bluetooth Smart (previously called Bluetooth low energy), ANT and proprietary 2.4GHz protocols such as Gazell.
-
-    * - :ref:`platform_teensy`
-      - Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard USB cable and a PC or Macintosh with a USB port.
-
-    * - :ref:`platform_timsp430`
-      - MSP430 microcontrollers (MCUs) from Texas Instruments (TI) are 16-bit, RISC-based, mixed-signal processors designed for ultra-low power. These MCUs offer the lowest power consumption and the perfect mix of integrated peripherals for thousands of applications.
-
-Boards
-------
-
-.. note::
-    * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
-    * For more detailed ``board`` information please scroll tables below by horizontal.
 
 4DSystems
 ~~~~~~~~~
@@ -76,6 +42,26 @@ Boards
       - `4DSystems PICadillo 35T <http://www.4dsystems.com.au/product/Picadillo_35T/>`_
       - 32MX795F512L
       - 80 MHz
+      - 512 Kb
+      - 128 Kb
+
+96Boards
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``b96b_f446ve``
+      - `96Boards B96B-F446VE <https://developer.mbed.org/platforms/ST-B96B-F446VE/>`_
+      - STM32F446VET6
+      - 168 MHz
       - 512 Kb
       - 128 Kb
 
@@ -441,6 +427,94 @@ Arduino
       - 256 Kb
       - 32 Kb
 
+Armstrap
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``armstrap_eagle1024``
+      - `Armstrap Eagle 1024 <http://docs.armstrap.org/en/latest/hardware-overview.html>`_
+      - STM32F417VGT6
+      - 168 MHz
+      - 1024 Kb
+      - 192 Kb
+
+    * - ``armstrap_eagle2048``
+      - `Armstrap Eagle 2048 <http://docs.armstrap.org/en/latest/hardware-overview.html>`_
+      - STM32F427VIT6
+      - 168 MHz
+      - 2048 Kb
+      - 256 Kb
+
+    * - ``armstrap_eagle512``
+      - `Armstrap Eagle 512 <http://docs.armstrap.org/en/latest/hardware-overview.html>`_
+      - STM32F407VET6
+      - 168 MHz
+      - 512 Kb
+      - 192 Kb
+
+Atmel
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``samd21_xpro``
+      - `Atmel SAMD21-XPRO <https://developer.mbed.org/platforms/SAMD21-XPRO/>`_
+      - ATSAMD21J18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``saml21_xpro_b``
+      - `Atmel SAML21-XPRO-B <https://developer.mbed.org/platforms/SAML21-XPRO/>`_
+      - ATSAML21J18B
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``samr21_xpro``
+      - `Atmel ATSAMR21-XPRO <https://developer.mbed.org/platforms/SAMR21-XPRO/>`_
+      - ATSAMR21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+BBC
+~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``bbcmicrobit``
+      - `BBC micro:bit <https://developer.mbed.org/platforms/Microbit/>`_
+      - NRF51822
+      - 16 MHz
+      - 256 Kb
+      - 16 Kb
+
 BQ
 ~~
 
@@ -453,6 +527,13 @@ BQ
       - Frequency
       - Flash
       - RAM
+
+    * - ``icezum``
+      - `BQ IceZUM Alhambra FPGA <https://github.com/bqlabs/icezum/wiki>`_
+      - ICE40HX1K
+      - 12 MHz
+      - 32 Kb
+      - 32 Kb
 
     * - ``zumbt328``
       - `BQ ZUM BT-328 <http://www.bq.com/gb/products/zum.html>`_
@@ -480,6 +561,46 @@ BitWizard
       - 16 MHz
       - 32 Kb
       - 2 Kb
+
+CQ Publishing
+~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``lpc11u35_501``
+      - `CQ Publishing TG-LPC11U35-501 <https://developer.mbed.org/platforms/TG-LPC11U35-501/>`_
+      - LPC11U35
+      - 48 MHz
+      - 64 Kb
+      - 10 Kb
+
+Delta
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``dfcm_nnn40``
+      - `Delta DFCM-NNN40 <https://developer.mbed.org/platforms/Delta-DFCM-NNN40/>`_
+      - NRF51822
+      - 32 MHz
+      - 256 Kb
+      - 32 Kb
 
 Digilent
 ~~~~~~~~
@@ -700,6 +821,40 @@ ESPino
       - 4096 Kb
       - 80 Kb
 
+Embedded Artists
+~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``lpc11u35``
+      - `Embedded Artists LPC11U35 QuickStart Board <https://developer.mbed.org/platforms/EA-LPC11U35/>`_
+      - LPC11U35
+      - 48 MHz
+      - 64 Kb
+      - 10 Kb
+
+    * - ``lpc4088``
+      - `Embedded Artists LPC4088 QuickStart Board <https://developer.mbed.org/platforms/EA-LPC4088/>`_
+      - LPC4088
+      - 120 MHz
+      - 512 Kb
+      - 96 Kb
+
+    * - ``lpc4088_dm``
+      - `Embedded Artists LPC4088 Display Module <https://developer.mbed.org/platforms/EA-LPC4088-Display-Module/>`_
+      - LPC4088
+      - 120 MHz
+      - 512 Kb
+      - 96 Kb
+
 Engduino
 ~~~~~~~~
 
@@ -781,6 +936,68 @@ Espressif
       - 80 MHz
       - 4096 Kb
       - 50 Kb
+
+Freescale
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``IBMEthernetKit``
+      - `Ethernet IoT Starter Kit <http://developer.mbed.org/platforms/IBMEthernetKit/>`_
+      - MK64FN1M0VLL12
+      - 120 MHz
+      - 1024 Kb
+      - 256 Kb
+
+    * - ``frdm_k20d50m``
+      - `Freescale Kinetis FRDM-K20D50M <https://developer.mbed.org/platforms/FRDM-K20D50M/>`_
+      - MK20DX128VLH5
+      - 48 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``frdm_k22f``
+      - `Freescale Kinetis FRDM-K22F <https://developer.mbed.org/platforms/FRDM-K22F/>`_
+      - MK22FN512VLH12
+      - 120 MHz
+      - 512 Kb
+      - 128 Kb
+
+    * - ``frdm_k64f``
+      - `Freescale Kinetis FRDM-K64F <https://developer.mbed.org/platforms/FRDM-K64F/>`_
+      - MK64FN1M0VLL12
+      - 120 MHz
+      - 1024 Kb
+      - 256 Kb
+
+    * - ``frdm_kl05z``
+      - `Freescale Kinetis FRDM-KL05Z <https://developer.mbed.org/platforms/FRDM-KL05Z/>`_
+      - MKL05Z32VFM4
+      - 48 MHz
+      - 32 Kb
+      - 4 Kb
+
+    * - ``frdm_kl25z``
+      - `Freescale Kinetis FRDM-KL25Z <https://developer.mbed.org/platforms/KL25Z/>`_
+      - MKL25Z128VLK4
+      - 48 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``frdm_kl46z``
+      - `Freescale Kinetis FRDM-KL46Z <https://developer.mbed.org/platforms/FRDM-KL46Z/>`_
+      - MKL46Z256VLL4
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
 
 Fubarino
 ~~~~~~~~
@@ -890,6 +1107,46 @@ Intel
       - 32 MHz
       - 192 Kb
       - 80 Kb
+
+JKSoft
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``wallBotBLE``
+      - `JKSoft Wallbot BLE <https://developer.mbed.org/platforms/JKSoft-Wallbot-BLE/>`_
+      - NRF51822
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
+
+Lattice
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``icestick``
+      - `Lattice iCEstick FPGA Evaluation Kit <http://www.latticesemi.com/icestick>`_
+      - ICE40HX1K
+      - 12 MHz
+      - 32 Kb
+      - 32 Kb
 
 LightUp
 ~~~~~~~
@@ -1096,6 +1353,80 @@ Microduino
       - 64 Kb
       - 4 Kb
 
+MultiTech
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``mts_mdot_f411re``
+      - `MultiTech mDot F411 <https://developer.mbed.org/platforms/MTS-mDot-F411/>`_
+      - STM32F411RET6
+      - 100 MHz
+      - 512 Kb
+      - 128 Kb
+
+NGX Technologies
+~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``blueboard_lpc11u24``
+      - `NGX Technologies BlueBoard-LPC11U24 <https://developer.mbed.org/platforms/BlueBoard-LPC11U24/>`_
+      - LPC11U24
+      - 48 MHz
+      - 32 Kb
+      - 8 Kb
+
+NXP
+~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``lpc11u24``
+      - `NXP mbed LPC11U24 <https://developer.mbed.org/platforms/mbed-LPC11U24/>`_
+      - LPC11U24
+      - 48 MHz
+      - 32 Kb
+      - 8 Kb
+
+    * - ``lpc1549``
+      - `NXP LPCXpresso1549 <https://developer.mbed.org/platforms/LPCXpresso1549/>`_
+      - LPC1549
+      - 72 MHz
+      - 256 Kb
+      - 36 Kb
+
+    * - ``lpc1768``
+      - `NXP mbed LPC1768 <http://developer.mbed.org/platforms/mbed-LPC1768/>`_
+      - LPC1768
+      - 96 MHz
+      - 512 Kb
+      - 64 Kb
+
 NodeMCU
 ~~~~~~~
 
@@ -1122,6 +1453,40 @@ NodeMCU
       - 80 MHz
       - 4096 Kb
       - 80 Kb
+
+Nordic
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``nrf51_dk``
+      - `Nordic nRF51-DK <https://developer.mbed.org/platforms/Nordic-nRF51-DK/>`_
+      - NRF51822
+      - 32 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``nrf51_dongle``
+      - `Nordic nRF51-Dongle <https://developer.mbed.org/platforms/Nordic-nRF51-Dongle/>`_
+      - NRF51822
+      - 32 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``nrf51_mkit``
+      - `Nordic nRF51822-mKIT <http://developer.mbed.org/platforms/Nordic-nRF51822/>`_
+      - NRF51822
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
 
 Olimex
 ~~~~~~
@@ -1169,6 +1534,26 @@ OpenBCI
       - 40 MHz
       - 128 Kb
       - 32 Kb
+
+Outrageous Circuits
+~~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``mbuino``
+      - `Outrageous Circuits mBuino <https://developer.mbed.org/platforms/Outrageous-Circuits-mBuino/>`_
+      - LPC11U24
+      - 48 MHz
+      - 32 Kb
+      - 8 Kb
 
 PONTECH
 ~~~~~~~
@@ -1284,6 +1669,40 @@ RFduino
       - 128 Kb
       - 8 Kb
 
+Raspberry Pi
+~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``raspberrypi_1b``
+      - `Raspberry Pi 1 Model B <https://www.raspberrypi.org>`_
+      - BCM2835
+      - 700 MHz
+      - 524288 Kb
+      - 524288 Kb
+
+    * - ``raspberrypi_2b``
+      - `Raspberry Pi 2 Model B <https://www.raspberrypi.org>`_
+      - BCM2836
+      - 900 MHz
+      - 1048576 Kb
+      - 1048576 Kb
+
+    * - ``raspberrypi_zero``
+      - `Raspberry Pi Zero <https://www.raspberrypi.org>`_
+      - BCM2835
+      - 1000 MHz
+      - 524288 Kb
+      - 524288 Kb
+
 RedBearLab
 ~~~~~~~~~~
 
@@ -1318,6 +1737,20 @@ RedBearLab
       - 32 Kb
       - 2.5 Kb
 
+    * - ``redBearLab``
+      - `RedBearLab nRF51822 <https://developer.mbed.org/platforms/RedBearLab-nRF51822/>`_
+      - NRF51822
+      - 16 MHz
+      - 256 Kb
+      - 16 Kb
+
+    * - ``redBearLabBLENano``
+      - `RedBearLab BLE Nano <https://developer.mbed.org/platforms/RedBearLab-BLE-Nano/>`_
+      - NRF51822
+      - 16 MHz
+      - 256 Kb
+      - 16 Kb
+
 RepRap
 ~~~~~~
 
@@ -1337,6 +1770,229 @@ RepRap
       - 16 MHz
       - 256 Kb
       - 8 Kb
+
+ST
+~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``disco_f051r8``
+      - `ST STM32F0DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF253215>`_
+      - STM32F051R8T6
+      - 48 MHz
+      - 64 Kb
+      - 8 Kb
+
+    * - ``disco_f100rb``
+      - `ST STM32VLDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF250863>`_
+      - STM32F100RBT6
+      - 24 MHz
+      - 128 Kb
+      - 8 Kb
+
+    * - ``disco_f303vc``
+      - `ST STM32F3DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF254044>`_
+      - STM32F303VCT6
+      - 72 MHz
+      - 256 Kb
+      - 48 Kb
+
+    * - ``disco_f334c8``
+      - `ST 32F3348DISCOVERY <http://www.st.com/web/en/catalog/tools/PF260318>`_
+      - STM32F334C8T6
+      - 72 MHz
+      - 64 Kb
+      - 12 Kb
+
+    * - ``disco_f401vc``
+      - `ST 32F401CDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259098>`_
+      - STM32F401VCT6
+      - 84 MHz
+      - 256 Kb
+      - 64 Kb
+
+    * - ``disco_f407vg``
+      - `ST STM32F4DISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF252419>`_
+      - STM32F407VGT6
+      - 168 MHz
+      - 1024 Kb
+      - 128 Kb
+
+    * - ``disco_f429zi``
+      - `ST 32F429IDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF259090>`_
+      - STM32F429ZIT6
+      - 180 MHz
+      - 2048 Kb
+      - 256 Kb
+
+    * - ``disco_f469ni``
+      - `ST 32F469IDISCOVERY <http://www.st.com/web/catalog/tools/FM116/CL1620/SC959/SS1532/LN1848/PF262395>`_
+      - STM32F469NIH6
+      - 180 MHz
+      - 1024 Kb
+      - 384 Kb
+
+    * - ``disco_l053c8``
+      - `ST 32L0538DISCOVERY <http://www.st.com/web/en/catalog/tools/PF260319>`_
+      - STM32L053C8T6
+      - 32 MHz
+      - 64 Kb
+      - 8 Kb
+
+    * - ``disco_l152rb``
+      - `ST STM32LDISCOVERY <http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1848/PF258515>`_
+      - STM32L152RBT6
+      - 32 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``disco_l476vg``
+      - `ST 32L476GDISCOVERY <http://www.st.com/web/catalog/tools/FM116/CL1620/SC959/SS1532/LN1848/PF261635>`_
+      - STM32L476VGT6
+      - 80 MHz
+      - 1024 Kb
+      - 128 Kb
+
+    * - ``nucleo_f030r8``
+      - `ST Nucleo F030R8 <https://developer.mbed.org/platforms/ST-Nucleo-F030R8/>`_
+      - STM32F030R8T6
+      - 48 MHz
+      - 64 Kb
+      - 8 Kb
+
+    * - ``nucleo_f031k6``
+      - `ST Nucleo F031K6 <https://developer.mbed.org/platforms/ST-Nucleo-F031K6/>`_
+      - STM32F031K6T6
+      - 48 MHz
+      - 32 Kb
+      - 4 Kb
+
+    * - ``nucleo_f042k6``
+      - `ST Nucleo F042K6 <https://developer.mbed.org/platforms/ST-Nucleo-F042K6/>`_
+      - STM32F042K6T6
+      - 48 MHz
+      - 32 Kb
+      - 6 Kb
+
+    * - ``nucleo_f070rb``
+      - `ST Nucleo F070RB <https://developer.mbed.org/platforms/ST-Nucleo-F070RB/>`_
+      - STM32F070RBT6
+      - 48 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``nucleo_f072rb``
+      - `ST Nucleo F072RB <https://developer.mbed.org/platforms/ST-Nucleo-F072RB/>`_
+      - STM32F072RBT6
+      - 48 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``nucleo_f091rc``
+      - `ST Nucleo F091RC <https://developer.mbed.org/platforms/ST-Nucleo-F091RC/>`_
+      - STM32F091RCT6
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``nucleo_f103rb``
+      - `ST Nucleo F103RB <https://developer.mbed.org/platforms/ST-Nucleo-F103RB/>`_
+      - STM32F103RBT6
+      - 72 MHz
+      - 128 Kb
+      - 20 Kb
+
+    * - ``nucleo_f302r8``
+      - `ST Nucleo F302R8 <https://developer.mbed.org/platforms/ST-Nucleo-F302R8/>`_
+      - STM32F302R8T6
+      - 72 MHz
+      - 64 Kb
+      - 16 Kb
+
+    * - ``nucleo_f303k8``
+      - `ST Nucleo F303K8 <https://developer.mbed.org/platforms/ST-Nucleo-F303K8/>`_
+      - STM32F303K8T6
+      - 72 MHz
+      - 64 Kb
+      - 16 Kb
+
+    * - ``nucleo_f303re``
+      - `ST Nucleo F303RE <http://developer.mbed.org/platforms/ST-Nucleo-F303RE/>`_
+      - STM32F303RET6
+      - 72 MHz
+      - 512 Kb
+      - 64 Kb
+
+    * - ``nucleo_f334r8``
+      - `ST Nucleo F334R8 <https://developer.mbed.org/platforms/ST-Nucleo-F334R8/>`_
+      - STM32F334R8T6
+      - 72 MHz
+      - 64 Kb
+      - 16 Kb
+
+    * - ``nucleo_f401re``
+      - `ST Nucleo F401RE <https://developer.mbed.org/platforms/ST-Nucleo-F401RE/>`_
+      - STM32F401RET6
+      - 84 MHz
+      - 512 Kb
+      - 96 Kb
+
+    * - ``nucleo_f410rb``
+      - `ST Nucleo F410RB <https://developer.mbed.org/platforms/ST-Nucleo-F410RB/>`_
+      - STM32F410RBT6
+      - 100 MHz
+      - 128 Kb
+      - 32 Kb
+
+    * - ``nucleo_f411re``
+      - `ST Nucleo F411RE <https://developer.mbed.org/platforms/ST-Nucleo-F411RE/>`_
+      - STM32F411RET6
+      - 100 MHz
+      - 512 Kb
+      - 128 Kb
+
+    * - ``nucleo_f446re``
+      - `ST Nucleo F446RE <https://developer.mbed.org/platforms/ST-Nucleo-F446RE/>`_
+      - STM32F446RET6
+      - 180 MHz
+      - 512 Kb
+      - 128 Kb
+
+    * - ``nucleo_l053r8``
+      - `ST Nucleo L053R8 <https://developer.mbed.org/platforms/ST-Nucleo-L053R8/>`_
+      - STM32L053R8T6
+      - 48 MHz
+      - 64 Kb
+      - 8 Kb
+
+    * - ``nucleo_l073rz``
+      - `ST Nucleo L073RZ <https://developer.mbed.org/platforms/ST-Nucleo-L073RZ/>`_
+      - STM32L073RZ
+      - 32 MHz
+      - 192 Kb
+      - 20 Kb
+
+    * - ``nucleo_l152re``
+      - `ST Nucleo L152RE <https://developer.mbed.org/platforms/ST-Nucleo-L152RE/>`_
+      - STM32L152RET6
+      - 32 MHz
+      - 512 Kb
+      - 80 Kb
+
+    * - ``nucleo_l476rg``
+      - `ST Nucleo L476RG <https://developer.mbed.org/platforms/ST-Nucleo-L476RG/>`_
+      - STM32L476RGT6
+      - 80 MHz
+      - 1024 Kb
+      - 128 Kb
 
 SainSmart
 ~~~~~~~~~
@@ -1439,6 +2095,102 @@ SeeedStudio
       - 80 MHz
       - 512 Kb
       - 128 Kb
+
+    * - ``seeedArchMax``
+      - `SeeedStudio Arch Max <https://developer.mbed.org/platforms/Seeed-Arch-Max/>`_
+      - STM32F407VET6
+      - 168 MHz
+      - 512 Kb
+      - 192 Kb
+
+    * - ``seeedTinyBLE``
+      - `SeeedStudio Seeed Tiny BLE <http://developer.mbed.org/platforms/Seeed-Tiny-BLE/>`_
+      - NRF51822
+      - 16 MHz
+      - 256 Kb
+      - 16 Kb
+
+    * - ``seeeduinoArchPro``
+      - `SeeedStudio Seeeduino-Arch-Pro <https://developer.mbed.org/platforms/Seeeduino-Arch-Pro/>`_
+      - LPC1768
+      - 96 MHz
+      - 512 Kb
+      - 64 Kb
+
+Silicon Labs
+~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``efm32gg_stk3700``
+      - `Silicon Labs EFM32GG-STK3700 (Giant Gecko) <https://developer.mbed.org/platforms/EFM32-Giant-Gecko/>`_
+      - EFM32GG990F1024
+      - 48 MHz
+      - 1024 Kb
+      - 128 Kb
+
+    * - ``efm32hg_stk3400``
+      - `Silicon Labs SLSTK3400A USB-enabled (Happy Gecko) <https://developer.mbed.org/platforms/EFM32-Happy-Gecko/>`_
+      - EFM32HG322F64
+      - 24 MHz
+      - 64 Kb
+      - 8 Kb
+
+    * - ``efm32lg_stk3600``
+      - `Silicon Labs EFM32LG-STK3600 (Leopard Gecko) <https://developer.mbed.org/platforms/EFM32-Leopard-Gecko/>`_
+      - EFM32LG990F256
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``efm32pg_stk3401``
+      - `Silicon Labs SLSTK3401A (Pearl Gecko) <https://developer.mbed.org/platforms/EFM32-Pearl-Gecko/>`_
+      - EFM32PG1B200F256
+      - 40 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``efm32wg_stk3800``
+      - `Silicon Labs EFM32WG-STK3800 (Wonder Gecko) <https://developer.mbed.org/platforms/EFM32-Wonder-Gecko/>`_
+      - EFM32WG990F256
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``efm32zg_stk3200``
+      - `Silicon Labs EFM32ZG-STK3200 (Zero Gecko) <https://developer.mbed.org/platforms/EFM32-Zero-Gecko/>`_
+      - EFM2ZG222F32
+      - 24 MHz
+      - 32 Kb
+      - 4 Kb
+
+Solder Splash Labs
+~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``dipcortexm0``
+      - `Solder Splash Labs DipCortex M0 <https://developer.mbed.org/platforms/DipCortex-M0/>`_
+      - LPC11U24
+      - 50 MHz
+      - 32 Kb
+      - 8 Kb
 
 SparkFun
 ~~~~~~~~
@@ -1556,6 +2308,130 @@ SweetPea
       - 80 MHz
       - 4096 Kb
       - 80 Kb
+
+Switch Science
+~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``hrm1017``
+      - `Switch Science mbed HRM1017 <https://developer.mbed.org/platforms/mbed-HRM1017/>`_
+      - NRF51822
+      - 16 MHz
+      - 256 Kb
+      - 16 Kb
+
+    * - ``lpc1114fn28``
+      - `Switch Science mbed LPC1114FN28 <https://developer.mbed.org/platforms/LPC1114FN28/>`_
+      - LPC1114FN28
+      - 48 MHz
+      - 32 Kb
+      - 4 Kb
+
+TI
+~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``lplm4f120h5qr``
+      - `TI LaunchPad (Stellaris) w/ lm4f120 (80MHz) <http://www.ti.com/tool/ek-lm4f120xl>`_
+      - LPLM4F120H5QR
+      - 80 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``lpmsp430f5529``
+      - `TI LaunchPad w/ msp430f5529 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430f5529lp.html>`_
+      - MSP430F5529
+      - 16 MHz
+      - 128 Kb
+      - 1 Kb
+
+    * - ``lpmsp430f5529_25``
+      - `TI LaunchPad w/ msp430f5529 (25MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430f5529lp.html>`_
+      - MSP430F5529
+      - 25 MHz
+      - 128 Kb
+      - 1 Kb
+
+    * - ``lpmsp430fr4133``
+      - `TI LaunchPad w/ msp430fr4133 <http://www.ti.com/tool/msp-exp430fr4133>`_
+      - MSP430FR4133
+      - 16 MHz
+      - 16 Kb
+      - 2 Kb
+
+    * - ``lpmsp430fr5739``
+      - `TI FraunchPad w/ msp430fr5739 <http://www.ti.com/tool/msp-exp430fr5739>`_
+      - MSP430FR5739
+      - 16 MHz
+      - 16 Kb
+      - 1 Kb
+
+    * - ``lpmsp430fr5969``
+      - `TI LaunchPad w/ msp430fr5969 <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430fr5969.html>`_
+      - MSP430FR5969
+      - 8 MHz
+      - 64 Kb
+      - 1 Kb
+
+    * - ``lpmsp430fr6989``
+      - `TI LaunchPad w/ msp430fr6989 <http://www.ti.com/tool/msp-exp430fr6989>`_
+      - MSP430FR6989
+      - 16 MHz
+      - 128 Kb
+      - 2 Kb
+
+    * - ``lpmsp430g2231``
+      - `TI LaunchPad w/ msp430g2231 (1 MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
+      - MSP430G2231
+      - 1 MHz
+      - 2 Kb
+      - 0.125 Kb
+
+    * - ``lpmsp430g2452``
+      - `TI LaunchPad w/ msp430g2452 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
+      - MSP430G2452
+      - 16 MHz
+      - 8 Kb
+      - 0.25 Kb
+
+    * - ``lpmsp430g2553``
+      - `TI LaunchPad w/ msp430g2553 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
+      - MSP430G2553
+      - 16 MHz
+      - 16 Kb
+      - 0.5 Kb
+
+    * - ``lptm4c1230c3pm``
+      - `TI LaunchPad (Tiva C) w/ tm4c123 (80MHz) <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c123gxl.html>`_
+      - LPTM4C1230C3PM
+      - 80 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``lptm4c1294ncpdt``
+      - `TI LaunchPad (Tiva C) w/ tm4c129 (120MHz) <http://www.ti.com/ww/en/launchpad/launchpads-connected-ek-tm4c1294xl.html>`_
+      - LPTM4C1294NCPDT
+      - 120 MHz
+      - 1024 Kb
+      - 256 Kb
 
 Teensy
 ~~~~~~
@@ -1752,6 +2628,26 @@ element14
       - 40 MHz
       - 128 Kb
       - 32 Kb
+
+u-blox
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``ubloxc027``
+      - `u-blox C027 <https://developer.mbed.org/platforms/u-blox-C027/>`_
+      - LPC1768
+      - 96 MHz
+      - 512 Kb
+      - 64 Kb
 
 ubIQio
 ~~~~~~

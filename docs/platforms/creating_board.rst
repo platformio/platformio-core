@@ -33,8 +33,7 @@ JSON Structure
 
 The key fields:
 
-* ``build`` data will be used by :ref:`platforms` and
-  :ref:`frameworks` builders
+* ``build`` data will be used by :ref:`platforms` and :ref:`frameworks` builders
 * ``frameworks`` is the list with supported :ref:`frameworks`
 * ``platform`` main type of :ref:`platforms`
 * ``upload`` upload settings which depend on the ``platform``

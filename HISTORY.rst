@@ -15,24 +15,33 @@ PlatformIO 3.0
 PlatformIO 2.0
 --------------
 
-2.9.2 (2016-??-??)
+2.9.2 (2016-06-02)
 ~~~~~~~~~~~~~~~~~~
 
-* Simplified documentation for `Continuous Integration with AppVeyor <http://docs.platformio.org/en/latest/ci/appveyor.html>`__
+* Simplified `Continuous Integration with AppVeyor <http://docs.platformio.org/en/latest/ci/appveyor.html>`__
   (`issue #671 <https://github.com/platformio/platformio/issues/671>`_)
 * Automatically add source directory to ``CPPPATH`` of Build System
 * Added support for Silicon Labs SLSTK3401A (Pearl Gecko) and
   MultiTech mDot F411 ARM mbed based boards
 * Added support for MightyCore ATmega8535 board
   (`issue #585 <https://github.com/platformio/platformio/issues/585>`_)
+* Added ``stlink`` as the default uploader for STM32 Discovery boards
+  (`issue #665 <https://github.com/platformio/platformio/issues/665>`_)
 * Use HTTP mirror for Package Manager in a case with SSL errors
   (`issue #645 <https://github.com/platformio/platformio/issues/645>`_)
+* Improved firmware uploading to Arduino Leonardo/Due based boards
 * Fixed bug with ``env_default`` when ``pio run -e`` is used
 * Fixed issue with ``src_filter`` option for Windows OS
   (`issue #652 <https://github.com/platformio/platformio/issues/652>`_)
 * Fixed configuration data for TI LaunchPads based on msp430fr4133 and
   msp430fr6989 MCUs
   (`issue #676 <https://github.com/platformio/platformio/issues/676>`_)
+* Fixed issue with ARM mbed framework and multiple definition errors
+  on FRDM-KL46Z board
+  (`issue #641 <https://github.com/platformio/platformio/issues/641>`_)
+* Fixed issue with ARM mbed framework when abstract class breaks compile
+  for LPC1768
+  (`issue #666 <https://github.com/platformio/platformio/issues/666>`_)
 
 2.9.1 (2016-04-30)
 ~~~~~~~~~~~~~~~~~~

@@ -54,12 +54,3 @@ Desktop
     linux_i686
     linux_x86_64
     windows_x86
-
-Custom Platform & Board
------------------------
-
-.. toctree::
-    :maxdepth: 2
-
-    creating_platform
-    creating_board
