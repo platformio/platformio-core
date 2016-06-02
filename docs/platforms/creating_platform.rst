@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -27,7 +27,7 @@ different/own build scripts, uploader and etc.
 
 .. note::
     If you want to change some build flags for the existing
-    :ref:`Platforms <platforms>`, you don't need to create (or duplicate) own
+    :ref:`platforms`, you don't need to create (or duplicate) own
     development platforms! Please use :ref:`projectconf_build_flags` option.
 
 **Step-by-Step Manual**

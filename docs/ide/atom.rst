@@ -437,6 +437,19 @@ To force Smart Code Linter to use Arduino files as C++ please
 Frequently Asked Questions
 --------------------------
 
+Keep build panel visible
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+PlatformIO IDE hides build panel on success by default. Nevertheless, you can
+keep it visible all time. Please follow to
+``Menu: PlatformIO > Settings > Build`` and set ``Panel Visibility`` to
+``Keep Visible``.
+
+Key-bindings (toggle panel):
+
+* ``cmd+alt+v`` - Mac OS X
+* ``ctrl+alt+v`` - Windows/Linux
+
 Automatically save on build
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -458,10 +471,13 @@ package and `C/C++ Uncrustify Code Beautifier <http://sourceforge.net/projects/u
 Articles / Manuals
 ------------------
 
+* May 30, 2016 - **Ron Moerman** - `IoT Development with PlatformIO <https://electronicsworkbench.io/blog/platformio>`_
+* May 01, 2016 - **Pedro Minatel** - `PlatformIO – Uma alternativa ao Arduino IDE (PlatformIO - An alternative to the Arduino IDE, Portuguese) <http://pedrominatel.com.br/ferramentas/platformio-uma-alternativa-ao-arduino-ide/>`_
 * Apr 23, 2016 - **Al Williams** - `Hackaday: Atomic Arduino (and Other) Development <http://hackaday.com/2016/04/23/atomic-arduino-and-other-development/>`_
 * Apr 16, 2016 - **Sathittham Sangthong** - `[PlatformIO] มาลองเล่น PlatformIO แทน Arduino IDE กัน (Let's play together with PlatformIO IDE [alternative to Arduino IDE], Thai) <http://www.sathittham.com/platformio/platformio-ide/>`_
 * Apr 11, 2016 - **Matjaz Trcek** - `Top 5 Arduino integrated development environments <https://codeandunicorns.com/top-5-arduino-integrated-development-environments-ide/>`_
 * Apr 06, 2016 - **Aleks** - `PlatformIO ausprobiert (Tried PlatformIO, German) <http://5volt-junkie.net/platformio/>`_
+* Apr 02, 2016 - **Diego Pinto** - `Você tem coragem de abandonar a IDE do Arduino? PlatformIO + Atom (Do you dare to leave the Arduino IDE? PlatformIO + Atom, Portuguese) <http://www.clubemaker.com.br/?rota=artigo/81>`_
 * Mar 30, 2016 - **Brandon Cannaday** - `Getting Started with PlatformIO and ESP8266 NodeMcu <https://www.getstructure.io/blog/getting-started-with-platformio-esp8266-nodemcu>`_
 * Mar 12, 2016 - **Peter Marks** - `PlatformIO, the Arduino IDE for programmers <http://blog.marxy.org/2016/03/platformio-arduino-ide-for-programmers.html>`_
 * Mar 05, 2016 - **brichacek.net** - `PlatformIO – otevřený ekosystém pro vývoj IoT (PlatformIO – an open source ecosystem for IoT development, Czech) <http://blog.brichacek.net/platformio-otevreny-ekosystem-pro-vyvoj-iot/>`_

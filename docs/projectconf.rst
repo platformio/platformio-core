@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -194,7 +194,7 @@ General options
 ``platform``
 ^^^^^^^^^^^^
 
-:ref:`Platform <platforms>` type.
+:ref:`platforms` type.
 
 
 .. _projectconf_env_framework:
@@ -610,7 +610,7 @@ Examples
 
 .. note::
     A full list with project examples can be found in
-    `PlatformIO Repository <https://github.com/platformio/platformio/tree/develop/examples>`_.
+    `PlatformIO Repository <https://github.com/platformio/platformio-examples/tree/develop>`_.
 
 1. :ref:`platform_atmelavr`: Arduino UNO board with auto pre-configured
    ``board_*`` and ``upload_*`` options (use only ``board`` option) and Arduino

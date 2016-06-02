@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -95,6 +95,13 @@ Silicon Labs
       - `Silicon Labs EFM32LG-STK3600 (Leopard Gecko) <https://developer.mbed.org/platforms/EFM32-Leopard-Gecko/>`_
       - EFM32LG990F256
       - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``efm32pg_stk3401``
+      - `Silicon Labs SLSTK3401A (Pearl Gecko) <https://developer.mbed.org/platforms/EFM32-Pearl-Gecko/>`_
+      - EFM32PG1B200F256
+      - 40 MHz
       - 256 Kb
       - 32 Kb
 

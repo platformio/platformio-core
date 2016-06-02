@@ -240,6 +240,10 @@ Using Arduino Framework with Staging version
 Articles
 --------
 
+* May 29, 2016 - **Chris Synan** - `Reverse Engineer RF Remote Controller for IoT! <http://www.instructables.com/id/Reverse-Engineer-RF-Remote-Controller-for-IoT/?ALLSTEPS>`_
+* May 22, 2016 - **Pedro Minatel** - `Estação meteorológica com ESP8266 (Weather station with ESP8266, Portuguese) <http://pedrominatel.com.br/esp8266/estacao-meteorologica-com-esp8266/>`_
+* May 16, 2016 - **Pedro Minatel** - `Controle remoto WiFi com ESP8266 (WiFi remote control using ESP8266, Portuguese) <http://pedrominatel.com.br/esp8266/controle-remoto-wifi-com-esp8266/>`_
+* May 08, 2016 - **Radoslaw Bob** - `Touch controlled buzzer (Nodemcu ESP8266) <https://gettoknowthebob.wordpress.com/2016/05/08/touch-controlled-buzzer-nodemcu-esp8266/>`_
 * Mar 07, 2016 - **Joran Jessurun** - `Nieuwe wereld met PlatformIO (New world with PlatformIO, Dutch) <http://blog.wisclub.nl/#post178>`_
 * Feb 25, 2016 - **NutDIY** - `PlatformIO Blink On Nodemcu Dev Kit V1.0 (ESP 12-E) <http://nutdiy.blogspot.com/2016/02/platformio-blink-on-nodemcu-dev-kit-v10.html>`_
 * Feb 23, 2016 - **Ptarmigan Labs** - `ESP8266 Over The Air updating – what are the options? <https://ptarmiganlabs.com/blog/2016/02/23/esp8266-over-the-air-updating-what-are-the-options/>`_

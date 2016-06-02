@@ -102,6 +102,7 @@ class PackageManager(object):
             dlpath = self.download(info['url'], pkg_dir, info['sha1'])
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.ChunkedEncodingError,
+                requests.exceptions.SSLError,
                 exception.FDUnrecognizedStatusCode, StopIteration):
             if not info['url'].startswith("http://dl.platformio.org"):
                 dlpath = self.download(

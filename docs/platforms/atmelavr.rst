@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -701,6 +701,13 @@ Mcudude
       - 16 MHz
       - 64 Kb
       - 4 Kb
+
+    * - ``mightycore8535``
+      - `MightyCore ATmega8535 <https://www.tindie.com/products/MCUdude/dip-40-arduino-compatible-development-board>`_
+      - ATMEGA16
+      - 16 MHz
+      - 8 Kb
+      - 0.5 Kb
 
 Microduino
 ~~~~~~~~~~

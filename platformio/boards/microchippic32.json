@@ -561,7 +561,7 @@
             "variant": "OpenBCI"
         },
         "frameworks": ["arduino"],
-        "name": "Digilent OpenScope",
+        "name": "OpenBCI 32bit",
         "platform": "microchippic32",
         "upload": {
             "maximum_ram_size": 32768,
@@ -571,7 +571,7 @@
             "speed": 115200,
             "wait_for_upload_port": true
         },
-        "url": "http://store.digilentinc.com/",
-        "vendor": "Digilent"
+        "url": "http://shop.openbci.com/",
+        "vendor": "OpenBCI"
     }
 }

@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -177,13 +177,6 @@ Digilent
       - 512 Kb
       - 128 Kb
 
-    * - ``openbci``
-      - `Digilent OpenScope <http://store.digilentinc.com/>`_
-      - 32MX250F128B
-      - 40 MHz
-      - 128 Kb
-      - 32 Kb
-
     * - ``openscope``
       - `Digilent OpenScope <http://store.digilentinc.com/>`_
       - 32MZ2048EFG124
@@ -243,6 +236,26 @@ Olimex
       - 32MX440F256H
       - 80 MHz
       - 256 Kb
+      - 32 Kb
+
+OpenBCI
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``openbci``
+      - `OpenBCI 32bit <http://shop.openbci.com/>`_
+      - 32MX250F128B
+      - 40 MHz
+      - 128 Kb
       - 32 Kb
 
 PONTECH

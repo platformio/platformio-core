@@ -16,11 +16,8 @@ PlatformIO
 .. image:: https://img.shields.io/pypi/l/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
-.. image:: https://img.shields.io/pypi/dm/platformio.svg
-    :target: https://pypi.python.org/pypi/platformio/
-    :alt: PyPi Downloads
 .. image:: https://img.shields.io/community/PlatformIO.png
-   :alt: Join the chat at https://gitter.im/platformio/platformio
+   :alt: Community Forums
    :target: https://community.platformio.org
 .. image:: https://img.shields.io/donate/PlatformIO.png?color=yellow
    :alt: Donate for PlatformIO.Org
@@ -29,7 +26,7 @@ PlatformIO
 
 `Home <http://platformio.org>`_ |
 `IDE <http://platformio.org/platformio-ide>`_ |
-`Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_ |
+`Project Examples <https://github.com/platformio/platformio-examples/tree/develop>`_ |
 `Docs <http://docs.platformio.org>`_ |
 `Twitter <https://twitter.com/PlatformIO_Org>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
@@ -62,9 +59,9 @@ IDE integration. Arduino and MBED compatible. Ready for Cloud compiling.
   platforms and frameworks; learn via examples; be up-to-date with the latest
   version.
 
-*Atmel AVR & SAM, Espressif, Freescale Kinetis, Nordic nRF51, NXP LPC,
-Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
-libOpenCM3, etc.*
+*Atmel AVR & SAM, Espressif, Freescale Kinetis, Intel ARC32, Lattice iCE40,
+Microchip PIC32, Nordic nRF51, NXP LPC, Silicon Labs EFM32, ST STM32,
+TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-demo-wiring.gif
     :target: http://platformio.org
@@ -161,6 +158,9 @@ It has support for the most popular embedded platforms:
 * `Atmel SAM <http://platformio.org/platforms/atmelsam>`_
 * `Espressif <http://platformio.org/platforms/espressif>`_
 * `Freescale Kinetis <http://platformio.org/platforms/freescalekinetis>`_
+* `Intel ARC32 <http://platformio.org/platforms/intel_arc32>`_
+* `Lattice iCE40 <http://platformio.org/platforms/lattice_ice40>`_
+* `Microchip PIC32 <http://platformio.org/platforms/microchippic32>`_
 * `Nordic nRF51 <http://platformio.org/platforms/nordicnrf51>`_
 * `NXP LPC <http://platformio.org/platforms/nxplpc>`_
 * `ST STM32 <http://platformio.org/platforms/ststm32>`_

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import base64
 import json
 import sys
 from os import environ
@@ -99,6 +100,12 @@ DefaultEnvironment(
 )
 
 env = DefaultEnvironment()
+
+# decode common variables
+for k in commonvars.keys():
+    if k in env:
+        env[k] = base64.b64decode(env[k])
+
 env.Prepend(LIBPATH=[join("$PIOPACKAGES_DIR", "ldscripts")])
 
 if "BOARD" in env:

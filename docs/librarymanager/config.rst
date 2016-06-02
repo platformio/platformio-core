@@ -141,7 +141,7 @@ Examples:
 The repository in which the source code can be found. The field consists for the
 next items:
 
-* ``type``
+* ``type`` the only "git", "hg" or "svn" are supported
 * ``url``
 * ``branch`` if is not specified, default branch will be used. This field will
   be ignored if tag/release exists with the value of :ref:`libjson_version`.

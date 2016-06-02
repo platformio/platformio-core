@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import base64
 import os
 import re
 import sys
@@ -400,10 +401,10 @@ class BasePlatform(object):
         obsolated = pm.get_outdated()
         return not set(self.get_packages().keys()).isdisjoint(set(obsolated))
 
-    def configure_default_packages(self, envoptions, targets):
+    def configure_default_packages(self, variables, targets):
         # enbale used frameworks
         for pkg_name in self.pkg_aliases_to_names(["framework"]):
-            for framework in envoptions.get("framework", "").split(","):
+            for framework in variables.get("framework", "").split(","):
                 framework = framework.lower().strip()
                 if not framework:
                     continue
@@ -441,15 +442,10 @@ class BasePlatform(object):
             raise exception.PlatformNotInstalledYet(self.get_type())
 
     def run(self, variables, targets, verbose):
-        assert isinstance(variables, list)
+        assert isinstance(variables, dict)
         assert isinstance(targets, list)
 
-        envoptions = {}
-        for v in variables:
-            _name, _value = v.split("=", 1)
-            envoptions[_name.lower()] = _value
-
-        self.configure_default_packages(envoptions, targets)
+        self.configure_default_packages(variables, targets)
         self._install_default_packages()
 
         self._verbose_level = int(verbose)
@@ -458,23 +454,17 @@ class BasePlatform(object):
             targets.remove("clean")
             targets.append("-c")
 
-        if "build_script" not in envoptions:
-            variables.append("BUILD_SCRIPT=%s" % self.get_build_script())
-
-        for v in variables:
-            if not v.startswith("BUILD_SCRIPT="):
-                continue
-            _, path = v.split("=", 1)
-            if not isfile(path):
-                raise exception.BuildScriptNotFound(path)
+        if "build_script" not in variables:
+            variables['build_script'] = self.get_build_script()
+        if not isfile(variables['build_script']):
+            raise exception.BuildScriptNotFound(variables['build_script'])
 
         # append aliases of the installed packages
         installed_packages = PackageManager.get_installed()
         for name, options in self.get_packages().items():
             if "alias" not in options or name not in installed_packages:
                 continue
-            variables.append(
-                "PIOPACKAGE_%s=%s" % (options['alias'].upper(), name))
+            variables['piopackage_%s' % options['alias']] = name
 
         self._found_error = False
         result = self._run_scons(variables, targets)
@@ -498,16 +488,22 @@ class BasePlatform(object):
                 _PYTHONPATH.append(p)
         os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
 
+        cmd = [
+            os.path.normpath(sys.executable),
+            join(util.get_home_dir(), "packages", "tool-scons",
+                 "script", "scons"),
+            "-Q",
+            "-j %d" % self.get_job_nums(),
+            "--warn=no-no-parallel-support",
+            "-f", join(util.get_source_dir(), "builder", "main.py")
+        ] + targets
+
+        # encode and append variables
+        for key, value in variables.items():
+            cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
+
         result = util.exec_command(
-            [
-                os.path.normpath(sys.executable),
-                join(util.get_home_dir(), "packages", "tool-scons",
-                     "script", "scons"),
-                "-Q",
-                "-j %d" % self.get_job_nums(),
-                "--warn=no-no-parallel-support",
-                "-f", join(util.get_source_dir(), "builder", "main.py")
-            ] + variables + targets,
+            cmd,
             stdout=util.AsyncPipe(self.on_run_out),
             stderr=util.AsyncPipe(self.on_run_err)
         )

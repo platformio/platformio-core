@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -39,7 +39,7 @@ libOpenCM3, etc.*
 * :ref:`ide_atom`
 * `Web 2.0 Library Search <http://platformio.org/lib>`_ |
   `Embedded Boards Explorer <http://platformio.org/boards>`_
-* `Project Examples <https://github.com/platformio/platformio/tree/develop/examples>`_
+* `Project Examples <https://github.com/platformio/platformio-examples/tree/develop>`_
 * `Source Code <https://github.com/platformio/platformio>`_ |
   `Issues <https://github.com/platformio/platformio/issues>`_
 * `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
@@ -57,8 +57,7 @@ Embedded Development. *Easier Than Ever.*
 * Cloud compiling and  :ref:`ci` with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
 * Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>` and
   configurable build :ref:`-flags/-options <projectconf_build_flags>`
-* Pre-built toolchains, :ref:`frameworks` for the
-  :ref:`Development Platforms <platforms>`
+* Pre-built toolchains, :ref:`frameworks` for the :ref:`platforms`
 
 Smart Build System. *Fast and Reliable.*
 ----------------------------------------
@@ -108,8 +107,11 @@ Contents
     :caption: Instruments
     :maxdepth: 3
 
-    Platforms & Boards <platforms/index>
+    platforms/index
+    platforms/embedded_boards
     frameworks/index
+    platforms/creating_platform
+    platforms/creating_board
 
 .. toctree::
     :caption: Library Manager

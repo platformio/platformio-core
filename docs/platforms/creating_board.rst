@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -33,10 +33,9 @@ JSON Structure
 
 The key fields:
 
-* ``build`` data will be used by :ref:`Platforms <platforms>` and
-  :ref:`frameworks` builders
+* ``build`` data will be used by :ref:`platforms` and :ref:`frameworks` builders
 * ``frameworks`` is the list with supported :ref:`frameworks`
-* ``platform`` main type of :ref:`Platforms <platforms>`
+* ``platform`` main type of :ref:`platforms`
 * ``upload`` upload settings which depend on the ``platform``
 
 .. code-block:: json

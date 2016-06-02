@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -27,8 +27,7 @@ Usage
 Description
 -----------
 
-Install pre-built development :ref:`Platforms <platforms>` with related
-packages.
+Install pre-built development :ref:`platforms` with related packages.
 
 There are several predefined aliases for packages, such as:
 

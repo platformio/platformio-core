@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -141,6 +141,26 @@ Armstrap
       - 168 MHz
       - 512 Kb
       - 192 Kb
+
+MultiTech
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``mts_mdot_f411re``
+      - `MultiTech mDot F411 <https://developer.mbed.org/platforms/MTS-mDot-F411/>`_
+      - STM32F411RET6
+      - 100 MHz
+      - 512 Kb
+      - 128 Kb
 
 ST
 ~~

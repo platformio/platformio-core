@@ -1,27 +1,13 @@
 build: off
 environment:
-  global:
-    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\scripts\\appveyor\\run_with_compiler.cmd"
+
   matrix:
     - TOXENV: "py27"
-      TOXPYTHON: "C:\\Python27-x64\\python.exe"
-      WINDOWS_SDK_VERSION: "v7.0"
-      PYTHON_HOME: "C:\\Python27-x64"
-      PYTHON_VERSION: "2.7"
-      PYTHON_ARCH: "64"
-      
-init:
-  - "ECHO %TOXENV%"
-  - ps: "ls C:\\Python*"
-  
+
 install:
-  - "git submodule update --init --recursive"
-  - "powershell scripts\\appveyor\\install.ps1"
-  
-before_test:
-  - cmd: SET PATH=%PATH%;C:\MinGW\bin  
-  
+  - cmd: git submodule update --init --recursive
+  - cmd: SET PATH=%PATH%;C:\Python27\Scripts;C:\MinGW\bin
+  - cmd: pip install tox
+
 test_script:
-  - "%PYTHON_HOME%\\Scripts\\tox --version"
-  - "%PYTHON_HOME%\\Scripts\\pip --version"
-  - "%WITH_COMPILER% %PYTHON_HOME%\\Scripts\\tox"
+  - cmd: tox
