@@ -199,7 +199,7 @@ def get_build_flags(data):
 
 def _mbed_whole_archive_hook(libs_):
     if (not isinstance(libs_, list) or
-            env.get("BOARD_OPTIONS", {}).get("platform") != "ststm32"):
+            env.get("BOARD_OPTIONS", {}).get("platform") == "nordicnrf51"):
         return libs_
 
     _dynlibs = []
