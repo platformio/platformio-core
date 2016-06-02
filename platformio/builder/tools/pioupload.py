@@ -48,9 +48,10 @@ def TouchSerialPort(env, port, baudrate):
 
 
 def WaitForNewSerialPort(env, before):
+    print "Waiting for the new upload port..."
     new_port = None
     elapsed = 0
-    while elapsed < 10:
+    while elapsed < 5:
         now = [i['port'] for i in get_serialports(use_grep=True)]
         diff = list(set(now) - set(before))
         if diff:
@@ -63,7 +64,6 @@ def WaitForNewSerialPort(env, before):
 
     if not new_port and env.subst("$UPLOAD_PORT") in now:
         new_port = env.subst("$UPLOAD_PORT")
-
     if not new_port:
         env.Exit("Error: Couldn't find a board on the selected port. "
                  "Check that you have the correct port selected. "
