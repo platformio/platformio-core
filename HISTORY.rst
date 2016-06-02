@@ -25,6 +25,10 @@ PlatformIO 2.0
 * Fixed configuration data for TI LaunchPads based on msp430fr4133 and
   msp430fr6989 MCUs
   (`issue #676 <https://github.com/platformio/platformio/issues/676>`_)
+* Fixed issue with ARM mbed framework and multiple definition errors
+  on FRDM-KL46Z board
+  (`issue #641 <https://github.com/platformio/platformio/issues/641>`_)
+
 
 2.9.1 (2016-04-30)
 ~~~~~~~~~~~~~~~~~~
