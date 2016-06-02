@@ -285,19 +285,28 @@ def get_serialports(use_grep=False):
     def _grep_serial_ports():
         result = []
         if system() == "Windows":
-            return result
-        if system() == "Linux":
-            patterns = ["/dev/%s*" % p for p in (
-                "ttyS", "ttyUSB", "ttyACM", "ttyAMA", "rfcomm", "ttyO")]
+            output = exec_command(["mode"]).get("out", "")
+            for line in output.split("\n"):
+                line = line.strip()
+                if "COM" in line:
+                    result.append({"port": line[line.index("COM"):-1],
+                                   "description": "", "hwid": ""})
         else:
-            patterns = ["/dev/tty.*", "/dev/cu.*"]
-        for pattern in patterns:
-            for port in glob(pattern):
-                result.append({"port": port, "description": "", "hwid": ""})
+            if system() == "Linux":
+                patterns = ["/dev/%s*" % p for p in (
+                    "ttyS", "ttyUSB", "ttyACM", "ttyAMA", "rfcomm", "ttyO")]
+            else:
+                patterns = ["/dev/tty.*", "/dev/cu.*"]
+            for pattern in patterns:
+                for port in glob(pattern):
+                    result.append(
+                        {"port": port, "description": "", "hwid": ""})
         return result
 
-    if use_grep and system() != "Windows":
-        return _grep_serial_ports()
+    if use_grep:
+        result = _grep_serial_ports()
+        if result:
+            return result
 
     try:
         from serial.tools.list_ports import comports
@@ -316,7 +325,7 @@ def get_serialports(use_grep=False):
         result.append({"port": p, "description": d, "hwid": h})
 
     # fix for PySerial
-    if not result:
+    if not result and not use_grep:
         result = _grep_serial_ports()
 
     return result
@@ -326,7 +335,7 @@ def get_logicaldisks():
     disks = []
     if system() == "Windows":
         result = exec_command(
-            ["wmic", "logicaldisk", "get", "name,VolumeName"]).get("out")
+            ["wmic", "logicaldisk", "get", "name,VolumeName"]).get("out", "")
         disknamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
         for line in result.split("\n"):
             match = disknamere.match(line.strip())
