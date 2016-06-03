@@ -45,8 +45,9 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", MODE:="066
 # QinHeng Electronics HL-340 USB-Serial adapter
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE:="0666"
 
-# ARDUINO
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="00??", MODE:="0666"
+# Arduino boards
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="[08][02]*", MODE:="0666"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2a03", ATTRS{idProduct}=="[08][02]*", MODE:="0666"
 
 # Arduino SAM-BA
 ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", ENV{ID_MM_DEVICE_IGNORE}="1"

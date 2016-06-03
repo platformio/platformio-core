@@ -90,6 +90,14 @@ def AutodetectUploadPort(env):
             env.Replace(UPLOAD_PORT=item['disk'])
             break
     else:
+        if not isfile("/etc/udev/99-platformio-udev.rules"):
+            print (
+                "\nWarning! Please install `99-platformio-udev.rules` and "
+                "check that your board's PID and VID are listed in the rules."
+                "\n https://raw.githubusercontent.com/platformio/platformio"
+                "/develop/scripts/99-platformio-udev.rules\n"
+            )
+
         board_build_opts = env.get("BOARD_OPTIONS", {}).get("build", {})
         for item in get_serialports():
             if "VID:PID" not in item['hwid']:
