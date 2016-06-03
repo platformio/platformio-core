@@ -14,7 +14,6 @@
 
 from __future__ import absolute_import
 
-import sys
 from os.path import isfile, join
 from shutil import copyfile
 from time import sleep
