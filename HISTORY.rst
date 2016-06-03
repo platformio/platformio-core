@@ -7,7 +7,7 @@ PlatformIO 2.0
 2.9.4 (2016-06-04)
 ~~~~~~~~~~~~~~~~~~
 
-* Show ``udev`` warning only for the Linux OS while upload firmware
+* Show ``udev`` warning only for the Linux OS while uploading firmware
 
 2.9.3 (2016-06-03)
 ~~~~~~~~~~~~~~~~~~
