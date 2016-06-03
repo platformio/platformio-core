@@ -23,6 +23,7 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
+* Jun 3, 2016 - **Daniel Eichhorn** - `ESP8266: Continuous Delivery Pipeline – Push To Production <http://blog.squix.org/2016/06/esp8266-continuous-delivery-pipeline-push-to-production.html>`_
 * May 30, 2016 - **Ron Moerman** - `IoT Development with PlatformIO <https://electronicsworkbench.io/blog/platformio>`_
 * May 29, 2016 - **Chris Synan** - `Reverse Engineer RF Remote Controller for IoT! <http://www.instructables.com/id/Reverse-Engineer-RF-Remote-Controller-for-IoT/?ALLSTEPS>`_
 * May 26, 2016 - **Charlie Key** - `7 Best Developer Tools To Build Your NEXT Internet of Things Application <https://www.losant.com/blog/7-best-developer-tools-to-build-your-next-internet-of-things-application>`_
