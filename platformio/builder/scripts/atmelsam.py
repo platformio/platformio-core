@@ -41,7 +41,7 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
     if not upload_options.get("disable_flushing", False):
         env.FlushSerialBuffer("$UPLOAD_PORT")
 
-    before_ports = [i['port'] for i in get_serialports(use_grep=True)]
+    before_ports = get_serialports()
 
     if upload_options.get("use_1200bps_touch", False):
         env.TouchSerialPort("$UPLOAD_PORT", 1200)

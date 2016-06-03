@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+import sys
 from os.path import isfile, join
 from shutil import copyfile
 from time import sleep
@@ -49,21 +50,25 @@ def TouchSerialPort(env, port, baudrate):
 
 def WaitForNewSerialPort(env, before):
     print "Waiting for the new upload port..."
+    prev_port = env.subst("$UPLOAD_PORT")
     new_port = None
     elapsed = 0
-    while elapsed < 5:
-        now = [i['port'] for i in get_serialports(use_grep=True)]
-        diff = list(set(now) - set(before))
-        if diff:
-            new_port = diff[0]
-            break
-
+    while elapsed < 5 and new_port is None:
+        now = get_serialports()
+        for p in now:
+            if p not in before:
+                new_port = p['port']
+                break
         before = now
         sleep(0.25)
         elapsed += 0.25
 
-    if not new_port and env.subst("$UPLOAD_PORT") in now:
-        new_port = env.subst("$UPLOAD_PORT")
+    if not new_port:
+        for p in now:
+            if prev_port == p['port']:
+                new_port = p['port']
+                break
+
     if not new_port:
         env.Exit("Error: Couldn't find a board on the selected port. "
                  "Check that you have the correct port selected. "
