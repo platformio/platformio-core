@@ -4,6 +4,11 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.9.3 (2016-06-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed firmware uploading to the embedded boards with SAM-BA bootloader
+
 2.9.2 (2016-06-02)
 ~~~~~~~~~~~~~~~~~~
 
