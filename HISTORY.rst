@@ -4,6 +4,13 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.9.3 (2016-06-03)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for Arduboy, the game system the size of a credit card
+* Updated `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`__ for Linux OS
+* Refactored firmware uploading to the embedded boards with SAM-BA bootloader
+
 2.9.2 (2016-06-02)
 ~~~~~~~~~~~~~~~~~~
 

@@ -47,21 +47,26 @@ def TouchSerialPort(env, port, baudrate):
     sleep(0.4)
 
 
-def WaitForNewSerialPort(env):
-    before = [i['port'] for i in get_serialports(use_grep=True)]
-    sleep(0.5)
+def WaitForNewSerialPort(env, before):
+    print "Waiting for the new upload port..."
+    prev_port = env.subst("$UPLOAD_PORT")
     new_port = None
     elapsed = 0
-    while elapsed < 10:
-        now = [i['port'] for i in get_serialports(use_grep=True)]
-        diff = list(set(now) - set(before))
-        if diff:
-            new_port = diff[0]
-            break
-
+    while elapsed < 5 and new_port is None:
+        now = get_serialports()
+        for p in now:
+            if p not in before:
+                new_port = p['port']
+                break
         before = now
         sleep(0.25)
         elapsed += 0.25
+
+    if not new_port:
+        for p in now:
+            if prev_port == p['port']:
+                new_port = p['port']
+                break
 
     if not new_port:
         env.Exit("Error: Couldn't find a board on the selected port. "
@@ -85,6 +90,14 @@ def AutodetectUploadPort(env):
             env.Replace(UPLOAD_PORT=item['disk'])
             break
     else:
+        if not isfile("/etc/udev/99-platformio-udev.rules"):
+            print (
+                "\nWarning! Please install `99-platformio-udev.rules` and "
+                "check that your board's PID and VID are listed in the rules."
+                "\n https://raw.githubusercontent.com/platformio/platformio"
+                "/develop/scripts/99-platformio-udev.rules\n"
+            )
+
         board_build_opts = env.get("BOARD_OPTIONS", {}).get("build", {})
         for item in get_serialports():
             if "VID:PID" not in item['hwid']:

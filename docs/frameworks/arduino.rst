@@ -176,6 +176,26 @@ Adafruit
       - 8 Kb
       - 0.5 Kb
 
+Arduboy
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``arduboy``
+      - `Arduboy <https://www.arduboy.com>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
 Arduino
 ~~~~~~~
 
