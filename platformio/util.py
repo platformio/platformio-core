@@ -300,7 +300,7 @@ def get_serialports():
     # fix for PySerial
     if not result and system() == "Darwin":
         for p in glob("/dev/tty.*"):
-            result.append({"port": p, "description": "", "hwid": ""})
+            result.append({"port": p, "description": "n/a", "hwid": "n/a"})
     return result
 
 
