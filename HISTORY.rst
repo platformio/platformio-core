@@ -4,10 +4,16 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.9.4 (2016-06-??)
+~~~~~~~~~~~~~~~~~~
+
+* Show ``udev`` warning only for the Linux OS while upload firmware
+
 2.9.3 (2016-06-03)
 ~~~~~~~~~~~~~~~~~~
 
-* Added support for Arduboy, the game system the size of a credit card
+* Added support for `Arduboy <https://www.arduboy.com>`__, the game system
+  the size of a credit card
 * Updated `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`__ for Linux OS
 * Refactored firmware uploading to the embedded boards with SAM-BA bootloader
 

@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 
 from os.path import isfile, join
+from platform import system
 from shutil import copyfile
 from time import sleep
 
@@ -90,7 +91,8 @@ def AutodetectUploadPort(env):
             env.Replace(UPLOAD_PORT=item['disk'])
             break
     else:
-        if not isfile("/etc/udev/99-platformio-udev.rules"):
+        if (system() == "Linux" and
+                not isfile("/etc/udev/99-platformio-udev.rules")):
             print (
                 "\nWarning! Please install `99-platformio-udev.rules` and "
                 "check that your board's PID and VID are listed in the rules."
