@@ -182,6 +182,13 @@ Arduboy
       - 32 Kb
       - 2.5 Kb
 
+    * - ``arduboy_devkit``
+      - `Arduboy DevKit <https://www.arduboy.com>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
 Arduino
 ~~~~~~~
 
