@@ -15,6 +15,12 @@ PlatformIO 3.0
 PlatformIO 2.0
 --------------
 
+2.9.5 (2016-06-??)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for `Arduboy DevKit <https://www.arduboy.com>`__, the game system
+  the size of a credit card
+
 2.9.4 (2016-06-04)
 ~~~~~~~~~~~~~~~~~~
 
