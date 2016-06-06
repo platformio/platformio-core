@@ -287,34 +287,7 @@ def exec_command(*args, **kwargs):
     return result
 
 
-def get_serialports(use_grep=False):
-
-    def _grep_serial_ports():
-        result = []
-        if system() == "Windows":
-            output = exec_command(["mode"]).get("out", "")
-            for line in output.split("\n"):
-                line = line.strip()
-                if "COM" in line:
-                    result.append({"port": line[line.index("COM"):-1],
-                                   "description": "", "hwid": ""})
-        else:
-            if system() == "Linux":
-                patterns = ["/dev/%s*" % p for p in (
-                    "ttyS", "ttyUSB", "ttyACM", "ttyAMA", "rfcomm", "ttyO")]
-            else:
-                patterns = ["/dev/tty.*", "/dev/cu.*"]
-            for pattern in patterns:
-                for port in glob(pattern):
-                    result.append(
-                        {"port": port, "description": "", "hwid": ""})
-        return result
-
-    if use_grep:
-        result = _grep_serial_ports()
-        if result:
-            return result
-
+def get_serialports():
     try:
         from serial.tools.list_ports import comports
     except ImportError:
@@ -332,9 +305,9 @@ def get_serialports(use_grep=False):
         result.append({"port": p, "description": d, "hwid": h})
 
     # fix for PySerial
-    if not result and not use_grep:
-        result = _grep_serial_ports()
-
+    if not result and system() == "Darwin":
+        for p in glob("/dev/tty.*"):
+            result.append({"port": p, "description": "n/a", "hwid": "n/a"})
     return result
 
 
