@@ -105,6 +105,12 @@ temporary directory within your operation system.
 Don't remove :option:`platformio ci --build-dir` after build process.
 
 .. option::
+    --enable_upload
+
+Target upload after build. So it possible to upload a examble or *.ino file
+direct without create a project.
+
+.. option::
     --project-conf
 
 Buid project using pre-configured :ref:`projectconf`.
