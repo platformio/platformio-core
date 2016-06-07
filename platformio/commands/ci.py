@@ -100,11 +100,8 @@ def cli(ctx, src, lib, exclude, board,  # pylint: disable=R0913
             _exclude_contents(build_dir, exclude)
 
         # initialise project
-        if not enable_upload:
-            ctx.invoke(cmd_init, project_dir=build_dir, board=board)
-        else:
-            ctx.invoke(cmd_init, enable_auto_uploading=True,
-                       project_dir=build_dir, board=board)
+        ctx.invoke(cmd_init, enable_auto_uploading=enable_upload,
+                   project_dir=build_dir, board=board)
 
         # process project
         ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)
