@@ -48,7 +48,7 @@ Local
 PlatformIO supports installing development platform from local directory. Here
 is supported form:
 
-* file:///local/path/to/the/platform/dir
+* ``file:///local/path/to/the/platform/dir``
 
 VCS
 ~~~

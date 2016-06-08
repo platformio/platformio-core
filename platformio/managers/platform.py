@@ -416,7 +416,9 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         else:
             if id_ not in self._BOARDS_CACHE:
                 for boards_dir in bdirs:
-                    manifest_path = join(bdirs, "%s.json" % id_)
+                    if not isdir(boards_dir):
+                        continue
+                    manifest_path = join(boards_dir, "%s.json" % id_)
                     if not isfile(manifest_path):
                         continue
                     _append_board(id_, manifest_path)
