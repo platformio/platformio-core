@@ -98,11 +98,8 @@ class PlatformManager(PackageManager):
         boards = []
         for manifest in self.get_installed():
             p = PlatformFactory.newPlatform(manifest['_manifest_path'])
-            for id_, config in p.get_boards().items():
-                manifest = config.get_manifest().copy()
-                manifest['id'] = id_
-                manifest['platform'] = p.name
-                boards.append(manifest)
+            for config in p.get_boards().values():
+                boards.append(config.get_brief_data())
         return boards
 
     @staticmethod
@@ -394,22 +391,37 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         return False
 
     def get_boards(self, id_=None):
+
+        def _append_board(board_id, manifest_path):
+            config = PlatformBoardConfig(manifest_path)
+            if "platform" in config and config.get("platform") != self.name:
+                return
+            elif ("platforms" in config and
+                  self.name not in config.get("platforms")):
+                return
+            config.manifest['platform'] = self.name
+            self._BOARDS_CACHE[board_id] = config
+
+        bdirs = (join(util.get_home_dir(), "boards"),
+                 join(self.get_dir(), "boards"))
         if id_ is None:
-            boards_dir = join(self.get_dir(), "boards")
-            if not isdir(boards_dir):
-                return {}
-            for item in sorted(os.listdir(boards_dir)):
-                _id = item[:-5]
-                if _id in self._BOARDS_CACHE:
+            for boards_dir in bdirs:
+                if not isdir(boards_dir):
                     continue
-                self._BOARDS_CACHE[_id] = PlatformBoardConfig(
-                    join(self.get_dir(), "boards", item)
-                )
+                for item in sorted(os.listdir(boards_dir)):
+                    _id = item[:-5]
+                    if not item.endswith(".json") or _id in self._BOARDS_CACHE:
+                        continue
+                    _append_board(_id, join(boards_dir, item))
         else:
             if id_ not in self._BOARDS_CACHE:
-                self._BOARDS_CACHE[id_] = PlatformBoardConfig(
-                    join(self.get_dir(), "boards", "%s.json" % id_)
-                )
+                for boards_dir in bdirs:
+                    manifest_path = join(bdirs, "%s.json" % id_)
+                    if not isfile(manifest_path):
+                        continue
+                    _append_board(id_, manifest_path)
+            if id_ not in self._BOARDS_CACHE:
+                raise exception.UnknownBoard(id_)
         return self._BOARDS_CACHE[id_] if id_ else self._BOARDS_CACHE
 
     def board_config(self, id_):
@@ -472,10 +484,11 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 class PlatformBoardConfig(object):
 
     def __init__(self, manifest_path):
-        if not isfile(manifest_path):
-            raise exception.UnknownBoard(basename(manifest_path[:-5]))
+        self._id = basename(manifest_path)[:-5]
+        assert isfile(manifest_path)
         self.manifest_path = manifest_path
         self._manifest = util.load_json(manifest_path)
+        assert set(["name", "url", "vendor"]) <= set(self._manifest.keys())
 
     def get(self, path, default=None):
         try:
@@ -496,5 +509,24 @@ class PlatformBoardConfig(object):
         except KeyError:
             return False
 
-    def get_manifest(self):
+    @property
+    def id_(self):
+        return self._id
+
+    @property
+    def manifest(self):
         return self._manifest
+
+    def get_brief_data(self):
+        return {
+            "id": self.id_,
+            "name": self._manifest['name'],
+            "platform": self._manifest.get("platform"),
+            "mcu": self._manifest.get("build", {}).get("mcu", "").upper(),
+            "fcpu": int(self._manifest.get("build", {}).get("f_cpu", "")[:-1]),
+            "ram": self._manifest.get("upload", {}).get("maximum_ram_size", 0),
+            "rom": self._manifest.get("upload", {}).get("maximum_size", 0),
+            "frameworks": self._manifest.get("frameworks"),
+            "vendor": self._manifest['vendor'],
+            "url": self._manifest['url']
+        }

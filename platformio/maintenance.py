@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
-import struct
+import json
+import os
 from os import getenv
+from os.path import isdir, join
 from time import time
 
 import click
+import semantic_version
 
 from platformio import __version__, app, exception, telemetry, util
 from platformio.commands.lib import lib_update as cmd_libraries_update
@@ -65,20 +67,12 @@ def on_platformio_exception(e):
 class Upgrader(object):
 
     def __init__(self, from_version, to_version):
-        self.from_version = self.version_to_int(from_version)
-        self.to_version = self.version_to_int(to_version)
+        self.from_version = semantic_version.Version.coerce(from_version)
+        self.to_version = semantic_version.Version.coerce(to_version)
 
         self._upgraders = [
-            (self.version_to_int("3.0.0"), self._upgrade_to_3_0_0)
+            (semantic_version.Version("3.0.0"), self._upgrade_to_3_0_0)
         ]
-
-    @staticmethod
-    def version_to_int(version):
-        match = re.match(r"(\d+)\.(\d+)\.(\d+)(\D+)?", version)
-        assert match is not None and len(match.groups()) is 4
-        verchrs = [chr(int(match.group(i))) for i in range(1, 4)]
-        verchrs.append(chr(255 if match.group(4) is None else 0))
-        return struct.unpack(">I", "".join(verchrs))
 
     def run(self, ctx):
         if self.from_version > self.to_version:
@@ -93,9 +87,26 @@ class Upgrader(object):
         return all(result)
 
     def _upgrade_to_3_0_0(self, ctx):  # pylint: disable=R0201
+        # convert custom board configuration
+        boards_dir = join(util.get_home_dir(), "boards")
+        if isdir(boards_dir):
+            for item in os.listdir(boards_dir):
+                if not item.endswith(".json"):
+                    continue
+                data = util.load_json(join(boards_dir, item))
+                if set(["name", "url", "vendor"]) <= set(data.keys()):
+                    continue
+                os.remove(join(boards_dir, item))
+                for key, value in data.items():
+                    with open(join(boards_dir, "%s.json" % key),
+                              "w") as f:
+                        json.dump(value, f, sort_keys=True, indent=2)
+
+        # re-install PlatformIO 2.0 development platforms
         installed_platforms = app.get_state_item("installed_platforms", [])
         if installed_platforms:
             ctx.invoke(cmd_platform_install, platforms=installed_platforms)
+
         return True
 
 
@@ -169,9 +180,8 @@ def check_platformio_upgrade():
     app.set_state_item("last_check", last_check)
 
     latest_version = get_latest_version()
-    if (latest_version == __version__ or
-            Upgrader.version_to_int(latest_version) <
-            Upgrader.version_to_int(__version__)):
+    if (semantic_version.Version.coerce(latest_version) <=
+            semantic_version.Version.coerce(__version__)):
         return
 
     terminal_width, _ = click.get_terminal_size()

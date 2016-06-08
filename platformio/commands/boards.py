@@ -16,6 +16,7 @@ import json
 
 import click
 
+from platformio.exception import APIRequestError
 from platformio.managers.platform import PlatformManager
 
 
@@ -78,24 +79,24 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
 
 
 def _get_boards(installed=False):
-    boards = PlatformManager.get_registered_boards()
-    if installed:
-        _installed_boards = [
-            "%s:%s" % (b['platform'], b['id'])
-            for b in PlatformManager().get_installed_boards()
-        ]
-        _new_boards = []
-        for board in boards:
+    boards = PlatformManager().get_installed_boards()
+    if not installed:
+        know_boards = ["%s:%s" % (b['platform'], b['id']) for b in boards]
+        for board in PlatformManager().get_registered_boards():
             key = "%s:%s" % (board['platform'], board['id'])
-            if key in _installed_boards:
-                _new_boards.append(board)
-        boards = _new_boards
+            if key not in know_boards:
+                boards.append(board)
     return boards
 
 
 def _ouput_boards_json(query, installed=False):
     result = []
-    for board in _get_boards(installed):
+    try:
+        boards = _get_boards(installed)
+    except APIRequestError:
+        if not installed:
+            boards = _get_boards(True)
+    for board in boards:
         if query:
             search_data = "%s %s" % (board['id'], json.dumps(board).lower())
             if query.lower() not in search_data.lower():
