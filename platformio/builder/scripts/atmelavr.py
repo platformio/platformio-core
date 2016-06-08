@@ -73,6 +73,29 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         if upload_options.get("wait_for_upload_port", False):
             env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
 
+    if env.subst("$BOARD") == "emonpi":
+
+        def _rpi_sysgpio(path, value):
+            with open(path, "w") as f:
+                f.write(str(value))
+
+        _rpi_sysgpio("/sys/class/gpio/export", 4)
+        _rpi_sysgpio("/sys/class/gpio/gpio4/direction", "out")
+        _rpi_sysgpio("/sys/class/gpio/gpio4/value", 1)
+        sleep(0.1)
+        _rpi_sysgpio("/sys/class/gpio/gpio4/value", 0)
+        _rpi_sysgpio("/sys/class/gpio/unexport", 4)
+    else:
+        if not upload_options.get("disable_flushing", False):
+            env.FlushSerialBuffer("$UPLOAD_PORT")
+
+        before_ports = get_serialports()
+
+        if upload_options.get("use_1200bps_touch", False):
+            env.TouchSerialPort("$UPLOAD_PORT", 1200)
+
+        if upload_options.get("wait_for_upload_port", False):
+            env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
 
 env = DefaultEnvironment()
 
