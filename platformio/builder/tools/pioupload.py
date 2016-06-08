@@ -79,17 +79,36 @@ def WaitForNewSerialPort(env, before):
 
 
 def AutodetectUploadPort(env):
-    if "UPLOAD_PORT" in env:
-        return
 
-    if env.subst("$FRAMEWORK") == "mbed":
+    def _look_for_mbed_disk():
         msdlabels = ("mbed", "nucleo", "frdm")
         for item in get_logicaldisks():
             if (not item['name'] or
                     not any([l in item['name'].lower() for l in msdlabels])):
                 continue
-            env.Replace(UPLOAD_PORT=item['disk'])
-            break
+            return item['disk']
+        return None
+
+    def _look_for_serial_port():
+        port = None
+        board_hwids = []
+        if "BOARD" in env and "build.hwids" in env.BoardConfig():
+            board_hwids = env.BoardConfig().get("build.hwids")
+        for item in get_serialports():
+            if "VID:PID" not in item['hwid']:
+                continue
+            port = item['port']
+            for hwid in board_hwids:
+                hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
+                if hwid_str in item['hwid']:
+                    return port
+        return port
+
+    if "UPLOAD_PORT" in env:
+        return
+
+    if env.subst("$FRAMEWORK") == "mbed":
+        env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
         if (system() == "Linux" and
                 not isfile("/etc/udev/99-platformio-udev.rules")):
@@ -99,20 +118,9 @@ def AutodetectUploadPort(env):
                 "\n https://raw.githubusercontent.com/platformio/platformio"
                 "/develop/scripts/99-platformio-udev.rules\n"
             )
+        env.Replace(UPLOAD_PORT=_look_for_serial_port())
 
-        board_hwids = []
-        if "BOARD" in env and "build.hwids" in env.BoardConfig():
-            board_hwids = env.BoardConfig().get("build.hwids")
-        for item in get_serialports():
-            if "VID:PID" not in item['hwid']:
-                continue
-            env.Replace(UPLOAD_PORT=item['port'])
-            for hwid in board_hwids:
-                hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
-                if hwid_str in item['hwid']:
-                    break
-
-    if "UPLOAD_PORT" in env:
+    if env.subst("$UPLOAD_PORT"):
         print "Auto-detected UPLOAD_PORT/DISK: %s" % env['UPLOAD_PORT']
     else:
         env.Exit("Error: Please specify `upload_port` for environment or use "
