@@ -1562,6 +1562,26 @@ OpenBCI
       - 128 Kb
       - 32 Kb
 
+OpenEnergyMonitor
+~~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``emonpi``
+      - `emonPi <https://github.com/openenergymonitor/emonpi>`_
+      - ATMEGA328P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
 Outrageous Circuits
 ~~~~~~~~~~~~~~~~~~~
 

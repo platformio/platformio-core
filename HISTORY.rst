@@ -7,6 +7,9 @@ PlatformIO 2.0
 2.9.5 (2016-06-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for `emonPi <https://github.com/openenergymonitor/emonpi>`__,
+  the OpenEnergyMonitor system
+  (`issue #687 <https://github.com/platformio/platformio/issues/687>`_)
 * Added support for `Arduboy DevKit <https://www.arduboy.com>`__, the game system
   the size of a credit card
 

@@ -43,6 +43,28 @@
         "vendor": "BitWizard"
     },
 
+    "emonpi": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_EMONPI",
+            "f_cpu": "16000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "frameworks": ["arduino"],
+        "name": "emonPi",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 30720,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 57600
+        },
+        "url": "https://github.com/openenergymonitor/emonpi",
+        "vendor": "OpenEnergyMonitor"
+    },
+
     "sainSmartDue": {
         "build": {
             "core": "arduino",
