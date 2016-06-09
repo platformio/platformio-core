@@ -113,7 +113,7 @@ env.Replace(
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-arduino101load", "arduino101load"),
     DFUUTIL=join("$PIOPACKAGES_DIR", "tool-arduino101load", "dfu-util"),
-    UPLOADCMD='"$UPLOADER" $DFUUTIL $SOURCES $UPLOADERFLAGS verbose',
+    UPLOADCMD='"$UPLOADER" "$DFUUTIL" $SOURCES $UPLOADERFLAGS verbose',
 
     PROGNAME="firmware",
     PROGSUFFIX=".elf"
