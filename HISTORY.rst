@@ -10,6 +10,9 @@ PlatformIO 2.0
 * Added support for `emonPi <https://github.com/openenergymonitor/emonpi>`__,
   the OpenEnergyMonitor system
   (`issue #687 <https://github.com/platformio/platformio/issues/687>`_)
+* Added support for STM32F0 boards for `SPL <http://platformio.org/frameworks/spl>`__
+  framework
+  (`issue #683 <https://github.com/platformio/platformio/issues/683>`_)
 * Added support for `Arduboy DevKit <https://www.arduboy.com>`__, the game system
   the size of a credit card
 
