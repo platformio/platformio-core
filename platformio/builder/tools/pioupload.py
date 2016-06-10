@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+from os import environ
 from os.path import isfile, join
 from platform import system
 from shutil import copyfile
@@ -21,7 +22,7 @@ from time import sleep
 
 from serial import Serial
 
-from platformio.util import get_logicaldisks, get_serialports, get_systype
+from platformio import util
 
 
 def FlushSerialBuffer(env, port):
@@ -36,7 +37,7 @@ def FlushSerialBuffer(env, port):
 
 
 def TouchSerialPort(env, port, baudrate):
-    if "windows" not in get_systype():
+    if system() != "Windows":
         try:
             s = Serial(env.subst(port))
             s.close()
@@ -54,7 +55,7 @@ def WaitForNewSerialPort(env, before):
     new_port = None
     elapsed = 0
     while elapsed < 5 and new_port is None:
-        now = get_serialports()
+        now = util.get_serialports()
         for p in now:
             if p not in before:
                 new_port = p['port']
@@ -82,7 +83,7 @@ def AutodetectUploadPort(env):
 
     def _look_for_mbed_disk():
         msdlabels = ("mbed", "nucleo", "frdm")
-        for item in get_logicaldisks():
+        for item in util.get_logicaldisks():
             if (not item['name'] or
                     not any([l in item['name'].lower() for l in msdlabels])):
                 continue
@@ -94,7 +95,7 @@ def AutodetectUploadPort(env):
         board_hwids = []
         if "BOARD" in env and "build.hwids" in env.BoardConfig():
             board_hwids = env.BoardConfig().get("build.hwids")
-        for item in get_serialports():
+        for item in util.get_serialports():
             if "VID:PID" not in item['hwid']:
                 continue
             port = item['port']
@@ -142,6 +143,31 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
           "Please restart your board.")
 
 
+def CheckUploadSize(env):
+    if "BOARD" not in env:
+        return
+    max_size = int(env.BoardConfig().get("upload.maximum_size", 0))
+    if max_size == 0 or "SIZETOOL" not in env:
+        return
+
+    sysenv = environ.copy()
+    sysenv['PATH'] = str(env['ENV']['PATH'])
+    cmd = [env.subst("$SIZETOOL"), "-B"]
+    cmd.append(env.subst(join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX")))
+    result = util.exec_command(cmd, env=sysenv)
+    if result['returncode'] != 0:
+        return
+
+    line = result['out'].strip().splitlines()[1]
+    values = [v.strip() for v in line.split("\t")]
+    used_size = int(values[0]) + int(values[1])
+
+    if used_size > max_size:
+        print result['out']
+        env.Exit("Error: The program size (%d bytes) is greater "
+                 "than maximum allowed (%s bytes)" % (used_size, max_size))
+
+
 def exists(_):
     return True
 
@@ -152,4 +178,5 @@ def generate(env):
     env.AddMethod(WaitForNewSerialPort)
     env.AddMethod(AutodetectUploadPort)
     env.AddMethod(UploadToDisk)
+    env.AddMethod(CheckUploadSize)
     return env
