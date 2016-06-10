@@ -15,6 +15,8 @@ PlatformIO 2.0
   (`issue #683 <https://github.com/platformio/platformio/issues/683>`_)
 * Added support for `Arduboy DevKit <https://www.arduboy.com>`__, the game system
   the size of a credit card
+* Fixed issue with ``-L relative/path`` when parsing ``build_flags``
+  (`issue #688 <https://github.com/platformio/platformio/issues/688>`_)
 
 2.9.4 (2016-06-04)
 ~~~~~~~~~~~~~~~~~~

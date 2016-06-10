@@ -114,10 +114,11 @@ def ProcessFlags(env, flags):
             env.Append(CPPDEFINES=[flag])
         env.Append(**parsed_flags)
 
-    # fix relative CPPPATH
-    for i, p in enumerate(env.get("CPPPATH", [])):
-        if isdir(p):
-            env['CPPPATH'][i] = realpath(p)
+    # fix relative CPPPATH & LIBPATH
+    for k in ("CPPPATH", "LIBPATH"):
+        for i, p in enumerate(env.get(k, [])):
+            if isdir(p):
+                env[k][i] = realpath(p)
     # fix relative path for "-include"
     for i, f in enumerate(env.get("CCFLAGS", [])):
         if isinstance(f, tuple) and f[0] == "-include":
