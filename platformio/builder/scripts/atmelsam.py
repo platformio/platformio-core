@@ -174,10 +174,11 @@ AlwaysBuild(target_size)
 #
 
 if env.subst("$BOARD") == "zero":
-    upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
+    upload = env.Alias(["upload", "uploadlazy"], target_firm,
+                       [env.CheckUploadSize, "$UPLOADCMD"])
 else:
     upload = env.Alias(["upload", "uploadlazy"], target_firm,
-                       [BeforeUpload, "$UPLOADCMD"])
+                       [env.CheckUploadSize, BeforeUpload, "$UPLOADCMD"])
 
 AlwaysBuild(upload)
 

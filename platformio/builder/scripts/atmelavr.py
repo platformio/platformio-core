@@ -142,7 +142,7 @@ AlwaysBuild(target_size)
 #
 
 upload = env.Alias(["upload", "uploadlazy"], target_firm,
-                   [BeforeUpload, "$UPLOADHEXCMD"])
+                   [env.CheckUploadSize, BeforeUpload, "$UPLOADHEXCMD"])
 AlwaysBuild(upload)
 
 #
@@ -159,7 +159,8 @@ AlwaysBuild(uploadeep)
 # Target: Upload firmware using external programmer
 #
 
-program = env.Alias("program", target_firm, [BeforeUpload, "$PROGRAMHEXCMD"])
+program = env.Alias("program", target_firm,
+                    [env.CheckUploadSize, BeforeUpload, "$PROGRAMHEXCMD"])
 AlwaysBuild(program)
 
 #

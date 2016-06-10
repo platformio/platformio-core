@@ -133,7 +133,7 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
           "Please restart your board.")
 
 
-def CheckUploadSize(env):
+def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
     max_size = int(env.get("BOARD_OPTIONS", {}).get("upload", {}).get(
         "maximum_size", 0))
     if max_size == 0 or "SIZETOOL" not in env:
@@ -141,8 +141,7 @@ def CheckUploadSize(env):
 
     sysenv = environ.copy()
     sysenv['PATH'] = str(env['ENV']['PATH'])
-    cmd = [env.subst("$SIZETOOL"), "-B"]
-    cmd.append(env.subst(join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX")))
+    cmd = [env.subst("$SIZETOOL"), "-B", str(source[0])]
     result = util.exec_command(cmd, env=sysenv)
     if result['returncode'] != 0:
         return
