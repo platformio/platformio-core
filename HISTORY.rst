@@ -15,6 +15,8 @@ PlatformIO 2.0
   (`issue #683 <https://github.com/platformio/platformio/issues/683>`_)
 * Added support for `Arduboy DevKit <https://www.arduboy.com>`__, the game system
   the size of a credit card
+* Check program size before uploading to the board
+  (`issue #689 <https://github.com/platformio/platformio/issues/689>`_)
 * Fixed issue with ``-L relative/path`` when parsing ``build_flags``
   (`issue #688 <https://github.com/platformio/platformio/issues/688>`_)
 

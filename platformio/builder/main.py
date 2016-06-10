@@ -171,3 +171,6 @@ if "envdump" in COMMAND_LINE_TARGETS:
 if "idedata" in COMMAND_LINE_TARGETS:
     print json.dumps(env.DumpIDEData())
     env.Exit()
+
+if set(["upload", "uploadlazy", "program"]) & set(COMMAND_LINE_TARGETS):
+    env.CheckUploadSize()
