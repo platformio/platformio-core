@@ -142,25 +142,23 @@ AlwaysBuild(target_size)
 #
 
 upload = env.Alias(["upload", "uploadlazy"], target_firm,
-                   [env.CheckUploadSize, BeforeUpload, "$UPLOADHEXCMD"])
+                   [BeforeUpload, "$UPLOADHEXCMD"])
 AlwaysBuild(upload)
 
 #
 # Target: Upload EEPROM data (from EEMEM directive)
 #
 
-uploadeep = env.Alias(
-    "uploadeep",
-    env.ElfToEep(join("$BUILD_DIR", "firmware"), target_elf),
-    [BeforeUpload, "$UPLOADEEPCMD"])
+uploadeep = env.Alias("uploadeep",
+                      env.ElfToEep(join("$BUILD_DIR", "firmware"), target_elf),
+                      [BeforeUpload, "$UPLOADEEPCMD"])
 AlwaysBuild(uploadeep)
 
 #
 # Target: Upload firmware using external programmer
 #
 
-program = env.Alias("program", target_firm,
-                    [env.CheckUploadSize, BeforeUpload, "$PROGRAMHEXCMD"])
+program = env.Alias("program", target_firm, [BeforeUpload, "$PROGRAMHEXCMD"])
 AlwaysBuild(program)
 
 #

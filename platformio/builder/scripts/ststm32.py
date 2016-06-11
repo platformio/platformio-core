@@ -100,8 +100,7 @@ AlwaysBuild(target_size)
 #
 
 if "mbed" in env.subst("$FRAMEWORK") and not env.subst("$UPLOAD_PROTOCOL"):
-    upload = env.Alias(["upload", "uploadlazy"],
-                       target_firm, env.UploadToDisk)
+    upload = env.Alias(["upload", "uploadlazy"], target_firm, env.UploadToDisk)
 else:
     upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
 AlwaysBuild(upload)

@@ -63,9 +63,8 @@ AlwaysBuild(target_size)
 #
 
 if env.subst("$BOARD") == "rfduino":
-    upload = env.Alias(
-        ["upload", "uploadlazy"], target_firm,
-        [lambda target, source, env: env.AutodetectUploadPort(), "$UPLOADCMD"])
+    upload = env.Alias(["upload", "uploadlazy"], target_firm,
+                       [env.AutodetectUploadPort, "$UPLOADCMD"])
 else:
     upload = env.Alias(["upload", "uploadlazy"], target_firm, env.UploadToDisk)
 AlwaysBuild(upload)

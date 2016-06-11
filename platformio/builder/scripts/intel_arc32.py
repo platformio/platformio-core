@@ -21,20 +21,6 @@ from os.path import join
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
 
-
-def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
-
-    if "program" in COMMAND_LINE_TARGETS:
-        return
-
-    env.AutodetectUploadPort()
-    env.Prepend(UPLOADERFLAGS=['"$UPLOAD_PORT"'])
-
-    if env.get("BOARD_OPTIONS", {}).get("upload", {}).get(
-            "use_1200bps_touch", False):
-        env.TouchSerialPort("$UPLOAD_PORT", 1200)
-
-
 env = DefaultEnvironment()
 
 env.Replace(
@@ -112,6 +98,9 @@ env.Replace(
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-arduino101load", "arduino101load"),
+    UPLOADERFLAGS=[
+        '"$UPLOAD_PORT"'
+    ],
     DFUUTIL=join("$PIOPACKAGES_DIR", "tool-arduino101load", "dfu-util"),
     UPLOADCMD='"$UPLOADER" "$DFUUTIL" $SOURCES $UPLOADERFLAGS verbose',
 
@@ -189,8 +178,8 @@ AlwaysBuild(target_size)
 # Target: Upload firmware
 #
 
-upload = env.Alias(
-    ["upload", "uploadlazy"], target_firm, [BeforeUpload, "$UPLOADCMD"])
+upload = env.Alias(["upload", "uploadlazy"], target_firm,
+                   [env.AutodetectUploadPort, "$UPLOADCMD"])
 AlwaysBuild(upload)
 
 #

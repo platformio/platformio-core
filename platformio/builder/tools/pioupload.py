@@ -81,7 +81,7 @@ def WaitForNewSerialPort(env, before):
 
 def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
     env = args[0]
-    print("Looking for upload port/disk...")
+    print "Looking for upload port/disk..."
 
     def _look_for_mbed_disk():
         msdlabels = ("mbed", "nucleo", "frdm")
@@ -107,7 +107,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         return port
 
     if "UPLOAD_PORT" in env:
-        print(env.subst("Manually specified: $UPLOAD_PORT"))
+        print env.subst("Manually specified: $UPLOAD_PORT")
         return
 
     if env.subst("$FRAMEWORK") == "mbed":
@@ -124,8 +124,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         env.Replace(UPLOAD_PORT=_look_for_serial_port())
 
     if env.subst("$UPLOAD_PORT"):
-        print(env.subst("Auto-detected: $UPLOAD_PORT"))
-        print("")
+        print env.subst("Auto-detected: $UPLOAD_PORT")
     else:
         env.Exit("Error: Please specify `upload_port` for environment or use "
                  "global `--upload-port` option.\n"
@@ -152,19 +151,20 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
     if max_size == 0 or "SIZETOOL" not in env:
         return
 
+    print "Check program size..."
     sysenv = environ.copy()
     sysenv['PATH'] = str(env['ENV']['PATH'])
     cmd = [env.subst("$SIZETOOL"), "-B", str(source[0])]
     result = util.exec_command(cmd, env=sysenv)
     if result['returncode'] != 0:
         return
+    print result['out'].strip()
 
     line = result['out'].strip().splitlines()[1]
     values = [v.strip() for v in line.split("\t")]
     used_size = int(values[0]) + int(values[1])
 
     if used_size > max_size:
-        print result['out']
         env.Exit("Error: The program size (%d bytes) is greater "
                  "than maximum allowed (%s bytes)" % (used_size, max_size))
 

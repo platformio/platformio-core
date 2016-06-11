@@ -94,10 +94,15 @@ def BuildProgram(env):
             "Error: Nothing to build. Please put your source code files "
             "to '%s' folder" % env.subst("$PROJECTSRC_DIR"))
 
-    return env.Program(
+    program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")),
         sources
     )
+
+    if set(["upload", "uploadlazy", "program"]) & set(COMMAND_LINE_TARGETS):
+        env.AddPostAction(program, env.CheckUploadSize)
+
+    return program
 
 
 def ProcessFlags(env, flags):
