@@ -35,29 +35,44 @@ The key fields:
 
 * ``build`` data will be used by :ref:`platforms` and :ref:`frameworks` builders
 * ``frameworks`` is the list with supported :ref:`frameworks`
-* ``platform`` main type of :ref:`platforms`
+* ``platform`` name of :ref:`platforms`
 * ``upload`` upload settings which depend on the ``platform``
 
 .. code-block:: json
 
     {
-        "myboard": {
-            "build": {},
-            "frameworks": ["%LIST_WITH_SUPPORTED_FRAMEWORKS%"],
-            "name": "My test board",
-            "platform": "%PLATFORM_TYPE_HERE%",
-            "upload": {},
-            "url": "http://example.com",
-            "vendor": "My Company Ltd."
-        }
+      "build": {
+        "extra_flags": "-DHELLO_PLATFORMIO",
+        "f_cpu": "16000000L",
+        "hwids": [
+          [
+            "0x1234",
+            "0x0013"
+          ],
+          [
+            "0x4567",
+            "0x0013"
+          ]
+        ],
+        "mcu": "%MCU_TYPE_HERE%"
+      },
+      "frameworks": ["%LIST_WITH_SUPPORTED_FRAMEWORKS%"],
+      "name": "My Test Board",
+      "upload": {
+        "maximum_ram_size": 2048,
+        "maximum_size": 32256
+      },
+      "url": "http://example.com",
+      "vendor": "MyCompany"
     }
+
 
 Installation
 ------------
 
 1. Create ``boards`` directory in :ref:`projectconf_pio_home_dir` if it
    doesn't exist.
-2. Create ``my_own_boards.json`` file and put to ``boards`` directory.
+2. Create ``myboard.json`` file and put to ``boards`` directory.
 3. Search available boards via :ref:`cmd_boards` command. You should see
    ``myboard`` board.
 
@@ -68,5 +83,6 @@ Now, you can use ``myboard`` for the :ref:`projectconf_env_board` option in
 Examples
 --------
 
-For the examples, please look into built-in ``*.json`` files with boards
-settings: https://github.com/platformio/platformio/tree/develop/platformio/boards.
+Please take a look at the source code of
+`PlatformIO Development Platforms <https://github.com/platformio?query=platform->`_
+and navigate to ``boards`` folder of the repository.
