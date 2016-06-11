@@ -8,7 +8,7 @@
             "mcu": "ARCv2EM",
             "usb_product": "Genuino 101",
             "variant": "arduino_101",
-            "hwid": [
+            "hwids": [
               ["0x8087", "0x0AB6"]
             ]
         },
@@ -18,11 +18,8 @@
         "upload": {
             "maximum_ram_size": 81920,
             "maximum_size": 196608,
-            "use_1200bps_touch": true,
             "protocol": "script",
-            "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": false
+            "require_upload_port" : true
         },
         "url": "https://www.arduino.cc/en/Main/ArduinoBoard101",
         "vendor": "Intel"

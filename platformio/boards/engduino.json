@@ -7,7 +7,7 @@
             "mcu": "atmega32u4",
             "usb_product": "EngduinoV1",
             "variant": "engduinov1",
-            "hwid": [
+            "hwids": [
               ["0x1B4F", "0x9208"]
             ]
         },
@@ -35,7 +35,7 @@
             "mcu": "atmega32u4",
             "usb_product": "EngduinoV2",
             "variant": "engduinov2",
-            "hwid": [
+            "hwids": [
               ["0x1B4F", "0x9208"]
             ]
         },
@@ -63,7 +63,7 @@
             "mcu": "atmega32u4",
             "usb_product": "EngduinoV3",
             "variant": "engduinov3",
-            "hwid": [
+            "hwids": [
               ["0x1B4F", "0x9208"]
             ]
         },

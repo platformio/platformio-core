@@ -79,40 +79,53 @@ def WaitForNewSerialPort(env, before):
     return new_port
 
 
-def AutodetectUploadPort(env):
-    if "UPLOAD_PORT" in env:
-        return
+def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
+    env = args[0]
+    print("Looking for upload port/disk...")
 
-    if env.subst("$FRAMEWORK") == "mbed":
+    def _look_for_mbed_disk():
         msdlabels = ("mbed", "nucleo", "frdm")
         for item in util.get_logicaldisks():
             if (not item['name'] or
                     not any([l in item['name'].lower() for l in msdlabels])):
                 continue
-            env.Replace(UPLOAD_PORT=item['disk'])
-            break
+            return item['disk']
+        return None
+
+    def _look_for_serial_port():
+        port = None
+        board_hwids = env.get("BOARD_OPTIONS", {}).get(
+            "build", {}).get("hwids", [])
+        for item in util.get_serialports():
+            if "VID:PID" not in item['hwid']:
+                continue
+            port = item['port']
+            for hwid in board_hwids:
+                hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
+                if hwid_str in item['hwid']:
+                    return port
+        return port
+
+    if "UPLOAD_PORT" in env:
+        print(env.subst("Manually specified: $UPLOAD_PORT"))
+        return
+
+    if env.subst("$FRAMEWORK") == "mbed":
+        env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
         if (system() == "Linux" and
                 not isfile("/etc/udev/99-platformio-udev.rules")):
-            print (
+            print(
                 "\nWarning! Please install `99-platformio-udev.rules` and "
                 "check that your board's PID and VID are listed in the rules."
                 "\n https://raw.githubusercontent.com/platformio/platformio"
                 "/develop/scripts/99-platformio-udev.rules\n"
             )
+        env.Replace(UPLOAD_PORT=_look_for_serial_port())
 
-        board_build_opts = env.get("BOARD_OPTIONS", {}).get("build", {})
-        for item in util.get_serialports():
-            if "VID:PID" not in item['hwid']:
-                continue
-            env.Replace(UPLOAD_PORT=item['port'])
-            for hwid in board_build_opts.get("hwid", []):
-                board_hwid = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
-                if board_hwid in item['hwid']:
-                    break
-
-    if "UPLOAD_PORT" in env:
-        print "Auto-detected UPLOAD_PORT/DISK: %s" % env['UPLOAD_PORT']
+    if env.subst("$UPLOAD_PORT"):
+        print(env.subst("Auto-detected: $UPLOAD_PORT"))
+        print("")
     else:
         env.Exit("Error: Please specify `upload_port` for environment or use "
                  "global `--upload-port` option.\n"

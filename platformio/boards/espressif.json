@@ -134,7 +134,7 @@
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
             "variant": "nodemcu",
-            "hwid": [
+            "hwids": [
               ["0x10C4", "0xEA60"]
             ]
         },
@@ -162,7 +162,7 @@
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
             "variant": "nodemcu",
-            "hwid": [
+            "hwids": [
               ["0x10C4", "0xEA60"]
             ]
         },

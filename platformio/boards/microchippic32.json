@@ -16,8 +16,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/cerebot-32mx4-limited-time-see-chipkit-pro-mx4/",
         "vendor": "Digilent"
@@ -40,8 +39,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://www.microchip.com/Developmenttools/ProductDetails.aspx?PartNO=TDGL004",
         "vendor": "Digilent"
@@ -64,8 +62,7 @@
             "maximum_size": 126976,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/chipkit-mx3-microcontroller-board-with-pmod-headers/",
         "vendor": "Digilent"
@@ -88,8 +85,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/chipkit-pro-mx4-embedded-systems-trainer-board/",
         "vendor": "Digilent"
@@ -112,8 +108,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/chipkit-pro-mx7-advanced-peripherals-embedded-systems-trainer-board/",
         "vendor": "Digilent"
@@ -136,8 +131,7 @@
             "maximum_size": 122880,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://www.element14.com/community/community/knode/dev_platforms_kits/element14_dev_kits/microchip-chipkit/chipkit_pi",
         "vendor": "element14"
@@ -160,8 +154,7 @@
             "maximum_size": 126976,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/chipkit-cmod-breadboardable-mz-microcontroller-board/",
         "vendor": "Digilent"
@@ -184,8 +177,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://www.seeedstudio.com/wiki/CUI32Stem",
         "vendor": "SeeedStudio"
@@ -208,8 +200,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://www.schmalzhaus.com/UBW32/",
         "vendor": "UBW32"
@@ -232,8 +223,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://www.schmalzhaus.com/UBW32/",
         "vendor": "UBW32"
@@ -256,8 +246,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://www.pontech.com/productdisplay/uav100",
         "vendor": "PONTECH"
@@ -280,8 +269,7 @@
             "maximum_size": 122880,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/chipkit-dp32-dip-package-prototyping-microcontroller-board/",
         "vendor": "Digilent"
@@ -304,8 +292,7 @@
             "maximum_size": 122880,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://fubarino.org/mini/",
         "vendor": "Fubarino"
@@ -328,8 +315,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://fubarino.org/sd/index.html",
         "vendor": "Fubarino"
@@ -352,8 +338,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/chipkit-max32-microcontroller-board-with-mega-r3-headers/",
         "vendor": "Digilent"
@@ -376,8 +361,7 @@
             "maximum_size": 258048,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "https://www.olimex.com/Products/Duino/PIC32/PIC32-PINGUINO/open-source-hardware",
         "vendor": "Olimex"
@@ -400,8 +384,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://www.4dsystems.com.au/product/Picadillo_35T/",
         "vendor": "4DSystems"
@@ -424,8 +407,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://quick240.com/quicki/",
         "vendor": "PONTECH"
@@ -448,8 +430,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/chipkit-uc32-basic-microcontroller-board-with-uno-r3-headers/",
         "vendor": "Digilent"
@@ -472,8 +453,7 @@
             "maximum_size": 126976,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/chipkit-uno32-basic-microcontroller-board-retired-see-chipkit-uc32/",
         "vendor": "Digilent"
@@ -496,8 +476,7 @@
             "maximum_size": 520192,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/chipkit-wf32-wifi-enabled-microntroller-board-with-uno-r3-headers/",
         "vendor": "Digilent"
@@ -520,8 +499,7 @@
             "maximum_size": 2080768,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/chipkit-wi-fire-wifi-enabled-mz-microcontroller-board/",
         "vendor": "Digilent"
@@ -544,8 +522,7 @@
             "maximum_size": 2080768,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://store.digilentinc.com/",
         "vendor": "Digilent"
@@ -568,8 +545,7 @@
             "maximum_size": 122880,
             "protocol": "stk500v2",
             "require_upload_port" : true,
-            "speed": 115200,
-            "wait_for_upload_port": true
+            "speed": 115200
         },
         "url": "http://shop.openbci.com/",
         "vendor": "OpenBCI"

@@ -7,7 +7,7 @@
             "mcu": "atmega32u4",
             "usb_product": "LilyPad USB",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x1B4F", "0x9207"],
               ["0x1B4F", "0x9208"]
             ]
@@ -164,7 +164,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Arduino Esplora",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x003C"],
               ["0x2341", "0x803C"],
               ["0x2A03", "0x003C"],
@@ -237,7 +237,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Arduino Leonardo",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x0036"],
               ["0x2341", "0x8036"],
               ["0x2A03", "0x0036"],
@@ -268,7 +268,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Arduino Leonardo ETH",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x2A03", "0x8040"],
               ["0x2A03", "0x0040"]
             ]
@@ -402,7 +402,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Arduino Micro",
             "variant": "micro",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x0037"],
               ["0x2341", "0x8037"],
               ["0x2A03", "0x0037"],
@@ -601,7 +601,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Robot Control",
             "variant": "robot_control",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x0038"],
               ["0x2341", "0x8038"],
               ["0x2A03", "0x0038"],
@@ -632,7 +632,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Robot Motor",
             "variant": "robot_motor",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x0039"],
               ["0x2341", "0x8039"],
               ["0x2A03", "0x0039"],
@@ -662,7 +662,7 @@
             "f_cpu": "16000000L",
             "mcu": "atmega328p",
             "variant": "standard",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x0043"],
               ["0x2341", "0x0001"],
               ["0x2A03", "0x0043"]
@@ -689,7 +689,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Arduino Yun",
             "variant": "yun",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x0041"],
               ["0x2341", "0x8041"],
               ["0x2A03", "0x0041"],
@@ -721,7 +721,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Arduino Yun Mini",
             "variant": "yun",
-            "hwid": [
+            "hwids": [
               ["0x2A03", "0x8050"],
               ["0x2A03", "0x0050"]
             ]
@@ -751,7 +751,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Arduino Industrial 101",
             "variant": "yun",
-            "hwid": [
+            "hwids": [
               ["0x2A03", "0x8056"],
               ["0x2A03", "0x0056"]
             ]
@@ -781,7 +781,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Linino One",
             "variant": "yun",
-            "hwid": [
+            "hwids": [
               ["0x2A03", "0x8001"],
               ["0x2A03", "0x0001"]
             ]
@@ -813,7 +813,7 @@
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
             "ldscript": "sam3x8e.ld",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x003D"],
               ["0x2A03", "0x003D"]
             ]
@@ -843,7 +843,7 @@
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
             "ldscript": "sam3x8e.ld",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x003E"],
               ["0x2A03", "0x003E"]
             ]
@@ -873,7 +873,7 @@
             "usb_product": "Arduino Zero",
             "variant": "arduino_zero",
             "ldscript": "flash_with_bootloader.ld",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x804D"],
               ["0x03EB", "0x2157"]
             ]
@@ -903,7 +903,7 @@
             "usb_product": "Arduino Zero",
             "variant": "arduino_zero",
             "ldscript": "flash_with_bootloader.ld",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x804D"],
               ["0x2341", "0x004D"],
               ["0x2341", "0x824D"]

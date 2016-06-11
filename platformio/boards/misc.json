@@ -75,7 +75,7 @@
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
             "ldscript": "sam3x8e.ld",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x003E"]
             ]
         },
@@ -104,7 +104,7 @@
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
             "ldscript": "sam3x8e.ld",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x003E"]
             ]
         },
@@ -348,7 +348,7 @@
             "mcu": "atmega32u4",
             "usb_product": "RedBearLab Blend",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x8036"]
             ]
         },
@@ -377,7 +377,7 @@
             "mcu": "atmega32u4",
             "usb_product": "RedBearLab Blend",
             "variant": "micro",
-            "hwid": [
+            "hwids": [
               ["0x03EB", "0x2404"]
             ]
         },
@@ -406,7 +406,7 @@
             "mcu": "atmega32u4",
             "usb_product": "RedBearLab Blend",
             "variant": "micro",
-            "hwid": [
+            "hwids": [
               ["0x03EB", "0x2404"]
             ]
         },
@@ -457,7 +457,7 @@
             "mcu": "atmega32u4",
             "usb_product": "LightUp",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x1d50", "0x6096"]
             ]
         },
@@ -553,7 +553,7 @@
             "mcu": "atmega32u4",
             "variant" : "quirkbot",
             "usb_product": "Quirkbot",
-            "hwid": [
+            "hwids": [
               ["0x2886", "0xf004"],
               ["0x2886", "0xf005"],
               ["0x2886", "0xf006"],
@@ -770,7 +770,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Arduboy",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x0036"],
               ["0x2341", "0x8036"]
             ]
@@ -800,7 +800,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Arduboy DevKit",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x0036"],
               ["0x2341", "0x8036"]
             ]
