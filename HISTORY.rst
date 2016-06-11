@@ -17,6 +17,8 @@ PlatformIO 2.0
   the size of a credit card
 * Check program size before uploading to the board
   (`issue #689 <https://github.com/platformio/platformio/issues/689>`_)
+* Improved firmware uploading to Arduino Leonardo based boards
+  (`issue #691 <https://github.com/platformio/platformio/issues/691>`_)
 * Fixed issue with ``-L relative/path`` when parsing ``build_flags``
   (`issue #688 <https://github.com/platformio/platformio/issues/688>`_)
 
