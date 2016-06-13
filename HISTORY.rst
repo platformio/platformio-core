@@ -15,6 +15,7 @@ PlatformIO 2.0
   (`issue #683 <https://github.com/platformio/platformio/issues/683>`_)
 * Added support for `Arduboy DevKit <https://www.arduboy.com>`__, the game system
   the size of a credit card
+* Updated ARM mbed framework package to v121
 * Check program size before uploading to the board
   (`issue #689 <https://github.com/platformio/platformio/issues/689>`_)
 * Improved firmware uploading to Arduino Leonardo based boards
