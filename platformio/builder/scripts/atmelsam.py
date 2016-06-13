@@ -25,8 +25,6 @@ from platformio.util import get_serialports
 
 
 def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
-    env.AutodetectUploadPort()
-
     board_type = env.subst("$BOARD")
     if "zero" not in board_type:
         env.Append(
@@ -176,8 +174,9 @@ AlwaysBuild(target_size)
 if env.subst("$BOARD") == "zero":
     upload = env.Alias(["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
 else:
-    upload = env.Alias(["upload", "uploadlazy"], target_firm,
-                       [BeforeUpload, "$UPLOADCMD"])
+    upload = env.Alias(
+        ["upload", "uploadlazy"], target_firm,
+        [env.AutodetectUploadPort, BeforeUpload, "$UPLOADCMD"])
 
 AlwaysBuild(upload)
 

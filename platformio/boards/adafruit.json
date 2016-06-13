@@ -7,7 +7,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Adafruit Flora",
             "variant": "flora",
-            "hwid": [
+            "hwids": [
               ["0x239A", "0x8004"]
             ]
         },
@@ -36,7 +36,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Bluefruit Micro",
             "variant": "bluefruitmicro",
-            "hwid": [
+            "hwids": [
               ["0x239A", "0x800A"]
             ]
         },
@@ -85,7 +85,7 @@
             "mcu": "atmega32u4",
             "usb_product": "Feather 32u4",
             "variant": "feather32u4",
-            "hwid": [
+            "hwids": [
               ["0x239A", "0x800C"]
             ]
         },

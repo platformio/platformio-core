@@ -21,12 +21,6 @@ from os.path import join
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment)
 
-
-def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
-
-    env.AutodetectUploadPort()
-    env.Prepend(UPLOADERFLAGS=["-d", '"$UPLOAD_PORT"'])
-
 env = DefaultEnvironment()
 
 env.Replace(
@@ -86,7 +80,8 @@ env.Replace(
 
     UPLOADER=join("$PIOPACKAGES_DIR", "tool-pic32prog", "pic32prog"),
     UPLOADERFLAGS=[
-        "-b", "$UPLOAD_SPEED"
+        "-b", "$UPLOAD_SPEED",
+        "-d", '"$UPLOAD_PORT"'
     ],
     UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES',
 
@@ -179,8 +174,8 @@ AlwaysBuild(target_size)
 # Target: Upload firmware
 #
 
-upload = env.Alias(
-    ["upload", "uploadlazy"], target_firm, [BeforeUpload, "$UPLOADCMD"])
+upload = env.Alias(["upload", "uploadlazy"], target_firm,
+                   [env.AutodetectUploadPort, "$UPLOADCMD"])
 AlwaysBuild(upload)
 
 #

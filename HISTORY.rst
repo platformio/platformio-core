@@ -4,10 +4,29 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.10.0 (2016-06-13)
+~~~~~~~~~~~~~~~~~~~
+
+* Added support for `emonPi <https://github.com/openenergymonitor/emonpi>`__,
+  the OpenEnergyMonitor system
+  (`issue #687 <https://github.com/platformio/platformio/issues/687>`_)
+* Added support for `SPL <http://platformio.org/frameworks/spl>`__
+  framework for STM32F0 boards
+  (`issue #683 <https://github.com/platformio/platformio/issues/683>`_)
+* Added support for `Arduboy DevKit <https://www.arduboy.com>`__, the game system
+  the size of a credit card
+* Updated ARM mbed framework package to v121
+* Check program size before uploading to the board
+  (`issue #689 <https://github.com/platformio/platformio/issues/689>`_)
+* Improved firmware uploading to Arduino Leonardo based boards
+  (`issue #691 <https://github.com/platformio/platformio/issues/691>`_)
+* Fixed issue with ``-L relative/path`` when parsing ``build_flags``
+  (`issue #688 <https://github.com/platformio/platformio/issues/688>`_)
+
 2.9.4 (2016-06-04)
 ~~~~~~~~~~~~~~~~~~
 
-* Show ``udev`` warning only for the Linux OS while upload firmware
+* Show ``udev`` warning only for the Linux OS while uploading firmware
 
 2.9.3 (2016-06-03)
 ~~~~~~~~~~~~~~~~~~

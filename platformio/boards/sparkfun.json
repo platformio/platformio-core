@@ -28,7 +28,7 @@
             "mcu": "atmega32u4",
             "usb_product": "SparkFun Pro Micro",
             "variant": "sparkfun_promicro",
-            "hwid": [
+            "hwids": [
                 ["0x1B4F", "0x9205"],
                 ["0x1B4F", "0x9206"]
             ]
@@ -57,7 +57,7 @@
             "mcu": "atmega32u4",
             "usb_product": "SparkFun Pro Micro",
             "variant": "sparkfun_promicro",
-            "hwid": [
+            "hwids": [
                 ["0x1B4F", "0x9203"],
                 ["0x1B4F", "0x9204"]
             ]
@@ -86,7 +86,7 @@
             "mcu": "atmega32u4",
             "usb_product": "SparkFun Fio v3",
             "variant": "sparkfun_promicro",
-            "hwid": [
+            "hwids": [
                 ["0x1B4F", "0xF100"],
                 ["0x1B4F", "0xF101"]
             ]
@@ -115,7 +115,7 @@
             "mcu": "atmega32u4",
             "usb_product": "SparkFun MaKey",
             "variant": "sparkfun_promicro",
-            "hwid": [
+            "hwids": [
                 ["0x1B4F", "0x2B74"],
                 ["0x1B4F", "0x2B75"]
             ]

@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -29,7 +29,7 @@ Description
 
 :ref:`cmd_ci` command is conceived of as "hot key" for building project with
 arbitrary source code structure. In a nutshell, using ``SRC`` and
-:option:`platformio ci --lib` contents PlatformIO initialises via
+:option:`platformio ci --lib` contents PlatformIO initializes via
 :ref:`cmd_init` new project in :option:`platformio ci --build-dir`
 with the build environments (using :option:`platformio ci --board` or
 :option:`platformio ci --project-conf`) and processes them via :ref:`cmd_run`

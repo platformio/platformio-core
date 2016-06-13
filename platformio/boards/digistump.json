@@ -85,7 +85,7 @@
             "ldscript": "sam3x8e.ld",
             "usb_product": "Digistump DigiX",
             "variant": "digispark_digix",
-            "hwid": [
+            "hwids": [
               ["0x16D0", "0x078A"]
             ]
         },

@@ -346,7 +346,7 @@ AlwaysBuild(target_size)
 
 target_upload = env.Alias(
     ["upload", "uploadlazy", "uploadfs"], target_firm,
-    [lambda target, source, env: env.AutodetectUploadPort(), "$UPLOADCMD"])
+    [env.AutodetectUploadPort, "$UPLOADCMD"])
 env.AlwaysBuild(target_upload)
 
 

@@ -196,6 +196,13 @@ Arduboy
       - 32 Kb
       - 2.5 Kb
 
+    * - ``arduboy_devkit``
+      - `Arduboy DevKit <https://www.arduboy.com>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
 Arduino
 ~~~~~~~
 
@@ -1189,6 +1196,26 @@ OpenBCI
       - 40 MHz
       - 128 Kb
       - 32 Kb
+
+OpenEnergyMonitor
+~~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``emonpi``
+      - `emonPi <https://github.com/openenergymonitor/emonpi>`_
+      - ATMEGA328P
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
 
 PONTECH
 ~~~~~~~

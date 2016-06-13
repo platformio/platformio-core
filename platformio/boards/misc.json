@@ -43,6 +43,28 @@
         "vendor": "BitWizard"
     },
 
+    "emonpi": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DAVR_EMONPI",
+            "f_cpu": "16000000L",
+            "mcu": "atmega328p",
+            "variant": "standard"
+        },
+        "frameworks": ["arduino"],
+        "name": "emonPi",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 2048,
+            "maximum_size": 30720,
+            "protocol": "arduino",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "https://github.com/openenergymonitor/emonpi",
+        "vendor": "OpenEnergyMonitor"
+    },
+
     "sainSmartDue": {
         "build": {
             "core": "arduino",
@@ -53,7 +75,7 @@
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
             "ldscript": "sam3x8e.ld",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x003E"]
             ]
         },
@@ -82,7 +104,7 @@
             "usb_product": "Arduino Due",
             "variant": "arduino_due_x",
             "ldscript": "sam3x8e.ld",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x003E"]
             ]
         },
@@ -326,7 +348,7 @@
             "mcu": "atmega32u4",
             "usb_product": "RedBearLab Blend",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x8036"]
             ]
         },
@@ -355,7 +377,7 @@
             "mcu": "atmega32u4",
             "usb_product": "RedBearLab Blend",
             "variant": "micro",
-            "hwid": [
+            "hwids": [
               ["0x03EB", "0x2404"]
             ]
         },
@@ -384,7 +406,7 @@
             "mcu": "atmega32u4",
             "usb_product": "RedBearLab Blend",
             "variant": "micro",
-            "hwid": [
+            "hwids": [
               ["0x03EB", "0x2404"]
             ]
         },
@@ -435,7 +457,7 @@
             "mcu": "atmega32u4",
             "usb_product": "LightUp",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x1d50", "0x6096"]
             ]
         },
@@ -531,7 +553,7 @@
             "mcu": "atmega32u4",
             "variant" : "quirkbot",
             "usb_product": "Quirkbot",
-            "hwid": [
+            "hwids": [
               ["0x2886", "0xf004"],
               ["0x2886", "0xf005"],
               ["0x2886", "0xf006"],
@@ -743,20 +765,48 @@
     "arduboy": {
         "build": {
             "core": "arduino",
-            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_LEONARDO",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ARDUBOY -DARDUBOY_10",
             "f_cpu": "16000000L",
             "mcu": "atmega32u4",
-            "usb_product": "Arduino Leonardo",
+            "usb_product": "Arduboy",
             "variant": "leonardo",
-            "hwid": [
+            "hwids": [
               ["0x2341", "0x0036"],
-              ["0x2341", "0x8036"],
-              ["0x2A03", "0x0036"],
-              ["0x2A03", "0x8036"]
+              ["0x2341", "0x8036"]
             ]
         },
         "frameworks": ["arduino"],
         "name": "Arduboy",
+        "platform": "atmelavr",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 2560,
+            "maximum_size": 28672,
+            "protocol": "avr109",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "https://www.arduboy.com",
+        "vendor": "Arduboy"
+    },
+
+    "arduboy_devkit": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_AVR_ARDUBOY_DEVKIT -DAB_DEVKIT",
+            "f_cpu": "16000000L",
+            "mcu": "atmega32u4",
+            "usb_product": "Arduboy DevKit",
+            "variant": "leonardo",
+            "hwids": [
+              ["0x2341", "0x0036"],
+              ["0x2341", "0x8036"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduboy DevKit",
         "platform": "atmelavr",
         "upload": {
             "disable_flushing": true,

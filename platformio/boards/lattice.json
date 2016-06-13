@@ -6,7 +6,7 @@
             "cpu": "fpga",
             "mcu": "ice40hx1k",
             "variant": "1k",
-            "hwid": [
+            "hwids": [
               ["0x0403", "0x6010"]
             ]
         },
@@ -28,7 +28,7 @@
             "cpu": "fpga",
             "mcu": "ice40hx1k",
             "variant": "1k",
-            "hwid": [
+            "hwids": [
               ["0x0403", "0x6010"]
             ]
         },

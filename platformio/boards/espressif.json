@@ -133,7 +133,10 @@
             "flash_mode": "qio",
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
-            "variant": "nodemcu"
+            "variant": "nodemcu",
+            "hwids": [
+              ["0x10C4", "0xEA60"]
+            ]
         },
         "frameworks": ["arduino", "simba"],
         "name": "NodeMCU 0.9 (ESP-12 Module)",
@@ -158,7 +161,10 @@
             "flash_mode": "dio",
             "ldscript": "esp8266.flash.4m1m.ld",
             "mcu": "esp8266",
-            "variant": "nodemcu"
+            "variant": "nodemcu",
+            "hwids": [
+              ["0x10C4", "0xEA60"]
+            ]
         },
         "frameworks": ["arduino", "simba"],
         "name": "NodeMCU 1.0 (ESP-12E Module)",
