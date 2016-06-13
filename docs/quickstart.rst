@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -30,7 +30,7 @@ PlatformIO CLI provides special :ref:`cmd_init` command for configuring your pro
 It allows to initialize new empty project or update existing with the new data.
 
 What is more, :ref:`cmd_init` can be used for :ref:`ide`. It means that you will
-be able to import pre-generated PlatformIO project using favourite IDE and
+be able to import pre-generated PlatformIO project using favorite IDE and
 extend it with the professional instruments for IoT development.
 
 This tutorial is based on the next popular embedded boards and development
