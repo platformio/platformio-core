@@ -71,7 +71,7 @@ MBED_VARIANTS = {
     "samr21_xpro": "SAMR21G18A",
     "saml21_xpro_b": "SAML21J18A",
     "samd21_xpro": "SAMD21J18A",
-    "bbcmicrobit": "NRF51822"
+    "bbcmicrobit": "NRF51_MICROBIT"
 }
 
 MBED_LIBS_MAP = {
@@ -149,6 +149,18 @@ def add_mbedlib(libname, libar):
         if (not any(f.endswith(".h") for f in files) and
                 basename(root) not in sysincdirs):
             continue
+
+        target_includes = (
+            "TARGET_%s" % env.get(
+                "BOARD_OPTIONS", {}).get("vendor", "").upper(),
+            "TARGET_%s" % variant,
+            "TARGET_CORTEX_M"
+        )
+
+        if "TARGET_" in root:
+            if all([p not in root.upper() for p in target_includes]):
+                continue
+
         var_dir = join("$BUILD_DIR", "FrameworkMbed%sInc%d" %
                        (libname.upper(), crc32(root)))
         if var_dir in env.get("CPPPATH"):
