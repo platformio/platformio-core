@@ -4,8 +4,8 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.9.5 (2016-06-??)
-~~~~~~~~~~~~~~~~~~
+2.10.0 (2016-06-13)
+~~~~~~~~~~~~~~~~~~~
 
 * Added support for `emonPi <https://github.com/openenergymonitor/emonpi>`__,
   the OpenEnergyMonitor system
