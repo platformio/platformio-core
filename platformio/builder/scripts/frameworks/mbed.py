@@ -202,7 +202,7 @@ def parse_eix_file(filename):
                 node.get(_nkeys[0]) if len(_nkeys) == 1 else node.attrib)
 
     if "LINKFLAGS" in result:
-        for i, f in enumerate(result["LINKFLAGS"]):
+        for i, flag in enumerate(result["LINKFLAGS"]):
             if f.startswith("-u "):
                 result["LINKFLAGS"][i] = result["LINKFLAGS"][i].split(" ")
 
