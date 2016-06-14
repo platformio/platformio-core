@@ -67,7 +67,7 @@ def BuildProgram(env):
     _append_pio_macros()
 
     # build dependent libs
-    deplibs = env.BuildDependentLibraries("$PROJECTSRC_DIR")
+    deplibs = env.BuildDependentLibraries("$PROJECTSRC_DIR", src_filter=env.get("SRC_FILTER"))
 
     # append specified LD_SCRIPT
     if ("LDSCRIPT_PATH" in env and
@@ -170,10 +170,9 @@ def VariantDirWrap(env, variant_dir, src_dir, duplicate=True):
     DefaultEnvironment().Append(VARIANT_DIRS=[(variant_dir, src_dir)])
     env.VariantDir(variant_dir, src_dir, duplicate)
 
+SRC_FILTER_PATTERNS_RE = re.compile(r"(\+|\-)<([^>]+)>")
 
 def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
-
-    SRC_FILTER_PATTERNS_RE = re.compile(r"(\+|\-)<([^>]+)>")
 
     def _append_build_item(items, item, src_dir):
         if env.IsFileWithExt(item, SRC_BUILD_EXT + SRC_HEADER_EXT):
@@ -250,7 +249,10 @@ def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     )
 
 
-def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
+def BuildDependentLibraries(env, src_dir, src_filter=None):  # pylint: disable=R0914
+    # correct fs directory separator
+    if (src_filter):
+        src_filter = src_filter.replace("/", sep).replace("\\", sep)
 
     INCLUDES_RE = re.compile(
         r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")", re.M)
@@ -329,8 +331,18 @@ def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
             "libs": set(),
             "ordered": set()
         }
+        
+        import os
+        # Determine all directories which are listed in src_filter (marked with a "+").
+        src_dir_l = env.subst(src_dir)
+        src_dirs = set()
+        for (action, pattern) in SRC_FILTER_PATTERNS_RE.findall(src_filter):
+            if action == "+":
+                for item in glob(join(src_dir_l, pattern)):
+                    src_dirs.add(os.path.dirname(item))
 
-        state = _process_src_dir(state, env.subst(src_dir))
+        for src_dir_l in src_dirs:
+            state = _process_src_dir(state, src_dir_l)
 
         result = []
         for item in sorted(state['ordered'], key=lambda s: s[0]):
