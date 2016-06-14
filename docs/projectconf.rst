@@ -398,7 +398,7 @@ For more detailed information about available flags/options go to:
 ``src_build_flags``
 ^^^^^^^^^^^^^^^^^^^
 
-An option ``src_build_flags`` has the same behaviour like ``build_flags``
+An option ``src_build_flags`` has the same behavior like ``build_flags``
 but will be applied only for the project source code from
 :ref:`projectconf_pio_src_dir` directory.
 
@@ -610,7 +610,7 @@ Example:
 ``lib_dfcyclic``
 ^^^^^^^^^^^^^^^^
 
-Control cyclic (recursive) behaviour for ``Library Dependency Finder (LDF)``.
+Control cyclic (recursive) behavior for ``Library Dependency Finder (LDF)``.
 By default, this option is turned OFF (``lib_dfcyclic=False``) and means that
 ``LDF`` will find only libraries which are included in source files from the
 project :ref:`projectconf_pio_src_dir`.

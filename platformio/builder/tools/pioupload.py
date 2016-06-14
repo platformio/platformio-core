@@ -54,6 +54,7 @@ def WaitForNewSerialPort(env, before):
     prev_port = env.subst("$UPLOAD_PORT")
     new_port = None
     elapsed = 0
+    sleep(1)
     while elapsed < 5 and new_port is None:
         now = util.get_serialports()
         for p in now:

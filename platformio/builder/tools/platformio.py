@@ -35,6 +35,11 @@ SRC_DEFAULT_FILTER = " ".join([
 
 def BuildProgram(env):
 
+    env.Append(
+        CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
+            *pioversion_to_intstr())],
+    )
+
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes(".s", ".S"):
         env.Replace(
@@ -77,8 +82,6 @@ def BuildProgram(env):
     env.ProcessFlags([env.get("SRC_BUILD_FLAGS", None)])
 
     env.Append(
-        CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
-            *pioversion_to_intstr())],
         CPPPATH=["$PROJECTSRC_DIR"],
         LIBS=deplibs,
         LIBPATH=["$BUILD_DIR"]

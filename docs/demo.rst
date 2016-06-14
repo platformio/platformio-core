@@ -19,7 +19,7 @@ Demo & Projects
 Project Examples
 ----------------
 
-Preconfigured demo projects are located in `PlatformIO GitHub <https://github.com/platformio/platformio-examples/tree/develop>`_ repository.
+Pre-configured demo projects are located in `PlatformIO GitHub <https://github.com/platformio/platformio-examples/tree/develop>`_ repository.
 
 "Blink Project"
 ---------------

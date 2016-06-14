@@ -15,8 +15,22 @@ PlatformIO 3.0
 PlatformIO 2.0
 --------------
 
-2.9.5 (2016-06-??)
-~~~~~~~~~~~~~~~~~~
+2.10.2 (2016-06-??)
+~~~~~~~~~~~~~~~~~~~
+
+* Added support for ST Nucleo L031K6 board to ARM mbed framework
+* Fixed issue with ARM mbed framework with ``-u _printf_float`` and
+  ``-u _scanf_float`` when parsing ``$LINKFLAGS``
+* Fixed issue with ARM mbed framework and extra includes for the custom boards,
+  such as Seeeduino Arch Pro
+
+2.10.1 (2016-06-13)
+~~~~~~~~~~~~~~~~~~~
+
+* Re-submit a package to PyPI
+
+2.10.0 (2016-06-13)
+~~~~~~~~~~~~~~~~~~~
 
 * Added support for `emonPi <https://github.com/openenergymonitor/emonpi>`__,
   the OpenEnergyMonitor system
@@ -26,8 +40,11 @@ PlatformIO 2.0
   (`issue #683 <https://github.com/platformio/platformio/issues/683>`_)
 * Added support for `Arduboy DevKit <https://www.arduboy.com>`__, the game system
   the size of a credit card
+* Updated ARM mbed framework package to v121
 * Check program size before uploading to the board
   (`issue #689 <https://github.com/platformio/platformio/issues/689>`_)
+* Improved firmware uploading to Arduino Leonardo based boards
+  (`issue #691 <https://github.com/platformio/platformio/issues/691>`_)
 * Fixed issue with ``-L relative/path`` when parsing ``build_flags``
   (`issue #688 <https://github.com/platformio/platformio/issues/688>`_)
 

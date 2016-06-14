@@ -19,7 +19,7 @@ integration. Arduino and MBED compatible. Ready for Cloud compiling.**
   C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
   Multi-projects workflow with Multiple Panes. Themes Support with dark and light colors.
   Built-in Terminal with PlatformIO CLI tool and support for the powerful Serial Port Monitor.
-  All advanced instruments without leaving your favourite development environment.
+  All advanced instruments without leaving your favorite development environment.
 * **Development Platforms** - Embedded and Desktop development platforms with
   pre-built toolchains, debuggers, uploaders and frameworks which work under
   popular host OS: Mac, Windows, Linux (+ARM)
@@ -110,8 +110,7 @@ Contents
     platforms/index
     platforms/embedded_boards
     frameworks/index
-    platforms/creating_platform
-    platforms/creating_board
+    platforms/custom_platform_and_board
 
 .. toctree::
     :caption: Library Manager
