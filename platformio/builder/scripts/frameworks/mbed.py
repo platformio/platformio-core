@@ -145,17 +145,23 @@ def add_mbedlib(libname, libar):
         "lwip-sys"
     )
 
+    target_map = {
+        "nxplpc": "NXP",
+        "freescalekinetis": "Freescale",
+        "ststm32": "STM"
+    }
+
+    target_includes = (
+        "TARGET_%s" % target_map.get(
+            env.get("BOARD_OPTIONS", {}).get("platform", ""), ""),
+        "TARGET_%s" % variant,
+        "TARGET_CORTEX_M"
+    )
+
     for root, _, files in walk(lib_dir):
         if (not any(f.endswith(".h") for f in files) and
                 basename(root) not in sysincdirs):
             continue
-
-        target_includes = (
-            "TARGET_%s" % env.get(
-                "BOARD_OPTIONS", {}).get("vendor", "").upper(),
-            "TARGET_%s" % variant,
-            "TARGET_CORTEX_M"
-        )
 
         if "TARGET_" in root:
             if all([p not in root.upper() for p in target_includes]):
