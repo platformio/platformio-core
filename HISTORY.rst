@@ -4,6 +4,14 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.10.2 (2016-06-??)
+~~~~~~~~~~~~~~~~~~~
+
+* Fixed issue with ARM mbed framework with ``-u _printf_float`` and
+  ``-u _scanf_float`` when parsing ``$LINKFLAGS``
+* Fixed issue with ARM mbed framework and extra includes for the custom boards,
+  such as Seeeduino Arch Pro
+
 2.10.1 (2016-06-13)
 ~~~~~~~~~~~~~~~~~~~
 
