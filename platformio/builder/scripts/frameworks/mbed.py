@@ -203,7 +203,7 @@ def parse_eix_file(filename):
 
     if "LINKFLAGS" in result:
         for i, flag in enumerate(result["LINKFLAGS"]):
-            if f.startswith("-u "):
+            if flag.startswith("-u "):
                 result["LINKFLAGS"][i] = result["LINKFLAGS"][i].split(" ")
 
     return result
