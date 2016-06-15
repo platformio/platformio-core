@@ -10,6 +10,7 @@ PlatformIO 3.0
 * Decentralized architecture for development platforms: "platform.json",
   semantic versioning, package dependencies, embedded board configs, isolated
   build scripts
+  (`issue #479 <https://github.com/platformio/platformio/issues/479>`_)
 * Unit Testing for Embedded (`docs <http://docs.platformio.org/en/latest/platforms/unit_testing.html>`__)
   (`issue #408 <https://github.com/platformio/platformio/issues/408>`_)
 
