@@ -32,6 +32,8 @@ PlatformIO Test System consists of:
 * Firmware uploader
 * Test processor
 
+There is special command :ref:`cmd_test` to run tests from PlatformIO Project.
+
 .. contents::
 
 .. _unit_testing_design:
@@ -388,3 +390,8 @@ Test results
     ========================= [TEST SUMMARY] =====================================
     test:*/env:uno  PASSED
     ========================= [PASSED] Took 13.35 seconds ========================
+
+-------
+
+For the other examples and source code please follow to
+`PlatformIO Unit Testing Examples <https://github.com/platformio/platformio-examples/tree/feature/platformio-30/unit-testing>`_ repository.
