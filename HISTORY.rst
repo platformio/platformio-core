@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.10.2 (2016-06-??)
+2.10.2 (2016-06-15)
 ~~~~~~~~~~~~~~~~~~~
 
 * Added support for ST Nucleo L031K6 board to ARM mbed framework
