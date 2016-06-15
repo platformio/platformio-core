@@ -82,11 +82,10 @@ According to the table above the ID/TYPE for Teensy 3.1 is ``teensy31``. Also,
 the ID for Arduino UNO is ``uno`` and for NodeMCU 1.0 (ESP-12E Module)
 is ``nodemcuv2``.
 
-
 Initialize Project
 ------------------
 
-PlatformIO ecosystem contains huge database with pre-configured settings for the
+PlatformIO ecosystem contains big database with pre-configured settings for the
 most popular embedded boards. It helps you to forget about installing
 toolchains, writing build scripts or configuring uploading process. Just tell
 PlatformIO the Board ID and you will receive full working project with

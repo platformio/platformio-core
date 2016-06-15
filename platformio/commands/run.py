@@ -41,19 +41,8 @@ from platformio.managers.platform import PlatformFactory
 @click.pass_context
 def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
         project_dir, verbose, disable_auto_clean):
+    assert check_project_envs(project_dir, environment)
     with util.cd(project_dir):
-        config = util.get_project_config()
-
-        if not config.sections():
-            raise exception.ProjectEnvsNotAvailable()
-
-        known = set([s[4:] for s in config.sections()
-                     if s.startswith("env:")])
-        unknown = set(environment) - known
-        if unknown:
-            raise exception.UnknownEnvNames(
-                ", ".join(unknown), ", ".join(known))
-
         # clean obsolete .pioenvs dir
         if not disable_auto_clean:
             try:
@@ -66,6 +55,7 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
                     fg="yellow"
                 )
 
+        config = util.get_project_config()
         env_default = None
         if config.has_option("platformio", "env_default"):
             env_default = [
@@ -94,6 +84,8 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
             options = {}
             for k, v in config.items(section):
                 options[k] = v
+            if "piotest" not in options and "piotest" in ctx.meta:
+                options['piotest'] = ctx.meta['piotest']
 
             ep = EnvironmentProcessor(
                 ctx, envname, options, target, upload_port, verbose)
@@ -136,15 +128,12 @@ class EnvironmentProcessor(object):
         result = self._run()
 
         is_error = result['returncode'] != 0
-        summary_text = " Took %.2f seconds " % (time() - start_time)
-        half_line = "=" * ((terminal_width - len(summary_text) - 10) / 2)
-        click.echo("%s [%s]%s%s" % (
-            half_line,
-            (click.style(" ERROR ", fg="red", bold=True)
-             if is_error else click.style("SUCCESS", fg="green", bold=True)),
-            summary_text,
-            half_line
-        ), err=is_error)
+        if is_error or "piotest_processor" not in self.cmd_ctx.meta:
+            print_header("[%s] Took %.2f seconds" % (
+                (click.style("ERROR", fg="red", bold=True) if is_error
+                 else click.style("SUCCESS", fg="green", bold=True)),
+                time() - start_time
+            ), is_error=is_error)
 
         return not is_error
 
@@ -252,6 +241,29 @@ def _clean_pioenvs_dir(pioenvs_dir):
 
     with open(structhash_file, "w") as f:
         f.write(proj_hash)
+
+
+def print_header(label, is_error=False):
+    terminal_width, _ = click.get_terminal_size()
+    width = len(click.unstyle(label))
+    half_line = "=" * ((terminal_width - width - 2) / 2)
+    click.echo("%s %s %s" % (half_line, label, half_line), err=is_error)
+
+
+def check_project_envs(project_dir, environments):
+    with util.cd(project_dir):
+        config = util.get_project_config()
+
+        if not config.sections():
+            raise exception.ProjectEnvsNotAvailable()
+
+        known = set([s[4:] for s in config.sections()
+                     if s.startswith("env:")])
+        unknown = set(environments) - known
+        if unknown:
+            raise exception.UnknownEnvNames(
+                ", ".join(unknown), ", ".join(known))
+    return True
 
 
 def calculate_project_hash():

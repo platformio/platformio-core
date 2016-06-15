@@ -111,6 +111,7 @@ Contents
     platforms/embedded_boards
     frameworks/index
     platforms/custom_platform_and_board
+    platforms/unit_testing
 
 .. toctree::
     :caption: Library Manager

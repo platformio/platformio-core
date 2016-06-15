@@ -16,10 +16,10 @@ from __future__ import absolute_import
 
 import atexit
 from os import remove
-from os.path import isdir, isfile, join
+from os.path import isdir, isfile, join, sep
 from string import Template
 
-FRAMEWORKS_PARAMETERS = {
+FRAMEWORK_PARAMETERS = {
     "arduino": {
         "framework": "Arduino.h",
         "serial_obj": "",
@@ -50,9 +50,6 @@ FRAMEWORKS_PARAMETERS = {
 
 
 def ProcessTest(env):
-
-    test_dir = env.subst("$PROJECTTEST_DIR")
-
     env.Append(
         CPPDEFINES=[
             "UNIT_TEST",
@@ -63,19 +60,23 @@ def ProcessTest(env):
             join("$BUILD_DIR", "UnityTestLib")
         ]
     )
-
     unitylib = env.BuildLibrary(
         join("$BUILD_DIR", "UnityTestLib"),
         env.DevPlatform().get_package_dir("tool-unity")
 
     )
-
     env.Prepend(LIBS=[unitylib])
 
+    test_dir = env.subst("$PROJECTTEST_DIR")
     env.GenerateOutputReplacement(test_dir)
+    src_filter = None
+    if "PIOTEST" in env:
+        src_filter = "+<output_export.cpp>"
+        src_filter += " +<%s%s>" % (env['PIOTEST'], sep)
 
     return env.LookupSources(
-        "$BUILDTEST_DIR", test_dir, duplicate=False)
+        "$BUILDTEST_DIR", test_dir, duplicate=False, src_filter=src_filter
+    )
 
 
 def GenerateOutputReplacement(env, destination_dir):
@@ -122,12 +123,12 @@ void output_complete(void)
                       "Please remove it manually." % file_)
 
     framework = env.subst("$FRAMEWORK").lower()
-    if framework not in FRAMEWORKS_PARAMETERS.keys():
+    if framework not in FRAMEWORK_PARAMETERS.keys():
         env.Exit(
             "Error: %s framework doesn't support testing feature!" % framework)
     else:
         data = Template(TEMPLATECPP).substitute(
-            FRAMEWORKS_PARAMETERS[framework])
+            FRAMEWORK_PARAMETERS[framework])
 
         tmp_file = join(destination_dir, "output_export.cpp")
         with open(tmp_file, "w") as f:

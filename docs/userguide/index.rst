@@ -66,5 +66,6 @@ Commands
     cmd_run
     cmd_serialports
     cmd_settings
+    cmd_test
     cmd_update
     cmd_upgrade

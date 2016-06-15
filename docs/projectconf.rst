@@ -113,7 +113,7 @@ This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_ENVS_DIR`.
 
 .. note::
-    If you have any problems with building your Project environmets which
+    If you have any problems with building your Project environments which
     are defined in :ref:`projectconf`, then **TRY TO DELETE** this folder. In
     this situation you will remove all cached files without any risk.
 
@@ -129,6 +129,19 @@ project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_DATA_DIR`.
+
+.. _projectconf_pio_test_dir:
+
+``test_dir``
+^^^^^^^^^^^^
+
+Directory for :ref:`unit_testing`.
+
+A default value is ``test`` which means that folder is located in the root of
+project.
+
+This option can be overridden by global environment variable
+:envvar:`PLATFORMIO_TEST_DIR`.
 
 .. _projectconf_pio_env_default:
 

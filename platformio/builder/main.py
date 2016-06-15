@@ -32,6 +32,7 @@ commonvars.AddVariables(
     ("BUILD_SCRIPT",),
     ("EXTRA_SCRIPT",),
     ("PIOENV",),
+    ("PIOTEST",),
     ("PLATFORM",),
 
     # options
