@@ -5,7 +5,7 @@
             "extra_flags": "-DARDUINO_ARCH_ARC32 -D__ARDUINO_ARC__",
             "f_cpu": "32000000L",
             "ldscript": "flash.ld",
-            "mcu": "ARCv2EM",
+            "cpu": "quarkse_em",
             "usb_product": "Genuino 101",
             "variant": "arduino_101",
             "hwids": [
@@ -17,7 +17,7 @@
         "platform": "intel_arc32",
         "upload": {
             "maximum_ram_size": 81920,
-            "maximum_size": 196608,
+            "maximum_size": 155648,
             "protocol": "script",
             "require_upload_port" : true
         },
@@ -25,3 +25,4 @@
         "vendor": "Intel"
     }
 }
+

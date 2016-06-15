@@ -42,9 +42,8 @@ env.Replace(
         "-ffunction-sections",
         "-fdata-sections",
         "-Wall",
-        "-mav2em",
         "-mlittle-endian",
-        "-m${BOARD_OPTIONS['build']['mcu']}",
+        "-mcpu=${BOARD_OPTIONS['build']['cpu']}",
         "-fno-reorder-functions",
         "-fno-asynchronous-unwind-tables",
         "-fno-omit-frame-pointer",
@@ -82,7 +81,7 @@ env.Replace(
         "-Wl,--gc-sections",
         "-Wl,-X",
         "-Wl,-N",
-        "-Wl,-m${BOARD_OPTIONS['build']['mcu']}",
+        "-Wl,-mcpu=${BOARD_OPTIONS['build']['cpu']}",
         "-Wl,-marcelf",
         "-static",
         "-nostdlib",
@@ -93,7 +92,7 @@ env.Replace(
         "-Wl,--no-whole-archive"
     ],
 
-    LIBS=["c", "m", "gcc"],
+    LIBS=["nsim", "c", "m", "gcc"],
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
