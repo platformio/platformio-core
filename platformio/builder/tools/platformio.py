@@ -35,10 +35,13 @@ SRC_DEFAULT_FILTER = " ".join([
 
 def BuildProgram(env):
 
-    env.Append(
-        CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
-            *pioversion_to_intstr())],
-    )
+    def _append_pio_macros():
+        env.AppendUnique(
+            CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
+                *pioversion_to_intstr())],
+        )
+
+    _append_pio_macros()
 
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes(".s", ".S"):
@@ -59,6 +62,9 @@ def BuildProgram(env):
     if env.get("FRAMEWORK"):
         env.BuildFrameworks([
             f.lower().strip() for f in env.get("FRAMEWORK", "").split(",")])
+
+    # restore PIO macros if it was deleted by framework
+    _append_pio_macros()
 
     # build dependent libs
     deplibs = env.BuildDependentLibraries("$PROJECTSRC_DIR")

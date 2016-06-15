@@ -145,17 +145,22 @@ def add_mbedlib(libname, libar):
         "lwip-sys"
     )
 
+    target_map = {
+        "nxplpc": "NXP",
+        "freescalekinetis": "Freescale",
+        "ststm32": "STM"
+    }
+
+    target_includes = (
+        "TARGET_%s" % target_map.get(env.subst("$PLATFORM"), ""),
+        "TARGET_%s" % variant,
+        "TARGET_CORTEX_M"
+    )
+
     for root, _, files in walk(lib_dir):
         if (not any(f.endswith(".h") for f in files) and
                 basename(root) not in sysincdirs):
             continue
-
-        target_includes = (
-            "TARGET_%s" % env.get(
-                "BOARD_OPTIONS", {}).get("vendor", "").upper(),
-            "TARGET_%s" % variant,
-            "TARGET_CORTEX_M"
-        )
 
         if "TARGET_" in root:
             if all([p not in root.upper() for p in target_includes]):
@@ -195,6 +200,11 @@ def parse_eix_file(filename):
             result[key].append(
                 node.get(_nkeys[0]) if len(_nkeys) == 1 else node.attrib)
 
+    if "LINKFLAGS" in result:
+        for i, flag in enumerate(result["LINKFLAGS"]):
+            if flag.startswith("-u "):
+                result["LINKFLAGS"][i] = result["LINKFLAGS"][i].split(" ")
+
     return result
 
 
@@ -211,7 +221,7 @@ def get_build_flags(data):
 
 def _mbed_whole_archive_hook(libs_):
     if (not isinstance(libs_, list) or
-            env.get("BOARD_OPTIONS", {}).get("platform") == "nordicnrf51"):
+            env.subst("$PLATFORM") == "nordicnrf51"):
         return libs_
 
     _dynlibs = []
@@ -255,9 +265,12 @@ env.Replace(
 
 # restore external build flags
 env.ProcessFlags([
-    env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags"),
-    env.get("BUILD_FLAGS")
+    env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags")
 ])
+# remove base flags
+env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
+# apply user flags
+env.ProcessFlags([env.get("BUILD_FLAGS")])
 
 # Hook for K64F and K22F
 if board_type in ("frdm_k22f", "frdm_k64f"):

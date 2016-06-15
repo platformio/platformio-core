@@ -23,6 +23,14 @@ from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
 
 env = DefaultEnvironment()
 
+
+def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
+
+    if env.get("BOARD_OPTIONS", {}).get("upload", {}).get(
+            "use_1200bps_touch", False):
+        env.TouchSerialPort("$UPLOAD_PORT", 1200)
+
+
 env.Replace(
     AR="arc-elf32-ar",
     AS="arc-elf32-as",
@@ -42,9 +50,8 @@ env.Replace(
         "-ffunction-sections",
         "-fdata-sections",
         "-Wall",
-        "-mav2em",
         "-mlittle-endian",
-        "-m${BOARD_OPTIONS['build']['mcu']}",
+        "-mcpu=${BOARD_OPTIONS['build']['cpu']}",
         "-fno-reorder-functions",
         "-fno-asynchronous-unwind-tables",
         "-fno-omit-frame-pointer",
@@ -82,7 +89,7 @@ env.Replace(
         "-Wl,--gc-sections",
         "-Wl,-X",
         "-Wl,-N",
-        "-Wl,-m${BOARD_OPTIONS['build']['mcu']}",
+        "-Wl,-mcpu=${BOARD_OPTIONS['build']['cpu']}",
         "-Wl,-marcelf",
         "-static",
         "-nostdlib",
@@ -93,7 +100,7 @@ env.Replace(
         "-Wl,--no-whole-archive"
     ],
 
-    LIBS=["c", "m", "gcc"],
+    LIBS=["nsim", "c", "m", "gcc"],
 
     SIZEPRINTCMD='"$SIZETOOL" -B -d $SOURCES',
 
@@ -179,7 +186,7 @@ AlwaysBuild(target_size)
 #
 
 upload = env.Alias(["upload", "uploadlazy"], target_firm,
-                   [env.AutodetectUploadPort, "$UPLOADCMD"])
+                   [env.AutodetectUploadPort, BeforeUpload, "$UPLOADCMD"])
 AlwaysBuild(upload)
 
 #

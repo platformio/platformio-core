@@ -37,13 +37,15 @@ def FlushSerialBuffer(env, port):
 
 
 def TouchSerialPort(env, port, baudrate):
+    port = env.subst(port)
+    print "Forcing reset using %dbps open/close on port %s" % (baudrate, port)
     if system() != "Windows":
         try:
-            s = Serial(env.subst(port))
+            s = Serial(port)
             s.close()
         except:  # pylint: disable=W0702
             pass
-    s = Serial(port=env.subst(port), baudrate=baudrate)
+    s = Serial(port=port, baudrate=baudrate)
     s.setDTR(False)
     s.close()
     sleep(0.4)
@@ -155,7 +157,7 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
     print "Check program size..."
     sysenv = environ.copy()
     sysenv['PATH'] = str(env['ENV']['PATH'])
-    cmd = [env.subst("$SIZETOOL"), "-B", str(source[0])]
+    cmd = [env.subst("$SIZETOOL"), "-B", str(target[0])]
     result = util.exec_command(cmd, env=sysenv)
     if result['returncode'] != 0:
         return
