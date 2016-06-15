@@ -42,6 +42,14 @@ def test_init_ext_folder(platformio_setup, clirunner, validate_cliresult):
         validate_pioproject(join(getcwd(), ext_folder_name))
 
 
+def test_init_ide_eclipse(platformio_setup, clirunner, validate_cliresult):
+    with clirunner.isolated_filesystem():
+        result = clirunner.invoke(cli, ["-b", "uno", "--ide", "eclipse"])
+        validate_cliresult(result)
+        validate_pioproject(getcwd())
+        assert all([isfile(f) for f in (".cproject", ".project")])
+
+
 def test_init_special_board(platformio_setup, clirunner, validate_cliresult):
     with clirunner.isolated_filesystem():
         result = clirunner.invoke(cli, ["-b", "uno"])

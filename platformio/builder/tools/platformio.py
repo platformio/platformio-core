@@ -36,7 +36,9 @@ SRC_DEFAULT_FILTER = " ".join([
 def BuildProgram(env):
 
     def _append_pio_macros():
-        env.AppendUnique(
+        if any(["PLATFORMIO=" in str(d) for d in env.get("CPPDEFINES", [])]):
+            return
+        env.Append(
             CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
                 *pioversion_to_intstr())],
         )
