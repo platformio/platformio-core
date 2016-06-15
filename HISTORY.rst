@@ -4,6 +4,11 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.10.3 (2016-06-15)
+~~~~~~~~~~~~~~~~~~~
+
+* Fixed issue with ``platformio init --ide`` command
+
 2.10.2 (2016-06-15)
 ~~~~~~~~~~~~~~~~~~~
 
