@@ -5,6 +5,7 @@
             "extra_flags": "-DARDUINO_ARCH_ARC32 -D__ARDUINO_ARC__",
             "f_cpu": "32000000L",
             "ldscript": "flash.ld",
+            "mcu": "ARCv2EM",
             "cpu": "quarkse_em",
             "usb_product": "Genuino 101",
             "variant": "arduino_101",
