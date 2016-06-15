@@ -629,6 +629,13 @@ ST
       - 512 Kb
       - 128 Kb
 
+    * - ``nucleo_l031k6``
+      - `ST Nucleo L031K6 <https://developer.mbed.org/platforms/ST-Nucleo-L031K6/>`_
+      - STM32L031K6T6
+      - 32 MHz
+      - 32 Kb
+      - 8 Kb
+
     * - ``nucleo_l053r8``
       - `ST Nucleo L053R8 <https://developer.mbed.org/platforms/ST-Nucleo-L053R8/>`_
       - STM32L053R8T6
