@@ -5,3 +5,4 @@
 docs/_build
 dist
 build
+.cache
