@@ -52,6 +52,8 @@ def cli():
         r = None
         try:
             for cmd in cmds:
+                if sys.version_info < (2, 7, 0):
+                    cmd[0] += ".__main__"
                 cmd = [os.path.normpath(sys.executable), "-m"] + cmd
                 r = None
                 r = util.exec_command(cmd)

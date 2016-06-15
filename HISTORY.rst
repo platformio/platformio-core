@@ -17,11 +17,25 @@ PlatformIO 3.0
 PlatformIO 2.0
 --------------
 
-2.10.2 (2016-06-??)
+2.10.4 (2016-06-??)
+~~~~~~~~~~~~~~~~~~~
+
+* Fixed issue with ``platformio init --ide`` command for Python 2.6
+
+2.10.3 (2016-06-15)
+~~~~~~~~~~~~~~~~~~~
+
+* Fixed issue with ``platformio init --ide`` command
+
+2.10.2 (2016-06-15)
 ~~~~~~~~~~~~~~~~~~~
 
 * Added support for ST Nucleo L031K6 board to ARM mbed framework
-* Fixed issue with ARM mbed framework with ``-u _printf_float`` and
+* Process ``build_unflags`` option for ARM mbed framework
+* Updated Intel ARC32 Arduino framework to v1.0.6
+  (`issue #695 <https://github.com/platformio/platformio/issues/695>`_)
+* Improved a check of program size before uploading to the board
+* Fixed issue with ARM mbed framework ``-u _printf_float`` and
   ``-u _scanf_float`` when parsing ``$LINKFLAGS``
 * Fixed issue with ARM mbed framework and extra includes for the custom boards,
   such as Seeeduino Arch Pro
