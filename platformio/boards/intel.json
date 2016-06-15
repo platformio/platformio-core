@@ -20,7 +20,8 @@
             "maximum_ram_size": 81920,
             "maximum_size": 155648,
             "protocol": "script",
-            "require_upload_port" : true
+            "require_upload_port" : true,
+            "use_1200bps_touch": true
         },
         "url": "https://www.arduino.cc/en/Main/ArduinoBoard101",
         "vendor": "Intel"
