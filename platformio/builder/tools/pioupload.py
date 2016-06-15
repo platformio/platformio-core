@@ -157,7 +157,7 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
     print "Check program size..."
     sysenv = environ.copy()
     sysenv['PATH'] = str(env['ENV']['PATH'])
-    cmd = [env.subst("$SIZETOOL"), "-B", str(source[0])]
+    cmd = [env.subst("$SIZETOOL"), "-B", str(target[0])]
     result = util.exec_command(cmd, env=sysenv)
     if result['returncode'] != 0:
         return
