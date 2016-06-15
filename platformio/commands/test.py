@@ -42,14 +42,9 @@ def cli(ctx, environment, ignore, upload_port,  # pylint: disable=R0913,R0914
         test_dir = util.get_projecttest_dir()
         if not isdir(test_dir):
             raise exception.TestDirEmpty(test_dir)
+        test_names = get_test_names(test_dir)
         projectconf = util.get_project_config()
 
-    test_names = []
-    for item in sorted(listdir(test_dir)):
-        if isdir(join(test_dir, item)):
-            test_names.append(item)
-    if not test_names:
-        test_names = ["*"]
     click.echo("Collected %d items" % len(test_names))
     click.echo()
 
@@ -201,3 +196,13 @@ class TestProcessor(object):
                 "Please specify `upload_port` for environment or use "
                 "global `--upload-port` option.")
         return port
+
+
+def get_test_names(test_dir):
+    names = []
+    for item in sorted(listdir(test_dir)):
+        if isdir(join(test_dir, item)):
+            names.append(item)
+    if not names:
+        names = ["*"]
+    return names
