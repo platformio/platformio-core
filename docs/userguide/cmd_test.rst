@@ -43,6 +43,32 @@ Options
 Process specified environments. More details :option:`platformio run --environment`
 
 .. option::
+    -i, --ignore
+
+Ignore tests where the name matches with specified pattern. More than one
+option/pattern is allowed.
+
+.. list-table::
+    :header-rows:  1
+
+    * - Pattern
+      - Meaning
+
+    * - ``*``
+      - matches everything
+
+    * - ``?``
+      - matches any single character
+
+    * - ``[seq]``
+      - matches any character in seq
+
+    * - ``[!seq]``
+      - matches any character not in seq
+
+For example, ``platformio test --ignore "mytest*" -i "test[13]"``
+
+.. option::
     --upload-port
 
 Upload port of embedded board. To print all available ports use

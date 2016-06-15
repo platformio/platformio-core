@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from fnmatch import fnmatch
 from os import getcwd, listdir
 from os.path import isdir, join
 from time import sleep, time
@@ -27,22 +28,21 @@ from platformio.managers.platform import PlatformFactory
 
 @click.command("test", short_help="Unit Testing")
 @click.option("--environment", "-e", multiple=True, metavar="<environment>")
+@click.option("--ignore", "-i", multiple=True, metavar="<pattern>")
 @click.option("--upload-port", metavar="<upload port>")
 @click.option("--project-dir", "-d", default=getcwd,
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
 @click.option("--verbose", "-v", count=True, default=3)
 @click.pass_context
-def cli(ctx, environment, upload_port,  # pylint: disable=R0913,R0914
+def cli(ctx, environment, ignore, upload_port,  # pylint: disable=R0913,R0914
         project_dir, verbose):
     assert check_project_envs(project_dir, environment)
     with util.cd(project_dir):
         test_dir = util.get_projecttest_dir()
         if not isdir(test_dir):
             raise exception.TestDirEmpty(test_dir)
-        config = util.get_project_config()
-        env_names = set(
-            [s[4:] for s in config.sections() if s.startswith("env:")])
+        projectconf = util.get_project_config()
 
     test_names = []
     for item in sorted(listdir(test_dir)):
@@ -56,11 +56,20 @@ def cli(ctx, environment, upload_port,  # pylint: disable=R0913,R0914
     start_time = time()
     results = []
     for testname in test_names:
-        for envname in env_names:
+        for envname in projectconf.sections():
+            if not envname.startswith("env:"):
+                continue
+            envname = envname[4:]
             if environment and envname not in environment:
                 continue
+
+            # check ignore patterns
+            if testname != "*" and any([fnmatch(testname, i) for i in ignore]):
+                results.append((None, testname, envname))
+                continue
+
             tp = TestProcessor(ctx, testname, envname, {
-                "project_config": config,
+                "project_config": projectconf,
                 "project_dir": project_dir,
                 "upload_port": upload_port,
                 "verbose": verbose
@@ -72,13 +81,18 @@ def cli(ctx, environment, upload_port,  # pylint: disable=R0913,R0914
 
     passed = True
     for result in results:
-        if not result[0]:
+        status, testname, envname = result
+        status_str = click.style("PASSED", fg="green")
+        if status is False:
             passed = False
+            status_str = click.style("FAILED", fg="red")
+        elif status is None:
+            status_str = click.style("IGNORED", fg="yellow")
+
         click.echo("test:%s/env:%s\t%s" % (
-            click.style(result[1], fg="yellow"),
-            click.style(result[2], fg="cyan"),
-            click.style("PASSED" if passed else "FAILED", fg="green"
-                        if passed else "red")), err=not passed)
+            click.style(testname, fg="yellow"),
+            click.style(envname, fg="cyan"),
+            status_str), err=status is False)
 
     print_header("[%s] Took %.2f seconds" % (
         (click.style("PASSED", fg="green", bold=True) if passed
@@ -144,7 +158,8 @@ class TestProcessor(object):
                     line[:-5], click.style("PASSED", fg="green")))
             elif ":FAIL:" in line:
                 passed = False
-                click.secho(line, fg="red")
+                click.echo("%s\t%s" % (
+                    line, click.style("FAILED", fg="red")))
             else:
                 click.echo(line)
             if all([l in line for l in ("Tests", "Failures", "Ignored")]):

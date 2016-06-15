@@ -44,7 +44,7 @@ Design
 PlatformIO Test System design is based on a few isolated components:
 
 1. **Main program**. Contains the independent modules, procedures,
-   functions or methods that will be the target candidates (TC) for testing
+   functions or methods that will be the target candidates (TC) for testing.
 2. **Unit test**. This a small independent program that is intended to
    re-use TC from the main program and apply tests for them.
 3. **Test processor**. The set of approaches and tools that will be used
@@ -53,8 +53,8 @@ PlatformIO Test System design is based on a few isolated components:
 Workflow
 --------
 
-1. Create PlatformIO project using :ref:`cmd_init` command
-2. Place source code of main program to ``src`` directory
+1. Create PlatformIO project using :ref:`cmd_init` command.
+2. Place source code of main program to ``src`` directory.
 3. Wrap ``main()`` or ``setup()/loop()`` methods of main program in ``UNIT_TEST``
    guard:
 
@@ -86,10 +86,10 @@ Workflow
        }
        #endif
 
-4. Create ``test`` directory in the root of project. See :ref:`projectconf_pio_test_dir`
+4. Create ``test`` directory in the root of project. See :ref:`projectconf_pio_test_dir`.
 5. Write test using :ref:`unit_testing_api`. The each test is a small
    independent program with own ``main()`` or ``setup()/loop()`` methods. Also,
-   test should start from ``UNITY_BEGIN()`` and finish with ``UNITY_END()``
+   test should start from ``UNITY_BEGIN()`` and finish with ``UNITY_END()``.
 6. Place test to ``test`` directory. If you have more than one test, split them
    into sub-folders. For example, ``test/test_1/*.[c,cpp,h]``,
    ``test_N/*.[c,cpp,h]``, etc. If no such directory in ``test`` folder, then
@@ -185,11 +185,11 @@ Example
 -------
 
 1. Please follow to :ref:`quickstart` and create "Blink Project". According
-   to the Unit Testing :ref:`unit_testing_design` it is the **Main program**
+   to the Unit Testing :ref:`unit_testing_design` it is the **Main program**.
 2. Create ``test`` directory in that project (on the same level as ``src``)
-   and place ``test_main.cpp`` file to it (the source code is located below)
+   and place ``test_main.cpp`` file to it (the source code is located below).
 3. Wrap ``setup()`` and ``loop()`` methods of main program in ``UNIT_TEST``
-   guard
+   guard.
 4. Run tests using :ref:`cmd_test` command.
 
 Project structure
@@ -313,11 +313,11 @@ Source files
               delay(500);
               RUN_TEST(test_led_state_low);
               delay(500);
+              i++;
           }
           else if (i == max_blinks) {
-            UNITY_END();  // IMPORTANT LINE!
+            UNITY_END(); // stop unit testing
           }
-          i++;
       }
 
       #endif
