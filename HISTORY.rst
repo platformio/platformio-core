@@ -9,11 +9,12 @@ PlatformIO 2.0
 
 * Added support for ST Nucleo L031K6 board to ARM mbed framework
 * Process ``build_unflags`` option for ARM mbed framework
-* Fixed issue with ARM mbed framework with ``-u _printf_float`` and
+* Updated Intel ARC32 Arduino framework to v1.0.6
+* Improved a check of program size before uploading to the board
+* Fixed issue with ARM mbed framework ``-u _printf_float`` and
   ``-u _scanf_float`` when parsing ``$LINKFLAGS``
 * Fixed issue with ARM mbed framework and extra includes for the custom boards,
   such as Seeeduino Arch Pro
-* Improved a check of program size before uploading to the board
 
 2.10.1 (2016-06-13)
 ~~~~~~~~~~~~~~~~~~~
