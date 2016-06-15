@@ -163,7 +163,7 @@ def add_mbedlib(libname, libar):
             continue
 
         if "TARGET_" in root:
-            if all([p not in root.upper() for p in target_includes]):
+            if all([p not in root for p in target_includes]):
                 continue
 
         var_dir = join("$BUILD_DIR", "FrameworkMbed%sInc%d" %
