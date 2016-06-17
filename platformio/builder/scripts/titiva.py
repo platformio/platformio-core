@@ -31,6 +31,13 @@ env.Replace(
     UPLOADCMD='"$UPLOADER" $SOURCES'
 )
 
+env.Append(
+    LINKFLAGS=[
+        "-nostartfiles",
+        "-nostdlib"
+    ]
+)
+
 #
 # Target: Build executable and linkable firmware
 #

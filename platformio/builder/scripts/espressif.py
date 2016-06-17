@@ -71,7 +71,8 @@ env.Replace(
         "-Wpointer-arith",
         "-Wno-implicit-function-declaration",
         "-Wl,-EL",
-        "-fno-inline-functions"
+        "-fno-inline-functions",
+        "-nostdlib"
     ],
 
     CCFLAGS=[
@@ -81,7 +82,8 @@ env.Replace(
         "-falign-functions=4",
         "-U__STRICT_ANSI__",
         "-ffunction-sections",
-        "-fdata-sections"
+        "-fdata-sections",
+        "-MMD"  # output dependancy info
     ],
 
     CXXFLAGS=[

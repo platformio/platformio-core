@@ -40,7 +40,8 @@ env.Replace(
         "-fdata-sections",
         "-Wall",
         "-mthumb",
-        "-mcpu=${BOARD_OPTIONS['build']['cpu']}"
+        "-mcpu=${BOARD_OPTIONS['build']['cpu']}",
+        "-nostdlib"
     ],
 
     CXXFLAGS=[
@@ -56,9 +57,7 @@ env.Replace(
         "-Os",
         "-Wl,--gc-sections,--relax",
         "-mthumb",
-        "-mcpu=${BOARD_OPTIONS['build']['cpu']}",
-        "-nostdlib",
-        "-nostartfiles"
+        "-mcpu=${BOARD_OPTIONS['build']['cpu']}"
     ],
 
     LIBS=["c", "gcc", "m"],
