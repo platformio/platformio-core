@@ -53,13 +53,12 @@ def BuildProgram(env):
         )
 
     # process extra flags from board
-    env.ProcessFlags([
-        env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags")
-    ])
+    env.ProcessFlags(
+        env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags"))
     # remove base flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
     # apply user flags
-    env.ProcessFlags([env.get("BUILD_FLAGS")])
+    env.ProcessFlags(env.get("BUILD_FLAGS"))
 
     if env.get("FRAMEWORK"):
         env.BuildFrameworks([
@@ -88,7 +87,7 @@ def BuildProgram(env):
         )
 
     # Handle SRC_BUILD_FLAGS
-    env.ProcessFlags([env.get("SRC_BUILD_FLAGS", None)])
+    env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
     env.Append(
         CPPPATH=["$PROJECTSRC_DIR"],
@@ -117,18 +116,17 @@ def BuildProgram(env):
 
 
 def ProcessFlags(env, flags):
-    for f in flags:
-        if not f:
+    if not flags:
+        return
+    parsed_flags = env.ParseFlags(str(flags))
+    for flag in parsed_flags.pop("CPPDEFINES"):
+        if not isinstance(flag, list):
+            env.Append(CPPDEFINES=flag)
             continue
-        parsed_flags = env.ParseFlags(str(f))
-        for flag in parsed_flags.pop("CPPDEFINES"):
-            if not isinstance(flag, list):
-                env.Append(CPPDEFINES=flag)
-                continue
-            if '\"' in flag[1]:
-                flag[1] = flag[1].replace('\"', '\\\"')
-            env.Append(CPPDEFINES=[flag])
-        env.Append(**parsed_flags)
+        if '\"' in flag[1]:
+            flag[1] = flag[1].replace('\"', '\\\"')
+        env.Append(CPPDEFINES=[flag])
+    env.Append(**parsed_flags)
 
     # fix relative CPPPATH & LIBPATH
     for k in ("CPPPATH", "LIBPATH"):
@@ -153,10 +151,17 @@ def ProcessFlags(env, flags):
 def ProcessUnFlags(env, flags):
     if not flags:
         return
-    for var, values in env.ParseFlags(flags).items():
-        for v in values:
-            if v in env[var]:
-                env[var].remove(v)
+    parsed_flags = env.ParseFlags(flags)
+    all_flags = []
+    for items in parsed_flags.values():
+        all_flags.extend(items)
+    all_flags = set(all_flags)
+
+    for key in parsed_flags.keys():
+        cur_flags = set(env.get(key, []))
+        common = cur_flags & all_flags
+        for item in common:
+            env[key].remove(item)
 
 
 def IsFileWithExt(env, file_, ext):  # pylint: disable=W0613

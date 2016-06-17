@@ -66,11 +66,6 @@ env.Append(
     ],
 
     LIBS=["stdc++", "nosys"],
-
-    LINKFLAGS=[
-        "-nostartfiles",
-        "-nostdlib"
-    ]
 )
 
 #
