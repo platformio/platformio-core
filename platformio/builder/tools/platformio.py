@@ -159,7 +159,7 @@ def ProcessUnFlags(env, flags):
 
     for key in parsed_flags.keys():
         cur_flags = set(env.get(key, []))
-        for item in (cur_flags & all_flags):
+        for item in cur_flags & all_flags:
             while item in env[key]:
                 env[key].remove(item)
 
