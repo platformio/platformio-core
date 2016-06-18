@@ -52,7 +52,7 @@
             "variant": "standard"
         },
         "frameworks": ["arduino"],
-        "name": "emonPi",
+        "name": "OpenEnergyMonitor emonPi",
         "platform": "atmelavr",
         "upload": {
             "maximum_ram_size": 2048,
