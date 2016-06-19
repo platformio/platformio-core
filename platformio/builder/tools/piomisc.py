@@ -122,8 +122,8 @@ def ConvertInoToCpp(env):
             remove(file_)
         except:  # pylint: disable=bare-except
             if isfile(file_):
-                print ("Warning: Could not remove temporary file '%s'. "
-                       "Please remove it manually." % file_)
+                print("Warning: Could not remove temporary file '%s'. "
+                      "Please remove it manually." % file_)
 
     ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
                  env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
@@ -204,9 +204,7 @@ def DumpIDEData(env):
     def get_defines(env_):
         defines = []
         # global symbols
-        for item in env_.get("CPPDEFINES", []):
-            if isinstance(item, list):
-                item = "=".join(item)
+        for item in env.Flatten(env_.get("CPPDEFINES", [])):
             defines.append(env_.subst(item).replace('\\"', '"'))
 
         # special symbol for Atmel AVR MCU
@@ -233,9 +231,7 @@ def DumpIDEData(env):
 
     # https://github.com/platformio/platformio-atom-ide/issues/34
     _new_defines = []
-    for item in env_.get("CPPDEFINES", []):
-        if isinstance(item, list):
-            item = "=".join(item)
+    for item in env.Flatten(env_.get("CPPDEFINES", [])):
         item = item.replace('\\"', '"')
         if " " in item:
             _new_defines.append(item.replace(" ", "\\\\ "))

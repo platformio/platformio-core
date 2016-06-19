@@ -20,6 +20,8 @@ PlatformIO 2.0
 2.10.4 (2016-06-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Better removing unnecessary flags using ``build_unflags`` option
+  (`issue #698 <https://github.com/platformio/platformio/issues/698>`_)
 * Fixed issue with ``platformio init --ide`` command for Python 2.6
 
 2.10.3 (2016-06-15)
