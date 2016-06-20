@@ -74,8 +74,8 @@ def ProcessTest(env):
         src_filter = "+<output_export.cpp>"
         src_filter += " +<%s%s>" % (env['PIOTEST'], sep)
 
-    return env.LookupSources(
-        "$BUILDTEST_DIR", test_dir, duplicate=False, src_filter=src_filter
+    return env.CollectBuildFiles(
+        "$BUILDTEST_DIR", test_dir, src_filter=src_filter
     )
 
 

@@ -92,9 +92,8 @@ def BuildProgram(env):
         LIBPATH=["$BUILD_DIR"]
     )
 
-    sources = env.LookupSources(
-        "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
-        src_filter=env.get("SRC_FILTER"))
+    sources = env.CollectBuildFiles(
+        "$BUILDSRC_DIR", "$PROJECTSRC_DIR", src_filter=env.get("SRC_FILTER"))
 
     if "test" in COMMAND_LINE_TARGETS:
         sources.extend(env.ProcessTest())
@@ -173,12 +172,7 @@ def IsFileWithExt(env, file_, ext):  # pylint: disable=W0613
     return False
 
 
-def VariantDirWrap(env, variant_dir, src_dir, duplicate=True):
-    DefaultEnvironment().Append(VARIANT_DIRS=[(variant_dir, src_dir)])
-    env.VariantDir(variant_dir, src_dir, duplicate)
-
-
-def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
+def MatchSourceFiles(env, src_dir, src_filter):
 
     SRC_FILTER_PATTERNS_RE = re.compile(r"(\+|\-)<([^>]+)>")
 
@@ -186,25 +180,32 @@ def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
         if env.IsFileWithExt(item, SRC_BUILD_EXT + SRC_HEADER_EXT):
             items.add(item.replace(src_dir + sep, ""))
 
-    def _match_sources(src_dir, src_filter):
-        matches = set()
-        # correct fs directory separator
-        src_filter = src_filter.replace("/", sep).replace("\\", sep)
-        for (action, pattern) in SRC_FILTER_PATTERNS_RE.findall(src_filter):
-            items = set()
-            for item in glob(join(src_dir, pattern)):
-                if isdir(item):
-                    for root, _, files in walk(item, followlinks=True):
-                        for f in files:
-                            _append_build_item(items, join(root, f), src_dir)
-                else:
-                    _append_build_item(items, item, src_dir)
-            if action == "+":
-                matches |= items
+    matches = set()
+    # correct fs directory separator
+    src_filter = src_filter.replace("/", sep).replace("\\", sep)
+    for (action, pattern) in SRC_FILTER_PATTERNS_RE.findall(src_filter):
+        items = set()
+        for item in glob(join(src_dir, pattern)):
+            if isdir(item):
+                for root, _, files in walk(item, followlinks=True):
+                    for f in files:
+                        _append_build_item(items, join(root, f), src_dir)
             else:
-                matches -= items
-        return sorted(list(matches))
+                _append_build_item(items, item, src_dir)
+        if action == "+":
+            matches |= items
+        else:
+            matches -= items
+    return sorted(list(matches))
 
+
+def VariantDirWrap(env, variant_dir, src_dir, duplicate=True):
+    DefaultEnvironment().Append(VARIANT_DIRS=[(variant_dir, src_dir)])
+    env.VariantDir(variant_dir, src_dir, duplicate)
+
+
+def CollectBuildFiles(env, variant_dir, src_dir,
+                      src_filter=None, duplicate=False):
     sources = []
     variants = []
 
@@ -212,7 +213,8 @@ def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
     if src_dir.endswith(sep):
         src_dir = src_dir[:-1]
 
-    for item in _match_sources(src_dir, src_filter or SRC_DEFAULT_FILTER):
+    for item in env.MatchSourceFiles(
+            src_dir, src_filter or SRC_DEFAULT_FILTER):
         _reldir = dirname(item)
         _src_dir = join(src_dir, _reldir) if _reldir else src_dir
         _var_dir = join(variant_dir, _reldir) if _reldir else variant_dir
@@ -257,7 +259,8 @@ def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     lib = env.Clone()
     return lib.Library(
         lib.subst(variant_dir),
-        lib.LookupSources(variant_dir, src_dir, src_filter=src_filter)
+        lib.CollectBuildFiles(
+            variant_dir, src_dir, src_filter=src_filter)
     )
 
 
@@ -413,8 +416,9 @@ def generate(env):
     env.AddMethod(ProcessFlags)
     env.AddMethod(ProcessUnFlags)
     env.AddMethod(IsFileWithExt)
+    env.AddMethod(MatchSourceFiles)
     env.AddMethod(VariantDirWrap)
-    env.AddMethod(LookupSources)
+    env.AddMethod(CollectBuildFiles)
     env.AddMethod(BuildFrameworks)
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildDependentLibraries)
