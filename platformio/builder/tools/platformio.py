@@ -93,7 +93,8 @@ def BuildProgram(env):
     )
 
     sources = env.CollectBuildFiles(
-        "$BUILDSRC_DIR", "$PROJECTSRC_DIR", src_filter=env.get("SRC_FILTER"))
+        "$BUILDSRC_DIR", "$PROJECTSRC_DIR",
+        src_filter=env.get("SRC_FILTER"), duplicate=False)
 
     if "test" in COMMAND_LINE_TARGETS:
         sources.extend(env.ProcessTest())
@@ -205,7 +206,7 @@ def VariantDirWrap(env, variant_dir, src_dir, duplicate=True):
 
 
 def CollectBuildFiles(env, variant_dir, src_dir,
-                      src_filter=None, duplicate=False):
+                      src_filter=None, duplicate=True):
     sources = []
     variants = []
 

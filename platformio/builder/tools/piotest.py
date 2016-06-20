@@ -75,7 +75,7 @@ def ProcessTest(env):
         src_filter += " +<%s%s>" % (env['PIOTEST'], sep)
 
     return env.CollectBuildFiles(
-        "$BUILDTEST_DIR", test_dir, src_filter=src_filter
+        "$BUILDTEST_DIR", test_dir, src_filter=src_filter, duplicate=False
     )
 
 
