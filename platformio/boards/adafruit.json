@@ -248,5 +248,35 @@
         },
         "url": "http://www.adafruit.com/products/2000",
         "vendor": "Adafruit"
+    },
+    "adafruit_feather_m0_usb": {
+        "build": {
+            "core": "arduino_zero",
+            "extra_flags": "-DARDUINO_SAMD_FEATHER_M0 -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "usb_product": "Adafruit Feather M0",
+            "variant": "arduino_zero",
+            "ldscript": "flash_with_bootloader.ld",
+            "hwids": [
+              ["0x239A", "0x800B"],
+              ["0x239A", "0x000B"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Adafruit Feather M0",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "sam-ba",
+            "require_upload_port" : true,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "https://www.adafruit.com/product/2772",
+        "vendor": "Adafruit"
     }
 }

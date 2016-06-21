@@ -137,7 +137,7 @@ if "sam3x8e" in env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu", None):
         ]
 
     )
-elif "zero" in env.subst("$BOARD"):
+elif "samd" in env.get("BOARD_OPTIONS", {}).get("build", {}).get("mcu", None):
     env.Append(
         LINKFLAGS=[
             "--specs=nosys.specs",

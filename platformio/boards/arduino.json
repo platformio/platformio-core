@@ -923,5 +923,37 @@
         },
         "url": "https://www.arduino.cc/en/Main/ArduinoBoardZero",
         "vendor": "Arduino"
+    },
+    "mkr1000USB": {
+        "build": {
+            "core": "arduino_zero",
+            "extra_flags": "-DARDUINO_SAMD_MKR1000 -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "usb_product": "Arduino MKR1000",
+            "variant": "mkr1000",
+            "ldscript": "flash_with_bootloader.ld",
+            "hwids": [
+              ["0x2341", "0x804E"],
+              ["0x2341", "0x004E"],
+              ["0x2341", "0x824E"],
+              ["0x2341", "0x024E"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino MKR1000",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "sam-ba",
+            "require_upload_port" : true,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "https://www.arduino.cc/en/Main/ArduinoMKR1000",
+        "vendor": "Arduino"
     }
 }

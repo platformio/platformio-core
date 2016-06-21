@@ -238,5 +238,67 @@
         },
         "url": "https://www.sparkfun.com/products/12923",
         "vendor": "SparkFun"
+    },
+
+    "sparkfun_samd21_dev_usb": {
+        "build": {
+            "core": "arduino_zero",
+            "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "usb_product": "SparkFun SAMD21",
+            "variant": "arduino_zero",
+            "ldscript": "flash_with_bootloader.ld",
+            "hwids": [
+              ["0x1B4F", "0x8D21"],
+              ["0x1B4F", "0x0D21"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "SparkFun SAMD21 Dev Breakout",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "sam-ba",
+            "require_upload_port" : true,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "https://www.sparkfun.com/products/13672",
+        "vendor": "SparkFun"
+    },
+
+    "sparkfun_samd21_mini_usb": {
+        "build": {
+            "core": "arduino_zero",
+            "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "usb_product": "SparkFun SAMD21",
+            "variant": "SparkFun_SAMD_Mini",
+            "ldscript": "flash_with_bootloader.ld",
+            "hwids": [
+              ["0x1B4F", "0x8D21"],
+              ["0x1B4F", "0x0D21"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "SparkFun SAMD21 Mini Breakout",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "sam-ba",
+            "require_upload_port" : true,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true
+        },
+        "url": "https://www.sparkfun.com/products/13664",
+        "vendor": "SparkFun"
     }
 }
