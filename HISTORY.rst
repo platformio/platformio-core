@@ -16,6 +16,8 @@ PlatformIO 3.0
 * New Library Build System: intelligent dependency finder that interprets
   C Preprocessor conditional macros
   (`issue #432 <https://github.com/platformio/platformio/issues/432>`_)
+* Show detailed build information about dependent libraries
+  (`issue #617 <https://github.com/platformio/platformio/issues/617>`_)
 
 PlatformIO 2.0
 --------------

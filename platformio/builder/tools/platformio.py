@@ -17,7 +17,7 @@ from __future__ import absolute_import
 import re
 from glob import glob
 from os import sep, walk
-from os.path import basename, dirname, isdir, join, normpath, realpath
+from os.path import basename, dirname, isdir, join, realpath
 
 from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, SConscript
 from SCons.Util import case_sensitive_suffixes

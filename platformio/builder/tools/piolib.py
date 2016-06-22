@@ -109,7 +109,7 @@ class LibBuilderBase(object):
         return [self.build_dir if use_build_dir else self.src_dir]
 
     def build(self):
-        print "Depends on: %s" % self.name
+        print "Depends on <%s> (%s)" % (self.name, self.path)
         assert self._is_built is False
         self._is_built = True
         return self.env.BuildLibrary(self.build_dir, self.src_dir)
@@ -225,7 +225,6 @@ def BuildDependentLibraries(env, src_dir):
                     LibBuilderFactory.new(env, join(libs_dir, item)))
 
     print "Looking for dependencies..."
-    print "Library locations: " + ", ".join(libs_dirs)
     print "Collecting %d libraries" % len(lib_builders)
 
     return find_and_build_deps(
