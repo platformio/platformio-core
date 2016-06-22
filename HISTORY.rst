@@ -13,6 +13,9 @@ PlatformIO 3.0
   (`issue #479 <https://github.com/platformio/platformio/issues/479>`_)
 * Unit Testing for Embedded (`docs <http://docs.platformio.org/en/latest/platforms/unit_testing.html>`__)
   (`issue #408 <https://github.com/platformio/platformio/issues/408>`_)
+* New Library Build System: intelligent dependency finder that interprets
+  C Preprocessor conditional macros
+  (`issue #432 <https://github.com/platformio/platformio/issues/432>`_)
 
 PlatformIO 2.0
 --------------

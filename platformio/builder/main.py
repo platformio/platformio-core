@@ -63,7 +63,8 @@ commonvars.AddVariables(
 DefaultEnvironment(
     tools=[
         "gcc", "g++", "as", "ar", "gnulink",
-        "platformio", "devplatform", "piotest", "pioupload", "pioar", "piomisc"
+        "platformio", "devplatform",
+        "piolib", "piotest", "pioupload", "pioar", "piomisc"
     ],
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
     variables=commonvars,
