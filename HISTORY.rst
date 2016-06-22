@@ -18,6 +18,8 @@ PlatformIO 3.0
   (`issue #432 <https://github.com/platformio/platformio/issues/432>`_)
 * Show detailed build information about dependent libraries
   (`issue #617 <https://github.com/platformio/platformio/issues/617>`_)
+* Embedded Board compatibility with more than one development platform
+  (`issue #456 <https://github.com/platformio/platformio/issues/456>`_)
 
 PlatformIO 2.0
 --------------
