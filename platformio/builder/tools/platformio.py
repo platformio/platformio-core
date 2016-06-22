@@ -50,8 +50,8 @@ def BuildProgram(env):
         )
 
     # process extra flags from board
-    if "BOARD" in env:
-        env.ProcessFlags(env.BoardConfig().get("build.extra_flags", None))
+    if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
+        env.ProcessFlags(env.BoardConfig().get("build.extra_flags"))
     # remove base flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
     # apply user flags
