@@ -143,7 +143,7 @@ class MbedLibBuilder(LibBuilderBase):
     def src_dir(self):
         if isdir(join(self.path, "source")):
             return join(self.path, "source")
-        return super(LibBuilderBase, self).src_dir  # pylint: disable=no-member
+        return LibBuilderBase.src_dir.fget(self)  # pylint: disable=no-member
 
     def get_path_dirs(self, use_build_dir=False):
         path_dirs = LibBuilderBase.get_path_dirs(self, use_build_dir)
