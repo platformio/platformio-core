@@ -204,7 +204,7 @@ def find_and_build_deps(env, lib_builders, scanner,
     for lb in target_lbs:
         libs.append(lb.build())
 
-    if env.get("LIB_DFCYCLIC", "").lower() == "true":
+    if env.get("LIB_DEEP_SEARCH", "").lower() == "true":
         for lb in target_lbs:
             libs.extend(find_and_build_deps(
                 env, lib_builders, scanner, lb.src_dir, lb.src_filter))

@@ -41,7 +41,7 @@ commonvars.AddVariables(
     ("SRC_BUILD_FLAGS",),
     ("BUILD_UNFLAGS",),
     ("SRC_FILTER",),
-    ("LIB_DFCYCLIC",),
+    ("LIB_DEEP_SEARCH",),
     ("LIB_IGNORE",),
     ("LIB_USE",),
 

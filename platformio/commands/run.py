@@ -101,7 +101,7 @@ class EnvironmentProcessor(object):
         "INSTALL_LIBS": "LIB_INSTALL",
         "IGNORE_LIBS": "LIB_IGNORE",
         "USE_LIBS": "LIB_USE",
-        "LDF_CYCLIC": "LIB_DFCYCLIC",
+        "LIB_DFCYCLIC": "LIB_DEEP_SEARCH",
         "SRCBUILD_FLAGS": "SRC_BUILD_FLAGS"
     }
 

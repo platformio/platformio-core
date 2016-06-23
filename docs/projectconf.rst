@@ -620,24 +620,59 @@ Example:
     [env:ignore_some_libs]
     lib_ignore = SPI,EngduinoV3_ID123
 
-``lib_dfcyclic``
-^^^^^^^^^^^^^^^^
+``lib_deep_search``
+^^^^^^^^^^^^^^^^^^^
 
-Control cyclic (recursive) behavior for ``Library Dependency Finder (LDF)``.
-By default, this option is turned OFF (``lib_dfcyclic=False``) and means that
-``LDF`` will find only libraries which are included in source files from the
-project :ref:`projectconf_pio_src_dir`.
+By default, this option is turned OFF (``lib_deep_search = false``) and means
+that ``Library Dependency Finder (LDF)`` will looking only for the libraries
+that are mentioned (using ``#include <...>``) in the source files from the
+project :ref:`projectconf_pio_src_dir`. Also, ``LDF`` analyzes nested
+``#include <...>`` by default.
 
-If you want to enable cyclic (recursive, nested) search, please set this option
-to ``True``. Founded library will be treated like a new source files and
+If you want to enable deep search, please set this option to ``true``.
+Founded library will be treated like a new source files and
 ``LDF`` will search dependencies for it.
 
-Example:
+For example, there are 2 libraries:
 
-.. code-block:: ini
+* Library "Foo" with files:
 
-    [env:libs_with_enabled_ldf_cyclic]
-    lib_dfcyclic = True
+  - ``Foo/foo.h``
+  - ``Foo/foo.cpp``
+
+* Library "Bar" with files:
+
+  - ``Bar/bar.h``
+  - ``Bar/bar.cpp``
+
+:Case 1:
+
+  * ``lib_deep_search = false``
+  * ``Foo/foo.h`` depends on "Bar" library (contains ``#include <bar.h>``)
+  * ``#include <foo.h>`` is located in the one of the project source files
+
+  Here are nested includes (``project file > foo.h > bar.h``) and ``LDF`` will
+  find both libraries "Foo" and "Bar".
+
+:Case 2:
+
+  * ``lib_deep_search = false``
+  * ``Foo/foo.cpp`` depends on "Bar" library (contains ``#include <bar.h>``)
+  * ``#include <foo.h>`` is located in the one of the project source files
+
+  In this case, ``LDF`` will not find "Bar" library because it doesn't know
+  about CPP file (``Foo/foo.cpp``).
+
+:Case 3:
+
+  * ``lib_deep_search = true``
+  * ``Foo/foo.cpp`` depends on "Bar" library (contains ``#include <bar.h>``)
+  * ``#include <foo.h>`` is located in the one of the project source files
+
+  Firstly, ``LDF`` finds "Foo" library, then it parses all sources from "Foo"
+  library and finds ``Foo/foo.cpp`` that depends on ``#include <bar.h>``.
+  Secondly, it will parse all sources from "Bar" library and this operation
+  continues until all dependent libraries will not be parsed.
 
 -----------
 
