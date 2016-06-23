@@ -56,7 +56,7 @@ class LibBuilderFactory(object):
         # check source files
         for root, _, files in os.walk(path, followlinks=True):
             for fname in files:
-                if not env.IsFileWithExt(fname, ("c", "cpp", "h")):
+                if not env.IsFileWithExt(fname, ("c", "cpp", "h", "hpp")):
                     continue
                 with open(join(root, fname)) as f:
                     content = f.read()
@@ -109,7 +109,7 @@ class LibBuilderBase(object):
         return [self.build_dir if use_build_dir else self.src_dir]
 
     def build(self):
-        print "Depends on <%s> (%s)" % (self.name, self.path)
+        print "Depends on <%s>" % self.name
         assert self._is_built is False
         self._is_built = True
         return self.env.BuildLibrary(self.build_dir, self.src_dir)
