@@ -7,6 +7,11 @@ PlatformIO 2.0
 2.10.4 (2016-06-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Added support for Arduino MKR1000 board
+  (`issue #620 <https://github.com/platformio/platformio/issues/620>`_)
+* Added support for Adafruit Feather M0, SparkFun SAMD21 and SparkFun SAMD21
+  Mini Breakout boards
+  (`issue #520 <https://github.com/platformio/platformio/issues/520>`_)
 * Better removing unnecessary flags using ``build_unflags`` option
   (`issue #698 <https://github.com/platformio/platformio/issues/698>`_)
 * Fixed issue with ``platformio init --ide`` command for Python 2.6
