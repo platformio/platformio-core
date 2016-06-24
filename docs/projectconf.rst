@@ -624,13 +624,13 @@ Example:
 ^^^^^^^^^^^^^^^^^^^
 
 By default, this option is turned OFF (``lib_deep_search = false``) and means
-that ``Library Dependency Finder (LDF)`` will looking only for the libraries
+that ``Library Dependency Finder (LDF)`` will look only for the libraries
 that are mentioned (using ``#include <...>``) in the source files from the
 project :ref:`projectconf_pio_src_dir`. Also, ``LDF`` analyzes nested
 ``#include <...>`` by default.
 
 If you want to enable deep search, please set this option to ``true``.
-Founded library will be treated like a new source files and
+Found library will be treated like the new source files and
 ``LDF`` will search dependencies for it.
 
 For example, there are 2 libraries:
@@ -649,7 +649,7 @@ For example, there are 2 libraries:
 
   * ``lib_deep_search = false``
   * ``Foo/foo.h`` depends on "Bar" library (contains ``#include <bar.h>``)
-  * ``#include <foo.h>`` is located in the one of the project source files
+  * ``#include <foo.h>`` is located in one of the project source files
 
   Here are nested includes (``project file > foo.h > bar.h``) and ``LDF`` will
   find both libraries "Foo" and "Bar".
@@ -658,7 +658,7 @@ For example, there are 2 libraries:
 
   * ``lib_deep_search = false``
   * ``Foo/foo.cpp`` depends on "Bar" library (contains ``#include <bar.h>``)
-  * ``#include <foo.h>`` is located in the one of the project source files
+  * ``#include <foo.h>`` is located in one of the project source files
 
   In this case, ``LDF`` will not find "Bar" library because it doesn't know
   about CPP file (``Foo/foo.cpp``).
@@ -667,7 +667,7 @@ For example, there are 2 libraries:
 
   * ``lib_deep_search = true``
   * ``Foo/foo.cpp`` depends on "Bar" library (contains ``#include <bar.h>``)
-  * ``#include <foo.h>`` is located in the one of the project source files
+  * ``#include <foo.h>`` is located in one of the project source files
 
   Firstly, ``LDF`` finds "Foo" library, then it parses all sources from "Foo"
   library and finds ``Foo/foo.cpp`` that depends on ``#include <bar.h>``.
