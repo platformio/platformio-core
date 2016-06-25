@@ -14,7 +14,8 @@ PlatformIO 3.0
 * Unit Testing for Embedded (`docs <http://docs.platformio.org/en/latest/platforms/unit_testing.html>`__)
   (`issue #408 <https://github.com/platformio/platformio/issues/408>`_)
 * New Library Build System: intelligent dependency finder that interprets
-  C Preprocessor conditional macros, `library deep search <http://docs.platformio.org/en/latest/projectconf.html#lib-deep-search>`__
+  C Preprocessor conditional macros, `library deep search <http://docs.platformio.org/en/latest/projectconf.html#lib-deep-search>`__, support for the 3rd party
+  manifests (Arduino IDE ``library.properties``, ARM mbed ``module.json``)
   (`issue #432 <https://github.com/platformio/platformio/issues/432>`_)
 * Show detailed build information about dependent libraries
   (`issue #617 <https://github.com/platformio/platformio/issues/617>`_)
