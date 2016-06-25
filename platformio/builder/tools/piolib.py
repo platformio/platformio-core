@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=no-member
+
 from __future__ import absolute_import
 
 import os
@@ -73,6 +75,7 @@ class LibBuilderBase(object):
         self.env = env
         self.path = path
         self._is_built = False
+        self._manifest = self.load_manifest()
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.path)
@@ -82,7 +85,11 @@ class LibBuilderBase(object):
 
     @property
     def name(self):
-        return basename(self.path)
+        return self._manifest.get("name", basename(self.path))
+
+    @property
+    def version(self):
+        return self._manifest.get("version")
 
     @property
     def src_filter(self):
@@ -105,13 +112,25 @@ class LibBuilderBase(object):
     def is_built(self):
         return self._is_built
 
+    def load_manifest(self):  # pylint: disable=no-self-use
+        return {}
+
     def get_path_dirs(self, use_build_dir=False):
         return [self.build_dir if use_build_dir else self.src_dir]
 
+    def append_to_cpppath(self):
+        self.env.AppendUnique(
+            CPPPATH=self.get_path_dirs(use_build_dir=True)
+        )
+
     def build(self):
-        print "Depends on <%s>" % self.name
+        if self.version:
+            print "Depends on <%s> v%s" % (self.name, self.version)
+        else:
+            print "Depends on <%s>" % self.name
         assert self._is_built is False
         self._is_built = True
+        self.append_to_cpppath()
         return self.env.BuildLibrary(self.build_dir, self.src_dir)
 
 
@@ -121,33 +140,43 @@ class UnknownLibBuilder(LibBuilderBase):
 
 class ArduinoLibBuilder(LibBuilderBase):
 
+    def load_manifest(self):
+        manifest = {}
+        if not isfile(join(self.path, "library.properties")):
+            return manifest
+        with open(join(self.path, "library.properties")) as fp:
+            for line in fp.readlines():
+                if "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                manifest[key.strip()] = value.strip()
+        return manifest
+
     def get_path_dirs(self, use_build_dir=False):
         path_dirs = LibBuilderBase.get_path_dirs(self, use_build_dir)
         if not isdir(join(self.src_dir, "utility")):
             return path_dirs
-        path_dirs.append(join(self.build_dir if use_build_dir
-                              else self.src_dir, "utility"))
+        path_dirs.append(
+            join(self.build_dir if use_build_dir else self.src_dir, "utility"))
         return path_dirs
 
 
 class MbedLibBuilder(LibBuilderBase):
 
-    def __init__(self, env, path):
-        self.module_json = {}
-        if isfile(join(path, "module.json")):
-            self.module_json = util.load_json(join(path, "module.json"))
-
-        LibBuilderBase.__init__(self, env, path)
+    def load_manifest(self):
+        if not isfile(join(self.path, "module.json")):
+            return {}
+        return util.load_json(join(self.path, "module.json"))
 
     @property
     def src_dir(self):
         if isdir(join(self.path, "source")):
             return join(self.path, "source")
-        return LibBuilderBase.src_dir.fget(self)  # pylint: disable=no-member
+        return LibBuilderBase.src_dir.fget(self)
 
     def get_path_dirs(self, use_build_dir=False):
         path_dirs = LibBuilderBase.get_path_dirs(self, use_build_dir)
-        for p in self.module_json.get("extraIncludes", []):
+        for p in self._manifest.get("extraIncludes", []):
             if p.startswith("source/"):
                 p = p[7:]
             path_dirs.append(
@@ -157,12 +186,11 @@ class MbedLibBuilder(LibBuilderBase):
 
 class PlatformIOLibBuilder(LibBuilderBase):
 
-    def __init__(self, env, path):
-        self.library_json = {}
-        if isfile(join(path, "library.json")):
-            self.library_json = util.load_json(join(path, "library.json"))
-
-        LibBuilderBase.__init__(self, env, path)
+    def load_manifest(self):
+        assert isfile(join(self.path, "library.json"))
+        manifest = util.load_json(join(self.path, "library.json"))
+        assert "name" in manifest
+        return manifest
 
 
 def find_deps(env, scanner, path_dirs, src_dir, src_filter):
@@ -195,11 +223,9 @@ def find_and_build_deps(env, lib_builders, scanner,
                 break
 
     libs = []
-    # add build dirs to global CPPPATH
+    # append PATH directories to global CPPPATH before build starts
     for lb in target_lbs:
-        env.Append(
-            CPPPATH=lb.get_path_dirs(use_build_dir=True)
-        )
+        lb.append_to_cpppath()
     # start builder
     for lb in target_lbs:
         libs.append(lb.build())
@@ -212,24 +238,45 @@ def find_and_build_deps(env, lib_builders, scanner,
     return libs
 
 
-def BuildDependentLibraries(env, src_dir):
-    lib_builders = []
+def GetLibBuilders(env):
+    items = []
     libs_dirs = [env.subst(d) for d in env.get("LIBSOURCE_DIRS", [])
                  if isdir(env.subst(d))]
     for libs_dir in libs_dirs:
-        if not isdir(libs_dir):
-            continue
         for item in sorted(os.listdir(libs_dir)):
-            if isdir(join(libs_dir, item)):
-                lib_builders.append(
-                    LibBuilderFactory.new(env, join(libs_dir, item)))
+            if item == "__cores__" or not isdir(join(libs_dir, item)):
+                continue
+            lb = LibBuilderFactory.new(env, join(libs_dir, item))
+            if lb.name in env.get("LIB_IGNORE", []):
+                continue
+            items.append(lb)
+    return items
+
+
+def BuildDependentLibraries(env, src_dir):
+    libs = []
+    scanner = SCons.Scanner.C.CScanner()
+    lib_builders = env.GetLibBuilders()
 
     print "Looking for dependencies..."
     print "Collecting %d libraries" % len(lib_builders)
 
-    return find_and_build_deps(
-        env, lib_builders, SCons.Scanner.C.CScanner(),
-        src_dir, env.get("SRC_FILTER"))
+    built_lib_names = []
+    for lib_name in env.get("LIB_FORCE", []):
+        for lb in lib_builders:
+            if lb.name != lib_name or lb.name in built_lib_names:
+                continue
+            built_lib_names.append(lb.name)
+            libs.extend(find_and_build_deps(
+                env, lib_builders, scanner, lb.src_dir, lb.src_filter))
+            if not lb.is_built:
+                libs.append(lb.build())
+
+    # process project source code
+    libs.extend(find_and_build_deps(
+        env, lib_builders, scanner, src_dir, env.get("SRC_FILTER")))
+
+    return libs
 
 
 def exists(_):
@@ -237,5 +284,6 @@ def exists(_):
 
 
 def generate(env):
+    env.AddMethod(GetLibBuilders)
     env.AddMethod(BuildDependentLibraries)
     return env

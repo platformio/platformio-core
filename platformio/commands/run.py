@@ -100,9 +100,8 @@ class EnvironmentProcessor(object):
     RENAMED_OPTIONS = {
         "INSTALL_LIBS": "LIB_INSTALL",
         "IGNORE_LIBS": "LIB_IGNORE",
-        "USE_LIBS": "LIB_USE",
-        "LIB_DFCYCLIC": "LIB_DEEP_SEARCH",
-        "SRCBUILD_FLAGS": "SRC_BUILD_FLAGS"
+        "LIB_USE": "LIB_FORCE",
+        "LIB_DFCYCLIC": "LIB_DEEP_SEARCH"
     }
 
     def __init__(self, cmd_ctx, name, options,  # pylint: disable=R0913

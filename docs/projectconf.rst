@@ -595,18 +595,19 @@ Example:
     [env:depends_on_some_libs]
     lib_install = 1,13,19
 
-``lib_use``
-^^^^^^^^^^^
+``lib_force``
+^^^^^^^^^^^^^
 
-Specify libraries which should be used by ``Library Dependency Finder (LDF)`` with
-the highest priority.
+Force Library Build System to build specified libraries if even they are not
+included in the project source code. Also, these libraries will be processed
+in the first order.
 
 Example:
 
 .. code-block:: ini
 
-    [env:libs_with_highest_priority]
-    lib_use = OneWire_ID1,SPI
+    [env:myenv]
+    lib_force = OneWire, SPI
 
 ``lib_ignore``
 ^^^^^^^^^^^^^^
@@ -618,7 +619,7 @@ Example:
 .. code-block:: ini
 
     [env:ignore_some_libs]
-    lib_ignore = SPI,EngduinoV3_ID123
+    lib_ignore = SPI, Ethernet
 
 ``lib_deep_search``
 ^^^^^^^^^^^^^^^^^^^

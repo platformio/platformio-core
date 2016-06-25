@@ -145,7 +145,7 @@ def DumpIDEData(env):
 
     def get_includes(env_):
         includes = []
-        # includes from used framework and libs
+        # includes from used frameworks and libs
         for item in env_.get("VARIANT_DIRS", []):
             if "$BUILDSRC_DIR" in item[0]:
                 continue
@@ -158,9 +158,8 @@ def DumpIDEData(env):
             includes.append(env_.subst(item))
 
         # installed libs
-        for d in env_.get("LIBSOURCE_DIRS", []):
-            lsd_dir = env_.subst(d)
-            _append_lib_includes(env_, lsd_dir, includes)
+        for lb in env.GetLibBuilders():
+            includes.extend(lb.get_path_dirs())
 
         # includes from toolchains
         p = env.DevPlatform()
@@ -176,30 +175,6 @@ def DumpIDEData(env):
                 includes.extend(glob(g))
 
         return includes
-
-    def _append_lib_includes(env_, libs_dir, includes):
-        if not isdir(libs_dir):
-            return
-        for name in env_.get("LIB_USE", []) + sorted(listdir(libs_dir)):
-            if not isdir(join(libs_dir, name)):
-                continue
-            # ignore user's specified libs
-            if name in env_.get("LIB_IGNORE", []):
-                continue
-            if name == "__cores__":
-                board_core = env_.BoardConfig().get("build.core")
-                if isdir(join(libs_dir, name, board_core)):
-                    _append_lib_includes(
-                        env_, join(libs_dir, name, board_core), includes)
-                return
-
-            include = (
-                join(libs_dir, name, "src")
-                if isdir(join(libs_dir, name, "src"))
-                else join(libs_dir, name)
-            )
-            if include not in includes:
-                includes.append(include)
 
     def get_defines(env_):
         defines = []

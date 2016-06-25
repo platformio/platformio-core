@@ -43,7 +43,7 @@ commonvars.AddVariables(
     ("SRC_FILTER",),
     ("LIB_DEEP_SEARCH",),
     ("LIB_IGNORE",),
-    ("LIB_USE",),
+    ("LIB_FORCE",),
 
     # board options
     ("BOARD",),
@@ -104,7 +104,7 @@ for k in commonvars.keys():
 env.LoadDevPlatform(commonvars)
 
 # Parse library names
-for opt in ("LIB_IGNORE", "LIB_USE"):
+for opt in ("LIB_IGNORE", "LIB_FORCE"):
     if opt not in env:
         continue
     env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
