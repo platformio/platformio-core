@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.10.4 (2016-06-??)
+2.11.0 (2016-06-28)
 ~~~~~~~~~~~~~~~~~~~
 
 * New ESP8266-based boards: Generic ESP8285 Module, Phoenix 1.0 & 2.0, WifInfo
