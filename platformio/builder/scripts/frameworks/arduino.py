@@ -60,8 +60,11 @@ elif env.get("PLATFORM") == "espressif":
             join("$PLATFORMFW_DIR", "tools", "sdk", "lwip", "include")
         ],
         LIBPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "lib")],
-        LIBS=["mesh", "wpa2", "smartconfig", "pp", "main", "wpa", "lwip",
-              "net80211", "wps", "crypto", "phy", "hal", "axtls", "gcc", "m"]
+        LIBS=[
+            "mesh", "wpa2", "smartconfig", "pp", "main", "wpa", "lwip",
+            "net80211", "wps", "crypto", "phy", "hal", "axtls", "gcc",
+            "m", "stdc++"
+        ]
     )
     env.VariantDirWrap(
         join("$BUILD_DIR", "generic"),
