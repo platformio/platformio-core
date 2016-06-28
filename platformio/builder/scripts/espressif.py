@@ -82,8 +82,7 @@ env.Replace(
         "-falign-functions=4",
         "-U__STRICT_ANSI__",
         "-ffunction-sections",
-        "-fdata-sections",
-        "-MMD"  # output dependancy info
+        "-fdata-sections"
     ],
 
     CXXFLAGS=[

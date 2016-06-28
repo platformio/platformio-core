@@ -1211,7 +1211,7 @@ OpenEnergyMonitor
       - RAM
 
     * - ``emonpi``
-      - `emonPi <https://github.com/openenergymonitor/emonpi>`_
+      - `OpenEnergyMonitor emonPi <https://github.com/openenergymonitor/emonpi>`_
       - ATMEGA328P
       - 16 MHz
       - 32 Kb

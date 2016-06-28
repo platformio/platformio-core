@@ -358,7 +358,7 @@
     "d1": {
         "build": {
             "core": "esp8266",
-            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_NODEMCU",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DESP8266_WEMOS_D1MINI",
             "f_cpu": "80000000L",
             "f_flash": "40000000L",
             "flash_mode": "dio",
@@ -383,7 +383,7 @@
     "d1_mini": {
         "build": {
             "core": "esp8266",
-            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DARDUINO_ESP8266_NODEMCU",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DESP8266_WEMOS_D1MINI",
             "f_cpu": "80000000L",
             "f_flash": "40000000L",
             "flash_mode": "dio",
@@ -472,6 +472,106 @@
         "upload": {
             "maximum_ram_size": 51200,
             "maximum_size": 4194304,
+            "resetmethod": "nodemcu",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family",
+        "vendor": "Espressif"
+    },
+
+    "esp8285": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DESP8266_ESP01",
+            "f_cpu": "80000000L",
+            "f_flash": "40000000L",
+            "flash_mode": "dout",
+            "ldscript": "esp8266.flash.1m256.ld",
+            "mcu": "esp8266",
+            "variant": "generic"
+        },
+        "frameworks": ["arduino"],
+        "name": "Generic ESP8285 Module",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 434160,
+            "resetmethod": "ck",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family",
+        "vendor": "Espressif"
+    },
+
+    "phoenix_v1": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DESP8266_PHOENIX_V1",
+            "f_cpu": "80000000L",
+            "f_flash": "40000000L",
+            "flash_mode": "dio",
+            "ldscript": "esp8266.flash.4m1m.ld",
+            "mcu": "esp8266",
+            "variant": "phoenix_v1"
+        },
+        "frameworks": ["arduino"],
+        "name": "Phoenix 1.0",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 1044464,
+            "resetmethod": "nodemcu",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family",
+        "vendor": "Espressif"
+    },
+
+    "phoenix_v2": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DESP8266_PHOENIX_V2",
+            "f_cpu": "80000000L",
+            "f_flash": "40000000L",
+            "flash_mode": "dio",
+            "ldscript": "esp8266.flash.4m1m.ld",
+            "mcu": "esp8266",
+            "variant": "phoenix_v2"
+        },
+        "frameworks": ["arduino"],
+        "name": "Phoenix 2.0",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 1044464,
+            "resetmethod": "ck",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family",
+        "vendor": "Espressif"
+    },
+
+    "wifinfo": {
+        "build": {
+            "core": "esp8266",
+            "extra_flags": "-DESP8266 -DARDUINO_ARCH_ESP8266 -DWIFINFO",
+            "f_cpu": "80000000L",
+            "f_flash": "40000000L",
+            "flash_mode": "qio",
+            "ldscript": "esp8266.flash.1m256.ld",
+            "mcu": "esp8266",
+            "variant": "wifinfo"
+        },
+        "frameworks": ["arduino"],
+        "name": "WifInfo",
+        "platform": "espressif",
+        "upload": {
+            "maximum_ram_size": 81920,
+            "maximum_size": 434160,
             "resetmethod": "nodemcu",
             "require_upload_port" : true,
             "speed": 115200

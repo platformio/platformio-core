@@ -4,6 +4,22 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.11.0 (2016-06-28)
+~~~~~~~~~~~~~~~~~~~
+
+* New ESP8266-based boards: Generic ESP8285 Module, Phoenix 1.0 & 2.0, WifInfo
+* Added support for Arduino M0 Pro board
+  (`issue #472 <https://github.com/platformio/platformio/issues/472>`_)
+* Added support for Arduino MKR1000 board
+  (`issue #620 <https://github.com/platformio/platformio/issues/620>`_)
+* Added support for Adafruit Feather M0, SparkFun SAMD21 and SparkFun SAMD21
+  Mini Breakout boards
+  (`issue #520 <https://github.com/platformio/platformio/issues/520>`_)
+* Updated Arduino ESP8266 core for Espressif platform to 2.3.0
+* Better removing unnecessary flags using ``build_unflags`` option
+  (`issue #698 <https://github.com/platformio/platformio/issues/698>`_)
+* Fixed issue with ``platformio init --ide`` command for Python 2.6
+
 2.10.3 (2016-06-15)
 ~~~~~~~~~~~~~~~~~~~
 

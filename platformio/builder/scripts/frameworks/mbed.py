@@ -163,7 +163,7 @@ def add_mbedlib(libname, libar):
             continue
 
         if "TARGET_" in root:
-            if all([p not in root.upper() for p in target_includes]):
+            if all([p not in root for p in target_includes]):
                 continue
 
         var_dir = join("$BUILD_DIR", "FrameworkMbed%sInc%d" %
@@ -264,13 +264,12 @@ env.Replace(
 )
 
 # restore external build flags
-env.ProcessFlags([
-    env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags")
-])
+env.ProcessFlags(
+    env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags"))
 # remove base flags
 env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 # apply user flags
-env.ProcessFlags([env.get("BUILD_FLAGS")])
+env.ProcessFlags(env.get("BUILD_FLAGS"))
 
 # Hook for K64F and K22F
 if board_type in ("frdm_k22f", "frdm_k64f"):
