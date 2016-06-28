@@ -885,7 +885,7 @@
             "disable_flushing": true,
             "maximum_ram_size": 32768,
             "maximum_size": 262144,
-            "protocol": "sam-ba",
+            "protocol": "openocd",
             "require_upload_port" : false,
             "use_1200bps_touch": false,
             "wait_for_upload_port": false
@@ -954,6 +954,37 @@
             "wait_for_upload_port": true
         },
         "url": "https://www.arduino.cc/en/Main/ArduinoMKR1000",
+        "vendor": "Arduino"
+    },
+    "mzeropro": {
+        "build": {
+            "core": "arduino_zero",
+            "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "usb_product": "Arduino M0 Pro",
+            "variant": "arduino_zero",
+            "ldscript": "samd21g18a_bootloader_org.ld",
+            "hwids": [
+              ["0x03EB", "0x2111"],
+              ["0x2A03", "0x804F"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino M0 Pro (Programming Port)",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "openocd",
+            "require_upload_port" : false,
+            "use_1200bps_touch": false,
+            "wait_for_upload_port": false,
+            "section_start": "0x4000"
+        },
+        "url": "http://www.arduino.org/products/boards/arduino-m0-pro",
         "vendor": "Arduino"
     }
 }
