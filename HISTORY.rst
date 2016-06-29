@@ -4,6 +4,11 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.11.1 (2016-??-??)
+~~~~~~~~~~~~~~~~~~~
+
+* Auto-remove project cache when PlatformIO is upgraded
+
 2.11.0 (2016-06-28)
 ~~~~~~~~~~~~~~~~~~~
 
