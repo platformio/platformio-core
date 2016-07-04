@@ -132,22 +132,11 @@ class ProjectGenerator(object):
         return bottle.template(content, **self._tplvars)
 
     def _gather_tplvars(self):
-        src_files = self.get_src_files()
-
-        if (not any([f.endswith((".c", ".cpp")) for f in src_files]) and
-                self.ide == "clion"):
-            click.secho(
-                "Warning! Can not find main source file (*.c, *.cpp). So, "
-                "code auto-completion is disabled. Please add source files "
-                "to `src` directory and re-initialize project or edit "
-                "`CMakeLists.txt` file manually (`add_executable` command).",
-                fg="yellow")
-
         self._tplvars.update(self.get_project_env())
         self._tplvars.update(self.get_project_build_data())
         self._tplvars.update({
             "project_name": self.get_project_name(),
-            "src_files": src_files,
+            "src_files": self.get_src_files(),
             "user_home_dir": abspath(expanduser("~")),
             "project_dir": self.project_dir,
             "systype": util.get_systype(),

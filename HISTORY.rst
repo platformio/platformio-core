@@ -7,6 +7,7 @@ PlatformIO 2.0
 2.11.1 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Improved project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
 * Auto-remove project cache when PlatformIO is upgraded
 * Fixed missed ``--boot`` flag for the firmware uploader for ATSAM3X8E
   Cortex-M3 MCU based boards (Arduino Due, etc)

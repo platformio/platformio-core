@@ -43,10 +43,11 @@ command and generate project via :option:`platformio init --ide` command:
 
 Then:
 
-1. Import this project via ``Menu: File > Import Project``
+1. Place source files (``*.c, *.cpp, *.h, *.ino, etc.``) to ``src`` directory
+2. Import this project via ``Menu: File > Import Project``
    and specify root directory where is located :ref:`projectconf`
-2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
-3. Build project (*DO NOT RUN*): ``Menu: Run > Build``.
+3. Open source file from ``src`` directory
+4. Build project (*DO NOT RUN*): ``Menu: Run > Build``.
 
 There are 6 predefined targets for building (*NOT FOR RUNNING*, see marks on
 the screenshot below):
@@ -62,22 +63,6 @@ the screenshot below):
     The libraries which are added, installed or used in the project
     after generating process wont be reflected in IDE. To fix it you
     need to reinitialize project using :ref:`cmd_init` (repeat it).
-
-.. warning::
-    PlatformIO generates empty project by default and **code auto-completion
-    will not work!** To enable auto-completion please choose one of:
-
-    * Add source files ``*.c, *.cpp, etc`` to ``src`` directory and re-initialize
-      project with command above
-    * Manually correct ``add_executable`` command in ``CMakeLists.txt`` file
-      (will be created in project directory after initialization).
-
-    ``*.ino`` file isn't acceptable for ``add_executable`` command. You should
-    convert it manually to ``*.cpp``. See `project example <https://github.com/platformio/platformio-examples/tree/develop/ide/clion>`_.
-
-    More info `CLion issue #CPP-3977 <https://youtrack.jetbrains.com/issue/CPP-3977>`_.
-    Active discussion is located in
-    `PlatformIO issue #132 <https://github.com/platformio/platformio/issues/132>`_.
 
 Articles / Manuals
 ------------------
