@@ -103,10 +103,6 @@ if "sam3x8e" in BOARD_OPTIONS.get("build", {}).get("mcu", ""):
         LINKFLAGS=[
             "-Wl,--entry=Reset_Handler",
             "-Wl,--start-group"
-        ],
-
-        UPLOADERFLAGS=[
-            "--boot",
         ]
 
     )
@@ -173,6 +169,9 @@ elif upload_protocol == "sam-ba":
 
         UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
     )
+
+    if "sam3x8e" in BOARD_OPTIONS.get("build", {}).get("mcu", ""):
+        env.Append(UPLOADERFLAGS=["--boot"])
 
 #
 # Target: Build executable and linkable firmware
