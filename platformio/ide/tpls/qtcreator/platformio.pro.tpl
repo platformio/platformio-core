@@ -20,7 +20,6 @@ DEFINES += "{{define}}"
 OTHER_FILES += \
     platformio.ini
 
-SOURCES += \
-	% for file in src_files:
-    {{file}}
-    % end
+% for file in src_files:
+SOURCES += {{file}}
+% end
