@@ -11,6 +11,9 @@ PlatformIO 2.0
 * Fixed missed ``--boot`` flag for the firmware uploader for ATSAM3X8E
   Cortex-M3 MCU based boards (Arduino Due, etc)
   (`issue #710 <https://github.com/platformio/platformio/issues/710>`_)
+* Fixed missing trailing ``\`` for the source files list when generate project
+  for Qt Creator IDE
+  (`issue #711 <https://github.com/platformio/platformio/issues/711>`_)
 
 2.11.0 (2016-06-28)
 ~~~~~~~~~~~~~~~~~~~
