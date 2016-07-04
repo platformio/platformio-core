@@ -18,7 +18,7 @@
 
 from os.path import basename, join
 
-from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment, SConscript)
 
 from platformio.util import get_serialports
@@ -173,6 +173,38 @@ elif upload_protocol == "sam-ba":
     if "sam3x8e" in BOARD_OPTIONS.get("build", {}).get("mcu", ""):
         env.Append(UPLOADERFLAGS=["--boot"])
 
+elif upload_protocol == "stk500v2":
+    env.Append(
+        BUILDERS=dict(
+            ElfToHex=Builder(
+                action=" ".join([
+                    "$OBJCOPY",
+                    "-O",
+                    "ihex",
+                    "-R",
+                    ".eeprom",
+                    "$SOURCES",
+                    "$TARGET"]),
+                suffix=".hex"
+            )
+        )
+    )
+
+    env.Replace(
+        UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
+        UPLOADERFLAGS=[
+            "-C", '"%s"' % join("$PIOPACKAGES_DIR",
+                                "tool-avrdude", "avrdude.conf"),
+            "-v",
+            "-p", "atmega2560",  # Arduino M0/Tian upload hook
+            "-c", "$UPLOAD_PROTOCOL",
+            "-P", '"$UPLOAD_PORT"',
+            "-b", "$UPLOAD_SPEED"
+        ],
+
+        UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS -U flash:w:$SOURCES:i'
+    )
+
 #
 # Target: Build executable and linkable firmware
 #
@@ -185,6 +217,8 @@ target_elf = env.BuildProgram()
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
     target_firm = join("$BUILD_DIR", "firmware.bin")
+elif upload_protocol == "stk500v2":
+    target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 else:
     target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
 

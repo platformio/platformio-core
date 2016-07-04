@@ -986,5 +986,71 @@
         },
         "url": "http://www.arduino.org/products/boards/arduino-m0-pro",
         "vendor": "Arduino"
+    },
+    "mzeroUSB": {
+        "build": {
+            "core": "arduino_zero",
+            "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "usb_product": "Arduino M0/Pro",
+            "variant": "arduino_zero",
+            "ldscript": "samd21g18a_bootloader_org.ld",
+            "hwids": [
+              ["0x2A03", "0x004D"],
+              ["0x2A03", "0x804D"],
+              ["0x2A03", "0x004F"],
+              ["0x2A03", "0x804F"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino M0 Pro (Native USB Port)",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "stk500v2",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true,
+            "section_start": "0x4000"
+        },
+        "url": "http://www.arduino.org/products/boards/arduino-m0-pro",
+        "vendor": "Arduino"
+    },
+    "tian": {
+        "build": {
+            "core": "arduino_zero",
+            "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "usb_product": "Arduino Tian",
+            "variant": "arduino_zero",
+            "ldscript": "samd21g18a_bootloader_org.ld",
+            "hwids": [
+              ["0x10C4", "0xEA70"],
+              ["0x2A03", "0x8052"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino Tian",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "stk500v2",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true,
+            "section_start": "0x4000"
+        },
+        "url": "http://www.arduino.org/products/boards/arduino-tian",
+        "vendor": "Arduino"
     }
 }
