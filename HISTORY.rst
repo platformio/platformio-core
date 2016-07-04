@@ -13,8 +13,11 @@ PlatformIO 2.0
   Cortex-M3 MCU based boards (Arduino Due, etc)
   (`issue #710 <https://github.com/platformio/platformio/issues/710>`_)
 * Fixed missing trailing ``\`` for the source files list when generate project
-  for Qt Creator IDE
+  for `Qt Creator IDE <http://docs.platformio.org/en/latest/ide/qtcreator.html>`__
   (`issue #711 <https://github.com/platformio/platformio/issues/711>`_)
+* Split source files to ``HEADERS`` and ``SOURCES`` when generate project
+  for `Qt Creator IDE <http://docs.platformio.org/en/latest/ide/qtcreator.html>`__
+  (`issue #713 <https://github.com/platformio/platformio/issues/713>`_)
 
 2.11.0 (2016-06-28)
 ~~~~~~~~~~~~~~~~~~~

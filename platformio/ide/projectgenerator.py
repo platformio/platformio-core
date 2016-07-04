@@ -20,7 +20,6 @@ from os.path import (abspath, basename, expanduser, isdir, join, normpath,
                      relpath)
 
 import bottle
-import click  # pylint: disable=wrong-import-order
 
 from platformio import app, exception, util
 
