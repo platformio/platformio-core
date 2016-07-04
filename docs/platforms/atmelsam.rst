@@ -28,11 +28,17 @@ Packages
     * - Name
       - Contents
 
+    * - ``framework-mbed``
+      - `mbed Framework <http://mbed.org>`_
+
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
     * - ``framework-arduinosam``
       - `Arduino Wiring-based Framework (SAM Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
+
+    * - ``ldscripts``
+      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
 
     * - ``framework-simba``
       - `Simba Framework <https://github.com/eerimoq/simba>`_
@@ -40,11 +46,8 @@ Packages
     * - ``tool-openocd``
       - `OpenOCD <http://openocd.org>`_
 
-    * - ``framework-mbed``
-      - `mbed Framework <http://mbed.org>`_
-
-    * - ``ldscripts``
-      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
+    * - ``tool-avrdude``
+      - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
 
     * - ``tool-bossac``
       - `BOSSA CLI <https://sourceforge.net/projects/b-o-s-s-a/>`_
@@ -85,6 +88,26 @@ Boards
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
+Adafruit
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``adafruit_feather_m0_usb``
+      - `Adafruit Feather M0 <https://www.adafruit.com/product/2772>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
 Arduino
 ~~~~~~~
 
@@ -110,6 +133,34 @@ Arduino
       - SAM3X8E
       - 84 MHz
       - 512 Kb
+      - 32 Kb
+
+    * - ``mkr1000USB``
+      - `Arduino MKR1000 <https://www.arduino.cc/en/Main/ArduinoMKR1000>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``mzeroUSB``
+      - `Arduino M0 Pro (Native USB Port) <http://www.arduino.org/products/boards/arduino-m0-pro>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``mzeropro``
+      - `Arduino M0 Pro (Programming Port) <http://www.arduino.org/products/boards/arduino-m0-pro>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``tian``
+      - `Arduino Tian <http://www.arduino.org/products/boards/arduino-tian>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
       - 32 Kb
 
     * - ``zero``
@@ -205,4 +256,31 @@ SainSmart
       - AT91SAM3X8E
       - 84 MHz
       - 512 Kb
+      - 32 Kb
+
+SparkFun
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``sparkfun_samd21_dev_usb``
+      - `SparkFun SAMD21 Dev Breakout <https://www.sparkfun.com/products/13672>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``sparkfun_samd21_mini_usb``
+      - `SparkFun SAMD21 Mini Breakout <https://www.sparkfun.com/products/13664>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
       - 32 Kb

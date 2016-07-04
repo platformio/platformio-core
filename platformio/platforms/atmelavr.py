@@ -36,11 +36,9 @@ class AtmelavrPlatform(BasePlatform):
         },
 
         "tool-avrdude": {
-            "alias": "uploader"
         },
 
         "tool-micronucleus": {
-            "alias": "uploader"
         },
 
         "framework-arduinoavr": {
@@ -58,10 +56,10 @@ class AtmelavrPlatform(BasePlatform):
     def configure_default_packages(self, envoptions, targets):
         if envoptions.get("board"):
             board = get_boards(envoptions.get("board"))
-            disable_tool = "tool-micronucleus"
             if "digispark" in board['build']['core']:
-                disable_tool = "tool-avrdude"
-            del self.PACKAGES[disable_tool]['alias']
+                self.PACKAGES['tool-micronucleus']['alias'] = "uploader"
+            else:
+                self.PACKAGES['tool-avrdude']['alias'] = "uploader"
 
         return BasePlatform.configure_default_packages(
             self, envoptions, targets)
