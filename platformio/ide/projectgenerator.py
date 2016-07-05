@@ -132,7 +132,8 @@ class ProjectGenerator(object):
             content = f.read()
         return bottle.template(content, **self._tplvars)
 
-    def _merge_contents(self, dst_path, contents):
+    @staticmethod
+    def _merge_contents(dst_path, contents):
         file_name = basename(dst_path)
 
         # merge .gitignore
