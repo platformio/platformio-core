@@ -11,6 +11,7 @@ PlatformIO 2.0
   (from EEMEM directive)
 * Improved project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
 * Auto-remove project cache when PlatformIO is upgraded
+* Keep user changes for ``.gitignore`` file when re-generate/update project data
 * Fixed missed ``--boot`` flag for the firmware uploader for ATSAM3X8E
   Cortex-M3 MCU based boards (Arduino Due, etc)
   (`issue #710 <https://github.com/platformio/platformio/issues/710>`_)
