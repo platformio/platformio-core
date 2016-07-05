@@ -115,7 +115,10 @@ elif env.get("PLATFORM") == "microchippic32":
                 "$PLATFORMFW_DIR", "variants",
                 "${BOARD_OPTIONS['build']['variant']}"
             )
-        ]
+        ],
+
+        CPPDEFINES=["ARDUINO_ARCH_PIC32"]
+
     )
 
 elif "intel" in env.get("PLATFORM"):

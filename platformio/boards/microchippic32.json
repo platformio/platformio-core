@@ -236,7 +236,7 @@
             "f_cpu": "80000000L",
             "ldscript": "chipKIT-application-32MX440F512.ld",
             "mcu": "32MX440F512H",
-            "variant": "Default_64"
+            "variant": "PONTECH_UAV100"
         },
         "frameworks": ["arduino"],
         "name": "PONTECH UAV100",
@@ -510,7 +510,7 @@
             "core": "pic32",
             "extra_flags": "-D_BOARD_OPENSCOPE_",
             "f_cpu": "200000000L",
-            "ldscript": "MZ-application-32MZ2048ECX.ld",
+            "ldscript": "OpenScope.ld",
             "mcu": "32MZ2048EFG124",
             "variant": "OpenScope"
         },
@@ -549,5 +549,28 @@
         },
         "url": "http://shop.openbci.com/",
         "vendor": "OpenBCI"
+    },
+
+    "lenny": {
+        "build": {
+            "core": "pic32",
+            "extra_flags": "-D_BOARD_LENNY_ -D_USE_USB_FOR_SERIAL_",
+            "f_cpu": "40000000L",
+            "ldscript": "chipKIT-application-32MX270F256.ld",
+            "mcu": "32MX270F256D",
+            "variant": "Lenny"
+        },
+        "frameworks": ["arduino"],
+        "name": "chipKIT Lenny",
+        "platform": "microchippic32",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 122880,
+            "protocol": "stk500v2",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "http://chipkit.net/tag/lenny/",
+        "vendor": "chipKIT"
     }
 }
