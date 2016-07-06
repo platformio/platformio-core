@@ -20,6 +20,9 @@ source code structure. The only one requirement is library's manifest file -
 :ref:`library_config`. It can be located inside your library or in the another
 location where |PIOAPICR| will have *HTTP* access.
 
+Updates to existing libraries are done every 24 hours. In case a more urgent
+update is required, you can post a request on PlatformIO `community <https://community.platformio.org/>`_.
+
 .. contents::
 
 Source Code Location
@@ -151,6 +154,12 @@ to :ref:`install <cmd_lib_install>` it.
 
 Examples
 --------
+
+Command:
+
+.. code-block:: bash
+
+    $ platformio lib register http://my.example.com/library.json
 
 * `GitHub + fixed release <http://platformio.org/lib/show/552/ACNoblex>`_
 * `Dependencies by author and framework <http://platformio.org/lib/show/3/PID-AutoTune>`_

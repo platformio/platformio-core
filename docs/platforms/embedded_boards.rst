@@ -78,6 +78,13 @@ Adafruit
       - Flash
       - RAM
 
+    * - ``adafruit_feather_m0_usb``
+      - `Adafruit Feather M0 <https://www.adafruit.com/product/2772>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
     * - ``bluefruitmicro``
       - `Adafruit Bluefruit Micro <https://www.adafruit.com/products/2661>`_
       - ATMEGA32U4
@@ -363,6 +370,34 @@ Arduino
       - 32 Kb
       - 2 Kb
 
+    * - ``mkr1000USB``
+      - `Arduino MKR1000 <https://www.arduino.cc/en/Main/ArduinoMKR1000>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``mzeroUSB``
+      - `Arduino M0 <http://www.arduino.org/products/boards/arduino-m0>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``mzeropro``
+      - `Arduino M0 Pro (Programming Port) <http://www.arduino.org/products/boards/arduino-m0-pro>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``mzeroproUSB``
+      - `Arduino M0 Pro (Native USB Port) <http://www.arduino.org/products/boards/arduino-m0-pro>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
     * - ``nanoatmega168``
       - `Arduino Nano ATmega168 <http://www.arduino.org/products/boards/4-arduino-boards/arduino-nano>`_
       - ATMEGA168
@@ -418,6 +453,13 @@ Arduino
       - 16 MHz
       - 32 Kb
       - 2.5 Kb
+
+    * - ``tian``
+      - `Arduino Tian <http://www.arduino.org/products/boards/arduino-tian>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
 
     * - ``uno``
       - `Arduino Uno <http://www.arduino.org/products/boards/4-arduino-boards/arduino-uno>`_
@@ -957,12 +999,40 @@ Espressif
       - 4096 Kb
       - 80 Kb
 
+    * - ``esp8285``
+      - `Generic ESP8285 Module <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 448 Kb
+      - 80 Kb
+
     * - ``esp_wroom_02``
       - `ESP-WROOM-02 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
       - ESP8266
       - 80 MHz
       - 4096 Kb
       - 50 Kb
+
+    * - ``phoenix_v1``
+      - `Phoenix 1.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``phoenix_v2``
+      - `Phoenix 2.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``wifinfo``
+      - `WifInfo <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 448 Kb
+      - 80 Kb
 
 Freescale
 ~~~~~~~~~
@@ -2322,6 +2392,20 @@ SparkFun
       - 32 Kb
       - 2 Kb
 
+    * - ``sparkfun_samd21_dev_usb``
+      - `SparkFun SAMD21 Dev Breakout <https://www.sparkfun.com/products/13672>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``sparkfun_samd21_mini_usb``
+      - `SparkFun SAMD21 Mini Breakout <https://www.sparkfun.com/products/13664>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
     * - ``thing``
       - `SparkFun ESP8266 Thing <https://www.sparkfun.com/products/13231>`_
       - ESP8266
@@ -2662,6 +2746,26 @@ Wicked Device
       - 16 MHz
       - 128 Kb
       - 16 Kb
+
+chipKIT
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``lenny``
+      - `chipKIT Lenny <http://chipkit.net/tag/lenny/>`_
+      - 32MX270F256D
+      - 40 MHz
+      - 128 Kb
+      - 32 Kb
 
 element14
 ~~~~~~~~~

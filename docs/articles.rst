@@ -23,6 +23,10 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
+* Jun 14, 2016 - **Glyn Hudson** - `OpenEnergyMonitor Part 2/3: Firmware Continuous Test & Build <https://blog.openenergymonitor.org/2016/06/auto-build-continuous-test-firmware/>`_
+* Jun 13, 2016 - **Daniel Eichhorn** - `New Weather Station Demo on Github <http://blog.squix.org/2016/06/new-weather-station-demo-on-github.html>`_
+* Jun 12, 2016 - **Glyn Hudson** - `OpenEnergyMonitor Part 1/3: PlatformIO open-source embedded development ecosystem <https://blog.openenergymonitor.org/2016/06/platformio/>`_
+* Jun 12, 2016 - **Uli Wolf** - `Nutzung von PlatformIO im Atom Editor zur Entwicklung von Arduino Code (Use PlatformIO and Atom Editor to develop Arduino code, German) <https://wolf-u.li/5668/nutzung-von-platform-io-im-atom-editor-zur-entwicklung-von-arduino-code/>`_
 * Jun 3, 2016 - **Daniel Eichhorn** - `ESP8266: Continuous Delivery Pipeline – Push To Production <http://blog.squix.org/2016/06/esp8266-continuous-delivery-pipeline-push-to-production.html>`_
 * May 30, 2016 - **Ron Moerman** - `IoT Development with PlatformIO <https://electronicsworkbench.io/blog/platformio>`_
 * May 29, 2016 - **Chris Synan** - `Reverse Engineer RF Remote Controller for IoT! <http://www.instructables.com/id/Reverse-Engineer-RF-Remote-Controller-for-IoT/?ALLSTEPS>`_

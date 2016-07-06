@@ -17,10 +17,12 @@ INCLUDEPATH += "{{include}}"
 DEFINES += "{{define}}"
 % end
 
-OTHER_FILES += \
-    platformio.ini
+OTHER_FILES += platformio.ini
 
-SOURCES += \
-	% for file in src_files:
-    {{file}}
-    % end
+% for file in src_files:
+% if file.endswith((".h", ".hpp")):
+HEADERS += {{file}}
+% else:
+SOURCES += {{file}}
+% end
+% end

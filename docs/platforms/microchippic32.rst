@@ -332,6 +332,26 @@ UBW32
       - 512 Kb
       - 128 Kb
 
+chipKIT
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``lenny``
+      - `chipKIT Lenny <http://chipkit.net/tag/lenny/>`_
+      - 32MX270F256D
+      - 40 MHz
+      - 128 Kb
+      - 32 Kb
+
 element14
 ~~~~~~~~~
 

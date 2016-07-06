@@ -43,18 +43,5 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-% if src_files and any([f.endswith((".c", ".cpp")) for f in src_files]):
-add_executable({{project_name}}
-% for f in src_files:
-% if f.endswith((".c", ".cpp")):
-    {{f.replace("\\", "/")}}
-% end
-% end
-)
-% else:
-#
-# To enable code auto-completion, please specify path
-# to main source file (*.c, *.cpp) and uncomment line below
-#
-# add_executable({{project_name}} src/main_change_me.cpp)
-% end
+aux_source_directory(src SRC_LIST)
+add_executable(${PROJECT_NAME} ${SRC_LIST})

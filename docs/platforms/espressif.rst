@@ -210,12 +210,40 @@ Espressif
       - 4096 Kb
       - 80 Kb
 
+    * - ``esp8285``
+      - `Generic ESP8285 Module <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 448 Kb
+      - 80 Kb
+
     * - ``esp_wroom_02``
       - `ESP-WROOM-02 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
       - ESP8266
       - 80 MHz
       - 4096 Kb
       - 50 Kb
+
+    * - ``phoenix_v1``
+      - `Phoenix 1.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``phoenix_v2``
+      - `Phoenix 2.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
+    * - ``wifinfo``
+      - `WifInfo <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
+      - ESP8266
+      - 80 MHz
+      - 448 Kb
+      - 80 Kb
 
 NodeMCU
 ~~~~~~~

@@ -16,11 +16,10 @@ import json
 import os
 import re
 import sys
-from os.path import (abspath, basename, expanduser, isdir, join, normpath,
-                     relpath)
+from os.path import (abspath, basename, expanduser, isdir, isfile, join,
+                     normpath, relpath)
 
 import bottle
-import click  # pylint: disable=wrong-import-order
 
 from platformio import app, exception, util
 
@@ -114,16 +113,18 @@ class ProjectGenerator(object):
         return tpls
 
     def generate(self):
-        for _relpath, _path in self.get_tpls():
-            tpl_dir = self.project_dir
-            if _relpath:
-                tpl_dir = join(self.project_dir, _relpath)
-                if not isdir(tpl_dir):
-                    os.makedirs(tpl_dir)
+        for tpl_relpath, tpl_path in self.get_tpls():
+            dst_dir = self.project_dir
+            if tpl_relpath:
+                dst_dir = join(self.project_dir, tpl_relpath)
+                if not isdir(dst_dir):
+                    os.makedirs(dst_dir)
 
-            file_name = basename(_path)[:-4]
-            with open(join(tpl_dir, file_name), "w") as f:
-                f.write(self._render_tpl(_path).encode("utf8"))
+            file_name = basename(tpl_path)[:-4]
+            self._merge_contents(
+                join(dst_dir, file_name),
+                self._render_tpl(tpl_path).encode("utf8")
+            )
 
     def _render_tpl(self, tpl_path):
         content = ""
@@ -131,23 +132,29 @@ class ProjectGenerator(object):
             content = f.read()
         return bottle.template(content, **self._tplvars)
 
+    @staticmethod
+    def _merge_contents(dst_path, contents):
+        file_name = basename(dst_path)
+
+        # merge .gitignore
+        if file_name == ".gitignore" and isfile(dst_path):
+            contents = [l.strip() for l in contents.split("\n") if l.strip()]
+            with open(dst_path) as f:
+                for line in f.readlines():
+                    line = line.strip()
+                    if line and line not in contents:
+                        contents.append(line)
+            contents = "\n".join(contents)
+
+        with open(dst_path, "w") as f:
+            f.write(contents)
+
     def _gather_tplvars(self):
-        src_files = self.get_src_files()
-
-        if (not any([f.endswith((".c", ".cpp")) for f in src_files]) and
-                self.ide == "clion"):
-            click.secho(
-                "Warning! Can not find main source file (*.c, *.cpp). So, "
-                "code auto-completion is disabled. Please add source files "
-                "to `src` directory and re-initialize project or edit "
-                "`CMakeLists.txt` file manually (`add_executable` command).",
-                fg="yellow")
-
         self._tplvars.update(self.get_project_env())
         self._tplvars.update(self.get_project_build_data())
         self._tplvars.update({
             "project_name": self.get_project_name(),
-            "src_files": src_files,
+            "src_files": self.get_src_files(),
             "user_home_dir": abspath(expanduser("~")),
             "project_dir": self.project_dir,
             "systype": util.get_systype(),

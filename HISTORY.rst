@@ -25,9 +25,38 @@ PlatformIO 3.0
 PlatformIO 2.0
 --------------
 
-2.10.4 (2016-06-??)
+2.11.1 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Added support for Microchip chipKIT Lenny board
+* Updated Microchip PIC32 Arduino framework to v1.2.1
+* Documented `uploading of EEPROM data <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-eeprom-data>`__
+  (from EEMEM directive)
+* Improved project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
+* Auto-remove project cache when PlatformIO is upgraded
+* Keep user changes for ``.gitignore`` file when re-generate/update project data
+* Fixed missed ``--boot`` flag for the firmware uploader for ATSAM3X8E
+  Cortex-M3 MCU based boards (Arduino Due, etc)
+  (`issue #710 <https://github.com/platformio/platformio/issues/710>`_)
+* Fixed missing trailing ``\`` for the source files list when generate project
+  for `Qt Creator IDE <http://docs.platformio.org/en/latest/ide/qtcreator.html>`__
+  (`issue #711 <https://github.com/platformio/platformio/issues/711>`_)
+* Split source files to ``HEADERS`` and ``SOURCES`` when generate project
+  for `Qt Creator IDE <http://docs.platformio.org/en/latest/ide/qtcreator.html>`__
+  (`issue #713 <https://github.com/platformio/platformio/issues/713>`_)
+
+2.11.0 (2016-06-28)
+~~~~~~~~~~~~~~~~~~~
+
+* New ESP8266-based boards: Generic ESP8285 Module, Phoenix 1.0 & 2.0, WifInfo
+* Added support for Arduino M0 Pro board
+  (`issue #472 <https://github.com/platformio/platformio/issues/472>`_)
+* Added support for Arduino MKR1000 board
+  (`issue #620 <https://github.com/platformio/platformio/issues/620>`_)
+* Added support for Adafruit Feather M0, SparkFun SAMD21 and SparkFun SAMD21
+  Mini Breakout boards
+  (`issue #520 <https://github.com/platformio/platformio/issues/520>`_)
+* Updated Arduino ESP8266 core for Espressif platform to 2.3.0
 * Better removing unnecessary flags using ``build_unflags`` option
   (`issue #698 <https://github.com/platformio/platformio/issues/698>`_)
 * Fixed issue with ``platformio init --ide`` command for Python 2.6
