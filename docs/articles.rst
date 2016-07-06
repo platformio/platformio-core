@@ -23,6 +23,9 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
+* Jul 5, 2016 - **Ivan Kravets, Ph.D.** - `Explore the new development instruments for Arduino with PlatformIO ecosystem <http://www.slideshare.net/ivankravets/explore-the-new-development-instruments-for-arduino-with-platformio-ecosystem>`_
+* Jul 5, 2016 - **Belinda** - `Monte Bianco Arduino Developer Summit <http://www.arduino.org/blog/arduino-developer-summit>`_
+* Jul 1, 2016 - **Tam Hanna** - `Mikrocontroller-Gipfel in den Alpen: Arduino Developer Summit, Tag eins (Microcontroller peaks in the Alps: Arduino Developer Summit, Day One, German) <http://www.heise.de/make/meldung/Mikrocontroller-Gipfel-in-den-Alpen-Arduino-Developer-Summit-Tag-eins-3252421.html>`_
 * Jun 14, 2016 - **Glyn Hudson** - `OpenEnergyMonitor Part 2/3: Firmware Continuous Test & Build <https://blog.openenergymonitor.org/2016/06/auto-build-continuous-test-firmware/>`_
 * Jun 13, 2016 - **Daniel Eichhorn** - `New Weather Station Demo on Github <http://blog.squix.org/2016/06/new-weather-station-demo-on-github.html>`_
 * Jun 12, 2016 - **Glyn Hudson** - `OpenEnergyMonitor Part 1/3: PlatformIO open-source embedded development ecosystem <https://blog.openenergymonitor.org/2016/06/platformio/>`_
