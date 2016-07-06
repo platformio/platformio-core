@@ -392,7 +392,7 @@ Arduino
       - 32 Kb
 
     * - ``mzeroUSB``
-      - `Arduino M0 Pro (Native USB Port) <http://www.arduino.org/products/boards/arduino-m0-pro>`_
+      - `Arduino M0 <http://www.arduino.org/products/boards/arduino-m0>`_
       - SAMD21G18A
       - 48 MHz
       - 256 Kb
@@ -400,6 +400,13 @@ Arduino
 
     * - ``mzeropro``
       - `Arduino M0 Pro (Programming Port) <http://www.arduino.org/products/boards/arduino-m0-pro>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``mzeroproUSB``
+      - `Arduino M0 Pro (Native USB Port) <http://www.arduino.org/products/boards/arduino-m0-pro>`_
       - SAMD21G18A
       - 48 MHz
       - 256 Kb
@@ -1856,6 +1863,26 @@ Wicked Device
       - 16 MHz
       - 128 Kb
       - 16 Kb
+
+chipKIT
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``lenny``
+      - `chipKIT Lenny <http://chipkit.net/tag/lenny/>`_
+      - 32MX270F256D
+      - 40 MHz
+      - 128 Kb
+      - 32 Kb
 
 element14
 ~~~~~~~~~
