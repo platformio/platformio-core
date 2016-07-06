@@ -461,6 +461,8 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
     def configure_default_packages(self, variables, targets):
         # enbale used frameworks
         for framework in variables.get("framework", "").split(","):
+            if not self.frameworks:
+                continue
             framework = framework.lower().strip()
             if not framework or framework not in self.frameworks:
                 continue

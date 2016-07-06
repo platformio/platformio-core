@@ -17,8 +17,8 @@ from __future__ import absolute_import
 import atexit
 import re
 from glob import glob
-from os import environ, listdir, remove
-from os.path import isdir, isfile, join
+from os import environ, remove
+from os.path import isfile, join
 
 from platformio import util
 
