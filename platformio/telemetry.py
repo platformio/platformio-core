@@ -326,7 +326,7 @@ def backup_reports(items):
 
     for params in items:
         # skip static options
-        for key in params.keys():
+        for key in params:
             if key in ("v", "tid", "cid", "cd1", "cd2", "sr", "an"):
                 del params[key]
 
