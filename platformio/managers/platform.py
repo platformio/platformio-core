@@ -200,7 +200,7 @@ class PlatformPackagesMixin(object):
         return True
 
     def update_packages(self):
-        for name in self.get_installed_packages().keys():
+        for name in self.get_installed_packages():
             self.pm.update(name, self.packages[name]['version'])
 
     def are_outdated_packages(self):

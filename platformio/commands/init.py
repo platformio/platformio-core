@@ -90,6 +90,10 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
 
     if ide:
         if not board:
+            board = get_first_board(project_dir)
+            if board:
+                board = [board]
+        if not board:
             raise exception.BoardNotDefined()
         if len(board) > 1:
             click.secho(
@@ -100,8 +104,7 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
                 "your list '%s'." % (board[0], ", ".join(board)),
                 fg="yellow"
             )
-        pg = ProjectGenerator(
-            project_dir, ide, board[0])
+        pg = ProjectGenerator(project_dir, ide, board[0])
         pg.generate()
 
     click.secho(
@@ -115,6 +118,17 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
         "`platformio run --help` - additional information",
         fg="green"
     )
+
+
+def get_first_board(project_dir):
+    with util.cd(project_dir):
+        config = util.get_project_config()
+        for section in config.sections():
+            if not section.startswith("env:"):
+                continue
+            elif config.has_option(section, "board"):
+                return config.get(section, "board")
+    return None
 
 
 def init_base_project(project_dir):

@@ -153,7 +153,7 @@ def lib_install(ctx, libid, version):
 def lib_install_dependency(ctx, data):
     assert isinstance(data, dict)
     query = []
-    for key in data.keys():
+    for key in data:
         if key in ("authors", "frameworks", "platforms", "keywords"):
             values = data[key]
             if not isinstance(values, list):

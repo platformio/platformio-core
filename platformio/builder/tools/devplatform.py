@@ -61,7 +61,7 @@ def LoadDevPlatform(env, variables):
     installed_packages = p.get_installed_packages()
 
     # Add toolchains and uploaders to $PATH
-    for name in installed_packages.keys():
+    for name in installed_packages:
         type_ = p.get_package_type(name)
         if type_ not in ("toolchain", "uploader"):
             continue
@@ -78,7 +78,7 @@ def LoadDevPlatform(env, variables):
         return
 
     board_config = env.BoardConfig()
-    for k in variables.keys():
+    for k in variables:
         if (k in env or
                 not any([k.startswith("BOARD_"), k.startswith("UPLOAD_")])):
             continue

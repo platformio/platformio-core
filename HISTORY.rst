@@ -32,6 +32,7 @@ PlatformIO 2.0
 * Updated Microchip PIC32 Arduino framework to v1.2.1
 * Documented `uploading of EEPROM data <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-eeprom-data>`__
   (from EEMEM directive)
+* Added ``Rebuild C/C++ Project Index`` target to CLion and Eclipse IDEs
 * Improved project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
 * Auto-remove project cache when PlatformIO is upgraded
 * Keep user changes for ``.gitignore`` file when re-generate/update project data

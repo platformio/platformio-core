@@ -53,16 +53,20 @@ There are 6 predefined targets for building (*NOT FOR RUNNING*, see marks on
 the screenshot below):
 
 * ``PLATFORMIO_BUILD`` - Build project without auto-uploading
-* ``PLATFORMIO_UPLOAD`` - Build and upload (if no errors).
-* ``PLATFORMIO_CLEAN`` - Clean compiled objects.
-* ``PLATFORMIO_PROGRAM`` - Build and upload using external programmer (if no errors), see :ref:`atmelavr_upload_via_programmer`.
-* ``PLATFORMIO_UPLOADFS`` - Upload files to file system SPIFFS, see :ref:`platform_espressif_uploadfs`.
-* ``PLATFORMIO_UPDATE`` - Update installed platforms and libraries via :ref:`cmd_update`.
+* ``PLATFORMIO_UPLOAD`` - Build and upload (if no errors)
+* ``PLATFORMIO_CLEAN`` - Clean compiled objects
+* ``PLATFORMIO_PROGRAM`` - Build and upload using external programmer
+  (if no errors), see :ref:`atmelavr_upload_via_programmer`
+* ``PLATFORMIO_UPLOADFS`` - Upload files to file system SPIFFS,
+  see :ref:`platform_espressif_uploadfs`
+* ``PLATFORMIO_UPDATE`` - Update installed platforms and libraries via :ref:`cmd_update`
+* ``PLATFORMIO_REBUILD_PROJECT_INDEX`` - Rebuild C/C++ Index for the Project.
+  Allows to fix code completion and code linting issues.
 
 .. warning::
     The libraries which are added, installed or used in the project
-    after generating process wont be reflected in IDE. To fix it you
-    need to reinitialize project using :ref:`cmd_init` (repeat it).
+    after generating process wont be reflected in IDE. To fix it please run
+    ``PLATFORMIO_REBUILD_PROJECT_INDEX`` target.
 
 Articles / Manuals
 ------------------

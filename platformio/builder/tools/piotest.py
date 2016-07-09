@@ -123,7 +123,7 @@ void output_complete(void)
                       "Please remove it manually." % file_)
 
     framework = env.subst("$FRAMEWORK").lower()
-    if framework not in FRAMEWORK_PARAMETERS.keys():
+    if framework not in FRAMEWORK_PARAMETERS:
         env.Exit(
             "Error: %s framework doesn't support testing feature!" % framework)
     else:
