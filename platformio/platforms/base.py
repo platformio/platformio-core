@@ -330,7 +330,7 @@ class BasePlatform(object):
 
     def get_installed_packages(self):
         pm = PackageManager()
-        return [n for n in self.get_packages().keys() if pm.is_installed(n)]
+        return [n for n in self.get_packages() if pm.is_installed(n)]
 
     def install(self, with_packages=None, without_packages=None,
                 skip_default_packages=False):
@@ -380,7 +380,7 @@ class BasePlatform(object):
             deppkgs = deppkgs.union(set(p.get_packages().keys()))
 
         pm = PackageManager()
-        for name in self.get_packages().keys():
+        for name in self.get_packages():
             if not pm.is_installed(name) or name in deppkgs:
                 continue
             pm.uninstall(name)
