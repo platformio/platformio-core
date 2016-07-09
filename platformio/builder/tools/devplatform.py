@@ -78,7 +78,7 @@ def LoadDevPlatform(env, variables):
         return
 
     board_config = env.BoardConfig()
-    for k in variables:
+    for k in variables.keys():
         if (k in env or
                 not any([k.startswith("BOARD_"), k.startswith("UPLOAD_")])):
             continue
