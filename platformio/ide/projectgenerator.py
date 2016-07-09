@@ -98,7 +98,6 @@ class ProjectGenerator(object):
         result = []
         with util.cd(self.project_dir):
             for root, _, files in os.walk(self.project_src_dir):
-                print root, files
                 for f in files:
                     result.append(relpath(join(root, f)))
         return result
