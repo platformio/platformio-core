@@ -351,6 +351,10 @@ Example:
     [env:specific_ld_script]
     build_flags = -Wl,-T/path/to/ld_script.ld
 
+    [env:exec_command]
+    # get VCS revision "on-the-fly"
+    build_flags = !echo "-DPIO_SRC_REV="$(git rev-parse HEAD)
+
 
 For more detailed information about available flags/options go to:
 
