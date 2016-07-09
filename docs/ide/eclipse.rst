@@ -51,7 +51,7 @@ Then:
    ``Menu: File > Import... > General > Existing Projects into Workspace > Next``
    and specify root directory where is located :ref:`projectconf`
 2. Open source file from ``src`` directory (``*.c, *.cpp, *.ino, etc.``)
-3. Build project using ``Menu: Project > Build Project`` or preconfigured
+3. Build project using ``Menu: Project > Build Project`` or pre-configured
    Make Targets (see screenshot below):
 
    + ``PlatformIO: Build`` - Build project without auto-uploading
@@ -59,17 +59,24 @@ Then:
    + ``PlatformIO: Upload`` - Build and upload (if no errors)
    + ``PlatformIO: Upload using Programmer`` see :ref:`atmelavr_upload_via_programmer`
    + ``PlatformIO: Upload SPIFFS image`` see :ref:`platform_espressif_uploadfs`
-   + ``PlatformIO: Update platforms and libraries`` - Update installed platforms and libraries via :ref:`cmd_update`.
+   + ``PlatformIO: Update platforms and libraries`` - Update installed
+     platforms and libraries via :ref:`cmd_update`
+   + ``PlatformIO: Rebuild C/C++ Project Index`` - Rebuild C/C++ Index for the Project.
+     Allows to fix code completion and code linting issues.
 
 If you have some problems with unresolved includes, defines, etc., then
 
-* Restart Eclipse IDE
-* Rebuild index using ``Menu: Project > C/C++ Index > Rebuild``.
+1. Rebuild PlatformIO Project Index:
+   ``PlatformIO: Rebuild C/C++ Project Index`` target
+2. Rebuild Eclipse Project Index: ``Menu: Project > C/C++ Index > Rebuild``
+3. Refresh Project, right click on the project ``Project > Refresh`` (F5) or
+   restart Eclipse IDE.
 
 .. warning::
     The libraries which are added, installed or used in the project
-    after generating process wont be reflected in IDE. To fix it you
-    need to reinitialize project using :ref:`cmd_init` (repeat it).
+    after generating process wont be reflected in IDE. To fix it please run
+    ``PlatformIO: Rebuild C/C++ Project Index`` target and right click on the
+    project and ``Project > Refresh`` (F5).
 
 Live Integration
 ----------------

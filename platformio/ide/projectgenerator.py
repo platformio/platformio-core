@@ -32,6 +32,9 @@ class ProjectGenerator(object):
         self.board = board
         self._tplvars = {}
 
+        with util.cd(self.project_dir):
+            self.project_src_dir = util.get_projectsrc_dir()
+
         self._gather_tplvars()
 
     @staticmethod
@@ -94,7 +97,8 @@ class ProjectGenerator(object):
     def get_src_files(self):
         result = []
         with util.cd(self.project_dir):
-            for root, _, files in os.walk(util.get_projectsrc_dir()):
+            for root, _, files in os.walk(self.project_src_dir):
+                print root, files
                 for f in files:
                     result.append(relpath(join(root, f)))
         return result
@@ -157,6 +161,7 @@ class ProjectGenerator(object):
             "src_files": self.get_src_files(),
             "user_home_dir": abspath(expanduser("~")),
             "project_dir": self.project_dir,
+            "project_src_dir": self.project_src_dir,
             "systype": util.get_systype(),
             "platformio_path": self._fix_os_path(
                 util.where_is_program("platformio")),
