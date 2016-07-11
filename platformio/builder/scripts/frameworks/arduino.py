@@ -216,11 +216,19 @@ env.Append(
 if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
     env.VariantDirWrap(
         join("$BUILD_DIR", "FrameworkCMSISInc"),
-        join("$PLATFORMFW_DIR", "system", "CMSIS", "CMSIS", "Include")
+        join(
+            "$PLATFORMFW_DIR", "system",
+            "CMSIS%s" % ("_ORG" if "_org" in BOARD_CORELIBDIRNAME else ""),
+            "CMSIS", "Include"
+        )
     )
     env.VariantDirWrap(
         join("$BUILD_DIR", "FrameworkDeviceInc"),
-        join("$PLATFORMFW_DIR", "system", "CMSIS", "Device", "ATMEL")
+        join(
+            "$PLATFORMFW_DIR", "system",
+            "CMSIS%s" % ("_ORG" if "_org" in BOARD_CORELIBDIRNAME else ""),
+            "Device", "ATMEL"
+        )
     )
     env.VariantDirWrap(
         join("$BUILD_DIR", "FrameworkLibSam"),

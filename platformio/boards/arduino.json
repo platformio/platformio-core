@@ -958,17 +958,17 @@
     },
     "mzeropro": {
         "build": {
-            "core": "arduino_zero",
+            "core": "arduino_zero_org",
             "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
             "f_cpu": "48000000L",
             "mcu": "samd21g18a",
             "cpu": "cortex-m0plus",
             "usb_product": "Arduino M0 Pro",
-            "variant": "arduino_zero",
+            "variant": "arduino_zero_org",
             "ldscript": "samd21g18a_bootloader_org.ld",
             "hwids": [
-              ["0x03EB", "0x2111"],
-              ["0x2A03", "0x804F"]
+              ["0x2A03", "0x804F"],
+              ["0x03EB", "0x2111"]
             ]
         },
         "frameworks": ["arduino"],
@@ -989,19 +989,17 @@
     },
     "mzeroproUSB": {
         "build": {
-            "core": "arduino_zero",
+            "core": "arduino_zero_org",
             "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
             "f_cpu": "48000000L",
             "mcu": "samd21g18a",
             "cpu": "cortex-m0plus",
             "usb_product": "Arduino M0 Pro",
-            "variant": "arduino_zero",
+            "variant": "arduino_zero_org",
             "ldscript": "samd21g18a_bootloader_org.ld",
             "hwids": [
-              ["0x2A03", "0x004D"],
-              ["0x2A03", "0x804D"],
-              ["0x2A03", "0x004F"],
-              ["0x2A03", "0x804F"]
+              ["0x2A03", "0x804F"],
+              ["0x2A03", "0x004F"]
             ]
         },
         "frameworks": ["arduino"],
@@ -1023,19 +1021,17 @@
     },
     "mzeroUSB": {
         "build": {
-            "core": "arduino_zero",
+            "core": "arduino_zero_org",
             "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
             "f_cpu": "48000000L",
             "mcu": "samd21g18a",
             "cpu": "cortex-m0plus",
             "usb_product": "Arduino M0",
-            "variant": "arduino_zero",
+            "variant": "arduino_zero_org",
             "ldscript": "samd21g18a_bootloader_org.ld",
             "hwids": [
-              ["0x2A03", "0x004D"],
-              ["0x2A03", "0x804D"],
-              ["0x2A03", "0x004E"],
-              ["0x2A03", "0x804E"]
+              ["0x2A03", "0x804E"],
+              ["0x2A03", "0x004E"]
             ]
         },
         "frameworks": ["arduino"],
@@ -1057,17 +1053,17 @@
     },
     "tian": {
         "build": {
-            "core": "arduino_zero",
+            "core": "arduino_zero_org",
             "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
             "f_cpu": "48000000L",
             "mcu": "samd21g18a",
             "cpu": "cortex-m0plus",
             "usb_product": "Arduino Tian",
-            "variant": "arduino_zero",
+            "variant": "arduino_zero_org",
             "ldscript": "samd21g18a_bootloader_org.ld",
             "hwids": [
-              ["0x10C4", "0xEA70"],
-              ["0x2A03", "0x8052"]
+              ["0x2A03", "0x8052"],
+              ["0x10C4", "0xEA70"]
             ]
         },
         "frameworks": ["arduino"],
