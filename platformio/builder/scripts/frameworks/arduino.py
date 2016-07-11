@@ -218,7 +218,8 @@ if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
         join("$BUILD_DIR", "FrameworkCMSISInc"),
         join(
             "$PLATFORMFW_DIR", "system",
-            "CMSIS%s" % ("_ORG" if "_org" in BOARD_CORELIBDIRNAME else ""),
+            "CMSIS%s" % (
+                "_ORG" if BOARD_CORELIBDIRNAME.endswith("_org") else ""),
             "CMSIS", "Include"
         )
     )
@@ -226,7 +227,8 @@ if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
         join("$BUILD_DIR", "FrameworkDeviceInc"),
         join(
             "$PLATFORMFW_DIR", "system",
-            "CMSIS%s" % ("_ORG" if "_org" in BOARD_CORELIBDIRNAME else ""),
+            "CMSIS%s" % (
+                "_ORG" if BOARD_CORELIBDIRNAME.endswith("_org") else ""),
             "Device", "ATMEL"
         )
     )
