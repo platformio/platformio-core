@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.11.1 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Added support for Arduino M0, M0 Pro and Tian boards
+  (`issue #472 <https://github.com/platformio/platformio/issues/472>`_)
 * Added support for Microchip chipKIT Lenny board
 * Updated Microchip PIC32 Arduino framework to v1.2.1
 * Documented `uploading of EEPROM data <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-eeprom-data>`__
