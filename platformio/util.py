@@ -217,6 +217,8 @@ def get_pioenvs_dir():
         "envs_dir",
         join(get_project_dir(), ".pioenvs")
     )
+    if not isdir(path):
+        os.makedirs(path)
     dontmod_path = join(path, "do-not-modify-files-here.url")
     if not isfile(dontmod_path):
         with open(dontmod_path, "w") as fp:
