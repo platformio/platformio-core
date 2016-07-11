@@ -27,25 +27,25 @@ from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
 
-class PackageManager(object):
+class BasePkgManager(object):
 
     _INSTALLED_CACHE = {}
 
-    def __init__(self, package_dir=None, repositories=None):
+    def __init__(self, package_dir, repositories=None):
         self._INSTALLED_CACHE = {}
         self.repositories = repositories
-        self.package_dir = package_dir or join(util.get_home_dir(), "packages")
+        self.package_dir = package_dir
         if not isdir(self.package_dir):
             os.makedirs(self.package_dir)
         assert isdir(self.package_dir)
 
     @staticmethod
     def reset_cache():
-        PackageManager._INSTALLED_CACHE = {}
+        BasePkgManager._INSTALLED_CACHE = {}
 
     @property
     def manifest_name(self):
-        return "package.json"
+        raise NotImplementedError()
 
     @staticmethod
     def download(url, dest_dir, sha1=None):
@@ -133,8 +133,8 @@ class PackageManager(object):
         return best
 
     def get_installed(self):
-        if self.package_dir in PackageManager._INSTALLED_CACHE:
-            return PackageManager._INSTALLED_CACHE[self.package_dir]
+        if self.package_dir in BasePkgManager._INSTALLED_CACHE:
+            return BasePkgManager._INSTALLED_CACHE[self.package_dir]
         items = []
         for p in sorted(os.listdir(self.package_dir)):
             manifest_path = join(self.package_dir, p, self.manifest_name)
@@ -144,7 +144,7 @@ class PackageManager(object):
             manifest['_manifest_path'] = manifest_path
             assert set(["name", "version"]) <= set(manifest.keys())
             items.append(manifest)
-        PackageManager._INSTALLED_CACHE[self.package_dir] = items
+        BasePkgManager._INSTALLED_CACHE[self.package_dir] = items
         return items
 
     def is_installed(self, name, requirements=None):
@@ -183,7 +183,8 @@ class PackageManager(object):
         self.reset_cache()
         if trigger_event:
             telemetry.on_event(
-                category="PackageManager", action="Install", label=name)
+                category=self.__class__.__name__,
+                action="Install", label=name)
 
         return join(pkg_dir, self.manifest_name)
 
@@ -300,7 +301,8 @@ class PackageManager(object):
         self.reset_cache()
         if trigger_event:
             telemetry.on_event(
-                category="PackageManager", action="Uninstall", label=name)
+                category=self.__class__.__name__,
+                action="Uninstall", label=name)
 
     def update(self, name, requirements=None):
         click.echo("Updating %s %s @ %s:" % (
@@ -310,8 +312,8 @@ class PackageManager(object):
 
         latest_version = self.get_latest_repo_version(name, requirements)
         if latest_version is None:
-            click.secho("Ignored! '%s' is not listed in "
-                        "Package Repository" % name, fg="yellow")
+            click.secho("Ignored! '%s' is not listed in repository" % name,
+                        fg="yellow")
             return
 
         current = None
@@ -341,7 +343,8 @@ class PackageManager(object):
         self.install(name, latest_version, trigger_event=False)
 
         telemetry.on_event(
-            category="PackageManager", action="Update", label=name)
+            category=self.__class__.__name__,
+            action="Update", label=name)
         return True
 
 
@@ -384,3 +387,10 @@ class PackageRepoIterator(object):
             return manifest[self.package]
         else:
             return self.next()
+
+
+class PackageManager(BasePkgManager):
+
+    @property
+    def manifest_name(self):
+        return "package.json"

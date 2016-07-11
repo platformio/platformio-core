@@ -24,13 +24,15 @@ import click
 import semantic_version
 
 from platformio import exception, util
-from platformio.managers.package import PackageManager
+from platformio.managers.package import BasePkgManager, PackageManager
+
+PACKAGE_DIR = join(util.get_home_dir(), "packages")
 
 
-class PlatformManager(PackageManager):
+class PlatformManager(BasePkgManager):
 
     def __init__(self):
-        PackageManager.__init__(
+        BasePkgManager.__init__(
             self,
             join(util.get_home_dir(), "platforms"),
             ["http://dl.platformio.org/platforms/manifest.json"]
@@ -43,7 +45,7 @@ class PlatformManager(PackageManager):
     def install(self,  # pylint: disable=too-many-arguments,arguments-differ
                 name, requirements=None, with_packages=None,
                 without_packages=None, skip_default_packages=False):
-        manifest_path = PackageManager.install(self, name, requirements)
+        manifest_path = BasePkgManager.install(self, name, requirements)
         p = PlatformFactory.newPlatform(manifest_path, requirements)
         p.install_packages(
             with_packages, without_packages, skip_default_packages)
@@ -53,14 +55,14 @@ class PlatformManager(PackageManager):
     def uninstall(self,  # pylint: disable=arguments-differ
                   name, requirements=None):
         p = PlatformFactory.newPlatform(name, requirements)
-        PackageManager.uninstall(self, name, requirements)
+        BasePkgManager.uninstall(self, name, requirements)
         self.cleanup_packages(p.packages.keys())
         return True
 
     def update(self,  # pylint: disable=arguments-differ
                name, requirements=None, only_packages=False):
         if not only_packages:
-            PackageManager.update(self, name, requirements)
+            BasePkgManager.update(self, name, requirements)
         p = PlatformFactory.newPlatform(name, requirements)
         p.update_packages()
         self.cleanup_packages(p.packages.keys())
@@ -82,7 +84,7 @@ class PlatformManager(PackageManager):
                     deppkgs[pkgname] = set()
                 deppkgs[pkgname].add(pkgmanifest['version'])
 
-        pm = PackageManager()
+        pm = PackageManager(PACKAGE_DIR)
         for manifest in pm.get_installed():
             if manifest['name'] not in names:
                 continue
@@ -322,7 +324,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         self._manifest = util.load_json(manifest_path)
 
         self.pm = PackageManager(
-            repositories=self._manifest.get("packageRepositories"))
+            PACKAGE_DIR, self._manifest.get("packageRepositories"))
 
         self._found_error = False
         self._last_echo_line = None
