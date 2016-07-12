@@ -101,7 +101,7 @@ class Upgrader(object):
         prev_platforms = []
 
         # remove platform's folder (obsolete package structure)
-        for name in PlatformFactory.get_platforms().keys():
+        for name in PlatformFactory.get_platforms():
             pdir = join(get_home_dir(), name)
             if not isdir(pdir):
                 continue
@@ -234,7 +234,7 @@ def check_internal_updates(ctx, what):
 
     outdated_items = []
     if what == "platforms":
-        for platform in PlatformFactory.get_platforms(installed=True).keys():
+        for platform in PlatformFactory.get_platforms(installed=True):
             p = PlatformFactory.newPlatform(platform)
             if p.is_outdated():
                 outdated_items.append(platform)

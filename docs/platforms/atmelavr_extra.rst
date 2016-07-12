@@ -95,6 +95,13 @@ Configuration for the programmers:
         upload_port = SERIAL_PORT_HERE
         upload_speed = 19200
 
+Upload EEPROM data
+------------------
+
+To upload EEPROM data (from EEMEM directive) you need to use ``uploadeep``
+target instead ``upload`` for :option:`platformio run --target` command.
+For example, ``platformio run -t uploadeep``.
+
 Articles
 --------
 

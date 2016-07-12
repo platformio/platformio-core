@@ -23,11 +23,10 @@ from platformio.commands.platforms import \
     platforms_install as cli_platforms_install
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.platforms.base import PlatformFactory
-from platformio.util import get_boards, get_source_dir
 
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
-    unknown_boards = set(value) - set(get_boards().keys())
+    unknown_boards = set(value) - set(util.get_boards().keys())
     try:
         assert not unknown_boards
         return value
@@ -85,6 +84,10 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
 
     if ide:
         if not board:
+            board = get_first_board(project_dir)
+            if board:
+                board = [board]
+        if not board:
             raise exception.BoardNotDefined()
         if len(board) > 1:
             click.secho(
@@ -95,8 +98,7 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
                 " '%s'." % (board[0], ", ".join(board)),
                 fg="yellow"
             )
-        pg = ProjectGenerator(
-            project_dir, ide, board[0])
+        pg = ProjectGenerator(project_dir, ide, board[0])
         pg.generate()
 
     click.secho(
@@ -112,10 +114,21 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
     )
 
 
+def get_first_board(project_dir):
+    with util.cd(project_dir):
+        config = util.get_project_config()
+        for section in config.sections():
+            if not section.startswith("env:"):
+                continue
+            elif config.has_option(section, "board"):
+                return config.get(section, "board")
+    return None
+
+
 def init_base_project(project_dir):
     platformio_ini = join(project_dir, "platformio.ini")
     if not isfile(platformio_ini):
-        copyfile(join(get_source_dir(), "projectconftpl.ini"),
+        copyfile(join(util.get_source_dir(), "projectconftpl.ini"),
                  platformio_ini)
 
     lib_dir = join(project_dir, "lib")
@@ -260,7 +273,7 @@ def init_cvs_ignore(project_dir):
 def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
         ctx, platformio_ini, board_types, enable_auto_uploading,
         env_prefix, force_download):
-    builtin_boards = get_boards()
+    builtin_boards = util.get_boards()
     content = []
     used_boards = []
     used_platforms = []

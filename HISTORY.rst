@@ -4,6 +4,34 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.11.1 (2016-07-12)
+~~~~~~~~~~~~~~~~~~~
+
+* Added support for Arduino M0, M0 Pro and Tian boards
+  (`issue #472 <https://github.com/platformio/platformio/issues/472>`_)
+* Added support for Microchip chipKIT Lenny board
+* Updated Microchip PIC32 Arduino framework to v1.2.1
+* Documented `uploading of EEPROM data <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-eeprom-data>`__
+  (from EEMEM directive)
+* Added ``Rebuild C/C++ Project Index`` target to CLion and Eclipse IDEs
+* Improved project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
+* Added ``udev`` rules for OpenOCD CMSIS-DAP adapters
+  (`issue #718 <https://github.com/platformio/platformio/issues/718>`_)
+* Auto-remove project cache when PlatformIO is upgraded
+* Keep user changes for ``.gitignore`` file when re-generate/update project data
+* Ignore ``[platformio]`` section from custom project configuration file when
+  `platformio ci --project-conf <http://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__
+  command is used
+* Fixed missed ``--boot`` flag for the firmware uploader for ATSAM3X8E
+  Cortex-M3 MCU based boards (Arduino Due, etc)
+  (`issue #710 <https://github.com/platformio/platformio/issues/710>`_)
+* Fixed missing trailing ``\`` for the source files list when generate project
+  for `Qt Creator IDE <http://docs.platformio.org/en/latest/ide/qtcreator.html>`__
+  (`issue #711 <https://github.com/platformio/platformio/issues/711>`_)
+* Split source files to ``HEADERS`` and ``SOURCES`` when generate project
+  for `Qt Creator IDE <http://docs.platformio.org/en/latest/ide/qtcreator.html>`__
+  (`issue #713 <https://github.com/platformio/platformio/issues/713>`_)
+
 2.11.0 (2016-06-28)
 ~~~~~~~~~~~~~~~~~~~
 

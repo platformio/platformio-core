@@ -202,7 +202,9 @@ def DumpIDEData(env):
     def get_defines(env_):
         defines = []
         # global symbols
-        for item in env.Flatten(env_.get("CPPDEFINES", [])):
+        for item in env_.get("CPPDEFINES", []):
+            if isinstance(item, list) or isinstance(item, tuple):
+                item = "=".join(item)
             defines.append(env_.subst(item).replace('\\"', '"'))
 
         # special symbol for Atmel AVR MCU
@@ -224,13 +226,17 @@ def DumpIDEData(env):
         "includes": get_includes(env_),
         "cc_flags": env_.subst(LINTCCOM),
         "cxx_flags": env_.subst(LINTCXXCOM),
+        "cc_path": where_is_program(
+            env_.subst("$CC"), env_.subst("${ENV['PATH']}")),
         "cxx_path": where_is_program(
             env_.subst("$CXX"), env_.subst("${ENV['PATH']}"))
     }
 
     # https://github.com/platformio/platformio-atom-ide/issues/34
     _new_defines = []
-    for item in env.Flatten(env_.get("CPPDEFINES", [])):
+    for item in env_.get("CPPDEFINES", []):
+        if isinstance(item, list) or isinstance(item, tuple):
+            item = "=".join(item)
         item = item.replace('\\"', '"')
         if " " in item:
             _new_defines.append(item.replace(" ", "\\\\ "))

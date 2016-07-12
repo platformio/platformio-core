@@ -21,7 +21,7 @@ from time import time
 
 import click
 
-from platformio import app, exception, telemetry, util
+from platformio import __version__, app, exception, telemetry, util
 from platformio.commands.lib import lib_install as cmd_lib_install
 from platformio.libmanager import LibraryManager
 from platformio.platforms.base import PlatformFactory
@@ -243,7 +243,7 @@ def _clean_pioenvs_dir(pioenvs_dir):
 
 
 def calculate_project_hash():
-    structure = []
+    structure = [__version__]
     for d in (util.get_projectsrc_dir(), util.get_projectlib_dir()):
         if not isdir(d):
             continue

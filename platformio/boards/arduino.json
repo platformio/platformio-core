@@ -958,17 +958,17 @@
     },
     "mzeropro": {
         "build": {
-            "core": "arduino_zero",
+            "core": "arduino_zero_org",
             "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
             "f_cpu": "48000000L",
             "mcu": "samd21g18a",
             "cpu": "cortex-m0plus",
             "usb_product": "Arduino M0 Pro",
-            "variant": "arduino_zero",
+            "variant": "arduino_zero_org",
             "ldscript": "samd21g18a_bootloader_org.ld",
             "hwids": [
-              ["0x03EB", "0x2111"],
-              ["0x2A03", "0x804F"]
+              ["0x2A03", "0x804F"],
+              ["0x03EB", "0x2111"]
             ]
         },
         "frameworks": ["arduino"],
@@ -985,6 +985,102 @@
             "section_start": "0x4000"
         },
         "url": "http://www.arduino.org/products/boards/arduino-m0-pro",
+        "vendor": "Arduino"
+    },
+    "mzeroproUSB": {
+        "build": {
+            "core": "arduino_zero_org",
+            "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "usb_product": "Arduino M0 Pro",
+            "variant": "arduino_zero_org",
+            "ldscript": "samd21g18a_bootloader_org.ld",
+            "hwids": [
+              ["0x2A03", "0x804F"],
+              ["0x2A03", "0x004F"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino M0 Pro (Native USB Port)",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "stk500v2",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true,
+            "section_start": "0x4000"
+        },
+        "url": "http://www.arduino.org/products/boards/arduino-m0-pro",
+        "vendor": "Arduino"
+    },
+    "mzeroUSB": {
+        "build": {
+            "core": "arduino_zero_org",
+            "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "usb_product": "Arduino M0",
+            "variant": "arduino_zero_org",
+            "ldscript": "samd21g18a_bootloader_org.ld",
+            "hwids": [
+              ["0x2A03", "0x804E"],
+              ["0x2A03", "0x004E"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino M0",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "stk500v2",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true,
+            "section_start": "0x4000"
+        },
+        "url": "http://www.arduino.org/products/boards/arduino-m0",
+        "vendor": "Arduino"
+    },
+    "tian": {
+        "build": {
+            "core": "arduino_zero_org",
+            "extra_flags": "-DARDUINO_SAMD_ZERO -DARDUINO_ARCH_SAMD -D__SAMD21G18A__",
+            "f_cpu": "48000000L",
+            "mcu": "samd21g18a",
+            "cpu": "cortex-m0plus",
+            "usb_product": "Arduino Tian",
+            "variant": "arduino_zero_org",
+            "ldscript": "samd21g18a_bootloader_org.ld",
+            "hwids": [
+              ["0x2A03", "0x8052"],
+              ["0x10C4", "0xEA70"]
+            ]
+        },
+        "frameworks": ["arduino"],
+        "name": "Arduino Tian",
+        "platform": "atmelsam",
+        "upload": {
+            "disable_flushing": true,
+            "maximum_ram_size": 32768,
+            "maximum_size": 262144,
+            "protocol": "stk500v2",
+            "require_upload_port" : true,
+            "speed": 57600,
+            "use_1200bps_touch": true,
+            "wait_for_upload_port": true,
+            "section_start": "0x4000"
+        },
+        "url": "http://www.arduino.org/products/boards/arduino-tian",
         "vendor": "Arduino"
     }
 }

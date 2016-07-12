@@ -3,10 +3,6 @@ project({{project_name}})
 
 include(CMakeListsPrivate.txt)
 
-% for define in defines:
-add_definitions(-D{{!define}})
-% end
-
 add_custom_target(
     PLATFORMIO_BUILD ALL
     COMMAND ${PLATFORMIO_CMD} -f -c clion run
@@ -43,18 +39,10 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-% if src_files and any([f.endswith((".c", ".cpp")) for f in src_files]):
-add_executable({{project_name}}
-% for f in src_files:
-% if f.endswith((".c", ".cpp")):
-    {{f.replace("\\", "/")}}
-% end
-% end
+add_custom_target(
+    PLATFORMIO_REBUILD_PROJECT_INDEX ALL
+    COMMAND ${PLATFORMIO_CMD} -f -c clion init --ide clion
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-% else:
-#
-# To enable code auto-completion, please specify path
-# to main source file (*.c, *.cpp) and uncomment line below
-#
-# add_executable({{project_name}} src/main_change_me.cpp)
-% end
+
+add_executable(${PROJECT_NAME} ${SRC_LIST})

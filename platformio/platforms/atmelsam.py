@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from platformio.platforms.base import BasePlatform
+from platformio.util import get_boards
 
 
 class AtmelsamPlatform(BasePlatform):
@@ -49,13 +50,32 @@ class AtmelsamPlatform(BasePlatform):
         },
 
         "tool-bossac": {
-            "alias": "uploader"
         },
 
         "tool-openocd": {
-            "alias": "uploader"
+        },
+
+        "tool-avrdude": {
         }
     }
 
     def get_name(self):
         return "Atmel SAM"
+
+    def configure_default_packages(self, envoptions, targets):
+        if envoptions.get("board"):
+            board = get_boards(envoptions.get("board"))
+            upload_protocol = board.get("upload", {}).get("protocol", None)
+            upload_tool = None
+            if upload_protocol == "openocd":
+                upload_tool = "tool-openocd"
+            elif upload_protocol == "sam-ba":
+                upload_tool = "tool-bossac"
+            elif upload_protocol == "stk500v2":
+                upload_tool = "tool-avrdude"
+
+            if upload_tool:
+                self.PACKAGES[upload_tool]['alias'] = "uploader"
+
+        return BasePlatform.configure_default_packages(
+            self, envoptions, targets)

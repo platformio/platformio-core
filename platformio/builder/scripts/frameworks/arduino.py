@@ -115,7 +115,10 @@ elif env.get("PLATFORM") == "microchippic32":
                 "$PLATFORMFW_DIR", "variants",
                 "${BOARD_OPTIONS['build']['variant']}"
             )
-        ]
+        ],
+
+        CPPDEFINES=["ARDUINO_ARCH_PIC32"]
+
     )
 
 elif "intel" in env.get("PLATFORM"):
@@ -213,11 +216,21 @@ env.Append(
 if env.subst("${PLATFORMFW_DIR}")[-3:] == "sam":
     env.VariantDirWrap(
         join("$BUILD_DIR", "FrameworkCMSISInc"),
-        join("$PLATFORMFW_DIR", "system", "CMSIS", "CMSIS", "Include")
+        join(
+            "$PLATFORMFW_DIR", "system",
+            "CMSIS%s" % (
+                "_ORG" if BOARD_CORELIBDIRNAME.endswith("_org") else ""),
+            "CMSIS", "Include"
+        )
     )
     env.VariantDirWrap(
         join("$BUILD_DIR", "FrameworkDeviceInc"),
-        join("$PLATFORMFW_DIR", "system", "CMSIS", "Device", "ATMEL")
+        join(
+            "$PLATFORMFW_DIR", "system",
+            "CMSIS%s" % (
+                "_ORG" if BOARD_CORELIBDIRNAME.endswith("_org") else ""),
+            "Device", "ATMEL"
+        )
     )
     env.VariantDirWrap(
         join("$BUILD_DIR", "FrameworkLibSam"),
