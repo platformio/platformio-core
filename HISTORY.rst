@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.11.1 (2016-??-??)
+2.11.1 (2016-07-12)
 ~~~~~~~~~~~~~~~~~~~
 
 * Added support for Arduino M0, M0 Pro and Tian boards
