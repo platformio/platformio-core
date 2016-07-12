@@ -187,10 +187,10 @@ Contributing
 
 See `contributing guidelines <https://github.com/platformio/platformio/blob/develop/CONTRIBUTING.md>`_.
 
-Licence
+License
 -------
 
 Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
 
-The PlatformIO is licensed under the permissive Apache 2.0 licence,
+The PlatformIO is licensed under the permissive Apache 2.0 license,
 so you can use it in both commercial and personal projects with confidence.
