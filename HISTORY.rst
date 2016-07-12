@@ -15,6 +15,8 @@ PlatformIO 2.0
   (from EEMEM directive)
 * Added ``Rebuild C/C++ Project Index`` target to CLion and Eclipse IDEs
 * Improved project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
+* Added ``udev`` rules for OpenOCD CMSIS-DAP adapters
+  (`issue #718 <https://github.com/platformio/platformio/issues/718>`_)
 * Auto-remove project cache when PlatformIO is upgraded
 * Keep user changes for ``.gitignore`` file when re-generate/update project data
 * Ignore ``[platformio]`` section from custom project configuration file when
