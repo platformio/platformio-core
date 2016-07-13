@@ -43,11 +43,16 @@ command and generate project via :option:`platformio init --ide` command:
 
 Then:
 
-1. Place source files (``*.c, *.cpp, *.h, *.ino, etc.``) to ``src`` directory
+1. Place source files (``*.c, *.cpp, *.h, *.hpp``) to ``src`` directory
 2. Import this project via ``Menu: File > Import Project``
    and specify root directory where is located :ref:`projectconf`
 3. Open source file from ``src`` directory
 4. Build project (*DO NOT RUN*): ``Menu: Run > Build``.
+
+.. warning::
+
+    See know issue: :ref:`ide_clion_knownissues_inopde_not_supported` and how
+    to resolve it.
 
 There are 6 predefined targets for building (*NOT FOR RUNNING*, see marks on
 the screenshot below):
@@ -68,6 +73,64 @@ the screenshot below):
     after generating process wont be reflected in IDE. To fix it please run
     ``PLATFORMIO_REBUILD_PROJECT_INDEX`` target.
 
+Known issues
+------------
+
+.. _ide_clion_knownissues_inopde_not_supported:
+
+Arduino ``.ino`` files are not supported
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CLion doesn't support Arduino files (``*.ino`` and ``.pde``) because they are
+not valid C/C++ based source files:
+
+1. Missing includes such as ``#include <Arduino.h>``
+2. Function declarations are omitted.
+
+Convert Arduino file to C++ manually
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For example, we have the next ``Demo.ino`` file:
+
+.. code-block:: cpp
+
+    void function setup () {
+        someFunction(13);
+    }
+
+    void function loop() {
+        delay(1000);
+    }
+
+    void someFunction(int num) {
+    }
+
+Let's convert it to  ``Demo.cpp``:
+
+1. Add ``#include <Arduino.h>`` at the top of the source file
+2. Declare each custom function (excluding built-in, such as ``setup`` and ``loop``)
+   before it will be called.
+
+The final ``Demo.cpp``:
+
+.. code-block:: cpp
+
+    #include <Arduino.h>
+
+    void someFunction(int num);
+
+    void function setup () {
+        someFunction(13);
+    }
+
+    void function loop() {
+        delay(1000);
+    }
+
+    void someFunction(int num) {
+    }
+
+
 Articles / Manuals
 ------------------
 
@@ -81,6 +144,6 @@ Examples
 --------
 
 "Blink" Project
-^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~
 
 Source code of `CLion "Blink" Project <https://github.com/platformio/platformio-examples/tree/develop/ide/clion>`_.
