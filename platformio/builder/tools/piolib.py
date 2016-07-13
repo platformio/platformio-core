@@ -23,6 +23,7 @@ from sys import modules
 import SCons.Scanner
 
 from platformio import util
+from platformio.builder.tools import platformio as piotool
 
 
 class LibBuilderFactory(object):
@@ -72,7 +73,7 @@ class LibBuilderFactory(object):
 class LibBuilderBase(object):
 
     def __init__(self, env, path):
-        self.env = env
+        self.env = env.Clone()
         self.path = path
         self._is_built = False
         self._manifest = self.load_manifest()
@@ -93,11 +94,10 @@ class LibBuilderBase(object):
 
     @property
     def src_filter(self):
-        return " ".join([
-            "+<*>", "-<.git%s>" % os.sep, "-<svn%s>" % os.sep,
+        return piotool.SRC_FILTER_DEFAULT + [
             "-<example%s>" % os.sep, "-<examples%s>" % os.sep,
             "-<test%s>" % os.sep, "-<tests%s>" % os.sep
-        ])
+        ]
 
     @property
     def src_dir(self):
@@ -118,8 +118,8 @@ class LibBuilderBase(object):
     def get_path_dirs(self, use_build_dir=False):
         return [self.build_dir if use_build_dir else self.src_dir]
 
-    def append_to_cpppath(self):
-        self.env.AppendUnique(
+    def append_to_cpppath(self, env):
+        env.AppendUnique(
             CPPPATH=self.get_path_dirs(use_build_dir=True)
         )
 
@@ -130,8 +130,8 @@ class LibBuilderBase(object):
             print "Depends on <%s>" % self.name
         assert self._is_built is False
         self._is_built = True
-        self.append_to_cpppath()
-        return self.env.BuildLibrary(self.build_dir, self.src_dir)
+        return self.env.BuildLibrary(
+            self.build_dir, self.src_dir, self.src_filter)
 
 
 class UnknownLibBuilder(LibBuilderBase):
@@ -159,6 +159,13 @@ class ArduinoLibBuilder(LibBuilderBase):
         path_dirs.append(
             join(self.build_dir if use_build_dir else self.src_dir, "utility"))
         return path_dirs
+
+    @property
+    def src_filter(self):
+        if isdir(join(self.path, "src")):
+            return LibBuilderBase.src_filter.fget(self)
+        return ["+<*.%s>" % ext
+                for ext in piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT]
 
 
 class MbedLibBuilder(LibBuilderBase):
@@ -225,7 +232,7 @@ def find_and_build_deps(env, lib_builders, scanner,
     libs = []
     # append PATH directories to global CPPPATH before build starts
     for lb in target_lbs:
-        lb.append_to_cpppath()
+        lb.append_to_cpppath(env)
     # start builder
     for lb in target_lbs:
         libs.append(lb.build())
@@ -270,6 +277,7 @@ def BuildDependentLibraries(env, src_dir):
             libs.extend(find_and_build_deps(
                 env, lib_builders, scanner, lb.src_dir, lb.src_filter))
             if not lb.is_built:
+                lb.append_to_cpppath(env)
                 libs.append(lb.build())
 
     # process project source code

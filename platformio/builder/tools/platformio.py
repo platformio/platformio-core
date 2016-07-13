@@ -26,7 +26,7 @@ from platformio.util import pioversion_to_intstr
 
 SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
-SRC_FILTER_DEFAULT = " ".join(["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep])
+SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
 
 
 def BuildProgram(env):
@@ -179,6 +179,8 @@ def MatchSourceFiles(env, src_dir, src_filter=None):
 
     src_dir = env.subst(src_dir)
     src_filter = src_filter or SRC_FILTER_DEFAULT
+    if isinstance(src_filter, list) or isinstance(src_filter, tuple):
+        src_filter = " ".join(src_filter)
 
     matches = set()
     # correct fs directory separator
