@@ -426,14 +426,28 @@ A list of example patterns. This field is predefined with default value:
 Specify advanced settings, options and flags for the build system. Possible
 options:
 
-* ``flags`` - extra flags to control preprocessing, compilation, assembly and
-  linking processes. More details :ref:`projectconf_build_flags`
-* ``unflags`` - remove base/initial flags which were set by development
-  platform. More details :ref:`projectconf_build_unflags`
-* ``srcFilter`` - specify which source files should be included/excluded
-  from build process. More details :ref:`projectconf_src_filter`
-* ``extraScript`` - launch extra script before build process.
-  More details :ref:`projectconf_extra_script`.
+.. list-table::
+    :header-rows:  1
+
+    * - Option
+      - Type
+      - Description
+    * - ``flags``
+      - ``String`` or ``Array``
+      - Extra flags to control preprocessing, compilation, assembly and
+        linking processes. More details :ref:`projectconf_build_flags`
+    * - ``unflags``
+      - ``String`` or ``Array``
+      - Remove base/initial flags which were set by development
+        platform. More details :ref:`projectconf_build_unflags`
+    * - ``srcFilter``
+      - ``String`` or ``Array``
+      - Specify which source files should be included/excluded
+        from build process. More details :ref:`projectconf_src_filter`
+    * - ``extraScript``
+      - ``String``
+      - Launch extra script before build process.
+        More details :ref:`projectconf_extra_script`
 
 **Examples**
 
@@ -450,7 +464,10 @@ options:
 .. code-block:: javascript
 
     "build": {
-        "flags": "-I inc -I inc/target_x13"
+        "flags": [
+            "-I inc",
+            "-I inc/target_x13"
+        ]
     }
 
 3. Force to use ``C99`` standard instead ``C11``
@@ -487,7 +504,11 @@ options:
 
 .. code-block:: python
 
-    # Import('env')
+    Import('env')
     # print env.Dump()
+    env.Append(
+        CPPDEFINES=["HELLO=WORLD", "TAG=1.2.3", "DEBUG"],
+        CPPPATH=["inc", "inc/devices"]
+    )
 
     # some python code that generates headers files "on-the-fly"
