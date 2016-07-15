@@ -681,6 +681,30 @@ For example, there are 2 libraries:
   Secondly, it will parse all sources from "Bar" library and this operation
   continues until all dependent libraries will not be parsed.
 
+.. _projectconf_lib_extra_dirs:
+
+``lib_extra_dirs``
+^^^^^^^^^^^^^^^^^^
+
+A list with extra directories where ``Library Dependency Finder (LDF)`` will
+look for dependencies. Multiple paths are allowed. Please separate them using
+comma ``,`` symbol.
+
+This option can be set by global environment variable
+:envvar:`PLATFORMIO_LIB_EXTRA_DIRS`.
+
+.. warning::
+  This is a not direct path to library with source code. It should be the path
+  to directory that contains libraries grouped by folders. For example,
+  ``/extra/lib/path/`` but not ``/extra/lib/path/MyLibrary``.
+
+Example:
+
+.. code-block:: ini
+
+    [env:custom_lib_dirs]
+    lib_extra_dirs = /path/to/private/dir1,/path/to/private/dir2
+
 -----------
 
 .. _projectconf_examples:

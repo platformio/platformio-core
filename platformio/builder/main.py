@@ -34,16 +34,19 @@ commonvars.AddVariables(
     ("PIOENV",),
     ("PIOTEST",),
     ("PLATFORM",),
-
-    # options
     ("FRAMEWORK",),
+
+    # build options
     ("BUILD_FLAGS",),
     ("SRC_BUILD_FLAGS",),
     ("BUILD_UNFLAGS",),
     ("SRC_FILTER",),
+
+    # library options
     ("LIB_DEEP_SEARCH",),
     ("LIB_IGNORE",),
     ("LIB_FORCE",),
+    ("LIB_EXTRA_DIRS",),
 
     # board options
     ("BOARD",),
@@ -101,21 +104,20 @@ for k in commonvars.keys():
     if k in env:
         env[k] = base64.b64decode(env[k])
 
-env.LoadDevPlatform(commonvars)
-
-# Parse library names
-for opt in ("LIB_IGNORE", "LIB_FORCE"):
-    if opt not in env:
-        continue
-    env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
-
 # Handle custom variables from system environment
 for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPT",
-            "UPLOAD_PORT", "UPLOAD_FLAGS"):
+            "UPLOAD_PORT", "UPLOAD_FLAGS", "LIB_EXTRA_DIRS"):
     k = "PLATFORMIO_%s" % var
     if environ.get(k):
         env[var] = environ.get(k)
 
+# Parse comma separated items
+for opt in ("LIB_IGNORE", "LIB_FORCE", "LIB_EXTRA_DIRS"):
+    if opt not in env:
+        continue
+    env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
+
+env.LoadDevPlatform(commonvars)
 
 env.SConscriptChdir(0)
 env.SConsignFile(join("$PIOENVS_DIR", ".sconsign.dblite"))

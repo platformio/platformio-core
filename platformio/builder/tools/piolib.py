@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-member
+# pylint: disable=no-member, no-self-use, unused-argument
 
 from __future__ import absolute_import
 
@@ -130,7 +130,7 @@ class LibBuilderBase(object):
     def is_framework_compatible(self, framework):
         return True
 
-    def load_manifest(self):  # pylint: disable=no-self-use
+    def load_manifest(self):
         return {}
 
     def get_path_dirs(self, use_build_dir=False):
@@ -326,10 +326,16 @@ def find_and_build_deps(env, lib_builders, scanner,
 
 def GetLibBuilders(env):
     items = []
+    libs_dirs = []
     env_frameworks = [
         f.lower().strip() for f in env.get("FRAMEWORK", "").split(",")]
-    libs_dirs = [env.subst(d) for d in env.get("LIBSOURCE_DIRS", [])
-                 if isdir(env.subst(d))]
+
+    for key in ("LIB_EXTRA_DIRS", "LIBSOURCE_DIRS"):
+        for d in env.get(key, []):
+            d = env.subst(d)
+            if isdir(d):
+                libs_dirs.append(d)
+
     for libs_dir in libs_dirs:
         for item in sorted(os.listdir(libs_dir)):
             if item == "__cores__" or not isdir(join(libs_dir, item)):
