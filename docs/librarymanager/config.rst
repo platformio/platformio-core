@@ -222,6 +222,19 @@ Example:
     },
     "version": "1.0.0"
 
+
+``license``
+-----------
+
+A license of the library. You can check
+`the full list of SPDX license IDs <https://spdx.org/licenses/>`_. Ideally you
+should pick one that is `OSI <https://opensource.org/licenses/alphabetical>`_
+approved.
+
+.. code-block:: javascript
+
+    "license": "Apache-2.0"
+
 .. _libjson_downloadurl:
 
 ``downloadUrl``
@@ -479,7 +492,7 @@ options:
         "flags": "-std=c99"
     }
 
-4. Build source files (``c, cpp, h``) only from the root of the library
+4. Build source files (``c, cpp, h``) at the top level of the library
 
 .. code-block:: javascript
 
