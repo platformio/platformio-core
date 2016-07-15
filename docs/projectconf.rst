@@ -422,6 +422,8 @@ but will be applied only for the project source code from
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_SRC_BUILD_FLAGS`.
 
+.. _projectconf_build_unflags:
+
 ``build_unflags``
 ^^^^^^^^^^^^^^^^^
 

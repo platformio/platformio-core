@@ -17,7 +17,7 @@
 from __future__ import absolute_import
 
 import os
-from os.path import basename, commonprefix, isdir, isfile, join
+from os.path import basename, commonprefix, isdir, isfile, join, realpath
 from sys import modules
 
 import SCons.Scanner
@@ -73,7 +73,7 @@ class LibBuilderFactory(object):
 class LibBuilderBase(object):
 
     def __init__(self, env, path):
-        self.env = env.Clone()
+        self.env = env
         self.path = path
         self._is_built = False
         self._manifest = self.load_manifest()
@@ -109,6 +109,18 @@ class LibBuilderBase(object):
         return join("$BUILD_DIR", "lib", self.name)
 
     @property
+    def build_flags(self):
+        return None
+
+    @property
+    def build_unflags(self):
+        return None
+
+    @property
+    def extra_script(self):
+        return None
+
+    @property
     def is_built(self):
         return self._is_built
 
@@ -118,8 +130,8 @@ class LibBuilderBase(object):
     def get_path_dirs(self, use_build_dir=False):
         return [self.build_dir if use_build_dir else self.src_dir]
 
-    def append_to_cpppath(self, env):
-        env.AppendUnique(
+    def append_to_cpppath(self):
+        self.env.AppendUnique(
             CPPPATH=self.get_path_dirs(use_build_dir=True)
         )
 
@@ -130,8 +142,20 @@ class LibBuilderBase(object):
             print "Depends on <%s>" % self.name
         assert self._is_built is False
         self._is_built = True
-        return self.env.BuildLibrary(
-            self.build_dir, self.src_dir, self.src_filter)
+        self.append_to_cpppath()
+
+        env = self.env.Clone()
+        with util.cd(self.path):
+            env.ProcessUnFlags(self.build_unflags)
+            env.ProcessFlags(self.build_flags)
+            if self.extra_script:
+                env.SConscript(realpath(self.extra_script), exports="env")
+
+        # copy some data to global env
+        for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
+            self.env.AppendUnique(**{key: env.get(key)})
+
+        return env.BuildLibrary(self.build_dir, self.src_dir, self.src_filter)
 
 
 class UnknownLibBuilder(LibBuilderBase):
@@ -199,6 +223,30 @@ class PlatformIOLibBuilder(LibBuilderBase):
         assert "name" in manifest
         return manifest
 
+    @property
+    def src_filter(self):
+        if "srcFilter" in self._manifest.get("build", {}):
+            return self._manifest.get("build").get("srcFilter")
+        return LibBuilderBase.src_filter.fget(self)
+
+    @property
+    def build_flags(self):
+        if "flags" in self._manifest.get("build", {}):
+            return self._manifest.get("build").get("flags")
+        return LibBuilderBase.build_flags.fget(self)
+
+    @property
+    def build_unflags(self):
+        if "unflags" in self._manifest.get("build", {}):
+            return self._manifest.get("build").get("unflags")
+        return LibBuilderBase.build_unflags.fget(self)
+
+    @property
+    def extra_script(self):
+        if "extra_script" in self._manifest.get("build", {}):
+            return self._manifest.get("build").get("extra_script")
+        return LibBuilderBase.extra_script.fget(self)
+
 
 def find_deps(env, scanner, path_dirs, src_dir, src_filter):
     result = []
@@ -232,7 +280,7 @@ def find_and_build_deps(env, lib_builders, scanner,
     libs = []
     # append PATH directories to global CPPPATH before build starts
     for lb in target_lbs:
-        lb.append_to_cpppath(env)
+        lb.append_to_cpppath()
     # start builder
     for lb in target_lbs:
         libs.append(lb.build())
@@ -277,7 +325,6 @@ def BuildDependentLibraries(env, src_dir):
             libs.extend(find_and_build_deps(
                 env, lib_builders, scanner, lb.src_dir, lb.src_filter))
             if not lb.is_built:
-                lb.append_to_cpppath(env)
                 libs.append(lb.build())
 
     # process project source code

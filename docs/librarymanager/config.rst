@@ -22,6 +22,7 @@ to keep project in own structure and define:
 * examples list
 * compatible frameworks and platforms
 * library dependencies
+* advanced build settings
 
 PlatformIO Library Crawler uses ``library.json`` manifest to extract
 source code from developer's location and keeps cleaned library in own
@@ -397,7 +398,7 @@ See more ``library.json`` :ref:`library_creating_examples`.
 .. _libjson_examples:
 
 ``examples``
-----------------
+------------
 
 *Optional* | Type: ``String`` or ``Array`` |
 `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_
@@ -413,3 +414,80 @@ A list of example patterns. This field is predefined with default value:
         "[Ee]xamples/*/*.ino",
         "[Ee]xamples/*/*.pde"
     ]
+
+
+.. _libjson_build:
+
+``build``
+------------
+
+*Optional* | Type: ``Object``
+
+Specify advanced settings, options and flags for the build system. Possible
+options:
+
+* ``flags`` - extra flags to control preprocessing, compilation, assembly and
+  linking processes. More details :ref:`projectconf_build_flags`
+* ``unflags`` - remove base/initial flags which were set by development
+  platform. More details :ref:`projectconf_build_unflags`
+* ``srcFilter`` - specify which source files should be included/excluded
+  from build process. More details :ref:`projectconf_src_filter`
+* ``extraScript`` - launch extra script before build process.
+  More details :ref:`projectconf_extra_script`.
+
+**Examples**
+
+1. Custom macros/defines
+
+.. code-block:: javascript
+
+    "build": {
+        "flags": "-D MYLIB_REV=0.1.2 -DRELEASE"
+    }
+
+2. Extra includes for C preprocessor
+
+.. code-block:: javascript
+
+    "build": {
+        "flags": "-I inc -I inc/target_x13"
+    }
+
+3. Force to use ``C99`` standard instead ``C11``
+
+.. code-block:: javascript
+
+    "build": {
+        "unflags": "-std=gnu++11",
+        "flags": "-std=c99"
+    }
+
+4. Build source files (``c, cpp, h``) only from the root of the library
+
+.. code-block:: javascript
+
+    "build": {
+        "srcFilter": [
+            "+<*.c>",
+            "+<*.cpp>",
+            "+<*.h>"
+        ]
+    }
+
+
+5. Extend PlatformIO Build System with own extra script
+
+.. code-block:: javascript
+
+    "build": {
+        "extraScript": "generate_headers.py"
+    }
+
+``generate_headers.py``
+
+.. code-block:: python
+
+    # Import('env')
+    # print env.Dump()
+
+    # some python code that generates headers files "on-the-fly"

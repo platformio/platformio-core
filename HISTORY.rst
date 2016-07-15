@@ -17,6 +17,9 @@ PlatformIO 3.0
   C Preprocessor conditional macros, `library deep search <http://docs.platformio.org/en/latest/projectconf.html#lib-deep-search>`__, support for the 3rd party
   manifests (Arduino IDE ``library.properties``, ARM mbed ``module.json``)
   (`issue #432 <https://github.com/platformio/platformio/issues/432>`_)
+* Handle extra build flags and build script from
+  `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
+  (`issue #289 <https://github.com/platformio/platformio/issues/289>`_)
 * Show detailed build information about dependent libraries
   (`issue #617 <https://github.com/platformio/platformio/issues/617>`_)
 * Embedded Board compatibility with more than one development platform
