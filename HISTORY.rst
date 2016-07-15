@@ -20,6 +20,8 @@ PlatformIO 3.0
 * Handle extra build flags and build script from
   `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
   (`issue #289 <https://github.com/platformio/platformio/issues/289>`_)
+* Check library compatibility with project environment before building
+  (`issue #415 <https://github.com/platformio/platformio/issues/415>`_)
 * Added ``license`` field to `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
   (`issue #522 <https://github.com/platformio/platformio/issues/522>`_)
 * Show detailed build information about dependent libraries

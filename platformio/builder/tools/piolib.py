@@ -124,6 +124,12 @@ class LibBuilderBase(object):
     def is_built(self):
         return self._is_built
 
+    def is_platform_compatible(self, platform):
+        return True
+
+    def is_framework_compatible(self, framework):
+        return True
+
     def load_manifest(self):  # pylint: disable=no-self-use
         return {}
 
@@ -191,6 +197,9 @@ class ArduinoLibBuilder(LibBuilderBase):
         return ["+<*.%s>" % ext
                 for ext in piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT]
 
+    def is_framework_compatible(self, framework):
+        return framework.lower() in ("arduino", "energia")
+
 
 class MbedLibBuilder(LibBuilderBase):
 
@@ -213,6 +222,9 @@ class MbedLibBuilder(LibBuilderBase):
             path_dirs.append(
                 join(self.build_dir if use_build_dir else self.src_dir, p))
         return path_dirs
+
+    def is_framework_compatible(self, framework):
+        return framework.lower() == "mbed"
 
 
 class PlatformIOLibBuilder(LibBuilderBase):
@@ -246,6 +258,25 @@ class PlatformIOLibBuilder(LibBuilderBase):
         if "extra_script" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("extra_script")
         return LibBuilderBase.extra_script.fget(self)
+
+    def is_platform_compatible(self, platform):
+        items = self._manifest.get("platforms")
+        if not items:
+            return LibBuilderBase.is_platform_compatible(self, platform)
+        return self._item_in_list(platform, items)
+
+    def is_framework_compatible(self, framework):
+        items = self._manifest.get("frameworks")
+        if not items:
+            return LibBuilderBase.is_framework_compatible(self, framework)
+        return self._item_in_list(framework, items)
+
+    def _item_in_list(self, item, ilist):
+        if ilist == "*":
+            return True
+        if not isinstance(ilist, list):
+            ilist = [i.strip() for i in ilist.split(",")]
+        return item.lower() in [i.lower() for i in ilist]
 
 
 def find_deps(env, scanner, path_dirs, src_dir, src_filter):
@@ -295,6 +326,8 @@ def find_and_build_deps(env, lib_builders, scanner,
 
 def GetLibBuilders(env):
     items = []
+    env_frameworks = [
+        f.lower().strip() for f in env.get("FRAMEWORK", "").split(",")]
     libs_dirs = [env.subst(d) for d in env.get("LIBSOURCE_DIRS", [])
                  if isdir(env.subst(d))]
     for libs_dir in libs_dirs:
@@ -303,6 +336,11 @@ def GetLibBuilders(env):
                 continue
             lb = LibBuilderFactory.new(env, join(libs_dir, item))
             if lb.name in env.get("LIB_IGNORE", []):
+                continue
+            if not lb.is_platform_compatible(env['PLATFORM']):
+                continue
+            if not any([lb.is_framework_compatible(f)
+                        for f in env_frameworks]):
                 continue
             items.append(lb)
     return items
@@ -314,7 +352,7 @@ def BuildDependentLibraries(env, src_dir):
     lib_builders = env.GetLibBuilders()
 
     print "Looking for dependencies..."
-    print "Collecting %d libraries" % len(lib_builders)
+    print "Collecting %d compatible libraries" % len(lib_builders)
 
     built_lib_names = []
     for lib_name in env.get("LIB_FORCE", []):
