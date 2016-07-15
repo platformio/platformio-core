@@ -116,7 +116,7 @@ def ProcessFlags(env, flags):
         return
     if isinstance(flags, list):
         flags = " ".join(flags)
-    parsed_flags = env.ParseFlags(flags)
+    parsed_flags = env.ParseFlags(str(flags))
     for flag in parsed_flags.pop("CPPDEFINES"):
         if not isinstance(flag, list):
             env.Append(CPPDEFINES=flag)
@@ -151,7 +151,7 @@ def ProcessUnFlags(env, flags):
         return
     if isinstance(flags, list):
         flags = " ".join(flags)
-    parsed_flags = env.ParseFlags(flags)
+    parsed_flags = env.ParseFlags(str(flags))
     all_flags = []
     for items in parsed_flags.values():
         all_flags.extend(items)
