@@ -128,7 +128,7 @@ if "UPLOAD_FLAGS" in env:
     env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
 
 if env.get("EXTRA_SCRIPT"):
-    env.SConscript(env.get("EXTRA_SCRIPT"))
+    env.SConscript(env.get("EXTRA_SCRIPT"), exports="env")
 
 if "envdump" in COMMAND_LINE_TARGETS:
     print env.Dump()

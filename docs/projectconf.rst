@@ -486,9 +486,7 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 
 .. code-block:: python
 
-    from SCons.Script import DefaultEnvironment
-
-    env = DefaultEnvironment()
+    Import('env')
 
     env.Replace(UPLOADHEXCMD='"$UPLOADER" ${ARGUMENTS.get("custom_option")} --uploader --flags')
 
