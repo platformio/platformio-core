@@ -149,7 +149,8 @@ def ProcessFlags(env, flags):
 def ProcessUnFlags(env, flags):
     if not flags:
         return
-    flags = " ".join(flags)
+    if isinstance(flags, list):
+        flags = " ".join(flags)
     parsed_flags = env.ParseFlags(flags)
     all_flags = []
     for items in parsed_flags.values():
