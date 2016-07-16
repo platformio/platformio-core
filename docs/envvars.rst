@@ -157,3 +157,7 @@ Allows to override setting :ref:`setting_enable_prompts`.
 .. envvar:: PLATFORMIO_SETTING_ENABLE_TELEMETRY
 
 Allows to override setting :ref:`setting_enable_telemetry`.
+
+.. envvar:: PLATFORMIO_SETTING_FORCE_VERBOSE
+
+Allows to override setting :ref:`setting_force_verbose`.

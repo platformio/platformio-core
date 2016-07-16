@@ -25,6 +25,9 @@ PlatformIO 3.0
   (`issue #289 <https://github.com/platformio/platformio/issues/289>`_)
 * Check library compatibility with project environment before building
   (`issue #415 <https://github.com/platformio/platformio/issues/415>`_)
+* Print human-readable information when processing environments without
+  ``-v, --verbose`` option
+  (`issue #721 <https://github.com/platformio/platformio/issues/721>`_)
 * Added ``license`` field to `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
   (`issue #522 <https://github.com/platformio/platformio/issues/522>`_)
 * Show detailed build information about dependent libraries

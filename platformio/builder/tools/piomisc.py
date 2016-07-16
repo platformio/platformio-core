@@ -264,6 +264,14 @@ def GetActualLDScript(env):
     return None
 
 
+def ProgressHandler(env, node):
+    item = str(node)
+    if "toolchain-" in item or item.endswith((".o", ".h", ".hpp", ".ipp")):
+        return
+    item = item.replace(env['PIOHOME_DIR'], ".platformio")
+    print "Processing %s" % item
+
+
 def exists(_):
     return True
 
@@ -273,4 +281,5 @@ def generate(env):
     env.AddMethod(DumpIDEData)
     env.AddMethod(GetCompilerType)
     env.AddMethod(GetActualLDScript)
+    env.AddMethod(ProgressHandler)
     return env

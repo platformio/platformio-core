@@ -87,6 +87,20 @@ Check for the new PlatformIO interval.
 
 Check for the platform updates interval.
 
+.. _setting_force_verbose:
+
+``force_verbose``
+^^^^^^^^^^^^^^^^^
+
+:Default:   No
+:Values:    Yes/No
+
+Force verbose output when processing environments. This setting overrides
+
+* :option:`platformio run --verbose`
+* :option:`platformio ci --verbose`
+* :option:`platformio test --verbose`
+
 .. _setting_enable_prompts:
 
 ``enable_prompts``

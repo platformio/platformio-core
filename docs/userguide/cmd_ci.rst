@@ -112,8 +112,10 @@ Buid project using pre-configured :ref:`projectconf`.
 .. option::
     -v, --verbose
 
-Shows details about the results of processing environments. More details
-:option:`platformio run --verbose`
+Shows detailed information when processing environments.
+
+This option can be set globally using :ref:`setting_force_verbose` setting
+or by environment variable :envvar:`PLATFORMIO_SETTING_FORCE_VERBOSE`.
 
 Examples
 --------

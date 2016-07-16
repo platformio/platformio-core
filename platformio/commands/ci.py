@@ -58,7 +58,7 @@ def validate_path(ctx, param, value):  # pylint: disable=W0613
 @click.option("--project-conf",
               type=click.Path(exists=True, file_okay=True, dir_okay=False,
                               readable=True, resolve_path=True))
-@click.option("--verbose", "-v", count=True, default=3)
+@click.option("--verbose", "-v", is_flag=True)
 @click.pass_context
 def cli(ctx, src, lib, exclude, board,  # pylint: disable=R0913
         build_dir, keep_build_dir, project_conf, verbose):

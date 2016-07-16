@@ -19,11 +19,12 @@ from os import environ
 from os.path import join, normpath
 from time import time
 
-from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, Variables
+from SCons.Script import (COMMAND_LINE_TARGETS, AllowSubstExceptions,
+                          DefaultEnvironment, Progress, Variables)
 
 from platformio import util
 
-# AllowSubstExceptions()
+AllowSubstExceptions(NameError)
 
 # allow common variables from INI file
 commonvars = Variables(None)
@@ -65,7 +66,7 @@ commonvars.AddVariables(
 
 DefaultEnvironment(
     tools=[
-        "gcc", "g++", "as", "ar", "gnulink",
+        "ar", "as", "gcc", "g++", "gnulink",
         "platformio", "devplatform",
         "piolib", "piotest", "pioupload", "pioar", "piomisc"
     ],
@@ -98,6 +99,9 @@ DefaultEnvironment(
 )
 
 env = DefaultEnvironment()
+
+if env.GetOption("silent"):
+    Progress(env.ProgressHandler)
 
 # decode common variables
 for k in commonvars.keys():

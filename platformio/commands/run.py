@@ -36,7 +36,7 @@ from platformio.managers.platform import PlatformFactory
 @click.option("--project-dir", "-d", default=getcwd,
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
-@click.option("--verbose", "-v", count=True, default=3)
+@click.option("--verbose", "-v", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.pass_context
 def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
@@ -111,7 +111,7 @@ class EnvironmentProcessor(object):
         self.options = self._validate_options(options)
         self.targets = targets
         self.upload_port = upload_port
-        self.verbose_level = int(verbose)
+        self.verbose = verbose
 
     def process(self):
         terminal_width, _ = click.get_terminal_size()
@@ -197,7 +197,7 @@ class EnvironmentProcessor(object):
                 cmd_platform_install, platforms=[self.options['platform']])
             p = PlatformFactory.newPlatform(platform, version)
 
-        return p.run(build_vars, build_targets, self.verbose_level)
+        return p.run(build_vars, build_targets, self.verbose)
 
 
 def _autoinstall_libs(ctx, libids_list):

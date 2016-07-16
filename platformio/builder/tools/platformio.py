@@ -205,13 +205,13 @@ def MatchSourceFiles(env, src_dir, src_filter=None):
     return sorted(list(matches))
 
 
-def VariantDirWrap(env, variant_dir, src_dir, duplicate=True):
+def VariantDirWrap(env, variant_dir, src_dir, duplicate=None):
     DefaultEnvironment().Append(VARIANT_DIRS=[(variant_dir, src_dir)])
     env.VariantDir(variant_dir, src_dir, duplicate)
 
 
 def CollectBuildFiles(env, variant_dir, src_dir,
-                      src_filter=None, duplicate=True):
+                      src_filter=None, duplicate=None):
     sources = []
     variants = []
 

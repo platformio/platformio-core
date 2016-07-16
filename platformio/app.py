@@ -44,6 +44,10 @@ DEFAULT_SETTINGS = {
         "description": "Automatically update libraries (Yes/No)",
         "value": False
     },
+    "force_verbose": {
+        "description": "Force verbose output when processing environments",
+        "value": False
+    },
     "enable_telemetry": {
         "description": (
             "Telemetry service <http://docs.platformio.org/en/latest/"
