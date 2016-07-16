@@ -43,9 +43,9 @@ Options
 Process specified environments. More details :option:`platformio run --environment`
 
 .. option::
-    -i, --ignore
+    --skip
 
-Ignore tests where the name matches with specified pattern. More than one
+Skip over tests where the name matches specified patterns. More than one
 option/pattern is allowed.
 
 .. list-table::
@@ -66,7 +66,7 @@ option/pattern is allowed.
     * - ``[!seq]``
       - matches any character not in seq
 
-For example, ``platformio test --ignore "mytest*" -i "test[13]"``
+For example, ``platformio test --skip "mytest*" -i "test[13]"``
 
 .. option::
     --upload-port

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=R0913,R0914
+
 from fnmatch import fnmatch
 from os import getcwd, listdir
 from os.path import isdir, join
@@ -28,15 +30,14 @@ from platformio.managers.platform import PlatformFactory
 
 @click.command("test", short_help="Unit Testing")
 @click.option("--environment", "-e", multiple=True, metavar="<environment>")
-@click.option("--ignore", "-i", multiple=True, metavar="<pattern>")
+@click.option("--skip", multiple=True, metavar="<pattern>")
 @click.option("--upload-port", metavar="<upload port>")
 @click.option("--project-dir", "-d", default=getcwd,
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
 @click.option("--verbose", "-v", count=True, default=3)
 @click.pass_context
-def cli(ctx, environment, ignore, upload_port,  # pylint: disable=R0913,R0914
-        project_dir, verbose):
+def cli(ctx, environment, skip, upload_port, project_dir, verbose):
     assert check_project_envs(project_dir, environment)
     with util.cd(project_dir):
         test_dir = util.get_projecttest_dir()
@@ -58,8 +59,8 @@ def cli(ctx, environment, ignore, upload_port,  # pylint: disable=R0913,R0914
             if environment and envname not in environment:
                 continue
 
-            # check ignore patterns
-            if testname != "*" and any([fnmatch(testname, i) for i in ignore]):
+            # check skip patterns
+            if testname != "*" and any([fnmatch(testname, p) for p in skip]):
                 results.append((None, testname, envname))
                 continue
 
@@ -133,7 +134,8 @@ class TestProcessor(object):
         return self.cmd_ctx.invoke(
             cmd_run, project_dir=self.options['project_dir'],
             upload_port=self.options['upload_port'],
-            verbose=self.options['verbose'], environment=[self.env_name],
+            verbose=self.options['verbose'],
+            environment=[self.env_name],
             target=target
         )
 
