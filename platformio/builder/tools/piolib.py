@@ -344,7 +344,7 @@ def GetLibBuilders(env):
             lb = LibBuilderFactory.new(env, join(libs_dir, item))
             if lb.name in env.get("LIB_IGNORE", []):
                 continue
-            if not lb.is_platform_compatible(env['PLATFORM']):
+            if not lb.is_platform_compatible(env['PIOPLATFORM']):
                 continue
             if not any([lb.is_framework_compatible(f)
                         for f in env_frameworks]):
