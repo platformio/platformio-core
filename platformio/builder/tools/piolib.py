@@ -35,7 +35,8 @@ class LibBuilderFactory(object):
             clsname = "PlatformIOLibBuilder"
         else:
             env_frameworks = [
-                f.lower().strip() for f in env.get("PIOFRAMEWORK", "").split(",")]
+                f.lower().strip()
+                for f in env.get("PIOFRAMEWORK", "").split(",")]
             used_frameworks = LibBuilderFactory.get_used_frameworks(env, path)
             common_frameworks = set(env_frameworks) & set(used_frameworks)
             if common_frameworks:
