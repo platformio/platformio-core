@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+from os.path import basename
 
 import click
 
@@ -79,7 +80,10 @@ def platform_install(platforms, with_package, without_package,
     for platform in platforms:
         _platform = platform
         _version = None
-        if "@" in platform:
+        if any([s in platform for s in ("\\", "/")]):
+            _platform = basename(platform)
+            _version = platform
+        elif "@" in platform:
             _platform, _version = platform.rsplit("@", 1)
         if PlatformManager().install(_platform, _version, with_package,
                                      without_package, skip_default_package):

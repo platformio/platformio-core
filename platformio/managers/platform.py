@@ -45,8 +45,8 @@ class PlatformManager(BasePkgManager):
     def install(self,  # pylint: disable=too-many-arguments,arguments-differ
                 name, requirements=None, with_packages=None,
                 without_packages=None, skip_default_packages=False):
-        manifest_path = BasePkgManager.install(self, name, requirements)
-        p = PlatformFactory.newPlatform(manifest_path, requirements)
+        platform_dir = BasePkgManager.install(self, name, requirements)
+        p = PlatformFactory.newPlatform(self.get_manifest_path(platform_dir))
         p.install_packages(
             with_packages, without_packages, skip_default_packages)
         self.cleanup_packages(p.packages.keys())
@@ -99,7 +99,8 @@ class PlatformManager(BasePkgManager):
     def get_installed_boards(self):
         boards = []
         for manifest in self.get_installed():
-            p = PlatformFactory.newPlatform(manifest['_manifest_path'])
+            p = PlatformFactory.newPlatform(
+                self.get_manifest_path(manifest['__pkg_dir']))
             for config in p.get_boards().values():
                 boards.append(config.get_brief_data())
         return boards
@@ -138,10 +139,8 @@ class PlatformFactory(object):
             platform_dir = dirname(name)
             name = util.load_json(name)['name']
         else:
-            _manifest = PlatformManager().max_satisfying_version(
+            platform_dir = PlatformManager().max_installed_version(
                 name, requirements)
-            if _manifest:
-                platform_dir = dirname(_manifest['_manifest_path'])
 
         if not platform_dir:
             raise exception.UnknownPlatform(
@@ -169,9 +168,17 @@ class PlatformPackagesMixin(object):
         installed = self.pm.get_installed()
         for name, opts in self.packages.items():
             manifest = None
+            reqspec = None
+            try:
+                reqspec = semantic_version.Spec(opts['version'])
+            except ValueError:
+                pass
+
             for p in installed:
-                if (p['name'] != name or not semantic_version.match(
-                        opts['version'], p['version'])):
+                if p['name'] != name:
+                    continue
+                if reqspec and not reqspec.match(
+                        semantic_version.Version(p['version'])):
                     continue
                 elif (not manifest or semantic_version.compare(
                         p['version'], manifest['version']) == 1):
@@ -413,7 +420,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         packages = self.get_installed_packages()
         if name not in packages:
             return None
-        return dirname(packages[name]['_manifest_path'])
+        return packages[name]['__pkg_dir']
 
     def get_package_version(self, name):
         packages = self.get_installed_packages()
