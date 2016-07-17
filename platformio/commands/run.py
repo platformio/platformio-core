@@ -97,6 +97,11 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
 
 class EnvironmentProcessor(object):
 
+    REMAPED_OPTIONS = {
+        "FRAMEWORK": "PIOFRAMEWORK",
+        "PLATFORM": "PIOPLATFORM"
+    }
+
     RENAMED_OPTIONS = {
         "INSTALL_LIBS": "LIB_INSTALL",
         "IGNORE_LIBS": "LIB_IGNORE",
@@ -158,6 +163,8 @@ class EnvironmentProcessor(object):
         if self.upload_port:
             variables['upload_port'] = self.upload_port
         for k, v in self.options.items():
+            if k.upper() in self.REMAPED_OPTIONS:
+                k = self.REMAPED_OPTIONS[k.upper()]
             k = k.lower()
             if k == "targets" or (k == "upload_port" and self.upload_port):
                 continue

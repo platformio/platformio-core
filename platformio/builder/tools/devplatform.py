@@ -29,7 +29,7 @@ def initDevPlatform(name):
 
 def DevPlatform(env):
     variables = {}
-    for key in ("board", "framework"):
+    for key in ("board", "pioframework"):
         if key not in env:
             continue
         variables[key] = env[key.upper()]

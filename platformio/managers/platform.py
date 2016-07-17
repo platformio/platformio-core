@@ -440,7 +440,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 
     def configure_default_packages(self, variables, targets):
         # enbale used frameworks
-        for framework in variables.get("framework", "").split(","):
+        for framework in variables.get("pioframework", "").split(","):
             if not self.frameworks:
                 continue
             framework = framework.lower().strip()

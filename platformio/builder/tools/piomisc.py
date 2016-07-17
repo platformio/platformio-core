@@ -185,7 +185,7 @@ def DumpIDEData(env):
             defines.append(env_.subst(item).replace('\\"', '"'))
 
         # special symbol for Atmel AVR MCU
-        if env.subst("$PLATFORM") == "atmelavr":
+        if env['PIOPLATFORM'] == "atmelavr":
             defines.append(
                 "__AVR_%s__" % env.BoardConfig().get("build.mcu").upper()
                 .replace("ATMEGA", "ATmega")

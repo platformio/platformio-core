@@ -122,7 +122,7 @@ void output_complete(void)
                 print("Warning: Could not remove temporary file '%s'. "
                       "Please remove it manually." % file_)
 
-    framework = env.subst("$FRAMEWORK").lower()
+    framework = env.subst("$PIOFRAMEWORK").lower()
     if framework not in FRAMEWORK_PARAMETERS:
         env.Exit(
             "Error: %s framework doesn't support testing feature!" % framework)

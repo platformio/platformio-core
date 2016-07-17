@@ -34,8 +34,8 @@ commonvars.AddVariables(
     ("EXTRA_SCRIPT",),
     ("PIOENV",),
     ("PIOTEST",),
-    ("PLATFORM",),
-    ("FRAMEWORK",),
+    ("PIOPLATFORM",),
+    ("PIOFRAMEWORK",),
 
     # build options
     ("BUILD_FLAGS",),
