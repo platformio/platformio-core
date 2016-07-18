@@ -55,7 +55,7 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
                     fg="yellow"
                 )
 
-        config = util.get_project_config()
+        config = util.load_project_config()
         env_default = None
         if config.has_option("platformio", "env_default"):
             env_default = [
@@ -257,18 +257,17 @@ def print_header(label, is_error=False):
 
 
 def check_project_envs(project_dir, environments):
-    with util.cd(project_dir):
-        config = util.get_project_config()
+    config = util.load_project_config(project_dir)
 
-        if not config.sections():
-            raise exception.ProjectEnvsNotAvailable()
+    if not config.sections():
+        raise exception.ProjectEnvsNotAvailable()
 
-        known = set([s[4:] for s in config.sections()
-                     if s.startswith("env:")])
-        unknown = set(environments) - known
-        if unknown:
-            raise exception.UnknownEnvNames(
-                ", ".join(unknown), ", ".join(known))
+    known = set([s[4:] for s in config.sections()
+                 if s.startswith("env:")])
+    unknown = set(environments) - known
+    if unknown:
+        raise exception.UnknownEnvNames(
+            ", ".join(unknown), ", ".join(known))
     return True
 
 

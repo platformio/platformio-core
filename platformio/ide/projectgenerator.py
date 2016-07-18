@@ -46,16 +46,15 @@ class ProjectGenerator(object):
     @util.memoized
     def get_project_env(self):
         data = {"env_name": "PlatformIO"}
-        with util.cd(self.project_dir):
-            config = util.get_project_config()
-            for section in config.sections():
-                if not section.startswith("env:"):
-                    continue
-                data = {"env_name": section[4:]}
-                for k, v in config.items(section):
-                    data[k] = v
-                if self.board == data.get("board"):
-                    break
+        config = util.load_project_config(self.project_dir)
+        for section in config.sections():
+            if not section.startswith("env:"):
+                continue
+            data = {"env_name": section[4:]}
+            for k, v in config.items(section):
+                data[k] = v
+            if self.board == data.get("board"):
+                break
         return data
 
     @util.memoized

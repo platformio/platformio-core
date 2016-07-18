@@ -81,6 +81,7 @@ class cd(object):
 
 
 class memoized(object):
+
     '''
     Decorator. Caches a function's return value each time it is called.
     If called later with the same arguments, the cached value is returned
@@ -148,7 +149,7 @@ def _get_projconf_option_dir(name, default=None):
         return os.getenv(_env_name)
 
     try:
-        config = get_project_config()
+        config = load_project_config()
         if (config.has_section("platformio") and
                 config.has_option("platformio", name)):
             option_dir = config.get("platformio", name)
@@ -232,14 +233,20 @@ def get_projectdata_dir():
     )
 
 
-def get_project_config(ini_path=None):
-    if not ini_path:
-        ini_path = join(get_project_dir(), "platformio.ini")
-    if not isfile(ini_path):
-        raise exception.NotPlatformProject(get_project_dir())
+def load_project_config(project_dir=None):
+    if not project_dir:
+        project_dir = get_project_dir()
+    if not is_platformio_project(project_dir):
+        raise exception.NotPlatformProject(project_dir)
     cp = ConfigParser()
-    cp.read(ini_path)
+    cp.read(join(project_dir, "platformio.ini"))
     return cp
+
+
+def is_platformio_project(project_dir=None):
+    if not project_dir:
+        project_dir = get_project_dir()
+    return isfile(join(project_dir, "platformio.ini"))
 
 
 def change_filemtime(path, time):

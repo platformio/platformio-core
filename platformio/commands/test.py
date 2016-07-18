@@ -44,7 +44,7 @@ def cli(ctx, environment, skip, upload_port, project_dir, verbose):
         if not isdir(test_dir):
             raise exception.TestDirEmpty(test_dir)
         test_names = get_test_names(test_dir)
-        projectconf = util.get_project_config()
+        projectconf = util.load_project_config()
 
     click.echo("Collected %d items" % len(test_names))
     click.echo()

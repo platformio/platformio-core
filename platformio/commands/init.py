@@ -84,7 +84,7 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
 
     if board:
         fill_project_envs(
-            ctx, join(project_dir, "platformio.ini"), board,
+            ctx, project_dir, board,
             enable_auto_uploading, env_prefix, ide is not None
         )
 
@@ -121,25 +121,23 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
 
 
 def get_first_board(project_dir):
-    with util.cd(project_dir):
-        config = util.get_project_config()
-        for section in config.sections():
-            if not section.startswith("env:"):
-                continue
-            elif config.has_option(section, "board"):
-                return config.get(section, "board")
+    config = util.load_project_config(project_dir)
+    for section in config.sections():
+        if not section.startswith("env:"):
+            continue
+        elif config.has_option(section, "board"):
+            return config.get(section, "board")
     return None
 
 
 def init_base_project(project_dir):
-    platformio_ini = join(project_dir, "platformio.ini")
-    if not isfile(platformio_ini):
+    if not util.is_platformio_project(project_dir):
         copyfile(join(util.get_source_dir(), "projectconftpl.ini"),
-                 platformio_ini)
+                 join(project_dir, "platformio.ini"))
 
     lib_dir = join(project_dir, "lib")
     src_dir = join(project_dir, "src")
-    config = util.get_project_config(platformio_ini)
+    config = util.load_project_config(project_dir)
     if config.has_option("platformio", "src_dir"):
         src_dir = join(project_dir, config.get("platformio", "src_dir"))
 
@@ -277,14 +275,14 @@ def init_cvs_ignore(project_dir):
 
 
 def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
-        ctx, platformio_ini, board_ids, enable_auto_uploading,
+        ctx, project_dir, board_ids, enable_auto_uploading,
         env_prefix, force_download):
     installed_boards = PlatformManager().get_installed_boards()
     content = []
     used_boards = []
     used_platforms = []
 
-    config = util.get_project_config(platformio_ini)
+    config = util.load_project_config(project_dir)
     for section in config.sections():
         if not all([section.startswith("env:"),
                     config.has_option(section, "board")]):
@@ -324,7 +322,7 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
     if not content:
         return
 
-    with open(platformio_ini, "a") as f:
+    with open(join(project_dir, "platformio.ini"), "a") as f:
         content.append("")
         f.write("\n".join(content))
 
