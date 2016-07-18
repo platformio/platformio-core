@@ -62,7 +62,7 @@ def test_init_special_board(platformio_setup, clirunner, validate_cliresult):
         validate_cliresult(result)
         boards = json.loads(result.output)
 
-        config = util.get_project_config()
+        config = util.load_project_config()
         expected_result = [
             ("platform", str(boards[0]['platform'])),
             ("framework", str(boards[0]['frameworks'][0])),
@@ -81,7 +81,7 @@ def test_init_enable_auto_uploading(platformio_setup, clirunner,
                                   ["-b", "uno", "--enable-auto-uploading"])
         validate_cliresult(result)
         validate_pioproject(getcwd())
-        config = util.get_project_config()
+        config = util.load_project_config()
         expected_result = [
             ("platform", "atmelavr"),
             ("framework", "arduino"),
