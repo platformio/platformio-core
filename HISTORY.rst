@@ -4,6 +4,12 @@ Release Notes
 PlatformIO 2.0
 --------------
 
+2.11.2 (2016-??-??)
+~~~~~~~~~~~~~~~~~~~
+
+* Fixed broken LD Script for Element14 chipKIT Pi board
+  (`issue #725 <https://github.com/platformio/platformio/issues/725>`_)
+
 2.11.1 (2016-07-12)
 ~~~~~~~~~~~~~~~~~~~
 
