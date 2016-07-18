@@ -820,5 +820,27 @@
         },
         "url": "https://www.arduboy.com",
         "vendor": "Arduboy"
+    },
+
+    "pinoccio": {
+        "build": {
+            "core": "arduino",
+            "extra_flags": "-DARDUINO_ARCH_AVR -DARDUINO_PINOCCIO -D__PROG_TYPES_COMPAT__",
+            "f_cpu": "16000000L",
+            "mcu": "atmega256rfr2",
+            "variant": "pinoccio"
+        },
+        "frameworks": ["arduino"],
+        "name": "Pinoccio Scout",
+        "platform": "atmelavr",
+        "upload": {
+            "maximum_ram_size": 32768,
+            "maximum_size": 253952,
+            "protocol": "wiring",
+            "require_upload_port" : true,
+            "speed": 115200
+        },
+        "url": "https://www.crowdsupply.com/pinoccio/mesh-sensor-network",
+        "vendor": "Pinoccio"
     }
 }
