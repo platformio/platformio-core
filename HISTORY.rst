@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.11.2 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Added support for Pinoccio Scout board
+  (`issue #52 <https://github.com/platformio/platformio/issues/52>`_)
 * Fixed broken LD Script for Element14 chipKIT Pi board
   (`issue #725 <https://github.com/platformio/platformio/issues/725>`_)
 
