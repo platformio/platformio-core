@@ -119,7 +119,7 @@
             "core": "pic32",
             "extra_flags": "-D_BOARD_CHIPKIT_PI_",
             "f_cpu": "40000000L",
-            "ldscript": "cchipKIT-application-32MX250F128.ld",
+            "ldscript": "chipKIT-application-32MX250F128.ld",
             "mcu": "32MX250F128B",
             "variant": "ChipKIT_Pi"
         },
