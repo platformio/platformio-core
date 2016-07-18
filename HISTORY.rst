@@ -38,17 +38,35 @@ PlatformIO 3.0
 PlatformIO 2.0
 --------------
 
-2.11.1 (2016-??-??)
+2.11.2 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Added support for Pinoccio Scout board
+  (`issue #52 <https://github.com/platformio/platformio/issues/52>`_)
+* Added support for `Teensy USB Features <http://docs.platformio.org/en/latest/platforms/teensy.html#usb-features>`__
+  (HID, SERIAL_HID, DISK, DISK_SDFLASH, MIDI, etc.)
+  (`issue #722 <https://github.com/platformio/platformio/issues/722>`_)
+* Fixed broken LD Script for Element14 chipKIT Pi board
+  (`issue #725 <https://github.com/platformio/platformio/issues/725>`_)
+
+2.11.1 (2016-07-12)
+~~~~~~~~~~~~~~~~~~~
+
+* Added support for Arduino M0, M0 Pro and Tian boards
+  (`issue #472 <https://github.com/platformio/platformio/issues/472>`_)
 * Added support for Microchip chipKIT Lenny board
 * Updated Microchip PIC32 Arduino framework to v1.2.1
 * Documented `uploading of EEPROM data <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-eeprom-data>`__
   (from EEMEM directive)
 * Added ``Rebuild C/C++ Project Index`` target to CLion and Eclipse IDEs
 * Improved project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
+* Added ``udev`` rules for OpenOCD CMSIS-DAP adapters
+  (`issue #718 <https://github.com/platformio/platformio/issues/718>`_)
 * Auto-remove project cache when PlatformIO is upgraded
 * Keep user changes for ``.gitignore`` file when re-generate/update project data
+* Ignore ``[platformio]`` section from custom project configuration file when
+  `platformio ci --project-conf <http://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__
+  command is used
 * Fixed missed ``--boot`` flag for the firmware uploader for ATSAM3X8E
   Cortex-M3 MCU based boards (Arduino Due, etc)
   (`issue #710 <https://github.com/platformio/platformio/issues/710>`_)

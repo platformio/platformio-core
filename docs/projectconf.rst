@@ -97,7 +97,11 @@ This option can be overridden by global environment variable
 ``envs_dir``
 ^^^^^^^^^^^^
 
-This is a cache directory. *PlatformIO Build System* uses this folder for project
+.. warning::
+    **PLEASE DO NOT EDIT FILES IN THIS FOLDER**. PlatformIO will overwrite
+    your changes on the next build. **THIS IS A CACHE DIRECTORY**.
+
+*PlatformIO Build System* uses this folder for project
 environments to store compiled object files, static libraries, firmwares and
 other cached information. It allows PlatformIO to build source code extremely
 fast!

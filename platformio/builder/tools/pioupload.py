@@ -39,15 +39,12 @@ def FlushSerialBuffer(env, port):
 def TouchSerialPort(env, port, baudrate):
     port = env.subst(port)
     print "Forcing reset using %dbps open/close on port %s" % (baudrate, port)
-    if system() != "Windows":
-        try:
-            s = Serial(port)
-            s.close()
-        except:  # pylint: disable=W0702
-            pass
-    s = Serial(port=port, baudrate=baudrate)
-    s.setDTR(False)
-    s.close()
+    try:
+        s = Serial(port=port, baudrate=baudrate)
+        s.setDTR(False)
+        s.close()
+    except:  # pylint: disable=W0702
+        pass
     sleep(0.4)
 
 

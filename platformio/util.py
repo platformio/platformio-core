@@ -220,10 +220,20 @@ def get_projectlib_dir():
 
 
 def get_pioenvs_dir():
-    return _get_projconf_option_dir(
+    path = _get_projconf_option_dir(
         "envs_dir",
         join(get_project_dir(), ".pioenvs")
     )
+    if not isdir(path):
+        os.makedirs(path)
+    dontmod_path = join(path, "do-not-modify-files-here.url")
+    if not isfile(dontmod_path):
+        with open(dontmod_path, "w") as fp:
+            fp.write("""
+[InternetShortcut]
+URL=http://docs.platformio.org/en/latest/projectconf.html#envs-dir
+""")
+    return path
 
 
 def get_projectdata_dir():
