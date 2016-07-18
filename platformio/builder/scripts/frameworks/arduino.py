@@ -198,6 +198,20 @@ if env.get("PLATFORM") == "teensy":
         "ARDUINO=10600",
         "TEENSYDUINO=%d" % ARDUINO_VERSION
     ]
+
+    USB_FLAGS = (
+        "USB_HID",
+        "USB_SERIAL_HID",
+        "USB_DISK",
+        "USB_DISK_SDFLASH",
+        "USB_MIDI",
+        "USB_RAWHID",
+        "USB_FLIGHTSIM",
+        "USB_DISABLED"
+    )
+
+    if not any(f in env.get("BUILD_FLAGS", []) for f in USB_FLAGS):
+        env.Append(CPPDEFINES=["USB_SERIAL"])
 else:
     ARDUINO_USBDEFINES += ["ARDUINO=%d" % ARDUINO_VERSION]
 
@@ -309,6 +323,8 @@ if BOARD_BUILDOPTS.get("core", None) == "teensy":
             continue
         with open(file_path, "w") as fp:
             fp.write(content)
+
+    env.Append(CPPPATH=[join("$PLATFORMFW_DIR", "cores")])
 
 #
 # Target: Build Core Library

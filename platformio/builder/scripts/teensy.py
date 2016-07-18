@@ -40,7 +40,6 @@ elif env.get("BOARD_OPTIONS", {}).get("build", {}).get("core") == "teensy3":
 
 env.Append(
     CPPDEFINES=[
-        "USB_SERIAL",
         "LAYOUT_US_ENGLISH"
     ],
 
