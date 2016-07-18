@@ -9,8 +9,8 @@ PlatformIO 2.0
 
 * Added support for Pinoccio Scout board
   (`issue #52 <https://github.com/platformio/platformio/issues/52>`_)
-* Implemented `Teensy 2.0 USB functionality <http://docs.platformio.org/en/latest/platforms/teensy.html#teensy-2-0-and-usb>`__
-  (HID, SERIAL_HID, DISK, MIDI, etc.)
+* Added support for `Teensy USB Features <http://docs.platformio.org/en/latest/platforms/teensy.html#usb-features>`__
+  (HID, SERIAL_HID, DISK, DISK_SDFLASH, MIDI, etc.)
   (`issue #722 <https://github.com/platformio/platformio/issues/722>`_)
 * Fixed broken LD Script for Element14 chipKIT Pi board
   (`issue #725 <https://github.com/platformio/platformio/issues/725>`_)

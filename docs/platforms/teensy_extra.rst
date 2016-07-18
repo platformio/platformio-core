@@ -9,11 +9,11 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-Teensy 2.0 and USB
-------------------
+USB Features
+------------
 
-If you want to implement USB functionality using Teensy 2.0, you need to
-add special macros/define using :ref:`projectconf_build_flags`:
+If you want to use Teensy USB Features, you need to add special
+acros/define using :ref:`projectconf_build_flags`:
 
 * ``-D USB_HID``
 * ``-D USB_SERIAL_HID``
