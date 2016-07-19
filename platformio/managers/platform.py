@@ -26,17 +26,17 @@ import semantic_version
 from platformio import app, exception, util
 from platformio.managers.package import BasePkgManager, PackageManager
 
-PACKAGE_DIR = join(util.get_home_dir(), "packages")
+PLATFORMS_DIR = join(util.get_home_dir(), "platforms")
+PACKAGES_DIR = join(util.get_home_dir(), "packages")
 
 
 class PlatformManager(BasePkgManager):
 
-    def __init__(self):
+    def __init__(self, package_dir=None, repositories=None):
+        if not repositories:
+            repositories = ["http://dl.platformio.org/platforms/manifest.json"]
         BasePkgManager.__init__(
-            self,
-            join(util.get_home_dir(), "platforms"),
-            ["http://dl.platformio.org/platforms/manifest.json"]
-        )
+            self, package_dir or PLATFORMS_DIR, repositories)
 
     @property
     def manifest_name(self):
@@ -84,7 +84,7 @@ class PlatformManager(BasePkgManager):
                     deppkgs[pkgname] = set()
                 deppkgs[pkgname].add(pkgmanifest['version'])
 
-        pm = PackageManager(PACKAGE_DIR)
+        pm = PackageManager(PACKAGES_DIR)
         for manifest in pm.get_installed():
             if manifest['name'] not in names:
                 continue
@@ -315,7 +315,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         self._manifest = util.load_json(manifest_path)
 
         self.pm = PackageManager(
-            PACKAGE_DIR, self._manifest.get("packageRepositories"))
+            PACKAGES_DIR, self._manifest.get("packageRepositories"))
 
         self._verbose = False
 

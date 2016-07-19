@@ -261,7 +261,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
     _INSTALLED_CACHE = {}
 
     def __init__(self, package_dir, repositories=None):
-        self._INSTALLED_CACHE = {}
         self.repositories = repositories
         self.package_dir = package_dir
         if not isdir(self.package_dir):
@@ -271,10 +270,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
     @property
     def manifest_name(self):
         raise NotImplementedError()
-
-    @staticmethod
-    def reset_cache():
-        BasePkgManager._INSTALLED_CACHE = {}
 
     @staticmethod
     def download(url, dest_dir, sha1=None):
@@ -288,6 +283,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
     def unpack(source_path, dest_dir):
         fu = FileUnpacker(source_path, dest_dir)
         return fu.start()
+
+    def reset_cache(self):
+        if self.package_dir in BasePkgManager._INSTALLED_CACHE:
+            del BasePkgManager._INSTALLED_CACHE[self.package_dir]
 
     def print_message(self, message, nl=True):
         click.echo("%s: %s" % (self.__class__.__name__, message), nl=nl)
