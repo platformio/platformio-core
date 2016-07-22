@@ -72,8 +72,8 @@ def platform_search(query, json_output):
 
 @cli.command("install", short_help="Install new platforms")
 @click.argument("platforms", nargs=-1, required=True)
-@click.option("--with-package", multiple=True, metavar="<package>")
-@click.option("--without-package", multiple=True, metavar="<package>")
+@click.option("--with-package", multiple=True)
+@click.option("--without-package", multiple=True)
 @click.option("--skip-default-package", is_flag=True)
 def platform_install(platforms, with_package, without_package,
                      skip_default_package):

@@ -53,9 +53,9 @@ def validate_path(ctx, param, value):  # pylint: disable=W0613
 
 @click.command("ci", short_help="Continuous Integration")
 @click.argument("src", nargs=-1, callback=validate_path)
-@click.option("--lib", "-l", multiple=True, callback=validate_path)
+@click.option("-l", "--lib", multiple=True, callback=validate_path)
 @click.option("--exclude", multiple=True)
-@click.option("--board", "-b", multiple=True, metavar="ID",
+@click.option("-b", "--board", multiple=True, metavar="ID",
               callback=validate_boards)
 @click.option("--build-dir", default=mkdtemp,
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
@@ -64,7 +64,7 @@ def validate_path(ctx, param, value):  # pylint: disable=W0613
 @click.option("--project-conf",
               type=click.Path(exists=True, file_okay=True, dir_okay=False,
                               readable=True, resolve_path=True))
-@click.option("--verbose", "-v", is_flag=True)
+@click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
 def cli(ctx, src, lib, exclude, board,  # pylint: disable=R0913
         build_dir, keep_build_dir, project_conf, verbose):

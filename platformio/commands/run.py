@@ -30,13 +30,13 @@ from platformio.managers.platform import PlatformFactory
 
 
 @click.command("run", short_help="Process project environments")
-@click.option("--environment", "-e", multiple=True, metavar="<environment>")
-@click.option("--target", "-t", multiple=True, metavar="<target>")
-@click.option("--upload-port", metavar="<upload port>")
-@click.option("--project-dir", "-d", default=getcwd,
+@click.option("-e", "--environment", multiple=True)
+@click.option("-t", "--target", multiple=True)
+@click.option("--upload-port")
+@click.option("-d", "--project-dir", default=getcwd,
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
-@click.option("--verbose", "-v", is_flag=True)
+@click.option("-v", "--verbose", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.pass_context
 def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914

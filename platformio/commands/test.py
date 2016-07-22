@@ -32,7 +32,7 @@ from platformio.managers.platform import PlatformFactory
 @click.option("--environment", "-e", multiple=True, metavar="<environment>")
 @click.option("--skip", multiple=True, metavar="<pattern>")
 @click.option("--upload-port", metavar="<upload port>")
-@click.option("--project-dir", "-d", default=getcwd,
+@click.option("-d", "--project-dir", default=getcwd,
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
 @click.option("--verbose", "-v", is_flag=True)
