@@ -96,5 +96,5 @@ def test_init_enable_auto_uploading(platformio_setup, clirunner,
 def test_init_incorrect_board(clirunner):
     result = clirunner.invoke(cli, ["-b", "missed_board"])
     assert result.exit_code == 2
-    assert 'Error: Invalid value for "--board" / "-b"' in result.output
+    assert 'Error: Invalid value for "-b" / "--board' in result.output
     assert isinstance(result.exception, SystemExit)
