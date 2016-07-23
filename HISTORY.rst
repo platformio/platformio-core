@@ -12,6 +12,7 @@ PlatformIO 2.0
 * Added support for `Teensy USB Features <http://docs.platformio.org/en/latest/platforms/teensy.html#usb-features>`__
   (HID, SERIAL_HID, DISK, DISK_SDFLASH, MIDI, etc.)
   (`issue #722 <https://github.com/platformio/platformio/issues/722>`_)
+* Improved Project Generator for PlatformIO IDE (fixes incorrect linter errors)
 * Fixed broken LD Script for Element14 chipKIT Pi board
   (`issue #725 <https://github.com/platformio/platformio/issues/725>`_)
 

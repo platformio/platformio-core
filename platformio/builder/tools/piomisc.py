@@ -147,17 +147,15 @@ def DumpIDEData(env):
 
     def get_includes(env_):
         includes = []
-        # includes from used framework and libs
-        for item in env_.get("VARIANT_DIRS", []):
-            if "$BUILDSRC_DIR" in item[0]:
-                continue
-            includes.append(env_.subst(item[1]))
-
-        # custom includes
         for item in env_.get("CPPPATH", []):
-            if item.startswith("$BUILD_DIR"):
-                continue
-            includes.append(env_.subst(item))
+            invardir = False
+            for vardiritem in env_.get("VARIANT_DIRS", []):
+                if item == vardiritem[0]:
+                    includes.append(vardiritem[1])
+                    invardir = True
+                    break
+            if not invardir:
+                includes.append(env_.subst(item))
 
         # installed libs
         for d in env_.get("LIBSOURCE_DIRS", []):
