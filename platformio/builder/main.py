@@ -45,6 +45,7 @@ commonvars.AddVariables(
 
     # library options
     ("LIB_DEEP_SEARCH",),
+    ("LIB_COMPAT_LEVEL",),
     ("LIB_IGNORE",),
     ("LIB_FORCE",),
     ("LIB_EXTRA_DIRS",),
@@ -121,6 +122,7 @@ for opt in ("LIB_IGNORE", "LIB_FORCE", "LIB_EXTRA_DIRS"):
         continue
     env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
 
+env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
 env.LoadDevPlatform(commonvars)
 
 env.SConscriptChdir(0)

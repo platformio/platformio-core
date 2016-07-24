@@ -17,8 +17,8 @@
 from __future__ import absolute_import
 
 import os
+import sys
 from os.path import basename, commonprefix, isdir, isfile, join, realpath
-from sys import modules
 
 import SCons.Scanner
 
@@ -44,7 +44,7 @@ class LibBuilderFactory(object):
             elif used_frameworks:
                 clsname = "%sLibBuilder" % used_frameworks[0].title()
 
-        obj = getattr(modules[__name__], clsname)(env, path)
+        obj = getattr(sys.modules[__name__], clsname)(env, path)
         assert isinstance(obj, LibBuilderBase)
         return obj
 
@@ -327,27 +327,34 @@ def find_and_build_deps(env, lib_builders, scanner,
 
 def GetLibBuilders(env):
     items = []
-    libs_dirs = []
     env_frameworks = [
-        f.lower().strip() for f in env.get("PIOFRAMEWORK", "").split(",")]
+        f.lower().strip() for f in env.get("PIOFRAMEWORK", "").split(",")
+    ]
+    compat_level = int(env.get("LIB_COMPAT_LEVEL", 1))
 
-    for key in ("LIB_EXTRA_DIRS", "LIBSOURCE_DIRS"):
-        for d in env.get(key, []):
-            d = env.subst(d)
-            if isdir(d):
-                libs_dirs.append(d)
-
-    for libs_dir in libs_dirs:
+    for libs_dir in env['LIBSOURCE_DIRS']:
+        libs_dir = env.subst(libs_dir)
+        if not isdir(libs_dir):
+            continue
         for item in sorted(os.listdir(libs_dir)):
             if item == "__cores__" or not isdir(join(libs_dir, item)):
                 continue
             lb = LibBuilderFactory.new(env, join(libs_dir, item))
             if lb.name in env.get("LIB_IGNORE", []):
+                if not env.GetOption("silent"):
+                    print "Ignored library " + lb.path
                 continue
-            if not lb.is_platform_compatible(env['PIOPLATFORM']):
+            if compat_level > 1 and not lb.is_platform_compatible(env[
+                    'PIOPLATFORM']):
+                if not env.GetOption("silent"):
+                    sys.stderr.write("Platform incompatible library %s\n" %
+                                     lb.path)
                 continue
-            if not any([lb.is_framework_compatible(f)
-                        for f in env_frameworks]):
+            if compat_level > 0 and not any([lb.is_framework_compatible(f)
+                                             for f in env_frameworks]):
+                if not env.GetOption("silent"):
+                    sys.stderr.write("Framework incompatible library %s\n" %
+                                     lb.path)
                 continue
             items.append(lb)
     return items
@@ -358,8 +365,8 @@ def BuildDependentLibraries(env, src_dir):
     scanner = SCons.Scanner.C.CScanner()
     lib_builders = env.GetLibBuilders()
 
-    print "Looking for dependencies..."
     print "Collecting %d compatible libraries" % len(lib_builders)
+    print "Looking for dependencies..."
 
     built_lib_names = []
     for lib_name in env.get("LIB_FORCE", []):

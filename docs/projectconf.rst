@@ -606,9 +606,14 @@ Example:
 ``lib_force``
 ^^^^^^^^^^^^^
 
-Force Library Build System to build specified libraries if even they are not
+Force Library Build System to build specified libraries if they even are not
 included in the project source code. Also, these libraries will be processed
 in the first order.
+
+The correct value for this option is library name (not
+folder name). In the most cases, library name is pre-defined in manifest file
+(:ref:`library_config`, ``library.properties``, ``module.json``). The multiple
+library names are allowed, split them with comma ``,`` separator.
 
 Example:
 
@@ -617,10 +622,19 @@ Example:
     [env:myenv]
     lib_force = OneWire, SPI
 
+.. _projectconf_lib_ignore:
+
 ``lib_ignore``
 ^^^^^^^^^^^^^^
 
-Specify libraries which should be ignored by ``Library Dependency Finder (LDF)``
+Please make sure to read :ref:`faq_ldf` guides first.
+
+Specify libraries which should be ignored by Library Dependency Finder.
+
+The correct value for this option is library name (not
+folder name). In the most cases, library name is pre-defined in manifest file
+(:ref:`library_config`, ``library.properties``, ``module.json``). The multiple
+library names are allowed, split them with comma ``,`` separator.
 
 Example:
 
@@ -629,18 +643,25 @@ Example:
     [env:ignore_some_libs]
     lib_ignore = SPI, Ethernet
 
+.. _projectconf_lib_deep_search:
+
 ``lib_deep_search``
 ^^^^^^^^^^^^^^^^^^^
 
+Please make sure to read :ref:`faq_ldf` guides first.
+
 By default, this option is turned OFF (``lib_deep_search = false``) and means
-that ``Library Dependency Finder (LDF)`` will look only for the libraries
-that are mentioned (using ``#include <...>``) in the source files from the
-project :ref:`projectconf_pio_src_dir`. Also, ``LDF`` analyzes nested
-``#include <...>`` by default.
+that Library Dependency Finder will analyzes only "nested includes/chain".
+
+Nevertheless, some libraries depend on other libraries and the
+``#include <...>`` directives for these libraries are not declared in the
+"main" header file that is used by upper library. In this case, LDF will not
+handle these libraries automatically because it doesn't analyze "each source
+file" of the nested libraries.
 
 If you want to enable deep search, please set this option to ``true``.
-Found library will be treated like the new source files and
-``LDF`` will search dependencies for it.
+Found library will be treated like the new source files and LDF will
+search dependencies for it.
 
 For example, there are 2 libraries:
 
@@ -688,17 +709,19 @@ For example, there are 2 libraries:
 ``lib_extra_dirs``
 ^^^^^^^^^^^^^^^^^^
 
-A list with extra directories where ``Library Dependency Finder (LDF)`` will
-look for dependencies. Multiple paths are allowed. Please separate them using
-comma ``,`` symbol.
+Please make sure to read :ref:`faq_ldf` guides first.
+
+A list with extra directories/storages where Library Dependency Finder will
+look for dependencies. Multiple paths are allowed. Please separate them
+using comma ``,`` symbol.
 
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_LIB_EXTRA_DIRS`.
 
 .. warning::
   This is a not direct path to library with source code. It should be the path
-  to directory that contains libraries grouped by folders. For example,
-  ``/extra/lib/path/`` but not ``/extra/lib/path/MyLibrary``.
+  to storage that contains libraries grouped by folders. For example,
+  ``/extra/lib/storage/`` but not ``/extra/lib/storage/MyLibrary``.
 
 Example:
 
@@ -706,6 +729,27 @@ Example:
 
     [env:custom_lib_dirs]
     lib_extra_dirs = /path/to/private/dir1,/path/to/private/dir2
+
+.. _projectconf_lib_compat_level:
+
+``lib_compat_level``
+^^^^^^^^^^^^^^^^^^^^
+
+Please make sure to read :ref:`faq_ldf` guides first.
+
+Library compatibility level that allows to control Library Dependency Finder
+strictness. If library contains manifest file (:ref:`library_config`,
+``library.properties``, ``module.json``), then LDF check compatibility of this
+library with real build environment. Available compatibility levels:
+
+* ``0`` - don't check for compatibility (disable)
+* ``1`` - check for the compatibility with :ref:`projectconf_env_framework`
+  from build environment
+* ``2`` - check for the compatibility with :ref:`projectconf_env_framework`
+  and :ref:`projectconf_env_platform` from build environment.
+
+By default, this value is set to ``lib_compat_level = 1`` and means that LDF
+will check only for framework compatibility.
 
 -----------
 
