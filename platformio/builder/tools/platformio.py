@@ -85,24 +85,24 @@ def BuildProgram(env):
     env.Append(
         CPPPATH=["$PROJECTSRC_DIR"],
         LIBS=deplibs,
-        LIBPATH=["$BUILD_DIR"]
-    )
-
-    sources = env.CollectBuildFiles(
-        "$BUILDSRC_DIR", "$PROJECTSRC_DIR",
-        src_filter=env.get("SRC_FILTER"), duplicate=False)
+        LIBPATH=["$BUILD_DIR"],
+        PIOBUILDFILES=env.CollectBuildFiles(
+            "$BUILDSRC_DIR",
+            "$PROJECTSRC_DIR",
+            src_filter=env.get("SRC_FILTER"),
+            duplicate=False))
 
     if "test" in COMMAND_LINE_TARGETS:
-        sources.extend(env.ProcessTest())
+        env.Append(PIOBUILDFILES=env.ProcessTest())
 
-    if not sources and not COMMAND_LINE_TARGETS:
+    if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
         env.Exit(
             "Error: Nothing to build. Please put your source code files "
             "to '%s' folder" % env.subst("$PROJECTSRC_DIR"))
 
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")),
-        sources
+        env['PIOBUILDFILES']
     )
 
     if set(["upload", "uploadlazy", "program"]) & set(COMMAND_LINE_TARGETS):
@@ -262,11 +262,15 @@ def BuildFrameworks(env, frameworks):
 
 def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     lib = env.Clone()
-    return lib.Library(
+    return lib.StaticLibrary(
         lib.subst(variant_dir),
         lib.CollectBuildFiles(
-            variant_dir, src_dir, src_filter=src_filter)
-    )
+            variant_dir, src_dir, src_filter=src_filter))
+
+
+def BuildSources(env, variant_dir, src_dir, src_filter=None):
+    DefaultEnvironment().Append(PIOBUILDFILES=env.Clone().CollectBuildFiles(
+        variant_dir, src_dir, src_filter=src_filter))
 
 
 def exists(_):
@@ -283,4 +287,5 @@ def generate(env):
     env.AddMethod(CollectBuildFiles)
     env.AddMethod(BuildFrameworks)
     env.AddMethod(BuildLibrary)
+    env.AddMethod(BuildSources)
     return env

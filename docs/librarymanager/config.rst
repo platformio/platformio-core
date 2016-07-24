@@ -461,6 +461,10 @@ options:
       - ``String``
       - Launch extra script before build process.
         More details :ref:`projectconf_extra_script`
+    * - ``libArchive``
+      - ``Boolean``
+      - Archive object files to Static Library. This is default behavior of
+        PlatformIO Build System (``"libArchive": true``).
 
 **Examples**
 

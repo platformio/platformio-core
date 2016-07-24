@@ -122,6 +122,10 @@ class LibBuilderBase(object):
         return None
 
     @property
+    def lib_archive(self):
+        return True
+
+    @property
     def is_built(self):
         return self._is_built
 
@@ -162,7 +166,12 @@ class LibBuilderBase(object):
         for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
             self.env.AppendUnique(**{key: env.get(key)})
 
-        return env.BuildLibrary(self.build_dir, self.src_dir, self.src_filter)
+        if self.lib_archive:
+            return env.BuildLibrary(
+                self.build_dir, self.src_dir, self.src_filter)
+        else:
+            return env.BuildSources(
+                self.build_dir, self.src_dir, self.src_filter)
 
 
 class UnknownLibBuilder(LibBuilderBase):
@@ -260,6 +269,12 @@ class PlatformIOLibBuilder(LibBuilderBase):
             return self._manifest.get("build").get("extra_script")
         return LibBuilderBase.extra_script.fget(self)
 
+    @property
+    def lib_archive(self):
+        if "libArchive" in self._manifest.get("build", {}):
+            return self._manifest.get("build").get("libArchive")
+        return LibBuilderBase.lib_archive.fget(self)
+
     def is_platform_compatible(self, platform):
         items = self._manifest.get("platforms")
         if not items:
@@ -315,7 +330,9 @@ def find_and_build_deps(env, lib_builders, scanner,
         lb.append_to_cpppath()
     # start builder
     for lb in target_lbs:
-        libs.append(lb.build())
+        lib_node = lb.build()
+        if lib_node:
+            libs.append(lib_node)
 
     if env.get("LIB_DEEP_SEARCH", "").lower() == "true":
         for lb in target_lbs:
@@ -377,7 +394,9 @@ def BuildDependentLibraries(env, src_dir):
             libs.extend(find_and_build_deps(
                 env, lib_builders, scanner, lb.src_dir, lb.src_filter))
             if not lb.is_built:
-                libs.append(lb.build())
+                lib_node = lb.build()
+                if lib_node:
+                    libs.append(lib_node)
 
     # process project source code
     libs.extend(find_and_build_deps(

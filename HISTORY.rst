@@ -13,28 +13,33 @@ PlatformIO 3.0
   (`issue #479 <https://github.com/platformio/platformio/issues/479>`_)
 * Unit Testing for Embedded (`docs <http://docs.platformio.org/en/latest/platforms/unit_testing.html>`__)
   (`issue #408 <https://github.com/platformio/platformio/issues/408>`_)
-* New Library Build System: intelligent dependency finder that interprets
-  C Preprocessor conditional macros,
-  `library deep search <http://docs.platformio.org/en/latest/projectconf.html#lib-deep-search>`__,
-  `library compatibility level <http://docs.platformio.org/en/latest/projectconf.html#lib-compat-level>`__,
-  support for the 3rd party manifests (Arduino IDE ``library.properties``,
-  ARM mbed ``module.json``)
-  (`issue #432 <https://github.com/platformio/platformio/issues/432>`_)
-* New `lib_extra_dirs <http://docs.platformio.org/en/latest/projectconf.html#lib-extra-dirs>`__ option for project environment.
-  Multiple custom library locations!
-  (`issue #537 <https://github.com/platformio/platformio/issues/537>`_)
-* Handle extra build flags and build script from
-  `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
-  (`issue #289 <https://github.com/platformio/platformio/issues/289>`_)
-* Check library compatibility with project environment before building
-  (`issue #415 <https://github.com/platformio/platformio/issues/415>`_)
+* New Intelligent Library Build System
+
+    + `Library Dependency Finder <http://docs.platformio.org/en/latest/faq.html#how-works-library-dependency-finder-ldf>`__
+      that interprets C Preprocessor conditional macros and nested includes/chain
+    + Check library compatibility with project environment before building
+      (`issue #415 <https://github.com/platformio/platformio/issues/415>`_)
+    + Control Library Dependency Finder for compatibility using
+      `lib_compat_level <http://docs.platformio.org/en/latest/projectconf.html#lib-compat-level>`__
+      option
+    + Custom library storages/directories with
+      `lib_extra_dirs <http://docs.platformio.org/en/latest/projectconf.html#lib-extra-dirs>`__ option
+      (`issue #537 <https://github.com/platformio/platformio/issues/537>`_)
+    + Handle extra build flags, source filters and build script from
+      `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
+      (`issue #289 <https://github.com/platformio/platformio/issues/289>`_)
+    + Allowed to disable library archiving (``*.ar``)
+      (`issue #719 <https://github.com/platformio/platformio/issues/719>`_)
+    + Show detailed build information about dependent libraries
+      (`issue #617 <https://github.com/platformio/platformio/issues/617>`_)
+    + Support for the 3rd party manifests (Arduino IDE "library.properties"
+      and ARM mbed "module.json")
+
 * Print human-readable information when processing environments without
   ``-v, --verbose`` option
   (`issue #721 <https://github.com/platformio/platformio/issues/721>`_)
 * Added ``license`` field to `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
   (`issue #522 <https://github.com/platformio/platformio/issues/522>`_)
-* Show detailed build information about dependent libraries
-  (`issue #617 <https://github.com/platformio/platformio/issues/617>`_)
 * Embedded Board compatibility with more than one development platform
   (`issue #456 <https://github.com/platformio/platformio/issues/456>`_)
 
