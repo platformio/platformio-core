@@ -71,7 +71,19 @@ env.Replace(
         "-mprocessor=$BOARD_MCU",
         "-mno-peripheral-libs",
         "-nostartfiles",
-        "-Wl,--gc-sections"
+        "-Wl,--gc-sections",
+        join(
+            "$PLATFORMFW_DIR",
+            "cores",
+            "${BOARD_OPTIONS['build']['core']}",
+            "cpp-startup.S"
+        ),
+        join(
+            "$PLATFORMFW_DIR",
+            "cores",
+            "${BOARD_OPTIONS['build']['core']}",
+            "crti.S"
+        )
     ],
 
     LIBS=["m"],
