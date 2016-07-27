@@ -159,7 +159,7 @@ def DumpIDEData(env):
 
         # installed libs
         for lb in env.GetLibBuilders():
-            includes.extend(lb.get_path_dirs())
+            includes.extend(lb.get_inc_dirs())
 
         # includes from toolchains
         p = env.DevPlatform()
