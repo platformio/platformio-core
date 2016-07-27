@@ -36,7 +36,8 @@ class LibBuilderFactory(object):
         else:
             env_frameworks = [
                 f.lower().strip()
-                for f in env.get("PIOFRAMEWORK", "").split(",")]
+                for f in env.get("PIOFRAMEWORK", "").split(",")
+            ]
             used_frameworks = LibBuilderFactory.get_used_frameworks(env, path)
             common_frameworks = set(env_frameworks) & set(used_frameworks)
             if common_frameworks:
@@ -73,11 +74,19 @@ class LibBuilderFactory(object):
 
 class LibBuilderBase(object):
 
+    INC_SCANNER = SCons.Scanner.C.CScanner()
+
     def __init__(self, env, path):
-        self.env = env
-        self.path = path
-        self._is_built = False
+        self.env = env.Clone()
+        self.path = env.subst(path)
         self._manifest = self.load_manifest()
+        self._is_dependent = False
+        self._deps = []
+        self._scanner_visited = tuple()
+        self._built_node = None
+
+        # process extra options and append to build environment
+        self.process_extra_options()
 
     def __repr__(self):
         return "%s(%r)" % (self.__class__, self.path)
@@ -96,14 +105,14 @@ class LibBuilderBase(object):
     @property
     def src_filter(self):
         return piotool.SRC_FILTER_DEFAULT + [
-            "-<example%s>" % os.sep, "-<examples%s>" % os.sep,
-            "-<test%s>" % os.sep, "-<tests%s>" % os.sep
+            "-<example%s>" % os.sep, "-<examples%s>" % os.sep, "-<test%s>" %
+            os.sep, "-<tests%s>" % os.sep
         ]
 
     @property
     def src_dir(self):
-        return (join(self.path, "src") if isdir(join(self.path, "src"))
-                else self.path)
+        return (join(self.path, "src")
+                if isdir(join(self.path, "src")) else self.path)
 
     @property
     def build_dir(self):
@@ -126,8 +135,17 @@ class LibBuilderBase(object):
         return True
 
     @property
-    def is_built(self):
-        return self._is_built
+    def dependencies(self):
+        return self._deps
+
+    def depends_on(self, lb):
+        assert isinstance(lb, LibBuilderBase)
+        if lb not in self._deps:
+            self._deps.append(lb)
+
+    @property
+    def dependent(self):
+        return self._is_dependent
 
     def is_platform_compatible(self, platform):
         return True
@@ -138,44 +156,121 @@ class LibBuilderBase(object):
     def load_manifest(self):
         return {}
 
-    def get_path_dirs(self, use_build_dir=False):
+    def process_extra_options(self):
+        with util.cd(self.path):
+            self.env.ProcessUnFlags(self.build_unflags)
+            self.env.ProcessFlags(self.build_flags)
+            if self.extra_script:
+                self.env.SConscript(realpath(self.extra_script), exports="env")
+
+    def get_inc_dirs(self, use_build_dir=False):
         return [self.build_dir if use_build_dir else self.src_dir]
 
-    def append_to_cpppath(self):
-        self.env.AppendUnique(
-            CPPPATH=self.get_path_dirs(use_build_dir=True)
-        )
+    def _validate_search_paths(self, lib_builders, search_paths=None):
+        if not search_paths:
+            search_paths = tuple()
+        deep_search = self.env.get("LIB_DEEP_SEARCH", "true").lower() == "true"
+
+        if not self._scanner_visited and (
+                isinstance(self, ProjectAsLibBuilder) or deep_search):
+            for item in self.env.MatchSourceFiles(self.src_dir,
+                                                  self.src_filter):
+                path = join(self.src_dir, item)
+                if (path not in self._scanner_visited and
+                        path not in search_paths):
+                    search_paths += (path, )
+
+        _search_paths = tuple()
+        for path in search_paths:
+            if path not in self._scanner_visited:
+                _search_paths += (path, )
+                self._scanner_visited += (path, )
+
+        return _search_paths
+
+    def _get_found_includes(self, lib_builders, search_paths=None):
+        inc_dirs = tuple()
+        used_inc_dirs = tuple()
+        for lb in [self] + lib_builders:
+            items = tuple(self.env.Dir(d) for d in lb.get_inc_dirs())
+            if lb.dependent:
+                used_inc_dirs += items
+            else:
+                inc_dirs += items
+        inc_dirs = used_inc_dirs + inc_dirs
+
+        result = tuple()
+        for path in self._validate_search_paths(search_paths):
+            for inc in self.env.File(path).get_found_includes(
+                    self.env, LibBuilderBase.INC_SCANNER, inc_dirs):
+                if inc not in result:
+                    result += (inc, )
+        return result
+
+    def search_dependencies(self, lib_builders, search_paths=None):
+        self._is_dependent = True
+        lib_inc_map = {}
+        for inc in self._get_found_includes(lib_builders, search_paths):
+            for lb in lib_builders:
+                if inc.get_abspath() in lb:
+                    if lb not in lib_inc_map:
+                        lib_inc_map[lb] = []
+                    lib_inc_map[lb].append(inc.get_abspath())
+                    break
+
+        for lb, lb_src_files in lib_inc_map.items():
+            if lb != self and lb not in self.dependencies:
+                self.depends_on(lb)
+            lb.search_dependencies(lib_builders, lb_src_files)
 
     def build(self):
-        if self.version:
-            print "Depends on <%s> v%s" % (self.name, self.version)
-        else:
-            print "Depends on <%s>" % self.name
-        assert self._is_built is False
-        self._is_built = True
-        self.append_to_cpppath()
+        libs = []
+        for lb in self.dependencies:
+            libs.extend(lb.build())
+            # copy shared information to self env
+            for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
+                self.env.AppendUnique(**{key: lb.env.get(key)})
 
-        env = self.env.Clone()
-        with util.cd(self.path):
-            env.ProcessUnFlags(self.build_unflags)
-            env.ProcessFlags(self.build_flags)
-            if self.extra_script:
-                env.SConscript(realpath(self.extra_script), exports="env")
+        self.env.AppendUnique(CPPPATH=self.get_inc_dirs(use_build_dir=True))
 
-        # copy some data to global env
-        for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
-            self.env.AppendUnique(**{key: env.get(key)})
-
-        if self.lib_archive:
-            return env.BuildLibrary(
-                self.build_dir, self.src_dir, self.src_filter)
-        else:
-            return env.BuildSources(
-                self.build_dir, self.src_dir, self.src_filter)
+        if not self._built_node:
+            if self.lib_archive:
+                self._built_node = self.env.BuildLibrary(
+                    self.build_dir, self.src_dir, self.src_filter)
+            else:
+                self._built_node = self.env.BuildSources(
+                    self.build_dir, self.src_dir, self.src_filter)
+        return libs + [self._built_node]
 
 
 class UnknownLibBuilder(LibBuilderBase):
     pass
+
+
+class ProjectAsLibBuilder(LibBuilderBase):
+
+    @property
+    def src_filter(self):
+        return self.env.get("SRC_FILTER", LibBuilderBase.src_filter.fget(self))
+
+    def process_extra_options(self):
+        # skip for project, options are already processed
+        pass
+
+    def search_dependencies(self, lib_builders, search_paths=None):
+        for lib_name in self.env.get("LIB_FORCE", []):
+            for lb in lib_builders:
+                if lb.name == lib_name and lb not in self.dependencies:
+                    self.depends_on(lb)
+                    lb.search_dependencies(lib_builders)
+                    break
+        return LibBuilderBase.search_dependencies(self, lib_builders,
+                                                  search_paths)
+
+    def build(self):
+        # dummy mark that project is built
+        self._built_node = "dummy"
+        return [l for l in LibBuilderBase.build(self) if l != "dummy"]
 
 
 class ArduinoLibBuilder(LibBuilderBase):
@@ -192,13 +287,13 @@ class ArduinoLibBuilder(LibBuilderBase):
                 manifest[key.strip()] = value.strip()
         return manifest
 
-    def get_path_dirs(self, use_build_dir=False):
-        path_dirs = LibBuilderBase.get_path_dirs(self, use_build_dir)
+    def get_inc_dirs(self, use_build_dir=False):
+        inc_dirs = LibBuilderBase.get_inc_dirs(self, use_build_dir)
         if not isdir(join(self.src_dir, "utility")):
-            return path_dirs
-        path_dirs.append(
+            return inc_dirs
+        inc_dirs.append(
             join(self.build_dir if use_build_dir else self.src_dir, "utility"))
-        return path_dirs
+        return inc_dirs
 
     @property
     def src_filter(self):
@@ -224,14 +319,13 @@ class MbedLibBuilder(LibBuilderBase):
             return join(self.path, "source")
         return LibBuilderBase.src_dir.fget(self)
 
-    def get_path_dirs(self, use_build_dir=False):
-        path_dirs = LibBuilderBase.get_path_dirs(self, use_build_dir)
+    def get_inc_dirs(self, use_build_dir=False):
+        inc_dirs = LibBuilderBase.get_inc_dirs(self, use_build_dir)
+        if self.path not in inc_dirs:
+            inc_dirs.append(self.path)
         for p in self._manifest.get("extraIncludes", []):
-            if p.startswith("source/"):
-                p = p[7:]
-            path_dirs.append(
-                join(self.build_dir if use_build_dir else self.src_dir, p))
-        return path_dirs
+            inc_dirs.append(join(self.path, p))
+        return inc_dirs
 
     def is_framework_compatible(self, framework):
         return framework.lower() == "mbed"
@@ -295,53 +389,6 @@ class PlatformIOLibBuilder(LibBuilderBase):
         return item.lower() in [i.lower() for i in ilist]
 
 
-def find_deps(env, scanner, path_dirs, src_dir, src_filter):
-    result = []
-    for item in env.MatchSourceFiles(src_dir, src_filter):
-        result.extend(env.File(join(src_dir, item)).get_implicit_deps(
-            env, scanner, path_dirs))
-    return result
-
-
-def find_and_build_deps(env, lib_builders, scanner,
-                        src_dir, src_filter):
-    path_dirs = tuple()
-    built_path_dirs = tuple()
-    for lb in lib_builders:
-        items = [env.Dir(d) for d in lb.get_path_dirs()]
-        if lb.is_built:
-            built_path_dirs += tuple(items)
-        else:
-            path_dirs += tuple(items)
-    path_dirs = built_path_dirs + path_dirs
-
-    target_lbs = []
-    deps = find_deps(env, scanner, path_dirs, src_dir, src_filter)
-    for d in deps:
-        for lb in lib_builders:
-            if d.get_abspath() in lb:
-                if lb not in target_lbs and not lb.is_built:
-                    target_lbs.append(lb)
-                break
-
-    libs = []
-    # append PATH directories to global CPPPATH before build starts
-    for lb in target_lbs:
-        lb.append_to_cpppath()
-    # start builder
-    for lb in target_lbs:
-        lib_node = lb.build()
-        if lib_node:
-            libs.append(lib_node)
-
-    if env.get("LIB_DEEP_SEARCH", "").lower() == "true":
-        for lb in target_lbs:
-            libs.extend(find_and_build_deps(
-                env, lib_builders, scanner, lb.src_dir, lb.src_filter))
-
-    return libs
-
-
 def GetLibBuilders(env):
     items = []
     env_frameworks = [
@@ -378,31 +425,44 @@ def GetLibBuilders(env):
 
 
 def BuildDependentLibraries(env, src_dir):
-    libs = []
-    scanner = SCons.Scanner.C.CScanner()
+
+    def print_deps_tree(root, level=0):
+        margin = "|   " * (level)
+        for lb in root.dependencies:
+            title = "<%s>" % lb.name
+            if lb.version:
+                title += " v%s" % lb.version
+            if not env.GetOption("silent"):
+                title += " (%s)" % lb.path
+            print "%s|-- %s" % (margin, title)
+            if lb.dependencies:
+                print_deps_tree(lb, level + 1)
+
     lib_builders = env.GetLibBuilders()
 
-    print "Collecting %d compatible libraries" % len(lib_builders)
+    print "Collected %d compatible libraries" % len(lib_builders)
     print "Looking for dependencies..."
 
-    built_lib_names = []
-    for lib_name in env.get("LIB_FORCE", []):
-        for lb in lib_builders:
-            if lb.name != lib_name or lb.name in built_lib_names:
-                continue
-            built_lib_names.append(lb.name)
-            libs.extend(find_and_build_deps(
-                env, lib_builders, scanner, lb.src_dir, lb.src_filter))
-            if not lb.is_built:
-                lib_node = lb.build()
-                if lib_node:
-                    libs.append(lib_node)
+    from time import time
+    start = time()
+    project = ProjectAsLibBuilder(env, src_dir)
+    project.env = env
+    project.search_dependencies(lib_builders)
+    print 13, time() - start
 
-    # process project source code
-    libs.extend(find_and_build_deps(
-        env, lib_builders, scanner, src_dir, env.get("SRC_FILTER")))
+    if project.dependencies:
+        print "Library Dependency Map"
+        print_deps_tree(project)
+    else:
+        print "Project does not have dependencies"
 
-    return libs
+    # print "root", lbproj, lbproj._deps
+    # for lb_ in lib_builders:
+    #     if not lb_.dependent:
+    #         continue
+    #     print lb_.name, lb_, lb_._deps
+
+    return project.build()
 
 
 def exists(_):
