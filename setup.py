@@ -21,7 +21,7 @@ from platformio import (__author__, __description__, __email__, __license__,
 
 install_requires = [
     "bottle<0.13",
-    "click>=3.2,<6",
+    "click>=5,<6",
     "lockfile>=0.9.1,<0.13",
     "requests>=2.4.0,<3",
     "semantic_version>=2.5.0",

@@ -16,7 +16,7 @@ PlatformIO 3.0
 * New Intelligent Library Build System
 
     + `Library Dependency Finder <http://docs.platformio.org/en/latest/faq.html#how-works-library-dependency-finder-ldf>`__
-      that interprets C Preprocessor conditional macros and nested includes/chain
+      that interprets C Preprocessor conditional macros with deep search behavior
     + Check library compatibility with project environment before building
       (`issue #415 <https://github.com/platformio/platformio/issues/415>`_)
     + Control Library Dependency Finder for compatibility using

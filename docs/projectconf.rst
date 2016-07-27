@@ -650,18 +650,17 @@ Example:
 
 Please make sure to read :ref:`faq_ldf` guides first.
 
-By default, this option is turned OFF (``lib_deep_search = false``) and means
-that Library Dependency Finder will analyzes only "nested includes/chain".
+By default, this option is turned ON (``lib_deep_search = true``) and means
+that Library Dependency Finder will analyze ALL source files from the library
+and will try automatically find all dependencies.
 
-Nevertheless, some libraries depend on other libraries and the
+If you want to disable deep search, please set this option to ``false``.
+Note! Some libraries depend on other libraries and the
 ``#include <...>`` directives for these libraries are not declared in the
-"main" header file that is used by upper library. In this case, LDF will not
-handle these libraries automatically because it doesn't analyze "each source
-file" of the nested libraries.
-
-If you want to enable deep search, please set this option to ``true``.
-Found library will be treated like the new source files and LDF will
-search dependencies for it.
+"main" header file that is used by upper library. If LDF is turned OFF
+(``lib_deep_search = false``), it will not handle these libraries automatically
+because it doesn't analyze "each source file" of the nested libraries
+(only "nested includes/chain").
 
 For example, there are 2 libraries:
 

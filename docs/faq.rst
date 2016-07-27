@@ -42,8 +42,7 @@ Library Dependency Finder is a part of PlatformIO Library Build System. It
 operates with the header files (``*.h, *.hpp``) and looks for
 ``#include <...>`` directives. What is more, LDF interprets C Preprocessor
 conditional macros (``#ifdef ...``, etc.). Library Dependency Finder starts
-work from analyzing source files from :ref:`projectconf_pio_src_dir`. It
-understands "nested includes/chain" by default if they depend on each other.
+work from analyzing source files from :ref:`projectconf_pio_src_dir`.
 
 There are different library storages where Library Dependency Finder looks for
 dependencies. These storages/folders have priority. LDF operates in the next

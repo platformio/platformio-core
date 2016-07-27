@@ -30,6 +30,14 @@ Description
 Install new library  by specified
 `PlatformIO Library Registry ID <http://platformio.org/lib>`_.
 
+Installs the project library dependencies or a specific set of libraries.
+[LIBRARY] can have multiple forms: <source>, <source>@<target>,
+<id=> or <name>=<source>@<target>
+
+Where, <source> is a registry ID, registry name, repository URL, physical
+location, <target> is a valid semantic version/range, commit, branch, etc., and
+<name> is the name it should have locally.
+
 Options
 -------
 
