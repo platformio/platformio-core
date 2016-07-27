@@ -55,13 +55,14 @@ elif env.get("PLATFORM") == "timsp430":
     )
 elif env.get("PLATFORM") == "espressif":
     env.Prepend(
+        CPPDEFINES=["LWIP_OPEN_SRC"],
         CPPPATH=[
             join("$PLATFORMFW_DIR", "tools", "sdk", "include"),
             join("$PLATFORMFW_DIR", "tools", "sdk", "lwip", "include")
         ],
         LIBPATH=[join("$PLATFORMFW_DIR", "tools", "sdk", "lib")],
         LIBS=[
-            "mesh", "wpa2", "smartconfig", "pp", "main", "wpa", "lwip",
+            "mesh", "wpa2", "smartconfig", "pp", "main", "wpa", "lwip_gcc",
             "net80211", "wps", "crypto", "phy", "hal", "axtls", "gcc",
             "m", "stdc++"
         ]
