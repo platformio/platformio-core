@@ -15,6 +15,8 @@ PlatformIO 2.0
   (HID, SERIAL_HID, DISK, DISK_SDFLASH, MIDI, etc.)
   (`issue #722 <https://github.com/platformio/platformio/issues/722>`_)
 * Switched to built-in GCC LwIP library for Espressif development platform
+* Added support for local ``--echo`` for Serial Port Monitor
+  (`issue #733 <https://github.com/platformio/platformio/issues/733>`_)
 * Fixed Project Generator for ESP8266 and ARM mbed based projects
   (resolves incorrect linter errors)
 * Fixed broken LD Script for Element14 chipKIT Pi board

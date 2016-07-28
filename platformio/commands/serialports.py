@@ -61,6 +61,8 @@ if int(PYSERIAL_VERSION[0]) == 3:
                   help="Set initial RTS line state")
     @click.option("--dtr", default=None, type=click.Choice(["0", "1"]),
                   help="Set initial DTR line state")
+    @click.option("--echo", is_flag=True,
+                  help="Enable local echo, default=Off")
     @click.option("--encoding", default="UTF-8",
                   help="Set the encoding for the serial port (e.g. hexlify, "
                   "Latin1, UTF-8), default: UTF-8")
