@@ -72,12 +72,13 @@ class LibBuilderFactory(object):
         return []
 
 
-class LibBuilderBase(object):
+class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
 
     INC_SCANNER = SCons.Scanner.C.CScanner()
 
     def __init__(self, env, path):
         self.env = env.Clone()
+        self.envorigin = env.Clone()
         self.path = env.subst(path)
         self._manifest = self.load_manifest()
         self._is_dependent = False
@@ -156,7 +157,10 @@ class LibBuilderBase(object):
             self.env.ProcessUnFlags(self.build_unflags)
             self.env.ProcessFlags(self.build_flags)
             if self.extra_script:
-                self.env.SConscript(realpath(self.extra_script), exports="env")
+                self.env.SConscript(
+                    realpath(self.extra_script),
+                    exports={"env": self.env,
+                             "pio_lib_builder": self})
 
     def get_inc_dirs(self, use_build_dir=False):
         return [self.build_dir if use_build_dir else self.src_dir]
@@ -363,8 +367,8 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def extra_script(self):
-        if "extra_script" in self._manifest.get("build", {}):
-            return self._manifest.get("build").get("extra_script")
+        if "extraScript" in self._manifest.get("build", {}):
+            return self._manifest.get("build").get("extraScript")
         return LibBuilderBase.extra_script.fget(self)
 
     @property
@@ -391,6 +395,14 @@ class PlatformIOLibBuilder(LibBuilderBase):
         if not isinstance(ilist, list):
             ilist = [i.strip() for i in ilist.split(",")]
         return item.lower() in [i.lower() for i in ilist]
+
+    def get_inc_dirs(self, use_build_dir=False):
+        inc_dirs = LibBuilderBase.get_inc_dirs(self, use_build_dir)
+        for path in self.env['CPPPATH']:
+            if path not in self.envorigin['CPPPATH']:
+                inc_dirs.append(
+                    path if use_build_dir else self.env.subst(path))
+        return inc_dirs
 
 
 def GetLibBuilders(env):
