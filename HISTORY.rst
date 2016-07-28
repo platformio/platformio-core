@@ -7,6 +7,8 @@ PlatformIO 2.0
 2.11.2 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~~
 
+* Improved support for `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__ development platform and ChipKIT boards
+  (`issue #438 <https://github.com/platformio/platformio/issues/438>`_)
 * Added support for Pinoccio Scout board
   (`issue #52 <https://github.com/platformio/platformio/issues/52>`_)
 * Added support for `Teensy USB Features <http://docs.platformio.org/en/latest/platforms/teensy.html#usb-features>`__
