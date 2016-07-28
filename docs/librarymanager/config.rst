@@ -487,7 +487,7 @@ options:
         ]
     }
 
-3. Force to use ``C99`` standard instead ``C11``
+3. Force to use ``C99`` standard instead of ``C11``
 
 .. code-block:: javascript
 
@@ -528,4 +528,4 @@ options:
         CPPPATH=["inc", "inc/devices"]
     )
 
-    # some python code that generates headers files "on-the-fly"
+    # some python code that generates header files "on-the-fly"
