@@ -78,7 +78,6 @@ class LibBuilderBase(object):
 
     def __init__(self, env, path):
         self.env = env.Clone()
-        self.envorigin = env
         self.path = env.subst(path)
         self._manifest = self.load_manifest()
         self._is_dependent = False
@@ -208,11 +207,6 @@ class LibBuilderBase(object):
         assert isinstance(lb, LibBuilderBase)
         if lb not in self._deps:
             self._deps += (lb, )
-
-        # avoid infinite loop when we've already searched for dependencies
-        for lb_ in lib_builders:
-            if lb in lb_._deps:
-                return
         lb.search_dependencies(lib_builders, search_paths)
 
     def search_dependencies(self, lib_builders, search_paths=None):
