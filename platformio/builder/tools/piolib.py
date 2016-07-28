@@ -166,9 +166,10 @@ class LibBuilderBase(object):
     def get_inc_dirs(self, use_build_dir=False):
         return [self.build_dir if use_build_dir else self.src_dir]
 
-    def _validate_search_paths(self, lib_builders, search_paths=None):
+    def _validate_search_paths(self, search_paths=None):
         if not search_paths:
             search_paths = tuple()
+        assert isinstance(search_paths, tuple)
         deep_search = self.env.get("LIB_DEEP_SEARCH", "true").lower() == "true"
 
         if not self._scanner_visited and (
@@ -214,8 +215,8 @@ class LibBuilderBase(object):
             for lb in lib_builders:
                 if inc.get_abspath() in lb:
                     if lb not in lib_inc_map:
-                        lib_inc_map[lb] = []
-                    lib_inc_map[lb].append(inc.get_abspath())
+                        lib_inc_map[lb] = tuple()
+                    lib_inc_map[lb] += (inc.get_abspath(), )
                     break
 
         for lb, lb_src_files in lib_inc_map.items():
@@ -231,9 +232,9 @@ class LibBuilderBase(object):
             for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
                 self.env.AppendUnique(**{key: lb.env.get(key)})
 
-        self.env.AppendUnique(CPPPATH=self.get_inc_dirs(use_build_dir=True))
-
         if not self._built_node:
+            self.env.AppendUnique(CPPPATH=self.get_inc_dirs(
+                use_build_dir=True))
             if self.lib_archive:
                 self._built_node = self.env.BuildLibrary(
                     self.build_dir, self.src_dir, self.src_filter)
@@ -443,24 +444,15 @@ def BuildDependentLibraries(env, src_dir):
     print "Collected %d compatible libraries" % len(lib_builders)
     print "Looking for dependencies..."
 
-    from time import time
-    start = time()
     project = ProjectAsLibBuilder(env, src_dir)
     project.env = env
     project.search_dependencies(lib_builders)
-    print 13, time() - start
 
     if project.dependencies:
         print "Library Dependency Map"
         print_deps_tree(project)
     else:
         print "Project does not have dependencies"
-
-    # print "root", lbproj, lbproj._deps
-    # for lb_ in lib_builders:
-    #     if not lb_.dependent:
-    #         continue
-    #     print lb_.name, lb_, lb_._deps
 
     return project.build()
 
