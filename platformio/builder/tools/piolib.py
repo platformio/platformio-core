@@ -203,11 +203,13 @@ class LibBuilderBase(object):
                     result += (inc, )
         return result
 
-    def depends_on(self, lb, lib_builders, search_paths=None):
+    def depends_on(self, lb):
         assert isinstance(lb, LibBuilderBase)
-        if lb not in self._deps:
+        if self in lb.dependencies:
+            sys.stderr.write("Warning! Circular dependencies detected "
+                             "between `%s` and `%s`\n" % (self.path, lb.path))
+        elif lb not in self._deps:
             self._deps += (lb, )
-        lb.search_dependencies(lib_builders, search_paths)
 
     def search_dependencies(self, lib_builders, search_paths=None):
         self._is_dependent = True
@@ -222,7 +224,8 @@ class LibBuilderBase(object):
 
         for lb, lb_src_files in lib_inc_map.items():
             if lb != self and lb not in self.dependencies:
-                self.depends_on(lb, lib_builders, lb_src_files)
+                self.depends_on(lb)
+            lb.search_dependencies(lib_builders, lb_src_files)
 
     def build(self):
         libs = []
@@ -262,7 +265,8 @@ class ProjectAsLibBuilder(LibBuilderBase):
         for lib_name in self.env.get("LIB_FORCE", []):
             for lb in lib_builders:
                 if lb.name == lib_name and lb not in self.dependencies:
-                    self.depends_on(lb, lib_builders)
+                    self.depends_on(lb)
+                    lb.search_dependencies(lib_builders)
                     break
         return LibBuilderBase.search_dependencies(self, lib_builders,
                                                   search_paths)
