@@ -14,6 +14,7 @@ PlatformIO 2.0
 * Added support for `Teensy USB Features <http://docs.platformio.org/en/latest/platforms/teensy.html#usb-features>`__
   (HID, SERIAL_HID, DISK, DISK_SDFLASH, MIDI, etc.)
   (`issue #722 <https://github.com/platformio/platformio/issues/722>`_)
+* Switched to built-in GCC LwIP library for Espressif development platform
 * Fixed Project Generator for ESP8266 and ARM mbed based projects
   (resolves incorrect linter errors)
 * Fixed broken LD Script for Element14 chipKIT Pi board
