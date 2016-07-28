@@ -151,7 +151,7 @@ def DumpIDEData(env):
             invardir = False
             for vardiritem in env_.get("VARIANT_DIRS", []):
                 if item == vardiritem[0]:
-                    includes.append(vardiritem[1])
+                    includes.append(env_.subst(vardiritem[1]))
                     invardir = True
                     break
             if not invardir:
