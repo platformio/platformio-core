@@ -78,10 +78,11 @@ class LibBuilderBase(object):
 
     def __init__(self, env, path):
         self.env = env.Clone()
+        self.envorigin = env
         self.path = env.subst(path)
         self._manifest = self.load_manifest()
         self._is_dependent = False
-        self._deps = []
+        self._deps = tuple()
         self._scanner_visited = tuple()
         self._built_node = None
 
@@ -138,11 +139,6 @@ class LibBuilderBase(object):
     def dependencies(self):
         return self._deps
 
-    def depends_on(self, lb):
-        assert isinstance(lb, LibBuilderBase)
-        if lb not in self._deps:
-            self._deps.append(lb)
-
     @property
     def dependent(self):
         return self._is_dependent
@@ -192,7 +188,7 @@ class LibBuilderBase(object):
     def _get_found_includes(self, lib_builders, search_paths=None):
         inc_dirs = tuple()
         used_inc_dirs = tuple()
-        for lb in [self] + lib_builders:
+        for lb in (self, ) + lib_builders:
             items = tuple(self.env.Dir(d) for d in lb.get_inc_dirs())
             if lb.dependent:
                 used_inc_dirs += items
@@ -208,6 +204,17 @@ class LibBuilderBase(object):
                     result += (inc, )
         return result
 
+    def depends_on(self, lb, lib_builders, search_paths=None):
+        assert isinstance(lb, LibBuilderBase)
+        if lb not in self._deps:
+            self._deps += (lb, )
+
+        # avoid infinite loop when we've already searched for dependencies
+        for lb_ in lib_builders:
+            if lb in lb_._deps:
+                return
+        lb.search_dependencies(lib_builders, search_paths)
+
     def search_dependencies(self, lib_builders, search_paths=None):
         self._is_dependent = True
         lib_inc_map = {}
@@ -221,8 +228,7 @@ class LibBuilderBase(object):
 
         for lb, lb_src_files in lib_inc_map.items():
             if lb != self and lb not in self.dependencies:
-                self.depends_on(lb)
-            lb.search_dependencies(lib_builders, lb_src_files)
+                self.depends_on(lb, lib_builders, lb_src_files)
 
     def build(self):
         libs = []
@@ -262,8 +268,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
         for lib_name in self.env.get("LIB_FORCE", []):
             for lb in lib_builders:
                 if lb.name == lib_name and lb not in self.dependencies:
-                    self.depends_on(lb)
-                    lb.search_dependencies(lib_builders)
+                    self.depends_on(lb, lib_builders)
                     break
         return LibBuilderBase.search_dependencies(self, lib_builders,
                                                   search_paths)
@@ -391,7 +396,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
 
 def GetLibBuilders(env):
-    items = []
+    items = tuple()
     env_frameworks = [
         f.lower().strip() for f in env.get("PIOFRAMEWORK", "").split(",")
     ]
@@ -421,7 +426,7 @@ def GetLibBuilders(env):
                     sys.stderr.write("Framework incompatible library %s\n" %
                                      lb.path)
                 continue
-            items.append(lb)
+            items += (lb, )
     return items
 
 
