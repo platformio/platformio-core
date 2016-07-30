@@ -71,9 +71,10 @@ on the "Customize" stage, otherwise ``python`` command will not be available.
 2. Clang for Intelligent Code Autocompletion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
-To check that ``clang`` is available in your system, please open
-Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
+PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code
+Autocompletion. To check that ``clang`` is available in your system, please
+open Terminal and run ``clang --version``. If ``clang`` is not installed,
+then install it and restart Atom:
 
 - **Mac OS X**: `Install the latest Xcode <https://developer.apple.com/xcode/download/>`_
   along with the latest Command Line Tools
@@ -83,6 +84,12 @@ Terminal and run ``clang --version``. If ``clang`` is not installed, then instal
   Please select "Add LLVM to the system PATH" option on the installation step.
 
   .. image:: ../_static/clang-installer-add-path.png
+
+  .. warning::
+      If you see ``Failed to find MSBuild toolsets directory`` error in
+      the installation console, please ignore it and press any key to close
+      this window. PlatformIO IDE uses only Clang completion engine that
+      should work after it without any problems.
 
 - **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
 - **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
