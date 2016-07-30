@@ -82,8 +82,8 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
         self.path = env.subst(path)
         self._manifest = self.load_manifest()
         self._is_dependent = False
-        self._deps = tuple()
-        self._scanner_visited = tuple()
+        self._depbuilders = tuple()
+        self._scanned_paths = tuple()
         self._built_node = None
 
         # process extra options and append to build environment
@@ -102,6 +102,31 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
     @property
     def version(self):
         return self._manifest.get("version")
+
+    @property
+    def dependencies(self):
+        deps = self._manifest.get("dependencies")
+        if not deps:
+            return deps
+        items = []
+        if isinstance(deps, dict):
+            if "name" in deps:
+                items.append(deps)
+            else:
+                for name, version in deps.items():
+                    items.append({"name": name, "version": version})
+        elif isinstance(deps, list):
+            items = [d for d in deps if "name" in d]
+        for item in items:
+            for k in ("frameworks", "platforms"):
+                if k not in item or isinstance(k, list):
+                    continue
+                if item[k] == "*":
+                    del item[k]
+                elif isinstance(item[k], basestring):
+                    item[k] = [i.strip() for i in item[k].split(",")
+                               if i.strip()]
+        return items
 
     @property
     def src_filter(self):
@@ -136,8 +161,8 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
         return True
 
     @property
-    def dependencies(self):
-        return self._deps
+    def depbuilders(self):
+        return self._depbuilders
 
     @property
     def dependent(self):
@@ -171,20 +196,20 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
         assert isinstance(search_paths, tuple)
         deep_search = self.env.get("LIB_DEEP_SEARCH", "true").lower() == "true"
 
-        if not self._scanner_visited and (
+        if not self._scanned_paths and (
                 isinstance(self, ProjectAsLibBuilder) or deep_search):
             for item in self.env.MatchSourceFiles(self.src_dir,
                                                   self.src_filter):
                 path = join(self.src_dir, item)
-                if (path not in self._scanner_visited and
+                if (path not in self._scanned_paths and
                         path not in search_paths):
                     search_paths += (path, )
 
         _search_paths = tuple()
         for path in search_paths:
-            if path not in self._scanner_visited:
+            if path not in self._scanned_paths:
                 _search_paths += (path, )
-                self._scanner_visited += (path, )
+                self._scanned_paths += (path, )
 
         return _search_paths
 
@@ -207,16 +232,46 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
                     result += (inc, )
         return result
 
-    def depends_on(self, lb):
+    def depend_recursive(self, lb, lib_builders, search_paths=None):
         assert isinstance(lb, LibBuilderBase)
-        if self in lb.dependencies:
-            sys.stderr.write("Warning! Circular dependencies detected "
-                             "between `%s` and `%s`\n" % (self.path, lb.path))
-        elif lb not in self._deps:
-            self._deps += (lb, )
+        if self != lb:
+            if self in lb.depbuilders:
+                sys.stderr.write("Warning! Circular dependencies detected "
+                                 "between `%s` and `%s`\n" %
+                                 (self.path, lb.path))
+            elif lb not in self._depbuilders:
+                self._depbuilders += (lb, )
+        lb.search_deps_recursive(lib_builders, search_paths)
 
-    def search_dependencies(self, lib_builders, search_paths=None):
+    def search_deps_recursive(self, lib_builders, search_paths=None):
         self._is_dependent = True
+
+        # if dependencies are specified, don't use automatic finder
+        if self.dependencies:
+            for item in self.dependencies:
+                found = False
+                for lb in lib_builders:
+                    if item['name'] != lb.name:
+                        continue
+                    elif "frameworks" in item and \
+                         not any([lb.is_framework_compatible(f)
+                                  for f in item["frameworks"]]):
+                        continue
+                    elif "platforms" in item and \
+                         not any([lb.is_platform_compatible(p)
+                                  for p in item["platforms"]]):
+                        continue
+                    found = True
+                    self.depend_recursive(lb, lib_builders)
+                    break
+
+                if not found:
+                    sys.stderr.write(
+                        "Error: Could not find `%s` dependency for `%s` "
+                        "library\n" % (item['name'], self.name))
+                    self.env.Exit(2)
+            return
+
         lib_inc_map = {}
         for inc in self._get_found_includes(lib_builders, search_paths):
             for lb in lib_builders:
@@ -227,13 +282,11 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
                     break
 
         for lb, lb_src_files in lib_inc_map.items():
-            if lb != self and lb not in self.dependencies:
-                self.depends_on(lb)
-            lb.search_dependencies(lib_builders, lb_src_files)
+            self.depend_recursive(lb, lib_builders, lb_src_files)
 
     def build(self):
         libs = []
-        for lb in self.dependencies:
+        for lb in self.depbuilders:
             libs.extend(lb.build())
             # copy shared information to self env
             for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
@@ -265,15 +318,15 @@ class ProjectAsLibBuilder(LibBuilderBase):
         # skip for project, options are already processed
         pass
 
-    def search_dependencies(self, lib_builders, search_paths=None):
+    def search_deps_recursive(self, lib_builders, search_paths=None):
         for lib_name in self.env.get("LIB_FORCE", []):
             for lb in lib_builders:
-                if lb.name == lib_name and lb not in self.dependencies:
-                    self.depends_on(lb)
-                    lb.search_dependencies(lib_builders)
+                if lb.name == lib_name:
+                    if lb not in self.depbuilders:
+                        self.depend_recursive(lb, lib_builders)
                     break
-        return LibBuilderBase.search_dependencies(self, lib_builders,
-                                                  search_paths)
+        return LibBuilderBase.search_deps_recursive(self, lib_builders,
+                                                    search_paths)
 
     def build(self):
         # dummy mark that project is built
@@ -422,7 +475,7 @@ def GetLibBuilders(env):
             lb = LibBuilderFactory.new(env, join(libs_dir, item))
             if lb.name in env.get("LIB_IGNORE", []):
                 if not env.GetOption("silent"):
-                    print "Ignored library " + lb.path
+                    sys.stderr.write("Ignored library %s\n" % lb.path)
                 continue
             if compat_level > 1 and not lb.is_platform_compatible(env[
                     'PIOPLATFORM']):
@@ -444,14 +497,14 @@ def BuildDependentLibraries(env, src_dir):
 
     def print_deps_tree(root, level=0):
         margin = "|   " * (level)
-        for lb in root.dependencies:
+        for lb in root.depbuilders:
             title = "<%s>" % lb.name
             if lb.version:
                 title += " v%s" % lb.version
             if not env.GetOption("silent"):
                 title += " (%s)" % lb.path
             print "%s|-- %s" % (margin, title)
-            if lb.dependencies:
+            if lb.depbuilders:
                 print_deps_tree(lb, level + 1)
 
     lib_builders = env.GetLibBuilders()
@@ -461,9 +514,9 @@ def BuildDependentLibraries(env, src_dir):
 
     project = ProjectAsLibBuilder(env, src_dir)
     project.env = env
-    project.search_dependencies(lib_builders)
+    project.search_deps_recursive(lib_builders)
 
-    if project.dependencies:
+    if project.depbuilders:
         print "Library Dependency Map"
         print_deps_tree(project)
     else:

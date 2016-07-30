@@ -381,6 +381,7 @@ A list of dependent libraries. They will be installed automatically with
 Allowed requirements for dependent library:
 
 * ``name`` | Type: ``String``
+* ``version`` | Type: ``String``
 * ``authors`` | Type: ``String`` or ``Array``
 * ``frameworks`` | Type: ``String`` or ``Array``
 * ``platforms`` | Type: ``String`` or ``Array``
@@ -401,9 +402,22 @@ Example:
         },
         {
             "name": "Library-Bar",
-            "frameworks": "FrameworkFoo, FrameworkBar"
+            "version": "~1.2.3"
+        },
+        {
+            "name": "lib-from-repo",
+            "version": "https://github.com/user/package.git#1.2.3"
         }
     ]
+
+A short definition of dependencies is allowed:
+
+.. code-block:: javascript
+
+    "dependencies": {
+        "mylib": "1.2.3",
+        "lib-from-repo": "githubuser/package"
+    }
 
 
 See more ``library.json`` :ref:`library_creating_examples`.
