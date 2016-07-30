@@ -195,14 +195,16 @@ def check_platformio_upgrade():
         click.secho("PlatformIO IDE Menu: Upgrade PlatformIO",
                     fg="cyan", nl=False)
         click.secho("`.", fg="yellow")
+    elif join("Cellar", "platformio") in util.get_source_dir():
+        click.secho("brew update && brew upgrade", fg="cyan", nl=False)
+        click.secho("` command.", fg="yellow")
     else:
         click.secho("platformio upgrade", fg="cyan", nl=False)
         click.secho("` or `", fg="yellow", nl=False)
         click.secho("pip install -U platformio", fg="cyan", nl=False)
         click.secho("` command.", fg="yellow")
     click.secho("Changes: ", fg="yellow", nl=False)
-    click.secho("http://docs.platformio.org/en/latest/history.html",
-                fg="cyan")
+    click.secho("http://docs.platformio.org/en/latest/history.html", fg="cyan")
     click.echo("*" * terminal_width)
     click.echo("")
 
