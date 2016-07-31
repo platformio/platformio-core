@@ -70,7 +70,7 @@ DefaultEnvironment(
         "ar", "as", "gcc", "g++", "gnulink",
         "platformio", "devplatform",
         "piolib", "piotest", "pioupload", "pioar", "piomisc"
-    ], # yapf: disable
+    ],  # yapf: disable
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
     variables=commonvars,
 
