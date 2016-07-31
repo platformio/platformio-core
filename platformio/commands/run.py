@@ -46,14 +46,13 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
         # clean obsolete .pioenvs dir
         if not disable_auto_clean:
             try:
-                _clean_pioenvs_dir(util.get_pioenvs_dir())
+                _clean_pioenvs_dir(util.get_projectpioenvs_dir())
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
                     "`.pioenvs` directory from the project manually to avoid "
-                    "build issues" % util.get_pioenvs_dir(),
-                    fg="yellow"
-                )
+                    "build issues" % util.get_projectpioenvs_dir(),
+                    fg="yellow")
 
         config = util.load_project_config()
         env_default = None
@@ -105,8 +104,7 @@ class EnvironmentProcessor(object):
     RENAMED_OPTIONS = {
         "INSTALL_LIBS": "LIB_INSTALL",
         "IGNORE_LIBS": "LIB_IGNORE",
-        "LIB_USE": "LIB_FORCE",
-        "LIB_DFCYCLIC": "LIB_DEEP_SEARCH"
+        "LIB_USE": "LIB_FORCE"
     }
 
     def __init__(self, cmd_ctx, name, options,  # pylint: disable=R0913
