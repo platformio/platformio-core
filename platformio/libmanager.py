@@ -29,7 +29,7 @@ class LibraryManager(object):
     CONFIG_NAME = ".library.json"
 
     def __init__(self, lib_dir=None):
-        self.lib_dir = lib_dir or util.get_lib_dir()
+        self.lib_dir = lib_dir or join(util.get_home_dir(), "lib")
 
     @staticmethod
     def download(url, dest_dir):

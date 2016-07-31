@@ -144,6 +144,9 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
     def build_dir(self):
         return join("$BUILD_DIR", "lib", self.name)
 
+    def get_inc_dirs(self, use_build_dir=False):
+        return [self.build_dir if use_build_dir else self.src_dir]
+
     @property
     def build_flags(self):
         return None
@@ -187,8 +190,31 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
                     exports={"env": self.env,
                              "pio_lib_builder": self})
 
-    def get_inc_dirs(self, use_build_dir=False):
-        return [self.build_dir if use_build_dir else self.src_dir]
+    def _process_dependencies(self, lib_builders):
+        if not self.dependencies:
+            return
+        for item in self.dependencies:
+            found = False
+            for lb in lib_builders:
+                if item['name'] != lb.name:
+                    continue
+                elif "frameworks" in item and \
+                     not any([lb.is_framework_compatible(f)
+                              for f in item["frameworks"]]):
+                    continue
+                elif "platforms" in item and \
+                     not any([lb.is_platform_compatible(p)
+                              for p in item["platforms"]]):
+                    continue
+                found = True
+                self.depend_recursive(lb, lib_builders)
+                break
+
+            if not found:
+                sys.stderr.write(
+                    "Error: Could not find `%s` dependency for `%s` "
+                    "library\n" % (item['name'], self.name))
+                self.env.Exit(2)
 
     def _validate_search_paths(self, search_paths=None):
         if not search_paths:
@@ -246,30 +272,7 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
     def search_deps_recursive(self, lib_builders, search_paths=None):
         self._is_dependent = True
 
-        # if dependencies are specified, don't use automatic finder
-        if self.dependencies:
-            for item in self.dependencies:
-                found = False
-                for lb in lib_builders:
-                    if item['name'] != lb.name:
-                        continue
-                    elif "frameworks" in item and \
-                         not any([lb.is_framework_compatible(f)
-                                  for f in item["frameworks"]]):
-                        continue
-                    elif "platforms" in item and \
-                         not any([lb.is_platform_compatible(p)
-                                  for p in item["platforms"]]):
-                        continue
-                    found = True
-                    self.depend_recursive(lb, lib_builders)
-                    break
-
-                if not found:
-                    sys.stderr.write(
-                        "Error: Could not find `%s` dependency for `%s` "
-                        "library\n" % (item['name'], self.name))
-                    self.env.Exit(2)
+        self._process_dependencies(lib_builders)
 
         # when LDF is disabled
         if "LIB_LDF_MODE" in self.env and \
