@@ -45,7 +45,7 @@ commonvars.AddVariables(
 
     # library options
     ("LIB_DEEP_SEARCH",),
-    ("LIB_COMPAT_LEVEL",),
+    ("LIB_COMPAT_MODE",),
     ("LIB_IGNORE",),
     ("LIB_FORCE",),
     ("LIB_EXTRA_DIRS",),

@@ -729,25 +729,25 @@ Example:
     [env:custom_lib_dirs]
     lib_extra_dirs = /path/to/private/dir1,/path/to/private/dir2
 
-.. _projectconf_lib_compat_level:
+.. _projectconf_lib_compat_mode:
 
-``lib_compat_level``
-^^^^^^^^^^^^^^^^^^^^
+``lib_compat_mode``
+^^^^^^^^^^^^^^^^^^^
 
 Please make sure to read :ref:`faq_ldf` guides first.
 
-Library compatibility level that allows to control Library Dependency Finder
+Library compatibility mode that allows to control Library Dependency Finder
 strictness. If library contains manifest file (:ref:`library_config`,
 ``library.properties``, ``module.json``), then LDF check compatibility of this
-library with real build environment. Available compatibility levels:
+library with real build environment. Available compatibility modes:
 
-* ``0`` - don't check for compatibility (disable)
+* ``0`` - don't check for compatibility
 * ``1`` - check for the compatibility with :ref:`projectconf_env_framework`
   from build environment
 * ``2`` - check for the compatibility with :ref:`projectconf_env_framework`
   and :ref:`projectconf_env_platform` from build environment.
 
-By default, this value is set to ``lib_compat_level = 1`` and means that LDF
+By default, this value is set to ``lib_compat_mode = 1`` and means that LDF
 will check only for framework compatibility.
 
 -----------

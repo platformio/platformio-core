@@ -463,7 +463,7 @@ def GetLibBuilders(env):
     env_frameworks = [
         f.lower().strip() for f in env.get("PIOFRAMEWORK", "").split(",")
     ]
-    compat_level = int(env.get("LIB_COMPAT_LEVEL", 1))
+    compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
 
     for libs_dir in env['LIBSOURCE_DIRS']:
         libs_dir = env.subst(libs_dir)
@@ -477,14 +477,14 @@ def GetLibBuilders(env):
                 if not env.GetOption("silent"):
                     sys.stderr.write("Ignored library %s\n" % lb.path)
                 continue
-            if compat_level > 1 and not lb.is_platform_compatible(env[
+            if compat_mode > 1 and not lb.is_platform_compatible(env[
                     'PIOPLATFORM']):
                 if not env.GetOption("silent"):
                     sys.stderr.write("Platform incompatible library %s\n" %
                                      lb.path)
                 continue
-            if compat_level > 0 and not any([lb.is_framework_compatible(f)
-                                             for f in env_frameworks]):
+            if compat_mode > 0 and not any([lb.is_framework_compatible(f)
+                                            for f in env_frameworks]):
                 if not env.GetOption("silent"):
                     sys.stderr.write("Framework incompatible library %s\n" %
                                      lb.path)

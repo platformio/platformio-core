@@ -57,12 +57,12 @@ order:
 2. :ref:`projectconf_pio_lib_dir`
 3. :ref:`projectconf_pio_home_dir`/lib
 
-Library Dependency Finder has a few key factors from :ref:`projectconf`:
+Library Dependency Finder has a few controls from :ref:`projectconf`:
 
 * :ref:`projectconf_lib_ignore`
 * :ref:`projectconf_lib_deep_search`
 * :ref:`projectconf_lib_extra_dirs`
-* :ref:`projectconf_lib_compat_level`
+* :ref:`projectconf_lib_compat_mode`
 
 Command completion in Terminal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

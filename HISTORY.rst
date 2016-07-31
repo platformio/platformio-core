@@ -20,7 +20,7 @@ PlatformIO 3.0
     + Check library compatibility with project environment before building
       (`issue #415 <https://github.com/platformio/platformio/issues/415>`_)
     + Control Library Dependency Finder for compatibility using
-      `lib_compat_level <http://docs.platformio.org/en/latest/projectconf.html#lib-compat-level>`__
+      `lib_compat_mode <http://docs.platformio.org/en/latest/projectconf.html#lib-compat-mode>`__
       option
     + Custom library storages/directories with
       `lib_extra_dirs <http://docs.platformio.org/en/latest/projectconf.html#lib-extra-dirs>`__ option
