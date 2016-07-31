@@ -109,7 +109,7 @@ class FDSHASumMismatch(PlatformioException):
         "is not equal to remote '{2}'"
 
 
-class NotPlatformProject(PlatformioException):
+class NotPlatformIOProject(PlatformioException):
 
     MESSAGE = "Not a PlatformIO project. `platformio.ini` file has not been "\
         "found in current working directory ({0}). To initialize new project "\

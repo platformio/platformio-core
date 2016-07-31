@@ -194,7 +194,7 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
         if not search_paths:
             search_paths = tuple()
         assert isinstance(search_paths, tuple)
-        deep_search = self.env.get("LIB_DEEP_SEARCH", "true").lower() == "true"
+        deep_search = int(self.env.get("LIB_LDF_MODE", 2)) == 2
 
         if not self._scanned_paths and (
                 isinstance(self, ProjectAsLibBuilder) or deep_search):
@@ -270,6 +270,10 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
                         "Error: Could not find `%s` dependency for `%s` "
                         "library\n" % (item['name'], self.name))
                     self.env.Exit(2)
+
+        # when LDF is disabled
+        if "LIB_LDF_MODE" in self.env and \
+                int(self.env.get("LIB_LDF_MODE")) == 0:
             return
 
         lib_inc_map = {}

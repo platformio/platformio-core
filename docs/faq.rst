@@ -33,37 +33,6 @@ What is ``.pioenvs`` directory
 
 Please refer to :ref:`projectconf_pio_envs_dir`.
 
-.. _faq_ldf:
-
-How works Library Dependency Finder (LDF)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Library Dependency Finder is a part of PlatformIO Library Build System. It
-operates with the C/C++ source files and looks for ``#include <...>``
-directives. Also, LDF interprets C Preprocessor conditional macros
-(``#if``, ``ifdef``, etc.). Library Dependency Finder starts
-work from analyzing source files from :ref:`projectconf_pio_src_dir` by default.
-
-If project or library contains own ``dependencies`` list (see
-:ref:`libjson_dependencies`), the LDF will not looking for dependencies in
-the source code. The specified libraries will be built automatically without
-check.
-
-There are different library storages where Library Dependency Finder looks for
-dependencies. These storages/folders have priority. LDF operates in the next
-order:
-
-1. :ref:`projectconf_lib_extra_dirs`
-2. :ref:`projectconf_pio_lib_dir`
-3. :ref:`projectconf_pio_home_dir`/lib
-
-Library Dependency Finder has a few controls from :ref:`projectconf`:
-
-* :ref:`projectconf_lib_ignore`
-* :ref:`projectconf_lib_deep_search`
-* :ref:`projectconf_lib_extra_dirs`
-* :ref:`projectconf_lib_compat_mode`
-
 Command completion in Terminal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -44,7 +44,7 @@ commonvars.AddVariables(
     ("SRC_FILTER",),
 
     # library options
-    ("LIB_DEEP_SEARCH",),
+    ("LIB_LDF_MODE",),
     ("LIB_COMPAT_MODE",),
     ("LIB_IGNORE",),
     ("LIB_FORCE",),
@@ -63,41 +63,35 @@ commonvars.AddVariables(
     ("UPLOAD_SPEED",),
     ("UPLOAD_FLAGS",),
     ("UPLOAD_RESETMETHOD",)
-)
+)  # yapf: disable
 
 DefaultEnvironment(
     tools=[
         "ar", "as", "gcc", "g++", "gnulink",
         "platformio", "devplatform",
         "piolib", "piotest", "pioupload", "pioar", "piomisc"
-    ],
+    ], # yapf: disable
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
     variables=commonvars,
 
     # Propagating External Environment
     ENV=environ,
-
     UNIX_TIME=int(time()),
     PROGNAME="program",
-
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),
-    PROJECTLIB_DIR=util.get_projectlib_dir(),
     PROJECTSRC_DIR=util.get_projectsrc_dir(),
     PROJECTTEST_DIR=util.get_projecttest_dir(),
     PROJECTDATA_DIR=util.get_projectdata_dir(),
-    PIOENVS_DIR=util.get_pioenvs_dir(),
-
-    BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
+    PROJECTPIOENVS_DIR=util.get_projectpioenvs_dir(),
+    BUILD_DIR=join("$PROJECTPIOENVS_DIR", "$PIOENV"),
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     BUILDTEST_DIR=join("$BUILD_DIR", "test"),
     LIBSOURCE_DIRS=[
-        "$PROJECTLIB_DIR",
-        util.get_lib_dir()
+        util.get_projectlib_dir(), util.get_projectlibdeps_dir(),
+        join("$PIOHOME_DIR", "lib")
     ],
-
-    PYTHONEXE=normpath(sys.executable)
-)
+    PYTHONEXE=normpath(sys.executable))
 
 env = DefaultEnvironment()
 
@@ -126,9 +120,8 @@ env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
 env.LoadDevPlatform(commonvars)
 
 env.SConscriptChdir(0)
-env.SConsignFile(join("$PIOENVS_DIR", ".sconsign.dblite"))
+env.SConsignFile(join("$PROJECTPIOENVS_DIR", ".sconsign.dblite"))
 env.SConscript("$BUILD_SCRIPT")
-
 
 if "UPLOAD_FLAGS" in env:
     env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])

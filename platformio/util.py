@@ -156,7 +156,7 @@ def _get_projconf_option_dir(name, default=None):
             if option_dir.startswith("~"):
                 option_dir = expanduser(option_dir)
             return abspath(option_dir)
-    except exception.NotPlatformProject:
+    except exception.NotPlatformIOProject:
         pass
     return default
 
@@ -180,13 +180,6 @@ def get_home_dir():
     return home_dir
 
 
-def get_lib_dir():
-    return _get_projconf_option_dir(
-        "lib_dir",
-        join(get_home_dir(), "lib")
-    )
-
-
 def get_source_dir():
     curpath = abspath(__file__)
     if not isfile(curpath):
@@ -201,29 +194,33 @@ def get_project_dir():
     return os.getcwd()
 
 
-def get_projectsrc_dir():
-    return _get_projconf_option_dir(
-        "src_dir",
-        join(get_project_dir(), "src")
-    )
-
-
-def get_projecttest_dir():
-    return _get_projconf_option_dir(
-        "test_dir",
-        join(get_project_dir(), "test")
-    )
+def is_platformio_project(project_dir=None):
+    if not project_dir:
+        project_dir = get_project_dir()
+    return isfile(join(project_dir, "platformio.ini"))
 
 
 def get_projectlib_dir():
-    return join(get_project_dir(), "lib")
+    return _get_projconf_option_dir("lib_dir", join(get_project_dir(), "lib"))
 
 
-def get_pioenvs_dir():
-    path = _get_projconf_option_dir(
-        "envs_dir",
-        join(get_project_dir(), ".pioenvs")
-    )
+def get_projectlibdeps_dir():
+    return _get_projconf_option_dir("libdeps_dir",
+                                    join(get_project_dir(), ".piolibdeps"))
+
+
+def get_projectsrc_dir():
+    return _get_projconf_option_dir("src_dir", join(get_project_dir(), "src"))
+
+
+def get_projecttest_dir():
+    return _get_projconf_option_dir("test_dir", join(get_project_dir(),
+                                                     "test"))
+
+
+def get_projectpioenvs_dir():
+    path = _get_projconf_option_dir("envs_dir",
+                                    join(get_project_dir(), ".pioenvs"))
     if not isdir(path):
         os.makedirs(path)
     dontmod_path = join(path, "do-not-modify-files-here.url")
@@ -247,16 +244,10 @@ def load_project_config(project_dir=None):
     if not project_dir:
         project_dir = get_project_dir()
     if not is_platformio_project(project_dir):
-        raise exception.NotPlatformProject(project_dir)
+        raise exception.NotPlatformIOProject(project_dir)
     cp = ConfigParser()
     cp.read(join(project_dir, "platformio.ini"))
     return cp
-
-
-def is_platformio_project(project_dir=None):
-    if not project_dir:
-        project_dir = get_project_dir()
-    return isfile(join(project_dir, "platformio.ini"))
 
 
 def change_filemtime(path, time):
@@ -358,6 +349,12 @@ def get_request_defheaders():
     )}
 
 
+@memoized
+def _api_request_session():
+    import requests
+    return requests.Session()
+
+
 def get_api_result(path, params=None, data=None, skipdns=False):
     import requests
     result = None
@@ -371,12 +368,14 @@ def get_api_result(path, params=None, data=None, skipdns=False):
 
     try:
         if data:
-            r = requests.post(
+            r = _api_request_session().post(
                 url + path, params=params, data=data, headers=headers)
         else:
-            r = requests.get(url + path, params=params, headers=headers)
-        r.raise_for_status()
+            r = _api_request_session().get(url + path,
+                                           params=params,
+                                           headers=headers)
         result = r.json()
+        r.raise_for_status()
     except requests.exceptions.HTTPError as e:
         if result and "errors" in result:
             raise exception.APIRequestError(result['errors'][0]['title'])

@@ -119,6 +119,7 @@ Contents
 
     Quickstart <librarymanager/index>
     User Guide <userguide/lib/index.rst>
+    librarymanager/ldf
     librarymanager/config
     librarymanager/creating
 

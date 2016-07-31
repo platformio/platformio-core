@@ -44,8 +44,8 @@ Options
 ``home_dir``
 ^^^^^^^^^^^^
 
-Is used to store platform toolchains, frameworks, external libraries,
-service data and etc.
+Is used to store platform toolchains, frameworks, global libraries for
+:ref: `ldf`, service data and etc.
 
 A default value is User's home directory:
 
@@ -60,18 +60,59 @@ This option can be overridden by global environment variable
 ``lib_dir``
 ^^^^^^^^^^^
 
-This directory is used to store external libraries downloaded by
-:ref:`librarymanager`.
+You can put here your own/private libraries. The source code of each library
+should be placed in separate directory, like
+``lib/private_lib/[here are source files]``. This directory has the highest
+priority for :ref:`ldf`.
 
-A default value is ``%home_dir%/lib``.
+A default value is ``lib`` that means that folder is located in the root of
+project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_LIB_DIR`.
 
-.. note::
-    You can put here your own/private libraries. The source code of each
-    library should be placed in separate directory. For example,
-    ``%lib_dir%/private_lib/[here are source files]``.
+For example, see how can be organized ``Foo`` and ``Bar`` libraries:
+
+.. code::
+
+    |--lib
+    |  |--Bar
+    |  |  |--docs
+    |  |  |--examples
+    |  |  |--src
+    |  |     |- Bar.c
+    |  |     |- Bar.h
+    |  |--Foo
+    |  |  |- Foo.c
+    |  |  |- Foo.h
+    |- platformio.ini
+    |--src
+       |- main.c
+
+
+Then in ``src/main.c`` you should use:
+
+.. code-block:: c
+
+    #include <Foo.h>
+    #include <Bar.h>
+
+    // rest H/C/CPP code
+
+PlatformIO will find your libraries automatically, configure preprocessor's
+include paths and build them.
+
+.. _projectconf_pio_piolibdeps_dir:
+
+``piolibdeps_dir``
+^^^^^^^^^^^^^^^^^^
+
+Internal storage where :ref:`librarymanager` will install project dependencies.
+A default value is ``.piolibdeps`` that means that folder is located in the root of
+project.
+
+This option can be overridden by global environment variable
+:envvar:`PLATFORMIO_PIOLIBDEPS_DIR`.
 
 .. _projectconf_pio_src_dir:
 
@@ -79,10 +120,8 @@ This option can be overridden by global environment variable
 ^^^^^^^^^^^
 
 A path to project's source directory. PlatformIO uses it for :ref:`cmd_run`
-command.
-
-A default value is ``src`` which means that folder is located in the root of
-project.
+command. A default value is ``src`` that means that folder is located in the
+root of project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_SRC_DIR`.
@@ -110,7 +149,7 @@ fast!
 then PlatformIO will remove this folder automatically. It will be created on the
 next build operation.
 
-A default value is ``.pioenvs`` which means that folder is located in the root of
+A default value is ``.pioenvs`` that means that folder is located in the root of
 project.
 
 This option can be overridden by global environment variable
@@ -127,8 +166,7 @@ This option can be overridden by global environment variable
 ^^^^^^^^^^^^
 
 Data directory to store contents and :ref:`platform_espressif_uploadfs`.
-
-A default value is ``data`` which means that folder is located in the root of
+A default value is ``data`` that means that folder is located in the root of
 project.
 
 This option can be overridden by global environment variable
@@ -139,9 +177,8 @@ This option can be overridden by global environment variable
 ``test_dir``
 ^^^^^^^^^^^^
 
-Directory for :ref:`unit_testing`.
-
-A default value is ``test`` which means that folder is located in the root of
+Directory where :ref:`unit_testing` engine will look for the tests.
+A default value is ``test`` that means that folder is located in the root of
 project.
 
 This option can be overridden by global environment variable
@@ -206,6 +243,9 @@ For example, ``[env:hello_world]``.
 General options
 ~~~~~~~~~~~~~~~
 
+.. contents::
+    :local:
+
 .. _projectconf_env_platform:
 
 ``platform``
@@ -265,6 +305,9 @@ using `PlatformIO Embedded Boards Explorer <http://platformio.org/boards>`_.
 Board options
 ~~~~~~~~~~~~~
 
+.. contents::
+    :local:
+
 ``board_mcu``
 ^^^^^^^^^^^^^
 
@@ -309,8 +352,11 @@ This option isn't available for the all development platforms. The only
 Flash chip interface mode. This option isn't available for the all development
 platforms. The only :ref:`platform_espressif` supports it.
 
-Building options
-~~~~~~~~~~~~~~~~
+Build options
+~~~~~~~~~~~~~
+
+.. contents::
+    :local:
 
 .. _projectconf_build_flags:
 
@@ -456,7 +502,7 @@ be applied in theirs order.
 
 By default, ``src_filter`` is predefined to
 ``+<*> -<.git/> -<svn/> -<example/> -<examples/> -<test/> -<tests/>``,
-which means "includes ALL files, then
+that means "includes ALL files, then
 exclude ``.git`` and ``svn`` repository folders, ``example`` ... folder.
 
 This option can be set by global environment variable
@@ -529,8 +575,11 @@ The list with available targets is located in :option:`platformio run --target`.
 When no targets are defined, *PlatformIO* will build only sources by default.
 
 
-Uploading options
-~~~~~~~~~~~~~~~~~
+Upload options
+~~~~~~~~~~~~~~
+
+.. contents::
+    :local:
 
 .. _projectconf_upload_port:
 
@@ -587,6 +636,9 @@ development platforms. The only :ref:`platform_espressif` supports it.
 Library options
 ~~~~~~~~~~~~~~~
 
+.. contents::
+    :local:
+
 ``lib_install``
 ^^^^^^^^^^^^^^^
 
@@ -603,12 +655,17 @@ Example:
     [env:depends_on_some_libs]
     lib_install = 1,13,19
 
+.. _projectconf_lib_force:
+
 ``lib_force``
 ^^^^^^^^^^^^^
 
-Force Library Build System to build specified libraries if they even are not
-included in the project source code. Also, these libraries will be processed
-in the first order.
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
+
+Force Library Dependency Finder to depend on the specified libraries if
+they even are not included in the project source code. Also, these
+libraries will be processed in the first order.
 
 The correct value for this option is library name (not
 folder name). In the most cases, library name is pre-defined in manifest file
@@ -627,7 +684,8 @@ Example:
 ``lib_ignore``
 ^^^^^^^^^^^^^^
 
-Please make sure to read :ref:`faq_ldf` guides first.
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
 
 Specify libraries which should be ignored by Library Dependency Finder.
 
@@ -643,72 +701,14 @@ Example:
     [env:ignore_some_libs]
     lib_ignore = SPI, Ethernet
 
-.. _projectconf_lib_deep_search:
-
-``lib_deep_search``
-^^^^^^^^^^^^^^^^^^^
-
-Please make sure to read :ref:`faq_ldf` guides first.
-
-By default, this option is turned ON (``lib_deep_search = true``) and means
-that Library Dependency Finder will analyze ALL source files from the library
-and will try automatically find all dependencies.
-
-If you want to disable deep search, please set this option to ``false``.
-Note! Some libraries depend on other libraries and the
-``#include <...>`` directives for these libraries are not declared in the
-"main" header file that is used by upper library. If LDF is turned OFF
-(``lib_deep_search = false``), it will not handle these libraries automatically
-because it doesn't analyze "each source file" of the nested libraries
-(only "nested includes/chain").
-
-For example, there are 2 libraries:
-
-* Library "Foo" with files:
-
-  - ``Foo/foo.h``
-  - ``Foo/foo.cpp``
-
-* Library "Bar" with files:
-
-  - ``Bar/bar.h``
-  - ``Bar/bar.cpp``
-
-:Case 1:
-
-  * ``lib_deep_search = false``
-  * ``Foo/foo.h`` depends on "Bar" library (contains ``#include <bar.h>``)
-  * ``#include <foo.h>`` is located in one of the project source files
-
-  Here are nested includes (``project file > foo.h > bar.h``) and ``LDF`` will
-  find both libraries "Foo" and "Bar".
-
-:Case 2:
-
-  * ``lib_deep_search = false``
-  * ``Foo/foo.cpp`` depends on "Bar" library (contains ``#include <bar.h>``)
-  * ``#include <foo.h>`` is located in one of the project source files
-
-  In this case, ``LDF`` will not find "Bar" library because it doesn't know
-  about CPP file (``Foo/foo.cpp``).
-
-:Case 3:
-
-  * ``lib_deep_search = true``
-  * ``Foo/foo.cpp`` depends on "Bar" library (contains ``#include <bar.h>``)
-  * ``#include <foo.h>`` is located in one of the project source files
-
-  Firstly, ``LDF`` finds "Foo" library, then it parses all sources from "Foo"
-  library and finds ``Foo/foo.cpp`` that depends on ``#include <bar.h>``.
-  Secondly, it will parse all sources from "Bar" library and this operation
-  continues until all dependent libraries will not be parsed.
-
 .. _projectconf_lib_extra_dirs:
 
 ``lib_extra_dirs``
 ^^^^^^^^^^^^^^^^^^
 
-Please make sure to read :ref:`faq_ldf` guides first.
+.. versionadded:: 3.0
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
 
 A list with extra directories/storages where Library Dependency Finder will
 look for dependencies. Multiple paths are allowed. Please separate them
@@ -729,23 +729,34 @@ Example:
     [env:custom_lib_dirs]
     lib_extra_dirs = /path/to/private/dir1,/path/to/private/dir2
 
+.. _projectconf_lib_ldf_mode:
+
+``lib_ldf_mode``
+^^^^^^^^^^^^^^^^
+
+.. versionadded:: 3.0
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
+
+Library Dependency Finder starts work from analyzing source files of the
+project (:ref:`projectconf_pio_src_dir`) and can work in the different modes
+(see :ref:`ldf_mode`).
+
+By default, this value is set to ``lib_ldf_mode = 2`` and means that LDF
+will parse ALL C/C++ source code of the project and will parse ALL C/C++
+source code of the each dependent library (recursively).
+
 .. _projectconf_lib_compat_mode:
 
 ``lib_compat_mode``
 ^^^^^^^^^^^^^^^^^^^
 
-Please make sure to read :ref:`faq_ldf` guides first.
+.. versionadded:: 3.0
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
 
-Library compatibility mode that allows to control Library Dependency Finder
-strictness. If library contains manifest file (:ref:`library_config`,
-``library.properties``, ``module.json``), then LDF check compatibility of this
-library with real build environment. Available compatibility modes:
-
-* ``0`` - don't check for compatibility
-* ``1`` - check for the compatibility with :ref:`projectconf_env_framework`
-  from build environment
-* ``2`` - check for the compatibility with :ref:`projectconf_env_framework`
-  and :ref:`projectconf_env_platform` from build environment.
+Library compatibility mode allows to control strictness of Library Dependency
+Finder. More details :ref:`ldf_compat_mode`.
 
 By default, this value is set to ``lib_compat_mode = 1`` and means that LDF
 will check only for framework compatibility.

@@ -14,6 +14,8 @@
 Unit Testing
 ============
 
+.. versionadded:: 3.0
+
 `Unit Testing (wiki) <https://en.wikipedia.org/wiki/Unit_testing>`_
 is a software testing method by which individual units of source code, sets
 of one or more MCU program modules together with associated control data,

@@ -14,6 +14,8 @@
 platformio test
 ===============
 
+.. versionadded:: 3.0
+
 .. contents::
 
 Usage
