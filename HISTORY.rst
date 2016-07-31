@@ -17,6 +17,8 @@ PlatformIO 2.0
 * Switched to built-in GCC LwIP library for Espressif development platform
 * Added support for local ``--echo`` for Serial Port Monitor
   (`issue #733 <https://github.com/platformio/platformio/issues/733>`_)
+* Updated ``udev`` rules for the new STM32F407DISCOVERY boards
+  (`issue #731 <https://github.com/platformio/platformio/issues/731>`_)
 * Fixed Project Generator for ESP8266 and ARM mbed based projects
   (resolves incorrect linter errors)
 * Fixed broken LD Script for Element14 chipKIT Pi board
