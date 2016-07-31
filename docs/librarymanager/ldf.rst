@@ -131,14 +131,6 @@ library with real build environment. Available compatibility modes:
 This mode can be changed using :ref:`projectconf_lib_compat_mode` option in
 :ref:`projectconf`.
 
-Manual dependencies
--------------------
-
-If project or library contains own ``dependencies`` list (see
-:ref:`libjson_dependencies`), the LDF will not looking for dependencies in
-the source code. The specified libraries will be built automatically without
-check.
-
 .. _ldf_c_cond_syntax:
 
 C Preprocessor conditional syntax
