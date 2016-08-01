@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import listdir
-from os.path import isdir, join
-from platform import system
+import re
+from os.path import join
 from subprocess import check_call
 from sys import modules
-from urlparse import urlsplit, urlunsplit
+from urlparse import urlparse
 
 from platformio import util
 from platformio.exception import PlatformioException
@@ -26,28 +25,16 @@ from platformio.exception import PlatformioException
 class VCSClientFactory(object):
 
     @staticmethod
-    def newClient(src_dir, remote_url=None, branch=None):
-        clsnametpl = "%sClient"
-        vcscls = None
-        type_ = None
-        if remote_url:
-            scheme, netloc, path, query, branch = urlsplit(remote_url)
-            type_ = scheme
-            if "+" in type_:
-                type_, scheme = type_.split("+", 1)
-            remote_url = urlunsplit((scheme, netloc, path, query, None))
-            vcscls = getattr(modules[__name__], clsnametpl % type_.title())
-        elif isdir(src_dir):
-            for item in listdir(src_dir):
-                if not isdir(join(src_dir, item)) or not item.startswith("."):
-                    continue
-                try:
-                    vcscls = getattr(
-                        modules[__name__], clsnametpl % item[1:].title())
-                except AttributeError:
-                    pass
-        assert vcscls
-        obj = vcscls(src_dir, remote_url, branch)
+    def newClient(src_dir, remote_url):
+        result = urlparse(remote_url)
+        type_ = result.scheme
+        if "+" in result.scheme:
+            type_, _ = result.scheme.split("+", 1)
+            remote_url = remote_url[len(type_) + 1:]
+        if result.fragment:
+            remote_url = remote_url.rsplit("#", 1)[0]
+        obj = getattr(modules[__name__], "%sClient" % type_.title())(
+            src_dir, remote_url, result.fragment)
         assert isinstance(obj, VCSClientBase)
         return obj
 
@@ -79,19 +66,29 @@ class VCSClientBase(object):
     def export(self):
         raise NotImplementedError
 
-    def get_latest_revision(self):
+    def update(self):
+        raise NotImplementedError
+
+    @property
+    def can_be_updated(self):
+        return not self.branch
+
+    def get_current_revision(self):
         raise NotImplementedError
 
     def run_cmd(self, args, **kwargs):
         args = [self.command] + args
-        kwargs['shell'] = system() == "Windows"
+        if "cwd" not in kwargs:
+            kwargs['cwd'] = self.src_dir
         return check_call(args, **kwargs) == 0
 
     def get_cmd_output(self, args, **kwargs):
         args = [self.command] + args
+        if "cwd" not in kwargs:
+            kwargs['cwd'] = self.src_dir
         result = util.exec_command(args, **kwargs)
         if result['returncode'] == 0:
-            return result['out']
+            return result['out'].strip()
         raise PlatformioException(
             "VCS: Could not receive an output from `%s` command (%s)" % (
                 args, result))
@@ -101,16 +98,42 @@ class GitClient(VCSClientBase):
 
     command = "git"
 
+    def get_branches(self):
+        output = self.get_cmd_output(["branch"])
+        output = output.replace("*", "")  # fix active branch
+        return [b.strip() for b in output.split("\n")]
+
+    def get_tags(self):
+        output = self.get_cmd_output(["tag", "-l"])
+        return [t.strip() for t in output.split("\n")]
+
+    @staticmethod
+    def is_commit_id(text):
+        return text and re.match(r"[0-9a-f]{7,}$", text) is not None
+
+    @property
+    def can_be_updated(self):
+        return not self.branch or not self.is_commit_id(self.branch)
+
     def export(self):
-        args = ["clone", "--recursive", "--depth", "1"]
-        if self.branch:
-            args.extend(["--branch", self.branch])
-        args.extend([self.remote_url, self.src_dir])
+        is_commit = self.is_commit_id(self.branch)
+        args = ["clone", "--recursive"]
+        if not self.branch or not is_commit:
+            args += ["--depth", "1"]
+            if self.branch:
+                args += ["--branch", self.branch]
+        args += [self.remote_url, self.src_dir]
+        assert self.run_cmd(args)
+        if is_commit:
+            return self.run_cmd(["reset", "--hard", self.branch])
+        return True
+
+    def update(self):
+        args = ["pull"]
         return self.run_cmd(args)
 
-    def get_latest_revision(self):
-        return self.get_cmd_output(["rev-parse", "--short", "HEAD"],
-                                   cwd=self.src_dir).strip()
+    def get_current_revision(self):
+        return self.get_cmd_output(["rev-parse", "--short", "HEAD"])
 
 
 class HgClient(VCSClientBase):
@@ -124,9 +147,12 @@ class HgClient(VCSClientBase):
         args.extend([self.remote_url, self.src_dir])
         return self.run_cmd(args)
 
-    def get_latest_revision(self):
-        return self.get_cmd_output(["identify", "--id"],
-                                   cwd=self.src_dir).strip()
+    def update(self):
+        args = ["pull", "--update"]
+        return self.run_cmd(args)
+
+    def get_current_revision(self):
+        return self.get_cmd_output(["identify", "--id"])
 
 
 class SvnClient(VCSClientBase):
@@ -134,12 +160,22 @@ class SvnClient(VCSClientBase):
     command = "svn"
 
     def export(self):
-        args = ["export", "--force"]
+        args = ["checkout"]
         if self.branch:
             args.extend(["--revision", self.branch])
         args.extend([self.remote_url, self.src_dir])
         return self.run_cmd(args)
 
-    def get_latest_revision(self):
-        return self.get_cmd_output(["info", "-r", "HEAD"],
-                                   cwd=self.src_dir).strip()
+    def update(self):
+
+        args = ["update"]
+        return self.run_cmd(args)
+
+    def get_current_revision(self):
+        output = self.get_cmd_output(["info", "--non-interactive",
+                                      "--trust-server-cert", "-r", "HEAD"])
+        for line in output.split("\n"):
+            line = line.strip()
+            if line.startswith("Revision:"):
+                return line.split(":", 1)[1].strip()
+        raise PlatformioException("Could not detect current SVN revision")

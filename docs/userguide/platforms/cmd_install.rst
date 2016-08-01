@@ -22,7 +22,7 @@ Usage
 .. code-block:: bash
 
     # install platform by name
-    platformio platform install [OPTIONS] PLATFORM
+    platformio platform install [OPTIONS] [PLATFORM...]
 
     # install specific platform version using Semantic Versioning
     platformio platform install [OPTIONS] PLATFORM@X.Y.Z
@@ -45,10 +45,16 @@ There are several predefined aliases for packages, such as:
 Local
 ~~~~~
 
-PlatformIO supports installing development platform from local directory. Here
-is supported form:
+PlatformIO supports installing development platform from local directory or
+archive. Need to use ``file://`` prefix before local path. Also, platform
+directory or archive should contain ``platform.json`` manifest.
 
 * ``file:///local/path/to/the/platform/dir``
+* ``file:///local/path/to/the/platform.zip``
+* ``file:///local/path/to/the/platform.tar.gz``
+
+Remote
+~~~~~~
 
 VCS
 ~~~
@@ -135,34 +141,38 @@ Examples
 .. code-block:: bash
 
     $ platformio platform install atmelavr
-    Installing platform atmelavr @ latest:
+    PlatformManager: Installing atmelavr
     Downloading...
     Unpacking  [####################################]  100%
-    Installing package tool-scons @ >=2.3.0,<2.6.0:
+    atmelavr @ 0.0.0 has been successfully installed!
+    PackageManager: Installing tool-scons @ >=2.3.0,<2.6.0
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
-    Installing package toolchain-atmelavr @ ~1.40801.0:
+    tool-scons @ 2.4.1 has been successfully installed!
+    PackageManager: Installing toolchain-atmelavr @ ~1.40801.0
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
+    toolchain-atmelavr @ 1.40801.0 has been successfully installed!
     The platform 'atmelavr' has been successfully installed!
     The rest of packages will be installed automatically depending on your build environment.
-
 
 2. Install :ref:`platform_atmelavr` with ``uploader`` utility only and skip
    default packages
 
 .. code-block:: bash
 
-    $ platformio platform install atmelavr --skip-default-package --with-package=uploader
-    Installing platform atmelavr @ latest:
+    PlatformManager: Installing atmelavr
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
-    Installing package tool-micronucleus @ ~1.200.0:
+    atmelavr @ 0.0.0 has been successfully installed!
+    PackageManager: Installing tool-micronucleus @ ~1.200.0
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
-    Installing package tool-avrdude @ >=1.60001.0,<1.60101.0:
+    tool-micronucleus @ 1.200.0 has been successfully installed!
+    PackageManager: Installing tool-avrdude @ ~1.60001.0
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
+    tool-avrdude @ 1.60001.1 has been successfully installed!
     The platform 'atmelavr' has been successfully installed!
     The rest of packages will be installed automatically depending on your build environment.
 
@@ -171,27 +181,31 @@ Examples
 .. code-block:: bash
 
     $ platformio platform install https://github.com/platformio/platform-atmelavr.git
-    Installing platform https://github.com/platformio/platform-atmelavr.git @ latest:
+
+    PlatformManager: Installing platform-atmelavr
     git version 2.7.4 (Apple Git-66)
-    Cloning into '/Users/ikravets/.platformio/platforms/installing-XMIsAE-package'...
-    remote: Counting objects: 172, done.
-    remote: Compressing objects: 100% (51/51), done.
-    remote: Total 172 (delta 109), reused 168 (delta 109), pack-reused 0
-    Receiving objects: 100% (172/172), 38.18 KiB | 0 bytes/s, done.
-    Resolving deltas: 100% (109/109), done.
+    Cloning into '/Volumes/MEDIA/tmp/pio3_test_projects/arduino-digihead-master/home_dir/platforms/installing-U3ucN0-package'...
+    remote: Counting objects: 176, done.
+    remote: Compressing objects: 100% (55/55), done.
+    remote: Total 176 (delta 114), reused 164 (delta 109), pack-reused 0
+    Receiving objects: 100% (176/176), 38.86 KiB | 0 bytes/s, done.
+    Resolving deltas: 100% (114/114), done.
     Checking connectivity... done.
     Submodule 'examples/arduino-external-libs/lib/OneWire' (https://github.com/PaulStoffregen/OneWire.git) registered for path 'examples/arduino-external-libs/lib/OneWire'
     Cloning into 'examples/arduino-external-libs/lib/OneWire'...
-    remote: Counting objects: 87, done.
-    remote: Total 87 (delta 0), reused 0 (delta 0), pack-reused 87
-    Unpacking objects: 100% (87/87), done.
+    remote: Counting objects: 91, done.
+    remote: Total 91 (delta 0), reused 0 (delta 0), pack-reused 91
+    Unpacking objects: 100% (91/91), done.
     Checking connectivity... done.
     Submodule path 'examples/arduino-external-libs/lib/OneWire': checked out '57c18c6de80c13429275f70875c7c341f1719201'
-    Installing package tool-scons @ >=2.3.0,<2.6.0:
+    atmelavr @ 0.0.0 has been successfully installed!
+    PackageManager: Installing tool-scons @ >=2.3.0,<2.6.0
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
-    Installing package toolchain-atmelavr @ ~1.40801.0:
+    tool-scons @ 2.4.1 has been successfully installed!
+    PackageManager: Installing toolchain-atmelavr @ ~1.40801.0
     Downloading  [####################################]  100%
     Unpacking  [####################################]  100%
+    toolchain-atmelavr @ 1.40801.0 has been successfully installed!
     The platform 'https://github.com/platformio/platform-atmelavr.git' has been successfully installed!
     The rest of packages will be installed automatically depending on your build environment.

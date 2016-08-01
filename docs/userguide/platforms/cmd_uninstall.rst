@@ -21,7 +21,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio platform uninstall PLATFORM
+    platformio platform uninstall [PLATFORM...]
 
     # uninstall specific platform version using Semantic Versioning
     platformio platform uninstall PLATFORM@X.Y.Z
@@ -39,7 +39,7 @@ Examples
 .. code-block:: bash
 
     $ platformio platform uninstall atmelavr
-    Uninstalling platform atmelavr @ latest:    [OK]
-    Uninstalling package tool-scons @ 2.5.0:    [OK]
+    Uninstalling platform atmelavr @ 0.0.0:    [OK]
+    Uninstalling package tool-scons @ 2.4.1:    [OK]
     Uninstalling package toolchain-atmelavr @ 1.40801.0:    [OK]
     The platform 'atmelavr' has been successfully uninstalled!

@@ -130,7 +130,7 @@ def after_upgrade(ctx):
             # patch development platforms
             pm = PlatformManager()
             for manifest in pm.get_installed():
-                pm.update(manifest['name'], "~" + manifest['version'])
+                pm.update(manifest['name'], "^" + manifest['version'])
 
             click.secho("PlatformIO has been successfully upgraded to %s!\n" %
                         __version__, fg="green")
@@ -225,9 +225,9 @@ def check_internal_updates(ctx, what):
     if what == "platforms":
         pm = PlatformManager()
         for manifest in pm.get_installed():
-            if pm.is_outdated(manifest['name'], manifest['version']):
-                outdated_items.append(
-                    "%s@%s" % (manifest['name'], manifest['version']))
+            if manifest['name'] not in outdated_items and \
+                    pm.is_outdated(manifest['name']):
+                outdated_items.append(manifest['name'])
     elif what == "libraries":
         lm = LibraryManager()
         outdated_items = lm.get_outdated()

@@ -21,7 +21,10 @@ Usage
 
 .. code-block:: bash
 
-    platformio platform update
+    platformio platform update [OPTIONS] [PLATFORM...]
+
+    # update specific platform version using Semantic Versioning
+    platformio platform update PLATFORM@X.Y.Z
 
 
 Description
@@ -35,10 +38,15 @@ Options
 .. program:: platformio platform update
 
 .. option::
-    --only-packages
+    -p, --only-packages
 
 Update only platform related packages. Do not update development platform
 build scripts, board configs and etc.
+
+.. option::
+    -c, --only-check
+
+Do not update, only check for new version
 
 Examples
 --------
@@ -46,53 +54,32 @@ Examples
 .. code-block:: bash
 
     $ platformio platform update
-    Platform atmelavr @ 0.0.0
+    Platform atmelavr
     --------
-    Updating platform atmelavr @ latest:
-    Versions: Current=0.0.0, Latest=0.0.0    [Up-to-date]
-    Updating package framework-arduinoavr @ ~1.10608.0:
-    Versions: Current=1.10608.0, Latest=1.10608.0    [Up-to-date]
-    Updating package toolchain-atmelavr @ ~1.40801.0:
-    Versions: Current=1.40801.0, Latest=1.40801.0    [Up-to-date]
-    Updating package framework-simba @ ~1.500.0:
-    Versions: Current=1.500.0, Latest=1.500.0    [Up-to-date]
-    Updating package tool-scons @ >=2.3.0,<2.6.0:
-    Versions: Current=2.5.0, Latest=2.5.0    [Up-to-date]
+    Updating atmelavr @ 0.0.0:  [Up-to-date]
+    Updating framework-arduinoavr @ 1.10608.1:  [Up-to-date]
+    Updating tool-avrdude @ 1.60001.1:  [Up-to-date]
+    Updating toolchain-atmelavr @ 1.40801.0:    [Up-to-date]
+    Updating tool-scons @ 2.4.1:    [Up-to-date]
 
-    Platform atmelsam @ 0.0.0
+    Platform espressif
     --------
-    Updating platform atmelsam @ latest:
-    Versions: Current=0.0.0, Latest=0.0.0    [Up-to-date]
-    Updating package toolchain-gccarmnoneeabi @ >=1.40803.0,<1.40805.0:
-    Versions: Current=1.40804.0, Latest=1.40804.0    [Up-to-date]
-    Updating package framework-arduinosam @ ~1.10607.0:
-    Versions: Current=1.10607.0, Latest=1.10607.0    [Up-to-date]
-    Updating package framework-simba @ ~1.500.0:
-    Versions: Current=1.500.0, Latest=1.500.0    [Up-to-date]
-    Updating package framework-mbed @ ~1.117.0:
-    Versions: Current=1.117.0, Latest=1.117.0    [Up-to-date]
-    Updating package tool-scons @ >=2.3.0,<2.6.0:
-    Versions: Current=2.5.0, Latest=2.5.0    [Up-to-date]
-    Updating package tool-bossac @ ~1.10500.0:
-    Versions: Current=1.10500.0, Latest=1.10500.0    [Up-to-date]
+    Updating espressif @ 0.0.0:     [Up-to-date]
+    Updating tool-scons @ 2.4.1:    [Up-to-date]
+    Updating toolchain-xtensa @ 1.40802.0:  [Up-to-date]
+    Updating tool-esptool @ 1.409.0:    [Up-to-date]
+    Updating tool-mkspiffs @ 1.102.0:   [Up-to-date]
+    Updating framework-arduinoespressif @ 1.20300.0:    [Up-to-date]
+    Updating sdk-esp8266 @ 1.10502.0:   [Up-to-date]
 
-    Platform espressif @ 0.0.0
+    Platform teensy
     --------
-    Updating platform espressif @ latest:
-    Versions: Current=0.0.0, Latest=0.0.0    [Up-to-date]
-    Updating package tool-scons @ >=2.3.0,<2.6.0:
-    Versions: Current=2.5.0, Latest=2.5.0    [Up-to-date]
-    Updating package toolchain-xtensa @ ~1.40802.0:
-    Versions: Current=1.40802.0, Latest=1.40802.0    [Up-to-date]
-    Updating package framework-simba @ ~1.500.0:
-    Versions: Current=1.500.0, Latest=1.500.0    [Up-to-date]
-    Updating package tool-esptool @ ~1.408.0:
-    Versions: Current=1.408.0, Latest=1.408.0    [Up-to-date]
-    Updating package tool-mkspiffs @ ~1.102.0:
-    Versions: Current=1.102.0, Latest=1.102.0    [Up-to-date]
-    Updating package framework-arduinoespressif @ ~1.20200.0:
-    Versions: Current=1.20200.0, Latest=1.20200.0    [Up-to-date]
-    Updating package sdk-esp8266 @ ~1.10502.0:
-    Versions: Current=1.10502.0, Latest=1.10502.0    [Up-to-date]
+    Updating teensy @ 0.0.0:    [Up-to-date]
+    Updating framework-arduinoteensy @ 1.128.0:     [Up-to-date]
+    Updating tool-teensy @ 1.1.0:   [Up-to-date]
+    Updating framework-mbed @ 1.121.0:  [Up-to-date]
+    Updating tool-scons @ 2.4.1:    [Up-to-date]
+    Updating toolchain-atmelavr @ 1.40801.0:    [Up-to-date]
+    Updating toolchain-gccarmnoneeabi @ 1.40804.0:  [Up-to-date]
 
     ...

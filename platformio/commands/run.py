@@ -190,17 +190,13 @@ class EnvironmentProcessor(object):
         if "lib_install" in self.options:
             _autoinstall_libs(self.cmd_ctx, self.options['lib_install'])
 
-        platform = self.options['platform']
-        version = None
-        if "@" in platform:
-            platform, version = platform.rsplit("@", 1)
 
         try:
-            p = PlatformFactory.newPlatform(platform, version)
+            p = PlatformFactory.newPlatform(self.options['platform'])
         except exception.UnknownPlatform:
             self.cmd_ctx.invoke(
                 cmd_platform_install, platforms=[self.options['platform']])
-            p = PlatformFactory.newPlatform(platform, version)
+            p = PlatformFactory.newPlatform(self.options['platform'])
 
         return p.run(build_vars, build_targets, self.verbose)
 

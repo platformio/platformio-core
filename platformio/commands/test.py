@@ -174,11 +174,7 @@ class TestProcessor(object):
         if self.options.get("upload_port", envdata.get("upload_port")):
             return self.options.get("upload_port", envdata.get("upload_port"))
 
-        platform = envdata['platform']
-        version = None
-        if "@" in platform:
-            platform, version = platform.rsplit("@", 1)
-        p = PlatformFactory.newPlatform(platform, version)
+        p = PlatformFactory.newPlatform(envdata['platform'])
         bconfig = p.board_config(envdata['board'])
 
         port = None

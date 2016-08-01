@@ -13,15 +13,15 @@
 # limitations under the License.
 
 import json
+import os
+from os.path import join
 
-from platformio.commands.platform import \
-    platform_list as cmd_platform_list
-from platformio.commands.platform import \
-    platform_search as cmd_platform_search
+from platformio.commands import platform as cli_platform
+from platformio import exception, util
 
 
 def test_list_json_output(clirunner, validate_cliresult):
-    result = clirunner.invoke(cmd_platform_list, ["--json-output"])
+    result = clirunner.invoke(cli_platform.platform_list, ["--json-output"])
     validate_cliresult(result)
     list_result = json.loads(result.output)
     assert isinstance(list_result, list)
@@ -31,13 +31,13 @@ def test_list_json_output(clirunner, validate_cliresult):
 
 
 def test_list_raw_output(clirunner, validate_cliresult):
-    result = clirunner.invoke(cmd_platform_list)
+    result = clirunner.invoke(cli_platform.platform_list)
     validate_cliresult(result)
     assert "teensy" in result.output
 
 
 def test_search_json_output(clirunner, validate_cliresult):
-    result = clirunner.invoke(cmd_platform_search,
+    result = clirunner.invoke(cli_platform.platform_search,
                               ["arduino", "--json-output"])
     validate_cliresult(result)
     search_result = json.loads(result.output)
@@ -48,6 +48,79 @@ def test_search_json_output(clirunner, validate_cliresult):
 
 
 def test_search_raw_output(clirunner, validate_cliresult):
-    result = clirunner.invoke(cmd_platform_search, ["arduino"])
+    result = clirunner.invoke(cli_platform.platform_search, ["arduino"])
     validate_cliresult(result)
     assert "teensy" in result.output
+
+
+def test_install_uknown_from_registry(clirunner, validate_cliresult):
+    result = clirunner.invoke(cli_platform.platform_install,
+                              ["uknown-platform"])
+    assert result.exit_code == -1
+    assert isinstance(result.exception, exception.UnknownPackage)
+
+
+def test_install_uknown_version(clirunner, validate_cliresult):
+    result = clirunner.invoke(cli_platform.platform_install,
+                              ["atmelavr@99.99.99"])
+    assert result.exit_code == -1
+    assert isinstance(result.exception, exception.UndefinedPackageVersion)
+
+
+def test_complex(clirunner, validate_cliresult):
+    items = [
+        "teensy",
+        "https://github.com/platformio/platform-teensy/archive/develop.zip",
+        "https://github.com/platformio/platform-teensy.git",
+        "platformio/platform-teensy",
+    ]
+    for item in items:
+        with clirunner.isolated_filesystem():
+            os.environ["PLATFORMIO_HOME_DIR"] = os.getcwd()
+            try:
+                result = clirunner.invoke(cli_platform.platform_install,
+                                          [item])
+                validate_cliresult(result)
+                assert all([
+                    s in result.output
+                    for s in ("teensy", "Downloading", "Unpacking",
+                              "tool-scons")
+                ])
+
+                # show platform information
+                result = clirunner.invoke(cli_platform.platform_show,
+                                          ["teensy"])
+                validate_cliresult(result)
+                assert "teensy" in result.output
+
+                # list platforms
+                result = clirunner.invoke(cli_platform.platform_list,
+                                          ["--json-output"])
+                validate_cliresult(result)
+                list_result = json.loads(result.output)
+                assert isinstance(list_result, list)
+                assert len(list_result) == 1
+                assert list_result[0]["name"] == "teensy"
+                assert list_result[0]["packages"] == ["tool-scons"]
+
+                # try to install again
+                result = clirunner.invoke(cli_platform.platform_install,
+                                          ["teensy"])
+                validate_cliresult(result)
+                assert "is already installed" in result.output
+
+                # try to update
+                result = clirunner.invoke(cli_platform.platform_update)
+                validate_cliresult(result)
+                assert "teensy" in result.output
+                assert "Up-to-date" in result.output
+
+                # try to uninstall
+                result = clirunner.invoke(cli_platform.platform_uninstall,
+                                          ["teensy"])
+                validate_cliresult(result)
+                for folder in ("platforms", "packages"):
+                    assert len(os.listdir(join(util.get_home_dir(),
+                                               folder))) == 0
+            finally:
+                del os.environ["PLATFORMIO_HOME_DIR"]

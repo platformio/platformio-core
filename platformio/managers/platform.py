@@ -26,17 +26,17 @@ import semantic_version
 from platformio import app, exception, util
 from platformio.managers.package import BasePkgManager, PackageManager
 
-PLATFORMS_DIR = join(util.get_home_dir(), "platforms")
-PACKAGES_DIR = join(util.get_home_dir(), "packages")
-
 
 class PlatformManager(BasePkgManager):
 
     def __init__(self, package_dir=None, repositories=None):
         if not repositories:
-            repositories = ["http://dl.platformio.org/platforms/manifest.json"]
-        BasePkgManager.__init__(
-            self, package_dir or PLATFORMS_DIR, repositories)
+            repositories = [
+                "https://dl.platformio.org/platforms/manifest.json"
+            ]
+        BasePkgManager.__init__(self, package_dir or
+                                join(util.get_home_dir(), "platforms"),
+                                repositories)
 
     @property
     def manifest_name(self):
@@ -44,27 +44,29 @@ class PlatformManager(BasePkgManager):
 
     def install(self,  # pylint: disable=too-many-arguments,arguments-differ
                 name, requirements=None, with_packages=None,
-                without_packages=None, skip_default_packages=False):
+                without_packages=None, skip_default_package=False):
         platform_dir = BasePkgManager.install(self, name, requirements)
         p = PlatformFactory.newPlatform(self.get_manifest_path(platform_dir))
-        p.install_packages(
-            with_packages, without_packages, skip_default_packages)
+        p.install_packages(with_packages, without_packages,
+                           skip_default_package)
         self.cleanup_packages(p.packages.keys())
         return True
 
-    def uninstall(self,  # pylint: disable=arguments-differ
-                  name, requirements=None):
+    def uninstall(  # pylint: disable=arguments-differ
+            self, name, requirements=None):
+        name, requirements, _ = self.parse_pkg_name(name, requirements)
         p = PlatformFactory.newPlatform(name, requirements)
         BasePkgManager.uninstall(self, name, requirements)
         self.cleanup_packages(p.packages.keys())
         return True
 
     def update(self,  # pylint: disable=arguments-differ
-               name, requirements=None, only_packages=False):
+               name, requirements=None, only_packages=False, only_check=False):
+        name, requirements, _ = self.parse_pkg_name(name, requirements)
         if not only_packages:
-            BasePkgManager.update(self, name, requirements)
+            BasePkgManager.update(self, name, requirements, only_check)
         p = PlatformFactory.newPlatform(name, requirements)
-        p.update_packages()
+        p.update_packages(only_check)
         self.cleanup_packages(p.packages.keys())
         return True
 
@@ -77,14 +79,14 @@ class PlatformManager(BasePkgManager):
         self.reset_cache()
         deppkgs = {}
         for manifest in PlatformManager().get_installed():
-            p = PlatformFactory.newPlatform(
-                manifest['name'], manifest['version'])
+            p = PlatformFactory.newPlatform(manifest['name'],
+                                            manifest['version'])
             for pkgname, pkgmanifest in p.get_installed_packages().items():
                 if pkgname not in deppkgs:
                     deppkgs[pkgname] = set()
                 deppkgs[pkgname].add(pkgmanifest['version'])
 
-        pm = PackageManager(PACKAGES_DIR)
+        pm = PackageManager(join(util.get_home_dir(), "packages"))
         for manifest in pm.get_installed():
             if manifest['name'] not in names:
                 continue
@@ -126,35 +128,36 @@ class PlatformFactory(object):
     def load_module(name, path):
         module = None
         try:
-            module = load_source(
-                "platformio.managers.platform.%s" % name, path)
+            module = load_source("platformio.managers.platform.%s" % name,
+                                 path)
         except ImportError:
             raise exception.UnknownPlatform(name)
         return module
 
     @classmethod
     def newPlatform(cls, name, requirements=None):
+        if not requirements and "@" in name:
+            name, requirements = name.rsplit("@", 1)
         platform_dir = None
         if name.endswith("platform.json") and isfile(name):
             platform_dir = dirname(name)
             name = util.load_json(name)['name']
         else:
-            platform_dir = PlatformManager().max_installed_version(
-                name, requirements)
+            platform_dir = PlatformManager().get_installed_dir(name,
+                                                               requirements)
 
         if not platform_dir:
-            raise exception.UnknownPlatform(
-                name if not requirements else "%s@%s" % (name, requirements))
+            raise exception.UnknownPlatform(name if not requirements else
+                                            "%s@%s" % (name, requirements))
 
         platform_cls = None
         if isfile(join(platform_dir, "platform.py")):
             platform_cls = getattr(
                 cls.load_module(name, join(platform_dir, "platform.py")),
-                cls.get_clsname(name)
-            )
+                cls.get_clsname(name))
         else:
             platform_cls = type(
-                str(cls.get_clsname(name)), (PlatformBase,), {})
+                str(cls.get_clsname(name)), (PlatformBase, ), {})
 
         _instance = platform_cls(join(platform_dir, "platform.json"))
         assert isinstance(_instance, PlatformBase)
@@ -187,12 +190,13 @@ class PlatformPackagesMixin(object):
                 items[name] = manifest
         return items
 
-    def install_packages(self, with_packages=None, without_packages=None,
-                         skip_default_packages=False, silent=False):
-        with_packages = set(
-            self.pkg_types_to_names(with_packages or []))
-        without_packages = set(
-            self.pkg_types_to_names(without_packages or []))
+    def install_packages(self,
+                         with_packages=None,
+                         without_packages=None,
+                         skip_default_package=False,
+                         quiet=False):
+        with_packages = set(self.pkg_types_to_names(with_packages or []))
+        without_packages = set(self.pkg_types_to_names(without_packages or []))
 
         upkgs = with_packages | without_packages
         ppkgs = set(self.packages.keys())
@@ -203,14 +207,18 @@ class PlatformPackagesMixin(object):
             if name in without_packages:
                 continue
             elif (name in with_packages or
-                  not (skip_default_packages or opts.get("optional", False))):
-                self.pm.install(name, opts.get("version"), silent=silent)
+                  not (skip_default_package or opts.get("optional", False))):
+                if any([s in opts.get("version", "") for s in ("\\", "/")]):
+                    self.pm.install(
+                        "%s=%s" % (name, opts['version']), quiet=quiet)
+                else:
+                    self.pm.install(name, opts.get("version"), quiet=quiet)
 
         return True
 
-    def update_packages(self):
+    def update_packages(self, only_check=False):
         for name in self.get_installed_packages():
-            self.pm.update(name, self.packages[name]['version'])
+            self.pm.update(name, self.packages[name]['version'], only_check)
 
     def are_outdated_packages(self):
         for name, opts in self.get_installed_packages().items():
@@ -229,7 +237,7 @@ class PlatformRunMixin(object):
         assert isinstance(targets, list)
 
         self.configure_default_packages(variables, targets)
-        self.install_packages(silent=True)
+        self.install_packages(quiet=True)
 
         self._verbose = verbose or app.get_setting("force_verbose")
 
@@ -261,10 +269,8 @@ class PlatformRunMixin(object):
 
         cmd = [
             os.path.normpath(sys.executable),
-            join(self.get_package_dir("tool-scons"), "script", "scons"),
-            "-Q",
-            "-j %d" % self.get_job_nums(),
-            "--warn=no-no-parallel-support",
+            join(self.get_package_dir("tool-scons"), "script", "scons"), "-Q",
+            "-j %d" % self.get_job_nums(), "--warn=no-no-parallel-support",
             "-f", join(util.get_source_dir(), "builder", "main.py")
         ]
         if not self._verbose and "-c" not in targets:
@@ -278,8 +284,7 @@ class PlatformRunMixin(object):
         result = util.exec_command(
             cmd,
             stdout=util.AsyncPipe(self.on_run_out),
-            stderr=util.AsyncPipe(self.on_run_err)
-        )
+            stderr=util.AsyncPipe(self.on_run_err))
         return result
 
     def on_run_out(self, line):
@@ -315,7 +320,8 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         self._manifest = util.load_json(manifest_path)
 
         self.pm = PackageManager(
-            PACKAGES_DIR, self._manifest.get("packageRepositories"))
+            join(util.get_home_dir(), "packages"),
+            self._manifest.get("packageRepositories"))
 
         self._verbose = False
 

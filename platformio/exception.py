@@ -72,24 +72,14 @@ class UnknownPackage(PlatformioException):
 
 class UndefinedPackageVersion(PlatformioException):
 
-    MESSAGE = "Can not find package '{0}' with version requirements '{1}'"\
-        " for your system '{2}'"
-
-
-class UndefinedPlatformVersion(PlatformioException):
-
-    MESSAGE = "Can not find platform '{0}' with version requirements '{1}'"
+    MESSAGE = "Could not find a version that satisfies the requirement '{0}'"\
+              " for your system '{1}'"
 
 
 class PackageInstallError(PlatformioException):
 
-    MESSAGE = "Can not install package '{0}' with version requirements '{1}' "\
-        "for your system '{2}'"
-
-
-class NonSystemPackage(PlatformioException):
-
-    MESSAGE = "The package '{0}' is not available for your system '{1}'"
+    MESSAGE = "Can not install '{0}' with version requirements '{1}' "\
+              "for your system '{2}'"
 
 
 class FDUnrecognizedStatusCode(PlatformioException):
