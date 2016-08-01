@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present Ivan Kravets <me@ikravets.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,19 +13,20 @@
 # limitations under the License.
 
 import os
+import re
 import sys
 
 import click
 import requests
 
-from platformio import __version__, exception, util
+from platformio import VERSION, __version__, exception, util
 
 
 @click.command("upgrade",
                short_help="Upgrade PlatformIO to the latest version")
 def cli():
-    last = get_latest_version()
-    if __version__ == last:
+    latest = get_latest_version()
+    if __version__ == latest:
         return click.secho(
             "You're up-to-date!\nPlatformIO %s is currently the "
             "newest version available." % __version__, fg="green"
@@ -34,13 +35,7 @@ def cli():
         click.secho("Please wait while upgrading PlatformIO ...",
                     fg="yellow")
 
-        to_develop = False
-        try:
-            from pkg_resources import parse_version
-            to_develop = parse_version(last) < parse_version(__version__)
-        except ImportError:
-            pass
-
+        to_develop = not all([c.isdigit() for c in latest if c != "."])
         cmds = (
             ["pip", "install", "--upgrade",
              "https://github.com/platformio/platformio/archive/develop.zip"
@@ -100,10 +95,43 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
 
 def get_latest_version():
     try:
-        pkgdata = requests.get(
-            "https://pypi.python.org/pypi/platformio/json",
-            headers=util.get_request_defheaders()
-        ).json()
-        return pkgdata['info']['version']
+        if not isinstance(VERSION[2], int):
+            try:
+                return get_develop_latest_version()
+            except:  # pylint: disable=bare-except
+                pass
+        return get_pypi_latest_version()
     except:
         raise exception.GetLatestVersionError()
+
+
+def get_develop_latest_version():
+    version = None
+    r = requests.get(
+        "https://raw.githubusercontent.com/platformio/platformio"
+        "/develop/platformio/__init__.py",
+        headers=util.get_request_defheaders()
+    )
+    r.raise_for_status()
+    for line in r.text.split("\n"):
+        line = line.strip()
+        if not line.startswith("VERSION"):
+            continue
+        match = re.match(r"VERSION\s*=\s*\(([^\)]+)\)", line)
+        if not match:
+            continue
+        version = match.group(1)
+        for c in (" ", "'", '"'):
+            version = version.replace(c, "")
+        version = ".".join(version.split(","))
+    assert version
+    return version
+
+
+def get_pypi_latest_version():
+    r = requests.get(
+        "https://pypi.python.org/pypi/platformio/json",
+        headers=util.get_request_defheaders()
+    )
+    r.raise_for_status()
+    return r.json()['info']['version']

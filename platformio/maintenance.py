@@ -67,8 +67,10 @@ def on_platformio_exception(e):
 class Upgrader(object):
 
     def __init__(self, from_version, to_version):
-        self.from_version = semantic_version.Version.coerce(from_version)
-        self.to_version = semantic_version.Version.coerce(to_version)
+        self.from_version = semantic_version.Version.coerce(
+            util.pepver_to_semver(from_version))
+        self.to_version = semantic_version.Version.coerce(
+            util.pepver_to_semver(to_version))
 
         self._upgraders = [
             (semantic_version.Version("3.0.0"), self._upgrade_to_3_0_0)
@@ -180,8 +182,9 @@ def check_platformio_upgrade():
     app.set_state_item("last_check", last_check)
 
     latest_version = get_latest_version()
-    if (semantic_version.Version.coerce(latest_version) <=
-            semantic_version.Version.coerce(__version__)):
+    if semantic_version.Version.coerce(util.pepver_to_semver(
+            latest_version)) <= semantic_version.Version.coerce(
+                util.pepver_to_semver(__version__)):
         return
 
     terminal_width, _ = click.get_terminal_size()

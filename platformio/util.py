@@ -461,3 +461,7 @@ def where_is_program(program, envpath=None):
             return join(bin_dir, "%s.exe" % program)
 
     return program
+
+
+def pepver_to_semver(pepver):
+    return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2", pepver, 1)
