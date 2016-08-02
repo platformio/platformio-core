@@ -7,6 +7,8 @@ PlatformIO
 .. image:: https://ci.appveyor.com/api/projects/status/dku0h2rutfj0ctls/branch/develop?svg=true
     :target: https://ci.appveyor.com/project/ivankravets/platformio
     :alt: AppVeyor.CI Build Status
+.. image:: https://codecov.io/gh/platformio/platformio/branch/develop/graph/badge.svg
+  :target: https://codecov.io/gh/platformio/platformio
 .. image:: https://requires.io/github/platformio/platformio/requirements.svg?branch=develop
     :target: https://requires.io/github/platformio/platformio/requirements/?branch=develop
     :alt: Requirements Status

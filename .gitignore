@@ -6,3 +6,5 @@ docs/_build
 dist
 build
 .cache
+coverage.xml
+.coverage
