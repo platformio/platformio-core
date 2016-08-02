@@ -19,6 +19,9 @@ PlatformIO 2.0
   (`issue #733 <https://github.com/platformio/platformio/issues/733>`_)
 * Updated ``udev`` rules for the new STM32F407DISCOVERY boards
   (`issue #731 <https://github.com/platformio/platformio/issues/731>`_)
+* Implemented firmware merging with base firmware for Nordic nRF51 development platform
+  (`issue #500 <https://github.com/platformio/platformio/issues/500>`_,
+  `issue #533 <https://github.com/platformio/platformio/issues/533>`_)
 * Fixed Project Generator for ESP8266 and ARM mbed based projects
   (resolves incorrect linter errors)
 * Fixed broken LD Script for Element14 chipKIT Pi board
