@@ -36,7 +36,7 @@ __apiurl__ = "http://api.platformio.org"
 __apiip__ = "198.7.57.247"
 
 
-if sys.version_info >= (3, 0, 0):
+if sys.version_info < (2, 7, 0) or sys.version_info >= (3, 0, 0):
     msg = ("PlatformIO version %s does not run under Python version %s.\n"
            "Python 3 is not yet supported.\n")
     sys.stderr.write(msg % (__version__, sys.version.split()[0]))
