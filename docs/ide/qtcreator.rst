@@ -168,14 +168,11 @@ Edit the content to match the code described below.
 .. code-block:: none
 
     #
-    # Project Configuration File
+    # PlatformIO Project Configuration File
     #
-    # A detailed documentation with the EXAMPLES is located here:
+    # Please make sure to read documentation with examples first
     # http://docs.platformio.org/en/stable/projectconf.html
     #
-
-    # A sign `#` at the beginning of the line indicates a comment
-    # Comment lines are ignored.
 
     [env:arduino_uno]
     platform = atmelavr
