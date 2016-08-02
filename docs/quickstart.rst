@@ -150,7 +150,7 @@ The result of just generated ``platformio.ini``:
     # Project Configuration File
     #
     # A detailed documentation with the EXAMPLES is located here:
-    # http://docs.platformio.org/en/latest/projectconf.html
+    # http://docs.platformio.org/en/stable/projectconf.html
     #
 
     # A sign `#` at the beginning of the line indicates a comment

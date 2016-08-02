@@ -90,7 +90,7 @@ def lib_search(query, json_output, page, **filters):
         click.echo("For more examples and advanced search syntax, "
                    "please use documentation:")
         click.secho("http://docs.platformio.org"
-                    "/en/latest/userguide/lib/cmd_search.html\n", fg="cyan")
+                    "/en/stable/userguide/lib/cmd_search.html\n", fg="cyan")
         return
 
     click.secho("Found %d libraries:\n" % result['total'],

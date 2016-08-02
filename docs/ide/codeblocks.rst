@@ -14,16 +14,16 @@
 CodeBlocks
 ==========
 
-Code::Blocks is a free, open-source cross-platform IDE that supports multiple 
-compilers including GCC, Clang and Visual C++. It is developed in C++ using 
-wxWidgets as the GUI toolkit. Using a plugin architecture, its capabilities 
-and features are defined by the provided plugins. Currently, Code::Blocks is 
+Code::Blocks is a free, open-source cross-platform IDE that supports multiple
+compilers including GCC, Clang and Visual C++. It is developed in C++ using
+wxWidgets as the GUI toolkit. Using a plugin architecture, its capabilities
+and features are defined by the provided plugins. Currently, Code::Blocks is
 oriented towards C, C++, and Fortran.
 
 CodeBlocks IDE can be downloaded from `here <http://www.codeblocks.org/downloads>`_.
 
 .. image:: ../_static/ide-platformio-codeblocks.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-platformio-codeblocks.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-platformio-codeblocks.png
 
 .. contents::
 

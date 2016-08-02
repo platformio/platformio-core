@@ -23,7 +23,7 @@ Refer to the `Emacs Documentation <https://www.gnu.org/software/emacs/#Manuals>`
 page for more detailed information.
 
 .. image:: ../_static/ide-platformio-emacs.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-emacs.png
+    :target: http://docs.platformio.org/en/stable/_static/ide-platformio-emacs.png
 
 .. contents::
 
