@@ -33,9 +33,10 @@ Show details about the installed :ref:`platforms`
 Examples
 --------
 
-.. code-block:: bash
+.. code::
 
-    $ platformio platform show atmelavr
+    > platformio platform show atmelavr
+
     atmelavr ~ Atmel AVR
     ====================
     Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.

@@ -253,7 +253,7 @@ General options
 
 :ref:`platforms` name.
 
-PlatformIO allows to use specific platform versions using
+PlatformIO allows to use specific version of platform using
 `Semantic Versioning <http://semver.org>`_ (X.Y.Z=MAJOR.MINOR.PATCH).
 Version specifications can take any of the following forms:
 

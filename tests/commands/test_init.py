@@ -13,12 +13,12 @@
 # limitations under the License.
 
 import json
-from os import makedirs, getcwd
+from os import getcwd, makedirs
 from os.path import getsize, isdir, isfile, join
 
-from platformio.commands.init import cli
-from platformio.commands.boards import cli as cmd_boards
 from platformio import util
+from platformio.commands.boards import cli as cmd_boards
+from platformio.commands.init import cli
 
 
 def validate_pioproject(pioproject_dir):

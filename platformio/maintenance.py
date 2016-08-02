@@ -22,12 +22,12 @@ import click
 import semantic_version
 
 from platformio import __version__, app, exception, telemetry, util
-from platformio.commands.lib import lib_update as cmd_libraries_update
+from platformio.commands.lib import lib_update as cmd_lib_update
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
-from platformio.libmanager import LibraryManager
+from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformManager
 
 
@@ -221,16 +221,12 @@ def check_internal_updates(ctx, what):
     last_check[what + '_update'] = int(time())
     app.set_state_item("last_check", last_check)
 
+    pm = PlatformManager() if what == "platforms" else LibraryManager()
     outdated_items = []
-    if what == "platforms":
-        pm = PlatformManager()
-        for manifest in pm.get_installed():
-            if manifest['name'] not in outdated_items and \
-                    pm.is_outdated(manifest['name']):
-                outdated_items.append(manifest['name'])
-    elif what == "libraries":
-        lm = LibraryManager()
-        outdated_items = lm.get_outdated()
+    for manifest in pm.get_installed():
+        if manifest['name'] not in outdated_items and \
+                pm.is_outdated(manifest['name']):
+            outdated_items.append(manifest['name'])
 
     if not outdated_items:
         return
@@ -245,19 +241,26 @@ def check_internal_updates(ctx, what):
     if not app.get_setting("auto_update_" + what):
         click.secho("Please update them via ", fg="yellow", nl=False)
         click.secho("`platformio %s update`" %
-                    ("lib" if what == "libraries" else "platform"),
+                    ("lib --global" if what == "libraries" else "platform"),
+                    fg="cyan", nl=False)
+        click.secho(" command.\n", fg="yellow")
+        click.secho("If you want to manually check for the new versions "
+                    "without updating, please use ", fg="yellow", nl=False)
+        click.secho("`platformio %s update --only-check`" %
+                    ("lib --global" if what == "libraries" else "platform"),
                     fg="cyan", nl=False)
         click.secho(" command.", fg="yellow")
     else:
         click.secho("Please wait while updating %s ..." % what, fg="yellow")
         if what == "platforms":
-            ctx.invoke(cmd_platform_update)
+            ctx.invoke(cmd_platform_update, platforms=outdated_items)
         elif what == "libraries":
-            ctx.invoke(cmd_libraries_update)
+            ctx.obj = pm
+            ctx.invoke(cmd_lib_update, libraries=outdated_items)
         click.echo()
 
-        telemetry.on_event(category="Auto", action="Update",
-                           label=what.title())
+        telemetry.on_event(
+            category="Auto", action="Update", label=what.title())
 
     click.echo("*" * terminal_width)
     click.echo("")

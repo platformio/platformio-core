@@ -45,9 +45,10 @@ Examples
 
 1. Print all available development platforms
 
-.. code-block:: bash
+.. code::
 
-    $ platformio platform search
+    > platformio platform search
+
     atmelavr ~ Atmel AVR
     ====================
     Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.
@@ -75,9 +76,10 @@ Examples
 
 2. Search for TI development platforms
 
-.. code-block:: bash
+.. code::
 
-    $ platformio platform search texas
+    > platformio platform search texas
+
     timsp430 ~ TI MSP430
     ====================
     MSP430 microcontrollers (MCUs) from Texas Instruments (TI) are 16-bit, RISC-based, mixed-signal processors designed for ultra-low power. These MCUs offer the lowest power consumption and the perfect mix of integrated peripherals for thousands of applications.
@@ -92,9 +94,10 @@ Examples
     Home: http://platformio.org/platforms/titiva
     Packages: ldscripts, framework-libopencm3, toolchain-gccarmnoneeabi, tool-lm4flash, framework-energiativa
 
-.. code-block:: bash
+.. code::
 
-    $ platformio platform search framework-mbed
+    > platformio platform search framework-mbed
+
     atmelsam ~ Atmel SAM
     ====================
     Atmel | SMART offers Flash- based ARM products based on the ARM Cortex-M0+, Cortex-M3 and Cortex-M4 architectures, ranging from 8KB to 2MB of Flash including a rich peripheral and feature mix.

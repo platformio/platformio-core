@@ -42,9 +42,10 @@ Return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
 Examples
 --------
 
-.. code-block:: bash
+.. code::
 
-    $ platformio platform list
+    > platformio platform list
+
     atmelavr ~ Atmel AVR
     ====================
     Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.

@@ -12,25 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import listdir
-from os.path import isdir, isfile, join
-
 import re
 
 from platformio.commands.lib import cli
-from platformio import util
 
 
-def validate_libfolder():
-    libs_path = util.get_lib_dir()
-    installed_libs = listdir(libs_path)
-    for lib in installed_libs:
-        assert isdir(join(libs_path, lib))
-        assert isfile(join(libs_path, lib, ".library.json")) and isfile(
-            join(libs_path, lib, "library.json"))
-
-
-def test_lib_search(clirunner, validate_cliresult):
+def test_search(clirunner, validate_cliresult):
     result = clirunner.invoke(cli, ["search", "DHT22"])
     validate_cliresult(result)
     match = re.search(r"Found\s+(\d+)\slibraries:", result.output)
@@ -42,34 +29,70 @@ def test_lib_search(clirunner, validate_cliresult):
     assert int(match.group(1)) == 1
 
 
-def test_lib_install(clirunner, validate_cliresult):
-    result = clirunner.invoke(cli, ["install", "58", "115"])
+def test_global_install_registry(clirunner, validate_cliresult,
+                                 isolated_pio_home):
+    result = clirunner.invoke(
+        cli, ["-g", "install", "58", "OneWire", "Json@5.4.0", "Json@>5.4"])
     validate_cliresult(result)
-    validate_libfolder()
+    items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
+    items2 = ["DHT22_ID58", "Json_ID64", "Json_ID64@5.4.0", "OneWire_ID1"]
+    assert set(items1) == set(items2)
 
 
-def test_lib_list(clirunner, validate_cliresult):
-    result = clirunner.invoke(cli, ["list"])
+def test_global_install_repository(clirunner, validate_cliresult,
+                                   isolated_pio_home):
+    result = clirunner.invoke(
+        cli, ["-g", "install", "https://github.com/gioblu/PJON.git#3.0",
+              "https://developer.mbed.org/users/simon/code/TextLCD/",
+              "http://dl.platformio.org/libraries/archives/3/3756.tar.gz",
+              "knolleary/pubsubclient"])
     validate_cliresult(result)
-    assert "58" in result.output and "115" in result.output
+    items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
+    items2 = ["PJON", "TextLCD", "ESPAsyncTCP", "PubSubClient"]
+    assert set(items2) & set(items1)
 
 
-def test_lib_show(clirunner, validate_cliresult):
-    result = clirunner.invoke(cli, ["show", "115"])
+def test_global_lib_list(clirunner, validate_cliresult, isolated_pio_home):
+    result = clirunner.invoke(cli, ["-g", "list"])
     validate_cliresult(result)
-    assert "arduino" in result.output and "atmelavr" in result.output
+    assert all([n in result.output for n in ("OneWire", "DHT22", "64")])
 
-    result = clirunner.invoke(cli, ["show", "58"])
+    result = clirunner.invoke(cli, ["-g", "list", "--json-output"])
     validate_cliresult(result)
-    assert "energia" in result.output and "timsp430" in result.output
+    assert all(
+        [n in result.output
+         for n in ("PJON",
+                   "https://developer.mbed.org/users/simon/code/TextLCD/")])
 
 
-def test_lib_update(clirunner, validate_cliresult):
-    result = clirunner.invoke(cli, ["update"])
+def test_global_lib_show(clirunner, validate_cliresult, isolated_pio_home):
+    result = clirunner.invoke(cli, ["-g", "show", "64@5.4.0"])
     validate_cliresult(result)
-    assert "58" in result.output and "115" in result.output
+    assert all(
+        [s in result.output for s in ("Json", "arduino", "atmelavr", "5.4.0")])
 
-
-def test_lib_uninstall(clirunner, validate_cliresult):
-    result = clirunner.invoke(cli, ["uninstall", "58", "115"])
+    result = clirunner.invoke(cli, ["-g", "show", "Json@>5.4.0"])
     validate_cliresult(result)
+    assert all([s in result.output for s in ("Json", "arduino", "atmelavr")])
+    assert "5.4.0" not in result.output
+
+    result = clirunner.invoke(cli, ["-g", "show", "1"])
+    validate_cliresult(result)
+    assert "OneWire" in result.output
+
+
+def test_global_lib_update(clirunner, validate_cliresult, isolated_pio_home):
+    result = clirunner.invoke(cli, ["-g", "update"])
+    validate_cliresult(result)
+    assert all([s in result.output for s in ("Up-to-date", "Checking")])
+
+
+def test_global_lib_uninstall(clirunner, validate_cliresult,
+                              isolated_pio_home):
+    result = clirunner.invoke(
+        cli, ["-g", "uninstall", "1", "Json@!=5.4.0", "TextLCD"])
+    validate_cliresult(result)
+    items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
+    items2 = ["DHT22_ID58", "Json_ID64@5.4.0", "ESPAsyncTCP_ID305",
+              "pubsubclient", "PJON"]
+    assert set(items1) == set(items2)

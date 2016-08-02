@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -32,6 +32,6 @@ Register new library and allow others to install it.
 Examples
 --------
 
-.. code-block:: bash
+.. code::
 
-    $ platformio lib register http://my.example.com/library.json
+    platformio lib register http://my.example.com/raw-library.json

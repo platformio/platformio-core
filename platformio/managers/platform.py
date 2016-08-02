@@ -71,9 +71,10 @@ class PlatformManager(BasePkgManager):
         return True
 
     def is_outdated(self, name, requirements=None):
+        if BasePkgManager.is_outdated(self, name, requirements):
+            return True
         p = PlatformFactory.newPlatform(name, requirements)
-        return (p.are_outdated_packages() or
-                p.version != self.get_latest_repo_version(name, requirements))
+        return p.are_outdated_packages()
 
     def cleanup_packages(self, names):
         self.reset_cache()

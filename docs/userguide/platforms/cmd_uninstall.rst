@@ -36,9 +36,9 @@ Uninstall specified :ref:`platforms`
 Examples
 --------
 
-.. code-block:: bash
+.. code::
 
-    $ platformio platform uninstall atmelavr
+    > platformio platform uninstall atmelavr
     Uninstalling platform atmelavr @ 0.0.0:    [OK]
     Uninstalling package tool-scons @ 2.4.1:    [OK]
     Uninstalling package toolchain-atmelavr @ 1.40801.0:    [OK]

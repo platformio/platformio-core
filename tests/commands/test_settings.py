@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.commands.settings import cli
 from platformio import app
+from platformio.commands.settings import cli
 
 
 def test_settings_check(clirunner, validate_cliresult):

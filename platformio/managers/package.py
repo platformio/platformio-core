@@ -312,7 +312,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if "=" in text and not text.startswith("id="):
             name, url = text.split("=", 1)
 
-        # Handle GitHub URL (https://github.com/user/package.git)
+        # Handle GitHub URL (https://github.com/user/package)
         if url.startswith("https://github.com/") and \
            not url.endswith((".zip", ".tar.gz")):
             url = "git+" + url
@@ -393,6 +393,20 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 return None
             return best.get("__pkg_dir")
         return None
+
+    def is_outdated(self, name, requirements=None):
+        installed_dir = self.get_installed_dir(name, requirements)
+        if not installed_dir:
+            click.secho(
+                "%s @ %s is not installed" % (name, requirements or "*"),
+                fg="yellow")
+            return
+        manifest_path = self.get_manifest_path(installed_dir)
+        if manifest_path.endswith(self.VCS_MANIFEST_NAME):
+            return False
+        manifest = self.load_manifest(installed_dir)
+        return manifest['version'] != self.get_latest_repo_version(
+            name, requirements)
 
     def install(self, name, requirements=None, quiet=False,
                 trigger_event=True):

@@ -14,10 +14,8 @@
 
 import json
 
-from platformio import util
 from platformio.commands.boards import cli as cmd_boards
-from platformio.commands.platform import \
-    platform_search as cmd_platform_search
+from platformio.commands.platform import platform_search as cmd_platform_search
 
 
 def test_board_json_output(platformio_setup, clirunner, validate_cliresult):

@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -21,51 +21,102 @@ Usage
 
 .. code-block:: bash
 
-    platformio lib update [LIBRARY_ID]
+    platformio lib [STORAGE_OPTIONS] update [OPTIONS]
+
+    # update all project libraries
+    # (run it from a project root where is located "platformio.ini")
+    platformio lib update [OPTIONS]
+
+    # update project dependent library
+    platformio lib [STORAGE_OPTIONS] update [OPTIONS] [LIBRARY...]
+
+    # update library in global storage
+    platformio lib --global update [OPTIONS] [LIBRARY...]
+    platformio lib -g update [OPTIONS] [LIBRARY...]
+
+    # update library in custom storage
+    platformio lib --storage-dir /path/to/dir update [OPTIONS] [LIBRARY...]
+    platformio lib -d /path/to/dir update [OPTIONS] [LIBRARY...]
+
+    # [LIBRARY...] forms
+    platformio lib [STORAGE_OPTIONS] update <id>
+    platformio lib [STORAGE_OPTIONS] update <id>@<version>
+    platformio lib [STORAGE_OPTIONS] update <id>@<version range>
+    platformio lib [STORAGE_OPTIONS] update <name>
+    platformio lib [STORAGE_OPTIONS] update <name>@<version>
+    platformio lib [STORAGE_OPTIONS] update <name>@<version range>
 
 
 Description
 -----------
 
-Check or update installed libraries
+Check or update installed libraries.
 
+The ``version`` supports `Semantic Versioning <http://semver.org>`_ (
+``<major>.<minor>.<patch>``) and can take any of the following forms:
+
+* ``0.1.2`` - an exact version number. Use only this exact version
+* ``^0.1.2`` - any compatible version (exact version for ``0.x.x`` versions
+* ``~0.1.2`` - any version with the same major and minor versions, and an
+  equal or greater patch version
+* ``>0.1.2`` - any version greater than ``0.1.2``. ``>=``, ``<``, and ``<=``
+  are also possible
+* ``>0.1.0,!=0.2.0,<0.3.0`` - any version greater than ``0.1.0``, not equal to
+  ``0.2.0`` and less than ``0.3.0``
+
+Storage Options
+---------------
+
+See base options for :ref:`userguide_lib`.
+
+Options
+-------
+
+.. program:: platformio lib update
+
+.. option::
+    -c, --only-check
+
+Do not update, only check for new version
 
 Examples
 --------
 
-1. Update all installed libraries
+1. Update all installed libraries in global storage
 
-.. code-block:: bash
+.. code::
 
-    $ platformio lib update
-    # Updating  [ 23 ] Adafruit-L3GD20-Unified library:
-    # Versions: Current=63de2eb9ea, Latest=63de2eb9ea 	 [Up-to-date]
-    # Updating  [ 12 ] Adafruit-ST7735 library:
-    # Versions: Current=e880eb1687, Latest=e880eb1687 	 [Up-to-date]
-    # Updating  [ 31 ] Adafruit-Unified-Sensor library:
-    # Versions: Current=88ae805bce, Latest=88ae805bce 	 [Up-to-date]
-    # Updating  [ 26 ] Adafruit-LSM303DLHC-Unified library:
-    # Versions: Current=59767208a8, Latest=59767208a8 	 [Up-to-date]
-    # Updating  [ 13 ] Adafruit-GFX library:
-    # Versions: Current=a9e5bc4707, Latest=a9e5bc4707 	 [Up-to-date]
-    # Updating  [ 1 ] OneWire library:
-    # Versions: Current=2.2, Latest=2.2 	             [Up-to-date]
-    # Updating  [ 4 ] IRremote library:
-    # Versions: Current=f2dafe5030, Latest=f2dafe5030 	 [Up-to-date]
-    # Updating  [ 14 ] Adafruit-9DOF-Unified library:
-    # Versions: Current=b2f07242ac, Latest=b2f07242ac 	 [Up-to-date]
+    > platformio lib -g update
 
-2. Update specified libraries
+    Library Storage: /storage/dir/...
+    Updating ESP8266_SSD1306 @ 3.2.3:   [Up-to-date]
+    Updating EngduinoMagnetometer @ 3.1.0:  [Up-to-date]
+    Updating IRremote @ 2.2.1:  [Up-to-date]
+    Updating Json @ 5.4.0:  [Out-of-date]
+    LibraryManager: Installing id=64 @ 5.6.4
+    Downloading  [####################################]  100%
+    Unpacking  [####################################]  100%
+    Json @ 5.6.4 has been successfully installed!
+    Updating PJON @ 1fb26fd:    [Checking]
+    git version 2.7.4 (Apple Git-66)
+    Already up-to-date.
+    Updating TextLCD @ 308d188a2d3a:    [Checking]
+    Mercurial Distributed SCM (version 3.8.4)
+    (see https://mercurial-scm.org for more information)
 
-.. code-block:: bash
+    Copyright (C) 2005-2016 Matt Mackall and others
+    This is free software; see the source for copying conditions. There is NO
+    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    pulling from https://developer.mbed.org/users/simon/code/TextLCD/
+    searching for changes
+    no changes found
 
-    $ platformio lib update 1 59
-    # Updating  [ 1 ] OneWire library:
-    # Versions: Current=2.2, Latest=2.2 	             [Up-to-date]
-    # Updating [ 59 ] USB-Host-Shield-20 library:
-    # Versions: Current=fcab83dcb3, Latest=c61f9ce1c2 	 [Out-of-date]
-    # The library #59 'USB-Host-Shield-20' has been successfully uninstalled!
-    # Installing library [ 59 ]:
-    # Downloading  [####################################]  100%
-    # Unpacking  [####################################]  100%
-    # The library #59 'USB-Host-Shield-20' has been successfully installed!
+2. Update specified libraries in global storage
+
+.. code::
+
+    > platformio lib -g update Json 4
+
+    Library Storage: /storage/dir/...
+    Updating Json @ 5.6.4:  [Up-to-date]
+    Updating IRremote @ 2.2.1:  [Up-to-date]

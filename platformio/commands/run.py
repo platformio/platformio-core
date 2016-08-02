@@ -21,11 +21,11 @@ from time import time
 
 import click
 
-from platformio import __version__, app, exception, telemetry, util
+from platformio import __version__, exception, telemetry, util
 from platformio.commands.lib import lib_install as cmd_lib_install
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
-from platformio.libmanager import LibraryManager
+from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformFactory
 
 
@@ -188,8 +188,8 @@ class EnvironmentProcessor(object):
 
         # install dependent libraries
         if "lib_install" in self.options:
-            _autoinstall_libs(self.cmd_ctx, self.options['lib_install'])
-
+            _autoinstall_libs(self.cmd_ctx, self.options['lib_install'],
+                              self.verbose)
 
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])
@@ -201,22 +201,15 @@ class EnvironmentProcessor(object):
         return p.run(build_vars, build_targets, self.verbose)
 
 
-def _autoinstall_libs(ctx, libids_list):
-    require_libs = [int(l.strip()) for l in libids_list.split(",")]
-    installed_libs = [
-        l['id'] for l in LibraryManager().get_installed().values()
-    ]
-
-    not_intalled_libs = set(require_libs) - set(installed_libs)
-    if not require_libs or not not_intalled_libs:
-        return
-
-    if (not app.get_setting("enable_prompts") or
-            click.confirm(
-                "The libraries with IDs '%s' have not been installed yet. "
-                "Would you like to install them now?" %
-                ", ".join([str(i) for i in not_intalled_libs]))):
-        ctx.invoke(cmd_lib_install, libid=not_intalled_libs)
+def _autoinstall_libs(ctx, libids_list, verbose=False):
+    storage_dir = util.get_projectlibdeps_dir()
+    ctx.obj = LibraryManager(storage_dir)
+    if verbose:
+        click.echo("Library Storage: " + storage_dir)
+    ctx.invoke(
+        cmd_lib_install,
+        libraries=[int(l.strip()) for l in libids_list.split(",")],
+        quiet=not verbose)
 
 
 def _clean_pioenvs_dir(pioenvs_dir):

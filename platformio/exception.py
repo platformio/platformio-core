@@ -146,18 +146,9 @@ class APIRequestError(PlatformioException):
     MESSAGE = "[API] {0}"
 
 
-class LibAlreadyInstalled(PlatformioException):
-    pass
+class LibNotFound(PlatformioException):
 
-
-class LibNotInstalled(PlatformioException):
-
-    MESSAGE = "Library #{0:d} has not been installed yet"
-
-
-class LibInstallDependencyError(PlatformioException):
-
-    MESSAGE = "Error has been occurred for library dependency '{0}'"
+    MESSAGE = "Library `{0}` has not been found in the registry"
 
 
 class InvalidLibConfURL(PlatformioException):

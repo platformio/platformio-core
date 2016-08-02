@@ -18,8 +18,8 @@ To print all available commands and options use:
 
 .. code-block:: bash
 
-    $ platformio platform --help
-    $ platformio platform COMMAND --help
+    platformio platform --help
+    platformio platform COMMAND --help
 
 .. image:: ../../_static/platformio-demo-platforms.gif
 

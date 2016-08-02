@@ -43,10 +43,10 @@ class VCSClientBase(object):
 
     command = None
 
-    def __init__(self, src_dir, remote_url=None, branch=None):
+    def __init__(self, src_dir, remote_url=None, tag=None):
         self.src_dir = src_dir
         self.remote_url = remote_url
-        self.branch = branch
+        self.tag = tag
         self.check_client()
 
     def check_client(self):
@@ -71,7 +71,7 @@ class VCSClientBase(object):
 
     @property
     def can_be_updated(self):
-        return not self.branch
+        return not self.tag
 
     def get_current_revision(self):
         raise NotImplementedError
@@ -113,19 +113,19 @@ class GitClient(VCSClientBase):
 
     @property
     def can_be_updated(self):
-        return not self.branch or not self.is_commit_id(self.branch)
+        return not self.tag or not self.is_commit_id(self.tag)
 
     def export(self):
-        is_commit = self.is_commit_id(self.branch)
+        is_commit = self.is_commit_id(self.tag)
         args = ["clone", "--recursive"]
-        if not self.branch or not is_commit:
+        if not self.tag or not is_commit:
             args += ["--depth", "1"]
-            if self.branch:
-                args += ["--branch", self.branch]
+            if self.tag:
+                args += ["--branch", self.tag]
         args += [self.remote_url, self.src_dir]
         assert self.run_cmd(args)
         if is_commit:
-            return self.run_cmd(["reset", "--hard", self.branch])
+            return self.run_cmd(["reset", "--hard", self.tag])
         return True
 
     def update(self):
@@ -142,8 +142,8 @@ class HgClient(VCSClientBase):
 
     def export(self):
         args = ["clone"]
-        if self.branch:
-            args.extend(["--updaterev", self.branch])
+        if self.tag:
+            args.extend(["--updaterev", self.tag])
         args.extend([self.remote_url, self.src_dir])
         return self.run_cmd(args)
 
@@ -161,8 +161,8 @@ class SvnClient(VCSClientBase):
 
     def export(self):
         args = ["checkout"]
-        if self.branch:
-            args.extend(["--revision", self.branch])
+        if self.tag:
+            args.extend(["--revision", self.tag])
         args.extend([self.remote_url, self.src_dir])
         return self.run_cmd(args)
 

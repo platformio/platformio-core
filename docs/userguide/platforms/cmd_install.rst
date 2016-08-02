@@ -21,14 +21,18 @@ Usage
 
 .. code-block:: bash
 
-    # install platform by name
     platformio platform install [OPTIONS] [PLATFORM...]
 
-    # install specific platform version using Semantic Versioning
-    platformio platform install [OPTIONS] PLATFORM@X.Y.Z
-
-    # install platform using URL
-    platformio platform install [OPTIONS] URL
+    # [PLATFORM...] forms
+    platformio platform install <name>
+    platformio platform install <name>@<version>
+    platformio platform install <name>@<version range>
+    platformio platform install <zip or tarball url>
+    platformio platform install file://<zip or tarball file>
+    platformio platform install file://<folder>
+    platformio platform install <repository>
+    platformio platform install <name=repository> (name it should have locally)
+    platformio platform install <repository#tag> ("tag" can be commit, branch or tag)
 
 
 Description
@@ -36,33 +40,56 @@ Description
 
 Install :ref:`platforms` and dependent packages.
 
-There are several predefined aliases for packages, such as:
+The ``version`` supports `Semantic Versioning <http://semver.org>`_ (
+``<major>.<minor>.<patch>``) and can take any of the following forms:
 
-* ``framework``
-* ``toolchain``
-* ``uploader``
+* ``0.1.2`` - an exact version number. Use only this exact version
+* ``^0.1.2`` - any compatible version (exact version for ``0.x.x`` versions
+* ``~0.1.2`` - any version with the same major and minor versions, and an
+  equal or greater patch version
+* ``>0.1.2`` - any version greater than ``0.1.2``. ``>=``, ``<``, and ``<=``
+  are also possible
+* ``>0.1.0,!=0.2.0,<0.3.0`` - any version greater than ``0.1.0``, not equal to
+  ``0.2.0`` and less than ``0.3.0``
 
-Local
-~~~~~
-
-PlatformIO supports installing development platform from local directory or
-archive. Need to use ``file://`` prefix before local path. Also, platform
-directory or archive should contain ``platform.json`` manifest.
+Also, PlatformIO supports installing from local directory or archive. Need to
+use ``file://`` prefix before local path. Also, directory or archive should
+contain ``platform.json`` manifest.
 
 * ``file:///local/path/to/the/platform/dir``
 * ``file:///local/path/to/the/platform.zip``
 * ``file:///local/path/to/the/platform.tar.gz``
 
-Remote
-~~~~~~
+Options
+-------
 
-VCS
-~~~
+.. program:: platformio platform install
+
+.. option::
+    --with-package
+
+Install specified package (or alias)
+
+
+.. option::
+    --without-package
+
+Do not install specified package (or alias)
+
+.. option::
+    --skip-default
+
+Skip default packages
+
+Version control
+---------------
 
 PlatformIO supports installing from Git, Mercurial and Subversion, and detects
 the type of VCS using url prefixes: "git+", "hg+", or "svn+".
 
-PlatformIO requires a working VCS command on your path: git, hg or svn.
+.. note::
+    PlatformIO requires a working VCS command on your path: ``git``, ``hg``
+    or ``svn``.
 
 Git
 ^^^
@@ -70,6 +97,7 @@ Git
 The supported schemes are: ``git``, ``git+https`` and ``git+ssh``. Here are
 the supported forms:
 
+* platformio/platform-NAME (short version for GitHub repository)
 * https://github.com/platformio/platform-NAME.git
 * git+git://git.server.org/my-platform
 * git+https://git.server.org/my-platform
@@ -112,35 +140,15 @@ You can also give specific revisions to an SVN URL, like so:
 
 * svn+svn://svn.server.org/my-platform#13
 
-Options
--------
-
-.. program:: platformio platform install
-
-.. option::
-    --with-package
-
-Install specified package (or alias)
-
-
-.. option::
-    --without-package
-
-Do not install specified package (or alias)
-
-.. option::
-    --skip-default
-
-Skip default packages
-
 Examples
 --------
 
 1. Install :ref:`platform_atmelavr` with default packages
 
-.. code-block:: bash
+.. code::
 
-    $ platformio platform install atmelavr
+    > platformio platform install atmelavr
+
     PlatformManager: Installing atmelavr
     Downloading...
     Unpacking  [####################################]  100%
@@ -159,7 +167,9 @@ Examples
 2. Install :ref:`platform_atmelavr` with ``uploader`` utility only and skip
    default packages
 
-.. code-block:: bash
+.. code::
+
+    > platformio platform install atmelavr --skip-default-package --with-package=uploader
 
     PlatformManager: Installing atmelavr
     Downloading  [####################################]  100%
@@ -178,9 +188,9 @@ Examples
 
 3. Install the latest development :ref:`platform_atmelavr` from Git repository
 
-.. code-block:: bash
+.. code::
 
-    $ platformio platform install https://github.com/platformio/platform-atmelavr.git
+    > platformio platform install https://github.com/platformio/platform-atmelavr.git
 
     PlatformManager: Installing platform-atmelavr
     git version 2.7.4 (Apple Git-66)

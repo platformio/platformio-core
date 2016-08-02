@@ -50,7 +50,7 @@ libraries. These folders/path have priority and LDF operates in the next order:
 2. :ref:`projectconf_pio_lib_dir` - own/private library storage per project
 3. :ref:`projectconf_pio_piolibdeps_dir` - project dependencies storage used by
    :ref:`librarymanager`
-4. :ref:`projectconf_pio_home_dir`/lib - global storage per all projects.
+4. ":ref:`projectconf_pio_home_dir`/lib" - global storage per all projects.
 
 .. _ldf_mode:
 

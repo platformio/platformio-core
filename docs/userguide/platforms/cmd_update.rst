@@ -51,9 +51,10 @@ Do not update, only check for new version
 Examples
 --------
 
-.. code-block:: bash
+.. code::
 
-    $ platformio platform update
+    > platformio platform update
+
     Platform atmelavr
     --------
     Updating atmelavr @ 0.0.0:  [Up-to-date]

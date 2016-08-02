@@ -16,8 +16,8 @@ import json
 import os
 from os.path import join
 
-from platformio.commands import platform as cli_platform
 from platformio import exception, util
+from platformio.commands import platform as cli_platform
 
 
 def test_list_json_output(clirunner, validate_cliresult):
