@@ -9,6 +9,33 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
+USB Features
+------------
+
+If you want to use Teensy USB Features, you need to add special
+acros/define using :ref:`projectconf_build_flags`:
+
+* ``-D USB_HID``
+* ``-D USB_SERIAL_HID``
+* ``-D USB_DISK``
+* ``-D USB_DISK_SDFLASH``
+* ``-D USB_MIDI``
+* ``-D USB_RAWHID``
+* ``-D USB_FLIGHTSIM``
+* ``-D USB_DISABLED``
+
+Example:
+
+.. code-block:: ini
+
+    [env:teensy_hid_device]
+    platform = teensy
+    framework = arduino
+    board = teensy20
+    build_flags = -D USB_RAWHID
+
+See `Teensy USB Examples <https://www.pjrc.com/teensy/usb_debug_only.html>`_.
+
 Examples
 --------
 

@@ -181,6 +181,9 @@ PLATFORM_PACKAGES = {
     ],
     "tool-arduino101load": [
         ("Genuino101 uploader", "https://github.com/01org/intel-arduino-tools")
+    ],
+    "tool-sreccat": [
+        ("Merging tool", "https://github.com/marcows/SRecord")
     ]
 }
 

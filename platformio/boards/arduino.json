@@ -881,6 +881,9 @@
         "frameworks": ["arduino"],
         "name": "Arduino Zero (Programming Port)",
         "platform": "atmelsam",
+        "debug": {
+            "openocdcfg": "arduino_zero.cfg"
+        },
         "upload": {
             "disable_flushing": true,
             "maximum_ram_size": 32768,
@@ -888,7 +891,8 @@
             "protocol": "openocd",
             "require_upload_port" : false,
             "use_1200bps_touch": false,
-            "wait_for_upload_port": false
+            "wait_for_upload_port": false,
+            "section_start": "0x2000"
         },
         "url": "https://www.arduino.cc/en/Main/ArduinoBoardZero",
         "vendor": "Arduino"
@@ -974,6 +978,9 @@
         "frameworks": ["arduino"],
         "name": "Arduino M0 Pro (Programming Port)",
         "platform": "atmelsam",
+        "debug": {
+            "openocdcfg": "arduino_zero_org.cfg"
+        },
         "upload": {
             "disable_flushing": true,
             "maximum_ram_size": 32768,

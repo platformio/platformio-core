@@ -28,7 +28,7 @@ Refer to the `CDT Documentation <https://eclipse.org/cdt/documentation.php>`_
 page for more detailed information.
 
 .. image:: ../_static/ide-platformio-eclipse.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-eclipse.png
+    :target: http://docs.platformio.org/en/stable/_static/ide-platformio-eclipse.png
 
 .. contents::
 

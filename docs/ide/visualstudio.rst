@@ -20,7 +20,7 @@ Refer to the `Visual Studio Documentation <https://msdn.microsoft.com/library/vs
 page for more detailed information.
 
 .. image:: ../_static/ide-vs-platformio-newproject-8.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-8.png
+    :target: http://docs.platformio.org/en/stable/_static/ide-vs-platformio-newproject-8.png
 
 .. contents::
 
@@ -127,14 +127,11 @@ Copy the source code which is described below to it.
 .. code-block:: none
 
     #
-    # Project Configuration File
+    # PlatformIO Project Configuration File
     #
-    # A detailed documentation with the EXAMPLES is located here:
-    # http://docs.platformio.org/en/latest/projectconf.html
+    # Please make sure to read documentation with examples first
+    # http://docs.platformio.org/en/stable/projectconf.html
     #
-
-    # A sign `#` at the beginning of the line indicates a comment
-    # Comment lines are ignored.
 
     [env:arduino_uno]
     platform = atmelavr
@@ -175,4 +172,4 @@ disable IntelliSense error reporting at all.
 See details in `issue #543 <https://github.com/platformio/platformio/issues/543>`_
 
 .. image:: ../_static/ide-vs-platformio-newproject-9.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-vs-platformio-newproject-9.png
+    :target: http://docs.platformio.org/en/stable/_static/ide-vs-platformio-newproject-9.png

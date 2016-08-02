@@ -115,6 +115,8 @@ def BuildProgram(env):
 def ProcessFlags(env, flags):
     if not flags:
         return
+    if isinstance(flags, list):
+        flags = " ".join(flags)
     parsed_flags = env.ParseFlags(str(flags))
     for flag in parsed_flags.pop("CPPDEFINES"):
         if not isinstance(flag, list):
@@ -148,14 +150,16 @@ def ProcessFlags(env, flags):
 def ProcessUnFlags(env, flags):
     if not flags:
         return
-    parsed_flags = env.ParseFlags(flags)
+    if isinstance(flags, list):
+        flags = " ".join(flags)
+    parsed_flags = env.ParseFlags(str(flags))
     all_flags = []
     for items in parsed_flags.values():
         all_flags.extend(items)
     all_flags = set(all_flags)
 
     for key in parsed_flags:
-        cur_flags = set(env.get(key, []))
+        cur_flags = set(env.Flatten(env.get(key, [])))
         for item in cur_flags & all_flags:
             while item in env[key]:
                 env[key].remove(item)

@@ -207,13 +207,10 @@ default ``20`` (DEC)
 
 Diagnostics: suppress non-error messages, default ``Off``
 
-
 .. option::
     --echo
 
 Enable local echo, default ``Off``
-
-**REMOVED**: Is not available in Miniterm/PySerial 3.0
 
 .. option::
     --cr

@@ -1341,6 +1341,26 @@ PanStamp
       - 32 Kb
       - 4 Kb
 
+Pinoccio
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``pinoccio``
+      - `Pinoccio Scout <https://www.crowdsupply.com/pinoccio/mesh-sensor-network>`_
+      - ATMEGA256RFR2
+      - 16 MHz
+      - 256 Kb
+      - 32 Kb
+
 Punch Through
 ~~~~~~~~~~~~~
 

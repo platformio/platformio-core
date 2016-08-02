@@ -143,6 +143,9 @@ Packages
     * - ``tool-scons``
       - `SCons software construction tool <http://www.scons.org>`_
 
+    * - ``tool-sreccat``
+      - `Merging tool <https://github.com/marcows/SRecord>`_
+
     * - ``tool-stlink``
       - `ST-Link <https://github.com/texane/stlink>`_
 

@@ -147,23 +147,11 @@ The result of just generated ``platformio.ini``:
 .. code-block:: ini
 
     #
-    # Project Configuration File
+    # PlatformIO Project Configuration File
     #
-    # A detailed documentation with the EXAMPLES is located here:
-    # http://docs.platformio.org/en/latest/projectconf.html
+    # Please make sure to read documentation with examples first
+    # http://docs.platformio.org/en/stable/projectconf.html
     #
-
-    # A sign `#` at the beginning of the line indicates a comment
-    # Comment lines are ignored.
-
-    # Simple and base environment
-    # [env:mybaseenv]
-    # platform = %INSTALLED_PLATFORM_NAME_HERE%
-    # framework =
-    # board =
-    #
-    # Automatic targets - enable auto-uploading
-    # targets = upload
 
     [env:uno]
     platform = atmelavr

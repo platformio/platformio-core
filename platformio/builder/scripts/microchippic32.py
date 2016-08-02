@@ -71,7 +71,19 @@ env.Replace(
         "-mprocessor=$BOARD_MCU",
         "-mno-peripheral-libs",
         "-nostartfiles",
-        "-Wl,--gc-sections"
+        "-Wl,--gc-sections",
+        join(
+            "$PLATFORMFW_DIR",
+            "cores",
+            "${BOARD_OPTIONS['build']['core']}",
+            "cpp-startup.S"
+        ),
+        join(
+            "$PLATFORMFW_DIR",
+            "cores",
+            "${BOARD_OPTIONS['build']['core']}",
+            "crti.S"
+        )
     ],
 
     LIBS=["m"],
@@ -92,6 +104,7 @@ env.Replace(
 if int(env.get("BOARD_OPTIONS", {}).get(
         "upload", {}).get("maximum_ram_size", 0)) < 65535:
     env.Append(
+        ASFLAGS=["-G1024"],
         CCFLAGS=["-G1024"]
     )
 
@@ -115,15 +128,7 @@ env.Append(
         ),
 
         ElfToHex=Builder(
-            action=" ".join([
-                "$OBJCOPY",
-                "-O",
-                "ihex",
-                "-R",
-                ".eeprom",
-                "$SOURCES",
-                "$TARGET"]),
-            suffix=".hex"
+            action=" ".join(["pic32-bin2hex", "-a", "$SOURCES"]), suffix=".hex"
         )
     )
 )
@@ -161,7 +166,7 @@ env.Append(
 if "uploadlazy" in COMMAND_LINE_TARGETS:
     target_firm = join("$BUILD_DIR", "firmware.hex")
 else:
-    target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+    target_firm = env.ElfToHex(target_elf)
 
 #
 # Target: Print binary size
