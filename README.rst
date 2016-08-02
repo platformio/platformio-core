@@ -74,13 +74,13 @@ TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
 * `Development Platforms <http://platformio.org/platforms>`_
 * `Frameworks <http://platformio.org/frameworks>`_
 * `Embedded Boards Explorer <http://platformio.org/boards>`_
-* `Library Manager <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
-* `User Guide <http://docs.platformio.org/en/latest/userguide/index.html>`_
-* `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
-* `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_
-* `Articles about us <http://docs.platformio.org/en/latest/articles.html>`_
-* `FAQ <http://docs.platformio.org/en/latest/faq.html>`_
-* `Release Notes <http://docs.platformio.org/en/latest/history.html>`_
+* `Library Manager <http://docs.platformio.org/en/stable/librarymanager/index.html>`_
+* `User Guide <http://docs.platformio.org/en/stable/userguide/index.html>`_
+* `Continuous Integration <http://docs.platformio.org/en/stable/ci/index.html>`_
+* `IDE Integration <http://docs.platformio.org/en/stable/ide.html>`_
+* `Articles about us <http://docs.platformio.org/en/stable/articles.html>`_
+* `FAQ <http://docs.platformio.org/en/stable/faq.html>`_
+* `Release Notes <http://docs.platformio.org/en/stable/history.html>`_
 
 Use whenever. *Run everywhere.*
 -------------------------------
@@ -97,12 +97,12 @@ Embedded Development. *Easier Than Ever.*
 settings for most popular `Embedded Boards <http://platformio.org/boards>`_.
 
 * Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
-* `IDE Integration <http://docs.platformio.org/en/latest/ide.html>`_ with
+* `IDE Integration <http://docs.platformio.org/en/stable/ide.html>`_ with
   *Arduino, Atom, Eclipse, Emacs, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
-* Cloud compiling and `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
+* Cloud compiling and `Continuous Integration <http://docs.platformio.org/en/stable/ci/index.html>`_
   with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
-* Built-in `Serial Port Monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable
-  `build -flags/-options <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`_
+* Built-in `Serial Port Monitor <http://docs.platformio.org/en/stable/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable
+  `build -flags/-options <http://docs.platformio.org/en/stable/projectconf.html#build-flags>`_
 * Automatic **firmware uploading**
 * Pre-built tool chains, frameworks for the popular `Hardware Platforms <http://platformio.org/platforms>`_
 
@@ -115,10 +115,10 @@ The Missing Library Manager. *It's here!*
 *PlatformIO Library Manager* is the missing library manager for development
 platforms which allows you to organize and have up-to-date external libraries.
 
-* Friendly `Command-Line Interface <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
+* Friendly `Command-Line Interface <http://docs.platformio.org/en/stable/librarymanager/index.html>`_
 * Modern `Web 2.0 Library Search <http://platformio.org/lib>`_
 * Open Source `Library Registry API <https://github.com/platformio/platformio-api>`_
-* Library Crawler based on `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`_
+* Library Crawler based on `library.json <http://docs.platformio.org/en/stable/librarymanager/config.html>`_
   specification
 * Library **dependency management**
 * Automatic library updating
@@ -137,7 +137,7 @@ cross-platform substitute for the classic *Make* utility.
 * Reliable detection of *build changes*
 * Improved support for *parallel builds*
 * Ability to share *built files in a cache*
-* Lookup for external libraries which are installed via `Library Manager <http://docs.platformio.org/en/latest/librarymanager/index.html>`_
+* Lookup for external libraries which are installed via `Library Manager <http://docs.platformio.org/en/stable/librarymanager/index.html>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-scons-builder.png
     :target: http://platformio.org
@@ -147,9 +147,9 @@ Single source code. *Multiple platforms.*
 -----------------------------------------
 *PlatformIO* allows the developer to compile the same code with different
 development platforms using only *One Command*
-`platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`_.
+`platformio run <http://docs.platformio.org/en/stable/userguide/cmd_run.html>`_.
 This happens due to
-`Project Configuration File (platformio.ini) <http://docs.platformio.org/en/latest/projectconf.html>`_
+`Project Configuration File (platformio.ini) <http://docs.platformio.org/en/stable/projectconf.html>`_
 where you can setup different environments with specific options (platform
 type, firmware uploading settings, pre-built framework, build flags and many
 more).
@@ -182,7 +182,7 @@ Frameworks:
 * `SPL <http://platformio.org/frameworks/spl>`_
 * `WiringPi <http://platformio.org/frameworks/wiringpi>`_
 
-For further details, please refer to `What is PlatformIO? <http://docs.platformio.org/en/latest/faq.html#what-is-platformio>`_
+For further details, please refer to `What is PlatformIO? <http://docs.platformio.org/en/stable/faq.html#what-is-platformio>`_
 
 Contributing
 ------------

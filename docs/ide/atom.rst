@@ -37,7 +37,7 @@ can customize to do anything but also use productively without ever touching a
 config file.
 
 .. image:: ../_static/ide-atom-platformio.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio.png
 
 .. contents::
 
@@ -71,9 +71,10 @@ on the "Customize" stage, otherwise ``python`` command will not be available.
 2. Clang for Intelligent Code Autocompletion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code Autocompletion.
-To check that ``clang`` is available in your system, please open
-Terminal and run ``clang --version``. If ``clang`` is not installed, then install it:
+PlatformIO IDE uses `clang <http://clang.llvm.org>`_ for the Intelligent Code
+Autocompletion. To check that ``clang`` is available in your system, please
+open Terminal and run ``clang --version``. If ``clang`` is not installed,
+then install it and restart Atom:
 
 - **Mac OS X**: `Install the latest Xcode <https://developer.apple.com/xcode/download/>`_
   along with the latest Command Line Tools
@@ -83,6 +84,12 @@ Terminal and run ``clang --version``. If ``clang`` is not installed, then instal
   Please select "Add LLVM to the system PATH" option on the installation step.
 
   .. image:: ../_static/clang-installer-add-path.png
+
+  .. warning::
+      If you see ``Failed to find MSBuild toolsets directory`` error in
+      the installation console, please ignore it and press any key to close
+      this window. PlatformIO IDE uses only Clang completion engine that
+      should work after it without any problems.
 
 - **Linux**: Using package managers: ``apt-get install clang`` or ``yum install clang``.
 - **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
@@ -137,30 +144,30 @@ Setting Up the Project
    the corresponding icon in the PlatformIO toolbar as shown in the image below:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-1.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-1.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-1.png
 
 2. In the "New Project Menu" choose desired boards (more than one board is
    allowed) and select a project directory. Then press "Initialize" button:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-2.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-2.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-2.png
 
 3. If everything is fine, you should see the success message and project tree
    in the left panel:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-3.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-3.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-3.png
 
 4. Now, let's create the first project source file: right-click on the folder
    ``src`` and choose ``New File``:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-4.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-4.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-4.png
 
 Enter filename ``main.cpp``:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-5.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-5.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-5.png
 
 Copy the next source code to the just created file ``main.cpp``:
 
@@ -202,13 +209,13 @@ upload firmware, run other targets) using:
     - :ref:`ide_atom_building_targets` and hotkeys
 
 .. image:: ../_static/ide-atom-platformio-quick-start-6.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-6.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-6.png
 
 5. Run ``Build`` and you should see green "success" result in the building
    panel:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-7.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-7.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-7.png
 
 To upload firmware to the board run ``Upload``.
 
@@ -217,39 +224,39 @@ To upload firmware to the board run ``Upload``.
    or call targets list from the status bar (bottom, left corner):
 
 .. image:: ../_static/ide-atom-platformio-quick-start-8.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-8.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-8.png
 
 And select desired target:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-9.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-9.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-9.png
 
 7. To run built-in terminal interface choose ``Menu: PlatformIO > Terminal`` or
    press the corresponding icon in the PlatformIO toolbar:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-10.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-10.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-10.png
 
 It provides you fast access to all set of powerful PlatformIO CLI commands:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-11.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-11.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-11.png
 
 8. To run built-in "Serial Monitor" choose ``Menu: PlatformIO > Serial Monitor``
    or press the corresponding icon in the PlatformIO toolbar:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-12.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-12.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-12.png
 
 It has several settings to adjust your connection:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-13.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-13.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-13.png
 
 And allows you to communicate with your board in an easy way:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-14.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-atom-platformio-quick-start-14.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-14.png
 
 
 User Guide

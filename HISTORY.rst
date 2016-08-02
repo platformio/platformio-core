@@ -71,16 +71,30 @@ PlatformIO 3.0
 PlatformIO 2.0
 --------------
 
-2.11.2 (2016-??-??)
+2.11.2 (2016-08-02)
 ~~~~~~~~~~~~~~~~~~~
 
+* Improved support for `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__ development platform and ChipKIT boards
+  (`issue #438 <https://github.com/platformio/platformio/issues/438>`_)
 * Added support for Pinoccio Scout board
   (`issue #52 <https://github.com/platformio/platformio/issues/52>`_)
 * Added support for `Teensy USB Features <http://docs.platformio.org/en/latest/platforms/teensy.html#usb-features>`__
   (HID, SERIAL_HID, DISK, DISK_SDFLASH, MIDI, etc.)
   (`issue #722 <https://github.com/platformio/platformio/issues/722>`_)
+* Switched to built-in GCC LwIP library for Espressif development platform
+* Added support for local ``--echo`` for Serial Port Monitor
+  (`issue #733 <https://github.com/platformio/platformio/issues/733>`_)
+* Updated ``udev`` rules for the new STM32F407DISCOVERY boards
+  (`issue #731 <https://github.com/platformio/platformio/issues/731>`_)
+* Implemented firmware merging with base firmware for Nordic nRF51 development platform
+  (`issue #500 <https://github.com/platformio/platformio/issues/500>`_,
+  `issue #533 <https://github.com/platformio/platformio/issues/533>`_)
+* Fixed Project Generator for ESP8266 and ARM mbed based projects
+  (resolves incorrect linter errors)
 * Fixed broken LD Script for Element14 chipKIT Pi board
   (`issue #725 <https://github.com/platformio/platformio/issues/725>`_)
+* Fixed firmware uploading to Atmel SAMD21-XPRO board using ARM mbed framework
+  (`issue #732 <https://github.com/platformio/platformio/issues/732>`_)
 
 2.11.1 (2016-07-12)
 ~~~~~~~~~~~~~~~~~~~

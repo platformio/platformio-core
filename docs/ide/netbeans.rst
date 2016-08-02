@@ -26,7 +26,7 @@ Just make sure you download the C/C++ version (or if you already use NetBeans,
 install the C/C++ development plugins).
 
 .. image:: ../_static/ide-platformio-netbeans.png
-    :target: http://docs.platformio.org/en/latest/_images/ide-platformio-netbeans.png
+    :target: http://docs.platformio.org/en/stable/_images/ide-platformio-netbeans.png
 
 .. contents::
 

@@ -228,7 +228,7 @@ def get_projectpioenvs_dir():
         with open(dontmod_path, "w") as fp:
             fp.write("""
 [InternetShortcut]
-URL=http://docs.platformio.org/en/latest/projectconf.html#envs-dir
+URL=http://docs.platformio.org/en/stable/projectconf.html#envs-dir
 """)
     return path
 

@@ -37,6 +37,9 @@ Packages
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
+    * - ``tool-sreccat``
+      - `Merging tool <https://github.com/marcows/SRecord>`_
+
     * - ``framework-arduinonordicnrf51``
       - `Arduino Wiring-based Framework (RFduino Core) <https://github.com/RFduino/RFduino>`_
 

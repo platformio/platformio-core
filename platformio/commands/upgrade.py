@@ -65,7 +65,7 @@ def cli():
                 "PlatformIO has been successfully upgraded to %s" %
                 actual_version, fg="green")
             click.echo("Release notes: ", nl=False)
-            click.secho("http://docs.platformio.org/en/latest/history.html",
+            click.secho("http://docs.platformio.org/en/stable/history.html",
                         fg="cyan")
         except Exception as e:  # pylint: disable=W0703
             if not r:

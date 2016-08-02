@@ -24,7 +24,7 @@ Refer to the `CLion Documentation <https://www.jetbrains.com/clion/documentation
 page for more detailed information.
 
 .. image:: ../_static/ide-platformio-clion.png
-    :target: http://docs.platformio.org/en/latest/_static/ide-platformio-clion.png
+    :target: http://docs.platformio.org/en/stable/_static/ide-platformio-clion.png
 
 .. contents::
 
