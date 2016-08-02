@@ -8,3 +8,4 @@ build
 .cache
 coverage.xml
 .coverage
+htmlcov
