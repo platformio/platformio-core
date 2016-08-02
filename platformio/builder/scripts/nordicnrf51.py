@@ -18,7 +18,7 @@
 
 from os.path import join
 
-from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment, SConscript)
 
 env = DefaultEnvironment()
@@ -35,6 +35,25 @@ if env.subst("$BOARD") == "rfduino":
         UPLOADERFLAGS=["-q", '"$UPLOAD_PORT"'],
         UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS $SOURCES'
     )
+else:
+    env.Append(
+        BUILDERS=dict(
+            MergeHex=Builder(
+                action=" ".join([
+                    join("$PIOPACKAGES_DIR", "tool-sreccat", "srec_cat"),
+                    "$SOFTDEVICEHEX",
+                    "-intel",
+                    "$SOURCES",
+                    "-intel",
+                    "-o",
+                    "$TARGET",
+                    "-intel",
+                    "--line-length=44"
+                ]),
+                suffix=".hex"
+            )
+        )
+    )
 
 #
 # Target: Build executable and linkable firmware
@@ -49,7 +68,13 @@ target_elf = env.BuildProgram()
 if "uploadlazy" in COMMAND_LINE_TARGETS:
     target_firm = join("$BUILD_DIR", "firmware.hex")
 else:
-    target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+    if env.subst("$BOARD") == "rfduino":
+        target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
+    else:
+        target_firm = env.MergeHex(
+            join("$BUILD_DIR", "firmware"),
+            env.ElfToHex(join("$BUILD_DIR", "userfirmware"), target_elf)
+        )
 
 #
 # Target: Print binary size

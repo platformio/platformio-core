@@ -28,6 +28,7 @@ http://mbed.org/
 
 from __future__ import print_function
 
+import json
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
@@ -251,6 +252,37 @@ eixdata = parse_eix_file(
 build_flags = get_build_flags(eixdata)
 variant_dir = join("$PLATFORMFW_DIR", "variant", variant)
 
+
+def _find_soft_device_hex():
+
+    if not isfile(join(env.subst("$PLATFORMFW_DIR"), "targets.json")):
+        return None
+
+    with open(join(env.subst("$PLATFORMFW_DIR"), "targets.json")) as fp:
+        data = json.load(fp)
+
+    def _find_hex(target_name):
+        assert isinstance(data, dict)
+        if target_name not in data:
+            return None
+        target = data[target_name]
+        if "EXPECTED_SOFTDEVICES_WITH_OFFSETS" not in target:
+            try:
+                return _find_hex(target.get("inherits", [])[0])
+            except IndexError:
+                return None
+        else:
+            return target['EXPECTED_SOFTDEVICES_WITH_OFFSETS'][0]['name']
+
+    softdevice_name = _find_hex(variant)
+    if softdevice_name:
+        for root, _, files in walk(env.subst(variant_dir)):
+            if softdevice_name in files:
+                return join(root, softdevice_name)
+
+    env.Exit("Error: Cannot find SoftDevice binary file for your board!")
+
+
 env.Replace(
     _mbed_whole_archive_hook=_mbed_whole_archive_hook,
     _LIBFLAGS="${_mbed_whole_archive_hook(%s)}" % env.get("_LIBFLAGS")[2:-1],
@@ -262,6 +294,10 @@ env.Replace(
     LDSCRIPT_PATH=normpath(
         join(variant_dir, eixdata.get("LDSCRIPT_PATH")[0]))
 )
+
+
+if env.get("PLATFORM") == "nordicnrf51":
+    env.Append(SOFTDEVICEHEX=_find_soft_device_hex())
 
 # restore external build flags
 env.ProcessFlags(

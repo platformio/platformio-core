@@ -43,6 +43,10 @@ class Nordicnrf51Platform(BasePlatform):
             "alias": "framework"
         },
 
+        "tool-sreccat": {
+            "default": True
+        },
+
         "tool-rfdloader": {
         }
     }
