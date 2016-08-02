@@ -179,7 +179,7 @@ def lib_search(query, json_output, page, **filters):
                    "please use documentation:")
         click.secho(
             "http://docs.platformio.org"
-            "/en/latest/userguide/lib/cmd_search.html\n",
+            "/en/stable/userguide/lib/cmd_search.html\n",
             fg="cyan")
         return
 

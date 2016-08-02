@@ -181,7 +181,7 @@ class CIBuildEnvsEmpty(PlatformioException):
 class TestDirEmpty(PlatformioException):
 
     MESSAGE = "Test directory '{0}' is empty. More details about Unit "\
-              "Testing:\n http://docs.platformio.org/en/latest/platforms/"\
+              "Testing:\n http://docs.platformio.org/en/stable/platforms/"\
               "unit_testing.html"
 
 
