@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 2.0
 --------------
 
-2.11.2 (2016-??-??)
+2.11.2 (2016-08-02)
 ~~~~~~~~~~~~~~~~~~~
 
 * Improved support for `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__ development platform and ChipKIT boards
