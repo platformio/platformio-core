@@ -65,6 +65,7 @@ PlatformIO 3.0
   (`issue #721 <https://github.com/platformio/platformio/issues/721>`_)
 * Added ``license`` field to `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
   (`issue #522 <https://github.com/platformio/platformio/issues/522>`_)
+* Stopped Supporting Python 2.6
 
 
 PlatformIO 2.0
