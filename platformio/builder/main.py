@@ -96,6 +96,7 @@ DefaultEnvironment(
 env = DefaultEnvironment()
 
 if env.GetOption("silent"):
+    print "Use `-v, --verbose` option to enable verbose mode"
     Progress(env.ProgressHandler)
 
 # decode common variables
