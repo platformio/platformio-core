@@ -23,6 +23,8 @@ PlatformIO 2.0
   (resolves incorrect linter errors)
 * Fixed broken LD Script for Element14 chipKIT Pi board
   (`issue #725 <https://github.com/platformio/platformio/issues/725>`_)
+* Fixed firmware uploading to Atmel SAMD21-XPRO board using ARM mbed framework
+  (`issue #732 <https://github.com/platformio/platformio/issues/732>`_)
 
 2.11.1 (2016-07-12)
 ~~~~~~~~~~~~~~~~~~~
