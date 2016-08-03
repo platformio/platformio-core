@@ -16,12 +16,24 @@ import click
 
 from platformio.commands.lib import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
+from platformio.managers.lib import LibraryManager
 
 
 @click.command("update",
                short_help="Update installed Platforms, Packages and Libraries")
+@click.option(
+    "-c",
+    "--only-check",
+    is_flag=True,
+    help="Do not update, only check for new version")
 @click.pass_context
-def cli(ctx):
-    ctx.invoke(cmd_platform_update)
+def cli(ctx, only_check):
+    click.echo("Platform Manager")
+    click.echo("================")
+    ctx.invoke(cmd_platform_update, only_check=only_check)
+
     click.echo()
-    ctx.invoke(cmd_lib_update)
+    click.echo("Library Manager")
+    click.echo("===============")
+    ctx.obj = LibraryManager()
+    ctx.invoke(cmd_lib_update, only_check=only_check)

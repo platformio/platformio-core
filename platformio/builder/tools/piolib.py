@@ -21,7 +21,6 @@ import sys
 from os.path import basename, commonprefix, isdir, isfile, join, realpath
 
 import SCons.Scanner
-from SCons.Script import COMMAND_LINE_TARGETS
 
 from platformio import util
 from platformio.builder.tools import platformio as piotool

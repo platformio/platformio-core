@@ -33,11 +33,12 @@ Check or upgrade PlatformIO to the latest version
 Examples
 --------
 
-.. code-block:: bash
+.. code::
 
-    $ platformio upgrade
+    > platformio upgrade
+
     You are up-to-date!
     PlatformIO x.x.x is currently the newest version available.
 
     # If you have problem with permissions try:
-    $ sudo platformio upgrade
+    > sudo platformio upgrade
