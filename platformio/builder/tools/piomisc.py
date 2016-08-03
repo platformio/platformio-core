@@ -265,7 +265,8 @@ def GetActualLDScript(env):
 
 def ProgressHandler(env, node):
     item = str(node)
-    if "toolchain-" in item or item.endswith((".o", ".h", ".hpp", ".ipp")):
+    if ("toolchain-" in item or "tool-" in item) or \
+            item.endswith((".o", ".h", ".hpp", ".ipp")):
         return
     item = item.replace(env['PIOHOME_DIR'], ".platformio")
     print "Processing %s" % item
