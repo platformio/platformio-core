@@ -21,6 +21,7 @@ import sys
 from os.path import basename, commonprefix, isdir, isfile, join, realpath
 
 import SCons.Scanner
+from SCons.Script import COMMAND_LINE_TARGETS
 
 from platformio import util
 from platformio.builder.tools import platformio as piotool
@@ -471,6 +472,7 @@ def GetLibBuilders(env):
         f.lower().strip() for f in env.get("PIOFRAMEWORK", "").split(",")
     ]
     compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
+    verbose = not (env.GetOption("silent") or env.GetOption('clean'))
 
     for libs_dir in env['LIBSOURCE_DIRS']:
         libs_dir = env.subst(libs_dir)
@@ -481,18 +483,18 @@ def GetLibBuilders(env):
                 continue
             lb = LibBuilderFactory.new(env, join(libs_dir, item))
             if lb.name in env.get("LIB_IGNORE", []):
-                if not env.GetOption("silent"):
+                if verbose:
                     sys.stderr.write("Ignored library %s\n" % lb.path)
                 continue
             if compat_mode > 1 and not lb.is_platform_compatible(env[
                     'PIOPLATFORM']):
-                if not env.GetOption("silent"):
+                if verbose:
                     sys.stderr.write("Platform incompatible library %s\n" %
                                      lb.path)
                 continue
             if compat_mode > 0 and not any([lb.is_framework_compatible(f)
                                             for f in env_frameworks]):
-                if not env.GetOption("silent"):
+                if verbose:
                     sys.stderr.write("Framework incompatible library %s\n" %
                                      lb.path)
                 continue
