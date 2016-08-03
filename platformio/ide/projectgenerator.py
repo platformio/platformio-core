@@ -63,11 +63,7 @@ class ProjectGenerator(object):
         envdata = self.get_project_env()
         if "env_name" not in envdata:
             return data
-        cmd = [
-            normpath(sys.executable), "-m",
-            "platformio" + (".__main__"
-                            if sys.version_info < (2, 7, 0) else ""), "-f"
-        ]
+        cmd = [normpath(sys.executable), "-m", "platformio", "-f"]
         if app.get_session_var("caller_id"):
             cmd.extend(["-c", app.get_session_var("caller_id")])
         cmd.extend(["run", "-t", "idedata", "-e", envdata['env_name']])
