@@ -40,8 +40,8 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
     def get_command(self, ctx, name):
         mod = None
         try:
-            mod = __import__("platformio.commands." + name,
-                             None, None, ["cli"])
+            mod = __import__("platformio.commands." + name, None, None,
+                             ["cli"])
         except ImportError:
             try:
                 return self._handle_obsolate_command(name)
@@ -57,11 +57,15 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
         raise AttributeError()
 
 
-@click.command(cls=PlatformioCLI,
-               context_settings=dict(help_option_names=["-h", "--help"]))
+@click.command(
+    cls=PlatformioCLI,
+    context_settings=dict(help_option_names=["-h", "--help"]))
 @click.version_option(__version__, prog_name="PlatformIO")
-@click.option("--force", "-f", is_flag=True,
-              help="Force to accept any confirmation prompts.")
+@click.option(
+    "--force",
+    "-f",
+    is_flag=True,
+    help="Force to accept any confirmation prompts.")
 @click.option("--caller", "-c", help="Caller ID (service).")
 @click.pass_context
 def cli(ctx, force, caller):

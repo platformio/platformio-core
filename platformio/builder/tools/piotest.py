@@ -28,7 +28,6 @@ FRAMEWORK_PARAMETERS = {
         "serial_begin": "Serial.begin(9600)",
         "serial_end": "Serial.end()"
     },
-
     "mbed": {
         "framework": "mbed.h",
         "serial_obj": "Serial pc(USBTX, USBRX);",
@@ -37,7 +36,6 @@ FRAMEWORK_PARAMETERS = {
         "serial_begin": "pc.baud(9600)",
         "serial_end": ""
     },
-
     "energia": {
         "framework": "Energia.h",
         "serial_obj": "",
@@ -52,19 +50,14 @@ FRAMEWORK_PARAMETERS = {
 def ProcessTest(env):
     env.Append(
         CPPDEFINES=[
-            "UNIT_TEST",
-            "UNITY_INCLUDE_CONFIG_H"
+            "UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"
         ],
-
         CPPPATH=[
             join("$BUILD_DIR", "UnityTestLib")
-        ]
-    )
+        ])
     unitylib = env.BuildLibrary(
         join("$BUILD_DIR", "UnityTestLib"),
-        env.PioPlatform().get_package_dir("tool-unity")
-
-    )
+        env.PioPlatform().get_package_dir("tool-unity"))
     env.Prepend(LIBS=[unitylib])
 
     test_dir = env.subst("$PROJECTTEST_DIR")
@@ -75,8 +68,7 @@ def ProcessTest(env):
         src_filter += " +<%s%s>" % (env['PIOTEST'], sep)
 
     return env.CollectBuildFiles(
-        "$BUILDTEST_DIR", test_dir, src_filter=src_filter, duplicate=False
-    )
+        "$BUILDTEST_DIR", test_dir, src_filter=src_filter, duplicate=False)
 
 
 def GenerateOutputReplacement(env, destination_dir):
@@ -124,11 +116,11 @@ void output_complete(void)
 
     framework = env.subst("$PIOFRAMEWORK").lower()
     if framework not in FRAMEWORK_PARAMETERS:
-        env.Exit(
-            "Error: %s framework doesn't support testing feature!" % framework)
+        env.Exit("Error: %s framework doesn't support testing feature!" %
+                 framework)
     else:
-        data = Template(TEMPLATECPP).substitute(
-            FRAMEWORK_PARAMETERS[framework])
+        data = Template(TEMPLATECPP).substitute(FRAMEWORK_PARAMETERS[
+            framework])
 
         tmp_file = join(destination_dir, "output_export.cpp")
         with open(tmp_file, "w") as f:

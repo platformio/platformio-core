@@ -43,7 +43,7 @@ def generate(env):
 
     env.Replace(
         _huge_sources_hook=_huge_sources_hook,
-        ARCOM=env.get("ARCOM", "").replace(
-            "$SOURCES", "${_huge_sources_hook(SOURCES)}"))
+        ARCOM=env.get("ARCOM", "").replace("$SOURCES",
+                                           "${_huge_sources_hook(SOURCES)}"))
 
     return env

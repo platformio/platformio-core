@@ -33,14 +33,26 @@ from platformio.managers.platform import PlatformFactory
 @click.option("-e", "--environment", multiple=True)
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")
-@click.option("-d", "--project-dir", default=getcwd,
-              type=click.Path(exists=True, file_okay=False, dir_okay=True,
-                              writable=True, resolve_path=True))
+@click.option(
+    "-d",
+    "--project-dir",
+    default=getcwd,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        resolve_path=True))
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.pass_context
-def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
-        project_dir, verbose, disable_auto_clean):
+def cli(ctx,  # pylint: disable=R0913,R0914
+        environment,
+        target,
+        upload_port,
+        project_dir,
+        verbose,
+        disable_auto_clean):
     assert check_project_envs(project_dir, environment)
     with util.cd(project_dir):
         # clean obsolete .pioenvs dir
@@ -59,7 +71,8 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
         if config.has_option("platformio", "env_default"):
             env_default = [
                 e.strip()
-                for e in config.get("platformio", "env_default").split(",")]
+                for e in config.get("platformio", "env_default").split(",")
+            ]
 
         results = []
         for section in config.sections():
@@ -71,9 +84,10 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
                 raise exception.InvalidEnvName(section)
 
             envname = section[4:]
-            if ((environment and envname not in environment) or
-                    (not environment and env_default and
-                     envname not in env_default)):
+            skipenv = any([environment and envname not in environment,
+                           not environment and env_default and
+                           envname not in env_default])
+            if skipenv:
                 # echo("Skipped %s environment" % style(envname, fg="yellow"))
                 continue
 
@@ -86,8 +100,8 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
             if "piotest" not in options and "piotest" in ctx.meta:
                 options['piotest'] = ctx.meta['piotest']
 
-            ep = EnvironmentProcessor(
-                ctx, envname, options, target, upload_port, verbose)
+            ep = EnvironmentProcessor(ctx, envname, options, target,
+                                      upload_port, verbose)
             results.append(ep.process())
 
         if not all(results):
@@ -96,10 +110,7 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
 
 class EnvironmentProcessor(object):
 
-    REMAPED_OPTIONS = {
-        "FRAMEWORK": "PIOFRAMEWORK",
-        "PLATFORM": "PIOPLATFORM"
-    }
+    REMAPED_OPTIONS = {"FRAMEWORK": "PIOFRAMEWORK", "PLATFORM": "PIOPLATFORM"}
 
     RENAMED_OPTIONS = {
         "INSTALL_LIBS": "LIB_INSTALL",
@@ -107,8 +118,13 @@ class EnvironmentProcessor(object):
         "LIB_USE": "LIB_FORCE"
     }
 
-    def __init__(self, cmd_ctx, name, options,  # pylint: disable=R0913
-                 targets, upload_port, verbose):
+    def __init__(self,  # pylint: disable=R0913
+                 cmd_ctx,
+                 name,
+                 options,
+                 targets,
+                 upload_port,
+                 verbose):
         self.cmd_ctx = cmd_ctx
         self.name = name
         self.options = self._validate_options(options)
@@ -121,21 +137,21 @@ class EnvironmentProcessor(object):
         start_time = time()
 
         click.echo("[%s] Processing %s (%s)" % (
-            datetime.now().strftime("%c"),
-            click.style(self.name, fg="cyan", bold=True),
-            ", ".join(["%s: %s" % (k, v) for k, v in self.options.iteritems()])
-        ))
+            datetime.now().strftime("%c"), click.style(
+                self.name, fg="cyan", bold=True), ", ".join(
+                    ["%s: %s" % (k, v) for k, v in self.options.iteritems()])))
         click.secho("-" * terminal_width, bold=True)
 
         result = self._run()
 
         is_error = result['returncode'] != 0
         if is_error or "piotest_processor" not in self.cmd_ctx.meta:
-            print_header("[%s] Took %.2f seconds" % (
-                (click.style("ERROR", fg="red", bold=True) if is_error
-                 else click.style("SUCCESS", fg="green", bold=True)),
-                time() - start_time
-            ), is_error=is_error)
+            print_header(
+                "[%s] Took %.2f seconds" % ((click.style(
+                    "ERROR", fg="red", bold=True) if is_error else click.style(
+                        "SUCCESS", fg="green", bold=True)),
+                                            time() - start_time),
+                is_error=is_error)
 
         return not is_error
 
@@ -148,10 +164,8 @@ class EnvironmentProcessor(object):
                 click.secho(
                     "Warning! `%s` option is deprecated and will be "
                     "removed in the next release! Please use "
-                    "`%s` instead." % (
-                        k, self.RENAMED_OPTIONS[_k].lower()),
-                    fg="yellow"
-                )
+                    "`%s` instead." % (k, self.RENAMED_OPTIONS[_k].lower()),
+                    fg="yellow")
                 k = self.RENAMED_OPTIONS[_k].lower()
             result[k] = v
         return result
@@ -249,12 +263,10 @@ def check_project_envs(project_dir, environments):
     if not config.sections():
         raise exception.ProjectEnvsNotAvailable()
 
-    known = set([s[4:] for s in config.sections()
-                 if s.startswith("env:")])
+    known = set([s[4:] for s in config.sections() if s.startswith("env:")])
     unknown = set(environments) - known
     if unknown:
-        raise exception.UnknownEnvNames(
-            ", ".join(unknown), ", ".join(known))
+        raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
     return True
 
 

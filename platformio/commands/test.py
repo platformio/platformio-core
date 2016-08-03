@@ -32,9 +32,16 @@ from platformio.managers.platform import PlatformFactory
 @click.option("--environment", "-e", multiple=True, metavar="<environment>")
 @click.option("--skip", multiple=True, metavar="<pattern>")
 @click.option("--upload-port", metavar="<upload port>")
-@click.option("-d", "--project-dir", default=getcwd,
-              type=click.Path(exists=True, file_okay=False, dir_okay=True,
-                              writable=True, resolve_path=True))
+@click.option(
+    "-d",
+    "--project-dir",
+    default=getcwd,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        resolve_path=True))
 @click.option("--verbose", "-v", is_flag=True)
 @click.pass_context
 def cli(ctx, environment, skip, upload_port, project_dir, verbose):
@@ -85,16 +92,17 @@ def cli(ctx, environment, skip, upload_port, project_dir, verbose):
         elif status is None:
             status_str = click.style("IGNORED", fg="yellow")
 
-        click.echo("test:%s/env:%s\t%s" % (
-            click.style(testname, fg="yellow"),
-            click.style(envname, fg="cyan"),
-            status_str), err=status is False)
+        click.echo(
+            "test:%s/env:%s\t%s" % (click.style(
+                testname, fg="yellow"), click.style(
+                    envname, fg="cyan"), status_str),
+            err=status is False)
 
-    print_header("[%s] Took %.2f seconds" % (
-        (click.style("PASSED", fg="green", bold=True) if passed
-         else click.style("FAILED", fg="red", bold=True)),
-        time() - start_time
-    ), is_error=not passed)
+    print_header(
+        "[%s] Took %.2f seconds" % ((click.style(
+            "PASSED", fg="green", bold=True) if passed else click.style(
+                "FAILED", fg="red", bold=True)), time() - start_time),
+        is_error=not passed)
 
     if not passed:
         raise exception.ReturnErrorCode()
@@ -122,41 +130,42 @@ class TestProcessor(object):
         return self._run_hardware_test()
 
     def _progress(self, text, is_error=False):
-        print_header("[test::%s] %s" % (
-            click.style(self.test_name, fg="yellow", bold=True),
-            text
-        ), is_error=is_error)
+        print_header(
+            "[test::%s] %s" % (click.style(
+                self.test_name, fg="yellow", bold=True), text),
+            is_error=is_error)
         click.echo()
 
     def _build_or_upload(self, target):
         if self.test_name != "*":
             self.cmd_ctx.meta['piotest'] = self.test_name
         return self.cmd_ctx.invoke(
-            cmd_run, project_dir=self.options['project_dir'],
+            cmd_run,
+            project_dir=self.options['project_dir'],
             upload_port=self.options['upload_port'],
             verbose=self.options['verbose'],
             environment=[self.env_name],
-            target=target
-        )
+            target=target)
 
     def _run_hardware_test(self):
         click.echo("If you don't see any output for the first 10 secs, "
                    "please reset board (press reset button)")
         click.echo()
-        ser = serial.Serial(self.get_serial_port(), self.SERIAL_BAUDRATE,
-                            timeout=self.SERIAL_TIMEOUT)
+        ser = serial.Serial(
+            self.get_serial_port(),
+            self.SERIAL_BAUDRATE,
+            timeout=self.SERIAL_TIMEOUT)
         passed = True
         while True:
             line = ser.readline().strip()
             if not line:
                 continue
             if line.endswith(":PASS"):
-                click.echo("%s\t%s" % (
-                    line[:-5], click.style("PASSED", fg="green")))
+                click.echo("%s\t%s" % (line[:-5], click.style(
+                    "PASSED", fg="green")))
             elif ":FAIL:" in line:
                 passed = False
-                click.echo("%s\t%s" % (
-                    line, click.style("FAILED", fg="red")))
+                click.echo("%s\t%s" % (line, click.style("FAILED", fg="red")))
             else:
                 click.echo(line)
             if all([l in line for l in ("Tests", "Failures", "Ignored")]):

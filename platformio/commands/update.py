@@ -19,8 +19,8 @@ from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.managers.lib import LibraryManager
 
 
-@click.command("update",
-               short_help="Update installed Platforms, Packages and Libraries")
+@click.command(
+    "update", short_help="Update installed Platforms, Packages and Libraries")
 @click.option(
     "-c",
     "--only-check",

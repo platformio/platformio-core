@@ -120,8 +120,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
                 "\nWarning! Please install `99-platformio-udev.rules` and "
                 "check that your board's PID and VID are listed in the rules."
                 "\n https://raw.githubusercontent.com/platformio/platformio"
-                "/develop/scripts/99-platformio-udev.rules\n"
-            )
+                "/develop/scripts/99-platformio-udev.rules\n")
         env.Replace(UPLOAD_PORT=_look_for_serial_port())
 
     if env.subst("$UPLOAD_PORT"):

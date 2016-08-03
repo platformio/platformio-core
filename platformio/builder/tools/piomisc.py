@@ -25,15 +25,12 @@ from platformio import util
 
 class InoToCPPConverter(object):
 
-    PROTOTYPE_RE = re.compile(
-        r"""^(
+    PROTOTYPE_RE = re.compile(r"""^(
         (\s*[a-z_\d]+\*?){1,2}      # return type
         (\s+[a-z_\d]+\s*)           # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*\{                      # must end with {
-        """,
-        re.X | re.M | re.I
-    )
+        """, re.X | re.M | re.I)
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
     PROTOPTRS_TPLRE = r"\([^&\(]*&(%s)[^\)]*\)"
 
@@ -66,20 +63,18 @@ class InoToCPPConverter(object):
                 split_pos = item['match'].start()
                 break
 
-        match_ptrs = re.search(
-            self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),
-            contents[:split_pos],
-            re.M
-        )
+        match_ptrs = re.search(self.PROTOPTRS_TPLRE %
+                               ("|".join(prototype_names)),
+                               contents[:split_pos], re.M)
         if match_ptrs:
             split_pos = contents.rfind("\n", 0, match_ptrs.start())
 
         result.append(contents[:split_pos].strip())
         result.append("%s;" %
                       ";\n".join([p['match'].group(1) for p in prototypes]))
-        result.append('#line %d "%s"' % (
-            contents.count("\n", 0, split_pos) + 2,
-            file_path.replace("\\", "/")))
+        result.append('#line %d "%s"' %
+                      (contents.count("\n", 0, split_pos) + 2,
+                       file_path.replace("\\", "/")))
         result.append(contents[split_pos:].strip())
 
         return result
@@ -106,8 +101,8 @@ class InoToCPPConverter(object):
             result.append('#line 1 "%s"' % file_path.replace("\\", "/"))
 
             if is_first and prototypes:
-                result += self.append_prototypes(
-                    file_path, contents, prototypes)
+                result += self.append_prototypes(file_path, contents,
+                                                 prototypes)
             else:
                 result.append(contents)
             is_first = False
@@ -187,9 +182,7 @@ def DumpIDEData(env):
         if env['PIOPLATFORM'] == "atmelavr":
             defines.append(
                 "__AVR_%s__" % env.BoardConfig().get("build.mcu").upper()
-                .replace("ATMEGA", "ATmega")
-                .replace("ATTINY", "ATtiny")
-            )
+                .replace("ATMEGA", "ATmega").replace("ATTINY", "ATtiny"))
         return defines
 
     LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
@@ -257,8 +250,8 @@ def GetActualLDScript(env):
                     return path
 
     if script:
-        env.Exit("Error: Could not find '%s' LD script in LDPATH '%s'" % (
-            script, env.subst("$LIBPATH")))
+        env.Exit("Error: Could not find '%s' LD script in LDPATH '%s'" %
+                 (script, env.subst("$LIBPATH")))
 
     return None
 

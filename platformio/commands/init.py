@@ -37,24 +37,35 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
         assert not unknown_boards
         return value
     except AssertionError:
-        raise click.BadParameter(
-            "%s. Please search for the board ID using "
-            "`platformio boards` command" % ", ".join(unknown_boards))
+        raise click.BadParameter("%s. Please search for the board ID using "
+                                 "`platformio boards` command" %
+                                 ", ".join(unknown_boards))
 
 
 @click.command("init", short_help="Initialize new PlatformIO based project")
-@click.option("--project-dir", "-d", default=getcwd,
-              type=click.Path(exists=True, file_okay=False, dir_okay=True,
-                              writable=True, resolve_path=True))
-@click.option("-b", "--board", multiple=True, metavar="ID",
-              callback=validate_boards)
-@click.option("--ide",
-              type=click.Choice(ProjectGenerator.get_supported_ides()))
+@click.option(
+    "--project-dir",
+    "-d",
+    default=getcwd,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        resolve_path=True))
+@click.option(
+    "-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
+@click.option(
+    "--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
 @click.option("--enable-auto-uploading", is_flag=True)
 @click.option("--env-prefix", default="")
 @click.pass_context
-def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
-        enable_auto_uploading, env_prefix):
+def cli(ctx,  # pylint: disable=R0913
+        project_dir,
+        board,
+        ide,
+        enable_auto_uploading,
+        env_prefix):
 
     if project_dir == getcwd():
         click.secho("\nThe current working directory", fg="yellow", nl=False)
@@ -63,18 +74,20 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
             "will be used for project.\n"
             "You can specify another project directory via\n"
             "`platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.",
-            fg="yellow"
-        )
+            fg="yellow")
         click.echo("")
 
     click.echo("The next files/directories will be created in %s" %
-               click.style(project_dir, fg="cyan"))
+               click.style(
+                   project_dir, fg="cyan"))
     click.echo("%s - Project Configuration File. |-> PLEASE EDIT ME <-|" %
-               click.style("platformio.ini", fg="cyan"))
-    click.echo("%s - Put your source files here" %
-               click.style("src", fg="cyan"))
+               click.style(
+                   "platformio.ini", fg="cyan"))
+    click.echo("%s - Put your source files here" % click.style(
+        "src", fg="cyan"))
     click.echo("%s - Put here project specific (private) libraries" %
-               click.style("lib", fg="cyan"))
+               click.style(
+                   "lib", fg="cyan"))
 
     if (app.get_setting("enable_prompts") and
             not click.confirm("Do you want to continue?")):
@@ -83,10 +96,8 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
     init_base_project(project_dir)
 
     if board:
-        fill_project_envs(
-            ctx, project_dir, board,
-            enable_auto_uploading, env_prefix, ide is not None
-        )
+        fill_project_envs(ctx, project_dir, board, enable_auto_uploading,
+                          env_prefix, ide is not None)
 
     if ide:
         if not board:
@@ -102,8 +113,7 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
                 "However, the IDE features (code autocompletion, syntax "
                 "linter) have been configured for the first board '%s' from "
                 "your list '%s'." % (board[0], ", ".join(board)),
-                fg="yellow"
-            )
+                fg="yellow")
         pg = ProjectGenerator(project_dir, ide, board[0])
         pg.generate()
 
@@ -116,8 +126,7 @@ def cli(ctx, project_dir, board, ide,  # pylint: disable=R0913
         "`platformio run --target clean` - clean project (remove compiled "
         "files)\n"
         "`platformio run --help` - additional information",
-        fg="green"
-    )
+        fg="green")
 
 
 def get_first_board(project_dir):
@@ -132,8 +141,9 @@ def get_first_board(project_dir):
 
 def init_base_project(project_dir):
     if not util.is_platformio_project(project_dir):
-        copyfile(join(util.get_source_dir(), "projectconftpl.ini"),
-                 join(project_dir, "platformio.ini"))
+        copyfile(
+            join(util.get_source_dir(), "projectconftpl.ini"),
+            join(project_dir, "platformio.ini"))
 
     lib_dir = join(project_dir, "lib")
     src_dir = join(project_dir, "src")
@@ -275,8 +285,8 @@ def init_cvs_ignore(project_dir):
 
 
 def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
-        ctx, project_dir, board_ids, enable_auto_uploading,
-        env_prefix, force_download):
+        ctx, project_dir, board_ids, enable_auto_uploading, env_prefix,
+        force_download):
     installed_boards = PlatformManager().get_installed_boards()
     content = []
     used_boards = []
@@ -291,8 +301,8 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
 
     for id_ in board_ids:
         manifest = None
-        for boards in (
-                installed_boards, PlatformManager.get_registered_boards()):
+        for boards in (installed_boards,
+                       PlatformManager.get_registered_boards()):
             for b in boards:
                 if b['id'] == id_:
                     manifest = b
@@ -329,10 +339,10 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
 
 def _install_dependent_platforms(ctx, platforms):
     installed_platforms = [
-        p['name'] for p in PlatformManager().get_installed()]
+        p['name'] for p in PlatformManager().get_installed()
+    ]
     if set(platforms) <= set(installed_platforms):
         return
     ctx.invoke(
         cli_platform_install,
-        platforms=list(set(platforms) - set(installed_platforms))
-    )
+        platforms=list(set(platforms) - set(installed_platforms)))

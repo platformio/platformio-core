@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-
 from setuptools import find_packages, setup
 
 from platformio import (__author__, __description__, __email__, __license__,
@@ -28,9 +26,6 @@ install_requires = [
     "colorama",
     "pyserial<4"
 ]
-
-if sys.version_info < (2, 7, 0):
-    install_requires[-1] = "pyserial<3"
 
 setup(
     name=__title__,

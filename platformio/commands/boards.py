@@ -48,15 +48,21 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
         click.echo("Platform: ", nl=False)
         click.secho(platform, bold=True)
         click.echo("-" * terminal_width)
-        click.echo(BOARDLIST_TPL.format(
-            type=click.style("ID", fg="cyan"), mcu="MCU",
-            frequency="Frequency", flash="Flash", ram="RAM", name="Name"))
+        click.echo(
+            BOARDLIST_TPL.format(
+                type=click.style(
+                    "ID", fg="cyan"),
+                mcu="MCU",
+                frequency="Frequency",
+                flash="Flash",
+                ram="RAM",
+                name="Name"))
         click.echo("-" * terminal_width)
 
         for board in sorted(pboards, key=lambda b: b['id']):
             if query:
-                search_data = "%s %s" % (
-                    board['id'], json.dumps(board).lower())
+                search_data = "%s %s" % (board['id'],
+                                         json.dumps(board).lower())
                 if query.lower() not in search_data.lower():
                     continue
 
@@ -71,11 +77,15 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
             else:
                 ram_size = "%dB" % ram_size
 
-            click.echo(BOARDLIST_TPL.format(
-                type=click.style(board['id'], fg="cyan"),
-                mcu=board['mcu'],
-                frequency="%dMhz" % (board['fcpu'] / 1000000),
-                flash=flash_size, ram=ram_size, name=board['name']))
+            click.echo(
+                BOARDLIST_TPL.format(
+                    type=click.style(
+                        board['id'], fg="cyan"),
+                    mcu=board['mcu'],
+                    frequency="%dMhz" % (board['fcpu'] / 1000000),
+                    flash=flash_size,
+                    ram=ram_size,
+                    name=board['name']))
 
 
 def _get_boards(installed=False):

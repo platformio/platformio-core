@@ -32,18 +32,14 @@ SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
 def BuildProgram(env):
 
     def _append_pio_macros():
-        env.AppendUnique(
-            CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
-                *pioversion_to_intstr())])
+        env.AppendUnique(CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
+            *pioversion_to_intstr())])
 
     _append_pio_macros()
 
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes(".s", ".S"):
-        env.Replace(
-            AS="$CC",
-            ASCOM="$ASPPCOM"
-        )
+        env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
@@ -55,7 +51,8 @@ def BuildProgram(env):
 
     if env.get("PIOFRAMEWORK"):
         env.BuildFrameworks([
-            f.lower().strip() for f in env['PIOFRAMEWORK'].split(",")])
+            f.lower().strip() for f in env['PIOFRAMEWORK'].split(",")
+        ])
 
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
@@ -66,18 +63,12 @@ def BuildProgram(env):
     # append specified LD_SCRIPT
     if ("LDSCRIPT_PATH" in env and
             not any(["-Wl,-T" in f for f in env['LINKFLAGS']])):
-        env.Append(
-            LINKFLAGS=['-Wl,-T"$LDSCRIPT_PATH"']
-        )
+        env.Append(LINKFLAGS=['-Wl,-T"$LDSCRIPT_PATH"'])
 
     # enable "cyclic reference" for linker
     if env.get("LIBS", deplibs) and env.GetCompilerType() == "gcc":
-        env.Prepend(
-            _LIBFLAGS="-Wl,--start-group "
-        )
-        env.Append(
-            _LIBFLAGS=" -Wl,--end-group"
-        )
+        env.Prepend(_LIBFLAGS="-Wl,--start-group ")
+        env.Append(_LIBFLAGS=" -Wl,--end-group")
 
     # Handle SRC_BUILD_FLAGS
     env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
@@ -96,14 +87,11 @@ def BuildProgram(env):
         env.Append(PIOBUILDFILES=env.ProcessTest())
 
     if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
-        env.Exit(
-            "Error: Nothing to build. Please put your source code files "
-            "to '%s' folder" % env.subst("$PROJECTSRC_DIR"))
+        env.Exit("Error: Nothing to build. Please put your source code files "
+                 "to '%s' folder" % env.subst("$PROJECTSRC_DIR"))
 
     program = env.Program(
-        join("$BUILD_DIR", env.subst("$PROGNAME")),
-        env['PIOBUILDFILES']
-    )
+        join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
 
     if set(["upload", "uploadlazy", "program"]) & set(COMMAND_LINE_TARGETS):
         env.AddPostAction(program, env.CheckUploadSize)
@@ -210,8 +198,11 @@ def VariantDirWrap(env, variant_dir, src_dir, duplicate=False):
     env.VariantDir(variant_dir, src_dir, duplicate)
 
 
-def CollectBuildFiles(env, variant_dir, src_dir,
-                      src_filter=None, duplicate=False):
+def CollectBuildFiles(env,
+                      variant_dir,
+                      src_dir,
+                      src_filter=None,
+                      duplicate=False):
     sources = []
     variants = []
 
@@ -239,9 +230,8 @@ def BuildFrameworks(env, frameworks):
         return
 
     if "BOARD" not in env:
-        env.Exit(
-            "Please specify `board` in `platformio.ini` to use "
-            "with '%s' framework" % ", ".join(frameworks))
+        env.Exit("Please specify `board` in `platformio.ini` to use "
+                 "with '%s' framework" % ", ".join(frameworks))
 
     board_frameworks = env.BoardConfig().get("frameworks", [])
     if frameworks == ["platformio"]:

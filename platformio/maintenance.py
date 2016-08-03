@@ -56,8 +56,10 @@ def on_platformio_end(ctx, result):  # pylint: disable=W0613
         check_internal_updates(ctx, "platforms")
         check_internal_updates(ctx, "libraries")
     except (exception.GetLatestVersionError, exception.APIRequestError):
-        click.secho("Failed to check for PlatformIO upgrades. "
-                    "Please check your Internet connection.", fg="red")
+        click.secho(
+            "Failed to check for PlatformIO upgrades. "
+            "Please check your Internet connection.",
+            fg="red")
 
 
 def on_platformio_exception(e):
@@ -100,8 +102,7 @@ class Upgrader(object):
                     continue
                 os.remove(join(boards_dir, item))
                 for key, value in data.items():
-                    with open(join(boards_dir, "%s.json" % key),
-                              "w") as f:
+                    with open(join(boards_dir, "%s.json" % key), "w") as f:
                         json.dump(value, f, sort_keys=True, indent=2)
 
         # re-install PlatformIO 2.0 development platforms
@@ -120,8 +121,7 @@ def after_upgrade(ctx):
     if last_version == "0.0.0":
         app.set_state_item("last_version", __version__)
     else:
-        click.secho("Please wait while upgrading PlatformIO ...",
-                    fg="yellow")
+        click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
 
         u = Upgrader(last_version, __version__)
         if u.run(ctx):
@@ -132,11 +132,15 @@ def after_upgrade(ctx):
             for manifest in pm.get_installed():
                 pm.update(manifest['name'], "^" + manifest['version'])
 
-            click.secho("PlatformIO has been successfully upgraded to %s!\n" %
-                        __version__, fg="green")
+            click.secho(
+                "PlatformIO has been successfully upgraded to %s!\n" %
+                __version__,
+                fg="green")
 
-            telemetry.on_event(category="Auto", action="Upgrade",
-                               label="%s > %s" % (last_version, __version__))
+            telemetry.on_event(
+                category="Auto",
+                action="Upgrade",
+                label="%s > %s" % (last_version, __version__))
         else:
             raise exception.UpgradeError("Auto upgrading...")
         click.echo("")
@@ -144,29 +148,24 @@ def after_upgrade(ctx):
     # PlatformIO banner
     terminal_width, _ = click.get_terminal_size()
     click.echo("*" * terminal_width)
-    click.echo("If you like %s, please:" % (
-        click.style("PlatformIO", fg="cyan")
-    ))
-    click.echo(
-        "- %s us on Twitter to stay up-to-date "
-        "on the latest project news > %s" %
-        (click.style("follow", fg="cyan"),
-         click.style("https://twitter.com/PlatformIO_Org", fg="cyan"))
-    )
-    click.echo("- %s it on GitHub > %s" % (
-        click.style("star", fg="cyan"),
-        click.style("https://github.com/platformio/platformio", fg="cyan")
-    ))
+    click.echo("If you like %s, please:" % (click.style(
+        "PlatformIO", fg="cyan")))
+    click.echo("- %s us on Twitter to stay up-to-date "
+               "on the latest project news > %s" % (click.style(
+                   "follow", fg="cyan"), click.style(
+                       "https://twitter.com/PlatformIO_Org", fg="cyan")))
+    click.echo("- %s it on GitHub > %s" % (click.style(
+        "star", fg="cyan"), click.style(
+            "https://github.com/platformio/platformio", fg="cyan")))
     if not getenv("PLATFORMIO_IDE"):
-        click.echo("- %s PlatformIO IDE for IoT development > %s" % (
-            click.style("try", fg="cyan"),
-            click.style("http://platformio.org/platformio-ide", fg="cyan")
-        ))
+        click.echo("- %s PlatformIO IDE for IoT development > %s" %
+                   (click.style(
+                       "try", fg="cyan"), click.style(
+                           "http://platformio.org/platformio-ide", fg="cyan")))
     if not util.is_ci():
-        click.echo("- %s to keep PlatformIO alive! > %s" % (
-            click.style("donate", fg="cyan"),
-            click.style("http://platformio.org/donate", fg="cyan")
-        ))
+        click.echo("- %s to keep PlatformIO alive! > %s" % (click.style(
+            "donate", fg="cyan"), click.style(
+                "http://platformio.org/donate", fg="cyan")))
 
     click.echo("*" * terminal_width)
     click.echo("")
@@ -191,12 +190,14 @@ def check_platformio_upgrade():
 
     click.echo("")
     click.echo("*" * terminal_width)
-    click.secho("There is a new version %s of PlatformIO available.\n"
-                "Please upgrade it via `" % latest_version,
-                fg="yellow", nl=False)
+    click.secho(
+        "There is a new version %s of PlatformIO available.\n"
+        "Please upgrade it via `" % latest_version,
+        fg="yellow",
+        nl=False)
     if getenv("PLATFORMIO_IDE"):
-        click.secho("PlatformIO IDE Menu: Upgrade PlatformIO",
-                    fg="cyan", nl=False)
+        click.secho(
+            "PlatformIO IDE Menu: Upgrade PlatformIO", fg="cyan", nl=False)
         click.secho("`.", fg="yellow")
     elif join("Cellar", "platformio") in util.get_source_dir():
         click.secho("brew update && brew upgrade", fg="cyan", nl=False)
@@ -235,20 +236,29 @@ def check_internal_updates(ctx, what):
 
     click.echo("")
     click.echo("*" * terminal_width)
-    click.secho("There are the new updates for %s (%s)" %
-                (what, ", ".join(outdated_items)), fg="yellow")
+    click.secho(
+        "There are the new updates for %s (%s)" %
+        (what, ", ".join(outdated_items)),
+        fg="yellow")
 
     if not app.get_setting("auto_update_" + what):
         click.secho("Please update them via ", fg="yellow", nl=False)
-        click.secho("`platformio %s update`" %
-                    ("lib --global" if what == "libraries" else "platform"),
-                    fg="cyan", nl=False)
+        click.secho(
+            "`platformio %s update`" %
+            ("lib --global" if what == "libraries" else "platform"),
+            fg="cyan",
+            nl=False)
         click.secho(" command.\n", fg="yellow")
-        click.secho("If you want to manually check for the new versions "
-                    "without updating, please use ", fg="yellow", nl=False)
-        click.secho("`platformio %s update --only-check`" %
-                    ("lib --global" if what == "libraries" else "platform"),
-                    fg="cyan", nl=False)
+        click.secho(
+            "If you want to manually check for the new versions "
+            "without updating, please use ",
+            fg="yellow",
+            nl=False)
+        click.secho(
+            "`platformio %s update --only-check`" %
+            ("lib --global" if what == "libraries" else "platform"),
+            fg="cyan",
+            nl=False)
         click.secho(" command.", fg="yellow")
     else:
         click.secho("Please wait while updating %s ..." % what, fg="yellow")

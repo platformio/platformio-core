@@ -18,12 +18,10 @@ VERSION = (3, 0, "0.dev18")
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
-__description__ = (
-    "An open source ecosystem for IoT development. "
-    "Cross-platform build system and library manager. "
-    "Continuous and IDE integration. "
-    "Arduino and MBED compatible. Ready for Cloud compiling."
-)
+__description__ = ("An open source ecosystem for IoT development. "
+                   "Cross-platform build system and library manager. "
+                   "Continuous and IDE integration. "
+                   "Arduino and MBED compatible. Ready for Cloud compiling.")
 __url__ = "http://platformio.org"
 
 __author__ = "Ivan Kravets"
@@ -34,7 +32,6 @@ __copyright__ = "Copyright 2014-2016 Ivan Kravets"
 
 __apiurl__ = "http://api.platformio.org"
 __apiip__ = "198.7.57.247"
-
 
 if sys.version_info < (2, 7, 0) or sys.version_info >= (3, 0, 0):
     msg = ("PlatformIO version %s does not run under Python version %s.\n"

@@ -22,26 +22,22 @@ import requests
 from platformio import VERSION, __version__, exception, util
 
 
-@click.command("upgrade",
-               short_help="Upgrade PlatformIO to the latest version")
+@click.command(
+    "upgrade", short_help="Upgrade PlatformIO to the latest version")
 def cli():
     latest = get_latest_version()
     if __version__ == latest:
         return click.secho(
             "You're up-to-date!\nPlatformIO %s is currently the "
-            "newest version available." % __version__, fg="green"
-        )
+            "newest version available." % __version__,
+            fg="green")
     else:
-        click.secho("Please wait while upgrading PlatformIO ...",
-                    fg="yellow")
+        click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
 
         to_develop = not all([c.isdigit() for c in latest if c != "."])
-        cmds = (
-            ["pip", "install", "--upgrade",
-             "https://github.com/platformio/platformio/archive/develop.zip"
-             if to_develop else "platformio"],
-            ["platformio", "--version"]
-        )
+        cmds = (["pip", "install", "--upgrade",
+                 "https://github.com/platformio/platformio/archive/develop.zip"
+                 if to_develop else "platformio"], ["platformio", "--version"])
 
         cmd = None
         r = None
@@ -63,21 +59,19 @@ def cli():
             actual_version = r['out'].strip().split("version", 1)[1].strip()
             click.secho(
                 "PlatformIO has been successfully upgraded to %s" %
-                actual_version, fg="green")
+                actual_version,
+                fg="green")
             click.echo("Release notes: ", nl=False)
-            click.secho("http://docs.platformio.org/en/stable/history.html",
-                        fg="cyan")
+            click.secho(
+                "http://docs.platformio.org/en/stable/history.html", fg="cyan")
         except Exception as e:  # pylint: disable=W0703
             if not r:
-                raise exception.UpgradeError(
-                    "\n".join([str(cmd), str(e)]))
-            permission_errors = (
-                "permission denied",
-                "not permitted"
-            )
+                raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
+            permission_errors = ("permission denied", "not permitted")
             if (any([m in r['err'].lower() for m in permission_errors]) and
                     "windows" not in util.get_systype()):
-                click.secho("""
+                click.secho(
+                    """
 -----------------
 Permission denied
 -----------------
@@ -86,11 +80,13 @@ You need the `sudo` permission to install Python packages. Try
 > sudo pip install -U platformio
 
 WARNING! Don't use `sudo` for the rest PlatformIO commands.
-""", fg="yellow", err=True)
+""",
+                    fg="yellow",
+                    err=True)
                 raise exception.ReturnErrorCode()
             else:
-                raise exception.UpgradeError(
-                    "\n".join([str(cmd), r['out'], r['err']]))
+                raise exception.UpgradeError("\n".join([str(cmd), r['out'], r[
+                    'err']]))
 
 
 def get_latest_version():
@@ -107,11 +103,9 @@ def get_latest_version():
 
 def get_develop_latest_version():
     version = None
-    r = requests.get(
-        "https://raw.githubusercontent.com/platformio/platformio"
-        "/develop/platformio/__init__.py",
-        headers=util.get_request_defheaders()
-    )
+    r = requests.get("https://raw.githubusercontent.com/platformio/platformio"
+                     "/develop/platformio/__init__.py",
+                     headers=util.get_request_defheaders())
     r.raise_for_status()
     for line in r.text.split("\n"):
         line = line.strip()
@@ -129,9 +123,7 @@ def get_develop_latest_version():
 
 
 def get_pypi_latest_version():
-    r = requests.get(
-        "https://pypi.python.org/pypi/platformio/json",
-        headers=util.get_request_defheaders()
-    )
+    r = requests.get("https://pypi.python.org/pypi/platformio/json",
+                     headers=util.get_request_defheaders())
     r.raise_for_status()
     return r.json()['info']['version']

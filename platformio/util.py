@@ -81,7 +81,6 @@ class cd(object):
 
 
 class memoized(object):
-
     '''
     Decorator. Caches a function's return value each time it is called.
     If called later with the same arguments, the cached value is returned
@@ -122,6 +121,7 @@ def singleton(cls):
         if cls not in _instances:
             _instances[cls] = cls(*args, **kwargs)
         return _instances[cls]
+
     return get_instance
 
 
@@ -162,10 +162,8 @@ def _get_projconf_option_dir(name, default=None):
 
 
 def get_home_dir():
-    home_dir = _get_projconf_option_dir(
-        "home_dir",
-        join(expanduser("~"), ".platformio")
-    )
+    home_dir = _get_projconf_option_dir("home_dir",
+                                        join(expanduser("~"), ".platformio"))
 
     if "windows" in get_systype():
         try:
@@ -234,10 +232,8 @@ URL=http://docs.platformio.org/en/stable/projectconf.html#envs-dir
 
 
 def get_projectdata_dir():
-    return _get_projconf_option_dir(
-        "data_dir",
-        join(get_project_dir(), "data")
-    )
+    return _get_projconf_option_dir("data_dir",
+                                    join(get_project_dir(), "data"))
 
 
 def load_project_config(project_dir=None):
@@ -259,17 +255,12 @@ def is_ci():
 
 
 def exec_command(*args, **kwargs):
-    result = {
-        "out": None,
-        "err": None,
-        "returncode": None
-    }
+    result = {"out": None, "err": None, "returncode": None}
 
     default = dict(
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        shell=system() == "Windows"
-    )
+        shell=system() == "Windows")
     default.update(kwargs)
     kwargs = default
 
@@ -344,9 +335,8 @@ def get_logicaldisks():
 
 def get_request_defheaders():
     import requests
-    return {"User-Agent": "PlatformIO/%s CI/%d %s" % (
-        __version__, int(is_ci()), requests.utils.default_user_agent()
-    )}
+    data = (__version__, int(is_ci()), requests.utils.default_user_agent())
+    return {"User-Agent": "PlatformIO/%s CI/%d %s" % data}
 
 
 @memoized
@@ -364,7 +354,7 @@ def get_api_result(path, params=None, data=None, skipdns=False):
     url = __apiurl__
     if skipdns:
         url = "http://%s" % __apiip__
-        headers['host'] = __apiurl__[__apiurl__.index("://")+3:]
+        headers['host'] = __apiurl__[__apiurl__.index("://") + 3:]
 
     try:
         if data:
@@ -390,8 +380,8 @@ def get_api_result(path, params=None, data=None, skipdns=False):
             "Could not connect to PlatformIO Registry Service. "
             "Please try later.")
     except ValueError:
-        raise exception.APIRequestError(
-            "Invalid response: %s" % r.text.encode("utf-8"))
+        raise exception.APIRequestError("Invalid response: %s" %
+                                        r.text.encode("utf-8"))
     finally:
         if r:
             r.close()
@@ -401,8 +391,8 @@ def get_api_result(path, params=None, data=None, skipdns=False):
 @memoized
 def _lookup_frameworks():
     frameworks = {}
-    frameworks_path = join(
-        get_source_dir(), "builder", "scripts", "frameworks")
+    frameworks_path = join(get_source_dir(), "builder", "scripts",
+                           "frameworks")
 
     frameworks_list = [f[:-3] for f in os.listdir(frameworks_path)
                        if not f.startswith("__") and f.endswith(".py")]
@@ -412,8 +402,8 @@ def _lookup_frameworks():
             fcontent = f.read()
             assert '"""' in fcontent
             _doc_start = fcontent.index('"""') + 3
-            fdoc = fcontent[
-                _doc_start:fcontent.index('"""', _doc_start)].strip()
+            fdoc = fcontent[_doc_start:fcontent.index('"""',
+                                                      _doc_start)].strip()
             doclines = [l.strip() for l in fdoc.splitlines() if l.strip()]
             frameworks[_type] = {
                 "name": doclines[0],
@@ -446,8 +436,7 @@ def where_is_program(program, envpath=None):
     try:
         result = exec_command(
             ["where" if "windows" in get_systype() else "which", program],
-            env=env
-        )
+            env=env)
         if result['returncode'] == 0 and isfile(result['out'].strip()):
             return result['out'].strip()
     except OSError:

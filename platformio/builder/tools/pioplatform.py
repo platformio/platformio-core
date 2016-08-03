@@ -89,9 +89,7 @@ def LoadPioPlatform(env, variables):
             env.Replace(**{k: board_config.get("%s.%s" % (_opt, _val))})
 
     if "build.ldscript" in board_config:
-        env.Replace(
-            LDSCRIPT_PATH=board_config.get("build.ldscript")
-        )
+        env.Replace(LDSCRIPT_PATH=board_config.get("build.ldscript"))
 
 
 def exists(_):
