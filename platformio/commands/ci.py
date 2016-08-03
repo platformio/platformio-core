@@ -121,7 +121,8 @@ def cli(ctx,  # pylint: disable=R0913
         if not keep_build_dir:
             rmtree(
                 build_dir,
-                onerror=lambda action, name, exc: (chmod(name, stat.S_IWRITE), remove(name)))
+                onerror=lambda action, name, exc: (chmod(name, stat.S_IWRITE),
+                                                   remove(name)))
 
 
 def _clean_dir(dirpath):
