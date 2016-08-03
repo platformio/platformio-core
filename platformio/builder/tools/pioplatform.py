@@ -23,23 +23,23 @@ from platformio.managers.platform import PlatformFactory
 
 
 @util.memoized
-def initDevPlatform(name):
+def initPioPlatform(name):
     return PlatformFactory.newPlatform(name)
 
 
-def DevPlatform(env):
+def PioPlatform(env):
     variables = {}
     for key in ("board", "pioframework"):
         if key not in env:
             continue
         variables[key] = env[key.upper()]
-    p = initDevPlatform(env['PLATFORM_MANIFEST'])
+    p = initPioPlatform(env['PLATFORM_MANIFEST'])
     p.configure_default_packages(variables, COMMAND_LINE_TARGETS)
     return p
 
 
 def BoardConfig(env, board=None):
-    p = initDevPlatform(env['PLATFORM_MANIFEST'])
+    p = initPioPlatform(env['PLATFORM_MANIFEST'])
     try:
         config = p.board_config(board if board else env['BOARD'])
     except exception.UnknownBoard as e:
@@ -48,7 +48,7 @@ def BoardConfig(env, board=None):
 
 
 def GetFrameworkScript(env, framework):
-    p = env.DevPlatform()
+    p = env.PioPlatform()
     assert p.frameworks and framework in p.frameworks
     script_path = env.subst(p.frameworks[framework]['script'])
     if not isfile(script_path):
@@ -56,8 +56,8 @@ def GetFrameworkScript(env, framework):
     return script_path
 
 
-def LoadDevPlatform(env, variables):
-    p = env.DevPlatform()
+def LoadPioPlatform(env, variables):
+    p = env.PioPlatform()
     installed_packages = p.get_installed_packages()
 
     # Add toolchains and uploaders to $PATH
@@ -99,8 +99,8 @@ def exists(_):
 
 
 def generate(env):
-    env.AddMethod(DevPlatform)
+    env.AddMethod(PioPlatform)
     env.AddMethod(BoardConfig)
     env.AddMethod(GetFrameworkScript)
-    env.AddMethod(LoadDevPlatform)
+    env.AddMethod(LoadPioPlatform)
     return env

@@ -161,7 +161,7 @@ def DumpIDEData(env):
             includes.extend(lb.get_inc_dirs())
 
         # includes from toolchains
-        p = env.DevPlatform()
+        p = env.PioPlatform()
         for name in p.get_installed_packages():
             if p.get_package_type(name) != "toolchain":
                 continue

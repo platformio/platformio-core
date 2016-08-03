@@ -62,7 +62,7 @@ def ProcessTest(env):
     )
     unitylib = env.BuildLibrary(
         join("$BUILD_DIR", "UnityTestLib"),
-        env.DevPlatform().get_package_dir("tool-unity")
+        env.PioPlatform().get_package_dir("tool-unity")
 
     )
     env.Prepend(LIBS=[unitylib])

@@ -68,7 +68,7 @@ commonvars.AddVariables(
 DefaultEnvironment(
     tools=[
         "ar", "as", "gcc", "g++", "gnulink",
-        "platformio", "devplatform",
+        "platformio", "pioplatform",
         "piolib", "piotest", "pioupload", "pioar", "piomisc"
     ],  # yapf: disable
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
@@ -118,7 +118,7 @@ for opt in ("LIB_IGNORE", "LIB_FORCE", "LIB_EXTRA_DIRS"):
     env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
 
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
-env.LoadDevPlatform(commonvars)
+env.LoadPioPlatform(commonvars)
 
 env.SConscriptChdir(0)
 env.SConsignFile(join("$PROJECTPIOENVS_DIR", ".sconsign.dblite"))
