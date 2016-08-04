@@ -146,7 +146,7 @@ if upload_protocol == "openocd":
             "-c", "\"telnet_port", "disabled;",
             "program", "{{$SOURCES}}",
             "verify", "reset",
-            "%s;" % user_code_section if user_code_section else "",
+            "%s;" % (user_code_section if user_code_section else ""),
             "shutdown\""
         ]
     )
