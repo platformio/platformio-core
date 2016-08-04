@@ -121,12 +121,11 @@ if upload_protocol == "openocd":
     env.Replace(
         UPLOADER=join("$PIOPACKAGES_DIR", "tool-openocd", "bin", "openocd"),
         UPLOADERFLAGS=[
-            "-d2",
             "-f", join(BOARD_OPTIONS.get("debug", {}).get("openocdcfg", "")),
-            "-s", join("$PIOPACKAGES_DIR", "tool-openocd",
-                       "share", "openocd", "scripts"),
-            "-s", join("$PIOPACKAGES_DIR", "tool-openocd",
-                       "share", "openocd", "scripts", "board")
+            "-s", '"%s"' % join("$PIOPACKAGES_DIR", "tool-openocd",
+                                "share", "openocd", "scripts"),
+            "-s", '"%s"' % join("$PIOPACKAGES_DIR", "tool-openocd",
+                                "share", "openocd", "scripts", "board")
         ],
 
         UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS'
@@ -135,19 +134,17 @@ if upload_protocol == "openocd":
     if "zero" in env.subst("$BOARD"):
         env.Append(
             UPLOADERFLAGS=[
-                "-s", join("$PLATFORMFW_DIR", "variants",
-                           "${BOARD_OPTIONS['build']['variant']}",
-                           "openocd_scripts")
+                "-s", '"%s"' % join("$PLATFORMFW_DIR", "variants",
+                                    "${BOARD_OPTIONS['build']['variant']}",
+                                    "openocd_scripts")
             ]
         )
 
     env.Append(
         UPLOADERFLAGS=[
-            "-c", "\"telnet_port", "disabled;",
-            "program", "{{$SOURCES}}",
-            "verify", "reset",
-            "%s;" % (user_code_section if user_code_section else ""),
-            "shutdown\""
+            "-c", ("telnet_port disabled; program {{$SOURCES}} "
+                   "verify reset %s; shutdown" % (
+                       user_code_section if user_code_section else ""))
         ]
     )
 
