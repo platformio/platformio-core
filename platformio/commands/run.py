@@ -16,7 +16,6 @@ from datetime import datetime
 from hashlib import sha1
 from os import getcwd, makedirs, walk
 from os.path import getmtime, isdir, isfile, join
-from shutil import rmtree
 from time import time
 
 import click
@@ -234,14 +233,14 @@ def _clean_pioenvs_dir(pioenvs_dir):
     if (isdir(pioenvs_dir) and
             getmtime(join(util.get_project_dir(), "platformio.ini")) >
             getmtime(pioenvs_dir)):
-        rmtree(pioenvs_dir)
+        util.rmtree_(pioenvs_dir)
 
     # check project structure
     if isdir(pioenvs_dir) and isfile(structhash_file):
         with open(structhash_file) as f:
             if f.read() == proj_hash:
                 return
-        rmtree(pioenvs_dir)
+        util.rmtree_(pioenvs_dir)
 
     if not isdir(pioenvs_dir):
         makedirs(pioenvs_dir)

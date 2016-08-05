@@ -12,16 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import stat
 from glob import glob
-from os import chmod, getenv, makedirs, remove
+from os import getenv, makedirs, remove
 from os.path import abspath, basename, expanduser, isdir, isfile, join
-from shutil import copyfile, copytree, rmtree
+from shutil import copyfile, copytree
 from tempfile import mkdtemp
 
 import click
 
-from platformio import app
+from platformio import app, util
 from platformio.commands.init import cli as cmd_init
 from platformio.commands.init import validate_boards
 from platformio.commands.run import cli as cmd_run
@@ -119,14 +118,11 @@ def cli(ctx,  # pylint: disable=R0913
         ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)
     finally:
         if not keep_build_dir:
-            rmtree(
-                build_dir,
-                onerror=lambda action, name, exc: (chmod(name, stat.S_IWRITE),
-                                                   remove(name)))
+            util.rmtree_(build_dir)
 
 
 def _clean_dir(dirpath):
-    rmtree(dirpath)
+    util.rmtree_(dirpath)
     makedirs(dirpath)
 
 
@@ -165,7 +161,7 @@ def _exclude_contents(dst_dir, patterns):
     for path in contents:
         path = abspath(path)
         if isdir(path):
-            rmtree(path)
+            util.rmtree_(path)
         elif isfile(path):
             remove(path)
 

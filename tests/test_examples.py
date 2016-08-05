@@ -15,11 +15,10 @@
 from glob import glob
 from os import listdir, walk
 from os.path import dirname, getsize, isdir, isfile, join, normpath
-from shutil import rmtree
 
 import pytest
 
-from platformio.util import exec_command
+from platformio import util
 
 
 def pytest_generate_tests(metafunc):
@@ -38,9 +37,9 @@ def pytest_generate_tests(metafunc):
 @pytest.mark.examples
 def test_run(platformio_setup, pioproject_dir):
     if isdir(join(pioproject_dir, ".pioenvs")):
-        rmtree(join(pioproject_dir, ".pioenvs"))
+        util.rmtree_(join(pioproject_dir, ".pioenvs"))
 
-    result = exec_command(
+    result = util.exec_command(
         ["platformio", "--force", "run", "--project-dir", pioproject_dir]
     )
     if result['returncode'] != 0:

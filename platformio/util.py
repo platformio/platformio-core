@@ -17,12 +17,14 @@ import functools
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, splitdrive)
 from platform import system, uname
+from shutil import rmtree
 from threading import Thread
 
 from platformio import __apiip__, __apiurl__, __version__, exception
@@ -454,3 +456,12 @@ def where_is_program(program, envpath=None):
 
 def pepver_to_semver(pepver):
     return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2", pepver, 1)
+
+
+def rmtree_(path):
+
+    def _onerror(_, name, __):
+        os.chmod(name, stat.S_IWRITE)
+        os.remove(name)
+
+    return rmtree(path, onerror=_onerror)

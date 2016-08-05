@@ -15,7 +15,7 @@
 import json
 import os
 from os.path import basename, dirname, isdir, isfile, islink, join
-from shutil import copyfile, copytree, rmtree
+from shutil import copyfile, copytree
 from tempfile import mkdtemp
 
 import click
@@ -159,7 +159,7 @@ class PkgInstallerMixin(object):
                     copytree(item_path, join(pkg_dir, item), symlinks=True)
             # remove not used contents
             while True:
-                rmtree(root)
+                util.rmtree_(root)
                 root = dirname(root)
                 if root == pkg_dir:
                     break
@@ -205,7 +205,7 @@ class PkgInstallerMixin(object):
                 if isfile(url):
                     self.unpack(url, tmp_dir)
                 else:
-                    rmtree(tmp_dir)
+                    util.rmtree_(tmp_dir)
                     copytree(url, tmp_dir)
             elif url.startswith(("http://", "https://")):
                 dlpath = self.download(url, tmp_dir, sha1)
@@ -228,7 +228,7 @@ class PkgInstallerMixin(object):
             pkg_dir = self._install_from_tmp_dir(tmp_dir, requirements)
         finally:
             if isdir(tmp_dir):
-                rmtree(tmp_dir)
+                util.rmtree_(tmp_dir)
         return pkg_dir
 
     def _install_from_tmp_dir(self, tmp_dir, requirements=None):
@@ -267,7 +267,7 @@ class PkgInstallerMixin(object):
 
         # remove previous/not-satisfied package
         if isdir(pkg_dir):
-            rmtree(pkg_dir)
+            util.rmtree_(pkg_dir)
         os.rename(tmp_dir, pkg_dir)
         assert isdir(pkg_dir)
         return pkg_dir
@@ -478,7 +478,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             if islink(installed_dir):
                 os.unlink(installed_dir)
             else:
-                rmtree(installed_dir)
+                util.rmtree_(installed_dir)
 
         click.echo("[%s]" % click.style("OK", fg="green"))
 
