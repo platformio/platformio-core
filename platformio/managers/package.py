@@ -492,8 +492,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
         manifest = self.load_manifest(installed_dir)
         click.echo(
-            "Updating %s @ %s: \t" % (click.style(
-                manifest['name'], fg="cyan"), manifest['version']),
+            "%s %s @ %s: \t" % ("Checking"
+                                if only_check else "Updating", click.style(
+                                    manifest['name'], fg="cyan"),
+                                manifest['version']),
             nl=False)
         manifest_path = self.get_manifest_path(installed_dir)
         if manifest_path.endswith(self.VCS_MANIFEST_NAME):
