@@ -522,6 +522,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             click.echo("[%s]" % (click.style("Out-of-date", fg="red")))
             if only_check:
                 return
+            self.uninstall(name, manifest['version'], trigger_event=False)
             self.install(name, latest_version, trigger_event=False)
 
         telemetry.on_event(

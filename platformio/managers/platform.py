@@ -43,7 +43,8 @@ class PlatformManager(BasePkgManager):
         return "platform.json"
 
     def install(self,  # pylint: disable=too-many-arguments,arguments-differ
-                name, requirements=None, with_packages=None,
+                name, requirements=None, quiet=False,
+                trigger_event=True, with_packages=None,
                 without_packages=None, skip_default_package=False):
         platform_dir = BasePkgManager.install(self, name, requirements)
         p = PlatformFactory.newPlatform(self.get_manifest_path(platform_dir))
@@ -52,12 +53,14 @@ class PlatformManager(BasePkgManager):
         self.cleanup_packages(p.packages.keys())
         return True
 
-    def uninstall(  # pylint: disable=arguments-differ
-            self, name, requirements=None):
+    def uninstall(self, name, requirements=None, trigger_event=True):
         name, requirements, _ = self.parse_pkg_name(name, requirements)
         p = PlatformFactory.newPlatform(name, requirements)
         BasePkgManager.uninstall(self, name, requirements)
-        self.cleanup_packages(p.packages.keys())
+        # trigger event is disabled when upgrading operation
+        # don't cleanup packages, "install" will do that
+        if trigger_event:
+            self.cleanup_packages(p.packages.keys())
         return True
 
     def update(self,  # pylint: disable=arguments-differ
@@ -67,7 +70,6 @@ class PlatformManager(BasePkgManager):
             BasePkgManager.update(self, name, requirements, only_check)
         p = PlatformFactory.newPlatform(name, requirements)
         p.update_packages(only_check)
-        self.cleanup_packages(p.packages.keys())
         return True
 
     def is_outdated(self, name, requirements=None):
@@ -137,13 +139,13 @@ class PlatformFactory(object):
 
     @classmethod
     def newPlatform(cls, name, requirements=None):
-        if not requirements and "@" in name:
-            name, requirements = name.rsplit("@", 1)
         platform_dir = None
         if name.endswith("platform.json") and isfile(name):
             platform_dir = dirname(name)
             name = util.load_json(name)['name']
         else:
+            if not requirements and "@" in name:
+                name, requirements = name.rsplit("@", 1)
             platform_dir = PlatformManager().get_installed_dir(name,
                                                                requirements)
 

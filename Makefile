@@ -5,12 +5,11 @@ lint:
 isort:
 	isort -rc ./platformio
 	isort -rc ./tests
-	isort -rc ./scripts
 
 yapf:
 	yapf --recursive --in-place platformio/
 
-before-commit: isort yapf pylint
+before-commit: isort yapf lint
 
 clean-docs:
 	rm -rf docs/_build
