@@ -84,7 +84,7 @@ def test_global_lib_show(clirunner, validate_cliresult, isolated_pio_home):
 def test_global_lib_update(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cli, ["-g", "update"])
     validate_cliresult(result)
-    assert all([s in result.output for s in ("Up-to-date", "Checking")])
+    assert all([s in result.output for s in ("[Up-to-date]", "[VCS]")])
 
 
 def test_global_lib_uninstall(clirunner, validate_cliresult,
