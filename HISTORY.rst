@@ -7,6 +7,11 @@ PlatformIO 3.0
 3.0.0 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* PlatformIO Plus
+
+  + `Unit Testing <http://docs.platformio.org/en/latest/platforms/unit_testing.html>`__ for Embedded
+    (`issue #408 <https://github.com/platformio/platformio/issues/408>`_)
+
 * Decentralized Development Platforms
 
   + Development platform manifest "platform.json" and
@@ -18,9 +23,6 @@ PlatformIO 3.0
     (`issue #479 <https://github.com/platformio/platformio/issues/479>`_)
   + Embedded Board compatibility with more than one development platform
     (`issue #456 <https://github.com/platformio/platformio/issues/456>`_)
-
-* `Unit Testing <http://docs.platformio.org/en/latest/platforms/unit_testing.html>`__ for Embedded
-  (`issue #408 <https://github.com/platformio/platformio/issues/408>`_)
 
 * Library Manager 3.0
 
@@ -41,7 +43,7 @@ PlatformIO 3.0
 * New Intelligent Library Build System
 
   + `Library Dependency Finder <http://docs.platformio.org/en/latest/faq.html#how-works-library-dependency-finder-ldf>`__
-    that interprets C Preprocessor conditional macros with deep search behavior
+    that interprets C/C++ Preprocessor conditional macros with deep search behavior
   + Check library compatibility with project environment before building
     (`issue #415 <https://github.com/platformio/platformio/issues/415>`_)
   + Control Library Dependency Finder for compatibility using

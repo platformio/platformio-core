@@ -133,11 +133,11 @@ This mode can be changed using :ref:`projectconf_lib_compat_mode` option in
 
 .. _ldf_c_cond_syntax:
 
-C Preprocessor conditional syntax
----------------------------------
+C/C++ Preprocessor conditional syntax
+-------------------------------------
 
 In spite of the fact that Library Dependency Finder is written in pure Python,
-it interprets (emulates) `C Preprocessor conditional syntax <https://gcc.gnu.org/onlinedocs/cpp/Conditional-Syntax.html#Conditional-Syntax>`_
+it interprets (emulates) `C/C++ Preprocessor conditional syntax <https://gcc.gnu.org/onlinedocs/cpp/Conditional-Syntax.html#Conditional-Syntax>`_
 (``#ifdef``, ``if``, ``defined``, ``else``, and ``elif``) without calling
 ``gcc -E``. For example,
 

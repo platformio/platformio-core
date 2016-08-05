@@ -14,7 +14,7 @@
 Unit Testing
 ============
 
-.. versionadded:: 3.0
+.. versionadded:: 3.0 (PlatformIO Plus)
 
 `Unit Testing (wiki) <https://en.wikipedia.org/wiki/Unit_testing>`_
 is a software testing method by which individual units of source code, sets
