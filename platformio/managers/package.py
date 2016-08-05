@@ -129,14 +129,15 @@ class PkgInstallerMixin(object):
         return self.get_manifest_path(pkg_dir) is not None
 
     def load_manifest(self, path):
+        assert path
         pkg_dir = path
         if isdir(path):
             path = self.get_manifest_path(path)
         else:
             pkg_dir = dirname(pkg_dir)
-        if isfile(path) and path.endswith(self.VCS_MANIFEST_NAME):
-            pkg_dir = dirname(pkg_dir)
         if path:
+            if isfile(path) and path.endswith(self.VCS_MANIFEST_NAME):
+                pkg_dir = dirname(dirname(path))
             manifest = util.load_json(path)
             manifest['__pkg_dir'] = pkg_dir
             return manifest
