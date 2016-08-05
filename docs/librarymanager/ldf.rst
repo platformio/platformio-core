@@ -61,12 +61,12 @@ Library Dependency Finder starts work from analyzing source files of the
 project (:ref:`projectconf_pio_src_dir`) and can work in the next modes:
 
 * ``0`` - "manual mode", does not process source files of a project and
-  dependent libraries. Builds only the libraries that are specified in
+  dependencies. Builds only the libraries that are specified in
   manifests (:ref:`library_config`, ``module.json``) or in the :ref:`projectconf`.
 * ``1`` - parses ALL C/C++ source code of the project and follows only by
   nested includes/chain (``#include ...``) from the libraries.
 * ``2`` - **default** - parses ALL C/C++ source code of the project and parses
-  ALL C/C++ source code of the each dependent library (recursively).
+  ALL C/C++ source code of the each dependency (recursively).
 
 This mode can be changed using :ref:`projectconf_lib_ldf_mode` option in
 :ref:`projectconf`.
@@ -110,7 +110,7 @@ A difference between ``1`` and ``2`` modes. For example, there are 2 libraries:
     Firstly, ``LDF`` finds "Foo" library, then it parses all sources from "Foo"
     library and finds ``Foo/foo.cpp`` that depends on ``#include <bar.h>``.
     Secondly, it will parse all sources from "Bar" library and this operation
-    continues until all dependent libraries will not be parsed.
+    continues until all dependencies will not be parsed.
 
 .. _ldf_compat_mode:
 
