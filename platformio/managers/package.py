@@ -109,12 +109,7 @@ class PkgInstallerMixin(object):
 
     VCS_MANIFEST_NAME = ".piopkgmanager.json"
 
-    def get_manifest_path(self, pkg_dir):
-        if not isdir(pkg_dir):
-            return None
-        manifest_path = join(pkg_dir, self.manifest_name)
-        if isfile(manifest_path):
-            return manifest_path
+    def get_vcs_manifest_path(self, pkg_dir):
         for item in os.listdir(pkg_dir):
             if not isdir(join(pkg_dir, item)):
                 continue
@@ -122,13 +117,27 @@ class PkgInstallerMixin(object):
                 return join(pkg_dir, item, self.VCS_MANIFEST_NAME)
         return None
 
+    def get_manifest_path(self, pkg_dir):
+        if not isdir(pkg_dir):
+            return None
+        manifest_path = join(pkg_dir, self.manifest_name)
+        if isfile(manifest_path):
+            return manifest_path
+        return self.get_vcs_manifest_path(pkg_dir)
+
     def manifest_exists(self, pkg_dir):
         return self.get_manifest_path(pkg_dir) is not None
 
-    def load_manifest(self, pkg_dir):
-        manifest_path = self.get_manifest_path(pkg_dir)
-        if manifest_path:
-            manifest = util.load_json(manifest_path)
+    def load_manifest(self, path):
+        pkg_dir = path
+        if isdir(path):
+            path = self.get_manifest_path(path)
+        else:
+            pkg_dir = dirname(pkg_dir)
+        if isfile(path) and path.endswith(self.VCS_MANIFEST_NAME):
+            pkg_dir = dirname(pkg_dir)
+        if path:
+            manifest = util.load_json(path)
             manifest['__pkg_dir'] = pkg_dir
             return manifest
         return None
@@ -401,8 +410,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 "%s @ %s is not installed" % (name, requirements or "*"),
                 fg="yellow")
             return
-        manifest_path = self.get_manifest_path(installed_dir)
-        if manifest_path.endswith(self.VCS_MANIFEST_NAME):
+        if self.get_vcs_manifest_path(installed_dir):
             return False
         manifest = self.load_manifest(installed_dir)
         return manifest['version'] != self.get_latest_repo_version(
@@ -490,19 +498,24 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 fg="yellow")
             return
 
-        manifest = self.load_manifest(installed_dir)
+        is_vcs_pkg = False
+        if self.get_vcs_manifest_path(installed_dir):
+            is_vcs_pkg = True
+            manifest_path = self.get_vcs_manifest_path(installed_dir)
+        else:
+            manifest_path = self.get_manifest_path(installed_dir)
+
+        manifest = self.load_manifest(manifest_path)
         click.echo(
             "%s %s @ %s: \t" % ("Checking"
                                 if only_check else "Updating", click.style(
-                                    manifest['name'], fg="cyan"),
-                                manifest['version']),
+                                    name, fg="cyan"), manifest['version']),
             nl=False)
-        manifest_path = self.get_manifest_path(installed_dir)
-        if manifest_path.endswith(self.VCS_MANIFEST_NAME):
+        if is_vcs_pkg:
             if only_check:
                 click.echo("[%s]" % (click.style("Skip", fg="yellow")))
                 return
-            click.echo("[%s]" % (click.style("Checking", fg="yellow")))
+            click.echo("[%s]" % (click.style("VCS", fg="yellow")))
             vcs = VCSClientFactory.newClient(installed_dir, manifest['url'])
             if not vcs.can_be_updated:
                 click.secho(
