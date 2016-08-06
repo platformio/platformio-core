@@ -71,13 +71,14 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
               type=click.Path(exists=True, file_okay=False, dir_okay=True,
                               writable=True, resolve_path=True))
 @click.option("--keep-build-dir", is_flag=True)
+@click.option("--enable-upload", is_flag=True)
 @click.option("--project-conf",
               type=click.Path(exists=True, file_okay=True, dir_okay=False,
                               readable=True, resolve_path=True))
 @click.option("--verbose", "-v", count=True, default=3)
 @click.pass_context
 def cli(ctx, src, lib, exclude, board,  # pylint: disable=R0913
-        build_dir, keep_build_dir, project_conf, verbose):
+        build_dir, keep_build_dir, enable_upload, project_conf, verbose):
 
     if not src:
         src = getenv("PLATFORMIO_CI_SRC", "").split(":")
@@ -105,10 +106,12 @@ def cli(ctx, src, lib, exclude, board,  # pylint: disable=R0913
             _exclude_contents(build_dir, exclude)
 
         # initialise project
-        ctx.invoke(cmd_init, project_dir=build_dir, board=board)
+        ctx.invoke(cmd_init, enable_auto_uploading=enable_upload,
+                   project_dir=build_dir, board=board)
 
         # process project
         ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)
+
     finally:
         if not keep_build_dir:
             rmtree(
