@@ -45,13 +45,13 @@ from platformio.managers.platform import PlatformFactory
 @click.option("--verbose", "-v", is_flag=True)
 @click.pass_context
 def cli(ctx, environment, skip, upload_port, project_dir, verbose):
-    assert check_project_envs(project_dir, environment)
     with util.cd(project_dir):
         test_dir = util.get_projecttest_dir()
         if not isdir(test_dir):
             raise exception.TestDirEmpty(test_dir)
         test_names = get_test_names(test_dir)
         projectconf = util.load_project_config()
+        assert check_project_envs(projectconf, environment)
 
     click.echo("Collected %d items" % len(test_names))
     click.echo()
