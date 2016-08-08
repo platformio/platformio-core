@@ -510,7 +510,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         click.echo(
             "%s %s @ %s: \t" % ("Checking"
                                 if only_check else "Updating", click.style(
-                                    name, fg="cyan"), manifest['version']),
+                                    manifest['name'], fg="cyan"),
+                                manifest['version']),
             nl=False)
         if is_vcs_pkg:
             if only_check:
