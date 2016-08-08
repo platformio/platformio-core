@@ -38,6 +38,7 @@ Usage
     # [LIBRARY...] forms
     platformio lib [STORAGE_OPTIONS] install (with no args, project dependencies)
     platformio lib [STORAGE_OPTIONS] install <id>
+    platformio lib [STORAGE_OPTIONS] install id=<id>
     platformio lib [STORAGE_OPTIONS] install <id>@<version>
     platformio lib [STORAGE_OPTIONS] install <id>@<version range>
     platformio lib [STORAGE_OPTIONS] install <name>
@@ -47,7 +48,7 @@ Usage
     platformio lib [STORAGE_OPTIONS] install file://<zip or tarball file>
     platformio lib [STORAGE_OPTIONS] install file://<folder>
     platformio lib [STORAGE_OPTIONS] install <repository>
-    platformio lib [STORAGE_OPTIONS] install <name=repository> (name it should have locally)
+    platformio lib [STORAGE_OPTIONS] install <name>=<repository> (name it should have locally)
     platformio lib [STORAGE_OPTIONS] install <repository#tag> ("tag" can be commit, branch or tag)
 
 Description

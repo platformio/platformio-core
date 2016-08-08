@@ -30,6 +30,7 @@ Library Dependency Finder has controls that can be set up in :ref:`projectconf`:
 .. hlist::
     :columns: 3
 
+    * :ref:`projectconf_lib_deps`
     * :ref:`projectconf_lib_extra_dirs`
     * :ref:`projectconf_lib_force`
     * :ref:`projectconf_lib_ignore`
@@ -43,12 +44,13 @@ Library Dependency Finder has controls that can be set up in :ref:`projectconf`:
 Storage
 -------
 
-There are different storages/folders where Library Dependency Finder looks for
-libraries. These folders/path have priority and LDF operates in the next order:
+There are different storages where Library Dependency Finder looks for
+libraries. These storages (folders) have priority and LDF operates in the next
+order:
 
 1. :ref:`projectconf_lib_extra_dirs` - extra storages per build environment
 2. :ref:`projectconf_pio_lib_dir` - own/private library storage per project
-3. :ref:`projectconf_pio_piolibdeps_dir` - project dependencies storage used by
+3. :ref:`projectconf_pio_libdeps_dir` - project dependencies storage used by
    :ref:`librarymanager`
 4. ":ref:`projectconf_pio_home_dir`/lib" - global storage per all projects.
 

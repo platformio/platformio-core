@@ -57,6 +57,10 @@ Allows to override :ref:`projectconf` option :ref:`projectconf_pio_home_dir`.
 
 Allows to override :ref:`projectconf` option :ref:`projectconf_pio_lib_dir`.
 
+.. envvar:: PLATFORMIO_LIBDEPS_DIR
+
+Allows to override :ref:`projectconf` option :ref:`projectconf_pio_libdeps_dir`.
+
 .. envvar:: PLATFORMIO_SRC_DIR
 
 Allows to override :ref:`projectconf` option :ref:`projectconf_pio_src_dir`.

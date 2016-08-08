@@ -102,17 +102,17 @@ Then in ``src/main.c`` you should use:
 PlatformIO will find your libraries automatically, configure preprocessor's
 include paths and build them.
 
-.. _projectconf_pio_piolibdeps_dir:
+.. _projectconf_pio_libdeps_dir:
 
-``piolibdeps_dir``
-^^^^^^^^^^^^^^^^^^
+``libdeps_dir``
+^^^^^^^^^^^^^^^
 
-Internal storage where :ref:`librarymanager` will install project dependencies.
-A default value is ``.piolibdeps`` that means that folder is located in the root of
-project.
+Internal storage where :ref:`librarymanager` will install project dependencies
+(:ref:`projectconf_lib_deps`). A default value is ``.piolibdeps`` that means
+that folder is located in the root of project.
 
 This option can be overridden by global environment variable
-:envvar:`PLATFORMIO_PIOLIBDEPS_DIR`.
+:envvar:`PLATFORMIO_LIBDEPS_DIR`.
 
 .. _projectconf_pio_src_dir:
 
@@ -639,21 +639,40 @@ Library options
 .. contents::
     :local:
 
-``lib_install``
-^^^^^^^^^^^^^^^
+.. _projectconf_lib_deps:
 
-Specify dependent libraries which should be installed before environment
-process. The only library IDs are allowed. Multiple libraries can be passed
-using comma ``,`` sign.
+``lib_deps``
+^^^^^^^^^^^^
 
-You can obtain library IDs using :ref:`cmd_lib_search` command.
+Specify project dependencies that should be installed automatically to
+:ref:`projectconf_pio_libdeps_dir` before an environment process.
+Multiple dependencies are allowed (multi-lines).
+
+**Valid forms**
+
+.. code-block:: ini
+
+  [env:***]
+  lib_deps =
+    LIBRARY_1
+    LIBRARY_2
+    LIBRARY_N
+
+The each line with ``LIBRARY_1... LIBRARY_N`` will be passed automatically to
+:ref:`cmd_lib_install` command. Please follow to :ref:`cmd_lib_install` for
+detailed documentation about possible values.
 
 Example:
 
 .. code-block:: ini
 
-    [env:depends_on_some_libs]
-    lib_install = 1,13,19
+  [env:depends_on_some_libs]
+  lib_deps =
+    1
+    PubSubClient
+    Json@~5.6,!=5.4
+    https://github.com/gioblu/PJON.git@v2.0
+    https://github.com/me-no-dev/ESPAsyncTCP.git
 
 .. _projectconf_lib_force:
 
@@ -663,12 +682,12 @@ Example:
 .. seealso::
     Please make sure to read :ref:`ldf` guide first.
 
-Force Library Dependency Finder to depend on the specified libraries if
-they even are not included in the project source code. Also, these
-libraries will be processed in the first order.
+Force Library Dependency Finder to depend on the specified library if it even
+is not included in the project source code. Also, this library will be
+processed in the first order.
 
-The correct value for this option is library name (not
-folder name). In the most cases, library name is pre-defined in manifest file
+The correct value for this option is library name (not folder name). In the
+most cases, library name is pre-defined in manifest file
 (:ref:`library_config`, ``library.properties``, ``module.json``). The multiple
 library names are allowed, split them with comma ``,`` separator.
 

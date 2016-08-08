@@ -111,13 +111,14 @@ def cli(ctx,  # pylint: disable=R0913,R0914
 
 class EnvironmentProcessor(object):
 
-    KNOWN_OPTIONS = (
-        "platform", "framework", "board", "board_mcu", "board_f_cpu",
-        "board_f_flash", "board_flash_mode", "build_flags", "src_build_flags",
-        "build_unflags", "src_filter", "extra_script", "targets",
-        "upload_port", "upload_protocol", "upload_speed", "upload_flags",
-        "upload_resetmethod", "lib_install", "lib_force", "lib_ignore",
-        "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode", "piotest")
+    KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
+                     "board_f_cpu", "board_f_flash", "board_flash_mode",
+                     "build_flags", "src_build_flags", "build_unflags",
+                     "src_filter", "extra_script", "targets", "upload_port",
+                     "upload_protocol", "upload_speed", "upload_flags",
+                     "upload_resetmethod", "lib_install", "lib_deps",
+                     "lib_force", "lib_ignore", "lib_extra_dirs",
+                     "lib_ldf_mode", "lib_compat_mode", "piotest")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
@@ -141,10 +142,18 @@ class EnvironmentProcessor(object):
         terminal_width, _ = click.get_terminal_size()
         start_time = time()
 
-        click.echo("[%s] Processing %s (%s)" % (
-            datetime.now().strftime("%c"), click.style(
-                self.name, fg="cyan", bold=True), ", ".join(
-                    ["%s: %s" % (k, v) for k, v in self.options.iteritems()])))
+        process_opts = []
+        for k, v in self.options.items():
+            if "\n" in v:
+                process_opts.append((k, "; ".join(
+                    [s.strip() for s in v.split("\n") if s.strip()])))
+            else:
+                process_opts.append((k, v))
+
+        click.echo("[%s] Processing %s (%s)" %
+                   (datetime.now().strftime("%c"), click.style(
+                       self.name, fg="cyan", bold=True),
+                    ", ".join(["%s: %s" % opts for opts in process_opts])))
         click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
@@ -212,8 +221,15 @@ class EnvironmentProcessor(object):
 
         # install dependent libraries
         if "lib_install" in self.options:
-            _autoinstall_libs(self.cmd_ctx, self.options['lib_install'],
-                              self.verbose)
+            _autoinstall_libdeps(self.cmd_ctx, [
+                int(d.strip()) for d in self.options['lib_install'].split(",")
+                if d.strip()
+            ], self.verbose)
+        if "lib_deps" in self.options:
+            _autoinstall_libdeps(self.cmd_ctx, [
+                d.strip() for d in self.options['lib_deps'].split("\n")
+                if d.strip()
+            ], self.verbose)
 
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])
@@ -225,15 +241,12 @@ class EnvironmentProcessor(object):
         return p.run(build_vars, build_targets, self.verbose)
 
 
-def _autoinstall_libs(ctx, libids_list, verbose=False):
+def _autoinstall_libdeps(ctx, libraries, verbose=False):
     storage_dir = util.get_projectlibdeps_dir()
     ctx.obj = LibraryManager(storage_dir)
     if verbose:
         click.echo("Library Storage: " + storage_dir)
-    ctx.invoke(
-        cmd_lib_install,
-        libraries=[int(l.strip()) for l in libids_list.split(",")],
-        quiet=not verbose)
+    ctx.invoke(cmd_lib_install, libraries=libraries, quiet=not verbose)
 
 
 def _clean_pioenvs_dir(pioenvs_dir):

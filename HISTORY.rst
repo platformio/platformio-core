@@ -26,10 +26,12 @@ PlatformIO 3.0
 
 * Library Manager 3.0
 
+  + Project dependencies per build environment using `lib_deps <http://docs.platformio.org/en/latest/projectconf.html#lib-deps>`__ option
+    (`issue #413 <https://github.com/platformio/platformio/issues/413>`_)
   + `Semantic Versioning <http://semver.org/>`__ for library commands and
     dependencies
     (`issue #410 <https://github.com/platformio/platformio/issues/410>`_)
-  + Multiple library storages: project's local, PlatformIO global or custom
+  + Multiple library storages: Project's Local, PlatformIO's Global or Custom
     (`issue #475 <https://github.com/platformio/platformio/issues/475>`_)
   + Install library by name
     (`issue #414 <https://github.com/platformio/platformio/issues/414>`_)
