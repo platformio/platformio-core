@@ -525,7 +525,7 @@ def BuildDependentLibraries(env, src_dir):
     project.search_deps_recursive(lib_builders)
 
     if project.depbuilders:
-        print "Project Dependencies Graph"
+        print "Library Dependency Graph"
         print_deps_tree(project)
     else:
         print "Project does not have dependencies"
