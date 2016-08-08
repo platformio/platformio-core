@@ -644,6 +644,10 @@ Library options
 ``lib_deps``
 ^^^^^^^^^^^^
 
+.. versionadded:: 3.0
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
+
 Specify project dependencies that should be installed automatically to
 :ref:`projectconf_pio_libdeps_dir` before an environment process.
 Multiple dependencies are allowed (multi-lines).
