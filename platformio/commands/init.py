@@ -198,10 +198,8 @@ Then in `src/main.c` you should use:
 PlatformIO will find your libraries automatically, configure preprocessor's
 include paths and build them.
 
-See additional options for PlatformIO Library Dependency Finder `lib_*`:
-
-http://docs.platformio.org/en/stable/projectconf.html#lib-install
-
+More information about PlatformIO Library Dependency Finder
+- http://docs.platformio.org/en/stable/librarymanager/ldf.html
 """)
 
 
