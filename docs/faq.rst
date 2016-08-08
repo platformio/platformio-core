@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -154,12 +154,6 @@ Answered in `issue #144 <https://github.com/platformio/platformio/issues/144#iss
 
 Building
 ~~~~~~~~
-
-Can not compile a library that compiles without issue with Arduino IDE
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-* `#298: Unable to use Souliss library <https://github.com/platformio/platformio/issues/298>`_
-* `#331: Unable to use MySensors library <https://github.com/platformio/platformio/issues/331>`_
 
 ARM toolchain: cc1plus: error while loading shared libraries
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''

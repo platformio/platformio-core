@@ -1,6 +1,79 @@
 Release Notes
 =============
 
+PlatformIO 3.0
+--------------
+
+3.0.0 (2016-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* PlatformIO Plus
+
+  + `Unit Testing <http://docs.platformio.org/en/latest/platforms/unit_testing.html>`__ for Embedded
+    (`issue #408 <https://github.com/platformio/platformio/issues/408>`_)
+
+* Decentralized Development Platforms
+
+  + Development platform manifest "platform.json" and
+    `open source development platforms <https://github.com/platformio?utf8=✓&query=platform->`__
+  + `Semantic Versioning <http://semver.org/>`__ for platform commands,
+    development platforms and dependent packages
+  + Custom package repositories
+  + External embedded board configuration files, isolated build scripts
+    (`issue #479 <https://github.com/platformio/platformio/issues/479>`_)
+  + Embedded Board compatibility with more than one development platform
+    (`issue #456 <https://github.com/platformio/platformio/issues/456>`_)
+
+* Library Manager 3.0
+
+  + Project dependencies per build environment using `lib_deps <http://docs.platformio.org/en/latest/projectconf.html#lib-deps>`__ option
+    (`issue #413 <https://github.com/platformio/platformio/issues/413>`_)
+  + `Semantic Versioning <http://semver.org/>`__ for library commands and
+    dependencies
+    (`issue #410 <https://github.com/platformio/platformio/issues/410>`_)
+  + Multiple library storages: Project's Local, PlatformIO's Global or Custom
+    (`issue #475 <https://github.com/platformio/platformio/issues/475>`_)
+  + Install library by name
+    (`issue #414 <https://github.com/platformio/platformio/issues/414>`_)
+  + Depend on a library using VCS URL (GitHub, Git, ARM mbed code registry, Hg, SVN)
+    (`issue #498 <https://github.com/platformio/platformio/issues/498>`_)
+  + Strict search for library dependencies
+    (`issue #588 <https://github.com/platformio/platformio/issues/588>`_)
+  + Allowed ``library.json`` to specify sources other than PlatformIO's Repository
+    (`issue #461 <https://github.com/platformio/platformio/issues/461>`_)
+
+* New Intelligent Library Build System
+
+  + `Library Dependency Finder <http://docs.platformio.org/en/latest/faq.html#how-works-library-dependency-finder-ldf>`__
+    that interprets C/C++ Preprocessor conditional macros with deep search behavior
+  + Check library compatibility with project environment before building
+    (`issue #415 <https://github.com/platformio/platformio/issues/415>`_)
+  + Control Library Dependency Finder for compatibility using
+    `lib_compat_mode <http://docs.platformio.org/en/latest/projectconf.html#lib-compat-mode>`__
+    option
+  + Custom library storages/directories with
+    `lib_extra_dirs <http://docs.platformio.org/en/latest/projectconf.html#lib-extra-dirs>`__ option
+    (`issue #537 <https://github.com/platformio/platformio/issues/537>`_)
+  + Handle extra build flags, source filters and build script from
+    `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
+    (`issue #289 <https://github.com/platformio/platformio/issues/289>`_)
+  + Allowed to disable library archiving (``*.ar``)
+    (`issue #719 <https://github.com/platformio/platformio/issues/719>`_)
+  + Show detailed build information about dependent libraries
+    (`issue #617 <https://github.com/platformio/platformio/issues/617>`_)
+  + Support for the 3rd party manifests (Arduino IDE "library.properties"
+    and ARM mbed "module.json")
+
+* Print human-readable information when processing environments without
+  ``-v, --verbose`` option
+  (`issue #721 <https://github.com/platformio/platformio/issues/721>`_)
+* Added ``license`` field to `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
+  (`issue #522 <https://github.com/platformio/platformio/issues/522>`_)
+* Warn about unknown options in project configuration file ``platformio.ini``
+  (`issue #740 <https://github.com/platformio/platformio/issues/740>`_)
+* Stopped supporting Python 2.6
+
+
 PlatformIO 2.0
 --------------
 

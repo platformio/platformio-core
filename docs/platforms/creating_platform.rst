@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -14,7 +14,7 @@
 Custom Development Platform
 ===========================
 
-*PlatformIO* was developed like a tool which would build the same source code
+*PlatformIO* was developed like a tool that may build the same source code
 for the different development platforms via single command :ref:`cmd_run`
 without any dependent software or requirements.
 
@@ -32,7 +32,7 @@ different/own build scripts, uploader and etc.
 
 **Step-by-Step Manual**
 
-1. Chose :ref:`platform_creating_packages` for platform
+1. Choose :ref:`platform_creating_packages` for platform
 2. Create :ref:`platform_creating_manifest_file`
 3. Create :ref:`platform_creating_build_script`
 4. Finish with the :ref:`platform_creating_installation`.
@@ -187,89 +187,82 @@ Packages
 
 .. _platform_creating_manifest_file:
 
-Manifest File
--------------
+Manifest File ``platform.json``
+-------------------------------
 
-A platform manifest file is a `Python <https://www.python.org>`_ script with the
-next requirements:
+.. code-block:: json
 
-1. The file should have ``.py`` extension
-2. The **name of the file** is the **platform name** (lowercase)
-3. The source code of this file should contain a ``class`` which describes your
-   own platform. The name of the ``class`` should start with your
-   **platform name** (the first letter should be capitalized) + ``Platform``
-   ending. This ``class`` should be derived from *PlatformIO* ``BasePlatform``
-   class.
-
-.. warning::
-    If you are new to *Python* language, please read:
-
-    * `Style Guide for Python Code <https://www.python.org/dev/peps/pep-0008>`_.
-    * A hash sign (#) that is not inside a string literal begins a comment.
-      All characters after the # and up to the physical line end are part
-      of the comment and the *Python* interpreter ignores them.
-
-Example of the **test** platform (``test.py``):
-
-.. code-block:: python
-
-    import os
-
-    from platformio.platforms.base import BasePlatform
-
-    class TestPlatform(BasePlatform):
-        # This is a description of your platform.
-        # Platformio uses it for the `platformio search / list` commands
-        """
-            My Test platform - test.py
-        """
-
-        PACKAGES = {
-
-            "toolchain-foo": {
-
-                # alias is used for quick access to package.
-                # For example,
-                # `> platformio install test --without-package=toolchain`
-                "alias": "toolchain",
-
-                # Flag which allows PlatformIO to install this package by
-                # default via `> platformio install test` command
-                "default": True
-            },
-
-            "tool-bar": {
-                "alias": "uploader",
-                "default": True
-            },
-
-            "framework-baz": {
-                "default": True
+    {
+      "name": "myplatform",
+      "title": "My Platform",
+      "description": "My custom development platform",
+      "url": "http://example.com",
+      "homepage": "http://platformio.org/platforms/myplatform",
+      "license": {
+        "type": "Apache-2.0",
+        "url": "http://opensource.org/licenses/apache2.0.php"
+      },
+      "engines": {
+        "platformio": "~3.0.0",
+        "scons": ">=2.3.0,<2.6.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/platformio/platform-myplatform.git"
+      },
+      "version": "0.0.0",
+      "packageRepositories": [
+        "https://dl.bintray.com/platformio/dl-packages/manifest.json",
+        "https://sourceforge.net/projects/platformio-storage/files/packages/manifest.json/download",
+        "http://dl.platformio.org/packages/manifest.json",
+        {
+          "framework-%FRAMEWORK_NAME_1%": [
+            {
+              "url": "http://dl.example.com/packages/framework-%FRAMEWORK_NAME_1%-1.10607.0.tar.gz",
+              "sha1": "adce2cd30a830d71cb6572575bf08461b7b73c07",
+              "version": "1.10607.0",
+              "system": "*"
             }
+          ]
         }
-
-        def get_build_script(self):
-            """ Returns a path to build script """
-
-            # You can return static path
-            #return "/path/to/test-builder.py"
-
-            # or detect dynamically if `test-builder.py` is located in the same
-            # folder with `test.py`
-            return os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                "test-builder.py"
-            )
+      ],
+      "frameworks": {
+        "%FRAMEWORK_NAME_1%": {
+          "package": "framework-%FRAMEWORK_NAME_1%",
+          "script": "builder/frameworks/%FRAMEWORK_NAME_1%.py"
+        },
+        "%FRAMEWORK_NAME_N%": {
+          "package": "framework-%FRAMEWORK_NAME_N%",
+          "script": "builder/frameworks/%FRAMEWORK_NAME_N%.py"
+        }
+      },
+      "packages": {
+        "toolchain-gccarmnoneeabi": {
+          "type": "toolchain",
+          "version": ">=1.40803.0,<1.40805.0"
+        },
+        "framework-%FRAMEWORK_NAME_1%": {
+          "type": "framework",
+          "optional": true,
+          "version": "~1.10607.0"
+        },
+        "framework-%FRAMEWORK_NAME_N%": {
+          "type": "framework",
+          "optional": true,
+          "version": "~1.117.0"
+        }
+      }
+    }
 
 .. _platform_creating_build_script:
 
-Build Script
-------------
+Build Script ``main.py``
+------------------------
 
 Platform's build script is based on a next-generation build tool named
 `SCons <http://www.scons.org>`_. PlatformIO has own built-in firmware builder
-``env.BuildProgram`` with the nested libraries search. Please look into a
-base template of ``test-builder.py``.
+``env.BuildProgram`` with the deep libraries search. Please look into a
+base template of ``main.py``.
 
 .. code-block:: python
 
@@ -347,15 +340,6 @@ base template of ``test-builder.py``.
     Default(target_bin)
 
 
-Please look into the examples with built-in scripts for the popular
-platforms:
-
-* `baseavr.py <https://github.com/platformio/platformio/blob/develop/platformio/builder/scripts/baseavr.py>`_
-* `basearm.py <https://github.com/platformio/platformio/blob/develop/platformio/builder/scripts/basearm.py>`_
-* `atmelavr.py <https://github.com/platformio/platformio/blob/develop/platformio/builder/scripts/atmelavr.py>`_
-* `timsp430.py <https://github.com/platformio/platformio/blob/develop/platformio/builder/scripts/timsp430.py>`_
-* `ststm32.py <https://github.com/platformio/platformio/blob/develop/platformio/builder/scripts/ststm32.py>`_
-
 .. _platform_creating_installation:
 
 Installation
@@ -363,126 +347,17 @@ Installation
 
 1. Create ``platforms`` directory in :ref:`projectconf_pio_home_dir` if it
    doesn't exist.
-2. Copy ``test.py`` and ``test-builder.py`` files to ``platforms`` directory.
-3. Search available platforms via :ref:`cmd_platforms_search` command. You should see
-   ``test`` platform.
-4. Install ``test`` platform via :ref:`cmd_platforms_install` command.
+2. Create ``myplatform`` directory in ``platforms``
+3. Copy ``platform.json`` and ``builder/main.py`` files to ``myplatform`` directory.
+4. Search available platforms via :ref:`cmd_platform_search` command. You
+   should see ``myplatform`` platform.
+5. Install ``myplatform`` platform via :ref:`cmd_platform_install` command.
 
-Now, you can use ``test`` for the :ref:`projectconf_env_platform` option in
-:ref:`projectconf`.
+Now, you can use ``myplatform`` for the :ref:`projectconf_env_platform`
+option in :ref:`projectconf`.
 
-Example
--------
+Examples
+--------
 
-Let's use the real example which was requested by our user in `issue 175 <https://github.com/platformio/platformio/issues/175>`_. Need to add support for uploading firmware using GDB to
-:ref:`platform_ststm32`.
-
-First of all, need to create new folder ``platforms`` in :ref:`projectconf_pio_home_dir`
-and copy there two files:
-
-1. Platform manifest file ``ststm32gdb.py`` with the next content:
-
-.. code-block:: python
-
-    import os
-
-    from platformio.platforms.ststm32 import Ststm32Platform
-
-
-    class Ststm32gdbPlatform(Ststm32Platform):
-
-        """
-        ST STM32 using GDB as uploader
-
-        http://www.st.com/web/en/catalog/mmc/FM141/SC1169?sc=stm32
-        """
-
-        def get_build_script(self):
-
-            return os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                "ststm32gdb-builder.py"
-            )
-
-2. Build script file ``ststm32gdb-builder.py`` with the next content:
-
-.. code-block:: python
-
-    """
-        Builder for ST STM32 Series ARM microcontrollers with GDB upload.
-    """
-
-    from os.path import join
-
-    from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
-                              DefaultEnvironment, SConscript)
-
-
-    env = DefaultEnvironment()
-
-    SConscript(env.subst(join("$PIOBUILDER_DIR", "scripts", "basearm.py")))
-
-    env.Replace(
-        UPLOADER=join(
-            "$PIOPACKAGES_DIR", "toolchain-gccarmnoneeabi",
-            "bin", "arm-none-eabi-gdb"
-        ),
-        UPLOADERFLAGS=[
-            join("$BUILD_DIR", "firmware.elf"),
-            "-batch",
-            "-x", join("$PROJECT_DIR", "upload.gdb")
-        ],
-
-        UPLOADCMD="$UPLOADER $UPLOADERFLAGS"
-    )
-
-    env.Append(
-        CPPDEFINES=[
-            "${BOARD_OPTIONS['build']['variant'].upper()}"
-        ],
-
-        LINKFLAGS=[
-            "-nostartfiles",
-            "-nostdlib"
-        ]
-    )
-
-    #
-    # Target: Build executable and linkable firmware
-    #
-
-    target_elf = env.BuildProgram()
-
-    #
-    # Target: Build the .bin file
-    #
-
-    if "uploadlazy" in COMMAND_LINE_TARGETS:
-        target_firm = join("$BUILD_DIR", "firmware.bin")
-    else:
-        target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
-
-    #
-    # Target: Print binary size
-    #
-
-    target_size = env.Alias("size", target_elf, "$SIZEPRINTCMD")
-    AlwaysBuild(target_size)
-
-    #
-    # Target: Upload by default .bin file
-    #
-
-    upload = env.Alias(
-        ["upload", "uploadlazy"], target_firm, "$UPLOADCMD")
-    AlwaysBuild(upload)
-
-    #
-    # Target: Define targets
-    #
-
-    Default([target_firm, target_size])
-
-Now, we should see ``ststm32gdb`` platform using :ref:`cmd_platforms_search` command output
-and can install it via :ref:`platformio platforms install ststm32gdb <cmd_platforms_install>` command.
-
+Please take a look at the source code of
+`PlatformIO Development Platforms <https://github.com/platformio?query=platform->`_.

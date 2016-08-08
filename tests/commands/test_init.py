@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import makedirs, getcwd
+import json
+from os import getcwd, makedirs
 from os.path import getsize, isdir, isfile, join
 
-from platformio.commands.init import cli
 from platformio import util
+from platformio.commands.boards import cli as cmd_boards
+from platformio.commands.init import cli
 
 
 def validate_pioproject(pioproject_dir):
@@ -56,11 +58,14 @@ def test_init_special_board(platformio_setup, clirunner, validate_cliresult):
         validate_cliresult(result)
         validate_pioproject(getcwd())
 
-        uno = util.get_boards("uno")
-        config = util.get_project_config()
+        result = clirunner.invoke(cmd_boards, ["Arduino Uno", "--json-output"])
+        validate_cliresult(result)
+        boards = json.loads(result.output)
+
+        config = util.load_project_config()
         expected_result = [
-            ("platform", str(uno['platform'])),
-            ("framework", str(uno['frameworks'][0])),
+            ("platform", str(boards[0]['platform'])),
+            ("framework", str(boards[0]['frameworks'][0])),
             ("board", "uno")
         ]
 
@@ -76,7 +81,7 @@ def test_init_enable_auto_uploading(platformio_setup, clirunner,
                                   ["-b", "uno", "--enable-auto-uploading"])
         validate_cliresult(result)
         validate_pioproject(getcwd())
-        config = util.get_project_config()
+        config = util.load_project_config()
         expected_result = [
             ("platform", "atmelavr"),
             ("framework", "arduino"),
@@ -91,5 +96,5 @@ def test_init_enable_auto_uploading(platformio_setup, clirunner,
 def test_init_incorrect_board(clirunner):
     result = clirunner.invoke(cli, ["-b", "missed_board"])
     assert result.exit_code == 2
-    assert 'Error: Invalid value for "--board" / "-b"' in result.output
+    assert 'Error: Invalid value for "-b" / "--board' in result.output
     assert isinstance(result.exception, SystemExit)

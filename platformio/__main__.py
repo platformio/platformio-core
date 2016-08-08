@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,8 +40,8 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
     def get_command(self, ctx, name):
         mod = None
         try:
-            mod = __import__("platformio.commands." + name,
-                             None, None, ["cli"])
+            mod = __import__("platformio.commands." + name, None, None,
+                             ["cli"])
         except ImportError:
             try:
                 return self._handle_obsolate_command(name)
@@ -51,23 +51,21 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
 
     @staticmethod
     def _handle_obsolate_command(name):
-        if name in ("install", "list", "search", "show", "uninstall"):
-            click.secho(
-                "Warning! `platformio %s` command is deprecated and will be "
-                "removed in the next release! Please use "
-                "`platformio platforms %s` instead." % (name, name),
-                fg="yellow"
-            )
-            from platformio.commands import platforms
-            return getattr(platforms, "platforms_" + name)
+        if name == "platforms":
+            from platformio.commands import platform
+            return platform.cli
         raise AttributeError()
 
 
-@click.command(cls=PlatformioCLI,
-               context_settings=dict(help_option_names=["-h", "--help"]))
+@click.command(
+    cls=PlatformioCLI,
+    context_settings=dict(help_option_names=["-h", "--help"]))
 @click.version_option(__version__, prog_name="PlatformIO")
-@click.option("--force", "-f", is_flag=True,
-              help="Force to accept any confirmation prompts.")
+@click.option(
+    "--force",
+    "-f",
+    is_flag=True,
+    help="Force to accept any confirmation prompts.")
 @click.option("--caller", "-c", help="Caller ID (service).")
 @click.pass_context
 def cli(ctx, force, caller):

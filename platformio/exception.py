@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ class BoardNotDefined(PlatformioException):
 
 class UnknownBoard(PlatformioException):
 
-    MESSAGE = "Unknown board type '{0}'"
+    MESSAGE = "Unknown board ID '{0}'"
 
 
 class UnknownFramework(PlatformioException):
@@ -70,14 +70,16 @@ class UnknownPackage(PlatformioException):
     MESSAGE = "Detected unknown package '{0}'"
 
 
-class InvalidPackageVersion(PlatformioException):
+class UndefinedPackageVersion(PlatformioException):
 
-    MESSAGE = "The package '{0}' with version '{1:d}' does not exist"
+    MESSAGE = "Could not find a version that satisfies the requirement '{0}'"\
+              " for your system '{1}'"
 
 
-class NonSystemPackage(PlatformioException):
+class PackageInstallError(PlatformioException):
 
-    MESSAGE = "The package '{0}' is not available for your system '{1}'"
+    MESSAGE = "Can not install '{0}' with version requirements '{1}' "\
+              "for your system '{2}'"
 
 
 class FDUnrecognizedStatusCode(PlatformioException):
@@ -97,7 +99,7 @@ class FDSHASumMismatch(PlatformioException):
         "is not equal to remote '{2}'"
 
 
-class NotPlatformProject(PlatformioException):
+class NotPlatformIOProject(PlatformioException):
 
     MESSAGE = "Not a PlatformIO project. `platformio.ini` file has not been "\
         "found in current working directory ({0}). To initialize new project "\
@@ -144,18 +146,9 @@ class APIRequestError(PlatformioException):
     MESSAGE = "[API] {0}"
 
 
-class LibAlreadyInstalled(PlatformioException):
-    pass
+class LibNotFound(PlatformioException):
 
-
-class LibNotInstalled(PlatformioException):
-
-    MESSAGE = "Library #{0:d} has not been installed yet"
-
-
-class LibInstallDependencyError(PlatformioException):
-
-    MESSAGE = "Error has been occurred for library dependency '{0}'"
+    MESSAGE = "Library `{0}` has not been found in the registry"
 
 
 class InvalidLibConfURL(PlatformioException):
@@ -183,6 +176,13 @@ class CIBuildEnvsEmpty(PlatformioException):
     MESSAGE = "Can't find PlatformIO build environments.\n"\
         "Please specify `--board` or path to `platformio.ini` with "\
         "predefined environments using `--project-conf` option"
+
+
+class TestDirEmpty(PlatformioException):
+
+    MESSAGE = "Test directory '{0}' is empty. More details about Unit "\
+              "Testing:\n http://docs.platformio.org/en/stable/platforms/"\
+              "unit_testing.html"
 
 
 class UpgradeError(PlatformioException):

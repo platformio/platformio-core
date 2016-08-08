@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -210,8 +210,7 @@ class MPDataPusher(object):
                 "https://ssl.google-analytics.com/collect",
                 data=data,
                 headers=util.get_request_defheaders(),
-                timeout=1
-            )
+                timeout=1)
             r.raise_for_status()
             return True
         except:  # pylint: disable=W0702
@@ -233,11 +232,7 @@ def on_command():
 
 
 def measure_ci():
-    event = {
-        "category": "CI",
-        "action": "NoName",
-        "label": None
-    }
+    event = {"category": "CI", "action": "NoName", "label": None}
 
     envmap = {
         "APPVEYOR": {"label": getenv("APPVEYOR_REPO_NAME")},
@@ -258,11 +253,7 @@ def measure_ci():
 
 def measure_caller(calller_id):
     calller_id = str(calller_id)[:20].lower()
-    event = {
-        "category": "Caller",
-        "action": "Misc",
-        "label": calller_id
-    }
+    event = {"category": "Caller", "action": "Misc", "label": calller_id}
     if calller_id in (["atom", "vim"] + ProjectGenerator.get_supported_ides()):
         event['action'] = "IDE"
     on_event(**event)

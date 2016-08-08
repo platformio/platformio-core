@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -62,9 +62,10 @@ Commands
     cmd_boards
     cmd_ci
     cmd_init
-    platformio platforms <platforms/index>
+    platformio platform <platforms/index>
     cmd_run
     cmd_serialports
     cmd_settings
+    cmd_test
     cmd_update
     cmd_upgrade

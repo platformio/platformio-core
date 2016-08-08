@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,59 +16,64 @@ from datetime import datetime
 from hashlib import sha1
 from os import getcwd, makedirs, walk
 from os.path import getmtime, isdir, isfile, join
-from shutil import rmtree
 from time import time
 
 import click
 
-from platformio import __version__, app, exception, telemetry, util
+from platformio import __version__, exception, telemetry, util
 from platformio.commands.lib import lib_install as cmd_lib_install
-from platformio.libmanager import LibraryManager
-from platformio.platforms.base import PlatformFactory
+from platformio.commands.platform import \
+    platform_install as cmd_platform_install
+from platformio.managers.lib import LibraryManager
+from platformio.managers.platform import PlatformFactory
 
 
 @click.command("run", short_help="Process project environments")
-@click.option("--environment", "-e", multiple=True, metavar="<environment>")
-@click.option("--target", "-t", multiple=True, metavar="<target>")
-@click.option("--upload-port", metavar="<upload port>")
-@click.option("--project-dir", "-d", default=getcwd,
-              type=click.Path(exists=True, file_okay=False, dir_okay=True,
-                              writable=True, resolve_path=True))
-@click.option("--verbose", "-v", count=True, default=3)
+@click.option("-e", "--environment", multiple=True)
+@click.option("-t", "--target", multiple=True)
+@click.option("--upload-port")
+@click.option(
+    "-d",
+    "--project-dir",
+    default=getcwd,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        resolve_path=True))
+@click.option("-v", "--verbose", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.pass_context
-def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
-        project_dir, verbose, disable_auto_clean):
+def cli(ctx,  # pylint: disable=R0913,R0914
+        environment,
+        target,
+        upload_port,
+        project_dir,
+        verbose,
+        disable_auto_clean):
     with util.cd(project_dir):
-        config = util.get_project_config()
-
-        if not config.sections():
-            raise exception.ProjectEnvsNotAvailable()
-
-        known = set([s[4:] for s in config.sections()
-                     if s.startswith("env:")])
-        unknown = set(environment) - known
-        if unknown:
-            raise exception.UnknownEnvNames(
-                ", ".join(unknown), ", ".join(known))
-
         # clean obsolete .pioenvs dir
         if not disable_auto_clean:
             try:
-                _clean_pioenvs_dir(util.get_pioenvs_dir())
+                _clean_pioenvs_dir(util.get_projectpioenvs_dir())
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
                     "`.pioenvs` directory from the project manually to avoid "
-                    "build issues" % util.get_pioenvs_dir(),
-                    fg="yellow"
-                )
+                    "build issues" % util.get_projectpioenvs_dir(),
+                    fg="yellow")
+
+        config = util.load_project_config()
+        check_project_defopts(config)
+        assert check_project_envs(config, environment)
 
         env_default = None
         if config.has_option("platformio", "env_default"):
             env_default = [
                 e.strip()
-                for e in config.get("platformio", "env_default").split(",")]
+                for e in config.get("platformio", "env_default").split(",")
+            ]
 
         results = []
         for section in config.sections():
@@ -80,9 +85,10 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
                 raise exception.InvalidEnvName(section)
 
             envname = section[4:]
-            if ((environment and envname not in environment) or
-                    (not environment and env_default and
-                     envname not in env_default)):
+            skipenv = any([environment and envname not in environment,
+                           not environment and env_default and
+                           envname not in env_default])
+            if skipenv:
                 # echo("Skipped %s environment" % style(envname, fg="yellow"))
                 continue
 
@@ -92,9 +98,11 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
             options = {}
             for k, v in config.items(section):
                 options[k] = v
+            if "piotest" not in options and "piotest" in ctx.meta:
+                options['piotest'] = ctx.meta['piotest']
 
-            ep = EnvironmentProcessor(
-                ctx, envname, options, target, upload_port, verbose)
+            ep = EnvironmentProcessor(ctx, envname, options, target,
+                                      upload_port, verbose)
             results.append(ep.process())
 
         if not all(results):
@@ -103,63 +111,82 @@ def cli(ctx, environment, target, upload_port,  # pylint: disable=R0913,R0914
 
 class EnvironmentProcessor(object):
 
-    RENAMED_OPTIONS = {
-        "INSTALL_LIBS": "LIB_INSTALL",
-        "IGNORE_LIBS": "LIB_IGNORE",
-        "USE_LIBS": "LIB_USE",
-        "LDF_CYCLIC": "LIB_DFCYCLIC",
-        "SRCBUILD_FLAGS": "SRC_BUILD_FLAGS"
-    }
+    KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
+                     "board_f_cpu", "board_f_flash", "board_flash_mode",
+                     "build_flags", "src_build_flags", "build_unflags",
+                     "src_filter", "extra_script", "targets", "upload_port",
+                     "upload_protocol", "upload_speed", "upload_flags",
+                     "upload_resetmethod", "lib_install", "lib_deps",
+                     "lib_force", "lib_ignore", "lib_extra_dirs",
+                     "lib_ldf_mode", "lib_compat_mode", "piotest")
 
-    def __init__(self, cmd_ctx, name, options,  # pylint: disable=R0913
-                 targets, upload_port, verbose):
+    REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
+
+    RENAMED_OPTIONS = {"lib_use": "lib_force"}
+
+    def __init__(self,  # pylint: disable=R0913
+                 cmd_ctx,
+                 name,
+                 options,
+                 targets,
+                 upload_port,
+                 verbose):
         self.cmd_ctx = cmd_ctx
         self.name = name
-        self.options = self._validate_options(options)
+        self.options = options
         self.targets = targets
         self.upload_port = upload_port
-        self.verbose_level = int(verbose)
+        self.verbose = verbose
 
     def process(self):
         terminal_width, _ = click.get_terminal_size()
         start_time = time()
 
-        click.echo("[%s] Processing %s (%s)" % (
-            datetime.now().strftime("%c"),
-            click.style(self.name, fg="cyan", bold=True),
-            ", ".join(["%s: %s" % (k, v) for k, v in self.options.iteritems()])
-        ))
+        process_opts = []
+        for k, v in self.options.items():
+            if "\n" in v:
+                process_opts.append((k, "; ".join(
+                    [s.strip() for s in v.split("\n") if s.strip()])))
+            else:
+                process_opts.append((k, v))
+
+        click.echo("[%s] Processing %s (%s)" %
+                   (datetime.now().strftime("%c"), click.style(
+                       self.name, fg="cyan", bold=True),
+                    ", ".join(["%s: %s" % opts for opts in process_opts])))
         click.secho("-" * terminal_width, bold=True)
 
+        self.options = self._validate_options(self.options)
         result = self._run()
 
         is_error = result['returncode'] != 0
-        summary_text = " Took %.2f seconds " % (time() - start_time)
-        half_line = "=" * ((terminal_width - len(summary_text) - 10) / 2)
-        click.echo("%s [%s]%s%s" % (
-            half_line,
-            (click.style(" ERROR ", fg="red", bold=True)
-             if is_error else click.style("SUCCESS", fg="green", bold=True)),
-            summary_text,
-            half_line
-        ), err=is_error)
+        if is_error or "piotest_processor" not in self.cmd_ctx.meta:
+            print_header(
+                "[%s] Took %.2f seconds" % ((click.style(
+                    "ERROR", fg="red", bold=True) if is_error else click.style(
+                        "SUCCESS", fg="green", bold=True)),
+                                            time() - start_time),
+                is_error=is_error)
 
         return not is_error
 
     def _validate_options(self, options):
         result = {}
         for k, v in options.items():
-            _k = k.upper()
             # process obsolete options
-            if _k in self.RENAMED_OPTIONS:
+            if k in self.RENAMED_OPTIONS:
                 click.secho(
                     "Warning! `%s` option is deprecated and will be "
                     "removed in the next release! Please use "
-                    "`%s` instead." % (
-                        k, self.RENAMED_OPTIONS[_k].lower()),
-                    fg="yellow"
-                )
-                k = self.RENAMED_OPTIONS[_k].lower()
+                    "`%s` instead." % (k, self.RENAMED_OPTIONS[k]),
+                    fg="yellow")
+                k = self.RENAMED_OPTIONS[k]
+            # warn about unknown options
+            if k not in self.KNOWN_OPTIONS:
+                click.secho(
+                    "Warning! Ignore unknown `%s` option from `[env:]` section"
+                    % k,
+                    fg="yellow")
             result[k] = v
         return result
 
@@ -168,7 +195,8 @@ class EnvironmentProcessor(object):
         if self.upload_port:
             variables['upload_port'] = self.upload_port
         for k, v in self.options.items():
-            k = k.lower()
+            if k in self.REMAPED_OPTIONS:
+                k = self.REMAPED_OPTIONS[k]
             if k == "targets" or (k == "upload_port" and self.upload_port):
                 continue
             variables[k] = v
@@ -186,7 +214,6 @@ class EnvironmentProcessor(object):
         if "platform" not in self.options:
             raise exception.UndefinedEnvPlatform(self.name)
 
-        platform = self.options['platform']
         build_vars = self._get_build_variables()
         build_targets = self._get_build_targets()
 
@@ -194,28 +221,32 @@ class EnvironmentProcessor(object):
 
         # install dependent libraries
         if "lib_install" in self.options:
-            _autoinstall_libs(self.cmd_ctx, self.options['lib_install'])
+            _autoinstall_libdeps(self.cmd_ctx, [
+                int(d.strip()) for d in self.options['lib_install'].split(",")
+                if d.strip()
+            ], self.verbose)
+        if "lib_deps" in self.options:
+            _autoinstall_libdeps(self.cmd_ctx, [
+                d.strip() for d in self.options['lib_deps'].split("\n")
+                if d.strip()
+            ], self.verbose)
 
-        p = PlatformFactory.newPlatform(platform)
-        return p.run(build_vars, build_targets, self.verbose_level)
+        try:
+            p = PlatformFactory.newPlatform(self.options['platform'])
+        except exception.UnknownPlatform:
+            self.cmd_ctx.invoke(
+                cmd_platform_install, platforms=[self.options['platform']])
+            p = PlatformFactory.newPlatform(self.options['platform'])
+
+        return p.run(build_vars, build_targets, self.verbose)
 
 
-def _autoinstall_libs(ctx, libids_list):
-    require_libs = [int(l.strip()) for l in libids_list.split(",")]
-    installed_libs = [
-        l['id'] for l in LibraryManager().get_installed().values()
-    ]
-
-    not_intalled_libs = set(require_libs) - set(installed_libs)
-    if not require_libs or not not_intalled_libs:
-        return
-
-    if (not app.get_setting("enable_prompts") or
-            click.confirm(
-                "The libraries with IDs '%s' have not been installed yet. "
-                "Would you like to install them now?" %
-                ", ".join([str(i) for i in not_intalled_libs]))):
-        ctx.invoke(cmd_lib_install, libid=not_intalled_libs)
+def _autoinstall_libdeps(ctx, libraries, verbose=False):
+    storage_dir = util.get_projectlibdeps_dir()
+    ctx.obj = LibraryManager(storage_dir)
+    if verbose:
+        click.echo("Library Storage: " + storage_dir)
+    ctx.invoke(cmd_lib_install, libraries=libraries, quiet=not verbose)
 
 
 def _clean_pioenvs_dir(pioenvs_dir):
@@ -226,20 +257,53 @@ def _clean_pioenvs_dir(pioenvs_dir):
     if (isdir(pioenvs_dir) and
             getmtime(join(util.get_project_dir(), "platformio.ini")) >
             getmtime(pioenvs_dir)):
-        rmtree(pioenvs_dir)
+        util.rmtree_(pioenvs_dir)
 
     # check project structure
     if isdir(pioenvs_dir) and isfile(structhash_file):
         with open(structhash_file) as f:
             if f.read() == proj_hash:
                 return
-        rmtree(pioenvs_dir)
+        util.rmtree_(pioenvs_dir)
 
     if not isdir(pioenvs_dir):
         makedirs(pioenvs_dir)
 
     with open(structhash_file, "w") as f:
         f.write(proj_hash)
+
+
+def print_header(label, is_error=False):
+    terminal_width, _ = click.get_terminal_size()
+    width = len(click.unstyle(label))
+    half_line = "=" * ((terminal_width - width - 2) / 2)
+    click.echo("%s %s %s" % (half_line, label, half_line), err=is_error)
+
+
+def check_project_defopts(config):
+    if not config.has_section("platformio"):
+        return True
+    known = ("home_dir", "lib_dir", "libdeps_dir", "src_dir", "env_dir",
+             "data_dir", "test_dir", "env_default")
+    unknown = set([k for k, _ in config.items("platformio")]) - set(known)
+    if not unknown:
+        return True
+    click.secho(
+        "Warning! Ignore unknown `%s` option from `[platformio]` section" %
+        ", ".join(unknown),
+        fg="yellow")
+    return False
+
+
+def check_project_envs(config, environments):
+    if not config.sections():
+        raise exception.ProjectEnvsNotAvailable()
+
+    known = set([s[4:] for s in config.sections() if s.startswith("env:")])
+    unknown = set(environments) - known
+    if unknown:
+        raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
+    return True
 
 
 def calculate_project_hash():

@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -64,7 +64,9 @@ Pre-built targets:
     --upload-port
 
 Upload port of embedded board. To print all available ports use
-:ref:`cmd_serialports` command
+:ref:`cmd_serialports` command.
+
+If upload port is not specified, PlatformIO will try to detect it automatically.
 
 .. option::
     -d, --project-dir
@@ -75,17 +77,10 @@ to current working directory (``CWD``).
 .. option::
     -v, --verbose
 
-Shows details about the results of processing environments. Each instance of
-``--verbose`` on the command line increases the verbosity level by one, so if
-you need more details on the output, specify it twice.
+Shows detailed information when processing environments.
 
-There 3 levels of verbosity:
-
-1. ``-v`` - output errors only
-2. ``-vv`` - output errors and warnings
-3. ``-vvv`` - output errors, warnings and additional information
-
-By default, verbosity level is set to 3 (maximum information).
+This option can be set globally using :ref:`setting_force_verbose` setting
+or by environment variable :envvar:`PLATFORMIO_SETTING_FORCE_VERBOSE`.
 
 .. option::
     --disable-auto-clean
@@ -101,17 +96,34 @@ Examples
 .. code-block::   bash
 
     $ platformio run
-    Processing arduino_pro5v environment:
-    scons: `.pioenvs/arduino_pro5v/firmware.elf' is up to date.
-    scons: `.pioenvs/arduino_pro5v/firmware.hex' is up to date.
+    [Sun Jul 17 00:09:16 2016] Processing uno (platform: atmelavr, board: uno, framework: arduino)
+    -----------------------------------------------------------------------------------------------
+    Looking for dependencies...
+    Collecting 32 compatible libraries
+    Processing src/main.cpp
+    Processing .pioenvs/uno/libFrameworkArduinoVariant.a
+    Processing .platformio/packages/framework-arduinoavr/cores/arduino/CDC.cpp
+    Processing .platformio/packages/framework-arduinoavr/cores/arduino/HardwareSerial.cpp
+    Processing .platformio/packages/framework-arduinoavr/cores/arduino/HardwareSerial0.cpp
+    ...
+    Processing .platformio/packages/framework-arduinoavr/cores/arduino/wiring_analog.c
+    Processing .platformio/packages/framework-arduinoavr/cores/arduino/wiring_digital.c
+    Processing .platformio/packages/framework-arduinoavr/cores/arduino/wiring_pulse.c
+    Processing .platformio/packages/framework-arduinoavr/cores/arduino/wiring_shift.c
+    Processing .pioenvs/uno/libFrameworkArduino.a
+    Processing .pioenvs/uno/firmware.elf
+    Processing .pioenvs/uno/firmware.hex
+    Processing size
+    AVR Memory Usage
+    ----------------
+    Device: atmega328p
 
-    Processing launchpad_msp430g2 environment:
-    scons: `.pioenvs/launchpad_msp430g2/firmware.elf' is up to date.
-    scons: `.pioenvs/launchpad_msp430g2/firmware.hex' is up to date.
+    Program:    1034 bytes (3.2% Full)
+    (.text + .data + .bootloader)
 
-    Processing launchpad_lm4f120 environment:
-    scons: `.pioenvs/launchpad_lm4f120/firmware.elf' is up to date.
-    scons: `.pioenvs/launchpad_lm4f120/firmware.hex' is up to   date
+    Data:          9 bytes (0.4% Full)
+    (.data + .bss + .noinit)
+
 
 
 2. Process specific environment
@@ -119,13 +131,27 @@ Examples
 .. code-block:: bash
 
     $ platformio run -e arduino_pro5v -e launchpad_lm4f120
-    Processing arduino_pro5v environment:
-    scons: `.pioenvs/arduino_pro5v/firmware.elf' is up to date.
-    scons: `.pioenvs/arduino_pro5v/firmware.hex' is up to date.
-
-    Processing launchpad_lm4f120 environment:
-    scons: `.pioenvs/launchpad_lm4f120/firmware.elf' is up to date.
-    scons: `.pioenvs/launchpad_lm4f120/firmware.hex' is up to date.
+    [Sun Jul 17 00:10:14 2016] Processing nodemcu (platform: espressif, board: nodemcu, framework: arduino)
+    --------------------------------------------------------------------------------------------------------
+    Looking for dependencies...
+    Collecting 29 compatible libraries
+    Processing src/main.cpp
+    Processing .pioenvs/nodemcu/libFrameworkArduinoVariant.a
+    Processing .platformio/packages/framework-arduinoespressif/cores/esp8266/Esp.cpp
+    ...
+    Processing .platformio/packages/framework-arduinoespressif/cores/esp8266/pgmspace.cpp
+    Processing .platformio/packages/framework-arduinoespressif/cores/esp8266/setjmp.S
+    Processing .pioenvs/nodemcu/libFrameworkArduino.a
+    Processing .platformio/packages/framework-arduinoespressif/tools/sdk/lib/libmesh.a
+    ...
+    Processing .platformio/packages/framework-arduinoespressif/tools/sdk/lib/libaxtls.a
+    Processing .platformio/packages/framework-arduinoespressif/tools/sdk/lib/libstdc++.a
+    Processing .pioenvs/nodemcu/firmware.elf
+    Processing .platformio/packages/tool-esptool/esptool
+    Processing .pioenvs/nodemcu/firmware.bin
+    Processing size
+    text       data     bss     dec     hex filename
+    221456      884   29496  251836   3d7bc .pioenvs/nodemcu/firmware.elf
 
 
 3. Process specific target
@@ -133,52 +159,49 @@ Examples
 .. code-block:: bash
 
     $ platformio run -t clean
-    Processing arduino_pro5v environment:
-    Removed .pioenvs/arduino_pro5v/src/main.o
+    [Sun Jul 17 00:19:36 2016] Processing uno (platform: atmelavr, board: uno, framework: arduino)
+    ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Looking for dependencies...
+    Collecting 32 compatible libraries
+    Removed .pioenvs/uno/FrameworkArduino/CDC.o
+    Removed .pioenvs/uno/FrameworkArduino/HardwareSerial.o
     ...
-    Removed .pioenvs/arduino_pro5v/firmware.hex
-
-    Processing launchpad_msp430g2 environment:
-    Removed .pioenvs/launchpad_msp430g2/src/main.o
-    ...
-    Removed .pioenvs/launchpad_msp430g2/firmware.hex
-
-    Processing launchpad_lm4f120 environment:
-    Removed .pioenvs/launchpad_lm4f120/src/main.o
-    ...
-    Removed .pioenvs/launchpad_lm4f120/firmware.hex
+    Removed .pioenvs/uno/libFrameworkArduinoVariant.a
+    Removed .pioenvs/uno/src/main.o
+    Removed .pioenvs/uno/libFrameworkArduino.a
+    Removed .pioenvs/uno/firmware.elf
+    Removed .pioenvs/uno/firmware.hex
 
 
 4. Mix environments and targets
 
 .. code-block:: bash
 
-    $ platformio run -e launchpad_msp430g2 -t upload
-    Processing launchpad_msp430g2 environment:
-    /Users/ikravets/.platformio/timsp430/tools/mspdebug/mspdebug rf2500 --force-reset "prog .pioenvs/launchpad_msp430g2/firmware.hex"
-    MSPDebug version 0.20 - debugging tool for MSP430 MCUs
-    Copyright (C) 2009-2012 Daniel Beer <dlbeer@gmail.com>
-    This is free software; see the source for copying conditions.  There is NO
-    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    Trying to open interface 1 on 009
-    Initializing FET...
-    FET protocol version is 30394216
-    Configured for Spy-Bi-Wire
-    Sending reset...
-    Set Vcc: 3000 mV
-    Device ID: 0x2553
-      Code start address: 0xc000
-      Code size         : 16384 byte = 16 kb
-      RAM  start address: 0x200
-      RAM  end   address: 0x3ff
-      RAM  size         : 512 byte = 0 kb
-    Device: MSP430G2553/G2403
-    Code memory starts at 0xc000
-    Number of breakpoints: 2
-    Chip ID data: 25 53
-    Erasing...
-    Programming...
-    Writing  646 bytes at c000...
-    Writing   32 bytes at ffe0...
-    Done, 678 bytes total
+    $ platformio run -e teensy31 -t upload
+    [Sun Jul 17 00:27:14 2016] Processing teensy31 (platform: teensy, board: teensy31, framework: arduino)
+    -------------------------------------------------------------------------------------------------------
+    Looking for dependencies...
+    Collecting 25 compatible libraries
+    Processing src/main.cpp
+    Processing .platformio/packages/framework-arduinoteensy/cores/teensy3/AudioStream.cpp
+    Processing .platformio/packages/framework-arduinoteensy/cores/teensy3/DMAChannel.cpp
+    Processing .platformio/packages/framework-arduinoteensy/cores/teensy3/HardwareSerial1.cpp
+    ...
+    Processing .platformio/packages/framework-arduinoteensy/cores/teensy3/yield.cpp
+    Processing .platformio/packages/tool-teensy/teensy_loader_cli
+    Processing .pioenvs/teensy31/libFrameworkArduino.a
+    Processing .pioenvs/teensy31/firmware.elf
+    Check program size...
+    text       data     bss     dec     hex filename
+    11080       168    2288   13536    34e0 .pioenvs/teensy31/firmware.elf
+    Processing .pioenvs/teensy31/firmware.hex
+    Processing upload
+    Teensy Loader, Command Line, Version 2.0
+    Read ".pioenvs/teensy31/firmware.hex": 11248 bytes, 4.3% usage
+    Soft reboot is not implemented for OSX
+    Waiting for Teensy device...
+    (hint: press the reset button)
+    Found HalfKay Bootloader
+    Read ".pioenvs/teensy31/firmware.hex": 11248 bytes, 4.3% usage
+    Programming...........
+    Booting

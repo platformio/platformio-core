@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -94,8 +94,9 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
 
     def _look_for_serial_port():
         port = None
-        board_hwids = env.get("BOARD_OPTIONS", {}).get(
-            "build", {}).get("hwids", [])
+        board_hwids = []
+        if "BOARD" in env and "build.hwids" in env.BoardConfig():
+            board_hwids = env.BoardConfig().get("build.hwids")
         for item in util.get_serialports():
             if "VID:PID" not in item['hwid']:
                 continue
@@ -110,7 +111,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         print env.subst("Manually specified: $UPLOAD_PORT")
         return
 
-    if env.subst("$FRAMEWORK") == "mbed":
+    if env.subst("$PIOFRAMEWORK") == "mbed":
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
         if (system() == "Linux" and
@@ -119,8 +120,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
                 "\nWarning! Please install `99-platformio-udev.rules` and "
                 "check that your board's PID and VID are listed in the rules."
                 "\n https://raw.githubusercontent.com/platformio/platformio"
-                "/develop/scripts/99-platformio-udev.rules\n"
-            )
+                "/develop/scripts/99-platformio-udev.rules\n")
         env.Replace(UPLOAD_PORT=_look_for_serial_port())
 
     if env.subst("$UPLOAD_PORT"):
@@ -146,8 +146,9 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
 
 
 def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
-    max_size = int(env.get("BOARD_OPTIONS", {}).get("upload", {}).get(
-        "maximum_size", 0))
+    if "BOARD" not in env:
+        return
+    max_size = int(env.BoardConfig().get("upload.maximum_size", 0))
     if max_size == 0 or "SIZETOOL" not in env:
         return
 

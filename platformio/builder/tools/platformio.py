@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ from __future__ import absolute_import
 
 import re
 from glob import glob
-from os import listdir, sep, walk
-from os.path import basename, dirname, isdir, isfile, join, normpath, realpath
+from os import sep, walk
+from os.path import basename, dirname, isdir, join, realpath
 
 from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, SConscript
 from SCons.Util import case_sensitive_suffixes
@@ -26,40 +26,33 @@ from platformio.util import pioversion_to_intstr
 
 SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
-SRC_DEFAULT_FILTER = " ".join([
-    "+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep,
-    "-<example%s>" % sep, "-<examples%s>" % sep,
-    "-<test%s>" % sep, "-<tests%s>" % sep
-])
+SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
 
 
 def BuildProgram(env):
 
     def _append_pio_macros():
-        env.AppendUnique(
-            CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
-                *pioversion_to_intstr())])
+        env.AppendUnique(CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
+            *pioversion_to_intstr())])
 
     _append_pio_macros()
 
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes(".s", ".S"):
-        env.Replace(
-            AS="$CC",
-            ASCOM="$ASPPCOM"
-        )
+        env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 
     # process extra flags from board
-    env.ProcessFlags(
-        env.get("BOARD_OPTIONS", {}).get("build", {}).get("extra_flags"))
+    if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
+        env.ProcessFlags(env.BoardConfig().get("build.extra_flags"))
     # remove base flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
     # apply user flags
     env.ProcessFlags(env.get("BUILD_FLAGS"))
 
-    if env.get("FRAMEWORK"):
+    if env.get("PIOFRAMEWORK"):
         env.BuildFrameworks([
-            f.lower().strip() for f in env.get("FRAMEWORK", "").split(",")])
+            f.lower().strip() for f in env['PIOFRAMEWORK'].split(",")
+        ])
 
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
@@ -70,18 +63,12 @@ def BuildProgram(env):
     # append specified LD_SCRIPT
     if ("LDSCRIPT_PATH" in env and
             not any(["-Wl,-T" in f for f in env['LINKFLAGS']])):
-        env.Append(
-            LINKFLAGS=['-Wl,-T"$LDSCRIPT_PATH"']
-        )
+        env.Append(LINKFLAGS=['-Wl,-T"$LDSCRIPT_PATH"'])
 
     # enable "cyclic reference" for linker
     if env.get("LIBS", deplibs) and env.GetCompilerType() == "gcc":
-        env.Prepend(
-            _LIBFLAGS="-Wl,--start-group "
-        )
-        env.Append(
-            _LIBFLAGS=" -Wl,--end-group"
-        )
+        env.Prepend(_LIBFLAGS="-Wl,--start-group ")
+        env.Append(_LIBFLAGS=" -Wl,--end-group")
 
     # Handle SRC_BUILD_FLAGS
     env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
@@ -89,22 +76,22 @@ def BuildProgram(env):
     env.Append(
         CPPPATH=["$PROJECTSRC_DIR"],
         LIBS=deplibs,
-        LIBPATH=["$BUILD_DIR"]
-    )
+        LIBPATH=["$BUILD_DIR"],
+        PIOBUILDFILES=env.CollectBuildFiles(
+            "$BUILDSRC_DIR",
+            "$PROJECTSRC_DIR",
+            src_filter=env.get("SRC_FILTER"),
+            duplicate=False))
 
-    sources = env.LookupSources(
-        "$BUILDSRC_DIR", "$PROJECTSRC_DIR", duplicate=False,
-        src_filter=env.get("SRC_FILTER"))
+    if "test" in COMMAND_LINE_TARGETS:
+        env.Append(PIOBUILDFILES=env.ProcessTest())
 
-    if not sources and not COMMAND_LINE_TARGETS:
-        env.Exit(
-            "Error: Nothing to build. Please put your source code files "
-            "to '%s' folder" % env.subst("$PROJECTSRC_DIR"))
+    if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
+        env.Exit("Error: Nothing to build. Please put your source code files "
+                 "to '%s' folder" % env.subst("$PROJECTSRC_DIR"))
 
     program = env.Program(
-        join("$BUILD_DIR", env.subst("$PROGNAME")),
-        sources
-    )
+        join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
 
     if set(["upload", "uploadlazy", "program"]) & set(COMMAND_LINE_TARGETS):
         env.AddPostAction(program, env.CheckUploadSize)
@@ -174,12 +161,7 @@ def IsFileWithExt(env, file_, ext):  # pylint: disable=W0613
     return False
 
 
-def VariantDirWrap(env, variant_dir, src_dir, duplicate=True):
-    DefaultEnvironment().Append(VARIANT_DIRS=[(variant_dir, src_dir)])
-    env.VariantDir(variant_dir, src_dir, duplicate)
-
-
-def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
+def MatchSourceFiles(env, src_dir, src_filter=None):
 
     SRC_FILTER_PATTERNS_RE = re.compile(r"(\+|\-)<([^>]+)>")
 
@@ -187,25 +169,40 @@ def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
         if env.IsFileWithExt(item, SRC_BUILD_EXT + SRC_HEADER_EXT):
             items.add(item.replace(src_dir + sep, ""))
 
-    def _match_sources(src_dir, src_filter):
-        matches = set()
-        # correct fs directory separator
-        src_filter = src_filter.replace("/", sep).replace("\\", sep)
-        for (action, pattern) in SRC_FILTER_PATTERNS_RE.findall(src_filter):
-            items = set()
-            for item in glob(join(src_dir, pattern)):
-                if isdir(item):
-                    for root, _, files in walk(item, followlinks=True):
-                        for f in files:
-                            _append_build_item(items, join(root, f), src_dir)
-                else:
-                    _append_build_item(items, item, src_dir)
-            if action == "+":
-                matches |= items
-            else:
-                matches -= items
-        return sorted(list(matches))
+    src_dir = env.subst(src_dir)
+    src_filter = src_filter or SRC_FILTER_DEFAULT
+    if isinstance(src_filter, list) or isinstance(src_filter, tuple):
+        src_filter = " ".join(src_filter)
 
+    matches = set()
+    # correct fs directory separator
+    src_filter = src_filter.replace("/", sep).replace("\\", sep)
+    for (action, pattern) in SRC_FILTER_PATTERNS_RE.findall(src_filter):
+        items = set()
+        for item in glob(join(src_dir, pattern)):
+            if isdir(item):
+                for root, _, files in walk(item, followlinks=True):
+                    for f in files:
+                        _append_build_item(items, join(root, f), src_dir)
+            else:
+                _append_build_item(items, item, src_dir)
+        if action == "+":
+            matches |= items
+        else:
+            matches -= items
+    return sorted(list(matches))
+
+
+def VariantDirWrap(env, variant_dir, src_dir, duplicate=False):
+    DefaultEnvironment().Append(VARIANT_DIRS=[(variant_dir, src_dir)])
+    env.VariantDir(variant_dir, src_dir, duplicate)
+
+
+def CollectBuildFiles(env,
+                      variant_dir,
+                      src_dir,
+                      src_filter=None,
+                      duplicate=False):
     sources = []
     variants = []
 
@@ -213,7 +210,7 @@ def LookupSources(env, variant_dir, src_dir, duplicate=True, src_filter=None):
     if src_dir.endswith(sep):
         src_dir = src_dir[:-1]
 
-    for item in _match_sources(src_dir, src_filter or SRC_DEFAULT_FILTER):
+    for item in env.MatchSourceFiles(src_dir, src_filter):
         _reldir = dirname(item)
         _src_dir = join(src_dir, _reldir) if _reldir else src_dir
         _var_dir = join(variant_dir, _reldir) if _reldir else variant_dir
@@ -232,173 +229,38 @@ def BuildFrameworks(env, frameworks):
     if not frameworks or "uploadlazy" in COMMAND_LINE_TARGETS:
         return
 
-    board_frameworks = env.get("BOARD_OPTIONS", {}).get("frameworks", [])
+    if "BOARD" not in env:
+        env.Exit("Please specify `board` in `platformio.ini` to use "
+                 "with '%s' framework" % ", ".join(frameworks))
+
+    board_frameworks = env.BoardConfig().get("frameworks", [])
     if frameworks == ["platformio"]:
         if board_frameworks:
             frameworks.insert(0, board_frameworks[0])
         else:
-            env.Exit("Error: Please specify board type")
+            env.Exit("Error: Please specify `board` in `platformio.ini`")
 
     for f in frameworks:
         if f in ("arduino", "energia"):
             env.ConvertInoToCpp()
 
         if f in board_frameworks:
-            SConscript(env.subst(
-                join("$PIOBUILDER_DIR", "scripts", "frameworks", "%s.py" % f)))
+            SConscript(env.GetFrameworkScript(f))
         else:
             env.Exit("Error: This board doesn't support %s framework!" % f)
 
 
 def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     lib = env.Clone()
-    return lib.Library(
+    return lib.StaticLibrary(
         lib.subst(variant_dir),
-        lib.LookupSources(variant_dir, src_dir, src_filter=src_filter)
-    )
+        lib.CollectBuildFiles(
+            variant_dir, src_dir, src_filter=src_filter))
 
 
-def BuildDependentLibraries(env, src_dir):  # pylint: disable=R0914
-
-    INCLUDES_RE = re.compile(
-        r"^\s*#include\s+(\<|\")([^\>\"\']+)(?:\>|\")", re.M)
-    LIBSOURCE_DIRS = [env.subst(d) for d in env.get("LIBSOURCE_DIRS", [])]
-
-    # start internal prototypes
-
-    class IncludeFinder(object):
-
-        def __init__(self, base_dir, name, is_system=False):
-            self.base_dir = base_dir
-            self.name = name
-            self.is_system = is_system
-
-            self._inc_path = None
-            self._lib_dir = None
-            self._lib_name = None
-
-        def getIncPath(self):
-            return self._inc_path
-
-        def getLibDir(self):
-            return self._lib_dir
-
-        def getLibName(self):
-            return self._lib_name
-
-        def run(self):
-            if not self.is_system and self._find_in_local():
-                return True
-            return self._find_in_system()
-
-        def _find_in_local(self):
-            if isfile(join(self.base_dir, self.name)):
-                self._inc_path = join(self.base_dir, self.name)
-                return True
-            else:
-                return False
-
-        def _find_in_system(self):
-            for lsd_dir in LIBSOURCE_DIRS:
-                if not isdir(lsd_dir):
-                    continue
-
-                for ld in env.get("LIB_USE", []) + sorted(listdir(lsd_dir)):
-                    if not isdir(join(lsd_dir, ld)):
-                        continue
-
-                    inc_path = normpath(join(lsd_dir, ld, self.name))
-                    try:
-                        lib_dir = inc_path[:inc_path.index(
-                            sep, len(lsd_dir) + 1)]
-                    except ValueError:
-                        continue
-                    lib_name = basename(lib_dir)
-
-                    # ignore user's specified libs
-                    if lib_name in env.get("LIB_IGNORE", []):
-                        continue
-
-                    if not isfile(inc_path):
-                        # if source code is in "src" dir
-                        lib_dir = join(lsd_dir, lib_name, "src")
-                        inc_path = join(lib_dir, self.name)
-
-                    if isfile(inc_path):
-                        self._lib_dir = lib_dir
-                        self._lib_name = lib_name
-                        self._inc_path = inc_path
-                        return True
-            return False
-
-    def _get_dep_libs(src_dir):
-        state = {
-            "paths": set(),
-            "libs": set(),
-            "ordered": set()
-        }
-
-        state = _process_src_dir(state, env.subst(src_dir))
-
-        result = []
-        for item in sorted(state['ordered'], key=lambda s: s[0]):
-            result.append((item[1], item[2]))
-        return result
-
-    def _process_src_dir(state, src_dir):
-        for root, _, files in walk(src_dir, followlinks=True):
-            for f in files:
-                if env.IsFileWithExt(f, SRC_BUILD_EXT + SRC_HEADER_EXT):
-                    state = _parse_includes(state, env.File(join(root, f)))
-        return state
-
-    def _parse_includes(state, node):
-        skip_includes = ("arduino.h", "energia.h")
-        matches = INCLUDES_RE.findall(node.get_text_contents())
-        for (inc_type, inc_name) in matches:
-            base_dir = dirname(node.get_abspath())
-            if inc_name.lower() in skip_includes:
-                continue
-            if join(base_dir, inc_name) in state['paths']:
-                continue
-            else:
-                state['paths'].add(join(base_dir, inc_name))
-
-            finder = IncludeFinder(base_dir, inc_name, inc_type == "<")
-            if finder.run():
-                _parse_includes(state, env.File(finder.getIncPath()))
-
-                _lib_dir = finder.getLibDir()
-                if _lib_dir and _lib_dir not in state['libs']:
-                    state['ordered'].add((
-                        len(state['ordered']) + 1, finder.getLibName(),
-                        _lib_dir))
-                    state['libs'].add(_lib_dir)
-
-                    if env.subst("$LIB_DFCYCLIC").lower() == "true":
-                        state = _process_src_dir(state, _lib_dir)
-        return state
-
-    # end internal prototypes
-
-    deplibs = _get_dep_libs(src_dir)
-    for l, ld in deplibs:
-        env.Append(
-            CPPPATH=[join("$BUILD_DIR", l)]
-        )
-        # add automatically "utility" dir from the lib (Arduino issue)
-        if isdir(join(ld, "utility")):
-            env.Append(
-                CPPPATH=[join("$BUILD_DIR", l, "utility")]
-            )
-
-    libs = []
-    for (libname, inc_dir) in deplibs:
-        lib = env.BuildLibrary(
-            join("$BUILD_DIR", libname), inc_dir)
-        env.Clean(libname, lib)
-        libs.append(lib)
-    return libs
+def BuildSources(env, variant_dir, src_dir, src_filter=None):
+    DefaultEnvironment().Append(PIOBUILDFILES=env.Clone().CollectBuildFiles(
+        variant_dir, src_dir, src_filter=src_filter))
 
 
 def exists(_):
@@ -410,9 +272,10 @@ def generate(env):
     env.AddMethod(ProcessFlags)
     env.AddMethod(ProcessUnFlags)
     env.AddMethod(IsFileWithExt)
+    env.AddMethod(MatchSourceFiles)
     env.AddMethod(VariantDirWrap)
-    env.AddMethod(LookupSources)
+    env.AddMethod(CollectBuildFiles)
     env.AddMethod(BuildFrameworks)
     env.AddMethod(BuildLibrary)
-    env.AddMethod(BuildDependentLibraries)
+    env.AddMethod(BuildSources)
     return env

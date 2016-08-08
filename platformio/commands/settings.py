@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,12 +29,14 @@ def settings_get(name):
     list_tpl = "{name:<40} {value:<35} {description}"
     terminal_width, _ = click.get_terminal_size()
 
-    click.echo(list_tpl.format(
-        name=click.style("Name", fg="cyan"),
-        value=(click.style("Value", fg="green") +
-               click.style(" [Default]", fg="yellow")),
-        description="Description"
-    ))
+    click.echo(
+        list_tpl.format(
+            name=click.style(
+                "Name", fg="cyan"),
+            value=(click.style(
+                "Value", fg="green") + click.style(
+                    " [Default]", fg="yellow")),
+            description="Description"))
     click.echo("-" * terminal_width)
 
     for _name, _data in sorted(app.DEFAULT_SETTINGS.items()):
@@ -55,11 +57,12 @@ def settings_get(name):
         else:
             _value_str += click.style(" ", fg="yellow")
 
-        click.echo(list_tpl.format(
-            name=click.style(_name, fg="cyan"),
-            value=_value_str,
-            description=_data['description']
-        ))
+        click.echo(
+            list_tpl.format(
+                name=click.style(
+                    _name, fg="cyan"),
+                value=_value_str,
+                description=_data['description']))
 
 
 @cli.command("set", short_help="Set new value for the setting")

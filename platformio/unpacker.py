@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -64,8 +64,7 @@ class ZIPArchive(ArchiveBase):
     def preserve_mtime(item, dest_dir):
         util.change_filemtime(
             join(dest_dir, item.filename),
-            mktime(list(item.date_time) + [0] * 3)
-        )
+            mktime(list(item.date_time) + [0] * 3))
 
     def get_items(self):
         return self._afo.infolist()
@@ -97,8 +96,8 @@ class FileUnpacker(object):
             for item in self._unpacker.get_items():
                 self._unpacker.extract_item(item, self._dest_dir)
         else:
-            with click.progressbar(self._unpacker.get_items(),
-                                   label="Unpacking") as pb:
+            items = self._unpacker.get_items()
+            with click.progressbar(items, label="Unpacking") as pb:
                 for item in pb:
                     self._unpacker.extract_item(item, self._dest_dir)
         return True

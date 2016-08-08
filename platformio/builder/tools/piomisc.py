@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,23 +17,20 @@ from __future__ import absolute_import
 import atexit
 import re
 from glob import glob
-from os import environ, listdir, remove
-from os.path import isdir, isfile, join
+from os import environ, remove
+from os.path import isfile, join
 
-from platformio.util import exec_command, where_is_program
+from platformio import util
 
 
 class InoToCPPConverter(object):
 
-    PROTOTYPE_RE = re.compile(
-        r"""^(
+    PROTOTYPE_RE = re.compile(r"""^(
         (\s*[a-z_\d]+\*?){1,2}      # return type
         (\s+[a-z_\d]+\s*)           # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*\{                      # must end with {
-        """,
-        re.X | re.M | re.I
-    )
+        """, re.X | re.M | re.I)
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
     PROTOPTRS_TPLRE = r"\([^&\(]*&(%s)[^\)]*\)"
 
@@ -66,20 +63,18 @@ class InoToCPPConverter(object):
                 split_pos = item['match'].start()
                 break
 
-        match_ptrs = re.search(
-            self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),
-            contents[:split_pos],
-            re.M
-        )
+        match_ptrs = re.search(self.PROTOPTRS_TPLRE %
+                               ("|".join(prototype_names)),
+                               contents[:split_pos], re.M)
         if match_ptrs:
             split_pos = contents.rfind("\n", 0, match_ptrs.start())
 
         result.append(contents[:split_pos].strip())
         result.append("%s;" %
                       ";\n".join([p['match'].group(1) for p in prototypes]))
-        result.append('#line %d "%s"' % (
-            contents.count("\n", 0, split_pos) + 2,
-            file_path.replace("\\", "/")))
+        result.append('#line %d "%s"' %
+                      (contents.count("\n", 0, split_pos) + 2,
+                       file_path.replace("\\", "/")))
         result.append(contents[split_pos:].strip())
 
         return result
@@ -106,8 +101,8 @@ class InoToCPPConverter(object):
             result.append('#line 1 "%s"' % file_path.replace("\\", "/"))
 
             if is_first and prototypes:
-                result += self.append_prototypes(
-                    file_path, contents, prototypes)
+                result += self.append_prototypes(file_path, contents,
+                                                 prototypes)
             else:
                 result.append(contents)
             is_first = False
@@ -143,10 +138,9 @@ def ConvertInoToCpp(env):
 
 def DumpIDEData(env):
 
-    BOARD_CORE = env.get("BOARD_OPTIONS", {}).get("build", {}).get("core")
-
     def get_includes(env_):
         includes = []
+
         for item in env_.get("CPPPATH", []):
             invardir = False
             for vardiritem in env_.get("VARIANT_DIRS", []):
@@ -158,44 +152,23 @@ def DumpIDEData(env):
                 includes.append(env_.subst(item))
 
         # installed libs
-        for d in env_.get("LIBSOURCE_DIRS", []):
-            lsd_dir = env_.subst(d)
-            _append_lib_includes(env_, lsd_dir, includes)
+        for lb in env.GetLibBuilders():
+            includes.extend(lb.get_inc_dirs())
 
-        # includes from toolchain
-        toolchain_dir = env_.subst(
-            join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
-        toolchain_incglobs = [
-            join(toolchain_dir, "*", "include*"),
-            join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
-        ]
-        for g in toolchain_incglobs:
-            includes.extend(glob(g))
+        # includes from toolchains
+        p = env.PioPlatform()
+        for name in p.get_installed_packages():
+            if p.get_package_type(name) != "toolchain":
+                continue
+            toolchain_dir = p.get_package_dir(name)
+            toolchain_incglobs = [
+                join(toolchain_dir, "*", "include*"),
+                join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
+            ]
+            for g in toolchain_incglobs:
+                includes.extend(glob(g))
 
         return includes
-
-    def _append_lib_includes(env_, libs_dir, includes):
-        if not isdir(libs_dir):
-            return
-        for name in env_.get("LIB_USE", []) + sorted(listdir(libs_dir)):
-            if not isdir(join(libs_dir, name)):
-                continue
-            # ignore user's specified libs
-            if name in env_.get("LIB_IGNORE", []):
-                continue
-            if name == "__cores__":
-                if isdir(join(libs_dir, name, BOARD_CORE)):
-                    _append_lib_includes(
-                        env_, join(libs_dir, name, BOARD_CORE), includes)
-                return
-
-            include = (
-                join(libs_dir, name, "src")
-                if isdir(join(libs_dir, name, "src"))
-                else join(libs_dir, name)
-            )
-            if include not in includes:
-                includes.append(include)
 
     def get_defines(env_):
         defines = []
@@ -206,13 +179,10 @@ def DumpIDEData(env):
             defines.append(env_.subst(item).replace('\\"', '"'))
 
         # special symbol for Atmel AVR MCU
-        board = env_.get("BOARD_OPTIONS", {})
-        if board and board['platform'] == "atmelavr":
+        if env['PIOPLATFORM'] == "atmelavr":
             defines.append(
-                "__AVR_%s__" % board['build']['mcu'].upper()
-                .replace("ATMEGA", "ATmega")
-                .replace("ATTINY", "ATtiny")
-            )
+                "__AVR_%s__" % env.BoardConfig().get("build.mcu").upper()
+                .replace("ATMEGA", "ATmega").replace("ATTINY", "ATtiny"))
         return defines
 
     LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
@@ -224,9 +194,9 @@ def DumpIDEData(env):
         "includes": get_includes(env_),
         "cc_flags": env_.subst(LINTCCOM),
         "cxx_flags": env_.subst(LINTCXXCOM),
-        "cc_path": where_is_program(
+        "cc_path": util.where_is_program(
             env_.subst("$CC"), env_.subst("${ENV['PATH']}")),
-        "cxx_path": where_is_program(
+        "cxx_path": util.where_is_program(
             env_.subst("$CXX"), env_.subst("${ENV['PATH']}"))
     }
 
@@ -254,7 +224,7 @@ def GetCompilerType(env):
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
-        result = exec_command([env.subst("$CC"), "-v"], env=sysenv)
+        result = util.exec_command([env.subst("$CC"), "-v"], env=sysenv)
     except OSError:
         return None
     if result['returncode'] != 0:
@@ -280,10 +250,19 @@ def GetActualLDScript(env):
                     return path
 
     if script:
-        env.Exit("Error: Could not find '%s' LD script in LDPATH '%s'" % (
-            script, env.subst("$LIBPATH")))
+        env.Exit("Error: Could not find '%s' LD script in LDPATH '%s'" %
+                 (script, env.subst("$LIBPATH")))
 
     return None
+
+
+def ProgressHandler(env, node):
+    item = str(node)
+    if ("toolchain-" in item or "tool-" in item) or \
+            item.endswith((".o", ".h", ".hpp", ".ipp")):
+        return
+    item = item.replace(env['PIOHOME_DIR'], ".platformio")
+    print "Processing %s" % item
 
 
 def exists(_):
@@ -295,4 +274,5 @@ def generate(env):
     env.AddMethod(DumpIDEData)
     env.AddMethod(GetCompilerType)
     env.AddMethod(GetActualLDScript)
+    env.AddMethod(ProgressHandler)
     return env

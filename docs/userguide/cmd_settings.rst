@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -86,6 +86,20 @@ Check for the new PlatformIO interval.
 :Values:    Days (Number)
 
 Check for the platform updates interval.
+
+.. _setting_force_verbose:
+
+``force_verbose``
+^^^^^^^^^^^^^^^^^
+
+:Default:   No
+:Values:    Yes/No
+
+Force verbose output when processing environments. This setting overrides
+
+* :option:`platformio run --verbose`
+* :option:`platformio ci --verbose`
+* :option:`platformio test --verbose`
 
 .. _setting_enable_prompts:
 

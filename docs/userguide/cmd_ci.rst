@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -112,8 +112,10 @@ Buid project using pre-configured :ref:`projectconf`.
 .. option::
     -v, --verbose
 
-Shows details about the results of processing environments. More details
-:option:`platformio run --verbose`
+Shows detailed information when processing environments.
+
+This option can be set globally using :ref:`setting_force_verbose` setting
+or by environment variable :envvar:`PLATFORMIO_SETTING_FORCE_VERBOSE`.
 
 Examples
 --------

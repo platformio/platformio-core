@@ -7,6 +7,8 @@ PlatformIO
 .. image:: https://ci.appveyor.com/api/projects/status/dku0h2rutfj0ctls/branch/develop?svg=true
     :target: https://ci.appveyor.com/project/ivankravets/platformio
     :alt: AppVeyor.CI Build Status
+.. image:: https://codecov.io/gh/platformio/platformio/branch/develop/graph/badge.svg
+  :target: https://codecov.io/gh/platformio/platformio
 .. image:: https://requires.io/github/platformio/platformio/requirements.svg?branch=develop
     :target: https://requires.io/github/platformio/platformio/requirements/?branch=develop
     :alt: Requirements Status
@@ -190,7 +192,7 @@ See `contributing guidelines <https://github.com/platformio/platformio/blob/deve
 License
 -------
 
-Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+Copyright 2014-present PlatformIO <contact@platformio.org>
 
 The PlatformIO is licensed under the permissive Apache 2.0 license,
 so you can use it in both commercial and personal projects with confidence.

@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -22,6 +22,7 @@ to keep project in own structure and define:
 * examples list
 * compatible frameworks and platforms
 * library dependencies
+* advanced build settings
 
 PlatformIO Library Crawler uses ``library.json`` manifest to extract
 source code from developer's location and keeps cleaned library in own
@@ -221,6 +222,19 @@ Example:
     },
     "version": "1.0.0"
 
+
+``license``
+-----------
+
+A license of the library. You can check
+`the full list of SPDX license IDs <https://spdx.org/licenses/>`_. Ideally you
+should pick one that is `OSI <https://opensource.org/licenses/alphabetical>`_
+approved.
+
+.. code-block:: javascript
+
+    "license": "Apache-2.0"
+
 .. _libjson_downloadurl:
 
 ``downloadUrl``
@@ -367,6 +381,7 @@ A list of dependent libraries. They will be installed automatically with
 Allowed requirements for dependent library:
 
 * ``name`` | Type: ``String``
+* ``version`` | Type: ``String``
 * ``authors`` | Type: ``String`` or ``Array``
 * ``frameworks`` | Type: ``String`` or ``Array``
 * ``platforms`` | Type: ``String`` or ``Array``
@@ -387,9 +402,22 @@ Example:
         },
         {
             "name": "Library-Bar",
-            "frameworks": "FrameworkFoo, FrameworkBar"
+            "version": "~1.2.3"
+        },
+        {
+            "name": "lib-from-repo",
+            "version": "https://github.com/user/package.git#1.2.3"
         }
     ]
+
+A short definition of dependencies is allowed:
+
+.. code-block:: javascript
+
+    "dependencies": {
+        "mylib": "1.2.3",
+        "lib-from-repo": "githubuser/package"
+    }
 
 
 See more ``library.json`` :ref:`library_creating_examples`.
@@ -397,7 +425,7 @@ See more ``library.json`` :ref:`library_creating_examples`.
 .. _libjson_examples:
 
 ``examples``
-----------------
+------------
 
 *Optional* | Type: ``String`` or ``Array`` |
 `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_
@@ -413,3 +441,105 @@ A list of example patterns. This field is predefined with default value:
         "[Ee]xamples/*/*.ino",
         "[Ee]xamples/*/*.pde"
     ]
+
+
+.. _libjson_build:
+
+``build``
+------------
+
+*Optional* | Type: ``Object``
+
+Specify advanced settings, options and flags for the build system. Possible
+options:
+
+.. list-table::
+    :header-rows:  1
+
+    * - Option
+      - Type
+      - Description
+    * - ``flags``
+      - ``String`` or ``Array``
+      - Extra flags to control preprocessing, compilation, assembly and
+        linking processes. More details :ref:`projectconf_build_flags`
+    * - ``unflags``
+      - ``String`` or ``Array``
+      - Remove base/initial flags which were set by development
+        platform. More details :ref:`projectconf_build_unflags`
+    * - ``srcFilter``
+      - ``String`` or ``Array``
+      - Specify which source files should be included/excluded
+        from build process. More details :ref:`projectconf_src_filter`
+    * - ``extraScript``
+      - ``String``
+      - Launch extra script before build process.
+        More details :ref:`projectconf_extra_script`
+    * - ``libArchive``
+      - ``Boolean``
+      - Archive object files to Static Library. This is default behavior of
+        PlatformIO Build System (``"libArchive": true``).
+
+**Examples**
+
+1. Custom macros/defines
+
+.. code-block:: javascript
+
+    "build": {
+        "flags": "-D MYLIB_REV=0.1.2 -DRELEASE"
+    }
+
+2. Extra includes for C preprocessor
+
+.. code-block:: javascript
+
+    "build": {
+        "flags": [
+            "-I inc",
+            "-I inc/target_x13"
+        ]
+    }
+
+3. Force to use ``C99`` standard instead of ``C11``
+
+.. code-block:: javascript
+
+    "build": {
+        "unflags": "-std=gnu++11",
+        "flags": "-std=c99"
+    }
+
+4. Build source files (``c, cpp, h``) at the top level of the library
+
+.. code-block:: javascript
+
+    "build": {
+        "srcFilter": [
+            "+<*.c>",
+            "+<*.cpp>",
+            "+<*.h>"
+        ]
+    }
+
+
+5. Extend PlatformIO Build System with own extra script
+
+.. code-block:: javascript
+
+    "build": {
+        "extraScript": "generate_headers.py"
+    }
+
+``generate_headers.py``
+
+.. code-block:: python
+
+    Import('env')
+    # print env.Dump()
+    env.Append(
+        CPPDEFINES=["HELLO=WORLD", "TAG=1.2.3", "DEBUG"],
+        CPPPATH=["inc", "inc/devices"]
+    )
+
+    # some python code that generates header files "on-the-fly"

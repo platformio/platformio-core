@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -111,6 +111,7 @@ Contents
     platforms/embedded_boards
     frameworks/index
     platforms/custom_platform_and_board
+    platforms/unit_testing
 
 .. toctree::
     :caption: Library Manager
@@ -118,6 +119,7 @@ Contents
 
     Quickstart <librarymanager/index>
     User Guide <userguide/lib/index.rst>
+    librarymanager/ldf
     librarymanager/config
     librarymanager/creating
 

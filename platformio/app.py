@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,29 +44,28 @@ DEFAULT_SETTINGS = {
         "description": "Automatically update libraries (Yes/No)",
         "value": False
     },
+    "force_verbose": {
+        "description": "Force verbose output when processing environments",
+        "value": False
+    },
     "enable_telemetry": {
-        "description": (
-            "Telemetry service <http://docs.platformio.org/en/stable/"
-            "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
+        "description":
+        ("Telemetry service <http://docs.platformio.org/en/stable/"
+         "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
         "value": True
     },
     "enable_prompts": {
-        "description": (
-            "Can PlatformIO communicate with you via prompts: "
-            "propose to install platforms which aren't installed yet, "
-            "paginate over library search results and etc.)? ATTENTION!!! "
-            "If you call PlatformIO like subprocess, "
-            "please disable prompts to avoid blocking (Yes/No)"),
+        "description":
+        ("Can PlatformIO communicate with you via prompts: "
+         "propose to install platforms which aren't installed yet, "
+         "paginate over library search results and etc.)? ATTENTION!!! "
+         "If you call PlatformIO like subprocess, "
+         "please disable prompts to avoid blocking (Yes/No)"),
         "value": True
     }
 }
 
-
-SESSION_VARS = {
-    "command_ctx": None,
-    "force_option": False,
-    "caller_id": None
-}
+SESSION_VARS = {"command_ctx": None, "force_option": False, "caller_id": None}
 
 
 class State(object):
@@ -104,8 +103,8 @@ class State(object):
             return
         self._lockfile = LockFile(self.path)
 
-        if (self._lockfile.is_locked() and
-                (time() - getmtime(self._lockfile.lock_file)) > 10):
+        if self._lockfile.is_locked() and \
+                (time() - getmtime(self._lockfile.lock_file)) > 10:
             self._lockfile.break_lock()
 
         self._lockfile.acquire()

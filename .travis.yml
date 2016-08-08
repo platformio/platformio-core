@@ -5,16 +5,21 @@ python:
 env:
   - TOX_ENV=docs
   - TOX_ENV=lint
-  - TOX_ENV=py26
   - TOX_ENV=py27
 
 install:
   - git submodule update --init --recursive
   - pip install -U pip setuptools tox
-  - sudo apt-get install -qq lib32z1 lib32ncurses5 lib32bz2-1.0 # temporarily
+
+  # temporary hook to fix issue with gcc-pic32
+  - sudo apt-get install -qq lib32z1 lib32ncurses5 lib32bz2-1.0
 
 script:
   - tox -e $TOX_ENV
+
+after_success:
+  - tox -e coverage
+  - bash <(curl -s https://codecov.io/bash)
 
 notifications:
   slack:
