@@ -18,7 +18,7 @@ from __future__ import absolute_import
 
 import os
 import sys
-from os.path import basename, commonprefix, isdir, isfile, join, realpath
+from os.path import basename, commonprefix, isdir, isfile, join, realpath, sep
 
 import SCons.Scanner
 
@@ -93,7 +93,7 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
         return "%s(%r)" % (self.__class__, self.path)
 
     def __contains__(self, path):
-        return commonprefix((self.path, path)) == self.path
+        return commonprefix((self.path + sep, path)) == self.path + sep
 
     @property
     def name(self):
