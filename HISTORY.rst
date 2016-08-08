@@ -9,7 +9,7 @@ PlatformIO 3.0
 
 * PlatformIO Plus
 
-  + `Unit Testing <http://docs.platformio.org/en/latest/platforms/unit_testing.html>`__ for Embedded
+  + `Unit Testing <http://docs.platformio.org/en/latest/unit_testing.html>`__ for Embedded
     (`issue #408 <https://github.com/platformio/platformio/issues/408>`_)
 
 * Decentralized Development Platforms
