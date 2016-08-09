@@ -440,7 +440,7 @@ Example:
     build_flags = -Wl,-T/path/to/ld_script.ld
 
     [env:exec_command]
-    # get VCS revision "on-the-fly"
+    ; get VCS revision "on-the-fly"
     build_flags = !echo "-DPIO_SRC_REV="$(git rev-parse HEAD)
 
 
@@ -569,7 +569,7 @@ The list with available targets is located in :option:`platformio run --target`.
     # clean project
     platformio run -t clean
 
-    # dump curent build environment
+    # dump current build environment
     platformio run --target envdump
 
 When no targets are defined, *PlatformIO* will build only sources by default.
@@ -806,7 +806,7 @@ Examples
     framework = arduino
     board = uno
 
-    # enable auto-uploading
+    ; enable auto-uploading
     targets = upload
 
 
@@ -821,12 +821,12 @@ Examples
     board_f_cpu = 16000000L
 
     upload_port = /dev/ttyUSB0
-    # for Windows OS
-    # upload_port = COM3
+    ; for Windows OS
+    ; upload_port = COM3
     upload_protocol = arduino
     upload_speed = 19200
 
-    # enable auto-uploading
+    ; enable auto-uploading
     targets = upload
 
 

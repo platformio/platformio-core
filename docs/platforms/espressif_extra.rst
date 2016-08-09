@@ -17,7 +17,7 @@ See :ref:`projectconf_board_f_cpu` option from :ref:`projectconf`
 .. code-block:: ini
 
     [env:myenv]
-    # set frequency to 160MHz
+    ; set frequency to 160MHz
     board_f_cpu = 160000000L
 
 Custom FLASH Frequency
@@ -34,7 +34,7 @@ values:
 .. code-block:: ini
 
     [env:myenv]
-    # set frequency to 80MHz
+    ; set frequency to 80MHz
     board_f_flash = 80000000L
 
 Custom FLASH Mode

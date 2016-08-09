@@ -30,7 +30,7 @@ Configuration for the programmers:
         upload_protocol = stk500v1
         upload_flags = -P$UPLOAD_PORT
 
-        # edit this line with valid upload port
+        ; edit this line with valid upload port
         upload_port = SERIAL_PORT_HERE
 
 *   AVRISP mkII
@@ -91,7 +91,7 @@ Configuration for the programmers:
         upload_protocol = stk500v1
         upload_flags = -P$UPLOAD_PORT -b$UPLOAD_SPEED
 
-        # edit these lines
+        ; edit these lines
         upload_port = SERIAL_PORT_HERE
         upload_speed = 19200
 

@@ -164,14 +164,16 @@ Let's create new file named ``main.c`` using ``Menu: File > New File`` or shortc
 2. Project Configuration File named ``platformio.ini`` must be located in the project root directory.
 Copy the source code which is described below to it.
 
-.. code-block:: none
+.. code-block:: ini
 
-    #
-    # PlatformIO Project Configuration File
-    #
-    # Please make sure to read documentation with examples first
-    # http://docs.platformio.org/en/stable/projectconf.html
-    #
+    ; PlatformIO Project Configuration File
+    ;
+    ;   Build options: build flags, source filter, extra scripting
+    ;   Upload options: custom port, speed and extra flags
+    ;   Library options: dependencies, extra library storages
+    ;
+    ; Please visit documentation for the other options and examples
+    ; http://docs.platformio.org/en/stable/projectconf.html
 
     [env:arduino_uno]
     platform = atmelavr
