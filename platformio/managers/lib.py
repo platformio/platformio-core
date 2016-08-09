@@ -34,6 +34,30 @@ class LibraryManager(BasePkgManager):
         return ".library.json"
 
     @staticmethod
+    def normalize_dependencies(dependencies):
+        if not dependencies:
+            return []
+        items = []
+        if isinstance(dependencies, dict):
+            if "name" in dependencies:
+                items.append(dependencies)
+            else:
+                for name, version in dependencies.items():
+                    items.append({"name": name, "version": version})
+        elif isinstance(dependencies, list):
+            items = [d for d in dependencies if "name" in d]
+        for item in items:
+            for k in ("frameworks", "platforms"):
+                if k not in item or isinstance(k, list):
+                    continue
+                if item[k] == "*":
+                    del item[k]
+                elif isinstance(item[k], basestring):
+                    item[k] = [i.strip() for i in item[k].split(",")
+                               if i.strip()]
+        return items
+
+    @staticmethod
     def max_satisfying_repo_version(versions, requirements=None):
 
         def _cmp_dates(datestr1, datestr2):
@@ -132,10 +156,7 @@ class LibraryManager(BasePkgManager):
         if not quiet:
             click.secho("Installing dependencies", fg="yellow")
 
-        _dependencies = manifest['dependencies']
-        if not isinstance(_dependencies, list):
-            _dependencies = [_dependencies]
-        for filters in _dependencies:
+        for filters in self.normalize_dependencies(manifest['dependencies']):
             assert "name" in filters
             if any([s in filters.get("version", "") for s in ("\\", "/")]):
                 self.install("{name}={version}".format(**filters))

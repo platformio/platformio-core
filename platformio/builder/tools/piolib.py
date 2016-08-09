@@ -24,6 +24,7 @@ import SCons.Scanner
 
 from platformio import util
 from platformio.builder.tools import platformio as piotool
+from platformio.managers.lib import LibraryManager
 
 
 class LibBuilderFactory(object):
@@ -105,28 +106,8 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
 
     @property
     def dependencies(self):
-        deps = self._manifest.get("dependencies")
-        if not deps:
-            return deps
-        items = []
-        if isinstance(deps, dict):
-            if "name" in deps:
-                items.append(deps)
-            else:
-                for name, version in deps.items():
-                    items.append({"name": name, "version": version})
-        elif isinstance(deps, list):
-            items = [d for d in deps if "name" in d]
-        for item in items:
-            for k in ("frameworks", "platforms"):
-                if k not in item or isinstance(k, list):
-                    continue
-                if item[k] == "*":
-                    del item[k]
-                elif isinstance(item[k], basestring):
-                    item[k] = [i.strip() for i in item[k].split(",")
-                               if i.strip()]
-        return items
+        return LibraryManager.normalize_dependencies(
+            self._manifest.get("dependencies", []))
 
     @property
     def src_filter(self):

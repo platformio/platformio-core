@@ -64,6 +64,9 @@ PlatformIO 3.0
   + Support for the 3rd party manifests (Arduino IDE "library.properties"
     and ARM mbed "module.json")
 
+* Added support for BBC micro:bit board that is built on the ARM mbed and
+  Nordic nrf51 platform
+  (`issue #709 <https://github.com/platformio/platformio/issues/709>`_)
 * Print human-readable information when processing environments without
   ``-v, --verbose`` option
   (`issue #721 <https://github.com/platformio/platformio/issues/721>`_)
