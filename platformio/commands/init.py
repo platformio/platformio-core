@@ -18,7 +18,7 @@ from shutil import copyfile
 
 import click
 
-from platformio import app, exception, util
+from platformio import exception, util
 from platformio.commands.platform import \
     platform_install as cli_platform_install
 from platformio.ide.projectgenerator import ProjectGenerator
