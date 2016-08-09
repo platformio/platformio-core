@@ -283,7 +283,7 @@ def print_header(label, is_error=False):
 def check_project_defopts(config):
     if not config.has_section("platformio"):
         return True
-    known = ("home_dir", "lib_dir", "libdeps_dir", "src_dir", "env_dir",
+    known = ("home_dir", "lib_dir", "libdeps_dir", "src_dir", "envs_dir",
              "data_dir", "test_dir", "env_default")
     unknown = set([k for k, _ in config.items("platformio")]) - set(known)
     if not unknown:
