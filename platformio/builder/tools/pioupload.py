@@ -142,7 +142,7 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
         copyfile(fpath, join(
             env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
     print("Firmware has been successfully uploaded.\n"
-          "Please restart your board.")
+          "(Some boards may require manual hard reset)")
 
 
 def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
