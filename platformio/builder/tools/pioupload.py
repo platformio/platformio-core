@@ -84,7 +84,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
     print "Looking for upload port/disk..."
 
     def _look_for_mbed_disk():
-        msdlabels = ("mbed", "nucleo", "frdm")
+        msdlabels = ("mbed", "nucleo", "frdm", "microbit")
         for item in util.get_logicaldisks():
             if (not item['name'] or
                     not any([l in item['name'].lower() for l in msdlabels])):
