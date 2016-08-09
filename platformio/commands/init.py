@@ -77,10 +77,10 @@ def cli(ctx,  # pylint: disable=R0913
             fg="yellow")
         click.echo("")
 
-    click.echo("The next files/directories will be created in %s" %
+    click.echo("The next files/directories have been created in %s" %
                click.style(
                    project_dir, fg="cyan"))
-    click.echo("%s - Project Configuration File. |-> PLEASE EDIT ME <-|" %
+    click.echo("%s - Project Configuration File" %
                click.style(
                    "platformio.ini", fg="cyan"))
     click.echo("%s - Put your source files here" % click.style(
@@ -88,10 +88,6 @@ def cli(ctx,  # pylint: disable=R0913
     click.echo("%s - Put here project specific (private) libraries" %
                click.style(
                    "lib", fg="cyan"))
-
-    if (app.get_setting("enable_prompts") and
-            not click.confirm("Do you want to continue?")):
-        raise exception.AbortedByUser()
 
     init_base_project(project_dir)
 
@@ -276,10 +272,21 @@ def init_ci_conf(project_dir):
 
 
 def init_cvs_ignore(project_dir):
-    if isfile(join(project_dir, ".gitignore")):
-        return
-    with open(join(project_dir, ".gitignore"), "w") as f:
-        f.write(".pioenvs")
+    ignore_path = join(project_dir, ".gitignore")
+    default = [
+        ".pioenvs\n",
+        ".piolibdeps\n"
+    ]
+    current = []
+    if isfile(ignore_path):
+        with open(ignore_path) as fp:
+            current = fp.readlines()
+    print 13, current
+    for d in default:
+        if d not in current:
+            current.append(d)
+    with open(ignore_path, "w") as fp:
+        fp.writelines(current)
 
 
 def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
