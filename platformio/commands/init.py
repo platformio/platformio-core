@@ -281,7 +281,6 @@ def init_cvs_ignore(project_dir):
     if isfile(ignore_path):
         with open(ignore_path) as fp:
             current = fp.readlines()
-    print 13, current
     for d in default:
         if d not in current:
             current.append(d)
