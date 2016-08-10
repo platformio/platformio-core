@@ -357,7 +357,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             return BasePkgManager._INSTALLED_CACHE[self.package_dir]
         items = []
         for p in sorted(os.listdir(self.package_dir)):
-            manifest = self.load_manifest(join(self.package_dir, p))
+            pkg_dir = join(self.package_dir, p)
+            if not isdir(pkg_dir):
+                continue
+            manifest = self.load_manifest(pkg_dir)
             if not manifest:
                 continue
             assert set(["name", "version"]) <= set(manifest.keys())

@@ -47,8 +47,11 @@ def cli(ctx, **options):
             (len(ctx.args) == 2 and ctx.args[1] in ("-h", "--help")):
         return
     storage_dir = options['storage_dir']
-    if not storage_dir and options['global']:
-        storage_dir = join(util.get_home_dir(), "lib")
+    if not storage_dir:
+        if options['global']:
+            storage_dir = join(util.get_home_dir(), "lib")
+        elif util.is_platformio_project():
+            storage_dir = util.get_projectlibdeps_dir()
 
     if not storage_dir and not util.is_platformio_project():
         raise exception.PlatformioException(
@@ -59,7 +62,8 @@ def cli(ctx, **options):
              ctx.invoked_subcommand))
 
     ctx.obj = LibraryManager(storage_dir)
-    click.echo("Library Storage: " + storage_dir)
+    if "--json-output" not in ctx.args:
+        click.echo("Library Storage: " + storage_dir)
 
 
 @cli.command("install", short_help="Install library")
