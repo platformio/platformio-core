@@ -30,7 +30,7 @@ from platformio.managers.platform import PlatformFactory
 
 @click.command("test", short_help="Unit Testing")
 @click.option("--environment", "-e", multiple=True, metavar="<environment>")
-@click.option("--skip", multiple=True, metavar="<pattern>")
+@click.option("--ignore", "-i", multiple=True, metavar="<pattern>")
 @click.option("--upload-port", metavar="<upload port>")
 @click.option(
     "-d",
@@ -44,7 +44,7 @@ from platformio.managers.platform import PlatformFactory
         resolve_path=True))
 @click.option("--verbose", "-v", is_flag=True)
 @click.pass_context
-def cli(ctx, environment, skip, upload_port, project_dir, verbose):
+def cli(ctx, environment, ignore, upload_port, project_dir, verbose):
     with util.cd(project_dir):
         test_dir = util.get_projecttest_dir()
         if not isdir(test_dir):
@@ -59,19 +59,30 @@ def cli(ctx, environment, skip, upload_port, project_dir, verbose):
     start_time = time()
     results = []
     for testname in test_names:
-        for envname in projectconf.sections():
-            if not envname.startswith("env:"):
+        for section in projectconf.sections():
+            if not section.startswith("env:"):
                 continue
-            envname = envname[4:]
+
+            envname = section[4:]
             if environment and envname not in environment:
                 continue
 
-            # check skip patterns
-            if testname != "*" and any([fnmatch(testname, p) for p in skip]):
+            # check ignore patterns
+            _ignore = list(ignore)
+            if projectconf.has_option(section, "test_ignore"):
+                _ignore.extend([p.strip()
+                                for p in projectconf.get(
+                                    section, "test_ignore").split("\n")
+                                if p.strip()])
+            if testname != "*" and \
+               any([fnmatch(testname, p) for p in _ignore]):
                 results.append((None, testname, envname))
                 continue
 
-            tp = TestProcessor(ctx, testname, envname, {
+            cls = (LocalTestProcessor
+                   if projectconf.get(section, "platform") == "native" else
+                   EmbeddedTestProcessor)
+            tp = cls(ctx, testname, envname, {
                 "project_config": projectconf,
                 "project_dir": project_dir,
                 "upload_port": upload_port,
@@ -93,7 +104,7 @@ def cli(ctx, environment, skip, upload_port, project_dir, verbose):
             status_str = click.style("IGNORED", fg="yellow")
 
         click.echo(
-            "test:%s/env:%s\t%s" % (click.style(
+            "test:%s/env:%s\t[%s]" % (click.style(
                 testname, fg="yellow"), click.style(
                     envname, fg="cyan"), status_str),
             err=status is False)
@@ -108,10 +119,7 @@ def cli(ctx, environment, skip, upload_port, project_dir, verbose):
         raise exception.ReturnErrorCode()
 
 
-class TestProcessor(object):
-
-    SERIAL_TIMEOUT = 600
-    SERIAL_BAUDRATE = 9600
+class TestProcessorBase(object):
 
     def __init__(self, cmd_ctx, testname, envname, options):
         self.cmd_ctx = cmd_ctx
@@ -119,24 +127,16 @@ class TestProcessor(object):
         self.test_name = testname
         self.env_name = envname
         self.options = options
+        self._run_failed = False
 
-    def process(self):
-        self._progress("Building... (1/3)")
-        self._build_or_upload(["test"])
-        self._progress("Uploading... (2/3)")
-        self._build_or_upload(["test", "upload"])
-        self._progress("Testing... (3/3)")
-        sleep(1.0)  # wait while board is starting...
-        return self._run_hardware_test()
-
-    def _progress(self, text, is_error=False):
+    def print_progress(self, text, is_error=False):
         print_header(
             "[test::%s] %s" % (click.style(
                 self.test_name, fg="yellow", bold=True), text),
             is_error=is_error)
         click.echo()
 
-    def _build_or_upload(self, target):
+    def build_or_upload(self, target):
         if self.test_name != "*":
             self.cmd_ctx.meta['piotest'] = self.test_name
         return self.cmd_ctx.invoke(
@@ -147,7 +147,54 @@ class TestProcessor(object):
             environment=[self.env_name],
             target=target)
 
-    def _run_hardware_test(self):
+    def run(self):
+        raise NotImplementedError
+
+    def on_run_out(self, line):
+        if line.endswith(":PASS"):
+            click.echo("%s\t[%s]" % (line[:-5], click.style(
+                "PASSED", fg="green")))
+        elif ":FAIL:" in line:
+            self._run_failed = True
+            click.echo("%s\t[%s]" % (line, click.style("FAILED", fg="red")))
+        else:
+            click.echo(line)
+
+
+class LocalTestProcessor(TestProcessorBase):
+
+    def process(self):
+        self.print_progress("Building... (1/2)")
+        self.build_or_upload(["test"])
+        self.print_progress("Testing... (2/2)")
+        return self.run()
+
+    def run(self):
+        with util.cd(self.options['project_dir']):
+            pioenvs_dir = util.get_projectpioenvs_dir()
+        result = util.exec_command(
+            [join(pioenvs_dir, self.env_name, "program")],
+            stdout=util.AsyncPipe(self.on_run_out),
+            stderr=util.AsyncPipe(self.on_run_out))
+        assert "returncode" in result
+        return result['returncode'] == 0 and not self._run_failed
+
+
+class EmbeddedTestProcessor(TestProcessorBase):
+
+    SERIAL_TIMEOUT = 600
+    SERIAL_BAUDRATE = 9600
+
+    def process(self):
+        self.print_progress("Building... (1/3)")
+        self.build_or_upload(["test"])
+        self.print_progress("Uploading... (2/3)")
+        self.build_or_upload(["test", "upload"])
+        self.print_progress("Testing... (3/3)")
+        sleep(1.0)  # wait while board is starting...
+        return self.run()
+
+    def run(self):
         click.echo("If you don't see any output for the first 10 secs, "
                    "please reset board (press reset button)")
         click.echo()
@@ -155,23 +202,15 @@ class TestProcessor(object):
             self.get_serial_port(),
             self.SERIAL_BAUDRATE,
             timeout=self.SERIAL_TIMEOUT)
-        passed = True
         while True:
             line = ser.readline().strip()
             if not line:
                 continue
-            if line.endswith(":PASS"):
-                click.echo("%s\t%s" % (line[:-5], click.style(
-                    "PASSED", fg="green")))
-            elif ":FAIL:" in line:
-                passed = False
-                click.echo("%s\t%s" % (line, click.style("FAILED", fg="red")))
-            else:
-                click.echo(line)
+            self.on_run_out(line)
             if all([l in line for l in ("Tests", "Failures", "Ignored")]):
                 break
         ser.close()
-        return passed
+        return not self._run_failed
 
     def get_serial_port(self):
         config = self.options['project_config']

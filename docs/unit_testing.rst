@@ -22,19 +22,30 @@ of one or more MCU program modules together with associated control data,
 usage procedures, and operating procedures, are tested to determine whether
 they are fit for use. Unit testing finds problems early in the development cycle.
 
-PlatformIO Test System is very interesting for embedded development.
-It allows you to write tests locally and run them directly on the target
-device (hardware unit testing). Also, you will be able to run the same tests
-on the different target devices (:ref:`embedded_boards`).
+PlatformIO Test System supports 2 different test types:
+
+1. **Local Test** - *[host, native]*, process test on the host machine
+   using :ref:`platform_native`.
+2. **Embedded Test** - *[remote, hardware]*, prepare special firmware for the
+   target device and upload it. Run test on the embedded device and collect
+   results. Process test results on the host machine.
+
+   You will be able to run the same test on the different target devices
+   (:ref:`embedded_boards`).
 
 PlatformIO Test System consists of:
 
 * Project builder
 * Test builder
-* Firmware uploader
+* Firmware uploader (is used only for embedded test)
 * Test processor
 
 There is special command :ref:`cmd_test` to run tests from PlatformIO Project.
+It allows to process specific environments or to ignore some tests using
+"Glob patterns".
+
+Also, is possible to ignore some tests for specific environment using
+:ref:`projectconf_test_ignore` option from :ref:`projectconf`.
 
 .. contents::
 
@@ -55,38 +66,74 @@ PlatformIO Test System design is based on a few isolated components:
 Workflow
 --------
 
-1. Create PlatformIO project using :ref:`cmd_init` command.
+1. Create PlatformIO project using :ref:`cmd_init` command. For Local Unit
+   Testing (on the host machine), need to use :ref:`platform_native`.
+
+   .. code-block:: ini
+
+        ; PlatformIO Project Configuration File
+        ;
+        ;   Build options: build flags, source filter, extra scripting
+        ;   Upload options: custom port, speed and extra flags
+        ;   Library options: dependencies, extra library storages
+        ;
+        ; Please visit documentation for the other options and examples
+        ; http://docs.platformio.org/en/stable/projectconf.html
+
+        ;
+        ; Embedded platforms
+        ;
+
+        [env:uno]
+        platform = atmelavr
+        framework = arduino
+        board = uno
+
+        [env:nodemcu]
+        platform = espressif
+        framework = arduino
+        board = nodemcuv2
+
+        ;
+        ; Local (PC, native) platforms
+        ;
+
+        [env:local]
+        platform = native
+
 2. Place source code of main program to ``src`` directory.
 3. Wrap ``main()`` or ``setup()/loop()`` methods of main program in ``UNIT_TEST``
    guard:
 
    .. code-block:: c
 
-       /**
+        /**
         * Arduino Wiring-based Framework
         */
-       #ifndef UNIT_TEST
-       void setup () {
+        #ifndef UNIT_TEST
+        #include <Arduino.h>
+        void setup () {
           // some code...
-       }
+        }
 
-       void loop () {
+        void loop () {
           // some code...
-       }
-       #endif
+        }
+        #endif
 
-       /**
+        /**
         * Generic C/C++
         */
-       #ifndef UNIT_TEST
-       int main() {
+        #ifndef UNIT_TEST
+        int main(int argc, char **argv) {
           // setup code...
 
           while (1) {
               // loop code...
           }
-       }
-       #endif
+          return 0
+        }
+        #endif
 
 4. Create ``test`` directory in the root of project. See :ref:`projectconf_pio_test_dir`.
 5. Write test using :ref:`unit_testing_api`. The each test is a small
@@ -183,8 +230,8 @@ The summary of `Unity Test API <https://github.com/ThrowTheSwitch/Unity#unity-te
 
   - ``TEST_ASSERT_EQUAL_MEMORY(expected, actual, len)``
 
-Example
--------
+Test "Blink" Project
+--------------------
 
 1. Please follow to :ref:`quickstart` and create "Blink Project". According
    to the Unit Testing :ref:`unit_testing_design` it is the **Main program**.
@@ -215,8 +262,15 @@ Source files
 
   .. code-block:: ini
 
-      ; Project Configuration File
-      ; Docs: http://docs.platformio.org/en/latest/projectconf.html
+      ; PlatformIO Project Configuration File
+      ;
+      ;   Build options: build flags, source filter, extra scripting
+      ;   Upload options: custom port, speed and extra flags
+      ;   Library options: dependencies, extra library storages
+      ;
+      ; Please visit documentation for the other options and examples
+      ; http://docs.platformio.org/en/stable/projectconf.html
+
 
       [env:uno]
       platform = atmelavr
@@ -393,7 +447,11 @@ Test results
     test:*/env:uno  PASSED
     ========================= [PASSED] Took 13.35 seconds ========================
 
--------
+Examples
+--------
+
+* `Embedded: Wiring Blink <https://github.com/platformio/platformio-examples/tree/develop/unit-testing/wiring-blink>`_
+* `Local & Embedded: Calculator <https://github.com/platformio/platformio-examples/tree/develop/unit-testing/calculator>`_
 
 For the other examples and source code please follow to
-`PlatformIO Unit Testing Examples <https://github.com/platformio/platformio-examples/tree/feature/platformio-30/unit-testing>`_ repository.
+`PlatformIO Unit Testing Examples <hhttps://github.com/platformio/platformio-examples/tree/develop/unit-testing>`_ repository.

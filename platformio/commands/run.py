@@ -111,14 +111,14 @@ def cli(ctx,  # pylint: disable=R0913,R0914
 
 class EnvironmentProcessor(object):
 
-    KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
-                     "board_f_cpu", "board_f_flash", "board_flash_mode",
-                     "build_flags", "src_build_flags", "build_unflags",
-                     "src_filter", "extra_script", "targets", "upload_port",
-                     "upload_protocol", "upload_speed", "upload_flags",
-                     "upload_resetmethod", "lib_install", "lib_deps",
-                     "lib_force", "lib_ignore", "lib_extra_dirs",
-                     "lib_ldf_mode", "lib_compat_mode", "piotest")
+    KNOWN_OPTIONS = (
+        "platform", "framework", "board", "board_mcu", "board_f_cpu",
+        "board_f_flash", "board_flash_mode", "build_flags", "src_build_flags",
+        "build_unflags", "src_filter", "extra_script", "targets",
+        "upload_port", "upload_protocol", "upload_speed", "upload_flags",
+        "upload_resetmethod", "lib_install", "lib_deps", "lib_force",
+        "lib_ignore", "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
+        "test_ignore", "piotest")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 

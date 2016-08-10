@@ -656,7 +656,7 @@ Multiple dependencies are allowed (multi-lines).
 
 .. code-block:: ini
 
-  [env:***]
+  [env:myenv]
   lib_deps =
     LIBRARY_1
     LIBRARY_2
@@ -783,6 +783,53 @@ Finder. More details :ref:`ldf_compat_mode`.
 
 By default, this value is set to ``lib_compat_mode = 1`` and means that LDF
 will check only for framework compatibility.
+
+
+Test options
+~~~~~~~~~~~~
+
+.. contents::
+    :local:
+
+.. _projectconf_test_ignore:
+
+``test_ignore``
+^^^^^^^^^^^^^^^
+
+.. versionadded:: 3.0
+.. seealso::
+    Please make sure to read :ref:`unit_testing` guide first.
+
+Ignore tests where the name matches specified patterns.
+More than one pattern is allowed (multi-lines). Also, you can ignore some
+tests using :option:`platformio test --ignore` command.
+
+.. list-table::
+    :header-rows:  1
+
+    * - Pattern
+      - Meaning
+
+    * - ``*``
+      - matches everything
+
+    * - ``?``
+      - matches any single character
+
+    * - ``[seq]``
+      - matches any character in seq
+
+    * - ``[!seq]``
+      - matches any character not in seq
+
+**Example**
+
+.. code-block:: ini
+
+  [env:myenv]
+  test_ignore =
+    mytest*
+    test[13]
 
 -----------
 

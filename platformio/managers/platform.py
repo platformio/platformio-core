@@ -362,14 +362,15 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 
     @property
     def packages(self):
-        packages = self._manifest.get("packages", {})
-        if "tool-scons" not in packages:
-            packages['tool-scons'] = {
+        if "packages" not in self._manifest:
+            self._manifest['packages'] = {}
+        if "tool-scons" not in self._manifest['packages']:
+            self._manifest['packages']['tool-scons'] = {
                 "version": self._manifest.get("engines", {}).get(
                     "scons", ">=2.3.0,<2.6.0"),
                 "optional": False
             }
-        return packages
+        return self._manifest['packages']
 
     def get_dir(self):
         return dirname(self.manifest_path)
@@ -476,7 +477,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 
         if "test" in targets and "tool-unity" not in self.packages:
             self.packages['tool-unity'] = {
-                "version": "~1.20302.0",
+                "version": "~1.20302.1",
                 "optional": False
             }
 

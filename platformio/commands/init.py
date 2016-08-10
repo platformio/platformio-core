@@ -80,9 +80,8 @@ def cli(ctx,  # pylint: disable=R0913
     click.echo("The next files/directories have been created in %s" %
                click.style(
                    project_dir, fg="cyan"))
-    click.echo("%s - Project Configuration File" %
-               click.style(
-                   "platformio.ini", fg="cyan"))
+    click.echo("%s - Project Configuration File" % click.style(
+        "platformio.ini", fg="cyan"))
     click.echo("%s - Put your source files here" % click.style(
         "src", fg="cyan"))
     click.echo("%s - Put here project specific (private) libraries" %
@@ -273,10 +272,7 @@ def init_ci_conf(project_dir):
 
 def init_cvs_ignore(project_dir):
     ignore_path = join(project_dir, ".gitignore")
-    default = [
-        ".pioenvs\n",
-        ".piolibdeps\n"
-    ]
+    default = [".pioenvs\n", ".piolibdeps\n"]
     current = []
     if isfile(ignore_path):
         with open(ignore_path) as fp:

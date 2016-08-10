@@ -43,6 +43,14 @@ FRAMEWORK_PARAMETERS = {
         "serial_flush": "Serial.flush()",
         "serial_begin": "Serial.begin(9600)",
         "serial_end": "Serial.end()"
+    },
+    "native": {
+        "framework": "stdio.h",
+        "serial_obj": "",
+        "serial_putc": "putchar(a)",
+        "serial_flush": "fflush(stdout)",
+        "serial_begin": "",
+        "serial_end": ""
     }
 }
 
@@ -114,7 +122,10 @@ void output_complete(void)
                 print("Warning: Could not remove temporary file '%s'. "
                       "Please remove it manually." % file_)
 
-    framework = env.subst("$PIOFRAMEWORK").lower()
+    if env['PIOPLATFORM'] == "native":
+        framework = "native"
+    else:
+        framework = env.subst("$PIOFRAMEWORK").lower()
     if framework not in FRAMEWORK_PARAMETERS:
         env.Exit("Error: %s framework doesn't support testing feature!" %
                  framework)
