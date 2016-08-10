@@ -52,7 +52,8 @@ def validate_path(ctx, param, value):  # pylint: disable=W0613
 
 @click.command("ci", short_help="Continuous Integration")
 @click.argument("src", nargs=-1, callback=validate_path)
-@click.option("-l", "--lib", multiple=True, callback=validate_path)
+@click.option(
+    "-l", "--lib", multiple=True, callback=validate_path, metavar="DIRECTORY")
 @click.option("--exclude", multiple=True)
 @click.option(
     "-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
