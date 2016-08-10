@@ -107,7 +107,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
 
 
 def test_project_lib_complex(clirunner, validate_cliresult, tmpdir):
-    with util.cd(str(tmpdir)):
+    with tmpdir.as_cwd():
         # init
         result = clirunner.invoke(cmd_init)
         validate_cliresult(result)

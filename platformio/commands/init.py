@@ -312,6 +312,7 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
         used_platforms.append(manifest['platform'])
         if id_ in used_boards:
             continue
+        used_boards.append(id_)
 
         content.append("")
         content.append("[env:%s%s]" % (env_prefix, id_))
