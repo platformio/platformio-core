@@ -454,4 +454,4 @@ Examples
 * `Local & Embedded: Calculator <https://github.com/platformio/platformio-examples/tree/develop/unit-testing/calculator>`_
 
 For the other examples and source code please follow to
-`PlatformIO Unit Testing Examples <hhttps://github.com/platformio/platformio-examples/tree/develop/unit-testing>`_ repository.
+`PlatformIO Unit Testing Examples <hhttps://github.com/platformio/platformio-examples/tree/develop/unit-testing>`__ repository.
