@@ -19,6 +19,7 @@ from __future__ import absolute_import
 import os
 import sys
 from os.path import basename, commonprefix, isdir, isfile, join, realpath, sep
+from platform import system
 
 import SCons.Scanner
 
@@ -94,7 +95,12 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
         return "%s(%r)" % (self.__class__, self.path)
 
     def __contains__(self, path):
-        return commonprefix((self.path + sep, path)) == self.path + sep
+        p1 = self.path
+        p2 = path
+        if system() == "Windows":
+            p1 = p1.lower()
+            p2 = p2.lower()
+        return commonprefix((p1 + sep, p2)) == p1 + sep
 
     @property
     def name(self):
