@@ -23,6 +23,7 @@ Here are recent articles about PlatformIO:
 2016
 ^^^^
 
+* Jul 26, 2016 - **Embedded Systems Laboratory** - `แนะนำการใช้งาน PlatformIO IDE สำหรับบอร์ด Arduino และ ESP8266 (Get started with PlatformIO IDE for Arduino board and ESP8266, Thai) <http://cpre.kmutnb.ac.th/esl/learning/index.php?article=intro_platformio-ide>`_
 * Jul 5, 2016 - **Ivan Kravets, Ph.D.** - `Explore the new development instruments for Arduino with PlatformIO ecosystem <http://www.slideshare.net/ivankravets/explore-the-new-development-instruments-for-arduino-with-platformio-ecosystem>`_
 * Jul 5, 2016 - **Belinda** - `Monte Bianco Arduino Developer Summit <http://www.arduino.org/blog/arduino-developer-summit>`_
 * Jul 1, 2016 - **Tam Hanna** - `Mikrocontroller-Gipfel in den Alpen: Arduino Developer Summit, Tag eins (Microcontroller peaks in the Alps: Arduino Developer Summit, Day One, German) <http://www.heise.de/make/meldung/Mikrocontroller-Gipfel-in-den-Alpen-Arduino-Developer-Summit-Tag-eins-3252421.html>`_
