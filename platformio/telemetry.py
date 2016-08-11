@@ -118,7 +118,7 @@ class MeasurementProtocol(TelemetryBase):
         args = [str(s).lower() for s in ctx_args if not str(s).startswith("-")]
         if not args:
             return
-        if args[0] in ("lib", "platforms", "serialports", "settings"):
+        if args[0] in ("lib", "platform", "serialports", "settings"):
             cmd_path = args[:2]
         else:
             cmd_path = args[:1]
