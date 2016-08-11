@@ -524,7 +524,8 @@ class PlatformBoardConfig(object):
             "name": self._manifest['name'],
             "platform": self._manifest.get("platform"),
             "mcu": self._manifest.get("build", {}).get("mcu", "").upper(),
-            "fcpu": int(self._manifest.get("build", {}).get("f_cpu", "")[:-1]),
+            "fcpu":
+            int(self._manifest.get("build", {}).get("f_cpu", "0L")[:-1]),
             "ram": self._manifest.get("upload", {}).get("maximum_ram_size", 0),
             "rom": self._manifest.get("upload", {}).get("maximum_size", 0),
             "frameworks": self._manifest.get("frameworks"),

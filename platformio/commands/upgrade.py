@@ -89,7 +89,7 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
 
 def get_latest_version():
     try:
-        if not isinstance(VERSION[2], int):
+        if not str(VERSION[2]).isdigit():
             try:
                 return get_develop_latest_version()
             except:  # pylint: disable=bare-except
