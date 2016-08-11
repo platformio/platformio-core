@@ -460,6 +460,26 @@ def GetLibBuilders(env):
     compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
     verbose = not (env.GetOption("silent") or env.GetOption('clean'))
 
+    def _init_lib_builder(src_dir):
+        lb = LibBuilderFactory.new(env, src_dir)
+        if lb.name in env.get("LIB_IGNORE", []):
+            if verbose:
+                sys.stderr.write("Ignored library %s\n" % lb.path)
+            return
+        if compat_mode > 1 and not lb.is_platform_compatible(env[
+                'PIOPLATFORM']):
+            if verbose:
+                sys.stderr.write("Platform incompatible library %s\n" %
+                                 lb.path)
+            return
+        if compat_mode > 0 and not any([lb.is_framework_compatible(f)
+                                        for f in env_frameworks]):
+            if verbose:
+                sys.stderr.write("Framework incompatible library %s\n" %
+                                 lb.path)
+            return
+        return lb
+
     for libs_dir in env['LIBSOURCE_DIRS']:
         libs_dir = env.subst(libs_dir)
         if not isdir(libs_dir):
@@ -467,24 +487,15 @@ def GetLibBuilders(env):
         for item in sorted(os.listdir(libs_dir)):
             if item == "__cores__" or not isdir(join(libs_dir, item)):
                 continue
-            lb = LibBuilderFactory.new(env, join(libs_dir, item))
-            if lb.name in env.get("LIB_IGNORE", []):
-                if verbose:
-                    sys.stderr.write("Ignored library %s\n" % lb.path)
-                continue
-            if compat_mode > 1 and not lb.is_platform_compatible(env[
-                    'PIOPLATFORM']):
-                if verbose:
-                    sys.stderr.write("Platform incompatible library %s\n" %
-                                     lb.path)
-                continue
-            if compat_mode > 0 and not any([lb.is_framework_compatible(f)
-                                            for f in env_frameworks]):
-                if verbose:
-                    sys.stderr.write("Framework incompatible library %s\n" %
-                                     lb.path)
-                continue
+            lb = _init_lib_builder(join(libs_dir, item))
+            if lb:
+                items += (lb, )
+
+    for lib_dir in env.get("LIBSOURCE_EXTRA", []):
+        lb = _init_lib_builder(lib_dir)
+        if lb:
             items += (lb, )
+
     return items
 
 
