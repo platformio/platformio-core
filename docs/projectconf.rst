@@ -553,6 +553,8 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
   - `#351 Specific reset method for ESP8266 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_
   - `#247 Specific options for avrdude <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_.
 
+.. _projectconf_targets:
+
 ``targets``
 ^^^^^^^^^^^
 

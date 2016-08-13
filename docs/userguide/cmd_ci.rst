@@ -35,19 +35,34 @@ with the build environments (using :option:`platformio ci --board` or
 :option:`platformio ci --project-conf`) and processes them via :ref:`cmd_run`
 command.
 
+:ref:`cmd_ci` command accepts **multiple** ``SRC`` arguments,
+:option:`platformio ci --lib` and :option:`platformio ci --exclude` options
+which can be a path to directory, file or
+`Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_.
+Also, you can omit ``SRC`` argument and set path (multiple paths are allowed
+denoting with ``:``) to
+``PLATFORMIO_CI_SRC`` `Environment variable <http://en.wikipedia.org/wiki/Environment_variable>`_
+
 For more details as for integration with the popular Continuous Integration
 Systems please follow to :ref:`ci` page.
 
 .. note::
-    :ref:`cmd_ci` command accepts **multiple** ``SRC`` arguments,
-    :option:`platformio ci --lib` and :option:`platformio ci --exclude` options
-    which can be a path to directory, file or
-    `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_.
+    :ref:`cmd_ci` command is useful for library developers. It allows to build
+    different examples without creating own project per them. Also, is possible
+    to upload firmware to the target device. In this case, need to create
+    :ref:`projectconf` where specify "upload" :ref:`projectconf_targets`. Custom
+    upload port can be overridden with :ref:`projectconf_upload_port` option.
+    Then need to specify the path to this :ref:`projectconf` to
+    :option:`platformio ci --project-conf`. For example,
 
-.. note::
-    You can omit ``SRC`` argument and set path (multiple paths are allowed
-    denoting with ``:``) to
-    ``PLATFORMIO_CI_SRC`` `Environment variable <http://en.wikipedia.org/wiki/Environment_variable>`_
+    .. code-block:: ini
+
+        [env:uno]
+        platform = atmelavr
+        framework = arduino
+        targets = upload
+        ; custom upload port
+        ; upload_port = ...
 
 Options
 -------
@@ -120,4 +135,4 @@ or by environment variable :envvar:`PLATFORMIO_SETTING_FORCE_VERBOSE`.
 Examples
 --------
 
-For the examples please follow to :ref:`ci` page.
+For the others examples please follow to :ref:`ci` page.
