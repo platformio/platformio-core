@@ -19,12 +19,12 @@ from tempfile import gettempdir
 MAX_SOURCES_LENGTH = 8000  # Windows CLI has limit with command length to 8192
 
 
-def _huge_sources_hook(sources):
+def long_cmd_hook(sources):
     _sources = str(sources).replace("\\", "/")
     if len(str(_sources)) < MAX_SOURCES_LENGTH:
         return sources
 
-    tmp_file = join(gettempdir(), "pioarargs-%s" % md5(_sources).hexdigest())
+    tmp_file = join(gettempdir(), "longcmd-%s" % md5(_sources).hexdigest())
     with open(tmp_file, "w") as f:
         # fix space in paths
         for line in _sources.split(".o "):
@@ -41,9 +41,11 @@ def exists(_):
 
 def generate(env):
 
-    env.Replace(
-        _huge_sources_hook=_huge_sources_hook,
-        ARCOM=env.get("ARCOM", "").replace("$SOURCES",
-                                           "${_huge_sources_hook(SOURCES)}"))
+    env.Replace(_long_cmd_hook=long_cmd_hook)
+    coms = {}
+    for key in ("ARCOM", "LINKCOM"):
+        coms[key] = env.get(key, "").replace("$SOURCES",
+                                             "${_long_cmd_hook(SOURCES)}")
+    env.Replace(**coms)
 
     return env
