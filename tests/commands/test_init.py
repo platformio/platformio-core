@@ -16,7 +16,7 @@ import json
 from os import getcwd, makedirs
 from os.path import getsize, isdir, isfile, join
 
-from platformio import util, exception
+from platformio import exception, util
 from platformio.commands.boards import cli as cmd_boards
 from platformio.commands.init import cli as cmd_init
 
