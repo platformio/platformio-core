@@ -78,11 +78,11 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
 
     INC_SCANNER = SCons.Scanner.C.CScanner()
 
-    def __init__(self, env, path):
+    def __init__(self, env, path, manifest=None):
         self.env = env.Clone()
         self.envorigin = env.Clone()
         self.path = realpath(env.subst(path))
-        self._manifest = self.load_manifest()
+        self._manifest = manifest if manifest else self.load_manifest()
         self._is_dependent = False
         self._depbuilders = tuple()
         self._scanned_paths = tuple()
@@ -246,7 +246,7 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
         return result
 
     def depend_recursive(self, lb, lib_builders, search_paths=None):
-        assert isinstance(lb, LibBuilderBase)
+        # assert isinstance(lb, LibBuilderBase)
         if self != lb:
             if self in lb.depbuilders:
                 sys.stderr.write("Warning! Circular dependencies detected "
