@@ -81,7 +81,7 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
     def __init__(self, env, path):
         self.env = env.Clone()
         self.envorigin = env.Clone()
-        self.path = env.subst(path)
+        self.path = realpath(env.subst(path))
         self._manifest = self.load_manifest()
         self._is_dependent = False
         self._depbuilders = tuple()
