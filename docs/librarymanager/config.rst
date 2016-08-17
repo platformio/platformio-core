@@ -260,10 +260,8 @@ Example with fixed release/tag on GitHub:
 
 See more ``library.json`` :ref:`library_creating_examples`.
 
-.. _libjson_url:
-
-``url``
--------
+``homepage``
+------------
 
 *Optional* | Type: ``String`` | Max. Length: 255
 
