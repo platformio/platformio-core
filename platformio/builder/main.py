@@ -68,7 +68,7 @@ commonvars.AddVariables(
 DefaultEnvironment(
     tools=[
         "ar", "as", "gcc", "g++", "gnulink",
-        "longcmdhook", "platformio", "pioplatform",
+        "platformio", "pioplatform", "piowinhooks",
         "piolib", "piotest", "pioupload", "piomisc"
     ],  # yapf: disable
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
