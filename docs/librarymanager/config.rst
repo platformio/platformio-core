@@ -139,7 +139,7 @@ Examples:
 
 *Required* if :ref:`libjson_downloadurl` field is not defined | Type: ``Object``
 
-The repository in which the source code can be found. The field consists for the
+The repository in which the source code can be found. The field consists of the
 next items:
 
 * ``type`` the only "git", "hg" or "svn" are supported
@@ -225,6 +225,8 @@ Example:
 
 ``license``
 -----------
+
+*Optional* | Type: ``String``
 
 A license of the library. You can check
 `the full list of SPDX license IDs <https://spdx.org/licenses/>`_. Ideally you
