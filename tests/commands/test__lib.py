@@ -31,7 +31,7 @@ def test_search(clirunner, validate_cliresult):
                               ["search", "DHT22", "--platform=timsp430"])
     validate_cliresult(result)
     match = re.search(r"Found\s+(\d+)\slibraries:", result.output)
-    assert int(match.group(1)) == 1
+    assert int(match.group(1)) > 1
 
 
 def test_global_install_registry(clirunner, validate_cliresult,
