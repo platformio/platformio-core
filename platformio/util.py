@@ -261,8 +261,7 @@ def exec_command(*args, **kwargs):
 
     default = dict(
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        shell=system() == "Windows")
+        stderr=subprocess.PIPE)
     default.update(kwargs)
     kwargs = default
 
