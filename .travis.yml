@@ -34,6 +34,7 @@ after_success:
 
 notifications:
   slack:
-    secure: ksQmXOP5NVsf8IgoDuxD68Q/YNwDpZuwq0V29h2dxYCr38oYdAkq/Os4LSCs0X6P0cQFf6nC1hM/d+cAvU+SmzcHGxEceHNEGCg3/TAj+68KIwooPU93Lfq1zwdfteZWxANjKlCQy4+wZliHLhL8fvCYgfJww/6qKmqSYleBNM=
+    rooms:
+      secure: JD6VGfN4+SLU2CwDdiIOr1VgwD+zbYUCE/srwyGuHavnjIkPItkl6T6Bn8Y4VrU6ysbuKotfdV2TAJJ82ivFbY8BvZBc7FBcYp/AGQ4FaCCV5ySv8RDAcQgdE12oaGzMdODiLqsB85f65zOlAFa+htaXyEiRTcotn6Y2hupatrI=
     on_failure: always
     on_success: change
