@@ -33,6 +33,8 @@ after_success:
   - if [[ "$TOX_ENV" == "py27" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash); fi
 
 notifications:
+  email: false
+
   slack:
     rooms:
       secure: JD6VGfN4+SLU2CwDdiIOr1VgwD+zbYUCE/srwyGuHavnjIkPItkl6T6Bn8Y4VrU6ysbuKotfdV2TAJJ82ivFbY8BvZBc7FBcYp/AGQ4FaCCV5ySv8RDAcQgdE12oaGzMdODiLqsB85f65zOlAFa+htaXyEiRTcotn6Y2hupatrI=
