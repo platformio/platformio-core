@@ -33,7 +33,7 @@ except ImportError:
     from ConfigParser import ConfigParser
 
 
-def validate_path(ctx, param, value):  # pylint: disable=W0613
+def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     invalid_path = None
     value = list(value)
     for i, p in enumerate(value):
@@ -87,8 +87,8 @@ def cli(ctx,  # pylint: disable=R0913
         project_conf,
         verbose):
 
-    if not src:
-        src = getenv("PLATFORMIO_CI_SRC", "").split(":")
+    if not src and getenv("PLATFORMIO_CI_SRC"):
+        src = validate_path(ctx, None, getenv("PLATFORMIO_CI_SRC").split(":"))
     if not src:
         raise click.BadParameter("Missing argument 'src'")
 
