@@ -24,3 +24,11 @@ You don't need to bother for finding the latest version of library. Due to
 :ref:`cmd_lib_update` command you will have up-to-date external libraries.
 
 .. image:: ../_static/platformio-demo-lib.gif
+
+.. toctree::
+    :maxdepth: 2
+
+    User Guide <../userguide/lib/index.rst>
+    ldf
+    config
+    creating
