@@ -78,8 +78,9 @@ def generate(env):
     for key in ("ARCOM", "LINKCOM"):
         coms[key] = env.get(key, "").replace(
             "$SOURCES", "${_long_sources_hook(__env__, SOURCES)}")
-    coms['_CCCOMCOM'] = env.get("_CCCOMCOM", "").replace(
-        "$_CPPINCFLAGS", "${_long_incflags_hook(__env__, _CPPINCFLAGS)}")
+    for key in ("_CCCOMCOM", "ASPPCOM"):
+        coms[key] = env.get(key, "").replace(
+            "$_CPPINCFLAGS", "${_long_incflags_hook(__env__, _CPPINCFLAGS)}")
     env.Replace(**coms)
 
     return env
