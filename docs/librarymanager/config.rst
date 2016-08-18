@@ -435,11 +435,21 @@ A list of example patterns. This field is predefined with default value:
 .. code-block:: javascript
 
     "examples": [
+        "[Ee]xamples/*.c",
+        "[Ee]xamples/*.cpp",
+        "[Ee]xamples/*.h",
+        "[Ee]xamples/*.ino",
+        "[Ee]xamples/*.pde",
         "[Ee]xamples/*/*.c",
         "[Ee]xamples/*/*.cpp",
         "[Ee]xamples/*/*.h",
         "[Ee]xamples/*/*.ino",
-        "[Ee]xamples/*/*.pde"
+        "[Ee]xamples/*/*.pde",
+        "[Ee]xamples/*/*/*.c",
+        "[Ee]xamples/*/*/*.cpp",
+        "[Ee]xamples/*/*/*.h",
+        "[Ee]xamples/*/*/*.ino",
+        "[Ee]xamples/*/*/*.pde"
     ]
 
 
