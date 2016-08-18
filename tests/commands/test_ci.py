@@ -14,14 +14,13 @@
 
 from os.path import join
 
-from platformio import exception
 from platformio.commands.ci import cli as cmd_ci
 
 
 def test_ci_empty(clirunner):
     result = clirunner.invoke(cmd_ci)
-    assert result.exit_code == -1
-    assert isinstance(result.exception, exception.CIBuildEnvsEmpty)
+    assert result.exit_code == 2
+    assert "Invalid value: Missing argument 'src'" in result.output
 
 
 def test_ci_boards(clirunner, validate_cliresult):
