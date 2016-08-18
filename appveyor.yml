@@ -14,6 +14,8 @@ test_script:
 
 notifications:
   - provider: Email
+    to:
+      - me@ikravets.com
     on_build_success: false
     on_build_failure: false
     on_build_status_changed: false
