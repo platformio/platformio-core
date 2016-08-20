@@ -420,18 +420,21 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         return manifest['version'] != self.get_latest_repo_version(
             name, requirements)
 
-    def install(self, name, requirements=None, quiet=False,
+    def install(self,
+                name,
+                requirements=None,
+                silent=False,
                 trigger_event=True):
         name, requirements, url = self.parse_pkg_name(name, requirements)
         installed_dir = self.get_installed_dir(name, requirements, url)
 
-        if not installed_dir or not quiet:
+        if not installed_dir or not silent:
             msg = "Installing " + click.style(name, fg="cyan")
             if requirements:
                 msg += " @ " + requirements
             self.print_message(msg)
         if installed_dir:
-            if not quiet:
+            if not silent:
                 click.secho(
                     "{name} @ {version} is already installed".format(
                         **self.load_manifest(installed_dir)),

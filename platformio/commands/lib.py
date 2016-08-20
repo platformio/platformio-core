@@ -68,18 +68,18 @@ def cli(ctx, **options):
 
 @cli.command("install", short_help="Install library")
 @click.argument("libraries", required=False, nargs=-1, metavar="[LIBRARY...]")
+# @click.option(
+#     "--save",
+#     is_flag=True,
+#     help="Save installed libraries into the project's platformio.ini "
+#     "library dependencies")
 @click.option(
-    "--save",
-    is_flag=True,
-    help="Save installed libraries into the project's platformio.ini "
-    "library dependencies")
-@click.option(
-    "-q", "--quiet", is_flag=True, help="Suppress progress reporting")
+    "-s", "--silent", is_flag=True, help="Suppress progress reporting")
 @click.pass_obj
-def lib_install(lm, libraries, save, quiet):  # pylint: disable=unused-argument
+def lib_install(lm, libraries, silent):
     # @TODO "save" option
     for library in libraries:
-        lm.install(library, quiet=quiet)
+        lm.install(library, silent=silent)
 
 
 @cli.command("uninstall", short_help="Uninstall libraries")

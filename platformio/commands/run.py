@@ -246,7 +246,7 @@ def _autoinstall_libdeps(ctx, libraries, verbose=False):
     ctx.obj = LibraryManager(storage_dir)
     if verbose:
         click.echo("Library Storage: " + storage_dir)
-    ctx.invoke(cmd_lib_install, libraries=libraries, quiet=not verbose)
+    ctx.invoke(cmd_lib_install, libraries=libraries, silent=not verbose)
 
 
 def _clean_pioenvs_dir(pioenvs_dir):

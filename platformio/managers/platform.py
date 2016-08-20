@@ -43,7 +43,7 @@ class PlatformManager(BasePkgManager):
         return "platform.json"
 
     def install(self,  # pylint: disable=too-many-arguments,arguments-differ
-                name, requirements=None, quiet=False,
+                name, requirements=None, silent=False,
                 trigger_event=True, with_packages=None,
                 without_packages=None, skip_default_package=False):
         platform_dir = BasePkgManager.install(self, name, requirements)
@@ -197,7 +197,7 @@ class PlatformPackagesMixin(object):
                          with_packages=None,
                          without_packages=None,
                          skip_default_package=False,
-                         quiet=False):
+                         silent=False):
         with_packages = set(self.pkg_types_to_names(with_packages or []))
         without_packages = set(self.pkg_types_to_names(without_packages or []))
 
@@ -213,9 +213,9 @@ class PlatformPackagesMixin(object):
                   not (skip_default_package or opts.get("optional", False))):
                 if any([s in opts.get("version", "") for s in ("\\", "/")]):
                     self.pm.install(
-                        "%s=%s" % (name, opts['version']), quiet=quiet)
+                        "%s=%s" % (name, opts['version']), silent=silent)
                 else:
-                    self.pm.install(name, opts.get("version"), quiet=quiet)
+                    self.pm.install(name, opts.get("version"), silent=silent)
 
         return True
 
@@ -240,7 +240,7 @@ class PlatformRunMixin(object):
         assert isinstance(targets, list)
 
         self.configure_default_packages(variables, targets)
-        self.install_packages(quiet=True)
+        self.install_packages(silent=True)
 
         self._verbose = verbose or app.get_setting("force_verbose")
 

@@ -90,7 +90,7 @@ Options
 .. program:: platformio lib install
 
 .. option::
-    -q, --quiet
+    -s, --silent
 
 Suppress progress reporting
 

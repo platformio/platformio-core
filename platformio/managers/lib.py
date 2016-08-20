@@ -106,7 +106,7 @@ class LibraryManager(BasePkgManager):
                 name, requirements)), requirements)
         return item['version'] if item else None
 
-    def _get_pkg_id_by_name(self, name, requirements, quiet=False):
+    def _get_pkg_id_by_name(self, name, requirements, silent=False):
         if name.startswith("id="):
             return int(name[3:])
         # try to find ID from installed packages
@@ -115,7 +115,7 @@ class LibraryManager(BasePkgManager):
             manifest = self.load_manifest(installed_dir)
             if "id" in manifest:
                 return int(manifest['id'])
-        return int(self.search_for_library({"name": name}, quiet)['id'])
+        return int(self.search_for_library({"name": name}, silent)['id'])
 
     def _install_from_piorepo(self, name, requirements):
         assert name.startswith("id=")
@@ -136,15 +136,18 @@ class LibraryManager(BasePkgManager):
                                              requirements)
         return pkg_dir
 
-    def install(self, name, requirements=None, quiet=False,
+    def install(self,
+                name,
+                requirements=None,
+                silent=False,
                 trigger_event=True):
         _name, _requirements, _url = self.parse_pkg_name(name, requirements)
         if not _url:
             _name = "id=%d" % self._get_pkg_id_by_name(
-                _name, _requirements, quiet=quiet)
+                _name, _requirements, silent=silent)
         already_installed = self.get_installed_dir(_name, _requirements, _url)
         pkg_dir = BasePkgManager.install(self, _name if not _url else name,
-                                         _requirements, quiet, trigger_event)
+                                         _requirements, silent, trigger_event)
 
         if already_installed:
             return
@@ -153,7 +156,7 @@ class LibraryManager(BasePkgManager):
         if "dependencies" not in manifest:
             return pkg_dir
 
-        if not quiet:
+        if not silent:
             click.secho("Installing dependencies", fg="yellow")
 
         for filters in self.normalize_dependencies(manifest['dependencies']):
@@ -161,26 +164,26 @@ class LibraryManager(BasePkgManager):
             if any([s in filters.get("version", "") for s in ("\\", "/")]):
                 self.install("{name}={version}".format(**filters))
             else:
-                lib_info = self.search_for_library(filters, quiet)
+                lib_info = self.search_for_library(filters, silent)
                 if filters.get("version"):
                     self.install(
                         lib_info['id'],
                         requirements=filters.get("version"),
-                        quiet=quiet,
+                        silent=silent,
                         trigger_event=trigger_event)
                 else:
                     self.install(
                         lib_info['id'],
-                        quiet=quiet,
+                        silent=silent,
                         trigger_event=trigger_event)
         return pkg_dir
 
     @staticmethod
     def search_for_library(  # pylint: disable=too-many-branches
-            filters, quiet=False):
+            filters, silent=False):
         assert isinstance(filters, dict)
         assert "name" in filters
-        if not quiet:
+        if not silent:
             click.echo("Looking for %s library in registry" % click.style(
                 filters['name'], fg="cyan"))
         query = []
@@ -222,7 +225,7 @@ class LibraryManager(BasePkgManager):
 
         if not lib_info:
             raise exception.LibNotFound(str(filters))
-        if not quiet:
+        if not silent:
             click.echo("Found: %s" % click.style(
                 "http://platformio.org/lib/show/{id}/{name}".format(
                     **lib_info),
