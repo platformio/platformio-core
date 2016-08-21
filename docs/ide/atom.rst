@@ -381,11 +381,11 @@ For example, we have the next ``Demo.ino`` file:
 
 .. code-block:: cpp
 
-    void function setup () {
+    void setup () {
         someFunction(13);
     }
 
-    void function loop() {
+    void loop() {
         delay(1000);
     }
 
@@ -406,11 +406,11 @@ The final ``Demo.cpp``:
 
     void someFunction(int num);
 
-    void function setup () {
+    void setup () {
         someFunction(13);
     }
 
-    void function loop() {
+    void loop() {
         delay(1000);
     }
 
