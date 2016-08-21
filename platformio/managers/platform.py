@@ -235,14 +235,15 @@ class PlatformRunMixin(object):
 
     LINE_ERROR_RE = re.compile(r"(\s+error|error[:\s]+)", re.I)
 
-    def run(self, variables, targets, verbose):
+    def run(self, variables, targets, silent, verbose):
         assert isinstance(variables, dict)
         assert isinstance(targets, list)
 
         self.configure_default_packages(variables, targets)
         self.install_packages(silent=True)
 
-        self._verbose = verbose or app.get_setting("force_verbose")
+        self.silent = silent
+        self.verbose = verbose or app.get_setting("force_verbose")
 
         if "clean" in targets:
             targets = ["-c", "."]
@@ -276,7 +277,7 @@ class PlatformRunMixin(object):
             "-j %d" % self.get_job_nums(), "--warn=no-no-parallel-support",
             "-f", join(util.get_source_dir(), "builder", "main.py")
         ]
-        if not self._verbose and "-c" not in targets:
+        if not self.verbose and "-c" not in targets:
             cmd.append("--silent")
         cmd += targets
 
@@ -297,9 +298,10 @@ class PlatformRunMixin(object):
         is_error = self.LINE_ERROR_RE.search(line) is not None
         self._echo_line(line, level=3 if is_error else 2)
 
-    @staticmethod
-    def _echo_line(line, level):
+    def _echo_line(self, line, level):
         assert 1 <= level <= 3
+        if self.silent and (level < 2 or not line):
+            return
         fg = (None, "yellow", "red")[level - 1]
         if level == 1 and "is up to date" in line:
             fg = "green"
@@ -326,7 +328,8 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             join(util.get_home_dir(), "packages"),
             self._manifest.get("packageRepositories"))
 
-        self._verbose = False
+        self.silent = False
+        self.verbose = False
 
     @property
     def name(self):

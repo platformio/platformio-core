@@ -42,6 +42,7 @@ from platformio.managers.platform import PlatformFactory
         dir_okay=True,
         writable=True,
         resolve_path=True))
+@click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.pass_context
@@ -50,6 +51,7 @@ def cli(ctx,  # pylint: disable=R0913,R0914
         target,
         upload_port,
         project_dir,
+        silent,
         verbose,
         disable_auto_clean):
     with util.cd(project_dir):
@@ -102,11 +104,12 @@ def cli(ctx,  # pylint: disable=R0913,R0914
                 options['piotest'] = ctx.meta['piotest']
 
             ep = EnvironmentProcessor(ctx, envname, options, target,
-                                      upload_port, verbose)
+                                      upload_port, silent, verbose)
             results.append(ep.process())
 
         if not all(results):
             raise exception.ReturnErrorCode()
+        return True
 
 
 class EnvironmentProcessor(object):
@@ -130,12 +133,14 @@ class EnvironmentProcessor(object):
                  options,
                  targets,
                  upload_port,
+                 silent,
                  verbose):
         self.cmd_ctx = cmd_ctx
         self.name = name
         self.options = options
         self.targets = targets
         self.upload_port = upload_port
+        self.silent = silent
         self.verbose = verbose
 
     def process(self):
@@ -155,6 +160,8 @@ class EnvironmentProcessor(object):
                        self.name, fg="cyan", bold=True),
                     ", ".join(["%s: %s" % opts for opts in process_opts])))
         click.secho("-" * terminal_width, bold=True)
+        if self.silent:
+            click.echo("Please wait...")
 
         self.options = self._validate_options(self.options)
         result = self._run()
@@ -238,7 +245,7 @@ class EnvironmentProcessor(object):
                 cmd_platform_install, platforms=[self.options['platform']])
             p = PlatformFactory.newPlatform(self.options['platform'])
 
-        return p.run(build_vars, build_targets, self.verbose)
+        return p.run(build_vars, build_targets, self.silent, self.verbose)
 
 
 def _autoinstall_libdeps(ctx, libraries, verbose=False):

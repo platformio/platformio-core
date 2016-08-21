@@ -53,8 +53,8 @@ def cli(ctx, environment, ignore, upload_port, project_dir, verbose):
         projectconf = util.load_project_config()
         assert check_project_envs(projectconf, environment)
 
+    click.echo("Verbose mode can be enabled via `-v, --verbose` option")
     click.echo("Collected %d items" % len(test_names))
-    click.echo()
 
     start_time = time()
     results = []
@@ -130,11 +130,11 @@ class TestProcessorBase(object):
         self._run_failed = False
 
     def print_progress(self, text, is_error=False):
+        click.echo()
         print_header(
             "[test::%s] %s" % (click.style(
                 self.test_name, fg="yellow", bold=True), text),
             is_error=is_error)
-        click.echo()
 
     def build_or_upload(self, target):
         if self.test_name != "*":
@@ -143,7 +143,7 @@ class TestProcessorBase(object):
             cmd_run,
             project_dir=self.options['project_dir'],
             upload_port=self.options['upload_port'],
-            verbose=self.options['verbose'],
+            silent=not self.options['verbose'],
             environment=[self.env_name],
             target=target)
 
@@ -204,6 +204,13 @@ class EmbeddedTestProcessor(TestProcessorBase):
             timeout=self.SERIAL_TIMEOUT)
         while True:
             line = ser.readline().strip()
+
+            # fix non-ascii output from device
+            for i, c in enumerate(line[::-1]):
+                if ord(c) > 127:
+                    line = line[-i:]
+                    break
+
             if not line:
                 continue
             self.on_run_out(line)
