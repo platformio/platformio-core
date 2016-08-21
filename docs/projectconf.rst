@@ -802,9 +802,9 @@ Test options
 .. seealso::
     Please make sure to read :ref:`unit_testing` guide first.
 
-Ignore tests where the name matches specified patterns.
-More than one pattern is allowed (multi-lines). Also, you can ignore some
-tests using :option:`platformio test --ignore` command.
+Ignore tests where the name matches specified patterns. Multiple names are
+allowed. Please separate them using comma ``,`` symbol. Also, you can
+ignore some tests using :option:`platformio test --ignore` command.
 
 .. list-table::
     :header-rows:  1
@@ -829,9 +829,7 @@ tests using :option:`platformio test --ignore` command.
 .. code-block:: ini
 
   [env:myenv]
-  test_ignore =
-    mytest*
-    test[13]
+  test_ignore = footest, bartest_*, test[13]
 
 -----------
 

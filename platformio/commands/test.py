@@ -72,7 +72,7 @@ def cli(ctx, environment, ignore, upload_port, project_dir, verbose):
             if projectconf.has_option(section, "test_ignore"):
                 _ignore.extend([p.strip()
                                 for p in projectconf.get(
-                                    section, "test_ignore").split("\n")
+                                    section, "test_ignore").split(",")
                                 if p.strip()])
             if testname != "*" and \
                any([fnmatch(testname, p) for p in _ignore]):
