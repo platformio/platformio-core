@@ -32,9 +32,8 @@ There are a several ways how to share your library with the whole world
 (see `examples <https://github.com/platformio/platformio-libmirror/tree/master/configs>`_).
 
 You can hold a lot of libraries (split into separated folders) inside one of
-the repository/archive. In this case please use :ref:`libjson_include`
-field to specify the relative path to your library's source code.
-
+the repository/archive. In this case, you need to specify ``include`` option of
+:ref:`libjson_export` field to relative path to your library's source code.
 
 At GitHub
 ^^^^^^^^^
@@ -132,7 +131,9 @@ of **required** fields in the :ref:`library_config` will look like:
         },
         "version": "2.2",
         "downloadUrl": "http://www.pjrc.com/teensy/arduino_libraries/OneWire.zip",
-        "include": "OneWire",
+        "export": {
+            "include": "OneWire"
+        },
         "frameworks": "arduino",
         "platforms": "atmelavr"
     }

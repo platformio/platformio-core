@@ -25,8 +25,8 @@ to keep project in own structure and define:
 * advanced build settings
 
 PlatformIO Library Crawler uses ``library.json`` manifest to extract
-source code from developer's location and keeps cleaned library in own
-Library Storage.
+source code from developer's location and keeps a cleaned library in own
+Library Registry.
 
 A data in ``library.json`` should be represented
 in `JSON-style <http://en.wikipedia.org/wiki/JSON>`_ via
@@ -270,17 +270,32 @@ See more ``library.json`` :ref:`library_creating_examples`.
 Home page of library (if is different from :ref:`libjson_repository` url).
 
 
-.. _libjson_include:
+.. _libjson_export:
+
+``export``
+----------
+
+*Optional* | Type: ``Object``
+
+Explain PlatformIO Library Crawler which content from the repository/archive
+should be exported as "source code" of the library. This option is useful if
+need to exclude extra data (test code, docs, images, PDFs, etc). It allows to
+reduce size of the final archive.
+
+Possible options:
+
+* ``include``
+* ``exclude``
 
 ``include``
------------
+~~~~~~~~~~~
 
 *Optional* | Type: ``String`` or ``Array`` |
 `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_
 
-If :ref:`libjson_include` field is a type of ``String``, then
-|PIOAPICR| will recognize it like a "relative path inside
-repository/archive to library source code". See example below where the only
+If ``include`` field is a type of ``String``, then |PIOAPICR| will recognize
+it like a "relative path inside repository/archive to library source code".
+See example below where the only
 source code from the relative directory ``LibrarySourceCodeHere`` will be
 included.
 
@@ -288,21 +303,23 @@ included.
 
     "include": "some/child/dir/LibrarySourceCodeHere"
 
-If :ref:`libjson_include` field is a type of ``Array``, then
-|PIOAPICR| firstly will apply :ref:`libjson_exclude` filter and
-then include only directories/files which match with :ref:`libjson_include`
-patterns.
+If ``include`` field is a type of ``Array``, then |PIOAPICR| firstly will
+apply ``exclude`` filter and then include only directories/files
+which match with ``include`` patterns.
 
 Example:
 
 .. code-block:: javascript
 
-    "include":
-    [
-        "dir/*.[ch]pp",
-        "dir/examples/*",
-        "*/*/*.h"
-    ]
+    "export": {
+        "include":
+        [
+            "dir/*.[ch]pp",
+            "dir/examples/*",
+            "*/*/*.h"
+        ]
+    }
+
 
 Pattern	Meaning
 
@@ -322,16 +339,14 @@ Pattern	Meaning
 
 See more ``library.json`` :ref:`library_creating_examples`.
 
-.. _libjson_exclude:
 
 ``exclude``
------------
+~~~~~~~~~~~
 
 *Optional* | Type: ``String`` or ``Array`` |
 `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_
 
-Exclude the directories and files which match with :ref:`libjson_exclude`
-patterns.
+Exclude the directories and files which match with ``exclude`` patterns.
 
 .. _libjson_frameworks:
 
