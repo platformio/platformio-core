@@ -479,6 +479,7 @@ def GetLibBuilders(env):
             return False
         return True
 
+    found_incompat = False
     for libs_dir in env['LIBSOURCE_DIRS']:
         libs_dir = env.subst(libs_dir)
         if not isdir(libs_dir):
@@ -486,13 +487,28 @@ def GetLibBuilders(env):
         for item in sorted(os.listdir(libs_dir)):
             if item == "__cores__" or not isdir(join(libs_dir, item)):
                 continue
-            lb = LibBuilderFactory.new(env, join(libs_dir, item))
+            try:
+                lb = LibBuilderFactory.new(env, join(libs_dir, item))
+            except ValueError:
+                sys.stderr.write("Skip library with broken manifest: %s\n" %
+                                 join(libs_dir, item))
+                continue
             if _check_lib_builder(lb):
                 items += (lb, )
+            else:
+                found_incompat = True
 
     for lb in env.get("EXTRA_LIB_BUILDERS", []):
         if _check_lib_builder(lb):
             items += (lb, )
+        else:
+            found_incompat = True
+
+    if verbose and found_incompat:
+        sys.stderr.write(
+            "More details about \"Library Compatibility Mode\": "
+            "http://docs.platformio.org/en/latest/librarymanager/ldf.html#"
+            "ldf-compat-mode\n")
 
     return items
 
