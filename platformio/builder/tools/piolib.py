@@ -33,7 +33,9 @@ class LibBuilderFactory(object):
     @staticmethod
     def new(env, path):
         clsname = "UnknownLibBuilder"
-        if isfile(join(path, "library.json")):
+        if isfile(join(path, "library.properties")):
+            clsname = "ArduinoLibBuilder"
+        elif isfile(join(path, "library.json")):
             clsname = "PlatformIOLibBuilder"
         else:
             env_frameworks = [
@@ -354,8 +356,12 @@ class ArduinoLibBuilder(LibBuilderBase):
     def src_filter(self):
         if isdir(join(self.path, "src")):
             return LibBuilderBase.src_filter.fget(self)
-        return ["+<*.%s>" % ext
-                for ext in piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT]
+        src_filter = [
+            "+<*.%s>" % ext
+            for ext in piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
+        ]
+        src_filter.append("+<utility%s>" + sep)
+        return src_filter
 
     def is_framework_compatible(self, framework):
         return framework.lower() in ("arduino", "energia")
