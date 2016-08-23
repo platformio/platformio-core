@@ -43,7 +43,7 @@ def _print_platforms(platforms):
         click.echo()
 
 
-@cli.command("search", short_help="Search for development platforms")
+@cli.command("search", short_help="Search for development platform")
 @click.argument("query", required=False)
 @click.option("--json-output", is_flag=True)
 def platform_search(query, json_output):
@@ -70,7 +70,7 @@ def platform_search(query, json_output):
         _print_platforms(platforms)
 
 
-@cli.command("install", short_help="Install new platforms")
+@cli.command("install", short_help="Install new development platform")
 @click.argument("platforms", nargs=-1, required=True, metavar="[PLATFORM...]")
 @click.option("--with-package", multiple=True)
 @click.option("--without-package", multiple=True)
@@ -91,7 +91,7 @@ def platform_install(platforms, with_package, without_package,
                 fg="green")
 
 
-@cli.command("uninstall", short_help="Uninstall platforms")
+@cli.command("uninstall", short_help="Uninstall development platform")
 @click.argument("platforms", nargs=-1, required=True, metavar="[PLATFORM...]")
 def platform_uninstall(platforms):
     pm = PlatformManager()
@@ -103,7 +103,7 @@ def platform_uninstall(platforms):
                 fg="green")
 
 
-@cli.command("update", short_help="Update installed Platforms")
+@cli.command("update", short_help="Update installed development platforms")
 @click.argument("platforms", nargs=-1, required=False, metavar="[PLATFORM...]")
 @click.option(
     "-p",
@@ -126,7 +126,7 @@ def platform_update(platforms, only_packages, only_check):
         click.echo()
 
 
-@cli.command("list", short_help="List installed platforms")
+@cli.command("list", short_help="List installed development platforms")
 @click.option("--json-output", is_flag=True)
 def platform_list(json_output):
     platforms = []
@@ -148,7 +148,7 @@ def platform_list(json_output):
         _print_platforms(platforms)
 
 
-@cli.command("show", short_help="Show details about installed Platform")
+@cli.command("show", short_help="Show details about installed platform")
 @click.argument("platform")
 @click.pass_context
 def platform_show(ctx, platform):
