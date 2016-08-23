@@ -651,7 +651,7 @@ Library options
     Please make sure to read :ref:`ldf` guide first.
 
 Specify project dependencies that should be installed automatically to
-:ref:`projectconf_pio_libdeps_dir` before an environment process.
+:ref:`projectconf_pio_libdeps_dir` before environment processing.
 Multiple dependencies are allowed (multi-lines).
 
 **Valid forms**
@@ -674,7 +674,7 @@ Example:
 
   [env:depends_on_some_libs]
   lib_deps =
-    1
+    13
     PubSubClient
     Json@~5.6,!=5.4
     https://github.com/gioblu/PJON.git@v2.0
