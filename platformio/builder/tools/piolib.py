@@ -131,7 +131,7 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
 
     @property
     def build_dir(self):
-        return join("$BUILD_DIR", "lib", self.name)
+        return join("$BUILD_DIR", "lib", basename(self.path))
 
     def get_inc_dirs(self, use_build_dir=False):
         return [self.build_dir if use_build_dir else self.src_dir]
