@@ -491,7 +491,10 @@ class PlatformBoardConfig(object):
         self._id = basename(manifest_path)[:-5]
         assert isfile(manifest_path)
         self.manifest_path = manifest_path
-        self._manifest = util.load_json(manifest_path)
+        try:
+            self._manifest = util.load_json(manifest_path)
+        except ValueError:
+            raise exception.InvalidBoardManifest(manifest_path)
         assert set(["name", "url", "vendor"]) <= set(self._manifest.keys())
 
     def get(self, path, default=None):

@@ -60,6 +60,11 @@ class UnknownBoard(PlatformioException):
     MESSAGE = "Unknown board ID '{0}'"
 
 
+class InvalidBoardManifest(PlatformioException):
+
+    MESSAGE = "Invalid board JSON manifest '{0}'"
+
+
 class UnknownFramework(PlatformioException):
 
     MESSAGE = "Unknown framework '{0}'"
