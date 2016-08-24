@@ -360,7 +360,7 @@ class ArduinoLibBuilder(LibBuilderBase):
             "+<*.%s>" % ext
             for ext in piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
         ]
-        src_filter.append("+<utility%s>" + sep)
+        src_filter.append("+<utility%s>" % sep)
         return src_filter
 
     def is_framework_compatible(self, framework):
