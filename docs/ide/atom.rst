@@ -49,7 +49,7 @@ It's built on top of `GitHub's Atom "hackable" text editor <https://atom.io>`_.
 If you have already Atom installed, please install `PlatformIO IDE for Atom package <https://atom.io/packages/platformio-ide>`_.
 
 .. note::
-    You don't need to install PlatformIO CLI seprately to system.
+    You don't need to install PlatformIO CLI separately to system.
     PlatformIO CLI is built into PlatformIO IDE and you will be able to use it
     within PlatformIO IDE Terminal.
 
@@ -95,9 +95,9 @@ then install it and restart Atom:
 - **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
 
 .. warning::
-    The libraries which are added/installed after initializing process will
-    not be reflected in code linter. You need ``Menu: PlatformIO >
-    Rebuild C/C++ Project Index (Autocomplete, Linter)``.
+    If some libraries are not visible in :ref:`ide_atom` and Code Completion or
+    Code Linting does not work properly, please perform  ``Menu: PlatformIO >
+    Rebuild C/C++ Project Index (Autocomplete, Linter)``
 
 3. IDE Installation
 ~~~~~~~~~~~~~~~~~~~
@@ -337,9 +337,9 @@ automatically created and preconfigured when you initialize project using
 ``Menu: PlatformIO > Initialize new PlatformIO Project or update existing...``.
 
 .. warning::
-    The libraries which are added/installed after initializing process will
-    not be reflected in code linter. You need ``Menu: PlatformIO >
-    Rebuild C/C++ Project Index (Autocomplete, Linter)``.
+    If some libraries are not visible in :ref:`ide_atom` and Code Completion or
+    Code Linting does not work properly, please perform  ``Menu: PlatformIO >
+    Rebuild C/C++ Project Index (Autocomplete, Linter)``
 
 
 .. error::

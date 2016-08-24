@@ -54,4 +54,9 @@ You can use library ID, Name or even repository URL. For example,
 Please follow to :ref:`cmd_lib_install` for detailed documentation about
 possible values.
 
+.. warning::
+  If some libraries are not visible in :ref:`ide_atom` and Code Completion or
+  Code Linting does not work properly, please perform  ``Menu: PlatformIO >
+  Rebuild C/C++ Project Index (Autocomplete, Linter)``
+
 .. image:: ../_static/platformio-demo-lib.gif
