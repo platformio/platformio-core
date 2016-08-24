@@ -97,7 +97,8 @@ def test_check_pio_upgrade(clirunner, validate_cliresult, isolated_pio_home):
 
 def test_check_lib_updates(clirunner, validate_cliresult, isolated_pio_home):
     # install obsolete library
-    result = clirunner.invoke(cli_pio, ["lib", "-g", "install", "Json@<5.4"])
+    result = clirunner.invoke(cli_pio,
+                              ["lib", "-g", "install", "PubSubClient@<2.6"])
     validate_cliresult(result)
 
     # reset check time
@@ -107,7 +108,8 @@ def test_check_lib_updates(clirunner, validate_cliresult, isolated_pio_home):
 
     result = clirunner.invoke(cli_pio, ["lib", "-g", "list"])
     validate_cliresult(result)
-    assert "There are the new updates for libraries (Json)" in result.output
+    assert ("There are the new updates for libraries (PubSubClient)" in
+            result.output)
 
 
 def test_check_and_update_libraries(clirunner, validate_cliresult,
@@ -128,9 +130,10 @@ def test_check_and_update_libraries(clirunner, validate_cliresult,
     assert len(prev_data) == 1
 
     # initiate auto-updating
-    result = clirunner.invoke(cli_pio, ["lib", "-g", "show", "Json"])
+    result = clirunner.invoke(cli_pio, ["lib", "-g", "show", "PubSubClient"])
     validate_cliresult(result)
-    assert "There are the new updates for libraries (Json)" in result.output
+    assert ("There are the new updates for libraries (PubSubClient)" in
+            result.output)
     assert "Please wait while updating libraries" in result.output
     assert "[Out-of-date]" in result.output
 
