@@ -65,9 +65,6 @@ PlatformIO 3.0
   + Support for the 3rd party manifests (Arduino IDE "library.properties"
     and ARM mbed "module.json")
 
-* Added support for BBC micro:bit board that is built on the ARM mbed and
-  Nordic nrf51 platform
-  (`issue #709 <https://github.com/platformio/platformio/issues/709>`_)
 * Print human-readable information when processing environments without
   ``-v, --verbose`` option
   (`issue #721 <https://github.com/platformio/platformio/issues/721>`_)
@@ -76,6 +73,26 @@ PlatformIO 3.0
 * Warn about unknown options in project configuration file ``platformio.ini``
   (`issue #740 <https://github.com/platformio/platformio/issues/740>`_)
 * Stopped supporting Python 2.6
+
+* Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
+
+  + Fixed missing analog ports for Adafruit Feather M0 Bluefruit
+    (`issue #2 <https://github.com/platformio/platform-atmelsam/issue/2>`_)
+
+* Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
+
+  + Added support for BBC micro:bit board
+    (`issue #709 <https://github.com/platformio/platformio/issues/709>`_)
+
+* Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
+
+  + Added support for BluePill F103C8 board
+    (`pull #2 <https://github.com/platformio/platform-ststm32/pull/2>`_)
+
+* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
+
+  + Updated Arduino Framework to v1.29
+    (`issue #2 <https://github.com/platformio/platform-teensy/issue/2>`_)
 
 
 PlatformIO 2.0
