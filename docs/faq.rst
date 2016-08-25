@@ -68,6 +68,13 @@ PlatformIO IDE
 
 Please refer to :ref:`PlatformIO IDE Frequently Asked Questions <ide_atom_faq>`.
 
+Before/Pre and After/Post build actions
+---------------------------------------
+
+PlatformIO Build System has rich API that allows to attach different pre-/post
+actions (hooks). See features of :ref:`projectconf_extra_script` option for
+:ref:`projectconf`.
+
 .. _faq_troubleshooting:
 
 Troubleshooting
