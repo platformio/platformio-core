@@ -65,6 +65,7 @@ PlatformIO 3.0
   + Support for the 3rd party manifests (Arduino IDE "library.properties"
     and ARM mbed "module.json")
 
+* Switched to SSL PlatformIO API
 * Build System: Attach custom Before/Pre and After/Post actions for targets
   (`issue #542 <https://github.com/platformio/platformio/issues/542>`_)
 * Print human-readable information when processing environments without

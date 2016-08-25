@@ -346,6 +346,8 @@ def _api_request_session():
 
 def get_api_result(path, params=None, data=None, skipdns=False):
     import requests
+    import app
+
     result = None
     r = None
 
@@ -354,6 +356,9 @@ def get_api_result(path, params=None, data=None, skipdns=False):
     if skipdns:
         url = "https://%s" % __apiip__
         headers['host'] = __apiurl__[__apiurl__.index("://") + 3:]
+
+    if app.get_setting("disable_ssl"):
+        url = url.replace("https://", "http://")
 
     try:
         if data:

@@ -165,3 +165,8 @@ Allows to override setting :ref:`setting_enable_telemetry`.
 .. envvar:: PLATFORMIO_SETTING_FORCE_VERBOSE
 
 Allows to override setting :ref:`setting_force_verbose`.
+
+
+.. envvar:: PLATFORMIO_SETTING_DISABLE_SSL
+
+Allows to override setting :ref:`setting_disable_ssl`.

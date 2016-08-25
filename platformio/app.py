@@ -48,6 +48,11 @@ DEFAULT_SETTINGS = {
         "description": "Force verbose output when processing environments",
         "value": False
     },
+    "disable_ssl": {
+        "description": ("Disable SSL for PlatformIO API "
+                        "(NOT RECOMMENDED, INSECURE)"),
+        "value": False
+    },
     "enable_telemetry": {
         "description":
         ("Telemetry service <http://docs.platformio.org/en/stable/"
