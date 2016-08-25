@@ -77,7 +77,7 @@ PlatformIO 3.0
 * Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
 
   + Fixed missing analog ports for Adafruit Feather M0 Bluefruit
-    (`issue #2 <https://github.com/platformio/platform-atmelsam/issue/2>`_)
+    (`issue #2 <https://github.com/platformio/platform-atmelsam/issues/2>`_)
 
 * Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
 
@@ -92,7 +92,7 @@ PlatformIO 3.0
 * Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
 
   + Updated Arduino Framework to v1.29
-    (`issue #2 <https://github.com/platformio/platform-teensy/issue/2>`_)
+    (`issue #2 <https://github.com/platformio/platform-teensy/issues/2>`_)
 
 
 PlatformIO 2.0
