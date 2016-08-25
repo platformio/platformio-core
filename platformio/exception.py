@@ -45,7 +45,7 @@ class UnknownPlatform(PlatformioException):
 class PlatformNotInstalledYet(PlatformioException):
 
     MESSAGE = "The platform '{0}' has not been installed yet. "\
-        "Use `platformio platforms install {0}` command"
+        "Use `platformio platform install {0}` command"
 
 
 class BoardNotDefined(PlatformioException):

@@ -496,7 +496,10 @@ class PlatformBoardConfig(object):
             self._manifest = util.load_json(manifest_path)
         except ValueError:
             raise exception.InvalidBoardManifest(manifest_path)
-        assert set(["name", "url", "vendor"]) <= set(self._manifest.keys())
+        if not set(["name", "url", "vendor"]) <= set(self._manifest.keys()):
+            raise exception.PlatformioException(
+                "Please specify name, url and vendor fields for " +
+                manifest_path)
 
     def get(self, path, default=None):
         try:
