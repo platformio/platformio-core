@@ -352,7 +352,7 @@ def get_api_result(path, params=None, data=None, skipdns=False):
     headers = get_request_defheaders()
     url = __apiurl__
     if skipdns:
-        url = "http://%s" % __apiip__
+        url = "https://%s" % __apiip__
         headers['host'] = __apiurl__[__apiurl__.index("://") + 3:]
 
     try:

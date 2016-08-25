@@ -30,7 +30,7 @@ __email__ = "me@ikravets.com"
 __license__ = "Apache Software License"
 __copyright__ = "Copyright 2014-present PlatformIO"
 
-__apiurl__ = "http://api.platformio.org"
+__apiurl__ = "https://api.platformio.org"
 __apiip__ = "198.7.57.247"
 
 if sys.version_info < (2, 7, 0) or sys.version_info >= (3, 0, 0):
