@@ -589,8 +589,8 @@ when :option:`platformio run --target` is called with ``upload`` value.
         # do some actions
 
 
-    def after_uploads(source, target, env):
-        print "after_uploads"
+    def after_upload(source, target, env):
+        print "after_upload"
         # do some actions
 
     print "Current build targets", map(str, BUILD_TARGETS)
@@ -599,7 +599,7 @@ when :option:`platformio run --target` is called with ``upload`` value.
     # env.AddPostAction("$BUILD_DIR/firmware.hex", callback...)
 
     env.AddPreAction("upload", before_upload)
-    env.AddPostAction("upload", after_uploads)
+    env.AddPostAction("upload", after_upload)
 
 
 .. _projectconf_targets:
