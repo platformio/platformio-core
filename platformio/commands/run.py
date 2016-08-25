@@ -63,7 +63,7 @@ def cli(ctx,  # pylint: disable=R0913,R0914
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
                     "`.pioenvs` directory from the project manually to avoid "
-                    "build issues" % util.get_projectpioenvs_dir(),
+                    "build issues" % util.get_projectpioenvs_dir(force=True),
                     fg="yellow")
 
         config = util.load_project_config()

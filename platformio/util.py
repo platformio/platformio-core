@@ -218,18 +218,22 @@ def get_projecttest_dir():
                                                      "test"))
 
 
-def get_projectpioenvs_dir():
+def get_projectpioenvs_dir(force=False):
     path = _get_projconf_option_dir("envs_dir",
                                     join(get_project_dir(), ".pioenvs"))
-    if not isdir(path):
-        os.makedirs(path)
-    dontmod_path = join(path, "do-not-modify-files-here.url")
-    if not isfile(dontmod_path):
-        with open(dontmod_path, "w") as fp:
-            fp.write("""
+    try:
+        if not isdir(path):
+            os.makedirs(path)
+        dontmod_path = join(path, "do-not-modify-files-here.url")
+        if not isfile(dontmod_path):
+            with open(dontmod_path, "w") as fp:
+                fp.write("""
 [InternetShortcut]
 URL=http://docs.platformio.org/en/stable/projectconf.html#envs-dir
 """)
+    except Exception as e:
+        if not force:
+            raise Exception(e)
     return path
 
 
