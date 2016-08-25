@@ -127,6 +127,10 @@ def echo_liblist_header():
 
 
 def echo_liblist_item(item):
+    description = item.get("description", item.get("url", "")).encode("utf-8")
+    if "version" in item:
+        description += " | @" + click.style(item['version'], fg="yellow")
+
     click.echo(
         LIBLIST_TPL.format(
             id=click.style(
@@ -137,10 +141,9 @@ def echo_liblist_item(item):
                 ", ".join(
                     item.get("frameworks", ["-"]) + item.get("platforms", [])),
                 fg="yellow"),
-            authornames=", ".join(item.get("authornames", ["Unknown"])),
-            description=item.get("description", item.get("url", ""))) +
-        (" | @" + click.style(
-            item['version'], fg="yellow") if "version" in item else ""))
+            authornames=", ".join(item.get("authornames", ["Unknown"])).encode(
+                "utf-8"),
+            description=description))
 
 
 @cli.command("search", short_help="Search for library")
