@@ -56,7 +56,7 @@ Put ``appveyor.yml`` to the root directory of the GitHub repository.
         - cmd: pip install -U platformio
 
     test_script:
-        - cmd: platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+        - cmd: platformio ci --board=ID_1 --board=ID_2 --board=ID_N
 
 
 For more details as for PlatformIO build process please look into :ref:`cmd_ci`

@@ -45,12 +45,12 @@ Code completion can optionally be provided by installing `irony-mode <https://gi
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
+Choose board ``ID`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
-    platformio init --ide emacs --board %TYPE%
+    platformio init --ide emacs --board %ID%
 
 
 There are 6 predefined targets for building.

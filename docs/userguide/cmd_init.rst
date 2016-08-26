@@ -52,7 +52,7 @@ A path to the directory where *PlatformIO* will initialize new project.
 .. option::
     -b, --board
 
-If you specify board ``type`` (you can pass multiple ``--board`` options), then
+If you specify board ``ID`` (you can pass multiple ``--board`` options), then
 *PlatformIO* will automatically generate environment for :ref:`projectconf` and
 pre-fill these data:
 

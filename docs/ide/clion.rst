@@ -31,12 +31,12 @@ page for more detailed information.
 Integration
 -----------
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
+Choose board ``ID`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
-    platformio init --ide clion --board %TYPE%
+    platformio init --ide clion --board %ID%
 
     # For example, generate project for Arduino UNO
     platformio init --ide clion --board uno

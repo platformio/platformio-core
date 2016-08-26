@@ -49,9 +49,9 @@ guide first.
 
     test:
         override:
-            - platformio ci path/to/test/file.c --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
-            - platformio ci examples/file.ino --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
-            - platformio ci path/to/test/directory --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+            - platformio ci path/to/test/file.c --board=ID_1 --board=ID_2 --board=ID_N
+            - platformio ci examples/file.ino --board=ID_1 --board=ID_2 --board=ID_N
+            - platformio ci path/to/test/directory --board=ID_1 --board=ID_2 --board=ID_N
 
 
 For more details as for PlatformIO build process please look into :ref:`cmd_ci`.
@@ -65,7 +65,7 @@ it), please use ``--lib="."`` option for :ref:`cmd_ci` command
 .. code-block:: yaml
 
     script:
-        - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+        - platformio ci --lib="." --board=ID_1 --board=ID_2 --board=ID_N
 
 Library dependecies
 ~~~~~~~~~~~~~~~~~~~
@@ -87,7 +87,7 @@ Install dependent library using :ref:`librarymanager`
 
     test:
         override:
-            - platformio ci path/to/test/file.c --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+            - platformio ci path/to/test/file.c --board=ID_1 --board=ID_2 --board=ID_N
 
 Manually download dependent library and include in build process via ``--lib`` option
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -105,7 +105,7 @@ Manually download dependent library and include in build process via ``--lib`` o
 
     test:
         override:
-            - platformio ci path/to/test/file.c --lib="/tmp/OneWire-master" --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+            - platformio ci path/to/test/file.c --lib="/tmp/OneWire-master" --board=ID_1 --board=ID_2 --board=ID_N
 
 Custom Build Flags
 ~~~~~~~~~~~~~~~~~~

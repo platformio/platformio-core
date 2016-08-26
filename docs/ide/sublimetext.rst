@@ -42,12 +42,12 @@ steps and documentation.
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
+Choose board ``ID`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
-    platformio init --ide sublimetext --board %TYPE%
+    platformio init --ide sublimetext --board %ID%
 
     # For example, generate project for Arduino UNO
     platformio init --ide sublimetext --board uno

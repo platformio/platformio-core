@@ -30,12 +30,12 @@ CodeBlocks IDE can be downloaded from `here <http://www.codeblocks.org/downloads
 Integration
 -----------
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
+Choose board ``ID`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
-    platformio init --ide codeblocks --board %TYPE%
+    platformio init --ide codeblocks --board %ID%
 
     # For example, generate project for Arduino UNO
     platformio init --ide codeblocks --board uno

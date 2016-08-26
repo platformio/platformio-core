@@ -33,12 +33,12 @@ install the C/C++ development plugins).
 Integration
 -----------
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
+Choose board ``ID`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
-    platformio init --ide netbeans --board %TYPE%
+    platformio init --ide netbeans --board %ID%
 
     # For example, generate project for Arduino UNO
     platformio init --ide netbeans --board uno

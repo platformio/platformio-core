@@ -58,7 +58,7 @@ GitHub repository.
         - pip install -U platformio
 
     script:
-        - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+        - platformio ci --board=ID_1 --board=ID_2 --board=ID_N
 
 
 For more details as for PlatformIO build process please look into :ref:`cmd_ci`

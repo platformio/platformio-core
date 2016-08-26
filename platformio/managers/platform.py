@@ -117,12 +117,7 @@ class PlatformManager(BasePkgManager):
     @staticmethod
     @util.memoized
     def get_registered_boards():
-        boards = util.get_api_result("/boards")
-        for item in boards:
-            # @TODO remove type from API
-            item['id'] = item['type']
-            del item['type']
-        return boards
+        return util.get_api_result("/boards")
 
 
 class PlatformFactory(object):

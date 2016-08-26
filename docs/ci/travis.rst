@@ -72,7 +72,7 @@ PlatformIO is written in Python and is recommended to be run within
         - pip install -U platformio
 
     script:
-        - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+        - platformio ci --board=ID_1 --board=ID_2 --board=ID_N
 
 Then perform steps 1, 2 and 4 from http://docs.travis-ci.com/user/getting-started/
 
@@ -87,7 +87,7 @@ it), please use ``--lib="."`` option for :ref:`cmd_ci` command
 .. code-block:: yaml
 
     script:
-        - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+        - platformio ci --lib="." --board=ID_1 --board=ID_2 --board=ID_N
 
 Library dependecies
 ~~~~~~~~~~~~~~~~~~~
@@ -121,7 +121,7 @@ Manually download dependent library and include in build process via ``--lib`` o
         - unzip /tmp/onewire_source.zip -d /tmp/
 
     script:
-        - platformio ci --lib="/tmp/OneWire-master" --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+        - platformio ci --lib="/tmp/OneWire-master" --board=ID_1 --board=ID_2 --board=ID_N
 
 Custom Build Flags
 ~~~~~~~~~~~~~~~~~~

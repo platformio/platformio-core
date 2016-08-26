@@ -56,10 +56,9 @@ def platform_search(query, json_output):
         if query and query.lower() not in search_data.lower():
             continue
 
-        # @TODO update API with NAME/TITLE
         platforms.append({
-            "name": platform['type'],
-            "title": platform['name'],
+            "name": platform['name'],
+            "title": platform['title'],
             "description": platform['description'],
             "packages": platform['packages']
         })
