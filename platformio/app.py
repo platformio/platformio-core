@@ -58,15 +58,6 @@ DEFAULT_SETTINGS = {
         ("Telemetry service <http://docs.platformio.org/en/stable/"
          "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
         "value": True
-    },
-    "enable_prompts": {
-        "description":
-        ("Can PlatformIO communicate with you via prompts: "
-         "propose to install platforms which aren't installed yet, "
-         "paginate over library search results and etc.)? ATTENTION!!! "
-         "If you call PlatformIO like subprocess, "
-         "please disable prompts to avoid blocking (Yes/No)"),
-        "value": True
     }
 }
 
@@ -148,12 +139,6 @@ def set_state_item(name, value):
 
 
 def get_setting(name):
-    if name == "enable_prompts":
-        # disable prompts for Continuous Integration systems
-        # and when global "--force" option is set
-        if any([util.is_ci(), get_session_var("force_option")]):
-            return False
-
     _env_name = "PLATFORMIO_SETTING_%s" % name.upper()
     if _env_name in environ:
         return sanitize_setting(name, getenv(_env_name))
@@ -188,5 +173,5 @@ def set_session_var(name, value):
 
 
 def is_disabled_progressbar():
-    return (not get_setting("enable_prompts") or
-            getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true")
+    return any([get_session_var("force_option"), util.is_ci(),
+                getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"])

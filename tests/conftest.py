@@ -20,7 +20,7 @@ from click.testing import CliRunner
 
 @pytest.fixture(scope="session")
 def platformio_setup(request):
-    pioenvvars = ("ENABLE_PROMPTS", "ENABLE_TELEMETRY")
+    pioenvvars = ("ENABLE_TELEMETRY", )
     for v in pioenvvars:
         os.environ["PLATFORMIO_SETTING_%s" % v] = "No"
 

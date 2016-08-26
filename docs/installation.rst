@@ -200,11 +200,6 @@ To revert to the latest stable version
 Troubleshooting
 ---------------
 
-.. warning::
-    If you are going to run *PlatformIO* from **subprocess**, you
-    :ref:`MUST DISABLE <faq_troubleshooting_pioblocksprompt>` all prompts.
-    It will allow you to avoid blocking.
-
 .. note::
     **Linux OS**: Don't forget to install "udev" rules file
     `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).

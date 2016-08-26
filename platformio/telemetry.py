@@ -27,7 +27,6 @@ import click
 import requests
 
 from platformio import __version__, app, exception, util
-from platformio.ide.projectgenerator import ProjectGenerator
 
 
 class TelemetryBase(object):
@@ -60,7 +59,7 @@ class TelemetryBase(object):
 
 class MeasurementProtocol(TelemetryBase):
 
-    TRACKING_ID = "UA-1768265-9"
+    TID = "UA-1768265-9"
     PARAMS_MAP = {
         "screen_name": "cd",
         "event_category": "ec",
@@ -72,7 +71,7 @@ class MeasurementProtocol(TelemetryBase):
     def __init__(self):
         TelemetryBase.__init__(self)
         self['v'] = 1
-        self['tid'] = self.TRACKING_ID
+        self['tid'] = self.TID
         self['cid'] = self.get_cid()
 
         self['sr'] = "%dx%d" % click.get_terminal_size()
@@ -106,8 +105,9 @@ class MeasurementProtocol(TelemetryBase):
         self['cd1'] = util.get_systype()
         self['cd2'] = "Python/%s %s" % (platform.python_version(),
                                         platform.platform())
-        self['cd4'] = (1 if app.get_setting("enable_prompts") or
-                       app.get_session_var("caller_id") else 0)
+        self['cd4'] = 1 if not util.is_ci() else 0
+        if app.get_session_var("caller_id"):
+            self['cd5'] = str(app.get_session_var("caller_id")).lower()
 
     def _prefill_screen_name(self):
         self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
@@ -227,9 +227,6 @@ def on_command():
     if util.is_ci():
         measure_ci()
 
-    if app.get_session_var("caller_id"):
-        measure_caller(app.get_session_var("caller_id"))
-
 
 def measure_ci():
     event = {"category": "CI", "action": "NoName", "label": None}
@@ -248,14 +245,6 @@ def measure_ci():
             continue
         event.update({"action": key, "label": value['label']})
 
-    on_event(**event)
-
-
-def measure_caller(calller_id):
-    calller_id = str(calller_id)[:20].lower()
-    event = {"category": "Caller", "action": "Misc", "label": calller_id}
-    if calller_id in (["atom", "vim"] + ProjectGenerator.get_supported_ides()):
-        event['action'] = "IDE"
     on_event(**event)
 
 

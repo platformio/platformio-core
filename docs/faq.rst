@@ -139,21 +139,6 @@ Please upgrade *SetupTools* package:
 Miscellaneous
 ~~~~~~~~~~~~~
 
-.. _faq_troubleshooting_pioblocksprompt:
-
-PlatformIO blocks command execution using user prompt
-'''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-If you are going to run *PlatformIO* from **subprocess**, you **MUST
-DISABLE** all prompts. It will allow you to avoid blocking.
-There are a few options:
-
-- using :option:`platformio --force` option before each command
-- using environment variable :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <PLATFORMIO_SETTING_ENABLE_PROMPTS>`
-- disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
-- masking under Continuous Integration system via environment variable
-  :envvar:`CI=true <CI>`.
-
 Serial does not work with panStampAVR board
 '''''''''''''''''''''''''''''''''''''''''''
 

@@ -34,8 +34,7 @@ Options
 .. option::
     --force, -f
 
-Force to accept any confirmation prompts. This option allows to avoid an issue
-with :ref:`faq_troubleshooting_pioblocksprompt`
+Force to accept any confirmation prompts and disable progress bars.
 
 .. option::
     --version

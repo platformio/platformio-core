@@ -27,6 +27,8 @@ from platformio.downloader import FileDownloader
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
+# pylint: disable=too-many-arguments
+
 
 class PackageRepoIterator(object):
 
@@ -424,7 +426,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 name,
                 requirements=None,
                 silent=False,
-                trigger_event=True):
+                trigger_event=True,
+                interactive=False):  # pylint: disable=unused-argument
         name, requirements, url = self.parse_pkg_name(name, requirements)
         installed_dir = self.get_installed_dir(name, requirements, url)
 

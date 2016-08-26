@@ -231,7 +231,7 @@ def get_projectpioenvs_dir(force=False):
 [InternetShortcut]
 URL=http://docs.platformio.org/en/stable/projectconf.html#envs-dir
 """)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         if not force:
             raise Exception(e)
     return path
@@ -348,9 +348,10 @@ def _api_request_session():
     return requests.Session()
 
 
-def get_api_result(path, params=None, data=None, skipdns=False):
+def get_api_result(path,  # pylint: disable=too-many-branches
+                   params=None, data=None, skipdns=False):
     import requests
-    import app
+    from platformio.app import get_setting
 
     result = None
     r = None
@@ -361,7 +362,7 @@ def get_api_result(path, params=None, data=None, skipdns=False):
         url = "https://%s" % __apiip__
         headers['host'] = __apiurl__[__apiurl__.index("://") + 3:]
 
-    if app.get_setting("disable_ssl"):
+    if get_setting("disable_ssl"):
         url = url.replace("https://", "http://")
 
     try:

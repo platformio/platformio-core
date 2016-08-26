@@ -35,8 +35,8 @@ PlatformIO handles ``CI`` variable which is setup by
 `Continuous Integration <http://en.wikipedia.org/wiki/Continuous_integration>`_
 (Travis, Circle and etc.) systems.
 PlatformIO uses it to disable prompts and progress bars. In other words,
-``CI=true`` automatically setup :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS` to
-``false`` and :envvar:`PLATFORMIO_DISABLE_PROGRESSBAR` to ``true``.
+``CI=true`` automatically setup :envvar:`PLATFORMIO_DISABLE_PROGRESSBAR` to
+``true``.
 
 .. envvar:: PLATFORMIO_FORCE_COLOR
 
@@ -153,10 +153,6 @@ Allows to override setting :ref:`setting_check_platformio_interval`.
 .. envvar:: PLATFORMIO_SETTING_CHECK_PLATFORMS_INTERVAL
 
 Allows to override setting :ref:`setting_check_platforms_interval`.
-
-.. envvar:: PLATFORMIO_SETTING_ENABLE_PROMPTS
-
-Allows to override setting :ref:`setting_enable_prompts`.
 
 .. envvar:: PLATFORMIO_SETTING_ENABLE_TELEMETRY
 

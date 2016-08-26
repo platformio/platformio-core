@@ -65,6 +65,7 @@ PlatformIO 3.0
   + Support for the 3rd party manifests (Arduino IDE "library.properties"
     and ARM mbed "module.json")
 
+* Removed ``enable_prompts`` setting. Now, all PlatformIO CLI is non-blocking!
 * Switched to SSL PlatformIO API
 * Build System: Attach custom Before/Pre and After/Post actions for targets
   (`issue #542 <https://github.com/platformio/platformio/issues/542>`_)
@@ -1126,8 +1127,7 @@ PlatformIO 0.0
 ~~~~~~~~~~~~~~~~~~
 
 * Replaced "dark blue" by "cyan" colour for the texts (`issue #33 <https://github.com/platformio/platformio/issues/33>`_)
-* Added new setting `enable_prompts <http://docs.platformio.org/en/latest/userguide/cmd_settings.html>`_
-  and allowed to disable all *PlatformIO* prompts (useful for cloud compilers)
+* Added new setting ``enable_prompts`` and allowed to disable all *PlatformIO* prompts (useful for cloud compilers)
   (`issue #34 <https://github.com/platformio/platformio/issues/34>`_)
 * Fixed compilation bug on *Windows* with installed *MSVC* (`issue #18 <https://github.com/platformio/platformio/issues/18>`_)
 

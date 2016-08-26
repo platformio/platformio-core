@@ -14,10 +14,11 @@
 
 import json
 from os.path import join
+from time import sleep
 
 import click
 
-from platformio import app, exception, util
+from platformio import exception, util
 from platformio.managers.lib import LibraryManager
 from platformio.util import get_api_result
 
@@ -75,11 +76,15 @@ def cli(ctx, **options):
 #     "library dependencies")
 @click.option(
     "-s", "--silent", is_flag=True, help="Suppress progress reporting")
+@click.option(
+    "--interactive",
+    is_flag=True,
+    help="Allow to make a choice for all prompts")
 @click.pass_obj
-def lib_install(lm, libraries, silent):
+def lib_install(lm, libraries, silent, interactive):
     # @TODO "save" option
     for library in libraries:
-        lm.install(library, silent=silent)
+        lm.install(library, silent=silent, interactive=interactive)
 
 
 @cli.command("uninstall", short_help="Uninstall libraries")
@@ -147,6 +152,7 @@ def echo_liblist_item(item):
 
 
 @cli.command("search", short_help="Search for library")
+@click.argument("query", required=False, nargs=-1)
 @click.option("--json-output", is_flag=True)
 @click.option("--page", type=click.INT, default=1)
 @click.option("-n", "--name", multiple=True)
@@ -154,8 +160,11 @@ def echo_liblist_item(item):
 @click.option("-k", "--keyword", multiple=True)
 @click.option("-f", "--framework", multiple=True)
 @click.option("-p", "--platform", multiple=True)
-@click.argument("query", required=False, nargs=-1)
-def lib_search(query, json_output, page, **filters):
+@click.option(
+    "--noninteractive",
+    is_flag=True,
+    help="Do not prompt, automatically paginate with delay")
+def lib_search(query, json_output, page, noninteractive, **filters):
     if not query:
         query = []
     if not isinstance(query, list):
@@ -205,14 +214,20 @@ def lib_search(query, json_output, page, **filters):
                 int(result['total'])):
             break
 
-        if (app.get_setting("enable_prompts") and
-                click.confirm("Show next libraries?")):
-            result = get_api_result(
-                "/lib/search",
-                dict(
-                    query=" ".join(query), page=int(result['page']) + 1))
-        else:
+        if noninteractive:
+            click.echo()
+            click.secho(
+                "Loading next %d libraries... Press Ctrl+C to stop!" %
+                result['perpage'],
+                fg="yellow")
+            click.echo()
+            sleep(5)
+        elif not click.confirm("Show next libraries?"):
             break
+        result = get_api_result(
+            "/lib/search",
+            dict(
+                query=" ".join(query), page=int(result['page']) + 1))
 
 
 @cli.command("list", short_help="List installed libraries")

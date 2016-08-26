@@ -43,10 +43,13 @@ class PlatformManager(BasePkgManager):
     def manifest_name(self):
         return "platform.json"
 
-    def install(self,  # pylint: disable=too-many-arguments,arguments-differ
-                name, requirements=None, silent=False,
-                trigger_event=True, with_packages=None,
-                without_packages=None, skip_default_package=False):
+    def install(self,  # pylint: disable=too-many-arguments
+                name,
+                requirements=None,
+                with_packages=None,
+                without_packages=None,
+                skip_default_package=False,
+                **_):
         platform_dir = BasePkgManager.install(self, name, requirements)
         p = PlatformFactory.newPlatform(self.get_manifest_path(platform_dir))
         p.install_packages(with_packages, without_packages,

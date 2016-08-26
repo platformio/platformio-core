@@ -16,7 +16,7 @@ import json
 
 import click
 
-from platformio import app, exception, util
+from platformio import exception, util
 from platformio.managers.platform import PlatformFactory, PlatformManager
 
 
@@ -150,17 +150,11 @@ def platform_list(json_output):
 
 @cli.command("show", short_help="Show details about installed platform")
 @click.argument("platform")
-@click.pass_context
-def platform_show(ctx, platform):
+def platform_show(platform):
     try:
         p = PlatformFactory.newPlatform(platform)
     except exception.UnknownPlatform:
-        if (not app.get_setting("enable_prompts") or
-                click.confirm("The platform '%s' has not been installed yet. "
-                              "Would you like to install it now?" % platform)):
-            ctx.invoke(platform_install, platforms=[platform])
-        else:
-            raise exception.PlatformNotInstalledYet(platform)
+        raise exception.PlatformNotInstalledYet(platform)
 
     click.echo("{name} ~ {title}".format(
         name=click.style(

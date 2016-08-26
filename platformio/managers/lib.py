@@ -18,7 +18,7 @@ from os.path import join
 import click
 import semantic_version
 
-from platformio import app, commands, exception, util
+from platformio import commands, exception, util
 from platformio.managers.package import BasePkgManager
 
 
@@ -106,7 +106,11 @@ class LibraryManager(BasePkgManager):
                 name, requirements)), requirements)
         return item['version'] if item else None
 
-    def _get_pkg_id_by_name(self, name, requirements, silent=False):
+    def _get_pkg_id_by_name(self,
+                            name,
+                            requirements,
+                            silent=False,
+                            interactive=False):
         if name.startswith("id="):
             return int(name[3:])
         # try to find ID from installed packages
@@ -115,7 +119,8 @@ class LibraryManager(BasePkgManager):
             manifest = self.load_manifest(installed_dir)
             if "id" in manifest:
                 return int(manifest['id'])
-        return int(self.search_for_library({"name": name}, silent)['id'])
+        return int(
+            self.search_for_library({"name": name}, silent, interactive)['id'])
 
     def _install_from_piorepo(self, name, requirements):
         assert name.startswith("id=")
@@ -136,15 +141,16 @@ class LibraryManager(BasePkgManager):
                                              requirements)
         return pkg_dir
 
-    def install(self,
+    def install(self,  # pylint: disable=too-many-arguments
                 name,
                 requirements=None,
                 silent=False,
-                trigger_event=True):
+                trigger_event=True,
+                interactive=False):
         _name, _requirements, _url = self.parse_pkg_name(name, requirements)
         if not _url:
             _name = "id=%d" % self._get_pkg_id_by_name(
-                _name, _requirements, silent=silent)
+                _name, _requirements, silent=silent, interactive=interactive)
         already_installed = self.get_installed_dir(_name, _requirements, _url)
         pkg_dir = BasePkgManager.install(self, _name if not _url else name,
                                          _requirements, silent, trigger_event)
@@ -164,7 +170,8 @@ class LibraryManager(BasePkgManager):
             if any([s in filters.get("version", "") for s in ("\\", "/")]):
                 self.install("{name}={version}".format(**filters))
             else:
-                lib_info = self.search_for_library(filters, silent)
+                lib_info = self.search_for_library(filters, silent,
+                                                   interactive)
                 if filters.get("version"):
                     self.install(
                         lib_info['id'],
@@ -180,7 +187,9 @@ class LibraryManager(BasePkgManager):
 
     @staticmethod
     def search_for_library(  # pylint: disable=too-many-branches
-            filters, silent=False):
+            filters,
+            silent=False,
+            interactive=False):
         assert isinstance(filters, dict)
         assert "name" in filters
         if not silent:
@@ -206,13 +215,18 @@ class LibraryManager(BasePkgManager):
             click.secho(
                 "Conflict: More than one library has been found "
                 "by request %s:" % json.dumps(filters),
-                fg="red")
+                fg="red",
+                err=True)
             commands.lib.echo_liblist_header()
             for item in result['items']:
                 commands.lib.echo_liblist_item(item)
 
-            if not app.get_setting("enable_prompts"):
-                click.echo("Automatically chose the first available library")
+            if not interactive:
+                click.secho(
+                    "Automatically chose the first available library "
+                    "(use `--interactive` option to make a choice)",
+                    fg="yellow",
+                    err=True)
                 lib_info = result['items'][0]
             else:
                 deplib_id = click.prompt(
