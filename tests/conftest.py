@@ -15,7 +15,10 @@
 import os
 
 import pytest
+import requests
 from click.testing import CliRunner
+
+requests.packages.urllib3.disable_warnings()
 
 
 @pytest.fixture(scope="session")
@@ -40,10 +43,12 @@ def clirunner():
 
 @pytest.fixture(scope="session")
 def validate_cliresult():
+
     def decorator(result):
         assert result.exit_code == 0
         assert not result.exception
         assert "error" not in result.output.lower()
+
     return decorator
 
 

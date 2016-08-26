@@ -60,10 +60,10 @@ Commands
 
     cmd_boards
     cmd_ci
+    cmd_device
     cmd_init
     platformio platform <platforms/index>
     cmd_run
-    cmd_serialports
     cmd_settings
     cmd_test
     cmd_update

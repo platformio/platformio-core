@@ -9,14 +9,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _cmd_serialports:
+.. _cmd_device:
 
-platformio serialports
+platformio device
 ======================
 
 .. contents::
 
-platformio serialports list
+platformio device list
 ---------------------------
 
 Usage
@@ -24,7 +24,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio serialports list [OPTIONS]
+    platformio device list [OPTIONS]
 
 
 Description
@@ -35,7 +35,7 @@ List available `Serial Ports <http://en.wikipedia.org/wiki/Serial_port>`_
 Options
 ~~~~~~~
 
-.. program:: platformio serialports list
+.. program:: platformio device list
 
 .. option::
     --json-output
@@ -50,7 +50,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio serialports list
+    $ platformio device list
     /dev/cu.SLAB_USBtoUART
     ----------
     Hardware ID: USB VID:PID=10c4:ea60 SNR=0001
@@ -66,7 +66,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio serialports list
+    $ platformio device list
     COM4
     ----------
     Hardware ID: USB VID:PID=0451:F432
@@ -78,9 +78,9 @@ Examples
     Description: Silicon Labs CP210x USB to UART Bridge (COM3)
 
 
-.. _cmd_serialports_monitor:
+.. _cmd_device_monitor:
 
-platformio serialports monitor
+platformio device monitor
 ------------------------------
 
 Usage
@@ -88,7 +88,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio serialports monitor [OPTIONS]
+    platformio device monitor [OPTIONS]
 
 
 Description
@@ -112,7 +112,7 @@ To control *monitor* please use these "hot keys":
 Options
 ~~~~~~~
 
-.. program:: platformio serialports monitor
+.. program:: platformio device monitor
 
 .. option::
     -p, --port
@@ -194,7 +194,7 @@ ASCII code of special character that is used to exit the application,
 default ``29`` (DEC).
 
 For example, to use ``Ctrl+Q`` run
-``platformio serialports monitor --exit-char 17``.
+``platformio device monitor --exit-char 17``.
 
 .. option::
     --menu-char
@@ -238,8 +238,8 @@ multiple times:
 3. hex dump everything
 
 **REMOVED**: Is not available in Miniterm/PySerial 3.0.
-See :option:`platformio serialports monitor --encoding` and
-:option:`platformio serialports monitor --filter` options.
+See :option:`platformio device monitor --encoding` and
+:option:`platformio device monitor --filter` options.
 
 Examples
 ~~~~~~~~
@@ -248,8 +248,8 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio serialports monitor --help
-    Usage: platformio serialports monitor [OPTIONS]
+    $ platformio device monitor --help
+    Usage: platformio device monitor [OPTIONS]
 
     Options:
       -p, --port TEXT       Port, a number or a device name
@@ -276,7 +276,7 @@ Examples
 
 .. code-block:: bash
 
-    $ platformio serialports monitor
+    $ platformio device monitor
 
     --- Available ports:
     --- /dev/cu.Bluetooth-Incoming-Port n/a

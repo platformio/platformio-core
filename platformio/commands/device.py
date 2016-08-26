@@ -24,14 +24,14 @@ from platformio.exception import MinitermException
 from platformio.util import get_serialports
 
 
-@click.group(short_help="List or Monitor Serial ports")
+@click.group(short_help="Monitor device or list existing")
 def cli():
     pass
 
 
-@cli.command("list", short_help="List Serial ports")
+@cli.command("list", short_help="List devices")
 @click.option("--json-output", is_flag=True)
-def serialports_list(json_output):
+def device_list(json_output):
 
     if json_output:
         click.echo(json.dumps(get_serialports()))
@@ -47,7 +47,7 @@ def serialports_list(json_output):
 
 if int(PYSERIAL_VERSION[0]) == 3:
 
-    @cli.command("monitor", short_help="Monitor Serial port")
+    @cli.command("monitor", short_help="Monitor device (Serial)")
     @click.option("--port", "-p", help="Port, a number or a device name")
     @click.option(
         "--baud",
@@ -112,7 +112,7 @@ if int(PYSERIAL_VERSION[0]) == 3:
         "--quiet",
         is_flag=True,
         help="Diagnostics: suppress non-error messages, default=Off")
-    def serialports_monitor(**kwargs):
+    def device_monitor(**kwargs):
         if not kwargs['port']:
             for item in get_serialports():
                 if "VID:PID" in item['hwid']:
@@ -143,7 +143,7 @@ if int(PYSERIAL_VERSION[0]) == 3:
             raise MinitermException(e)
 else:
 
-    @cli.command("monitor", short_help="Monitor Serial port")
+    @cli.command("monitor", short_help="Monitor device (Serial)")
     @click.option("--port", "-p", help="Port, a number or a device name")
     @click.option(
         "--baud",
@@ -210,7 +210,7 @@ else:
         "--quiet",
         is_flag=True,
         help="Diagnostics: suppress non-error messages, default=Off")
-    def serialports_monitor(**kwargs):
+    def device_monitor(**kwargs):
         sys.argv = app.get_session_var("command_ctx").args[1:]
 
         if not kwargs['port']:

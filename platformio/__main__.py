@@ -52,8 +52,11 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
     @staticmethod
     def _handle_obsolate_command(name):
         if name == "platforms":
-            from platformio.commands import platform
-            return platform.cli
+            from platformio.commands.platform import cli
+            return cli
+        elif name == "serialports":
+            from platformio.commands.device import cli
+            return cli
         raise AttributeError()
 
 

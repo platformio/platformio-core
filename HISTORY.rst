@@ -67,6 +67,7 @@ PlatformIO 3.0
 
 * Removed ``enable_prompts`` setting. Now, all PlatformIO CLI is non-blocking!
 * Switched to SSL PlatformIO API
+* Renamed ``platformio serialports`` command to ``platformio device``
 * Build System: Attach custom Before/Pre and After/Post actions for targets
   (`issue #542 <https://github.com/platformio/platformio/issues/542>`_)
 * Print human-readable information when processing environments without

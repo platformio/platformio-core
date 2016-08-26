@@ -42,7 +42,8 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
                                  ", ".join(unknown_boards))
 
 
-@click.command("init", short_help="Initialize new PlatformIO based project")
+@click.command(
+    "init", short_help="Initialize PlatformIO project or update existing")
 @click.option(
     "--project-dir",
     "-d",
