@@ -268,7 +268,9 @@ def on_event(category, action, label=None, value=None, screen_name=None):
 
 
 def on_exception(e):
-    if isinstance(e, exception.AbortedByUser):
+    if any([isinstance(e, cls)
+            for cls in (IOError, exception.AbortedByUser,
+                        exception.NotGlobalLibDir)]):
         return
     is_crash = any([
         not isinstance(e, exception.PlatformioException),

@@ -55,12 +55,9 @@ def cli(ctx, **options):
             storage_dir = util.get_projectlibdeps_dir()
 
     if not storage_dir and not util.is_platformio_project():
-        raise exception.PlatformioException(
-            "The `%s` is not a PlatformIO project.\nTo manage libraries "
-            "in the global storage `%s`, please use "
-            "`platformio lib --global %s` instead." %
-            (util.get_project_dir(), join(util.get_home_dir(), "lib"),
-             ctx.invoked_subcommand))
+        raise exception.NotGlobalLibDir(util.get_project_dir(),
+                                        join(util.get_home_dir(), "lib"),
+                                        ctx.invoked_subcommand)
 
     ctx.obj = LibraryManager(storage_dir)
     if "--json-output" not in ctx.args:

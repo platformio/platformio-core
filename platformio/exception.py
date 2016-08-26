@@ -156,6 +156,16 @@ class LibNotFound(PlatformioException):
     MESSAGE = "Library `{0}` has not been found in the registry"
 
 
+class NotGlobalLibDir(PlatformioException):
+
+    MESSAGE = "The `{0}` is not a PlatformIO project.\n\n"\
+              "To manage libraries "\
+              "in global storage `{1}`,\n"\
+              "please use `platformio lib --global {2}` or specify custom "\
+              "storage `platformio lib --storage-dir /path/to/storage/ {2}`."\
+              "\nCheck `platformio lib --help` for details."
+
+
 class InvalidLibConfURL(PlatformioException):
 
     MESSAGE = "Invalid library config URL '{0}'"
