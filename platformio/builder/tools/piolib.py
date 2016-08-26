@@ -346,21 +346,22 @@ class ArduinoLibBuilder(LibBuilderBase):
 
     def get_inc_dirs(self, use_build_dir=False):
         inc_dirs = LibBuilderBase.get_inc_dirs(self, use_build_dir)
-        if not isdir(join(self.src_dir, "utility")):
+        if not isdir(join(self.path, "utility")):
             return inc_dirs
         inc_dirs.append(
-            join(self.build_dir if use_build_dir else self.src_dir, "utility"))
+            join(self.build_dir if use_build_dir else self.path, "utility"))
         return inc_dirs
 
     @property
     def src_filter(self):
         if isdir(join(self.path, "src")):
             return LibBuilderBase.src_filter.fget(self)
-        src_filter = [
-            "+<*.%s>" % ext
-            for ext in piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
-        ]
-        src_filter.append("+<utility%s>" % sep)
+        src_filter = []
+        is_utility = isdir(join(self.path, "utility"))
+        for ext in piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT:
+            src_filter.append("+<*.%s>" % ext)
+            if is_utility:
+                src_filter.append("+<utility%s*.%s>" % (sep, ext))
         return src_filter
 
     def is_framework_compatible(self, framework):
