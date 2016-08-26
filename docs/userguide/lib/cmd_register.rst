@@ -21,17 +21,25 @@ Usage
 
 .. code-block:: bash
 
-    platformio lib register [HTTP_URL_TO_LIBRARY.JSON]
+    platformio lib register [MANIFEST_URL]
 
 
 Description
 -----------
 
-Register new library and allow others to install it.
+Register new library in `PlatformIO Library Registry <http://platformio.org/lib>`_.
+
+PlatformIO Library Registry supports the next library manifests:
+
+* PlatformIO :ref:`library_config`
+* Arduino `library.properties <https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5:-Library-specification>`_
+* ARM mbed yotta `module.json <http://yottadocs.mbed.com/reference/module.html>`_.
 
 Examples
 --------
 
 .. code::
 
-    platformio lib register http://my.example.com/raw-library.json
+    platformio lib register https://raw.githubusercontent.com/bblanchon/ArduinoJson/master/library.json
+    platformio lib register https://raw.githubusercontent.com/adafruit/DHT-sensor-library/master/library.properties
+    platformio lib register https://raw.githubusercontent.com/ARMmbed/ble/master/module.json
