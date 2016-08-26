@@ -401,6 +401,21 @@ Allowed requirements for dependent library:
 * ``frameworks`` | Type: ``String`` or ``Array``
 * ``platforms`` | Type: ``String`` or ``Array``
 
+The ``version`` supports `Semantic Versioning <http://semver.org>`_ (
+``<major>.<minor>.<patch>``) and can take any of the following forms:
+
+* ``0.1.2`` - an exact version number. Use only this exact version
+* ``^0.1.2`` - any compatible version (exact version for ``0.x.x`` versions
+* ``~0.1.2`` - any version with the same major and minor versions, and an
+  equal or greater patch version
+* ``>0.1.2`` - any version greater than ``0.1.2``. ``>=``, ``<``, and ``<=``
+  are also possible
+* ``>0.1.0,!=0.2.0,<0.3.0`` - any version greater than ``0.1.0``, not equal to
+  ``0.2.0`` and less than ``0.3.0``
+
+The rest possible values including VCS repository URLs are documented in
+:ref:`cmd_lib_install` command.
+
 Example:
 
 .. code-block:: javascript
