@@ -284,8 +284,8 @@ reduce size of the final archive.
 
 Possible options:
 
-* ``include``
-* ``exclude``
+.. contents::
+    :local:
 
 ``include``
 ~~~~~~~~~~~
@@ -483,39 +483,55 @@ A list of example patterns. This field is predefined with default value:
 .. _libjson_build:
 
 ``build``
-------------
+---------
 
 *Optional* | Type: ``Object``
 
 Specify advanced settings, options and flags for the build system. Possible
 options:
 
-.. list-table::
-    :header-rows:  1
+.. contents::
+    :local:
 
-    * - Option
-      - Type
-      - Description
-    * - ``flags``
-      - ``String`` or ``Array``
-      - Extra flags to control preprocessing, compilation, assembly and
-        linking processes. More details :ref:`projectconf_build_flags`
-    * - ``unflags``
-      - ``String`` or ``Array``
-      - Remove base/initial flags which were set by development
-        platform. More details :ref:`projectconf_build_unflags`
-    * - ``srcFilter``
-      - ``String`` or ``Array``
-      - Specify which source files should be included/excluded
-        from build process. More details :ref:`projectconf_src_filter`
-    * - ``extraScript``
-      - ``String``
-      - Launch extra script before build process.
-        More details :ref:`projectconf_extra_script`
-    * - ``libArchive``
-      - ``Boolean``
-      - Archive object files to Static Library. This is default behavior of
-        PlatformIO Build System (``"libArchive": true``).
+``flags``
+~~~~~~~~~
+
+*Optional* | Type: ``String`` or ``Array``
+
+Extra flags to control preprocessing, compilation, assembly and linking
+processes. More details :ref:`projectconf_build_flags`.
+
+``unflags``
+~~~~~~~~~~~
+
+*Optional* | Type: ``String`` or ``Array``
+
+Remove base/initial flags which were set by development platform. More
+details :ref:`projectconf_build_unflags`.
+
+``srcFilter``
+~~~~~~~~~~~~~
+
+*Optional* | Type: ``String`` or ``Array``
+
+Specify which source files should be included/excluded from build process.
+More details :ref:`projectconf_src_filter`.
+
+``extraScript``
+~~~~~~~~~~~~~~~
+
+*Optional* | Type: ``String``
+
+Launch extra script before build process.
+More details :ref:`projectconf_extra_script`.
+
+``libArchive``
+~~~~~~~~~~~~~~
+
+*Optional* | Type: ``Boolean``
+
+Archive object files to Static Library. This is default behavior of PlatformIO
+Build System (``"libArchive": true``).
 
 **Examples**
 
