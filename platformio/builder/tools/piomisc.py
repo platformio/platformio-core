@@ -16,6 +16,7 @@ from __future__ import absolute_import
 
 import atexit
 import re
+import sys
 from glob import glob
 from os import environ, remove
 from os.path import isfile, join
@@ -250,8 +251,10 @@ def GetActualLDScript(env):
                     return path
 
     if script:
-        env.Exit("Error: Could not find '%s' LD script in LDPATH '%s'" %
-                 (script, env.subst("$LIBPATH")))
+        sys.stderr.write(
+            "Error: Could not find '%s' LD script in LDPATH '%s'\n" %
+            (script, env.subst("$LIBPATH")))
+        env.Exit(1)
 
     return None
 

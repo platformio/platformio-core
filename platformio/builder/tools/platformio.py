@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 
 import re
+import sys
 from glob import glob
 from os import sep, walk
 from os.path import basename, dirname, isdir, join, realpath
@@ -87,8 +88,10 @@ def BuildProgram(env):
         env.Append(PIOBUILDFILES=env.ProcessTest())
 
     if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
-        env.Exit("Error: Nothing to build. Please put your source code files "
-                 "to '%s' folder" % env.subst("$PROJECTSRC_DIR"))
+        sys.stderr.write(
+            "Error: Nothing to build. Please put your source code files "
+            "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR"))
+        env.Exit(1)
 
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
@@ -230,15 +233,18 @@ def BuildFrameworks(env, frameworks):
         return
 
     if "BOARD" not in env:
-        env.Exit("Please specify `board` in `platformio.ini` to use "
-                 "with '%s' framework" % ", ".join(frameworks))
+        sys.stderr.write("Please specify `board` in `platformio.ini` to use "
+                         "with '%s' framework\n" % ", ".join(frameworks))
+        env.Exit(1)
 
     board_frameworks = env.BoardConfig().get("frameworks", [])
     if frameworks == ["platformio"]:
         if board_frameworks:
             frameworks.insert(0, board_frameworks[0])
         else:
-            env.Exit("Error: Please specify `board` in `platformio.ini`")
+            sys.stderr.write(
+                "Error: Please specify `board` in `platformio.ini`\n")
+            env.Exit(1)
 
     for f in frameworks:
         if f in ("arduino", "energia"):
@@ -247,7 +253,9 @@ def BuildFrameworks(env, frameworks):
         if f in board_frameworks:
             SConscript(env.GetFrameworkScript(f))
         else:
-            env.Exit("Error: This board doesn't support %s framework!" % f)
+            sys.stderr.write(
+                "Error: This board doesn't support %s framework!\n" % f)
+            env.Exit(1)
 
 
 def BuildLibrary(env, variant_dir, src_dir, src_filter=None):

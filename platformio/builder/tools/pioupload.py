@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+import sys
 from os import environ
 from os.path import isfile, join
 from platform import system
@@ -71,10 +72,11 @@ def WaitForNewSerialPort(env, before):
                 break
 
     if not new_port:
-        env.Exit("Error: Couldn't find a board on the selected port. "
-                 "Check that you have the correct port selected. "
-                 "If it is correct, try pressing the board's reset "
-                 "button after initiating the upload.")
+        sys.stderr.write("Error: Couldn't find a board on the selected port. "
+                         "Check that you have the correct port selected. "
+                         "If it is correct, try pressing the board's reset "
+                         "button after initiating the upload.\n")
+        env.Exit(1)
 
     return new_port
 
@@ -116,7 +118,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
     else:
         if (system() == "Linux" and
                 not isfile("/etc/udev/99-platformio-udev.rules")):
-            print(
+            sys.stderr.write(
                 "\nWarning! Please install `99-platformio-udev.rules` and "
                 "check that your board's PID and VID are listed in the rules."
                 "\n https://raw.githubusercontent.com/platformio/platformio"
@@ -126,10 +128,12 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
     if env.subst("$UPLOAD_PORT"):
         print env.subst("Auto-detected: $UPLOAD_PORT")
     else:
-        env.Exit("Error: Please specify `upload_port` for environment or use "
-                 "global `--upload-port` option.\n"
-                 "For some development platforms this can be a USB flash "
-                 "drive (i.e. /media/<user>/<device name>)\n")
+        sys.stderr.write(
+            "Error: Please specify `upload_port` for environment or use "
+            "global `--upload-port` option.\n"
+            "For some development platforms this can be a USB flash "
+            "drive (i.e. /media/<user>/<device name>)\n")
+        env.Exit(1)
 
 
 def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
@@ -141,8 +145,8 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
             continue
         copyfile(fpath, join(
             env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
-    print("Firmware has been successfully uploaded.\n"
-          "(Some boards may require manual hard reset)")
+    print "Firmware has been successfully uploaded.\n"\
+          "(Some boards may require manual hard reset)"
 
 
 def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
@@ -166,8 +170,10 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
     used_size = int(values[0]) + int(values[1])
 
     if used_size > max_size:
-        env.Exit("Error: The program size (%d bytes) is greater "
-                 "than maximum allowed (%s bytes)" % (used_size, max_size))
+        sys.stderr.write("Error: The program size (%d bytes) is greater "
+                         "than maximum allowed (%s bytes)\n" %
+                         (used_size, max_size))
+        env.Exit(1)
 
 
 def exists(_):

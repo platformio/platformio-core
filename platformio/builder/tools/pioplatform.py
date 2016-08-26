@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+import sys
 from os.path import isdir, isfile, join
 
 from SCons.Script import COMMAND_LINE_TARGETS
@@ -43,7 +44,8 @@ def BoardConfig(env, board=None):
     try:
         config = p.board_config(board if board else env['BOARD'])
     except exception.UnknownBoard as e:
-        env.Exit("Error: %s" % str(e))
+        sys.stderr.write("Error: %s\n" % str(e))
+        env.Exit(1)
     return config
 
 

@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 
 import atexit
+import sys
 from os import remove
 from os.path import isdir, isfile, join, sep
 from string import Template
@@ -82,9 +83,10 @@ def ProcessTest(env):
 def GenerateOutputReplacement(env, destination_dir):
 
     if not isdir(env.subst(destination_dir)):
-        env.Exit(
-            "Error: Test folder doesn't exist. Please put your test suite "
-            'to \"test\" folder in project\'s root directory.')
+        sys.stderr.write(
+            "Error: Test folder does not exist. Please put your test suite "
+            "to \"test\" folder in project's root directory.\n")
+        env.Exit(1)
 
     TEMPLATECPP = """
 # include <$framework>
@@ -127,8 +129,10 @@ void output_complete(void)
     else:
         framework = env.subst("$PIOFRAMEWORK").lower()
     if framework not in FRAMEWORK_PARAMETERS:
-        env.Exit("Error: %s framework doesn't support testing feature!" %
-                 framework)
+        sys.stderr.write(
+            "Error: %s framework doesn't support testing feature!\n" %
+            framework)
+        env.Exit(1)
     else:
         data = Template(TEMPLATECPP).substitute(FRAMEWORK_PARAMETERS[
             framework])

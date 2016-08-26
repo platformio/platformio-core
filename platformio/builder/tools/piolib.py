@@ -203,7 +203,7 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
                 sys.stderr.write(
                     "Error: Could not find `%s` dependency for `%s` "
                     "library\n" % (item['name'], self.name))
-                self.env.Exit(2)
+                self.env.Exit(1)
 
     def _validate_search_paths(self, search_paths=None):
         if not search_paths:
