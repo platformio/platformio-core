@@ -20,6 +20,7 @@ from glob import glob
 from os import sep, walk
 from os.path import basename, dirname, isdir, join, realpath
 
+from SCons.Action import Action
 from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, SConscript
 from SCons.Util import case_sensitive_suffixes
 
@@ -97,7 +98,8 @@ def BuildProgram(env):
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
 
     if set(["upload", "uploadlazy", "program"]) & set(COMMAND_LINE_TARGETS):
-        env.AddPostAction(program, env.CheckUploadSize)
+        env.AddPostAction(program, Action(env.CheckUploadSize,
+                                          "Checking program size $TARGET"))
 
     return program
 

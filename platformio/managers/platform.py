@@ -276,8 +276,7 @@ class PlatformRunMixin(object):
             "-j %d" % self.get_job_nums(), "--warn=no-no-parallel-support",
             "-f", join(util.get_source_dir(), "builder", "main.py")
         ]
-        if not self.verbose and "-c" not in targets:
-            cmd.append("--silent")
+        cmd.append("PIOVERBOSE=%d" % (1 if self.verbose else 0))
         cmd += targets
 
         # encode and append variables

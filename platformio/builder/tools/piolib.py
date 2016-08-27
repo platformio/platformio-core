@@ -22,6 +22,7 @@ from os.path import basename, commonprefix, isdir, isfile, join, realpath, sep
 from platform import system
 
 import SCons.Scanner
+from SCons.Script import ARGUMENTS
 
 from platformio import util
 from platformio.builder.tools import platformio as piotool
@@ -465,7 +466,8 @@ def GetLibBuilders(env):
         f.lower().strip() for f in env.get("PIOFRAMEWORK", "").split(",")
     ]
     compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
-    verbose = not (env.GetOption("silent") or env.GetOption('clean'))
+    verbose = (int(ARGUMENTS.get("PIOVERBOSE", 0)) and
+               not env.GetOption('clean'))
 
     def _check_lib_builder(lb):
         if lb.name in env.get("LIB_IGNORE", []):
@@ -528,7 +530,7 @@ def BuildDependentLibraries(env, src_dir):
             title = "<%s>" % lb.name
             if lb.version:
                 title += " v%s" % lb.version
-            if not env.GetOption("silent"):
+            if int(ARGUMENTS.get("PIOVERBOSE", 0)):
                 title += " (%s)" % lb.path
             print "%s|-- %s" % (margin, title)
             if lb.depbuilders:

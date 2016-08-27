@@ -83,7 +83,6 @@ def WaitForNewSerialPort(env, before):
 
 def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
     env = args[0]
-    print "Looking for upload port/disk..."
 
     def _look_for_mbed_disk():
         msdlabels = ("mbed", "nucleo", "frdm", "microbit")
@@ -110,7 +109,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         return port
 
     if "UPLOAD_PORT" in env:
-        print env.subst("Manually specified: $UPLOAD_PORT")
+        print env.subst("Use manually specified: $UPLOAD_PORT")
         return
 
     if env.subst("$PIOFRAMEWORK") == "mbed":
@@ -131,13 +130,13 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         sys.stderr.write(
             "Error: Please specify `upload_port` for environment or use "
             "global `--upload-port` option.\n"
-            "For some development platforms this can be a USB flash "
+            "For some development platforms it can be a USB flash "
             "drive (i.e. /media/<user>/<device name>)\n")
         env.Exit(1)
 
 
 def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
-    env.AutodetectUploadPort()
+    assert "UPLOAD_PORT" in env
     progname = env.subst("$PROGNAME")
     for ext in ("bin", "hex"):
         fpath = join(env.subst("$BUILD_DIR"), "%s.%s" % (progname, ext))
@@ -156,7 +155,6 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
     if max_size == 0 or "SIZETOOL" not in env:
         return
 
-    print "Check program size..."
     sysenv = environ.copy()
     sysenv['PATH'] = str(env['ENV']['PATH'])
     cmd = [env.subst("$SIZETOOL"), "-B", str(target[0])]

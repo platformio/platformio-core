@@ -21,6 +21,9 @@ from glob import glob
 from os import environ, remove
 from os.path import isfile, join
 
+from SCons.Action import Action
+from SCons.Script import ARGUMENTS
+
 from platformio import util
 
 
@@ -259,13 +262,11 @@ def GetActualLDScript(env):
     return None
 
 
-def ProgressHandler(env, node):
-    item = str(node)
-    if "toolchain-" in item or "tool-" in item or \
-            item.endswith((".o", ".h", ".hpp", ".ipp")):
-        return
-    item = item.replace(env['PIOHOME_DIR'], ".platformio")
-    print "Processing %s" % item
+def VerboseAction(env, act, actstr):
+    if int(ARGUMENTS.get("PIOVERBOSE", 0)):
+        return act
+    else:
+        return Action(act, actstr)
 
 
 def exists(_):
@@ -277,5 +278,5 @@ def generate(env):
     env.AddMethod(DumpIDEData)
     env.AddMethod(GetCompilerType)
     env.AddMethod(GetActualLDScript)
-    env.AddMethod(ProgressHandler)
+    env.AddMethod(VerboseAction)
     return env

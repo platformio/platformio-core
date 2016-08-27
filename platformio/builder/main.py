@@ -19,8 +19,8 @@ from os import environ
 from os.path import join, normpath
 from time import time
 
-from SCons.Script import (COMMAND_LINE_TARGETS, AllowSubstExceptions,
-                          DefaultEnvironment, Progress, Variables)
+from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS,
+                          AllowSubstExceptions, DefaultEnvironment, Variables)
 
 from platformio import util
 
@@ -65,7 +65,7 @@ commonvars.AddVariables(
     ("UPLOAD_RESETMETHOD",)
 )  # yapf: disable
 
-DefaultEnvironment(
+DEFAULT_ENV_OPTIONS = dict(
     tools=[
         "ar", "as", "gcc", "g++", "gnulink",
         "platformio", "pioplatform", "piowinhooks",
@@ -93,11 +93,15 @@ DefaultEnvironment(
     ],
     PYTHONEXE=normpath(sys.executable))
 
-env = DefaultEnvironment()
-
-if env.GetOption("silent"):
+if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     print "Verbose mode can be enabled via `-v, --verbose` option"
-    Progress(env.ProgressHandler)
+    DEFAULT_ENV_OPTIONS['ARCOMSTR'] = "Archiving $TARGET"
+    DEFAULT_ENV_OPTIONS['LINKCOMSTR'] = "Linking $TARGET"
+    DEFAULT_ENV_OPTIONS['RANLIBCOMSTR'] = "Indexing $TARGET"
+    for k in ("ASPPCOMSTR", "CCCOMSTR", "CXXCOMSTR"):
+        DEFAULT_ENV_OPTIONS[k] = "Compiling $TARGET"
+
+env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 
 # decode common variables
 for k in commonvars.keys():

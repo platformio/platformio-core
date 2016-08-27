@@ -27,7 +27,6 @@ from platformio.downloader import FileDownloader
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
-
 # pylint: disable=too-many-arguments
 
 
