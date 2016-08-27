@@ -72,8 +72,6 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
 @click.option("--caller", "-c", help="Caller ID (service).")
 @click.pass_context
 def cli(ctx, force, caller):
-    if not caller and getenv("PLATFORMIO_CALLER"):
-        caller = getenv("PLATFORMIO_CALLER")
     maintenance.on_platformio_start(ctx, force, caller)
 
 

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+import uuid
 from copy import deepcopy
 from os import environ, getenv
 from os.path import getmtime, isfile, join
@@ -164,6 +165,11 @@ def reset_settings():
 
 
 def get_session_var(name, default=None):
+    if name == "caller_id" and not SESSION_VARS[name]:
+        if getenv("PLATFORMIO_CALLER"):
+            return getenv("PLATFORMIO_CALLER")
+        elif getenv("C9_UID"):
+            return "C9"
     return SESSION_VARS.get(name, default)
 
 
@@ -175,3 +181,13 @@ def set_session_var(name, value):
 def is_disabled_progressbar():
     return any([get_session_var("force_option"), util.is_ci(),
                 getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"])
+
+
+def get_cid():
+    cid = get_state_item("cid")
+    if not cid:
+        cid = str(
+            uuid.uuid5(uuid.NAMESPACE_OID, str(
+                getenv("C9_UID") if getenv("C9_UID") else uuid.getnode())))
+        set_state_item("cid", cid)
+    return cid

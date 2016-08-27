@@ -17,7 +17,6 @@ import platform
 import Queue
 import sys
 import threading
-import uuid
 from collections import deque
 from os import getenv
 from time import sleep, time
@@ -31,8 +30,6 @@ from platformio import __version__, app, exception, util
 
 class TelemetryBase(object):
 
-    MACHINE_ID = str(uuid.uuid5(uuid.NAMESPACE_OID, str(uuid.getnode())))
-
     def __init__(self):
         self._params = {}
 
@@ -45,13 +42,6 @@ class TelemetryBase(object):
     def __delitem__(self, name):
         if name in self._params:
             del self._params[name]
-
-    def get_cid(self):
-        cid = app.get_state_item("cid")
-        if not cid:
-            cid = self.MACHINE_ID
-            app.set_state_item("cid", cid)
-        return cid
 
     def send(self, hittype):
         raise NotImplementedError()
@@ -72,7 +62,7 @@ class MeasurementProtocol(TelemetryBase):
         TelemetryBase.__init__(self)
         self['v'] = 1
         self['tid'] = self.TID
-        self['cid'] = self.get_cid()
+        self['cid'] = app.get_cid()
 
         self['sr'] = "%dx%d" % click.get_terminal_size()
         self._prefill_screen_name()
