@@ -194,6 +194,16 @@ def get_project_dir():
     return os.getcwd()
 
 
+def find_project_dir_above(path):
+    if isfile(path):
+        path = dirname(path)
+    if is_platformio_project(path):
+        return path
+    if isdir(dirname(path)):
+        return find_project_dir_above(dirname(path))
+    return None
+
+
 def is_platformio_project(project_dir=None):
     if not project_dir:
         project_dir = get_project_dir()

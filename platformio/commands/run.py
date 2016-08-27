@@ -38,7 +38,7 @@ from platformio.managers.platform import PlatformFactory
     default=getcwd,
     type=click.Path(
         exists=True,
-        file_okay=False,
+        file_okay=True,
         dir_okay=True,
         writable=True,
         resolve_path=True))
@@ -54,6 +54,13 @@ def cli(ctx,  # pylint: disable=R0913,R0914
         silent,
         verbose,
         disable_auto_clean):
+    # find project directory on upper level
+    if isfile(project_dir):
+        project_dir = util.find_project_dir_above(project_dir)
+
+    if not util.is_platformio_project(project_dir):
+        raise exception.NotPlatformIOProject(project_dir)
+
     with util.cd(project_dir):
         # clean obsolete .pioenvs dir
         if not disable_auto_clean:
