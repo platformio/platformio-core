@@ -14,6 +14,7 @@
 
 import json
 import uuid
+import hashlib
 from copy import deepcopy
 from os import environ, getenv
 from os.path import getmtime, isfile, join
@@ -165,11 +166,6 @@ def reset_settings():
 
 
 def get_session_var(name, default=None):
-    if name == "caller_id" and not SESSION_VARS[name]:
-        if getenv("PLATFORMIO_CALLER"):
-            return getenv("PLATFORMIO_CALLER")
-        elif getenv("C9_UID"):
-            return "C9"
     return SESSION_VARS.get(name, default)
 
 
@@ -187,7 +183,8 @@ def get_cid():
     cid = get_state_item("cid")
     if not cid:
         cid = str(
-            uuid.uuid5(uuid.NAMESPACE_OID, str(
-                getenv("C9_UID") if getenv("C9_UID") else uuid.getnode())))
+            uuid.UUID(bytes=hashlib.md5(
+                str(getenv("C9_UID")
+                    if getenv("C9_UID") else uuid.getnode())).digest()))
         set_state_item("cid", cid)
     return cid

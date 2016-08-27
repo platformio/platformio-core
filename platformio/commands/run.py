@@ -27,6 +27,8 @@ from platformio.commands.platform import \
 from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformFactory
 
+# pylint: disable=too-many-arguments,too-many-locals,too-many-branches
+
 
 @click.command("run", short_help="Process project environments")
 @click.option("-e", "--environment", multiple=True)
@@ -46,13 +48,7 @@ from platformio.managers.platform import PlatformFactory
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.pass_context
-def cli(ctx,  # pylint: disable=R0913,R0914
-        environment,
-        target,
-        upload_port,
-        project_dir,
-        silent,
-        verbose,
+def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
         disable_auto_clean):
     # find project directory on upper level
     if isfile(project_dir):

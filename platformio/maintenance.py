@@ -38,6 +38,12 @@ def in_silence(ctx):
 
 
 def on_platformio_start(ctx, force, caller):
+    if not caller:
+        if getenv("PLATFORMIO_CALLER"):
+            caller = getenv("PLATFORMIO_CALLER")
+        elif getenv("C9_UID"):
+            caller = "C9"
+
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
     app.set_session_var("caller_id", caller)
