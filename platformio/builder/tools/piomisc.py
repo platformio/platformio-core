@@ -262,7 +262,7 @@ def GetActualLDScript(env):
     return None
 
 
-def VerboseAction(env, act, actstr):
+def VerboseAction(_, act, actstr):
     if int(ARGUMENTS.get("PIOVERBOSE", 0)):
         return act
     else:
