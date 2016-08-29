@@ -72,6 +72,7 @@ class PlatformManager(BasePkgManager):
             BasePkgManager.update(self, name, requirements, only_check)
         p = PlatformFactory.newPlatform(name, requirements)
         p.update_packages(only_check)
+        self.cleanup_packages(p.packages.keys())
         return True
 
     def is_outdated(self, name, requirements=None):
