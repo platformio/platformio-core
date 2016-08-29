@@ -252,14 +252,14 @@ def lib_list(lm, json_output):
 @click.argument("library", metavar="[LIBRARY]")
 def lib_show(lm, library):  # pylint: disable=too-many-branches
     name, requirements, url = lm.parse_pkg_name(library)
-    installed_dir = lm.get_installed_dir(name, requirements, url)
-    if not installed_dir:
+    package_dir = lm.get_package_dir(name, requirements, url)
+    if not package_dir:
         click.secho(
             "%s @ %s is not installed" % (name, requirements or "*"),
             fg="yellow")
         return
 
-    manifest = lm.load_manifest(installed_dir)
+    manifest = lm.load_manifest(package_dir)
 
     click.secho(manifest['name'], fg="cyan")
     click.echo("=" * len(manifest['name']))

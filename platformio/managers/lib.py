@@ -114,9 +114,9 @@ class LibraryManager(BasePkgManager):
         if name.startswith("id="):
             return int(name[3:])
         # try to find ID from installed packages
-        installed_dir = self.get_installed_dir(name, requirements)
-        if installed_dir:
-            manifest = self.load_manifest(installed_dir)
+        package_dir = self.get_package_dir(name, requirements)
+        if package_dir:
+            manifest = self.load_manifest(package_dir)
             if "id" in manifest:
                 return int(manifest['id'])
         return int(
@@ -151,7 +151,7 @@ class LibraryManager(BasePkgManager):
         if not _url:
             _name = "id=%d" % self._get_pkg_id_by_name(
                 _name, _requirements, silent=silent, interactive=interactive)
-        already_installed = self.get_installed_dir(_name, _requirements, _url)
+        already_installed = self.get_package(_name, _requirements, _url)
         pkg_dir = BasePkgManager.install(self, _name if not _url else name,
                                          _requirements, silent, trigger_event)
 

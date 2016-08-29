@@ -144,8 +144,8 @@ class PlatformFactory(object):
         else:
             if not requirements and "@" in name:
                 name, requirements = name.rsplit("@", 1)
-            platform_dir = PlatformManager().get_installed_dir(name,
-                                                               requirements)
+            platform_dir = PlatformManager().get_package_dir(name,
+                                                             requirements)
 
         if not platform_dir:
             raise exception.UnknownPlatform(name if not requirements else
@@ -166,30 +166,6 @@ class PlatformFactory(object):
 
 
 class PlatformPackagesMixin(object):
-
-    def get_installed_packages(self):
-        items = {}
-        installed = self.pm.get_installed()
-        for name, opts in self.packages.items():
-            manifest = None
-            reqspec = None
-            try:
-                reqspec = semantic_version.Spec(opts['version'])
-            except ValueError:
-                pass
-
-            for p in installed:
-                if p['name'] != name:
-                    continue
-                if reqspec and not reqspec.match(
-                        semantic_version.Version(p['version'])):
-                    continue
-                elif (not manifest or semantic_version.compare(
-                        p['version'], manifest['version']) == 1):
-                    manifest = p
-            if manifest:
-                items[name] = manifest
-        return items
 
     def install_packages(self,
                          with_packages=None,
@@ -217,6 +193,14 @@ class PlatformPackagesMixin(object):
 
         return True
 
+    def get_installed_packages(self):
+        items = {}
+        for name, opts in self.packages.items():
+            package = self.pm.get_package(name, opts['version'])
+            if package:
+                items[name] = package
+        return items
+
     def update_packages(self, only_check=False):
         for name in self.get_installed_packages():
             self.pm.update(name, self.packages[name]['version'], only_check)
@@ -227,6 +211,14 @@ class PlatformPackagesMixin(object):
                     name, self.packages[name].get("version"))):
                 return True
         return False
+
+    def get_package_dir(self, name):
+        return self.pm.get_package_dir(name,
+                                       self.packages[name].get("version"))
+
+    def get_package_version(self, name):
+        package = self.pm.get_package(name, self.packages[name].get("version"))
+        return package['version'] if package else None
 
 
 class PlatformRunMixin(object):
@@ -416,18 +408,6 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 
     def board_config(self, id_):
         return self.get_boards(id_)
-
-    def get_package_dir(self, name):
-        packages = self.get_installed_packages()
-        if name not in packages:
-            return None
-        return packages[name]['__pkg_dir']
-
-    def get_package_version(self, name):
-        packages = self.get_installed_packages()
-        if name not in packages:
-            return None
-        return packages[name]['version']
 
     def get_package_type(self, name):
         return self.packages[name].get("type")

@@ -370,7 +370,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         BasePkgManager._INSTALLED_CACHE[self.package_dir] = items
         return items
 
-    def get_installed_dir(self, name, requirements=None, url=None):
+    def get_package(self, name, requirements=None, url=None):
         pkg_id = int(name[3:]) if name.startswith("id=") else 0
         best = None
         reqspec = None
@@ -406,19 +406,23 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             # check that URL is the same in installed package (VCS)
             if url and best.get("url") != url:
                 return None
-            return best.get("__pkg_dir")
+            return best
         return None
 
+    def get_package_dir(self, name, requirements=None, url=None):
+        package = self.get_package(name, requirements, url)
+        return package.get("__pkg_dir") if package else None
+
     def is_outdated(self, name, requirements=None):
-        installed_dir = self.get_installed_dir(name, requirements)
-        if not installed_dir:
+        package_dir = self.get_package_dir(name, requirements)
+        if not package_dir:
             click.secho(
                 "%s @ %s is not installed" % (name, requirements or "*"),
                 fg="yellow")
             return
-        if self.get_vcs_manifest_path(installed_dir):
+        if self.get_vcs_manifest_path(package_dir):
             return False
-        manifest = self.load_manifest(installed_dir)
+        manifest = self.load_manifest(package_dir)
         return manifest['version'] != self.get_latest_repo_version(
             name, requirements)
 
@@ -429,20 +433,20 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 trigger_event=True,
                 interactive=False):  # pylint: disable=unused-argument
         name, requirements, url = self.parse_pkg_name(name, requirements)
-        installed_dir = self.get_installed_dir(name, requirements, url)
+        package_dir = self.get_package_dir(name, requirements, url)
 
-        if not installed_dir or not silent:
+        if not package_dir or not silent:
             msg = "Installing " + click.style(name, fg="cyan")
             if requirements:
                 msg += " @ " + requirements
             self.print_message(msg)
-        if installed_dir:
+        if package_dir:
             if not silent:
                 click.secho(
                     "{name} @ {version} is already installed".format(
-                        **self.load_manifest(installed_dir)),
+                        **self.load_manifest(package_dir)),
                     fg="yellow")
-            return installed_dir
+            return package_dir
 
         if url:
             pkg_dir = self._install_from_url(name, url, requirements)
@@ -470,24 +474,24 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
     def uninstall(self, name, requirements=None, trigger_event=True):
         name, requirements, url = self.parse_pkg_name(name, requirements)
-        installed_dir = self.get_installed_dir(name, requirements, url)
-        if not installed_dir:
+        package_dir = self.get_package_dir(name, requirements, url)
+        if not package_dir:
             click.secho(
                 "%s @ %s is not installed" % (name, requirements or "*"),
                 fg="yellow")
             return
 
-        manifest = self.load_manifest(installed_dir)
+        manifest = self.load_manifest(package_dir)
         click.echo(
             "Uninstalling %s @ %s: \t" % (click.style(
                 manifest['name'], fg="cyan"), manifest['version']),
             nl=False)
 
-        if isdir(installed_dir):
-            if islink(installed_dir):
-                os.unlink(installed_dir)
+        if isdir(package_dir):
+            if islink(package_dir):
+                os.unlink(package_dir)
             else:
-                util.rmtree_(installed_dir)
+                util.rmtree_(package_dir)
 
         click.echo("[%s]" % click.style("OK", fg="green"))
 
@@ -501,19 +505,19 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
     def update(self, name, requirements=None, only_check=False):
         name, requirements, url = self.parse_pkg_name(name, requirements)
-        installed_dir = self.get_installed_dir(name, requirements, url)
-        if not installed_dir:
+        package_dir = self.get_package_dir(name, requirements, url)
+        if not package_dir:
             click.secho(
                 "%s @ %s is not installed" % (name, requirements or "*"),
                 fg="yellow")
             return
 
         is_vcs_pkg = False
-        if self.get_vcs_manifest_path(installed_dir):
+        if self.get_vcs_manifest_path(package_dir):
             is_vcs_pkg = True
-            manifest_path = self.get_vcs_manifest_path(installed_dir)
+            manifest_path = self.get_vcs_manifest_path(package_dir)
         else:
-            manifest_path = self.get_manifest_path(installed_dir)
+            manifest_path = self.get_manifest_path(package_dir)
 
         manifest = self.load_manifest(manifest_path)
         click.echo(
@@ -527,7 +531,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 click.echo("[%s]" % (click.style("Skip", fg="yellow")))
                 return
             click.echo("[%s]" % (click.style("VCS", fg="yellow")))
-            vcs = VCSClientFactory.newClient(installed_dir, manifest['url'])
+            vcs = VCSClientFactory.newClient(package_dir, manifest['url'])
             if not vcs.can_be_updated:
                 click.secho(
                     "Skip update because repository is fixed "
