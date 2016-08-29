@@ -98,7 +98,7 @@ if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     DEFAULT_ENV_OPTIONS['ARCOMSTR'] = "Archiving $TARGET"
     DEFAULT_ENV_OPTIONS['LINKCOMSTR'] = "Linking $TARGET"
     DEFAULT_ENV_OPTIONS['RANLIBCOMSTR'] = "Indexing $TARGET"
-    for k in ("ASPPCOMSTR", "CCCOMSTR", "CXXCOMSTR"):
+    for k in ("ASCOMSTR", "ASPPCOMSTR", "CCCOMSTR", "CXXCOMSTR"):
         DEFAULT_ENV_OPTIONS[k] = "Compiling $TARGET"
 
 env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
