@@ -15,7 +15,6 @@
 import base64
 import os
 import re
-import sys
 from imp import load_source
 from multiprocessing import cpu_count
 from os.path import basename, dirname, isdir, isfile, join
@@ -260,18 +259,8 @@ class PlatformRunMixin(object):
         return result
 
     def _run_scons(self, variables, targets):
-        # pass current PYTHONPATH to SCons
-        if "PYTHONPATH" in os.environ:
-            _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
-        else:
-            _PYTHONPATH = []
-        for p in os.sys.path:
-            if p not in _PYTHONPATH:
-                _PYTHONPATH.append(p)
-        os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
-
         cmd = [
-            os.path.normpath(sys.executable),
+            util.get_pythonexe_path(),
             join(self.get_package_dir("tool-scons"), "script", "scons"), "-Q",
             "-j %d" % self.get_job_nums(), "--warn=no-no-parallel-support",
             "-f", join(util.get_source_dir(), "builder", "main.py")
@@ -283,6 +272,7 @@ class PlatformRunMixin(object):
         for key, value in variables.items():
             cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
 
+        util.copy_pythonpath_to_osenv()
         result = util.exec_command(
             cmd,
             stdout=util.AsyncPipe(self.on_run_out),

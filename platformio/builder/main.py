@@ -14,9 +14,8 @@
 
 import base64
 import json
-import sys
 from os import environ
-from os.path import join, normpath
+from os.path import join
 from time import time
 
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS,
@@ -91,7 +90,7 @@ DEFAULT_ENV_OPTIONS = dict(
         util.get_projectlib_dir(), util.get_projectlibdeps_dir(),
         join("$PIOHOME_DIR", "lib")
     ],
-    PYTHONEXE=normpath(sys.executable))
+    PYTHONEXE=util.get_pythonexe_path())
 
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     print "Verbose mode can be enabled via `-v, --verbose` option"

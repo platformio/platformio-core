@@ -15,9 +15,7 @@
 import json
 import os
 import re
-import sys
-from os.path import (abspath, basename, expanduser, isdir, isfile, join,
-                     normpath, relpath)
+from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
 
 import bottle
 
@@ -63,7 +61,7 @@ class ProjectGenerator(object):
         envdata = self.get_project_env()
         if "env_name" not in envdata:
             return data
-        cmd = [normpath(sys.executable), "-m", "platformio", "-f"]
+        cmd = [util.get_pythonexe_path(), "-m", "platformio", "-f"]
         if app.get_session_var("caller_id"):
             cmd.extend(["-c", app.get_session_var("caller_id")])
         cmd.extend(["run", "-t", "idedata", "-e", envdata['env_name']])

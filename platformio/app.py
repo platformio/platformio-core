@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import hashlib
 import json
 import uuid
-import hashlib
 from copy import deepcopy
 from os import environ, getenv
 from os.path import getmtime, isfile, join

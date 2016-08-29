@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import re
-import sys
 
 import click
 import requests
@@ -43,7 +41,7 @@ def cli():
         r = None
         try:
             for cmd in cmds:
-                cmd = [os.path.normpath(sys.executable), "-m"] + cmd
+                cmd = [util.get_pythonexe_path(), "-m"] + cmd
                 r = None
                 r = util.exec_command(cmd)
 

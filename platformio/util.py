@@ -22,7 +22,7 @@ import subprocess
 import sys
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
-                     join, splitdrive)
+                     join, normpath, splitdrive)
 from platform import system, uname
 from shutil import rmtree
 from threading import Thread
@@ -299,6 +299,16 @@ def exec_command(*args, **kwargs):
     return result
 
 
+def copy_pythonpath_to_osenv():
+    _PYTHONPATH = []
+    if "PYTHONPATH" in os.environ:
+        _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
+    for p in os.sys.path:
+        if p not in _PYTHONPATH:
+            _PYTHONPATH.append(p)
+    os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
+
+
 def get_serialports():
     try:
         from serial.tools.list_ports import comports
@@ -444,6 +454,10 @@ def get_frameworks(type_=None):
         return frameworks[type_]
 
     return frameworks
+
+
+def get_pythonexe_path():
+    return os.environ.get("PYTHONEXEPATH", normpath(sys.executable))
 
 
 def where_is_program(program, envpath=None):
