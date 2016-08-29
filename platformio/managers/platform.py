@@ -20,7 +20,6 @@ from multiprocessing import cpu_count
 from os.path import basename, dirname, isdir, isfile, join
 
 import click
-import semantic_version
 
 from platformio import app, exception, util
 from platformio.managers.package import BasePkgManager, PackageManager
