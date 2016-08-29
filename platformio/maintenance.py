@@ -133,10 +133,12 @@ def after_upgrade(ctx):
         if u.run(ctx):
             app.set_state_item("last_version", __version__)
 
-            # patch development platforms
+            # update development platforms
             pm = PlatformManager()
             for manifest in pm.get_installed():
-                pm.update(manifest['name'], "^" + manifest['version'])
+                # @TODO Uncomment line below after first PIO3 release
+                # pm.update(manifest['name'], "^" + manifest['version'])
+                pm.update(manifest['name'])
 
             click.secho(
                 "PlatformIO has been successfully upgraded to %s!\n" %
