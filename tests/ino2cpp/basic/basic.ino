@@ -9,9 +9,13 @@ struct Item {
 class Foo {
 
     public:
-    Foo(void (*function)()) {
-		#warning "Line number is 13"
-    }
+        Foo(void (*function)()) {
+            #warning "Line number is 13"
+        }
+
+        bool childFunc() {
+
+        }
 
 };
 
