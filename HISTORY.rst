@@ -73,6 +73,7 @@ PlatformIO 3.0
 * Print human-readable information when processing environments without
   ``-v, --verbose`` option
   (`issue #721 <https://github.com/platformio/platformio/issues/721>`_)
+* Improved INO to CPP converter
 * Added ``license`` field to `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
   (`issue #522 <https://github.com/platformio/platformio/issues/522>`_)
 * Warn about unknown options in project configuration file ``platformio.ini``

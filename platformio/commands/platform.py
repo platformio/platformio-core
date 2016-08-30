@@ -165,7 +165,7 @@ def platform_show(platform):
     if p.homepage:
         click.echo("Home: %s" % p.homepage)
     if p.license:
-        click.echo("License: %s" % p.license.get("type"))
+        click.echo("License: %s" % p.license)
     if p.frameworks:
         click.echo("Frameworks: %s" % ", ".join(p.frameworks.keys()))
 

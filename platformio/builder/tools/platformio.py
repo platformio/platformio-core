@@ -198,11 +198,6 @@ def MatchSourceFiles(env, src_dir, src_filter=None):
     return sorted(list(matches))
 
 
-def VariantDirWrap(env, variant_dir, src_dir, duplicate=False):
-    DefaultEnvironment().Append(VARIANT_DIRS=[(variant_dir, src_dir)])
-    env.VariantDir(variant_dir, src_dir, duplicate)
-
-
 def CollectBuildFiles(env,
                       variant_dir,
                       src_dir,
@@ -222,7 +217,7 @@ def CollectBuildFiles(env,
 
         if _var_dir not in variants:
             variants.append(_var_dir)
-            env.VariantDirWrap(_var_dir, _src_dir, duplicate)
+            env.VariantDir(_var_dir, _src_dir, duplicate)
 
         if env.IsFileWithExt(item, SRC_BUILD_EXT):
             sources.append(env.File(join(_var_dir, basename(item))))
@@ -283,7 +278,6 @@ def generate(env):
     env.AddMethod(ProcessUnFlags)
     env.AddMethod(IsFileWithExt)
     env.AddMethod(MatchSourceFiles)
-    env.AddMethod(VariantDirWrap)
     env.AddMethod(CollectBuildFiles)
     env.AddMethod(BuildFrameworks)
     env.AddMethod(BuildLibrary)

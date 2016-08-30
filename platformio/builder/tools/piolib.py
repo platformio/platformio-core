@@ -134,8 +134,8 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
     def build_dir(self):
         return join("$BUILD_DIR", "lib", basename(self.path))
 
-    def get_inc_dirs(self, use_build_dir=False):
-        return [self.build_dir if use_build_dir else self.src_dir]
+    def get_inc_dirs(self):
+        return [self.src_dir]
 
     @property
     def build_flags(self):
@@ -290,8 +290,7 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
                 self.env.AppendUnique(**{key: lb.env.get(key)})
 
         if not self._built_node:
-            self.env.AppendUnique(CPPPATH=self.get_inc_dirs(
-                use_build_dir=True))
+            self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
             if self.lib_archive:
                 self._built_node = self.env.BuildLibrary(
                     self.build_dir, self.src_dir, self.src_filter)
@@ -345,12 +344,11 @@ class ArduinoLibBuilder(LibBuilderBase):
                 manifest[key.strip()] = value.strip()
         return manifest
 
-    def get_inc_dirs(self, use_build_dir=False):
-        inc_dirs = LibBuilderBase.get_inc_dirs(self, use_build_dir)
+    def get_inc_dirs(self):
+        inc_dirs = LibBuilderBase.get_inc_dirs(self)
         if not isdir(join(self.path, "utility")):
             return inc_dirs
-        inc_dirs.append(
-            join(self.build_dir if use_build_dir else self.path, "utility"))
+        inc_dirs.append(join(self.path, "utility"))
         return inc_dirs
 
     @property
@@ -382,8 +380,8 @@ class MbedLibBuilder(LibBuilderBase):
             return join(self.path, "source")
         return LibBuilderBase.src_dir.fget(self)
 
-    def get_inc_dirs(self, use_build_dir=False):
-        inc_dirs = LibBuilderBase.get_inc_dirs(self, use_build_dir)
+    def get_inc_dirs(self):
+        inc_dirs = LibBuilderBase.get_inc_dirs(self)
         if self.path not in inc_dirs:
             inc_dirs.append(self.path)
         for p in self._manifest.get("extraIncludes", []):
@@ -451,12 +449,11 @@ class PlatformIOLibBuilder(LibBuilderBase):
             ilist = [i.strip() for i in ilist.split(",")]
         return item.lower() in [i.lower() for i in ilist]
 
-    def get_inc_dirs(self, use_build_dir=False):
-        inc_dirs = LibBuilderBase.get_inc_dirs(self, use_build_dir)
+    def get_inc_dirs(self):
+        inc_dirs = LibBuilderBase.get_inc_dirs(self)
         for path in self.env['CPPPATH']:
             if path not in self.envorigin['CPPPATH']:
-                inc_dirs.append(
-                    path if use_build_dir else self.env.subst(path))
+                inc_dirs.append(self.env.subst(path))
         return inc_dirs
 
 
@@ -499,8 +496,9 @@ def GetLibBuilders(env):
             try:
                 lb = LibBuilderFactory.new(env, join(libs_dir, item))
             except ValueError:
-                sys.stderr.write("Skip library with broken manifest: %s\n" %
-                                 join(libs_dir, item))
+                if verbose:
+                    sys.stderr.write("Skip library with broken manifest: %s\n"
+                                     % join(libs_dir, item))
                 continue
             if _check_lib_builder(lb):
                 items += (lb, )

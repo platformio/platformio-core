@@ -27,7 +27,6 @@ from platformio.downloader import FileDownloader
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
-
 # pylint: disable=too-many-arguments
 
 
@@ -504,7 +503,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 label=manifest['name'])
         return True
 
-    def update(self, name, requirements=None, only_check=False):
+    def update(self,  # pylint: disable=too-many-return-statements
+               name,
+               requirements=None,
+               only_check=False):
         name, requirements, url = self.parse_pkg_name(name, requirements)
         package_dir = self.get_package_dir(name, requirements, url)
         if not package_dir:

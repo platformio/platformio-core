@@ -19,7 +19,8 @@ import re
 import sys
 from glob import glob
 from os import environ, remove
-from os.path import isfile, join
+from os.path import basename, isfile, join
+from tempfile import mkstemp
 
 from SCons.Action import Action
 from SCons.Script import ARGUMENTS
@@ -38,106 +39,118 @@ class InoToCPPConverter(object):
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
     PROTOPTRS_TPLRE = r"\([^&\(]*&(%s)[^\)]*\)"
 
-    def __init__(self, nodes):
-        self.nodes = nodes
+    def __init__(self, env):
+        self.env = env
+        self._main_ino = None
 
     def is_main_node(self, contents):
         return self.DETECTMAIN_RE.search(contents)
 
-    def _parse_prototypes(self, file_path, contents):
+    def convert(self, nodes):
+        contents = self.merge(nodes)
+        if not contents:
+            return
+        return self.process(contents)
+
+    def merge(self, nodes):
+        lines = []
+        for node in nodes:
+            contents = node.get_text_contents()
+            _lines = [
+                '# 1 "%s"' % node.get_path().replace("\\", "/"), contents
+            ]
+            if self.is_main_node(contents):
+                lines = _lines + lines
+                self._main_ino = node.get_path()
+            else:
+                lines.extend(_lines)
+
+        return "\n".join(["#include <Arduino.h>"] + lines) if lines else None
+
+    def process(self, contents):
+        out_file = self._main_ino + ".cpp"
+        assert self._gcc_preprocess(contents, out_file)
+        with open(out_file) as fp:
+            contents = fp.read()
+        with open(out_file, "w") as fp:
+            fp.write(self.append_prototypes(contents))
+        return out_file
+
+    def _gcc_preprocess(self, contents, out_file):
+        tmp_path = mkstemp()[1]
+        with open(tmp_path, "w") as fp:
+            fp.write(contents)
+            fp.close()
+        self.env.Execute(
+            self.env.VerboseAction(
+                '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
+                    out_file, tmp_path), "Converting " + basename(
+                        out_file[:-4])))
+        remove(tmp_path)
+        return isfile(out_file)
+
+    def _parse_prototypes(self, contents):
         prototypes = []
         reserved_keywords = set(["if", "else", "while"])
         for match in self.PROTOTYPE_RE.finditer(contents):
             if (set([match.group(2).strip(), match.group(3).strip()]) &
                     reserved_keywords):
                 continue
-            prototypes.append({"path": file_path, "match": match})
+            prototypes.append(match)
         return prototypes
 
-    def append_prototypes(self, file_path, contents, prototypes):
-        result = []
+    @staticmethod
+    def _get_total_lines(contents):
+        total = 0
+        for line in contents.split("\n")[::-1]:
+            if line.startswith("#"):
+                tokens = line.split(" ", 3)
+                if len(tokens) > 2 and tokens[1].isdigit():
+                    return int(tokens[1]) + total
+            total += 1
+        return total
+
+    def append_prototypes(self, contents):
+        prototypes = self._parse_prototypes(contents)
         if not prototypes:
-            return result
+            return contents
 
-        prototype_names = set(
-            [p['match'].group(3).strip() for p in prototypes])
-        split_pos = prototypes[0]['match'].start()
-        for item in prototypes:
-            if item['path'] == file_path:
-                split_pos = item['match'].start()
-                break
-
+        prototype_names = set([m.group(3).strip() for m in prototypes])
+        split_pos = prototypes[0].start()
         match_ptrs = re.search(self.PROTOPTRS_TPLRE %
                                ("|".join(prototype_names)),
                                contents[:split_pos], re.M)
         if match_ptrs:
             split_pos = contents.rfind("\n", 0, match_ptrs.start())
 
+        result = []
         result.append(contents[:split_pos].strip())
-        result.append("%s;" %
-                      ";\n".join([p['match'].group(1) for p in prototypes]))
+        result.append("%s;" % ";\n".join([m.group(1) for m in prototypes]))
         result.append('#line %d "%s"' %
-                      (contents.count("\n", 0, split_pos) + 2,
-                       file_path.replace("\\", "/")))
+                      (self._get_total_lines(contents[:split_pos]),
+                       self._main_ino.replace("\\", "/")))
         result.append(contents[split_pos:].strip())
-
-        return result
-
-    def convert(self):
-        prototypes = []
-        data = []
-        for node in self.nodes:
-            ino_contents = node.get_text_contents()
-            prototypes += self._parse_prototypes(node.get_path(), ino_contents)
-
-            item = (node.get_path(), ino_contents)
-            if self.is_main_node(ino_contents):
-                data = [item] + data
-            else:
-                data.append(item)
-
-        if not data:
-            return None
-
-        result = ["#include <Arduino.h>"]
-        is_first = True
-        for file_path, contents in data:
-            result.append('#line 1 "%s"' % file_path.replace("\\", "/"))
-
-            if is_first and prototypes:
-                result += self.append_prototypes(file_path, contents,
-                                                 prototypes)
-            else:
-                result.append(contents)
-            is_first = False
-
         return "\n".join(result)
 
 
 def ConvertInoToCpp(env):
 
-    def delete_tmpcpp_file(file_):
+    def _delete_file(path):
         try:
-            remove(file_)
+            if isfile(path):
+                remove(path)
         except:  # pylint: disable=bare-except
-            if isfile(file_):
-                print("Warning: Could not remove temporary file '%s'. "
-                      "Please remove it manually." % file_)
+            if path and isfile(path):
+                sys.stderr.write(
+                    "Warning: Could not remove temporary file '%s'. "
+                    "Please remove it manually.\n" % path)
 
     ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
                  env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
+    c = InoToCPPConverter(env)
+    out_file = c.convert(ino_nodes)
 
-    c = InoToCPPConverter(ino_nodes)
-    data = c.convert()
-
-    if not data:
-        return
-
-    tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "tmp_ino_to.cpp")
-    with open(tmpcpp_file, "w") as f:
-        f.write(data)
-
-    atexit.register(delete_tmpcpp_file, tmpcpp_file)
+    atexit.register(_delete_file, out_file)
 
 
 def DumpIDEData(env):
@@ -146,14 +159,7 @@ def DumpIDEData(env):
         includes = []
 
         for item in env_.get("CPPPATH", []):
-            invardir = False
-            for vardiritem in env_.get("VARIANT_DIRS", []):
-                if item == vardiritem[0]:
-                    includes.append(env_.subst(vardiritem[1]))
-                    invardir = True
-                    break
-            if not invardir:
-                includes.append(env_.subst(item))
+            includes.append(env_.subst(item))
 
         # installed libs
         for lb in env.GetLibBuilders():

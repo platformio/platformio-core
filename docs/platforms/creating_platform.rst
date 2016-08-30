@@ -198,10 +198,7 @@ Manifest File ``platform.json``
       "description": "My custom development platform",
       "url": "http://example.com",
       "homepage": "http://platformio.org/platforms/myplatform",
-      "license": {
-        "type": "Apache-2.0",
-        "url": "http://opensource.org/licenses/apache2.0.php"
-      },
+      "license": "Apache-2.0",
       "engines": {
         "platformio": "~3.0.0",
         "scons": ">=2.3.0,<2.6.0"
