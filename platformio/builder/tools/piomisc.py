@@ -86,7 +86,7 @@ class InoToCPPConverter(object):
                 '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
                     out_file, tmp_path), "Converting " + basename(
                         out_file[:-4])))
-        remove(tmp_path)
+        atexit.register(_delete_file, tmp_path)
         return isfile(out_file)
 
     def _parse_prototypes(self, contents):
@@ -134,23 +134,22 @@ class InoToCPPConverter(object):
 
 
 def ConvertInoToCpp(env):
-
-    def _delete_file(path):
-        try:
-            if isfile(path):
-                remove(path)
-        except:  # pylint: disable=bare-except
-            if path and isfile(path):
-                sys.stderr.write(
-                    "Warning: Could not remove temporary file '%s'. "
-                    "Please remove it manually.\n" % path)
-
     ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
                  env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
     c = InoToCPPConverter(env)
     out_file = c.convert(ino_nodes)
 
     atexit.register(_delete_file, out_file)
+
+
+def _delete_file(path):
+    try:
+        if isfile(path):
+            remove(path)
+    except:  # pylint: disable=bare-except
+        if path and isfile(path):
+            sys.stderr.write("Warning: Could not remove temporary file '%s'. "
+                             "Please remove it manually.\n" % path)
 
 
 def DumpIDEData(env):
