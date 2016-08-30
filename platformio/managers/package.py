@@ -27,6 +27,7 @@ from platformio.downloader import FileDownloader
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
+
 # pylint: disable=too-many-arguments
 
 
@@ -544,6 +545,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 json.dump(manifest, fp)
         else:
             latest_version = self.get_latest_repo_version(name, requirements)
+            if not latest_version:
+                click.echo("[%s]" % (click.style("Unknown", fg="yellow")))
+                return
             if manifest['version'] == latest_version:
                 click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
                 return
