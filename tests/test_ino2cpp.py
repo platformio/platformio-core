@@ -40,5 +40,5 @@ def test_warning_line(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_ci,
                               [join(INOTEST_DIR, "basic"), "-b", "uno"])
     validate_cliresult(result)
-    assert ('basic.ino:13:2: warning: #warning "Line number is 13"' in
+    assert ('basic.ino:13:4: warning: #warning "Line number is 13"' in
             result.output)
