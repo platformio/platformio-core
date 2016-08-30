@@ -18,8 +18,9 @@ from os import environ
 from os.path import join
 from time import time
 
-from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS,
-                          AllowSubstExceptions, DefaultEnvironment, Variables)
+from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
+                          AllowSubstExceptions, AlwaysBuild,
+                          DefaultEnvironment, Variables)
 
 from platformio import util
 
@@ -126,6 +127,8 @@ env.LoadPioPlatform(commonvars)
 env.SConscriptChdir(0)
 env.SConsignFile(join("$PROJECTPIOENVS_DIR", ".sconsign.dblite"))
 env.SConscript("$BUILD_SCRIPT")
+
+AlwaysBuild(env.Alias("test", DEFAULT_TARGETS + ["size"]))
 
 if "UPLOAD_FLAGS" in env:
     env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
