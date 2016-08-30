@@ -17,7 +17,9 @@ from os import makedirs
 from os.path import isdir, isfile, join
 from platform import system
 
-MAX_SOURCES_LENGTH = 8000  # Windows CLI has limit with command length to 8192
+# Windows CLI has limit with command length to 8192
+# Leave 2000 chars for flags and other options
+MAX_SOURCES_LENGTH = 6000
 
 
 def long_sources_hook(env, sources):
@@ -38,7 +40,7 @@ def long_sources_hook(env, sources):
 
 def long_incflags_hook(env, incflags):
     _incflags = env.subst(incflags).replace("\\", "/")
-    if len(_incflags) < MAX_SOURCES_LENGTH - 2000:
+    if len(_incflags) < MAX_SOURCES_LENGTH:
         return incflags
 
     # fix space in paths
