@@ -21,21 +21,6 @@ from click.testing import CliRunner
 requests.packages.urllib3.disable_warnings()
 
 
-@pytest.fixture(scope="session")
-def platformio_setup(request):
-    pioenvvars = ("ENABLE_TELEMETRY", )
-    for v in pioenvvars:
-        os.environ["PLATFORMIO_SETTING_%s" % v] = "No"
-
-    def platformio_teardown():
-        for v in pioenvvars:
-            _name = "PLATFORMIO_SETTING_%s" % v
-            if _name in os.environ:
-                del os.environ[_name]
-
-    request.addfinalizer(platformio_teardown)
-
-
 @pytest.fixture(scope="module")
 def clirunner():
     return CliRunner()

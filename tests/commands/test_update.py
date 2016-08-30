@@ -15,7 +15,7 @@
 from platformio.commands.update import cli as cmd_update
 
 
-def test_update(platformio_setup, clirunner, validate_cliresult):
+def test_update(clirunner, validate_cliresult):
     matches = (
         "Platform Manager",
         "Up-to-date",

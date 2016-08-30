@@ -18,7 +18,7 @@ from platformio.commands.boards import cli as cmd_boards
 from platformio.commands.platform import platform_search as cmd_platform_search
 
 
-def test_board_json_output(platformio_setup, clirunner, validate_cliresult):
+def test_board_json_output(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_boards, ["mbed", "--json-output"])
     validate_cliresult(result)
     boards = json.loads(result.output)
@@ -26,13 +26,13 @@ def test_board_json_output(platformio_setup, clirunner, validate_cliresult):
     assert any(["mbed" in b['frameworks'] for b in boards])
 
 
-def test_board_raw_output(platformio_setup, clirunner, validate_cliresult):
+def test_board_raw_output(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_boards, ["energia"])
     validate_cliresult(result)
     assert "titiva" in result.output
 
 
-def test_board_options(platformio_setup, clirunner, validate_cliresult):
+def test_board_options(clirunner, validate_cliresult):
     required_opts = set(
         ["fcpu", "frameworks", "id", "mcu", "name", "platform"])
 

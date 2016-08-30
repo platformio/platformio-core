@@ -1,4 +1,3 @@
-
 void setup() {
     barFunc();
     fooFunc();

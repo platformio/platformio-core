@@ -78,7 +78,11 @@ PlatformIO 3.0
   (`issue #522 <https://github.com/platformio/platformio/issues/522>`_)
 * Warn about unknown options in project configuration file ``platformio.ini``
   (`issue #740 <https://github.com/platformio/platformio/issues/740>`_)
+* Fixed wrong line number for INO file when ``#warning`` directive is used
+  (`issue #742 <https://github.com/platformio/platformio/issues/742>`_)
 * Stopped supporting Python 2.6
+
+------
 
 * Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
 

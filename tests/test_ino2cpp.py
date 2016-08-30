@@ -15,27 +15,30 @@
 from os import listdir
 from os.path import dirname, isdir, join, normpath
 
-import pytest
+from platformio.commands.ci import cli as cmd_ci
 
-from platformio import util
+INOTEST_DIR = normpath(join(dirname(__file__), "ino2cpp"))
 
 
 def pytest_generate_tests(metafunc):
     if "piotest_dir" not in metafunc.fixturenames:
         return
-    test_dir = normpath(join(dirname(__file__), "ino2cpp"))
     test_dirs = []
-    for name in listdir(test_dir):
-        if isdir(join(test_dir, name)):
-            test_dirs.append(join(test_dir, name))
+    for name in listdir(INOTEST_DIR):
+        if isdir(join(INOTEST_DIR, name)):
+            test_dirs.append(join(INOTEST_DIR, name))
     test_dirs.sort()
     metafunc.parametrize("piotest_dir", test_dirs)
 
 
-@pytest.mark.examples
-def test_ci(platformio_setup, piotest_dir):
-    result = util.exec_command(
-        ["platformio", "--force", "ci", piotest_dir, "-b", "uno"]
-    )
-    if result['returncode'] != 0:
-        pytest.fail(result)
+def test_example(clirunner, validate_cliresult, piotest_dir):
+    result = clirunner.invoke(cmd_ci, [piotest_dir, "-b", "uno"])
+    validate_cliresult(result)
+
+
+def test_warning_line(clirunner, validate_cliresult):
+    result = clirunner.invoke(cmd_ci,
+                              [join(INOTEST_DIR, "basic"), "-b", "uno"])
+    validate_cliresult(result)
+    assert ('basic.ino:13:2: warning: #warning "Line number is 13"' in
+            result.output)
