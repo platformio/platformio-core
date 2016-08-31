@@ -80,6 +80,7 @@ class LibBuilderFactory(object):
 class LibBuilderBase(object):
 
     INC_SCANNER = SCons.Scanner.C.CScanner()
+    INC_DIRS_CACHE = None
 
     def __init__(self, env, path, manifest=None):
         self.env = env.Clone()
@@ -87,8 +88,8 @@ class LibBuilderBase(object):
         self.path = realpath(env.subst(path))
         self._manifest = manifest if manifest else self.load_manifest()
         self._is_dependent = False
-        self._depbuilders = tuple()
-        self._scanned_paths = tuple()
+        self._depbuilders = list()
+        self._scanned_paths = list()
         self._built_node = None
 
         # process extra options and append to build environment
@@ -155,7 +156,7 @@ class LibBuilderBase(object):
 
     @property
     def lib_ldf_mode(self):
-        return int(self.env.get("LIB_LDF_MODE", 2))
+        return int(self.env.get("LIB_LDF_MODE", 1))
 
     @property
     def depbuilders(self):
@@ -173,6 +174,13 @@ class LibBuilderBase(object):
 
     def load_manifest(self):
         return {}
+
+    def get_src_files(self):
+        return [
+            join(self.src_dir, item)
+            for item in self.env.MatchSourceFiles(self.src_dir,
+                                                  self.src_filter)
+        ]
 
     def process_extra_options(self):
         with util.cd(self.path):
@@ -212,44 +220,40 @@ class LibBuilderBase(object):
 
     def _validate_search_paths(self, search_paths=None):
         if not search_paths:
-            search_paths = tuple()
-        assert isinstance(search_paths, tuple)
-        deep_search = self.lib_ldf_mode == 2
+            search_paths = []
+        assert isinstance(search_paths, list)
 
-        if not self._scanned_paths and (
-                isinstance(self, ProjectAsLibBuilder) or deep_search):
-            for item in self.env.MatchSourceFiles(self.src_dir,
-                                                  self.src_filter):
-                path = join(self.src_dir, item)
-                if (path not in self._scanned_paths and
-                        path not in search_paths):
-                    search_paths += (path, )
-
-        _search_paths = tuple()
+        _search_paths = []
         for path in search_paths:
             if path not in self._scanned_paths:
-                _search_paths += (path, )
-                self._scanned_paths += (path, )
+                _search_paths.append(path)
+                self._scanned_paths.append(path)
 
         return _search_paths
 
     def _get_found_includes(self, lib_builders, search_paths=None):
-        inc_dirs = tuple()
-        used_inc_dirs = tuple()
-        for lb in (self, ) + lib_builders:
-            items = tuple(self.env.Dir(d) for d in lb.get_inc_dirs())
-            if lb.dependent:
-                used_inc_dirs += items
-            else:
-                inc_dirs += items
-        inc_dirs = used_inc_dirs + inc_dirs
+        # all include directories
+        if not LibBuilderBase.INC_DIRS_CACHE:
+            inc_dirs = []
+            used_inc_dirs = []
+            for lb in lib_builders:
+                items = [self.env.Dir(d) for d in lb.get_inc_dirs()]
+                if lb.dependent:
+                    used_inc_dirs.extend(items)
+                else:
+                    inc_dirs.extend(items)
+            LibBuilderBase.INC_DIRS_CACHE = used_inc_dirs + inc_dirs
 
-        result = tuple()
+        # append self include directories
+        inc_dirs = [self.env.Dir(d) for d in self.get_inc_dirs()]
+        inc_dirs.extend(LibBuilderBase.INC_DIRS_CACHE)
+
+        result = []
         for path in self._validate_search_paths(search_paths):
             for inc in self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.INC_SCANNER, inc_dirs):
+                    self.env, LibBuilderBase.INC_SCANNER, tuple(inc_dirs)):
                 if inc not in result:
-                    result += (inc, )
+                    result.append(inc)
         return result
 
     def depend_recursive(self, lb, lib_builders, search_paths=None):
@@ -260,13 +264,17 @@ class LibBuilderBase(object):
                                  "between `%s` and `%s`\n" %
                                  (self.path, lb.path))
             elif lb not in self._depbuilders:
-                self._depbuilders += (lb, )
+                self._depbuilders.append(lb)
+                LibBuilderBase.INC_DIRS_CACHE = None
         lb.search_deps_recursive(lib_builders, search_paths)
 
     def search_deps_recursive(self, lib_builders, search_paths=None):
-        self._is_dependent = True
+        if not self._is_dependent:
+            self._is_dependent = True
+            self._process_dependencies(lib_builders)
 
-        self._process_dependencies(lib_builders)
+            if self.lib_ldf_mode == 2:
+                search_paths = self.get_src_files()
 
         # when LDF is disabled
         if self.lib_ldf_mode == 0:
@@ -277,12 +285,12 @@ class LibBuilderBase(object):
             for lb in lib_builders:
                 if inc.get_abspath() in lb:
                     if lb not in lib_inc_map:
-                        lib_inc_map[lb] = tuple()
-                    lib_inc_map[lb] += (inc.get_abspath(), )
+                        lib_inc_map[lb] = []
+                    lib_inc_map[lb].append(inc.get_abspath())
                     break
 
-        for lb, lb_src_files in lib_inc_map.items():
-            self.depend_recursive(lb, lib_builders, lb_src_files)
+        for lb, lb_search_paths in lib_inc_map.items():
+            self.depend_recursive(lb, lib_builders, lb_search_paths)
 
     def build(self):
         libs = []
@@ -308,6 +316,10 @@ class UnknownLibBuilder(LibBuilderBase):
 
 
 class ProjectAsLibBuilder(LibBuilderBase):
+
+    @property
+    def lib_ldf_mode(self):
+        return 2  # parse all project files
 
     @property
     def src_filter(self):
@@ -395,12 +407,6 @@ class MbedLibBuilder(LibBuilderBase):
     def is_framework_compatible(self, framework):
         return framework.lower() == "mbed"
 
-    @property
-    def lib_ldf_mode(self):
-        if "dependencies" in self._manifest:
-            return 2
-        return LibBuilderBase.lib_ldf_mode.fget(self)
-
 
 class PlatformIOLibBuilder(LibBuilderBase):
 
@@ -486,7 +492,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
 
 def GetLibBuilders(env):
-    items = tuple()
+    items = []
     env_frameworks = [
         f.lower().strip() for f in env.get("PIOFRAMEWORK", "").split(",")
     ]
@@ -529,13 +535,13 @@ def GetLibBuilders(env):
                                      % join(libs_dir, item))
                 continue
             if _check_lib_builder(lb):
-                items += (lb, )
+                items.append(lb)
             else:
                 found_incompat = True
 
     for lb in env.get("EXTRA_LIB_BUILDERS", []):
         if _check_lib_builder(lb):
-            items += (lb, )
+            items.append(lb)
         else:
             found_incompat = True
 
@@ -549,6 +555,16 @@ def GetLibBuilders(env):
 
 
 def BuildDependentLibraries(env, src_dir):
+
+    def correct_found_libs(lib_builders):
+        # build full dependency graph
+        found_lbs = [lb for lb in lib_builders if lb.dependent]
+        for lb in lib_builders:
+            lb.search_deps_recursive(lib_builders, lb.get_src_files())
+        for lb in lib_builders:
+            for deplb in lb.depbuilders[:]:
+                if deplb not in found_lbs:
+                    lb.depbuilders.remove(deplb)
 
     def print_deps_tree(root, level=0):
         margin = "|   " * (level)
@@ -570,6 +586,9 @@ def BuildDependentLibraries(env, src_dir):
     project = ProjectAsLibBuilder(env, src_dir)
     project.env = env
     project.search_deps_recursive(lib_builders)
+
+    if int(env.get("LIB_LDF_MODE", 1)) == 1 and project.depbuilders:
+        correct_found_libs(lib_builders)
 
     if project.depbuilders:
         print "Library Dependency Graph"
