@@ -29,6 +29,7 @@ from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformManager
+from platformio.pioplus import pioplus_update
 
 
 def in_silence(ctx):
@@ -139,6 +140,9 @@ def after_upgrade(ctx):
                 # @TODO Uncomment line below after first PIO3 release
                 # pm.update(manifest['name'], "^" + manifest['version'])
                 pm.update(manifest['name'])
+
+            # update PlatformIO Plus tool if installed
+            pioplus_update()
 
             click.secho(
                 "PlatformIO has been successfully upgraded to %s!\n" %

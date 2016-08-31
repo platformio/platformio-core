@@ -21,6 +21,6 @@ def test_local_env(clirunner, validate_cliresult):
     result = clirunner.invoke(
         cli_test,
         ["-d", join("examples", "unit-testing", "calculator"), "-e", "local"])
-    result.exit_code == -1
+    validate_cliresult(result)
     assert all(
         [s in result.output for s in ("[PASSED]", "[IGNORED]", "[FAILED]")])

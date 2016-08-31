@@ -14,46 +14,7 @@
 
 from __future__ import absolute_import
 
-import atexit
-import sys
-from os import remove
-from os.path import isdir, isfile, join, sep
-from string import Template
-
-FRAMEWORK_PARAMETERS = {
-    "arduino": {
-        "framework": "Arduino.h",
-        "serial_obj": "",
-        "serial_putc": "Serial.write(a)",
-        "serial_flush": "Serial.flush()",
-        "serial_begin": "Serial.begin(9600)",
-        "serial_end": "Serial.end()"
-    },
-    "mbed": {
-        "framework": "mbed.h",
-        "serial_obj": "Serial pc(USBTX, USBRX);",
-        "serial_putc": "pc.putc(a)",
-        "serial_flush": "",
-        "serial_begin": "pc.baud(9600)",
-        "serial_end": ""
-    },
-    "energia": {
-        "framework": "Energia.h",
-        "serial_obj": "",
-        "serial_putc": "Serial.write(a)",
-        "serial_flush": "Serial.flush()",
-        "serial_begin": "Serial.begin(9600)",
-        "serial_end": "Serial.end()"
-    },
-    "native": {
-        "framework": "stdio.h",
-        "serial_obj": "",
-        "serial_putc": "putchar(a)",
-        "serial_flush": "fflush(stdout)",
-        "serial_begin": "",
-        "serial_end": ""
-    }
-}
+from os.path import join, sep
 
 
 def ProcessTest(env):
@@ -69,79 +30,16 @@ def ProcessTest(env):
         env.PioPlatform().get_package_dir("tool-unity"))
     env.Prepend(LIBS=[unitylib])
 
-    test_dir = env.subst("$PROJECTTEST_DIR")
-    env.GenerateOutputReplacement(test_dir)
     src_filter = None
     if "PIOTEST" in env:
         src_filter = "+<output_export.cpp>"
         src_filter += " +<%s%s>" % (env['PIOTEST'], sep)
 
     return env.CollectBuildFiles(
-        "$BUILDTEST_DIR", test_dir, src_filter=src_filter, duplicate=False)
-
-
-def GenerateOutputReplacement(env, destination_dir):
-
-    if not isdir(env.subst(destination_dir)):
-        sys.stderr.write(
-            "Error: Test folder does not exist. Please put your test suite "
-            "to \"test\" folder in project's root directory.\n")
-        env.Exit(1)
-
-    TEMPLATECPP = """
-# include <$framework>
-# include <output_export.h>
-
-$serial_obj
-
-void output_char(int a)
-{
-    $serial_putc;
-}
-
-void output_flush(void)
-{
-    $serial_flush;
-}
-
-void output_start(unsigned int baudrate)
-{
-    $serial_begin;
-}
-
-void output_complete(void)
-{
-   $serial_end;
-}
-
-"""
-
-    def delete_tmptest_file(file_):
-        try:
-            remove(file_)
-        except:  # pylint: disable=bare-except
-            if isfile(file_):
-                print("Warning: Could not remove temporary file '%s'. "
-                      "Please remove it manually." % file_)
-
-    if env['PIOPLATFORM'] == "native":
-        framework = "native"
-    else:
-        framework = env.subst("$PIOFRAMEWORK").lower()
-    if framework not in FRAMEWORK_PARAMETERS:
-        sys.stderr.write(
-            "Error: %s framework doesn't support testing feature!\n" %
-            framework)
-        env.Exit(1)
-    else:
-        data = Template(TEMPLATECPP).substitute(FRAMEWORK_PARAMETERS[
-            framework])
-
-        tmp_file = join(destination_dir, "output_export.cpp")
-        with open(tmp_file, "w") as f:
-            f.write(data)
-
-        atexit.register(delete_tmptest_file, tmp_file)
+        "$BUILDTEST_DIR",
+        "$PROJECTTEST_DIR",
+        src_filter=src_filter,
+        duplicate=False)
 
 
 def exists(_):
@@ -150,5 +48,4 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(ProcessTest)
-    env.AddMethod(GenerateOutputReplacement)
     return env
