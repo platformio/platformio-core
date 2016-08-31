@@ -53,6 +53,13 @@ def cli(ctx, **options):
             storage_dir = join(util.get_home_dir(), "lib")
         elif util.is_platformio_project():
             storage_dir = util.get_projectlibdeps_dir()
+        elif util.is_ci():
+            storage_dir = join(util.get_home_dir(), "lib")
+            click.secho(
+                "Warning! Global library storage is used automatically. "
+                "Please use `platformio lib --global %s` command to remove "
+                "this warning." % ctx.invoked_subcommand,
+                fg="yellow")
 
     if not storage_dir and not util.is_platformio_project():
         raise exception.NotGlobalLibDir(util.get_project_dir(),

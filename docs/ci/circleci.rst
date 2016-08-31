@@ -83,7 +83,7 @@ Install dependent library using :ref:`librarymanager`
             - sudo pip install -U platformio
 
             # OneWire Library with ID=1 http://platformio.org/lib/show/1/OneWire
-            - platformio lib install 1
+            - platformio lib -g install 1
 
     test:
         override:
@@ -159,7 +159,7 @@ Examples
             #
             # http://platformio.org/lib/show/416/TinyGPS
             # http://platformio.org/lib/show/417/SPI4Teensy3
-            - platformio lib install 416 417
+            - platformio lib -g install 416 417
 
     test:
         override:
