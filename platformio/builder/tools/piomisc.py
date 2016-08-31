@@ -31,8 +31,8 @@ from platformio import util
 class InoToCPPConverter(object):
 
     PROTOTYPE_RE = re.compile(r"""^(
-        ([a-z_\d]+\*?){1,2}         # return type
-        (\s+[a-z_\d]+\s*)           # name of prototype
+        ([a-z_\d]+\*?\s+){1,2}      # return type
+        ([a-z_\d]+\s*)              # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*\{                      # must end with {
         """, re.X | re.M | re.I)

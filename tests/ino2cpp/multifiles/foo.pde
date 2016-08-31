@@ -9,5 +9,5 @@ void loop() {
 }
 
 char* fooFunc() {
-	return buf;
+    return buf;
 }

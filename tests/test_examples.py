@@ -19,7 +19,6 @@ from os.path import dirname, getsize, isdir, isfile, join, normpath
 import pytest
 
 from platformio import util
-from platformio.commands.run import cli as cmd_run
 
 
 def pytest_generate_tests(metafunc):
@@ -35,12 +34,16 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize("pioproject_dir", project_dirs)
 
 
-def test_run(clirunner, validate_cliresult, pioproject_dir):
+@pytest.mark.examples
+def test_run(pioproject_dir):
     if isdir(join(pioproject_dir, ".pioenvs")):
         util.rmtree_(join(pioproject_dir, ".pioenvs"))
 
-    result = clirunner.invoke(cmd_run, ["-d", pioproject_dir])
-    validate_cliresult(result)
+    result = util.exec_command(
+        ["platformio", "--force", "run", "--project-dir", pioproject_dir]
+    )
+    if result['returncode'] != 0:
+        pytest.fail(result)
 
     # check .elf file
     pioenvs_dir = join(pioproject_dir, ".pioenvs")
