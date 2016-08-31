@@ -48,13 +48,16 @@ def test_global_install_registry(clirunner, validate_cliresult,
 def test_global_install_repository(clirunner, validate_cliresult,
                                    isolated_pio_home):
     result = clirunner.invoke(
-        cmd_lib, ["-g", "install", "https://github.com/gioblu/PJON.git#3.0",
-                  "https://developer.mbed.org/users/simon/code/TextLCD/",
-                  "http://dl.platformio.org/libraries/archives/3/3756.tar.gz",
-                  "knolleary/pubsubclient"])
+        cmd_lib,
+        ["-g",
+         "install",
+         "https://github.com/gioblu/PJON.git#3.0",
+         # "https://developer.mbed.org/users/simon/code/TextLCD/",
+         "http://dl.platformio.org/libraries/archives/3/3756.tar.gz",
+         "knolleary/pubsubclient"])
     validate_cliresult(result)
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
-    items2 = ["PJON", "TextLCD", "ESPAsyncTCP", "PubSubClient"]
+    items2 = ["PJON", "ESPAsyncTCP", "PubSubClient"]
     assert set(items2) & set(items1)
 
 
@@ -66,11 +69,10 @@ def test_global_lib_list(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cmd_lib, ["-g", "list", "--json-output"])
     assert all(
         [n in result.output
-         for n in ("PJON",
-                   "https://developer.mbed.org/users/simon/code/TextLCD/")])
+         for n in ("PJON", "git+https://github.com/knolleary/pubsubclient")])
     items1 = [i['name'] for i in json.loads(result.output)]
     items2 = ["OneWire", "DHT22", "PJON", "ESPAsyncTCP", "Json", "ArduinoJson",
-              "TextLCD", "pubsubclient"]
+              "pubsubclient"]
     assert set(items1) == set(items2)
 
 
@@ -82,7 +84,8 @@ def test_global_lib_show(clirunner, validate_cliresult, isolated_pio_home):
 
     result = clirunner.invoke(cmd_lib, ["-g", "show", "ArduinoJson@>5.4.0"])
     validate_cliresult(result)
-    assert all([s in result.output for s in ("ArduinoJson", "arduino", "atmelavr")])
+    assert all(
+        [s in result.output for s in ("ArduinoJson", "arduino", "atmelavr")])
     assert "5.4.0" not in result.output
 
     result = clirunner.invoke(cmd_lib, ["-g", "show", "1"])
