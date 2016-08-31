@@ -155,7 +155,7 @@ class LibBuilderBase(object):
 
     @property
     def lib_ldf_mode(self):
-        return int(self.env.get("LIB_LDF_MODE", 1))
+        return int(self.env.get("LIB_LDF_MODE", 2))
 
     @property
     def depbuilders(self):
