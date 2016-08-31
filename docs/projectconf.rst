@@ -812,13 +812,8 @@ Example:
 .. seealso::
     Please make sure to read :ref:`ldf` guide first.
 
-Library Dependency Finder starts work from analyzing source files of the
-project (:ref:`projectconf_pio_src_dir`) and can work in the different modes
-(see :ref:`ldf_mode`).
-
-By default, this value is set to ``lib_ldf_mode = 2`` and means that LDF
-will parse ALL C/C++ source code of the project and will parse ALL C/C++
-source code of the each dependent library (recursively).
+This option specifies how does Library Dependency Finder should analyze
+dependencies (``#include`` directives). See :ref:`ldf_mode` for details.
 
 .. _projectconf_lib_compat_mode:
 

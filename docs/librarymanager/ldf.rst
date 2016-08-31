@@ -65,10 +65,10 @@ project (:ref:`projectconf_pio_src_dir`) and can work in the next modes:
 * ``0`` - "manual mode", does not process source files of a project and
   dependencies. Builds only the libraries that are specified in
   manifests (:ref:`library_config`, ``module.json``) or in the :ref:`projectconf`.
-* ``1`` - parses ALL C/C++ source code of the project and follows only by
-  nested includes/chain (``#include ...``) from the libraries.
-* ``2`` - **default** - parses ALL C/C++ source code of the project and parses
-  ALL C/C++ source code of the each dependency (recursively).
+* ``1`` - **default** - parses ALL C/C++ source code of the project and follows
+  only by nested includes (``#include ...``, chain...) from the libraries.
+* ``2`` - parses ALL C/C++ source code of the project and parses
+  ALL C/C++ source code of the each found dependency (recursively).
 
 This mode can be changed using :ref:`projectconf_lib_ldf_mode` option in
 :ref:`projectconf`.

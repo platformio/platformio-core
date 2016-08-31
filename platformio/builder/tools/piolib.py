@@ -34,9 +34,7 @@ class LibBuilderFactory(object):
     @staticmethod
     def new(env, path):
         clsname = "UnknownLibBuilder"
-        if isfile(join(path, "library.properties")):
-            clsname = "ArduinoLibBuilder"
-        elif isfile(join(path, "library.json")):
+        if isfile(join(path, "library.json")):
             clsname = "PlatformIOLibBuilder"
         else:
             env_frameworks = [
@@ -76,8 +74,10 @@ class LibBuilderFactory(object):
                         return ["mbed"]
         return []
 
+# pylint: disable=too-many-instance-attributes, too-many-public-methods
 
-class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
+
+class LibBuilderBase(object):
 
     INC_SCANNER = SCons.Scanner.C.CScanner()
 
@@ -154,6 +154,10 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
         return True
 
     @property
+    def lib_ldf_mode(self):
+        return int(self.env.get("LIB_LDF_MODE", 1))
+
+    @property
     def depbuilders(self):
         return self._depbuilders
 
@@ -210,7 +214,7 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
         if not search_paths:
             search_paths = tuple()
         assert isinstance(search_paths, tuple)
-        deep_search = int(self.env.get("LIB_LDF_MODE", 2)) == 2
+        deep_search = self.lib_ldf_mode == 2
 
         if not self._scanned_paths and (
                 isinstance(self, ProjectAsLibBuilder) or deep_search):
@@ -265,8 +269,7 @@ class LibBuilderBase(object):  # pylint: disable=too-many-instance-attributes
         self._process_dependencies(lib_builders)
 
         # when LDF is disabled
-        if "LIB_LDF_MODE" in self.env and \
-                int(self.env.get("LIB_LDF_MODE")) == 0:
+        if self.lib_ldf_mode == 0:
             return
 
         lib_inc_map = {}
@@ -346,9 +349,10 @@ class ArduinoLibBuilder(LibBuilderBase):
 
     def get_inc_dirs(self):
         inc_dirs = LibBuilderBase.get_inc_dirs(self)
-        if not isdir(join(self.path, "utility")):
+        if isdir(join(self.path, "src")):
             return inc_dirs
-        inc_dirs.append(join(self.path, "utility"))
+        if isdir(join(self.path, "utility")):
+            inc_dirs.append(join(self.path, "utility"))
         return inc_dirs
 
     @property
@@ -391,6 +395,12 @@ class MbedLibBuilder(LibBuilderBase):
     def is_framework_compatible(self, framework):
         return framework.lower() == "mbed"
 
+    @property
+    def lib_ldf_mode(self):
+        if "dependencies" in self._manifest:
+            return 2
+        return LibBuilderBase.lib_ldf_mode.fget(self)
+
 
 class PlatformIOLibBuilder(LibBuilderBase):
 
@@ -400,10 +410,15 @@ class PlatformIOLibBuilder(LibBuilderBase):
         assert "name" in manifest
         return manifest
 
+    def _is_arduino_manifest(self):
+        return isfile(join(self.path, "library.properties"))
+
     @property
     def src_filter(self):
         if "srcFilter" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("srcFilter")
+        elif self._is_arduino_manifest():
+            return ArduinoLibBuilder.src_filter.fget(self)
         return LibBuilderBase.src_filter.fget(self)
 
     @property
@@ -430,6 +445,12 @@ class PlatformIOLibBuilder(LibBuilderBase):
             return self._manifest.get("build").get("libArchive")
         return LibBuilderBase.lib_archive.fget(self)
 
+    @property
+    def lib_ldf_mode(self):
+        if "libLDFMode" in self._manifest.get("build", {}):
+            return int(self._manifest.get("build").get("libLDFMode"))
+        return LibBuilderBase.lib_ldf_mode.fget(self)
+
     def is_platform_compatible(self, platform):
         items = self._manifest.get("platforms")
         if not items:
@@ -451,6 +472,13 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     def get_inc_dirs(self):
         inc_dirs = LibBuilderBase.get_inc_dirs(self)
+
+        #  backwards compatibility with PlatformIO 2.0
+        if ("build" not in self._manifest and self._is_arduino_manifest() and
+                not isdir(join(self.path, "src")) and
+                isdir(join(self.path, "utility"))):
+            inc_dirs.append(join(self.path, "utility"))
+
         for path in self.env['CPPPATH']:
             if path not in self.envorigin['CPPPATH']:
                 inc_dirs.append(self.env.subst(path))

@@ -533,6 +533,13 @@ More details :ref:`projectconf_extra_script`.
 Archive object files to Static Library. This is default behavior of PlatformIO
 Build System (``"libArchive": true``).
 
+``libLDFMode``
+~~~~~~~~~~~~~~
+
+*Optional* | Type: ``Integer``
+
+Specify Library Dependency Finder Mode. See :ref:`ldf_mode` for details.
+
 **Examples**
 
 1. Custom macros/defines
