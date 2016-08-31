@@ -16,7 +16,7 @@
 
 from fnmatch import fnmatch
 from os import getcwd, listdir
-from os.path import isdir, isfile, join
+from os.path import isdir, join
 from time import sleep, time
 
 import click
@@ -173,8 +173,6 @@ class LocalTestProcessor(TestProcessorBase):
     def run(self):
         with util.cd(self.options['project_dir']):
             pioenvs_dir = util.get_projectpioenvs_dir()
-        program_path = join(pioenvs_dir, self.env_name, "program")
-        assert isfile(program_path)
         result = util.exec_command(
             [join(pioenvs_dir, self.env_name, "program")],
             stdout=util.AsyncPipe(self.on_run_out),
