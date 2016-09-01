@@ -58,14 +58,14 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
     "-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
 @click.option(
     "--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
-@click.option("--enable-auto-uploading", is_flag=True)
+@click.option("-O", "--project-option", multiple=True)
 @click.option("--env-prefix", default="")
 @click.pass_context
 def cli(ctx,  # pylint: disable=R0913
         project_dir,
         board,
         ide,
-        enable_auto_uploading,
+        project_option,
         env_prefix):
 
     if project_dir == getcwd():
@@ -92,8 +92,8 @@ def cli(ctx,  # pylint: disable=R0913
     init_base_project(project_dir)
 
     if board:
-        fill_project_envs(ctx, project_dir, board, enable_auto_uploading,
-                          env_prefix, ide is not None)
+        fill_project_envs(ctx, project_dir, board, project_option, env_prefix,
+                          ide is not None)
 
     if ide:
         if not board:
@@ -288,7 +288,7 @@ def init_cvs_ignore(project_dir):
 
 
 def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
-        ctx, project_dir, board_ids, enable_auto_uploading, env_prefix,
+        ctx, project_dir, board_ids, project_option, env_prefix,
         force_download):
     installed_boards = PlatformManager().get_installed_boards()
     content = []
@@ -327,8 +327,8 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
             content.append("framework = %s" % frameworks[0])
 
         content.append("board = %s" % id_)
-        if enable_auto_uploading:
-            content.append("targets = upload")
+        if project_option:
+            content.extend(project_option)
 
     if force_download and used_platforms:
         _install_dependent_platforms(ctx, used_platforms)

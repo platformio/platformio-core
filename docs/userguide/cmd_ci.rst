@@ -49,20 +49,11 @@ Systems please follow to :ref:`ci` page.
 .. note::
     :ref:`cmd_ci` command is useful for library developers. It allows to build
     different examples without creating own project per them. Also, is possible
-    to upload firmware to the target device. In this case, need to create
-    :ref:`projectconf` where specify "upload" :ref:`projectconf_targets`. Custom
-    upload port can be overridden with :ref:`projectconf_upload_port` option.
-    Then need to specify the path to this :ref:`projectconf` to
-    :option:`platformio ci --project-conf`. For example,
-
-    .. code-block:: ini
-
-        [env:uno]
-        platform = atmelavr
-        framework = arduino
-        targets = upload
-        ; custom upload port
-        ; upload_port = ...
+    to upload firmware to the target device. In this case, you need to pass
+    additional option ``--project-option="targets=upload"``. What is more,
+    you can specify custom upload port using
+    ``--project-option="upload_port=<port>"`` option.
+    See :option:`platformio ci --project-option` for details.
 
 Options
 -------
@@ -120,9 +111,18 @@ temporary directory within your operation system.
 Don't remove :option:`platformio ci --build-dir` after build process.
 
 .. option::
-    --project-conf
+    -P, --project-conf
 
 Buid project using pre-configured :ref:`projectconf`.
+
+.. option::
+    -O, --project-option
+
+Pass additional options from :ref:`projectconf` to
+:option:`platformio init --project-option` command. For example,
+automatically install dependent libraries
+``platformio ci --project-option="lib_deps=ArduinoJSON"`` or ignore specific
+library ``platformio ci --project-option="lib_ignore=SomeLib"``.
 
 .. option::
     -v, --verbose

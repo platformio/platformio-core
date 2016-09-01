@@ -70,6 +70,8 @@ PlatformIO 3.0
 * Renamed ``platformio serialports`` command to ``platformio device``
 * Build System: Attach custom Before/Pre and After/Post actions for targets
   (`issue #542 <https://github.com/platformio/platformio/issues/542>`_)
+* Allowed passing custom project configuration options to ``platformio ci``
+  and ``platformio init`` commands using ``-O, --project-option``.
 * Print human-readable information when processing environments without
   ``-v, --verbose`` option
   (`issue #721 <https://github.com/platformio/platformio/issues/721>`_)

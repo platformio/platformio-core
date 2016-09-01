@@ -68,6 +68,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
         resolve_path=True))
 @click.option("--keep-build-dir", is_flag=True)
 @click.option(
+    "-C",
     "--project-conf",
     type=click.Path(
         exists=True,
@@ -75,6 +76,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
         dir_okay=False,
         readable=True,
         resolve_path=True))
+@click.option("-O", "--project-option", multiple=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
 def cli(ctx,  # pylint: disable=R0913
@@ -85,6 +87,7 @@ def cli(ctx,  # pylint: disable=R0913
         build_dir,
         keep_build_dir,
         project_conf,
+        project_option,
         verbose):
 
     if not src and getenv("PLATFORMIO_CI_SRC"):
@@ -113,7 +116,11 @@ def cli(ctx,  # pylint: disable=R0913
             _exclude_contents(build_dir, exclude)
 
         # initialise project
-        ctx.invoke(cmd_init, project_dir=build_dir, board=board)
+        ctx.invoke(
+            cmd_init,
+            project_dir=build_dir,
+            board=board,
+            project_option=project_option)
 
         # process project
         ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)

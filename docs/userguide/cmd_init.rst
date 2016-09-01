@@ -65,18 +65,17 @@ The full list with pre-configured boards is available here :ref:`platforms`.
 .. option::
     --ide
 
-Initialise PlatformIO project for the specified IDE which can be imported later
+Initialize PlatformIO project for the specified IDE which can be imported later
 via "Import Project" functionality.
 
 A list with supported IDE is available within ``platformio init --help`` command.
 Also, please take a look at :ref:`ide` page.
 
 .. option::
-    --enable-auto-uploading
+    -O, --project-option
 
-If you initialise project with the specified
-:option:`platformio init --board`, then *PlatformIO*
-will create environment with enabled firmware auto-uploading.
+Initialize project with additional options from :ref:`projectconf`. For example,
+``platformio init --project-option="lib_deps=ArduinoJSON"``.
 
 .. option::
     --env-prefix
@@ -104,7 +103,6 @@ Examples
     platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
     src - Put your source files here
     lib - Put here project specific (private) libraries
-    Do you want to continue? [y/N]: y
     Project has been successfully initialized!
     Useful commands:
     `platformio run` - process/build project from the current directory
@@ -122,14 +120,13 @@ Examples
      platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
     src - Put your source files here
     lib - Put here project specific (private) libraries
-    Do you want to continue? [y/N]: y
     Project has been successfully initialized!
     Useful commands:
     `platformio run` - process/build project from the current directory
     `platformio run --target upload` or `platformio run -t upload` - upload firmware to embedded board
     `platformio run --target clean` - clean project (remove compiled files)
 
-3. Initialise project for Arduino Uno
+3. Initialize project for Arduino Uno
 
 .. code-block:: bash
 
@@ -143,7 +140,6 @@ Examples
     platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
     src - Put your source files here
     lib - Put here project specific (private) libraries
-    Do you want to continue? [y/N]: y
     Project has been successfully initialized!
     Useful commands:
     `platformio run` - process/build project from the current directory
