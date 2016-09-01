@@ -89,8 +89,8 @@ it), please use ``--lib="."`` option for :ref:`cmd_ci` command
     script:
         - platformio ci --lib="." --board=ID_1 --board=ID_2 --board=ID_N
 
-Library dependecies
-~~~~~~~~~~~~~~~~~~~
+Library dependencies
+~~~~~~~~~~~~~~~~~~~~
 
 There 2 options to test source code with dependent libraries:
 

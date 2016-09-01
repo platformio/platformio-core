@@ -26,8 +26,12 @@ from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
 from platform import system, uname
 from shutil import rmtree
 from threading import Thread
+from time import sleep
 
-from platformio import __apiip__, __apiurl__, __version__, exception
+import click
+import requests
+
+from platformio import __apiurl__, __version__, exception
 
 # pylint: disable=wrong-import-order
 try:
@@ -357,20 +361,19 @@ def get_logicaldisks():
 
 
 def get_request_defheaders():
-    import requests
     data = (__version__, int(is_ci()), requests.utils.default_user_agent())
     return {"User-Agent": "PlatformIO/%s CI/%d %s" % data}
 
 
 @memoized
 def _api_request_session():
-    import requests
     return requests.Session()
 
 
-def get_api_result(path,  # pylint: disable=too-many-branches
-                   params=None, data=None, skipdns=False):
-    import requests
+def _get_api_result(
+        path,  # pylint: disable=too-many-branches
+        params=None,
+        data=None):
     from platformio.app import get_setting
 
     result = None
@@ -378,9 +381,6 @@ def get_api_result(path,  # pylint: disable=too-many-branches
 
     headers = get_request_defheaders()
     url = __apiurl__
-    if skipdns:
-        url = "https://%s" % __apiip__
-        headers['host'] = __apiurl__[__apiurl__.index("://") + 3:]
 
     if get_setting("disable_ssl"):
         url = url.replace("https://", "http://")
@@ -400,14 +400,6 @@ def get_api_result(path,  # pylint: disable=too-many-branches
             raise exception.APIRequestError(result['errors'][0]['title'])
         else:
             raise exception.APIRequestError(e)
-    except (requests.exceptions.ConnectionError,
-            requests.exceptions.ConnectTimeout,
-            requests.exceptions.ReadTimeout):
-        if not skipdns:
-            return get_api_result(path, params, data, skipdns=True)
-        raise exception.APIRequestError(
-            "Could not connect to PlatformIO Registry Service. "
-            "Please try later.")
     except ValueError:
         raise exception.APIRequestError("Invalid response: %s" %
                                         r.text.encode("utf-8"))
@@ -415,6 +407,26 @@ def get_api_result(path,  # pylint: disable=too-many-branches
         if r:
             r.close()
     return result
+
+
+def get_api_result(path, params=None, data=None):
+    max_retries = 5
+    total = 0
+    while total < max_retries:
+        try:
+            return _get_api_result(path, params, data)
+        except (requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout) as e:
+            total += 1
+            click.secho(
+                "[API] ConnectionError: {0} (incremented retry: max={1}, "
+                "total={2})".format(e, max_retries, total),
+                fg="yellow")
+            sleep(2 * total)
+
+    raise exception.APIRequestError(
+        "Could not connect to PlatformIO Registry Service. "
+        "Please try later.")
 
 
 @memoized

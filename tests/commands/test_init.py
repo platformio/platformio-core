@@ -117,8 +117,8 @@ def test_init_special_board(clirunner, validate_cliresult):
 
 def test_init_enable_auto_uploading(clirunner, validate_cliresult):
     with clirunner.isolated_filesystem():
-        result = clirunner.invoke(cmd_init,
-                                  ["-b", "uno", "--enable-auto-uploading"])
+        result = clirunner.invoke(
+            cmd_init, ["-b", "uno", "--project-option", "targets=upload"])
         validate_cliresult(result)
         validate_pioproject(getcwd())
         config = util.load_project_config()
