@@ -194,8 +194,8 @@ if :option:`platformio run --environment` option is not specified.
 :ref:`projectconf_pio_env_default` allows to define environments which
 should be processed by default.
 
-Multiple environments are allowed if they are separated with ``, `` (comma+space).
-For example.
+Multiple environments are allowed if they are separated with ``, ``
+(comma+space). For example.
 
 .. code-block:: ini
 

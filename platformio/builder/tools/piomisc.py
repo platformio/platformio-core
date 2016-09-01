@@ -90,7 +90,7 @@ class InoToCPPConverter(object):
         return isfile(out_file)
 
     def _join_multiline_strings(self, contents):
-        if "\\" not in contents:
+        if "\\\n" not in contents:
             return contents
         newlines = []
         linenum = 0
@@ -99,7 +99,6 @@ class InoToCPPConverter(object):
             _linenum = self._parse_preproc_line_num(line)
             if _linenum is not None:
                 linenum = _linenum
-                continue
             else:
                 linenum += 1
 
