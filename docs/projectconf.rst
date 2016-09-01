@@ -194,7 +194,7 @@ if :option:`platformio run --environment` option is not specified.
 :ref:`projectconf_pio_env_default` allows to define environments which
 should be processed by default.
 
-Multiple environments are allowed if they are separated with ``, ``
+Multiple environments are allowed if they are separated with ", "
 (comma+space). For example.
 
 .. code-block:: ini
@@ -286,7 +286,7 @@ Examples:
 
 :ref:`frameworks` name.
 
-The multiple frameworks are allowed, split them with comma+space ``, ``.
+The multiple frameworks are allowed, split them with comma+space ", ".
 
 .. _projectconf_env_board:
 
@@ -701,8 +701,7 @@ Library options
 
 Specify project dependencies that should be installed automatically to
 :ref:`projectconf_pio_libdeps_dir` before environment processing.
-Multiple dependencies are allowed (multi-lines or separated with comma+space
-``, ``).
+Multiple dependencies are allowed (multi-lines or separated with comma+space ", ").
 
 **Valid forms**
 
@@ -748,7 +747,7 @@ processed in the first order.
 The correct value for this option is library name (not folder name). In the
 most cases, library name is pre-defined in manifest file
 (:ref:`library_config`, ``library.properties``, ``module.json``). The multiple
-library names are allowed, split them with comma+space ``, ``.
+library names are allowed, split them with comma+space ", ".
 
 Example:
 
@@ -770,7 +769,7 @@ Specify libraries which should be ignored by Library Dependency Finder.
 The correct value for this option is library name (not
 folder name). In the most cases, library name is pre-defined in manifest file
 (:ref:`library_config`, ``library.properties``, ``module.json``). The multiple
-library names are allowed, split them with comma+space ``, ``.
+library names are allowed, split them with comma+space ", ".
 
 Example:
 
@@ -790,7 +789,7 @@ Example:
 
 A list with extra directories/storages where Library Dependency Finder will
 look for dependencies. Multiple paths are allowed. Please separate them
-using comma+space ``, ``.
+using comma+space ", ".
 
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_LIB_EXTRA_DIRS`.
@@ -851,7 +850,7 @@ Test options
     Please make sure to read :ref:`unit_testing` guide first.
 
 Ignore tests where the name matches specified patterns. Multiple names are
-allowed. Please separate them using comma+space ``, ``. Also, you can
+allowed. Please separate them using comma+space ", ". Also, you can
 ignore some tests using :option:`platformio test --ignore` command.
 
 .. list-table::
