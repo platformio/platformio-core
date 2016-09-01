@@ -153,7 +153,7 @@ class EnvironmentProcessor(object):
         process_opts = []
         for k, v in self.options.items():
             if "\n" in v:
-                process_opts.append((k, "; ".join(
+                process_opts.append((k, ", ".join(
                     [s.strip() for s in v.split("\n") if s.strip()])))
             else:
                 process_opts.append((k, v))
@@ -237,7 +237,9 @@ class EnvironmentProcessor(object):
             ], self.verbose)
         if "lib_deps" in self.options:
             _autoinstall_libdeps(self.cmd_ctx, [
-                d.strip() for d in self.options['lib_deps'].split("\n")
+                d.strip()
+                for d in self.options['lib_deps'].split(
+                    "\n" if "\n" in self.options['lib_deps'] else ", ")
                 if d.strip()
             ], self.verbose)
 
