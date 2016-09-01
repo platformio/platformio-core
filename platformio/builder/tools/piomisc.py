@@ -72,6 +72,7 @@ class InoToCPPConverter(object):
         assert self._gcc_preprocess(contents, out_file)
         with open(out_file) as fp:
             contents = fp.read()
+        contents = self._join_multiline_strings(contents)
         with open(out_file, "w") as fp:
             fp.write(self.append_prototypes(contents))
         return out_file
@@ -89,6 +90,45 @@ class InoToCPPConverter(object):
         atexit.register(_delete_file, tmp_path)
         return isfile(out_file)
 
+    def _join_multiline_strings(self, contents):
+        if "\\" not in contents:
+            return contents
+        newlines = []
+        linenum = 0
+        stropen = False
+        for line in contents.split("\n"):
+            _linenum = self._parse_preproc_line_num(line)
+            if _linenum is not None:
+                linenum = _linenum
+                continue
+            else:
+                linenum += 1
+
+            if line.endswith("\\"):
+                if line.startswith('"'):
+                    newlines.append(line[:-1])
+                    stropen = True
+                elif stropen:
+                    newlines[len(newlines) - 1] += line[:-1]
+            elif stropen and line.endswith('";'):
+                newlines[len(newlines) - 1] += line
+                stropen = False
+                newlines.append('#line %d "%s"' %
+                                (linenum, self._main_ino.replace("\\", "/")))
+            else:
+                newlines.append(line)
+
+        return "\n".join(newlines)
+
+    @staticmethod
+    def _parse_preproc_line_num(line):
+        if not line.startswith("#"):
+            return None
+        tokens = line.split(" ", 3)
+        if len(tokens) > 2 and tokens[1].isdigit():
+            return int(tokens[1])
+        return None
+
     def _parse_prototypes(self, contents):
         prototypes = []
         reserved_keywords = set(["if", "else", "while"])
@@ -99,14 +139,12 @@ class InoToCPPConverter(object):
             prototypes.append(match)
         return prototypes
 
-    @staticmethod
-    def _get_total_lines(contents):
+    def _get_total_lines(self, contents):
         total = 0
         for line in contents.split("\n")[::-1]:
-            if line.startswith("#"):
-                tokens = line.split(" ", 3)
-                if len(tokens) > 2 and tokens[1].isdigit():
-                    return int(tokens[1]) + total
+            linenum = self._parse_preproc_line_num(line)
+            if linenum is not None:
+                return total + linenum
             total += 1
         return total
 
