@@ -81,7 +81,6 @@ class InoToCPPConverter(object):
         tmp_path = mkstemp()[1]
         with open(tmp_path, "w") as fp:
             fp.write(contents)
-            fp.close()
         self.env.Execute(
             self.env.VerboseAction(
                 '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
@@ -185,9 +184,7 @@ def _delete_file(path):
         if isfile(path):
             remove(path)
     except:  # pylint: disable=bare-except
-        if path and isfile(path):
-            sys.stderr.write("Warning: Could not remove temporary file '%s'. "
-                             "Please remove it manually.\n" % path)
+        pass
 
 
 def DumpIDEData(env):
