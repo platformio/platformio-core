@@ -179,6 +179,8 @@ class InoToCPPConverter(object):
 def ConvertInoToCpp(env):
     ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
                  env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
+    if not ino_nodes:
+        return
     c = InoToCPPConverter(env)
     out_file = c.convert(ino_nodes)
 
