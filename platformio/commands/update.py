@@ -17,6 +17,7 @@ import click
 from platformio.commands.lib import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.managers.lib import LibraryManager
+from platformio.pioplus import pioplus_update
 
 
 @click.command(
@@ -31,6 +32,7 @@ def cli(ctx, only_check):
     click.echo("Platform Manager")
     click.echo("================")
     ctx.invoke(cmd_platform_update, only_check=only_check)
+    pioplus_update()
 
     click.echo()
     click.echo("Library Manager")

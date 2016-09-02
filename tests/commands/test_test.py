@@ -14,13 +14,16 @@
 
 from os.path import join
 
-from platformio.commands.test import cli as cli_test
+import pytest
+
+from platformio import util
 
 
-def test_local_env(clirunner, validate_cliresult):
-    result = clirunner.invoke(
-        cli_test,
-        ["-d", join("examples", "unit-testing", "calculator"), "-e", "local"])
-    result.exit_code == -1
+def test_local_env():
+    result = util.exec_command(["platformio", "test", "-d",
+                                join("examples", "unit-testing", "calculator"),
+                                "-e", "local"])
+    if result['returncode'] != 0:
+        pytest.fail(result)
     assert all(
-        [s in result.output for s in ("[PASSED]", "[IGNORED]", "[FAILED]")])
+        [s in result['out'] for s in ("[PASSED]", "[IGNORED]", "[FAILED]")])
