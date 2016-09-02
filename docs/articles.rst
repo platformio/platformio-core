@@ -18,11 +18,13 @@ Articles about us
     If you've written article about PlatformIO and would like it listed on
     this page, `please edit this page <https://github.com/platformio/platformio/blob/develop/docs/articles.rst>`_.
 
-Here are recent articles about PlatformIO:
+Here are recent articles/reviews about PlatformIO:
 
 2016
 ^^^^
 
+* Sep 2, 2016 - **Tinkerman** `ESP8266: Optimizing files for SPIFFS with Gulp <http://tinkerman.cat/optimizing-files-for-spiffs-with-gulp/>`_
+* Aug 28, 2016 - **Tom Parker** `Using the BBC micro:bit with PlatformIO <http://www.lshift.net/blog/2016/08/28/using-the-bbc-microbit-with-platformio/>`_
 * Aug 24, 2016 - **Primal Cortex** `Cloud based continuous integration and delivery for IOT using PlatformIO <https://primalcortex.wordpress.com/2016/08/24/cloud-based-continuous-integration-and-delivery-for-iot-using-platformio/>`_
 * Aug 18, 2016 - **Primal Cortex** - `Installing PlatformIO on Arch Linux <https://primalcortex.wordpress.com/2016/08/18/platformio/>`_
 * Jul 26, 2016 - **Embedded Systems Laboratory** - `แนะนำการใช้งาน PlatformIO IDE สำหรับบอร์ด Arduino และ ESP8266 (Get started with PlatformIO IDE for Arduino board and ESP8266, Thai) <http://cpre.kmutnb.ac.th/esl/learning/index.php?article=intro_platformio-ide>`_

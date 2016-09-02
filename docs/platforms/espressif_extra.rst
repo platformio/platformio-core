@@ -240,6 +240,7 @@ Using Arduino Framework with Staging version
 Articles
 --------
 
+* Sep 2, 2016 - **Tinkerman** `Optimizing files for SPIFFS with Gulp <http://tinkerman.cat/optimizing-files-for-spiffs-with-gulp/>`_
 * Jul 15, 2016 - **Jaime** - `ESP8266 Mobile Rick Roll Captive Portal <https://hackaday.io/project/12709-esp8266-mobile-rick-roll-captive-portal>`_
 * Jun 13, 2016 - **Daniel Eichhorn** - `New Weather Station Demo on Github <http://blog.squix.org/2016/06/new-weather-station-demo-on-github.html>`_
 * Jun 3, 2016 - **Daniel Eichhorn** - `ESP8266: Continuous Delivery Pipeline – Push To Production <http://blog.squix.org/2016/06/esp8266-continuous-delivery-pipeline-push-to-production.html>`_
