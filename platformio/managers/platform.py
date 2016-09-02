@@ -279,6 +279,8 @@ class PlatformRunMixin(object):
         self._echo_line(line, level=3 if is_error else 2)
 
     def _echo_line(self, line, level):
+        if line.startswith("scons: "):
+            line = line[7:]
         assert 1 <= level <= 3
         if self.silent and (level < 2 or not line):
             return

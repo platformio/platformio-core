@@ -94,7 +94,6 @@ DEFAULT_ENV_OPTIONS = dict(
     PYTHONEXE=util.get_pythonexe_path())
 
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
-    print "Verbose mode can be enabled via `-v, --verbose` option"
     DEFAULT_ENV_OPTIONS['ARCOMSTR'] = "Archiving $TARGET"
     DEFAULT_ENV_OPTIONS['LINKCOMSTR'] = "Linking $TARGET"
     DEFAULT_ENV_OPTIONS['RANLIBCOMSTR'] = "Indexing $TARGET"
@@ -107,6 +106,12 @@ env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 for k in commonvars.keys():
     if k in env:
         env[k] = base64.b64decode(env[k])
+
+if env.GetOption('clean'):
+    env.PioClean(env.subst("$BUILD_DIR"))
+    env.Exit(0)
+elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
+    print "Verbose mode can be enabled via `-v, --verbose` option"
 
 # Handle custom variables from system environment
 for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPT",
@@ -138,8 +143,8 @@ if env.get("EXTRA_SCRIPT"):
 
 if "envdump" in COMMAND_LINE_TARGETS:
     print env.Dump()
-    env.Exit()
+    env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
     print json.dumps(env.DumpIDEData())
-    env.Exit()
+    env.Exit(0)

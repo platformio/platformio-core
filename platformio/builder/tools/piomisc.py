@@ -18,8 +18,8 @@ import atexit
 import re
 import sys
 from glob import glob
-from os import environ, remove
-from os.path import basename, isfile, join
+from os import environ, remove, walk
+from os.path import basename, isdir, isfile, join, relpath
 from tempfile import mkstemp
 
 from SCons.Action import Action
@@ -317,6 +317,19 @@ def VerboseAction(_, act, actstr):
         return Action(act, actstr)
 
 
+def PioClean(env, clean_dir):
+    if not isdir(clean_dir):
+        print "Build environment is clean"
+        env.Exit(0)
+    for root, _, files in walk(clean_dir):
+        for file_ in files:
+            remove(join(root, file_))
+            print "Removed %s" % relpath(join(root, file_))
+    print "Done cleaning"
+    util.rmtree_(clean_dir)
+    env.Exit(0)
+
+
 def exists(_):
     return True
 
@@ -327,4 +340,5 @@ def generate(env):
     env.AddMethod(GetCompilerType)
     env.AddMethod(GetActualLDScript)
     env.AddMethod(VerboseAction)
+    env.AddMethod(PioClean)
     return env
