@@ -63,10 +63,10 @@ Options
 .. option::
     -l, --lib
 
-Source code which will be copied to ``%build_dir%/lib`` directly.
+Source code which will be copied to ``<BUILD_DIR>/lib`` directly.
 
 If :option:`platformio ci --lib` is a path to file (not to directory), then
-PlatformIO will create temporary directory within ``%build_dir%/lib`` and copy
+PlatformIO will create temporary directory within ``<BUILD_DIR>/lib`` and copy
 the rest files into it.
 
 

@@ -38,7 +38,7 @@ command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
-    platformio init --ide netbeans --board %ID%
+    platformio init --ide netbeans --board <ID>
 
     # For example, generate project for Arduino UNO
     platformio init --ide netbeans --board uno

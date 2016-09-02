@@ -50,7 +50,7 @@ command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
-    platformio init --ide emacs --board %ID%
+    platformio init --ide emacs --board <ID>
 
 
 There are 6 predefined targets for building.

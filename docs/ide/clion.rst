@@ -36,7 +36,7 @@ command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
-    platformio init --ide clion --board %ID%
+    platformio init --ide clion --board <ID>
 
     # For example, generate project for Arduino UNO
     platformio init --ide clion --board uno
