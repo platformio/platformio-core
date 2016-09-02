@@ -14,7 +14,8 @@
 
 import os
 import subprocess
-from os.path import join
+from os.path import dirname, join
+from platform import system
 
 from platformio import util
 from platformio.managers.package import PackageManager
@@ -48,6 +49,9 @@ def pioplus_update():
 
 
 def pioplus_call(args, **kwargs):
+    pioplus_path = get_pioplusexe_path()
+    if system() == "Linux":
+        os.environ['LD_LIBRARY_PATH'] = dirname(pioplus_path)
     os.environ['PYTHONEXEPATH'] = util.get_pythonexe_path()
     util.copy_pythonpath_to_osenv()
-    subprocess.call([get_pioplusexe_path()] + args, **kwargs)
+    subprocess.call([pioplus_path] + args, **kwargs)
