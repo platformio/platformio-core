@@ -30,6 +30,8 @@ def test_pkg_name_parser():
          ("LocalName", None, "file://" + util.get_home_dir())],
         ["https://github.com/user/package.git",
          ("package", None, "git+https://github.com/user/package.git")],
+        ["https://gitlab.com/user/package.git",
+         ("package", None, "git+https://gitlab.com/user/package.git")],
         ["https://github.com/user/package/archive/branch.zip",
          ("branch", None,
           "https://github.com/user/package/archive/branch.zip")],

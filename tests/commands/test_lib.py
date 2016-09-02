@@ -52,6 +52,7 @@ def test_global_install_repository(clirunner, validate_cliresult,
         ["-g",
          "install",
          "https://github.com/gioblu/PJON.git#3.0",
+         "https://gitlab.com/ivankravets/rs485-nodeproto.git",
          # "https://developer.mbed.org/users/simon/code/TextLCD/",
          "http://dl.platformio.org/libraries/archives/3/3756.tar.gz",
          "knolleary/pubsubclient"])
@@ -72,7 +73,7 @@ def test_global_lib_list(clirunner, validate_cliresult, isolated_pio_home):
          for n in ("PJON", "git+https://github.com/knolleary/pubsubclient")])
     items1 = [i['name'] for i in json.loads(result.output)]
     items2 = ["OneWire", "DHT22", "PJON", "ESPAsyncTCP", "Json", "ArduinoJson",
-              "pubsubclient"]
+              "pubsubclient", "rs485-nodeproto"]
     assert set(items1) == set(items2)
 
 
@@ -106,7 +107,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
     validate_cliresult(result)
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
     items2 = ["DHT22_ID58", "Json_ID64", "ESPAsyncTCP_ID305", "pubsubclient",
-              "PJON"]
+              "PJON", "rs485-nodeproto"]
     assert set(items1) == set(items2)
 
 

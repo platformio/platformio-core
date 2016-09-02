@@ -324,13 +324,19 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if "=" in text and not text.startswith("id="):
             name, url = text.split("=", 1)
 
-        # Handle GitHub URL (https://github.com/user/package)
-        if url.startswith("https://github.com/") and \
-           not url.endswith((".zip", ".tar.gz")):
+        git_conditions = [
+            # Handle GitHub URL (https://github.com/user/package)
+            url.startswith("https://github.com/") and not url.endswith(
+                (".zip", ".tar.gz")),
+            url.startswith("http") and
+            (url.split("#", 1)[0] if "#" in url else url).endswith(".git")
+        ]
+
+        if any(git_conditions):
             url = "git+" + url
         # Handle Developer Mbed URL
         # (https://developer.mbed.org/users/user/code/package/)
-        if url.startswith("https://developer.mbed.org"):
+        elif url.startswith("https://developer.mbed.org"):
             url = "hg+" + url
 
         # git@github.com:user/package.git
@@ -342,6 +348,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 url = "file://" + url
             elif url.count("/") == 1 and not url.startswith("git@"):
                 url = "git+https://github.com/" + url
+
+        # determine name
         if url_marker in url and not name:
             _url = url.split("#", 1)[0] if "#" in url else url
             if _url.endswith(("\\", "/")):
