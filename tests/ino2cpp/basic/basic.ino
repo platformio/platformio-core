@@ -1,3 +1,6 @@
+#define SQR(a) \
+( a * a )
+
 typedef struct Item item;
 struct Item {
    byte  foo[50];
@@ -10,7 +13,7 @@ class Foo {
 
     public:
         Foo(void (*function)()) {
-            #warning "Line number is 13"
+            #warning "Line number is 16"
         }
 
         bool childFunc() {

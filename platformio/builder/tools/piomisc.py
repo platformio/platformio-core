@@ -53,6 +53,7 @@ class InoToCPPConverter(object):
         return self.process(contents)
 
     def merge(self, nodes):
+        assert nodes
         lines = []
         for node in nodes:
             contents = node.get_text_contents()
@@ -64,6 +65,9 @@ class InoToCPPConverter(object):
                 self._main_ino = node.get_path()
             else:
                 lines.extend(_lines)
+
+        if not self._main_ino:
+            self._main_ino = nodes[0].get_path()
 
         return "\n".join(["#include <Arduino.h>"] + lines) if lines else None
 
@@ -104,17 +108,20 @@ class InoToCPPConverter(object):
 
             if line.endswith("\\"):
                 if line.startswith('"'):
-                    newlines.append(line[:-1])
                     stropen = True
+                    newlines.append(line[:-1])
+                    continue
                 elif stropen:
                     newlines[len(newlines) - 1] += line[:-1]
+                    continue
             elif stropen and line.endswith('";'):
                 newlines[len(newlines) - 1] += line
                 stropen = False
                 newlines.append('#line %d "%s"' %
                                 (linenum, self._main_ino.replace("\\", "/")))
-            else:
-                newlines.append(line)
+                continue
+
+            newlines.append(line)
 
         return "\n".join(newlines)
 
