@@ -12,7 +12,7 @@
 Articles
 --------
 
-* Aug 28, 2016 - **Tom Parker ** `Using the BBC micro:bit with PlatformIO <http://www.lshift.net/blog/2016/08/28/using-the-bbc-microbit-with-platformio/>`_
+* Aug 28, 2016 - **Tom Parker** `Using the BBC micro:bit with PlatformIO <http://www.lshift.net/blog/2016/08/28/using-the-bbc-microbit-with-platformio/>`_
 
 Examples
 --------
