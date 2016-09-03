@@ -138,7 +138,11 @@ def platform_list(json_output):
             "title": p.title,
             "description": p.description,
             "version": p.version,
-            "packages": p.get_installed_packages().keys()
+            "url": p.manifest.get("url"),
+            "packages": p.get_installed_packages().keys(),
+            'forDesktop': any([
+                p.name.startswith(n) for n in ("native", "linux", "windows")
+            ])
         })
 
     if json_output:
