@@ -25,6 +25,8 @@ from platformio import __version__, app, exception, telemetry, util
 from platformio.commands.lib import lib_update as cmd_lib_update
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
+from platformio.commands.platform import \
+    platform_uninstall as cmd_platform_uninstall
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.managers.lib import LibraryManager
@@ -82,7 +84,8 @@ class Upgrader(object):
             util.pepver_to_semver(to_version))
 
         self._upgraders = [
-            (semantic_version.Version("3.0.0-a1"), self._upgrade_to_3_0_0)
+            (semantic_version.Version("3.0.0-a1"), self._upgrade_to_3_0_0),
+            (semantic_version.Version("3.0.0-b11"), self._upgrade_to_3_0_0)
         ]
 
     def run(self, ctx):
@@ -97,7 +100,8 @@ class Upgrader(object):
 
         return all(result)
 
-    def _upgrade_to_3_0_0(self, ctx):  # pylint: disable=R0201
+    @staticmethod
+    def _upgrade_to_3_0_0(ctx):
         # convert custom board configuration
         boards_dir = join(util.get_home_dir(), "boards")
         if isdir(boards_dir):
@@ -115,9 +119,21 @@ class Upgrader(object):
         # re-install PlatformIO 2.0 development platforms
         installed_platforms = app.get_state_item("installed_platforms", [])
         if installed_platforms:
+            if "espressif" in installed_platforms:
+                installed_platforms[installed_platforms.index(
+                    "espressif")] = "espressif8266"
             ctx.invoke(cmd_platform_install, platforms=installed_platforms)
 
         return True
+
+    @staticmethod
+    def _upgrade_to_3_0_0b11(ctx):
+        current_platforms = [m['name']
+                             for m in PlatformManager().get_installed()]
+        if "espressif" not in current_platforms:
+            return
+        ctx.invoke(cmd_platform_install, platforms=["espressif8266"])
+        ctx.invoke(cmd_platform_uninstall, platforms=["espressif"])
 
 
 def after_upgrade(ctx):

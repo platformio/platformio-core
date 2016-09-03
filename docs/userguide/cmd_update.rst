@@ -93,14 +93,14 @@ Examples
     Updating toolchain-atmelavr @ 1.40801.0:    [Up-to-date]
     Updating tool-scons @ 2.4.1:    [Up-to-date]
 
-    Platform espressif
+    Platform espressif8266
     --------
-    Updating espressif @ 0.0.0:     [Up-to-date]
+    Updating espressif8266 @ 0.0.0:     [Up-to-date]
     Updating tool-scons @ 2.4.1:    [Up-to-date]
     Updating toolchain-xtensa @ 1.40802.0:  [Up-to-date]
     Updating tool-esptool @ 1.409.0:    [Up-to-date]
     Updating tool-mkspiffs @ 1.102.0:   [Up-to-date]
-    Updating framework-arduinoespressif @ 1.20300.0:    [Up-to-date]
+    Updating framework-arduinoespressif8266 @ 1.20300.0:    [Up-to-date]
     Updating sdk-esp8266 @ 1.10502.0:   [Up-to-date]
 
     Platform linux_x86_64

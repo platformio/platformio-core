@@ -131,21 +131,21 @@ Examples
 .. code-block:: bash
 
     $ platformio run -e arduino_pro5v -e launchpad_lm4f120
-    [Sun Jul 17 00:10:14 2016] Processing nodemcu (platform: espressif, board: nodemcu, framework: arduino)
+    [Sun Jul 17 00:10:14 2016] Processing nodemcu (platform: espressif8266, board: nodemcu, framework: arduino)
     --------------------------------------------------------------------------------------------------------
     Looking for dependencies...
     Collecting 29 compatible libraries
     Processing src/main.cpp
     Processing .pioenvs/nodemcu/libFrameworkArduinoVariant.a
-    Processing .platformio/packages/framework-arduinoespressif/cores/esp8266/Esp.cpp
+    Processing .platformio/packages/framework-arduinoespressif8266/cores/esp8266/Esp.cpp
     ...
-    Processing .platformio/packages/framework-arduinoespressif/cores/esp8266/pgmspace.cpp
-    Processing .platformio/packages/framework-arduinoespressif/cores/esp8266/setjmp.S
+    Processing .platformio/packages/framework-arduinoespressif8266/cores/esp8266/pgmspace.cpp
+    Processing .platformio/packages/framework-arduinoespressif8266/cores/esp8266/setjmp.S
     Processing .pioenvs/nodemcu/libFrameworkArduino.a
-    Processing .platformio/packages/framework-arduinoespressif/tools/sdk/lib/libmesh.a
+    Processing .platformio/packages/framework-arduinoespressif8266/tools/sdk/lib/libmesh.a
     ...
-    Processing .platformio/packages/framework-arduinoespressif/tools/sdk/lib/libaxtls.a
-    Processing .platformio/packages/framework-arduinoespressif/tools/sdk/lib/libstdc++.a
+    Processing .platformio/packages/framework-arduinoespressif8266/tools/sdk/lib/libaxtls.a
+    Processing .platformio/packages/framework-arduinoespressif8266/tools/sdk/lib/libstdc++.a
     Processing .pioenvs/nodemcu/firmware.elf
     Processing .platformio/packages/tool-esptool/esptool
     Processing .pioenvs/nodemcu/firmware.bin
@@ -154,7 +154,7 @@ Examples
     221456      884   29496  251836   3d7bc .pioenvs/nodemcu/firmware.elf
 
 
-3. Process specific target
+3. Process specific target (clean project)
 
 .. code-block:: bash
 

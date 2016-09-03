@@ -65,12 +65,12 @@ Examples
     Packages: framework-arduinosam, framework-mbed, framework-simba, toolchain-gccarmnoneeabi, tool-bossac
     Version: 0.0.0
 
-    espressif ~ Espressif
-    =====================
+    espressif8266 ~ Espressif 8266
+    ==============================
     Espressif Systems is a privately held fabless semiconductor company. They provide wireless communications and Wi-Fi chips which are widely used in mobile devices and the Internet of Things applications.
 
     Home: http://platformio.org/platforms/espressif
-    Packages: framework-simba, tool-esptool, framework-arduinoespressif, sdk-esp8266, toolchain-xtensa
+    Packages: framework-simba, tool-esptool, framework-arduinoespressif8266, sdk-esp8266, toolchain-xtensa
     Version: 0.0.0
     ...
 

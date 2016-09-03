@@ -208,7 +208,7 @@ Multiple environments are allowed if they are separated with ", "
     board = uno
 
     [env:nodemcu]
-    platform = espressif
+    platform = espressif8266
     framework = arduino
     board = nodemcu
 
@@ -342,7 +342,7 @@ format of this option is ``C-like long integer`` value with ``L`` suffix. The
 1 Hertz is equal to ``1L``, then 40 Mhz (Mega Hertz) is equal to ``40000000L``.
 
 This option isn't available for the all development platforms. The only
-:ref:`platform_espressif` supports it.
+:ref:`platform_espressif8266` supports it.
 
 .. _projectconf_board_flash_mode:
 
@@ -350,7 +350,7 @@ This option isn't available for the all development platforms. The only
 ^^^^^^^^^^^^^^^^^^^^
 
 Flash chip interface mode. This option isn't available for the all development
-platforms. The only :ref:`platform_espressif` supports it.
+platforms. The only :ref:`platform_espressif8266` supports it.
 
 Build options
 ~~~~~~~~~~~~~
@@ -682,7 +682,7 @@ This option can be set by global environment variable
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Specify reset method for "uploader" tool. This option isn't available for all
-development platforms. The only :ref:`platform_espressif` supports it.
+development platforms. The only :ref:`platform_espressif8266` supports it.
 
 Library options
 ~~~~~~~~~~~~~~~

@@ -130,6 +130,8 @@ class EnvironmentProcessor(object):
 
     RENAMED_OPTIONS = {"lib_use": "lib_force"}
 
+    RENAMED_PLATFORMS = {"espressif": "espressif8266"}
+
     def __init__(self,  # pylint: disable=R0913
                  cmd_ctx,
                  name,
@@ -191,6 +193,15 @@ class EnvironmentProcessor(object):
                     "`%s` instead." % (k, self.RENAMED_OPTIONS[k]),
                     fg="yellow")
                 k = self.RENAMED_OPTIONS[k]
+            # process renamed platforms
+            if k == "platform" and v in self.RENAMED_PLATFORMS:
+                click.secho(
+                    "Warning! Platform `%s` is deprecated and will be "
+                    "removed in the next release! Please use "
+                    "`%s` instead." % (v, self.RENAMED_PLATFORMS[v]),
+                    fg="yellow")
+                v = self.RENAMED_PLATFORMS[v]
+
             # warn about unknown options
             if k not in self.KNOWN_OPTIONS:
                 click.secho(

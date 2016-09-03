@@ -30,7 +30,7 @@ Embedded
 
     atmelavr
     atmelsam
-    espressif
+    espressif8266
     freescalekinetis
     intel_arc32
     lattice_ice40

@@ -90,7 +90,7 @@ Workflow
         board = uno
 
         [env:nodemcu]
-        platform = espressif
+        platform = espressif8266
         framework = arduino
         board = nodemcuv2
 
@@ -278,7 +278,7 @@ Source files
       board = uno
 
       [env:nodemcu]
-      platform = espressif
+      platform = espressif8266
       framework = arduino
       board = nodemcu
 

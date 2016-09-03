@@ -56,7 +56,7 @@ Packages
     * - ``framework-arduinoavr``
       - `Arduino Wiring-based Framework (AVR Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
 
-    * - ``framework-arduinoespressif``
+    * - ``framework-arduinoespressif8266``
       - `Arduino Wiring-based Framework (ESP8266 Core) <https://github.com/esp8266/Arduino>`_
 
     * - ``framework-arduinointel``

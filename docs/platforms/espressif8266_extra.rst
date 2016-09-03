@@ -181,7 +181,7 @@ For the full list with available options please run
 
 .. code-block:: bash
 
-    ~/.platformio/packages/framework-arduinoespressif/tools/espota.py -h
+    ~/.platformio/packages/framework-arduinoespressif8266/tools/espota.py -h
 
     Usage: espota.py [options]
 
@@ -221,9 +221,20 @@ Using Arduino Framework with Staging version
 --------------------------------------------
 
 1.  Clone/Copy `main repository <https://github.com/esp8266/Arduino>`_ to
-    :ref:`projectconf_pio_home_dir` + ``packages/framework-arduinoespressif``
-    and create new file ``packages/framework-arduinoespressif/version.txt``
-    with the new version (for example, ``2.2.0``).
+    :ref:`projectconf_pio_home_dir` + ``packages/framework-arduinoespressif8266``
+    and create new file ``packages/framework-arduinoespressif8266/package.json``
+    with the next contents (you can specify own version if you want)
+
+    .. code-block:: json
+
+        {
+            "description":"Arduino Wiring-based Framework (ESP8266 Core)",
+            "name":"framework-arduinoespressif8266",
+            "system":"all",
+            "url":"https://github.com/esp8266/Arduino",
+            "version":"1.20300.0"
+        }
+
 2.  Try to build project
 3.  If you see build errors, then try to build this project using the same
     ``stage`` on Arduino IDE

@@ -160,7 +160,7 @@ The result of just generated ``platformio.ini``:
     board = uno
 
     [env:nodemcuv2]
-    platform = espressif
+    platform = espressif8266
     framework = arduino
     board = nodemcuv2
 

@@ -67,5 +67,5 @@ Examples
     [ ID  ] Name             Compatibility         "Authors": Description
     -----------------------------------------------------------------------------------------------------------
     [  4  ] IRremote         arduino, atmelavr     "Rafi Khan, Ken Shirriff": Send and receive infrared signals with multiple protocols | @2.2.1
-    [ 64  ] Json             arduino, atmelavr, atmelsam, timsp430, titiva, teensy, freescalekinetis, ststm32, nordicnrf51, nxplpc, espressif, siliconlabsefm32, linux_arm, native, intel_arc32 "Benoit Blanchon": An elegant and efficient JSON library for embedded systems | @5.4.0
+    [ 64  ] Json             arduino, atmelavr, atmelsam, timsp430, titiva, teensy, freescalekinetis, ststm32, nordicnrf51, nxplpc, espressif8266, siliconlabsefm32, linux_arm, native, intel_arc32 "Benoit Blanchon": An elegant and efficient JSON library for embedded systems | @5.4.0
     [ VCS ] TextLCD          -                     "Unknown": hg+https://developer.mbed.org/users/simon/code/TextLCD/ | @308d188a2d3a

@@ -81,5 +81,5 @@ Examples
     Authors: Benoit Blanchon http://blog.benoitblanchon.fr
     Keywords: json, rest, http, web
     Frameworks: arduino
-    Platforms: atmelavr, atmelsam, timsp430, titiva, teensy, freescalekinetis, ststm32, nordicnrf51, nxplpc, espressif, siliconlabsefm32, linux_arm, native, intel_arc32
+    Platforms: atmelavr, atmelsam, timsp430, titiva, teensy, freescalekinetis, ststm32, nordicnrf51, nxplpc, espressif8266, siliconlabsefm32, linux_arm, native, intel_arc32
     Version: 5.4.0

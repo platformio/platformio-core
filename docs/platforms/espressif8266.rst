@@ -9,10 +9,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _platform_espressif:
+.. _platform_espressif8266:
 
-Platform ``espressif``
-======================
+Platform ``espressif8266``
+==========================
 Espressif Systems is a privately held fabless semiconductor company. They provide wireless communications and Wi-Fi chips which are widely used in mobile devices and the Internet of Things applications.
 
 For more detailed information please visit `vendor site <https://espressif.com/>`_.
@@ -28,7 +28,7 @@ Packages
     * - Name
       - Contents
 
-    * - ``framework-arduinoespressif``
+    * - ``framework-arduinoespressif8266``
       - `Arduino Wiring-based Framework (ESP8266 Core) <https://github.com/esp8266/Arduino>`_
 
     * - ``framework-simba``
@@ -386,4 +386,4 @@ WeMos
       - 4096 Kb
       - 80 Kb
 
-.. include:: espressif_extra.rst
+.. include:: espressif8266_extra.rst
