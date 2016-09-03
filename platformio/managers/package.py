@@ -15,7 +15,7 @@
 import json
 import os
 from os.path import basename, dirname, isdir, isfile, islink, join
-from shutil import copyfile, copytree
+from shutil import copytree
 from tempfile import mkdtemp
 
 import click
@@ -147,32 +147,13 @@ class PkgInstallerMixin(object):
 
     def check_pkg_structure(self, pkg_dir):
         if self.manifest_exists(pkg_dir):
-            return True
+            return pkg_dir
 
         for root, _, _ in os.walk(pkg_dir):
-            if not self.manifest_exists(root):
-                continue
-            # copy contents to the root of package directory
-            for item in os.listdir(root):
-                item_path = join(root, item)
-                if isfile(item_path):
-                    copyfile(item_path, join(pkg_dir, item))
-                elif isdir(item_path):
-                    copytree(item_path, join(pkg_dir, item), symlinks=True)
-            # remove not used contents
-            while True:
-                util.rmtree_(root)
-                root = dirname(root)
-                if root == pkg_dir:
-                    break
-            break
+            if self.manifest_exists(root):
+                return root
 
-        if self.manifest_exists(pkg_dir):
-            return True
-
-        raise exception.PlatformioException(
-            "Could not find '%s' manifest file in the package" %
-            self.manifest_name)
+        raise exception.MissingPackageManifest(self.manifest_name)
 
     def _install_from_piorepo(self, name, requirements):
         pkg_dir = None
@@ -226,8 +207,8 @@ class PkgInstallerMixin(object):
                         "requirements": requirements
                     }, fp)
 
-            self.check_pkg_structure(tmp_dir)
-            pkg_dir = self._install_from_tmp_dir(tmp_dir, requirements)
+            pkg_dir = self.check_pkg_structure(tmp_dir)
+            pkg_dir = self._install_from_tmp_dir(pkg_dir, requirements)
         finally:
             if isdir(tmp_dir):
                 util.rmtree_(tmp_dir)
@@ -554,7 +535,12 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 manifest['version'] = vcs.get_current_revision()
                 json.dump(manifest, fp)
         else:
-            latest_version = self.get_latest_repo_version(name, requirements)
+            latest_version = None
+            try:
+                latest_version = self.get_latest_repo_version(name,
+                                                              requirements)
+            except exception.PlatformioException:
+                pass
             if not latest_version:
                 click.echo("[%s]" % (click.style("Unknown", fg="yellow")))
                 return

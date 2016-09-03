@@ -143,7 +143,7 @@ def echo_liblist_item(item):
     click.echo(
         LIBLIST_TPL.format(
             id=click.style(
-                str(item.get("id", "VCS")), fg="green"),
+                str(item.get("id", "-")), fg="green"),
             name=click.style(
                 item['name'], fg="cyan"),
             compatibility=click.style(

@@ -13,7 +13,9 @@
 # limitations under the License.
 
 import json
-from os.path import join
+import os
+from hashlib import md5
+from os.path import dirname, join
 
 import click
 import semantic_version
@@ -32,6 +34,69 @@ class LibraryManager(BasePkgManager):
     @property
     def manifest_name(self):
         return ".library.json"
+
+    def check_pkg_structure(self, pkg_dir):
+        try:
+            return BasePkgManager.check_pkg_structure(self, pkg_dir)
+        except exception.MissingPackageManifest:
+            # we will generate manifest automatically
+            pass
+
+        manifest = {
+            "name": "Library_" + md5(pkg_dir).hexdigest()[:5],
+            "version": "0.0.0"
+        }
+        manifest_path = self._find_any_manifest(pkg_dir)
+        if manifest_path:
+            _manifest = self._parse_manifest(manifest_path)
+            pkg_dir = dirname(manifest_path)
+            for key in ("name", "version"):
+                if key not in _manifest:
+                    _manifest[key] = manifest[key]
+            manifest = _manifest
+        else:
+            for root, dirs, files in os.walk(pkg_dir):
+                if len(dirs) == 1 and not files:
+                    manifest['name'] = dirs[0]
+                    continue
+                if dirs or files:
+                    pkg_dir = root
+                    break
+
+        with open(join(pkg_dir, self.manifest_name), "w") as fp:
+            json.dump(manifest, fp)
+
+        return pkg_dir
+
+    @staticmethod
+    def _find_any_manifest(pkg_dir):
+        manifests = ("library.json", "library.properties", "module.json")
+        for root, _, files in os.walk(pkg_dir):
+            for manifest in manifests:
+                if manifest in files:
+                    return join(root, manifest)
+        return None
+
+    @staticmethod
+    def _parse_manifest(path):
+        manifest = {}
+        if path.endswith(".json"):
+            return util.load_json(path)
+        elif path.endswith("library.properties"):
+            with open(path) as fp:
+                for line in fp.readlines():
+                    if "=" not in line:
+                        continue
+                    key, value = line.split("=", 1)
+                    manifest[key.strip()] = value.strip()
+            manifest['frameworks'] = ["arduino"]
+            if "author" in manifest:
+                manifest['authors'] = [{"name": manifest['author']}]
+                del manifest['author']
+            if "sentence" in manifest:
+                manifest['description'] = manifest['sentence']
+                del manifest['sentence']
+        return manifest
 
     @staticmethod
     def normalize_dependencies(dependencies):

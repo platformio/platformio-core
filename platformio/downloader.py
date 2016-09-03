@@ -30,22 +30,23 @@ class FileDownloader(object):
     CHUNK_SIZE = 1024
 
     def __init__(self, url, dest_dir=None):
-        self._url = url
-        self._fname = url.split("/")[-1]
-
-        self._destination = self._fname
-        if dest_dir:
-            self.set_destination(join(dest_dir, self._fname))
-
-        self._progressbar = None
-        self._request = None
-
         # make connection
         self._request = requests.get(url,
                                      stream=True,
                                      headers=util.get_request_defheaders())
         if self._request.status_code != 200:
             raise FDUnrecognizedStatusCode(self._request.status_code, url)
+
+        disposition = self._request.headers.get("content-disposition")
+        if disposition and "filename=" in disposition:
+            self._fname = disposition[disposition.index("filename=") + 9:]
+        else:
+            self._fname = url.split("/")[-1]
+
+        self._progressbar = None
+        self._destination = self._fname
+        if dest_dir:
+            self.set_destination(join(dest_dir, self._fname))
 
     def set_destination(self, destination):
         self._destination = destination

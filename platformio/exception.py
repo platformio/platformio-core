@@ -75,6 +75,11 @@ class UnknownPackage(PlatformioException):
     MESSAGE = "Detected unknown package '{0}'"
 
 
+class MissingPackageManifest(PlatformioException):
+
+    MESSAGE = "Could not find '{0}' manifest file in the package"
+
+
 class UndefinedPackageVersion(PlatformioException):
 
     MESSAGE = "Could not find a version that satisfies the requirement '{0}'"\

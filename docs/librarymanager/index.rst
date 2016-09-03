@@ -50,6 +50,7 @@ You can use library ID, Name or even repository URL. For example,
     Json@~5.6,!=5.4
     https://github.com/gioblu/PJON.git@v2.0
     https://github.com/me-no-dev/ESPAsyncTCP.git
+    https://github.com/adafruit/DHT-sensor-library/archive/master.zip
 
 Please follow to :ref:`cmd_lib_install` for detailed documentation about
 possible values.

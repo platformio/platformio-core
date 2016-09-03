@@ -76,7 +76,7 @@ The ``version`` supports `Semantic Versioning <http://semver.org>`_ (
 * ``>0.1.0,!=0.2.0,<0.3.0`` - any version greater than ``0.1.0``, not equal to
   ``0.2.0`` and less than ``0.3.0``
 
-Also, PlatformIO supports installing from local directory or archive. Need
+PlatformIO supports installing from local directory or archive. Need
 to use ``file://`` prefix before local path. Also, directory or
 archive should contain ``.library.json`` manifest (see :ref:`library_config`).
 
@@ -243,3 +243,15 @@ Examples
     updating to branch default
     2 files updated, 0 files merged, 0 files removed, 0 files unresolved
     TextLCD @ 308d188a2d3a has been successfully installed!
+
+5. Install from archive using URL
+
+.. code::
+
+    > platformio lib -g install  https://github.com/adafruit/DHT-sensor-library/archive/master.zip
+
+    Library Storage: /storage/dir/...
+    LibraryManager: Installing master
+    Downloading  [####################################]  100%
+    Unpacking  [####################################]  100%
+    DHT sensor library @ 1.2.3 has been successfully installed!
