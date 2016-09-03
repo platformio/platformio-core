@@ -28,26 +28,26 @@ Packages
     * - Name
       - Contents
 
-    * - ``framework-libopencm3``
-      - `libOpenCM3 Framework <http://www.libopencm3.org/>`_
-
-    * - ``toolchain-gccarmnoneeabi``
-      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
-
-    * - ``tool-stlink``
-      - `ST-Link <https://github.com/texane/stlink>`_
-
-    * - ``framework-spl``
-      - `Standard Peripheral Library for STM32 MCUs <http://www.st.com/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890>`_
-
     * - ``framework-cmsis``
       - `Vendor-independent hardware abstraction layer for the Cortex-M processor series <http://www.arm.com/products/processors/cortex-m/cortex-microcontroller-software-interface-standard.php>`_
+
+    * - ``framework-libopencm3``
+      - `libOpenCM3 Framework <http://www.libopencm3.org/>`_
 
     * - ``framework-mbed``
       - `mbed Framework <http://mbed.org>`_
 
-    * - ``ldscripts``
-      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
+    * - ``framework-spl``
+      - `Standard Peripheral Library for STM32 MCUs <http://www.st.com/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890>`_
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
+    * - ``tool-stlink``
+      - `ST-Link <https://github.com/texane/stlink>`_
+
+    * - ``toolchain-gccarmnoneeabi``
+      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
@@ -73,11 +73,11 @@ Frameworks
     * - :ref:`framework_libopencm3`
       - The libOpenCM3 framework aims to create a free/libre/open-source firmware library for various ARM Cortex-M0(+)/M3/M4 microcontrollers, including ST STM32, Ti Tiva and Stellaris, NXP LPC 11xx, 13xx, 15xx, 17xx parts, Atmel SAM3, Energy Micro EFM32 and others.
 
-    * - :ref:`framework_mbed`
-      - The mbed framework The mbed SDK has been designed to provide enough hardware abstraction to be intuitive and concise, yet powerful enough to build complex projects. It is built on the low-level ARM CMSIS APIs, allowing you to code down to the metal if needed. In addition to RTOS, USB and Networking libraries, a cookbook of hundreds of reusable peripheral and module libraries have been built on top of the SDK by the mbed Developer Community.
-
     * - :ref:`framework_spl`
       - The ST Standard Peripheral Library provides a set of functions for handling the peripherals on the STM32 Cortex-M3 family. The idea is to save the user (the new user, in particular) having to deal directly with the registers.
+
+    * - :ref:`framework_mbed`
+      - The mbed framework The mbed SDK has been designed to provide enough hardware abstraction to be intuitive and concise, yet powerful enough to build complex projects. It is built on the low-level ARM CMSIS APIs, allowing you to code down to the metal if needed. In addition to RTOS, USB and Networking libraries, a cookbook of hundreds of reusable peripheral and module libraries have been built on top of the SDK by the mbed Developer Community.
 
 Boards
 ------
@@ -141,6 +141,26 @@ Armstrap
       - 168 MHz
       - 512 Kb
       - 192 Kb
+
+Generic
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``bluepill_f103c8``
+      - `BluePill F103C8 <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103c8.html>`_
+      - STM32F103C8T6
+      - 72 MHz
+      - 64 Kb
+      - 20 Kb
 
 MultiTech
 ~~~~~~~~~

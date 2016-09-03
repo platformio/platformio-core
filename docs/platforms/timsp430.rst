@@ -28,17 +28,20 @@ Packages
     * - Name
       - Contents
 
-    * - ``toolchain-timsp430``
-      - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_, `GDB <http://www.gnu.org/software/gdb/>`_
-
-    * - ``tool-mspdebug``
-      - `MSPDebug <http://mspdebug.sourceforge.net/>`_
+    * - ``framework-arduinomsp430``
+      - `Arduino Wiring-based Framework (MSP430 Core) <http://arduino.cc/en/Reference/HomePage>`_
 
     * - ``framework-energiamsp430``
       - `Energia Wiring-based Framework (MSP430 Core) <http://energia.nu/reference/>`_
 
-    * - ``framework-arduinomsp430``
-      - `Arduino Wiring-based Framework (MSP430 Core) <http://arduino.cc/en/Reference/HomePage>`_
+    * - ``tool-mspdebug``
+      - `MSPDebug <http://mspdebug.sourceforge.net/>`_
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
+    * - ``toolchain-timsp430``
+      - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file

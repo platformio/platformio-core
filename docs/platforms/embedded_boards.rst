@@ -137,7 +137,7 @@ Adafruit
     * - ``protrinket3ftdi``
       - `Adafruit Pro Trinket 3V/12MHz (FTDI) <http://www.adafruit.com/products/2010>`_
       - ATMEGA328P
-      - 16 MHz
+      - 12 MHz
       - 32 Kb
       - 2 Kb
 
@@ -1122,6 +1122,26 @@ Fubarino
       - 80 MHz
       - 512 Kb
       - 128 Kb
+
+Generic
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``bluepill_f103c8``
+      - `BluePill F103C8 <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103c8.html>`_
+      - STM32F103C8T6
+      - 72 MHz
+      - 64 Kb
+      - 20 Kb
 
 Generic ATTiny
 ~~~~~~~~~~~~~~

@@ -28,20 +28,20 @@ Packages
     * - Name
       - Contents
 
-    * - ``ldscripts``
-      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
+    * - ``framework-energiativa``
+      - `Energia Wiring-based Framework (LM4F Core) <http://energia.nu/reference/>`_
 
     * - ``framework-libopencm3``
       - `libOpenCM3 Framework <http://www.libopencm3.org/>`_
 
-    * - ``toolchain-gccarmnoneeabi``
-      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
-
     * - ``tool-lm4flash``
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
 
-    * - ``framework-energiativa``
-      - `Energia Wiring-based Framework (LM4F Core) <http://energia.nu/reference/>`_
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
+    * - ``toolchain-gccarmnoneeabi``
+      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
@@ -61,11 +61,11 @@ Frameworks
     * - Name
       - Description
 
-    * - :ref:`framework_energia`
-      - Energia Wiring-based framework enables pretty much anyone to start easily creating microcontroller-based projects and applications. Its easy-to-use libraries and functions provide developers of all experience levels to start blinking LEDs, buzzing buzzers and sensing sensors more quickly than ever before.
-
     * - :ref:`framework_libopencm3`
       - The libOpenCM3 framework aims to create a free/libre/open-source firmware library for various ARM Cortex-M0(+)/M3/M4 microcontrollers, including ST STM32, Ti Tiva and Stellaris, NXP LPC 11xx, 13xx, 15xx, 17xx parts, Atmel SAM3, Energy Micro EFM32 and others.
+
+    * - :ref:`framework_energia`
+      - Energia Wiring-based framework enables pretty much anyone to start easily creating microcontroller-based projects and applications. Its easy-to-use libraries and functions provide developers of all experience levels to start blinking LEDs, buzzing buzzers and sensing sensors more quickly than ever before.
 
 Boards
 ------

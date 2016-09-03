@@ -28,20 +28,23 @@ Packages
     * - Name
       - Contents
 
+    * - ``framework-arduinonordicnrf51``
+      - `Arduino Wiring-based Framework (RFduino Core) <https://github.com/RFduino/RFduino>`_
+
     * - ``framework-mbed``
       - `mbed Framework <http://mbed.org>`_
 
     * - ``tool-rfdloader``
       - `rfdloader <https://github.com/RFduino/RFduino>`_
 
-    * - ``toolchain-gccarmnoneeabi``
-      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
 
     * - ``tool-sreccat``
       - `Merging tool <https://github.com/marcows/SRecord>`_
 
-    * - ``framework-arduinonordicnrf51``
-      - `Arduino Wiring-based Framework (RFduino Core) <https://github.com/RFduino/RFduino>`_
+    * - ``toolchain-gccarmnoneeabi``
+      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file

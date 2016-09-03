@@ -31,11 +31,14 @@ Packages
     * - ``framework-arduinomicrochippic32``
       - `Arduino Wiring-based Framework (PIC32 Core) <https://github.com/chipKIT32/chipKIT-core>`_
 
-    * - ``toolchain-microchippic32``
-      - `GCC for Microchip PIC32 <https://github.com/chipKIT32/chipKIT-cxx>`_
-
     * - ``tool-pic32prog``
       - `pic32prog <https://github.com/sergev/pic32prog>`_
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
+    * - ``toolchain-microchippic32``
+      - `GCC for Microchip PIC32 <https://github.com/chipKIT32/chipKIT-cxx>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file

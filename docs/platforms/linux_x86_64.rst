@@ -15,7 +15,7 @@ Platform ``linux_x86_64``
 =========================
 Linux x86_64 (64-bit) is a Unix-like and mostly POSIX-compliant computer operating system (OS) assembled under the model of free and open-source software development and distribution. Using host OS (Mac OS X or Linux 64-bit) you can build native application for Linux x86_64 platform.
 
-For more detailed information please visit `vendor site <http://platformio.org/platforms/linux_i686>`_.
+For more detailed information please visit `vendor site <http://platformio.org/platforms/linux_x86_64>`_.
 
 .. contents::
 
@@ -27,6 +27,9 @@ Packages
 
     * - Name
       - Contents
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
 
     * - ``toolchain-gcclinux64``
       - `GCC for Linux x86_64 <https://gcc.gnu.org>`_

@@ -151,7 +151,7 @@ Adafruit
     * - ``protrinket3ftdi``
       - `Adafruit Pro Trinket 3V/12MHz (FTDI) <http://www.adafruit.com/products/2010>`_
       - ATMEGA328P
-      - 16 MHz
+      - 12 MHz
       - 32 Kb
       - 2 Kb
 

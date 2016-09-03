@@ -28,5 +28,8 @@ Packages
     * - Name
       - Contents
 
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
     * - ``toolchain-gccmingw32``
       - `MinGW <http://www.mingw.org>`_

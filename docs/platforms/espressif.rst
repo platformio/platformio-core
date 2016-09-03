@@ -28,11 +28,14 @@ Packages
     * - Name
       - Contents
 
-    * - ``toolchain-xtensa``
-      - `xtensa-gcc <https://github.com/jcmvbkbc/gcc-xtensa>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+    * - ``framework-arduinoespressif``
+      - `Arduino Wiring-based Framework (ESP8266 Core) <https://github.com/esp8266/Arduino>`_
 
     * - ``framework-simba``
       - `Simba Framework <https://github.com/eerimoq/simba>`_
+
+    * - ``sdk-esp8266``
+      - `ESP8266 SDK <http://bbs.espressif.com>`_
 
     * - ``tool-esptool``
       - `esptool-ck <https://github.com/igrr/esptool-ck>`_
@@ -40,14 +43,11 @@ Packages
     * - ``tool-mkspiffs``
       - `Tool to build and unpack SPIFFS images <https://github.com/igrr/mkspiffs>`_
 
-    * - ``framework-arduinoespressif``
-      - `Arduino Wiring-based Framework (ESP8266 Core) <https://github.com/esp8266/Arduino>`_
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
 
-    * - ``ldscripts``
-      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
-
-    * - ``sdk-esp8266``
-      - `ESP8266 SDK <http://bbs.espressif.com>`_
+    * - ``toolchain-xtensa``
+      - `xtensa-gcc <https://github.com/jcmvbkbc/gcc-xtensa>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file

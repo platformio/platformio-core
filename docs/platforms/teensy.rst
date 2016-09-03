@@ -15,7 +15,7 @@ Platform ``teensy``
 ===================
 Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard USB cable and a PC or Macintosh with a USB port.
 
-For more detailed information please visit `vendor site <https://www.pjrc.com/teensy>`_.
+For more detailed information please visit `vendor site <ttps://www.pjrc.com/teensy>`_.
 
 .. contents::
 
@@ -31,20 +31,20 @@ Packages
     * - ``framework-arduinoteensy``
       - `Arduino Wiring-based Framework <http://arduino.cc/en/Reference/HomePage>`_
 
-    * - ``tool-teensy``
-      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
-
-    * - ``toolchain-gccarmnoneeabi``
-      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
-
     * - ``framework-mbed``
       - `mbed Framework <http://mbed.org>`_
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
+    * - ``tool-teensy``
+      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
 
     * - ``toolchain-atmelavr``
       - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
 
-    * - ``ldscripts``
-      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
+    * - ``toolchain-gccarmnoneeabi``
+      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file

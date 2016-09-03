@@ -334,6 +334,10 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         return self._manifest.get("homepage")
 
     @property
+    def vendor_url(self):
+        return self._manifest.get("url")
+
+    @property
     def license(self):
         return self._manifest.get("license")
 

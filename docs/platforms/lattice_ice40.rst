@@ -28,6 +28,9 @@ Packages
     * - Name
       - Contents
 
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
     * - ``toolchain-icestorm``
       - `GCC for FPGA IceStorm <http://www.clifford.at/icestorm/>`_
 
