@@ -39,7 +39,8 @@ class FileDownloader(object):
 
         disposition = self._request.headers.get("content-disposition")
         if disposition and "filename=" in disposition:
-            self._fname = disposition[disposition.index("filename=") + 9:]
+            self._fname = disposition[disposition.index("filename=") +
+                                      9:].replace('"', "").replace("'", "")
         else:
             self._fname = url.split("/")[-1]
 
