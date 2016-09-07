@@ -22,8 +22,8 @@ PlatformIO
    :alt: Community Forums
    :target: https://community.platformio.org
 .. image:: https://img.shields.io/PlatformIO/Plus.png?color=orange
-   :alt: Donate for PlatformIO.Org
-   :target: http://platformio.org/donate
+   :alt: PlatformIO Plus: Professional solutions for an awesome open source PlatformIO ecosystem
+   :target: https://pioplus.com
 
 **Quick Links:** `Home Page <http://platformio.org>`_ |
 `PlatformIO Plus <https://pioplus.com>`_ |
