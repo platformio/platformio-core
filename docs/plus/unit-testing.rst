@@ -14,7 +14,7 @@
 Unit Testing
 ============
 
-.. versionadded:: 3.0 (PlatformIO Plus)
+.. versionadded:: 3.0 (`PlatformIO Plus <https://pioplus.com>`_)
 
 `Unit Testing (wiki) <https://en.wikipedia.org/wiki/Unit_testing>`_
 is a software testing method by which individual units of source code, sets
@@ -22,7 +22,7 @@ of one or more MCU program modules together with associated control data,
 usage procedures, and operating procedures, are tested to determine whether
 they are fit for use. Unit testing finds problems early in the development cycle.
 
-PlatformIO Test System supports 2 different test types:
+PlatformIO Testing Engine supports 2 different test types:
 
 1. **Local Test** - *[host, native]*, process test on the host machine
    using :ref:`platform_native`.
@@ -33,7 +33,7 @@ PlatformIO Test System supports 2 different test types:
    You will be able to run the same test on the different target devices
    (:ref:`embedded_boards`).
 
-PlatformIO Test System consists of:
+PlatformIO Testing Engine consists of:
 
 * Project builder
 * Test builder
@@ -49,12 +49,20 @@ Also, is possible to ignore some tests for specific environment using
 
 .. contents::
 
+Demo
+----
+
+Demo of `Local & Embedded: Calculator <https://github.com/platformio/platformio-examples/tree/develop/unit-testing/calculator>`_.
+
+.. image:: ../_static/pioplus-unit-testing-demo.png
+    :target: https://youtu.be/bo3VVRZVKhA
+
 .. _unit_testing_design:
 
 Design
 ------
 
-PlatformIO Test System design is based on a few isolated components:
+PlatformIO Testing Engine design is based on a few isolated components:
 
 1. **Main program**. Contains the independent modules, procedures,
    functions or methods that will be the target candidates (TC) for testing.
@@ -121,6 +129,9 @@ Workflow
         }
         #endif
 
+
+   .. code-block:: c
+
         /**
         * Generic C/C++
         */
@@ -142,7 +153,7 @@ Workflow
 6. Place test to ``test`` directory. If you have more than one test, split them
    into sub-folders. For example, ``test/test_1/*.[c,cpp,h]``,
    ``test_N/*.[c,cpp,h]``, etc. If no such directory in ``test`` folder, then
-   PlatformIO Test System will treat the source code of ``test`` folder
+   PlatformIO Testing Engine will treat the source code of ``test`` folder
    as SINGLE test.
 7. Run tests using :ref:`cmd_test` command.
 
@@ -381,71 +392,83 @@ Source files
 Test results
 ~~~~~~~~~~~~
 
-.. code-block:: bash
+.. code::
 
-    > platformio test --environment uno
+    > platformio test -e nodemcu --verbose
+
+    PlatformIO Plus (https://pioplus.com) v0.1.0
+    Verbose mode can be enabled via `-v, --verbose` option
     Collected 1 items
 
-    ========================= [test::*] Building... (1/3) ==============================
+    ============================== [test::*] Building... (1/3) ==============================
+    [Wed Sep  7 15:16:55 2016] Processing nodemcu (platform: espressif8266, board: nodemcu, framework: arduino)
+    ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Verbose mode can be enabled via `-v, --verbose` option
+    Collected 34 compatible libraries
+    Looking for dependencies...
+    Project does not have dependencies
+    Compiling .pioenvs/nodemcu/src/main.o
+    Compiling .pioenvs/nodemcu/test/output_export.o
+    Compiling .pioenvs/nodemcu/test/test_main.o
+    Compiling .pioenvs/nodemcu/UnityTestLib/unity.o
+    Archiving .pioenvs/nodemcu/libFrameworkArduinoVariant.a
+    Indexing .pioenvs/nodemcu/libFrameworkArduinoVariant.a
+    Compiling .pioenvs/nodemcu/FrameworkArduino/Esp.o
+    Compiling .pioenvs/nodemcu/FrameworkArduino/FS.o
+    Compiling .pioenvs/nodemcu/FrameworkArduino/HardwareSerial.o
+    Compiling .pioenvs/nodemcu/FrameworkArduino/IPAddress.o
+    Archiving .pioenvs/nodemcu/libUnityTestLib.a
+    Indexing .pioenvs/nodemcu/libUnityTestLib.a
+    Compiling .pioenvs/nodemcu/FrameworkArduino/MD5Builder.o
+    ...
+    Compiling .pioenvs/nodemcu/FrameworkArduino/umm_malloc/umm_malloc.o
+    Archiving .pioenvs/nodemcu/libFrameworkArduino.a
+    Indexing .pioenvs/nodemcu/libFrameworkArduino.a
+    Linking .pioenvs/nodemcu/firmware.elf
+    Calculating size .pioenvs/nodemcu/firmware.elf
+    text       data     bss     dec     hex filename
+    223500     2408   29536  255444   3e5d4 .pioenvs/nodemcu/firmware.elf
+    Building .pioenvs/nodemcu/firmware.bin
 
-    [Wed Jun 15 00:27:42 2016] Processing uno (platform: atmelavr, board: uno, framework: arduino)
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    avr-g++ -o .pioenvs/uno/test/test_main.o -c -fno-exceptions -fno-threadsafe-statics -std=gnu++11 -g -Os -Wall -ffunction-sections -fdata-sections -mmcu=atmega328p -DF_CPU=16000000L -DPLATFORMIO=030000 -DARDUINO_ARCH_AVR -DARDUINO_AVR_UNO -DARDUINO=10608 -DUNIT_TEST -DUNITY_INCLUDE_CONFIG_H -I.pioenvs/uno/FrameworkArduino -I.pioenvs/uno/FrameworkArduinoVariant -Isrc -I.pioenvs/uno/UnityTestLib test/test_main.cpp
-    avr-g++ -o .pioenvs/uno/firmware.elf -Os -mmcu=atmega328p -Wl,--gc-sections,--relax .pioenvs/uno/src/main.o .pioenvs/uno/test/output_export.o .pioenvs/uno/test/test_main.o -L.pioenvs/uno -Wl,--start-group .pioenvs/uno/libUnityTestLib.a .pioenvs/uno/libFrameworkArduinoVariant.a .pioenvs/uno/libFrameworkArduino.a -lm -Wl,--end-group
-    avr-objcopy -O ihex -R .eeprom .pioenvs/uno/firmware.elf .pioenvs/uno/firmware.hex
-    avr-size --mcu=atmega328p -C -d .pioenvs/uno/firmware.elf
-    AVR Memory Usage
-    ----------------
-    Device: atmega328p
+    ============================== [test::*] Uploading... (2/3) ==============================
+    [Wed Sep  7 15:17:01 2016] Processing nodemcu (platform: espressif8266, board: nodemcu, framework: arduino)
+    ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Verbose mode can be enabled via `-v, --verbose` option
+    Collected 34 compatible libraries
+    Looking for dependencies...
+    Project does not have dependencies
+    Linking .pioenvs/nodemcu/firmware.elf
+    Checking program size .pioenvs/nodemcu/firmware.elf
+    text       data     bss     dec     hex filename
+    223500     2408   29536  255444   3e5d4 .pioenvs/nodemcu/firmware.elf
+    Calculating size .pioenvs/nodemcu/firmware.elf
+    text       data     bss     dec     hex filename
+    223500     2408   29536  255444   3e5d4 .pioenvs/nodemcu/firmware.elf
+    Looking for upload port...
+    Auto-detected: /dev/cu.SLAB_USBtoUART
+    Uploading .pioenvs/nodemcu/firmware.bin
+    Uploading 230064 bytes from .pioenvs/nodemcu/firmware.bin to flash at 0x00000000
+    ................................................................................ [ 35% ]
+    ................................................................................ [ 71% ]
+    .................................................................                [ 100% ]
 
-    Program:    4702 bytes (14.3% Full)
-    (.text + .data + .bootloader)
+    =============================== [test::*] Testing... (3/3) ===============================
+    If you don't see any output for the first 10 secs, please reset board (press reset button)
 
-    Data:        460 bytes (22.5% Full)
-    (.data + .bss + .noinit)
-
-
-    ========================= [test::*] Uploading... (2/3)  ==============================
-
-    [Wed Jun 15 00:27:43 2016] Processing uno (platform: atmelavr, board: uno, framework: arduino)
-    --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    avr-g++ -o .pioenvs/uno/firmware.elf -Os -mmcu=atmega328p -Wl,--gc-sections,--relax .pioenvs/uno/src/main.o .pioenvs/uno/test/output_export.o .pioenvs/uno/test/test_main.o -L.pioenvs/uno -Wl,--start-group .pioenvs/uno/libUnityTestLib.a .pioenvs/uno/libFrameworkArduinoVariant.a .pioenvs/uno/libFrameworkArduino.a -lm -Wl,--end-group
-    MethodWrapper([".pioenvs/uno/firmware.elf"], [".pioenvs/uno/src/main.o", ".pioenvs/uno/test/output_export.o", ".pioenvs/uno/test/test_main.o"])
-    Check program size...
-    text     data     bss     dec     hex filename
-    4464      238     222    4924    133c .pioenvs/uno/firmware.elf
-    BeforeUpload(["upload"], [".pioenvs/uno/firmware.hex"])
-    Looking for upload port/disk...
-    avr-size --mcu=atmega328p -C -d .pioenvs/uno/firmware.elf
-
-    Auto-detected: /dev/cu.usbmodemFD131
-    avrdude -v -p atmega328p -C "/Users/ikravets/.platformio/packages/tool-avrdude/avrdude.conf" -c arduino -b 115200 -P "/dev/cu.usbmodemFD131" -D -U flash:w:.pioenvs/uno/firmware.hex:i
-
-    [...]
-
-    avrdude done.  Thank you.
-
-    ========================= [test::*] Testing... (3/3) =========================
-
-    If you do not see any output for the first 10 secs, please reset board (press reset button)
-
-    test/test_main.cpp:30:test_led_builtin_pin_number PASSED
-    test/test_main.cpp:41:test_led_state_high PASSED
-    test/test_main.cpp:43:test_led_state_low  PASSED
-    test/test_main.cpp:41:test_led_state_high PASSED
-    test/test_main.cpp:43:test_led_state_low  PASSED
-    test/test_main.cpp:41:test_led_state_high PASSED
-    test/test_main.cpp:43:test_led_state_low  PASSED
-    test/test_main.cpp:41:test_led_state_high PASSED
-    test/test_main.cpp:43:test_led_state_low  PASSED
-    test/test_main.cpp:41:test_led_state_high PASSED
-    test/test_main.cpp:43:test_led_state_low  PASSED
+    test/test_main.cpp:41:test_led_state_high       [PASSED]
+    test/test_main.cpp:43:test_led_state_low        [PASSED]
+    test/test_main.cpp:41:test_led_state_high       [PASSED]
+    test/test_main.cpp:43:test_led_state_low        [PASSED]
+    test/test_main.cpp:41:test_led_state_high       [PASSED]
+    test/test_main.cpp:43:test_led_state_low        [PASSED]
+    test/test_main.cpp:41:test_led_state_high       [PASSED]
+    test/test_main.cpp:43:test_led_state_low        [PASSED]
     -----------------------
-    11 Tests 0 Failures 0 Ignored
+    11 Tests 1 Failures 0 Ignored
 
-    ========================= [TEST SUMMARY] =====================================
-    test:*/env:uno  PASSED
-    ========================= [PASSED] Took 13.35 seconds ========================
+    ===================================== [TEST SUMMARY] =====================================
+    test:*/env:nodemcu      [PASSED]
+    ================================ [PASSED] Took 38.15 seconds ================================
 
 Examples
 --------
