@@ -21,7 +21,7 @@ __title__ = "platformio"
 __description__ = ("An open source ecosystem for IoT development. "
                    "Cross-platform build system and library manager. "
                    "Continuous and IDE integration. "
-                   "Arduino and MBED compatible. Ready for Cloud compiling.")
+                   "Arduino, ESP8266 and ARM mbed compatible")
 __url__ = "http://platformio.org"
 
 __author__ = "Ivan Kravets"

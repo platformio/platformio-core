@@ -25,25 +25,26 @@ PlatformIO
    :alt: Donate for PlatformIO.Org
    :target: http://platformio.org/donate
 
-
-`Home <http://platformio.org>`_ |
-`IDE <http://platformio.org/platformio-ide>`_ |
+**Quick Links:** `Home Page <http://platformio.org>`_ |
+`PlatformIO Plus <https://pioplus.com>`_ |
+`PlatformIO IDE <http://platformio.org/platformio-ide>`_ |
 `Project Examples <https://github.com/platformio/platformio-examples/tree/develop>`_ |
 `Docs <http://docs.platformio.org>`_ |
-`Twitter <https://twitter.com/PlatformIO_Org>`_ |
+`Donate <http://platformio.org/donate>`_ |
+`Contact Us <http://platformio.org/contact>`_
+
+**Social:** `Twitter <https://twitter.com/PlatformIO_Org>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
 `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
 `Bintray <https://bintray.com/platformio>`_ |
 `Community <https://community.platformio.org>`_ |
-`Donate <http://platformio.org/donate>`_ |
-`Contact Us <http://platformio.org/contact>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
 
 `PlatformIO <http://platformio.org>`_ is an open source ecosystem for IoT
 development. Cross-platform build system and library manager. Continuous and
-IDE integration. Arduino and MBED compatible. Ready for Cloud compiling.
+IDE integration. Arduino, ESP8266 and ARM mbed compatible
 
 * **PlatformIO IDE** - The next-generation integrated development environment for IoT.
   C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
@@ -68,9 +69,10 @@ TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-demo-wiring.gif
     :target: http://platformio.org
 
+* `PlatformIO Plus and professional solutions <https://pioplus.com>`_
 * `PlatformIO IDE <http://platformio.org/platformio-ide>`_
 * `Get Started <http://platformio.org/get-started>`_
-* `Web 2.0 Library Search <http://platformio.org/lib>`_
+* `Library Search and Registry <http://platformio.org/lib>`_
 * `Development Platforms <http://platformio.org/platforms>`_
 * `Frameworks <http://platformio.org/frameworks>`_
 * `Embedded Boards Explorer <http://platformio.org/boards>`_

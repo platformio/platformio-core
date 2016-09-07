@@ -13,7 +13,7 @@ PlatformIO is an open source ecosystem for IoT development
 ==========================================================
 
 **Cross-platform build system and library manager. Continuous and IDE
-integration. Arduino and MBED compatible. Ready for Cloud compiling.**
+integration. Arduino, ESP8266 and ARM mbed compatible.**
 
 * **PlatformIO IDE** - The next-generation integrated development environment for IoT.
   C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
@@ -35,9 +35,10 @@ integration. Arduino and MBED compatible. Ready for Cloud compiling.**
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
 libOpenCM3, etc.*
 
-* `Website <http://platformio.org>`_
+* `Home Page <http://platformio.org>`_
+* `PlatformIO Plus and professional solutions <https://pioplus.com>`_
 * :ref:`ide_atom`
-* `Web 2.0 Library Search <http://platformio.org/lib>`_ |
+* `Library Search and Registry <http://platformio.org/lib>`_ |
   `Embedded Boards Explorer <http://platformio.org/boards>`_
 * `Project Examples <https://github.com/platformio/platformio-examples/tree/develop>`_
 * `Source Code <https://github.com/platformio/platformio>`_ |
@@ -111,7 +112,12 @@ Contents
     platforms/embedded_boards
     frameworks/index
     platforms/custom_platform_and_board
-    unit_testing
+
+.. toctree::
+    :caption: PlatformIO Plus
+    :maxdepth: 3
+
+    plus/unit-testing
 
 .. toctree::
     :caption: Library Manager

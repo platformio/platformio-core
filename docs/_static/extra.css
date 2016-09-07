@@ -292,6 +292,16 @@ nav {
   }
 }
 
+.navbar-inverse .navbar-nav > li.nav-pioplus > a,
+.navbar-inverse .navbar-nav > li.nav-pioplus > a:visited
+{
+  color: #ff6600;
+}
+
+.navbar-inverse .navbar-nav > li.nav-pioplus > a:hover {
+  color: #ff9900;
+}
+
 .top-banner {
   display: block;
   padding: 10px 20px;
