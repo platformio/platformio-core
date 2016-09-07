@@ -4,6 +4,12 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.0.1 (2016-09-??)
+~~~~~~~~~~~~~~~~~~
+
+* Disabled temporary SSL for PlatformIO services
+  (`issue #772 <https://github.com/platformio/platformio/issues/772>`_)
+
 3.0.0 (2016-09-07)
 ~~~~~~~~~~~~~~~~~~
 
