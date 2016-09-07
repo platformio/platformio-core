@@ -164,6 +164,7 @@ def echo_liblist_item(item):
 @click.option("-k", "--keyword", multiple=True)
 @click.option("-f", "--framework", multiple=True)
 @click.option("-p", "--platform", multiple=True)
+@click.option("-i", "--header", multiple=True)
 @click.option(
     "--noninteractive",
     is_flag=True,

@@ -787,7 +787,7 @@ Example:
 .. seealso::
     Please make sure to read :ref:`ldf` guide first.
 
-A list with extra directories/storages where Library Dependency Finder will
+A list with extra directories/storages where :ref:`ldf` will
 look for dependencies. Multiple paths are allowed. Please separate them
 using comma+space ", ".
 
