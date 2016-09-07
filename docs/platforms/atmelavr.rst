@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -28,20 +28,33 @@ Packages
     * - Name
       - Contents
 
-    * - ``toolchain-atmelavr``
-      - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
-
-    * - ``tool-avrdude``
-      - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
+    * - ``framework-arduinoavr``
+      - `Arduino Wiring-based Framework (AVR Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
 
     * - ``framework-simba``
       - `Simba Framework <https://github.com/eerimoq/simba>`_
 
-    * - ``framework-arduinoavr``
-      - `Arduino Wiring-based Framework (AVR Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
+    * - ``tool-avrdude``
+      - `AVRDUDE <http://www.nongnu.org/avrdude/>`_
 
     * - ``tool-micronucleus``
       - `Micronucleus <https://github.com/micronucleus/micronucleus>`_
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
+    * - ``toolchain-atmelavr``
+      - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
+
+.. warning::
+    **Linux Users:** Don't forget to install "udev" rules file
+    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+
+
+    **Windows Users:** Please check that you have correctly installed USB
+    driver from board manufacturer
+
+
 
 Frameworks
 ----------
@@ -124,7 +137,7 @@ Adafruit
     * - ``protrinket3ftdi``
       - `Adafruit Pro Trinket 3V/12MHz (FTDI) <http://www.adafruit.com/products/2010>`_
       - ATMEGA328P
-      - 16 MHz
+      - 12 MHz
       - 32 Kb
       - 2 Kb
 

@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import hashlib
 import json
+import uuid
 from copy import deepcopy
 from os import environ, getenv
 from os.path import getmtime, isfile, join
@@ -44,29 +46,24 @@ DEFAULT_SETTINGS = {
         "description": "Automatically update libraries (Yes/No)",
         "value": False
     },
-    "enable_telemetry": {
-        "description": (
-            "Telemetry service <http://docs.platformio.org/en/stable/"
-            "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
-        "value": True
+    "force_verbose": {
+        "description": "Force verbose output when processing environments",
+        "value": False
     },
-    "enable_prompts": {
-        "description": (
-            "Can PlatformIO communicate with you via prompts: "
-            "propose to install platforms which aren't installed yet, "
-            "paginate over library search results and etc.)? ATTENTION!!! "
-            "If you call PlatformIO like subprocess, "
-            "please disable prompts to avoid blocking (Yes/No)"),
+    "disable_ssl": {
+        "description": ("Disable SSL for PlatformIO API "
+                        "(NOT RECOMMENDED, INSECURE)"),
+        "value": False
+    },
+    "enable_telemetry": {
+        "description":
+        ("Telemetry service <http://docs.platformio.org/en/stable/"
+         "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
         "value": True
     }
 }
 
-
-SESSION_VARS = {
-    "command_ctx": None,
-    "force_option": False,
-    "caller_id": None
-}
+SESSION_VARS = {"command_ctx": None, "force_option": False, "caller_id": None}
 
 
 class State(object):
@@ -104,8 +101,8 @@ class State(object):
             return
         self._lockfile = LockFile(self.path)
 
-        if (self._lockfile.is_locked() and
-                (time() - getmtime(self._lockfile.lock_file)) > 10):
+        if self._lockfile.is_locked() and \
+                (time() - getmtime(self._lockfile.lock_file)) > 10:
             self._lockfile.break_lock()
 
         self._lockfile.acquire()
@@ -144,12 +141,6 @@ def set_state_item(name, value):
 
 
 def get_setting(name):
-    if name == "enable_prompts":
-        # disable prompts for Continuous Integration systems
-        # and when global "--force" option is set
-        if any([util.is_ci(), get_session_var("force_option")]):
-            return False
-
     _env_name = "PLATFORMIO_SETTING_%s" % name.upper()
     if _env_name in environ:
         return sanitize_setting(name, getenv(_env_name))
@@ -184,5 +175,16 @@ def set_session_var(name, value):
 
 
 def is_disabled_progressbar():
-    return (not get_setting("enable_prompts") or
-            getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true")
+    return any([get_session_var("force_option"), util.is_ci(),
+                getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"])
+
+
+def get_cid():
+    cid = get_state_item("cid")
+    if not cid:
+        cid = str(
+            uuid.UUID(bytes=hashlib.md5(
+                str(getenv("C9_UID")
+                    if getenv("C9_UID") else uuid.getnode())).digest()))
+        set_state_item("cid", cid)
+    return cid

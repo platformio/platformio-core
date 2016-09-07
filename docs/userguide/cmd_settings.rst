@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -87,23 +87,29 @@ Check for the new PlatformIO interval.
 
 Check for the platform updates interval.
 
-.. _setting_enable_prompts:
+.. _setting_disable_ssl:
 
-``enable_prompts``
-^^^^^^^^^^^^^^^^^^
+``disable_ssl``
+^^^^^^^^^^^^^^^
 
-:Default:   Yes
+:Default:   No
 :Values:    Yes/No
 
-Can PlatformIO communicate with you via prompts?
+Disable SSL for PlatformIO API (NOT RECOMMENDED, INSECURE)
 
-* propose to install platforms which aren't installed yet
-* paginate over library search results
-* and etc.
+.. _setting_force_verbose:
 
-.. warning::
-    If you are going to run *PlatformIO* from **subprocess**, you **MUST
-    DISABLE** all prompts. It will allow you to avoid blocking.
+``force_verbose``
+^^^^^^^^^^^^^^^^^
+
+:Default:   No
+:Values:    Yes/No
+
+Force verbose output when processing environments. This setting overrides
+
+* :option:`platformio run --verbose`
+* :option:`platformio ci --verbose`
+* :option:`platformio test --verbose`
 
 .. _setting_enable_telemetry:
 
@@ -148,7 +154,6 @@ Examples
     check_libraries_interval        7                 Check for the library updates interval (days)
     check_platformio_interval       3                 Check for the new PlatformIO interval (days)
     check_platforms_interval        7                 Check for the platform updates interval (days)
-    enable_prompts                  Yes               Can PlatformIO communicate with you via prompts ...
     enable_telemetry                Yes               Telemetry service (Yes/No)
 
 

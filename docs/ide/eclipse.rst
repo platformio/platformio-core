@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -35,12 +35,12 @@ page for more detailed information.
 Integration
 -----------
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
+Choose board ``ID`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
-    platformio init --ide eclipse --board %TYPE%
+    platformio init --ide eclipse --board <ID>
 
     # For example, generate project for Arduino UNO
     platformio init --ide eclipse --board uno

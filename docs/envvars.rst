@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -35,8 +35,8 @@ PlatformIO handles ``CI`` variable which is setup by
 `Continuous Integration <http://en.wikipedia.org/wiki/Continuous_integration>`_
 (Travis, Circle and etc.) systems.
 PlatformIO uses it to disable prompts and progress bars. In other words,
-``CI=true`` automatically setup :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS` to
-``false`` and :envvar:`PLATFORMIO_DISABLE_PROGRESSBAR` to ``true``.
+``CI=true`` automatically setup :envvar:`PLATFORMIO_DISABLE_PROGRESSBAR` to
+``true``.
 
 .. envvar:: PLATFORMIO_FORCE_COLOR
 
@@ -57,6 +57,10 @@ Allows to override :ref:`projectconf` option :ref:`projectconf_pio_home_dir`.
 
 Allows to override :ref:`projectconf` option :ref:`projectconf_pio_lib_dir`.
 
+.. envvar:: PLATFORMIO_LIBDEPS_DIR
+
+Allows to override :ref:`projectconf` option :ref:`projectconf_pio_libdeps_dir`.
+
 .. envvar:: PLATFORMIO_SRC_DIR
 
 Allows to override :ref:`projectconf` option :ref:`projectconf_pio_src_dir`.
@@ -68,6 +72,10 @@ Allows to override :ref:`projectconf` option :ref:`projectconf_pio_envs_dir`.
 .. envvar:: PLATFORMIO_DATA_DIR
 
 Allows to override :ref:`projectconf` option :ref:`projectconf_pio_data_dir`.
+
+.. envvar:: PLATFORMIO_TEST_DIR
+
+Allows to override :ref:`projectconf` option :ref:`projectconf_pio_test_dir`.
 
 
 Building
@@ -102,6 +110,10 @@ Allows to set :ref:`projectconf` option :ref:`projectconf_src_filter`.
 .. envvar:: PLATFORMIO_EXTRA_SCRIPT
 
 Allows to set :ref:`projectconf` option :ref:`projectconf_extra_script`.
+
+.. envvar:: PLATFORMIO_LIB_EXTRA_DIRS
+
+Allows to set :ref:`projectconf` option :ref:`projectconf_lib_extra_dirs`.
 
 
 Uploading
@@ -142,10 +154,15 @@ Allows to override setting :ref:`setting_check_platformio_interval`.
 
 Allows to override setting :ref:`setting_check_platforms_interval`.
 
-.. envvar:: PLATFORMIO_SETTING_ENABLE_PROMPTS
-
-Allows to override setting :ref:`setting_enable_prompts`.
-
 .. envvar:: PLATFORMIO_SETTING_ENABLE_TELEMETRY
 
 Allows to override setting :ref:`setting_enable_telemetry`.
+
+.. envvar:: PLATFORMIO_SETTING_FORCE_VERBOSE
+
+Allows to override setting :ref:`setting_force_verbose`.
+
+
+.. envvar:: PLATFORMIO_SETTING_DISABLE_SSL
+
+Allows to override setting :ref:`setting_disable_ssl`.

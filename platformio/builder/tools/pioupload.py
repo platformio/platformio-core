@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+import sys
 from os import environ
 from os.path import isfile, join
 from platform import system
@@ -71,20 +72,20 @@ def WaitForNewSerialPort(env, before):
                 break
 
     if not new_port:
-        env.Exit("Error: Couldn't find a board on the selected port. "
-                 "Check that you have the correct port selected. "
-                 "If it is correct, try pressing the board's reset "
-                 "button after initiating the upload.")
+        sys.stderr.write("Error: Couldn't find a board on the selected port. "
+                         "Check that you have the correct port selected. "
+                         "If it is correct, try pressing the board's reset "
+                         "button after initiating the upload.\n")
+        env.Exit(1)
 
     return new_port
 
 
 def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
     env = args[0]
-    print "Looking for upload port/disk..."
 
     def _look_for_mbed_disk():
-        msdlabels = ("mbed", "nucleo", "frdm")
+        msdlabels = ("mbed", "nucleo", "frdm", "microbit")
         for item in util.get_logicaldisks():
             if (not item['name'] or
                     not any([l in item['name'].lower() for l in msdlabels])):
@@ -94,8 +95,9 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
 
     def _look_for_serial_port():
         port = None
-        board_hwids = env.get("BOARD_OPTIONS", {}).get(
-            "build", {}).get("hwids", [])
+        board_hwids = []
+        if "BOARD" in env and "build.hwids" in env.BoardConfig():
+            board_hwids = env.BoardConfig().get("build.hwids")
         for item in util.get_serialports():
             if "VID:PID" not in item['hwid']:
                 continue
@@ -107,33 +109,34 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         return port
 
     if "UPLOAD_PORT" in env:
-        print env.subst("Manually specified: $UPLOAD_PORT")
+        print env.subst("Use manually specified: $UPLOAD_PORT")
         return
 
-    if env.subst("$FRAMEWORK") == "mbed":
+    if env.subst("$PIOFRAMEWORK") == "mbed":
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
         if (system() == "Linux" and
                 not isfile("/etc/udev/99-platformio-udev.rules")):
-            print(
+            sys.stderr.write(
                 "\nWarning! Please install `99-platformio-udev.rules` and "
                 "check that your board's PID and VID are listed in the rules."
                 "\n https://raw.githubusercontent.com/platformio/platformio"
-                "/develop/scripts/99-platformio-udev.rules\n"
-            )
+                "/develop/scripts/99-platformio-udev.rules\n")
         env.Replace(UPLOAD_PORT=_look_for_serial_port())
 
     if env.subst("$UPLOAD_PORT"):
         print env.subst("Auto-detected: $UPLOAD_PORT")
     else:
-        env.Exit("Error: Please specify `upload_port` for environment or use "
-                 "global `--upload-port` option.\n"
-                 "For some development platforms this can be a USB flash "
-                 "drive (i.e. /media/<user>/<device name>)\n")
+        sys.stderr.write(
+            "Error: Please specify `upload_port` for environment or use "
+            "global `--upload-port` option.\n"
+            "For some development platforms it can be a USB flash "
+            "drive (i.e. /media/<user>/<device name>)\n")
+        env.Exit(1)
 
 
 def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
-    env.AutodetectUploadPort()
+    assert "UPLOAD_PORT" in env
     progname = env.subst("$PROGNAME")
     for ext in ("bin", "hex"):
         fpath = join(env.subst("$BUILD_DIR"), "%s.%s" % (progname, ext))
@@ -141,17 +144,17 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
             continue
         copyfile(fpath, join(
             env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
-    print("Firmware has been successfully uploaded.\n"
-          "Please restart your board.")
+    print "Firmware has been successfully uploaded.\n"\
+          "(Some boards may require manual hard reset)"
 
 
 def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
-    max_size = int(env.get("BOARD_OPTIONS", {}).get("upload", {}).get(
-        "maximum_size", 0))
+    if "BOARD" not in env:
+        return
+    max_size = int(env.BoardConfig().get("upload.maximum_size", 0))
     if max_size == 0 or "SIZETOOL" not in env:
         return
 
-    print "Check program size..."
     sysenv = environ.copy()
     sysenv['PATH'] = str(env['ENV']['PATH'])
     cmd = [env.subst("$SIZETOOL"), "-B", str(target[0])]
@@ -165,8 +168,10 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
     used_size = int(values[0]) + int(values[1])
 
     if used_size > max_size:
-        env.Exit("Error: The program size (%d bytes) is greater "
-                 "than maximum allowed (%s bytes)" % (used_size, max_size))
+        sys.stderr.write("Error: The program size (%d bytes) is greater "
+                         "than maximum allowed (%s bytes)\n" %
+                         (used_size, max_size))
+        env.Exit(1)
 
 
 def exists(_):

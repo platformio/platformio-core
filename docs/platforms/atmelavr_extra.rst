@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -30,7 +30,7 @@ Configuration for the programmers:
         upload_protocol = stk500v1
         upload_flags = -P$UPLOAD_PORT
 
-        # edit this line with valid upload port
+        ; edit this line with valid upload port
         upload_port = SERIAL_PORT_HERE
 
 *   AVRISP mkII
@@ -91,7 +91,7 @@ Configuration for the programmers:
         upload_protocol = stk500v1
         upload_flags = -P$UPLOAD_PORT -b$UPLOAD_SPEED
 
-        # edit these lines
+        ; edit these lines
         upload_port = SERIAL_PORT_HERE
         upload_speed = 19200
 

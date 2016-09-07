@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -68,6 +68,13 @@ PlatformIO IDE
 
 Please refer to :ref:`PlatformIO IDE Frequently Asked Questions <ide_atom_faq>`.
 
+Before/Pre and After/Post build actions
+---------------------------------------
+
+PlatformIO Build System has rich API that allows to attach different pre-/post
+actions (hooks). See features of :ref:`projectconf_extra_script` option for
+:ref:`projectconf`.
+
 .. _faq_troubleshooting:
 
 Troubleshooting
@@ -132,21 +139,6 @@ Please upgrade *SetupTools* package:
 Miscellaneous
 ~~~~~~~~~~~~~
 
-.. _faq_troubleshooting_pioblocksprompt:
-
-PlatformIO blocks command execution using user prompt
-'''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-If you are going to run *PlatformIO* from **subprocess**, you **MUST
-DISABLE** all prompts. It will allow you to avoid blocking.
-There are a few options:
-
-- using :option:`platformio --force` option before each command
-- using environment variable :envvar:`PLATFORMIO_SETTING_ENABLE_PROMPTS=No <PLATFORMIO_SETTING_ENABLE_PROMPTS>`
-- disable global setting ``enable_prompts`` via :ref:`cmd_settings` command
-- masking under Continuous Integration system via environment variable
-  :envvar:`CI=true <CI>`.
-
 Serial does not work with panStampAVR board
 '''''''''''''''''''''''''''''''''''''''''''
 
@@ -154,12 +146,6 @@ Answered in `issue #144 <https://github.com/platformio/platformio/issues/144#iss
 
 Building
 ~~~~~~~~
-
-Can not compile a library that compiles without issue with Arduino IDE
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-* `#298: Unable to use Souliss library <https://github.com/platformio/platformio/issues/298>`_
-* `#331: Unable to use MySensors library <https://github.com/platformio/platformio/issues/331>`_
 
 ARM toolchain: cc1plus: error while loading shared libraries
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''

@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -14,13 +14,50 @@
 Library Manager
 ===============
 
-*PlatformIO Library Manager* allows you to organize external embedded libraries.
-You can search for new libraries via
+*PlatformIO Library Manager* is a tool for managing libraries of
+`PlatformIO Registry <http://platformio.org/lib>`__ and VCS repositories (Git,
+Hg, SVN). It makes it exceedingly simple to find, install and keep libraries
+up-to-date. PlatformIO Library Manager supports
+`Semantic Versioning <http://semver.org>`_ and its rules.
 
-* :ref:`Command Line interface <cmd_lib_search>`
-* `Web 2.0 Library Search <http://platformio.org/lib>`_
+There 2 options how to find library:
 
-You don't need to bother for finding the latest version of library. Due to
-:ref:`cmd_lib_update` command you will have up-to-date external libraries.
+* :ref:`Command Line Interface <cmd_lib_search>`
+* `Web-based Library Search <http://platformio.org/lib>`__
+
+*PlatformIO Library Manager* allows to manage different library storages using
+:option:`platformio lib --global` or  :option:`platformio lib --storage-dir`
+options.
+
+Project dependencies
+--------------------
+
+*PlatformIO Library Manager* allows to specify project dependencies
+(:ref:`projectconf_lib_deps`) that will be installed automatically per project
+before environment processing. You do not need to install libraries manually.
+The only one simple step is to define dependencies in :ref:`projectconf`.
+You can use library ID, Name or even repository URL. For example,
+
+.. code-block:: ini
+
+  [env:myenv]
+  platform = ...
+  framework = ...
+  board = ...
+  lib_deps =
+    13
+    PubSubClient
+    Json@~5.6,!=5.4
+    https://github.com/gioblu/PJON.git@v2.0
+    https://github.com/me-no-dev/ESPAsyncTCP.git
+    https://github.com/adafruit/DHT-sensor-library/archive/master.zip
+
+Please follow to :ref:`cmd_lib_install` for detailed documentation about
+possible values.
+
+.. warning::
+  If some libraries are not visible in :ref:`ide_atom` and Code Completion or
+  Code Linting does not work properly, please perform  ``Menu: PlatformIO >
+  Rebuild C/C++ Project Index (Autocomplete, Linter)``
 
 .. image:: ../_static/platformio-demo-lib.gif

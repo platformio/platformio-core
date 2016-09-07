@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,57 +13,163 @@
 # limitations under the License.
 
 import json
+from os.path import join
+from time import sleep
 
 import click
 
-from platformio import app, exception
-from platformio.libmanager import LibraryManager
+from platformio import exception, util
+from platformio.managers.lib import LibraryManager
 from platformio.util import get_api_result
+
+
+@click.group(short_help="Library Manager")
+@click.option(
+    "-g",
+    "--global",
+    is_flag=True,
+    help="Manager global PlatformIO"
+    " library storage `%s`" % join(util.get_home_dir(), "lib"))
+@click.option(
+    "-d",
+    "--storage-dir",
+    default=None,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        resolve_path=True),
+    help="Manage custom library storage")
+@click.pass_context
+def cli(ctx, **options):
+    # skip commands that don't need storage folder
+    if ctx.invoked_subcommand in ("search", "register") or \
+            (len(ctx.args) == 2 and ctx.args[1] in ("-h", "--help")):
+        return
+    storage_dir = options['storage_dir']
+    if not storage_dir:
+        if options['global']:
+            storage_dir = join(util.get_home_dir(), "lib")
+        elif util.is_platformio_project():
+            storage_dir = util.get_projectlibdeps_dir()
+        elif util.is_ci():
+            storage_dir = join(util.get_home_dir(), "lib")
+            click.secho(
+                "Warning! Global library storage is used automatically. "
+                "Please use `platformio lib --global %s` command to remove "
+                "this warning." % ctx.invoked_subcommand,
+                fg="yellow")
+
+    if not storage_dir and not util.is_platformio_project():
+        raise exception.NotGlobalLibDir(util.get_project_dir(),
+                                        join(util.get_home_dir(), "lib"),
+                                        ctx.invoked_subcommand)
+
+    ctx.obj = LibraryManager(storage_dir)
+    if "--json-output" not in ctx.args:
+        click.echo("Library Storage: " + storage_dir)
+
+
+@cli.command("install", short_help="Install library")
+@click.argument("libraries", required=False, nargs=-1, metavar="[LIBRARY...]")
+# @click.option(
+#     "--save",
+#     is_flag=True,
+#     help="Save installed libraries into the project's platformio.ini "
+#     "library dependencies")
+@click.option(
+    "-s", "--silent", is_flag=True, help="Suppress progress reporting")
+@click.option(
+    "--interactive",
+    is_flag=True,
+    help="Allow to make a choice for all prompts")
+@click.pass_obj
+def lib_install(lm, libraries, silent, interactive):
+    # @TODO "save" option
+    for library in libraries:
+        lm.install(library, silent=silent, interactive=interactive)
+
+
+@cli.command("uninstall", short_help="Uninstall libraries")
+@click.argument("libraries", nargs=-1, metavar="[LIBRARY...]")
+@click.pass_obj
+def lib_uninstall(lm, libraries):
+    for library in libraries:
+        lm.uninstall(library)
+
+
+@cli.command("update", short_help="Update installed libraries")
+@click.argument("libraries", required=False, nargs=-1, metavar="[LIBRARY...]")
+@click.option(
+    "-c",
+    "--only-check",
+    is_flag=True,
+    help="Do not update, only check for new version")
+@click.pass_obj
+def lib_update(lm, libraries, only_check):
+    if not libraries:
+        libraries = [str(m.get("id", m['name'])) for m in lm.get_installed()]
+    for library in libraries:
+        lm.update(library, only_check=only_check)
+
+#######
 
 LIBLIST_TPL = ("[{id:^14}] {name:<25} {compatibility:<30} "
                "\"{authornames}\": {description}")
 
 
 def echo_liblist_header():
-    click.echo(LIBLIST_TPL.format(
-        id=click.style("ID", fg="green"),
-        name=click.style("Name", fg="cyan"),
-        compatibility=click.style("Compatibility", fg="yellow"),
-        authornames="Authors",
-        description="Description"
-    ))
+    click.echo(
+        LIBLIST_TPL.format(
+            id=click.style(
+                "ID", fg="green"),
+            name=click.style(
+                "Name", fg="cyan"),
+            compatibility=click.style(
+                "Compatibility", fg="yellow"),
+            authornames="Authors",
+            description="Description"))
 
     terminal_width, _ = click.get_terminal_size()
     click.echo("-" * terminal_width)
 
 
 def echo_liblist_item(item):
-    click.echo(LIBLIST_TPL.format(
-        id=click.style(str(item['id']), fg="green"),
-        name=click.style(item['name'], fg="cyan"),
-        compatibility=click.style(
-            ", ".join(item['frameworks'] + item['platforms']),
-            fg="yellow"
-        ),
-        authornames=", ".join(item['authornames']),
-        description=item['description']
-    ))
+    description = item.get("description", item.get("url", "")).encode("utf-8")
+    if "version" in item:
+        description += " | @" + click.style(item['version'], fg="yellow")
 
-
-@click.group(short_help="Library Manager")
-def cli():
-    pass
+    click.echo(
+        LIBLIST_TPL.format(
+            id=click.style(
+                str(item.get("id", "-")), fg="green"),
+            name=click.style(
+                item['name'], fg="cyan"),
+            compatibility=click.style(
+                ", ".join(
+                    item.get("frameworks", ["-"]) + item.get("platforms", [])),
+                fg="yellow"),
+            authornames=", ".join(item.get("authornames", ["Unknown"])).encode(
+                "utf-8"),
+            description=description))
 
 
 @cli.command("search", short_help="Search for library")
+@click.argument("query", required=False, nargs=-1)
 @click.option("--json-output", is_flag=True)
 @click.option("--page", type=click.INT, default=1)
+@click.option("-n", "--name", multiple=True)
 @click.option("-a", "--author", multiple=True)
 @click.option("-k", "--keyword", multiple=True)
 @click.option("-f", "--framework", multiple=True)
 @click.option("-p", "--platform", multiple=True)
-@click.argument("query", required=False, nargs=-1)
-def lib_search(query, json_output, page, **filters):
+@click.option("-i", "--header", multiple=True)
+@click.option(
+    "--noninteractive",
+    is_flag=True,
+    help="Do not prompt, automatically paginate with delay")
+def lib_search(query, json_output, page, noninteractive, **filters):
     if not query:
         query = []
     if not isinstance(query, list):
@@ -73,8 +179,9 @@ def lib_search(query, json_output, page, **filters):
         for value in values:
             query.append('%s:"%s"' % (key, value))
 
-    result = get_api_result("/lib/search",
-                            dict(query=" ".join(query), page=page))
+    result = get_api_result(
+        "/lib/search", dict(
+            query=" ".join(query), page=page))
 
     if json_output:
         click.echo(json.dumps(result))
@@ -84,17 +191,22 @@ def lib_search(query, json_output, page, **filters):
         click.secho(
             "Nothing has been found by your request\n"
             "Try a less-specific search or use truncation (or wildcard) "
-            "operator", fg="yellow", nl=False)
+            "operator",
+            fg="yellow",
+            nl=False)
         click.secho(" *", fg="green")
         click.secho("For example: DS*, PCA*, DHT* and etc.\n", fg="yellow")
         click.echo("For more examples and advanced search syntax, "
                    "please use documentation:")
-        click.secho("http://docs.platformio.org"
-                    "/en/stable/userguide/lib/cmd_search.html\n", fg="cyan")
+        click.secho(
+            "http://docs.platformio.org"
+            "/en/stable/userguide/lib/cmd_search.html\n",
+            fg="cyan")
         return
 
-    click.secho("Found %d libraries:\n" % result['total'],
-                fg="green" if result['total'] else "yellow")
+    click.secho(
+        "Found %d libraries:\n" % result['total'],
+        fg="green" if result['total'] else "yellow")
 
     if result['total']:
         echo_liblist_header()
@@ -107,98 +219,27 @@ def lib_search(query, json_output, page, **filters):
                 int(result['total'])):
             break
 
-        if (app.get_setting("enable_prompts") and
-                click.confirm("Show next libraries?")):
-            result = get_api_result(
-                "/lib/search",
-                dict(query=" ".join(query), page=int(result['page']) + 1)
-            )
-        else:
-            break
-
-
-@cli.command("install", short_help="Install library")
-@click.argument("libid", type=click.INT, nargs=-1, metavar="[LIBRARY_ID]")
-@click.option("-v", "--version")
-@click.pass_context
-def lib_install(ctx, libid, version):
-    lm = LibraryManager()
-    for id_ in libid:
-        click.echo(
-            "Installing library [ %s ]:" % click.style(str(id_), fg="green"))
-        try:
-            if not lm.install(id_, version):
-                continue
-
-            info = lm.get_info(id_)
+        if noninteractive:
+            click.echo()
             click.secho(
-                "The library #%s '%s' has been successfully installed!"
-                % (str(id_), info['name']), fg="green")
-
-            if "dependencies" in info:
-                click.secho("Installing dependencies:", fg="yellow")
-                _dependencies = info['dependencies']
-                if not isinstance(_dependencies, list):
-                    _dependencies = [_dependencies]
-                for item in _dependencies:
-                    try:
-                        lib_install_dependency(ctx, item)
-                    except AssertionError:
-                        raise exception.LibInstallDependencyError(str(item))
-
-        except exception.LibAlreadyInstalled:
-            click.secho("Already installed", fg="yellow")
-
-
-def lib_install_dependency(ctx, data):
-    assert isinstance(data, dict)
-    query = []
-    for key in data:
-        if key in ("authors", "frameworks", "platforms", "keywords"):
-            values = data[key]
-            if not isinstance(values, list):
-                values = [v.strip() for v in values.split(",") if v]
-            for value in values:
-                query.append('%s:"%s"' % (key[:-1], value))
-        elif isinstance(data[key], basestring):
-            query.append('+"%s"' % data[key])
-
-    result = get_api_result("/lib/search", dict(query=" ".join(query)))
-    assert result['total'] > 0
-
-    if result['total'] == 1 or not app.get_setting("enable_prompts"):
-        ctx.invoke(lib_install, libid=[result['items'][0]['id']])
-    else:
-        click.secho(
-            "Conflict: More than one dependent libraries have been found "
-            "by request %s:" % json.dumps(data), fg="red")
-
-        echo_liblist_header()
-        for item in result['items']:
-            echo_liblist_item(item)
-
-        deplib_id = click.prompt(
-            "Please choose one dependent library ID",
-            type=click.Choice([str(i['id']) for i in result['items']]))
-        ctx.invoke(lib_install, libid=[int(deplib_id)])
-
-
-@cli.command("uninstall", short_help="Uninstall libraries")
-@click.argument("libid", type=click.INT, nargs=-1)
-def lib_uninstall(libid):
-    lm = LibraryManager()
-    for id_ in libid:
-        info = lm.get_info(id_)
-        if lm.uninstall(id_):
-            click.secho("The library #%s '%s' has been successfully "
-                        "uninstalled!" % (str(id_), info['name']), fg="green")
+                "Loading next %d libraries... Press Ctrl+C to stop!" %
+                result['perpage'],
+                fg="yellow")
+            click.echo()
+            sleep(5)
+        elif not click.confirm("Show next libraries?"):
+            break
+        result = get_api_result(
+            "/lib/search",
+            dict(
+                query=" ".join(query), page=int(result['page']) + 1))
 
 
 @cli.command("list", short_help="List installed libraries")
 @click.option("--json-output", is_flag=True)
-def lib_list(json_output):
-    lm = LibraryManager()
-    items = lm.get_installed().values()
+@click.pass_obj
+def lib_list(lm, json_output):
+    items = lm.get_installed()
 
     if json_output:
         click.echo(json.dumps(items))
@@ -208,21 +249,34 @@ def lib_list(json_output):
         return
 
     echo_liblist_header()
-    for item in sorted(items, key=lambda i: i['id']):
-        item['authornames'] = [i['name'] for i in item['authors']]
+    for item in sorted(items, key=lambda i: i['name']):
+        if "authors" in item:
+            item['authornames'] = [i['name'] for i in item['authors']]
         echo_liblist_item(item)
 
 
 @cli.command("show", short_help="Show details about installed library")
-@click.argument("libid", type=click.INT)
-def lib_show(libid):
-    lm = LibraryManager()
-    info = lm.get_info(libid)
-    click.secho(info['name'], fg="cyan")
-    click.echo("-" * len(info['name']))
+@click.pass_obj
+@click.argument("library", metavar="[LIBRARY]")
+def lib_show(lm, library):  # pylint: disable=too-many-branches
+    name, requirements, url = lm.parse_pkg_name(library)
+    package_dir = lm.get_package_dir(name, requirements, url)
+    if not package_dir:
+        click.secho(
+            "%s @ %s is not installed" % (name, requirements or "*"),
+            fg="yellow")
+        return
+
+    manifest = lm.load_manifest(package_dir)
+
+    click.secho(manifest['name'], fg="cyan")
+    click.echo("=" * len(manifest['name']))
+    if "description" in manifest:
+        click.echo(manifest['description'])
+    click.echo()
 
     _authors = []
-    for author in info['authors']:
+    for author in manifest.get("authors", []):
         _data = []
         for key in ("name", "email", "url", "maintainer"):
             if not author[key]:
@@ -234,61 +288,29 @@ def lib_show(libid):
             else:
                 _data.append(author[key])
         _authors.append(" ".join(_data))
-    click.echo("Authors: %s" % ", ".join(_authors))
+    if _authors:
+        click.echo("Authors: %s" % ", ".join(_authors))
 
-    click.echo("Keywords: %s" % ", ".join(info['keywords']))
-    if "frameworks" in info:
-        click.echo("Frameworks: %s" % ", ".join(info['frameworks']))
-    if "platforms" in info:
-        click.echo("Platforms: %s" % ", ".join(info['platforms']))
-    click.echo("Version: %s" % info['version'])
-    click.echo()
-    click.echo(info['description'])
-    click.echo()
-
-
-@cli.command("update", short_help="Update installed libraries")
-@click.argument("libid", type=click.INT, nargs=-1, required=False,
-                metavar="[LIBRARY_ID]")
-@click.pass_context
-def lib_update(ctx, libid):
-    lm = LibraryManager()
-    for id_, latest_version in (lm.get_latest_versions() or {}).items():
-        if libid and int(id_) not in libid:
+    for key in ("keywords", "frameworks", "platforms", "license", "url",
+                "version"):
+        if key not in manifest:
             continue
-
-        info = lm.get_info(int(id_))
-
-        click.echo("Updating [ %s ] %s library:" % (
-            click.style(id_, fg="yellow"),
-            click.style(info['name'], fg="cyan")))
-
-        current_version = info['version']
-        if latest_version is None:
-            click.secho("Unknown library", fg="red")
-            continue
-
-        click.echo("Versions: Current=%s, Latest=%s \t " % (
-            current_version, latest_version), nl=False)
-
-        if current_version == latest_version:
-            click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
-            continue
+        if isinstance(manifest[key], list):
+            click.echo("%s: %s" % (key.title(), ", ".join(manifest[key])))
         else:
-            click.echo("[%s]" % (click.style("Out-of-date", fg="red")))
-
-        ctx.invoke(lib_uninstall, libid=[int(id_)])
-        ctx.invoke(lib_install, libid=[int(id_)])
+            click.echo("%s: %s" % (key.title(), manifest[key]))
 
 
 @cli.command("register", short_help="Register new library")
 @click.argument("config_url")
 def lib_register(config_url):
-    if (not config_url.startswith("http://") and not
-            config_url.startswith("https://")):
+    if (not config_url.startswith("http://") and
+            not config_url.startswith("https://")):
         raise exception.InvalidLibConfURL(config_url)
 
     result = get_api_result("/lib/register", data=dict(config_url=config_url))
     if "message" in result and result['message']:
-        click.secho(result['message'], fg="green" if "successed" in result and
-                    result['successed'] else "red")
+        click.secho(
+            result['message'],
+            fg="green"
+            if "successed" in result and result['successed'] else "red")

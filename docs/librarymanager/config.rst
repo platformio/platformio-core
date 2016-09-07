@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -22,10 +22,11 @@ to keep project in own structure and define:
 * examples list
 * compatible frameworks and platforms
 * library dependencies
+* advanced build settings
 
 PlatformIO Library Crawler uses ``library.json`` manifest to extract
-source code from developer's location and keeps cleaned library in own
-Library Storage.
+source code from developer's location and keeps a cleaned library in own
+Library Registry.
 
 A data in ``library.json`` should be represented
 in `JSON-style <http://en.wikipedia.org/wiki/JSON>`_ via
@@ -138,7 +139,7 @@ Examples:
 
 *Required* if :ref:`libjson_downloadurl` field is not defined | Type: ``Object``
 
-The repository in which the source code can be found. The field consists for the
+The repository in which the source code can be found. The field consists of the
 next items:
 
 * ``type`` the only "git", "hg" or "svn" are supported
@@ -221,6 +222,21 @@ Example:
     },
     "version": "1.0.0"
 
+
+``license``
+-----------
+
+*Optional* | Type: ``String``
+
+A license of the library. You can check
+`the full list of SPDX license IDs <https://spdx.org/licenses/>`_. Ideally you
+should pick one that is `OSI <https://opensource.org/licenses/alphabetical>`_
+approved.
+
+.. code-block:: javascript
+
+    "license": "Apache-2.0"
+
 .. _libjson_downloadurl:
 
 ``downloadUrl``
@@ -246,27 +262,40 @@ Example with fixed release/tag on GitHub:
 
 See more ``library.json`` :ref:`library_creating_examples`.
 
-.. _libjson_url:
-
-``url``
--------
+``homepage``
+------------
 
 *Optional* | Type: ``String`` | Max. Length: 255
 
 Home page of library (if is different from :ref:`libjson_repository` url).
 
 
-.. _libjson_include:
+.. _libjson_export:
+
+``export``
+----------
+
+*Optional* | Type: ``Object``
+
+Explain PlatformIO Library Crawler which content from the repository/archive
+should be exported as "source code" of the library. This option is useful if
+need to exclude extra data (test code, docs, images, PDFs, etc). It allows to
+reduce size of the final archive.
+
+Possible options:
+
+.. contents::
+    :local:
 
 ``include``
------------
+~~~~~~~~~~~
 
 *Optional* | Type: ``String`` or ``Array`` |
 `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_
 
-If :ref:`libjson_include` field is a type of ``String``, then
-|PIOAPICR| will recognize it like a "relative path inside
-repository/archive to library source code". See example below where the only
+If ``include`` field is a type of ``String``, then |PIOAPICR| will recognize
+it like a "relative path inside repository/archive to library source code".
+See example below where the only
 source code from the relative directory ``LibrarySourceCodeHere`` will be
 included.
 
@@ -274,21 +303,23 @@ included.
 
     "include": "some/child/dir/LibrarySourceCodeHere"
 
-If :ref:`libjson_include` field is a type of ``Array``, then
-|PIOAPICR| firstly will apply :ref:`libjson_exclude` filter and
-then include only directories/files which match with :ref:`libjson_include`
-patterns.
+If ``include`` field is a type of ``Array``, then |PIOAPICR| firstly will
+apply ``exclude`` filter and then include only directories/files
+which match with ``include`` patterns.
 
 Example:
 
 .. code-block:: javascript
 
-    "include":
-    [
-        "dir/*.[ch]pp",
-        "dir/examples/*",
-        "*/*/*.h"
-    ]
+    "export": {
+        "include":
+        [
+            "dir/*.[ch]pp",
+            "dir/examples/*",
+            "*/*/*.h"
+        ]
+    }
+
 
 Pattern	Meaning
 
@@ -308,16 +339,14 @@ Pattern	Meaning
 
 See more ``library.json`` :ref:`library_creating_examples`.
 
-.. _libjson_exclude:
 
 ``exclude``
------------
+~~~~~~~~~~~
 
 *Optional* | Type: ``String`` or ``Array`` |
 `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_
 
-Exclude the directories and files which match with :ref:`libjson_exclude`
-patterns.
+Exclude the directories and files which match with ``exclude`` patterns.
 
 .. _libjson_frameworks:
 
@@ -367,9 +396,25 @@ A list of dependent libraries. They will be installed automatically with
 Allowed requirements for dependent library:
 
 * ``name`` | Type: ``String``
+* ``version`` | Type: ``String``
 * ``authors`` | Type: ``String`` or ``Array``
 * ``frameworks`` | Type: ``String`` or ``Array``
 * ``platforms`` | Type: ``String`` or ``Array``
+
+The ``version`` supports `Semantic Versioning <http://semver.org>`_ (
+``<major>.<minor>.<patch>``) and can take any of the following forms:
+
+* ``0.1.2`` - an exact version number. Use only this exact version
+* ``^0.1.2`` - any compatible version (exact version for ``0.x.x`` versions
+* ``~0.1.2`` - any version with the same major and minor versions, and an
+  equal or greater patch version
+* ``>0.1.2`` - any version greater than ``0.1.2``. ``>=``, ``<``, and ``<=``
+  are also possible
+* ``>0.1.0,!=0.2.0,<0.3.0`` - any version greater than ``0.1.0``, not equal to
+  ``0.2.0`` and less than ``0.3.0``
+
+The rest possible values including VCS repository URLs are documented in
+:ref:`cmd_lib_install` command.
 
 Example:
 
@@ -387,9 +432,22 @@ Example:
         },
         {
             "name": "Library-Bar",
-            "frameworks": "FrameworkFoo, FrameworkBar"
+            "version": "~1.2.3"
+        },
+        {
+            "name": "lib-from-repo",
+            "version": "https://github.com/user/package.git#1.2.3"
         }
     ]
+
+A short definition of dependencies is allowed:
+
+.. code-block:: javascript
+
+    "dependencies": {
+        "mylib": "1.2.3",
+        "lib-from-repo": "githubuser/package"
+    }
 
 
 See more ``library.json`` :ref:`library_creating_examples`.
@@ -397,7 +455,7 @@ See more ``library.json`` :ref:`library_creating_examples`.
 .. _libjson_examples:
 
 ``examples``
-----------------
+------------
 
 *Optional* | Type: ``String`` or ``Array`` |
 `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_
@@ -407,9 +465,141 @@ A list of example patterns. This field is predefined with default value:
 .. code-block:: javascript
 
     "examples": [
+        "[Ee]xamples/*.c",
+        "[Ee]xamples/*.cpp",
+        "[Ee]xamples/*.ino",
+        "[Ee]xamples/*.pde",
         "[Ee]xamples/*/*.c",
         "[Ee]xamples/*/*.cpp",
-        "[Ee]xamples/*/*.h",
         "[Ee]xamples/*/*.ino",
-        "[Ee]xamples/*/*.pde"
+        "[Ee]xamples/*/*.pde",
+        "[Ee]xamples/*/*/*.c",
+        "[Ee]xamples/*/*/*.cpp",
+        "[Ee]xamples/*/*/*.ino",
+        "[Ee]xamples/*/*/*.pde"
     ]
+
+
+.. _libjson_build:
+
+``build``
+---------
+
+*Optional* | Type: ``Object``
+
+Specify advanced settings, options and flags for the build system. Possible
+options:
+
+.. contents::
+    :local:
+
+``flags``
+~~~~~~~~~
+
+*Optional* | Type: ``String`` or ``Array``
+
+Extra flags to control preprocessing, compilation, assembly and linking
+processes. More details :ref:`projectconf_build_flags`.
+
+``unflags``
+~~~~~~~~~~~
+
+*Optional* | Type: ``String`` or ``Array``
+
+Remove base/initial flags which were set by development platform. More
+details :ref:`projectconf_build_unflags`.
+
+``srcFilter``
+~~~~~~~~~~~~~
+
+*Optional* | Type: ``String`` or ``Array``
+
+Specify which source files should be included/excluded from build process.
+More details :ref:`projectconf_src_filter`.
+
+``extraScript``
+~~~~~~~~~~~~~~~
+
+*Optional* | Type: ``String``
+
+Launch extra script before build process.
+More details :ref:`projectconf_extra_script`.
+
+``libArchive``
+~~~~~~~~~~~~~~
+
+*Optional* | Type: ``Boolean``
+
+Archive object files to Static Library. This is default behavior of PlatformIO
+Build System (``"libArchive": true``).
+
+``libLDFMode``
+~~~~~~~~~~~~~~
+
+*Optional* | Type: ``Integer``
+
+Specify Library Dependency Finder Mode. See :ref:`ldf_mode` for details.
+
+**Examples**
+
+1. Custom macros/defines
+
+.. code-block:: javascript
+
+    "build": {
+        "flags": "-D MYLIB_REV=0.1.2 -DRELEASE"
+    }
+
+2. Extra includes for C preprocessor
+
+.. code-block:: javascript
+
+    "build": {
+        "flags": [
+            "-I inc",
+            "-I inc/target_x13"
+        ]
+    }
+
+3. Force to use ``C99`` standard instead of ``C11``
+
+.. code-block:: javascript
+
+    "build": {
+        "unflags": "-std=gnu++11",
+        "flags": "-std=c99"
+    }
+
+4. Build source files (``c, cpp, h``) at the top level of the library
+
+.. code-block:: javascript
+
+    "build": {
+        "srcFilter": [
+            "+<*.c>",
+            "+<*.cpp>",
+            "+<*.h>"
+        ]
+    }
+
+
+5. Extend PlatformIO Build System with own extra script
+
+.. code-block:: javascript
+
+    "build": {
+        "extraScript": "generate_headers.py"
+    }
+
+``generate_headers.py``
+
+.. code-block:: python
+
+    Import('env')
+    # print env.Dump()
+    env.Append(
+        CPPDEFINES=["HELLO=WORLD", "TAG=1.2.3", "DEBUG"],
+        CPPPATH=["inc", "inc/devices"]
+    )
+
+    # some python code that generates header files "on-the-fly"

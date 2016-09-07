@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -35,12 +35,12 @@ Integration
 Project Generator
 ^^^^^^^^^^^^^^^^^
 
-Choose board ``type`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
+Choose board ``ID`` using :ref:`cmd_boards` or `Embedded Boards Explorer <http://platformio.org/boards>`_
 command and generate project via :option:`platformio init --ide` command:
 
 .. code-block:: shell
 
-    platformio init --ide qtcreator --board %TYPE%
+    platformio init --ide qtcreator --board <ID>
 
     # For example, generate project for Arduino UNO
     platformio init --ide qtcreator --board uno
@@ -165,14 +165,16 @@ Copy the source code which is described below to file ``main.c``.
 
 Edit the content to match the code described below.
 
-.. code-block:: none
+.. code-block:: ini
 
-    #
-    # PlatformIO Project Configuration File
-    #
-    # Please make sure to read documentation with examples first
-    # http://docs.platformio.org/en/stable/projectconf.html
-    #
+    ; PlatformIO Project Configuration File
+    ;
+    ;   Build options: build flags, source filter, extra scripting
+    ;   Upload options: custom port, speed and extra flags
+    ;   Library options: dependencies, extra library storages
+    ;
+    ; Please visit documentation for the other options and examples
+    ; http://docs.platformio.org/en/stable/projectconf.html
 
     [env:arduino_uno]
     platform = atmelavr

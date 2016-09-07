@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,186 +16,211 @@ from __future__ import absolute_import
 
 import atexit
 import re
+import sys
 from glob import glob
-from os import environ, listdir, remove
-from os.path import isdir, isfile, join
+from os import environ, remove, walk
+from os.path import basename, isdir, isfile, join, relpath
+from tempfile import mkstemp
 
-from platformio.util import exec_command, where_is_program
+from SCons.Action import Action
+from SCons.Script import ARGUMENTS
+
+from platformio import util
 
 
 class InoToCPPConverter(object):
 
-    PROTOTYPE_RE = re.compile(
-        r"""^(
-        (\s*[a-z_\d]+\*?){1,2}      # return type
-        (\s+[a-z_\d]+\s*)           # name of prototype
+    PROTOTYPE_RE = re.compile(r"""^(
+        ([a-z_\d]+\*?\s+){1,2}      # return type
+        ([a-z_\d]+\s*)              # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*\{                      # must end with {
-        """,
-        re.X | re.M | re.I
-    )
+        """, re.X | re.M | re.I)
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
     PROTOPTRS_TPLRE = r"\([^&\(]*&(%s)[^\)]*\)"
 
-    def __init__(self, nodes):
-        self.nodes = nodes
+    def __init__(self, env):
+        self.env = env
+        self._main_ino = None
 
     def is_main_node(self, contents):
         return self.DETECTMAIN_RE.search(contents)
 
-    def _parse_prototypes(self, file_path, contents):
+    def convert(self, nodes):
+        contents = self.merge(nodes)
+        if not contents:
+            return
+        return self.process(contents)
+
+    def merge(self, nodes):
+        assert nodes
+        lines = []
+        for node in nodes:
+            contents = node.get_text_contents()
+            _lines = [
+                '# 1 "%s"' % node.get_path().replace("\\", "/"), contents
+            ]
+            if self.is_main_node(contents):
+                lines = _lines + lines
+                self._main_ino = node.get_path()
+            else:
+                lines.extend(_lines)
+
+        if not self._main_ino:
+            self._main_ino = nodes[0].get_path()
+
+        return "\n".join(["#include <Arduino.h>"] + lines) if lines else None
+
+    def process(self, contents):
+        out_file = self._main_ino + ".cpp"
+        assert self._gcc_preprocess(contents, out_file)
+        with open(out_file) as fp:
+            contents = fp.read()
+        contents = self._join_multiline_strings(contents)
+        with open(out_file, "w") as fp:
+            fp.write(self.append_prototypes(contents))
+        return out_file
+
+    def _gcc_preprocess(self, contents, out_file):
+        tmp_path = mkstemp()[1]
+        with open(tmp_path, "w") as fp:
+            fp.write(contents)
+        self.env.Execute(
+            self.env.VerboseAction(
+                '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
+                    out_file, tmp_path), "Converting " + basename(
+                        out_file[:-4])))
+        atexit.register(_delete_file, tmp_path)
+        return isfile(out_file)
+
+    def _join_multiline_strings(self, contents):
+        if "\\\n" not in contents:
+            return contents
+        newlines = []
+        linenum = 0
+        stropen = False
+        for line in contents.split("\n"):
+            _linenum = self._parse_preproc_line_num(line)
+            if _linenum is not None:
+                linenum = _linenum
+            else:
+                linenum += 1
+
+            if line.endswith("\\"):
+                if line.startswith('"'):
+                    stropen = True
+                    newlines.append(line[:-1])
+                    continue
+                elif stropen:
+                    newlines[len(newlines) - 1] += line[:-1]
+                    continue
+            elif stropen and line.endswith('";'):
+                newlines[len(newlines) - 1] += line
+                stropen = False
+                newlines.append('#line %d "%s"' %
+                                (linenum, self._main_ino.replace("\\", "/")))
+                continue
+
+            newlines.append(line)
+
+        return "\n".join(newlines)
+
+    @staticmethod
+    def _parse_preproc_line_num(line):
+        if not line.startswith("#"):
+            return None
+        tokens = line.split(" ", 3)
+        if len(tokens) > 2 and tokens[1].isdigit():
+            return int(tokens[1])
+        return None
+
+    def _parse_prototypes(self, contents):
         prototypes = []
         reserved_keywords = set(["if", "else", "while"])
         for match in self.PROTOTYPE_RE.finditer(contents):
             if (set([match.group(2).strip(), match.group(3).strip()]) &
                     reserved_keywords):
                 continue
-            prototypes.append({"path": file_path, "match": match})
+            prototypes.append(match)
         return prototypes
 
-    def append_prototypes(self, file_path, contents, prototypes):
-        result = []
+    def _get_total_lines(self, contents):
+        total = 0
+        for line in contents.split("\n")[::-1]:
+            linenum = self._parse_preproc_line_num(line)
+            if linenum is not None:
+                return total + linenum
+            total += 1
+        return total
+
+    def append_prototypes(self, contents):
+        prototypes = self._parse_prototypes(contents)
         if not prototypes:
-            return result
+            return contents
 
-        prototype_names = set(
-            [p['match'].group(3).strip() for p in prototypes])
-        split_pos = prototypes[0]['match'].start()
-        for item in prototypes:
-            if item['path'] == file_path:
-                split_pos = item['match'].start()
-                break
-
-        match_ptrs = re.search(
-            self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),
-            contents[:split_pos],
-            re.M
-        )
+        prototype_names = set([m.group(3).strip() for m in prototypes])
+        split_pos = prototypes[0].start()
+        match_ptrs = re.search(self.PROTOPTRS_TPLRE %
+                               ("|".join(prototype_names)),
+                               contents[:split_pos], re.M)
         if match_ptrs:
             split_pos = contents.rfind("\n", 0, match_ptrs.start())
 
+        result = []
         result.append(contents[:split_pos].strip())
-        result.append("%s;" %
-                      ";\n".join([p['match'].group(1) for p in prototypes]))
-        result.append('#line %d "%s"' % (
-            contents.count("\n", 0, split_pos) + 2,
-            file_path.replace("\\", "/")))
+        result.append("%s;" % ";\n".join([m.group(1) for m in prototypes]))
+        result.append('#line %d "%s"' %
+                      (self._get_total_lines(contents[:split_pos]),
+                       self._main_ino.replace("\\", "/")))
         result.append(contents[split_pos:].strip())
-
-        return result
-
-    def convert(self):
-        prototypes = []
-        data = []
-        for node in self.nodes:
-            ino_contents = node.get_text_contents()
-            prototypes += self._parse_prototypes(node.get_path(), ino_contents)
-
-            item = (node.get_path(), ino_contents)
-            if self.is_main_node(ino_contents):
-                data = [item] + data
-            else:
-                data.append(item)
-
-        if not data:
-            return None
-
-        result = ["#include <Arduino.h>"]
-        is_first = True
-        for file_path, contents in data:
-            result.append('#line 1 "%s"' % file_path.replace("\\", "/"))
-
-            if is_first and prototypes:
-                result += self.append_prototypes(
-                    file_path, contents, prototypes)
-            else:
-                result.append(contents)
-            is_first = False
-
         return "\n".join(result)
 
 
 def ConvertInoToCpp(env):
-
-    def delete_tmpcpp_file(file_):
-        try:
-            remove(file_)
-        except:  # pylint: disable=bare-except
-            if isfile(file_):
-                print("Warning: Could not remove temporary file '%s'. "
-                      "Please remove it manually." % file_)
-
     ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
                  env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
-
-    c = InoToCPPConverter(ino_nodes)
-    data = c.convert()
-
-    if not data:
+    if not ino_nodes:
         return
+    c = InoToCPPConverter(env)
+    out_file = c.convert(ino_nodes)
 
-    tmpcpp_file = join(env.subst("$PROJECTSRC_DIR"), "tmp_ino_to.cpp")
-    with open(tmpcpp_file, "w") as f:
-        f.write(data)
+    atexit.register(_delete_file, out_file)
 
-    atexit.register(delete_tmpcpp_file, tmpcpp_file)
+
+def _delete_file(path):
+    try:
+        if isfile(path):
+            remove(path)
+    except:  # pylint: disable=bare-except
+        pass
 
 
 def DumpIDEData(env):
 
-    BOARD_CORE = env.get("BOARD_OPTIONS", {}).get("build", {}).get("core")
-
     def get_includes(env_):
         includes = []
+
         for item in env_.get("CPPPATH", []):
-            invardir = False
-            for vardiritem in env_.get("VARIANT_DIRS", []):
-                if item == vardiritem[0]:
-                    includes.append(env_.subst(vardiritem[1]))
-                    invardir = True
-                    break
-            if not invardir:
-                includes.append(env_.subst(item))
+            includes.append(env_.subst(item))
 
         # installed libs
-        for d in env_.get("LIBSOURCE_DIRS", []):
-            lsd_dir = env_.subst(d)
-            _append_lib_includes(env_, lsd_dir, includes)
+        for lb in env.GetLibBuilders():
+            includes.extend(lb.get_inc_dirs())
 
-        # includes from toolchain
-        toolchain_dir = env_.subst(
-            join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN"))
-        toolchain_incglobs = [
-            join(toolchain_dir, "*", "include*"),
-            join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
-        ]
-        for g in toolchain_incglobs:
-            includes.extend(glob(g))
+        # includes from toolchains
+        p = env.PioPlatform()
+        for name in p.get_installed_packages():
+            if p.get_package_type(name) != "toolchain":
+                continue
+            toolchain_dir = p.get_package_dir(name)
+            toolchain_incglobs = [
+                join(toolchain_dir, "*", "include*"),
+                join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
+            ]
+            for g in toolchain_incglobs:
+                includes.extend(glob(g))
 
         return includes
-
-    def _append_lib_includes(env_, libs_dir, includes):
-        if not isdir(libs_dir):
-            return
-        for name in env_.get("LIB_USE", []) + sorted(listdir(libs_dir)):
-            if not isdir(join(libs_dir, name)):
-                continue
-            # ignore user's specified libs
-            if name in env_.get("LIB_IGNORE", []):
-                continue
-            if name == "__cores__":
-                if isdir(join(libs_dir, name, BOARD_CORE)):
-                    _append_lib_includes(
-                        env_, join(libs_dir, name, BOARD_CORE), includes)
-                return
-
-            include = (
-                join(libs_dir, name, "src")
-                if isdir(join(libs_dir, name, "src"))
-                else join(libs_dir, name)
-            )
-            if include not in includes:
-                includes.append(include)
 
     def get_defines(env_):
         defines = []
@@ -206,13 +231,10 @@ def DumpIDEData(env):
             defines.append(env_.subst(item).replace('\\"', '"'))
 
         # special symbol for Atmel AVR MCU
-        board = env_.get("BOARD_OPTIONS", {})
-        if board and board['platform'] == "atmelavr":
+        if env['PIOPLATFORM'] == "atmelavr":
             defines.append(
-                "__AVR_%s__" % board['build']['mcu'].upper()
-                .replace("ATMEGA", "ATmega")
-                .replace("ATTINY", "ATtiny")
-            )
+                "__AVR_%s__" % env.BoardConfig().get("build.mcu").upper()
+                .replace("ATMEGA", "ATmega").replace("ATTINY", "ATtiny"))
         return defines
 
     LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
@@ -224,9 +246,9 @@ def DumpIDEData(env):
         "includes": get_includes(env_),
         "cc_flags": env_.subst(LINTCCOM),
         "cxx_flags": env_.subst(LINTCXXCOM),
-        "cc_path": where_is_program(
+        "cc_path": util.where_is_program(
             env_.subst("$CC"), env_.subst("${ENV['PATH']}")),
-        "cxx_path": where_is_program(
+        "cxx_path": util.where_is_program(
             env_.subst("$CXX"), env_.subst("${ENV['PATH']}"))
     }
 
@@ -254,7 +276,7 @@ def GetCompilerType(env):
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
-        result = exec_command([env.subst("$CC"), "-v"], env=sysenv)
+        result = util.exec_command([env.subst("$CC"), "-v"], env=sysenv)
     except OSError:
         return None
     if result['returncode'] != 0:
@@ -280,10 +302,32 @@ def GetActualLDScript(env):
                     return path
 
     if script:
-        env.Exit("Error: Could not find '%s' LD script in LDPATH '%s'" % (
-            script, env.subst("$LIBPATH")))
+        sys.stderr.write(
+            "Error: Could not find '%s' LD script in LDPATH '%s'\n" %
+            (script, env.subst("$LIBPATH")))
+        env.Exit(1)
 
     return None
+
+
+def VerboseAction(_, act, actstr):
+    if int(ARGUMENTS.get("PIOVERBOSE", 0)):
+        return act
+    else:
+        return Action(act, actstr)
+
+
+def PioClean(env, clean_dir):
+    if not isdir(clean_dir):
+        print "Build environment is clean"
+        env.Exit(0)
+    for root, _, files in walk(clean_dir):
+        for file_ in files:
+            remove(join(root, file_))
+            print "Removed %s" % relpath(join(root, file_))
+    print "Done cleaning"
+    util.rmtree_(clean_dir)
+    env.Exit(0)
 
 
 def exists(_):
@@ -295,4 +339,6 @@ def generate(env):
     env.AddMethod(DumpIDEData)
     env.AddMethod(GetCompilerType)
     env.AddMethod(GetActualLDScript)
+    env.AddMethod(VerboseAction)
+    env.AddMethod(PioClean)
     return env

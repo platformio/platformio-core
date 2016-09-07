@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -72,7 +72,7 @@ PlatformIO is written in Python and is recommended to be run within
         - pip install -U platformio
 
     script:
-        - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+        - platformio ci --board=<ID_1> --board=<ID_2> --board=<ID_N>
 
 Then perform steps 1, 2 and 4 from http://docs.travis-ci.com/user/getting-started/
 
@@ -87,10 +87,10 @@ it), please use ``--lib="."`` option for :ref:`cmd_ci` command
 .. code-block:: yaml
 
     script:
-        - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+        - platformio ci --lib="." --board=<ID_1> --board=<ID_2> --board=<ID_N>
 
-Library dependecies
-~~~~~~~~~~~~~~~~~~~
+Library dependencies
+~~~~~~~~~~~~~~~~~~~~
 
 There 2 options to test source code with dependent libraries:
 
@@ -106,7 +106,7 @@ Install dependent library using :ref:`librarymanager`
         # Libraries from PlatformIO Library Registry:
         #
         # http://platformio.org/lib/show/1/OneWire
-        - platformio lib install 1
+        - platformio lib -g install 1
 
 Manually download dependent library and include in build process via ``--lib`` option
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -121,7 +121,7 @@ Manually download dependent library and include in build process via ``--lib`` o
         - unzip /tmp/onewire_source.zip -d /tmp/
 
     script:
-        - platformio ci --lib="/tmp/OneWire-master" --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+        - platformio ci --lib="/tmp/OneWire-master" --board=<ID_1> --board=<ID_2> --board=<ID_N>
 
 Custom Build Flags
 ~~~~~~~~~~~~~~~~~~
@@ -189,7 +189,7 @@ Examples
         #
         # http://platformio.org/lib/show/416/TinyGPS
         # http://platformio.org/lib/show/417/SPI4Teensy3
-        - platformio lib install 416 417
+        - platformio lib -g install 416 417
 
     script:
         - platformio ci --board=uno --board=teensy31 --board=due --lib="."
@@ -260,7 +260,7 @@ Examples
         # Libraries from PlatformIO Library Registry:
         #
         # http://platformio.org/lib/show/416/TinyGPS
-        - platformio lib install 416 421 422
+        - platformio lib -g install 416 421 422
 
     script:
         - platformio ci --lib="." --board=uno --board=teensy20pp $PLATFORMIO_CI_EXTRA_ARGS

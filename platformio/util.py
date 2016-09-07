@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,15 +17,21 @@ import functools
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
-                     join, splitdrive)
+                     join, normpath, splitdrive)
 from platform import system, uname
+from shutil import rmtree
 from threading import Thread
+from time import sleep
 
-from platformio import __apiip__, __apiurl__, __version__, exception
+import click
+import requests
+
+from platformio import __apiurl__, __version__, exception
 
 # pylint: disable=wrong-import-order
 try:
@@ -81,7 +87,6 @@ class cd(object):
 
 
 class memoized(object):
-
     '''
     Decorator. Caches a function's return value each time it is called.
     If called later with the same arguments, the cached value is returned
@@ -122,6 +127,7 @@ def singleton(cls):
         if cls not in _instances:
             _instances[cls] = cls(*args, **kwargs)
         return _instances[cls]
+
     return get_instance
 
 
@@ -149,23 +155,21 @@ def _get_projconf_option_dir(name, default=None):
         return os.getenv(_env_name)
 
     try:
-        config = get_project_config()
+        config = load_project_config()
         if (config.has_section("platformio") and
                 config.has_option("platformio", name)):
             option_dir = config.get("platformio", name)
             if option_dir.startswith("~"):
                 option_dir = expanduser(option_dir)
             return abspath(option_dir)
-    except exception.NotPlatformProject:
+    except exception.NotPlatformIOProject:
         pass
     return default
 
 
 def get_home_dir():
-    home_dir = _get_projconf_option_dir(
-        "home_dir",
-        join(expanduser("~"), ".platformio")
-    )
+    home_dir = _get_projconf_option_dir("home_dir",
+                                        join(expanduser("~"), ".platformio"))
 
     if "windows" in get_systype():
         try:
@@ -178,13 +182,6 @@ def get_home_dir():
 
     assert isdir(home_dir)
     return home_dir
-
-
-def get_lib_dir():
-    return _get_projconf_option_dir(
-        "lib_dir",
-        join(get_home_dir(), "lib")
-    )
 
 
 def get_source_dir():
@@ -201,48 +198,71 @@ def get_project_dir():
     return os.getcwd()
 
 
-def get_projectsrc_dir():
-    return _get_projconf_option_dir(
-        "src_dir",
-        join(get_project_dir(), "src")
-    )
+def find_project_dir_above(path):
+    if isfile(path):
+        path = dirname(path)
+    if is_platformio_project(path):
+        return path
+    if isdir(dirname(path)):
+        return find_project_dir_above(dirname(path))
+    return None
+
+
+def is_platformio_project(project_dir=None):
+    if not project_dir:
+        project_dir = get_project_dir()
+    return isfile(join(project_dir, "platformio.ini"))
 
 
 def get_projectlib_dir():
-    return join(get_project_dir(), "lib")
+    return _get_projconf_option_dir("lib_dir", join(get_project_dir(), "lib"))
 
 
-def get_pioenvs_dir():
-    path = _get_projconf_option_dir(
-        "envs_dir",
-        join(get_project_dir(), ".pioenvs")
-    )
-    if not isdir(path):
-        os.makedirs(path)
-    dontmod_path = join(path, "do-not-modify-files-here.url")
-    if not isfile(dontmod_path):
-        with open(dontmod_path, "w") as fp:
-            fp.write("""
+def get_projectlibdeps_dir():
+    return _get_projconf_option_dir("libdeps_dir",
+                                    join(get_project_dir(), ".piolibdeps"))
+
+
+def get_projectsrc_dir():
+    return _get_projconf_option_dir("src_dir", join(get_project_dir(), "src"))
+
+
+def get_projecttest_dir():
+    return _get_projconf_option_dir("test_dir", join(get_project_dir(),
+                                                     "test"))
+
+
+def get_projectpioenvs_dir(force=False):
+    path = _get_projconf_option_dir("envs_dir",
+                                    join(get_project_dir(), ".pioenvs"))
+    try:
+        if not isdir(path):
+            os.makedirs(path)
+        dontmod_path = join(path, "do-not-modify-files-here.url")
+        if not isfile(dontmod_path):
+            with open(dontmod_path, "w") as fp:
+                fp.write("""
 [InternetShortcut]
 URL=http://docs.platformio.org/en/stable/projectconf.html#envs-dir
 """)
+    except Exception as e:  # pylint: disable=broad-except
+        if not force:
+            raise Exception(e)
     return path
 
 
 def get_projectdata_dir():
-    return _get_projconf_option_dir(
-        "data_dir",
-        join(get_project_dir(), "data")
-    )
+    return _get_projconf_option_dir("data_dir",
+                                    join(get_project_dir(), "data"))
 
 
-def get_project_config(ini_path=None):
-    if not ini_path:
-        ini_path = join(get_project_dir(), "platformio.ini")
-    if not isfile(ini_path):
-        raise exception.NotPlatformProject(get_project_dir())
+def load_project_config(project_dir=None):
+    if not project_dir:
+        project_dir = get_project_dir()
+    if not is_platformio_project(project_dir):
+        raise exception.NotPlatformIOProject(project_dir)
     cp = ConfigParser()
-    cp.read(ini_path)
+    cp.read(join(project_dir, "platformio.ini"))
     return cp
 
 
@@ -255,17 +275,9 @@ def is_ci():
 
 
 def exec_command(*args, **kwargs):
-    result = {
-        "out": None,
-        "err": None,
-        "returncode": None
-    }
+    result = {"out": None, "err": None, "returncode": None}
 
-    default = dict(
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        shell=system() == "Windows"
-    )
+    default = dict(stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     default.update(kwargs)
     kwargs = default
 
@@ -289,6 +301,16 @@ def exec_command(*args, **kwargs):
             result[k].strip()
 
     return result
+
+
+def copy_pythonpath_to_osenv():
+    _PYTHONPATH = []
+    if "PYTHONPATH" in os.environ:
+        _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
+    for p in os.sys.path:
+        if p not in _PYTHONPATH:
+            _PYTHONPATH.append(p)
+    os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
 
 
 def get_serialports():
@@ -339,116 +361,76 @@ def get_logicaldisks():
 
 
 def get_request_defheaders():
-    import requests
-    return {"User-Agent": "PlatformIO/%s CI/%d %s" % (
-        __version__, int(is_ci()), requests.utils.default_user_agent()
-    )}
+    data = (__version__, int(is_ci()), requests.utils.default_user_agent())
+    return {"User-Agent": "PlatformIO/%s CI/%d %s" % data}
 
 
-def get_api_result(path, params=None, data=None, skipdns=False):
-    import requests
+@memoized
+def _api_request_session():
+    return requests.Session()
+
+
+def _get_api_result(
+        path,  # pylint: disable=too-many-branches
+        params=None,
+        data=None):
+    from platformio.app import get_setting
+
     result = None
     r = None
 
     headers = get_request_defheaders()
     url = __apiurl__
-    if skipdns:
-        url = "http://%s" % __apiip__
-        headers['host'] = __apiurl__[__apiurl__.index("://")+3:]
+
+    if get_setting("disable_ssl"):
+        url = url.replace("https://", "http://")
 
     try:
         if data:
-            r = requests.post(
+            r = _api_request_session().post(
                 url + path, params=params, data=data, headers=headers)
         else:
-            r = requests.get(url + path, params=params, headers=headers)
-        r.raise_for_status()
+            r = _api_request_session().get(url + path,
+                                           params=params,
+                                           headers=headers)
         result = r.json()
+        r.raise_for_status()
     except requests.exceptions.HTTPError as e:
         if result and "errors" in result:
             raise exception.APIRequestError(result['errors'][0]['title'])
         else:
             raise exception.APIRequestError(e)
-    except (requests.exceptions.ConnectionError,
-            requests.exceptions.ConnectTimeout,
-            requests.exceptions.ReadTimeout):
-        if not skipdns:
-            return get_api_result(path, params, data, skipdns=True)
-        raise exception.APIRequestError(
-            "Could not connect to PlatformIO Registry Service. "
-            "Please try later.")
     except ValueError:
-        raise exception.APIRequestError(
-            "Invalid response: %s" % r.text.encode("utf-8"))
+        raise exception.APIRequestError("Invalid response: %s" %
+                                        r.text.encode("utf-8"))
     finally:
         if r:
             r.close()
     return result
 
 
-@memoized
-def _lookup_boards():
-    boards = {}
-    bdirs = [join(get_source_dir(), "boards")]
-    if isdir(join(get_home_dir(), "boards")):
-        bdirs.append(join(get_home_dir(), "boards"))
+def get_api_result(path, params=None, data=None):
+    max_retries = 5
+    total = 0
+    while total < max_retries:
+        try:
+            return _get_api_result(path, params, data)
+        except (requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout) as e:
+            total += 1
+            click.secho(
+                "[API] ConnectionError: {0} (incremented retry: max={1}, "
+                "total={2})".format(e, max_retries, total),
+                fg="yellow")
+            sleep(2 * total)
 
-    for bdir in bdirs:
-        for json_file in sorted(os.listdir(bdir)):
-            if not json_file.endswith(".json"):
-                continue
-            boards.update(load_json(join(bdir, json_file)))
-    return boards
-
-
-def get_boards(type_=None):
-    boards = _lookup_boards()
-
-    if type_ is None:
-        return boards
-    else:
-        if type_ not in boards:
-            raise exception.UnknownBoard(type_)
-        return boards[type_]
+    raise exception.APIRequestError(
+        "Could not connect to PlatformIO Registry Service. "
+        "Please try later.")
 
 
-@memoized
-def _lookup_frameworks():
-    frameworks = {}
-    frameworks_path = join(
-        get_source_dir(), "builder", "scripts", "frameworks")
-
-    frameworks_list = [f[:-3] for f in os.listdir(frameworks_path)
-                       if not f.startswith("__") and f.endswith(".py")]
-    for _type in frameworks_list:
-        script_path = join(frameworks_path, "%s.py" % _type)
-        with open(script_path) as f:
-            fcontent = f.read()
-            assert '"""' in fcontent
-            _doc_start = fcontent.index('"""') + 3
-            fdoc = fcontent[
-                _doc_start:fcontent.index('"""', _doc_start)].strip()
-            doclines = [l.strip() for l in fdoc.splitlines() if l.strip()]
-            frameworks[_type] = {
-                "name": doclines[0],
-                "description": " ".join(doclines[1:-1]),
-                "url": doclines[-1],
-                "script": script_path
-            }
-    return frameworks
-
-
-def get_frameworks(type_=None):
-    frameworks = _lookup_frameworks()
-
-    if type_ is None:
-        return frameworks
-    else:
-        if type_ not in frameworks:
-            raise exception.UnknownFramework(type_)
-        return frameworks[type_]
-
-    return frameworks
+def get_pythonexe_path():
+    return os.environ.get("PYTHONEXEPATH", normpath(sys.executable))
 
 
 def where_is_program(program, envpath=None):
@@ -460,8 +442,7 @@ def where_is_program(program, envpath=None):
     try:
         result = exec_command(
             ["where" if "windows" in get_systype() else "which", program],
-            env=env
-        )
+            env=env)
         if result['returncode'] == 0 and isfile(result['out'].strip()):
             return result['out'].strip()
     except OSError:
@@ -475,3 +456,16 @@ def where_is_program(program, envpath=None):
             return join(bin_dir, "%s.exe" % program)
 
     return program
+
+
+def pepver_to_semver(pepver):
+    return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2", pepver, 1)
+
+
+def rmtree_(path):
+
+    def _onerror(_, name, __):
+        os.chmod(name, stat.S_IWRITE)
+        os.remove(name)
+
+    return rmtree(path, onerror=_onerror)

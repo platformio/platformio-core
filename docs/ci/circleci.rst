@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -49,9 +49,9 @@ guide first.
 
     test:
         override:
-            - platformio ci path/to/test/file.c --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
-            - platformio ci examples/file.ino --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
-            - platformio ci path/to/test/directory --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+            - platformio ci path/to/test/file.c --board=<ID_1> --board=<ID_2> --board=<ID_N>
+            - platformio ci examples/file.ino --board=<ID_1> --board=<ID_2> --board=<ID_N>
+            - platformio ci path/to/test/directory --board=<ID_1> --board=<ID_2> --board=<ID_N>
 
 
 For more details as for PlatformIO build process please look into :ref:`cmd_ci`.
@@ -65,7 +65,7 @@ it), please use ``--lib="."`` option for :ref:`cmd_ci` command
 .. code-block:: yaml
 
     script:
-        - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+        - platformio ci --lib="." --board=<ID_1> --board=<ID_2> --board=<ID_N>
 
 Library dependecies
 ~~~~~~~~~~~~~~~~~~~
@@ -83,11 +83,11 @@ Install dependent library using :ref:`librarymanager`
             - sudo pip install -U platformio
 
             # OneWire Library with ID=1 http://platformio.org/lib/show/1/OneWire
-            - platformio lib install 1
+            - platformio lib -g install 1
 
     test:
         override:
-            - platformio ci path/to/test/file.c --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+            - platformio ci path/to/test/file.c --board=<ID_1> --board=<ID_2> --board=<ID_N>
 
 Manually download dependent library and include in build process via ``--lib`` option
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -105,7 +105,7 @@ Manually download dependent library and include in build process via ``--lib`` o
 
     test:
         override:
-            - platformio ci path/to/test/file.c --lib="/tmp/OneWire-master" --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+            - platformio ci path/to/test/file.c --lib="/tmp/OneWire-master" --board=<ID_1> --board=<ID_2> --board=<ID_N>
 
 Custom Build Flags
 ~~~~~~~~~~~~~~~~~~
@@ -152,14 +152,14 @@ Examples
             - sudo pip install -U platformio
 
             # pre-install PlatformIO development platforms, they will be cached
-            - platformio platforms install atmelavr atmelsam teensy
+            - platformio platform install atmelavr atmelsam teensy
 
             #
             # Libraries from PlatformIO Library Registry:
             #
             # http://platformio.org/lib/show/416/TinyGPS
             # http://platformio.org/lib/show/417/SPI4Teensy3
-            - platformio lib install 416 417
+            - platformio lib -g install 416 417
 
     test:
         override:

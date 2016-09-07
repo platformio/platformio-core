@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ import platform
 import Queue
 import sys
 import threading
-import uuid
 from collections import deque
 from os import getenv
 from time import sleep, time
@@ -27,12 +26,9 @@ import click
 import requests
 
 from platformio import __version__, app, exception, util
-from platformio.ide.projectgenerator import ProjectGenerator
 
 
 class TelemetryBase(object):
-
-    MACHINE_ID = str(uuid.uuid5(uuid.NAMESPACE_OID, str(uuid.getnode())))
 
     def __init__(self):
         self._params = {}
@@ -47,20 +43,13 @@ class TelemetryBase(object):
         if name in self._params:
             del self._params[name]
 
-    def get_cid(self):
-        cid = app.get_state_item("cid")
-        if not cid:
-            cid = self.MACHINE_ID
-            app.set_state_item("cid", cid)
-        return cid
-
     def send(self, hittype):
         raise NotImplementedError()
 
 
 class MeasurementProtocol(TelemetryBase):
 
-    TRACKING_ID = "UA-1768265-9"
+    TID = "UA-1768265-9"
     PARAMS_MAP = {
         "screen_name": "cd",
         "event_category": "ec",
@@ -72,8 +61,8 @@ class MeasurementProtocol(TelemetryBase):
     def __init__(self):
         TelemetryBase.__init__(self)
         self['v'] = 1
-        self['tid'] = self.TRACKING_ID
-        self['cid'] = self.get_cid()
+        self['tid'] = self.TID
+        self['cid'] = app.get_cid()
 
         self['sr'] = "%dx%d" % click.get_terminal_size()
         self._prefill_screen_name()
@@ -106,8 +95,9 @@ class MeasurementProtocol(TelemetryBase):
         self['cd1'] = util.get_systype()
         self['cd2'] = "Python/%s %s" % (platform.python_version(),
                                         platform.platform())
-        self['cd4'] = (1 if app.get_setting("enable_prompts") or
-                       app.get_session_var("caller_id") else 0)
+        self['cd4'] = 1 if not util.is_ci() else 0
+        if app.get_session_var("caller_id"):
+            self['cd5'] = str(app.get_session_var("caller_id")).lower()
 
     def _prefill_screen_name(self):
         self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
@@ -118,7 +108,7 @@ class MeasurementProtocol(TelemetryBase):
         args = [str(s).lower() for s in ctx_args if not str(s).startswith("-")]
         if not args:
             return
-        if args[0] in ("lib", "platforms", "serialports", "settings"):
+        if args[0] in ("lib", "platform", "serialports", "settings"):
             cmd_path = args[:2]
         else:
             cmd_path = args[:1]
@@ -210,8 +200,7 @@ class MPDataPusher(object):
                 "https://ssl.google-analytics.com/collect",
                 data=data,
                 headers=util.get_request_defheaders(),
-                timeout=1
-            )
+                timeout=1)
             r.raise_for_status()
             return True
         except:  # pylint: disable=W0702
@@ -228,16 +217,9 @@ def on_command():
     if util.is_ci():
         measure_ci()
 
-    if app.get_session_var("caller_id"):
-        measure_caller(app.get_session_var("caller_id"))
-
 
 def measure_ci():
-    event = {
-        "category": "CI",
-        "action": "NoName",
-        "label": None
-    }
+    event = {"category": "CI", "action": "NoName", "label": None}
 
     envmap = {
         "APPVEYOR": {"label": getenv("APPVEYOR_REPO_NAME")},
@@ -253,18 +235,6 @@ def measure_ci():
             continue
         event.update({"action": key, "label": value['label']})
 
-    on_event(**event)
-
-
-def measure_caller(calller_id):
-    calller_id = str(calller_id)[:20].lower()
-    event = {
-        "category": "Caller",
-        "action": "Misc",
-        "label": calller_id
-    }
-    if calller_id in (["atom", "vim"] + ProjectGenerator.get_supported_ides()):
-        event['action'] = "IDE"
     on_event(**event)
 
 
@@ -288,7 +258,9 @@ def on_event(category, action, label=None, value=None, screen_name=None):
 
 
 def on_exception(e):
-    if isinstance(e, exception.AbortedByUser):
+    if any([isinstance(e, cls)
+            for cls in (IOError, exception.AbortedByUser,
+                        exception.NotGlobalLibDir)]):
         return
     is_crash = any([
         not isinstance(e, exception.PlatformioException),

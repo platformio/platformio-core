@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,21 +30,24 @@ class FileDownloader(object):
     CHUNK_SIZE = 1024
 
     def __init__(self, url, dest_dir=None):
-        self._url = url
-        self._fname = url.split("/")[-1]
-
-        self._destination = self._fname
-        if dest_dir:
-            self.set_destination(join(dest_dir, self._fname))
-
-        self._progressbar = None
-        self._request = None
-
         # make connection
-        self._request = requests.get(url, stream=True,
+        self._request = requests.get(url,
+                                     stream=True,
                                      headers=util.get_request_defheaders())
         if self._request.status_code != 200:
             raise FDUnrecognizedStatusCode(self._request.status_code, url)
+
+        disposition = self._request.headers.get("content-disposition")
+        if disposition and "filename=" in disposition:
+            self._fname = disposition[disposition.index("filename=") +
+                                      9:].replace('"', "").replace("'", "")
+        else:
+            self._fname = url.split("/")[-1]
+
+        self._progressbar = None
+        self._destination = self._fname
+        if dest_dir:
+            self.set_destination(join(dest_dir, self._fname))
 
     def set_destination(self, destination):
         self._destination = destination
@@ -53,7 +56,7 @@ class FileDownloader(object):
         return self._destination
 
     def get_lmtime(self):
-        return self._request.headers['last-modified']
+        return self._request.headers.get("last-modified")
 
     def get_size(self):
         if "content-length" not in self._request.headers:
@@ -77,7 +80,8 @@ class FileDownloader(object):
         f.close()
         self._request.close()
 
-        self._preserve_filemtime(self.get_lmtime())
+        if self.get_lmtime():
+            self._preserve_filemtime(self.get_lmtime())
 
     def verify(self, sha1=None):
         _dlsize = getsize(self._destination)

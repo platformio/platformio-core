@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -199,11 +199,6 @@ To revert to the latest stable version
 
 Troubleshooting
 ---------------
-
-.. warning::
-    If you are going to run *PlatformIO* from **subprocess**, you
-    :ref:`MUST DISABLE <faq_troubleshooting_pioblocksprompt>` all prompts.
-    It will allow you to avoid blocking.
 
 .. note::
     **Linux OS**: Don't forget to install "udev" rules file

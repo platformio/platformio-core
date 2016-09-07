@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -9,10 +9,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _cmd_platforms_show:
+.. _cmd_platform_show:
 
-platformio platforms show
-=========================
+platformio platform show
+========================
 
 .. contents::
 
@@ -21,7 +21,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio platforms show PLATFORM
+    platformio platform show PLATFORM
 
 
 Description
@@ -33,24 +33,56 @@ Show details about the installed :ref:`platforms`
 Examples
 --------
 
-.. code-block:: bash
+.. code::
 
-    $ platformio platforms show atmelavr
-    atmelavr    - An embedded platform for Atmel AVR microcontrollers (with Arduino Framework)
-    ----------
-    Package: toolchain-atmelavr
-    Alias: toolchain
-    Version: 1
-    Installed: 2014-12-13 23:58:48
-    ----------
-    Package: tool-avrdude
-    Version: 2
-    Installed: 2015-02-13 22:23:17
-    ----------
-    Package: framework-arduinoavr
-    Version: 12
-    Installed: 2015-02-23 20:57:40
-    ----------
-    Package: tool-micronucleus
-    Version: 1
-    Installed: 2015-02-23 21:20:14
+    > platformio platform show atmelavr
+
+    atmelavr ~ Atmel AVR
+    ====================
+    Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.
+
+    Version: 0.0.0
+    Home: http://platformio.org/platforms/atmelavr
+    License: Apache-2.0
+    Frameworks: simba, arduino
+
+    Package toolchain-atmelavr
+    --------------------------
+    Type: toolchain
+    Optional: No
+    Requirements: ~1.40801.0
+    Installed: Yes
+    Description: avr-gcc
+    Url: https://gcc.gnu.org/wiki/avr-gcc
+    Version: 1.40801.0
+
+    Package framework-arduinoavr
+    ----------------------------
+    Type: framework
+    Optional: Yes
+    Requirements: ~1.10608.0
+    Installed: No (optional)
+
+    Package framework-simba
+    -----------------------
+    Type: framework
+    Optional: Yes
+    Requirements: ~1.50.0
+    Installed: Yes
+    Description: framework-simba
+    Url: https://github.com/eerimoq/simba
+    Version: 1.50.0
+
+    Package tool-avrdude
+    --------------------
+    Type: uploader
+    Optional: Yes
+    Requirements: >=1.60001.0,<=1.60100.0
+    Installed: No (optional)
+
+    Package tool-micronucleus
+    -------------------------
+    Type: uploader
+    Optional: Yes
+    Requirements: ~1.200.0
+    Installed: No (optional)

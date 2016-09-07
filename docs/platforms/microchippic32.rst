@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -31,11 +31,14 @@ Packages
     * - ``framework-arduinomicrochippic32``
       - `Arduino Wiring-based Framework (PIC32 Core) <https://github.com/chipKIT32/chipKIT-core>`_
 
-    * - ``toolchain-microchippic32``
-      - `GCC for Microchip PIC32 <https://github.com/chipKIT32/chipKIT-cxx>`_
-
     * - ``tool-pic32prog``
       - `pic32prog <https://github.com/sergev/pic32prog>`_
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
+    * - ``toolchain-microchippic32``
+      - `GCC for Microchip PIC32 <https://github.com/chipKIT32/chipKIT-cxx>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file

@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -18,3 +18,15 @@ Native development platform is intended to be used for desktop OS. This platform
 For more detailed information please visit `vendor site <http://platformio.org/platforms/native>`_.
 
 .. contents::
+
+Packages
+--------
+
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Contents
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_

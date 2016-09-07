@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -30,7 +30,7 @@ Embedded
 
     atmelavr
     atmelsam
-    espressif
+    espressif8266
     freescalekinetis
     intel_arc32
     lattice_ice40

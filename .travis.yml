@@ -1,23 +1,42 @@
 language: python
-python:
-  - "2.7"
 
-env:
-  - TOX_ENV=docs
-  - TOX_ENV=lint
-  - TOX_ENV=py26
-  - TOX_ENV=py27
+matrix:
+  include:
+    - os: linux
+      sudo: false
+      python: 2.7
+      env: TOX_ENV=docs
+    - os: linux
+      sudo: false
+      python: 2.7
+      env: TOX_ENV=lint
+    - os: linux
+      sudo: required
+      python: 2.7
+      env: TOX_ENV=py27
+    - os: osx
+      language: generic
+      env: TOX_ENV=py27
 
 install:
   - git submodule update --init --recursive
-  - pip install -U pip setuptools tox
-  - sudo apt-get install -qq lib32z1 lib32ncurses5 lib32bz2-1.0 # temporarily
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo pip install -U tox; else pip install -U tox; fi
+
+  # temporary hook to fix issue with gcc-pic32
+  - if [[ "$TOX_ENV" == "py27" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq lib32z1 lib32ncurses5 lib32bz2-1.0; fi
 
 script:
   - tox -e $TOX_ENV
 
+after_success:
+  - if [[ "$TOX_ENV" == "py27" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tox -e coverage; fi
+  - if [[ "$TOX_ENV" == "py27" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash); fi
+
 notifications:
+  email: false
+
   slack:
-    secure: ksQmXOP5NVsf8IgoDuxD68Q/YNwDpZuwq0V29h2dxYCr38oYdAkq/Os4LSCs0X6P0cQFf6nC1hM/d+cAvU+SmzcHGxEceHNEGCg3/TAj+68KIwooPU93Lfq1zwdfteZWxANjKlCQy4+wZliHLhL8fvCYgfJww/6qKmqSYleBNM=
+    rooms:
+      secure: JD6VGfN4+SLU2CwDdiIOr1VgwD+zbYUCE/srwyGuHavnjIkPItkl6T6Bn8Y4VrU6ysbuKotfdV2TAJJ82ivFbY8BvZBc7FBcYp/AGQ4FaCCV5ySv8RDAcQgdE12oaGzMdODiLqsB85f65zOlAFa+htaXyEiRTcotn6Y2hupatrI=
     on_failure: always
     on_success: change

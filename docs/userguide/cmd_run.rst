@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -64,7 +64,9 @@ Pre-built targets:
     --upload-port
 
 Upload port of embedded board. To print all available ports use
-:ref:`cmd_serialports` command
+:ref:`cmd_device` command.
+
+If upload port is not specified, PlatformIO will try to detect it automatically.
 
 .. option::
     -d, --project-dir
@@ -75,17 +77,10 @@ to current working directory (``CWD``).
 .. option::
     -v, --verbose
 
-Shows details about the results of processing environments. Each instance of
-``--verbose`` on the command line increases the verbosity level by one, so if
-you need more details on the output, specify it twice.
+Shows detailed information when processing environments.
 
-There 3 levels of verbosity:
-
-1. ``-v`` - output errors only
-2. ``-vv`` - output errors and warnings
-3. ``-vvv`` - output errors, warnings and additional information
-
-By default, verbosity level is set to 3 (maximum information).
+This option can be set globally using :ref:`setting_force_verbose` setting
+or by environment variable :envvar:`PLATFORMIO_SETTING_FORCE_VERBOSE`.
 
 .. option::
     --disable-auto-clean
@@ -98,87 +93,285 @@ Examples
 
 1. Process `Wiring Blink Example <https://github.com/platformio/platformio-examples/tree/develop/wiring-blink>`_
 
-.. code-block::   bash
+.. code::
 
-    $ platformio run
-    Processing arduino_pro5v environment:
-    scons: `.pioenvs/arduino_pro5v/firmware.elf' is up to date.
-    scons: `.pioenvs/arduino_pro5v/firmware.hex' is up to date.
+    > platformio run
 
-    Processing launchpad_msp430g2 environment:
-    scons: `.pioenvs/launchpad_msp430g2/firmware.elf' is up to date.
-    scons: `.pioenvs/launchpad_msp430g2/firmware.hex' is up to date.
+    [Wed Sep  7 15:48:58 2016] Processing uno (platform: atmelavr, board: uno, framework: arduino)
+    -----------------------------------------------------------------------------------------------
+    Verbose mode can be enabled via `-v, --verbose` option
+    Collected 36 compatible libraries
+    Looking for dependencies...
+    Project does not have dependencies
+    Compiling .pioenvs/uno/src/main.o
+    Archiving .pioenvs/uno/libFrameworkArduinoVariant.a
+    Indexing .pioenvs/uno/libFrameworkArduinoVariant.a
+    Compiling .pioenvs/uno/FrameworkArduino/CDC.o
+    ...
+    Compiling .pioenvs/uno/FrameworkArduino/wiring_shift.o
+    Archiving .pioenvs/uno/libFrameworkArduino.a
+    Indexing .pioenvs/uno/libFrameworkArduino.a
+    Linking .pioenvs/uno/firmware.elf
+    Building .pioenvs/uno/firmware.hex
+    Calculating size .pioenvs/uno/firmware.elf
+    AVR Memory Usage
+    ----------------
+    Device: atmega328p
 
-    Processing launchpad_lm4f120 environment:
-    scons: `.pioenvs/launchpad_lm4f120/firmware.elf' is up to date.
-    scons: `.pioenvs/launchpad_lm4f120/firmware.hex' is up to   date
+    Program:    1034 bytes (3.2% Full)
+    (.text + .data + .bootloader)
 
+    Data:          9 bytes (0.4% Full)
+    (.data + .bss + .noinit)
+
+
+    =========================== [SUCCESS] Took 2.47 seconds ===========================
+
+    [Wed Sep  7 15:49:01 2016] Processing nodemcu (platform: espressif8266, board: nodemcu, framework: arduino)
+    -----------------------------------------------------------------------------------------------
+    Verbose mode can be enabled via `-v, --verbose` option
+    Collected 34 compatible libraries
+    Looking for dependencies...
+    Project does not have dependencies
+    Compiling .pioenvs/nodemcu/src/main.o
+    Archiving .pioenvs/nodemcu/libFrameworkArduinoVariant.a
+    Indexing .pioenvs/nodemcu/libFrameworkArduinoVariant.a
+    Compiling .pioenvs/nodemcu/FrameworkArduino/Esp.o
+    Compiling .pioenvs/nodemcu/FrameworkArduino/FS.o
+    Compiling .pioenvs/nodemcu/FrameworkArduino/HardwareSerial.o
+    ...
+    Archiving .pioenvs/nodemcu/libFrameworkArduino.a
+    Indexing .pioenvs/nodemcu/libFrameworkArduino.a
+    Linking .pioenvs/nodemcu/firmware.elf
+    Calculating size .pioenvs/nodemcu/firmware.elf
+    text       data     bss     dec     hex filename
+    221240      888   29400  251528   3d688 .pioenvs/nodemcu/firmware.elf
+    Building .pioenvs/nodemcu/firmware.bin
+    =========================== [SUCCESS] Took 6.43 seconds ===========================
+
+    [Wed Sep  7 15:49:07 2016] Processing teensy31 (platform: teensy, board: teensy31, framework: arduino)
+    -----------------------------------------------------------------------------------------------
+    Verbose mode can be enabled via `-v, --verbose` option
+    Collected 96 compatible libraries
+    Looking for dependencies...
+    Project does not have dependencies
+    Compiling .pioenvs/teensy31/src/main.o
+    Compiling .pioenvs/teensy31/FrameworkArduino/AudioStream.o
+    Compiling .pioenvs/teensy31/FrameworkArduino/DMAChannel.o
+    ...
+    Compiling .pioenvs/teensy31/FrameworkArduino/yield.o
+    Archiving .pioenvs/teensy31/libFrameworkArduino.a
+    Indexing .pioenvs/teensy31/libFrameworkArduino.a
+    Linking .pioenvs/teensy31/firmware.elf
+    Calculating size .pioenvs/teensy31/firmware.elf
+    text       data     bss     dec     hex filename
+    11288       168    2288   13744    35b0 .pioenvs/teensy31/firmware.elf
+    Building .pioenvs/teensy31/firmware.hex
+    =========================== [SUCCESS] Took 5.36 seconds ===========================
+
+    [Wed Sep  7 15:49:12 2016] Processing lpmsp430g2553 (platform: timsp430, build_flags: -D LED_BUILTIN=RED_LED, board: lpmsp430g2553, framework: energia)
+    -----------------------------------------------------------------------------------------------
+    Verbose mode can be enabled via `-v, --verbose` option
+    Collected 29 compatible libraries
+    Looking for dependencies...
+    Project does not have dependencies
+    Compiling .pioenvs/lpmsp430g2553/src/main.o
+    Compiling .pioenvs/lpmsp430g2553/FrameworkEnergia/HardwareSerial.o
+    Compiling .pioenvs/lpmsp430g2553/FrameworkEnergia/IPAddress.o
+    ...
+    Compiling .pioenvs/lpmsp430g2553/FrameworkEnergia/wiring_digital.o
+    Compiling .pioenvs/lpmsp430g2553/FrameworkEnergia/wiring_pulse.o
+    Compiling .pioenvs/lpmsp430g2553/FrameworkEnergia/wiring_shift.o
+    Archiving .pioenvs/lpmsp430g2553/libFrameworkEnergia.a
+    Indexing .pioenvs/lpmsp430g2553/libFrameworkEnergia.a
+    Linking .pioenvs/lpmsp430g2553/firmware.elf
+    Calculating size .pioenvs/lpmsp430g2553/firmware.elf
+    text       data     bss     dec     hex filename
+    820           0      20     840     348 .pioenvs/lpmsp430g2553/firmware.elf
+    Building .pioenvs/lpmsp430g2553/firmware.hex
+    =========================== [SUCCESS] Took 2.34 seconds ===========================
 
 2. Process specific environment
 
-.. code-block:: bash
+.. code::
 
-    $ platformio run -e arduino_pro5v -e launchpad_lm4f120
-    Processing arduino_pro5v environment:
-    scons: `.pioenvs/arduino_pro5v/firmware.elf' is up to date.
-    scons: `.pioenvs/arduino_pro5v/firmware.hex' is up to date.
+    > platformio run -e nodemcu -e teensy31
 
-    Processing launchpad_lm4f120 environment:
-    scons: `.pioenvs/launchpad_lm4f120/firmware.elf' is up to date.
-    scons: `.pioenvs/launchpad_lm4f120/firmware.hex' is up to date.
-
-
-3. Process specific target
-
-.. code-block:: bash
-
-    $ platformio run -t clean
-    Processing arduino_pro5v environment:
-    Removed .pioenvs/arduino_pro5v/src/main.o
+    [Wed Sep  7 15:49:01 2016] Processing nodemcu (platform: espressif8266, board: nodemcu, framework: arduino)
+    -----------------------------------------------------------------------------------------------
+    Verbose mode can be enabled via `-v, --verbose` option
+    Collected 34 compatible libraries
+    Looking for dependencies...
+    Project does not have dependencies
+    Compiling .pioenvs/nodemcu/src/main.o
+    Archiving .pioenvs/nodemcu/libFrameworkArduinoVariant.a
+    Indexing .pioenvs/nodemcu/libFrameworkArduinoVariant.a
+    Compiling .pioenvs/nodemcu/FrameworkArduino/Esp.o
+    Compiling .pioenvs/nodemcu/FrameworkArduino/FS.o
+    Compiling .pioenvs/nodemcu/FrameworkArduino/HardwareSerial.o
     ...
-    Removed .pioenvs/arduino_pro5v/firmware.hex
+    Archiving .pioenvs/nodemcu/libFrameworkArduino.a
+    Indexing .pioenvs/nodemcu/libFrameworkArduino.a
+    Linking .pioenvs/nodemcu/firmware.elf
+    Calculating size .pioenvs/nodemcu/firmware.elf
+    text       data     bss     dec     hex filename
+    221240      888   29400  251528   3d688 .pioenvs/nodemcu/firmware.elf
+    Building .pioenvs/nodemcu/firmware.bin
+    =========================== [SUCCESS] Took 6.43 seconds ===========================
 
-    Processing launchpad_msp430g2 environment:
-    Removed .pioenvs/launchpad_msp430g2/src/main.o
+    [Wed Sep  7 15:49:07 2016] Processing teensy31 (platform: teensy, board: teensy31, framework: arduino)
+    -----------------------------------------------------------------------------------------------
+    Verbose mode can be enabled via `-v, --verbose` option
+    Collected 96 compatible libraries
+    Looking for dependencies...
+    Project does not have dependencies
+    Compiling .pioenvs/teensy31/src/main.o
+    Compiling .pioenvs/teensy31/FrameworkArduino/AudioStream.o
+    Compiling .pioenvs/teensy31/FrameworkArduino/DMAChannel.o
     ...
-    Removed .pioenvs/launchpad_msp430g2/firmware.hex
+    Compiling .pioenvs/teensy31/FrameworkArduino/yield.o
+    Archiving .pioenvs/teensy31/libFrameworkArduino.a
+    Indexing .pioenvs/teensy31/libFrameworkArduino.a
+    Linking .pioenvs/teensy31/firmware.elf
+    Calculating size .pioenvs/teensy31/firmware.elf
+    text       data     bss     dec     hex filename
+    11288       168    2288   13744    35b0 .pioenvs/teensy31/firmware.elf
+    Building .pioenvs/teensy31/firmware.hex
+    =========================== [SUCCESS] Took 5.36 seconds ===========================
 
-    Processing launchpad_lm4f120 environment:
-    Removed .pioenvs/launchpad_lm4f120/src/main.o
+
+3. Process specific target (clean project)
+
+.. code:: bash
+
+    > platformio run -t clean
+    [Wed Sep  7 15:53:26 2016] Processing uno (platform: atmelavr, board: uno, framework: arduino)
+    -----------------------------------------------------------------------------------------------------
+    Removed .pioenvs/uno/firmware.elf
+    Removed .pioenvs/uno/firmware.hex
+    Removed .pioenvs/uno/libFrameworkArduino.a
+    Removed .pioenvs/uno/libFrameworkArduinoVariant.a
+    Removed .pioenvs/uno/FrameworkArduino/_wiring_pulse.o
+    Removed .pioenvs/uno/FrameworkArduino/abi.o
+    Removed .pioenvs/uno/FrameworkArduino/CDC.o
+    Removed .pioenvs/uno/FrameworkArduino/HardwareSerial.o
+    Removed .pioenvs/uno/FrameworkArduino/HardwareSerial0.o
+    Removed .pioenvs/uno/FrameworkArduino/HardwareSerial1.o
+    Removed .pioenvs/uno/FrameworkArduino/HardwareSerial2.o
+    Removed .pioenvs/uno/FrameworkArduino/HardwareSerial3.o
+    Removed .pioenvs/uno/FrameworkArduino/hooks.o
+    Removed .pioenvs/uno/FrameworkArduino/IPAddress.o
+    Removed .pioenvs/uno/FrameworkArduino/main.o
+    Removed .pioenvs/uno/FrameworkArduino/new.o
+    Removed .pioenvs/uno/FrameworkArduino/PluggableUSB.o
+    Removed .pioenvs/uno/FrameworkArduino/Print.o
+    Removed .pioenvs/uno/FrameworkArduino/Stream.o
+    Removed .pioenvs/uno/FrameworkArduino/Tone.o
+    Removed .pioenvs/uno/FrameworkArduino/USBCore.o
+    Removed .pioenvs/uno/FrameworkArduino/WInterrupts.o
+    Removed .pioenvs/uno/FrameworkArduino/wiring.o
+    Removed .pioenvs/uno/FrameworkArduino/wiring_analog.o
+    Removed .pioenvs/uno/FrameworkArduino/wiring_digital.o
+    Removed .pioenvs/uno/FrameworkArduino/wiring_pulse.o
+    Removed .pioenvs/uno/FrameworkArduino/wiring_shift.o
+    Removed .pioenvs/uno/FrameworkArduino/WMath.o
+    Removed .pioenvs/uno/FrameworkArduino/WString.o
+    Removed .pioenvs/uno/src/main.o
+    Done cleaning
+    ======================= [SUCCESS] Took 0.49 seconds =======================
+
+    [Wed Sep  7 15:53:27 2016] Processing nodemcu (platform: espressif8266, board: nodemcu, framework: arduino)
+    -----------------------------------------------------------------------------------------------------
+    Removed .pioenvs/nodemcu/firmware.bin
+    Removed .pioenvs/nodemcu/firmware.elf
+    Removed .pioenvs/nodemcu/libFrameworkArduino.a
+    Removed .pioenvs/nodemcu/libFrameworkArduinoVariant.a
     ...
-    Removed .pioenvs/launchpad_lm4f120/firmware.hex
+    Removed .pioenvs/nodemcu/FrameworkArduino/spiffs/spiffs_nucleus.o
+    Removed .pioenvs/nodemcu/FrameworkArduino/umm_malloc/umm_malloc.o
+    Removed .pioenvs/nodemcu/src/main.o
+    Done cleaning
+    ======================= [SUCCESS] Took 0.50 seconds =======================
+
+    [Wed Sep  7 15:53:27 2016] Processing teensy31 (platform: teensy, board: teensy31, framework: arduino)
+    -----------------------------------------------------------------------------------------------------
+    Removed .pioenvs/teensy31/firmware.elf
+    Removed .pioenvs/teensy31/firmware.hex
+    Removed .pioenvs/teensy31/libFrameworkArduino.a
+    Removed .pioenvs/teensy31/FrameworkArduino/analog.o
+    Removed .pioenvs/teensy31/FrameworkArduino/AudioStream.o
+    ...
+    Removed .pioenvs/teensy31/FrameworkArduino/WString.o
+    Removed .pioenvs/teensy31/FrameworkArduino/yield.o
+    Removed .pioenvs/teensy31/src/main.o
+    Done cleaning
+    ======================= [SUCCESS] Took 0.50 seconds =======================
+
+    [Wed Sep  7 15:53:28 2016] Processing lpmsp430g2553 (platform: timsp430, build_flags: -D LED_BUILTIN=RED_LED, board: lpmsp430g2553, framework: energia)
+    -----------------------------------------------------------------------------------------------------
+    Removed .pioenvs/lpmsp430g2553/firmware.elf
+    Removed .pioenvs/lpmsp430g2553/firmware.hex
+    Removed .pioenvs/lpmsp430g2553/libFrameworkEnergia.a
+    Removed .pioenvs/lpmsp430g2553/FrameworkEnergia/atof.o
+    ...
+    Removed .pioenvs/lpmsp430g2553/FrameworkEnergia/avr/dtostrf.o
+    Removed .pioenvs/lpmsp430g2553/src/main.o
+    Done cleaning
+    ======================= [SUCCESS] Took 0.49 seconds =======================
 
 
 4. Mix environments and targets
 
-.. code-block:: bash
+.. code::
 
-    $ platformio run -e launchpad_msp430g2 -t upload
-    Processing launchpad_msp430g2 environment:
-    /Users/ikravets/.platformio/timsp430/tools/mspdebug/mspdebug rf2500 --force-reset "prog .pioenvs/launchpad_msp430g2/firmware.hex"
-    MSPDebug version 0.20 - debugging tool for MSP430 MCUs
-    Copyright (C) 2009-2012 Daniel Beer <dlbeer@gmail.com>
-    This is free software; see the source for copying conditions.  There is NO
-    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    > platformio run -e uno -t upload
 
-    Trying to open interface 1 on 009
-    Initializing FET...
-    FET protocol version is 30394216
-    Configured for Spy-Bi-Wire
-    Sending reset...
-    Set Vcc: 3000 mV
-    Device ID: 0x2553
-      Code start address: 0xc000
-      Code size         : 16384 byte = 16 kb
-      RAM  start address: 0x200
-      RAM  end   address: 0x3ff
-      RAM  size         : 512 byte = 0 kb
-    Device: MSP430G2553/G2403
-    Code memory starts at 0xc000
-    Number of breakpoints: 2
-    Chip ID data: 25 53
-    Erasing...
-    Programming...
-    Writing  646 bytes at c000...
-    Writing   32 bytes at ffe0...
-    Done, 678 bytes total
+    [Wed Sep  7 15:55:11 2016] Processing uno (platform: atmelavr, board: uno, framework: arduino)
+    --------------------------------------------------------------------------------------------------
+    Verbose mode can be enabled via `-v, --verbose` option
+    Collected 36 compatible libraries
+    Looking for dependencies...
+    Project does not have dependencies
+    Compiling .pioenvs/uno/src/main.o
+    Archiving .pioenvs/uno/libFrameworkArduinoVariant.a
+    Indexing .pioenvs/uno/libFrameworkArduinoVariant.a
+    Compiling .pioenvs/uno/FrameworkArduino/CDC.o
+    ...
+    Compiling .pioenvs/uno/FrameworkArduino/wiring_shift.o
+    Archiving .pioenvs/uno/libFrameworkArduino.a
+    Indexing .pioenvs/uno/libFrameworkArduino.a
+    Linking .pioenvs/uno/firmware.elf
+    Checking program size .pioenvs/uno/firmware.elf
+    text       data     bss     dec     hex filename
+    1034          0       9    1043     413 .pioenvs/uno/firmware.elf
+    Building .pioenvs/uno/firmware.hex
+    Looking for upload port...
+    Auto-detected: /dev/cu.usbmodemFA141
+    Uploading .pioenvs/uno/firmware.hex
+
+    avrdude: AVR device initialized and ready to accept instructions
+
+    Reading | ################################################## | 100% 0.01s
+
+    avrdude: Device signature = 0x1e950f
+    avrdude: reading input file ".pioenvs/uno/firmware.hex"
+    avrdude: writing flash (1034 bytes):
+
+    Writing | ################################################## | 100% 0.18s
+
+    avrdude: 1034 bytes of flash written
+    avrdude: verifying flash memory against .pioenvs/uno/firmware.hex:
+    avrdude: load data flash data from input file .pioenvs/uno/firmware.hex:
+    avrdude: input file .pioenvs/uno/firmware.hex contains 1034 bytes
+    avrdude: reading on-chip flash data:
+
+    Reading | ################################################## | 100% 0.15s
+
+    avrdude: verifying ...
+    avrdude: 1034 bytes of flash verified
+
+    avrdude: safemode: Fuses OK (H:00, E:00, L:00)
+
+    avrdude done.  Thank you.
+
+    ======================== [SUCCESS] Took 4.14 seconds ========================

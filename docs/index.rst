@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -13,7 +13,7 @@ PlatformIO is an open source ecosystem for IoT development
 ==========================================================
 
 **Cross-platform build system and library manager. Continuous and IDE
-integration. Arduino and MBED compatible. Ready for Cloud compiling.**
+integration. Arduino, ESP8266 and ARM mbed compatible.**
 
 * **PlatformIO IDE** - The next-generation integrated development environment for IoT.
   C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
@@ -35,9 +35,10 @@ integration. Arduino and MBED compatible. Ready for Cloud compiling.**
 Silicon Labs EFM32, ST STM32, TI MSP430 & Tiva, Teensy, Arduino, mbed,
 libOpenCM3, etc.*
 
-* `Website <http://platformio.org>`_
+* `Home Page <http://platformio.org>`_
+* `PlatformIO Plus and professional solutions <https://pioplus.com>`_
 * :ref:`ide_atom`
-* `Web 2.0 Library Search <http://platformio.org/lib>`_ |
+* `Library Search and Registry <http://platformio.org/lib>`_ |
   `Embedded Boards Explorer <http://platformio.org/boards>`_
 * `Project Examples <https://github.com/platformio/platformio-examples/tree/develop>`_
 * `Source Code <https://github.com/platformio/platformio>`_ |
@@ -55,7 +56,7 @@ Embedded Development. *Easier Than Ever.*
 * :ref:`IDE Integration <ide>` with *Arduino, Atom, CLion, Eclipse, Emacs,
   Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
 * Cloud compiling and  :ref:`ci` with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
-* Built-in :ref:`Serial Port Monitor <cmd_serialports_monitor>` and
+* Built-in :ref:`Serial Port Monitor <cmd_device_monitor>` and
   configurable build :ref:`-flags/-options <projectconf_build_flags>`
 * Pre-built toolchains, :ref:`frameworks` for the :ref:`platforms`
 
@@ -113,11 +114,18 @@ Contents
     platforms/custom_platform_and_board
 
 .. toctree::
+    :caption: PlatformIO Plus
+    :maxdepth: 3
+
+    plus/unit-testing
+
+.. toctree::
     :caption: Library Manager
     :maxdepth: 2
 
     Quickstart <librarymanager/index>
     User Guide <userguide/lib/index.rst>
+    librarymanager/ldf
     librarymanager/config
     librarymanager/creating
 
@@ -135,3 +143,5 @@ Contents
     articles
     FAQ <faq>
     history
+    migration
+

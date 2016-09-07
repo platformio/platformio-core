@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,13 +15,12 @@
 import pytest
 import requests
 
-from platformio.util import get_api_result
-
 
 def pytest_generate_tests(metafunc):
     if "package_data" not in metafunc.fixturenames:
         return
-    pkgs_manifest = get_api_result("/packages/manifest")
+    pkgs_manifest = requests.get(
+        "https://dl.bintray.com/platformio/dl-packages/manifest.json").json()
     assert isinstance(pkgs_manifest, dict)
     packages = []
     for _, variants in pkgs_manifest.iteritems():

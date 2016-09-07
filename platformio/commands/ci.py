@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,20 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import stat
 from glob import glob
-from os import chmod, getenv, makedirs, remove
+from os import getenv, makedirs, remove
 from os.path import abspath, basename, expanduser, isdir, isfile, join
-from shutil import copyfile, copytree, rmtree
+from shutil import copyfile, copytree
 from tempfile import mkdtemp
 
 import click
 
-from platformio import app
+from platformio import app, util
 from platformio.commands.init import cli as cmd_init
+from platformio.commands.init import validate_boards
 from platformio.commands.run import cli as cmd_run
 from platformio.exception import CIBuildEnvsEmpty
-from platformio.util import get_boards
 
 # pylint: disable=wrong-import-order
 try:
@@ -34,7 +33,7 @@ except ImportError:
     from ConfigParser import ConfigParser
 
 
-def validate_path(ctx, param, value):  # pylint: disable=W0613
+def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     invalid_path = None
     value = list(value)
     for i, p in enumerate(value):
@@ -51,36 +50,48 @@ def validate_path(ctx, param, value):  # pylint: disable=W0613
         raise click.BadParameter("Found invalid path: %s" % invalid_path)
 
 
-def validate_boards(ctx, param, value):  # pylint: disable=W0613
-    unknown_boards = set(value) - set(get_boards().keys())
-    try:
-        assert not unknown_boards
-        return value
-    except AssertionError:
-        raise click.BadParameter(
-            "%s. Please search for the board types using "
-            "`platformio boards` command" % ", ".join(unknown_boards))
-
-
 @click.command("ci", short_help="Continuous Integration")
 @click.argument("src", nargs=-1, callback=validate_path)
-@click.option("--lib", "-l", multiple=True, callback=validate_path)
+@click.option(
+    "-l", "--lib", multiple=True, callback=validate_path, metavar="DIRECTORY")
 @click.option("--exclude", multiple=True)
-@click.option("--board", "-b", multiple=True, callback=validate_boards)
-@click.option("--build-dir", default=mkdtemp,
-              type=click.Path(exists=True, file_okay=False, dir_okay=True,
-                              writable=True, resolve_path=True))
+@click.option(
+    "-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
+@click.option(
+    "--build-dir",
+    default=mkdtemp,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        resolve_path=True))
 @click.option("--keep-build-dir", is_flag=True)
-@click.option("--project-conf",
-              type=click.Path(exists=True, file_okay=True, dir_okay=False,
-                              readable=True, resolve_path=True))
-@click.option("--verbose", "-v", count=True, default=3)
+@click.option(
+    "-C",
+    "--project-conf",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True))
+@click.option("-O", "--project-option", multiple=True)
+@click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
-def cli(ctx, src, lib, exclude, board,  # pylint: disable=R0913
-        build_dir, keep_build_dir, project_conf, verbose):
+def cli(ctx,  # pylint: disable=R0913
+        src,
+        lib,
+        exclude,
+        board,
+        build_dir,
+        keep_build_dir,
+        project_conf,
+        project_option,
+        verbose):
 
-    if not src:
-        src = getenv("PLATFORMIO_CI_SRC", "").split(":")
+    if not src and getenv("PLATFORMIO_CI_SRC"):
+        src = validate_path(ctx, None, getenv("PLATFORMIO_CI_SRC").split(":"))
     if not src:
         raise click.BadParameter("Missing argument 'src'")
 
@@ -105,28 +116,26 @@ def cli(ctx, src, lib, exclude, board,  # pylint: disable=R0913
             _exclude_contents(build_dir, exclude)
 
         # initialise project
-        ctx.invoke(cmd_init, project_dir=build_dir, board=board)
+        ctx.invoke(
+            cmd_init,
+            project_dir=build_dir,
+            board=board,
+            project_option=project_option)
 
         # process project
         ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)
     finally:
         if not keep_build_dir:
-            rmtree(
-                build_dir, onerror=lambda action, name, exc:
-                (chmod(name, stat.S_IWRITE), remove(name))
-            )
+            util.rmtree_(build_dir)
 
 
 def _clean_dir(dirpath):
-    rmtree(dirpath)
+    util.rmtree_(dirpath)
     makedirs(dirpath)
 
 
 def _copy_contents(dst_dir, contents):
-    items = {
-        "dirs": set(),
-        "files": set()
-    }
+    items = {"dirs": set(), "files": set()}
 
     for path in contents:
         if isdir(path):
@@ -160,7 +169,7 @@ def _exclude_contents(dst_dir, patterns):
     for path in contents:
         path = abspath(path)
         if isdir(path):
-            rmtree(path)
+            util.rmtree_(path)
         elif isfile(path):
             remove(path)
 

@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -49,7 +49,7 @@ It's built on top of `GitHub's Atom "hackable" text editor <https://atom.io>`_.
 If you have already Atom installed, please install `PlatformIO IDE for Atom package <https://atom.io/packages/platformio-ide>`_.
 
 .. note::
-    You don't need to install PlatformIO CLI seprately to system.
+    You don't need to install PlatformIO CLI separately to system.
     PlatformIO CLI is built into PlatformIO IDE and you will be able to use it
     within PlatformIO IDE Terminal.
 
@@ -95,9 +95,9 @@ then install it and restart Atom:
 - **Other Systems**: Download the latest `Clang for the other systems <http://llvm.org/releases/download.html>`_.
 
 .. warning::
-    The libraries which are added/installed after initializing process will
-    not be reflected in code linter. You need ``Menu: PlatformIO >
-    Rebuild C/C++ Project Index (Autocomplete, Linter)``.
+    If some libraries are not visible in :ref:`ide_atom` and Code Completion or
+    Code Linting does not work properly, please perform  ``Menu: PlatformIO >
+    Rebuild C/C++ Project Index (Autocomplete, Linter)``
 
 3. IDE Installation
 ~~~~~~~~~~~~~~~~~~~
@@ -337,9 +337,9 @@ automatically created and preconfigured when you initialize project using
 ``Menu: PlatformIO > Initialize new PlatformIO Project or update existing...``.
 
 .. warning::
-    The libraries which are added/installed after initializing process will
-    not be reflected in code linter. You need ``Menu: PlatformIO >
-    Rebuild C/C++ Project Index (Autocomplete, Linter)``.
+    If some libraries are not visible in :ref:`ide_atom` and Code Completion or
+    Code Linting does not work properly, please perform  ``Menu: PlatformIO >
+    Rebuild C/C++ Project Index (Autocomplete, Linter)``
 
 
 .. error::
@@ -381,11 +381,11 @@ For example, we have the next ``Demo.ino`` file:
 
 .. code-block:: cpp
 
-    void function setup () {
+    void setup () {
         someFunction(13);
     }
 
-    void function loop() {
+    void loop() {
         delay(1000);
     }
 
@@ -406,11 +406,11 @@ The final ``Demo.cpp``:
 
     void someFunction(int num);
 
-    void function setup () {
+    void setup () {
         someFunction(13);
     }
 
-    void function loop() {
+    void loop() {
         delay(1000);
     }
 
@@ -438,6 +438,11 @@ To force Smart Code Linter to use Arduino files as C++ please
 
 2. Perform all steps from :ref:`ide_atom_knownissues_sclarduino_manually`
    (without renaming to ``.cpp``).
+
+Arch Linux: PlatformIO IDE Terminal issue
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Please read this article `Installing PlatformIO on Arch Linux <https://primalcortex.wordpress.com/2016/08/18/platformio/>`_.
 
 .. _ide_atom_faq:
 
@@ -478,6 +483,8 @@ package and `C/C++ Uncrustify Code Beautifier <http://sourceforge.net/projects/u
 Articles / Manuals
 ------------------
 
+* Aug 18, 2016 - **Primal Cortex** - `Installing PlatformIO on Arch Linux <https://primalcortex.wordpress.com/2016/08/18/platformio/>`_
+* Jul 26, 2016 - **Embedded Systems Laboratory** - `แนะนำการใช้งาน PlatformIO IDE สำหรับบอร์ด Arduino และ ESP8266 (Get started with PlatformIO IDE for Arduino board and ESP8266, Thai) <http://cpre.kmutnb.ac.th/esl/learning/index.php?article=intro_platformio-ide>`_
 * May 30, 2016 - **Ron Moerman** - `IoT Development with PlatformIO <https://electronicsworkbench.io/blog/platformio>`_
 * May 01, 2016 - **Pedro Minatel** - `PlatformIO – Uma alternativa ao Arduino IDE (PlatformIO - An alternative to the Arduino IDE, Portuguese) <http://pedrominatel.com.br/ferramentas/platformio-uma-alternativa-ao-arduino-ide/>`_
 * Apr 23, 2016 - **Al Williams** - `Hackaday: Atomic Arduino (and Other) Development <http://hackaday.com/2016/04/23/atomic-arduino-and-other-development/>`_

@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -35,19 +35,25 @@ with the build environments (using :option:`platformio ci --board` or
 :option:`platformio ci --project-conf`) and processes them via :ref:`cmd_run`
 command.
 
+:ref:`cmd_ci` command accepts **multiple** ``SRC`` arguments,
+:option:`platformio ci --lib` and :option:`platformio ci --exclude` options
+which can be a path to directory, file or
+`Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_.
+Also, you can omit ``SRC`` argument and set path (multiple paths are allowed
+denoting with ``:``) to
+``PLATFORMIO_CI_SRC`` `Environment variable <http://en.wikipedia.org/wiki/Environment_variable>`_
+
 For more details as for integration with the popular Continuous Integration
 Systems please follow to :ref:`ci` page.
 
 .. note::
-    :ref:`cmd_ci` command accepts **multiple** ``SRC`` arguments,
-    :option:`platformio ci --lib` and :option:`platformio ci --exclude` options
-    which can be a path to directory, file or
-    `Glob Pattern <http://en.wikipedia.org/wiki/Glob_(programming)>`_.
-
-.. note::
-    You can omit ``SRC`` argument and set path (multiple paths are allowed
-    denoting with ``:``) to
-    ``PLATFORMIO_CI_SRC`` `Environment variable <http://en.wikipedia.org/wiki/Environment_variable>`_
+    :ref:`cmd_ci` command is useful for library developers. It allows to build
+    different examples without creating own project per them. Also, is possible
+    to upload firmware to the target device. In this case, you need to pass
+    additional option ``--project-option="targets=upload"``. What is more,
+    you can specify custom upload port using
+    ``--project-option="upload_port=<port>"`` option.
+    See :option:`platformio ci --project-option` for details.
 
 Options
 -------
@@ -57,10 +63,10 @@ Options
 .. option::
     -l, --lib
 
-Source code which will be copied to ``%build_dir%/lib`` directly.
+Source code which will be copied to ``<BUILD_DIR>/lib`` directly.
 
 If :option:`platformio ci --lib` is a path to file (not to directory), then
-PlatformIO will create temporary directory within ``%build_dir%/lib`` and copy
+PlatformIO will create temporary directory within ``<BUILD_DIR>/lib`` and copy
 the rest files into it.
 
 
@@ -105,17 +111,28 @@ temporary directory within your operation system.
 Don't remove :option:`platformio ci --build-dir` after build process.
 
 .. option::
-    --project-conf
+    -P, --project-conf
 
 Buid project using pre-configured :ref:`projectconf`.
 
 .. option::
+    -O, --project-option
+
+Pass additional options from :ref:`projectconf` to
+:option:`platformio init --project-option` command. For example,
+automatically install dependent libraries
+``platformio ci --project-option="lib_deps=ArduinoJSON"`` or ignore specific
+library ``platformio ci --project-option="lib_ignore=SomeLib"``.
+
+.. option::
     -v, --verbose
 
-Shows details about the results of processing environments. More details
-:option:`platformio run --verbose`
+Shows detailed information when processing environments.
+
+This option can be set globally using :ref:`setting_force_verbose` setting
+or by environment variable :envvar:`PLATFORMIO_SETTING_FORCE_VERBOSE`.
 
 Examples
 --------
 
-For the examples please follow to :ref:`ci` page.
+For the others examples please follow to :ref:`ci` page.

@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -30,6 +30,9 @@ Packages
 
     * - ``framework-mbed``
       - `mbed Framework <http://mbed.org>`_
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
 
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_

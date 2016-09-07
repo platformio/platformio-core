@@ -1,4 +1,4 @@
-# Copyright 2014-present Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,12 +20,17 @@ from sys import path
 path.append("..")
 
 from platformio import util
-from platformio.platforms.base import PlatformFactory, get_packages
+from platformio.managers.platform import PlatformFactory, PlatformManager
+
+API_PACKAGES = util.get_api_result("/packages")
+API_FRAMEWORKS = util.get_api_result("/frameworks")
+BOARDS = PlatformManager().get_installed_boards()
+PLATFORM_MANIFESTS = PlatformManager().get_installed()
 
 
 def is_compat_platform_and_framework(platform, framework):
     p = PlatformFactory.newPlatform(platform)
-    for pkg in p.get_packages().keys():
+    for pkg in p.packages.keys():
         if pkg.startswith("framework-%s" % framework):
             return True
     return False
@@ -56,34 +61,29 @@ def generate_boards(boards):
       - Flash
       - RAM""")
 
-    for board in sorted(boards):
-        for type_, data in board.iteritems():
-            assert type_ in util.get_boards()
-            board_ram = float(data['upload']['maximum_ram_size']) / 1024
-            lines.append("""
-    * - ``{type}``
+    for data in sorted(boards, key=lambda item: item['id']):
+        board_ram = float(data['ram']) / 1024
+        lines.append("""
+    * - ``{id}``
       - `{name} <{url}>`_
       - {mcu}
       - {f_cpu:d} MHz
       - {rom} Kb
       - {ram} Kb""".format(
-                type=type_,
-                name=data['name'],
-                url=data['url'],
-                mcu=data['build']['mcu'].upper(),
-                f_cpu=int((data['build']['f_cpu'][:-1])) / 1000000,
-                ram=int(board_ram) if board_ram % 1 == 0 else board_ram,
-                rom=_round_memory_size(
-                    data['upload']['maximum_size'] / 1024)
-            ))
+            id=data['id'],
+            name=data['name'],
+            url=data['url'],
+            mcu=data['mcu'].upper(),
+            f_cpu=int(data['fcpu']) / 1000000,
+            ram=int(board_ram) if board_ram % 1 == 0 else board_ram,
+            rom=_round_memory_size(data['rom'] / 1024)))
 
     return "\n".join(lines + [""])
 
 
-def generate_packages(platform, packages, is_embedded):
-    if not packages:
+def generate_packages(platform, packagenames, is_embedded):
+    if not packagenames:
         return
-    allpackages = get_packages()
     lines = []
     lines.append("""
 Packages
@@ -94,17 +94,15 @@ Packages
 
     * - Name
       - Contents""")
-    for type_, data in packages.iteritems():
-        assert type_ in allpackages
+    for name in sorted(packagenames):
+        assert name in API_PACKAGES
         contitems = [
-            "`%s <%s>`_" % (name, url)
-            for name, url in allpackages[type_]
+            "`{name} <{url}>`_".format(**item) for item in API_PACKAGES[name]
         ]
         lines.append("""
-    * - ``{type_}``
+    * - ``{name}``
       - {contents}""".format(
-            type_=type_,
-            contents=", ".join(contitems)))
+            name=name, contents=", ".join(contitems)))
 
     if is_embedded:
         lines.append("""
@@ -134,7 +132,8 @@ def generate_platform(name):
     print "Processing platform: %s" % name
     lines = []
 
-    lines.append("""..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+    lines.append(
+        """..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -154,33 +153,31 @@ def generate_platform(name):
     lines.append("=" * len(_title))
 
     p = PlatformFactory.newPlatform(name)
-    lines.append(p.get_description())
+    lines.append(p.description)
     lines.append("""
 For more detailed information please visit `vendor site <%s>`_.""" %
-                 p.get_vendor_url())
+                 p.vendor_url)
     lines.append("""
 .. contents::""")
 
     #
     # Packages
     #
-    _packages_content = generate_packages(name, p.get_packages(), p.is_embedded())
+    _packages_content = generate_packages(name, p.packages.keys(),
+                                          p.is_embedded())
     if _packages_content:
         lines.append(_packages_content)
 
     #
     # Frameworks
     #
-    _frameworks = util.get_frameworks()
     _frameworks_lines = []
-    for framework in sorted(_frameworks.keys()):
-        if not is_compat_platform_and_framework(name, framework):
+    for framework in API_FRAMEWORKS:
+        if not is_compat_platform_and_framework(name, framework['name']):
             continue
         _frameworks_lines.append("""
-    * - :ref:`framework_{type_}`
-      - {description}""".format(
-            type_=framework,
-            description=_frameworks[framework]['description']))
+    * - :ref:`framework_{name}`
+      - {description}""".format(**framework))
 
     if _frameworks_lines:
         lines.append("""
@@ -197,14 +194,13 @@ Frameworks
     # Boards
     #
     vendors = {}
-    for board, data in util.get_boards().items():
-        platform = data['platform']
-        vendor = data['vendor']
-        if name in platform:
+    for board in BOARDS:
+        vendor = board['vendor']
+        if name in board['platform']:
             if vendor in vendors:
-                vendors[vendor].append({board: data})
+                vendors[vendor].append(board)
             else:
-                vendors[vendor] = [{board: data}]
+                vendors[vendor] = [board]
 
     if vendors:
         lines.append("""
@@ -227,9 +223,10 @@ Boards
 
 
 def update_platform_docs():
-    for name in PlatformFactory.get_platforms().keys():
-        platforms_dir = join(dirname(realpath(__file__)),
-                             "..", "docs", "platforms")
+    for manifest in PLATFORM_MANIFESTS:
+        name = manifest['name']
+        platforms_dir = join(
+            dirname(realpath(__file__)), "..", "docs", "platforms")
         rst_path = join(platforms_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
             f.write(generate_platform(name))
@@ -241,7 +238,8 @@ def generate_framework(type_, data):
     print "Processing framework: %s" % type_
     lines = []
 
-    lines.append("""..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+    lines.append(
+        """..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -276,16 +274,15 @@ Platforms
       - Description""")
 
     _found_platform = False
-    for platform in sorted(PlatformFactory.get_platforms().keys()):
-        if not is_compat_platform_and_framework(platform, type_):
+    for manifest in PLATFORM_MANIFESTS:
+        if not is_compat_platform_and_framework(manifest['name'], type_):
             continue
         _found_platform = True
-        p = PlatformFactory.newPlatform(platform)
+        p = PlatformFactory.newPlatform(manifest['name'])
         lines.append("""
     * - :ref:`platform_{type_}`
       - {description}""".format(
-            type_=platform,
-            description=p.get_description()))
+            type_=manifest['name'], description=p.description))
     if not _found_platform:
         del lines[-1]
 
@@ -300,14 +297,14 @@ Boards
 """)
 
     vendors = {}
-    for board, data in util.get_boards().items():
+    for data in BOARDS:
         frameworks = data['frameworks']
         vendor = data['vendor']
         if type_ in frameworks:
             if vendor in vendors:
-                vendors[vendor].append({board: data})
+                vendors[vendor].append(data)
             else:
-                vendors[vendor] = [{board: data}]
+                vendors[vendor] = [data]
     for vendor, boards in sorted(vendors.iteritems()):
         lines.append(str(vendor))
         lines.append("~" * len(vendor))
@@ -316,18 +313,18 @@ Boards
 
 
 def update_framework_docs():
-    for name, data in util.get_frameworks().items():
-        frameworks_dir = join(dirname(realpath(__file__)),
-                              "..", "docs", "frameworks")
+    for framework in API_FRAMEWORKS:
+        name = framework['name']
+        frameworks_dir = join(
+            dirname(realpath(__file__)), "..", "docs", "frameworks")
         rst_path = join(frameworks_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
-            f.write(generate_framework(name, data))
+            f.write(generate_framework(name, framework))
             if isfile(join(frameworks_dir, "%s_extra.rst" % name)):
                 f.write("\n.. include:: %s_extra.rst\n" % name)
 
 
 def update_create_platform_doc():
-    allpackages = get_packages()
     lines = []
     lines.append(""".. _platform_creating_packages:
 
@@ -342,32 +339,28 @@ Packages
 
     * - Name
       - Contents""")
-    for type_, data in sorted(allpackages.iteritems()):
-        contitems = [
-            "`%s <%s>`_" % (name, url)
-            for name, url in allpackages[type_]
-        ]
+    for name, items in sorted(API_PACKAGES.iteritems()):
+        contitems = ["`{name} <{url}>`_".format(**item) for item in items]
         lines.append("""
-    * - ``{type_}``
+    * - ``{name}``
       - {contents}""".format(
-            type_=type_,
-            contents=", ".join(contitems)))
+            name=name, contents=", ".join(contitems)))
 
-    with open(join(util.get_source_dir(), "..", "docs", "platforms",
-                   "creating_platform.rst"), "r+") as fp:
+    with open(
+            join(util.get_source_dir(), "..", "docs", "platforms",
+                 "creating_platform.rst"), "r+") as fp:
         content = fp.read()
         fp.seek(0, 0)
-        fp.write(
-            content[:content.index(".. _platform_creating_packages:")] +
-            "\n".join(lines) + "\n\n" +
-            content[content.index(".. _platform_creating_manifest_file:"):]
-        )
+        fp.write(content[:content.index(".. _platform_creating_packages:")] +
+                 "\n".join(lines) + "\n\n" + content[content.index(
+                     ".. _platform_creating_manifest_file:"):])
 
 
 def update_embedded_boards():
     lines = []
 
-    lines.append("""..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+    lines.append(
+        """..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -400,20 +393,21 @@ popular embedded boards and IDE.
     lines.append("")
 
     vendors = {}
-    for board, data in util.get_boards().items():
+    for data in BOARDS:
         vendor = data['vendor']
         if vendor in vendors:
-            vendors[vendor].append({board: data})
+            vendors[vendor].append(data)
         else:
-            vendors[vendor] = [{board: data}]
+            vendors[vendor] = [data]
 
     for vendor, boards in sorted(vendors.iteritems()):
         lines.append(str(vendor))
         lines.append("~" * len(vendor))
         lines.append(generate_boards(boards))
 
-    emboards_rst = join(dirname(realpath(__file__)),
-                        "..", "docs", "platforms", "embedded_boards.rst")
+    emboards_rst = join(
+        dirname(realpath(__file__)), "..", "docs", "platforms",
+        "embedded_boards.rst")
     with open(emboards_rst, "w") as f:
         f.write("\n".join(lines))
 
@@ -423,6 +417,7 @@ def main():
     update_platform_docs()
     update_framework_docs()
     update_embedded_boards()
+
 
 if __name__ == "__main__":
     sys_exit(main())

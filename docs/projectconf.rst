@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -18,7 +18,7 @@ The Project configuration file is named ``platformio.ini``. This is a
 `INI-style <http://en.wikipedia.org/wiki/INI_file>`_ file.
 
 ``platformio.ini`` has sections (each denoted by a ``[header]``) and
-key / value pairs within the sections. Lines beginning with ``#`` or ``;``
+key / value pairs within the sections. Lines beginning with ``;``
 are ignored and may be used to provide comments.
 
 The sections and their allowable values are described below.
@@ -44,8 +44,8 @@ Options
 ``home_dir``
 ^^^^^^^^^^^^
 
-Is used to store platform toolchains, frameworks, external libraries,
-service data and etc.
+Is used to store platform toolchains, frameworks, global libraries for
+:ref: `ldf`, service data and etc.
 
 A default value is User's home directory:
 
@@ -60,18 +60,59 @@ This option can be overridden by global environment variable
 ``lib_dir``
 ^^^^^^^^^^^
 
-This directory is used to store external libraries downloaded by
-:ref:`librarymanager`.
+You can put here your own/private libraries. The source code of each library
+should be placed in separate directory, like
+``lib/private_lib/[here are source files]``. This directory has the highest
+priority for :ref:`ldf`.
 
-A default value is ``%home_dir%/lib``.
+A default value is ``lib`` that means that folder is located in the root of
+project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_LIB_DIR`.
 
-.. note::
-    You can put here your own/private libraries. The source code of each
-    library should be placed in separate directory. For example,
-    ``%lib_dir%/private_lib/[here are source files]``.
+For example, see how can be organized ``Foo`` and ``Bar`` libraries:
+
+.. code::
+
+    |--lib
+    |  |--Bar
+    |  |  |--docs
+    |  |  |--examples
+    |  |  |--src
+    |  |     |- Bar.c
+    |  |     |- Bar.h
+    |  |--Foo
+    |  |  |- Foo.c
+    |  |  |- Foo.h
+    |- platformio.ini
+    |--src
+       |- main.c
+
+
+Then in ``src/main.c`` you should use:
+
+.. code-block:: c
+
+    #include <Foo.h>
+    #include <Bar.h>
+
+    // rest H/C/CPP code
+
+PlatformIO will find your libraries automatically, configure preprocessor's
+include paths and build them.
+
+.. _projectconf_pio_libdeps_dir:
+
+``libdeps_dir``
+^^^^^^^^^^^^^^^
+
+Internal storage where :ref:`librarymanager` will install project dependencies
+(:ref:`projectconf_lib_deps`). A default value is ``.piolibdeps`` that means
+that folder is located in the root of project.
+
+This option can be overridden by global environment variable
+:envvar:`PLATFORMIO_LIBDEPS_DIR`.
 
 .. _projectconf_pio_src_dir:
 
@@ -79,10 +120,8 @@ This option can be overridden by global environment variable
 ^^^^^^^^^^^
 
 A path to project's source directory. PlatformIO uses it for :ref:`cmd_run`
-command.
-
-A default value is ``src`` which means that folder is located in the root of
-project.
+command. A default value is ``src`` that means that folder is located in the
+root of project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_SRC_DIR`.
@@ -110,14 +149,14 @@ fast!
 then PlatformIO will remove this folder automatically. It will be created on the
 next build operation.
 
-A default value is ``.pioenvs`` which means that folder is located in the root of
+A default value is ``.pioenvs`` that means that folder is located in the root of
 project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_ENVS_DIR`.
 
 .. note::
-    If you have any problems with building your Project environmets which
+    If you have any problems with building your Project environments which
     are defined in :ref:`projectconf`, then **TRY TO DELETE** this folder. In
     this situation you will remove all cached files without any risk.
 
@@ -127,12 +166,23 @@ This option can be overridden by global environment variable
 ^^^^^^^^^^^^
 
 Data directory to store contents and :ref:`platform_espressif_uploadfs`.
-
-A default value is ``data`` which means that folder is located in the root of
+A default value is ``data`` that means that folder is located in the root of
 project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_DATA_DIR`.
+
+.. _projectconf_pio_test_dir:
+
+``test_dir``
+^^^^^^^^^^^^
+
+Directory where :ref:`unit_testing` engine will look for the tests.
+A default value is ``test`` that means that folder is located in the root of
+project.
+
+This option can be overridden by global environment variable
+:envvar:`PLATFORMIO_TEST_DIR`.
 
 .. _projectconf_pio_env_default:
 
@@ -144,8 +194,8 @@ if :option:`platformio run --environment` option is not specified.
 :ref:`projectconf_pio_env_default` allows to define environments which
 should be processed by default.
 
-Multiple environments are allowed if they are separated with ``,`` (comma).
-For example.
+Multiple environments are allowed if they are separated with ", "
+(comma+space). For example.
 
 .. code-block:: ini
 
@@ -158,7 +208,7 @@ For example.
     board = uno
 
     [env:nodemcu]
-    platform = espressif
+    platform = espressif8266
     framework = arduino
     board = nodemcu
 
@@ -193,22 +243,50 @@ For example, ``[env:hello_world]``.
 General options
 ~~~~~~~~~~~~~~~
 
+.. contents::
+    :local:
+
 .. _projectconf_env_platform:
 
 ``platform``
 ^^^^^^^^^^^^
 
-:ref:`platforms` type.
+:ref:`platforms` name.
 
+PlatformIO allows to use specific version of platform using
+`Semantic Versioning <http://semver.org>`_ (X.Y.Z=MAJOR.MINOR.PATCH).
+Version specifications can take any of the following forms:
+
+* ``0.1.2``: an exact version number. Use only this exact version
+* ``^0.1.2``: any compatible version (exact version for ``0.x.x`` versions
+* ``~0.1.2``: any version with the same major and minor versions, and an
+  equal or greater patch version
+* ``>0.1.2``: any version greater than ``0.1.2``. ``>=``, ``<``, and ``<=``
+  are also possible
+* ``>0.1.0,!=0.2.0,<0.3.0``: any version greater than ``0.1.0``, not equal to
+  ``0.2.0`` and less than ``0.3.0``
+
+Examples:
+
+.. code-block:: ini
+
+    [env:the_latest_version]
+    platform = atmelavr
+
+    [env:specific_major_version]
+    platform = atmelavr@^0.1.2
+
+    [env:specific_major_and_minor_version]
+    platform = atmelavr@~0.1.2
 
 .. _projectconf_env_framework:
 
 ``framework``
 ^^^^^^^^^^^^^
 
-:ref:`Framework <frameworks>` type.
+:ref:`frameworks` name.
 
-The multiple frameworks are allowed, split them with comma ``,`` separator.
+The multiple frameworks are allowed, split them with comma+space ", ".
 
 .. _projectconf_env_board:
 
@@ -226,6 +304,9 @@ using `PlatformIO Embedded Boards Explorer <http://platformio.org/boards>`_.
 
 Board options
 ~~~~~~~~~~~~~
+
+.. contents::
+    :local:
 
 ``board_mcu``
 ^^^^^^^^^^^^^
@@ -261,7 +342,7 @@ format of this option is ``C-like long integer`` value with ``L`` suffix. The
 1 Hertz is equal to ``1L``, then 40 Mhz (Mega Hertz) is equal to ``40000000L``.
 
 This option isn't available for the all development platforms. The only
-:ref:`platform_espressif` supports it.
+:ref:`platform_espressif8266` supports it.
 
 .. _projectconf_board_flash_mode:
 
@@ -269,10 +350,13 @@ This option isn't available for the all development platforms. The only
 ^^^^^^^^^^^^^^^^^^^^
 
 Flash chip interface mode. This option isn't available for the all development
-platforms. The only :ref:`platform_espressif` supports it.
+platforms. The only :ref:`platform_espressif8266` supports it.
 
-Building options
-~~~~~~~~~~~~~~~~
+Build options
+~~~~~~~~~~~~~
+
+.. contents::
+    :local:
 
 .. _projectconf_build_flags:
 
@@ -356,7 +440,7 @@ Example:
     build_flags = -Wl,-T/path/to/ld_script.ld
 
     [env:exec_command]
-    # get VCS revision "on-the-fly"
+    ; get VCS revision "on-the-fly"
     build_flags = !echo "-DPIO_SRC_REV="$(git rev-parse HEAD)
 
 
@@ -388,6 +472,8 @@ but will be applied only for the project source code from
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_SRC_BUILD_FLAGS`.
 
+.. _projectconf_build_unflags:
+
 ``build_unflags``
 ^^^^^^^^^^^^^^^^^
 
@@ -416,7 +502,7 @@ be applied in theirs order.
 
 By default, ``src_filter`` is predefined to
 ``+<*> -<.git/> -<svn/> -<example/> -<examples/> -<test/> -<tests/>``,
-which means "includes ALL files, then
+that means "includes ALL files, then
 exclude ``.git`` and ``svn`` repository folders, ``example`` ... folder.
 
 This option can be set by global environment variable
@@ -427,6 +513,9 @@ This option can be set by global environment variable
 ``extra_script``
 ^^^^^^^^^^^^^^^^
 
+.. contents::
+    :local:
+
 Allows to launch extra script using `SCons <http://www.scons.org>`_ software
 construction tool. For more details please follow to "Construction Environments"
 section of
@@ -435,13 +524,23 @@ section of
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_EXTRA_SCRIPT`.
 
+Take a look at the multiple snippets/answers for the user questions:
+
+  - `#462 Split C/C++ build flags <https://github.com/platformio/platformio/issues/462#issuecomment-172667342>`_
+  - `#365 Extra configuration for ESP8266 uploader <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_
+  - `#351 Specific reset method for ESP8266 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_
+  - `#247 Specific options for avrdude <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_.
+
+Custom Uploader
+'''''''''''''''
+
 Example, specify own upload command for :ref:`platform_atmelavr`:
 
 ``platformio.ini``:
 
 .. code-block:: ini
 
-    [env:env_with_specific_extra_script]
+    [env:env_custom_uploader]
     platform = atmelavr
     extra_script = /path/to/extra_script.py
     custom_option = hello
@@ -450,9 +549,7 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 
 .. code-block:: python
 
-    from SCons.Script import DefaultEnvironment
-
-    env = DefaultEnvironment()
+    Import('env')
 
     env.Replace(UPLOADHEXCMD='"$UPLOADER" ${ARGUMENTS.get("custom_option")} --uploader --flags')
 
@@ -460,14 +557,52 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
     # print env.Dump()
     # print ARGUMENTS
 
+Before/Pre and After/Post actions
+'''''''''''''''''''''''''''''''''
 
-* see built-in examples of `PlatformIO build scripts <https://github.com/platformio/platformio/tree/develop/platformio/builder/scripts>`_.
-* take a look at the multiple snippets/answers for the user questions:
+PlatformIO Build System has rich API that allows to attach different pre-/post
+actions (hooks) using ``env.AddPreAction(target, callback)`` function. A first
+argument ``target`` can be a name of target that is passed using
+:option:`platformio run --target` command or path to file which PlatformIO
+processes (ELF, HEX, BIN, etc.). For example, to call function before HEX file
+will be created, need to use as a ``$BUILD_DIR/firmware.hex`` target value.
 
-  - `#462 Split C/C++ build flags <https://github.com/platformio/platformio/issues/462#issuecomment-172667342>`_
-  - `#365 Extra configuration for ESP8266 uploader <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_
-  - `#351 Specific reset method for ESP8266 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_
-  - `#247 Specific options for avrdude <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_.
+The example below demonstrates how to call different functions
+when :option:`platformio run --target` is called with ``upload`` value.
+`extra_script.py` file is located on the same level as ``platformio.ini``.
+
+``platformio.ini``:
+
+.. code-block:: ini
+
+    [env:pre_and_post_hooks]
+    extra_script = extra_script.py
+
+``extra_script.py``:
+
+.. code-block:: python
+
+    Import("env")
+
+    def before_upload(source, target, env):
+        print "before_upload"
+        # do some actions
+
+
+    def after_upload(source, target, env):
+        print "after_upload"
+        # do some actions
+
+    print "Current build targets", map(str, BUILD_TARGETS)
+
+    # env.AddPreAction("$BUILD_DIR/firmware.elf", callback...)
+    # env.AddPostAction("$BUILD_DIR/firmware.hex", callback...)
+
+    env.AddPreAction("upload", before_upload)
+    env.AddPostAction("upload", after_upload)
+
+
+.. _projectconf_targets:
 
 ``targets``
 ^^^^^^^^^^^
@@ -485,14 +620,17 @@ The list with available targets is located in :option:`platformio run --target`.
     # clean project
     platformio run -t clean
 
-    # dump curent build environment
+    # dump current build environment
     platformio run --target envdump
 
 When no targets are defined, *PlatformIO* will build only sources by default.
 
 
-Uploading options
-~~~~~~~~~~~~~~~~~
+Upload options
+~~~~~~~~~~~~~~
+
+.. contents::
+    :local:
 
 .. _projectconf_upload_port:
 
@@ -509,7 +647,7 @@ This option is used by "uploader" tool when sending firmware to board via
 If ``upload_port`` isn't specified, then *PlatformIO* will try to detect it
 automatically.
 
-To print all available serial ports use :ref:`cmd_serialports` command.
+To print all available serial ports use :ref:`cmd_device` command.
 
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_UPLOAD_PORT`.
@@ -544,70 +682,201 @@ This option can be set by global environment variable
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Specify reset method for "uploader" tool. This option isn't available for all
-development platforms. The only :ref:`platform_espressif` supports it.
+development platforms. The only :ref:`platform_espressif8266` supports it.
 
 Library options
 ~~~~~~~~~~~~~~~
 
-``lib_install``
-^^^^^^^^^^^^^^^
+.. contents::
+    :local:
 
-Specify dependent libraries which should be installed before environment
-process. The only library IDs are allowed. Multiple libraries can be passed
-using comma ``,`` sign.
+.. _projectconf_lib_deps:
 
-You can obtain library IDs using :ref:`cmd_lib_search` command.
+``lib_deps``
+^^^^^^^^^^^^
+
+.. versionadded:: 3.0
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
+
+Specify project dependencies that should be installed automatically to
+:ref:`projectconf_pio_libdeps_dir` before environment processing.
+Multiple dependencies are allowed (multi-lines or separated with comma+space ", ").
+
+**Valid forms**
+
+.. code-block:: ini
+
+  [env:myenv]
+  lib_deps = LIBRARY_1, LIBRARY_2, LIBRARY_N
+
+  [env:myenv2]
+  lib_deps =
+    LIBRARY_1
+    LIBRARY_2
+    LIBRARY_N
+
+The each line with ``LIBRARY_1... LIBRARY_N`` will be passed automatically to
+:ref:`cmd_lib_install` command. Please follow to :ref:`cmd_lib_install` for
+detailed documentation about possible values.
 
 Example:
 
 .. code-block:: ini
 
-    [env:depends_on_some_libs]
-    lib_install = 1,13,19
+  [env:depends_on_some_libs]
+  lib_deps =
+    13
+    PubSubClient
+    Json@~5.6,!=5.4
+    https://github.com/gioblu/PJON.git@v2.0
+    https://github.com/me-no-dev/ESPAsyncTCP.git
 
-``lib_use``
-^^^^^^^^^^^
+.. _projectconf_lib_force:
 
-Specify libraries which should be used by ``Library Dependency Finder (LDF)`` with
-the highest priority.
+``lib_force``
+^^^^^^^^^^^^^
+
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
+
+Force Library Dependency Finder to depend on the specified library if it even
+is not included in the project source code. Also, this library will be
+processed in the first order.
+
+The correct value for this option is library name (not folder name). In the
+most cases, library name is pre-defined in manifest file
+(:ref:`library_config`, ``library.properties``, ``module.json``). The multiple
+library names are allowed, split them with comma+space ", ".
 
 Example:
 
 .. code-block:: ini
 
-    [env:libs_with_highest_priority]
-    lib_use = OneWire_ID1,SPI
+    [env:myenv]
+    lib_force = OneWire, SPI
+
+.. _projectconf_lib_ignore:
 
 ``lib_ignore``
 ^^^^^^^^^^^^^^
 
-Specify libraries which should be ignored by ``Library Dependency Finder (LDF)``
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
+
+Specify libraries which should be ignored by Library Dependency Finder.
+
+The correct value for this option is library name (not
+folder name). In the most cases, library name is pre-defined in manifest file
+(:ref:`library_config`, ``library.properties``, ``module.json``). The multiple
+library names are allowed, split them with comma+space ", ".
 
 Example:
 
 .. code-block:: ini
 
     [env:ignore_some_libs]
-    lib_ignore = SPI,EngduinoV3_ID123
+    lib_ignore = SPI, Ethernet
 
-``lib_dfcyclic``
-^^^^^^^^^^^^^^^^
+.. _projectconf_lib_extra_dirs:
 
-Control cyclic (recursive) behavior for ``Library Dependency Finder (LDF)``.
-By default, this option is turned OFF (``lib_dfcyclic=False``) and means that
-``LDF`` will find only libraries which are included in source files from the
-project :ref:`projectconf_pio_src_dir`.
+``lib_extra_dirs``
+^^^^^^^^^^^^^^^^^^
 
-If you want to enable cyclic (recursive, nested) search, please set this option
-to ``True``. Founded library will be treated like a new source files and
-``LDF`` will search dependencies for it.
+.. versionadded:: 3.0
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
+
+A list with extra directories/storages where :ref:`ldf` will
+look for dependencies. Multiple paths are allowed. Please separate them
+using comma+space ", ".
+
+This option can be set by global environment variable
+:envvar:`PLATFORMIO_LIB_EXTRA_DIRS`.
+
+.. warning::
+  This is a not direct path to library with source code. It should be the path
+  to storage that contains libraries grouped by folders. For example,
+  ``/extra/lib/storage/`` but not ``/extra/lib/storage/MyLibrary``.
 
 Example:
 
 .. code-block:: ini
 
-    [env:libs_with_enabled_ldf_cyclic]
-    lib_dfcyclic = True
+    [env:custom_lib_dirs]
+    lib_extra_dirs = /path/to/private/dir1,/path/to/private/dir2
+
+.. _projectconf_lib_ldf_mode:
+
+``lib_ldf_mode``
+^^^^^^^^^^^^^^^^
+
+.. versionadded:: 3.0
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
+
+This option specifies how does Library Dependency Finder should analyze
+dependencies (``#include`` directives). See :ref:`ldf_mode` for details.
+
+.. _projectconf_lib_compat_mode:
+
+``lib_compat_mode``
+^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 3.0
+.. seealso::
+    Please make sure to read :ref:`ldf` guide first.
+
+Library compatibility mode allows to control strictness of Library Dependency
+Finder. More details :ref:`ldf_compat_mode`.
+
+By default, this value is set to ``lib_compat_mode = 1`` and means that LDF
+will check only for framework compatibility.
+
+
+Test options
+~~~~~~~~~~~~
+
+.. contents::
+    :local:
+
+.. _projectconf_test_ignore:
+
+``test_ignore``
+^^^^^^^^^^^^^^^
+
+.. versionadded:: 3.0
+.. seealso::
+    Please make sure to read :ref:`unit_testing` guide first.
+
+Ignore tests where the name matches specified patterns. Multiple names are
+allowed. Please separate them using comma+space ", ". Also, you can
+ignore some tests using :option:`platformio test --ignore` command.
+
+.. list-table::
+    :header-rows:  1
+
+    * - Pattern
+      - Meaning
+
+    * - ``*``
+      - matches everything
+
+    * - ``?``
+      - matches any single character
+
+    * - ``[seq]``
+      - matches any character in seq
+
+    * - ``[!seq]``
+      - matches any character not in seq
+
+**Example**
+
+.. code-block:: ini
+
+  [env:myenv]
+  test_ignore = footest, bartest_*, test[13]
 
 -----------
 
@@ -631,7 +900,7 @@ Examples
     framework = arduino
     board = uno
 
-    # enable auto-uploading
+    ; enable auto-uploading
     targets = upload
 
 
@@ -646,12 +915,12 @@ Examples
     board_f_cpu = 16000000L
 
     upload_port = /dev/ttyUSB0
-    # for Windows OS
-    # upload_port = COM3
+    ; for Windows OS
+    ; upload_port = COM3
     upload_protocol = arduino
     upload_speed = 19200
 
-    # enable auto-uploading
+    ; enable auto-uploading
     targets = upload
 
 

@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,40 +14,41 @@
 
 import base64
 import json
-import sys
 from os import environ
-from os.path import join, normpath
+from os.path import join
 from time import time
 
-from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, Variables
+from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
+                          AllowSubstExceptions, AlwaysBuild,
+                          DefaultEnvironment, Variables)
 
 from platformio import util
-from platformio.exception import UnknownBoard
 
-# AllowSubstExceptions()
+AllowSubstExceptions(NameError)
 
 # allow common variables from INI file
 commonvars = Variables(None)
 commonvars.AddVariables(
+    ("PLATFORM_MANIFEST",),
     ("BUILD_SCRIPT",),
     ("EXTRA_SCRIPT",),
     ("PIOENV",),
-    ("PLATFORM",),
+    ("PIOTEST",),
+    ("PIOPLATFORM",),
+    ("PIOFRAMEWORK",),
 
-    # package aliases
-    ("PIOPACKAGE_TOOLCHAIN",),
-    ("PIOPACKAGE_FRAMEWORK",),
-    ("PIOPACKAGE_UPLOADER",),
-
-    # options
-    ("FRAMEWORK",),
+    # build options
     ("BUILD_FLAGS",),
     ("SRC_BUILD_FLAGS",),
     ("BUILD_UNFLAGS",),
     ("SRC_FILTER",),
-    ("LIB_DFCYCLIC",),
+
+    # library options
+    ("LIB_LDF_MODE",),
+    ("LIB_COMPAT_MODE",),
     ("LIB_IGNORE",),
-    ("LIB_USE",),
+    ("LIB_FORCE",),
+    ("LIB_EXTRA_DIRS",),
 
     # board options
     ("BOARD",),
@@ -62,112 +63,88 @@ commonvars.AddVariables(
     ("UPLOAD_SPEED",),
     ("UPLOAD_FLAGS",),
     ("UPLOAD_RESETMETHOD",)
-)
+)  # yapf: disable
 
-DefaultEnvironment(
+DEFAULT_ENV_OPTIONS = dict(
     tools=[
-        "gcc", "g++", "as", "ar", "gnulink",
-        "platformio", "pioupload", "pioar", "piomisc"
-    ],
-    toolpath=[join("$PIOBUILDER_DIR", "tools")],
+        "ar", "as", "gcc", "g++", "gnulink",
+        "platformio", "pioplatform", "piowinhooks",
+        "piolib", "piotest", "pioupload", "piomisc"
+    ],  # yapf: disable
+    toolpath=[join(util.get_source_dir(), "builder", "tools")],
     variables=commonvars,
 
     # Propagating External Environment
     ENV=environ,
-
     UNIX_TIME=int(time()),
     PROGNAME="program",
-
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),
-    PROJECTLIB_DIR=util.get_projectlib_dir(),
     PROJECTSRC_DIR=util.get_projectsrc_dir(),
+    PROJECTTEST_DIR=util.get_projecttest_dir(),
     PROJECTDATA_DIR=util.get_projectdata_dir(),
-    PIOENVS_DIR=util.get_pioenvs_dir(),
-
-    PIOBUILDER_DIR=join(util.get_source_dir(), "builder"),
-    PIOPACKAGES_DIR=join("$PIOHOME_DIR", "packages"),
-
-    BUILD_DIR=join("$PIOENVS_DIR", "$PIOENV"),
+    PROJECTPIOENVS_DIR=util.get_projectpioenvs_dir(),
+    BUILD_DIR=join("$PROJECTPIOENVS_DIR", "$PIOENV"),
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
+    BUILDTEST_DIR=join("$BUILD_DIR", "test"),
     LIBSOURCE_DIRS=[
-        "$PROJECTLIB_DIR",
-        util.get_lib_dir(),
-        join("$PLATFORMFW_DIR", "libraries")
+        util.get_projectlib_dir(), util.get_projectlibdeps_dir(),
+        join("$PIOHOME_DIR", "lib")
     ],
+    PYTHONEXE=util.get_pythonexe_path())
 
-    PYTHONEXE=normpath(sys.executable)
-)
+if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
+    DEFAULT_ENV_OPTIONS['ARCOMSTR'] = "Archiving $TARGET"
+    DEFAULT_ENV_OPTIONS['LINKCOMSTR'] = "Linking $TARGET"
+    DEFAULT_ENV_OPTIONS['RANLIBCOMSTR'] = "Indexing $TARGET"
+    for k in ("ASCOMSTR", "ASPPCOMSTR", "CCCOMSTR", "CXXCOMSTR"):
+        DEFAULT_ENV_OPTIONS[k] = "Compiling $TARGET"
 
-env = DefaultEnvironment()
+env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 
 # decode common variables
 for k in commonvars.keys():
     if k in env:
         env[k] = base64.b64decode(env[k])
 
-env.Prepend(LIBPATH=[join("$PIOPACKAGES_DIR", "ldscripts")])
+if env.GetOption('clean'):
+    env.PioClean(env.subst("$BUILD_DIR"))
+    env.Exit(0)
+elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
+    print "Verbose mode can be enabled via `-v, --verbose` option"
 
-if "BOARD" in env:
-    try:
-        env.Replace(BOARD_OPTIONS=util.get_boards(env.subst("$BOARD")))
-    except UnknownBoard as e:
-        env.Exit("Error: %s" % str(e))
-
-    for k in commonvars.keys():
-        if (k in env or
-                not any([k.startswith("BOARD_"), k.startswith("UPLOAD_")])):
-            continue
-        _opt, _val = k.lower().split("_", 1)
-        if _opt == "board":
-            _opt = "build"
-        if _val in env['BOARD_OPTIONS'][_opt]:
-            env.Replace(**{k: "${BOARD_OPTIONS['%s']['%s']}" % (_opt, _val)})
-
-    if "ldscript" in env.get("BOARD_OPTIONS", {}).get("build", {}):
-        env.Replace(
-            LDSCRIPT_PATH="${BOARD_OPTIONS['build']['ldscript']}"
-        )
-
-    if env['PLATFORM'] != env.get("BOARD_OPTIONS", {}).get("platform"):
-        env.Exit(
-            "Error: '%s' platform doesn't support this board. "
-            "Use '%s' platform instead." % (
-                env['PLATFORM'], env.get("BOARD_OPTIONS", {}).get("platform")))
-
-
-for opt in ("LIB_IGNORE", "LIB_USE"):
-    if opt not in env:
-        continue
-    env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
-
-if env.subst("$PIOPACKAGE_TOOLCHAIN"):
-    env.PrependENVPath(
-        "PATH",
-        env.subst(join("$PIOPACKAGES_DIR", "$PIOPACKAGE_TOOLCHAIN", "bin"))
-    )
-
-# handle custom variable from system environment
+# Handle custom variables from system environment
 for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPT",
-            "UPLOAD_PORT", "UPLOAD_FLAGS"):
+            "UPLOAD_PORT", "UPLOAD_FLAGS", "LIB_EXTRA_DIRS"):
     k = "PLATFORMIO_%s" % var
     if environ.get(k):
         env[var] = environ.get(k)
 
+# Parse comma separated items
+for opt in ("LIB_IGNORE", "LIB_FORCE", "LIB_EXTRA_DIRS"):
+    if opt not in env:
+        continue
+    env[opt] = [l.strip() for l in env[opt].split(",") if l.strip()]
+
+env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
+env.LoadPioPlatform(commonvars)
+
 env.SConscriptChdir(0)
-env.SConsignFile(join("$PIOENVS_DIR", ".sconsign.dblite"))
+env.SConsignFile(join("$PROJECTPIOENVS_DIR", ".sconsign.dblite"))
 env.SConscript("$BUILD_SCRIPT")
+
+AlwaysBuild(env.Alias("test", DEFAULT_TARGETS + ["size"]))
 
 if "UPLOAD_FLAGS" in env:
     env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
 
 if env.get("EXTRA_SCRIPT"):
-    env.SConscript(env.get("EXTRA_SCRIPT"))
+    env.SConscript(env.get("EXTRA_SCRIPT"), exports="env")
 
 if "envdump" in COMMAND_LINE_TARGETS:
     print env.Dump()
-    env.Exit()
+    env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
     print json.dumps(env.DumpIDEData())
-    env.Exit()
+    env.Exit(0)

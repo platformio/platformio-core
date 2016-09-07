@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,37 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import environ
-
-from click.testing import CliRunner
+import os
 
 import pytest
+import requests
+from click.testing import CliRunner
+
+requests.packages.urllib3.disable_warnings()
 
 
-@pytest.fixture(scope="session")
-def platformio_setup(request):
-    pioenvvars = ("ENABLE_PROMPTS", "ENABLE_TELEMETRY")
-    for v in pioenvvars:
-        environ["PLATFORMIO_SETTING_%s" % v] = "No"
-
-    def platformio_teardown():
-        for v in pioenvvars:
-            _name = "PLATFORMIO_SETTING_%s" % v
-            if _name in environ:
-                del environ[_name]
-
-    request.addfinalizer(platformio_teardown)
-
-
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def clirunner():
     return CliRunner()
 
 
 @pytest.fixture(scope="session")
 def validate_cliresult():
+
     def decorator(result):
         assert result.exit_code == 0
         assert not result.exception
-        assert "error" not in result.output.lower()
+
     return decorator
+
+
+@pytest.fixture(scope="module")
+def isolated_pio_home(request, tmpdir_factory):
+    home_dir = tmpdir_factory.mktemp(".platformio")
+    os.environ['PLATFORMIO_HOME_DIR'] = str(home_dir)
+
+    def fin():
+        del os.environ['PLATFORMIO_HOME_DIR']
+
+    request.addfinalizer(fin)
+    return home_dir

@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -51,7 +51,7 @@ Please fill all fields for your project in the Drone control panel:
 .. code-block:: bash
 
     pip install -U platformio
-    platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+    platformio ci --board=<ID_1> --board=<ID_2> --board=<ID_N>
 
 .. image:: ../_static/droneci-platformio-integration-1.png
 

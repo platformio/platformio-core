@@ -1,4 +1,4 @@
-..  Copyright 2014-present Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -31,20 +31,20 @@ Packages
     * - ``framework-arduinoteensy``
       - `Arduino Wiring-based Framework <http://arduino.cc/en/Reference/HomePage>`_
 
-    * - ``tool-teensy``
-      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
-
-    * - ``toolchain-gccarmnoneeabi``
-      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
-
     * - ``framework-mbed``
       - `mbed Framework <http://mbed.org>`_
+
+    * - ``tool-scons``
+      - `SCons software construction tool <http://www.scons.org>`_
+
+    * - ``tool-teensy``
+      - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
 
     * - ``toolchain-atmelavr``
       - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
 
-    * - ``ldscripts``
-      - `Linker Scripts <https://sourceware.org/binutils/docs/ld/Scripts.html>`_
+    * - ``toolchain-gccarmnoneeabi``
+      - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file

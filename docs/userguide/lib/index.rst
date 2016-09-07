@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -14,14 +14,47 @@
 Library Manager
 ===============
 
-To print all available commands and options use:
+Usage
+-----
 
 .. code-block:: bash
 
-    $ platformio lib --help
-    $ platformio lib COMMAND --help
+    platformio lib [OPTIONS] COMMAND
+
+    # To print all available commands and options use
+    platformio lib --help
+    platformio lib COMMAND --help
+
+Options
+-------
+
+.. program:: platformio lib
+
+.. option::
+     -g, --global
+
+.. versionadded:: 3.0
+
+
+Manage global PlatformIO's library storage (
+":ref:`projectconf_pio_home_dir`/lib") where :ref:`ldf` will look for
+dependencies by default.
+
+.. option::
+    -d, --storage-dir
+
+.. versionadded:: 3.0
+
+Manage custom library storage. It can be used later for the
+:ref:`projectconf_extra_script` option from :ref:`projectconf`.
+
+Demo
+----
 
 .. image:: ../../_static/platformio-demo-lib.gif
+
+Commands
+--------
 
 .. toctree::
     :maxdepth: 2

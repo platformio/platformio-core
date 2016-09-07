@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,29 +14,25 @@
 
 import sys
 
-VERSION = (2, 11, 2)
+VERSION = (3, 0, 0)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
-__description__ = (
-    "An open source ecosystem for IoT development. "
-    "Cross-platform build system and library manager. "
-    "Continuous and IDE integration. "
-    "Arduino and MBED compatible. Ready for Cloud compiling."
-)
+__description__ = ("An open source ecosystem for IoT development. "
+                   "Cross-platform build system and library manager. "
+                   "Continuous and IDE integration. "
+                   "Arduino, ESP8266 and ARM mbed compatible")
 __url__ = "http://platformio.org"
 
 __author__ = "Ivan Kravets"
 __email__ = "me@ikravets.com"
 
 __license__ = "Apache Software License"
-__copyright__ = "Copyright 2014-2016 Ivan Kravets"
+__copyright__ = "Copyright 2014-present PlatformIO"
 
-__apiurl__ = "http://api.platformio.org"
-__apiip__ = "198.7.57.247"
+__apiurl__ = "https://api.platformio.org"
 
-
-if sys.version_info >= (3, 0, 0):
+if sys.version_info < (2, 7, 0) or sys.version_info >= (3, 0, 0):
     msg = ("PlatformIO version %s does not run under Python version %s.\n"
            "Python 3 is not yet supported.\n")
     sys.stderr.write(msg % (__version__, sys.version.split()[0]))

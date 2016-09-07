@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+# Copyright 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,11 +15,10 @@
 from glob import glob
 from os import listdir, walk
 from os.path import dirname, getsize, isdir, isfile, join, normpath
-from shutil import rmtree
 
 import pytest
 
-from platformio.util import exec_command
+from platformio import util
 
 
 def pytest_generate_tests(metafunc):
@@ -36,11 +35,11 @@ def pytest_generate_tests(metafunc):
 
 
 @pytest.mark.examples
-def test_run(platformio_setup, pioproject_dir):
+def test_run(pioproject_dir):
     if isdir(join(pioproject_dir, ".pioenvs")):
-        rmtree(join(pioproject_dir, ".pioenvs"))
+        util.rmtree_(join(pioproject_dir, ".pioenvs"))
 
-    result = exec_command(
+    result = util.exec_command(
         ["platformio", "--force", "run", "--project-dir", pioproject_dir]
     )
     if result['returncode'] != 0:

@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -34,8 +34,7 @@ Options
 .. option::
     --force, -f
 
-Force to accept any confirmation prompts. This option allows to avoid an issue
-with :ref:`faq_troubleshooting_pioblocksprompt`
+Force to accept any confirmation prompts and disable progress bars.
 
 .. option::
     --version
@@ -61,10 +60,11 @@ Commands
 
     cmd_boards
     cmd_ci
+    cmd_device
     cmd_init
-    platformio platforms <platforms/index>
+    platformio platform <platforms/index>
     cmd_run
-    cmd_serialports
     cmd_settings
+    cmd_test
     cmd_update
     cmd_upgrade

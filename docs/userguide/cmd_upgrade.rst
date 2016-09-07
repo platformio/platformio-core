@@ -1,4 +1,4 @@
-..  Copyright 2014-2016 Ivan Kravets <me@ikravets.com>
+..  Copyright 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -33,11 +33,12 @@ Check or upgrade PlatformIO to the latest version
 Examples
 --------
 
-.. code-block:: bash
+.. code::
 
-    $ platformio upgrade
+    > platformio upgrade
+
     You are up-to-date!
     PlatformIO x.x.x is currently the newest version available.
 
     # If you have problem with permissions try:
-    $ sudo platformio upgrade
+    > sudo platformio upgrade
