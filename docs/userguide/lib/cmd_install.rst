@@ -99,6 +99,11 @@ Options
 
 Suppress progress reporting
 
+.. option::
+    --interactive
+
+Allow to make a choice for all prompts
+
 Version control
 ---------------
 

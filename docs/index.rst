@@ -143,3 +143,5 @@ Contents
     articles
     FAQ <faq>
     history
+    migration
+

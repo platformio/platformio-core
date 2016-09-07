@@ -89,17 +89,22 @@ Filter libraries by specified author
 
 Filter libraries by specified keyword
 
-
 .. option::
     -f, --framework
 
 Filter libraries by specified framework
 
-
 .. option::
     -p, --platform
 
 Filter libraries by specified keyword
+
+.. option::
+    -i, --header
+
+Filter libraries by header file (include)
+
+For example, ``platformio lib search --header "OneWire.h"``
 
 .. option::
     --json-output

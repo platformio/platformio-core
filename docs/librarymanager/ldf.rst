@@ -41,6 +41,8 @@ Library Dependency Finder has controls that can be set up in :ref:`projectconf`:
 
 .. contents::
 
+.. _ldf_storage:
+
 Storage
 -------
 
