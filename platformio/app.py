@@ -51,9 +51,8 @@ DEFAULT_SETTINGS = {
         "value": False
     },
     "disable_ssl": {
-        "description": ("Disable SSL for PlatformIO API "
-                        "(NOT RECOMMENDED, INSECURE)"),
-        "value": False
+        "description": "Disable SSL for PlatformIO services",
+        "value": True
     },
     "enable_telemetry": {
         "description":
