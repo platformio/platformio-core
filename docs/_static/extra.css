@@ -262,6 +262,12 @@ nav {
   visibility: none;
 }
 
+@media (min-width: 768px) {
+  .wy-side-scroll {
+    padding-bottom: 50px;
+  }
+}
+
 .navbar-header .navbar-brand {
   color: #e0e0e0;
   background: url("../_static/platformio-logo-xs.png") no-repeat;
