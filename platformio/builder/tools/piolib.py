@@ -308,7 +308,8 @@ class LibBuilderBase(object):
             else:
                 self._built_node = self.env.BuildSources(
                     self.build_dir, self.src_dir, self.src_filter)
-        return libs + [self._built_node]
+            libs.append(self._built_node)
+        return libs
 
 
 class UnknownLibBuilder(LibBuilderBase):
