@@ -21,7 +21,7 @@ PlatformIO
 .. image:: https://img.shields.io/community/PlatformIO.png
    :alt: Community Forums
    :target: https://community.platformio.org
-.. image:: https://img.shields.io/donate/PlatformIO.png?color=yellow
+.. image:: https://img.shields.io/PlatformIO/Plus.png?color=orange
    :alt: Donate for PlatformIO.Org
    :target: http://platformio.org/donate
 
