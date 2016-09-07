@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.0.0 (2016-??-??)
+3.0.0 (2016-09-07)
 ~~~~~~~~~~~~~~~~~~
 
 * `PlatformIO Plus <https://pioplus.com>`__
