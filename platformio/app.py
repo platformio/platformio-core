@@ -14,6 +14,7 @@
 
 import hashlib
 import json
+import sys
 import uuid
 from copy import deepcopy
 from os import environ, getenv
@@ -52,7 +53,7 @@ DEFAULT_SETTINGS = {
     },
     "disable_ssl": {
         "description": "Disable SSL for PlatformIO services",
-        "value": True
+        "value": sys.version_info < (2, 7, 9)
     },
     "enable_telemetry": {
         "description":

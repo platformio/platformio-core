@@ -4,6 +4,11 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.0.2 (2016-09-??)
+~~~~~~~~~~~~~~~~~~
+
+* Disable SSL Server-Name-Indication for Python < 2.7.9
+
 3.0.1 (2016-09-08)
 ~~~~~~~~~~~~~~~~~~
 

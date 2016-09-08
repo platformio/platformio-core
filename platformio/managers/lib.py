@@ -20,7 +20,7 @@ from os.path import dirname, join
 import click
 import semantic_version
 
-from platformio import commands, exception, util
+from platformio import app, commands, exception, util
 from platformio.managers.package import BasePkgManager
 
 
@@ -199,8 +199,8 @@ class LibraryManager(BasePkgManager):
         pkg_dir = None
         try:
             pkg_dir = self._install_from_url(
-                name, dl_data['url'].replace("http://", "https://"),
-                requirements)
+                name, dl_data['url'] if app.get_setting("disable_ssl") else
+                dl_data['url'].replace("http://", "https://"), requirements)
         except exception.APIRequestError:
             pkg_dir = self._install_from_url(name, dl_data['url'],
                                              requirements)
