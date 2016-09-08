@@ -1590,6 +1590,13 @@ SparkFun
       - Flash
       - RAM
 
+    * - ``sparkfunBlynk``
+      - `SparkFun Blynk Board <https://www.sparkfun.com/products/13794>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
     * - ``sparkfun_digitalsandbox``
       - `SparkFun Digital Sandbox <https://www.sparkfun.com/products/12651>`_
       - ATMEGA328P

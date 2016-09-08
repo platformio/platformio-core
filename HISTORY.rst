@@ -10,6 +10,10 @@ PlatformIO 3.0
 * Disable SSL Server-Name-Indication for Python < 2.7.9
 * Return valid exit code from ``plaformio test`` command
 
+* Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
+
+  + Add support for `SparkFun Blynk Board <https://www.sparkfun.com/products/13794>`_
+
 3.0.1 (2016-09-08)
 ~~~~~~~~~~~~~~~~~~
 

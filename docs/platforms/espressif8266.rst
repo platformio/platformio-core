@@ -305,6 +305,13 @@ SparkFun
       - Flash
       - RAM
 
+    * - ``sparkfunBlynk``
+      - `SparkFun Blynk Board <https://www.sparkfun.com/products/13794>`_
+      - ESP8266
+      - 80 MHz
+      - 1024 Kb
+      - 80 Kb
+
     * - ``thing``
       - `SparkFun ESP8266 Thing <https://www.sparkfun.com/products/13231>`_
       - ESP8266
