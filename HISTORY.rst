@@ -8,6 +8,7 @@ PlatformIO 3.0
 ~~~~~~~~~~~~~~~~~~
 
 * Disable SSL Server-Name-Indication for Python < 2.7.9
+* Return valid exit code from ``plaformio test`` command
 
 3.0.1 (2016-09-08)
 ~~~~~~~~~~~~~~~~~~

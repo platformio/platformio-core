@@ -17,7 +17,7 @@ import subprocess
 from os.path import dirname, join
 from platform import system
 
-from platformio import util
+from platformio import exception, util
 from platformio.managers.package import PackageManager
 
 PACKAGE_PIOPLUS_NAME = "tool-pioplus"
@@ -54,4 +54,5 @@ def pioplus_call(args, **kwargs):
         os.environ['LD_LIBRARY_PATH'] = dirname(pioplus_path)
     os.environ['PYTHONEXEPATH'] = util.get_pythonexe_path()
     util.copy_pythonpath_to_osenv()
-    subprocess.call([pioplus_path] + args, **kwargs)
+    if subprocess.call([pioplus_path] + args, **kwargs) != 0:
+        raise exception.ReturnErrorCode()
