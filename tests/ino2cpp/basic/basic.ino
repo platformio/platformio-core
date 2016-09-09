@@ -40,6 +40,8 @@ void myFunction(struct Item *item) {
 
 }
 
+#warning "Line number is 43"
+
 void fooCallback(){
 
 }

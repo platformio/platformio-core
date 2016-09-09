@@ -146,6 +146,8 @@ class InoToCPPConverter(object):
 
     def _get_total_lines(self, contents):
         total = 0
+        if contents.endswith("\n"):
+            contents = contents[:-1]
         for line in contents.split("\n")[::-1]:
             linenum = self._parse_preproc_line_num(line)
             if linenum is not None:
@@ -164,7 +166,7 @@ class InoToCPPConverter(object):
                                ("|".join(prototype_names)),
                                contents[:split_pos], re.M)
         if match_ptrs:
-            split_pos = contents.rfind("\n", 0, match_ptrs.start())
+            split_pos = contents.rfind("\n", 0, match_ptrs.start()) + 1
 
         result = []
         result.append(contents[:split_pos].strip())
