@@ -196,7 +196,7 @@ dash. `Semantic Versioning <http://semver.org>`_ IS RECOMMENDED.
     field is defined.
 
     |PIOAPICR| will use the
-    `CVS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_ revision from
+    `VCS <http://en.wikipedia.org/wiki/Concurrent_Versions_System>`_ revision from
     the latest commit as "current version". For example, ``13`` (*SVN*) or first
     10 chars of *SHA* digest ``e4564b7da4`` (*Git*). If :ref:`libjson_repository`
     ``branch`` is not specified, then default branch will be used.

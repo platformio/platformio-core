@@ -50,7 +50,7 @@ class PlatformNotInstalledYet(PlatformioException):
 
 class BoardNotDefined(PlatformioException):
 
-    MESSAGE = "You need to specify board type using `-b` or `--board` "\
+    MESSAGE = "You need to specify board ID using `-b` or `--board` "\
         "option. Supported boards list is available via "\
         " `platformio boards` command"
 

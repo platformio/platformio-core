@@ -133,7 +133,7 @@ next structure:
   (``*.h, *.c, *.cpp, *.S, *.ino, etc.``)
 * ``lib`` directory can be used for the project specific (private) libraries.
   More details are located in ``lib/readme.txt`` file.
-* Miscellaneous files for CVS and :ref:`ci` support.
+* Miscellaneous files for VCS and :ref:`ci` support.
 
 
 .. note::
