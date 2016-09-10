@@ -258,7 +258,9 @@ class EnvironmentProcessor(object):
             p = PlatformFactory.newPlatform(self.options['platform'])
         except exception.UnknownPlatform:
             self.cmd_ctx.invoke(
-                cmd_platform_install, platforms=[self.options['platform']])
+                cmd_platform_install,
+                platforms=[self.options['platform']],
+                skip_default_package=True)
             p = PlatformFactory.newPlatform(self.options['platform'])
 
         return p.run(build_vars, build_targets, self.silent, self.verbose)
