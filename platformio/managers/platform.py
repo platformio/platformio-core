@@ -223,7 +223,7 @@ class PlatformPackagesMixin(object):
 
 class PlatformRunMixin(object):
 
-    LINE_ERROR_RE = re.compile(r"(\s+error|error[:\s]+)", re.I)
+    LINE_ERROR_RE = re.compile(r"(^|\s+)error:?\s+", re.I)
 
     def run(self, variables, targets, silent, verbose):
         assert isinstance(variables, dict)
