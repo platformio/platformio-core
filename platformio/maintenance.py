@@ -191,9 +191,9 @@ def after_upgrade(ctx):
                        "try", fg="cyan"), click.style(
                            "http://platformio.org/platformio-ide", fg="cyan")))
     if not util.is_ci():
-        click.echo("- %s to keep PlatformIO alive! > %s" % (click.style(
-            "donate", fg="cyan"), click.style(
-                "http://platformio.org/donate", fg="cyan")))
+        click.echo("- %s us with PlatformIO Plus > %s" % (click.style(
+            "support", fg="cyan"), click.style(
+                "https://pioplus.com", fg="cyan")))
 
     click.echo("*" * terminal_width)
     click.echo("")
