@@ -83,8 +83,7 @@ def test_complex(clirunner, validate_cliresult):
                 validate_cliresult(result)
                 assert all([
                     s in result.output
-                    for s in ("teensy", "Downloading", "Unpacking",
-                              "tool-scons")
+                    for s in ("teensy", "Downloading", "Unpacking")
                 ])
 
                 # show platform information
