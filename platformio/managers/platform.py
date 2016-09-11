@@ -31,7 +31,7 @@ class PlatformManager(BasePkgManager):
         if not repositories:
             repositories = [
                 "{0}://dl.platformio.org/platforms/manifest.json".format(
-                    "http" if app.get_setting("disable_ssl") else "https")
+                    "https" if app.get_setting("enable_ssl") else "http")
             ]
         BasePkgManager.__init__(self, package_dir or
                                 join(util.get_home_dir(), "platforms"),

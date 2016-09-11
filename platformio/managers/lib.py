@@ -196,15 +196,10 @@ class LibraryManager(BasePkgManager):
         dl_data = util.get_api_result(
             "/lib/download/" + str(name[3:]), dict(version=version))
         assert dl_data
-        pkg_dir = None
-        try:
-            pkg_dir = self._install_from_url(
-                name, dl_data['url'] if app.get_setting("disable_ssl") else
-                dl_data['url'].replace("http://", "https://"), requirements)
-        except exception.APIRequestError:
-            pkg_dir = self._install_from_url(name, dl_data['url'],
-                                             requirements)
-        return pkg_dir
+
+        return self._install_from_url(
+            name, dl_data['url'].replace("http://", "https://")
+            if app.get_setting("enable_ssl") else dl_data['url'], requirements)
 
     def install(self,  # pylint: disable=too-many-arguments
                 name,
