@@ -317,18 +317,25 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
             continue
         used_boards.append(id_)
 
-        content.append("")
-        content.append("[env:%s%s]" % (env_prefix, id_))
-        content.append("platform = %s" % manifest['platform'])
-
+        envopts = {
+            "platform": manifest['platform'],
+            "board": id_
+        }
         # find default framework for board
         frameworks = manifest.get("frameworks")
         if frameworks:
-            content.append("framework = %s" % frameworks[0])
+            envopts['framework'] = frameworks[0]
 
-        content.append("board = %s" % id_)
-        if project_option:
-            content.extend(project_option)
+        for item in project_option:
+            if "=" not in item:
+                continue
+            _name, _value = item.split("=", 1)
+            envopts[_name.strip()] = _value.strip()
+
+        content.append("")
+        content.append("[env:%s%s]" % (env_prefix, id_))
+        for name, value in envopts.items():
+            content.append("%s = %s" % (name, value))
 
     if force_download and used_platforms:
         _install_dependent_platforms(ctx, used_platforms)

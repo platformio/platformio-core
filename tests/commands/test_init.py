@@ -132,6 +132,23 @@ def test_init_enable_auto_uploading(clirunner, validate_cliresult):
                 set(config.items("env:uno")))) == 0
 
 
+def test_init_custom_framework(clirunner, validate_cliresult):
+    with clirunner.isolated_filesystem():
+        result = clirunner.invoke(
+            cmd_init, ["-b", "teensy31", "--project-option", "framework=mbed"])
+        validate_cliresult(result)
+        validate_pioproject(getcwd())
+        config = util.load_project_config()
+        expected_result = [
+            ("platform", "teensy"), ("framework", "mbed"),
+            ("board", "teensy31")
+        ]
+        assert config.has_section("env:teensy31")
+        assert len(
+            set(expected_result).symmetric_difference(
+                set(config.items("env:teensy31")))) == 0
+
+
 def test_init_incorrect_board(clirunner):
     result = clirunner.invoke(cmd_init, ["-b", "missed_board"])
     assert result.exit_code == 2
