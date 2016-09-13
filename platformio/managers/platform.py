@@ -494,8 +494,12 @@ class PlatformBoardConfig(object):
             return False
 
     @property
-    def id_(self):
+    def id(self):
         return self._id
+
+    @property
+    def id_(self):
+        return self.id
 
     @property
     def manifest(self):
@@ -503,7 +507,7 @@ class PlatformBoardConfig(object):
 
     def get_brief_data(self):
         return {
-            "id": self.id_,
+            "id": self.id,
             "name": self._manifest['name'],
             "platform": self._manifest.get("platform"),
             "mcu": self._manifest.get("build", {}).get("mcu", "").upper(),
