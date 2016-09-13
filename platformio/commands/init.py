@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-arguments,too-many-locals, too-many-branches
+
 from os import getcwd, makedirs
 from os.path import isdir, isfile, join
 from shutil import copyfile
@@ -287,9 +289,8 @@ def init_cvs_ignore(project_dir):
         fp.writelines(current)
 
 
-def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
-        ctx, project_dir, board_ids, project_option, env_prefix,
-        force_download):
+def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
+                      force_download):
     installed_boards = PlatformManager().get_installed_boards()
     content = []
     used_boards = []
@@ -317,10 +318,7 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
             continue
         used_boards.append(id_)
 
-        envopts = {
-            "platform": manifest['platform'],
-            "board": id_
-        }
+        envopts = {"platform": manifest['platform'], "board": id_}
         # find default framework for board
         frameworks = manifest.get("frameworks")
         if frameworks:

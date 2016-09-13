@@ -8,7 +8,7 @@ PlatformIO 3.0
 ~~~~~~~~~~~~~~~~~~
 
 * Improved Project Generator when custom ``--project-option`` is passed to
-  `platformio init <http://docs.platformio.org/en/stable/userguide/cmd_init.html>`_
+  `platformio init <http://docs.platformio.org/en/stable/userguide/cmd_init.html>`__
   command
 * Disable SSL Server-Name-Indication for Python < 2.7.9
 * Return valid exit code from ``plaformio test`` command
