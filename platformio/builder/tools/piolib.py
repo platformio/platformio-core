@@ -549,7 +549,7 @@ def GetLibBuilders(env):
     if verbose and found_incompat:
         sys.stderr.write(
             "More details about \"Library Compatibility Mode\": "
-            "http://docs.platformio.org/en/latest/librarymanager/ldf.html#"
+            "http://docs.platformio.org/en/stable/librarymanager/ldf.html#"
             "ldf-compat-mode\n")
 
     return items
