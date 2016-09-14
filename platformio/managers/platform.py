@@ -132,6 +132,7 @@ class PlatformFactory(object):
 
     @staticmethod
     def get_clsname(name):
+        name = re.sub(r"[^\da-z]+", "", name, flags=re.I)
         return "%s%sPlatform" % (name.upper()[0], name.lower()[1:])
 
     @staticmethod
