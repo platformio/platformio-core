@@ -180,8 +180,10 @@ def lib_search(query, json_output, page, noninteractive, **filters):
             query.append('%s:"%s"' % (key, value))
 
     result = get_api_result(
-        "/lib/search", dict(
-            query=" ".join(query), page=page))
+        "/lib/search",
+        dict(
+            query=" ".join(query), page=page),
+        cache_valid="3d")
 
     if json_output:
         click.echo(json.dumps(result))
@@ -232,7 +234,8 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         result = get_api_result(
             "/lib/search",
             dict(
-                query=" ".join(query), page=int(result['page']) + 1))
+                query=" ".join(query), page=int(result['page']) + 1),
+            cache_valid="3d")
 
 
 @cli.command("list", short_help="List installed libraries")

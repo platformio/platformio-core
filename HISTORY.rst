@@ -4,14 +4,14 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.0.2 (2016-09-??)
+3.1.0 (2016-09-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Improved a work in off-line mode
+* Implemented LocalCache system for API and improved a work in off-line mode
 * Improved Project Generator when custom ``--project-option`` is passed to
   `platformio init <http://docs.platformio.org/en/stable/userguide/cmd_init.html>`__
   command
-* Disable SSL Server-Name-Indication for Python < 2.7.9
+* Fixed SSL Server-Name-Indication for Python < 2.7.9
 * Return valid exit code from ``plaformio test`` command
 
 * Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__

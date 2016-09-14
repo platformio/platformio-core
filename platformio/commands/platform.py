@@ -48,7 +48,7 @@ def _print_platforms(platforms):
 @click.option("--json-output", is_flag=True)
 def platform_search(query, json_output):
     platforms = []
-    for platform in util.get_api_result("/platforms"):
+    for platform in util.get_api_result("/platforms", cache_valid="365d"):
         if query == "all":
             query = ""
 

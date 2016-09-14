@@ -409,12 +409,24 @@ def _get_api_result(
     return result
 
 
-def get_api_result(path, params=None, data=None):
-    max_retries = 5
+def get_api_result(path, params=None, data=None, cache_valid=None):
+    from platformio.app import LocalCache
     total = 0
+    max_retries = 5
+    cache_key = (LocalCache.key_from_args(path, params, data)
+                 if cache_valid else None)
     while total < max_retries:
         try:
-            return _get_api_result(path, params, data)
+            with LocalCache() as lc:
+                if cache_key:
+                    result = lc.get(cache_key)
+                    if result is not None:
+                        return result
+            result = _get_api_result(path, params, data)
+            if cache_valid:
+                with LocalCache() as lc:
+                    lc.set(cache_key, result, cache_valid)
+            return result
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
             from platformio.maintenance import in_silence
