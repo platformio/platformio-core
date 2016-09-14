@@ -221,13 +221,13 @@ Using Arduino Framework with Staging version
 --------------------------------------------
 
 1.  Install :ref:`installation_develop` of PlatformIO
-2.  Set :ref:`projectconf_env_platform` to ``espressif8266-stage`` in
+2.  Set :ref:`projectconf_env_platform` to ``espressif8266_stage`` in
     :ref:`projectconf`. For example,
 
     .. code-block:: ini
 
         [env:nodemcuv2]
-        platform = espressif8266-stage
+        platform = espressif8266_stage
         board = nodemcuv2
         framework = arduino
 
