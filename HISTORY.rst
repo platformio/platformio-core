@@ -14,9 +14,13 @@ PlatformIO 3.0
 * Fixed SSL Server-Name-Indication for Python < 2.7.9
 * Return valid exit code from ``plaformio test`` command
 
+-------
+
 * Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
 
   + Add support for `SparkFun Blynk Board <https://www.sparkfun.com/products/13794>`_
+  + Created `staging <http://docs.platformio.org/en/stable/platforms/espressif8266.html#using-arduino-framework-with-staging-version>`__
+    branch to work with development version of Arduino Framework
 
 3.0.1 (2016-09-08)
 ~~~~~~~~~~~~~~~~~~

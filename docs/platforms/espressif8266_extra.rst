@@ -220,20 +220,15 @@ Demo
 Using Arduino Framework with Staging version
 --------------------------------------------
 
-1.  Clone/Copy `main repository <https://github.com/esp8266/Arduino>`_ to
-    :ref:`projectconf_pio_home_dir` + ``packages/framework-arduinoespressif8266``
-    and create new file ``packages/framework-arduinoespressif8266/package.json``
-    with the next contents (you can specify own version if you want)
+1.  Install ``stage`` version of Espressif 8266 development platform
 
-    .. code-block:: json
+    .. code-block:: bash
 
-        {
-            "description":"Arduino Wiring-based Framework (ESP8266 Core)",
-            "name":"framework-arduinoespressif8266",
-            "system":"all",
-            "url":"https://github.com/esp8266/Arduino",
-            "version":"1.20300.0"
-        }
+        # uninstall existing (if you have it)
+        platformio platform uninstall espressif8266
+
+        # install from ``stage`` branch
+        platformio platform install https://github.com/platformio/platform-espressif8266.git#feature/stage
 
 2.  Try to build project
 3.  If you see build errors, then try to build this project using the same
