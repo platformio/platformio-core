@@ -21,8 +21,7 @@ from tempfile import mkdtemp
 import click
 
 from platformio import app, util
-from platformio.commands.init import cli as cmd_init
-from platformio.commands.init import validate_boards
+from platformio.commands.init import cli as cmd_init, validate_boards
 from platformio.commands.run import cli as cmd_run
 from platformio.exception import CIBuildEnvsEmpty
 

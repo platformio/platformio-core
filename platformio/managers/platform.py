@@ -118,6 +118,15 @@ class PlatformManager(BasePkgManager):
     def get_registered_boards():
         return util.get_api_result("/boards")
 
+    def board_config(self, id_):
+        for manifest in self.get_installed_boards():
+            if manifest['id'] == id_:
+                return manifest
+        for manifest in self.get_registered_boards():
+            if manifest['id'] == id_:
+                return manifest
+        raise exception.UnknownBoard(id_)
+
 
 class PlatformFactory(object):
 
