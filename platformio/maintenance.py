@@ -43,9 +43,8 @@ def in_silence(ctx=None):
 
 
 def clean_cache(ctx):
-    if ctx.args and (ctx.args[0] == "upgrade" or "update" in ctx.args):
-        with app.LocalCache() as lc:
-            lc.clean()
+    with app.LocalCache() as lc:
+        lc.clean()
 
 
 def on_platformio_start(ctx, force, caller):
@@ -58,9 +57,10 @@ def on_platformio_start(ctx, force, caller):
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
     app.set_session_var("caller_id", caller)
-    clean_cache(ctx)
     telemetry.on_command()
 
+    if ctx.args and (ctx.args[0] == "upgrade" or "update" in ctx.args):
+        clean_cache()
     if not in_silence(ctx):
         after_upgrade(ctx)
 
