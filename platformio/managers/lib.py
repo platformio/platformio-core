@@ -194,7 +194,9 @@ class LibraryManager(BasePkgManager):
             raise exception.UndefinedPackageVersion(requirements or "latest",
                                                     util.get_systype())
         dl_data = util.get_api_result(
-            "/lib/download/" + str(name[3:]), dict(version=version))
+            "/lib/download/" + str(name[3:]),
+            dict(version=version),
+            cache_valid="30d")
         assert dl_data
 
         return self._install_from_url(
@@ -268,7 +270,7 @@ class LibraryManager(BasePkgManager):
 
         lib_info = None
         result = util.get_api_result(
-            "/lib/search", dict(query=" ".join(query)))
+            "/lib/search", dict(query=" ".join(query)), cache_valid="3d")
         if result['total'] == 1:
             lib_info = result['items'][0]
         elif result['total'] > 1:

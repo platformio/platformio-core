@@ -154,7 +154,7 @@ def after_upgrade(ctx):
         app.set_state_item("last_version", __version__)
     else:
         click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
-
+        clean_cache()
         u = Upgrader(last_version, __version__)
         if u.run(ctx):
             app.set_state_item("last_version", __version__)
@@ -162,7 +162,6 @@ def after_upgrade(ctx):
             # update development platforms
             pm = PlatformManager()
             for manifest in pm.get_installed():
-                # @TODO Uncomment line below after first PIO3 release
                 # pm.update(manifest['name'], "^" + manifest['version'])
                 pm.update(manifest['name'])
 

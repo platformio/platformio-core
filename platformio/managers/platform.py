@@ -116,7 +116,7 @@ class PlatformManager(BasePkgManager):
     @staticmethod
     @util.memoized
     def get_registered_boards():
-        return util.get_api_result("/boards")
+        return util.get_api_result("/boards", cache_valid="365d")
 
     def board_config(self, id_):
         for manifest in self.get_installed_boards():
