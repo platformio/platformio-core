@@ -42,7 +42,7 @@ def in_silence(ctx=None):
             (ctx.args[0] == "upgrade" or "--json-output" in ctx_args))
 
 
-def clean_cache(ctx):
+def clean_cache():
     with app.LocalCache() as lc:
         lc.clean()
 
