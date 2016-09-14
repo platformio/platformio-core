@@ -417,11 +417,13 @@ def get_api_result(path, params=None, data=None):
             return _get_api_result(path, params, data)
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
+            from platformio.maintenance import in_silence
             total += 1
-            click.secho(
-                "[API] ConnectionError: {0} (incremented retry: max={1}, "
-                "total={2})".format(e, max_retries, total),
-                fg="yellow")
+            if not in_silence():
+                click.secho(
+                    "[API] ConnectionError: {0} (incremented retry: max={1}, "
+                    "total={2})".format(e, max_retries, total),
+                    fg="yellow")
             sleep(2 * total)
 
     raise exception.APIRequestError(

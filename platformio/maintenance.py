@@ -34,7 +34,9 @@ from platformio.managers.platform import PlatformManager
 from platformio.pioplus import pioplus_update
 
 
-def in_silence(ctx):
+def in_silence(ctx=None):
+    ctx = ctx or app.get_session_var("command_ctx")
+    assert ctx
     ctx_args = ctx.args or []
     return (ctx_args and
             (ctx.args[0] == "upgrade" or "--json-output" in ctx_args))

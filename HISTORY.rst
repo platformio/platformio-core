@@ -7,6 +7,7 @@ PlatformIO 3.0
 3.0.2 (2016-09-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Improved a work in off-line mode
 * Improved Project Generator when custom ``--project-option`` is passed to
   `platformio init <http://docs.platformio.org/en/stable/userguide/cmd_init.html>`__
   command
