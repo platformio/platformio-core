@@ -220,20 +220,21 @@ Demo
 Using Arduino Framework with Staging version
 --------------------------------------------
 
-1.  Install ``stage`` version of Espressif 8266 development platform
+1.  Install :ref:`installation_develop` of PlatformIO
+2.  Set :ref:`projectconf_env_platform` to ``espressif8266-stage`` in
+    :ref:`projectconf`. For example,
 
-    .. code-block:: bash
+    .. code-block:: ini
 
-        # uninstall existing (if you have it)
-        platformio platform uninstall espressif8266
+        [env:nodemcuv2]
+        platform = espressif8266-stage
+        board = nodemcuv2
+        framework = arduino
 
-        # install from ``stage`` branch
-        platformio platform install https://github.com/platformio/platform-espressif8266.git#feature/stage
-
-2.  Try to build project
-3.  If you see build errors, then try to build this project using the same
+3.  Try to build project
+4.  If you see build errors, then try to build this project using the same
     ``stage`` on Arduino IDE
-4.  If it works with Arduino IDE but doesn't work with PlatformIO, then please
+5.  If it works with Arduino IDE but doesn't work with PlatformIO, then please
     `open new issue <https://github.com/platformio/platformio/issues>`_ with
     attached information:
 
