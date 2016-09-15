@@ -30,6 +30,7 @@ class PlatformManager(BasePkgManager):
     def __init__(self, package_dir=None, repositories=None):
         if not repositories:
             repositories = [
+                "https://dl.bintray.com/platformio/dl-platforms/manifest.json",
                 "{0}://dl.platformio.org/platforms/manifest.json".format(
                     "https" if app.get_setting("enable_ssl") else "http")
             ]
