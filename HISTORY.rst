@@ -22,6 +22,11 @@ PlatformIO 3.0
   + Created `staging <http://docs.platformio.org/en/stable/platforms/espressif8266.html#using-arduino-framework-with-staging-version>`__
     branch to work with development version of Arduino Framework
 
+* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
+
+  + Added support for Teensy 3.5 and 3.6 boards
+  + Updated Arduino Framework for Teensy to v130
+
 3.0.1 (2016-09-08)
 ~~~~~~~~~~~~~~~~~~
 
