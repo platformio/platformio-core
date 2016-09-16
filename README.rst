@@ -18,7 +18,7 @@ PlatformIO
 .. image:: https://img.shields.io/pypi/l/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
-.. image:: https://img.shields.io/community/PlatformIO.png
+.. image:: https://img.shields.io/PlatformIO/Community.png
    :alt: Community Forums
    :target: https://community.platformio.org
 .. image:: https://img.shields.io/PlatformIO/Plus.png?color=orange
