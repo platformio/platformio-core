@@ -43,9 +43,6 @@ Packages
     * - ``tool-mkspiffs``
       - `Tool to build and unpack SPIFFS images <https://github.com/igrr/mkspiffs>`_
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``toolchain-xtensa``
       - `xtensa-gcc <https://github.com/jcmvbkbc/gcc-xtensa>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
@@ -222,7 +219,7 @@ Espressif
       - ESP8266
       - 80 MHz
       - 4096 Kb
-      - 50 Kb
+      - 80 Kb
 
     * - ``phoenix_v1``
       - `Phoenix 1.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
@@ -309,7 +306,7 @@ SparkFun
       - `SparkFun Blynk Board <https://www.sparkfun.com/products/13794>`_
       - ESP8266
       - 80 MHz
-      - 1024 Kb
+      - 4096 Kb
       - 80 Kb
 
     * - ``thing``

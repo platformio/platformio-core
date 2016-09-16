@@ -31,9 +31,6 @@ Packages
     * - ``framework-mbed``
       - `mbed Framework <http://mbed.org>`_
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
@@ -122,9 +119,50 @@ Freescale
       - 128 Kb
       - 16 Kb
 
+    * - ``frdm_kl26z``
+      - `Freescale Kinetis FRDM-KL26Z <http://www.nxp.com/products/software-and-tools/hardware-development-tools/freedom-development-boards/freedom-development-platform-for-kinetis-kl16-and-kl26-mcus-up-to-128-kb-flash:FRDM-KL26Z>`_
+      - MKL26Z128VLH4
+      - 48 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``frdm_kl27z``
+      - `Freescale Kinetis FRDM-KL27Z <http://www.nxp.com/products/software-and-tools/hardware-development-tools/freedom-development-boards/freedom-development-platform-for-kinetis-kl17-and-kl27-mcus:FRDM-KL27Z>`_
+      - MKL27Z64VLH4
+      - 48 MHz
+      - 64 Kb
+      - 16 Kb
+
+    * - ``frdm_kl43z``
+      - `Freescale Kinetis FRDM-KL43Z <http://www.nxp.com/products/software-and-tools/hardware-development-tools/freedom-development-boards/freedom-development-platform-for-kinetis-kl43-kl33-kl27-kl17-and-kl13-mcus:FRDM-KL43Z>`_
+      - MKL43Z256VLH4
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
     * - ``frdm_kl46z``
       - `Freescale Kinetis FRDM-KL46Z <https://developer.mbed.org/platforms/FRDM-KL46Z/>`_
       - MKL46Z256VLL4
       - 48 MHz
       - 256 Kb
       - 32 Kb
+
+MikroElektronika
+~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``hexiwear``
+      - `Hexiwear <https://developer.mbed.org/platforms/Hexiwear/>`_
+      - MK64FN1M0VDC12
+      - 120 MHz
+      - 1024 Kb
+      - 256 Kb

@@ -45,6 +45,9 @@ Platforms
     * - :ref:`platform_nordicnrf51`
       - The Nordic nRF51 Series is a family of highly flexible, multi-protocol, system-on-chip (SoC) devices for ultra-low power wireless applications. nRF51 Series devices support a range of protocol stacks including Bluetooth Smart (previously called Bluetooth low energy), ANT and proprietary 2.4GHz protocols such as Gazell.
 
+    * - :ref:`platform_ststm32`
+      - The STM32 family of 32-bit Flash MCUs based on the ARM Cortex-M processor is designed to offer new degrees of freedom to MCU users. It offers a 32-bit product range that combines very high performance, real-time capabilities, digital signal processing, and low-power, low-voltage operation, while maintaining full integration and ease of development.
+
     * - :ref:`platform_teensy`
       - Teensy is a complete USB-based microcontroller development system, in a very small footprint, capable of implementing many types of projects. All programming is done via the USB port. No special programmer is needed, only a standard USB cable and a PC or Macintosh with a USB port.
 
@@ -856,7 +859,7 @@ Espressif
       - ESP8266
       - 80 MHz
       - 4096 Kb
-      - 50 Kb
+      - 80 Kb
 
     * - ``phoenix_v1``
       - `Phoenix 1.0 <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
@@ -905,6 +908,68 @@ Fubarino
       - 80 MHz
       - 512 Kb
       - 128 Kb
+
+Generic
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``bluepill_f103c8``
+      - `BluePill F103C8 <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103c8.html>`_
+      - STM32F103C8T6
+      - 72 MHz
+      - 64 Kb
+      - 20 Kb
+
+    * - ``genericSTM32F103C8``
+      - `STM32F103C8 (20k RAM. 64k Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103c8.html>`_
+      - STM32F103C8
+      - 72 MHz
+      - 64 Kb
+      - 20 Kb
+
+    * - ``genericSTM32F103CB``
+      - `STM32F103CB (20k RAM. 128k Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103cb.html>`_
+      - STM32F103CB
+      - 72 MHz
+      - 128 Kb
+      - 20 Kb
+
+    * - ``genericSTM32F103R8``
+      - `STM32F103R8 (20k RAM. 64 Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103r8.html>`_
+      - STM32F103R8
+      - 72 MHz
+      - 64 Kb
+      - 20 Kb
+
+    * - ``genericSTM32F103RB``
+      - `STM32F103RB (20k RAM. 128k Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103rb.html>`_
+      - STM32F103RB
+      - 72 MHz
+      - 128 Kb
+      - 20 Kb
+
+    * - ``genericSTM32F103RC``
+      - `STM32F103RC (48k RAM. 256k Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103rc.html>`_
+      - STM32F103RC
+      - 72 MHz
+      - 256 Kb
+      - 48 Kb
+
+    * - ``genericSTM32F103RE``
+      - `STM32F103RE (64k RAM. 512k Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103re.html>`_
+      - STM32F103RE
+      - 72 MHz
+      - 512 Kb
+      - 64 Kb
 
 Generic ATTiny
 ~~~~~~~~~~~~~~
@@ -1232,6 +1297,13 @@ Olimex
       - Frequency
       - Flash
       - RAM
+
+    * - ``maple``
+      - `Olimexino STM32 <https://www.olimex.com/Products/Duino/STM32/OLIMEXINO-STM32/>`_
+      - STM32F103RB_MAPLE
+      - 72 MHz
+      - 128 Kb
+      - 16.6015625 Kb
 
     * - ``modwifi``
       - `Olimex MOD-WIFI-ESP8266(-DEV) <https://www.olimex.com/Products/IoT/MOD-WIFI-ESP8266-DEV/open-source-hardware>`_
@@ -1594,7 +1666,7 @@ SparkFun
       - `SparkFun Blynk Board <https://www.sparkfun.com/products/13794>`_
       - ESP8266
       - 80 MHz
-      - 1024 Kb
+      - 4096 Kb
       - 80 Kb
 
     * - ``sparkfun_digitalsandbox``
@@ -1755,6 +1827,20 @@ Teensy
       - 72 MHz
       - 256 Kb
       - 64 Kb
+
+    * - ``teensy35``
+      - `Teensy 3.5 <https://www.pjrc.com>`_
+      - MK64FX512
+      - 120 MHz
+      - 512 Kb
+      - 192 Kb
+
+    * - ``teensy36``
+      - `Teensy 3.6 <https://www.pjrc.com>`_
+      - MK66FX1M0
+      - 180 MHz
+      - 1024 Kb
+      - 256 Kb
 
     * - ``teensylc``
       - `Teensy LC <http://www.pjrc.com/teensy/teensyLC.html>`_

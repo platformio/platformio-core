@@ -28,8 +28,5 @@ Packages
     * - Name
       - Contents
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``toolchain-gcclinux32``
       - `GCC for Linux i686 <https://gcc.gnu.org>`_

@@ -28,6 +28,9 @@ Packages
     * - Name
       - Contents
 
+    * - ``framework-arduinoststm32``
+      - `Arduino Wiring-based Framework (STM32 Core) <https://github.com/rogerclarkmelbourne/Arduino_STM32>`_
+
     * - ``framework-cmsis``
       - `Vendor-independent hardware abstraction layer for the Cortex-M processor series <http://www.arm.com/products/processors/cortex-m/cortex-microcontroller-software-interface-standard.php>`_
 
@@ -39,9 +42,6 @@ Packages
 
     * - ``framework-spl``
       - `Standard Peripheral Library for STM32 MCUs <http://www.st.com/web/catalog/tools/FM147/CL1794/SC961/SS1743/PF257890>`_
-
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
 
     * - ``tool-stlink``
       - `ST-Link <https://github.com/texane/stlink>`_
@@ -66,6 +66,9 @@ Frameworks
 
     * - Name
       - Description
+
+    * - :ref:`framework_arduino`
+      - Arduino Wiring-based Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
 
     * - :ref:`framework_cmsis`
       - The ARM Cortex Microcontroller Software Interface Standard (CMSIS) is a vendor-independent hardware abstraction layer for the Cortex-M processor series and specifies debugger interfaces. The CMSIS enables consistent and simple software interfaces to the processor for interface peripherals, real-time operating systems, and middleware. It simplifies software re-use, reducing the learning curve for new microcontroller developers and cutting the time-to-market for devices.
@@ -162,6 +165,48 @@ Generic
       - 64 Kb
       - 20 Kb
 
+    * - ``genericSTM32F103C8``
+      - `STM32F103C8 (20k RAM. 64k Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103c8.html>`_
+      - STM32F103C8
+      - 72 MHz
+      - 64 Kb
+      - 20 Kb
+
+    * - ``genericSTM32F103CB``
+      - `STM32F103CB (20k RAM. 128k Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103cb.html>`_
+      - STM32F103CB
+      - 72 MHz
+      - 128 Kb
+      - 20 Kb
+
+    * - ``genericSTM32F103R8``
+      - `STM32F103R8 (20k RAM. 64 Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103r8.html>`_
+      - STM32F103R8
+      - 72 MHz
+      - 64 Kb
+      - 20 Kb
+
+    * - ``genericSTM32F103RB``
+      - `STM32F103RB (20k RAM. 128k Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103rb.html>`_
+      - STM32F103RB
+      - 72 MHz
+      - 128 Kb
+      - 20 Kb
+
+    * - ``genericSTM32F103RC``
+      - `STM32F103RC (48k RAM. 256k Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103rc.html>`_
+      - STM32F103RC
+      - 72 MHz
+      - 256 Kb
+      - 48 Kb
+
+    * - ``genericSTM32F103RE``
+      - `STM32F103RE (64k RAM. 512k Flash) <http://www.st.com/content/st_com/en/products/microcontrollers/stm32-32-bit-arm-cortex-mcus/stm32f1-series/stm32f103/stm32f103re.html>`_
+      - STM32F103RE
+      - 72 MHz
+      - 512 Kb
+      - 64 Kb
+
 MultiTech
 ~~~~~~~~~
 
@@ -175,12 +220,39 @@ MultiTech
       - Flash
       - RAM
 
+    * - ``mts_mdot_f405rg``
+      - `MultiTech mDot <https://developer.mbed.org/platforms/MTS-mDot-F411/>`_
+      - STM32F411RET6
+      - 100 MHz
+      - 512 Kb
+      - 128 Kb
+
     * - ``mts_mdot_f411re``
       - `MultiTech mDot F411 <https://developer.mbed.org/platforms/MTS-mDot-F411/>`_
       - STM32F411RET6
       - 100 MHz
       - 512 Kb
       - 128 Kb
+
+Olimex
+~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``maple``
+      - `Olimexino STM32 <https://www.olimex.com/Products/Duino/STM32/OLIMEXINO-STM32/>`_
+      - STM32F103RB_MAPLE
+      - 72 MHz
+      - 128 Kb
+      - 16.6015625 Kb
 
 ST
 ~~
@@ -250,6 +322,13 @@ ST
       - 180 MHz
       - 1024 Kb
       - 384 Kb
+
+    * - ``disco_f746ng``
+      - `ST 32F746GDISCOVERY <http://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f746gdiscovery.html>`_
+      - STM32F746NGH6
+      - 216 MHz
+      - 1024 Kb
+      - 320 Kb
 
     * - ``disco_l053c8``
       - `ST 32L0538DISCOVERY <http://www.st.com/web/en/catalog/tools/PF260319>`_
@@ -321,6 +400,13 @@ ST
       - 128 Kb
       - 20 Kb
 
+    * - ``nucleo_f207zg``
+      - `ST Nucleo F207ZG <https://developer.mbed.org/platforms/ST-Nucleo-F207ZG/>`_
+      - STM32F207ZGT6
+      - 120 MHz
+      - 1024 Kb
+      - 128 Kb
+
     * - ``nucleo_f302r8``
       - `ST Nucleo F302R8 <https://developer.mbed.org/platforms/ST-Nucleo-F302R8/>`_
       - STM32F302R8T6
@@ -370,12 +456,47 @@ ST
       - 512 Kb
       - 128 Kb
 
+    * - ``nucleo_f429zi``
+      - `ST Nucleo F429ZI <https://developer.mbed.org/platforms/ST-Nucleo-F429ZI/>`_
+      - STM32F429ZIT6
+      - 180 MHz
+      - 2048 Kb
+      - 256 Kb
+
     * - ``nucleo_f446re``
       - `ST Nucleo F446RE <https://developer.mbed.org/platforms/ST-Nucleo-F446RE/>`_
       - STM32F446RET6
       - 180 MHz
       - 512 Kb
       - 128 Kb
+
+    * - ``nucleo_f446ze``
+      - `ST Nucleo F446ZE <https://developer.mbed.org/platforms/ST-Nucleo-F446ZE/>`_
+      - STM32F446ZET6
+      - 180 MHz
+      - 512 Kb
+      - 128 Kb
+
+    * - ``nucleo_f746zg``
+      - `ST Nucleo F746ZG <https://developer.mbed.org/platforms/ST-Nucleo-F446ZE/>`_
+      - STM32F746ZGT6
+      - 216 MHz
+      - 1024 Kb
+      - 320 Kb
+
+    * - ``nucleo_f767zi``
+      - `ST Nucleo F767ZI <https://developer.mbed.org/platforms/ST-Nucleo-F767ZI/>`_
+      - STM32F746ZGT6
+      - 216 MHz
+      - 2048 Kb
+      - 512 Kb
+
+    * - ``nucleo_l011k4``
+      - `ST Nucleo L011K4 <https://developer.mbed.org/platforms/ST-Nucleo-L011K4/>`_
+      - STM32L011K4T6
+      - 32 MHz
+      - 16 Kb
+      - 2 Kb
 
     * - ``nucleo_l031k6``
       - `ST Nucleo L031K6 <https://developer.mbed.org/platforms/ST-Nucleo-L031K6/>`_
@@ -405,6 +526,13 @@ ST
       - 512 Kb
       - 80 Kb
 
+    * - ``nucleo_l432kc``
+      - `ST Nucleo L432KC <https://developer.mbed.org/platforms/ST-Nucleo-L432KC/>`_
+      - STM32L432KCU6
+      - 80 MHz
+      - 256 Kb
+      - 64 Kb
+
     * - ``nucleo_l476rg``
       - `ST Nucleo L476RG <https://developer.mbed.org/platforms/ST-Nucleo-L476RG/>`_
       - STM32L476RGT6
@@ -426,7 +554,7 @@ SeeedStudio
       - RAM
 
     * - ``seeedArchMax``
-      - `SeeedStudio Arch Max <https://developer.mbed.org/platforms/Seeed-Arch-Max/>`_
+      - `Seeed Arch Max <https://developer.mbed.org/platforms/Seeed-Arch-Max/>`_
       - STM32F407VET6
       - 168 MHz
       - 512 Kb

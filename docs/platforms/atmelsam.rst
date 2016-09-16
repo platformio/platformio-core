@@ -46,9 +46,6 @@ Packages
     * - ``tool-openocd``
       - `OpenOCD <http://openocd.org>`_
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 

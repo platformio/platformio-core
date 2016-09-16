@@ -18,15 +18,3 @@ Native development platform is intended to be used for desktop OS. This platform
 For more detailed information please visit `vendor site <http://platformio.org/platforms/native>`_.
 
 .. contents::
-
-Packages
---------
-
-.. list-table::
-    :header-rows:  1
-
-    * - Name
-      - Contents
-
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_

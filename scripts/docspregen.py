@@ -95,7 +95,7 @@ Packages
     * - Name
       - Contents""")
     for name in sorted(packagenames):
-        assert name in API_PACKAGES
+        assert name in API_PACKAGES, name
         contitems = [
             "`{name} <{url}>`_".format(**item) for item in API_PACKAGES[name]
         ]

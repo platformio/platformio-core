@@ -31,9 +31,6 @@ Packages
     * - ``framework-wiringpi``
       - `GPIO Interface library for the Raspberry Pi <http://wiringpi.com>`_
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``toolchain-gccarmlinuxgnueabi``
       - `GCC for Linux ARM GNU EABI <https://gcc.gnu.org>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
