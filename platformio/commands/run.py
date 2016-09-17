@@ -121,7 +121,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                     status_str = click.style("SKIP", fg="yellow")
 
                 click.echo(
-                    "Environment %s:\t[%s]" % (click.style(
+                    "Environment %s\t[%s]" % (click.style(
                         envname, fg="cyan"), status_str),
                     err=status is False)
 
