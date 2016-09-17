@@ -80,7 +80,8 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                 for e in config.get("platformio", "env_default").split(",")
             ]
 
-        results = []
+        results = {}
+        start_time = time()
         for section in config.sections():
             if not section.startswith("env:"):
                 continue
@@ -90,7 +91,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                            not environment and env_default and
                            envname not in env_default])
             if skipenv:
-                # echo("Skipped %s environment" % style(envname, fg="yellow"))
+                results[envname] = None
                 continue
 
             if results:
@@ -104,9 +105,35 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
             ep = EnvironmentProcessor(ctx, envname, options, target,
                                       upload_port, silent, verbose)
-            results.append(ep.process())
+            results[envname] = ep.process()
 
-        if not all(results):
+        errored = False
+        if len(results) > 1:
+            click.echo()
+            print_header("[%s]" % click.style("SUMMARY"))
+
+            for envname, status in results.items():
+                errored = False
+                status_str = click.style("SUCCESS", fg="green")
+                if status is False:
+                    errored = True
+                    status_str = click.style("ERROR", fg="red")
+                elif status is None:
+                    status_str = click.style("SKIP", fg="yellow")
+
+                click.echo(
+                    "Environment %s:\t[%s]" % (click.style(
+                        envname, fg="cyan"), status_str),
+                    err=status is False)
+
+            print_header(
+                "[%s] Took %.2f seconds" % ((click.style(
+                    "SUCCESS", fg="green",
+                    bold=True) if not errored else click.style(
+                        "ERROR", fg="red", bold=True)), time() - start_time),
+                is_error=errored)
+
+        if any([r is False for r in results.values()]):
             raise exception.ReturnErrorCode()
         return True
 

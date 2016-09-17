@@ -9,6 +9,8 @@ PlatformIO 3.0
 
 * New! Dynamic variables/templates for `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
   (`issue #705 <https://github.com/platformio/platformio/issues/705>`_)
+* Summary about processed environments
+  (`issue #777 <https://github.com/platformio/platformio/issues/777>`_)
 * Implemented LocalCache system for API and improved a work in off-line mode
 * Improved Project Generator when custom ``--project-option`` is passed to
   `platformio init <http://docs.platformio.org/en/stable/userguide/cmd_init.html>`__
