@@ -107,16 +107,15 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                                       upload_port, silent, verbose)
             results[envname] = ep.process()
 
-        errored = False
         if len(results) > 1:
             click.echo()
             print_header("[%s]" % click.style("SUMMARY"))
 
+            successed = True
             for envname, status in results.items():
-                errored = False
                 status_str = click.style("SUCCESS", fg="green")
                 if status is False:
-                    errored = True
+                    successed = False
                     status_str = click.style("ERROR", fg="red")
                 elif status is None:
                     status_str = click.style("SKIP", fg="yellow")
@@ -129,9 +128,9 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
             print_header(
                 "[%s] Took %.2f seconds" % ((click.style(
                     "SUCCESS", fg="green",
-                    bold=True) if not errored else click.style(
+                    bold=True) if successed else click.style(
                         "ERROR", fg="red", bold=True)), time() - start_time),
-                is_error=errored)
+                is_error=not successed)
 
         if any([r is False for r in results.values()]):
             raise exception.ReturnErrorCode()
