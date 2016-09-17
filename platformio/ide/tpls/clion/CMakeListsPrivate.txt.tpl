@@ -1,8 +1,8 @@
 set(ENV{PATH} "{{env_path}}")
 set(PLATFORMIO_CMD "{{platformio_path}}")
 
-SET(CMAKE_C_COMPILER "{{cc_path}}")
-SET(CMAKE_CXX_COMPILER "{{cxx_path}}")
+SET(CMAKE_C_COMPILER "{{cc_path.replace("\\", "/")}}")
+SET(CMAKE_CXX_COMPILER "{{cxx_path.replace("\\", "/")}}")
 SET(CMAKE_CXX_FLAGS_DISTRIBUTION "{{cxx_flags}}")
 SET(CMAKE_C_FLAGS_DISTRIBUTION "{{cc_flags}}")
 

@@ -12,8 +12,11 @@ PlatformIO 3.0
   `platformio init <http://docs.platformio.org/en/stable/userguide/cmd_init.html>`__
   command
 * Deprecated ``lib_force`` option, please use `lib_deps <http://docs.platformio.org/en/stable/projectconf.html#lib-deps>`__ instead
-* Fixed SSL Server-Name-Indication for Python < 2.7.9
 * Return valid exit code from ``plaformio test`` command
+* Fixed Project Generator for CLion IDE using Windows OS
+  (`issue #785 <https://github.com/platformio/platformio/issues/785>`_)
+* Fixed SSL Server-Name-Indication for Python < 2.7.9
+  (`issue #774 <https://github.com/platformio/platformio/issues/774>`_)
 
 -------
 
