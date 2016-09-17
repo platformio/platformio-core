@@ -11,6 +11,7 @@ PlatformIO 3.0
 * Improved Project Generator when custom ``--project-option`` is passed to
   `platformio init <http://docs.platformio.org/en/stable/userguide/cmd_init.html>`__
   command
+* Deprecated ``lib_force`` option, please use `lib_deps <http://docs.platformio.org/en/stable/projectconf.html#lib-deps>`__ instead
 * Fixed SSL Server-Name-Indication for Python < 2.7.9
 * Return valid exit code from ``plaformio test`` command
 

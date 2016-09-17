@@ -158,7 +158,9 @@ class APIRequestError(PlatformioException):
 
 class LibNotFound(PlatformioException):
 
-    MESSAGE = "Library `{0}` has not been found in the registry"
+    MESSAGE = "Library `{0}` has not been found in PlatformIO Registry.\n"\
+              "You can ignore this message, if `{0}` is a built-in library "\
+              "(included in framework, SDK). E.g., SPI, Wire, etc."
 
 
 class NotGlobalLibDir(PlatformioException):

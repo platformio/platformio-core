@@ -203,7 +203,7 @@ class LibraryManager(BasePkgManager):
             name, dl_data['url'].replace("http://", "https://")
             if app.get_setting("enable_ssl") else dl_data['url'], requirements)
 
-    def install(self,  # pylint: disable=too-many-arguments
+    def install(self,  # pylint: disable=too-many-arguments, too-many-locals
                 name,
                 requirements=None,
                 silent=False,
@@ -232,8 +232,13 @@ class LibraryManager(BasePkgManager):
             if any([s in filters.get("version", "") for s in ("\\", "/")]):
                 self.install("{name}={version}".format(**filters))
             else:
-                lib_info = self.search_for_library(filters, silent,
-                                                   interactive)
+                try:
+                    lib_info = self.search_for_library(filters, silent,
+                                                       interactive)
+                except exception.LibNotFound as e:
+                    click.secho("Warning! %s" % e, fg="yellow")
+                    continue
+
                 if filters.get("version"):
                     self.install(
                         lib_info['id'],

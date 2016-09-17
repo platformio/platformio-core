@@ -128,7 +128,7 @@ class EnvironmentProcessor(object):
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
-    RENAMED_OPTIONS = {"lib_use": "lib_force"}
+    RENAMED_OPTIONS = {"lib_use": "lib_deps", "lib_force": "lib_deps"}
 
     RENAMED_PLATFORMS = {"espressif": "espressif8266"}
 
@@ -152,18 +152,15 @@ class EnvironmentProcessor(object):
         terminal_width, _ = click.get_terminal_size()
         start_time = time()
 
-        process_opts = []
+        # multi-line values to one line
         for k, v in self.options.items():
             if "\n" in v:
-                process_opts.append((k, ", ".join(
-                    [s.strip() for s in v.split("\n") if s.strip()])))
-            else:
-                process_opts.append((k, v))
+                self.options[k] = self.options[k].strip().replace("\n", ", ")
 
-        click.echo("[%s] Processing %s (%s)" %
-                   (datetime.now().strftime("%c"), click.style(
-                       self.name, fg="cyan", bold=True),
-                    ", ".join(["%s: %s" % opts for opts in process_opts])))
+        click.echo("[%s] Processing %s (%s)" % (
+            datetime.now().strftime("%c"), click.style(
+                self.name, fg="cyan", bold=True),
+            ", ".join(["%s: %s" % (k, v) for k, v in self.options.items()])))
         click.secho("-" * terminal_width, bold=True)
         if self.silent:
             click.echo("Please wait...")
@@ -248,9 +245,7 @@ class EnvironmentProcessor(object):
             ], self.verbose)
         if "lib_deps" in self.options:
             _autoinstall_libdeps(self.cmd_ctx, [
-                d.strip()
-                for d in self.options['lib_deps'].split(
-                    "\n" if "\n" in self.options['lib_deps'] else ", ")
+                d.strip() for d in self.options['lib_deps'].split(", ")
                 if d.strip()
             ], self.verbose)
 
@@ -271,7 +266,11 @@ def _autoinstall_libdeps(ctx, libraries, verbose=False):
     ctx.obj = LibraryManager(storage_dir)
     if verbose:
         click.echo("Library Storage: " + storage_dir)
-    ctx.invoke(cmd_lib_install, libraries=libraries, silent=not verbose)
+    for lib in libraries:
+        try:
+            ctx.invoke(cmd_lib_install, libraries=[lib], silent=not verbose)
+        except exception.LibNotFound as e:
+            click.secho("Warning! %s" % e, fg="yellow")
 
 
 def _clean_pioenvs_dir(pioenvs_dir):

@@ -707,9 +707,11 @@ Multiple dependencies are allowed (multi-lines or separated with comma+space ", 
 
 .. code-block:: ini
 
+  ; one line definition (comma + space)
   [env:myenv]
   lib_deps = LIBRARY_1, LIBRARY_2, LIBRARY_N
 
+  ; multi-line definition
   [env:myenv2]
   lib_deps =
     LIBRARY_1
@@ -731,30 +733,6 @@ Example:
     Json@~5.6,!=5.4
     https://github.com/gioblu/PJON.git@v2.0
     https://github.com/me-no-dev/ESPAsyncTCP.git
-
-.. _projectconf_lib_force:
-
-``lib_force``
-^^^^^^^^^^^^^
-
-.. seealso::
-    Please make sure to read :ref:`ldf` guide first.
-
-Force Library Dependency Finder to depend on the specified library if it even
-is not included in the project source code. Also, this library will be
-processed in the first order.
-
-The correct value for this option is library name (not folder name). In the
-most cases, library name is pre-defined in manifest file
-(:ref:`library_config`, ``library.properties``, ``module.json``). The multiple
-library names are allowed, split them with comma+space ", ".
-
-Example:
-
-.. code-block:: ini
-
-    [env:myenv]
-    lib_force = OneWire, SPI
 
 .. _projectconf_lib_ignore:
 
