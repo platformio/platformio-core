@@ -46,7 +46,6 @@ class ProjectConfig(ConfigParser):
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
 
     def items(self, section, **_):
-        ConfigParser.items()
         items = []
         for option in ConfigParser.options(self, section):
             items.append((option, self.get(section, option)))
