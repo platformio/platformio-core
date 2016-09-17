@@ -82,12 +82,8 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
         results = []
         for section in config.sections():
-            # skip main configuration section
-            if section == "platformio":
-                continue
-
             if not section.startswith("env:"):
-                raise exception.InvalidEnvName(section)
+                continue
 
             envname = section[4:]
             skipenv = any([environment and envname not in environment,

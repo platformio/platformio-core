@@ -26,12 +26,6 @@ from platformio.commands.init import validate_boards
 from platformio.commands.run import cli as cmd_run
 from platformio.exception import CIBuildEnvsEmpty
 
-# pylint: disable=wrong-import-order
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser
-
 
 def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     invalid_path = None
@@ -175,9 +169,8 @@ def _exclude_contents(dst_dir, patterns):
 
 
 def _copy_project_conf(build_dir, project_conf):
-    cp = ConfigParser()
-    cp.read(project_conf)
-    if cp.has_section("platformio"):
-        cp.remove_section("platformio")
+    config = util.load_project_config(project_conf)
+    if config.has_section("platformio"):
+        config.remove_section("platformio")
     with open(join(build_dir, "platformio.ini"), "w") as fp:
-        cp.write(fp)
+        config.write(fp)

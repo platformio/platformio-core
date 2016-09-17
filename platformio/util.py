@@ -33,11 +33,33 @@ import requests
 
 from platformio import __apiurl__, __version__, exception
 
-# pylint: disable=wrong-import-order
+# pylint: disable=wrong-import-order, too-many-ancestors
+
 try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
+
+
+class ProjectConfig(ConfigParser):
+
+    VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
+
+    def items(self, section, **_):
+        ConfigParser.items()
+        items = []
+        for option in ConfigParser.options(self, section):
+            items.append((option, self.get(section, option)))
+        return items
+
+    def get(self, section, option, **kwargs):
+        value = ConfigParser.get(self, section, option, **kwargs)
+        if "${" not in value or "}" not in value:
+            return value
+        return self.VARTPL_RE.sub(self._re_sub_handler, value)
+
+    def _re_sub_handler(self, match):
+        return self.get(match.group(1), match.group(2))
 
 
 class AsyncPipe(Thread):
@@ -256,13 +278,15 @@ def get_projectdata_dir():
                                     join(get_project_dir(), "data"))
 
 
-def load_project_config(project_dir=None):
-    if not project_dir:
-        project_dir = get_project_dir()
-    if not is_platformio_project(project_dir):
-        raise exception.NotPlatformIOProject(project_dir)
-    cp = ConfigParser()
-    cp.read(join(project_dir, "platformio.ini"))
+def load_project_config(path=None):
+    if not path or isdir(path):
+        project_dir = path or get_project_dir()
+        if not is_platformio_project(project_dir):
+            raise exception.NotPlatformIOProject(project_dir)
+        path = join(project_dir, "platformio.ini")
+    assert isfile(path)
+    cp = ProjectConfig()
+    cp.read(path)
     return cp
 
 

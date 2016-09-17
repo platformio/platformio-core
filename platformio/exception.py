@@ -131,11 +131,6 @@ class ProjectEnvsNotAvailable(PlatformioException):
     MESSAGE = "Please setup environments in `platformio.ini` file"
 
 
-class InvalidEnvName(PlatformioException):
-
-    MESSAGE = "Invalid environment '{0}'. The name must start with 'env:'"
-
-
 class UnknownEnvNames(PlatformioException):
 
     MESSAGE = "Unknown environment names '{0}'. Valid names are '{1}'"

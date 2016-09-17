@@ -21,12 +21,72 @@ The Project configuration file is named ``platformio.ini``. This is a
 key / value pairs within the sections. Lines beginning with ``;``
 are ignored and may be used to provide comments.
 
-The sections and their allowable values are described below.
+There are 2 system reserved sections:
+
+* Base PlatformIO settings: :ref:`projectconf_section_platformio`
+* Build Environment settings: :ref:`projectconf_section_env`
+
+The other sections can be used by users, for example, for
+:ref:`projectconf_dynamic_vars`. The sections and their allowable values are
+described below.
 
 .. contents::
+  :depth: 2
+
+.. _projectconf_dynamic_vars:
+
+Dynamic variables
+-----------------
+
+.. versionadded:: 3.1
+
+Dynamic variables/templates are useful when you have common configuration data
+between build environments. For examples, common :ref:`projectconf_build_flags`
+or project dependencies :ref:`projectconf_lib_deps`.
+
+Each variable should have a next format: ``${<section>.<option>}``, where
+``<section>`` is a value from ``[<section>]`` group, and ``<option>`` is a
+first item from pair ``<option> = value``.
+
+* Variable can be applied only for the option's value
+* Multiple variables are allowed
+* The ``platformio`` section is reserved and could not be used as custom
+  section. Some good section names might be ``common`` or ``global``.
+
+Example:
+
+.. code-block:: ini
+
+    [common]
+    build_flags = -D VERSION=1.2.3 -D DEBUG=1
+    lib_deps_builtin = SPI, Wire
+    lib_deps_external = ArduinoJson@>5.6.0
+
+    [env:uno]
+    platform = atmelavr
+    framework = arduino
+    board = uno
+    build_flags = ${common.build_flags}
+    lib_deps = ${common.lib_deps_builtin}, ${common.lib_deps_external}
+
+    [env:nodemcuv2]
+    platform = espressif8266
+    framework = arduino
+    board = nodemcuv2
+    build_flags = ${common.build_flags} -DSSID_NAME=HELLO -DSSID_PASWORD=WORLD
+    lib_deps =
+      ${common.lib_deps_builtin}
+      ${common.lib_deps_external}
+      PubSubClient@2.6
+      OneWire
+
+.. _projectconf_section_platformio:
 
 Section ``[platformio]``
 ------------------------
+
+.. contents::
+    :local:
 
 A ``platformio`` section is used for overriding default configuration options
 
@@ -45,7 +105,8 @@ Options
 ^^^^^^^^^^^^
 
 Is used to store platform toolchains, frameworks, global libraries for
-:ref: `ldf`, service data and etc.
+:ref: `ldf`, service data and etc. The size of this folder will depend on
+number of installed development platforms.
 
 A default value is User's home directory:
 
@@ -54,6 +115,13 @@ A default value is User's home directory:
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_HOME_DIR`.
+
+Example:
+
+.. code-block:: ini
+
+    [platformio]
+    home_dir = /path/to/custom/pio/storage
 
 .. _projectconf_pio_lib_dir:
 
@@ -223,10 +291,13 @@ Multiple environments are allowed if they are separated with ", "
     board = lpmsp430g2553
     build_flags = -D LED_BUILTIN=RED_LED
 
-----------
+.. _projectconf_section_env:
 
 Section ``[env:NAME]``
 ----------------------
+
+.. contents::
+    :local:
 
 A section with ``env:`` prefix is used to define virtual environment with
 specific options that will be processed with :ref:`cmd_run` command. You can
@@ -702,6 +773,9 @@ Library options
 Specify project dependencies that should be installed automatically to
 :ref:`projectconf_pio_libdeps_dir` before environment processing.
 Multiple dependencies are allowed (multi-lines or separated with comma+space ", ").
+
+If you have multiple build environments that depend on the same libraries,
+you can use :ref:`projectconf_dynamic_vars` to use common configuration.
 
 **Valid forms**
 
