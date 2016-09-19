@@ -28,7 +28,7 @@ from platformio.util import get_api_result
     "-g",
     "--global",
     is_flag=True,
-    help="Manager global PlatformIO"
+    help="Manage global PlatformIO"
     " library storage `%s`" % join(util.get_home_dir(), "lib"))
 @click.option(
     "-d",
