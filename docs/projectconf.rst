@@ -723,6 +723,16 @@ To print all available serial ports use :ref:`cmd_device` command.
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_UPLOAD_PORT`.
 
+Example:
+
+.. code-block:: ini
+
+    [env:uno]
+    platform = atmelavr
+    framework = arduino
+    board = uno
+    upload_port = /dev/ttyUSB0
+
 ``upload_protocol``
 ^^^^^^^^^^^^^^^^^^^
 
