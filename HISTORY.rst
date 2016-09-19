@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.1.0 (2016-09-??)
+3.1.0 (2016-09-19)
 ~~~~~~~~~~~~~~~~~~
 
 * New! Dynamic variables/templates for `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
