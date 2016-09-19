@@ -87,15 +87,15 @@ Check for the new PlatformIO interval.
 
 Check for the platform updates interval.
 
-.. _setting_disable_ssl:
+.. _setting_enable_ssl:
 
-``disable_ssl``
-^^^^^^^^^^^^^^^
+``enable_ssl``
+^^^^^^^^^^^^^^
 
 :Default:   No
 :Values:    Yes/No
 
-Disable SSL for PlatformIO API (NOT RECOMMENDED, INSECURE)
+Enable SSL for PlatformIO Services
 
 .. _setting_force_verbose:
 

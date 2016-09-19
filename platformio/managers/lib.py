@@ -20,7 +20,7 @@ from os.path import dirname, join
 import click
 import semantic_version
 
-from platformio import commands, exception, util
+from platformio import app, commands, exception, util
 from platformio.managers.package import BasePkgManager
 
 
@@ -194,31 +194,39 @@ class LibraryManager(BasePkgManager):
             raise exception.UndefinedPackageVersion(requirements or "latest",
                                                     util.get_systype())
         dl_data = util.get_api_result(
-            "/lib/download/" + str(name[3:]), dict(version=version))
+            "/lib/download/" + str(name[3:]),
+            dict(version=version),
+            cache_valid="30d")
         assert dl_data
-        pkg_dir = None
-        try:
-            pkg_dir = self._install_from_url(
-                name, dl_data['url'].replace("http://", "https://"),
-                requirements)
-        except exception.APIRequestError:
-            pkg_dir = self._install_from_url(name, dl_data['url'],
-                                             requirements)
-        return pkg_dir
 
-    def install(self,  # pylint: disable=too-many-arguments
+        return self._install_from_url(
+            name, dl_data['url'].replace("http://", "https://")
+            if app.get_setting("enable_ssl") else dl_data['url'], requirements)
+
+    def install(self,  # pylint: disable=too-many-arguments, too-many-locals
                 name,
                 requirements=None,
                 silent=False,
                 trigger_event=True,
                 interactive=False):
+        already_installed = False
         _name, _requirements, _url = self.parse_pkg_name(name, requirements)
-        if not _url:
-            _name = "id=%d" % self._get_pkg_id_by_name(
-                _name, _requirements, silent=silent, interactive=interactive)
-        already_installed = self.get_package(_name, _requirements, _url)
-        pkg_dir = BasePkgManager.install(self, _name if not _url else name,
-                                         _requirements, silent, trigger_event)
+
+        try:
+            if not _url:
+                _name = "id=%d" % self._get_pkg_id_by_name(
+                    _name,
+                    _requirements,
+                    silent=silent,
+                    interactive=interactive)
+            already_installed = self.get_package(_name, _requirements, _url)
+            pkg_dir = BasePkgManager.install(
+                self, _name
+                if not _url else name, _requirements, silent, trigger_event)
+        except exception.InternetIsOffline as e:
+            if not silent:
+                click.secho(str(e), fg="yellow")
+            return
 
         if already_installed:
             return
@@ -235,8 +243,13 @@ class LibraryManager(BasePkgManager):
             if any([s in filters.get("version", "") for s in ("\\", "/")]):
                 self.install("{name}={version}".format(**filters))
             else:
-                lib_info = self.search_for_library(filters, silent,
-                                                   interactive)
+                try:
+                    lib_info = self.search_for_library(filters, silent,
+                                                       interactive)
+                except exception.LibNotFound as e:
+                    click.secho("Warning! %s" % e, fg="yellow")
+                    continue
+
                 if filters.get("version"):
                     self.install(
                         lib_info['id'],
@@ -273,7 +286,7 @@ class LibraryManager(BasePkgManager):
 
         lib_info = None
         result = util.get_api_result(
-            "/lib/search", dict(query=" ".join(query)))
+            "/lib/search", dict(query=" ".join(query)), cache_valid="3d")
         if result['total'] == 1:
             lib_info = result['items'][0]
         elif result['total'] > 1:

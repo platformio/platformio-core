@@ -14,10 +14,11 @@
 
 import hashlib
 import json
+import os
 import uuid
 from copy import deepcopy
-from os import environ, getenv
-from os.path import getmtime, isfile, join
+from os import environ, getenv, listdir, remove
+from os.path import dirname, getmtime, isdir, isfile, join
 from time import time
 
 from lockfile import LockFile
@@ -50,9 +51,9 @@ DEFAULT_SETTINGS = {
         "description": "Force verbose output when processing environments",
         "value": False
     },
-    "disable_ssl": {
-        "description": "Disable SSL for PlatformIO services",
-        "value": True
+    "enable_ssl": {
+        "description": "Enable SSL for PlatformIO Services",
+        "value": False
     },
     "enable_telemetry": {
         "description":
@@ -109,6 +110,85 @@ class State(object):
     def _unlock_state_file(self):
         if self._lockfile:
             self._lockfile.release()
+
+
+class LocalCache(object):
+
+    def __init__(self, cache_dir=None):
+        self.cache_dir = cache_dir or join(util.get_home_dir(), ".cache")
+        if not self.cache_dir:
+            os.makedirs(self.cache_dir)
+        self.db_path = join(self.cache_dir, "db.data")
+
+    def __enter__(self):
+        if not isfile(self.db_path):
+            return self
+        newlines = []
+        found = False
+        with open(self.db_path) as fp:
+            for line in fp.readlines():
+                if "=" not in line:
+                    continue
+                line = line.strip()
+                expire, path = line.split("=")
+                if time() < int(expire):
+                    newlines.append(line)
+                    continue
+                found = True
+                if isfile(path):
+                    remove(path)
+                    if not len(listdir(dirname(path))):
+                        util.rmtree_(dirname(path))
+        if found:
+            with open(self.db_path, "w") as fp:
+                fp.write("\n".join(newlines) + "\n")
+        return self
+
+    def __exit__(self, type_, value, traceback):
+        pass
+
+    def get_cache_path(self, key):
+        assert len(key) > 3
+        return join(self.cache_dir, key[-2:], key)
+
+    @staticmethod
+    def key_from_args(*args):
+        h = hashlib.md5()
+        for data in args:
+            h.update(str(data))
+        return h.hexdigest()
+
+    def get(self, key):
+        cache_path = self.get_cache_path(key)
+        if not isfile(cache_path):
+            return None
+        with open(cache_path) as fp:
+            data = fp.read()
+            if data[0] in ("{", "["):
+                return json.loads(data)
+            return data
+
+    def set(self, key, data, valid):
+        if not data:
+            return
+        tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+        assert valid.endswith(tuple(tdmap.keys()))
+        cache_path = self.get_cache_path(key)
+        if not isdir(dirname(cache_path)):
+            os.makedirs(dirname(cache_path))
+        with open(cache_path, "w") as fp:
+            if isinstance(data, dict) or isinstance(data, list):
+                json.dump(data, fp)
+            else:
+                fp.write(str(data))
+        expire_time = int(time() + tdmap[valid[-1]] * int(valid[:-1]))
+        with open(self.db_path, "w+") as fp:
+            fp.write("%s=%s\n" % (str(expire_time), cache_path))
+        return True
+
+    def clean(self):
+        if isdir(self.cache_dir):
+            util.rmtree_(self.cache_dir)
 
 
 def sanitize_setting(name, value):

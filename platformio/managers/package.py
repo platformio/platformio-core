@@ -542,11 +542,23 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             except exception.PlatformioException:
                 pass
             if not latest_version:
-                click.echo("[%s]" % (click.style("Unknown", fg="yellow")))
+                click.echo("[%s]" % (click.style(
+                    "Off-line" if not util.internet_on() else "Unknown",
+                    fg="yellow")))
                 return
-            if manifest['version'] == latest_version:
+
+            up_to_date = False
+            try:
+                up_to_date = (
+                    semantic_version.Version.coerce(manifest['version']) >=
+                    semantic_version.Version.coerce(latest_version))
+            except ValueError:
+                up_to_date = latest_version == manifest['version']
+
+            if up_to_date:
                 click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
                 return
+
             click.echo("[%s]" % (click.style("Out-of-date", fg="red")))
             if only_check:
                 return

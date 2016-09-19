@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-arguments,too-many-locals, too-many-branches
+
 from os import getcwd, makedirs
 from os.path import isdir, isfile, join
 from shutil import copyfile
@@ -27,19 +29,14 @@ from platformio.managers.platform import PlatformManager
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
     pm = PlatformManager()
-    # check installed boards
-    known_boards = set([b['id'] for b in pm.get_installed_boards()])
-    # if boards are not listed as installed, check registered boards
-    if set(value) - known_boards:
-        known_boards = set([b['id'] for b in pm.get_registered_boards()])
-    unknown_boards = set(value) - known_boards
-    try:
-        assert not unknown_boards
-        return value
-    except AssertionError:
-        raise click.BadParameter("%s. Please search for the board ID using "
-                                 "`platformio boards` command" %
-                                 ", ".join(unknown_boards))
+    for id_ in value:
+        try:
+            pm.board_config(id_)
+        except exception.UnknownBoard:
+            raise click.BadParameter(
+                "`%s`. Please search for board ID using `platformio boards` "
+                "command" % id_)
+    return value
 
 
 @click.command(
@@ -287,10 +284,8 @@ def init_cvs_ignore(project_dir):
         fp.writelines(current)
 
 
-def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
-        ctx, project_dir, board_ids, project_option, env_prefix,
-        force_download):
-    installed_boards = PlatformManager().get_installed_boards()
+def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
+                      force_download):
     content = []
     used_boards = []
     used_platforms = []
@@ -302,33 +297,30 @@ def fill_project_envs(  # pylint: disable=too-many-arguments,too-many-locals
             continue
         used_boards.append(config.get(section, "board"))
 
+    pm = PlatformManager()
     for id_ in board_ids:
-        manifest = None
-        for boards in (installed_boards,
-                       PlatformManager.get_registered_boards()):
-            for b in boards:
-                if b['id'] == id_:
-                    manifest = b
-                    break
-        assert manifest is not None
-
-        used_platforms.append(manifest['platform'])
+        board_config = pm.board_config(id_)
+        used_platforms.append(board_config['platform'])
         if id_ in used_boards:
             continue
         used_boards.append(id_)
 
+        envopts = {"platform": board_config['platform'], "board": id_}
+        # find default framework for board
+        frameworks = board_config.get("frameworks")
+        if frameworks:
+            envopts['framework'] = frameworks[0]
+
+        for item in project_option:
+            if "=" not in item:
+                continue
+            _name, _value = item.split("=", 1)
+            envopts[_name.strip()] = _value.strip()
+
         content.append("")
         content.append("[env:%s%s]" % (env_prefix, id_))
-        content.append("platform = %s" % manifest['platform'])
-
-        # find default framework for board
-        frameworks = manifest.get("frameworks")
-        if frameworks:
-            content.append("framework = %s" % frameworks[0])
-
-        content.append("board = %s" % id_)
-        if project_option:
-            content.extend(project_option)
+        for name, value in envopts.items():
+            content.append("%s = %s" % (name, value))
 
     if force_download and used_platforms:
         _install_dependent_platforms(ctx, used_platforms)

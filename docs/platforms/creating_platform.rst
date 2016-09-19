@@ -74,6 +74,9 @@ Packages
     * - ``framework-arduinosam``
       - `Arduino Wiring-based Framework (SAM Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
 
+    * - ``framework-arduinoststm32``
+      - `Arduino Wiring-based Framework (STM32 Core) <https://github.com/rogerclarkmelbourne/Arduino_STM32>`_
+
     * - ``framework-arduinoteensy``
       - `Arduino Wiring-based Framework <http://arduino.cc/en/Reference/HomePage>`_
 

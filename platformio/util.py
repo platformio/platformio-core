@@ -17,6 +17,7 @@ import functools
 import json
 import os
 import re
+import socket
 import stat
 import subprocess
 import sys
@@ -33,11 +34,32 @@ import requests
 
 from platformio import __apiurl__, __version__, exception
 
-# pylint: disable=wrong-import-order
+# pylint: disable=wrong-import-order, too-many-ancestors
+
 try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
+
+
+class ProjectConfig(ConfigParser):
+
+    VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
+
+    def items(self, section, **_):
+        items = []
+        for option in ConfigParser.options(self, section):
+            items.append((option, self.get(section, option)))
+        return items
+
+    def get(self, section, option, **kwargs):
+        value = ConfigParser.get(self, section, option, **kwargs)
+        if "${" not in value or "}" not in value:
+            return value
+        return self.VARTPL_RE.sub(self._re_sub_handler, value)
+
+    def _re_sub_handler(self, match):
+        return self.get(match.group(1), match.group(2))
 
 
 class AsyncPipe(Thread):
@@ -256,13 +278,15 @@ def get_projectdata_dir():
                                     join(get_project_dir(), "data"))
 
 
-def load_project_config(project_dir=None):
-    if not project_dir:
-        project_dir = get_project_dir()
-    if not is_platformio_project(project_dir):
-        raise exception.NotPlatformIOProject(project_dir)
-    cp = ConfigParser()
-    cp.read(join(project_dir, "platformio.ini"))
+def load_project_config(path=None):
+    if not path or isdir(path):
+        project_dir = path or get_project_dir()
+        if not is_platformio_project(project_dir):
+            raise exception.NotPlatformIOProject(project_dir)
+        path = join(project_dir, "platformio.ini")
+    assert isfile(path)
+    cp = ProjectConfig()
+    cp.read(path)
     return cp
 
 
@@ -382,7 +406,7 @@ def _get_api_result(
     headers = get_request_defheaders()
     url = __apiurl__
 
-    if get_setting("disable_ssl"):
+    if not get_setting("enable_ssl"):
         url = url.replace("https://", "http://")
 
     try:
@@ -409,24 +433,51 @@ def _get_api_result(
     return result
 
 
-def get_api_result(path, params=None, data=None):
-    max_retries = 5
+def get_api_result(path, params=None, data=None, cache_valid=None):
+    from platformio.app import LocalCache
     total = 0
+    max_retries = 5
+    cache_key = (LocalCache.key_from_args(path, params, data)
+                 if cache_valid else None)
     while total < max_retries:
         try:
-            return _get_api_result(path, params, data)
+            with LocalCache() as lc:
+                if cache_key:
+                    result = lc.get(cache_key)
+                    if result is not None:
+                        return result
+            result = _get_api_result(path, params, data)
+            if cache_valid:
+                with LocalCache() as lc:
+                    lc.set(cache_key, result, cache_valid)
+            return result
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
+            if not internet_on():
+                raise exception.InternetIsOffline()
+            from platformio.maintenance import in_silence
             total += 1
-            click.secho(
-                "[API] ConnectionError: {0} (incremented retry: max={1}, "
-                "total={2})".format(e, max_retries, total),
-                fg="yellow")
+            if not in_silence():
+                click.secho(
+                    "[API] ConnectionError: {0} (incremented retry: max={1}, "
+                    "total={2})".format(e, max_retries, total),
+                    fg="yellow")
             sleep(2 * total)
 
     raise exception.APIRequestError(
         "Could not connect to PlatformIO Registry Service. "
         "Please try later.")
+
+
+def internet_on(timeout=3):
+    host = "8.8.8.8"
+    port = 53
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except:  # pylint: disable=bare-except
+        return False
 
 
 def get_pythonexe_path():

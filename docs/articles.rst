@@ -23,6 +23,7 @@ Here are recent articles/reviews about PlatformIO:
 2016
 ^^^^
 
+* Sep 12, 2016 - **Pedro Minatel** - `OTA – Como programar o ESP8266 pelo WiFi no platformIO (OTA programming for ESP8266 via Wi-Fi using PlatformIO, Portuguese) <http://pedrominatel.com.br/esp8266/ota-como-programar-o-esp8266-pelo-wifi-no-platformio/>`_
 * Sep 2, 2016 - **Tinkerman** `ESP8266: Optimizing files for SPIFFS with Gulp <http://tinkerman.cat/optimizing-files-for-spiffs-with-gulp/>`_
 * Aug 28, 2016 - **Tom Parker** `Using the BBC micro:bit with PlatformIO <http://www.lshift.net/blog/2016/08/28/using-the-bbc-microbit-with-platformio/>`_
 * Aug 24, 2016 - **Primal Cortex** `Cloud based continuous integration and delivery for IOT using PlatformIO <https://primalcortex.wordpress.com/2016/08/24/cloud-based-continuous-integration-and-delivery-for-iot-using-platformio/>`_

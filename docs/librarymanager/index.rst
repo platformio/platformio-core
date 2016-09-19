@@ -20,14 +20,16 @@ Hg, SVN). It makes it exceedingly simple to find, install and keep libraries
 up-to-date. PlatformIO Library Manager supports
 `Semantic Versioning <http://semver.org>`_ and its rules.
 
-There 2 options how to find library:
+There are 2 options how to find library:
 
+* `Web Library Search <http://platformio.org/lib>`__
 * :ref:`Command Line Interface <cmd_lib_search>`
-* `Web-based Library Search <http://platformio.org/lib>`__
 
-*PlatformIO Library Manager* allows to manage different library storages using
+You can manage different library storages using
 :option:`platformio lib --global` or  :option:`platformio lib --storage-dir`
-options.
+options. If you change current working directory in terminal to project folder,
+then :ref:`platformio lib <cmd_lib>` command will manage automatically dependency
+storage in :ref:`projectconf_pio_libdeps_dir`.
 
 Project dependencies
 --------------------

@@ -4,6 +4,66 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.1.0 (2016-09-19)
+~~~~~~~~~~~~~~~~~~
+
+* New! Dynamic variables/templates for `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
+  (`issue #705 <https://github.com/platformio/platformio/issues/705>`_)
+* Summary about processed environments
+  (`issue #777 <https://github.com/platformio/platformio/issues/777>`_)
+* Implemented LocalCache system for API and improved a work in off-line mode
+* Improved Project Generator when custom ``--project-option`` is passed to
+  `platformio init <http://docs.platformio.org/en/stable/userguide/cmd_init.html>`__
+  command
+* Deprecated ``lib_force`` option, please use `lib_deps <http://docs.platformio.org/en/stable/projectconf.html#lib-deps>`__ instead
+* Return valid exit code from ``plaformio test`` command
+* Fixed Project Generator for CLion IDE using Windows OS
+  (`issue #785 <https://github.com/platformio/platformio/issues/785>`_)
+* Fixed SSL Server-Name-Indication for Python < 2.7.9
+  (`issue #774 <https://github.com/platformio/platformio/issues/774>`_)
+
+-------
+
+* Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
+
+  + Add support for `SparkFun Blynk Board <https://www.sparkfun.com/products/13794>`_
+  + Created `staging <http://docs.platformio.org/en/stable/platforms/espressif8266.html#using-arduino-framework-with-staging-version>`__
+    branch to work with development version of Arduino Framework
+
+* Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
+
+  + Added support for new boards: FRDM-KL26Z, FRDM-KL27Z, FRDM-KL43Z, Hexiwear
+
+* Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
+
+  + Added support for new boards: Seeed Arch BLE, Seeed Arch Link, Switch
+    Science mbed TY51822r3, y5 nRF51822 mbug, JKSoft Wallbot BLE
+
+* Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
+
+  + Added support for new boards: ARM mbed LPC11U24 (+CAN), Bambino-210E,
+    CoCo-ri-Co!, DipCortex M3, LPCXpresso11U68, LPCXpresso824-MAX, mBuino,
+    MicroNFCBoard, NXP LPC11C24, NXP LPC11U34, EA LPC11U35 QuickStart Board,
+    NXP LPC11U37, NXP LPC2368, NXP LPC2460, NXP LPC800-MAX, Seeed Arch GPRS V2,
+    Seeed Xadow M0, Smeshlink xbed LPC1768, Switch Science mbed LPC824
+
+* Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
+
+  + New Arduino framework for ST STM32 -
+    `STM32Duino <https://github.com/rogerclarkmelbourne/Arduino_STM32>`__.
+    Supported boards: BluePill F103C8, Generic STM32F103C8, Generic STM32F103R8,
+    Generic STM32F103RB, Generic STM32F103RC, Generic STM32F103RE, Olimexino STM32
+
+  + Added support for new ARM mbed based boards: ST 32F746GDISCOVER,
+    MultiTech mDot, ST Nucleo F207ZG, ST Nucleo F429ZI, ST Nucleo F446ZE,
+    ST Nucleo F746ZG, ST Nucleo F767ZI, ST Nucleo L011K4, ST Nucleo L432KC,
+    Seeed Arch Max
+
+* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
+
+  + Added support for Teensy 3.5 and 3.6 boards
+  + Updated Arduino Framework for Teensy to v130
+
 3.0.1 (2016-09-08)
 ~~~~~~~~~~~~~~~~~~
 

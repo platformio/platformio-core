@@ -9,7 +9,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _userguide_lib:
+.. _cmd_lib:
 
 Library Manager
 ===============
@@ -46,7 +46,7 @@ dependencies by default.
 .. versionadded:: 3.0
 
 Manage custom library storage. It can be used later for the
-:ref:`projectconf_extra_script` option from :ref:`projectconf`.
+:ref:`projectconf_lib_extra_dirs` option from :ref:`projectconf`.
 
 Demo
 ----

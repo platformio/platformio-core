@@ -34,9 +34,6 @@ Packages
     * - ``framework-mbed``
       - `mbed Framework <http://mbed.org>`_
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``tool-teensy``
       - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
 
@@ -122,6 +119,20 @@ Teensy
       - 72 MHz
       - 256 Kb
       - 64 Kb
+
+    * - ``teensy35``
+      - `Teensy 3.5 <https://www.pjrc.com>`_
+      - MK64FX512
+      - 120 MHz
+      - 512 Kb
+      - 192 Kb
+
+    * - ``teensy36``
+      - `Teensy 3.6 <https://www.pjrc.com>`_
+      - MK66FX1M0
+      - 180 MHz
+      - 1024 Kb
+      - 256 Kb
 
     * - ``teensylc``
       - `Teensy LC <http://www.pjrc.com/teensy/teensyLC.html>`_

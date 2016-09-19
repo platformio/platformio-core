@@ -55,7 +55,7 @@ Library Manager
 Used in demo
 ~~~~~~~~~~~~
 
-1. :ref:`userguide_lib`
+1. :ref:`cmd_lib`
 2. :ref:`platformio lib search 1-wire <cmd_lib_search>` command
 3. :ref:`platformio lib install 54 <cmd_lib_install>` command
 4. :ref:`platformio lib search -f mbed <cmd_lib_search>` command

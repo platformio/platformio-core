@@ -34,10 +34,17 @@ from platformio.managers.platform import PlatformManager
 from platformio.pioplus import pioplus_update
 
 
-def in_silence(ctx):
+def in_silence(ctx=None):
+    ctx = ctx or app.get_session_var("command_ctx")
+    assert ctx
     ctx_args = ctx.args or []
     return (ctx_args and
             (ctx.args[0] == "upgrade" or "--json-output" in ctx_args))
+
+
+def clean_cache():
+    with app.LocalCache() as lc:
+        lc.clean()
 
 
 def on_platformio_start(ctx, force, caller):
@@ -52,6 +59,8 @@ def on_platformio_start(ctx, force, caller):
     app.set_session_var("caller_id", caller)
     telemetry.on_command()
 
+    if ctx.args and (ctx.args[0] == "upgrade" or "update" in ctx.args):
+        clean_cache()
     if not in_silence(ctx):
         after_upgrade(ctx)
 
@@ -145,7 +154,7 @@ def after_upgrade(ctx):
         app.set_state_item("last_version", __version__)
     else:
         click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
-
+        clean_cache()
         u = Upgrader(last_version, __version__)
         if u.run(ctx):
             app.set_state_item("last_version", __version__)
@@ -153,7 +162,6 @@ def after_upgrade(ctx):
             # update development platforms
             pm = PlatformManager()
             for manifest in pm.get_installed():
-                # @TODO Uncomment line below after first PIO3 release
                 # pm.update(manifest['name'], "^" + manifest['version'])
                 pm.update(manifest['name'])
 
@@ -191,9 +199,9 @@ def after_upgrade(ctx):
                        "try", fg="cyan"), click.style(
                            "http://platformio.org/platformio-ide", fg="cyan")))
     if not util.is_ci():
-        click.echo("- %s to keep PlatformIO alive! > %s" % (click.style(
-            "donate", fg="cyan"), click.style(
-                "http://platformio.org/donate", fg="cyan")))
+        click.echo("- %s us with PlatformIO Plus > %s" % (click.style(
+            "support", fg="cyan"), click.style(
+                "https://pioplus.com", fg="cyan")))
 
     click.echo("*" * terminal_width)
     click.echo("")

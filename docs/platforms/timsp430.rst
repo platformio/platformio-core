@@ -37,9 +37,6 @@ Packages
     * - ``tool-mspdebug``
       - `MSPDebug <http://mspdebug.sourceforge.net/>`_
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``toolchain-timsp430``
       - `msp-gcc <http://sourceforge.net/projects/mspgcc/>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 

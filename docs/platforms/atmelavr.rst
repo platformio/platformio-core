@@ -40,9 +40,6 @@ Packages
     * - ``tool-micronucleus``
       - `Micronucleus <https://github.com/micronucleus/micronucleus>`_
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``toolchain-atmelavr``
       - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
 

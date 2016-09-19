@@ -220,25 +220,27 @@ Demo
 Using Arduino Framework with Staging version
 --------------------------------------------
 
-1.  Clone/Copy `main repository <https://github.com/esp8266/Arduino>`_ to
-    :ref:`projectconf_pio_home_dir` + ``packages/framework-arduinoespressif8266``
-    and create new file ``packages/framework-arduinoespressif8266/package.json``
-    with the next contents (you can specify own version if you want)
+1.  Install :ref:`installation_develop` of PlatformIO
+2.  Install Espressif 8266 (Stage) development platform
 
-    .. code-block:: json
+    .. code::
 
-        {
-            "description":"Arduino Wiring-based Framework (ESP8266 Core)",
-            "name":"framework-arduinoespressif8266",
-            "system":"all",
-            "url":"https://github.com/esp8266/Arduino",
-            "version":"1.20300.0"
-        }
+        platformio platform install https://github.com/platformio/platform-espressif8266.git#feature/stage
 
-2.  Try to build project
-3.  If you see build errors, then try to build this project using the same
+3.  Set :ref:`projectconf_env_platform` to ``espressif8266_stage`` in
+    :ref:`projectconf`. For example,
+
+    .. code-block:: ini
+
+        [env:nodemcuv2]
+        platform = espressif8266_stage
+        board = nodemcuv2
+        framework = arduino
+
+4.  Try to build project
+5.  If you see build errors, then try to build this project using the same
     ``stage`` on Arduino IDE
-4.  If it works with Arduino IDE but doesn't work with PlatformIO, then please
+6.  If it works with Arduino IDE but doesn't work with PlatformIO, then please
     `open new issue <https://github.com/platformio/platformio/issues>`_ with
     attached information:
 
@@ -251,6 +253,7 @@ Using Arduino Framework with Staging version
 Articles
 --------
 
+* Sep 12, 2016 - **Pedro Minatel** - `OTA – Como programar o ESP8266 pelo WiFi no platformIO (OTA programming for ESP8266 via Wi-Fi using PlatformIO, Portuguese) <http://pedrominatel.com.br/esp8266/ota-como-programar-o-esp8266-pelo-wifi-no-platformio/>`_
 * Sep 2, 2016 - **Tinkerman** `Optimizing files for SPIFFS with Gulp <http://tinkerman.cat/optimizing-files-for-spiffs-with-gulp/>`_
 * Jul 15, 2016 - **Jaime** - `ESP8266 Mobile Rick Roll Captive Portal <https://hackaday.io/project/12709-esp8266-mobile-rick-roll-captive-portal>`_
 * Jun 13, 2016 - **Daniel Eichhorn** - `New Weather Station Demo on Github <http://blog.squix.org/2016/06/new-weather-station-demo-on-github.html>`_

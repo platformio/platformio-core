@@ -41,6 +41,7 @@ class FileDownloader(object):
         if disposition and "filename=" in disposition:
             self._fname = disposition[disposition.index("filename=") +
                                       9:].replace('"', "").replace("'", "")
+            self._fname = self._fname.encode("utf8")
         else:
             self._fname = url.split("/")[-1]
 

@@ -258,9 +258,11 @@ def on_event(category, action, label=None, value=None, screen_name=None):
 
 
 def on_exception(e):
-    if any([isinstance(e, cls)
-            for cls in (IOError, exception.AbortedByUser,
-                        exception.NotGlobalLibDir)]):
+    skip = any(
+        [isinstance(e, cls)
+         for cls in (IOError, exception.AbortedByUser,
+                     exception.NotGlobalLibDir, exception.InternetIsOffline)])
+    if skip:
         return
     is_crash = any([
         not isinstance(e, exception.PlatformioException),

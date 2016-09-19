@@ -44,34 +44,63 @@ If a library source code is located at `GitHub <https://github.com>`_, then
 you **need to specify** only these fields in the :ref:`library_config`:
 
 * :ref:`libjson_name`
+* :ref:`libjson_version` (is not required, but highly recommended for new :ref:`librarymanager`)
 * :ref:`libjson_keywords`
 * :ref:`libjson_description`
 * :ref:`libjson_repository`
 
-|PIOAPICR| will populate the rest fields, like :ref:`libjson_version` or
-:ref:`libjson_authors` with an actual information from *GitHub*.
+|PIOAPICR| will populate the rest fields, like :ref:`libjson_authors` with an
+actual information from *GitHub*.
 
-Example:
+Example, `DallasTemperature <http://platformio.org/lib/show/54/DallasTemperature/manifest>`_:
 
 .. code-block:: javascript
 
     {
-        "name": "IRremote",
-        "keywords": "infrared, ir, remote",
-        "description": "Send and receive infrared signals with multiple protocols",
-        "repository":
+      "name": "DallasTemperature",
+      "keywords": "onewire, 1-wire, bus, sensor, temperature",
+      "description": "Arduino Library for Dallas Temperature ICs (DS18B20, DS18S20, DS1822, DS1820)",
+      "repository":
+      {
+        "type": "git",
+        "url": "https://github.com/milesburton/Arduino-Temperature-Control-Library.git"
+      },
+      "authors":
+      [
         {
-            "type": "git",
-            "url": "https://github.com/shirriff/Arduino-IRremote.git"
+          "name": "Miles Burton",
+          "email": "miles@mnetcs.com",
+          "url": "http://www.milesburton.com",
+          "maintainer": true
         },
-        "frameworks": "arduino",
-        "platforms": "atmelavr"
+        {
+          "name": "Tim Newsome",
+          "email": "nuisance@casualhacker.net"
+        },
+        {
+          "name": "Guil Barros",
+          "email": "gfbarros@bappos.com"
+        },
+        {
+          "name": "Rob Tillaart",
+          "email": "rob.tillaart@gmail.com"
+        }
+      ],
+      "dependencies":
+      {
+        "name": "OneWire",
+        "authors": "Paul Stoffregen",
+        "frameworks": "arduino"
+      },
+      "version": "3.7.7",
+      "frameworks": "arduino",
+      "platforms": "*"
     }
 
-Under CVS (SVN/GIT)
+Under VCS (SVN/GIT)
 ^^^^^^^^^^^^^^^^^^^
 
-|PIOAPICR| can operate with a library source code that is under *CVS* control.
+|PIOAPICR| can operate with a library source code that is under *VCS* control.
 The list of **required** fields in the :ref:`library_config` will look like:
 
 * :ref:`libjson_name`

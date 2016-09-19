@@ -12,11 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[run]
-omit =
-	platformio/builder/*
-source = platformio
-
 [report]
 # Regexes for lines to exclude from consideration
 exclude_lines =

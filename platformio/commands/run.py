@@ -80,21 +80,18 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                 for e in config.get("platformio", "env_default").split(",")
             ]
 
-        results = []
+        results = {}
+        start_time = time()
         for section in config.sections():
-            # skip main configuration section
-            if section == "platformio":
-                continue
-
             if not section.startswith("env:"):
-                raise exception.InvalidEnvName(section)
+                continue
 
             envname = section[4:]
             skipenv = any([environment and envname not in environment,
                            not environment and env_default and
                            envname not in env_default])
             if skipenv:
-                # echo("Skipped %s environment" % style(envname, fg="yellow"))
+                results[envname] = None
                 continue
 
             if results:
@@ -108,9 +105,34 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
             ep = EnvironmentProcessor(ctx, envname, options, target,
                                       upload_port, silent, verbose)
-            results.append(ep.process())
+            results[envname] = ep.process()
 
-        if not all(results):
+        if len(results) > 1:
+            click.echo()
+            print_header("[%s]" % click.style("SUMMARY"))
+
+            successed = True
+            for envname, status in results.items():
+                status_str = click.style("SUCCESS", fg="green")
+                if status is False:
+                    successed = False
+                    status_str = click.style("ERROR", fg="red")
+                elif status is None:
+                    status_str = click.style("SKIP", fg="yellow")
+
+                click.echo(
+                    "Environment %s\t[%s]" % (click.style(
+                        envname, fg="cyan"), status_str),
+                    err=status is False)
+
+            print_header(
+                "[%s] Took %.2f seconds" % ((click.style(
+                    "SUCCESS", fg="green",
+                    bold=True) if successed else click.style(
+                        "ERROR", fg="red", bold=True)), time() - start_time),
+                is_error=not successed)
+
+        if any([r is False for r in results.values()]):
             raise exception.ReturnErrorCode()
         return True
 
@@ -128,7 +150,7 @@ class EnvironmentProcessor(object):
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
-    RENAMED_OPTIONS = {"lib_use": "lib_force"}
+    RENAMED_OPTIONS = {"lib_use": "lib_deps", "lib_force": "lib_deps"}
 
     RENAMED_PLATFORMS = {"espressif": "espressif8266"}
 
@@ -152,18 +174,15 @@ class EnvironmentProcessor(object):
         terminal_width, _ = click.get_terminal_size()
         start_time = time()
 
-        process_opts = []
+        # multi-line values to one line
         for k, v in self.options.items():
             if "\n" in v:
-                process_opts.append((k, ", ".join(
-                    [s.strip() for s in v.split("\n") if s.strip()])))
-            else:
-                process_opts.append((k, v))
+                self.options[k] = self.options[k].strip().replace("\n", ", ")
 
-        click.echo("[%s] Processing %s (%s)" %
-                   (datetime.now().strftime("%c"), click.style(
-                       self.name, fg="cyan", bold=True),
-                    ", ".join(["%s: %s" % opts for opts in process_opts])))
+        click.echo("[%s] Processing %s (%s)" % (
+            datetime.now().strftime("%c"), click.style(
+                self.name, fg="cyan", bold=True),
+            ", ".join(["%s: %s" % (k, v) for k, v in self.options.items()])))
         click.secho("-" * terminal_width, bold=True)
         if self.silent:
             click.echo("Please wait...")
@@ -248,9 +267,7 @@ class EnvironmentProcessor(object):
             ], self.verbose)
         if "lib_deps" in self.options:
             _autoinstall_libdeps(self.cmd_ctx, [
-                d.strip()
-                for d in self.options['lib_deps'].split(
-                    "\n" if "\n" in self.options['lib_deps'] else ", ")
+                d.strip() for d in self.options['lib_deps'].split(", ")
                 if d.strip()
             ], self.verbose)
 
@@ -258,7 +275,9 @@ class EnvironmentProcessor(object):
             p = PlatformFactory.newPlatform(self.options['platform'])
         except exception.UnknownPlatform:
             self.cmd_ctx.invoke(
-                cmd_platform_install, platforms=[self.options['platform']])
+                cmd_platform_install,
+                platforms=[self.options['platform']],
+                skip_default_package=True)
             p = PlatformFactory.newPlatform(self.options['platform'])
 
         return p.run(build_vars, build_targets, self.silent, self.verbose)
@@ -269,7 +288,11 @@ def _autoinstall_libdeps(ctx, libraries, verbose=False):
     ctx.obj = LibraryManager(storage_dir)
     if verbose:
         click.echo("Library Storage: " + storage_dir)
-    ctx.invoke(cmd_lib_install, libraries=libraries, silent=not verbose)
+    for lib in libraries:
+        try:
+            ctx.invoke(cmd_lib_install, libraries=[lib], silent=not verbose)
+        except exception.LibNotFound as e:
+            click.secho("Warning! %s" % e, fg="yellow")
 
 
 def _clean_pioenvs_dir(pioenvs_dir):

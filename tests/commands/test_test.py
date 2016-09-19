@@ -23,7 +23,7 @@ def test_local_env():
     result = util.exec_command(["platformio", "test", "-d",
                                 join("examples", "unit-testing", "calculator"),
                                 "-e", "local"])
-    if result['returncode'] != 0:
+    if result['returncode'] != 1:
         pytest.fail(result)
     assert all(
         [s in result['out'] for s in ("[PASSED]", "[IGNORED]", "[FAILED]")])

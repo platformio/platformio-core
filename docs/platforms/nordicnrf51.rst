@@ -37,9 +37,6 @@ Packages
     * - ``tool-rfdloader``
       - `rfdloader <https://github.com/RFduino/RFduino>`_
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``tool-sreccat``
       - `Merging tool <https://github.com/marcows/SRecord>`_
 
@@ -132,7 +129,7 @@ JKSoft
       - Flash
       - RAM
 
-    * - ``wallBotBLE``
+    * - ``wallbot_ble``
       - `JKSoft Wallbot BLE <https://developer.mbed.org/platforms/JKSoft-Wallbot-BLE/>`_
       - NRF51822
       - 16 MHz
@@ -233,8 +230,22 @@ SeeedStudio
       - Flash
       - RAM
 
+    * - ``seeedArchBLE``
+      - `Seeed Arch BLE <https://developer.mbed.org/platforms/Seeed-Arch-BLE/>`_
+      - NRF51822
+      - 16 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``seeedArchLink``
+      - `Seeed Arch Link <https://developer.mbed.org/platforms/Seeed-Arch-Link/>`_
+      - NRF51822
+      - 16 MHz
+      - 256 Kb
+      - 16 Kb
+
     * - ``seeedTinyBLE``
-      - `SeeedStudio Seeed Tiny BLE <http://developer.mbed.org/platforms/Seeed-Tiny-BLE/>`_
+      - `Seeed Tiny BLE <http://developer.mbed.org/platforms/Seeed-Tiny-BLE/>`_
       - NRF51822
       - 16 MHz
       - 256 Kb
@@ -255,6 +266,33 @@ Switch Science
 
     * - ``hrm1017``
       - `Switch Science mbed HRM1017 <https://developer.mbed.org/platforms/mbed-HRM1017/>`_
+      - NRF51822
+      - 16 MHz
+      - 256 Kb
+      - 16 Kb
+
+    * - ``ty51822r3``
+      - `Switch Science mbed TY51822r3 <https://developer.mbed.org/platforms/Switch-Science-mbed-TY51822r3/>`_
+      - NRF51822
+      - 32 MHz
+      - 256 Kb
+      - 32 Kb
+
+y5 design
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``nrf51822_y5_mbug``
+      - `y5 nRF51822 mbug <https://developer.mbed.org/platforms/Y5-NRF51822-MBUG/>`_
       - NRF51822
       - 16 MHz
       - 256 Kb

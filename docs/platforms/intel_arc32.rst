@@ -34,9 +34,6 @@ Packages
     * - ``tool-arduino101load``
       - `Genuino101 uploader <https://github.com/01org/intel-arduino-tools>`_
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``toolchain-intelarc32``
       - `GCC for Intel ARC <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain>`_
 

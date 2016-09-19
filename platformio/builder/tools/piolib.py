@@ -331,9 +331,12 @@ class ProjectAsLibBuilder(LibBuilderBase):
         pass
 
     def search_deps_recursive(self, lib_builders, search_paths=None):
-        for lib_name in self.env.get("LIB_FORCE", []):
+        for dep in self.env.get("LIB_DEPS", []):
+            for token in ("@", "="):
+                if token in dep:
+                    dep, _ = dep.split(token, 1)
             for lb in lib_builders:
-                if lb.name == lib_name:
+                if lb.name == dep:
                     if lb not in self.depbuilders:
                         self.depend_recursive(lb, lib_builders)
                     break
@@ -549,7 +552,7 @@ def GetLibBuilders(env):
     if verbose and found_incompat:
         sys.stderr.write(
             "More details about \"Library Compatibility Mode\": "
-            "http://docs.platformio.org/en/latest/librarymanager/ldf.html#"
+            "http://docs.platformio.org/en/stable/librarymanager/ldf.html#"
             "ldf-compat-mode\n")
 
     return items

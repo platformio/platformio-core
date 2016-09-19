@@ -30,8 +30,9 @@ class PlatformManager(BasePkgManager):
     def __init__(self, package_dir=None, repositories=None):
         if not repositories:
             repositories = [
+                "https://dl.bintray.com/platformio/dl-platforms/manifest.json",
                 "{0}://dl.platformio.org/platforms/manifest.json".format(
-                    "http" if app.get_setting("disable_ssl") else "https")
+                    "https" if app.get_setting("enable_ssl") else "http")
             ]
         BasePkgManager.__init__(self, package_dir or
                                 join(util.get_home_dir(), "platforms"),
@@ -116,13 +117,23 @@ class PlatformManager(BasePkgManager):
     @staticmethod
     @util.memoized
     def get_registered_boards():
-        return util.get_api_result("/boards")
+        return util.get_api_result("/boards", cache_valid="365d")
+
+    def board_config(self, id_):
+        for manifest in self.get_installed_boards():
+            if manifest['id'] == id_:
+                return manifest
+        for manifest in self.get_registered_boards():
+            if manifest['id'] == id_:
+                return manifest
+        raise exception.UnknownBoard(id_)
 
 
 class PlatformFactory(object):
 
     @staticmethod
     def get_clsname(name):
+        name = re.sub(r"[^\da-z\_]+", "", name, flags=re.I)
         return "%s%sPlatform" % (name.upper()[0], name.lower()[1:])
 
     @staticmethod
@@ -223,7 +234,7 @@ class PlatformPackagesMixin(object):
 
 class PlatformRunMixin(object):
 
-    LINE_ERROR_RE = re.compile(r"(\s+error|error[:\s]+)", re.I)
+    LINE_ERROR_RE = re.compile(r"(^|\s+)error:?\s+", re.I)
 
     def run(self, variables, targets, silent, verbose):
         assert isinstance(variables, dict)
@@ -353,12 +364,6 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
     def packages(self):
         if "packages" not in self._manifest:
             self._manifest['packages'] = {}
-        if "tool-scons" not in self._manifest['packages']:
-            self._manifest['packages']['tool-scons'] = {
-                "version": self._manifest.get("engines", {}).get(
-                    "scons", ">=2.3.0,<2.6.0"),
-                "optional": False
-            }
         return self._manifest['packages']
 
     def get_dir(self):
@@ -457,6 +462,12 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
                 "version": "~1.20302.1",
                 "optional": False
             }
+        if "tool-scons" not in self.packages:
+            self.packages['tool-scons'] = {
+                "version": self._manifest.get("engines", {}).get(
+                    "scons", ">=2.3.0,<2.6.0"),
+                "optional": False
+            }
 
 
 class PlatformBoardConfig(object):
@@ -494,8 +505,12 @@ class PlatformBoardConfig(object):
             return False
 
     @property
-    def id_(self):
+    def id(self):
         return self._id
+
+    @property
+    def id_(self):
+        return self.id
 
     @property
     def manifest(self):
@@ -503,7 +518,7 @@ class PlatformBoardConfig(object):
 
     def get_brief_data(self):
         return {
-            "id": self.id_,
+            "id": self.id,
             "name": self._manifest['name'],
             "platform": self._manifest.get("platform"),
             "mcu": self._manifest.get("build", {}).get("mcu", "").upper(),

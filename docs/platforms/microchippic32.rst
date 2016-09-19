@@ -34,9 +34,6 @@ Packages
     * - ``tool-pic32prog``
       - `pic32prog <https://github.com/sergev/pic32prog>`_
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``toolchain-microchippic32``
       - `GCC for Microchip PIC32 <https://github.com/chipKIT32/chipKIT-cxx>`_
 

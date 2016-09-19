@@ -28,8 +28,5 @@ Packages
     * - Name
       - Contents
 
-    * - ``tool-scons``
-      - `SCons software construction tool <http://www.scons.org>`_
-
     * - ``toolchain-gcclinux64``
       - `GCC for Linux x86_64 <https://gcc.gnu.org>`_

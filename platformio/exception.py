@@ -50,7 +50,7 @@ class PlatformNotInstalledYet(PlatformioException):
 
 class BoardNotDefined(PlatformioException):
 
-    MESSAGE = "You need to specify board type using `-b` or `--board` "\
+    MESSAGE = "You need to specify board ID using `-b` or `--board` "\
         "option. Supported boards list is available via "\
         " `platformio boards` command"
 
@@ -131,11 +131,6 @@ class ProjectEnvsNotAvailable(PlatformioException):
     MESSAGE = "Please setup environments in `platformio.ini` file"
 
 
-class InvalidEnvName(PlatformioException):
-
-    MESSAGE = "Invalid environment '{0}'. The name must start with 'env:'"
-
-
 class UnknownEnvNames(PlatformioException):
 
     MESSAGE = "Unknown environment names '{0}'. Valid names are '{1}'"
@@ -156,9 +151,16 @@ class APIRequestError(PlatformioException):
     MESSAGE = "[API] {0}"
 
 
+class InternetIsOffline(PlatformioException):
+
+    MESSAGE = "You are not connected to the Internet"
+
+
 class LibNotFound(PlatformioException):
 
-    MESSAGE = "Library `{0}` has not been found in the registry"
+    MESSAGE = "Library `{0}` has not been found in PlatformIO Registry.\n"\
+              "You can ignore this message, if `{0}` is a built-in library "\
+              "(included in framework, SDK). E.g., SPI, Wire, etc."
 
 
 class NotGlobalLibDir(PlatformioException):

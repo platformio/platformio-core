@@ -87,7 +87,7 @@ archive should contain ``.library.json`` manifest (see :ref:`library_config`).
 Storage Options
 ---------------
 
-See base options for :ref:`userguide_lib`.
+See base options for :ref:`cmd_lib`.
 
 Options
 -------

@@ -37,7 +37,7 @@ This command will create:
   (``*.h, *.c, *.cpp, *.S, *.ino, etc.``)
 * ``lib`` directory can be used for the project specific (private) libraries.
   More details are located in ``lib/readme.txt`` file.
-* Miscellaneous files for CVS and :ref:`ci` support.
+* Miscellaneous files for VCS and :ref:`ci` support.
 
 Options
 -------
@@ -89,11 +89,11 @@ be ``[env:teensy_31]``.
 Examples
 --------
 
-1. Create new project in the current working directory
+1. Initialize new project in a current working directory
 
-.. code-block:: bash
+.. code::
 
-    $ platformio init
+    > platformio init
 
     The current working directory *** will be used for the new project.
     You can specify another project directory via
@@ -110,38 +110,35 @@ Examples
     `platformio run --target clean` - clean project (remove compiled files)
 
 
-2. Create new project in the specified directory
+2. Initialize new project in a specified directory
 
-.. code-block:: bash
+.. code::
 
-    $ platformio init -d %PATH_TO_DIR%
+    > platformio init -d %PATH_TO_DIR%
 
     The next files/directories will be created in ***
      platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
-    src - Put your source files here
-    lib - Put here project specific (private) libraries
-    Project has been successfully initialized!
-    Useful commands:
-    `platformio run` - process/build project from the current directory
-    `platformio run --target upload` or `platformio run -t upload` - upload firmware to embedded board
-    `platformio run --target clean` - clean project (remove compiled files)
+    ...
 
 3. Initialize project for Arduino Uno
 
-.. code-block:: bash
+.. code::
 
-    $ platformio init --board uno
+    > platformio init --board uno
+
+    The current working directory *** will be used for the new project.
+    You can specify another project directory via
+    `platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.
+    ...
+
+4. Initialize project for Teensy 3.1 board with custom :ref:`framework_mbed`
+
+.. code::
+
+    > platformio init --board teensy31 --project-option "framework=mbed"
 
     The current working directory *** will be used for the new project.
     You can specify another project directory via
     `platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.
 
-    The next files/directories will be created in ***
-    platformio.ini - Project Configuration File. |-> PLEASE EDIT ME <-|
-    src - Put your source files here
-    lib - Put here project specific (private) libraries
-    Project has been successfully initialized!
-    Useful commands:
-    `platformio run` - process/build project from the current directory
-    `platformio run --target upload` or `platformio run -t upload` - upload firmware to embedded board
-    `platformio run --target clean` - clean project (remove compiled files)
+    ...

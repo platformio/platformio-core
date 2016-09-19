@@ -167,6 +167,8 @@ For upgrading ``platformio`` to the latest version:
 
     pip install -U platformio
 
+.. _installation_develop:
+
 Development Version
 ~~~~~~~~~~~~~~~~~~~
 

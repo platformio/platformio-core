@@ -118,9 +118,9 @@ Buid project using pre-configured :ref:`projectconf`.
 .. option::
     -O, --project-option
 
-Pass additional options from :ref:`projectconf` to
-:option:`platformio init --project-option` command. For example,
-automatically install dependent libraries
+Pass additional options from :ref:`projectconf` to :ref:`cmd_init` command.
+Use multiple ``--project-option`` options to pass multiple options to
+:ref:`cmd_init` command. For example, automatically install dependent libraries
 ``platformio ci --project-option="lib_deps=ArduinoJSON"`` or ignore specific
 library ``platformio ci --project-option="lib_ignore=SomeLib"``.
 
