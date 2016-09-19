@@ -43,7 +43,7 @@ List installed libraries
 Storage Options
 ---------------
 
-See base options for :ref:`userguide_lib`.
+See base options for :ref:`cmd_lib`.
 
 Options
 ~~~~~~~

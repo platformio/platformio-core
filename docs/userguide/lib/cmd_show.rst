@@ -64,7 +64,7 @@ The ``version`` supports `Semantic Versioning <http://semver.org>`_ (
 Storage Options
 ---------------
 
-See base options for :ref:`userguide_lib`.
+See base options for :ref:`cmd_lib`.
 
 Examples
 --------
