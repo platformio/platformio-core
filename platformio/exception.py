@@ -151,6 +151,11 @@ class APIRequestError(PlatformioException):
     MESSAGE = "[API] {0}"
 
 
+class InternetIsOffline(PlatformioException):
+
+    MESSAGE = "You are not connected to the Internet"
+
+
 class LibNotFound(PlatformioException):
 
     MESSAGE = "Library `{0}` has not been found in PlatformIO Registry.\n"\

@@ -209,13 +209,24 @@ class LibraryManager(BasePkgManager):
                 silent=False,
                 trigger_event=True,
                 interactive=False):
+        already_installed = False
         _name, _requirements, _url = self.parse_pkg_name(name, requirements)
-        if not _url:
-            _name = "id=%d" % self._get_pkg_id_by_name(
-                _name, _requirements, silent=silent, interactive=interactive)
-        already_installed = self.get_package(_name, _requirements, _url)
-        pkg_dir = BasePkgManager.install(self, _name if not _url else name,
-                                         _requirements, silent, trigger_event)
+
+        try:
+            if not _url:
+                _name = "id=%d" % self._get_pkg_id_by_name(
+                    _name,
+                    _requirements,
+                    silent=silent,
+                    interactive=interactive)
+            already_installed = self.get_package(_name, _requirements, _url)
+            pkg_dir = BasePkgManager.install(
+                self, _name
+                if not _url else name, _requirements, silent, trigger_event)
+        except exception.InternetIsOffline as e:
+            if not silent:
+                click.secho(str(e), fg="yellow")
+            return
 
         if already_installed:
             return

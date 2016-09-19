@@ -17,6 +17,7 @@ import functools
 import json
 import os
 import re
+import socket
 import stat
 import subprocess
 import sys
@@ -452,6 +453,8 @@ def get_api_result(path, params=None, data=None, cache_valid=None):
             return result
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
+            if not internet_on():
+                raise exception.InternetIsOffline()
             from platformio.maintenance import in_silence
             total += 1
             if not in_silence():
@@ -464,6 +467,17 @@ def get_api_result(path, params=None, data=None, cache_valid=None):
     raise exception.APIRequestError(
         "Could not connect to PlatformIO Registry Service. "
         "Please try later.")
+
+
+def internet_on(timeout=3):
+    host = "8.8.8.8"
+    port = 53
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except:  # pylint: disable=bare-except
+        return False
 
 
 def get_pythonexe_path():

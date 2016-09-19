@@ -542,7 +542,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             except exception.PlatformioException:
                 pass
             if not latest_version:
-                click.echo("[%s]" % (click.style("Unknown", fg="yellow")))
+                click.echo("[%s]" % (click.style(
+                    "Off-line" if not util.internet_on() else "Unknown",
+                    fg="yellow")))
                 return
 
             up_to_date = False
