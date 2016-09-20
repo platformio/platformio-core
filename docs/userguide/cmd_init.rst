@@ -76,6 +76,7 @@ Also, please take a look at :ref:`ide` page.
 
 Initialize project with additional options from :ref:`projectconf`. For example,
 ``platformio init --project-option="lib_deps=ArduinoJSON"``.
+Multiple options are allowed.
 
 .. option::
     --env-prefix
