@@ -55,7 +55,7 @@ class ProjectConfig(ConfigParser):
         items = {}
 
         try:
-            options = ConfigParser.options(self, section);
+            options = ConfigParser.options(self, section)
         except NoSectionError:
             raise exception.UnknownIncludedSection(section)
 
