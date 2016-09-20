@@ -88,7 +88,7 @@ class ProjectConfig(ConfigParser):
                 try:
                     return self.get(include.strip(' '), option)
                 except NoSectionError:
-                    raise UnknownIncludedSection(section)
+                    raise exception.UnknownIncludedSection(section)
                 except NoOptionError:
                     None
             raise NoOptionError(option, section)
