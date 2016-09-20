@@ -221,3 +221,12 @@ class CygwinEnvDetected(PlatformioException):
 
     MESSAGE = "PlatformIO does not work within Cygwin environment. "\
         "Use native Terminal instead."
+
+class UnknownIncludedSection(PlatformioException):
+
+    MESSAGE = "Unknown included section '{0}'"
+
+class RecursiveInclusion(PlatformioException):
+
+    MESSAGE = "Section '{0}' included recursively in '{1}'"
+

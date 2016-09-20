@@ -37,23 +37,65 @@ from platformio import __apiurl__, __version__, exception
 # pylint: disable=wrong-import-order, too-many-ancestors
 
 try:
-    from configparser import ConfigParser
+    from configparser import ConfigParser, NoOptionError, NoSectionError
 except ImportError:
-    from ConfigParser import ConfigParser
+    from ConfigParser import ConfigParser, NoOptionError, NoSectionError
 
 
 class ProjectConfig(ConfigParser):
 
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
 
-    def items(self, section, **_):
-        items = []
-        for option in ConfigParser.options(self, section):
-            items.append((option, self.get(section, option)))
-        return items
+    def merge(self, x, y):
+        z = x.copy()
+        z.update(y)
+        return z
+
+    def items(self, section, **kwargs):
+        items = {}
+        try:
+            for option in ConfigParser.options(self, section):
+                if option == 'include':
+
+                    try:
+                        kwargs['previous'].append(section)
+                    except:
+                        kwargs['previous'] = [section]
+
+                    includes = self.get(section, 'include').split(',')
+                    for include in includes:
+                        if include in kwargs['previous']:
+                            raise exception.RecursiveInclusion(include, section)
+                        override = dict(self.items(include.strip(' '), **kwargs))
+                        items = self.merge(items, override)
+
+                else:
+                    items[option] = self.get(section, option)
+
+        except NoSectionError:
+            raise exception.UnknownIncludedSection(section)
+
+        return items.items()
 
     def get(self, section, option, **kwargs):
-        value = ConfigParser.get(self, section, option, **kwargs)
+
+        if self.has_option(section, option):
+            value = ConfigParser.get(self, section, option, **kwargs)
+
+        elif self.has_option(section, 'include'):
+            includes = self.get(section, 'include').split(',')
+            for include in includes:
+                try:
+                    return self.get(include.strip(' '), option)
+                except NoSectionError:
+                    raise UnknownIncludedSection(section)
+                except NoOptionError:
+                    None
+            raise NoOptionError(option, section)
+
+        else:
+            raise NoOptionError(option, section)
+
         if "${" not in value or "}" not in value:
             return value
         return self.VARTPL_RE.sub(self._re_sub_handler, value)
