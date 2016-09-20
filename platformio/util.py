@@ -53,27 +53,28 @@ class ProjectConfig(ConfigParser):
 
     def items(self, section, **kwargs):
         items = {}
+
         try:
-            for option in ConfigParser.options(self, section):
-                if option == 'include':
-
-                    try:
-                        kwargs['previous'].append(section)
-                    except:
-                        kwargs['previous'] = [section]
-
-                    includes = self.get(section, 'include').split(',')
-                    for include in includes:
-                        if include in kwargs['previous']:
-                            raise exception.RecursiveInclusion(include, section)
-                        override = dict(self.items(include.strip(' '), **kwargs))
-                        items = self.merge(items, override)
-
-                else:
-                    items[option] = self.get(section, option)
-
+            options = ConfigParser.options(self, section);
         except NoSectionError:
             raise exception.UnknownIncludedSection(section)
+
+        for option in options:
+            if option == 'include':
+                try:
+                    kwargs['previous'].append(section)
+                except:
+                    kwargs['previous'] = [section]
+
+                includes = self.get(section, 'include').split(',')
+                for include in includes:
+                    if include in kwargs['previous']:
+                        raise exception.RecursiveInclusion(include, section)
+                    override = self.items(include.strip(' '), **kwargs)
+                    items = self.merge(items, dict(override))
+
+            else:
+                items[option] = self.get(section, option)
 
         return items.items()
 
