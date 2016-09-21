@@ -4,6 +4,17 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.1.1 (2016-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Improved detecting of ARM mbed media disk for uploading
+
+-------
+
+* Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
+
+  + Added support for new boards: ST 32F769IDISCOVERY
+
 3.1.0 (2016-09-19)
 ~~~~~~~~~~~~~~~~~~
 
