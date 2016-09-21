@@ -29,6 +29,7 @@ Here are recent articles/reviews about PlatformIO:
 * Aug 28, 2016 - **Tom Parker** `Using the BBC micro:bit with PlatformIO <http://www.lshift.net/blog/2016/08/28/using-the-bbc-microbit-with-platformio/>`_
 * Aug 24, 2016 - **Primal Cortex** `Cloud based continuous integration and delivery for IOT using PlatformIO <https://primalcortex.wordpress.com/2016/08/24/cloud-based-continuous-integration-and-delivery-for-iot-using-platformio/>`_
 * Aug 18, 2016 - **Primal Cortex** - `Installing PlatformIO on Arch Linux <https://primalcortex.wordpress.com/2016/08/18/platformio/>`_
+* Jul 27, 2016 - **Francesco Azzola** - `Arduino Alternative IDE: PlatformIO IoT integrated platform <http://www.survivingwithandroid.com/2016/07/arduino-alternative-ide.html>`_
 * Jul 26, 2016 - **Embedded Systems Laboratory** - `แนะนำการใช้งาน PlatformIO IDE สำหรับบอร์ด Arduino และ ESP8266 (Get started with PlatformIO IDE for Arduino board and ESP8266, Thai) <http://cpre.kmutnb.ac.th/esl/learning/index.php?article=intro_platformio-ide>`_
 * Jul 15, 2016 - **Jaime** - `ESP8266 Mobile Rick Roll Captive Portal <https://hackaday.io/project/12709-esp8266-mobile-rick-roll-captive-portal>`_
 * Jul 5, 2016 - **Ivan Kravets, Ph.D.** - `Explore the new development instruments for Arduino with PlatformIO ecosystem <http://www.slideshare.net/ivankravets/explore-the-new-development-instruments-for-arduino-with-platformio-ecosystem>`_
