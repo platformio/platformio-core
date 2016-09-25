@@ -8,6 +8,7 @@ PlatformIO 3.0
 ~~~~~~~~~~~~~~~~~~
 
 * Improved detecting of ARM mbed media disk for uploading
+* Improved Project Generator for CLion IDE when source folder contains nested items
 
 -------
 
