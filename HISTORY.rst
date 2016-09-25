@@ -12,6 +12,10 @@ PlatformIO 3.0
 
 -------
 
+* Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
+
+  + Add support for ESPrectro board
+
 * Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
 
   + Added support for new boards: ST 32F769IDISCOVERY
