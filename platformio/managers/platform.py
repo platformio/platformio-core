@@ -438,7 +438,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         return names
 
     def configure_default_packages(self, variables, targets):
-        # enbale used frameworks
+        # enable used frameworks
         for framework in variables.get("pioframework", "").split(","):
             if not self.frameworks:
                 continue

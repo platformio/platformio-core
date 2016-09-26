@@ -20,7 +20,7 @@ from platform import system
 from platformio import exception, util
 from platformio.managers.package import PackageManager
 
-PACKAGE_PIOPLUS_NAME = "tool-pioplus"
+PACKAGE_DEPS = {"pysite": "pysite-pioplus", "tool": "tool-pioplus"}
 
 
 class PioPlusPackageManager(PackageManager):
@@ -32,27 +32,26 @@ class PioPlusPackageManager(PackageManager):
              "https://dl.platformio.org/packages/manifest.json"])
 
 
-def get_pioplusexe_path():
+def pioplus_install():
     pm = PioPlusPackageManager()
-    package_dir = pm.get_package_dir(PACKAGE_PIOPLUS_NAME)
-    if not package_dir:
-        pm.install(PACKAGE_PIOPLUS_NAME)
-        package_dir = pm.get_package_dir(PACKAGE_PIOPLUS_NAME)
-    assert package_dir
-    return join(package_dir, "pioplus")
+    for name in PACKAGE_DEPS.values():
+        pm.install(name, silent=True)
 
 
 def pioplus_update():
     pm = PioPlusPackageManager()
-    if pm.get_package_dir(PACKAGE_PIOPLUS_NAME):
-        pm.update(PACKAGE_PIOPLUS_NAME)
+    for name in PACKAGE_DEPS.values():
+        pm.update(name)
 
 
 def pioplus_call(args, **kwargs):
-    pioplus_path = get_pioplusexe_path()
+    pioplus_install()
+    pm = PioPlusPackageManager()
+    pioplus_path = join(pm.get_package_dir(PACKAGE_DEPS['tool']), "pioplus")
     if system() == "Linux":
         os.environ['LD_LIBRARY_PATH'] = dirname(pioplus_path)
     os.environ['PYTHONEXEPATH'] = util.get_pythonexe_path()
+    os.environ['PYTHONPYSITEDIR'] = pm.get_package_dir(PACKAGE_DEPS['pysite'])
     util.copy_pythonpath_to_osenv()
     if subprocess.call([pioplus_path] + args, **kwargs) != 0:
         raise exception.ReturnErrorCode()
