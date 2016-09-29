@@ -51,8 +51,11 @@ def on_platformio_start(ctx, force, caller):
     if not caller:
         if getenv("PLATFORMIO_CALLER"):
             caller = getenv("PLATFORMIO_CALLER")
-        elif getenv("C9_UID"):
-            caller = "C9"
+        elif util.is_container():
+            if getenv("C9_UID"):
+                caller = "C9"
+            elif getenv("USER") == "cabox":
+                caller = "CA"
 
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
