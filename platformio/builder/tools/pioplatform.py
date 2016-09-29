@@ -31,7 +31,7 @@ def initPioPlatform(name):
 def PioPlatform(env):
     variables = {}
     for key in ("board", "pioframework"):
-        if key not in env:
+        if key.upper() not in env:
             continue
         variables[key] = env[key.upper()]
     p = initPioPlatform(env['PLATFORM_MANIFEST'])
