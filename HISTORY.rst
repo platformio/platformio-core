@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.1.1 (2016-??-??)
+3.2.0 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~
 
 * Improved detecting of ARM mbed media disk for uploading
