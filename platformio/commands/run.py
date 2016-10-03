@@ -109,28 +109,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
         if len(results) > 1:
             click.echo()
-            print_header("[%s]" % click.style("SUMMARY"))
-
-            successed = True
-            for envname, status in results.items():
-                status_str = click.style("SUCCESS", fg="green")
-                if status is False:
-                    successed = False
-                    status_str = click.style("ERROR", fg="red")
-                elif status is None:
-                    status_str = click.style("SKIP", fg="yellow")
-
-                click.echo(
-                    "Environment %s\t[%s]" % (click.style(
-                        envname, fg="cyan"), status_str),
-                    err=status is False)
-
-            print_header(
-                "[%s] Took %.2f seconds" % ((click.style(
-                    "SUCCESS", fg="green",
-                    bold=True) if successed else click.style(
-                        "ERROR", fg="red", bold=True)), time() - start_time),
-                is_error=not successed)
+            print_summary(results, start_time)
 
         if any([r is False for r in results.values()]):
             raise exception.ReturnErrorCode()
@@ -324,6 +303,38 @@ def print_header(label, is_error=False):
     width = len(click.unstyle(label))
     half_line = "=" * ((terminal_width - width - 2) / 2)
     click.echo("%s %s %s" % (half_line, label, half_line), err=is_error)
+
+
+def print_summary(results, start_time):
+    print_header("[%s]" % click.style("SUMMARY"))
+
+    envname_max_len = 0
+    for envname in results:
+        if len(envname) > envname_max_len:
+            envname_max_len = len(envname)
+
+    successed = True
+    for envname, status in results.items():
+        status_str = click.style("SUCCESS", fg="green")
+        if status is False:
+            successed = False
+            status_str = click.style("ERROR", fg="red")
+        elif status is None:
+            status_str = click.style("SKIP", fg="yellow")
+
+        format_str = (
+            "Environment {0:<" + str(envname_max_len + 9) + "}\t[{1}]")
+        click.echo(
+            format_str.format(
+                click.style(
+                    envname, fg="cyan"), status_str),
+            err=status is False)
+
+    print_header(
+        "[%s] Took %.2f seconds" % ((click.style(
+            "SUCCESS", fg="green", bold=True) if successed else click.style(
+                "ERROR", fg="red", bold=True)), time() - start_time),
+        is_error=not successed)
 
 
 def check_project_defopts(config):
