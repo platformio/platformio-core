@@ -118,8 +118,8 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
         if (system() == "Linux" and not any([
-                isfile("/etc/udev/99-platformio-udev.rules"),
-                isfile("/etc/rules.d/99-platformio-udev.rules")
+                isfile("/etc/udev/rules.d/99-platformio-udev.rules"),
+                isfile("/lib/udev/rules.d/99-platformio-udev.rules")
         ])):
             sys.stderr.write(
                 "\nWarning! Please install `99-platformio-udev.rules` and "
