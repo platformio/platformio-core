@@ -110,10 +110,13 @@ class MeasurementProtocol(TelemetryBase):
         args = [str(s).lower() for s in ctx_args if not str(s).startswith("-")]
         if not args:
             return
-        if args[0] in ("lib", "platform", "serialports", "settings"):
+        cmd_path = args[:1]
+        if args[0] in ("lib", "platform", "device", "settings",
+                       "remote"):
             cmd_path = args[:2]
-        else:
-            cmd_path = args[:1]
+            if args[0] == "remote":
+                if len(args) > 2 and args[1] in ("agent", "device"):
+                    cmd_path = args[:3]
         self['screen_name'] = " ".join([p.title() for p in cmd_path])
 
     def send(self, hittype):
