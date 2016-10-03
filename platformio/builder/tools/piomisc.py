@@ -292,16 +292,23 @@ def GetCompilerType(env):
 
 
 def GetActualLDScript(env):
+
+    def _lookup_in_ldpath(script):
+        for d in env.get("LIBPATH", []):
+            path = join(env.subst(d), script)
+            if isfile(path):
+                return path
+        return None
+
     script = None
     for f in env.get("LINKFLAGS", []):
         if f.startswith("-Wl,-T"):
             script = env.subst(f[6:].replace('"', "").strip())
             if isfile(script):
                 return script
-            for d in env.get("LIBPATH", []):
-                path = join(env.subst(d), script)
-                if isfile(path):
-                    return path
+            path = _lookup_in_ldpath(script)
+            if path:
+                return path
 
     if script:
         sys.stderr.write(
@@ -309,7 +316,13 @@ def GetActualLDScript(env):
             (script, env.subst("$LIBPATH")))
         env.Exit(1)
 
-    return None
+    if not script and "LDSCRIPT_PATH" in env:
+        path = _lookup_in_ldpath(env['LDSCRIPT_PATH'])
+        if path:
+            return path
+
+    sys.stderr.write("Error: Could not find LD script\n")
+    env.Exit(1)
 
 
 def VerboseAction(_, act, actstr):
