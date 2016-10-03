@@ -453,7 +453,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             for _name, _opts in self.packages.iteritems():
                 if _opts.get("type") == "uploader":
                     self.packages[_name]['optional'] = False
-                elif "uploadlazy" in targets:
+                elif "nobuild" in targets:
                     # skip all packages, allow only upload tools
                     self.packages[_name]['optional'] = True
 

@@ -30,12 +30,25 @@ from platformio.pioplus import pioplus_call
 
 
 @click.group("remote", short_help="PIO Remote")
-def cli():
+@click.option("-a", "--agent", multiple=True)
+def cli(**kwargs):
     pass
 
 
-@cli.command("agent", short_help="Host agent")
+@cli.group("agent", short_help="Start new agent or list active")
 def remote_agent():
+    pass
+
+
+@remote_agent.command("start", short_help="Start agent")
+@click.option("-n", "--name")
+@click.option("-s", "--share")
+def remote_agent_start(**kwargs):
+    pioplus_call(sys.argv[1:])
+
+
+@remote_agent.command("list", short_help="List active agents")
+def remote_agent_list():
     pioplus_call(sys.argv[1:])
 
 

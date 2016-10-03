@@ -21,7 +21,8 @@ from os import sep, walk
 from os.path import basename, dirname, isdir, join, realpath
 
 from SCons.Action import Action
-from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, SConscript
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
+                          DefaultEnvironment, SConscript)
 from SCons.Util import case_sensitive_suffixes
 
 from platformio.util import pioversion_to_intstr
@@ -97,9 +98,10 @@ def BuildProgram(env):
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
 
-    if set(["upload", "uploadlazy", "program"]) & set(COMMAND_LINE_TARGETS):
-        env.AddPostAction(program, Action(env.CheckUploadSize,
-                                          "Checking program size $TARGET"))
+    checksize_action = Action(env.CheckUploadSize, "Checking program size")
+    AlwaysBuild(env.Alias("checkprogsize", program, checksize_action))
+    if set(["upload", "program"]) & set(COMMAND_LINE_TARGETS):
+        env.AddPostAction(program, checksize_action)
 
     return program
 
@@ -226,7 +228,7 @@ def CollectBuildFiles(env,
 
 
 def BuildFrameworks(env, frameworks):
-    if not frameworks or "uploadlazy" in COMMAND_LINE_TARGETS:
+    if not frameworks:
         return
 
     if "BOARD" not in env:
