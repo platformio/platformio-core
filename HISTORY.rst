@@ -15,6 +15,8 @@ PlatformIO 3.0
 * Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
 
   + Add support for ESPrectro board
+  + Additional target "buildfs" to accompany "uploadfs"
+    (`issue #6 <https://github.com/platformio/platform-espressif8266/issues/6>`__)
 
 * Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
 
