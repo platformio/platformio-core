@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 from os import getenv, listdir
 from os.path import join
 from platform import system
+from sys import exit as sys_exit
 from traceback import format_exc
 
 import click
@@ -43,8 +43,21 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
             mod = __import__("platformio.commands." + name, None, None,
                              ["cli"])
         except ImportError:
-            raise click.UsageError('No such command "%s"' % name, ctx)
+            try:
+                return self._handle_obsolate_command(name)
+            except AttributeError:
+                raise click.UsageError('No such command "%s"' % name, ctx)
         return mod.cli
+
+    @staticmethod
+    def _handle_obsolate_command(name):
+        if name == "platforms":
+            from platformio.commands import platform
+            return platform.cli
+        elif name == "serialports":
+            from platformio.commands import device
+            return device.cli
+        raise AttributeError()
 
 
 @click.command(
@@ -90,13 +103,6 @@ def main():
             except:  # pylint: disable=bare-except
                 pass
 
-        # renamed commands
-        if len(sys.argv) > 1:
-            if sys.argv[1] == "platforms":
-                sys.argv[1] = "platform"
-            if sys.argv[1] == "serialports":
-                sys.argv[1] = "device"
-
         cli(None, None, None)
     except Exception as e:  # pylint: disable=W0703
         if not isinstance(e, exception.ReturnErrorCode):
@@ -128,4 +134,4 @@ An unexpected error occurred. Further steps:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys_exit(main())

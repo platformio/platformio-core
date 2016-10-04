@@ -111,7 +111,8 @@ class MeasurementProtocol(TelemetryBase):
         if not args:
             return
         cmd_path = args[:1]
-        if args[0] in ("lib", "platform", "device", "settings", "remote"):
+        if args[0] in ("lib", "platform", "platforms", "serialports", "device",
+                       "settings", "remote"):
             cmd_path = args[:2]
             if args[0] == "remote":
                 if len(args) > 2 and args[1] in ("agent", "device"):
