@@ -42,7 +42,7 @@ def remote_agent():
 
 @remote_agent.command("start", short_help="Start agent")
 @click.option("-n", "--name")
-@click.option("-s", "--share", metavar="E-MAIL")
+@click.option("-s", "--share", multiple=True, metavar="E-MAIL")
 def remote_agent_start(**kwargs):
     pioplus_call(sys.argv[1:])
 
