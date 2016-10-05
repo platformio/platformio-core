@@ -20,39 +20,48 @@ from platform import system
 from platformio import exception, util
 from platformio.managers.package import PackageManager
 
-PACKAGE_PIOPLUS_NAME = "tool-pioplus"
+PACKAGE_DEPS = {"pysite": {"name": "pysite-pioplus",
+                           "requirements": ">=0.1.0"},
+                "tool": {"name": "tool-pioplus",
+                         "requirements": ">=0.2.0"}}
 
 
 class PioPlusPackageManager(PackageManager):
 
     def __init__(self):
-        PackageManager.__init__(
-            self, join(util.get_home_dir(), "packages"),
-            ["https://dl.bintray.com/platformio/dl-packages/manifest.json",
-             "https://dl.platformio.org/packages/manifest.json"])
+        PackageManager.__init__(self, join(util.get_home_dir(), "packages"), [
+            "https://dl.bintray.com/platformio/dl-packages/manifest.json",
+            "https://sourceforge.net/projects/platformio-storage/files/"
+            "packages/manifest.json/download",
+            "https://dl.platformio.org/packages/manifest.json"
+        ])
 
 
-def get_pioplusexe_path():
+def pioplus_install():
     pm = PioPlusPackageManager()
-    package_dir = pm.get_package_dir(PACKAGE_PIOPLUS_NAME)
-    if not package_dir:
-        pm.install(PACKAGE_PIOPLUS_NAME)
-        package_dir = pm.get_package_dir(PACKAGE_PIOPLUS_NAME)
-    assert package_dir
-    return join(package_dir, "pioplus")
+    for item in PACKAGE_DEPS.values():
+        pm.install(item['name'], item['requirements'], silent=True)
 
 
 def pioplus_update():
     pm = PioPlusPackageManager()
-    if pm.get_package_dir(PACKAGE_PIOPLUS_NAME):
-        pm.update(PACKAGE_PIOPLUS_NAME)
+    for item in PACKAGE_DEPS.values():
+        package_dir = pm.get_package_dir(item['name'], item['requirements'])
+        if package_dir:
+            pm.update(item['name'], item['requirements'])
 
 
 def pioplus_call(args, **kwargs):
-    pioplus_path = get_pioplusexe_path()
+    pioplus_install()
+    pm = PioPlusPackageManager()
+    pioplus_path = join(
+        pm.get_package_dir(PACKAGE_DEPS['tool']['name'],
+                           PACKAGE_DEPS['tool']['requirements']), "pioplus")
     if system() == "Linux":
         os.environ['LD_LIBRARY_PATH'] = dirname(pioplus_path)
     os.environ['PYTHONEXEPATH'] = util.get_pythonexe_path()
+    os.environ['PYTHONPYSITEDIR'] = pm.get_package_dir(
+        PACKAGE_DEPS['pysite']['name'], PACKAGE_DEPS['pysite']['requirements'])
     util.copy_pythonpath_to_osenv()
     if subprocess.call([pioplus_path] + args, **kwargs) != 0:
         raise exception.ReturnErrorCode()

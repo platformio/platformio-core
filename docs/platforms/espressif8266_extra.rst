@@ -117,10 +117,10 @@ Uploading files to file system SPIFFS
     Please make sure to read `ESP8266 Flash layout <https://github.com/esp8266/Arduino/blob/master/doc/filesystem.md#flash-layout>`_
     information first.
 
-1. Initialise project :ref:`cmd_init` (if you have not initialized yet)
+1. Initialize project :ref:`cmd_init` (if you have not initialized yet)
 2. Create ``data`` folder (it should be on the same level as ``src`` folder)
    and put files here. Also, you can specify own location for :ref:`projectconf_pio_data_dir`
-3. Run target ``uploadfs`` using  :option:`platformio run --target` command.
+3. Run ``buildfs`` or ``uploadfs`` target using :option:`platformio run --target` command.
 
 To upload SPIFFS image using OTA update please specify ``upload_port`` /
 ``--upload-port`` as IP address or mDNS host name (ending with the ``*.local``).

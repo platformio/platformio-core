@@ -92,12 +92,14 @@ class MeasurementProtocol(TelemetryBase):
         self['an'] = " ".join(dpdata)
 
     def _prefill_custom_data(self):
+        caller_id = str(app.get_session_var("caller_id"))
         self['cd1'] = util.get_systype()
         self['cd2'] = "Python/%s %s" % (platform.python_version(),
                                         platform.platform())
-        self['cd4'] = 1 if not util.is_ci() else 0
-        if app.get_session_var("caller_id"):
-            self['cd5'] = str(app.get_session_var("caller_id")).lower()
+        self['cd4'] = 1 if (not util.is_ci() and
+                            (caller_id or not util.is_container())) else 0
+        if caller_id:
+            self['cd5'] = caller_id.lower()
 
     def _prefill_screen_name(self):
         self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
@@ -108,10 +110,13 @@ class MeasurementProtocol(TelemetryBase):
         args = [str(s).lower() for s in ctx_args if not str(s).startswith("-")]
         if not args:
             return
-        if args[0] in ("lib", "platform", "serialports", "settings"):
+        cmd_path = args[:1]
+        if args[0] in ("lib", "platform", "platforms", "serialports", "device",
+                       "settings", "remote"):
             cmd_path = args[:2]
-        else:
-            cmd_path = args[:1]
+            if args[0] == "remote":
+                if len(args) > 2 and args[1] in ("agent", "device"):
+                    cmd_path = args[:3]
         self['screen_name'] = " ".join([p.title() for p in cmd_path])
 
     def send(self, hittype):

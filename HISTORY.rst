@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.1.1 (2016-??-??)
+3.2.0 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~
 
 * Improved detecting of ARM mbed media disk for uploading
@@ -14,13 +14,40 @@ PlatformIO 3.0
 
 -------
 
+* Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
+
+  + Updated ARM mbed OS to 5.1.4/rev126
+
 * Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
 
   + Add support for ESPrectro board
+  + Additional target "buildfs" to accompany "uploadfs"
+    (`issue #6 <https://github.com/platformio/platform-espressif8266/issues/6>`__)
+
+* Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
+
+  + Updated ARM mbed OS to 5.1.4/rev126
+
+* Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
+
+  + Updated ARM mbed OS to 5.1.4/rev126
+
+* Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
+
+  + Updated ARM mbed OS to 5.1.4/rev126
+
+* Development platform `Silicon Labs EFM32 <https://github.com/platformio/platform-siliconlabsefm32>`__
+
+  + Updated ARM mbed OS to 5.1.4/rev126
 
 * Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
 
   + Added support for new boards: ST 32F769IDISCOVERY
+  + Updated ARM mbed OS to 5.1.4/rev126
+
+* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
+
+  + Updated ARM mbed OS to 5.1.4/rev126
 
 3.1.0 (2016-09-19)
 ~~~~~~~~~~~~~~~~~~

@@ -51,8 +51,11 @@ def on_platformio_start(ctx, force, caller):
     if not caller:
         if getenv("PLATFORMIO_CALLER"):
             caller = getenv("PLATFORMIO_CALLER")
-        elif getenv("C9_UID"):
-            caller = "C9"
+        elif util.is_container():
+            if getenv("C9_UID"):
+                caller = "C9"
+            elif getenv("USER") == "cabox":
+                caller = "CA"
 
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
@@ -244,7 +247,7 @@ def check_platformio_upgrade():
         click.secho("pip install -U platformio", fg="cyan", nl=False)
         click.secho("` command.", fg="yellow")
     click.secho("Changes: ", fg="yellow", nl=False)
-    click.secho("http://docs.platformio.org/en/stable/history.html", fg="cyan")
+    click.secho("http://docs.platformio.org/en/latest/history.html", fg="cyan")
     click.echo("*" * terminal_width)
     click.echo("")
 

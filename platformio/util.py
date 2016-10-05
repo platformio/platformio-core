@@ -298,6 +298,17 @@ def is_ci():
     return os.getenv("CI", "").lower() == "true"
 
 
+def is_container():
+    if not isfile("/proc/1/cgroup"):
+        return False
+    with open("/proc/1/cgroup") as fp:
+        for line in fp:
+            line = line.strip()
+            if ":" in line and not line.endswith(":/"):
+                return True
+    return False
+
+
 def exec_command(*args, **kwargs):
     result = {"out": None, "err": None, "returncode": None}
 
