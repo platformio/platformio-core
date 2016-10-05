@@ -22,7 +22,7 @@ from time import sleep
 import click
 from serial import VERSION as PYSERIAL_VERSION
 
-from platformio import util
+from platformio import exception, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.pioplus import pioplus_call
 
@@ -229,11 +229,17 @@ else:
 
 
 def _device_monitor(ctx, **kwargs):
+
+    def _tx_target(sock_dir):
+        try:
+            pioplus_call(sys.argv[1:] + ["--sock", sock_dir])
+        except exception.ReturnErrorCode:
+            pass
+
     sock_dir = mkdtemp(suffix="pioplus")
     sock_file = join(sock_dir, "sock")
     try:
-        t = threading.Thread(
-            target=pioplus_call, args=(sys.argv[1:] + ["--sock", sock_dir], ))
+        t = threading.Thread(target=_tx_target, args=(sock_dir, ))
         t.start()
         while t.is_alive() and not isfile(sock_file):
             sleep(0.1)
