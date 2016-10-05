@@ -283,6 +283,8 @@ class PlatformRunMixin(object):
         return result
 
     def on_run_out(self, line):
+        if "`buildprog' is up to date." in line:
+            return
         self._echo_line(line, level=1)
 
     def on_run_err(self, line):
