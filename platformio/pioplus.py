@@ -29,10 +29,12 @@ PACKAGE_DEPS = {"pysite": {"name": "pysite-pioplus",
 class PioPlusPackageManager(PackageManager):
 
     def __init__(self):
-        PackageManager.__init__(
-            self, join(util.get_home_dir(), "packages"),
-            ["https://dl.bintray.com/platformio/dl-packages/manifest.json",
-             "https://dl.platformio.org/packages/manifest.json"])
+        PackageManager.__init__(self, join(util.get_home_dir(), "packages"), [
+            "https://dl.bintray.com/platformio/dl-packages/manifest.json",
+            "https://sourceforge.net/projects/platformio-storage/files/"
+            "packages/manifest.json/download",
+            "https://dl.platformio.org/packages/manifest.json"
+        ])
 
 
 def pioplus_install():
