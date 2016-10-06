@@ -497,7 +497,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                requirements=None,
                only_check=False):
         name, requirements, url = self.parse_pkg_name(name, requirements)
-        package_dir = self.get_package_dir(name, requirements, url)
+        package_dir = self.get_package_dir(name, None, url)
         if not package_dir:
             click.secho(
                 "%s @ %s is not installed" % (name, requirements or "*"),
