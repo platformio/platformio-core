@@ -31,7 +31,7 @@ PlatformIO
 `Project Examples <https://github.com/platformio/platformio-examples/tree/develop>`_ |
 `Docs <http://docs.platformio.org>`_ |
 `Donate <http://platformio.org/donate>`_ |
-`Contact Us <http://platformio.org/contact>`_
+`Contact Us <https://pioplus.com/contact.html>`_
 
 **Social:** `Twitter <https://twitter.com/PlatformIO_Org>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
