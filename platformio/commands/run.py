@@ -238,17 +238,19 @@ class EnvironmentProcessor(object):
 
         telemetry.on_run_environment(self.options, build_targets)
 
-        # install dependent libraries
-        if "lib_install" in self.options:
-            _autoinstall_libdeps(self.cmd_ctx, [
-                int(d.strip()) for d in self.options['lib_install'].split(",")
-                if d.strip()
-            ], self.verbose)
-        if "lib_deps" in self.options:
-            _autoinstall_libdeps(self.cmd_ctx, [
-                d.strip() for d in self.options['lib_deps'].split(", ")
-                if d.strip()
-            ], self.verbose)
+        if "nobuild" not in build_targets:
+            # install dependent libraries
+            if "lib_install" in self.options:
+                _autoinstall_libdeps(self.cmd_ctx, [
+                    int(d.strip())
+                    for d in self.options['lib_install'].split(",")
+                    if d.strip()
+                ], self.verbose)
+            if "lib_deps" in self.options:
+                _autoinstall_libdeps(self.cmd_ctx, [
+                    d.strip() for d in self.options['lib_deps'].split(", ")
+                    if d.strip()
+                ], self.verbose)
 
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])
