@@ -22,9 +22,9 @@ from os.path import dirname, getmtime, isdir, isfile, join
 from time import time
 
 import requests
-from lockfile import LockFile
+from lockfile import LockFailed, LockFile
 
-from platformio import __version__, util
+from platformio import __version__, exception, util
 from platformio.exception import InvalidSettingName, InvalidSettingValue
 
 DEFAULT_SETTINGS = {
@@ -106,7 +106,16 @@ class State(object):
                 (time() - getmtime(self._lockfile.lock_file)) > 10:
             self._lockfile.break_lock()
 
-        self._lockfile.acquire()
+        try:
+            self._lockfile.acquire()
+        except LockFailed:
+            raise exception.PlatformioException(
+                "The directory `{0}` or its parent directory is not owned by "
+                "the current user and PlatformIO can not store configuration "
+                "data. \nPlease check the permissions and owner of that "
+                "directory. Otherwise, please remove manually `{0}` "
+                "directory and PlatformIO will create new from the current "
+                "user.".format(dirname(self.path)))
 
     def _unlock_state_file(self):
         if self._lockfile:

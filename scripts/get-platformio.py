@@ -176,18 +176,6 @@ https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platf
     else:
         print("\n ==> Installation process has been "
               "successfully FINISHED! <==\n")
-
-    try:
-        print_exec_result(exec_command("platformio"))
-    except:
-        try:
-            print_exec_result(exec_python_cmd([
-                "-m",
-                "platformio.__main__" if sys.version_info < (2, 7, 0) else
-                "platformio"]))
-        except:
-            pass
-    finally:
         print ("""
 
 ----------------------------------------
