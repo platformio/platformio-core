@@ -21,6 +21,7 @@ from os import environ, getenv, listdir, remove
 from os.path import dirname, getmtime, isdir, isfile, join
 from time import time
 
+import requests
 from lockfile import LockFile
 
 from platformio import __version__, util
@@ -261,9 +262,18 @@ def is_disabled_progressbar():
 def get_cid():
     cid = get_state_item("cid")
     if not cid:
+        _uid = None
+        if getenv("C9_UID"):
+            _uid = getenv("C9_UID")
+        elif getenv("CHE_API_ENDPOINT"):
+            try:
+                _uid = requests.get("{api}/user?token={token}".format(
+                    api=getenv("CHE_API_ENDPOINT"), token=getenv(
+                        "USER_TOKEN"))).json().get("id")
+            except:  # pylint: disable=bare-except
+                pass
         cid = str(
-            uuid.UUID(bytes=hashlib.md5(
-                str(getenv("C9_UID")
-                    if getenv("C9_UID") else uuid.getnode())).digest()))
+            uuid.UUID(bytes=hashlib.md5(str(_uid if _uid else uuid.getnode()))
+                      .digest()))
         set_state_item("cid", cid)
     return cid
