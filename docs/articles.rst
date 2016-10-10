@@ -23,6 +23,7 @@ Here are recent articles/reviews about PlatformIO:
 2016
 ^^^^
 
+* Oct 3, 2016 - **Xose Pérez** - `Using the new Bean Loader CLI from PlatformIO <http://tinkerman.cat/using-new-bean-loader-cli-platformio/>`_
 * Sep 20, 2016 - **The Linux Foundation** - `21 Open Source Projects for IoT <https://www.linux.com/comment/16265>`_
 * Sep 19, 2016 - **Doc Walker** - `How to automatically test build Arduino libraries <http://4-20ma.io/2016/09/19/howto-automatically-test-build-arduino-libraries/>`_
 * Sep 18, 2016 - **Kadda Sahnine** - `LoRaWAN network practice with Objenious, PlatformIO and Node-RED <http://blog.inovia-conseil.fr/?p=262>`_
