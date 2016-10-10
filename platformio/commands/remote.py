@@ -138,9 +138,9 @@ if int(PYSERIAL_VERSION[0]) == 3:
     @click.option(
         "--exit-char",
         type=int,
-        default=29,
+        default=3,
         help="ASCII code of special character that is used to exit "
-        "the application, default=29 (DEC)")
+        "the application, default=3 (Ctrl+C)")
     @click.option(
         "--menu-char",
         type=int,
@@ -210,9 +210,9 @@ else:
     @click.option(
         "--exit-char",
         type=int,
-        default=29,
+        default=3,
         help="ASCII code of special character that is used to exit "
-        "the application, default=29 (DEC)")
+        "the application, default=3 (Ctrl+C)")
     @click.option(
         "--menu-char",
         type=int,

@@ -105,7 +105,7 @@ escapes.
 
 To control *monitor* please use these "hot keys":
 
-* ``Ctrl+]`` Quit
+* ``Ctrl+C`` Quit
 * ``Ctrl+T`` Menu
 * ``Ctrl+T followed by Ctrl+H`` Help
 
@@ -191,10 +191,10 @@ Do not apply any encodings/transformations
     --exit-char
 
 ASCII code of special character that is used to exit the application,
-default ``29`` (DEC).
+default ``3`` (DEC, ``Ctrl+C``).
 
-For example, to use ``Ctrl+Q`` run
-``platformio device monitor --exit-char 17``.
+For example, to use ``Ctrl+]`` run
+``platformio device monitor --exit-char 29``.
 
 .. option::
     --menu-char
@@ -285,9 +285,8 @@ Examples
     --- /dev/cu.obd2ecu-SPPDev n/a
     Enter port name:/dev/cu.SLAB_USBtoUART
     --- Miniterm on /dev/cu.SLAB_USBtoUART: 9600,8,N,1 ---
-    --- Quit: Ctrl+]  |  Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---
+    --- Quit: Ctrl+C  |  Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---
     Hello PlatformIO!
-    --- pySerial (2.7) - miniterm - help
     ---
     --- Ctrl+]   Exit program
     --- Ctrl+T   Menu escape key, followed by:

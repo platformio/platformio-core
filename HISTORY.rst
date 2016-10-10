@@ -9,6 +9,7 @@ PlatformIO 3.0
 
 * Improved detecting of ARM mbed media disk for uploading
 * Improved Project Generator for CLion IDE when source folder contains nested items
+* Changed default exit combination for Device Monitor from ``Ctrl+]`` to ``Ctrl+C``
 * Fixed issue with ``PATH`` auto-configuring for upload tools
 * Fixed ``99-platformio-udev.rules`` checker for Linux OS
 
