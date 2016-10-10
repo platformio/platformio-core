@@ -245,7 +245,8 @@ def _device_monitor(ctx, **kwargs):
             sleep(0.1)
         if not t.is_alive():
             return
-        ctx.invoke(cmd_device_monitor, port=open(sock_file).read())
+        kwargs['port'] = open(sock_file).read()
+        ctx.invoke(cmd_device_monitor, **kwargs)
         t.join(2)
     finally:
         util.rmtree_(sock_dir)
