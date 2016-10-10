@@ -86,7 +86,7 @@ def BuildProgram(env):
             src_filter=env.get("SRC_FILTER"),
             duplicate=False))
 
-    if "test" in COMMAND_LINE_TARGETS:
+    if "__test" in COMMAND_LINE_TARGETS:
         env.Append(PIOBUILDFILES=env.ProcessTest())
 
     if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:

@@ -459,7 +459,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
                     # skip all packages, allow only upload tools
                     self.packages[_name]['optional'] = True
 
-        if "test" in targets and "tool-unity" not in self.packages:
+        if "__test" in targets and "tool-unity" not in self.packages:
             self.packages['tool-unity'] = {
                 "version": "~1.20302.1",
                 "optional": False
