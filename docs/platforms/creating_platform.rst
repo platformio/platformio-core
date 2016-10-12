@@ -152,6 +152,9 @@ Packages
     * - ``tool-stlink``
       - `ST-Link <https://github.com/texane/stlink>`_
 
+    * - ``tool-stm32duino``
+      - `STM32Duino Tools <https://github.com/rogerclarkmelbourne/Arduino_STM32>`_
+
     * - ``tool-teensy``
       - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
 
@@ -174,10 +177,13 @@ Packages
       - `MinGW <http://www.mingw.org>`_
 
     * - ``toolchain-icestorm``
-      - `GCC for FPGA IceStorm <http://www.clifford.at/icestorm/>`_
+      - `Tools for analyzing and creating bitstream files for FPGA IceStorm <http://www.clifford.at/icestorm/>`_
 
     * - ``toolchain-intelarc32``
       - `GCC for Intel ARC <https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain>`_
+
+    * - ``toolchain-iverilog``
+      - `Verilog simulation and synthesis tool <http://iverilog.icarus.com>`_
 
     * - ``toolchain-microchippic32``
       - `GCC for Microchip PIC32 <https://github.com/chipKIT32/chipKIT-cxx>`_

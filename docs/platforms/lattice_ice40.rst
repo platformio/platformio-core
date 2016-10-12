@@ -29,7 +29,10 @@ Packages
       - Contents
 
     * - ``toolchain-icestorm``
-      - `GCC for FPGA IceStorm <http://www.clifford.at/icestorm/>`_
+      - `Tools for analyzing and creating bitstream files for FPGA IceStorm <http://www.clifford.at/icestorm/>`_
+
+    * - ``toolchain-iverilog``
+      - `Verilog simulation and synthesis tool <http://iverilog.icarus.com>`_
 
 .. warning::
     **Linux Users:** Don't forget to install "udev" rules file
@@ -50,8 +53,8 @@ Boards
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 
-BQ
-~~
+FPGAwars
+~~~~~~~~
 
 .. list-table::
     :header-rows:  1
@@ -64,8 +67,8 @@ BQ
       - RAM
 
     * - ``icezum``
-      - `BQ IceZUM Alhambra FPGA <https://github.com/bqlabs/icezum/wiki>`_
-      - ICE40HX1K
+      - `IceZUM Alhambra FPGA <https://github.com/FPGAwars/icezum/wiki>`_
+      - ICE40-HX1K-TQ144
       - 12 MHz
       - 32 Kb
       - 32 Kb
@@ -85,7 +88,7 @@ Lattice
 
     * - ``icestick``
       - `Lattice iCEstick FPGA Evaluation Kit <http://www.latticesemi.com/icestick>`_
-      - ICE40HX1K
+      - ICE40-HX1K-TQ144
       - 12 MHz
       - 32 Kb
       - 32 Kb

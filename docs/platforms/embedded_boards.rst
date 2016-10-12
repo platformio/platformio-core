@@ -597,13 +597,6 @@ BQ
       - Flash
       - RAM
 
-    * - ``icezum``
-      - `BQ IceZUM Alhambra FPGA <https://github.com/bqlabs/icezum/wiki>`_
-      - ICE40HX1K
-      - 12 MHz
-      - 32 Kb
-      - 32 Kb
-
     * - ``zumbt328``
       - `BQ ZUM BT-328 <http://www.bq.com/gb/products/zum.html>`_
       - ATMEGA328P
@@ -843,6 +836,26 @@ Doit
       - 4096 Kb
       - 80 Kb
 
+DycodeX
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``espectro``
+      - `ESPrectro Core <https://shop.makestro.com/en/product/espectro-core/>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
 ESPert
 ~~~~~~
 
@@ -1053,6 +1066,26 @@ Espressif
       - 80 MHz
       - 448 Kb
       - 80 Kb
+
+FPGAwars
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``icezum``
+      - `IceZUM Alhambra FPGA <https://github.com/FPGAwars/icezum/wiki>`_
+      - ICE40-HX1K-TQ144
+      - 12 MHz
+      - 32 Kb
+      - 32 Kb
 
 Freescale
 ~~~~~~~~~
@@ -1363,7 +1396,7 @@ Lattice
 
     * - ``icestick``
       - `Lattice iCEstick FPGA Evaluation Kit <http://www.latticesemi.com/icestick>`_
-      - ICE40HX1K
+      - ICE40-HX1K-TQ144
       - 12 MHz
       - 32 Kb
       - 32 Kb
@@ -1839,7 +1872,7 @@ Olimex
       - RAM
 
     * - ``maple``
-      - `Olimexino STM32 <https://www.olimex.com/Products/Duino/STM32/OLIMEXINO-STM32/>`_
+      - `Olimexino STM32 (Maple) <https://www.olimex.com/Products/Duino/STM32/OLIMEXINO-STM32/>`_
       - STM32F103RB_MAPLE
       - 72 MHz
       - 128 Kb
@@ -2230,6 +2263,13 @@ ST
       - 216 MHz
       - 1024 Kb
       - 320 Kb
+
+    * - ``disco_f769ni``
+      - `ST 32F769IDISCOVERY <http://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f769idiscovery.html>`_
+      - STM32F769NIH6
+      - 80 MHz
+      - 1024 Kb
+      - 512 Kb
 
     * - ``disco_l053c8``
       - `ST 32L0538DISCOVERY <http://www.st.com/web/en/catalog/tools/PF260319>`_
@@ -3025,14 +3065,14 @@ Teensy
       - 64 Kb
 
     * - ``teensy35``
-      - `Teensy 3.5 <https://www.pjrc.com>`_
+      - `Teensy 3.5 <https://www.pjrc.com/store/teensy35.html>`_
       - MK64FX512
       - 120 MHz
       - 512 Kb
       - 192 Kb
 
     * - ``teensy36``
-      - `Teensy 3.6 <https://www.pjrc.com>`_
+      - `Teensy 3.6 <https://www.pjrc.com/store/teensy36.html>`_
       - MK66FX1M0
       - 180 MHz
       - 1024 Kb

@@ -121,14 +121,14 @@ Teensy
       - 64 Kb
 
     * - ``teensy35``
-      - `Teensy 3.5 <https://www.pjrc.com>`_
+      - `Teensy 3.5 <https://www.pjrc.com/store/teensy35.html>`_
       - MK64FX512
       - 120 MHz
       - 512 Kb
       - 192 Kb
 
     * - ``teensy36``
-      - `Teensy 3.6 <https://www.pjrc.com>`_
+      - `Teensy 3.6 <https://www.pjrc.com/store/teensy36.html>`_
       - MK66FX1M0
       - 180 MHz
       - 1024 Kb

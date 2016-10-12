@@ -9,10 +9,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _platform_espressif8266:
+.. _platform_espressif8266_stage:
 
-Platform ``espressif8266``
-==========================
+Platform ``espressif8266_stage``
+================================
 Espressif Systems is a privately held fabless semiconductor company. They provide wireless communications and Wi-Fi chips which are widely used in mobile devices and the Internet of Things applications.
 
 For more detailed information please visit `vendor site <https://espressif.com/>`_.
@@ -409,5 +409,3 @@ WeMos
       - 80 MHz
       - 4096 Kb
       - 80 Kb
-
-.. include:: espressif8266_extra.rst

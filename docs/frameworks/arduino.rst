@@ -725,6 +725,26 @@ Doit
       - 4096 Kb
       - 80 Kb
 
+DycodeX
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``espectro``
+      - `ESPrectro Core <https://shop.makestro.com/en/product/espectro-core/>`_
+      - ESP8266
+      - 80 MHz
+      - 4096 Kb
+      - 80 Kb
+
 ESPert
 ~~~~~~
 
@@ -1299,7 +1319,7 @@ Olimex
       - RAM
 
     * - ``maple``
-      - `Olimexino STM32 <https://www.olimex.com/Products/Duino/STM32/OLIMEXINO-STM32/>`_
+      - `Olimexino STM32 (Maple) <https://www.olimex.com/Products/Duino/STM32/OLIMEXINO-STM32/>`_
       - STM32F103RB_MAPLE
       - 72 MHz
       - 128 Kb
@@ -1829,14 +1849,14 @@ Teensy
       - 64 Kb
 
     * - ``teensy35``
-      - `Teensy 3.5 <https://www.pjrc.com>`_
+      - `Teensy 3.5 <https://www.pjrc.com/store/teensy35.html>`_
       - MK64FX512
       - 120 MHz
       - 512 Kb
       - 192 Kb
 
     * - ``teensy36``
-      - `Teensy 3.6 <https://www.pjrc.com>`_
+      - `Teensy 3.6 <https://www.pjrc.com/store/teensy36.html>`_
       - MK66FX1M0
       - 180 MHz
       - 1024 Kb

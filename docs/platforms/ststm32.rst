@@ -46,6 +46,9 @@ Packages
     * - ``tool-stlink``
       - `ST-Link <https://github.com/texane/stlink>`_
 
+    * - ``tool-stm32duino``
+      - `STM32Duino Tools <https://github.com/rogerclarkmelbourne/Arduino_STM32>`_
+
     * - ``toolchain-gccarmnoneeabi``
       - `gcc-arm-embedded <https://launchpad.net/gcc-arm-embedded>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
@@ -248,7 +251,7 @@ Olimex
       - RAM
 
     * - ``maple``
-      - `Olimexino STM32 <https://www.olimex.com/Products/Duino/STM32/OLIMEXINO-STM32/>`_
+      - `Olimexino STM32 (Maple) <https://www.olimex.com/Products/Duino/STM32/OLIMEXINO-STM32/>`_
       - STM32F103RB_MAPLE
       - 72 MHz
       - 128 Kb
@@ -329,6 +332,13 @@ ST
       - 216 MHz
       - 1024 Kb
       - 320 Kb
+
+    * - ``disco_f769ni``
+      - `ST 32F769IDISCOVERY <http://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f769idiscovery.html>`_
+      - STM32F769NIH6
+      - 80 MHz
+      - 1024 Kb
+      - 512 Kb
 
     * - ``disco_l053c8``
       - `ST 32L0538DISCOVERY <http://www.st.com/web/en/catalog/tools/PF260319>`_
