@@ -45,6 +45,10 @@ PlatformIO 3.0
 
   + Added support for new boards: ST 32F769IDISCOVERY
   + Updated ARM mbed OS to 5.1.4/rev126
+  + Use ``serial`` protocol by default for STM32Duino-based boards
+    (`issue #14 <https://github.com/platformio/platform-ststm32/issues/14>`_)
+  + Fixed linker error "undefined reference to _sbrk" for STM32Duino
+    (`issue #10 <https://github.com/platformio/platform-ststm32/issues/10>`_)
 
 * Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
 
