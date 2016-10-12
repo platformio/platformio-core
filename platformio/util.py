@@ -16,6 +16,7 @@ import collections
 import functools
 import json
 import os
+import platform
 import re
 import socket
 import stat
@@ -24,7 +25,6 @@ import sys
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
-from platform import system, uname
 from shutil import rmtree
 from threading import Thread
 from time import sleep
@@ -159,9 +159,10 @@ def load_json(file_path):
 
 
 def get_systype():
-    data = uname()
-    type_ = data[0].lower()
-    arch = data[4].lower() if data[4] else ""
+    type_ = platform.system().lower()
+    arch = platform.machine().lower()
+    if type_ == "windows":
+        arch = "amd64" if platform.architecture()[0] == "64bit" else "x86"
     return "%s_%s" % (type_, arch) if arch else type_
 
 
@@ -359,7 +360,7 @@ def get_serialports():
     for p, d, h in comports():
         if not p:
             continue
-        if system() == "Windows":
+        if platform.system() == "Windows":
             try:
                 d = unicode(d, errors="ignore")
             except TypeError:
@@ -367,7 +368,7 @@ def get_serialports():
         result.append({"port": p, "description": d, "hwid": h})
 
     # fix for PySerial
-    if not result and system() == "Darwin":
+    if not result and platform.system() == "Darwin":
         for p in glob("/dev/tty.*"):
             result.append({"port": p, "description": "n/a", "hwid": "n/a"})
     return result
@@ -375,7 +376,7 @@ def get_serialports():
 
 def get_logicaldisks():
     disks = []
-    if system() == "Windows":
+    if platform.system() == "Windows":
         result = exec_command(
             ["wmic", "logicaldisk", "get", "name,VolumeName"]).get("out", "")
         disknamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
