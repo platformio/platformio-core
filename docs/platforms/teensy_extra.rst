@@ -15,6 +15,7 @@ USB Features
 If you want to use Teensy USB Features, you need to add special
 acros/define using :ref:`projectconf_build_flags`:
 
+* ``-D USB_AUDIO``
 * ``-D USB_HID``
 * ``-D USB_SERIAL_HID``
 * ``-D USB_DISK``

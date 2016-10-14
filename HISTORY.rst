@@ -53,6 +53,7 @@ PlatformIO 3.0
 * Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
 
   + Updated ARM mbed OS to 5.1.4/rev126
+  + Add support for Teensy Audio feature (``build_flags = -D USB_AUDIO``)
 
 3.1.0 (2016-09-19)
 ~~~~~~~~~~~~~~~~~~
