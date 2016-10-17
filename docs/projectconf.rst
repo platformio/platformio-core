@@ -621,8 +621,9 @@ Example, specify own upload command for :ref:`platform_atmelavr`:
 .. code-block:: python
 
     Import('env')
+    from base64 import b64decode
 
-    env.Replace(UPLOADHEXCMD='"$UPLOADER" ${ARGUMENTS.get("custom_option")} --uploader --flags')
+    env.Replace(UPLOADHEXCMD='"$UPLOADER" ' + b64decode(ARGUMENTS.get("CUSTOM_OPTION")) + ' --uploader --flags')
 
     # uncomment line below to see environment variables
     # print env.Dump()
