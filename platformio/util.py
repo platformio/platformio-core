@@ -392,8 +392,10 @@ def get_logicaldisks():
             match = disknamere.search(line.strip())
             if not match:
                 continue
-            disks.append({"disk": match.group(1),
-                          "name": basename(match.group(1))})
+            disks.append({
+                "disk": match.group(1),
+                "name": basename(match.group(1))
+            })
     return disks
 
 
@@ -407,33 +409,43 @@ def _api_request_session():
     return requests.Session()
 
 
-def _get_api_result(
-        path,  # pylint: disable=too-many-branches
-        params=None,
-        data=None):
+def _get_api_result(url,  # pylint: disable=too-many-branches
+                    params=None,
+                    data=None,
+                    auth=None):
     from platformio.app import get_setting
 
     result = None
     r = None
+    disable_ssl_check = sys.version_info < (2, 7, 9)
 
     headers = get_request_defheaders()
-    url = __apiurl__
-
-    if not get_setting("enable_ssl"):
-        url = url.replace("https://", "http://")
+    if not url.startswith("http"):
+        url = __apiurl__ + url
+        if not get_setting("enable_ssl"):
+            url = url.replace("https://", "http://")
 
     try:
         if data:
             r = _api_request_session().post(
-                url + path, params=params, data=data, headers=headers)
+                url,
+                params=params,
+                data=data,
+                headers=headers,
+                auth=auth,
+                verify=disable_ssl_check)
         else:
-            r = _api_request_session().get(url + path,
+            r = _api_request_session().get(url,
                                            params=params,
-                                           headers=headers)
+                                           headers=headers,
+                                           auth=auth,
+                                           verify=disable_ssl_check)
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        if result and "errors" in result:
+        if result and "message" in result:
+            raise exception.APIRequestError(result['message'])
+        elif result and "errors" in result:
             raise exception.APIRequestError(result['errors'][0]['title'])
         else:
             raise exception.APIRequestError(e)
@@ -446,11 +458,11 @@ def _get_api_result(
     return result
 
 
-def get_api_result(path, params=None, data=None, cache_valid=None):
+def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
     from platformio.app import LocalCache
     total = 0
     max_retries = 5
-    cache_key = (LocalCache.key_from_args(path, params, data)
+    cache_key = (LocalCache.key_from_args(url, params, data, auth)
                  if cache_valid else None)
     while total < max_retries:
         try:
@@ -459,7 +471,7 @@ def get_api_result(path, params=None, data=None, cache_valid=None):
                     result = lc.get(cache_key)
                     if result is not None:
                         return result
-            result = _get_api_result(path, params, data)
+            result = _get_api_result(url, params, data)
             if cache_valid:
                 with LocalCache() as lc:
                     lc.set(cache_key, result, cache_valid)
@@ -478,7 +490,7 @@ def get_api_result(path, params=None, data=None, cache_valid=None):
             sleep(2 * total)
 
     raise exception.APIRequestError(
-        "Could not connect to PlatformIO Registry Service. "
+        "Could not connect to PlatformIO API Service. "
         "Please try later.")
 
 

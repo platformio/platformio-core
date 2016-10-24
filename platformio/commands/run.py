@@ -203,8 +203,8 @@ class EnvironmentProcessor(object):
             # warn about unknown options
             if k not in self.KNOWN_OPTIONS:
                 click.secho(
-                    "Detected non-PlatformIO `%s` option in `[env:]` section"
-                    % k,
+                    "Detected non-PlatformIO `%s` option in `[env:]` section" %
+                    k,
                     fg="yellow")
             result[k] = v
         return result
