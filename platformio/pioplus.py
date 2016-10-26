@@ -14,9 +14,10 @@
 
 import os
 import subprocess
-from os.path import join
+from os.path import dirname, join
+from platform import system
 
-from platformio import exception, util
+from platformio import app, exception, util
 from platformio.managers.package import PackageManager
 
 PACKAGE_DEPS = {"pysite": {"name": "pysite-pioplus",
@@ -56,6 +57,8 @@ def pioplus_call(args, **kwargs):
     pioplus_path = join(
         pm.get_package_dir(PACKAGE_DEPS['tool']['name'],
                            PACKAGE_DEPS['tool']['requirements']), "pioplus")
+    if system() == "Linux" and app.get_session_var("caller_id") == "Che":
+        os.environ['LD_LIBRARY_PATH'] = dirname(pioplus_path)
     os.environ['PYTHONEXEPATH'] = util.get_pythonexe_path()
     os.environ['PYTHONPYSITEDIR'] = pm.get_package_dir(
         PACKAGE_DEPS['pysite']['name'], PACKAGE_DEPS['pysite']['requirements'])
