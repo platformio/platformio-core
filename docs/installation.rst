@@ -30,7 +30,7 @@ System requirements
 :Operating System: Mac OS X, Linux (+ARM) or Windows
 :Python Interpreter:
 
-    Python 2.6 or 2.7. Python 2.7 is recommended
+    Python 2.7 is  required. PlatformIO **does not** support Python 3.
 
     .. attention::
         **Windows Users**: Please `Download the latest Python 2.7.x
@@ -141,7 +141,7 @@ Mac OS X Homebrew Packages Manager (`brew <http://brew.sh/>`_) as follows:
 Full Guide
 ~~~~~~~~~~
 
-1. Check a ``python`` version (only 2.6-2.7 is supported):
+1. Check a ``python`` version (only Python 2.7 is supported):
 
 .. code-block:: bash
 

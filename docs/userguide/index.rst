@@ -58,6 +58,7 @@ Commands
 .. toctree::
     :maxdepth: 2
 
+    platformio account <account/index>
     cmd_boards
     cmd_ci
     cmd_device

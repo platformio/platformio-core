@@ -579,101 +579,6 @@ exclude ``.git`` and ``svn`` repository folders, ``example`` ... folder.
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_SRC_FILTER`.
 
-.. _projectconf_extra_script:
-
-``extra_script``
-^^^^^^^^^^^^^^^^
-
-.. contents::
-    :local:
-
-Allows to launch extra script using `SCons <http://www.scons.org>`_ software
-construction tool. For more details please follow to "Construction Environments"
-section of
-`SCons documentation <http://www.scons.org/doc/production/HTML/scons-user.html#chap-environments>`_.
-
-This option can be set by global environment variable
-:envvar:`PLATFORMIO_EXTRA_SCRIPT`.
-
-Take a look at the multiple snippets/answers for the user questions:
-
-  - `#462 Split C/C++ build flags <https://github.com/platformio/platformio/issues/462#issuecomment-172667342>`_
-  - `#365 Extra configuration for ESP8266 uploader <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_
-  - `#351 Specific reset method for ESP8266 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_
-  - `#247 Specific options for avrdude <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_.
-
-Custom Uploader
-'''''''''''''''
-
-Example, specify own upload command for :ref:`platform_atmelavr`:
-
-``platformio.ini``:
-
-.. code-block:: ini
-
-    [env:env_custom_uploader]
-    platform = atmelavr
-    extra_script = /path/to/extra_script.py
-    custom_option = hello
-
-``extra_script.py``:
-
-.. code-block:: python
-
-    Import('env')
-    from base64 import b64decode
-
-    env.Replace(UPLOADHEXCMD='"$UPLOADER" ' + b64decode(ARGUMENTS.get("CUSTOM_OPTION")) + ' --uploader --flags')
-
-    # uncomment line below to see environment variables
-    # print env.Dump()
-    # print ARGUMENTS
-
-Before/Pre and After/Post actions
-'''''''''''''''''''''''''''''''''
-
-PlatformIO Build System has rich API that allows to attach different pre-/post
-actions (hooks) using ``env.AddPreAction(target, callback)`` function. A first
-argument ``target`` can be a name of target that is passed using
-:option:`platformio run --target` command or path to file which PlatformIO
-processes (ELF, HEX, BIN, etc.). For example, to call function before HEX file
-will be created, need to use as a ``$BUILD_DIR/firmware.hex`` target value.
-
-The example below demonstrates how to call different functions
-when :option:`platformio run --target` is called with ``upload`` value.
-`extra_script.py` file is located on the same level as ``platformio.ini``.
-
-``platformio.ini``:
-
-.. code-block:: ini
-
-    [env:pre_and_post_hooks]
-    extra_script = extra_script.py
-
-``extra_script.py``:
-
-.. code-block:: python
-
-    Import("env")
-
-    def before_upload(source, target, env):
-        print "before_upload"
-        # do some actions
-
-
-    def after_upload(source, target, env):
-        print "after_upload"
-        # do some actions
-
-    print "Current build targets", map(str, BUILD_TARGETS)
-
-    # env.AddPreAction("$BUILD_DIR/firmware.elf", callback...)
-    # env.AddPostAction("$BUILD_DIR/firmware.hex", callback...)
-
-    env.AddPreAction("upload", before_upload)
-    env.AddPostAction("upload", after_upload)
-
-
 .. _projectconf_targets:
 
 ``targets``
@@ -940,6 +845,106 @@ ignore some tests using :option:`platformio test --ignore` command.
 
   [env:myenv]
   test_ignore = footest, bartest_*, test[13]
+
+
+Advanced options
+~~~~~~~~~~~~~~~~
+
+.. _projectconf_extra_script:
+
+``extra_script``
+^^^^^^^^^^^^^^^^
+
+.. contents::
+    :local:
+
+Allows to launch extra script using `SCons <http://www.scons.org>`_ software
+construction tool. For more details please follow to "Construction Environments"
+section of
+`SCons documentation <http://www.scons.org/doc/production/HTML/scons-user.html#chap-environments>`_.
+
+This option can be set by global environment variable
+:envvar:`PLATFORMIO_EXTRA_SCRIPT`.
+
+Take a look at the multiple snippets/answers for the user questions:
+
+  - `#462 Split C/C++ build flags <https://github.com/platformio/platformio/issues/462#issuecomment-172667342>`_
+  - `#365 Extra configuration for ESP8266 uploader <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_
+  - `#351 Specific reset method for ESP8266 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_
+  - `#247 Specific options for avrdude <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_.
+
+Custom Uploader
+'''''''''''''''
+
+Example, specify own upload command for :ref:`platform_atmelavr`:
+
+``platformio.ini``:
+
+.. code-block:: ini
+
+    [env:env_custom_uploader]
+    platform = atmelavr
+    extra_script = /path/to/extra_script.py
+    custom_option = hello
+
+``extra_script.py``:
+
+.. code-block:: python
+
+    Import('env')
+    from base64 import b64decode
+
+    env.Replace(UPLOADHEXCMD='"$UPLOADER" ' + b64decode(ARGUMENTS.get("CUSTOM_OPTION")) + ' --uploader --flags')
+
+    # uncomment line below to see environment variables
+    # print env.Dump()
+    # print ARGUMENTS
+
+Before/Pre and After/Post actions
+'''''''''''''''''''''''''''''''''
+
+PlatformIO Build System has rich API that allows to attach different pre-/post
+actions (hooks) using ``env.AddPreAction(target, callback)`` function. A first
+argument ``target`` can be a name of target that is passed using
+:option:`platformio run --target` command or path to file which PlatformIO
+processes (ELF, HEX, BIN, etc.). For example, to call function before HEX file
+will be created, need to use as a ``$BUILD_DIR/firmware.hex`` target value.
+
+The example below demonstrates how to call different functions
+when :option:`platformio run --target` is called with ``upload`` value.
+`extra_script.py` file is located on the same level as ``platformio.ini``.
+
+``platformio.ini``:
+
+.. code-block:: ini
+
+    [env:pre_and_post_hooks]
+    extra_script = extra_script.py
+
+``extra_script.py``:
+
+.. code-block:: python
+
+    Import("env")
+
+    def before_upload(source, target, env):
+        print "before_upload"
+        # do some actions
+
+
+    def after_upload(source, target, env):
+        print "after_upload"
+        # do some actions
+
+    print "Current build targets", map(str, BUILD_TARGETS)
+
+    # env.AddPreAction("$BUILD_DIR/firmware.elf", callback...)
+    # env.AddPostAction("$BUILD_DIR/firmware.hex", callback...)
+
+    env.AddPreAction("upload", before_upload)
+    env.AddPostAction("upload", after_upload)
+
+
 
 -----------
 
