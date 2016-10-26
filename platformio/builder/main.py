@@ -121,7 +121,7 @@ for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPT",
         env[var] = environ.get(k)
 
 # Parse comma separated items
-for opt in ("LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"):
+for opt in ("PIOFRAMEWORK", "LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"):
     if opt not in env:
         continue
     env[opt] = [l.strip() for l in env[opt].split(", ") if l.strip()]

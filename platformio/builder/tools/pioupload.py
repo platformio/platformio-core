@@ -114,7 +114,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         print env.subst("Use manually specified: $UPLOAD_PORT")
         return
 
-    if env.subst("$PIOFRAMEWORK") == "mbed":
+    if "mbed" in env.subst("$PIOFRAMEWORK"):
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
         if (system() == "Linux" and not any([

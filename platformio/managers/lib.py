@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-arguments, too-many-locals, too-many-branches
+
 import json
 import os
 from hashlib import md5
@@ -185,7 +187,9 @@ class LibraryManager(BasePkgManager):
             if "id" in manifest:
                 return int(manifest['id'])
         return int(
-            self.search_for_library({"name": name}, silent, interactive)['id'])
+            self.search_for_library({
+                "name": name
+            }, silent, interactive)['id'])
 
     def _install_from_piorepo(self, name, requirements):
         assert name.startswith("id=")
@@ -203,7 +207,7 @@ class LibraryManager(BasePkgManager):
             name, dl_data['url'].replace("http://", "https://")
             if app.get_setting("enable_ssl") else dl_data['url'], requirements)
 
-    def install(self,  # pylint: disable=too-many-arguments, too-many-locals
+    def install(self,
                 name,
                 requirements=None,
                 silent=False,
@@ -247,7 +251,8 @@ class LibraryManager(BasePkgManager):
                     lib_info = self.search_for_library(filters, silent,
                                                        interactive)
                 except exception.LibNotFound as e:
-                    click.secho("Warning! %s" % e, fg="yellow")
+                    if not silent:
+                        click.secho("Warning! %s" % e, fg="yellow")
                     continue
 
                 if filters.get("version"):

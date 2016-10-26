@@ -37,12 +37,9 @@ class LibBuilderFactory(object):
         if isfile(join(path, "library.json")):
             clsname = "PlatformIOLibBuilder"
         else:
-            env_frameworks = [
-                f.lower().strip()
-                for f in env.get("PIOFRAMEWORK", "").split(",")
-            ]
             used_frameworks = LibBuilderFactory.get_used_frameworks(env, path)
-            common_frameworks = set(env_frameworks) & set(used_frameworks)
+            common_frameworks = (set(env.get("PIOFRAMEWORK", [])) &
+                                 set(used_frameworks))
             if common_frameworks:
                 clsname = "%sLibBuilder" % list(common_frameworks)[0].title()
             elif used_frameworks:
@@ -166,10 +163,24 @@ class LibBuilderBase(object):
     def dependent(self):
         return self._is_dependent
 
-    def is_platform_compatible(self, platform):
+    @staticmethod
+    def items_in_list(items, ilist):
+
+        def _items_to_list(items_):
+            if not isinstance(items_, list):
+                items_ = [i.strip() for i in items_.split(",")]
+            return [i.lower() for i in items_ if i]
+
+        items = _items_to_list(items)
+        ilist = _items_to_list(ilist)
+        if "*" in items or "*" in ilist:
+            return True
+        return set(items) & set(ilist)
+
+    def is_platforms_compatible(self, platforms):
         return True
 
-    def is_framework_compatible(self, framework):
+    def is_frameworks_compatible(self, frameworks):
         return True
 
     def load_manifest(self):
@@ -189,24 +200,37 @@ class LibBuilderBase(object):
             if self.extra_script:
                 self.env.SConscript(
                     realpath(self.extra_script),
-                    exports={"env": self.env,
-                             "pio_lib_builder": self})
+                    exports={
+                        "env": self.env,
+                        "pio_lib_builder": self
+                    })
 
     def _process_dependencies(self, lib_builders):
         if not self.dependencies:
             return
+        verbose = (int(ARGUMENTS.get("PIOVERBOSE", 0)) and
+                   not self.env.GetOption('clean'))
         for item in self.dependencies:
+            skip = False
+            for key in ("platforms", "frameworks"):
+                if (key in item and not self.items_in_list(
+                        self.env["PIO" + key.upper()[:-1]], item[key])):
+                    if verbose:
+                        sys.stderr.write("Skip %s incompatible dependency %s\n"
+                                         % (key[:-1], item))
+                    skip = True
+            if skip:
+                continue
+
             found = False
             for lb in lib_builders:
                 if item['name'] != lb.name:
                     continue
                 elif "frameworks" in item and \
-                     not any([lb.is_framework_compatible(f)
-                              for f in item["frameworks"]]):
+                     not lb.is_frameworks_compatible(item["frameworks"]):
                     continue
                 elif "platforms" in item and \
-                     not any([lb.is_platform_compatible(p)
-                              for p in item["platforms"]]):
+                     not lb.is_platforms_compatible(item["platforms"]):
                     continue
                 found = True
                 self.depend_recursive(lb, lib_builders)
@@ -383,8 +407,8 @@ class ArduinoLibBuilder(LibBuilderBase):
                 src_filter.append("+<utility%s*.%s>" % (sep, ext))
         return src_filter
 
-    def is_framework_compatible(self, framework):
-        return framework.lower() in ("arduino", "energia")
+    def is_frameworks_compatible(self, frameworks):
+        return self.items_in_list(frameworks, ["arduino", "energia"])
 
 
 class MbedLibBuilder(LibBuilderBase):
@@ -408,8 +432,8 @@ class MbedLibBuilder(LibBuilderBase):
             inc_dirs.append(join(self.path, p))
         return inc_dirs
 
-    def is_framework_compatible(self, framework):
-        return framework.lower() == "mbed"
+    def is_frameworks_compatible(self, frameworks):
+        return self.items_in_list(frameworks, ["mbed"])
 
 
 class PlatformIOLibBuilder(LibBuilderBase):
@@ -461,24 +485,17 @@ class PlatformIOLibBuilder(LibBuilderBase):
             return int(self._manifest.get("build").get("libLDFMode"))
         return LibBuilderBase.lib_ldf_mode.fget(self)
 
-    def is_platform_compatible(self, platform):
+    def is_platforms_compatible(self, platforms):
         items = self._manifest.get("platforms")
         if not items:
-            return LibBuilderBase.is_platform_compatible(self, platform)
-        return self._item_in_list(platform, items)
+            return LibBuilderBase.is_platforms_compatible(self, platforms)
+        return self.items_in_list(platforms, items)
 
-    def is_framework_compatible(self, framework):
+    def is_frameworks_compatible(self, frameworks):
         items = self._manifest.get("frameworks")
         if not items:
-            return LibBuilderBase.is_framework_compatible(self, framework)
-        return self._item_in_list(framework, items)
-
-    def _item_in_list(self, item, ilist):
-        if ilist == "*":
-            return True
-        if not isinstance(ilist, list):
-            ilist = [i.strip() for i in ilist.split(",")]
-        return item.lower() in [i.lower() for i in ilist]
+            return LibBuilderBase.is_frameworks_compatible(self, frameworks)
+        return self.items_in_list(frameworks, items)
 
     def get_inc_dirs(self):
         inc_dirs = LibBuilderBase.get_inc_dirs(self)
@@ -497,9 +514,6 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
 def GetLibBuilders(env):
     items = []
-    env_frameworks = [
-        f.lower().strip() for f in env.get("PIOFRAMEWORK", "").split(",")
-    ]
     compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
     verbose = (int(ARGUMENTS.get("PIOVERBOSE", 0)) and
                not env.GetOption('clean'))
@@ -509,14 +523,14 @@ def GetLibBuilders(env):
             if verbose:
                 sys.stderr.write("Ignored library %s\n" % lb.path)
             return
-        if compat_mode > 1 and not lb.is_platform_compatible(env[
+        if compat_mode > 1 and not lb.is_platforms_compatible(env[
                 'PIOPLATFORM']):
             if verbose:
                 sys.stderr.write("Platform incompatible library %s\n" %
                                  lb.path)
             return False
-        if compat_mode > 0 and not any([lb.is_framework_compatible(f)
-                                        for f in env_frameworks]):
+        if compat_mode > 0 and "PIOFRAMEWORK" in env and \
+           not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", [])):
             if verbose:
                 sys.stderr.write("Framework incompatible library %s\n" %
                                  lb.path)

@@ -52,10 +52,7 @@ def BuildProgram(env):
     # apply user flags
     env.ProcessFlags(env.get("BUILD_FLAGS"))
 
-    if env.get("PIOFRAMEWORK"):
-        env.BuildFrameworks([
-            f.lower().strip() for f in env['PIOFRAMEWORK'].split(",")
-        ])
+    env.BuildFrameworks(env.get("PIOFRAMEWORK"))
 
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
