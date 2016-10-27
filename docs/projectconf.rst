@@ -904,11 +904,12 @@ Before/Pre and After/Post actions
 '''''''''''''''''''''''''''''''''
 
 PlatformIO Build System has rich API that allows to attach different pre-/post
-actions (hooks) using ``env.AddPreAction(target, callback)`` function. A first
+actions (hooks) using ``env.AddPreAction(target, callback)`` or
+``env.AddPreAction(target, [callback1, callback2, ...])`` function. A first
 argument ``target`` can be a name of target that is passed using
-:option:`platformio run --target` command or path to file which PlatformIO
-processes (ELF, HEX, BIN, etc.). For example, to call function before HEX file
-will be created, need to use as a ``$BUILD_DIR/firmware.hex`` target value.
+:option:`platformio run --target` command, a name of built-in targets
+(buildprog, size, upload, program, buildfs, uploadfs, uploadfsota) or path
+to file which PlatformIO processes (ELF, HEX, BIN, OBJ, etc.).
 
 The example below demonstrates how to call different functions
 when :option:`platformio run --target` is called with ``upload`` value.
@@ -927,6 +928,10 @@ when :option:`platformio run --target` is called with ``upload`` value.
 
     Import("env")
 
+    #
+    # Upload actions
+    #
+
     def before_upload(source, target, env):
         print "before_upload"
         # do some actions
@@ -938,12 +943,25 @@ when :option:`platformio run --target` is called with ``upload`` value.
 
     print "Current build targets", map(str, BUILD_TARGETS)
 
-    # env.AddPreAction("$BUILD_DIR/firmware.elf", callback...)
-    # env.AddPostAction("$BUILD_DIR/firmware.hex", callback...)
-
     env.AddPreAction("upload", before_upload)
     env.AddPostAction("upload", after_upload)
 
+    #
+    # Custom actions when building program/firmware
+    #
+
+    env.AddPreAction("buildprog", callback...)
+    env.AddPostAction("buildprog", callback...)
+
+    #
+    # Custom actions for specific files/objects
+    #
+
+    env.AddPreAction("$BUILD_DIR/firmware.elf", [callback1, callback2,...])
+    env.AddPostAction("$BUILD_DIR/firmware.hex", callback...)
+
+    # custom action for project's main.cpp
+    env.AddPostAction("$BUILD_DIR/src/main.cpp.o", callback...)
 
 
 -----------
