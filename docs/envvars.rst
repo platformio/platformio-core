@@ -91,8 +91,8 @@ Examples:
 
     # Unix:
     export PLATFORMIO_BUILD_FLAGS=-DFOO
-    export PLATFORMIO_BUILD_FLAGS="-DFOO -DBAR=1 -DFLOAT_VALUE=1.23457e+07"
-    export PLATFORMIO_BUILD_FLAGS="'-DWIFI_PASS=\"My password\"' '-DWIFI_SSID=\"My ssid name\"'"
+    export PLATFORMIO_BUILD_FLAGS=-DFOO -DBAR=1 -DFLOAT_VALUE=1.23457e+07
+    export PLATFORMIO_BUILD_FLAGS='-DWIFI_PASS=\"My password\"' '-DWIFI_SSID=\"My ssid name\"'
 
     # Windows:
     SET PLATFORMIO_BUILD_FLAGS=-DFOO
