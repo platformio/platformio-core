@@ -44,8 +44,15 @@ Packages
       - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
 
 .. warning::
-    **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+    **Linux Users**:
+
+    * Ubuntu/Debian users may need to add own "username" to the "dialout"
+      group if they are not "root", doing this issuing a
+      ``sudo usermod -a -G dialout yourusername``.
+    * Install "udev" rules file `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_
+      (an instruction is located in the file).
+    * Raspberry Pi users, please read this article
+      `Enable serial port on Raspberry Pi <https://hallard.me/enable-serial-port-on-raspberry-pi/>`__.
 
 
     **Windows Users:** Please check that you have correctly installed USB
@@ -1157,6 +1164,26 @@ Wicked Device
       - 16 MHz
       - 128 Kb
       - 16 Kb
+
+makerlab.mx
+~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``altair``
+      - `Altair <http://www.aquila.io/en>`_
+      - ATMEGA256RFR2
+      - 16 MHz
+      - 256 Kb
+      - 32 Kb
 
 ubIQio
 ~~~~~~

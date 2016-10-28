@@ -3253,6 +3253,26 @@ element14
       - 128 Kb
       - 32 Kb
 
+makerlab.mx
+~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - Type ``board``
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``altair``
+      - `Altair <http://www.aquila.io/en>`_
+      - ATMEGA256RFR2
+      - 16 MHz
+      - 256 Kb
+      - 32 Kb
+
 u-blox
 ~~~~~~
 

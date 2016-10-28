@@ -47,8 +47,15 @@ Packages
       - `xtensa-gcc <https://github.com/jcmvbkbc/gcc-xtensa>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. warning::
-    **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+    **Linux Users**:
+
+    * Ubuntu/Debian users may need to add own "username" to the "dialout"
+      group if they are not "root", doing this issuing a
+      ``sudo usermod -a -G dialout yourusername``.
+    * Install "udev" rules file `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_
+      (an instruction is located in the file).
+    * Raspberry Pi users, please read this article
+      `Enable serial port on Raspberry Pi <https://hallard.me/enable-serial-port-on-raspberry-pi/>`__.
 
 
     **Windows Users:** Please check that you have correctly installed USB
