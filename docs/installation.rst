@@ -30,7 +30,7 @@ System requirements
 :Operating System: Mac OS X, Linux (+ARM) or Windows
 :Python Interpreter:
 
-    Python 2.7 is  required. PlatformIO **does not** support Python 3.
+    Python 2.7 is required. PlatformIO **does not** support Python 3.
 
     .. attention::
         **Windows Users**: Please `Download the latest Python 2.7.x
@@ -43,10 +43,28 @@ System requirements
 
 :Terminal Application:
 
-    All commands below should be executed in
-    `Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_
-    application (Terminal). For Mac OS X and Linux OS - *Terminal* application,
-    for Windows OS – ``cmd.exe`` application.
+    .. attention::
+        All commands below should be executed in
+        `Command-line <http://en.wikipedia.org/wiki/Command-line_interface>`_
+        application (Terminal). For Mac OS X and Linux OS - *Terminal* application,
+        for Windows OS – ``cmd.exe`` application.
+
+
+:Access to Serial Ports (USB/UART):
+
+        **Windows Users:** Please check that you have correctly installed USB
+        driver from board manufacturer
+
+        **Linux Users**:
+
+        * Ubuntu/Debian users may need to add own "username" to the "dialout"
+          group if they are not "root", doing this issuing a
+          ``sudo usermod -a -G dialout yourusername``.
+        * Install "udev" rules file `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_
+          (an instruction is located in the file).
+        * Raspberry Pi users, please read this article
+          `Enable serial port on Raspberry Pi <https://hallard.me/enable-serial-port-on-raspberry-pi/>`__.
+
 
 Installation Methods
 --------------------
