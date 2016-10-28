@@ -80,7 +80,7 @@ Boards
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -100,7 +100,7 @@ Digilent
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -204,7 +204,7 @@ Fubarino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -231,7 +231,7 @@ Olimex
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -251,7 +251,7 @@ OpenBCI
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -271,7 +271,7 @@ PONTECH
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -298,7 +298,7 @@ SeeedStudio
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -318,7 +318,7 @@ UBW32
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -345,7 +345,7 @@ chipKIT
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -365,7 +365,7 @@ element14
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency

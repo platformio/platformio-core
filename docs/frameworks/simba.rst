@@ -50,7 +50,7 @@ Adafruit
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -70,7 +70,7 @@ Arduino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -111,7 +111,7 @@ Espressif
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -145,7 +145,7 @@ NodeMCU
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency

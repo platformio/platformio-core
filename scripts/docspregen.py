@@ -54,7 +54,7 @@ def generate_boards(boards):
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency

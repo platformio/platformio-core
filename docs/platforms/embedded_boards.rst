@@ -31,7 +31,7 @@ popular embedded boards and IDE.
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -51,7 +51,7 @@ popular embedded boards and IDE.
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -71,7 +71,7 @@ Adafruit
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -175,7 +175,7 @@ Arduboy
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -202,7 +202,7 @@ Arduino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -502,7 +502,7 @@ Armstrap
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -536,7 +536,7 @@ Atmel
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -570,7 +570,7 @@ BBC
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -590,7 +590,7 @@ BQ
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -610,7 +610,7 @@ BitWizard
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -630,7 +630,7 @@ CQ Publishing
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -650,7 +650,7 @@ Delta
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -670,7 +670,7 @@ Digilent
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -774,7 +774,7 @@ Digistump
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -822,7 +822,7 @@ Doit
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -842,7 +842,7 @@ DycodeX
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -862,7 +862,7 @@ ESPert
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -889,7 +889,7 @@ ESPino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -909,7 +909,7 @@ Elektor Labs
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -929,7 +929,7 @@ Embedded Artists
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -963,7 +963,7 @@ Engduino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -997,7 +997,7 @@ Espressif
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1073,7 +1073,7 @@ FPGAwars
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1093,7 +1093,7 @@ Freescale
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1176,7 +1176,7 @@ Fubarino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1203,7 +1203,7 @@ GHI Electronics
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1223,7 +1223,7 @@ Generic
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1285,7 +1285,7 @@ Generic ATTiny
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1347,7 +1347,7 @@ Intel
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1367,7 +1367,7 @@ JKSoft
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1387,7 +1387,7 @@ Lattice
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1407,7 +1407,7 @@ LightUp
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1427,7 +1427,7 @@ Linino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1447,7 +1447,7 @@ LowPowerLab
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1474,7 +1474,7 @@ Mcudude
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1536,7 +1536,7 @@ Microduino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1612,7 +1612,7 @@ Micromint
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1632,7 +1632,7 @@ MikroElektronika
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1652,7 +1652,7 @@ MultiTech
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1679,7 +1679,7 @@ NGX Technologies
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1699,7 +1699,7 @@ NXP
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1803,7 +1803,7 @@ NodeMCU
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1830,7 +1830,7 @@ Nordic
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1864,7 +1864,7 @@ Olimex
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1898,7 +1898,7 @@ OpenBCI
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1918,7 +1918,7 @@ OpenEnergyMonitor
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1938,7 +1938,7 @@ Outrageous Circuits
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1958,7 +1958,7 @@ PONTECH
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -1985,7 +1985,7 @@ PanStamp
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2012,7 +2012,7 @@ Pinoccio
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2032,7 +2032,7 @@ Punch Through
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2052,7 +2052,7 @@ Quirkbot
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2072,7 +2072,7 @@ RFduino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2092,7 +2092,7 @@ Raspberry Pi
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2126,7 +2126,7 @@ RedBearLab
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2174,7 +2174,7 @@ RepRap
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2194,7 +2194,7 @@ ST
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2487,7 +2487,7 @@ SainSmart
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2514,7 +2514,7 @@ Sanguino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2569,7 +2569,7 @@ SeeedStudio
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2638,7 +2638,7 @@ Silicon Labs
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2693,7 +2693,7 @@ Smeshlink
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2713,7 +2713,7 @@ Solder Splash Labs
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2733,7 +2733,7 @@ SolderSplash Labs
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2753,7 +2753,7 @@ SparkFun
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2871,7 +2871,7 @@ SweetPea
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2891,7 +2891,7 @@ Switch Science
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -2932,7 +2932,7 @@ TI
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3029,7 +3029,7 @@ Teensy
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3091,7 +3091,7 @@ ThaiEasyElec
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3111,7 +3111,7 @@ TinyCircuits
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3138,7 +3138,7 @@ UBW32
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3165,7 +3165,7 @@ WeMos
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3192,7 +3192,7 @@ Wicked Device
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3219,7 +3219,7 @@ chipKIT
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3239,7 +3239,7 @@ element14
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3259,7 +3259,7 @@ makerlab.mx
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3279,7 +3279,7 @@ u-blox
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3299,7 +3299,7 @@ ubIQio
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -3319,7 +3319,7 @@ y5 design
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency

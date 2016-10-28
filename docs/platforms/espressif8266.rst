@@ -92,7 +92,7 @@ Adafruit
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -112,7 +112,7 @@ Doit
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -132,7 +132,7 @@ DycodeX
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -152,7 +152,7 @@ ESPert
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -179,7 +179,7 @@ ESPino
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -199,7 +199,7 @@ Espressif
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -275,7 +275,7 @@ NodeMCU
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -302,7 +302,7 @@ Olimex
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -322,7 +322,7 @@ SparkFun
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -356,7 +356,7 @@ SweetPea
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -376,7 +376,7 @@ ThaiEasyElec
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -396,7 +396,7 @@ WeMos
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
