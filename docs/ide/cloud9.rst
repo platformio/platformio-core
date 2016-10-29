@@ -9,35 +9,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _ide:
+.. _ide_cloud9:
 
-Cloud & Standalone IDE
-======================
+Cloud9
+======
 
-.. _ide_cloud:
+`Cloud9 <https://c9.io/>`_ combines a powerful online code editor with a full
+Ubuntu workspace in the cloud.
+Workspaces are powered by Docker Ubuntu containers that give you full freedom
+over your environment, including sudo rights. Do a git push, compile SASS, see
+server output, and Run apps easily with the built-in Terminal and Runners.
 
-Cloud IDE
----------
+.. contents::
 
-.. toctree::
-    :maxdepth: 2
+Integration
+-----------
 
-    ide/cloud9
-
-.. _ide_standalone:
-
-Standalone IDE
---------------
-
-.. toctree::
-    :maxdepth: 2
-
-    ide/clion
-    ide/codeblocks
-    ide/eclipse
-    ide/emacs
-    ide/netbeans
-    ide/qtcreator
-    ide/sublimetext
-    ide/vim
-    ide/visualstudio
+@TODO

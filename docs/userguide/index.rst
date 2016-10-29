@@ -11,8 +11,8 @@
 
 .. _userguide:
 
-User Guide (CLI)
-================
+User Guide
+==========
 
 .. contents::
 
@@ -21,8 +21,8 @@ Usage
 
 .. code-block:: bash
 
-    platformio [OPTIONS] COMMAND
     pio [OPTIONS] COMMAND
+    platformio [OPTIONS] COMMAND
 
     # "pio" is the alias of "platformio" command
 

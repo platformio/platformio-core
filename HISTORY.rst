@@ -7,9 +7,13 @@ PlatformIO 3.0
 3.2.0 (2016-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* `PIO Remote™ <http://docs.platformio.org/en/latest/plus/pio-remote.html>`__.
+  Your devices are always with you!
+* `PIO Account <http://docs.platformio.org/en/latest/userguide/account/index.html>`__
+  for extra professional features from `PlatformIO Plus <https://pioplus.com>`__
+* Changed default exit combination for Device Monitor from ``Ctrl+]`` to ``Ctrl+C``
 * Improved detecting of ARM mbed media disk for uploading
 * Improved Project Generator for CLion IDE when source folder contains nested items
-* Changed default exit combination for Device Monitor from ``Ctrl+]`` to ``Ctrl+C``
 * Improved handling of library dependencies specified in ``library.json`` manifest
   (`issue #814 <https://github.com/platformio/platformio/issues/814>`_)
 * Fixed issue with ``PATH`` auto-configuring for upload tools

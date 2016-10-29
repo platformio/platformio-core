@@ -9,35 +9,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _ide:
+.. _cli:
 
-Cloud & Standalone IDE
-======================
-
-.. _ide_cloud:
-
-Cloud IDE
----------
+PlatformIO CLI
+==============
 
 .. toctree::
     :maxdepth: 2
 
-    ide/cloud9
-
-.. _ide_standalone:
-
-Standalone IDE
---------------
-
-.. toctree::
-    :maxdepth: 2
-
-    ide/clion
-    ide/codeblocks
-    ide/eclipse
-    ide/emacs
-    ide/netbeans
-    ide/qtcreator
-    ide/sublimetext
-    ide/vim
-    ide/visualstudio
+    installation
+    quickstart
+    userguide/index

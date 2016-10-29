@@ -93,9 +93,8 @@ Contents
     :caption: Getting Started
     :maxdepth: 2
 
-    installation
-    quickstart
-    userguide/index
+    PlatformIO IDE <ide/atom>
+    cli
 
 .. toctree::
     :caption: Configuration
@@ -133,8 +132,8 @@ Contents
     :caption: Integration
     :maxdepth: 2
 
-    ci/index
     ide
+    ci/index
 
 .. toctree::
     :caption: Miscellaneous
