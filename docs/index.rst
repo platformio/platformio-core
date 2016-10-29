@@ -100,7 +100,7 @@ Contents
     :caption: Configuration
     :maxdepth: 2
 
-    projectconf
+    platformio.ini <projectconf>
     envvars
 
 .. toctree::
