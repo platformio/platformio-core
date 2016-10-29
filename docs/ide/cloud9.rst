@@ -50,7 +50,7 @@ Integration
 
 .. code-block:: bash
 
-        sudo python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/develop/scripts/get-platformio.py)"
+    sudo python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/develop/scripts/get-platformio.py)"
 
 .. image:: ../_static/ide/cloud9/ide-cloud9-install-pio-cli.png
 
@@ -65,12 +65,12 @@ Let's create our first PlatformIO-based Cloud9 Project
 1.  Initialize new PlatformIO-based Project. Run a next command in Cloud IDE
     Terminal:
 
-.. code-block:: bash
+    .. code-block:: bash
 
-    platformio init --board <ID>
+        platformio init --board <ID>
 
-    # initialize project for Arduino Uno
-    platformio init --board uno
+        # initialize project for Arduino Uno
+        platformio init --board uno
 
     To get board ``ID`` please use :ref:`cmd_boards` command or
     `Embedded Boards Explorer <http://platformio.org/boards>`_.
@@ -79,27 +79,27 @@ Let's create our first PlatformIO-based Cloud9 Project
     Project Tree (left side). Please make right click on ``src`` folder,
     then "New File" and insert a next content:
 
-.. code-block:: c
+    .. code-block:: c
 
-    #include <Arduino.h>
+        #include <Arduino.h>
 
-    int i = 0;
+        int i = 0;
 
-    void setup() {
-        Serial.begin(9600);
-        Serial.println("Hello Cloud9!");
-    }
-
-    void loop() {
-        /*  serial echo */
-        while (Serial.available()) {
-            Serial.write(Serial.read());
+        void setup() {
+            Serial.begin(9600);
+            Serial.println("Hello Cloud9!");
         }
 
-        i++;
-        Serial.println(i);
-        delay(100);
-    }
+        void loop() {
+            /*  serial echo */
+            while (Serial.available()) {
+                Serial.write(Serial.read());
+            }
+
+            i++;
+            Serial.println(i);
+            delay(100);
+        }
 
 .. image:: ../_static/ide/cloud9/ide-cloud9-init-project.png
 
