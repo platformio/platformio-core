@@ -27,4 +27,4 @@ Usage
 Description
 -----------
 
-Log out of :ref:`userguide_account`.
+Log out of :ref:`cmd_account`.

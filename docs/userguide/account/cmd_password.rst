@@ -27,4 +27,4 @@ Usage
 Description
 -----------
 
-Change password for :ref:`userguide_account`.
+Change password for :ref:`cmd_account`.

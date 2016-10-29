@@ -159,8 +159,8 @@ Workflow
 
 .. _unit_testing_api:
 
-Test API
---------
+API
+---
 
 The summary of `Unity Test API <https://github.com/ThrowTheSwitch/Unity#unity-test-api>`_:
 
@@ -240,6 +240,18 @@ The summary of `Unity Test API <https://github.com/ThrowTheSwitch/Unity#unity-te
 * `Memory Assertions <https://github.com/ThrowTheSwitch/Unity#pointer-assertions>`_
 
   - ``TEST_ASSERT_EQUAL_MEMORY(expected, actual, len)``
+
+
+User Guide (CLI)
+----------------
+
+.. toctree::
+    :maxdepth: 3
+
+    platformio test <../userguide/cmd_test>
+
+--------------
+
 
 Test "Blink" Project
 --------------------

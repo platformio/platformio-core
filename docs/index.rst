@@ -117,6 +117,7 @@ Contents
     :caption: PlatformIO Plus
     :maxdepth: 3
 
+    plus/pio-remote
     plus/unit-testing
 
 .. toctree::
@@ -124,7 +125,6 @@ Contents
     :maxdepth: 2
 
     Quickstart <librarymanager/index>
-    User Guide <userguide/lib/index.rst>
     librarymanager/ldf
     librarymanager/config
     librarymanager/creating

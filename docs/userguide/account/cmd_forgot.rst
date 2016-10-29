@@ -27,7 +27,7 @@ Usage
 Description
 -----------
 
-Allows you to reset password for :ref:`userguide_account` using E-Mail that
+Allows you to reset password for :ref:`cmd_account` using E-Mail that
 was specified for registration.
 
 Options

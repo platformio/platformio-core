@@ -11,8 +11,8 @@
 
 .. _userguide:
 
-User Guide
-==========
+User Guide (CLI)
+================
 
 .. contents::
 
@@ -63,7 +63,9 @@ Commands
     cmd_ci
     cmd_device
     cmd_init
+    platformio lib <lib/index>
     platformio platform <platforms/index>
+    platformio remote <remote/index>
     cmd_run
     cmd_settings
     cmd_test

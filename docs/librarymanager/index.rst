@@ -63,3 +63,11 @@ possible values.
   Rebuild C/C++ Project Index (Autocomplete, Linter)``
 
 .. image:: ../_static/platformio-demo-lib.gif
+
+User Guide (CLI)
+----------------
+
+.. toctree::
+    :maxdepth: 3
+
+    platformio lib <../userguide/lib/index>

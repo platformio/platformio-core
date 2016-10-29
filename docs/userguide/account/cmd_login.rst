@@ -27,7 +27,7 @@ Usage
 Description
 -----------
 
-Log in to :ref:`userguide_account`.
+Log in to :ref:`cmd_account`.
 
 Options
 ~~~~~~~

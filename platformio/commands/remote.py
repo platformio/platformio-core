@@ -69,6 +69,7 @@ def remote_agent_list():
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("-r", "--build-remotely", is_flag=True)
+@click.option("--disable-auto-clean", is_flag=True)
 def remote_run(**kwargs):
     pioplus_call(sys.argv[1:])
 

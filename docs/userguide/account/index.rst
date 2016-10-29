@@ -9,7 +9,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _userguide_account:
+.. _cmd_account:
 
 PIO Account
 ===========
@@ -17,7 +17,10 @@ PIO Account
 Having **PIO Account** allows you to use extra professional features from
 `PlatformIO Plus <https://pioplus.com/>`__:
 
+* :ref:`pio_remote`
 * :ref:`unit_testing`
+
+A registration is **FREE**.
 
 To print all available commands and options use:
 
