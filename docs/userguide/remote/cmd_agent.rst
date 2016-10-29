@@ -25,6 +25,8 @@ network operations Over-The-Air.
 
 .. contents::
 
+.. _cmd_remote_agent_list:
+
 platformio remote agent list
 ----------------------------
 
