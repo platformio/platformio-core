@@ -56,7 +56,7 @@ def on_platformio_start(ctx, force, caller):
                 caller = "C9"
             elif getenv("USER") == "cabox":
                 caller = "CA"
-            elif getenv("CHE_API_ENDPOINT"):
+            elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
                 caller = "Che"
 
     app.set_session_var("command_ctx", ctx)

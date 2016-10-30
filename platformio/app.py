@@ -274,10 +274,10 @@ def get_cid():
         _uid = None
         if getenv("C9_UID"):
             _uid = getenv("C9_UID")
-        elif getenv("CHE_API_ENDPOINT"):
+        elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
             try:
                 _uid = requests.get("{api}/user?token={token}".format(
-                    api=getenv("CHE_API_ENDPOINT"), token=getenv(
+                    api=getenv("CHE_API", getenv("CHE_API_ENDPOINT")), token=getenv(
                         "USER_TOKEN"))).json().get("id")
             except:  # pylint: disable=bare-except
                 pass
