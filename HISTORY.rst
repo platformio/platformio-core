@@ -24,6 +24,7 @@ PlatformIO 3.0
   (`issue #814 <https://github.com/platformio/platformio/issues/814>`_)
 * Fixed issue with ``PATH`` auto-configuring for upload tools
 * Fixed ``99-platformio-udev.rules`` checker for Linux OS
+* Stopped supporting PySerial 2.7
 
 -------
 

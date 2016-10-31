@@ -153,12 +153,15 @@ Set initial ``RTS`` line state, default ``0``
 Set initial ``DTR`` line state, default ``0``
 
 .. option::
+    --echo
+
+Enable local echo, default ``Off``
+
+.. option::
     --encoding
 
 Set the encoding for the serial port (e.g. ``hexlify``, ``Latin1``, ``UTF-8``),
 default ``UTF-8``.
-
-**NEW**: Available in Miniterm/PySerial 3.0
 
 .. option::
     -f, --filter
@@ -173,8 +176,6 @@ Add text transformation. Available filters:
 * ``printable`` Show decimal code for all non-ASCII characters and replace
   most control codes
 
-**NEW**: Available in Miniterm/PySerial 3.0
-
 .. option::
     --eol
 
@@ -186,8 +187,6 @@ End of line mode (``CR``, ``LF`` or ``CRLF``), default ``CRLF``
     --raw
 
 Do not apply any encodings/transformations
-
-**NEW**: Available in Miniterm/PySerial 3.0
 
 .. option::
     --exit-char
@@ -208,40 +207,6 @@ default ``20`` (DEC)
     ---quiet
 
 Diagnostics: suppress non-error messages, default ``Off``
-
-.. option::
-    --echo
-
-Enable local echo, default ``Off``
-
-.. option::
-    --cr
-
-Do not send ``CR+LF``, send ``R`` only, default ``Off``
-
-**REMOVED**: Is not available in Miniterm/PySerial 3.0
-
-.. option::
-    --lf
-
-Do not send ``CR+LF``, send ``LF`` only, default ``Off``
-
-**REMOVED**: Is not available in Miniterm/PySerial 3.0
-
-.. option::
-    -d, --debug
-
-Debug received data (escape non-printable chars). ``--debug`` can be given
-multiple times:
-
-0. just print what is received
-1. escape non-printable characters, do newlines as unusual
-2. escape non-printable characters, newlines too
-3. hex dump everything
-
-**REMOVED**: Is not available in Miniterm/PySerial 3.0.
-See :option:`platformio device monitor --encoding` and
-:option:`platformio device monitor --filter` options.
 
 Examples
 ~~~~~~~~

@@ -24,7 +24,7 @@ install_requires = [
     "requests>=2.4.0,<3",
     "semantic_version>=2.5.0",
     "colorama",
-    "pyserial<4"
+    "pyserial>=3,<4"
 ]
 
 setup(

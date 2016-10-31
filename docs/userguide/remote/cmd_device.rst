@@ -172,6 +172,11 @@ Set initial ``RTS`` line state, default ``0``
 Set initial ``DTR`` line state, default ``0``
 
 .. option::
+    --echo
+
+Enable local echo, default ``Off``
+
+.. option::
     --encoding
 
 Set the encoding for the serial port (e.g. ``hexlify``, ``Latin1``, ``UTF-8``),
@@ -219,11 +224,6 @@ default ``20`` (DEC)
     ---quiet
 
 Diagnostics: suppress non-error messages, default ``Off``
-
-.. option::
-    --echo
-
-Enable local echo, default ``Off``
 
 Examples
 ~~~~~~~~
