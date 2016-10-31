@@ -395,8 +395,12 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             config.manifest['platform'] = self.name
             self._BOARDS_CACHE[board_id] = config
 
-        bdirs = (join(util.get_home_dir(), "boards"),
-                 join(self.get_dir(), "boards"))
+        bdirs = [
+            util.get_projectboards_dir(),
+            join(util.get_home_dir(), "boards"),
+            join(self.get_dir(), "boards"),
+        ]
+
         if id_ is None:
             for boards_dir in bdirs:
                 if not isdir(boards_dir):

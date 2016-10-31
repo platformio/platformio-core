@@ -258,6 +258,11 @@ def get_projecttest_dir():
                                                      "test"))
 
 
+def get_projectboards_dir():
+    return _get_projconf_option_dir("boards_dir", join(get_project_dir(),
+                                                       "boards"))
+
+
 def get_projectpioenvs_dir(force=False):
     path = _get_projconf_option_dir("envs_dir",
                                     join(get_project_dir(), ".pioenvs"))

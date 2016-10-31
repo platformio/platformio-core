@@ -103,6 +103,45 @@ A ``platformio`` section is used for overriding default configuration options
 Options
 ~~~~~~~
 
+.. _projectconf_pio_env_default:
+
+``env_default``
+^^^^^^^^^^^^^^^
+
+:ref:`cmd_run` command processes all environments ``[env:***]`` by default
+if :option:`platformio run --environment` option is not specified.
+:ref:`projectconf_pio_env_default` allows to define environments which
+should be processed by default.
+
+Multiple environments are allowed if they are separated with ", "
+(comma+space). For example.
+
+.. code-block:: ini
+
+    [platformio]
+    env_default = uno, nodemcu
+
+    [env:uno]
+    platform = atmelavr
+    framework = arduino
+    board = uno
+
+    [env:nodemcu]
+    platform = espressif8266
+    framework = arduino
+    board = nodemcu
+
+    [env:teensy31]
+    platform = teensy
+    framework = arduino
+    board = teensy31
+
+    [env:lpmsp430g2553]
+    platform = timsp430
+    framework = energia
+    board = lpmsp430g2553
+    build_flags = -D LED_BUILTIN=RED_LED
+
 .. _projectconf_pio_home_dir:
 
 ``home_dir``
@@ -256,44 +295,25 @@ project.
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_TEST_DIR`.
 
-.. _projectconf_pio_env_default:
+.. _projectconf_pio_boards_dir:
 
-``env_default``
-^^^^^^^^^^^^^^^
+``boards_dir``
+^^^^^^^^^^^^^^
 
-:ref:`cmd_run` command processes all environments ``[env:***]`` by default
-if :option:`platformio run --environment` option is not specified.
-:ref:`projectconf_pio_env_default` allows to define environments which
-should be processed by default.
+Custom board settings per project. You can change this path with your own.
+A default value is ``boards`` that means that folder is located in the root of
+project.
 
-Multiple environments are allowed if they are separated with ", "
-(comma+space). For example.
+By default, PlatformIO looks for boards in this order:
 
-.. code-block:: ini
+1. Project :ref:`projectconf_pio_boards_dir`
+2. Global :ref:`projectconf_pio_home_dir`/boards
+3. Development platform :ref:`projectconf_pio_home_dir`/platforms/\*/boards.
 
-    [platformio]
-    env_default = uno, nodemcu
+This option can be overridden by global environment variable
+:envvar:`PLATFORMIO_BOARDS_DIR`.
 
-    [env:uno]
-    platform = atmelavr
-    framework = arduino
-    board = uno
-
-    [env:nodemcu]
-    platform = espressif8266
-    framework = arduino
-    board = nodemcu
-
-    [env:teensy31]
-    platform = teensy
-    framework = arduino
-    board = teensy31
-
-    [env:lpmsp430g2553]
-    platform = timsp430
-    framework = energia
-    board = lpmsp430g2553
-    build_flags = -D LED_BUILTIN=RED_LED
+--------
 
 .. _projectconf_section_env:
 

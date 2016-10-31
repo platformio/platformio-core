@@ -72,13 +72,16 @@ Installation
 
 1. Create ``boards`` directory in :ref:`projectconf_pio_home_dir` if it
    doesn't exist.
-2. Create ``myboard.json`` file and put to ``boards`` directory.
+2. Create ``myboard.json`` file in this ``boards`` directory.
 3. Search available boards via :ref:`cmd_boards` command. You should see
    ``myboard`` board.
 
 Now, you can use ``myboard`` for the :ref:`projectconf_env_board` option in
 :ref:`projectconf`.
 
+.. note::
+  You can have custom boards per project. In this case, please put your
+  board's JSON files to :ref:`projectconf_pio_boards_dir`.
 
 Examples
 --------

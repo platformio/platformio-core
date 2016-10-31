@@ -77,6 +77,9 @@ Allows to override :ref:`projectconf` option :ref:`projectconf_pio_data_dir`.
 
 Allows to override :ref:`projectconf` option :ref:`projectconf_pio_test_dir`.
 
+.. envvar:: PLATFORMIO_BOARDS_DIR
+
+Allows to override :ref:`projectconf` option :ref:`projectconf_pio_boards_dir`.
 
 Building
 --------

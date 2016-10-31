@@ -14,7 +14,10 @@ PlatformIO 3.0
 * Inject system environment variables to configuration settings in
   `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
   (`issue #792 <https://github.com/platformio/platformio/issues/792>`_)
-* Changed default exit combination for Device Monitor from ``Ctrl+]`` to ``Ctrl+C``
+* Custom boards per project with ``boards_dir`` option in
+  `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
+  (`issue #515 <https://github.com/platformio/platformio/issues/515>`_)
+* Changed a default exit combination for Device Monitor from ``Ctrl+]`` to ``Ctrl+C``
 * Improved detecting of ARM mbed media disk for uploading
 * Improved Project Generator for CLion IDE when source folder contains nested items
 * Improved handling of library dependencies specified in ``library.json`` manifest
