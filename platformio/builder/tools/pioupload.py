@@ -100,9 +100,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         board_hwids = []
         if "BOARD" in env and "build.hwids" in env.BoardConfig():
             board_hwids = env.BoardConfig().get("build.hwids")
-        for item in util.get_serialports():
-            if "VID:PID" not in item['hwid']:
-                continue
+        for item in util.get_serialports(filter_hwid=True):
             port = item['port']
             for hwid in board_hwids:
                 hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")

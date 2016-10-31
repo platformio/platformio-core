@@ -100,10 +100,9 @@ def device_list(json_output):
     help="Diagnostics: suppress non-error messages, default=Off")
 def device_monitor(**kwargs):
     if not kwargs['port']:
-        for item in get_serialports():
-            if "VID:PID" in item['hwid']:
-                kwargs['port'] = item['port']
-                break
+        ports = get_serialports(filter_hwid=True)
+        if len(ports) == 1:
+            kwargs['port'] = ports[0]['port']
 
     sys.argv = ["monitor"]
     for k, v in kwargs.iteritems():
@@ -120,10 +119,10 @@ def device_monitor(**kwargs):
             sys.argv.extend([k, str(v)])
 
     try:
-        miniterm.main(  # pylint: disable=E1123
+        miniterm.main(
             default_port=kwargs['port'],
             default_baudrate=kwargs['baud'],
             default_rts=kwargs['rts'],
             default_dtr=kwargs['dtr'])
-    except Exception as e:  # pylint: disable=W0702
+    except Exception as e:
         raise MinitermException(e)

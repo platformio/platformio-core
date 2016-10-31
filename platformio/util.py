@@ -358,7 +358,7 @@ def copy_pythonpath_to_osenv():
     os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
 
 
-def get_serialports():
+def get_serialports(filter_hwid=False):
     try:
         from serial.tools.list_ports import comports
     except ImportError:
@@ -373,7 +373,11 @@ def get_serialports():
                 d = unicode(d, errors="ignore")
             except TypeError:
                 pass
-        result.append({"port": p, "description": d, "hwid": h})
+        if not filter_hwid or "VID:PID" in h:
+            result.append({"port": p, "description": d, "hwid": h})
+
+    if filter_hwid:
+        return result
 
     # fix for PySerial
     if not result and platform.system() == "Darwin":
