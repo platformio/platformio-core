@@ -48,10 +48,13 @@ Each variable should have a next format: ``${<section>.<option>}``, where
 ``<section>`` is a value from ``[<section>]`` group, and ``<option>`` is a
 first item from pair ``<option> = value``.
 
+You can inject environment variable using ``env`` as a ``section``. For example,
+``${env.HOME}``, etc.
+
 * Variable can be applied only for the option's value
 * Multiple variables are allowed
-* The ``platformio`` section is reserved and could not be used as custom
-  section. Some good section names might be ``common`` or ``global``.
+* The ``platformio`` and ``env`` sections are reserved and could not be used
+  as custom section. Some good section names might be ``common`` or ``global``.
 
 Example:
 
@@ -68,6 +71,7 @@ Example:
     board = uno
     build_flags = ${common.build_flags}
     lib_deps = ${common.lib_deps_builtin}, ${common.lib_deps_external}
+    lib_extra_dirs = ${env.HOME}/arduino/libs
 
     [env:nodemcuv2]
     platform = espressif8266

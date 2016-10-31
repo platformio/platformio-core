@@ -59,7 +59,10 @@ class ProjectConfig(ConfigParser):
         return self.VARTPL_RE.sub(self._re_sub_handler, value)
 
     def _re_sub_handler(self, match):
-        return self.get(match.group(1), match.group(2))
+        section, option = match.group(1), match.group(2)
+        if section == "env" and not self.has_section(section):
+            return os.getenv(option)
+        return self.get(section, option)
 
 
 class AsyncPipe(Thread):
