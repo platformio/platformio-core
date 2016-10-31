@@ -61,7 +61,9 @@ values:
 Custom Reset Method
 -------------------
 
-See :ref:`projectconf_upload_resetmethod` option from :ref:`projectconf`
+You can set custom reset method using :ref:`projectconf_upload_resetmethod`
+option from :ref:`projectconf`. The possible values are ``ck`` and ``nodemcu``.
+See `default reset method for each board <https://github.com/platformio/platform-espressif8266/search?p=1&q=resetmethod>`_.
 
 .. code-block:: ini
 
@@ -101,7 +103,8 @@ To override default LD script please use :ref:`projectconf_build_flags` from
 Custom Upload Speed
 -------------------
 
-See :ref:`projectconf_upload_speed` option from :ref:`projectconf`
+You can set custom upload speed using  :ref:`projectconf_upload_speed` option
+from :ref:`projectconf`
 
 .. code-block:: ini
 
