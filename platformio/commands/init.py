@@ -58,7 +58,8 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
 @click.option("-O", "--project-option", multiple=True)
 @click.option("--env-prefix", default="")
 @click.pass_context
-def cli(ctx,  # pylint: disable=R0913
+def cli(
+        ctx,  # pylint: disable=R0913
         project_dir,
         board,
         ide,
@@ -292,10 +293,11 @@ def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
 
     config = util.load_project_config(project_dir)
     for section in config.sections():
-        if not all([section.startswith("env:"),
-                    config.has_option(section, "board")]):
-            continue
-        used_boards.append(config.get(section, "board"))
+        cond = [
+            section.startswith("env:"), config.has_option(section, "board")
+        ]
+        if all(cond):
+            used_boards.append(config.get(section, "board"))
 
     pm = PlatformManager()
     for id_ in board_ids:

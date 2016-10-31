@@ -146,8 +146,8 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
         fpath = join(env.subst("$BUILD_DIR"), "%s.%s" % (progname, ext))
         if not isfile(fpath):
             continue
-        copyfile(fpath, join(
-            env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
+        copyfile(fpath,
+                 join(env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
     print "Firmware has been successfully uploaded.\n"\
           "(Some boards may require manual hard reset)"
 
@@ -161,8 +161,10 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
 
     sysenv = environ.copy()
     sysenv['PATH'] = str(env['ENV']['PATH'])
-    cmd = [env.subst("$SIZETOOL"), "-B",
-           str(source[0] if isinstance(target[0], Alias) else target[0])]
+    cmd = [
+        env.subst("$SIZETOOL"), "-B",
+        str(source[0] if isinstance(target[0], Alias) else target[0])
+    ]
     result = util.exec_command(cmd, env=sysenv)
     if result['returncode'] != 0:
         return

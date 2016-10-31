@@ -38,8 +38,8 @@ class ProjectGenerator(object):
     @staticmethod
     def get_supported_ides():
         tpls_dir = join(util.get_source_dir(), "ide", "tpls")
-        return sorted([d for d in os.listdir(tpls_dir)
-                       if isdir(join(tpls_dir, d))])
+        return sorted(
+            [d for d in os.listdir(tpls_dir) if isdir(join(tpls_dir, d))])
 
     @util.memoized
     def get_project_env(self):
@@ -69,8 +69,8 @@ class ProjectGenerator(object):
         result = util.exec_command(cmd)
 
         if result['returncode'] != 0 or '"includes":' not in result['out']:
-            raise exception.PlatformioException("\n".join([result['out'],
-                                                           result['err']]))
+            raise exception.PlatformioException("\n".join(
+                [result['out'], result['err']]))
 
         output = result['out']
         start_index = output.index('{"')

@@ -120,8 +120,9 @@ class LibraryManager(BasePkgManager):
                 if item[k] == "*":
                     del item[k]
                 elif isinstance(item[k], basestring):
-                    item[k] = [i.strip() for i in item[k].split(",")
-                               if i.strip()]
+                    item[k] = [
+                        i.strip() for i in item[k].split(",") if i.strip()
+                    ]
         return items
 
     @staticmethod

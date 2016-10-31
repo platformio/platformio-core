@@ -87,9 +87,10 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                 continue
 
             envname = section[4:]
-            skipenv = any([environment and envname not in environment,
-                           not environment and env_default and
-                           envname not in env_default])
+            skipenv = any([
+                environment and envname not in environment, not environment and
+                env_default and envname not in env_default
+            ])
             if skipenv:
                 results[envname] = None
                 continue
@@ -133,14 +134,15 @@ class EnvironmentProcessor(object):
 
     RENAMED_PLATFORMS = {"espressif": "espressif8266"}
 
-    def __init__(self,  # pylint: disable=R0913
-                 cmd_ctx,
-                 name,
-                 options,
-                 targets,
-                 upload_port,
-                 silent,
-                 verbose):
+    def __init__(
+            self,  # pylint: disable=R0913
+            cmd_ctx,
+            name,
+            options,
+            targets,
+            upload_port,
+            silent,
+            verbose):
         self.cmd_ctx = cmd_ctx
         self.name = name
         self.options = options

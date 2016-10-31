@@ -264,8 +264,10 @@ def set_session_var(name, value):
 
 
 def is_disabled_progressbar():
-    return any([get_session_var("force_option"), util.is_ci(),
-                getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"])
+    return any([
+        get_session_var("force_option"), util.is_ci(),
+        getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"
+    ])
 
 
 def get_cid():
@@ -282,7 +284,7 @@ def get_cid():
             except:  # pylint: disable=bare-except
                 pass
         cid = str(
-            uuid.UUID(bytes=hashlib.md5(str(_uid if _uid else uuid.getnode()))
-                      .digest()))
+            uuid.UUID(bytes=hashlib.md5(
+                str(_uid if _uid else uuid.getnode())).digest()))
         set_state_item("cid", cid)
     return cid

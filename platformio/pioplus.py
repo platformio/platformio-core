@@ -20,21 +20,29 @@ from platform import system
 from platformio import app, exception, util
 from platformio.managers.package import PackageManager
 
-PACKAGE_DEPS = {"pysite": {"name": "pysite-pioplus",
-                           "requirements": ">=0.1.0"},
-                "tool": {"name": "tool-pioplus",
-                         "requirements": ">=0.3.0"}}
+PACKAGE_DEPS = {
+    "pysite": {
+        "name": "pysite-pioplus",
+        "requirements": ">=0.1.0"
+    },
+    "tool": {
+        "name": "tool-pioplus",
+        "requirements": ">=0.3.0"
+    }
+}
 
 
 class PioPlusPackageManager(PackageManager):
 
     def __init__(self):
-        PackageManager.__init__(self, join(util.get_home_dir(), "packages"), [
-            "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-            "https://sourceforge.net/projects/platformio-storage/files/"
-            "packages/manifest.json/download",
-            "https://dl.platformio.org/packages/manifest.json"
-        ])
+        PackageManager.__init__(
+            self,
+            join(util.get_home_dir(), "packages"), [
+                "https://dl.bintray.com/platformio/dl-packages/manifest.json",
+                "https://sourceforge.net/projects/platformio-storage/files/"
+                "packages/manifest.json/download",
+                "https://dl.platformio.org/packages/manifest.json"
+            ])
 
 
 def pioplus_install():

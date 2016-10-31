@@ -164,8 +164,9 @@ class PkgInstallerMixin(object):
             if not pkgdata:
                 continue
             try:
-                pkg_dir = self._install_from_url(
-                    name, pkgdata['url'], requirements, pkgdata.get("sha1"))
+                pkg_dir = self._install_from_url(name, pkgdata['url'],
+                                                 requirements,
+                                                 pkgdata.get("sha1"))
                 break
             except Exception as e:  # pylint: disable=broad-except
                 click.secho("Warning! Package Mirror: %s" % e, fg="yellow")
@@ -240,8 +241,9 @@ class PkgInstallerMixin(object):
                         curmanifest['version'], partial=True)
                     # if current package version < new package, backup it
                     if tmpmanver > curmanver:
-                        os.rename(pkg_dir, join(self.package_dir, "%s@%s" % (
-                            name, curmanifest['version'])))
+                        os.rename(pkg_dir,
+                                  join(self.package_dir, "%s@%s" %
+                                       (name, curmanifest['version'])))
                     elif tmpmanver < curmanver:
                         pkg_dir = join(self.package_dir, "%s@%s" %
                                        (name, tmpmanifest['version']))
@@ -492,10 +494,11 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 label=manifest['name'])
         return True
 
-    def update(self,  # pylint: disable=too-many-return-statements
-               name,
-               requirements=None,
-               only_check=False):
+    def update(  # pylint: disable=too-many-return-statements
+            self,
+            name,
+            requirements=None,
+            only_check=False):
         name, requirements, url = self.parse_pkg_name(name, requirements)
         package_dir = self.get_package_dir(name, None, url)
         if not package_dir:

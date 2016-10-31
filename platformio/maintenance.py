@@ -142,8 +142,9 @@ class Upgrader(object):
 
     @staticmethod
     def _upgrade_to_3_0_0b11(ctx):
-        current_platforms = [m['name']
-                             for m in PlatformManager().get_installed()]
+        current_platforms = [
+            m['name'] for m in PlatformManager().get_installed()
+        ]
         if "espressif" not in current_platforms:
             return
         ctx.invoke(cmd_platform_install, platforms=["espressif8266"])

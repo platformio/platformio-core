@@ -51,8 +51,10 @@ class LibBuilderFactory(object):
 
     @staticmethod
     def get_used_frameworks(env, path):
-        if any([isfile(join(path, fname))
-                for fname in ("library.properties", "keywords.txt")]):
+        if any([
+                isfile(join(path, fname))
+                for fname in ("library.properties", "keywords.txt")
+        ]):
             return ["arduino"]
 
         if isfile(join(path, "module.json")):
@@ -70,6 +72,7 @@ class LibBuilderFactory(object):
                     elif "mbed.h" in content:
                         return ["mbed"]
         return []
+
 
 # pylint: disable=too-many-instance-attributes, too-many-public-methods
 
@@ -200,10 +203,8 @@ class LibBuilderBase(object):
             if self.extra_script:
                 self.env.SConscript(
                     realpath(self.extra_script),
-                    exports={
-                        "env": self.env,
-                        "pio_lib_builder": self
-                    })
+                    exports={"env": self.env,
+                             "pio_lib_builder": self})
 
     def _process_dependencies(self, lib_builders):
         if not self.dependencies:

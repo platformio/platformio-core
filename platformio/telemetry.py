@@ -227,12 +227,22 @@ def measure_ci():
     event = {"category": "CI", "action": "NoName", "label": None}
 
     envmap = {
-        "APPVEYOR": {"label": getenv("APPVEYOR_REPO_NAME")},
-        "CIRCLECI": {"label": "%s/%s" % (getenv("CIRCLE_PROJECT_USERNAME"),
-                                         getenv("CIRCLE_PROJECT_REPONAME"))},
-        "TRAVIS": {"label": getenv("TRAVIS_REPO_SLUG")},
-        "SHIPPABLE": {"label": getenv("REPO_NAME")},
-        "DRONE": {"label": getenv("DRONE_REPO_SLUG")}
+        "APPVEYOR": {
+            "label": getenv("APPVEYOR_REPO_NAME")
+        },
+        "CIRCLECI": {
+            "label": "%s/%s" % (getenv("CIRCLE_PROJECT_USERNAME"),
+                                getenv("CIRCLE_PROJECT_REPONAME"))
+        },
+        "TRAVIS": {
+            "label": getenv("TRAVIS_REPO_SLUG")
+        },
+        "SHIPPABLE": {
+            "label": getenv("REPO_NAME")
+        },
+        "DRONE": {
+            "label": getenv("DRONE_REPO_SLUG")
+        }
     }
 
     for key, value in envmap.iteritems():
@@ -263,10 +273,11 @@ def on_event(category, action, label=None, value=None, screen_name=None):
 
 
 def on_exception(e):
-    skip = any(
-        [isinstance(e, cls)
-         for cls in (IOError, exception.AbortedByUser,
-                     exception.NotGlobalLibDir, exception.InternetIsOffline)])
+    skip = any([
+        isinstance(e, cls)
+        for cls in (IOError, exception.AbortedByUser,
+                    exception.NotGlobalLibDir, exception.InternetIsOffline)
+    ])
     if skip:
         return
     is_crash = any([

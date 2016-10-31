@@ -254,13 +254,13 @@ def get_projectsrc_dir():
 
 
 def get_projecttest_dir():
-    return _get_projconf_option_dir("test_dir", join(get_project_dir(),
-                                                     "test"))
+    return _get_projconf_option_dir("test_dir",
+                                    join(get_project_dir(), "test"))
 
 
 def get_projectboards_dir():
-    return _get_projconf_option_dir("boards_dir", join(get_project_dir(),
-                                                       "boards"))
+    return _get_projconf_option_dir("boards_dir",
+                                    join(get_project_dir(), "boards"))
 
 
 def get_projectpioenvs_dir(force=False):
@@ -417,10 +417,11 @@ def _api_request_session():
     return requests.Session()
 
 
-def _get_api_result(url,  # pylint: disable=too-many-branches
-                    params=None,
-                    data=None,
-                    auth=None):
+def _get_api_result(
+        url,  # pylint: disable=too-many-branches
+        params=None,
+        data=None,
+        auth=None):
     from platformio.app import get_setting
 
     result = None

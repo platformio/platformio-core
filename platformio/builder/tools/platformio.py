@@ -35,8 +35,9 @@ SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
 def BuildProgram(env):
 
     def _append_pio_macros():
-        env.AppendUnique(CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
-            *pioversion_to_intstr())])
+        env.AppendUnique(CPPDEFINES=[
+            "PLATFORMIO={0:02d}{1:02d}{2:02d}".format(*pioversion_to_intstr())
+        ])
 
     _append_pio_macros()
 
@@ -130,8 +131,10 @@ def ProcessFlags(env, flags):
 
     # Cancel any previous definition of name, either built in or
     # provided with a -D option // Issue #191
-    undefines = [u for u in env.get("CCFLAGS", [])
-                 if isinstance(u, basestring) and u.startswith("-U")]
+    undefines = [
+        u for u in env.get("CCFLAGS", [])
+        if isinstance(u, basestring) and u.startswith("-U")
+    ]
     if undefines:
         for undef in undefines:
             env['CCFLAGS'].remove(undef)
