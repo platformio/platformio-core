@@ -62,8 +62,15 @@ Custom Reset Method
 -------------------
 
 You can set custom reset method using :ref:`projectconf_upload_resetmethod`
-option from :ref:`projectconf`. The possible values are ``ck`` and ``nodemcu``.
-See `default reset method for each board <https://github.com/platformio/platform-espressif8266/search?p=1&q=resetmethod>`_.
+option from :ref:`projectconf`.
+
+The `possible values <https://github.com/igrr/esptool-ck#supported-boards>`_ are:
+
+* ``ck`` - RTS controls RESET or CH_PD, DTR controls GPIO0
+* ``wifio`` - TXD controls GPIO0 via PNP transistor and DTR controls RESET via a capacitor
+* ``nodemcu`` - GPIO0 and RESET controlled using two NPN transistors as in NodeMCU devkit.
+
+See `default reset methods per board <https://github.com/platformio/platform-espressif8266/search?p=1&q=resetmethod>`_.
 
 .. code-block:: ini
 
