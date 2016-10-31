@@ -38,8 +38,9 @@ A registration is **FREE**.
 Features
 --------
 
+* :ref:`ide_cloud`
 * :ref:`OTA Device Manager <cmd_remote_device>`
-* :ref:`OTA Firmware Uploading <cmd_remote_run>`
+* :ref:`OTA Firmware Updates <cmd_remote_run>`
 * Continuous Deployment
 * Continuous Delivery
 * Remote Unit Testing
@@ -73,8 +74,9 @@ listing of local and remote devices will look like :ref:`cmd_device_list` and
 |PIORemote| Agent
 -----------------
 
-Start |PIORemote| Agent on a local host machine and work remotely with
-your devices **WITHOUT** extra software, services, SSH, VPN, tunneling or
+Start |PIORemote| Agent (using :ref:`cmd_remote_agent_start` command) on a
+local host machine and work remotely with your devices **WITHOUT** extra
+software, 3-rd party services, SSH, VPN, tunneling or
 opening incoming network ports.
 
 |PIORemote| supports wired and wireless devices. Wired devices should be
@@ -88,6 +90,7 @@ User Guide (CLI)
 .. toctree::
     :maxdepth: 3
 
+    platformio account <../userguide/account/index>
     platformio remote <../userguide/remote/index>
 
 

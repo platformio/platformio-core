@@ -14,7 +14,7 @@
 platformio remote run
 =====================
 
-**Over-The-Air (OTA) Firmware Uploading**
+**Over-The-Air (OTA) Firmware Updates**
 
 .. contents::
 
@@ -32,7 +32,7 @@ Usage
 Description
 -----------
 
-Process remotely  environments which are defined in :ref:`projectconf` file.
+Process remotely environments which are defined in :ref:`projectconf` file.
 By default, :ref:`pio_remote` builds project on the local machine and deploy
 final firmware Over-The-Air (OTA) to remote device.
 
