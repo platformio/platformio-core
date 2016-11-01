@@ -267,3 +267,52 @@ Examples
 
 * Configuration file: https://github.com/ivankravets/Time/blob/master/.travis.yml
 * Build History: https://travis-ci.org/ivankravets/Time
+
+4. Advanced configuration with extra project options and libraries
+
+.. code-block:: yaml
+
+    language: python
+    python:
+        - "2.7"
+
+    # Cache PlatformIO packages using Travis CI container-based infrastructure
+    sudo: false
+    cache:
+        directories:
+            - "~/.platformio"
+
+    env:
+        - PLATFORMIO_CI_SRC=examples/Boards_Bluetooth/Adafruit_Bluefruit_LE
+        - PLATFORMIO_CI_SRC=examples/Boards_Bluetooth/Arduino_101_BLE PLATFORMIO_CI_EXTRA_ARGS="--board=genuino101"
+        - PLATFORMIO_CI_SRC=examples/Boards_USB_Serial/Blue_Pill_STM32F103C PLATFORMIO_CI_EXTRA_ARGS="--board=bluepill_f103c8 --project-option='framework=arduino'"
+        - PLATFORMIO_CI_SRC=examples/Export_Demo/myPlant_ESP8266 PLATFORMIO_CI_EXTRA_ARGS="--board=nodemcuv2 --project-option='lib_ignore=WiFi101'"
+        # - ...
+
+    install:
+        - pip install -U platformio
+
+        #
+        # Libraries from PlatformIO Library Registry:
+        #
+        # http://platformio.org/lib/show/44/Time
+        # http://platformio.org/lib/show/419/SimpleTimer
+        #
+        # http://platformio.org/lib/show/17/Adafruit-CC3000
+        # http://platformio.org/lib/show/28/SPI4Teensy3
+        # http://platformio.org/lib/show/91/UIPEthernet
+        # http://platformio.org/lib/show/418/WildFireCore
+        # http://platformio.org/lib/show/420/WildFire-CC3000
+        # http://platformio.org/lib/show/65/WiFlyHQ
+        # http://platformio.org/lib/show/19/Adafruit-DHT
+        # http://platformio.org/lib/show/299/WiFi101
+        # http://platformio.org/lib/show/259/BLEPeripheral
+        # http://platformio.org/lib/show/177/Adafruit_BluefruitLE_nRF51
+
+        - platformio lib -g install 17 28 91 418 419 420 65 44 19 299 259 177 https://github.com/vshymanskyy/BlynkESP8266.git https://github.com/cmaglie/FlashStorage.git https://github.com/michael71/Timer5.git
+
+    script:
+        - make travis-build
+
+* Configuration file: https://github.com/blynkkk/blynk-library/blob/master/.travis.yml
+* Build History: https://travis-ci.org/blynkkk/blynk-library
