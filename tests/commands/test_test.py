@@ -22,7 +22,7 @@ from platformio import util
 def test_local_env():
     result = util.exec_command(["platformio", "test", "-d",
                                 join("examples", "unit-testing", "calculator"),
-                                "-e", "local"])
+                                "-e", "native"])
     if result['returncode'] != 1:
         pytest.fail(result)
     assert all(
