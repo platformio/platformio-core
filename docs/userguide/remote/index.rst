@@ -45,3 +45,4 @@ To print all available commands and options use:
     cmd_agent
     cmd_device
     cmd_run
+    cmd_test

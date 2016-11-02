@@ -20,10 +20,11 @@ import click
 from platformio.pioplus import pioplus_call
 
 
-@click.command("test", short_help="Unit Testing")
+@click.command("test", short_help="Local Unit Testing")
 @click.option("--environment", "-e", multiple=True, metavar="<environment>")
 @click.option("--ignore", "-i", multiple=True, metavar="<pattern>")
-@click.option("--upload-port", metavar="<upload port>")
+@click.option("--upload-port")
+@click.option("--test-port")
 @click.option(
     "-d",
     "--project-dir",
@@ -34,6 +35,8 @@ from platformio.pioplus import pioplus_call
         dir_okay=True,
         writable=True,
         resolve_path=True))
+@click.option("--without-building", is_flag=True)
+@click.option("--without-uploading", is_flag=True)
 @click.option("--verbose", "-v", is_flag=True)
 def cli(*args, **kwargs):  # pylint: disable=unused-argument
     pioplus_call(sys.argv[1:])

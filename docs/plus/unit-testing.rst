@@ -9,6 +9,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
+.. |PIOUTE| replace:: **PlatformIO Unit Testing Engine**
+.. |PIOUTF| replace:: *PlatformIO Unit Testing Framework*
+
 .. _unit_testing:
 
 Unit Testing
@@ -22,30 +25,53 @@ of one or more MCU program modules together with associated control data,
 usage procedures, and operating procedures, are tested to determine whether
 they are fit for use. Unit testing finds problems early in the development cycle.
 
-PlatformIO Testing Engine supports 2 different test types:
+|PIOUTE| supports 2 different test types:
 
-1. **Local Test** - *[host, native]*, process test on the host machine
-   using :ref:`platform_native`.
-2. **Embedded Test** - *[remote, hardware]*, prepare special firmware for the
-   target device and upload it. Run test on the embedded device and collect
-   results. Process test results on the host machine.
+1.  **Desktop Test**. PlatformIO wraps test and main program (from
+    :ref:`projectconf_pio_src_dir`) with own |PIOUTF|, builds final program
+    using :ref:`platform_native` and run test on a local host machine (desktop).
 
-   You will be able to run the same test on the different target devices
-   (:ref:`embedded_boards`).
+    .. note::
+        PlatformIO does not install any toolchains automatically for
+        :ref:`platform_native` and requires ``GCC`` toolchain to be installed
+        on your local machine.
+        Please open Terminal and check that ``gcc`` command is installed.
 
-PlatformIO Testing Engine consists of:
+2.  **Embedded Test**. PlatformIO wraps test and main firmware (from
+    :ref:`projectconf_pio_src_dir`) with own |PIOUTF|, builds special firmware
+    for a target device and upload it. After uploading, PlatformIO connects
+    to embedded device (board) using :ref:`projectconf_test_port` , starts
+    test, collects results and shows test results on the local host machine.
 
-* Project builder
-* Test builder
-* Firmware uploader (is used only for embedded test)
-* Test processor
+    Currently, |PIOUTE| supports these frameworks:
 
-There is special command :ref:`cmd_test` to run tests from PlatformIO Project.
-It allows to process specific environments or to ignore some tests using
-"Glob patterns".
+    * :ref:`framework_arduino`
+    * :ref:`framework_energia`
+    * :ref:`framework_mbed`.
 
-Also, is possible to ignore some tests for specific environment using
-:ref:`projectconf_test_ignore` option from :ref:`projectconf`.
+    .. note::
+        Please note that |PIOUTF| uses Serial/UART as communication interface
+        between PlatformIO Unit Test Engine and target device. If you use
+        ``Serial`` in your project, please wrap/hide Serial-based blocks with
+        ``#ifndef UNIT_TEST`` macro.
+
+
+There are 2 options how to run tests:
+
+1.  **Local**. Allows to run tests on local host machine or on the target devices
+    (boards) that are directly connected to this machine. In this case, need to
+    use :ref:`cmd_test` command.
+
+2.  **Remote**. Allows to run tests on remote machine or remote target device
+    (board) without any dependencies to OS software, extra software, SSH, VPN
+    or opening network ports. Remote Unit Testing works in pair with
+    :ref:`pio_remote`. In this case, need to use special command
+    :ref:`cmd_remote_test`.
+
+Both commands allow to process specific environments or to ignore some tests
+using "Glob patterns". Also, you will be able to ignore some tests for
+specific environment using :ref:`projectconf_test_ignore` option
+from :ref:`projectconf`.
 
 .. contents::
 
@@ -62,13 +88,13 @@ Demo of `Local & Embedded: Calculator <https://github.com/platformio/platformio-
 Design
 ------
 
-PlatformIO Testing Engine design is based on a few isolated components:
+|PIOUTE| design is based on a few isolated components:
 
-1. **Main program**. Contains the independent modules, procedures,
+1. **Main Program**. Contains the independent modules, procedures,
    functions or methods that will be the target candidates (TC) for testing.
-2. **Unit test**. This a small independent program that is intended to
+2. **Unit Test**. This a small independent program that is intended to
    re-use TC from the main program and apply tests for them.
-3. **Test processor**. The set of approaches and tools that will be used
+3. **Test Processor**. The set of approaches and tools that will be used
    to apply test for the environments from :ref:`projectconf`.
 
 Workflow
@@ -153,7 +179,7 @@ Workflow
 6. Place test to ``test`` directory. If you have more than one test, split them
    into sub-folders. For example, ``test/test_1/*.[c,cpp,h]``,
    ``test_N/*.[c,cpp,h]``, etc. If no such directory in ``test`` folder, then
-   PlatformIO Testing Engine will treat the source code of ``test`` folder
+   |PIOUTE| will treat the source code of ``test`` folder
    as SINGLE test.
 7. Run tests using :ref:`cmd_test` command.
 
@@ -248,7 +274,9 @@ User Guide (CLI)
 .. toctree::
     :maxdepth: 3
 
+    platformio account <../userguide/account/index>
     platformio test <../userguide/cmd_test>
+    platformio remote test <../userguide/remote/cmd_test>
 
 --------------
 

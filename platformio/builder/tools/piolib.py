@@ -214,8 +214,11 @@ class LibBuilderBase(object):
         for item in self.dependencies:
             skip = False
             for key in ("platforms", "frameworks"):
-                if (key in item and not self.items_in_list(
-                        self.env["PIO" + key.upper()[:-1]], item[key])):
+                env_key = "PIO" + key.upper()[:-1]
+                if env_key not in self.env:
+                    continue
+                if (key in item and
+                        not self.items_in_list(self.env[env_key], item[key])):
                     if verbose:
                         sys.stderr.write("Skip %s incompatible dependency %s\n"
                                          % (key[:-1], item))
@@ -507,7 +510,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
                 isdir(join(self.path, "utility"))):
             inc_dirs.append(join(self.path, "utility"))
 
-        for path in self.env['CPPPATH']:
+        for path in self.env.get("CPPPATH", []):
             if path not in self.envorigin['CPPPATH']:
                 inc_dirs.append(self.env.subst(path))
         return inc_dirs

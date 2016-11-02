@@ -9,12 +9,12 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _cmd_test:
+.. _cmd_remote_test:
 
-platformio test
-===============
+platformio remote test
+======================
 
-Helper command for local :ref:`unit_testing`.
+Helper command for remote :ref:`unit_testing`.
 
 .. contents::
 
@@ -23,12 +23,15 @@ Usage
 
 .. code-block:: bash
 
-    platformio test [OPTIONS]
+    platformio remote test [OPTIONS]
+
+    # run tests on specified PIO Remote Agent
+    platformio remote --agent NAME test [OPTIONS]
 
 Description
 -----------
 
-Run locally tests from PlatformIO based project. More details about PlatformIO
+Run remotely tests from PlatformIO based project. More details about PlatformIO
 :ref:`unit_testing`.
 
 This command allows you to apply the tests for the environments specified
@@ -37,7 +40,7 @@ in :ref:`projectconf`.
 Options
 -------
 
-.. program:: platformio test
+.. program:: platformio remote test
 
 .. option::
     -e, --environment
@@ -70,7 +73,7 @@ environment, please take a look at :ref:`projectconf_test_ignore` option from
     * - ``[!seq]``
       - matches any character not in seq
 
-For example, ``platformio test --ignore "mytest*" -i "test[13]"``
+For example, ``platformio remote test --ignore "mytest*" -i "test[13]"``
 
 .. option::
     --upload-port
@@ -94,6 +97,18 @@ If test port is not specified, PlatformIO will try to detect it automatically.
 
 Specify the path to project directory. By default, ``--project-dir`` is equal
 to current working directory (``CWD``).
+
+.. option::
+    -r, --build-remotely
+
+By default, :ref:`pio_remote` builds project on the local machine and deploy
+final testing firmware Over-The-Air (OTA) to remote device.
+
+If you need to build project on remote machine, please use
+:option:`platformio remote test --build-remotely` option. In this case,
+:ref:`pio_remote` will automatically deploy your project to remote machine,
+install required toolchains, frameworks, SDKs, etc and process tests.
+
 
 .. option::
     --without-building

@@ -648,7 +648,7 @@ This option is used by "uploader" tool when sending firmware to board via
 If ``upload_port`` isn't specified, then *PlatformIO* will try to detect it
 automatically.
 
-To print all available serial ports use :ref:`cmd_device` command.
+To print all available serial ports use :ref:`cmd_device_list` command.
 
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_UPLOAD_PORT`.
@@ -841,9 +841,9 @@ Test options
 .. seealso::
     Please make sure to read :ref:`unit_testing` guide first.
 
-Ignore tests where the name matches specified patterns. Multiple names are
-allowed. Please separate them using comma+space ", ". Also, you can
-ignore some tests using :option:`platformio test --ignore` command.
+Ignore :ref:`unit_testing` tests where the name matches specified patterns.
+Multiple names are allowed. Please separate them using comma+space ", ". Also,
+you can ignore some tests using :option:`platformio test --ignore` command.
 
 .. list-table::
     :header-rows:  1
@@ -869,6 +869,22 @@ ignore some tests using :option:`platformio test --ignore` command.
 
   [env:myenv]
   test_ignore = footest, bartest_*, test[13]
+
+.. _projectconf_test_port:
+
+``test_port``
+^^^^^^^^^^^^^
+
+This option is used as communication interface (Serial/UART) between PlatformIO
+:ref:`unit_testing` Engine and target device. For example,
+
+* ``/dev/ttyUSB0`` - Unix-based OS
+* ``COM3`` - Windows OS
+
+If ``test_port`` isn't specified, then *PlatformIO* will try to detect it
+automatically.
+
+To print all available serial ports use :ref:`cmd_device_list` command.
 
 
 Advanced options

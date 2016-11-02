@@ -51,7 +51,7 @@ def remote_agent_list():
     pioplus_call(sys.argv[1:])
 
 
-@cli.command("run", short_help="Process project environments")
+@cli.command("run", short_help="Process project environments remotely")
 @click.option("-e", "--environment", multiple=True)
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")
@@ -65,26 +65,49 @@ def remote_agent_list():
         dir_okay=True,
         writable=True,
         resolve_path=True))
+@click.option("--disable-auto-clean", is_flag=True)
+@click.option("-r", "--build-remotely", is_flag=True)
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
-@click.option("-r", "--build-remotely", is_flag=True)
-@click.option("--disable-auto-clean", is_flag=True)
 def remote_run(**kwargs):
     pioplus_call(sys.argv[1:])
 
 
-@cli.group("device", short_help="Monitor device or list existing")
+@cli.command("test", short_help="Remote Unit Testing")
+@click.option("--environment", "-e", multiple=True, metavar="<environment>")
+@click.option("--ignore", "-i", multiple=True, metavar="<pattern>")
+@click.option("--upload-port")
+@click.option("--test-port")
+@click.option(
+    "-d",
+    "--project-dir",
+    default=getcwd,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        resolve_path=True))
+@click.option("-r", "--build-remotely", is_flag=True)
+@click.option("--without-building", is_flag=True)
+@click.option("--without-uploading", is_flag=True)
+@click.option("--verbose", "-v", is_flag=True)
+def remote_test(**kwargs):
+    pioplus_call(sys.argv[1:])
+
+
+@cli.group("device", short_help="Monitor remote device or list existing")
 def remote_device():
     pass
 
 
-@remote_device.command("list", short_help="List devices")
+@remote_device.command("list", short_help="List remote devices")
 @click.option("--json-output", is_flag=True)
 def device_list(json_output):
     pioplus_call(sys.argv[1:])
 
 
-@remote_device.command("monitor", short_help="Monitor device (Serial)")
+@remote_device.command("monitor", short_help="Monitor remote device")
 @click.option("--port", "-p", help="Port, a number or a device name")
 @click.option(
     "--baud", "-b", type=int, default=9600, help="Set baud rate, default=9600")
