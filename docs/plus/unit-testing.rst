@@ -68,6 +68,9 @@ There are 2 options how to run tests:
     :ref:`pio_remote`. In this case, need to use special command
     :ref:`cmd_remote_test`.
 
+    PlatformIO supports multiple :ref:`ci` systems that can run project
+    unit tests automatically.
+
 Both commands allow to process specific environments or to ignore some tests
 using "Glob patterns". Also, you will be able to ignore some tests for
 specific environment using :ref:`projectconf_test_ignore` option
