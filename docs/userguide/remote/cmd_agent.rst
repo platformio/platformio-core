@@ -51,7 +51,7 @@ Example
 
     > platformio remote agent list
 
-    PlatformIO Plus (https://pioplus.com) v0.3.1
+    PlatformIO Plus (https://pioplus.com)
 
     innomac.local
     -------------

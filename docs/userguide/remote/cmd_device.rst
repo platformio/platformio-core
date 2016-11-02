@@ -71,7 +71,7 @@ Example
 
     > platformio remote device list
 
-    PlatformIO Plus (https://pioplus.com) v0.3.1
+    PlatformIO Plus (https://pioplus.com)
 
     Agent innomac.local
     ===================
@@ -106,6 +106,8 @@ Example
 platformio remote device monitor
 --------------------------------
 
+**Over-The-Air (OTA) Serial Port Monitor**
+
 Usage
 ~~~~~
 
@@ -121,8 +123,8 @@ Usage
 Description
 ~~~~~~~~~~~
 
-Connect to remote device Over-The-Air (OTA) and receive or send data in
-real time. :ref:`pio_remote_agent` should be started before.
+Connect to Serial Port of remote device Over-The-Air (OTA) and receive or
+send data in real time. :ref:`pio_remote_agent` should be started before.
 
 To control *monitor* please use these "hot keys":
 

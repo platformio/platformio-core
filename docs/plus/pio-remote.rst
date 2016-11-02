@@ -40,6 +40,7 @@ Features
 
 * :ref:`ide_cloud`
 * :ref:`OTA Device Manager <cmd_remote_device>`
+* :ref:`OTA Serial Port Monitor <cmd_remote_device_monitor>`
 * :ref:`OTA Firmware Updates <cmd_remote_run>`
 * Continuous Deployment
 * Continuous Delivery

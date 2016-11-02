@@ -59,3 +59,8 @@ def account_token(**kwargs):
 @click.option("-u", "--username")
 def account_forgot(**kwargs):
     pioplus_call(sys.argv[1:])
+
+
+@cli.command("info", short_help="PIO Account information: groups, permissions")
+def account_info():
+    pioplus_call(sys.argv[1:])

@@ -9,34 +9,25 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _cmd_account:
+.. _cmd_account_info:
 
-PIO Account
-===========
+platformio account info
+=======================
 
-Having **PIO Account** allows you to use extra professional features from
-`PlatformIO Plus <https://pioplus.com/>`__:
+.. contents::
 
-* :ref:`pio_remote`
-* :ref:`unit_testing`
-
-A registration is **FREE**.
-
-To print all available commands and options use:
+Usage
+-----
 
 .. code-block:: bash
 
-    platformio account --help
-    platformio account COMMAND --help
+    platformio account info
 
 
-.. toctree::
-    :maxdepth: 2
+Description
+-----------
 
-    cmd_forgot
-    cmd_info
-    cmd_login
-    cmd_logout
-    cmd_password
-    cmd_register
-    cmd_token
+Show detailed information about :ref:`cmd_account`:
+
+* Active groups and expiration
+* Group permissions
