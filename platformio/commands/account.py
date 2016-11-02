@@ -49,6 +49,12 @@ def account_password():
     pioplus_call(sys.argv[1:])
 
 
+@cli.command("token", short_help="Get or regenerate Authentication Token")
+@click.option("--regenerate", is_flag=True)
+def account_token(**kwargs):
+    pioplus_call(sys.argv[1:])
+
+
 @cli.command("forgot", short_help="Forgot password")
 @click.option("-u", "--username")
 def account_forgot(**kwargs):

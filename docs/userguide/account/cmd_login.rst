@@ -27,7 +27,9 @@ Usage
 Description
 -----------
 
-Log in to :ref:`cmd_account`.
+Log in to :ref:`cmd_account`. If you are not able to provide authentication
+credentials manually you can use :envvar:`PLATFORMIO_AUTH_TOKEN`. This is
+very useful for :ref:`ci` systems and :ref:`pio_remote` operations .
 
 Options
 ~~~~~~~

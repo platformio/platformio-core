@@ -21,6 +21,19 @@ will behave on a computer.
 *PlatformIO* handles variables which start with ``PLATFORMIO_`` prefix. They
 have the **HIGHEST PRIORITY**.
 
+How to set environment variable?
+
+.. code-block:: bash
+
+    # Windows
+    set VARIABLE_NAME=VALUE
+
+    # Unix (bash, zsh)
+    export VARIABLE_NAME=VALUE
+
+    # Unix (fish)
+    set -x VARIABLE_NAME VALUE
+
 .. contents::
 
 General
@@ -37,6 +50,15 @@ PlatformIO handles ``CI`` variable which is setup by
 PlatformIO uses it to disable prompts and progress bars. In other words,
 ``CI=true`` automatically setup :envvar:`PLATFORMIO_DISABLE_PROGRESSBAR` to
 ``true``.
+
+.. envvar:: PLATFORMIO_AUTH_TOKEN
+
+Allows to specify Personal Authentication Token that could be used for
+automatic login in to :ref:`cmd_account`. It is very useful for :ref:`ci`
+systems and :ref:`pio_remote` operations where you are not able manually authorize.
+
+You can get own Personal Authentication Token using :ref:`cmd_account_token`
+command.
 
 .. envvar:: PLATFORMIO_FORCE_COLOR
 
@@ -164,7 +186,6 @@ Allows to override setting :ref:`setting_enable_telemetry`.
 .. envvar:: PLATFORMIO_SETTING_FORCE_VERBOSE
 
 Allows to override setting :ref:`setting_force_verbose`.
-
 
 .. envvar:: PLATFORMIO_SETTING_ENABLE_SSL
 

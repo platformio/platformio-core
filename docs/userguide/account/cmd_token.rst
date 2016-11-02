@@ -9,33 +9,36 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _cmd_account:
+.. _cmd_account_token:
 
-PIO Account
-===========
+platformio account token
+===========================
 
-Having **PIO Account** allows you to use extra professional features from
-`PlatformIO Plus <https://pioplus.com/>`__:
+.. contents::
 
-* :ref:`pio_remote`
-* :ref:`unit_testing`
-
-A registration is **FREE**.
-
-To print all available commands and options use:
+Usage
+-----
 
 .. code-block:: bash
 
-    platformio account --help
-    platformio account COMMAND --help
+    platformio account token
 
 
-.. toctree::
-    :maxdepth: 2
+Description
+-----------
 
-    cmd_forgot
-    cmd_login
-    cmd_logout
-    cmd_password
-    cmd_register
-    cmd_token
+Get or regenerate Personal Authentication Token. It is very useful for :ref:`ci`
+systems, :ref:`pio_remote` operations where you are not able manually authorize.
+
+PlatformIO handles Personal Authentication Token from environment variable
+:envvar:`PLATFORMIO_AUTH_TOKEN`.
+
+Options
+~~~~~~~
+
+.. program:: platformio account token
+
+.. option::
+    --regenerate
+
+    If this option is specified a new authentication token will be generated.
