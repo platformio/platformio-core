@@ -18,6 +18,7 @@ Having **PIO Account** allows you to use extra professional features from
 `PlatformIO Plus <https://pioplus.com/>`__:
 
 * :ref:`pio_remote`
+* :ref:`ide_cloud`
 * :ref:`unit_testing`
 
 A registration is **FREE**.

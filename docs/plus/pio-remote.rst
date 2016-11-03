@@ -85,6 +85,9 @@ connected physically to host machine where |PIORemote| Agent is started,
 where wireless devices should be visible for |PIORemote| Agent to provide
 network operations Over-The-Air.
 
+To list active |PIORemote| Agents, please use :ref:`cmd_remote_agent_list`
+command.
+
 User Guide (CLI)
 ----------------
 

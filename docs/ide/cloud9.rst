@@ -141,7 +141,6 @@ OTA Device Manager
 Over-The-Air (OTA) Device Manager works in pair with :ref:`pio_remote`.
 You can list remote devices that are connected to host machine where
 :ref:`pio_remote_agent` is started or are visible for it.
-To list active agents please use this command :ref:`cmd_remote_agent_list`.
 
 Let's create New Run Configuration (shortcut) that will be used for OTA Manager.
 Please click on ``Menu: Run > Run Configurations > Manage...``, then
@@ -153,12 +152,13 @@ Please click on ``Menu: Run > Run Configurations > Manage...``, then
 
 .. image:: ../_static/ide/cloud9/ide-cloud9-runner-ota-devices.png
 
+.. _ide_cloud9_ota_updates:
+
 OTA Firmware Uploading
 ----------------------
 
 Over-The-Air (OTA) Firmware Uploading works in pair with :ref:`pio_remote`.
 You can deploy firmware to any devices which are visible for :ref:`pio_remote_agent`.
-To list active agents please use this command :ref:`cmd_remote_agent_list`.
 
 Let's create New Run Configuration (shortcut) that will be used for OTA Uploads.
 Please click on ``Menu: Run > Run Configurations > Manage...``, then
@@ -187,3 +187,33 @@ Please click on ``Menu: Run > Run Configurations > Manage...``, then
 * **Runner**: set to "Shell command"
 
 .. image:: ../_static/ide/cloud9/ide-cloud9-runner-ota-serial-monitor.png
+
+Multi-Project workspace
+-----------------------
+
+You can have multiple PlatformIO-based project in the same workspace. We
+recommend a next folders structure:
+
+.. code::
+
+    ├── project-A
+    │   ├── lib
+    │   │   └── readme.txt
+    │   ├── platformio.ini
+    │   └── src
+    │       └── main.ino
+    └── project-B
+        ├── lib
+        │   └── readme.txt
+        ├── platformio.ini
+        └── src
+            ├── main.cpp
+            └── main.h
+
+In this case, you need to create 2 "New Run Configuration" for
+:ref:`ide_cloud9_ota_updates` with using the next **commands**:
+
+* ``pio remote run --project-dir project-A -t upload`` for Project-A
+* ``pio remote run -d project-B -t upload`` for Project-B
+
+See documentation for :option:`platformio remote run --project-dir` option.
