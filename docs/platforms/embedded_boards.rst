@@ -2727,19 +2727,6 @@ Solder Splash Labs
       - 32 Kb
       - 8 Kb
 
-SolderSplash Labs
-~~~~~~~~~~~~~~~~~
-
-.. list-table::
-    :header-rows:  1
-
-    * - ID
-      - Name
-      - Microcontroller
-      - Frequency
-      - Flash
-      - RAM
-
     * - ``lpc1347``
       - `DipCortex M3 <https://developer.mbed.org/platforms/DipCortex-M3/>`_
       - LPC1347
