@@ -48,6 +48,13 @@ Please make sure to read Travis CI `Getting Started <http://docs.travis-ci.com/u
 and `general build configuration <http://docs.travis-ci.com/user/customizing-the-build/>`_
 guides first.
 
+.. note::
+    If you are going to use PlatformIO :ref:`unit_testing` or :ref:`pio_remote`
+    you will need to define :envvar:`PLATFORMIO_AUTH_TOKEN` environment
+    variable in project settings. See
+    `Defining Variables in Repository Settings <https://docs.travis-ci.com/user/environment-variables/#Defining-Variables-in-Repository-Settings>`_
+    guide.
+
 PlatformIO is written in Python and is recommended to be run within
 `Travis CI Python isolated environment <http://docs.travis-ci.com/user/languages/python/#Travis-CI-Uses-Isolated-virtualenvs>`_:
 
@@ -79,7 +86,7 @@ Then perform steps 1, 2 and 4 from http://docs.travis-ci.com/user/getting-starte
 For more details as for PlatformIO build process please look into :ref:`cmd_ci`.
 
 Project as a library
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 When project is written as a library (where own examples or testing code use
 it), please use ``--lib="."`` option for :ref:`cmd_ci` command
@@ -90,7 +97,7 @@ it), please use ``--lib="."`` option for :ref:`cmd_ci` command
         - platformio ci --lib="." --board=<ID_1> --board=<ID_2> --board=<ID_N>
 
 Library dependencies
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 There 2 options to test source code with dependent libraries:
 
@@ -124,7 +131,7 @@ Manually download dependent library and include in build process via ``--lib`` o
         - platformio ci --lib="/tmp/OneWire-master" --board=<ID_1> --board=<ID_2> --board=<ID_N>
 
 Custom Build Flags
-~~~~~~~~~~~~~~~~~~
+------------------
 
 PlatformIO allows to specify own build flags using :envvar:`PLATFORMIO_BUILD_FLAGS` environment
 
@@ -145,7 +152,7 @@ For the more details, please follow to
 
 
 Advanced configuration
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 PlatformIO allows to configure multiple build environments for the single
 source code using :ref:`projectconf`.
@@ -156,6 +163,11 @@ Instead of ``--board`` option, please use :option:`platformio ci --project-conf`
 
     script:
         - platformio ci --project-conf=/path/to/platoformio.ini
+
+Unit Testing
+------------
+
+See `PlatformIO Remote Unit Testing Example <https://github.com/platformio/platformio-remote-unit-testing-example>`_.
 
 Examples
 --------

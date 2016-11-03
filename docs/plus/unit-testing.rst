@@ -38,8 +38,8 @@ Demo of `Local & Embedded: Calculator <https://github.com/platformio/platformio-
 Test Types
 ----------
 
-Desktop Test
-~~~~~~~~~~~~
+Desktop
+~~~~~~~
 
 PlatformIO wraps test and main program (from :ref:`projectconf_pio_src_dir`)
 with own |PIOUTF|, builds final program using :ref:`platform_native` and run
@@ -51,8 +51,8 @@ test on a local host machine (desktop).
     on your local machine.
     Please open Terminal and check that ``gcc`` command is installed.
 
-Embedded Test
-~~~~~~~~~~~~~
+Embedded
+~~~~~~~~
 
 PlatformIO wraps test and main firmware (from :ref:`projectconf_pio_src_dir`)
 with own |PIOUTF|, builds special firmware for a target device and upload it.
@@ -95,7 +95,8 @@ ports. Remote Unit Testing works in pair with :ref:`pio_remote`. In this case,
 need to use special command :ref:`cmd_remote_test`.
 
 PlatformIO supports multiple :ref:`ci` systems where you can run unit tests
-on each integration stage.
+on each integration stage. See real
+`PlatformIO Remote Unit Testing Example <https://github.com/platformio/platformio-remote-unit-testing-example>`__.
 
 .. _unit_testing_design:
 
@@ -527,6 +528,7 @@ Test results
 Examples
 --------
 
+* `PlatformIO Remote Unit Testing Example <https://github.com/platformio/platformio-remote-unit-testing-example>`__
 * `Embedded: Wiring Blink <https://github.com/platformio/platformio-examples/tree/develop/unit-testing/wiring-blink>`_
 * `Local & Embedded: Calculator <https://github.com/platformio/platformio-examples/tree/develop/unit-testing/calculator>`_
 
