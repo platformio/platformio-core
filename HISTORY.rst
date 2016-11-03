@@ -8,10 +8,17 @@ PlatformIO 3.0
 ~~~~~~~~~~~~~~~~~~
 
 * `PIO Remote™ <http://docs.platformio.org/en/latest/plus/pio-remote.html>`__.
-  Your devices are always with you!
+  **Your devices are always with you!**
+
+    + Over-The-Air (OTA) Device Manager
+    + OTA Serial Port Monitor
+    + OTA Firmware Updates
+    + Continuous Deployment
+    + Continuous Delivery
+
 * `PIO Account <http://docs.platformio.org/en/latest/userguide/account/index.html>`__
-  for extra professional features from `PlatformIO Plus <https://pioplus.com>`__
-  and ``PLATFORMIO_AUTH_TOKEN`` environment variable for CI systems
+  and `PLATFORMIO_AUTH_TOKEN <http://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_AUTH_TOKEN>`__
+  environment variable for CI systems
 * Inject system environment variables to configuration settings in
   `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
   (`issue #792 <https://github.com/platformio/platformio/issues/792>`_)
