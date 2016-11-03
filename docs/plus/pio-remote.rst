@@ -76,7 +76,7 @@ Quick Start
 -----------
 
 1.  Start |PIORemote| Agent using :ref:`cmd_remote_agent_start` command on a
-    on a host machine where devices are connected physically or are visible
+    host machine where devices are connected physically or are visible
     via network. |PIORemote| **Agent works on Windows, macOS, Linux and Linux ARMv6+**.
     It means that you can use desktop machine, laptop or credit card sized PC
     (RaspberryPi, BeagleBoard, etc).
@@ -84,12 +84,13 @@ Quick Start
     You can share own devices/hardware with friends, team or other developers
     using :option:`platformio remote agent start --share` option.
 
-2.  Using the same :ref:`cmd_account` please login in to other machine or Cloud
-    IDE. You don't need to have network or other access to host machine where
-    |PIORemote| Agent is started. Just use :ref:`cmd_remote` commands and
-    PlatformIO will automatically process all local commands Over-The-Air (OTA)
-    on a remote machine.
+2.  Using other machine or :ref:`ide_cloud` Terminal in the browser, please authorize
+    using :ref:`cmd_account_login` command with the same credentials that you
+    used on the previous step. Now, you can use :ref:`cmd_remote` commands to
+    work with remote devices Over-The-Air (OTA).
 
+    You don't need to have network or other access to host machine where
+    |PIORemote| Agent is started.
 
 .. note::
     Please use local IP as "upload port" when device is not connected directly
