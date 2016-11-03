@@ -102,8 +102,14 @@ class MeasurementProtocol(TelemetryBase):
             self['cd5'] = caller_id.lower()
 
     def _prefill_screen_name(self):
-        self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
 
+        def _first_arg_from_list(args_, list_):
+            for _arg in args_:
+                if _arg in list_:
+                    return _arg
+            return None
+
+        self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
         if not app.get_session_var("command_ctx"):
             return
         ctx_args = app.get_session_var("command_ctx").args
@@ -111,12 +117,25 @@ class MeasurementProtocol(TelemetryBase):
         if not args:
             return
         cmd_path = args[:1]
-        if args[0] in ("lib", "platform", "platforms", "serialports", "device",
-                       "settings", "remote"):
+        if args[0] in ("platform", "platforms", "serialports", "device",
+                       "settings"):
             cmd_path = args[:2]
-            if args[0] == "remote":
-                if len(args) > 2 and args[1] in ("agent", "device"):
-                    cmd_path = args[:3]
+        if args[0] == "lib" and len(args) > 1:
+            lib_subcmds = ("install", "list", "register", "search", "show",
+                           "uninstall", "update")
+            sub_cmd = _first_arg_from_list(args[1:], lib_subcmds)
+            if sub_cmd:
+                cmd_path.append(sub_cmd)
+        elif args[0] == "remote" and len(args) > 1:
+            remote_subcmds = ("agent", "device", "run", "test")
+            sub_cmd = _first_arg_from_list(args[1:], remote_subcmds)
+            if sub_cmd:
+                cmd_path.append(sub_cmd)
+                if len(args) > 2 and sub_cmd in ("agent", "device"):
+                    remote2_subcmds = ("list", "start", "monitor")
+                    sub_cmd = _first_arg_from_list(args[2:], remote2_subcmds)
+                    if sub_cmd:
+                        cmd_path.append(sub_cmd)
         self['screen_name'] = " ".join([p.title() for p in cmd_path])
 
     def send(self, hittype):
