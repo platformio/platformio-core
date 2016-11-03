@@ -9,16 +9,18 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _ide_cloud9:
+.. _ide_codeanywhere:
 
-Cloud9
-======
+Codeanywhere
+============
 
-`Cloud9 <https://c9.io/>`_ combines a powerful online code editor with a full
-Ubuntu workspace in the cloud.
-Workspaces are powered by Docker Ubuntu containers that give you full freedom
-over your environment, including sudo rights. Do a git push, compile SASS, see
-server output, and Run apps easily with the built-in Terminal and Runners.
+`Codeanywhere <https://codeanywhere.com>`_ is a Cross Platform Cloud IDE and
+it has all the features of Desktop IDE but with additional features only a
+cloud application can give you! Codeanywhere is very flexible and you can set
+up your workflow any way you want it. The elegant development environment
+will let you focus on building great applications quicker. All the features
+you will need for any coding task are built into Codeanywhere, making
+development more productive and fun.
 
 .. contents::
 
@@ -32,27 +34,35 @@ server output, and Run apps easily with the built-in Terminal and Runners.
 Demo
 ----
 
-.. image:: ../_static/ide/cloud9/ide-cloud9-demo.jpg
-    :target: https://www.youtube.com/watch?v=NX56_0Ea_K8
+.. image:: ../_static/ide/codeanywhere/ide-codeanywhere-demo.jpg
+    :target: https://youtu.be/NX56_0Ea_K8?t=148
 
 Integration
 -----------
 
-1.  `Sign in to Cloud9 <https://c9.io/dashboard.html>`_. A registration is FREE
-    and gives you for FREE 1 private workspace (where you can host multiple
-    PlatformIO Projects) and unlimited public workspaces.
+1.  `Sign in to Codeanywhere <https://codeanywhere.com>`_. A registration is
+    FREE and gives you unlimited private projects within the one Container.
 
-2.  Create a new workspace using **Blank** template
+2.  Open `Dashboard Projects <https://codeanywhere.com/dashboard#project>`_
 
-.. image:: ../_static/ide/cloud9/ide-cloud9-new-workspace.png
+3.  Create a new Project and open it. In Connection Wizard create new Container:
 
-3. Install PlatformIO CLI using Cloud IDE Terminal. Paste a next command
+    * **Name** set to "PlatformIO"
+    * **Stack** search for ``Python`` stack (not Python3) that is based on
+      Ubuntu OS.
+    * Click on "Create" button.
+
+.. image:: ../_static/ide/codeanywhere/ide-codeanywhere-connection-wizard.png
+
+3.  Open **SSH-Terminal** tab (right click on
+    ``Container (PlatformIO) > SSH Terminal``) and install PlatformIO CLI using
+    a next command
 
 .. code-block:: bash
 
     sudo python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/develop/scripts/get-platformio.py)"
 
-.. image:: ../_static/ide/cloud9/ide-cloud9-install-pio-cli.png
+.. image:: ../_static/ide/Codeanywhere/ide-codeanywhere-install-pio-cli.png
 
 4.  Log in to :ref:`cmd_account` using :ref:`cmd_account_login` command.
 
@@ -60,10 +70,10 @@ Integration
 Quick Start
 -----------
 
-Let's create our first PlatformIO-based Cloud9 Project
+Let's create our first PlatformIO-based Codeanywhere Project
 
-1.  Initialize new PlatformIO-based Project. Run a next command in Cloud IDE
-    Terminal:
+1.  Initialize new PlatformIO-based Project. Run a next command in a
+    Cloud IDE SSH Terminal:
 
     .. code-block:: bash
 
@@ -75,9 +85,12 @@ Let's create our first PlatformIO-based Cloud9 Project
     To get board ``ID`` please use :ref:`cmd_boards` command or
     `Embedded Boards Explorer <http://platformio.org/boards>`_.
 
+    If you do not see created project, please refresh Project Tree using
+    right-click on ``Container Name (PlatformIO) > Refresh``.
+
 2.  Create new source file named ``main.cpp`` in ``src`` folder using
     Project Tree (left side). Please make right click on ``src`` folder,
-    then "New File" and insert a next content:
+    then "Create File" and insert a next content:
 
     .. code-block:: c
 
@@ -87,7 +100,7 @@ Let's create our first PlatformIO-based Cloud9 Project
 
         void setup() {
             Serial.begin(9600);
-            Serial.println("Hello Cloud9!");
+            Serial.println("Hello Codeanywhere!");
         }
 
         void loop() {
@@ -101,10 +114,10 @@ Let's create our first PlatformIO-based Cloud9 Project
             delay(100);
         }
 
-.. image:: ../_static/ide/cloud9/ide-cloud9-init-project.png
+.. image:: ../_static/ide/codeanywhere/ide-codeanywhere-init-project.png
 
 3.  If you prefer to work with PlatformIO CLI, then you can process project
-    using Cloud IDE Terminal and the next commands:
+    using Cloud IDE SSH Terminal and the next commands:
 
     * :ref:`cmd_run` - build project
     * :ref:`pio run -t clean <cmd_run>` - clean project
@@ -112,30 +125,30 @@ Let's create our first PlatformIO-based Cloud9 Project
     * :ref:`cmd_remote_device_list` - list available devices (OTA Device Manager)
     * :ref:`cmd_remote_device_monitor` - OTA Serial Port Monitor
 
-    If you are interested in better integration with Cloud9 and GUI, please
-    read guide below where we will explain how to create custom Build System
-    for PlatformIO and own Runners.
+4.  We recommend to hide "Hidden Files". You can do that via
+    ``Cloud IDE Menu: View > Show Hidden Files``.
 
-PlatformIO Build System
------------------------
+Run Button
+----------
 
-Cloud9 allows to create own build system and use hotkey or command
-(Menu: Run > Build) to build a project.
+Codeanywhere provides a quick "Run Project" button where you can specify own
+command. Let's add "PlatformIO Build Project" command:
 
-Let's create PlatformIO Build System that will be used for C/C++/H/INO/PDE
-files by default. Please click on ``Menu: Run > Build System > New Build System``
-and replace all content with the next:
+1. Open "Project Config" via right click on ``Container Name (PlatformIO) > Config``
+2. Set ``commands`` field to
 
-.. code-block:: js
+    .. code-block:: js
 
-    {
-        "cmd" : ["pio", "run", "-d", "$file"],
-        "info" : "Building $project_path/$file_name",
-        "selector": "^.*\\.(cpp|c|h|hpp|S|ini|ino|pde)$"
-    }
+        "commands": [
+            "pio run"
+        ]
 
-Save new Build System and give a name ``PIOBuilder``. Now, you can select it
-as default Build System using ``Menu: Run > Build System > PIOBuilder``.
+3. Save configuration file.
+
+Now, try to click on "Run Project" button. You can assign any PlatformIO
+command to this button.
+
+.. image:: ../_static/ide/codeanywhere/ide-codeanywhere-project-config.png
 
 OTA Device Manager
 ------------------
@@ -144,17 +157,14 @@ Over-The-Air (OTA) Device Manager works in pair with :ref:`pio_remote`.
 You can list remote devices that are connected to host machine where
 :ref:`pio_remote_agent` is started or are visible for it.
 
-Let's create New Run Configuration (shortcut) that will be used for OTA Manager.
-Please click on ``Menu: Run > Run Configurations > Manage...``, then
-"Add New Config" and specify the next values:
+1. Open Cloud IDE SSH Terminal
+2. Paste this command
 
-* **First Blank Input**: a name of runner. Please set it to "PIO: Remote Devices"
-* **Command**: set to ``pio remote device list``
-* **Runner**: set to "Shell command"
+    .. code-block:: bash
 
-.. image:: ../_static/ide/cloud9/ide-cloud9-runner-ota-devices.png
+        pio remote device list
 
-.. _ide_cloud9_ota_updates:
+.. image:: ../_static/ide/codeanywhere/ide-codeanywhere-ota-devices.png
 
 OTA Firmware Uploading
 ----------------------
@@ -162,15 +172,14 @@ OTA Firmware Uploading
 Over-The-Air (OTA) Firmware Uploading works in pair with :ref:`pio_remote`.
 You can deploy firmware to any devices which are visible for :ref:`pio_remote_agent`.
 
-Let's create New Run Configuration (shortcut) that will be used for OTA Uploads.
-Please click on ``Menu: Run > Run Configurations > Manage...``, then
-"Add New Config" and specify the next values:
+1. Open Cloud IDE SSH Terminal
+2. Paste this command
 
-* **First Blank Input**: a name of runner. Please set it to "PIO: Remote Upload"
-* **Command**: set to ``pio remote run -t upload``
-* **Runner**: set to "Shell command"
+    .. code-block:: bash
 
-.. image:: ../_static/ide/cloud9/ide-cloud9-runner-ota-uploading.png
+        pio remote run -t upload
+
+.. image:: ../_static/ide/codeanywhere/ide-codeanywhere-ota-uploading.png
 
 OTA Serial Port Monitor
 -----------------------
@@ -180,15 +189,14 @@ You can read or send data to any device that is connected to host machine
 where :ref:`pio_remote_agent` is started.
 To list active agents please use this command :ref:`cmd_remote_agent_list`.
 
-Let's create New Run Configuration (shortcut) that will be used for OTA Serial Port Monitor.
-Please click on ``Menu: Run > Run Configurations > Manage...``, then
-"Add New Config" and specify the next values:
+1. Open Cloud IDE SSH Terminal
+2. Paste this command
 
-* **First Blank Input**: a name of runner. Please set it to "PIO: Remote Serial Monitor"
-* **Command**: set to ``pio remote device monitor``
-* **Runner**: set to "Shell command"
+    .. code-block:: bash
 
-.. image:: ../_static/ide/cloud9/ide-cloud9-runner-ota-serial-monitor.png
+        pio remote device monitor
+
+.. image:: ../_static/ide/codeanywhere/ide-codeanywhere-ota-serial-monitor.png
 
 Multi-Project workspace
 -----------------------
@@ -212,10 +220,13 @@ recommend a next folders structure:
             ├── main.cpp
             └── main.h
 
-In this case, you need to create 2 "New Run Configuration" for
-:ref:`ide_cloud9_ota_updates` with using the next **commands**:
+In this case, you need to use ``-d, --project-dir`` option for :ref:`cmd_run`
+or :ref:`cmd_remote_run` commands:
 
-* ``pio remote run --project-dir project-A -t upload`` for Project-A
-* ``pio remote run -d project-B -t upload`` for Project-B
+* ``pio remote run --project-dir project-A -t upload`` build Project-A
+* ``pio remote run --project-dir project-A -t upload`` upload OTA Firmware
+    using Project-A
+* ``pio remote run -d project-B -t upload`` upload OTA Firmware
+    using Project-B
 
 See documentation for :option:`platformio remote run --project-dir` option.

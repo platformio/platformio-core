@@ -23,6 +23,7 @@ Cloud IDE
     :maxdepth: 2
 
     ide/cloud9
+    ide/codeanywhere
 
 .. _ide_standalone:
 
