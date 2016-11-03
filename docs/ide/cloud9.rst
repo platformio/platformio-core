@@ -142,7 +142,7 @@ OTA Device Manager
 
 Over-The-Air (OTA) Device Manager works in pair with :ref:`pio_remote`.
 You can list remote devices that are connected to host machine where
-:ref:`pio_remote_agent` is started or are visible for it.
+:ref:`cmd_remote_agent` is started or are visible for it.
 
 Let's create New Run Configuration (shortcut) that will be used for OTA Manager.
 Please click on ``Menu: Run > Run Configurations > Manage...``, then
@@ -160,7 +160,7 @@ OTA Firmware Uploading
 ----------------------
 
 Over-The-Air (OTA) Firmware Uploading works in pair with :ref:`pio_remote`.
-You can deploy firmware to any devices which are visible for :ref:`pio_remote_agent`.
+You can deploy firmware to any devices which are visible for :ref:`cmd_remote_agent`.
 
 Let's create New Run Configuration (shortcut) that will be used for OTA Uploads.
 Please click on ``Menu: Run > Run Configurations > Manage...``, then
@@ -177,7 +177,7 @@ OTA Serial Port Monitor
 
 Over-The-Air (OTA) Serial Port Monitor works in pair with :ref:`pio_remote`.
 You can read or send data to any device that is connected to host machine
-where :ref:`pio_remote_agent` is started.
+where :ref:`cmd_remote_agent` is started.
 To list active agents please use this command :ref:`cmd_remote_agent_list`.
 
 Let's create New Run Configuration (shortcut) that will be used for OTA Serial Port Monitor.

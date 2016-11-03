@@ -23,7 +23,7 @@ PIO Remote™
 
 |PIORemote| allows you to work remotely with devices from
 *Anywhere In The World*. No matter where are you now! Run small and
-cross-platform :ref:`pio_remote_agent` on a host machine and you will be able to
+cross-platform :ref:`cmd_remote_agent` on a host machine and you will be able to
 list active devices (wireless + wired), to upload firmware **Over-The-Air (OTA)**,
 to process remote unit tests, or to start remote debugging session via OTA
 Serial Port Monitor.
@@ -53,9 +53,9 @@ Technology
 **Over-The-Air (OTA)** remote operations without external dependencies to
 operation system or its software based on `client-server architecture <https://en.wikipedia.org/wiki/Client–server_model>`_.
 The Server component (|PIOCloud|) plays a role of coupling link between
-:ref:`pio_remote_agent` and client (end-developer, continuous integration
+:ref:`cmd_remote_agent` and client (end-developer, continuous integration
 system, etc.).
-When you start :ref:`pio_remote_agent`, it connects over the Internet with
+When you start :ref:`cmd_remote_agent`, it connects over the Internet with
 |PIOCloud| and listen for the actions/commands which you can send in Client
 role from anywhere in the world.
 
@@ -70,23 +70,32 @@ is a prefix "remote" before each generic PlatformIO command. For example,
 listing of local and remote devices will look like :ref:`cmd_device_list` and
 :ref:`cmd_remote_device_list`.
 
-.. _pio_remote_agent:
+Quick Start
+-----------
 
-|PIORemote| Agent
------------------
+1.  Start |PIORemote| Agent using :ref:`cmd_remote_agent_start` command on a
+    on a host machine where devices are connected physically or are visible
+    via network. |PIORemote| **Agent works on Windows, macOS, Linux and Linux ARMv6+**.
+    It means that you can use desktop machine, laptop or credit card sized PC
+    (RaspberryPi, BeagleBoard, etc).
 
-Start |PIORemote| Agent (using :ref:`cmd_remote_agent_start` command) on a
-local host machine and work remotely with your devices **WITHOUT** extra
-software, 3-rd party services, SSH, VPN, tunneling or
-opening incoming network ports.
+    You can share own devices/hardware with friends, team or other developers
+    using :option:`platformio remote agent start --share` option.
 
-|PIORemote| supports wired and wireless devices. Wired devices should be
-connected physically to host machine where |PIORemote| Agent is started,
-where wireless devices should be visible for |PIORemote| Agent to provide
-network operations Over-The-Air.
+2.  Using the same :ref:`cmd_account` please login in to other machine or Cloud
+    IDE. You don't need to have network or other access to host machine where
+    |PIORemote| Agent is started. Just use :ref:`cmd_remote` commands and
+    PlatformIO will automatically process all local commands Over-The-Air (OTA)
+    on a remote machine.
 
-To list active |PIORemote| Agents, please use :ref:`cmd_remote_agent_list`
-command.
+
+.. note::
+    Please use local IP as "upload port" when device is not connected directly
+    to host machine where |PIORemote| Agent is started but supports natively
+    Over-the-Air (OTA) updates. For example, :ref:`platform_espressif8266` and
+    :ref:`platform_espressif_ota`. In this case, the final command for remote
+    OTA update will look as ``platformio remote run -t upload --upload-port 192.168.0.255``
+    or ``platformio remote run -t upload --upload-port myesp8266.local``.
 
 User Guide (CLI)
 ----------------

@@ -11,16 +11,16 @@
 
 .. _cmd_remote_agent:
 
-platformio remote agent
-=======================
+PIO Remote™ Agent
+=================
 
-Start :ref:`pio_remote_agent` on a local host machine and work remotely with
+Start :ref:`cmd_remote_agent` on a local host machine and work remotely with
 your devices **WITHOUT** extra software, services, SSH, VPN, tunneling or
 opening incoming network ports.
 
 :ref:`pio_remote` supports wired and wireless devices. Wired devices should be
-connected physically to host machine where :ref:`pio_remote_agent` is started,
-where wireless devices should be visible for :ref:`pio_remote_agent` to provide
+connected physically to host machine where :ref:`cmd_remote_agent` is started,
+where wireless devices should be visible for :ref:`cmd_remote_agent` to provide
 network operations Over-The-Air.
 
 .. contents::
@@ -41,7 +41,7 @@ Usage
 Description
 ~~~~~~~~~~~
 
-List active :ref:`pio_remote_agent` s started using own :ref:`cmd_account`
+List active :ref:`cmd_remote_agent` s started using own :ref:`cmd_account`
 or shared with you by other PlatformIO developers.
 
 Example
@@ -76,7 +76,7 @@ Usage
 Description
 ~~~~~~~~~~~
 
-Start :ref:`pio_remote_agent` and work remotely with your devices from
+Start :ref:`cmd_remote_agent` and work remotely with your devices from
 anywhere in the world. This command can be run as daemon or added to
 autostart list of your OS.
 

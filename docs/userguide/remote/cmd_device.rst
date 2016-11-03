@@ -37,7 +37,7 @@ Description
 ~~~~~~~~~~~
 
 List `Serial Ports <http://en.wikipedia.org/wiki/Serial_port>`_ on remote
-machines where :ref:`pio_remote_agent` is started.
+machines where :ref:`cmd_remote_agent` is started.
 
 You can list devices from the specified remote machines using ``--agent NAME``
 option between "remote" & "device" sub-commands. For example, you have run
@@ -124,7 +124,7 @@ Description
 ~~~~~~~~~~~
 
 Connect to Serial Port of remote device Over-The-Air (OTA) and receive or
-send data in real time. :ref:`pio_remote_agent` should be started before.
+send data in real time. :ref:`cmd_remote_agent` should be started before.
 
 To control *monitor* please use these "hot keys":
 

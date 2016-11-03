@@ -9,14 +9,14 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _userguide_remote:
+.. _cmd_remote:
 
 PIO Remote™ CLI
 ===============
 
 :ref:`pio_remote` allows you to work remotely with devices from
 *Anywhere In The World*. No matter where are you now! Run small and
-cross-platform :ref:`pio_remote_agent` on a host machine and you will be able to
+cross-platform :ref:`cmd_remote_agent` on a host machine and you will be able to
 list active devices (wireless + wired), to upload firmware **Over-The-Air (OTA)**,
 to process remote unit tests, or to start remote debugging session via OTA
 Serial Port Monitor.
