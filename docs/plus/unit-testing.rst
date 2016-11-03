@@ -25,6 +25,19 @@ of one or more MCU program modules together with associated control data,
 usage procedures, and operating procedures, are tested to determine whether
 they are fit for use. Unit testing finds problems early in the development cycle.
 
+.. contents::
+
+Demo
+----
+
+Demo of `Local & Embedded: Calculator <https://github.com/platformio/platformio-examples/tree/develop/unit-testing/calculator>`_.
+
+.. image:: ../_static/pioplus-unit-testing-demo.png
+    :target: https://youtu.be/bo3VVRZVKhA
+
+Test Types
+----------
+
 |PIOUTE| supports 2 different test types:
 
 1.  **Desktop Test**. PlatformIO wraps test and main program (from
@@ -43,11 +56,11 @@ they are fit for use. Unit testing finds problems early in the development cycle
     to embedded device (board) using :ref:`projectconf_test_port` , starts
     test, collects results and shows test results on the local host machine.
 
-    Currently, |PIOUTE| supports these frameworks:
+    Currently, |PIOUTE| supports these embedded frameworks:
 
     * :ref:`framework_arduino`
     * :ref:`framework_energia`
-    * :ref:`framework_mbed`.
+    * :ref:`framework_mbed`
 
     .. note::
         Please note that |PIOUTF| uses Serial/UART as communication interface
@@ -55,6 +68,8 @@ they are fit for use. Unit testing finds problems early in the development cycle
         ``Serial`` in your project, please wrap/hide Serial-based blocks with
         ``#ifndef UNIT_TEST`` macro.
 
+Test Runner
+-----------
 
 There are 2 options how to run tests:
 
@@ -76,16 +91,6 @@ using "Glob patterns". Also, you will be able to ignore some tests for
 specific environment using :ref:`projectconf_test_ignore` option
 from :ref:`projectconf`.
 
-.. contents::
-
-Demo
-----
-
-Demo of `Local & Embedded: Calculator <https://github.com/platformio/platformio-examples/tree/develop/unit-testing/calculator>`_.
-
-.. image:: ../_static/pioplus-unit-testing-demo.png
-    :target: https://youtu.be/bo3VVRZVKhA
-
 .. _unit_testing_design:
 
 Design
@@ -103,7 +108,7 @@ Design
 Workflow
 --------
 
-1. Create PlatformIO project using :ref:`cmd_init` command. For Local Unit
+1. Create PlatformIO project using :ref:`cmd_init` command. For Desktop Unit
    Testing (on the host machine), need to use :ref:`platform_native`.
 
    .. code-block:: ini
@@ -132,10 +137,11 @@ Workflow
         board = nodemcuv2
 
         ;
-        ; Local (PC, native) platforms
+        ; Desktop platforms (Win, Mac, Linux, Raspberry Pi, etc)
+        ; See http://platformio.org/platforms/native
         ;
 
-        [env:local]
+        [env:native]
         platform = native
 
 2. Place source code of main program to ``src`` directory.
@@ -277,7 +283,6 @@ User Guide (CLI)
 .. toctree::
     :maxdepth: 3
 
-    platformio account <../userguide/account/index>
     platformio test <../userguide/cmd_test>
     platformio remote test <../userguide/remote/cmd_test>
 
