@@ -38,58 +38,64 @@ Demo of `Local & Embedded: Calculator <https://github.com/platformio/platformio-
 Test Types
 ----------
 
-|PIOUTE| supports 2 different test types:
+Desktop Test
+~~~~~~~~~~~~
 
-1.  **Desktop Test**. PlatformIO wraps test and main program (from
-    :ref:`projectconf_pio_src_dir`) with own |PIOUTF|, builds final program
-    using :ref:`platform_native` and run test on a local host machine (desktop).
+PlatformIO wraps test and main program (from :ref:`projectconf_pio_src_dir`)
+with own |PIOUTF|, builds final program using :ref:`platform_native` and run
+test on a local host machine (desktop).
 
-    .. note::
-        PlatformIO does not install any toolchains automatically for
-        :ref:`platform_native` and requires ``GCC`` toolchain to be installed
-        on your local machine.
-        Please open Terminal and check that ``gcc`` command is installed.
+.. note::
+    PlatformIO does not install any toolchains automatically for
+    :ref:`platform_native` and requires ``GCC`` toolchain to be installed
+    on your local machine.
+    Please open Terminal and check that ``gcc`` command is installed.
 
-2.  **Embedded Test**. PlatformIO wraps test and main firmware (from
-    :ref:`projectconf_pio_src_dir`) with own |PIOUTF|, builds special firmware
-    for a target device and upload it. After uploading, PlatformIO connects
-    to embedded device (board) using :ref:`projectconf_test_port` , starts
-    test, collects results and shows test results on the local host machine.
+Embedded Test
+~~~~~~~~~~~~~
 
-    Currently, |PIOUTE| supports these embedded frameworks:
+PlatformIO wraps test and main firmware (from :ref:`projectconf_pio_src_dir`)
+with own |PIOUTF|, builds special firmware for a target device and upload it.
+After uploading, PlatformIO connects to embedded device (board) using
+:ref:`projectconf_test_port` , starts test, collects results and shows test
+results on the local host machine.
 
-    * :ref:`framework_arduino`
-    * :ref:`framework_energia`
-    * :ref:`framework_mbed`
+Currently, |PIOUTE| supports these embedded frameworks:
 
-    .. note::
-        Please note that |PIOUTF| uses Serial/UART as communication interface
-        between PlatformIO Unit Test Engine and target device. If you use
-        ``Serial`` in your project, please wrap/hide Serial-based blocks with
-        ``#ifndef UNIT_TEST`` macro.
+* :ref:`framework_arduino`
+* :ref:`framework_energia`
+* :ref:`framework_mbed`
+
+.. note::
+    Please note that |PIOUTF| uses Serial/UART as communication interface
+    between PlatformIO Unit Test Engine and target device. If you use
+    ``Serial`` in your project, please wrap/hide Serial-based blocks with
+    ``#ifndef UNIT_TEST`` macro.
 
 Test Runner
 -----------
 
-There are 2 options how to run tests:
-
-1.  **Local**. Allows to run tests on local host machine or on the target devices
-    (boards) that are directly connected to this machine. In this case, need to
-    use :ref:`cmd_test` command.
-
-2.  **Remote**. Allows to run tests on remote machine or remote target device
-    (board) without any dependencies to OS software, extra software, SSH, VPN
-    or opening network ports. Remote Unit Testing works in pair with
-    :ref:`pio_remote`. In this case, need to use special command
-    :ref:`cmd_remote_test`.
-
-    PlatformIO supports multiple :ref:`ci` systems that can run project
-    unit tests automatically.
-
-Both commands allow to process specific environments or to ignore some tests
+Test Runner allows to process specific environments or to ignore some tests
 using "Glob patterns". Also, you will be able to ignore some tests for
 specific environment using :ref:`projectconf_test_ignore` option
 from :ref:`projectconf`.
+
+Local
+~~~~~
+Allows to run tests on local host machine or on the target devices (boards)
+that are directly connected to this machine. In this case, need to use
+:ref:`cmd_test` command.
+
+Remote
+~~~~~~
+
+Allows to run tests on remote machine or remote target device (board) without
+any dependencies to OS software, extra software, SSH, VPN or opening network
+ports. Remote Unit Testing works in pair with :ref:`pio_remote`. In this case,
+need to use special command :ref:`cmd_remote_test`.
+
+PlatformIO supports multiple :ref:`ci` systems where you can run unit tests
+on each integration stage.
 
 .. _unit_testing_design:
 
