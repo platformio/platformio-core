@@ -62,7 +62,7 @@ Integration
 
     sudo python -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/develop/scripts/get-platformio.py)"
 
-.. image:: ../_static/ide/Codeanywhere/ide-codeanywhere-install-pio-cli.png
+.. image:: ../_static/ide/codeanywhere/ide-codeanywhere-install-pio-cli.png
 
 4.  Log in to :ref:`cmd_account` using :ref:`cmd_account_login` command.
 
