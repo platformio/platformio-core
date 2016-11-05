@@ -14,7 +14,7 @@
 PIO Remote™ Agent
 =================
 
-Start :ref:`cmd_remote_agent` on a local host machine and work remotely with
+Start :ref:`cmd_remote_agent` on a host machine and work remotely with
 your devices **WITHOUT** extra software, services, SSH, VPN, tunneling or
 opening incoming network ports.
 

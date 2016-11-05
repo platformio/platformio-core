@@ -43,7 +43,7 @@ Desktop
 
 PlatformIO wraps test and main program (from :ref:`projectconf_pio_src_dir`)
 with own |PIOUTF|, builds final program using :ref:`platform_native` and run
-test on a local host machine (desktop).
+test on a host machine (desktop).
 
 .. note::
     PlatformIO does not install any toolchains automatically for
@@ -58,7 +58,7 @@ PlatformIO wraps test and main firmware (from :ref:`projectconf_pio_src_dir`)
 with own |PIOUTF|, builds special firmware for a target device and upload it.
 After uploading, PlatformIO connects to embedded device (board) using
 :ref:`projectconf_test_port` , starts test, collects results and shows test
-results on the local host machine.
+results on the host machine.
 
 Currently, |PIOUTE| supports these embedded frameworks:
 
@@ -82,7 +82,7 @@ from :ref:`projectconf`.
 
 Local
 ~~~~~
-Allows to run tests on local host machine or on the target devices (boards)
+Allows to run tests on host machine or on the target devices (boards)
 that are directly connected to this machine. In this case, need to use
 :ref:`cmd_test` command.
 

@@ -67,9 +67,9 @@ This approach allows to work with distributed hardware located in the different
 places, networks, etc.
 
 This technology allows to work with remote devices in generic form as you
-do that with local devices using PlatformIO ecosystem. The only one difference
+do that with host devices using PlatformIO ecosystem. The only one difference
 is a prefix "remote" before each generic PlatformIO command. For example,
-listing of local and remote devices will look like :ref:`cmd_device_list` and
+listing of host and remote devices will look like :ref:`cmd_device_list` and
 :ref:`cmd_remote_device_list`.
 
 Quick Start
