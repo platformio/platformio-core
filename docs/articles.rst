@@ -27,11 +27,13 @@ Here are recent articles/reviews about PlatformIO:
 * Sep 20, 2016 - **The Linux Foundation** - `21 Open Source Projects for IoT <https://www.linux.com/comment/16265>`_
 * Sep 19, 2016 - **Doc Walker** - `How to automatically test build Arduino libraries <http://4-20ma.io/2016/09/19/howto-automatically-test-build-arduino-libraries/>`_
 * Sep 18, 2016 - **Kadda Sahnine** - `LoRaWAN network practice with Objenious, PlatformIO and Node-RED <http://blog.inovia-conseil.fr/?p=262>`_
+* Sep 13, 2016 - **Xose Pérez** `MQTT LED Matrix Display <http://tinkerman.cat/mqtt-led-matrix-display/>`_
 * Sep 12, 2016 - **Pedro Minatel** - `OTA – Como programar o ESP8266 pelo WiFi no platformIO (OTA programming for ESP8266 via Wi-Fi using PlatformIO, Portuguese) <http://pedrominatel.com.br/esp8266/ota-como-programar-o-esp8266-pelo-wifi-no-platformio/>`_
-* Sep 2, 2016 - **Tinkerman** `ESP8266: Optimizing files for SPIFFS with Gulp <http://tinkerman.cat/optimizing-files-for-spiffs-with-gulp/>`_
+* Sep 2, 2016 - **Xose Pérez** `ESP8266: Optimizing files for SPIFFS with Gulp <http://tinkerman.cat/optimizing-files-for-spiffs-with-gulp/>`_
 * Aug 28, 2016 - **Tom Parker** `Using the BBC micro:bit with PlatformIO <http://www.lshift.net/blog/2016/08/28/using-the-bbc-microbit-with-platformio/>`_
 * Aug 24, 2016 - **Primal Cortex** `Cloud based continuous integration and delivery for IOT using PlatformIO <https://primalcortex.wordpress.com/2016/08/24/cloud-based-continuous-integration-and-delivery-for-iot-using-platformio/>`_
 * Aug 18, 2016 - **Primal Cortex** - `Installing PlatformIO on Arch Linux <https://primalcortex.wordpress.com/2016/08/18/platformio/>`_
+* Aug 14, 2016 - **Rodrigo Castro** - `PlataformIO o comó usar Arduino con ATOM (Spanish) <http://kiryeelesion.blogspot.mx/2016/08/plataformio-o-como-usar-arduino-con-atom.html>`_
 * Jul 27, 2016 - **Francesco Azzola** - `Arduino Alternative IDE: PlatformIO IoT integrated platform <http://www.survivingwithandroid.com/2016/07/arduino-alternative-ide.html>`_
 * Jul 26, 2016 - **Embedded Systems Laboratory** - `แนะนำการใช้งาน PlatformIO IDE สำหรับบอร์ด Arduino และ ESP8266 (Get started with PlatformIO IDE for Arduino board and ESP8266, Thai) <http://cpre.kmutnb.ac.th/esl/learning/index.php?article=intro_platformio-ide>`_
 * Jul 15, 2016 - **Jaime** - `ESP8266 Mobile Rick Roll Captive Portal <https://hackaday.io/project/12709-esp8266-mobile-rick-roll-captive-portal>`_
