@@ -10,11 +10,11 @@ PlatformIO 3.0
 * `PIO Remote™ <http://docs.platformio.org/en/latest/plus/pio-remote.html>`__.
   **Your devices are always with you!**
 
-    + Over-The-Air (OTA) Device Manager
-    + OTA Serial Port Monitor
-    + OTA Firmware Updates
-    + Continuous Deployment
-    + Continuous Delivery
+  + Over-The-Air (OTA) Device Manager
+  + OTA Serial Port Monitor
+  + OTA Firmware Updates
+  + Continuous Deployment
+  + Continuous Delivery
 
 * `PIO Account <http://docs.platformio.org/en/latest/userguide/account/index.html>`__
   and `PLATFORMIO_AUTH_TOKEN <http://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_AUTH_TOKEN>`__

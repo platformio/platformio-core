@@ -35,7 +35,7 @@ PlatformIO
 `Facebook <https://www.facebook.com/platformio>`_ |
 `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
 `Bintray <https://bintray.com/platformio>`_ |
-`Community <https://community.platformio.org>`_ |
+`Community <https://community.platformio.org>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
     :target: http://platformio.org
