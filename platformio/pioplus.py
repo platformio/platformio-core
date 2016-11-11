@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import os
 import subprocess
 from os.path import dirname, join
@@ -41,7 +42,8 @@ class PioPlusPackageManager(PackageManager):
             self,
             join(util.get_home_dir(), "packages"), [
                 "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-                "https://dl.platformio.org/packages/manifest.json"
+                "http%s://dl.platformio.org/packages/manifest.json" %
+                ("" if sys.version_info < (2, 7, 9) else "s")
             ])
 
 
