@@ -100,3 +100,38 @@ Share your agent/devices with other PlatformIO developers who have
 
 The valid value for ``--share`` option is E-Mail address that was used for
 :ref:`cmd_account_register` command.
+
+------------
+
+platformio remote agent reload
+------------------------------
+
+Usage
+~~~~~
+
+.. code::
+
+    platformio remote agent reload
+
+    # reload specified PIO Remote Agents
+    platformio remote --agent NAME reload
+
+
+Description
+~~~~~~~~~~~
+
+Allows gracefully reload one or more :ref:`cmd_remote_agent` 's.
+
+Example
+~~~~~~~
+
+.. code::
+
+    > platformio remote agent list
+
+    PlatformIO Plus (https://pioplus.com)
+
+    innomac.local
+    -------------
+    ID: 98853d93.....77375e7
+    Reloaded: 2016-11-11 23:33:32

@@ -28,7 +28,7 @@ PlatformIO IDE is the next-generation integrated development environment for IoT
 * Multi-projects workflow with multiple panes
 * Themes support with dark and light colors
 * Serial Port Monitor
-* Built-in Terminal with :ref:`PlatformIO CLI <userguide>` tool (``pio``, ``platformio``)
+* Built-in Terminal with :ref:`core` and CLI tool (``pio``, ``platformio``)
 
 
 PlatformIO IDE is based on GitHub's `Atom <https://atom.io>`_ source
@@ -49,14 +49,19 @@ It's built on top of `GitHub's Atom "hackable" text editor <https://atom.io>`_.
 If you have already Atom installed, please install `PlatformIO IDE for Atom package <https://atom.io/packages/platformio-ide>`_.
 
 .. note::
-    You don't need to install PlatformIO CLI separately to system.
-    PlatformIO CLI is built into PlatformIO IDE and you will be able to use it
-    within PlatformIO IDE Terminal.
+
+    Please note that you do not need to install :ref:`core` if you
+    are going to use :ref:`ide_atom`. :ref:`core` is built into
+    PlatformIO IDE and you will be able to use it within PlatformIO IDE Terminal.
+
+    Also, PlatformIO IDE allows to install :ref:`core` Shell Commands
+    (``pio``, ``platformio``) globally to your system via
+    ``Menu: PlatformIO > Install Shell Commands``.
 
 1. Python Interpreter
 ~~~~~~~~~~~~~~~~~~~~~
 
-PlatformIO IDE is based on PlatformIO CLI which is written in
+PlatformIO IDE is based on :ref:`core` which is written in
 `Python <https://www.python.org/downloads/>`_. Python is installed by default
 on the all popular OS except Windows.
 
@@ -131,7 +136,7 @@ Launch
 
 After installation, you launch PlatformIO IDE by opening Atom. Once Atom is
 open, PlatformIO IDE auto installer will continue to install dependent packages
-and PlatformIO CLI. Please be patient and let the installation complete. In the
+and :ref:`core`. Please be patient and let the installation complete. In the
 final result PlatformIO IDE will ask you to reload Atom window to apply
 installed components. Please click on ``Reload Now``. After it PlatformIO IDE is
 ready for using. Happy coding!
@@ -237,7 +242,7 @@ And select desired target:
 .. image:: ../_static/ide-atom-platformio-quick-start-10.png
     :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-10.png
 
-It provides you fast access to all set of powerful PlatformIO CLI commands:
+It provides you fast access to all set of powerful :ref:`core` CLI commands:
 
 .. image:: ../_static/ide-atom-platformio-quick-start-11.png
     :target: http://docs.platformio.org/en/stable/_images/ide-atom-platformio-quick-start-11.png

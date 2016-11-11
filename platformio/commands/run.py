@@ -113,7 +113,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
             print_summary(results, start_time)
 
         if any([r is False for r in results.values()]):
-            raise exception.ReturnErrorCode()
+            raise exception.ReturnErrorCode(1)
         return True
 
 

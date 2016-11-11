@@ -38,6 +38,9 @@ To print all available commands and options use:
     platformio remote --help
     platformio remote COMMAND --help
 
+    # run command on the specified PIO Remote Agents
+    platformio remote --agent NAME_1 --agent NAME_N COMMAND
+
 
 .. toctree::
     :maxdepth: 2
@@ -46,3 +49,4 @@ To print all available commands and options use:
     cmd_device
     cmd_run
     cmd_test
+    cmd_update

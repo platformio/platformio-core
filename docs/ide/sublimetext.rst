@@ -32,7 +32,7 @@ Deviot Plugin
 
 We are glad to inform you about awesome Sublime Text plugin for IoT development
 named `Deviot <https://github.com/gepd/Deviot>`_. It is based on
-PlatformIO CLI and will automatically install it for you. Please visit `official
+:ref:`core` and will automatically install it for you. Please visit `official
 Deviot page <https://github.com/gepd/Deviot>`_ for the further installation
 steps and documentation.
 

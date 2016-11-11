@@ -55,7 +55,7 @@ Integration
 .. image:: ../_static/ide/codeanywhere/ide-codeanywhere-connection-wizard.png
 
 3.  Open **SSH-Terminal** tab (right click on
-    ``Container (PlatformIO) > SSH Terminal``) and install PlatformIO CLI using
+    ``Container (PlatformIO) > SSH Terminal``) and install :ref:`core` using
     a next command
 
 .. code-block:: bash
@@ -116,7 +116,7 @@ Let's create our first PlatformIO-based Codeanywhere Project
 
 .. image:: ../_static/ide/codeanywhere/ide-codeanywhere-init-project.png
 
-3.  If you prefer to work with PlatformIO CLI, then you can process project
+3.  If you prefer to work with :ref:`core` CLI, then you can process project
     using Cloud IDE SSH Terminal and the next commands:
 
     * :ref:`cmd_run` - build project

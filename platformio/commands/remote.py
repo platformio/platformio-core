@@ -46,8 +46,24 @@ def remote_agent_start(**kwargs):
     pioplus_call(sys.argv[1:])
 
 
+@remote_agent.command("reload", short_help="Reload agents")
+def remote_agent_reload():
+    pioplus_call(sys.argv[1:])
+
+
 @remote_agent.command("list", short_help="List active agents")
 def remote_agent_list():
+    pioplus_call(sys.argv[1:])
+
+
+@cli.command(
+    "update", short_help="Update installed Platforms, Packages and Libraries")
+@click.option(
+    "-c",
+    "--only-check",
+    is_flag=True,
+    help="Do not update, only check for new version")
+def remote_update(only_check):
     pioplus_call(sys.argv[1:])
 
 

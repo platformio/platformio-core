@@ -25,7 +25,8 @@ class PlatformioException(Exception):
 
 
 class ReturnErrorCode(PlatformioException):
-    pass
+
+    MESSAGE = "{0}"
 
 
 class MinitermException(PlatformioException):

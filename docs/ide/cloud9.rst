@@ -46,7 +46,7 @@ Integration
 
 .. image:: ../_static/ide/cloud9/ide-cloud9-new-workspace.png
 
-3. Install PlatformIO CLI using Cloud IDE Terminal. Paste a next command
+3. Install :ref:`core` using Cloud IDE Terminal. Paste a next command
 
 .. code-block:: bash
 
@@ -103,7 +103,7 @@ Let's create our first PlatformIO-based Cloud9 Project
 
 .. image:: ../_static/ide/cloud9/ide-cloud9-init-project.png
 
-3.  If you prefer to work with PlatformIO CLI, then you can process project
+3.  If you prefer to work with :ref:`core` CLI, then you can process project
     using Cloud IDE Terminal and the next commands:
 
     * :ref:`cmd_run` - build project

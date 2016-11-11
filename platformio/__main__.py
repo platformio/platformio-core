@@ -129,7 +129,7 @@ An unexpected error occurred. Further steps:
 ============================================================
 """
             click.secho(error_str, fg="red", err=True)
-        return 1
+        return int(str(e)) if str(e).isdigit() else 1
     return 0
 
 

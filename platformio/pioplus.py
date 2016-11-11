@@ -23,13 +23,15 @@ from platformio.managers.package import PackageManager
 PACKAGE_DEPS = {
     "pysite": {
         "name": "pysite-pioplus",
-        "requirements": "^0.2.0"
+        "requirements": ">=0.2.0,<2"
     },
     "tool": {
         "name": "tool-pioplus",
-        "requirements": "^0.4.0"
+        "requirements": ">=0.5.0,<2"
     }
 }
+
+AUTO_UPDATES_MAX = 100
 
 
 class PioPlusPackageManager(PackageManager):
@@ -39,8 +41,6 @@ class PioPlusPackageManager(PackageManager):
             self,
             join(util.get_home_dir(), "packages"), [
                 "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-                "https://sourceforge.net/projects/platformio-storage/files/"
-                "packages/manifest.json/download",
                 "https://dl.platformio.org/packages/manifest.json"
             ])
 
@@ -71,5 +71,25 @@ def pioplus_call(args, **kwargs):
     os.environ['PYTHONPYSITEDIR'] = pm.get_package_dir(
         PACKAGE_DEPS['pysite']['name'], PACKAGE_DEPS['pysite']['requirements'])
     util.copy_pythonpath_to_osenv()
-    if subprocess.call([pioplus_path] + args, **kwargs) != 0:
-        raise exception.ReturnErrorCode()
+    code = subprocess.call([pioplus_path] + args, **kwargs)
+
+    # handle remote update request
+    if code == 13:
+        count_attr = "_update_count"
+        try:
+            count_value = getattr(pioplus_call, count_attr)
+        except AttributeError:
+            count_value = 0
+            setattr(pioplus_call, count_attr, 1)
+        count_value += 1
+        setattr(pioplus_call, count_attr, count_value)
+        if count_value < AUTO_UPDATES_MAX:
+            pioplus_update()
+            return pioplus_call(args, **kwargs)
+
+    # handle reload request
+    elif code == 14:
+        return pioplus_call(args, **kwargs)
+
+    if code != 0:
+        raise exception.ReturnErrorCode(1)

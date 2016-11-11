@@ -14,10 +14,18 @@
 Installation
 ============
 
-.. include:: /ide/_platformio_ide_extra.rst
+.. note::
 
-**PlatformIO** is written in `Python <https://www.python.org/downloads/>`_ and
-works on Mac OS X, Linux, Windows OS and *ARM*-based credit-card sized
+    Please note that you do not need to install **PlatformIO Core** if you
+    are going to use :ref:`ide_atom`. **PlatformIO Core** is built into
+    PlatformIO IDE and you will be able to use it within PlatformIO IDE Terminal.
+
+    Also, PlatformIO IDE allows to install :ref:`core` Shell Commands
+    (``pio``, ``platformio``) globally to your system via
+    ``Menu: PlatformIO > Install Shell Commands``.
+
+**PlatformIO Core** is written in `Python <https://www.python.org/downloads/>`_
+and works on Windows, macOS, Linux, FreeBSD and *ARM*-based credit-card sized
 computers (`Raspberry Pi <http://www.raspberrypi.org>`_,
 `BeagleBone <http://beagleboard.org>`_,
 `CubieBoard <http://cubieboard.org>`_).
@@ -67,12 +75,6 @@ System requirements
 
 Installation Methods
 --------------------
-
-.. note::
-    You don't need to install PlatformIO CLI if you are going to use
-    :ref:`ide_atom`. PlatformIO CLI is built into PlatformIO IDE and you will be
-    able to use it within PlatformIO IDE Terminal.
-
 
 Please *choose ONE of* the following methods:
 
