@@ -41,7 +41,7 @@ PlatformIO 3.0
 
 * Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
 
-  + Add support for ESPrectro board
+  + Added support for ESPrectro board
   + Additional target "buildfs" to accompany "uploadfs"
     (`issue #6 <https://github.com/platformio/platform-espressif8266/issues/6>`__)
 
@@ -73,7 +73,7 @@ PlatformIO 3.0
 * Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
 
   + Updated ARM mbed OS to 5.1.4/rev126
-  + Add support for Teensy Audio feature (``build_flags = -D USB_AUDIO``)
+  + Added support for Teensy Audio feature (``build_flags = -D USB_AUDIO``)
 
 3.1.0 (2016-09-19)
 ~~~~~~~~~~~~~~~~~~
