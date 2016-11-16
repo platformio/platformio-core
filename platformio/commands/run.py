@@ -80,7 +80,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                 for e in config.get("platformio", "env_default").split(",")
             ]
 
-        results = {}
+        results = []
         start_time = time()
         for section in config.sections():
             if not section.startswith("env:"):
@@ -92,7 +92,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                 env_default and envname not in env_default
             ])
             if skipenv:
-                results[envname] = None
+                results.append((envname, None))
                 continue
 
             if results:
@@ -106,13 +106,14 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
             ep = EnvironmentProcessor(ctx, envname, options, target,
                                       upload_port, silent, verbose)
-            results[envname] = ep.process()
+            results.append((envname, ep.process()))
 
         if len(results) > 1:
             click.echo()
             print_summary(results, start_time)
 
-        if any([r is False for r in results.values()]):
+        if any([status is False for _, status in results]):
+            print 90
             raise exception.ReturnErrorCode(1)
         return True
 
@@ -313,12 +314,12 @@ def print_summary(results, start_time):
     print_header("[%s]" % click.style("SUMMARY"))
 
     envname_max_len = 0
-    for envname in results:
+    for (envname, _) in results:
         if len(envname) > envname_max_len:
             envname_max_len = len(envname)
 
     successed = True
-    for envname, status in results.items():
+    for (envname, status) in results:
         status_str = click.style("SUCCESS", fg="green")
         if status is False:
             successed = False
