@@ -112,8 +112,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
             click.echo()
             print_summary(results, start_time)
 
-        if any([status is False for _, status in results]):
-            print 90
+        if any([status is False for (_, status) in results]):
             raise exception.ReturnErrorCode(1)
         return True
 
