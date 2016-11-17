@@ -24,6 +24,7 @@ Here are recent articles/reviews about PlatformIO:
 ^^^^
 
 * Nov 10, 2016 - **PiGreek** - `PlatformIO the new Arduino IDE ?! <https://pigreekblog.wordpress.com/2016/11/10/platformio-the-new-arduino-ide/>`_
+* Oct 31, 2016 - **Ricardo Quesada** - `Retro Challenge: announcing Commodore Home <https://retro.moe/2016/10/31/retro-challenge-commodore-home/>`_
 * Oct 3, 2016 - **Xose Pérez** - `Using the new Bean Loader CLI from PlatformIO <http://tinkerman.cat/using-new-bean-loader-cli-platformio/>`_
 * Sep 20, 2016 - **The Linux Foundation** - `21 Open Source Projects for IoT <https://www.linux.com/comment/16265>`_
 * Sep 19, 2016 - **Doc Walker** - `How to automatically test build Arduino libraries <http://4-20ma.io/2016/09/19/howto-automatically-test-build-arduino-libraries/>`_
