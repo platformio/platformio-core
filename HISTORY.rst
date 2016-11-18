@@ -35,8 +35,23 @@ PlatformIO 3.0
 
 -------
 
+* Development platform `Atmel AVR <https://github.com/platformio/platform-atmelavr>`__
+
+  + Updated Atmel AVR toolchain to GCC 4.9.2
+  + Added support for SODAQ AVR boards
+    (`issue #796 <https://github.com/platformio/platformio/issues/796>`__)
+  + Added support for Pololu A-Star boards
+    (`issue #804 <https://github.com/platformio/platformio/issues/804>`__)
+  + Added support for Altair board
+    (`issue #15 <https://github.com/platformio/platform-atmelavr/issues/15>`__)
+  + Added support for ATmega328PB MCUs
+  + Handle "micronucleus" tool base on upload protocol
+    (`issue #18 <https://github.com/platformio/platform-atmelavr/issues/18>`__)
+
 * Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
 
+  + Added support for SODAQ SAMD boards
+    (`issue #796 <https://github.com/platformio/platformio/issues/796>`__)
   + Updated ARM mbed OS to 5.1.4/rev126
 
 * Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
