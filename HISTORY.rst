@@ -53,6 +53,8 @@ PlatformIO 3.0
   + Added support for SODAQ SAMD boards
     (`issue #796 <https://github.com/platformio/platformio/issues/796>`__)
   + Updated ARM mbed OS to 5.1.4/rev126
+  + Fixed issue with uploading to Arduino Zero on programming USB port
+    (`issue #805 <https://github.com/platformio/platformio/issues/805>`__)
 
 * Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
 
