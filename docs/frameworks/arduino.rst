@@ -233,6 +233,13 @@ Arduino
       - 32 Kb
       - 2.5 Kb
 
+    * - ``atmega328pb``
+      - `Atmel ATmega328PB <http://www.atmel.com/devices/ATMEGA328PB.aspx>`_
+      - ATMEGA328PB
+      - 16 MHz
+      - 32 Kb
+      - 2 Kb
+
     * - ``atmegangatmega168``
       - `Arduino NG or older ATmega168 <http://arduino.cc/en/main/boards>`_
       - ATMEGA168
@@ -1453,6 +1460,26 @@ Pinoccio
       - 256 Kb
       - 32 Kb
 
+Pololu Corporation
+~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``a-star32U4``
+      - `Pololu A-Star 32U4 <https://www.pololu.com/category/149/a-star-programmable-controllers>`_
+      - ATMEGA32U4
+      - 16 MHz
+      - 32 Kb
+      - 2.5 Kb
+
 Punch Through
 ~~~~~~~~~~~~~
 
@@ -1470,6 +1497,13 @@ Punch Through
       - `LightBlue Bean <https://punchthrough.com/bean>`_
       - ATMEGA328P
       - 8 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``lightblue-beanplus``
+      - `LightBlue Bean+ <https://punchthrough.com/bean>`_
+      - ATMEGA328P
+      - 16 MHz
       - 32 Kb
       - 2 Kb
 
@@ -1566,6 +1600,82 @@ RepRap
       - 16 MHz
       - 256 Kb
       - 8 Kb
+
+SODAQ
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``sodaq_autonomo``
+      - `SODAQ Autonomo <http://support.sodaq.com/sodaq-one/autonomo/getting-started-autonomo/>`_
+      - SAMD21J18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``sodaq_explorer``
+      - `SODAQ ExpLoRer <http://support.sodaq.com/sodaq-one/explorer/>`_
+      - SAMD21J18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``sodaq_galora``
+      - `SODAQ GaLoRa <http://support.sodaq.com/>`_
+      - ATMEGA1284P
+      - 8 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``sodaq_mbili``
+      - `SODAQ Mbili <http://support.sodaq.com/sodaq-one/sodaq-mbili-1284p/>`_
+      - ATMEGA1284P
+      - 8 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``sodaq_moja``
+      - `SODAQ Moja <http://support.sodaq.com/sodaq-one/moja/>`_
+      - ATMEGA328P
+      - 8 MHz
+      - 32 Kb
+      - 2 Kb
+
+    * - ``sodaq_ndogo``
+      - `SODAQ Ndogo <http://support.sodaq.com/>`_
+      - ATMEGA1284P
+      - 8 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``sodaq_one``
+      - `SODAQ ONE <http://support.sodaq.com/sodaq-one/>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``sodaq_tatu``
+      - `SODAQ Tatu <http://support.sodaq.com/>`_
+      - ATMEGA1284P
+      - 8 MHz
+      - 128 Kb
+      - 16 Kb
+
+    * - ``sodaq_wdt``
+      - `SODAQ WDT <http://support.sodaq.com/>`_
+      - SAMD21J18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
 
 SainSmart
 ~~~~~~~~~

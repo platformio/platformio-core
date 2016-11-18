@@ -37,6 +37,9 @@ Packages
     * - ``sdk-esp8266``
       - `ESP8266 SDK <http://bbs.espressif.com>`_
 
+    * - ``tool-espotapy``
+      - `ESP8266 OTA utility <https://github.com/esp8266/Arduino/blob/master/tools/espota.py>`_
+
     * - ``tool-esptool``
       - `esptool-ck <https://github.com/igrr/esptool-ck>`_
 

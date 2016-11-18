@@ -77,11 +77,11 @@ Frameworks
     * - :ref:`framework_arduino`
       - Arduino Wiring-based Framework allows writing cross-platform software to control devices attached to a wide range of Arduino boards to create all kinds of creative coding, interactive objects, spaces or physical experiences.
 
-    * - :ref:`framework_simba`
-      - Simba is an RTOS and build framework. It aims to make embedded programming easy and portable.
-
     * - :ref:`framework_mbed`
       - The mbed framework The mbed SDK has been designed to provide enough hardware abstraction to be intuitive and concise, yet powerful enough to build complex projects. It is built on the low-level ARM CMSIS APIs, allowing you to code down to the metal if needed. In addition to RTOS, USB and Networking libraries, a cookbook of hundreds of reusable peripheral and module libraries have been built on top of the SDK by the mbed Developer Community.
+
+    * - :ref:`framework_simba`
+      - Simba is an RTOS and build framework. It aims to make embedded programming easy and portable.
 
 Boards
 ------
@@ -241,6 +241,47 @@ Digistump
       - 84 MHz
       - 512 Kb
       - 28 Kb
+
+SODAQ
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``sodaq_autonomo``
+      - `SODAQ Autonomo <http://support.sodaq.com/sodaq-one/autonomo/getting-started-autonomo/>`_
+      - SAMD21J18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``sodaq_explorer``
+      - `SODAQ ExpLoRer <http://support.sodaq.com/sodaq-one/explorer/>`_
+      - SAMD21J18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``sodaq_one``
+      - `SODAQ ONE <http://support.sodaq.com/sodaq-one/>`_
+      - SAMD21G18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
+
+    * - ``sodaq_wdt``
+      - `SODAQ WDT <http://support.sodaq.com/>`_
+      - SAMD21J18A
+      - 48 MHz
+      - 256 Kb
+      - 32 Kb
 
 SainSmart
 ~~~~~~~~~

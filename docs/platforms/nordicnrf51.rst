@@ -103,6 +103,13 @@ BBC
       - 256 Kb
       - 16 Kb
 
+    * - ``bbcmicrobit_b``
+      - `BBC micro:bit B(S130) <https://developer.mbed.org/platforms/Microbit/>`_
+      - NRF51822
+      - 16 MHz
+      - 256 Kb
+      - 16 Kb
+
 Delta
 ~~~~~
 
