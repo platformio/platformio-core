@@ -52,7 +52,7 @@ PlatformIO 3.0
 
   + Added support for SODAQ SAMD boards
     (`issue #796 <https://github.com/platformio/platformio/issues/796>`__)
-  + Updated ARM mbed OS to 5.1.4/rev126
+  + Updated ARM mbed OS to 5.1.5/rev127
   + Fixed issue with uploading to Arduino Zero on programming USB port
     (`issue #805 <https://github.com/platformio/platformio/issues/805>`__)
 
@@ -64,24 +64,24 @@ PlatformIO 3.0
 
 * Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
 
-  + Updated ARM mbed OS to 5.1.4/rev126
+  + Updated ARM mbed OS to 5.1.5/rev127
 
 * Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
 
-  + Updated ARM mbed OS to 5.1.4/rev126
+  + Updated ARM mbed OS to 5.1.5/rev127
 
 * Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
 
-  + Updated ARM mbed OS to 5.1.4/rev126
+  + Updated ARM mbed OS to 5.1.5/rev127
 
 * Development platform `Silicon Labs EFM32 <https://github.com/platformio/platform-siliconlabsefm32>`__
 
-  + Updated ARM mbed OS to 5.1.4/rev126
+  + Updated ARM mbed OS to 5.1.5/rev127
 
 * Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
 
   + Added support for new boards: ST 32F769IDISCOVERY
-  + Updated ARM mbed OS to 5.1.4/rev126
+  + Updated ARM mbed OS to 5.1.5/rev127
   + Use ``serial`` protocol by default for STM32Duino-based boards
     (`issue #14 <https://github.com/platformio/platform-ststm32/issues/14>`__)
   + Fixed linker error "undefined reference to _sbrk" for STM32Duino
@@ -89,7 +89,8 @@ PlatformIO 3.0
 
 * Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
 
-  + Updated ARM mbed OS to 5.1.4/rev126
+  + Updated Arduino Framework for Teensy to v131
+  + Updated ARM mbed OS to 5.1.5/rev127
   + Added support for Teensy Audio feature (``build_flags = -D USB_AUDIO``)
 
 3.1.0 (2016-09-19)
