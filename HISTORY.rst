@@ -37,7 +37,6 @@ PlatformIO 3.0
 
 * Development platform `Atmel AVR <https://github.com/platformio/platform-atmelavr>`__
 
-  + Updated Atmel AVR toolchain to GCC 4.9.2
   + Added support for SODAQ AVR boards
     (`issue #796 <https://github.com/platformio/platformio/issues/796>`__)
   + Added support for Pololu A-Star boards
@@ -45,8 +44,12 @@ PlatformIO 3.0
   + Added support for Altair board
     (`issue #15 <https://github.com/platformio/platform-atmelavr/issues/15>`__)
   + Added support for ATmega328PB MCUs
+  + Updated Atmel AVR toolchain to GCC 4.9.2
+  + Updated Arduino Core for LightBlue Bean/LightBlue Bean+ boards
   + Handle "micronucleus" tool base on upload protocol
     (`issue #18 <https://github.com/platformio/platform-atmelavr/issues/18>`__)
+  + Fixed programming of ATtiny boards when "micronucleus" uploader is used
+    (`issue #13 <https://github.com/platformio/platform-atmelavr/issues/13>`__)
 
 * Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
 
@@ -68,7 +71,11 @@ PlatformIO 3.0
 
 * Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
 
+  + Added BBC micro:bit B(S130) board
+    (`issue #3 <https://github.com/platformio/platform-nordicnrf51/issues/3>`__)
   + Updated ARM mbed OS to 5.1.5/rev127
+  + Fixed “undefined reference to `_sbrk’” error for RFDuino
+    (`issue #1 <https://github.com/platformio/platform-nordicnrf51/issues/1>`__)
 
 * Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
 
