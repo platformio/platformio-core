@@ -20,6 +20,7 @@ Frameworks
     arduino
     cmsis
     energia
+    espidf
     libopencm3
     mbed
     simba

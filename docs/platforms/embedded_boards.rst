@@ -169,6 +169,26 @@ Adafruit
       - 8 Kb
       - 0.5 Kb
 
+April Brother
+~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``espea32``
+      - `April Brother ESPea32 <https://blog.aprbrother.com/product/espea>`_
+      - ESP32
+      - 160 MHz
+      - 1024 Kb
+      - 288 Kb
+
 Arduboy
 ~~~~~~~
 
@@ -917,6 +937,26 @@ ESPino
       - 4096 Kb
       - 80 Kb
 
+Electronic SweetPeas
+~~~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``esp320``
+      - `Electronic SweetPeas ESP320 <http://www.sweetpeas.se/controller-modules/10-esp210.html>`_
+      - ESP32
+      - 160 MHz
+      - 1024 Kb
+      - 288 Kb
+
 Elektor Labs
 ~~~~~~~~~~~~
 
@@ -1045,6 +1085,13 @@ Espressif
       - 80 MHz
       - 4096 Kb
       - 80 Kb
+
+    * - ``esp32dev``
+      - `Espressif ESP32 Dev Module <https://en.wikipedia.org/wiki/ESP32>`_
+      - ESP32
+      - 160 MHz
+      - 1024 Kb
+      - 112 Kb
 
     * - ``esp8285``
       - `Generic ESP8285 Module <http://www.esp8266.com/wiki/doku.php?id=esp8266-module-family>`_
@@ -1482,6 +1529,26 @@ LowPowerLab
       - 128 Kb
       - 16 Kb
 
+MakerAsia
+~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``nano32``
+      - `MakerAsia Nano32 <http://iot-bits.com/nano32-esp32-development-board>`_
+      - ESP32
+      - 160 MHz
+      - 1024 Kb
+      - 288 Kb
+
 Mcudude
 ~~~~~~~
 
@@ -1837,6 +1904,26 @@ NodeMCU
       - 80 MHz
       - 4096 Kb
       - 80 Kb
+
+Noduino
+~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``quantum``
+      - `Noduino Quantum <http://wiki.jackslab.org/Noduino>`_
+      - ESP32
+      - 160 MHz
+      - 1024 Kb
+      - 288 Kb
 
 Nordic
 ~~~~~~
@@ -3262,6 +3349,26 @@ UBW32
       - 80 MHz
       - 512 Kb
       - 128 Kb
+
+WEMOS
+~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``lolin32``
+      - `WEMOS LoLin32 <https://wemos.cc>`_
+      - ESP32
+      - 160 MHz
+      - 1024 Kb
+      - 288 Kb
 
 WeMos
 ~~~~~

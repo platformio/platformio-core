@@ -56,6 +56,9 @@ Packages
     * - ``framework-arduinoavr``
       - `Arduino Wiring-based Framework (AVR Core, 1.6) <http://arduino.cc/en/Reference/HomePage>`_
 
+    * - ``framework-arduinoespressif32``
+      - `Arduino Wiring-based Framework (ESP32 Core) <https://github.com/espressif/arduino-esp32>`_
+
     * - ``framework-arduinoespressif8266``
       - `Arduino Wiring-based Framework (ESP8266 Core) <https://github.com/esp8266/Arduino>`_
 
@@ -89,6 +92,9 @@ Packages
     * - ``framework-energiativa``
       - `Energia Wiring-based Framework (LM4F Core) <http://energia.nu/reference/>`_
 
+    * - ``framework-espidf``
+      - `Espressif IoT Development Framework <https://github.com/espressif/esp-idf>`_
+
     * - ``framework-libopencm3``
       - `libOpenCM3 Framework <http://www.libopencm3.org/>`_
 
@@ -119,8 +125,14 @@ Packages
     * - ``tool-bossac``
       - `BOSSA CLI <https://sourceforge.net/projects/b-o-s-s-a/>`_
 
+    * - ``tool-espotapy``
+      - `ESP8266 OTA utility <https://github.com/esp8266/Arduino/blob/master/tools/espota.py>`_
+
     * - ``tool-esptool``
       - `esptool-ck <https://github.com/igrr/esptool-ck>`_
+
+    * - ``tool-esptoolpy``
+      - `Espressif ROM Bootloader utility <https://github.com/espressif/esptool>`_
 
     * - ``tool-lm4flash``
       - `Flash Programmer <http://www.ti.com/tool/lmflashprogrammer>`_
@@ -159,7 +171,7 @@ Packages
       - `Teensy Loader <https://www.pjrc.com/teensy/loader.html>`_
 
     * - ``toolchain-atmelavr``
-      - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_, `AVaRICE <http://avarice.sourceforge.net/>`_, `SimulAVR <http://www.nongnu.org/simulavr/>`_
+      - `avr-gcc <https://gcc.gnu.org/wiki/avr-gcc>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
     * - ``toolchain-gccarmlinuxgnueabi``
       - `GCC for Linux ARM GNU EABI <https://gcc.gnu.org>`_, `GDB <http://www.gnu.org/software/gdb/>`_
@@ -193,6 +205,9 @@ Packages
 
     * - ``toolchain-xtensa``
       - `xtensa-gcc <https://github.com/jcmvbkbc/gcc-xtensa>`_, `GDB <http://www.gnu.org/software/gdb/>`_
+
+    * - ``toolchain-xtensa32``
+      - `xtensa32-gcc <https://github.com/espressif/esp-idf>`_, `GDB <http://www.gnu.org/software/gdb/>`_
 
 .. _platform_creating_manifest_file:
 
@@ -366,4 +381,6 @@ Examples
 --------
 
 Please take a look at the source code of
+`PlatformIO Development Platforms <https://github.com/platformio?query=platform->`_.
+code of
 `PlatformIO Development Platforms <https://github.com/platformio?query=platform->`_.

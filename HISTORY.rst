@@ -59,6 +59,10 @@ PlatformIO 3.0
   + Fixed issue with uploading to Arduino Zero on programming USB port
     (`issue #805 <https://github.com/platformio/platformio/issues/805>`__)
 
+* Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
+
+  * Initial support for Espressif IDF and Arduino for ESP32
+
 * Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
 
   + Added support for ESPrectro board
