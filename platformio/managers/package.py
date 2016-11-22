@@ -298,8 +298,15 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             text, requirements=None):
         text = str(text)
         url_marker = "://"
-        if not requirements and "@" in text and not url_marker + "git@" in text:
-        # if not requirements and "@" in text and not text.startswith("git@"):
+
+        url_conditions = [
+            not requirements,
+            "@" in text,
+            not "git@" in text,
+            not url_marker + "git@" in text
+        ]
+
+        if all(url_conditions):
             text, requirements = text.rsplit("@", 1)
         if text.isdigit():
             text = "id=" + text
