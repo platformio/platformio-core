@@ -297,12 +297,13 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
     def parse_pkg_name(  # pylint: disable=too-many-branches
             text, requirements=None):
         text = str(text)
-        if not requirements and "@" in text and not text.startswith("git@"):
+        url_marker = "://"
+        if not requirements and "@" in text and not url_marker + "git@" in text:
+        # if not requirements and "@" in text and not text.startswith("git@"):
             text, requirements = text.rsplit("@", 1)
         if text.isdigit():
             text = "id=" + text
 
-        url_marker = "://"
         name, url = (None, text)
         if "=" in text and not text.startswith("id="):
             name, url = text.split("=", 1)
