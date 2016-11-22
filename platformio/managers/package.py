@@ -302,7 +302,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         url_conditions = [
             not requirements,
             "@" in text,
-            not "git@" in text,
+            not text.startswith("git@"),
             not url_marker + "git@" in text
         ]
 
