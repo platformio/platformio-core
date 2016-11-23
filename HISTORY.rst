@@ -30,6 +30,8 @@ PlatformIO 3.0
 * Improved Project Generator for CLion IDE when source folder contains nested items
 * Improved handling of library dependencies specified in ``library.json`` manifest
   (`issue #814 <https://github.com/platformio/platformio/issues/814>`_)
+* Improved `Library Dependency Finder (LDF) <http://docs.platformio.org/en/stable/librarymanager/ldf.html>`__
+  for circular dependencies
 * Fixed issue with ``PATH`` auto-configuring for upload tools
 * Fixed ``99-platformio-udev.rules`` checker for Linux OS
 
