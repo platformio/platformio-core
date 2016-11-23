@@ -32,7 +32,7 @@ from platformio.managers.lib import LibraryManager
 class LibBuilderFactory(object):
 
     @staticmethod
-    def new(env, path):
+    def new(env, path, verbose=False):
         clsname = "UnknownLibBuilder"
         if isfile(join(path, "library.json")):
             clsname = "PlatformIOLibBuilder"
@@ -45,7 +45,9 @@ class LibBuilderFactory(object):
             elif used_frameworks:
                 clsname = "%sLibBuilder" % used_frameworks[0].title()
 
-        obj = getattr(sys.modules[__name__], clsname)(env, path)
+        obj = getattr(sys.modules[__name__], clsname)(env,
+                                                      path,
+                                                      verbose=verbose)
         assert isinstance(obj, LibBuilderBase)
         return obj
 
@@ -82,15 +84,17 @@ class LibBuilderBase(object):
     INC_SCANNER = SCons.Scanner.C.CScanner()
     INC_DIRS_CACHE = None
 
-    def __init__(self, env, path, manifest=None):
+    def __init__(self, env, path, manifest=None, verbose=False):
         self.env = env.Clone()
         self.envorigin = env.Clone()
         self.path = realpath(env.subst(path))
+        self.verbose = verbose
         self._manifest = manifest if manifest else self.load_manifest()
         self._is_dependent = False
+        self._is_built = False
         self._depbuilders = list()
+        self._circular_deps = list()
         self._scanned_paths = list()
-        self._built_node = None
 
         # process extra options and append to build environment
         self.process_extra_options()
@@ -209,8 +213,6 @@ class LibBuilderBase(object):
     def _process_dependencies(self, lib_builders):
         if not self.dependencies:
             return
-        verbose = (int(ARGUMENTS.get("PIOVERBOSE", 0)) and
-                   not self.env.GetOption('clean'))
         for item in self.dependencies:
             skip = False
             for key in ("platforms", "frameworks"):
@@ -219,7 +221,7 @@ class LibBuilderBase(object):
                     continue
                 if (key in item and
                         not self.items_in_list(self.env[env_key], item[key])):
-                    if verbose:
+                    if self.verbose:
                         sys.stderr.write("Skip %s incompatible dependency %s\n"
                                          % (key[:-1], item))
                     skip = True
@@ -285,12 +287,23 @@ class LibBuilderBase(object):
         return result
 
     def depend_recursive(self, lb, lib_builders, search_paths=None):
+
+        def _already_depends(_lb):
+            if self in _lb.depbuilders:
+                return True
+            for __lb in _lb.depbuilders:
+                if _already_depends(__lb):
+                    return True
+            return False
+
         # assert isinstance(lb, LibBuilderBase)
         if self != lb:
-            if self in lb.depbuilders:
-                sys.stderr.write("Warning! Circular dependencies detected "
-                                 "between `%s` and `%s`\n" %
-                                 (self.path, lb.path))
+            if _already_depends(lb):
+                if self.verbose:
+                    sys.stderr.write("Warning! Circular dependencies detected "
+                                     "between `%s` and `%s`\n" %
+                                     (self.path, lb.path))
+                self._circular_deps.append(lb)
             elif lb not in self._depbuilders:
                 self._depbuilders.append(lb)
                 LibBuilderBase.INC_DIRS_CACHE = None
@@ -322,21 +335,25 @@ class LibBuilderBase(object):
 
     def build(self):
         libs = []
-        for lb in self.depbuilders:
+        for lb in self._depbuilders:
             libs.extend(lb.build())
             # copy shared information to self env
             for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
                 self.env.AppendUnique(**{key: lb.env.get(key)})
 
-        if not self._built_node:
+        for lb in self._circular_deps:
+            self.env.AppendUnique(CPPPATH=lb.get_inc_dirs())
+
+        if not self._is_built:
             self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
             if self.lib_archive:
-                self._built_node = self.env.BuildLibrary(
-                    self.build_dir, self.src_dir, self.src_filter)
+                libs.append(
+                    self.env.BuildLibrary(self.build_dir, self.src_dir,
+                                          self.src_filter))
             else:
-                self._built_node = self.env.BuildSources(
-                    self.build_dir, self.src_dir, self.src_filter)
-            libs.append(self._built_node)
+                self.env.BuildSources(self.build_dir, self.src_dir,
+                                      self.src_filter)
+            self._is_built = True
         return libs
 
 
@@ -345,6 +362,10 @@ class UnknownLibBuilder(LibBuilderBase):
 
 
 class ProjectAsLibBuilder(LibBuilderBase):
+
+    def __init__(self, *args, **kwargs):
+        LibBuilderBase.__init__(self, *args, **kwargs)
+        self._is_built = True
 
     @property
     def lib_ldf_mode(self):
@@ -370,11 +391,6 @@ class ProjectAsLibBuilder(LibBuilderBase):
                     break
         return LibBuilderBase.search_deps_recursive(self, lib_builders,
                                                     search_paths)
-
-    def build(self):
-        # dummy mark that project is built
-        self._built_node = "dummy"
-        return [l for l in LibBuilderBase.build(self) if l != "dummy"]
 
 
 class ArduinoLibBuilder(LibBuilderBase):
@@ -550,7 +566,9 @@ def GetLibBuilders(env):
             if item == "__cores__" or not isdir(join(libs_dir, item)):
                 continue
             try:
-                lb = LibBuilderFactory.new(env, join(libs_dir, item))
+                lb = LibBuilderFactory.new(env,
+                                           join(libs_dir, item),
+                                           verbose=verbose)
             except ValueError:
                 if verbose:
                     sys.stderr.write("Skip library with broken manifest: %s\n"
