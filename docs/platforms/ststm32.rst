@@ -217,6 +217,40 @@ Generic
       - 512 Kb
       - 64 Kb
 
+LeafLabs
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``maple``
+      - `Maple <http://www.leaflabs.com/maple/>`_
+      - STM32F103RB
+      - 72 MHz
+      - 128 Kb
+      - 17 Kb
+
+    * - ``maple_mini_b20``
+      - `Maple Mini Bootloader 2.0 <http://www.leaflabs.com/maple/>`_
+      - STM32F103CB
+      - 72 MHz
+      - 128 Kb
+      - 20 Kb
+
+    * - ``maple_mini_origin``
+      - `Maple Mini Original <http://www.leaflabs.com/maple/>`_
+      - STM32F103CB
+      - 72 MHz
+      - 128 Kb
+      - 17 Kb
+
 MultiTech
 ~~~~~~~~~
 
@@ -243,26 +277,6 @@ MultiTech
       - 100 MHz
       - 512 Kb
       - 128 Kb
-
-Olimex
-~~~~~~
-
-.. list-table::
-    :header-rows:  1
-
-    * - ID
-      - Name
-      - Microcontroller
-      - Frequency
-      - Flash
-      - RAM
-
-    * - ``maple``
-      - `Olimexino STM32 (Maple) <https://www.olimex.com/Products/Duino/STM32/OLIMEXINO-STM32/>`_
-      - STM32F103RB_MAPLE
-      - 72 MHz
-      - 128 Kb
-      - 16.6015625 Kb
 
 ST
 ~~

@@ -225,6 +225,26 @@ Fubarino
       - 512 Kb
       - 128 Kb
 
+MikroElektronika
+~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``clicker2``
+      - `MikroElektronika Clicker 2 <http://www.mikroe.com/pic/clicker/>`_
+      - 32MX460F512L
+      - 80 MHz
+      - 512 Kb
+      - 32 Kb
+
 Olimex
 ~~~~~~
 

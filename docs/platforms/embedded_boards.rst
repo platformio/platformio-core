@@ -1462,6 +1462,40 @@ Lattice
       - 32 Kb
       - 32 Kb
 
+LeafLabs
+~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``maple``
+      - `Maple <http://www.leaflabs.com/maple/>`_
+      - STM32F103RB
+      - 72 MHz
+      - 128 Kb
+      - 17 Kb
+
+    * - ``maple_mini_b20``
+      - `Maple Mini Bootloader 2.0 <http://www.leaflabs.com/maple/>`_
+      - STM32F103CB
+      - 72 MHz
+      - 128 Kb
+      - 20 Kb
+
+    * - ``maple_mini_origin``
+      - `Maple Mini Original <http://www.leaflabs.com/maple/>`_
+      - STM32F103CB
+      - 72 MHz
+      - 128 Kb
+      - 17 Kb
+
 LightUp
 ~~~~~~~
 
@@ -1720,6 +1754,13 @@ MikroElektronika
       - Flash
       - RAM
 
+    * - ``clicker2``
+      - `MikroElektronika Clicker 2 <http://www.mikroe.com/pic/clicker/>`_
+      - 32MX460F512L
+      - 80 MHz
+      - 512 Kb
+      - 32 Kb
+
     * - ``hexiwear``
       - `Hexiwear <https://developer.mbed.org/platforms/Hexiwear/>`_
       - MK64FN1M0VDC12
@@ -1971,13 +2012,6 @@ Olimex
       - Frequency
       - Flash
       - RAM
-
-    * - ``maple``
-      - `Olimexino STM32 (Maple) <https://www.olimex.com/Products/Duino/STM32/OLIMEXINO-STM32/>`_
-      - STM32F103RB_MAPLE
-      - 72 MHz
-      - 128 Kb
-      - 16.6015625 Kb
 
     * - ``modwifi``
       - `Olimex MOD-WIFI-ESP8266(-DEV) <https://www.olimex.com/Products/IoT/MOD-WIFI-ESP8266-DEV/open-source-hardware>`_
@@ -3055,6 +3089,26 @@ SparkFun
       - 16 MHz
       - 32 Kb
       - 2 Kb
+
+SparkFun Electronics
+~~~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+    :header-rows:  1
+
+    * - ID
+      - Name
+      - Microcontroller
+      - Frequency
+      - Flash
+      - RAM
+
+    * - ``esp32thing``
+      - `SparkFun ESP32 Thing <https://www.sparkfun.com/products/13907>`_
+      - ESP32
+      - 160 MHz
+      - 1024 Kb
+      - 112 Kb
 
 SweetPea
 ~~~~~~~~

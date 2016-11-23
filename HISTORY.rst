@@ -97,6 +97,8 @@ PlatformIO 3.0
 
 * Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
 
+  + Added support for Maple Mini Original and Maple Mini Bootloader 2.0
+    (`issue #22 <https://github.com/platformio/platform-ststm32/issues/22>`__)
   + Added support for new boards: ST 32F769IDISCOVERY
   + Updated ARM mbed OS to 5.1.5/rev127
   + Use ``serial`` protocol by default for STM32Duino-based boards
