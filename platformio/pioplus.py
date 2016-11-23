@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 import os
 import subprocess
+import sys
 from os.path import join
 
 from platformio import exception, util
