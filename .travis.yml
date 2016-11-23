@@ -22,8 +22,8 @@ install:
   - git submodule update --init --recursive
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo pip install -U tox; else pip install -U tox; fi
 
-  # temporary hook to fix issue with gcc-pic32
-  - if [[ "$TOX_ENV" == "py27" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq lib32z1 lib32ncurses5 lib32bz2-1.0; fi
+  # ChipKIT issue: install 32-bit support for GCC PIC32
+  - if [[ "$TOX_ENV" == "py27" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libc6-i386; fi
 
 script:
   - tox -e $TOX_ENV

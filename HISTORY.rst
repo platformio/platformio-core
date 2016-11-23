@@ -73,6 +73,12 @@ PlatformIO 3.0
 
   + Updated ARM mbed OS to 5.1.5/rev127
 
+* Development platform `Microchip PIC32 <https://github.com/platformio/platform-microchippic32>`__
+
+  + Add support for MikroElektronika Clicker 2 board
+  + Updated ChipKIT Core to v1.3.1
+  + Updated Microchip PIC32 GCC-based toolchain and "pic32prog" tool
+
 * Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
 
   + Added BBC micro:bit B(S130) board
