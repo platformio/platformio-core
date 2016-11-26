@@ -38,13 +38,15 @@ def test_global_install_registry(clirunner, validate_cliresult,
                                  isolated_pio_home):
     result = clirunner.invoke(cmd_lib, [
         "-g", "install", "58", "OneWire",
-        "http://dl.platformio.org/libraries/archives/3/3756.tar.gz",
-        "ArduinoJson@5.4.0", "ArduinoJson@>5.4"
+        "http://dl.platformio.org/libraries/archives/3/5174.tar.gz",
+        "ArduinoJson@5.6.7", "ArduinoJson@>5.6"
     ])
     validate_cliresult(result)
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
-    items2 = ["DHT22_ID58", "ArduinoJson_ID64", "Json_ID64", "OneWire_ID1",
-              "ESPAsyncTCP_ID305"]
+    items2 = [
+        "DHT22_ID58", "ArduinoJson_ID64", "ArduinoJson_ID64@5.6.7",
+        "OneWire_ID1", "ESPAsyncTCP_ID305"
+    ]
     assert set(items1) == set(items2)
 
 
@@ -65,12 +67,14 @@ def test_global_install_repository(clirunner, validate_cliresult,
                                    isolated_pio_home):
     result = clirunner.invoke(
         cmd_lib,
-        ["-g",
-         "install",
-         "https://github.com/gioblu/PJON.git#3.0",
-         "https://gitlab.com/ivankravets/rs485-nodeproto.git",
-         # "https://developer.mbed.org/users/simon/code/TextLCD/",
-         "knolleary/pubsubclient"])
+        [
+            "-g",
+            "install",
+            "https://github.com/gioblu/PJON.git#3.0",
+            "https://gitlab.com/ivankravets/rs485-nodeproto.git",
+            # "https://developer.mbed.org/users/simon/code/TextLCD/",
+            "knolleary/pubsubclient"
+        ])
     validate_cliresult(result)
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
     items2 = ["PJON", "ESPAsyncTCP", "PubSubClient"]
@@ -83,27 +87,31 @@ def test_global_lib_list(clirunner, validate_cliresult, isolated_pio_home):
     assert all([n in result.output for n in ("OneWire", "DHT22", "64")])
 
     result = clirunner.invoke(cmd_lib, ["-g", "list", "--json-output"])
-    assert all(
-        [n in result.output
-         for n in ("PJON", "git+https://github.com/knolleary/pubsubclient")])
+    assert all([
+        n in result.output
+        for n in ("PJON", "git+https://github.com/knolleary/pubsubclient")
+    ])
     items1 = [i['name'] for i in json.loads(result.output)]
-    items2 = ["OneWire", "DHT22", "PJON", "ESPAsyncTCP", "Json", "ArduinoJson",
-              "pubsubclient", "rs485-nodeproto", "Adafruit ST7735 Library",
-              "RadioHead"]
+    items2 = [
+        "OneWire", "DHT22", "PJON", "ESPAsyncTCP", "ArduinoJson",
+        "pubsubclient", "rs485-nodeproto", "Adafruit ST7735 Library",
+        "RadioHead"
+    ]
     assert set(items1) == set(items2)
 
 
 def test_global_lib_show(clirunner, validate_cliresult, isolated_pio_home):
-    result = clirunner.invoke(cmd_lib, ["-g", "show", "64@5.4.0"])
+    result = clirunner.invoke(cmd_lib, ["-g", "show", "64@5.6.7"])
     validate_cliresult(result)
-    assert all([s in result.output
-                for s in ("Json", "arduino", "atmelavr", "5.4.0")])
+    assert all([
+        s in result.output for s in ("Json", "arduino", "atmelavr", "5.6.7")
+    ])
 
-    result = clirunner.invoke(cmd_lib, ["-g", "show", "ArduinoJson@>5.4.0"])
+    result = clirunner.invoke(cmd_lib, ["-g", "show", "ArduinoJson@>5.6.7"])
     validate_cliresult(result)
     assert all(
         [s in result.output for s in ("ArduinoJson", "arduino", "atmelavr")])
-    assert "5.4.0" not in result.output
+    assert "5.6.7" not in result.output
 
     result = clirunner.invoke(cmd_lib, ["-g", "show", "1"])
     validate_cliresult(result)
@@ -118,13 +126,16 @@ def test_global_lib_update(clirunner, validate_cliresult, isolated_pio_home):
 
 def test_global_lib_uninstall(clirunner, validate_cliresult,
                               isolated_pio_home):
-    result = clirunner.invoke(cmd_lib,
-                              ["-g", "uninstall", "1", "ArduinoJson@!=5.4.0",
-                               "TextLCD", "Adafruit ST7735 Library"])
+    result = clirunner.invoke(cmd_lib, [
+        "-g", "uninstall", "1", "ArduinoJson@!=5.6.7", "TextLCD",
+        "Adafruit ST7735 Library"
+    ])
     validate_cliresult(result)
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
-    items2 = ["DHT22_ID58", "Json_ID64", "ESPAsyncTCP_ID305", "pubsubclient",
-              "PJON", "rs485-nodeproto", "RadioHead_ID124"]
+    items2 = [
+        "DHT22_ID58", "ArduinoJson_ID64@5.6.7", "ESPAsyncTCP_ID305",
+        "pubsubclient", "PJON", "rs485-nodeproto", "RadioHead_ID124"
+    ]
     assert set(items1) == set(items2)
 
 
@@ -137,9 +148,11 @@ def test_project_lib_complex(clirunner, validate_cliresult, tmpdir):
         # isntall
         result = clirunner.invoke(cmd_lib, ["install", "54", "ArduinoJson"])
         validate_cliresult(result)
-        items1 = [d.basename
-                  for d in tmpdir.join(basename(util.get_projectlibdeps_dir()))
-                  .listdir()]
+        items1 = [
+            d.basename
+            for d in tmpdir.join(basename(util.get_projectlibdeps_dir()))
+            .listdir()
+        ]
         items2 = ["DallasTemperature_ID54", "OneWire_ID1", "ArduinoJson_ID64"]
         assert set(items1) == set(items2)
 
