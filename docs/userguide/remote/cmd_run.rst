@@ -33,13 +33,13 @@ Description
 -----------
 
 Process remotely environments which are defined in :ref:`projectconf` file.
-By default, :ref:`pio_remote` builds project on the local machine and deploy
-final firmware Over-The-Air (OTA) to remote device.
+By default, :ref:`pio_remote` builds project on a host machine and deploy
+final firmware Over-The-Air (OTA) to remote device (embedded board).
 
-If you need to build project on remote machine, please use
-:option:`platformio remote run --build-remotely` option. In this case,
-:ref:`pio_remote` will automatically deploy your project to remote machine,
-install required toolchains, frameworks, SDKs, etc and build/upload firmware.
+If you need to process project on remote machine, please use
+:option:`platformio remote run --force-remote` option. In this case,
+:ref:`pio_remote` will automatically synchronize your project with remote machine,
+install required toolchains, frameworks, SDKs, etc., and process project.
 
 
 Options
@@ -101,15 +101,15 @@ Disable auto-clean of :ref:`projectconf_pio_envs_dir` when :ref:`projectconf`
 or :ref:`projectconf_pio_src_dir` (project structure) have been modified.
 
 .. option::
-    -r, --build-remotely
+    -r, --force-remote
 
-By default, :ref:`pio_remote` builds project on the local machine and deploy
-final firmware Over-The-Air (OTA) to remote device.
+By default, :ref:`pio_remote` builds project on a host machine and deploy
+final firmware Over-The-Air (OTA) to remote device (embedded board).
 
-If you need to build project on remote machine, please use
-:option:`platformio remote run --build-remotely` option. In this case,
-:ref:`pio_remote` will automatically deploy your project to remote machine,
-install required toolchains, frameworks, SDKs, etc and build/upload firmware.
+If you need to process project on remote machine, please use
+:option:`platformio remote run --force-remote` option. In this case,
+:ref:`pio_remote` will automatically synchronize your project with remote machine,
+install required toolchains, frameworks, SDKs, etc., and process project.
 
 Example
 -------

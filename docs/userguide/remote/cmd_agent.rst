@@ -101,6 +101,12 @@ Share your agent/devices with other PlatformIO developers who have
 The valid value for ``--share`` option is E-Mail address that was used for
 :ref:`cmd_account_register` command.
 
+.. option::
+    -d, --working-dir
+
+A working directory where :ref:`cmd_remote_agent` stores projects data for
+incremental synchronization and embedded programs for PIO Process Supervisor.
+
 ------------
 
 platformio remote agent reload

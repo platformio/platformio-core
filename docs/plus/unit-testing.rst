@@ -48,7 +48,7 @@ test on a host machine (desktop).
 .. note::
     PlatformIO does not install any toolchains automatically for
     :ref:`platform_native` and requires ``GCC`` toolchain to be installed
-    on your local machine.
+    on your host machine.
     Please open Terminal and check that ``gcc`` command is installed.
 
 Embedded

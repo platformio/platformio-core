@@ -99,15 +99,15 @@ Specify the path to project directory. By default, ``--project-dir`` is equal
 to current working directory (``CWD``).
 
 .. option::
-    -r, --build-remotely
+    -r, --force-remote
 
-By default, :ref:`pio_remote` builds project on the local machine and deploy
-final testing firmware Over-The-Air (OTA) to remote device.
+By default, :ref:`pio_remote` processes project on a host machine and deploy
+final testing firmware Over-The-Air (OTA) to remote device (embedded board).
 
-If you need to build project on remote machine, please use
-:option:`platformio remote test --build-remotely` option. In this case,
-:ref:`pio_remote` will automatically deploy your project to remote machine,
-install required toolchains, frameworks, SDKs, etc and process tests.
+If you need to process project on remote machine, please use
+:option:`platformio remote test --force-remote` option. In this case,
+:ref:`pio_remote` will automatically synchronize your project with remote machine,
+install required toolchains, frameworks, SDKs, etc., and process project.
 
 
 .. option::

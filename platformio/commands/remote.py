@@ -42,6 +42,15 @@ def remote_agent():
 @remote_agent.command("start", short_help="Start agent")
 @click.option("-n", "--name")
 @click.option("-s", "--share", multiple=True, metavar="E-MAIL")
+@click.option(
+    "-d",
+    "--working-dir",
+    envvar="PLATFORMIO_REMOTE_AGENT_DIR",
+    type=click.Path(
+        file_okay=False,
+        dir_okay=True,
+        writable=True,
+        resolve_path=True))
 def remote_agent_start(**kwargs):
     pioplus_call(sys.argv[1:])
 
@@ -82,7 +91,7 @@ def remote_update(only_check):
         writable=True,
         resolve_path=True))
 @click.option("--disable-auto-clean", is_flag=True)
-@click.option("-r", "--build-remotely", is_flag=True)
+@click.option("-r", "--force-remote", is_flag=True)
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 def remote_run(**kwargs):
@@ -104,7 +113,7 @@ def remote_run(**kwargs):
         dir_okay=True,
         writable=True,
         resolve_path=True))
-@click.option("-r", "--build-remotely", is_flag=True)
+@click.option("-r", "--force-remote", is_flag=True)
 @click.option("--without-building", is_flag=True)
 @click.option("--without-uploading", is_flag=True)
 @click.option("--verbose", "-v", is_flag=True)

@@ -103,6 +103,10 @@ Allows to override :ref:`projectconf` option :ref:`projectconf_pio_test_dir`.
 
 Allows to override :ref:`projectconf` option :ref:`projectconf_pio_boards_dir`.
 
+.. envvar:: PLATFORMIO_REMOTE_AGENT_DIR
+
+Allows to override :option:`platformio remote agent start --working-dir`.
+
 Building
 --------
 
