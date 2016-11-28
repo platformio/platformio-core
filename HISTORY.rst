@@ -31,7 +31,8 @@ PlatformIO 3.0
 * Improved handling of library dependencies specified in ``library.json`` manifest
   (`issue #814 <https://github.com/platformio/platformio/issues/814>`_)
 * Improved `Library Dependency Finder (LDF) <http://docs.platformio.org/en/stable/librarymanager/ldf.html>`__
-  for circular dependencies
+  for circular dependencies and fixed LDF C/C++ Preprocessor for conditional syntax
+  (`issue #837 <https://github.com/platformio/platformio/issues/837>`_)
 * Fixed issue with ``PATH`` auto-configuring for upload tools
 * Fixed ``99-platformio-udev.rules`` checker for Linux OS
 

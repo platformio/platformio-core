@@ -47,10 +47,7 @@ def remote_agent():
     "--working-dir",
     envvar="PLATFORMIO_REMOTE_AGENT_DIR",
     type=click.Path(
-        file_okay=False,
-        dir_okay=True,
-        writable=True,
-        resolve_path=True))
+        file_okay=False, dir_okay=True, writable=True, resolve_path=True))
 def remote_agent_start(**kwargs):
     pioplus_call(sys.argv[1:])
 

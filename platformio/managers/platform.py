@@ -477,8 +477,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             }
         if "tool-scons" not in self.packages:
             self.packages['tool-scons'] = {
-                "version": self._manifest.get("engines", {}).get(
-                    "scons", ">=2.3.0,<2.6.0"),
+                "version": "~3.20401.1",
                 "optional": False
             }
 

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # pylint: disable=no-member, no-self-use, unused-argument
+# pylint: disable=too-many-instance-attributes, too-many-public-methods
 
 from __future__ import absolute_import
 
@@ -76,12 +77,11 @@ class LibBuilderFactory(object):
         return []
 
 
-# pylint: disable=too-many-instance-attributes, too-many-public-methods
-
-
 class LibBuilderBase(object):
 
-    INC_SCANNER = SCons.Scanner.C.CScanner()
+    CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
+    INTELLISENSE_SCANNER = SCons.Scanner.C.SConsCPPScannerWrapper("CScanner",
+                                                                  "CPPPATH")
     INC_DIRS_CACHE = None
 
     def __init__(self, env, path, manifest=None, verbose=False):
@@ -280,8 +280,16 @@ class LibBuilderBase(object):
 
         result = []
         for path in self._validate_search_paths(search_paths):
-            for inc in self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.INC_SCANNER, tuple(inc_dirs)):
+            try:
+                assert isinstance(self, ProjectAsLibBuilder) or \
+                    self.lib_ldf_mode == 2
+                incs = self.env.File(path).get_found_includes(
+                    self.env, LibBuilderBase.INTELLISENSE_SCANNER,
+                    tuple(inc_dirs))
+            except:  # pylint: disable=bare-except
+                incs = self.env.File(path).get_found_includes(
+                    self.env, LibBuilderBase.CLASSIC_SCANNER, tuple(inc_dirs))
+            for inc in incs:
                 if inc not in result:
                     result.append(inc)
         return result
