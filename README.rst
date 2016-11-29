@@ -1,11 +1,11 @@
 PlatformIO
 ==========
 
-.. image:: https://travis-ci.org/platformio/platformio.svg?branch=develop
-    :target: https://travis-ci.org/platformio/platformio
+.. image:: https://travis-ci.org/platformio/platformio-core.svg?branch=develop
+    :target: https://travis-ci.org/platformio/platformio-core
     :alt: Travis.CI Build Status
-.. image:: https://ci.appveyor.com/api/projects/status/dku0h2rutfj0ctls/branch/develop?svg=true
-    :target: https://ci.appveyor.com/project/ivankravets/platformio
+.. image:: https://ci.appveyor.com/api/projects/status/unnpw0n3c5k14btn/branch/develop?svg=true
+    :target: https://ci.appveyor.com/project/ivankravets/platformio-core
     :alt: AppVeyor.CI Build Status
 .. image:: https://requires.io/github/platformio/platformio/requirements.svg?branch=develop
     :target: https://requires.io/github/platformio/platformio/requirements/?branch=develop
