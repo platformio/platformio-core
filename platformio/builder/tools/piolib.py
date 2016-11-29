@@ -79,9 +79,10 @@ class LibBuilderFactory(object):
 
 class LibBuilderBase(object):
 
+    DEFAULT_LDF_MODE = 1
+
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
-    INTELLISENSE_SCANNER = SCons.Scanner.C.SConsCPPScannerWrapper("CScanner",
-                                                                  "CPPPATH")
+    ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
     INC_DIRS_CACHE = None
 
     def __init__(self, env, path, manifest=None, verbose=False):
@@ -160,7 +161,7 @@ class LibBuilderBase(object):
 
     @property
     def lib_ldf_mode(self):
-        return int(self.env.get("LIB_LDF_MODE", 1))
+        return int(self.env.get("LIB_LDF_MODE", self.DEFAULT_LDF_MODE))
 
     @property
     def depbuilders(self):
@@ -281,11 +282,8 @@ class LibBuilderBase(object):
         result = []
         for path in self._validate_search_paths(search_paths):
             try:
-                assert isinstance(self, ProjectAsLibBuilder) or \
-                    self.lib_ldf_mode == 2
                 incs = self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.INTELLISENSE_SCANNER,
-                    tuple(inc_dirs))
+                    self.env, LibBuilderBase.ADVANCED_SCANNER, tuple(inc_dirs))
             except:  # pylint: disable=bare-except
                 incs = self.env.File(path).get_found_includes(
                     self.env, LibBuilderBase.CLASSIC_SCANNER, tuple(inc_dirs))
@@ -635,7 +633,8 @@ def BuildDependentLibraries(env, src_dir):
     project.env = env
     project.search_deps_recursive(lib_builders)
 
-    if int(env.get("LIB_LDF_MODE", 1)) == 1 and project.depbuilders:
+    if int(env.get("LIB_LDF_MODE", LibBuilderBase.DEFAULT_LDF_MODE)) == 1 \
+            and project.depbuilders:
         correct_found_libs(lib_builders)
 
     if project.depbuilders:
