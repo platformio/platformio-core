@@ -104,7 +104,7 @@ def BuildProgram(env):
     return program
 
 
-def ProcessFlags(env, flags):
+def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
     if not flags:
         return
     if isinstance(flags, list):

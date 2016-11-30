@@ -607,7 +607,8 @@ def BuildDependentLibraries(env, src_dir):
         # build full dependency graph
         found_lbs = [lb for lb in lib_builders if lb.dependent]
         for lb in lib_builders:
-            lb.search_deps_recursive(lib_builders, lb.get_src_files())
+            if lb in found_lbs:
+                lb.search_deps_recursive(lib_builders, lb.get_src_files())
         for lb in lib_builders:
             for deplb in lb.depbuilders[:]:
                 if deplb not in found_lbs:

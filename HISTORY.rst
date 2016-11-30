@@ -19,6 +19,9 @@ PlatformIO 3.0
 * `PIO Account <http://docs.platformio.org/en/latest/userguide/account/index.html>`__
   and `PLATFORMIO_AUTH_TOKEN <http://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_AUTH_TOKEN>`__
   environment variable for CI systems
+* Refactored `Library Dependency Finder (LDF) <http://docs.platformio.org/en/stable/librarymanager/ldf.html>`__
+  C/C++ Preprocessor for conditional syntax ("#ifdef", #if, #else, #elif, #define, etc.)
+  (`issue #837 <https://github.com/platformio/platformio/issues/837>`_)
 * Inject system environment variables to configuration settings in
   `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
   (`issue #792 <https://github.com/platformio/platformio/issues/792>`_)
@@ -31,8 +34,7 @@ PlatformIO 3.0
 * Improved handling of library dependencies specified in ``library.json`` manifest
   (`issue #814 <https://github.com/platformio/platformio/issues/814>`_)
 * Improved `Library Dependency Finder (LDF) <http://docs.platformio.org/en/stable/librarymanager/ldf.html>`__
-  for circular dependencies and fixed LDF C/C++ Preprocessor for conditional syntax
-  (`issue #837 <https://github.com/platformio/platformio/issues/837>`_)
+  for circular dependencies
 * Fixed issue with ``PATH`` auto-configuring for upload tools
 * Fixed ``99-platformio-udev.rules`` checker for Linux OS
 
