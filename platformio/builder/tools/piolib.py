@@ -287,6 +287,7 @@ class LibBuilderBase(object):
             except:  # pylint: disable=bare-except
                 incs = self.env.File(path).get_found_includes(
                     self.env, LibBuilderBase.CLASSIC_SCANNER, tuple(inc_dirs))
+            # print path, map(lambda n: n.get_abspath(), incs)
             for inc in incs:
                 if inc not in result:
                     result.append(inc)

@@ -477,7 +477,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             }
         if "tool-scons" not in self.packages:
             self.packages['tool-scons'] = {
-                "version": "~3.20401.2",
+                "version": "~3.20401.3",
                 "optional": False
             }
 
