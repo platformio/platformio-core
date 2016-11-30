@@ -23,7 +23,7 @@ from os.path import basename, dirname, isdir, join, realpath
 from SCons.Action import Action
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
                           DefaultEnvironment, SConscript)
-from SCons.Util import case_sensitive_suffixes
+from SCons.Util import case_sensitive_suffixes, is_Sequence
 
 from platformio.util import pioversion_to_intstr
 
@@ -111,12 +111,17 @@ def ProcessFlags(env, flags):
         flags = " ".join(flags)
     parsed_flags = env.ParseFlags(str(flags))
     for flag in parsed_flags.pop("CPPDEFINES"):
-        if not isinstance(flag, list):
+        if not is_Sequence(flag):
             env.Append(CPPDEFINES=flag)
             continue
-        if '\"' in flag[1]:
-            flag[1] = flag[1].replace('\"', '\\\"')
-        env.Append(CPPDEFINES=[flag])
+        _key, _value = flag[:2]
+        if '\"' in _value:
+            _value = _value.replace('\"', '\\\"')
+        elif _value.isdigit():
+            _value = int(_value)
+        elif _value.replace(".", "", 1).isdigit():
+            _value = float(_value)
+        env.Append(CPPDEFINES=(_key, _value))
     env.Append(**parsed_flags)
 
     # fix relative CPPPATH & LIBPATH

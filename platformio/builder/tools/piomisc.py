@@ -23,6 +23,7 @@ from os.path import basename, isdir, isfile, join, relpath
 from tempfile import mkstemp
 
 from SCons.Action import Action
+from SCons.Defaults import processDefines
 from SCons.Script import ARGUMENTS
 
 from platformio import util
@@ -227,10 +228,8 @@ def DumpIDEData(env):
     def get_defines(env_):
         defines = []
         # global symbols
-        for item in env_.get("CPPDEFINES", []):
-            if isinstance(item, list) or isinstance(item, tuple):
-                item = "=".join(item)
-            defines.append(env_.subst(item).replace('\\"', '"'))
+        for item in processDefines(env_.get("CPPDEFINES", [])):
+            defines.append(env_.subst(item).replace('\\', ''))
 
         # special symbol for Atmel AVR MCU
         if env['PIOPLATFORM'] == "atmelavr":
@@ -256,9 +255,7 @@ def DumpIDEData(env):
 
     # https://github.com/platformio/platformio-atom-ide/issues/34
     _new_defines = []
-    for item in env_.get("CPPDEFINES", []):
-        if isinstance(item, list) or isinstance(item, tuple):
-            item = "=".join(item)
+    for item in processDefines(env_.get("CPPDEFINES", [])):
         item = item.replace('\\"', '"')
         if " " in item:
             _new_defines.append(item.replace(" ", "\\\\ "))
