@@ -21,7 +21,7 @@ operates with the C/C++ source files and looks for ``#include ...``
 directives.
 
 In spite of the fact that Library Dependency Finder is written in pure Python,
-it interprets (emulates) :ref:`ldf_c_cond_syntax` (``#ifdef``, ``if``, ``defined``,
+it evaluates :ref:`ldf_c_cond_syntax` (``#ifdef``, ``if``, ``defined``,
 ``else``, and ``elif``) without calling ``gcc -E``. This approach allows
 significantly reduce total compilation time.
 
@@ -63,18 +63,39 @@ Dependency Finder Mode
 Library Dependency Finder starts work from analyzing source files of the
 project (:ref:`projectconf_pio_src_dir`) and can work in the next modes:
 
-* ``0`` - "manual mode", does not process source files of a project and
-  dependencies. Builds only the libraries that are specified in
-  manifests (:ref:`library_config`, ``module.json``) or in the :ref:`projectconf`.
-* ``1`` - **default** - parses ALL C/C++ source code of the project and follows
-  only by nested includes (``#include ...``, chain...) from the libraries.
-* ``2`` - parses ALL C/C++ source code of the project and parses
-  ALL C/C++ source code of the each found dependency (recursively).
+.. list-table::
+    :header-rows:  1
 
-This mode can be changed using :ref:`projectconf_lib_ldf_mode` option in
+    * - Mode
+      - Description
+
+    * - ``off``
+      - "Manual mode", does not process source files of a project and
+        dependencies. Builds only the libraries that are specified in
+        manifests (:ref:`library_config`, ``module.json``) or using
+        :ref:`projectconf_lib_deps` option.
+
+    * - ``chain``
+      - Parses ALL C/C++ source code of the project and follows
+        only by nested includes (``#include ...``, chain...) from the libraries.
+        Does not evaluates :ref:`ldf_c_cond_syntax`.
+
+    * - ``deep``
+      - Parses ALL C/C++ source code of the project and parses ALL C/C++
+        source code of the each found dependency (recursively).
+        Does not process :ref:`ldf_c_cond_syntax`.
+
+    * - ``chain+`` (**default**)
+      - The same behavior as for the ``chain`` but evaluates :ref:`ldf_c_cond_syntax`.
+
+    * - ``deep+``
+      - The same behavior as for the ``deep`` but evaluates :ref:`ldf_c_cond_syntax`.
+
+The mode can be changed using :ref:`projectconf_lib_ldf_mode` option in
 :ref:`projectconf`.
 
-A difference between ``1`` and ``2`` modes. For example, there are 2 libraries:
+A difference between ``chain/chain+`` and ``deep/deep+`` modes. For example,
+there are 2 libraries:
 
 * Library "Foo" with files:
 
@@ -88,7 +109,7 @@ A difference between ``1`` and ``2`` modes. For example, there are 2 libraries:
 
 :Case 1:
 
-    * ``lib_ldf_mode = 1``
+    * ``lib_ldf_mode = chain``
     * ``Foo/foo.h`` depends on "Bar" library (contains ``#include <bar.h>``)
     * ``#include <foo.h>`` is located in one of the project source files
 
@@ -97,7 +118,7 @@ A difference between ``1`` and ``2`` modes. For example, there are 2 libraries:
 
 :Case 2:
 
-    * ``lib_ldf_mode = 1``
+    * ``lib_ldf_mode = chain``
     * ``Foo/foo.cpp`` depends on "Bar" library (contains ``#include <bar.h>``)
     * ``#include <foo.h>`` is located in one of the project source files
 
@@ -106,7 +127,7 @@ A difference between ``1`` and ``2`` modes. For example, there are 2 libraries:
 
 :Case 3:
 
-    * ``lib_ldf_mode = 2``
+    * ``lib_ldf_mode = deep``
     * ``Foo/foo.cpp`` depends on "Bar" library (contains ``#include <bar.h>``)
     * ``#include <foo.h>`` is located in one of the project source files
 
@@ -140,7 +161,7 @@ C/C++ Preprocessor conditional syntax
 -------------------------------------
 
 In spite of the fact that Library Dependency Finder is written in pure Python,
-it interprets (emulates) `C/C++ Preprocessor conditional syntax <https://gcc.gnu.org/onlinedocs/cpp/Conditional-Syntax.html#Conditional-Syntax>`_
+it evaluates `C/C++ Preprocessor conditional syntax <https://gcc.gnu.org/onlinedocs/cpp/Conditional-Syntax.html#Conditional-Syntax>`_
 (``#ifdef``, ``if``, ``defined``, ``else``, and ``elif``) without calling
 ``gcc -E``. For example,
 

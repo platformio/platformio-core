@@ -23,7 +23,7 @@ from os.path import basename, commonprefix, isdir, isfile, join, realpath, sep
 from platform import system
 
 import SCons.Scanner
-from SCons.Script import ARGUMENTS
+from SCons.Script import ARGUMENTS, DefaultEnvironment
 
 from platformio import util
 from platformio.builder.tools import platformio as piotool
@@ -79,7 +79,8 @@ class LibBuilderFactory(object):
 
 class LibBuilderBase(object):
 
-    DEFAULT_LDF_MODE = 1
+    LDF_MODES = ["off", "chain", "deep", "chain+", "deep+"]
+    LDF_MODE_DEFAULT = "chain+"
 
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
@@ -90,7 +91,10 @@ class LibBuilderBase(object):
         self.envorigin = env.Clone()
         self.path = realpath(env.subst(path))
         self.verbose = verbose
+
         self._manifest = manifest if manifest else self.load_manifest()
+        self._ldf_mode = self.validate_ldf_mode(
+            self.env.get("LIB_LDF_MODE", self.LDF_MODE_DEFAULT))
         self._is_dependent = False
         self._is_built = False
         self._depbuilders = list()
@@ -159,9 +163,21 @@ class LibBuilderBase(object):
     def lib_archive(self):
         return True
 
+    @staticmethod
+    def validate_ldf_mode(mode):
+        if isinstance(mode, basestring):
+            mode = mode.strip().lower()
+        if mode in LibBuilderBase.LDF_MODES:
+            return mode
+        try:
+            return LibBuilderBase.LDF_MODES[int(mode)]
+        except (IndexError, ValueError):
+            pass
+        return LibBuilderBase.LDF_MODE_DEFAULT
+
     @property
     def lib_ldf_mode(self):
-        return int(self.env.get("LIB_LDF_MODE", self.DEFAULT_LDF_MODE))
+        return self._ldf_mode
 
     @property
     def depbuilders(self):
@@ -170,6 +186,10 @@ class LibBuilderBase(object):
     @property
     def dependent(self):
         return self._is_dependent
+
+    @property
+    def is_built(self):
+        return self._is_built
 
     @staticmethod
     def items_in_list(items, ilist):
@@ -211,7 +231,7 @@ class LibBuilderBase(object):
                     exports={"env": self.env,
                              "pio_lib_builder": self})
 
-    def _process_dependencies(self, lib_builders):
+    def _process_dependencies(self):
         if not self.dependencies:
             return
         for item in self.dependencies:
@@ -230,7 +250,7 @@ class LibBuilderBase(object):
                 continue
 
             found = False
-            for lb in lib_builders:
+            for lb in self.envorigin.GetLibBuilders():
                 if item['name'] != lb.name:
                     continue
                 elif "frameworks" in item and \
@@ -240,7 +260,7 @@ class LibBuilderBase(object):
                      not lb.is_platforms_compatible(item["platforms"]):
                     continue
                 found = True
-                self.depend_recursive(lb, lib_builders)
+                self.depend_recursive(lb)
                 break
 
             if not found:
@@ -262,12 +282,12 @@ class LibBuilderBase(object):
 
         return _search_paths
 
-    def _get_found_includes(self, lib_builders, search_paths=None):
+    def _get_found_includes(self, search_paths=None):
         # all include directories
         if not LibBuilderBase.INC_DIRS_CACHE:
             inc_dirs = []
             used_inc_dirs = []
-            for lb in lib_builders:
+            for lb in self.envorigin.GetLibBuilders():
                 items = [self.env.Dir(d) for d in lb.get_inc_dirs()]
                 if lb.dependent:
                     used_inc_dirs.extend(items)
@@ -293,7 +313,7 @@ class LibBuilderBase(object):
                     result.append(inc)
         return result
 
-    def depend_recursive(self, lb, lib_builders, search_paths=None):
+    def depend_recursive(self, lb, search_paths=None):
 
         def _already_depends(_lb):
             if self in _lb.depbuilders:
@@ -314,23 +334,23 @@ class LibBuilderBase(object):
             elif lb not in self._depbuilders:
                 self._depbuilders.append(lb)
                 LibBuilderBase.INC_DIRS_CACHE = None
-        lb.search_deps_recursive(lib_builders, search_paths)
+        lb.search_deps_recursive(search_paths)
 
-    def search_deps_recursive(self, lib_builders, search_paths=None):
+    def search_deps_recursive(self, search_paths=None):
         if not self._is_dependent:
             self._is_dependent = True
-            self._process_dependencies(lib_builders)
+            self._process_dependencies()
 
-            if self.lib_ldf_mode == 2:
+            if self.lib_ldf_mode.startswith("deep"):
                 search_paths = self.get_src_files()
 
         # when LDF is disabled
-        if self.lib_ldf_mode == 0:
+        if self.lib_ldf_mode == "off":
             return
 
         lib_inc_map = {}
-        for inc in self._get_found_includes(lib_builders, search_paths):
-            for lb in lib_builders:
+        for inc in self._get_found_includes(search_paths):
+            for lb in self.envorigin.GetLibBuilders():
                 if inc.get_abspath() in lb:
                     if lb not in lib_inc_map:
                         lib_inc_map[lb] = []
@@ -338,7 +358,7 @@ class LibBuilderBase(object):
                     break
 
         for lb, lb_search_paths in lib_inc_map.items():
-            self.depend_recursive(lb, lib_builders, lb_search_paths)
+            self.depend_recursive(lb, lb_search_paths)
 
     def build(self):
         libs = []
@@ -353,6 +373,14 @@ class LibBuilderBase(object):
 
         if not self._is_built:
             self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
+
+            if self.lib_ldf_mode == "off":
+                for lb in self.envorigin.GetLibBuilders():
+                    if self == lb or not lb.is_built:
+                        continue
+                    for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
+                        self.env.AppendUnique(**{key: lb.env.get(key)})
+
             if self.lib_archive:
                 libs.append(
                     self.env.BuildLibrary(self.build_dir, self.src_dir,
@@ -376,7 +404,11 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
     def lib_ldf_mode(self):
-        return 2  # parse all project files
+        mode = LibBuilderBase.lib_ldf_mode.fget(self)
+        if not mode.startswith("chain"):
+            return mode
+        # parse all project files
+        return "deep+" if "+" in mode else "deep"
 
     @property
     def src_filter(self):
@@ -386,18 +418,17 @@ class ProjectAsLibBuilder(LibBuilderBase):
         # skip for project, options are already processed
         pass
 
-    def search_deps_recursive(self, lib_builders, search_paths=None):
+    def search_deps_recursive(self, search_paths=None):
         for dep in self.env.get("LIB_DEPS", []):
             for token in ("@", "="):
                 if token in dep:
                     dep, _ = dep.split(token, 1)
-            for lb in lib_builders:
+            for lb in self.envorigin.GetLibBuilders():
                 if lb.name == dep:
                     if lb not in self.depbuilders:
-                        self.depend_recursive(lb, lib_builders)
+                        self.depend_recursive(lb)
                     break
-        return LibBuilderBase.search_deps_recursive(self, lib_builders,
-                                                    search_paths)
+        return LibBuilderBase.search_deps_recursive(self, search_paths)
 
 
 class ArduinoLibBuilder(LibBuilderBase):
@@ -509,7 +540,8 @@ class PlatformIOLibBuilder(LibBuilderBase):
     @property
     def lib_ldf_mode(self):
         if "libLDFMode" in self._manifest.get("build", {}):
-            return int(self._manifest.get("build").get("libLDFMode"))
+            return self.validate_ldf_mode(
+                self._manifest.get("build").get("libLDFMode"))
         return LibBuilderBase.lib_ldf_mode.fget(self)
 
     def is_platforms_compatible(self, platforms):
@@ -539,7 +571,11 @@ class PlatformIOLibBuilder(LibBuilderBase):
         return inc_dirs
 
 
-def GetLibBuilders(env):
+def GetLibBuilders(env):  # pylint: disable=too-many-branches
+
+    if "__PIO_LIB_BUILDERS" in DefaultEnvironment():
+        return DefaultEnvironment()['__PIO_LIB_BUILDERS']
+
     items = []
     compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
     verbose = (int(ARGUMENTS.get("PIOVERBOSE", 0)) and
@@ -598,17 +634,19 @@ def GetLibBuilders(env):
             "http://docs.platformio.org/en/stable/librarymanager/ldf.html#"
             "ldf-compat-mode\n")
 
+    DefaultEnvironment()['__PIO_LIB_BUILDERS'] = items
     return items
 
 
 def BuildDependentLibraries(env, src_dir):
+    lib_builders = env.GetLibBuilders()
 
-    def correct_found_libs(lib_builders):
+    def correct_found_libs():
         # build full dependency graph
         found_lbs = [lb for lb in lib_builders if lb.dependent]
         for lb in lib_builders:
             if lb in found_lbs:
-                lb.search_deps_recursive(lib_builders, lb.get_src_files())
+                lb.search_deps_recursive(lb.get_src_files())
         for lb in lib_builders:
             for deplb in lb.depbuilders[:]:
                 if deplb not in found_lbs:
@@ -626,18 +664,17 @@ def BuildDependentLibraries(env, src_dir):
             if lb.depbuilders:
                 print_deps_tree(lb, level + 1)
 
-    lib_builders = env.GetLibBuilders()
-
     print "Collected %d compatible libraries" % len(lib_builders)
     print "Looking for dependencies..."
 
     project = ProjectAsLibBuilder(env, src_dir)
     project.env = env
-    project.search_deps_recursive(lib_builders)
+    project.search_deps_recursive()
 
-    if int(env.get("LIB_LDF_MODE", LibBuilderBase.DEFAULT_LDF_MODE)) == 1 \
-            and project.depbuilders:
-        correct_found_libs(lib_builders)
+    if (LibBuilderBase.validate_ldf_mode(
+            env.get("LIB_LDF_MODE", LibBuilderBase.LDF_MODE_DEFAULT))
+            .startswith("chain") and project.depbuilders):
+        correct_found_libs()
 
     if project.depbuilders:
         print "Library Dependency Graph"

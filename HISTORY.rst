@@ -20,8 +20,11 @@ PlatformIO 3.0
   and `PLATFORMIO_AUTH_TOKEN <http://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_AUTH_TOKEN>`__
   environment variable for CI systems
 * Refactored `Library Dependency Finder (LDF) <http://docs.platformio.org/en/stable/librarymanager/ldf.html>`__
-  C/C++ Preprocessor for conditional syntax ("#ifdef", #if, #else, #elif, #define, etc.)
+  C/C++ Preprocessor for conditional syntax (``#ifdef``, ``#if``, ``#else``,
+  ``#elif``, ``#define``, etc.)
   (`issue #837 <https://github.com/platformio/platformio/issues/837>`_)
+* Added new `LDF Modes <http://docs.platformio.org/en/latest/librarymanager/ldf.html#ldf-mode>`__:
+  ``chain+`` and ``deep+`` and set ``chain+`` as default
 * Inject system environment variables to configuration settings in
   `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
   (`issue #792 <https://github.com/platformio/platformio/issues/792>`_)
