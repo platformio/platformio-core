@@ -302,9 +302,14 @@ class LibBuilderBase(object):
         result = []
         for path in self._validate_search_paths(search_paths):
             try:
+                assert "+" in self.lib_ldf_mode
                 incs = self.env.File(path).get_found_includes(
                     self.env, LibBuilderBase.ADVANCED_SCANNER, tuple(inc_dirs))
-            except:  # pylint: disable=bare-except
+            except Exception as e:  # pylint: disable=broad-except
+                if self.verbose and "+" in self.lib_ldf_mode:
+                    sys.stderr.write(
+                        "Warning! Classic Pre Processor is used for `%s`, "
+                        "advanced has failed with `%s`\n" % (path, e))
                 incs = self.env.File(path).get_found_includes(
                     self.env, LibBuilderBase.CLASSIC_SCANNER, tuple(inc_dirs))
             # print path, map(lambda n: n.get_abspath(), incs)
