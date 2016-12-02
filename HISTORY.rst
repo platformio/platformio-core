@@ -124,6 +124,14 @@ PlatformIO 3.0
   + Updated ARM mbed OS to 5.1.5/rev127
   + Added support for Teensy Audio feature (``build_flags = -D USB_AUDIO``)
 
+* Development platform `TI MSP430 <https://github.com/platformio/platform-timsp430>`__
+
+  + Upgrade development platform with the latest GCC toolchains and Energia
+    framework
+    (`issue #1 <https://github.com/platformio/platform-timsp430/issues/1>`__,
+    `issue #2 <https://github.com/platformio/platform-timsp430/issues/2>`__,
+    `issue #3 <https://github.com/platformio/platform-timsp430/issues/1>`__)
+
 3.1.0 (2016-09-19)
 ~~~~~~~~~~~~~~~~~~
 
