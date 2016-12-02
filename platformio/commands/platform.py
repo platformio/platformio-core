@@ -154,6 +154,18 @@ def platform_list(json_output):
 @cli.command("show", short_help="Show details about installed platform")
 @click.argument("platform")
 def platform_show(platform):
+
+    def _detail_version(version):
+        if version.count(".") != 2:
+            return version
+        x, y, z = version.split(".")
+        if int(y) < 100:
+            return version
+        if len(y) % 2 != 0:
+            y = "0" + y
+        parts = [str(int(y[i * 2:i * 2 + 2])) for i in range(len(y) / 2)]
+        return "%s (%s)" % (version, ".".join(parts))
+
     try:
         p = PlatformFactory.newPlatform(platform)
     except exception.UnknownPlatform:
@@ -189,4 +201,6 @@ def platform_show(platform):
         if name in installed_pkgs:
             for key, value in installed_pkgs[name].items():
                 if key in ("url", "version", "description"):
+                    if key == "version":
+                        value = _detail_version(value)
                     click.echo("%s: %s" % (key.title(), value))

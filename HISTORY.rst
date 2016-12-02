@@ -38,6 +38,8 @@ PlatformIO 3.0
   (`issue #814 <https://github.com/platformio/platformio/issues/814>`_)
 * Improved `Library Dependency Finder (LDF) <http://docs.platformio.org/en/stable/librarymanager/ldf.html>`__
   for circular dependencies
+* Show vendor version of a package for `platformio platform show <http://docs.platformio.org/en/stable/userguide/platforms/cmd_show.html>`__ command
+  (`issue #838 <https://github.com/platformio/platformio/issues/838>`_)
 * Fixed issue with ``PATH`` auto-configuring for upload tools
 * Fixed ``99-platformio-udev.rules`` checker for Linux OS
 

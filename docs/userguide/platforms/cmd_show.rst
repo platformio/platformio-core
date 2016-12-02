@@ -41,7 +41,7 @@ Examples
     ====================
     Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.
 
-    Version: 0.0.0
+    Version: 1.2.1
     Home: http://platformio.org/platforms/atmelavr
     License: Apache-2.0
     Frameworks: simba, arduino
@@ -49,40 +49,41 @@ Examples
     Package toolchain-atmelavr
     --------------------------
     Type: toolchain
-    Optional: No
-    Requirements: ~1.40801.0
+    Requirements: ~1.40902.0
     Installed: Yes
     Description: avr-gcc
-    Url: https://gcc.gnu.org/wiki/avr-gcc
-    Version: 1.40801.0
+    Url: http://www.atmel.com/products/microcontrollers/avr/32-bitavruc3.aspx?tab=tools
+    Version: 1.40902.0 (4.9.2)
 
     Package framework-arduinoavr
     ----------------------------
     Type: framework
-    Optional: Yes
-    Requirements: ~1.10608.0
-    Installed: No (optional)
+    Requirements: ~1.10612.1
+    Installed: Yes
+    Url: https://www.arduino.cc/en/Main/Software
+    Version: 1.10612.1 (1.6.12)
+    Description: Arduino Wiring-based Framework (AVR Core, 1.6)
 
     Package framework-simba
     -----------------------
     Type: framework
-    Optional: Yes
-    Requirements: ~1.50.0
+    Requirements: >=7.0.0
     Installed: Yes
-    Description: framework-simba
     Url: https://github.com/eerimoq/simba
-    Version: 1.50.0
+    Version: 11.0.0
+    Description: Simba Embedded Programming Platform
 
     Package tool-avrdude
     --------------------
     Type: uploader
-    Optional: Yes
-    Requirements: >=1.60001.0,<=1.60100.0
-    Installed: No (optional)
+    Requirements: ~1.60300.0
+    Installed: Yes
+    Description: AVRDUDE
+    Url: http://www.nongnu.org/avrdude/
+    Version: 1.60300.0 (6.3.0)
 
     Package tool-micronucleus
     -------------------------
     Type: uploader
-    Optional: Yes
     Requirements: ~1.200.0
     Installed: No (optional)
