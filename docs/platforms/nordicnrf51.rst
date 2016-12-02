@@ -229,7 +229,7 @@ RedBearLab
       - NRF51822
       - 16 MHz
       - 256 Kb
-      - 16 Kb
+      - 32 Kb
 
 SeeedStudio
 ~~~~~~~~~~~

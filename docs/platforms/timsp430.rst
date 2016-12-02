@@ -114,63 +114,42 @@ TI
       - RAM
 
     * - ``lpmsp430f5529``
-      - `TI LaunchPad w/ msp430f5529 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430f5529lp.html>`_
+      - `TI LaunchPad MSP-EXP430F5529LP <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430f5529lp.html>`_
       - MSP430F5529
       - 16 MHz
       - 128 Kb
-      - 1 Kb
-
-    * - ``lpmsp430f5529_25``
-      - `TI LaunchPad w/ msp430f5529 (25MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430f5529lp.html>`_
-      - MSP430F5529
-      - 25 MHz
-      - 128 Kb
-      - 1 Kb
+      - 8 Kb
 
     * - ``lpmsp430fr4133``
-      - `TI LaunchPad w/ msp430fr4133 <http://www.ti.com/tool/msp-exp430fr4133>`_
+      - `TI LaunchPad MSP-EXP430FR4133LP <http://www.ti.com/tool/msp-exp430fr4133>`_
       - MSP430FR4133
-      - 16 MHz
+      - 8 MHz
       - 16 Kb
       - 2 Kb
 
     * - ``lpmsp430fr5739``
-      - `TI FraunchPad w/ msp430fr5739 <http://www.ti.com/tool/msp-exp430fr5739>`_
+      - `TI FraunchPad MSP-EXP430FR5739LP <http://www.ti.com/tool/msp-exp430fr5739>`_
       - MSP430FR5739
       - 16 MHz
       - 16 Kb
-      - 1 Kb
+      - 0.5 Kb
 
     * - ``lpmsp430fr5969``
-      - `TI LaunchPad w/ msp430fr5969 <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430fr5969.html>`_
+      - `TI LaunchPad MSP-EXP430FR5969LP <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430fr5969.html>`_
       - MSP430FR5969
       - 8 MHz
       - 64 Kb
-      - 1 Kb
+      - 2 Kb
 
     * - ``lpmsp430fr6989``
-      - `TI LaunchPad w/ msp430fr6989 <http://www.ti.com/tool/msp-exp430fr6989>`_
+      - `TI LaunchPad MSP-EXP430FR6989LP <http://www.ti.com/tool/msp-exp430fr6989>`_
       - MSP430FR6989
-      - 16 MHz
+      - 8 MHz
       - 128 Kb
       - 2 Kb
 
-    * - ``lpmsp430g2231``
-      - `TI LaunchPad w/ msp430g2231 (1 MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
-      - MSP430G2231
-      - 1 MHz
-      - 2 Kb
-      - 0.125 Kb
-
-    * - ``lpmsp430g2452``
-      - `TI LaunchPad w/ msp430g2452 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
-      - MSP430G2452
-      - 16 MHz
-      - 8 Kb
-      - 0.25 Kb
-
     * - ``lpmsp430g2553``
-      - `TI LaunchPad w/ msp430g2553 (16MHz) <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
+      - `TI LaunchPad MSP-EXP430G2553LP <http://www.ti.com/ww/en/launchpad/launchpads-msp430-msp-exp430g2.html>`_
       - MSP430G2553
       - 16 MHz
       - 16 Kb
