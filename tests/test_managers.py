@@ -23,43 +23,63 @@ def test_pkg_name_parser():
         ["PkgName@1.2.3", ("PkgName", "1.2.3", None)],
         [("PkgName@1.2.3", "1.2.5"), ("PkgName@1.2.3", "1.2.5", None)],
         ["id:13", ("id:13", None, None)],
-        ["id:13@~1.2.3", ("id:13", "~1.2.3", None)],
-        [util.get_home_dir(),
-         (".platformio", None, "file://" + util.get_home_dir())],
-        ["LocalName=" + util.get_home_dir(),
-         ("LocalName", None, "file://" + util.get_home_dir())],
-        ["https://github.com/user/package.git",
-         ("package", None, "git+https://github.com/user/package.git")],
-        ["https://gitlab.com/user/package.git",
-         ("package", None, "git+https://gitlab.com/user/package.git")],
-        ["https://github.com/user/package/archive/branch.zip",
-         ("branch", None,
-          "https://github.com/user/package/archive/branch.zip")],
-        ["https://github.com/user/package/archive/branch.tar.gz",
-         ("branch", None,
-          "https://github.com/user/package/archive/branch.tar.gz")],
-        ["https://developer.mbed.org/users/user/code/package/",
-         ("package", None,
-          "hg+https://developer.mbed.org/users/user/code/package/")],
-        ["https://github.com/user/package#v1.2.3",
-         ("package", None, "git+https://github.com/user/package#v1.2.3")],
-        ["https://github.com/user/package.git#branch",
-         ("package", None, "git+https://github.com/user/package.git#branch")],
-        ["PkgName=https://github.com/user/package.git#a13d344fg56",
-         ("PkgName", None,
-          "git+https://github.com/user/package.git#a13d344fg56")],
-        ["PkgName=user/package",
-         ("PkgName", None, "git+https://github.com/user/package")],
-        ["PkgName=user/package#master",
-         ("PkgName", None, "git+https://github.com/user/package#master")],
-        ["git+https://github.com/user/package",
-         ("package", None, "git+https://github.com/user/package")],
-        ["hg+https://example.com/user/package",
-         ("package", None, "hg+https://example.com/user/package")],
-        ["git@github.com:user/package.git",
-         ("package", None, "git@github.com:user/package.git")],
-        ["git@github.com:user/package.git#v1.2.0",
-         ("package", None, "git@github.com:user/package.git#v1.2.0")]
+        ["id:13@~1.2.3", ("id:13", "~1.2.3", None)], [
+            util.get_home_dir(),
+            (".platformio", None, "file://" + util.get_home_dir())
+        ], [
+            "LocalName=" + util.get_home_dir(),
+            ("LocalName", None, "file://" + util.get_home_dir())
+        ], [
+            "https://github.com/user/package.git",
+            ("package", None, "git+https://github.com/user/package.git")
+        ], [
+            "https://gitlab.com/user/package.git",
+            ("package", None, "git+https://gitlab.com/user/package.git")
+        ], [
+            "https://github.com/user/package/archive/branch.zip",
+            ("branch", None,
+             "https://github.com/user/package/archive/branch.zip")
+        ], [
+            "https://github.com/user/package/archive/branch.tar.gz",
+            ("branch", None,
+             "https://github.com/user/package/archive/branch.tar.gz")
+        ], [
+            "https://developer.mbed.org/users/user/code/package/",
+            ("package", None,
+             "hg+https://developer.mbed.org/users/user/code/package/")
+        ], [
+            "https://github.com/user/package#v1.2.3",
+            ("package", None, "git+https://github.com/user/package#v1.2.3")
+        ], [
+            "https://github.com/user/package.git#branch",
+            ("package", None, "git+https://github.com/user/package.git#branch")
+        ], [
+            "PkgName=https://github.com/user/package.git#a13d344fg56",
+            ("PkgName", None,
+             "git+https://github.com/user/package.git#a13d344fg56")
+        ], [
+            "PkgName=user/package",
+            ("PkgName", None, "git+https://github.com/user/package")
+        ], [
+            "PkgName=user/package#master",
+            ("PkgName", None, "git+https://github.com/user/package#master")
+        ], [
+            "git+https://github.com/user/package",
+            ("package", None, "git+https://github.com/user/package")
+        ], [
+            "hg+https://example.com/user/package",
+            ("package", None, "hg+https://example.com/user/package")
+        ], [
+            "git@github.com:user/package.git",
+            ("package", None, "git@github.com:user/package.git")
+        ], [
+            "git@github.com:user/package.git#v1.2.0",
+            ("package", None, "git@github.com:user/package.git#v1.2.0")
+        ], [
+            "git+ssh://git@gitlab.private-server.com/user/package#1.2.0",
+            ("package", None,
+             "git+ssh://git@gitlab.private-server.com/user/package#1.2.0")
+        ]
     ]
     for params, result in items:
         if isinstance(params, tuple):

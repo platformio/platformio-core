@@ -170,7 +170,7 @@ class PkgInstallerMixin(object):
                 break
             except Exception as e:  # pylint: disable=broad-except
                 click.secho("Warning! Package Mirror: %s" % e, fg="yellow")
-                click.secho("Looking for the another mirror...", fg="yellow")
+                click.secho("Looking for other mirror...", fg="yellow")
 
         if versions is None:
             raise exception.UnknownPackage(name)
@@ -297,12 +297,15 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
     def parse_pkg_name(  # pylint: disable=too-many-branches
             text, requirements=None):
         text = str(text)
-        if not requirements and "@" in text and not text.startswith("git@"):
+        url_marker = "://"
+        if not any([
+                requirements, "@" not in text, text.startswith("git@"),
+                url_marker in text
+        ]):
             text, requirements = text.rsplit("@", 1)
         if text.isdigit():
             text = "id=" + text
 
-        url_marker = "://"
         name, url = (None, text)
         if "=" in text and not text.startswith("id="):
             name, url = text.split("=", 1)

@@ -40,6 +40,8 @@ PlatformIO 3.0
   for circular dependencies
 * Show vendor version of a package for `platformio platform show <http://docs.platformio.org/en/stable/userguide/platforms/cmd_show.html>`__ command
   (`issue #838 <https://github.com/platformio/platformio/issues/838>`_)
+* Fixed unable to include SSH user in ``lib_deps`` repository url
+  (`issue #830 <https://github.com/platformio/platformio/issues/830>`_)
 * Fixed issue with ``PATH`` auto-configuring for upload tools
 * Fixed ``99-platformio-udev.rules`` checker for Linux OS
 
