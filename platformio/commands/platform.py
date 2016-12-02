@@ -158,7 +158,7 @@ def platform_show(platform):
     def _detail_version(version):
         if version.count(".") != 2:
             return version
-        x, y, z = version.split(".")
+        _, y = version.split(".")[:2]
         if int(y) < 100:
             return version
         if len(y) % 2 != 0:
