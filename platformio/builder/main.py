@@ -74,6 +74,7 @@ DEFAULT_ENV_OPTIONS = dict(
     variables=commonvars,
 
     # Propagating External Environment
+    PIOVARIABLES=commonvars.keys(),
     ENV=environ,
     UNIX_TIME=int(time()),
     PROGNAME="program",
