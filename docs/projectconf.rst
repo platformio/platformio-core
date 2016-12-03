@@ -653,6 +653,26 @@ To print all available serial ports use :ref:`cmd_device_list` command.
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_UPLOAD_PORT`.
 
+Please note that you can use Unix shell-style wildcards:
+
+.. list-table::
+    :header-rows:  1
+
+    * - Pattern
+      - Meaning
+
+    * - ``*``
+      - matches everything
+
+    * - ``?``
+      - matches any single character
+
+    * - ``[seq]``
+      - matches any character in seq
+
+    * - ``[!seq]``
+      - matches any character not in seq
+
 Example:
 
 .. code-block:: ini
@@ -660,8 +680,11 @@ Example:
     [env:uno]
     platform = atmelavr
     framework = arduino
-    board = uno
-    upload_port = /dev/ttyUSB0
+    ; any port that stats with /dev/ttyUSB
+    upload_port = /dev/ttyUSB*
+
+    ; COM1 or COM3
+    upload_port = COM[13]
 
 ``upload_protocol``
 ^^^^^^^^^^^^^^^^^^^

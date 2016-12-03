@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 
 import sys
+from fnmatch import fnmatch
 from os import environ
 from os.path import isfile, join
 from platform import system
@@ -85,9 +86,24 @@ def WaitForNewSerialPort(env, before):
 def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
     env = args[0]
 
+    def _get_pattern():
+        if "UPLOAD_PORT" not in env:
+            return None
+        if set(["*", "?", "[", "]"]) & set(env['UPLOAD_PORT']):
+            return env['UPLOAD_PORT']
+        return None
+
+    def _is_match_pattern(port):
+        pattern = _get_pattern()
+        if not pattern:
+            return True
+        return fnmatch(port, pattern)
+
     def _look_for_mbed_disk():
         msdlabels = ("mbed", "nucleo", "frdm", "microbit")
         for item in util.get_logicaldisks():
+            if not _is_match_pattern(item['disk']):
+                continue
             if (item['name'] and
                     any([l in item['name'].lower() for l in msdlabels])):
                 return item['disk']
@@ -101,6 +117,8 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         if "BOARD" in env and "build.hwids" in env.BoardConfig():
             board_hwids = env.BoardConfig().get("build.hwids")
         for item in util.get_serialports(filter_hwid=True):
+            if not _is_match_pattern(item['port']):
+                continue
             port = item['port']
             for hwid in board_hwids:
                 hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
@@ -108,7 +126,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
                     return port
         return port
 
-    if "UPLOAD_PORT" in env:
+    if "UPLOAD_PORT" in env and not _get_pattern():
         print env.subst("Use manually specified: $UPLOAD_PORT")
         return
 
