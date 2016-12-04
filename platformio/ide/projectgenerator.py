@@ -72,11 +72,10 @@ class ProjectGenerator(object):
             raise exception.PlatformioException("\n".join(
                 [result['out'], result['err']]))
 
-        output = result['out']
-        start_index = output.index('{"')
-        stop_index = output.rindex('}')
-        data = json.loads(output[start_index:stop_index + 1])
-
+        for line in result['out'].split("\n"):
+            line = line.strip()
+            if line.startswith('{"') and line.endswith("}"):
+                data = json.loads(line)
         return data
 
     def get_project_name(self):

@@ -146,5 +146,5 @@ if "envdump" in COMMAND_LINE_TARGETS:
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
-    print json.dumps(env.DumpIDEData())
+    print "\n%s\n" % json.dumps(env.DumpIDEData())
     env.Exit(0)
