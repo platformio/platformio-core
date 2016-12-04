@@ -30,6 +30,16 @@ Integration
     to `PATH (wiki) <https://en.wikipedia.org/wiki/PATH_(variable)>`_ environment
     variable. See FAQ: :ref:`faq_troubleshooting_pionotfoundinpath`.
 
+
+"Neomake-PlatformIO" Plugin
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Please visit `neomake-platformio <https://github.com/coddingtonbear/neomake-platformio>`_
+for the further installation steps and documentation.
+
+Manual
+~~~~~~
+
 Recommended bundles:
 
 * Syntax highlight - `Arduino-syntax-file <https://github.com/vim-scripts/Arduino-syntax-file>`_
