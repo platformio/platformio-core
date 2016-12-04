@@ -21,7 +21,7 @@ PlatformIO 3.0
   environment variable for CI systems
 * Native integration with VIM/Neovim using `neomake-platformio <https://github.com/coddingtonbear/neomake-platformio>`__ plugin
   (`issue #808 <https://github.com/platformio/platformio-core/issues/808>`_,
-   `issue #467 <hhttps://github.com/platformio/platformio-core/issues/467>`_)
+  `issue #467 <hhttps://github.com/platformio/platformio-core/issues/467>`_)
 * Inject system environment variables to configuration settings in
   `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
   (`issue #792 <https://github.com/platformio/platformio-core/issues/792>`_)
