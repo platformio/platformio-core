@@ -42,7 +42,7 @@ libOpenCM3, etc.*
   `Embedded Boards Explorer <http://platformio.org/boards>`_
 * `Project Examples <https://github.com/platformio/platformio-examples/tree/develop>`_
 * `Source Code <https://github.com/platformio/platformio>`_ |
-  `Issues <https://github.com/platformio/platformio/issues>`_
+  `Issues <https://github.com/platformio/platformio-core/issues>`_
 * `Blog <http://www.ikravets.com/category/computer-life/platformio>`_ |
   `Twitter <https://twitter.com/PlatformIO_Org>`_ |
   `Facebook <https://www.facebook.com/platformio>`_ |

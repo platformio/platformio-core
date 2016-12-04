@@ -117,7 +117,7 @@ def install_platformio():
         # r = exec_python_cmd(cmd + ["install", "-U", "platformio"])
         r = exec_python_cmd(cmd + [
             "install", "-U",
-            "https://github.com/platformio/platformio/archive/develop.zip"
+            "https://github.com/platformio/platformio-core/archive/develop.zip"
         ])
         assert r['returncode'] == 0
     except AssertionError:
@@ -167,7 +167,7 @@ https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platf
     if is_error:
         print("The installation process has been FAILED!\n"
               "Please report about this problem here\n"
-              "< https://github.com/platformio/platformio/issues >")
+              "< https://github.com/platformio/platformio-core/issues >")
         return
     else:
         print("\n ==> Installation process has been "

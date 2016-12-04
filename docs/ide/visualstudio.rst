@@ -171,7 +171,7 @@ messages which will be shown in output console after build.
 Nevertheless, you can provide an IntelliSense-friendly definition of problematic
 GCC constructs and make sure that the GCC will ignore such definitions or
 disable IntelliSense error reporting at all.
-See details in `issue #543 <https://github.com/platformio/platformio/issues/543>`_
+See details in `issue #543 <https://github.com/platformio/platformio-core/issues/543>`_
 
 .. image:: ../_static/ide-vs-platformio-newproject-9.png
     :target: http://docs.platformio.org/en/stable/_static/ide-vs-platformio-newproject-9.png

@@ -931,10 +931,10 @@ This option can be set by global environment variable
 
 Take a look at the multiple snippets/answers for the user questions:
 
-  - `#462 Split C/C++ build flags <https://github.com/platformio/platformio/issues/462#issuecomment-172667342>`_
-  - `#365 Extra configuration for ESP8266 uploader <https://github.com/platformio/platformio/issues/365#issuecomment-163695011>`_
-  - `#351 Specific reset method for ESP8266 <https://github.com/platformio/platformio/issues/351#issuecomment-161789165>`_
-  - `#247 Specific options for avrdude <https://github.com/platformio/platformio/issues/247#issuecomment-118169728>`_.
+  - `#462 Split C/C++ build flags <https://github.com/platformio/platformio-core/issues/462#issuecomment-172667342>`_
+  - `#365 Extra configuration for ESP8266 uploader <https://github.com/platformio/platformio-core/issues/365#issuecomment-163695011>`_
+  - `#351 Specific reset method for ESP8266 <https://github.com/platformio/platformio-core/issues/351#issuecomment-161789165>`_
+  - `#247 Specific options for avrdude <https://github.com/platformio/platformio-core/issues/247#issuecomment-118169728>`_.
 
 Custom Uploader
 '''''''''''''''
@@ -1090,7 +1090,7 @@ command. To use other programmers see :ref:`atmelavr_upload_via_programmer`.
 
 
 4. :ref:`platform_ststm32`: Upload firmware using GDB script ``upload.gdb``,
-   `issue #175 <https://github.com/platformio/platformio/issues/175>`_
+   `issue #175 <https://github.com/platformio/platformio-core/issues/175>`_
 
 .. code-block:: ini
 

@@ -128,7 +128,7 @@ Share diagnostics and usage information to help us make PlatformIO better:
 
 This gives us a sense of what parts of the PlatformIO is most important.
 
-The source code of telemetry service is `open source <https://github.com/platformio/platformio/blob/develop/platformio/telemetry.py>`_. You can make sure that we DO NOT share PRIVATE information or
+The source code of telemetry service is `open source <https://github.com/platformio/platformio-core/blob/develop/platformio/telemetry.py>`_. You can make sure that we DO NOT share PRIVATE information or
 source code of your project. All information shares anonymously.
 
 Thanks a lot that keep this setting enabled.

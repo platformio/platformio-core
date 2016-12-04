@@ -140,7 +140,7 @@ By default, will be used default LD Script for the board where is specified
 SPIFFS offsets (start, end, page, block). You can override it using
 :ref:`platform_espressif_customflash`.
 
-Active discussion is located in `issue #382 <https://github.com/platformio/platformio/issues/382>`_.
+Active discussion is located in `issue #382 <https://github.com/platformio/platformio-core/issues/382>`_.
 
 .. _platform_espressif_ota:
 
@@ -250,7 +250,7 @@ Using Arduino Framework with Staging version
 4.  If you see build errors, then try to build this project using the same
     ``stage`` on Arduino IDE
 5.  If it works with Arduino IDE but doesn't work with PlatformIO, then please
-    `open new issue <https://github.com/platformio/platformio/issues>`_ with
+    `open new issue <https://github.com/platformio/platformio-core/issues>`_ with
     attached information:
 
     - test project/files

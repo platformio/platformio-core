@@ -67,7 +67,7 @@ System requirements
     * Ubuntu/Debian users may need to add own "username" to the "dialout"
       group if they are not "root", doing this issuing a
       ``sudo usermod -a -G dialout yourusername``.
-    * Install "udev" rules file `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_
+    * Install "udev" rules file `99-platformio-udev.rules <https://github.com/platformio/platformio-core/blob/develop/scripts/99-platformio-udev.rules>`_
       (an instruction is located in the file).
     * Raspberry Pi users, please read this article
       `Enable serial port on Raspberry Pi <https://hallard.me/enable-serial-port-on-raspberry-pi/>`__.
@@ -204,11 +204,11 @@ Install the latest PlatformIO from the ``develop`` branch:
     pip uninstall platformio
 
     # install the latest development version of PlatformIO
-    pip install -U https://github.com/platformio/platformio/archive/develop.zip
+    pip install -U https://github.com/platformio/platformio-core/archive/develop.zip
 
 If you want to be up-to-date with the latest ``develop`` version of PlatformIO,
 then you need to re-install PlatformIO each time if you see the new commits in
-`PlatformIO GitHub repository (branch: develop) <https://github.com/platformio/platformio/commits/develop>`_.
+`PlatformIO GitHub repository (branch: develop) <https://github.com/platformio/platformio-core/commits/develop>`_.
 
 To revert to the latest stable version
 
@@ -223,7 +223,7 @@ Troubleshooting
 
 .. note::
     **Linux OS**: Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+    `99-platformio-udev.rules <https://github.com/platformio/platformio-core/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
 
     **Windows OS**: Please check that you have correctly installed USB driver
     from board manufacturer

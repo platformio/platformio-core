@@ -35,7 +35,7 @@ def cli():
         to_develop = not all([c.isdigit() for c in latest if c != "."])
         cmds = ([
             "pip", "install", "--upgrade",
-            "https://github.com/platformio/platformio/archive/develop.zip"
+            "https://github.com/platformio/platformio-core/archive/develop.zip"
             if to_develop else "platformio"
         ], ["platformio", "--version"])
 

@@ -86,12 +86,12 @@ Installation
 [Errno 1] Operation not permitted
 '''''''''''''''''''''''''''''''''
 
-Answered in `issue #295 <https://github.com/platformio/platformio/issues/295#issuecomment-143772005>`_.
+Answered in `issue #295 <https://github.com/platformio/platformio-core/issues/295#issuecomment-143772005>`_.
 
 Windows AttributeError: 'module' object has no attribute 'packages'
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Answered in `issue #252 <https://github.com/platformio/platformio/issues/252#issuecomment-127072039>`_.
+Answered in `issue #252 <https://github.com/platformio/platformio-core/issues/252#issuecomment-127072039>`_.
 
 .. _faq_troubleshooting_pionotfoundinpath:
 
@@ -115,12 +115,12 @@ should contain ``/usr/local/bin`` directory.
 
 **Unix Users**: You can make "symlinks" from ``platformio`` program to the
 ``bin`` directory which is included in ``$PATH``. For example,
-see `issue #272 <https://github.com/platformio/platformio/issues/272#issuecomment-133626112>`_.
+see `issue #272 <https://github.com/platformio/platformio-core/issues/272#issuecomment-133626112>`_.
 
 Windows UnicodeDecodeError: 'ascii' codec can't decode byte
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Answered in `issue #143 <https://github.com/platformio/platformio/issues/143#issuecomment-88060906>`_.
+Answered in `issue #143 <https://github.com/platformio/platformio-core/issues/143#issuecomment-88060906>`_.
 
 PlatformIO: command not found || An error "pkg_resources.DistributionNotFound"
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -142,7 +142,7 @@ Miscellaneous
 Serial does not work with panStampAVR board
 '''''''''''''''''''''''''''''''''''''''''''
 
-Answered in `issue #144 <https://github.com/platformio/platformio/issues/144#issuecomment-87388038>`_.
+Answered in `issue #144 <https://github.com/platformio/platformio-core/issues/144#issuecomment-87388038>`_.
 
 Building
 ~~~~~~~~
@@ -151,14 +151,14 @@ ARM toolchain: cc1plus: error while loading shared libraries
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 See related answers for
-`error while loading shared libraries <https://github.com/platformio/platformio/issues?utf8=✓&q=error+while+loading+shared+libraries>`_.
+`error while loading shared libraries <https://github.com/platformio/platformio-core/issues?utf8=✓&q=error+while+loading+shared+libraries>`_.
 
 Archlinux: libncurses.so.5: cannot open shared object file
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Answered in `issue #291 <https://github.com/platformio/platformio/issues/291>`_.
+Answered in `issue #291 <https://github.com/platformio/platformio-core/issues/291>`_.
 
 Monitoring a serial port breaks upload
 ''''''''''''''''''''''''''''''''''''''
 
-Answered in `issue #384 <https://github.com/platformio/platformio/issues/384>`_.
+Answered in `issue #384 <https://github.com/platformio/platformio-core/issues/384>`_.
