@@ -359,7 +359,11 @@ def copy_pythonpath_to_osenv():
     if "PYTHONPATH" in os.environ:
         _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
     for p in os.sys.path:
-        if p not in _PYTHONPATH:
+        conditions = [p not in _PYTHONPATH]
+        if "windows" not in get_systype():
+            conditions.append(
+                isdir(join(p, "click")) or isdir(join(p, "platformio")))
+        if all(conditions):
             _PYTHONPATH.append(p)
     os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
 
