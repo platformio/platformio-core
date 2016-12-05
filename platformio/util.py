@@ -281,7 +281,7 @@ def get_projectpioenvs_dir(force=False):
             with open(dontmod_path, "w") as fp:
                 fp.write("""
 [InternetShortcut]
-URL=http://docs.platformio.org/en/stable/projectconf.html#envs-dir
+URL=http://docs.platformio.org/page/projectconf.html#envs-dir
 """)
     except Exception as e:  # pylint: disable=broad-except
         if not force:
