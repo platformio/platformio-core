@@ -23,11 +23,11 @@ from platformio.managers.package import PackageManager
 PACKAGE_DEPS = {
     "pysite": {
         "name": "pysite-pioplus",
-        "requirements": ">=0.2.0,<2"
+        "requirements": ">=0.3.0,<2"
     },
     "tool": {
         "name": "tool-pioplus",
-        "requirements": ">=0.5.0,<2"
+        "requirements": ">=0.6.6,<2"
     }
 }
 
