@@ -126,7 +126,15 @@ for opt in ("PIOFRAMEWORK", "LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"):
         continue
     env[opt] = [l.strip() for l in env[opt].split(", ") if l.strip()]
 
+# Configure extra library source directories for LDF
+if util.get_project_optional_dir("lib_extra_dirs"):
+    env.Prepend(LIBSOURCE_DIRS=[
+        l.strip()
+        for l in util.get_project_optional_dir("lib_extra_dirs").split(", ")
+        if l.strip()
+    ])
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
+
 env.LoadPioPlatform(commonvars)
 
 env.SConscriptChdir(0)

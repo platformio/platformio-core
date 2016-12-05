@@ -113,8 +113,8 @@ if :option:`platformio run --environment` option is not specified.
 :ref:`projectconf_pio_env_default` allows to define environments which
 should be processed by default.
 
-Multiple environments are allowed if they are separated with ", "
-(comma+space). For example.
+Multiple environments are allowed if they *are separated with ", "
+(comma+space)*. For example.
 
 .. code-block:: ini
 
@@ -224,6 +224,21 @@ that folder is located in the root of project.
 
 This option can be overridden by global environment variable
 :envvar:`PLATFORMIO_LIBDEPS_DIR`.
+
+``lib_extra_dirs``
+^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 3.2
+
+A list with global extra directories for a project where :ref:`ldf` will look
+for libraries.
+
+This option has the same behavior as :ref:`projectconf_lib_extra_dirs` option
+for a specific build environment defined in ``[env:]`` section. The main
+difference is that the option that is defined in ``[platofrmio]`` section
+will be applied automatically for all ``[env:]`` sections.
+
+For the possible values and examples please follow to :ref:`projectconf_lib_extra_dirs`.
 
 .. _projectconf_pio_src_dir:
 
@@ -381,7 +396,7 @@ Examples:
 
 :ref:`frameworks` name.
 
-The multiple frameworks are allowed, split them with comma+space ", ".
+The multiple frameworks are allowed, *split them with comma+space ", "*.
 
 .. _projectconf_env_board:
 
@@ -735,7 +750,7 @@ Library options
 
 Specify project dependencies that should be installed automatically to
 :ref:`projectconf_pio_libdeps_dir` before environment processing.
-Multiple dependencies are allowed (multi-lines or separated with comma+space ", ").
+Multiple dependencies are allowed (*multi-lines or separated with comma+space ", "*).
 
 If you have multiple build environments that depend on the same libraries,
 you can use :ref:`projectconf_dynamic_vars` to use common configuration.
@@ -784,7 +799,7 @@ Specify libraries which should be ignored by Library Dependency Finder.
 The correct value for this option is library name (not
 folder name). In the most cases, library name is pre-defined in manifest file
 (:ref:`library_config`, ``library.properties``, ``module.json``). The multiple
-library names are allowed, split them with comma+space ", ".
+library names are allowed, *split them with comma+space ", "*.
 
 Example:
 
@@ -803,8 +818,8 @@ Example:
     Please make sure to read :ref:`ldf` guide first.
 
 A list with extra directories/storages where :ref:`ldf` will
-look for dependencies. Multiple paths are allowed. Please separate them
-using comma+space ", ".
+look for dependencies. Multiple paths are allowed. *Please separate them
+using comma+space ", "*.
 
 This option can be set by global environment variable
 :envvar:`PLATFORMIO_LIB_EXTRA_DIRS`.
@@ -865,8 +880,8 @@ Test options
     Please make sure to read :ref:`unit_testing` guide first.
 
 Ignore :ref:`unit_testing` tests where the name matches specified patterns.
-Multiple names are allowed. Please separate them using comma+space ", ". Also,
-you can ignore some tests using :option:`platformio test --ignore` command.
+Multiple names are allowed. *Please separate them using comma+space ", "*.
+Also, you can ignore some tests using :option:`platformio test --ignore` command.
 
 .. list-table::
     :header-rows:  1

@@ -41,6 +41,9 @@ PlatformIO 3.0
   (`issue #837 <https://github.com/platformio/platformio-core/issues/837>`_)
 * Added new `LDF Modes <http://docs.platformio.org/en/latest/librarymanager/ldf.html#ldf-mode>`__:
   ``chain+`` and ``deep+`` and set ``chain+`` as default
+* Added global ``lib_extra_dirs`` option to ``[platformio]`` section for
+  `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
+  (`issue #842 <https://github.com/platformio/platformio-core/issues/842>`_)
 * Changed a default exit combination for Device Monitor from ``Ctrl+]`` to ``Ctrl+C``
 * Improved detecting of ARM mbed media disk for uploading
 * Improved Project Generator for CLion IDE when source folder contains nested items

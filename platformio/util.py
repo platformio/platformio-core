@@ -175,26 +175,33 @@ def pioversion_to_intstr():
     return [int(i) for i in vermatch.group(1).split(".")[:3]]
 
 
-def _get_projconf_option_dir(name, default=None):
-    _env_name = "PLATFORMIO_%s" % name.upper()
-    if _env_name in os.environ:
-        return os.getenv(_env_name)
+def get_project_optional_dir(name, default=None):
+    data = None
+    var_name = "PLATFORMIO_%s" % name.upper()
+    if var_name in os.environ:
+        data = os.getenv(var_name)
+    else:
+        try:
+            config = load_project_config()
+            if (config.has_section("platformio") and
+                    config.has_option("platformio", name)):
+                data = config.get("platformio", name)
+        except exception.NotPlatformIOProject:
+            pass
 
-    try:
-        config = load_project_config()
-        if (config.has_section("platformio") and
-                config.has_option("platformio", name)):
-            option_dir = config.get("platformio", name)
-            if option_dir.startswith("~"):
-                option_dir = expanduser(option_dir)
-            return abspath(option_dir)
-    except exception.NotPlatformIOProject:
-        pass
-    return default
+    if not data:
+        return default
+
+    items = []
+    for item in data.split(", "):
+        if item.startswith("~"):
+            item = expanduser(item)
+        items.append(abspath(item))
+    return ", ".join(items)
 
 
 def get_home_dir():
-    home_dir = _get_projconf_option_dir("home_dir",
+    home_dir = get_project_optional_dir("home_dir",
                                         join(expanduser("~"), ".platformio"))
 
     if "windows" in get_systype():
@@ -241,30 +248,30 @@ def is_platformio_project(project_dir=None):
 
 
 def get_projectlib_dir():
-    return _get_projconf_option_dir("lib_dir", join(get_project_dir(), "lib"))
+    return get_project_optional_dir("lib_dir", join(get_project_dir(), "lib"))
 
 
 def get_projectlibdeps_dir():
-    return _get_projconf_option_dir("libdeps_dir",
+    return get_project_optional_dir("libdeps_dir",
                                     join(get_project_dir(), ".piolibdeps"))
 
 
 def get_projectsrc_dir():
-    return _get_projconf_option_dir("src_dir", join(get_project_dir(), "src"))
+    return get_project_optional_dir("src_dir", join(get_project_dir(), "src"))
 
 
 def get_projecttest_dir():
-    return _get_projconf_option_dir("test_dir",
+    return get_project_optional_dir("test_dir",
                                     join(get_project_dir(), "test"))
 
 
 def get_projectboards_dir():
-    return _get_projconf_option_dir("boards_dir",
+    return get_project_optional_dir("boards_dir",
                                     join(get_project_dir(), "boards"))
 
 
 def get_projectpioenvs_dir(force=False):
-    path = _get_projconf_option_dir("envs_dir",
+    path = get_project_optional_dir("envs_dir",
                                     join(get_project_dir(), ".pioenvs"))
     try:
         if not isdir(path):
@@ -283,7 +290,7 @@ URL=http://docs.platformio.org/en/stable/projectconf.html#envs-dir
 
 
 def get_projectdata_dir():
-    return _get_projconf_option_dir("data_dir",
+    return get_project_optional_dir("data_dir",
                                     join(get_project_dir(), "data"))
 
 
