@@ -482,22 +482,22 @@ def _get_api_result(
 
 
 def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
-    from platformio.app import LocalCache
+    from platformio.app import ContentCache
     total = 0
     max_retries = 5
-    cache_key = (LocalCache.key_from_args(url, params, data, auth)
+    cache_key = (ContentCache.key_from_args(url, params, data, auth)
                  if cache_valid else None)
     while total < max_retries:
         try:
-            with LocalCache() as lc:
+            with ContentCache() as cc:
                 if cache_key:
-                    result = lc.get(cache_key)
+                    result = cc.get(cache_key)
                     if result is not None:
                         return result
             result = _get_api_result(url, params, data)
             if cache_valid:
-                with LocalCache() as lc:
-                    lc.set(cache_key, result, cache_valid)
+                with ContentCache() as cc:
+                    cc.set(cache_key, result, cache_valid)
             return result
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:

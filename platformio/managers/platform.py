@@ -27,6 +27,8 @@ from platformio.managers.package import BasePkgManager, PackageManager
 
 class PlatformManager(BasePkgManager):
 
+    FILE_CACHE_VALID = None  # disable platform caching
+
     def __init__(self, package_dir=None, repositories=None):
         if not repositories:
             repositories = [

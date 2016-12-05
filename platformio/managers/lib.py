@@ -170,8 +170,11 @@ class LibraryManager(BasePkgManager):
 
     def get_latest_repo_version(self, name, requirements):
         item = self.max_satisfying_repo_version(
-            util.get_api_result("/lib/versions/%d" % self._get_pkg_id_by_name(
-                name, requirements)), requirements)
+            util.get_api_result(
+                "/lib/versions/%d" % self._get_pkg_id_by_name(name,
+                                                              requirements),
+                cache_valid="1h"),
+            requirements)
         return item['version'] if item else None
 
     def _get_pkg_id_by_name(self,

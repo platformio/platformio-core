@@ -97,6 +97,16 @@ Check for the platform updates interval.
 
 Enable SSL for PlatformIO Services
 
+.. _enable_cache:
+
+``enable_cache``
+^^^^^^^^^^^^^^^^
+
+:Default:   Yes
+:Values:    Yes/No
+
+Enable caching for API requests and Library Manager
+
 .. _setting_force_verbose:
 
 ``force_verbose``
@@ -144,17 +154,21 @@ Examples
 
 1. List all settings and theirs current values
 
-.. code-block:: bash
+.. code::
 
-    $ platformio settings get
+    > platformio settings get
+
     Name                            Value [Default]   Description
     ------------------------------------------------------------------------------------------
-    auto_update_libraries           Yes               Automatically update libraries (Yes/No)
-    auto_update_platforms           Yes               Automatically update platforms (Yes/No)
+    auto_update_libraries           No                Automatically update libraries (Yes/No)
+    auto_update_platforms           No                Automatically update platforms (Yes/No)
     check_libraries_interval        7                 Check for the library updates interval (days)
     check_platformio_interval       3                 Check for the new PlatformIO interval (days)
     check_platforms_interval        7                 Check for the platform updates interval (days)
+    enable_cache                    Yes               Enable caching for API requests and Library Manager
+    enable_ssl                      No                Enable SSL for PlatformIO Services
     enable_telemetry                Yes               Telemetry service (Yes/No)
+    force_verbose                   No                Force verbose output when processing environments
 
 
 2. Show specified setting
@@ -223,8 +237,12 @@ Examples
 
     Name                            Value [Default]   Description
     ------------------------------------------------------------------------------------------
-    auto_update_libraries           Yes               Automatically update libraries (Yes/No)
-    auto_update_platforms           Yes               Automatically update platforms (Yes/No)
+    auto_update_libraries           No                Automatically update libraries (Yes/No)
+    auto_update_platforms           No                Automatically update platforms (Yes/No)
     check_libraries_interval        7                 Check for the library updates interval (days)
     check_platformio_interval       3                 Check for the new PlatformIO interval (days)
     check_platforms_interval        7                 Check for the platform updates interval (days)
+    enable_cache                    Yes               Enable caching for API requests and Library Manager
+    enable_ssl                      No                Enable SSL for PlatformIO Services
+    enable_telemetry                Yes               Telemetry service (Yes/No)
+    force_verbose                   No                Force verbose output when processing environments

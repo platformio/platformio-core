@@ -56,6 +56,10 @@ DEFAULT_SETTINGS = {
         "description": "Enable SSL for PlatformIO Services",
         "value": False
     },
+    "enable_cache": {
+        "description": "Enable caching for API requests and Library Manager",
+        "value": True
+    },
     "enable_telemetry": {
         "description":
         ("Telemetry service <http://docs.platformio.org/en/stable/"
@@ -122,16 +126,20 @@ class State(object):
             self._lockfile.release()
 
 
-class LocalCache(object):
+class ContentCache(object):
 
     def __init__(self, cache_dir=None):
+        self.cache_dir = None
+        self.db_path = None
+        if not get_setting("enable_cache"):
+            return
         self.cache_dir = cache_dir or join(util.get_home_dir(), ".cache")
         if not self.cache_dir:
             os.makedirs(self.cache_dir)
         self.db_path = join(self.cache_dir, "db.data")
 
     def __enter__(self):
-        if not isfile(self.db_path):
+        if not self.db_path or not isfile(self.db_path):
             return self
         newlines = []
         found = False
@@ -169,24 +177,26 @@ class LocalCache(object):
         return h.hexdigest()
 
     def get(self, key):
+        if not self.cache_dir:
+            return None
         cache_path = self.get_cache_path(key)
         if not isfile(cache_path):
             return None
-        with open(cache_path) as fp:
+        with open(cache_path, "rb") as fp:
             data = fp.read()
             if data[0] in ("{", "["):
                 return json.loads(data)
             return data
 
     def set(self, key, data, valid):
-        if not data:
+        if not self.cache_dir or not data:
             return
         tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
         assert valid.endswith(tuple(tdmap.keys()))
         cache_path = self.get_cache_path(key)
         if not isdir(dirname(cache_path)):
             os.makedirs(dirname(cache_path))
-        with open(cache_path, "w") as fp:
+        with open(cache_path, "wb") as fp:
             if isinstance(data, dict) or isinstance(data, list):
                 json.dump(data, fp)
             else:
@@ -197,7 +207,7 @@ class LocalCache(object):
         return True
 
     def clean(self):
-        if isdir(self.cache_dir):
+        if self.cache_dir and isdir(self.cache_dir):
             util.rmtree_(self.cache_dir)
 
 

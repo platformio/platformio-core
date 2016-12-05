@@ -43,8 +43,8 @@ def in_silence(ctx=None):
 
 
 def clean_cache():
-    with app.LocalCache() as lc:
-        lc.clean()
+    with app.ContentCache() as cc:
+        cc.clean()
 
 
 def on_platformio_start(ctx, force, caller):

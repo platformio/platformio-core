@@ -44,6 +44,7 @@ PlatformIO 3.0
 * Added global ``lib_extra_dirs`` option to ``[platformio]`` section for
   `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
   (`issue #842 <https://github.com/platformio/platformio-core/issues/842>`_)
+* Enabled caching by default for API requests and Library Manager (see `enable_cache <http://docs.platformio.org/en/latest/userguide/cmd_settings.html#enable-cache>`__ setting)
 * Changed a default exit combination for Device Monitor from ``Ctrl+]`` to ``Ctrl+C``
 * Improved detecting of ARM mbed media disk for uploading
 * Improved Project Generator for CLion IDE when source folder contains nested items
