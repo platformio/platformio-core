@@ -35,9 +35,9 @@ To print all available commands and options use:
     :maxdepth: 2
 
     cmd_forgot
-    cmd_info
     cmd_login
     cmd_logout
     cmd_password
     cmd_register
+    cmd_show
     cmd_token

@@ -61,6 +61,6 @@ def account_forgot(**kwargs):
     pioplus_call(sys.argv[1:])
 
 
-@cli.command("info", short_help="PIO Account information: groups, permissions")
-def account_info():
+@cli.command("show", short_help="PIO Account information: groups, permissions")
+def account_show():
     pioplus_call(sys.argv[1:])

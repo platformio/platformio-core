@@ -9,9 +9,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 
-.. _cmd_account_info:
+.. _cmd_account_show:
 
-platformio account info
+platformio account show
 =======================
 
 .. contents::
@@ -21,7 +21,7 @@ Usage
 
 .. code-block:: bash
 
-    platformio account info
+    platformio account show
 
 
 Description
