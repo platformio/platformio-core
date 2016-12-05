@@ -37,7 +37,7 @@ PlatformIO
 `Bintray <https://bintray.com/platformio>`_ |
 `Community <https://community.platformio.org>`_
 
-.. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
+.. image:: http://docs.platformio.org/en/stable/_static/platformio-logo.png
     :target: http://platformio.org
 
 `PlatformIO <http://platformio.org>`_ is an open source ecosystem for IoT
@@ -64,7 +64,7 @@ IDE integration. Arduino, ESP8266 and ARM mbed compatible
 Microchip PIC32, Nordic nRF51, NXP LPC, Silicon Labs EFM32, ST STM32,
 TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
 
-.. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-demo-wiring.gif
+.. image:: http://docs.platformio.org/en/stable/_static/platformio-demo-wiring.gif
     :target: http://platformio.org
 
 * `PlatformIO Plus and professional solutions <https://pioplus.com>`_
