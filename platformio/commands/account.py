@@ -62,5 +62,6 @@ def account_forgot(**kwargs):
 
 
 @cli.command("show", short_help="PIO Account information: groups, permissions")
-def account_show():
+@click.option("--json-output", is_flag=True)
+def account_show(**kwargs):
     pioplus_call(sys.argv[1:])

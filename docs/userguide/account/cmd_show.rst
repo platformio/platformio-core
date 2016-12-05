@@ -31,3 +31,13 @@ Show detailed information about :ref:`cmd_account`:
 
 * Active groups and expiration
 * Group permissions
+
+Options
+~~~~~~~
+
+.. program:: platformio account show
+
+.. option::
+    --json-output
+
+Return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
