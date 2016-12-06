@@ -243,6 +243,8 @@ def DumpIDEData(env):
     env_ = env.Clone()
 
     data = {
+        "libsource_dirs":
+        [env_.subst(l) for l in env_.get("LIBSOURCE_DIRS", [])],
         "defines": get_defines(env_),
         "includes": get_includes(env_),
         "cc_flags": env_.subst(LINTCCOM),
