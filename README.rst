@@ -47,7 +47,7 @@ IDE integration. Arduino, ESP8266 and ARM mbed compatible
 * **PlatformIO IDE** - The next-generation integrated development environment for IoT.
   C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
   Multi-projects workflow with Multiple Panes. Themes Support with dark and light colors.
-  Built-in Terminal with PlatformIO CLI tool and support for the powerful Serial Port Monitor.
+  Built-in Terminal with PlatformIO Core tool and support for the powerful Serial Port Monitor.
   All advanced instruments without leaving your favourite development environment.
 * **Development Platforms** - Embedded and Desktop development platforms with
   pre-built toolchains, debuggers, uploaders and frameworks which work under
