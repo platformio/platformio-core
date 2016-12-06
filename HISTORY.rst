@@ -56,6 +56,8 @@ PlatformIO 3.0
   (`issue #838 <https://github.com/platformio/platformio-core/issues/838>`_)
 * Fixed unable to include SSH user in ``lib_deps`` repository url
   (`issue #830 <https://github.com/platformio/platformio-core/issues/830>`_)
+* Fixed merging of ".gitignore" files when re-initialize project
+  (`issue #848 <https://github.com/platformio/platformio-core/issues/848>`_)
 * Fixed issue with ``PATH`` auto-configuring for upload tools
 * Fixed ``99-platformio-udev.rules`` checker for Linux OS
 
