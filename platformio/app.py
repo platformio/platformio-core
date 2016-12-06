@@ -130,20 +130,23 @@ class ContentCache(object):
 
     def __init__(self, cache_dir=None):
         self.cache_dir = None
-        self.db_path = None
+        self._db_path = None
+        self._lockfile = None
+
         if not get_setting("enable_cache"):
             return
+
         self.cache_dir = cache_dir or join(util.get_home_dir(), ".cache")
         if not self.cache_dir:
             os.makedirs(self.cache_dir)
-        self.db_path = join(self.cache_dir, "db.data")
+        self._db_path = join(self.cache_dir, "db.data")
 
     def __enter__(self):
-        if not self.db_path or not isfile(self.db_path):
+        if not self._db_path or not isfile(self._db_path):
             return self
-        newlines = []
         found = False
-        with open(self.db_path) as fp:
+        newlines = []
+        with open(self._db_path) as fp:
             for line in fp.readlines():
                 if "=" not in line:
                     continue
@@ -157,13 +160,33 @@ class ContentCache(object):
                     remove(path)
                     if not len(listdir(dirname(path))):
                         util.rmtree_(dirname(path))
-        if found:
-            with open(self.db_path, "w") as fp:
+
+        if found and self._lock_dbindex():
+            with open(self._db_path, "w") as fp:
                 fp.write("\n".join(newlines) + "\n")
+            self._unlock_dbindex()
+
         return self
 
     def __exit__(self, type_, value, traceback):
         pass
+
+    def _lock_dbindex(self):
+        self._lockfile = LockFile(self.cache_dir)
+        if self._lockfile.is_locked() and \
+                (time() - getmtime(self._lockfile.lock_file)) > 10:
+            self._lockfile.break_lock()
+
+        try:
+            self._lockfile.acquire()
+        except LockFailed:
+            return False
+
+        return True
+
+    def _unlock_dbindex(self):
+        if self._lockfile:
+            self._lockfile.release()
 
     def get_cache_path(self, key):
         assert len(key) > 3
@@ -191,9 +214,19 @@ class ContentCache(object):
     def set(self, key, data, valid):
         if not self.cache_dir or not data:
             return
+        if not isdir(self.cache_dir):
+            os.makedirs(self.cache_dir)
         tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
         assert valid.endswith(tuple(tdmap.keys()))
         cache_path = self.get_cache_path(key)
+        expire_time = int(time() + tdmap[valid[-1]] * int(valid[:-1]))
+
+        if not self._lock_dbindex():
+            return False
+        with open(self._db_path, "a") as fp:
+            fp.write("%s=%s\n" % (str(expire_time), cache_path))
+        self._unlock_dbindex()
+
         if not isdir(dirname(cache_path)):
             os.makedirs(dirname(cache_path))
         with open(cache_path, "wb") as fp:
@@ -201,9 +234,7 @@ class ContentCache(object):
                 json.dump(data, fp)
             else:
                 fp.write(str(data))
-        expire_time = int(time() + tdmap[valid[-1]] * int(valid[:-1]))
-        with open(self.db_path, "w+") as fp:
-            fp.write("%s=%s\n" % (str(expire_time), cache_path))
+
         return True
 
     def clean(self):
