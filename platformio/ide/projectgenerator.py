@@ -127,12 +127,16 @@ class ProjectGenerator(object):
 
         # merge .gitignore
         if file_name == ".gitignore" and isfile(dst_path):
+            modified = False
             default = [l.strip() for l in contents.split("\n")]
             with open(dst_path) as fp:
                 current = [l.strip() for l in fp.readlines()]
             for d in default:
                 if d and d not in current:
+                    modified = True
                     current.append(d)
+            if not modified:
+                return
             contents = "\n".join(current) + "\n"
 
         with open(dst_path, "w") as f:

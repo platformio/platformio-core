@@ -273,6 +273,7 @@ def init_cvs_ignore(project_dir):
     ignore_path = join(project_dir, ".gitignore")
     default = [".pioenvs\n", ".piolibdeps\n"]
     current = []
+    modified = False
     if isfile(ignore_path):
         with open(ignore_path) as fp:
             current = fp.readlines()
@@ -280,7 +281,10 @@ def init_cvs_ignore(project_dir):
             current[-1] += "\n"
     for d in default:
         if d not in current:
+            modified = True
             current.append(d)
+    if not modified:
+        return
     with open(ignore_path, "w") as fp:
         fp.writelines(current)
 
