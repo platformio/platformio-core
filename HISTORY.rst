@@ -24,7 +24,6 @@ PlatformIO 3.0
 * `PIO Account <http://docs.platformio.org/en/latest/userguide/account/index.html>`__
   and `PLATFORMIO_AUTH_TOKEN <http://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_AUTH_TOKEN>`__
   environment variable for CI systems
-* Native integration with VIM/Neovim using `neomake-platformio <https://github.com/coddingtonbear/neomake-platformio>`__ plugin
   (`issue #808 <https://github.com/platformio/platformio-core/issues/808>`_,
   `issue #467 <https://github.com/platformio/platformio-core/issues/467>`_)
 * Inject system environment variables to configuration settings in
@@ -45,6 +44,7 @@ PlatformIO 3.0
   `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
   (`issue #842 <https://github.com/platformio/platformio-core/issues/842>`_)
 * Enabled caching by default for API requests and Library Manager (see `enable_cache <http://docs.platformio.org/en/latest/userguide/cmd_settings.html#enable-cache>`__ setting)
+* Native integration with VIM/Neovim using `neomake-platformio <https://github.com/coddingtonbear/neomake-platformio>`__ plugin
 * Changed a default exit combination for Device Monitor from ``Ctrl+]`` to ``Ctrl+C``
 * Improved detecting of ARM mbed media disk for uploading
 * Improved Project Generator for CLion IDE when source folder contains nested items
