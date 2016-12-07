@@ -22,4 +22,4 @@ include_directories("{{include.replace("\\", "/")}}")
 % end
 % end
 
-FILE(GLOB_RECURSE SRC_LIST {{project_src_dir.replace("\\", "/")}}/*.*)
+FILE(GLOB_RECURSE SRC_LIST "{{project_src_dir.replace("\\", "/")}}/*.*")
