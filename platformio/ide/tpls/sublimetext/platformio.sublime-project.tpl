@@ -36,6 +36,15 @@
 					[
 						"platformio",
 						"-f", "-c", "sublimetext",
+						"test"
+					],
+					"name": "Test"
+				},
+				{
+					"cmd":
+					[
+						"platformio",
+						"-f", "-c", "sublimetext",
 						"run",
 						"--target",
 						"upload"
