@@ -20,6 +20,7 @@ PlatformIO 3.0
 
   + Cloud9
   + Codeanywhere
+  + Eclipse Che
 
 * `PIO Account <http://docs.platformio.org/en/latest/userguide/account/index.html>`__
   and `PLATFORMIO_AUTH_TOKEN <http://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_AUTH_TOKEN>`__
