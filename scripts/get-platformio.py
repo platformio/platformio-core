@@ -18,7 +18,6 @@ import sys
 from platform import system
 from tempfile import NamedTemporaryFile
 
-
 CURINTERPRETER_PATH = os.path.normpath(sys.executable)
 IS_WINDOWS = system().lower() == "windows"
 
@@ -64,11 +63,7 @@ def fix_winpython_pathenv():
 
 
 def exec_command(*args, **kwargs):
-    result = {
-        "out": None,
-        "err": None,
-        "returncode": None
-    }
+    result = {"out": None, "err": None, "returncode": None}
 
     kwargs['stdout'] = subprocess.PIPE
     kwargs['stderr'] = subprocess.PIPE
@@ -119,11 +114,15 @@ def install_platformio():
     r = None
     cmd = ["-m", "pip.__main__" if sys.version_info < (2, 7, 0) else "pip"]
     try:
-        r = exec_python_cmd(cmd + ["install", "-U", "platformio"])
+        # r = exec_python_cmd(cmd + ["install", "-U", "platformio"])
+        r = exec_python_cmd(cmd + [
+            "install", "-U",
+            "https://github.com/platformio/platformio-core/archive/develop.zip"
+        ])
         assert r['returncode'] == 0
     except AssertionError:
-        r = exec_python_cmd(
-            cmd + ["--no-cache-dir", "install", "-U", "platformio"])
+        r = exec_python_cmd(cmd + ["--no-cache-dir", "install", "-U",
+                                   "platformio"])
     if r:
         print_exec_result(r)
 
@@ -151,13 +150,10 @@ def main():
             print(str(e))
             print("[FAILURE]")
 
-            permission_errors = (
-                "permission denied",
-                "not permitted"
-            )
-            if (any([m in str(e).lower() for m in permission_errors]) and not
-                    IS_WINDOWS):
-                print ("""
+            permission_errors = ("permission denied", "not permitted")
+            if (any([m in str(e).lower() for m in permission_errors]) and
+                    not IS_WINDOWS):
+                print("""
 -----------------
 Permission denied
 -----------------
@@ -171,24 +167,12 @@ https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platf
     if is_error:
         print("The installation process has been FAILED!\n"
               "Please report about this problem here\n"
-              "< https://github.com/platformio/platformio/issues >")
+              "< https://github.com/platformio/platformio-core/issues >")
         return
     else:
         print("\n ==> Installation process has been "
               "successfully FINISHED! <==\n")
-
-    try:
-        print_exec_result(exec_command("platformio"))
-    except:
-        try:
-            print_exec_result(exec_python_cmd([
-                "-m",
-                "platformio.__main__" if sys.version_info < (2, 7, 0) else
-                "platformio"]))
-        except:
-            pass
-    finally:
-        print ("""
+        print("""
 
 ----------------------------------------
 Please RESTART your Terminal Application

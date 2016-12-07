@@ -1,14 +1,12 @@
 PlatformIO
 ==========
 
-.. image:: https://travis-ci.org/platformio/platformio.svg?branch=develop
-    :target: https://travis-ci.org/platformio/platformio
+.. image:: https://travis-ci.org/platformio/platformio-core.svg?branch=develop
+    :target: https://travis-ci.org/platformio/platformio-core
     :alt: Travis.CI Build Status
-.. image:: https://ci.appveyor.com/api/projects/status/dku0h2rutfj0ctls/branch/develop?svg=true
-    :target: https://ci.appveyor.com/project/ivankravets/platformio
+.. image:: https://ci.appveyor.com/api/projects/status/unnpw0n3c5k14btn/branch/develop?svg=true
+    :target: https://ci.appveyor.com/project/ivankravets/platformio-core
     :alt: AppVeyor.CI Build Status
-.. image:: https://codecov.io/gh/platformio/platformio/branch/develop/graph/badge.svg
-  :target: https://codecov.io/gh/platformio/platformio
 .. image:: https://requires.io/github/platformio/platformio/requirements.svg?branch=develop
     :target: https://requires.io/github/platformio/platformio/requirements/?branch=develop
     :alt: Requirements Status
@@ -31,15 +29,15 @@ PlatformIO
 `Project Examples <https://github.com/platformio/platformio-examples/tree/develop>`_ |
 `Docs <http://docs.platformio.org>`_ |
 `Donate <http://platformio.org/donate>`_ |
-`Contact Us <http://platformio.org/contact>`_
+`Contact Us <https://pioplus.com/contact.html>`_
 
 **Social:** `Twitter <https://twitter.com/PlatformIO_Org>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
 `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
 `Bintray <https://bintray.com/platformio>`_ |
-`Community <https://community.platformio.org>`_ |
+`Community <https://community.platformio.org>`_
 
-.. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-logo.png
+.. image:: http://docs.platformio.org/en/stable/_static/platformio-logo.png
     :target: http://platformio.org
 
 `PlatformIO <http://platformio.org>`_ is an open source ecosystem for IoT
@@ -49,7 +47,7 @@ IDE integration. Arduino, ESP8266 and ARM mbed compatible
 * **PlatformIO IDE** - The next-generation integrated development environment for IoT.
   C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
   Multi-projects workflow with Multiple Panes. Themes Support with dark and light colors.
-  Built-in Terminal with PlatformIO CLI tool and support for the powerful Serial Port Monitor.
+  Built-in Terminal with PlatformIO Core tool and support for the powerful Serial Port Monitor.
   All advanced instruments without leaving your favourite development environment.
 * **Development Platforms** - Embedded and Desktop development platforms with
   pre-built toolchains, debuggers, uploaders and frameworks which work under
@@ -66,7 +64,7 @@ IDE integration. Arduino, ESP8266 and ARM mbed compatible
 Microchip PIC32, Nordic nRF51, NXP LPC, Silicon Labs EFM32, ST STM32,
 TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
 
-.. image:: https://raw.githubusercontent.com/platformio/platformio/develop/docs/_static/platformio-demo-wiring.gif
+.. image:: http://docs.platformio.org/en/stable/_static/platformio-demo-wiring.gif
     :target: http://platformio.org
 
 * `PlatformIO Plus and professional solutions <https://pioplus.com>`_

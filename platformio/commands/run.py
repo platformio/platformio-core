@@ -80,18 +80,19 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                 for e in config.get("platformio", "env_default").split(",")
             ]
 
-        results = {}
+        results = []
         start_time = time()
         for section in config.sections():
             if not section.startswith("env:"):
                 continue
 
             envname = section[4:]
-            skipenv = any([environment and envname not in environment,
-                           not environment and env_default and
-                           envname not in env_default])
+            skipenv = any([
+                environment and envname not in environment, not environment and
+                env_default and envname not in env_default
+            ])
             if skipenv:
-                results[envname] = None
+                results.append((envname, None))
                 continue
 
             if results:
@@ -105,35 +106,14 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
             ep = EnvironmentProcessor(ctx, envname, options, target,
                                       upload_port, silent, verbose)
-            results[envname] = ep.process()
+            results.append((envname, ep.process()))
 
         if len(results) > 1:
             click.echo()
-            print_header("[%s]" % click.style("SUMMARY"))
+            print_summary(results, start_time)
 
-            successed = True
-            for envname, status in results.items():
-                status_str = click.style("SUCCESS", fg="green")
-                if status is False:
-                    successed = False
-                    status_str = click.style("ERROR", fg="red")
-                elif status is None:
-                    status_str = click.style("SKIP", fg="yellow")
-
-                click.echo(
-                    "Environment %s\t[%s]" % (click.style(
-                        envname, fg="cyan"), status_str),
-                    err=status is False)
-
-            print_header(
-                "[%s] Took %.2f seconds" % ((click.style(
-                    "SUCCESS", fg="green",
-                    bold=True) if successed else click.style(
-                        "ERROR", fg="red", bold=True)), time() - start_time),
-                is_error=not successed)
-
-        if any([r is False for r in results.values()]):
-            raise exception.ReturnErrorCode()
+        if any([status is False for (_, status) in results]):
+            raise exception.ReturnErrorCode(1)
         return True
 
 
@@ -146,7 +126,7 @@ class EnvironmentProcessor(object):
         "upload_port", "upload_protocol", "upload_speed", "upload_flags",
         "upload_resetmethod", "lib_install", "lib_deps", "lib_force",
         "lib_ignore", "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
-        "test_ignore", "piotest")
+        "test_ignore", "test_port", "piotest")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
@@ -154,14 +134,15 @@ class EnvironmentProcessor(object):
 
     RENAMED_PLATFORMS = {"espressif": "espressif8266"}
 
-    def __init__(self,  # pylint: disable=R0913
-                 cmd_ctx,
-                 name,
-                 options,
-                 targets,
-                 upload_port,
-                 silent,
-                 verbose):
+    def __init__(
+            self,  # pylint: disable=R0913
+            cmd_ctx,
+            name,
+            options,
+            targets,
+            upload_port,
+            silent,
+            verbose):
         self.cmd_ctx = cmd_ctx
         self.name = name
         self.options = options
@@ -224,8 +205,8 @@ class EnvironmentProcessor(object):
             # warn about unknown options
             if k not in self.KNOWN_OPTIONS:
                 click.secho(
-                    "Warning! Ignore unknown `%s` option from `[env:]` section"
-                    % k,
+                    "Detected non-PlatformIO `%s` option in `[env:]` section" %
+                    k,
                     fg="yellow")
             result[k] = v
         return result
@@ -259,17 +240,19 @@ class EnvironmentProcessor(object):
 
         telemetry.on_run_environment(self.options, build_targets)
 
-        # install dependent libraries
-        if "lib_install" in self.options:
-            _autoinstall_libdeps(self.cmd_ctx, [
-                int(d.strip()) for d in self.options['lib_install'].split(",")
-                if d.strip()
-            ], self.verbose)
-        if "lib_deps" in self.options:
-            _autoinstall_libdeps(self.cmd_ctx, [
-                d.strip() for d in self.options['lib_deps'].split(", ")
-                if d.strip()
-            ], self.verbose)
+        if "nobuild" not in build_targets:
+            # install dependent libraries
+            if "lib_install" in self.options:
+                _autoinstall_libdeps(self.cmd_ctx, [
+                    int(d.strip())
+                    for d in self.options['lib_install'].split(",")
+                    if d.strip()
+                ], self.verbose)
+            if "lib_deps" in self.options:
+                _autoinstall_libdeps(self.cmd_ctx, [
+                    d.strip() for d in self.options['lib_deps'].split(", ")
+                    if d.strip()
+                ], self.verbose)
 
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])
@@ -326,11 +309,43 @@ def print_header(label, is_error=False):
     click.echo("%s %s %s" % (half_line, label, half_line), err=is_error)
 
 
+def print_summary(results, start_time):
+    print_header("[%s]" % click.style("SUMMARY"))
+
+    envname_max_len = 0
+    for (envname, _) in results:
+        if len(envname) > envname_max_len:
+            envname_max_len = len(envname)
+
+    successed = True
+    for (envname, status) in results:
+        status_str = click.style("SUCCESS", fg="green")
+        if status is False:
+            successed = False
+            status_str = click.style("ERROR", fg="red")
+        elif status is None:
+            status_str = click.style("SKIP", fg="yellow")
+
+        format_str = (
+            "Environment {0:<" + str(envname_max_len + 9) + "}\t[{1}]")
+        click.echo(
+            format_str.format(
+                click.style(
+                    envname, fg="cyan"), status_str),
+            err=status is False)
+
+    print_header(
+        "[%s] Took %.2f seconds" % ((click.style(
+            "SUCCESS", fg="green", bold=True) if successed else click.style(
+                "ERROR", fg="red", bold=True)), time() - start_time),
+        is_error=not successed)
+
+
 def check_project_defopts(config):
     if not config.has_section("platformio"):
         return True
     known = ("home_dir", "lib_dir", "libdeps_dir", "src_dir", "envs_dir",
-             "data_dir", "test_dir", "env_default")
+             "data_dir", "test_dir", "env_default", "lib_extra_dirs")
     unknown = set([k for k, _ in config.items("platformio")]) - set(known)
     if not unknown:
         return True

@@ -27,6 +27,8 @@ from platformio.managers.package import BasePkgManager, PackageManager
 
 class PlatformManager(BasePkgManager):
 
+    FILE_CACHE_VALID = None  # disable platform caching
+
     def __init__(self, package_dir=None, repositories=None):
         if not repositories:
             repositories = [
@@ -42,13 +44,13 @@ class PlatformManager(BasePkgManager):
     def manifest_name(self):
         return "platform.json"
 
-    def install(self,  # pylint: disable=too-many-arguments
+    def install(self,
                 name,
                 requirements=None,
                 with_packages=None,
                 without_packages=None,
                 skip_default_package=False,
-                **_):
+                **_):  # pylint: disable=too-many-arguments
         platform_dir = BasePkgManager.install(self, name, requirements)
         p = PlatformFactory.newPlatform(self.get_manifest_path(platform_dir))
         p.install_packages(with_packages, without_packages,
@@ -66,8 +68,12 @@ class PlatformManager(BasePkgManager):
             self.cleanup_packages(p.packages.keys())
         return True
 
-    def update(self,  # pylint: disable=arguments-differ
-               name, requirements=None, only_packages=False, only_check=False):
+    def update(  # pylint: disable=arguments-differ
+            self,
+            name,
+            requirements=None,
+            only_packages=False,
+            only_check=False):
         name, requirements, _ = self.parse_pkg_name(name, requirements)
         if not only_packages:
             BasePkgManager.update(self, name, requirements, only_check)
@@ -283,6 +289,8 @@ class PlatformRunMixin(object):
         return result
 
     def on_run_out(self, line):
+        if "`buildprog' is up to date." in line:
+            return
         self._echo_line(line, level=1)
 
     def on_run_err(self, line):
@@ -393,8 +401,12 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             config.manifest['platform'] = self.name
             self._BOARDS_CACHE[board_id] = config
 
-        bdirs = (join(util.get_home_dir(), "boards"),
-                 join(self.get_dir(), "boards"))
+        bdirs = [
+            util.get_projectboards_dir(),
+            join(util.get_home_dir(), "boards"),
+            join(self.get_dir(), "boards"),
+        ]
+
         if id_ is None:
             for boards_dir in bdirs:
                 if not isdir(boards_dir):
@@ -438,8 +450,11 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         return names
 
     def configure_default_packages(self, variables, targets):
-        # enbale used frameworks
-        for framework in variables.get("pioframework", "").split(","):
+        # enable used frameworks
+        frameworks = variables.get("pioframework", [])
+        if not isinstance(frameworks, list):
+            frameworks = frameworks.split(", ")
+        for framework in frameworks:
             if not self.frameworks:
                 continue
             framework = framework.lower().strip()
@@ -453,19 +468,18 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             for _name, _opts in self.packages.iteritems():
                 if _opts.get("type") == "uploader":
                     self.packages[_name]['optional'] = False
-                elif "uploadlazy" in targets:
+                elif "nobuild" in targets:
                     # skip all packages, allow only upload tools
                     self.packages[_name]['optional'] = True
 
-        if "test" in targets and "tool-unity" not in self.packages:
+        if "__test" in targets and "tool-unity" not in self.packages:
             self.packages['tool-unity'] = {
                 "version": "~1.20302.1",
                 "optional": False
             }
         if "tool-scons" not in self.packages:
             self.packages['tool-scons'] = {
-                "version": self._manifest.get("engines", {}).get(
-                    "scons", ">=2.3.0,<2.6.0"),
+                "version": "~3.20501.2",
                 "optional": False
             }
 

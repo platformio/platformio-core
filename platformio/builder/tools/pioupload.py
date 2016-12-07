@@ -15,12 +15,14 @@
 from __future__ import absolute_import
 
 import sys
+from fnmatch import fnmatch
 from os import environ
 from os.path import isfile, join
 from platform import system
 from shutil import copyfile
 from time import sleep
 
+from SCons.Node.Alias import Alias
 from serial import Serial
 
 from platformio import util
@@ -84,13 +86,29 @@ def WaitForNewSerialPort(env, before):
 def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
     env = args[0]
 
+    def _get_pattern():
+        if "UPLOAD_PORT" not in env:
+            return None
+        if set(["*", "?", "[", "]"]) & set(env['UPLOAD_PORT']):
+            return env['UPLOAD_PORT']
+        return None
+
+    def _is_match_pattern(port):
+        pattern = _get_pattern()
+        if not pattern:
+            return True
+        return fnmatch(port, pattern)
+
     def _look_for_mbed_disk():
         msdlabels = ("mbed", "nucleo", "frdm", "microbit")
         for item in util.get_logicaldisks():
-            if (not item['name'] or
-                    not any([l in item['name'].lower() for l in msdlabels])):
+            if not _is_match_pattern(item['disk']):
                 continue
-            return item['disk']
+            if (item['name'] and
+                    any([l in item['name'].lower() for l in msdlabels])):
+                return item['disk']
+            if isfile(join(item['disk'], "mbed.html")):
+                return item['disk']
         return None
 
     def _look_for_serial_port():
@@ -98,8 +116,8 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         board_hwids = []
         if "BOARD" in env and "build.hwids" in env.BoardConfig():
             board_hwids = env.BoardConfig().get("build.hwids")
-        for item in util.get_serialports():
-            if "VID:PID" not in item['hwid']:
+        for item in util.get_serialports(filter_hwid=True):
+            if not _is_match_pattern(item['port']):
                 continue
             port = item['port']
             for hwid in board_hwids:
@@ -108,16 +126,16 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
                     return port
         return port
 
-    if "UPLOAD_PORT" in env:
+    if "UPLOAD_PORT" in env and not _get_pattern():
         print env.subst("Use manually specified: $UPLOAD_PORT")
         return
 
-    if env.subst("$PIOFRAMEWORK") == "mbed":
+    if "mbed" in env.subst("$PIOFRAMEWORK"):
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
         if (system() == "Linux" and not any([
-                isfile("/etc/udev/99-platformio-udev.rules"),
-                isfile("/etc/rules.d/99-platformio-udev.rules")
+                isfile("/etc/udev/rules.d/99-platformio-udev.rules"),
+                isfile("/lib/udev/rules.d/99-platformio-udev.rules")
         ])):
             sys.stderr.write(
                 "\nWarning! Please install `99-platformio-udev.rules` and "
@@ -144,8 +162,8 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
         fpath = join(env.subst("$BUILD_DIR"), "%s.%s" % (progname, ext))
         if not isfile(fpath):
             continue
-        copyfile(fpath, join(
-            env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
+        copyfile(fpath,
+                 join(env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
     print "Firmware has been successfully uploaded.\n"\
           "(Some boards may require manual hard reset)"
 
@@ -159,7 +177,10 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
 
     sysenv = environ.copy()
     sysenv['PATH'] = str(env['ENV']['PATH'])
-    cmd = [env.subst("$SIZETOOL"), "-B", str(target[0])]
+    cmd = [
+        env.subst("$SIZETOOL"), "-B",
+        str(source[0] if isinstance(target[0], Alias) else target[0])
+    ]
     result = util.exec_command(cmd, env=sysenv)
     if result['returncode'] != 0:
         return

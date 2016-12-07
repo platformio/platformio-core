@@ -16,6 +16,7 @@ import collections
 import functools
 import json
 import os
+import platform
 import re
 import socket
 import stat
@@ -24,7 +25,6 @@ import sys
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
-from platform import system, uname
 from shutil import rmtree
 from threading import Thread
 from time import sleep
@@ -59,7 +59,10 @@ class ProjectConfig(ConfigParser):
         return self.VARTPL_RE.sub(self._re_sub_handler, value)
 
     def _re_sub_handler(self, match):
-        return self.get(match.group(1), match.group(2))
+        section, option = match.group(1), match.group(2)
+        if section == "env" and not self.has_section(section):
+            return os.getenv(option)
+        return self.get(section, option)
 
 
 class AsyncPipe(Thread):
@@ -159,9 +162,10 @@ def load_json(file_path):
 
 
 def get_systype():
-    data = uname()
-    type_ = data[0].lower()
-    arch = data[4].lower() if data[4] else ""
+    type_ = platform.system().lower()
+    arch = platform.machine().lower()
+    if type_ == "windows":
+        arch = "amd64" if platform.architecture()[0] == "64bit" else "x86"
     return "%s_%s" % (type_, arch) if arch else type_
 
 
@@ -171,26 +175,33 @@ def pioversion_to_intstr():
     return [int(i) for i in vermatch.group(1).split(".")[:3]]
 
 
-def _get_projconf_option_dir(name, default=None):
-    _env_name = "PLATFORMIO_%s" % name.upper()
-    if _env_name in os.environ:
-        return os.getenv(_env_name)
+def get_project_optional_dir(name, default=None):
+    data = None
+    var_name = "PLATFORMIO_%s" % name.upper()
+    if var_name in os.environ:
+        data = os.getenv(var_name)
+    else:
+        try:
+            config = load_project_config()
+            if (config.has_section("platformio") and
+                    config.has_option("platformio", name)):
+                data = config.get("platformio", name)
+        except exception.NotPlatformIOProject:
+            pass
 
-    try:
-        config = load_project_config()
-        if (config.has_section("platformio") and
-                config.has_option("platformio", name)):
-            option_dir = config.get("platformio", name)
-            if option_dir.startswith("~"):
-                option_dir = expanduser(option_dir)
-            return abspath(option_dir)
-    except exception.NotPlatformIOProject:
-        pass
-    return default
+    if not data:
+        return default
+
+    items = []
+    for item in data.split(", "):
+        if item.startswith("~"):
+            item = expanduser(item)
+        items.append(abspath(item))
+    return ", ".join(items)
 
 
 def get_home_dir():
-    home_dir = _get_projconf_option_dir("home_dir",
+    home_dir = get_project_optional_dir("home_dir",
                                         join(expanduser("~"), ".platformio"))
 
     if "windows" in get_systype():
@@ -237,25 +248,30 @@ def is_platformio_project(project_dir=None):
 
 
 def get_projectlib_dir():
-    return _get_projconf_option_dir("lib_dir", join(get_project_dir(), "lib"))
+    return get_project_optional_dir("lib_dir", join(get_project_dir(), "lib"))
 
 
 def get_projectlibdeps_dir():
-    return _get_projconf_option_dir("libdeps_dir",
+    return get_project_optional_dir("libdeps_dir",
                                     join(get_project_dir(), ".piolibdeps"))
 
 
 def get_projectsrc_dir():
-    return _get_projconf_option_dir("src_dir", join(get_project_dir(), "src"))
+    return get_project_optional_dir("src_dir", join(get_project_dir(), "src"))
 
 
 def get_projecttest_dir():
-    return _get_projconf_option_dir("test_dir", join(get_project_dir(),
-                                                     "test"))
+    return get_project_optional_dir("test_dir",
+                                    join(get_project_dir(), "test"))
+
+
+def get_projectboards_dir():
+    return get_project_optional_dir("boards_dir",
+                                    join(get_project_dir(), "boards"))
 
 
 def get_projectpioenvs_dir(force=False):
-    path = _get_projconf_option_dir("envs_dir",
+    path = get_project_optional_dir("envs_dir",
                                     join(get_project_dir(), ".pioenvs"))
     try:
         if not isdir(path):
@@ -265,7 +281,7 @@ def get_projectpioenvs_dir(force=False):
             with open(dontmod_path, "w") as fp:
                 fp.write("""
 [InternetShortcut]
-URL=http://docs.platformio.org/en/stable/projectconf.html#envs-dir
+URL=http://docs.platformio.org/page/projectconf.html#envs-dir
 """)
     except Exception as e:  # pylint: disable=broad-except
         if not force:
@@ -274,7 +290,7 @@ URL=http://docs.platformio.org/en/stable/projectconf.html#envs-dir
 
 
 def get_projectdata_dir():
-    return _get_projconf_option_dir("data_dir",
+    return get_project_optional_dir("data_dir",
                                     join(get_project_dir(), "data"))
 
 
@@ -296,6 +312,17 @@ def change_filemtime(path, time):
 
 def is_ci():
     return os.getenv("CI", "").lower() == "true"
+
+
+def is_container():
+    if not isfile("/proc/1/cgroup"):
+        return False
+    with open("/proc/1/cgroup") as fp:
+        for line in fp:
+            line = line.strip()
+            if ":" in line and not line.endswith(":/"):
+                return True
+    return False
 
 
 def exec_command(*args, **kwargs):
@@ -332,12 +359,16 @@ def copy_pythonpath_to_osenv():
     if "PYTHONPATH" in os.environ:
         _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
     for p in os.sys.path:
-        if p not in _PYTHONPATH:
+        conditions = [p not in _PYTHONPATH]
+        if "windows" not in get_systype():
+            conditions.append(
+                isdir(join(p, "click")) or isdir(join(p, "platformio")))
+        if all(conditions):
             _PYTHONPATH.append(p)
     os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
 
 
-def get_serialports():
+def get_serialports(filter_hwid=False):
     try:
         from serial.tools.list_ports import comports
     except ImportError:
@@ -347,15 +378,19 @@ def get_serialports():
     for p, d, h in comports():
         if not p:
             continue
-        if system() == "Windows":
+        if platform.system() == "Windows":
             try:
                 d = unicode(d, errors="ignore")
             except TypeError:
                 pass
-        result.append({"port": p, "description": d, "hwid": h})
+        if not filter_hwid or "VID:PID" in h:
+            result.append({"port": p, "description": d, "hwid": h})
+
+    if filter_hwid:
+        return result
 
     # fix for PySerial
-    if not result and system() == "Darwin":
+    if not result and platform.system() == "Darwin":
         for p in glob("/dev/tty.*"):
             result.append({"port": p, "description": "n/a", "hwid": "n/a"})
     return result
@@ -363,7 +398,7 @@ def get_serialports():
 
 def get_logicaldisks():
     disks = []
-    if system() == "Windows":
+    if platform.system() == "Windows":
         result = exec_command(
             ["wmic", "logicaldisk", "get", "name,VolumeName"]).get("out", "")
         disknamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
@@ -379,8 +414,10 @@ def get_logicaldisks():
             match = disknamere.search(line.strip())
             if not match:
                 continue
-            disks.append({"disk": match.group(1),
-                          "name": basename(match.group(1))})
+            disks.append({
+                "disk": match.group(1),
+                "name": basename(match.group(1))
+            })
     return disks
 
 
@@ -395,32 +432,43 @@ def _api_request_session():
 
 
 def _get_api_result(
-        path,  # pylint: disable=too-many-branches
+        url,  # pylint: disable=too-many-branches
         params=None,
-        data=None):
+        data=None,
+        auth=None):
     from platformio.app import get_setting
 
     result = None
     r = None
+    disable_ssl_check = sys.version_info < (2, 7, 9)
 
     headers = get_request_defheaders()
-    url = __apiurl__
-
-    if not get_setting("enable_ssl"):
-        url = url.replace("https://", "http://")
+    if not url.startswith("http"):
+        url = __apiurl__ + url
+        if not get_setting("enable_ssl"):
+            url = url.replace("https://", "http://")
 
     try:
         if data:
             r = _api_request_session().post(
-                url + path, params=params, data=data, headers=headers)
+                url,
+                params=params,
+                data=data,
+                headers=headers,
+                auth=auth,
+                verify=disable_ssl_check)
         else:
-            r = _api_request_session().get(url + path,
+            r = _api_request_session().get(url,
                                            params=params,
-                                           headers=headers)
+                                           headers=headers,
+                                           auth=auth,
+                                           verify=disable_ssl_check)
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        if result and "errors" in result:
+        if result and "message" in result:
+            raise exception.APIRequestError(result['message'])
+        elif result and "errors" in result:
             raise exception.APIRequestError(result['errors'][0]['title'])
         else:
             raise exception.APIRequestError(e)
@@ -433,23 +481,23 @@ def _get_api_result(
     return result
 
 
-def get_api_result(path, params=None, data=None, cache_valid=None):
-    from platformio.app import LocalCache
+def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
+    from platformio.app import ContentCache
     total = 0
     max_retries = 5
-    cache_key = (LocalCache.key_from_args(path, params, data)
+    cache_key = (ContentCache.key_from_args(url, params, data, auth)
                  if cache_valid else None)
     while total < max_retries:
         try:
-            with LocalCache() as lc:
+            with ContentCache() as cc:
                 if cache_key:
-                    result = lc.get(cache_key)
+                    result = cc.get(cache_key)
                     if result is not None:
                         return result
-            result = _get_api_result(path, params, data)
+            result = _get_api_result(url, params, data)
             if cache_valid:
-                with LocalCache() as lc:
-                    lc.set(cache_key, result, cache_valid)
+                with ContentCache() as cc:
+                    cc.set(cache_key, result, cache_valid)
             return result
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
@@ -465,7 +513,7 @@ def get_api_result(path, params=None, data=None, cache_valid=None):
             sleep(2 * total)
 
     raise exception.APIRequestError(
-        "Could not connect to PlatformIO Registry Service. "
+        "Could not connect to PlatformIO API Service. "
         "Please try later.")
 
 

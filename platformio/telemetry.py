@@ -92,26 +92,50 @@ class MeasurementProtocol(TelemetryBase):
         self['an'] = " ".join(dpdata)
 
     def _prefill_custom_data(self):
+        caller_id = str(app.get_session_var("caller_id"))
         self['cd1'] = util.get_systype()
         self['cd2'] = "Python/%s %s" % (platform.python_version(),
                                         platform.platform())
-        self['cd4'] = 1 if not util.is_ci() else 0
-        if app.get_session_var("caller_id"):
-            self['cd5'] = str(app.get_session_var("caller_id")).lower()
+        self['cd4'] = 1 if (not util.is_ci() and
+                            (caller_id or not util.is_container())) else 0
+        if caller_id:
+            self['cd5'] = caller_id.lower()
 
     def _prefill_screen_name(self):
-        self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
 
+        def _first_arg_from_list(args_, list_):
+            for _arg in args_:
+                if _arg in list_:
+                    return _arg
+            return None
+
+        self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
         if not app.get_session_var("command_ctx"):
             return
         ctx_args = app.get_session_var("command_ctx").args
         args = [str(s).lower() for s in ctx_args if not str(s).startswith("-")]
         if not args:
             return
-        if args[0] in ("lib", "platform", "serialports", "settings"):
+        cmd_path = args[:1]
+        if args[0] in ("platform", "platforms", "serialports", "device",
+                       "settings", "account"):
             cmd_path = args[:2]
-        else:
-            cmd_path = args[:1]
+        if args[0] == "lib" and len(args) > 1:
+            lib_subcmds = ("install", "list", "register", "search", "show",
+                           "uninstall", "update")
+            sub_cmd = _first_arg_from_list(args[1:], lib_subcmds)
+            if sub_cmd:
+                cmd_path.append(sub_cmd)
+        elif args[0] == "remote" and len(args) > 1:
+            remote_subcmds = ("agent", "device", "run", "test")
+            sub_cmd = _first_arg_from_list(args[1:], remote_subcmds)
+            if sub_cmd:
+                cmd_path.append(sub_cmd)
+                if len(args) > 2 and sub_cmd in ("agent", "device"):
+                    remote2_subcmds = ("list", "start", "monitor")
+                    sub_cmd = _first_arg_from_list(args[2:], remote2_subcmds)
+                    if sub_cmd:
+                        cmd_path.append(sub_cmd)
         self['screen_name'] = " ".join([p.title() for p in cmd_path])
 
     def send(self, hittype):
@@ -222,12 +246,22 @@ def measure_ci():
     event = {"category": "CI", "action": "NoName", "label": None}
 
     envmap = {
-        "APPVEYOR": {"label": getenv("APPVEYOR_REPO_NAME")},
-        "CIRCLECI": {"label": "%s/%s" % (getenv("CIRCLE_PROJECT_USERNAME"),
-                                         getenv("CIRCLE_PROJECT_REPONAME"))},
-        "TRAVIS": {"label": getenv("TRAVIS_REPO_SLUG")},
-        "SHIPPABLE": {"label": getenv("REPO_NAME")},
-        "DRONE": {"label": getenv("DRONE_REPO_SLUG")}
+        "APPVEYOR": {
+            "label": getenv("APPVEYOR_REPO_NAME")
+        },
+        "CIRCLECI": {
+            "label": "%s/%s" % (getenv("CIRCLE_PROJECT_USERNAME"),
+                                getenv("CIRCLE_PROJECT_REPONAME"))
+        },
+        "TRAVIS": {
+            "label": getenv("TRAVIS_REPO_SLUG")
+        },
+        "SHIPPABLE": {
+            "label": getenv("REPO_NAME")
+        },
+        "DRONE": {
+            "label": getenv("DRONE_REPO_SLUG")
+        }
     }
 
     for key, value in envmap.iteritems():
@@ -258,10 +292,11 @@ def on_event(category, action, label=None, value=None, screen_name=None):
 
 
 def on_exception(e):
-    skip = any(
-        [isinstance(e, cls)
-         for cls in (IOError, exception.AbortedByUser,
-                     exception.NotGlobalLibDir, exception.InternetIsOffline)])
+    skip = any([
+        isinstance(e, cls)
+        for cls in (IOError, exception.AbortedByUser,
+                    exception.NotGlobalLibDir, exception.InternetIsOffline)
+    ])
     if skip:
         return
     is_crash = any([

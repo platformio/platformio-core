@@ -19,12 +19,8 @@ from os.path import join, sep
 
 def ProcessTest(env):
     env.Append(
-        CPPDEFINES=[
-            "UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"
-        ],
-        CPPPATH=[
-            join("$BUILD_DIR", "UnityTestLib")
-        ])
+        CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
+        CPPPATH=[join("$BUILD_DIR", "UnityTestLib")])
     unitylib = env.BuildLibrary(
         join("$BUILD_DIR", "UnityTestLib"),
         env.PioPlatform().get_package_dir("tool-unity"))

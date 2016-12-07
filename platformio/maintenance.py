@@ -43,16 +43,21 @@ def in_silence(ctx=None):
 
 
 def clean_cache():
-    with app.LocalCache() as lc:
-        lc.clean()
+    with app.ContentCache() as cc:
+        cc.clean()
 
 
 def on_platformio_start(ctx, force, caller):
     if not caller:
         if getenv("PLATFORMIO_CALLER"):
             caller = getenv("PLATFORMIO_CALLER")
-        elif getenv("C9_UID"):
-            caller = "C9"
+        elif util.is_container():
+            if getenv("C9_UID"):
+                caller = "C9"
+            elif getenv("USER") == "cabox":
+                caller = "CA"
+            elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
+                caller = "Che"
 
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
@@ -137,8 +142,9 @@ class Upgrader(object):
 
     @staticmethod
     def _upgrade_to_3_0_0b11(ctx):
-        current_platforms = [m['name']
-                             for m in PlatformManager().get_installed()]
+        current_platforms = [
+            m['name'] for m in PlatformManager().get_installed()
+        ]
         if "espressif" not in current_platforms:
             return
         ctx.invoke(cmd_platform_install, platforms=["espressif8266"])
@@ -244,7 +250,7 @@ def check_platformio_upgrade():
         click.secho("pip install -U platformio", fg="cyan", nl=False)
         click.secho("` command.", fg="yellow")
     click.secho("Changes: ", fg="yellow", nl=False)
-    click.secho("http://docs.platformio.org/en/stable/history.html", fg="cyan")
+    click.secho("http://docs.platformio.org/en/latest/history.html", fg="cyan")
     click.echo("*" * terminal_width)
     click.echo("")
 

@@ -25,7 +25,8 @@ class PlatformioException(Exception):
 
 
 class ReturnErrorCode(PlatformioException):
-    pass
+
+    MESSAGE = "{0}"
 
 
 class MinitermException(PlatformioException):
@@ -200,20 +201,13 @@ class CIBuildEnvsEmpty(PlatformioException):
         "predefined environments using `--project-conf` option"
 
 
-class TestDirEmpty(PlatformioException):
-
-    MESSAGE = "Test directory '{0}' is empty. More details about Unit "\
-              "Testing:\n http://docs.platformio.org/en/stable/platforms/"\
-              "unit_testing.html"
-
-
 class UpgradeError(PlatformioException):
 
     MESSAGE = """{0}
 
 * Upgrade using `pip install -U platformio`
 * Try different installation/upgrading steps:
-  http://docs.platformio.org/en/stable/installation.html
+  http://docs.platformio.org/page/installation.html
 """
 
 

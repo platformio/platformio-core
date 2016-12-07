@@ -67,14 +67,14 @@ commonvars.AddVariables(
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
-        "ar", "as", "gcc", "g++", "gnulink",
-        "platformio", "pioplatform", "piowinhooks",
-        "piolib", "piotest", "pioupload", "piomisc"
+        "ar", "as", "gcc", "g++", "gnulink", "platformio", "pioplatform",
+        "piowinhooks", "piolib", "piotest", "pioupload", "piomisc"
     ],  # yapf: disable
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
     variables=commonvars,
 
     # Propagating External Environment
+    PIOVARIABLES=commonvars.keys(),
     ENV=environ,
     UNIX_TIME=int(time()),
     PROGNAME="program",
@@ -121,19 +121,27 @@ for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPT",
         env[var] = environ.get(k)
 
 # Parse comma separated items
-for opt in ("LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"):
+for opt in ("PIOFRAMEWORK", "LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"):
     if opt not in env:
         continue
     env[opt] = [l.strip() for l in env[opt].split(", ") if l.strip()]
 
+# Configure extra library source directories for LDF
+if util.get_project_optional_dir("lib_extra_dirs"):
+    env.Prepend(LIBSOURCE_DIRS=[
+        l.strip()
+        for l in util.get_project_optional_dir("lib_extra_dirs").split(", ")
+        if l.strip()
+    ])
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
+
 env.LoadPioPlatform(commonvars)
 
 env.SConscriptChdir(0)
 env.SConsignFile(join("$PROJECTPIOENVS_DIR", ".sconsign.dblite"))
 env.SConscript("$BUILD_SCRIPT")
 
-AlwaysBuild(env.Alias("test", DEFAULT_TARGETS + ["size"]))
+AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS + ["size"]))
 
 if "UPLOAD_FLAGS" in env:
     env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
@@ -146,5 +154,5 @@ if "envdump" in COMMAND_LINE_TARGETS:
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
-    print json.dumps(env.DumpIDEData())
+    print "\n%s\n" % json.dumps(env.DumpIDEData())
     env.Exit(0)

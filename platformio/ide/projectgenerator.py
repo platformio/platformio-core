@@ -38,8 +38,8 @@ class ProjectGenerator(object):
     @staticmethod
     def get_supported_ides():
         tpls_dir = join(util.get_source_dir(), "ide", "tpls")
-        return sorted([d for d in os.listdir(tpls_dir)
-                       if isdir(join(tpls_dir, d))])
+        return sorted(
+            [d for d in os.listdir(tpls_dir) if isdir(join(tpls_dir, d))])
 
     @util.memoized
     def get_project_env(self):
@@ -69,14 +69,13 @@ class ProjectGenerator(object):
         result = util.exec_command(cmd)
 
         if result['returncode'] != 0 or '"includes":' not in result['out']:
-            raise exception.PlatformioException("\n".join([result['out'],
-                                                           result['err']]))
+            raise exception.PlatformioException("\n".join(
+                [result['out'], result['err']]))
 
-        output = result['out']
-        start_index = output.index('{"')
-        stop_index = output.rindex('}')
-        data = json.loads(output[start_index:stop_index + 1])
-
+        for line in result['out'].split("\n"):
+            line = line.strip()
+            if line.startswith('{"') and line.endswith("}"):
+                data = json.loads(line)
         return data
 
     def get_project_name(self):
@@ -128,13 +127,17 @@ class ProjectGenerator(object):
 
         # merge .gitignore
         if file_name == ".gitignore" and isfile(dst_path):
-            contents = [l.strip() for l in contents.split("\n") if l.strip()]
-            with open(dst_path) as f:
-                for line in f.readlines():
-                    line = line.strip()
-                    if line and line not in contents:
-                        contents.append(line)
-            contents = "\n".join(contents)
+            modified = False
+            default = [l.strip() for l in contents.split("\n")]
+            with open(dst_path) as fp:
+                current = [l.strip() for l in fp.readlines()]
+            for d in default:
+                if d and d not in current:
+                    modified = True
+                    current.append(d)
+            if not modified:
+                return
+            contents = "\n".join(current) + "\n"
 
         with open(dst_path, "w") as f:
             f.write(contents)

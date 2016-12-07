@@ -7,6 +7,7 @@
       <config projectName="{{project_name}}" targetName="PLATFORMIO_BUILD" />
       <config projectName="{{project_name}}" targetName="PLATFORMIO_UPLOAD" />
       <config projectName="{{project_name}}" targetName="PLATFORMIO_CLEAN" />
+      <config projectName="{{project_name}}" targetName="PLATFORMIO_TEST" />
       <config projectName="{{project_name}}" targetName="PLATFORMIO_PROGRAM" />
       <config projectName="{{project_name}}" targetName="PLATFORMIO_UPLOADFS" />
       <config projectName="{{project_name}}" targetName="PLATFORMIO_UPDATE_ALL" />
@@ -174,6 +175,10 @@
       <envs />
       <method />
     </configuration>
+    <configuration default="false" name="PLATFORMIO_TEST" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS="FALSE" PROJECT_NAME="{{project_name}}" TARGET_NAME="PLATFORMIO_TEST" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
     <configuration default="false" name="PLATFORMIO_UPLOAD" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS="FALSE" PROJECT_NAME="{{project_name}}" TARGET_NAME="PLATFORMIO_UPLOAD" CONFIG_NAME="Debug">
       <envs />
       <method />
@@ -194,15 +199,16 @@
       <envs />
       <method />
     </configuration>
-    <list size="8">
+    <list size="9">
       <item index="0" class="java.lang.String" itemvalue="Application.Build All" />
       <item index="1" class="java.lang.String" itemvalue="Application.PLATFORMIO_BUILD" />
-      <item index="3" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPLOAD" />
-      <item index="2" class="java.lang.String" itemvalue="Application.PLATFORMIO_CLEAN" />
+      <item index="2" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPLOAD" />
+      <item index="3" class="java.lang.String" itemvalue="Application.PLATFORMIO_CLEAN" />
+      <item index="4" class="java.lang.String" itemvalue="Application.PLATFORMIO_TEST" />
       <item index="5" class="java.lang.String" itemvalue="Application.PLATFORMIO_PROGRAM" />
-      <item index="4" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPLOADFS" />
-      <item index="6" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPDATE" />
-      <item index="7" class="java.lang.String" itemvalue="Application.PLATFORMIO_REBUILD_PROJECT_INDEX" />
+      <item index="6" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPLOADFS" />
+      <item index="7" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPDATE" />
+      <item index="8" class="java.lang.String" itemvalue="Application.PLATFORMIO_REBUILD_PROJECT_INDEX" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />

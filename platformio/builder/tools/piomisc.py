@@ -23,6 +23,7 @@ from os.path import basename, isdir, isfile, join, relpath
 from tempfile import mkstemp
 
 from SCons.Action import Action
+from SCons.Defaults import processDefines
 from SCons.Script import ARGUMENTS
 
 from platformio import util
@@ -227,10 +228,8 @@ def DumpIDEData(env):
     def get_defines(env_):
         defines = []
         # global symbols
-        for item in env_.get("CPPDEFINES", []):
-            if isinstance(item, list) or isinstance(item, tuple):
-                item = "=".join(item)
-            defines.append(env_.subst(item).replace('\\"', '"'))
+        for item in processDefines(env_.get("CPPDEFINES", [])):
+            defines.append(env_.subst(item).replace('\\', ''))
 
         # special symbol for Atmel AVR MCU
         if env['PIOPLATFORM'] == "atmelavr":
@@ -244,6 +243,8 @@ def DumpIDEData(env):
     env_ = env.Clone()
 
     data = {
+        "libsource_dirs":
+        [env_.subst(l) for l in env_.get("LIBSOURCE_DIRS", [])],
         "defines": get_defines(env_),
         "includes": get_includes(env_),
         "cc_flags": env_.subst(LINTCCOM),
@@ -256,9 +257,7 @@ def DumpIDEData(env):
 
     # https://github.com/platformio/platformio-atom-ide/issues/34
     _new_defines = []
-    for item in env_.get("CPPDEFINES", []):
-        if isinstance(item, list) or isinstance(item, tuple):
-            item = "=".join(item)
+    for item in processDefines(env_.get("CPPDEFINES", [])):
         item = item.replace('\\"', '"')
         if " " in item:
             _new_defines.append(item.replace(" ", "\\\\ "))
@@ -292,16 +291,23 @@ def GetCompilerType(env):
 
 
 def GetActualLDScript(env):
+
+    def _lookup_in_ldpath(script):
+        for d in env.get("LIBPATH", []):
+            path = join(env.subst(d), script)
+            if isfile(path):
+                return path
+        return None
+
     script = None
     for f in env.get("LINKFLAGS", []):
         if f.startswith("-Wl,-T"):
             script = env.subst(f[6:].replace('"', "").strip())
             if isfile(script):
                 return script
-            for d in env.get("LIBPATH", []):
-                path = join(env.subst(d), script)
-                if isfile(path):
-                    return path
+            path = _lookup_in_ldpath(script)
+            if path:
+                return path
 
     if script:
         sys.stderr.write(
@@ -309,7 +315,13 @@ def GetActualLDScript(env):
             (script, env.subst("$LIBPATH")))
         env.Exit(1)
 
-    return None
+    if not script and "LDSCRIPT_PATH" in env:
+        path = _lookup_in_ldpath(env['LDSCRIPT_PATH'])
+        if path:
+            return path
+
+    sys.stderr.write("Error: Could not find LD script\n")
+    env.Exit(1)
 
 
 def VerboseAction(_, act, actstr):

@@ -93,7 +93,7 @@ def main():
         except AttributeError:
             raise exception.PlatformioException(
                 "Invalid installation of Python `requests` package`. See "
-                "< https://github.com/platformio/platformio/issues/252 >")
+                "< https://github.com/platformio/platformio-core/issues/252 >")
 
         # handle PLATFORMIO_FORCE_COLOR
         if str(getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
@@ -121,15 +121,15 @@ An unexpected error occurred. Further steps:
   `pip install -U platformio` command
 
 * Try to find answer in FAQ Troubleshooting section
-  http://docs.platformio.org/en/stable/faq.html
+  http://docs.platformio.org/page/faq.html
 
 * Report this problem to the developers
-  https://github.com/platformio/platformio/issues
+  https://github.com/platformio/platformio-core/issues
 
 ============================================================
 """
             click.secho(error_str, fg="red", err=True)
-        return 1
+        return int(str(e)) if str(e).isdigit() else 1
     return 0
 
 

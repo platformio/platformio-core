@@ -73,16 +73,9 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
 @click.option("-O", "--project-option", multiple=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
-def cli(ctx,  # pylint: disable=R0913
-        src,
-        lib,
-        exclude,
-        board,
-        build_dir,
-        keep_build_dir,
-        project_conf,
-        project_option,
-        verbose):
+def cli(  # pylint: disable=too-many-arguments
+        ctx, src, lib, exclude, board, build_dir, keep_build_dir, project_conf,
+        project_option, verbose):
 
     if not src and getenv("PLATFORMIO_CI_SRC"):
         src = validate_path(ctx, None, getenv("PLATFORMIO_CI_SRC").split(":"))

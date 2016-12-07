@@ -33,9 +33,11 @@ def cli():
         click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
 
         to_develop = not all([c.isdigit() for c in latest if c != "."])
-        cmds = (["pip", "install", "--upgrade",
-                 "https://github.com/platformio/platformio/archive/develop.zip"
-                 if to_develop else "platformio"], ["platformio", "--version"])
+        cmds = ([
+            "pip", "install", "--upgrade",
+            "https://github.com/platformio/platformio-core/archive/develop.zip"
+            if to_develop else "platformio"
+        ], ["platformio", "--version"])
 
         cmd = None
         r = None
@@ -59,7 +61,7 @@ def cli():
                 fg="green")
             click.echo("Release notes: ", nl=False)
             click.secho(
-                "http://docs.platformio.org/en/stable/history.html", fg="cyan")
+                "http://docs.platformio.org/en/latest/history.html", fg="cyan")
         except Exception as e:  # pylint: disable=W0703
             if not r:
                 raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
@@ -79,10 +81,10 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
 """,
                     fg="yellow",
                     err=True)
-                raise exception.ReturnErrorCode()
+                raise exception.ReturnErrorCode(1)
             else:
-                raise exception.UpgradeError("\n".join([str(cmd), r['out'], r[
-                    'err']]))
+                raise exception.UpgradeError("\n".join(
+                    [str(cmd), r['out'], r['err']]))
 
 
 def get_latest_version():

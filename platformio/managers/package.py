@@ -14,15 +14,15 @@
 
 import json
 import os
-from os.path import basename, dirname, isdir, isfile, islink, join
-from shutil import copytree
+import shutil
+from os.path import basename, dirname, getsize, isdir, isfile, islink, join
 from tempfile import mkdtemp
 
 import click
 import requests
 import semantic_version
 
-from platformio import exception, telemetry, util
+from platformio import app, exception, telemetry, util
 from platformio.downloader import FileDownloader
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
@@ -164,12 +164,13 @@ class PkgInstallerMixin(object):
             if not pkgdata:
                 continue
             try:
-                pkg_dir = self._install_from_url(
-                    name, pkgdata['url'], requirements, pkgdata.get("sha1"))
+                pkg_dir = self._install_from_url(name, pkgdata['url'],
+                                                 requirements,
+                                                 pkgdata.get("sha1"))
                 break
             except Exception as e:  # pylint: disable=broad-except
                 click.secho("Warning! Package Mirror: %s" % e, fg="yellow")
-                click.secho("Looking for the another mirror...", fg="yellow")
+                click.secho("Looking for other mirror...", fg="yellow")
 
         if versions is None:
             raise exception.UnknownPackage(name)
@@ -189,7 +190,7 @@ class PkgInstallerMixin(object):
                     self.unpack(url, tmp_dir)
                 else:
                     util.rmtree_(tmp_dir)
-                    copytree(url, tmp_dir)
+                    shutil.copytree(url, tmp_dir)
             elif url.startswith(("http://", "https://")):
                 dlpath = self.download(url, tmp_dir, sha1)
                 assert isfile(dlpath)
@@ -240,8 +241,9 @@ class PkgInstallerMixin(object):
                         curmanifest['version'], partial=True)
                     # if current package version < new package, backup it
                     if tmpmanver > curmanver:
-                        os.rename(pkg_dir, join(self.package_dir, "%s@%s" % (
-                            name, curmanifest['version'])))
+                        os.rename(pkg_dir,
+                                  join(self.package_dir, "%s@%s" %
+                                       (name, curmanifest['version'])))
                     elif tmpmanver < curmanver:
                         pkg_dir = join(self.package_dir, "%s@%s" %
                                        (name, tmpmanifest['version']))
@@ -260,6 +262,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
     _INSTALLED_CACHE = {}
 
+    FILE_CACHE_VALID = "1m"  # 1 month
+    FILE_CACHE_MAX_SIZE = 1024 * 1024
+
     def __init__(self, package_dir, repositories=None):
         self.repositories = repositories
         self.package_dir = package_dir
@@ -271,13 +276,32 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
     def manifest_name(self):
         raise NotImplementedError()
 
-    @staticmethod
-    def download(url, dest_dir, sha1=None):
+    def download(self, url, dest_dir, sha1=None):
+        cache_key_fname = app.ContentCache.key_from_args(url, "fname")
+        cache_key_data = app.ContentCache.key_from_args(url, "data")
+        if self.FILE_CACHE_VALID:
+            with app.ContentCache() as cc:
+                fname = cc.get(cache_key_fname)
+                cache_path = cc.get_cache_path(cache_key_data)
+                if fname and isfile(cache_path):
+                    dst_path = join(dest_dir, fname)
+                    shutil.copy(cache_path, dst_path)
+                    return dst_path
+
         fd = FileDownloader(url, dest_dir)
         fd.start()
         if sha1:
             fd.verify(sha1)
-        return fd.get_filepath()
+        dst_path = fd.get_filepath()
+        if not self.FILE_CACHE_VALID or getsize(
+                dst_path) > BasePkgManager.FILE_CACHE_MAX_SIZE:
+            return dst_path
+
+        with app.ContentCache() as cc:
+            cc.set(cache_key_fname, basename(dst_path), self.FILE_CACHE_VALID)
+            cc.set(cache_key_data, "DUMMY", self.FILE_CACHE_VALID)
+            shutil.copy(dst_path, cc.get_cache_path(cache_key_data))
+        return dst_path
 
     @staticmethod
     def unpack(source_path, dest_dir):
@@ -295,12 +319,15 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
     def parse_pkg_name(  # pylint: disable=too-many-branches
             text, requirements=None):
         text = str(text)
-        if not requirements and "@" in text and not text.startswith("git@"):
+        url_marker = "://"
+        if not any([
+                requirements, "@" not in text, text.startswith("git@"),
+                url_marker in text
+        ]):
             text, requirements = text.rsplit("@", 1)
         if text.isdigit():
             text = "id=" + text
 
-        url_marker = "://"
         name, url = (None, text)
         if "=" in text and not text.startswith("id="):
             name, url = text.split("=", 1)
@@ -492,12 +519,13 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 label=manifest['name'])
         return True
 
-    def update(self,  # pylint: disable=too-many-return-statements
-               name,
-               requirements=None,
-               only_check=False):
+    def update(  # pylint: disable=too-many-return-statements
+            self,
+            name,
+            requirements=None,
+            only_check=False):
         name, requirements, url = self.parse_pkg_name(name, requirements)
-        package_dir = self.get_package_dir(name, requirements, url)
+        package_dir = self.get_package_dir(name, None, url)
         if not package_dir:
             click.secho(
                 "%s @ %s is not installed" % (name, requirements or "*"),
@@ -573,6 +601,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
 
 class PackageManager(BasePkgManager):
+
+    FILE_CACHE_VALID = None  # disable package caching
 
     @property
     def manifest_name(self):

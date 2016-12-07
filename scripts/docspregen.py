@@ -54,7 +54,7 @@ def generate_boards(boards):
 .. list-table::
     :header-rows:  1
 
-    * - Type ``board``
+    * - ID
       - Name
       - Microcontroller
       - Frequency
@@ -107,9 +107,17 @@ Packages
     if is_embedded:
         lines.append("""
 .. warning::
-    **Linux Users:** Don't forget to install "udev" rules file
-    `99-platformio-udev.rules <https://github.com/platformio/platformio/blob/develop/scripts/99-platformio-udev.rules>`_ (an instruction is located in the file).
+    **Linux Users**:
+
+    * Ubuntu/Debian users may need to add own "username" to the "dialout"
+      group if they are not "root", doing this issuing a
+      ``sudo usermod -a -G dialout yourusername``.
+    * Install "udev" rules file `99-platformio-udev.rules <https://github.com/platformio/platformio-core/blob/develop/scripts/99-platformio-udev.rules>`_
+      (an instruction is located in the file).
+    * Raspberry Pi users, please read this article
+      `Enable serial port on Raspberry Pi <https://hallard.me/enable-serial-port-on-raspberry-pi/>`__.
 """)
+
         if platform == "teensy":
             lines.append("""
     **Windows Users:** Teensy programming uses only Windows built-in HID
@@ -125,6 +133,7 @@ Packages
     driver from board manufacturer
 
 """)
+
     return "\n".join(lines)
 
 

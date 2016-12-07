@@ -21,8 +21,9 @@ from os import sep, walk
 from os.path import basename, dirname, isdir, join, realpath
 
 from SCons.Action import Action
-from SCons.Script import COMMAND_LINE_TARGETS, DefaultEnvironment, SConscript
-from SCons.Util import case_sensitive_suffixes
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
+                          DefaultEnvironment, SConscript)
+from SCons.Util import case_sensitive_suffixes, is_Sequence
 
 from platformio.util import pioversion_to_intstr
 
@@ -34,8 +35,9 @@ SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
 def BuildProgram(env):
 
     def _append_pio_macros():
-        env.AppendUnique(CPPDEFINES=["PLATFORMIO={0:02d}{1:02d}{2:02d}".format(
-            *pioversion_to_intstr())])
+        env.AppendUnique(CPPDEFINES=[(
+            "PLATFORMIO",
+            int("{0:02d}{1:02d}{2:02d}".format(*pioversion_to_intstr())))])
 
     _append_pio_macros()
 
@@ -51,10 +53,7 @@ def BuildProgram(env):
     # apply user flags
     env.ProcessFlags(env.get("BUILD_FLAGS"))
 
-    if env.get("PIOFRAMEWORK"):
-        env.BuildFrameworks([
-            f.lower().strip() for f in env['PIOFRAMEWORK'].split(",")
-        ])
+    env.BuildFrameworks(env.get("PIOFRAMEWORK"))
 
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
@@ -85,7 +84,7 @@ def BuildProgram(env):
             src_filter=env.get("SRC_FILTER"),
             duplicate=False))
 
-    if "test" in COMMAND_LINE_TARGETS:
+    if "__test" in COMMAND_LINE_TARGETS:
         env.Append(PIOBUILDFILES=env.ProcessTest())
 
     if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
@@ -97,26 +96,32 @@ def BuildProgram(env):
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
 
-    if set(["upload", "uploadlazy", "program"]) & set(COMMAND_LINE_TARGETS):
-        env.AddPostAction(program, Action(env.CheckUploadSize,
-                                          "Checking program size $TARGET"))
+    checksize_action = Action(env.CheckUploadSize, "Checking program size")
+    AlwaysBuild(env.Alias("checkprogsize", program, checksize_action))
+    if set(["upload", "program"]) & set(COMMAND_LINE_TARGETS):
+        env.AddPostAction(program, checksize_action)
 
     return program
 
 
-def ProcessFlags(env, flags):
+def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
     if not flags:
         return
     if isinstance(flags, list):
         flags = " ".join(flags)
     parsed_flags = env.ParseFlags(str(flags))
     for flag in parsed_flags.pop("CPPDEFINES"):
-        if not isinstance(flag, list):
+        if not is_Sequence(flag):
             env.Append(CPPDEFINES=flag)
             continue
-        if '\"' in flag[1]:
-            flag[1] = flag[1].replace('\"', '\\\"')
-        env.Append(CPPDEFINES=[flag])
+        _key, _value = flag[:2]
+        if '\"' in _value:
+            _value = _value.replace('\"', '\\\"')
+        elif _value.isdigit():
+            _value = int(_value)
+        elif _value.replace(".", "", 1).isdigit():
+            _value = float(_value)
+        env.Append(CPPDEFINES=(_key, _value))
     env.Append(**parsed_flags)
 
     # fix relative CPPPATH & LIBPATH
@@ -131,8 +136,10 @@ def ProcessFlags(env, flags):
 
     # Cancel any previous definition of name, either built in or
     # provided with a -D option // Issue #191
-    undefines = [u for u in env.get("CCFLAGS", [])
-                 if isinstance(u, basestring) and u.startswith("-U")]
+    undefines = [
+        u for u in env.get("CCFLAGS", [])
+        if isinstance(u, basestring) and u.startswith("-U")
+    ]
     if undefines:
         for undef in undefines:
             env['CCFLAGS'].remove(undef)
@@ -226,7 +233,7 @@ def CollectBuildFiles(env,
 
 
 def BuildFrameworks(env, frameworks):
-    if not frameworks or "uploadlazy" in COMMAND_LINE_TARGETS:
+    if not frameworks:
         return
 
     if "BOARD" not in env:

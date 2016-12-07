@@ -21,9 +21,10 @@ from os import environ, getenv, listdir, remove
 from os.path import dirname, getmtime, isdir, isfile, join
 from time import time
 
-from lockfile import LockFile
+import requests
+from lockfile import LockFailed, LockFile
 
-from platformio import __version__, util
+from platformio import __version__, exception, util
 from platformio.exception import InvalidSettingName, InvalidSettingValue
 
 DEFAULT_SETTINGS = {
@@ -55,9 +56,13 @@ DEFAULT_SETTINGS = {
         "description": "Enable SSL for PlatformIO Services",
         "value": False
     },
+    "enable_cache": {
+        "description": "Enable caching for API requests and Library Manager",
+        "value": True
+    },
     "enable_telemetry": {
         "description":
-        ("Telemetry service <http://docs.platformio.org/en/stable/"
+        ("Telemetry service <http://docs.platformio.org/page/"
          "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
         "value": True
     }
@@ -105,27 +110,43 @@ class State(object):
                 (time() - getmtime(self._lockfile.lock_file)) > 10:
             self._lockfile.break_lock()
 
-        self._lockfile.acquire()
+        try:
+            self._lockfile.acquire()
+        except LockFailed:
+            raise exception.PlatformioException(
+                "The directory `{0}` or its parent directory is not owned by "
+                "the current user and PlatformIO can not store configuration "
+                "data. \nPlease check the permissions and owner of that "
+                "directory. Otherwise, please remove manually `{0}` "
+                "directory and PlatformIO will create new from the current "
+                "user.".format(dirname(self.path)))
 
     def _unlock_state_file(self):
         if self._lockfile:
             self._lockfile.release()
 
 
-class LocalCache(object):
+class ContentCache(object):
 
     def __init__(self, cache_dir=None):
+        self.cache_dir = None
+        self._db_path = None
+        self._lockfile = None
+
+        if not get_setting("enable_cache"):
+            return
+
         self.cache_dir = cache_dir or join(util.get_home_dir(), ".cache")
         if not self.cache_dir:
             os.makedirs(self.cache_dir)
-        self.db_path = join(self.cache_dir, "db.data")
+        self._db_path = join(self.cache_dir, "db.data")
 
     def __enter__(self):
-        if not isfile(self.db_path):
+        if not self._db_path or not isfile(self._db_path):
             return self
-        newlines = []
         found = False
-        with open(self.db_path) as fp:
+        newlines = []
+        with open(self._db_path) as fp:
             for line in fp.readlines():
                 if "=" not in line:
                     continue
@@ -139,13 +160,33 @@ class LocalCache(object):
                     remove(path)
                     if not len(listdir(dirname(path))):
                         util.rmtree_(dirname(path))
-        if found:
-            with open(self.db_path, "w") as fp:
+
+        if found and self._lock_dbindex():
+            with open(self._db_path, "w") as fp:
                 fp.write("\n".join(newlines) + "\n")
+            self._unlock_dbindex()
+
         return self
 
     def __exit__(self, type_, value, traceback):
         pass
+
+    def _lock_dbindex(self):
+        self._lockfile = LockFile(self.cache_dir)
+        if self._lockfile.is_locked() and \
+                (time() - getmtime(self._lockfile.lock_file)) > 10:
+            self._lockfile.break_lock()
+
+        try:
+            self._lockfile.acquire()
+        except LockFailed:
+            return False
+
+        return True
+
+    def _unlock_dbindex(self):
+        if self._lockfile:
+            self._lockfile.release()
 
     def get_cache_path(self, key):
         assert len(key) > 3
@@ -159,35 +200,45 @@ class LocalCache(object):
         return h.hexdigest()
 
     def get(self, key):
+        if not self.cache_dir:
+            return None
         cache_path = self.get_cache_path(key)
         if not isfile(cache_path):
             return None
-        with open(cache_path) as fp:
+        with open(cache_path, "rb") as fp:
             data = fp.read()
             if data[0] in ("{", "["):
                 return json.loads(data)
             return data
 
     def set(self, key, data, valid):
-        if not data:
+        if not self.cache_dir or not data:
             return
+        if not isdir(self.cache_dir):
+            os.makedirs(self.cache_dir)
         tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
         assert valid.endswith(tuple(tdmap.keys()))
         cache_path = self.get_cache_path(key)
+        expire_time = int(time() + tdmap[valid[-1]] * int(valid[:-1]))
+
+        if not self._lock_dbindex():
+            return False
+        with open(self._db_path, "a") as fp:
+            fp.write("%s=%s\n" % (str(expire_time), cache_path))
+        self._unlock_dbindex()
+
         if not isdir(dirname(cache_path)):
             os.makedirs(dirname(cache_path))
-        with open(cache_path, "w") as fp:
+        with open(cache_path, "wb") as fp:
             if isinstance(data, dict) or isinstance(data, list):
                 json.dump(data, fp)
             else:
                 fp.write(str(data))
-        expire_time = int(time() + tdmap[valid[-1]] * int(valid[:-1]))
-        with open(self.db_path, "w+") as fp:
-            fp.write("%s=%s\n" % (str(expire_time), cache_path))
+
         return True
 
     def clean(self):
-        if isdir(self.cache_dir):
+        if self.cache_dir and isdir(self.cache_dir):
             util.rmtree_(self.cache_dir)
 
 
@@ -254,16 +305,27 @@ def set_session_var(name, value):
 
 
 def is_disabled_progressbar():
-    return any([get_session_var("force_option"), util.is_ci(),
-                getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"])
+    return any([
+        get_session_var("force_option"), util.is_ci(),
+        getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"
+    ])
 
 
 def get_cid():
     cid = get_state_item("cid")
     if not cid:
+        _uid = None
+        if getenv("C9_UID"):
+            _uid = getenv("C9_UID")
+        elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
+            try:
+                _uid = requests.get("{api}/user?token={token}".format(
+                    api=getenv("CHE_API", getenv("CHE_API_ENDPOINT")),
+                    token=getenv("USER_TOKEN"))).json().get("id")
+            except:  # pylint: disable=bare-except
+                pass
         cid = str(
             uuid.UUID(bytes=hashlib.md5(
-                str(getenv("C9_UID")
-                    if getenv("C9_UID") else uuid.getnode())).digest()))
+                str(_uid if _uid else uuid.getnode())).digest()))
         set_state_item("cid", cid)
     return cid

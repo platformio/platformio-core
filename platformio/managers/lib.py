@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-arguments, too-many-locals, too-many-branches
+
 import json
 import os
 from hashlib import md5
@@ -118,8 +120,9 @@ class LibraryManager(BasePkgManager):
                 if item[k] == "*":
                     del item[k]
                 elif isinstance(item[k], basestring):
-                    item[k] = [i.strip() for i in item[k].split(",")
-                               if i.strip()]
+                    item[k] = [
+                        i.strip() for i in item[k].split(",") if i.strip()
+                    ]
         return items
 
     @staticmethod
@@ -167,8 +170,11 @@ class LibraryManager(BasePkgManager):
 
     def get_latest_repo_version(self, name, requirements):
         item = self.max_satisfying_repo_version(
-            util.get_api_result("/lib/versions/%d" % self._get_pkg_id_by_name(
-                name, requirements)), requirements)
+            util.get_api_result(
+                "/lib/versions/%d" % self._get_pkg_id_by_name(name,
+                                                              requirements),
+                cache_valid="1h"),
+            requirements)
         return item['version'] if item else None
 
     def _get_pkg_id_by_name(self,
@@ -185,7 +191,9 @@ class LibraryManager(BasePkgManager):
             if "id" in manifest:
                 return int(manifest['id'])
         return int(
-            self.search_for_library({"name": name}, silent, interactive)['id'])
+            self.search_for_library({
+                "name": name
+            }, silent, interactive)['id'])
 
     def _install_from_piorepo(self, name, requirements):
         assert name.startswith("id=")
@@ -203,7 +211,7 @@ class LibraryManager(BasePkgManager):
             name, dl_data['url'].replace("http://", "https://")
             if app.get_setting("enable_ssl") else dl_data['url'], requirements)
 
-    def install(self,  # pylint: disable=too-many-arguments, too-many-locals
+    def install(self,
                 name,
                 requirements=None,
                 silent=False,
@@ -247,7 +255,8 @@ class LibraryManager(BasePkgManager):
                     lib_info = self.search_for_library(filters, silent,
                                                        interactive)
                 except exception.LibNotFound as e:
-                    click.secho("Warning! %s" % e, fg="yellow")
+                    if not silent:
+                        click.secho("Warning! %s" % e, fg="yellow")
                     continue
 
                 if filters.get("version"):

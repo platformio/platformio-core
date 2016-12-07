@@ -28,7 +28,7 @@ from platformio.util import get_api_result
     "-g",
     "--global",
     is_flag=True,
-    help="Manager global PlatformIO"
+    help="Manage global PlatformIO"
     " library storage `%s`" % join(util.get_home_dir(), "lib"))
 @click.option(
     "-d",
@@ -112,6 +112,7 @@ def lib_update(lm, libraries, only_check):
         libraries = [str(m.get("id", m['name'])) for m in lm.get_installed()]
     for library in libraries:
         lm.update(library, only_check=only_check)
+
 
 #######
 
@@ -201,8 +202,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         click.echo("For more examples and advanced search syntax, "
                    "please use documentation:")
         click.secho(
-            "http://docs.platformio.org"
-            "/en/stable/userguide/lib/cmd_search.html\n",
+            "http://docs.platformio.org/page/userguide/lib/cmd_search.html\n",
             fg="cyan")
         return
 
