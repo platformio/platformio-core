@@ -4,6 +4,12 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.2.1 (2016-12-07)
+~~~~~~~~~~~~~~~~~~
+
+* Changed default `LDF Mode <http://docs.platformio.org/en/latest/librarymanager/ldf.html#ldf-mode>`__
+  from ``chain+`` to ``chain``
+
 3.2.0 (2016-12-07)
 ~~~~~~~~~~~~~~~~~~
 
