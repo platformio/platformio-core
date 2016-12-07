@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.2.0 (2016-??-??)
+3.2.0 (2016-12-07)
 ~~~~~~~~~~~~~~~~~~
 
 * `PIO Remote™ <http://docs.platformio.org/en/latest/plus/pio-remote.html>`__.
