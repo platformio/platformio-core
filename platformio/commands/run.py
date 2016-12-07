@@ -160,25 +160,25 @@ class EnvironmentProcessor(object):
             if "\n" in v:
                 self.options[k] = self.options[k].strip().replace("\n", ", ")
 
-        click.echo("[%s] Processing %s (%s)" % (
-            datetime.now().strftime("%c"), click.style(
-                self.name, fg="cyan", bold=True),
-            ", ".join(["%s: %s" % (k, v) for k, v in self.options.items()])))
-        click.secho("-" * terminal_width, bold=True)
-        if self.silent:
-            click.echo("Please wait...")
+        if not self.silent:
+            click.echo("[%s] Processing %s (%s)" % (
+                datetime.now().strftime("%c"), click.style(
+                    self.name, fg="cyan", bold=True),
+                ", ".join(
+                    ["%s: %s" % (k, v) for k, v in self.options.items()])))
+            click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
         result = self._run()
 
         is_error = result['returncode'] != 0
         if is_error or "piotest_processor" not in self.cmd_ctx.meta:
-            print_header(
-                "[%s] Took %.2f seconds" % ((click.style(
-                    "ERROR", fg="red", bold=True) if is_error else click.style(
-                        "SUCCESS", fg="green", bold=True)),
-                                            time() - start_time),
-                is_error=is_error)
+            if is_error:
+                status_str = click.style("ERROR", fg="red", bold=True)
+            else:
+                status_str = click.style("SUCCESS", fg="green", bold=True)
+            print_header("[%s] Took %.2f seconds" % (
+                status_str, time() - start_time), is_error=is_error)
 
         return not is_error
 
