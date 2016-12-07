@@ -80,7 +80,7 @@ class LibBuilderFactory(object):
 class LibBuilderBase(object):
 
     LDF_MODES = ["off", "chain", "deep", "chain+", "deep+"]
-    LDF_MODE_DEFAULT = "chain+"
+    LDF_MODE_DEFAULT = "chain"
 
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
