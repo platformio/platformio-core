@@ -7,8 +7,8 @@ PlatformIO
 .. image:: https://ci.appveyor.com/api/projects/status/unnpw0n3c5k14btn/branch/develop?svg=true
     :target: https://ci.appveyor.com/project/ivankravets/platformio-core
     :alt: AppVeyor.CI Build Status
-.. image:: https://requires.io/github/platformio/platformio/requirements.svg?branch=develop
-    :target: https://requires.io/github/platformio/platformio/requirements/?branch=develop
+.. image:: https://requires.io/github/platformio/platformio-core/requirements.svg?branch=develop
+    :target: https://requires.io/github/platformio/platformio-core/requirements/?branch=develop
     :alt: Requirements Status
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
@@ -26,7 +26,7 @@ PlatformIO
 **Quick Links:** `Home Page <http://platformio.org>`_ |
 `PlatformIO Plus <https://pioplus.com>`_ |
 `PlatformIO IDE <http://platformio.org/platformio-ide>`_ |
-`Project Examples <https://github.com/platformio/platformio-examples/tree/develop>`_ |
+`Project Examples <https://github.com/platformio/platformio-examples/>`_ |
 `Docs <http://docs.platformio.org>`_ |
 `Donate <http://platformio.org/donate>`_ |
 `Contact Us <https://pioplus.com/contact.html>`_
@@ -98,13 +98,13 @@ settings for most popular `Embedded Boards <http://platformio.org/boards>`_.
 
 * Colourful `command-line output <https://raw.githubusercontent.com/platformio/platformio/develop/examples/platformio-examples.png>`_
 * `IDE Integration <http://docs.platformio.org/en/stable/ide.html>`_ with
-  *Arduino, Atom, Eclipse, Emacs, Energia, Qt Creator, Sublime Text, Vim, Visual Studio*
+  *Cloud9, Codeanywhere, Eclipse Che, Atom, CLion, CodeBlocks, Eclipse, Emacs, NetBeans, Qt Creator, Sublime Text, Vim, Visual Studio*
 * Cloud compiling and `Continuous Integration <http://docs.platformio.org/en/stable/ci/index.html>`_
   with *AppVeyor, Circle CI, Drone, Shippable, Travis CI*
 * Built-in `Serial Port Monitor <http://docs.platformio.org/en/stable/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ and configurable
   `build -flags/-options <http://docs.platformio.org/en/stable/projectconf.html#build-flags>`_
 * Automatic **firmware uploading**
-* Pre-built tool chains, frameworks for the popular `Hardware Platforms <http://platformio.org/platforms>`_
+* Pre-built tool chains, frameworks for the popular `development platforms <http://platformio.org/platforms>`_
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-embedded-development.png
     :target: http://platformio.org
@@ -116,12 +116,11 @@ The Missing Library Manager. *It's here!*
 platforms which allows you to organize and have up-to-date external libraries.
 
 * Friendly `Command-Line Interface <http://docs.platformio.org/en/stable/librarymanager/index.html>`_
-* Modern `Web 2.0 Library Search <http://platformio.org/lib>`_
+* Modern `Web 2.0 Library Portal <http://platformio.org/lib>`_
 * Open Source `Library Registry API <https://github.com/platformio/platformio-api>`_
 * Library Crawler based on `library.json <http://docs.platformio.org/en/stable/librarymanager/config.html>`_
   specification
-* Library **dependency management**
-* Automatic library updating
+* Project Dependency Manager with `Semantic Versioning <http://docs.platformio.org/page/librarymanager/index.html>`_ requirements
 
 .. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-library-manager.png
     :target: http://platformio.org
@@ -158,7 +157,8 @@ It has support for the most popular embedded platforms:
 
 * `Atmel AVR <http://platformio.org/platforms/atmelavr>`_
 * `Atmel SAM <http://platformio.org/platforms/atmelsam>`_
-* `Espressif <http://platformio.org/platforms/espressif>`_
+* `Espressif 32 <http://platformio.org/platforms/espressif32>`_
+* `Espressif 8266 <http://platformio.org/platforms/espressif8266>`_
 * `Freescale Kinetis <http://platformio.org/platforms/freescalekinetis>`_
 * `Intel ARC32 <http://platformio.org/platforms/intel_arc32>`_
 * `Lattice iCE40 <http://platformio.org/platforms/lattice_ice40>`_
@@ -169,13 +169,14 @@ It has support for the most popular embedded platforms:
 * `Silicon Labs EFM32 <http://platformio.org/platforms/siliconlabsefm32>`_
 * `Teensy <http://platformio.org/platforms/teensy>`_
 * `TI MSP430 <http://platformio.org/platforms/timsp430>`_
-* `TI TIVA C <http://platformio.org/platforms/titiva>`_
+* `TI TivaVA C <http://platformio.org/platforms/titiva>`_
 
 Frameworks:
 
 * `Arduino <http://platformio.org/frameworks/arduino>`_
 * `CMSIS <http://platformio.org/frameworks/cmsis>`_
 * `Energia <http://platformio.org/frameworks/energia>`_
+* `ESP-IDF <http://platformio.org/frameworks/espidf>`_
 * `libOpenCM3 <http://platformio.org/frameworks/libopencm3>`_
 * `mbed <http://platformio.org/frameworks/mbed>`_
 * `Simba <http://platformio.org/frameworks/simba>`_
