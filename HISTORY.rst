@@ -4,16 +4,25 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.2.2 (2016-12-??)
+~~~~~~~~~~~~~~~~~~
+
+* Produce less noisy output when ``-s/--silent`` options are used for
+  `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`_
+  and `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`_
+  commands
+  (`issue #850 <https://github.com/platformio/platformio-core/issues/850>`_)
+
 3.2.1 (2016-12-07)
 ~~~~~~~~~~~~~~~~~~
 
-* Changed default `LDF Mode <http://docs.platformio.org/en/latest/librarymanager/ldf.html#ldf-mode>`__
+* Changed default `LDF Mode <http://docs.platformio.org/page/librarymanager/ldf.html#ldf-mode>`__
   from ``chain+`` to ``chain``
 
 3.2.0 (2016-12-07)
 ~~~~~~~~~~~~~~~~~~
 
-* `PIO Remote™ <http://docs.platformio.org/en/latest/plus/pio-remote.html>`__.
+* `PIO Remote™ <http://docs.platformio.org/page/plus/pio-remote.html>`__.
   **Your devices are always with you!**
 
   + Over-The-Air (OTA) Device Manager
@@ -22,44 +31,44 @@ PlatformIO 3.0
   + Continuous Deployment
   + Continuous Delivery
 
-* Integration with `Cloud IDEs <http://docs.platformio.org/en/latest/ide.html#cloud-ide>`__
+* Integration with `Cloud IDEs <http://docs.platformio.org/page/ide.html#cloud-ide>`__
 
   + Cloud9
   + Codeanywhere
   + Eclipse Che
 
-* `PIO Account <http://docs.platformio.org/en/latest/userguide/account/index.html>`__
-  and `PLATFORMIO_AUTH_TOKEN <http://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_AUTH_TOKEN>`__
+* `PIO Account <http://docs.platformio.org/page/userguide/account/index.html>`__
+  and `PLATFORMIO_AUTH_TOKEN <http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_AUTH_TOKEN>`__
   environment variable for CI systems
   (`issue #808 <https://github.com/platformio/platformio-core/issues/808>`_,
   `issue #467 <https://github.com/platformio/platformio-core/issues/467>`_)
 * Inject system environment variables to configuration settings in
-  `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
+  `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #792 <https://github.com/platformio/platformio-core/issues/792>`_)
 * Custom boards per project with ``boards_dir`` option in
-  `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
+  `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #515 <https://github.com/platformio/platformio-core/issues/515>`_)
-* Unix shell-style wildcards for `upload_port <http://docs.platformio.org/en/latest/projectconf.html#upload-port>`_
+* Unix shell-style wildcards for `upload_port <http://docs.platformio.org/page/projectconf.html#upload-port>`_
   (`issue #839 <https://github.com/platformio/platformio-core/issues/839>`_)
-* Refactored `Library Dependency Finder (LDF) <http://docs.platformio.org/en/stable/librarymanager/ldf.html>`__
+* Refactored `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__
   C/C++ Preprocessor for conditional syntax (``#ifdef``, ``#if``, ``#else``,
   ``#elif``, ``#define``, etc.)
   (`issue #837 <https://github.com/platformio/platformio-core/issues/837>`_)
-* Added new `LDF Modes <http://docs.platformio.org/en/latest/librarymanager/ldf.html#ldf-mode>`__:
+* Added new `LDF Modes <http://docs.platformio.org/page/librarymanager/ldf.html#ldf-mode>`__:
   ``chain+`` and ``deep+`` and set ``chain+`` as default
 * Added global ``lib_extra_dirs`` option to ``[platformio]`` section for
-  `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
+  `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #842 <https://github.com/platformio/platformio-core/issues/842>`_)
-* Enabled caching by default for API requests and Library Manager (see `enable_cache <http://docs.platformio.org/en/latest/userguide/cmd_settings.html#enable-cache>`__ setting)
+* Enabled caching by default for API requests and Library Manager (see `enable_cache <http://docs.platformio.org/page/userguide/cmd_settings.html#enable-cache>`__ setting)
 * Native integration with VIM/Neovim using `neomake-platformio <https://github.com/coddingtonbear/neomake-platformio>`__ plugin
 * Changed a default exit combination for Device Monitor from ``Ctrl+]`` to ``Ctrl+C``
 * Improved detecting of ARM mbed media disk for uploading
 * Improved Project Generator for CLion IDE when source folder contains nested items
 * Improved handling of library dependencies specified in ``library.json`` manifest
   (`issue #814 <https://github.com/platformio/platformio-core/issues/814>`_)
-* Improved `Library Dependency Finder (LDF) <http://docs.platformio.org/en/stable/librarymanager/ldf.html>`__
+* Improved `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__
   for circular dependencies
-* Show vendor version of a package for `platformio platform show <http://docs.platformio.org/en/stable/userguide/platforms/cmd_show.html>`__ command
+* Show vendor version of a package for `platformio platform show <http://docs.platformio.org/page/userguide/platforms/cmd_show.html>`__ command
   (`issue #838 <https://github.com/platformio/platformio-core/issues/838>`_)
 * Fixed unable to include SSH user in ``lib_deps`` repository url
   (`issue #830 <https://github.com/platformio/platformio-core/issues/830>`_)
@@ -158,15 +167,15 @@ PlatformIO 3.0
 3.1.0 (2016-09-19)
 ~~~~~~~~~~~~~~~~~~
 
-* New! Dynamic variables/templates for `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/stable/projectconf.html>`__
+* New! Dynamic variables/templates for `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #705 <https://github.com/platformio/platformio-core/issues/705>`_)
 * Summary about processed environments
   (`issue #777 <https://github.com/platformio/platformio-core/issues/777>`_)
 * Implemented LocalCache system for API and improved a work in off-line mode
 * Improved Project Generator when custom ``--project-option`` is passed to
-  `platformio init <http://docs.platformio.org/en/stable/userguide/cmd_init.html>`__
+  `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`__
   command
-* Deprecated ``lib_force`` option, please use `lib_deps <http://docs.platformio.org/en/stable/projectconf.html#lib-deps>`__ instead
+* Deprecated ``lib_force`` option, please use `lib_deps <http://docs.platformio.org/page/projectconf.html#lib-deps>`__ instead
 * Return valid exit code from ``plaformio test`` command
 * Fixed Project Generator for CLion IDE using Windows OS
   (`issue #785 <https://github.com/platformio/platformio-core/issues/785>`_)
@@ -178,7 +187,7 @@ PlatformIO 3.0
 * Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
 
   + Add support for `SparkFun Blynk Board <https://www.sparkfun.com/products/13794>`_
-  + Created `staging <http://docs.platformio.org/en/stable/platforms/espressif8266.html#using-arduino-framework-with-staging-version>`__
+  + Created `staging <http://docs.platformio.org/page/platforms/espressif8266.html#using-arduino-framework-with-staging-version>`__
     branch to work with development version of Arduino Framework
 
 * Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
@@ -226,7 +235,7 @@ PlatformIO 3.0
 
 * `PlatformIO Plus <https://pioplus.com>`__
 
-  + Local and Embedded `Unit Testing <http://docs.platformio.org/en/latest/unit_testing.html>`__
+  + Local and Embedded `Unit Testing <http://docs.platformio.org/page/unit_testing.html>`__
     (`issue #408 <https://github.com/platformio/platformio-core/issues/408>`_,
     `issue #519 <https://github.com/platformio/platformio-core/issues/519>`_)
 
@@ -244,7 +253,7 @@ PlatformIO 3.0
 
 * Library Manager 3.0
 
-  + Project dependencies per build environment using `lib_deps <http://docs.platformio.org/en/latest/projectconf.html#lib-deps>`__ option
+  + Project dependencies per build environment using `lib_deps <http://docs.platformio.org/page/projectconf.html#lib-deps>`__ option
     (`issue #413 <https://github.com/platformio/platformio-core/issues/413>`_)
   + `Semantic Versioning <http://semver.org/>`__ for library commands and
     dependencies
@@ -263,18 +272,18 @@ PlatformIO 3.0
 
 * New Intelligent Library Build System
 
-  + `Library Dependency Finder <http://docs.platformio.org/en/latest/faq.html#how-works-library-dependency-finder-ldf>`__
+  + `Library Dependency Finder <http://docs.platformio.org/page/faq.html#how-works-library-dependency-finder-ldf>`__
     that interprets C/C++ Preprocessor conditional macros with deep search behavior
   + Check library compatibility with project environment before building
     (`issue #415 <https://github.com/platformio/platformio-core/issues/415>`_)
   + Control Library Dependency Finder for compatibility using
-    `lib_compat_mode <http://docs.platformio.org/en/latest/projectconf.html#lib-compat-mode>`__
+    `lib_compat_mode <http://docs.platformio.org/page/projectconf.html#lib-compat-mode>`__
     option
   + Custom library storages/directories with
-    `lib_extra_dirs <http://docs.platformio.org/en/latest/projectconf.html#lib-extra-dirs>`__ option
+    `lib_extra_dirs <http://docs.platformio.org/page/projectconf.html#lib-extra-dirs>`__ option
     (`issue #537 <https://github.com/platformio/platformio-core/issues/537>`_)
   + Handle extra build flags, source filters and build script from
-    `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
+    `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
     (`issue #289 <https://github.com/platformio/platformio-core/issues/289>`_)
   + Allowed to disable library archiving (``*.ar``)
     (`issue #719 <https://github.com/platformio/platformio-core/issues/719>`_)
@@ -296,7 +305,7 @@ PlatformIO 3.0
 * Improved INO to CPP converter
   (`issue #659 <https://github.com/platformio/platformio-core/issues/659>`_,
   `issue #765 <https://github.com/platformio/platformio-core/issues/765>`_)
-* Added ``license`` field to `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
+* Added ``license`` field to `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
   (`issue #522 <https://github.com/platformio/platformio-core/issues/522>`_)
 * Warn about unknown options in project configuration file ``platformio.ini``
   (`issue #740 <https://github.com/platformio/platformio-core/issues/740>`_)
@@ -333,11 +342,11 @@ PlatformIO 2.0
 2.11.2 (2016-08-02)
 ~~~~~~~~~~~~~~~~~~~
 
-* Improved support for `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__ development platform and ChipKIT boards
+* Improved support for `Microchip PIC32 <http://docs.platformio.org/page/platforms/microchippic32.html>`__ development platform and ChipKIT boards
   (`issue #438 <https://github.com/platformio/platformio-core/issues/438>`_)
 * Added support for Pinoccio Scout board
   (`issue #52 <https://github.com/platformio/platformio-core/issues/52>`_)
-* Added support for `Teensy USB Features <http://docs.platformio.org/en/latest/platforms/teensy.html#usb-features>`__
+* Added support for `Teensy USB Features <http://docs.platformio.org/page/platforms/teensy.html#usb-features>`__
   (HID, SERIAL_HID, DISK, DISK_SDFLASH, MIDI, etc.)
   (`issue #722 <https://github.com/platformio/platformio-core/issues/722>`_)
 * Switched to built-in GCC LwIP library for Espressif development platform
@@ -362,25 +371,25 @@ PlatformIO 2.0
   (`issue #472 <https://github.com/platformio/platformio-core/issues/472>`_)
 * Added support for Microchip chipKIT Lenny board
 * Updated Microchip PIC32 Arduino framework to v1.2.1
-* Documented `uploading of EEPROM data <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-eeprom-data>`__
+* Documented `uploading of EEPROM data <http://docs.platformio.org/page/platforms/atmelavr.html#upload-eeprom-data>`__
   (from EEMEM directive)
 * Added ``Rebuild C/C++ Project Index`` target to CLion and Eclipse IDEs
-* Improved project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
+* Improved project generator for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__
 * Added ``udev`` rules for OpenOCD CMSIS-DAP adapters
   (`issue #718 <https://github.com/platformio/platformio-core/issues/718>`_)
 * Auto-remove project cache when PlatformIO is upgraded
 * Keep user changes for ``.gitignore`` file when re-generate/update project data
 * Ignore ``[platformio]`` section from custom project configuration file when
-  `platformio ci --project-conf <http://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__
+  `platformio ci --project-conf <http://docs.platformio.org/page/userguide/cmd_ci.html>`__
   command is used
 * Fixed missed ``--boot`` flag for the firmware uploader for ATSAM3X8E
   Cortex-M3 MCU based boards (Arduino Due, etc)
   (`issue #710 <https://github.com/platformio/platformio-core/issues/710>`_)
 * Fixed missing trailing ``\`` for the source files list when generate project
-  for `Qt Creator IDE <http://docs.platformio.org/en/latest/ide/qtcreator.html>`__
+  for `Qt Creator IDE <http://docs.platformio.org/page/ide/qtcreator.html>`__
   (`issue #711 <https://github.com/platformio/platformio-core/issues/711>`_)
 * Split source files to ``HEADERS`` and ``SOURCES`` when generate project
-  for `Qt Creator IDE <http://docs.platformio.org/en/latest/ide/qtcreator.html>`__
+  for `Qt Creator IDE <http://docs.platformio.org/page/ide/qtcreator.html>`__
   (`issue #713 <https://github.com/platformio/platformio-core/issues/713>`_)
 
 2.11.0 (2016-06-28)
@@ -457,7 +466,7 @@ PlatformIO 2.0
 2.9.2 (2016-06-02)
 ~~~~~~~~~~~~~~~~~~
 
-* Simplified `Continuous Integration with AppVeyor <http://docs.platformio.org/en/latest/ci/appveyor.html>`__
+* Simplified `Continuous Integration with AppVeyor <http://docs.platformio.org/page/ci/appveyor.html>`__
   (`issue #671 <https://github.com/platformio/platformio-core/issues/671>`_)
 * Automatically add source directory to ``CPPPATH`` of Build System
 * Added support for Silicon Labs SLSTK3401A (Pearl Gecko) and
@@ -491,21 +500,21 @@ PlatformIO 2.0
 2.9.0 (2016-04-28)
 ~~~~~~~~~~~~~~~~~~
 
-* Project generator for `CodeBlocks IDE <http://docs.platformio.org/en/latest/ide/codeblocks.html>`__
+* Project generator for `CodeBlocks IDE <http://docs.platformio.org/page/ide/codeblocks.html>`__
   (`issue #600 <https://github.com/platformio/platformio-core/issues/600>`_)
-* New `Lattice iCE40 FPGA <http://docs.platformio.org/en/latest/platforms/lattice_ice40.html>`__
+* New `Lattice iCE40 FPGA <http://docs.platformio.org/page/platforms/lattice_ice40.html>`__
   development platform with support for Lattice iCEstick FPGA Evaluation
   Kit and BQ IceZUM Alhambra FPGA
   (`issue #480 <https://github.com/platformio/platformio-core/issues/480>`_)
-* New `Intel ARC 32-bit <http://docs.platformio.org/en/latest/platforms/intel_arc32.html>`_
+* New `Intel ARC 32-bit <http://docs.platformio.org/page/platforms/intel_arc32.html>`_
   development platform with support for Arduino/Genuino 101 board
   (`issue #535 <https://github.com/platformio/platformio-core/issues/535>`_)
-* New `Microchip PIC32 <http://docs.platformio.org/en/latest/platforms/microchippic32.html>`__
+* New `Microchip PIC32 <http://docs.platformio.org/page/platforms/microchippic32.html>`__
   development platform with support for 20+ different PIC32 based boards
   (`issue #438 <https://github.com/platformio/platformio-core/issues/438>`_)
-* New RTOS and build Framework named `Simba <http://docs.platformio.org/en/latest/frameworks/simba.html>`__
+* New RTOS and build Framework named `Simba <http://docs.platformio.org/page/frameworks/simba.html>`__
   (`issue #412 <https://github.com/platformio/platformio-core/issues/412>`_)
-* New boards for `ARM mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+* New boards for `ARM mbed <http://docs.platformio.org/page/frameworks/mbed.html>`__
   framework: ST Nucleo F410RB, ST Nucleo L073RZ and BBC micro:bit
 * Added support for Arduino.Org boards: Arduino Leonardo ETH, Arduino Yun Mini,
   Arduino Industrial 101 and Linino One
@@ -516,7 +525,7 @@ PlatformIO 2.0
 * Added support for MightyCore boards: ATmega1284, ATmega644, ATmega324,
   ATmega164, ATmega32, ATmega16 and ATmega8535
   (`issue #585 <https://github.com/platformio/platformio-core/issues/585>`_)
-* Added support for `TI MSP430 <http://docs.platformio.org/en/latest/platforms/timsp430.html>`__
+* Added support for `TI MSP430 <http://docs.platformio.org/page/platforms/timsp430.html>`__
   boards: TI LaunchPad w/ msp430fr4133 and TI LaunchPad w/ msp430fr6989
 * Updated Arduino core for Espressif platform to 2.2.0
   (`issue #627 <https://github.com/platformio/platformio-core/issues/627>`_)
@@ -524,14 +533,14 @@ PlatformIO 2.0
   (`issue #366 <https://github.com/platformio/platformio-core/issues/366>`_)
 * PlatformIO Library Registry in JSON format! Implemented
   ``--json-output`` and ``--page`` options for
-  `platformio lib search <http://docs.platformio.org/en/latest/userguide/lib/cmd_search.html>`__
+  `platformio lib search <http://docs.platformio.org/page/userguide/lib/cmd_search.html>`__
   command
   (`issue #604 <https://github.com/platformio/platformio-core/issues/604>`_)
-* Allowed to specify default environments `env_default <http://docs.platformio.org/en/latest/projectconf.html#env-default>`__
+* Allowed to specify default environments `env_default <http://docs.platformio.org/page/projectconf.html#env-default>`__
   which should be processed by default with ``platformio run`` command
   (`issue #576 <https://github.com/platformio/platformio-core/issues/576>`_)
 * Allowed to unflag(remove) base/initial flags using
-  `build_unflags <http://docs.platformio.org/en/latest/projectconf.html#build-unflags>`__
+  `build_unflags <http://docs.platformio.org/page/projectconf.html#build-unflags>`__
   option
   (`issue #559 <https://github.com/platformio/platformio-core/issues/559>`_)
 * Allowed multiple VID/PID pairs when detecting serial ports
@@ -582,7 +591,7 @@ PlatformIO 2.0
 2.8.5 (2016-03-07)
 ~~~~~~~~~~~~~~~~~~
 
-* Project generator for `NetBeans IDE <http://docs.platformio.org/en/latest/ide/netbeans.html>`__
+* Project generator for `NetBeans IDE <http://docs.platformio.org/page/ide/netbeans.html>`__
   (`issue #541 <https://github.com/platformio/platformio-core/issues/541>`_)
 * Created package for Homebrew Mac OS X Package Manager: ``brew install
   platformio``
@@ -590,21 +599,21 @@ PlatformIO 2.0
 * Updated Arduino core for Espressif platform to 2.1.0
   (`issue #544 <https://github.com/platformio/platformio-core/issues/544>`_)
 * Added support for the ESP8266 ESP-07 board to
-  `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  `Espressif <http://docs.platformio.org/page/platforms/espressif.html>`__
   (`issue #527 <https://github.com/platformio/platformio-core/issues/527>`_)
 * Improved handling of String-based ``CPPDEFINES`` passed to extra ``build_flags``
   (`issue #526 <https://github.com/platformio/platformio-core/issues/526>`_)
 * Generate appropriate project for CLion IDE and CVS
   (`issue #523 <https://github.com/platformio/platformio-core/issues/523>`_)
-* Use ``src_dir`` directory from `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+* Use ``src_dir`` directory from `Project Configuration File platformio.ini <http://docs.platformio.org/page/projectconf.html>`__
   when initializing project otherwise create base ``src`` directory
   (`issue #536 <https://github.com/platformio/platformio-core/issues/536>`_)
 * Fixed issue with incorrect handling of user's build flags where the base flags
   were passed after user's flags to GCC compiler
   (`issue #528 <https://github.com/platformio/platformio-core/issues/528>`_)
 * Fixed issue with Project Generator when optional build flags were passed using
-  system environment variables: `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-flags>`__
-  or `PLATFORMIO_BUILD_SRC_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-src-flags>`__
+  system environment variables: `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/page/envvars.html#platformio-build-flags>`__
+  or `PLATFORMIO_BUILD_SRC_FLAGS <http://docs.platformio.org/page/envvars.html#platformio-build-src-flags>`__
 * Fixed invalid detecting of compiler type
   (`issue #550 <https://github.com/platformio/platformio-core/issues/550>`_)
 * Fixed issue with updating package which was deleted manually by user
@@ -617,18 +626,18 @@ PlatformIO 2.0
 
 * Added support for the new ESP8266-based boards (ESPDuino, ESP-WROOM-02,
   ESPresso Lite 1.0 & 2.0, SparkFun ESP8266 Thing Dev, ThaiEasyElec ESPino) to
-  `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  `Espressif <http://docs.platformio.org/page/platforms/espressif.html>`__
   development platform
-* Added ``board_f_flash`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
-  which allows to specify `custom flash chip frequency <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-flash-frequency>`_
+* Added ``board_f_flash`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/page/projectconf.html>`__
+  which allows to specify `custom flash chip frequency <http://docs.platformio.org/page/platforms/espressif.html#custom-flash-frequency>`_
   for Espressif development platform
   (`issue #501 <https://github.com/platformio/platformio-core/issues/501>`_)
-* Added ``board_flash_mode`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
-  which allows to specify `custom flash chip mode <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-flash-mode>`_
+* Added ``board_flash_mode`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/page/projectconf.html>`__
+  which allows to specify `custom flash chip mode <http://docs.platformio.org/page/platforms/espressif.html#custom-flash-mode>`_
   for Espressif development platform
 * Handle new environment variables
-  `PLATFORMIO_UPLOAD_PORT <http://docs.platformio.org/en/latest/envvars.html#platformio-upload-port>`_
-  and `PLATFORMIO_UPLOAD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-upload-flags>`_
+  `PLATFORMIO_UPLOAD_PORT <http://docs.platformio.org/page/envvars.html#platformio-upload-port>`_
+  and `PLATFORMIO_UPLOAD_FLAGS <http://docs.platformio.org/page/envvars.html#platformio-upload-flags>`_
   (`issue #518 <https://github.com/platformio/platformio-core/issues/518>`_)
 * Fixed issue with ``CPPDEFINES`` which contain space and break PlatformIO
   IDE Linter
@@ -664,19 +673,19 @@ PlatformIO 2.0
 2.8.0 (2016-01-29)
 ~~~~~~~~~~~~~~~~~~
 
-* `PlatformIO IDE <http://docs.platformio.org/en/latest/ide/atom.html>`_ for
+* `PlatformIO IDE <http://docs.platformio.org/page/ide/atom.html>`_ for
   Atom
   (`issue #470 <https://github.com/platformio/platformio-core/issues/470>`_)
 * Added ``pio`` command line alias for ``platformio`` command
   (`issue #447 <https://github.com/platformio/platformio-core/issues/447>`_)
 * Added SPL-Framework support for Nucleo F401RE board
   (`issue #453 <https://github.com/platformio/platformio-core/issues/453>`_)
-* Added ``upload_resetmethod`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
-  which allows to specify `custom upload reset method <http://docs.platformio.org/en/latest/platforms/espressif.html#custom-reset-method>`_
+* Added ``upload_resetmethod`` option to `Project Configuration File platformio.ini <http://docs.platformio.org/page/projectconf.html>`__
+  which allows to specify `custom upload reset method <http://docs.platformio.org/page/platforms/espressif.html#custom-reset-method>`_
   for Espressif development platform
   (`issue #444 <https://github.com/platformio/platformio-core/issues/444>`_)
 * Allowed to force output of color ANSI-codes or to disable progress bar even
-  if the output is a ``pipe`` (not a ``tty``) using `Environment variables <http://docs.platformio.org/en/latest/envvars.html>`__
+  if the output is a ``pipe`` (not a ``tty``) using `Environment variables <http://docs.platformio.org/page/envvars.html>`__
   (`issue #465 <https://github.com/platformio/platformio-core/issues/465>`_)
 * Set 1Mb SPIFFS for Espressif boards by default
   (`issue #458 <https://github.com/platformio/platformio-core/issues/458>`_)
@@ -691,7 +700,7 @@ PlatformIO 2.0
 * Initial support for Arduino Zero board
   (`issue #356 <https://github.com/platformio/platformio-core/issues/356>`_)
 * Added support for completions to Atom text editor using ``.clang_complete``
-* Generate default targets for `supported IDE <http://docs.platformio.org/en/latest/ide.html>`__
+* Generate default targets for `supported IDE <http://docs.platformio.org/page/ide.html>`__
   (CLion, Eclipse IDE, Emacs, Sublime Text, VIM): Build,
   Clean, Upload, Upload SPIFFS image, Upload using Programmer, Update installed
   platforms and libraries
@@ -721,12 +730,12 @@ PlatformIO 2.0
   (`issue #403 <https://github.com/platformio/platformio-core/issues/403>`_)
 * Added support for RFDuino
   (`issue #319 <https://github.com/platformio/platformio-core/issues/319>`_)
-* Project generator for `Emacs <http://docs.platformio.org/en/latest/ide/emacs.html>`__
+* Project generator for `Emacs <http://docs.platformio.org/page/ide/emacs.html>`__
   text editor
   (`pull #404 <https://github.com/platformio/platformio-core/pull/404>`_)
 * Updated Arduino framework for Atmel AVR development platform to 1.6.7
 * Documented `firmware uploading for Atmel AVR development platform using
-  Programmers <http://docs.platformio.org/en/latest/platforms/atmelavr.html#upload-using-programmer>`_:
+  Programmers <http://docs.platformio.org/page/platforms/atmelavr.html#upload-using-programmer>`_:
   AVR ISP, AVRISP mkII, USBtinyISP, USBasp, Parallel Programmer and Arduino as ISP
 * Fixed issue with current Python interpreter for Python-based tools
   (`issue #417 <https://github.com/platformio/platformio-core/issue/417>`_)
@@ -752,13 +761,13 @@ PlatformIO 2.0
 * Added support for the new ESP8266-based boards (SparkFun ESP8266 Thing,
   NodeMCU 0.9 & 1.0, Olimex MOD-WIFI-ESP8266(-DEV), Adafruit HUZZAH ESP8266,
   ESPino, SweetPea ESP-210, WeMos D1, WeMos D1 mini) to
-  `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  `Espressif <http://docs.platformio.org/page/platforms/espressif.html>`__
   development platform
 * Created public `platformio-pkg-ldscripts <https://github.com/platformio/platformio-pkg-ldscripts.git>`_
   repository for LD scripts. Moved common configuration for ESP8266 MCU to
   ``esp8266.flash.common.ld``
   (`issue #379 <https://github.com/platformio/platformio-core/issues/379>`_)
-* Improved documentation for `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+* Improved documentation for `Espressif <http://docs.platformio.org/page/platforms/espressif.html>`__
   development platform: OTA update, custom Flash Size, Upload Speed and CPU
   frequency
 * Fixed reset method for Espressif NodeMCU (ESP-12E Module)
@@ -775,17 +784,17 @@ PlatformIO 2.0
 
 * Install only required packages depending on build environment
   (`issue #308 <https://github.com/platformio/platformio-core/issues/308>`_)
-* Added support for Raspberry Pi `WiringPi <http://docs.platformio.org/en/latest/frameworks/wiringpi.html>`__
+* Added support for Raspberry Pi `WiringPi <http://docs.platformio.org/page/frameworks/wiringpi.html>`__
   framework
   (`issue #372 <https://github.com/platformio/platformio-core/issues/372>`_)
-* Implemented Over The Air (OTA) upgrades for `Espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+* Implemented Over The Air (OTA) upgrades for `Espressif <http://docs.platformio.org/page/platforms/espressif.html>`__
   development platform.
   (`issue #365 <https://github.com/platformio/platformio-core/issues/365>`_)
-* Updated `CMSIS framework <http://docs.platformio.org/en/latest/frameworks/cmsis.html>`__
+* Updated `CMSIS framework <http://docs.platformio.org/page/frameworks/cmsis.html>`__
   and added CMSIS support for Nucleo F401RE board
   (`issue #373 <https://github.com/platformio/platformio-core/issues/373>`_)
 * Added support for Espressif ESP8266 ESP-01-1MB board (ready for OTA)
-* Handle ``upload_flags`` option in `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+* Handle ``upload_flags`` option in `platformio.ini <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #368 <https://github.com/platformio/platformio-core/issues/368>`_)
 * Improved PlatformIO installation on the Mac OS X El Capitan
 
@@ -793,13 +802,13 @@ PlatformIO 2.0
 ~~~~~~~~~~~~~~~~~~
 
 * Improved code builder for parallel builds (up to 4 times faster than before)
-* Generate `.travis.yml <http://docs.platformio.org/en/latest/ci/travis.html>`__
+* Generate `.travis.yml <http://docs.platformio.org/page/ci/travis.html>`__
   CI and `.gitignore` files for embedded projects by default
   (`issue #354 <https://github.com/platformio/platformio-core/issues/354>`_)
-* Removed prompt with "auto-uploading" from `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
+* Removed prompt with "auto-uploading" from `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`__
   command and added ``--enable-auto-uploading`` option
   (`issue #352 <https://github.com/platformio/platformio-core/issues/352>`_)
-* Fixed incorrect behaviour of `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`__
+* Fixed incorrect behaviour of `platformio serialports monitor <http://docs.platformio.org/page/userguide/cmd_serialports.html#platformio-serialports-monitor>`__
   in pair with PySerial 3.0
 
 2.4.1 (2015-12-01)
@@ -816,7 +825,7 @@ PlatformIO 2.0
 * Updated Arduino core for Espressif platform to 2.0.0
   (`issue #345 <https://github.com/platformio/platformio-core/issues/345>`_)
 * Added to FAQ explanation of `Can not compile a library that compiles without issue
-  with Arduino IDE <http://docs.platformio.org/en/latest/faq.html#building>`_
+  with Arduino IDE <http://docs.platformio.org/page/faq.html#building>`_
   (`issue #331 <https://github.com/platformio/platformio-core/issues/331>`_)
 * Fixed ESP-12E flash size
   (`pull #333 <https://github.com/platformio/platformio-core/pull/333>`_)
@@ -829,7 +838,7 @@ PlatformIO 2.0
 2.3.5 (2015-11-18)
 ~~~~~~~~~~~~~~~~~~
 
-* Added support of `libOpenCM3 <http://docs.platformio.org/en/latest/frameworks/libopencm3.html>`_
+* Added support of `libOpenCM3 <http://docs.platformio.org/page/frameworks/libopencm3.html>`_
   framework for Nucleo F103RB board
   (`issue #309 <https://github.com/platformio/platformio-core/issues/309>`_)
 * Added support for Espressif ESP8266 ESP-12E board (NodeMCU)
@@ -838,13 +847,13 @@ PlatformIO 2.0
   (`issue #307 <https://github.com/platformio/platformio-core/issues/307>`_)
 * Updated Arduino AVR/SAM frameworks to 1.6.6
   (`issue #321 <https://github.com/platformio/platformio-core/issues/321>`_)
-* Upload firmware using external programmer via `platformio run --target program <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-t>`__
+* Upload firmware using external programmer via `platformio run --target program <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption-platformio-run-t>`__
   target
   (`issue #311 <https://github.com/platformio/platformio-core/issues/311>`_)
 * Fixed handling of upload port when ``board`` option is not specified in
-  `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  `platformio.ini <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #313 <https://github.com/platformio/platformio-core/issues/313>`_)
-* Fixed firmware uploading for `nordicrf51 <http://docs.platformio.org/en/latest/platforms/nordicnrf51.html>`__
+* Fixed firmware uploading for `nordicrf51 <http://docs.platformio.org/page/platforms/nordicnrf51.html>`__
   development platform
   (`issue #316 <https://github.com/platformio/platformio-core/issues/316>`_)
 * Fixed installation on Mac OS X El Capitan
@@ -860,18 +869,18 @@ PlatformIO 2.0
 2.3.4 (2015-10-13)
 ~~~~~~~~~~~~~~~~~~
 
-* Full support of `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`_
+* Full support of `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`_
   including code auto-completion
   (`issue #132 <https://github.com/platformio/platformio-core/issues/132>`_)
-* PlatformIO `command completion in Terminal <http://docs.platformio.org/en/latest/faq.html#command-completion-in-terminal>`_ for ``bash`` and ``zsh``
+* PlatformIO `command completion in Terminal <http://docs.platformio.org/page/faq.html#command-completion-in-terminal>`_ for ``bash`` and ``zsh``
 * Added support for ubIQio Ardhat board
   (`pull #302 <https://github.com/platformio/platformio-core/pull/302>`_)
 * Install SCons automatically and avoid ``error: option --single-version-externally-managed not recognized``
   (`issue #279 <https://github.com/platformio/platformio-core/issues/279>`_)
 * Use Teensy CLI Loader for upload of .hex files on Mac OS X
   (`issue #306 <https://github.com/platformio/platformio-core/issues/306>`_)
-* Fixed missing `framework-mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`_
-  package for `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`_
+* Fixed missing `framework-mbed <http://docs.platformio.org/page/frameworks/mbed.html>`_
+  package for `teensy <http://docs.platformio.org/page/platforms/teensy.html>`_
   platform
   (`issue #305 <https://github.com/platformio/platformio-core/issues/305>`_)
 
@@ -893,7 +902,7 @@ PlatformIO 2.0
 * Allowed to use ST-Link uploader for mbed-based projects
 * Explained how to use ``lib`` directory from the PlatformIO based project in
   ``readme.txt`` which will be automatically generated using
-  `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
+  `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`__
   command
   (`issue #273 <https://github.com/platformio/platformio-core/issues/273>`_)
 * Found solution for "pip/scons error: option --single-version-externally-managed not
@@ -906,44 +915,44 @@ PlatformIO 2.0
 2.3.1 (2015-09-06)
 ~~~~~~~~~~~~~~~~~~
 
-* Fixed critical issue when `platformio init --ide <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__ command hangs PlatformIO
+* Fixed critical issue when `platformio init --ide <http://docs.platformio.org/page/userguide/cmd_init.html>`__ command hangs PlatformIO
   (`issue #283 <https://github.com/platformio/platformio-core/issues/283>`_)
 
 2.3.0 (2015-09-05)
 ~~~~~~~~~~~~~~~~~~
 
 * Added
-  `native <http://docs.platformio.org/en/latest/platforms/native.html>`__,
-  `linux_arm <http://docs.platformio.org/en/latest/platforms/linux_arm.html>`__,
-  `linux_i686 <http://docs.platformio.org/en/latest/platforms/linux_i686.html>`__,
-  `linux_x86_64 <http://docs.platformio.org/en/latest/platforms/linux_x86_64.html>`__,
-  `windows_x86 <http://docs.platformio.org/en/latest/platforms/windows_x86.html>`__
+  `native <http://docs.platformio.org/page/platforms/native.html>`__,
+  `linux_arm <http://docs.platformio.org/page/platforms/linux_arm.html>`__,
+  `linux_i686 <http://docs.platformio.org/page/platforms/linux_i686.html>`__,
+  `linux_x86_64 <http://docs.platformio.org/page/platforms/linux_x86_64.html>`__,
+  `windows_x86 <http://docs.platformio.org/page/platforms/windows_x86.html>`__
   development platforms
   (`issue #263 <https://github.com/platformio/platformio-core/issues/263>`_)
-* Added `PlatformIO Demo <http://docs.platformio.org/en/latest/demo.html>`_
+* Added `PlatformIO Demo <http://docs.platformio.org/page/demo.html>`_
   page to documentation
-* Simplified `installation <http://docs.platformio.org/en/latest/installation.html>`__
+* Simplified `installation <http://docs.platformio.org/page/installation.html>`__
   process of PlatformIO
   (`issue #274 <https://github.com/platformio/platformio-core/issues/274>`_)
-* Significantly improved `Project Generator <http://docs.platformio.org/en/latest/userguide/cmd_init.html#cmdoption-platformio-init--ide>`__ which allows to integrate with `the most popular
-  IDE <http://docs.platformio.org/en/latest/ide.html>`__
+* Significantly improved `Project Generator <http://docs.platformio.org/page/userguide/cmd_init.html#cmdoption-platformio-init--ide>`__ which allows to integrate with `the most popular
+  IDE <http://docs.platformio.org/page/ide.html>`__
 * Added short ``-h`` help option for PlatformIO and sub-commands
-* Updated `mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+* Updated `mbed <http://docs.platformio.org/page/frameworks/mbed.html>`__
   framework
-* Updated ``tool-teensy`` package for `Teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`__
+* Updated ``tool-teensy`` package for `Teensy <http://docs.platformio.org/page/platforms/teensy.html>`__
   platform
   (`issue #268 <https://github.com/platformio/platformio-core/issues/268>`_)
-* Added FAQ answer when `Program "platformio" not found in PATH <http://docs.platformio.org/en/latest/faq.html#faq-troubleshooting-pionotfoundinpath>`_
+* Added FAQ answer when `Program "platformio" not found in PATH <http://docs.platformio.org/page/faq.html#faq-troubleshooting-pionotfoundinpath>`_
   (`issue #272 <https://github.com/platformio/platformio-core/issues/272>`_)
 * Generate "readme.txt" for project "lib" directory
   (`issue #273 <https://github.com/platformio/platformio-core/issues/273>`_)
 * Use toolchain's includes pattern ``include*`` for Project Generator
   (`issue #277 <https://github.com/platformio/platformio-core/issues/277>`_)
 * Added support for Adafruit Gemma board to
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html#boards>`__
   platform
   (`pull #256 <https://github.com/platformio/platformio-core/pull/256>`_)
-* Fixed includes list for Windows OS when generating project for `Eclipse IDE <http://docs.platformio.org/en/latest/ide/eclipse.html>`__
+* Fixed includes list for Windows OS when generating project for `Eclipse IDE <http://docs.platformio.org/page/ide/eclipse.html>`__
   (`issue #270 <https://github.com/platformio/platformio-core/issues/270>`_)
 * Fixed ``AttributeError: 'module' object has no attribute 'packages'``
   (`issue #252 <https://github.com/platformio/platformio-core/issues/252>`_)
@@ -951,15 +960,15 @@ PlatformIO 2.0
 2.2.2 (2015-07-30)
 ~~~~~~~~~~~~~~~~~~
 
-* Integration with `Atom IDE <http://docs.platformio.org/en/latest/ide/atom.html>`__
+* Integration with `Atom IDE <http://docs.platformio.org/page/ide/atom.html>`__
 * Support for off-line/unpublished/private libraries
   (`issue #260 <https://github.com/platformio/platformio-core/issues/260>`_)
 * Disable project auto-clean while building/uploading firmware using
-  `platformio run --disable-auto-clean <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--disable-auto-clean>`_ option
+  `platformio run --disable-auto-clean <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption--disable-auto-clean>`_ option
   (`issue #255 <https://github.com/platformio/platformio-core/issues/255>`_)
-* Show internal errors from "Miniterm" using `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`__ command
+* Show internal errors from "Miniterm" using `platformio serialports monitor <http://docs.platformio.org/page/userguide/cmd_serialports.html#platformio-serialports-monitor>`__ command
   (`issue #257 <https://github.com/platformio/platformio-core/issues/257>`_)
-* Fixed `platformio serialports monitor --help <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`__ information with HEX char for hotkeys
+* Fixed `platformio serialports monitor --help <http://docs.platformio.org/page/userguide/cmd_serialports.html#platformio-serialports-monitor>`__ information with HEX char for hotkeys
   (`issue #253 <https://github.com/platformio/platformio-core/issues/253>`_)
 * Handle "OSError: [Errno 13] Permission denied" for PlatformIO installer script
   (`issue #254 <https://github.com/platformio/platformio-core/issues/254>`_)
@@ -967,35 +976,35 @@ PlatformIO 2.0
 2.2.1 (2015-07-17)
 ~~~~~~~~~~~~~~~~~~
 
-* Project generator for `CLion IDE <http://docs.platformio.org/en/latest/ide/clion.html>`__
+* Project generator for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__
   (`issue #132 <https://github.com/platformio/platformio-core/issues/132>`_)
-* Updated ``tool-bossac`` package to 1.5 version for `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`__ platform
+* Updated ``tool-bossac`` package to 1.5 version for `atmelsam <http://docs.platformio.org/page/platforms/atmelsam.html>`__ platform
   (`issue #251 <https://github.com/platformio/platformio-core/issues/251>`_)
-* Updated ``sdk-esp8266`` package for `espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__ platform
-* Fixed incorrect arguments handling for `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ command
+* Updated ``sdk-esp8266`` package for `espressif <http://docs.platformio.org/page/platforms/espressif.html>`__ platform
+* Fixed incorrect arguments handling for `platformio serialports monitor <http://docs.platformio.org/page/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ command
   (`issue #248 <https://github.com/platformio/platformio-core/issues/248>`_)
 
 2.2.0 (2015-07-01)
 ~~~~~~~~~~~~~~~~~~
 
 * Allowed to exclude/include source files from build process using
-  `src_filter <http://docs.platformio.org/en/latest/projectconf.html#src-filter>`__
+  `src_filter <http://docs.platformio.org/page/projectconf.html#src-filter>`__
   (`issue #240 <https://github.com/platformio/platformio-core/issues/240>`_)
 * Launch own extra script before firmware building/uploading processes
   (`issue #239 <https://github.com/platformio/platformio-core/issues/239>`_)
 * Specify own path to the linker script (ld) using
-  `build_flags <http://docs.platformio.org/en/latest/projectconf.html#build-flags>`__
+  `build_flags <http://docs.platformio.org/page/projectconf.html#build-flags>`__
   option
   (`issue #233 <https://github.com/platformio/platformio-core/issues/233>`_)
 * Specify library compatibility with the all platforms/frameworks
   using ``*`` symbol in
-  `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`__
+  `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
 * Added support for new embedded boards: *ST 32L0538DISCOVERY and Delta DFCM-NNN40*
-  to `Framework mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+  to `Framework mbed <http://docs.platformio.org/page/frameworks/mbed.html>`__
 * Updated packages for
-  `Framework Arduino (AVR, SAM, Espressif and Teensy cores <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__,
-  `Framework mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__,
-  `Espressif ESP8266 SDK <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+  `Framework Arduino (AVR, SAM, Espressif and Teensy cores <http://docs.platformio.org/page/frameworks/arduino.html>`__,
+  `Framework mbed <http://docs.platformio.org/page/frameworks/mbed.html>`__,
+  `Espressif ESP8266 SDK <http://docs.platformio.org/page/platforms/espressif.html>`__
   (`issue #246 <https://github.com/platformio/platformio-core/issues/246>`_)
 * Fixed ``stk500v2_command(): command failed``
   (`issue #238 <https://github.com/platformio/platformio-core/issues/238>`_)
@@ -1023,19 +1032,19 @@ PlatformIO 2.0
 2.1.0 (2015-06-03)
 ~~~~~~~~~~~~~~~~~~
 
-* Added Silicon Labs EFM32 `siliconlabsefm32 <http://docs.platformio.org/en/latest/platforms/siliconlabsefm32.html>`_
+* Added Silicon Labs EFM32 `siliconlabsefm32 <http://docs.platformio.org/page/platforms/siliconlabsefm32.html>`_
   development platform
   (`issue #226 <https://github.com/platformio/platformio-core/issues/226>`_)
 * Integrate PlatformIO with `Circle CI <https://circleci.com>`_ and
   `Shippable CI <https://shippable.com>`_
-* Described in documentation how to `create/register own board <http://docs.platformio.org/en/latest/platforms/creating_board.html>`_ for PlatformIO
+* Described in documentation how to `create/register own board <http://docs.platformio.org/page/platforms/creating_board.html>`_ for PlatformIO
 * Disabled "nano.specs" for ARM-based platforms
   (`issue #219 <https://github.com/platformio/platformio-core/issues/219>`_)
 * Fixed "ConnectionError" when PlatformIO SF Storage is off-line
 * Fixed resolving of C/C++ std libs by Eclipse IDE
   (`issue #220 <https://github.com/platformio/platformio-core/issues/220>`_)
 * Fixed firmware uploading using USB programmer (USBasp) for
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html>`_
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html>`_
   platform
   (`issue #221 <https://github.com/platformio/platformio-core/issues/221>`_)
 
@@ -1048,16 +1057,16 @@ PlatformIO 2.0
 ~~~~~~~~~~~~~~~~~~
 
 * Handle new environment variable
-  `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/en/latest/envvars.html#platformio-build-flags>`_
+  `PLATFORMIO_BUILD_FLAGS <http://docs.platformio.org/page/envvars.html#platformio-build-flags>`_
 * Pass to API requests information about Continuous Integration system. This
   information will be used by PlatformIO-API.
 * Use ``include`` directories from toolchain when initialising project for IDE
   (`issue #210 <https://github.com/platformio/platformio-core/issues/210>`_)
 * Added support for new WildFire boards from
   `Wicked Device <http://wickeddevice.com>`_ to
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html#boards>`__
   platform
-* Updated `Arduino Framework <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__ to
+* Updated `Arduino Framework <http://docs.platformio.org/page/frameworks/arduino.html>`__ to
   1.6.4 version (`issue #212 <https://github.com/platformio/platformio-core/issues/212>`_)
 * Handle Atmel AVR Symbols when initialising project for IDE
   (`issue #216 <https://github.com/platformio/platformio-core/issues/216>`_)
@@ -1070,7 +1079,7 @@ PlatformIO 2.0
 
 *Made in* `Paradise <https://twitter.com/ikravets/status/592356377185619969>`_
 
-* PlatformIO as `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html>`_
+* PlatformIO as `Continuous Integration <http://docs.platformio.org/page/ci/index.html>`_
   (CI) tool for embedded projects
   (`issue #108 <https://github.com/platformio/platformio-core/issues/108>`_)
 * Initialise PlatformIO project for the specified IDE
@@ -1083,29 +1092,29 @@ PlatformIO 2.0
 * Global ``-f, --force`` option which will force to accept any
   confirmation prompts
   (`issue #152 <https://github.com/platformio/platformio-core/issues/152>`_)
-* Run project with `platformio run --project-dir <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--project-dir>`_ option without changing the current working
+* Run project with `platformio run --project-dir <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption--project-dir>`_ option without changing the current working
   directory
   (`issue #192 <https://github.com/platformio/platformio-core/issues/192>`_)
-* Control verbosity of `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-v>`_ command via ``-v/--verbose`` option
+* Control verbosity of `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption-platformio-run-v>`_ command via ``-v/--verbose`` option
 * Add library dependencies for build environment using
-  `lib_install <http://docs.platformio.org/en/latest/projectconf.html#lib-install>`_
+  `lib_install <http://docs.platformio.org/page/projectconf.html#lib-install>`_
   option in ``platformio.ini``
   (`issue #134 <https://github.com/platformio/platformio-core/issues/134>`_)
 * Specify libraries which are compatible with build environment using
-  `lib_use <http://docs.platformio.org/en/latest/projectconf.html#lib-use>`_
+  `lib_use <http://docs.platformio.org/page/projectconf.html#lib-use>`_
   option in ``platformio.ini``
   (`issue #148 <https://github.com/platformio/platformio-core/issues/148>`_)
 * Add more boards to PlatformIO project with
-  `platformio init --board <http://docs.platformio.org/en/latest/userguide/cmd_init.html#cmdoption--board>`__
+  `platformio init --board <http://docs.platformio.org/page/userguide/cmd_init.html#cmdoption--board>`__
   command
   (`issue #167 <https://github.com/platformio/platformio-core/issues/167>`_)
 * Choose which library to update
   (`issue #168 <https://github.com/platformio/platformio-core/issues/168>`_)
-* Specify `platformio init --env-prefix <http://docs.platformio.org/en/latest/userguide/cmd_init.html#cmdoption--env-prefix>`__ when initialise/update project
+* Specify `platformio init --env-prefix <http://docs.platformio.org/page/userguide/cmd_init.html#cmdoption--env-prefix>`__ when initialise/update project
   (`issue #182 <https://github.com/platformio/platformio-core/issues/182>`_)
 * Added new Armstrap boards
   (`issue #204 <https://github.com/platformio/platformio-core/issues/204>`_)
-* Updated SDK for `espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`__
+* Updated SDK for `espressif <http://docs.platformio.org/page/platforms/espressif.html>`__
   development platform to v1.1
   (`issue #179 <https://github.com/platformio/platformio-core/issues/179>`_)
 * Disabled automatic updates by default for platforms, packages and libraries
@@ -1122,7 +1131,7 @@ PlatformIO 1.0
 * Added support of `Framework mbed <http://platformio.org/frameworks/mbed>`_
   for Teensy 3.1
   (`issue #183 <https://github.com/platformio/platformio-core/issues/183>`_)
-* Added GDB as alternative uploader to `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__ platform
+* Added GDB as alternative uploader to `ststm32 <http://docs.platformio.org/page/platforms/ststm32.html>`__ platform
   (`issue #175 <https://github.com/platformio/platformio-core/issues/174>`_)
 * Added `examples <https://github.com/platformio/platformio-examples/tree/develop>`__
   with preconfigured IDE projects
@@ -1142,22 +1151,22 @@ PlatformIO 1.0
 1.4.0 (2015-04-11)
 ~~~~~~~~~~~~~~~~~~
 
-* Added `espressif <http://docs.platformio.org/en/latest/platforms/espressif.html>`_
+* Added `espressif <http://docs.platformio.org/page/platforms/espressif.html>`_
   development platform with ESP01 board
 * Integrated PlatformIO with AppVeyor Windows based Continuous Integration system
   (`issue #149 <https://github.com/platformio/platformio-core/issues/149>`_)
 * Added support for Teensy LC board to
-  `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`__
+  `teensy <http://docs.platformio.org/page/platforms/teensy.html>`__
   platform
 * Added support for new Arduino based boards by *SparkFun, BQ, LightUp,
   LowPowerLab, Quirkbot, RedBearLab, TinyCircuits* to
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html#boards>`__
   platform
-* Upgraded `Arduino Framework <http://docs.platformio.org/en/latest/frameworks/arduino.html>`__ to
+* Upgraded `Arduino Framework <http://docs.platformio.org/page/frameworks/arduino.html>`__ to
   1.6.3 version (`issue #156 <https://github.com/platformio/platformio-core/issues/156>`_)
-* Upgraded `Energia Framework <http://docs.platformio.org/en/latest/frameworks/energia.html>`__ to
+* Upgraded `Energia Framework <http://docs.platformio.org/page/frameworks/energia.html>`__ to
   0101E0015 version (`issue #146 <https://github.com/platformio/platformio-core/issues/146>`_)
-* Upgraded `Arduino Framework with Teensy Core <http://docs.platformio.org/en/latest/frameworks/arduino.html>`_
+* Upgraded `Arduino Framework with Teensy Core <http://docs.platformio.org/page/frameworks/arduino.html>`_
   to 1.22 version
   (`issue #162 <https://github.com/platformio/platformio-core/issues/162>`_,
   `issue #170 <https://github.com/platformio/platformio-core/issues/170>`_)
@@ -1172,12 +1181,12 @@ PlatformIO 1.0
   account to `PlatformIO Organisation <https://github.com/platformio>`_
   (`issue #138 <https://github.com/platformio/platformio-core/issues/138>`_)
 * Added support for new Arduino based boards by *SparkFun, RepRap, Sanguino* to
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html#boards>`__
   platform
   (`issue #127 <https://github.com/platformio/platformio-core/issues/127>`_,
   `issue #131 <https://github.com/platformio/platformio-core/issues/131>`_)
-* Added integration instructions for `Visual Studio <http://docs.platformio.org/en/latest/ide/visualstudio.html>`_
-  and `Sublime Text <http://docs.platformio.org/en/latest/ide/sublimetext.html>`_ IDEs
+* Added integration instructions for `Visual Studio <http://docs.platformio.org/page/ide/visualstudio.html>`_
+  and `Sublime Text <http://docs.platformio.org/page/ide/sublimetext.html>`_ IDEs
 * Improved handling of multi-file ``*.ino/pde`` sketches
   (`issue #130 <https://github.com/platformio/platformio-core/issues/130>`_)
 * Fixed wrong insertion of function prototypes converting ``*.ino/pde``
@@ -1189,31 +1198,31 @@ PlatformIO 1.0
 1.2.0 (2015-03-20)
 ~~~~~~~~~~~~~~~~~~
 
-* Added full support of `mbed <http://docs.platformio.org/en/latest/frameworks/mbed.html>`__
+* Added full support of `mbed <http://docs.platformio.org/page/frameworks/mbed.html>`__
   framework including libraries: *RTOS, Ethernet, DSP, FAT, USB*.
-* Added `freescalekinetis <http://docs.platformio.org/en/latest/platforms/freescalekinetis.html>`_
+* Added `freescalekinetis <http://docs.platformio.org/page/platforms/freescalekinetis.html>`_
   development platform with Freescale Kinetis Freedom boards
-* Added `nordicnrf51 <http://docs.platformio.org/en/latest/platforms/nordicnrf51.html>`_
+* Added `nordicnrf51 <http://docs.platformio.org/page/platforms/nordicnrf51.html>`_
   development platform with supported boards from *JKSoft, Nordic, RedBearLab,
   Switch Science*
-* Added `nxplpc <http://docs.platformio.org/en/latest/platforms/nxplpc.html>`_
+* Added `nxplpc <http://docs.platformio.org/page/platforms/nxplpc.html>`_
   development platform with supported boards from *CQ Publishing, Embedded
   Artists, NGX Technologies, NXP, Outrageous Circuits, SeeedStudio,
   Solder Splash Labs, Switch Science, u-blox*
 * Added support for *ST Nucleo* boards to
-  `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
+  `ststm32 <http://docs.platformio.org/page/platforms/ststm32.html>`__
   development platform
-* Created new `Frameworks <http://docs.platformio.org/en/latest/frameworks/index.html>`__
+* Created new `Frameworks <http://docs.platformio.org/page/frameworks/index.html>`__
   page in documentation and added to `PlatformIO Web Site <http://platformio.org>`_
   (`issue #115 <https://github.com/platformio/platformio-core/issues/115>`_)
 * Introduced online `Embedded Boards Explorer <http://platformio.org/boards>`_
 * Automatically append define ``-DPLATFORMIO=%version%`` to
   builder (`issue #105 <https://github.com/platformio/platformio-core/issues/105>`_)
 * Renamed ``stm32`` development platform to
-  `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
+  `ststm32 <http://docs.platformio.org/page/platforms/ststm32.html>`__
 * Renamed ``opencm3`` framework to
-  `libopencm3 <http://docs.platformio.org/en/latest/frameworks/libopencm3.html>`__
-* Fixed uploading for `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`__
+  `libopencm3 <http://docs.platformio.org/page/frameworks/libopencm3.html>`__
+* Fixed uploading for `atmelsam <http://docs.platformio.org/page/platforms/atmelsam.html>`__
   development platform
 * Fixed re-arranging the ``*.ino/pde`` files when converting to ``*.cpp``
   (`issue #100 <https://github.com/platformio/platformio-core/issues/100>`_)
@@ -1224,15 +1233,15 @@ PlatformIO 1.0
 * Implemented ``PLATFORMIO_*`` environment variables
   (`issue #102 <https://github.com/platformio/platformio-core/issues/102>`_)
 * Added support for *SainSmart* boards to
-  `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html#boards>`__
+  `atmelsam <http://docs.platformio.org/page/platforms/atmelsam.html#boards>`__
   development platform
 * Added
-  `Project Configuration <http://docs.platformio.org/en/latest/projectconf.html>`__
-  option named `envs_dir <http://docs.platformio.org/en/latest/projectconf.html#envs-dir>`__
+  `Project Configuration <http://docs.platformio.org/page/projectconf.html>`__
+  option named `envs_dir <http://docs.platformio.org/page/projectconf.html#envs-dir>`__
 * Disabled "prompts" automatically for *Continuous Integration* systems
   (`issue #103 <https://github.com/platformio/platformio-core/issues/103>`_)
 * Fixed firmware uploading for
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html#boards>`__
   boards which work within ``usbtiny`` protocol
 * Fixed uploading for *Digispark* board (`issue #106 <https://github.com/platformio/platformio-core/issues/106>`_)
 
@@ -1245,26 +1254,26 @@ PlatformIO 1.0
 * Added support for *ARM*-based credit-card sized computers:
   `Raspberry Pi <http://www.raspberrypi.org>`_,
   `BeagleBone <http://beagleboard.org>`_ and `CubieBoard <http://cubieboard.org>`_
-* Added `atmelsam <http://docs.platformio.org/en/latest/platforms/atmelsam.html>`__
+* Added `atmelsam <http://docs.platformio.org/page/platforms/atmelsam.html>`__
   development platform with supported boards: *Arduino Due and Digistump DigiX*
   (`issue #71 <https://github.com/platformio/platformio-core/issues/71>`_)
-* Added `ststm32 <http://docs.platformio.org/en/latest/platforms/ststm32.html>`__
+* Added `ststm32 <http://docs.platformio.org/page/platforms/ststm32.html>`__
   development platform with supported boards: *Discovery kit for STM32L151/152,
   STM32F303xx, STM32F407/417 lines* and `libOpenCM3 Framework <http://www.libopencm3.org>`_
   (`issue #73 <https://github.com/platformio/platformio-core/issues/73>`_)
-* Added `teensy <http://docs.platformio.org/en/latest/platforms/teensy.html>`_
+* Added `teensy <http://docs.platformio.org/page/platforms/teensy.html>`_
   development platform with supported boards: *Teensy 2.x & 3.x*
   (`issue #72 <https://github.com/platformio/platformio-core/issues/72>`_)
 * Added new *Arduino* boards to
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html#boards>`__
   platform: *Arduino NG, Arduino BT, Arduino Esplora, Arduino Ethernet,
   Arduino Robot Control, Arduino Robot Motor and Arduino Yun*
 * Added support for *Adafruit* boards to
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html#boards>`__
   platform: *Adafruit Flora and Adafruit Trinkets*
   (`issue #65 <https://github.com/platformio/platformio-core/issues/65>`_)
 * Added support for *Digispark* boards to
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#boards>`__
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html#boards>`__
   platform: *Digispark USB Development Board and Digispark Pro*
   (`issue #47 <https://github.com/platformio/platformio-core/issues/47>`_)
 * Covered code with tests (`issue #2 <https://github.com/platformio/platformio-core/issues/2>`_)
@@ -1272,24 +1281,24 @@ PlatformIO 1.0
   `#48 <https://github.com/platformio/platformio-core/issues/48>`_,
   `#50 <https://github.com/platformio/platformio-core/issues/50>`_,
   `#55 <https://github.com/platformio/platformio-core/pull/55>`_)
-* Added `src_dir <http://docs.platformio.org/en/latest/projectconf.html#src-dir>`__
+* Added `src_dir <http://docs.platformio.org/page/projectconf.html#src-dir>`__
   option to ``[platformio]`` section of
-  `platformio.ini <http://docs.platformio.org/en/latest/projectconf.html>`__
+  `platformio.ini <http://docs.platformio.org/page/projectconf.html>`__
   which allows to redefine location to project's source directory
   (`issue #83 <https://github.com/platformio/platformio-core/issues/83>`_)
 * Added ``--json-output`` option to
-  `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`__
-  and `platformio search <http://docs.platformio.org/en/latest/userguide/cmd_search.html>`__
+  `platformio boards <http://docs.platformio.org/page/userguide/cmd_boards.html>`__
+  and `platformio search <http://docs.platformio.org/page/userguide/cmd_search.html>`__
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/platformio/platformio-core/issues/42>`_)
 * Allowed to ignore some libs from *Library Dependency Finder* via
-  `lib_ignore <http://docs.platformio.org/en/latest/projectconf.html#lib-ignore>`_ option
-* Improved `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
+  `lib_ignore <http://docs.platformio.org/page/projectconf.html#lib-ignore>`_ option
+* Improved `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
   command: asynchronous output for build process, timing and detailed
   information about environment configuration
   (`issue #74 <https://github.com/platformio/platformio-core/issues/74>`_)
 * Output compiled size and static memory usage with
-  `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
+  `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
   command (`issue #59 <https://github.com/platformio/platformio-core/issues/59>`_)
 * Updated `framework-arduino` AVR & SAM to 1.6 stable version
 * Fixed an issue with the libraries that are git repositories
@@ -1313,19 +1322,19 @@ PlatformIO 0.0
 * Fixed an issue with ``--json-output``
   (`issue #42 <https://github.com/platformio/platformio-core/issues/42>`_)
 * Fixed an exception during
-  `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`__
+  `platformio upgrade <http://docs.platformio.org/page/userguide/cmd_upgrade.html>`__
   under Windows OS (`issue #45 <https://github.com/platformio/platformio-core/issues/45>`_)
 
 0.10.1 (2015-01-02)
 ~~~~~~~~~~~~~~~~~~~
 
 * Added ``--json-output`` option to
-  `platformio list <http://docs.platformio.org/en/latest/userguide/cmd_list.html>`__,
-  `platformio serialports list <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html>`__ and
-  `platformio lib list <http://docs.platformio.org/en/latest/userguide/lib/cmd_list.html>`__
+  `platformio list <http://docs.platformio.org/page/userguide/cmd_list.html>`__,
+  `platformio serialports list <http://docs.platformio.org/page/userguide/cmd_serialports.html>`__ and
+  `platformio lib list <http://docs.platformio.org/page/userguide/lib/cmd_list.html>`__
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/platformio/platformio-core/issues/42>`_)
-* Fixed missing auto-uploading by default after `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
+* Fixed missing auto-uploading by default after `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`__
   command
 
 0.10.0 (2015-01-01)
@@ -1333,19 +1342,19 @@ PlatformIO 0.0
 
 **Happy New Year!**
 
-* Implemented `platformio boards <http://docs.platformio.org/en/latest/userguide/cmd_boards.html>`_
+* Implemented `platformio boards <http://docs.platformio.org/page/userguide/cmd_boards.html>`_
   command (`issue #11 <https://github.com/platformio/platformio-core/issues/11>`_)
 * Added support of *Engduino* boards for
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html#engduino>`__
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html#engduino>`__
   platform (`issue #38 <https://github.com/platformio/platformio-core/issues/38>`_)
-* Added ``--board`` option to `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`__
+* Added ``--board`` option to `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`__
   command which allows to initialise project with the specified embedded boards
   (`issue #21 <https://github.com/platformio/platformio-core/issues/21>`_)
-* Added `example with uploading firmware <http://docs.platformio.org/en/latest/projectconf.html#examples>`_
+* Added `example with uploading firmware <http://docs.platformio.org/page/projectconf.html#examples>`_
   via USB programmer (USBasp) for
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html>`_
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html>`_
   *MCUs* (`issue #35 <https://github.com/platformio/platformio-core/issues/35>`_)
-* Automatic detection of port on `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
+* Automatic detection of port on `platformio serialports monitor <http://docs.platformio.org/page/userguide/cmd_serialports.html#platformio-serialports-monitor>`_
   (`issue #37 <https://github.com/platformio/platformio-core/issues/37>`_)
 * Allowed auto-installation of platforms when prompts are disabled (`issue #43 <https://github.com/platformio/platformio-core/issues/43>`_)
 * Fixed urllib3's *SSL* warning under Python <= 2.7.2 (`issue #39 <https://github.com/platformio/platformio-core/issues/39>`_)
@@ -1363,11 +1372,11 @@ PlatformIO 0.0
 ~~~~~~~~~~~~~~~~~~
 
 * Ask user to install platform (when it hasn't been installed yet) within
-  `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
-  and `platformio show <http://docs.platformio.org/en/latest/userguide/cmd_show.html>`_ commands
+  `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
+  and `platformio show <http://docs.platformio.org/page/userguide/cmd_show.html>`_ commands
 * Improved main `documentation <http://docs.platformio.org>`_
 * Fixed "*OSError: [Errno 2] No such file or directory*" within
-  `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`__
+  `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
   command when PlatformIO isn't installed properly
 * Fixed example for `Eclipse IDE with Tiva board <https://github.com/platformio/platformio-examples/tree/develop/ide/eclipse>`_
   (`issue #32 <https://github.com/platformio/platformio-core/pull/32>`_)
@@ -1377,8 +1386,8 @@ PlatformIO 0.0
 0.9.0 (2014-12-01)
 ~~~~~~~~~~~~~~~~~~
 
-* Implemented `platformio settings <http://docs.platformio.org/en/latest/userguide/cmd_settings.html>`_ command
-* Improved `platformio init <http://docs.platformio.org/en/latest/userguide/cmd_init.html>`_ command.
+* Implemented `platformio settings <http://docs.platformio.org/page/userguide/cmd_settings.html>`_ command
+* Improved `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`_ command.
   Added new option ``--project-dir`` where you can specify another path to
   directory where new project will be initialized (`issue #31 <https://github.com/platformio/platformio-core/issues/31>`_)
 * Added *Migration Manager* which simplifies process with upgrading to a
@@ -1395,18 +1404,18 @@ PlatformIO 0.0
 0.8.0 (2014-10-19)
 ~~~~~~~~~~~~~~~~~~
 
-* Avoided trademark issues in `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`_
-  with the new fields: `frameworks <http://docs.platformio.org/en/latest/librarymanager/config.html#frameworks>`_,
-  `platforms <http://docs.platformio.org/en/latest/librarymanager/config.html#platforms>`_
-  and `dependencies <http://docs.platformio.org/en/latest/librarymanager/config.html#dependencies>`_
+* Avoided trademark issues in `library.json <http://docs.platformio.org/page/librarymanager/config.html>`_
+  with the new fields: `frameworks <http://docs.platformio.org/page/librarymanager/config.html#frameworks>`_,
+  `platforms <http://docs.platformio.org/page/librarymanager/config.html#platforms>`_
+  and `dependencies <http://docs.platformio.org/page/librarymanager/config.html#dependencies>`_
   (`issue #17 <https://github.com/platformio/platformio-core/issues/17>`_)
 * Switched logic from "Library Name" to "Library Registry ID" for all
-  `platformio lib <http://docs.platformio.org/en/latest/userguide/lib/index.html>`_
+  `platformio lib <http://docs.platformio.org/page/userguide/lib/index.html>`_
   commands (install, uninstall, update and etc.)
-* Renamed ``author`` field to `authors <http://docs.platformio.org/en/latest/librarymanager/config.html#authors>`_
-  and allowed to setup multiple authors per library in `library.json <http://docs.platformio.org/en/latest/librarymanager/config.html>`_
-* Added option to specify "maintainer" status in `authors <http://docs.platformio.org/en/latest/librarymanager/config.html#authors>`_ field
-* New filters/options for `platformio lib search <http://docs.platformio.org/en/latest/userguide/lib/cmd_search.html>`_
+* Renamed ``author`` field to `authors <http://docs.platformio.org/page/librarymanager/config.html#authors>`_
+  and allowed to setup multiple authors per library in `library.json <http://docs.platformio.org/page/librarymanager/config.html>`_
+* Added option to specify "maintainer" status in `authors <http://docs.platformio.org/page/librarymanager/config.html#authors>`_ field
+* New filters/options for `platformio lib search <http://docs.platformio.org/page/userguide/lib/cmd_search.html>`_
   command: ``--framework`` and ``--platform``
 
 0.7.1 (2014-10-06)
@@ -1420,15 +1429,15 @@ PlatformIO 0.0
 0.7.0 (2014-09-24)
 ~~~~~~~~~~~~~~~~~~
 
-* Implemented new `[platformio] <http://docs.platformio.org/en/latest/projectconf.html#platformio>`_
-  section for Configuration File with `home_dir <http://docs.platformio.org/en/latest/projectconf.html#home-dir>`_
+* Implemented new `[platformio] <http://docs.platformio.org/page/projectconf.html#platformio>`_
+  section for Configuration File with `home_dir <http://docs.platformio.org/page/projectconf.html#home-dir>`_
   option (`issue #14 <https://github.com/platformio/platformio-core/issues/14>`_)
 * Implemented *Library Manager* (`issue #6 <https://github.com/platformio/platformio-core/issues/6>`_)
 
 0.6.0 (2014-08-09)
 ~~~~~~~~~~~~~~~~~~
 
-* Implemented `platformio serialports monitor <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ (`issue #10 <https://github.com/platformio/platformio-core/issues/10>`_)
+* Implemented `platformio serialports monitor <http://docs.platformio.org/page/userguide/cmd_serialports.html#platformio-serialports-monitor>`_ (`issue #10 <https://github.com/platformio/platformio-core/issues/10>`_)
 * Fixed an issue ``ImportError: No module named platformio.util`` (`issue #9 <https://github.com/platformio/platformio-core/issues/9>`_)
 * Fixed bug with auto-conversation from Arduino \*.ino to \*.cpp
 
@@ -1441,7 +1450,7 @@ PlatformIO 0.0
   frameworks (`issue #7 <https://github.com/platformio/platformio-core/issues/7>`_)
 * Added `Arduino example <https://github.com/platformio/platformio-examples/tree/develop/>`_
   with external library (*Adafruit CC3000*)
-* Implemented `platformio upgrade <http://docs.platformio.org/en/latest/userguide/cmd_upgrade.html>`_
+* Implemented `platformio upgrade <http://docs.platformio.org/page/userguide/cmd_upgrade.html>`_
   command and "auto-check" for the latest
   version (`issue #8 <https://github.com/platformio/platformio-core/issues/8>`_)
 * Fixed an issue with "auto-reset" for *Raspduino* board
@@ -1450,21 +1459,21 @@ PlatformIO 0.0
 0.4.0 (2014-07-31)
 ~~~~~~~~~~~~~~~~~~
 
-* Implemented `platformio serialports <http://docs.platformio.org/en/latest/userguide/cmd_serialports.html>`_ command
+* Implemented `platformio serialports <http://docs.platformio.org/page/userguide/cmd_serialports.html>`_ command
 * Allowed to put special build flags only for ``src`` files via
-  `src_build_flags <http://docs.platformio.org/en/latest/projectconf.html#src_build-flags>`_
+  `src_build_flags <http://docs.platformio.org/page/projectconf.html#src_build-flags>`_
   environment option
 * Allowed to override some of settings via system environment variables
   such as: ``PLATFORMIO_SRC_BUILD_FLAGS`` and ``PLATFORMIO_ENVS_DIR``
-* Added ``--upload-port`` option for `platformio run <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption--upload-port>`__ command
+* Added ``--upload-port`` option for `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption--upload-port>`__ command
 * Implemented (especially for `SmartAnthill <http://docs.smartanthill.ikravets.com/>`_)
-  `platformio run -t uploadlazy <http://docs.platformio.org/en/latest/userguide/cmd_run.html>`_
+  `platformio run -t uploadlazy <http://docs.platformio.org/page/userguide/cmd_run.html>`_
   target (no dependencies to framework libs, ELF and etc.)
-* Allowed to skip default packages via `platformio install --skip-default-package <http://docs.platformio.org/en/latest/userguide/cmd_install.html#cmdoption--skip-default>`_
+* Allowed to skip default packages via `platformio install --skip-default-package <http://docs.platformio.org/page/userguide/cmd_install.html#cmdoption--skip-default>`_
   option
 * Added tools for *Raspberry Pi* platform
 * Added support for *Microduino* and *Raspduino* boards in
-  `atmelavr <http://docs.platformio.org/en/latest/platforms/atmelavr.html>`_ platform
+  `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html>`_ platform
 
 
 0.3.1 (2014-06-21)

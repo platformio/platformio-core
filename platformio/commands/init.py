@@ -57,6 +57,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
     "--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
 @click.option("-O", "--project-option", multiple=True)
 @click.option("--env-prefix", default="")
+@click.option("-s", "--silent", is_flag=True)
 @click.pass_context
 def cli(
         ctx,  # pylint: disable=R0913
@@ -64,28 +65,31 @@ def cli(
         board,
         ide,
         project_option,
-        env_prefix):
+        env_prefix,
+        silent):
 
-    if project_dir == getcwd():
-        click.secho("\nThe current working directory", fg="yellow", nl=False)
-        click.secho(" %s " % project_dir, fg="cyan", nl=False)
-        click.secho(
-            "will be used for project.\n"
-            "You can specify another project directory via\n"
-            "`platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.",
-            fg="yellow")
-        click.echo("")
+    if not silent:
+        if project_dir == getcwd():
+            click.secho(
+                "\nThe current working directory", fg="yellow", nl=False)
+            click.secho(" %s " % project_dir, fg="cyan", nl=False)
+            click.secho(
+                "will be used for project.\n"
+                "You can specify another project directory via\n"
+                "`platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.",
+                fg="yellow")
+            click.echo("")
 
-    click.echo("The next files/directories have been created in %s" %
-               click.style(
-                   project_dir, fg="cyan"))
-    click.echo("%s - Project Configuration File" % click.style(
-        "platformio.ini", fg="cyan"))
-    click.echo("%s - Put your source files here" % click.style(
-        "src", fg="cyan"))
-    click.echo("%s - Put here project specific (private) libraries" %
-               click.style(
-                   "lib", fg="cyan"))
+        click.echo("The next files/directories have been created in %s" %
+                   click.style(
+                       project_dir, fg="cyan"))
+        click.echo("%s - Project Configuration File" % click.style(
+            "platformio.ini", fg="cyan"))
+        click.echo("%s - Put your source files here" % click.style(
+            "src", fg="cyan"))
+        click.echo("%s - Put here project specific (private) libraries" %
+                   click.style(
+                       "lib", fg="cyan"))
 
     init_base_project(project_dir)
 
@@ -111,16 +115,17 @@ def cli(
         pg = ProjectGenerator(project_dir, ide, board[0])
         pg.generate()
 
-    click.secho(
-        "\nProject has been successfully initialized!\nUseful commands:\n"
-        "`platformio run` - process/build project from the current "
-        "directory\n"
-        "`platformio run --target upload` or `platformio run -t upload` "
-        "- upload firmware to embedded board\n"
-        "`platformio run --target clean` - clean project (remove compiled "
-        "files)\n"
-        "`platformio run --help` - additional information",
-        fg="green")
+    if not silent:
+        click.secho(
+            "\nProject has been successfully initialized!\nUseful commands:\n"
+            "`platformio run` - process/build project from the current "
+            "directory\n"
+            "`platformio run --target upload` or `platformio run -t upload` "
+            "- upload firmware to embedded board\n"
+            "`platformio run --target clean` - clean project (remove compiled "
+            "files)\n"
+            "`platformio run --help` - additional information",
+            fg="green")
 
 
 def get_first_board(project_dir):
