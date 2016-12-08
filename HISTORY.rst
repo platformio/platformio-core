@@ -8,8 +8,8 @@ PlatformIO 3.0
 ~~~~~~~~~~~~~~~~~~
 
 * Produce less noisy output when ``-s/--silent`` options are used for
-  `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`_
-  and `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`_
+  `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`__
+  and `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
   commands
   (`issue #850 <https://github.com/platformio/platformio-core/issues/850>`_)
 
