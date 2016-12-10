@@ -13,6 +13,15 @@ PlatformIO 3.0
   commands
   (`issue #850 <https://github.com/platformio/platformio-core/issues/850>`_)
 
+-------
+
+* Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
+
+  + Added support for Simba Framework
+  + Added new board Node32s
+  + Updated ESP32 Core for Arduino
+
+
 3.2.1 (2016-12-07)
 ~~~~~~~~~~~~~~~~~~
 
