@@ -7,7 +7,9 @@ What kind of issue is this?
 - [ ] PlatformIO IDE. All issues related to PlatformIO IDE should be reported to appropriate repository
       https://github.com/platformio/platformio-atom-ide/issues
 
-- [ ] Development Platform. All issues related to Development Platform should be reported to appropriate repository. Search it using link below
+- [ ] Development Platform or Board. All issues related to Development Platforms or Embedded Boards
+      should be reported to appropriate repository. 
+      See full list with repositories and search for "platform-xxx" repository related to your hardware
       https://github.com/platformio?query=platform-
 
 - [ ] Feature Request. Start by telling us what problem you’re trying to solve. Often a solution
