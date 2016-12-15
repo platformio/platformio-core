@@ -460,8 +460,9 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             framework = framework.lower().strip()
             if not framework or framework not in self.frameworks:
                 continue
-            _pkg_name = self.frameworks[framework]['package']
-            self.packages[_pkg_name]['optional'] = False
+            _pkg_name = self.frameworks[framework].get("package")
+            if _pkg_name:
+                self.packages[_pkg_name]['optional'] = False
 
         # enable upload tools for upload targets
         if any(["upload" in t for t in targets] + ["program" in targets]):
