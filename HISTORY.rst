@@ -22,6 +22,12 @@ PlatformIO 3.0
   + Updated ESP32 Core for Arduino
 
 
+* Development platform `Linux ARM <https://github.com/platformio/platform-linux_arm>`__
+
+  + Added support for Samsung ARTIK boards (520, 710, 1020) and ARTIK SDK
+    (`issue #353 <https://github.com/platformio/platformio-core/issues/353>`_)
+
+
 3.2.1 (2016-12-07)
 ~~~~~~~~~~~~~~~~~~
 

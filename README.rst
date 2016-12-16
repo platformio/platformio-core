@@ -174,6 +174,7 @@ It has support for the most popular embedded platforms:
 Frameworks:
 
 * `Arduino <http://platformio.org/frameworks/arduino>`_
+* `ARTIK SDK <http://platformio.org/frameworks/artik-sdk>`_
 * `CMSIS <http://platformio.org/frameworks/cmsis>`_
 * `Energia <http://platformio.org/frameworks/energia>`_
 * `ESP-IDF <http://platformio.org/frameworks/espidf>`_
