@@ -15,17 +15,48 @@ PlatformIO 3.0
 
 -------
 
+* Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
+
+  + Added support for Atmel ATSAMW25-XPRO board
+  + Updated ARM mbed OS to 5.3.0/rev131
+
 * Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
 
   + Added support for Simba Framework
   + Added new board Node32s
   + Updated ESP32 Core for Arduino
 
+* Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
+
+  + Updated ARM mbed OS to 5.3.0/rev131
 
 * Development platform `Linux ARM <https://github.com/platformio/platform-linux_arm>`__
 
   + Added support for Samsung ARTIK boards (520, 710, 1020) and ARTIK SDK
     (`issue #353 <https://github.com/platformio/platformio-core/issues/353>`_)
+
+* Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
+
+  + Updated ARM mbed OS to 5.3.0/rev131
+
+* Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
+
+  + Added support for LPCXpresso4337 and y5 LPC11U35 mbug boards
+  + Updated ARM mbed OS to 5.3.0/rev131
+
+* Development platform `Silicon Labs EFM32 <https://github.com/platformio/platform-siliconlabsefm32>`__
+
+  + Updated ARM mbed OS to 5.3.0/rev131
+
+* Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
+
+  + Added support for new boards: Espotel LoRa Module, NAMote72, MTS Dragonfly,
+    ST Nucleo F303ZE, u-blox EVK-ODIN-W2, MultiTech xDot
+  + Updated ARM mbed OS to 5.3.0/rev131
+
+* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
+
+  + Updated ARM mbed OS to 5.3.0/rev131
 
 
 3.2.1 (2016-12-07)
