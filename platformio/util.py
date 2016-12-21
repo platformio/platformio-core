@@ -66,22 +66,43 @@ class ProjectConfig(ConfigParser):
 
 
 class AsyncPipe(Thread):
+    """
+    A file-like object that can be passed to subprocess.popen as stderr or
+    stdout, and constructs a pipe to a background thread
 
-    def __init__(self, outcallback=None):
+    The run() method should be overridden in the subclass
+    """
+
+    def __init__(self):
         Thread.__init__(self)
-        self.outcallback = outcallback
 
         self._fd_read, self._fd_write = os.pipe()
         self._pipe_reader = os.fdopen(self._fd_read)
-        self._buffer = []
 
         self.start()
 
-    def get_buffer(self):
-        return self._buffer
-
     def fileno(self):
         return self._fd_write
+
+    def close(self):
+        os.close(self._fd_write)
+        self.join()
+
+
+class AsyncLineBufferedPipe(AsyncPipe):
+    """
+    An AsyncPipe that invokes the function passed to its constructor for each
+    complete line. This causes the output to be line-buffered.
+    """
+
+    def __init__(self, outcallback=None):
+        self.outcallback = outcallback
+        self._buffer = []
+
+        AsyncPipe.__init__(self)
+
+    def get_buffer(self):
+        return self._buffer
 
     def run(self):
         for line in iter(self._pipe_reader.readline, ""):
@@ -92,10 +113,6 @@ class AsyncPipe(Thread):
             else:
                 print line
         self._pipe_reader.close()
-
-    def close(self):
-        os.close(self._fd_write)
-        self.join()
 
 
 class cd(object):
@@ -344,7 +361,7 @@ def exec_command(*args, **kwargs):
                 kwargs[s].close()
 
     for s in ("stdout", "stderr"):
-        if isinstance(kwargs[s], AsyncPipe):
+        if isinstance(kwargs[s], AsyncLineBufferedPipe):
             result[s[3:]] = "\n".join(kwargs[s].get_buffer())
 
     for k, v in result.iteritems():

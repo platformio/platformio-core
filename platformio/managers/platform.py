@@ -284,8 +284,9 @@ class PlatformRunMixin(object):
         util.copy_pythonpath_to_osenv()
         result = util.exec_command(
             cmd,
-            stdout=util.AsyncPipe(self.on_run_out),
-            stderr=util.AsyncPipe(self.on_run_err))
+            stdout=util.AsyncLineBufferedPipe(self.on_run_out),
+            stderr=util.AsyncLineBufferedPipe(self.on_run_err)
+        )
         return result
 
     def on_run_out(self, line):
