@@ -42,7 +42,7 @@ def test_warning_line(clirunner, validate_cliresult):
     validate_cliresult(result)
     assert ('basic.ino:16:14: warning: #warning "Line number is 16"' in
             result.output)
-    assert ('basic.ino:43:2: warning: #warning "Line number is 43"' in
+    assert ('basic.ino:46:2: warning: #warning "Line number is 46"' in
             result.output)
     result = clirunner.invoke(
         cmd_ci, [join(INOTEST_DIR, "strmultilines"), "-b", "uno"])
