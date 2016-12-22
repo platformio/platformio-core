@@ -7,6 +7,8 @@ PlatformIO 3.0
 3.2.2 (2016-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added support for templated methods in "*.ino to *.cpp" convertor
+  (`pull #858 <https://github.com/platformio/platformio-core/pull/858>`_)
 * Produce less noisy output when ``-s/--silent`` options are used for
   `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`__
   and `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
