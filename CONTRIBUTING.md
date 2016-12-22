@@ -1,7 +1,7 @@
 Contributing
 ------------
 
-To get started, <a href="https://www.clahub.com/agreements/platformio/platformio">sign the Contributor License Agreement</a>.
+To get started, <a href="https://www.clahub.com/agreements/platformio/platformio-core">sign the Contributor License Agreement</a>.
 
 1. Fork the repository on GitHub.
 2. Make a branch off of ``develop``
