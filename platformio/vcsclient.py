@@ -177,9 +177,8 @@ class SvnClient(VCSClientBase):
         return self.run_cmd(args)
 
     def get_current_revision(self):
-        output = self.get_cmd_output([
-            "info", "--non-interactive", "--trust-server-cert", "-r", "HEAD"
-        ])
+        output = self.get_cmd_output(
+            ["info", "--non-interactive", "--trust-server-cert", "-r", "HEAD"])
         for line in output.split("\n"):
             line = line.strip()
             if line.startswith("Revision:"):

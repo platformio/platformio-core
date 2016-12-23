@@ -4,8 +4,15 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.2.2 (2016-12-??)
+3.3.0 (2016-12-??)
 ~~~~~~~~~~~~~~~~~~
+
+* PlatformIO Library Registry statistics with new
+  `pio lib stats <http://docs.platformio.org/page/userguide/lib/cmd_stats.html>`__ command
+
+  - Recently updated and added libraries
+  - Recent and popular keywords
+  - Featured libraries (today, week, month)
 
 * Added support for templated methods in ``*.ino to *.cpp`` convertor
   (`pull #858 <https://github.com/platformio/platformio-core/pull/858>`_)

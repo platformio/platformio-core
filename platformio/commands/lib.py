@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import json
+from datetime import datetime
 from os.path import join
 from time import sleep
+from urllib import quote
 
 import click
 
@@ -44,7 +46,7 @@ from platformio.util import get_api_result
 @click.pass_context
 def cli(ctx, **options):
     # skip commands that don't need storage folder
-    if ctx.invoked_subcommand in ("search", "register") or \
+    if ctx.invoked_subcommand in ("search", "register", "stats") or \
             (len(ctx.args) == 2 and ctx.args[1] in ("-h", "--help")):
         return
     storage_dir = options['storage_dir']
@@ -116,7 +118,7 @@ def lib_update(lm, libraries, only_check):
 
 #######
 
-LIBLIST_TPL = ("[{id:^14}] {name:<25} {compatibility:<30} "
+LIBLIST_TPL = ("[{id:^15}] {name:<25} {compatibility:<30} "
                "\"{authornames}\": {description}")
 
 
@@ -317,3 +319,81 @@ def lib_register(config_url):
             result['message'],
             fg="green"
             if "successed" in result and result['successed'] else "red")
+
+
+@cli.command("stats", short_help="Library Registry Statistics")
+@click.option("--json-output", is_flag=True)
+def lib_stats(json_output):
+    result = get_api_result("/lib/stats", cache_valid="1h")
+
+    if json_output:
+        return click.echo(json.dumps(result))
+
+    printitem_tpl = "{name:<33} {url}"
+    printitemdate_tpl = "{name:<33} {date:23} {url}"
+
+    def _print_title(title):
+        click.secho(title.upper(), bold=True)
+        click.echo("*" * len(title))
+
+    def _print_header(with_date=False):
+        click.echo((printitemdate_tpl if with_date else printitem_tpl).format(
+            name=click.style(
+                "Name", fg="cyan"),
+            date="Date",
+            url=click.style(
+                "Url", fg="blue")))
+
+        terminal_width, _ = click.get_terminal_size()
+        click.echo("-" * terminal_width)
+
+    def _print_lib_item(item):
+        click.echo((printitemdate_tpl
+                    if "date" in item else printitem_tpl).format(
+                        name=click.style(
+                            item['name'], fg="cyan"),
+                        date=str(
+                            datetime.strptime(item['date'].replace("Z", "UTC"),
+                                              "%Y-%m-%dT%H:%M:%S%Z")
+                            if "date" in item else ""),
+                        url=click.style(
+                            "http://platformio.org/lib/show/%s/%s" % (item[
+                                'id'], quote(item['name'])),
+                            fg="blue")))
+
+    def _print_tag_item(name):
+        click.echo(
+            printitem_tpl.format(
+                name=click.style(
+                    name, fg="cyan"),
+                url=click.style(
+                    "http://platformio.org/lib/search?query=" + quote(
+                        "keyword:%s" % name),
+                    fg="blue")))
+
+    for key in ("updated", "added"):
+        _print_title("Recently " + key)
+        _print_header(with_date=True)
+        for item in result.get(key, []):
+            _print_lib_item(item)
+        click.echo()
+
+    _print_title("Recent keywords")
+    _print_header(with_date=False)
+    for item in result.get("lastkeywords"):
+        _print_tag_item(item)
+    click.echo()
+
+    _print_title("Popular keywords")
+    _print_header(with_date=False)
+    for item in result.get("topkeywords"):
+        _print_tag_item(item)
+    click.echo()
+
+    for key, title in (("dlday", "Today"), ("dlweek", "Week"),
+                       ("dlmonth", "Month")):
+        _print_title("Featured: " + title)
+        _print_header(with_date=False)
+        for item in result.get(key, []):
+            _print_lib_item(item)
+        click.echo()
