@@ -180,6 +180,7 @@ Frameworks:
 * `ESP-IDF <http://platformio.org/frameworks/espidf>`_
 * `libOpenCM3 <http://platformio.org/frameworks/libopencm3>`_
 * `mbed <http://platformio.org/frameworks/mbed>`_
+* `Pumbaa <http://platformio.org/frameworks/pumbaa>`_
 * `Simba <http://platformio.org/frameworks/simba>`_
 * `SPL <http://platformio.org/frameworks/spl>`_
 * `WiringPi <http://platformio.org/frameworks/wiringpi>`_

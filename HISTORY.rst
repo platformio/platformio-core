@@ -31,7 +31,7 @@ PlatformIO 3.0
 
 * Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
 
-  + Added support for Simba Framework
+  + Added support for Simba & Pumbaa Frameworks
   + Added new board Node32s
   + Updated ESP32 Core for Arduino
 
