@@ -207,7 +207,7 @@ class ContentCache(object):
             return None
         with open(cache_path, "rb") as fp:
             data = fp.read()
-            if data[0] in ("{", "["):
+            if data and data[0] in ("{", "["):
                 return json.loads(data)
             return data
 
