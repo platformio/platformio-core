@@ -125,7 +125,7 @@ def test_lib_show(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cmd_lib, ["show", "64"])
     validate_cliresult(result)
     assert all([
-        s in result.output for s in ("ArduinoJson", "arduino", "atmelavr")
+        s in result.output for s in ("ArduinoJson", "Arduino", "Atmel AVR")
     ])
     result = clirunner.invoke(cmd_lib, ["show", "OneWire"])
     validate_cliresult(result)

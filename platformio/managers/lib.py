@@ -291,7 +291,7 @@ class LibraryManager(BasePkgManager):
 
         lib_info = None
         result = util.get_api_result(
-            "/lib/search", dict(query=" ".join(query)), cache_valid="3d")
+            "/v2/lib/search", dict(query=" ".join(query)), cache_valid="3d")
         if result['total'] == 1:
             lib_info = result['items'][0]
         elif result['total'] > 1:
@@ -303,9 +303,8 @@ class LibraryManager(BasePkgManager):
                     "by request %s:" % json.dumps(filters),
                     fg="red",
                     err=True)
-                commands.lib.echo_liblist_header()
                 for item in result['items']:
-                    commands.lib.echo_liblist_item(item)
+                    commands.lib.print_lib_item(item)
 
                 if not interactive:
                     click.secho(

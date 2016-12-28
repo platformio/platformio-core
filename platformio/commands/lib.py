@@ -118,46 +118,33 @@ def lib_update(lm, libraries, only_check):
         lm.update(library, only_check=only_check)
 
 
-#######
+def print_lib_item(item):
+    click.secho(item['name'], fg="cyan")
+    click.echo("=" * len(item['name']))
+    if "id" in item:
+        click.secho("#ID: %d" % item['id'], bold=True)
+    click.echo(item.get("description", item.get("url", "")).encode("utf-8"))
+    click.echo()
 
-LIBLIST_TPL = ("[{id:^15}] {name:<25} {compatibility:<30} "
-               "\"{authornames}\": {description}")
+    for key in ("homepage", "license", "keywords"):
+        if key not in item or not item[key]:
+            continue
+        if isinstance(item[key], list):
+            click.echo("%s: %s" % (key.title(), ", ".join(item[key])))
+        else:
+            click.echo("%s: %s" % (key.title(), item[key]))
 
+    for key in ("frameworks", "platforms"):
+        if key not in item:
+            continue
+        click.echo("Compatible %s: %s" % (key, ", ".join(
+            [i['title'] if isinstance(i, dict) else i for i in item[key]])))
 
-def echo_liblist_header():
-    click.echo(
-        LIBLIST_TPL.format(
-            id=click.style(
-                "ID", fg="green"),
-            name=click.style(
-                "Name", fg="cyan"),
-            compatibility=click.style(
-                "Compatibility", fg="yellow"),
-            authornames="Authors",
-            description="Description"))
-
-    terminal_width, _ = click.get_terminal_size()
-    click.echo("-" * terminal_width)
-
-
-def echo_liblist_item(item):
-    description = item.get("description", item.get("url", "")).encode("utf-8")
-    if "version" in item:
-        description += " | @" + click.style(item['version'], fg="yellow")
-
-    click.echo(
-        LIBLIST_TPL.format(
-            id=click.style(
-                str(item.get("id", "-")), fg="green"),
-            name=click.style(
-                item['name'], fg="cyan"),
-            compatibility=click.style(
-                ", ".join(
-                    item.get("frameworks", ["-"]) + item.get("platforms", [])),
-                fg="yellow"),
-            authornames=", ".join(item.get("authornames", ["Unknown"])).encode(
-                "utf-8"),
-            description=description))
+    if "authors" in item or "authornames" in item:
+        click.echo("Authors: %s" % ", ".join(
+            item.get("authornames",
+                     [a.get("name", "") for a in item.get("authors", [])])))
+    click.echo()
 
 
 @cli.command("search", short_help="Search for a library")
@@ -185,7 +172,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
             query.append('%s:"%s"' % (key, value))
 
     result = get_api_result(
-        "/lib/search",
+        "/v2/lib/search",
         dict(
             query=" ".join(query), page=page),
         cache_valid="3d")
@@ -214,12 +201,9 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         "Found %d libraries:\n" % result['total'],
         fg="green" if result['total'] else "yellow")
 
-    if result['total']:
-        echo_liblist_header()
-
     while True:
         for item in result['items']:
-            echo_liblist_item(item)
+            print_lib_item(item)
 
         if (int(result['page']) * int(result['perpage']) >=
                 int(result['total'])):
@@ -236,7 +220,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         elif not click.confirm("Show next libraries?"):
             break
         result = get_api_result(
-            "/lib/search",
+            "/v2/lib/search",
             dict(
                 query=" ".join(query), page=int(result['page']) + 1),
             cache_valid="3d")
@@ -254,11 +238,8 @@ def lib_list(lm, json_output):
     if not items:
         return
 
-    echo_liblist_header()
     for item in sorted(items, key=lambda i: i['name']):
-        if "authors" in item:
-            item['authornames'] = [i['name'] for i in item['authors']]
-        echo_liblist_item(item)
+        print_lib_item(item)
 
 
 @cli.command("show", short_help="Show detailed info about a library")
@@ -275,13 +256,13 @@ def lib_show(library, json_output):
 
     click.secho(lib['name'], fg="cyan")
     click.echo("=" * len(lib['name']))
+    click.secho("#ID: %d" % lib['id'], bold=True)
     click.echo(lib['description'])
     click.echo()
 
     click.echo("Version: %s, released %s" %
                (lib['version']['name'],
                 arrow.get(lib['version']['released']).humanize()))
-    click.echo("Registry ID: %d" % lib['id'])
     click.echo("Manifest: %s" % lib['confurl'])
     for key in ("homepage", "repository", "license"):
         if key not in lib or not lib[key]:
@@ -310,10 +291,10 @@ def lib_show(library, json_output):
         blocks.append(("Authors", _authors))
 
     blocks.append(("Keywords", lib['keywords']))
-    if lib['frameworks']:
-        blocks.append(("Compatible Frameworks", lib['frameworks']))
-    if lib['platforms']:
-        blocks.append(("Compatible Platforms", lib['platforms']))
+    for key in ("frameworks", "platforms"):
+        if key not in lib or not lib[key]:
+            continue
+        blocks.append(("Compatible %s" % key, [i['title'] for i in lib[key]]))
     blocks.append(("Headers", lib['headers']))
     blocks.append(("Examples", lib['examples']))
     blocks.append(("Versions", [
