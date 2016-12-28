@@ -100,24 +100,6 @@ def test_global_lib_list(clirunner, validate_cliresult, isolated_pio_home):
     assert set(items1) == set(items2)
 
 
-def test_global_lib_show(clirunner, validate_cliresult, isolated_pio_home):
-    result = clirunner.invoke(cmd_lib, ["-g", "show", "64@5.6.7"])
-    validate_cliresult(result)
-    assert all([
-        s in result.output for s in ("Json", "arduino", "atmelavr", "5.6.7")
-    ])
-
-    result = clirunner.invoke(cmd_lib, ["-g", "show", "ArduinoJson@>5.6.7"])
-    validate_cliresult(result)
-    assert all(
-        [s in result.output for s in ("ArduinoJson", "arduino", "atmelavr")])
-    assert "5.6.7" not in result.output
-
-    result = clirunner.invoke(cmd_lib, ["-g", "show", "1"])
-    validate_cliresult(result)
-    assert "OneWire" in result.output
-
-
 def test_global_lib_update(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
@@ -137,6 +119,17 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
         "pubsubclient", "PJON", "rs485-nodeproto", "RadioHead_ID124"
     ]
     assert set(items1) == set(items2)
+
+
+def test_lib_show(clirunner, validate_cliresult, isolated_pio_home):
+    result = clirunner.invoke(cmd_lib, ["show", "64"])
+    validate_cliresult(result)
+    assert all([
+        s in result.output for s in ("ArduinoJson", "arduino", "atmelavr")
+    ])
+    result = clirunner.invoke(cmd_lib, ["show", "OneWire"])
+    validate_cliresult(result)
+    assert "OneWire" in result.output
 
 
 def test_project_lib_complex(clirunner, validate_cliresult, tmpdir):

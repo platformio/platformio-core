@@ -17,7 +17,7 @@ PlatformIO 3.0
 * Show detailed info about a library using `pio lib show <http://docs.platformio.org/page/userguide/lib/cmd_show.html>`__
   command
   (`issue #430 <https://github.com/platformio/platformio-core/issues/430>`_)
-* Added support for templated methods in ``*.ino to *.cpp`` convertor
+* Added support for templated methods in ``*.ino to *.cpp`` converter
   (`pull #858 <https://github.com/platformio/platformio-core/pull/858>`_)
 * Produce less noisy output when ``-s/--silent`` options are used for
   `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`__
