@@ -19,6 +19,7 @@ import os
 from hashlib import md5
 from os.path import dirname, join
 
+import arrow
 import click
 import semantic_version
 
@@ -129,13 +130,8 @@ class LibraryManager(BasePkgManager):
     def max_satisfying_repo_version(versions, requirements=None):
 
         def _cmp_dates(datestr1, datestr2):
-            from datetime import datetime
-            assert "T" in datestr1 and "T" in datestr2
-            dateformat = "%Y-%m-%d %H:%M:%S"
-            date1 = datetime.strptime(datestr1[:-1].replace("T", " "),
-                                      dateformat)
-            date2 = datetime.strptime(datestr2[:-1].replace("T", " "),
-                                      dateformat)
+            date1 = arrow.get(datestr1)
+            date2 = arrow.get(datestr2)
             if date1 == date2:
                 return 0
             return -1 if date1 < date2 else 1
@@ -150,7 +146,7 @@ class LibraryManager(BasePkgManager):
         for v in versions:
             specver = None
             try:
-                specver = semantic_version.Version(v['version'], partial=True)
+                specver = semantic_version.Version(v['name'], partial=True)
             except ValueError:
                 pass
 
@@ -158,30 +154,30 @@ class LibraryManager(BasePkgManager):
                 if not specver or specver not in reqspec:
                     continue
                 if not item or semantic_version.Version(
-                        item['version'], partial=True) < specver:
+                        item['name'], partial=True) < specver:
                     item = v
             elif requirements:
-                if requirements == v['version']:
+                if requirements == v['name']:
                     return v
             else:
-                if not item or _cmp_dates(item['date'], v['date']) == -1:
+                if not item or _cmp_dates(item['released'],
+                                          v['released']) == -1:
                     item = v
         return item
 
     def get_latest_repo_version(self, name, requirements):
         item = self.max_satisfying_repo_version(
             util.get_api_result(
-                "/lib/versions/%d" % self._get_pkg_id_by_name(name,
-                                                              requirements),
-                cache_valid="1h"),
+                "/lib/info/%d" % self.get_pkg_id_by_name(name, requirements),
+                cache_valid="1d")['versions'],
             requirements)
-        return item['version'] if item else None
+        return item['name'] if item else None
 
-    def _get_pkg_id_by_name(self,
-                            name,
-                            requirements,
-                            silent=False,
-                            interactive=False):
+    def get_pkg_id_by_name(self,
+                           name,
+                           requirements,
+                           silent=False,
+                           interactive=False):
         if name.startswith("id="):
             return int(name[3:])
         # try to find ID from installed packages
@@ -222,7 +218,7 @@ class LibraryManager(BasePkgManager):
 
         try:
             if not _url:
-                _name = "id=%d" % self._get_pkg_id_by_name(
+                _name = "id=%d" % self.get_pkg_id_by_name(
                     _name,
                     _requirements,
                     silent=silent,
@@ -299,30 +295,34 @@ class LibraryManager(BasePkgManager):
         if result['total'] == 1:
             lib_info = result['items'][0]
         elif result['total'] > 1:
-            click.secho(
-                "Conflict: More than one library has been found "
-                "by request %s:" % json.dumps(filters),
-                fg="red",
-                err=True)
-            commands.lib.echo_liblist_header()
-            for item in result['items']:
-                commands.lib.echo_liblist_item(item)
-
-            if not interactive:
-                click.secho(
-                    "Automatically chose the first available library "
-                    "(use `--interactive` option to make a choice)",
-                    fg="yellow",
-                    err=True)
+            if silent and not interactive:
                 lib_info = result['items'][0]
             else:
-                deplib_id = click.prompt(
-                    "Please choose library ID",
-                    type=click.Choice([str(i['id']) for i in result['items']]))
+                click.secho(
+                    "Conflict: More than one library has been found "
+                    "by request %s:" % json.dumps(filters),
+                    fg="red",
+                    err=True)
+                commands.lib.echo_liblist_header()
                 for item in result['items']:
-                    if item['id'] == int(deplib_id):
-                        lib_info = item
-                        break
+                    commands.lib.echo_liblist_item(item)
+
+                if not interactive:
+                    click.secho(
+                        "Automatically chose the first available library "
+                        "(use `--interactive` option to make a choice)",
+                        fg="yellow",
+                        err=True)
+                    lib_info = result['items'][0]
+                else:
+                    deplib_id = click.prompt(
+                        "Please choose library ID",
+                        type=click.Choice(
+                            [str(i['id']) for i in result['items']]))
+                    for item in result['items']:
+                        if item['id'] == int(deplib_id):
+                            lib_info = item
+                            break
 
         if not lib_info:
             if filters.keys() == ["name"]:

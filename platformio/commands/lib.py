@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-branches, too-many-locals
+
 import json
-from datetime import datetime
 from os.path import join
 from time import sleep
 from urllib import quote
 
+import arrow
 import click
 
 from platformio import exception, util
@@ -46,7 +48,7 @@ from platformio.util import get_api_result
 @click.pass_context
 def cli(ctx, **options):
     # skip commands that don't need storage folder
-    if ctx.invoked_subcommand in ("search", "register", "stats") or \
+    if ctx.invoked_subcommand in ("search", "show", "register", "stats") or \
             (len(ctx.args) == 2 and ctx.args[1] in ("-h", "--help")):
         return
     storage_dir = options['storage_dir']
@@ -158,7 +160,7 @@ def echo_liblist_item(item):
             description=description))
 
 
-@cli.command("search", short_help="Search for library")
+@cli.command("search", short_help="Search for a library")
 @click.argument("query", required=False, nargs=-1)
 @click.option("--json-output", is_flag=True)
 @click.option("--page", type=click.INT, default=1)
@@ -247,8 +249,7 @@ def lib_list(lm, json_output):
     items = lm.get_installed()
 
     if json_output:
-        click.echo(json.dumps(items))
-        return
+        return click.echo(json.dumps(items))
 
     if not items:
         return
@@ -260,28 +261,40 @@ def lib_list(lm, json_output):
         echo_liblist_item(item)
 
 
-@cli.command("show", short_help="Show details about installed library")
-@click.pass_obj
+@cli.command("show", short_help="Show detailed info about a library")
 @click.argument("library", metavar="[LIBRARY]")
-def lib_show(lm, library):  # pylint: disable=too-many-branches
-    name, requirements, url = lm.parse_pkg_name(library)
-    package_dir = lm.get_package_dir(name, requirements, url)
-    if not package_dir:
-        click.secho(
-            "%s @ %s is not installed" % (name, requirements or "*"),
-            fg="yellow")
-        return
+@click.option("--json-output", is_flag=True)
+def lib_show(library, json_output):
+    lm = LibraryManager()
+    name, requirements, _ = lm.parse_pkg_name(library)
+    lib_id = lm.get_pkg_id_by_name(
+        name, requirements, silent=json_output, interactive=not json_output)
+    lib = get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
+    if json_output:
+        return click.echo(json.dumps(lib))
 
-    manifest = lm.load_manifest(package_dir)
-
-    click.secho(manifest['name'], fg="cyan")
-    click.echo("=" * len(manifest['name']))
-    if "description" in manifest:
-        click.echo(manifest['description'])
+    click.secho(lib['name'], fg="cyan")
+    click.echo("=" * len(lib['name']))
+    click.echo(lib['description'])
     click.echo()
 
+    click.echo("Version: %s, released %s" %
+               (lib['version']['name'],
+                arrow.get(lib['version']['released']).humanize()))
+    click.echo("Registry ID: %d" % lib['id'])
+    click.echo("Manifest: %s" % lib['confurl'])
+    for key in ("homepage", "repository", "license"):
+        if key not in lib or not lib[key]:
+            continue
+        if isinstance(lib[key], list):
+            click.echo("%s: %s" % (key.title(), ", ".join(lib[key])))
+        else:
+            click.echo("%s: %s" % (key.title(), lib[key]))
+
+    blocks = []
+
     _authors = []
-    for author in manifest.get("authors", []):
+    for author in lib.get("authors", []):
         _data = []
         for key in ("name", "email", "url", "maintainer"):
             if not author[key]:
@@ -294,19 +307,33 @@ def lib_show(lm, library):  # pylint: disable=too-many-branches
                 _data.append(author[key])
         _authors.append(" ".join(_data))
     if _authors:
-        click.echo("Authors: %s" % ", ".join(_authors))
+        blocks.append(("Authors", _authors))
 
-    for key in ("keywords", "frameworks", "platforms", "license", "url",
-                "version"):
-        if key not in manifest:
-            continue
-        if isinstance(manifest[key], list):
-            click.echo("%s: %s" % (key.title(), ", ".join(manifest[key])))
-        else:
-            click.echo("%s: %s" % (key.title(), manifest[key]))
+    blocks.append(("Keywords", lib['keywords']))
+    if lib['frameworks']:
+        blocks.append(("Compatible Frameworks", lib['frameworks']))
+    if lib['platforms']:
+        blocks.append(("Compatible Platforms", lib['platforms']))
+    blocks.append(("Headers", lib['headers']))
+    blocks.append(("Examples", lib['examples']))
+    blocks.append(("Versions", [
+        "%s, released %s" % (v['name'], arrow.get(v['released']).humanize())
+        for v in lib['versions']
+    ]))
+    blocks.append(("Unique Downloads", [
+        "Today: %s" % lib['dlstats']['day'], "Week: %s" %
+        lib['dlstats']['week'], "Month: %s" % lib['dlstats']['month']
+    ]))
+
+    for (title, rows) in blocks:
+        click.echo()
+        click.secho(title, bold=True)
+        click.echo("-" * len(title))
+        for row in rows:
+            click.echo(row)
 
 
-@cli.command("register", short_help="Register new library")
+@cli.command("register", short_help="Register a new library")
 @click.argument("config_url")
 def lib_register(config_url):
     if (not config_url.startswith("http://") and
@@ -353,8 +380,7 @@ def lib_stats(json_output):
                         name=click.style(
                             item['name'], fg="cyan"),
                         date=str(
-                            datetime.strptime(item['date'].replace("Z", "UTC"),
-                                              "%Y-%m-%dT%H:%M:%S%Z")
+                            arrow.get(item['date']).humanize()
                             if "date" in item else ""),
                         url=click.style(
                             "http://platformio.org/lib/show/%s/%s" % (item[
