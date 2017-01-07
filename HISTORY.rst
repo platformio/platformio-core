@@ -27,6 +27,11 @@ PlatformIO 3.0
 
 -------
 
+* Development platform `Atmel AVR <https://github.com/platformio/platform-atmelavr>`__
+
+  + Set fuse bits with new target named ``fuses``
+    (`issue #865 <https://github.com/platformio/platformio-core/issues/865>`_)
+
 * Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
 
   + Added support for Atmel ATSAMW25-XPRO board
