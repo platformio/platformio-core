@@ -24,6 +24,8 @@ PlatformIO 3.0
   and `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
   commands
   (`issue #850 <https://github.com/platformio/platformio-core/issues/850>`_)
+* Use C++11 by default for CLion IDE based projects
+  (`pull #873 <https://github.com/platformio/platformio-core/pull/873>`_)
 
 -------
 
