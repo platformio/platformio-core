@@ -121,8 +121,8 @@ class MeasurementProtocol(TelemetryBase):
                        "settings", "account"):
             cmd_path = args[:2]
         if args[0] == "lib" and len(args) > 1:
-            lib_subcmds = ("install", "list", "register", "search", "show",
-                           "uninstall", "update")
+            lib_subcmds = ("builtin", "install", "list", "register", "search",
+                           "show", "stats", "uninstall", "update")
             sub_cmd = _first_arg_from_list(args[1:], lib_subcmds)
             if sub_cmd:
                 cmd_path.append(sub_cmd)

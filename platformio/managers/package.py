@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import codecs
 import json
 import os
 import shutil
@@ -122,10 +123,14 @@ class PkgInstallerMixin(object):
     def get_manifest_path(self, pkg_dir):
         if not isdir(pkg_dir):
             return None
-        manifest_path = join(pkg_dir, self.manifest_name)
-        if isfile(manifest_path):
+        manifest_path = self.get_vcs_manifest_path(pkg_dir)
+        if manifest_path:
             return manifest_path
-        return self.get_vcs_manifest_path(pkg_dir)
+        for name in self.manifest_names:
+            manifest_path = join(pkg_dir, name)
+            if isfile(manifest_path):
+                return manifest_path
+        return None
 
     def manifest_exists(self, pkg_dir):
         return self.get_manifest_path(pkg_dir) is not None
@@ -135,15 +140,27 @@ class PkgInstallerMixin(object):
         pkg_dir = path
         if isdir(path):
             path = self.get_manifest_path(path)
+            if not path:
+                return None
         else:
             pkg_dir = dirname(pkg_dir)
-        if path:
-            if isfile(path) and path.endswith(self.VCS_MANIFEST_NAME):
-                pkg_dir = dirname(dirname(path))
+
+        if isfile(path) and path.endswith(self.VCS_MANIFEST_NAME):
+            pkg_dir = dirname(dirname(path))
+
+        if path.endswith(".json"):
             manifest = util.load_json(path)
-            manifest['__pkg_dir'] = pkg_dir
-            return manifest
-        return None
+        else:
+            manifest = {}
+            with codecs.open(path, encoding="utf-8") as fp:
+                for line in fp.readlines():
+                    if "=" not in line:
+                        continue
+                    key, value = line.split("=", 1)
+                    manifest[key.strip()] = value.strip()
+        manifest['__pkg_dir'] = pkg_dir
+
+        return manifest
 
     def check_pkg_structure(self, pkg_dir):
         if self.manifest_exists(pkg_dir):
@@ -153,7 +170,7 @@ class PkgInstallerMixin(object):
             if self.manifest_exists(root):
                 return root
 
-        raise exception.MissingPackageManifest(self.manifest_name)
+        raise exception.MissingPackageManifest(", ".join(self.manifest_names))
 
     def _install_from_piorepo(self, name, requirements):
         pkg_dir = None
@@ -273,7 +290,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         assert isdir(self.package_dir)
 
     @property
-    def manifest_name(self):
+    def manifest_names(self):
         raise NotImplementedError()
 
     def download(self, url, dest_dir, sha1=None):
@@ -381,7 +398,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             manifest = self.load_manifest(pkg_dir)
             if not manifest:
                 continue
-            assert set(["name", "version"]) <= set(manifest.keys())
+            assert "name" in manifest
             items.append(manifest)
         BasePkgManager._INSTALLED_CACHE[self.package_dir] = items
         return items
@@ -605,5 +622,5 @@ class PackageManager(BasePkgManager):
     FILE_CACHE_VALID = None  # disable package caching
 
     @property
-    def manifest_name(self):
-        return "package.json"
+    def manifest_names(self):
+        return ["package.json"]

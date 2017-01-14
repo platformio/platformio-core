@@ -14,6 +14,8 @@ PlatformIO 3.0
   - Recent and popular keywords
   - Featured libraries (today, week, month)
 
+* List built-in libraries based on development platforms with
+  `pio lib builtin <http://docs.platformio.org/page/userguide/lib/cmd_builtin.html>`__ command
 * Show detailed info about a library using `pio lib show <http://docs.platformio.org/page/userguide/lib/cmd_show.html>`__
   command
   (`issue #430 <https://github.com/platformio/platformio-core/issues/430>`_)

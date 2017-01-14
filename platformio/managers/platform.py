@@ -41,8 +41,8 @@ class PlatformManager(BasePkgManager):
                                 repositories)
 
     @property
-    def manifest_name(self):
-        return "platform.json"
+    def manifest_names(self):
+        return ["platform.json"]
 
     def install(self,
                 name,
@@ -483,6 +483,19 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
                 "version": "~3.20501.2",
                 "optional": False
             }
+
+    def get_lib_storages(self):
+        storages = []
+        for _, opts in (self.frameworks or {}).items():
+            if "package" not in opts:
+                continue
+            pkg_dir = self.get_package_dir(opts['package'])
+            if not pkg_dir or not isdir(join(pkg_dir, "libraries")):
+                continue
+            storages.append(
+                dict(
+                    name=opts['package'], path=join(pkg_dir, "libraries")))
+        return storages
 
 
 class PlatformBoardConfig(object):

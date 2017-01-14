@@ -24,6 +24,7 @@ import click
 
 from platformio import exception, util
 from platformio.managers.lib import LibraryManager
+from platformio.managers.platform import PlatformFactory, PlatformManager
 from platformio.util import get_api_result
 
 
@@ -47,8 +48,9 @@ from platformio.util import get_api_result
     help="Manage custom library storage")
 @click.pass_context
 def cli(ctx, **options):
+    non_storage_cmds = ("search", "show", "register", "stats", "builtin")
     # skip commands that don't need storage folder
-    if ctx.invoked_subcommand in ("search", "show", "register", "stats") or \
+    if ctx.invoked_subcommand in non_storage_cmds or \
             (len(ctx.args) == 2 and ctx.args[1] in ("-h", "--help")):
         return
     storage_dir = options['storage_dir']
@@ -123,10 +125,10 @@ def print_lib_item(item):
     click.echo("=" * len(item['name']))
     if "id" in item:
         click.secho("#ID: %d" % item['id'], bold=True)
-    click.echo(item.get("description", item.get("url", "")).encode("utf-8"))
+    click.echo(item.get("description", item.get("url", "")))
     click.echo()
 
-    for key in ("homepage", "license", "keywords"):
+    for key in ("version", "homepage", "license", "keywords"):
         if key not in item or not item[key]:
             continue
         if isinstance(item[key], list):
@@ -240,6 +242,38 @@ def lib_list(lm, json_output):
 
     for item in sorted(items, key=lambda i: i['name']):
         print_lib_item(item)
+
+
+@cli.command("builtin", short_help="List built-in libraries")
+@click.option("--storage", multiple=True)
+@click.option("--json-output", is_flag=True)
+@click.pass_obj
+def lib_builtin(lm, storage, json_output):
+    items = []
+    storage_names = storage or []
+    del storage
+    pm = PlatformManager()
+    for manifest in pm.get_installed():
+        p = PlatformFactory.newPlatform(
+            pm.get_manifest_path(manifest['__pkg_dir']))
+        for storage in p.get_lib_storages():
+            if storage_names and storage['name'] not in storage_names:
+                continue
+            lm = LibraryManager(storage['path'])
+            items.append(dict(name=storage['name'], items=lm.get_installed()))
+
+    if json_output:
+        return click.echo(json.dumps(items))
+
+    for storage in items:
+        if not storage['items']:
+            continue
+        click.secho(storage['name'], fg="green")
+        click.echo("*" * len(storage['name']))
+        click.echo()
+
+        for item in sorted(storage['items'], key=lambda i: i['name']):
+            print_lib_item(item)
 
 
 @cli.command("show", short_help="Show detailed info about a library")

@@ -16,8 +16,9 @@
 
 import json
 import os
+import re
 from hashlib import md5
-from os.path import dirname, join
+from os.path import join
 
 import arrow
 import click
@@ -35,70 +36,99 @@ class LibraryManager(BasePkgManager):
         BasePkgManager.__init__(self, package_dir)
 
     @property
-    def manifest_name(self):
-        return ".library.json"
+    def manifest_names(self):
+        return [
+            ".library.json", "library.properties", "library.json",
+            "module.json"
+        ]
 
     def check_pkg_structure(self, pkg_dir):
         try:
             return BasePkgManager.check_pkg_structure(self, pkg_dir)
         except exception.MissingPackageManifest:
             # we will generate manifest automatically
+            # if library doesn't contain any
             pass
 
         manifest = {
             "name": "Library_" + md5(pkg_dir).hexdigest()[:5],
             "version": "0.0.0"
         }
-        manifest_path = self._find_any_manifest(pkg_dir)
-        if manifest_path:
-            _manifest = self._parse_manifest(manifest_path)
-            pkg_dir = dirname(manifest_path)
-            for key in ("name", "version"):
-                if key not in _manifest:
-                    _manifest[key] = manifest[key]
-            manifest = _manifest
-        else:
-            for root, dirs, files in os.walk(pkg_dir):
-                if len(dirs) == 1 and not files:
-                    manifest['name'] = dirs[0]
-                    continue
-                if dirs or files:
-                    pkg_dir = root
-                    break
+        for root, dirs, files in os.walk(pkg_dir):
+            if len(dirs) == 1 and not files:
+                manifest['name'] = dirs[0]
+                continue
+            if dirs or files:
+                pkg_dir = root
+                break
 
-        with open(join(pkg_dir, self.manifest_name), "w") as fp:
+        with open(join(pkg_dir, self.manifest_names[0]), "w") as fp:
             json.dump(manifest, fp)
 
         return pkg_dir
 
-    @staticmethod
-    def _find_any_manifest(pkg_dir):
-        manifests = ("library.json", "library.properties", "module.json")
-        for root, _, files in os.walk(pkg_dir):
-            for manifest in manifests:
-                if manifest in files:
-                    return join(root, manifest)
-        return None
+    def load_manifest(self, path):
+        manifest = BasePkgManager.load_manifest(self, path)
+        if not manifest:
+            return manifest
 
-    @staticmethod
-    def _parse_manifest(path):
-        manifest = {}
-        if path.endswith(".json"):
-            return util.load_json(path)
-        elif path.endswith("library.properties"):
-            with open(path) as fp:
-                for line in fp.readlines():
-                    if "=" not in line:
-                        continue
-                    key, value = line.split("=", 1)
-                    manifest[key.strip()] = value.strip()
+        # if Arudino library.properties
+        if "sentence" in manifest:
             manifest['frameworks'] = ["arduino"]
-            if "author" in manifest:
-                manifest['authors'] = [{"name": manifest['author']}]
-                del manifest['author']
-            if "sentence" in manifest:
-                manifest['description'] = manifest['sentence']
-                del manifest['sentence']
+
+        if "author" in manifest:
+            manifest['authors'] = [{"name": manifest['author']}]
+            del manifest['author']
+
+        if "sentence" in manifest:
+            manifest['description'] = manifest['sentence']
+            del manifest['sentence']
+
+        if "keywords" not in manifest:
+            keywords = []
+            for keyword in re.split(r"[\s/]+",
+                                    manifest.get("category", "Uncategorized")):
+                keyword = keyword.strip()
+                if not keyword:
+                    continue
+                keywords.append(keyword.lower())
+            manifest['keywords'] = keywords
+            if "category" in manifest:
+                del manifest['category']
+
+        # don't replace VCS URL
+        if "url" in manifest and "description" in manifest:
+            manifest['homepage'] = manifest['url']
+            del manifest['url']
+
+        if "architectures" in manifest:
+            platforms = []
+            platforms_map = {
+                "avr": "atmelavr",
+                "sam": "atmelsam",
+                "samd": "atmelsam",
+                "esp8266": "espressif8266",
+                "arc32": "intel_arc32"
+            }
+            for arch in manifest['architectures'].split(","):
+                arch = arch.strip()
+                if arch == "*":
+                    platforms = "*"
+                    break
+                if arch in platforms_map:
+                    platforms.append(platforms_map[arch])
+            manifest['platforms'] = platforms
+            del manifest['architectures']
+
+        # convert listed items via comma to array
+        for key in ("keywords", "frameworks", "platforms"):
+            if key not in manifest or \
+                    not isinstance(manifest[key], basestring):
+                continue
+            manifest[key] = [
+                i.strip() for i in manifest[key].split(",") if i.strip()
+            ]
+
         return manifest
 
     @staticmethod
@@ -301,7 +331,7 @@ class LibraryManager(BasePkgManager):
                 click.secho(
                     "Conflict: More than one library has been found "
                     "by request %s:" % json.dumps(filters),
-                    fg="red",
+                    fg="yellow",
                     err=True)
                 for item in result['items']:
                     commands.lib.print_lib_item(item)
