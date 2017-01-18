@@ -44,6 +44,15 @@ class PlatformManager(BasePkgManager):
     def manifest_names(self):
         return ["platform.json"]
 
+    def get_manifest_path(self, pkg_dir):
+        if not isdir(pkg_dir):
+            return None
+        for name in self.manifest_names:
+            manifest_path = join(pkg_dir, name)
+            if isfile(manifest_path):
+                return manifest_path
+        return None
+
     def install(self,
                 name,
                 requirements=None,

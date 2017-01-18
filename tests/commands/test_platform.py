@@ -60,6 +60,15 @@ def test_install_uknown_from_registry(clirunner, validate_cliresult):
     assert isinstance(result.exception, exception.UnknownPackage)
 
 
+def test_install_from_vcs(clirunner, validate_cliresult):
+    result = clirunner.invoke(cli_platform.platform_install, [
+        "https://github.com/platformio/"
+        "platform-espressif8266.git#feature/stage"
+    ])
+    validate_cliresult(result)
+    assert "espressif8266_stage" in result.output
+
+
 def test_install_uknown_version(clirunner, validate_cliresult):
     result = clirunner.invoke(cli_platform.platform_install,
                               ["atmelavr@99.99.99"])
