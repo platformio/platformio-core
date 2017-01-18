@@ -39,6 +39,7 @@ PlatformIO 3.0
 * Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
 
   + Added support for Atmel ATSAMW25-XPRO board
+  + Added support for ARM mbed events library
   + Updated ARM mbed OS to 5.3.0/rev131
 
 * Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
@@ -49,6 +50,7 @@ PlatformIO 3.0
 
 * Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
 
+  + Added support for ARM mbed events library
   + Updated ARM mbed OS to 5.3.0/rev131
 
 * Development platform `Linux ARM <https://github.com/platformio/platform-linux_arm>`__
@@ -58,26 +60,32 @@ PlatformIO 3.0
 
 * Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
 
+  + Added support for ARM mbed events library
   + Updated ARM mbed OS to 5.3.0/rev131
 
 * Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
 
   + Added support for LPCXpresso4337 and y5 LPC11U35 mbug boards
+  + Added support for ARM mbed events library
   + Updated ARM mbed OS to 5.3.0/rev131
 
 * Development platform `Silicon Labs EFM32 <https://github.com/platformio/platform-siliconlabsefm32>`__
 
+  + Added support for ARM mbed events library
   + Updated ARM mbed OS to 5.3.0/rev131
 
 * Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
 
   + Added support for new boards: Espotel LoRa Module, NAMote72, MTS Dragonfly,
     ST Nucleo F303ZE, u-blox EVK-ODIN-W2, MultiTech xDot
+  + Added support for ARM mbed events library
   + Updated ARM mbed OS to 5.3.0/rev131
 
 * Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
 
+  + Added support for ARM mbed events library
   + Updated ARM mbed OS to 5.3.0/rev131
+  + Updated Arduino Core to v1.35
 
 
 3.2.1 (2016-12-07)
