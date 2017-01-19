@@ -181,8 +181,9 @@ class InoToCPPConverter(object):
 
 
 def ConvertInoToCpp(env):
-    ino_nodes = (env.Glob(join("$PROJECTSRC_DIR", "*.ino")) +
-                 env.Glob(join("$PROJECTSRC_DIR", "*.pde")))
+    src_dir = util.glob_escape(env.subst("$PROJECTSRC_DIR"))
+    ino_nodes = (
+        env.Glob(join(src_dir, "*.ino")) + env.Glob(join(src_dir, "*.pde")))
     if not ino_nodes:
         return
     c = InoToCPPConverter(env)
@@ -216,7 +217,7 @@ def DumpIDEData(env):
         for name in p.get_installed_packages():
             if p.get_package_type(name) != "toolchain":
                 continue
-            toolchain_dir = p.get_package_dir(name)
+            toolchain_dir = util.glob_escape(p.get_package_dir(name))
             toolchain_incglobs = [
                 join(toolchain_dir, "*", "include*"),
                 join(toolchain_dir, "lib", "gcc", "*", "*", "include*")

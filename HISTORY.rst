@@ -28,6 +28,7 @@ PlatformIO 3.0
   (`issue #850 <https://github.com/platformio/platformio-core/issues/850>`_)
 * Use C++11 by default for CLion IDE based projects
   (`pull #873 <https://github.com/platformio/platformio-core/pull/873>`_)
+* Escape project path when Glob matching is used
 
 -------
 

@@ -568,3 +568,28 @@ def rmtree_(path):
         os.remove(name)
 
     return rmtree(path, onerror=_onerror)
+
+
+#
+# Glob.Escape from Python 3.4
+# https://github.com/python/cpython/blob/master/Lib/glob.py#L161
+#
+
+try:
+    from glob import escape as glob_escape  # pylint: disable=unused-import
+except ImportError:
+    magic_check = re.compile('([*?[])')
+    magic_check_bytes = re.compile(b'([*?[])')
+
+    def glob_escape(pathname):
+        """Escape all special characters.
+        """
+        # Escaping is done by wrapping any of "*?[" between square brackets.
+        # Metacharacters do not work in the drive part and shouldn't be
+        # escaped.
+        drive, pathname = os.path.splitdrive(pathname)
+        if isinstance(pathname, bytes):
+            pathname = magic_check_bytes.sub(br'[\1]', pathname)
+        else:
+            pathname = magic_check.sub(r'[\1]', pathname)
+        return drive + pathname
