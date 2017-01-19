@@ -87,6 +87,10 @@ PlatformIO 3.0
   + Updated ARM mbed OS to 5.3.0/rev131
   + Updated Arduino Core to v1.35
 
+* Development platform `TI TIVA <https://github.com/platformio/platform-titiva>`__
+
+  + Updated Energia Core to 1.0.2
+
 
 3.2.1 (2016-12-07)
 ~~~~~~~~~~~~~~~~~~
