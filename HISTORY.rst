@@ -36,6 +36,7 @@ PlatformIO 3.0
 
   + Set fuse bits with new target named ``fuses``
     (`issue #865 <https://github.com/platformio/platformio-core/issues/865>`_)
+  + Updated Arduino Core to 1.6.17
 
 * Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
 
@@ -47,7 +48,7 @@ PlatformIO 3.0
 
   + Added support for Simba & Pumbaa Frameworks
   + Added new board Node32s
-  + Updated ESP32 Core for Arduino
+  + Updated Arduino Core
 
 * Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
 
