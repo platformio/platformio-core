@@ -37,6 +37,7 @@ from platformio.pioplus import pioplus_call
         resolve_path=True))
 @click.option("--without-building", is_flag=True)
 @click.option("--without-uploading", is_flag=True)
+@click.option("--no-reset", is_flag=True)
 @click.option("--verbose", "-v", is_flag=True)
 def cli(*args, **kwargs):  # pylint: disable=unused-argument
     pioplus_call(sys.argv[1:])

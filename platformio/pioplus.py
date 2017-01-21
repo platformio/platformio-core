@@ -27,7 +27,7 @@ PACKAGE_DEPS = {
     },
     "tool": {
         "name": "tool-pioplus",
-        "requirements": ">=0.6.6,<2"
+        "requirements": ">=0.6.9,<2"
     }
 }
 
