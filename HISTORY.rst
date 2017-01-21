@@ -42,9 +42,11 @@ PlatformIO 3.0
 
 * Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
 
-  + Added support for Atmel ATSAMW25-XPRO board
+  + Added support for Adafruit Circuit Playground Express, Arduino MKRZero,
+    Atmel ATSAMW25-XPRO boards
   + Added support for ARM mbed events library
   + Updated ARM mbed OS to 5.3.0/rev131
+  + Updated Arduino SAM & SAMD Core to 1.6.11
 
 * Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
 
