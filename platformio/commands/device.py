@@ -61,12 +61,12 @@ def device_list(json_output):
 @click.option(
     "--rts",
     default=None,
-    type=click.Choice(["0", "1"]),
+    type=click.IntRange(0, 1),
     help="Set initial RTS line state")
 @click.option(
     "--dtr",
     default=None,
-    type=click.Choice(["0", "1"]),
+    type=click.IntRange(0, 1),
     help="Set initial DTR line state")
 @click.option("--echo", is_flag=True, help="Enable local echo, default=Off")
 @click.option(
