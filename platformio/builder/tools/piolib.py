@@ -571,7 +571,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
             inc_dirs.append(join(self.path, "utility"))
 
         for path in self.env.get("CPPPATH", []):
-            if path not in self.envorigin['CPPPATH']:
+            if path not in self.envorigin.get("CPPPATH", []):
                 inc_dirs.append(self.env.subst(path))
         return inc_dirs
 
