@@ -28,18 +28,19 @@ class VCSClientFactory(object):
     def newClient(src_dir, remote_url):
         result = urlparse(remote_url)
         type_ = result.scheme
+        tag = None
         if not type_ and remote_url.startswith("git@"):
             type_ = "git"
         elif "+" in result.scheme:
             type_, _ = result.scheme.split("+", 1)
             remote_url = remote_url[len(type_) + 1:]
-        if result.fragment:
-            remote_url = remote_url.rsplit("#", 1)[0]
+        if "#" in remote_url:
+            remote_url, tag = remote_url.rsplit("#", 1)
         if not type_:
             raise PlatformioException("VCS: Unknown repository type %s" %
                                       remote_url)
         obj = getattr(modules[__name__], "%sClient" % type_.title())(
-            src_dir, remote_url, result.fragment)
+            src_dir, remote_url, tag)
         assert isinstance(obj, VCSClientBase)
         return obj
 

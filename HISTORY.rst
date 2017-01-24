@@ -32,6 +32,9 @@ PlatformIO 3.0
 * Use C++11 by default for CLion IDE based projects
   (`pull #873 <https://github.com/platformio/platformio-core/pull/873>`_)
 * Escape project path when Glob matching is used
+* Fixed package installing with VCS branch for Python 2.7.3
+  (`issue #885 <https://github.com/platformio/platformio-core/issues/885>`_)
+
 
 -------
 
