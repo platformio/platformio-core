@@ -34,8 +34,8 @@ def _print_platforms(platforms):
         click.echo("=" * (3 + len(platform['name'] + platform['title'])))
         click.echo(platform['description'])
         click.echo()
-        click.echo("Home: %s" % "http://platformio.org/platforms/" + platform[
-            'name'])
+        click.echo("Home: %s" % "http://platformio.org/platforms/" +
+                   platform['name'])
         if platform['packages']:
             click.echo("Packages: %s" % ", ".join(platform['packages']))
         if "version" in platform:

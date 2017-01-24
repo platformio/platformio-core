@@ -591,8 +591,8 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             if verbose:
                 sys.stderr.write("Ignored library %s\n" % lb.path)
             return
-        if compat_mode > 1 and not lb.is_platforms_compatible(env[
-                'PIOPLATFORM']):
+        if compat_mode > 1 and not lb.is_platforms_compatible(
+                env['PIOPLATFORM']):
             if verbose:
                 sys.stderr.write("Platform incompatible library %s\n" %
                                  lb.path)

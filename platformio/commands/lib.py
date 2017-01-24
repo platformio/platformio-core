@@ -390,17 +390,17 @@ def lib_stats(json_output):
         click.echo("-" * terminal_width)
 
     def _print_lib_item(item):
-        click.echo((printitemdate_tpl
-                    if "date" in item else printitem_tpl).format(
-                        name=click.style(
-                            item['name'], fg="cyan"),
-                        date=str(
-                            arrow.get(item['date']).humanize()
-                            if "date" in item else ""),
-                        url=click.style(
-                            "http://platformio.org/lib/show/%s/%s" % (item[
-                                'id'], quote(item['name'])),
-                            fg="blue")))
+        click.echo((
+            printitemdate_tpl if "date" in item else printitem_tpl
+        ).format(
+            name=click.style(
+                item['name'], fg="cyan"),
+            date=str(
+                arrow.get(item['date']).humanize() if "date" in item else ""),
+            url=click.style(
+                "http://platformio.org/lib/show/%s/%s" % (item['id'],
+                                                          quote(item['name'])),
+                fg="blue")))
 
     def _print_tag_item(name):
         click.echo(
