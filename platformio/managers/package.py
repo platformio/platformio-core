@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import codecs
+import hashlib
 import json
 import os
 import shutil
@@ -233,39 +234,55 @@ class PkgInstallerMixin(object):
         return pkg_dir
 
     def _install_from_tmp_dir(self, tmp_dir, requirements=None):
-        tmpmanifest = self.load_manifest(tmp_dir)
-        assert set(["name", "version"]) <= set(tmpmanifest.keys())
-        name = tmpmanifest['name']
+        tmp_manifest_path = self.get_manifest_path(tmp_dir)
+        tmp_manifest = self.load_manifest(tmp_manifest_path)
+        assert set(["name", "version"]) <= set(tmp_manifest.keys())
+
+        name = tmp_manifest['name']
         pkg_dir = join(self.package_dir, name)
-        if "id" in tmpmanifest:
-            name += "_ID%d" % tmpmanifest['id']
+        if "id" in tmp_manifest:
+            name += "_ID%d" % tmp_manifest['id']
             pkg_dir = join(self.package_dir, name)
 
         # package should satisfy requirements
         if requirements:
             mismatch_error = (
                 "Package version %s doesn't satisfy requirements %s" % (
-                    tmpmanifest['version'], requirements))
+                    tmp_manifest['version'], requirements))
             try:
                 reqspec = semantic_version.Spec(requirements)
-                tmpmanver = semantic_version.Version(
-                    tmpmanifest['version'], partial=True)
-                assert tmpmanver in reqspec, mismatch_error
+                tmp_version = semantic_version.Version(
+                    tmp_manifest['version'], partial=True)
+                assert tmp_version in reqspec, mismatch_error
+            except ValueError:
+                assert tmp_manifest['version'] == requirements, mismatch_error
 
-                if self.manifest_exists(pkg_dir):
-                    curmanifest = self.load_manifest(pkg_dir)
-                    curmanver = semantic_version.Version(
-                        curmanifest['version'], partial=True)
+        if self.manifest_exists(pkg_dir):
+            cur_manifest_path = self.get_manifest_path(pkg_dir)
+            cur_manifest = self.load_manifest(cur_manifest_path)
+
+            if tmp_manifest_path.endswith(self.VCS_MANIFEST_NAME):
+                if cur_manifest.get("url") != tmp_manifest['url']:
+                    pkg_dir = join(self.package_dir, "%s@vcs-%s" % (
+                        name, hashlib.md5(tmp_manifest['url']).hexdigest()))
+            else:
+                try:
+                    tmp_version = semantic_version.Version(
+                        tmp_manifest['version'], partial=True)
+                    cur_version = semantic_version.Version(
+                        cur_manifest['version'], partial=True)
+
                     # if current package version < new package, backup it
-                    if tmpmanver > curmanver:
+                    if tmp_version > cur_version:
                         os.rename(pkg_dir,
                                   join(self.package_dir, "%s@%s" %
-                                       (name, curmanifest['version'])))
-                    elif tmpmanver < curmanver:
+                                       (name, cur_manifest['version'])))
+                    elif tmp_version < cur_version:
                         pkg_dir = join(self.package_dir, "%s@%s" %
-                                       (name, tmpmanifest['version']))
-            except ValueError:
-                assert tmpmanifest['version'] == requirements, mismatch_error
+                                       (name, tmp_manifest['version']))
+                except ValueError:
+                    pkg_dir = join(self.package_dir,
+                                   "%s@%s" % (name, tmp_manifest['version']))
 
         # remove previous/not-satisfied package
         if isdir(pkg_dir):
@@ -419,7 +436,12 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             elif not pkg_id and manifest['name'] != name:
                 continue
             elif not reqspec and requirements:
-                if requirements == manifest['version']:
+                conds = [
+                    requirements == manifest['version'],
+                    "://" in requirements and
+                    requirements in manifest.get("url", "")
+                ]
+                if any(conds):
                     best = manifest
                     break
                 continue
@@ -435,11 +457,13 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                     best = manifest
             except ValueError:
                 pass
+
         if best:
             # check that URL is the same in installed package (VCS)
             if url and best.get("url") != url:
                 return None
             return best
+
         return None
 
     def get_package_dir(self, name, requirements=None, url=None):

@@ -24,6 +24,8 @@ PlatformIO 3.0
   command (allows to avoid automatic board's auto-reset when gathering test results)
 * Added support for templated methods in ``*.ino to *.cpp`` converter
   (`pull #858 <https://github.com/platformio/platformio-core/pull/858>`_)
+* Package version as "Repository URL" in manifest of development version
+  (``"version": "https://github.com/user/repo.git"``)
 * Produce less noisy output when ``-s/--silent`` options are used for
   `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`__
   and `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
