@@ -456,8 +456,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if self.get_vcs_manifest_path(package_dir):
             return False
         manifest = self.load_manifest(package_dir)
-        return manifest['version'] != self.get_latest_repo_version(
-            name, requirements)
+        latest = self.get_latest_repo_version(name, requirements)
+        return latest and manifest['version'] != latest
 
     def install(self,
                 name,
