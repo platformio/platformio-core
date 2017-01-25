@@ -24,7 +24,7 @@ import click
 import requests
 import semantic_version
 
-from platformio import app, exception, telemetry, util
+from platformio import __version__, app, exception, telemetry, util
 from platformio.downloader import FileDownloader
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
@@ -75,6 +75,8 @@ class PackageRepoIterator(object):
 
 class PkgRepoMixin(object):
 
+    PIO_VERSION = semantic_version.Version(util.pepver_to_semver(__version__))
+
     @staticmethod
     def max_satisfying_repo_version(versions, requirements=None):
         item = None
@@ -87,9 +89,13 @@ class PkgRepoMixin(object):
                 pass
 
         for v in versions:
-            if ("system" in v and v['system'] not in ("all", "*") and
-                    systype not in v['system']):
+            if "system" in v and v['system'] not in ("all", "*") and \
+                    systype not in v['system']:
                 continue
+            if "platformio" in v.get("engines", {}):
+                if PkgRepoMixin.PIO_VERSION not in semantic_version.Spec(
+                        v['engines']['platformio']):
+                    continue
             specver = semantic_version.Version(v['version'])
             if reqspec and specver not in reqspec:
                 continue
@@ -462,9 +468,11 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         package = self.get_package(name, requirements, url)
         return package.get("__pkg_dir") if package else None
 
-    def is_outdated(self, name, requirements=None):
+    def is_outdated(self, name, requirements=None, silent=False):
         package_dir = self.get_package_dir(name, requirements)
         if not package_dir:
+            if silent:
+                return
             click.secho(
                 "%s @ %s is not installed" % (name, requirements or "*"),
                 fg="yellow")

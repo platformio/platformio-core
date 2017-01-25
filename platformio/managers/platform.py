@@ -20,8 +20,9 @@ from multiprocessing import cpu_count
 from os.path import basename, dirname, isdir, isfile, join
 
 import click
+import semantic_version
 
-from platformio import app, exception, util
+from platformio import __version__, app, exception, util
 from platformio.managers.package import BasePkgManager, PackageManager
 
 
@@ -91,8 +92,8 @@ class PlatformManager(BasePkgManager):
         self.cleanup_packages(p.packages.keys())
         return True
 
-    def is_outdated(self, name, requirements=None):
-        if BasePkgManager.is_outdated(self, name, requirements):
+    def is_outdated(self, name, requirements=None, silent=False):
+        if BasePkgManager.is_outdated(self, name, requirements, silent):
             return True
         p = PlatformFactory.newPlatform(name, requirements)
         return p.are_outdated_packages()
@@ -249,11 +250,11 @@ class PlatformPackagesMixin(object):
                                only_check)
 
     def are_outdated_packages(self):
-        for name, opts in self.get_installed_packages().items():
-            version = self.packages[name].get("version", "")
+        for name, opts in self.packages.items():
+            version = opts.get("version", "")
             if not self.validate_version_requirements(version):
                 continue
-            if self.pm.is_outdated(name, version):
+            if self.pm.is_outdated(name, version, silent=True):
                 return True
         return False
 
@@ -364,6 +365,7 @@ class PlatformRunMixin(object):
 
 class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 
+    PIO_VERSION = semantic_version.Version(util.pepver_to_semver(__version__))
     _BOARDS_CACHE = {}
 
     def __init__(self, manifest_path):
@@ -377,6 +379,12 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 
         self.silent = False
         self.verbose = False
+
+        if self.engines and "platformio" in self.engines:
+            if self.PIO_VERSION not in semantic_version.Spec(
+                    self.engines['platformio']):
+                raise exception.IncompatiblePlatform(self.name,
+                                                     str(self.PIO_VERSION))
 
     @property
     def name(self):
@@ -409,6 +417,10 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
     @property
     def frameworks(self):
         return self._manifest.get("frameworks")
+
+    @property
+    def engines(self):
+        return self._manifest.get("engines")
 
     @property
     def manifest(self):

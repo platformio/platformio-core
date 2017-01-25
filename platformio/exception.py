@@ -40,7 +40,12 @@ class AbortedByUser(PlatformioException):
 
 class UnknownPlatform(PlatformioException):
 
-    MESSAGE = "Unknown platform '{0}'"
+    MESSAGE = "Unknown development platform '{0}'"
+
+
+class IncompatiblePlatform(PlatformioException):
+
+    MESSAGE = "Development platform '{0}' is not compatible with PIO Core v{1}"
 
 
 class PlatformNotInstalledYet(PlatformioException):
