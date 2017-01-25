@@ -207,44 +207,81 @@ class PlatformPackagesMixin(object):
             raise exception.UnknownPackage(", ".join(upkgs - ppkgs))
 
         for name, opts in self.packages.items():
+            version = opts.get("version", "")
             if name in without_packages:
                 continue
             elif (name in with_packages or
                   not (skip_default_package or opts.get("optional", False))):
-                if any([s in opts.get("version", "") for s in ("\\", "/")]):
-                    self.pm.install(
-                        "%s=%s" % (name, opts['version']), silent=silent)
+                if self.validate_version_requirements(version):
+                    self.pm.install(name, version, silent=silent)
                 else:
-                    self.pm.install(name, opts.get("version"), silent=silent)
+                    requirements = None
+                    if "@" in version:
+                        version, requirements = version.rsplit("@", 1)
+                    self.pm.install(
+                        "%s=%s" % (name, version), requirements, silent=silent)
 
         return True
 
     def get_installed_packages(self):
         items = {}
         for name, opts in self.packages.items():
-            package = self.pm.get_package(name, opts['version'])
+            version = opts.get("version", "")
+            if self.validate_version_requirements(version):
+                package = self.pm.get_package(name, version)
+            else:
+                package = self.pm.get_package(*self._parse_pkg_name(name,
+                                                                    version))
             if package:
                 items[name] = package
         return items
 
     def update_packages(self, only_check=False):
         for name in self.get_installed_packages():
-            self.pm.update(name, self.packages[name]['version'], only_check)
+            version = self.packages[name].get("version", "")
+            if self.validate_version_requirements(version):
+                self.pm.update(name, version, only_check)
+            else:
+                requirements = None
+                if "@" in version:
+                    version, requirements = version.rsplit("@", 1)
+                self.pm.update("%s=%s" % (name, version), requirements,
+                               only_check)
 
     def are_outdated_packages(self):
         for name, opts in self.get_installed_packages().items():
-            if (opts['version'] != self.pm.get_latest_repo_version(
-                    name, self.packages[name].get("version"))):
+            version = self.packages[name].get("version", "")
+            if not self.validate_version_requirements(version):
+                continue
+            if self.pm.is_outdated(name, version):
                 return True
         return False
 
     def get_package_dir(self, name):
-        return self.pm.get_package_dir(name,
-                                       self.packages[name].get("version"))
+        version = self.packages[name].get("version", "")
+        if self.validate_version_requirements(version):
+            return self.pm.get_package_dir(name, version)
+        else:
+            return self.pm.get_package_dir(*self._parse_pkg_name(name,
+                                                                 version))
 
     def get_package_version(self, name):
-        package = self.pm.get_package(name, self.packages[name].get("version"))
+        version = self.packages[name].get("version", "")
+        if self.validate_version_requirements(version):
+            package = self.pm.get_package(name, version)
+        else:
+            package = self.pm.get_package(*self._parse_pkg_name(name, version))
         return package['version'] if package else None
+
+    @staticmethod
+    def validate_version_requirements(requirements):
+        return requirements and "://" not in requirements
+
+    def _parse_pkg_name(self, name, version):
+        requirements = None
+        if "@" in version:
+            version, requirements = version.rsplit("@", 1)
+        return self.pm.parse_pkg_name("%s=%s" % (name, version), requirements)
 
 
 class PlatformRunMixin(object):

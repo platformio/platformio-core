@@ -435,15 +435,13 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 continue
             elif not pkg_id and manifest['name'] != name:
                 continue
-            elif not reqspec and requirements:
+            elif not reqspec and (requirements or url):
                 conds = [
-                    requirements == manifest['version'],
-                    "://" in requirements and
-                    requirements in manifest.get("url", "")
+                    requirements == manifest['version'], url and
+                    url in manifest.get("url", "")
                 ]
-                if any(conds):
+                if not best or any(conds):
                     best = manifest
-                    break
                 continue
             try:
                 if reqspec and not reqspec.match(
@@ -458,13 +456,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             except ValueError:
                 pass
 
-        if best:
-            # check that URL is the same in installed package (VCS)
-            if url and best.get("url") != url:
-                return None
-            return best
-
-        return None
+        return best
 
     def get_package_dir(self, name, requirements=None, url=None):
         package = self.get_package(name, requirements, url)
