@@ -58,7 +58,7 @@ PlatformIO 3.0
 * Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
 
   + Added support for Simba & Pumbaa Frameworks
-  + Added new board Node32s
+  + Added new boards: Node32s, Hornbill ESP32 Dev, Hornbill ESP32 Minim
   + Updated Arduino Core
 
 * Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
