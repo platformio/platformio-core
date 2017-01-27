@@ -42,6 +42,7 @@ PlatformIO 3.0
 
 * Development platform `Atmel AVR <https://github.com/platformio/platform-atmelavr>`__
 
+  + Added support for EnviroDIY Mayfly board
   + Set fuse bits with new target named ``fuses``
     (`issue #865 <https://github.com/platformio/platformio-core/issues/865>`_)
   + Updated Arduino Core to 1.6.17
