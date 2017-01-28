@@ -244,14 +244,10 @@ def lib_list(lm, json_output):
         print_lib_item(item)
 
 
-@cli.command("builtin", short_help="List built-in libraries")
-@click.option("--storage", multiple=True)
-@click.option("--json-output", is_flag=True)
-@click.pass_obj
-def lib_builtin(lm, storage, json_output):
+@util.memoized
+def get_builtin_libs(storage_names=None):
     items = []
-    storage_names = storage or []
-    del storage
+    storage_names = storage_names or []
     pm = PlatformManager()
     for manifest in pm.get_installed():
         p = PlatformFactory.newPlatform(
@@ -261,7 +257,14 @@ def lib_builtin(lm, storage, json_output):
                 continue
             lm = LibraryManager(storage['path'])
             items.append(dict(name=storage['name'], items=lm.get_installed()))
+    return items
 
+
+@cli.command("builtin", short_help="List built-in libraries")
+@click.option("--storage", multiple=True)
+@click.option("--json-output", is_flag=True)
+def lib_builtin(storage, json_output):
+    items = get_builtin_libs(storage)
     if json_output:
         return click.echo(json.dumps(items))
 

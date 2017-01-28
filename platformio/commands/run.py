@@ -22,6 +22,7 @@ import click
 
 from platformio import __version__, exception, telemetry, util
 from platformio.commands.lib import lib_install as cmd_lib_install
+from platformio.commands.lib import get_builtin_libs
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
 from platformio.managers.lib import LibraryManager
@@ -279,7 +280,15 @@ def _autoinstall_libdeps(ctx, libraries, verbose=False):
         try:
             ctx.invoke(cmd_lib_install, libraries=[lib], silent=not verbose)
         except exception.LibNotFound as e:
-            click.secho("Warning! %s" % e, fg="yellow")
+            if not _is_builtin_lib(lib):
+                click.secho("Warning! %s" % e, fg="yellow")
+
+
+def _is_builtin_lib(lib_name):
+    for storage in get_builtin_libs():
+        if any([l.get("name") == lib_name for l in storage['items']]):
+            return True
+    return False
 
 
 def _clean_pioenvs_dir(pioenvs_dir):
