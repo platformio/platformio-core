@@ -17,8 +17,9 @@
 import json
 import os
 import re
+from glob import glob
 from hashlib import md5
-from os.path import join
+from os.path import isdir, join
 
 import arrow
 import click
@@ -42,30 +43,23 @@ class LibraryManager(BasePkgManager):
             "module.json"
         ]
 
-    def check_pkg_structure(self, pkg_dir):
-        try:
-            return BasePkgManager.check_pkg_structure(self, pkg_dir)
-        except exception.MissingPackageManifest:
-            # we will generate manifest automatically
-            # if library doesn't contain any
-            pass
+    def get_manifest_path(self, pkg_dir):
+        path = BasePkgManager.get_manifest_path(self, pkg_dir)
+        if path:
+            return path
 
-        manifest = {
-            "name": "Library_" + md5(pkg_dir).hexdigest()[:5],
-            "version": "0.0.0"
-        }
-        for root, dirs, files in os.walk(pkg_dir):
-            if len(dirs) == 1 and not files:
-                manifest['name'] = dirs[0]
-                continue
-            if dirs or files:
-                pkg_dir = root
-                break
+        # if library without manifest, returns first source file
+        src_dir = join(util.glob_escape(pkg_dir))
+        if isdir(join(pkg_dir, "src")):
+            src_dir = join(src_dir, "src")
+        chs_files = glob(join(src_dir, "*.[chS]"))
+        if chs_files:
+            return chs_files[0]
+        cpp_files = glob(join(src_dir, "*.cpp"))
+        if cpp_files:
+            return cpp_files[0]
 
-        with open(join(pkg_dir, self.manifest_names[0]), "w") as fp:
-            json.dump(manifest, fp)
-
-        return pkg_dir
+        return None
 
     def load_manifest(self, path):
         manifest = BasePkgManager.load_manifest(self, path)
@@ -75,14 +69,12 @@ class LibraryManager(BasePkgManager):
         # if Arudino library.properties
         if "sentence" in manifest:
             manifest['frameworks'] = ["arduino"]
+            manifest['description'] = manifest['sentence']
+            del manifest['sentence']
 
         if "author" in manifest:
             manifest['authors'] = [{"name": manifest['author']}]
             del manifest['author']
-
-        if "sentence" in manifest:
-            manifest['description'] = manifest['sentence']
-            del manifest['sentence']
 
         if "keywords" not in manifest:
             keywords = []
@@ -130,6 +122,31 @@ class LibraryManager(BasePkgManager):
             ]
 
         return manifest
+
+    def check_pkg_structure(self, pkg_dir):
+        try:
+            return BasePkgManager.check_pkg_structure(self, pkg_dir)
+        except exception.MissingPackageManifest:
+            # we will generate manifest automatically
+            # if library doesn't contain any
+            pass
+
+        manifest = {
+            "name": "Library_" + md5(pkg_dir).hexdigest()[:5],
+            "version": "0.0.0"
+        }
+        for root, dirs, files in os.walk(pkg_dir):
+            if len(dirs) == 1 and not files:
+                manifest['name'] = dirs[0]
+                continue
+            if dirs or files:
+                pkg_dir = root
+                break
+
+        with open(join(pkg_dir, self.manifest_names[0]), "w") as fp:
+            json.dump(manifest, fp)
+
+        return pkg_dir
 
     @staticmethod
     def normalize_dependencies(dependencies):

@@ -155,18 +155,23 @@ class PkgInstallerMixin(object):
         if isfile(path) and path.endswith(self.VCS_MANIFEST_NAME):
             pkg_dir = dirname(dirname(path))
 
+        manifest = {}
         if path.endswith(".json"):
             manifest = util.load_json(path)
-        else:
-            manifest = {}
+        elif path.endswith(".properties"):
             with codecs.open(path, encoding="utf-8") as fp:
                 for line in fp.readlines():
                     if "=" not in line:
                         continue
                     key, value = line.split("=", 1)
                     manifest[key.strip()] = value.strip()
-        manifest['__pkg_dir'] = pkg_dir
+        else:
+            if "name" not in manifest:
+                manifest['name'] = basename(pkg_dir)
+            if "version" not in manifest:
+                manifest['version'] = "0.0.0"
 
+        manifest['__pkg_dir'] = pkg_dir
         return manifest
 
     def check_pkg_structure(self, pkg_dir):

@@ -125,7 +125,8 @@ def print_lib_item(item):
     click.echo("=" * len(item['name']))
     if "id" in item:
         click.secho("#ID: %d" % item['id'], bold=True)
-    click.echo(item.get("description", item.get("url", "")))
+    if "description" in item or "url" in item:
+        click.echo(item.get("description", item.get("url", "")))
     click.echo()
 
     for key in ("version", "homepage", "license", "keywords"):
@@ -223,8 +224,8 @@ def lib_search(query, json_output, page, noninteractive, **filters):
             break
         result = get_api_result(
             "/v2/lib/search",
-            dict(
-                query=" ".join(query), page=int(result['page']) + 1),
+            {"query": " ".join(query),
+             "page": int(result['page']) + 1},
             cache_valid="3d")
 
 
@@ -256,7 +257,11 @@ def get_builtin_libs(storage_names=None):
             if storage_names and storage['name'] not in storage_names:
                 continue
             lm = LibraryManager(storage['path'])
-            items.append(dict(name=storage['name'], items=lm.get_installed()))
+            items.append({
+                "name": storage['name'],
+                "path": storage['path'],
+                "items": lm.get_installed()
+            })
     return items
 
 

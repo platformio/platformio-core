@@ -560,7 +560,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
                 if not isdir(libcore_dir):
                     continue
                 storages.append({
-                    "name": "%s-%s" % (opts['package'], item),
+                    "name": "%s-core-%s" % (opts['package'], item),
                     "path": libcore_dir
                 })
 
