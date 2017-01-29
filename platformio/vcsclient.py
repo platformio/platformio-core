@@ -25,7 +25,7 @@ from platformio.exception import PlatformioException
 class VCSClientFactory(object):
 
     @staticmethod
-    def newClient(src_dir, remote_url):
+    def newClient(src_dir, remote_url, silent=False):
         result = urlparse(remote_url)
         type_ = result.scheme
         tag = None
@@ -40,7 +40,7 @@ class VCSClientFactory(object):
             raise PlatformioException("VCS: Unknown repository type %s" %
                                       remote_url)
         obj = getattr(modules[__name__], "%sClient" % type_.title())(
-            src_dir, remote_url, tag)
+            src_dir, remote_url, tag, silent)
         assert isinstance(obj, VCSClientBase)
         return obj
 
@@ -49,17 +49,21 @@ class VCSClientBase(object):
 
     command = None
 
-    def __init__(self, src_dir, remote_url=None, tag=None):
+    def __init__(self, src_dir, remote_url=None, tag=None, silent=False):
         self.src_dir = src_dir
         self.remote_url = remote_url
         self.tag = tag
+        self.silent = silent
         self.check_client()
 
     def check_client(self):
         try:
             assert self.command
-            assert self.run_cmd(["--version"])
-        except (AssertionError, OSError):
+            if self.silent:
+                self.get_cmd_output(["--version"])
+            else:
+                assert self.run_cmd(["--version"])
+        except (AssertionError, OSError, PlatformioException):
             raise PlatformioException(
                 "VCS: `%s` client is not installed in your system" %
                 self.command)
@@ -81,6 +85,9 @@ class VCSClientBase(object):
 
     def get_current_revision(self):
         raise NotImplementedError
+
+    def get_latest_revision(self):
+        return None if self.can_be_updated else self.get_current_revision()
 
     def run_cmd(self, args, **kwargs):
         args = [self.command] + args
@@ -141,6 +148,16 @@ class GitClient(VCSClientBase):
     def get_current_revision(self):
         return self.get_cmd_output(["rev-parse", "--short", "HEAD"])
 
+    def get_latest_revision(self):
+        if not self.can_be_updated:
+            return self.get_latest_revision()
+        result = self.get_cmd_output(["ls-remote"])
+        for line in result.split("\n"):
+            line = line.strip()
+            if "HEAD" in line:
+                return line.split("HEAD", 1)[0].strip()[:7]
+        return None
+
 
 class HgClient(VCSClientBase):
 
@@ -159,6 +176,11 @@ class HgClient(VCSClientBase):
 
     def get_current_revision(self):
         return self.get_cmd_output(["identify", "--id"])
+
+    def get_latest_revision(self):
+        if not self.can_be_updated:
+            return self.get_latest_revision()
+        return self.get_cmd_output(["identify", "--id", self.remote_url])
 
 
 class SvnClient(VCSClientBase):

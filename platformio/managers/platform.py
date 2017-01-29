@@ -92,9 +92,10 @@ class PlatformManager(BasePkgManager):
         self.cleanup_packages(p.packages.keys())
         return True
 
-    def is_outdated(self, name, requirements=None, silent=False):
-        if BasePkgManager.is_outdated(self, name, requirements, silent):
-            return True
+    def outdated(self, name, requirements=None, url=None):
+        latest = BasePkgManager.outdated(self, name, requirements, url)
+        if latest:
+            return latest
         p = PlatformFactory.newPlatform(name, requirements)
         return p.are_outdated_packages()
 
@@ -213,7 +214,7 @@ class PlatformPackagesMixin(object):
                 continue
             elif (name in with_packages or
                   not (skip_default_package or opts.get("optional", False))):
-                if self.validate_version_requirements(version):
+                if self.is_valid_requirements(version):
                     self.pm.install(name, version, silent=silent)
                 else:
                     requirements = None
@@ -228,7 +229,7 @@ class PlatformPackagesMixin(object):
         items = {}
         for name, opts in self.packages.items():
             version = opts.get("version", "")
-            if self.validate_version_requirements(version):
+            if self.is_valid_requirements(version):
                 package = self.pm.get_package(name, version)
             else:
                 package = self.pm.get_package(*self._parse_pkg_name(name,
@@ -240,7 +241,7 @@ class PlatformPackagesMixin(object):
     def update_packages(self, only_check=False):
         for name in self.get_installed_packages():
             version = self.packages[name].get("version", "")
-            if self.validate_version_requirements(version):
+            if self.is_valid_requirements(version):
                 self.pm.update(name, version, only_check)
             else:
                 requirements = None
@@ -250,17 +251,23 @@ class PlatformPackagesMixin(object):
                                only_check)
 
     def are_outdated_packages(self):
-        for name, opts in self.packages.items():
-            version = opts.get("version", "")
-            if not self.validate_version_requirements(version):
-                continue
-            if self.pm.is_outdated(name, version, silent=True):
+        latest = None
+        for name in self.get_installed_packages():
+            version = self.packages[name].get("version", "")
+            if self.is_valid_requirements(version):
+                latest = self.pm.outdated(name, version)
+            else:
+                requirements = None
+                if "@" in version:
+                    version, requirements = version.rsplit("@", 1)
+                latest = self.pm.outdated(name, requirements, version)
+            if latest or latest is None:
                 return True
         return False
 
     def get_package_dir(self, name):
         version = self.packages[name].get("version", "")
-        if self.validate_version_requirements(version):
+        if self.is_valid_requirements(version):
             return self.pm.get_package_dir(name, version)
         else:
             return self.pm.get_package_dir(*self._parse_pkg_name(name,
@@ -268,14 +275,14 @@ class PlatformPackagesMixin(object):
 
     def get_package_version(self, name):
         version = self.packages[name].get("version", "")
-        if self.validate_version_requirements(version):
+        if self.is_valid_requirements(version):
             package = self.pm.get_package(name, version)
         else:
             package = self.pm.get_package(*self._parse_pkg_name(name, version))
         return package['version'] if package else None
 
     @staticmethod
-    def validate_version_requirements(requirements):
+    def is_valid_requirements(requirements):
         return requirements and "://" not in requirements
 
     def _parse_pkg_name(self, name, version):

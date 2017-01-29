@@ -119,6 +119,47 @@ class PkgInstallerMixin(object):
 
     VCS_MANIFEST_NAME = ".piopkgmanager.json"
 
+    FILE_CACHE_VALID = "1m"  # 1 month
+    FILE_CACHE_MAX_SIZE = 1024 * 1024
+
+    _INSTALLED_CACHE = {}
+
+    def reset_cache(self):
+        if self.package_dir in PkgInstallerMixin._INSTALLED_CACHE:
+            del PkgInstallerMixin._INSTALLED_CACHE[self.package_dir]
+
+    def download(self, url, dest_dir, sha1=None):
+        cache_key_fname = app.ContentCache.key_from_args(url, "fname")
+        cache_key_data = app.ContentCache.key_from_args(url, "data")
+        if self.FILE_CACHE_VALID:
+            with app.ContentCache() as cc:
+                fname = cc.get(cache_key_fname)
+                cache_path = cc.get_cache_path(cache_key_data)
+                if fname and isfile(cache_path):
+                    dst_path = join(dest_dir, fname)
+                    shutil.copy(cache_path, dst_path)
+                    return dst_path
+
+        fd = FileDownloader(url, dest_dir)
+        fd.start()
+        if sha1:
+            fd.verify(sha1)
+        dst_path = fd.get_filepath()
+        if not self.FILE_CACHE_VALID or getsize(
+                dst_path) > PkgInstallerMixin.FILE_CACHE_MAX_SIZE:
+            return dst_path
+
+        with app.ContentCache() as cc:
+            cc.set(cache_key_fname, basename(dst_path), self.FILE_CACHE_VALID)
+            cc.set(cache_key_data, "DUMMY", self.FILE_CACHE_VALID)
+            shutil.copy(dst_path, cc.get_cache_path(cache_key_data))
+        return dst_path
+
+    @staticmethod
+    def unpack(source_path, dest_dir):
+        fu = FileUnpacker(source_path, dest_dir)
+        return fu.start()
+
     def get_vcs_manifest_path(self, pkg_dir):
         for item in os.listdir(pkg_dir):
             if not isdir(join(pkg_dir, item)):
@@ -142,7 +183,7 @@ class PkgInstallerMixin(object):
     def manifest_exists(self, pkg_dir):
         return self.get_manifest_path(pkg_dir) is not None
 
-    def load_manifest(self, path):
+    def load_manifest(self, path):  # pylint: disable=too-many-branches
         assert path
         pkg_dir = path
         if isdir(path):
@@ -154,6 +195,13 @@ class PkgInstallerMixin(object):
 
         if isfile(path) and path.endswith(self.VCS_MANIFEST_NAME):
             pkg_dir = dirname(dirname(path))
+
+        # return from cache
+        if self.package_dir in PkgInstallerMixin._INSTALLED_CACHE:
+            for manifest in PkgInstallerMixin._INSTALLED_CACHE[self.
+                                                               package_dir]:
+                if manifest['__pkg_dir'] == pkg_dir:
+                    return manifest
 
         manifest = {}
         if path.endswith(".json"):
@@ -173,6 +221,22 @@ class PkgInstallerMixin(object):
 
         manifest['__pkg_dir'] = pkg_dir
         return manifest
+
+    def get_installed(self):
+        if self.package_dir in PkgInstallerMixin._INSTALLED_CACHE:
+            return PkgInstallerMixin._INSTALLED_CACHE[self.package_dir]
+        items = []
+        for p in sorted(os.listdir(self.package_dir)):
+            pkg_dir = join(self.package_dir, p)
+            if not isdir(pkg_dir):
+                continue
+            manifest = self.load_manifest(pkg_dir)
+            if not manifest:
+                continue
+            assert "name" in manifest
+            items.append(manifest)
+        PkgInstallerMixin._INSTALLED_CACHE[self.package_dir] = items
+        return items
 
     def check_pkg_structure(self, pkg_dir):
         if self.manifest_exists(pkg_dir):
@@ -305,11 +369,6 @@ class PkgInstallerMixin(object):
 
 class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
-    _INSTALLED_CACHE = {}
-
-    FILE_CACHE_VALID = "1m"  # 1 month
-    FILE_CACHE_MAX_SIZE = 1024 * 1024
-
     def __init__(self, package_dir, repositories=None):
         self.repositories = repositories
         self.package_dir = package_dir
@@ -320,42 +379,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
     @property
     def manifest_names(self):
         raise NotImplementedError()
-
-    def download(self, url, dest_dir, sha1=None):
-        cache_key_fname = app.ContentCache.key_from_args(url, "fname")
-        cache_key_data = app.ContentCache.key_from_args(url, "data")
-        if self.FILE_CACHE_VALID:
-            with app.ContentCache() as cc:
-                fname = cc.get(cache_key_fname)
-                cache_path = cc.get_cache_path(cache_key_data)
-                if fname and isfile(cache_path):
-                    dst_path = join(dest_dir, fname)
-                    shutil.copy(cache_path, dst_path)
-                    return dst_path
-
-        fd = FileDownloader(url, dest_dir)
-        fd.start()
-        if sha1:
-            fd.verify(sha1)
-        dst_path = fd.get_filepath()
-        if not self.FILE_CACHE_VALID or getsize(
-                dst_path) > BasePkgManager.FILE_CACHE_MAX_SIZE:
-            return dst_path
-
-        with app.ContentCache() as cc:
-            cc.set(cache_key_fname, basename(dst_path), self.FILE_CACHE_VALID)
-            cc.set(cache_key_data, "DUMMY", self.FILE_CACHE_VALID)
-            shutil.copy(dst_path, cc.get_cache_path(cache_key_data))
-        return dst_path
-
-    @staticmethod
-    def unpack(source_path, dest_dir):
-        fu = FileUnpacker(source_path, dest_dir)
-        return fu.start()
-
-    def reset_cache(self):
-        if self.package_dir in BasePkgManager._INSTALLED_CACHE:
-            del BasePkgManager._INSTALLED_CACHE[self.package_dir]
 
     def print_message(self, message, nl=True):
         click.echo("%s: %s" % (self.__class__.__name__, message), nl=nl)
@@ -415,22 +438,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             url = None
         return (name or text, requirements, url)
 
-    def get_installed(self):
-        if self.package_dir in BasePkgManager._INSTALLED_CACHE:
-            return BasePkgManager._INSTALLED_CACHE[self.package_dir]
-        items = []
-        for p in sorted(os.listdir(self.package_dir)):
-            pkg_dir = join(self.package_dir, p)
-            if not isdir(pkg_dir):
-                continue
-            manifest = self.load_manifest(pkg_dir)
-            if not manifest:
-                continue
-            assert "name" in manifest
-            items.append(manifest)
-        BasePkgManager._INSTALLED_CACHE[self.package_dir] = items
-        return items
-
     def get_package(self, name, requirements=None, url=None):
         pkg_id = int(name[3:]) if name.startswith("id=") else 0
         best = None
@@ -473,20 +480,38 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         package = self.get_package(name, requirements, url)
         return package.get("__pkg_dir") if package else None
 
-    def is_outdated(self, name, requirements=None, silent=False):
-        package_dir = self.get_package_dir(name, requirements)
+    def outdated(self, name, requirements=None, url=None):
+        """
+        Has 3 different results:
+        `None` - unknown package, VCS is fixed to commit
+        `False` - package is up-to-date
+        `String` - a found latest version
+        """
+        latest = None
+        package_dir = self.get_package_dir(name, requirements, url)
         if not package_dir:
-            if silent:
-                return
-            click.secho(
-                "%s @ %s is not installed" % (name, requirements or "*"),
-                fg="yellow")
-            return
-        if self.get_vcs_manifest_path(package_dir):
-            return False
+            return None
         manifest = self.load_manifest(package_dir)
-        latest = self.get_latest_repo_version(name, requirements)
-        return latest and manifest['version'] != latest
+        if self.get_vcs_manifest_path(package_dir):
+            vcs = VCSClientFactory.newClient(
+                package_dir, manifest['url'], silent=True)
+            if not vcs.can_be_updated:
+                return None
+            latest = vcs.get_latest_revision()
+        else:
+            try:
+                latest = self.get_latest_repo_version(name, requirements)
+            except (exception.PlatformioException, ValueError):
+                return None
+        if not latest:
+            return None
+        up_to_date = False
+        try:
+            up_to_date = (semantic_version.Version.coerce(manifest['version'])
+                          >= semantic_version.Version.coerce(latest))
+        except ValueError:
+            up_to_date = latest == manifest['version']
+        return False if up_to_date else latest
 
     def install(self,
                 name,
@@ -571,7 +596,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             requirements=None,
             only_check=False):
         name, requirements, url = self.parse_pkg_name(name, requirements)
-        package_dir = self.get_package_dir(name, None, url)
+        package_dir = self.get_package_dir(name, requirements, url)
         if not package_dir:
             click.secho(
                 "%s @ %s is not installed" % (name, requirements or "*"),
@@ -587,16 +612,29 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
         manifest = self.load_manifest(manifest_path)
         click.echo(
-            "%s %s @ %s: \t" % ("Checking"
-                                if only_check else "Updating", click.style(
-                                    manifest['name'], fg="cyan"),
-                                manifest['version']),
+            "{} {:<40} @ {:<15}".format(
+                "Checking" if only_check else "Updating",
+                click.style(
+                    manifest['name'], fg="cyan"),
+                manifest['version']),
             nl=False)
+        if not util.internet_on():
+            click.echo("[%s]" % (click.style("Off-line", fg="yellow")))
+            return
+        latest = self.outdated(name, requirements, url)
+        if latest is True:
+            click.echo("[%s]" % (click.style("Out-of-date", fg="red")))
+        elif latest:
+            click.echo("[%s]" % (click.style(latest, fg="red")))
+        elif latest is False:
+            click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
+        else:
+            click.echo("[%s]" % (click.style("Unknown", fg="yellow")))
+
+        if only_check or latest is False or (not is_vcs_pkg and not latest):
+            return
+
         if is_vcs_pkg:
-            if only_check:
-                click.echo("[%s]" % (click.style("Skip", fg="yellow")))
-                return
-            click.echo("[%s]" % (click.style("VCS", fg="yellow")))
             vcs = VCSClientFactory.newClient(package_dir, manifest['url'])
             if not vcs.can_be_updated:
                 click.secho(
@@ -608,36 +646,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             with open(manifest_path, "w") as fp:
                 manifest['version'] = vcs.get_current_revision()
                 json.dump(manifest, fp)
+            self.reset_cache()
         else:
-            latest_version = None
-            try:
-                latest_version = self.get_latest_repo_version(name,
-                                                              requirements)
-            except exception.PlatformioException:
-                pass
-            if not latest_version:
-                click.echo("[%s]" % (click.style(
-                    "Off-line" if not util.internet_on() else "Unknown",
-                    fg="yellow")))
-                return
-
-            up_to_date = False
-            try:
-                up_to_date = (
-                    semantic_version.Version.coerce(manifest['version']) >=
-                    semantic_version.Version.coerce(latest_version))
-            except ValueError:
-                up_to_date = latest_version == manifest['version']
-
-            if up_to_date:
-                click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
-                return
-
-            click.echo("[%s]" % (click.style("Out-of-date", fg="red")))
-            if only_check:
-                return
             self.uninstall(name, manifest['version'], trigger_event=False)
-            self.install(name, latest_version, trigger_event=False)
+            self.install(name, latest, trigger_event=False)
 
         telemetry.on_event(
             category=self.__class__.__name__,

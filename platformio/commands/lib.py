@@ -112,12 +112,35 @@ def lib_uninstall(lm, libraries):
     "--only-check",
     is_flag=True,
     help="Do not update, only check for new version")
+@click.option("--json-output", is_flag=True)
 @click.pass_obj
-def lib_update(lm, libraries, only_check):
+def lib_update(lm, libraries, only_check, json_output):
     if not libraries:
-        libraries = [str(m.get("id", m['name'])) for m in lm.get_installed()]
-    for library in libraries:
-        lm.update(library, only_check=only_check)
+        libraries = []
+        for manifest in lm.get_installed():
+            pkg_dir = manifest['__pkg_dir']
+            if "@" in pkg_dir and "@vcs-" not in pkg_dir:
+                continue
+            elif "@vcs-" in pkg_dir:
+                libraries.append("%s=%s" % (manifest['name'], manifest['url']))
+            else:
+                libraries.append(str(manifest.get("id", manifest['name'])))
+
+    if only_check and json_output:
+        result = []
+        for library in libraries:
+            name, requirements, url = lm.parse_pkg_name(library)
+            latest = lm.outdated(name, requirements, url)
+            if latest is False:
+                continue
+            manifest = lm.load_manifest(
+                lm.get_package_dir(name, requirements, url))
+            manifest['versionLatest'] = latest or "Unknown"
+            result.append(manifest)
+        return click.echo(json.dumps(result))
+    else:
+        for library in libraries:
+            lm.update(library, only_check=only_check)
 
 
 def print_lib_item(item):

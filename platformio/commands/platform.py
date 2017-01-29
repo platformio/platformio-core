@@ -114,15 +114,42 @@ def platform_uninstall(platforms):
     "--only-check",
     is_flag=True,
     help="Do not update, only check for new version")
-def platform_update(platforms, only_packages, only_check):
+@click.option("--json-output", is_flag=True)
+def platform_update(platforms, only_packages, only_check, json_output):
     pm = PlatformManager()
     if not platforms:
-        platforms = set([m['name'] for m in pm.get_installed()])
-    for platform in platforms:
-        click.echo("Platform %s" % click.style(platform, fg="cyan"))
-        click.echo("--------")
-        pm.update(platform, only_packages=only_packages, only_check=only_check)
-        click.echo()
+        platforms = []
+        for manifest in pm.get_installed():
+            pkg_dir = manifest['__pkg_dir']
+            if "@" in pkg_dir and "@vcs-" not in pkg_dir:
+                continue
+            elif "@vcs-" in pkg_dir:
+                platforms.append("%s=%s" % (manifest['name'], manifest['url']))
+            else:
+                platforms.append(manifest['name'])
+
+    if only_check and json_output:
+        result = []
+        for platform in platforms:
+            name, requirements, url = pm.parse_pkg_name(platform)
+            latest = pm.outdated(name, requirements, url)
+            if latest is False:
+                continue
+            manifest = pm.load_manifest(
+                pm.get_package_dir(name, requirements, url))
+            if latest is True:
+                manifest['versionLatest'] = "Out-of-date"
+            else:
+                manifest['versionLatest'] = latest or "Unknown"
+            result.append(manifest)
+        return click.echo(json.dumps(result))
+    else:
+        for platform in platforms:
+            click.echo("Platform %s" % click.style(platform, fg="cyan"))
+            click.echo("--------")
+            pm.update(
+                platform, only_packages=only_packages, only_check=only_check)
+            click.echo()
 
 
 @cli.command("list", short_help="List installed development platforms")

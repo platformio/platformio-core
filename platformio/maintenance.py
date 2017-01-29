@@ -268,7 +268,7 @@ def check_internal_updates(ctx, what):
     outdated_items = []
     for manifest in pm.get_installed():
         if manifest['name'] not in outdated_items and \
-                pm.is_outdated(manifest['name']):
+                pm.outdated(manifest['name']):
             outdated_items.append(manifest['name'])
 
     if not outdated_items:
