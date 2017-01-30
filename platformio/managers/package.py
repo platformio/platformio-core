@@ -635,9 +635,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             click.echo("[%s]" % (click.style("Off-line", fg="yellow")))
             return
         latest = self.outdated(name, requirements, url)
-        if latest is True:
-            click.echo("[%s]" % (click.style("Out-of-date", fg="red")))
-        elif latest:
+        if latest:
             click.echo("[%s]" % (click.style(latest, fg="red")))
         elif latest is False:
             click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
@@ -659,11 +657,11 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             with open(manifest_path, "w") as fp:
                 manifest['version'] = vcs.get_current_revision()
                 json.dump(manifest, fp)
-            self.reset_cache()
         else:
             self.uninstall(name, manifest['version'], trigger_event=False)
             self.install(name, latest, trigger_event=False)
 
+        self.reset_cache()
         telemetry.on_event(
             category=self.__class__.__name__,
             action="Update",

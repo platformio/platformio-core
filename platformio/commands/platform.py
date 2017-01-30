@@ -137,10 +137,7 @@ def platform_update(platforms, only_packages, only_check, json_output):
                 continue
             manifest = pm.load_manifest(
                 pm.get_package_dir(name, requirements, url))
-            if latest is True:
-                manifest['versionLatest'] = "Out-of-date"
-            else:
-                manifest['versionLatest'] = latest or "Unknown"
+            manifest['versionLatest'] = latest or "Unknown"
             result.append(manifest)
         return click.echo(json.dumps(result))
     else:

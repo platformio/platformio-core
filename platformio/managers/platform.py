@@ -60,9 +60,16 @@ class PlatformManager(BasePkgManager):
                 with_packages=None,
                 without_packages=None,
                 skip_default_package=False,
+                trigger_event=True,
                 **_):  # pylint: disable=too-many-arguments
         platform_dir = BasePkgManager.install(self, name, requirements)
         p = PlatformFactory.newPlatform(self.get_manifest_path(platform_dir))
+
+        # @Hook: when 'update' operation (trigger_event is False),
+        # don't cleanup packages or install them
+        if not trigger_event:
+            return True
+
         p.install_packages(with_packages, without_packages,
                            skip_default_package)
         self.cleanup_packages(p.packages.keys())
@@ -72,10 +79,13 @@ class PlatformManager(BasePkgManager):
         name, requirements, _ = self.parse_pkg_name(name, requirements)
         p = PlatformFactory.newPlatform(name, requirements)
         BasePkgManager.uninstall(self, name, requirements)
-        # trigger event is disabled when upgrading operation
-        # don't cleanup packages, "install" will do that
-        if trigger_event:
-            self.cleanup_packages(p.packages.keys())
+
+        # @Hook: when 'update' operation (trigger_event is False),
+        # don't cleanup packages or install them
+        if not trigger_event:
+            return True
+
+        self.cleanup_packages(p.packages.keys())
         return True
 
     def update(  # pylint: disable=arguments-differ
@@ -85,19 +95,24 @@ class PlatformManager(BasePkgManager):
             only_packages=False,
             only_check=False):
         name, requirements, _ = self.parse_pkg_name(name, requirements)
+
+        p = PlatformFactory.newPlatform(name, requirements)
+        pkgs_before = pkgs_after = p.get_installed_packages().keys()
+
         if not only_packages:
             BasePkgManager.update(self, name, requirements, only_check)
-        p = PlatformFactory.newPlatform(name, requirements)
+            p = PlatformFactory.newPlatform(name, requirements)
+            pkgs_after = p.get_installed_packages().keys()
+
         p.update_packages(only_check)
         self.cleanup_packages(p.packages.keys())
-        return True
 
-    def outdated(self, name, requirements=None, url=None):
-        latest = BasePkgManager.outdated(self, name, requirements, url)
-        if latest:
-            return latest
-        p = PlatformFactory.newPlatform(name, requirements)
-        return p.are_outdated_packages()
+        pkgs_missed = set(pkgs_before) - set(pkgs_after)
+        if pkgs_missed:
+            p.install_packages(
+                with_packages=pkgs_missed, skip_default_package=True)
+
+        return True
 
     def cleanup_packages(self, names):
         self.reset_cache()
