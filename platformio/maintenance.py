@@ -98,8 +98,8 @@ class Upgrader(object):
             util.pepver_to_semver(to_version))
 
         self._upgraders = [
-            (semantic_version.Version("3.0.0-a1"), self._upgrade_to_3_0_0),
-            (semantic_version.Version("3.0.0-b11"), self._upgrade_to_3_0_0)
+            (semantic_version.Version("3.0.0-a.1"), self._upgrade_to_3_0_0),
+            (semantic_version.Version("3.0.0-b.11"), self._upgrade_to_3_0_0)
         ]
 
     def run(self, ctx):

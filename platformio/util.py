@@ -558,7 +558,7 @@ def where_is_program(program, envpath=None):
 
 
 def pepver_to_semver(pepver):
-    return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2", pepver, 1)
+    return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2.", pepver, 1)
 
 
 def rmtree_(path):
