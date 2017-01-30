@@ -121,7 +121,9 @@ class GitClient(VCSClientBase):
         for line in output.split("\n"):
             line = line.strip()
             if line.startswith("*"):
-                return line[1:].strip()
+                branch = line[1:].strip()
+                if branch != "(no branch)":
+                    return branch
         return None
 
     def get_tags(self):
@@ -158,8 +160,10 @@ class GitClient(VCSClientBase):
 
     def get_latest_revision(self):
         if not self.can_be_updated:
-            return self.get_latest_revision()
+            return self.get_current_revision()
         branch = self.get_current_branch()
+        if not branch:
+            return self.get_current_revision()
         result = self.get_cmd_output(["ls-remote"])
         for line in result.split("\n"):
             ref_pos = line.strip().find("refs/heads/" + branch)

@@ -39,7 +39,7 @@ def test_global_install_registry(clirunner, validate_cliresult,
     result = clirunner.invoke(cmd_lib, [
         "-g", "install", "58", "OneWire",
         "http://dl.platformio.org/libraries/archives/3/5174.tar.gz",
-        "ArduinoJson@5.6.7", "ArduinoJson@>5.6"
+        "ArduinoJson@5.6.7", "ArduinoJson@~5.7.0"
     ])
     validate_cliresult(result)
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
@@ -106,15 +106,15 @@ def test_global_lib_update_check(clirunner, validate_cliresult,
         cmd_lib, ["-g", "update", "--only-check", "--json-output"])
     validate_cliresult(result)
     output = json.loads(result.output)
-    assert set(["PJON", "RadioHead"]) == set([l['name'] for l in output])
+    assert set(["ArduinoJson", "RadioHead"]) == set(
+        [l['name'] for l in output])
 
 
 def test_global_lib_update(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
     assert "[Up-to-date]" in result.output
-    assert re.search(r"Updating PJON\s+@ 1fb26fd\s+\[[a-z\d]{7}\]",
-                     result.output)
+    assert "Uninstalling ArduinoJson @ 5.7.3" in result.output
 
 
 def test_global_lib_uninstall(clirunner, validate_cliresult,
