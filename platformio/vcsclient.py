@@ -116,6 +116,14 @@ class GitClient(VCSClientBase):
         output = output.replace("*", "")  # fix active branch
         return [b.strip() for b in output.split("\n")]
 
+    def get_current_branch(self):
+        output = self.get_cmd_output(["branch"])
+        for line in output.split("\n"):
+            line = line.strip()
+            if line.startswith("*"):
+                return line[1:].strip()
+        return None
+
     def get_tags(self):
         output = self.get_cmd_output(["tag", "-l"])
         return [t.strip() for t in output.split("\n")]
@@ -151,11 +159,12 @@ class GitClient(VCSClientBase):
     def get_latest_revision(self):
         if not self.can_be_updated:
             return self.get_latest_revision()
+        branch = self.get_current_branch()
         result = self.get_cmd_output(["ls-remote"])
         for line in result.split("\n"):
-            line = line.strip()
-            if "HEAD" in line:
-                return line.split("HEAD", 1)[0].strip()[:7]
+            ref_pos = line.strip().find("refs/heads/" + branch)
+            if ref_pos > 0:
+                return line[:ref_pos].strip()[:7]
         return None
 
 

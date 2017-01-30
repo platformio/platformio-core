@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+import re
 from time import time
 
 from platformio import app, maintenance
@@ -135,7 +136,8 @@ def test_check_and_update_libraries(clirunner, validate_cliresult,
     assert ("There are the new updates for libraries (ArduinoJson)" in
             result.output)
     assert "Please wait while updating libraries" in result.output
-    assert "[Out-of-date]" in result.output
+    assert re.search(r"Updating ArduinoJson\s+@ 5.6.7\s+\[[\d\.]+\]",
+                     result.output)
 
     # check updated version
     result = clirunner.invoke(cli_pio, ["lib", "-g", "list", "--json-output"])
@@ -188,7 +190,8 @@ def test_check_and_update_platforms(clirunner, validate_cliresult,
     validate_cliresult(result)
     assert "There are the new updates for platforms (native)" in result.output
     assert "Please wait while updating platforms" in result.output
-    assert "[Out-of-date]" in result.output
+    assert re.search(r"Updating native\s+@ 0.0.0\s+\[[\d\.]+\]",
+                     result.output)
 
     # check updated version
     result = clirunner.invoke(cli_pio, ["platform", "list", "--json-output"])

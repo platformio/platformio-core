@@ -100,10 +100,21 @@ def test_global_lib_list(clirunner, validate_cliresult, isolated_pio_home):
     assert set(items1) == set(items2)
 
 
+def test_global_lib_update_check(clirunner, validate_cliresult,
+                                 isolated_pio_home):
+    result = clirunner.invoke(
+        cmd_lib, ["-g", "update", "--only-check", "--json-output"])
+    validate_cliresult(result)
+    output = json.loads(result.output)
+    assert set(["PJON", "RadioHead"]) == set([l['name'] for l in output])
+
+
 def test_global_lib_update(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
-    assert all([s in result.output for s in ("[Up-to-date]", "[VCS]")])
+    assert "[Up-to-date]" in result.output
+    assert re.search(r"Updating PJON\s+@ 1fb26fd\s+\[[a-z\d]{7}\]",
+                     result.output)
 
 
 def test_global_lib_uninstall(clirunner, validate_cliresult,
@@ -124,9 +135,8 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
 def test_lib_show(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cmd_lib, ["show", "64"])
     validate_cliresult(result)
-    assert all([
-        s in result.output for s in ("ArduinoJson", "Arduino", "Atmel AVR")
-    ])
+    assert all(
+        [s in result.output for s in ("ArduinoJson", "Arduino", "Atmel AVR")])
     result = clirunner.invoke(cmd_lib, ["show", "OneWire"])
     validate_cliresult(result)
     assert "OneWire" in result.output

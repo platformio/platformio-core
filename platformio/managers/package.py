@@ -103,7 +103,11 @@ class PkgRepoMixin(object):
                 item = v
         return item
 
-    def get_latest_repo_version(self, name, requirements):
+    def get_latest_repo_version(  # pylint: disable=unused-argument
+            self,
+            name,
+            requirements,
+            silent=False):
         version = None
         for versions in PackageRepoIterator(name, self.repositories):
             pkgdata = self.max_satisfying_repo_version(versions, requirements)
@@ -193,14 +197,16 @@ class PkgInstallerMixin(object):
         else:
             pkg_dir = dirname(pkg_dir)
 
+        is_vcs_pkg = False
         if isfile(path) and path.endswith(self.VCS_MANIFEST_NAME):
+            is_vcs_pkg = True
             pkg_dir = dirname(dirname(path))
 
         # return from cache
         if self.package_dir in PkgInstallerMixin._INSTALLED_CACHE:
             for manifest in PkgInstallerMixin._INSTALLED_CACHE[self.
                                                                package_dir]:
-                if manifest['__pkg_dir'] == pkg_dir:
+                if not is_vcs_pkg and manifest['__pkg_dir'] == pkg_dir:
                     return manifest
 
         manifest = {}
@@ -491,8 +497,14 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         package_dir = self.get_package_dir(name, requirements, url)
         if not package_dir:
             return None
-        manifest = self.load_manifest(package_dir)
-        if self.get_vcs_manifest_path(package_dir):
+        is_vcs_pkg = False
+        manifest_path = self.get_vcs_manifest_path(package_dir)
+        if manifest_path:
+            is_vcs_pkg = True
+            manifest = self.load_manifest(manifest_path)
+        else:
+            manifest = self.load_manifest(package_dir)
+        if is_vcs_pkg:
             vcs = VCSClientFactory.newClient(
                 package_dir, manifest['url'], silent=True)
             if not vcs.can_be_updated:
@@ -500,7 +512,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             latest = vcs.get_latest_revision()
         else:
             try:
-                latest = self.get_latest_repo_version(name, requirements)
+                latest = self.get_latest_repo_version(
+                    name, requirements, silent=True)
             except (exception.PlatformioException, ValueError):
                 return None
         if not latest:
