@@ -227,8 +227,13 @@ class MPDataPusher(object):
                 timeout=1)
             r.raise_for_status()
             return True
+        except requests.exceptions.HTTPError as e:
+            # skip Bad Request
+            if 400 >= e.response.status_code < 500:
+                return True
         except:  # pylint: disable=W0702
-            self._http_offline = True
+            pass
+        self._http_offline = True
         return False
 
 
@@ -304,7 +309,8 @@ def on_exception(e):
         "Error" in e.__class__.__name__
     ])
     mp = MeasurementProtocol()
-    mp['exd'] = "%s: %s" % (type(e).__name__, format_exc() if is_crash else e)
+    mp['exd'] = ("%s: %s" % (type(e).__name__, format_exc()
+                             if is_crash else e))[:150]
     mp['exf'] = 1 if is_crash else 0
     mp.send("exception")
 
