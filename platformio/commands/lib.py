@@ -135,7 +135,7 @@ def lib_update(lm, libraries, only_check, json_output):
                 continue
             manifest = lm.load_manifest(
                 lm.get_package_dir(name, requirements, url))
-            manifest['versionLatest'] = latest or "Unknown"
+            manifest['versionLatest'] = latest
             result.append(manifest)
         return click.echo(json.dumps(result))
     else:
