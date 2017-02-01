@@ -42,11 +42,6 @@ def in_silence(ctx=None):
             (ctx.args[0] == "upgrade" or "--json-output" in ctx_args))
 
 
-def clean_cache():
-    with app.ContentCache() as cc:
-        cc.clean()
-
-
 def on_platformio_start(ctx, force, caller):
     if not caller:
         if getenv("PLATFORMIO_CALLER"):
@@ -65,7 +60,7 @@ def on_platformio_start(ctx, force, caller):
     telemetry.on_command()
 
     if ctx.args and ctx.args[0] == "upgrade":
-        clean_cache()
+        app.clean_cache()
     if not in_silence(ctx):
         after_upgrade(ctx)
 
@@ -160,7 +155,7 @@ def after_upgrade(ctx):
         app.set_state_item("last_version", __version__)
     else:
         click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
-        clean_cache()
+        app.clean_cache()
         u = Upgrader(last_version, __version__)
         if u.run(ctx):
             app.set_state_item("last_version", __version__)

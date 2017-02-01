@@ -243,6 +243,11 @@ class ContentCache(object):
         util.rmtree_(self.cache_dir)
 
 
+def clean_cache():
+    with ContentCache() as cc:
+        cc.clean()
+
+
 def sanitize_setting(name, value):
     if name not in DEFAULT_SETTINGS:
         raise InvalidSettingName(name)

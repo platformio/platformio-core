@@ -16,7 +16,7 @@ import json
 
 import click
 
-from platformio import exception, util
+from platformio import app, exception, util
 from platformio.managers.platform import PlatformFactory, PlatformManager
 
 
@@ -48,7 +48,7 @@ def _print_platforms(platforms):
 @click.option("--json-output", is_flag=True)
 def platform_search(query, json_output):
     platforms = []
-    for platform in util.get_api_result("/platforms", cache_valid="365d"):
+    for platform in util.get_api_result("/platforms", cache_valid="30d"):
         if query == "all":
             query = ""
 
@@ -116,6 +116,9 @@ def platform_uninstall(platforms):
     help="Do not update, only check for new version")
 @click.option("--json-output", is_flag=True)
 def platform_update(platforms, only_packages, only_check, json_output):
+    # cleanup cached board and platform lists
+    app.clean_cache()
+
     pm = PlatformManager()
     if not platforms:
         platforms = []
