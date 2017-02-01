@@ -137,8 +137,6 @@ class ContentCache(object):
             return
 
         self.cache_dir = cache_dir or join(util.get_home_dir(), ".cache")
-        if not self.cache_dir:
-            os.makedirs(self.cache_dir)
         self._db_path = join(self.cache_dir, "db.data")
 
     def __enter__(self):
@@ -152,7 +150,7 @@ class ContentCache(object):
                     continue
                 line = line.strip()
                 expire, path = line.split("=")
-                if time() < int(expire):
+                if time() < int(expire) and isfile(path):
                     newlines.append(line)
                     continue
                 found = True
@@ -172,6 +170,8 @@ class ContentCache(object):
         pass
 
     def _lock_dbindex(self):
+        if not self.cache_dir:
+            os.makedirs(self.cache_dir)
         self._lockfile = LockFile(self.cache_dir)
         if self._lockfile.is_locked() and \
                 (time() - getmtime(self._lockfile.lock_file)) > 10:
@@ -200,8 +200,6 @@ class ContentCache(object):
         return h.hexdigest()
 
     def get(self, key):
-        if not self.cache_dir:
-            return None
         cache_path = self.get_cache_path(key)
         if not isfile(cache_path):
             return None
@@ -212,7 +210,7 @@ class ContentCache(object):
             return data
 
     def set(self, key, data, valid):
-        if not self.cache_dir or not data:
+        if not data:
             return
         if not isdir(self.cache_dir):
             os.makedirs(self.cache_dir)
@@ -238,8 +236,11 @@ class ContentCache(object):
         return True
 
     def clean(self):
-        if self.cache_dir and isdir(self.cache_dir):
-            util.rmtree_(self.cache_dir)
+        if not self.cache_dir or not isdir(self.cache_dir):
+            return
+        if not self._lock_dbindex():
+            return
+        util.rmtree_(self.cache_dir)
 
 
 def sanitize_setting(name, value):
