@@ -59,7 +59,7 @@ def on_platformio_start(ctx, force, caller):
     app.set_session_var("caller_id", caller)
     telemetry.on_command()
 
-    if ctx.args and ctx.args[0] == "upgrade":
+    if ctx.args and ctx.args[0] == "update":
         app.clean_cache()
     if not in_silence(ctx):
         after_upgrade(ctx)
