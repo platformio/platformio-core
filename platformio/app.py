@@ -238,8 +238,6 @@ class ContentCache(object):
     def clean(self):
         if not self.cache_dir or not isdir(self.cache_dir):
             return
-        if not self._lock_dbindex():
-            return
         util.rmtree_(self.cache_dir)
 
 
