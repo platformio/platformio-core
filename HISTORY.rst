@@ -34,6 +34,8 @@ PlatformIO 3.0
 * Use C++11 by default for CLion IDE based projects
   (`pull #873 <https://github.com/platformio/platformio-core/pull/873>`_)
 * Escape project path when Glob matching is used
+* Do not overwrite project configuration variables when system environment
+  variables are set
 * Fixed package installing with VCS branch for Python 2.7.3
   (`issue #885 <https://github.com/platformio/platformio-core/issues/885>`_)
 
@@ -68,7 +70,7 @@ PlatformIO 3.0
 
 * Development platform `Linux ARM <https://github.com/platformio/platform-linux_arm>`__
 
-  + Added support for Samsung ARTIK boards (520, 710, 1020) and ARTIK SDK
+  + Added support for Samsung ARTIK boards (520, 530, 710, 1020) and ARTIK SDK
     (`issue #353 <https://github.com/platformio/platformio-core/issues/353>`_)
 
 * Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
