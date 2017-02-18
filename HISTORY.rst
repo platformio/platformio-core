@@ -1128,7 +1128,7 @@ PlatformIO 2.0
   development platform
   (`issue #226 <https://github.com/platformio/platformio-core/issues/226>`_)
 * Integrate PlatformIO with `Circle CI <https://circleci.com>`_ and
-  `Shippable CI <https://shippable.com>`_
+  `Shippable CI <https://www.shippable.com/>`_
 * Described in documentation how to `create/register own board <http://docs.platformio.org/page/platforms/creating_board.html>`_ for PlatformIO
 * Disabled "nano.specs" for ARM-based platforms
   (`issue #219 <https://github.com/platformio/platformio-core/issues/219>`_)
