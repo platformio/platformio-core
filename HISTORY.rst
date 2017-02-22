@@ -64,6 +64,8 @@ PlatformIO 3.0
   + Added support for Simba & Pumbaa Frameworks
   + Added new boards: Node32s, Hornbill ESP32 Dev, Hornbill ESP32 Minim
   + Updated Arduino Core
+  + Updated ESP-IDF framework to the latest v2.0 Release Candidate 1
+  + New ESP IDF examples: BLE, Coap Server, Peripherals UART, Storage SDCard
 
 * Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
 
