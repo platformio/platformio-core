@@ -28,15 +28,14 @@ def cli():
 def _print_platforms(platforms):
     for platform in platforms:
         click.echo("{name} ~ {title}".format(
-            name=click.style(
-                platform['name'], fg="cyan"),
+            name=click.style(platform['name'], fg="cyan"),
             title=platform['title']))
         click.echo("=" * (3 + len(platform['name'] + platform['title'])))
         click.echo(platform['description'])
         click.echo()
-        click.echo("Home: %s" % "http://platformio.org/platforms/" +
-                   platform['name'])
-        if platform['packages']:
+        if "homepage" in platform:
+            click.echo("Home: %s" % platform['homepage'])
+        if "packages" in platform:
             click.echo("Packages: %s" % ", ".join(platform['packages']))
         if "version" in platform:
             click.echo("Version: " + platform['version'])
@@ -51,22 +50,39 @@ def platform_search(query, json_output):
     for platform in util.get_api_result("/platforms", cache_valid="30d"):
         if query == "all":
             query = ""
-
         search_data = json.dumps(platform)
         if query and query.lower() not in search_data.lower():
             continue
-
-        platforms.append({
-            "name": platform['name'],
-            "title": platform['title'],
-            "description": platform['description'],
-            "packages": platform['packages']
-        })
+        platform['homepage'] = (
+            "http://platformio.org/platforms/" + platform['name'])
+        del platform['version']
+        platforms.append(platform)
 
     if json_output:
         click.echo(json.dumps(platforms))
     else:
         _print_platforms(platforms)
+
+
+@cli.command("frameworks", short_help="List supported frameworks, SDKs")
+@click.argument("query", required=False)
+@click.option("--json-output", is_flag=True)
+def platform_frameworks(query, json_output):
+    frameworks = []
+    for framework in util.get_api_result("/frameworks", cache_valid="30d"):
+        if query == "all":
+            query = ""
+        search_data = json.dumps(framework)
+        if query and query.lower() not in search_data.lower():
+            continue
+        framework['homepage'] = (
+            "http://platformio.org/frameworks/" + framework['name'])
+        frameworks.append(framework)
+
+    if json_output:
+        click.echo(json.dumps(frameworks))
+    else:
+        _print_platforms(frameworks)
 
 
 @cli.command("install", short_help="Install new development platform")
@@ -166,6 +182,7 @@ def platform_list(json_output):
             "description": p.description,
             "version": p.version,
             "url": p.vendor_url,
+            "homepage": p.homepage,
             # "packages": p.packages.keys(),  # dump all packages
             "packages": p.get_installed_packages().keys(),
             'forDesktop':

@@ -14,11 +14,13 @@ PlatformIO 3.0
   - Recent and popular keywords
   - Featured libraries (today, week, month)
 
-* List built-in libraries based on development platforms with
+* List built-in libraries based on development platforms with a new
   `pio lib builtin <http://docs.platformio.org/page/userguide/lib/cmd_builtin.html>`__ command
 * Show detailed info about a library using `pio lib show <http://docs.platformio.org/page/userguide/lib/cmd_show.html>`__
   command
   (`issue #430 <https://github.com/platformio/platformio-core/issues/430>`_)
+* List supported frameworks, SDKs with a new
+  `pio platform frameworks <http://docs.platformio.org/en/latest/userguide/platforms/cmd_frameworks.htmll>`__ command
 * Added new options ``--no-reset``, ``--monitor-rts`` and ``--monitor-dtr``
   to `pio test <http://docs.platformio.org/en/latest/userguide/cmd_test.html>`__
   command (allows to avoid automatic board's auto-reset when gathering test results)
