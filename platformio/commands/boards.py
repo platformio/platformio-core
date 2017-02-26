@@ -66,8 +66,6 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
                 if query.lower() not in search_data.lower():
                     continue
 
-            flash_size = "%dkB" % (board['rom'] / 1024)
-
             ram_size = board['ram']
             if ram_size >= 1024:
                 if ram_size % 1024:
@@ -83,7 +81,7 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
                         board['id'], fg="cyan"),
                     mcu=board['mcu'],
                     frequency="%dMhz" % (board['fcpu'] / 1000000),
-                    flash=flash_size,
+                    flash="%dkB" % (board['rom'] / 1024),
                     ram=ram_size,
                     name=board['name']))
 
