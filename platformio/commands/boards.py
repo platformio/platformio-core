@@ -59,7 +59,7 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
                 name="Name"))
         click.echo("-" * terminal_width)
 
-        for board in sorted(pboards, key=lambda b: b['id']):
+        for board in pboards:
             if query:
                 search_data = "%s %s" % (board['id'],
                                          json.dumps(board).lower())
@@ -97,7 +97,7 @@ def _get_boards(installed=False):
                     boards.append(board)
         except InternetIsOffline:
             pass
-    return boards
+    return sorted(boards, key=lambda b: b['name'])
 
 
 def _ouput_boards_json(query, installed=False):
