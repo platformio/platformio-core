@@ -266,8 +266,7 @@ def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     lib = env.Clone()
     return lib.StaticLibrary(
         lib.subst(variant_dir),
-        lib.CollectBuildFiles(
-            variant_dir, src_dir, src_filter=src_filter))
+        lib.CollectBuildFiles(variant_dir, src_dir, src_filter=src_filter))
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):

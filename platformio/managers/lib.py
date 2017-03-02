@@ -217,8 +217,7 @@ class LibraryManager(BasePkgManager):
             util.get_api_result(
                 "/lib/info/%d" % self.get_pkg_id_by_name(
                     name, requirements, silent=silent),
-                cache_valid="1d")['versions'],
-            requirements)
+                cache_valid="1d")['versions'], requirements)
         return item['name'] if item else None
 
     def get_pkg_id_by_name(self,

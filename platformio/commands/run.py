@@ -342,9 +342,7 @@ def print_summary(results, start_time):
         format_str = (
             "Environment {0:<" + str(envname_max_len + 9) + "}\t[{1}]")
         click.echo(
-            format_str.format(
-                click.style(
-                    envname, fg="cyan"), status_str),
+            format_str.format(click.style(envname, fg="cyan"), status_str),
             err=status is False)
 
     print_header(

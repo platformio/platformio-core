@@ -191,14 +191,13 @@ def after_upgrade(ctx):
                "on the latest project news > %s" % (click.style(
                    "follow", fg="cyan"), click.style(
                        "https://twitter.com/PlatformIO_Org", fg="cyan")))
-    click.echo("- %s it on GitHub > %s" % (click.style(
-        "star", fg="cyan"), click.style(
-            "https://github.com/platformio/platformio", fg="cyan")))
+    click.echo("- %s it on GitHub > %s" %
+               (click.style("star", fg="cyan"), click.style(
+                   "https://github.com/platformio/platformio", fg="cyan")))
     if not getenv("PLATFORMIO_IDE"):
         click.echo("- %s PlatformIO IDE for IoT development > %s" %
-                   (click.style(
-                       "try", fg="cyan"), click.style(
-                           "http://platformio.org/platformio-ide", fg="cyan")))
+                   (click.style("try", fg="cyan"), click.style(
+                       "http://platformio.org/platformio-ide", fg="cyan")))
     if not util.is_ci():
         click.echo("- %s us with PlatformIO Plus > %s" % (click.style(
             "support", fg="cyan"), click.style(

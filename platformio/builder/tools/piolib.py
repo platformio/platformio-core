@@ -46,9 +46,8 @@ class LibBuilderFactory(object):
             elif used_frameworks:
                 clsname = "%sLibBuilder" % used_frameworks[0].title()
 
-        obj = getattr(sys.modules[__name__], clsname)(env,
-                                                      path,
-                                                      verbose=verbose)
+        obj = getattr(sys.modules[__name__], clsname)(
+            env, path, verbose=verbose)
         assert isinstance(obj, LibBuilderBase)
         return obj
 
@@ -614,9 +613,8 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             if item == "__cores__" or not isdir(join(libs_dir, item)):
                 continue
             try:
-                lb = LibBuilderFactory.new(env,
-                                           join(libs_dir, item),
-                                           verbose=verbose)
+                lb = LibBuilderFactory.new(
+                    env, join(libs_dir, item), verbose=verbose)
             except ValueError:
                 if verbose:
                     sys.stderr.write("Skip library with broken manifest: %s\n"

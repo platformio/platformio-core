@@ -199,8 +199,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
 
     result = get_api_result(
         "/v2/lib/search",
-        dict(
-            query=" ".join(query), page=page),
+        dict(query=" ".join(query), page=page),
         cache_valid="3d")
 
     if json_output:
@@ -411,11 +410,9 @@ def lib_stats(json_output):
 
     def _print_header(with_date=False):
         click.echo((printitemdate_tpl if with_date else printitem_tpl).format(
-            name=click.style(
-                "Name", fg="cyan"),
+            name=click.style("Name", fg="cyan"),
             date="Date",
-            url=click.style(
-                "Url", fg="blue")))
+            url=click.style("Url", fg="blue")))
 
         terminal_width, _ = click.get_terminal_size()
         click.echo("-" * terminal_width)
@@ -424,8 +421,7 @@ def lib_stats(json_output):
         click.echo((
             printitemdate_tpl if "date" in item else printitem_tpl
         ).format(
-            name=click.style(
-                item['name'], fg="cyan"),
+            name=click.style(item['name'], fg="cyan"),
             date=str(
                 arrow.get(item['date']).humanize() if "date" in item else ""),
             url=click.style(
@@ -436,8 +432,7 @@ def lib_stats(json_output):
     def _print_tag_item(name):
         click.echo(
             printitem_tpl.format(
-                name=click.style(
-                    name, fg="cyan"),
+                name=click.style(name, fg="cyan"),
                 url=click.style(
                     "http://platformio.org/lib/search?query=" + quote(
                         "keyword:%s" % name),

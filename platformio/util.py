@@ -458,11 +458,12 @@ def _get_api_result(
                 auth=auth,
                 verify=disable_ssl_check)
         else:
-            r = _api_request_session().get(url,
-                                           params=params,
-                                           headers=headers,
-                                           auth=auth,
-                                           verify=disable_ssl_check)
+            r = _api_request_session().get(
+                url,
+                params=params,
+                headers=headers,
+                auth=auth,
+                verify=disable_ssl_check)
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
