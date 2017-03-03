@@ -52,6 +52,7 @@ PlatformIO 3.0
     (`issue #865 <https://github.com/platformio/platformio-core/issues/865>`_)
   + Updated Arduino Core to 1.6.17
   + Fixed ISO C99 warning for EnviroDIY Mayfly board
+  + Fixed firmware uploading to Arduino Leonardo
 
 * Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
 
@@ -73,6 +74,14 @@ PlatformIO 3.0
 
   + Added support for ARM mbed events library
   + Updated ARM mbed OS to 5.3.0/rev131
+
+* Development platform `Lattice iCE40 <https://github.com/platformio/platform-lattice_ice40>`__
+
+  + Improved path management for Windows
+  + Custom uploader using ``$UPLOAD`` build variable
+    (`issue #865 <https://github.com/platformio/platform-lattice_ice40/issues/6>`_)
+  + Updated toolchain-icestorm to 1.10.0 (added -C option to "time" target)
+  + Updated toolchain-iverilog to 1.1.0  (loaed all vlib/\*.v files in "iverilog" builder)
 
 * Development platform `Linux ARM <https://github.com/platformio/platform-linux_arm>`__
 

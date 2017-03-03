@@ -118,6 +118,12 @@ class PkgRepoMixin(object):
                 version = pkgdata['version']
         return version
 
+    def get_all_repo_versions(self, name):
+        result = []
+        for versions in PackageRepoIterator(name, self.repositories):
+            result.extend([v['version'] for v in versions])
+        return sorted(set(result))
+
 
 class PkgInstallerMixin(object):
 
@@ -204,8 +210,8 @@ class PkgInstallerMixin(object):
 
         # return from cache
         if self.package_dir in PkgInstallerMixin._INSTALLED_CACHE:
-            for manifest in PkgInstallerMixin._INSTALLED_CACHE[self.
-                                                               package_dir]:
+            for manifest in PkgInstallerMixin._INSTALLED_CACHE[
+                    self.package_dir]:
                 if not is_vcs_pkg and manifest['__pkg_dir'] == pkg_dir:
                     return manifest
 
@@ -627,9 +633,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         click.echo(
             "{} {:<40} @ {:<15}".format(
                 "Checking" if only_check else "Updating",
-                click.style(
-                    manifest['name'], fg="cyan"),
-                manifest['version']),
+                click.style(manifest['name'], fg="cyan"), manifest['version']),
             nl=False)
         if not util.internet_on():
             click.echo("[%s]" % (click.style("Off-line", fg="yellow")))

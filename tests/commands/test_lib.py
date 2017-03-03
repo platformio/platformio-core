@@ -106,7 +106,7 @@ def test_global_lib_update_check(clirunner, validate_cliresult,
         cmd_lib, ["-g", "update", "--only-check", "--json-output"])
     validate_cliresult(result)
     output = json.loads(result.output)
-    assert set(["ArduinoJson", "RadioHead"]) == set(
+    assert set(["ArduinoJson", "ESPAsyncTCP", "RadioHead"]) == set(
         [l['name'] for l in output])
 
 

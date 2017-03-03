@@ -21,7 +21,7 @@ from platformio.pioplus import pioplus_update
 
 
 @click.command(
-    "update", short_help="Update installed Platforms, Packages and Libraries")
+    "update", short_help="Update installed platforms, packages and libraries")
 @click.option(
     "-c",
     "--only-check",

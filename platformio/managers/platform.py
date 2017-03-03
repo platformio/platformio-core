@@ -143,7 +143,9 @@ class PlatformManager(BasePkgManager):
             p = PlatformFactory.newPlatform(
                 self.get_manifest_path(manifest['__pkg_dir']))
             for config in p.get_boards().values():
-                boards.append(config.get_brief_data())
+                board = config.get_brief_data()
+                if board not in boards:
+                    boards.append(board)
         return boards
 
     @staticmethod
@@ -385,7 +387,8 @@ class PlatformRunMixin(object):
             return 1
 
 
-class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
+class PlatformBase(  # pylint: disable=too-many-public-methods
+        PlatformPackagesMixin, PlatformRunMixin):
 
     PIO_VERSION = semantic_version.Version(util.pepver_to_semver(__version__))
     _BOARDS_CACHE = {}
@@ -431,6 +434,10 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
     @property
     def vendor_url(self):
         return self._manifest.get("url")
+
+    @property
+    def repository_url(self):
+        return self._manifest.get("repository", {}).get("url")
 
     @property
     def license(self):
