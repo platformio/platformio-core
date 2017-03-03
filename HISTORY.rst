@@ -79,7 +79,7 @@ PlatformIO 3.0
 
   + Improved path management for Windows
   + Custom uploader using ``$UPLOAD`` build variable
-    (`issue #865 <https://github.com/platformio/platform-lattice_ice40/issues/6>`_)
+    (`issue #6 <https://github.com/platformio/platform-lattice_ice40/issues/6>`__)
   + Updated toolchain-icestorm to 1.10.0 (added -C option to "time" target)
   + Updated toolchain-iverilog to 1.1.0  (loaed all vlib/\*.v files in "iverilog" builder)
 
