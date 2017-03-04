@@ -16,7 +16,7 @@ matrix:
       env: TOX_ENV=py27
     - os: osx
       language: generic
-      env: TOX_ENV=py27
+      env: TOX_ENV=skipexamples
 
 install:
   - git submodule update --init --recursive
