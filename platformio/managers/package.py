@@ -501,7 +501,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         """
         latest = None
         package_dir = self.get_package_dir(name, requirements, url)
-        if not package_dir:
+        if not package_dir or ("@" in package_dir and
+                               "@vcs-" not in package_dir):
             return None
         is_vcs_pkg = False
         manifest_path = self.get_vcs_manifest_path(package_dir)
@@ -598,10 +599,16 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 os.unlink(package_dir)
             else:
                 util.rmtree_(package_dir)
+            self.reset_cache()
+
+        # unfix package with the same name
+        package_dir = self.get_package_dir(manifest['name'])
+        if package_dir and "@" in package_dir:
+            os.rename(package_dir, join(self.package_dir, manifest['name']))
+            self.reset_cache()
 
         click.echo("[%s]" % click.style("OK", fg="green"))
 
-        self.reset_cache()
         if trigger_event:
             telemetry.on_event(
                 category=self.__class__.__name__,
@@ -644,7 +651,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         elif latest is False:
             click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
         else:
-            click.echo("[%s]" % (click.style("Unknown", fg="yellow")))
+            click.echo("[%s]" % (click.style("Skip", fg="yellow")))
 
         if only_check or latest is False or (not is_vcs_pkg and not latest):
             return

@@ -118,10 +118,7 @@ def lib_update(lm, libraries, only_check, json_output):
     if not libraries:
         libraries = []
         for manifest in lm.get_installed():
-            pkg_dir = manifest['__pkg_dir']
-            if "@" in pkg_dir and "@vcs-" not in pkg_dir:
-                continue
-            elif "@vcs-" in pkg_dir:
+            if "@vcs-" in manifest['__pkg_dir']:
                 libraries.append("%s=%s" % (manifest['name'], manifest['url']))
             else:
                 libraries.append(str(manifest.get("id", manifest['name'])))
@@ -131,7 +128,7 @@ def lib_update(lm, libraries, only_check, json_output):
         for library in libraries:
             name, requirements, url = lm.parse_pkg_name(library)
             latest = lm.outdated(name, requirements, url)
-            if latest is False:
+            if not latest:
                 continue
             manifest = lm.load_manifest(
                 lm.get_package_dir(name, requirements, url))

@@ -337,11 +337,7 @@ def platform_update(platforms, only_packages, only_check, json_output):
     if not platforms:
         platforms = []
         for manifest in pm.get_installed():
-            pkg_dir = manifest['__pkg_dir']
-            # don't check fixed platforms
-            if "@" in pkg_dir and "@vcs-" not in pkg_dir:
-                continue
-            elif "@vcs-" in pkg_dir:
+            if "@vcs-" in manifest['__pkg_dir']:
                 platforms.append("%s=%s" % (manifest['name'], manifest['url']))
             else:
                 platforms.append(manifest['name'])
@@ -351,7 +347,7 @@ def platform_update(platforms, only_packages, only_check, json_output):
         for platform in platforms:
             name, requirements, url = pm.parse_pkg_name(platform)
             latest = pm.outdated(name, requirements, url)
-            if latest is False:
+            if not latest:
                 continue
             data = _get_installed_platform_data(
                 name, with_boards=False, expose_packages=False)
