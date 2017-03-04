@@ -126,7 +126,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
     validate_cliresult(result)
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
     items2 = [
-        "DHT22_ID58", "ArduinoJson_ID64@5.6.7", "ESPAsyncTCP_ID305",
+        "DHT22_ID58", "ArduinoJson_ID64", "ESPAsyncTCP_ID305",
         "pubsubclient", "PJON", "rs485-nodeproto", "RadioHead_ID124"
     ]
     assert set(items1) == set(items2)

@@ -170,6 +170,13 @@ class PkgInstallerMixin(object):
         fu = FileUnpacker(source_path, dest_dir)
         return fu.start()
 
+    @staticmethod
+    def generate_install_dirname(manifest):
+        name = manifest['name']
+        if "id" in manifest:
+            name += "_ID%d" % manifest['id']
+        return name
+
     def get_vcs_manifest_path(self, pkg_dir):
         for item in os.listdir(pkg_dir):
             if not isdir(join(pkg_dir, item)):
@@ -325,11 +332,8 @@ class PkgInstallerMixin(object):
         tmp_manifest = self.load_manifest(tmp_manifest_path)
         assert set(["name", "version"]) <= set(tmp_manifest.keys())
 
-        name = tmp_manifest['name']
+        name = self.generate_install_dirname(tmp_manifest)
         pkg_dir = join(self.package_dir, name)
-        if "id" in tmp_manifest:
-            name += "_ID%d" % tmp_manifest['id']
-            pkg_dir = join(self.package_dir, name)
 
         # package should satisfy requirements
         if requirements:
@@ -604,7 +608,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         # unfix package with the same name
         package_dir = self.get_package_dir(manifest['name'])
         if package_dir and "@" in package_dir:
-            os.rename(package_dir, join(self.package_dir, manifest['name']))
+            os.rename(package_dir,
+                      join(self.package_dir,
+                           self.generate_install_dirname(manifest)))
             self.reset_cache()
 
         click.echo("[%s]" % click.style("OK", fg="green"))
