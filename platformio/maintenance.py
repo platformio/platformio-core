@@ -30,7 +30,7 @@ from platformio.commands.platform import \
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.managers.lib import LibraryManager
-from platformio.managers.platform import PlatformManager
+from platformio.managers.platform import PlatformFactory, PlatformManager
 from platformio.pioplus import pioplus_update
 
 
@@ -260,8 +260,14 @@ def check_internal_updates(ctx, what):
     pm = PlatformManager() if what == "platforms" else LibraryManager()
     outdated_items = []
     for manifest in pm.get_installed():
-        if manifest['name'] not in outdated_items and \
-                pm.outdated(manifest['__pkg_dir']):
+        if manifest['name'] in outdated_items:
+            continue
+        conds = [
+            pm.outdated(manifest['__pkg_dir']), what == "platforms" and
+            PlatformFactory.newPlatform(
+                manifest['__pkg_dir']).are_outdated_packages()
+        ]
+        if any(conds):
             outdated_items.append(manifest['name'])
 
     if not outdated_items:

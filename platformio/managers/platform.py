@@ -253,45 +253,29 @@ class PlatformPackagesMixin(object):
 
         return True
 
+    def update_packages(self, only_check=False):
+        for name, manifest in self.get_installed_packages().items():
+            version = self.packages[name].get("version", "")
+            if "@" in version:
+                _, version = version.rsplit("@", 1)
+            self.pm.update(manifest['__pkg_dir'], version, only_check)
+
     def get_installed_packages(self):
         items = {}
-        for name, opts in self.packages.items():
-            version = opts.get("version", "")
-            if self.is_valid_requirements(version):
-                package = self.pm.get_package(name, version)
-            else:
-                package = self.pm.get_package(*self._parse_pkg_input(name,
-                                                                     version))
-            if package:
-                items[name] = package
+        for name in self.packages:
+            pkg_dir = self.get_package_dir(name)
+            if pkg_dir:
+                items[name] = self.pm.load_manifest(pkg_dir)
         return items
 
-    def update_packages(self, only_check=False):
-        for name in self.get_installed_packages():
+    def are_outdated_packages(self):
+        for name, manifest in self.get_installed_packages().items():
             version = self.packages[name].get("version", "")
-            if self.is_valid_requirements(version):
-                self.pm.update(name, version, only_check)
-            else:
-                requirements = None
-                if "@" in version:
-                    version, requirements = version.rsplit("@", 1)
-                self.pm.update("%s=%s" % (name, version), requirements,
-                               only_check)
-
-    # def are_outdated_packages(self):
-    #     latest = None
-    #     for name in self.get_installed_packages():
-    #         version = self.packages[name].get("version", "")
-    #         if self.is_valid_requirements(version):
-    #             latest = self.pm.outdated(name, version)
-    #         else:
-    #             requirements = None
-    #             if "@" in version:
-    #                 version, requirements = version.rsplit("@", 1)
-    #             latest = self.pm.outdated(name, requirements, version)
-    #         if latest or latest is None:
-    #             return True
-    #     return False
+            if "@" in version:
+                _, version = version.rsplit("@", 1)
+            if self.pm.outdated(manifest['__pkg_dir'], version):
+                return True
+        return False
 
     def get_package_dir(self, name):
         version = self.packages[name].get("version", "")
@@ -302,13 +286,10 @@ class PlatformPackagesMixin(object):
                                                                   version))
 
     def get_package_version(self, name):
-        version = self.packages[name].get("version", "")
-        if self.is_valid_requirements(version):
-            package = self.pm.get_package(name, version)
-        else:
-            package = self.pm.get_package(*self._parse_pkg_input(name,
-                                                                 version))
-        return package['version'] if package else None
+        pkg_dir = self.get_package_dir(name)
+        if not pkg_dir:
+            return None
+        return self.pm.load_manifest(pkg_dir).get("version")
 
     @staticmethod
     def is_valid_requirements(requirements):

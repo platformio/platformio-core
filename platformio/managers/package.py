@@ -547,6 +547,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         `False` - package is up-to-date
         `String` - a found latest version
         """
+        assert isdir(pkg_dir)
         latest = None
         manifest = self.load_manifest(pkg_dir)
         # skip a fixed package to a specific version
@@ -709,7 +710,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             return
 
         if "__src_url" in manifest:
-            vcs = VCSClientFactory.newClient(pkg_dir, manifest['__vcs_url'])
+            vcs = VCSClientFactory.newClient(pkg_dir, manifest['__src_url'])
             assert vcs.update()
             self._update_src_manifest(
                 dict(version=vcs.get_current_revision()), vcs.storage_dir)

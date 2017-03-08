@@ -336,9 +336,13 @@ def platform_update(platforms, only_packages, only_check, json_output):
     app.clean_cache()
 
     pm = PlatformManager()
+    pkg_dir_to_name = {}
     if not platforms:
         platforms = []
-        platforms = [manifest['__pkg_dir'] for manifest in pm.get_installed()]
+        for manifest in pm.get_installed():
+            platforms.append(manifest['__pkg_dir'])
+            pkg_dir_to_name[manifest['__pkg_dir']] = manifest.get(
+                "title", manifest['name'])
 
     if only_check and json_output:
         result = []
@@ -352,16 +356,19 @@ def platform_update(platforms, only_packages, only_check, json_output):
             if not pkg_dir:
                 continue
             latest = pm.outdated(pkg_dir, requirements)
-            if not latest:
+            if (not latest and not PlatformFactory.newPlatform(pkg_dir)
+                    .are_outdated_packages()):
                 continue
             data = _get_installed_platform_data(
                 pkg_dir, with_boards=False, expose_packages=False)
-            data['versionLatest'] = latest
+            if latest:
+                data['versionLatest'] = latest
             result.append(data)
         return click.echo(json.dumps(result))
     else:
         for platform in platforms:
-            click.echo("Platform %s" % click.style(platform, fg="cyan"))
+            click.echo("Platform %s" % click.style(
+                pkg_dir_to_name.get(platform, platform), fg="cyan"))
             click.echo("--------")
             pm.update(
                 platform, only_packages=only_packages, only_check=only_check)
