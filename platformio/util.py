@@ -141,7 +141,12 @@ class memoized(object):
 
     def __get__(self, obj, objtype):
         '''Support instance methods.'''
-        return functools.partial(self.__call__, obj)
+        fn = functools.partial(self.__call__, obj)
+        fn.reset = self._reset
+        return fn
+
+    def _reset(self):
+        self.cache = {}
 
 
 def singleton(cls):

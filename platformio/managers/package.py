@@ -17,7 +17,7 @@ import hashlib
 import json
 import os
 import shutil
-from os.path import basename, dirname, getsize, isdir, isfile, islink, join
+from os.path import basename, getsize, isdir, isfile, islink, join
 from tempfile import mkdtemp
 
 import click
@@ -127,16 +127,36 @@ class PkgRepoMixin(object):
 
 class PkgInstallerMixin(object):
 
-    VCS_MANIFEST_NAME = ".piopkgmanager.json"
+    SRC_MANIFEST_NAME = ".piopkgmanager.json"
 
     FILE_CACHE_VALID = "1m"  # 1 month
     FILE_CACHE_MAX_SIZE = 1024 * 1024
 
-    _INSTALLED_CACHE = {}
+    MEMORY_CACHE = {}
 
-    def reset_cache(self):
-        if self.package_dir in PkgInstallerMixin._INSTALLED_CACHE:
-            del PkgInstallerMixin._INSTALLED_CACHE[self.package_dir]
+    @staticmethod
+    def cache_get(key, default=None):
+        return PkgInstallerMixin.MEMORY_CACHE.get(key, default)
+
+    @staticmethod
+    def cache_set(key, value):
+        PkgInstallerMixin.MEMORY_CACHE[key] = value
+
+    @staticmethod
+    def cache_reset():
+        PkgInstallerMixin.MEMORY_CACHE = {}
+
+    def read_dirs(self, src_dir):
+        cache_key = "read_dirs-%s" % src_dir
+        result = self.cache_get(cache_key)
+        if result:
+            return result
+        result = [
+            join(src_dir, name) for name in sorted(os.listdir(src_dir))
+            if isdir(join(src_dir, name))
+        ]
+        self.cache_set(cache_key, result)
+        return result
 
     def download(self, url, dest_dir, sha1=None):
         cache_key_fname = app.ContentCache.key_from_args(url, "fname")
@@ -171,26 +191,23 @@ class PkgInstallerMixin(object):
         return fu.start()
 
     @staticmethod
-    def generate_install_dirname(manifest):
+    def get_install_dirname(manifest):
         name = manifest['name']
         if "id" in manifest:
             name += "_ID%d" % manifest['id']
         return name
 
-    def get_vcs_manifest_path(self, pkg_dir):
+    def get_src_manifest_path(self, pkg_dir):
         for item in os.listdir(pkg_dir):
             if not isdir(join(pkg_dir, item)):
                 continue
-            if isfile(join(pkg_dir, item, self.VCS_MANIFEST_NAME)):
-                return join(pkg_dir, item, self.VCS_MANIFEST_NAME)
+            if isfile(join(pkg_dir, item, self.SRC_MANIFEST_NAME)):
+                return join(pkg_dir, item, self.SRC_MANIFEST_NAME)
         return None
 
     def get_manifest_path(self, pkg_dir):
         if not isdir(pkg_dir):
             return None
-        manifest_path = self.get_vcs_manifest_path(pkg_dir)
-        if manifest_path:
-            return manifest_path
         for name in self.manifest_names:
             manifest_path = join(pkg_dir, name)
             if isfile(manifest_path):
@@ -198,73 +215,104 @@ class PkgInstallerMixin(object):
         return None
 
     def manifest_exists(self, pkg_dir):
-        return self.get_manifest_path(pkg_dir) is not None
+        return self.get_manifest_path(pkg_dir) or \
+            self.get_src_manifest_path(pkg_dir)
 
-    def load_manifest(self, path):  # pylint: disable=too-many-branches
-        assert path
-        pkg_dir = path
-        if isdir(path):
-            path = self.get_manifest_path(path)
-            if not path:
-                return None
-        else:
-            pkg_dir = dirname(pkg_dir)
+    def load_manifest(self, pkg_dir):
+        cache_key = "load_manifest-%s" % pkg_dir
+        result = self.cache_get(cache_key)
+        if result:
+            return result
 
-        is_vcs_pkg = False
-        if isfile(path) and path.endswith(self.VCS_MANIFEST_NAME):
-            is_vcs_pkg = True
-            pkg_dir = dirname(dirname(path))
+        manifest_path = self.get_manifest_path(pkg_dir)
+        if not manifest_path:
+            return None
 
-        # return from cache
-        if self.package_dir in PkgInstallerMixin._INSTALLED_CACHE:
-            for manifest in PkgInstallerMixin._INSTALLED_CACHE[
-                    self.package_dir]:
-                if not is_vcs_pkg and manifest['__pkg_dir'] == pkg_dir:
-                    return manifest
+        # if non-registry packages: VCS or archive
+        src_manifest_path = self.get_src_manifest_path(pkg_dir)
+        src_manifest = None
+        if src_manifest_path:
+            src_manifest = util.load_json(src_manifest_path)
 
         manifest = {}
-        if path.endswith(".json"):
-            manifest = util.load_json(path)
-        elif path.endswith(".properties"):
-            with codecs.open(path, encoding="utf-8") as fp:
+        if manifest_path.endswith(".json"):
+            manifest = util.load_json(manifest_path)
+        elif manifest_path.endswith(".properties"):
+            with codecs.open(manifest_path, encoding="utf-8") as fp:
                 for line in fp.readlines():
                     if "=" not in line:
                         continue
                     key, value = line.split("=", 1)
                     manifest[key.strip()] = value.strip()
-        else:
+
+        if src_manifest:
             if "name" not in manifest:
-                manifest['name'] = basename(pkg_dir)
-            if "version" not in manifest:
-                manifest['version'] = "0.0.0"
+                manifest['name'] = src_manifest['name']
+            if "version" in src_manifest:
+                manifest['version'] = src_manifest['version']
+            manifest['__src_url'] = src_manifest['url']
+
+        if "name" not in manifest:
+            manifest['name'] = basename(pkg_dir)
+        if "version" not in manifest:
+            manifest['version'] = "0.0.0"
 
         manifest['__pkg_dir'] = pkg_dir
+        self.cache_set(cache_key, manifest)
         return manifest
 
     def get_installed(self):
-        if self.package_dir in PkgInstallerMixin._INSTALLED_CACHE:
-            return PkgInstallerMixin._INSTALLED_CACHE[self.package_dir]
         items = []
-        for p in sorted(os.listdir(self.package_dir)):
-            pkg_dir = join(self.package_dir, p)
-            if not isdir(pkg_dir):
-                continue
+        for pkg_dir in self.read_dirs(self.package_dir):
             manifest = self.load_manifest(pkg_dir)
             if not manifest:
                 continue
             assert "name" in manifest
             items.append(manifest)
-        PkgInstallerMixin._INSTALLED_CACHE[self.package_dir] = items
         return items
 
-    def check_pkg_structure(self, pkg_dir):
-        if self.manifest_exists(pkg_dir):
-            return pkg_dir
+    def get_package(self, name, requirements=None, url=None):
+        pkg_id = int(name[3:]) if name.startswith("id=") else 0
+        best = None
+        for manifest in self.get_installed():
+            if url:
+                if manifest.get("__src_url") != url:
+                    continue
+            elif pkg_id and manifest.get("id") != pkg_id:
+                continue
+            elif not pkg_id and manifest['name'] != name:
+                continue
 
-        for root, _, _ in os.walk(pkg_dir):
+            # strict version or VCS HASH
+            if requirements and requirements == manifest['version']:
+                return manifest
+
+            try:
+                if requirements and not semantic_version.Spec(
+                        requirements).match(
+                            semantic_version.Version(
+                                manifest['version'], partial=True)):
+                    continue
+                elif not best or (semantic_version.Version(
+                        manifest['version'], partial=True) >
+                                  semantic_version.Version(
+                                      best['version'], partial=True)):
+                    best = manifest
+            except ValueError:
+                pass
+
+        return best
+
+    def get_package_dir(self, name, requirements=None, url=None):
+        manifest = self.get_package(name, requirements, url)
+        return manifest.get("__pkg_dir") if manifest else None
+
+    def find_pkg_root(self, src_dir):
+        if self.manifest_exists(src_dir):
+            return src_dir
+        for root, _, _ in os.walk(src_dir):
             if self.manifest_exists(root):
                 return root
-
         raise exception.MissingPackageManifest(", ".join(self.manifest_names))
 
     def _install_from_piorepo(self, name, requirements):
@@ -291,18 +339,25 @@ class PkgInstallerMixin(object):
                                                     util.get_systype())
         return pkg_dir
 
-    def _install_from_url(self, name, url, requirements=None, sha1=None):
+    def _install_from_url(self,
+                          name,
+                          url,
+                          requirements=None,
+                          sha1=None,
+                          track=False):
         pkg_dir = None
         tmp_dir = mkdtemp("-package", "installing-", self.package_dir)
+        src_manifest_dir = None
+        src_manifest = {"name": name, "url": url, "requirements": requirements}
 
         try:
             if url.startswith("file://"):
-                url = url[7:]
-                if isfile(url):
-                    self.unpack(url, tmp_dir)
+                _url = url[7:]
+                if isfile(_url):
+                    self.unpack(_url, tmp_dir)
                 else:
                     util.rmtree_(tmp_dir)
-                    shutil.copytree(url, tmp_dir)
+                    shutil.copytree(_url, tmp_dir)
             elif url.startswith(("http://", "https://")):
                 dlpath = self.download(url, tmp_dir, sha1)
                 assert isfile(dlpath)
@@ -311,29 +366,52 @@ class PkgInstallerMixin(object):
             else:
                 vcs = VCSClientFactory.newClient(tmp_dir, url)
                 assert vcs.export()
-                with open(join(vcs.storage_dir, self.VCS_MANIFEST_NAME),
-                          "w") as fp:
-                    json.dump({
-                        "name": name,
-                        "version": vcs.get_current_revision(),
-                        "url": url,
-                        "requirements": requirements
-                    }, fp)
+                src_manifest_dir = vcs.storage_dir
+                src_manifest['version'] = vcs.get_current_revision()
 
-            pkg_dir = self.check_pkg_structure(tmp_dir)
+            pkg_dir = self.find_pkg_root(tmp_dir)
+
+            # write source data to a special manifest
+            if track:
+                if not src_manifest_dir:
+                    src_manifest_dir = join(pkg_dir, ".pio")
+                self._update_src_manifest(src_manifest, src_manifest_dir)
+
             pkg_dir = self._install_from_tmp_dir(pkg_dir, requirements)
         finally:
             if isdir(tmp_dir):
                 util.rmtree_(tmp_dir)
         return pkg_dir
 
-    def _install_from_tmp_dir(self, tmp_dir, requirements=None):
-        tmp_manifest_path = self.get_manifest_path(tmp_dir)
-        tmp_manifest = self.load_manifest(tmp_manifest_path)
+    def _update_src_manifest(self, data, src_dir):
+        if not isdir(src_dir):
+            os.makedirs(src_dir)
+        src_manifest_path = join(src_dir, self.SRC_MANIFEST_NAME)
+        _data = data
+        if isfile(src_manifest_path):
+            _data.update(util.load_json(src_manifest_path))
+        with open(src_manifest_path, "w") as fp:
+            json.dump(_data, fp)
+
+    def _install_from_tmp_dir(  # pylint: disable=too-many-branches
+            self, tmp_dir, requirements=None):
+        tmp_manifest = self.load_manifest(tmp_dir)
         assert set(["name", "version"]) <= set(tmp_manifest.keys())
 
-        name = self.generate_install_dirname(tmp_manifest)
-        pkg_dir = join(self.package_dir, name)
+        pkg_dirname = self.get_install_dirname(tmp_manifest)
+        pkg_dir = join(self.package_dir, pkg_dirname)
+        cur_manifest = self.load_manifest(pkg_dir)
+
+        tmp_semver = None
+        cur_semver = None
+        try:
+            tmp_semver = semantic_version.Version(
+                tmp_manifest['version'], partial=True)
+            if cur_manifest:
+                cur_semver = semantic_version.Version(
+                    cur_manifest['version'], partial=True)
+        except ValueError:
+            pass
 
         # package should satisfy requirements
         if requirements:
@@ -341,45 +419,51 @@ class PkgInstallerMixin(object):
                 "Package version %s doesn't satisfy requirements %s" % (
                     tmp_manifest['version'], requirements))
             try:
-                reqspec = semantic_version.Spec(requirements)
-                tmp_version = semantic_version.Version(
-                    tmp_manifest['version'], partial=True)
-                assert tmp_version in reqspec, mismatch_error
-            except ValueError:
+                assert tmp_semver and tmp_semver in semantic_version.Spec(
+                    requirements), mismatch_error
+            except (AssertionError, ValueError):
                 assert tmp_manifest['version'] == requirements, mismatch_error
 
-        if self.manifest_exists(pkg_dir):
-            cur_manifest_path = self.get_manifest_path(pkg_dir)
-            cur_manifest = self.load_manifest(cur_manifest_path)
-
-            if tmp_manifest_path.endswith(self.VCS_MANIFEST_NAME):
-                if cur_manifest.get("url") != tmp_manifest['url']:
-                    pkg_dir = join(self.package_dir, "%s@vcs-%s" % (
-                        name, hashlib.md5(tmp_manifest['url']).hexdigest()))
+        # check if package already exists
+        if cur_manifest:
+            # 0-overwrite, 1-rename, 2-fix to a version
+            action = 0
+            if "__src_url" in cur_manifest:
+                if cur_manifest['__src_url'] != tmp_manifest.get("__src_url"):
+                    action = 1
+            elif "__src_url" in tmp_manifest:
+                action = 2
             else:
-                try:
-                    tmp_version = semantic_version.Version(
-                        tmp_manifest['version'], partial=True)
-                    cur_version = semantic_version.Version(
-                        cur_manifest['version'], partial=True)
+                if tmp_semver and (not cur_semver or tmp_semver > cur_semver):
+                    action = 1
+                elif tmp_semver and cur_semver and tmp_semver != cur_semver:
+                    action = 2
 
-                    # if current package version < new package, backup it
-                    if tmp_version > cur_version:
-                        os.rename(pkg_dir,
-                                  join(self.package_dir, "%s@%s" %
-                                       (name, cur_manifest['version'])))
-                    elif tmp_version < cur_version:
-                        pkg_dir = join(self.package_dir, "%s@%s" %
-                                       (name, tmp_manifest['version']))
-                except ValueError:
-                    pkg_dir = join(self.package_dir,
-                                   "%s@%s" % (name, tmp_manifest['version']))
+            # rename
+            if action == 1:
+                target_dirname = "%s@%s" % (pkg_dirname,
+                                            cur_manifest['version'])
+                if "__src_url" in cur_manifest:
+                    target_dirname = "%s@src-%s" % (
+                        pkg_dirname,
+                        hashlib.md5(cur_manifest['__src_url']).hexdigest())
+                os.rename(pkg_dir, join(self.package_dir, target_dirname))
+            # fix to a version
+            elif action == 2:
+                target_dirname = "%s@%s" % (pkg_dirname,
+                                            tmp_manifest['version'])
+                if "__src_url" in tmp_manifest:
+                    target_dirname = "%s@src-%s" % (
+                        pkg_dirname,
+                        hashlib.md5(tmp_manifest['__src_url']).hexdigest())
+                pkg_dir = join(self.package_dir, target_dirname)
 
         # remove previous/not-satisfied package
         if isdir(pkg_dir):
             util.rmtree_(pkg_dir)
         os.rename(tmp_dir, pkg_dir)
         assert isdir(pkg_dir)
+        self.cache_reset()
         return pkg_dir
 
 
@@ -400,14 +484,20 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         click.echo("%s: %s" % (self.__class__.__name__, message), nl=nl)
 
     @staticmethod
-    def parse_pkg_name(  # pylint: disable=too-many-branches
+    def parse_pkg_input(  # pylint: disable=too-many-branches
             text, requirements=None):
         text = str(text)
-        url_marker = "://"
-        if not any([
-                requirements, "@" not in text, text.startswith("git@"),
-                url_marker in text
-        ]):
+        # git@github.com:user/package.git
+        url_marker = text[:4]
+        if url_marker not in ("git@", "git+") or ":" not in text:
+            url_marker = "://"
+
+        req_conditions = [
+            not requirements, "@" in text,
+            (url_marker != "git@" and "://git@" not in text) or
+            text.count("@") > 1
+        ]
+        if all(req_conditions):
             text, requirements = text.rsplit("@", 1)
         if text.isdigit():
             text = "id=" + text
@@ -423,22 +513,18 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             url.startswith("http") and
             (url.split("#", 1)[0] if "#" in url else url).endswith(".git")
         ]
-
         if any(git_conditions):
             url = "git+" + url
+
         # Handle Developer Mbed URL
         # (https://developer.mbed.org/users/user/code/package/)
-        elif url.startswith("https://developer.mbed.org"):
+        if url.startswith("https://developer.mbed.org"):
             url = "hg+" + url
-
-        # git@github.com:user/package.git
-        if url.startswith("git@"):
-            url_marker = "git@"
 
         if any([s in url for s in ("\\", "/")]) and url_marker not in url:
             if isfile(url) or isdir(url):
                 url = "file://" + url
-            elif url.count("/") == 1 and not url.startswith("git@"):
+            elif url.count("/") == 1 and "git" not in url_marker:
                 url = "git+https://github.com/" + url
 
         # determine name
@@ -448,55 +534,13 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 _url = _url[:-1]
             name = basename(_url)
             if "." in name and not name.startswith("."):
-                name = name.split(".", 1)[0]
+                name = name.rsplit(".", 1)[0]
 
         if url_marker not in url:
             url = None
         return (name or text, requirements, url)
 
-    def get_package(self, name, requirements=None, url=None):
-        pkg_id = int(name[3:]) if name.startswith("id=") else 0
-        best = None
-        reqspec = None
-        if requirements:
-            try:
-                reqspec = semantic_version.Spec(requirements)
-            except ValueError:
-                pass
-
-        for manifest in self.get_installed():
-            if pkg_id and manifest.get("id") != pkg_id:
-                continue
-            elif not pkg_id and manifest['name'] != name:
-                continue
-            elif not reqspec and (requirements or url):
-                conds = [
-                    requirements == manifest['version'], url and
-                    url in manifest.get("url", "")
-                ]
-                if not best or any(conds):
-                    best = manifest
-                continue
-            try:
-                if reqspec and not reqspec.match(
-                        semantic_version.Version(
-                            manifest['version'], partial=True)):
-                    continue
-                elif not best or (semantic_version.Version(
-                        manifest['version'], partial=True) >
-                                  semantic_version.Version(
-                                      best['version'], partial=True)):
-                    best = manifest
-            except ValueError:
-                pass
-
-        return best
-
-    def get_package_dir(self, name, requirements=None, url=None):
-        package = self.get_package(name, requirements, url)
-        return package.get("__pkg_dir") if package else None
-
-    def outdated(self, name, requirements=None, url=None):
+    def outdated(self, pkg_dir, requirements=None):
         """
         Has 3 different results:
         `None` - unknown package, VCS is fixed to commit
@@ -504,27 +548,26 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         `String` - a found latest version
         """
         latest = None
-        package_dir = self.get_package_dir(name, requirements, url)
-        if not package_dir or ("@" in package_dir and
-                               "@vcs-" not in package_dir):
+        manifest = self.load_manifest(pkg_dir)
+        # skip a fixed package to a specific version
+        if "@" in pkg_dir and "__src_url" not in manifest:
             return None
-        is_vcs_pkg = False
-        manifest_path = self.get_vcs_manifest_path(package_dir)
-        if manifest_path:
-            is_vcs_pkg = True
-            manifest = self.load_manifest(manifest_path)
-        else:
-            manifest = self.load_manifest(package_dir)
-        if is_vcs_pkg:
-            vcs = VCSClientFactory.newClient(
-                package_dir, manifest['url'], silent=True)
+        if "__src_url" in manifest:
+            try:
+                vcs = VCSClientFactory.newClient(
+                    pkg_dir, manifest['__src_url'], silent=True)
+            except (AttributeError, exception.PlatformioException):
+                return None
             if not vcs.can_be_updated:
                 return None
             latest = vcs.get_latest_revision()
         else:
             try:
                 latest = self.get_latest_repo_version(
-                    name, requirements, silent=True)
+                    "id=%d" % manifest['id']
+                    if "id" in manifest else manifest['name'],
+                    requirements,
+                    silent=True)
             except (exception.PlatformioException, ValueError):
                 return None
         if not latest:
@@ -543,7 +586,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 silent=False,
                 trigger_event=True,
                 interactive=False):  # pylint: disable=unused-argument
-        name, requirements, url = self.parse_pkg_name(name, requirements)
+        name, requirements, url = self.parse_pkg_input(name, requirements)
         package_dir = self.get_package_dir(name, requirements, url)
 
         if not package_dir or not silent:
@@ -560,15 +603,16 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             return package_dir
 
         if url:
-            pkg_dir = self._install_from_url(name, url, requirements)
+            pkg_dir = self._install_from_url(
+                name, url, requirements, track=True)
         else:
             pkg_dir = self._install_from_piorepo(name, requirements)
         if not pkg_dir or not self.manifest_exists(pkg_dir):
             raise exception.PackageInstallError(name, requirements or "*",
                                                 util.get_systype())
 
-        self.reset_cache()
         manifest = self.load_manifest(pkg_dir)
+        assert manifest
 
         if trigger_event:
             telemetry.on_event(
@@ -576,42 +620,45 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 action="Install",
                 label=manifest['name'])
 
-        click.secho(
-            "{name} @ {version} has been successfully installed!".format(
-                **manifest),
-            fg="green")
+        if not silent:
+            click.secho(
+                "{name} @ {version} has been successfully installed!".format(
+                    **manifest),
+                fg="green")
 
         return pkg_dir
 
-    def uninstall(self, name, requirements=None, trigger_event=True):
-        name, requirements, url = self.parse_pkg_name(name, requirements)
-        package_dir = self.get_package_dir(name, requirements, url)
-        if not package_dir:
-            click.secho(
-                "%s @ %s is not installed" % (name, requirements or "*"),
-                fg="yellow")
-            return
+    def uninstall(self, package, requirements=None, trigger_event=True):
+        if isdir(package):
+            pkg_dir = package
+        else:
+            name, requirements, url = self.parse_pkg_input(package,
+                                                           requirements)
+            pkg_dir = self.get_package_dir(name, requirements, url)
 
-        manifest = self.load_manifest(package_dir)
+        if not pkg_dir:
+            raise exception.UnknownPackage("%s @ %s" %
+                                           (package, requirements or "*"))
+
+        manifest = self.load_manifest(pkg_dir)
         click.echo(
             "Uninstalling %s @ %s: \t" % (click.style(
                 manifest['name'], fg="cyan"), manifest['version']),
             nl=False)
 
-        if isdir(package_dir):
-            if islink(package_dir):
-                os.unlink(package_dir)
-            else:
-                util.rmtree_(package_dir)
-            self.reset_cache()
+        if islink(pkg_dir):
+            os.unlink(pkg_dir)
+        else:
+            util.rmtree_(pkg_dir)
+        self.cache_reset()
 
         # unfix package with the same name
-        package_dir = self.get_package_dir(manifest['name'])
-        if package_dir and "@" in package_dir:
-            os.rename(package_dir,
-                      join(self.package_dir,
-                           self.generate_install_dirname(manifest)))
-            self.reset_cache()
+        pkg_dir = self.get_package_dir(manifest['name'])
+        if pkg_dir and "@" in pkg_dir:
+            os.rename(
+                pkg_dir,
+                join(self.package_dir, self.get_install_dirname(manifest)))
+            self.cache_reset()
 
         click.echo("[%s]" % click.style("OK", fg="green"))
 
@@ -624,25 +671,23 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
     def update(  # pylint: disable=too-many-return-statements
             self,
-            name,
+            package,
             requirements=None,
             only_check=False):
-        name, requirements, url = self.parse_pkg_name(name, requirements)
-        package_dir = self.get_package_dir(name, requirements, url)
-        if not package_dir:
-            click.secho(
-                "%s @ %s is not installed" % (name, requirements or "*"),
-                fg="yellow")
-            return
-
-        is_vcs_pkg = False
-        if self.get_vcs_manifest_path(package_dir):
-            is_vcs_pkg = True
-            manifest_path = self.get_vcs_manifest_path(package_dir)
+        if isdir(package):
+            pkg_dir = package
         else:
-            manifest_path = self.get_manifest_path(package_dir)
+            name, requirements, url = self.parse_pkg_input(package,
+                                                           requirements)
+            pkg_dir = self.get_package_dir(name, requirements, url)
 
-        manifest = self.load_manifest(manifest_path)
+        if not pkg_dir:
+            raise exception.UnknownPackage("%s @ %s" %
+                                           (package, requirements or "*"))
+
+        manifest = self.load_manifest(pkg_dir)
+        name = manifest['name']
+
         click.echo(
             "{} {:<40} @ {:<15}".format(
                 "Checking" if only_check else "Updating",
@@ -651,7 +696,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if not util.internet_on():
             click.echo("[%s]" % (click.style("Off-line", fg="yellow")))
             return
-        latest = self.outdated(name, requirements, url)
+
+        latest = self.outdated(pkg_dir, requirements)
         if latest:
             click.echo("[%s]" % (click.style(latest, fg="red")))
         elif latest is False:
@@ -659,26 +705,18 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         else:
             click.echo("[%s]" % (click.style("Skip", fg="yellow")))
 
-        if only_check or latest is False or (not is_vcs_pkg and not latest):
+        if only_check or not latest:
             return
 
-        if is_vcs_pkg:
-            vcs = VCSClientFactory.newClient(package_dir, manifest['url'])
-            if not vcs.can_be_updated:
-                click.secho(
-                    "Skip update because repository is fixed "
-                    "to %s revision" % manifest['version'],
-                    fg="yellow")
-                return
+        if "__src_url" in manifest:
+            vcs = VCSClientFactory.newClient(pkg_dir, manifest['__vcs_url'])
             assert vcs.update()
-            with open(manifest_path, "w") as fp:
-                manifest['version'] = vcs.get_current_revision()
-                json.dump(manifest, fp)
+            self._update_src_manifest(
+                dict(version=vcs.get_current_revision()), vcs.storage_dir)
         else:
-            self.uninstall(name, manifest['version'], trigger_event=False)
+            self.uninstall(pkg_dir, trigger_event=False)
             self.install(name, latest, trigger_event=False)
 
-        self.reset_cache()
         telemetry.on_event(
             category=self.__class__.__name__,
             action="Update",

@@ -156,7 +156,7 @@ def test_check_platform_updates(clirunner, validate_cliresult,
     manifest['version'] = "0.0.0"
     manifest_path.write(json.dumps(manifest))
     # reset cached manifests
-    PlatformManager().reset_cache()
+    PlatformManager().cache_reset()
 
     # reset check time
     interval = int(app.get_setting("check_platforms_interval")) * 3600 * 24

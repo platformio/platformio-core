@@ -38,6 +38,7 @@ PlatformIO 3.0
 * Escape project path when Glob matching is used
 * Do not overwrite project configuration variables when system environment
   variables are set
+* Handle dependencies when installing non-registry package/library (VCS, archive, local folder)
 * Fixed package installing with VCS branch for Python 2.7.3
   (`issue #885 <https://github.com/platformio/platformio-core/issues/885>`_)
 

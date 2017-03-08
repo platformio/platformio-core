@@ -63,7 +63,7 @@ class PlatformManager(BasePkgManager):
                 trigger_event=True,
                 **_):  # pylint: disable=too-many-arguments
         platform_dir = BasePkgManager.install(self, name, requirements)
-        p = PlatformFactory.newPlatform(self.get_manifest_path(platform_dir))
+        p = PlatformFactory.newPlatform(platform_dir)
 
         # @Hook: when 'update' operation (trigger_event is False),
         # don't cleanup packages or install them
@@ -75,10 +75,16 @@ class PlatformManager(BasePkgManager):
         self.cleanup_packages(p.packages.keys())
         return True
 
-    def uninstall(self, name, requirements=None, trigger_event=True):
-        name, requirements, _ = self.parse_pkg_name(name, requirements)
-        p = PlatformFactory.newPlatform(name, requirements)
-        BasePkgManager.uninstall(self, name, requirements)
+    def uninstall(self, package, requirements=None, trigger_event=True):
+        if isdir(package):
+            pkg_dir = package
+        else:
+            name, requirements, url = self.parse_pkg_input(package,
+                                                           requirements)
+            pkg_dir = self.get_package_dir(name, requirements, url)
+
+        p = PlatformFactory.newPlatform(pkg_dir)
+        BasePkgManager.uninstall(self, pkg_dir, requirements)
 
         # @Hook: when 'update' operation (trigger_event is False),
         # don't cleanup packages or install them
@@ -90,18 +96,23 @@ class PlatformManager(BasePkgManager):
 
     def update(  # pylint: disable=arguments-differ
             self,
-            name,
+            package,
             requirements=None,
-            only_packages=False,
-            only_check=False):
-        name, requirements, _ = self.parse_pkg_name(name, requirements)
+            only_check=False,
+            only_packages=False):
+        if isdir(package):
+            pkg_dir = package
+        else:
+            name, requirements, url = self.parse_pkg_input(package,
+                                                           requirements)
+            pkg_dir = self.get_package_dir(name, requirements, url)
 
-        p = PlatformFactory.newPlatform(name, requirements)
+        p = PlatformFactory.newPlatform(pkg_dir)
         pkgs_before = pkgs_after = p.get_installed_packages().keys()
 
         if not only_packages:
-            BasePkgManager.update(self, name, requirements, only_check)
-            p = PlatformFactory.newPlatform(name, requirements)
+            BasePkgManager.update(self, pkg_dir, requirements, only_check)
+            p = PlatformFactory.newPlatform(pkg_dir)
             pkgs_after = p.get_installed_packages().keys()
 
         p.update_packages(only_check)
@@ -115,11 +126,10 @@ class PlatformManager(BasePkgManager):
         return True
 
     def cleanup_packages(self, names):
-        self.reset_cache()
+        self.cache_reset()
         deppkgs = {}
         for manifest in PlatformManager().get_installed():
-            p = PlatformFactory.newPlatform(manifest['name'],
-                                            manifest['version'])
+            p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
             for pkgname, pkgmanifest in p.get_installed_packages().items():
                 if pkgname not in deppkgs:
                     deppkgs[pkgname] = set()
@@ -131,17 +141,15 @@ class PlatformManager(BasePkgManager):
                 continue
             if (manifest['name'] not in deppkgs or
                     manifest['version'] not in deppkgs[manifest['name']]):
-                pm.uninstall(
-                    manifest['name'], manifest['version'], trigger_event=False)
+                pm.uninstall(manifest['__pkg_dir'], trigger_event=False)
 
-        self.reset_cache()
+        self.cache_reset()
         return True
 
     def get_installed_boards(self):
         boards = []
         for manifest in self.get_installed():
-            p = PlatformFactory.newPlatform(
-                self.get_manifest_path(manifest['__pkg_dir']))
+            p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
             for config in p.get_boards().values():
                 board = config.get_brief_data()
                 if board not in boards:
@@ -183,7 +191,10 @@ class PlatformFactory(object):
     @classmethod
     def newPlatform(cls, name, requirements=None):
         platform_dir = None
-        if name.endswith("platform.json") and isfile(name):
+        if isdir(name):
+            platform_dir = name
+            name = PlatformManager().load_manifest(platform_dir)['name']
+        elif name.endswith("platform.json") and isfile(name):
             platform_dir = dirname(name)
             name = util.load_json(name)['name']
         else:
@@ -249,8 +260,8 @@ class PlatformPackagesMixin(object):
             if self.is_valid_requirements(version):
                 package = self.pm.get_package(name, version)
             else:
-                package = self.pm.get_package(*self._parse_pkg_name(name,
-                                                                    version))
+                package = self.pm.get_package(*self._parse_pkg_input(name,
+                                                                     version))
             if package:
                 items[name] = package
         return items
@@ -267,46 +278,47 @@ class PlatformPackagesMixin(object):
                 self.pm.update("%s=%s" % (name, version), requirements,
                                only_check)
 
-    def are_outdated_packages(self):
-        latest = None
-        for name in self.get_installed_packages():
-            version = self.packages[name].get("version", "")
-            if self.is_valid_requirements(version):
-                latest = self.pm.outdated(name, version)
-            else:
-                requirements = None
-                if "@" in version:
-                    version, requirements = version.rsplit("@", 1)
-                latest = self.pm.outdated(name, requirements, version)
-            if latest or latest is None:
-                return True
-        return False
+    # def are_outdated_packages(self):
+    #     latest = None
+    #     for name in self.get_installed_packages():
+    #         version = self.packages[name].get("version", "")
+    #         if self.is_valid_requirements(version):
+    #             latest = self.pm.outdated(name, version)
+    #         else:
+    #             requirements = None
+    #             if "@" in version:
+    #                 version, requirements = version.rsplit("@", 1)
+    #             latest = self.pm.outdated(name, requirements, version)
+    #         if latest or latest is None:
+    #             return True
+    #     return False
 
     def get_package_dir(self, name):
         version = self.packages[name].get("version", "")
         if self.is_valid_requirements(version):
             return self.pm.get_package_dir(name, version)
         else:
-            return self.pm.get_package_dir(*self._parse_pkg_name(name,
-                                                                 version))
+            return self.pm.get_package_dir(*self._parse_pkg_input(name,
+                                                                  version))
 
     def get_package_version(self, name):
         version = self.packages[name].get("version", "")
         if self.is_valid_requirements(version):
             package = self.pm.get_package(name, version)
         else:
-            package = self.pm.get_package(*self._parse_pkg_name(name, version))
+            package = self.pm.get_package(*self._parse_pkg_input(name,
+                                                                 version))
         return package['version'] if package else None
 
     @staticmethod
     def is_valid_requirements(requirements):
         return requirements and "://" not in requirements
 
-    def _parse_pkg_name(self, name, version):
+    def _parse_pkg_input(self, name, version):
         requirements = None
         if "@" in version:
             version, requirements = version.rsplit("@", 1)
-        return self.pm.parse_pkg_name("%s=%s" % (name, version), requirements)
+        return self.pm.parse_pkg_input("%s=%s" % (name, version), requirements)
 
 
 class PlatformRunMixin(object):

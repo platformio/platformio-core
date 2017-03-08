@@ -16,19 +16,6 @@ import pytest
 import requests
 
 
-def pytest_generate_tests(metafunc):
-    if "package_data" not in metafunc.fixturenames:
-        return
-    pkgs_manifest = requests.get(
-        "https://dl.bintray.com/platformio/dl-packages/manifest.json").json()
-    assert isinstance(pkgs_manifest, dict)
-    packages = []
-    for _, variants in pkgs_manifest.iteritems():
-        for item in variants:
-            packages.append(item)
-    metafunc.parametrize("package_data", packages)
-
-
 def validate_response(req):
     assert req.status_code == 200
     assert int(req.headers['Content-Length']) > 0
@@ -36,13 +23,22 @@ def validate_response(req):
                                            "application/octet-stream")
 
 
-def test_package(package_data):
-    assert package_data['url'].endswith(".tar.gz")
+def test_packages():
+    pkgs_manifest = requests.get(
+        "https://dl.bintray.com/platformio/dl-packages/manifest.json").json()
+    assert isinstance(pkgs_manifest, dict)
+    items = []
+    for _, variants in pkgs_manifest.iteritems():
+        for item in variants:
+            items.append(item)
 
-    r = requests.head(package_data['url'], allow_redirects=True)
-    validate_response(r)
+    for item in items:
+        assert item['url'].endswith(".tar.gz"), item
 
-    if "X-Checksum-Sha1" not in r.headers:
-        return pytest.skip("X-Checksum-Sha1 is not provided")
+        r = requests.head(item['url'], allow_redirects=True)
+        validate_response(r)
 
-    assert package_data['sha1'] == r.headers.get("X-Checksum-Sha1")
+        if "X-Checksum-Sha1" not in r.headers:
+            return pytest.skip("X-Checksum-Sha1 is not provided")
+
+        assert item['sha1'] == r.headers.get("X-Checksum-Sha1"), item

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import json
-from os.path import dirname, isfile, join
+from os.path import dirname, isdir
 
 import click
 
@@ -94,10 +94,12 @@ def _get_installed_platform_data(platform,
     # del data['version']
     # return data
 
-    data['__pkg_dir'] = dirname(p.manifest_path)
-    # if VCS cloned platform
-    if not isfile(join(data['__pkg_dir'], "platform.json")):
-        data['__pkg_dir'] = dirname(data['__pkg_dir'])
+    # overwrite VCS version and add extra fields
+    manifest = PlatformManager().load_manifest(dirname(p.manifest_path))
+    assert manifest
+    for key in manifest:
+        if key == "version" or key.startswith("__"):
+            data[key] = manifest[key]
 
     if with_boards:
         data['boards'] = [c.get_brief_data() for c in p.get_boards().values()]
@@ -214,7 +216,7 @@ def platform_list(json_output):
     for manifest in pm.get_installed():
         platforms.append(
             _get_installed_platform_data(
-                pm.get_manifest_path(manifest['__pkg_dir']),
+                manifest['__pkg_dir'],
                 with_boards=False,
                 expose_packages=False))
     if json_output:
@@ -336,22 +338,25 @@ def platform_update(platforms, only_packages, only_check, json_output):
     pm = PlatformManager()
     if not platforms:
         platforms = []
-        for manifest in pm.get_installed():
-            if "@vcs-" in manifest['__pkg_dir']:
-                platforms.append("%s=%s" % (manifest['name'], manifest['url']))
-            else:
-                platforms.append(manifest['name'])
+        platforms = [manifest['__pkg_dir'] for manifest in pm.get_installed()]
 
     if only_check and json_output:
         result = []
         for platform in platforms:
-            name, requirements, url = pm.parse_pkg_name(platform)
-            latest = pm.outdated(name, requirements, url)
+            pkg_dir = platform if isdir(platform) else None
+            requirements = None
+            url = None
+            if not pkg_dir:
+                name, requirements, url = pm.parse_pkg_input(platform)
+                pkg_dir = pm.get_package_dir(name, requirements, url)
+            if not pkg_dir:
+                continue
+            latest = pm.outdated(pkg_dir, requirements)
             if not latest:
                 continue
             data = _get_installed_platform_data(
-                name, with_boards=False, expose_packages=False)
-            data['versionLatest'] = latest or "Unknown"
+                pkg_dir, with_boards=False, expose_packages=False)
+            data['versionLatest'] = latest
             result.append(data)
         return click.echo(json.dumps(result))
     else:

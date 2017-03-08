@@ -163,8 +163,7 @@ def after_upgrade(ctx):
             # update development platforms
             pm = PlatformManager()
             for manifest in pm.get_installed():
-                # pm.update(manifest['name'], "^" + manifest['version'])
-                pm.update(manifest['name'])
+                pm.update(manifest['__pkg_dir'])
 
             # update PlatformIO Plus tool if installed
             pioplus_update()
@@ -262,7 +261,7 @@ def check_internal_updates(ctx, what):
     outdated_items = []
     for manifest in pm.get_installed():
         if manifest['name'] not in outdated_items and \
-                pm.outdated(manifest['name']):
+                pm.outdated(manifest['__pkg_dir']):
             outdated_items.append(manifest['name'])
 
     if not outdated_items:

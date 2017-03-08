@@ -15,10 +15,8 @@
 # pylint: disable=too-many-arguments, too-many-locals, too-many-branches
 
 import json
-import os
 import re
 from glob import glob
-from hashlib import md5
 from os.path import isdir, join
 
 import arrow
@@ -61,8 +59,8 @@ class LibraryManager(BasePkgManager):
 
         return None
 
-    def load_manifest(self, path):
-        manifest = BasePkgManager.load_manifest(self, path)
+    def load_manifest(self, pkg_dir):
+        manifest = BasePkgManager.load_manifest(self, pkg_dir)
         if not manifest:
             return manifest
 
@@ -75,6 +73,9 @@ class LibraryManager(BasePkgManager):
         if "author" in manifest:
             manifest['authors'] = [{"name": manifest['author']}]
             del manifest['author']
+
+        if "authors" in manifest and not isinstance(manifest['authors'], list):
+            manifest['authors'] = [manifest['authors']]
 
         if "keywords" not in manifest:
             keywords = []
@@ -122,31 +123,6 @@ class LibraryManager(BasePkgManager):
             ]
 
         return manifest
-
-    def check_pkg_structure(self, pkg_dir):
-        try:
-            return BasePkgManager.check_pkg_structure(self, pkg_dir)
-        except exception.MissingPackageManifest:
-            # we will generate manifest automatically
-            # if library doesn't contain any
-            pass
-
-        manifest = {
-            "name": "Library_" + md5(pkg_dir).hexdigest()[:5],
-            "version": "0.0.0"
-        }
-        for root, dirs, files in os.walk(pkg_dir):
-            if len(dirs) == 1 and not files:
-                manifest['name'] = dirs[0]
-                continue
-            if dirs or files:
-                pkg_dir = root
-                break
-
-        with open(join(pkg_dir, self.manifest_names[0]), "w") as fp:
-            json.dump(manifest, fp)
-
-        return pkg_dir
 
     @staticmethod
     def normalize_dependencies(dependencies):
@@ -239,7 +215,7 @@ class LibraryManager(BasePkgManager):
             }, silent, interactive)['id'])
 
     def _install_from_piorepo(self, name, requirements):
-        assert name.startswith("id=")
+        assert name.startswith("id="), name
         version = self.get_latest_repo_version(name, requirements)
         if not version:
             raise exception.UndefinedPackageVersion(requirements or "latest",
@@ -260,26 +236,21 @@ class LibraryManager(BasePkgManager):
                 silent=False,
                 trigger_event=True,
                 interactive=False):
-        already_installed = False
-        _name, _requirements, _url = self.parse_pkg_name(name, requirements)
-
         try:
+            _name, _requirements, _url = self.parse_pkg_input(name,
+                                                              requirements)
             if not _url:
-                _name = "id=%d" % self.get_pkg_id_by_name(
+                name = "id=%d" % self.get_pkg_id_by_name(
                     _name,
                     _requirements,
                     silent=silent,
                     interactive=interactive)
-            already_installed = self.get_package(_name, _requirements, _url)
-            pkg_dir = BasePkgManager.install(
-                self, _name
-                if not _url else name, _requirements, silent, trigger_event)
+                requirements = _requirements
+            pkg_dir = BasePkgManager.install(self, name, requirements, silent,
+                                             trigger_event)
         except exception.InternetIsOffline as e:
             if not silent:
                 click.secho(str(e), fg="yellow")
-            return
-
-        if already_installed:
             return
 
         manifest = self.load_manifest(pkg_dir)

@@ -15,7 +15,7 @@
 # pylint: disable=too-many-branches, too-many-locals
 
 import json
-from os.path import join
+from os.path import isdir, join
 from time import sleep
 from urllib import quote
 
@@ -116,22 +116,23 @@ def lib_uninstall(lm, libraries):
 @click.pass_obj
 def lib_update(lm, libraries, only_check, json_output):
     if not libraries:
-        libraries = []
-        for manifest in lm.get_installed():
-            if "@vcs-" in manifest['__pkg_dir']:
-                libraries.append("%s=%s" % (manifest['name'], manifest['url']))
-            else:
-                libraries.append(str(manifest.get("id", manifest['name'])))
+        libraries = [manifest['__pkg_dir'] for manifest in lm.get_installed()]
 
     if only_check and json_output:
         result = []
         for library in libraries:
-            name, requirements, url = lm.parse_pkg_name(library)
-            latest = lm.outdated(name, requirements, url)
+            pkg_dir = library if isdir(library) else None
+            requirements = None
+            url = None
+            if not pkg_dir:
+                name, requirements, url = lm.parse_pkg_input(library)
+                pkg_dir = lm.get_package_dir(name, requirements, url)
+            if not pkg_dir:
+                continue
+            latest = lm.outdated(pkg_dir, requirements)
             if not latest:
                 continue
-            manifest = lm.load_manifest(
-                lm.get_package_dir(name, requirements, url))
+            manifest = lm.load_manifest(pkg_dir)
             manifest['versionLatest'] = latest
             result.append(manifest)
         return click.echo(json.dumps(result))
@@ -167,6 +168,9 @@ def print_lib_item(item):
         click.echo("Authors: %s" % ", ".join(
             item.get("authornames",
                      [a.get("name", "") for a in item.get("authors", [])])))
+
+    if "__src_url" in item:
+        click.secho("Source: %s" % item['__src_url'])
     click.echo()
 
 
@@ -270,8 +274,7 @@ def get_builtin_libs(storage_names=None):
     storage_names = storage_names or []
     pm = PlatformManager()
     for manifest in pm.get_installed():
-        p = PlatformFactory.newPlatform(
-            pm.get_manifest_path(manifest['__pkg_dir']))
+        p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
         for storage in p.get_lib_storages():
             if storage_names and storage['name'] not in storage_names:
                 continue
@@ -308,7 +311,7 @@ def lib_builtin(storage, json_output):
 @click.option("--json-output", is_flag=True)
 def lib_show(library, json_output):
     lm = LibraryManager()
-    name, requirements, _ = lm.parse_pkg_name(library)
+    name, requirements, _ = lm.parse_pkg_input(library)
     lib_id = lm.get_pkg_id_by_name(
         name, requirements, silent=json_output, interactive=not json_output)
     lib = get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
