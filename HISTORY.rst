@@ -39,6 +39,7 @@ PlatformIO 3.0
 * Do not overwrite project configuration variables when system environment
   variables are set
 * Handle dependencies when installing non-registry package/library (VCS, archive, local folder)
+  (`issue #913 <https://github.com/platformio/platformio-core/issues/913>`_)
 * Fixed package installing with VCS branch for Python 2.7.3
   (`issue #885 <https://github.com/platformio/platformio-core/issues/885>`_)
 

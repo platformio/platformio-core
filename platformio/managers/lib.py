@@ -37,7 +37,7 @@ class LibraryManager(BasePkgManager):
     @property
     def manifest_names(self):
         return [
-            ".library.json", "library.properties", "library.json",
+            ".library.json", "library.json", "library.properties",
             "module.json"
         ]
 
