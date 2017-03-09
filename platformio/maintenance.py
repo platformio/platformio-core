@@ -141,9 +141,10 @@ class Upgrader(object):
             m['name'] for m in PlatformManager().get_installed()
         ]
         if "espressif" not in current_platforms:
-            return
+            return True
         ctx.invoke(cmd_platform_install, platforms=["espressif8266"])
         ctx.invoke(cmd_platform_uninstall, platforms=["espressif"])
+        return True
 
 
 def after_upgrade(ctx):
