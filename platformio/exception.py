@@ -94,8 +94,10 @@ class UndefinedPackageVersion(PlatformioException):
 
 class PackageInstallError(PlatformioException):
 
-    MESSAGE = "Can not install '{0}' with version requirements '{1}' "\
-              "for your system '{2}'"
+    MESSAGE = "Could not install '{0}' with version requirements '{1}' "\
+              "for your system '{2}'.\n"\
+              "If you use Antivirus, it can block PlatformIO Package "\
+              "Manager. Try to disable it for a while."
 
 
 class FDUnrecognizedStatusCode(PlatformioException):
