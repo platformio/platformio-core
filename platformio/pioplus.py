@@ -49,14 +49,14 @@ class PioPlusPackageManager(PackageManager):
 def pioplus_install():
     pm = PioPlusPackageManager()
     for item in PACKAGE_DEPS.values():
-        pm.install(item['name'], item['requirements'], silent=True)
+        if not pm.get_package(item['name'], item['requirements']):
+            pm.install(item['name'], item['requirements'])
 
 
 def pioplus_update():
     pm = PioPlusPackageManager()
     for item in PACKAGE_DEPS.values():
-        package_dir = pm.get_package_dir(item['name'])
-        if package_dir:
+        if pm.get_package(item['name']):
             pm.update(item['name'], item['requirements'])
 
 

@@ -678,9 +678,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(package,
-                                                           requirements)
-            pkg_dir = self.get_package_dir(name, requirements, url)
+            pkg_dir = self.get_package_dir(*self.parse_pkg_input(package))
 
         if not pkg_dir:
             raise exception.UnknownPackage("%s @ %s" %

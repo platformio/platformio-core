@@ -94,7 +94,7 @@ class Upgrader(object):
 
         self._upgraders = [
             (semantic_version.Version("3.0.0-a.1"), self._upgrade_to_3_0_0),
-            (semantic_version.Version("3.0.0-b.11"), self._upgrade_to_3_0_0)
+            (semantic_version.Version("3.0.0-b.11"), self._upgrade_to_3_0_0b11)
         ]
 
     def run(self, ctx):
@@ -160,7 +160,7 @@ def after_upgrade(ctx):
         if u.run(ctx):
             app.set_state_item("last_version", __version__)
 
-            # update PlatformIO Plus tool if installed
+            # update PlatformIO Plus tool if it's installed
             pioplus_update()
 
             click.secho(
