@@ -154,16 +154,11 @@ def after_upgrade(ctx):
     if last_version == "0.0.0":
         app.set_state_item("last_version", __version__)
     else:
-        click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
+        click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
         app.clean_cache()
         u = Upgrader(last_version, __version__)
         if u.run(ctx):
             app.set_state_item("last_version", __version__)
-
-            # update development platforms
-            pm = PlatformManager()
-            for manifest in pm.get_installed():
-                pm.update(manifest['__pkg_dir'])
 
             # update PlatformIO Plus tool if installed
             pioplus_update()
