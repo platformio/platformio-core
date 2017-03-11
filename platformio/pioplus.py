@@ -56,7 +56,8 @@ def pioplus_install():
 def pioplus_update():
     pm = PioPlusPackageManager()
     for item in PACKAGE_DEPS.values():
-        if pm.get_package(item['name']):
+        pkg_dir = pm.get_package_dir(item['name'])
+        if pkg_dir and pm.outdated(pkg_dir, item['requirements']):
             pm.update(item['name'], item['requirements'])
 
 
