@@ -48,8 +48,9 @@ PlatformIO 3.0
 
 * Development platform `Atmel AVR <https://github.com/platformio/platform-atmelavr>`__
 
-  + Added support for EnviroDIY Mayfly, The Things Uno, SparkFun Qduino Mini,
-    SparkFun ATmega128RFA1 Dev Board, SparkFun Serial 7-Segment Display boards
+  + New boards: EnviroDIY Mayfly, The Things Uno, SparkFun Qduino Mini,
+    SparkFun ATmega128RFA1 Dev Board, SparkFun Serial 7-Segment Display,
+    Generic ATTiny2313 and ATTiny4313
   + Set fuse bits with new target named ``fuses``
     (`issue #865 <https://github.com/platformio/platformio-core/issues/865>`_)
   + Updated Arduino Core to 1.6.17
