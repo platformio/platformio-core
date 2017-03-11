@@ -553,6 +553,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         # skip a fixed package to a specific version
         if "@" in pkg_dir and "__src_url" not in manifest:
             return None
+
         if "__src_url" in manifest:
             try:
                 vcs = VCSClientFactory.newClient(
@@ -571,14 +572,18 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                     silent=True)
             except (exception.PlatformioException, ValueError):
                 return None
+
         if not latest:
             return None
+
         up_to_date = False
         try:
+            assert "__src_url" not in manifest
             up_to_date = (semantic_version.Version.coerce(manifest['version'])
                           >= semantic_version.Version.coerce(latest))
-        except ValueError:
+        except (AssertionError, ValueError):
             up_to_date = latest == manifest['version']
+
         return False if up_to_date else latest
 
     def install(self,
