@@ -18,7 +18,7 @@ import sys
 
 import click
 
-from platformio.pioplus import pioplus_call
+from platformio.managers.core import pioplus_call
 
 
 @click.group("account", short_help="Manage PIO Account")

@@ -16,8 +16,8 @@ import click
 
 from platformio.commands.lib import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
+from platformio.managers.core import update_core_packages
 from platformio.managers.lib import LibraryManager
-from platformio.pioplus import pioplus_update
 
 
 @click.command(
@@ -29,10 +29,12 @@ from platformio.pioplus import pioplus_update
     help="Do not update, only check for new version")
 @click.pass_context
 def cli(ctx, only_check):
+    update_core_packages(only_check)
+
+    click.echo()
     click.echo("Platform Manager")
     click.echo("================")
     ctx.invoke(cmd_platform_update, only_check=only_check)
-    pioplus_update()
 
     click.echo()
     click.echo("Library Manager")

@@ -29,9 +29,9 @@ from platformio.commands.platform import \
     platform_uninstall as cmd_platform_uninstall
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
+from platformio.managers.core import update_core_packages
 from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
-from platformio.pioplus import pioplus_update
 
 
 def in_silence(ctx=None):
@@ -157,18 +157,17 @@ def after_upgrade(ctx):
     else:
         click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
         app.clean_cache()
+
+        # Update PlatformIO's Core packages
+        update_core_packages()
+
         u = Upgrader(last_version, __version__)
         if u.run(ctx):
             app.set_state_item("last_version", __version__)
-
-            # update PlatformIO Plus tool if it's installed
-            pioplus_update()
-
             click.secho(
                 "PlatformIO has been successfully upgraded to %s!\n" %
                 __version__,
                 fg="green")
-
             telemetry.on_event(
                 category="Auto",
                 action="Upgrade",

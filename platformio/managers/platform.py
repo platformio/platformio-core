@@ -23,6 +23,7 @@ import click
 import semantic_version
 
 from platformio import __version__, app, exception, util
+from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
 
 
@@ -161,12 +162,14 @@ class PlatformManager(BasePkgManager):
     def get_registered_boards():
         return util.get_api_result("/boards", cache_valid="30d")
 
-    def board_config(self, id_):
+    def board_config(self, id_, platform=None):
         for manifest in self.get_installed_boards():
-            if manifest['id'] == id_:
+            if manifest['id'] == id_ and (not platform or
+                                          manifest['platform'] == platform):
                 return manifest
         for manifest in self.get_registered_boards():
-            if manifest['id'] == id_:
+            if manifest['id'] == id_ and (not platform or
+                                          manifest['platform'] == platform):
                 return manifest
         raise exception.UnknownBoard(id_)
 
@@ -334,7 +337,7 @@ class PlatformRunMixin(object):
     def _run_scons(self, variables, targets):
         cmd = [
             util.get_pythonexe_path(),
-            join(self.get_package_dir("tool-scons"), "script", "scons"), "-Q",
+            join(get_core_package_dir("tool-scons"), "script", "scons"), "-Q",
             "-j %d" % self.get_job_nums(), "--warn=no-no-parallel-support",
             "-f", join(util.get_source_dir(), "builder", "main.py")
         ]
@@ -552,17 +555,6 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
                 elif "nobuild" in targets:
                     # skip all packages, allow only upload tools
                     self.packages[_name]['optional'] = True
-
-        if "__test" in targets and "tool-unity" not in self.packages:
-            self.packages['tool-unity'] = {
-                "version": "~1.20302.1",
-                "optional": False
-            }
-        if "tool-scons" not in self.packages:
-            self.packages['tool-scons'] = {
-                "version": "~3.20501.2",
-                "optional": False
-            }
 
     def get_lib_storages(self):
         storages = []

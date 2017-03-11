@@ -387,9 +387,10 @@ class PkgInstallerMixin(object):
         if not isdir(src_dir):
             os.makedirs(src_dir)
         src_manifest_path = join(src_dir, self.SRC_MANIFEST_NAME)
-        _data = data
+        _data = {}
         if isfile(src_manifest_path):
-            _data.update(util.load_json(src_manifest_path))
+            _data = util.load_json(src_manifest_path)
+        _data.update(data)
         with open(src_manifest_path, "w") as fp:
             json.dump(_data, fp)
 

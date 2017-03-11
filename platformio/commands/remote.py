@@ -23,7 +23,7 @@ import click
 
 from platformio import exception, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
-from platformio.pioplus import pioplus_call
+from platformio.managers.core import pioplus_call
 
 # pylint: disable=unused-argument
 

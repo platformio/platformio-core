@@ -17,7 +17,7 @@ from os import getcwd
 
 import click
 
-from platformio.pioplus import pioplus_call
+from platformio.managers.core import pioplus_call
 
 
 @click.command("test", short_help="Local Unit Testing")

@@ -20,21 +20,18 @@ from os.path import join
 from platformio import exception, util
 from platformio.managers.package import PackageManager
 
-PACKAGE_DEPS = {
-    "pysite": {
-        "name": "pysite-pioplus",
-        "requirements": ">=0.3.0,<2"
-    },
-    "tool": {
-        "name": "tool-pioplus",
-        "requirements": ">=0.6.10,<2"
-    }
+CORE_PACKAGES = {
+    "project-templates": "*",
+    "pysite-pioplus": ">=0.3.0,<2",
+    "tool-pioplus": ">=0.6.10,<2",
+    "tool-unity": "~1.20302.1",
+    "tool-scons": "~3.20501.2"
 }
 
-AUTO_UPDATES_MAX = 100
+PIOPLUS_AUTO_UPDATES_MAX = 100
 
 
-class PioPlusPackageManager(PackageManager):
+class CorePackageManager(PackageManager):
 
     def __init__(self):
         PackageManager.__init__(
@@ -46,30 +43,28 @@ class PioPlusPackageManager(PackageManager):
             ])
 
 
-def pioplus_install():
-    pm = PioPlusPackageManager()
-    for item in PACKAGE_DEPS.values():
-        if not pm.get_package(item['name'], item['requirements']):
-            pm.install(item['name'], item['requirements'])
+def get_core_package_dir(name):
+    assert name in CORE_PACKAGES
+    requirements = CORE_PACKAGES[name]
+    pm = CorePackageManager()
+    pkg_dir = pm.get_package_dir(name, requirements)
+    if pkg_dir:
+        return pkg_dir
+    return pm.install(name, requirements)
 
 
-def pioplus_update():
-    pm = PioPlusPackageManager()
-    for item in PACKAGE_DEPS.values():
-        pkg_dir = pm.get_package_dir(item['name'])
-        if pkg_dir and pm.outdated(pkg_dir, item['requirements']):
-            pm.update(item['name'], item['requirements'])
+def update_core_packages(only_check=False):
+    pm = CorePackageManager()
+    for name, requirements in CORE_PACKAGES.items():
+        pkg_dir = pm.get_package_dir(name)
+        if pkg_dir and pm.outdated(pkg_dir, requirements):
+            pm.update(name, requirements, only_check=only_check)
 
 
 def pioplus_call(args, **kwargs):
-    pioplus_install()
-    pm = PioPlusPackageManager()
-    pioplus_path = join(
-        pm.get_package_dir(PACKAGE_DEPS['tool']['name'],
-                           PACKAGE_DEPS['tool']['requirements']), "pioplus")
+    pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
     os.environ['PYTHONEXEPATH'] = util.get_pythonexe_path()
-    os.environ['PYTHONPYSITEDIR'] = pm.get_package_dir(
-        PACKAGE_DEPS['pysite']['name'], PACKAGE_DEPS['pysite']['requirements'])
+    os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("pysite-pioplus")
     util.copy_pythonpath_to_osenv()
     code = subprocess.call([pioplus_path] + args, **kwargs)
 
@@ -83,8 +78,8 @@ def pioplus_call(args, **kwargs):
             setattr(pioplus_call, count_attr, 1)
         count_value += 1
         setattr(pioplus_call, count_attr, count_value)
-        if count_value < AUTO_UPDATES_MAX:
-            pioplus_update()
+        if count_value < PIOPLUS_AUTO_UPDATES_MAX:
+            update_core_packages()
             return pioplus_call(args, **kwargs)
 
     # handle reload request
