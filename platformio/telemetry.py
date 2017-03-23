@@ -310,7 +310,7 @@ def on_exception(e):
     ])
     mp = MeasurementProtocol()
     mp['exd'] = ("%s: %s" % (type(e).__name__, format_exc()
-                             if is_crash else e))[:150]
+                             if is_crash else e))[:2048]
     mp['exf'] = 1 if is_crash else 0
     mp.send("exception")
 
