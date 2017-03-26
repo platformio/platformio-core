@@ -62,17 +62,21 @@ class PlatformManager(BasePkgManager):
                 without_packages=None,
                 skip_default_package=False,
                 trigger_event=True,
+                silent=False,
                 **_):  # pylint: disable=too-many-arguments
-        platform_dir = BasePkgManager.install(self, name, requirements)
+        platform_dir = BasePkgManager.install(
+            self, name, requirements, silent=silent)
         p = PlatformFactory.newPlatform(platform_dir)
 
         # @Hook: when 'update' operation (trigger_event is False),
         # don't cleanup packages or install them
         if not trigger_event:
             return True
-
-        p.install_packages(with_packages, without_packages,
-                           skip_default_package)
+        p.install_packages(
+            with_packages,
+            without_packages,
+            skip_default_package,
+            silent=silent)
         self.cleanup_packages(p.packages.keys())
         return True
 
@@ -231,8 +235,8 @@ class PlatformPackagesMixin(object):
                          without_packages=None,
                          skip_default_package=False,
                          silent=False):
-        with_packages = set(self.pkg_types_to_names(with_packages or []))
-        without_packages = set(self.pkg_types_to_names(without_packages or []))
+        with_packages = set(self.find_pkg_names(with_packages or []))
+        without_packages = set(self.find_pkg_names(without_packages or []))
 
         upkgs = with_packages | without_packages
         ppkgs = set(self.packages.keys())
@@ -255,6 +259,23 @@ class PlatformPackagesMixin(object):
                         "%s=%s" % (name, version), requirements, silent=silent)
 
         return True
+
+    def find_pkg_names(self, items):
+        result = []
+        for item in items:
+            candidate = item
+
+            # lookup by package types
+            for _name, _opts in self.packages.items():
+                if _opts.get("type") == item:
+                    candidate = _name
+
+            if (self.frameworks and item.startswith("framework-") and
+                    item[10:] in self.frameworks):
+                candidate = self.frameworks[item[10:]]['package']
+
+            result.append(candidate)
+        return result
 
     def update_packages(self, only_check=False):
         for name, manifest in self.get_installed_packages().items():
@@ -517,20 +538,6 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
 
     def get_package_type(self, name):
         return self.packages[name].get("type")
-
-    def pkg_types_to_names(self, types):
-        names = []
-        for type_ in types:
-            name = type_
-            # lookup by package types
-            for _name, _opts in self.packages.items():
-                if _opts.get("type") == type_:
-                    name = None
-                    names.append(_name)
-            # if type is the right name
-            if name:
-                names.append(name)
-        return names
 
     def configure_default_packages(self, variables, targets):
         # enable used frameworks

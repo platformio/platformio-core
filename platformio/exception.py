@@ -58,7 +58,7 @@ class BoardNotDefined(PlatformioException):
 
     MESSAGE = "You need to specify board ID using `-b` or `--board` "\
         "option. Supported boards list is available via "\
-        " `platformio boards` command"
+        "`platformio boards` command"
 
 
 class UnknownBoard(PlatformioException):

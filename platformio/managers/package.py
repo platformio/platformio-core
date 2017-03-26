@@ -346,7 +346,7 @@ class PkgInstallerMixin(object):
                           sha1=None,
                           track=False):
         pkg_dir = None
-        tmp_dir = mkdtemp("-package", "installing-", self.package_dir)
+        tmp_dir = mkdtemp("-package", "_tmp_installing-", self.package_dir)
         src_manifest_dir = None
         src_manifest = {"name": name, "url": url, "requirements": requirements}
 
@@ -591,8 +591,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 name,
                 requirements=None,
                 silent=False,
-                trigger_event=True,
-                interactive=False):  # pylint: disable=unused-argument
+                trigger_event=True):
         name, requirements, url = self.parse_pkg_input(name, requirements)
         package_dir = self.get_package_dir(name, requirements, url)
 

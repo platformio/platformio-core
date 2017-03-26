@@ -230,12 +230,13 @@ class LibraryManager(BasePkgManager):
             name, dl_data['url'].replace("http://", "https://")
             if app.get_setting("enable_ssl") else dl_data['url'], requirements)
 
-    def install(self,
-                name,
-                requirements=None,
-                silent=False,
-                trigger_event=True,
-                interactive=False):
+    def install(  # pylint: disable=arguments-differ
+            self,
+            name,
+            requirements=None,
+            silent=False,
+            trigger_event=True,
+            interactive=False):
         try:
             _name, _requirements, _url = self.parse_pkg_input(name,
                                                               requirements)
