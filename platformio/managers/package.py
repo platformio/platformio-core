@@ -470,6 +470,9 @@ class PkgInstallerMixin(object):
 
 class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
+    # Handle circle dependencies
+    INSTALL_HISTORY = None
+
     def __init__(self, package_dir, repositories=None):
         self.repositories = repositories
         self.package_dir = package_dir
@@ -592,6 +595,15 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 requirements=None,
                 silent=False,
                 trigger_event=True):
+
+        # avoid circle dependencies
+        if not BasePkgManager.INSTALL_HISTORY:
+            BasePkgManager.INSTALL_HISTORY = []
+        history_key = "%s-%s" % (name, requirements) if requirements else name
+        if history_key in BasePkgManager.INSTALL_HISTORY:
+            return
+        BasePkgManager.INSTALL_HISTORY.append(history_key)
+
         name, requirements, url = self.parse_pkg_input(name, requirements)
         package_dir = self.get_package_dir(name, requirements, url)
 

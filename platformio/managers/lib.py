@@ -237,6 +237,7 @@ class LibraryManager(BasePkgManager):
             silent=False,
             trigger_event=True,
             interactive=False):
+        pkg_dir = None
         try:
             _name, _requirements, _url = self.parse_pkg_input(name,
                                                               requirements)
@@ -252,6 +253,9 @@ class LibraryManager(BasePkgManager):
         except exception.InternetIsOffline as e:
             if not silent:
                 click.secho(str(e), fg="yellow")
+            return
+
+        if not pkg_dir:
             return
 
         manifest = self.load_manifest(pkg_dir)
