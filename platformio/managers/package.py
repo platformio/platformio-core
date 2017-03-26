@@ -597,12 +597,12 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 trigger_event=True):
 
         # avoid circle dependencies
-        if not BasePkgManager.INSTALL_HISTORY:
-            BasePkgManager.INSTALL_HISTORY = []
+        if not self.INSTALL_HISTORY:
+            self.INSTALL_HISTORY = []
         history_key = "%s-%s" % (name, requirements) if requirements else name
-        if history_key in BasePkgManager.INSTALL_HISTORY:
+        if history_key in self.INSTALL_HISTORY:
             return
-        BasePkgManager.INSTALL_HISTORY.append(history_key)
+        self.INSTALL_HISTORY.append(history_key)
 
         name, requirements, url = self.parse_pkg_input(name, requirements)
         package_dir = self.get_package_dir(name, requirements, url)
