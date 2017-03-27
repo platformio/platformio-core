@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.3.0 (2017-??-??)
+3.3.0 (2017-03-27)
 ~~~~~~~~~~~~~~~~~~
 
 * PlatformIO Library Registry statistics with new
