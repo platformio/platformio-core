@@ -83,8 +83,8 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
                     err=True)
                 raise exception.ReturnErrorCode(1)
             else:
-                raise exception.UpgradeError("\n".join(
-                    [str(cmd), r['out'], r['err']]))
+                raise exception.UpgradeError(
+                    "\n".join([str(cmd), r['out'], r['err']]))
 
 
 def get_latest_version():
@@ -101,9 +101,10 @@ def get_latest_version():
 
 def get_develop_latest_version():
     version = None
-    r = requests.get("https://raw.githubusercontent.com/platformio/platformio"
-                     "/develop/platformio/__init__.py",
-                     headers=util.get_request_defheaders())
+    r = requests.get(
+        "https://raw.githubusercontent.com/platformio/platformio"
+        "/develop/platformio/__init__.py",
+        headers=util.get_request_defheaders())
     r.raise_for_status()
     for line in r.text.split("\n"):
         line = line.strip()
@@ -121,7 +122,8 @@ def get_develop_latest_version():
 
 
 def get_pypi_latest_version():
-    r = requests.get("https://pypi.python.org/pypi/platformio/json",
-                     headers=util.get_request_defheaders())
+    r = requests.get(
+        "https://pypi.python.org/pypi/platformio/json",
+        headers=util.get_request_defheaders())
     r.raise_for_status()
     return r.json()['info']['version']

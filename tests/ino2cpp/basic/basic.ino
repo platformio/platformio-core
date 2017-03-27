@@ -26,11 +26,14 @@ Foo foo(&fooCallback);
 
 //
 
+template<class T> T Add(T n1, T n2) {
+    return n1 + n2;
+}
+
 void setup() {
     struct Item item1;
     myFunction(&item1);
 }
-
 
 void loop() {
 
@@ -40,7 +43,7 @@ void myFunction(struct Item *item) {
 
 }
 
-#warning "Line number is 43"
+#warning "Line number is 46"
 
 void fooCallback(){
 

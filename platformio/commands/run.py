@@ -22,6 +22,7 @@ import click
 
 from platformio import __version__, exception, telemetry, util
 from platformio.commands.lib import lib_install as cmd_lib_install
+from platformio.commands.lib import get_builtin_libs
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
 from platformio.managers.lib import LibraryManager
@@ -95,7 +96,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                 results.append((envname, None))
                 continue
 
-            if results:
+            if not silent and results:
                 click.echo()
 
             options = {}
@@ -108,11 +109,13 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                                       upload_port, silent, verbose)
             results.append((envname, ep.process()))
 
-        if len(results) > 1:
+        found_error = any([status is False for (_, status) in results])
+
+        if (found_error or not silent) and len(results) > 1:
             click.echo()
             print_summary(results, start_time)
 
-        if any([status is False for (_, status) in results]):
+        if found_error:
             raise exception.ReturnErrorCode(1)
         return True
 
@@ -160,18 +163,20 @@ class EnvironmentProcessor(object):
             if "\n" in v:
                 self.options[k] = self.options[k].strip().replace("\n", ", ")
 
-        click.echo("[%s] Processing %s (%s)" % (
-            datetime.now().strftime("%c"), click.style(
-                self.name, fg="cyan", bold=True),
-            ", ".join(["%s: %s" % (k, v) for k, v in self.options.items()])))
-        click.secho("-" * terminal_width, bold=True)
-        if self.silent:
-            click.echo("Please wait...")
+        if not self.silent:
+            click.echo("[%s] Processing %s (%s)" % (
+                datetime.now().strftime("%c"), click.style(
+                    self.name, fg="cyan", bold=True), ", ".join(
+                        ["%s: %s" % (k, v) for k, v in self.options.items()])))
+            click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
         result = self._run()
-
         is_error = result['returncode'] != 0
+
+        if self.silent and not is_error:
+            return True
+
         if is_error or "piotest_processor" not in self.cmd_ctx.meta:
             print_header(
                 "[%s] Took %.2f seconds" % ((click.style(
@@ -275,7 +280,15 @@ def _autoinstall_libdeps(ctx, libraries, verbose=False):
         try:
             ctx.invoke(cmd_lib_install, libraries=[lib], silent=not verbose)
         except exception.LibNotFound as e:
-            click.secho("Warning! %s" % e, fg="yellow")
+            if not _is_builtin_lib(lib):
+                click.secho("Warning! %s" % e, fg="yellow")
+
+
+def _is_builtin_lib(lib_name):
+    for storage in get_builtin_libs():
+        if any([l.get("name") == lib_name for l in storage['items']]):
+            return True
+    return False
 
 
 def _clean_pioenvs_dir(pioenvs_dir):
@@ -329,9 +342,7 @@ def print_summary(results, start_time):
         format_str = (
             "Environment {0:<" + str(envname_max_len + 9) + "}\t[{1}]")
         click.echo(
-            format_str.format(
-                click.style(
-                    envname, fg="cyan"), status_str),
+            format_str.format(click.style(envname, fg="cyan"), status_str),
             err=status is False)
 
     print_header(

@@ -17,7 +17,7 @@ from os import getcwd
 
 import click
 
-from platformio.pioplus import pioplus_call
+from platformio.managers.core import pioplus_call
 
 
 @click.command("test", short_help="Local Unit Testing")
@@ -37,6 +37,20 @@ from platformio.pioplus import pioplus_call
         resolve_path=True))
 @click.option("--without-building", is_flag=True)
 @click.option("--without-uploading", is_flag=True)
+@click.option(
+    "--no-reset",
+    is_flag=True,
+    help="Disable software reset via Serial.DTR/RST")
+@click.option(
+    "--monitor-rts",
+    default=None,
+    type=click.IntRange(0, 1),
+    help="Set initial RTS line state for Serial Monitor")
+@click.option(
+    "--monitor-dtr",
+    default=None,
+    type=click.IntRange(0, 1),
+    help="Set initial DTR line state for Serial Monitor")
 @click.option("--verbose", "-v", is_flag=True)
 def cli(*args, **kwargs):  # pylint: disable=unused-argument
     pioplus_call(sys.argv[1:])

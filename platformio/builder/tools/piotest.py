@@ -16,14 +16,15 @@ from __future__ import absolute_import
 
 from os.path import join, sep
 
+from platformio.managers.core import get_core_package_dir
+
 
 def ProcessTest(env):
     env.Append(
         CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
         CPPPATH=[join("$BUILD_DIR", "UnityTestLib")])
     unitylib = env.BuildLibrary(
-        join("$BUILD_DIR", "UnityTestLib"),
-        env.PioPlatform().get_package_dir("tool-unity"))
+        join("$BUILD_DIR", "UnityTestLib"), get_core_package_dir("tool-unity"))
     env.Prepend(LIBS=[unitylib])
 
     src_filter = None

@@ -25,7 +25,7 @@ from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
                           DefaultEnvironment, SConscript)
 from SCons.Util import case_sensitive_suffixes, is_Sequence
 
-from platformio.util import pioversion_to_intstr
+from platformio.util import glob_escape, pioversion_to_intstr
 
 SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
@@ -191,7 +191,7 @@ def MatchSourceFiles(env, src_dir, src_filter=None):
     src_filter = src_filter.replace("/", sep).replace("\\", sep)
     for (action, pattern) in SRC_FILTER_PATTERNS_RE.findall(src_filter):
         items = set()
-        for item in glob(join(src_dir, pattern)):
+        for item in glob(join(glob_escape(src_dir), pattern)):
             if isdir(item):
                 for root, _, files in walk(item, followlinks=True):
                     for f in files:
@@ -266,8 +266,7 @@ def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     lib = env.Clone()
     return lib.StaticLibrary(
         lib.subst(variant_dir),
-        lib.CollectBuildFiles(
-            variant_dir, src_dir, src_filter=src_filter))
+        lib.CollectBuildFiles(variant_dir, src_dir, src_filter=src_filter))
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):

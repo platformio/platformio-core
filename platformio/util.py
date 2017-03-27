@@ -141,7 +141,12 @@ class memoized(object):
 
     def __get__(self, obj, objtype):
         '''Support instance methods.'''
-        return functools.partial(self.__call__, obj)
+        fn = functools.partial(self.__call__, obj)
+        fn.reset = self._reset
+        return fn
+
+    def _reset(self):
+        self.cache = {}
 
 
 def singleton(cls):
@@ -157,8 +162,12 @@ def singleton(cls):
 
 
 def load_json(file_path):
-    with open(file_path, "r") as f:
-        return json.load(f)
+    try:
+        with open(file_path, "r") as f:
+            return json.load(f)
+    except ValueError:
+        raise exception.PlatformioException("Could not load broken JSON: %s" %
+                                            file_path)
 
 
 def get_systype():
@@ -458,11 +467,12 @@ def _get_api_result(
                 auth=auth,
                 verify=disable_ssl_check)
         else:
-            r = _api_request_session().get(url,
-                                           params=params,
-                                           headers=headers,
-                                           auth=auth,
-                                           verify=disable_ssl_check)
+            r = _api_request_session().get(
+                url,
+                params=params,
+                headers=headers,
+                auth=auth,
+                verify=disable_ssl_check)
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -558,7 +568,7 @@ def where_is_program(program, envpath=None):
 
 
 def pepver_to_semver(pepver):
-    return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2", pepver, 1)
+    return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2.", pepver, 1)
 
 
 def rmtree_(path):
@@ -568,3 +578,28 @@ def rmtree_(path):
         os.remove(name)
 
     return rmtree(path, onerror=_onerror)
+
+
+#
+# Glob.Escape from Python 3.4
+# https://github.com/python/cpython/blob/master/Lib/glob.py#L161
+#
+
+try:
+    from glob import escape as glob_escape  # pylint: disable=unused-import
+except ImportError:
+    magic_check = re.compile('([*?[])')
+    magic_check_bytes = re.compile(b'([*?[])')
+
+    def glob_escape(pathname):
+        """Escape all special characters.
+        """
+        # Escaping is done by wrapping any of "*?[" between square brackets.
+        # Metacharacters do not work in the drive part and shouldn't be
+        # escaped.
+        drive, pathname = os.path.splitdrive(pathname)
+        if isinstance(pathname, bytes):
+            pathname = magic_check_bytes.sub(br'[\1]', pathname)
+        else:
+            pathname = magic_check.sub(r'[\1]', pathname)
+        return drive + pathname

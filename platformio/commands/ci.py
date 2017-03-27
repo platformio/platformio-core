@@ -152,7 +152,7 @@ def _copy_contents(dst_dir, contents):
 def _exclude_contents(dst_dir, patterns):
     contents = []
     for p in patterns:
-        contents += glob(join(dst_dir, p))
+        contents += glob(join(util.glob_escape(dst_dir), p))
     for path in contents:
         path = abspath(path)
         if isdir(path):

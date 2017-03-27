@@ -69,8 +69,8 @@ class ProjectGenerator(object):
         result = util.exec_command(cmd)
 
         if result['returncode'] != 0 or '"includes":' not in result['out']:
-            raise exception.PlatformioException("\n".join(
-                [result['out'], result['err']]))
+            raise exception.PlatformioException(
+                "\n".join([result['out'], result['err']]))
 
         for line in result['out'].split("\n"):
             line = line.strip()

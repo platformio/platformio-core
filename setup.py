@@ -18,13 +18,14 @@ from platformio import (__author__, __description__, __email__, __license__,
                         __title__, __url__, __version__)
 
 install_requires = [
+    "arrow<1",
     "bottle<0.13",
     "click>=5,<6",
-    "lockfile>=0.9.1,<0.13",
-    "requests>=2.4.0,<3",
-    "semantic_version>=2.5.0",
     "colorama",
-    "pyserial>=3,<4"
+    "lockfile>=0.9.1,<0.13",
+    "pyserial>=3,<4",
+    "requests>=2.4.0,<3",
+    "semantic_version>=2.5.0"
 ]
 
 setup(
@@ -69,6 +70,6 @@ setup(
         "iot", "ide", "build", "compile", "library manager",
         "embedded", "ci", "continuous integration", "arduino", "mbed",
         "esp8266", "framework", "ide", "ide integration", "library.json",
-        "make", "cmake", "makefile", "mk", "pic32", "fpga"
+        "make", "cmake", "makefile", "mk", "pic32", "fpga", "artik"
     ]
 )

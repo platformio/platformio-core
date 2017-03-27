@@ -93,16 +93,15 @@ Packages
     :header-rows:  1
 
     * - Name
-      - Contents""")
+      - Description""")
     for name in sorted(packagenames):
         assert name in API_PACKAGES, name
-        contitems = [
-            "`{name} <{url}>`_".format(**item) for item in API_PACKAGES[name]
-        ]
         lines.append("""
-    * - ``{name}``
-      - {contents}""".format(
-            name=name, contents=", ".join(contitems)))
+    * - `{name} <{url}>`__
+      - {description}""".format(
+            name=name,
+            url=API_PACKAGES[name]['url'],
+            description=API_PACKAGES[name]['description']))
 
     if is_embedded:
         lines.append("""
@@ -172,8 +171,8 @@ For more detailed information please visit `vendor site <%s>`_.""" %
     #
     # Packages
     #
-    _packages_content = generate_packages(name, p.packages.keys(),
-                                          p.is_embedded())
+    _packages_content = generate_packages(name,
+                                          p.packages.keys(), p.is_embedded())
     if _packages_content:
         lines.append(_packages_content)
 
@@ -288,10 +287,11 @@ Platforms
             continue
         _found_platform = True
         p = PlatformFactory.newPlatform(manifest['name'])
-        lines.append("""
+        lines.append(
+            """
     * - :ref:`platform_{type_}`
-      - {description}""".format(
-            type_=manifest['name'], description=p.description))
+      - {description}"""
+            .format(type_=manifest['name'], description=p.description))
     if not _found_platform:
         del lines[-1]
 
@@ -347,19 +347,21 @@ Packages
     :header-rows:  1
 
     * - Name
-      - Contents""")
+      - Description""")
     for name, items in sorted(API_PACKAGES.iteritems()):
-        contitems = ["`{name} <{url}>`_".format(**item) for item in items]
         lines.append("""
-    * - ``{name}``
-      - {contents}""".format(
-            name=name, contents=", ".join(contitems)))
+    * - `{name} <{url}>`__
+      - {description}""".format(
+            name=name,
+            url=API_PACKAGES[name]['url'],
+            description=API_PACKAGES[name]['description']))
 
     with open(
             join(util.get_source_dir(), "..", "docs", "platforms",
                  "creating_platform.rst"), "r+") as fp:
         content = fp.read()
-        fp.seek(0, 0)
+        fp.seek(0)
+        fp.truncate()
         fp.write(content[:content.index(".. _platform_creating_packages:")] +
                  "\n".join(lines) + "\n\n" + content[content.index(
                      ".. _platform_creating_manifest_file:"):])

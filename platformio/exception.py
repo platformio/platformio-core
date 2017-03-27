@@ -40,7 +40,12 @@ class AbortedByUser(PlatformioException):
 
 class UnknownPlatform(PlatformioException):
 
-    MESSAGE = "Unknown platform '{0}'"
+    MESSAGE = "Unknown development platform '{0}'"
+
+
+class IncompatiblePlatform(PlatformioException):
+
+    MESSAGE = "Development platform '{0}' is not compatible with PIO Core v{1}"
 
 
 class PlatformNotInstalledYet(PlatformioException):
@@ -53,7 +58,7 @@ class BoardNotDefined(PlatformioException):
 
     MESSAGE = "You need to specify board ID using `-b` or `--board` "\
         "option. Supported boards list is available via "\
-        " `platformio boards` command"
+        "`platformio boards` command"
 
 
 class UnknownBoard(PlatformioException):
@@ -78,7 +83,7 @@ class UnknownPackage(PlatformioException):
 
 class MissingPackageManifest(PlatformioException):
 
-    MESSAGE = "Could not find '{0}' manifest file in the package"
+    MESSAGE = "Could not find one of '{0}' manifest files in the package"
 
 
 class UndefinedPackageVersion(PlatformioException):
@@ -89,8 +94,10 @@ class UndefinedPackageVersion(PlatformioException):
 
 class PackageInstallError(PlatformioException):
 
-    MESSAGE = "Can not install '{0}' with version requirements '{1}' "\
-              "for your system '{2}'"
+    MESSAGE = "Could not install '{0}' with version requirements '{1}' "\
+              "for your system '{2}'.\n"\
+              "If you use Antivirus, it can block PlatformIO Package "\
+              "Manager. Try to disable it for a while."
 
 
 class FDUnrecognizedStatusCode(PlatformioException):

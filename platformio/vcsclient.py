@@ -25,21 +25,22 @@ from platformio.exception import PlatformioException
 class VCSClientFactory(object):
 
     @staticmethod
-    def newClient(src_dir, remote_url):
+    def newClient(src_dir, remote_url, silent=False):
         result = urlparse(remote_url)
         type_ = result.scheme
+        tag = None
         if not type_ and remote_url.startswith("git@"):
             type_ = "git"
         elif "+" in result.scheme:
             type_, _ = result.scheme.split("+", 1)
             remote_url = remote_url[len(type_) + 1:]
-        if result.fragment:
-            remote_url = remote_url.rsplit("#", 1)[0]
+        if "#" in remote_url:
+            remote_url, tag = remote_url.rsplit("#", 1)
         if not type_:
             raise PlatformioException("VCS: Unknown repository type %s" %
                                       remote_url)
         obj = getattr(modules[__name__], "%sClient" % type_.title())(
-            src_dir, remote_url, result.fragment)
+            src_dir, remote_url, tag, silent)
         assert isinstance(obj, VCSClientBase)
         return obj
 
@@ -48,17 +49,21 @@ class VCSClientBase(object):
 
     command = None
 
-    def __init__(self, src_dir, remote_url=None, tag=None):
+    def __init__(self, src_dir, remote_url=None, tag=None, silent=False):
         self.src_dir = src_dir
         self.remote_url = remote_url
         self.tag = tag
+        self.silent = silent
         self.check_client()
 
     def check_client(self):
         try:
             assert self.command
-            assert self.run_cmd(["--version"])
-        except (AssertionError, OSError):
+            if self.silent:
+                self.get_cmd_output(["--version"])
+            else:
+                assert self.run_cmd(["--version"])
+        except (AssertionError, OSError, PlatformioException):
             raise PlatformioException(
                 "VCS: `%s` client is not installed in your system" %
                 self.command)
@@ -80,6 +85,9 @@ class VCSClientBase(object):
 
     def get_current_revision(self):
         raise NotImplementedError
+
+    def get_latest_revision(self):
+        return None if self.can_be_updated else self.get_current_revision()
 
     def run_cmd(self, args, **kwargs):
         args = [self.command] + args
@@ -107,6 +115,16 @@ class GitClient(VCSClientBase):
         output = self.get_cmd_output(["branch"])
         output = output.replace("*", "")  # fix active branch
         return [b.strip() for b in output.split("\n")]
+
+    def get_current_branch(self):
+        output = self.get_cmd_output(["branch"])
+        for line in output.split("\n"):
+            line = line.strip()
+            if line.startswith("*"):
+                branch = line[1:].strip()
+                if branch != "(no branch)":
+                    return branch
+        return None
 
     def get_tags(self):
         output = self.get_cmd_output(["tag", "-l"])
@@ -140,6 +158,19 @@ class GitClient(VCSClientBase):
     def get_current_revision(self):
         return self.get_cmd_output(["rev-parse", "--short", "HEAD"])
 
+    def get_latest_revision(self):
+        if not self.can_be_updated:
+            return self.get_current_revision()
+        branch = self.get_current_branch()
+        if not branch:
+            return self.get_current_revision()
+        result = self.get_cmd_output(["ls-remote"])
+        for line in result.split("\n"):
+            ref_pos = line.strip().find("refs/heads/" + branch)
+            if ref_pos > 0:
+                return line[:ref_pos].strip()[:7]
+        return None
+
 
 class HgClient(VCSClientBase):
 
@@ -159,6 +190,11 @@ class HgClient(VCSClientBase):
     def get_current_revision(self):
         return self.get_cmd_output(["identify", "--id"])
 
+    def get_latest_revision(self):
+        if not self.can_be_updated:
+            return self.get_latest_revision()
+        return self.get_cmd_output(["identify", "--id", self.remote_url])
+
 
 class SvnClient(VCSClientBase):
 
@@ -177,9 +213,8 @@ class SvnClient(VCSClientBase):
         return self.run_cmd(args)
 
     def get_current_revision(self):
-        output = self.get_cmd_output([
-            "info", "--non-interactive", "--trust-server-cert", "-r", "HEAD"
-        ])
+        output = self.get_cmd_output(
+            ["info", "--non-interactive", "--trust-server-cert", "-r", "HEAD"])
         for line in output.split("\n"):
             line = line.strip()
             if line.startswith("Revision:"):

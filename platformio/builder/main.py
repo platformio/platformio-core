@@ -117,8 +117,13 @@ elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
 for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPT",
             "UPLOAD_PORT", "UPLOAD_FLAGS", "LIB_EXTRA_DIRS"):
     k = "PLATFORMIO_%s" % var
-    if environ.get(k):
+    if k not in environ:
+        continue
+    if var in ("UPLOAD_PORT", "EXTRA_SCRIPT") or not env.get(var):
         env[var] = environ.get(k)
+    else:
+        env[var] = "%s%s%s" % (environ.get(k), ", "
+                               if var == "LIB_EXTRA_DIRS" else " ", env[var])
 
 # Parse comma separated items
 for opt in ("PIOFRAMEWORK", "LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"):

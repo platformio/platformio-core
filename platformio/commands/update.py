@@ -14,25 +14,36 @@
 
 import click
 
+from platformio import app
 from platformio.commands.lib import lib_update as cmd_lib_update
 from platformio.commands.platform import platform_update as cmd_platform_update
+from platformio.managers.core import update_core_packages
 from platformio.managers.lib import LibraryManager
-from platformio.pioplus import pioplus_update
 
 
 @click.command(
-    "update", short_help="Update installed Platforms, Packages and Libraries")
+    "update", short_help="Update installed platforms, packages and libraries")
+@click.option(
+    "--core-packages", is_flag=True, help="Update only the core packages")
 @click.option(
     "-c",
     "--only-check",
     is_flag=True,
     help="Do not update, only check for new version")
 @click.pass_context
-def cli(ctx, only_check):
+def cli(ctx, core_packages, only_check):
+    update_core_packages(only_check)
+
+    if core_packages:
+        return
+
+    # cleanup lib search results, cached board and platform lists
+    app.clean_cache()
+
+    click.echo()
     click.echo("Platform Manager")
     click.echo("================")
     ctx.invoke(cmd_platform_update, only_check=only_check)
-    pioplus_update()
 
     click.echo()
     click.echo("Library Manager")

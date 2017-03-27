@@ -114,11 +114,7 @@ def install_platformio():
     r = None
     cmd = ["-m", "pip.__main__" if sys.version_info < (2, 7, 0) else "pip"]
     try:
-        # r = exec_python_cmd(cmd + ["install", "-U", "platformio"])
-        r = exec_python_cmd(cmd + [
-            "install", "-U",
-            "https://github.com/platformio/platformio-core/archive/develop.zip"
-        ])
+        r = exec_python_cmd(cmd + ["install", "-U", "platformio"])
         assert r['returncode'] == 0
     except AssertionError:
         r = exec_python_cmd(cmd + ["--no-cache-dir", "install", "-U",

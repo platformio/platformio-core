@@ -12,14 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-from os.path import join
-from time import sleep
+# pylint: disable=too-many-branches, too-many-locals
 
+import json
+from os.path import isdir, join
+from time import sleep
+from urllib import quote
+
+import arrow
 import click
 
 from platformio import exception, util
 from platformio.managers.lib import LibraryManager
+from platformio.managers.platform import PlatformFactory, PlatformManager
 from platformio.util import get_api_result
 
 
@@ -43,8 +48,9 @@ from platformio.util import get_api_result
     help="Manage custom library storage")
 @click.pass_context
 def cli(ctx, **options):
+    non_storage_cmds = ("search", "show", "register", "stats", "builtin")
     # skip commands that don't need storage folder
-    if ctx.invoked_subcommand in ("search", "register") or \
+    if ctx.invoked_subcommand in non_storage_cmds or \
             (len(ctx.args) == 2 and ctx.args[1] in ("-h", "--help")):
         return
     storage_dir = options['storage_dir']
@@ -106,57 +112,69 @@ def lib_uninstall(lm, libraries):
     "--only-check",
     is_flag=True,
     help="Do not update, only check for new version")
+@click.option("--json-output", is_flag=True)
 @click.pass_obj
-def lib_update(lm, libraries, only_check):
+def lib_update(lm, libraries, only_check, json_output):
     if not libraries:
-        libraries = [str(m.get("id", m['name'])) for m in lm.get_installed()]
-    for library in libraries:
-        lm.update(library, only_check=only_check)
+        libraries = [manifest['__pkg_dir'] for manifest in lm.get_installed()]
+
+    if only_check and json_output:
+        result = []
+        for library in libraries:
+            pkg_dir = library if isdir(library) else None
+            requirements = None
+            url = None
+            if not pkg_dir:
+                name, requirements, url = lm.parse_pkg_input(library)
+                pkg_dir = lm.get_package_dir(name, requirements, url)
+            if not pkg_dir:
+                continue
+            latest = lm.outdated(pkg_dir, requirements)
+            if not latest:
+                continue
+            manifest = lm.load_manifest(pkg_dir)
+            manifest['versionLatest'] = latest
+            result.append(manifest)
+        return click.echo(json.dumps(result))
+    else:
+        for library in libraries:
+            lm.update(library, only_check=only_check)
 
 
-#######
+def print_lib_item(item):
+    click.secho(item['name'], fg="cyan")
+    click.echo("=" * len(item['name']))
+    if "id" in item:
+        click.secho("#ID: %d" % item['id'], bold=True)
+    if "description" in item or "url" in item:
+        click.echo(item.get("description", item.get("url", "")))
+    click.echo()
 
-LIBLIST_TPL = ("[{id:^14}] {name:<25} {compatibility:<30} "
-               "\"{authornames}\": {description}")
+    for key in ("version", "homepage", "license", "keywords"):
+        if key not in item or not item[key]:
+            continue
+        if isinstance(item[key], list):
+            click.echo("%s: %s" % (key.title(), ", ".join(item[key])))
+        else:
+            click.echo("%s: %s" % (key.title(), item[key]))
 
+    for key in ("frameworks", "platforms"):
+        if key not in item:
+            continue
+        click.echo("Compatible %s: %s" % (key, ", ".join(
+            [i['title'] if isinstance(i, dict) else i for i in item[key]])))
 
-def echo_liblist_header():
-    click.echo(
-        LIBLIST_TPL.format(
-            id=click.style(
-                "ID", fg="green"),
-            name=click.style(
-                "Name", fg="cyan"),
-            compatibility=click.style(
-                "Compatibility", fg="yellow"),
-            authornames="Authors",
-            description="Description"))
+    if "authors" in item or "authornames" in item:
+        click.echo("Authors: %s" % ", ".join(
+            item.get("authornames",
+                     [a.get("name", "") for a in item.get("authors", [])])))
 
-    terminal_width, _ = click.get_terminal_size()
-    click.echo("-" * terminal_width)
-
-
-def echo_liblist_item(item):
-    description = item.get("description", item.get("url", "")).encode("utf-8")
-    if "version" in item:
-        description += " | @" + click.style(item['version'], fg="yellow")
-
-    click.echo(
-        LIBLIST_TPL.format(
-            id=click.style(
-                str(item.get("id", "-")), fg="green"),
-            name=click.style(
-                item['name'], fg="cyan"),
-            compatibility=click.style(
-                ", ".join(
-                    item.get("frameworks", ["-"]) + item.get("platforms", [])),
-                fg="yellow"),
-            authornames=", ".join(item.get("authornames", ["Unknown"])).encode(
-                "utf-8"),
-            description=description))
+    if "__src_url" in item:
+        click.secho("Source: %s" % item['__src_url'])
+    click.echo()
 
 
-@cli.command("search", short_help="Search for library")
+@cli.command("search", short_help="Search for a library")
 @click.argument("query", required=False, nargs=-1)
 @click.option("--json-output", is_flag=True)
 @click.option("--page", type=click.INT, default=1)
@@ -181,9 +199,8 @@ def lib_search(query, json_output, page, noninteractive, **filters):
             query.append('%s:"%s"' % (key, value))
 
     result = get_api_result(
-        "/lib/search",
-        dict(
-            query=" ".join(query), page=page),
+        "/v2/lib/search",
+        dict(query=" ".join(query), page=page),
         cache_valid="3d")
 
     if json_output:
@@ -210,12 +227,9 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         "Found %d libraries:\n" % result['total'],
         fg="green" if result['total'] else "yellow")
 
-    if result['total']:
-        echo_liblist_header()
-
     while True:
         for item in result['items']:
-            echo_liblist_item(item)
+            print_lib_item(item)
 
         if (int(result['page']) * int(result['perpage']) >=
                 int(result['total'])):
@@ -232,9 +246,9 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         elif not click.confirm("Show next libraries?"):
             break
         result = get_api_result(
-            "/lib/search",
-            dict(
-                query=" ".join(query), page=int(result['page']) + 1),
+            "/v2/lib/search",
+            {"query": " ".join(query),
+             "page": int(result['page']) + 1},
             cache_valid="3d")
 
 
@@ -245,41 +259,87 @@ def lib_list(lm, json_output):
     items = lm.get_installed()
 
     if json_output:
-        click.echo(json.dumps(items))
-        return
+        return click.echo(json.dumps(items))
 
     if not items:
         return
 
-    echo_liblist_header()
     for item in sorted(items, key=lambda i: i['name']):
-        if "authors" in item:
-            item['authornames'] = [i['name'] for i in item['authors']]
-        echo_liblist_item(item)
+        print_lib_item(item)
 
 
-@cli.command("show", short_help="Show details about installed library")
-@click.pass_obj
+@util.memoized
+def get_builtin_libs(storage_names=None):
+    items = []
+    storage_names = storage_names or []
+    pm = PlatformManager()
+    for manifest in pm.get_installed():
+        p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
+        for storage in p.get_lib_storages():
+            if storage_names and storage['name'] not in storage_names:
+                continue
+            lm = LibraryManager(storage['path'])
+            items.append({
+                "name": storage['name'],
+                "path": storage['path'],
+                "items": lm.get_installed()
+            })
+    return items
+
+
+@cli.command("builtin", short_help="List built-in libraries")
+@click.option("--storage", multiple=True)
+@click.option("--json-output", is_flag=True)
+def lib_builtin(storage, json_output):
+    items = get_builtin_libs(storage)
+    if json_output:
+        return click.echo(json.dumps(items))
+
+    for storage in items:
+        if not storage['items']:
+            continue
+        click.secho(storage['name'], fg="green")
+        click.echo("*" * len(storage['name']))
+        click.echo()
+
+        for item in sorted(storage['items'], key=lambda i: i['name']):
+            print_lib_item(item)
+
+
+@cli.command("show", short_help="Show detailed info about a library")
 @click.argument("library", metavar="[LIBRARY]")
-def lib_show(lm, library):  # pylint: disable=too-many-branches
-    name, requirements, url = lm.parse_pkg_name(library)
-    package_dir = lm.get_package_dir(name, requirements, url)
-    if not package_dir:
-        click.secho(
-            "%s @ %s is not installed" % (name, requirements or "*"),
-            fg="yellow")
-        return
+@click.option("--json-output", is_flag=True)
+def lib_show(library, json_output):
+    lm = LibraryManager()
+    name, requirements, _ = lm.parse_pkg_input(library)
+    lib_id = lm.get_pkg_id_by_name(
+        name, requirements, silent=json_output, interactive=not json_output)
+    lib = get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
+    if json_output:
+        return click.echo(json.dumps(lib))
 
-    manifest = lm.load_manifest(package_dir)
-
-    click.secho(manifest['name'], fg="cyan")
-    click.echo("=" * len(manifest['name']))
-    if "description" in manifest:
-        click.echo(manifest['description'])
+    click.secho(lib['name'], fg="cyan")
+    click.echo("=" * len(lib['name']))
+    click.secho("#ID: %d" % lib['id'], bold=True)
+    click.echo(lib['description'])
     click.echo()
 
+    click.echo("Version: %s, released %s" %
+               (lib['version']['name'],
+                arrow.get(lib['version']['released']).humanize()))
+    click.echo("Manifest: %s" % lib['confurl'])
+    for key in ("homepage", "repository", "license"):
+        if key not in lib or not lib[key]:
+            continue
+        if isinstance(lib[key], list):
+            click.echo("%s: %s" % (key.title(), ", ".join(lib[key])))
+        else:
+            click.echo("%s: %s" % (key.title(), lib[key]))
+
+    blocks = []
+
     _authors = []
-    for author in manifest.get("authors", []):
+    for author in lib.get("authors", []):
         _data = []
         for key in ("name", "email", "url", "maintainer"):
             if not author[key]:
@@ -292,19 +352,33 @@ def lib_show(lm, library):  # pylint: disable=too-many-branches
                 _data.append(author[key])
         _authors.append(" ".join(_data))
     if _authors:
-        click.echo("Authors: %s" % ", ".join(_authors))
+        blocks.append(("Authors", _authors))
 
-    for key in ("keywords", "frameworks", "platforms", "license", "url",
-                "version"):
-        if key not in manifest:
+    blocks.append(("Keywords", lib['keywords']))
+    for key in ("frameworks", "platforms"):
+        if key not in lib or not lib[key]:
             continue
-        if isinstance(manifest[key], list):
-            click.echo("%s: %s" % (key.title(), ", ".join(manifest[key])))
-        else:
-            click.echo("%s: %s" % (key.title(), manifest[key]))
+        blocks.append(("Compatible %s" % key, [i['title'] for i in lib[key]]))
+    blocks.append(("Headers", lib['headers']))
+    blocks.append(("Examples", lib['examples']))
+    blocks.append(("Versions", [
+        "%s, released %s" % (v['name'], arrow.get(v['released']).humanize())
+        for v in lib['versions']
+    ]))
+    blocks.append(("Unique Downloads", [
+        "Today: %s" % lib['dlstats']['day'], "Week: %s" %
+        lib['dlstats']['week'], "Month: %s" % lib['dlstats']['month']
+    ]))
+
+    for (title, rows) in blocks:
+        click.echo()
+        click.secho(title, bold=True)
+        click.echo("-" * len(title))
+        for row in rows:
+            click.echo(row)
 
 
-@cli.command("register", short_help="Register new library")
+@cli.command("register", short_help="Register a new library")
 @click.argument("config_url")
 def lib_register(config_url):
     if (not config_url.startswith("http://") and
@@ -317,3 +391,76 @@ def lib_register(config_url):
             result['message'],
             fg="green"
             if "successed" in result and result['successed'] else "red")
+
+
+@cli.command("stats", short_help="Library Registry Statistics")
+@click.option("--json-output", is_flag=True)
+def lib_stats(json_output):
+    result = get_api_result("/lib/stats", cache_valid="1h")
+
+    if json_output:
+        return click.echo(json.dumps(result))
+
+    printitem_tpl = "{name:<33} {url}"
+    printitemdate_tpl = "{name:<33} {date:23} {url}"
+
+    def _print_title(title):
+        click.secho(title.upper(), bold=True)
+        click.echo("*" * len(title))
+
+    def _print_header(with_date=False):
+        click.echo((printitemdate_tpl if with_date else printitem_tpl).format(
+            name=click.style("Name", fg="cyan"),
+            date="Date",
+            url=click.style("Url", fg="blue")))
+
+        terminal_width, _ = click.get_terminal_size()
+        click.echo("-" * terminal_width)
+
+    def _print_lib_item(item):
+        click.echo((
+            printitemdate_tpl if "date" in item else printitem_tpl
+        ).format(
+            name=click.style(item['name'], fg="cyan"),
+            date=str(
+                arrow.get(item['date']).humanize() if "date" in item else ""),
+            url=click.style(
+                "http://platformio.org/lib/show/%s/%s" % (item['id'],
+                                                          quote(item['name'])),
+                fg="blue")))
+
+    def _print_tag_item(name):
+        click.echo(
+            printitem_tpl.format(
+                name=click.style(name, fg="cyan"),
+                url=click.style(
+                    "http://platformio.org/lib/search?query=" + quote(
+                        "keyword:%s" % name),
+                    fg="blue")))
+
+    for key in ("updated", "added"):
+        _print_title("Recently " + key)
+        _print_header(with_date=True)
+        for item in result.get(key, []):
+            _print_lib_item(item)
+        click.echo()
+
+    _print_title("Recent keywords")
+    _print_header(with_date=False)
+    for item in result.get("lastkeywords"):
+        _print_tag_item(item)
+    click.echo()
+
+    _print_title("Popular keywords")
+    _print_header(with_date=False)
+    for item in result.get("topkeywords"):
+        _print_tag_item(item)
+    click.echo()
+
+    for key, title in (("dlday", "Today"), ("dlweek", "Week"),
+                       ("dlmonth", "Month")):
+        _print_title("Featured: " + title)
+        _print_header(with_date=False)
+        for item in result.get(key, []):
+            _print_lib_item(item)
+        click.echo()

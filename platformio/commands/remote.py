@@ -23,7 +23,7 @@ import click
 
 from platformio import exception, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
-from platformio.pioplus import pioplus_call
+from platformio.managers.core import pioplus_call
 
 # pylint: disable=unused-argument
 
@@ -147,12 +147,12 @@ def device_list(json_output):
 @click.option(
     "--rts",
     default=None,
-    type=click.Choice(["0", "1"]),
+    type=click.IntRange(0, 1),
     help="Set initial RTS line state")
 @click.option(
     "--dtr",
     default=None,
-    type=click.Choice(["0", "1"]),
+    type=click.IntRange(0, 1),
     help="Set initial DTR line state")
 @click.option("--echo", is_flag=True, help="Enable local echo, default=Off")
 @click.option(
