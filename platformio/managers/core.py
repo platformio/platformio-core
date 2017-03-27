@@ -21,7 +21,6 @@ from platformio import exception, util
 from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
-    "project-templates": "*",
     "pysite-pioplus": ">=0.3.0,<2",
     "tool-pioplus": ">=0.6.10,<2",
     "tool-unity": "~1.20302.1",
@@ -53,11 +52,13 @@ def get_core_package_dir(name):
     return pm.install(name, requirements)
 
 
-def update_core_packages(only_check=False):
+def update_core_packages(only_check=False, silent=False):
     pm = CorePackageManager()
     for name, requirements in CORE_PACKAGES.items():
         pkg_dir = pm.get_package_dir(name)
-        if pkg_dir and pm.outdated(pkg_dir, requirements):
+        if not pkg_dir:
+            continue
+        if not silent or pm.outdated(pkg_dir, requirements):
             pm.update(name, requirements, only_check=only_check)
 
 

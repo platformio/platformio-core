@@ -332,9 +332,6 @@ def platform_uninstall(platforms):
     help="Do not update, only check for a new version")
 @click.option("--json-output", is_flag=True)
 def platform_update(platforms, only_packages, only_check, json_output):
-    # cleanup cached board and platform lists
-    app.clean_cache()
-
     pm = PlatformManager()
     pkg_dir_to_name = {}
     if not platforms:
@@ -366,6 +363,8 @@ def platform_update(platforms, only_packages, only_check, json_output):
             result.append(data)
         return click.echo(json.dumps(result))
     else:
+        # cleanup cached board and platform lists
+        app.clean_cache()
         for platform in platforms:
             click.echo("Platform %s" % click.style(
                 pkg_dir_to_name.get(platform, platform), fg="cyan"))
