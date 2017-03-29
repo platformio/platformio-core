@@ -161,13 +161,15 @@ class EnvironmentProcessor(object):
         # multi-line values to one line
         for k, v in self.options.items():
             if "\n" in v:
-                self.options[k] = self.options[k].strip().replace("\n", ", ")
+                self.options[k] = self.options[k].strip()
 
         if not self.silent:
-            click.echo("[%s] Processing %s (%s)" % (
-                datetime.now().strftime("%c"), click.style(
-                    self.name, fg="cyan", bold=True), ", ".join(
-                        ["%s: %s" % (k, v) for k, v in self.options.items()])))
+            click.echo("[%s] Processing %s (%s)" %
+                       (datetime.now().strftime("%c"), click.style(
+                           self.name, fg="cyan", bold=True), ", ".join([
+                               "%s: %s" % (k, v.replace("\n", ", "))
+                               for k, v in self.options.items()
+                           ])))
             click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)

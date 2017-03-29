@@ -106,6 +106,8 @@ env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 for k in commonvars.keys():
     if k in env:
         env[k] = base64.b64decode(env[k])
+        if "\n" in env[k]:
+            env[k] = [v.strip() for v in env[k].split("\n") if v.strip()]
 
 if env.GetOption('clean'):
     env.PioClean(env.subst("$BUILD_DIR"))
@@ -121,21 +123,23 @@ for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPT",
         continue
     if var in ("UPLOAD_PORT", "EXTRA_SCRIPT") or not env.get(var):
         env[var] = environ.get(k)
+    elif isinstance(env[var], list):
+        env.Append(**{var: environ.get(k)})
     else:
         env[var] = "%s%s%s" % (environ.get(k), ", "
                                if var == "LIB_EXTRA_DIRS" else " ", env[var])
 
 # Parse comma separated items
 for opt in ("PIOFRAMEWORK", "LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"):
-    if opt not in env:
+    if opt not in env or isinstance(env[opt], list):
         continue
     env[opt] = [l.strip() for l in env[opt].split(", ") if l.strip()]
 
 # Configure extra library source directories for LDF
 if util.get_project_optional_dir("lib_extra_dirs"):
+    items = util.get_project_optional_dir("lib_extra_dirs")
     env.Prepend(LIBSOURCE_DIRS=[
-        l.strip()
-        for l in util.get_project_optional_dir("lib_extra_dirs").split(", ")
+        l.strip() for l in items.split("\n" if "\n" in items else ", ")
         if l.strip()
     ])
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))

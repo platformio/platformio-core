@@ -4,6 +4,13 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.4.0 (2017-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Multi-line support for the different options in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__,
+  such as: ``build_flags``, ``build_unflags``, etc.
+  (`issue #889 <https://github.com/platformio/platformio-core/issues/889>`_)
+
 3.3.0 (2017-03-27)
 ~~~~~~~~~~~~~~~~~~
 
