@@ -29,7 +29,7 @@ def ProcessDebug(env):
 def DebugLinkSettings(env):
     if "BOARD" not in env:
         return
-    board_debug = env.BoardConfig().get("debug")
+    board_debug = env.BoardConfig().get("debug", {})
     if not board_debug or not board_debug.get("links"):
         return
     debug_links = board_debug.get("links")
