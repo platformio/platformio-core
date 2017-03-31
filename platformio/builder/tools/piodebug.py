@@ -16,6 +16,8 @@ from __future__ import absolute_import
 
 import sys
 from fnmatch import fnmatch
+from os.path import isfile
+from platform import system
 
 from platformio import util
 
@@ -78,6 +80,22 @@ def AutodetectDebugPort(env):
         return
     if not link_settings.get("require_debug_port"):
         return
+
+    need_openocd_rules = [
+        system() == "Linux",
+        "openocd" in link_settings.get("server", {}).get("package", ""),
+        not any([
+            isfile("/etc/udev/rules.d/98-openocd-udev.rules"),
+            isfile("/lib/udev/rules.d/98-openocd-udev.rules")
+        ])
+    ]
+    if all(need_openocd_rules):
+        sys.stderr.write(
+            "\nWarning! Please install `98-openocd-udev.rules` and check "
+            "that your debug adapter's PID and VID are listed in the rules."
+            "\n https://raw.githubusercontent.com/platformio/platformio"
+            "/develop/scripts/98-openocd-udev.rules\n")
+
     env.Replace(
         DEBUG_PORT=_look_for_serial_port(link_settings.get("hwids", [])))
 
