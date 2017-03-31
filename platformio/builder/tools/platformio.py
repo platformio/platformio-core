@@ -45,6 +45,9 @@ def BuildProgram(env):
     if not case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 
+    if "__debug" in COMMAND_LINE_TARGETS:
+        env.ProcessDebug()
+
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
         env.ProcessFlags(env.BoardConfig().get("build.extra_flags"))

@@ -17,13 +17,11 @@ from __future__ import absolute_import
 import atexit
 import re
 import sys
-from glob import glob
 from os import environ, remove, walk
 from os.path import basename, isdir, isfile, join, relpath
 from tempfile import mkstemp
 
 from SCons.Action import Action
-from SCons.Defaults import processDefines
 from SCons.Script import ARGUMENTS
 
 from platformio import util
@@ -200,81 +198,6 @@ def _delete_file(path):
         pass
 
 
-def DumpIDEData(env):
-
-    def get_includes(env_):
-        includes = []
-
-        for item in env_.get("CPPPATH", []):
-            includes.append(env_.subst(item))
-
-        # installed libs
-        for lb in env.GetLibBuilders():
-            includes.extend(lb.get_inc_dirs())
-
-        # includes from toolchains
-        p = env.PioPlatform()
-        for name in p.get_installed_packages():
-            if p.get_package_type(name) != "toolchain":
-                continue
-            toolchain_dir = util.glob_escape(p.get_package_dir(name))
-            toolchain_incglobs = [
-                join(toolchain_dir, "*", "include*"),
-                join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
-            ]
-            for g in toolchain_incglobs:
-                includes.extend(glob(g))
-
-        return includes
-
-    def get_defines(env_):
-        defines = []
-        # global symbols
-        for item in processDefines(env_.get("CPPDEFINES", [])):
-            defines.append(env_.subst(item).replace('\\', ''))
-
-        # special symbol for Atmel AVR MCU
-        if env['PIOPLATFORM'] == "atmelavr":
-            defines.append(
-                "__AVR_%s__" % env.BoardConfig().get("build.mcu").upper()
-                .replace("ATMEGA", "ATmega").replace("ATTINY", "ATtiny"))
-        return defines
-
-    LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
-    LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
-    env_ = env.Clone()
-
-    data = {
-        "libsource_dirs":
-        [env_.subst(l) for l in env_.get("LIBSOURCE_DIRS", [])],
-        "defines": get_defines(env_),
-        "includes": get_includes(env_),
-        "cc_flags": env_.subst(LINTCCOM),
-        "cxx_flags": env_.subst(LINTCXXCOM),
-        "cc_path": util.where_is_program(
-            env_.subst("$CC"), env_.subst("${ENV['PATH']}")),
-        "cxx_path": util.where_is_program(
-            env_.subst("$CXX"), env_.subst("${ENV['PATH']}"))
-    }
-
-    # https://github.com/platformio/platformio-atom-ide/issues/34
-    _new_defines = []
-    for item in processDefines(env_.get("CPPDEFINES", [])):
-        item = item.replace('\\"', '"')
-        if " " in item:
-            _new_defines.append(item.replace(" ", "\\\\ "))
-        else:
-            _new_defines.append(item)
-    env_.Replace(CPPDEFINES=_new_defines)
-
-    data.update({
-        "cc_flags": env_.subst(LINTCCOM),
-        "cxx_flags": env_.subst(LINTCXXCOM)
-    })
-
-    return data
-
-
 def GetCompilerType(env):
     try:
         sysenv = environ.copy()
@@ -352,7 +275,6 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(ConvertInoToCpp)
-    env.AddMethod(DumpIDEData)
     env.AddMethod(GetCompilerType)
     env.AddMethod(GetActualLDScript)
     env.AddMethod(VerboseAction)

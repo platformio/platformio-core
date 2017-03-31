@@ -62,13 +62,20 @@ commonvars.AddVariables(
     ("UPLOAD_PROTOCOL",),
     ("UPLOAD_SPEED",),
     ("UPLOAD_FLAGS",),
-    ("UPLOAD_RESETMETHOD",)
+    ("UPLOAD_RESETMETHOD",),
+
+    # debug options
+    ("DEBUG_LINK",),
+    ("DEBUG_PORT",),
+    ("DEBUG_GDBINIT",)
+
 )  # yapf: disable
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
         "ar", "as", "gcc", "g++", "gnulink", "platformio", "pioplatform",
-        "piowinhooks", "piolib", "piotest", "pioupload", "piomisc"
+        "piowinhooks", "piolib", "piotest", "pioupload", "piomisc", "pioide",
+        "piodebug"
     ],  # yapf: disable
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
     variables=commonvars,
@@ -77,7 +84,6 @@ DEFAULT_ENV_OPTIONS = dict(
     PIOVARIABLES=commonvars.keys(),
     ENV=environ,
     UNIX_TIME=int(time()),
-    PROGNAME="program",
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),
     PROJECTSRC_DIR=util.get_projectsrc_dir(),
@@ -91,6 +97,8 @@ DEFAULT_ENV_OPTIONS = dict(
         util.get_projectlib_dir(), util.get_projectlibdeps_dir(),
         join("$PIOHOME_DIR", "lib")
     ],
+    PROGNAME="program",
+    PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
     PYTHONEXE=util.get_pythonexe_path())
 
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
@@ -150,6 +158,7 @@ env.SConscriptChdir(0)
 env.SConsignFile(join("$PROJECTPIOENVS_DIR", ".sconsign.dblite"))
 env.SConscript("$BUILD_SCRIPT")
 
+AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS + ["size"]))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS + ["size"]))
 
 if "UPLOAD_FLAGS" in env:

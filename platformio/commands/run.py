@@ -129,7 +129,8 @@ class EnvironmentProcessor(object):
         "upload_port", "upload_protocol", "upload_speed", "upload_flags",
         "upload_resetmethod", "lib_install", "lib_deps", "lib_force",
         "lib_ignore", "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
-        "test_ignore", "test_port", "piotest")
+        "test_ignore", "test_port", "piotest", "debug_link", "debug_port",
+        "debug_gdbinit")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
