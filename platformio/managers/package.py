@@ -607,7 +607,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         name, requirements, url = self.parse_pkg_input(name, requirements)
         package_dir = self.get_package_dir(name, requirements, url)
 
-        if not package_dir or not silent:
+        if not package_dir and not silent:
             msg = "Installing " + click.style(name, fg="cyan")
             if requirements:
                 msg += " @ " + requirements
