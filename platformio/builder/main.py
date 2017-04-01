@@ -65,7 +65,7 @@ commonvars.AddVariables(
     ("UPLOAD_RESETMETHOD",),
 
     # debug options
-    ("DEBUG_LINK",),
+    ("DEBUG_TOOL",),
     ("DEBUG_PORT",),
     ("DEBUG_GDBINIT",)
 

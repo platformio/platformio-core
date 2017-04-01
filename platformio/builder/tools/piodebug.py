@@ -28,19 +28,19 @@ def ProcessDebug(env):
         BUILD_UNFLAGS=["-Os", "-O0", "-O1", "-O2", "-O3"])
 
 
-def DebugLinkSettings(env):
+def DebugToolSettings(env):
     if "BOARD" not in env:
         return
     board_debug = env.BoardConfig().get("debug", {})
-    if not board_debug or not board_debug.get("links"):
+    if not board_debug or not board_debug.get("tools"):
         return
-    debug_links = board_debug.get("links")
-    link_name = (env.subst("$DEBUG_LINK") or
-                 board_debug.get("default_link", debug_links.keys()[0]))
-    settings = debug_links.get(link_name)
+    debug_tools = board_debug.get("tools")
+    tool_name = (env.subst("$DEBUG_TOOL") or
+                 board_debug.get("default_tool", debug_tools.keys()[0]))
+    settings = debug_tools.get(tool_name)
     if not settings:
         return
-    settings.update({"name": link_name})
+    settings.update({"name": tool_name})
     return settings
 
 
@@ -75,15 +75,15 @@ def AutodetectDebugPort(env):
     if "BOARD" not in env or ("DEBUG_PORT" in env and not _get_pattern()):
         return
 
-    link_settings = env.DebugLinkSettings()
-    if not link_settings:
+    tool_settings = env.DebugToolSettings()
+    if not tool_settings:
         return
-    if not link_settings.get("require_debug_port"):
+    if not tool_settings.get("require_debug_port"):
         return
 
     need_openocd_rules = [
         system() == "Linux",
-        "openocd" in link_settings.get("server", {}).get("package", ""),
+        "openocd" in tool_settings.get("server", {}).get("package", ""),
         not any([
             isfile("/etc/udev/rules.d/98-openocd-udev.rules"),
             isfile("/lib/udev/rules.d/98-openocd-udev.rules")
@@ -97,7 +97,7 @@ def AutodetectDebugPort(env):
             "/develop/scripts/98-openocd-udev.rules\n")
 
     env.Replace(
-        DEBUG_PORT=_look_for_serial_port(link_settings.get("hwids", [])))
+        DEBUG_PORT=_look_for_serial_port(tool_settings.get("hwids", [])))
 
     if not env.subst("$DEBUG_PORT"):
         sys.stderr.write(
@@ -111,6 +111,6 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(ProcessDebug)
-    env.AddMethod(DebugLinkSettings)
+    env.AddMethod(DebugToolSettings)
     env.AddMethod(AutodetectDebugPort)
     return env

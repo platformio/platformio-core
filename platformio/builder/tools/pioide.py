@@ -15,7 +15,7 @@
 from __future__ import absolute_import
 
 from glob import glob
-from os.path import join
+from os.path import join, sep
 
 from SCons.Defaults import processDefines
 
@@ -64,6 +64,9 @@ def dump_defines(env):
 
 def dump_debug(env):
 
+    def _fix_path_sep(path):
+        return path.replace("/", sep).replace("\\", sep)
+
     def _dump_server(configuration):
         if not configuration:
             return
@@ -74,8 +77,8 @@ def dump_debug(env):
             return
         return {
             "cwd": pkg_dir,
-            "executable": configuration['executable'],
-            "arguments": configuration.get("arguments")
+            "executable": _fix_path_sep(configuration['executable']),
+            "arguments": _fix_path_sep(configuration.get("arguments"))
         }
 
     gdbinit = None
@@ -85,9 +88,9 @@ def dump_debug(env):
         else:
             gdbinit = [env['DEBUG_GDBINIT']]
 
-    link_settings = env.DebugLinkSettings()
-    if link_settings and not gdbinit:
-        gdbinit = link_settings.get("gdbinit")
+    tool_settings = env.DebugToolSettings()
+    if tool_settings and not gdbinit:
+        gdbinit = tool_settings.get("gdbinit")
 
     env.AutodetectDebugPort()
 
@@ -95,11 +98,11 @@ def dump_debug(env):
         "gdb_path": util.where_is_program(
             env.subst("$GDB"), env.subst("${ENV['PATH']}")),
         "prog_path": env.subst("$PROG_PATH"),
-        "link": link_settings['name'] if link_settings else None,
+        "tool": tool_settings['name'] if tool_settings else None,
         "gdbinit": [env.subst(cmd) for cmd in gdbinit] if gdbinit else None,
         "port": env.subst("$DEBUG_PORT"),
-        "server": (_dump_server(link_settings['server'])
-                   if link_settings and "server" in link_settings else None)
+        "server": (_dump_server(tool_settings['server'])
+                   if tool_settings and "server" in tool_settings else None)
     }
 
 
