@@ -65,7 +65,11 @@ def dump_defines(env):
 def dump_debug(env):
 
     def _fix_path_sep(path):
-        return path.replace("/", sep).replace("\\", sep)
+        result = []
+        items = path if isinstance(path, list) else [path]
+        for item in items:
+            result.append(item.replace("/", sep).replace("\\", sep))
+        return result if isinstance(path, list) else result[0]
 
     def _dump_server(configuration):
         if not configuration:
