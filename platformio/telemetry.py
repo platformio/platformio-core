@@ -278,7 +278,10 @@ def measure_ci():
 
 
 def on_run_environment(options, targets):
-    opts = ["%s=%s" % (opt, value) for opt, value in sorted(options.items())]
+    opts = [
+        "%s=%s" % (opt, value.replace("\n", ", ") if "\n" in value else value)
+        for opt, value in sorted(options.items())
+    ]
     targets = [t.title() for t in targets or ["run"]]
     on_event("Env", " ".join(targets), "&".join(opts))
 

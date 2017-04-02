@@ -78,7 +78,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
         if config.has_option("platformio", "env_default"):
             env_default = [
                 e.strip()
-                for e in config.get("platformio", "env_default").split(",")
+                for e in config.get("platformio", "env_default").split(", ")
             ]
 
         results = []
@@ -159,15 +159,13 @@ class EnvironmentProcessor(object):
         terminal_width, _ = click.get_terminal_size()
         start_time = time()
 
-        # multi-line values to one line
         for k, v in self.options.items():
-            if "\n" in v:
-                self.options[k] = self.options[k].strip()
+            self.options[k] = self.options[k].strip()
 
         if not self.silent:
             click.echo("[%s] Processing %s (%s)" %
                        (datetime.now().strftime("%c"), click.style(
-                           self.name, fg="cyan", bold=True), ", ".join([
+                           self.name, fg="cyan", bold=True), "; ".join([
                                "%s: %s" % (k, v.replace("\n", ", "))
                                for k, v in self.options.items()
                            ])))
@@ -236,7 +234,7 @@ class EnvironmentProcessor(object):
         if self.targets:
             targets = [t for t in self.targets]
         elif "targets" in self.options:
-            targets = self.options['targets'].split()
+            targets = self.options['targets'].split(", ")
         return targets
 
     def _run(self):
@@ -258,7 +256,9 @@ class EnvironmentProcessor(object):
                 ], self.verbose)
             if "lib_deps" in self.options:
                 _autoinstall_libdeps(self.cmd_ctx, [
-                    d.strip() for d in self.options['lib_deps'].split(", ")
+                    d.strip()
+                    for d in self.options['lib_deps'].split(
+                        "\n" if "\n" in self.options['lib_deps'] else ", ")
                     if d.strip()
                 ], self.verbose)
 
