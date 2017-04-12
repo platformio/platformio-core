@@ -11,6 +11,14 @@ PlatformIO 3.0
   such as: ``build_flags``, ``build_unflags``, etc.
   (`issue #889 <https://github.com/platformio/platformio-core/issues/889>`_)
 
+
+-------
+
+* Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
+
+  + Update ESP-IDF framework to v2.0
+
+
 3.3.0 (2017-03-27)
 ~~~~~~~~~~~~~~~~~~
 
