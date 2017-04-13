@@ -107,7 +107,10 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             if (item['name'] and
                     any([l in item['name'].lower() for l in msdlabels])):
                 return item['disk']
-            if isfile(join(item['disk'], "mbed.html")):
+            if any([
+                    isfile(join(item['disk'], n))
+                    for n in ("mbed.htm", "mbed.html")
+            ]):
                 return item['disk']
         return None
 
