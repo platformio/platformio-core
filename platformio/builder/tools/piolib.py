@@ -100,6 +100,9 @@ class LibBuilderBase(object):
         self._circular_deps = list()
         self._scanned_paths = list()
 
+        # reset source filter, could be overridden with extra script
+        self.env['SRC_FILTER'] = ""
+
         # process extra options and append to build environment
         self.process_extra_options()
 
@@ -225,6 +228,7 @@ class LibBuilderBase(object):
             self.env.ProcessUnFlags(self.build_unflags)
             self.env.ProcessFlags(self.build_flags)
             if self.extra_script:
+                self.env.SConscriptChdir(1)
                 self.env.SConscript(
                     realpath(self.extra_script),
                     exports={"env": self.env,
@@ -513,6 +517,8 @@ class PlatformIOLibBuilder(LibBuilderBase):
     def src_filter(self):
         if "srcFilter" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("srcFilter")
+        elif self.env['SRC_FILTER']:
+            return self.env['SRC_FILTER']
         elif self._is_arduino_manifest():
             return ArduinoLibBuilder.src_filter.fget(self)
         return LibBuilderBase.src_filter.fget(self)
