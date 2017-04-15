@@ -152,7 +152,7 @@ class GitClient(VCSClientBase):
         return True
 
     def update(self):
-        args = ["pull"]
+        args = ["pull", "--recurse-submodules"]
         return self.run_cmd(args)
 
     def get_current_revision(self):

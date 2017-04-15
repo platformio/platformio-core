@@ -10,7 +10,11 @@ PlatformIO 3.0
 * Multi-line support for the different options in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__,
   such as: ``build_flags``, ``build_unflags``, etc.
   (`issue #889 <https://github.com/platformio/platformio-core/issues/889>`_)
-
+* Handle dynamic ``SRC_FILTER`` environment variable from
+  `library.json extra script <http://docs.platformio.org/page/librarymanager/config.html#extrascript>`__
+* Improved auto-detecting of mbed-enabled media disks
+* Update Git-submodules for development platforms and libraries which were
+  installed from repository
 
 -------
 
