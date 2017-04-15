@@ -17,6 +17,9 @@ PlatformIO 3.0
   that were installed from repository
 * Add support for ``.*cc`` extension
   (`issue #939 <https://github.com/platformio/platformio-core/issues/939>`_)
+* Fixed infinite dependency installing when repository consists of multiple
+  libraries
+  (`issue #935 <https://github.com/platformio/platformio-core/issues/935>`_)
 
 -------
 

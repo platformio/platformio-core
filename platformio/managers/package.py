@@ -197,6 +197,8 @@ class PkgInstallerMixin(object):
         return name
 
     def get_src_manifest_path(self, pkg_dir):
+        if not isdir(pkg_dir):
+            return None
         for item in os.listdir(pkg_dir):
             if not isdir(join(pkg_dir, item)):
                 continue
@@ -223,20 +225,19 @@ class PkgInstallerMixin(object):
         if result:
             return result
 
-        manifest_path = self.get_manifest_path(pkg_dir)
-        if not manifest_path:
-            return None
-
-        # if non-registry packages: VCS or archive
-        src_manifest_path = self.get_src_manifest_path(pkg_dir)
+        manifest = {}
         src_manifest = None
+        manifest_path = self.get_manifest_path(pkg_dir)
+        src_manifest_path = self.get_src_manifest_path(pkg_dir)
         if src_manifest_path:
             src_manifest = util.load_json(src_manifest_path)
 
-        manifest = {}
-        if manifest_path.endswith(".json"):
+        if not manifest_path and not src_manifest_path:
+            return None
+
+        if manifest_path and manifest_path.endswith(".json"):
             manifest = util.load_json(manifest_path)
-        elif manifest_path.endswith(".properties"):
+        elif manifest_path and manifest_path.endswith(".properties"):
             with codecs.open(manifest_path, encoding="utf-8") as fp:
                 for line in fp.readlines():
                     if "=" not in line:
@@ -344,7 +345,6 @@ class PkgInstallerMixin(object):
                           requirements=None,
                           sha1=None,
                           track=False):
-        pkg_dir = None
         tmp_dir = mkdtemp("-package", "_tmp_installing-", self.package_dir)
         src_manifest_dir = None
         src_manifest = {"name": name, "url": url, "requirements": requirements}
@@ -368,19 +368,19 @@ class PkgInstallerMixin(object):
                 src_manifest_dir = vcs.storage_dir
                 src_manifest['version'] = vcs.get_current_revision()
 
-            pkg_dir = self.find_pkg_root(tmp_dir)
-
             # write source data to a special manifest
+            _tmp_dir = tmp_dir
             if track:
                 if not src_manifest_dir:
-                    src_manifest_dir = join(pkg_dir, ".pio")
+                    _tmp_dir = self.find_pkg_root(tmp_dir)
+                    src_manifest_dir = join(_tmp_dir, ".pio")
                 self._update_src_manifest(src_manifest, src_manifest_dir)
 
-            pkg_dir = self._install_from_tmp_dir(pkg_dir, requirements)
+            return self._install_from_tmp_dir(_tmp_dir, requirements)
         finally:
             if isdir(tmp_dir):
                 util.rmtree_(tmp_dir)
-        return pkg_dir
+        return
 
     def _update_src_manifest(self, data, src_dir):
         if not isdir(src_dir):

@@ -64,7 +64,7 @@ class LibraryManager(BasePkgManager):
         if not manifest:
             return manifest
 
-        # if Arudino library.properties
+        # if Arduino library.properties
         if "sentence" in manifest:
             manifest['frameworks'] = ["arduino"]
             manifest['description'] = manifest['sentence']
