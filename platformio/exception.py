@@ -20,8 +20,7 @@ class PlatformioException(Exception):
     def __str__(self):  # pragma: no cover
         if self.MESSAGE:
             return self.MESSAGE.format(*self.args)
-        else:
-            return Exception.__str__(self)
+        return Exception.__str__(self)
 
 
 class ReturnErrorCode(PlatformioException):

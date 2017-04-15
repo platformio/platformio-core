@@ -63,7 +63,7 @@ class PlatformManager(BasePkgManager):
                 skip_default_package=False,
                 trigger_event=True,
                 silent=False,
-                **_):  # pylint: disable=too-many-arguments
+                **_):  # pylint: disable=too-many-arguments, arguments-differ
         platform_dir = BasePkgManager.install(
             self, name, requirements, silent=silent)
         p = PlatformFactory.newPlatform(platform_dir)
@@ -305,9 +305,7 @@ class PlatformPackagesMixin(object):
         version = self.packages[name].get("version", "")
         if self.is_valid_requirements(version):
             return self.pm.get_package_dir(name, version)
-        else:
-            return self.pm.get_package_dir(*self._parse_pkg_input(name,
-                                                                  version))
+        return self.pm.get_package_dir(*self._parse_pkg_input(name, version))
 
     def get_package_version(self, name):
         pkg_dir = self.get_package_dir(name)

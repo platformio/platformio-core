@@ -156,7 +156,7 @@ class ContentCache(object):
                 found = True
                 if isfile(path):
                     remove(path)
-                    if not len(listdir(dirname(path))):
+                    if not listdir(dirname(path)):
                         util.rmtree_(dirname(path))
 
         if found and self._lock_dbindex():
@@ -228,7 +228,7 @@ class ContentCache(object):
         if not isdir(dirname(cache_path)):
             os.makedirs(dirname(cache_path))
         with open(cache_path, "wb") as fp:
-            if isinstance(data, dict) or isinstance(data, list):
+            if isinstance(data, (dict, list)):
                 json.dump(data, fp)
             else:
                 fp.write(str(data))

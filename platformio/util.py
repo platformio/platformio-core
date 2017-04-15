@@ -46,7 +46,7 @@ class ProjectConfig(ConfigParser):
 
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
 
-    def items(self, section, **_):
+    def items(self, section, **_):  # pylint: disable=arguments-differ
         items = []
         for option in ConfigParser.options(self, section):
             items.append((option, self.get(section, option)))
@@ -130,10 +130,9 @@ class memoized(object):
             return self.func(*args)
         if args in self.cache:
             return self.cache[args]
-        else:
-            value = self.func(*args)
-            self.cache[args] = value
-            return value
+        value = self.func(*args)
+        self.cache[args] = value
+        return value
 
     def __repr__(self):
         '''Return the function's docstring.'''

@@ -295,14 +295,14 @@ def lib_builtin(storage, json_output):
     if json_output:
         return click.echo(json.dumps(items))
 
-    for storage in items:
-        if not storage['items']:
+    for storage_ in items:
+        if not storage_['items']:
             continue
-        click.secho(storage['name'], fg="green")
-        click.echo("*" * len(storage['name']))
+        click.secho(storage_['name'], fg="green")
+        click.echo("*" * len(storage_['name']))
         click.echo()
 
-        for item in sorted(storage['items'], key=lambda i: i['name']):
+        for item in sorted(storage_['items'], key=lambda i: i['name']):
             print_lib_item(item)
 
 

@@ -186,7 +186,7 @@ def MatchSourceFiles(env, src_dir, src_filter=None):
 
     src_dir = env.subst(src_dir)
     src_filter = src_filter or SRC_FILTER_DEFAULT
-    if isinstance(src_filter, list) or isinstance(src_filter, tuple):
+    if isinstance(src_filter, (list, tuple)):
         src_filter = " ".join(src_filter)
 
     matches = set()

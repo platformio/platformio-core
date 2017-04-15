@@ -252,8 +252,7 @@ def GetActualLDScript(env):
 def VerboseAction(_, act, actstr):
     if int(ARGUMENTS.get("PIOVERBOSE", 0)):
         return act
-    else:
-        return Action(act, actstr)
+    return Action(act, actstr)
 
 
 def PioClean(env, clean_dir):

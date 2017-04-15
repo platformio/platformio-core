@@ -69,8 +69,7 @@ class PackageRepoIterator(object):
 
         if self.package in manifest:
             return manifest[self.package]
-        else:
-            return self.next()
+        return self.next()
 
 
 class PkgRepoMixin(object):
