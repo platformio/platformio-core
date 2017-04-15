@@ -65,7 +65,8 @@ class LibBuilderFactory(object):
         # check source files
         for root, _, files in os.walk(path, followlinks=True):
             for fname in files:
-                if not env.IsFileWithExt(fname, ("c", "cpp", "h", "hpp")):
+                if not env.IsFileWithExt(
+                        fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT):
                     continue
                 with open(join(root, fname)) as f:
                     content = f.read()

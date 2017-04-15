@@ -27,7 +27,7 @@ from SCons.Util import case_sensitive_suffixes, is_Sequence
 
 from platformio.util import glob_escape, pioversion_to_intstr
 
-SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
+SRC_BUILD_EXT = ["c", "cc", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
 

@@ -13,8 +13,10 @@ PlatformIO 3.0
 * Handle dynamic ``SRC_FILTER`` environment variable from
   `library.json extra script <http://docs.platformio.org/page/librarymanager/config.html#extrascript>`__
 * Improved auto-detecting of mbed-enabled media disks
-* Update Git-submodules for development platforms and libraries which were
-  installed from repository
+* Automatically update Git-submodules for development platforms and libraries
+  that were installed from repository
+* Add support for ``.*cc`` extension
+  (`issue #939 <https://github.com/platformio/platformio-core/issues/939>`_)
 
 -------
 
