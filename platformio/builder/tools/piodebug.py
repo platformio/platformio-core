@@ -60,7 +60,6 @@ def AutodetectDebugPort(env):
         return fnmatch(port, pattern)
 
     def _look_for_serial_port(hwids):
-        port = None
         for item in util.get_serialports(filter_hwid=True):
             if not _is_match_pattern(item['port']):
                 continue
@@ -69,8 +68,8 @@ def AutodetectDebugPort(env):
             for hwid in hwids:
                 hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
                 if hwid_str in item['hwid']:
-                    return port
-        return port
+                    return item['port']
+        return None
 
     if "BOARD" not in env or ("DEBUG_PORT" in env and not _get_pattern()):
         return
