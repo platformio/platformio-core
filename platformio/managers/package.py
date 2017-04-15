@@ -368,12 +368,13 @@ class PkgInstallerMixin(object):
                 src_manifest_dir = vcs.storage_dir
                 src_manifest['version'] = vcs.get_current_revision()
 
-            # write source data to a special manifest
             _tmp_dir = tmp_dir
+            if not src_manifest_dir:
+                _tmp_dir = self.find_pkg_root(tmp_dir)
+                src_manifest_dir = join(_tmp_dir, ".pio")
+
+            # write source data to a special manifest
             if track:
-                if not src_manifest_dir:
-                    _tmp_dir = self.find_pkg_root(tmp_dir)
-                    src_manifest_dir = join(_tmp_dir, ".pio")
                 self._update_src_manifest(src_manifest, src_manifest_dir)
 
             return self._install_from_tmp_dir(_tmp_dir, requirements)
