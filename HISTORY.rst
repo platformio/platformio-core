@@ -25,7 +25,9 @@ PlatformIO 3.0
 
 * Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
 
+  + Add support for FireBeetle-ESP32 and IntoRobot Fig
   + Update ESP-IDF framework to v2.0
+  + Update core for Arduino framework
 
 
 3.3.0 (2017-03-27)
