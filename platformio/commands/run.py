@@ -358,8 +358,9 @@ def print_summary(results, start_time):
 def check_project_defopts(config):
     if not config.has_section("platformio"):
         return True
-    known = ("home_dir", "lib_dir", "libdeps_dir", "src_dir", "envs_dir",
-             "data_dir", "test_dir", "env_default", "lib_extra_dirs")
+    known = ("env_default", "home_dir", "lib_dir", "libdeps_dir", "src_dir",
+             "envs_dir", "data_dir", "test_dir", "boards_dir",
+             "lib_extra_dirs")
     unknown = set([k for k, _ in config.items("platformio")]) - set(known)
     if not unknown:
         return True
