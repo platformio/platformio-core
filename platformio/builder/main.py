@@ -62,20 +62,14 @@ commonvars.AddVariables(
     ("UPLOAD_PROTOCOL",),
     ("UPLOAD_SPEED",),
     ("UPLOAD_FLAGS",),
-    ("UPLOAD_RESETMETHOD",),
-
-    # debug options
-    ("DEBUG_TOOL",),
-    ("DEBUG_PORT",),
-    ("DEBUG_GDBINIT",)
+    ("UPLOAD_RESETMETHOD",)
 
 )  # yapf: disable
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
         "ar", "as", "gcc", "g++", "gnulink", "platformio", "pioplatform",
-        "piowinhooks", "piolib", "piotest", "pioupload", "piomisc", "pioide",
-        "piodebug"
+        "piowinhooks", "piolib", "pioupload", "piomisc", "pioide"
     ],  # yapf: disable
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
     variables=commonvars,

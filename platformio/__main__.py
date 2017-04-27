@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import getenv, listdir
+import os
+import sys
 from os.path import join
 from platform import system
-from sys import exit as sys_exit
 from traceback import format_exc
 
 import click
@@ -29,7 +29,7 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
 
     def list_commands(self, ctx):
         cmds = []
-        for filename in listdir(join(get_source_dir(), "commands")):
+        for filename in os.listdir(join(get_source_dir(), "commands")):
             if filename.startswith("__init__"):
                 continue
             if filename.endswith(".py"):
@@ -96,7 +96,7 @@ def main():
                 "< https://github.com/platformio/platformio-core/issues/252 >")
 
         # handle PLATFORMIO_FORCE_COLOR
-        if str(getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
+        if str(os.getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
             try:
                 # pylint: disable=protected-access
                 click._compat.isatty = lambda stream: True
@@ -133,5 +133,10 @@ An unexpected error occurred. Further steps:
     return 0
 
 
+def debug_gdb_main():
+    sys.argv = [sys.argv[0], "debug", "--interface", "gdb"] + sys.argv[1:]
+    return main()
+
+
 if __name__ == "__main__":
-    sys_exit(main())
+    sys.exit(main())

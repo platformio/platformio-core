@@ -122,15 +122,18 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
 class EnvironmentProcessor(object):
 
-    KNOWN_OPTIONS = (
-        "platform", "framework", "board", "board_mcu", "board_f_cpu",
-        "board_f_flash", "board_flash_mode", "build_flags", "src_build_flags",
-        "build_unflags", "src_filter", "extra_script", "targets",
-        "upload_port", "upload_protocol", "upload_speed", "upload_flags",
-        "upload_resetmethod", "lib_install", "lib_deps", "lib_force",
-        "lib_ignore", "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
-        "test_ignore", "test_port", "piotest", "debug_tool", "debug_port",
-        "debug_gdbinit")
+    KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
+                     "board_f_cpu", "board_f_flash", "board_flash_mode",
+                     "build_flags", "src_build_flags", "build_unflags",
+                     "src_filter", "extra_script", "targets", "upload_port",
+                     "upload_protocol", "upload_speed", "upload_flags",
+                     "upload_resetmethod", "lib_deps", "lib_ignore",
+                     "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
+                     "piotest", "test_ignore", "test_port", "debug_tool",
+                     "debug_port", "debug_init_cmds", "debug_extra_cmds")
+
+    IGNORE_BUILD_OPTIONS = ("debug_tool", "debug_port", "debug_init_cmds",
+                            "debug_extra_cmds")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
@@ -224,6 +227,8 @@ class EnvironmentProcessor(object):
         for k, v in self.options.items():
             if k in self.REMAPED_OPTIONS:
                 k = self.REMAPED_OPTIONS[k]
+            if k in self.IGNORE_BUILD_OPTIONS:
+                continue
             if k == "targets" or (k == "upload_port" and self.upload_port):
                 continue
             variables[k] = v

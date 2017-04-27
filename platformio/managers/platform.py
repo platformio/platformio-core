@@ -643,6 +643,18 @@ class PlatformBoardConfig(object):
             "ram": self._manifest.get("upload", {}).get("maximum_ram_size", 0),
             "rom": self._manifest.get("upload", {}).get("maximum_size", 0),
             "frameworks": self._manifest.get("frameworks"),
+            "debug": self.get_debug_data(),
             "vendor": self._manifest['vendor'],
             "url": self._manifest['url']
         }
+
+    def get_debug_data(self):
+        if not self._manifest.get("debug", {}).get("tools"):
+            return
+        tools = {}
+        for name, options in self._manifest['debug']['tools'].items():
+            tools[name] = {}
+            for key, value in options.items():
+                if key in ("default", "onboard"):
+                    tools[name][key] = value
+        return {"tools": tools}

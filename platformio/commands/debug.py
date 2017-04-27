@@ -20,7 +20,10 @@ import click
 from platformio.managers.core import pioplus_call
 
 
-@click.command("debug", short_help="Project Debugger")
+@click.command(
+    "debug",
+    context_settings=dict(ignore_unknown_options=True),
+    short_help="The Unified Debugger")
 @click.option(
     "-d",
     "--project-dir",
@@ -32,8 +35,8 @@ from platformio.managers.core import pioplus_call
         writable=True,
         resolve_path=True))
 @click.option("--environment", "-e", metavar="<environment>")
-@click.option("--configuration", is_flag=True)
-@click.option("--json-output", is_flag=True)
 @click.option("--verbose", "-v", is_flag=True)
+@click.option("--interface", type=click.Choice(["gdb"]))
+@click.argument("__unprocessed", nargs=-1, type=click.UNPROCESSED)
 def cli(*args, **kwargs):  # pylint: disable=unused-argument
     pioplus_call(sys.argv[1:])

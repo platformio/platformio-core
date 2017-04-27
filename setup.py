@@ -51,6 +51,7 @@ setup(
     entry_points={
         "console_scripts": [
             "pio = platformio.__main__:main",
+            "piodebuggdb = platformio.__main__:debug_gdb_main",
             "platformio = platformio.__main__:main"
         ]
     },

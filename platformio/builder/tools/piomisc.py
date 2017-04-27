@@ -18,13 +18,14 @@ import atexit
 import re
 import sys
 from os import environ, remove, walk
-from os.path import basename, isdir, isfile, join, relpath
+from os.path import basename, isdir, isfile, join, relpath, sep
 from tempfile import mkstemp
 
 from SCons.Action import Action
 from SCons.Script import ARGUMENTS
 
 from platformio import util
+from platformio.managers.core import get_core_package_dir
 
 
 class InoToCPPConverter(object):
@@ -268,6 +269,34 @@ def PioClean(env, clean_dir):
     env.Exit(0)
 
 
+def ProcessDebug(env):
+    if not env.subst("$PIODEBUGFLAGS"):
+        env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb"])
+    env.Append(
+        BUILD_FLAGS=env.get("PIODEBUGFLAGS", []),
+        BUILD_UNFLAGS=["-Os", "-O0", "-O1", "-O2", "-O3"])
+
+
+def ProcessTest(env):
+    env.Append(
+        CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
+        CPPPATH=[join("$BUILD_DIR", "UnityTestLib")])
+    unitylib = env.BuildLibrary(
+        join("$BUILD_DIR", "UnityTestLib"), get_core_package_dir("tool-unity"))
+    env.Prepend(LIBS=[unitylib])
+
+    src_filter = None
+    if "PIOTEST" in env:
+        src_filter = "+<output_export.cpp>"
+        src_filter += " +<%s%s>" % (env['PIOTEST'], sep)
+
+    return env.CollectBuildFiles(
+        "$BUILDTEST_DIR",
+        "$PROJECTTEST_DIR",
+        src_filter=src_filter,
+        duplicate=False)
+
+
 def exists(_):
     return True
 
@@ -278,4 +307,6 @@ def generate(env):
     env.AddMethod(GetActualLDScript)
     env.AddMethod(VerboseAction)
     env.AddMethod(PioClean)
+    env.AddMethod(ProcessDebug)
+    env.AddMethod(ProcessTest)
     return env
