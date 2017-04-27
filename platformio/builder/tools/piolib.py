@@ -412,6 +412,10 @@ class ProjectAsLibBuilder(LibBuilderBase):
         self._is_built = True
 
     @property
+    def src_dir(self):
+        return self.env.subst("$PROJECTSRC_DIR")
+
+    @property
     def lib_ldf_mode(self):
         mode = LibBuilderBase.lib_ldf_mode.fget(self)
         if not mode.startswith("chain"):

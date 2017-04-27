@@ -24,6 +24,9 @@ PlatformIO 3.0
   (`pull #949 <https://github.com/platformio/platformio-core/pull/949>`_)
 * Fixed linter error "unity.h does not exist" for Unit Testing
   (`issue #947 <https://github.com/platformio/platformio-core/issues/947>`_)
+* Fixed issue when `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__
+  does not handle custom ``src_dir``
+  (`issue #942 <https://github.com/platformio/platformio-core/issues/942>`_)
 
 -------
 
