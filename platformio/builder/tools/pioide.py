@@ -20,6 +20,7 @@ from os.path import join, sep
 from SCons.Defaults import processDefines
 
 from platformio import util
+from platformio.managers.core import get_core_package_dir
 
 
 def dump_includes(env):
@@ -44,6 +45,10 @@ def dump_includes(env):
         ]
         for g in toolchain_incglobs:
             includes.extend(glob(g))
+
+    unity_dir = get_core_package_dir("tool-unity")
+    if unity_dir:
+        includes.append(unity_dir)
 
     return includes
 

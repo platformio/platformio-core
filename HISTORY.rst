@@ -20,6 +20,10 @@ PlatformIO 3.0
 * Fixed infinite dependency installing when repository consists of multiple
   libraries
   (`issue #935 <https://github.com/platformio/platformio-core/issues/935>`_)
+* Don't warn about known ``boards_dir`` option
+  (`pull #949 <https://github.com/platformio/platformio-core/pull/949>`_)
+* Fixed linter error "unity.h does not exist" for Unit Testing
+  (`issue #947 <https://github.com/platformio/platformio-core/issues/947>`_)
 
 -------
 
