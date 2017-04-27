@@ -22,6 +22,7 @@ import socket
 import stat
 import subprocess
 import sys
+from contextlib import contextmanager
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
@@ -158,6 +159,14 @@ def singleton(cls):
         return _instances[cls]
 
     return get_instance
+
+
+@contextmanager
+def capture_stdout(output):
+    stdout = sys.stdout
+    sys.stdout = output
+    yield
+    sys.stdout = stdout
 
 
 def load_json(file_path):
