@@ -96,21 +96,10 @@ def cli(
                           ide is not None)
 
     if ide:
-        if not board:
-            board = get_first_board(project_dir)
-            if board:
-                board = [board]
-        if not board:
+        env_name = get_best_envname(project_dir, board)
+        if not env_name:
             raise exception.BoardNotDefined()
-        if len(board) > 1:
-            click.secho(
-                "Warning! You have initialised project with more than 1 board"
-                " for the specified IDE.\n"
-                "However, the IDE features (code autocompletion, syntax "
-                "linter) have been configured for the first board '%s' from "
-                "your list '%s'." % (board[0], ", ".join(board)),
-                fg="yellow")
-        pg = ProjectGenerator(project_dir, ide, board[0])
+        pg = ProjectGenerator(project_dir, ide, env_name)
         pg.generate()
 
     if not silent:
@@ -126,13 +115,20 @@ def cli(
             fg="green")
 
 
-def get_first_board(project_dir):
+def get_best_envname(project_dir, boards=None):
     config = util.load_project_config(project_dir)
+    env_default = None
+    if config.has_option("platformio", "env_default"):
+        env_default = config.get("platformio",
+                                 "env_default").split(", ")[0].strip()
+    if env_default:
+        return env_default
     for section in config.sections():
         if not section.startswith("env:"):
             continue
-        elif config.has_option(section, "board"):
-            return config.get(section, "board")
+        elif config.has_option(section, "board") and (not boards or config.get(
+                section, "board") in boards):
+            return section[4:]
     return None
 
 

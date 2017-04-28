@@ -17,11 +17,14 @@ PlatformIO 3.0
   that were installed from repository
 * Add support for ``.*cc`` extension
   (`issue #939 <https://github.com/platformio/platformio-core/issues/939>`_)
+* Handle ``env_default`` in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
+  when re-initializing a project
+  (`issue #950 <https://github.com/platformio/platformio-core/issues/950>`_)
+* Don't warn about known ``boards_dir`` option
+  (`pull #949 <https://github.com/platformio/platformio-core/pull/949>`_)
 * Fixed infinite dependency installing when repository consists of multiple
   libraries
   (`issue #935 <https://github.com/platformio/platformio-core/issues/935>`_)
-* Don't warn about known ``boards_dir`` option
-  (`pull #949 <https://github.com/platformio/platformio-core/pull/949>`_)
 * Fixed linter error "unity.h does not exist" for Unit Testing
   (`issue #947 <https://github.com/platformio/platformio-core/issues/947>`_)
 * Fixed issue when `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__

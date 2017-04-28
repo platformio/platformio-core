@@ -27,10 +27,10 @@ from platformio.commands.run import cli as cmd_run
 
 class ProjectGenerator(object):
 
-    def __init__(self, project_dir, ide, board):
+    def __init__(self, project_dir, ide, env_name):
         self.project_dir = project_dir
         self.ide = ide
-        self.board = board
+        self.env_name = env_name
         self._tplvars = {}
 
         with util.cd(self.project_dir):
@@ -46,23 +46,23 @@ class ProjectGenerator(object):
 
     @util.memoized
     def get_project_env(self):
-        data = {"env_name": "PlatformIO"}
+        data = None
         config = util.load_project_config(self.project_dir)
         for section in config.sections():
             if not section.startswith("env:"):
                 continue
+            if self.env_name != section[4:]:
+                continue
             data = {"env_name": section[4:]}
             for k, v in config.items(section):
                 data[k] = v
-            if self.board == data.get("board"):
-                break
         return data
 
     @util.memoized
     def get_project_build_data(self):
         data = {"defines": [], "includes": [], "cxx_path": None}
         envdata = self.get_project_env()
-        if "env_name" not in envdata:
+        if not envdata:
             return data
 
         out = StringIO()
