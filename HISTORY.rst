@@ -7,6 +7,14 @@ PlatformIO 3.0
 3.4.0 (2017-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+
+  - 100+ boards
+  - Multiple architectures and development platforms
+  - Zero Configuration
+  - Compatibility with the popular IDEs: Eclipse, Atom, VSCode, Sublime Text, etc
+  - Windows, MacOS, Linux (+ARMv6-8)
+
 * Multi-line support for the different options in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__,
   such as: ``build_flags``, ``build_unflags``, etc.
   (`issue #889 <https://github.com/platformio/platformio-core/issues/889>`_)

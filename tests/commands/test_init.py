@@ -73,7 +73,7 @@ def test_init_ide_atom(clirunner, validate_cliresult, tmpdir):
 
         # switch to NodeMCU
         result = clirunner.invoke(
-            cmd_init, ["--ide", "atom", "-b", "nodemcuv2", "-b", "uno"])
+            cmd_init, ["--ide", "atom", "-b", "nodemcuv2"])
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
         assert "arduinoespressif" in tmpdir.join(".clang_complete").read()

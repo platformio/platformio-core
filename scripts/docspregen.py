@@ -48,6 +48,8 @@ def generate_boards(boards):
                 return int(ceil(size / b) * b)
         assert NotImplemented()
 
+    platforms = {m['name']: m['title'] for m in PLATFORM_MANIFESTS}
+
     lines = []
 
     lines.append("""
@@ -56,6 +58,7 @@ def generate_boards(boards):
 
     * - ID
       - Name
+      - Platform
       - Microcontroller
       - Frequency
       - Flash
@@ -66,12 +69,15 @@ def generate_boards(boards):
         lines.append("""
     * - ``{id}``
       - `{name} <{url}>`_
+      - :ref:`{platform_title} <platform_{platform}>`
       - {mcu}
       - {f_cpu:d} MHz
       - {rom} Kb
       - {ram} Kb""".format(
             id=data['id'],
             name=data['name'],
+            platform=data['platform'],
+            platform_title=platforms[data['platform']],
             url=data['url'],
             mcu=data['mcu'].upper(),
             f_cpu=int(data['fcpu']) / 1000000,
@@ -423,11 +429,88 @@ popular embedded boards and IDE.
         f.write("\n".join(lines))
 
 
+def update_debugging():
+    vendors = {}
+    platforms = []
+    frameworks = []
+    for data in BOARDS:
+        if not data['debug']:
+            continue
+        platforms.append(data['platform'])
+        frameworks.extend(data['frameworks'])
+        vendor = data['vendor']
+        if vendor in vendors:
+            vendors[vendor].append(data)
+        else:
+            vendors[vendor] = [data]
+
+    lines = []
+    # Platforms
+    lines.append(""".. _debugging_platforms:
+
+Platforms
+---------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description""")
+
+    for manifest in PLATFORM_MANIFESTS:
+        if manifest['name'] not in platforms:
+            continue
+        p = PlatformFactory.newPlatform(manifest['name'])
+        lines.append(
+            """
+    * - :ref:`platform_{type_}`
+      - {description}"""
+            .format(type_=manifest['name'], description=p.description))
+
+    # Frameworks
+    lines.append("""
+Frameworks
+----------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description""")
+    for framework in API_FRAMEWORKS:
+        if framework['name'] not in frameworks:
+            continue
+        lines.append("""
+    * - :ref:`framework_{name}`
+      - {description}""".format(**framework))
+
+    # Boards
+    lines.append("""
+Boards
+------
+
+.. note::
+    For more detailed ``board`` information please scroll tables below by horizontal.
+""")
+    for vendor, boards in sorted(vendors.iteritems()):
+        lines.append(str(vendor))
+        lines.append("~" * len(vendor))
+        lines.append(generate_boards(boards))
+
+    with open(
+            join(util.get_source_dir(), "..", "docs", "plus",
+                 "debugging.rst"), "r+") as fp:
+        content = fp.read()
+        fp.seek(0)
+        fp.truncate()
+        fp.write(content[:content.index(".. _debugging_platforms:")] +
+                 "\n".join(lines))
+
+
 def main():
     update_create_platform_doc()
     update_platform_docs()
     update_framework_docs()
     update_embedded_boards()
+    update_debugging()
 
 
 if __name__ == "__main__":
