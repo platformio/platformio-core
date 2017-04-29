@@ -36,7 +36,7 @@ def is_compat_platform_and_framework(platform, framework):
     return False
 
 
-def generate_boards(boards):
+def generate_boards(boards, extend_debug=False):
 
     def _round_memory_size(size):
         if size == 1:
@@ -59,17 +59,34 @@ def generate_boards(boards):
     * - ID
       - Name
       - Platform
+      - Debug
       - Microcontroller
       - Frequency
       - Flash
       - RAM""")
 
     for data in sorted(boards, key=lambda item: item['id']):
+        debug = [":ref:`Yes <debugging>`" if data['debug'] else ""]
+        if extend_debug and data['debug']:
+            debug = []
+            for name, options in data['debug']['tools'].items():
+                attrs = []
+                if options.get("default"):
+                    attrs.append("default")
+                if options.get("onboard"):
+                    attrs.append("on-board")
+                tool = ":ref:`debugging_tool_%s`" % name
+                if attrs:
+                    debug.append("%s (%s)" % (tool, ", ".join(attrs)))
+                else:
+                    debug.append(tool)
+
         board_ram = float(data['ram']) / 1024
         lines.append("""
     * - ``{id}``
       - `{name} <{url}>`_
       - :ref:`{platform_title} <platform_{platform}>`
+      - {debug}
       - {mcu}
       - {f_cpu:d} MHz
       - {rom} Kb
@@ -78,6 +95,7 @@ def generate_boards(boards):
             name=data['name'],
             platform=data['platform'],
             platform_title=platforms[data['platform']],
+            debug=", ".join(debug),
             url=data['url'],
             mcu=data['mcu'].upper(),
             f_cpu=int(data['fcpu']) / 1000000,
@@ -493,7 +511,7 @@ Boards
     for vendor, boards in sorted(vendors.iteritems()):
         lines.append(str(vendor))
         lines.append("~" * len(vendor))
-        lines.append(generate_boards(boards))
+        lines.append(generate_boards(boards, extend_debug=True))
 
     with open(
             join(util.get_source_dir(), "..", "docs", "plus",
