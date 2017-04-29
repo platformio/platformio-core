@@ -23,7 +23,7 @@ from platformio.managers.core import pioplus_call
 @click.command(
     "debug",
     context_settings=dict(ignore_unknown_options=True),
-    short_help="The Unified Debugger")
+    short_help="PIO Unified Debugger")
 @click.option(
     "-d",
     "--project-dir",
