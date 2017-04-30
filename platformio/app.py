@@ -155,9 +155,12 @@ class ContentCache(object):
                     continue
                 found = True
                 if isfile(path):
-                    remove(path)
-                    if not listdir(dirname(path)):
-                        util.rmtree_(dirname(path))
+                    try:
+                        remove(path)
+                        if not listdir(dirname(path)):
+                            util.rmtree_(dirname(path))
+                    except OSError:
+                        pass
 
         if found and self._lock_dbindex():
             with open(self._db_path, "w") as fp:
