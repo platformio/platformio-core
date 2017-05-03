@@ -61,7 +61,8 @@ def account_forgot(**kwargs):
     pioplus_call(sys.argv[1:])
 
 
-@cli.command("show", short_help="PIO Account information: groups, permissions")
+@cli.command("show", short_help="PIO Account information")
+@click.option("--offline", is_flag=True)
 @click.option("--json-output", is_flag=True)
 def account_show(**kwargs):
     pioplus_call(sys.argv[1:])
