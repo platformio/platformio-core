@@ -41,11 +41,47 @@ PlatformIO 3.0
 
 -------
 
+* Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
+
+  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+  + Added support for MKRFox1200 board
+  + Updated Arduino SAMD Core to 1.6.14
+  + Fixed firmware uploading Arduino Zero and USB-native boards
+
 * Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
 
   + Add support for FireBeetle-ESP32 and IntoRobot Fig
   + Update ESP-IDF framework to v2.0
   + Update core for Arduino framework
+
+* Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
+
+  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+
+* Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
+
+  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+
+* Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
+
+  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+
+* Development platform `Silicon Labs EFM32 <https://github.com/platformio/platform-siliconlabsefm32>`__
+
+  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+
+* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
+
+  + Updated Teensy Loader CLI to v21
+  + Updated Arduino Core to v1.36
+
+* Development platform `TI MSP430 <https://github.com/platformio/platform-timsp430>`__
+
+  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+
+* Development platform `TI TIVA <https://github.com/platformio/platform-titiva>`__
+
+  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
 
 
 3.3.0 (2017-03-27)
