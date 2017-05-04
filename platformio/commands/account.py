@@ -45,7 +45,9 @@ def account_logout():
 
 
 @cli.command("password", short_help="Change password")
-def account_password():
+@click.option("--old-password")
+@click.option("--new-password")
+def account_password(**kwargs):
     pioplus_call(sys.argv[1:])
 
 
