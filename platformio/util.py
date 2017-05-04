@@ -220,15 +220,19 @@ def get_project_optional_dir(name, default=None):
 def get_home_dir():
     home_dir = get_project_optional_dir("home_dir",
                                         join(expanduser("~"), ".platformio"))
-
+    win_home_dir = None
     if "windows" in get_systype():
-        try:
-            home_dir.encode("utf8")
-        except UnicodeDecodeError:
-            home_dir = splitdrive(home_dir)[0] + "\\.platformio"
+        win_home_dir = splitdrive(home_dir)[0] + "\\.platformio"
+        if isdir(win_home_dir):
+            home_dir = win_home_dir
 
     if not isdir(home_dir):
-        os.makedirs(home_dir)
+        try:
+            os.makedirs(home_dir)
+        except WindowsError:
+            if win_home_dir:
+                os.makedirs(win_home_dir)
+                home_dir = win_home_dir
 
     assert isdir(home_dir)
     return home_dir

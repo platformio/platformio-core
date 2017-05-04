@@ -28,6 +28,9 @@ PlatformIO 3.0
 * Handle ``env_default`` in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
   when re-initializing a project
   (`issue #950 <https://github.com/platformio/platformio-core/issues/950>`_)
+* Use root directory for PIO Home when path contains non-ascii characters
+  (`issue #951 <https://github.com/platformio/platformio-core/issues/951>`_,
+  `issue #952 <https://github.com/platformio/platformio-core/issues/952>`_)
 * Don't warn about known ``boards_dir`` option
   (`pull #949 <https://github.com/platformio/platformio-core/pull/949>`_)
 * Fixed infinite dependency installing when repository consists of multiple
@@ -44,7 +47,7 @@ PlatformIO 3.0
 * Development platform `Atmel AVR <https://github.com/platformio/platform-atmelavr>`__
 
   + ATTiny Support (1634, x313, x4, x41, x5, x61, x7, x8)
-    (`issue #47 <https://github.com/platformio/platform-atmelavr/issues/47>`_)
+    (`issue #47 <https://github.com/platformio/platform-atmelavr/issues/47>`__)
   + New boards: Dwenguino, nicai-systems BOB3 coding bot, NIBO 2 robot,
     NIBObee robot
   + AVRDude TCP upload port (``net:host:port``)
