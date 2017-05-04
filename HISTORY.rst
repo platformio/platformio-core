@@ -41,6 +41,16 @@ PlatformIO 3.0
 
 -------
 
+* Development platform `Atmel AVR <https://github.com/platformio/platform-atmelavr>`__
+
+  + ATTiny Support (1634, x313, x4, x41, x5, x61, x7, x8)
+    (`issue #47 <https://github.com/platformio/platform-atmelavr/issues/47>`_)
+  + New boards: Dwenguino, nicai-systems BOB3 coding bot, NIBO 2 robot,
+    NIBObee robot
+  + AVRDude TCP upload port (``net:host:port``)
+    (`pull #45 <https://github.com/platformio/platform-atmelavr/pull/45>`_)
+  + Fixed uploading for LowPowerLab Moteino
+
 * Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
 
   + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
@@ -50,7 +60,8 @@ PlatformIO 3.0
 
 * Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
 
-  + Add support for FireBeetle-ESP32 and IntoRobot Fig
+  + Added support for OTA (Over-The-Air) updates
+  + Added support for FireBeetle-ESP32 and IntoRobot Fig
   + Update ESP-IDF framework to v2.0
   + Update core for Arduino framework
 
@@ -69,6 +80,12 @@ PlatformIO 3.0
 * Development platform `Silicon Labs EFM32 <https://github.com/platformio/platform-siliconlabsefm32>`__
 
   + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+
+* Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
+
+  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+  + Added support for new boards: ST STM32F0308DISCOVERY
+  + Updated ``tool-stlink`` to v1.3.1
 
 * Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
 

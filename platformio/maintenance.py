@@ -95,7 +95,9 @@ class Upgrader(object):
 
         self._upgraders = [
             (semantic_version.Version("3.0.0-a.1"), self._upgrade_to_3_0_0),
-            (semantic_version.Version("3.0.0-b.11"), self._upgrade_to_3_0_0b11)
+            (semantic_version.Version("3.0.0-b.11"),
+             self._upgrade_to_3_0_0b11),
+            (semantic_version.Version("3.4.0-a.9"), self._update_dev_platforms)
         ]
 
     def run(self, ctx):
@@ -103,10 +105,10 @@ class Upgrader(object):
             return True
 
         result = [True]
-        for item in self._upgraders:
-            if self.from_version >= item[0] or self.to_version < item[0]:
+        for version, callback in self._upgraders:
+            if self.from_version >= version or self.to_version < version:
                 continue
-            result.append(item[1](ctx))
+            result.append(callback(ctx))
 
         return all(result)
 
@@ -145,6 +147,11 @@ class Upgrader(object):
             return True
         ctx.invoke(cmd_platform_install, platforms=["espressif8266"])
         ctx.invoke(cmd_platform_uninstall, platforms=["espressif"])
+        return True
+
+    @staticmethod
+    def _update_dev_platforms(ctx):
+        ctx.invoke(cmd_platform_update)
         return True
 
 

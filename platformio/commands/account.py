@@ -52,7 +52,9 @@ def account_password(**kwargs):
 
 
 @cli.command("token", short_help="Get or regenerate Authentication Token")
+@click.option("-p", "--password")
 @click.option("--regenerate", is_flag=True)
+@click.option("--json-output", is_flag=True)
 def account_token(**kwargs):
     pioplus_call(sys.argv[1:])
 
