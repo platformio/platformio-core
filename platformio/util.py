@@ -229,7 +229,7 @@ def get_home_dir():
     if not isdir(home_dir):
         try:
             os.makedirs(home_dir)
-        except WindowsError:
+        except:  # pylint: disable=bare-except
             if win_home_dir:
                 os.makedirs(win_home_dir)
                 home_dir = win_home_dir
