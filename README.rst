@@ -37,12 +37,12 @@ PlatformIO
 `Bintray <https://bintray.com/platformio>`_ |
 `Community <https://community.platformio.org>`_
 
-.. image:: http://docs.platformio.org/en/stable/_static/platformio-logo.png
+.. image:: https://raw.githubusercontent.com/platformio/platformio-web/develop/app/images/platformio-ide-laptop.png
     :target: http://platformio.org
 
 `PlatformIO <http://platformio.org>`_ is an open source ecosystem for IoT
-development. Cross-platform build system and library manager. Continuous and
-IDE integration. Arduino, ESP8266 and ARM mbed compatible
+development. Cross-platform build system, unified debugger and library manager.
+Continuous and IDE integration. Arduino, ESP8266 and ARM mbed compatible
 
 * **PlatformIO IDE** - The next-generation integrated development environment for IoT.
   C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
@@ -60,12 +60,9 @@ IDE integration. Arduino, ESP8266 and ARM mbed compatible
   platforms and frameworks; learn via examples; be up-to-date with the latest
   version.
 
-*Atmel AVR & SAM, Espressif, Freescale Kinetis, Intel ARC32, Lattice iCE40,
+*Atmel AVR & SAM, Espressif 8266 & 32, Freescale Kinetis, Intel ARC32, Lattice iCE40,
 Microchip PIC32, Nordic nRF51, NXP LPC, Silicon Labs EFM32, ST STM32,
 TI MSP430 & Tiva, Teensy, Arduino, mbed, libOpenCM3, etc.*
-
-.. image:: http://docs.platformio.org/en/stable/_static/platformio-demo-wiring.gif
-    :target: http://platformio.org
 
 * `PlatformIO Plus and professional solutions <https://pioplus.com>`_
 * `PlatformIO IDE <http://platformio.org/platformio-ide>`_
