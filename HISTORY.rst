@@ -63,10 +63,10 @@ PlatformIO 3.0
 
 * Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
 
+  + New boards: Adafruit Feather, FireBeetle-ESP32, IntoRobot Fig, NodeMCU-32S, Onehorse ESP32 Dev Module, and Widora AIR
   + Added support for OTA (Over-The-Air) updates
-  + Added support for FireBeetle-ESP32 and IntoRobot Fig
-  + Update ESP-IDF framework to v2.0
-  + Update core for Arduino framework
+  + Updated ESP-IDF framework to v2.0
+  + Updated core for Arduino framework
 
 * Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
 
