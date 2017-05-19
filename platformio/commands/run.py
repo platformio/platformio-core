@@ -122,19 +122,20 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
 class EnvironmentProcessor(object):
 
-    KNOWN_OPTIONS = (
-        "platform", "framework", "board", "board_mcu", "board_f_cpu",
-        "board_f_flash", "board_flash_mode", "build_flags", "src_build_flags",
-        "build_unflags", "src_filter", "extra_script", "targets",
-        "upload_port", "upload_protocol", "upload_speed", "upload_flags",
-        "upload_resetmethod", "lib_deps", "lib_ignore", "lib_extra_dirs",
-        "lib_ldf_mode", "lib_compat_mode", "piotest", "test_ignore",
-        "test_port", "debug_tool", "debug_port", "debug_init_cmds",
-        "debug_extra_cmds", "debug_server", "debug_init_break")
+    KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
+                     "board_f_cpu", "board_f_flash", "board_flash_mode",
+                     "build_flags", "src_build_flags", "build_unflags",
+                     "src_filter", "extra_script", "targets", "upload_port",
+                     "upload_protocol", "upload_speed", "upload_flags",
+                     "upload_resetmethod", "lib_deps", "lib_ignore",
+                     "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
+                     "piotest", "test_ignore", "test_port", "debug_tool",
+                     "debug_port", "debug_init_cmds", "debug_extra_cmds",
+                     "debug_server", "debug_init_break", "debug_preload")
 
     IGNORE_BUILD_OPTIONS = ("debug_tool", "debug_port", "debug_init_cmds",
                             "debug_extra_cmds", "debug_server",
-                            "debug_init_break")
+                            "debug_init_break", "debug_preload")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
