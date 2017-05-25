@@ -41,8 +41,7 @@ PlatformIO
     :target: http://platformio.org
 
 `PlatformIO <http://platformio.org>`_ is an open source ecosystem for IoT
-development. Cross-platform build system, unified debugger and library manager.
-Continuous and IDE integration. Arduino, ESP8266 and ARM mbed compatible
+development. Cross-platform IDE and unified debugger. Remote unit testing and firmware updates.
 
 * **PlatformIO IDE** - The next-generation integrated development environment for IoT.
   C/C++ Intelligent Code Completion and Smart Code Linter for the super-fast coding.
