@@ -59,6 +59,7 @@ PlatformIO 3.0
   + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
   + Added support for MKRFox1200 board
   + Updated Arduino SAMD Core to 1.6.14
+  + Updated mbed framework to 5.4.5/142
   + Fixed firmware uploading Arduino Zero and USB-native boards
 
 * Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
@@ -71,29 +72,35 @@ PlatformIO 3.0
 * Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
 
   + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+  + Updated mbed framework to 5.4.5/142
 
 * Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
 
   + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+  + Updated mbed framework to 5.4.5/142
 
 * Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
 
   + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+  + Updated mbed framework to 5.4.5/142
 
 * Development platform `Silicon Labs EFM32 <https://github.com/platformio/platform-siliconlabsefm32>`__
 
   + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+  + Updated mbed framework to 5.4.5/142
 
 * Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
 
   + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
   + Added support for new boards: ST STM32F0308DISCOVERY
   + Updated ``tool-stlink`` to v1.3.1
+  + Updated mbed framework to 5.4.5/142
 
 * Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
 
   + Updated Teensy Loader CLI to v21
   + Updated Arduino Core to v1.36
+  + Updated mbed framework to 5.4.5/142
 
 * Development platform `TI MSP430 <https://github.com/platformio/platform-timsp430>`__
 
