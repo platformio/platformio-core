@@ -540,8 +540,8 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
 
 
 def internet_on(timeout=3):
-    host = "8.8.8.8"
-    port = 53
+    host = "dl.bintray.com"
+    port = 443
     try:
         socket.setdefaulttimeout(timeout)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
