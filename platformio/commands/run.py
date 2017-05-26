@@ -131,11 +131,11 @@ class EnvironmentProcessor(object):
                      "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
                      "piotest", "test_ignore", "test_port", "debug_tool",
                      "debug_port", "debug_init_cmds", "debug_extra_cmds",
-                     "debug_server", "debug_init_break", "debug_preload")
+                     "debug_server", "debug_init_break", "debug_load_cmd")
 
     IGNORE_BUILD_OPTIONS = ("debug_tool", "debug_port", "debug_init_cmds",
                             "debug_extra_cmds", "debug_server",
-                            "debug_init_break", "debug_preload")
+                            "debug_init_break", "debug_load_cmd")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
