@@ -89,11 +89,10 @@ def main():
         # https://urllib3.readthedocs.org
         # /en/latest/security.html#insecureplatformwarning
         try:
-            requests.packages.urllib3.disable_warnings()
-        except AttributeError:
-            raise exception.PlatformioException(
-                "Invalid installation of Python `requests` package`. See "
-                "< https://github.com/platformio/platformio-core/issues/252 >")
+            import urllib3
+            urllib3.disable_warnings()
+        except (AttributeError, ImportError):
+            pass
 
         # handle PLATFORMIO_FORCE_COLOR
         if str(getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
