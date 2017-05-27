@@ -15,10 +15,7 @@
 import os
 
 import pytest
-import requests
 from click.testing import CliRunner
-
-requests.packages.urllib3.disable_warnings()
 
 
 @pytest.fixture(scope="module")

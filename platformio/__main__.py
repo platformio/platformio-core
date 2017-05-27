@@ -19,7 +19,6 @@ from platform import system
 from traceback import format_exc
 
 import click
-import requests
 
 from platformio import __version__, exception, maintenance
 from platformio.util import get_source_dir
