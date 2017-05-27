@@ -49,6 +49,8 @@ def on_platformio_start(ctx, force, caller):
     if not caller:
         if getenv("PLATFORMIO_CALLER"):
             caller = getenv("PLATFORMIO_CALLER")
+        elif getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
+            caller = "vscode"
         elif util.is_container():
             if getenv("C9_UID"):
                 caller = "C9"
