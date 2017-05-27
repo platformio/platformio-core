@@ -12,7 +12,7 @@ PlatformIO 3.0
   - 100+ boards
   - Multiple architectures and development platforms
   - Zero Configuration
-  - Compatibility with the popular IDEs: Eclipse, Atom, VSCode, Sublime Text, etc
+  - Compatibility with the popular IDEs: Atom, VSCode, Eclipse, Sublime Text, etc
   - Windows, MacOS, Linux (+ARMv6-8)
 
 * Project generator for `VIM <http://docs.platformio.org/page/ide/vim.html>`__
@@ -21,6 +21,8 @@ PlatformIO 3.0
   (`issue #889 <https://github.com/platformio/platformio-core/issues/889>`_)
 * Handle dynamic ``SRC_FILTER`` environment variable from
   `library.json extra script <http://docs.platformio.org/page/librarymanager/config.html#extrascript>`__
+* Notify about multiple installations of PIO Core
+  (`issue #961 <https://github.com/platformio/platformio-core/issues/961>`_)
 * Improved auto-detecting of mbed-enabled media disks
 * Automatically update Git-submodules for development platforms and libraries
   that were installed from repository

@@ -156,12 +156,29 @@ class Upgrader(object):
 
 
 def after_upgrade(ctx):
+    terminal_width, _ = click.get_terminal_size()
     last_version = app.get_state_item("last_version", "0.0.0")
     if last_version == __version__:
         return
 
     if last_version == "0.0.0":
         app.set_state_item("last_version", __version__)
+    elif semantic_version.Version.coerce(util.pepver_to_semver(
+            last_version)) > semantic_version.Version.coerce(
+                util.pepver_to_semver(__version__)):
+        click.secho("*" * terminal_width, fg="yellow")
+        click.secho(
+            "Obsolete PIO Core v%s is used (previous was %s)" %
+            (__version__, last_version),
+            fg="yellow")
+        click.secho(
+            "Please remove multiple PIO Cores from a system:", fg="yellow")
+        click.secho(
+            "http://docs.platformio.org/page/faq.html"
+            "#multiple-pio-cores-in-a-system",
+            fg="cyan")
+        click.secho("*" * terminal_width, fg="yellow")
+        return
     else:
         click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
         app.clean_cache()
@@ -185,7 +202,6 @@ def after_upgrade(ctx):
         click.echo("")
 
     # PlatformIO banner
-    terminal_width, _ = click.get_terminal_size()
     click.echo("*" * terminal_width)
     click.echo("If you like %s, please:" % (click.style(
         "PlatformIO", fg="cyan")))
