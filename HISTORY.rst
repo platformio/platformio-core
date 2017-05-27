@@ -112,6 +112,11 @@ PlatformIO 3.0
   + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
 
 
+3.3.1 (2017-05-27)
+~~~~~~~~~~~~~~~~~~
+
+* Hotfix for recently updated Python Requests package (2.16.0)
+
 3.3.0 (2017-03-27)
 ~~~~~~~~~~~~~~~~~~
 
