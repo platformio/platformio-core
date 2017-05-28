@@ -12,7 +12,7 @@
 % end
             "includePath": [
 % for include in includes:
-                "{{include.replace('"', '\\"').replace('\\\\', '/').replace('\\', '/')}}",
+                "{{include.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')}}",
 % end
                 ""
             ],
@@ -21,7 +21,7 @@
                 "databaseFilename": "",
                 "path": [
 % for include in includes:
-                    "{{include.replace('"', '\\"').replace('\\\\', '/').replace('\\', '/')}}",
+                    "{{include.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')}}",
 % end
                     ""
                 ]
