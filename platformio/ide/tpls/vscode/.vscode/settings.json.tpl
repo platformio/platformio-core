@@ -6,7 +6,6 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "**/.pioenvs": true,
-        "**/.piolibdeps": true,
-        ".vscode/BROWSE.VC.DB*": true
+        "**/.piolibdeps": true
     }
 }
