@@ -8,7 +8,5 @@
         "**/.pioenvs": true,
         "**/.piolibdeps": true,
         ".vscode/BROWSE.VC.DB*": true
-    },
-    "C_Cpp.intelliSenseEngine": "Default",
-    "C_Cpp.autocomplete": "Default"
+    }
 }
