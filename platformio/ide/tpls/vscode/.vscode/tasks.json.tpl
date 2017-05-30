@@ -1,7 +1,7 @@
 {
     "version": "0.1.0",
     "command": "{{platformio_path}}",
-    "isShellCommand": true,
+    "isShellCommand": false,
     "args": ["-c", "vscode"],
     "showOutput": "always",
     "echoCommand": false,
