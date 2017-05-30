@@ -23,7 +23,7 @@ from shutil import copyfile
 from time import sleep
 
 from SCons.Node.Alias import Alias
-from serial import Serial
+from serial import Serial, SerialException
 
 from platformio import util
 
@@ -71,6 +71,11 @@ def WaitForNewSerialPort(env, before):
             if prev_port == p['port']:
                 new_port = p['port']
                 break
+
+    try:
+        Serial(new_port)
+    except SerialException:
+        sleep(1)
 
     if not new_port:
         sys.stderr.write("Error: Couldn't find a board on the selected port. "
