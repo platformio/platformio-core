@@ -73,7 +73,8 @@ def WaitForNewSerialPort(env, before):
                 break
 
     try:
-        Serial(new_port)
+        s = Serial(new_port)
+        s.close()
     except SerialException:
         sleep(1)
 
