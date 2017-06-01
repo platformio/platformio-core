@@ -115,7 +115,7 @@ class InoToCPPConverter(object):
                 elif stropen:
                     newlines[len(newlines) - 1] += line[:-1]
                     continue
-            elif stropen and line.endswith('";'):
+            elif stropen and line.endswith(('",', '";')):
                 newlines[len(newlines) - 1] += line
                 stropen = False
                 newlines.append('#line %d "%s"' %
