@@ -14,6 +14,7 @@
 
 import base64
 import json
+import sys
 from os import environ
 from os.path import join
 from time import time
@@ -166,5 +167,13 @@ if "envdump" in COMMAND_LINE_TARGETS:
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
-    print "\n%s\n" % json.dumps(env.DumpIDEData())
-    env.Exit(0)
+    try:
+        print "\n%s\n" % json.dumps(env.DumpIDEData())
+        env.Exit(0)
+    except UnicodeDecodeError:
+        sys.stderr.write(
+            "\nUnicodeDecodeError: Non-ASCII characters found in build "
+            "environment\n"
+            "See explanation in FAQ > Troubleshooting > Building\n"
+            "http://docs.platformio.org/page/faq.html\n\n")
+        env.Exit(1)
