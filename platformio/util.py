@@ -540,14 +540,15 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
 
 
 def internet_on(timeout=3):
-    host = "dl.bintray.com"
-    port = 443
-    try:
-        socket.setdefaulttimeout(timeout)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        return True
-    except:  # pylint: disable=bare-except
-        return False
+    socket.setdefaulttimeout(timeout)
+    for host in ("dl.bintray.com", "dl.platformio.org"):
+        try:
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(
+                (host, 80))
+            return True
+        except:  # pylint: disable=bare-except
+            pass
+    return False
 
 
 def get_pythonexe_path():
