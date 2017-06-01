@@ -305,7 +305,8 @@ class PkgInstallerMixin(object):
 
     def get_package_dir(self, name, requirements=None, url=None):
         manifest = self.get_package(name, requirements, url)
-        return manifest.get("__pkg_dir") if manifest else None
+        return manifest.get("__pkg_dir") if manifest and isdir(
+            manifest.get("__pkg_dir")) else None
 
     def find_pkg_root(self, src_dir):
         if self.manifest_exists(src_dir):
