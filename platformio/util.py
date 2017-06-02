@@ -410,6 +410,11 @@ def get_serialports(filter_hwid=False):
     if filter_hwid:
         return result
 
+    if platform.system() == "Windows":
+        result = sorted(result, key=lambda x: int(x["port"][3:]))
+    else:
+        result = sorted(result, key=lambda x: x["port"])
+
     # fix for PySerial
     if not result and platform.system() == "Darwin":
         for p in glob("/dev/tty.*"):
