@@ -89,8 +89,8 @@ class InoToCPPConverter(object):
         self.env.Execute(
             self.env.VerboseAction(
                 '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
-                    out_file, tmp_path), "Converting " + basename(
-                        out_file[:-4])))
+                    out_file,
+                    tmp_path), "Converting " + basename(out_file[:-4])))
         atexit.register(_delete_file, tmp_path)
         return isfile(out_file)
 
@@ -139,8 +139,8 @@ class InoToCPPConverter(object):
         prototypes = []
         reserved_keywords = set(["if", "else", "while"])
         for match in self.PROTOTYPE_RE.finditer(contents):
-            if (set([match.group(2).strip(), match.group(3).strip()]) &
-                    reserved_keywords):
+            if (set([match.group(2).strip(),
+                     match.group(3).strip()]) & reserved_keywords):
                 continue
             prototypes.append(match)
         return prototypes

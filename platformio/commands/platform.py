@@ -269,8 +269,8 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
             if item['type']:
                 click.echo("Type: %s" % item['type'])
             click.echo("Requirements: %s" % item['requirements'])
-            click.echo("Installed: %s" % ("Yes" if item.get("version") else
-                                          "No (optional)"))
+            click.echo("Installed: %s" %
+                       ("Yes" if item.get("version") else "No (optional)"))
             if "version" in item:
                 click.echo("Version: %s" % item['version'])
             if "originalVersion" in item:

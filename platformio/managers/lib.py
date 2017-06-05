@@ -226,9 +226,9 @@ class LibraryManager(BasePkgManager):
             cache_valid="30d")
         assert dl_data
 
-        return self._install_from_url(
-            name, dl_data['url'].replace("http://", "https://")
-            if app.get_setting("enable_ssl") else dl_data['url'], requirements)
+        return self._install_from_url(name, dl_data['url'].replace(
+            "http://", "https://") if app.get_setting("enable_ssl") else
+                                      dl_data['url'], requirements)
 
     def install(  # pylint: disable=arguments-differ
             self,
@@ -239,8 +239,8 @@ class LibraryManager(BasePkgManager):
             interactive=False):
         pkg_dir = None
         try:
-            _name, _requirements, _url = self.parse_pkg_input(name,
-                                                              requirements)
+            _name, _requirements, _url = self.parse_pkg_input(
+                name, requirements)
             if not _url:
                 name = "id=%d" % self.get_pkg_id_by_name(
                     _name,
@@ -309,8 +309,9 @@ class LibraryManager(BasePkgManager):
             if not isinstance(values, list):
                 values = [v.strip() for v in values.split(",") if v]
             for value in values:
-                query.append('%s:"%s"' % (key[:-1] if key.endswith("s") else
-                                          key, value))
+                query.append('%s:"%s"' % (key[:-1]
+                                          if key.endswith("s") else key,
+                                          value))
 
         lib_info = None
         result = util.get_api_result(

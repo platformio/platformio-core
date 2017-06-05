@@ -89,7 +89,8 @@ DEFAULT_ENV_OPTIONS = dict(
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     BUILDTEST_DIR=join("$BUILD_DIR", "test"),
     LIBSOURCE_DIRS=[
-        util.get_projectlib_dir(), util.get_projectlibdeps_dir(),
+        util.get_projectlib_dir(),
+        util.get_projectlibdeps_dir(),
         join("$PIOHOME_DIR", "lib")
     ],
     PROGNAME="program",

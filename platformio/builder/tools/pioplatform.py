@@ -81,7 +81,8 @@ def LoadPioPlatform(env, variables):
     board_config = env.BoardConfig()
     for k in variables.keys():
         if (k in env or
-                not any([k.startswith("BOARD_"), k.startswith("UPLOAD_")])):
+                not any([k.startswith("BOARD_"),
+                         k.startswith("UPLOAD_")])):
             continue
         _opt, _val = k.lower().split("_", 1)
         if _opt == "board":

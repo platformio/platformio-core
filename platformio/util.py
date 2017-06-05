@@ -174,8 +174,8 @@ def load_json(file_path):
         with open(file_path, "r") as f:
             return json.load(f)
     except ValueError:
-        raise exception.PlatformioException("Could not load broken JSON: %s" %
-                                            file_path)
+        raise exception.PlatformioException(
+            "Could not load broken JSON: %s" % file_path)
 
 
 def get_systype():
@@ -282,8 +282,8 @@ def get_projectsrc_dir():
 
 
 def get_projecttest_dir():
-    return get_project_optional_dir("test_dir",
-                                    join(get_project_dir(), "test"))
+    return get_project_optional_dir("test_dir", join(get_project_dir(),
+                                                     "test"))
 
 
 def get_projectboards_dir():
@@ -311,8 +311,8 @@ URL=http://docs.platformio.org/page/projectconf.html#envs-dir
 
 
 def get_projectdata_dir():
-    return get_project_optional_dir("data_dir",
-                                    join(get_project_dir(), "data"))
+    return get_project_optional_dir("data_dir", join(get_project_dir(),
+                                                     "data"))
 
 
 def load_project_config(path=None):
@@ -495,8 +495,8 @@ def _get_api_result(
         else:
             raise exception.APIRequestError(e)
     except ValueError:
-        raise exception.APIRequestError("Invalid response: %s" %
-                                        r.text.encode("utf-8"))
+        raise exception.APIRequestError(
+            "Invalid response: %s" % r.text.encode("utf-8"))
     finally:
         if r:
             r.close()
@@ -543,8 +543,8 @@ def internet_on(timeout=3):
     socket.setdefaulttimeout(timeout)
     for host in ("dl.bintray.com", "dl.platformio.org"):
         try:
-            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(
-                (host, 80))
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host,
+                                                                       80))
             return True
         except:  # pylint: disable=bare-except
             pass

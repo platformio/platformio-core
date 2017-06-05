@@ -418,8 +418,8 @@ class PkgInstallerMixin(object):
         # package should satisfy requirements
         if requirements:
             mismatch_error = (
-                "Package version %s doesn't satisfy requirements %s" % (
-                    tmp_manifest['version'], requirements))
+                "Package version %s doesn't satisfy requirements %s" %
+                (tmp_manifest['version'], requirements))
             try:
                 assert tmp_semver and tmp_semver in semantic_version.Spec(
                     requirements), mismatch_error
@@ -651,18 +651,18 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(package,
-                                                           requirements)
+            name, requirements, url = self.parse_pkg_input(
+                package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         if not pkg_dir:
-            raise exception.UnknownPackage("%s @ %s" %
-                                           (package, requirements or "*"))
+            raise exception.UnknownPackage("%s @ %s" % (package,
+                                                        requirements or "*"))
 
         manifest = self.load_manifest(pkg_dir)
         click.echo(
-            "Uninstalling %s @ %s: \t" % (click.style(
-                manifest['name'], fg="cyan"), manifest['version']),
+            "Uninstalling %s @ %s: \t" %
+            (click.style(manifest['name'], fg="cyan"), manifest['version']),
             nl=False)
 
         if islink(pkg_dir):
@@ -674,9 +674,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         # unfix package with the same name
         pkg_dir = self.get_package_dir(manifest['name'])
         if pkg_dir and "@" in pkg_dir:
-            os.rename(
-                pkg_dir,
-                join(self.package_dir, self.get_install_dirname(manifest)))
+            os.rename(pkg_dir,
+                      join(self.package_dir,
+                           self.get_install_dirname(manifest)))
             self.cache_reset()
 
         click.echo("[%s]" % click.style("OK", fg="green"))
@@ -699,8 +699,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             pkg_dir = self.get_package_dir(*self.parse_pkg_input(package))
 
         if not pkg_dir:
-            raise exception.UnknownPackage("%s @ %s" %
-                                           (package, requirements or "*"))
+            raise exception.UnknownPackage("%s @ %s" % (package,
+                                                        requirements or "*"))
 
         manifest = self.load_manifest(pkg_dir)
         name = manifest['name']

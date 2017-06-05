@@ -84,8 +84,8 @@ class PlatformManager(BasePkgManager):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(package,
-                                                           requirements)
+            name, requirements, url = self.parse_pkg_input(
+                package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         p = PlatformFactory.newPlatform(pkg_dir)
@@ -108,8 +108,8 @@ class PlatformManager(BasePkgManager):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(package,
-                                                           requirements)
+            name, requirements, url = self.parse_pkg_input(
+                package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         p = PlatformFactory.newPlatform(pkg_dir)
@@ -207,8 +207,8 @@ class PlatformFactory(object):
         else:
             if not requirements and "@" in name:
                 name, requirements = name.rsplit("@", 1)
-            platform_dir = PlatformManager().get_package_dir(name,
-                                                             requirements)
+            platform_dir = PlatformManager().get_package_dir(
+                name, requirements)
 
         if not platform_dir:
             raise exception.UnknownPlatform(name if not requirements else
@@ -358,7 +358,8 @@ class PlatformRunMixin(object):
             util.get_pythonexe_path(),
             join(get_core_package_dir("tool-scons"), "script", "scons"), "-Q",
             "-j %d" % self.get_job_nums(), "--warn=no-no-parallel-support",
-            "-f", join(util.get_source_dir(), "builder", "main.py")
+            "-f",
+            join(util.get_source_dir(), "builder", "main.py")
         ]
         cmd.append("PIOVERBOSE=%d" % (1 if self.verbose else 0))
         cmd += targets
@@ -579,8 +580,10 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
                 if not isdir(libcore_dir):
                     continue
                 storages.append({
-                    "name": "%s-core-%s" % (opts['package'], item),
-                    "path": libcore_dir
+                    "name":
+                    "%s-core-%s" % (opts['package'], item),
+                    "path":
+                    libcore_dir
                 })
 
         return storages

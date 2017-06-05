@@ -74,17 +74,22 @@ def DumpIDEData(env):
     data = {
         "libsource_dirs":
         [env.subst(l) for l in env.get("LIBSOURCE_DIRS", [])],
-        "defines": dump_defines(env),
-        "includes": dump_includes(env),
-        "cc_flags": env.subst(LINTCCOM),
-        "cxx_flags": env.subst(LINTCXXCOM),
-        "cc_path": util.where_is_program(
-            env.subst("$CC"), env.subst("${ENV['PATH']}")),
-        "cxx_path": util.where_is_program(
-            env.subst("$CXX"), env.subst("${ENV['PATH']}")),
-        "gdb_path": util.where_is_program(
-            env.subst("$GDB"), env.subst("${ENV['PATH']}")),
-        "prog_path": env.subst("$PROG_PATH")
+        "defines":
+        dump_defines(env),
+        "includes":
+        dump_includes(env),
+        "cc_flags":
+        env.subst(LINTCCOM),
+        "cxx_flags":
+        env.subst(LINTCXXCOM),
+        "cc_path":
+        util.where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
+        "cxx_path":
+        util.where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
+        "gdb_path":
+        util.where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
+        "prog_path":
+        env.subst("$PROG_PATH")
     }
 
     env_ = env.Clone()

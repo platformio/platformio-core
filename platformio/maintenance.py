@@ -95,12 +95,12 @@ class Upgrader(object):
         self.to_version = semantic_version.Version.coerce(
             util.pepver_to_semver(to_version))
 
-        self._upgraders = [
-            (semantic_version.Version("3.0.0-a.1"), self._upgrade_to_3_0_0),
-            (semantic_version.Version("3.0.0-b.11"),
-             self._upgrade_to_3_0_0b11),
-            (semantic_version.Version("3.4.0-a.9"), self._update_dev_platforms)
-        ]
+        self._upgraders = [(semantic_version.Version("3.0.0-a.1"),
+                            self._upgrade_to_3_0_0),
+                           (semantic_version.Version("3.0.0-b.11"),
+                            self._upgrade_to_3_0_0b11),
+                           (semantic_version.Version("3.4.0-a.9"),
+                            self._update_dev_platforms)]
 
     def run(self, ctx):
         if self.from_version > self.to_version:
@@ -170,8 +170,8 @@ def after_upgrade(ctx):
                 util.pepver_to_semver(__version__)):
         click.secho("*" * terminal_width, fg="yellow")
         click.secho(
-            "Obsolete PIO Core v%s is used (previous was %s)" %
-            (__version__, last_version),
+            "Obsolete PIO Core v%s is used (previous was %s)" % (__version__,
+                                                                 last_version),
             fg="yellow")
         click.secho(
             "Please remove multiple PIO Cores from a system:", fg="yellow")
@@ -205,23 +205,25 @@ def after_upgrade(ctx):
 
     # PlatformIO banner
     click.echo("*" * terminal_width)
-    click.echo("If you like %s, please:" % (click.style(
-        "PlatformIO", fg="cyan")))
+    click.echo("If you like %s, please:" %
+               (click.style("PlatformIO", fg="cyan")))
     click.echo("- %s us on Twitter to stay up-to-date "
-               "on the latest project news > %s" % (click.style(
-                   "follow", fg="cyan"), click.style(
-                       "https://twitter.com/PlatformIO_Org", fg="cyan")))
-    click.echo("- %s it on GitHub > %s" %
-               (click.style("star", fg="cyan"), click.style(
-                   "https://github.com/platformio/platformio", fg="cyan")))
+               "on the latest project news > %s" %
+               (click.style("follow", fg="cyan"),
+                click.style("https://twitter.com/PlatformIO_Org", fg="cyan")))
+    click.echo(
+        "- %s it on GitHub > %s" %
+        (click.style("star", fg="cyan"),
+         click.style("https://github.com/platformio/platformio", fg="cyan")))
     if not getenv("PLATFORMIO_IDE"):
-        click.echo("- %s PlatformIO IDE for IoT development > %s" %
-                   (click.style("try", fg="cyan"), click.style(
-                       "http://platformio.org/platformio-ide", fg="cyan")))
+        click.echo(
+            "- %s PlatformIO IDE for IoT development > %s" %
+            (click.style("try", fg="cyan"),
+             click.style("http://platformio.org/platformio-ide", fg="cyan")))
     if not util.is_ci():
-        click.echo("- %s us with PlatformIO Plus > %s" % (click.style(
-            "support", fg="cyan"), click.style(
-                "https://pioplus.com", fg="cyan")))
+        click.echo("- %s us with PlatformIO Plus > %s" %
+                   (click.style("support", fg="cyan"),
+                    click.style("https://pioplus.com", fg="cyan")))
 
     click.echo("*" * terminal_width)
     click.echo("")
@@ -284,8 +286,8 @@ def check_internal_updates(ctx, what):
         if manifest['name'] in outdated_items:
             continue
         conds = [
-            pm.outdated(manifest['__pkg_dir']), what == "platforms" and
-            PlatformFactory.newPlatform(
+            pm.outdated(manifest['__pkg_dir']),
+            what == "platforms" and PlatformFactory.newPlatform(
                 manifest['__pkg_dir']).are_outdated_packages()
         ]
         if any(conds):
@@ -299,8 +301,8 @@ def check_internal_updates(ctx, what):
     click.echo("")
     click.echo("*" * terminal_width)
     click.secho(
-        "There are the new updates for %s (%s)" %
-        (what, ", ".join(outdated_items)),
+        "There are the new updates for %s (%s)" % (what,
+                                                   ", ".join(outdated_items)),
         fg="yellow")
 
     if not app.get_setting("auto_update_" + what):

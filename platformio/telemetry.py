@@ -255,8 +255,9 @@ def measure_ci():
             "label": getenv("APPVEYOR_REPO_NAME")
         },
         "CIRCLECI": {
-            "label": "%s/%s" % (getenv("CIRCLE_PROJECT_USERNAME"),
-                                getenv("CIRCLE_PROJECT_REPONAME"))
+            "label":
+            "%s/%s" % (getenv("CIRCLE_PROJECT_USERNAME"),
+                       getenv("CIRCLE_PROJECT_REPONAME"))
         },
         "TRAVIS": {
             "label": getenv("TRAVIS_REPO_SLUG")

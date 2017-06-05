@@ -84,8 +84,8 @@ def cli(
                    click.style(project_dir, fg="cyan"))
         click.echo("%s - Project Configuration File" % click.style(
             "platformio.ini", fg="cyan"))
-        click.echo("%s - Put your source files here" % click.style(
-            "src", fg="cyan"))
+        click.echo(
+            "%s - Put your source files here" % click.style("src", fg="cyan"))
         click.echo("%s - Put here project specific (private) libraries" %
                    click.style("lib", fg="cyan"))
 
@@ -297,7 +297,8 @@ def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
     config = util.load_project_config(project_dir)
     for section in config.sections():
         cond = [
-            section.startswith("env:"), config.has_option(section, "board")
+            section.startswith("env:"),
+            config.has_option(section, "board")
         ]
         if all(cond):
             used_boards.append(config.get(section, "board"))

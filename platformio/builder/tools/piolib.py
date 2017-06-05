@@ -39,8 +39,8 @@ class LibBuilderFactory(object):
             clsname = "PlatformIOLibBuilder"
         else:
             used_frameworks = LibBuilderFactory.get_used_frameworks(env, path)
-            common_frameworks = (set(env.get("PIOFRAMEWORK", [])) &
-                                 set(used_frameworks))
+            common_frameworks = (
+                set(env.get("PIOFRAMEWORK", [])) & set(used_frameworks))
             if common_frameworks:
                 clsname = "%sLibBuilder" % list(common_frameworks)[0].title()
             elif used_frameworks:
@@ -134,8 +134,10 @@ class LibBuilderBase(object):
     @property
     def src_filter(self):
         return piotool.SRC_FILTER_DEFAULT + [
-            "-<example%s>" % os.sep, "-<examples%s>" % os.sep, "-<test%s>" %
-            os.sep, "-<tests%s>" % os.sep
+            "-<example%s>" % os.sep,
+            "-<examples%s>" % os.sep,
+            "-<test%s>" % os.sep,
+            "-<tests%s>" % os.sep
         ]
 
     @property
@@ -247,8 +249,9 @@ class LibBuilderBase(object):
                 if (key in item and
                         not self.items_in_list(self.env[env_key], item[key])):
                     if self.verbose:
-                        sys.stderr.write("Skip %s incompatible dependency %s\n"
-                                         % (key[:-1], item))
+                        sys.stderr.write(
+                            "Skip %s incompatible dependency %s\n" % (key[:-1],
+                                                                      item))
                     skip = True
             if skip:
                 continue
@@ -337,8 +340,8 @@ class LibBuilderBase(object):
             if _already_depends(lb):
                 if self.verbose:
                     sys.stderr.write("Warning! Circular dependencies detected "
-                                     "between `%s` and `%s`\n" %
-                                     (self.path, lb.path))
+                                     "between `%s` and `%s`\n" % (self.path,
+                                                                  lb.path))
                 self._circular_deps.append(lb)
             elif lb not in self._depbuilders:
                 self._depbuilders.append(lb)
@@ -604,14 +607,14 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
         if compat_mode > 1 and not lb.is_platforms_compatible(
                 env['PIOPLATFORM']):
             if verbose:
-                sys.stderr.write("Platform incompatible library %s\n" %
-                                 lb.path)
+                sys.stderr.write(
+                    "Platform incompatible library %s\n" % lb.path)
             return False
         if compat_mode > 0 and "PIOFRAMEWORK" in env and \
            not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", [])):
             if verbose:
-                sys.stderr.write("Framework incompatible library %s\n" %
-                                 lb.path)
+                sys.stderr.write(
+                    "Framework incompatible library %s\n" % lb.path)
             return False
         return True
 

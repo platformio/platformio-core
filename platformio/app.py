@@ -64,7 +64,8 @@ DEFAULT_SETTINGS = {
         "description":
         ("Telemetry service <http://docs.platformio.org/page/"
          "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
-        "value": True
+        "value":
+        True
     }
 }
 
@@ -333,7 +334,8 @@ def set_session_var(name, value):
 
 def is_disabled_progressbar():
     return any([
-        get_session_var("force_option"), util.is_ci(),
+        get_session_var("force_option"),
+        util.is_ci(),
         getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"
     ])
 

@@ -151,16 +151,24 @@ class ProjectGenerator(object):
         self._tplvars.update(self.get_project_env())
         self._tplvars.update(self.get_project_build_data())
         self._tplvars.update({
-            "project_name": self.get_project_name(),
-            "src_files": self.get_src_files(),
-            "user_home_dir": abspath(expanduser("~")),
-            "project_dir": self.project_dir,
-            "project_src_dir": self.project_src_dir,
-            "systype": util.get_systype(),
+            "project_name":
+            self.get_project_name(),
+            "src_files":
+            self.get_src_files(),
+            "user_home_dir":
+            abspath(expanduser("~")),
+            "project_dir":
+            self.project_dir,
+            "project_src_dir":
+            self.project_src_dir,
+            "systype":
+            util.get_systype(),
             "platformio_path":
             self._fix_os_path(util.where_is_program("platformio")),
-            "env_pathsep": os.pathsep,
-            "env_path": self._fix_os_path(os.getenv("PATH"))
+            "env_pathsep":
+            os.pathsep,
+            "env_path":
+            self._fix_os_path(os.getenv("PATH"))
         })
 
     @staticmethod
