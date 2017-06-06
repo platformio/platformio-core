@@ -14,12 +14,12 @@
 
 import json
 import sys
+from os import getcwd
 
 import click
 from serial.tools import miniterm
 
-from platformio.exception import MinitermException
-from platformio.util import get_serialports
+from platformio import exception, util
 
 
 @click.group(short_help="Monitor device or list existing")
@@ -32,10 +32,10 @@ def cli():
 def device_list(json_output):
 
     if json_output:
-        click.echo(json.dumps(get_serialports()))
+        click.echo(json.dumps(util.get_serialports()))
         return
 
-    for item in get_serialports():
+    for item in util.get_serialports():
         click.secho(item['port'], fg="cyan")
         click.echo("-" * len(item['port']))
         click.echo("Hardware ID: %s" % item['hwid'])
@@ -45,8 +45,7 @@ def device_list(json_output):
 
 @cli.command("monitor", short_help="Monitor device (Serial)")
 @click.option("--port", "-p", help="Port, a number or a device name")
-@click.option(
-    "--baud", "-b", type=int, default=9600, help="Set baud rate, default=9600")
+@click.option("--baud", "-b", type=int, help="Set baud rate, default=9600")
 @click.option(
     "--parity",
     default="N",
@@ -98,15 +97,39 @@ def device_list(json_output):
     "--quiet",
     is_flag=True,
     help="Diagnostics: suppress non-error messages, default=Off")
-def device_monitor(**kwargs):
+@click.option(
+    "-d",
+    "--project-dir",
+    default=getcwd,
+    type=click.Path(
+        exists=True, file_okay=False, dir_okay=True, resolve_path=True))
+@click.option(
+    "-e",
+    "--environment",
+    help="Load configuration from `platformio.ini` and specified environment")
+def device_monitor(**kwargs):  # pylint: disable=too-many-branches
+    try:
+        project_options = get_project_options(kwargs['project_dir'],
+                                              kwargs['environment'])
+        monitor_options = {k: v for k, v in project_options or []}
+        if monitor_options:
+            for k in ("port", "baud", "rts", "dtr"):
+                k2 = "monitor_%s" % k
+                if kwargs[k] is None and k2 in monitor_options:
+                    kwargs[k] = monitor_options[k2]
+                    if k != "port":
+                        kwargs[k] = int(kwargs[k])
+    except exception.NotPlatformIOProject:
+        pass
+
     if not kwargs['port']:
-        ports = get_serialports(filter_hwid=True)
+        ports = util.get_serialports(filter_hwid=True)
         if len(ports) == 1:
             kwargs['port'] = ports[0]['port']
 
     sys.argv = ["monitor"]
     for k, v in kwargs.iteritems():
-        if k in ("port", "baud", "rts", "dtr"):
+        if k in ("port", "baud", "rts", "dtr", "environment", "project_dir"):
             continue
         k = "--" + k.replace("_", "-")
         if isinstance(v, bool):
@@ -121,8 +144,31 @@ def device_monitor(**kwargs):
     try:
         miniterm.main(
             default_port=kwargs['port'],
-            default_baudrate=kwargs['baud'],
+            default_baudrate=kwargs['baud'] or 9600,
             default_rts=kwargs['rts'],
             default_dtr=kwargs['dtr'])
     except Exception as e:
-        raise MinitermException(e)
+        raise exception.MinitermException(e)
+
+
+def get_project_options(project_dir, environment):
+    config = util.load_project_config(project_dir)
+    if not config.sections():
+        return
+
+    known_envs = [s[4:] for s in config.sections() if s.startswith("env:")]
+    if environment:
+        if environment in known_envs:
+            return config.items("env:%s" % environment)
+        raise exception.UnknownEnvNames(environment, ", ".join(known_envs))
+
+    if not known_envs:
+        return
+
+    if config.has_option("platformio", "env_default"):
+        env_default = config.get("platformio",
+                                 "env_default").split(", ")[0].strip()
+        if env_default and env_default in known_envs:
+            return config.items("env:%s" % env_default)
+
+    return config.items("env:%s" % known_envs[0])

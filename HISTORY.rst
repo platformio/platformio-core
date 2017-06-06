@@ -15,6 +15,8 @@ PlatformIO 3.0
   - Compatibility with the popular IDEs: Atom, VSCode, Eclipse, Sublime Text, etc
   - Windows, MacOS, Linux (+ARMv6-8)
 
+* Configure Serial Port Monitor in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
+  (`issue #787 <https://github.com/platformio/platformio-core/issues/787>`_)
 * Project generator for `VIM <http://docs.platformio.org/page/ide/vim.html>`__
 * Multi-line support for the different options in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__,
   such as: ``build_flags``, ``build_unflags``, etc.
