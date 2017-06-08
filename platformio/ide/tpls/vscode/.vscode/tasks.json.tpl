@@ -1,5 +1,6 @@
 {
     "version": "0.1.0",
+    "runner": "terminal",
     "command": "{{platformio_path}}",
     "isShellCommand": false,
     "args": ["-c", "vscode"],
