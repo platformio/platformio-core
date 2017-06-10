@@ -66,7 +66,7 @@ def generate_boards(boards, extend_debug=False):
       - RAM""")
 
     for data in sorted(boards, key=lambda item: item['id']):
-        debug = [":ref:`Yes <debugging>`" if data['debug'] else ""]
+        debug = [":ref:`Yes <piodebug>`" if data['debug'] else ""]
         if extend_debug and data['debug']:
             debug = []
             for name, options in data['debug']['tools'].items():
