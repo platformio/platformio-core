@@ -112,23 +112,25 @@ def install_pip():
 
 def install_platformio():
     r = None
-    cmd = ["-m", "pip.__main__" if sys.version_info < (2, 7, 0) else "pip"]
+    # cmd = ["pip", "install", "-U", "platformio"]
+    cmd = [
+        "pip", "install", "-U",
+        "https://github.com/platformio/platformio-core/archive/develop.zip"
+    ]
     try:
-        r = exec_python_cmd(cmd + ["install", "-U", "platformio"])
+        r = exec_python_cmd(cmd)
         assert r['returncode'] == 0
     except AssertionError:
-        r = exec_python_cmd(cmd + ["--no-cache-dir", "install", "-U",
-                                   "platformio"])
+        cmd.insert(1, "--no-cache-dir")
+        r = exec_python_cmd(cmd)
     if r:
         print_exec_result(r)
 
 
 def main():
-    steps = [
-        ("Fixing Windows %PATH% Environment", fix_winpython_pathenv),
-        ("Installing Python Package Manager", install_pip),
-        ("Installing PlatformIO and dependencies", install_platformio)
-    ]
+    steps = [("Fixing Windows %PATH% Environment", fix_winpython_pathenv),
+             ("Installing Python Package Manager", install_pip),
+             ("Installing PlatformIO and dependencies", install_platformio)]
 
     if not IS_WINDOWS:
         del steps[0]
@@ -157,7 +159,7 @@ Permission denied
 You need the `sudo` permission to install Python packages. Try
 
 $ sudo python -c "$(curl -fsSL
-https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+https://raw.githubusercontent.com/platformio/platformio/develop/scripts/get-platformio.py)"
 """)
 
     if is_error:
