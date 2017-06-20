@@ -176,21 +176,22 @@ def generate_platform(name):
     See the License for the specific language governing permissions and
     limitations under the License.
 """)
+    p = PlatformFactory.newPlatform(name)
 
-    lines.append(".. _platform_%s:" % name)
+    lines.append(".. _platform_%s:" % p.name)
     lines.append("")
 
-    _title = "Platform ``%s``" % name
-    lines.append(_title)
-    lines.append("=" * len(_title))
-
-    p = PlatformFactory.newPlatform(name)
+    lines.append(p.title)
+    lines.append("=" * len(p.title))
+    lines.append(":ref:`projectconf_env_platform` = ``%s``" % p.name)
+    lines.append("")
     lines.append(p.description)
     lines.append("""
 For more detailed information please visit `vendor site <%s>`_.""" %
                  p.vendor_url)
     lines.append("""
-.. contents::""")
+.. contents:: Contents
+    :local:""")
 
     #
     # Packages
@@ -286,15 +287,18 @@ def generate_framework(type_, data):
     lines.append(".. _framework_%s:" % type_)
     lines.append("")
 
-    _title = "Framework ``%s``" % type_
-    lines.append(_title)
-    lines.append("=" * len(_title))
+    lines.append(data['title'])
+    lines.append("=" * len(data['title']))
+    lines.append(":ref:`projectconf_env_framework` = ``%s``" % type_)
+    lines.append("")
     lines.append(data['description'])
     lines.append("""
 For more detailed information please visit `vendor site <%s>`_.
 """ % data['url'])
 
-    lines.append(".. contents::")
+    lines.append("""
+.. contents:: Contents
+    :local:""")
 
     lines.append("""
 Platforms
@@ -418,14 +422,16 @@ Rapid Embedded Development, Continuous and IDE integration in a few
 steps with PlatformIO thanks to built-in project generator for the most
 popular embedded boards and IDE.
 
-* You can list pre-configured boards using :ref:`cmd_boards` command or
-  `PlatformIO Boards Explorer <http://platformio.org/boards>`_
-* For more detailed ``board`` information please scroll tables below by
-  horizontal.
+.. note::
+    * You can list pre-configured boards by :ref:`cmd_boards` command or
+      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
+    * For more detailed ``board`` information please scroll tables below by horizontal.
 """)
 
-    lines.append(".. contents::")
-    lines.append("")
+    lines.append("""
+.. contents:: Vendors
+    :local:
+    """)
 
     vendors = {}
     for data in BOARDS:
