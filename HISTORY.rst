@@ -15,6 +15,7 @@ PlatformIO 3.0
   - Compatibility with the popular IDEs: Atom, VSCode, Eclipse, Sublime Text, etc
   - Windows, MacOS, Linux (+ARMv6-8)
 
+* Custom ``test_transport`` for `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__ Engine
 * Configure Serial Port Monitor in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #787 <https://github.com/platformio/platformio-core/issues/787>`_)
 * Project generator for `VIM <http://docs.platformio.org/page/ide/vim.html>`__
@@ -137,11 +138,11 @@ PlatformIO 3.0
   command
   (`issue #430 <https://github.com/platformio/platformio-core/issues/430>`_)
 * List supported frameworks, SDKs with a new
-  `pio platform frameworks <http://docs.platformio.org/en/latest/userguide/platforms/cmd_frameworks.htmll>`__ command
+  `pio platform frameworks <http://docs.platformio.org/page/userguide/platforms/cmd_frameworks.htmll>`__ command
 * Visual Studio Code extension for PlatformIO
   (`issue #619 <https://github.com/platformio/platformio-core/issues/619>`_)
 * Added new options ``--no-reset``, ``--monitor-rts`` and ``--monitor-dtr``
-  to `pio test <http://docs.platformio.org/en/latest/userguide/cmd_test.html>`__
+  to `pio test <http://docs.platformio.org/page/userguide/cmd_test.html>`__
   command (allows to avoid automatic board's auto-reset when gathering test results)
 * Added support for templated methods in ``*.ino to *.cpp`` converter
   (`pull #858 <https://github.com/platformio/platformio-core/pull/858>`_)
@@ -279,7 +280,7 @@ PlatformIO 3.0
 * Custom boards per project with ``boards_dir`` option in
   `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #515 <https://github.com/platformio/platformio-core/issues/515>`_)
-* Unix shell-style wildcards for `upload_port <http://docs.platformio.org/page/projectconf.html#upload-port>`_
+* Unix shell-style wildcards for `upload_port <http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-port>`_
   (`issue #839 <https://github.com/platformio/platformio-core/issues/839>`_)
 * Refactored `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__
   C/C++ Preprocessor for conditional syntax (``#ifdef``, ``#if``, ``#else``,
@@ -406,7 +407,7 @@ PlatformIO 3.0
 * Improved Project Generator when custom ``--project-option`` is passed to
   `platformio init <http://docs.platformio.org/page/userguide/cmd_init.html>`__
   command
-* Deprecated ``lib_force`` option, please use `lib_deps <http://docs.platformio.org/page/projectconf.html#lib-deps>`__ instead
+* Deprecated ``lib_force`` option, please use `lib_deps <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__ instead
 * Return valid exit code from ``plaformio test`` command
 * Fixed Project Generator for CLion IDE using Windows OS
   (`issue #785 <https://github.com/platformio/platformio-core/issues/785>`_)
@@ -484,7 +485,7 @@ PlatformIO 3.0
 
 * Library Manager 3.0
 
-  + Project dependencies per build environment using `lib_deps <http://docs.platformio.org/page/projectconf.html#lib-deps>`__ option
+  + Project dependencies per build environment using `lib_deps <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__ option
     (`issue #413 <https://github.com/platformio/platformio-core/issues/413>`_)
   + `Semantic Versioning <http://semver.org/>`__ for library commands and
     dependencies
@@ -508,10 +509,10 @@ PlatformIO 3.0
   + Check library compatibility with project environment before building
     (`issue #415 <https://github.com/platformio/platformio-core/issues/415>`_)
   + Control Library Dependency Finder for compatibility using
-    `lib_compat_mode <http://docs.platformio.org/page/projectconf.html#lib-compat-mode>`__
+    `lib_compat_mode <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-compat-mode>`__
     option
   + Custom library storages/directories with
-    `lib_extra_dirs <http://docs.platformio.org/page/projectconf.html#lib-extra-dirs>`__ option
+    `lib_extra_dirs <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-extra-dirs>`__ option
     (`issue #537 <https://github.com/platformio/platformio-core/issues/537>`_)
   + Handle extra build flags, source filters and build script from
     `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
@@ -767,11 +768,11 @@ PlatformIO 2.0
   `platformio lib search <http://docs.platformio.org/page/userguide/lib/cmd_search.html>`__
   command
   (`issue #604 <https://github.com/platformio/platformio-core/issues/604>`_)
-* Allowed to specify default environments `env_default <http://docs.platformio.org/page/projectconf.html#env-default>`__
+* Allowed to specify default environments `env_default <http://docs.platformio.org/page/projectconf/section_platformio.html#env-default>`__
   which should be processed by default with ``platformio run`` command
   (`issue #576 <https://github.com/platformio/platformio-core/issues/576>`_)
 * Allowed to unflag(remove) base/initial flags using
-  `build_unflags <http://docs.platformio.org/page/projectconf.html#build-unflags>`__
+  `build_unflags <http://docs.platformio.org/page/projectconf/section_env_build.html#build-unflags>`__
   option
   (`issue #559 <https://github.com/platformio/platformio-core/issues/559>`_)
 * Allowed multiple VID/PID pairs when detecting serial ports
@@ -1219,12 +1220,12 @@ PlatformIO 2.0
 ~~~~~~~~~~~~~~~~~~
 
 * Allowed to exclude/include source files from build process using
-  `src_filter <http://docs.platformio.org/page/projectconf.html#src-filter>`__
+  `src_filter <http://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__
   (`issue #240 <https://github.com/platformio/platformio-core/issues/240>`_)
 * Launch own extra script before firmware building/uploading processes
   (`issue #239 <https://github.com/platformio/platformio-core/issues/239>`_)
 * Specify own path to the linker script (ld) using
-  `build_flags <http://docs.platformio.org/page/projectconf.html#build-flags>`__
+  `build_flags <http://docs.platformio.org/page/projectconf/section_env_build.html#build-flags>`__
   option
   (`issue #233 <https://github.com/platformio/platformio-core/issues/233>`_)
 * Specify library compatibility with the all platforms/frameworks
@@ -1328,11 +1329,11 @@ PlatformIO 2.0
   (`issue #192 <https://github.com/platformio/platformio-core/issues/192>`_)
 * Control verbosity of `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption-platformio-run-v>`_ command via ``-v/--verbose`` option
 * Add library dependencies for build environment using
-  `lib_install <http://docs.platformio.org/page/projectconf.html#lib-install>`_
+  `lib_install <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`_
   option in ``platformio.ini``
   (`issue #134 <https://github.com/platformio/platformio-core/issues/134>`_)
 * Specify libraries which are compatible with build environment using
-  `lib_use <http://docs.platformio.org/page/projectconf.html#lib-use>`_
+  `lib_use <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`_
   option in ``platformio.ini``
   (`issue #148 <https://github.com/platformio/platformio-core/issues/148>`_)
 * Add more boards to PlatformIO project with
@@ -1468,7 +1469,7 @@ PlatformIO 1.0
   development platform
 * Added
   `Project Configuration <http://docs.platformio.org/page/projectconf.html>`__
-  option named `envs_dir <http://docs.platformio.org/page/projectconf.html#envs-dir>`__
+  option named `envs_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#envs-dir>`__
 * Disabled "prompts" automatically for *Continuous Integration* systems
   (`issue #103 <https://github.com/platformio/platformio-core/issues/103>`_)
 * Fixed firmware uploading for
@@ -1512,7 +1513,7 @@ PlatformIO 1.0
   `#48 <https://github.com/platformio/platformio-core/issues/48>`_,
   `#50 <https://github.com/platformio/platformio-core/issues/50>`_,
   `#55 <https://github.com/platformio/platformio-core/pull/55>`_)
-* Added `src_dir <http://docs.platformio.org/page/projectconf.html#src-dir>`__
+* Added `src_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#src-dir>`__
   option to ``[platformio]`` section of
   `platformio.ini <http://docs.platformio.org/page/projectconf.html>`__
   which allows to redefine location to project's source directory
@@ -1523,7 +1524,7 @@ PlatformIO 1.0
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/platformio/platformio-core/issues/42>`_)
 * Allowed to ignore some libs from *Library Dependency Finder* via
-  `lib_ignore <http://docs.platformio.org/page/projectconf.html#lib-ignore>`_ option
+  `lib_ignore <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-ignore>`_ option
 * Improved `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
   command: asynchronous output for build process, timing and detailed
   information about environment configuration

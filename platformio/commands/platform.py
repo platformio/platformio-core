@@ -81,7 +81,7 @@ def _get_installed_platform_data(platform,
         name=p.name,
         title=p.title,
         description=p.description,
-        version=p.version,  # comment before dump
+        version=p.version,
         homepage=p.homepage,
         repository=p.repository_url,
         url=p.vendor_url,
