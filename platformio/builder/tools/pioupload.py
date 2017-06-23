@@ -48,7 +48,6 @@ def TouchSerialPort(env, port, baudrate):
         s.close()
     except:  # pylint: disable=W0702
         pass
-    sleep(0.4)
 
 
 def WaitForNewSerialPort(env, before):
@@ -56,11 +55,12 @@ def WaitForNewSerialPort(env, before):
     prev_port = env.subst("$UPLOAD_PORT")
     new_port = None
     elapsed = 0
+    before = [p['port'] for p in before]
     while elapsed < 5 and new_port is None:
-        now = util.get_serialports()
+        now = [p['port'] for p in util.get_serialports()]
         for p in now:
             if p not in before:
-                new_port = p['port']
+                new_port = p
                 break
         before = now
         sleep(0.25)
@@ -68,8 +68,8 @@ def WaitForNewSerialPort(env, before):
 
     if not new_port:
         for p in now:
-            if prev_port == p['port']:
-                new_port = p['port']
+            if prev_port == p:
+                new_port = p
                 break
 
     try:
