@@ -31,6 +31,10 @@
 # 	sudo udevadm control --reload-rules
 #	sudo udevadm trigger
 #
+# Ubuntu/Debian users may need to add own “username” to the “dialout” group if
+# they are not “root”, doing this issuing a
+#   sudo usermod -a -G dialout yourusername
+#
 # After this file is installed, physically unplug and reconnect your board.
 
 # CP210X USB UART
@@ -64,6 +68,9 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374?", MODE:="066
 
 # USBtiny
 SUBSYSTEMS=="usb", ATTRS{idProduct}=="0c9f", ATTRS{idVendor}=="1781", MODE="0666"
+
+# USBasp V2.0
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05dc", MODE:="0666"
 
 # Teensy boards
 ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04[789]?", ENV{ID_MM_DEVICE_IGNORE}="1"
