@@ -9,11 +9,12 @@ PlatformIO 3.0
 
 * `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
 
-  - 100+ boards
+  - "1-click" solution, zero configuration
+  - Support for 100+ embedded boards
   - Multiple architectures and development platforms
-  - Zero Configuration
-  - Compatibility with the popular IDEs: Atom, VSCode, Eclipse, Sublime Text, etc
   - Windows, MacOS, Linux (+ARMv6-8)
+  - Built-in into `PlatformIO IDE for Atom <http://docs.platformio.org/page/ide/atom.html>`__ and `PlatformIO IDE for VScode <http://docs.platformio.org/page/ide/vscode.html>`__
+  - Integration with `Eclipse <http://docs.platformio.org/page/ide/eclipse.html>`__ and `Sublime Text <http://docs.platformio.org/page/ide/sublimetext.html>`__
 
 * Custom ``test_transport`` for `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__ Engine
 * Configure Serial Port Monitor in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
