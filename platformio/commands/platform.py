@@ -202,6 +202,7 @@ def platform_frameworks(query, json_output):
         ]
         frameworks.append(framework)
 
+    frameworks = sorted(frameworks, key=lambda manifest: manifest['name'])
     if json_output:
         click.echo(json.dumps(frameworks))
     else:
@@ -219,6 +220,8 @@ def platform_list(json_output):
                 manifest['__pkg_dir'],
                 with_boards=False,
                 expose_packages=False))
+
+    platforms = sorted(platforms, key=lambda manifest: manifest['name'])
     if json_output:
         click.echo(json.dumps(platforms))
     else:
