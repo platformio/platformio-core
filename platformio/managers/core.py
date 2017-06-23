@@ -17,7 +17,7 @@ import subprocess
 import sys
 from os.path import join
 
-from platformio import exception, util
+from platformio import __version__, exception, util
 from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
@@ -63,6 +63,13 @@ def update_core_packages(only_check=False, silent=False):
 
 
 def pioplus_call(args, **kwargs):
+    if "windows" in util.get_systype() and sys.version_info < (2, 7, 6):
+        raise exception.PlatformioException(
+            "PlatformIO Core Plus v%s does not run under Python version %s.\n"
+            "Minimum supported version is 2.7.6, please upgrade Python.\n"
+            "Python 3 is not yet supported.\n" % (__version__,
+                                                  sys.version.split()[0]))
+
     pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
     os.environ['PYTHONEXEPATH'] = util.get_pythonexe_path()
     os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("pysite-pioplus")
