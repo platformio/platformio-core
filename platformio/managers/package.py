@@ -503,10 +503,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             url_marker = "://"
 
         req_conditions = [
-            not requirements, "@" in text,
-            (url_marker != "git@" and "://git@" not in text) or
-            text.count("@") > 1
-        ]
+            not requirements,
+            "@" in text,
+            not url_marker.startswith("git")
+        ]  # yapf: disable
         if all(req_conditions):
             text, requirements = text.rsplit("@", 1)
         if text.isdigit():

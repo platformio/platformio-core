@@ -50,6 +50,9 @@ PlatformIO 3.0
 * Fixed issue when `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__
   does not handle custom ``src_dir``
   (`issue #942 <https://github.com/platformio/platformio-core/issues/942>`_)
+* Fixed cloning a package (library) from a private Git repository with
+  custom user name and SSH port
+  (`issue #925 <https://github.com/platformio/platformio-core/issues/925>`_)
 
 -------
 

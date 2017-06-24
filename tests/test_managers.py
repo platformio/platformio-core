@@ -127,6 +127,11 @@ def test_pkg_input_parser():
             "git+ssh://git@gitlab.private-server.com/user/package#1.2.0",
             ("package", None,
              "git+ssh://git@gitlab.private-server.com/user/package#1.2.0")
+        ],
+        [
+            "git+ssh://user@gitlab.private-server.com:1234/package#1.2.0",
+            ("package", None,
+             "git+ssh://user@gitlab.private-server.com:1234/package#1.2.0")
         ]
     ]
     for params, result in items:
