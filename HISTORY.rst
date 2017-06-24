@@ -16,6 +16,10 @@ PlatformIO 3.0
   - Built-in into `PlatformIO IDE for Atom <http://docs.platformio.org/page/ide/atom.html>`__ and `PlatformIO IDE for VScode <http://docs.platformio.org/page/ide/vscode.html>`__
   - Integration with `Eclipse <http://docs.platformio.org/page/ide/eclipse.html>`__ and `Sublime Text <http://docs.platformio.org/page/ide/sublimetext.html>`__
 
+* Filter `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
+  tests using a new ``test_filter`` option in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
+  or `platformio test --filter <http://docs.platformio.org/page/userguide/cmd_test.html#cmdoption-platformio-test-f>`__ command
+  (`issue #934 <https://github.com/platformio/platformio-core/issues/934>`_)
 * Custom ``test_transport`` for `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__ Engine
 * Configure Serial Port Monitor in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #787 <https://github.com/platformio/platformio-core/issues/787>`_)

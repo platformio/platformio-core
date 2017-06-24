@@ -22,7 +22,18 @@ from platformio.managers.core import pioplus_call
 
 @click.command("test", short_help="Local Unit Testing")
 @click.option("--environment", "-e", multiple=True, metavar="<environment>")
-@click.option("--ignore", "-i", multiple=True, metavar="<pattern>")
+@click.option(
+    "--filter",
+    "-f",
+    multiple=True,
+    metavar="<pattern>",
+    help="Filter tests by a pattern")
+@click.option(
+    "--ignore",
+    "-i",
+    multiple=True,
+    metavar="<pattern>",
+    help="Ignore tests by a pattern")
 @click.option("--upload-port")
 @click.option("--test-port")
 @click.option(
