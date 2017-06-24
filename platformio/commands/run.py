@@ -122,16 +122,17 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
 class EnvironmentProcessor(object):
 
-    KNOWN_OPTIONS = (
-        "platform", "framework", "board", "board_mcu", "board_f_cpu",
-        "board_f_flash", "board_flash_mode", "build_flags", "src_build_flags",
-        "build_unflags", "src_filter", "extra_script", "targets",
-        "upload_port", "upload_protocol", "upload_speed", "upload_flags",
-        "upload_resetmethod", "lib_deps", "lib_ignore", "lib_extra_dirs",
-        "lib_ldf_mode", "lib_compat_mode", "piotest", "test_transport",
-        "test_ignore", "test_port", "debug_tool", "debug_port",
-        "debug_init_cmds", "debug_extra_cmds", "debug_server",
-        "debug_init_break", "debug_load_cmd")
+    KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
+                     "board_f_cpu", "board_f_flash", "board_flash_mode",
+                     "build_flags", "src_build_flags", "build_unflags",
+                     "src_filter", "extra_script", "targets", "upload_port",
+                     "upload_protocol", "upload_speed", "upload_flags",
+                     "upload_resetmethod", "lib_deps", "lib_ignore",
+                     "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
+                     "piotest", "test_transport", "test_ignore", "test_port",
+                     "debug_tool", "debug_port", "debug_init_cmds",
+                     "debug_extra_cmds", "debug_server", "debug_init_break",
+                     "debug_load_cmd")
 
     IGNORE_BUILD_OPTIONS = ("test_transport", "test_ignore", "test_port",
                             "debug_tool", "debug_port", "debug_init_cmds",
@@ -169,12 +170,13 @@ class EnvironmentProcessor(object):
             self.options[k] = self.options[k].strip()
 
         if not self.silent:
-            click.echo("[%s] Processing %s (%s)" % (
-                datetime.now().strftime("%c"),
-                click.style(self.name, fg="cyan", bold=True), "; ".join([
-                    "%s: %s" % (k, v.replace("\n", ", "))
-                    for k, v in self.options.items()
-                ])))
+            click.echo("[%s] Processing %s (%s)" %
+                       (datetime.now().strftime("%c"),
+                        click.style(self.name, fg="cyan", bold=True),
+                        "; ".join([
+                            "%s: %s" % (k, v.replace("\n", ", "))
+                            for k, v in self.options.items()
+                        ])))
             click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
@@ -357,9 +359,10 @@ def print_summary(results, start_time):
             err=status is False)
 
     print_header(
-        "[%s] Took %.2f seconds" % (
-            (click.style("SUCCESS", fg="green", bold=True) if successed else
-             click.style("ERROR", fg="red", bold=True)), time() - start_time),
+        "[%s] Took %.2f seconds" %
+        ((click.style("SUCCESS", fg="green", bold=True)
+          if successed else click.style("ERROR", fg="red", bold=True)),
+         time() - start_time),
         is_error=not successed)
 
 
