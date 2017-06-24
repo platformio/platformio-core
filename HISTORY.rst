@@ -40,6 +40,8 @@ PlatformIO 3.0
   `issue #952 <https://github.com/platformio/platformio-core/issues/952>`_)
 * Don't warn about known ``boards_dir`` option
   (`pull #949 <https://github.com/platformio/platformio-core/pull/949>`_)
+* Escape non-valid file name characters when installing a new package (library)
+  (`issue #985 <https://github.com/platformio/platformio-core/issues/985>`_)
 * Fixed infinite dependency installing when repository consists of multiple
   libraries
   (`issue #935 <https://github.com/platformio/platformio-core/issues/935>`_)

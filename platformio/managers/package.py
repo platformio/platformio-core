@@ -126,6 +126,9 @@ class PkgRepoMixin(object):
 
 class PkgInstallerMixin(object):
 
+    PATH_ESCAPE_CHARS = ("/", "\\", "?", "%", "*", ":", "|", '"', "<", ">",
+                         ".", "(", ")", "&", "#", ",", "'")
+
     SRC_MANIFEST_NAME = ".piopkgmanager.json"
 
     FILE_CACHE_VALID = "1m"  # 1 month
@@ -189,9 +192,11 @@ class PkgInstallerMixin(object):
         fu = FileUnpacker(source_path, dest_dir)
         return fu.start()
 
-    @staticmethod
-    def get_install_dirname(manifest):
+    def get_install_dirname(self, manifest):
         name = manifest['name']
+        for c in self.PATH_ESCAPE_CHARS:
+            if c in name:
+                name = name.replace(c, "_")
         if "id" in manifest:
             name += "_ID%d" % manifest['id']
         return name
