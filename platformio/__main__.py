@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,14 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import getenv, listdir
+import os
+import sys
 from os.path import join
 from platform import system
-from sys import exit as sys_exit
 from traceback import format_exc
 
 import click
-import requests
 
 from platformio import __version__, exception, maintenance
 from platformio.util import get_source_dir
@@ -29,7 +28,7 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
 
     def list_commands(self, ctx):
         cmds = []
-        for filename in listdir(join(get_source_dir(), "commands")):
+        for filename in os.listdir(join(get_source_dir(), "commands")):
             if filename.startswith("__init__"):
                 continue
             if filename.endswith(".py"):
@@ -37,16 +36,16 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
         cmds.sort()
         return cmds
 
-    def get_command(self, ctx, name):
+    def get_command(self, ctx, cmd_name):
         mod = None
         try:
-            mod = __import__("platformio.commands." + name, None, None,
+            mod = __import__("platformio.commands." + cmd_name, None, None,
                              ["cli"])
         except ImportError:
             try:
-                return self._handle_obsolate_command(name)
+                return self._handle_obsolate_command(cmd_name)
             except AttributeError:
-                raise click.UsageError('No such command "%s"' % name, ctx)
+                raise click.UsageError('No such command "%s"' % cmd_name, ctx)
         return mod.cli
 
     @staticmethod
@@ -95,7 +94,7 @@ def main():
             pass
 
         # handle PLATFORMIO_FORCE_COLOR
-        if str(getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
+        if str(os.getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
             try:
                 # pylint: disable=protected-access
                 click._compat.isatty = lambda stream: True
@@ -132,5 +131,10 @@ An unexpected error occurred. Further steps:
     return 0
 
 
+def debug_gdb_main():
+    sys.argv = [sys.argv[0], "debug", "--interface", "gdb"] + sys.argv[1:]
+    return main()
+
+
 if __name__ == "__main__":
-    sys_exit(main())
+    sys.exit(main())

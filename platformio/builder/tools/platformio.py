@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ from SCons.Util import case_sensitive_suffixes, is_Sequence
 
 from platformio.util import glob_escape, pioversion_to_intstr
 
-SRC_BUILD_EXT = ["c", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
+SRC_BUILD_EXT = ["c", "cc", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
 
@@ -35,15 +35,19 @@ SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
 def BuildProgram(env):
 
     def _append_pio_macros():
-        env.AppendUnique(CPPDEFINES=[(
-            "PLATFORMIO",
-            int("{0:02d}{1:02d}{2:02d}".format(*pioversion_to_intstr())))])
+        env.AppendUnique(CPPDEFINES=[
+            ("PLATFORMIO",
+             int("{0:02d}{1:02d}{2:02d}".format(*pioversion_to_intstr())))
+        ])
 
     _append_pio_macros()
 
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
+
+    if "__debug" in COMMAND_LINE_TARGETS:
+        env.ProcessDebug()
 
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
@@ -183,7 +187,7 @@ def MatchSourceFiles(env, src_dir, src_filter=None):
 
     src_dir = env.subst(src_dir)
     src_filter = src_filter or SRC_FILTER_DEFAULT
-    if isinstance(src_filter, list) or isinstance(src_filter, tuple):
+    if isinstance(src_filter, (list, tuple)):
         src_filter = " ".join(src_filter)
 
     matches = set()

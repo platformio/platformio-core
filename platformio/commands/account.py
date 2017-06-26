@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,12 +45,16 @@ def account_logout():
 
 
 @cli.command("password", short_help="Change password")
-def account_password():
+@click.option("--old-password")
+@click.option("--new-password")
+def account_password(**kwargs):
     pioplus_call(sys.argv[1:])
 
 
 @cli.command("token", short_help="Get or regenerate Authentication Token")
+@click.option("-p", "--password")
 @click.option("--regenerate", is_flag=True)
+@click.option("--json-output", is_flag=True)
 def account_token(**kwargs):
     pioplus_call(sys.argv[1:])
 
@@ -61,7 +65,8 @@ def account_forgot(**kwargs):
     pioplus_call(sys.argv[1:])
 
 
-@cli.command("show", short_help="PIO Account information: groups, permissions")
+@cli.command("show", short_help="PIO Account information")
+@click.option("--offline", is_flag=True)
 @click.option("--json-output", is_flag=True)
 def account_show(**kwargs):
     pioplus_call(sys.argv[1:])

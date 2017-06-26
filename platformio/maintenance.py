@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,14 +38,19 @@ def in_silence(ctx=None):
     ctx = ctx or app.get_session_var("command_ctx")
     assert ctx
     ctx_args = ctx.args or []
-    return (ctx_args and
-            (ctx.args[0] == "upgrade" or "--json-output" in ctx_args))
+    conditions = [
+        ctx.args[0] == "upgrade", "--json-output" in ctx_args,
+        "--version" in ctx_args
+    ]
+    return ctx_args and any(conditions)
 
 
 def on_platformio_start(ctx, force, caller):
     if not caller:
         if getenv("PLATFORMIO_CALLER"):
             caller = getenv("PLATFORMIO_CALLER")
+        elif getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
+            caller = "vscode"
         elif util.is_container():
             if getenv("C9_UID"):
                 caller = "C9"
@@ -90,20 +95,22 @@ class Upgrader(object):
         self.to_version = semantic_version.Version.coerce(
             util.pepver_to_semver(to_version))
 
-        self._upgraders = [
-            (semantic_version.Version("3.0.0-a.1"), self._upgrade_to_3_0_0),
-            (semantic_version.Version("3.0.0-b.11"), self._upgrade_to_3_0_0b11)
-        ]
+        self._upgraders = [(semantic_version.Version("3.0.0-a.1"),
+                            self._upgrade_to_3_0_0),
+                           (semantic_version.Version("3.0.0-b.11"),
+                            self._upgrade_to_3_0_0b11),
+                           (semantic_version.Version("3.4.0-a.9"),
+                            self._update_dev_platforms)]
 
     def run(self, ctx):
         if self.from_version > self.to_version:
             return True
 
         result = [True]
-        for item in self._upgraders:
-            if self.from_version >= item[0] or self.to_version < item[0]:
+        for version, callback in self._upgraders:
+            if self.from_version >= version or self.to_version < version:
                 continue
-            result.append(item[1](ctx))
+            result.append(callback(ctx))
 
         return all(result)
 
@@ -144,14 +151,36 @@ class Upgrader(object):
         ctx.invoke(cmd_platform_uninstall, platforms=["espressif"])
         return True
 
+    @staticmethod
+    def _update_dev_platforms(ctx):
+        ctx.invoke(cmd_platform_update)
+        return True
+
 
 def after_upgrade(ctx):
+    terminal_width, _ = click.get_terminal_size()
     last_version = app.get_state_item("last_version", "0.0.0")
     if last_version == __version__:
         return
 
     if last_version == "0.0.0":
         app.set_state_item("last_version", __version__)
+    elif semantic_version.Version.coerce(util.pepver_to_semver(
+            last_version)) > semantic_version.Version.coerce(
+                util.pepver_to_semver(__version__)):
+        click.secho("*" * terminal_width, fg="yellow")
+        click.secho(
+            "Obsolete PIO Core v%s is used (previous was %s)" % (__version__,
+                                                                 last_version),
+            fg="yellow")
+        click.secho(
+            "Please remove multiple PIO Cores from a system:", fg="yellow")
+        click.secho(
+            "http://docs.platformio.org/page/faq.html"
+            "#multiple-pio-cores-in-a-system",
+            fg="cyan")
+        click.secho("*" * terminal_width, fg="yellow")
+        return
     else:
         click.secho("Please wait while upgrading PlatformIO...", fg="yellow")
         app.clean_cache()
@@ -175,25 +204,26 @@ def after_upgrade(ctx):
         click.echo("")
 
     # PlatformIO banner
-    terminal_width, _ = click.get_terminal_size()
     click.echo("*" * terminal_width)
-    click.echo("If you like %s, please:" % (click.style(
-        "PlatformIO", fg="cyan")))
+    click.echo("If you like %s, please:" %
+               (click.style("PlatformIO", fg="cyan")))
     click.echo("- %s us on Twitter to stay up-to-date "
-               "on the latest project news > %s" % (click.style(
-                   "follow", fg="cyan"), click.style(
-                       "https://twitter.com/PlatformIO_Org", fg="cyan")))
-    click.echo("- %s it on GitHub > %s" %
-               (click.style("star", fg="cyan"), click.style(
-                   "https://github.com/platformio/platformio", fg="cyan")))
+               "on the latest project news > %s" %
+               (click.style("follow", fg="cyan"),
+                click.style("https://twitter.com/PlatformIO_Org", fg="cyan")))
+    click.echo(
+        "- %s it on GitHub > %s" %
+        (click.style("star", fg="cyan"),
+         click.style("https://github.com/platformio/platformio", fg="cyan")))
     if not getenv("PLATFORMIO_IDE"):
-        click.echo("- %s PlatformIO IDE for IoT development > %s" %
-                   (click.style("try", fg="cyan"), click.style(
-                       "http://platformio.org/platformio-ide", fg="cyan")))
+        click.echo(
+            "- %s PlatformIO IDE for IoT development > %s" %
+            (click.style("try", fg="cyan"),
+             click.style("http://platformio.org/platformio-ide", fg="cyan")))
     if not util.is_ci():
-        click.echo("- %s us with PlatformIO Plus > %s" % (click.style(
-            "support", fg="cyan"), click.style(
-                "https://pioplus.com", fg="cyan")))
+        click.echo("- %s us with PlatformIO Plus > %s" %
+                   (click.style("support", fg="cyan"),
+                    click.style("https://pioplus.com", fg="cyan")))
 
     click.echo("*" * terminal_width)
     click.echo("")
@@ -256,8 +286,8 @@ def check_internal_updates(ctx, what):
         if manifest['name'] in outdated_items:
             continue
         conds = [
-            pm.outdated(manifest['__pkg_dir']), what == "platforms" and
-            PlatformFactory.newPlatform(
+            pm.outdated(manifest['__pkg_dir']),
+            what == "platforms" and PlatformFactory.newPlatform(
                 manifest['__pkg_dir']).are_outdated_packages()
         ]
         if any(conds):
@@ -271,8 +301,8 @@ def check_internal_updates(ctx, what):
     click.echo("")
     click.echo("*" * terminal_width)
     click.secho(
-        "There are the new updates for %s (%s)" %
-        (what, ", ".join(outdated_items)),
+        "There are the new updates for %s (%s)" % (what,
+                                                   ", ".join(outdated_items)),
         fg="yellow")
 
     if not app.get_setting("auto_update_" + what):

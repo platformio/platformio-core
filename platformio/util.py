@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import socket
 import stat
 import subprocess
 import sys
+from contextlib import contextmanager
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
@@ -46,7 +47,7 @@ class ProjectConfig(ConfigParser):
 
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
 
-    def items(self, section, **_):
+    def items(self, section, **_):  # pylint: disable=arguments-differ
         items = []
         for option in ConfigParser.options(self, section):
             items.append((option, self.get(section, option)))
@@ -130,10 +131,9 @@ class memoized(object):
             return self.func(*args)
         if args in self.cache:
             return self.cache[args]
-        else:
-            value = self.func(*args)
-            self.cache[args] = value
-            return value
+        value = self.func(*args)
+        self.cache[args] = value
+        return value
 
     def __repr__(self):
         '''Return the function's docstring.'''
@@ -161,13 +161,21 @@ def singleton(cls):
     return get_instance
 
 
+@contextmanager
+def capture_stdout(output):
+    stdout = sys.stdout
+    sys.stdout = output
+    yield
+    sys.stdout = stdout
+
+
 def load_json(file_path):
     try:
         with open(file_path, "r") as f:
             return json.load(f)
     except ValueError:
-        raise exception.PlatformioException("Could not load broken JSON: %s" %
-                                            file_path)
+        raise exception.PlatformioException(
+            "Could not load broken JSON: %s" % file_path)
 
 
 def get_systype():
@@ -212,15 +220,19 @@ def get_project_optional_dir(name, default=None):
 def get_home_dir():
     home_dir = get_project_optional_dir("home_dir",
                                         join(expanduser("~"), ".platformio"))
-
+    win_home_dir = None
     if "windows" in get_systype():
-        try:
-            home_dir.encode("utf8")
-        except UnicodeDecodeError:
-            home_dir = splitdrive(home_dir)[0] + "\\.platformio"
+        win_home_dir = splitdrive(home_dir)[0] + "\\.platformio"
+        if isdir(win_home_dir):
+            home_dir = win_home_dir
 
     if not isdir(home_dir):
-        os.makedirs(home_dir)
+        try:
+            os.makedirs(home_dir)
+        except:  # pylint: disable=bare-except
+            if win_home_dir:
+                os.makedirs(win_home_dir)
+                home_dir = win_home_dir
 
     assert isdir(home_dir)
     return home_dir
@@ -270,8 +282,8 @@ def get_projectsrc_dir():
 
 
 def get_projecttest_dir():
-    return get_project_optional_dir("test_dir",
-                                    join(get_project_dir(), "test"))
+    return get_project_optional_dir("test_dir", join(get_project_dir(),
+                                                     "test"))
 
 
 def get_projectboards_dir():
@@ -299,8 +311,8 @@ URL=http://docs.platformio.org/page/projectconf.html#envs-dir
 
 
 def get_projectdata_dir():
-    return get_project_optional_dir("data_dir",
-                                    join(get_project_dir(), "data"))
+    return get_project_optional_dir("data_dir", join(get_project_dir(),
+                                                     "data"))
 
 
 def load_project_config(path=None):
@@ -465,14 +477,14 @@ def _get_api_result(
                 data=data,
                 headers=headers,
                 auth=auth,
-                verify=disable_ssl_check)
+                verify=not disable_ssl_check)
         else:
             r = _api_request_session().get(
                 url,
                 params=params,
                 headers=headers,
                 auth=auth,
-                verify=disable_ssl_check)
+                verify=not disable_ssl_check)
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -483,8 +495,8 @@ def _get_api_result(
         else:
             raise exception.APIRequestError(e)
     except ValueError:
-        raise exception.APIRequestError("Invalid response: %s" %
-                                        r.text.encode("utf-8"))
+        raise exception.APIRequestError(
+            "Invalid response: %s" % r.text.encode("utf-8"))
     finally:
         if r:
             r.close()
@@ -528,14 +540,15 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
 
 
 def internet_on(timeout=3):
-    host = "8.8.8.8"
-    port = 53
-    try:
-        socket.setdefaulttimeout(timeout)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        return True
-    except:  # pylint: disable=bare-except
-        return False
+    socket.setdefaulttimeout(timeout)
+    for host in ("dl.bintray.com", "dl.platformio.org"):
+        try:
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host,
+                                                                       80))
+            return True
+        except:  # pylint: disable=bare-except
+            pass
+    return False
 
 
 def get_pythonexe_path():

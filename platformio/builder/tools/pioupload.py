@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ from shutil import copyfile
 from time import sleep
 
 from SCons.Node.Alias import Alias
-from serial import Serial
+from serial import Serial, SerialException
 
 from platformio import util
 
@@ -48,7 +48,6 @@ def TouchSerialPort(env, port, baudrate):
         s.close()
     except:  # pylint: disable=W0702
         pass
-    sleep(0.4)
 
 
 def WaitForNewSerialPort(env, before):
@@ -56,12 +55,12 @@ def WaitForNewSerialPort(env, before):
     prev_port = env.subst("$UPLOAD_PORT")
     new_port = None
     elapsed = 0
-    sleep(1)
+    before = [p['port'] for p in before]
     while elapsed < 5 and new_port is None:
-        now = util.get_serialports()
+        now = [p['port'] for p in util.get_serialports()]
         for p in now:
             if p not in before:
-                new_port = p['port']
+                new_port = p
                 break
         before = now
         sleep(0.25)
@@ -69,9 +68,15 @@ def WaitForNewSerialPort(env, before):
 
     if not new_port:
         for p in now:
-            if prev_port == p['port']:
-                new_port = p['port']
+            if prev_port == p:
+                new_port = p
                 break
+
+    try:
+        s = Serial(new_port)
+        s.close()
+    except SerialException:
+        sleep(1)
 
     if not new_port:
         sys.stderr.write("Error: Couldn't find a board on the selected port. "
@@ -102,12 +107,16 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
     def _look_for_mbed_disk():
         msdlabels = ("mbed", "nucleo", "frdm", "microbit")
         for item in util.get_logicaldisks():
-            if not _is_match_pattern(item['disk']):
+            if item['disk'].startswith(
+                    "/net") or not _is_match_pattern(item['disk']):
                 continue
+            mbed_pages = [
+                join(item['disk'], n) for n in ("mbed.htm", "mbed.html")
+            ]
+            if any([isfile(p) for p in mbed_pages]):
+                return item['disk']
             if (item['name'] and
                     any([l in item['name'].lower() for l in msdlabels])):
-                return item['disk']
-            if isfile(join(item['disk'], "mbed.html")):
                 return item['disk']
         return None
 
@@ -192,8 +201,8 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
 
     if used_size > max_size:
         sys.stderr.write("Error: The program size (%d bytes) is greater "
-                         "than maximum allowed (%s bytes)\n" %
-                         (used_size, max_size))
+                         "than maximum allowed (%s bytes)\n" % (used_size,
+                                                                max_size))
         env.Exit(1)
 
 

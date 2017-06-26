@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ def is_compat_platform_and_framework(platform, framework):
     return False
 
 
-def generate_boards(boards):
+def generate_boards(boards, extend_debug=False):
 
     def _round_memory_size(size):
         if size == 1:
@@ -48,6 +48,8 @@ def generate_boards(boards):
                 return int(ceil(size / b) * b)
         assert NotImplemented()
 
+    platforms = {m['name']: m['title'] for m in PLATFORM_MANIFESTS}
+
     lines = []
 
     lines.append("""
@@ -56,22 +58,44 @@ def generate_boards(boards):
 
     * - ID
       - Name
+      - Platform
+      - Debug
       - Microcontroller
       - Frequency
       - Flash
       - RAM""")
 
     for data in sorted(boards, key=lambda item: item['id']):
+        debug = [":ref:`Yes <piodebug>`" if data['debug'] else ""]
+        if extend_debug and data['debug']:
+            debug = []
+            for name, options in data['debug']['tools'].items():
+                attrs = []
+                if options.get("default"):
+                    attrs.append("default")
+                if options.get("onboard"):
+                    attrs.append("on-board")
+                tool = ":ref:`debugging_tool_%s`" % name
+                if attrs:
+                    debug.append("%s (%s)" % (tool, ", ".join(attrs)))
+                else:
+                    debug.append(tool)
+
         board_ram = float(data['ram']) / 1024
         lines.append("""
     * - ``{id}``
       - `{name} <{url}>`_
+      - :ref:`{platform_title} <platform_{platform}>`
+      - {debug}
       - {mcu}
       - {f_cpu:d} MHz
       - {rom} Kb
       - {ram} Kb""".format(
             id=data['id'],
             name=data['name'],
+            platform=data['platform'],
+            platform_title=platforms[data['platform']],
+            debug=", ".join(debug),
             url=data['url'],
             mcu=data['mcu'].upper(),
             f_cpu=int(data['fcpu']) / 1000000,
@@ -108,29 +132,29 @@ Packages
 .. warning::
     **Linux Users**:
 
-    * Ubuntu/Debian users may need to add own "username" to the "dialout"
-      group if they are not "root", doing this issuing a
-      ``sudo usermod -a -G dialout yourusername``.
-    * Install "udev" rules file `99-platformio-udev.rules <https://github.com/platformio/platformio-core/blob/develop/scripts/99-platformio-udev.rules>`_
-      (an instruction is located in the file).
-    * Raspberry Pi users, please read this article
-      `Enable serial port on Raspberry Pi <https://hallard.me/enable-serial-port-on-raspberry-pi/>`__.
+        * Install "udev" rules file `99-platformio-udev.rules <https://github.com/platformio/platformio-core/blob/develop/scripts/99-platformio-udev.rules>`_
+          (an instruction is located inside a file).
+        * Raspberry Pi users, please read this article
+          `Enable serial port on Raspberry Pi <https://hallard.me/enable-serial-port-on-raspberry-pi/>`__.
 """)
 
         if platform == "teensy":
             lines.append("""
-    **Windows Users:** Teensy programming uses only Windows built-in HID
-    drivers. When Teensy is programmed to act as a USB Serial device,
-    Windows XP, Vista, 7 and 8 require `this serial driver
-    <http://www.pjrc.com/teensy/serial_install.exe>`_
-    is needed to access the COM port your program uses. No special driver
-    installation is necessary on Windows 10.
+    **Windows Users:**
+
+        Teensy programming uses only Windows built-in HID
+        drivers. When Teensy is programmed to act as a USB Serial device,
+        Windows XP, Vista, 7 and 8 require `this serial driver
+        <http://www.pjrc.com/teensy/serial_install.exe>`_
+        is needed to access the COM port your program uses. No special driver
+        installation is necessary on Windows 10.
 """)
         else:
             lines.append("""
-    **Windows Users:** Please check that you have correctly installed USB
-    driver from board manufacturer
+    **Windows Users:**
 
+        Please check that you have a correctly installed USB driver from board
+        manufacturer
 """)
 
     return "\n".join(lines)
@@ -141,7 +165,7 @@ def generate_platform(name):
     lines = []
 
     lines.append(
-        """..  Copyright 2014-present PlatformIO <contact@platformio.org>
+        """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -152,21 +176,22 @@ def generate_platform(name):
     See the License for the specific language governing permissions and
     limitations under the License.
 """)
+    p = PlatformFactory.newPlatform(name)
 
-    lines.append(".. _platform_%s:" % name)
+    lines.append(".. _platform_%s:" % p.name)
     lines.append("")
 
-    _title = "Platform ``%s``" % name
-    lines.append(_title)
-    lines.append("=" * len(_title))
-
-    p = PlatformFactory.newPlatform(name)
+    lines.append(p.title)
+    lines.append("=" * len(p.title))
+    lines.append(":ref:`projectconf_env_platform` = ``%s``" % p.name)
+    lines.append("")
     lines.append(p.description)
     lines.append("""
 For more detailed information please visit `vendor site <%s>`_.""" %
                  p.vendor_url)
     lines.append("""
-.. contents::""")
+.. contents:: Contents
+    :local:""")
 
     #
     # Packages
@@ -247,7 +272,7 @@ def generate_framework(type_, data):
     lines = []
 
     lines.append(
-        """..  Copyright 2014-present PlatformIO <contact@platformio.org>
+        """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -262,15 +287,18 @@ def generate_framework(type_, data):
     lines.append(".. _framework_%s:" % type_)
     lines.append("")
 
-    _title = "Framework ``%s``" % type_
-    lines.append(_title)
-    lines.append("=" * len(_title))
+    lines.append(data['title'])
+    lines.append("=" * len(data['title']))
+    lines.append(":ref:`projectconf_env_framework` = ``%s``" % type_)
+    lines.append("")
     lines.append(data['description'])
     lines.append("""
 For more detailed information please visit `vendor site <%s>`_.
 """ % data['url'])
 
-    lines.append(".. contents::")
+    lines.append("""
+.. contents:: Contents
+    :local:""")
 
     lines.append("""
 Platforms
@@ -371,7 +399,7 @@ def update_embedded_boards():
     lines = []
 
     lines.append(
-        """..  Copyright 2014-present PlatformIO <contact@platformio.org>
+        """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -394,14 +422,16 @@ Rapid Embedded Development, Continuous and IDE integration in a few
 steps with PlatformIO thanks to built-in project generator for the most
 popular embedded boards and IDE.
 
-* You can list pre-configured boards using :ref:`cmd_boards` command or
-  `PlatformIO Boards Explorer <http://platformio.org/boards>`_
-* For more detailed ``board`` information please scroll tables below by
-  horizontal.
+.. note::
+    * You can list pre-configured boards by :ref:`cmd_boards` command or
+      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
+    * For more detailed ``board`` information please scroll tables below by horizontal.
 """)
 
-    lines.append(".. contents::")
-    lines.append("")
+    lines.append("""
+.. contents:: Vendors
+    :local:
+    """)
 
     vendors = {}
     for data in BOARDS:
@@ -423,11 +453,88 @@ popular embedded boards and IDE.
         f.write("\n".join(lines))
 
 
+def update_debugging():
+    vendors = {}
+    platforms = []
+    frameworks = []
+    for data in BOARDS:
+        if not data['debug']:
+            continue
+        platforms.append(data['platform'])
+        frameworks.extend(data['frameworks'])
+        vendor = data['vendor']
+        if vendor in vendors:
+            vendors[vendor].append(data)
+        else:
+            vendors[vendor] = [data]
+
+    lines = []
+    # Platforms
+    lines.append(""".. _debugging_platforms:
+
+Platforms
+---------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description""")
+
+    for manifest in PLATFORM_MANIFESTS:
+        if manifest['name'] not in platforms:
+            continue
+        p = PlatformFactory.newPlatform(manifest['name'])
+        lines.append(
+            """
+    * - :ref:`platform_{type_}`
+      - {description}"""
+            .format(type_=manifest['name'], description=p.description))
+
+    # Frameworks
+    lines.append("""
+Frameworks
+----------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description""")
+    for framework in API_FRAMEWORKS:
+        if framework['name'] not in frameworks:
+            continue
+        lines.append("""
+    * - :ref:`framework_{name}`
+      - {description}""".format(**framework))
+
+    # Boards
+    lines.append("""
+Boards
+------
+
+.. note::
+    For more detailed ``board`` information please scroll tables below by horizontal.
+""")
+    for vendor, boards in sorted(vendors.iteritems()):
+        lines.append(str(vendor))
+        lines.append("~" * len(vendor))
+        lines.append(generate_boards(boards, extend_debug=True))
+
+    with open(
+            join(util.get_source_dir(), "..", "docs", "plus",
+                 "debugging.rst"), "r+") as fp:
+        content = fp.read()
+        fp.seek(0)
+        fp.truncate()
+        fp.write(content[:content.index(".. _debugging_platforms:")] +
+                 "\n".join(lines))
+
+
 def main():
     update_create_platform_doc()
     update_platform_docs()
     update_framework_docs()
     update_embedded_boards()
+    update_debugging()
 
 
 if __name__ == "__main__":

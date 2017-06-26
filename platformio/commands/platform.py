@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ def _get_installed_platform_data(platform,
         name=p.name,
         title=p.title,
         description=p.description,
-        version=p.version,  # comment before dump
+        version=p.version,
         homepage=p.homepage,
         repository=p.repository_url,
         url=p.vendor_url,
@@ -202,6 +202,7 @@ def platform_frameworks(query, json_output):
         ]
         frameworks.append(framework)
 
+    frameworks = sorted(frameworks, key=lambda manifest: manifest['name'])
     if json_output:
         click.echo(json.dumps(frameworks))
     else:
@@ -219,6 +220,8 @@ def platform_list(json_output):
                 manifest['__pkg_dir'],
                 with_boards=False,
                 expose_packages=False))
+
+    platforms = sorted(platforms, key=lambda manifest: manifest['name'])
     if json_output:
         click.echo(json.dumps(platforms))
     else:
@@ -269,8 +272,8 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
             if item['type']:
                 click.echo("Type: %s" % item['type'])
             click.echo("Requirements: %s" % item['requirements'])
-            click.echo("Installed: %s" % ("Yes" if item.get("version") else
-                                          "No (optional)"))
+            click.echo("Installed: %s" %
+                       ("Yes" if item.get("version") else "No (optional)"))
             if "version" in item:
                 click.echo("Version: %s" % item['version'])
             if "originalVersion" in item:

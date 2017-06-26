@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,8 +39,8 @@ class LibBuilderFactory(object):
             clsname = "PlatformIOLibBuilder"
         else:
             used_frameworks = LibBuilderFactory.get_used_frameworks(env, path)
-            common_frameworks = (set(env.get("PIOFRAMEWORK", [])) &
-                                 set(used_frameworks))
+            common_frameworks = (
+                set(env.get("PIOFRAMEWORK", [])) & set(used_frameworks))
             if common_frameworks:
                 clsname = "%sLibBuilder" % list(common_frameworks)[0].title()
             elif used_frameworks:
@@ -65,7 +65,8 @@ class LibBuilderFactory(object):
         # check source files
         for root, _, files in os.walk(path, followlinks=True):
             for fname in files:
-                if not env.IsFileWithExt(fname, ("c", "cpp", "h", "hpp")):
+                if not env.IsFileWithExt(
+                        fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT):
                     continue
                 with open(join(root, fname)) as f:
                     content = f.read()
@@ -100,6 +101,9 @@ class LibBuilderBase(object):
         self._circular_deps = list()
         self._scanned_paths = list()
 
+        # reset source filter, could be overridden with extra script
+        self.env['SRC_FILTER'] = ""
+
         # process extra options and append to build environment
         self.process_extra_options()
 
@@ -130,8 +134,10 @@ class LibBuilderBase(object):
     @property
     def src_filter(self):
         return piotool.SRC_FILTER_DEFAULT + [
-            "-<example%s>" % os.sep, "-<examples%s>" % os.sep, "-<test%s>" %
-            os.sep, "-<tests%s>" % os.sep
+            "-<example%s>" % os.sep,
+            "-<examples%s>" % os.sep,
+            "-<test%s>" % os.sep,
+            "-<tests%s>" % os.sep
         ]
 
     @property
@@ -225,6 +231,7 @@ class LibBuilderBase(object):
             self.env.ProcessUnFlags(self.build_unflags)
             self.env.ProcessFlags(self.build_flags)
             if self.extra_script:
+                self.env.SConscriptChdir(1)
                 self.env.SConscript(
                     realpath(self.extra_script),
                     exports={"env": self.env,
@@ -242,8 +249,9 @@ class LibBuilderBase(object):
                 if (key in item and
                         not self.items_in_list(self.env[env_key], item[key])):
                     if self.verbose:
-                        sys.stderr.write("Skip %s incompatible dependency %s\n"
-                                         % (key[:-1], item))
+                        sys.stderr.write(
+                            "Skip %s incompatible dependency %s\n" % (key[:-1],
+                                                                      item))
                     skip = True
             if skip:
                 continue
@@ -332,8 +340,8 @@ class LibBuilderBase(object):
             if _already_depends(lb):
                 if self.verbose:
                     sys.stderr.write("Warning! Circular dependencies detected "
-                                     "between `%s` and `%s`\n" %
-                                     (self.path, lb.path))
+                                     "between `%s` and `%s`\n" % (self.path,
+                                                                  lb.path))
                 self._circular_deps.append(lb)
             elif lb not in self._depbuilders:
                 self._depbuilders.append(lb)
@@ -405,6 +413,10 @@ class ProjectAsLibBuilder(LibBuilderBase):
     def __init__(self, *args, **kwargs):
         LibBuilderBase.__init__(self, *args, **kwargs)
         self._is_built = True
+
+    @property
+    def src_dir(self):
+        return self.env.subst("$PROJECTSRC_DIR")
 
     @property
     def lib_ldf_mode(self):
@@ -513,6 +525,8 @@ class PlatformIOLibBuilder(LibBuilderBase):
     def src_filter(self):
         if "srcFilter" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("srcFilter")
+        elif self.env['SRC_FILTER']:
+            return self.env['SRC_FILTER']
         elif self._is_arduino_manifest():
             return ArduinoLibBuilder.src_filter.fget(self)
         return LibBuilderBase.src_filter.fget(self)
@@ -593,14 +607,14 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
         if compat_mode > 1 and not lb.is_platforms_compatible(
                 env['PIOPLATFORM']):
             if verbose:
-                sys.stderr.write("Platform incompatible library %s\n" %
-                                 lb.path)
+                sys.stderr.write(
+                    "Platform incompatible library %s\n" % lb.path)
             return False
         if compat_mode > 0 and "PIOFRAMEWORK" in env and \
            not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", [])):
             if verbose:
-                sys.stderr.write("Framework incompatible library %s\n" %
-                                 lb.path)
+                sys.stderr.write(
+                    "Framework incompatible library %s\n" % lb.path)
             return False
         return True
 

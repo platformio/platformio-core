@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -127,6 +127,11 @@ def test_pkg_input_parser():
             "git+ssh://git@gitlab.private-server.com/user/package#1.2.0",
             ("package", None,
              "git+ssh://git@gitlab.private-server.com/user/package#1.2.0")
+        ],
+        [
+            "git+ssh://user@gitlab.private-server.com:1234/package#1.2.0",
+            ("package", None,
+             "git+ssh://user@gitlab.private-server.com:1234/package#1.2.0")
         ]
     ]
     for params, result in items:

@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ def test_init_ide_atom(clirunner, validate_cliresult, tmpdir):
 
         # switch to NodeMCU
         result = clirunner.invoke(
-            cmd_init, ["--ide", "atom", "-b", "nodemcuv2", "-b", "uno"])
+            cmd_init, ["--ide", "atom", "-b", "nodemcuv2"])
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
         assert "arduinoespressif" in tmpdir.join(".clang_complete").read()

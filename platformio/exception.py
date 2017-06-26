@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@ class PlatformioException(Exception):
     def __str__(self):  # pragma: no cover
         if self.MESSAGE:
             return self.MESSAGE.format(*self.args)
-        else:
-            return Exception.__str__(self)
+        return Exception.__str__(self)
 
 
 class ReturnErrorCode(PlatformioException):

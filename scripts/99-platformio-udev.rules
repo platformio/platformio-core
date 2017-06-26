@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,6 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+#
+# INSTALLATION
+#
 
 # UDEV Rules for PlatformIO supported boards, http://platformio.org/boards
 #
@@ -30,6 +34,11 @@
 #		or
 # 	sudo udevadm control --reload-rules
 #	sudo udevadm trigger
+#
+# Ubuntu/Debian users may need to add own “username” to the “dialout” group if
+# they are not “root”, doing this issuing a
+#   sudo usermod -a -G dialout $USER
+#   sudo usermod -a -G plugdev $USER
 #
 # After this file is installed, physically unplug and reconnect your board.
 
@@ -64,6 +73,9 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374?", MODE:="066
 
 # USBtiny
 SUBSYSTEMS=="usb", ATTRS{idProduct}=="0c9f", ATTRS{idVendor}=="1781", MODE="0666"
+
+# USBasp V2.0
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05dc", MODE:="0666"
 
 # Teensy boards
 ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04[789]?", ENV{ID_MM_DEVICE_IGNORE}="1"

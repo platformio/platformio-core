@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -295,14 +295,14 @@ def lib_builtin(storage, json_output):
     if json_output:
         return click.echo(json.dumps(items))
 
-    for storage in items:
-        if not storage['items']:
+    for storage_ in items:
+        if not storage_['items']:
             continue
-        click.secho(storage['name'], fg="green")
-        click.echo("*" * len(storage['name']))
+        click.secho(storage_['name'], fg="green")
+        click.echo("*" * len(storage_['name']))
         click.echo()
 
-        for item in sorted(storage['items'], key=lambda i: i['name']):
+        for item in sorted(storage_['items'], key=lambda i: i['name']):
             print_lib_item(item)
 
 
@@ -366,8 +366,9 @@ def lib_show(library, json_output):
         for v in lib['versions']
     ]))
     blocks.append(("Unique Downloads", [
-        "Today: %s" % lib['dlstats']['day'], "Week: %s" %
-        lib['dlstats']['week'], "Month: %s" % lib['dlstats']['month']
+        "Today: %s" % lib['dlstats']['day'],
+        "Week: %s" % lib['dlstats']['week'],
+        "Month: %s" % lib['dlstats']['month']
     ]))
 
     for (title, rows) in blocks:
@@ -418,16 +419,16 @@ def lib_stats(json_output):
         click.echo("-" * terminal_width)
 
     def _print_lib_item(item):
-        click.echo((
-            printitemdate_tpl if "date" in item else printitem_tpl
-        ).format(
-            name=click.style(item['name'], fg="cyan"),
-            date=str(
-                arrow.get(item['date']).humanize() if "date" in item else ""),
-            url=click.style(
-                "http://platformio.org/lib/show/%s/%s" % (item['id'],
-                                                          quote(item['name'])),
-                fg="blue")))
+        click.echo((printitemdate_tpl
+                    if "date" in item else printitem_tpl).format(
+                        name=click.style(item['name'], fg="cyan"),
+                        date=str(
+                            arrow.get(item['date']).humanize()
+                            if "date" in item else ""),
+                        url=click.style(
+                            "http://platformio.org/lib/show/%s/%s" %
+                            (item['id'], quote(item['name'])),
+                            fg="blue")))
 
     def _print_tag_item(name):
         click.echo(
@@ -457,8 +458,8 @@ def lib_stats(json_output):
         _print_tag_item(item)
     click.echo()
 
-    for key, title in (("dlday", "Today"), ("dlweek", "Week"),
-                       ("dlmonth", "Month")):
+    for key, title in (("dlday", "Today"), ("dlweek", "Week"), ("dlmonth",
+                                                                "Month")):
         _print_title("Featured: " + title)
         _print_header(with_date=False)
         for item in result.get(key, []):

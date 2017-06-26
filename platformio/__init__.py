@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 import sys
 
-VERSION = (3, 3, 1)
+VERSION = (3, 4, 0)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -33,7 +33,8 @@ __copyright__ = "Copyright 2014-present PlatformIO"
 __apiurl__ = "https://api.platformio.org"
 
 if sys.version_info < (2, 7, 0) or sys.version_info >= (3, 0, 0):
-    msg = ("PlatformIO version %s does not run under Python version %s.\n"
+    msg = ("PlatformIO Core v%s does not run under Python version %s.\n"
+           "Minimum supported version is 2.7, please upgrade Python.\n"
            "Python 3 is not yet supported.\n")
     sys.stderr.write(msg % (__version__, sys.version.split()[0]))
     sys.exit(1)

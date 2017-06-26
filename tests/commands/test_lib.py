@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -112,6 +112,7 @@ def test_global_install_repository(clirunner, validate_cliresult,
             "https://github.com/gioblu/PJON.git#6.2",
             "https://github.com/bblanchon/ArduinoJson.git",
             "https://gitlab.com/ivankravets/rs485-nodeproto.git",
+            "https://github.com/platformio/platformio-libmirror.git",
             # "https://developer.mbed.org/users/simon/code/TextLCD/",
             "knolleary/pubsubclient"
         ])
@@ -123,6 +124,14 @@ def test_global_install_repository(clirunner, validate_cliresult,
         "PubSubClient"
     ]
     assert set(items1) >= set(items2)
+
+    # check lib with duplicate URL
+    result = clirunner.invoke(cmd_lib, [
+        "-g", "install",
+        "https://github.com/platformio/platformio-libmirror.git"
+    ])
+    validate_cliresult(result)
+    assert "is already installed" in result.output
 
 
 def test_global_lib_list(clirunner, validate_cliresult, isolated_pio_home):
@@ -141,7 +150,8 @@ def test_global_lib_list(clirunner, validate_cliresult, isolated_pio_home):
     items2 = [
         "OneWire", "DHT22", "PJON", "ESPAsyncTCP", "ArduinoJson",
         "PubSubClient", "rs485-nodeproto", "Adafruit ST7735 Library",
-        "RadioHead-1.62", "DallasTemperature", "NeoPixelBus", "IRremoteESP8266"
+        "RadioHead-1.62", "DallasTemperature", "NeoPixelBus",
+        "IRremoteESP8266", "platformio-libmirror"
     ]
     assert set(items1) == set(items2)
 
@@ -175,7 +185,7 @@ def test_global_lib_update(clirunner, validate_cliresult, isolated_pio_home):
     validate_cliresult(result)
     validate_cliresult(result)
     assert result.output.count("[Skip]") == 5
-    assert result.output.count("[Up-to-date]") == 9
+    assert result.output.count("[Up-to-date]") == 10
     assert "Uninstalling ArduinoJson @ 5.7.3" in result.output
     assert "Uninstalling IRremoteESP8266 @ fee16e880b" in result.output
 
@@ -208,7 +218,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
         "ArduinoJson", "ArduinoJson_ID64@5.6.7", "DallasTemperature_ID54",
         "DHT22_ID58", "ESPAsyncTCP_ID305", "NeoPixelBus_ID547", "PJON",
         "PJON@src-79de467ebe19de18287becff0a1fb42d", "PubSubClient",
-        "RadioHead-1.62", "rs485-nodeproto"
+        "RadioHead-1.62", "rs485-nodeproto", "platformio-libmirror"
     ]
     assert set(items1) == set(items2)
 

@@ -1,0 +1,3 @@
+.pioenvs
+.piolibdeps
+.vscode

@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,11 @@ from platformio import util
 
 
 def test_local_env():
-    result = util.exec_command(["platformio", "test", "-d",
-                                join("examples", "unit-testing", "calculator"),
-                                "-e", "native"])
+    result = util.exec_command([
+        "platformio", "test", "-d",
+        join("examples", "unit-testing", "calculator"), "-e", "native"
+    ])
     if result['returncode'] != 1:
         pytest.fail(result)
-    assert all(
-        [s in result['out'] for s in ("PASSED", "IGNORED", "FAILED")])
+    assert all([s in result['out']
+                for s in ("PASSED", "IGNORED", "FAILED")]), result['out']

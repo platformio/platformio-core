@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@ class VCSClientFactory(object):
         if "#" in remote_url:
             remote_url, tag = remote_url.rsplit("#", 1)
         if not type_:
-            raise PlatformioException("VCS: Unknown repository type %s" %
-                                      remote_url)
+            raise PlatformioException(
+                "VCS: Unknown repository type %s" % remote_url)
         obj = getattr(modules[__name__], "%sClient" % type_.title())(
             src_dir, remote_url, tag, silent)
         assert isinstance(obj, VCSClientBase)
@@ -103,8 +103,8 @@ class VCSClientBase(object):
         if result['returncode'] == 0:
             return result['out'].strip()
         raise PlatformioException(
-            "VCS: Could not receive an output from `%s` command (%s)" % (
-                args, result))
+            "VCS: Could not receive an output from `%s` command (%s)" %
+            (args, result))
 
 
 class GitClient(VCSClientBase):
@@ -152,7 +152,7 @@ class GitClient(VCSClientBase):
         return True
 
     def update(self):
-        args = ["pull"]
+        args = ["pull", "--recurse-submodules"]
         return self.run_cmd(args)
 
     def get_current_revision(self):

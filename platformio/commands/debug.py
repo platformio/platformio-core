@@ -20,22 +20,10 @@ import click
 from platformio.managers.core import pioplus_call
 
 
-@click.command("test", short_help="Local Unit Testing")
-@click.option("--environment", "-e", multiple=True, metavar="<environment>")
-@click.option(
-    "--filter",
-    "-f",
-    multiple=True,
-    metavar="<pattern>",
-    help="Filter tests by a pattern")
-@click.option(
-    "--ignore",
-    "-i",
-    multiple=True,
-    metavar="<pattern>",
-    help="Ignore tests by a pattern")
-@click.option("--upload-port")
-@click.option("--test-port")
+@click.command(
+    "debug",
+    context_settings=dict(ignore_unknown_options=True),
+    short_help="PIO Unified Debugger")
 @click.option(
     "-d",
     "--project-dir",
@@ -46,22 +34,9 @@ from platformio.managers.core import pioplus_call
         dir_okay=True,
         writable=True,
         resolve_path=True))
-@click.option("--without-building", is_flag=True)
-@click.option("--without-uploading", is_flag=True)
-@click.option(
-    "--no-reset",
-    is_flag=True,
-    help="Disable software reset via Serial.DTR/RST")
-@click.option(
-    "--monitor-rts",
-    default=None,
-    type=click.IntRange(0, 1),
-    help="Set initial RTS line state for Serial Monitor")
-@click.option(
-    "--monitor-dtr",
-    default=None,
-    type=click.IntRange(0, 1),
-    help="Set initial DTR line state for Serial Monitor")
+@click.option("--environment", "-e", metavar="<environment>")
 @click.option("--verbose", "-v", is_flag=True)
+@click.option("--interface", type=click.Choice(["gdb"]))
+@click.argument("__unprocessed", nargs=-1, type=click.UNPROCESSED)
 def cli(*args, **kwargs):  # pylint: disable=unused-argument
     pioplus_call(sys.argv[1:])

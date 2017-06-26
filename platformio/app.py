@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -64,7 +64,8 @@ DEFAULT_SETTINGS = {
         "description":
         ("Telemetry service <http://docs.platformio.org/page/"
          "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
-        "value": True
+        "value":
+        True
     }
 }
 
@@ -142,28 +143,8 @@ class ContentCache(object):
     def __enter__(self):
         if not self._db_path or not isfile(self._db_path):
             return self
-        found = False
-        newlines = []
-        with open(self._db_path) as fp:
-            for line in fp.readlines():
-                if "=" not in line:
-                    continue
-                line = line.strip()
-                expire, path = line.split("=")
-                if time() < int(expire) and isfile(path):
-                    newlines.append(line)
-                    continue
-                found = True
-                if isfile(path):
-                    remove(path)
-                    if not len(listdir(dirname(path))):
-                        util.rmtree_(dirname(path))
 
-        if found and self._lock_dbindex():
-            with open(self._db_path, "w") as fp:
-                fp.write("\n".join(newlines) + "\n")
-            self._unlock_dbindex()
-
+        self.delete()
         return self
 
     def __exit__(self, type_, value, traceback):
@@ -187,6 +168,7 @@ class ContentCache(object):
     def _unlock_dbindex(self):
         if self._lockfile:
             self._lockfile.release()
+        return True
 
     def get_cache_path(self, key):
         assert len(key) > 3
@@ -210,28 +192,64 @@ class ContentCache(object):
             return data
 
     def set(self, key, data, valid):
+        cache_path = self.get_cache_path(key)
+        if isfile(cache_path):
+            self.delete(key)
         if not data:
             return
         if not isdir(self.cache_dir):
             os.makedirs(self.cache_dir)
         tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
         assert valid.endswith(tuple(tdmap.keys()))
-        cache_path = self.get_cache_path(key)
         expire_time = int(time() + tdmap[valid[-1]] * int(valid[:-1]))
 
         if not self._lock_dbindex():
             return False
-        with open(self._db_path, "a") as fp:
-            fp.write("%s=%s\n" % (str(expire_time), cache_path))
-        self._unlock_dbindex()
 
         if not isdir(dirname(cache_path)):
             os.makedirs(dirname(cache_path))
         with open(cache_path, "wb") as fp:
-            if isinstance(data, dict) or isinstance(data, list):
+            if isinstance(data, (dict, list)):
                 json.dump(data, fp)
             else:
                 fp.write(str(data))
+        with open(self._db_path, "a") as fp:
+            fp.write("%s=%s\n" % (str(expire_time), cache_path))
+
+        return self._unlock_dbindex()
+
+    def delete(self, keys=None):
+        """ Keys=None, delete expired items """
+        if not keys:
+            keys = []
+        if not isinstance(keys, list):
+            keys = [keys]
+        paths_for_delete = [self.get_cache_path(k) for k in keys]
+        found = False
+        newlines = []
+        with open(self._db_path) as fp:
+            for line in fp.readlines():
+                if "=" not in line:
+                    continue
+                line = line.strip()
+                expire, path = line.split("=")
+                if time() < int(expire) and isfile(path) and \
+                        path not in paths_for_delete:
+                    newlines.append(line)
+                    continue
+                found = True
+                if isfile(path):
+                    try:
+                        remove(path)
+                        if not listdir(dirname(path)):
+                            util.rmtree_(dirname(path))
+                    except OSError:
+                        pass
+
+        if found and self._lock_dbindex():
+            with open(self._db_path, "w") as fp:
+                fp.write("\n".join(newlines) + "\n")
+            self._unlock_dbindex()
 
         return True
 
@@ -274,6 +292,12 @@ def set_state_item(name, value):
         data[name] = value
 
 
+def delete_state_item(name):
+    with State(lock=True) as data:
+        if name in data:
+            del data[name]
+
+
 def get_setting(name):
     _env_name = "PLATFORMIO_SETTING_%s" % name.upper()
     if _env_name in environ:
@@ -310,7 +334,8 @@ def set_session_var(name, value):
 
 def is_disabled_progressbar():
     return any([
-        get_session_var("force_option"), util.is_ci(),
+        get_session_var("force_option"),
+        util.is_ci(),
         getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"
     ])
 

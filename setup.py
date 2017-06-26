@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ install_requires = [
     "click>=5,<6",
     "colorama",
     "lockfile>=0.9.1,<0.13",
-    "pyserial>=3,<4",
+    "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",
     "semantic_version>=2.5.0"
 ]
@@ -51,6 +51,7 @@ setup(
     entry_points={
         "console_scripts": [
             "pio = platformio.__main__:main",
+            "piodebuggdb = platformio.__main__:debug_gdb_main",
             "platformio = platformio.__main__:main"
         ]
     },
@@ -67,9 +68,8 @@ setup(
         "Topic :: Software Development :: Compilers"
     ],
     keywords=[
-        "iot", "ide", "build", "compile", "library manager",
-        "embedded", "ci", "continuous integration", "arduino", "mbed",
-        "esp8266", "framework", "ide", "ide integration", "library.json",
-        "make", "cmake", "makefile", "mk", "pic32", "fpga", "artik"
-    ]
-)
+        "iot", "embedded", "arduino", "mbed", "esp8266", "esp32", "fpga",
+        "firmware", "continuous-integration", "cloud-ide", "avr", "arm",
+        "ide", "unit-testing", "hardware", "verilog", "microcontroller",
+        "debug"
+    ])

@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -255,8 +255,9 @@ def measure_ci():
             "label": getenv("APPVEYOR_REPO_NAME")
         },
         "CIRCLECI": {
-            "label": "%s/%s" % (getenv("CIRCLE_PROJECT_USERNAME"),
-                                getenv("CIRCLE_PROJECT_REPONAME"))
+            "label":
+            "%s/%s" % (getenv("CIRCLE_PROJECT_USERNAME"),
+                       getenv("CIRCLE_PROJECT_REPONAME"))
         },
         "TRAVIS": {
             "label": getenv("TRAVIS_REPO_SLUG")
@@ -278,7 +279,10 @@ def measure_ci():
 
 
 def on_run_environment(options, targets):
-    opts = ["%s=%s" % (opt, value) for opt, value in sorted(options.items())]
+    opts = [
+        "%s=%s" % (opt, value.replace("\n", ", ") if "\n" in value else value)
+        for opt, value in sorted(options.items())
+    ]
     targets = [t.title() for t in targets or ["run"]]
     on_event("Env", " ".join(targets), "&".join(opts))
 

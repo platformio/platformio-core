@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,10 +15,7 @@
 import os
 
 import pytest
-import requests
 from click.testing import CliRunner
-
-requests.packages.urllib3.disable_warnings()
 
 
 @pytest.fixture(scope="module")

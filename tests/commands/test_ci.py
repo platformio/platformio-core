@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,15 +25,14 @@ def test_ci_empty(clirunner):
 
 def test_ci_boards(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_ci, [
-        join("examples", "atmelavr-and-arduino", "arduino-internal-libs",
-             "src", "ChatServer.ino"), "-b", "uno", "-b", "leonardo"
+        join("examples", "atmelavr", "arduino-internal-libs", "src",
+             "ChatServer.ino"), "-b", "uno", "-b", "leonardo"
     ])
     validate_cliresult(result)
 
 
 def test_ci_project_conf(clirunner, validate_cliresult):
-    project_dir = join("examples", "atmelavr-and-arduino",
-                       "arduino-internal-libs")
+    project_dir = join("examples", "atmelavr", "arduino-internal-libs")
     result = clirunner.invoke(cmd_ci, [
         join(project_dir, "src", "ChatServer.ino"), "--project-conf",
         join(project_dir, "platformio.ini")
@@ -43,8 +42,7 @@ def test_ci_project_conf(clirunner, validate_cliresult):
 
 
 def test_ci_lib_and_board(clirunner, validate_cliresult):
-    example_dir = join("examples", "atmelavr-and-arduino",
-                       "arduino-external-libs")
+    example_dir = join("examples", "atmelavr", "arduino-external-libs")
     result = clirunner.invoke(cmd_ci, [
         join(example_dir, "lib", "OneWire", "examples", "DS2408_Switch",
              "DS2408_Switch.pde"), "-l", join(example_dir, "lib", "OneWire"),

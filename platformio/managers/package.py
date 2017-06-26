@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ import codecs
 import hashlib
 import json
 import os
+import re
 import shutil
 from os.path import basename, getsize, isdir, isfile, islink, join
 from tempfile import mkdtemp
@@ -69,8 +70,7 @@ class PackageRepoIterator(object):
 
         if self.package in manifest:
             return manifest[self.package]
-        else:
-            return self.next()
+        return self.next()
 
 
 class PkgRepoMixin(object):
@@ -192,12 +192,14 @@ class PkgInstallerMixin(object):
 
     @staticmethod
     def get_install_dirname(manifest):
-        name = manifest['name']
+        name = re.sub(r"[^\da-z\_\-\. ]", "_", manifest['name'], flags=re.I)
         if "id" in manifest:
             name += "_ID%d" % manifest['id']
         return name
 
     def get_src_manifest_path(self, pkg_dir):
+        if not isdir(pkg_dir):
+            return None
         for item in os.listdir(pkg_dir):
             if not isdir(join(pkg_dir, item)):
                 continue
@@ -224,20 +226,19 @@ class PkgInstallerMixin(object):
         if result:
             return result
 
-        manifest_path = self.get_manifest_path(pkg_dir)
-        if not manifest_path:
-            return None
-
-        # if non-registry packages: VCS or archive
-        src_manifest_path = self.get_src_manifest_path(pkg_dir)
+        manifest = {}
         src_manifest = None
+        manifest_path = self.get_manifest_path(pkg_dir)
+        src_manifest_path = self.get_src_manifest_path(pkg_dir)
         if src_manifest_path:
             src_manifest = util.load_json(src_manifest_path)
 
-        manifest = {}
-        if manifest_path.endswith(".json"):
+        if not manifest_path and not src_manifest_path:
+            return None
+
+        if manifest_path and manifest_path.endswith(".json"):
             manifest = util.load_json(manifest_path)
-        elif manifest_path.endswith(".properties"):
+        elif manifest_path and manifest_path.endswith(".properties"):
             with codecs.open(manifest_path, encoding="utf-8") as fp:
                 for line in fp.readlines():
                     if "=" not in line:
@@ -305,7 +306,8 @@ class PkgInstallerMixin(object):
 
     def get_package_dir(self, name, requirements=None, url=None):
         manifest = self.get_package(name, requirements, url)
-        return manifest.get("__pkg_dir") if manifest else None
+        return manifest.get("__pkg_dir") if manifest and isdir(
+            manifest.get("__pkg_dir")) else None
 
     def find_pkg_root(self, src_dir):
         if self.manifest_exists(src_dir):
@@ -345,7 +347,6 @@ class PkgInstallerMixin(object):
                           requirements=None,
                           sha1=None,
                           track=False):
-        pkg_dir = None
         tmp_dir = mkdtemp("-package", "_tmp_installing-", self.package_dir)
         src_manifest_dir = None
         src_manifest = {"name": name, "url": url, "requirements": requirements}
@@ -369,19 +370,20 @@ class PkgInstallerMixin(object):
                 src_manifest_dir = vcs.storage_dir
                 src_manifest['version'] = vcs.get_current_revision()
 
-            pkg_dir = self.find_pkg_root(tmp_dir)
+            _tmp_dir = tmp_dir
+            if not src_manifest_dir:
+                _tmp_dir = self.find_pkg_root(tmp_dir)
+                src_manifest_dir = join(_tmp_dir, ".pio")
 
             # write source data to a special manifest
             if track:
-                if not src_manifest_dir:
-                    src_manifest_dir = join(pkg_dir, ".pio")
                 self._update_src_manifest(src_manifest, src_manifest_dir)
 
-            pkg_dir = self._install_from_tmp_dir(pkg_dir, requirements)
+            return self._install_from_tmp_dir(_tmp_dir, requirements)
         finally:
             if isdir(tmp_dir):
                 util.rmtree_(tmp_dir)
-        return pkg_dir
+        return
 
     def _update_src_manifest(self, data, src_dir):
         if not isdir(src_dir):
@@ -417,8 +419,8 @@ class PkgInstallerMixin(object):
         # package should satisfy requirements
         if requirements:
             mismatch_error = (
-                "Package version %s doesn't satisfy requirements %s" % (
-                    tmp_manifest['version'], requirements))
+                "Package version %s doesn't satisfy requirements %s" %
+                (tmp_manifest['version'], requirements))
             try:
                 assert tmp_semver and tmp_semver in semantic_version.Spec(
                     requirements), mismatch_error
@@ -497,10 +499,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             url_marker = "://"
 
         req_conditions = [
-            not requirements, "@" in text,
-            (url_marker != "git@" and "://git@" not in text) or
-            text.count("@") > 1
-        ]
+            not requirements,
+            "@" in text,
+            not url_marker.startswith("git")
+        ]  # yapf: disable
         if all(req_conditions):
             text, requirements = text.rsplit("@", 1)
         if text.isdigit():
@@ -650,18 +652,18 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(package,
-                                                           requirements)
+            name, requirements, url = self.parse_pkg_input(
+                package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         if not pkg_dir:
-            raise exception.UnknownPackage("%s @ %s" %
-                                           (package, requirements or "*"))
+            raise exception.UnknownPackage("%s @ %s" % (package,
+                                                        requirements or "*"))
 
         manifest = self.load_manifest(pkg_dir)
         click.echo(
-            "Uninstalling %s @ %s: \t" % (click.style(
-                manifest['name'], fg="cyan"), manifest['version']),
+            "Uninstalling %s @ %s: \t" %
+            (click.style(manifest['name'], fg="cyan"), manifest['version']),
             nl=False)
 
         if islink(pkg_dir):
@@ -673,9 +675,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         # unfix package with the same name
         pkg_dir = self.get_package_dir(manifest['name'])
         if pkg_dir and "@" in pkg_dir:
-            os.rename(
-                pkg_dir,
-                join(self.package_dir, self.get_install_dirname(manifest)))
+            os.rename(pkg_dir,
+                      join(self.package_dir,
+                           self.get_install_dirname(manifest)))
             self.cache_reset()
 
         click.echo("[%s]" % click.style("OK", fg="green"))
@@ -698,8 +700,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             pkg_dir = self.get_package_dir(*self.parse_pkg_input(package))
 
         if not pkg_dir:
-            raise exception.UnknownPackage("%s @ %s" %
-                                           (package, requirements or "*"))
+            raise exception.UnknownPackage("%s @ %s" % (package,
+                                                        requirements or "*"))
 
         manifest = self.load_manifest(pkg_dir)
         name = manifest['name']

@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,19 +15,22 @@
 import json
 import os
 import re
+from cStringIO import StringIO
 from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
 
 import bottle
+import click
 
-from platformio import app, exception, util
+from platformio import exception, util
+from platformio.commands.run import cli as cmd_run
 
 
 class ProjectGenerator(object):
 
-    def __init__(self, project_dir, ide, board):
+    def __init__(self, project_dir, ide, env_name):
         self.project_dir = project_dir
         self.ide = ide
-        self.board = board
+        self.env_name = env_name
         self._tplvars = {}
 
         with util.cd(self.project_dir):
@@ -43,36 +46,38 @@ class ProjectGenerator(object):
 
     @util.memoized
     def get_project_env(self):
-        data = {"env_name": "PlatformIO"}
+        data = None
         config = util.load_project_config(self.project_dir)
         for section in config.sections():
             if not section.startswith("env:"):
                 continue
+            if self.env_name != section[4:]:
+                continue
             data = {"env_name": section[4:]}
             for k, v in config.items(section):
                 data[k] = v
-            if self.board == data.get("board"):
-                break
         return data
 
     @util.memoized
     def get_project_build_data(self):
         data = {"defines": [], "includes": [], "cxx_path": None}
         envdata = self.get_project_env()
-        if "env_name" not in envdata:
+        if not envdata:
             return data
-        cmd = [util.get_pythonexe_path(), "-m", "platformio", "-f"]
-        if app.get_session_var("caller_id"):
-            cmd.extend(["-c", app.get_session_var("caller_id")])
-        cmd.extend(["run", "-t", "idedata", "-e", envdata['env_name']])
-        cmd.extend(["-d", self.project_dir])
-        result = util.exec_command(cmd)
 
-        if result['returncode'] != 0 or '"includes":' not in result['out']:
-            raise exception.PlatformioException(
-                "\n".join([result['out'], result['err']]))
+        out = StringIO()
+        with util.capture_stdout(out):
+            click.get_current_context().invoke(
+                cmd_run,
+                project_dir=self.project_dir,
+                environment=[envdata['env_name']],
+                target=["idedata"])
+        result = out.getvalue()
 
-        for line in result['out'].split("\n"):
+        if '"includes":' not in result:
+            raise exception.PlatformioException(result)
+
+        for line in result.split("\n"):
             line = line.strip()
             if line.startswith('{"') and line.endswith("}"):
                 data = json.loads(line)
@@ -146,16 +151,24 @@ class ProjectGenerator(object):
         self._tplvars.update(self.get_project_env())
         self._tplvars.update(self.get_project_build_data())
         self._tplvars.update({
-            "project_name": self.get_project_name(),
-            "src_files": self.get_src_files(),
-            "user_home_dir": abspath(expanduser("~")),
-            "project_dir": self.project_dir,
-            "project_src_dir": self.project_src_dir,
-            "systype": util.get_systype(),
+            "project_name":
+            self.get_project_name(),
+            "src_files":
+            self.get_src_files(),
+            "user_home_dir":
+            abspath(expanduser("~")),
+            "project_dir":
+            self.project_dir,
+            "project_src_dir":
+            self.project_src_dir,
+            "systype":
+            util.get_systype(),
             "platformio_path":
             self._fix_os_path(util.where_is_program("platformio")),
-            "env_pathsep": os.pathsep,
-            "env_path": self._fix_os_path(os.getenv("PATH"))
+            "env_pathsep":
+            os.pathsep,
+            "env_path":
+            self._fix_os_path(os.getenv("PATH"))
         })
 
     @staticmethod

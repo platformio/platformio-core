@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 import base64
 import json
+import sys
 from os import environ
 from os.path import join
 from time import time
@@ -63,12 +64,13 @@ commonvars.AddVariables(
     ("UPLOAD_SPEED",),
     ("UPLOAD_FLAGS",),
     ("UPLOAD_RESETMETHOD",)
+
 )  # yapf: disable
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
         "ar", "as", "gcc", "g++", "gnulink", "platformio", "pioplatform",
-        "piowinhooks", "piolib", "piotest", "pioupload", "piomisc"
+        "piowinhooks", "piolib", "pioupload", "piomisc", "pioide"
     ],  # yapf: disable
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
     variables=commonvars,
@@ -77,7 +79,6 @@ DEFAULT_ENV_OPTIONS = dict(
     PIOVARIABLES=commonvars.keys(),
     ENV=environ,
     UNIX_TIME=int(time()),
-    PROGNAME="program",
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),
     PROJECTSRC_DIR=util.get_projectsrc_dir(),
@@ -88,9 +89,12 @@ DEFAULT_ENV_OPTIONS = dict(
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     BUILDTEST_DIR=join("$BUILD_DIR", "test"),
     LIBSOURCE_DIRS=[
-        util.get_projectlib_dir(), util.get_projectlibdeps_dir(),
+        util.get_projectlib_dir(),
+        util.get_projectlibdeps_dir(),
         join("$PIOHOME_DIR", "lib")
     ],
+    PROGNAME="program",
+    PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
     PYTHONEXE=util.get_pythonexe_path())
 
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
@@ -106,6 +110,8 @@ env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 for k in commonvars.keys():
     if k in env:
         env[k] = base64.b64decode(env[k])
+        if "\n" in env[k]:
+            env[k] = [v.strip() for v in env[k].split("\n") if v.strip()]
 
 if env.GetOption('clean'):
     env.PioClean(env.subst("$BUILD_DIR"))
@@ -121,21 +127,23 @@ for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPT",
         continue
     if var in ("UPLOAD_PORT", "EXTRA_SCRIPT") or not env.get(var):
         env[var] = environ.get(k)
+    elif isinstance(env[var], list):
+        env.Append(**{var: environ.get(k)})
     else:
         env[var] = "%s%s%s" % (environ.get(k), ", "
                                if var == "LIB_EXTRA_DIRS" else " ", env[var])
 
 # Parse comma separated items
 for opt in ("PIOFRAMEWORK", "LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"):
-    if opt not in env:
+    if opt not in env or isinstance(env[opt], list):
         continue
     env[opt] = [l.strip() for l in env[opt].split(", ") if l.strip()]
 
 # Configure extra library source directories for LDF
 if util.get_project_optional_dir("lib_extra_dirs"):
+    items = util.get_project_optional_dir("lib_extra_dirs")
     env.Prepend(LIBSOURCE_DIRS=[
-        l.strip()
-        for l in util.get_project_optional_dir("lib_extra_dirs").split(", ")
+        l.strip() for l in items.split("\n" if "\n" in items else ", ")
         if l.strip()
     ])
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
@@ -146,6 +154,7 @@ env.SConscriptChdir(0)
 env.SConsignFile(join("$PROJECTPIOENVS_DIR", ".sconsign.dblite"))
 env.SConscript("$BUILD_SCRIPT")
 
+AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS + ["size"]))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS + ["size"]))
 
 if "UPLOAD_FLAGS" in env:
@@ -159,5 +168,13 @@ if "envdump" in COMMAND_LINE_TARGETS:
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
-    print "\n%s\n" % json.dumps(env.DumpIDEData())
-    env.Exit(0)
+    try:
+        print "\n%s\n" % json.dumps(env.DumpIDEData())
+        env.Exit(0)
+    except UnicodeDecodeError:
+        sys.stderr.write(
+            "\nUnicodeDecodeError: Non-ASCII characters found in build "
+            "environment\n"
+            "See explanation in FAQ > Troubleshooting > Building\n"
+            "http://docs.platformio.org/page/faq.html\n\n")
+        env.Exit(1)

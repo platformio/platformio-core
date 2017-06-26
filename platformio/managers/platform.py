@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ class PlatformManager(BasePkgManager):
                 skip_default_package=False,
                 trigger_event=True,
                 silent=False,
-                **_):  # pylint: disable=too-many-arguments
+                **_):  # pylint: disable=too-many-arguments, arguments-differ
         platform_dir = BasePkgManager.install(
             self, name, requirements, silent=silent)
         p = PlatformFactory.newPlatform(platform_dir)
@@ -84,8 +84,8 @@ class PlatformManager(BasePkgManager):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(package,
-                                                           requirements)
+            name, requirements, url = self.parse_pkg_input(
+                package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         p = PlatformFactory.newPlatform(pkg_dir)
@@ -108,8 +108,8 @@ class PlatformManager(BasePkgManager):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(package,
-                                                           requirements)
+            name, requirements, url = self.parse_pkg_input(
+                package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         p = PlatformFactory.newPlatform(pkg_dir)
@@ -207,8 +207,8 @@ class PlatformFactory(object):
         else:
             if not requirements and "@" in name:
                 name, requirements = name.rsplit("@", 1)
-            platform_dir = PlatformManager().get_package_dir(name,
-                                                             requirements)
+            platform_dir = PlatformManager().get_package_dir(
+                name, requirements)
 
         if not platform_dir:
             raise exception.UnknownPlatform(name if not requirements else
@@ -305,9 +305,7 @@ class PlatformPackagesMixin(object):
         version = self.packages[name].get("version", "")
         if self.is_valid_requirements(version):
             return self.pm.get_package_dir(name, version)
-        else:
-            return self.pm.get_package_dir(*self._parse_pkg_input(name,
-                                                                  version))
+        return self.pm.get_package_dir(*self._parse_pkg_input(name, version))
 
     def get_package_version(self, name):
         pkg_dir = self.get_package_dir(name)
@@ -360,7 +358,8 @@ class PlatformRunMixin(object):
             util.get_pythonexe_path(),
             join(get_core_package_dir("tool-scons"), "script", "scons"), "-Q",
             "-j %d" % self.get_job_nums(), "--warn=no-no-parallel-support",
-            "-f", join(util.get_source_dir(), "builder", "main.py")
+            "-f",
+            join(util.get_source_dir(), "builder", "main.py")
         ]
         cmd.append("PIOVERBOSE=%d" % (1 if self.verbose else 0))
         cmd += targets
@@ -581,8 +580,10 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
                 if not isdir(libcore_dir):
                     continue
                 storages.append({
-                    "name": "%s-core-%s" % (opts['package'], item),
-                    "path": libcore_dir
+                    "name":
+                    "%s-core-%s" % (opts['package'], item),
+                    "path":
+                    libcore_dir
                 })
 
         return storages
@@ -645,6 +646,18 @@ class PlatformBoardConfig(object):
             "ram": self._manifest.get("upload", {}).get("maximum_ram_size", 0),
             "rom": self._manifest.get("upload", {}).get("maximum_size", 0),
             "frameworks": self._manifest.get("frameworks"),
+            "debug": self.get_debug_data(),
             "vendor": self._manifest['vendor'],
             "url": self._manifest['url']
         }
+
+    def get_debug_data(self):
+        if not self._manifest.get("debug", {}).get("tools"):
+            return
+        tools = {}
+        for name, options in self._manifest['debug']['tools'].items():
+            tools[name] = {}
+            for key, value in options.items():
+                if key in ("default", "onboard"):
+                    tools[name][key] = value
+        return {"tools": tools}

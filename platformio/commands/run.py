@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ from time import time
 import click
 
 from platformio import __version__, exception, telemetry, util
+from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.commands.lib import lib_install as cmd_lib_install
 from platformio.commands.lib import get_builtin_libs
 from platformio.commands.platform import \
@@ -78,7 +79,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
         if config.has_option("platformio", "env_default"):
             env_default = [
                 e.strip()
-                for e in config.get("platformio", "env_default").split(",")
+                for e in config.get("platformio", "env_default").split(", ")
             ]
 
         results = []
@@ -107,7 +108,11 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
             ep = EnvironmentProcessor(ctx, envname, options, target,
                                       upload_port, silent, verbose)
-            results.append((envname, ep.process()))
+            result = (envname, ep.process())
+            results.append(result)
+            if result[1] and "monitor" in ep.get_build_targets() and \
+                    "nobuild" not in ep.get_build_targets():
+                ctx.invoke(cmd_device_monitor)
 
         found_error = any([status is False for (_, status) in results])
 
@@ -122,14 +127,23 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
 class EnvironmentProcessor(object):
 
-    KNOWN_OPTIONS = (
-        "platform", "framework", "board", "board_mcu", "board_f_cpu",
-        "board_f_flash", "board_flash_mode", "build_flags", "src_build_flags",
-        "build_unflags", "src_filter", "extra_script", "targets",
-        "upload_port", "upload_protocol", "upload_speed", "upload_flags",
-        "upload_resetmethod", "lib_install", "lib_deps", "lib_force",
-        "lib_ignore", "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
-        "test_ignore", "test_port", "piotest")
+    KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
+                     "board_f_cpu", "board_f_flash", "board_flash_mode",
+                     "build_flags", "src_build_flags", "build_unflags",
+                     "src_filter", "extra_script", "targets", "upload_port",
+                     "upload_protocol", "upload_speed", "upload_flags",
+                     "upload_resetmethod", "lib_deps", "lib_ignore",
+                     "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
+                     "piotest", "test_transport", "test_ignore", "test_port",
+                     "debug_tool", "debug_port", "debug_init_cmds",
+                     "debug_extra_cmds", "debug_server", "debug_init_break",
+                     "debug_load_cmd")
+
+    IGNORE_BUILD_OPTIONS = ("test_transport", "test_filter", "test_ignore",
+                            "test_port", "debug_tool", "debug_port",
+                            "debug_init_cmds", "debug_extra_cmds",
+                            "debug_server", "debug_init_break",
+                            "debug_load_cmd")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
@@ -158,16 +172,17 @@ class EnvironmentProcessor(object):
         terminal_width, _ = click.get_terminal_size()
         start_time = time()
 
-        # multi-line values to one line
         for k, v in self.options.items():
-            if "\n" in v:
-                self.options[k] = self.options[k].strip().replace("\n", ", ")
+            self.options[k] = self.options[k].strip()
 
         if not self.silent:
-            click.echo("[%s] Processing %s (%s)" % (
-                datetime.now().strftime("%c"), click.style(
-                    self.name, fg="cyan", bold=True), ", ".join(
-                        ["%s: %s" % (k, v) for k, v in self.options.items()])))
+            click.echo("[%s] Processing %s (%s)" %
+                       (datetime.now().strftime("%c"),
+                        click.style(self.name, fg="cyan", bold=True),
+                        "; ".join([
+                            "%s: %s" % (k, v.replace("\n", ", "))
+                            for k, v in self.options.items()
+                        ])))
             click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
@@ -179,10 +194,10 @@ class EnvironmentProcessor(object):
 
         if is_error or "piotest_processor" not in self.cmd_ctx.meta:
             print_header(
-                "[%s] Took %.2f seconds" % ((click.style(
-                    "ERROR", fg="red", bold=True) if is_error else click.style(
-                        "SUCCESS", fg="green", bold=True)),
-                                            time() - start_time),
+                "[%s] Took %.2f seconds" %
+                ((click.style("ERROR", fg="red", bold=True)
+                  if is_error else click.style(
+                      "SUCCESS", fg="green", bold=True)), time() - start_time),
                 is_error=is_error)
 
         return not is_error
@@ -210,41 +225,46 @@ class EnvironmentProcessor(object):
             # warn about unknown options
             if k not in self.KNOWN_OPTIONS:
                 click.secho(
-                    "Detected non-PlatformIO `%s` option in `[env:]` section" %
-                    k,
+                    "Detected non-PlatformIO `%s` option in `[env:%s]` section"
+                    % (k, self.name),
                     fg="yellow")
             result[k] = v
         return result
 
-    def _get_build_variables(self):
+    def get_build_variables(self):
         variables = {"pioenv": self.name}
         if self.upload_port:
             variables['upload_port'] = self.upload_port
         for k, v in self.options.items():
             if k in self.REMAPED_OPTIONS:
                 k = self.REMAPED_OPTIONS[k]
+            if k in self.IGNORE_BUILD_OPTIONS:
+                continue
             if k == "targets" or (k == "upload_port" and self.upload_port):
                 continue
             variables[k] = v
         return variables
 
-    def _get_build_targets(self):
+    def get_build_targets(self):
         targets = []
         if self.targets:
             targets = [t for t in self.targets]
         elif "targets" in self.options:
-            targets = self.options['targets'].split()
+            targets = self.options['targets'].split(", ")
         return targets
 
     def _run(self):
         if "platform" not in self.options:
             raise exception.UndefinedEnvPlatform(self.name)
 
-        build_vars = self._get_build_variables()
-        build_targets = self._get_build_targets()
+        build_vars = self.get_build_variables()
+        build_targets = self.get_build_targets()
 
         telemetry.on_run_environment(self.options, build_targets)
 
+        # skip monitor target, we call it above
+        if "monitor" in build_targets:
+            build_targets.remove("monitor")
         if "nobuild" not in build_targets:
             # install dependent libraries
             if "lib_install" in self.options:
@@ -255,7 +275,9 @@ class EnvironmentProcessor(object):
                 ], self.verbose)
             if "lib_deps" in self.options:
                 _autoinstall_libdeps(self.cmd_ctx, [
-                    d.strip() for d in self.options['lib_deps'].split(", ")
+                    d.strip()
+                    for d in self.options['lib_deps'].split(
+                        "\n" if "\n" in self.options['lib_deps'] else ", ")
                     if d.strip()
                 ], self.verbose)
 
@@ -346,17 +368,19 @@ def print_summary(results, start_time):
             err=status is False)
 
     print_header(
-        "[%s] Took %.2f seconds" % ((click.style(
-            "SUCCESS", fg="green", bold=True) if successed else click.style(
-                "ERROR", fg="red", bold=True)), time() - start_time),
+        "[%s] Took %.2f seconds" %
+        ((click.style("SUCCESS", fg="green", bold=True)
+          if successed else click.style("ERROR", fg="red", bold=True)),
+         time() - start_time),
         is_error=not successed)
 
 
 def check_project_defopts(config):
     if not config.has_section("platformio"):
         return True
-    known = ("home_dir", "lib_dir", "libdeps_dir", "src_dir", "envs_dir",
-             "data_dir", "test_dir", "env_default", "lib_extra_dirs")
+    known = ("env_default", "home_dir", "lib_dir", "libdeps_dir", "src_dir",
+             "envs_dir", "data_dir", "test_dir", "boards_dir",
+             "lib_extra_dirs")
     unknown = set([k for k, _ in config.items("platformio")]) - set(known)
     if not unknown:
         return True

@@ -1,4 +1,4 @@
-# Copyright 2014-present PlatformIO <contact@platformio.org>
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,8 +38,9 @@ class FileDownloader(object):
 
         disposition = self._request.headers.get("content-disposition")
         if disposition and "filename=" in disposition:
-            self._fname = disposition[disposition.index("filename=") +
-                                      9:].replace('"', "").replace("'", "")
+            self._fname = disposition[
+                disposition.index("filename=") + 9:].replace('"', "").replace(
+                    "'", "")
             self._fname = self._fname.encode("utf8")
         else:
             self._fname = url.split("/")[-1]
