@@ -23,6 +23,10 @@ PlatformIO 3.0
 * Custom ``test_transport`` for `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__ Engine
 * Configure Serial Port Monitor in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #787 <https://github.com/platformio/platformio-core/issues/787>`_)
+* New `monitor <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption-platformio-run-t>`__
+  target which allows to launch Serial Monitor automatically after successful
+  "build" or "upload" operations
+  (`issue #788 <https://github.com/platformio/platformio-core/issues/788>`_)
 * Project generator for `VIM <http://docs.platformio.org/page/ide/vim.html>`__
 * Multi-line support for the different options in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__,
   such as: ``build_flags``, ``build_unflags``, etc.

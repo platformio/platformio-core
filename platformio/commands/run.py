@@ -21,6 +21,7 @@ from time import time
 import click
 
 from platformio import __version__, exception, telemetry, util
+from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.commands.lib import lib_install as cmd_lib_install
 from platformio.commands.lib import get_builtin_libs
 from platformio.commands.platform import \
@@ -107,7 +108,11 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
             ep = EnvironmentProcessor(ctx, envname, options, target,
                                       upload_port, silent, verbose)
-            results.append((envname, ep.process()))
+            result = (envname, ep.process())
+            results.append(result)
+            if result[1] and "monitor" in ep.get_build_targets() and \
+                    "nobuild" not in ep.get_build_targets():
+                ctx.invoke(cmd_device_monitor)
 
         found_error = any([status is False for (_, status) in results])
 
@@ -226,7 +231,7 @@ class EnvironmentProcessor(object):
             result[k] = v
         return result
 
-    def _get_build_variables(self):
+    def get_build_variables(self):
         variables = {"pioenv": self.name}
         if self.upload_port:
             variables['upload_port'] = self.upload_port
@@ -240,7 +245,7 @@ class EnvironmentProcessor(object):
             variables[k] = v
         return variables
 
-    def _get_build_targets(self):
+    def get_build_targets(self):
         targets = []
         if self.targets:
             targets = [t for t in self.targets]
@@ -252,11 +257,14 @@ class EnvironmentProcessor(object):
         if "platform" not in self.options:
             raise exception.UndefinedEnvPlatform(self.name)
 
-        build_vars = self._get_build_variables()
-        build_targets = self._get_build_targets()
+        build_vars = self.get_build_variables()
+        build_targets = self.get_build_targets()
 
         telemetry.on_run_environment(self.options, build_targets)
 
+        # skip monitor target, we call it above
+        if "monitor" in build_targets:
+            build_targets.remove("monitor")
         if "nobuild" not in build_targets:
             # install dependent libraries
             if "lib_install" in self.options:
