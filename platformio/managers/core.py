@@ -52,16 +52,6 @@ class CorePackageManager(PackageManager):
         self.cleanup_packages()
         return result
 
-    def uninstall(self, package, requirements=None, trigger_event=True):
-        result = PackageManager.uninstall(self, package, requirements,
-                                          trigger_event)
-        # @Hook: when 'update' operation (trigger_event is False),
-        # don't cleanup packages or install them
-        if not trigger_event:
-            return result
-        self.cleanup_packages()
-        return result
-
     def cleanup_packages(self):
         self.cache_reset()
         best_pkg_versions = {}
