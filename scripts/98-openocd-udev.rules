@@ -1,4 +1,9 @@
 # UDEV Rules for debug adapters/boards supported by OpenOCD
+
+#
+# INSTALLATION
+#
+
 #
 # The latest version of this file may be found at:
 # 	https://github.com/platformio/platformio-core/blob/develop/scripts/98-openocd-udev.rules
@@ -16,6 +21,11 @@
 #		or
 # 	sudo udevadm control --reload-rules
 #	sudo udevadm trigger
+#
+# Ubuntu/Debian users may need to add own “username” to the “dialout” group if
+# they are not “root”, doing this issuing a
+#   sudo usermod -a -G dialout $USER
+#   sudo usermod -a -G plugdev $USER
 #
 # After this file is installed, physically unplug and reconnect your adapter/board.
 

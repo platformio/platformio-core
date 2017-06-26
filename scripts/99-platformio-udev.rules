@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#
+# INSTALLATION
+#
+
 # UDEV Rules for PlatformIO supported boards, http://platformio.org/boards
 #
 # The latest version of this file may be found at:
@@ -33,7 +37,8 @@
 #
 # Ubuntu/Debian users may need to add own “username” to the “dialout” group if
 # they are not “root”, doing this issuing a
-#   sudo usermod -a -G dialout yourusername
+#   sudo usermod -a -G dialout $USER
+#   sudo usermod -a -G plugdev $USER
 #
 # After this file is installed, physically unplug and reconnect your board.
 
