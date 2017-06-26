@@ -55,7 +55,7 @@ Products
 * `PlatformIO IDE <http://platformio.org/platformio-ide>`_
 * `PlatformIO Core <http://docs.platformio.org/page/core.html>`_
 * `PIO Remote™ <http://docs.platformio.org/page/plus/pio-remote.html>`_
-* `PIO Unified Debugger <hhttp://docs.platformio.org/page/plus/debugging.html>`_
+* `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`_
 * `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`_
 * `PIO Delivery™ <http://platformio.org/pricing#solution-pio-delivery>`_
 * `Cloud Builder <http://platformio.org/pricing#solution-cloud-builder>`_
