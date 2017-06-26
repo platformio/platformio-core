@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.4.0 (2017-??-??)
+3.4.0 (2017-06-26)
 ~~~~~~~~~~~~~~~~~~
 
 * `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
