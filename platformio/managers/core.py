@@ -22,7 +22,7 @@ from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
     "pysite-pioplus": ">=0.3.0,<2",
-    "tool-pioplus": ">=0.8.11,<2",
+    "tool-pioplus": ">=0.9.0,<2",
     "tool-unity": "~1.20302.1",
     "tool-scons": "~3.20501.2"
 }
@@ -40,6 +40,43 @@ class CorePackageManager(PackageManager):
                 "http%s://dl.platformio.org/packages/manifest.json" %
                 ("" if sys.version_info < (2, 7, 9) else "s")
             ])
+
+    def install(self, name, requirements=None, *args,
+                **kwargs):  # pylint: disable=arguments-differ
+        PackageManager.install(self, name, requirements, *args, **kwargs)
+        self.cleanup_packages()
+        return self.get_package_dir(name, requirements)
+
+    def update(self, *args, **kwargs):  # pylint: disable=arguments-differ
+        result = PackageManager.update(self, *args, **kwargs)
+        self.cleanup_packages()
+        return result
+
+    def uninstall(self, package, requirements=None, trigger_event=True):
+        result = PackageManager.uninstall(self, package, requirements,
+                                          trigger_event)
+        # @Hook: when 'update' operation (trigger_event is False),
+        # don't cleanup packages or install them
+        if not trigger_event:
+            return result
+        self.cleanup_packages()
+        return result
+
+    def cleanup_packages(self):
+        self.cache_reset()
+        best_pkg_versions = {}
+        for name, requirements in CORE_PACKAGES.items():
+            pkg_dir = self.get_package_dir(name, requirements)
+            if not pkg_dir:
+                continue
+            best_pkg_versions[name] = self.load_manifest(pkg_dir)['version']
+        for manifest in self.get_installed():
+            if manifest['name'] not in best_pkg_versions:
+                continue
+            if manifest['version'] != best_pkg_versions[manifest['name']]:
+                self.uninstall(manifest['__pkg_dir'], trigger_event=False)
+        self.cache_reset()
+        return True
 
 
 def get_core_package_dir(name):
