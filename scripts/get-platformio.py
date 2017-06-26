@@ -112,11 +112,11 @@ def install_pip():
 
 def install_platformio():
     r = None
-    # cmd = ["pip", "install", "-U", "platformio"]
-    cmd = [
-        "pip", "install", "-U",
-        "https://github.com/platformio/platformio-core/archive/develop.zip"
-    ]
+    cmd = ["pip", "install", "-U", "platformio"]
+    # cmd = [
+    #     "pip", "install", "-U",
+    #     "https://github.com/platformio/platformio-core/archive/develop.zip"
+    # ]
     try:
         r = exec_python_cmd(cmd)
         assert r['returncode'] == 0
