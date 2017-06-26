@@ -68,9 +68,8 @@ setup(
         "Topic :: Software Development :: Compilers"
     ],
     keywords=[
-        "iot", "ide", "build", "compile", "library manager",
-        "embedded", "ci", "continuous integration", "arduino", "mbed",
-        "esp8266", "framework", "ide", "ide integration", "library.json",
-        "make", "cmake", "makefile", "mk", "pic32", "fpga", "artik"
-    ]
-)
+        "iot", "embedded", "arduino", "mbed", "esp8266", "esp32", "fpga",
+        "firmware", "continuous-integration", "cloud-ide", "avr", "arm",
+        "ide", "unit-testing", "hardware", "verilog", "microcontroller",
+        "debug"
+    ])
