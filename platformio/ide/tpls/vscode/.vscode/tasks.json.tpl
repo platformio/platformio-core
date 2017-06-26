@@ -78,6 +78,22 @@
             }
         },
         {
+            "taskName": "PlatformIO: Upload and Monitor",
+            "args": ["run", "-t", "upload", "-t", "monitor"],
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": ["relative", "${workspaceRoot}"],
+                "pattern": {
+                    "regexp": "^([^:\\n]+):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
             "taskName": "PlatformIO: Test",
             "args": ["test"],
             "problemMatcher": {
