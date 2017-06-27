@@ -7,6 +7,7 @@ PlatformIO 3.0
 3.4.1 (2017-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Do not ask for board ID when initialize project for desktop platform
 * Fixed issue when can not load broken PIO Core state
 
 3.4.0 (2017-06-26)
