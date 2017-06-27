@@ -4,6 +4,11 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.4.1 (2017-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed issue when can not load broken PIO Core state
+
 3.4.0 (2017-06-26)
 ~~~~~~~~~~~~~~~~~~
 

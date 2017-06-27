@@ -88,7 +88,7 @@ class State(object):
             self._lock_state_file()
             if isfile(self.path):
                 self._state = util.load_json(self.path)
-        except ValueError:
+        except exception.PlatformioException:
             self._state = {}
         self._prev_state = deepcopy(self._state)
         return self._state
