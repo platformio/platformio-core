@@ -327,6 +327,15 @@ def load_project_config(path=None):
     return cp
 
 
+def parse_conf_multi_values(items):
+    if not items:
+        return []
+    return [
+        item.strip() for item in items.split("\n" if "\n" in items else ", ")
+        if item.strip()
+    ]
+
+
 def change_filemtime(path, time):
     os.utime(path, (time, time))
 

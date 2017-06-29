@@ -297,6 +297,20 @@ def ProcessTest(env):
         duplicate=False)
 
 
+def GetPreExtraScripts(env):
+    return [
+        item[4:] for item in env.get("EXTRA_SCRIPTS", [])
+        if item.startswith("pre:")
+    ]
+
+
+def GetPostExtraScripts(env):
+    return [
+        item[5:] if item.startswith("post:") else item
+        for item in env.get("EXTRA_SCRIPTS", []) if not item.startswith("pre:")
+    ]
+
+
 def exists(_):
     return True
 
@@ -309,4 +323,6 @@ def generate(env):
     env.AddMethod(PioClean)
     env.AddMethod(ProcessDebug)
     env.AddMethod(ProcessTest)
+    env.AddMethod(GetPreExtraScripts)
+    env.AddMethod(GetPostExtraScripts)
     return env

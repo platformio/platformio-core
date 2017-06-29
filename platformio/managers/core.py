@@ -41,8 +41,7 @@ class CorePackageManager(PackageManager):
                 ("" if sys.version_info < (2, 7, 9) else "s")
             ])
 
-    def install(self, name, requirements=None, *args,
-                **kwargs):  # pylint: disable=arguments-differ
+    def install(self, name, requirements=None, *args, **kwargs):  # pylint: disable=arguments-differ
         PackageManager.install(self, name, requirements, *args, **kwargs)
         self.cleanup_packages()
         return self.get_package_dir(name, requirements)

@@ -7,6 +7,8 @@ PlatformIO 3.0
 3.4.1 (2017-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Pre/Post extra scripting for advanced control of PIO Build System
+  (`issue #891 <https://github.com/platformio/platformio-core/issues/891>`_)
 * Added ``monitor_*`` options to white-list for `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
   (`issue #982 <https://github.com/platformio/platformio-core/issues/982>`_)
 * Use a root of library when filtering source code using
