@@ -7,6 +7,8 @@ PlatformIO 3.0
 3.4.1 (2017-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added ``monitor_*`` options to white-list for `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
+  (`issue #982 <https://github.com/platformio/platformio-core/issues/982>`_)
 * Use a root of library when filtering source code using
   `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
   and ``srcFilter`` field
