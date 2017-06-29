@@ -29,6 +29,8 @@ CORE_PACKAGES = {
 
 PIOPLUS_AUTO_UPDATES_MAX = 100
 
+# pylint: disable=arguments-differ
+
 
 class CorePackageManager(PackageManager):
 
@@ -41,12 +43,12 @@ class CorePackageManager(PackageManager):
                 ("" if sys.version_info < (2, 7, 9) else "s")
             ])
 
-    def install(self, name, requirements=None, *args, **kwargs):  # pylint: disable=arguments-differ
+    def install(self, name, requirements=None, *args, **kwargs):
         PackageManager.install(self, name, requirements, *args, **kwargs)
         self.cleanup_packages()
         return self.get_package_dir(name, requirements)
 
-    def update(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def update(self, *args, **kwargs):
         result = PackageManager.update(self, *args, **kwargs)
         self.cleanup_packages()
         return result
