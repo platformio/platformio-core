@@ -7,6 +7,9 @@ PlatformIO 3.0
 3.4.1 (2017-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Use a root of library when filtering source code using
+  `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
+  and ``srcFilter`` field
 * Do not ask for board ID when initialize project for desktop platform
 * Fixed issue when can not load broken PIO Core state
 

@@ -522,6 +522,15 @@ class PlatformIOLibBuilder(LibBuilderBase):
         return isfile(join(self.path, "library.properties"))
 
     @property
+    def src_dir(self):
+        if all([
+                "srcFilter" in self._manifest.get("build", {}) or
+                self.env['SRC_FILTER'], not self._is_arduino_manifest()
+        ]):
+            return self.path
+        return LibBuilderBase.src_dir.fget(self)
+
+    @property
     def src_filter(self):
         if "srcFilter" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("srcFilter")
