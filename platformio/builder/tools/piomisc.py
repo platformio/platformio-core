@@ -285,10 +285,7 @@ def ProcessTest(env):
         join("$BUILD_DIR", "UnityTestLib"), get_core_package_dir("tool-unity"))
     env.Prepend(LIBS=[unitylib])
 
-    src_filter = [
-        "+<*.cpp>",
-        "+<*.c>"
-    ]
+    src_filter = ["+<*.cpp>", "+<*.c>"]
     if "PIOTEST" in env:
         src_filter.append("+<%s%s>" % (env['PIOTEST'], sep))
 

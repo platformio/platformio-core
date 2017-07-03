@@ -19,7 +19,7 @@ from sys import modules
 from urlparse import urlparse
 
 from platformio import util
-from platformio.exception import PlatformioException
+from platformio.exception import PlatformioException, UserSideException
 
 
 class VCSClientFactory(object):
@@ -64,7 +64,7 @@ class VCSClientBase(object):
             else:
                 assert self.run_cmd(["--version"])
         except (AssertionError, OSError, PlatformioException):
-            raise PlatformioException(
+            raise UserSideException(
                 "VCS: `%s` client is not installed in your system" %
                 self.command)
         return True
