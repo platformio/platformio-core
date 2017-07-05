@@ -94,6 +94,10 @@
             }
         },
         {
+            "taskName": "PlatformIO: Monitor",
+            "args": ["device", "monitor"]
+        },
+        {
             "taskName": "PlatformIO: Test",
             "args": ["test"],
             "problemMatcher": {
