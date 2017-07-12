@@ -66,6 +66,9 @@ def cli(ctx, **options):
                 "Please use `platformio lib --global %s` command to remove "
                 "this warning." % ctx.invoked_subcommand,
                 fg="yellow")
+    elif util.is_platformio_project(storage_dir):
+        with util.cd(storage_dir):
+            storage_dir = util.get_projectlibdeps_dir()
 
     if not storage_dir and not util.is_platformio_project():
         raise exception.NotGlobalLibDir(util.get_project_dir(),
