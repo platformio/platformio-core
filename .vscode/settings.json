@@ -1,0 +1,12 @@
+{
+  "python.pythonPath": "${workspaceRoot}/.tox/develop/bin/python",
+  "python.formatting.provider": "yapf",
+  "files.exclude": {
+    "**/*.pyc": true,
+    "*.egg-info": true,
+    ".cache": true,
+    "build": true,
+    "dist": true
+  },
+  "editor.rulers": [79]
+}
