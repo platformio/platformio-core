@@ -385,8 +385,8 @@ def lib_show(library, json_output):
 @cli.command("register", short_help="Register a new library")
 @click.argument("config_url")
 def lib_register(config_url):
-    if (not config_url.startswith("http://") and
-            not config_url.startswith("https://")):
+    if (not config_url.startswith("http://")
+            and not config_url.startswith("https://")):
         raise exception.InvalidLibConfURL(config_url)
 
     result = get_api_result("/lib/register", data=dict(config_url=config_url))

@@ -66,8 +66,8 @@ def cli():
             if not r:
                 raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
             permission_errors = ("permission denied", "not permitted")
-            if (any([m in r['err'].lower() for m in permission_errors]) and
-                    "windows" not in util.get_systype()):
+            if (any([m in r['err'].lower() for m in permission_errors])
+                    and "windows" not in util.get_systype()):
                 click.secho(
                     """
 -----------------

@@ -115,8 +115,8 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             ]
             if any([isfile(p) for p in mbed_pages]):
                 return item['disk']
-            if (item['name'] and
-                    any([l in item['name'].lower() for l in msdlabels])):
+            if (item['name']
+                    and any([l in item['name'].lower() for l in msdlabels])):
                 return item['disk']
         return None
 

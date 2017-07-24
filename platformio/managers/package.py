@@ -516,8 +516,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             # Handle GitHub URL (https://github.com/user/package)
             url.startswith("https://github.com/") and not url.endswith(
                 (".zip", ".tar.gz")),
-            url.startswith("http") and
-            (url.split("#", 1)[0] if "#" in url else url).endswith(".git")
+            url.startswith("http")
+            and (url.split("#", 1)[0] if "#" in url else url).endswith(".git")
         ]
         if any(git_conditions):
             url = "git+" + url

@@ -200,8 +200,8 @@ def get_project_optional_dir(name, default=None):
     else:
         try:
             config = load_project_config()
-            if (config.has_section("platformio") and
-                    config.has_option("platformio", name)):
+            if (config.has_section("platformio")
+                    and config.has_option("platformio", name)):
                 data = config.get("platformio", name)
         except exception.NotPlatformIOProject:
             pass

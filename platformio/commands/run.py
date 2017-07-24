@@ -88,8 +88,8 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
             envname = section[4:]
             skipenv = any([
-                environment and envname not in environment, not environment and
-                env_default and envname not in env_default
+                environment and envname not in environment, not environment
+                and env_default and envname not in env_default
             ])
             if skipenv:
                 results.append((envname, None))
@@ -322,8 +322,8 @@ def _clean_pioenvs_dir(pioenvs_dir):
     proj_hash = calculate_project_hash()
 
     # if project's config is modified
-    if (isdir(pioenvs_dir) and
-            getmtime(join(util.get_project_dir(), "platformio.ini")) >
+    if (isdir(pioenvs_dir)
+            and getmtime(join(util.get_project_dir(), "platformio.ini")) >
             getmtime(pioenvs_dir)):
         util.rmtree_(pioenvs_dir)
 

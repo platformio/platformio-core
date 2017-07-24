@@ -524,8 +524,8 @@ class PlatformIOLibBuilder(LibBuilderBase):
     @property
     def src_dir(self):
         if all([
-                "srcFilter" in self._manifest.get("build", {}) or
-                self.env['SRC_FILTER'], not self._is_arduino_manifest()
+                "srcFilter" in self._manifest.get("build", {})
+                or self.env['SRC_FILTER'], not self._is_arduino_manifest()
         ]):
             return self.path
         return LibBuilderBase.src_dir.fget(self)
@@ -587,9 +587,9 @@ class PlatformIOLibBuilder(LibBuilderBase):
         inc_dirs = LibBuilderBase.get_inc_dirs(self)
 
         #  backwards compatibility with PlatformIO 2.0
-        if ("build" not in self._manifest and self._is_arduino_manifest() and
-                not isdir(join(self.path, "src")) and
-                isdir(join(self.path, "utility"))):
+        if ("build" not in self._manifest and self._is_arduino_manifest()
+                and not isdir(join(self.path, "src"))
+                and isdir(join(self.path, "utility"))):
             inc_dirs.append(join(self.path, "utility"))
 
         for path in self.env.get("CPPPATH", []):
@@ -605,8 +605,8 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
     items = []
     compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
-    verbose = (int(ARGUMENTS.get("PIOVERBOSE", 0)) and
-               not env.GetOption('clean'))
+    verbose = (int(ARGUMENTS.get("PIOVERBOSE", 0))
+               and not env.GetOption('clean'))
 
     def _check_lib_builder(lb):
         if lb.name in env.get("LIB_IGNORE", []):
