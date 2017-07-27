@@ -645,6 +645,7 @@ class PlatformBoardConfig(object):
             int(self._manifest.get("build", {}).get("f_cpu", "0L")[:-1]),
             "ram": self._manifest.get("upload", {}).get("maximum_ram_size", 0),
             "rom": self._manifest.get("upload", {}).get("maximum_size", 0),
+            "connectivity": self._manifest.get("connectivity"),
             "frameworks": self._manifest.get("frameworks"),
             "debug": self.get_debug_data(),
             "vendor": self._manifest['vendor'],
