@@ -39,7 +39,7 @@ def in_silence(ctx=None):
     assert ctx
     ctx_args = ctx.args or []
     conditions = [
-        ctx.args[0] == "upgrade", "--json-output" in ctx_args,
+        ctx_args and ctx.args[0] == "upgrade", "--json-output" in ctx_args,
         "--version" in ctx_args
     ]
     return ctx_args and any(conditions)
