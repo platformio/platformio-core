@@ -48,6 +48,7 @@ def TouchSerialPort(env, port, baudrate):
         s.close()
     except:  # pylint: disable=W0702
         pass
+    sleep(0.4)
 
 
 def WaitForNewSerialPort(env, before):
