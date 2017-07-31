@@ -18,11 +18,15 @@ import click
 import requests
 
 from platformio import VERSION, __version__, exception, util
+from platformio.managers.core import update_core_packages
 
 
 @click.command(
     "upgrade", short_help="Upgrade PlatformIO to the latest version")
 def cli():
+    # Update PlatformIO's Core packages
+    update_core_packages(silent=True)
+
     latest = get_latest_version()
     if __version__ == latest:
         return click.secho(
