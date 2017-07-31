@@ -15,9 +15,10 @@ PlatformIO 3.0
   `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
   and ``srcFilter`` field
 * Do not ask for board ID when initialize project for desktop platform
-* Fixed issue when can not load broken PIO Core state
+* Handle broken PIO Core state and create new one
 * Fixed an issue with a custom transport for `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
   when multiple tests are present
+* Fixed an issue when can not upload firmware to SAM-BA based board (Due)
 
 3.4.0 (2017-06-26)
 ~~~~~~~~~~~~~~~~~~
