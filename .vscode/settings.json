@@ -8,5 +8,8 @@
     "build": true,
     "dist": true
   },
-  "editor.rulers": [79]
+  "editor.rulers": [79],
+  "restructuredtext.builtDocumentationPath": "${workspaceRoot}/docs/_build/html",
+  "restructuredtext.confPath": "${workspaceRoot}/docs",
+  "restructuredtext.linter.executablePath": "${workspaceRoot}/.tox/docs/bin/restructuredtext-lint"
 }

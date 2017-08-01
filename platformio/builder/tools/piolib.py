@@ -150,7 +150,10 @@ class LibBuilderBase(object):
         return join("$BUILD_DIR", "lib", basename(self.path))
 
     def get_inc_dirs(self):
-        return [self.src_dir]
+        items = [self.src_dir]
+        if all([isdir(join(self.path, d)) for d in ("inc", "src")]):
+            items.append(join(self.path, "inc"))
+        return items
 
     @property
     def build_flags(self):
@@ -383,68 +386,31 @@ class LibBuilderBase(object):
         for lb in self._circular_deps:
             self.env.AppendUnique(CPPPATH=lb.get_inc_dirs())
 
-        if not self._is_built:
-            self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
+        if self._is_built:
+            return libs
+        self._is_built = True
 
-            if self.lib_ldf_mode == "off":
-                for lb in self.envorigin.GetLibBuilders():
-                    if self == lb or not lb.is_built:
-                        continue
-                    for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
-                        self.env.AppendUnique(**{key: lb.env.get(key)})
+        self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
 
-            if self.lib_archive:
-                libs.append(
-                    self.env.BuildLibrary(self.build_dir, self.src_dir,
-                                          self.src_filter))
-            else:
-                self.env.BuildSources(self.build_dir, self.src_dir,
-                                      self.src_filter)
-            self._is_built = True
+        if self.lib_ldf_mode == "off":
+            for lb in self.envorigin.GetLibBuilders():
+                if self == lb or not lb.is_built:
+                    continue
+                for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
+                    self.env.AppendUnique(**{key: lb.env.get(key)})
+
+        if self.lib_archive:
+            libs.append(
+                self.env.BuildLibrary(self.build_dir, self.src_dir,
+                                      self.src_filter))
+        else:
+            self.env.BuildSources(self.build_dir, self.src_dir,
+                                  self.src_filter)
         return libs
 
 
 class UnknownLibBuilder(LibBuilderBase):
     pass
-
-
-class ProjectAsLibBuilder(LibBuilderBase):
-
-    def __init__(self, *args, **kwargs):
-        LibBuilderBase.__init__(self, *args, **kwargs)
-        self._is_built = True
-
-    @property
-    def src_dir(self):
-        return self.env.subst("$PROJECTSRC_DIR")
-
-    @property
-    def lib_ldf_mode(self):
-        mode = LibBuilderBase.lib_ldf_mode.fget(self)
-        if not mode.startswith("chain"):
-            return mode
-        # parse all project files
-        return "deep+" if "+" in mode else "deep"
-
-    @property
-    def src_filter(self):
-        return self.env.get("SRC_FILTER", LibBuilderBase.src_filter.fget(self))
-
-    def process_extra_options(self):
-        # skip for project, options are already processed
-        pass
-
-    def search_deps_recursive(self, search_paths=None):
-        for dep in self.env.get("LIB_DEPS", []):
-            for token in ("@", "="):
-                if token in dep:
-                    dep, _ = dep.split(token, 1)
-            for lb in self.envorigin.GetLibBuilders():
-                if lb.name == dep:
-                    if lb not in self.depbuilders:
-                        self.depend_recursive(lb)
-                    break
-        return LibBuilderBase.search_deps_recursive(self, search_paths)
 
 
 class ArduinoLibBuilder(LibBuilderBase):
@@ -598,6 +564,46 @@ class PlatformIOLibBuilder(LibBuilderBase):
         return inc_dirs
 
 
+class ProjectAsLibBuilder(LibBuilderBase):
+
+    @property
+    def src_dir(self):
+        return self.env.subst("$PROJECTSRC_DIR")
+
+    @property
+    def lib_ldf_mode(self):
+        mode = LibBuilderBase.lib_ldf_mode.fget(self)
+        if not mode.startswith("chain"):
+            return mode
+        # parse all project files
+        return "deep+" if "+" in mode else "deep"
+
+    @property
+    def src_filter(self):
+        return self.env.get("SRC_FILTER", LibBuilderBase.src_filter.fget(self))
+
+    def process_extra_options(self):
+        # skip for project, options are already processed
+        pass
+
+    def search_deps_recursive(self, search_paths=None):
+        for dep in self.env.get("LIB_DEPS", []):
+            for token in ("@", "="):
+                if token in dep:
+                    dep, _ = dep.split(token, 1)
+            for lb in self.envorigin.GetLibBuilders():
+                if lb.name == dep:
+                    if lb not in self.depbuilders:
+                        self.depend_recursive(lb)
+                    break
+        return LibBuilderBase.search_deps_recursive(self, search_paths)
+
+    def build(self):
+        self._is_built = True  # do not build Project now
+        self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
+        return LibBuilderBase.build(self)
+
+
 def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
     if "__PIO_LIB_BUILDERS" in DefaultEnvironment():
@@ -664,7 +670,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
     return items
 
 
-def BuildDependentLibraries(env, src_dir):
+def BuildProjectLibraries(env):
     lib_builders = env.GetLibBuilders()
 
     def correct_found_libs():
@@ -693,7 +699,7 @@ def BuildDependentLibraries(env, src_dir):
     print "Collected %d compatible libraries" % len(lib_builders)
     print "Looking for dependencies..."
 
-    project = ProjectAsLibBuilder(env, src_dir)
+    project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     project.env = env
     project.search_deps_recursive()
 
@@ -717,5 +723,5 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(GetLibBuilders)
-    env.AddMethod(BuildDependentLibraries)
+    env.AddMethod(BuildProjectLibraries)
     return env

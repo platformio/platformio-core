@@ -9,11 +9,13 @@ PlatformIO 3.0
 
 * Pre/Post extra scripting for advanced control of PIO Build System
   (`issue #891 <https://github.com/platformio/platformio-core/issues/891>`_)
-* Added ``monitor_*`` options to white-list for `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
-  (`issue #982 <https://github.com/platformio/platformio-core/issues/982>`_)
+* Add "inc" folder automatically to CPPPATH when "src" is available (works for project and library)
+  (`issue #1003 <https://github.com/platformio/platformio-core/issues/1003>`_)
 * Use a root of library when filtering source code using
   `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
   and ``srcFilter`` field
+* Added ``monitor_*`` options to white-list for `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
+  (`issue #982 <https://github.com/platformio/platformio-core/issues/982>`_)
 * Do not ask for board ID when initialize project for desktop platform
 * Handle broken PIO Core state and create new one
 * Fixed an issue with a custom transport for `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
@@ -1433,7 +1435,6 @@ PlatformIO 0.0
 * Added tools for *Raspberry Pi* platform
 * Added support for *Microduino* and *Raspduino* boards in
   `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html>`_ platform
-
 
 0.3.1 (2014-06-21)
 ~~~~~~~~~~~~~~~~~~
