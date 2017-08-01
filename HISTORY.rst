@@ -9,6 +9,9 @@ PlatformIO 3.0
 
 * Pre/Post extra scripting for advanced control of PIO Build System
   (`issue #891 <https://github.com/platformio/platformio-core/issues/891>`_)
+* New `lib_archive <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-archive>`_
+  option to control library archiving and linking behaviour
+  (`issue #993 <https://github.com/platformio/platformio-core/issues/993>`_)
 * Add "inc" folder automatically to CPPPATH when "src" is available (works for project and library)
   (`issue #1003 <https://github.com/platformio/platformio-core/issues/1003>`_)
 * Use a root of library when filtering source code using

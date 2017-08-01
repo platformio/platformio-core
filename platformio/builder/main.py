@@ -50,6 +50,7 @@ commonvars.AddVariables(
     ("LIB_DEPS",),
     ("LIB_IGNORE",),
     ("LIB_EXTRA_DIRS",),
+    ("LIB_ARCHIVE",),
 
     # board options
     ("BOARD",),

@@ -169,7 +169,7 @@ class LibBuilderBase(object):
 
     @property
     def lib_archive(self):
-        return True
+        return self.env.get("LIB_ARCHIVE", "") != "false"
 
     @staticmethod
     def validate_ldf_mode(mode):
