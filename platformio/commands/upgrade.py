@@ -18,11 +18,15 @@ import click
 import requests
 
 from platformio import VERSION, __version__, exception, util
+from platformio.managers.core import update_core_packages
 
 
 @click.command(
     "upgrade", short_help="Upgrade PlatformIO to the latest version")
 def cli():
+    # Update PlatformIO's Core packages
+    update_core_packages(silent=True)
+
     latest = get_latest_version()
     if __version__ == latest:
         return click.secho(
@@ -66,8 +70,8 @@ def cli():
             if not r:
                 raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
             permission_errors = ("permission denied", "not permitted")
-            if (any([m in r['err'].lower() for m in permission_errors]) and
-                    "windows" not in util.get_systype()):
+            if (any([m in r['err'].lower() for m in permission_errors])
+                    and "windows" not in util.get_systype()):
                 click.secho(
                     """
 -----------------

@@ -66,6 +66,9 @@ def cli(ctx, **options):
                 "Please use `platformio lib --global %s` command to remove "
                 "this warning." % ctx.invoked_subcommand,
                 fg="yellow")
+    elif util.is_platformio_project(storage_dir):
+        with util.cd(storage_dir):
+            storage_dir = util.get_projectlibdeps_dir()
 
     if not storage_dir and not util.is_platformio_project():
         raise exception.NotGlobalLibDir(util.get_project_dir(),
@@ -382,8 +385,8 @@ def lib_show(library, json_output):
 @cli.command("register", short_help="Register a new library")
 @click.argument("config_url")
 def lib_register(config_url):
-    if (not config_url.startswith("http://") and
-            not config_url.startswith("https://")):
+    if (not config_url.startswith("http://")
+            and not config_url.startswith("https://")):
         raise exception.InvalidLibConfURL(config_url)
 
     result = get_api_result("/lib/register", data=dict(config_url=config_url))

@@ -4,6 +4,27 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.4.1 (2017-08-02)
+~~~~~~~~~~~~~~~~~~
+
+* Pre/Post extra scripting for advanced control of PIO Build System
+  (`issue #891 <https://github.com/platformio/platformio-core/issues/891>`_)
+* New `lib_archive <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-archive>`_
+  option to control library archiving and linking behaviour
+  (`issue #993 <https://github.com/platformio/platformio-core/issues/993>`_)
+* Add "inc" folder automatically to CPPPATH when "src" is available (works for project and library)
+  (`issue #1003 <https://github.com/platformio/platformio-core/issues/1003>`_)
+* Use a root of library when filtering source code using
+  `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
+  and ``srcFilter`` field
+* Added ``monitor_*`` options to white-list for `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf.html>`__
+  (`issue #982 <https://github.com/platformio/platformio-core/issues/982>`_)
+* Do not ask for board ID when initialize project for desktop platform
+* Handle broken PIO Core state and create new one
+* Fixed an issue with a custom transport for `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
+  when multiple tests are present
+* Fixed an issue when can not upload firmware to SAM-BA based board (Due)
+
 3.4.0 (2017-06-26)
 ~~~~~~~~~~~~~~~~~~
 
@@ -62,75 +83,6 @@ PlatformIO 3.0
   custom user name and SSH port
   (`issue #925 <https://github.com/platformio/platformio-core/issues/925>`_)
 
--------
-
-* Development platform `Atmel AVR <https://github.com/platformio/platform-atmelavr>`__
-
-  + ATTiny Support (1634, x313, x4, x41, x5, x61, x7, x8)
-    (`issue #47 <https://github.com/platformio/platform-atmelavr/issues/47>`__)
-  + New boards: Dwenguino, nicai-systems BOB3 coding bot, NIBO 2 robot,
-    NIBObee robot
-  + AVRDude TCP upload port (``net:host:port``)
-    (`pull #45 <https://github.com/platformio/platform-atmelavr/pull/45>`_)
-  + Fixed uploading for LowPowerLab Moteino
-
-* Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
-
-  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
-  + Added support for MKRFox1200 board
-  + Updated Arduino SAMD Core to 1.6.14
-  + Updated mbed framework to 5.4.5/142
-  + Fixed firmware uploading Arduino Zero and USB-native boards
-
-* Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
-
-  + New boards: Adafruit Feather, FireBeetle-ESP32, IntoRobot Fig, NodeMCU-32S, Onehorse ESP32 Dev Module, and Widora AIR
-  + Added support for OTA (Over-The-Air) updates
-  + Updated ESP-IDF framework to v2.0
-  + Updated core for Arduino framework
-
-* Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
-
-  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
-  + Updated mbed framework to 5.4.5/142
-
-* Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
-
-  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
-  + Updated mbed framework to 5.4.5/142
-
-* Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
-
-  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
-  + Updated mbed framework to 5.4.5/142
-
-* Development platform `Silicon Labs EFM32 <https://github.com/platformio/platform-siliconlabsefm32>`__
-
-  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
-  + Updated mbed framework to 5.4.5/142
-
-* Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
-
-  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
-  + Added support for new boards: ST STM32F0308DISCOVERY
-  + Updated ``tool-stlink`` to v1.3.1
-  + Updated mbed framework to 5.4.5/142
-
-* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
-
-  + Updated Teensy Loader CLI to v21
-  + Updated Arduino Core to v1.36
-  + Updated mbed framework to 5.4.5/142
-
-* Development platform `TI MSP430 <https://github.com/platformio/platform-timsp430>`__
-
-  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
-
-* Development platform `TI TIVA <https://github.com/platformio/platform-titiva>`__
-
-  + Support for `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
-
-
 3.3.1 (2017-05-27)
 ~~~~~~~~~~~~~~~~~~
 
@@ -176,88 +128,6 @@ PlatformIO 3.0
   (`issue #913 <https://github.com/platformio/platformio-core/issues/913>`_)
 * Fixed package installing with VCS branch for Python 2.7.3
   (`issue #885 <https://github.com/platformio/platformio-core/issues/885>`_)
-
-
--------
-
-* Development platform `Atmel AVR <https://github.com/platformio/platform-atmelavr>`__
-
-  + New boards: EnviroDIY Mayfly, The Things Uno, SparkFun Qduino Mini,
-    SparkFun ATmega128RFA1 Dev Board, SparkFun Serial 7-Segment Display,
-    Generic ATTiny2313 and ATTiny4313
-  + Set fuse bits with new target named ``fuses``
-    (`issue #865 <https://github.com/platformio/platformio-core/issues/865>`_)
-  + Updated Arduino Core to 1.6.17
-  + Fixed ISO C99 warning for EnviroDIY Mayfly board
-  + Fixed firmware uploading to Arduino Leonardo
-
-* Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
-
-  + Added support for Adafruit Circuit Playground Express, Arduino MKRZero,
-    Atmel ATSAMW25-XPRO boards
-  + Added support for ARM mbed events library
-  + Updated ARM mbed OS to 5.3.6/rev137
-  + Updated Arduino SAM & SAMD Core to 1.6.11
-
-* Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
-
-  + Added support for Simba & Pumbaa Frameworks
-  + Added new boards: Node32s, Hornbill ESP32 Dev, Hornbill ESP32 Minim
-  + Updated Arduino Core
-  + Updated ESP-IDF framework to the latest v2.0 Release Candidate 1
-  + New ESP IDF examples: BLE, Coap Server, Peripherals UART, Storage SDCard
-
-* Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
-
-  + Added support for ARM mbed events library
-  + Updated ARM mbed OS to 5.3.6/rev137
-
-* Development platform `Lattice iCE40 <https://github.com/platformio/platform-lattice_ice40>`__
-
-  + Improved path management for Windows
-  + Custom uploader using ``$UPLOAD`` build variable
-    (`issue #6 <https://github.com/platformio/platform-lattice_ice40/issues/6>`__)
-  + Updated toolchain-icestorm to 1.10.0 (added -C option to "time" target)
-  + Updated toolchain-iverilog to 1.1.0  (loaed all vlib/\*.v files in "iverilog" builder)
-
-* Development platform `Linux ARM <https://github.com/platformio/platform-linux_arm>`__
-
-  + Added support for Samsung ARTIK boards (520, 530, 710, 1020) and ARTIK SDK
-    (`issue #353 <https://github.com/platformio/platformio-core/issues/353>`_)
-
-* Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
-
-  + Added support for ARM mbed events library
-  + Updated ARM mbed OS to 5.3.6/rev137
-
-* Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
-
-  + Added support for LPCXpresso4337 and y5 LPC11U35 mbug boards
-  + Added support for ARM mbed events library
-  + Updated ARM mbed OS to 5.3.6/rev137
-
-* Development platform `Silicon Labs EFM32 <https://github.com/platformio/platform-siliconlabsefm32>`__
-
-  + Added support for ARM mbed events library
-  + Updated ARM mbed OS to 5.3.6/rev137
-
-* Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
-
-  + Added support for new boards: Espotel LoRa Module, NAMote72, MTS Dragonfly,
-    ST Nucleo F303ZE, u-blox EVK-ODIN-W2, MultiTech xDot
-  + Added support for ARM mbed events library
-  + Updated ARM mbed OS to 5.3.6/rev137
-
-* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
-
-  + Added support for ARM mbed events library
-  + Updated ARM mbed OS to 5.3.6/rev137
-  + Updated Arduino Core to v1.35
-
-* Development platform `TI TIVA <https://github.com/platformio/platform-titiva>`__
-
-  + Updated Energia Core to 1.0.2
-
 
 3.2.1 (2016-12-07)
 ~~~~~~~~~~~~~~~~~~
@@ -323,93 +193,6 @@ PlatformIO 3.0
 * Fixed issue with ``PATH`` auto-configuring for upload tools
 * Fixed ``99-platformio-udev.rules`` checker for Linux OS
 
--------
-
-* Development platform `Atmel AVR <https://github.com/platformio/platform-atmelavr>`__
-
-  + Added support for SODAQ AVR boards
-    (`issue #796 <https://github.com/platformio/platformio-core/issues/796>`__)
-  + Added support for Pololu A-Star boards
-    (`issue #804 <https://github.com/platformio/platformio-core/issues/804>`__)
-  + Added support for Altair board
-    (`issue #15 <https://github.com/platformio/platform-atmelavr/issues/15>`__)
-  + Added support for ATmega328PB MCUs
-  + Updated Atmel AVR toolchain to GCC 4.9.2
-  + Updated Arduino Core for LightBlue Bean/LightBlue Bean+ boards
-  + Handle "micronucleus" tool base on upload protocol
-    (`issue #18 <https://github.com/platformio/platform-atmelavr/issues/18>`__)
-  + Fixed programming of ATtiny boards when "micronucleus" uploader is used
-    (`issue #13 <https://github.com/platformio/platform-atmelavr/issues/13>`__)
-
-* Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
-
-  + Added support for SODAQ SAMD boards
-    (`issue #796 <https://github.com/platformio/platformio-core/issues/796>`__)
-  + Updated ARM mbed OS to 5.1.4/rev126
-  + Fixed issue with uploading to Arduino Zero on programming USB port
-    (`issue #805 <https://github.com/platformio/platformio-core/issues/805>`__)
-
-* Development platform `Espressif 32 <https://github.com/platformio/platform-espressif32>`__
-
-  * Initial support for Espressif IDF and Arduino for ESP32
-
-* Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
-
-  + Added support for ESPrectro board
-  + Additional target "buildfs" to accompany "uploadfs"
-    (`issue #6 <https://github.com/platformio/platform-espressif8266/issues/6>`__)
-
-* Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
-
-  + Updated ARM mbed OS to 5.1.4/rev126
-
-* Development platform `Microchip PIC32 <https://github.com/platformio/platform-microchippic32>`__
-
-  + Add support for MikroElektronika Clicker 2 board
-  + Updated ChipKIT Core to v1.3.1
-  + Updated Microchip PIC32 GCC-based toolchain and "pic32prog" tool
-
-* Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
-
-  + Added BBC micro:bit B(S130) board
-    (`issue #3 <https://github.com/platformio/platform-nordicnrf51/issues/3>`__)
-  + Updated ARM mbed OS to 5.1.4/rev126
-  + Fixed “undefined reference to `_sbrk’” error for RFDuino
-    (`issue #1 <https://github.com/platformio/platform-nordicnrf51/issues/1>`__)
-
-* Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
-
-  + Updated ARM mbed OS to 5.1.4/rev126
-
-* Development platform `Silicon Labs EFM32 <https://github.com/platformio/platform-siliconlabsefm32>`__
-
-  + Updated ARM mbed OS to 5.1.4/rev126
-
-* Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
-
-  + Added support for Maple Mini Original and Maple Mini Bootloader 2.0
-    (`issue #22 <https://github.com/platformio/platform-ststm32/issues/22>`__)
-  + Added support for new boards: ST 32F769IDISCOVERY
-  + Updated ARM mbed OS to 5.1.4/rev126
-  + Use ``serial`` protocol by default for STM32Duino-based boards
-    (`issue #14 <https://github.com/platformio/platform-ststm32/issues/14>`__)
-  + Fixed linker error "undefined reference to _sbrk" for STM32Duino
-    (`issue #10 <https://github.com/platformio/platform-ststm32/issues/10>`__)
-
-* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
-
-  + Updated Arduino Framework for Teensy to v131
-  + Updated ARM mbed OS to 5.1.4/rev126
-  + Added support for Teensy Audio feature (``build_flags = -D USB_AUDIO``)
-
-* Development platform `TI MSP430 <https://github.com/platformio/platform-timsp430>`__
-
-  + Upgrade development platform with the latest GCC toolchains and Energia
-    framework
-    (`issue #1 <https://github.com/platformio/platform-timsp430/issues/1>`__,
-    `issue #2 <https://github.com/platformio/platform-timsp430/issues/2>`__,
-    `issue #3 <https://github.com/platformio/platform-timsp430/issues/1>`__)
-
 3.1.0 (2016-09-19)
 ~~~~~~~~~~~~~~~~~~
 
@@ -427,48 +210,6 @@ PlatformIO 3.0
   (`issue #785 <https://github.com/platformio/platformio-core/issues/785>`_)
 * Fixed SSL Server-Name-Indication for Python < 2.7.9
   (`issue #774 <https://github.com/platformio/platformio-core/issues/774>`_)
-
--------
-
-* Development platform `Espressif 8266 <https://github.com/platformio/platform-espressif8266>`__
-
-  + Add support for `SparkFun Blynk Board <https://www.sparkfun.com/products/13794>`_
-  + Created `staging <http://docs.platformio.org/page/platforms/espressif8266.html#using-arduino-framework-with-staging-version>`__
-    branch to work with development version of Arduino Framework
-
-* Development platform `Freescale Kinetis <https://github.com/platformio/platform-freescalekinetis>`__
-
-  + Added support for new boards: FRDM-KL26Z, FRDM-KL27Z, FRDM-KL43Z, Hexiwear
-
-* Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
-
-  + Added support for new boards: Seeed Arch BLE, Seeed Arch Link, Switch
-    Science mbed TY51822r3, y5 nRF51822 mbug, JKSoft Wallbot BLE
-
-* Development platform `NXP LPC <https://github.com/platformio/platform-nxplpc>`__
-
-  + Added support for new boards: ARM mbed LPC11U24 (+CAN), Bambino-210E,
-    CoCo-ri-Co!, DipCortex M3, LPCXpresso11U68, LPCXpresso824-MAX, mBuino,
-    MicroNFCBoard, NXP LPC11C24, NXP LPC11U34, EA LPC11U35 QuickStart Board,
-    NXP LPC11U37, NXP LPC2368, NXP LPC2460, NXP LPC800-MAX, Seeed Arch GPRS V2,
-    Seeed Xadow M0, Smeshlink xbed LPC1768, Switch Science mbed LPC824
-
-* Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
-
-  + New Arduino framework for ST STM32 -
-    `STM32Duino <https://github.com/rogerclarkmelbourne/Arduino_STM32>`__.
-    Supported boards: BluePill F103C8, Generic STM32F103C8, Generic STM32F103R8,
-    Generic STM32F103RB, Generic STM32F103RC, Generic STM32F103RE, Olimexino STM32
-
-  + Added support for new ARM mbed based boards: ST 32F746GDISCOVER,
-    MultiTech mDot, ST Nucleo F207ZG, ST Nucleo F429ZI, ST Nucleo F446ZE,
-    ST Nucleo F746ZG, ST Nucleo F767ZI, ST Nucleo L011K4, ST Nucleo L432KC,
-    Seeed Arch Max
-
-* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
-
-  + Added support for Teensy 3.5 and 3.6 boards
-  + Updated Arduino Framework for Teensy to v130
 
 3.0.1 (2016-09-08)
 ~~~~~~~~~~~~~~~~~~
@@ -558,29 +299,6 @@ PlatformIO 3.0
 * Fixed wrong line number for INO file when ``#warning`` directive is used
   (`issue #742 <https://github.com/platformio/platformio-core/issues/742>`_)
 * Stopped supporting Python 2.6
-
-------
-
-* Development platform `Atmel SAM <https://github.com/platformio/platform-atmelsam>`__
-
-  + Fixed missing analog ports for Adafruit Feather M0 Bluefruit
-    (`issue #2 <https://github.com/platformio/platform-atmelsam/issues/2>`__)
-
-* Development platform `Nordic nRF51 <https://github.com/platformio/platform-nordicnrf51>`__
-
-  + Added support for BBC micro:bit board
-    (`issue #709 <https://github.com/platformio/platformio-core/issues/709>`_)
-
-* Development platform `ST STM32 <https://github.com/platformio/platform-ststm32>`__
-
-  + Added support for BluePill F103C8 board
-    (`pull #2 <https://github.com/platformio/platform-ststm32/pull/2>`__)
-
-* Development platform `Teensy <https://github.com/platformio/platform-teensy>`__
-
-  + Updated Arduino Framework to v1.29
-    (`issue #2 <https://github.com/platformio/platform-teensy/issues/2>`__)
-
 
 PlatformIO 2.0
 --------------
@@ -1720,7 +1438,6 @@ PlatformIO 0.0
 * Added tools for *Raspberry Pi* platform
 * Added support for *Microduino* and *Raspduino* boards in
   `atmelavr <http://docs.platformio.org/page/platforms/atmelavr.html>`_ platform
-
 
 0.3.1 (2014-06-21)
 ~~~~~~~~~~~~~~~~~~

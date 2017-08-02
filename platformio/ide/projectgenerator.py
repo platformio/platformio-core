@@ -46,7 +46,7 @@ class ProjectGenerator(object):
 
     @util.memoized
     def get_project_env(self):
-        data = None
+        data = {}
         config = util.load_project_config(self.project_dir)
         for section in config.sections():
             if not section.startswith("env:"):

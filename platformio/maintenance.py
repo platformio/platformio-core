@@ -38,11 +38,10 @@ def in_silence(ctx=None):
     ctx = ctx or app.get_session_var("command_ctx")
     assert ctx
     ctx_args = ctx.args or []
-    conditions = [
+    return ctx_args and any([
         ctx.args[0] == "upgrade", "--json-output" in ctx_args,
         "--version" in ctx_args
-    ]
-    return ctx_args and any(conditions)
+    ])
 
 
 def on_platformio_start(ctx, force, caller):
@@ -234,6 +233,9 @@ def check_platformio_upgrade():
     interval = int(app.get_setting("check_platformio_interval")) * 3600 * 24
     if (time() - interval) < last_check.get("platformio_upgrade", 0):
         return
+
+    # Update PlatformIO's Core packages
+    update_core_packages(silent=True)
 
     last_check['platformio_upgrade'] = int(time())
     app.set_state_item("last_check", last_check)

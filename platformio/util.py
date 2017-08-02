@@ -200,8 +200,8 @@ def get_project_optional_dir(name, default=None):
     else:
         try:
             config = load_project_config()
-            if (config.has_section("platformio") and
-                    config.has_option("platformio", name)):
+            if (config.has_section("platformio")
+                    and config.has_option("platformio", name)):
                 data = config.get("platformio", name)
         except exception.NotPlatformIOProject:
             pass
@@ -325,6 +325,15 @@ def load_project_config(path=None):
     cp = ProjectConfig()
     cp.read(path)
     return cp
+
+
+def parse_conf_multi_values(items):
+    if not items:
+        return []
+    return [
+        item.strip() for item in items.split("\n" if "\n" in items else ", ")
+        if item.strip()
+    ]
 
 
 def change_filemtime(path, time):

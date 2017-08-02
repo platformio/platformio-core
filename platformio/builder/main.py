@@ -32,7 +32,7 @@ commonvars = Variables(None)
 commonvars.AddVariables(
     ("PLATFORM_MANIFEST",),
     ("BUILD_SCRIPT",),
-    ("EXTRA_SCRIPT",),
+    ("EXTRA_SCRIPTS",),
     ("PIOENV",),
     ("PIOTEST",),
     ("PIOPLATFORM",),
@@ -50,6 +50,7 @@ commonvars.AddVariables(
     ("LIB_DEPS",),
     ("LIB_IGNORE",),
     ("LIB_EXTRA_DIRS",),
+    ("LIB_ARCHIVE",),
 
     # board options
     ("BOARD",),
@@ -66,6 +67,11 @@ commonvars.AddVariables(
     ("UPLOAD_RESETMETHOD",)
 
 )  # yapf: disable
+
+MULTILINE_VARS = [
+    "EXTRA_SCRIPTS", "PIOFRAMEWORK", "BUILD_FLAGS", "SRC_BUILD_FLAGS",
+    "BUILD_UNFLAGS", "SRC_FILTER", "LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"
+]
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
@@ -110,8 +116,8 @@ env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 for k in commonvars.keys():
     if k in env:
         env[k] = base64.b64decode(env[k])
-        if "\n" in env[k]:
-            env[k] = [v.strip() for v in env[k].split("\n") if v.strip()]
+        if k in MULTILINE_VARS:
+            env[k] = util.parse_conf_multi_values(env[k])
 
 if env.GetOption('clean'):
     env.PioClean(env.subst("$BUILD_DIR"))
@@ -120,38 +126,30 @@ elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     print "Verbose mode can be enabled via `-v, --verbose` option"
 
 # Handle custom variables from system environment
-for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPT",
+for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPTS",
             "UPLOAD_PORT", "UPLOAD_FLAGS", "LIB_EXTRA_DIRS"):
     k = "PLATFORMIO_%s" % var
     if k not in environ:
         continue
-    if var in ("UPLOAD_PORT", "EXTRA_SCRIPT") or not env.get(var):
+    if var in ("UPLOAD_PORT", ):
         env[var] = environ.get(k)
-    elif isinstance(env[var], list):
-        env.Append(**{var: environ.get(k)})
-    else:
-        env[var] = "%s%s%s" % (environ.get(k), ", "
-                               if var == "LIB_EXTRA_DIRS" else " ", env[var])
-
-# Parse comma separated items
-for opt in ("PIOFRAMEWORK", "LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"):
-    if opt not in env or isinstance(env[opt], list):
         continue
-    env[opt] = [l.strip() for l in env[opt].split(", ") if l.strip()]
+    env.Append(**{var: util.parse_conf_multi_values(environ.get(k))})
 
 # Configure extra library source directories for LDF
 if util.get_project_optional_dir("lib_extra_dirs"):
-    items = util.get_project_optional_dir("lib_extra_dirs")
-    env.Prepend(LIBSOURCE_DIRS=[
-        l.strip() for l in items.split("\n" if "\n" in items else ", ")
-        if l.strip()
-    ])
+    env.Prepend(LIBSOURCE_DIRS=util.parse_conf_multi_values(
+        util.get_project_optional_dir("lib_extra_dirs")))
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
 
 env.LoadPioPlatform(commonvars)
 
 env.SConscriptChdir(0)
 env.SConsignFile(join("$PROJECTPIOENVS_DIR", ".sconsign.dblite"))
+
+for item in env.GetPreExtraScripts():
+    env.SConscript(item, exports="env")
+
 env.SConscript("$BUILD_SCRIPT")
 
 AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS + ["size"]))
@@ -160,8 +158,8 @@ AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS + ["size"]))
 if "UPLOAD_FLAGS" in env:
     env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
 
-if env.get("EXTRA_SCRIPT"):
-    env.SConscript(env.get("EXTRA_SCRIPT"), exports="env")
+for item in env.GetPostExtraScripts():
+    env.SConscript(item, exports="env")
 
 if "envdump" in COMMAND_LINE_TARGETS:
     print env.Dump()

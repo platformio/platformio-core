@@ -32,6 +32,10 @@ class MinitermException(PlatformioException):
     pass
 
 
+class UserSideException(PlatformioException):
+    pass
+
+
 class AbortedByUser(PlatformioException):
 
     MESSAGE = "Aborted by user"

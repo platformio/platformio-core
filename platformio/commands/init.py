@@ -123,13 +123,14 @@ def get_best_envname(project_dir, boards=None):
                                  "env_default").split(", ")[0].strip()
     if env_default:
         return env_default
+    section = None
     for section in config.sections():
         if not section.startswith("env:"):
             continue
         elif config.has_option(section, "board") and (not boards or config.get(
                 section, "board") in boards):
-            return section[4:]
-    return None
+            break
+    return section[4:] if section else None
 
 
 def init_base_project(project_dir):

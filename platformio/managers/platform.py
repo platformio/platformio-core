@@ -38,8 +38,8 @@ class PlatformManager(BasePkgManager):
                 "{0}://dl.platformio.org/platforms/manifest.json".format(
                     "https" if app.get_setting("enable_ssl") else "http")
             ]
-        BasePkgManager.__init__(self, package_dir or
-                                join(util.get_home_dir(), "platforms"),
+        BasePkgManager.__init__(self, package_dir
+                                or join(util.get_home_dir(), "platforms"),
                                 repositories)
 
     @property
@@ -144,8 +144,8 @@ class PlatformManager(BasePkgManager):
         for manifest in pm.get_installed():
             if manifest['name'] not in names:
                 continue
-            if (manifest['name'] not in deppkgs or
-                    manifest['version'] not in deppkgs[manifest['name']]):
+            if (manifest['name'] not in deppkgs
+                    or manifest['version'] not in deppkgs[manifest['name']]):
                 pm.uninstall(manifest['__pkg_dir'], trigger_event=False)
 
         self.cache_reset()
@@ -168,12 +168,12 @@ class PlatformManager(BasePkgManager):
 
     def board_config(self, id_, platform=None):
         for manifest in self.get_installed_boards():
-            if manifest['id'] == id_ and (not platform or
-                                          manifest['platform'] == platform):
+            if manifest['id'] == id_ and (not platform
+                                          or manifest['platform'] == platform):
                 return manifest
         for manifest in self.get_registered_boards():
-            if manifest['id'] == id_ and (not platform or
-                                          manifest['platform'] == platform):
+            if manifest['id'] == id_ and (not platform
+                                          or manifest['platform'] == platform):
                 return manifest
         raise exception.UnknownBoard(id_)
 
@@ -270,8 +270,8 @@ class PlatformPackagesMixin(object):
                 if _opts.get("type") == item:
                     candidate = _name
 
-            if (self.frameworks and item.startswith("framework-") and
-                    item[10:] in self.frameworks):
+            if (self.frameworks and item.startswith("framework-")
+                    and item[10:] in self.frameworks):
                 candidate = self.frameworks[item[10:]]['package']
 
             result.append(candidate)
@@ -498,8 +498,8 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
             config = PlatformBoardConfig(manifest_path)
             if "platform" in config and config.get("platform") != self.name:
                 return
-            elif ("platforms" in config and
-                  self.name not in config.get("platforms")):
+            elif ("platforms" in config
+                  and self.name not in config.get("platforms")):
                 return
             config.manifest['platform'] = self.name
             self._BOARDS_CACHE[board_id] = config
@@ -645,6 +645,7 @@ class PlatformBoardConfig(object):
             int(self._manifest.get("build", {}).get("f_cpu", "0L")[:-1]),
             "ram": self._manifest.get("upload", {}).get("maximum_ram_size", 0),
             "rom": self._manifest.get("upload", {}).get("maximum_size", 0),
+            "connectivity": self._manifest.get("connectivity"),
             "frameworks": self._manifest.get("frameworks"),
             "debug": self.get_debug_data(),
             "vendor": self._manifest['vendor'],

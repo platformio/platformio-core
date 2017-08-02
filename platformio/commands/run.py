@@ -77,10 +77,8 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
         env_default = None
         if config.has_option("platformio", "env_default"):
-            env_default = [
-                e.strip()
-                for e in config.get("platformio", "env_default").split(", ")
-            ]
+            env_default = util.parse_conf_multi_values(
+                config.get("platformio", "env_default"))
 
         results = []
         start_time = time()
@@ -90,8 +88,8 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
             envname = section[4:]
             skipenv = any([
-                environment and envname not in environment, not environment and
-                env_default and envname not in env_default
+                environment and envname not in environment, not environment
+                and env_default and envname not in env_default
             ])
             if skipenv:
                 results.append((envname, None))
@@ -130,24 +128,30 @@ class EnvironmentProcessor(object):
     KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
                      "board_f_cpu", "board_f_flash", "board_flash_mode",
                      "build_flags", "src_build_flags", "build_unflags",
-                     "src_filter", "extra_script", "targets", "upload_port",
+                     "src_filter", "extra_scripts", "targets", "upload_port",
                      "upload_protocol", "upload_speed", "upload_flags",
                      "upload_resetmethod", "lib_deps", "lib_ignore",
                      "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
-                     "piotest", "test_transport", "test_ignore", "test_port",
-                     "debug_tool", "debug_port", "debug_init_cmds",
-                     "debug_extra_cmds", "debug_server", "debug_init_break",
-                     "debug_load_cmd")
+                     "lib_archive", "piotest", "test_transport", "test_ignore",
+                     "test_port", "debug_tool", "debug_port",
+                     "debug_init_cmds", "debug_extra_cmds", "debug_server",
+                     "debug_init_break", "debug_load_cmd", "monitor_port",
+                     "monitor_baud", "monitor_rts", "monitor_dtr")
 
     IGNORE_BUILD_OPTIONS = ("test_transport", "test_filter", "test_ignore",
                             "test_port", "debug_tool", "debug_port",
                             "debug_init_cmds", "debug_extra_cmds",
                             "debug_server", "debug_init_break",
-                            "debug_load_cmd")
+                            "debug_load_cmd", "monitor_port", "monitor_baud",
+                            "monitor_rts", "monitor_dtr")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
-    RENAMED_OPTIONS = {"lib_use": "lib_deps", "lib_force": "lib_deps"}
+    RENAMED_OPTIONS = {
+        "lib_use": "lib_deps",
+        "lib_force": "lib_deps",
+        "extra_script": "extra_scripts"
+    }
 
     RENAMED_PLATFORMS = {"espressif": "espressif8266"}
 
@@ -176,13 +180,13 @@ class EnvironmentProcessor(object):
             self.options[k] = self.options[k].strip()
 
         if not self.silent:
-            click.echo("[%s] Processing %s (%s)" %
-                       (datetime.now().strftime("%c"),
-                        click.style(self.name, fg="cyan", bold=True),
-                        "; ".join([
-                            "%s: %s" % (k, v.replace("\n", ", "))
-                            for k, v in self.options.items()
-                        ])))
+            click.echo(
+                "[%s] Processing %s (%s)" %
+                (datetime.now().strftime("%c"),
+                 click.style(self.name, fg="cyan", bold=True), "; ".join([
+                     "%s: %s" % (k, ", ".join(util.parse_conf_multi_values(v)))
+                     for k, v in self.options.items()
+                 ])))
             click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
@@ -274,12 +278,10 @@ class EnvironmentProcessor(object):
                     if d.strip()
                 ], self.verbose)
             if "lib_deps" in self.options:
-                _autoinstall_libdeps(self.cmd_ctx, [
-                    d.strip()
-                    for d in self.options['lib_deps'].split(
-                        "\n" if "\n" in self.options['lib_deps'] else ", ")
-                    if d.strip()
-                ], self.verbose)
+                _autoinstall_libdeps(
+                    self.cmd_ctx,
+                    util.parse_conf_multi_values(self.options['lib_deps']),
+                    self.verbose)
 
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])
@@ -294,6 +296,8 @@ class EnvironmentProcessor(object):
 
 
 def _autoinstall_libdeps(ctx, libraries, verbose=False):
+    if not libraries:
+        return
     storage_dir = util.get_projectlibdeps_dir()
     ctx.obj = LibraryManager(storage_dir)
     if verbose:
@@ -318,8 +322,8 @@ def _clean_pioenvs_dir(pioenvs_dir):
     proj_hash = calculate_project_hash()
 
     # if project's config is modified
-    if (isdir(pioenvs_dir) and
-            getmtime(join(util.get_project_dir(), "platformio.ini")) >
+    if (isdir(pioenvs_dir)
+            and getmtime(join(util.get_project_dir(), "platformio.ini")) >
             getmtime(pioenvs_dir)):
         util.rmtree_(pioenvs_dir)
 

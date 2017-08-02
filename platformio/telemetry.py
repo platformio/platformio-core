@@ -92,12 +92,26 @@ class MeasurementProtocol(TelemetryBase):
         self['an'] = " ".join(dpdata)
 
     def _prefill_custom_data(self):
+
+        def _filter_args(items):
+            result = []
+            stop = False
+            for item in items:
+                item = str(item).lower()
+                result.append(item)
+                if stop:
+                    break
+                if item == "account":
+                    stop = True
+            return result
+
         caller_id = str(app.get_session_var("caller_id"))
         self['cd1'] = util.get_systype()
         self['cd2'] = "Python/%s %s" % (platform.python_version(),
                                         platform.platform())
-        self['cd4'] = 1 if (not util.is_ci() and
-                            (caller_id or not util.is_container())) else 0
+        self['cd3'] = " ".join(_filter_args(sys.argv[1:]))
+        self['cd4'] = 1 if (not util.is_ci()
+                            and (caller_id or not util.is_container())) else 0
         if caller_id:
             self['cd5'] = caller_id.lower()
 
@@ -109,7 +123,6 @@ class MeasurementProtocol(TelemetryBase):
                     return _arg
             return None
 
-        self['cd3'] = " ".join([str(s).lower() for s in sys.argv[1:]])
         if not app.get_session_var("command_ctx"):
             return
         ctx_args = app.get_session_var("command_ctx").args
@@ -301,12 +314,15 @@ def on_event(category, action, label=None, value=None, screen_name=None):
 
 
 def on_exception(e):
-    skip = any([
+    skip_conditions = [
         isinstance(e, cls)
         for cls in (IOError, exception.AbortedByUser,
-                    exception.NotGlobalLibDir, exception.InternetIsOffline)
-    ])
-    if skip:
+                    exception.NotGlobalLibDir, exception.InternetIsOffline,
+                    exception.NotPlatformIOProject,
+                    exception.UserSideException)
+    ]
+    skip_conditions.append("[API] Account: " in str(e))
+    if any(skip_conditions):
         return
     is_crash = any([
         not isinstance(e, exception.PlatformioException),

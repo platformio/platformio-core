@@ -48,6 +48,7 @@ def TouchSerialPort(env, port, baudrate):
         s.close()
     except:  # pylint: disable=W0702
         pass
+    sleep(0.4)  # DO NOT REMOVE THAT (required by SAM-BA based boards)
 
 
 def WaitForNewSerialPort(env, before):
@@ -115,8 +116,8 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             ]
             if any([isfile(p) for p in mbed_pages]):
                 return item['disk']
-            if (item['name'] and
-                    any([l in item['name'].lower() for l in msdlabels])):
+            if (item['name']
+                    and any([l in item['name'].lower() for l in msdlabels])):
                 return item['disk']
         return None
 

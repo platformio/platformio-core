@@ -285,16 +285,29 @@ def ProcessTest(env):
         join("$BUILD_DIR", "UnityTestLib"), get_core_package_dir("tool-unity"))
     env.Prepend(LIBS=[unitylib])
 
-    src_filter = None
+    src_filter = ["+<*.cpp>", "+<*.c>"]
     if "PIOTEST" in env:
-        src_filter = "+<output_export.cpp>"
-        src_filter += " +<%s%s>" % (env['PIOTEST'], sep)
+        src_filter.append("+<%s%s>" % (env['PIOTEST'], sep))
 
     return env.CollectBuildFiles(
         "$BUILDTEST_DIR",
         "$PROJECTTEST_DIR",
         src_filter=src_filter,
         duplicate=False)
+
+
+def GetPreExtraScripts(env):
+    return [
+        item[4:] for item in env.get("EXTRA_SCRIPTS", [])
+        if item.startswith("pre:")
+    ]
+
+
+def GetPostExtraScripts(env):
+    return [
+        item[5:] if item.startswith("post:") else item
+        for item in env.get("EXTRA_SCRIPTS", []) if not item.startswith("pre:")
+    ]
 
 
 def exists(_):
@@ -309,4 +322,6 @@ def generate(env):
     env.AddMethod(PioClean)
     env.AddMethod(ProcessDebug)
     env.AddMethod(ProcessTest)
+    env.AddMethod(GetPreExtraScripts)
+    env.AddMethod(GetPostExtraScripts)
     return env

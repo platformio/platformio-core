@@ -63,11 +63,11 @@ def BuildProgram(env):
     _append_pio_macros()
 
     # build dependent libs
-    deplibs = env.BuildDependentLibraries("$PROJECTSRC_DIR")
+    deplibs = env.BuildProjectLibraries()
 
     # append specified LD_SCRIPT
-    if ("LDSCRIPT_PATH" in env and
-            not any(["-Wl,-T" in f for f in env['LINKFLAGS']])):
+    if ("LDSCRIPT_PATH" in env
+            and not any(["-Wl,-T" in f for f in env['LINKFLAGS']])):
         env.Append(LINKFLAGS=['-Wl,-T"$LDSCRIPT_PATH"'])
 
     # enable "cyclic reference" for linker
@@ -79,7 +79,6 @@ def BuildProgram(env):
     env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
     env.Append(
-        CPPPATH=["$PROJECTSRC_DIR"],
         LIBS=deplibs,
         LIBPATH=["$BUILD_DIR"],
         PIOBUILDFILES=env.CollectBuildFiles(

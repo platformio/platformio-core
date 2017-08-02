@@ -95,7 +95,7 @@ Development Platforms
 * `ST STM32 <http://platformio.org/platforms/ststm32>`_
 * `Teensy <http://platformio.org/platforms/teensy>`_
 * `TI MSP430 <http://platformio.org/platforms/timsp430>`_
-* `TI TivaVA C <http://platformio.org/platforms/titiva>`_
+* `TI Tiva <http://platformio.org/platforms/titiva>`_
 * `WIZNet W7500 <http://platformio.org/platforms/wiznet7500>`_
 
 Frameworks

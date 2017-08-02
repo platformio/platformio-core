@@ -22,12 +22,14 @@ from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
     "pysite-pioplus": ">=0.3.0,<2",
-    "tool-pioplus": ">=0.9.0,<2",
+    "tool-pioplus": ">=0.9.1,<2",
     "tool-unity": "~1.20302.1",
     "tool-scons": "~3.20501.2"
 }
 
 PIOPLUS_AUTO_UPDATES_MAX = 100
+
+# pylint: disable=arguments-differ
 
 
 class CorePackageManager(PackageManager):
@@ -41,13 +43,12 @@ class CorePackageManager(PackageManager):
                 ("" if sys.version_info < (2, 7, 9) else "s")
             ])
 
-    def install(self, name, requirements=None, *args,
-                **kwargs):  # pylint: disable=arguments-differ
+    def install(self, name, requirements=None, *args, **kwargs):
         PackageManager.install(self, name, requirements, *args, **kwargs)
         self.cleanup_packages()
         return self.get_package_dir(name, requirements)
 
-    def update(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def update(self, *args, **kwargs):
         result = PackageManager.update(self, *args, **kwargs)
         self.cleanup_packages()
         return result
