@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.4.1 (2017-??-??)
+3.4.1 (2017-08-02)
 ~~~~~~~~~~~~~~~~~~
 
 * Pre/Post extra scripting for advanced control of PIO Build System
