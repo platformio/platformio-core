@@ -98,7 +98,7 @@ class Upgrader(object):
                             self._upgrade_to_3_0_0),
                            (semantic_version.Version("3.0.0-b.11"),
                             self._upgrade_to_3_0_0b11),
-                           (semantic_version.Version("3.4.0-a.9"),
+                           (semantic_version.Version("3.5.0-a.2"),
                             self._update_dev_platforms)]
 
     def run(self, ctx):
