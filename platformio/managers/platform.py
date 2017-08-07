@@ -113,20 +113,21 @@ class PlatformManager(BasePkgManager):
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         p = PlatformFactory.newPlatform(pkg_dir)
-        pkgs_before = pkgs_after = p.get_installed_packages().keys()
+        pkgs_before = p.get_installed_packages().keys()
 
+        missed_pkgs = set()
         if not only_packages:
             BasePkgManager.update(self, pkg_dir, requirements, only_check)
             p = PlatformFactory.newPlatform(pkg_dir)
-            pkgs_after = p.get_installed_packages().keys()
+            missed_pkgs = set(pkgs_before) & set(p.packages.keys())
+            missed_pkgs -= set(p.get_installed_packages().keys())
 
         p.update_packages(only_check)
         self.cleanup_packages(p.packages.keys())
 
-        pkgs_missed = set(pkgs_before) - set(pkgs_after)
-        if pkgs_missed:
+        if missed_pkgs:
             p.install_packages(
-                with_packages=pkgs_missed, skip_default_package=True)
+                with_packages=list(missed_pkgs), skip_default_package=True)
 
         return True
 
