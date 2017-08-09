@@ -112,7 +112,7 @@ def install_pip():
 
 def install_platformio():
     r = None
-    cmd = ["pip", "install", "-U", "platformio"]
+    cmd = ["python", "-m", "pip", "install", "-U", "platformio"]
     # cmd = [
     #     "pip", "install", "-U",
     #     "https://github.com/platformio/platformio-core/archive/develop.zip"
