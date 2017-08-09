@@ -92,6 +92,10 @@ def exec_python_cmd(args):
 
 
 def install_pip():
+    r = exec_python_cmd(["-m", "pip", "--version"])
+    if r['returncode'] == 0:
+        print r['out']
+        return
     try:
         from urllib2 import urlopen
     except ImportError:
@@ -112,9 +116,9 @@ def install_pip():
 
 def install_platformio():
     r = None
-    cmd = ["python", "-m", "pip", "install", "-U", "platformio"]
+    cmd = ["-m", "pip", "install", "-U", "platformio"]
     # cmd = [
-    #     "pip", "install", "-U",
+    #     "-m", "pip", "install", "-U",
     #     "https://github.com/platformio/platformio-core/archive/develop.zip"
     # ]
     try:
