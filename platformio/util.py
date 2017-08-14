@@ -429,19 +429,29 @@ def get_serialports(filter_hwid=False):
 def get_logicaldisks():
     disks = []
     if platform.system() == "Windows":
-        result = exec_command(
-            ["wmic", "logicaldisk", "get", "name,VolumeName"]).get("out", "")
-        disknamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
-        for line in result.split("\n"):
-            match = disknamere.match(line.strip())
-            if not match:
-                continue
-            disks.append({"disk": match.group(1), "name": match.group(2)})
+        try:
+            result = exec_command(
+                ["wmic", "logicaldisk", "get", "name,VolumeName"]).get(
+                    "out", "")
+            disknamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
+            for line in result.split("\n"):
+                match = disknamere.match(line.strip())
+                if not match:
+                    continue
+                disks.append({"disk": match.group(1), "name": match.group(2)})
+            return disks
+        except WindowsError:  # pylint: disable=undefined-variable
+            pass
+        # try "fsutil"
+        result = exec_command(["fsutil", "fsinfo", "drives"]).get("out", "")
+        for disk in re.findall(r"[A-Z]:\\", result):
+            disks.append({"disk": disk[:-1], "name": disk})
+        return disks
     else:
         result = exec_command(["df"]).get("out")
-        disknamere = re.compile(r"\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
+        disknamere = re.compile(r"^/.+\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
         for line in result.split("\n"):
-            match = disknamere.search(line.strip())
+            match = disknamere.match(line.strip())
             if not match:
                 continue
             disks.append({
