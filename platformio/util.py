@@ -23,12 +23,13 @@ import stat
 import subprocess
 import sys
 from contextlib import contextmanager
+from functools import wraps
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
 from shutil import rmtree
 from threading import Thread
-from time import sleep
+from time import sleep, time
 
 import click
 import requests
@@ -147,6 +148,25 @@ class memoized(object):
 
     def _reset(self):
         self.cache = {}
+
+
+class throttle(object):
+
+    def __init__(self, limit):
+        self.limit = limit  # milliseconds
+        self.last = 0
+
+    def __call__(self, fn):
+
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            diff = int(round((time() - self.last) * 1000))
+            if diff < self.limit:
+                sleep((self.limit - diff) * 0.001)
+            self.last = time()
+            return fn(*args, **kwargs)
+
+        return wrapper
 
 
 def singleton(cls):
@@ -336,8 +356,8 @@ def parse_conf_multi_values(items):
     ]
 
 
-def change_filemtime(path, time):
-    os.utime(path, (time, time))
+def change_filemtime(path, mtime):
+    os.utime(path, (mtime, mtime))
 
 
 def is_ci():
@@ -471,6 +491,7 @@ def _api_request_session():
     return requests.Session()
 
 
+@throttle(500)
 def _get_api_result(
         url,  # pylint: disable=too-many-branches
         params=None,
