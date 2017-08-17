@@ -132,8 +132,8 @@ class EnvironmentProcessor(object):
                      "upload_protocol", "upload_speed", "upload_flags",
                      "upload_resetmethod", "lib_deps", "lib_ignore",
                      "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
-                     "lib_archive", "piotest", "test_transport", "test_ignore",
-                     "test_port", "debug_tool", "debug_port",
+                     "lib_archive", "piotest", "test_transport", "test_filter",
+                     "test_ignore", "test_port", "debug_tool", "debug_port",
                      "debug_init_cmds", "debug_extra_cmds", "debug_server",
                      "debug_init_break", "debug_load_cmd", "monitor_port",
                      "monitor_baud", "monitor_rts", "monitor_dtr")
