@@ -152,8 +152,8 @@ class memoized(object):
 
 class throttle(object):
 
-    def __init__(self, limit):
-        self.limit = limit  # milliseconds
+    def __init__(self, threshhold):
+        self.threshhold = threshhold  # milliseconds
         self.last = 0
 
     def __call__(self, fn):
@@ -161,8 +161,8 @@ class throttle(object):
         @wraps(fn)
         def wrapper(*args, **kwargs):
             diff = int(round((time() - self.last) * 1000))
-            if diff < self.limit:
-                sleep((self.limit - diff) * 0.001)
+            if diff < self.threshhold:
+                sleep((self.threshhold - diff) * 0.001)
             self.last = time()
             return fn(*args, **kwargs)
 

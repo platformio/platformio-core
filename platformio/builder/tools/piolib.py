@@ -712,7 +712,7 @@ def BuildProjectLibraries(env):
         print "Library Dependency Graph"
         print_deps_tree(project)
     else:
-        print "Project does not have dependencies"
+        print "No dependencies"
 
     return project.build()
 
