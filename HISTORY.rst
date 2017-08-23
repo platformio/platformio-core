@@ -111,7 +111,7 @@ PlatformIO 3.0
   command
   (`issue #430 <https://github.com/platformio/platformio-core/issues/430>`_)
 * List supported frameworks, SDKs with a new
-  `pio platform frameworks <http://docs.platformio.org/page/userguide/platforms/cmd_frameworks.htmll>`__ command
+  `pio platform frameworks <http://docs.platformio.org/page/userguide/platforms/cmd_frameworks.html>`__ command
 * Visual Studio Code extension for PlatformIO
   (`issue #619 <https://github.com/platformio/platformio-core/issues/619>`_)
 * Added new options ``--no-reset``, ``--monitor-rts`` and ``--monitor-dtr``
@@ -229,7 +229,7 @@ PlatformIO 3.0
 
 * `PlatformIO Plus <https://pioplus.com>`__
 
-  + Local and Embedded `Unit Testing <http://docs.platformio.org/page/unit_testing.html>`__
+  + Local and Embedded `Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
     (`issue #408 <https://github.com/platformio/platformio-core/issues/408>`_,
     `issue #519 <https://github.com/platformio/platformio-core/issues/519>`_)
 
@@ -900,7 +900,7 @@ PlatformIO 2.0
   `windows_x86 <http://docs.platformio.org/page/platforms/windows_x86.html>`__
   development platforms
   (`issue #263 <https://github.com/platformio/platformio-core/issues/263>`_)
-* Added `PlatformIO Demo <http://docs.platformio.org/page/demo.html>`_
+* Added `PlatformIO Demo <http://docs.platformio.org/page/userguide/demo.html>`_
   page to documentation
 * Simplified `installation <http://docs.platformio.org/page/installation.html>`__
   process of PlatformIO
@@ -1259,7 +1259,7 @@ PlatformIO 1.0
   (`issue #83 <https://github.com/platformio/platformio-core/issues/83>`_)
 * Added ``--json-output`` option to
   `platformio boards <http://docs.platformio.org/page/userguide/cmd_boards.html>`__
-  and `platformio search <http://docs.platformio.org/page/userguide/cmd_search.html>`__
+  and `platformio search <http://docs.platformio.org/page/userguide/platforms/cmd_search.html>`__
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/platformio/platformio-core/issues/42>`_)
 * Allowed to ignore some libs from *Library Dependency Finder* via
@@ -1300,7 +1300,7 @@ PlatformIO 0.0
 ~~~~~~~~~~~~~~~~~~~
 
 * Added ``--json-output`` option to
-  `platformio list <http://docs.platformio.org/page/userguide/cmd_list.html>`__,
+  `platformio list <http://docs.platformio.org/page/userguide/platforms/cmd_list.htmll>`__,
   `platformio serialports list <http://docs.platformio.org/page/userguide/cmd_serialports.html>`__ and
   `platformio lib list <http://docs.platformio.org/page/userguide/lib/cmd_list.html>`__
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
@@ -1344,14 +1344,14 @@ PlatformIO 0.0
 
 * Ask user to install platform (when it hasn't been installed yet) within
   `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
-  and `platformio show <http://docs.platformio.org/page/userguide/cmd_show.html>`_ commands
+  and `platformio show <http://docs.platformio.org/page/userguide/platforms/cmd_show.html>`_ commands
 * Improved main `documentation <http://docs.platformio.org>`_
 * Fixed "*OSError: [Errno 2] No such file or directory*" within
   `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
   command when PlatformIO isn't installed properly
-* Fixed example for `Eclipse IDE with Tiva board <https://github.com/platformio/platformio-examples/tree/develop/ide/eclipse>`_
+* Fixed example for Eclipse IDE with Tiva board
   (`issue #32 <https://github.com/platformio/platformio-core/pull/32>`_)
-* Upgraded `Eclipse Project Examples <https://github.com/platformio/platformio-examples/tree/develop/ide/eclipse>`_
+* Upgraded Eclipse Project Examples
   to latest *Luna* and *PlatformIO* releases
 
 0.9.0 (2014-12-01)
@@ -1440,7 +1440,7 @@ PlatformIO 0.0
 * Implemented (especially for `SmartAnthill <http://docs.smartanthill.ikravets.com/>`_)
   `platformio run -t uploadlazy <http://docs.platformio.org/page/userguide/cmd_run.html>`_
   target (no dependencies to framework libs, ELF and etc.)
-* Allowed to skip default packages via `platformio install --skip-default-package <http://docs.platformio.org/page/userguide/cmd_install.html#cmdoption--skip-default>`_
+* Allowed to skip default packages via `platformio install --skip-default-package <http://docs.platformio.org/page/userguide/platforms/cmd_install.html#cmdoption-platformio-platform-install-skip-default>`_
   option
 * Added tools for *Raspberry Pi* platform
 * Added support for *Microduino* and *Raspduino* boards in
@@ -1449,7 +1449,7 @@ PlatformIO 0.0
 0.3.1 (2014-06-21)
 ~~~~~~~~~~~~~~~~~~
 
-* Fixed auto-installer for Windows OS (bug with %PATH% customisations)
+* Fixed auto-installer for Windows OS (bug with %PATH% custom installation)
 
 
 0.3.0 (2014-06-21)
