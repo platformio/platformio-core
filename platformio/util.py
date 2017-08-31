@@ -458,14 +458,17 @@ def get_logicaldisks():
                 match = disknamere.match(line.strip())
                 if not match:
                     continue
-                disks.append({"disk": match.group(1), "name": match.group(2)})
+                disks.append({
+                    "disk": match.group(1) + "\\",
+                    "name": match.group(2)
+                })
             return disks
         except WindowsError:  # pylint: disable=undefined-variable
             pass
         # try "fsutil"
         result = exec_command(["fsutil", "fsinfo", "drives"]).get("out", "")
         for disk in re.findall(r"[A-Z]:\\", result):
-            disks.append({"disk": disk[:-1], "name": disk})
+            disks.append({"disk": disk, "name": None})
         return disks
     else:
         result = exec_command(["df"]).get("out")
