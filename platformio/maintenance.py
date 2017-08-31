@@ -34,33 +34,10 @@ from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
 
 
-def in_silence(ctx=None):
-    ctx = ctx or app.get_session_var("command_ctx")
-    assert ctx
-    ctx_args = ctx.args or []
-    return ctx_args and any([
-        ctx.args[0] == "upgrade", "--json-output" in ctx_args,
-        "--version" in ctx_args
-    ])
-
-
 def on_platformio_start(ctx, force, caller):
-    if not caller:
-        if getenv("PLATFORMIO_CALLER"):
-            caller = getenv("PLATFORMIO_CALLER")
-        elif getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
-            caller = "vscode"
-        elif util.is_container():
-            if getenv("C9_UID"):
-                caller = "C9"
-            elif getenv("USER") == "cabox":
-                caller = "CA"
-            elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
-                caller = "Che"
-
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
-    app.set_session_var("caller_id", caller)
+    set_caller(caller)
     telemetry.on_command()
 
     if not in_silence(ctx):
@@ -84,6 +61,32 @@ def on_platformio_end(ctx, result):  # pylint: disable=W0613
 
 def on_platformio_exception(e):
     telemetry.on_exception(e)
+
+
+def in_silence(ctx=None):
+    ctx = ctx or app.get_session_var("command_ctx")
+    assert ctx
+    ctx_args = ctx.args or []
+    return ctx_args and any([
+        ctx.args[0] == "upgrade", "--json-output" in ctx_args,
+        "--version" in ctx_args
+    ])
+
+
+def set_caller(caller=None):
+    if not caller:
+        if getenv("PLATFORMIO_CALLER"):
+            caller = getenv("PLATFORMIO_CALLER")
+        elif getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
+            caller = "vscode"
+        elif util.is_container():
+            if getenv("C9_UID"):
+                caller = "C9"
+            elif getenv("USER") == "cabox":
+                caller = "CA"
+            elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
+                caller = "Che"
+    app.set_session_var("caller_id", caller)
 
 
 class Upgrader(object):
