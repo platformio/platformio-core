@@ -101,17 +101,18 @@ def main():
             except:  # pylint: disable=bare-except
                 pass
 
-        # Handle IOError issue with colorama/VSCode
-        click_echo_origin = click.echo
+        # Handle IOError issue with VSCode's Terminal (Windows)
+        click_echo_origin = [click.echo, click.secho]
 
-        def _echo(*args, **kwargs):
+        def _safe_echo(origin, *args, **kwargs):
             try:
-                click_echo_origin(*args, **kwargs)
+                click_echo_origin[origin](*args, **kwargs)
             except IOError:
                 (sys.stderr.write if kwargs.get("err") else
                  sys.stdout.write)("%s\n" % (args[0] if args else ""))
 
-        click.echo = _echo
+        click.echo = lambda *args, **kwargs: _safe_echo(0, *args, **kwargs)
+        click.secho = lambda *args, **kwargs: _safe_echo(1, *args, **kwargs)
 
         cli(None, None, None)
     except Exception as e:  # pylint: disable=W0703
