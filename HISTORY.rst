@@ -10,6 +10,7 @@ PlatformIO 3.0
 * PIO Home
 * Fixed "Super-Quick (Mac / Linux)" installer script
   (`issue #1017 <https://github.com/platformio/platformio-core/issues/1017>`_)
+* Fixed issue with "IOError" in VSCode when processing a project
 
 3.4.1 (2017-08-02)
 ~~~~~~~~~~~~~~~~~~
