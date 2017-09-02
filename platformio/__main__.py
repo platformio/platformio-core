@@ -80,40 +80,43 @@ def process_result(ctx, result, force, caller):  # pylint: disable=W0613
     maintenance.on_platformio_end(ctx, result)
 
 
-def main():
-    try:
-        if "cygwin" in system().lower():
-            raise exception.CygwinEnvDetected()
+def configure():
+    if "cygwin" in system().lower():
+        raise exception.CygwinEnvDetected()
 
-        # https://urllib3.readthedocs.org
-        # /en/latest/security.html#insecureplatformwarning
+    # https://urllib3.readthedocs.org
+    # /en/latest/security.html#insecureplatformwarning
+    try:
+        import urllib3
+        urllib3.disable_warnings()
+    except (AttributeError, ImportError):
+        pass
+
+    # handle PLATFORMIO_FORCE_COLOR
+    if str(os.getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
         try:
-            import urllib3
-            urllib3.disable_warnings()
-        except (AttributeError, ImportError):
+            # pylint: disable=protected-access
+            click._compat.isatty = lambda stream: True
+        except:  # pylint: disable=bare-except
             pass
 
-        # handle PLATFORMIO_FORCE_COLOR
-        if str(os.getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
-            try:
-                # pylint: disable=protected-access
-                click._compat.isatty = lambda stream: True
-            except:  # pylint: disable=bare-except
-                pass
+    # Handle IOError issue with VSCode's Terminal (Windows)
+    click_echo_origin = [click.echo, click.secho]
 
-        # Handle IOError issue with VSCode's Terminal (Windows)
-        click_echo_origin = [click.echo, click.secho]
+    def _safe_echo(origin, *args, **kwargs):
+        try:
+            click_echo_origin[origin](*args, **kwargs)
+        except IOError:
+            (sys.stderr.write if kwargs.get("err") else
+             sys.stdout.write)("%s\n" % (args[0] if args else ""))
 
-        def _safe_echo(origin, *args, **kwargs):
-            try:
-                click_echo_origin[origin](*args, **kwargs)
-            except IOError:
-                (sys.stderr.write if kwargs.get("err") else
-                 sys.stdout.write)("%s\n" % (args[0] if args else ""))
+    click.echo = lambda *args, **kwargs: _safe_echo(0, *args, **kwargs)
+    click.secho = lambda *args, **kwargs: _safe_echo(1, *args, **kwargs)
 
-        click.echo = lambda *args, **kwargs: _safe_echo(0, *args, **kwargs)
-        click.secho = lambda *args, **kwargs: _safe_echo(1, *args, **kwargs)
 
+def main():
+    try:
+        configure()
         cli(None, None, None)
     except Exception as e:  # pylint: disable=W0703
         if not isinstance(e, exception.ReturnErrorCode):
