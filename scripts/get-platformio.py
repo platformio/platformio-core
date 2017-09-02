@@ -125,7 +125,7 @@ def install_platformio():
         r = exec_python_cmd(cmd)
         assert r['returncode'] == 0
     except AssertionError:
-        cmd.insert(1, "--no-cache-dir")
+        cmd.insert(2, "--no-cache-dir")
         r = exec_python_cmd(cmd)
     if r:
         print_exec_result(r)
