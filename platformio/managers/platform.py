@@ -15,7 +15,6 @@
 import base64
 import os
 import re
-import sys
 from imp import load_source
 from multiprocessing import cpu_count
 from os.path import basename, dirname, isdir, isfile, join
@@ -395,10 +394,7 @@ class PlatformRunMixin(object):
         fg = (None, "yellow", "red")[level - 1]
         if level == 1 and "is up to date" in line:
             fg = "green"
-        try:
-            click.secho(line, fg=fg, err=level > 1)
-        except IOError:
-            (sys.stderr.write if level > 1 else sys.stdout.write)(line + "\n")
+        click.secho(line, fg=fg, err=level > 1)
 
     @staticmethod
     def get_job_nums():
