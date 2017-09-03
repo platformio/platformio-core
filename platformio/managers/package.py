@@ -556,8 +556,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         assert isdir(pkg_dir)
         latest = None
         manifest = self.load_manifest(pkg_dir)
-        # skip a fixed package to a specific version
-        if "@" in pkg_dir and "__src_url" not in manifest:
+        # skip fixed package to a specific version
+        if "@" in pkg_dir and "__src_url" not in manifest and not requirements:
             return None
 
         if "__src_url" in manifest:
@@ -721,7 +721,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         elif latest is False:
             click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
         else:
-            click.echo("[%s]" % (click.style("Skip", fg="yellow")))
+            click.echo("[%s]" % (click.style("Fixed", fg="yellow")))
 
         if only_check or not latest:
             return
