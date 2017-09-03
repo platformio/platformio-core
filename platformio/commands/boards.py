@@ -16,7 +16,6 @@ import json
 
 import click
 
-from platformio.exception import APIRequestError, InternetIsOffline
 from platformio.managers.platform import PlatformManager
 
 
@@ -80,27 +79,12 @@ def print_boards(boards):
 
 
 def _get_boards(installed=False):
-    boards = PlatformManager().get_installed_boards()
-    if not installed:
-        know_boards = ["%s:%s" % (b['platform'], b['id']) for b in boards]
-        try:
-            for board in PlatformManager().get_registered_boards():
-                key = "%s:%s" % (board['platform'], board['id'])
-                if key not in know_boards:
-                    boards.append(board)
-        except InternetIsOffline:
-            pass
-    return sorted(boards, key=lambda b: b['name'])
-
+    pm = PlatformManager()
+    return pm.get_installed_boards() if installed else pm.get_all_boards()
 
 def _print_boards_json(query, installed=False):
     result = []
-    try:
-        boards = _get_boards(installed)
-    except APIRequestError:
-        if not installed:
-            boards = _get_boards(True)
-    for board in boards:
+    for board in _get_boards(installed):
         if query:
             search_data = "%s %s" % (board['id'], json.dumps(board).lower())
             if query.lower() not in search_data.lower():

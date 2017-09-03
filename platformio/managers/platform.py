@@ -167,6 +167,18 @@ class PlatformManager(BasePkgManager):
     def get_registered_boards():
         return util.get_api_result("/boards", cache_valid="30d")
 
+    def get_all_boards(self):
+        boards = self.get_installed_boards()
+        know_boards = ["%s:%s" % (b['platform'], b['id']) for b in boards]
+        try:
+            for board in self.get_registered_boards():
+                key = "%s:%s" % (board['platform'], board['id'])
+                if key not in know_boards:
+                    boards.append(board)
+        except (exception.APIRequestError, exception.InternetIsOffline):
+            pass
+        return sorted(boards, key=lambda b: b['name'])
+
     def board_config(self, id_, platform=None):
         for manifest in self.get_installed_boards():
             if manifest['id'] == id_ and (not platform
