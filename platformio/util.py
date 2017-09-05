@@ -504,7 +504,7 @@ def _get_api_result(
 
     result = None
     r = None
-    disable_ssl_check = sys.version_info < (2, 7, 9)
+    verify_ssl = sys.version_info >= (2, 7, 9)
 
     headers = get_request_defheaders()
     if not url.startswith("http"):
@@ -520,14 +520,14 @@ def _get_api_result(
                 data=data,
                 headers=headers,
                 auth=auth,
-                verify=not disable_ssl_check)
+                verify=verify_ssl)
         else:
             r = _api_request_session().get(
                 url,
                 params=params,
                 headers=headers,
                 auth=auth,
-                verify=not disable_ssl_check)
+                verify=verify_ssl)
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
