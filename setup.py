@@ -22,6 +22,7 @@ install_requires = [
     "bottle<0.13",
     "click>=5,<6",
     "colorama",
+    "configobj",
     "lockfile>=0.9.1,<0.13",
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",

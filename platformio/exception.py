@@ -127,6 +127,28 @@ class NotPlatformIOProject(PlatformioException):
         "please use `platformio init` command"
 
 
+class UnknownProjectTemplate(PlatformioException):
+
+    MESSAGE = "Unknown Project Template '{0}'"
+
+
+class UnknownProjectTplVar(PlatformioException):
+
+    MESSAGE = "Unknown Project Template Variable '{0}'"
+
+
+class IncompatbileProjectTemplate(PlatformioException):
+
+    MESSAGE = "Project Template '{0}' is not compatible with {1} '{2}'. "\
+              "Valid candidates: {3}"
+
+
+class InvalidProjectTplVar(PlatformioException):
+
+    MESSAGE = "Project Template Variable: invalid value `{0}` for '{1}' "\
+              "(type={2}, options={3})"
+
+
 class UndefinedEnvPlatform(PlatformioException):
 
     MESSAGE = "Please specify platform for '{0}' environment"

@@ -12,22 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=too-many-arguments,too-many-locals, too-many-branches
-
-from os import getcwd, makedirs
-from os.path import isdir, isfile, join
-from shutil import copyfile
+from os import getcwd
 
 import click
 
-from platformio import exception, util
-from platformio.commands.platform import \
-    platform_install as cli_platform_install
-from platformio.ide.projectgenerator import ProjectGenerator
+from platformio import exception
 from platformio.managers.platform import PlatformManager
+from platformio.project.generator import ProjectGenerator
 
 
-def validate_boards(ctx, param, value):  # pylint: disable=W0613
+def validate_boards(ctx, param, value):  # pylint: disable=unused-argument
     pm = PlatformManager()
     for id_ in value:
         try:
@@ -53,21 +47,27 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
         resolve_path=True))
 @click.option(
     "-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
+@click.option("-p", "--platform")
+@click.option("-f", "--framework")
+@click.option("--ide", type=click.Choice(ProjectGenerator.get_supported_ide()))
+@click.option("--vcs", type=click.Choice(ProjectGenerator.get_supported_vcs()))
+@click.option("--ci", type=click.Choice(ProjectGenerator.get_supported_ci()))
 @click.option(
-    "--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
-@click.option("-O", "--project-option", multiple=True)
+    "-L", "--list-templates", help="List available source code templates")
+@click.option("-t", "--template")
+@click.option("-T", "--template-var", multiple=True)
 @click.option("--env-prefix", default="")
+@click.option("-E", "--env-option", multiple=True)
+@click.option(
+    "-O",
+    "--project-option",
+    multiple=True,
+    help="Deprecated. Use `--env-option` instead")
 @click.option("-s", "--silent", is_flag=True)
-@click.pass_context
-def cli(
-        ctx,  # pylint: disable=R0913
-        project_dir,
-        board,
-        ide,
-        project_option,
-        env_prefix,
+def cli(  # pylint: disable=too-many-arguments,too-many-locals
+        project_dir, board, platform, framework, ide, vcs, ci, list_templates,
+        template, template_var, env_prefix, env_option, project_option,
         silent):
-
     if not silent:
         if project_dir == getcwd():
             click.secho(
@@ -89,18 +89,37 @@ def cli(
         click.echo("%s - Put here project specific (private) libraries" %
                    click.style("lib", fg="cyan"))
 
-    init_base_project(project_dir)
-
-    if board:
-        fill_project_envs(ctx, project_dir, board, project_option, env_prefix,
-                          ide is not None)
+    pg = ProjectGenerator(
+        project_dir,
+        dict(
+            boards=list(board),
+            platform=platform,
+            framework=framework,
+            ide=ide,
+            template=template,
+            template_vars=list(template_var),
+            env_prefix=env_prefix,
+            env_options=list(env_option) + list(project_option),
+            vcs=vcs,
+            ci=ci))
 
     if ide:
-        env_name = get_best_envname(project_dir, board)
-        if not env_name:
-            raise exception.BoardNotDefined()
-        pg = ProjectGenerator(project_dir, ide, env_name)
-        pg.generate()
+        # install development platform before (show progress)
+        pm = PlatformManager()
+        for name in pg.project_config.get_env_names():
+            platform = pg.project_config.env_get(name, "platform")
+            framework = pg.project_config.env_get(name, "framework")
+            if not platform:
+                continue
+            if framework:
+                pm.install(
+                    platform,
+                    with_packages=["framework-%s" % framework],
+                    silent=True)
+            else:
+                pm.install(platform, silent=True)
+
+    pg.generate()
 
     if not silent:
         click.secho(
@@ -113,239 +132,3 @@ def cli(
             "files)\n"
             "`platformio run --help` - additional information",
             fg="green")
-
-
-def get_best_envname(project_dir, boards=None):
-    config = util.load_project_config(project_dir)
-    env_default = None
-    if config.has_option("platformio", "env_default"):
-        env_default = config.get("platformio",
-                                 "env_default").split(", ")[0].strip()
-    if env_default:
-        return env_default
-    section = None
-    for section in config.sections():
-        if not section.startswith("env:"):
-            continue
-        elif config.has_option(section, "board") and (not boards or config.get(
-                section, "board") in boards):
-            break
-    return section[4:] if section else None
-
-
-def init_base_project(project_dir):
-    if not util.is_platformio_project(project_dir):
-        copyfile(
-            join(util.get_source_dir(), "projectconftpl.ini"),
-            join(project_dir, "platformio.ini"))
-
-    lib_dir = join(project_dir, "lib")
-    src_dir = join(project_dir, "src")
-    config = util.load_project_config(project_dir)
-    if config.has_option("platformio", "src_dir"):
-        src_dir = join(project_dir, config.get("platformio", "src_dir"))
-
-    for d in (src_dir, lib_dir):
-        if not isdir(d):
-            makedirs(d)
-
-    init_lib_readme(lib_dir)
-    init_ci_conf(project_dir)
-    init_cvs_ignore(project_dir)
-
-
-def init_lib_readme(lib_dir):
-    if isfile(join(lib_dir, "readme.txt")):
-        return
-    with open(join(lib_dir, "readme.txt"), "w") as f:
-        f.write("""
-This directory is intended for the project specific (private) libraries.
-PlatformIO will compile them to static libraries and link to executable file.
-
-The source code of each library should be placed in separate directory, like
-"lib/private_lib/[here are source files]".
-
-For example, see how can be organized `Foo` and `Bar` libraries:
-
-|--lib
-|  |--Bar
-|  |  |--docs
-|  |  |--examples
-|  |  |--src
-|  |     |- Bar.c
-|  |     |- Bar.h
-|  |--Foo
-|  |  |- Foo.c
-|  |  |- Foo.h
-|  |- readme.txt --> THIS FILE
-|- platformio.ini
-|--src
-   |- main.c
-
-Then in `src/main.c` you should use:
-
-#include <Foo.h>
-#include <Bar.h>
-
-// rest H/C/CPP code
-
-PlatformIO will find your libraries automatically, configure preprocessor's
-include paths and build them.
-
-More information about PlatformIO Library Dependency Finder
-- http://docs.platformio.org/page/librarymanager/ldf.html
-""")
-
-
-def init_ci_conf(project_dir):
-    if isfile(join(project_dir, ".travis.yml")):
-        return
-    with open(join(project_dir, ".travis.yml"), "w") as f:
-        f.write("""# Continuous Integration (CI) is the practice, in software
-# engineering, of merging all developer working copies with a shared mainline
-# several times a day < http://docs.platformio.org/page/ci/index.html >
-#
-# Documentation:
-#
-# * Travis CI Embedded Builds with PlatformIO
-#   < https://docs.travis-ci.com/user/integration/platformio/ >
-#
-# * PlatformIO integration with Travis CI
-#   < http://docs.platformio.org/page/ci/travis.html >
-#
-# * User Guide for `platformio ci` command
-#   < http://docs.platformio.org/page/userguide/cmd_ci.html >
-#
-#
-# Please choice one of the following templates (proposed below) and uncomment
-# it (remove "# " before each line) or use own configuration according to the
-# Travis CI documentation (see above).
-#
-
-
-#
-# Template #1: General project. Test it using existing `platformio.ini`.
-#
-
-# language: python
-# python:
-#     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
-# install:
-#     - pip install -U platformio
-#
-# script:
-#     - platformio run
-
-
-#
-# Template #2: The project is intended to by used as a library with examples
-#
-
-# language: python
-# python:
-#     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
-# env:
-#     - PLATFORMIO_CI_SRC=path/to/test/file.c
-#     - PLATFORMIO_CI_SRC=examples/file.ino
-#     - PLATFORMIO_CI_SRC=path/to/test/directory
-#
-# install:
-#     - pip install -U platformio
-#
-# script:
-#     - platformio ci --lib="." --board=ID_1 --board=ID_2 --board=ID_N
-""")
-
-
-def init_cvs_ignore(project_dir):
-    ignore_path = join(project_dir, ".gitignore")
-    default = [".pioenvs\n", ".piolibdeps\n"]
-    current = []
-    modified = False
-    if isfile(ignore_path):
-        with open(ignore_path) as fp:
-            current = fp.readlines()
-        if current and not current[-1].endswith("\n"):
-            current[-1] += "\n"
-    for d in default:
-        if d not in current:
-            modified = True
-            current.append(d)
-    if not modified:
-        return
-    with open(ignore_path, "w") as fp:
-        fp.writelines(current)
-
-
-def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
-                      force_download):
-    content = []
-    used_boards = []
-    used_platforms = []
-
-    config = util.load_project_config(project_dir)
-    for section in config.sections():
-        cond = [
-            section.startswith("env:"),
-            config.has_option(section, "board")
-        ]
-        if all(cond):
-            used_boards.append(config.get(section, "board"))
-
-    pm = PlatformManager()
-    for id_ in board_ids:
-        board_config = pm.board_config(id_)
-        used_platforms.append(board_config['platform'])
-        if id_ in used_boards:
-            continue
-        used_boards.append(id_)
-
-        envopts = {"platform": board_config['platform'], "board": id_}
-        # find default framework for board
-        frameworks = board_config.get("frameworks")
-        if frameworks:
-            envopts['framework'] = frameworks[0]
-
-        for item in project_option:
-            if "=" not in item:
-                continue
-            _name, _value = item.split("=", 1)
-            envopts[_name.strip()] = _value.strip()
-
-        content.append("")
-        content.append("[env:%s%s]" % (env_prefix, id_))
-        for name, value in envopts.items():
-            content.append("%s = %s" % (name, value))
-
-    if force_download and used_platforms:
-        _install_dependent_platforms(ctx, used_platforms)
-
-    if not content:
-        return
-
-    with open(join(project_dir, "platformio.ini"), "a") as f:
-        content.append("")
-        f.write("\n".join(content))
-
-
-def _install_dependent_platforms(ctx, platforms):
-    installed_platforms = [
-        p['name'] for p in PlatformManager().get_installed()
-    ]
-    if set(platforms) <= set(installed_platforms):
-        return
-    ctx.invoke(
-        cli_platform_install,
-        platforms=list(set(platforms) - set(installed_platforms)))

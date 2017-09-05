@@ -1,3 +1,0 @@
-.pioenvs
-.piolibdeps
-CMakeListsPrivate.txt

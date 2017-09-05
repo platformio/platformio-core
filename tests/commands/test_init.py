@@ -20,6 +20,10 @@ from platformio import exception, util
 from platformio.commands.boards import cli as cmd_boards
 from platformio.commands.init import cli as cmd_init
 
+# test dynamic ${env.VAR} in option value
+# test incompatible framework/platform for a board
+# test dynamic vars in INI
+
 
 def validate_pioproject(pioproject_dir):
     pioconf_path = join(pioproject_dir, "platformio.ini")
