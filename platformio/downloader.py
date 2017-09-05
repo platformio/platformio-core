@@ -15,6 +15,7 @@
 from email.utils import parsedate_tz
 from math import ceil
 from os.path import getsize, join
+from sys import version_info
 from time import mktime
 
 import click
@@ -30,9 +31,13 @@ class FileDownloader(object):
     CHUNK_SIZE = 1024
 
     def __init__(self, url, dest_dir=None):
+        self._request = None
         # make connection
         self._request = requests.get(
-            url, stream=True, headers=util.get_request_defheaders())
+            url,
+            stream=True,
+            headers=util.get_request_defheaders(),
+            verify=version_info >= (2, 7, 9))
         if self._request.status_code != 200:
             raise FDUnrecognizedStatusCode(self._request.status_code, url)
 
