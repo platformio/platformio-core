@@ -15,7 +15,7 @@
 import os
 import subprocess
 import sys
-from os.path import join
+from os.path import dirname, join
 
 from platformio import __version__, exception, util
 from platformio.managers.package import PackageManager
@@ -100,7 +100,10 @@ def pioplus_call(args, **kwargs):
                                                   sys.version.split()[0]))
 
     pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
-    os.environ['PYTHONEXEPATH'] = util.get_pythonexe_path()
+    pythonexe_path = util.get_pythonexe_path()
+    os.environ['PATH'] = (os.pathsep).join(
+        [dirname(pythonexe_path), os.environ['PATH']])
+    os.environ['PYTHONEXEPATH'] = pythonexe_path
     os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("pysite-pioplus")
     util.copy_pythonpath_to_osenv()
     code = subprocess.call([pioplus_path] + args, **kwargs)
