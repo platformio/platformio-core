@@ -82,6 +82,7 @@ def _get_boards(installed=False):
     pm = PlatformManager()
     return pm.get_installed_boards() if installed else pm.get_all_boards()
 
+
 def _print_boards_json(query, installed=False):
     result = []
     for board in _get_boards(installed):

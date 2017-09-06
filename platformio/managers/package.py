@@ -30,7 +30,7 @@ from platformio.downloader import FileDownloader
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-return-statements
 
 
 class PackageRepoIterator(object):
@@ -690,11 +690,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 label=manifest['name'])
         return True
 
-    def update(  # pylint: disable=too-many-return-statements
-            self,
-            package,
-            requirements=None,
-            only_check=False):
+    def update(self, package, requirements=None, only_check=False):
         if isdir(package):
             pkg_dir = package
         else:
