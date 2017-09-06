@@ -553,7 +553,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         `False` - package is up-to-date
         `String` - a found latest version
         """
-        assert isdir(pkg_dir)
+        if not isdir(pkg_dir):
+            return None
         latest = None
         manifest = self.load_manifest(pkg_dir)
         # skip fixed package to a specific version

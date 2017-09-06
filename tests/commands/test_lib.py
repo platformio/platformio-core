@@ -184,7 +184,7 @@ def test_global_lib_update(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
     validate_cliresult(result)
-    assert result.output.count("[Skip]") == 5
+    assert result.output.count("[Fixed]") == 5
     assert result.output.count("[Up-to-date]") == 10
     assert "Uninstalling ArduinoJson @ 5.7.3" in result.output
     assert "Uninstalling IRremoteESP8266 @ fee16e880b" in result.output
