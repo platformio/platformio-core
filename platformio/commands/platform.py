@@ -47,7 +47,7 @@ def _print_platforms(platforms):
 
 
 def _get_registry_platforms():
-    platforms = util.get_api_result("/platforms", cache_valid="30d")
+    platforms = util.get_api_result("/platforms", cache_valid="7d")
     pm = PlatformManager()
     for platform in platforms or []:
         platform['versions'] = pm.get_all_repo_versions(platform['name'])
@@ -188,7 +188,7 @@ def platform_search(query, json_output):
 @click.option("--json-output", is_flag=True)
 def platform_frameworks(query, json_output):
     frameworks = []
-    for framework in util.get_api_result("/frameworks", cache_valid="30d"):
+    for framework in util.get_api_result("/frameworks", cache_valid="7d"):
         if query == "all":
             query = ""
         search_data = json.dumps(framework)

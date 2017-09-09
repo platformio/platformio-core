@@ -193,7 +193,7 @@ class LibraryManager(BasePkgManager):
             util.get_api_result(
                 "/lib/info/%d" % self.get_pkg_id_by_name(
                     name, requirements, silent=silent),
-                cache_valid="1d")['versions'], requirements)
+                cache_valid="1h")['versions'], requirements)
         return item['name'] if item else None
 
     def get_pkg_id_by_name(self,
@@ -315,7 +315,7 @@ class LibraryManager(BasePkgManager):
 
         lib_info = None
         result = util.get_api_result(
-            "/v2/lib/search", dict(query=" ".join(query)), cache_valid="3d")
+            "/v2/lib/search", dict(query=" ".join(query)), cache_valid="1h")
         if result['total'] == 1:
             lib_info = result['items'][0]
         elif result['total'] > 1:
