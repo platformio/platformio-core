@@ -227,7 +227,7 @@ class EnvironmentProcessor(object):
                 v = self.RENAMED_PLATFORMS[v]
 
             # warn about unknown options
-            if k not in self.KNOWN_OPTIONS:
+            if k not in self.KNOWN_OPTIONS and not k.startswith("custom_"):
                 click.secho(
                     "Detected non-PlatformIO `%s` option in `[env:%s]` section"
                     % (k, self.name),
