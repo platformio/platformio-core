@@ -25,8 +25,8 @@ def test_pkg_input_parser():
         [("PkgName", "!=1.2.3,<2.0"), ("PkgName", "!=1.2.3,<2.0", None)],
         ["PkgName@1.2.3", ("PkgName", "1.2.3", None)],
         [("PkgName@1.2.3", "1.2.5"), ("PkgName@1.2.3", "1.2.5", None)],
-        ["id:13", ("id:13", None, None)],
-        ["id:13@~1.2.3", ("id:13", "~1.2.3", None)],
+        ["id=13", ("id=13", None, None)],
+        ["id=13@~1.2.3", ("id=13", "~1.2.3", None)],
         [
             util.get_home_dir(),
             (".platformio", None, "file://" + util.get_home_dir())

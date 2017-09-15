@@ -210,18 +210,19 @@ class PlatformFactory(object):
 
     @classmethod
     def newPlatform(cls, name, requirements=None):
+        pm = PlatformManager()
         platform_dir = None
         if isdir(name):
             platform_dir = name
-            name = PlatformManager().load_manifest(platform_dir)['name']
+            name = pm.load_manifest(platform_dir)['name']
         elif name.endswith("platform.json") and isfile(name):
             platform_dir = dirname(name)
             name = util.load_json(name)['name']
         else:
-            if not requirements and "@" in name:
-                name, requirements = name.rsplit("@", 1)
-            platform_dir = PlatformManager().get_package_dir(
-                name, requirements)
+            name, requirements, url = pm.parse_pkg_input(name, requirements)
+            platform_dir = pm.get_package_dir(name, requirements, url)
+            if platform_dir:
+                name = pm.load_manifest(platform_dir)['name']
 
         if not platform_dir:
             raise exception.UnknownPlatform(name if not requirements else
