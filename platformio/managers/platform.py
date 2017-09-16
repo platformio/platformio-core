@@ -662,7 +662,7 @@ class PlatformBoardConfig(object):
             "fcpu":
             int(
                 re.sub(r"[^\d]+", "",
-                       self._manifest.get("build", {}).get("f_cpu", ""))),
+                       self._manifest.get("build", {}).get("f_cpu", "0L"))),
             "ram":
             self._manifest.get("upload", {}).get("maximum_ram_size", 0),
             "rom":
