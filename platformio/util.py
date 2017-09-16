@@ -18,7 +18,6 @@ import json
 import os
 import platform
 import re
-import socket
 import stat
 import subprocess
 import sys
@@ -582,12 +581,10 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
         "Please try later.")
 
 
-def internet_on(timeout=3):
-    socket.setdefaulttimeout(timeout)
-    for host in ("dl.bintray.com", "dl.platformio.org"):
+def internet_on():
+    for url in ("http://dl.bintray.com", "http://dl.platformio.org"):
         try:
-            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host,
-                                                                       80))
+            requests.get(url, timeout=3)
             return True
         except:  # pylint: disable=bare-except
             pass

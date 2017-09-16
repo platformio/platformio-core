@@ -11,6 +11,8 @@ PlatformIO 3.0
 * Fixed "Super-Quick (Mac / Linux)" installer script
   (`issue #1017 <https://github.com/platformio/platformio-core/issues/1017>`_)
 * Fixed issue with "IOError" in VSCode when processing a project
+* Fixed platforms, packages, and libraries updating behind proxy
+  (`issue #1061 <https://github.com/platformio/platformio-core/issues/1061>`_)
 
 3.4.1 (2017-08-02)
 ~~~~~~~~~~~~~~~~~~
