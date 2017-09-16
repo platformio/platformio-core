@@ -651,19 +651,32 @@ class PlatformBoardConfig(object):
 
     def get_brief_data(self):
         return {
-            "id": self.id,
-            "name": self._manifest['name'],
-            "platform": self._manifest.get("platform"),
-            "mcu": self._manifest.get("build", {}).get("mcu", "").upper(),
+            "id":
+            self.id,
+            "name":
+            self._manifest['name'],
+            "platform":
+            self._manifest.get("platform"),
+            "mcu":
+            self._manifest.get("build", {}).get("mcu", "").upper(),
             "fcpu":
-            int(self._manifest.get("build", {}).get("f_cpu", "0L")[:-1]),
-            "ram": self._manifest.get("upload", {}).get("maximum_ram_size", 0),
-            "rom": self._manifest.get("upload", {}).get("maximum_size", 0),
-            "connectivity": self._manifest.get("connectivity"),
-            "frameworks": self._manifest.get("frameworks"),
-            "debug": self.get_debug_data(),
-            "vendor": self._manifest['vendor'],
-            "url": self._manifest['url']
+            int(
+                re.sub(r"[^\d]+", "",
+                       self._manifest.get("build", {}).get("f_cpu", ""))),
+            "ram":
+            self._manifest.get("upload", {}).get("maximum_ram_size", 0),
+            "rom":
+            self._manifest.get("upload", {}).get("maximum_size", 0),
+            "connectivity":
+            self._manifest.get("connectivity"),
+            "frameworks":
+            self._manifest.get("frameworks"),
+            "debug":
+            self.get_debug_data(),
+            "vendor":
+            self._manifest['vendor'],
+            "url":
+            self._manifest['url']
         }
 
     def get_debug_data(self):
