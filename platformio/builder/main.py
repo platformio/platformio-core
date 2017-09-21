@@ -16,7 +16,7 @@ import base64
 import json
 import sys
 from os import environ
-from os.path import join
+from os.path import expanduser, join
 from time import time
 
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
@@ -141,6 +141,9 @@ if util.get_project_optional_dir("lib_extra_dirs"):
     env.Prepend(LIBSOURCE_DIRS=util.parse_conf_multi_values(
         util.get_project_optional_dir("lib_extra_dirs")))
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
+env['LIBSOURCE_DIRS'] = [
+    expanduser(d) if d.startswith("~") else d for d in env['LIBSOURCE_DIRS']
+]
 
 env.LoadPioPlatform(commonvars)
 
