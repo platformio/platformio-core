@@ -71,7 +71,10 @@ class LibraryManager(BasePkgManager):
             del manifest['sentence']
 
         if "author" in manifest:
-            manifest['authors'] = [{"name": manifest['author']}]
+            if isinstance(manifest['author'], dict):
+                manifest['authors'] = [manifest['author']]
+            else:
+                manifest['authors'] = [{"name": manifest['author']}]
             del manifest['author']
 
         if "authors" in manifest and not isinstance(manifest['authors'], list):
