@@ -54,11 +54,11 @@ def test_install_unknown_from_registry(clirunner, validate_cliresult,
 def test_install_known_version(clirunner, validate_cliresult,
                                isolated_pio_home):
     result = clirunner.invoke(cli_platform.platform_install, [
-        "atmelavr@1.1.0", "--skip-default-package", "--with-package",
+        "atmelavr@1.2.0", "--skip-default-package", "--with-package",
         "tool-avrdude"
     ])
     validate_cliresult(result)
-    assert "atmelavr @ 1.1.0" in result.output
+    assert "atmelavr @ 1.2.0" in result.output
     assert "Installing tool-avrdude @" in result.output
     assert len(isolated_pio_home.join("packages").listdir()) == 1
 
@@ -102,7 +102,7 @@ def test_update_check(clirunner, validate_cliresult, isolated_pio_home):
 def test_update_raw(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cli_platform.platform_update)
     validate_cliresult(result)
-    assert "Uninstalling atmelavr @ 1.1.0:" in result.output
+    assert "Uninstalling atmelavr @ 1.2.0:" in result.output
     assert "PlatformManager: Installing atmelavr @" in result.output
     assert len(isolated_pio_home.join("packages").listdir()) == 1
 
