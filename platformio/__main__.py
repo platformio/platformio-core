@@ -118,7 +118,7 @@ def main():
     try:
         configure()
         cli(None, None, None)
-    except Exception as e:  # pylint: disable=W0703
+    except Exception as e:  # pylint: disable=broad-except
         if not isinstance(e, exception.ReturnErrorCode):
             maintenance.on_platformio_exception(e)
             error_str = "Error: "

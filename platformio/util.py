@@ -627,8 +627,13 @@ def pepver_to_semver(pepver):
 def rmtree_(path):
 
     def _onerror(_, name, __):
-        os.chmod(name, stat.S_IWRITE)
-        os.remove(name)
+        try:
+            os.chmod(name, stat.S_IWRITE)
+            os.remove(name)
+        except Exception as e:  # pylint: disable=broad-except
+            click.secho(
+                "Please manually remove file `%s`" % name, fg="red", err=True)
+            raise e
 
     return rmtree(path, onerror=_onerror)
 
