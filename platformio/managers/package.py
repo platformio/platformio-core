@@ -187,8 +187,8 @@ class PkgInstallerMixin(object):
 
     @staticmethod
     def unpack(source_path, dest_dir):
-        fu = FileUnpacker(source_path, dest_dir)
-        return fu.start()
+        with FileUnpacker(source_path) as fu:
+            return fu.unpack(dest_dir)
 
     @staticmethod
     def get_install_dirname(manifest):
