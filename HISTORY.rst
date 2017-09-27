@@ -8,6 +8,8 @@ PlatformIO 3.0
 ~~~~~~~~~~~~~~~~~~
 
 * PIO Home
+* Depend on development platform using VSC URL (Git, Mercurial and Subversion)
+  in `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__
 * Fixed "Super-Quick (Mac / Linux)" installer script
   (`issue #1017 <https://github.com/platformio/platformio-core/issues/1017>`_)
 * Fixed issue with "IOError" in VSCode when processing a project
