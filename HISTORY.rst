@@ -15,6 +15,8 @@ PlatformIO 3.0
 * Fixed issue with "IOError" in VSCode when processing a project
 * Fixed platforms, packages, and libraries updating behind proxy
   (`issue #1061 <https://github.com/platformio/platformio-core/issues/1061>`_)
+* Fixed missing toolchain include paths for project generator
+  (`issue #1154 <https://github.com/platformio/platformio-core/issues/1154>`_)
 
 3.4.1 (2017-08-02)
 ~~~~~~~~~~~~~~~~~~
@@ -22,7 +24,7 @@ PlatformIO 3.0
 * Pre/Post extra scripting for advanced control of PIO Build System
   (`issue #891 <https://github.com/platformio/platformio-core/issues/891>`_)
 * New `lib_archive <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-archive>`_
-  option to control library archiving and linking behaviour
+  option to control library archiving and linking behavior
   (`issue #993 <https://github.com/platformio/platformio-core/issues/993>`_)
 * Add "inc" folder automatically to CPPPATH when "src" is available (works for project and library)
   (`issue #1003 <https://github.com/platformio/platformio-core/issues/1003>`_)

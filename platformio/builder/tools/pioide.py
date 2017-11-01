@@ -41,6 +41,8 @@ def dump_includes(env):
         toolchain_dir = util.glob_escape(p.get_package_dir(name))
         toolchain_incglobs = [
             join(toolchain_dir, "*", "include*"),
+            join(toolchain_dir, "*", "include", "c++", "*"),
+            join(toolchain_dir, "*", "include", "c++", "*", "*-*-*"),
             join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
         ]
         for g in toolchain_incglobs:

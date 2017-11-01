@@ -15,7 +15,6 @@
 import atexit
 import platform
 import Queue
-import sys
 import threading
 from collections import deque
 from os import getenv
@@ -109,7 +108,7 @@ class MeasurementProtocol(TelemetryBase):
         self['cd1'] = util.get_systype()
         self['cd2'] = "Python/%s %s" % (platform.python_version(),
                                         platform.platform())
-        self['cd3'] = " ".join(_filter_args(sys.argv[1:]))
+        # self['cd3'] = " ".join(_filter_args(sys.argv[1:]))
         self['cd4'] = 1 if (not util.is_ci()
                             and (caller_id or not util.is_container())) else 0
         if caller_id:
