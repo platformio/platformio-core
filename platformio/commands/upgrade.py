@@ -87,8 +87,8 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
                     err=True)
                 raise exception.ReturnErrorCode(1)
             else:
-                raise exception.UpgradeError(
-                    "\n".join([str(cmd), r['out'], r['err']]))
+                raise exception.UpgradeError("\n".join(
+                    [str(cmd), r['out'], r['err']]))
 
 
 def get_latest_version():

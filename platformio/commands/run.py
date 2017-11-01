@@ -278,10 +278,10 @@ class EnvironmentProcessor(object):
                     if d.strip()
                 ], self.verbose)
             if "lib_deps" in self.options:
-                _autoinstall_libdeps(
-                    self.cmd_ctx,
-                    util.parse_conf_multi_values(self.options['lib_deps']),
-                    self.verbose)
+                _autoinstall_libdeps(self.cmd_ctx,
+                                     util.parse_conf_multi_values(
+                                         self.options['lib_deps']),
+                                     self.verbose)
 
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])
@@ -323,8 +323,8 @@ def _clean_pioenvs_dir(pioenvs_dir):
 
     # if project's config is modified
     if (isdir(pioenvs_dir)
-            and getmtime(join(util.get_project_dir(), "platformio.ini")) >
-            getmtime(pioenvs_dir)):
+            and getmtime(join(util.get_project_dir(),
+                              "platformio.ini")) > getmtime(pioenvs_dir)):
         util.rmtree_(pioenvs_dir)
 
     # check project structure

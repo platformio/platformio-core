@@ -108,8 +108,8 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
     def _look_for_mbed_disk():
         msdlabels = ("mbed", "nucleo", "frdm", "microbit")
         for item in util.get_logicaldisks():
-            if item['disk'].startswith(
-                    "/net") or not _is_match_pattern(item['disk']):
+            if item['disk'].startswith("/net") or not _is_match_pattern(
+                    item['disk']):
                 continue
             mbed_pages = [
                 join(item['disk'], n) for n in ("mbed.htm", "mbed.html")

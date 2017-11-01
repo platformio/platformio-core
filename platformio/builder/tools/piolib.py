@@ -237,8 +237,10 @@ class LibBuilderBase(object):
                 self.env.SConscriptChdir(1)
                 self.env.SConscript(
                     realpath(self.extra_script),
-                    exports={"env": self.env,
-                             "pio_lib_builder": self})
+                    exports={
+                        "env": self.env,
+                        "pio_lib_builder": self
+                    })
 
     def _process_dependencies(self):
         if not self.dependencies:

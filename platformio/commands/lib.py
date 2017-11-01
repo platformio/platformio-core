@@ -234,8 +234,8 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         for item in result['items']:
             print_lib_item(item)
 
-        if (int(result['page']) * int(result['perpage']) >=
-                int(result['total'])):
+        if (int(result['page']) * int(result['perpage']) >= int(
+                result['total'])):
             break
 
         if noninteractive:
@@ -438,8 +438,8 @@ def lib_stats(json_output):
             printitem_tpl.format(
                 name=click.style(name, fg="cyan"),
                 url=click.style(
-                    "http://platformio.org/lib/search?query=" + quote(
-                        "keyword:%s" % name),
+                    "http://platformio.org/lib/search?query=" +
+                    quote("keyword:%s" % name),
                     fg="blue")))
 
     for key in ("updated", "added"):

@@ -32,8 +32,8 @@ def settings_get(name):
     click.echo(
         list_tpl.format(
             name=click.style("Name", fg="cyan"),
-            value=(click.style("Value", fg="green") + click.style(
-                " [Default]", fg="yellow")),
+            value=(click.style("Value", fg="green") +
+                   click.style(" [Default]", fg="yellow")),
             description="Description"))
     click.echo("-" * terminal_width)
 
