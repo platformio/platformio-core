@@ -18,7 +18,6 @@ import json
 import os
 import re
 import shutil
-import sys
 from os.path import basename, getsize, isdir, isfile, islink, join
 from tempfile import mkdtemp
 
