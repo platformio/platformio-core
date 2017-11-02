@@ -21,7 +21,6 @@ import re
 import stat
 import subprocess
 import sys
-from contextlib import contextmanager
 from functools import wraps
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
@@ -180,12 +179,8 @@ def singleton(cls):
     return get_instance
 
 
-@contextmanager
-def capture_stdout(output):
-    stdout = sys.stdout
-    sys.stdout = output
-    yield
-    sys.stdout = stdout
+def path_to_unicode(path):
+    return path.decode(sys.getfilesystemencoding()).encode("utf-8")
 
 
 def load_json(file_path):

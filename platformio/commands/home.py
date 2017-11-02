@@ -20,8 +20,12 @@ from platformio.managers.core import pioplus_call
 
 
 @click.command("home", short_help="PIO Home")
+@click.option("--port", type=int, default=8008, help="HTTP port, default=8008")
 @click.option(
-    "--port", "-p", type=int, default=8008, help="HTTP port, default=8008")
+    "--host",
+    default="127.0.0.1",
+    help="HTTP host, default=127.0.0.1. "
+    "You can open PIO Home for inbound connections with --host=0.0.0.0")
 @click.option("--no-open", is_flag=True)
 def cli(*args, **kwargs):  # pylint: disable=unused-argument
     pioplus_call(sys.argv[1:])

@@ -15,7 +15,7 @@
 from email.utils import parsedate_tz
 from math import ceil
 from os.path import getsize, join
-from sys import version_info
+from sys import getfilesystemencoding, version_info
 from time import mktime
 
 import click
@@ -53,7 +53,8 @@ class FileDownloader(object):
         self._progressbar = None
         self._destination = self._fname
         if dest_dir:
-            self.set_destination(join(dest_dir, self._fname))
+            self.set_destination(
+                join(dest_dir.decode(getfilesystemencoding()), self._fname))
 
     def set_destination(self, destination):
         self._destination = destination

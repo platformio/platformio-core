@@ -18,6 +18,7 @@ import json
 import os
 import re
 import shutil
+import sys
 from os.path import basename, getsize, isdir, isfile, islink, join
 from tempfile import mkdtemp
 
@@ -195,7 +196,7 @@ class PkgInstallerMixin(object):
         name = re.sub(r"[^\da-z\_\-\. ]", "_", manifest['name'], flags=re.I)
         if "id" in manifest:
             name += "_ID%d" % manifest['id']
-        return name
+        return str(name)
 
     def get_src_manifest_path(self, pkg_dir):
         if not isdir(pkg_dir):
@@ -258,7 +259,7 @@ class PkgInstallerMixin(object):
         if "version" not in manifest:
             manifest['version'] = "0.0.0"
 
-        manifest['__pkg_dir'] = pkg_dir
+        manifest['__pkg_dir'] = util.path_to_unicode(pkg_dir)
         self.cache_set(cache_key, manifest)
         return manifest
 

@@ -170,7 +170,8 @@ if "envdump" in COMMAND_LINE_TARGETS:
 
 if "idedata" in COMMAND_LINE_TARGETS:
     try:
-        print "\n%s\n" % json.dumps(env.DumpIDEData())
+        print "\n%s\n" % util.path_to_unicode(
+            json.dumps(env.DumpIDEData(), ensure_ascii=False))
         env.Exit(0)
     except UnicodeDecodeError:
         sys.stderr.write(
