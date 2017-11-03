@@ -15,6 +15,7 @@
 import sys
 
 import click
+import requests
 
 from platformio.managers.core import pioplus_call
 
@@ -29,3 +30,13 @@ from platformio.managers.core import pioplus_call
 @click.option("--no-open", is_flag=True)
 def cli(*args, **kwargs):  # pylint: disable=unused-argument
     pioplus_call(sys.argv[1:])
+
+
+def shutdown_servers():
+    port = 8010
+    while port < 9000:
+        try:
+            requests.get("http://127.0.0.1:%d?__shutdown__=1" % port)
+            port += 1
+        except:  # pylint: disable=bare-except
+            return
