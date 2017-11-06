@@ -512,8 +512,8 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
             config = PlatformBoardConfig(manifest_path)
             if "platform" in config and config.get("platform") != self.name:
                 return
-            elif ("platforms" in config
-                  and self.name not in config.get("platforms")):
+            elif "platforms" in config \
+                    and self.name not in config.get("platforms"):
                 return
             config.manifest['platform'] = self.name
             self._BOARDS_CACHE[board_id] = config
