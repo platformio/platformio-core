@@ -8,6 +8,7 @@ PlatformIO 3.0
 ~~~~~~~~~~~~~~~~~~
 
 * PIO Home
+* Integration with `Jenkins CI <http://docs.platformio.org/en/latest/ci/jenkins.html>`_
 * Depend on development platform using VSC URL (Git, Mercurial and Subversion)
   in `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__
 * Fixed "Super-Quick (Mac / Linux)" installer script
