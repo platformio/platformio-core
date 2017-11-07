@@ -613,8 +613,8 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
     items = []
     compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
-    verbose = (int(ARGUMENTS.get("PIOVERBOSE", 0))
-               and not env.GetOption('clean'))
+    verbose = int(ARGUMENTS.get("PIOVERBOSE",
+                                0)) and not env.GetOption('clean')
 
     def _check_lib_builder(lb):
         if lb.name in env.get("LIB_IGNORE", []):
