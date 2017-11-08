@@ -116,20 +116,24 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             ]
             if any([isfile(p) for p in mbed_pages]):
                 return item['disk']
-            if (item['name']
-                    and any([l in item['name'].lower() for l in msdlabels])):
+            if item['name'] \
+                    and any([l in item['name'].lower() for l in msdlabels]):
                 return item['disk']
         return None
 
     def _look_for_serial_port():
         port = None
         board_hwids = []
+        upload_protocol = env.subst("$UPLOAD_PROTOCOL")
         if "BOARD" in env and "build.hwids" in env.BoardConfig():
             board_hwids = env.BoardConfig().get("build.hwids")
         for item in util.get_serialports(filter_hwid=True):
             if not _is_match_pattern(item['port']):
                 continue
             port = item['port']
+            if upload_protocol.startswith("blackmagic") \
+                    and "GDB" in item['description']:
+                return port
             for hwid in board_hwids:
                 hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
                 if hwid_str in item['hwid']:
@@ -140,7 +144,8 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         print env.subst("Use manually specified: $UPLOAD_PORT")
         return
 
-    if "mbed" in env.subst("$PIOFRAMEWORK"):
+    if "mbed" in env.subst("$PIOFRAMEWORK") \
+            and not env.subst("$UPLOAD_PROTOCOL"):
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
         if (system() == "Linux" and not any([
