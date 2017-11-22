@@ -499,8 +499,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             url_marker = "://"
 
         req_conditions = [
-            not requirements,
             "@" in text,
+            not requirements,
             not url_marker.startswith("git")
         ]  # yapf: disable
         if all(req_conditions):

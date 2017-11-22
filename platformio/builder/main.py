@@ -138,8 +138,9 @@ for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPTS",
 
 # Configure extra library source directories for LDF
 if util.get_project_optional_dir("lib_extra_dirs"):
-    env.Prepend(LIBSOURCE_DIRS=util.parse_conf_multi_values(
-        util.get_project_optional_dir("lib_extra_dirs")))
+    env.Prepend(
+        LIBSOURCE_DIRS=util.parse_conf_multi_values(
+            util.get_project_optional_dir("lib_extra_dirs")))
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
 env['LIBSOURCE_DIRS'] = [
     expanduser(d) if d.startswith("~") else d for d in env['LIBSOURCE_DIRS']

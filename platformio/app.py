@@ -354,7 +354,8 @@ def get_cid():
             except:  # pylint: disable=bare-except
                 pass
         cid = str(
-            uuid.UUID(bytes=hashlib.md5(str(_uid if _uid else uuid.getnode()))
-                      .digest()))
+            uuid.UUID(
+                bytes=hashlib.md5(str(_uid if _uid else uuid.getnode()))
+                .digest()))
         set_state_item("cid", cid)
     return cid

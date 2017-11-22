@@ -180,13 +180,14 @@ class EnvironmentProcessor(object):
             self.options[k] = self.options[k].strip()
 
         if not self.silent:
-            click.echo(
-                "[%s] Processing %s (%s)" %
-                (datetime.now().strftime("%c"),
-                 click.style(self.name, fg="cyan", bold=True), "; ".join([
-                     "%s: %s" % (k, ", ".join(util.parse_conf_multi_values(v)))
-                     for k, v in self.options.items()
-                 ])))
+            click.echo("[%s] Processing %s (%s)" %
+                       (datetime.now().strftime("%c"),
+                        click.style(self.name, fg="cyan", bold=True),
+                        "; ".join([
+                            "%s: %s" %
+                            (k, ", ".join(util.parse_conf_multi_values(v)))
+                            for k, v in self.options.items()
+                        ])))
             click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
