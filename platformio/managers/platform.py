@@ -265,6 +265,8 @@ class PlatformPackagesMixin(object):
                   not (skip_default_package or opts.get("optional", False))):
                 if self.is_valid_requirements(version):
                     self.pm.install(name, version, silent=silent)
+                elif version.startswith("git@"):
+                    self.pm.install(version, silent=silent)
                 else:
                     requirements = None
                     if "@" in version:
@@ -294,7 +296,7 @@ class PlatformPackagesMixin(object):
     def update_packages(self, only_check=False):
         for name, manifest in self.get_installed_packages().items():
             version = self.packages[name].get("version", "")
-            if "@" in version:
+            if "@" in version and not version.startswith("git@"):
                 _, version = version.rsplit("@", 1)
             self.pm.update(manifest['__pkg_dir'], version, only_check)
 
@@ -309,7 +311,7 @@ class PlatformPackagesMixin(object):
     def are_outdated_packages(self):
         for name, manifest in self.get_installed_packages().items():
             version = self.packages[name].get("version", "")
-            if "@" in version:
+            if "@" in version and not version.startswith("git@"):
                 _, version = version.rsplit("@", 1)
             if self.pm.outdated(manifest['__pkg_dir'], version):
                 return True
@@ -329,11 +331,11 @@ class PlatformPackagesMixin(object):
 
     @staticmethod
     def is_valid_requirements(requirements):
-        return requirements and "://" not in requirements
+        return requirements and ":" not in requirements
 
     def _parse_pkg_input(self, name, version):
         requirements = None
-        if "@" in version:
+        if "@" in version and not version.startswith("git@"):
             version, requirements = version.rsplit("@", 1)
         return self.pm.parse_pkg_input("%s=%s" % (name, version), requirements)
 
