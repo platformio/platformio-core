@@ -242,8 +242,7 @@ class LibraryManager(BasePkgManager):
             interactive=False):
         pkg_dir = None
         try:
-            _name, _requirements, _url = self.parse_pkg_input(
-                name, requirements)
+            _name, _requirements, _url = self.parse_pkg_uri(name, requirements)
             if not _url:
                 name = "id=%d" % self.get_pkg_id_by_name(
                     _name,

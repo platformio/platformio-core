@@ -490,51 +490,59 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         click.echo("%s: %s" % (self.__class__.__name__, message), nl=nl)
 
     @staticmethod
-    def parse_pkg_input(  # pylint: disable=too-many-branches
+    def parse_pkg_uri(  # pylint: disable=too-many-branches
             text, requirements=None):
         text = str(text)
-        # git@github.com:user/package.git
-        url_marker = text[:4]
-        if url_marker not in ("git@", "git+") or ":" not in text:
-            url_marker = "://"
+        name, url = None, None
 
+        # Parse requirements
         req_conditions = [
-            "@" in text,
-            not requirements,
-            not url_marker.startswith("git")
-        ]  # yapf: disable
+            "@" in text, not requirements, "://" not in text
+            or text.rfind("/") < text.rfind("@")
+        ]
         if all(req_conditions):
             text, requirements = text.rsplit("@", 1)
+
+        # Handle PIO Library Registry ID
         if text.isdigit():
             text = "id=" + text
+        # Parse custom name
+        elif "=" in text and not text.startswith("id="):
+            name, text = text.split("=", 1)
 
-        name, url = (None, text)
-        if "=" in text and not text.startswith("id="):
-            name, url = text.split("=", 1)
+        # Parse URL
+        # if valid URL with scheme vcs+protocol://
+        if "+" in text and text.find("+") < text.find("://"):
+            url = text
+        elif "/" in text or "\\" in text:
+            git_conditions = [
+                # Handle GitHub URL (https://github.com/user/package)
+                text.startswith("https://github.com/") and not text.endswith(
+                    (".zip", ".tar.gz")),
+                text.startswith("http")
+                and (text.split("#", 1)[0]
+                     if "#" in text else text).endswith(".git")
+            ]
+            hg_conditions = [
+                # Handle Developer Mbed URL
+                # (https://developer.mbed.org/users/user/code/package/)
+                text.startswith("https://developer.mbed.org")
+            ]
+            if any(git_conditions):
+                url = "git+" + text
+            elif any(hg_conditions):
+                url = "hg+" + text
+            elif "://" not in text and (isfile(text) or isdir(text)):
+                url = "file://" + text
+            elif "://" in text:
+                url = text
 
-        git_conditions = [
-            # Handle GitHub URL (https://github.com/user/package)
-            url.startswith("https://github.com/") and not url.endswith(
-                (".zip", ".tar.gz")),
-            url.startswith("http")
-            and (url.split("#", 1)[0] if "#" in url else url).endswith(".git")
-        ]
-        if any(git_conditions):
-            url = "git+" + url
+            # Handle short version of GitHub URL
+            if text.count("/") == 1:
+                url = "git+https://github.com/" + text
 
-        # Handle Developer Mbed URL
-        # (https://developer.mbed.org/users/user/code/package/)
-        if url.startswith("https://developer.mbed.org"):
-            url = "hg+" + url
-
-        if any([s in url for s in ("\\", "/")]) and url_marker not in url:
-            if isfile(url) or isdir(url):
-                url = "file://" + url
-            elif url.count("/") == 1 and "git" not in url_marker:
-                url = "git+https://github.com/" + url
-
-        # determine name
-        if url_marker in url and not name:
+        # Parse name from URL
+        if url and not name:
             _url = url.split("#", 1)[0] if "#" in url else url
             if _url.endswith(("\\", "/")):
                 _url = _url[:-1]
@@ -542,8 +550,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             if "." in name and not name.startswith("."):
                 name = name.rsplit(".", 1)[0]
 
-        if url_marker not in url:
-            url = None
         return (name or text, requirements, url)
 
     def outdated(self, pkg_dir, requirements=None):
@@ -607,7 +613,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             return
         self.INSTALL_HISTORY.append(history_key)
 
-        name, requirements, url = self.parse_pkg_input(name, requirements)
+        name, requirements, url = self.parse_pkg_uri(name, requirements)
         package_dir = self.get_package_dir(name, requirements, url)
 
         if not package_dir or not silent:
@@ -653,8 +659,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(
-                package, requirements)
+            name, requirements, url = self.parse_pkg_uri(package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         if not pkg_dir:
@@ -694,7 +699,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if isdir(package):
             pkg_dir = package
         else:
-            pkg_dir = self.get_package_dir(*self.parse_pkg_input(package))
+            pkg_dir = self.get_package_dir(*self.parse_pkg_uri(package))
 
         if not pkg_dir:
             raise exception.UnknownPackage("%s @ %s" % (package,

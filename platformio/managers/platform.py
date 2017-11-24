@@ -84,8 +84,7 @@ class PlatformManager(BasePkgManager):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(
-                package, requirements)
+            name, requirements, url = self.parse_pkg_uri(package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         p = PlatformFactory.newPlatform(pkg_dir)
@@ -108,8 +107,7 @@ class PlatformManager(BasePkgManager):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(
-                package, requirements)
+            name, requirements, url = self.parse_pkg_uri(package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         p = PlatformFactory.newPlatform(pkg_dir)
@@ -219,7 +217,7 @@ class PlatformFactory(object):
             platform_dir = dirname(name)
             name = util.load_json(name)['name']
         else:
-            name, requirements, url = pm.parse_pkg_input(name, requirements)
+            name, requirements, url = pm.parse_pkg_uri(name, requirements)
             platform_dir = pm.get_package_dir(name, requirements, url)
             if platform_dir:
                 name = pm.load_manifest(platform_dir)['name']
@@ -263,16 +261,10 @@ class PlatformPackagesMixin(object):
                 continue
             elif (name in with_packages or
                   not (skip_default_package or opts.get("optional", False))):
-                if self.is_valid_requirements(version):
-                    self.pm.install(name, version, silent=silent)
-                elif version.startswith("git@"):
-                    self.pm.install(version, silent=silent)
+                if "://" in version:
+                    self.pm.install("%s=%s" % (name, version), silent=silent)
                 else:
-                    requirements = None
-                    if "@" in version:
-                        version, requirements = version.rsplit("@", 1)
-                    self.pm.install(
-                        "%s=%s" % (name, version), requirements, silent=silent)
+                    self.pm.install(name, version, silent=silent)
 
         return True
 
@@ -295,10 +287,10 @@ class PlatformPackagesMixin(object):
 
     def update_packages(self, only_check=False):
         for name, manifest in self.get_installed_packages().items():
-            version = self.packages[name].get("version", "")
-            if "@" in version and not version.startswith("git@"):
-                _, version = version.rsplit("@", 1)
-            self.pm.update(manifest['__pkg_dir'], version, only_check)
+            requirements = self.packages[name].get("version", "")
+            if "://" in requirements:
+                _, requirements, __ = self.parse_pkg_uri(requirements)
+            self.pm.update(manifest['__pkg_dir'], requirements, only_check)
 
     def get_installed_packages(self):
         items = {}
@@ -310,34 +302,25 @@ class PlatformPackagesMixin(object):
 
     def are_outdated_packages(self):
         for name, manifest in self.get_installed_packages().items():
-            version = self.packages[name].get("version", "")
-            if "@" in version and not version.startswith("git@"):
-                _, version = version.rsplit("@", 1)
-            if self.pm.outdated(manifest['__pkg_dir'], version):
+            requirements = self.packages[name].get("version", "")
+            if "://" in requirements:
+                _, requirements, __ = self.parse_pkg_uri(requirements)
+            if self.pm.outdated(manifest['__pkg_dir'], requirements):
                 return True
         return False
 
     def get_package_dir(self, name):
         version = self.packages[name].get("version", "")
-        if self.is_valid_requirements(version):
-            return self.pm.get_package_dir(name, version)
-        return self.pm.get_package_dir(*self._parse_pkg_input(name, version))
+        if "://" in version:
+            return self.pm.get_package_dir(*self.pm.parse_pkg_uri(
+                "%s=%s" % (name, version)))
+        return self.pm.get_package_dir(name, version)
 
     def get_package_version(self, name):
         pkg_dir = self.get_package_dir(name)
         if not pkg_dir:
             return None
         return self.pm.load_manifest(pkg_dir).get("version")
-
-    @staticmethod
-    def is_valid_requirements(requirements):
-        return requirements and ":" not in requirements
-
-    def _parse_pkg_input(self, name, version):
-        requirements = None
-        if "@" in version and not version.startswith("git@"):
-            version, requirements = version.rsplit("@", 1)
-        return self.pm.parse_pkg_input("%s=%s" % (name, version), requirements)
 
 
 class PlatformRunMixin(object):

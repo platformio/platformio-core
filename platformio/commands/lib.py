@@ -128,7 +128,7 @@ def lib_update(lm, libraries, only_check, json_output):
             requirements = None
             url = None
             if not pkg_dir:
-                name, requirements, url = lm.parse_pkg_input(library)
+                name, requirements, url = lm.parse_pkg_uri(library)
                 pkg_dir = lm.get_package_dir(name, requirements, url)
             if not pkg_dir:
                 continue
@@ -314,7 +314,7 @@ def lib_builtin(storage, json_output):
 @click.option("--json-output", is_flag=True)
 def lib_show(library, json_output):
     lm = LibraryManager()
-    name, requirements, _ = lm.parse_pkg_input(library)
+    name, requirements, _ = lm.parse_pkg_uri(library)
     lib_id = lm.get_pkg_id_by_name(
         name, requirements, silent=json_output, interactive=not json_output)
     lib = get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")

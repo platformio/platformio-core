@@ -351,7 +351,7 @@ def platform_update(platforms, only_packages, only_check, json_output):
             requirements = None
             url = None
             if not pkg_dir:
-                name, requirements, url = pm.parse_pkg_input(platform)
+                name, requirements, url = pm.parse_pkg_uri(platform)
                 pkg_dir = pm.get_package_dir(name, requirements, url)
             if not pkg_dir:
                 continue

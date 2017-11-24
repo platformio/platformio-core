@@ -115,14 +115,14 @@ def test_pkg_input_parser():
             "hg+https://example.com/user/package",
             ("package", None, "hg+https://example.com/user/package")
         ],
-        [
-            "git@github.com:user/package.git",
-            ("package", None, "git@github.com:user/package.git")
-        ],
-        [
-            "git@github.com:user/package.git#v1.2.0",
-            ("package", None, "git@github.com:user/package.git#v1.2.0")
-        ],
+        # [
+        #     "git@github.com:user/package.git",
+        #     ("package", None, "git@github.com:user/package.git")
+        # ],
+        # [
+        #     "git@github.com:user/package.git#v1.2.0",
+        #     ("package", None, "git@github.com:user/package.git#v1.2.0")
+        # ],
         [
             "git+ssh://git@gitlab.private-server.com/user/package#1.2.0",
             ("package", None,
@@ -132,13 +132,19 @@ def test_pkg_input_parser():
             "git+ssh://user@gitlab.private-server.com:1234/package#1.2.0",
             ("package", None,
              "git+ssh://user@gitlab.private-server.com:1234/package#1.2.0")
+        ],
+        [
+            "LocalName=git+ssh://user@gitlab.private-server.com:1234"
+            "/package#1.2.0@!=13",
+            ("LocalName", "!=13",
+             "git+ssh://user@gitlab.private-server.com:1234/package#1.2.0")
         ]
     ]
     for params, result in items:
         if isinstance(params, tuple):
-            assert PackageManager.parse_pkg_input(*params) == result
+            assert PackageManager.parse_pkg_uri(*params) == result
         else:
-            assert PackageManager.parse_pkg_input(params) == result
+            assert PackageManager.parse_pkg_uri(params) == result
 
 
 def test_install_packages(isolated_pio_home, tmpdir):
