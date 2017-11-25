@@ -14,6 +14,8 @@ PlatformIO 3.0
 * Improved handling of library dependencies defined as VCS or SemVer in
   `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__
   (`issue #1155 <https://github.com/platformio/platformio-core/issues/1155>`_)
+* Added option to configure library `Compatible Mode <http://docs.platformio.org/en/latest/librarymanager/ldf.html#compatibility-mode>`__
+  using `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
 * Fixed "Super-Quick (Mac / Linux)" installer script
   (`issue #1017 <https://github.com/platformio/platformio-core/issues/1017>`_)
 * Fixed issue with "IOError" in VSCode when processing a project

@@ -83,6 +83,9 @@ class LibBuilderBase(object):
     LDF_MODES = ["off", "chain", "deep", "chain+", "deep+"]
     LDF_MODE_DEFAULT = "chain"
 
+    COMPAT_MODES = [0, 1, 2]
+    COMPAT_MODE_DEFAULT = 1
+
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
     INC_DIRS_CACHE = None
@@ -94,8 +97,6 @@ class LibBuilderBase(object):
         self.verbose = verbose
 
         self._manifest = manifest if manifest else self.load_manifest()
-        self._ldf_mode = self.validate_ldf_mode(
-            self.env.get("LIB_LDF_MODE", self.LDF_MODE_DEFAULT))
         self._is_dependent = False
         self._is_built = False
         self._depbuilders = list()
@@ -172,21 +173,15 @@ class LibBuilderBase(object):
     def lib_archive(self):
         return self.env.get("LIB_ARCHIVE", "") != "false"
 
-    @staticmethod
-    def validate_ldf_mode(mode):
-        if isinstance(mode, basestring):
-            mode = mode.strip().lower()
-        if mode in LibBuilderBase.LDF_MODES:
-            return mode
-        try:
-            return LibBuilderBase.LDF_MODES[int(mode)]
-        except (IndexError, ValueError):
-            pass
-        return LibBuilderBase.LDF_MODE_DEFAULT
-
     @property
     def lib_ldf_mode(self):
-        return self._ldf_mode
+        return self.validate_ldf_mode(
+            self.env.get("LIB_LDF_MODE", self.LDF_MODE_DEFAULT))
+
+    @property
+    def lib_compat_mode(self):
+        return self.validate_compat_mode(
+            self.env.get("LIB_COMPAT_MODE", self.COMPAT_MODE_DEFAULT))
 
     @property
     def depbuilders(self):
@@ -199,6 +194,27 @@ class LibBuilderBase(object):
     @property
     def is_built(self):
         return self._is_built
+
+    @staticmethod
+    def validate_ldf_mode(mode):
+        if isinstance(mode, basestring):
+            mode = mode.strip().lower()
+        if mode in LibBuilderBase.LDF_MODES:
+            return mode
+        try:
+            return LibBuilderBase.LDF_MODES[int(mode)]
+        except (IndexError, ValueError):
+            pass
+        return LibBuilderBase.LDF_MODE_DEFAULT
+
+    @staticmethod
+    def validate_compat_mode(mode):
+        try:
+            mode = int(mode)
+            assert mode in LibBuilderBase.COMPAT_MODES
+            return mode
+        except (AssertionError, ValueError):
+            return LibBuilderBase.COMPAT_MODE_DEFAULT
 
     @staticmethod
     def items_in_list(items, ilist):
@@ -263,7 +279,7 @@ class LibBuilderBase(object):
                 continue
 
             found = False
-            for lb in self.envorigin.GetLibBuilders():
+            for lb in self.env.GetLibBuilders():
                 if item['name'] != lb.name:
                     continue
                 elif "frameworks" in item and \
@@ -299,7 +315,7 @@ class LibBuilderBase(object):
         # all include directories
         if not LibBuilderBase.INC_DIRS_CACHE:
             LibBuilderBase.INC_DIRS_CACHE = []
-            for lb in self.envorigin.GetLibBuilders():
+            for lb in self.env.GetLibBuilders():
                 LibBuilderBase.INC_DIRS_CACHE.extend(
                     [self.env.Dir(d) for d in lb.get_inc_dirs()])
 
@@ -363,7 +379,7 @@ class LibBuilderBase(object):
 
         lib_inc_map = {}
         for inc in self._get_found_includes(search_paths):
-            for lb in self.envorigin.GetLibBuilders():
+            for lb in self.env.GetLibBuilders():
                 if inc.get_abspath() in lb:
                     if lb not in lib_inc_map:
                         lib_inc_map[lb] = []
@@ -391,7 +407,7 @@ class LibBuilderBase(object):
         self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
 
         if self.lib_ldf_mode == "off":
-            for lb in self.envorigin.GetLibBuilders():
+            for lb in self.env.GetLibBuilders():
                 if self == lb or not lb.is_built:
                     continue
                 for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
@@ -535,6 +551,13 @@ class PlatformIOLibBuilder(LibBuilderBase):
                 self._manifest.get("build").get("libLDFMode"))
         return LibBuilderBase.lib_ldf_mode.fget(self)
 
+    @property
+    def lib_compat_mode(self):
+        if "libCompatMode" in self._manifest.get("build", {}):
+            return self.validate_compat_mode(
+                self._manifest.get("build").get("libCompatMode"))
+        return LibBuilderBase.lib_compat_mode.fget(self)
+
     def is_platforms_compatible(self, platforms):
         items = self._manifest.get("platforms")
         if not items:
@@ -602,7 +625,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
                 pkg_dir = lm.get_package_dir(*lm.parse_pkg_uri(uri))
                 if not pkg_dir:
                     continue
-                for lb in self.envorigin.GetLibBuilders():
+                for lb in self.env.GetLibBuilders():
                     if lb.path != pkg_dir:
                         continue
                     if lb not in self.depbuilders:
@@ -611,7 +634,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
                     break
 
             if not found:
-                for lb in self.envorigin.GetLibBuilders():
+                for lb in self.env.GetLibBuilders():
                     if lb.name != uri:
                         continue
                     if lb not in self.depbuilders:
@@ -632,11 +655,11 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             key=lambda lb: 0 if lb.dependent else 1)
 
     items = []
-    compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
     verbose = int(ARGUMENTS.get("PIOVERBOSE",
                                 0)) and not env.GetOption('clean')
 
     def _check_lib_builder(lb):
+        compat_mode = lb.lib_compat_mode
         if lb.name in env.get("LIB_IGNORE", []):
             if verbose:
                 sys.stderr.write("Ignored library %s\n" % lb.path)
