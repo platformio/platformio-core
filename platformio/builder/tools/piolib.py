@@ -19,7 +19,8 @@ from __future__ import absolute_import
 
 import os
 import sys
-from os.path import basename, commonprefix, isdir, isfile, join, realpath, sep
+from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
+                     realpath, sep)
 from platform import system
 
 import SCons.Scanner
@@ -242,7 +243,7 @@ class LibBuilderBase(object):
                         "pio_lib_builder": self
                     })
 
-    def _process_dependencies(self):
+    def process_dependencies(self):
         if not self.dependencies:
             return
         for item in self.dependencies:
@@ -297,15 +298,10 @@ class LibBuilderBase(object):
     def _get_found_includes(self, search_paths=None):
         # all include directories
         if not LibBuilderBase.INC_DIRS_CACHE:
-            inc_dirs = []
-            used_inc_dirs = []
+            LibBuilderBase.INC_DIRS_CACHE = []
             for lb in self.envorigin.GetLibBuilders():
-                items = [self.env.Dir(d) for d in lb.get_inc_dirs()]
-                if lb.dependent:
-                    used_inc_dirs.extend(items)
-                else:
-                    inc_dirs.extend(items)
-            LibBuilderBase.INC_DIRS_CACHE = used_inc_dirs + inc_dirs
+                LibBuilderBase.INC_DIRS_CACHE.extend(
+                    [self.env.Dir(d) for d in lb.get_inc_dirs()])
 
         # append self include directories
         inc_dirs = [self.env.Dir(d) for d in self.get_inc_dirs()]
@@ -356,7 +352,7 @@ class LibBuilderBase(object):
     def search_deps_recursive(self, search_paths=None):
         if not self._is_dependent:
             self._is_dependent = True
-            self._process_dependencies()
+            self.process_dependencies()
 
             if self.lib_ldf_mode.startswith("deep"):
                 search_paths = self.get_src_files()
@@ -588,17 +584,40 @@ class ProjectAsLibBuilder(LibBuilderBase):
         # skip for project, options are already processed
         pass
 
-    def search_deps_recursive(self, search_paths=None):
-        for dep in self.env.get("LIB_DEPS", []):
-            for token in ("@", "="):
-                if token in dep:
-                    dep, _ = dep.split(token, 1)
-            for lb in self.envorigin.GetLibBuilders():
-                if lb.name == dep:
+    def process_dependencies(self):
+        dependencies = self.env.get("LIB_DEPS", [])
+        if not dependencies:
+            return
+        storage_dirs = []
+        for lb in self.env.GetLibBuilders():
+            if dirname(lb.path) not in storage_dirs:
+                storage_dirs.append(dirname(lb.path))
+
+        for uri in self.env.get("LIB_DEPS", []):
+            found = False
+            for storage_dir in storage_dirs:
+                if found:
+                    break
+                lm = LibraryManager(storage_dir)
+                pkg_dir = lm.get_package_dir(*lm.parse_pkg_uri(uri))
+                if not pkg_dir:
+                    continue
+                for lb in self.envorigin.GetLibBuilders():
+                    if lb.path != pkg_dir:
+                        continue
+                    if lb not in self.depbuilders:
+                        self.depend_recursive(lb)
+                    found = True
+                    break
+
+            if not found:
+                print 67, uri
+                for lb in self.envorigin.GetLibBuilders():
+                    if lb.name != uri:
+                        continue
                     if lb not in self.depbuilders:
                         self.depend_recursive(lb)
                     break
-        return LibBuilderBase.search_deps_recursive(self, search_paths)
 
     def build(self):
         self._is_built = True  # do not build Project now
@@ -609,7 +628,9 @@ class ProjectAsLibBuilder(LibBuilderBase):
 def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
     if "__PIO_LIB_BUILDERS" in DefaultEnvironment():
-        return DefaultEnvironment()['__PIO_LIB_BUILDERS']
+        return sorted(
+            DefaultEnvironment()['__PIO_LIB_BUILDERS'],
+            key=lambda lb: 0 if lb.dependent else 1)
 
     items = []
     compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
