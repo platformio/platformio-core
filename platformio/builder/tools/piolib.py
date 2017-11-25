@@ -611,7 +611,6 @@ class ProjectAsLibBuilder(LibBuilderBase):
                     break
 
             if not found:
-                print 67, uri
                 for lb in self.envorigin.GetLibBuilders():
                     if lb.name != uri:
                         continue
