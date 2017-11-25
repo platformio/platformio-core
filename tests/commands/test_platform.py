@@ -69,7 +69,7 @@ def test_install_from_vcs(clirunner, validate_cliresult, isolated_pio_home):
         "platform-espressif8266.git#feature/stage", "--skip-default-package"
     ])
     validate_cliresult(result)
-    assert "espressif8266_stage" in result.output
+    assert "espressif8266" in result.output
 
 
 def test_list_json_output(clirunner, validate_cliresult, isolated_pio_home):
@@ -79,14 +79,14 @@ def test_list_json_output(clirunner, validate_cliresult, isolated_pio_home):
     assert isinstance(list_result, list)
     assert len(list_result)
     platforms = [item['name'] for item in list_result]
-    assert set(["atmelavr", "espressif8266_stage"]) == set(platforms)
+    assert set(["atmelavr", "espressif8266"]) == set(platforms)
 
 
 def test_list_raw_output(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cli_platform.platform_list)
     validate_cliresult(result)
     assert all(
-        [s in result.output for s in ("atmelavr", "espressif8266_stage")])
+        [s in result.output for s in ("atmelavr", "espressif8266")])
 
 
 def test_update_check(clirunner, validate_cliresult, isolated_pio_home):
@@ -109,6 +109,6 @@ def test_update_raw(clirunner, validate_cliresult, isolated_pio_home):
 
 def test_uninstall(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cli_platform.platform_uninstall,
-                              ["atmelavr", "espressif8266_stage"])
+                              ["atmelavr", "espressif8266"])
     validate_cliresult(result)
     assert len(isolated_pio_home.join("platforms").listdir()) == 0
