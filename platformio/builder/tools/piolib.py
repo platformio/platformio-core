@@ -584,16 +584,16 @@ class ProjectAsLibBuilder(LibBuilderBase):
         # skip for project, options are already processed
         pass
 
-    def process_dependencies(self):
-        dependencies = self.env.get("LIB_DEPS", [])
-        if not dependencies:
+    def process_dependencies(self):  # pylint: disable=too-many-branches
+        uris = self.env.get("LIB_DEPS", [])
+        if not uris:
             return
         storage_dirs = []
         for lb in self.env.GetLibBuilders():
             if dirname(lb.path) not in storage_dirs:
                 storage_dirs.append(dirname(lb.path))
 
-        for uri in self.env.get("LIB_DEPS", []):
+        for uri in uris:
             found = False
             for storage_dir in storage_dirs:
                 if found:
