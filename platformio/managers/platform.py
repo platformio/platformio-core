@@ -289,7 +289,7 @@ class PlatformPackagesMixin(object):
         for name, manifest in self.get_installed_packages().items():
             requirements = self.packages[name].get("version", "")
             if "://" in requirements:
-                _, requirements, __ = self.parse_pkg_uri(requirements)
+                _, requirements, __ = self.pm.parse_pkg_uri(requirements)
             self.pm.update(manifest['__pkg_dir'], requirements, only_check)
 
     def get_installed_packages(self):
@@ -304,7 +304,7 @@ class PlatformPackagesMixin(object):
         for name, manifest in self.get_installed_packages().items():
             requirements = self.packages[name].get("version", "")
             if "://" in requirements:
-                _, requirements, __ = self.parse_pkg_uri(requirements)
+                _, requirements, __ = self.pm.parse_pkg_uri(requirements)
             if self.pm.outdated(manifest['__pkg_dir'], requirements):
                 return True
         return False
