@@ -9,13 +9,19 @@ PlatformIO 3.0
 
 * PIO Home
 * Integration with `Jenkins CI <http://docs.platformio.org/en/latest/ci/jenkins.html>`_
-* Depend on development platform using VSC URL (Git, Mercurial and Subversion)
+* Allowed to depend on development platform using VSC URL (Git, Mercurial and Subversion)
   in `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__
-* Improved handling of library dependencies defined as VCS or SemVer in
-  `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__
-  (`issue #1155 <https://github.com/platformio/platformio-core/issues/1155>`_)
-* Added option to configure library `Compatible Mode <http://docs.platformio.org/en/latest/librarymanager/ldf.html#compatibility-mode>`__
-  using `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
+  Dropped support for ``*_stage`` dev/platforms. Use VCS URL instead.
+* Improvements to `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__:
+
+  - Parse library source file in pair with a header when they have the same name
+    (`issue #1175 <https://github.com/platformio/platformio-core/issues/1175>`_)
+  - Handle library dependencies defined as VCS or SemVer in
+    `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__
+    (`issue #1155 <https://github.com/platformio/platformio-core/issues/1155>`_)
+  - Added option to configure library `Compatible Mode <http://docs.platformio.org/en/latest/librarymanager/ldf.html#compatibility-mode>`__
+    using `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
+
 * Fixed "Super-Quick (Mac / Linux)" installer script
   (`issue #1017 <https://github.com/platformio/platformio-core/issues/1017>`_)
 * Fixed issue with "IOError" in VSCode when processing a project
