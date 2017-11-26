@@ -334,8 +334,20 @@ class LibBuilderBase(object):
                     sys.stderr.write(
                         "Warning! Classic Pre Processor is used for `%s`, "
                         "advanced has failed with `%s`\n" % (path, e))
-                incs = self.env.File(path).get_found_includes(
+                _incs = self.env.File(path).get_found_includes(
                     self.env, LibBuilderBase.CLASSIC_SCANNER, tuple(inc_dirs))
+                incs = []
+                for inc in _incs:
+                    incs.append(inc)
+                    _h_path = inc.get_abspath()
+                    if not self.env.IsFileWithExt(_h_path,
+                                                  piotool.SRC_HEADER_EXT):
+                        continue
+                    _f_part = _h_path[:_h_path.rindex(".")]
+                    for ext in piotool.SRC_C_EXT:
+                        if isfile("%s.%s" % (_f_part, ext)):
+                            incs.append(
+                                self.env.File("%s.%s" % (_f_part, ext)))
             # print path, map(lambda n: n.get_abspath(), incs)
             for inc in incs:
                 if inc not in result:
