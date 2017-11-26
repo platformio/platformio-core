@@ -770,7 +770,7 @@ def BuildProjectLibraries(env):
         correct_found_libs()
 
     if project.depbuilders:
-        print "Library Dependency Graph"
+        print "Library Dependency Graph ( http://bit.ly/configure-pio-ldf )"
         print_deps_tree(project)
     else:
         print "No dependencies"
