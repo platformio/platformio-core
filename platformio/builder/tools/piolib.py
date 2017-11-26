@@ -88,7 +88,9 @@ class LibBuilderBase(object):
 
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
-    INC_DIRS_CACHE = None
+    PARSE_SRC_BY_H_NAME = True
+    _INC_DIRS_CACHE = None
+
 
     def __init__(self, env, path, manifest=None, verbose=False):
         self.env = env.Clone()
@@ -313,15 +315,15 @@ class LibBuilderBase(object):
 
     def _get_found_includes(self, search_paths=None):
         # all include directories
-        if not LibBuilderBase.INC_DIRS_CACHE:
-            LibBuilderBase.INC_DIRS_CACHE = []
+        if not LibBuilderBase._INC_DIRS_CACHE:
+            LibBuilderBase._INC_DIRS_CACHE = []
             for lb in self.env.GetLibBuilders():
-                LibBuilderBase.INC_DIRS_CACHE.extend(
+                LibBuilderBase._INC_DIRS_CACHE.extend(
                     [self.env.Dir(d) for d in lb.get_inc_dirs()])
 
         # append self include directories
         inc_dirs = [self.env.Dir(d) for d in self.get_inc_dirs()]
-        inc_dirs.extend(LibBuilderBase.INC_DIRS_CACHE)
+        inc_dirs.extend(LibBuilderBase._INC_DIRS_CACHE)
 
         result = []
         for path in self._validate_search_paths(search_paths):
@@ -339,6 +341,8 @@ class LibBuilderBase(object):
                 incs = []
                 for inc in _incs:
                     incs.append(inc)
+                    if not self.PARSE_SRC_BY_H_NAME:
+                        continue
                     _h_path = inc.get_abspath()
                     if not self.env.IsFileWithExt(_h_path,
                                                   piotool.SRC_HEADER_EXT):
@@ -374,7 +378,7 @@ class LibBuilderBase(object):
                 self._circular_deps.append(lb)
             elif lb not in self._depbuilders:
                 self._depbuilders.append(lb)
-                LibBuilderBase.INC_DIRS_CACHE = None
+                LibBuilderBase._INC_DIRS_CACHE = None
         lb.search_deps_recursive(search_paths)
 
     def search_deps_recursive(self, search_paths=None):
