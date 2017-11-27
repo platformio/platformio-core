@@ -41,4 +41,4 @@ def test_packages():
         if "X-Checksum-Sha1" not in r.headers:
             return pytest.skip("X-Checksum-Sha1 is not provided")
 
-        assert item['sha1'] == r.headers.get("X-Checksum-Sha1"), item
+        assert item['sha1'] == r.headers.get("X-Checksum-Sha1")[0:40], item
