@@ -115,14 +115,18 @@ def test_pkg_input_parser():
             "hg+https://example.com/user/package",
             ("package", None, "hg+https://example.com/user/package")
         ],
-        # [
-        #     "git@github.com:user/package.git",
-        #     ("package", None, "git@github.com:user/package.git")
-        # ],
-        # [
-        #     "git@github.com:user/package.git#v1.2.0",
-        #     ("package", None, "git@github.com:user/package.git#v1.2.0")
-        # ],
+        [
+            "git@github.com:user/package.git",
+            ("package", None, "git+git@github.com:user/package.git")
+        ],
+        [
+            "git@github.com:user/package.git#v1.2.0",
+            ("package", None, "git+git@github.com:user/package.git#v1.2.0")
+        ],
+        [
+            "LocalName=git@github.com:user/package.git#v1.2.0@~1.2.0",
+            ("LocalName", "~1.2.0", "git+git@github.com:user/package.git#v1.2.0")
+        ],
         [
             "git+ssh://git@gitlab.private-server.com/user/package#1.2.0",
             ("package", None,

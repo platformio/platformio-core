@@ -497,7 +497,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
         # Parse requirements
         req_conditions = [
-            "@" in text, not requirements, "://" not in text
+            "@" in text, not requirements, ":" not in text
             or text.rfind("/") < text.rfind("@")
         ]
         if all(req_conditions):
@@ -519,9 +519,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 # Handle GitHub URL (https://github.com/user/package)
                 text.startswith("https://github.com/") and not text.endswith(
                     (".zip", ".tar.gz")),
-                text.startswith("http")
-                and (text.split("#", 1)[0]
-                     if "#" in text else text).endswith(".git")
+                (text.split("#", 1)[0]
+                 if "#" in text else text).endswith(".git")
             ]
             hg_conditions = [
                 # Handle Developer Mbed URL
@@ -536,9 +535,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 url = "file://" + text
             elif "://" in text:
                 url = text
-
             # Handle short version of GitHub URL
-            if text.count("/") == 1:
+            elif text.count("/") == 1:
                 url = "git+https://github.com/" + text
 
         # Parse name from URL

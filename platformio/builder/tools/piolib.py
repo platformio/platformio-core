@@ -91,7 +91,6 @@ class LibBuilderBase(object):
     PARSE_SRC_BY_H_NAME = True
     _INC_DIRS_CACHE = None
 
-
     def __init__(self, env, path, manifest=None, verbose=False):
         self.env = env.Clone()
         self.envorigin = env.Clone()

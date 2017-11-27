@@ -29,8 +29,9 @@ class VCSClientFactory(object):
         result = urlparse(remote_url)
         type_ = result.scheme
         tag = None
-        if not type_ and remote_url.startswith("git@"):
+        if not type_ and remote_url.startswith("git+"):
             type_ = "git"
+            remote_url = remote_url[4:]
         elif "+" in result.scheme:
             type_, _ = result.scheme.split("+", 1)
             remote_url = remote_url[len(type_) + 1:]

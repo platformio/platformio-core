@@ -261,7 +261,7 @@ class PlatformPackagesMixin(object):
                 continue
             elif (name in with_packages or
                   not (skip_default_package or opts.get("optional", False))):
-                if "://" in version:
+                if ":" in version:
                     self.pm.install("%s=%s" % (name, version), silent=silent)
                 else:
                     self.pm.install(name, version, silent=silent)
@@ -288,7 +288,7 @@ class PlatformPackagesMixin(object):
     def update_packages(self, only_check=False):
         for name, manifest in self.get_installed_packages().items():
             requirements = self.packages[name].get("version", "")
-            if "://" in requirements:
+            if ":" in requirements:
                 _, requirements, __ = self.pm.parse_pkg_uri(requirements)
             self.pm.update(manifest['__pkg_dir'], requirements, only_check)
 
@@ -303,7 +303,7 @@ class PlatformPackagesMixin(object):
     def are_outdated_packages(self):
         for name, manifest in self.get_installed_packages().items():
             requirements = self.packages[name].get("version", "")
-            if "://" in requirements:
+            if ":" in requirements:
                 _, requirements, __ = self.pm.parse_pkg_uri(requirements)
             if self.pm.outdated(manifest['__pkg_dir'], requirements):
                 return True
@@ -311,7 +311,7 @@ class PlatformPackagesMixin(object):
 
     def get_package_dir(self, name):
         version = self.packages[name].get("version", "")
-        if "://" in version:
+        if ":" in version:
             return self.pm.get_package_dir(*self.pm.parse_pkg_uri(
                 "%s=%s" % (name, version)))
         return self.pm.get_package_dir(name, version)
