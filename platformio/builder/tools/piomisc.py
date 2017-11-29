@@ -199,7 +199,8 @@ def _delete_file(path):
         pass
 
 
-def GetCompilerType(env):
+@util.memoized
+def _get_compiler_type(env):
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
@@ -214,6 +215,10 @@ def GetCompilerType(env):
     elif "gcc" in output:
         return "gcc"
     return None
+
+
+def GetCompilerType(env):
+    return _get_compiler_type(env)
 
 
 def GetActualLDScript(env):

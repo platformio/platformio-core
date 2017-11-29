@@ -91,7 +91,9 @@ def DumpIDEData(env):
         "gdb_path":
         util.where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
         "prog_path":
-        env.subst("$PROG_PATH")
+        env.subst("$PROG_PATH"),
+        "compiler_type":
+        env.GetCompilerType()
     }
 
     env_ = env.Clone()
