@@ -218,15 +218,14 @@ class LibBuilderBase(object):
             return LibBuilderBase.COMPAT_MODE_DEFAULT
 
     @staticmethod
-    def items_in_list(items, ilist):
+    def items_to_list(items):
+        if not isinstance(items, list):
+            items = [i.strip() for i in items.split(",")]
+        return [i.lower() for i in items if i]
 
-        def _items_to_list(items_):
-            if not isinstance(items_, list):
-                items_ = [i.strip() for i in items_.split(",")]
-            return [i.lower() for i in items_ if i]
-
-        items = _items_to_list(items)
-        ilist = _items_to_list(ilist)
+    def items_in_list(self, items, ilist):
+        items = self.items_to_list(items)
+        ilist = self.items_to_list(ilist)
         if "*" in items or "*" in ilist:
             return True
         return set(items) & set(ilist)
@@ -511,6 +510,17 @@ class PlatformIOLibBuilder(LibBuilderBase):
         assert isfile(join(self.path, "library.json"))
         manifest = util.load_json(join(self.path, "library.json"))
         assert "name" in manifest
+
+        # replace "espressif" dev/platform with ESP8266/ESP32
+        if "platforms" in manifest:
+            new_platforms = []
+            for platform in self.items_to_list(manifest['platforms']):
+                if platform == "espressif":
+                    new_platforms.extend(["espressif8266", "espressif32"])
+                else:
+                    new_platforms.append(platform)
+            manifest['platforms'] = new_platforms
+
         return manifest
 
     def _is_arduino_manifest(self):
