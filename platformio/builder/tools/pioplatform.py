@@ -41,8 +41,9 @@ def PioPlatform(env):
 def BoardConfig(env, board=None):
     p = initPioPlatform(env['PLATFORM_MANIFEST'])
     try:
-        config = p.board_config(board if board else env['BOARD'])
-    except exception.UnknownBoard as e:
+        assert env.get("BOARD", board), "BoardConfig: Board is not defined"
+        config = p.board_config(board if board else env.get("BOARD"))
+    except (AssertionError, exception.UnknownBoard) as e:
         sys.stderr.write("Error: %s\n" % str(e))
         env.Exit(1)
     return config

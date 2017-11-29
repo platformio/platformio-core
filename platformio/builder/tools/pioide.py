@@ -63,9 +63,13 @@ def dump_defines(env):
 
     # special symbol for Atmel AVR MCU
     if env['PIOPLATFORM'] == "atmelavr":
-        defines.append(
-            str("__AVR_%s__" % env.BoardConfig().get("build.mcu").upper()
-                .replace("ATMEGA", "ATmega").replace("ATTINY", "ATtiny")))
+        board_mcu = env.get("BOARD_MCU")
+        if not board_mcu and "BOARD" in env:
+            board_mcu = env.BoardConfig().get("build.mcu")
+        if board_mcu:
+            defines.append(
+                str("__AVR_%s__" % board_mcu.upper()
+                    .replace("ATMEGA", "ATmega").replace("ATTINY", "ATtiny")))
     return defines
 
 
