@@ -14,7 +14,7 @@
 
 import re
 from os.path import join
-from subprocess import check_call
+from subprocess import CalledProcessError, check_call
 from sys import modules
 from urlparse import urlparse
 
@@ -94,7 +94,12 @@ class VCSClientBase(object):
         args = [self.command] + args
         if "cwd" not in kwargs:
             kwargs['cwd'] = self.src_dir
-        return check_call(args, **kwargs) == 0
+        try:
+            check_call(args, **kwargs)
+            return True
+        except CalledProcessError as e:
+            raise PlatformioException(
+                "VCS: Could not process command %s" % e.cmd)
 
     def get_cmd_output(self, args, **kwargs):
         args = [self.command] + args
@@ -111,6 +116,13 @@ class VCSClientBase(object):
 class GitClient(VCSClientBase):
 
     command = "git"
+
+    def check_client(self):
+        try:
+            return VCSClientBase.check_client(self)
+        except UserSideException:
+            raise UserSideException(
+                "Please install Git client from https://git-scm.com/downloads")
 
     def get_branches(self):
         output = self.get_cmd_output(["branch"])
