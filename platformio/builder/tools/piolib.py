@@ -511,15 +511,12 @@ class PlatformIOLibBuilder(LibBuilderBase):
         manifest = util.load_json(join(self.path, "library.json"))
         assert "name" in manifest
 
-        # replace "espressif" dev/platform with ESP8266/ESP32
+        # replace "espressif" old name dev/platform with ESP8266
         if "platforms" in manifest:
-            new_platforms = []
-            for platform in self.items_to_list(manifest['platforms']):
-                if platform == "espressif":
-                    new_platforms.extend(["espressif8266", "espressif32"])
-                else:
-                    new_platforms.append(platform)
-            manifest['platforms'] = new_platforms
+            manifest['platforms'] = [
+                "espressif8266" if p == "espressif" else p
+                for p in self.items_to_list(manifest['platforms'])
+            ]
 
         return manifest
 
