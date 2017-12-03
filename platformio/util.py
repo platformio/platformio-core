@@ -331,11 +331,10 @@ def get_projectdata_dir():
 
 def load_project_config(path=None):
     if not path or isdir(path):
-        project_dir = path or get_project_dir()
-        if not is_platformio_project(project_dir):
-            raise exception.NotPlatformIOProject(project_dir)
-        path = join(project_dir, "platformio.ini")
-    assert isfile(path)
+        path = join(path or get_project_dir(), "platformio.ini")
+    if not isfile(path):
+        raise exception.NotPlatformIOProject(
+            dirname(path) if path.endswith("platformio.ini") else path)
     cp = ProjectConfig()
     cp.read(path)
     return cp
