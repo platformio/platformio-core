@@ -320,7 +320,10 @@ def on_exception(e):
                     exception.NotPlatformIOProject,
                     exception.UserSideException)
     ]
-    skip_conditions.append("[API] Account: " in str(e))
+    try:
+        skip_conditions.append("[API] Account: " in str(e))
+    except UnicodeEncodeError as ue:
+        e = ue
     if any(skip_conditions):
         return
     is_crash = any([
