@@ -237,11 +237,11 @@ def check_platformio_upgrade():
     if (time() - interval) < last_check.get("platformio_upgrade", 0):
         return
 
-    # Update PlatformIO's Core packages
-    update_core_packages(silent=True)
-
     last_check['platformio_upgrade'] = int(time())
     app.set_state_item("last_check", last_check)
+
+    # Update PlatformIO's Core packages
+    update_core_packages(silent=True)
 
     latest_version = get_latest_version()
     if semantic_version.Version.coerce(util.pepver_to_semver(
