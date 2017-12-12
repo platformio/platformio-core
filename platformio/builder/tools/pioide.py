@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 
 from glob import glob
+from os import environ
 from os.path import join
 
 from SCons.Defaults import processDefines
@@ -23,7 +24,7 @@ from platformio import util
 from platformio.managers.core import get_core_package_dir
 
 
-def dump_includes(env):
+def _dump_includes(env):
     includes = []
 
     for item in env.get("CPPPATH", []):
@@ -55,7 +56,29 @@ def dump_includes(env):
     return includes
 
 
-def dump_defines(env):
+def _get_gcc_defines(env):
+    items = []
+    try:
+        sysenv = environ.copy()
+        sysenv['PATH'] = str(env['ENV']['PATH'])
+        result = util.exec_command(
+            "echo | %s -dM -E -" % env.subst("$CC"), env=sysenv, shell=True)
+    except OSError:
+        return items
+    if result['returncode'] != 0:
+        return items
+    for line in result['out'].split("\n"):
+        tokens = line.strip().split(" ", 2)
+        if not tokens or tokens[0] != "#define":
+            continue
+        if len(tokens) > 2:
+            items.append("%s=%s" % (tokens[1], tokens[2]))
+        else:
+            items.append(tokens[1])
+    return items
+
+
+def _dump_defines(env):
     defines = []
     # global symbols
     for item in processDefines(env.get("CPPDEFINES", [])):
@@ -70,6 +93,11 @@ def dump_defines(env):
             defines.append(
                 str("__AVR_%s__" % board_mcu.upper()
                     .replace("ATMEGA", "ATmega").replace("ATTINY", "ATtiny")))
+
+    # built-in GCC marcos
+    if env.GetCompilerType() == "gcc":
+        defines.extend(_get_gcc_defines(env))
+
     return defines
 
 
@@ -81,9 +109,9 @@ def DumpIDEData(env):
         "libsource_dirs":
         [env.subst(l) for l in env.get("LIBSOURCE_DIRS", [])],
         "defines":
-        dump_defines(env),
+        _dump_defines(env),
         "includes":
-        dump_includes(env),
+        _dump_includes(env),
         "cc_flags":
         env.subst(LINTCCOM),
         "cxx_flags":

@@ -30,11 +30,7 @@
 % for define in defines:
                 "{{!define.replace('"', '\\"')}}",
 % end
-% if compiler_type == "gcc":
-                "__GNUC__"
-% else:
                 ""
-% end
             ],
             "intelliSenseMode": "clang-x64"
         }
