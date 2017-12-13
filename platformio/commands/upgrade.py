@@ -24,12 +24,12 @@ from platformio.managers.core import update_core_packages
 
 @click.command(
     "upgrade", short_help="Upgrade PlatformIO to the latest version")
-@click.option("--develop", is_flag=True, help="Force development branch")
-def cli(develop):
+@click.option("--dev", is_flag=True, help="Use development branch")
+def cli(dev):
     # Update PlatformIO's Core packages
     update_core_packages(silent=True)
 
-    if not develop and __version__ == get_latest_version():
+    if not dev and __version__ == get_latest_version():
         return click.secho(
             "You're up-to-date!\nPlatformIO %s is currently the "
             "newest version available." % __version__,
@@ -40,7 +40,7 @@ def cli(develop):
     # kill all PIO Home servers, they block `pioplus` binary
     shutdown_servers()
 
-    to_develop = develop or not all(
+    to_develop = dev or not all(
         [c.isdigit() for c in __version__ if c != "."])
     cmds = ([
         "pip", "install", "--upgrade",
