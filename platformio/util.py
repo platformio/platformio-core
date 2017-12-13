@@ -18,6 +18,7 @@ import json
 import os
 import platform
 import re
+import socket
 import stat
 import subprocess
 import sys
@@ -540,6 +541,7 @@ def _get_api_result(
 
 
 def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
+    internet_on(raise_exception=True)
     from platformio.app import ContentCache
     total = 0
     max_retries = 5
@@ -559,8 +561,6 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
             return result
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
-            if not internet_on():
-                raise exception.InternetIsOffline()
             from platformio.maintenance import in_silence
             total += 1
             if not in_silence():
@@ -575,14 +575,32 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
         "Please try later.")
 
 
-def internet_on():
-    for url in ("http://dl.bintray.com", "http://dl.platformio.org"):
+@memoized
+def _internet_on():
+    ips = [
+        "193.222.52.25",  # dl.platformio.org
+        "159.122.18.156"  # dl.bintray.com
+    ]
+    timeout = 2
+    socket.setdefaulttimeout(timeout)
+    for ip in ips:
         try:
-            requests.get(url, timeout=3)
+            if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
+                requests.get("http://%s" % ip, timeout=timeout)
+            else:
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip,
+                                                                           80))
             return True
         except:  # pylint: disable=bare-except
             pass
     return False
+
+
+def internet_on(raise_exception=False):
+    result = _internet_on()
+    if raise_exception and not result:
+        raise exception.InternetIsOffline()
+    return result
 
 
 def get_pythonexe_path():

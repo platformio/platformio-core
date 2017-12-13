@@ -40,8 +40,7 @@ def cli(dev):
     # kill all PIO Home servers, they block `pioplus` binary
     shutdown_servers()
 
-    to_develop = dev or not all(
-        [c.isdigit() for c in __version__ if c != "."])
+    to_develop = dev or not all([c.isdigit() for c in __version__ if c != "."])
     cmds = ([
         "pip", "install", "--upgrade",
         "https://github.com/platformio/platformio-core/archive/develop.zip"

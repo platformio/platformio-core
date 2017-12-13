@@ -52,7 +52,8 @@ def on_platformio_end(ctx, result):  # pylint: disable=W0613
         check_platformio_upgrade()
         check_internal_updates(ctx, "platforms")
         check_internal_updates(ctx, "libraries")
-    except (exception.GetLatestVersionError, exception.APIRequestError):
+    except (exception.InternetIsOffline, exception.GetLatestVersionError,
+            exception.APIRequestError):
         click.secho(
             "Failed to check for PlatformIO upgrades. "
             "Please check your Internet connection.",
@@ -240,6 +241,8 @@ def check_platformio_upgrade():
     last_check['platformio_upgrade'] = int(time())
     app.set_state_item("last_check", last_check)
 
+    util.internet_on(raise_exception=True)
+
     # Update PlatformIO's Core packages
     update_core_packages(silent=True)
 
@@ -284,6 +287,8 @@ def check_internal_updates(ctx, what):
 
     last_check[what + '_update'] = int(time())
     app.set_state_item("last_check", last_check)
+
+    util.internet_on(raise_exception=True)
 
     pm = PlatformManager() if what == "platforms" else LibraryManager()
     outdated_items = []
