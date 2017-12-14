@@ -575,15 +575,17 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
         "Please try later.")
 
 
+PING_INTERNET_IPS = [
+    "159.122.18.156",  # dl.bintray.com
+    "193.222.52.25"  # dl.platformio.org
+]
+
+
 @memoized
 def _internet_on():
-    ips = [
-        "193.222.52.25",  # dl.platformio.org
-        "159.122.18.156"  # dl.bintray.com
-    ]
     timeout = 2
     socket.setdefaulttimeout(timeout)
-    for ip in ips:
+    for ip in PING_INTERNET_IPS:
         try:
             if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
                 requests.get("http://%s" % ip, timeout=timeout)
