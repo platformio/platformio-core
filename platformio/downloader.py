@@ -73,19 +73,29 @@ class FileDownloader(object):
     def start(self):
         itercontent = self._request.iter_content(chunk_size=self.CHUNK_SIZE)
         f = open(self._destination, "wb")
-
-        if app.is_disabled_progressbar() or self.get_size() == -1:
-            click.echo("Downloading...")
-            for chunk in itercontent:
-                if chunk:
-                    f.write(chunk)
-        else:
-            chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
-            with click.progressbar(length=chunks, label="Downloading") as pb:
-                for _ in pb:
-                    f.write(next(itercontent))
-        f.close()
-        self._request.close()
+        try:
+            if app.is_disabled_progressbar() or self.get_size() == -1:
+                click.echo("Downloading...")
+                for chunk in itercontent:
+                    if chunk:
+                        f.write(chunk)
+            else:
+                chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
+                with click.progressbar(
+                        length=chunks, label="Downloading") as pb:
+                    for _ in pb:
+                        f.write(next(itercontent))
+        except IOError as e:
+            click.secho(
+                "IOError: Please read -> http://docs.platformio.org"
+                "/en/latest/ide/vscode.html"
+                "#packagemanager-is-unable-to-install-tool",
+                fg="red",
+                err=True)
+            raise e
+        finally:
+            f.close()
+            self._request.close()
 
         if self.get_lmtime():
             self._preserve_filemtime(self.get_lmtime())
