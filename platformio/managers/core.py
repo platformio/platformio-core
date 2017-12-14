@@ -23,7 +23,7 @@ from platformio.managers.package import PackageManager
 CORE_PACKAGES = {
     "contrib-piohome": ">=0.4.0,<2",
     "pysite-pioplus": ">=0.4.2,<2",
-    "tool-pioplus": ">=0.11.0,<2",
+    "tool-pioplus": ">=0.12.0,<2",
     "tool-unity": "~1.20302.1",
     "tool-scons": "~3.20501.2"
 }

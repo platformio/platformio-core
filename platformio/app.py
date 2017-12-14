@@ -18,7 +18,7 @@ import os
 import uuid
 from copy import deepcopy
 from os import environ, getenv, listdir, remove
-from os.path import dirname, getmtime, isdir, isfile, join
+from os.path import abspath, dirname, expanduser, getmtime, isdir, isfile, join
 from time import time
 
 import requests
@@ -27,7 +27,25 @@ from lockfile import LockFailed, LockFile
 from platformio import __version__, exception, util
 from platformio.exception import InvalidSettingName, InvalidSettingValue
 
+
+def projects_dir_validate(projects_dir):
+    assert isdir(projects_dir)
+    return abspath(projects_dir)
+
+
 DEFAULT_SETTINGS = {
+    "auto_update_libraries": {
+        "description": "Automatically update libraries (Yes/No)",
+        "value": False
+    },
+    "auto_update_platforms": {
+        "description": "Automatically update platforms (Yes/No)",
+        "value": False
+    },
+    "check_libraries_interval": {
+        "description": "Check for the library updates interval (days)",
+        "value": 7
+    },
     "check_platformio_interval": {
         "description": "Check for the new PlatformIO interval (days)",
         "value": 3
@@ -36,29 +54,13 @@ DEFAULT_SETTINGS = {
         "description": "Check for the platform updates interval (days)",
         "value": 7
     },
-    "check_libraries_interval": {
-        "description": "Check for the library updates interval (days)",
-        "value": 7
-    },
-    "auto_update_platforms": {
-        "description": "Automatically update platforms (Yes/No)",
-        "value": False
-    },
-    "auto_update_libraries": {
-        "description": "Automatically update libraries (Yes/No)",
-        "value": False
-    },
-    "force_verbose": {
-        "description": "Force verbose output when processing environments",
-        "value": False
+    "enable_cache": {
+        "description": "Enable caching for API requests and Library Manager",
+        "value": True
     },
     "enable_ssl": {
         "description": "Enable SSL for PlatformIO Services",
         "value": False
-    },
-    "enable_cache": {
-        "description": "Enable caching for API requests and Library Manager",
-        "value": True
     },
     "enable_telemetry": {
         "description":
@@ -66,7 +68,16 @@ DEFAULT_SETTINGS = {
          "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
         "value":
         True
-    }
+    },
+    "force_verbose": {
+        "description": "Force verbose output when processing environments",
+        "value": False
+    },
+    "projects_dir": {
+        "description": "Default location for PlatformIO projects (PIO Home)",
+        "value": join(expanduser("~"), "Documents", "PlatformIO", "Projects"),
+        "validator": projects_dir_validate
+    },
 }
 
 SESSION_VARS = {"command_ctx": None, "force_option": False, "caller_id": None}
@@ -269,7 +280,7 @@ def sanitize_setting(name, value):
     defdata = DEFAULT_SETTINGS[name]
     try:
         if "validator" in defdata:
-            value = defdata['validator']()
+            value = defdata['validator'](value)
         elif isinstance(defdata['value'], bool):
             if not isinstance(value, bool):
                 value = str(value).lower() in ("true", "yes", "y", "1")
