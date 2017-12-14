@@ -121,8 +121,9 @@ class PkgRepoMixin(object):
     def get_all_repo_versions(self, name):
         result = []
         for versions in PackageRepoIterator(name, self.repositories):
-            result.extend([v['version'] for v in versions])
-        return sorted(set(result))
+            result.extend(
+                [semantic_version.Version(v['version']) for v in versions])
+        return [str(v) for v in sorted(result)]
 
 
 class PkgInstallerMixin(object):
