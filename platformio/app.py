@@ -134,16 +134,10 @@ class ContentCache(object):
         self._db_path = None
         self._lockfile = None
 
-        if not get_setting("enable_cache"):
-            return
-
         self.cache_dir = cache_dir or join(util.get_home_dir(), ".cache")
         self._db_path = join(self.cache_dir, "db.data")
 
     def __enter__(self):
-        if not self._db_path or not isfile(self._db_path):
-            return self
-
         self.delete()
         return self
 
@@ -192,6 +186,8 @@ class ContentCache(object):
             return data
 
     def set(self, key, data, valid):
+        if not get_setting("enable_cache"):
+            return
         cache_path = self.get_cache_path(key)
         if isfile(cache_path):
             self.delete(key)
@@ -220,6 +216,8 @@ class ContentCache(object):
 
     def delete(self, keys=None):
         """ Keys=None, delete expired items """
+        if not isfile(self._db_path):
+            return
         if not keys:
             keys = []
         if not isinstance(keys, list):
