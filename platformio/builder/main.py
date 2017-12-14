@@ -87,6 +87,7 @@ DEFAULT_ENV_OPTIONS = dict(
     UNIX_TIME=int(time()),
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),
+    PROJECTINCLUDE_DIR=util.get_projectinclude_dir(),
     PROJECTSRC_DIR=util.get_projectsrc_dir(),
     PROJECTTEST_DIR=util.get_projecttest_dir(),
     PROJECTDATA_DIR=util.get_projectdata_dir(),

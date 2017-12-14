@@ -296,6 +296,11 @@ def get_projectsrc_dir():
     return get_project_optional_dir("src_dir", join(get_project_dir(), "src"))
 
 
+def get_projectinclude_dir():
+    return get_project_optional_dir("include_dir",
+                                    join(get_project_dir(), "include"))
+
+
 def get_projecttest_dir():
     return get_project_optional_dir("test_dir", join(get_project_dir(),
                                                      "test"))

@@ -154,8 +154,8 @@ class LibBuilderBase(object):
 
     def get_inc_dirs(self):
         items = [self.src_dir]
-        if all([isdir(join(self.path, d)) for d in ("inc", "src")]):
-            items.append(join(self.path, "inc"))
+        if all([isdir(join(self.path, d)) for d in ("include", "src")]):
+            items.append(join(self.path, "include"))
         return items
 
     @property
@@ -612,6 +612,11 @@ class ProjectAsLibBuilder(LibBuilderBase):
     @property
     def src_dir(self):
         return self.env.subst("$PROJECTSRC_DIR")
+
+    def get_inc_dirs(self):
+        inc_dirs = LibBuilderBase.get_inc_dirs(self)
+        inc_dirs.append(self.env.subst("$PROJECTINCLUDE_DIR"))
+        return inc_dirs
 
     @property
     def lib_ldf_mode(self):
