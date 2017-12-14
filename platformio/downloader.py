@@ -71,18 +71,18 @@ class FileDownloader(object):
         return int(self._request.headers['content-length'])
 
     def start(self):
+        label = "Downloading"
         itercontent = self._request.iter_content(chunk_size=self.CHUNK_SIZE)
         f = open(self._destination, "wb")
         try:
             if app.is_disabled_progressbar() or self.get_size() == -1:
-                click.echo("Downloading...")
+                click.echo("%s..." % label)
                 for chunk in itercontent:
                     if chunk:
                         f.write(chunk)
             else:
                 chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
-                with click.progressbar(
-                        length=chunks, label="Downloading") as pb:
+                with click.progressbar(length=chunks, label=label) as pb:
                     for _ in pb:
                         f.write(next(itercontent))
         except IOError as e:

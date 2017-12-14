@@ -315,8 +315,9 @@ def on_event(category, action, label=None, value=None, screen_name=None):
 def on_exception(e):
     skip_conditions = [
         isinstance(e, cls)
-        for cls in (IOError, exception.AbortedByUser,
-                    exception.NotGlobalLibDir, exception.InternetIsOffline,
+        for cls in (IOError, exception.ReturnErrorCode,
+                    exception.AbortedByUser, exception.NotGlobalLibDir,
+                    exception.InternetIsOffline,
                     exception.NotPlatformIOProject,
                     exception.UserSideException)
     ]
