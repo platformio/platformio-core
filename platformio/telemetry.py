@@ -15,9 +15,11 @@
 import atexit
 import platform
 import Queue
+import re
 import threading
 from collections import deque
-from os import getenv
+from os import getenv, sep
+from os.path import join
 from time import sleep, time
 from traceback import format_exc
 
@@ -313,6 +315,17 @@ def on_event(category, action, label=None, value=None, screen_name=None):
 
 
 def on_exception(e):
+
+    def _cleanup_description(text):
+        text = text.replace("Traceback (most recent call last):", "")
+        text = re.sub(
+            r'File "([^"]+)"',
+            lambda m: join(*m.group(1).split(sep)[-2:]),
+            text,
+            flags=re.M)
+        text = re.sub(r"\s+", " ", text, flags=re.M)
+        return text.strip()
+
     skip_conditions = [
         isinstance(e, cls)
         for cls in (IOError, exception.ReturnErrorCode,
@@ -332,8 +345,8 @@ def on_exception(e):
         "Error" in e.__class__.__name__
     ])
     mp = MeasurementProtocol()
-    mp['exd'] = ("%s: %s" % (type(e).__name__, format_exc()
-                             if is_crash else e))[:2048]
+    description = _cleanup_description(format_exc() if is_crash else str(e))
+    mp['exd'] = ("%s: %s" % (type(e).__name__, description))[:2048]
     mp['exf'] = 1 if is_crash else 0
     mp.send("exception")
 
