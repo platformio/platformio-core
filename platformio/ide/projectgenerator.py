@@ -59,7 +59,12 @@ class ProjectGenerator(object):
 
     @util.memoized
     def get_project_build_data(self):
-        data = {"defines": [], "includes": [], "cxx_path": None}
+        data = {
+            "defines": [],
+            "includes": [],
+            "cxx_path": None,
+            "prog_path": None
+        }
         envdata = self.get_project_env()
         if not envdata:
             return data

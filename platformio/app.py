@@ -160,6 +160,7 @@ class ContentCache(object):
             os.makedirs(self.cache_dir)
         self._lockfile = LockFile(self.cache_dir)
         if self._lockfile.is_locked() and \
+                isfile(self._lockfile.lock_file) and \
                 (time() - getmtime(self._lockfile.lock_file)) > 10:
             self._lockfile.break_lock()
 
