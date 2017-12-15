@@ -619,7 +619,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
         return inc_dirs
 
     def get_src_files(self):
-        return self.env['PIOBUILDFILES']
+        return self.env.get("PROJECTBUILDFILES", [])
 
     @property
     def lib_ldf_mode(self):
