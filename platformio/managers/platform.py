@@ -87,6 +87,9 @@ class PlatformManager(BasePkgManager):
             name, requirements, url = self.parse_pkg_uri(package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
+        if not pkg_dir:
+            raise exception.UnknownPlatform(package)
+
         p = PlatformFactory.newPlatform(pkg_dir)
         BasePkgManager.uninstall(self, pkg_dir, requirements)
 
@@ -109,6 +112,9 @@ class PlatformManager(BasePkgManager):
         else:
             name, requirements, url = self.parse_pkg_uri(package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
+
+        if not pkg_dir:
+            raise exception.UnknownPlatform(package)
 
         p = PlatformFactory.newPlatform(pkg_dir)
         pkgs_before = p.get_installed_packages().keys()
