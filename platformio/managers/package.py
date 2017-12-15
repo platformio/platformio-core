@@ -609,7 +609,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         # avoid circle dependencies
         if not self.INSTALL_HISTORY:
             self.INSTALL_HISTORY = []
-        history_key = "%s-%s" % (name, requirements) if requirements else name
+        history_key = "%s-%s-%s" % (name, requirements or "", url or "")
         if history_key in self.INSTALL_HISTORY:
             return package_dir
         self.INSTALL_HISTORY.append(history_key)
