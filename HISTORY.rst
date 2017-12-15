@@ -17,6 +17,8 @@ PlatformIO 3.0
   Dropped support for ``*_stage`` dev/platforms. Use VCS URL instead.
 * Improvements to `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__:
 
+  - Search for libraries used in test
+    (`issue #953 <https://github.com/platformio/platformio-core/issues/953>`_)
   - Parse library source file in pair with a header when they have the same name
     (`issue #1175 <https://github.com/platformio/platformio-core/issues/1175>`_)
   - Handle library dependencies defined as VCS or SemVer in

@@ -618,6 +618,9 @@ class ProjectAsLibBuilder(LibBuilderBase):
         inc_dirs.append(self.env.subst("$PROJECTINCLUDE_DIR"))
         return inc_dirs
 
+    def get_src_files(self):
+        return self.env['PIOBUILDFILES']
+
     @property
     def lib_ldf_mode(self):
         mode = LibBuilderBase.lib_ldf_mode.fget(self)
