@@ -25,15 +25,15 @@ PlatformIO 3.0
   - Added option to configure library `Compatible Mode <http://docs.platformio.org/en/latest/librarymanager/ldf.html#compatibility-mode>`__
     using `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
 
-* Fixed "Super-Quick (Mac / Linux)" installer script
-  (`issue #1017 <https://github.com/platformio/platformio-core/issues/1017>`_)
-* Fixed issue with "IOError" in VSCode when processing a project
 * Fixed platforms, packages, and libraries updating behind proxy
   (`issue #1061 <https://github.com/platformio/platformio-core/issues/1061>`_)
 * Fixed missing toolchain include paths for project generator
   (`issue #1154 <https://github.com/platformio/platformio-core/issues/1154>`_)
+* Fixed "Super-Quick (Mac / Linux)" installation in "get-platformio.py" script
+  (`issue #1017 <https://github.com/platformio/platformio-core/issues/1017>`_)
 * Fixed "get-platformio.py" script which hangs on Windows 10
   (`issue #1118 <https://github.com/platformio/platformio-core/issues/1118>`_)
+* Other bug fixes and performance improvements
 
 3.4.1 (2017-08-02)
 ~~~~~~~~~~~~~~~~~~
