@@ -42,25 +42,6 @@ def BuildProgram(env):
 
     _append_pio_macros()
 
-    env.Append(
-        LIBPATH=["$BUILD_DIR"],
-        PIOBUILDFILES=env.CollectBuildFiles(
-            "$BUILDSRC_DIR",
-            "$PROJECTSRC_DIR",
-            src_filter=env.get("SRC_FILTER"),
-            duplicate=False))
-
-    if "__debug" in COMMAND_LINE_TARGETS:
-        env.ProcessDebug()
-    if "__test" in COMMAND_LINE_TARGETS:
-        env.Append(PIOBUILDFILES=env.ProcessTest())
-
-    if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
-        sys.stderr.write(
-            "Error: Nothing to build. Please put your source code files "
-            "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR"))
-        env.Exit(1)
-
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
@@ -79,6 +60,20 @@ def BuildProgram(env):
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
 
+    # Search for project source files
+    env.Append(
+        LIBPATH=["$BUILD_DIR"],
+        PIOBUILDFILES=env.CollectBuildFiles(
+            "$BUILDSRC_DIR",
+            "$PROJECTSRC_DIR",
+            src_filter=env.get("SRC_FILTER"),
+            duplicate=False))
+
+    if "__debug" in COMMAND_LINE_TARGETS:
+        env.ProcessDebug()
+    if "__test" in COMMAND_LINE_TARGETS:
+        env.Append(PIOBUILDFILES=env.ProcessTest())
+
     # build dependent libs
     env.Append(LIBS=env.BuildProjectLibraries())
 
@@ -94,6 +89,12 @@ def BuildProgram(env):
 
     # Handle SRC_BUILD_FLAGS
     env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
+
+    if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
+        sys.stderr.write(
+            "Error: Nothing to build. Please put your source code files "
+            "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR"))
+        env.Exit(1)
 
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
