@@ -32,6 +32,8 @@ PlatformIO 3.0
   (`issue #1061 <https://github.com/platformio/platformio-core/issues/1061>`_)
 * Fixed missing toolchain include paths for project generator
   (`issue #1154 <https://github.com/platformio/platformio-core/issues/1154>`_)
+* Fixed "get-platformio.py" script which hangs on Windows 10
+  (`issue #1118 <https://github.com/platformio/platformio-core/issues/1118>`_)
 
 3.4.1 (2017-08-02)
 ~~~~~~~~~~~~~~~~~~
