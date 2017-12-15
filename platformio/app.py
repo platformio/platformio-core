@@ -198,12 +198,12 @@ class ContentCache(object):
 
     def set(self, key, data, valid):
         if not get_setting("enable_cache"):
-            return
+            return False
         cache_path = self.get_cache_path(key)
         if isfile(cache_path):
             self.delete(key)
         if not data:
-            return
+            return False
         if not isdir(self.cache_dir):
             os.makedirs(self.cache_dir)
         tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
@@ -228,7 +228,7 @@ class ContentCache(object):
     def delete(self, keys=None):
         """ Keys=None, delete expired items """
         if not isfile(self._db_path):
-            return
+            return None
         if not keys:
             keys = []
         if not isinstance(keys, list):

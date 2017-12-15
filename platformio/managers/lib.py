@@ -256,10 +256,10 @@ class LibraryManager(BasePkgManager):
         except exception.InternetIsOffline as e:
             if not silent:
                 click.secho(str(e), fg="yellow")
-            return
+            return None
 
         if not pkg_dir:
-            return
+            return None
 
         manifest = self.load_manifest(pkg_dir)
         if "dependencies" not in manifest:

@@ -257,7 +257,7 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
         click.echo("Frameworks: %s" % ", ".join(data['frameworks']))
 
     if not data['packages']:
-        return
+        return None
 
     if not isinstance(data['packages'][0], dict):
         click.echo("Packages: %s" % ", ".join(data['packages']))
@@ -286,6 +286,8 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
         click.secho("Boards", bold=True)
         click.echo("------")
         print_boards(data['boards'])
+
+    return True
 
 
 @cli.command("install", short_help="Install new development platform")
@@ -375,3 +377,5 @@ def platform_update(platforms, only_packages, only_check, json_output):
             pm.update(
                 platform, only_packages=only_packages, only_check=only_check)
             click.echo()
+
+    return True

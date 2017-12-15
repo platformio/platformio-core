@@ -693,7 +693,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
         if lb.name in env.get("LIB_IGNORE", []):
             if verbose:
                 sys.stderr.write("Ignored library %s\n" % lb.path)
-            return
+            return None
         if compat_mode > 1 and not lb.is_platforms_compatible(
                 env['PIOPLATFORM']):
             if verbose:

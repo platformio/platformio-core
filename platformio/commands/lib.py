@@ -143,6 +143,8 @@ def lib_update(lm, libraries, only_check, json_output):
         for library in libraries:
             lm.update(library, only_check=only_check)
 
+    return True
+
 
 def print_lib_item(item):
     click.secho(item['name'], fg="cyan")
@@ -265,10 +267,12 @@ def lib_list(lm, json_output):
         return click.echo(json.dumps(items))
 
     if not items:
-        return
+        return None
 
     for item in sorted(items, key=lambda i: i['name']):
         print_lib_item(item)
+
+    return True
 
 
 @util.memoized
@@ -307,6 +311,8 @@ def lib_builtin(storage, json_output):
 
         for item in sorted(storage_['items'], key=lambda i: i['name']):
             print_lib_item(item)
+
+    return True
 
 
 @cli.command("show", short_help="Show detailed info about a library")
@@ -380,6 +386,8 @@ def lib_show(library, json_output):
         click.echo("-" * len(title))
         for row in rows:
             click.echo(row)
+
+    return True
 
 
 @cli.command("register", short_help="Register a new library")
@@ -468,3 +476,5 @@ def lib_stats(json_output):
         for item in result.get(key, []):
             _print_lib_item(item)
         click.echo()
+
+    return True

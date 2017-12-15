@@ -42,7 +42,12 @@ class CorePackageManager(PackageManager):
             ("" if sys.version_info < (2, 7, 9) else "s")
         ])
 
-    def install(self, name, requirements=None, *args, **kwargs):
+    def install(  # pylint: disable=keyword-arg-before-vararg
+            self,
+            name,
+            requirements=None,
+            *args,
+            **kwargs):
         PackageManager.install(self, name, requirements, *args, **kwargs)
         self.cleanup_packages()
         return self.get_package_dir(name, requirements)
@@ -126,3 +131,5 @@ def pioplus_call(args, **kwargs):
 
     if code != 0:
         raise exception.ReturnErrorCode(1)
+
+    return True

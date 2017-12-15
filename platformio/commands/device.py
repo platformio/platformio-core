@@ -30,10 +30,8 @@ def cli():
 @cli.command("list", short_help="List devices")
 @click.option("--json-output", is_flag=True)
 def device_list(json_output):
-
     if json_output:
-        click.echo(json.dumps(util.get_serialports()))
-        return
+        return click.echo(json.dumps(util.get_serialports()))
 
     for item in util.get_serialports():
         click.secho(item['port'], fg="cyan")
@@ -41,6 +39,8 @@ def device_list(json_output):
         click.echo("Hardware ID: %s" % item['hwid'])
         click.echo("Description: %s" % item['description'])
         click.echo("")
+
+    return True
 
 
 @cli.command("monitor", short_help="Monitor device (Serial)")
@@ -154,7 +154,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
 def get_project_options(project_dir, environment):
     config = util.load_project_config(project_dir)
     if not config.sections():
-        return
+        return None
 
     known_envs = [s[4:] for s in config.sections() if s.startswith("env:")]
     if environment:
@@ -163,7 +163,7 @@ def get_project_options(project_dir, environment):
         raise exception.UnknownEnvNames(environment, ", ".join(known_envs))
 
     if not known_envs:
-        return
+        return None
 
     if config.has_option("platformio", "env_default"):
         env_default = config.get("platformio",

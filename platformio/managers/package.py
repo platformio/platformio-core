@@ -384,7 +384,7 @@ class PkgInstallerMixin(object):
         finally:
             if isdir(tmp_dir):
                 util.rmtree_(tmp_dir)
-        return
+        return None
 
     def _update_src_manifest(self, data, src_dir):
         if not isdir(src_dir):
@@ -603,17 +603,16 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 requirements=None,
                 silent=False,
                 trigger_event=True):
+        name, requirements, url = self.parse_pkg_uri(name, requirements)
+        package_dir = self.get_package_dir(name, requirements, url)
 
         # avoid circle dependencies
         if not self.INSTALL_HISTORY:
             self.INSTALL_HISTORY = []
         history_key = "%s-%s" % (name, requirements) if requirements else name
         if history_key in self.INSTALL_HISTORY:
-            return
+            return package_dir
         self.INSTALL_HISTORY.append(history_key)
-
-        name, requirements, url = self.parse_pkg_uri(name, requirements)
-        package_dir = self.get_package_dir(name, requirements, url)
 
         if not package_dir or not silent:
             msg = "Installing " + click.style(name, fg="cyan")
@@ -714,7 +713,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             nl=False)
         if not util.internet_on():
             click.echo("[%s]" % (click.style("Off-line", fg="yellow")))
-            return
+            return None
 
         latest = self.outdated(pkg_dir, requirements)
         if latest:
@@ -725,7 +724,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             click.echo("[%s]" % (click.style("Fixed", fg="yellow")))
 
         if only_check or not latest:
-            return
+            return True
 
         if "__src_url" in manifest:
             vcs = VCSClientFactory.newClient(pkg_dir, manifest['__src_url'])

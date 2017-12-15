@@ -42,6 +42,7 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
         click.secho(platform, bold=True)
         click.echo("-" * terminal_width)
         print_boards(boards)
+    return True
 
 
 def print_boards(boards):

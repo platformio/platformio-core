@@ -50,7 +50,7 @@ class InoToCPPConverter(object):
     def convert(self, nodes):
         contents = self.merge(nodes)
         if not contents:
-            return
+            return None
         return self.process(contents)
 
     def merge(self, nodes):

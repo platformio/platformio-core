@@ -93,6 +93,8 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
             raise exception.UpgradeError("\n".join(
                 [str(cmd), r['out'], r['err']]))
 
+    return True
+
 
 def get_latest_version():
     try:

@@ -407,3 +407,4 @@ def resend_backuped_reports():
     # clean
     tm['backup'] = []
     app.set_state_item("telemetry", tm)
+    return True

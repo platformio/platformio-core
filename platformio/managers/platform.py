@@ -672,7 +672,7 @@ class PlatformBoardConfig(object):
 
     def get_debug_data(self):
         if not self._manifest.get("debug", {}).get("tools"):
-            return
+            return None
         tools = {}
         for name, options in self._manifest['debug']['tools'].items():
             tools[name] = {}
