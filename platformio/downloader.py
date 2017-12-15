@@ -87,9 +87,7 @@ class FileDownloader(object):
                         f.write(next(itercontent))
         except IOError as e:
             click.secho(
-                "IOError: Please read -> http://docs.platformio.org"
-                "/en/latest/ide/vscode.html"
-                "#packagemanager-is-unable-to-install-tool",
+                "Error: Please read http://bit.ly/package-manager-ioerror",
                 fg="red",
                 err=True)
             raise e
