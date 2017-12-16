@@ -335,7 +335,7 @@ Boards
 
     vendors = {}
     for data in BOARDS:
-        frameworks = data['frameworks']
+        frameworks = data['frameworks'] or []
         vendor = data['vendor']
         if type_ in frameworks:
             if vendor in vendors:
