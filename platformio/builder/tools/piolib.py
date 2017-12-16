@@ -24,7 +24,7 @@ from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
 from platform import system
 
 import SCons.Scanner
-from SCons.Script import ARGUMENTS, DefaultEnvironment
+from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, DefaultEnvironment
 
 from platformio import util
 from platformio.builder.tools import platformio as piotool
@@ -89,7 +89,7 @@ class LibBuilderBase(object):
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
     PARSE_SRC_BY_H_NAME = True
-    _INC_DIRS_CACHE = None
+    _INCLUDE_DIRS_CACHE = None
 
     def __init__(self, env, path, manifest=None, verbose=False):
         self.env = env.Clone()
@@ -102,7 +102,7 @@ class LibBuilderBase(object):
         self._is_built = False
         self._depbuilders = list()
         self._circular_deps = list()
-        self._scanned_paths = list()
+        self._processed_files = list()
 
         # reset source filter, could be overridden with extra script
         self.env['SRC_FILTER'] = ""
@@ -144,19 +144,26 @@ class LibBuilderBase(object):
         ]
 
     @property
+    def include_dir(self):
+        if not all([isdir(join(self.path, d)) for d in ("include", "src")]):
+            return None
+        return join(self.path, "include")
+
+    @property
     def src_dir(self):
         return (join(self.path, "src")
                 if isdir(join(self.path, "src")) else self.path)
 
+    def get_include_dirs(self):
+        items = [self.src_dir]
+        include_dir = self.include_dir
+        if include_dir and include_dir not in items:
+            items.append(include_dir)
+        return items
+
     @property
     def build_dir(self):
         return join("$BUILD_DIR", "lib", basename(self.path))
-
-    def get_inc_dirs(self):
-        items = [self.src_dir]
-        if all([isdir(join(self.path, d)) for d in ("include", "src")]):
-            items.append(join(self.path, "include"))
-        return items
 
     @property
     def build_flags(self):
@@ -239,13 +246,6 @@ class LibBuilderBase(object):
     def load_manifest(self):
         return {}
 
-    def get_src_files(self):
-        return [
-            join(self.src_dir, item)
-            for item in self.env.MatchSourceFiles(self.src_dir,
-                                                  self.src_filter)
-        ]
-
     def process_extra_options(self):
         with util.cd(self.path):
             self.env.ProcessUnFlags(self.build_unflags)
@@ -298,44 +298,60 @@ class LibBuilderBase(object):
                     "library\n" % (item['name'], self.name))
                 self.env.Exit(1)
 
-    def _validate_search_paths(self, search_paths=None):
-        if not search_paths:
-            search_paths = []
-        assert isinstance(search_paths, list)
+    def get_search_files(self):
+        items = [
+            join(self.src_dir, item)
+            for item in self.env.MatchSourceFiles(self.src_dir,
+                                                  self.src_filter)
+        ]
+        include_dir = self.include_dir
+        if include_dir:
+            items.extend([
+                join(include_dir, item)
+                for item in self.env.MatchSourceFiles(include_dir)
+            ])
+        return items
 
-        _search_paths = []
-        for path in search_paths:
-            if path not in self._scanned_paths:
-                _search_paths.append(path)
-                self._scanned_paths.append(path)
+    def _validate_search_files(self, search_files=None):
+        if not search_files:
+            search_files = []
+        assert isinstance(search_files, list)
 
-        return _search_paths
+        _search_files = []
+        for path in search_files:
+            if path not in self._processed_files:
+                _search_files.append(path)
+                self._processed_files.append(path)
 
-    def _get_found_includes(self, search_paths=None):
+        return _search_files
+
+    def _get_found_includes(self, search_files=None):
         # all include directories
-        if not LibBuilderBase._INC_DIRS_CACHE:
-            LibBuilderBase._INC_DIRS_CACHE = []
+        if not LibBuilderBase._INCLUDE_DIRS_CACHE:
+            LibBuilderBase._INCLUDE_DIRS_CACHE = []
             for lb in self.env.GetLibBuilders():
-                LibBuilderBase._INC_DIRS_CACHE.extend(
-                    [self.env.Dir(d) for d in lb.get_inc_dirs()])
+                LibBuilderBase._INCLUDE_DIRS_CACHE.extend(
+                    [self.env.Dir(d) for d in lb.get_include_dirs()])
 
         # append self include directories
-        inc_dirs = [self.env.Dir(d) for d in self.get_inc_dirs()]
-        inc_dirs.extend(LibBuilderBase._INC_DIRS_CACHE)
+        include_dirs = [self.env.Dir(d) for d in self.get_include_dirs()]
+        include_dirs.extend(LibBuilderBase._INCLUDE_DIRS_CACHE)
 
         result = []
-        for path in self._validate_search_paths(search_paths):
+        for path in self._validate_search_files(search_files):
             try:
                 assert "+" in self.lib_ldf_mode
                 incs = self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.ADVANCED_SCANNER, tuple(inc_dirs))
+                    self.env, LibBuilderBase.ADVANCED_SCANNER,
+                    tuple(include_dirs))
             except Exception as e:  # pylint: disable=broad-except
                 if self.verbose and "+" in self.lib_ldf_mode:
                     sys.stderr.write(
                         "Warning! Classic Pre Processor is used for `%s`, "
                         "advanced has failed with `%s`\n" % (path, e))
                 _incs = self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.CLASSIC_SCANNER, tuple(inc_dirs))
+                    self.env, LibBuilderBase.CLASSIC_SCANNER,
+                    tuple(include_dirs))
                 incs = []
                 for inc in _incs:
                     incs.append(inc)
@@ -356,7 +372,7 @@ class LibBuilderBase(object):
                     result.append(inc)
         return result
 
-    def depend_recursive(self, lb, search_paths=None):
+    def depend_recursive(self, lb, search_files=None):
 
         def _already_depends(_lb):
             if self in _lb.depbuilders:
@@ -376,23 +392,23 @@ class LibBuilderBase(object):
                 self._circular_deps.append(lb)
             elif lb not in self._depbuilders:
                 self._depbuilders.append(lb)
-                LibBuilderBase._INC_DIRS_CACHE = None
-        lb.search_deps_recursive(search_paths)
+                LibBuilderBase._INCLUDE_DIRS_CACHE = None
+        lb.search_deps_recursive(search_files)
 
-    def search_deps_recursive(self, search_paths=None):
+    def search_deps_recursive(self, search_files=None):
         if not self._is_dependent:
             self._is_dependent = True
             self.process_dependencies()
 
             if self.lib_ldf_mode.startswith("deep"):
-                search_paths = self.get_src_files()
+                search_files = self.get_search_files()
 
         # when LDF is disabled
         if self.lib_ldf_mode == "off":
             return
 
         lib_inc_map = {}
-        for inc in self._get_found_includes(search_paths):
+        for inc in self._get_found_includes(search_files):
             for lb in self.env.GetLibBuilders():
                 if inc.get_abspath() in lb:
                     if lb not in lib_inc_map:
@@ -400,8 +416,8 @@ class LibBuilderBase(object):
                     lib_inc_map[lb].append(inc.get_abspath())
                     break
 
-        for lb, lb_search_paths in lib_inc_map.items():
-            self.depend_recursive(lb, lb_search_paths)
+        for lb, lb_search_files in lib_inc_map.items():
+            self.depend_recursive(lb, lb_search_files)
 
     def build(self):
         libs = []
@@ -412,13 +428,13 @@ class LibBuilderBase(object):
                 self.env.AppendUnique(**{key: lb.env.get(key)})
 
         for lb in self._circular_deps:
-            self.env.AppendUnique(CPPPATH=lb.get_inc_dirs())
+            self.env.AppendUnique(CPPPATH=lb.get_include_dirs())
 
         if self._is_built:
             return libs
         self._is_built = True
 
-        self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
+        self.env.AppendUnique(CPPPATH=self.get_include_dirs())
 
         if self.lib_ldf_mode == "off":
             for lb in self.env.GetLibBuilders():
@@ -455,13 +471,13 @@ class ArduinoLibBuilder(LibBuilderBase):
                 manifest[key.strip()] = value.strip()
         return manifest
 
-    def get_inc_dirs(self):
-        inc_dirs = LibBuilderBase.get_inc_dirs(self)
+    def get_include_dirs(self):
+        include_dirs = LibBuilderBase.get_include_dirs(self)
         if isdir(join(self.path, "src")):
-            return inc_dirs
+            return include_dirs
         if isdir(join(self.path, "utility")):
-            inc_dirs.append(join(self.path, "utility"))
-        return inc_dirs
+            include_dirs.append(join(self.path, "utility"))
+        return include_dirs
 
     @property
     def src_filter(self):
@@ -487,18 +503,24 @@ class MbedLibBuilder(LibBuilderBase):
         return util.load_json(join(self.path, "module.json"))
 
     @property
+    def include_dir(self):
+        if isdir(join(self.path, "include")):
+            return join(self.path, "include")
+        return None
+
+    @property
     def src_dir(self):
         if isdir(join(self.path, "source")):
             return join(self.path, "source")
         return LibBuilderBase.src_dir.fget(self)
 
-    def get_inc_dirs(self):
-        inc_dirs = LibBuilderBase.get_inc_dirs(self)
-        if self.path not in inc_dirs:
-            inc_dirs.append(self.path)
+    def get_include_dirs(self):
+        include_dirs = LibBuilderBase.get_include_dirs(self)
+        if self.path not in include_dirs:
+            include_dirs.append(self.path)
         for p in self._manifest.get("extraIncludes", []):
-            inc_dirs.append(join(self.path, p))
-        return inc_dirs
+            include_dirs.append(join(self.path, p))
+        return include_dirs
 
     def is_frameworks_compatible(self, frameworks):
         return self.items_in_list(frameworks, ["mbed"])
@@ -592,34 +614,48 @@ class PlatformIOLibBuilder(LibBuilderBase):
             return LibBuilderBase.is_frameworks_compatible(self, frameworks)
         return self.items_in_list(frameworks, items)
 
-    def get_inc_dirs(self):
-        inc_dirs = LibBuilderBase.get_inc_dirs(self)
+    def get_include_dirs(self):
+        include_dirs = LibBuilderBase.get_include_dirs(self)
 
-        #  backwards compatibility with PlatformIO 2.0
+        # backwards compatibility with PlatformIO 2.0
         if ("build" not in self._manifest and self._is_arduino_manifest()
                 and not isdir(join(self.path, "src"))
                 and isdir(join(self.path, "utility"))):
-            inc_dirs.append(join(self.path, "utility"))
+            include_dirs.append(join(self.path, "utility"))
 
         for path in self.env.get("CPPPATH", []):
             if path not in self.envorigin.get("CPPPATH", []):
-                inc_dirs.append(self.env.subst(path))
-        return inc_dirs
+                include_dirs.append(self.env.subst(path))
+        return include_dirs
 
 
 class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
+    def include_dir(self):
+        include_dir = self.env.subst("$PROJECTINCLUDE_DIR")
+        return include_dir if isdir(include_dir) else None
+
+    @property
     def src_dir(self):
         return self.env.subst("$PROJECTSRC_DIR")
 
-    def get_inc_dirs(self):
-        inc_dirs = LibBuilderBase.get_inc_dirs(self)
-        inc_dirs.append(self.env.subst("$PROJECTINCLUDE_DIR"))
-        return inc_dirs
+    def get_include_dirs(self):
+        include_dirs = LibBuilderBase.get_include_dirs(self)
+        include_dirs.append(self.env.subst("$PROJECTINCLUDE_DIR"))
+        return include_dirs
 
-    def get_src_files(self):
-        return self.env.get("PROJECTBUILDFILES", [])
+    def get_search_files(self):
+        # project files
+        items = LibBuilderBase.get_search_files(self)
+        # test files
+        if "__test" in COMMAND_LINE_TARGETS:
+            items.extend([
+                join("$PROJECTTEST_DIR", item)
+                for item in self.env.MatchSourceFiles("$PROJECTTEST_DIR",
+                                                      "$PIOTEST_SRC_FILTER")
+            ])
+        return items
 
     @property
     def lib_ldf_mode(self):
@@ -673,7 +709,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     def build(self):
         self._is_built = True  # do not build Project now
-        self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
+        self.env.AppendUnique(CPPPATH=self.get_include_dirs())
         return LibBuilderBase.build(self)
 
 
@@ -753,7 +789,7 @@ def BuildProjectLibraries(env):
         found_lbs = [lb for lb in lib_builders if lb.dependent]
         for lb in lib_builders:
             if lb in found_lbs:
-                lb.search_deps_recursive(lb.get_src_files())
+                lb.search_deps_recursive(lb.get_search_files())
         for lb in lib_builders:
             for deplb in lb.depbuilders[:]:
                 if deplb not in found_lbs:

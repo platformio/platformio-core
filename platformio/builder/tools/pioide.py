@@ -32,7 +32,7 @@ def _dump_includes(env):
 
     # installed libs
     for lb in env.GetLibBuilders():
-        includes.extend(lb.get_inc_dirs())
+        includes.extend(lb.get_include_dirs())
 
     # includes from toolchains
     p = env.PioPlatform()

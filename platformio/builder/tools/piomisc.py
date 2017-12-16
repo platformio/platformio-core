@@ -293,11 +293,12 @@ def ProcessTest(env):
     src_filter = ["+<*.cpp>", "+<*.c>"]
     if "PIOTEST" in env:
         src_filter.append("+<%s%s>" % (env['PIOTEST'], sep))
+    env.Replace(PIOTEST_SRC_FILTER=src_filter)
 
     return env.CollectBuildFiles(
         "$BUILDTEST_DIR",
         "$PROJECTTEST_DIR",
-        src_filter=src_filter,
+        "$PIOTEST_SRC_FILTER",
         duplicate=False)
 
 

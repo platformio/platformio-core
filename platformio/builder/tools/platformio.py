@@ -63,16 +63,14 @@ def BuildProgram(env):
     # Search for project source files
     env.Append(
         LIBPATH=["$BUILD_DIR"],
-        PROJECTBUILDFILES=env.CollectBuildFiles(
-            "$BUILDSRC_DIR",
-            "$PROJECTSRC_DIR",
-            src_filter=env.get("SRC_FILTER"),
+        PIOBUILDFILES=env.CollectBuildFiles(
+            "$BUILDSRC_DIR", "$PROJECTSRC_DIR", "$SRC_FILTER",
             duplicate=False))
 
     if "__debug" in COMMAND_LINE_TARGETS:
         env.ProcessDebug()
     if "__test" in COMMAND_LINE_TARGETS:
-        env.Append(PROJECTBUILDFILES=env.ProcessTest())
+        env.Append(PIOBUILDFILES=env.ProcessTest())
 
     # build dependent libs
     env.Append(LIBS=env.BuildProjectLibraries())
@@ -90,15 +88,14 @@ def BuildProgram(env):
     # Handle SRC_BUILD_FLAGS
     env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
-    if not env.get("PROJECTBUILDFILES") and not COMMAND_LINE_TARGETS:
+    if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
             "Error: Nothing to build. Please put your source code files "
             "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR"))
         env.Exit(1)
 
     program = env.Program(
-        join("$BUILD_DIR", env.subst("$PROGNAME")),
-        env['PROJECTBUILDFILES'] + env.get("PIOBUILDFILES", []))
+        join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
 
     checksize_action = Action(env.CheckUploadSize, "Checking program size")
     AlwaysBuild(env.Alias("checkprogsize", program, checksize_action))
@@ -186,6 +183,7 @@ def MatchSourceFiles(env, src_dir, src_filter=None):
             items.add(item.replace(src_dir + sep, ""))
 
     src_dir = env.subst(src_dir)
+    src_filter = env.subst(src_filter) if src_filter else None
     src_filter = src_filter or SRC_FILTER_DEFAULT
     if isinstance(src_filter, (list, tuple)):
         src_filter = " ".join(src_filter)
@@ -270,12 +268,12 @@ def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     lib = env.Clone()
     return lib.StaticLibrary(
         lib.subst(variant_dir),
-        lib.CollectBuildFiles(variant_dir, src_dir, src_filter=src_filter))
+        lib.CollectBuildFiles(variant_dir, src_dir, src_filter))
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):
     DefaultEnvironment().Append(PIOBUILDFILES=env.Clone().CollectBuildFiles(
-        variant_dir, src_dir, src_filter=src_filter))
+        variant_dir, src_dir, src_filter))
 
 
 def exists(_):
