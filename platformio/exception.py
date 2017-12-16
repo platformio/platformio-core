@@ -164,7 +164,9 @@ class APIRequestError(PlatformioException):
 
 class InternetIsOffline(PlatformioException):
 
-    MESSAGE = "You are not connected to the Internet"
+    MESSAGE = "You are not connected to the Internet.\n"\
+              "If you build a project first time, we need Internet "\
+              "connection to install all dependencies and toolchain."
 
 
 class LibNotFound(PlatformioException):
