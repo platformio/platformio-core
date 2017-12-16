@@ -123,7 +123,7 @@ class PkgRepoMixin(object):
         for versions in PackageRepoIterator(name, self.repositories):
             result.extend(
                 [semantic_version.Version(v['version']) for v in versions])
-        return [str(v) for v in sorted(result)]
+        return [str(v) for v in sorted(set(result))]
 
 
 class PkgInstallerMixin(object):
