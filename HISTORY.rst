@@ -15,16 +15,24 @@ PlatformIO 3.0
 * Allowed to depend on development platform using VSC URL (Git, Mercurial and Subversion)
   in `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__
   Dropped support for ``*_stage`` dev/platforms. Use VCS URL instead.
-* Improvements to `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__:
+* New options for `platformio device list <http://docs.platformio.org/en/latest/userguide/cmd_device.html#platformio-device-list>`__
+  command:
 
-  - Search for libraries used in test
+  - ``--serial`` list available serial ports (default)
+  - ``--logical`` list logical devices
+  - ``--mdns`` discover multicast DNS services
+    (`issue #463 <https://github.com/platformio/platformio-core/issues/463>`_)
+
+* `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__:
+
+  - Search for dependencies used in `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
     (`issue #953 <https://github.com/platformio/platformio-core/issues/953>`_)
   - Parse library source file in pair with a header when they have the same name
     (`issue #1175 <https://github.com/platformio/platformio-core/issues/1175>`_)
   - Handle library dependencies defined as VCS or SemVer in
-    `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__
+    `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_env_general.html#platform>`__
     (`issue #1155 <https://github.com/platformio/platformio-core/issues/1155>`_)
-  - Added option to configure library `Compatible Mode <http://docs.platformio.org/en/latest/librarymanager/ldf.html#compatibility-mode>`__
+  - Added option to configure library `Compatible Mode <http://docs.platformio.org/page/librarymanager/ldf.html#compatibility-mode>`__
     using `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
 
 * Fixed platforms, packages, and libraries updating behind proxy

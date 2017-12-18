@@ -25,7 +25,8 @@ install_requires = [
     "lockfile>=0.9.1,<0.13",
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",
-    "semantic_version>=2.5.0,<3"
+    "semantic_version>=2.5.0,<3",
+    "zeroconf<=0.19.1"
 ]
 
 setup(
