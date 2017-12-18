@@ -9,19 +9,16 @@ PlatformIO 3.0
 
 * PIO Home
 * Integration with `Jenkins CI <http://docs.platformio.org/en/latest/ci/jenkins.html>`_
-* Added `include <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#include-dir>`__
+* New `include <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#include-dir>`__
   folder for project's header files
   (`issue #1107 <https://github.com/platformio/platformio-core/issues/1107>`_)
-* Allowed to depend on development platform using VSC URL (Git, Mercurial and Subversion)
-  in `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__
-  Dropped support for ``*_stage`` dev/platforms. Use VCS URL instead.
-* New options for `platformio device list <http://docs.platformio.org/en/latest/userguide/cmd_device.html#platformio-device-list>`__
-  command:
-
-  - ``--serial`` list available serial ports (default)
-  - ``--logical`` list logical devices
-  - ``--mdns`` discover multicast DNS services
-    (`issue #463 <https://github.com/platformio/platformio-core/issues/463>`_)
+* Depend on development platform using VSC URL (Git, Mercurial and Subversion) instead of a name
+  in `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__.
+  Drop support for ``*_stage`` dev/platform names (use VCS URL instead).
+* Reinstall/redownload package with a new ``-f, --force`` option for `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__
+  and `platformio platform install <http://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__
+  commands
+  (`issue #778 <https://github.com/platformio/platformio-core/issues/778>`_)
 
 * `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__:
 
@@ -34,6 +31,14 @@ PlatformIO 3.0
     (`issue #1155 <https://github.com/platformio/platformio-core/issues/1155>`_)
   - Added option to configure library `Compatible Mode <http://docs.platformio.org/page/librarymanager/ldf.html#compatibility-mode>`__
     using `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
+
+* New options for `platformio device list <http://docs.platformio.org/en/latest/userguide/cmd_device.html#platformio-device-list>`__
+  command:
+
+  - ``--serial`` list available serial ports (default)
+  - ``--logical`` list logical devices
+  - ``--mdns`` discover multicast DNS services
+    (`issue #463 <https://github.com/platformio/platformio-core/issues/463>`_)
 
 * Fixed platforms, packages, and libraries updating behind proxy
   (`issue #1061 <https://github.com/platformio/platformio-core/issues/1061>`_)

@@ -602,7 +602,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 name,
                 requirements=None,
                 silent=False,
-                trigger_event=True):
+                trigger_event=True,
+                force=False):
         name, requirements, url = self.parse_pkg_uri(name, requirements)
         package_dir = self.get_package_dir(name, requirements, url)
 
@@ -613,6 +614,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if history_key in self.INSTALL_HISTORY:
             return package_dir
         self.INSTALL_HISTORY.append(history_key)
+
+        if package_dir and force:
+            self.uninstall(package_dir)
+            package_dir = None
 
         if not package_dir or not silent:
             msg = "Installing " + click.style(name, fg="cyan")

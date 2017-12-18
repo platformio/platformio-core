@@ -240,7 +240,8 @@ class LibraryManager(BasePkgManager):
             requirements=None,
             silent=False,
             trigger_event=True,
-            interactive=False):
+            interactive=False,
+            force=False):
         pkg_dir = None
         try:
             _name, _requirements, _url = self.parse_pkg_uri(name, requirements)
@@ -251,8 +252,13 @@ class LibraryManager(BasePkgManager):
                     silent=silent,
                     interactive=interactive)
                 requirements = _requirements
-            pkg_dir = BasePkgManager.install(self, name, requirements, silent,
-                                             trigger_event)
+            pkg_dir = BasePkgManager.install(
+                self,
+                name,
+                requirements,
+                silent=silent,
+                trigger_event=trigger_event,
+                force=force)
         except exception.InternetIsOffline as e:
             if not silent:
                 click.secho(str(e), fg="yellow")
@@ -271,7 +277,12 @@ class LibraryManager(BasePkgManager):
         for filters in self.normalize_dependencies(manifest['dependencies']):
             assert "name" in filters
             if any([s in filters.get("version", "") for s in ("\\", "/")]):
-                self.install("{name}={version}".format(**filters))
+                self.install(
+                    "{name}={version}".format(**filters),
+                    silent=silent,
+                    trigger_event=trigger_event,
+                    interactive=interactive,
+                    force=force)
             else:
                 try:
                     lib_info = self.search_for_library(filters, silent,
@@ -284,14 +295,18 @@ class LibraryManager(BasePkgManager):
                 if filters.get("version"):
                     self.install(
                         lib_info['id'],
-                        requirements=filters.get("version"),
+                        filters.get("version"),
                         silent=silent,
-                        trigger_event=trigger_event)
+                        trigger_event=trigger_event,
+                        interactive=interactive,
+                        force=force)
                 else:
                     self.install(
                         lib_info['id'],
                         silent=silent,
-                        trigger_event=trigger_event)
+                        trigger_event=trigger_event,
+                        interactive=interactive,
+                        force=force)
         return pkg_dir
 
     @staticmethod

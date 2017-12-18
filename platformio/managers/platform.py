@@ -63,9 +63,10 @@ class PlatformManager(BasePkgManager):
                 skip_default_package=False,
                 trigger_event=True,
                 silent=False,
+                force=False,
                 **_):  # pylint: disable=too-many-arguments, arguments-differ
         platform_dir = BasePkgManager.install(
-            self, name, requirements, silent=silent)
+            self, name, requirements, silent=silent, force=force)
         p = PlatformFactory.newPlatform(platform_dir)
 
         # @Hook: when 'update' operation (trigger_event is False),
@@ -76,7 +77,8 @@ class PlatformManager(BasePkgManager):
             with_packages,
             without_packages,
             skip_default_package,
-            silent=silent)
+            silent=silent,
+            force=force)
         self.cleanup_packages(p.packages.keys())
         return True
 
@@ -248,11 +250,13 @@ class PlatformFactory(object):
 
 class PlatformPackagesMixin(object):
 
-    def install_packages(self,
-                         with_packages=None,
-                         without_packages=None,
-                         skip_default_package=False,
-                         silent=False):
+    def install_packages(  # pylint: disable=too-many-arguments
+            self,
+            with_packages=None,
+            without_packages=None,
+            skip_default_package=False,
+            silent=False,
+            force=False):
         with_packages = set(self.find_pkg_names(with_packages or []))
         without_packages = set(self.find_pkg_names(without_packages or []))
 
@@ -268,9 +272,10 @@ class PlatformPackagesMixin(object):
             elif (name in with_packages or
                   not (skip_default_package or opts.get("optional", False))):
                 if ":" in version:
-                    self.pm.install("%s=%s" % (name, version), silent=silent)
+                    self.pm.install(
+                        "%s=%s" % (name, version), silent=silent, force=force)
                 else:
-                    self.pm.install(name, version, silent=silent)
+                    self.pm.install(name, version, silent=silent, force=force)
 
         return True
 

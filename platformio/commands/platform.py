@@ -295,15 +295,21 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
 @click.option("--with-package", multiple=True)
 @click.option("--without-package", multiple=True)
 @click.option("--skip-default-package", is_flag=True)
+@click.option(
+    "-f",
+    "--force",
+    is_flag=True,
+    help="Reinstall/redownload dev/platform and its packages if exist")
 def platform_install(platforms, with_package, without_package,
-                     skip_default_package):
+                     skip_default_package, force):
     pm = PlatformManager()
     for platform in platforms:
         if pm.install(
                 name=platform,
                 with_packages=with_package,
                 without_packages=without_package,
-                skip_default_package=skip_default_package):
+                skip_default_package=skip_default_package,
+                force=force):
             click.secho(
                 "The platform '%s' has been successfully installed!\n"
                 "The rest of packages will be installed automatically "

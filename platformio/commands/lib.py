@@ -93,11 +93,17 @@ def cli(ctx, **options):
     "--interactive",
     is_flag=True,
     help="Allow to make a choice for all prompts")
+@click.option(
+    "-f",
+    "--force",
+    is_flag=True,
+    help="Reinstall/redownload library if exists")
 @click.pass_obj
-def lib_install(lm, libraries, silent, interactive):
+def lib_install(lm, libraries, silent, interactive, force):
     # @TODO "save" option
     for library in libraries:
-        lm.install(library, silent=silent, interactive=interactive)
+        lm.install(
+            library, silent=silent, interactive=interactive, force=force)
 
 
 @cli.command("uninstall", short_help="Uninstall libraries")
