@@ -18,6 +18,7 @@ import re
 from imp import load_source
 from multiprocessing import cpu_count
 from os.path import basename, dirname, isdir, isfile, join
+from urllib import quote
 
 import click
 import semantic_version
@@ -394,6 +395,12 @@ class PlatformRunMixin(object):
         is_error = self.LINE_ERROR_RE.search(line) is not None
         self._echo_line(line, level=3 if is_error else 2)
 
+        a_pos = line.find("fatal error:")
+        b_pos = line.rfind(": No such file or directory")
+        if a_pos == -1 or b_pos == -1:
+            return
+        self._echo_missed_dependency(line[a_pos + 12:b_pos].strip())
+
     def _echo_line(self, line, level):
         if line.startswith("scons: "):
             line = line[7:]
@@ -404,6 +411,27 @@ class PlatformRunMixin(object):
         if level == 1 and "is up to date" in line:
             fg = "green"
         click.secho(line, fg=fg, err=level > 1)
+
+    @staticmethod
+    def _echo_missed_dependency(filename):
+        if "/" in filename or not filename.endswith((".h", ".hpp")):
+            return
+        banner = """
+{dots}
+* Looking for {filename_styled} dependency? Check our library registry!
+*
+* CLI  > platformio lib search "header:{filename}"
+* Web  > {link}
+*
+{dots}
+""".format(filename=filename,
+           filename_styled=click.style(filename, fg="cyan"),
+           link=click.style(
+               "http://platformio.org/lib/search?query=header:%s" % quote(
+                   filename, safe=""),
+               fg="blue"),
+           dots="*" * (55 + len(filename)))
+        click.echo(banner, err=True)
 
     @staticmethod
     def get_job_nums():

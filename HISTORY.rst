@@ -19,6 +19,8 @@ PlatformIO 3.0
   and `platformio platform install <http://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__
   commands
   (`issue #778 <https://github.com/platformio/platformio-core/issues/778>`_)
+* Handle missed dependency and provide a help how to find it using PlatformIO Library Registry
+  (`issue #781 <https://github.com/platformio/platformio-core/issues/781>`_)
 
 * `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__:
 
