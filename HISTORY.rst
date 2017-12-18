@@ -12,15 +12,20 @@ PlatformIO 3.0
 * New `include <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#include-dir>`__
   folder for project's header files
   (`issue #1107 <https://github.com/platformio/platformio-core/issues/1107>`_)
-* Depend on development platform using VSC URL (Git, Mercurial and Subversion) instead of a name
-  in `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__.
+* Depend on development platform using VSC URL (Git, Mercurial and Subversion)
+  instead of a name in `Project Configuration File "platformio.ini" <http://docs.platformio.org/en/latest/projectconf/section_env_general.html#platform>`__.
   Drop support for ``*_stage`` dev/platform names (use VCS URL instead).
-* Reinstall/redownload package with a new ``-f, --force`` option for `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__
+* Reinstall/redownload package with a new ``-f, --force`` option for
+  `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__
   and `platformio platform install <http://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__
   commands
   (`issue #778 <https://github.com/platformio/platformio-core/issues/778>`_)
-* Handle missed dependencies and provide a solution based on PlatformIO Library Registry
+* Handle missed dependencies and provide a solution based on PlatformIO Library
+  Registry
   (`issue #781 <https://github.com/platformio/platformio-core/issues/781>`_)
+* New setting `projects_dir <http://docs.platformio.org/en/latest/userguide/cmd_settings.html#projects-dir>`__
+  that allows to override a default PIO Home Projects location
+  (`issue #1161 <https://github.com/platformio/platformio-core/issues/1161>`_)
 
 * `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__:
 
