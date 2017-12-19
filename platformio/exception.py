@@ -223,6 +223,12 @@ class UpgradeError(PlatformioException):
 """
 
 
+class HomeDirPermissionsError(PlatformioException):
+
+    MESSAGE = "You do not have permissions to PlatformIO home directory.\n"\
+              "Please remove `{0}` folder manually and repeat operation."
+
+
 class CygwinEnvDetected(PlatformioException):
 
     MESSAGE = "PlatformIO does not work within Cygwin environment. "\

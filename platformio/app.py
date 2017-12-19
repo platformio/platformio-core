@@ -25,7 +25,6 @@ import requests
 from lockfile import LockFailed, LockFile
 
 from platformio import __version__, exception, util
-from platformio.exception import InvalidSettingName, InvalidSettingValue
 
 
 def projects_dir_validate(projects_dir):
@@ -106,11 +105,14 @@ class State(object):
 
     def __exit__(self, type_, value, traceback):
         if self._prev_state != self._state:
-            with open(self.path, "w") as fp:
-                if "dev" in __version__:
-                    json.dump(self._state, fp, indent=4)
-                else:
-                    json.dump(self._state, fp)
+            try:
+                with open(self.path, "w") as fp:
+                    if "dev" in __version__:
+                        json.dump(self._state, fp, indent=4)
+                    else:
+                        json.dump(self._state, fp)
+            except IOError:
+                raise exception.HomeDirPermissionsError(util.get_home_dir())
         self._unlock_state_file()
 
     def _lock_state_file(self):
@@ -276,7 +278,7 @@ def clean_cache():
 
 def sanitize_setting(name, value):
     if name not in DEFAULT_SETTINGS:
-        raise InvalidSettingName(name)
+        raise exception.InvalidSettingName(name)
 
     defdata = DEFAULT_SETTINGS[name]
     try:
@@ -288,7 +290,7 @@ def sanitize_setting(name, value):
         elif isinstance(defdata['value'], int):
             value = int(value)
     except Exception:
-        raise InvalidSettingValue(value, name)
+        raise exception.InvalidSettingValue(value, name)
     return value
 
 
@@ -367,5 +369,6 @@ def get_cid():
             uuid.UUID(
                 bytes=hashlib.md5(str(_uid if _uid else uuid.getnode()))
                 .digest()))
-        set_state_item("cid", cid)
+        if "windows" in util.get_systype() or os.getuid() > 0:
+            set_state_item("cid", cid)
     return cid
