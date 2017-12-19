@@ -15,7 +15,7 @@
 import os
 import subprocess
 import sys
-from os.path import dirname, join
+from os.path import dirname, isdir, join
 
 from platformio import __version__, exception, util
 from platformio.managers.package import PackageManager
@@ -35,8 +35,10 @@ PIOPLUS_AUTO_UPDATES_MAX = 100
 
 class CorePackageManager(PackageManager):
 
+    CORE_PACKAGES_DIR = join(util.get_home_dir(), "packages")
+
     def __init__(self):
-        PackageManager.__init__(self, join(util.get_home_dir(), "packages"), [
+        PackageManager.__init__(self, CorePackageManager.CORE_PACKAGES_DIR, [
             "https://dl.bintray.com/platformio/dl-packages/manifest.json",
             "http%s://dl.platformio.org/packages/manifest.json" %
             ("" if sys.version_info < (2, 7, 9) else "s")
@@ -85,6 +87,8 @@ def get_core_package_dir(name):
 
 
 def update_core_packages(only_check=False, silent=False):
+    if not isdir(CorePackageManager.CORE_PACKAGES_DIR):
+        return None
     pm = CorePackageManager()
     for name, requirements in CORE_PACKAGES.items():
         pkg_dir = pm.get_package_dir(name)
@@ -92,6 +96,7 @@ def update_core_packages(only_check=False, silent=False):
             continue
         if not silent or pm.outdated(pkg_dir, requirements):
             pm.update(name, requirements, only_check=only_check)
+    return True
 
 
 def pioplus_call(args, **kwargs):
