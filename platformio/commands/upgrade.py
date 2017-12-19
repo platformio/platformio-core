@@ -19,16 +19,12 @@ import requests
 
 from platformio import VERSION, __version__, exception, util
 from platformio.commands.home import shutdown_servers
-from platformio.managers.core import update_core_packages
 
 
 @click.command(
     "upgrade", short_help="Upgrade PlatformIO to the latest version")
 @click.option("--dev", is_flag=True, help="Use development branch")
 def cli(dev):
-    # Update PlatformIO's Core packages
-    update_core_packages(silent=True)
-
     if not dev and __version__ == get_latest_version():
         return click.secho(
             "You're up-to-date!\nPlatformIO %s is currently the "
