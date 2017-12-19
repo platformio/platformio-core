@@ -226,7 +226,8 @@ class UpgradeError(PlatformioException):
 class HomeDirPermissionsError(PlatformioException):
 
     MESSAGE = "You do not have permissions to PlatformIO home directory.\n"\
-              "Please remove `{0}` folder manually and repeat operation."
+              "Please remove `{0}` folder manually and avoid using "
+              "`sudo pio ...`."
 
 
 class CygwinEnvDetected(PlatformioException):

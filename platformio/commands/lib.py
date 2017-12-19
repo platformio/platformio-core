@@ -33,8 +33,7 @@ from platformio.util import get_api_result
     "-g",
     "--global",
     is_flag=True,
-    help="Manage global PlatformIO"
-    " library storage `%s`" % join(util.get_home_dir(), "lib"))
+    help="Manage global PlatformIO library storage")
 @click.option(
     "-d",
     "--storage-dir",
