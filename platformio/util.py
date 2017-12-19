@@ -32,7 +32,6 @@ from time import sleep, time
 
 import click
 import requests
-import zeroconf
 
 from platformio import __apiurl__, __version__, exception
 
@@ -493,6 +492,10 @@ get_logicaldisks = lambda: [{
 
 
 def get_mdns_services():
+    try:
+        import zeroconf
+    except ImportError:
+        raise exception.ZeroconfIsNotInstalled()
 
     class mDNSListener(object):
 

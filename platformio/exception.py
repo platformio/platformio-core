@@ -227,3 +227,10 @@ class CygwinEnvDetected(PlatformioException):
 
     MESSAGE = "PlatformIO does not work within Cygwin environment. "\
         "Use native Terminal instead."
+
+
+class ZeroconfIsNotInstalled(PlatformioException):
+
+    MESSAGE = "Python multicast DNS service discovery library has not been "\
+              "installed automatically. Please open terminal and run \n"\
+              "> pip install zeroconf"
