@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import subprocess
-import sys
-from os.path import normpath
 from setuptools import find_packages, setup
 
 from platformio import (__author__, __description__, __email__, __license__,
@@ -30,19 +27,6 @@ install_requires = [
     "requests>=2.4.0,<3",
     "semantic_version>=2.5.0,<3"
 ]
-zeroconf_requirement = "zeroconf<=0.19.1"
-
-try:
-    import zeroconf  # pylint: disable=unused-import
-except ImportError:
-    try:
-        subprocess.check_call([
-            normpath(sys.executable), "-m", "pip", "install",
-            zeroconf_requirement
-        ])
-        install_requires.append(zeroconf_requirement)
-    except:  # pylint: disable=bare-except
-        pass
 
 setup(
     name=__title__,

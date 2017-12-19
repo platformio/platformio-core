@@ -495,7 +495,12 @@ def get_mdns_services():
     try:
         import zeroconf
     except ImportError:
-        raise exception.ZeroconfIsNotInstalled()
+        from site import addsitedir
+        from platformio.managers.core import get_core_package_dir
+        contrib_pysite_dir = get_core_package_dir("contrib-pysite")
+        addsitedir(contrib_pysite_dir)
+        sys.path.insert(0, contrib_pysite_dir)
+        import zeroconf
 
     class mDNSListener(object):
 
