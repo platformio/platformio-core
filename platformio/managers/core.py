@@ -22,8 +22,7 @@ from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
     "contrib-piohome": ">=0.5.3,<2",
-    "contrib-pysite": ">=0.1.0,<2",
-    "pysite-pioplus": ">=0.4.2,<2",
+    "contrib-pysite": ">=0.1.1,<2",
     "tool-pioplus": ">=0.12.1,<2",
     "tool-unity": "~1.20302.1",
     "tool-scons": "~3.20501.2"
@@ -107,7 +106,7 @@ def pioplus_call(args, **kwargs):
     pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
     pythonexe_path = util.get_pythonexe_path()
     os.environ['PYTHONEXEPATH'] = pythonexe_path
-    os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("pysite-pioplus")
+    os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("contrib-pysite")
     os.environ['PATH'] = (os.pathsep).join(
         [dirname(pythonexe_path), os.environ['PATH']])
     util.copy_pythonpath_to_osenv()
