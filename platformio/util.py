@@ -523,8 +523,10 @@ def get_mdns_services():
 
         def add_service(self, zc, type_, name):
             try:
-                zeroconf.service_type_name(name)
-            except zeroconf.BadTypeInNameException:
+                assert zeroconf.service_type_name(name)
+                assert str(name)
+            except (AssertionError, UnicodeError,
+                    zeroconf.BadTypeInNameException):
                 return
             if name not in self._found_types:
                 self._found_types.append(name)
@@ -539,7 +541,7 @@ def get_mdns_services():
 
     items = []
     with mDNSListener() as mdns:
-        sleep(5)
+        sleep(3)
         for service in mdns.get_services():
             items.append({
                 "type":
