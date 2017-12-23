@@ -127,13 +127,7 @@ class State(object):
         try:
             self._lockfile.acquire()
         except LockFailed:
-            raise exception.PlatformioException(
-                "The directory `{0}` or its parent directory is not owned by "
-                "the current user and PlatformIO can not store configuration "
-                "data. \nPlease check the permissions and owner of that "
-                "directory. Otherwise, please remove manually `{0}` "
-                "directory and PlatformIO will create new from the current "
-                "user.".format(dirname(self.path)))
+            raise exception.HomeDirPermissionsError(dirname(self.path))
 
     def _unlock_state_file(self):
         if self._lockfile:
