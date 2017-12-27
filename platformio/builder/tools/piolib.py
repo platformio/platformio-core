@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import
 
+import hashlib
 import os
 import sys
 from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
@@ -89,6 +90,7 @@ class LibBuilderBase(object):
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
     PARSE_SRC_BY_H_NAME = True
+
     _INCLUDE_DIRS_CACHE = None
 
     def __init__(self, env, path, manifest=None, verbose=False):
@@ -163,7 +165,9 @@ class LibBuilderBase(object):
 
     @property
     def build_dir(self):
-        return join("$BUILD_DIR", "lib", basename(self.path))
+        return join("$BUILD_DIR",
+                    "lib%s" % hashlib.sha1(self.path).hexdigest()[:3],
+                    basename(self.path))
 
     @property
     def build_flags(self):
