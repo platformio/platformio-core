@@ -192,6 +192,27 @@ class PkgInstallerMixin(object):
             return fu.unpack(dest_dir)
 
     @staticmethod
+    def parse_semver_spec(value, raise_exception=False):
+        try:
+            return semantic_version.Spec(value)
+        except ValueError as e:
+            if raise_exception:
+                raise e
+        return None
+
+    @staticmethod
+    def parse_semver_version(value, raise_exception=False):
+        try:
+            try:
+                return semantic_version.Version(value)
+            except ValueError:
+                return semantic_version.Version.coerce(value)
+        except ValueError as e:
+            if raise_exception:
+                raise e
+        return None
+
+    @staticmethod
     def get_install_dirname(manifest):
         name = re.sub(r"[^\da-z\_\-\. ]", "_", manifest['name'], flags=re.I)
         if "id" in manifest:
@@ -290,15 +311,15 @@ class PkgInstallerMixin(object):
                 return manifest
 
             try:
-                if requirements and not semantic_version.Spec(
-                        requirements).match(
-                            semantic_version.Version(
-                                manifest['version'], partial=True)):
+                if requirements and not self.parse_semver_spec(
+                        requirements, raise_exception=True).match(
+                            self.parse_semver_version(
+                                manifest['version'], raise_exception=True)):
                     continue
-                elif not best or (semantic_version.Version(
-                        manifest['version'], partial=True) >
-                                  semantic_version.Version(
-                                      best['version'], partial=True)):
+                elif not best or (self.parse_semver_version(
+                        manifest['version'], raise_exception=True) >
+                                  self.parse_semver_version(
+                                      best['version'], raise_exception=True)):
                     best = manifest
             except ValueError:
                 pass
@@ -406,16 +427,10 @@ class PkgInstallerMixin(object):
         pkg_dir = join(self.package_dir, pkg_dirname)
         cur_manifest = self.load_manifest(pkg_dir)
 
-        tmp_semver = None
+        tmp_semver = self.parse_semver_version(tmp_manifest['version'])
         cur_semver = None
-        try:
-            tmp_semver = semantic_version.Version(
-                tmp_manifest['version'], partial=True)
-            if cur_manifest:
-                cur_semver = semantic_version.Version(
-                    cur_manifest['version'], partial=True)
-        except ValueError:
-            pass
+        if cur_manifest:
+            cur_semver = self.parse_semver_version(cur_manifest['version'])
 
         # package should satisfy requirements
         if requirements:
@@ -591,8 +606,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         up_to_date = False
         try:
             assert "__src_url" not in manifest
-            up_to_date = (semantic_version.Version.coerce(manifest['version'])
-                          >= semantic_version.Version.coerce(latest))
+            up_to_date = (self.parse_semver_version(
+                manifest['version'], raise_exception=True) >=
+                          self.parse_semver_version(
+                              latest, raise_exception=True))
         except (AssertionError, ValueError):
             up_to_date = latest == manifest['version']
 

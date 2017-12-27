@@ -21,7 +21,6 @@ from os.path import isdir, join
 
 import arrow
 import click
-import semantic_version
 
 from platformio import app, commands, exception, util
 from platformio.managers.package import BasePkgManager
@@ -153,8 +152,7 @@ class LibraryManager(BasePkgManager):
                     ]
         return items
 
-    @staticmethod
-    def max_satisfying_repo_version(versions, requirements=None):
+    def max_satisfying_repo_version(self, versions, requirements=None):
 
         def _cmp_dates(datestr1, datestr2):
             date1 = arrow.get(datestr1)
@@ -163,29 +161,22 @@ class LibraryManager(BasePkgManager):
                 return 0
             return -1 if date1 < date2 else 1
 
+        semver_spec = self.parse_semver_spec(
+            requirements) if requirements else None
         item = None
-        reqspec = None
-        if requirements:
-            try:
-                reqspec = semantic_version.Spec(requirements)
-            except ValueError:
-                pass
-        for v in versions:
-            specver = None
-            try:
-                specver = semantic_version.Version(v['name'], partial=True)
-            except ValueError:
-                pass
 
-            if reqspec:
-                if not specver or specver not in reqspec:
+        for v in versions:
+            semver_new = self.parse_semver_version(v['name'])
+            if semver_spec:
+                if not semver_new or semver_new not in semver_spec:
                     continue
-                if not item or semantic_version.Version(
-                        item['name'], partial=True) < specver:
+                if not item or self.parse_semver_version(
+                        item['name']) < semver_new:
                     item = v
             elif requirements:
                 if requirements == v['name']:
                     return v
+
             else:
                 if not item or _cmp_dates(item['released'],
                                           v['released']) == -1:
