@@ -75,7 +75,8 @@ class CorePackageManager(PackageManager):
 
 
 def get_core_package_dir(name):
-    assert name in CORE_PACKAGES
+    if name not in CORE_PACKAGES:
+        raise exception.PlatformioException("Please upgrade PIO Core")
     requirements = CORE_PACKAGES[name]
     pm = CorePackageManager()
     pkg_dir = pm.get_package_dir(name, requirements)
