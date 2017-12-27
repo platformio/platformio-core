@@ -78,9 +78,15 @@ class PkgRepoMixin(object):
     PIO_VERSION = semantic_version.Version(util.pepver_to_semver(__version__))
 
     @staticmethod
-    def max_satisfying_repo_version(versions, requirements=None):
+    def is_system_compatible(valid_systems):
+        if valid_systems in (None, "all", "*"):
+            return True
+        if not isinstance(valid_systems, list):
+            valid_systems = list([valid_systems])
+        return util.get_systype() in valid_systems
+
+    def max_satisfying_repo_version(self, versions, requirements=None):
         item = None
-        systype = util.get_systype()
         reqspec = None
         if requirements:
             try:
@@ -89,8 +95,7 @@ class PkgRepoMixin(object):
                 pass
 
         for v in versions:
-            if "system" in v and v['system'] not in ("all", "*") and \
-                    systype not in v['system']:
+            if not self.is_system_compatible(v.get("system")):
                 continue
             if "platformio" in v.get("engines", {}):
                 if PkgRepoMixin.PIO_VERSION not in semantic_version.Spec(
@@ -304,6 +309,8 @@ class PkgInstallerMixin(object):
             elif pkg_id and manifest.get("id") != pkg_id:
                 continue
             elif not pkg_id and manifest['name'] != name:
+                continue
+            elif not PkgRepoMixin.is_system_compatible(manifest.get("system")):
                 continue
 
             # strict version or VCS HASH

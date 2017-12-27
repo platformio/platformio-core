@@ -9,7 +9,10 @@ isort:
 yapf:
 	yapf --recursive --in-place platformio/
 
-before-commit: isort yapf lint
+test:
+	py.test -v -s tests --ignore tests/test_examples.py --ignore tests/test_pkgmanifest.py
+
+before-commit: isort yapf lint test
 
 clean-docs:
 	rm -rf docs/_build
