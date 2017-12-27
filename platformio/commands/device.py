@@ -70,8 +70,8 @@ def device_list(  # pylint: disable=too-many-branches
 
         if key == "logical":
             for item in value:
-                click.secho(item['device'], fg="cyan")
-                click.echo("-" * len(item['device']))
+                click.secho(item['path'], fg="cyan")
+                click.echo("-" * len(item['path']))
                 click.echo("Name: %s" % item['name'])
                 click.echo("")
 

@@ -458,7 +458,7 @@ def get_logical_devices():
                 if not match:
                     continue
                 items.append({
-                    "device": match.group(1) + "\\",
+                    "path": match.group(1) + "\\",
                     "name": match.group(2)
                 })
             return items
@@ -467,7 +467,7 @@ def get_logical_devices():
         # try "fsutil"
         result = exec_command(["fsutil", "fsinfo", "drives"]).get("out", "")
         for device in re.findall(r"[A-Z]:\\", result):
-            items.append({"device": device, "name": None})
+            items.append({"path": device, "name": None})
         return items
     else:
         result = exec_command(["df"]).get("out")
@@ -477,7 +477,7 @@ def get_logical_devices():
             if not match:
                 continue
             items.append({
-                "device": match.group(1),
+                "path": match.group(1),
                 "name": basename(match.group(1))
             })
     return items
@@ -486,7 +486,7 @@ def get_logical_devices():
 ### Backward compatibility for PIO Core <3.5
 get_serialports = get_serial_ports
 get_logicaldisks = lambda: [{
-    "disk": d['device'],
+    "disk": d['path'],
     "name": d['name']
 } for d in get_logical_devices()]
 
