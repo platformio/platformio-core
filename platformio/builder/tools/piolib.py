@@ -805,9 +805,12 @@ def BuildProjectLibraries(env):
             title = "<%s>" % lb.name
             if lb.version:
                 title += " v%s" % lb.version
+            sys.stdout.write("%s|-- %s" % (margin, title))
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
-                title += " (%s)" % lb.path
-            print "%s|-- %s" % (margin, title)
+                sys.stdout.write(" (")
+                sys.stdout.write(lb.path)
+                sys.stdout.write(")")
+            sys.stdout.write("\n")
             if lb.depbuilders:
                 print_deps_tree(lb, level + 1)
 
