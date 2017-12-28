@@ -31,7 +31,8 @@
                 "{{!define.replace('"', '\\"')}}",
 % end
                 ""
-            ]
+            ],
+            "intelliSenseMode": "clang-x64"
         }
     ]
 }

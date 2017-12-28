@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from os import chmod
-from os.path import join, splitext
+from os.path import join
 from tarfile import open as tarfile_open
 from time import mktime
 from zipfile import ZipFile
@@ -38,6 +38,9 @@ class ArchiveBase(object):
 
     def after_extract(self, item, dest_dir):
         pass
+
+    def close(self):
+        self._afo.close()
 
 
 class TARArchive(ArchiveBase):
@@ -76,28 +79,32 @@ class ZIPArchive(ArchiveBase):
 
 class FileUnpacker(object):
 
-    def __init__(self, archpath, dest_dir="."):
-        self._archpath = archpath
-        self._dest_dir = dest_dir
+    def __init__(self, archpath):
+        self.archpath = archpath
         self._unpacker = None
 
-        _, archext = splitext(archpath.lower())
-        if archext in (".gz", ".bz2"):
-            self._unpacker = TARArchive(archpath)
-        elif archext == ".zip":
-            self._unpacker = ZIPArchive(archpath)
-
+    def __enter__(self):
+        if self.archpath.lower().endswith((".gz", ".bz2")):
+            self._unpacker = TARArchive(self.archpath)
+        elif self.archpath.lower().endswith(".zip"):
+            self._unpacker = ZIPArchive(self.archpath)
         if not self._unpacker:
-            raise UnsupportedArchiveType(archpath)
+            raise UnsupportedArchiveType(self.archpath)
+        return self
 
-    def start(self):
+    def __exit__(self, *args):
+        if self._unpacker:
+            self._unpacker.close()
+
+    def unpack(self, dest_dir="."):
+        assert self._unpacker
         if app.is_disabled_progressbar():
             click.echo("Unpacking...")
             for item in self._unpacker.get_items():
-                self._unpacker.extract_item(item, self._dest_dir)
+                self._unpacker.extract_item(item, dest_dir)
         else:
             items = self._unpacker.get_items()
             with click.progressbar(items, label="Unpacking") as pb:
                 for item in pb:
-                    self._unpacker.extract_item(item, self._dest_dir)
+                    self._unpacker.extract_item(item, dest_dir)
         return True

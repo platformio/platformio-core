@@ -25,8 +25,8 @@ def test_pkg_input_parser():
         [("PkgName", "!=1.2.3,<2.0"), ("PkgName", "!=1.2.3,<2.0", None)],
         ["PkgName@1.2.3", ("PkgName", "1.2.3", None)],
         [("PkgName@1.2.3", "1.2.5"), ("PkgName@1.2.3", "1.2.5", None)],
-        ["id:13", ("id:13", None, None)],
-        ["id:13@~1.2.3", ("id:13", "~1.2.3", None)],
+        ["id=13", ("id=13", None, None)],
+        ["id=13@~1.2.3", ("id=13", "~1.2.3", None)],
         [
             util.get_home_dir(),
             (".platformio", None, "file://" + util.get_home_dir())
@@ -117,11 +117,15 @@ def test_pkg_input_parser():
         ],
         [
             "git@github.com:user/package.git",
-            ("package", None, "git@github.com:user/package.git")
+            ("package", None, "git+git@github.com:user/package.git")
         ],
         [
             "git@github.com:user/package.git#v1.2.0",
-            ("package", None, "git@github.com:user/package.git#v1.2.0")
+            ("package", None, "git+git@github.com:user/package.git#v1.2.0")
+        ],
+        [
+            "LocalName=git@github.com:user/package.git#v1.2.0@~1.2.0",
+            ("LocalName", "~1.2.0", "git+git@github.com:user/package.git#v1.2.0")
         ],
         [
             "git+ssh://git@gitlab.private-server.com/user/package#1.2.0",
@@ -132,13 +136,19 @@ def test_pkg_input_parser():
             "git+ssh://user@gitlab.private-server.com:1234/package#1.2.0",
             ("package", None,
              "git+ssh://user@gitlab.private-server.com:1234/package#1.2.0")
+        ],
+        [
+            "LocalName=git+ssh://user@gitlab.private-server.com:1234"
+            "/package#1.2.0@!=13",
+            ("LocalName", "!=13",
+             "git+ssh://user@gitlab.private-server.com:1234/package#1.2.0")
         ]
     ]
     for params, result in items:
         if isinstance(params, tuple):
-            assert PackageManager.parse_pkg_input(*params) == result
+            assert PackageManager.parse_pkg_uri(*params) == result
         else:
-            assert PackageManager.parse_pkg_input(params) == result
+            assert PackageManager.parse_pkg_uri(params) == result
 
 
 def test_install_packages(isolated_pio_home, tmpdir):
@@ -146,7 +156,7 @@ def test_install_packages(isolated_pio_home, tmpdir):
         dict(id=1, name="name_1", version="shasum"),
         dict(id=1, name="name_1", version="2.0.0"),
         dict(id=1, name="name_1", version="2.1.0"),
-        dict(id=1, name="name_1", version="1.2.0"),
+        dict(id=1, name="name_1", version="1.2"),
         dict(id=1, name="name_1", version="1.0.0"),
         dict(name="name_2", version="1.0.0"),
         dict(name="name_2", version="2.0.0",
@@ -167,7 +177,7 @@ def test_install_packages(isolated_pio_home, tmpdir):
     assert len(pm.get_installed()) == len(packages) - 1
 
     pkg_dirnames = [
-        'name_1_ID1', 'name_1_ID1@1.0.0', 'name_1_ID1@1.2.0',
+        'name_1_ID1', 'name_1_ID1@1.0.0', 'name_1_ID1@1.2',
         'name_1_ID1@2.0.0', 'name_1_ID1@shasum', 'name_2',
         'name_2@src-177cbce1f0705580d17790fda1cc2ef5',
         'name_2@src-f863b537ab00f4c7b5011fc44b120e1f'
@@ -182,12 +192,11 @@ def test_get_package(isolated_pio_home):
         [("1", ), None],
         [("id=1", "shasum"), dict(id=1, name="name_1", version="shasum")],
         [("id=1", "*"), dict(id=1, name="name_1", version="2.1.0")],
-        [("id=1", "^1"), dict(id=1, name="name_1", version="1.2.0")],
-        [("id=1", "^1"), dict(id=1, name="name_1", version="1.2.0")],
-        [("name_1", "<2"), dict(id=1, name="name_1", version="1.2.0")],
+        [("id=1", "^1"), dict(id=1, name="name_1", version="1.2")],
+        [("id=1", "^1"), dict(id=1, name="name_1", version="1.2")],
+        [("name_1", "<2"), dict(id=1, name="name_1", version="1.2")],
         [("name_1", ">2"), None],
-        [("name_1", "2-0-0"), dict(id=1, name="name_1", version="2.1.0")],
-        [("name_1", "2-0-0"), dict(id=1, name="name_1", version="2.1.0")],
+        [("name_1", "2-0-0"), None],
         [("name_2", ), dict(name="name_2", version="4.0.0")],
         [("url_has_higher_priority", None, "git+https://github.com"),
          dict(name="name_2", version="2.0.0",

@@ -41,8 +41,9 @@ def PioPlatform(env):
 def BoardConfig(env, board=None):
     p = initPioPlatform(env['PLATFORM_MANIFEST'])
     try:
-        config = p.board_config(board if board else env['BOARD'])
-    except exception.UnknownBoard as e:
+        assert env.get("BOARD", board), "BoardConfig: Board is not defined"
+        config = p.board_config(board if board else env.get("BOARD"))
+    except (AssertionError, exception.UnknownBoard) as e:
         sys.stderr.write("Error: %s\n" % str(e))
         env.Exit(1)
     return config
@@ -60,6 +61,9 @@ def GetFrameworkScript(env, framework):
 def LoadPioPlatform(env, variables):
     p = env.PioPlatform()
     installed_packages = p.get_installed_packages()
+
+    # Ensure real platform name
+    env['PIOPLATFORM'] = p.name
 
     # Add toolchains and uploaders to $PATH
     for name in installed_packages:
@@ -80,9 +84,8 @@ def LoadPioPlatform(env, variables):
 
     board_config = env.BoardConfig()
     for k in variables.keys():
-        if (k in env
-                or not any([k.startswith("BOARD_"),
-                            k.startswith("UPLOAD_")])):
+        if k in env or \
+                not any([k.startswith("BOARD_"), k.startswith("UPLOAD_")]):
             continue
         _opt, _val = k.lower().split("_", 1)
         if _opt == "board":

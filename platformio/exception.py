@@ -53,15 +53,15 @@ class IncompatiblePlatform(PlatformioException):
 
 class PlatformNotInstalledYet(PlatformioException):
 
-    MESSAGE = "The platform '{0}' has not been installed yet. "\
-        "Use `platformio platform install {0}` command"
+    MESSAGE = ("The platform '{0}' has not been installed yet. "
+               "Use `platformio platform install {0}` command")
 
 
 class BoardNotDefined(PlatformioException):
 
-    MESSAGE = "You need to specify board ID using `-b` or `--board` "\
-        "option. Supported boards list is available via "\
-        "`platformio boards` command"
+    MESSAGE = (
+        "You need to specify board ID using `-b` or `--board` option. "
+        "Supported boards list is available via `platformio boards` command")
 
 
 class UnknownBoard(PlatformioException):
@@ -91,16 +91,16 @@ class MissingPackageManifest(PlatformioException):
 
 class UndefinedPackageVersion(PlatformioException):
 
-    MESSAGE = "Could not find a version that satisfies the requirement '{0}'"\
-              " for your system '{1}'"
+    MESSAGE = ("Could not find a version that satisfies the requirement '{0}'"
+               " for your system '{1}'")
 
 
 class PackageInstallError(PlatformioException):
 
-    MESSAGE = "Could not install '{0}' with version requirements '{1}' "\
-              "for your system '{2}'.\n"\
-              "If you use Antivirus, it can block PlatformIO Package "\
-              "Manager. Try to disable it for a while."
+    MESSAGE = (
+        "Could not install '{0}' with version requirements '{1}' for your "
+        "system '{2}'.\n If you use Antivirus, it can block PlatformIO "
+        "Package Manager. Try to disable it for a while.")
 
 
 class FDUnrecognizedStatusCode(PlatformioException):
@@ -110,21 +110,22 @@ class FDUnrecognizedStatusCode(PlatformioException):
 
 class FDSizeMismatch(PlatformioException):
 
-    MESSAGE = "The size ({0:d} bytes) of downloaded file '{1}' "\
-        "is not equal to remote size ({2:d} bytes)"
+    MESSAGE = ("The size ({0:d} bytes) of downloaded file '{1}' "
+               "is not equal to remote size ({2:d} bytes)")
 
 
 class FDSHASumMismatch(PlatformioException):
 
-    MESSAGE = "The 'sha1' sum '{0}' of downloaded file '{1}' "\
-        "is not equal to remote '{2}'"
+    MESSAGE = ("The 'sha1' sum '{0}' of downloaded file '{1}' "
+               "is not equal to remote '{2}'")
 
 
 class NotPlatformIOProject(PlatformioException):
 
-    MESSAGE = "Not a PlatformIO project. `platformio.ini` file has not been "\
-        "found in current working directory ({0}). To initialize new project "\
-        "please use `platformio init` command"
+    MESSAGE = (
+        "Not a PlatformIO project. `platformio.ini` file has not been "
+        "found in current working directory ({0}). To initialize new project "
+        "please use `platformio init` command")
 
 
 class UndefinedEnvPlatform(PlatformioException):
@@ -164,24 +165,27 @@ class APIRequestError(PlatformioException):
 
 class InternetIsOffline(PlatformioException):
 
-    MESSAGE = "You are not connected to the Internet"
+    MESSAGE = (
+        "You are not connected to the Internet.\n"
+        "If you build a project first time, we need Internet connection "
+        "to install all dependencies and toolchain.")
 
 
 class LibNotFound(PlatformioException):
 
-    MESSAGE = "Library `{0}` has not been found in PlatformIO Registry.\n"\
-              "You can ignore this message, if `{0}` is a built-in library "\
-              "(included in framework, SDK). E.g., SPI, Wire, etc."
+    MESSAGE = ("Library `{0}` has not been found in PlatformIO Registry.\n"
+               "You can ignore this message, if `{0}` is a built-in library "
+               "(included in framework, SDK). E.g., SPI, Wire, etc.")
 
 
 class NotGlobalLibDir(PlatformioException):
 
-    MESSAGE = "The `{0}` is not a PlatformIO project.\n\n"\
-              "To manage libraries "\
-              "in global storage `{1}`,\n"\
-              "please use `platformio lib --global {2}` or specify custom "\
-              "storage `platformio lib --storage-dir /path/to/storage/ {2}`."\
-              "\nCheck `platformio lib --help` for details."
+    MESSAGE = (
+        "The `{0}` is not a PlatformIO project.\n\n"
+        "To manage libraries in global storage `{1}`,\n"
+        "please use `platformio lib --global {2}` or specify custom storage "
+        "`platformio lib --storage-dir /path/to/storage/ {2}`.\n"
+        "Check `platformio lib --help` for details.")
 
 
 class InvalidLibConfURL(PlatformioException):
@@ -206,9 +210,9 @@ class InvalidSettingValue(PlatformioException):
 
 class CIBuildEnvsEmpty(PlatformioException):
 
-    MESSAGE = "Can't find PlatformIO build environments.\n"\
-        "Please specify `--board` or path to `platformio.ini` with "\
-        "predefined environments using `--project-conf` option"
+    MESSAGE = ("Can't find PlatformIO build environments.\n"
+               "Please specify `--board` or path to `platformio.ini` with "
+               "predefined environments using `--project-conf` option")
 
 
 class UpgradeError(PlatformioException):
@@ -221,7 +225,17 @@ class UpgradeError(PlatformioException):
 """
 
 
+class HomeDirPermissionsError(PlatformioException):
+
+    MESSAGE = (
+        "The directory `{0}` or its parent directory is not owned by the "
+        "current user and PlatformIO can not store configuration data.\n"
+        "Please check the permissions and owner of that directory.\n"
+        "Otherwise, please remove manually `{0}` directory and PlatformIO "
+        "will create new from the current user.")
+
+
 class CygwinEnvDetected(PlatformioException):
 
-    MESSAGE = "PlatformIO does not work within Cygwin environment. "\
-        "Use native Terminal instead."
+    MESSAGE = ("PlatformIO does not work within Cygwin environment. "
+               "Use native Terminal instead.")

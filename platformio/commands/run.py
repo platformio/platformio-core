@@ -132,8 +132,8 @@ class EnvironmentProcessor(object):
                      "upload_protocol", "upload_speed", "upload_flags",
                      "upload_resetmethod", "lib_deps", "lib_ignore",
                      "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
-                     "lib_archive", "piotest", "test_transport", "test_ignore",
-                     "test_port", "debug_tool", "debug_port",
+                     "lib_archive", "piotest", "test_transport", "test_filter",
+                     "test_ignore", "test_port", "debug_tool", "debug_port",
                      "debug_init_cmds", "debug_extra_cmds", "debug_server",
                      "debug_init_break", "debug_load_cmd", "monitor_port",
                      "monitor_baud", "monitor_rts", "monitor_dtr")
@@ -180,13 +180,14 @@ class EnvironmentProcessor(object):
             self.options[k] = self.options[k].strip()
 
         if not self.silent:
-            click.echo(
-                "[%s] Processing %s (%s)" %
-                (datetime.now().strftime("%c"),
-                 click.style(self.name, fg="cyan", bold=True), "; ".join([
-                     "%s: %s" % (k, ", ".join(util.parse_conf_multi_values(v)))
-                     for k, v in self.options.items()
-                 ])))
+            click.echo("[%s] Processing %s (%s)" %
+                       (datetime.now().strftime("%c"),
+                        click.style(self.name, fg="cyan", bold=True),
+                        "; ".join([
+                            "%s: %s" %
+                            (k, ", ".join(util.parse_conf_multi_values(v)))
+                            for k, v in self.options.items()
+                        ])))
             click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
@@ -227,7 +228,7 @@ class EnvironmentProcessor(object):
                 v = self.RENAMED_PLATFORMS[v]
 
             # warn about unknown options
-            if k not in self.KNOWN_OPTIONS:
+            if k not in self.KNOWN_OPTIONS and not k.startswith("custom_"):
                 click.secho(
                     "Detected non-PlatformIO `%s` option in `[env:%s]` section"
                     % (k, self.name),
@@ -278,10 +279,10 @@ class EnvironmentProcessor(object):
                     if d.strip()
                 ], self.verbose)
             if "lib_deps" in self.options:
-                _autoinstall_libdeps(
-                    self.cmd_ctx,
-                    util.parse_conf_multi_values(self.options['lib_deps']),
-                    self.verbose)
+                _autoinstall_libdeps(self.cmd_ctx,
+                                     util.parse_conf_multi_values(
+                                         self.options['lib_deps']),
+                                     self.verbose)
 
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])
@@ -323,8 +324,8 @@ def _clean_pioenvs_dir(pioenvs_dir):
 
     # if project's config is modified
     if (isdir(pioenvs_dir)
-            and getmtime(join(util.get_project_dir(), "platformio.ini")) >
-            getmtime(pioenvs_dir)):
+            and getmtime(join(util.get_project_dir(),
+                              "platformio.ini")) > getmtime(pioenvs_dir)):
         util.rmtree_(pioenvs_dir)
 
     # check project structure

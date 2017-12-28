@@ -34,33 +34,10 @@ from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
 
 
-def in_silence(ctx=None):
-    ctx = ctx or app.get_session_var("command_ctx")
-    assert ctx
-    ctx_args = ctx.args or []
-    return ctx_args and any([
-        ctx.args[0] == "upgrade", "--json-output" in ctx_args,
-        "--version" in ctx_args
-    ])
-
-
 def on_platformio_start(ctx, force, caller):
-    if not caller:
-        if getenv("PLATFORMIO_CALLER"):
-            caller = getenv("PLATFORMIO_CALLER")
-        elif getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
-            caller = "vscode"
-        elif util.is_container():
-            if getenv("C9_UID"):
-                caller = "C9"
-            elif getenv("USER") == "cabox":
-                caller = "CA"
-            elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
-                caller = "Che"
-
     app.set_session_var("command_ctx", ctx)
     app.set_session_var("force_option", force)
-    app.set_session_var("caller_id", caller)
+    set_caller(caller)
     telemetry.on_command()
 
     if not in_silence(ctx):
@@ -75,7 +52,8 @@ def on_platformio_end(ctx, result):  # pylint: disable=W0613
         check_platformio_upgrade()
         check_internal_updates(ctx, "platforms")
         check_internal_updates(ctx, "libraries")
-    except (exception.GetLatestVersionError, exception.APIRequestError):
+    except (exception.InternetIsOffline, exception.GetLatestVersionError,
+            exception.APIRequestError):
         click.secho(
             "Failed to check for PlatformIO upgrades. "
             "Please check your Internet connection.",
@@ -84,6 +62,32 @@ def on_platformio_end(ctx, result):  # pylint: disable=W0613
 
 def on_platformio_exception(e):
     telemetry.on_exception(e)
+
+
+def in_silence(ctx=None):
+    ctx = ctx or app.get_session_var("command_ctx")
+    assert ctx
+    ctx_args = ctx.args or []
+    return ctx_args and any([
+        ctx.args[0] == "upgrade", "--json-output" in ctx_args,
+        "--version" in ctx_args
+    ])
+
+
+def set_caller(caller=None):
+    if not caller:
+        if getenv("PLATFORMIO_CALLER"):
+            caller = getenv("PLATFORMIO_CALLER")
+        elif getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
+            caller = "vscode"
+        elif util.is_container():
+            if getenv("C9_UID"):
+                caller = "C9"
+            elif getenv("USER") == "cabox":
+                caller = "CA"
+            elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
+                caller = "Che"
+    app.set_session_var("caller_id", caller)
 
 
 class Upgrader(object):
@@ -98,7 +102,7 @@ class Upgrader(object):
                             self._upgrade_to_3_0_0),
                            (semantic_version.Version("3.0.0-b.11"),
                             self._upgrade_to_3_0_0b11),
-                           (semantic_version.Version("3.4.0-a.9"),
+                           (semantic_version.Version("3.5.0-a.2"),
                             self._update_dev_platforms)]
 
     def run(self, ctx):
@@ -234,11 +238,13 @@ def check_platformio_upgrade():
     if (time() - interval) < last_check.get("platformio_upgrade", 0):
         return
 
-    # Update PlatformIO's Core packages
-    update_core_packages(silent=True)
-
     last_check['platformio_upgrade'] = int(time())
     app.set_state_item("last_check", last_check)
+
+    util.internet_on(raise_exception=True)
+
+    # Update PlatformIO's Core packages
+    update_core_packages(silent=True)
 
     latest_version = get_latest_version()
     if semantic_version.Version.coerce(util.pepver_to_semver(
@@ -281,6 +287,8 @@ def check_internal_updates(ctx, what):
 
     last_check[what + '_update'] = int(time())
     app.set_state_item("last_check", last_check)
+
+    util.internet_on(raise_exception=True)
 
     pm = PlatformManager() if what == "platforms" else LibraryManager()
     outdated_items = []

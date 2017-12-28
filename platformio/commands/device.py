@@ -28,19 +28,71 @@ def cli():
 
 
 @cli.command("list", short_help="List devices")
+@click.option("--serial", is_flag=True, help="List serial ports, default")
+@click.option("--logical", is_flag=True, help="List logical devices")
+@click.option("--mdns", is_flag=True, help="List multicast DNS services")
 @click.option("--json-output", is_flag=True)
-def device_list(json_output):
+def device_list(  # pylint: disable=too-many-branches
+        serial, logical, mdns, json_output):
+    if not logical and not mdns:
+        serial = True
+    data = {}
+    if serial:
+        data['serial'] = util.get_serial_ports()
+    if logical:
+        data['logical'] = util.get_logical_devices()
+    if mdns:
+        data['mdns'] = util.get_mdns_services()
+
+    single_key = data.keys()[0] if len(data.keys()) == 1 else None
 
     if json_output:
-        click.echo(json.dumps(util.get_serialports()))
-        return
+        return click.echo(json.dumps(data[single_key] if single_key else data))
 
-    for item in util.get_serialports():
-        click.secho(item['port'], fg="cyan")
-        click.echo("-" * len(item['port']))
-        click.echo("Hardware ID: %s" % item['hwid'])
-        click.echo("Description: %s" % item['description'])
-        click.echo("")
+    titles = {
+        "serial": "Serial Ports",
+        "logical": "Logical Devices",
+        "mdns": "Multicast DNS Services"
+    }
+
+    for key, value in data.iteritems():
+        if not single_key:
+            click.secho(titles[key], bold=True)
+            click.echo("=" * len(titles[key]))
+
+        if key == "serial":
+            for item in value:
+                click.secho(item['port'], fg="cyan")
+                click.echo("-" * len(item['port']))
+                click.echo("Hardware ID: %s" % item['hwid'])
+                click.echo("Description: %s" % item['description'])
+                click.echo("")
+
+        if key == "logical":
+            for item in value:
+                click.secho(item['path'], fg="cyan")
+                click.echo("-" * len(item['path']))
+                click.echo("Name: %s" % item['name'])
+                click.echo("")
+
+        if key == "mdns":
+            for item in value:
+                click.secho(item['name'], fg="cyan")
+                click.echo("-" * len(item['name']))
+                click.echo("Type: %s" % item['type'])
+                click.echo("IP: %s" % item['ip'])
+                click.echo("Port: %s" % item['port'])
+                if item['properties']:
+                    click.echo("Properties: %s" % ("; ".join([
+                        "%s=%s" % (k, v)
+                        for k, v in item['properties'].iteritems()
+                    ])))
+                click.echo("")
+
+        if single_key:
+            click.echo("")
+
+    return True
 
 
 @cli.command("monitor", short_help="Monitor device (Serial)")
@@ -123,7 +175,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         pass
 
     if not kwargs['port']:
-        ports = util.get_serialports(filter_hwid=True)
+        ports = util.get_serial_ports(filter_hwid=True)
         if len(ports) == 1:
             kwargs['port'] = ports[0]['port']
 
@@ -154,7 +206,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
 def get_project_options(project_dir, environment):
     config = util.load_project_config(project_dir)
     if not config.sections():
-        return
+        return None
 
     known_envs = [s[4:] for s in config.sections() if s.startswith("env:")]
     if environment:
@@ -163,7 +215,7 @@ def get_project_options(project_dir, environment):
         raise exception.UnknownEnvNames(environment, ", ".join(known_envs))
 
     if not known_envs:
-        return
+        return None
 
     if config.has_option("platformio", "env_default"):
         env_default = config.get("platformio",

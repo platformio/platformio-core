@@ -91,3 +91,7 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="f432", MODE="0666
 
 # CMSIS-DAP compatible adapters
 ATTRS{product}=="*CMSIS-DAP*", MODE="664", GROUP="plugdev"
+
+# Black Magic Probe
+SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic GDB Server"
+SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic UART Port"

@@ -4,13 +4,82 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.5.0 (2017-12-28)
+~~~~~~~~~~~~~~~~~~
+
+* `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`__ -
+  interact with PlatformIO ecosystem using modern and cross-platform GUI:
+
+  - Library Manager:
+
+    * Search for new libraries in PlatformIO Registry
+    * "1-click" library installation, per-project libraries, extra storages
+    * List installed libraries in multiple storages
+    * List built-in libraries (by frameworks)
+    * Updates for installed libraries
+    * Multiple examples, trending libraries, and more.
+
+  - PlatformIO Projects
+  - PIO Account
+  - Development platforms, frameworks and board explorer
+  - Device Manager: serial, logical, and multicast DNS services
+
+* Integration with `Jenkins CI <http://docs.platformio.org/page/ci/jenkins.html>`_
+* New `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__
+  folder for project's header files
+  (`issue #1107 <https://github.com/platformio/platformio-core/issues/1107>`_)
+* Depend on development platform using VSC URL (Git, Mercurial and Subversion)
+  instead of a name in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_env_general.html#platform>`__.
+  Drop support for ``*_stage`` dev/platform names (use VCS URL instead).
+* Reinstall/redownload package with a new ``-f, --force`` option for
+  `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__
+  and `platformio platform install <http://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__
+  commands
+  (`issue #778 <https://github.com/platformio/platformio-core/issues/778>`_)
+* Handle missed dependencies and provide a solution based on PlatformIO Library
+  Registry
+  (`issue #781 <https://github.com/platformio/platformio-core/issues/781>`_)
+* New setting `projects_dir <http://docs.platformio.org/page/userguide/cmd_settings.html#projects-dir>`__
+  that allows to override a default PIO Home Projects location
+  (`issue #1161 <https://github.com/platformio/platformio-core/issues/1161>`_)
+
+* `Library Dependency Finder (LDF) <http://docs.platformio.org/page/librarymanager/ldf.html>`__:
+
+  - Search for dependencies used in `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
+    (`issue #953 <https://github.com/platformio/platformio-core/issues/953>`_)
+  - Parse library source file in pair with a header when they have the same name
+    (`issue #1175 <https://github.com/platformio/platformio-core/issues/1175>`_)
+  - Handle library dependencies defined as VCS or SemVer in
+    `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_env_general.html#platform>`__
+    (`issue #1155 <https://github.com/platformio/platformio-core/issues/1155>`_)
+  - Added option to configure library `Compatible Mode <http://docs.platformio.org/page/librarymanager/ldf.html#compatibility-mode>`__
+    using `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
+
+* New options for `platformio device list <http://docs.platformio.org/page/userguide/cmd_device.html#platformio-device-list>`__
+  command:
+
+  - ``--serial`` list available serial ports (default)
+  - ``--logical`` list logical devices
+  - ``--mdns`` discover multicast DNS services
+    (`issue #463 <https://github.com/platformio/platformio-core/issues/463>`_)
+
+* Fixed platforms, packages, and libraries updating behind proxy
+  (`issue #1061 <https://github.com/platformio/platformio-core/issues/1061>`_)
+* Fixed missing toolchain include paths for project generator
+  (`issue #1154 <https://github.com/platformio/platformio-core/issues/1154>`_)
+* Fixed "Super-Quick (Mac / Linux)" installation in "get-platformio.py" script
+  (`issue #1017 <https://github.com/platformio/platformio-core/issues/1017>`_)
+* Fixed "get-platformio.py" script which hangs on Windows 10
+  (`issue #1118 <https://github.com/platformio/platformio-core/issues/1118>`_)
+* Other bug fixes and performance improvements
+
 3.4.1 (2017-08-02)
 ~~~~~~~~~~~~~~~~~~
 
 * Pre/Post extra scripting for advanced control of PIO Build System
   (`issue #891 <https://github.com/platformio/platformio-core/issues/891>`_)
 * New `lib_archive <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-archive>`_
-  option to control library archiving and linking behaviour
+  option to control library archiving and linking behavior
   (`issue #993 <https://github.com/platformio/platformio-core/issues/993>`_)
 * Add "inc" folder automatically to CPPPATH when "src" is available (works for project and library)
   (`issue #1003 <https://github.com/platformio/platformio-core/issues/1003>`_)
@@ -104,7 +173,7 @@ PlatformIO 3.0
   command
   (`issue #430 <https://github.com/platformio/platformio-core/issues/430>`_)
 * List supported frameworks, SDKs with a new
-  `pio platform frameworks <http://docs.platformio.org/page/userguide/platforms/cmd_frameworks.htmll>`__ command
+  `pio platform frameworks <http://docs.platformio.org/page/userguide/platforms/cmd_frameworks.html>`__ command
 * Visual Studio Code extension for PlatformIO
   (`issue #619 <https://github.com/platformio/platformio-core/issues/619>`_)
 * Added new options ``--no-reset``, ``--monitor-rts`` and ``--monitor-dtr``
@@ -222,7 +291,7 @@ PlatformIO 3.0
 
 * `PlatformIO Plus <https://pioplus.com>`__
 
-  + Local and Embedded `Unit Testing <http://docs.platformio.org/page/unit_testing.html>`__
+  + Local and Embedded `Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
     (`issue #408 <https://github.com/platformio/platformio-core/issues/408>`_,
     `issue #519 <https://github.com/platformio/platformio-core/issues/519>`_)
 
@@ -893,7 +962,7 @@ PlatformIO 2.0
   `windows_x86 <http://docs.platformio.org/page/platforms/windows_x86.html>`__
   development platforms
   (`issue #263 <https://github.com/platformio/platformio-core/issues/263>`_)
-* Added `PlatformIO Demo <http://docs.platformio.org/page/demo.html>`_
+* Added `PlatformIO Demo <http://docs.platformio.org/page/userguide/demo.html>`_
   page to documentation
 * Simplified `installation <http://docs.platformio.org/page/installation.html>`__
   process of PlatformIO
@@ -1252,7 +1321,7 @@ PlatformIO 1.0
   (`issue #83 <https://github.com/platformio/platformio-core/issues/83>`_)
 * Added ``--json-output`` option to
   `platformio boards <http://docs.platformio.org/page/userguide/cmd_boards.html>`__
-  and `platformio search <http://docs.platformio.org/page/userguide/cmd_search.html>`__
+  and `platformio search <http://docs.platformio.org/page/userguide/platforms/cmd_search.html>`__
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
   (`issue #42 <https://github.com/platformio/platformio-core/issues/42>`_)
 * Allowed to ignore some libs from *Library Dependency Finder* via
@@ -1293,7 +1362,7 @@ PlatformIO 0.0
 ~~~~~~~~~~~~~~~~~~~
 
 * Added ``--json-output`` option to
-  `platformio list <http://docs.platformio.org/page/userguide/cmd_list.html>`__,
+  `platformio list <http://docs.platformio.org/page/userguide/platforms/cmd_list.htmll>`__,
   `platformio serialports list <http://docs.platformio.org/page/userguide/cmd_serialports.html>`__ and
   `platformio lib list <http://docs.platformio.org/page/userguide/lib/cmd_list.html>`__
   commands which allows to return the output in `JSON <http://en.wikipedia.org/wiki/JSON>`_ format
@@ -1337,14 +1406,14 @@ PlatformIO 0.0
 
 * Ask user to install platform (when it hasn't been installed yet) within
   `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
-  and `platformio show <http://docs.platformio.org/page/userguide/cmd_show.html>`_ commands
+  and `platformio show <http://docs.platformio.org/page/userguide/platforms/cmd_show.html>`_ commands
 * Improved main `documentation <http://docs.platformio.org>`_
 * Fixed "*OSError: [Errno 2] No such file or directory*" within
   `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__
   command when PlatformIO isn't installed properly
-* Fixed example for `Eclipse IDE with Tiva board <https://github.com/platformio/platformio-examples/tree/develop/ide/eclipse>`_
+* Fixed example for Eclipse IDE with Tiva board
   (`issue #32 <https://github.com/platformio/platformio-core/pull/32>`_)
-* Upgraded `Eclipse Project Examples <https://github.com/platformio/platformio-examples/tree/develop/ide/eclipse>`_
+* Upgraded Eclipse Project Examples
   to latest *Luna* and *PlatformIO* releases
 
 0.9.0 (2014-12-01)
@@ -1433,7 +1502,7 @@ PlatformIO 0.0
 * Implemented (especially for `SmartAnthill <http://docs.smartanthill.ikravets.com/>`_)
   `platformio run -t uploadlazy <http://docs.platformio.org/page/userguide/cmd_run.html>`_
   target (no dependencies to framework libs, ELF and etc.)
-* Allowed to skip default packages via `platformio install --skip-default-package <http://docs.platformio.org/page/userguide/cmd_install.html#cmdoption--skip-default>`_
+* Allowed to skip default packages via `platformio install --skip-default-package <http://docs.platformio.org/page/userguide/platforms/cmd_install.html#cmdoption-platformio-platform-install-skip-default>`_
   option
 * Added tools for *Raspberry Pi* platform
 * Added support for *Microduino* and *Raspduino* boards in
@@ -1442,7 +1511,7 @@ PlatformIO 0.0
 0.3.1 (2014-06-21)
 ~~~~~~~~~~~~~~~~~~
 
-* Fixed auto-installer for Windows OS (bug with %PATH% customisations)
+* Fixed auto-installer for Windows OS (bug with %PATH% custom installation)
 
 
 0.3.0 (2014-06-21)

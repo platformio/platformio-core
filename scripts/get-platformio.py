@@ -14,6 +14,7 @@
 
 import os
 import subprocess
+import site
 import sys
 from platform import system
 from tempfile import NamedTemporaryFile
@@ -26,39 +27,34 @@ def fix_winpython_pathenv():
     """
     Add Python & Python Scripts to the search path on Windows
     """
-    import ctypes
-    from ctypes.wintypes import HWND, UINT, WPARAM, LPARAM, LPVOID
     try:
         import _winreg as winreg
     except ImportError:
         import winreg
 
     # took these lines from the native "win_add2path.py"
-    pythonpath = os.path.dirname(CURINTERPRETER_PATH)
+    pythonpath = os.path.dirname(os.path.normpath(sys.executable))
     scripts = os.path.join(pythonpath, "Scripts")
-    if not os.path.isdir(scripts):
-        os.makedirs(scripts)
+    appdata = os.environ["APPDATA"]
+    if hasattr(site, "USER_SITE"):
+        userpath = site.USER_SITE.replace(appdata, "%APPDATA%")
+        userscripts = os.path.join(userpath, "Scripts")
+    else:
+        userscripts = None
 
-    with winreg.CreateKey(winreg.HKEY_CURRENT_USER, u"Environment") as key:
+    with winreg.CreateKey(winreg.HKEY_CURRENT_USER, "Environment") as key:
         try:
-            envpath = winreg.QueryValueEx(key, u"PATH")[0]
+            envpath = winreg.QueryValueEx(key, "PATH")[0]
         except WindowsError:
             envpath = u"%PATH%"
 
         paths = [envpath]
-        for path in (pythonpath, scripts):
+        for path in (pythonpath, scripts, userscripts):
             if path and path not in envpath and os.path.isdir(path):
                 paths.append(path)
 
         envpath = os.pathsep.join(paths)
-        winreg.SetValueEx(key, u"PATH", 0, winreg.REG_EXPAND_SZ, envpath)
-    winreg.ExpandEnvironmentStrings(envpath)
-
-    # notify the system about the changes
-    SendMessage = ctypes.windll.user32.SendMessageW
-    SendMessage.argtypes = HWND, UINT, WPARAM, LPVOID
-    SendMessage.restype = LPARAM
-    SendMessage(0xFFFF, 0x1A, 0, u"Environment")
+        winreg.SetValueEx(key, "PATH", 0, winreg.REG_EXPAND_SZ, envpath)
     return True
 
 
@@ -92,6 +88,10 @@ def exec_python_cmd(args):
 
 
 def install_pip():
+    r = exec_python_cmd(["-m", "pip", "--version"])
+    if r['returncode'] == 0:
+        print r['out']
+        return
     try:
         from urllib2 import urlopen
     except ImportError:
@@ -112,16 +112,16 @@ def install_pip():
 
 def install_platformio():
     r = None
-    cmd = ["pip", "install", "-U", "platformio"]
+    cmd = ["-m", "pip", "install", "-U", "platformio"]
     # cmd = [
-    #     "pip", "install", "-U",
+    #     "-m", "pip", "install", "-U",
     #     "https://github.com/platformio/platformio-core/archive/develop.zip"
     # ]
     try:
         r = exec_python_cmd(cmd)
         assert r['returncode'] == 0
     except AssertionError:
-        cmd.insert(1, "--no-cache-dir")
+        cmd.insert(2, "--no-cache-dir")
         r = exec_python_cmd(cmd)
     if r:
         print_exec_result(r)

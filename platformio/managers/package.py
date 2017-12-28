@@ -30,7 +30,7 @@ from platformio.downloader import FileDownloader
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-return-statements
 
 
 class PackageRepoIterator(object):
@@ -78,9 +78,15 @@ class PkgRepoMixin(object):
     PIO_VERSION = semantic_version.Version(util.pepver_to_semver(__version__))
 
     @staticmethod
-    def max_satisfying_repo_version(versions, requirements=None):
+    def is_system_compatible(valid_systems):
+        if valid_systems in (None, "all", "*"):
+            return True
+        if not isinstance(valid_systems, list):
+            valid_systems = list([valid_systems])
+        return util.get_systype() in valid_systems
+
+    def max_satisfying_repo_version(self, versions, requirements=None):
         item = None
-        systype = util.get_systype()
         reqspec = None
         if requirements:
             try:
@@ -89,8 +95,7 @@ class PkgRepoMixin(object):
                 pass
 
         for v in versions:
-            if "system" in v and v['system'] not in ("all", "*") and \
-                    systype not in v['system']:
+            if not self.is_system_compatible(v.get("system")):
                 continue
             if "platformio" in v.get("engines", {}):
                 if PkgRepoMixin.PIO_VERSION not in semantic_version.Spec(
@@ -121,8 +126,9 @@ class PkgRepoMixin(object):
     def get_all_repo_versions(self, name):
         result = []
         for versions in PackageRepoIterator(name, self.repositories):
-            result.extend([v['version'] for v in versions])
-        return sorted(set(result))
+            result.extend(
+                [semantic_version.Version(v['version']) for v in versions])
+        return [str(v) for v in sorted(set(result))]
 
 
 class PkgInstallerMixin(object):
@@ -187,15 +193,36 @@ class PkgInstallerMixin(object):
 
     @staticmethod
     def unpack(source_path, dest_dir):
-        fu = FileUnpacker(source_path, dest_dir)
-        return fu.start()
+        with FileUnpacker(source_path) as fu:
+            return fu.unpack(dest_dir)
+
+    @staticmethod
+    def parse_semver_spec(value, raise_exception=False):
+        try:
+            return semantic_version.Spec(value)
+        except ValueError as e:
+            if raise_exception:
+                raise e
+        return None
+
+    @staticmethod
+    def parse_semver_version(value, raise_exception=False):
+        try:
+            try:
+                return semantic_version.Version(value)
+            except ValueError:
+                return semantic_version.Version.coerce(value)
+        except ValueError as e:
+            if raise_exception:
+                raise e
+        return None
 
     @staticmethod
     def get_install_dirname(manifest):
         name = re.sub(r"[^\da-z\_\-\. ]", "_", manifest['name'], flags=re.I)
         if "id" in manifest:
             name += "_ID%d" % manifest['id']
-        return name
+        return str(name)
 
     def get_src_manifest_path(self, pkg_dir):
         if not isdir(pkg_dir):
@@ -258,7 +285,7 @@ class PkgInstallerMixin(object):
         if "version" not in manifest:
             manifest['version'] = "0.0.0"
 
-        manifest['__pkg_dir'] = pkg_dir
+        manifest['__pkg_dir'] = util.path_to_unicode(pkg_dir)
         self.cache_set(cache_key, manifest)
         return manifest
 
@@ -283,21 +310,23 @@ class PkgInstallerMixin(object):
                 continue
             elif not pkg_id and manifest['name'] != name:
                 continue
+            elif not PkgRepoMixin.is_system_compatible(manifest.get("system")):
+                continue
 
             # strict version or VCS HASH
             if requirements and requirements == manifest['version']:
                 return manifest
 
             try:
-                if requirements and not semantic_version.Spec(
-                        requirements).match(
-                            semantic_version.Version(
-                                manifest['version'], partial=True)):
+                if requirements and not self.parse_semver_spec(
+                        requirements, raise_exception=True).match(
+                            self.parse_semver_version(
+                                manifest['version'], raise_exception=True)):
                     continue
-                elif not best or (semantic_version.Version(
-                        manifest['version'], partial=True) >
-                                  semantic_version.Version(
-                                      best['version'], partial=True)):
+                elif not best or (self.parse_semver_version(
+                        manifest['version'], raise_exception=True) >
+                                  self.parse_semver_version(
+                                      best['version'], raise_exception=True)):
                     best = manifest
             except ValueError:
                 pass
@@ -383,7 +412,7 @@ class PkgInstallerMixin(object):
         finally:
             if isdir(tmp_dir):
                 util.rmtree_(tmp_dir)
-        return
+        return None
 
     def _update_src_manifest(self, data, src_dir):
         if not isdir(src_dir):
@@ -405,16 +434,10 @@ class PkgInstallerMixin(object):
         pkg_dir = join(self.package_dir, pkg_dirname)
         cur_manifest = self.load_manifest(pkg_dir)
 
-        tmp_semver = None
+        tmp_semver = self.parse_semver_version(tmp_manifest['version'])
         cur_semver = None
-        try:
-            tmp_semver = semantic_version.Version(
-                tmp_manifest['version'], partial=True)
-            if cur_manifest:
-                cur_semver = semantic_version.Version(
-                    cur_manifest['version'], partial=True)
-        except ValueError:
-            pass
+        if cur_manifest:
+            cur_semver = self.parse_semver_version(cur_manifest['version'])
 
         # package should satisfy requirements
         if requirements:
@@ -490,51 +513,57 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         click.echo("%s: %s" % (self.__class__.__name__, message), nl=nl)
 
     @staticmethod
-    def parse_pkg_input(  # pylint: disable=too-many-branches
+    def parse_pkg_uri(  # pylint: disable=too-many-branches
             text, requirements=None):
         text = str(text)
-        # git@github.com:user/package.git
-        url_marker = text[:4]
-        if url_marker not in ("git@", "git+") or ":" not in text:
-            url_marker = "://"
+        name, url = None, None
 
+        # Parse requirements
         req_conditions = [
-            not requirements,
-            "@" in text,
-            not url_marker.startswith("git")
-        ]  # yapf: disable
+            "@" in text, not requirements, ":" not in text
+            or text.rfind("/") < text.rfind("@")
+        ]
         if all(req_conditions):
             text, requirements = text.rsplit("@", 1)
+
+        # Handle PIO Library Registry ID
         if text.isdigit():
             text = "id=" + text
+        # Parse custom name
+        elif "=" in text and not text.startswith("id="):
+            name, text = text.split("=", 1)
 
-        name, url = (None, text)
-        if "=" in text and not text.startswith("id="):
-            name, url = text.split("=", 1)
+        # Parse URL
+        # if valid URL with scheme vcs+protocol://
+        if "+" in text and text.find("+") < text.find("://"):
+            url = text
+        elif "/" in text or "\\" in text:
+            git_conditions = [
+                # Handle GitHub URL (https://github.com/user/package)
+                text.startswith("https://github.com/") and not text.endswith(
+                    (".zip", ".tar.gz")),
+                (text.split("#", 1)[0]
+                 if "#" in text else text).endswith(".git")
+            ]
+            hg_conditions = [
+                # Handle Developer Mbed URL
+                # (https://developer.mbed.org/users/user/code/package/)
+                text.startswith("https://developer.mbed.org")
+            ]
+            if any(git_conditions):
+                url = "git+" + text
+            elif any(hg_conditions):
+                url = "hg+" + text
+            elif "://" not in text and (isfile(text) or isdir(text)):
+                url = "file://" + text
+            elif "://" in text:
+                url = text
+            # Handle short version of GitHub URL
+            elif text.count("/") == 1:
+                url = "git+https://github.com/" + text
 
-        git_conditions = [
-            # Handle GitHub URL (https://github.com/user/package)
-            url.startswith("https://github.com/") and not url.endswith(
-                (".zip", ".tar.gz")),
-            url.startswith("http")
-            and (url.split("#", 1)[0] if "#" in url else url).endswith(".git")
-        ]
-        if any(git_conditions):
-            url = "git+" + url
-
-        # Handle Developer Mbed URL
-        # (https://developer.mbed.org/users/user/code/package/)
-        if url.startswith("https://developer.mbed.org"):
-            url = "hg+" + url
-
-        if any([s in url for s in ("\\", "/")]) and url_marker not in url:
-            if isfile(url) or isdir(url):
-                url = "file://" + url
-            elif url.count("/") == 1 and "git" not in url_marker:
-                url = "git+https://github.com/" + url
-
-        # determine name
-        if url_marker in url and not name:
+        # Parse name from URL
+        if url and not name:
             _url = url.split("#", 1)[0] if "#" in url else url
             if _url.endswith(("\\", "/")):
                 _url = _url[:-1]
@@ -542,8 +571,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             if "." in name and not name.startswith("."):
                 name = name.rsplit(".", 1)[0]
 
-        if url_marker not in url:
-            url = None
         return (name or text, requirements, url)
 
     def outdated(self, pkg_dir, requirements=None):
@@ -553,11 +580,12 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         `False` - package is up-to-date
         `String` - a found latest version
         """
-        assert isdir(pkg_dir)
+        if not isdir(pkg_dir):
+            return None
         latest = None
         manifest = self.load_manifest(pkg_dir)
-        # skip a fixed package to a specific version
-        if "@" in pkg_dir and "__src_url" not in manifest:
+        # skip fixed package to a specific version
+        if "@" in pkg_dir and "__src_url" not in manifest and not requirements:
             return None
 
         if "__src_url" in manifest:
@@ -585,8 +613,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         up_to_date = False
         try:
             assert "__src_url" not in manifest
-            up_to_date = (semantic_version.Version.coerce(manifest['version'])
-                          >= semantic_version.Version.coerce(latest))
+            up_to_date = (self.parse_semver_version(
+                manifest['version'], raise_exception=True) >=
+                          self.parse_semver_version(
+                              latest, raise_exception=True))
         except (AssertionError, ValueError):
             up_to_date = latest == manifest['version']
 
@@ -596,18 +626,22 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 name,
                 requirements=None,
                 silent=False,
-                trigger_event=True):
+                trigger_event=True,
+                force=False):
+        name, requirements, url = self.parse_pkg_uri(name, requirements)
+        package_dir = self.get_package_dir(name, requirements, url)
 
         # avoid circle dependencies
         if not self.INSTALL_HISTORY:
             self.INSTALL_HISTORY = []
-        history_key = "%s-%s" % (name, requirements) if requirements else name
+        history_key = "%s-%s-%s" % (name, requirements or "", url or "")
         if history_key in self.INSTALL_HISTORY:
-            return
+            return package_dir
         self.INSTALL_HISTORY.append(history_key)
 
-        name, requirements, url = self.parse_pkg_input(name, requirements)
-        package_dir = self.get_package_dir(name, requirements, url)
+        if package_dir and force:
+            self.uninstall(package_dir)
+            package_dir = None
 
         if not package_dir or not silent:
             msg = "Installing " + click.style(name, fg="cyan")
@@ -652,8 +686,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if isdir(package):
             pkg_dir = package
         else:
-            name, requirements, url = self.parse_pkg_input(
-                package, requirements)
+            name, requirements, url = self.parse_pkg_uri(package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         if not pkg_dir:
@@ -689,15 +722,11 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 label=manifest['name'])
         return True
 
-    def update(  # pylint: disable=too-many-return-statements
-            self,
-            package,
-            requirements=None,
-            only_check=False):
+    def update(self, package, requirements=None, only_check=False):
         if isdir(package):
             pkg_dir = package
         else:
-            pkg_dir = self.get_package_dir(*self.parse_pkg_input(package))
+            pkg_dir = self.get_package_dir(*self.parse_pkg_uri(package))
 
         if not pkg_dir:
             raise exception.UnknownPackage("%s @ %s" % (package,
@@ -713,7 +742,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             nl=False)
         if not util.internet_on():
             click.echo("[%s]" % (click.style("Off-line", fg="yellow")))
-            return
+            return None
 
         latest = self.outdated(pkg_dir, requirements)
         if latest:
@@ -721,10 +750,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         elif latest is False:
             click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
         else:
-            click.echo("[%s]" % (click.style("Skip", fg="yellow")))
+            click.echo("[%s]" % (click.style("Fixed", fg="yellow")))
 
         if only_check or not latest:
-            return
+            return True
 
         if "__src_url" in manifest:
             vcs = VCSClientFactory.newClient(pkg_dir, manifest['__src_url'])

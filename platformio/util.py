@@ -22,13 +22,13 @@ import socket
 import stat
 import subprocess
 import sys
-from contextlib import contextmanager
+from functools import wraps
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
 from shutil import rmtree
 from threading import Thread
-from time import sleep
+from time import sleep, time
 
 import click
 import requests
@@ -149,6 +149,25 @@ class memoized(object):
         self.cache = {}
 
 
+class throttle(object):
+
+    def __init__(self, threshhold):
+        self.threshhold = threshhold  # milliseconds
+        self.last = 0
+
+    def __call__(self, fn):
+
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            diff = int(round((time() - self.last) * 1000))
+            if diff < self.threshhold:
+                sleep((self.threshhold - diff) * 0.001)
+            self.last = time()
+            return fn(*args, **kwargs)
+
+        return wrapper
+
+
 def singleton(cls):
     """ From PEP-318 http://www.python.org/dev/peps/pep-0318/#examples """
     _instances = {}
@@ -161,12 +180,8 @@ def singleton(cls):
     return get_instance
 
 
-@contextmanager
-def capture_stdout(output):
-    stdout = sys.stdout
-    sys.stdout = output
-    yield
-    sys.stdout = stdout
+def path_to_unicode(path):
+    return path.decode(sys.getfilesystemencoding()).encode("utf-8")
 
 
 def load_json(file_path):
@@ -281,6 +296,11 @@ def get_projectsrc_dir():
     return get_project_optional_dir("src_dir", join(get_project_dir(), "src"))
 
 
+def get_projectinclude_dir():
+    return get_project_optional_dir("include_dir",
+                                    join(get_project_dir(), "include"))
+
+
 def get_projecttest_dir():
     return get_project_optional_dir("test_dir", join(get_project_dir(),
                                                      "test"))
@@ -317,11 +337,10 @@ def get_projectdata_dir():
 
 def load_project_config(path=None):
     if not path or isdir(path):
-        project_dir = path or get_project_dir()
-        if not is_platformio_project(project_dir):
-            raise exception.NotPlatformIOProject(project_dir)
-        path = join(project_dir, "platformio.ini")
-    assert isfile(path)
+        path = join(path or get_project_dir(), "platformio.ini")
+    if not isfile(path):
+        raise exception.NotPlatformIOProject(
+            dirname(path) if path.endswith("platformio.ini") else path)
     cp = ProjectConfig()
     cp.read(path)
     return cp
@@ -336,8 +355,8 @@ def parse_conf_multi_values(items):
     ]
 
 
-def change_filemtime(path, time):
-    os.utime(path, (time, time))
+def change_filemtime(path, mtime):
+    os.utime(path, (mtime, mtime))
 
 
 def is_ci():
@@ -398,7 +417,7 @@ def copy_pythonpath_to_osenv():
     os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
 
 
-def get_serialports(filter_hwid=False):
+def get_serial_ports(filter_hwid=False):
     try:
         from serial.tools.list_ports import comports
     except ImportError:
@@ -426,29 +445,117 @@ def get_serialports(filter_hwid=False):
     return result
 
 
-def get_logicaldisks():
-    disks = []
+def get_logical_devices():
+    items = []
     if platform.system() == "Windows":
-        result = exec_command(
-            ["wmic", "logicaldisk", "get", "name,VolumeName"]).get("out", "")
-        disknamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
-        for line in result.split("\n"):
-            match = disknamere.match(line.strip())
-            if not match:
-                continue
-            disks.append({"disk": match.group(1), "name": match.group(2)})
+        try:
+            result = exec_command(
+                ["wmic", "logicaldisk", "get", "name,VolumeName"]).get(
+                    "out", "")
+            devicenamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
+            for line in result.split("\n"):
+                match = devicenamere.match(line.strip())
+                if not match:
+                    continue
+                items.append({
+                    "path": match.group(1) + "\\",
+                    "name": match.group(2)
+                })
+            return items
+        except WindowsError:  # pylint: disable=undefined-variable
+            pass
+        # try "fsutil"
+        result = exec_command(["fsutil", "fsinfo", "drives"]).get("out", "")
+        for device in re.findall(r"[A-Z]:\\", result):
+            items.append({"path": device, "name": None})
+        return items
     else:
         result = exec_command(["df"]).get("out")
-        disknamere = re.compile(r"\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
+        devicenamere = re.compile(r"^/.+\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
         for line in result.split("\n"):
-            match = disknamere.search(line.strip())
+            match = devicenamere.match(line.strip())
             if not match:
                 continue
-            disks.append({
-                "disk": match.group(1),
+            items.append({
+                "path": match.group(1),
                 "name": basename(match.group(1))
             })
-    return disks
+    return items
+
+
+### Backward compatibility for PIO Core <3.5
+get_serialports = get_serial_ports
+get_logicaldisks = lambda: [{
+    "disk": d['path'],
+    "name": d['name']
+} for d in get_logical_devices()]
+
+
+def get_mdns_services():
+    try:
+        import zeroconf
+    except ImportError:
+        from site import addsitedir
+        from platformio.managers.core import get_core_package_dir
+        contrib_pysite_dir = get_core_package_dir("contrib-pysite")
+        addsitedir(contrib_pysite_dir)
+        sys.path.insert(0, contrib_pysite_dir)
+        import zeroconf
+
+    class mDNSListener(object):
+
+        def __init__(self):
+            self._zc = zeroconf.Zeroconf(
+                interfaces=zeroconf.InterfaceChoice.All)
+            self._found_types = []
+            self._found_services = []
+
+        def __enter__(self):
+            zeroconf.ServiceBrowser(self._zc, "_services._dns-sd._udp.local.",
+                                    self)
+            return self
+
+        def __exit__(self, etype, value, traceback):
+            self._zc.close()
+
+        def remove_service(self, zc, type_, name):
+            pass
+
+        def add_service(self, zc, type_, name):
+            try:
+                assert zeroconf.service_type_name(name)
+                assert str(name)
+            except (AssertionError, UnicodeError,
+                    zeroconf.BadTypeInNameException):
+                return
+            if name not in self._found_types:
+                self._found_types.append(name)
+                zeroconf.ServiceBrowser(self._zc, name, self)
+            if type_ in self._found_types:
+                s = zc.get_service_info(type_, name)
+                if s:
+                    self._found_services.append(s)
+
+        def get_services(self):
+            return self._found_services
+
+    items = []
+    with mDNSListener() as mdns:
+        sleep(3)
+        for service in mdns.get_services():
+            items.append({
+                "type":
+                service.type,
+                "name":
+                service.name,
+                "ip":
+                ".".join([str(ord(c)) for c in service.address]),
+                "port":
+                service.port,
+                "properties":
+                service.properties
+            })
+    return items
 
 
 def get_request_defheaders():
@@ -461,6 +568,7 @@ def _api_request_session():
     return requests.Session()
 
 
+@throttle(500)
 def _get_api_result(
         url,  # pylint: disable=too-many-branches
         params=None,
@@ -470,7 +578,7 @@ def _get_api_result(
 
     result = None
     r = None
-    disable_ssl_check = sys.version_info < (2, 7, 9)
+    verify_ssl = sys.version_info >= (2, 7, 9)
 
     headers = get_request_defheaders()
     if not url.startswith("http"):
@@ -486,14 +594,14 @@ def _get_api_result(
                 data=data,
                 headers=headers,
                 auth=auth,
-                verify=not disable_ssl_check)
+                verify=verify_ssl)
         else:
             r = _api_request_session().get(
                 url,
                 params=params,
                 headers=headers,
                 auth=auth,
-                verify=not disable_ssl_check)
+                verify=verify_ssl)
         result = r.json()
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
@@ -513,6 +621,7 @@ def _get_api_result(
 
 
 def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
+    internet_on(raise_exception=True)
     from platformio.app import ContentCache
     total = 0
     max_retries = 5
@@ -532,8 +641,6 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
             return result
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
-            if not internet_on():
-                raise exception.InternetIsOffline()
             from platformio.maintenance import in_silence
             total += 1
             if not in_silence():
@@ -548,16 +655,36 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
         "Please try later.")
 
 
-def internet_on(timeout=3):
+PING_INTERNET_IPS = [
+    "192.30.253.113",  # github.com
+    "159.122.18.156",  # dl.bintray.com
+    "193.222.52.25"  # dl.platformio.org
+]
+
+
+@memoized
+def _internet_on():
+    timeout = 2
     socket.setdefaulttimeout(timeout)
-    for host in ("dl.bintray.com", "dl.platformio.org"):
+    for ip in PING_INTERNET_IPS:
         try:
-            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host,
-                                                                       80))
+            if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
+                requests.get(
+                    "http://%s" % ip, allow_redirects=False, timeout=timeout)
+            else:
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip,
+                                                                           80))
             return True
         except:  # pylint: disable=bare-except
             pass
     return False
+
+
+def internet_on(raise_exception=False):
+    result = _internet_on()
+    if raise_exception and not result:
+        raise exception.InternetIsOffline()
+    return result
 
 
 def get_pythonexe_path():
@@ -596,8 +723,13 @@ def pepver_to_semver(pepver):
 def rmtree_(path):
 
     def _onerror(_, name, __):
-        os.chmod(name, stat.S_IWRITE)
-        os.remove(name)
+        try:
+            os.chmod(name, stat.S_IWRITE)
+            os.remove(name)
+        except Exception as e:  # pylint: disable=broad-except
+            click.secho(
+                "Please manually remove file `%s`" % name, fg="red", err=True)
+            raise e
 
     return rmtree(path, onerror=_onerror)
 

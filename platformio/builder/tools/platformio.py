@@ -27,27 +27,24 @@ from SCons.Util import case_sensitive_suffixes, is_Sequence
 
 from platformio.util import glob_escape, pioversion_to_intstr
 
-SRC_BUILD_EXT = ["c", "cc", "cpp", "S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_HEADER_EXT = ["h", "hpp"]
+SRC_C_EXT = ["c", "cc", "cpp"]
+SRC_BUILD_EXT = SRC_C_EXT + ["S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
 
 
 def BuildProgram(env):
 
     def _append_pio_macros():
-        env.AppendUnique(CPPDEFINES=[
-            ("PLATFORMIO",
-             int("{0:02d}{1:02d}{2:02d}".format(*pioversion_to_intstr())))
-        ])
+        env.AppendUnique(CPPDEFINES=[(
+            "PLATFORMIO",
+            int("{0:02d}{1:02d}{2:02d}".format(*pioversion_to_intstr())))])
 
     _append_pio_macros()
 
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
-
-    if "__debug" in COMMAND_LINE_TARGETS:
-        env.ProcessDebug()
 
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
@@ -57,13 +54,26 @@ def BuildProgram(env):
     # apply user flags
     env.ProcessFlags(env.get("BUILD_FLAGS"))
 
+    # process framework scripts
     env.BuildFrameworks(env.get("PIOFRAMEWORK"))
 
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
 
+    # Search for project source files
+    env.Append(
+        LIBPATH=["$BUILD_DIR"],
+        PIOBUILDFILES=env.CollectBuildFiles(
+            "$BUILDSRC_DIR", "$PROJECTSRC_DIR", "$SRC_FILTER",
+            duplicate=False))
+
+    if "__debug" in COMMAND_LINE_TARGETS:
+        env.ProcessDebug()
+    if "__test" in COMMAND_LINE_TARGETS:
+        env.Append(PIOBUILDFILES=env.ProcessTest())
+
     # build dependent libs
-    deplibs = env.BuildProjectLibraries()
+    env.Append(LIBS=env.BuildProjectLibraries())
 
     # append specified LD_SCRIPT
     if ("LDSCRIPT_PATH" in env
@@ -71,26 +81,14 @@ def BuildProgram(env):
         env.Append(LINKFLAGS=['-Wl,-T"$LDSCRIPT_PATH"'])
 
     # enable "cyclic reference" for linker
-    if env.get("LIBS", deplibs) and env.GetCompilerType() == "gcc":
+    if env.get("LIBS") and env.GetCompilerType() == "gcc":
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 
     # Handle SRC_BUILD_FLAGS
     env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
-    env.Append(
-        LIBS=deplibs,
-        LIBPATH=["$BUILD_DIR"],
-        PIOBUILDFILES=env.CollectBuildFiles(
-            "$BUILDSRC_DIR",
-            "$PROJECTSRC_DIR",
-            src_filter=env.get("SRC_FILTER"),
-            duplicate=False))
-
-    if "__test" in COMMAND_LINE_TARGETS:
-        env.Append(PIOBUILDFILES=env.ProcessTest())
-
-    if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
+    if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
             "Error: Nothing to build. Please put your source code files "
             "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR"))
@@ -185,6 +183,7 @@ def MatchSourceFiles(env, src_dir, src_filter=None):
             items.add(item.replace(src_dir + sep, ""))
 
     src_dir = env.subst(src_dir)
+    src_filter = env.subst(src_filter) if src_filter else None
     src_filter = src_filter or SRC_FILTER_DEFAULT
     if isinstance(src_filter, (list, tuple)):
         src_filter = " ".join(src_filter)
@@ -269,12 +268,12 @@ def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     lib = env.Clone()
     return lib.StaticLibrary(
         lib.subst(variant_dir),
-        lib.CollectBuildFiles(variant_dir, src_dir, src_filter=src_filter))
+        lib.CollectBuildFiles(variant_dir, src_dir, src_filter))
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):
     DefaultEnvironment().Append(PIOBUILDFILES=env.Clone().CollectBuildFiles(
-        variant_dir, src_dir, src_filter=src_filter))
+        variant_dir, src_dir, src_filter))
 
 
 def exists(_):

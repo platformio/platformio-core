@@ -231,11 +231,6 @@ def init_ci_conf(project_dir):
 # python:
 #     - "2.7"
 #
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
 # install:
 #     - pip install -U platformio
 #
@@ -250,11 +245,6 @@ def init_ci_conf(project_dir):
 # language: python
 # python:
 #     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
 #
 # env:
 #     - PLATFORMIO_CI_SRC=path/to/test/file.c

@@ -18,16 +18,33 @@ import os
 import uuid
 from copy import deepcopy
 from os import environ, getenv, listdir, remove
-from os.path import dirname, getmtime, isdir, isfile, join
+from os.path import abspath, dirname, expanduser, getmtime, isdir, isfile, join
 from time import time
 
 import requests
 from lockfile import LockFailed, LockFile
 
 from platformio import __version__, exception, util
-from platformio.exception import InvalidSettingName, InvalidSettingValue
+
+
+def projects_dir_validate(projects_dir):
+    assert isdir(projects_dir)
+    return abspath(projects_dir)
+
 
 DEFAULT_SETTINGS = {
+    "auto_update_libraries": {
+        "description": "Automatically update libraries (Yes/No)",
+        "value": False
+    },
+    "auto_update_platforms": {
+        "description": "Automatically update platforms (Yes/No)",
+        "value": False
+    },
+    "check_libraries_interval": {
+        "description": "Check for the library updates interval (days)",
+        "value": 7
+    },
     "check_platformio_interval": {
         "description": "Check for the new PlatformIO interval (days)",
         "value": 3
@@ -36,29 +53,13 @@ DEFAULT_SETTINGS = {
         "description": "Check for the platform updates interval (days)",
         "value": 7
     },
-    "check_libraries_interval": {
-        "description": "Check for the library updates interval (days)",
-        "value": 7
-    },
-    "auto_update_platforms": {
-        "description": "Automatically update platforms (Yes/No)",
-        "value": False
-    },
-    "auto_update_libraries": {
-        "description": "Automatically update libraries (Yes/No)",
-        "value": False
-    },
-    "force_verbose": {
-        "description": "Force verbose output when processing environments",
-        "value": False
+    "enable_cache": {
+        "description": "Enable caching for API requests and Library Manager",
+        "value": True
     },
     "enable_ssl": {
         "description": "Enable SSL for PlatformIO Services",
         "value": False
-    },
-    "enable_cache": {
-        "description": "Enable caching for API requests and Library Manager",
-        "value": True
     },
     "enable_telemetry": {
         "description":
@@ -66,7 +67,16 @@ DEFAULT_SETTINGS = {
          "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
         "value":
         True
-    }
+    },
+    "force_verbose": {
+        "description": "Force verbose output when processing environments",
+        "value": False
+    },
+    "projects_dir": {
+        "description": "Default location for PlatformIO projects (PIO Home)",
+        "value": join(expanduser("~"), "Documents", "PlatformIO", "Projects"),
+        "validator": projects_dir_validate
+    },
 }
 
 SESSION_VARS = {"command_ctx": None, "force_option": False, "caller_id": None}
@@ -95,11 +105,14 @@ class State(object):
 
     def __exit__(self, type_, value, traceback):
         if self._prev_state != self._state:
-            with open(self.path, "w") as fp:
-                if "dev" in __version__:
-                    json.dump(self._state, fp, indent=4)
-                else:
-                    json.dump(self._state, fp)
+            try:
+                with open(self.path, "w") as fp:
+                    if "dev" in __version__:
+                        json.dump(self._state, fp, indent=4)
+                    else:
+                        json.dump(self._state, fp)
+            except IOError:
+                raise exception.HomeDirPermissionsError(util.get_home_dir())
         self._unlock_state_file()
 
     def _lock_state_file(self):
@@ -114,13 +127,7 @@ class State(object):
         try:
             self._lockfile.acquire()
         except LockFailed:
-            raise exception.PlatformioException(
-                "The directory `{0}` or its parent directory is not owned by "
-                "the current user and PlatformIO can not store configuration "
-                "data. \nPlease check the permissions and owner of that "
-                "directory. Otherwise, please remove manually `{0}` "
-                "directory and PlatformIO will create new from the current "
-                "user.".format(dirname(self.path)))
+            raise exception.HomeDirPermissionsError(dirname(self.path))
 
     def _unlock_state_file(self):
         if self._lockfile:
@@ -134,16 +141,10 @@ class ContentCache(object):
         self._db_path = None
         self._lockfile = None
 
-        if not get_setting("enable_cache"):
-            return
-
         self.cache_dir = cache_dir or join(util.get_home_dir(), ".cache")
         self._db_path = join(self.cache_dir, "db.data")
 
     def __enter__(self):
-        if not self._db_path or not isfile(self._db_path):
-            return self
-
         self.delete()
         return self
 
@@ -155,6 +156,7 @@ class ContentCache(object):
             os.makedirs(self.cache_dir)
         self._lockfile = LockFile(self.cache_dir)
         if self._lockfile.is_locked() and \
+                isfile(self._lockfile.lock_file) and \
                 (time() - getmtime(self._lockfile.lock_file)) > 10:
             self._lockfile.break_lock()
 
@@ -192,11 +194,13 @@ class ContentCache(object):
             return data
 
     def set(self, key, data, valid):
+        if not get_setting("enable_cache"):
+            return False
         cache_path = self.get_cache_path(key)
         if isfile(cache_path):
             self.delete(key)
         if not data:
-            return
+            return False
         if not isdir(self.cache_dir):
             os.makedirs(self.cache_dir)
         tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
@@ -220,6 +224,8 @@ class ContentCache(object):
 
     def delete(self, keys=None):
         """ Keys=None, delete expired items """
+        if not isfile(self._db_path):
+            return None
         if not keys:
             keys = []
         if not isinstance(keys, list):
@@ -266,19 +272,19 @@ def clean_cache():
 
 def sanitize_setting(name, value):
     if name not in DEFAULT_SETTINGS:
-        raise InvalidSettingName(name)
+        raise exception.InvalidSettingName(name)
 
     defdata = DEFAULT_SETTINGS[name]
     try:
         if "validator" in defdata:
-            value = defdata['validator']()
+            value = defdata['validator'](value)
         elif isinstance(defdata['value'], bool):
             if not isinstance(value, bool):
                 value = str(value).lower() in ("true", "yes", "y", "1")
         elif isinstance(defdata['value'], int):
             value = int(value)
     except Exception:
-        raise InvalidSettingValue(value, name)
+        raise exception.InvalidSettingValue(value, name)
     return value
 
 
@@ -354,7 +360,9 @@ def get_cid():
             except:  # pylint: disable=bare-except
                 pass
         cid = str(
-            uuid.UUID(bytes=hashlib.md5(str(_uid if _uid else uuid.getnode()))
-                      .digest()))
-        set_state_item("cid", cid)
+            uuid.UUID(
+                bytes=hashlib.md5(str(_uid if _uid else uuid.getnode()))
+                .digest()))
+        if "windows" in util.get_systype() or os.getuid() > 0:
+            set_state_item("cid", cid)
     return cid

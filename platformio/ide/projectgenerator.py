@@ -15,11 +15,10 @@
 import json
 import os
 import re
-from cStringIO import StringIO
 from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
 
 import bottle
-import click
+from click.testing import CliRunner
 
 from platformio import exception, util
 from platformio.commands.run import cli as cmd_run
@@ -60,24 +59,28 @@ class ProjectGenerator(object):
 
     @util.memoized
     def get_project_build_data(self):
-        data = {"defines": [], "includes": [], "cxx_path": None}
+        data = {
+            "defines": [],
+            "includes": [],
+            "cxx_path": None,
+            "prog_path": None
+        }
         envdata = self.get_project_env()
         if not envdata:
             return data
 
-        out = StringIO()
-        with util.capture_stdout(out):
-            click.get_current_context().invoke(
-                cmd_run,
-                project_dir=self.project_dir,
-                environment=[envdata['env_name']],
-                target=["idedata"])
-        result = out.getvalue()
+        result = CliRunner().invoke(cmd_run, [
+            "--project-dir", self.project_dir, "--environment",
+            envdata['env_name'], "--target", "idedata"
+        ])
 
-        if '"includes":' not in result:
-            raise exception.PlatformioException(result)
+        if result.exit_code != 0 and not isinstance(result.exception,
+                                                    exception.ReturnErrorCode):
+            raise result.exception
+        if '"includes":' not in result.output:
+            raise exception.PlatformioException(result.output)
 
-        for line in result.split("\n"):
+        for line in result.output.split("\n"):
             line = line.strip()
             if line.startswith('{"') and line.endswith("}"):
                 data = json.loads(line)

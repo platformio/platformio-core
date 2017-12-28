@@ -16,7 +16,7 @@ import base64
 import json
 import sys
 from os import environ
-from os.path import join
+from os.path import expanduser, join
 from time import time
 
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
@@ -87,6 +87,7 @@ DEFAULT_ENV_OPTIONS = dict(
     UNIX_TIME=int(time()),
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=util.get_project_dir(),
+    PROJECTINCLUDE_DIR=util.get_projectinclude_dir(),
     PROJECTSRC_DIR=util.get_projectsrc_dir(),
     PROJECTTEST_DIR=util.get_projecttest_dir(),
     PROJECTDATA_DIR=util.get_projectdata_dir(),
@@ -138,9 +139,13 @@ for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPTS",
 
 # Configure extra library source directories for LDF
 if util.get_project_optional_dir("lib_extra_dirs"):
-    env.Prepend(LIBSOURCE_DIRS=util.parse_conf_multi_values(
-        util.get_project_optional_dir("lib_extra_dirs")))
+    env.Prepend(
+        LIBSOURCE_DIRS=util.parse_conf_multi_values(
+            util.get_project_optional_dir("lib_extra_dirs")))
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
+env['LIBSOURCE_DIRS'] = [
+    expanduser(d) if d.startswith("~") else d for d in env['LIBSOURCE_DIRS']
+]
 
 env.LoadPioPlatform(commonvars)
 
@@ -167,7 +172,8 @@ if "envdump" in COMMAND_LINE_TARGETS:
 
 if "idedata" in COMMAND_LINE_TARGETS:
     try:
-        print "\n%s\n" % json.dumps(env.DumpIDEData())
+        print "\n%s\n" % util.path_to_unicode(
+            json.dumps(env.DumpIDEData(), ensure_ascii=False))
         env.Exit(0)
     except UnicodeDecodeError:
         sys.stderr.write(

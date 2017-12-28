@@ -50,7 +50,7 @@ class InoToCPPConverter(object):
     def convert(self, nodes):
         contents = self.merge(nodes)
         if not contents:
-            return
+            return None
         return self.process(contents)
 
     def merge(self, nodes):
@@ -199,7 +199,8 @@ def _delete_file(path):
         pass
 
 
-def GetCompilerType(env):
+@util.memoized
+def _get_compiler_type(env):
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
@@ -214,6 +215,10 @@ def GetCompilerType(env):
     elif "gcc" in output:
         return "gcc"
     return None
+
+
+def GetCompilerType(env):
+    return _get_compiler_type(env)
 
 
 def GetActualLDScript(env):
@@ -271,7 +276,7 @@ def PioClean(env, clean_dir):
 
 def ProcessDebug(env):
     if not env.subst("$PIODEBUGFLAGS"):
-        env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb"])
+        env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb3"])
     env.Append(
         BUILD_FLAGS=env.get("PIODEBUGFLAGS", []),
         BUILD_UNFLAGS=["-Os", "-O0", "-O1", "-O2", "-O3"])
@@ -288,11 +293,12 @@ def ProcessTest(env):
     src_filter = ["+<*.cpp>", "+<*.c>"]
     if "PIOTEST" in env:
         src_filter.append("+<%s%s>" % (env['PIOTEST'], sep))
+    env.Replace(PIOTEST_SRC_FILTER=src_filter)
 
     return env.CollectBuildFiles(
         "$BUILDTEST_DIR",
         "$PROJECTTEST_DIR",
-        src_filter=src_filter,
+        "$PIOTEST_SRC_FILTER",
         duplicate=False)
 
 

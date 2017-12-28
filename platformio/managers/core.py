@@ -15,14 +15,15 @@
 import os
 import subprocess
 import sys
-from os.path import join
+from os.path import dirname, join
 
 from platformio import __version__, exception, util
 from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
-    "pysite-pioplus": ">=0.3.0,<2",
-    "tool-pioplus": ">=0.9.1,<2",
+    "contrib-piohome": ">=0.6.0,<2",
+    "contrib-pysite": ">=0.1.2,<2",
+    "tool-pioplus": ">=0.12.1,<2",
     "tool-unity": "~1.20302.1",
     "tool-scons": "~3.20501.2"
 }
@@ -35,15 +36,18 @@ PIOPLUS_AUTO_UPDATES_MAX = 100
 class CorePackageManager(PackageManager):
 
     def __init__(self):
-        PackageManager.__init__(
-            self,
-            join(util.get_home_dir(), "packages"), [
-                "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-                "http%s://dl.platformio.org/packages/manifest.json" %
-                ("" if sys.version_info < (2, 7, 9) else "s")
-            ])
+        PackageManager.__init__(self, join(util.get_home_dir(), "packages"), [
+            "https://dl.bintray.com/platformio/dl-packages/manifest.json",
+            "http%s://dl.platformio.org/packages/manifest.json" %
+            ("" if sys.version_info < (2, 7, 9) else "s")
+        ])
 
-    def install(self, name, requirements=None, *args, **kwargs):
+    def install(  # pylint: disable=keyword-arg-before-vararg
+            self,
+            name,
+            requirements=None,
+            *args,
+            **kwargs):
         PackageManager.install(self, name, requirements, *args, **kwargs)
         self.cleanup_packages()
         return self.get_package_dir(name, requirements)
@@ -71,7 +75,8 @@ class CorePackageManager(PackageManager):
 
 
 def get_core_package_dir(name):
-    assert name in CORE_PACKAGES
+    if name not in CORE_PACKAGES:
+        raise exception.PlatformioException("Please upgrade PIO Core")
     requirements = CORE_PACKAGES[name]
     pm = CorePackageManager()
     pkg_dir = pm.get_package_dir(name, requirements)
@@ -88,6 +93,7 @@ def update_core_packages(only_check=False, silent=False):
             continue
         if not silent or pm.outdated(pkg_dir, requirements):
             pm.update(name, requirements, only_check=only_check)
+    return True
 
 
 def pioplus_call(args, **kwargs):
@@ -99,8 +105,11 @@ def pioplus_call(args, **kwargs):
                                                   sys.version.split()[0]))
 
     pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
-    os.environ['PYTHONEXEPATH'] = util.get_pythonexe_path()
-    os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("pysite-pioplus")
+    pythonexe_path = util.get_pythonexe_path()
+    os.environ['PYTHONEXEPATH'] = pythonexe_path
+    os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("contrib-pysite")
+    os.environ['PATH'] = (os.pathsep).join(
+        [dirname(pythonexe_path), os.environ['PATH']])
     util.copy_pythonpath_to_osenv()
     code = subprocess.call([pioplus_path] + args, **kwargs)
 
@@ -124,3 +133,5 @@ def pioplus_call(args, **kwargs):
 
     if code != 0:
         raise exception.ReturnErrorCode(1)
+
+    return True

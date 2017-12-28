@@ -21,7 +21,6 @@ from os.path import isdir, join
 
 import arrow
 import click
-import semantic_version
 
 from platformio import app, commands, exception, util
 from platformio.managers.package import BasePkgManager
@@ -71,7 +70,10 @@ class LibraryManager(BasePkgManager):
             del manifest['sentence']
 
         if "author" in manifest:
-            manifest['authors'] = [{"name": manifest['author']}]
+            if isinstance(manifest['author'], dict):
+                manifest['authors'] = [manifest['author']]
+            else:
+                manifest['authors'] = [{"name": manifest['author']}]
             del manifest['author']
 
         if "authors" in manifest and not isinstance(manifest['authors'], list):
@@ -101,6 +103,7 @@ class LibraryManager(BasePkgManager):
                 "sam": "atmelsam",
                 "samd": "atmelsam",
                 "esp8266": "espressif8266",
+                "esp32": "espressif32",
                 "arc32": "intel_arc32"
             }
             for arch in manifest['architectures'].split(","):
@@ -149,8 +152,7 @@ class LibraryManager(BasePkgManager):
                     ]
         return items
 
-    @staticmethod
-    def max_satisfying_repo_version(versions, requirements=None):
+    def max_satisfying_repo_version(self, versions, requirements=None):
 
         def _cmp_dates(datestr1, datestr2):
             date1 = arrow.get(datestr1)
@@ -159,29 +161,22 @@ class LibraryManager(BasePkgManager):
                 return 0
             return -1 if date1 < date2 else 1
 
+        semver_spec = self.parse_semver_spec(
+            requirements) if requirements else None
         item = None
-        reqspec = None
-        if requirements:
-            try:
-                reqspec = semantic_version.Spec(requirements)
-            except ValueError:
-                pass
-        for v in versions:
-            specver = None
-            try:
-                specver = semantic_version.Version(v['name'], partial=True)
-            except ValueError:
-                pass
 
-            if reqspec:
-                if not specver or specver not in reqspec:
+        for v in versions:
+            semver_new = self.parse_semver_version(v['name'])
+            if semver_spec:
+                if not semver_new or semver_new not in semver_spec:
                     continue
-                if not item or semantic_version.Version(
-                        item['name'], partial=True) < specver:
+                if not item or self.parse_semver_version(
+                        item['name']) < semver_new:
                     item = v
             elif requirements:
                 if requirements == v['name']:
                     return v
+
             else:
                 if not item or _cmp_dates(item['released'],
                                           v['released']) == -1:
@@ -193,7 +188,7 @@ class LibraryManager(BasePkgManager):
             util.get_api_result(
                 "/lib/info/%d" % self.get_pkg_id_by_name(
                     name, requirements, silent=silent),
-                cache_valid="1d")['versions'], requirements)
+                cache_valid="1h")['versions'], requirements)
         return item['name'] if item else None
 
     def get_pkg_id_by_name(self,
@@ -236,11 +231,11 @@ class LibraryManager(BasePkgManager):
             requirements=None,
             silent=False,
             trigger_event=True,
-            interactive=False):
+            interactive=False,
+            force=False):
         pkg_dir = None
         try:
-            _name, _requirements, _url = self.parse_pkg_input(
-                name, requirements)
+            _name, _requirements, _url = self.parse_pkg_uri(name, requirements)
             if not _url:
                 name = "id=%d" % self.get_pkg_id_by_name(
                     _name,
@@ -248,15 +243,20 @@ class LibraryManager(BasePkgManager):
                     silent=silent,
                     interactive=interactive)
                 requirements = _requirements
-            pkg_dir = BasePkgManager.install(self, name, requirements, silent,
-                                             trigger_event)
+            pkg_dir = BasePkgManager.install(
+                self,
+                name,
+                requirements,
+                silent=silent,
+                trigger_event=trigger_event,
+                force=force)
         except exception.InternetIsOffline as e:
             if not silent:
                 click.secho(str(e), fg="yellow")
-            return
+            return None
 
         if not pkg_dir:
-            return
+            return None
 
         manifest = self.load_manifest(pkg_dir)
         if "dependencies" not in manifest:
@@ -268,7 +268,12 @@ class LibraryManager(BasePkgManager):
         for filters in self.normalize_dependencies(manifest['dependencies']):
             assert "name" in filters
             if any([s in filters.get("version", "") for s in ("\\", "/")]):
-                self.install("{name}={version}".format(**filters))
+                self.install(
+                    "{name}={version}".format(**filters),
+                    silent=silent,
+                    trigger_event=trigger_event,
+                    interactive=interactive,
+                    force=force)
             else:
                 try:
                     lib_info = self.search_for_library(filters, silent,
@@ -281,14 +286,18 @@ class LibraryManager(BasePkgManager):
                 if filters.get("version"):
                     self.install(
                         lib_info['id'],
-                        requirements=filters.get("version"),
+                        filters.get("version"),
                         silent=silent,
-                        trigger_event=trigger_event)
+                        trigger_event=trigger_event,
+                        interactive=interactive,
+                        force=force)
                 else:
                     self.install(
                         lib_info['id'],
                         silent=silent,
-                        trigger_event=trigger_event)
+                        trigger_event=trigger_event,
+                        interactive=interactive,
+                        force=force)
         return pkg_dir
 
     @staticmethod
@@ -315,7 +324,7 @@ class LibraryManager(BasePkgManager):
 
         lib_info = None
         result = util.get_api_result(
-            "/v2/lib/search", dict(query=" ".join(query)), cache_valid="3d")
+            "/v2/lib/search", dict(query=" ".join(query)), cache_valid="1h")
         if result['total'] == 1:
             lib_info = result['items'][0]
         elif result['total'] > 1:

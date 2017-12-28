@@ -47,7 +47,7 @@ def _print_platforms(platforms):
 
 
 def _get_registry_platforms():
-    platforms = util.get_api_result("/platforms", cache_valid="30d")
+    platforms = util.get_api_result("/platforms", cache_valid="7d")
     pm = PlatformManager()
     for platform in platforms or []:
         platform['versions'] = pm.get_all_repo_versions(platform['name'])
@@ -188,7 +188,7 @@ def platform_search(query, json_output):
 @click.option("--json-output", is_flag=True)
 def platform_frameworks(query, json_output):
     frameworks = []
-    for framework in util.get_api_result("/frameworks", cache_valid="30d"):
+    for framework in util.get_api_result("/frameworks", cache_valid="7d"):
         if query == "all":
             query = ""
         search_data = json.dumps(framework)
@@ -257,7 +257,7 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
         click.echo("Frameworks: %s" % ", ".join(data['frameworks']))
 
     if not data['packages']:
-        return
+        return None
 
     if not isinstance(data['packages'][0], dict):
         click.echo("Packages: %s" % ", ".join(data['packages']))
@@ -287,21 +287,29 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
         click.echo("------")
         print_boards(data['boards'])
 
+    return True
+
 
 @cli.command("install", short_help="Install new development platform")
 @click.argument("platforms", nargs=-1, required=True, metavar="[PLATFORM...]")
 @click.option("--with-package", multiple=True)
 @click.option("--without-package", multiple=True)
 @click.option("--skip-default-package", is_flag=True)
+@click.option(
+    "-f",
+    "--force",
+    is_flag=True,
+    help="Reinstall/redownload dev/platform and its packages if exist")
 def platform_install(platforms, with_package, without_package,
-                     skip_default_package):
+                     skip_default_package, force):
     pm = PlatformManager()
     for platform in platforms:
         if pm.install(
                 name=platform,
                 with_packages=with_package,
                 without_packages=without_package,
-                skip_default_package=skip_default_package):
+                skip_default_package=skip_default_package,
+                force=force):
             click.secho(
                 "The platform '%s' has been successfully installed!\n"
                 "The rest of packages will be installed automatically "
@@ -351,7 +359,7 @@ def platform_update(platforms, only_packages, only_check, json_output):
             requirements = None
             url = None
             if not pkg_dir:
-                name, requirements, url = pm.parse_pkg_input(platform)
+                name, requirements, url = pm.parse_pkg_uri(platform)
                 pkg_dir = pm.get_package_dir(name, requirements, url)
             if not pkg_dir:
                 continue
@@ -375,3 +383,5 @@ def platform_update(platforms, only_packages, only_check, json_output):
             pm.update(
                 platform, only_packages=only_packages, only_check=only_check)
             click.echo()
+
+    return True

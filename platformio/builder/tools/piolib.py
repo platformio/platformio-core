@@ -17,13 +17,15 @@
 
 from __future__ import absolute_import
 
+import hashlib
 import os
 import sys
-from os.path import basename, commonprefix, isdir, isfile, join, realpath, sep
+from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
+                     realpath, sep)
 from platform import system
 
 import SCons.Scanner
-from SCons.Script import ARGUMENTS, DefaultEnvironment
+from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, DefaultEnvironment
 
 from platformio import util
 from platformio.builder.tools import platformio as piotool
@@ -82,9 +84,14 @@ class LibBuilderBase(object):
     LDF_MODES = ["off", "chain", "deep", "chain+", "deep+"]
     LDF_MODE_DEFAULT = "chain"
 
+    COMPAT_MODES = [0, 1, 2]
+    COMPAT_MODE_DEFAULT = 1
+
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
-    INC_DIRS_CACHE = None
+    PARSE_SRC_BY_H_NAME = True
+
+    _INCLUDE_DIRS_CACHE = None
 
     def __init__(self, env, path, manifest=None, verbose=False):
         self.env = env.Clone()
@@ -93,13 +100,11 @@ class LibBuilderBase(object):
         self.verbose = verbose
 
         self._manifest = manifest if manifest else self.load_manifest()
-        self._ldf_mode = self.validate_ldf_mode(
-            self.env.get("LIB_LDF_MODE", self.LDF_MODE_DEFAULT))
         self._is_dependent = False
         self._is_built = False
         self._depbuilders = list()
         self._circular_deps = list()
-        self._scanned_paths = list()
+        self._processed_files = list()
 
         # reset source filter, could be overridden with extra script
         self.env['SRC_FILTER'] = ""
@@ -141,19 +146,28 @@ class LibBuilderBase(object):
         ]
 
     @property
+    def include_dir(self):
+        if not all([isdir(join(self.path, d)) for d in ("include", "src")]):
+            return None
+        return join(self.path, "include")
+
+    @property
     def src_dir(self):
         return (join(self.path, "src")
                 if isdir(join(self.path, "src")) else self.path)
 
+    def get_include_dirs(self):
+        items = [self.src_dir]
+        include_dir = self.include_dir
+        if include_dir and include_dir not in items:
+            items.append(include_dir)
+        return items
+
     @property
     def build_dir(self):
-        return join("$BUILD_DIR", "lib", basename(self.path))
-
-    def get_inc_dirs(self):
-        items = [self.src_dir]
-        if all([isdir(join(self.path, d)) for d in ("inc", "src")]):
-            items.append(join(self.path, "inc"))
-        return items
+        return join("$BUILD_DIR",
+                    "lib%s" % hashlib.sha1(self.path).hexdigest()[:3],
+                    basename(self.path))
 
     @property
     def build_flags(self):
@@ -171,21 +185,15 @@ class LibBuilderBase(object):
     def lib_archive(self):
         return self.env.get("LIB_ARCHIVE", "") != "false"
 
-    @staticmethod
-    def validate_ldf_mode(mode):
-        if isinstance(mode, basestring):
-            mode = mode.strip().lower()
-        if mode in LibBuilderBase.LDF_MODES:
-            return mode
-        try:
-            return LibBuilderBase.LDF_MODES[int(mode)]
-        except (IndexError, ValueError):
-            pass
-        return LibBuilderBase.LDF_MODE_DEFAULT
-
     @property
     def lib_ldf_mode(self):
-        return self._ldf_mode
+        return self.validate_ldf_mode(
+            self.env.get("LIB_LDF_MODE", self.LDF_MODE_DEFAULT))
+
+    @property
+    def lib_compat_mode(self):
+        return self.validate_compat_mode(
+            self.env.get("LIB_COMPAT_MODE", self.COMPAT_MODE_DEFAULT))
 
     @property
     def depbuilders(self):
@@ -200,15 +208,35 @@ class LibBuilderBase(object):
         return self._is_built
 
     @staticmethod
-    def items_in_list(items, ilist):
+    def validate_ldf_mode(mode):
+        if isinstance(mode, basestring):
+            mode = mode.strip().lower()
+        if mode in LibBuilderBase.LDF_MODES:
+            return mode
+        try:
+            return LibBuilderBase.LDF_MODES[int(mode)]
+        except (IndexError, ValueError):
+            pass
+        return LibBuilderBase.LDF_MODE_DEFAULT
 
-        def _items_to_list(items_):
-            if not isinstance(items_, list):
-                items_ = [i.strip() for i in items_.split(",")]
-            return [i.lower() for i in items_ if i]
+    @staticmethod
+    def validate_compat_mode(mode):
+        try:
+            mode = int(mode)
+            assert mode in LibBuilderBase.COMPAT_MODES
+            return mode
+        except (AssertionError, ValueError):
+            return LibBuilderBase.COMPAT_MODE_DEFAULT
 
-        items = _items_to_list(items)
-        ilist = _items_to_list(ilist)
+    @staticmethod
+    def items_to_list(items):
+        if not isinstance(items, list):
+            items = [i.strip() for i in items.split(",")]
+        return [i.lower() for i in items if i]
+
+    def items_in_list(self, items, ilist):
+        items = self.items_to_list(items)
+        ilist = self.items_to_list(ilist)
         if "*" in items or "*" in ilist:
             return True
         return set(items) & set(ilist)
@@ -222,13 +250,6 @@ class LibBuilderBase(object):
     def load_manifest(self):
         return {}
 
-    def get_src_files(self):
-        return [
-            join(self.src_dir, item)
-            for item in self.env.MatchSourceFiles(self.src_dir,
-                                                  self.src_filter)
-        ]
-
     def process_extra_options(self):
         with util.cd(self.path):
             self.env.ProcessUnFlags(self.build_unflags)
@@ -237,10 +258,12 @@ class LibBuilderBase(object):
                 self.env.SConscriptChdir(1)
                 self.env.SConscript(
                     realpath(self.extra_script),
-                    exports={"env": self.env,
-                             "pio_lib_builder": self})
+                    exports={
+                        "env": self.env,
+                        "pio_lib_builder": self
+                    })
 
-    def _process_dependencies(self):
+    def process_dependencies(self):
         if not self.dependencies:
             return
         for item in self.dependencies:
@@ -260,7 +283,7 @@ class LibBuilderBase(object):
                 continue
 
             found = False
-            for lb in self.envorigin.GetLibBuilders():
+            for lb in self.env.GetLibBuilders():
                 if item['name'] != lb.name:
                     continue
                 elif "frameworks" in item and \
@@ -279,56 +302,81 @@ class LibBuilderBase(object):
                     "library\n" % (item['name'], self.name))
                 self.env.Exit(1)
 
-    def _validate_search_paths(self, search_paths=None):
-        if not search_paths:
-            search_paths = []
-        assert isinstance(search_paths, list)
+    def get_search_files(self):
+        items = [
+            join(self.src_dir, item)
+            for item in self.env.MatchSourceFiles(self.src_dir,
+                                                  self.src_filter)
+        ]
+        include_dir = self.include_dir
+        if include_dir:
+            items.extend([
+                join(include_dir, item)
+                for item in self.env.MatchSourceFiles(include_dir)
+            ])
+        return items
 
-        _search_paths = []
-        for path in search_paths:
-            if path not in self._scanned_paths:
-                _search_paths.append(path)
-                self._scanned_paths.append(path)
+    def _validate_search_files(self, search_files=None):
+        if not search_files:
+            search_files = []
+        assert isinstance(search_files, list)
 
-        return _search_paths
+        _search_files = []
+        for path in search_files:
+            if path not in self._processed_files:
+                _search_files.append(path)
+                self._processed_files.append(path)
 
-    def _get_found_includes(self, search_paths=None):
+        return _search_files
+
+    def _get_found_includes(self, search_files=None):
         # all include directories
-        if not LibBuilderBase.INC_DIRS_CACHE:
-            inc_dirs = []
-            used_inc_dirs = []
-            for lb in self.envorigin.GetLibBuilders():
-                items = [self.env.Dir(d) for d in lb.get_inc_dirs()]
-                if lb.dependent:
-                    used_inc_dirs.extend(items)
-                else:
-                    inc_dirs.extend(items)
-            LibBuilderBase.INC_DIRS_CACHE = used_inc_dirs + inc_dirs
+        if not LibBuilderBase._INCLUDE_DIRS_CACHE:
+            LibBuilderBase._INCLUDE_DIRS_CACHE = []
+            for lb in self.env.GetLibBuilders():
+                LibBuilderBase._INCLUDE_DIRS_CACHE.extend(
+                    [self.env.Dir(d) for d in lb.get_include_dirs()])
 
         # append self include directories
-        inc_dirs = [self.env.Dir(d) for d in self.get_inc_dirs()]
-        inc_dirs.extend(LibBuilderBase.INC_DIRS_CACHE)
+        include_dirs = [self.env.Dir(d) for d in self.get_include_dirs()]
+        include_dirs.extend(LibBuilderBase._INCLUDE_DIRS_CACHE)
 
         result = []
-        for path in self._validate_search_paths(search_paths):
+        for path in self._validate_search_files(search_files):
             try:
                 assert "+" in self.lib_ldf_mode
                 incs = self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.ADVANCED_SCANNER, tuple(inc_dirs))
+                    self.env, LibBuilderBase.ADVANCED_SCANNER,
+                    tuple(include_dirs))
             except Exception as e:  # pylint: disable=broad-except
                 if self.verbose and "+" in self.lib_ldf_mode:
                     sys.stderr.write(
                         "Warning! Classic Pre Processor is used for `%s`, "
                         "advanced has failed with `%s`\n" % (path, e))
-                incs = self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.CLASSIC_SCANNER, tuple(inc_dirs))
+                _incs = self.env.File(path).get_found_includes(
+                    self.env, LibBuilderBase.CLASSIC_SCANNER,
+                    tuple(include_dirs))
+                incs = []
+                for inc in _incs:
+                    incs.append(inc)
+                    if not self.PARSE_SRC_BY_H_NAME:
+                        continue
+                    _h_path = inc.get_abspath()
+                    if not self.env.IsFileWithExt(_h_path,
+                                                  piotool.SRC_HEADER_EXT):
+                        continue
+                    _f_part = _h_path[:_h_path.rindex(".")]
+                    for ext in piotool.SRC_C_EXT:
+                        if isfile("%s.%s" % (_f_part, ext)):
+                            incs.append(
+                                self.env.File("%s.%s" % (_f_part, ext)))
             # print path, map(lambda n: n.get_abspath(), incs)
             for inc in incs:
                 if inc not in result:
                     result.append(inc)
         return result
 
-    def depend_recursive(self, lb, search_paths=None):
+    def depend_recursive(self, lb, search_files=None):
 
         def _already_depends(_lb):
             if self in _lb.depbuilders:
@@ -348,32 +396,32 @@ class LibBuilderBase(object):
                 self._circular_deps.append(lb)
             elif lb not in self._depbuilders:
                 self._depbuilders.append(lb)
-                LibBuilderBase.INC_DIRS_CACHE = None
-        lb.search_deps_recursive(search_paths)
+                LibBuilderBase._INCLUDE_DIRS_CACHE = None
+        lb.search_deps_recursive(search_files)
 
-    def search_deps_recursive(self, search_paths=None):
+    def search_deps_recursive(self, search_files=None):
         if not self._is_dependent:
             self._is_dependent = True
-            self._process_dependencies()
+            self.process_dependencies()
 
             if self.lib_ldf_mode.startswith("deep"):
-                search_paths = self.get_src_files()
+                search_files = self.get_search_files()
 
         # when LDF is disabled
         if self.lib_ldf_mode == "off":
             return
 
         lib_inc_map = {}
-        for inc in self._get_found_includes(search_paths):
-            for lb in self.envorigin.GetLibBuilders():
+        for inc in self._get_found_includes(search_files):
+            for lb in self.env.GetLibBuilders():
                 if inc.get_abspath() in lb:
                     if lb not in lib_inc_map:
                         lib_inc_map[lb] = []
                     lib_inc_map[lb].append(inc.get_abspath())
                     break
 
-        for lb, lb_search_paths in lib_inc_map.items():
-            self.depend_recursive(lb, lb_search_paths)
+        for lb, lb_search_files in lib_inc_map.items():
+            self.depend_recursive(lb, lb_search_files)
 
     def build(self):
         libs = []
@@ -384,16 +432,16 @@ class LibBuilderBase(object):
                 self.env.AppendUnique(**{key: lb.env.get(key)})
 
         for lb in self._circular_deps:
-            self.env.AppendUnique(CPPPATH=lb.get_inc_dirs())
+            self.env.AppendUnique(CPPPATH=lb.get_include_dirs())
 
         if self._is_built:
             return libs
         self._is_built = True
 
-        self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
+        self.env.AppendUnique(CPPPATH=self.get_include_dirs())
 
         if self.lib_ldf_mode == "off":
-            for lb in self.envorigin.GetLibBuilders():
+            for lb in self.env.GetLibBuilders():
                 if self == lb or not lb.is_built:
                     continue
                 for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
@@ -427,13 +475,13 @@ class ArduinoLibBuilder(LibBuilderBase):
                 manifest[key.strip()] = value.strip()
         return manifest
 
-    def get_inc_dirs(self):
-        inc_dirs = LibBuilderBase.get_inc_dirs(self)
+    def get_include_dirs(self):
+        include_dirs = LibBuilderBase.get_include_dirs(self)
         if isdir(join(self.path, "src")):
-            return inc_dirs
+            return include_dirs
         if isdir(join(self.path, "utility")):
-            inc_dirs.append(join(self.path, "utility"))
-        return inc_dirs
+            include_dirs.append(join(self.path, "utility"))
+        return include_dirs
 
     @property
     def src_filter(self):
@@ -459,18 +507,24 @@ class MbedLibBuilder(LibBuilderBase):
         return util.load_json(join(self.path, "module.json"))
 
     @property
+    def include_dir(self):
+        if isdir(join(self.path, "include")):
+            return join(self.path, "include")
+        return None
+
+    @property
     def src_dir(self):
         if isdir(join(self.path, "source")):
             return join(self.path, "source")
         return LibBuilderBase.src_dir.fget(self)
 
-    def get_inc_dirs(self):
-        inc_dirs = LibBuilderBase.get_inc_dirs(self)
-        if self.path not in inc_dirs:
-            inc_dirs.append(self.path)
+    def get_include_dirs(self):
+        include_dirs = LibBuilderBase.get_include_dirs(self)
+        if self.path not in include_dirs:
+            include_dirs.append(self.path)
         for p in self._manifest.get("extraIncludes", []):
-            inc_dirs.append(join(self.path, p))
-        return inc_dirs
+            include_dirs.append(join(self.path, p))
+        return include_dirs
 
     def is_frameworks_compatible(self, frameworks):
         return self.items_in_list(frameworks, ["mbed"])
@@ -482,6 +536,14 @@ class PlatformIOLibBuilder(LibBuilderBase):
         assert isfile(join(self.path, "library.json"))
         manifest = util.load_json(join(self.path, "library.json"))
         assert "name" in manifest
+
+        # replace "espressif" old name dev/platform with ESP8266
+        if "platforms" in manifest:
+            manifest['platforms'] = [
+                "espressif8266" if p == "espressif" else p
+                for p in self.items_to_list(manifest['platforms'])
+            ]
+
         return manifest
 
     def _is_arduino_manifest(self):
@@ -537,6 +599,13 @@ class PlatformIOLibBuilder(LibBuilderBase):
                 self._manifest.get("build").get("libLDFMode"))
         return LibBuilderBase.lib_ldf_mode.fget(self)
 
+    @property
+    def lib_compat_mode(self):
+        if "libCompatMode" in self._manifest.get("build", {}):
+            return self.validate_compat_mode(
+                self._manifest.get("build").get("libCompatMode"))
+        return LibBuilderBase.lib_compat_mode.fget(self)
+
     def is_platforms_compatible(self, platforms):
         items = self._manifest.get("platforms")
         if not items:
@@ -549,26 +618,48 @@ class PlatformIOLibBuilder(LibBuilderBase):
             return LibBuilderBase.is_frameworks_compatible(self, frameworks)
         return self.items_in_list(frameworks, items)
 
-    def get_inc_dirs(self):
-        inc_dirs = LibBuilderBase.get_inc_dirs(self)
+    def get_include_dirs(self):
+        include_dirs = LibBuilderBase.get_include_dirs(self)
 
-        #  backwards compatibility with PlatformIO 2.0
+        # backwards compatibility with PlatformIO 2.0
         if ("build" not in self._manifest and self._is_arduino_manifest()
                 and not isdir(join(self.path, "src"))
                 and isdir(join(self.path, "utility"))):
-            inc_dirs.append(join(self.path, "utility"))
+            include_dirs.append(join(self.path, "utility"))
 
         for path in self.env.get("CPPPATH", []):
             if path not in self.envorigin.get("CPPPATH", []):
-                inc_dirs.append(self.env.subst(path))
-        return inc_dirs
+                include_dirs.append(self.env.subst(path))
+        return include_dirs
 
 
 class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
+    def include_dir(self):
+        include_dir = self.env.subst("$PROJECTINCLUDE_DIR")
+        return include_dir if isdir(include_dir) else None
+
+    @property
     def src_dir(self):
         return self.env.subst("$PROJECTSRC_DIR")
+
+    def get_include_dirs(self):
+        include_dirs = LibBuilderBase.get_include_dirs(self)
+        include_dirs.append(self.env.subst("$PROJECTINCLUDE_DIR"))
+        return include_dirs
+
+    def get_search_files(self):
+        # project files
+        items = LibBuilderBase.get_search_files(self)
+        # test files
+        if "__test" in COMMAND_LINE_TARGETS:
+            items.extend([
+                join("$PROJECTTEST_DIR", item)
+                for item in self.env.MatchSourceFiles("$PROJECTTEST_DIR",
+                                                      "$PIOTEST_SRC_FILTER")
+            ])
+        return items
 
     @property
     def lib_ldf_mode(self):
@@ -586,39 +677,63 @@ class ProjectAsLibBuilder(LibBuilderBase):
         # skip for project, options are already processed
         pass
 
-    def search_deps_recursive(self, search_paths=None):
-        for dep in self.env.get("LIB_DEPS", []):
-            for token in ("@", "="):
-                if token in dep:
-                    dep, _ = dep.split(token, 1)
-            for lb in self.envorigin.GetLibBuilders():
-                if lb.name == dep:
+    def process_dependencies(self):  # pylint: disable=too-many-branches
+        uris = self.env.get("LIB_DEPS", [])
+        if not uris:
+            return
+        storage_dirs = []
+        for lb in self.env.GetLibBuilders():
+            if dirname(lb.path) not in storage_dirs:
+                storage_dirs.append(dirname(lb.path))
+
+        for uri in uris:
+            found = False
+            for storage_dir in storage_dirs:
+                if found:
+                    break
+                lm = LibraryManager(storage_dir)
+                pkg_dir = lm.get_package_dir(*lm.parse_pkg_uri(uri))
+                if not pkg_dir:
+                    continue
+                for lb in self.env.GetLibBuilders():
+                    if lb.path != pkg_dir:
+                        continue
+                    if lb not in self.depbuilders:
+                        self.depend_recursive(lb)
+                    found = True
+                    break
+
+            if not found:
+                for lb in self.env.GetLibBuilders():
+                    if lb.name != uri:
+                        continue
                     if lb not in self.depbuilders:
                         self.depend_recursive(lb)
                     break
-        return LibBuilderBase.search_deps_recursive(self, search_paths)
 
     def build(self):
         self._is_built = True  # do not build Project now
-        self.env.AppendUnique(CPPPATH=self.get_inc_dirs())
+        self.env.AppendUnique(CPPPATH=self.get_include_dirs())
         return LibBuilderBase.build(self)
 
 
 def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
     if "__PIO_LIB_BUILDERS" in DefaultEnvironment():
-        return DefaultEnvironment()['__PIO_LIB_BUILDERS']
+        return sorted(
+            DefaultEnvironment()['__PIO_LIB_BUILDERS'],
+            key=lambda lb: 0 if lb.dependent else 1)
 
     items = []
-    compat_mode = int(env.get("LIB_COMPAT_MODE", 1))
-    verbose = (int(ARGUMENTS.get("PIOVERBOSE", 0))
-               and not env.GetOption('clean'))
+    verbose = int(ARGUMENTS.get("PIOVERBOSE",
+                                0)) and not env.GetOption('clean')
 
     def _check_lib_builder(lb):
+        compat_mode = lb.lib_compat_mode
         if lb.name in env.get("LIB_IGNORE", []):
             if verbose:
                 sys.stderr.write("Ignored library %s\n" % lb.path)
-            return
+            return None
         if compat_mode > 1 and not lb.is_platforms_compatible(
                 env['PIOPLATFORM']):
             if verbose:
@@ -678,7 +793,7 @@ def BuildProjectLibraries(env):
         found_lbs = [lb for lb in lib_builders if lb.dependent]
         for lb in lib_builders:
             if lb in found_lbs:
-                lb.search_deps_recursive(lb.get_src_files())
+                lb.search_deps_recursive(lb.get_search_files())
         for lb in lib_builders:
             for deplb in lb.depbuilders[:]:
                 if deplb not in found_lbs:
@@ -690,9 +805,12 @@ def BuildProjectLibraries(env):
             title = "<%s>" % lb.name
             if lb.version:
                 title += " v%s" % lb.version
+            sys.stdout.write("%s|-- %s" % (margin, title))
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
-                title += " (%s)" % lb.path
-            print "%s|-- %s" % (margin, title)
+                sys.stdout.write(" (")
+                sys.stdout.write(lb.path)
+                sys.stdout.write(")")
+            sys.stdout.write("\n")
             if lb.depbuilders:
                 print_deps_tree(lb, level + 1)
 
@@ -709,10 +827,10 @@ def BuildProjectLibraries(env):
         correct_found_libs()
 
     if project.depbuilders:
-        print "Library Dependency Graph"
+        print "Library Dependency Graph ( http://bit.ly/configure-pio-ldf )"
         print_deps_tree(project)
     else:
-        print "Project does not have dependencies"
+        print "No dependencies"
 
     return project.build()
 

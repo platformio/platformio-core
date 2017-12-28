@@ -72,7 +72,7 @@ def exists(_):
 
 def generate(env):
     if system() != "Windows":
-        return
+        return None
 
     env.Replace(_long_sources_hook=long_sources_hook)
     env.Replace(_long_incflags_hook=long_incflags_hook)

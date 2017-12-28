@@ -18,14 +18,14 @@ from platformio import (__author__, __description__, __email__, __license__,
                         __title__, __url__, __version__)
 
 install_requires = [
-    "arrow<1",
+    "arrow>=0.10.0,!=0.11.0",
     "bottle<0.13",
     "click>=5,<6",
     "colorama",
     "lockfile>=0.9.1,<0.13",
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",
-    "semantic_version>=2.5.0"
+    "semantic_version>=2.5.0,<3"
 ]
 
 setup(

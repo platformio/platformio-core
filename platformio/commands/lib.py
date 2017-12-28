@@ -33,8 +33,7 @@ from platformio.util import get_api_result
     "-g",
     "--global",
     is_flag=True,
-    help="Manage global PlatformIO"
-    " library storage `%s`" % join(util.get_home_dir(), "lib"))
+    help="Manage global PlatformIO library storage")
 @click.option(
     "-d",
     "--storage-dir",
@@ -93,11 +92,17 @@ def cli(ctx, **options):
     "--interactive",
     is_flag=True,
     help="Allow to make a choice for all prompts")
+@click.option(
+    "-f",
+    "--force",
+    is_flag=True,
+    help="Reinstall/redownload library if exists")
 @click.pass_obj
-def lib_install(lm, libraries, silent, interactive):
+def lib_install(lm, libraries, silent, interactive, force):
     # @TODO "save" option
     for library in libraries:
-        lm.install(library, silent=silent, interactive=interactive)
+        lm.install(
+            library, silent=silent, interactive=interactive, force=force)
 
 
 @cli.command("uninstall", short_help="Uninstall libraries")
@@ -128,7 +133,7 @@ def lib_update(lm, libraries, only_check, json_output):
             requirements = None
             url = None
             if not pkg_dir:
-                name, requirements, url = lm.parse_pkg_input(library)
+                name, requirements, url = lm.parse_pkg_uri(library)
                 pkg_dir = lm.get_package_dir(name, requirements, url)
             if not pkg_dir:
                 continue
@@ -142,6 +147,8 @@ def lib_update(lm, libraries, only_check, json_output):
     else:
         for library in libraries:
             lm.update(library, only_check=only_check)
+
+    return True
 
 
 def print_lib_item(item):
@@ -204,7 +211,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
     result = get_api_result(
         "/v2/lib/search",
         dict(query=" ".join(query), page=page),
-        cache_valid="3d")
+        cache_valid="1d")
 
     if json_output:
         click.echo(json.dumps(result))
@@ -234,8 +241,8 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         for item in result['items']:
             print_lib_item(item)
 
-        if (int(result['page']) * int(result['perpage']) >=
-                int(result['total'])):
+        if (int(result['page']) * int(result['perpage']) >= int(
+                result['total'])):
             break
 
         if noninteractive:
@@ -252,7 +259,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
             "/v2/lib/search",
             {"query": " ".join(query),
              "page": int(result['page']) + 1},
-            cache_valid="3d")
+            cache_valid="1d")
 
 
 @cli.command("list", short_help="List installed libraries")
@@ -265,10 +272,12 @@ def lib_list(lm, json_output):
         return click.echo(json.dumps(items))
 
     if not items:
-        return
+        return None
 
     for item in sorted(items, key=lambda i: i['name']):
         print_lib_item(item)
+
+    return True
 
 
 @util.memoized
@@ -308,13 +317,15 @@ def lib_builtin(storage, json_output):
         for item in sorted(storage_['items'], key=lambda i: i['name']):
             print_lib_item(item)
 
+    return True
+
 
 @cli.command("show", short_help="Show detailed info about a library")
 @click.argument("library", metavar="[LIBRARY]")
 @click.option("--json-output", is_flag=True)
 def lib_show(library, json_output):
     lm = LibraryManager()
-    name, requirements, _ = lm.parse_pkg_input(library)
+    name, requirements, _ = lm.parse_pkg_uri(library)
     lib_id = lm.get_pkg_id_by_name(
         name, requirements, silent=json_output, interactive=not json_output)
     lib = get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
@@ -381,6 +392,8 @@ def lib_show(library, json_output):
         for row in rows:
             click.echo(row)
 
+    return True
+
 
 @cli.command("register", short_help="Register a new library")
 @click.argument("config_url")
@@ -438,8 +451,8 @@ def lib_stats(json_output):
             printitem_tpl.format(
                 name=click.style(name, fg="cyan"),
                 url=click.style(
-                    "http://platformio.org/lib/search?query=" + quote(
-                        "keyword:%s" % name),
+                    "http://platformio.org/lib/search?query=" +
+                    quote("keyword:%s" % name),
                     fg="blue")))
 
     for key in ("updated", "added"):
@@ -468,3 +481,5 @@ def lib_stats(json_output):
         for item in result.get(key, []):
             _print_lib_item(item)
         click.echo()
+
+    return True

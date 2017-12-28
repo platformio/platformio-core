@@ -15,6 +15,7 @@
 from email.utils import parsedate_tz
 from math import ceil
 from os.path import getsize, join
+from sys import getfilesystemencoding, version_info
 from time import mktime
 
 import click
@@ -30,9 +31,13 @@ class FileDownloader(object):
     CHUNK_SIZE = 1024
 
     def __init__(self, url, dest_dir=None):
+        self._request = None
         # make connection
         self._request = requests.get(
-            url, stream=True, headers=util.get_request_defheaders())
+            url,
+            stream=True,
+            headers=util.get_request_defheaders(),
+            verify=version_info >= (2, 7, 9))
         if self._request.status_code != 200:
             raise FDUnrecognizedStatusCode(self._request.status_code, url)
 
@@ -48,7 +53,8 @@ class FileDownloader(object):
         self._progressbar = None
         self._destination = self._fname
         if dest_dir:
-            self.set_destination(join(dest_dir, self._fname))
+            self.set_destination(
+                join(dest_dir.decode(getfilesystemencoding()), self._fname))
 
     def set_destination(self, destination):
         self._destination = destination
@@ -65,21 +71,29 @@ class FileDownloader(object):
         return int(self._request.headers['content-length'])
 
     def start(self):
+        label = "Downloading"
         itercontent = self._request.iter_content(chunk_size=self.CHUNK_SIZE)
         f = open(self._destination, "wb")
-
-        if app.is_disabled_progressbar() or self.get_size() == -1:
-            click.echo("Downloading...")
-            for chunk in itercontent:
-                if chunk:
-                    f.write(chunk)
-        else:
-            chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
-            with click.progressbar(length=chunks, label="Downloading") as pb:
-                for _ in pb:
-                    f.write(next(itercontent))
-        f.close()
-        self._request.close()
+        try:
+            if app.is_disabled_progressbar() or self.get_size() == -1:
+                click.echo("%s..." % label)
+                for chunk in itercontent:
+                    if chunk:
+                        f.write(chunk)
+            else:
+                chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
+                with click.progressbar(length=chunks, label=label) as pb:
+                    for _ in pb:
+                        f.write(next(itercontent))
+        except IOError as e:
+            click.secho(
+                "Error: Please read http://bit.ly/package-manager-ioerror",
+                fg="red",
+                err=True)
+            raise e
+        finally:
+            f.close()
+            self._request.close()
 
         if self.get_lmtime():
             self._preserve_filemtime(self.get_lmtime())
