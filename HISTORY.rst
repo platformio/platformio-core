@@ -28,7 +28,7 @@ PlatformIO 3.0
 * New `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__
   folder for project's header files
   (`issue #1107 <https://github.com/platformio/platformio-core/issues/1107>`_)
-* Depend on development platform using VSC URL (Git, Mercurial and Subversion)
+* Depend on development platform using VCS URL (Git, Mercurial and Subversion)
   instead of a name in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_env_general.html#platform>`__.
   Drop support for ``*_stage`` dev/platform names (use VCS URL instead).
 * Reinstall/redownload package with a new ``-f, --force`` option for
