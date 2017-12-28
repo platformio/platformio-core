@@ -7,7 +7,23 @@ PlatformIO 3.0
 3.5.0 (2017-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* PIO Home
+* `PlatformIO Home <http://docs.platformio.org/en/latest/home/index.html>`__ -
+  interact with PlatformIO ecosystem using modern and cross-platform GUI:
+
+  - Library Manager:
+
+    * Search for new libraries in PlatformIO Registry
+    * "1-click" library installation, per-project libraries, extra storages
+    * List installed libraries in multiple storages
+    * List built-in libraries (by frameworks)
+    * Updates for installed libraries
+    * Multiple examples, trending libraries, and more.
+
+  - PlatformIO Projects
+  - PIO Account
+  - Development platforms, frameworks and board explorer
+  - Device Manager: serial, logical, and multicast DNS services
+
 * Integration with `Jenkins CI <http://docs.platformio.org/en/latest/ci/jenkins.html>`_
 * New `include <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#include-dir>`__
   folder for project's header files
