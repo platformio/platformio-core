@@ -19,4 +19,4 @@ from platformio import util
 
 def test_ping_internet_ips():
     for ip in util.PING_INTERNET_IPS:
-        requests.get("http://%s" % ip, timeout=2)
+        requests.get("http://%s" % ip, allow_redirects=False, timeout=2)

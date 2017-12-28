@@ -669,7 +669,8 @@ def _internet_on():
     for ip in PING_INTERNET_IPS:
         try:
             if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-                requests.get("http://%s" % ip, timeout=timeout)
+                requests.get(
+                    "http://%s" % ip, allow_redirects=False, timeout=timeout)
             else:
                 socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip,
                                                                            80))
