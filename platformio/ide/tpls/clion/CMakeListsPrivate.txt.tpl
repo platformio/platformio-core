@@ -8,7 +8,9 @@ SET(CMAKE_C_FLAGS_DISTRIBUTION "{{cc_flags}}")
 set(CMAKE_CXX_STANDARD 11)
 
 % for define in defines:
-add_definitions(-D{{!define}})
+% if "##" not in define:
+add_definitions("-D{{!define.replace("(", "\(").replace(")", "\)").replace('"', '\\"')}}")
+% end
 % end
 
 % for include in includes:
