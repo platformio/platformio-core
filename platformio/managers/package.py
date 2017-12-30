@@ -361,7 +361,7 @@ class PkgInstallerMixin(object):
                 break
             except Exception as e:  # pylint: disable=broad-except
                 click.secho("Warning! Package Mirror: %s" % e, fg="yellow")
-                click.secho("Looking for other mirror...", fg="yellow")
+                click.secho("Looking for another mirror...", fg="yellow")
 
         if versions is None:
             raise exception.UnknownPackage(name)

@@ -815,7 +815,7 @@ def BuildProjectLibraries(env):
                 print_deps_tree(lb, level + 1)
 
     print "Collected %d compatible libraries" % len(lib_builders)
-    print "Looking for dependencies..."
+    print "Scanning dependencies..."
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     project.env = env
