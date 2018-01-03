@@ -311,8 +311,8 @@ def get_projectboards_dir():
                                     join(get_project_dir(), "boards"))
 
 
-def get_projectpioenvs_dir(force=False):
-    path = get_project_optional_dir("envs_dir",
+def get_projectbuild_dir(force=False):
+    path = get_project_optional_dir("build_dir",
                                     join(get_project_dir(), ".pioenvs"))
     try:
         if not isdir(path):
@@ -322,12 +322,16 @@ def get_projectpioenvs_dir(force=False):
             with open(dontmod_path, "w") as fp:
                 fp.write("""
 [InternetShortcut]
-URL=http://docs.platformio.org/page/projectconf.html#envs-dir
+URL=http://docs.platformio.org/page/projectconf.html#build-dir
 """)
     except Exception as e:  # pylint: disable=broad-except
         if not force:
             raise Exception(e)
     return path
+
+
+# compatibility with PIO Core+
+get_projectpioenvs_dir = get_projectbuild_dir
 
 
 def get_projectdata_dir():

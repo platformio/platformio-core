@@ -36,26 +36,27 @@ def pytest_generate_tests(metafunc):
 
 @pytest.mark.examples
 def test_run(pioproject_dir):
-    if isdir(join(pioproject_dir, ".pioenvs")):
-        util.rmtree_(join(pioproject_dir, ".pioenvs"))
+    with util.cd(pioproject_dir):
+        build_dir = util.get_projectbuild_dir()
+        if isdir(build_dir):
+            util.rmtree_(build_dir)
 
-    result = util.exec_command(
-        ["platformio", "--force", "run", "--project-dir", pioproject_dir]
-    )
-    if result['returncode'] != 0:
-        pytest.fail(result)
+        result = util.exec_command(["platformio", "--force", "run"])
+        if result['returncode'] != 0:
+            pytest.fail(result)
 
-    # check .elf file
-    pioenvs_dir = join(pioproject_dir, ".pioenvs")
-    for item in listdir(pioenvs_dir):
-        if not isdir(item):
-            continue
-        assert isfile(join(pioenvs_dir, item, "firmware.elf"))
-        # check .hex or .bin files
-        firmwares = []
-        for ext in ("bin", "hex"):
-            firmwares += glob(join(pioenvs_dir, item, "firmware*.%s" % ext))
-        if not firmwares:
-            pytest.fail("Missed firmware file")
-        for firmware in firmwares:
-            assert getsize(firmware) > 0
+        assert isdir(build_dir)
+
+        # check .elf file
+        for item in listdir(build_dir):
+            if not isdir(item):
+                continue
+            assert isfile(join(build_dir, item, "firmware.elf"))
+            # check .hex or .bin files
+            firmwares = []
+            for ext in ("bin", "hex"):
+                firmwares += glob(join(build_dir, item, "firmware*.%s" % ext))
+            if not firmwares:
+                pytest.fail("Missed firmware file")
+            for firmware in firmwares:
+                assert getsize(firmware) > 0

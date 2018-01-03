@@ -60,15 +60,15 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
         raise exception.NotPlatformIOProject(project_dir)
 
     with util.cd(project_dir):
-        # clean obsolete .pioenvs dir
+        # clean obsolete build dir
         if not disable_auto_clean:
             try:
-                _clean_pioenvs_dir(util.get_projectpioenvs_dir())
+                _clean_build_dir(util.get_projectbuild_dir())
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
-                    "`.pioenvs` directory from the project manually to avoid "
-                    "build issues" % util.get_projectpioenvs_dir(force=True),
+                    "it manually to avoid build issues" %
+                    util.get_projectbuild_dir(force=True),
                     fg="yellow")
 
         config = util.load_project_config()
@@ -318,25 +318,25 @@ def _is_builtin_lib(lib_name):
     return False
 
 
-def _clean_pioenvs_dir(pioenvs_dir):
-    structhash_file = join(pioenvs_dir, "structure.hash")
+def _clean_build_dir(build_dir):
+    structhash_file = join(build_dir, "structure.hash")
     proj_hash = calculate_project_hash()
 
     # if project's config is modified
-    if (isdir(pioenvs_dir)
+    if (isdir(build_dir)
             and getmtime(join(util.get_project_dir(),
-                              "platformio.ini")) > getmtime(pioenvs_dir)):
-        util.rmtree_(pioenvs_dir)
+                              "platformio.ini")) > getmtime(build_dir)):
+        util.rmtree_(build_dir)
 
     # check project structure
-    if isdir(pioenvs_dir) and isfile(structhash_file):
+    if isdir(build_dir) and isfile(structhash_file):
         with open(structhash_file) as f:
             if f.read() == proj_hash:
                 return
-        util.rmtree_(pioenvs_dir)
+        util.rmtree_(build_dir)
 
-    if not isdir(pioenvs_dir):
-        makedirs(pioenvs_dir)
+    if not isdir(build_dir):
+        makedirs(build_dir)
 
     with open(structhash_file, "w") as f:
         f.write(proj_hash)
@@ -384,13 +384,13 @@ def check_project_defopts(config):
     if not config.has_section("platformio"):
         return True
     known = ("env_default", "home_dir", "lib_dir", "libdeps_dir", "src_dir",
-             "envs_dir", "data_dir", "test_dir", "boards_dir",
+             "build_dir", "data_dir", "test_dir", "boards_dir",
              "lib_extra_dirs")
     unknown = set([k for k, _ in config.items("platformio")]) - set(known)
     if not unknown:
         return True
     click.secho(
-        "Warning! Ignore unknown `%s` option from `[platformio]` section" %
+        "Warning! Ignore unknown `%s` option in `[platformio]` section" %
         ", ".join(unknown),
         fg="yellow")
     return False

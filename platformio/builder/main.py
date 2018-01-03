@@ -91,8 +91,8 @@ DEFAULT_ENV_OPTIONS = dict(
     PROJECTSRC_DIR=util.get_projectsrc_dir(),
     PROJECTTEST_DIR=util.get_projecttest_dir(),
     PROJECTDATA_DIR=util.get_projectdata_dir(),
-    PROJECTPIOENVS_DIR=util.get_projectpioenvs_dir(),
-    BUILD_DIR=join("$PROJECTPIOENVS_DIR", "$PIOENV"),
+    PROJECTBUILD_DIR=util.get_projectbuild_dir(),
+    BUILD_DIR=join("$PROJECTBUILD_DIR", "$PIOENV"),
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     BUILDTEST_DIR=join("$BUILD_DIR", "test"),
     LIBSOURCE_DIRS=[
@@ -150,7 +150,7 @@ env['LIBSOURCE_DIRS'] = [
 env.LoadPioPlatform(commonvars)
 
 env.SConscriptChdir(0)
-env.SConsignFile(join("$PROJECTPIOENVS_DIR", ".sconsign.dblite"))
+env.SConsignFile(join("$PROJECTBUILD_DIR", ".sconsign.dblite"))
 
 for item in env.GetPreExtraScripts():
     env.SConscript(item, exports="env")
