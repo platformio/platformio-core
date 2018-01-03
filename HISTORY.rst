@@ -7,6 +7,7 @@ PlatformIO 3.0
 3.5.1 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Custom firmware/program name in build directory (`example <http://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-firmware-program-name>`__)
 * Renamed ``envs_dir`` option to ``build_dir``
   in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__
 * Fixed project generator for CLion IDE
