@@ -46,6 +46,9 @@ def BuildProgram(env):
     if not case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 
+    if "__debug" in COMMAND_LINE_TARGETS:
+        env.ProcessDebug()
+
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
         env.ProcessFlags(env.BoardConfig().get("build.extra_flags"))
@@ -59,18 +62,6 @@ def BuildProgram(env):
 
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
-
-    # Search for project source files
-    env.Append(
-        LIBPATH=["$BUILD_DIR"],
-        PIOBUILDFILES=env.CollectBuildFiles(
-            "$BUILDSRC_DIR", "$PROJECTSRC_DIR", "$SRC_FILTER",
-            duplicate=False))
-
-    if "__debug" in COMMAND_LINE_TARGETS:
-        env.ProcessDebug()
-    if "__test" in COMMAND_LINE_TARGETS:
-        env.Append(PIOBUILDFILES=env.ProcessTest())
 
     # build dependent libs
     env.Append(LIBS=env.BuildProjectLibraries())
@@ -88,7 +79,18 @@ def BuildProgram(env):
     # Handle SRC_BUILD_FLAGS
     env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
-    if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
+    env.Append(
+        LIBPATH=["$BUILD_DIR"],
+        PIOBUILDFILES=env.CollectBuildFiles(
+            "$BUILDSRC_DIR",
+            "$PROJECTSRC_DIR",
+            src_filter=env.get("SRC_FILTER"),
+            duplicate=False))
+
+    if "__test" in COMMAND_LINE_TARGETS:
+        env.Append(PIOBUILDFILES=env.ProcessTest())
+
+    if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
             "Error: Nothing to build. Please put your source code files "
             "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR"))
