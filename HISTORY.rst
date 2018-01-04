@@ -7,7 +7,11 @@ PlatformIO 3.0
 3.5.1 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Custom firmware/program name in build directory (`example <http://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-firmware-program-name>`__)
+* New ``test_speed`` option to control a communication baudrate/speed between
+  `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
+  engine and a target device
+  (`issue #1273 <https://github.com/platformio/platformio-core/issues/1273>`_)
+* Configure a custom firmware/program name in build directory (`example <http://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-firmware-program-name>`__)
 * Renamed ``envs_dir`` option to ``build_dir``
   in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__
 * Fixed project generator for CLion IDE
