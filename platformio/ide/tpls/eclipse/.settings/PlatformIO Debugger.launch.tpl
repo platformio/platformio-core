@@ -2,7 +2,7 @@
 <launchConfiguration type="org.eclipse.cdt.launch.applicationLaunchType">
 <booleanAttribute key="org.eclipse.cdt.dsf.gdb.AUTO_SOLIB" value="true"/>
 <listAttribute key="org.eclipse.cdt.dsf.gdb.AUTO_SOLIB_LIST"/>
-<stringAttribute key="org.eclipse.cdt.dsf.gdb.DEBUG_NAME" value="platformio -c eclipse debug -d ${project_loc} --interface=gdb"/>
+<stringAttribute key="org.eclipse.cdt.dsf.gdb.DEBUG_NAME" value="piodebuggdb"/>
 <booleanAttribute key="org.eclipse.cdt.dsf.gdb.DEBUG_ON_FORK" value="false"/>
 <stringAttribute key="org.eclipse.cdt.dsf.gdb.GDB_INIT" value=".pioinit"/>
 <booleanAttribute key="org.eclipse.cdt.dsf.gdb.NON_STOP" value="false"/>
@@ -12,17 +12,17 @@
 <stringAttribute key="org.eclipse.cdt.dsf.gdb.TRACEPOINT_MODE" value="TP_NORMAL_ONLY"/>
 <booleanAttribute key="org.eclipse.cdt.dsf.gdb.UPDATE_THREADLIST_ON_SUSPEND" value="false"/>
 <booleanAttribute key="org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab.DEFAULTS_SET" value="true"/>
-<intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="0"/>
+<intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="1"/>
 <stringAttribute key="org.eclipse.cdt.launch.COREFILE_PATH" value=""/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_ID" value="gdb"/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_REGISTER_GROUPS" value=""/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_START_MODE" value="run"/>
 <booleanAttribute key="org.eclipse.cdt.launch.DEBUGGER_STOP_AT_MAIN" value="true"/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_STOP_AT_MAIN_SYMBOL" value="main"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value=".pioenvs/{{env_name}}/firmware.elf"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="{{prog_path}}"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="{{project_name}}"/>
 <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="false"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value=""/>
+<stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="0.910961921.1363900502"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/{{project_name}}"/>
 </listAttribute>

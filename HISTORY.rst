@@ -14,6 +14,7 @@ PlatformIO 3.0
 * Configure a custom firmware/program name in build directory (`example <http://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-firmware-program-name>`__)
 * Renamed ``envs_dir`` option to ``build_dir``
   in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__
+* Improved support of PIO Unified Debugger for Eclipse Oxygen
 * Fixed project generator for CLion IDE
 * Fixed PIO Unified Debugger for mbed framework
 
