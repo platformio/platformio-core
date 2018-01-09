@@ -17,6 +17,7 @@ PlatformIO 3.0
 * Improved support of PIO Unified Debugger for Eclipse Oxygen
 * Fixed project generator for CLion IDE
 * Fixed PIO Unified Debugger for mbed framework
+* Fixed library updates when a version is declared in VCS format (not SemVer)
 
 3.5.0 (2017-12-28)
 ~~~~~~~~~~~~~~~~~~

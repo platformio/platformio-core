@@ -211,6 +211,8 @@ class PkgInstallerMixin(object):
             try:
                 return semantic_version.Version(value)
             except ValueError:
+                if "." not in str(value) and not str(value).isdigit():
+                    raise ValueError("Invalid SemVer version %s" % value)
                 return semantic_version.Version.coerce(value)
         except ValueError as e:
             if raise_exception:

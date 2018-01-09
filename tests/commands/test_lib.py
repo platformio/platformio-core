@@ -15,8 +15,7 @@
 import json
 import re
 
-from platformio import exception, util
-from platformio.commands.init import cli as cmd_init
+from platformio import exception
 from platformio.commands.lib import cli as cmd_lib
 
 
@@ -38,7 +37,7 @@ def test_global_install_registry(clirunner, validate_cliresult,
     result = clirunner.invoke(cmd_lib, [
         "-g", "install", "58", "547@2.2.4", "DallasTemperature",
         "http://dl.platformio.org/libraries/archives/3/5174.tar.gz",
-        "ArduinoJson@5.6.7", "ArduinoJson@~5.7.0", "168@00589a3250"
+        "ArduinoJson@5.6.7", "ArduinoJson@~5.7.0", "999@77d4eb3f8a"
     ])
     validate_cliresult(result)
 
@@ -64,7 +63,7 @@ def test_global_install_registry(clirunner, validate_cliresult,
     items2 = [
         "ArduinoJson_ID64", "ArduinoJson_ID64@5.6.7", "DallasTemperature_ID54",
         "DHT22_ID58", "ESPAsyncTCP_ID305", "NeoPixelBus_ID547", "OneWire_ID1",
-        "EspSoftwareSerial_ID168"
+        "RFcontrol_ID999"
     ]
     assert set(items1) == set(items2)
 
@@ -150,7 +149,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
         "OneWire", "DHT22", "PJON", "ESPAsyncTCP", "ArduinoJson",
         "PubSubClient", "rs485-nodeproto", "Adafruit ST7735 Library",
         "RadioHead-1.62", "DallasTemperature", "NeoPixelBus",
-        "EspSoftwareSerial", "platformio-libmirror"
+        "RFcontrol", "platformio-libmirror"
     ]
     assert set(items1) == set(items2)
 
@@ -160,7 +159,7 @@ def test_global_lib_update_check(clirunner, validate_cliresult):
         cmd_lib, ["-g", "update", "--only-check", "--json-output"])
     validate_cliresult(result)
     output = json.loads(result.output)
-    assert set(["ArduinoJson", "EspSoftwareSerial",
+    assert set(["ArduinoJson", "RFcontrol",
                 "NeoPixelBus"]) == set([l['name'] for l in output])
 
 
@@ -185,7 +184,7 @@ def test_global_lib_update(clirunner, validate_cliresult):
     assert result.output.count("[Fixed]") == 5
     assert result.output.count("[Up-to-date]") == 10
     assert "Uninstalling ArduinoJson @ 5.7.3" in result.output
-    assert "Uninstalling EspSoftwareSerial @ 00589a3250" in result.output
+    assert "Uninstalling RFcontrol @ 77d4eb3f8a" in result.output
 
     # update unknown library
     result = clirunner.invoke(cmd_lib, ["-g", "update", "Unknown"])
@@ -207,7 +206,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
     # uninstall the rest libraries
     result = clirunner.invoke(cmd_lib, [
         "-g", "uninstall", "1", "https://github.com/bblanchon/ArduinoJson.git",
-        "ArduinoJson@!=5.6.7", "EspSoftwareSerial@>=3.3.1"
+        "ArduinoJson@!=5.6.7", "RFcontrol"
     ])
     validate_cliresult(result)
 
