@@ -22,7 +22,7 @@ import socket
 import stat
 import subprocess
 import sys
-from configparser import ConfigParser
+from ConfigParser import ConfigParser
 from functools import wraps
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
