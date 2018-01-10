@@ -22,7 +22,6 @@ import socket
 import stat
 import subprocess
 import sys
-from ConfigParser import ConfigParser
 from functools import wraps
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
@@ -36,7 +35,12 @@ import requests
 
 from platformio import __apiurl__, __version__, exception
 
-# pylint: too-many-ancestors
+# pylint: disable=wrong-import-order, too-many-ancestors
+
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser
 
 
 class ProjectConfig(ConfigParser):
