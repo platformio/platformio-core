@@ -134,6 +134,7 @@ class PkgRepoMixin(object):
 class PkgInstallerMixin(object):
 
     SRC_MANIFEST_NAME = ".piopkgmanager.json"
+    TMP_FOLDER_PREFIX = "_tmp_installing-"
 
     FILE_CACHE_VALID = "1m"  # 1 month
     FILE_CACHE_MAX_SIZE = 1024 * 1024
@@ -294,6 +295,8 @@ class PkgInstallerMixin(object):
     def get_installed(self):
         items = []
         for pkg_dir in self.read_dirs(self.package_dir):
+            if self.TMP_FOLDER_PREFIX in pkg_dir:
+                continue
             manifest = self.load_manifest(pkg_dir)
             if not manifest:
                 continue
@@ -378,7 +381,7 @@ class PkgInstallerMixin(object):
                           requirements=None,
                           sha1=None,
                           track=False):
-        tmp_dir = mkdtemp("-package", "_tmp_installing-", self.package_dir)
+        tmp_dir = mkdtemp("-package", self.TMP_FOLDER_PREFIX, self.package_dir)
         src_manifest_dir = None
         src_manifest = {"name": name, "url": url, "requirements": requirements}
 
