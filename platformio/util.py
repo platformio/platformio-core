@@ -22,6 +22,7 @@ import socket
 import stat
 import subprocess
 import sys
+from configparser import ConfigParser
 from functools import wraps
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
@@ -35,12 +36,7 @@ import requests
 
 from platformio import __apiurl__, __version__, exception
 
-# pylint: disable=wrong-import-order, too-many-ancestors
-
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser
+# pylint: too-many-ancestors
 
 
 class ProjectConfig(ConfigParser):
@@ -449,6 +445,10 @@ def get_serial_ports(filter_hwid=False):
     return result
 
 
+# Backward compatibility for PIO Core <3.5
+get_serialports = get_serial_ports
+
+
 def get_logical_devices():
     items = []
     if platform.system() == "Windows":
@@ -485,14 +485,6 @@ def get_logical_devices():
                 "name": basename(match.group(1))
             })
     return items
-
-
-### Backward compatibility for PIO Core <3.5
-get_serialports = get_serial_ports
-get_logicaldisks = lambda: [{
-    "disk": d['path'],
-    "name": d['name']
-} for d in get_logical_devices()]
 
 
 def get_mdns_services():
