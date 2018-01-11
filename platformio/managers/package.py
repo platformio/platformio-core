@@ -666,6 +666,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 name, url, requirements, track=True)
         else:
             pkg_dir = self._install_from_piorepo(name, requirements)
+
         if not pkg_dir or not self.manifest_exists(pkg_dir):
             raise exception.PackageInstallError(name, requirements or "*",
                                                 util.get_systype())
