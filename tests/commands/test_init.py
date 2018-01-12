@@ -54,7 +54,7 @@ def test_init_duplicated_boards(clirunner, validate_cliresult, tmpdir):
         assert set(config.sections()) == set(["env:uno"])
 
 
-def test_init_ide_without_board(clirunner, validate_cliresult, tmpdir):
+def test_init_ide_without_board(clirunner, tmpdir):
     with tmpdir.as_cwd():
         result = clirunner.invoke(cmd_init, ["--ide", "atom"])
         assert result.exit_code == -1
@@ -67,13 +67,15 @@ def test_init_ide_atom(clirunner, validate_cliresult, tmpdir):
             cmd_init, ["--ide", "atom", "-b", "uno", "-b", "teensy31"])
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
-        assert all([tmpdir.join(f).check()
-                    for f in (".clang_complete", ".gcc-flags.json")])
+        assert all([
+            tmpdir.join(f).check()
+            for f in (".clang_complete", ".gcc-flags.json")
+        ])
         assert "arduinoavr" in tmpdir.join(".clang_complete").read()
 
         # switch to NodeMCU
-        result = clirunner.invoke(
-            cmd_init, ["--ide", "atom", "-b", "nodemcuv2"])
+        result = clirunner.invoke(cmd_init,
+                                  ["--ide", "atom", "-b", "nodemcuv2"])
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
         assert "arduinoespressif" in tmpdir.join(".clang_complete").read()
@@ -104,15 +106,13 @@ def test_init_special_board(clirunner, validate_cliresult):
         boards = json.loads(result.output)
 
         config = util.load_project_config()
-        expected_result = [
-            ("platform", str(boards[0]['platform'])),
-            ("framework", str(boards[0]['frameworks'][0])), ("board", "uno")
-        ]
+        expected_result = [("platform", str(boards[0]['platform'])),
+                           ("framework",
+                            str(boards[0]['frameworks'][0])), ("board", "uno")]
 
         assert config.has_section("env:uno")
-        assert len(
-            set(expected_result).symmetric_difference(
-                set(config.items("env:uno")))) == 0
+        assert not set(expected_result).symmetric_difference(
+            set(config.items("env:uno")))
 
 
 def test_init_enable_auto_uploading(clirunner, validate_cliresult):
@@ -122,14 +122,11 @@ def test_init_enable_auto_uploading(clirunner, validate_cliresult):
         validate_cliresult(result)
         validate_pioproject(getcwd())
         config = util.load_project_config()
-        expected_result = [
-            ("platform", "atmelavr"), ("framework", "arduino"),
-            ("board", "uno"), ("targets", "upload")
-        ]
+        expected_result = [("platform", "atmelavr"), ("framework", "arduino"),
+                           ("board", "uno"), ("targets", "upload")]
         assert config.has_section("env:uno")
-        assert len(
-            set(expected_result).symmetric_difference(
-                set(config.items("env:uno")))) == 0
+        assert not set(expected_result).symmetric_difference(
+            set(config.items("env:uno")))
 
 
 def test_init_custom_framework(clirunner, validate_cliresult):
@@ -139,14 +136,11 @@ def test_init_custom_framework(clirunner, validate_cliresult):
         validate_cliresult(result)
         validate_pioproject(getcwd())
         config = util.load_project_config()
-        expected_result = [
-            ("platform", "teensy"), ("framework", "mbed"),
-            ("board", "teensy31")
-        ]
+        expected_result = [("platform", "teensy"), ("framework", "mbed"),
+                           ("board", "teensy31")]
         assert config.has_section("env:teensy31")
-        assert len(
-            set(expected_result).symmetric_difference(
-                set(config.items("env:teensy31")))) == 0
+        assert not set(expected_result).symmetric_difference(
+            set(config.items("env:teensy31")))
 
 
 def test_init_incorrect_board(clirunner):

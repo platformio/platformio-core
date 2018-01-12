@@ -148,8 +148,8 @@ def test_global_lib_list(clirunner, validate_cliresult):
     items2 = [
         "OneWire", "DHT22", "PJON", "ESPAsyncTCP", "ArduinoJson",
         "PubSubClient", "rs485-nodeproto", "Adafruit ST7735 Library",
-        "RadioHead-1.62", "DallasTemperature", "NeoPixelBus",
-        "RFcontrol", "platformio-libmirror"
+        "RadioHead-1.62", "DallasTemperature", "NeoPixelBus", "RFcontrol",
+        "platformio-libmirror"
     ]
     assert set(items1) == set(items2)
 

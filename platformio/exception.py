@@ -97,10 +97,9 @@ class UndefinedPackageVersion(PlatformioException):
 
 class PackageInstallError(PlatformioException):
 
-    MESSAGE = (
-        "Could not install '{0}' with version requirements '{1}' "
-        "for your system '{2}'.\n"
-        "More details: http://bit.ly/faq-package-manager")
+    MESSAGE = ("Could not install '{0}' with version requirements '{1}' "
+               "for your system '{2}'.\n"
+               "More details: http://bit.ly/faq-package-manager")
 
 
 class FDUnrecognizedStatusCode(PlatformioException):
