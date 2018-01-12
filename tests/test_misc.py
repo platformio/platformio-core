@@ -12,11 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pytest
 import requests
 
-from platformio import util
+from platformio import exception, util
 
 
 def test_ping_internet_ips():
     for ip in util.PING_INTERNET_IPS:
         requests.get("http://%s" % ip, allow_redirects=False, timeout=2)
+
+
+def test_api_internet_offline(monkeypatch, isolated_pio_home):
+    monkeypatch.setattr(util, "_internet_on", lambda: False)
+    with pytest.raises(exception.InternetIsOffline):
+        util.get_api_result("/stats")
+
+def test_api_cache(monkeypatch, isolated_pio_home):
+    api_kwargs = {"url": "/stats", "cache_valid": "1m"}
+    result = util.get_api_result(**api_kwargs)
+    assert result and "boards" in result
+    monkeypatch.setattr(util, '_internet_on', lambda: False)
+    assert util.get_api_result(**api_kwargs) == result

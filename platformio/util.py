@@ -621,7 +621,6 @@ def _get_api_result(
 
 
 def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
-    internet_on(raise_exception=True)
     from platformio.app import ContentCache
     total = 0
     max_retries = 5
@@ -634,6 +633,10 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
                     result = cc.get(cache_key)
                     if result is not None:
                         return result
+
+            # check internet before and resolve issue with 60 seconds timeout
+            internet_on(raise_exception=True)
+
             result = _get_api_result(url, params, data)
             if cache_valid:
                 with ContentCache() as cc:
