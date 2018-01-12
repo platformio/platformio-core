@@ -101,8 +101,7 @@ def pioplus_call(args, **kwargs):
         raise exception.PlatformioException(
             "PlatformIO Core Plus v%s does not run under Python version %s.\n"
             "Minimum supported version is 2.7.6, please upgrade Python.\n"
-            "Python 3 is not yet supported.\n" % (__version__,
-                                                  sys.version.split()[0]))
+            "Python 3 is not yet supported.\n" % (__version__, sys.version))
 
     pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
     pythonexe_path = util.get_pythonexe_path()
