@@ -15,7 +15,7 @@ PlatformIO 3.0
 * Renamed ``envs_dir`` option to ``build_dir``
   in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__
 * Improved support of PIO Unified Debugger for Eclipse Oxygen
-* Improved work in off-line mode
+* Improved a work in off-line mode
 * Fixed project generator for CLion IDE
 * Fixed PIO Unified Debugger for mbed framework
 * Fixed library updates when a version is declared in VCS format (not SemVer)
