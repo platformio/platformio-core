@@ -23,10 +23,9 @@ import click
 from platformio import __version__, exception, telemetry, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.commands.lib import lib_install as cmd_lib_install
-from platformio.commands.lib import get_builtin_libs
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
-from platformio.managers.lib import LibraryManager
+from platformio.managers.lib import LibraryManager, is_builtin_lib
 from platformio.managers.platform import PlatformFactory
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
@@ -309,15 +308,10 @@ def _autoinstall_libdeps(ctx, libraries, verbose=False):
         try:
             ctx.invoke(cmd_lib_install, libraries=[lib], silent=not verbose)
         except exception.LibNotFound as e:
-            if not _is_builtin_lib(lib):
+            if verbose or not is_builtin_lib(lib):
                 click.secho("Warning! %s" % e, fg="yellow")
-
-
-def _is_builtin_lib(lib_name):
-    for storage in get_builtin_libs():
-        if any([l.get("name") == lib_name for l in storage['items']]):
-            return True
-    return False
+        except exception.InternetIsOffline as e:
+            click.secho(str(e), fg="yellow")
 
 
 def _clean_build_dir(build_dir):

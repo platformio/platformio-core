@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # pylint: disable=too-many-arguments, too-many-locals, too-many-branches
+# pylint: disable=too-many-return-statements
 
 import json
 import re
@@ -24,6 +25,7 @@ import click
 
 from platformio import app, commands, exception, util
 from platformio.managers.package import BasePkgManager
+from platformio.managers.platform import PlatformFactory, PlatformManager
 
 
 class LibraryManager(BasePkgManager):
@@ -186,28 +188,14 @@ class LibraryManager(BasePkgManager):
     def get_latest_repo_version(self, name, requirements, silent=False):
         item = self.max_satisfying_repo_version(
             util.get_api_result(
-                "/lib/info/%d" % self.get_pkg_id_by_name(
-                    name, requirements, silent=silent),
+                "/lib/info/%d" % self.search_lib_id(
+                    {
+                        "name": name,
+                        "requirements": requirements
+                    },
+                    silent=silent),
                 cache_valid="1h")['versions'], requirements)
         return item['name'] if item else None
-
-    def get_pkg_id_by_name(self,
-                           name,
-                           requirements,
-                           silent=False,
-                           interactive=False):
-        if name.startswith("id="):
-            return int(name[3:])
-        # try to find ID from installed packages
-        package_dir = self.get_package_dir(name, requirements)
-        if package_dir:
-            manifest = self.load_manifest(package_dir)
-            if "id" in manifest:
-                return int(manifest['id'])
-        return int(
-            self.search_for_library({
-                "name": name
-            }, silent, interactive)['id'])
 
     def _install_from_piorepo(self, name, requirements):
         assert name.startswith("id="), name
@@ -225,88 +213,20 @@ class LibraryManager(BasePkgManager):
             "http://", "https://") if app.get_setting("enable_ssl") else
                                       dl_data['url'], requirements)
 
-    def install(  # pylint: disable=arguments-differ
+    def search_lib_id(  # pylint: disable=too-many-branches
             self,
-            name,
-            requirements=None,
-            silent=False,
-            trigger_event=True,
-            interactive=False,
-            force=False):
-        pkg_dir = None
-        try:
-            _name, _requirements, _url = self.parse_pkg_uri(name, requirements)
-            if not _url:
-                name = "id=%d" % self.get_pkg_id_by_name(
-                    _name,
-                    _requirements,
-                    silent=silent,
-                    interactive=interactive)
-                requirements = _requirements
-            pkg_dir = BasePkgManager.install(
-                self,
-                name,
-                requirements,
-                silent=silent,
-                trigger_event=trigger_event,
-                force=force)
-        except exception.InternetIsOffline as e:
-            if not silent:
-                click.secho(str(e), fg="yellow")
-            return None
-
-        if not pkg_dir:
-            return None
-
-        manifest = self.load_manifest(pkg_dir)
-        if "dependencies" not in manifest:
-            return pkg_dir
-
-        if not silent:
-            click.secho("Installing dependencies", fg="yellow")
-
-        for filters in self.normalize_dependencies(manifest['dependencies']):
-            assert "name" in filters
-            if any([s in filters.get("version", "") for s in ("\\", "/")]):
-                self.install(
-                    "{name}={version}".format(**filters),
-                    silent=silent,
-                    trigger_event=trigger_event,
-                    interactive=interactive,
-                    force=force)
-            else:
-                try:
-                    lib_info = self.search_for_library(filters, silent,
-                                                       interactive)
-                except exception.LibNotFound as e:
-                    if not silent:
-                        click.secho("Warning! %s" % e, fg="yellow")
-                    continue
-
-                if filters.get("version"):
-                    self.install(
-                        lib_info['id'],
-                        filters.get("version"),
-                        silent=silent,
-                        trigger_event=trigger_event,
-                        interactive=interactive,
-                        force=force)
-                else:
-                    self.install(
-                        lib_info['id'],
-                        silent=silent,
-                        trigger_event=trigger_event,
-                        interactive=interactive,
-                        force=force)
-        return pkg_dir
-
-    @staticmethod
-    def search_for_library(  # pylint: disable=too-many-branches
             filters,
             silent=False,
             interactive=False):
         assert isinstance(filters, dict)
         assert "name" in filters
+
+        # try to find ID within installed packages
+        lib_id = self._get_lib_id_from_installed(filters)
+        if lib_id:
+            return lib_id
+
+        # looking in PIO Library Registry
         if not silent:
             click.echo("Looking for %s library in registry" % click.style(
                 filters['name'], fg="cyan"))
@@ -366,4 +286,141 @@ class LibraryManager(BasePkgManager):
                 "http://platformio.org/lib/show/{id}/{name}".format(
                     **lib_info),
                 fg="blue"))
-        return lib_info
+        return int(lib_info['id'])
+
+    def _get_lib_id_from_installed(self, filters):
+        if filters['name'].startswith("id="):
+            return int(filters['name'][3:])
+        package_dir = self.get_package_dir(filters['name'],
+                                           filters.get("requirements",
+                                                       filters.get("version")))
+        if not package_dir:
+            return None
+        manifest = self.load_manifest(package_dir)
+        if "id" not in manifest:
+            return None
+
+        for key in ("frameworks", "platforms"):
+            if key not in filters:
+                continue
+            if key not in manifest:
+                return None
+            if not util.items_in_list(
+                    util.items_to_list(filters[key]),
+                    util.items_to_list(manifest[key])):
+                return None
+
+        if "authors" in filters:
+            if "authors" not in manifest:
+                return None
+            manifest_authors = manifest['authors']
+            if not isinstance(manifest_authors, list):
+                manifest_authors = [manifest_authors]
+            manifest_authors = [
+                a['name'] for a in manifest_authors
+                if isinstance(a, dict) and "name" in a
+            ]
+            filter_authors = filters['authors']
+            if not isinstance(filter_authors, list):
+                filter_authors = [filter_authors]
+            if not set(filter_authors) <= set(manifest_authors):
+                return None
+
+        return int(manifest['id'])
+
+    def install(  # pylint: disable=arguments-differ
+            self,
+            name,
+            requirements=None,
+            silent=False,
+            trigger_event=True,
+            interactive=False,
+            force=False):
+        _name, _requirements, _url = self.parse_pkg_uri(name, requirements)
+        if not _url:
+            name = "id=%d" % self.search_lib_id(
+                {
+                    "name": _name,
+                    "requirements": _requirements
+                },
+                silent=silent,
+                interactive=interactive)
+            requirements = _requirements
+        pkg_dir = BasePkgManager.install(
+            self,
+            name,
+            requirements,
+            silent=silent,
+            trigger_event=trigger_event,
+            force=force)
+
+        if not pkg_dir:
+            return None
+
+        manifest = self.load_manifest(pkg_dir)
+        if "dependencies" not in manifest:
+            return pkg_dir
+
+        if not silent:
+            click.secho("Installing dependencies", fg="yellow")
+
+        for filters in self.normalize_dependencies(manifest['dependencies']):
+            assert "name" in filters
+            if any([s in filters.get("version", "") for s in ("\\", "/")]):
+                self.install(
+                    "{name}={version}".format(**filters),
+                    silent=silent,
+                    trigger_event=trigger_event,
+                    interactive=interactive,
+                    force=force)
+            else:
+                try:
+                    lib_id = self.search_lib_id(filters, silent, interactive)
+                except exception.LibNotFound as e:
+                    if not silent or is_builtin_lib(filters['name']):
+                        click.secho("Warning! %s" % e, fg="yellow")
+                    continue
+
+                if filters.get("version"):
+                    self.install(
+                        lib_id,
+                        filters.get("version"),
+                        silent=silent,
+                        trigger_event=trigger_event,
+                        interactive=interactive,
+                        force=force)
+                else:
+                    self.install(
+                        lib_id,
+                        silent=silent,
+                        trigger_event=trigger_event,
+                        interactive=interactive,
+                        force=force)
+        return pkg_dir
+
+
+@util.memoized
+def get_builtin_libs(storage_names=None):
+    items = []
+    storage_names = storage_names or []
+    pm = PlatformManager()
+    for manifest in pm.get_installed():
+        p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
+        for storage in p.get_lib_storages():
+            if storage_names and storage['name'] not in storage_names:
+                continue
+            lm = LibraryManager(storage['path'])
+            items.append({
+                "name": storage['name'],
+                "path": storage['path'],
+                "items": lm.get_installed()
+            })
+    return items
+
+
+@util.memoized
+def is_builtin_lib(name):
+    for storage in get_builtin_libs():
+        if any([l.get("name") == name for l in storage['items']]):
+            return True
+    return False

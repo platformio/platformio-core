@@ -723,6 +723,20 @@ def pepver_to_semver(pepver):
     return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2.", pepver, 1)
 
 
+def items_to_list(items):
+    if not isinstance(items, list):
+        items = [i.strip() for i in items.split(",")]
+    return [i.lower() for i in items if i]
+
+
+def items_in_list(needle, haystack):
+    needle = items_to_list(needle)
+    haystack = items_to_list(haystack)
+    if "*" in needle or "*" in haystack:
+        return True
+    return set(needle) & set(haystack)
+
+
 def rmtree_(path):
 
     def _onerror(_, name, __):

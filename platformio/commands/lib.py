@@ -23,8 +23,7 @@ import arrow
 import click
 
 from platformio import exception, util
-from platformio.managers.lib import LibraryManager
-from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.managers.lib import LibraryManager, get_builtin_libs
 from platformio.util import get_api_result
 
 
@@ -99,7 +98,7 @@ def cli(ctx, **options):
     help="Reinstall/redownload library if exists")
 @click.pass_obj
 def lib_install(lm, libraries, silent, interactive, force):
-    # @TODO "save" option
+    # @TODO: "save" option
     for library in libraries:
         lm.install(
             library, silent=silent, interactive=interactive, force=force)
@@ -280,25 +279,6 @@ def lib_list(lm, json_output):
     return True
 
 
-@util.memoized
-def get_builtin_libs(storage_names=None):
-    items = []
-    storage_names = storage_names or []
-    pm = PlatformManager()
-    for manifest in pm.get_installed():
-        p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
-        for storage in p.get_lib_storages():
-            if storage_names and storage['name'] not in storage_names:
-                continue
-            lm = LibraryManager(storage['path'])
-            items.append({
-                "name": storage['name'],
-                "path": storage['path'],
-                "items": lm.get_installed()
-            })
-    return items
-
-
 @cli.command("builtin", short_help="List built-in libraries")
 @click.option("--storage", multiple=True)
 @click.option("--json-output", is_flag=True)
@@ -326,8 +306,13 @@ def lib_builtin(storage, json_output):
 def lib_show(library, json_output):
     lm = LibraryManager()
     name, requirements, _ = lm.parse_pkg_uri(library)
-    lib_id = lm.get_pkg_id_by_name(
-        name, requirements, silent=json_output, interactive=not json_output)
+    lib_id = lm.search_lib_id(
+        {
+            "name": name,
+            "requirements": requirements
+        },
+        silent=json_output,
+        interactive=not json_output)
     lib = get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
     if json_output:
         return click.echo(json.dumps(lib))

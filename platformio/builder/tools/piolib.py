@@ -228,19 +228,6 @@ class LibBuilderBase(object):
         except (AssertionError, ValueError):
             return LibBuilderBase.COMPAT_MODE_DEFAULT
 
-    @staticmethod
-    def items_to_list(items):
-        if not isinstance(items, list):
-            items = [i.strip() for i in items.split(",")]
-        return [i.lower() for i in items if i]
-
-    def items_in_list(self, items, ilist):
-        items = self.items_to_list(items)
-        ilist = self.items_to_list(ilist)
-        if "*" in items or "*" in ilist:
-            return True
-        return set(items) & set(ilist)
-
     def is_platforms_compatible(self, platforms):
         return True
 
@@ -273,7 +260,7 @@ class LibBuilderBase(object):
                 if env_key not in self.env:
                     continue
                 if (key in item and
-                        not self.items_in_list(self.env[env_key], item[key])):
+                        not util.items_in_list(self.env[env_key], item[key])):
                     if self.verbose:
                         sys.stderr.write(
                             "Skip %s incompatible dependency %s\n" % (key[:-1],
@@ -496,7 +483,7 @@ class ArduinoLibBuilder(LibBuilderBase):
         return src_filter
 
     def is_frameworks_compatible(self, frameworks):
-        return self.items_in_list(frameworks, ["arduino", "energia"])
+        return util.items_in_list(frameworks, ["arduino", "energia"])
 
 
 class MbedLibBuilder(LibBuilderBase):
@@ -527,7 +514,7 @@ class MbedLibBuilder(LibBuilderBase):
         return include_dirs
 
     def is_frameworks_compatible(self, frameworks):
-        return self.items_in_list(frameworks, ["mbed"])
+        return util.items_in_list(frameworks, ["mbed"])
 
 
 class PlatformIOLibBuilder(LibBuilderBase):
@@ -541,7 +528,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
         if "platforms" in manifest:
             manifest['platforms'] = [
                 "espressif8266" if p == "espressif" else p
-                for p in self.items_to_list(manifest['platforms'])
+                for p in util.items_to_list(manifest['platforms'])
             ]
 
         return manifest
@@ -610,13 +597,13 @@ class PlatformIOLibBuilder(LibBuilderBase):
         items = self._manifest.get("platforms")
         if not items:
             return LibBuilderBase.is_platforms_compatible(self, platforms)
-        return self.items_in_list(platforms, items)
+        return util.items_in_list(platforms, items)
 
     def is_frameworks_compatible(self, frameworks):
         items = self._manifest.get("frameworks")
         if not items:
             return LibBuilderBase.is_frameworks_compatible(self, frameworks)
-        return self.items_in_list(frameworks, items)
+        return util.items_in_list(frameworks, items)
 
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
