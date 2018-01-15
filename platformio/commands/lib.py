@@ -19,7 +19,6 @@ from os.path import isdir, join
 from time import sleep
 from urllib import quote
 
-import arrow
 import click
 
 from platformio import exception, util
@@ -323,9 +322,7 @@ def lib_show(library, json_output):
     click.echo(lib['description'])
     click.echo()
 
-    click.echo("Version: %s, released %s" %
-               (lib['version']['name'],
-                arrow.get(lib['version']['released']).humanize()))
+    click.echo("Version: {name}, released {released}".format(**lib['version']))
     click.echo("Manifest: %s" % lib['confurl'])
     for key in ("homepage", "repository", "license"):
         if key not in lib or not lib[key]:
@@ -360,11 +357,10 @@ def lib_show(library, json_output):
         blocks.append(("Compatible %s" % key, [i['title'] for i in lib[key]]))
     blocks.append(("Headers", lib['headers']))
     blocks.append(("Examples", lib['examples']))
-    blocks.append(("Versions", [
-        "%s, released %s" % (v['name'], arrow.get(v['released']).humanize())
-        for v in lib['versions']
-    ]))
-    blocks.append(("Unique Downloads", [
+    blocks.append(
+        ("Versions",
+         ["{name}, released {released}".format(**v) for v in lib['versions']]))
+    blocks.append(("Downloads", [
         "Today: %s" % lib['dlstats']['day'],
         "Week: %s" % lib['dlstats']['week'],
         "Month: %s" % lib['dlstats']['month']
@@ -423,9 +419,7 @@ def lib_stats(json_output):
         click.echo((printitemdate_tpl
                     if "date" in item else printitem_tpl).format(
                         name=click.style(item['name'], fg="cyan"),
-                        date=str(
-                            arrow.get(item['date']).humanize()
-                            if "date" in item else ""),
+                        date=item.get("date"),
                         url=click.style(
                             "http://platformio.org/lib/show/%s/%s" %
                             (item['id'], quote(item['name'])),

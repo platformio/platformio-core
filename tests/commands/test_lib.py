@@ -141,8 +141,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["-g", "list"])
     validate_cliresult(result)
     assert all([
-        n in result.output
-        for n in
+        n in result.output for n in
         ("Source: https://github.com/adafruit/Adafruit-ST7735-Library/archive/master.zip",
          "Version: 5.10.1",
          "Source: git+https://github.com/gioblu/PJON.git#3.0",
@@ -151,8 +150,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
 
     result = clirunner.invoke(cmd_lib, ["-g", "list", "--json-output"])
     assert all([
-        n in result.output
-        for n in
+        n in result.output for n in
         ("__pkg_dir",
          '"__src_url": "git+https://gitlab.com/ivankravets/rs485-nodeproto.git"',
          '"version": "5.10.1"')
@@ -172,10 +170,10 @@ def test_global_lib_list(clirunner, validate_cliresult):
         for item in json.loads(result.output)
     ]
     versions2 = [
-        'ArduinoJson@5c33fd4', 'ArduinoJson@5.8.2', 'ArduinoJson@5.10.1',
-        'AsyncMqttClient@0.8.2', 'AsyncTCP@1.0.1', 'ESPAsyncTCP@1.1.3',
-        'NeoPixelBus@2.2.4', 'PJON@07fe9aa', 'PJON@1fb26fd',
-        'PubSubClient@bef5814', 'RFcontrol@77d4eb3f8a', 'RadioHead-1.62@0.0.0'
+        'ArduinoJson@5.8.2', 'ArduinoJson@5.10.1', 'AsyncMqttClient@0.8.2',
+        'AsyncTCP@1.0.1', 'ESPAsyncTCP@1.1.3', 'NeoPixelBus@2.2.4',
+        'PJON@07fe9aa', 'PJON@1fb26fd', 'PubSubClient@bef5814',
+        'RFcontrol@77d4eb3f8a', 'RadioHead-1.62@0.0.0'
     ]
     assert set(versions1) >= set(versions2)
 
@@ -272,7 +270,7 @@ def test_lib_stats(clirunner, validate_cliresult):
     validate_cliresult(result)
     assert all([
         s in result.output
-        for s in ("UPDATED", "ago", "http://platformio.org/lib/show")
+        for s in ("UPDATED", "POPULAR", "http://platformio.org/lib/show")
     ])
 
     result = clirunner.invoke(cmd_lib, ["stats", "--json-output"])

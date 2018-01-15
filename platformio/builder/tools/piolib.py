@@ -291,9 +291,8 @@ class LibBuilderBase(object):
 
     def get_search_files(self):
         items = [
-            join(self.src_dir, item)
-            for item in self.env.MatchSourceFiles(self.src_dir,
-                                                  self.src_filter)
+            join(self.src_dir, item) for item in self.env.MatchSourceFiles(
+                self.src_dir, self.src_filter)
         ]
         include_dir = self.include_dir
         if include_dir:
@@ -644,9 +643,9 @@ class ProjectAsLibBuilder(LibBuilderBase):
         # test files
         if "__test" in COMMAND_LINE_TARGETS:
             items.extend([
-                join("$PROJECTTEST_DIR", item)
-                for item in self.env.MatchSourceFiles("$PROJECTTEST_DIR",
-                                                      "$PIOTEST_SRC_FILTER")
+                join("$PROJECTTEST_DIR",
+                     item) for item in self.env.MatchSourceFiles(
+                         "$PROJECTTEST_DIR", "$PIOTEST_SRC_FILTER")
             ])
         return items
 
