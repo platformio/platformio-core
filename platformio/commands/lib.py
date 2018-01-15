@@ -15,8 +15,8 @@
 # pylint: disable=too-many-branches, too-many-locals
 
 import json
+import time
 from os.path import isdir, join
-from time import sleep
 from urllib import quote
 
 import click
@@ -250,7 +250,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
                 result['perpage'],
                 fg="yellow")
             click.echo()
-            sleep(5)
+            time.sleep(5)
         elif not click.confirm("Show next libraries?"):
             break
         result = get_api_result(
@@ -322,7 +322,10 @@ def lib_show(library, json_output):
     click.echo(lib['description'])
     click.echo()
 
-    click.echo("Version: {name}, released {released}".format(**lib['version']))
+    click.echo(
+        "Version: %s, released %s" %
+        (lib['version']['name'],
+         time.strftime("%c", util.parse_date(lib['version']['released']))))
     click.echo("Manifest: %s" % lib['confurl'])
     for key in ("homepage", "repository", "license"):
         if key not in lib or not lib[key]:
@@ -357,10 +360,12 @@ def lib_show(library, json_output):
         blocks.append(("Compatible %s" % key, [i['title'] for i in lib[key]]))
     blocks.append(("Headers", lib['headers']))
     blocks.append(("Examples", lib['examples']))
-    blocks.append(
-        ("Versions",
-         ["{name}, released {released}".format(**v) for v in lib['versions']]))
-    blocks.append(("Downloads", [
+    blocks.append(("Versions", [
+        "%s, released %s" %
+        (v['name'], time.strftime("%c", util.parse_date(v['released'])))
+        for v in lib['versions']
+    ]))
+    blocks.append(("Unique Downloads", [
         "Today: %s" % lib['dlstats']['day'],
         "Week: %s" % lib['dlstats']['week'],
         "Month: %s" % lib['dlstats']['month']
@@ -419,7 +424,9 @@ def lib_stats(json_output):
         click.echo((printitemdate_tpl
                     if "date" in item else printitem_tpl).format(
                         name=click.style(item['name'], fg="cyan"),
-                        date=item.get("date"),
+                        date=str(
+                            time.strftime("%c", util.parse_date(item['date']))
+                            if "date" in item else ""),
                         url=click.style(
                             "http://platformio.org/lib/show/%s/%s" %
                             (item['id'], quote(item['name'])),

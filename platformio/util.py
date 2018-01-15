@@ -22,13 +22,13 @@ import socket
 import stat
 import subprocess
 import sys
+import time
 from functools import wraps
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
 from shutil import rmtree
 from threading import Thread
-from time import sleep, time
 
 import click
 import requests
@@ -159,10 +159,10 @@ class throttle(object):
 
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            diff = int(round((time() - self.last) * 1000))
+            diff = int(round((time.time() - self.last) * 1000))
             if diff < self.threshhold:
-                sleep((self.threshhold - diff) * 0.001)
-            self.last = time()
+                time.sleep((self.threshhold - diff) * 0.001)
+            self.last = time.time()
             return fn(*args, **kwargs)
 
         return wrapper
@@ -541,7 +541,7 @@ def get_mdns_services():
 
     items = []
     with mDNSListener() as mdns:
-        sleep(3)
+        time.sleep(3)
         for service in mdns.get_services():
             items.append({
                 "type":
@@ -651,7 +651,7 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
                     "[API] ConnectionError: {0} (incremented retry: max={1}, "
                     "total={2})".format(e, max_retries, total),
                     fg="yellow")
-            sleep(2 * total)
+            time.sleep(2 * total)
 
     raise exception.APIRequestError(
         "Could not connect to PlatformIO API Service. "
@@ -735,6 +735,12 @@ def items_in_list(needle, haystack):
     if "*" in needle or "*" in haystack:
         return True
     return set(needle) & set(haystack)
+
+
+def parse_date(datestr):
+    if "T" in datestr and "Z" in datestr:
+        return time.strptime(datestr, "%Y-%m-%dT%H:%M:%SZ")
+    return time.strptime(datestr)
 
 
 def rmtree_(path):

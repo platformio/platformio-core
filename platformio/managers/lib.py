@@ -21,7 +21,6 @@ from glob import glob
 from os.path import isdir, join
 
 import click
-from dateutil.parser import parse as parse_date
 
 from platformio import app, commands, exception, util
 from platformio.managers.package import BasePkgManager
@@ -157,8 +156,8 @@ class LibraryManager(BasePkgManager):
     def max_satisfying_repo_version(self, versions, requirements=None):
 
         def _cmp_dates(datestr1, datestr2):
-            date1 = parse_date(datestr1)
-            date2 = parse_date(datestr2)
+            date1 = util.parse_date(datestr1)
+            date2 = util.parse_date(datestr2)
             if date1 == date2:
                 return 0
             return -1 if date1 < date2 else 1

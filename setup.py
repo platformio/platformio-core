@@ -22,7 +22,6 @@ install_requires = [
     "click>=5,<6",
     "colorama",
     "lockfile>=0.9.1,<0.13",
-    "python-dateutil",
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",
     "semantic_version>=2.5.0,<3"
