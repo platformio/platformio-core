@@ -14,7 +14,7 @@ INCLUDEPATH += "{{include}}"
 % end
 
 % for define in defines:
-DEFINES += "{{define}}"
+DEFINES += {{!define}}
 % end
 
 OTHER_FILES += platformio.ini

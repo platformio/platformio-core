@@ -17,7 +17,8 @@ PlatformIO 3.0
 * Refactored code without "arrow" dependency (resolve issue with "ImportError: No module named backports.functools_lru_cache")
 * Improved support of PIO Unified Debugger for Eclipse Oxygen
 * Improved a work in off-line mode
-* Fixed project generator for CLion IDE
+* Fixed project generator for CLion and Qt Creator IDE
+  (`issue #1299 <https://github.com/platformio/platformio-core/issues/1299>`_)
 * Fixed PIO Unified Debugger for mbed framework
 * Fixed library updates when a version is declared in VCS format (not SemVer)
 
