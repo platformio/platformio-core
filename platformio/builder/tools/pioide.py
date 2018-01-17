@@ -68,7 +68,8 @@ def _get_gcc_defines(env):
     if result['returncode'] != 0:
         return items
     for line in result['out'].split("\n"):
-        tokens = line.strip().split(" ", 2)
+        # line can be "#define __INT64_C(c) c ## LL" and we need to strip out the trailing comment
+        tokens = line.strip().split(" ", 3)
         if not tokens or tokens[0] != "#define":
             continue
         if len(tokens) > 2:
