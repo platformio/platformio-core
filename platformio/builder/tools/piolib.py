@@ -20,6 +20,7 @@ from __future__ import absolute_import
 import hashlib
 import os
 import sys
+from glob import glob
 from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
                      realpath, sep)
 from platform import system
@@ -30,6 +31,7 @@ from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, DefaultEnvironment
 from platformio import util
 from platformio.builder.tools import platformio as piotool
 from platformio.managers.lib import LibraryManager
+from platformio.managers.package import PackageManager
 
 
 class LibBuilderFactory(object):
@@ -130,6 +132,13 @@ class LibBuilderBase(object):
     @property
     def version(self):
         return self._manifest.get("version")
+
+    @property
+    def vcs_info(self):
+        items = glob(join(self.path, ".*", PackageManager.SRC_MANIFEST_NAME))
+        if not items:
+            return None
+        return util.load_json(items[0])
 
     @property
     def dependencies(self):
@@ -791,10 +800,15 @@ def BuildProjectLibraries(env):
         margin = "|   " * (level)
         for lb in root.depbuilders:
             title = "<%s>" % lb.name
+            vcs_info = lb.vcs_info
             if lb.version:
                 title += " v%s" % lb.version
+            if vcs_info:
+                title += " #%s" % vcs_info.get("version")
             sys.stdout.write("%s|-- %s" % (margin, title))
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
+                if vcs_info:
+                    sys.stdout.write(" [%s]" % vcs_info.get("url"))
                 sys.stdout.write(" (")
                 sys.stdout.write(lb.path)
                 sys.stdout.write(")")

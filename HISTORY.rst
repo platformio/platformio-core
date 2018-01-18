@@ -11,10 +11,14 @@ PlatformIO 3.0
   `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
   engine and a target device
   (`issue #1273 <https://github.com/platformio/platformio-core/issues/1273>`_)
+* Show full library version in "Library Dependency Graph" including VCS
+  information
+  (`issue #1274 <https://github.com/platformio/platformio-core/issues/1274>`_)
 * Configure a custom firmware/program name in build directory (`example <http://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-firmware-program-name>`__)
 * Renamed ``envs_dir`` option to ``build_dir``
   in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__
-* Refactored code without "arrow" dependency (resolve issue with "ImportError: No module named backports.functools_lru_cache")
+* Refactored code without "arrow" dependency (resolve issue with "ImportError:
+  No module named backports.functools_lru_cache")
 * Improved support of PIO Unified Debugger for Eclipse Oxygen
 * Improved a work in off-line mode
 * Fixed project generator for CLion and Qt Creator IDE
