@@ -36,7 +36,7 @@ def cli(dev):
     # kill all PIO Home servers, they block `pioplus` binary
     shutdown_servers()
 
-    to_develop = dev or not all([c.isdigit() for c in __version__ if c != "."])
+    to_develop = dev or not all(c.isdigit() for c in __version__ if c != ".")
     cmds = ([
         "pip", "install", "--upgrade",
         "https://github.com/platformio/platformio-core/archive/develop.zip"
@@ -69,7 +69,7 @@ def cli(dev):
         if not r:
             raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
         permission_errors = ("permission denied", "not permitted")
-        if (any([m in r['err'].lower() for m in permission_errors])
+        if (any(m in r['err'].lower() for m in permission_errors)
                 and "windows" not in util.get_systype()):
             click.secho(
                 """

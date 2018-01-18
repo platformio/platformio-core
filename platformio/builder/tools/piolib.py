@@ -57,10 +57,9 @@ class LibBuilderFactory(object):
 
     @staticmethod
     def get_used_frameworks(env, path):
-        if any([
+        if any(
                 isfile(join(path, fname))
-                for fname in ("library.properties", "keywords.txt")
-        ]):
+                for fname in ("library.properties", "keywords.txt")):
             return ["arduino"]
 
         if isfile(join(path, "module.json")):
@@ -156,7 +155,7 @@ class LibBuilderBase(object):
 
     @property
     def include_dir(self):
-        if not all([isdir(join(self.path, d)) for d in ("include", "src")]):
+        if not all(isdir(join(self.path, d)) for d in ("include", "src")):
             return None
         return join(self.path, "include")
 

@@ -114,10 +114,10 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             mbed_pages = [
                 join(item['path'], n) for n in ("mbed.htm", "mbed.html")
             ]
-            if any([isfile(p) for p in mbed_pages]):
+            if any(isfile(p) for p in mbed_pages):
                 return item['path']
             if item['name'] \
-                    and any([l in item['name'].lower() for l in msdlabels]):
+                    and any(l in item['name'].lower() for l in msdlabels):
                 return item['path']
         return None
 
