@@ -134,6 +134,7 @@ class PkgRepoMixin(object):
 class PkgInstallerMixin(object):
 
     SRC_MANIFEST_NAME = ".piopkgmanager.json"
+    TMP_FOLDER_PREFIX = "_tmp_installing-"
 
     FILE_CACHE_VALID = "1m"  # 1 month
     FILE_CACHE_MAX_SIZE = 1024 * 1024
@@ -211,6 +212,8 @@ class PkgInstallerMixin(object):
             try:
                 return semantic_version.Version(value)
             except ValueError:
+                if "." not in str(value) and not str(value).isdigit():
+                    raise ValueError("Invalid SemVer version %s" % value)
                 return semantic_version.Version.coerce(value)
         except ValueError as e:
             if raise_exception:
@@ -292,6 +295,8 @@ class PkgInstallerMixin(object):
     def get_installed(self):
         items = []
         for pkg_dir in self.read_dirs(self.package_dir):
+            if self.TMP_FOLDER_PREFIX in pkg_dir:
+                continue
             manifest = self.load_manifest(pkg_dir)
             if not manifest:
                 continue
@@ -361,7 +366,7 @@ class PkgInstallerMixin(object):
                 break
             except Exception as e:  # pylint: disable=broad-except
                 click.secho("Warning! Package Mirror: %s" % e, fg="yellow")
-                click.secho("Looking for other mirror...", fg="yellow")
+                click.secho("Looking for another mirror...", fg="yellow")
 
         if versions is None:
             raise exception.UnknownPackage(name)
@@ -376,7 +381,7 @@ class PkgInstallerMixin(object):
                           requirements=None,
                           sha1=None,
                           track=False):
-        tmp_dir = mkdtemp("-package", "_tmp_installing-", self.package_dir)
+        tmp_dir = mkdtemp("-package", self.TMP_FOLDER_PREFIX, self.package_dir)
         src_manifest_dir = None
         src_manifest = {"name": name, "url": url, "requirements": requirements}
 
@@ -661,6 +666,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 name, url, requirements, track=True)
         else:
             pkg_dir = self._install_from_piorepo(name, requirements)
+
         if not pkg_dir or not self.manifest_exists(pkg_dir):
             raise exception.PackageInstallError(name, requirements or "*",
                                                 util.get_systype())

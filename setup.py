@@ -18,7 +18,6 @@ from platformio import (__author__, __description__, __email__, __license__,
                         __title__, __url__, __version__)
 
 install_requires = [
-    "arrow>=0.10.0,!=0.11.0",
     "bottle<0.13",
     "click>=5,<6",
     "colorama",
@@ -37,6 +36,7 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
+    python_requires='>=2.7, <3',
     install_requires=install_requires,
     packages=find_packages(),
     package_data={

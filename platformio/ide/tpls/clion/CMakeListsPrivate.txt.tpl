@@ -7,8 +7,9 @@ SET(CMAKE_CXX_FLAGS_DISTRIBUTION "{{cxx_flags}}")
 SET(CMAKE_C_FLAGS_DISTRIBUTION "{{cc_flags}}")
 set(CMAKE_CXX_STANDARD 11)
 
+% import re
 % for define in defines:
-add_definitions(-D{{!define}})
+add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
 % end
 
 % for include in includes:

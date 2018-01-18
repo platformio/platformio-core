@@ -4,6 +4,28 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.5.1 (2018-01-18)
+~~~~~~~~~~~~~~~~~~
+
+* New ``test_speed`` option to control a communication baudrate/speed between
+  `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
+  engine and a target device
+  (`issue #1273 <https://github.com/platformio/platformio-core/issues/1273>`_)
+* Show full library version in "Library Dependency Graph" including VCS
+  information
+  (`issue #1274 <https://github.com/platformio/platformio-core/issues/1274>`_)
+* Configure a custom firmware/program name in build directory (`example <http://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-firmware-program-name>`__)
+* Renamed ``envs_dir`` option to ``build_dir``
+  in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__
+* Refactored code without "arrow" dependency (resolve issue with "ImportError:
+  No module named backports.functools_lru_cache")
+* Improved support of PIO Unified Debugger for Eclipse Oxygen
+* Improved a work in off-line mode
+* Fixed project generator for CLion and Qt Creator IDE
+  (`issue #1299 <https://github.com/platformio/platformio-core/issues/1299>`_)
+* Fixed PIO Unified Debugger for mbed framework
+* Fixed library updates when a version is declared in VCS format (not SemVer)
+
 3.5.0 (2017-12-28)
 ~~~~~~~~~~~~~~~~~~
 
@@ -28,7 +50,7 @@ PlatformIO 3.0
 * New `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__
   folder for project's header files
   (`issue #1107 <https://github.com/platformio/platformio-core/issues/1107>`_)
-* Depend on development platform using VSC URL (Git, Mercurial and Subversion)
+* Depend on development platform using VCS URL (Git, Mercurial and Subversion)
   instead of a name in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_env_general.html#platform>`__.
   Drop support for ``*_stage`` dev/platform names (use VCS URL instead).
 * Reinstall/redownload package with a new ``-f, --force`` option for

@@ -186,7 +186,7 @@ def test_install_packages(isolated_pio_home, tmpdir):
         "packages").listdir()]) == set(pkg_dirnames)
 
 
-def test_get_package(isolated_pio_home):
+def test_get_package():
     tests = [
         [("unknown", ), None],
         [("1", ), None],

@@ -45,7 +45,7 @@ def test_ci_lib_and_board(clirunner, validate_cliresult):
     example_dir = join("examples", "atmelavr", "arduino-external-libs")
     result = clirunner.invoke(cmd_ci, [
         join(example_dir, "lib", "OneWire", "examples", "DS2408_Switch",
-             "DS2408_Switch.pde"), "-l", join(example_dir, "lib", "OneWire"),
-        "-b", "uno"
+             "DS2408_Switch.pde"), "-l",
+        join(example_dir, "lib", "OneWire"), "-b", "uno"
     ])
     validate_cliresult(result)

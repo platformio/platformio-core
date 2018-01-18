@@ -20,6 +20,7 @@ from __future__ import absolute_import
 import hashlib
 import os
 import sys
+from glob import glob
 from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
                      realpath, sep)
 from platform import system
@@ -30,6 +31,7 @@ from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, DefaultEnvironment
 from platformio import util
 from platformio.builder.tools import platformio as piotool
 from platformio.managers.lib import LibraryManager
+from platformio.managers.package import PackageManager
 
 
 class LibBuilderFactory(object):
@@ -132,6 +134,13 @@ class LibBuilderBase(object):
         return self._manifest.get("version")
 
     @property
+    def vcs_info(self):
+        items = glob(join(self.path, ".*", PackageManager.SRC_MANIFEST_NAME))
+        if not items:
+            return None
+        return util.load_json(items[0])
+
+    @property
     def dependencies(self):
         return LibraryManager.normalize_dependencies(
             self._manifest.get("dependencies", []))
@@ -228,19 +237,6 @@ class LibBuilderBase(object):
         except (AssertionError, ValueError):
             return LibBuilderBase.COMPAT_MODE_DEFAULT
 
-    @staticmethod
-    def items_to_list(items):
-        if not isinstance(items, list):
-            items = [i.strip() for i in items.split(",")]
-        return [i.lower() for i in items if i]
-
-    def items_in_list(self, items, ilist):
-        items = self.items_to_list(items)
-        ilist = self.items_to_list(ilist)
-        if "*" in items or "*" in ilist:
-            return True
-        return set(items) & set(ilist)
-
     def is_platforms_compatible(self, platforms):
         return True
 
@@ -273,7 +269,7 @@ class LibBuilderBase(object):
                 if env_key not in self.env:
                     continue
                 if (key in item and
-                        not self.items_in_list(self.env[env_key], item[key])):
+                        not util.items_in_list(self.env[env_key], item[key])):
                     if self.verbose:
                         sys.stderr.write(
                             "Skip %s incompatible dependency %s\n" % (key[:-1],
@@ -304,9 +300,8 @@ class LibBuilderBase(object):
 
     def get_search_files(self):
         items = [
-            join(self.src_dir, item)
-            for item in self.env.MatchSourceFiles(self.src_dir,
-                                                  self.src_filter)
+            join(self.src_dir, item) for item in self.env.MatchSourceFiles(
+                self.src_dir, self.src_filter)
         ]
         include_dir = self.include_dir
         if include_dir:
@@ -496,7 +491,7 @@ class ArduinoLibBuilder(LibBuilderBase):
         return src_filter
 
     def is_frameworks_compatible(self, frameworks):
-        return self.items_in_list(frameworks, ["arduino", "energia"])
+        return util.items_in_list(frameworks, ["arduino", "energia"])
 
 
 class MbedLibBuilder(LibBuilderBase):
@@ -527,7 +522,7 @@ class MbedLibBuilder(LibBuilderBase):
         return include_dirs
 
     def is_frameworks_compatible(self, frameworks):
-        return self.items_in_list(frameworks, ["mbed"])
+        return util.items_in_list(frameworks, ["mbed"])
 
 
 class PlatformIOLibBuilder(LibBuilderBase):
@@ -541,7 +536,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
         if "platforms" in manifest:
             manifest['platforms'] = [
                 "espressif8266" if p == "espressif" else p
-                for p in self.items_to_list(manifest['platforms'])
+                for p in util.items_to_list(manifest['platforms'])
             ]
 
         return manifest
@@ -610,13 +605,13 @@ class PlatformIOLibBuilder(LibBuilderBase):
         items = self._manifest.get("platforms")
         if not items:
             return LibBuilderBase.is_platforms_compatible(self, platforms)
-        return self.items_in_list(platforms, items)
+        return util.items_in_list(platforms, items)
 
     def is_frameworks_compatible(self, frameworks):
         items = self._manifest.get("frameworks")
         if not items:
             return LibBuilderBase.is_frameworks_compatible(self, frameworks)
-        return self.items_in_list(frameworks, items)
+        return util.items_in_list(frameworks, items)
 
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
@@ -646,7 +641,9 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
-        include_dirs.append(self.env.subst("$PROJECTINCLUDE_DIR"))
+        project_include_dir = self.env.subst("$PROJECTINCLUDE_DIR")
+        if isdir(project_include_dir):
+            include_dirs.append(project_include_dir)
         return include_dirs
 
     def get_search_files(self):
@@ -655,9 +652,9 @@ class ProjectAsLibBuilder(LibBuilderBase):
         # test files
         if "__test" in COMMAND_LINE_TARGETS:
             items.extend([
-                join("$PROJECTTEST_DIR", item)
-                for item in self.env.MatchSourceFiles("$PROJECTTEST_DIR",
-                                                      "$PIOTEST_SRC_FILTER")
+                join("$PROJECTTEST_DIR",
+                     item) for item in self.env.MatchSourceFiles(
+                         "$PROJECTTEST_DIR", "$PIOTEST_SRC_FILTER")
             ])
         return items
 
@@ -803,10 +800,15 @@ def BuildProjectLibraries(env):
         margin = "|   " * (level)
         for lb in root.depbuilders:
             title = "<%s>" % lb.name
+            vcs_info = lb.vcs_info
             if lb.version:
                 title += " v%s" % lb.version
+            if vcs_info:
+                title += " #%s" % vcs_info.get("version")
             sys.stdout.write("%s|-- %s" % (margin, title))
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
+                if vcs_info:
+                    sys.stdout.write(" [%s]" % vcs_info.get("url"))
                 sys.stdout.write(" (")
                 sys.stdout.write(lb.path)
                 sys.stdout.write(")")
@@ -815,7 +817,7 @@ def BuildProjectLibraries(env):
                 print_deps_tree(lb, level + 1)
 
     print "Collected %d compatible libraries" % len(lib_builders)
-    print "Looking for dependencies..."
+    print "Scanning dependencies..."
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     project.env = env

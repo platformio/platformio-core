@@ -22,13 +22,13 @@ import socket
 import stat
 import subprocess
 import sys
+import time
 from functools import wraps
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
 from shutil import rmtree
 from threading import Thread
-from time import sleep, time
 
 import click
 import requests
@@ -159,10 +159,10 @@ class throttle(object):
 
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            diff = int(round((time() - self.last) * 1000))
+            diff = int(round((time.time() - self.last) * 1000))
             if diff < self.threshhold:
-                sleep((self.threshhold - diff) * 0.001)
-            self.last = time()
+                time.sleep((self.threshhold - diff) * 0.001)
+            self.last = time.time()
             return fn(*args, **kwargs)
 
         return wrapper
@@ -311,8 +311,8 @@ def get_projectboards_dir():
                                     join(get_project_dir(), "boards"))
 
 
-def get_projectpioenvs_dir(force=False):
-    path = get_project_optional_dir("envs_dir",
+def get_projectbuild_dir(force=False):
+    path = get_project_optional_dir("build_dir",
                                     join(get_project_dir(), ".pioenvs"))
     try:
         if not isdir(path):
@@ -322,12 +322,16 @@ def get_projectpioenvs_dir(force=False):
             with open(dontmod_path, "w") as fp:
                 fp.write("""
 [InternetShortcut]
-URL=http://docs.platformio.org/page/projectconf.html#envs-dir
+URL=http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir
 """)
     except Exception as e:  # pylint: disable=broad-except
         if not force:
             raise Exception(e)
     return path
+
+
+# compatibility with PIO Core+
+get_projectpioenvs_dir = get_projectbuild_dir
 
 
 def get_projectdata_dir():
@@ -445,6 +449,10 @@ def get_serial_ports(filter_hwid=False):
     return result
 
 
+# Backward compatibility for PIO Core <3.5
+get_serialports = get_serial_ports
+
+
 def get_logical_devices():
     items = []
     if platform.system() == "Windows":
@@ -481,14 +489,6 @@ def get_logical_devices():
                 "name": basename(match.group(1))
             })
     return items
-
-
-### Backward compatibility for PIO Core <3.5
-get_serialports = get_serial_ports
-get_logicaldisks = lambda: [{
-    "disk": d['path'],
-    "name": d['name']
-} for d in get_logical_devices()]
 
 
 def get_mdns_services():
@@ -541,7 +541,7 @@ def get_mdns_services():
 
     items = []
     with mDNSListener() as mdns:
-        sleep(3)
+        time.sleep(3)
         for service in mdns.get_services():
             items.append({
                 "type":
@@ -621,7 +621,6 @@ def _get_api_result(
 
 
 def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
-    internet_on(raise_exception=True)
     from platformio.app import ContentCache
     total = 0
     max_retries = 5
@@ -634,6 +633,10 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
                     result = cc.get(cache_key)
                     if result is not None:
                         return result
+
+            # check internet before and resolve issue with 60 seconds timeout
+            internet_on(raise_exception=True)
+
             result = _get_api_result(url, params, data)
             if cache_valid:
                 with ContentCache() as cc:
@@ -648,7 +651,7 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
                     "[API] ConnectionError: {0} (incremented retry: max={1}, "
                     "total={2})".format(e, max_retries, total),
                     fg="yellow")
-            sleep(2 * total)
+            time.sleep(2 * total)
 
     raise exception.APIRequestError(
         "Could not connect to PlatformIO API Service. "
@@ -718,6 +721,26 @@ def where_is_program(program, envpath=None):
 
 def pepver_to_semver(pepver):
     return re.sub(r"(\.\d+)\.?(dev|a|b|rc|post)", r"\1-\2.", pepver, 1)
+
+
+def items_to_list(items):
+    if not isinstance(items, list):
+        items = [i.strip() for i in items.split(",")]
+    return [i.lower() for i in items if i]
+
+
+def items_in_list(needle, haystack):
+    needle = items_to_list(needle)
+    haystack = items_to_list(haystack)
+    if "*" in needle or "*" in haystack:
+        return True
+    return set(needle) & set(haystack)
+
+
+def parse_date(datestr):
+    if "T" in datestr and "Z" in datestr:
+        return time.strptime(datestr, "%Y-%m-%dT%H:%M:%SZ")
+    return time.strptime(datestr)
 
 
 def rmtree_(path):

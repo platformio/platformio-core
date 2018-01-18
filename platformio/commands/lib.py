@@ -15,16 +15,14 @@
 # pylint: disable=too-many-branches, too-many-locals
 
 import json
+import time
 from os.path import isdir, join
-from time import sleep
 from urllib import quote
 
-import arrow
 import click
 
 from platformio import exception, util
-from platformio.managers.lib import LibraryManager
-from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.managers.lib import LibraryManager, get_builtin_libs
 from platformio.util import get_api_result
 
 
@@ -99,7 +97,7 @@ def cli(ctx, **options):
     help="Reinstall/redownload library if exists")
 @click.pass_obj
 def lib_install(lm, libraries, silent, interactive, force):
-    # @TODO "save" option
+    # @TODO: "save" option
     for library in libraries:
         lm.install(
             library, silent=silent, interactive=interactive, force=force)
@@ -252,7 +250,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
                 result['perpage'],
                 fg="yellow")
             click.echo()
-            sleep(5)
+            time.sleep(5)
         elif not click.confirm("Show next libraries?"):
             break
         result = get_api_result(
@@ -278,25 +276,6 @@ def lib_list(lm, json_output):
         print_lib_item(item)
 
     return True
-
-
-@util.memoized
-def get_builtin_libs(storage_names=None):
-    items = []
-    storage_names = storage_names or []
-    pm = PlatformManager()
-    for manifest in pm.get_installed():
-        p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
-        for storage in p.get_lib_storages():
-            if storage_names and storage['name'] not in storage_names:
-                continue
-            lm = LibraryManager(storage['path'])
-            items.append({
-                "name": storage['name'],
-                "path": storage['path'],
-                "items": lm.get_installed()
-            })
-    return items
 
 
 @cli.command("builtin", short_help="List built-in libraries")
@@ -326,8 +305,13 @@ def lib_builtin(storage, json_output):
 def lib_show(library, json_output):
     lm = LibraryManager()
     name, requirements, _ = lm.parse_pkg_uri(library)
-    lib_id = lm.get_pkg_id_by_name(
-        name, requirements, silent=json_output, interactive=not json_output)
+    lib_id = lm.search_lib_id(
+        {
+            "name": name,
+            "requirements": requirements
+        },
+        silent=json_output,
+        interactive=not json_output)
     lib = get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
     if json_output:
         return click.echo(json.dumps(lib))
@@ -338,9 +322,10 @@ def lib_show(library, json_output):
     click.echo(lib['description'])
     click.echo()
 
-    click.echo("Version: %s, released %s" %
-               (lib['version']['name'],
-                arrow.get(lib['version']['released']).humanize()))
+    click.echo(
+        "Version: %s, released %s" %
+        (lib['version']['name'],
+         time.strftime("%c", util.parse_date(lib['version']['released']))))
     click.echo("Manifest: %s" % lib['confurl'])
     for key in ("homepage", "repository", "license"):
         if key not in lib or not lib[key]:
@@ -376,7 +361,8 @@ def lib_show(library, json_output):
     blocks.append(("Headers", lib['headers']))
     blocks.append(("Examples", lib['examples']))
     blocks.append(("Versions", [
-        "%s, released %s" % (v['name'], arrow.get(v['released']).humanize())
+        "%s, released %s" %
+        (v['name'], time.strftime("%c", util.parse_date(v['released'])))
         for v in lib['versions']
     ]))
     blocks.append(("Unique Downloads", [
@@ -439,7 +425,7 @@ def lib_stats(json_output):
                     if "date" in item else printitem_tpl).format(
                         name=click.style(item['name'], fg="cyan"),
                         date=str(
-                            arrow.get(item['date']).humanize()
+                            time.strftime("%c", util.parse_date(item['date']))
                             if "date" in item else ""),
                         url=click.style(
                             "http://platformio.org/lib/show/%s/%s" %

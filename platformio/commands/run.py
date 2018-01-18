@@ -23,10 +23,9 @@ import click
 from platformio import __version__, exception, telemetry, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.commands.lib import lib_install as cmd_lib_install
-from platformio.commands.lib import get_builtin_libs
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
-from platformio.managers.lib import LibraryManager
+from platformio.managers.lib import LibraryManager, is_builtin_lib
 from platformio.managers.platform import PlatformFactory
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
@@ -60,15 +59,15 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
         raise exception.NotPlatformIOProject(project_dir)
 
     with util.cd(project_dir):
-        # clean obsolete .pioenvs dir
+        # clean obsolete build dir
         if not disable_auto_clean:
             try:
-                _clean_pioenvs_dir(util.get_projectpioenvs_dir())
+                _clean_build_dir(util.get_projectbuild_dir())
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
-                    "`.pioenvs` directory from the project manually to avoid "
-                    "build issues" % util.get_projectpioenvs_dir(force=True),
+                    "it manually to avoid build issues" %
+                    util.get_projectbuild_dir(force=True),
                     fg="yellow")
 
         config = util.load_project_config()
@@ -133,17 +132,19 @@ class EnvironmentProcessor(object):
                      "upload_resetmethod", "lib_deps", "lib_ignore",
                      "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
                      "lib_archive", "piotest", "test_transport", "test_filter",
-                     "test_ignore", "test_port", "debug_tool", "debug_port",
-                     "debug_init_cmds", "debug_extra_cmds", "debug_server",
-                     "debug_init_break", "debug_load_cmd", "monitor_port",
-                     "monitor_baud", "monitor_rts", "monitor_dtr")
+                     "test_ignore", "test_port", "test_speed", "debug_tool",
+                     "debug_port", "debug_init_cmds", "debug_extra_cmds",
+                     "debug_server", "debug_init_break", "debug_load_cmd",
+                     "monitor_port", "monitor_baud", "monitor_rts",
+                     "monitor_dtr")
 
     IGNORE_BUILD_OPTIONS = ("test_transport", "test_filter", "test_ignore",
-                            "test_port", "debug_tool", "debug_port",
-                            "debug_init_cmds", "debug_extra_cmds",
-                            "debug_server", "debug_init_break",
-                            "debug_load_cmd", "monitor_port", "monitor_baud",
-                            "monitor_rts", "monitor_dtr")
+                            "test_port", "test_speed", "debug_tool",
+                            "debug_port", "debug_init_cmds",
+                            "debug_extra_cmds", "debug_server",
+                            "debug_init_break", "debug_load_cmd",
+                            "monitor_port", "monitor_baud", "monitor_rts",
+                            "monitor_dtr")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
@@ -307,36 +308,31 @@ def _autoinstall_libdeps(ctx, libraries, verbose=False):
         try:
             ctx.invoke(cmd_lib_install, libraries=[lib], silent=not verbose)
         except exception.LibNotFound as e:
-            if not _is_builtin_lib(lib):
+            if verbose or not is_builtin_lib(lib):
                 click.secho("Warning! %s" % e, fg="yellow")
+        except exception.InternetIsOffline as e:
+            click.secho(str(e), fg="yellow")
 
 
-def _is_builtin_lib(lib_name):
-    for storage in get_builtin_libs():
-        if any([l.get("name") == lib_name for l in storage['items']]):
-            return True
-    return False
-
-
-def _clean_pioenvs_dir(pioenvs_dir):
-    structhash_file = join(pioenvs_dir, "structure.hash")
+def _clean_build_dir(build_dir):
+    structhash_file = join(build_dir, "structure.hash")
     proj_hash = calculate_project_hash()
 
     # if project's config is modified
-    if (isdir(pioenvs_dir)
+    if (isdir(build_dir)
             and getmtime(join(util.get_project_dir(),
-                              "platformio.ini")) > getmtime(pioenvs_dir)):
-        util.rmtree_(pioenvs_dir)
+                              "platformio.ini")) > getmtime(build_dir)):
+        util.rmtree_(build_dir)
 
     # check project structure
-    if isdir(pioenvs_dir) and isfile(structhash_file):
+    if isdir(build_dir) and isfile(structhash_file):
         with open(structhash_file) as f:
             if f.read() == proj_hash:
                 return
-        util.rmtree_(pioenvs_dir)
+        util.rmtree_(build_dir)
 
-    if not isdir(pioenvs_dir):
-        makedirs(pioenvs_dir)
+    if not isdir(build_dir):
+        makedirs(build_dir)
 
     with open(structhash_file, "w") as f:
         f.write(proj_hash)
@@ -384,13 +380,13 @@ def check_project_defopts(config):
     if not config.has_section("platformio"):
         return True
     known = ("env_default", "home_dir", "lib_dir", "libdeps_dir", "src_dir",
-             "envs_dir", "data_dir", "test_dir", "boards_dir",
+             "build_dir", "data_dir", "test_dir", "boards_dir",
              "lib_extra_dirs")
     unknown = set([k for k, _ in config.items("platformio")]) - set(known)
     if not unknown:
         return True
     click.secho(
-        "Warning! Ignore unknown `%s` option from `[platformio]` section" %
+        "Warning! Ignore unknown `%s` option in `[platformio]` section" %
         ", ".join(unknown),
         fg="yellow")
     return False
