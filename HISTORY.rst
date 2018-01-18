@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.5.1 (2018-??-??)
+3.5.1 (2018-01-18)
 ~~~~~~~~~~~~~~~~~~
 
 * New ``test_speed`` option to control a communication baudrate/speed between
