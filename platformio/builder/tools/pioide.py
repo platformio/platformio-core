@@ -53,7 +53,13 @@ def _dump_includes(env):
     if unity_dir:
         includes.append(unity_dir)
 
-    return includes
+    # remove dupicates
+    result = []
+    for item in includes:
+        if item not in result:
+            result.append(item)
+
+    return result
 
 
 def _get_gcc_defines(env):
