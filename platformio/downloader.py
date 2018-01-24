@@ -48,7 +48,7 @@ class FileDownloader(object):
                     "'", "")
             self._fname = self._fname.encode("utf8")
         else:
-            self._fname = url.split("/")[-1]
+            self._fname = [p for p in url.split("/") if p][-1]
 
         self._progressbar = None
         self._destination = self._fname
