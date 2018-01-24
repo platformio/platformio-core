@@ -431,7 +431,7 @@ def get_serial_ports(filter_hwid=False):
     for p, d, h in comports():
         if not p:
             continue
-        if platform.system() == "Windows":
+        if "windows" in get_systype():
             try:
                 d = unicode(d, errors="ignore")
             except TypeError:
@@ -443,7 +443,7 @@ def get_serial_ports(filter_hwid=False):
         return result
 
     # fix for PySerial
-    if not result and platform.system() == "Darwin":
+    if not result and "darwin" in get_systype():
         for p in glob("/dev/tty.*"):
             result.append({"port": p, "description": "n/a", "hwid": "n/a"})
     return result
@@ -455,7 +455,7 @@ get_serialports = get_serial_ports
 
 def get_logical_devices():
     items = []
-    if platform.system() == "Windows":
+    if "windows" in get_systype():
         try:
             result = exec_command(
                 ["wmic", "logicaldisk", "get", "name,VolumeName"]).get(

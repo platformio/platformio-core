@@ -23,7 +23,6 @@ import sys
 from glob import glob
 from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
                      realpath, sep)
-from platform import system
 
 import SCons.Scanner
 from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, DefaultEnvironment
@@ -82,6 +81,8 @@ class LibBuilderFactory(object):
 
 class LibBuilderBase(object):
 
+    IS_WINDOWS = "windows" in util.get_systype()
+
     LDF_MODES = ["off", "chain", "deep", "chain+", "deep+"]
     LDF_MODE_DEFAULT = "chain"
 
@@ -119,7 +120,7 @@ class LibBuilderBase(object):
     def __contains__(self, path):
         p1 = self.path
         p2 = path
-        if system() == "Windows":
+        if self.IS_WINDOWS:
             p1 = p1.lower()
             p2 = p2.lower()
         return commonprefix((p1 + sep, p2)) == p1 + sep

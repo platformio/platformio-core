@@ -18,7 +18,6 @@ import sys
 from fnmatch import fnmatch
 from os import environ
 from os.path import isfile, join
-from platform import system
 from shutil import copyfile
 from time import sleep
 
@@ -133,7 +132,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             port = item['port']
             if upload_protocol.startswith("blackmagic") \
                     and "GDB" in item['description']:
-                return ("\\\\.\\%s" % port if system() == "Windows"
+                return ("\\\\.\\%s" % port if "windows" in util.get_systype()
                         and port.startswith("COM") and len(port) > 4 else port)
             for hwid in board_hwids:
                 hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
@@ -149,7 +148,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             and not env.subst("$UPLOAD_PROTOCOL"):
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
-        if (system() == "Linux" and not any([
+        if ("linux" in util.get_systype() and not any([
                 isfile("/etc/udev/rules.d/99-platformio-udev.rules"),
                 isfile("/lib/udev/rules.d/99-platformio-udev.rules")
         ])):
