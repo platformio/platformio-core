@@ -133,7 +133,8 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             port = item['port']
             if upload_protocol.startswith("blackmagic") \
                     and "GDB" in item['description']:
-                return port
+                return ("\\\\.\\%s" % port if system() == "Windows"
+                        and port.startswith("COM") and len(port) > 4 else port)
             for hwid in board_hwids:
                 hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
                 if hwid_str in item['hwid']:
