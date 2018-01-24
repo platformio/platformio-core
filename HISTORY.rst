@@ -7,8 +7,10 @@ PlatformIO 3.0
 3.5.2 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Handle "os.mbed.com" URL as Mercurial (hg) repository
+* Handle "os.mbed.com" URL as a Mercurial (hg) repository
 * Improved support for old mbed libraries without manifest
+* Fixed issue with duplicated "include" records when generating data for IDE
+  (`issue #1301 <https://github.com/platformio/platformio-core/issues/1301>`_)
 
 3.5.1 (2018-01-18)
 ~~~~~~~~~~~~~~~~~~
