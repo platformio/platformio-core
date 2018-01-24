@@ -516,8 +516,20 @@ class MbedLibBuilder(LibBuilderBase):
         include_dirs = LibBuilderBase.get_include_dirs(self)
         if self.path not in include_dirs:
             include_dirs.append(self.path)
+
+        # library with module.json
         for p in self._manifest.get("extraIncludes", []):
             include_dirs.append(join(self.path, p))
+
+        # old mbed library without manifest, add to CPPPATH all folders
+        if not self._manifest:
+            for root, _, __ in os.walk(self.path):
+                part = root.replace(self.path, "").lower()
+                if any(s in part for s in ("%s." % sep, "test", "example")):
+                    continue
+                if root not in include_dirs:
+                    include_dirs.append(root)
+
         return include_dirs
 
     def is_frameworks_compatible(self, frameworks):
