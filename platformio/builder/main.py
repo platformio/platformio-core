@@ -20,7 +20,7 @@ from os.path import expanduser, join
 from time import time
 
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
-                          AllowSubstExceptions, AlwaysBuild,
+                          Action, AllowSubstExceptions, AlwaysBuild,
                           DefaultEnvironment, Variables)
 
 from platformio import util
@@ -182,3 +182,16 @@ if "idedata" in COMMAND_LINE_TARGETS:
             "See explanation in FAQ > Troubleshooting > Building\n"
             "http://docs.platformio.org/page/faq.html\n\n")
         env.Exit(1)
+
+
+def print_upload_protocols_info(source, target, env):
+    selected = env.subst("$UPLOAD_PROTOCOL")
+    available = env.BoardConfig().get("upload", {}).get(
+        "protocols", [selected])
+    print "Available: %s" % ", ".join(available)
+    print "Selected: %s" % selected
+
+
+env.AddPreAction(["upload", "program"],
+                 Action(print_upload_protocols_info,
+                        "Configuring upload protocol..."))
