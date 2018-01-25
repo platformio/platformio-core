@@ -183,16 +183,6 @@ if "idedata" in COMMAND_LINE_TARGETS:
             "http://docs.platformio.org/page/faq.html\n\n")
         env.Exit(1)
 
-
-def print_upload_protocols_info(  # pylint: disable=unused-argument
-        source, target, _):
-    selected = env.subst("$UPLOAD_PROTOCOL")
-    available = env.BoardConfig().get("upload", {}).get(
-        "protocols", [selected])
-    print "Available: %s" % ", ".join(available)
-    print "Selected: %s" % selected
-
-
 env.AddPreAction(["upload", "program"],
-                 Action(print_upload_protocols_info,
+                 Action(lambda source, target, env: env.PrintUploadInfo(),
                         "Configuring upload protocol..."))
