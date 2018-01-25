@@ -42,6 +42,8 @@ def BuildProgram(env):
 
     _append_pio_macros()
 
+    env.PrintSystemInfo()
+
     # fix ASM handling under non-casitive OS
     if not case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")

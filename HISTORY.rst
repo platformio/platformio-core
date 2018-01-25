@@ -7,7 +7,9 @@ PlatformIO 3.0
 3.5.2 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Show all available upload protocols before firmware uploading
+* Show device system information (MCU, Frequency, RAM, Flash, Debugging tools)
+  in a build log
+* Show all available upload protocols before firmware uploading in a build log
 * Handle "os.mbed.com" URL as a Mercurial (hg) repository
 * Improved support for old mbed libraries without manifest
 * Fixed issue with duplicated "include" records when generating data for IDE

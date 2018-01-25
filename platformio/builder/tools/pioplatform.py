@@ -41,8 +41,9 @@ def PioPlatform(env):
 def BoardConfig(env, board=None):
     p = initPioPlatform(env['PLATFORM_MANIFEST'])
     try:
-        assert env.get("BOARD", board), "BoardConfig: Board is not defined"
-        config = p.board_config(board if board else env.get("BOARD"))
+        board = board or env.get("BOARD")
+        assert board, "BoardConfig: Board is not defined"
+        config = p.board_config(board)
     except (AssertionError, exception.UnknownBoard) as e:
         sys.stderr.write("Error: %s\n" % str(e))
         env.Exit(1)
@@ -97,6 +98,50 @@ def LoadPioPlatform(env, variables):
         env.Replace(LDSCRIPT_PATH=board_config.get("build.ldscript"))
 
 
+def PrintSystemInfo(env):
+    data = []
+    debug_tools = None
+    mcu = env.subst("$BOARD_MCU")
+    f_cpu = env.subst("$BOARD_F_CPU")
+    if mcu:
+        data.append(mcu.upper())
+    if f_cpu:
+        f_cpu = int("".join([c for c in str(f_cpu) if c.isdigit()]))
+        data.append("%dMHz" % (f_cpu / 1000000))
+
+    if "BOARD" in env:
+        board_config = env.BoardConfig()
+        debug_tools = board_config.get("debug", {}).get("tools")
+        ram = board_config.get("upload", {}).get("maximum_ram_size")
+        flash = board_config.get("upload", {}).get("maximum_size")
+        for (key, value) in (("RAM", ram), ("Flash", flash)):
+            if not value:
+                continue
+            data.append("%s/%s" % (key, util.format_filesize(value)))
+
+    if data:
+        print "System: %s" % " ".join(data)
+
+    # Debugging
+    if not debug_tools:
+        return
+
+    data = []
+    onboard = []
+    external = []
+    for key, value in debug_tools.items():
+        if value.get("onboard"):
+            onboard.append(key)
+        else:
+            external.append(key)
+    if onboard:
+        data.append("ON-BORD(%s)" % ", ".join(sorted(onboard)))
+    if external:
+        data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
+
+    print "Debug: %s" % " ".join(data)
+
+
 def exists(_):
     return True
 
@@ -106,4 +151,5 @@ def generate(env):
     env.AddMethod(BoardConfig)
     env.AddMethod(GetFrameworkScript)
     env.AddMethod(LoadPioPlatform)
+    env.AddMethod(PrintSystemInfo)
     return env

@@ -184,7 +184,8 @@ if "idedata" in COMMAND_LINE_TARGETS:
         env.Exit(1)
 
 
-def print_upload_protocols_info(source, target, env):
+def print_upload_protocols_info(  # pylint: disable=unused-argument
+        source, target, _):
     selected = env.subst("$UPLOAD_PROTOCOL")
     available = env.BoardConfig().get("upload", {}).get(
         "protocols", [selected])

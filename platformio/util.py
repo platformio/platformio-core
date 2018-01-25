@@ -743,6 +743,23 @@ def parse_date(datestr):
     return time.strptime(datestr)
 
 
+def format_filesize(filesize):
+    base = 1024
+    unit = 0
+    suffix = "B"
+    filesize = float(filesize)
+    if filesize < base:
+        return "%d%s" % (filesize, suffix)
+    for i, suffix in enumerate("KMGTPEZY"):
+        unit = base**(i + 2)
+        if filesize >= unit:
+            continue
+        if filesize % (base**(i + 1)):
+            return "%.2f%s" % ((base * filesize / unit), suffix)
+        break
+    return "%d%s" % ((base * filesize / unit), suffix)
+
+
 def rmtree_(path):
 
     def _onerror(_, name, __):
