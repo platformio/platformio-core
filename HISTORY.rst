@@ -7,6 +7,8 @@ PlatformIO 3.0
 3.5.2 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added aliases (off, light, strict) for
+  `LDF Compatibility Modes <http://docs.platformio.org/page/librarymanager/ldf.html>`__
 * Show device system information (MCU, Frequency, RAM, Flash, Debugging tools)
   in a build log
 * Show all available upload protocols before firmware uploading in a build log

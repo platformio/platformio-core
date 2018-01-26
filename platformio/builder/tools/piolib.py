@@ -86,8 +86,8 @@ class LibBuilderBase(object):
     LDF_MODES = ["off", "chain", "deep", "chain+", "deep+"]
     LDF_MODE_DEFAULT = "chain"
 
-    COMPAT_MODES = [0, 1, 2]
-    COMPAT_MODE_DEFAULT = 1
+    COMPAT_MODES = ["off", "light", "strict"]
+    COMPAT_MODE_DEFAULT = "light"
 
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
@@ -230,12 +230,15 @@ class LibBuilderBase(object):
 
     @staticmethod
     def validate_compat_mode(mode):
-        try:
-            mode = int(mode)
-            assert mode in LibBuilderBase.COMPAT_MODES
+        if isinstance(mode, basestring):
+            mode = mode.strip().lower()
+        if mode in LibBuilderBase.COMPAT_MODES:
             return mode
-        except (AssertionError, ValueError):
-            return LibBuilderBase.COMPAT_MODE_DEFAULT
+        try:
+            return LibBuilderBase.COMPAT_MODES[int(mode)]
+        except (IndexError, ValueError):
+            pass
+        return LibBuilderBase.COMPAT_MODE_DEFAULT
 
     def is_platforms_compatible(self, platforms):
         return True
@@ -743,13 +746,13 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             if verbose:
                 sys.stderr.write("Ignored library %s\n" % lb.path)
             return None
-        if compat_mode > 1 and not lb.is_platforms_compatible(
+        if compat_mode == "strict" and not lb.is_platforms_compatible(
                 env['PIOPLATFORM']):
             if verbose:
                 sys.stderr.write(
                     "Platform incompatible library %s\n" % lb.path)
             return False
-        if compat_mode > 0 and "PIOFRAMEWORK" in env and \
+        if compat_mode == "light" and "PIOFRAMEWORK" in env and \
            not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", [])):
             if verbose:
                 sys.stderr.write(
@@ -828,20 +831,23 @@ def BuildProjectLibraries(env):
             if lb.depbuilders:
                 print_deps_tree(lb, level + 1)
 
-    print "Collected %d compatible libraries" % len(lib_builders)
-    print "Scanning dependencies..."
-
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     project.env = env
+    ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
+
+    print "Library Dependency Finder -> http://bit.ly/configure-pio-ldf"
+    print "Modes: Finder/%s Compatibility/%s" % (ldf_mode,
+                                                 project.lib_compat_mode)
+    print "Collected %d compatible libraries" % len(lib_builders)
+
+    print "Scanning dependencies..."
     project.search_deps_recursive()
 
-    if (LibBuilderBase.validate_ldf_mode(
-            env.get("LIB_LDF_MODE", LibBuilderBase.LDF_MODE_DEFAULT))
-            .startswith("chain") and project.depbuilders):
+    if ldf_mode.startswith("chain") and project.depbuilders:
         correct_found_libs()
 
     if project.depbuilders:
-        print "Library Dependency Graph ( http://bit.ly/configure-pio-ldf )"
+        print "Dependency Graph"
         print_deps_tree(project)
     else:
         print "No dependencies"
