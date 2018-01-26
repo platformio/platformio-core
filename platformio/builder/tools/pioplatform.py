@@ -142,14 +142,6 @@ def PrintSystemInfo(env):
     print "Debug: %s" % " ".join(data)
 
 
-def PrintUploadInfo(env):
-    selected = env.subst("$UPLOAD_PROTOCOL")
-    available = env.BoardConfig().get("upload", {}).get(
-        "protocols", [selected])
-    print "Available: %s" % ", ".join(available)
-    print "Selected: %s" % selected
-
-
 def exists(_):
     return True
 
@@ -160,5 +152,4 @@ def generate(env):
     env.AddMethod(GetFrameworkScript)
     env.AddMethod(LoadPioPlatform)
     env.AddMethod(PrintSystemInfo)
-    env.AddMethod(PrintUploadInfo)
     return env

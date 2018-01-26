@@ -144,8 +144,9 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         print env.subst("Use manually specified: $UPLOAD_PORT")
         return
 
-    if "mbed" in env.subst("$PIOFRAMEWORK") \
-            and not env.subst("$UPLOAD_PROTOCOL"):
+    if (env.subst("$UPLOAD_PROTOCOL") == "mbed"
+            or ("mbed" in env.subst("$PIOFRAMEWORK")
+                and not env.subst("$UPLOAD_PROTOCOL"))):
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
         if ("linux" in util.get_systype() and not any([
@@ -212,6 +213,14 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
         env.Exit(1)
 
 
+def PrintUploadInfo(env):
+    selected = env.subst("$UPLOAD_PROTOCOL")
+    available = env.BoardConfig().get("upload", {}).get(
+        "protocols", [selected])
+    print "Available: %s" % ", ".join(available)
+    print "Selected: %s" % selected
+
+
 def exists(_):
     return True
 
@@ -223,4 +232,5 @@ def generate(env):
     env.AddMethod(AutodetectUploadPort)
     env.AddMethod(UploadToDisk)
     env.AddMethod(CheckUploadSize)
+    env.AddMethod(PrintUploadInfo)
     return env
