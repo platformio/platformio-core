@@ -90,7 +90,7 @@ class LibBuilderBase(object):
     COMPAT_MODE_DEFAULT = "light"
 
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
-    ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
+    CCONDITIONAL_SCANNER = SCons.Scanner.C.CConditionalScanner()
     PARSE_SRC_BY_H_NAME = True
 
     _INCLUDE_DIRS_CACHE = None
@@ -343,17 +343,15 @@ class LibBuilderBase(object):
         for path in self._validate_search_files(search_files):
             try:
                 assert "+" in self.lib_ldf_mode
-                incs = self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.ADVANCED_SCANNER,
-                    tuple(include_dirs))
+                incs = LibBuilderBase.CCONDITIONAL_SCANNER(
+                    self.env.File(path), self.env, tuple(include_dirs))
             except Exception as e:  # pylint: disable=broad-except
                 if self.verbose and "+" in self.lib_ldf_mode:
                     sys.stderr.write(
                         "Warning! Classic Pre Processor is used for `%s`, "
                         "advanced has failed with `%s`\n" % (path, e))
-                _incs = self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.CLASSIC_SCANNER,
-                    tuple(include_dirs))
+                _incs = LibBuilderBase.CLASSIC_SCANNER(
+                    self.env.File(path), self.env, tuple(include_dirs))
                 incs = []
                 for inc in _incs:
                     incs.append(inc)

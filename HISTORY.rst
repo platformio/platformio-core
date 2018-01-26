@@ -7,6 +7,8 @@ PlatformIO 3.0
 3.5.2 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Upgraded build system to `SCons <http://scons.org>`__ 3.0
+  (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
 * Added aliases (off, light, strict) for
   `LDF Compatibility Modes <http://docs.platformio.org/page/librarymanager/ldf.html>`__
 * Show device system information (MCU, Frequency, RAM, Flash, Debugging tools)
