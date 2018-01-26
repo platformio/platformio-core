@@ -44,7 +44,7 @@ def BuildProgram(env):
 
     env.PrintSystemInfo()
 
-    # fix ASM handling under non-casitive OS
+    # fix ASM handling under non case-sensitive OS
     if not case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 

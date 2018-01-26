@@ -75,7 +75,7 @@ MULTILINE_VARS = [
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
-        "ar", "as", "gcc", "g++", "gnulink", "platformio", "pioplatform",
+        "ar", "gas", "gcc", "g++", "gnulink", "platformio", "pioplatform",
         "piowinhooks", "piolib", "pioupload", "piomisc", "pioide"
     ],  # yapf: disable
     toolpath=[join(util.get_source_dir(), "builder", "tools")],

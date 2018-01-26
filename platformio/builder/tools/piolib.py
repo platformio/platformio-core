@@ -796,9 +796,8 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
 
 def BuildProjectLibraries(env):
-    lib_builders = env.GetLibBuilders()
 
-    def correct_found_libs():
+    def correct_found_libs(lib_builders):
         # build full dependency graph
         found_lbs = [lb for lb in lib_builders if lb.dependent]
         for lb in lib_builders:
@@ -836,13 +835,15 @@ def BuildProjectLibraries(env):
     print "Library Dependency Finder -> http://bit.ly/configure-pio-ldf"
     print "Modes: Finder/%s Compatibility/%s" % (ldf_mode,
                                                  project.lib_compat_mode)
+
+    lib_builders = env.GetLibBuilders()
     print "Collected %d compatible libraries" % len(lib_builders)
 
     print "Scanning dependencies..."
     project.search_deps_recursive()
 
     if ldf_mode.startswith("chain") and project.depbuilders:
-        correct_found_libs()
+        correct_found_libs(lib_builders)
 
     if project.depbuilders:
         print "Dependency Graph"
