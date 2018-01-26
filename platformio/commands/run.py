@@ -15,7 +15,7 @@
 from datetime import datetime
 from hashlib import sha1
 from os import getcwd, makedirs, walk
-from os.path import basename, getmtime, isdir, isfile, join
+from os.path import getmtime, isdir, isfile, join
 from time import time
 
 import click
@@ -404,15 +404,14 @@ def check_project_envs(config, environments):
 
 
 def calculate_project_hash():
+    check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
     structure = [__version__]
-    build_dir_name = basename(util.get_projectbuild_dir())
     for d in (util.get_projectsrc_dir(), util.get_projectlib_dir()):
         if not isdir(d):
             continue
         for root, _, files in walk(d):
             for f in files:
                 path = join(root, f)
-                if not any(
-                        s in path for s in (".git", ".svn", build_dir_name)):
+                if path.endswith(check_suffixes):
                     structure.append(path)
-    return sha1(",".join(sorted(structure))).hexdigest() if structure else ""
+    return sha1(",".join(sorted(structure))).hexdigest()
