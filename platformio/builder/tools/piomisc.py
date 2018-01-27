@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 
 import atexit
+import io
 import re
 import sys
 from os import environ, remove, walk
@@ -84,7 +85,7 @@ class InoToCPPConverter(object):
 
     def _gcc_preprocess(self, contents, out_file):
         tmp_path = mkstemp()[1]
-        with open(tmp_path, "w") as fp:
+        with io.open(tmp_path, mode="w", encoding="utf-8") as fp:
             fp.write(contents)
         self.env.Execute(
             self.env.VerboseAction(
