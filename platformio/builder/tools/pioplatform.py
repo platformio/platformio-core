@@ -135,9 +135,9 @@ def PrintSystemInfo(env):
         else:
             external.append(key)
     if onboard:
-        data.append("ON-BORD(%s)" % ", ".join(sorted(onboard)))
+        data.append("ON-BORD/%s" % ", ".join(sorted(onboard)))
     if external:
-        data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
+        data.append("EXTERNAL/%s" % ", ".join(sorted(external)))
 
     print "Debug: %s" % " ".join(data)
 

@@ -215,11 +215,14 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
 
 def PrintUploadInfo(env):
     configured = env.subst("$UPLOAD_PROTOCOL")
+    available = []
     if "BOARD" in env:
         available = env.BoardConfig().get("upload", {}).get(
             "protocols", [configured])
+    if available:
         print "Available: %s" % ", ".join(available)
-    print "Configured: %s" % configured
+    if configured:
+        print "Configured: upload_protocol = %s" % configured
 
 
 def exists(_):
