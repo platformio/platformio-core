@@ -10,7 +10,8 @@
             "target": "{{prog_path.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')}}",
             "gdbpath": "{{join(dirname(platformio_path), "piodebuggdb").replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')}}",
             "autorun": [ "source .pioinit" ],
-            "preLaunchTask": "PlatformIO: Pre-Debug"
+            "preLaunchTask": "PlatformIO: Pre-Debug",
+            "internalConsoleOptions": "openOnSessionStart"
         }
     ]
 }
