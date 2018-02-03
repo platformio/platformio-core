@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os.path import dirname, isfile, join, realpath
+import os
+import urlparse
+from os.path import dirname, isdir, isfile, join, realpath
 from sys import exit as sys_exit
 from sys import path
 
@@ -35,12 +37,15 @@ def is_compat_platform_and_framework(platform, framework):
     return False
 
 
-def campaign_url(url):
-    if "?" in url:
-        url += "&"
-    else:
-        url += "?"
-    return url + "utm_source=platformio&utm_medium=docs"
+def campaign_url(url, source="platformio", medium="docs"):
+    data = urlparse.urlparse(url)
+    query = data.query
+    if query:
+        query += "&"
+    query += "utm_source=%s&utm_medium=%s" % (source, medium)
+    return urlparse.urlunparse(
+        urlparse.ParseResult(data.scheme, data.netloc, data.path, data.params,
+                             query, data.fragment))
 
 
 def generate_boards(boards, extend_debug=False, skip_columns=None):
@@ -263,11 +268,19 @@ For more detailed information please visit `vendor site <%s>`_.""" %
 Examples
 --------
 
-Examples are located in `%s development platform repository <%s>`_.
+Examples are listed from `%s development platform repository <%s>`_:
 """ % (p.title,
        campaign_url(
            "https://github.com/platformio/platform-%s/tree/develop/examples" %
            p.name)))
+    examples_dir = join(p.get_dir(), "examples")
+    if isdir(examples_dir):
+        for eitem in os.listdir(examples_dir):
+            if not isdir(join(examples_dir, eitem)):
+                continue
+            url = ("https://github.com/platformio/platform-%s"
+                   "/tree/develop/examples/%s" % (p.name, eitem))
+            lines.append("* `%s <%s>`_" % (eitem, campaign_url(url)))
 
     #
     # Debugging
@@ -639,12 +652,66 @@ Boards
                  "\n".join(lines))
 
 
+def update_examples_readme():
+    examples_dir = join(util.get_source_dir(), "..", "examples")
+
+    # Platforms
+    embedded = []
+    desktop = []
+    for manifest in PLATFORM_MANIFESTS:
+        p = PlatformFactory.newPlatform(manifest['name'])
+        url = campaign_url(
+            "http://docs.platformio.org/en/latest/platforms/%s.html#examples" %
+            p.name,
+            source="github",
+            medium="examples")
+        line = "* [%s](%s)" % (p.title, url)
+        if p.is_embedded():
+            embedded.append(line)
+        else:
+            desktop.append(line)
+
+    # Frameworks
+    frameworks = []
+    for framework in API_FRAMEWORKS:
+        url = campaign_url(
+            "http://docs.platformio.org/en/latest/frameworks/%s.html#examples"
+            % framework['name'],
+            source="github",
+            medium="examples")
+        frameworks.append("* [%s](%s)" % (framework['title'], url))
+
+    with open(join(examples_dir, "README.md"), "w") as fp:
+        fp.write("""# PlatformIO Project Examples
+
+- [Development platforms](#development-platforms):
+  - [Embedded](#embedded)
+  - [Desktop](#desktop)
+- [Frameworks](#frameworks)
+
+## Development platforms
+
+### Embedded
+
+%s
+
+### Desktop
+
+%s
+
+## Frameworks
+
+%s
+""" % ("\n".join(embedded), "\n".join(desktop), "\n".join(frameworks)))
+
+
 def main():
     update_create_platform_doc()
     update_platform_docs()
     update_framework_docs()
     update_embedded_boards()
     update_debugging()
+    update_examples_readme()
 
 
 if __name__ == "__main__":
