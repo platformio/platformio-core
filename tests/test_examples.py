@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import random
 from glob import glob
 from os import listdir, walk
 from os.path import dirname, getsize, isdir, isfile, join, normpath
@@ -19,17 +20,32 @@ from os.path import dirname, getsize, isdir, isfile, join, normpath
 import pytest
 
 from platformio import util
+from platformio.managers.platform import PlatformFactory, PlatformManager
 
 
 def pytest_generate_tests(metafunc):
     if "pioproject_dir" not in metafunc.fixturenames:
         return
-    example_dirs = normpath(join(dirname(__file__), "..", "examples"))
-    project_dirs = []
-    for root, _, files in walk(example_dirs):
-        if "platformio.ini" not in files or ".skiptest" in files:
+    examples_dirs = []
+
+    # repo examples
+    examples_dirs.append(normpath(join(dirname(__file__), "..", "examples")))
+
+    # dev/platforms
+    for manifest in PlatformManager().get_installed():
+        p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
+        if not p.is_embedded():
             continue
-        project_dirs.append(root)
+        examples_dir = join(p.get_dir(), "examples")
+        assert isdir(examples_dir)
+        examples_dirs.append(examples_dir)
+
+    project_dirs = []
+    for examples_dir in examples_dirs:
+        for root, _, files in walk(examples_dir):
+            if "platformio.ini" not in files or ".skiptest" in files:
+                continue
+            project_dirs.append(root)
     project_dirs.sort()
     metafunc.parametrize("pioproject_dir", project_dirs)
 
@@ -41,7 +57,14 @@ def test_run(pioproject_dir):
         if isdir(build_dir):
             util.rmtree_(build_dir)
 
-        result = util.exec_command(["platformio", "--force", "run"])
+        env_names = []
+        for section in util.load_project_config().sections():
+            if section.startswith("env:"):
+                env_names.append(section[4:])
+
+        result = util.exec_command(
+            ["platformio", "run", "-e",
+             random.choice(env_names)])
         if result['returncode'] != 0:
             pytest.fail(result)
 
