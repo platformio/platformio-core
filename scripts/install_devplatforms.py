@@ -22,6 +22,8 @@ def main():
         subprocess.check_output(
             ["platformio", "platform", "search", "--json-output"]))
     for platform in platforms:
+        if platform['forDesktop']:
+            continue
         subprocess.check_call(
             ["platformio", "platform", "install", platform['repository']])
 
