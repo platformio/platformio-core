@@ -71,13 +71,13 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                     fg="yellow")
 
         config = util.load_project_config()
-        check_project_defopts(config)
-        assert check_project_envs(config, environment)
-
         env_default = None
         if config.has_option("platformio", "env_default"):
             env_default = util.parse_conf_multi_values(
                 config.get("platformio", "env_default"))
+
+        check_project_defopts(config)
+        check_project_envs(config, environment or env_default)
 
         results = []
         start_time = time()
