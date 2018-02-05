@@ -16,7 +16,7 @@ PlatformIO 3.0
 * Improved support for old mbed libraries without manifest
 * Fixed project generator for Qt Creator IDE
   (`issue #1303 <https://github.com/platformio/platformio-core/issues/1303>`_,
-   `issue #1323 <https://github.com/platformio/platformio-core/issues/1323>`_)
+  `issue #1323 <https://github.com/platformio/platformio-core/issues/1323>`_)
 * Fixed issue with duplicated "include" records when generating data for IDE
   (`issue #1301 <https://github.com/platformio/platformio-core/issues/1301>`_)
 
