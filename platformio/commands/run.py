@@ -77,7 +77,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                 config.get("platformio", "env_default"))
 
         check_project_defopts(config)
-        check_project_envs(config, environment or env_default or [])
+        check_project_envs(config, environment or env_default)
 
         results = []
         start_time = time()
@@ -392,12 +392,12 @@ def check_project_defopts(config):
     return False
 
 
-def check_project_envs(config, environments):
+def check_project_envs(config, environments=None):
     if not config.sections():
         raise exception.ProjectEnvsNotAvailable()
 
     known = set([s[4:] for s in config.sections() if s.startswith("env:")])
-    unknown = set(environments) - known
+    unknown = set(environments or []) - known
     if unknown:
         raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
     return True
