@@ -77,7 +77,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                 config.get("platformio", "env_default"))
 
         check_project_defopts(config)
-        check_project_envs(config, environment or env_default)
+        check_project_envs(config, environment or env_default or [])
 
         results = []
         start_time = time()
