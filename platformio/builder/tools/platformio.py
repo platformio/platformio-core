@@ -65,8 +65,8 @@ def BuildProgram(env):
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
 
-    # build dependent libs
-    env.Append(LIBS=env.BuildProjectLibraries())
+    # build dependent libs; place them before built-in libs
+    env.Prepend(LIBS=env.BuildProjectLibraries())
 
     # append specified LD_SCRIPT
     if ("LDSCRIPT_PATH" in env
