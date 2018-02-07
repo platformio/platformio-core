@@ -755,9 +755,9 @@ def format_filesize(filesize):
         if filesize >= unit:
             continue
         if filesize % (base**(i + 1)):
-            return "%.2f%s" % ((base * filesize / unit), suffix)
+            return "%.2f%sB" % ((base * filesize / unit), suffix)
         break
-    return "%d%s" % ((base * filesize / unit), suffix)
+    return "%d%sB" % ((base * filesize / unit), suffix)
 
 
 def rmtree_(path):

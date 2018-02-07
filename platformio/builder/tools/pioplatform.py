@@ -98,29 +98,34 @@ def LoadPioPlatform(env, variables):
         env.Replace(LDSCRIPT_PATH=board_config.get("build.ldscript"))
 
 
-def PrintSystemInfo(env):
-    data = []
-    debug_tools = None
+def PrintConfiguration(env):  # pylint: disable=too-many-branches
+    platform_data = ["Platform: %s ::" % env.PioPlatform().title]
+    system_data = ["System:"]
     mcu = env.subst("$BOARD_MCU")
     f_cpu = env.subst("$BOARD_F_CPU")
     if mcu:
-        data.append(mcu.upper())
+        system_data.append(mcu.upper())
     if f_cpu:
         f_cpu = int("".join([c for c in str(f_cpu) if c.isdigit()]))
-        data.append("%dMHz" % (f_cpu / 1000000))
+        system_data.append("%dMHz" % (f_cpu / 1000000))
 
+    debug_tools = None
     if "BOARD" in env:
         board_config = env.BoardConfig()
+        platform_data.append(board_config.get("name"))
+
         debug_tools = board_config.get("debug", {}).get("tools")
         ram = board_config.get("upload", {}).get("maximum_ram_size")
         flash = board_config.get("upload", {}).get("maximum_size")
         for (key, value) in (("RAM", ram), ("Flash", flash)):
             if not value:
                 continue
-            data.append("%s/%s" % (key, util.format_filesize(value)))
+            system_data.append("%s/%s" % (key, util.format_filesize(value)))
 
-    if data:
-        print "System: %s" % " ".join(data)
+    if platform_data:
+        print " ".join(platform_data)
+    if system_data:
+        print " ".join(system_data)
 
     # Debugging
     if not debug_tools:
@@ -151,5 +156,5 @@ def generate(env):
     env.AddMethod(BoardConfig)
     env.AddMethod(GetFrameworkScript)
     env.AddMethod(LoadPioPlatform)
-    env.AddMethod(PrintSystemInfo)
+    env.AddMethod(PrintConfiguration)
     return env

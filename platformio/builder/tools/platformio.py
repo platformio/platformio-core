@@ -42,7 +42,7 @@ def BuildProgram(env):
 
     _append_pio_macros()
 
-    env.PrintSystemInfo()
+    env.PrintConfiguration()
 
     # fix ASM handling under non case-sensitive OS
     if not case_sensitive_suffixes(".s", ".S"):

@@ -55,7 +55,7 @@ def generate_boards(boards, extend_debug=False, skip_columns=None):
         ("Platform", ":ref:`{platform_title} <platform_{platform}>`"),
         ("Debug", "{debug}"),
         ("MCU", "{mcu}"),
-        ("Frequency", "{f_cpu:d} MHz"),
+        ("Frequency", "{f_cpu:d}MHz"),
         ("Flash", "{rom}"),
         ("RAM", "{ram}"),
     ]
