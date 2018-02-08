@@ -99,7 +99,7 @@ def LoadPioPlatform(env, variables):
 
 
 def PrintConfiguration(env):  # pylint: disable=too-many-branches
-    platform_data = ["Platform: %s ::" % env.PioPlatform().title]
+    platform_data = ["Platform: %s >" % env.PioPlatform().title]
     system_data = ["System:"]
     mcu = env.subst("$BOARD_MCU")
     f_cpu = env.subst("$BOARD_F_CPU")

@@ -124,6 +124,8 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
 class EnvironmentProcessor(object):
 
+    DEFAULT_DUMP_OPTIONS = ("platform", "framework", "board")
+
     KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
                      "board_f_cpu", "board_f_flash", "board_flash_mode",
                      "build_flags", "src_build_flags", "build_unflags",
@@ -176,19 +178,19 @@ class EnvironmentProcessor(object):
     def process(self):
         terminal_width, _ = click.get_terminal_size()
         start_time = time()
+        env_dump = []
 
         for k, v in self.options.items():
             self.options[k] = self.options[k].strip()
+            if self.verbose or k in self.DEFAULT_DUMP_OPTIONS:
+                env_dump.append(
+                    "%s: %s" % (k, ", ".join(util.parse_conf_multi_values(v))))
 
         if not self.silent:
             click.echo("[%s] Processing %s (%s)" %
                        (datetime.now().strftime("%c"),
                         click.style(self.name, fg="cyan", bold=True),
-                        "; ".join([
-                            "%s: %s" %
-                            (k, ", ".join(util.parse_conf_multi_values(v)))
-                            for k, v in self.options.items()
-                        ])))
+                        "; ".join(env_dump)))
             click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
