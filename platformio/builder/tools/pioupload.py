@@ -220,9 +220,9 @@ def PrintUploadInfo(env):
         available.extend(env.BoardConfig().get("upload", {}).get(
             "protocols", []))
     if available:
-        print "Available: %s" % ", ".join(sorted(available))
+        print "AVAILABLE: %s" % ", ".join(sorted(available))
     if configured:
-        print "Configured: upload_protocol = %s" % configured
+        print "CURRENT: upload_protocol = %s" % configured
 
 
 def exists(_):

@@ -715,3 +715,32 @@ class PlatformBoardConfig(object):
                 if key in ("default", "onboard"):
                     tools[name][key] = value
         return {"tools": tools}
+
+    def get_debug_tool_name(self, custom=None):
+        debug_tools = self._manifest.get("debug", {}).get("tools")
+        tool_name = custom
+        if tool_name == "custom":
+            return tool_name
+        if not debug_tools:
+            raise exception.DebugSupportError(self._manifest['name'])
+        if tool_name:
+            if tool_name in debug_tools:
+                return tool_name
+            raise exception.DebugInvalidOptions(
+                "Unknown debug tool `%s`. Please use one of `%s` or `custom`" %
+                (tool_name, ", ".join(sorted(debug_tools.keys()))))
+
+        # automatically select best tool
+        default = []
+        onboard = []
+        external = []
+        for key, value in debug_tools.items():
+            if value.get("default"):
+                default.append(key)
+            elif value.get("onboard"):
+                onboard.append(key)
+            external.append(key)
+
+        assert default or onboard or external
+        return (default[0] if default else onboard[0]
+                if onboard else external[0])

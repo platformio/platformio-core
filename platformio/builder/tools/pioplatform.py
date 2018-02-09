@@ -99,8 +99,8 @@ def LoadPioPlatform(env, variables):
 
 
 def PrintConfiguration(env):  # pylint: disable=too-many-branches
-    platform_data = ["Platform: %s >" % env.PioPlatform().title]
-    system_data = ["System:"]
+    platform_data = ["PLATFORM: %s >" % env.PioPlatform().title]
+    system_data = ["SYSTEM:"]
     mcu = env.subst("$BOARD_MCU")
     f_cpu = env.subst("$BOARD_F_CPU")
     if mcu:
@@ -131,7 +131,10 @@ def PrintConfiguration(env):  # pylint: disable=too-many-branches
     if not debug_tools:
         return
 
-    data = []
+    data = [
+        "CURRENT/%s" % board_config.get_debug_tool_name(
+            env.subst("$DEBUG_TOOL"))
+    ]
     onboard = []
     external = []
     for key, value in debug_tools.items():
@@ -144,7 +147,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-branches
     if external:
         data.append("EXTERNAL/%s" % ", ".join(sorted(external)))
 
-    print "Debug: %s" % " ".join(data)
+    print "DEBUG: %s" % " ".join(data)
 
 
 def exists(_):

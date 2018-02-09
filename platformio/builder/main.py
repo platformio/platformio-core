@@ -64,7 +64,11 @@ commonvars.AddVariables(
     ("UPLOAD_PROTOCOL",),
     ("UPLOAD_SPEED",),
     ("UPLOAD_FLAGS",),
-    ("UPLOAD_RESETMETHOD",)
+    ("UPLOAD_RESETMETHOD",),
+
+    # debug options
+    ("DEBUG_TOOL",),
+
 
 )  # yapf: disable
 

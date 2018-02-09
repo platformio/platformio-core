@@ -238,3 +238,15 @@ class CygwinEnvDetected(PlatformioException):
 
     MESSAGE = ("PlatformIO does not work within Cygwin environment. "
                "Use native Terminal instead.")
+
+
+class DebugSupportError(PlatformioException):
+
+    MESSAGE = ("Currently, PlatformIO does not support debugging for `{0}`.\n"
+               "Please mail contact@pioplus.com or visit "
+               "< http://docs.platformio.org/page/plus/debugging.html >")
+
+
+class DebugInvalidOptions(PlatformioException):
+
+    pass
