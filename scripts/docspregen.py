@@ -291,6 +291,32 @@ Examples are listed from `%s development platform repository <%s>`_:
                 compatible_boards, skip_columns=["Platform"]))
 
     #
+    # Development version of dev/platform
+    #
+    lines.append("""
+Stable and upstream versions
+----------------------------
+
+You can switch between `stable releases <https://github.com/platformio/platform-{name}/releases>`__
+of {title} development platform and the latest upstream version using
+:ref:`projectconf_env_platform` option as described below:
+
+.. code-block:: ini
+
+    ; Custom stable version
+    [env:stable]
+    platform ={name}@x.y.z
+    board = ...
+    ...
+
+    ; The latest upstream/development version
+    [env:upstream]
+    platform = https://github.com/platformio/platform-{name}.git
+    board = ...
+    ...
+""".format(name=p.name, title=p.title))
+
+    #
     # Packages
     #
     _packages_content = generate_packages(name, p.packages.keys(),
