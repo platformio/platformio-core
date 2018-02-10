@@ -731,16 +731,18 @@ class PlatformBoardConfig(object):
                 (tool_name, ", ".join(sorted(debug_tools.keys()))))
 
         # automatically select best tool
-        default = []
-        onboard = []
-        external = []
+        data = {"default": [], "onboard": [], "external": []}
         for key, value in debug_tools.items():
             if value.get("default"):
-                default.append(key)
+                data['default'].append(key)
             elif value.get("onboard"):
-                onboard.append(key)
-            external.append(key)
+                data['onboard'].append(key)
+            data['external'].append(key)
 
-        assert default or onboard or external
-        return (default[0] if default else onboard[0]
-                if onboard else external[0])
+        for key, value in data.items():
+            print key
+            if not value:
+                continue
+            return sorted(value)[0]
+
+        assert any(item for item in data)
