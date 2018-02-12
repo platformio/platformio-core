@@ -832,9 +832,9 @@ def BuildProjectLibraries(env):
     project.env = env
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
 
-    print "Library Dependency Finder (LDF) -> http://bit.ly/configure-pio-ldf"
-    print "LDF MODES: FINDER/%s COMPATIBILITY/%s" % (ldf_mode,
-                                                     project.lib_compat_mode)
+    print "Library Dependency Finder -> http://bit.ly/configure-pio-ldf"
+    print "LDF MODES: FINDER(%s) COMPATIBILITY(%s)" % (ldf_mode,
+                                                       project.lib_compat_mode)
 
     lib_builders = env.GetLibBuilders()
     print "Collected %d compatible libraries" % len(lib_builders)

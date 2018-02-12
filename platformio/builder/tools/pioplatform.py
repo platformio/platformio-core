@@ -117,10 +117,8 @@ def PrintConfiguration(env):  # pylint: disable=too-many-branches
         debug_tools = board_config.get("debug", {}).get("tools")
         ram = board_config.get("upload", {}).get("maximum_ram_size")
         flash = board_config.get("upload", {}).get("maximum_size")
-        for (key, value) in (("RAM", ram), ("Flash", flash)):
-            if not value:
-                continue
-            system_data.append("%s/%s" % (key, util.format_filesize(value)))
+        system_data.append("%s (%s Flash)" % (util.format_filesize(ram),
+                                              util.format_filesize(flash)))
 
     if platform_data:
         print " ".join(platform_data)
@@ -132,7 +130,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-branches
         return
 
     data = [
-        "CURRENT/%s" % board_config.get_debug_tool_name(
+        "CURRENT(%s)" % board_config.get_debug_tool_name(
             env.subst("$DEBUG_TOOL"))
     ]
     onboard = []
@@ -143,9 +141,9 @@ def PrintConfiguration(env):  # pylint: disable=too-many-branches
         else:
             external.append(key)
     if onboard:
-        data.append("ON-BORD/%s" % ", ".join(sorted(onboard)))
+        data.append("ON-BORD(%s)" % ", ".join(sorted(onboard)))
     if external:
-        data.append("EXTERNAL/%s" % ", ".join(sorted(external)))
+        data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
 
     print "DEBUG: %s" % " ".join(data)
 
