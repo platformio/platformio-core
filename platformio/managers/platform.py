@@ -740,7 +740,6 @@ class PlatformBoardConfig(object):
             data['external'].append(key)
 
         for key, value in data.items():
-            print key
             if not value:
                 continue
             return sorted(value)[0]
