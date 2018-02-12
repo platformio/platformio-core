@@ -195,7 +195,7 @@ def platform_frameworks(query, json_output):
         if query and query.lower() not in search_data.lower():
             continue
         framework['homepage'] = (
-            "http://platformio.org/frameworks/" + framework['name'])
+            "https://platformio.org/frameworks/" + framework['name'])
         framework['platforms'] = [
             platform['name'] for platform in _get_registry_platforms()
             if framework['name'] in platform['frameworks']

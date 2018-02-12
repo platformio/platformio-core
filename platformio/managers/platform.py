@@ -427,10 +427,10 @@ class PlatformRunMixin(object):
 """.format(filename=filename,
            filename_styled=click.style(filename, fg="cyan"),
            link=click.style(
-               "http://platformio.org/lib/search?query=header:%s" % quote(
+               "https://platformio.org/lib/search?query=header:%s" % quote(
                    filename, safe=""),
                fg="blue"),
-           dots="*" * (55 + len(filename)))
+           dots="*" * (56 + len(filename)))
         click.echo(banner, err=True)
 
     @staticmethod

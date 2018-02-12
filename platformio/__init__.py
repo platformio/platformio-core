@@ -24,7 +24,7 @@ __description__ = (
     "Remote unit testing and firmware updates. "
     "Arduino, ARM mbed, Espressif (ESP8266/ESP32), STM32, PIC32, nRF51/nRF52, "
     "FPGA, CMSIS, SPL, AVR, Samsung ARTIK, libOpenCM3")
-__url__ = "http://platformio.org"
+__url__ = "https://platformio.org"
 
 __author__ = "Ivan Kravets"
 __email__ = "me@ikravets.com"

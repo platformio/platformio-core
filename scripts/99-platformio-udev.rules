@@ -16,7 +16,7 @@
 # INSTALLATION
 #
 
-# UDEV Rules for PlatformIO supported boards, http://platformio.org/boards
+# UDEV Rules for PlatformIO supported boards, https://platformio.org/boards
 #
 # The latest version of this file may be found at:
 # 	https://github.com/platformio/platformio-core/blob/develop/scripts/99-platformio-udev.rules

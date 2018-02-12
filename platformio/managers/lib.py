@@ -282,7 +282,7 @@ class LibraryManager(BasePkgManager):
                 raise exception.LibNotFound(str(filters))
         if not silent:
             click.echo("Found: %s" % click.style(
-                "http://platformio.org/lib/show/{id}/{name}".format(
+                "https://platformio.org/lib/show/{id}/{name}".format(
                     **lib_info),
                 fg="blue"))
         return int(lib_info['id'])

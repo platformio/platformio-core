@@ -362,7 +362,7 @@ Boards
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
+      `PlatformIO Boards Explorer <https://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 """)
@@ -487,7 +487,7 @@ Boards
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
+      `PlatformIO Boards Explorer <https://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by horizontal.
 """)
         for vendor, boards in sorted(vendors.items()):
@@ -574,7 +574,7 @@ popular embedded boards and IDE.
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
+      `PlatformIO Boards Explorer <https://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by horizontal.
 """)
 

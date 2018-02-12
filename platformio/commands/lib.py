@@ -428,7 +428,7 @@ def lib_stats(json_output):
                             time.strftime("%c", util.parse_date(item['date']))
                             if "date" in item else ""),
                         url=click.style(
-                            "http://platformio.org/lib/show/%s/%s" %
+                            "https://platformio.org/lib/show/%s/%s" %
                             (item['id'], quote(item['name'])),
                             fg="blue")))
 
@@ -437,7 +437,7 @@ def lib_stats(json_output):
             printitem_tpl.format(
                 name=click.style(name, fg="cyan"),
                 url=click.style(
-                    "http://platformio.org/lib/search?query=" +
+                    "https://platformio.org/lib/search?query=" +
                     quote("keyword:%s" % name),
                     fg="blue")))
 
