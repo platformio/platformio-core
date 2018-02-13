@@ -117,8 +117,8 @@ def PrintConfiguration(env):  # pylint: disable=too-many-branches
         debug_tools = board_config.get("debug", {}).get("tools")
         ram = board_config.get("upload", {}).get("maximum_ram_size")
         flash = board_config.get("upload", {}).get("maximum_size")
-        system_data.append("%s (%s Flash)" % (util.format_filesize(ram),
-                                              util.format_filesize(flash)))
+        system_data.append("%s RAM (%s Flash)" % (util.format_filesize(ram),
+                                                  util.format_filesize(flash)))
 
     if platform_data:
         print " ".join(platform_data)

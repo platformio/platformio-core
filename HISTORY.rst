@@ -8,7 +8,7 @@ PlatformIO 3.0
 ~~~~~~~~~~~~~~~~~~
 
 * Added aliases (off, light, strict) for
-  `LDF Compatibility Modes <http://docs.platformio.org/page/librarymanager/ldf.html>`__
+  `LDF Compatibility Mode <http://docs.platformio.org/page/librarymanager/ldf.html>`__
 * Show device system information (MCU, Frequency, RAM, Flash, Debugging tools)
   in a build log
 * Show all available upload protocols before firmware uploading in a build log
@@ -17,6 +17,10 @@ PlatformIO 3.0
 * Fixed project generator for Qt Creator IDE
   (`issue #1303 <https://github.com/platformio/platformio-core/issues/1303>`_,
   `issue #1323 <https://github.com/platformio/platformio-core/issues/1323>`_)
+* Mark project source and library directories for CLion IDE
+  (`issue #1359 <https://github.com/platformio/platformio-core/issues/1359>`_,
+  `issue #1345 <https://github.com/platformio/platformio-core/issues/1345>`_,
+  `issue #897 <https://github.com/platformio/platformio-core/issues/897>`_)
 * Fixed issue with duplicated "include" records when generating data for IDE
   (`issue #1301 <https://github.com/platformio/platformio-core/issues/1301>`_)
 
