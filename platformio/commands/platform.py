@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 import json
 from os.path import dirname, isdir
 
@@ -20,6 +21,7 @@ import click
 from platformio import app, exception, util
 from platformio.commands.boards import print_boards
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from six.moves import range
 
 
 @click.group(short_help="Platform Manager")
@@ -87,8 +89,8 @@ def _get_installed_platform_data(platform,
         url=p.vendor_url,
         license=p.license,
         forDesktop=not p.is_embedded(),
-        frameworks=sorted(p.frameworks.keys() if p.frameworks else []),
-        packages=p.packages.keys() if p.packages else [])
+        frameworks=sorted(list(p.frameworks.keys()) if p.frameworks else []),
+        packages=list(p.packages.keys()) if p.packages else [])
 
     # if dump to API
     # del data['version']

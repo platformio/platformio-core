@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 import base64
 import os
 import re
@@ -26,6 +27,7 @@ import semantic_version
 from platformio import __version__, app, exception, util
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
+import six
 
 
 class PlatformManager(BasePkgManager):
@@ -80,7 +82,7 @@ class PlatformManager(BasePkgManager):
             skip_default_package,
             silent=silent,
             force=force)
-        self.cleanup_packages(p.packages.keys())
+        self.cleanup_packages(list(p.packages.keys()))
         return True
 
     def uninstall(self, package, requirements=None, trigger_event=True):
@@ -101,7 +103,7 @@ class PlatformManager(BasePkgManager):
         if not trigger_event:
             return True
 
-        self.cleanup_packages(p.packages.keys())
+        self.cleanup_packages(list(p.packages.keys()))
         return True
 
     def update(  # pylint: disable=arguments-differ
@@ -120,7 +122,7 @@ class PlatformManager(BasePkgManager):
             raise exception.UnknownPlatform(package)
 
         p = PlatformFactory.newPlatform(pkg_dir)
-        pkgs_before = p.get_installed_packages().keys()
+        pkgs_before = list(p.get_installed_packages().keys())
 
         missed_pkgs = set()
         if not only_packages:
@@ -130,7 +132,7 @@ class PlatformManager(BasePkgManager):
             missed_pkgs -= set(p.get_installed_packages().keys())
 
         p.update_packages(only_check)
-        self.cleanup_packages(p.packages.keys())
+        self.cleanup_packages(list(p.packages.keys()))
 
         if missed_pkgs:
             p.install_packages(
@@ -593,7 +595,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
 
         # enable upload tools for upload targets
         if any(["upload" in t for t in targets] + ["program" in targets]):
-            for _name, _opts in self.packages.iteritems():
+            for _name, _opts in six.iteritems(self.packages):
                 if _opts.get("type") == "uploader":
                     self.packages[_name]['optional'] = False
                 elif "nobuild" in targets:

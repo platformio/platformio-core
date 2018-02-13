@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+from __future__ import print_function
 import collections
 import functools
 import json
@@ -34,13 +36,14 @@ import click
 import requests
 
 from platformio import __apiurl__, __version__, exception
+import six
 
 # pylint: disable=wrong-import-order, too-many-ancestors
 
 try:
     from configparser import ConfigParser
 except ImportError:
-    from ConfigParser import ConfigParser
+    from six.moves.configparser import ConfigParser
 
 
 class ProjectConfig(ConfigParser):
@@ -91,7 +94,7 @@ class AsyncPipe(Thread):
             if self.outcallback:
                 self.outcallback(line)
             else:
-                print line
+                print(line)
         self._pipe_reader.close()
 
     def close(self):
@@ -400,8 +403,8 @@ def exec_command(*args, **kwargs):
         if isinstance(kwargs[s], AsyncPipe):
             result[s[3:]] = "\n".join(kwargs[s].get_buffer())
 
-    for k, v in result.iteritems():
-        if v and isinstance(v, basestring):
+    for k, v in six.iteritems(result):
+        if v and isinstance(v, six.string_types):
             result[k].strip()
 
     return result
@@ -433,7 +436,7 @@ def get_serial_ports(filter_hwid=False):
             continue
         if "windows" in get_systype():
             try:
-                d = unicode(d, errors="ignore")
+                d = six.text_type(d, errors="ignore")
             except TypeError:
                 pass
         if not filter_hwid or "VID:PID" in h:

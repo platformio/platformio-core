@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 import atexit
 import platform
-import Queue
+import six.moves.queue
 import re
 import threading
 from collections import deque
@@ -27,6 +28,8 @@ import click
 import requests
 
 from platformio import __version__, app, exception, util
+import six
+from six.moves import range
 
 
 class TelemetryBase(object):
@@ -171,7 +174,7 @@ class MPDataPusher(object):
     MAX_WORKERS = 5
 
     def __init__(self):
-        self._queue = Queue.LifoQueue()
+        self._queue = six.moves.queue.LifoQueue()
         self._failedque = deque()
         self._http_session = requests.Session()
         self._http_offline = False
@@ -196,7 +199,7 @@ class MPDataPusher(object):
         try:
             while True:
                 items.append(self._queue.get_nowait())
-        except Queue.Empty:
+        except six.moves.queue.Empty:
             pass
         return items
 
@@ -284,7 +287,7 @@ def measure_ci():
         }
     }
 
-    for key, value in envmap.iteritems():
+    for key, value in six.iteritems(envmap):
         if getenv(key, "").lower() != "true":
             continue
         event.update({"action": key, "label": value['label']})

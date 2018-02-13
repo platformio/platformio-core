@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 from email.utils import parsedate_tz
 from math import ceil
 from os.path import getsize, join

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 import codecs
 import hashlib
 import json
@@ -70,7 +71,7 @@ class PackageRepoIterator(object):
 
         if self.package in manifest:
             return manifest[self.package]
-        return self.next()
+        return next(self)
 
 
 class PkgRepoMixin(object):

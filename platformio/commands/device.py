@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 import json
 import sys
 from os import getcwd
@@ -20,6 +21,7 @@ import click
 from serial.tools import miniterm
 
 from platformio import exception, util
+import six
 
 
 @click.group(short_help="Monitor device or list existing")
@@ -44,7 +46,7 @@ def device_list(  # pylint: disable=too-many-branches
     if mdns:
         data['mdns'] = util.get_mdns_services()
 
-    single_key = data.keys()[0] if len(data.keys()) == 1 else None
+    single_key = list(data.keys())[0] if len(list(data.keys())) == 1 else None
 
     if json_output:
         return click.echo(json.dumps(data[single_key] if single_key else data))
@@ -55,7 +57,7 @@ def device_list(  # pylint: disable=too-many-branches
         "mdns": "Multicast DNS Services"
     }
 
-    for key, value in data.iteritems():
+    for key, value in six.iteritems(data):
         if not single_key:
             click.secho(titles[key], bold=True)
             click.echo("=" * len(titles[key]))
@@ -85,7 +87,7 @@ def device_list(  # pylint: disable=too-many-branches
                 if item['properties']:
                     click.echo("Properties: %s" % ("; ".join([
                         "%s=%s" % (k, v)
-                        for k, v in item['properties'].iteritems()
+                        for k, v in six.iteritems(item['properties'])
                     ])))
                 click.echo("")
 
@@ -180,7 +182,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
             kwargs['port'] = ports[0]['port']
 
     sys.argv = ["monitor"]
-    for k, v in kwargs.iteritems():
+    for k, v in six.iteritems(kwargs):
         if k in ("port", "baud", "rts", "dtr", "environment", "project_dir"):
             continue
         k = "--" + k.replace("_", "-")

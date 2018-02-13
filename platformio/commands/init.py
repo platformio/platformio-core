@@ -14,6 +14,7 @@
 
 # pylint: disable=too-many-arguments,too-many-locals, too-many-branches
 
+from __future__ import absolute_import
 from os import getcwd, makedirs
 from os.path import isdir, isfile, join
 from shutil import copyfile

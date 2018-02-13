@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+from __future__ import print_function
 import base64
 import json
 import sys
@@ -86,7 +88,7 @@ DEFAULT_ENV_OPTIONS = dict(
     variables=commonvars,
 
     # Propagating External Environment
-    PIOVARIABLES=commonvars.keys(),
+    PIOVARIABLES=list(commonvars.keys()),
     ENV=environ,
     UNIX_TIME=int(time()),
     PIOHOME_DIR=util.get_home_dir(),
@@ -128,7 +130,7 @@ if env.GetOption('clean'):
     env.PioClean(env.subst("$BUILD_DIR"))
     env.Exit(0)
 elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
-    print "Verbose mode can be enabled via `-v, --verbose` option"
+    print("Verbose mode can be enabled via `-v, --verbose` option")
 
 # Handle custom variables from system environment
 for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPTS",
@@ -171,13 +173,13 @@ for item in env.GetPostExtraScripts():
     env.SConscript(item, exports="env")
 
 if "envdump" in COMMAND_LINE_TARGETS:
-    print env.Dump()
+    print(env.Dump())
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
     try:
-        print "\n%s\n" % util.path_to_unicode(
-            json.dumps(env.DumpIDEData(), ensure_ascii=False))
+        print("\n%s\n" % util.path_to_unicode(
+            json.dumps(env.DumpIDEData(), ensure_ascii=False)))
         env.Exit(0)
     except UnicodeDecodeError:
         sys.stderr.write(

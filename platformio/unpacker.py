@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 from os import chmod
 from os.path import join
 from tarfile import open as tarfile_open
@@ -59,7 +60,7 @@ class ZIPArchive(ArchiveBase):
 
     @staticmethod
     def preserve_permissions(item, dest_dir):
-        attrs = item.external_attr >> 16L
+        attrs = item.external_attr >> 16
         if attrs:
             chmod(join(dest_dir, item.filename), attrs)
 

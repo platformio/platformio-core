@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 from glob import glob
 from os import getenv, makedirs, remove
 from os.path import abspath, basename, expanduser, isdir, isfile, join
@@ -25,6 +26,7 @@ from platformio.commands.init import cli as cmd_init
 from platformio.commands.init import validate_boards
 from platformio.commands.run import cli as cmd_run
 from platformio.exception import CIBuildEnvsEmpty
+import six
 
 
 def validate_path(ctx, param, value):  # pylint: disable=unused-argument
@@ -86,7 +88,7 @@ def cli(  # pylint: disable=too-many-arguments
         app.set_session_var("force_option", True)
         _clean_dir(build_dir)
 
-        for dir_name, patterns in dict(lib=lib, src=src).iteritems():
+        for dir_name, patterns in six.iteritems(dict(lib=lib, src=src)):
             if not patterns:
                 continue
             contents = []
