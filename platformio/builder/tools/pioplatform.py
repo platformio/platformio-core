@@ -141,7 +141,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-branches
         else:
             external.append(key)
     if onboard:
-        data.append("ON-BORD(%s)" % ", ".join(sorted(onboard)))
+        data.append("ON-BOARD(%s)" % ", ".join(sorted(onboard)))
     if external:
         data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
 
