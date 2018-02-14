@@ -25,6 +25,7 @@ install_requires = [
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",
     "semantic_version>=2.5.0,<3",
+    #: .. versionadded:: X.X.X
     "six"
 ]
 

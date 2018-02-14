@@ -32,6 +32,11 @@ class FileDownloader(object):
     CHUNK_SIZE = 1024
 
     def __init__(self, url, dest_dir=None):
+        '''
+        .. versionchanged:: X.X.X
+            Remove unnecessary unicode encoding/decoding as part of Python 3
+            compatibility port.
+        '''
         self._request = None
         # make connection
         self._request = requests.get(

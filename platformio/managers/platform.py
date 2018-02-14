@@ -218,6 +218,12 @@ class PlatformFactory(object):
 
     @classmethod
     def newPlatform(cls, name, requirements=None):
+        '''
+        .. versionchanged:: X.X.X
+            If :data:`name` is specified as a :class:`bytes` instance,
+            deserialize unicode name assuming ``utf-8`` encoding.  This is
+            required for Python 3 support.
+        '''
         pm = PlatformManager()
         platform_dir = None
 
@@ -370,6 +376,13 @@ class PlatformRunMixin(object):
         return result
 
     def _run_scons(self, variables, targets):
+        '''
+        .. versionchanged:: X.X.X
+            In Python 3 :func:`hashlib.md5.update` requires `bytes` objects;
+            **NOT `str` objects**.  Thus, to work properly with Python 3,
+            **explicitly decode** unicode string objects to `bytes` assuming
+            ``utf-8`` encoding.  This is required for Python 3 support.
+        '''
         cmd = [
             util.get_pythonexe_path(),
             join(get_core_package_dir("tool-scons"), "script", "scons"), "-Q",
@@ -579,6 +592,12 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         return self._BOARDS_CACHE[id_] if id_ else self._BOARDS_CACHE
 
     def board_config(self, id_):
+        '''
+        .. versionchanged:: X.X.X
+            If :data:`id_` is specified as a :class:`bytes` instance,
+            deserialize unicode name assuming ``utf-8`` encoding.  This is
+            required for Python 3 support.
+        '''
         if isinstance(id_, bytes):
             id_ = id_.decode('utf8')
         return self.get_boards(id_)

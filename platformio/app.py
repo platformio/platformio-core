@@ -180,6 +180,11 @@ class ContentCache(object):
 
     @staticmethod
     def key_from_args(*args):
+        '''
+        .. versionchanged:: X.X.X
+            Serialize unicode data strings using ``utf-8`` encoding.  This is
+            required for Python 3 support.
+        '''
         h = hashlib.md5()
         for data in args:
             if not isinstance(data, bytes):

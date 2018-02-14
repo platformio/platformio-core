@@ -122,6 +122,10 @@ env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 # decode common variables
 for k in commonvars.keys():
     if k in env:
+        #: .. versionchanged:: X.X.X
+        #
+        #      Deserialize unicode data strings from bytes assuming ``utf-8``
+        #      encoding.  This is required for Python 3 support.
         env[k] = base64.b64decode(env[k]).decode('utf8')
         if k in MULTILINE_VARS:
             env[k] = util.parse_conf_multi_values(env[k])

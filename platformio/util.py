@@ -126,6 +126,10 @@ class memoized(object):
         self.cache = {}
 
     def __call__(self, *args):
+        '''
+        .. versionchanged:: X.X.X
+            Do not cache if **any** arg is not hashable.
+        '''
         if not isinstance(args, collections.Hashable) or \
                 any(not isinstance(arg_i, collections.Hashable)
                     for arg_i in args):
@@ -184,6 +188,11 @@ def singleton(cls):
 
 
 def path_to_unicode(path):
+    '''
+    .. versionchanged:: X.X.X
+        Only decode :data:`path` if it is not already a unicode string (i.e., a
+        Python 2 :class:`str` object or a :class:`bytes` object).
+    '''
     if isinstance(path, bytes):
         path = path.decode(sys.getfilesystemencoding())
     return path
@@ -384,6 +393,12 @@ def is_container():
 
 
 def exec_command(*args, **kwargs):
+    '''
+    .. versionchanged:: X.X.X
+        In Python 3 library the `Popen.communicate` function returns **`bytes`
+        objects**.  Explicitly encode the :data:`stdout` and :data:`stderr`
+        output to unicode strings to support both Python 3 and Python 2.
+    '''
     result = {"out": None, "err": None, "returncode": None}
 
     default = dict(stdout=subprocess.PIPE, stderr=subprocess.PIPE)

@@ -343,6 +343,11 @@ def _clean_build_dir(build_dir):
 
 
 def print_header(label, is_error=False):
+    '''
+    .. versionchanged:: X.X.X
+        Use floor division operator (i.e., ``//``) to ensure integer result in
+        header width equation.
+    '''
     terminal_width, _ = click.get_terminal_size()
     width = len(click.unstyle(label))
     half_line = "=" * ((terminal_width - width - 2) // 2)
