@@ -17,6 +17,7 @@ import hashlib
 import json
 import os
 import uuid
+from builtins import bytes
 from copy import deepcopy
 from os import environ, getenv, listdir, remove
 from os.path import abspath, dirname, expanduser, getmtime, isdir, isfile, join
@@ -181,7 +182,9 @@ class ContentCache(object):
     def key_from_args(*args):
         h = hashlib.md5()
         for data in args:
-            h.update(str(data))
+            if not isinstance(data, bytes):
+                data = data.encode('utf-8')
+            h.update(data)
         return h.hexdigest()
 
     def get(self, key):

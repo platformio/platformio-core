@@ -220,6 +220,10 @@ class PlatformFactory(object):
     def newPlatform(cls, name, requirements=None):
         pm = PlatformManager()
         platform_dir = None
+
+        if isinstance(name, bytes):
+            name = name.decode('utf8')
+
         if isdir(name):
             platform_dir = name
             name = pm.load_manifest(platform_dir)['name']
@@ -378,7 +382,10 @@ class PlatformRunMixin(object):
 
         # encode and append variables
         for key, value in variables.items():
-            cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
+            if not isinstance(value, bytes):
+                value = value.encode('utf8')
+            cmd.append("%s=%s" % (key.upper(),
+                                  base64.b64encode(value).decode('utf8')))
 
         util.copy_pythonpath_to_osenv()
         result = util.exec_command(
@@ -572,6 +579,8 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         return self._BOARDS_CACHE[id_] if id_ else self._BOARDS_CACHE
 
     def board_config(self, id_):
+        if isinstance(id_, bytes):
+            id_ = id_.decode('utf8')
         return self.get_boards(id_)
 
     def get_package_type(self, name):

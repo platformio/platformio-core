@@ -11,9 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from __future__ import absolute_import
 from __future__ import print_function
+
+from builtins import bytes
 import collections
 import functools
 import json
@@ -125,7 +126,9 @@ class memoized(object):
         self.cache = {}
 
     def __call__(self, *args):
-        if not isinstance(args, collections.Hashable):
+        if not isinstance(args, collections.Hashable) or \
+                any(not isinstance(arg_i, collections.Hashable)
+                    for arg_i in args):
             # uncacheable. a list, for instance.
             # better to not cache than blow up.
             return self.func(*args)
@@ -181,7 +184,9 @@ def singleton(cls):
 
 
 def path_to_unicode(path):
-    return path.decode(sys.getfilesystemencoding()).encode("utf-8")
+    if isinstance(path, bytes):
+        path = path.decode(sys.getfilesystemencoding())
+    return path
 
 
 def load_json(file_path):
@@ -401,6 +406,8 @@ def exec_command(*args, **kwargs):
             result[s[3:]] = "\n".join(kwargs[s].get_buffer())
 
     for k, v in six.iteritems(result):
+        if isinstance(v, bytes):
+            result[k] = result[k].decode('utf8')
         if v and isinstance(v, six.string_types):
             result[k].strip()
 

@@ -16,7 +16,7 @@ from __future__ import absolute_import
 from email.utils import parsedate_tz
 from math import ceil
 from os.path import getsize, join
-from sys import getfilesystemencoding, version_info
+from sys import version_info
 from time import mktime
 
 import click
@@ -44,18 +44,15 @@ class FileDownloader(object):
 
         disposition = self._request.headers.get("content-disposition")
         if disposition and "filename=" in disposition:
-            self._fname = disposition[
-                disposition.index("filename=") + 9:].replace('"', "").replace(
-                    "'", "")
-            self._fname = self._fname.encode("utf8")
+            self._fname = disposition[disposition.index("filename=") +
+                                      9:].replace('"', "").replace("'", "")
         else:
             self._fname = [p for p in url.split("/") if p][-1]
 
         self._progressbar = None
         self._destination = self._fname
         if dest_dir:
-            self.set_destination(
-                join(dest_dir.decode(getfilesystemencoding()), self._fname))
+            self.set_destination(join(dest_dir, self._fname))
 
     def set_destination(self, destination):
         self._destination = destination
@@ -113,8 +110,8 @@ class FileDownloader(object):
             dlsha1 = result['out']
         except (OSError, ValueError):
             try:
-                result = util.exec_command(
-                    ["shasum", "-a", "1", self._destination])
+                result = util.exec_command(["shasum", "-a", "1",
+                                            self._destination])
                 dlsha1 = result['out']
             except (OSError, ValueError):
                 pass
