@@ -14,16 +14,18 @@
 
 # pylint: disable=too-many-branches, too-many-locals
 
+from __future__ import absolute_import
 import json
 import time
 from os.path import isdir, join
-from urllib import quote
 
 import click
 
 from platformio import exception, util
 from platformio.managers.lib import LibraryManager, get_builtin_libs
 from platformio.util import get_api_result
+from six.moves.urllib.parse import quote
+import six
 
 
 @click.group(short_help="Library Manager")
@@ -202,7 +204,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
     if not isinstance(query, list):
         query = list(query)
 
-    for key, values in filters.iteritems():
+    for key, values in six.iteritems(filters):
         for value in values:
             query.append('%s:"%s"' % (key, value))
 

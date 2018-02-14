@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 import os
 import subprocess
 import sys
@@ -25,7 +26,7 @@ CORE_PACKAGES = {
     "contrib-pysite": ">=0.1.2,<2",
     "tool-pioplus": ">=0.13.5,<2",
     "tool-unity": "~1.20302.1",
-    "tool-scons": "~2.20501.3"
+    "tool-scons": ">=3.30000.0,<4"
 }
 
 PIOPLUS_AUTO_UPDATES_MAX = 100
@@ -100,8 +101,8 @@ def pioplus_call(args, **kwargs):
     if "windows" in util.get_systype() and sys.version_info < (2, 7, 6):
         raise exception.PlatformioException(
             "PlatformIO Core Plus v%s does not run under Python version %s.\n"
-            "Minimum supported version is 2.7.6, please upgrade Python.\n"
-            "Python 3 is not yet supported.\n" % (__version__, sys.version))
+            "Minimum supported version is 2.7.6, please upgrade Python.\n" %
+            (__version__, sys.version))
 
     pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
     pythonexe_path = util.get_pythonexe_path()

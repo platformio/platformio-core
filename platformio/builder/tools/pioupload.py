@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+from __future__ import print_function
 import sys
 from fnmatch import fnmatch
 from os import environ
@@ -40,7 +41,7 @@ def FlushSerialBuffer(env, port):
 
 def TouchSerialPort(env, port, baudrate):
     port = env.subst(port)
-    print "Forcing reset using %dbps open/close on port %s" % (baudrate, port)
+    print("Forcing reset using %dbps open/close on port %s" % (baudrate, port))
     try:
         s = Serial(port=port, baudrate=baudrate)
         s.setDTR(False)
@@ -51,7 +52,7 @@ def TouchSerialPort(env, port, baudrate):
 
 
 def WaitForNewSerialPort(env, before):
-    print "Waiting for the new upload port..."
+    print("Waiting for the new upload port...")
     prev_port = env.subst("$UPLOAD_PORT")
     new_port = None
     elapsed = 0
@@ -141,7 +142,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         return port
 
     if "UPLOAD_PORT" in env and not _get_pattern():
-        print env.subst("Use manually specified: $UPLOAD_PORT")
+        print(env.subst("Use manually specified: $UPLOAD_PORT"))
         return
 
     if (env.subst("$UPLOAD_PROTOCOL") == "mbed"
@@ -161,7 +162,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         env.Replace(UPLOAD_PORT=_look_for_serial_port())
 
     if env.subst("$UPLOAD_PORT"):
-        print env.subst("Auto-detected: $UPLOAD_PORT")
+        print(env.subst("Auto-detected: $UPLOAD_PORT"))
     else:
         sys.stderr.write(
             "Error: Please specify `upload_port` for environment or use "
@@ -180,8 +181,8 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
             continue
         copyfile(fpath,
                  join(env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
-    print "Firmware has been successfully uploaded.\n"\
-          "(Some boards may require manual hard reset)"
+    print("Firmware has been successfully uploaded.\n"\
+          "(Some boards may require manual hard reset)")
 
 
 def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
@@ -200,7 +201,7 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
     result = util.exec_command(cmd, env=sysenv)
     if result['returncode'] != 0:
         return
-    print result['out'].strip()
+    print(result['out'].strip())
 
     line = result['out'].strip().splitlines()[1]
     values = [v.strip() for v in line.split("\t")]
@@ -220,9 +221,9 @@ def PrintUploadInfo(env):
         available.extend(env.BoardConfig().get("upload", {}).get(
             "protocols", []))
     if available:
-        print "AVAILABLE: %s" % ", ".join(sorted(available))
+        print("AVAILABLE: %s" % ", ".join(sorted(available)))
     if configured:
-        print "CURRENT: upload_protocol = %s" % configured
+        print("CURRENT: upload_protocol = %s" % configured)
 
 
 def exists(_):

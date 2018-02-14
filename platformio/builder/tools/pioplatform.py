@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+from __future__ import print_function
 import sys
 from os.path import isdir, isfile, join
 
@@ -121,9 +122,9 @@ def PrintConfiguration(env):  # pylint: disable=too-many-branches
                                                   util.format_filesize(flash)))
 
     if platform_data:
-        print " ".join(platform_data)
+        print(" ".join(platform_data))
     if system_data:
-        print " ".join(system_data)
+        print(" ".join(system_data))
 
     # Debugging
     if not debug_tools:
@@ -145,7 +146,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-branches
     if external:
         data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
 
-    print "DEBUG: %s" % " ".join(data)
+    print("DEBUG: %s" % " ".join(data))
 
 
 def exists(_):

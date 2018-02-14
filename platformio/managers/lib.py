@@ -15,6 +15,7 @@
 # pylint: disable=too-many-arguments, too-many-locals, too-many-branches
 # pylint: disable=too-many-return-statements
 
+from __future__ import absolute_import
 import json
 import re
 from glob import glob
@@ -25,6 +26,7 @@ import click
 from platformio import app, commands, exception, util
 from platformio.managers.package import BasePkgManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
+import six
 
 
 class LibraryManager(BasePkgManager):
@@ -120,7 +122,7 @@ class LibraryManager(BasePkgManager):
         # convert listed items via comma to array
         for key in ("keywords", "frameworks", "platforms"):
             if key not in manifest or \
-                    not isinstance(manifest[key], basestring):
+                    not isinstance(manifest[key], six.string_types):
                 continue
             manifest[key] = [
                 i.strip() for i in manifest[key].split(",") if i.strip()
@@ -147,7 +149,7 @@ class LibraryManager(BasePkgManager):
                     continue
                 if item[k] == "*":
                     del item[k]
-                elif isinstance(item[k], basestring):
+                elif isinstance(item[k], six.string_types):
                     item[k] = [
                         i.strip() for i in item[k].split(",") if i.strip()
                     ]
@@ -276,7 +278,7 @@ class LibraryManager(BasePkgManager):
                             break
 
         if not lib_info:
-            if filters.keys() == ["name"]:
+            if list(filters.keys()) == ["name"]:
                 raise exception.LibNotFound(filters['name'])
             else:
                 raise exception.LibNotFound(str(filters))

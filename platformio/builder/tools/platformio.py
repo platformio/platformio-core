@@ -26,6 +26,7 @@ from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
 from SCons.Util import case_sensitive_suffixes, is_Sequence
 
 from platformio.util import glob_escape, pioversion_to_intstr
+import six
 
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_C_EXT = ["c", "cc", "cpp"]
@@ -143,7 +144,7 @@ def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
     # provided with a -D option // Issue #191
     undefines = [
         u for u in env.get("CCFLAGS", [])
-        if isinstance(u, basestring) and u.startswith("-U")
+        if isinstance(u, six.string_types) and u.startswith("-U")
     ]
     if undefines:
         for undef in undefines:

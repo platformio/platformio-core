@@ -12,20 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 import base64
 import os
 import re
 from imp import load_source
 from multiprocessing import cpu_count
 from os.path import basename, dirname, isdir, isfile, join
-from urllib import quote
-
-import click
-import semantic_version
 
 from platformio import __version__, app, exception, util
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
+from six.moves.urllib.parse import quote
+import click
+import semantic_version
+import six
 
 
 class PlatformManager(BasePkgManager):
@@ -80,7 +81,7 @@ class PlatformManager(BasePkgManager):
             skip_default_package,
             silent=silent,
             force=force)
-        self.cleanup_packages(p.packages.keys())
+        self.cleanup_packages(list(p.packages.keys()))
         return True
 
     def uninstall(self, package, requirements=None, trigger_event=True):
@@ -101,7 +102,7 @@ class PlatformManager(BasePkgManager):
         if not trigger_event:
             return True
 
-        self.cleanup_packages(p.packages.keys())
+        self.cleanup_packages(list(p.packages.keys()))
         return True
 
     def update(  # pylint: disable=arguments-differ
@@ -120,7 +121,7 @@ class PlatformManager(BasePkgManager):
             raise exception.UnknownPlatform(package)
 
         p = PlatformFactory.newPlatform(pkg_dir)
-        pkgs_before = p.get_installed_packages().keys()
+        pkgs_before = list(p.get_installed_packages().keys())
 
         missed_pkgs = set()
         if not only_packages:
@@ -130,7 +131,7 @@ class PlatformManager(BasePkgManager):
             missed_pkgs -= set(p.get_installed_packages().keys())
 
         p.update_packages(only_check)
-        self.cleanup_packages(p.packages.keys())
+        self.cleanup_packages(list(p.packages.keys()))
 
         if missed_pkgs:
             p.install_packages(
@@ -217,8 +218,18 @@ class PlatformFactory(object):
 
     @classmethod
     def newPlatform(cls, name, requirements=None):
+        '''
+        .. versionchanged:: X.X.X
+            If :data:`name` is specified as a :class:`bytes` instance,
+            deserialize unicode name assuming ``utf-8`` encoding.  This is
+            required for Python 3 support.
+        '''
         pm = PlatformManager()
         platform_dir = None
+
+        if isinstance(name, bytes):
+            name = name.decode('utf8')
+
         if isdir(name):
             platform_dir = name
             name = pm.load_manifest(platform_dir)['name']
@@ -365,6 +376,13 @@ class PlatformRunMixin(object):
         return result
 
     def _run_scons(self, variables, targets):
+        '''
+        .. versionchanged:: X.X.X
+            In Python 3 :func:`hashlib.md5.update` requires `bytes` objects;
+            **NOT `str` objects**.  Thus, to work properly with Python 3,
+            **explicitly decode** unicode string objects to `bytes` assuming
+            ``utf-8`` encoding.  This is required for Python 3 support.
+        '''
         cmd = [
             util.get_pythonexe_path(),
             join(get_core_package_dir("tool-scons"), "script", "scons"), "-Q",
@@ -377,7 +395,10 @@ class PlatformRunMixin(object):
 
         # encode and append variables
         for key, value in variables.items():
-            cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
+            if not isinstance(value, bytes):
+                value = value.encode('utf8')
+            cmd.append("%s=%s" % (key.upper(),
+                                  base64.b64encode(value).decode('utf8')))
 
         util.copy_pythonpath_to_osenv()
         result = util.exec_command(
@@ -571,6 +592,14 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         return self._BOARDS_CACHE[id_] if id_ else self._BOARDS_CACHE
 
     def board_config(self, id_):
+        '''
+        .. versionchanged:: X.X.X
+            If :data:`id_` is specified as a :class:`bytes` instance,
+            deserialize unicode name assuming ``utf-8`` encoding.  This is
+            required for Python 3 support.
+        '''
+        if isinstance(id_, bytes):
+            id_ = id_.decode('utf8')
         return self.get_boards(id_)
 
     def get_package_type(self, name):
@@ -593,7 +622,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
 
         # enable upload tools for upload targets
         if any(["upload" in t for t in targets] + ["program" in targets]):
-            for _name, _opts in self.packages.iteritems():
+            for _name, _opts in six.iteritems(self.packages):
                 if _opts.get("type") == "uploader":
                     self.packages[_name]['optional'] = False
                 elif "nobuild" in targets:

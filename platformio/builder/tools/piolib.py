@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import
 
+from __future__ import print_function
 import hashlib
 import os
 import sys
@@ -31,6 +32,7 @@ from platformio import util
 from platformio.builder.tools import platformio as piotool
 from platformio.managers.lib import LibraryManager
 from platformio.managers.package import PackageManager
+import six
 
 
 class LibBuilderFactory(object):
@@ -218,7 +220,7 @@ class LibBuilderBase(object):
 
     @staticmethod
     def validate_ldf_mode(mode):
-        if isinstance(mode, basestring):
+        if isinstance(mode, six.string_types):
             mode = mode.strip().lower()
         if mode in LibBuilderBase.LDF_MODES:
             return mode
@@ -230,7 +232,7 @@ class LibBuilderBase(object):
 
     @staticmethod
     def validate_compat_mode(mode):
-        if isinstance(mode, basestring):
+        if isinstance(mode, six.string_types):
             mode = mode.strip().lower()
         if mode in LibBuilderBase.COMPAT_MODES:
             return mode
@@ -832,24 +834,24 @@ def BuildProjectLibraries(env):
     project.env = env
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
 
-    print "Library Dependency Finder -> http://bit.ly/configure-pio-ldf"
-    print "LDF MODES: FINDER(%s) COMPATIBILITY(%s)" % (ldf_mode,
-                                                       project.lib_compat_mode)
+    print("Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
+    print("LDF MODES: FINDER(%s) COMPATIBILITY(%s)" % (ldf_mode,
+                                                       project.lib_compat_mode))
 
     lib_builders = env.GetLibBuilders()
-    print "Collected %d compatible libraries" % len(lib_builders)
+    print("Collected %d compatible libraries" % len(lib_builders))
 
-    print "Scanning dependencies..."
+    print("Scanning dependencies...")
     project.search_deps_recursive()
 
     if ldf_mode.startswith("chain") and project.depbuilders:
         correct_found_libs(lib_builders)
 
     if project.depbuilders:
-        print "Dependency Graph"
+        print("Dependency Graph")
         print_deps_tree(project)
     else:
-        print "No dependencies"
+        print("No dependencies")
 
     return project.build()
 

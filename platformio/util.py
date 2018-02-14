@@ -11,7 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import absolute_import
+from __future__ import print_function
 
+from builtins import bytes
 import collections
 import functools
 import json
@@ -34,13 +37,11 @@ import click
 import requests
 
 from platformio import __apiurl__, __version__, exception
+import six
 
 # pylint: disable=wrong-import-order, too-many-ancestors
 
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser
+from six.moves.configparser import ConfigParser
 
 
 class ProjectConfig(ConfigParser):
@@ -91,7 +92,7 @@ class AsyncPipe(Thread):
             if self.outcallback:
                 self.outcallback(line)
             else:
-                print line
+                print(line)
         self._pipe_reader.close()
 
     def close(self):
@@ -125,7 +126,13 @@ class memoized(object):
         self.cache = {}
 
     def __call__(self, *args):
-        if not isinstance(args, collections.Hashable):
+        '''
+        .. versionchanged:: X.X.X
+            Do not cache if **any** arg is not hashable.
+        '''
+        if not isinstance(args, collections.Hashable) or \
+                any(not isinstance(arg_i, collections.Hashable)
+                    for arg_i in args):
             # uncacheable. a list, for instance.
             # better to not cache than blow up.
             return self.func(*args)
@@ -181,7 +188,14 @@ def singleton(cls):
 
 
 def path_to_unicode(path):
-    return path.decode(sys.getfilesystemencoding()).encode("utf-8")
+    '''
+    .. versionchanged:: X.X.X
+        Only decode :data:`path` if it is not already a unicode string (i.e., a
+        Python 2 :class:`str` object or a :class:`bytes` object).
+    '''
+    if isinstance(path, bytes):
+        path = path.decode(sys.getfilesystemencoding())
+    return path
 
 
 def load_json(file_path):
@@ -379,6 +393,12 @@ def is_container():
 
 
 def exec_command(*args, **kwargs):
+    '''
+    .. versionchanged:: X.X.X
+        In Python 3 library the `Popen.communicate` function returns **`bytes`
+        objects**.  Explicitly encode the :data:`stdout` and :data:`stderr`
+        output to unicode strings to support both Python 3 and Python 2.
+    '''
     result = {"out": None, "err": None, "returncode": None}
 
     default = dict(stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -400,8 +420,10 @@ def exec_command(*args, **kwargs):
         if isinstance(kwargs[s], AsyncPipe):
             result[s[3:]] = "\n".join(kwargs[s].get_buffer())
 
-    for k, v in result.iteritems():
-        if v and isinstance(v, basestring):
+    for k, v in six.iteritems(result):
+        if isinstance(v, bytes):
+            result[k] = result[k].decode('utf8')
+        if v and isinstance(v, six.string_types):
             result[k].strip()
 
     return result
@@ -433,7 +455,7 @@ def get_serial_ports(filter_hwid=False):
             continue
         if "windows" in get_systype():
             try:
-                d = unicode(d, errors="ignore")
+                d = six.text_type(d, errors="ignore")
             except TypeError:
                 pass
         if not filter_hwid or "VID:PID" in h:

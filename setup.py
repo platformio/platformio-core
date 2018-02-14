@@ -24,7 +24,9 @@ install_requires = [
     "lockfile>=0.9.1,<0.13",
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",
-    "semantic_version>=2.5.0,<3"
+    "semantic_version>=2.5.0,<3",
+    #: .. versionadded:: X.X.X
+    "six"
 ]
 
 setup(
@@ -36,7 +38,7 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
-    python_requires='>=2.7, <3',
+    python_requires='>=2.7',
     install_requires=install_requires,
     packages=find_packages(),
     package_data={

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
 import codecs
 import hashlib
 import json
@@ -70,7 +71,7 @@ class PackageRepoIterator(object):
 
         if self.package in manifest:
             return manifest[self.package]
-        return self.next()
+        return next(self)
 
 
 class PkgRepoMixin(object):
@@ -478,7 +479,7 @@ class PkgInstallerMixin(object):
                     target_dirname = "%s@src-%s" % (
                         pkg_dirname,
                         hashlib.md5(cur_manifest['__src_url']).hexdigest())
-                os.rename(pkg_dir, join(self.package_dir, target_dirname))
+                os.rename(pkg_dir, join(self.package_dir, str(target_dirname)))
             # fix to a version
             elif action == 2:
                 target_dirname = "%s@%s" % (pkg_dirname,
