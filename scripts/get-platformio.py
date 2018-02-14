@@ -92,10 +92,8 @@ def install_pip():
     if r['returncode'] == 0:
         print r['out']
         return
-    try:
-        from urllib2 import urlopen
-    except ImportError:
-        from urllib.request import urlopen
+
+    from six.moves.urllib.request import urlopen
 
     f = NamedTemporaryFile(delete=False)
     response = urlopen("https://bootstrap.pypa.io/get-pip.py")

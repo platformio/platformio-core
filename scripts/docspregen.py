@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-import urlparse
 from os.path import dirname, isdir, isfile, join, realpath
 from sys import exit as sys_exit
 from sys import path
@@ -22,6 +21,7 @@ path.append("..")
 
 from platformio import util
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from six.moves.urllib.parse import urlparse
 
 API_PACKAGES = util.get_api_result("/packages")
 API_FRAMEWORKS = util.get_api_result("/frameworks")

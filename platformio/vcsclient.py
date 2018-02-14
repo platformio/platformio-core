@@ -17,10 +17,10 @@ import re
 from os.path import join
 from subprocess import CalledProcessError, check_call
 from sys import modules
-from urlparse import urlparse
 
 from platformio import util
 from platformio.exception import PlatformioException, UserSideException
+from six.moves.urllib.parse import urlparse
 
 
 class VCSClientFactory(object):

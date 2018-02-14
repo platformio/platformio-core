@@ -13,6 +13,8 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+from __future__ import division
+
 from datetime import datetime
 from hashlib import sha1
 from os import getcwd, makedirs, walk
@@ -343,7 +345,7 @@ def _clean_build_dir(build_dir):
 def print_header(label, is_error=False):
     terminal_width, _ = click.get_terminal_size()
     width = len(click.unstyle(label))
-    half_line = "=" * ((terminal_width - width - 2) / 2)
+    half_line = "=" * ((terminal_width - width - 2) // 2)
     click.echo("%s %s %s" % (half_line, label, half_line), err=is_error)
 
 

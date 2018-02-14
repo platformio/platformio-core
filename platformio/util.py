@@ -40,10 +40,7 @@ import six
 
 # pylint: disable=wrong-import-order, too-many-ancestors
 
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from six.moves.configparser import ConfigParser
+from six.moves.configparser import ConfigParser
 
 
 class ProjectConfig(ConfigParser):

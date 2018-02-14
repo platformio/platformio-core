@@ -18,13 +18,13 @@ from __future__ import absolute_import
 import json
 import time
 from os.path import isdir, join
-from urllib import quote
 
 import click
 
 from platformio import exception, util
 from platformio.managers.lib import LibraryManager, get_builtin_libs
 from platformio.util import get_api_result
+from six.moves.urllib.parse import quote
 import six
 
 

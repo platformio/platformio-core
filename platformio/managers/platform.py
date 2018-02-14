@@ -19,14 +19,13 @@ import re
 from imp import load_source
 from multiprocessing import cpu_count
 from os.path import basename, dirname, isdir, isfile, join
-from urllib import quote
-
-import click
-import semantic_version
 
 from platformio import __version__, app, exception, util
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
+from six.moves.urllib.parse import quote
+import click
+import semantic_version
 import six
 
 
