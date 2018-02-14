@@ -35,9 +35,8 @@ __copyright__ = "Copyright 2014-present PlatformIO"
 
 __apiurl__ = "https://api.platformio.org"
 
-if sys.version_info < (2, 7, 0) or sys.version_info >= (3, 0, 0):
+if sys.version_info < (2, 7, 0):
     msg = ("PlatformIO Core v%s does not run under Python version %s.\n"
-           "Minimum supported version is 2.7, please upgrade Python.\n"
-           "Python 3 is not yet supported.\n")
+           "Minimum supported version is 2.7, please upgrade Python.\n")
     sys.stderr.write(msg % (__version__, sys.version))
     sys.exit(1)
