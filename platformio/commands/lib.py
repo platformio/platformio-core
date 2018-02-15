@@ -186,6 +186,7 @@ def print_lib_item(item):
 @click.argument("query", required=False, nargs=-1)
 @click.option("--json-output", is_flag=True)
 @click.option("--page", type=click.INT, default=1)
+@click.option("--id", multiple=True)
 @click.option("-n", "--name", multiple=True)
 @click.option("-a", "--author", multiple=True)
 @click.option("-k", "--keyword", multiple=True)

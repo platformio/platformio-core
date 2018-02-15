@@ -9,6 +9,7 @@ PlatformIO 3.0
 
 * Added aliases (off, light, strict) for
   `LDF Compatibility Mode <http://docs.platformio.org/page/librarymanager/ldf.html>`__
+* Search for a library using PIO Library Registry ID ``id:X`` (e.g. ``pio lib search id:13``)
 * Show device system information (MCU, Frequency, RAM, Flash, Debugging tools)
   in a build log
 * Show all available upload protocols before firmware uploading in a build log
