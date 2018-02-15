@@ -7,6 +7,9 @@ PlatformIO 3.0
 3.5.2 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Control `PIO Unified Debugger <http://docs.platformio.org/en/latest/plus/debugging.html>`__
+  and its firmware loading mode using
+  `debug_load_mode <http://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-load-mode>`__ option
 * Added aliases (off, light, strict) for
   `LDF Compatibility Mode <http://docs.platformio.org/page/librarymanager/ldf.html>`__
 * Search for a library using PIO Library Registry ID ``id:X`` (e.g. ``pio lib search id:13``)

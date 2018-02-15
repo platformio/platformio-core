@@ -137,15 +137,16 @@ class EnvironmentProcessor(object):
                      "test_ignore", "test_port", "test_speed", "debug_tool",
                      "debug_port", "debug_init_cmds", "debug_extra_cmds",
                      "debug_server", "debug_init_break", "debug_load_cmd",
-                     "monitor_port", "monitor_baud", "monitor_rts",
-                     "monitor_dtr")
+                     "debug_load_mode", "monitor_port", "monitor_baud",
+                     "monitor_rts", "monitor_dtr")
 
     IGNORE_BUILD_OPTIONS = ("test_transport", "test_filter", "test_ignore",
                             "test_port", "test_speed", "debug_port",
                             "debug_init_cmds", "debug_extra_cmds",
                             "debug_server", "debug_init_break",
-                            "debug_load_cmd", "monitor_port", "monitor_baud",
-                            "monitor_rts", "monitor_dtr")
+                            "debug_load_cmd", "debug_load_mode",
+                            "monitor_port", "monitor_baud", "monitor_rts",
+                            "monitor_dtr")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
