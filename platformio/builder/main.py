@@ -19,6 +19,7 @@ from os import environ
 from os.path import expanduser, join
 from time import time
 
+from SCons import Builder, Util
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
                           Action, AllowSubstExceptions, AlwaysBuild,
                           DefaultEnvironment, Variables)
@@ -26,6 +27,19 @@ from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
 from platformio import util
 
 AllowSubstExceptions(NameError)
+
+
+def scons_patched_match_splitext(path, suffixes=None):
+    """
+        Patch SCons version, append $OBJSUFFIX to the end of each target
+    """
+    result = Util.splitext(path)
+    if result[1] in (suffixes or []):
+        return (path, result[1])
+    return result
+
+
+Builder.match_splitext = scons_patched_match_splitext
 
 # allow common variables from INI file
 commonvars = Variables(None)
