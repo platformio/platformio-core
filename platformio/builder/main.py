@@ -34,7 +34,7 @@ def scons_patched_match_splitext(path, suffixes=None):
         Patch SCons version, append $OBJSUFFIX to the end of each target
     """
     result = Util.splitext(path)
-    if result[1] in (suffixes or []):
+    if suffixes and result[1] and result[1] in suffixes:
         return (path, result[1])
     return result
 
