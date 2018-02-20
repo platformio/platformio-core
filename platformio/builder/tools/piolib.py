@@ -176,8 +176,18 @@ class LibBuilderBase(object):
 
     @property
     def build_dir(self):
+        '''
+        .. versionchanged:: X.X.X
+            Fix Python 3 unicode issues. Specifically, in Python 3
+            :func:`hashlib.sha1` requires a :class:`bytes` object; **NOT
+            :class:`str` objects**. Thus, the UUID must be
+            **explicitly decoded** to :class:`bytes` if it is a unicode string.
+        '''
+        path = (self.path if isinstance(self.path, bytes)
+                else self.path.encode('utf8'))
+
         return join("$BUILD_DIR",
-                    "lib%s" % hashlib.sha1(self.path).hexdigest()[:3],
+                    "lib%s" % hashlib.sha1(path).hexdigest()[:3],
                     basename(self.path))
 
     @property
