@@ -231,8 +231,14 @@ def init_ci_conf(project_dir):
 # python:
 #     - "2.7"
 #
+# sudo: false
+# cache:
+#     directories:
+#         - "~/.platformio"
+#
 # install:
 #     - pip install -U platformio
+#     - platformio update
 #
 # script:
 #     - platformio run
@@ -246,6 +252,11 @@ def init_ci_conf(project_dir):
 # python:
 #     - "2.7"
 #
+# sudo: false
+# cache:
+#     directories:
+#         - "~/.platformio"
+#
 # env:
 #     - PLATFORMIO_CI_SRC=path/to/test/file.c
 #     - PLATFORMIO_CI_SRC=examples/file.ino
@@ -253,6 +264,7 @@ def init_ci_conf(project_dir):
 #
 # install:
 #     - pip install -U platformio
+#     - platformio update
 #
 # script:
 #     - platformio ci --lib="." --board=ID_1 --board=ID_2 --board=ID_N

@@ -31,12 +31,12 @@ AllowSubstExceptions(NameError)
 
 def scons_patched_match_splitext(path, suffixes=None):
     """
-        Patch SCons version, append $OBJSUFFIX to the end of each target
+    Patch SCons Builder, append $OBJSUFFIX to the end of each target
     """
-    result = Util.splitext(path)
-    if suffixes and result[1] and result[1] in suffixes:
-        return (path, result[1])
-    return result
+    tokens = Util.splitext(path)
+    if suffixes and tokens[1] and tokens[1] in suffixes:
+        return (path, tokens[1])
+    return tokens
 
 
 Builder.match_splitext = scons_patched_match_splitext
