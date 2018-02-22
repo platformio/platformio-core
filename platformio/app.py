@@ -25,6 +25,7 @@ from time import time
 
 import requests
 from lockfile import LockFailed, LockFile
+import six
 
 from platformio import __version__, exception, util
 
@@ -187,7 +188,8 @@ class ContentCache(object):
         '''
         h = hashlib.md5()
         for data in args:
-            if not isinstance(data, bytes):
+            if all((isinstance(data, six.string_types),
+                    not isinstance(data, bytes))):
                 data = data.encode('utf-8')
             h.update(data)
         return h.hexdigest()
