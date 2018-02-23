@@ -18,7 +18,7 @@
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
-                "databaseFilename": "./.vscode/.browse.VC.db",
+                "databaseFilename": "./.vscode/.browse.c_cpp.db",
                 "path": [
 % for include in includes:
                     "{{include.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')}}",
