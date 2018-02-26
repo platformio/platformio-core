@@ -185,9 +185,14 @@ class ContentCache(object):
         .. versionchanged:: X.X.X
             Serialize unicode data strings using ``utf-8`` encoding.  This is
             required for Python 3 support.
+
+            Serialize :class:`dict`, :class:`list` and ``None`` to JSON before
+            hashing.
         '''
         h = hashlib.md5()
-        for data in args:
+        for i, data in enumerate(args):
+            if data is None or isinstance(data, (dict, list)):
+                data = json.dumps(data)
             if all((isinstance(data, six.string_types),
                     not isinstance(data, bytes))):
                 data = data.encode('utf-8')
@@ -205,6 +210,10 @@ class ContentCache(object):
             return data
 
     def set(self, key, data, valid):
+        '''
+        .. versionchanged:: X.X.X
+            Write cache file in text mode to support Python 3.
+        '''
         if not get_setting("enable_cache"):
             return False
         cache_path = self.get_cache_path(key)
@@ -223,7 +232,7 @@ class ContentCache(object):
 
         if not isdir(dirname(cache_path)):
             os.makedirs(dirname(cache_path))
-        with open(cache_path, "wb") as fp:
+        with open(cache_path, "w") as fp:
             if isinstance(data, (dict, list)):
                 json.dump(data, fp)
             else:
