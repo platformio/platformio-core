@@ -815,7 +815,7 @@ def BuildProjectLibraries(env):
             vcs_info = lb.vcs_info
             if lb.version:
                 title += " v%s" % lb.version
-            if vcs_info:
+            if vcs_info and vcs_info.get("version"):
                 title += " #%s" % vcs_info.get("version")
             sys.stdout.write("%s|-- %s" % (margin, title))
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
