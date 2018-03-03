@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import re
+from zipfile import ZipFile
 
 import click
 import requests
@@ -37,11 +39,8 @@ def cli(dev):
     shutdown_servers()
 
     to_develop = dev or not all(c.isdigit() for c in __version__ if c != ".")
-    cmds = ([
-        "pip", "install", "--upgrade",
-        "https://github.com/platformio/platformio-core/archive/develop.zip"
-        if to_develop else "platformio"
-    ], ["platformio", "--version"])
+    cmds = (["pip", "install", "--upgrade",
+             get_pip_package(to_develop)], ["platformio", "--version"])
 
     cmd = None
     r = None
@@ -90,6 +89,33 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
                 [str(cmd), r['out'], r['err']]))
 
     return True
+
+
+def get_pip_package(to_develop):
+    pkg_name = "platformio"
+    if not to_develop:
+        return pkg_name
+    cache_dir = util.get_cache_dir()
+    if not os.path.isdir(cache_dir):
+        os.makedirs(cache_dir)
+    pkg_name = os.path.join(cache_dir, "piocoredevelop.zip")
+    try:
+        with open(pkg_name, "w") as fp:
+            r = util.exec_command(
+                [
+                    "curl", "-fsSL", "https://github.com/platformio/"
+                    "platformio-core/archive/develop.zip"
+                ],
+                stdout=fp,
+                universal_newlines=True)
+            assert r['returncode'] == 0
+        # check ZIP structure
+        with ZipFile(pkg_name) as zp:
+            assert zp.testzip() is None
+        return pkg_name
+    except:  # pylint: disable=bare-except
+        pass
+    return "platformio"
 
 
 def get_latest_version():

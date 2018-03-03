@@ -253,6 +253,11 @@ def get_home_dir():
     return home_dir
 
 
+def get_cache_dir():
+    return get_project_optional_dir("cache_dir", join(get_home_dir(),
+                                                      ".cache"))
+
+
 def get_source_dir():
     curpath = abspath(__file__)
     if not isfile(curpath):
