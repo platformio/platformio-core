@@ -92,9 +92,8 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
 
 
 def get_pip_package(to_develop):
-    pkg_name = "platformio"
     if not to_develop:
-        return pkg_name
+        return "platformio"
     cache_dir = util.get_cache_dir()
     if not os.path.isdir(cache_dir):
         os.makedirs(cache_dir)
@@ -115,7 +114,7 @@ def get_pip_package(to_develop):
         return pkg_name
     except:  # pylint: disable=bare-except
         pass
-    return "platformio"
+    return "https://github.com/platformio/platformio-core/archive/develop.zip"
 
 
 def get_latest_version():
