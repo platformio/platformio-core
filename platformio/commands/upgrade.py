@@ -94,6 +94,8 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
 def get_pip_package(to_develop):
     if not to_develop:
         return "platformio"
+    dl_url = ("https://github.com/platformio/"
+              "platformio-core/archive/develop.zip")
     cache_dir = util.get_cache_dir()
     if not os.path.isdir(cache_dir):
         os.makedirs(cache_dir)
@@ -101,12 +103,7 @@ def get_pip_package(to_develop):
     try:
         with open(pkg_name, "w") as fp:
             r = util.exec_command(
-                [
-                    "curl", "-fsSL", "https://github.com/platformio/"
-                    "platformio-core/archive/develop.zip"
-                ],
-                stdout=fp,
-                universal_newlines=True)
+                ["curl", "-fsSL", dl_url], stdout=fp, universal_newlines=True)
             assert r['returncode'] == 0
         # check ZIP structure
         with ZipFile(pkg_name) as zp:
@@ -114,7 +111,7 @@ def get_pip_package(to_develop):
         return pkg_name
     except:  # pylint: disable=bare-except
         pass
-    return "https://github.com/platformio/platformio-core/archive/develop.zip"
+    return dl_url
 
 
 def get_latest_version():
