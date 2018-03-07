@@ -77,7 +77,8 @@ def generate_boards(boards, extend_debug=False, skip_columns=None):
     for data in sorted(boards, key=lambda item: item['id']):
         debug = [":ref:`Yes <piodebug>`" if data['debug'] else "No"]
         if extend_debug and data['debug']:
-            debug = []
+            debug_onboard = []
+            debug_external = []
             for name, options in data['debug']['tools'].items():
                 attrs = []
                 if options.get("default"):
@@ -86,9 +87,12 @@ def generate_boards(boards, extend_debug=False, skip_columns=None):
                     attrs.append("on-board")
                 tool = ":ref:`debugging_tool_%s`" % name
                 if attrs:
-                    debug.append("%s (%s)" % (tool, ", ".join(attrs)))
+                    tool = "%s (%s)" % (tool, ", ".join(attrs))
+                if options.get("onboard"):
+                    debug_onboard.append(tool)
                 else:
-                    debug.append(tool)
+                    debug_external.append(tool)
+            debug = sorted(debug_onboard) + sorted(debug_external)
 
         variables = dict(
             id=data['id'],
