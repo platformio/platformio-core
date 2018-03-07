@@ -563,9 +563,9 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
                     if not isdir(boards_dir):
                         continue
                     manifest_path = join(boards_dir, "%s.json" % id_)
-                    if not isfile(manifest_path):
-                        continue
-                    _append_board(id_, manifest_path)
+                    if isfile(manifest_path):
+                        _append_board(id_, manifest_path)
+                        break
             if id_ not in self._BOARDS_CACHE:
                 raise exception.UnknownBoard(id_)
         return self._BOARDS_CACHE[id_] if id_ else self._BOARDS_CACHE
