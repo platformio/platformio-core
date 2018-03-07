@@ -7,7 +7,12 @@ PlatformIO 3.0
 3.5.2 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Multiple themes (Dark & Light) for `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`__
+* `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`__ -
+  interact with PlatformIO ecosystem using modern and cross-platform GUI:
+
+  - Multiple themes (Dark & Light)
+  - Ability to specify a name for new project
+
 * Control `PIO Unified Debugger <http://docs.platformio.org/en/latest/plus/debugging.html>`__
   and its firmware loading mode using
   `debug_load_mode <http://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-load-mode>`__ option
