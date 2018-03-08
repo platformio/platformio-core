@@ -91,6 +91,11 @@ class LibBuilderBase(object):
 
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     CCONDITIONAL_SCANNER = SCons.Scanner.C.CConditionalScanner()
+    # Max depth of nested includes:
+    # -1 = unlimited
+    # 0 - disabled nesting
+    # >0 - number of allowed nested includes
+    CCONDITIONAL_SCANNER_DEPTH = 99
     PARSE_SRC_BY_H_NAME = True
 
     _INCLUDE_DIRS_CACHE = None
@@ -344,7 +349,10 @@ class LibBuilderBase(object):
             try:
                 assert "+" in self.lib_ldf_mode
                 incs = LibBuilderBase.CCONDITIONAL_SCANNER(
-                    self.env.File(path), self.env, tuple(include_dirs))
+                    self.env.File(path),
+                    self.env,
+                    tuple(include_dirs),
+                    depth=self.CCONDITIONAL_SCANNER_DEPTH)
             except Exception as e:  # pylint: disable=broad-except
                 if self.verbose and "+" in self.lib_ldf_mode:
                     sys.stderr.write(
