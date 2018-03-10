@@ -158,6 +158,7 @@ class ProjectGenerator(object):
                 "project_dir": self.project_dir,
                 "project_src_dir": util.get_projectsrc_dir(),
                 "project_lib_dir": util.get_projectlib_dir(),
+                "project_libdeps_dir": util.get_projectlibdeps_dir(),
                 "systype": util.get_systype(),
                 "platformio_path": self._fix_os_path(
                     util.where_is_program("platformio")),
