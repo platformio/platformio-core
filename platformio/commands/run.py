@@ -126,19 +126,25 @@ class EnvironmentProcessor(object):
 
     DEFAULT_DUMP_OPTIONS = ("platform", "framework", "board")
 
-    KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
-                     "board_f_cpu", "board_f_flash", "board_flash_mode",
-                     "build_flags", "src_build_flags", "build_unflags",
-                     "src_filter", "extra_scripts", "targets", "upload_port",
-                     "upload_protocol", "upload_speed", "upload_flags",
-                     "upload_resetmethod", "lib_deps", "lib_ignore",
-                     "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
-                     "lib_archive", "piotest", "test_transport", "test_filter",
-                     "test_ignore", "test_port", "test_speed", "debug_tool",
-                     "debug_port", "debug_init_cmds", "debug_extra_cmds",
-                     "debug_server", "debug_init_break", "debug_load_cmd",
-                     "debug_load_mode", "monitor_port", "monitor_baud",
-                     "monitor_rts", "monitor_dtr")
+    KNOWN_PLATFORMIO_OPTIONS = ("env_default", "home_dir", "lib_dir",
+                                "libdeps_dir", "include_dir", "src_dir",
+                                "build_dir", "data_dir", "test_dir",
+                                "boards_dir", "lib_extra_dirs")
+
+    KNOWN_ENV_OPTIONS = ("platform", "framework", "board", "board_mcu",
+                         "board_f_cpu", "board_f_flash", "board_flash_mode",
+                         "build_flags", "src_build_flags", "build_unflags",
+                         "src_filter", "extra_scripts", "targets",
+                         "upload_port", "upload_protocol", "upload_speed",
+                         "upload_flags", "upload_resetmethod", "lib_deps",
+                         "lib_ignore", "lib_extra_dirs", "lib_ldf_mode",
+                         "lib_compat_mode", "lib_archive", "piotest",
+                         "test_transport", "test_filter", "test_ignore",
+                         "test_port", "test_speed", "debug_tool", "debug_port",
+                         "debug_init_cmds", "debug_extra_cmds", "debug_server",
+                         "debug_init_break", "debug_load_cmd",
+                         "debug_load_mode", "monitor_port", "monitor_baud",
+                         "monitor_rts", "monitor_dtr")
 
     IGNORE_BUILD_OPTIONS = ("test_transport", "test_filter", "test_ignore",
                             "test_port", "test_speed", "debug_port",
@@ -231,7 +237,7 @@ class EnvironmentProcessor(object):
                 v = self.RENAMED_PLATFORMS[v]
 
             # warn about unknown options
-            if k not in self.KNOWN_OPTIONS and not k.startswith("custom_"):
+            if k not in self.KNOWN_ENV_OPTIONS and not k.startswith("custom_"):
                 click.secho(
                     "Detected non-PlatformIO `%s` option in `[env:%s]` section"
                     % (k, self.name),
@@ -381,10 +387,8 @@ def print_summary(results, start_time):
 def check_project_defopts(config):
     if not config.has_section("platformio"):
         return True
-    known = ("env_default", "home_dir", "lib_dir", "libdeps_dir", "src_dir",
-             "build_dir", "data_dir", "test_dir", "boards_dir",
-             "lib_extra_dirs")
-    unknown = set([k for k, _ in config.items("platformio")]) - set(known)
+    unknown = set([k for k, _ in config.items("platformio")]) - set(
+        EnvironmentProcessor.KNOWN_PLATFORMIO_OPTIONS)
     if not unknown:
         return True
     click.secho(
