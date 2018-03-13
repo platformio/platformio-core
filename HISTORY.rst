@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.5.2 (2018-??-??)
+3.5.2 (2018-03-13)
 ~~~~~~~~~~~~~~~~~~
 
 * `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`__ -
