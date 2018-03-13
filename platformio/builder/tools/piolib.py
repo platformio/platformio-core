@@ -23,7 +23,6 @@ import sys
 from glob import glob
 from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
                      realpath, sep)
-from platform import system
 
 import SCons.Scanner
 from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, DefaultEnvironment
@@ -57,10 +56,9 @@ class LibBuilderFactory(object):
 
     @staticmethod
     def get_used_frameworks(env, path):
-        if any([
+        if any(
                 isfile(join(path, fname))
-                for fname in ("library.properties", "keywords.txt")
-        ]):
+                for fname in ("library.properties", "keywords.txt")):
             return ["arduino"]
 
         if isfile(join(path, "module.json")):
@@ -83,14 +81,21 @@ class LibBuilderFactory(object):
 
 class LibBuilderBase(object):
 
+    IS_WINDOWS = "windows" in util.get_systype()
+
     LDF_MODES = ["off", "chain", "deep", "chain+", "deep+"]
     LDF_MODE_DEFAULT = "chain"
 
-    COMPAT_MODES = [0, 1, 2]
-    COMPAT_MODE_DEFAULT = 1
+    COMPAT_MODES = ["off", "light", "strict"]
+    COMPAT_MODE_DEFAULT = "light"
 
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
-    ADVANCED_SCANNER = SCons.Scanner.C.CScanner(advanced=True)
+    CCONDITIONAL_SCANNER = SCons.Scanner.C.CConditionalScanner()
+    # Max depth of nested includes:
+    # -1 = unlimited
+    # 0 - disabled nesting
+    # >0 - number of allowed nested includes
+    CCONDITIONAL_SCANNER_DEPTH = 99
     PARSE_SRC_BY_H_NAME = True
 
     _INCLUDE_DIRS_CACHE = None
@@ -120,7 +125,7 @@ class LibBuilderBase(object):
     def __contains__(self, path):
         p1 = self.path
         p2 = path
-        if system() == "Windows":
+        if self.IS_WINDOWS:
             p1 = p1.lower()
             p2 = p2.lower()
         return commonprefix((p1 + sep, p2)) == p1 + sep
@@ -156,7 +161,7 @@ class LibBuilderBase(object):
 
     @property
     def include_dir(self):
-        if not all([isdir(join(self.path, d)) for d in ("include", "src")]):
+        if not all(isdir(join(self.path, d)) for d in ("include", "src")):
             return None
         return join(self.path, "include")
 
@@ -230,12 +235,15 @@ class LibBuilderBase(object):
 
     @staticmethod
     def validate_compat_mode(mode):
-        try:
-            mode = int(mode)
-            assert mode in LibBuilderBase.COMPAT_MODES
+        if isinstance(mode, basestring):
+            mode = mode.strip().lower()
+        if mode in LibBuilderBase.COMPAT_MODES:
             return mode
-        except (AssertionError, ValueError):
-            return LibBuilderBase.COMPAT_MODE_DEFAULT
+        try:
+            return LibBuilderBase.COMPAT_MODES[int(mode)]
+        except (IndexError, ValueError):
+            pass
+        return LibBuilderBase.COMPAT_MODE_DEFAULT
 
     def is_platforms_compatible(self, platforms):
         return True
@@ -340,17 +348,18 @@ class LibBuilderBase(object):
         for path in self._validate_search_files(search_files):
             try:
                 assert "+" in self.lib_ldf_mode
-                incs = self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.ADVANCED_SCANNER,
-                    tuple(include_dirs))
+                incs = LibBuilderBase.CCONDITIONAL_SCANNER(
+                    self.env.File(path),
+                    self.env,
+                    tuple(include_dirs),
+                    depth=self.CCONDITIONAL_SCANNER_DEPTH)
             except Exception as e:  # pylint: disable=broad-except
                 if self.verbose and "+" in self.lib_ldf_mode:
                     sys.stderr.write(
                         "Warning! Classic Pre Processor is used for `%s`, "
                         "advanced has failed with `%s`\n" % (path, e))
-                _incs = self.env.File(path).get_found_includes(
-                    self.env, LibBuilderBase.CLASSIC_SCANNER,
-                    tuple(include_dirs))
+                _incs = LibBuilderBase.CLASSIC_SCANNER(
+                    self.env.File(path), self.env, tuple(include_dirs))
                 incs = []
                 for inc in _incs:
                     incs.append(inc)
@@ -517,8 +526,20 @@ class MbedLibBuilder(LibBuilderBase):
         include_dirs = LibBuilderBase.get_include_dirs(self)
         if self.path not in include_dirs:
             include_dirs.append(self.path)
+
+        # library with module.json
         for p in self._manifest.get("extraIncludes", []):
             include_dirs.append(join(self.path, p))
+
+        # old mbed library without manifest, add to CPPPATH all folders
+        if not self._manifest:
+            for root, _, __ in os.walk(self.path):
+                part = root.replace(self.path, "").lower()
+                if any(s in part for s in ("%s." % sep, "test", "example")):
+                    continue
+                if root not in include_dirs:
+                    include_dirs.append(root)
+
         return include_dirs
 
     def is_frameworks_compatible(self, frameworks):
@@ -731,13 +752,13 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             if verbose:
                 sys.stderr.write("Ignored library %s\n" % lb.path)
             return None
-        if compat_mode > 1 and not lb.is_platforms_compatible(
+        if compat_mode == "strict" and not lb.is_platforms_compatible(
                 env['PIOPLATFORM']):
             if verbose:
                 sys.stderr.write(
                     "Platform incompatible library %s\n" % lb.path)
             return False
-        if compat_mode > 0 and "PIOFRAMEWORK" in env and \
+        if compat_mode == "light" and "PIOFRAMEWORK" in env and \
            not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", [])):
             if verbose:
                 sys.stderr.write(
@@ -783,9 +804,8 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
 
 def BuildProjectLibraries(env):
-    lib_builders = env.GetLibBuilders()
 
-    def correct_found_libs():
+    def correct_found_libs(lib_builders):
         # build full dependency graph
         found_lbs = [lb for lb in lib_builders if lb.dependent]
         for lb in lib_builders:
@@ -803,7 +823,7 @@ def BuildProjectLibraries(env):
             vcs_info = lb.vcs_info
             if lb.version:
                 title += " v%s" % lb.version
-            if vcs_info:
+            if vcs_info and vcs_info.get("version"):
                 title += " #%s" % vcs_info.get("version")
             sys.stdout.write("%s|-- %s" % (margin, title))
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
@@ -816,20 +836,25 @@ def BuildProjectLibraries(env):
             if lb.depbuilders:
                 print_deps_tree(lb, level + 1)
 
-    print "Collected %d compatible libraries" % len(lib_builders)
-    print "Scanning dependencies..."
-
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     project.env = env
+    ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
+
+    print "Library Dependency Finder -> http://bit.ly/configure-pio-ldf"
+    print "LDF MODES: FINDER(%s) COMPATIBILITY(%s)" % (ldf_mode,
+                                                       project.lib_compat_mode)
+
+    lib_builders = env.GetLibBuilders()
+    print "Collected %d compatible libraries" % len(lib_builders)
+
+    print "Scanning dependencies..."
     project.search_deps_recursive()
 
-    if (LibBuilderBase.validate_ldf_mode(
-            env.get("LIB_LDF_MODE", LibBuilderBase.LDF_MODE_DEFAULT))
-            .startswith("chain") and project.depbuilders):
-        correct_found_libs()
+    if ldf_mode.startswith("chain") and project.depbuilders:
+        correct_found_libs(lib_builders)
 
     if project.depbuilders:
-        print "Library Dependency Graph ( http://bit.ly/configure-pio-ldf )"
+        print "Dependency Graph"
         print_deps_tree(project)
     else:
         print "No dependencies"

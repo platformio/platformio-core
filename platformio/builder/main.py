@@ -20,7 +20,7 @@ from os.path import expanduser, join
 from time import time
 
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
-                          AllowSubstExceptions, AlwaysBuild,
+                          Action, AllowSubstExceptions, AlwaysBuild,
                           DefaultEnvironment, Variables)
 
 from platformio import util
@@ -64,7 +64,11 @@ commonvars.AddVariables(
     ("UPLOAD_PROTOCOL",),
     ("UPLOAD_SPEED",),
     ("UPLOAD_FLAGS",),
-    ("UPLOAD_RESETMETHOD",)
+    ("UPLOAD_RESETMETHOD",),
+
+    # debug options
+    ("DEBUG_TOOL",),
+
 
 )  # yapf: disable
 
@@ -75,7 +79,7 @@ MULTILINE_VARS = [
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
-        "ar", "as", "gcc", "g++", "gnulink", "platformio", "pioplatform",
+        "ar", "gas", "gcc", "g++", "gnulink", "platformio", "pioplatform",
         "piowinhooks", "piolib", "pioupload", "piomisc", "pioide"
     ],  # yapf: disable
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
@@ -182,3 +186,7 @@ if "idedata" in COMMAND_LINE_TARGETS:
             "See explanation in FAQ > Troubleshooting > Building\n"
             "http://docs.platformio.org/page/faq.html\n\n")
         env.Exit(1)
+
+env.AddPreAction(["upload", "program"],
+                 Action(lambda source, target, env: env.PrintUploadInfo(),
+                        "Configuring upload protocol..."))

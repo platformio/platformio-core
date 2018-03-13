@@ -48,3 +48,5 @@ void myFunction(struct Item *item) {
 void fooCallback(){
 
 }
+
+// юнікод

@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from math import ceil
-from os.path import dirname, isfile, join, realpath
+import os
+import urlparse
+from os.path import dirname, isdir, isfile, join, realpath
 from sys import exit as sys_exit
 from sys import path
 
@@ -36,39 +37,48 @@ def is_compat_platform_and_framework(platform, framework):
     return False
 
 
-def generate_boards(boards, extend_debug=False):
+def campaign_url(url, source="platformio", medium="docs"):
+    data = urlparse.urlparse(url)
+    query = data.query
+    if query:
+        query += "&"
+    query += "utm_source=%s&utm_medium=%s" % (source, medium)
+    return urlparse.urlunparse(
+        urlparse.ParseResult(data.scheme, data.netloc, data.path, data.params,
+                             query, data.fragment))
 
-    def _round_memory_size(size):
-        if size == 1:
-            return 1
 
-        size = ceil(size)
-        for b in (64, 32, 16, 8, 4, 2, 1):
-            if b < size:
-                return int(ceil(size / b) * b)
-        assert NotImplemented()
-
+def generate_boards(boards, extend_debug=False, skip_columns=None):
+    columns = [
+        ("ID", "``{id}``"),
+        ("Name", "`{name} <{url}>`_"),
+        ("Platform", ":ref:`{platform_title} <platform_{platform}>`"),
+        ("Debug", "{debug}"),
+        ("MCU", "{mcu}"),
+        ("Frequency", "{f_cpu:d}MHz"),
+        ("Flash", "{rom}"),
+        ("RAM", "{ram}"),
+    ]
     platforms = {m['name']: m['title'] for m in PLATFORM_MANIFESTS}
-
     lines = []
 
     lines.append("""
 .. list-table::
     :header-rows:  1
+""")
 
-    * - ID
-      - Name
-      - Platform
-      - Debug
-      - Microcontroller
-      - Frequency
-      - Flash
-      - RAM""")
+    # add header
+    for (name, template) in columns:
+        if skip_columns and name in skip_columns:
+            continue
+        prefix = "    * - " if name == "ID" else "      - "
+        lines.append(prefix + name)
 
     for data in sorted(boards, key=lambda item: item['id']):
-        debug = [":ref:`Yes <piodebug>`" if data['debug'] else ""]
+        debug = [":ref:`Yes <piodebug>`" if data['debug'] else "No"]
         if extend_debug and data['debug']:
-            debug = []
+            debug_onboard = []
+            debug_external = []
             for name, options in data['debug']['tools'].items():
                 attrs = []
                 if options.get("default"):
@@ -77,32 +87,81 @@ def generate_boards(boards, extend_debug=False):
                     attrs.append("on-board")
                 tool = ":ref:`debugging_tool_%s`" % name
                 if attrs:
-                    debug.append("%s (%s)" % (tool, ", ".join(attrs)))
+                    tool = "%s (%s)" % (tool, ", ".join(attrs))
+                if options.get("onboard"):
+                    debug_onboard.append(tool)
                 else:
-                    debug.append(tool)
+                    debug_external.append(tool)
+            debug = sorted(debug_onboard) + sorted(debug_external)
 
-        board_ram = float(data['ram']) / 1024
-        lines.append("""
-    * - ``{id}``
-      - `{name} <{url}>`_
-      - :ref:`{platform_title} <platform_{platform}>`
-      - {debug}
-      - {mcu}
-      - {f_cpu:d} MHz
-      - {rom} Kb
-      - {ram} Kb""".format(
+        variables = dict(
             id=data['id'],
             name=data['name'],
             platform=data['platform'],
             platform_title=platforms[data['platform']],
             debug=", ".join(debug),
-            url=data['url'],
+            url=campaign_url(data['url']),
             mcu=data['mcu'].upper(),
             f_cpu=int(data['fcpu']) / 1000000,
-            ram=int(board_ram) if board_ram % 1 == 0 else board_ram,
-            rom=_round_memory_size(data['rom'] / 1024)))
+            ram=util.format_filesize(data['ram']),
+            rom=util.format_filesize(data['rom']))
 
-    return "\n".join(lines + [""])
+        for (name, template) in columns:
+            if skip_columns and name in skip_columns:
+                continue
+            prefix = "    * - " if name == "ID" else "      - "
+            lines.append(prefix + template.format(**variables))
+
+    if lines:
+        lines.append("")
+
+    return lines
+
+
+def generate_debug_boards(boards, skip_columns=None):
+    lines = []
+    onboard_debug = [
+        b for b in boards if b['debug'] and any(
+            t.get("onboard") for (_, t) in b['debug']['tools'].items())
+    ]
+    external_debug = [
+        b for b in boards if b['debug'] and b not in onboard_debug
+    ]
+    if onboard_debug or external_debug:
+        lines.append("""
+Debugging
+---------
+
+:ref:`piodebug` - "1-click" solution for debugging with a zero configuration.
+
+Supported debugging tools are listed in "Debug" column. For more detailed
+information, please scroll table by horizontal.
+You can switch between debugging :ref:`debugging_tools` using
+:ref:`projectconf_debug_tool` options.
+""")
+    if onboard_debug:
+        lines.append("""
+On-Board tools
+~~~~~~~~~~~~~~
+
+Boards listed below have on-board debugging tools and **ARE READY** for debugging!
+You do not need to use/buy external debugger.
+""")
+        lines.extend(
+            generate_boards(
+                onboard_debug, extend_debug=True, skip_columns=skip_columns))
+    if external_debug:
+        lines.append("""
+External tools
+~~~~~~~~~~~~~~
+
+Boards listed below are compatible with :ref:`piodebug` but depend on external
+debugging tools. See "Debug" column for compatible debugging tools.
+""")
+        lines.extend(
+            generate_boards(
+                external_debug, extend_debug=True, skip_columns=skip_columns))
+    return lines
 
 
 def generate_packages(platform, packagenames, is_embedded):
@@ -124,7 +183,7 @@ Packages
     * - `{name} <{url}>`__
       - {description}""".format(
             name=name,
-            url=API_PACKAGES[name]['url'],
+            url=campaign_url(API_PACKAGES[name]['url']),
             description=API_PACKAGES[name]['description']))
 
     if is_embedded:
@@ -132,8 +191,7 @@ Packages
 .. warning::
     **Linux Users**:
 
-        * Install "udev" rules file `99-platformio-udev.rules <https://github.com/platformio/platformio-core/blob/develop/scripts/99-platformio-udev.rules>`_
-          (an instruction is located inside a file).
+        * Install "udev" rules :ref:`faq_udev_rules`
         * Raspberry Pi users, please read this article
           `Enable serial port on Raspberry Pi <https://hallard.me/enable-serial-port-on-raspberry-pi/>`__.
 """)
@@ -160,8 +218,13 @@ Packages
     return "\n".join(lines)
 
 
-def generate_platform(name):
+def generate_platform(name, has_extra=False):
     print "Processing platform: %s" % name
+
+    compatible_boards = [
+        board for board in BOARDS if name in board['platform']
+    ]
+
     lines = []
 
     lines.append(
@@ -188,16 +251,79 @@ def generate_platform(name):
     lines.append(p.description)
     lines.append("""
 For more detailed information please visit `vendor site <%s>`_.""" %
-                 p.vendor_url)
+                 campaign_url(p.vendor_url))
     lines.append("""
 .. contents:: Contents
-    :local:""")
+    :local:
+    :depth: 1
+""")
+
+    #
+    # Extra
+    #
+    if has_extra:
+        lines.append(".. include:: %s_extra.rst" % p.name)
+
+    #
+    # Examples
+    #
+    lines.append("""
+Examples
+--------
+
+Examples are listed from `%s development platform repository <%s>`_:
+""" % (p.title,
+       campaign_url(
+           "https://github.com/platformio/platform-%s/tree/develop/examples" %
+           p.name)))
+    examples_dir = join(p.get_dir(), "examples")
+    if isdir(examples_dir):
+        for eitem in os.listdir(examples_dir):
+            if not isdir(join(examples_dir, eitem)):
+                continue
+            url = ("https://github.com/platformio/platform-%s"
+                   "/tree/develop/examples/%s" % (p.name, eitem))
+            lines.append("* `%s <%s>`_" % (eitem, campaign_url(url)))
+
+    #
+    # Debugging
+    #
+    if compatible_boards:
+        lines.extend(
+            generate_debug_boards(
+                compatible_boards, skip_columns=["Platform"]))
+
+    #
+    # Development version of dev/platform
+    #
+    lines.append("""
+Stable and upstream versions
+----------------------------
+
+You can switch between `stable releases <https://github.com/platformio/platform-{name}/releases>`__
+of {title} development platform and the latest upstream version using
+:ref:`projectconf_env_platform` option as described below:
+
+.. code-block:: ini
+
+    ; Custom stable version
+    [env:stable]
+    platform ={name}@x.y.z
+    board = ...
+    ...
+
+    ; The latest upstream/development version
+    [env:upstream]
+    platform = https://github.com/platformio/platform-{name}.git
+    board = ...
+    ...
+""".format(name=p.name, title=p.title))
 
     #
     # Packages
     #
-    _packages_content = generate_packages(name,
-                                          p.packages.keys(), p.is_embedded())
+    _packages_content = generate_packages(name, p.packages.keys(),
+                                          p.is_embedded())
     if _packages_content:
         lines.append(_packages_content)
 
@@ -226,31 +352,28 @@ Frameworks
     #
     # Boards
     #
-    vendors = {}
-    for board in BOARDS:
-        vendor = board['vendor']
-        if name in board['platform']:
-            if vendor in vendors:
-                vendors[vendor].append(board)
-            else:
-                vendors[vendor] = [board]
+    if compatible_boards:
+        vendors = {}
+        for board in compatible_boards:
+            if board['vendor'] not in vendors:
+                vendors[board['vendor']] = []
+            vendors[board['vendor']].append(board)
 
-    if vendors:
         lines.append("""
 Boards
 ------
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
+      `PlatformIO Boards Explorer <https://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by
       horizontal.
 """)
 
-    for vendor, boards in sorted(vendors.iteritems()):
-        lines.append(str(vendor))
-        lines.append("~" * len(vendor))
-        lines.append(generate_boards(boards))
+        for vendor, boards in sorted(vendors.items()):
+            lines.append(str(vendor))
+            lines.append("~" * len(vendor))
+            lines.extend(generate_boards(boards, skip_columns=["Platform"]))
 
     return "\n".join(lines)
 
@@ -262,13 +385,24 @@ def update_platform_docs():
             dirname(realpath(__file__)), "..", "docs", "platforms")
         rst_path = join(platforms_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
-            f.write(generate_platform(name))
-            if isfile(join(platforms_dir, "%s_extra.rst" % name)):
-                f.write("\n.. include:: %s_extra.rst\n" % name)
+            f.write(
+                generate_platform(name,
+                                  isfile(
+                                      join(platforms_dir,
+                                           "%s_extra.rst" % name))))
 
 
-def generate_framework(type_, data):
+def generate_framework(type_, data, has_extra=False):
     print "Processing framework: %s" % type_
+
+    compatible_platforms = [
+        m for m in PLATFORM_MANIFESTS
+        if is_compat_platform_and_framework(m['name'], type_)
+    ]
+    compatible_boards = [
+        board for board in BOARDS if type_ in board['frameworks']
+    ]
+
     lines = []
 
     lines.append(
@@ -294,13 +428,38 @@ def generate_framework(type_, data):
     lines.append(data['description'])
     lines.append("""
 For more detailed information please visit `vendor site <%s>`_.
-""" % data['url'])
+""" % campaign_url(data['url']))
 
     lines.append("""
 .. contents:: Contents
-    :local:""")
+    :local:
+    :depth: 1""")
 
-    lines.append("""
+    # Extra
+    if has_extra:
+        lines.append(".. include:: %s_extra.rst" % type_)
+
+    #
+    # Debugging
+    #
+    if compatible_boards:
+        lines.extend(generate_debug_boards(compatible_boards))
+
+    if compatible_platforms:
+        # examples
+        lines.append("""
+Examples
+--------
+""")
+        for manifest in compatible_platforms:
+            lines.append("* `%s for %s <%s>`_" % (
+                data['title'], manifest['title'],
+                campaign_url(
+                    "https://github.com/platformio/platform-%s/tree/develop/examples"
+                    % manifest['name'])))
+
+        # Platforms
+        lines.append("""
 Platforms
 ---------
 .. list-table::
@@ -309,43 +468,35 @@ Platforms
     * - Name
       - Description""")
 
-    _found_platform = False
-    for manifest in PLATFORM_MANIFESTS:
-        if not is_compat_platform_and_framework(manifest['name'], type_):
-            continue
-        _found_platform = True
-        p = PlatformFactory.newPlatform(manifest['name'])
-        lines.append(
-            """
+        for manifest in compatible_platforms:
+            p = PlatformFactory.newPlatform(manifest['name'])
+            lines.append("""
     * - :ref:`platform_{type_}`
-      - {description}"""
-            .format(type_=manifest['name'], description=p.description))
-    if not _found_platform:
-        del lines[-1]
+      - {description}""".format(
+                type_=manifest['name'], description=p.description))
 
-    lines.append("""
+    #
+    # Boards
+    #
+    if compatible_boards:
+        vendors = {}
+        for board in compatible_boards:
+            if board['vendor'] not in vendors:
+                vendors[board['vendor']] = []
+            vendors[board['vendor']].append(board)
+        lines.append("""
 Boards
 ------
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
+      `PlatformIO Boards Explorer <https://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by horizontal.
 """)
-
-    vendors = {}
-    for data in BOARDS:
-        frameworks = data['frameworks'] or []
-        vendor = data['vendor']
-        if type_ in frameworks:
-            if vendor in vendors:
-                vendors[vendor].append(data)
-            else:
-                vendors[vendor] = [data]
-    for vendor, boards in sorted(vendors.iteritems()):
-        lines.append(str(vendor))
-        lines.append("~" * len(vendor))
-        lines.append(generate_boards(boards))
+        for vendor, boards in sorted(vendors.items()):
+            lines.append(str(vendor))
+            lines.append("~" * len(vendor))
+            lines.extend(generate_boards(boards))
     return "\n".join(lines)
 
 
@@ -356,9 +507,11 @@ def update_framework_docs():
             dirname(realpath(__file__)), "..", "docs", "frameworks")
         rst_path = join(frameworks_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
-            f.write(generate_framework(name, framework))
-            if isfile(join(frameworks_dir, "%s_extra.rst" % name)):
-                f.write("\n.. include:: %s_extra.rst\n" % name)
+            f.write(
+                generate_framework(name, framework,
+                                   isfile(
+                                       join(frameworks_dir,
+                                            "%s_extra.rst" % name))))
 
 
 def update_create_platform_doc():
@@ -424,7 +577,7 @@ popular embedded boards and IDE.
 
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
-      `PlatformIO Boards Explorer <http://platformio.org/boards>`_
+      `PlatformIO Boards Explorer <https://platformio.org/boards>`_
     * For more detailed ``board`` information please scroll tables below by horizontal.
 """)
 
@@ -444,7 +597,7 @@ popular embedded boards and IDE.
     for vendor, boards in sorted(vendors.iteritems()):
         lines.append(str(vendor))
         lines.append("~" * len(vendor))
-        lines.append(generate_boards(boards))
+        lines.extend(generate_boards(boards))
 
     emboards_rst = join(
         dirname(realpath(__file__)), "..", "docs", "platforms",
@@ -484,11 +637,10 @@ Platforms
         if manifest['name'] not in platforms:
             continue
         p = PlatformFactory.newPlatform(manifest['name'])
-        lines.append(
-            """
+        lines.append("""
     * - :ref:`platform_{type_}`
-      - {description}"""
-            .format(type_=manifest['name'], description=p.description))
+      - {description}""".format(
+            type_=manifest['name'], description=p.description))
 
     # Frameworks
     lines.append("""
@@ -517,16 +669,69 @@ Boards
     for vendor, boards in sorted(vendors.iteritems()):
         lines.append(str(vendor))
         lines.append("~" * len(vendor))
-        lines.append(generate_boards(boards, extend_debug=True))
+        lines.extend(generate_boards(boards, extend_debug=True))
 
     with open(
-            join(util.get_source_dir(), "..", "docs", "plus",
-                 "debugging.rst"), "r+") as fp:
+            join(util.get_source_dir(), "..", "docs", "plus", "debugging.rst"),
+            "r+") as fp:
         content = fp.read()
         fp.seek(0)
         fp.truncate()
         fp.write(content[:content.index(".. _debugging_platforms:")] +
                  "\n".join(lines))
+
+
+def update_examples_readme():
+    examples_dir = join(util.get_source_dir(), "..", "examples")
+
+    # Platforms
+    embedded = []
+    desktop = []
+    for manifest in PLATFORM_MANIFESTS:
+        p = PlatformFactory.newPlatform(manifest['name'])
+        url = campaign_url(
+            "http://docs.platformio.org/en/latest/platforms/%s.html#examples" %
+            p.name,
+            source="github",
+            medium="examples")
+        line = "* [%s](%s)" % (p.title, url)
+        if p.is_embedded():
+            embedded.append(line)
+        else:
+            desktop.append(line)
+
+    # Frameworks
+    frameworks = []
+    for framework in API_FRAMEWORKS:
+        url = campaign_url(
+            "http://docs.platformio.org/en/latest/frameworks/%s.html#examples"
+            % framework['name'],
+            source="github",
+            medium="examples")
+        frameworks.append("* [%s](%s)" % (framework['title'], url))
+
+    with open(join(examples_dir, "README.md"), "w") as fp:
+        fp.write("""# PlatformIO Project Examples
+
+- [Development platforms](#development-platforms):
+  - [Embedded](#embedded)
+  - [Desktop](#desktop)
+- [Frameworks](#frameworks)
+
+## Development platforms
+
+### Embedded
+
+%s
+
+### Desktop
+
+%s
+
+## Frameworks
+
+%s
+""" % ("\n".join(embedded), "\n".join(desktop), "\n".join(frameworks)))
 
 
 def main():
@@ -535,6 +740,7 @@ def main():
     update_framework_docs()
     update_embedded_boards()
     update_debugging()
+    update_examples_readme()
 
 
 if __name__ == "__main__":

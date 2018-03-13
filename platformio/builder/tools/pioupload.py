@@ -18,7 +18,6 @@ import sys
 from fnmatch import fnmatch
 from os import environ
 from os.path import isfile, join
-from platform import system
 from shutil import copyfile
 from time import sleep
 
@@ -114,10 +113,10 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             mbed_pages = [
                 join(item['path'], n) for n in ("mbed.htm", "mbed.html")
             ]
-            if any([isfile(p) for p in mbed_pages]):
+            if any(isfile(p) for p in mbed_pages):
                 return item['path']
             if item['name'] \
-                    and any([l in item['name'].lower() for l in msdlabels]):
+                    and any(l in item['name'].lower() for l in msdlabels):
                 return item['path']
         return None
 
@@ -133,7 +132,8 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             port = item['port']
             if upload_protocol.startswith("blackmagic") \
                     and "GDB" in item['description']:
-                return port
+                return ("\\\\.\\%s" % port if "windows" in util.get_systype()
+                        and port.startswith("COM") and len(port) > 4 else port)
             for hwid in board_hwids:
                 hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
                 if hwid_str in item['hwid']:
@@ -144,19 +144,20 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         print env.subst("Use manually specified: $UPLOAD_PORT")
         return
 
-    if "mbed" in env.subst("$PIOFRAMEWORK") \
-            and not env.subst("$UPLOAD_PROTOCOL"):
+    if (env.subst("$UPLOAD_PROTOCOL") == "mbed"
+            or ("mbed" in env.subst("$PIOFRAMEWORK")
+                and not env.subst("$UPLOAD_PROTOCOL"))):
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
-        if (system() == "Linux" and not any([
+        if ("linux" in util.get_systype() and not any([
                 isfile("/etc/udev/rules.d/99-platformio-udev.rules"),
                 isfile("/lib/udev/rules.d/99-platformio-udev.rules")
         ])):
             sys.stderr.write(
                 "\nWarning! Please install `99-platformio-udev.rules` and "
                 "check that your board's PID and VID are listed in the rules."
-                "\n https://raw.githubusercontent.com/platformio/platformio"
-                "/develop/scripts/99-platformio-udev.rules\n")
+                "\n http://docs.platformio.org/en/latest/faq.html"
+                "#platformio-udev-rules\n")
         env.Replace(UPLOAD_PORT=_look_for_serial_port())
 
     if env.subst("$UPLOAD_PORT"):
@@ -212,6 +213,18 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
         env.Exit(1)
 
 
+def PrintUploadInfo(env):
+    configured = env.subst("$UPLOAD_PROTOCOL")
+    available = [configured] if configured else []
+    if "BOARD" in env:
+        available.extend(env.BoardConfig().get("upload", {}).get(
+            "protocols", []))
+    if available:
+        print "AVAILABLE: %s" % ", ".join(sorted(available))
+    if configured:
+        print "CURRENT: upload_protocol = %s" % configured
+
+
 def exists(_):
     return True
 
@@ -223,4 +236,5 @@ def generate(env):
     env.AddMethod(AutodetectUploadPort)
     env.AddMethod(UploadToDisk)
     env.AddMethod(CheckUploadSize)
+    env.AddMethod(PrintUploadInfo)
     return env

@@ -16,6 +16,7 @@ import json
 
 import click
 
+from platformio import util
 from platformio.managers.platform import PlatformManager
 
 
@@ -60,22 +61,13 @@ def print_boards(boards):
     click.echo("-" * terminal_width)
 
     for board in boards:
-        ram_size = board['ram']
-        if ram_size >= 1024:
-            if ram_size % 1024:
-                ram_size = "%.1fkB" % (ram_size / 1024.0)
-            else:
-                ram_size = "%dkB" % (ram_size / 1024)
-        else:
-            ram_size = "%dB" % ram_size
-
         click.echo(
             BOARDLIST_TPL.format(
                 type=click.style(board['id'], fg="cyan"),
                 mcu=board['mcu'],
-                frequency="%dMhz" % (board['fcpu'] / 1000000),
-                flash="%dkB" % (board['rom'] / 1024),
-                ram=ram_size,
+                frequency="%dMHz" % (board['fcpu'] / 1000000),
+                flash=util.format_filesize(board['rom']),
+                ram=util.format_filesize(board['ram']),
                 name=board['name']))
 
 

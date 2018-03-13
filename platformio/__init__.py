@@ -14,7 +14,7 @@
 
 import sys
 
-VERSION = (3, 5, 1)
+VERSION = (3, 5, 2)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -24,7 +24,7 @@ __description__ = (
     "Remote unit testing and firmware updates. "
     "Arduino, ARM mbed, Espressif (ESP8266/ESP32), STM32, PIC32, nRF51/nRF52, "
     "FPGA, CMSIS, SPL, AVR, Samsung ARTIK, libOpenCM3")
-__url__ = "http://platformio.org"
+__url__ = "https://platformio.org"
 
 __author__ = "Ivan Kravets"
 __email__ = "me@ikravets.com"

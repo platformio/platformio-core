@@ -4,6 +4,36 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.5.2 (2018-03-13)
+~~~~~~~~~~~~~~~~~~
+
+* `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`__ -
+  interact with PlatformIO ecosystem using modern and cross-platform GUI:
+
+  - Multiple themes (Dark & Light)
+  - Ability to specify a name for new project
+
+* Control `PIO Unified Debugger <http://docs.platformio.org/en/latest/plus/debugging.html>`__
+  and its firmware loading mode using
+  `debug_load_mode <http://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-load-mode>`__ option
+* Added aliases (off, light, strict) for
+  `LDF Compatibility Mode <http://docs.platformio.org/page/librarymanager/ldf.html>`__
+* Search for a library using PIO Library Registry ID ``id:X`` (e.g. ``pio lib search id:13``)
+* Show device system information (MCU, Frequency, RAM, Flash, Debugging tools)
+  in a build log
+* Show all available upload protocols before firmware uploading in a build log
+* Handle "os.mbed.com" URL as a Mercurial (hg) repository
+* Improved support for old mbed libraries without manifest
+* Fixed project generator for Qt Creator IDE
+  (`issue #1303 <https://github.com/platformio/platformio-core/issues/1303>`_,
+  `issue #1323 <https://github.com/platformio/platformio-core/issues/1323>`_)
+* Mark project source and library directories for CLion IDE
+  (`issue #1359 <https://github.com/platformio/platformio-core/issues/1359>`_,
+  `issue #1345 <https://github.com/platformio/platformio-core/issues/1345>`_,
+  `issue #897 <https://github.com/platformio/platformio-core/issues/897>`_)
+* Fixed issue with duplicated "include" records when generating data for IDE
+  (`issue #1301 <https://github.com/platformio/platformio-core/issues/1301>`_)
+
 3.5.1 (2018-01-18)
 ~~~~~~~~~~~~~~~~~~
 
@@ -492,7 +522,7 @@ PlatformIO 2.0
 * Added support for `emonPi <https://github.com/openenergymonitor/emonpi>`__,
   the OpenEnergyMonitor system
   (`issue #687 <https://github.com/platformio/platformio-core/issues/687>`_)
-* Added support for `SPL <http://platformio.org/frameworks/spl>`__
+* Added support for `SPL <https://platformio.org/frameworks/spl>`__
   framework for STM32F0 boards
   (`issue #683 <https://github.com/platformio/platformio-core/issues/683>`_)
 * Added support for `Arduboy DevKit <https://www.arduboy.com>`__, the game system
@@ -1183,7 +1213,7 @@ PlatformIO 1.0
 1.5.0 (2015-05-15)
 ~~~~~~~~~~~~~~~~~~
 
-* Added support of `Framework mbed <http://platformio.org/frameworks/mbed>`_
+* Added support of `Framework mbed <https://platformio.org/frameworks/mbed>`_
   for Teensy 3.1
   (`issue #183 <https://github.com/platformio/platformio-core/issues/183>`_)
 * Added GDB as alternative uploader to `ststm32 <http://docs.platformio.org/page/platforms/ststm32.html>`__ platform
@@ -1268,9 +1298,9 @@ PlatformIO 1.0
   `ststm32 <http://docs.platformio.org/page/platforms/ststm32.html>`__
   development platform
 * Created new `Frameworks <http://docs.platformio.org/page/frameworks/index.html>`__
-  page in documentation and added to `PlatformIO Web Site <http://platformio.org>`_
+  page in documentation and added to `PlatformIO Web Site <https://platformio.org>`_
   (`issue #115 <https://github.com/platformio/platformio-core/issues/115>`_)
-* Introduced online `Embedded Boards Explorer <http://platformio.org/boards>`_
+* Introduced online `Embedded Boards Explorer <https://platformio.org/boards>`_
 * Automatically append define ``-DPLATFORMIO=%version%`` to
   builder (`issue #105 <https://github.com/platformio/platformio-core/issues/105>`_)
 * Renamed ``stm32`` development platform to

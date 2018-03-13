@@ -71,13 +71,13 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                     fg="yellow")
 
         config = util.load_project_config()
-        check_project_defopts(config)
-        assert check_project_envs(config, environment)
-
         env_default = None
         if config.has_option("platformio", "env_default"):
             env_default = util.parse_conf_multi_values(
                 config.get("platformio", "env_default"))
+
+        check_project_defopts(config)
+        check_project_envs(config, environment or env_default)
 
         results = []
         start_time = time()
@@ -111,7 +111,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                     "nobuild" not in ep.get_build_targets():
                 ctx.invoke(cmd_device_monitor)
 
-        found_error = any([status is False for (_, status) in results])
+        found_error = any(status is False for (_, status) in results)
 
         if (found_error or not silent) and len(results) > 1:
             click.echo()
@@ -124,25 +124,33 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
 
 class EnvironmentProcessor(object):
 
-    KNOWN_OPTIONS = ("platform", "framework", "board", "board_mcu",
-                     "board_f_cpu", "board_f_flash", "board_flash_mode",
-                     "build_flags", "src_build_flags", "build_unflags",
-                     "src_filter", "extra_scripts", "targets", "upload_port",
-                     "upload_protocol", "upload_speed", "upload_flags",
-                     "upload_resetmethod", "lib_deps", "lib_ignore",
-                     "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
-                     "lib_archive", "piotest", "test_transport", "test_filter",
-                     "test_ignore", "test_port", "test_speed", "debug_tool",
-                     "debug_port", "debug_init_cmds", "debug_extra_cmds",
-                     "debug_server", "debug_init_break", "debug_load_cmd",
-                     "monitor_port", "monitor_baud", "monitor_rts",
-                     "monitor_dtr")
+    DEFAULT_DUMP_OPTIONS = ("platform", "framework", "board")
+
+    KNOWN_PLATFORMIO_OPTIONS = ("env_default", "home_dir", "lib_dir",
+                                "libdeps_dir", "include_dir", "src_dir",
+                                "build_dir", "data_dir", "test_dir",
+                                "boards_dir", "lib_extra_dirs")
+
+    KNOWN_ENV_OPTIONS = ("platform", "framework", "board", "board_mcu",
+                         "board_f_cpu", "board_f_flash", "board_flash_mode",
+                         "build_flags", "src_build_flags", "build_unflags",
+                         "src_filter", "extra_scripts", "targets",
+                         "upload_port", "upload_protocol", "upload_speed",
+                         "upload_flags", "upload_resetmethod", "lib_deps",
+                         "lib_ignore", "lib_extra_dirs", "lib_ldf_mode",
+                         "lib_compat_mode", "lib_archive", "piotest",
+                         "test_transport", "test_filter", "test_ignore",
+                         "test_port", "test_speed", "debug_tool", "debug_port",
+                         "debug_init_cmds", "debug_extra_cmds", "debug_server",
+                         "debug_init_break", "debug_load_cmd",
+                         "debug_load_mode", "monitor_port", "monitor_baud",
+                         "monitor_rts", "monitor_dtr")
 
     IGNORE_BUILD_OPTIONS = ("test_transport", "test_filter", "test_ignore",
-                            "test_port", "test_speed", "debug_tool",
-                            "debug_port", "debug_init_cmds",
-                            "debug_extra_cmds", "debug_server",
-                            "debug_init_break", "debug_load_cmd",
+                            "test_port", "test_speed", "debug_port",
+                            "debug_init_cmds", "debug_extra_cmds",
+                            "debug_server", "debug_init_break",
+                            "debug_load_cmd", "debug_load_mode",
                             "monitor_port", "monitor_baud", "monitor_rts",
                             "monitor_dtr")
 
@@ -176,19 +184,19 @@ class EnvironmentProcessor(object):
     def process(self):
         terminal_width, _ = click.get_terminal_size()
         start_time = time()
+        env_dump = []
 
         for k, v in self.options.items():
             self.options[k] = self.options[k].strip()
+            if self.verbose or k in self.DEFAULT_DUMP_OPTIONS:
+                env_dump.append(
+                    "%s: %s" % (k, ", ".join(util.parse_conf_multi_values(v))))
 
         if not self.silent:
             click.echo("[%s] Processing %s (%s)" %
                        (datetime.now().strftime("%c"),
                         click.style(self.name, fg="cyan", bold=True),
-                        "; ".join([
-                            "%s: %s" %
-                            (k, ", ".join(util.parse_conf_multi_values(v)))
-                            for k, v in self.options.items()
-                        ])))
+                        "; ".join(env_dump)))
             click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
@@ -229,7 +237,7 @@ class EnvironmentProcessor(object):
                 v = self.RENAMED_PLATFORMS[v]
 
             # warn about unknown options
-            if k not in self.KNOWN_OPTIONS and not k.startswith("custom_"):
+            if k not in self.KNOWN_ENV_OPTIONS and not k.startswith("custom_"):
                 click.secho(
                     "Detected non-PlatformIO `%s` option in `[env:%s]` section"
                     % (k, self.name),
@@ -379,10 +387,8 @@ def print_summary(results, start_time):
 def check_project_defopts(config):
     if not config.has_section("platformio"):
         return True
-    known = ("env_default", "home_dir", "lib_dir", "libdeps_dir", "src_dir",
-             "build_dir", "data_dir", "test_dir", "boards_dir",
-             "lib_extra_dirs")
-    unknown = set([k for k, _ in config.items("platformio")]) - set(known)
+    unknown = set([k for k, _ in config.items("platformio")]) - set(
+        EnvironmentProcessor.KNOWN_PLATFORMIO_OPTIONS)
     if not unknown:
         return True
     click.secho(
@@ -392,18 +398,19 @@ def check_project_defopts(config):
     return False
 
 
-def check_project_envs(config, environments):
+def check_project_envs(config, environments=None):
     if not config.sections():
         raise exception.ProjectEnvsNotAvailable()
 
     known = set([s[4:] for s in config.sections() if s.startswith("env:")])
-    unknown = set(environments) - known
+    unknown = set(environments or []) - known
     if unknown:
         raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
     return True
 
 
 def calculate_project_hash():
+    check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
     structure = [__version__]
     for d in (util.get_projectsrc_dir(), util.get_projectlib_dir()):
         if not isdir(d):
@@ -411,6 +418,6 @@ def calculate_project_hash():
         for root, _, files in walk(d):
             for f in files:
                 path = join(root, f)
-                if not any([s in path for s in (".git", ".svn", ".pioenvs")]):
+                if path.endswith(check_suffixes):
                     structure.append(path)
-    return sha1(",".join(sorted(structure))).hexdigest() if structure else ""
+    return sha1(",".join(sorted(structure))).hexdigest()

@@ -30,11 +30,8 @@ class ProjectGenerator(object):
         self.project_dir = project_dir
         self.ide = ide
         self.env_name = env_name
+
         self._tplvars = {}
-
-        with util.cd(self.project_dir):
-            self.project_src_dir = util.get_projectsrc_dir()
-
         self._gather_tplvars()
 
     @staticmethod
@@ -92,7 +89,7 @@ class ProjectGenerator(object):
     def get_src_files(self):
         result = []
         with util.cd(self.project_dir):
-            for root, _, files in os.walk(self.project_src_dir):
+            for root, _, files in os.walk(util.get_projectsrc_dir()):
                 for f in files:
                     result.append(relpath(join(root, f)))
         return result
@@ -153,26 +150,21 @@ class ProjectGenerator(object):
     def _gather_tplvars(self):
         self._tplvars.update(self.get_project_env())
         self._tplvars.update(self.get_project_build_data())
-        self._tplvars.update({
-            "project_name":
-            self.get_project_name(),
-            "src_files":
-            self.get_src_files(),
-            "user_home_dir":
-            abspath(expanduser("~")),
-            "project_dir":
-            self.project_dir,
-            "project_src_dir":
-            self.project_src_dir,
-            "systype":
-            util.get_systype(),
-            "platformio_path":
-            self._fix_os_path(util.where_is_program("platformio")),
-            "env_pathsep":
-            os.pathsep,
-            "env_path":
-            self._fix_os_path(os.getenv("PATH"))
-        })
+        with util.cd(self.project_dir):
+            self._tplvars.update({
+                "project_name": self.get_project_name(),
+                "src_files": self.get_src_files(),
+                "user_home_dir": abspath(expanduser("~")),
+                "project_dir": self.project_dir,
+                "project_src_dir": util.get_projectsrc_dir(),
+                "project_lib_dir": util.get_projectlib_dir(),
+                "project_libdeps_dir": util.get_projectlibdeps_dir(),
+                "systype": util.get_systype(),
+                "platformio_path": self._fix_os_path(
+                    util.where_is_program("platformio")),
+                "env_pathsep": os.pathsep,
+                "env_path": self._fix_os_path(os.getenv("PATH"))
+            })  # yapf: disable
 
     @staticmethod
     def _fix_os_path(path):

@@ -14,7 +14,8 @@ INCLUDEPATH += "{{include}}"
 % end
 
 % for define in defines:
-DEFINES += {{!define}}
+% tokens = define.split("##", 1)
+DEFINES += "{{tokens[0].strip()}}"
 % end
 
 OTHER_FILES += platformio.ini

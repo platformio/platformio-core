@@ -83,6 +83,11 @@ def test_pkg_input_parser():
              "hg+https://developer.mbed.org/users/user/code/package/")
         ],
         [
+            "https://os.mbed.com/users/user/code/package/",
+            ("package", None,
+             "hg+https://os.mbed.com/users/user/code/package/")
+        ],
+        [
             "https://github.com/user/package#v1.2.3",
             ("package", None, "git+https://github.com/user/package#v1.2.3")
         ],

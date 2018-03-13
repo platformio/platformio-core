@@ -282,7 +282,7 @@ class LibraryManager(BasePkgManager):
                 raise exception.LibNotFound(str(filters))
         if not silent:
             click.echo("Found: %s" % click.style(
-                "http://platformio.org/lib/show/{id}/{name}".format(
+                "https://platformio.org/lib/show/{id}/{name}".format(
                     **lib_info),
                 fg="blue"))
         return int(lib_info['id'])
@@ -365,7 +365,7 @@ class LibraryManager(BasePkgManager):
 
         for filters in self.normalize_dependencies(manifest['dependencies']):
             assert "name" in filters
-            if any([s in filters.get("version", "") for s in ("\\", "/")]):
+            if any(s in filters.get("version", "") for s in ("\\", "/")):
                 self.install(
                     "{name}={version}".format(**filters),
                     silent=silent,
@@ -420,6 +420,6 @@ def get_builtin_libs(storage_names=None):
 @util.memoized
 def is_builtin_lib(name):
     for storage in get_builtin_libs():
-        if any([l.get("name") == name for l in storage['items']]):
+        if any(l.get("name") == name for l in storage['items']):
             return True
     return False

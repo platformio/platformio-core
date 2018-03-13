@@ -553,7 +553,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             hg_conditions = [
                 # Handle Developer Mbed URL
                 # (https://developer.mbed.org/users/user/code/package/)
-                text.startswith("https://developer.mbed.org")
+                # (https://os.mbed.com/users/user/code/package/)
+                text.startswith("https://developer.mbed.org"),
+                text.startswith("https://os.mbed.com")
             ]
             if any(git_conditions):
                 url = "git+" + text

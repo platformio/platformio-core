@@ -141,7 +141,7 @@ class ContentCache(object):
         self._db_path = None
         self._lockfile = None
 
-        self.cache_dir = cache_dir or join(util.get_home_dir(), ".cache")
+        self.cache_dir = cache_dir or util.get_cache_dir()
         self._db_path = join(self.cache_dir, "db.data")
 
     def __enter__(self):

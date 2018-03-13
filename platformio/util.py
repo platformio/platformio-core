@@ -253,6 +253,11 @@ def get_home_dir():
     return home_dir
 
 
+def get_cache_dir():
+    return get_project_optional_dir("cache_dir", join(get_home_dir(),
+                                                      ".cache"))
+
+
 def get_source_dir():
     curpath = abspath(__file__)
     if not isfile(curpath):
@@ -431,7 +436,7 @@ def get_serial_ports(filter_hwid=False):
     for p, d, h in comports():
         if not p:
             continue
-        if platform.system() == "Windows":
+        if "windows" in get_systype():
             try:
                 d = unicode(d, errors="ignore")
             except TypeError:
@@ -443,7 +448,7 @@ def get_serial_ports(filter_hwid=False):
         return result
 
     # fix for PySerial
-    if not result and platform.system() == "Darwin":
+    if not result and "darwin" in get_systype():
         for p in glob("/dev/tty.*"):
             result.append({"port": p, "description": "n/a", "hwid": "n/a"})
     return result
@@ -455,7 +460,7 @@ get_serialports = get_serial_ports
 
 def get_logical_devices():
     items = []
-    if platform.system() == "Windows":
+    if "windows" in get_systype():
         try:
             result = exec_command(
                 ["wmic", "logicaldisk", "get", "name,VolumeName"]).get(
@@ -741,6 +746,23 @@ def parse_date(datestr):
     if "T" in datestr and "Z" in datestr:
         return time.strptime(datestr, "%Y-%m-%dT%H:%M:%SZ")
     return time.strptime(datestr)
+
+
+def format_filesize(filesize):
+    base = 1024
+    unit = 0
+    suffix = "B"
+    filesize = float(filesize)
+    if filesize < base:
+        return "%d%s" % (filesize, suffix)
+    for i, suffix in enumerate("KMGTPEZY"):
+        unit = base**(i + 2)
+        if filesize >= unit:
+            continue
+        if filesize % (base**(i + 1)):
+            return "%.2f%sB" % ((base * filesize / unit), suffix)
+        break
+    return "%d%sB" % ((base * filesize / unit), suffix)
 
 
 def rmtree_(path):

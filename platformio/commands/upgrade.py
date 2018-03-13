@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import re
+from zipfile import ZipFile
 
 import click
 import requests
@@ -36,12 +38,9 @@ def cli(dev):
     # kill all PIO Home servers, they block `pioplus` binary
     shutdown_servers()
 
-    to_develop = dev or not all([c.isdigit() for c in __version__ if c != "."])
-    cmds = ([
-        "pip", "install", "--upgrade",
-        "https://github.com/platformio/platformio-core/archive/develop.zip"
-        if to_develop else "platformio"
-    ], ["platformio", "--version"])
+    to_develop = dev or not all(c.isdigit() for c in __version__ if c != ".")
+    cmds = (["pip", "install", "--upgrade",
+             get_pip_package(to_develop)], ["platformio", "--version"])
 
     cmd = None
     r = None
@@ -69,7 +68,7 @@ def cli(dev):
         if not r:
             raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
         permission_errors = ("permission denied", "not permitted")
-        if (any([m in r['err'].lower() for m in permission_errors])
+        if (any(m in r['err'].lower() for m in permission_errors)
                 and "windows" not in util.get_systype()):
             click.secho(
                 """
@@ -90,6 +89,29 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
                 [str(cmd), r['out'], r['err']]))
 
     return True
+
+
+def get_pip_package(to_develop):
+    if not to_develop:
+        return "platformio"
+    dl_url = ("https://github.com/platformio/"
+              "platformio-core/archive/develop.zip")
+    cache_dir = util.get_cache_dir()
+    if not os.path.isdir(cache_dir):
+        os.makedirs(cache_dir)
+    pkg_name = os.path.join(cache_dir, "piocoredevelop.zip")
+    try:
+        with open(pkg_name, "w") as fp:
+            r = util.exec_command(
+                ["curl", "-fsSL", dl_url], stdout=fp, universal_newlines=True)
+            assert r['returncode'] == 0
+        # check ZIP structure
+        with ZipFile(pkg_name) as zp:
+            assert zp.testzip() is None
+        return pkg_name
+    except:  # pylint: disable=bare-except
+        pass
+    return dl_url
 
 
 def get_latest_version():

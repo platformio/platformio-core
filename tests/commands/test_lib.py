@@ -253,7 +253,7 @@ def test_lib_show(clirunner, validate_cliresult):
     validate_cliresult(result)
     assert all(
         [s in result.output for s in ("ArduinoJson", "Arduino", "Atmel AVR")])
-    result = clirunner.invoke(cmd_lib, ["show", "OneWire"])
+    result = clirunner.invoke(cmd_lib, ["show", "OneWire", "--json-output"])
     validate_cliresult(result)
     assert "OneWire" in result.output
 
@@ -270,7 +270,7 @@ def test_lib_stats(clirunner, validate_cliresult):
     validate_cliresult(result)
     assert all([
         s in result.output
-        for s in ("UPDATED", "POPULAR", "http://platformio.org/lib/show")
+        for s in ("UPDATED", "POPULAR", "https://platformio.org/lib/show")
     ])
 
     result = clirunner.invoke(cmd_lib, ["stats", "--json-output"])

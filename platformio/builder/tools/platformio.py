@@ -20,10 +20,9 @@ from glob import glob
 from os import sep, walk
 from os.path import basename, dirname, isdir, join, realpath
 
-from SCons.Action import Action
+from SCons import Action, Builder, Util
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
                           DefaultEnvironment, SConscript)
-from SCons.Util import case_sensitive_suffixes, is_Sequence
 
 from platformio.util import glob_escape, pioversion_to_intstr
 
@@ -31,6 +30,16 @@ SRC_HEADER_EXT = ["h", "hpp"]
 SRC_C_EXT = ["c", "cc", "cpp"]
 SRC_BUILD_EXT = SRC_C_EXT + ["S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
+
+
+def scons_patched_match_splitext(path, suffixes=None):
+    """
+    Patch SCons Builder, append $OBJSUFFIX to the end of each target
+    """
+    tokens = Util.splitext(path)
+    if suffixes and tokens[1] and tokens[1] in suffixes:
+        return (path, tokens[1])
+    return tokens
 
 
 def BuildProgram(env):
@@ -42,8 +51,10 @@ def BuildProgram(env):
 
     _append_pio_macros()
 
-    # fix ASM handling under non-casitive OS
-    if not case_sensitive_suffixes(".s", ".S"):
+    env.PrintConfiguration()
+
+    # fix ASM handling under non case-sensitive OS
+    if not Util.case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 
     if "__debug" in COMMAND_LINE_TARGETS:
@@ -63,12 +74,12 @@ def BuildProgram(env):
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
 
-    # build dependent libs
-    env.Append(LIBS=env.BuildProjectLibraries())
+    # build dependent libs; place them before built-in libs
+    env.Prepend(LIBS=env.BuildProjectLibraries())
 
     # append specified LD_SCRIPT
     if ("LDSCRIPT_PATH" in env
-            and not any(["-Wl,-T" in f for f in env['LINKFLAGS']])):
+            and not any("-Wl,-T" in f for f in env['LINKFLAGS'])):
         env.Append(LINKFLAGS=['-Wl,-T"$LDSCRIPT_PATH"'])
 
     # enable "cyclic reference" for linker
@@ -99,7 +110,8 @@ def BuildProgram(env):
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
 
-    checksize_action = Action(env.CheckUploadSize, "Checking program size")
+    checksize_action = Action.Action(env.CheckUploadSize,
+                                     "Checking program size")
     AlwaysBuild(env.Alias("checkprogsize", program, checksize_action))
     if set(["upload", "program"]) & set(COMMAND_LINE_TARGETS):
         env.AddPostAction(program, checksize_action)
@@ -114,7 +126,7 @@ def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
         flags = " ".join(flags)
     parsed_flags = env.ParseFlags(str(flags))
     for flag in parsed_flags.pop("CPPDEFINES"):
-        if not is_Sequence(flag):
+        if not Util.is_Sequence(flag):
             env.Append(CPPDEFINES=flag)
             continue
         _key, _value = flag[:2]
@@ -256,6 +268,8 @@ def BuildFrameworks(env, frameworks):
 
     for f in frameworks:
         if f in ("arduino", "energia"):
+            # Arduino IDE appends .o the end of filename
+            Builder.match_splitext = scons_patched_match_splitext
             env.ConvertInoToCpp()
 
         if f in board_frameworks:

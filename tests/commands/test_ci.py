@@ -15,6 +15,7 @@
 from os.path import join
 
 from platformio.commands.ci import cli as cmd_ci
+from platformio.commands.lib import cli as cmd_lib
 
 
 def test_ci_empty(clirunner):
@@ -25,27 +26,31 @@ def test_ci_empty(clirunner):
 
 def test_ci_boards(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_ci, [
-        join("examples", "atmelavr", "arduino-internal-libs", "src",
-             "ChatServer.ino"), "-b", "uno", "-b", "leonardo"
+        join("examples", "wiring-blink", "src", "main.cpp"), "-b", "uno", "-b",
+        "leonardo"
     ])
     validate_cliresult(result)
 
 
 def test_ci_project_conf(clirunner, validate_cliresult):
-    project_dir = join("examples", "atmelavr", "arduino-internal-libs")
+    project_dir = join("examples", "wiring-blink")
     result = clirunner.invoke(cmd_ci, [
-        join(project_dir, "src", "ChatServer.ino"), "--project-conf",
+        join(project_dir, "src", "main.cpp"), "--project-conf",
         join(project_dir, "platformio.ini")
     ])
     validate_cliresult(result)
-    assert all([s in result.output for s in ("ethernet", "leonardo", "yun")])
+    assert "uno" in result.output
 
 
-def test_ci_lib_and_board(clirunner, validate_cliresult):
-    example_dir = join("examples", "atmelavr", "arduino-external-libs")
+def test_ci_lib_and_board(clirunner, tmpdir_factory, validate_cliresult):
+    storage_dir = str(tmpdir_factory.mktemp("lib"))
+    result = clirunner.invoke(
+        cmd_lib, ["--storage-dir", storage_dir, "install", "1@2.3.2"])
+    validate_cliresult(result)
+
     result = clirunner.invoke(cmd_ci, [
-        join(example_dir, "lib", "OneWire", "examples", "DS2408_Switch",
+        join(storage_dir, "OneWire_ID1", "examples", "DS2408_Switch",
              "DS2408_Switch.pde"), "-l",
-        join(example_dir, "lib", "OneWire"), "-b", "uno"
+        join(storage_dir, "OneWire_ID1"), "-b", "uno"
     ])
     validate_cliresult(result)

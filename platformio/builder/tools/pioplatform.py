@@ -41,8 +41,9 @@ def PioPlatform(env):
 def BoardConfig(env, board=None):
     p = initPioPlatform(env['PLATFORM_MANIFEST'])
     try:
-        assert env.get("BOARD", board), "BoardConfig: Board is not defined"
-        config = p.board_config(board if board else env.get("BOARD"))
+        board = board or env.get("BOARD")
+        assert board, "BoardConfig: Board is not defined"
+        config = p.board_config(board)
     except (AssertionError, exception.UnknownBoard) as e:
         sys.stderr.write("Error: %s\n" % str(e))
         env.Exit(1)
@@ -97,6 +98,56 @@ def LoadPioPlatform(env, variables):
         env.Replace(LDSCRIPT_PATH=board_config.get("build.ldscript"))
 
 
+def PrintConfiguration(env):  # pylint: disable=too-many-branches
+    platform_data = ["PLATFORM: %s >" % env.PioPlatform().title]
+    system_data = ["SYSTEM:"]
+    mcu = env.subst("$BOARD_MCU")
+    f_cpu = env.subst("$BOARD_F_CPU")
+    if mcu:
+        system_data.append(mcu.upper())
+    if f_cpu:
+        f_cpu = int("".join([c for c in str(f_cpu) if c.isdigit()]))
+        system_data.append("%dMHz" % (f_cpu / 1000000))
+
+    debug_tools = None
+    if "BOARD" in env:
+        board_config = env.BoardConfig()
+        platform_data.append(board_config.get("name"))
+
+        debug_tools = board_config.get("debug", {}).get("tools")
+        ram = board_config.get("upload", {}).get("maximum_ram_size")
+        flash = board_config.get("upload", {}).get("maximum_size")
+        system_data.append("%s RAM (%s Flash)" % (util.format_filesize(ram),
+                                                  util.format_filesize(flash)))
+
+    if platform_data:
+        print " ".join(platform_data)
+    if system_data:
+        print " ".join(system_data)
+
+    # Debugging
+    if not debug_tools:
+        return
+
+    data = [
+        "CURRENT(%s)" % board_config.get_debug_tool_name(
+            env.subst("$DEBUG_TOOL"))
+    ]
+    onboard = []
+    external = []
+    for key, value in debug_tools.items():
+        if value.get("onboard"):
+            onboard.append(key)
+        else:
+            external.append(key)
+    if onboard:
+        data.append("ON-BOARD(%s)" % ", ".join(sorted(onboard)))
+    if external:
+        data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
+
+    print "DEBUG: %s" % " ".join(data)
+
+
 def exists(_):
     return True
 
@@ -106,4 +157,5 @@ def generate(env):
     env.AddMethod(BoardConfig)
     env.AddMethod(GetFrameworkScript)
     env.AddMethod(LoadPioPlatform)
+    env.AddMethod(PrintConfiguration)
     return env

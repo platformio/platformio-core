@@ -60,7 +60,7 @@
   </ItemGroup>
   % for file in src_files:
   <ItemGroup>
-    % if any([file.endswith(".%s" % e) for e in ("h", "hh", "hpp", "inc")]):
+    % if any(file.endswith(".%s" % e) for e in ("h", "hh", "hpp", "inc")):
     <ClInclude Include="{{file}}">
       <Filter>Header Files</Filter>
     </ClInclude>

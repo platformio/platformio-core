@@ -427,10 +427,10 @@ class PlatformRunMixin(object):
 """.format(filename=filename,
            filename_styled=click.style(filename, fg="cyan"),
            link=click.style(
-               "http://platformio.org/lib/search?query=header:%s" % quote(
+               "https://platformio.org/lib/search?query=header:%s" % quote(
                    filename, safe=""),
                fg="blue"),
-           dots="*" * (55 + len(filename)))
+           dots="*" * (56 + len(filename)))
         click.echo(banner, err=True)
 
     @staticmethod
@@ -563,9 +563,9 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
                     if not isdir(boards_dir):
                         continue
                     manifest_path = join(boards_dir, "%s.json" % id_)
-                    if not isfile(manifest_path):
-                        continue
-                    _append_board(id_, manifest_path)
+                    if isfile(manifest_path):
+                        _append_board(id_, manifest_path)
+                        break
             if id_ not in self._BOARDS_CACHE:
                 raise exception.UnknownBoard(id_)
         return self._BOARDS_CACHE[id_] if id_ else self._BOARDS_CACHE
@@ -684,9 +684,11 @@ class PlatformBoardConfig(object):
             "mcu":
             self._manifest.get("build", {}).get("mcu", "").upper(),
             "fcpu":
-            int(
-                re.sub(r"[^\d]+", "",
-                       self._manifest.get("build", {}).get("f_cpu", "0L"))),
+            int("".join([
+                c for c in str(
+                    self._manifest.get("build", {}).get("f_cpu", "0L"))
+                if c.isdigit()
+            ])),
             "ram":
             self._manifest.get("upload", {}).get("maximum_ram_size", 0),
             "rom":
@@ -713,3 +715,33 @@ class PlatformBoardConfig(object):
                 if key in ("default", "onboard"):
                     tools[name][key] = value
         return {"tools": tools}
+
+    def get_debug_tool_name(self, custom=None):
+        debug_tools = self._manifest.get("debug", {}).get("tools")
+        tool_name = custom
+        if tool_name == "custom":
+            return tool_name
+        if not debug_tools:
+            raise exception.DebugSupportError(self._manifest['name'])
+        if tool_name:
+            if tool_name in debug_tools:
+                return tool_name
+            raise exception.DebugInvalidOptions(
+                "Unknown debug tool `%s`. Please use one of `%s` or `custom`" %
+                (tool_name, ", ".join(sorted(debug_tools.keys()))))
+
+        # automatically select best tool
+        data = {"default": [], "onboard": [], "external": []}
+        for key, value in debug_tools.items():
+            if value.get("default"):
+                data['default'].append(key)
+            elif value.get("onboard"):
+                data['onboard'].append(key)
+            data['external'].append(key)
+
+        for key, value in data.items():
+            if not value:
+                continue
+            return sorted(value)[0]
+
+        assert any(item for item in data)
