@@ -411,7 +411,7 @@ def check_project_envs(config, environments=None):
 
 def calculate_project_hash():
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
-    structure = [__version__]
+    chunks = [__version__]
     for d in (util.get_projectsrc_dir(), util.get_projectlib_dir()):
         if not isdir(d):
             continue
@@ -419,5 +419,10 @@ def calculate_project_hash():
             for f in files:
                 path = join(root, f)
                 if path.endswith(check_suffixes):
-                    structure.append(path)
-    return sha1(",".join(sorted(structure))).hexdigest()
+                    chunks.append(path)
+    chunks_to_str = ",".join(sorted(chunks))
+    if "windows" in util.get_systype():
+        # Fix issue with useless project rebuilding for case insensitive FS.
+        # A case of disk drive can differ...
+        chunks_to_str = chunks_to_str.lower()
+    return sha1(chunks_to_str).hexdigest()

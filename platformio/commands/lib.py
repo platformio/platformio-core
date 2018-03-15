@@ -255,9 +255,10 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         elif not click.confirm("Show next libraries?"):
             break
         result = get_api_result(
-            "/v2/lib/search",
-            {"query": " ".join(query),
-             "page": int(result['page']) + 1},
+            "/v2/lib/search", {
+                "query": " ".join(query),
+                "page": int(result['page']) + 1
+            },
             cache_valid="1d")
 
 

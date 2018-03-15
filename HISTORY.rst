@@ -4,6 +4,12 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.5.3 (2018-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed issue with useless project rebuilding for case insensitive file
+  systems (Windows)
+
 3.5.2 (2018-03-13)
 ~~~~~~~~~~~~~~~~~~
 
