@@ -69,7 +69,7 @@ class CorePackageManager(PackageManager):
             if manifest['name'] not in best_pkg_versions:
                 continue
             if manifest['version'] != best_pkg_versions[manifest['name']]:
-                self.uninstall(manifest['__pkg_dir'], trigger_event=False)
+                self.uninstall(manifest['__pkg_dir'], after_update=True)
         self.cache_reset()
         return True
 

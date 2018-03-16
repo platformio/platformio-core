@@ -332,7 +332,7 @@ class LibraryManager(BasePkgManager):
             name,
             requirements=None,
             silent=False,
-            trigger_event=True,
+            after_update=False,
             interactive=False,
             force=False):
         _name, _requirements, _url = self.parse_pkg_uri(name, requirements)
@@ -350,7 +350,7 @@ class LibraryManager(BasePkgManager):
             name,
             requirements,
             silent=silent,
-            trigger_event=trigger_event,
+            after_update=after_update,
             force=force)
 
         if not pkg_dir:
@@ -369,7 +369,7 @@ class LibraryManager(BasePkgManager):
                 self.install(
                     "{name}={version}".format(**filters),
                     silent=silent,
-                    trigger_event=trigger_event,
+                    after_update=after_update,
                     interactive=interactive,
                     force=force)
             else:
@@ -385,14 +385,14 @@ class LibraryManager(BasePkgManager):
                         lib_id,
                         filters.get("version"),
                         silent=silent,
-                        trigger_event=trigger_event,
+                        after_update=after_update,
                         interactive=interactive,
                         force=force)
                 else:
                     self.install(
                         lib_id,
                         silent=silent,
-                        trigger_event=trigger_event,
+                        after_update=after_update,
                         interactive=interactive,
                         force=force)
         return pkg_dir

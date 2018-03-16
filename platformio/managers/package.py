@@ -633,7 +633,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 name,
                 requirements=None,
                 silent=False,
-                trigger_event=True,
+                after_update=False,
                 force=False):
         name, requirements, url = self.parse_pkg_uri(name, requirements)
         package_dir = self.get_package_dir(name, requirements, url)
@@ -676,7 +676,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         manifest = self.load_manifest(pkg_dir)
         assert manifest
 
-        if trigger_event:
+        if not after_update:
             telemetry.on_event(
                 category=self.__class__.__name__,
                 action="Install",
@@ -690,7 +690,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
         return pkg_dir
 
-    def uninstall(self, package, requirements=None, trigger_event=True):
+    def uninstall(self, package, requirements=None, after_update=False):
         if isdir(package):
             pkg_dir = package
         else:
@@ -723,7 +723,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
         click.echo("[%s]" % click.style("OK", fg="green"))
 
-        if trigger_event:
+        if not after_update:
             telemetry.on_event(
                 category=self.__class__.__name__,
                 action="Uninstall",
@@ -769,8 +769,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             self._update_src_manifest(
                 dict(version=vcs.get_current_revision()), vcs.storage_dir)
         else:
-            self.uninstall(pkg_dir, trigger_event=False)
-            self.install(name, latest, trigger_event=False)
+            self.uninstall(pkg_dir, after_update=True)
+            self.install(name, latest, after_update=True)
 
         telemetry.on_event(
             category=self.__class__.__name__,
