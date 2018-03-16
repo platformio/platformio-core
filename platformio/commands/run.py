@@ -126,9 +126,9 @@ class EnvironmentProcessor(object):
 
     DEFAULT_DUMP_OPTIONS = ("platform", "framework", "board")
 
-    KNOWN_PLATFORMIO_OPTIONS = ("env_default", "home_dir", "lib_dir",
-                                "libdeps_dir", "include_dir", "src_dir",
-                                "build_dir", "data_dir", "test_dir",
+    KNOWN_PLATFORMIO_OPTIONS = ("description", "env_default", "home_dir",
+                                "lib_dir", "libdeps_dir", "include_dir",
+                                "src_dir", "build_dir", "data_dir", "test_dir",
                                 "boards_dir", "lib_extra_dirs")
 
     KNOWN_ENV_OPTIONS = ("platform", "framework", "board", "board_mcu",
