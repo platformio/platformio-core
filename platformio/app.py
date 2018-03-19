@@ -210,10 +210,17 @@ class ContentCache(object):
 
         if not isdir(dirname(cache_path)):
             os.makedirs(dirname(cache_path))
-        with codecs.open(cache_path, "wb") as fp:
-            fp.write(str(data))
-        with codecs.open(self._db_path, "a") as fp:
-            fp.write("%s=%s\n" % (str(expire_time), cache_path))
+        try:
+            with codecs.open(cache_path, "wb") as fp:
+                fp.write(data)
+            with codecs.open(self._db_path, "a") as fp:
+                fp.write("%s=%s\n" % (str(expire_time), cache_path))
+        except UnicodeError:
+            if isfile(cache_path):
+                try:
+                    remove(cache_path)
+                except OSError:
+                    pass
 
         return self._unlock_dbindex()
 
