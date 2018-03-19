@@ -107,7 +107,7 @@ class State(object):
     def __exit__(self, type_, value, traceback):
         if self._prev_state != self._state:
             try:
-                with codecs.open(self.path, "w") as fp:
+                with codecs.open(self.path, "w", encoding="utf8") as fp:
                     if "dev" in __version__:
                         json.dump(self._state, fp, indent=4)
                     else:
@@ -188,7 +188,7 @@ class ContentCache(object):
         cache_path = self.get_cache_path(key)
         if not isfile(cache_path):
             return None
-        with codecs.open(cache_path, "rb") as fp:
+        with codecs.open(cache_path, "rb", encoding="utf8") as fp:
             return fp.read()
 
     def set(self, key, data, valid):
@@ -211,9 +211,9 @@ class ContentCache(object):
         if not isdir(dirname(cache_path)):
             os.makedirs(dirname(cache_path))
         try:
-            with codecs.open(cache_path, "wb") as fp:
+            with codecs.open(cache_path, "wb", encoding="utf8") as fp:
                 fp.write(data)
-            with codecs.open(self._db_path, "a") as fp:
+            with open(self._db_path, "a") as fp:
                 fp.write("%s=%s\n" % (str(expire_time), cache_path))
         except UnicodeError:
             if isfile(cache_path):
@@ -235,7 +235,7 @@ class ContentCache(object):
         paths_for_delete = [self.get_cache_path(k) for k in keys]
         found = False
         newlines = []
-        with codecs.open(self._db_path) as fp:
+        with open(self._db_path) as fp:
             for line in fp.readlines():
                 if "=" not in line:
                     continue
@@ -255,7 +255,7 @@ class ContentCache(object):
                         pass
 
         if found and self._lock_dbindex():
-            with codecs.open(self._db_path, "w") as fp:
+            with open(self._db_path, "w") as fp:
                 fp.write("\n".join(newlines) + "\n")
             self._unlock_dbindex()
 
