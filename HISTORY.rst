@@ -7,6 +7,12 @@ PlatformIO 3.0
 3.5.3 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`__ -
+  interact with PlatformIO ecosystem using modern and cross-platform GUI:
+
+  - "Recent News" block on "Welcome" page
+  - Direct import of development platform's example
+
 * Describe your project with a new
   `description <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#description>`_
   option for `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__ (information will be used by
