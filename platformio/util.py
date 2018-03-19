@@ -607,8 +607,9 @@ def _get_api_result(
                 headers=headers,
                 auth=auth,
                 verify=verify_ssl)
-        result = r.json()
         r.raise_for_status()
+        r.json()
+        result = r.text
     except requests.exceptions.HTTPError as e:
         if result and "message" in result:
             raise exception.APIRequestError(result['message'])
@@ -637,7 +638,7 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
                 if cache_key:
                     result = cc.get(cache_key)
                     if result is not None:
-                        return result
+                        return json.loads(result)
 
             # check internet before and resolve issue with 60 seconds timeout
             internet_on(raise_exception=True)
@@ -646,7 +647,7 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
             if cache_valid:
                 with ContentCache() as cc:
                     cc.set(cache_key, result, cache_valid)
-            return result
+            return json.loads(result)
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
             from platformio.maintenance import in_silence
