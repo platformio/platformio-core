@@ -16,8 +16,10 @@ from platformio.commands.run import cli as cmd_run
 
 
 def test_build_flags(clirunner, validate_cliresult, tmpdir):
-    build_flags = [("-D TEST_INT=13", "-DTEST_INT=13"), ("-DTEST_SINGLE_MACRO", "-DTEST_SINGLE_MACRO"),
-                   ('-DTEST_STR_SPACE="Andrew Smith"', '"-DTEST_STR_SPACE=Andrew Smith"')]
+    build_flags = [("-D TEST_INT=13", "-DTEST_INT=13"),
+                   ("-DTEST_SINGLE_MACRO", "-DTEST_SINGLE_MACRO"),
+                   ('-DTEST_STR_SPACE="Andrew Smith"',
+                    '"-DTEST_STR_SPACE=Andrew Smith"')]
 
     tmpdir.join("platformio.ini").write("""
 [env:native]
