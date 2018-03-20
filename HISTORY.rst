@@ -19,6 +19,8 @@ PlatformIO 3.0
   `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`_)
 * Fixed issue with useless project rebuilding for case insensitive file
   systems (Windows)
+* Fixed issue with ``build_unflags`` option when a macro contains value
+  (e.g., ``-DNAME=VALUE``)
 
 3.5.2 (2018-03-13)
 ~~~~~~~~~~~~~~~~~~

@@ -119,38 +119,47 @@ def BuildProgram(env):
     return program
 
 
-def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
-    if not flags:
-        return
+def ParseFlagsExtended(env, flags):
     if isinstance(flags, list):
         flags = " ".join(flags)
-    parsed_flags = env.ParseFlags(str(flags))
-    for flag in parsed_flags.pop("CPPDEFINES"):
-        if not Util.is_Sequence(flag):
-            env.Append(CPPDEFINES=flag)
+    result = env.ParseFlags(str(flags))
+
+    cppdefines = []
+    for item in result['CPPDEFINES']:
+        if not Util.is_Sequence(item):
+            cppdefines.append(item)
             continue
-        _key, _value = flag[:2]
-        if '\"' in _value:
-            _value = _value.replace('\"', '\\\"')
-        elif _value.isdigit():
-            _value = int(_value)
-        elif _value.replace(".", "", 1).isdigit():
-            _value = float(_value)
-        env.Append(CPPDEFINES=(_key, _value))
-    env.Append(**parsed_flags)
+        name, value = item[:2]
+        if '\"' in value:
+            value = value.replace('\"', '\\\"')
+        elif value.isdigit():
+            value = int(value)
+        elif value.replace(".", "", 1).isdigit():
+            value = float(value)
+        cppdefines.append((name, value))
+    result['CPPDEFINES'] = cppdefines
 
     # fix relative CPPPATH & LIBPATH
     for k in ("CPPPATH", "LIBPATH"):
-        for i, p in enumerate(env.get(k, [])):
+        for i, p in enumerate(result.get(k, [])):
             if isdir(p):
-                env[k][i] = realpath(p)
+                result[k][i] = realpath(p)
+
     # fix relative path for "-include"
-    for i, f in enumerate(env.get("CCFLAGS", [])):
+    for i, f in enumerate(result.get("CCFLAGS", [])):
         if isinstance(f, tuple) and f[0] == "-include":
-            env['CCFLAGS'][i] = (f[0], env.File(realpath(f[1].get_path())))
+            result['CCFLAGS'][i] = (f[0], env.File(realpath(f[1].get_path())))
+
+    return result
+
+
+def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
+    if not flags:
+        return
+    env.Append(**env.ParseFlagsExtended(flags))
 
     # Cancel any previous definition of name, either built in or
-    # provided with a -D option // Issue #191
+    # provided with a -U option // Issue #191
     undefines = [
         u for u in env.get("CCFLAGS", [])
         if isinstance(u, basestring) and u.startswith("-U")
@@ -164,19 +173,18 @@ def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
 def ProcessUnFlags(env, flags):
     if not flags:
         return
-    if isinstance(flags, list):
-        flags = " ".join(flags)
-    parsed_flags = env.ParseFlags(str(flags))
-    all_flags = []
-    for items in parsed_flags.values():
-        all_flags.extend(items)
-    all_flags = set(all_flags)
-
-    for key in parsed_flags:
-        cur_flags = set(env.Flatten(env.get(key, [])))
-        for item in cur_flags & all_flags:
-            while item in env[key]:
-                env[key].remove(item)
+    for key, unflags in env.ParseFlagsExtended(flags).items():
+        for unflag in unflags:
+            if not isinstance(unflag, (list, tuple)):
+                unflag = tuple([unflag])
+            for current in env.get(key, []):
+                conditions = [
+                    unflag == current,
+                    isinstance(current, (tuple, list))
+                    and unflag[0] == current[0]
+                ]
+                if any(conditions):
+                    env[key].remove(current)
 
 
 def IsFileWithExt(env, file_, ext):  # pylint: disable=W0613
@@ -298,6 +306,7 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(BuildProgram)
+    env.AddMethod(ParseFlagsExtended)
     env.AddMethod(ProcessFlags)
     env.AddMethod(ProcessUnFlags)
     env.AddMethod(IsFileWithExt)
