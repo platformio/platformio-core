@@ -18,7 +18,7 @@ import atexit
 import re
 import sys
 from os import environ, remove, walk
-from os.path import basename, isdir, isfile, join, relpath, sep
+from os.path import basename, isdir, isfile, join, realpath, relpath, sep
 from tempfile import mkstemp
 
 from SCons.Action import Action
@@ -302,18 +302,17 @@ def ProcessTest(env):
         duplicate=False)
 
 
-def GetPreExtraScripts(env):
-    return [
-        item[4:] for item in env.get("EXTRA_SCRIPTS", [])
-        if item.startswith("pre:")
-    ]
-
-
-def GetPostExtraScripts(env):
-    return [
-        item[5:] if item.startswith("post:") else item
-        for item in env.get("EXTRA_SCRIPTS", []) if not item.startswith("pre:")
-    ]
+def GetExtraScripts(env, scope):
+    items = []
+    for item in env.get("EXTRA_SCRIPTS", []):
+        if scope == "post" and ":" not in item:
+            items.append(item)
+        elif item.startswith("%s:" % scope):
+            items.append(item[len(scope) + 1:])
+    if not items:
+        return items
+    with util.cd(env.subst("$PROJECT_DIR")):
+        return [realpath(item) for item in items]
 
 
 def exists(_):
@@ -328,6 +327,5 @@ def generate(env):
     env.AddMethod(PioClean)
     env.AddMethod(ProcessDebug)
     env.AddMethod(ProcessTest)
-    env.AddMethod(GetPreExtraScripts)
-    env.AddMethod(GetPostExtraScripts)
+    env.AddMethod(GetExtraScripts)
     return env

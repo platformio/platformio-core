@@ -289,15 +289,14 @@ def BuildFrameworks(env, frameworks):
 
 
 def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
-    lib = env.Clone()
-    return lib.StaticLibrary(
-        lib.subst(variant_dir),
-        lib.CollectBuildFiles(variant_dir, src_dir, src_filter))
+    return env.StaticLibrary(
+        env.subst(variant_dir),
+        env.CollectBuildFiles(variant_dir, src_dir, src_filter))
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):
-    DefaultEnvironment().Append(PIOBUILDFILES=env.Clone().CollectBuildFiles(
-        variant_dir, src_dir, src_filter))
+    DefaultEnvironment().Append(
+        PIOBUILDFILES=env.CollectBuildFiles(variant_dir, src_dir, src_filter))
 
 
 def exists(_):

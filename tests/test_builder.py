@@ -24,8 +24,14 @@ def test_build_flags(clirunner, validate_cliresult, tmpdir):
     tmpdir.join("platformio.ini").write("""
 [env:native]
 platform = native
+extra_scripts = extra.py
 build_flags = %s
     """ % " ".join([f[0] for f in build_flags]))
+
+    tmpdir.join("extra.py").write("""
+Import("env")
+env.Append(CPPDEFINES="POST_SCRIPT_MACRO")
+    """)
 
     tmpdir.mkdir("src").join("main.cpp").write("""
 #if !defined(TEST_INT) || TEST_INT != 13
@@ -34,6 +40,10 @@ build_flags = %s
 
 #ifndef TEST_STR_SPACE
 #error "TEST_STR_SPACE"
+#endif
+
+#ifndef POST_SCRIPT_MACRO
+#error "POST_SCRIPT_MACRO"
 #endif
 
 int main() {

@@ -21,6 +21,8 @@ PlatformIO 3.0
   systems (Windows)
 * Fixed issue with ``build_unflags`` option when a macro contains value
   (e.g., ``-DNAME=VALUE``)
+* Fixed issue which did not allow to override runtime build environment using
+  extra POST script
 
 3.5.2 (2018-03-13)
 ~~~~~~~~~~~~~~~~~~

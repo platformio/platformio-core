@@ -156,7 +156,7 @@ env.LoadPioPlatform(commonvars)
 env.SConscriptChdir(0)
 env.SConsignFile(join("$PROJECTBUILD_DIR", ".sconsign.dblite"))
 
-for item in env.GetPreExtraScripts():
+for item in env.GetExtraScripts("pre"):
     env.SConscript(item, exports="env")
 
 env.SConscript("$BUILD_SCRIPT")
@@ -167,7 +167,7 @@ AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS + ["size"]))
 if "UPLOAD_FLAGS" in env:
     env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
 
-for item in env.GetPostExtraScripts():
+for item in env.GetExtraScripts("post"):
     env.SConscript(item, exports="env")
 
 if "envdump" in COMMAND_LINE_TARGETS:
