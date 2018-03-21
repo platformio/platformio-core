@@ -63,8 +63,6 @@ def BuildProgram(env):
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
         env.ProcessFlags(env.BoardConfig().get("build.extra_flags"))
-    # remove base flags
-    env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
     # apply user flags
     env.ProcessFlags(env.get("BUILD_FLAGS"))
 
@@ -73,6 +71,9 @@ def BuildProgram(env):
 
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
+
+    # remove specified flags
+    env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 
     # build dependent libs; place them before built-in libs
     env.Prepend(LIBS=env.BuildProjectLibraries())
