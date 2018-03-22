@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 from glob import glob
 from os import environ
-from os.path import join
+from os.path import abspath, join
 
 from SCons.Defaults import processDefines
 
@@ -57,7 +57,7 @@ def _dump_includes(env):
     result = []
     for item in includes:
         if item not in result:
-            result.append(item)
+            result.append(abspath(item))
 
     return result
 
