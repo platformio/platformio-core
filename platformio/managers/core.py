@@ -24,7 +24,7 @@ CORE_PACKAGES = {
     "contrib-piohome": ">=0.9.1,<2",
     "contrib-pysite": ">=0.2.0,<2",
     "tool-pioplus": ">=1.1.2,<2",
-    "tool-unity": "~1.20302.1",
+    "tool-unity": "~1.20403.0",
     "tool-scons": "~2.20501.4"
 }
 
