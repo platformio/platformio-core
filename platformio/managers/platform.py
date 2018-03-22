@@ -30,7 +30,7 @@ from platformio.managers.package import BasePkgManager, PackageManager
 
 class PlatformManager(BasePkgManager):
 
-    FILE_CACHE_VALID = None  # disable platform caching
+    FILE_CACHE_VALID = None  # disable platform download caching
 
     def __init__(self, package_dir=None, repositories=None):
         if not repositories:
@@ -158,6 +158,7 @@ class PlatformManager(BasePkgManager):
         self.cache_reset()
         return True
 
+    @util.memoized(expire=5000)
     def get_installed_boards(self):
         boards = []
         for manifest in self.get_installed():
@@ -169,7 +170,7 @@ class PlatformManager(BasePkgManager):
         return boards
 
     @staticmethod
-    @util.memoized
+    @util.memoized()
     def get_registered_boards():
         return util.get_api_result("/boards", cache_valid="7d")
 

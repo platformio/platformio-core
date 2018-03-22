@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import collections
-import functools
 import json
 import os
 import platform
@@ -113,40 +111,22 @@ class cd(object):
 
 
 class memoized(object):
-    '''
-    Decorator. Caches a function's return value each time it is called.
-    If called later with the same arguments, the cached value is returned
-    (not reevaluated).
-    https://wiki.python.org/moin/PythonDecoratorLibrary#Memoize
-    '''
 
-    def __init__(self, func):
-        self.func = func
+    def __init__(self, expire=0):
+        self.expire = expire / 1000  # milliseconds
         self.cache = {}
 
-    def __call__(self, *args):
-        if not isinstance(args, collections.Hashable):
-            # uncacheable. a list, for instance.
-            # better to not cache than blow up.
-            return self.func(*args)
-        if args in self.cache:
-            return self.cache[args]
-        value = self.func(*args)
-        self.cache[args] = value
-        return value
+    def __call__(self, func):
 
-    def __repr__(self):
-        '''Return the function's docstring.'''
-        return self.func.__doc__
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            key = str(args) + str(kwargs)
+            if (key not in self.cache
+                    or self.cache[key][0] < time.time() - self.expire):
+                self.cache[key] = (time.time(), func(*args, **kwargs))
+            return self.cache[key][1]
 
-    def __get__(self, obj, objtype):
-        '''Support instance methods.'''
-        fn = functools.partial(self.__call__, obj)
-        fn.reset = self._reset
-        return fn
-
-    def _reset(self):
-        self.cache = {}
+        return wrapper
 
 
 class throttle(object):
@@ -155,15 +135,15 @@ class throttle(object):
         self.threshhold = threshhold  # milliseconds
         self.last = 0
 
-    def __call__(self, fn):
+    def __call__(self, func):
 
-        @wraps(fn)
+        @wraps(func)
         def wrapper(*args, **kwargs):
             diff = int(round((time.time() - self.last) * 1000))
             if diff < self.threshhold:
                 time.sleep((self.threshhold - diff) * 0.001)
             self.last = time.time()
-            return fn(*args, **kwargs)
+            return func(*args, **kwargs)
 
         return wrapper
 
@@ -568,7 +548,7 @@ def get_request_defheaders():
     return {"User-Agent": "PlatformIO/%s CI/%d %s" % data}
 
 
-@memoized
+@memoized(expire=10000)
 def _api_request_session():
     return requests.Session()
 
@@ -671,7 +651,7 @@ PING_INTERNET_IPS = [
 ]
 
 
-@memoized
+@memoized(expire=5000)
 def _internet_on():
     timeout = 2
     socket.setdefaulttimeout(timeout)

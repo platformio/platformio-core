@@ -199,7 +199,7 @@ def _delete_file(path):
         pass
 
 
-@util.memoized
+@util.memoized()
 def _get_compiler_type(env):
     try:
         sysenv = environ.copy()

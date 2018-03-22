@@ -23,7 +23,7 @@ from platformio import exception, util
 from platformio.managers.platform import PlatformFactory
 
 
-@util.memoized
+@util.memoized()
 def initPioPlatform(name):
     return PlatformFactory.newPlatform(name)
 

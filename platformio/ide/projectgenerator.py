@@ -40,7 +40,7 @@ class ProjectGenerator(object):
         return sorted(
             [d for d in os.listdir(tpls_dir) if isdir(join(tpls_dir, d))])
 
-    @util.memoized
+    @util.memoized()
     def get_project_env(self):
         data = {}
         config = util.load_project_config(self.project_dir)
@@ -54,7 +54,6 @@ class ProjectGenerator(object):
                 data[k] = v
         return data
 
-    @util.memoized
     def get_project_build_data(self):
         data = {
             "defines": [],

@@ -398,7 +398,7 @@ class LibraryManager(BasePkgManager):
         return pkg_dir
 
 
-@util.memoized
+@util.memoized()
 def get_builtin_libs(storage_names=None):
     items = []
     storage_names = storage_names or []
@@ -417,7 +417,7 @@ def get_builtin_libs(storage_names=None):
     return items
 
 
-@util.memoized
+@util.memoized()
 def is_builtin_lib(name):
     for storage in get_builtin_libs():
         if any(l.get("name") == name for l in storage['items']):
