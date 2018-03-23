@@ -528,6 +528,13 @@ def get_mdns_services():
     with mDNSListener() as mdns:
         time.sleep(3)
         for service in mdns.get_services():
+            properties = None
+            try:
+                assert str(service.properties)
+                properties = service.properties
+            except (AssertionError, UnicodeError):
+                pass
+
             items.append({
                 "type":
                 service.type,
@@ -538,7 +545,7 @@ def get_mdns_services():
                 "port":
                 service.port,
                 "properties":
-                service.properties
+                properties
             })
     return items
 
