@@ -530,9 +530,10 @@ def get_mdns_services():
         for service in mdns.get_services():
             properties = None
             try:
-                assert str(service.properties)
+                if service.properties:
+                    json.dumps(service.properties)
                 properties = service.properties
-            except (AssertionError, UnicodeError):
+            except UnicodeDecodeError:
                 pass
 
             items.append({
