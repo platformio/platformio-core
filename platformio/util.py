@@ -587,9 +587,9 @@ def _get_api_result(
                 headers=headers,
                 auth=auth,
                 verify=verify_ssl)
+        result = r.json()
         r.raise_for_status()
-        r.json()
-        result = r.text
+        return r.text
     except requests.exceptions.HTTPError as e:
         if result and "message" in result:
             raise exception.APIRequestError(result['message'])
@@ -603,7 +603,7 @@ def _get_api_result(
     finally:
         if r:
             r.close()
-    return result
+    return None
 
 
 def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
