@@ -16,11 +16,11 @@ import pytest
 import requests
 
 
-def validate_response(req):
-    assert req.status_code == 200
-    assert int(req.headers['Content-Length']) > 0
-    assert req.headers['Content-Type'] in ("application/gzip",
-                                           "application/octet-stream")
+def validate_response(r):
+    assert r.status_code == 200, r.url
+    assert int(r.headers['Content-Length']) > 0, r.url
+    assert r.headers['Content-Type'] in ("application/gzip",
+                                         "application/octet-stream")
 
 
 def test_packages():
