@@ -68,7 +68,9 @@ def _get_gcc_defines(env):
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
         result = util.exec_command(
-            "echo | %s -dM -E -" % env.subst("$CC"), env=sysenv, shell=True)
+            "echo | %s -dM -E -x c++ -" % env.subst("$CC"),
+            env=sysenv,
+            shell=True)
     except OSError:
         return items
     if result['returncode'] != 0:
