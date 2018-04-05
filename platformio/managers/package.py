@@ -178,7 +178,7 @@ class PkgInstallerMixin(object):
                     return dst_path
 
         fd = FileDownloader(url, dest_dir)
-        fd.start()
+        fd.start(with_progress=not app.is_disabled_progressbar())
         if sha1:
             fd.verify(sha1)
         dst_path = fd.get_filepath()

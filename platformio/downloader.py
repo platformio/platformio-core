@@ -21,7 +21,7 @@ from time import mktime
 import click
 import requests
 
-from platformio import app, util
+from platformio import util
 from platformio.exception import (FDSHASumMismatch, FDSizeMismatch,
                                   FDUnrecognizedStatusCode)
 
@@ -70,12 +70,12 @@ class FileDownloader(object):
             return -1
         return int(self._request.headers['content-length'])
 
-    def start(self):
+    def start(self, with_progress=True):
         label = "Downloading"
         itercontent = self._request.iter_content(chunk_size=self.CHUNK_SIZE)
         f = open(self._destination, "wb")
         try:
-            if app.is_disabled_progressbar() or self.get_size() == -1:
+            if not with_progress or self.get_size() == -1:
                 click.echo("%s..." % label)
                 for chunk in itercontent:
                     if chunk:
@@ -86,6 +86,8 @@ class FileDownloader(object):
                     for _ in pb:
                         f.write(next(itercontent))
         except IOError as e:
+            if with_progress:
+                return self.start(with_progress=False)
             click.secho(
                 "Error: Please read http://bit.ly/package-manager-ioerror",
                 fg="red",
@@ -97,6 +99,8 @@ class FileDownloader(object):
 
         if self.get_lmtime():
             self._preserve_filemtime(self.get_lmtime())
+
+        return True
 
     def verify(self, sha1=None):
         _dlsize = getsize(self._destination)
