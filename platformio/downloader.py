@@ -31,8 +31,15 @@ class FileDownloader(object):
     CHUNK_SIZE = 1024
 
     def __init__(self, url, dest_dir=None):
-        self.url = url
-        self._request = self.init_request()
+        self._request = None
+        # make connection
+        self._request = requests.get(
+            url,
+            stream=True,
+            headers=util.get_request_defheaders(),
+            verify=version_info >= (2, 7, 9))
+        if self._request.status_code != 200:
+            raise FDUnrecognizedStatusCode(self._request.status_code, url)
 
         disposition = self._request.headers.get("content-disposition")
         if disposition and "filename=" in disposition:
@@ -47,16 +54,6 @@ class FileDownloader(object):
         if dest_dir:
             self.set_destination(
                 join(dest_dir.decode(getfilesystemencoding()), self._fname))
-
-    def init_request(self):
-        r = requests.get(
-            self.url,
-            stream=True,
-            headers=util.get_request_defheaders(),
-            verify=version_info >= (2, 7, 9))
-        if r.status_code != 200:
-            raise FDUnrecognizedStatusCode(r.status_code, self.url)
-        return r
 
     def set_destination(self, destination):
         self._destination = destination
@@ -87,16 +84,6 @@ class FileDownloader(object):
                 with click.progressbar(length=chunks, label=label) as pb:
                     for _ in pb:
                         f.write(next(itercontent))
-        except IOError as e:
-            if with_progress:
-                # reinitialize request
-                self._request = self.init_request()
-                return self.start(with_progress=False)
-            click.secho(
-                "Error: Please read http://bit.ly/package-manager-ioerror",
-                fg="red",
-                err=True)
-            raise e
         finally:
             f.close()
             self._request.close()

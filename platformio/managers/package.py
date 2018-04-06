@@ -177,8 +177,25 @@ class PkgInstallerMixin(object):
                     shutil.copy(cache_path, dst_path)
                     return dst_path
 
-        fd = FileDownloader(url, dest_dir)
-        fd.start(with_progress=not app.is_disabled_progressbar())
+        with_progress = not app.is_disabled_progressbar()
+        try:
+            fd = FileDownloader(url, dest_dir)
+            fd.start(with_progress=with_progress)
+        except IOError as e:
+            raise_error = not with_progress
+            if with_progress:
+                try:
+                    fd = FileDownloader(url, dest_dir)
+                    fd.start(with_progress=False)
+                except IOError:
+                    raise_error = True
+            if raise_error:
+                click.secho(
+                    "Error: Please read http://bit.ly/package-manager-ioerror",
+                    fg="red",
+                    err=True)
+                raise e
+
         if sha1:
             fd.verify(sha1)
         dst_path = fd.get_filepath()
@@ -194,8 +211,15 @@ class PkgInstallerMixin(object):
 
     @staticmethod
     def unpack(source_path, dest_dir):
-        with FileUnpacker(source_path) as fu:
-            return fu.unpack(dest_dir)
+        with_progress = not app.is_disabled_progressbar()
+        try:
+            with FileUnpacker(source_path) as fu:
+                return fu.unpack(dest_dir, with_progress=with_progress)
+        except IOError as e:
+            if not with_progress:
+                raise e
+            with FileUnpacker(source_path) as fu:
+                return fu.unpack(dest_dir, with_progress=False)
 
     @staticmethod
     def parse_semver_spec(value, raise_exception=False):
