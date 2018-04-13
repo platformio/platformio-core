@@ -494,6 +494,10 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         return self._manifest.get("url")
 
     @property
+    def docs_url(self):
+        return self._manifest.get("docs")
+
+    @property
     def repository_url(self):
         return self._manifest.get("repository", {}).get("url")
 
