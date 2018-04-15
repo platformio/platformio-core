@@ -27,7 +27,7 @@ from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
 import SCons.Scanner
 from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, DefaultEnvironment
 
-from platformio import util
+from platformio import exception, util
 from platformio.builder.tools import platformio as piotool
 from platformio.managers.lib import LibraryManager
 from platformio.managers.package import PackageManager
@@ -777,7 +777,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             try:
                 lb = LibBuilderFactory.new(
                     env, join(libs_dir, item), verbose=verbose)
-            except ValueError:
+            except exception.InvalidJSONFile:
                 if verbose:
                     sys.stderr.write("Skip library with broken manifest: %s\n"
                                      % join(libs_dir, item))

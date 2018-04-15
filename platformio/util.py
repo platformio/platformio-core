@@ -169,8 +169,7 @@ def load_json(file_path):
         with open(file_path, "r") as f:
             return json.load(f)
     except ValueError:
-        raise exception.PlatformioException(
-            "Could not load broken JSON: %s" % file_path)
+        raise exception.InvalidJSONFile(file_path)
 
 
 def get_systype():
