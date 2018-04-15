@@ -153,7 +153,10 @@ class PlatformManager(BasePkgManager):
                 continue
             if (manifest['name'] not in deppkgs
                     or manifest['version'] not in deppkgs[manifest['name']]):
-                pm.uninstall(manifest['__pkg_dir'], after_update=True)
+                try:
+                    pm.uninstall(manifest['__pkg_dir'], after_update=True)
+                except exception.UnknownPackage:
+                    pass
 
         self.cache_reset()
         return True
