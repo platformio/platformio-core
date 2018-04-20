@@ -63,7 +63,7 @@ def test_build_unflags(clirunner, validate_cliresult, tmpdir):
     tmpdir.join("platformio.ini").write("""
 [env:native]
 platform = native
-build_unflags = -DTMP_MACRO1=45 -I. -DNON_EXISTING_MACRO
+build_unflags = -DTMP_MACRO1=45 -I. -DNON_EXISTING_MACRO -lunknownLib -Os
 extra_scripts = pre:extra.py
 """)
 
@@ -73,6 +73,8 @@ env.Append(CPPPATH="%s")
 env.Append(CPPDEFINES="TMP_MACRO1")
 env.Append(CPPDEFINES=["TMP_MACRO2"])
 env.Append(CPPDEFINES=("TMP_MACRO3", 13))
+env.Append(CCFLAGS=["-Os"])
+env.Append(LIBS=["unknownLib"])
     """ % str(tmpdir))
 
     tmpdir.mkdir("src").join("main.c").write("""
@@ -90,4 +92,5 @@ int main() {
     build_output = result.output[result.output.find(
         "Scanning dependencies..."):]
     assert "-DTMP_MACRO1" not in build_output
+    assert "-Os" not in build_output
     assert str(tmpdir) not in build_output

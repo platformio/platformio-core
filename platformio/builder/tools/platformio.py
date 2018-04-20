@@ -176,8 +176,6 @@ def ProcessUnFlags(env, flags):
         return
     for key, unflags in env.ParseFlagsExtended(flags).items():
         for unflag in unflags:
-            if not isinstance(unflag, (list, tuple)):
-                unflag = tuple([unflag])
             for current in env.get(key, []):
                 conditions = [
                     unflag == current,
