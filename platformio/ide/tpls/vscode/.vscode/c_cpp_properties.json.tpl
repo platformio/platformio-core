@@ -53,7 +53,7 @@
 % if STD_RE.search(cxx_flags):
             "cppStandard": "c++{{ STD_RE.search(cxx_flags).group(1) }}",
 % end
-            "compilerPath": "{{ cc_path }}"
+            "compilerPath": "{{ cc_path.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"') }}"
         }
     ]
 }
