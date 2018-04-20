@@ -53,7 +53,7 @@ def _dump_includes(env):
     if unity_dir:
         includes.append(unity_dir)
 
-    # remove dupicates
+    # remove duplicates
     result = []
     for item in includes:
         if item not in result:
@@ -101,8 +101,8 @@ def _dump_defines(env):
                     .replace("ATMEGA", "ATmega").replace("ATTINY", "ATtiny")))
 
     # built-in GCC marcos
-    if env.GetCompilerType() == "gcc":
-        defines.extend(_get_gcc_defines(env))
+    # if env.GetCompilerType() == "gcc":
+    #     defines.extend(_get_gcc_defines(env))
 
     return defines
 
