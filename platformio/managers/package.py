@@ -502,7 +502,7 @@ class PkgInstallerMixin(object):
                     target_dirname = "%s@src-%s" % (
                         pkg_dirname,
                         hashlib.md5(cur_manifest['__src_url']).hexdigest())
-                os.rename(pkg_dir, join(self.package_dir, target_dirname))
+                shutil.move(pkg_dir, join(self.package_dir, target_dirname))
             # fix to a version
             elif action == 2:
                 target_dirname = "%s@%s" % (pkg_dirname,
@@ -516,7 +516,7 @@ class PkgInstallerMixin(object):
         # remove previous/not-satisfied package
         if isdir(pkg_dir):
             util.rmtree_(pkg_dir)
-        os.rename(tmp_dir, pkg_dir)
+        shutil.move(tmp_dir, pkg_dir)
         assert isdir(pkg_dir)
         self.cache_reset()
         return pkg_dir
@@ -740,9 +740,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         # unfix package with the same name
         pkg_dir = self.get_package_dir(manifest['name'])
         if pkg_dir and "@" in pkg_dir:
-            os.rename(pkg_dir,
-                      join(self.package_dir,
-                           self.get_install_dirname(manifest)))
+            shutil.move(pkg_dir,
+                        join(self.package_dir,
+                             self.get_install_dirname(manifest)))
             self.cache_reset()
 
         click.echo("[%s]" % click.style("OK", fg="green"))
