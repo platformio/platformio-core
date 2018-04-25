@@ -25,6 +25,8 @@ PlatformIO 3.0
   (e.g., ``-DNAME=VALUE``)
 * Fixed issue which did not allow to override runtime build environment using
   extra POST script
+* Fixed "RuntimeError: maximum recursion depth exceeded" for library manager
+  (`issue #1528 <https://github.com/platformio/platformio-core/issues/1528>`_)
 
 3.5.2 (2018-03-13)
 ~~~~~~~~~~~~~~~~~~

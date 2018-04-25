@@ -667,7 +667,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             self.INSTALL_HISTORY = []
         history_key = "%s-%s-%s" % (name, requirements or "", url or "")
         if history_key in self.INSTALL_HISTORY:
-            return package_dir
+            return None
         self.INSTALL_HISTORY.append(history_key)
 
         if package_dir and force:
