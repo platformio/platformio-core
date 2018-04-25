@@ -19,6 +19,8 @@ PlatformIO 3.0
   `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`_)
 * Updated Unity tool to 2.4.3
 * Improved support for Black Magic Probe in "uploader" role
+* Respect a custom "lib_dir" option in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__
+  (`issue #1473 <https://github.com/platformio/platformio-core/issues/1473>`_)
 * Fixed issue with useless project rebuilding for case insensitive file
   systems (Windows)
 * Fixed issue with ``build_unflags`` option when a macro contains value
