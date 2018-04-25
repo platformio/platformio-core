@@ -62,7 +62,7 @@ def test_global_install_archive(clirunner, validate_cliresult,
         "https://github.com/bblanchon/ArduinoJson/archive/v5.8.2.zip",
         "https://github.com/bblanchon/ArduinoJson/archive/v5.8.2.zip@5.8.2",
         "http://dl.platformio.org/libraries/archives/0/9540.tar.gz",
-        "https://github.com/adafruit/Adafruit-ST7735-Library/archive/master.zip"
+        "https://github.com/Pedroalbuquerque/ESP32WebServer/archive/master.zip"
     ])
     validate_cliresult(result)
 
@@ -76,7 +76,7 @@ def test_global_install_archive(clirunner, validate_cliresult,
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
     items2 = [
         "RadioHead-1.62", "ArduinoJson", "DallasTemperature_ID54",
-        "OneWire_ID1", "Adafruit ST7735 Library"
+        "OneWire_ID1", "ESP32WebServer"
     ]
     assert set(items1) >= set(items2)
 
@@ -142,7 +142,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
     validate_cliresult(result)
     assert all([
         n in result.output for n in
-        ("Source: https://github.com/adafruit/Adafruit-ST7735-Library/archive/master.zip",
+        ("Source: https://github.com/Pedroalbuquerque/ESP32WebServer/archive/master.zip",
          "Version: 5.10.1",
          "Source: git+https://github.com/gioblu/PJON.git#3.0",
          "Version: 1fb26fd", "RadioHead-1.62")
@@ -157,7 +157,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
     ])
     items1 = [i['name'] for i in json.loads(result.output)]
     items2 = [
-        "Adafruit ST7735 Library", "ArduinoJson", "ArduinoJson", "ArduinoJson",
+        "ESP32WebServer", "ArduinoJson", "ArduinoJson", "ArduinoJson",
         "ArduinoJson", "AsyncMqttClient", "AsyncTCP", "DallasTemperature",
         "ESPAsyncTCP", "NeoPixelBus", "OneWire", "PJON", "PJON",
         "PubSubClient", "RFcontrol", "RadioHead-1.62", "platformio-libmirror",
@@ -221,9 +221,9 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
     validate_cliresult(result)
     items = json.loads(result.output)
     result = clirunner.invoke(cmd_lib,
-                              ["-g", "uninstall", items[0]['__pkg_dir']])
+                              ["-g", "uninstall", items[5]['__pkg_dir']])
     validate_cliresult(result)
-    assert "Uninstalling Adafruit ST7735 Library" in result.output
+    assert "Uninstalling AsyncTCP" in result.output
 
     # uninstall the rest libraries
     result = clirunner.invoke(cmd_lib, [
@@ -238,7 +238,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
         "PubSubClient", "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
         "ESPAsyncTCP_ID305", "DallasTemperature_ID54", "NeoPixelBus_ID547",
         "PJON", "AsyncMqttClient_ID346", "ArduinoJson_ID64",
-        "PJON@src-79de467ebe19de18287becff0a1fb42d", "AsyncTCP_ID1826"
+        "PJON@src-79de467ebe19de18287becff0a1fb42d", "ESP32WebServer"
     ]
     assert set(items1) == set(items2)
 

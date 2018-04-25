@@ -365,6 +365,15 @@ class LibraryManager(BasePkgManager):
 
         for filters in self.normalize_dependencies(manifest['dependencies']):
             assert "name" in filters
+
+            # avoid circle dependencies
+            if not self.INSTALL_HISTORY:
+                self.INSTALL_HISTORY = []
+            history_key = str(filters)
+            if history_key in self.INSTALL_HISTORY:
+                continue
+            self.INSTALL_HISTORY.append(history_key)
+
             if any(s in filters.get("version", "") for s in ("\\", "/")):
                 self.install(
                     "{name}={version}".format(**filters),
