@@ -28,18 +28,24 @@
         {
             "type": "platformio-debug",
             "request": "launch",
-            "name": "PlatformIO Debugger (Beta)",
+            "name": "PlatformIO Debugger (Dev)",
             "executable": "{{ _escape_path(prog_path) }}",
             "toolchainBinDir": "{{ _escape_path(dirname(gdb_path)) }}",
+% if svd_path:
+            "svdPath": "{{ _escape_path(svd_path) }}",
+% end
             "preLaunchTask": "PlatformIO: Pre-Debug",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "type": "platformio-debug",
             "request": "launch",
-            "name": "PlatformIO Debugger (Beta) (Quick)",
+            "name": "PlatformIO Debugger (Dev) (Quick)",
             "executable": "{{ _escape_path(prog_path) }}",
             "toolchainBinDir": "{{ _escape_path(dirname(gdb_path)) }}",
+% if svd_path:
+            "svdPath": "{{ _escape_path(svd_path) }}",
+% end
             "internalConsoleOptions": "openOnSessionStart"
         }
     ]

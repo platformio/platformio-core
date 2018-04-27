@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 from glob import glob
 from os import environ
-from os.path import abspath, join
+from os.path import abspath, dirname, join
 
 from SCons.Defaults import processDefines
 
@@ -107,6 +107,19 @@ def _dump_defines(env):
     return defines
 
 
+def _get_svd_path(env):
+    if "BOARD" not in env:
+        return None
+    try:
+        svd_path = env.BoardConfig().get("debug.svd_path")
+    except KeyError:
+        return None
+    if not svd_path:
+        return None
+    with util.cd(dirname(env.BoardConfig().manifest_path)):
+        return abspath(svd_path)
+
+
 def DumpIDEData(env):
     LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
     LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
@@ -130,6 +143,8 @@ def DumpIDEData(env):
         util.where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
         "prog_path":
         env.subst("$PROG_PATH"),
+        "svd_path":
+        _get_svd_path(env),
         "compiler_type":
         env.GetCompilerType()
     }
