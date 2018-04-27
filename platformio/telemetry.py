@@ -153,7 +153,8 @@ class MeasurementProtocol(TelemetryBase):
                         cmd_path.append(sub_cmd)
         self['screen_name'] = " ".join([p.title() for p in cmd_path])
 
-    def _ignore_hit(self):
+    @staticmethod
+    def _ignore_hit():
         if not app.get_setting("enable_telemetry"):
             return True
         if app.get_session_var("caller_id") and \
