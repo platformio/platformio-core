@@ -21,9 +21,9 @@ from platformio import __version__, exception, util
 from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
-    "contrib-piohome": ">=0.9.4,<2",
+    "contrib-piohome": ">=0.9.5,<2",
     "contrib-pysite": ">=0.2.0,<2",
-    "tool-pioplus": ">=1.1.7,<2",
+    "tool-pioplus": ">=1.2.1,<2",
     "tool-unity": "~1.20403.0",
     "tool-scons": "~2.20501.4"
 }
