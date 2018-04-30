@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 from glob import glob
 from os import environ
-from os.path import abspath, dirname, join
+from os.path import abspath, isfile, join
 
 from SCons.Defaults import processDefines
 
@@ -112,12 +112,17 @@ def _get_svd_path(env):
         return None
     try:
         svd_path = env.BoardConfig().get("debug.svd_path")
-    except KeyError:
+        assert svd_path
+    except (AssertionError, KeyError):
         return None
-    if not svd_path:
-        return None
-    with util.cd(dirname(env.BoardConfig().manifest_path)):
-        return abspath(svd_path)
+    # custom path to SVD file
+    if isfile(svd_path):
+        return svd_path
+    # default file from ./platform/misc/svd folder
+    p = env.PioPlatform()
+    if isfile(join(p.get_dir(), "misc", "svd", svd_path)):
+        return abspath(join(p.get_dir(), "misc", "svd", svd_path))
+    return None
 
 
 def DumpIDEData(env):
