@@ -15,13 +15,11 @@ PlatformIO 3.0
 
 * Configure a custom path to SVD file using `debug_svd_path <http://docs.platformio.org/page/projectconf/section_env_debug.html#debug-svd-path>`__
   option
-* Describe your project with a new
-  `description <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#description>`_
-  option from `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__ (information will be used by
-  `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`_)
+* Custom project `description <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#description>`_
+  which will be used by `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`_
 * Updated Unity tool to 2.4.3
-* Improved support for Black Magic Probe in "uploader" role
-* Respect a custom "lib_dir" option in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__
+* Improved support for Black Magic Probe in "uploader" mode
+* Fixed issue when a custom `lib_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#lib-dir> `__ was not handled correctly
   (`issue #1473 <https://github.com/platformio/platformio-core/issues/1473>`_)
 * Fixed issue with useless project rebuilding for case insensitive file
   systems (Windows)
