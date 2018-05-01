@@ -108,6 +108,10 @@ def _dump_defines(env):
 
 
 def _get_svd_path(env):
+    svd_path = env.subst("$DEBUG_SVD_PATH")
+    if svd_path and isfile(svd_path):
+        return abspath(svd_path)
+
     if "BOARD" not in env:
         return None
     try:

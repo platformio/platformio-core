@@ -68,7 +68,7 @@ commonvars.AddVariables(
 
     # debug options
     ("DEBUG_TOOL",),
-
+    ("DEBUG_SVD_PATH",),
 
 )  # yapf: disable
 

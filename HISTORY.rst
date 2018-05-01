@@ -13,9 +13,11 @@ PlatformIO 3.0
   - "Recent News" block on "Welcome" page
   - Direct import of development platform's example
 
+* Configure a custom path to SVD file using `debug_svd_path <http://docs.platformio.org/page/projectconf/section_env_debug.html#debug-svd-path>`__
+  option
 * Describe your project with a new
   `description <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#description>`_
-  option for `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__ (information will be used by
+  option from `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__ (information will be used by
   `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`_)
 * Updated Unity tool to 2.4.3
 * Improved support for Black Magic Probe in "uploader" role
