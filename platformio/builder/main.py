@@ -165,7 +165,7 @@ AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS + ["size"]))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS + ["size"]))
 
 if "UPLOAD_FLAGS" in env:
-    env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
+    env.Prepend(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
 
 for item in env.GetExtraScripts("post"):
     env.SConscript(item, exports="env")
