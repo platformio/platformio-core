@@ -69,7 +69,7 @@ def LoadPioPlatform(env, variables):
     # Add toolchains and uploaders to $PATH
     for name in installed_packages:
         type_ = p.get_package_type(name)
-        if type_ not in ("toolchain", "uploader"):
+        if type_ not in ("toolchain", "uploader", "debugger"):
             continue
         path = p.get_package_dir(name)
         if isdir(join(path, "bin")):
