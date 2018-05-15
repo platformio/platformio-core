@@ -13,6 +13,8 @@ PlatformIO 3.0
   - "Recent News" block on "Welcome" page
   - Direct import of development platform's example
 
+* Simplify configuration for `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__: separate main program from a test build process, drop
+  requirement for ``#ifdef UNIT_TEST`` guard
 * Configure a custom path to SVD file using `debug_svd_path <http://docs.platformio.org/page/projectconf/section_env_debug.html#debug-svd-path>`__
   option
 * Custom project `description <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#description>`_

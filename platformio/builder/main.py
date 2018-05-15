@@ -99,6 +99,7 @@ DEFAULT_ENV_OPTIONS = dict(
     BUILD_DIR=join("$PROJECTBUILD_DIR", "$PIOENV"),
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     BUILDTEST_DIR=join("$BUILD_DIR", "test"),
+    LIBPATH=["$BUILD_DIR"],
     LIBSOURCE_DIRS=[
         util.get_projectlib_dir(),
         util.get_projectlibdeps_dir(),

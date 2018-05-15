@@ -30,12 +30,11 @@ SRC_HEADER_EXT = ["h", "hpp"]
 SRC_C_EXT = ["c", "cc", "cpp"]
 SRC_BUILD_EXT = SRC_C_EXT + ["S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
+SRC_FILTER_PATTERNS_RE = re.compile(r"(\+|\-)<([^>]+)>")
 
 
 def scons_patched_match_splitext(path, suffixes=None):
-    """
-    Patch SCons Builder, append $OBJSUFFIX to the end of each target
-    """
+    """Patch SCons Builder, append $OBJSUFFIX to the end of each target"""
     tokens = Util.splitext(path)
     if suffixes and tokens[1] and tokens[1] in suffixes:
         return (path, tokens[1])
@@ -91,16 +90,14 @@ def BuildProgram(env):
     # Handle SRC_BUILD_FLAGS
     env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
-    env.Append(
-        LIBPATH=["$BUILD_DIR"],
-        PIOBUILDFILES=env.CollectBuildFiles(
-            "$BUILDSRC_DIR",
-            "$PROJECTSRC_DIR",
-            src_filter=env.get("SRC_FILTER"),
-            duplicate=False))
-
     if "__test" in COMMAND_LINE_TARGETS:
         env.Append(PIOBUILDFILES=env.ProcessTest())
+    else:
+        env.Append(
+            PIOBUILDFILES=env.CollectBuildFiles(
+                "$BUILDSRC_DIR",
+                "$PROJECTSRC_DIR",
+                src_filter=env.get("SRC_FILTER")))
 
     if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
@@ -196,8 +193,6 @@ def IsFileWithExt(env, file_, ext):  # pylint: disable=W0613
 
 
 def MatchSourceFiles(env, src_dir, src_filter=None):
-
-    SRC_FILTER_PATTERNS_RE = re.compile(r"(\+|\-)<([^>]+)>")
 
     def _append_build_item(items, item, src_dir):
         if env.IsFileWithExt(item, SRC_BUILD_EXT + SRC_HEADER_EXT):
