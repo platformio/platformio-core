@@ -166,7 +166,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         monitor_options = {k: v for k, v in project_options or []}
         if monitor_options:
             for k in ("port", "baud", "rts", "dtr"):
-                k2 = "monitor_%s" % k
+                k2 = "monitor_%s" % ("speed" if k == "baud" else k)
                 if kwargs[k] is None and k2 in monitor_options:
                     kwargs[k] = monitor_options[k2]
                     if k != "port":
