@@ -130,15 +130,21 @@ class ProjectGenerator(object):
         file_name = basename(dst_path)
 
         # merge .gitignore
+        # Special case: When .gitignore already has ".vscode", we should not
+        # add ".vscode/xxx" lines to the file.
         if file_name == ".gitignore" and isfile(dst_path):
             modified = False
-            default = [l.strip() for l in contents.split("\n")]
+            default = filter(None, (l.strip() for l in contents.splitlines()))
             with open(dst_path) as fp:
-                current = [l.strip() for l in fp.readlines()]
+                current = [l.strip() for l in fp]
+            vscode_already_ignored = ('.vscode' in current or '.vscode/' in current)
             for d in default:
-                if d and d not in current:
-                    modified = True
-                    current.append(d)
+                if d in current:
+                    continue
+                if d.startswith('.vscode') and vscode_already_ignored:
+                    continue
+                modified = True
+                current.append(d)
             if not modified:
                 return
             contents = "\n".join(current) + "\n"
