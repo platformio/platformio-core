@@ -86,8 +86,8 @@ class LibBuilderBase(object):
     LDF_MODES = ["off", "chain", "deep", "chain+", "deep+"]
     LDF_MODE_DEFAULT = "chain"
 
-    COMPAT_MODES = ["off", "light", "strict"]
-    COMPAT_MODE_DEFAULT = "light"
+    COMPAT_MODES = ["off", "soft", "strict"]
+    COMPAT_MODE_DEFAULT = "soft"
 
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     CCONDITIONAL_SCANNER = SCons.Scanner.C.CConditionalScanner()
@@ -758,7 +758,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
                 sys.stderr.write(
                     "Platform incompatible library %s\n" % lb.path)
             return False
-        if compat_mode == "light" and "PIOFRAMEWORK" in env and \
+        if compat_mode == "soft" and "PIOFRAMEWORK" in env and \
            not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", [])):
             if verbose:
                 sys.stderr.write(
