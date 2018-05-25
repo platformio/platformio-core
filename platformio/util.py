@@ -122,7 +122,8 @@ class memoized(object):
         def wrapper(*args, **kwargs):
             key = str(args) + str(kwargs)
             if (key not in self.cache
-                    or self.cache[key][0] < time.time() - self.expire):
+                    or (self.expire > 0
+                        and self.cache[key][0] < time.time() - self.expire)):
                 self.cache[key] = (time.time(), func(*args, **kwargs))
             return self.cache[key][1]
 
