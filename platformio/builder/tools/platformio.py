@@ -20,7 +20,7 @@ from glob import glob
 from os import sep, walk
 from os.path import basename, dirname, isdir, join, realpath
 
-from SCons import Action, Builder, Util
+from SCons import Builder, Util
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
                           DefaultEnvironment, SConscript)
 
@@ -108,8 +108,8 @@ def BuildProgram(env):
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
 
-    checksize_action = Action.Action(env.CheckUploadSize,
-                                     "Checking program size")
+    checksize_action = env.VerboseAction(env.CheckUploadSize,
+                                         "Checking program size")
     AlwaysBuild(env.Alias("checkprogsize", program, checksize_action))
     if set(["upload", "program"]) & set(COMMAND_LINE_TARGETS):
         env.AddPostAction(program, checksize_action)

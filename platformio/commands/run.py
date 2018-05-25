@@ -131,16 +131,15 @@ class EnvironmentProcessor(object):
                                 "src_dir", "build_dir", "data_dir", "test_dir",
                                 "boards_dir", "lib_extra_dirs")
 
-    KNOWN_ENV_OPTIONS = ("platform", "framework", "board", "board_mcu",
-                         "board_f_cpu", "board_f_flash", "board_flash_mode",
-                         "build_flags", "src_build_flags", "build_unflags",
-                         "src_filter", "extra_scripts", "targets",
-                         "upload_port", "upload_protocol", "upload_speed",
-                         "upload_flags", "upload_resetmethod", "lib_deps",
-                         "lib_ignore", "lib_extra_dirs", "lib_ldf_mode",
-                         "lib_compat_mode", "lib_archive", "piotest",
-                         "test_transport", "test_filter", "test_ignore",
-                         "test_port", "test_speed", "debug_tool", "debug_port",
+    KNOWN_ENV_OPTIONS = ("platform", "framework", "board", "build_flags",
+                         "src_build_flags", "build_unflags", "src_filter",
+                         "extra_scripts", "targets", "upload_port",
+                         "upload_protocol", "upload_speed", "upload_flags",
+                         "upload_resetmethod", "lib_deps", "lib_ignore",
+                         "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
+                         "lib_archive", "piotest", "test_transport",
+                         "test_filter", "test_ignore", "test_port",
+                         "test_speed", "debug_tool", "debug_port",
                          "debug_init_cmds", "debug_extra_cmds", "debug_server",
                          "debug_init_break", "debug_load_cmd",
                          "debug_load_mode", "debug_svd_path", "monitor_port",
@@ -160,7 +159,11 @@ class EnvironmentProcessor(object):
         "lib_use": "lib_deps",
         "lib_force": "lib_deps",
         "extra_script": "extra_scripts",
-        "monitor_baud": "monitor_speed"
+        "monitor_baud": "monitor_speed",
+        "board_mcu": "board_build.mcu",
+        "board_f_cpu": "board_build.f_cpu",
+        "board_f_flash": "board_build.f_flash",
+        "board_flash_mode": "board_build.flash_mode"
     }
 
     RENAMED_PLATFORMS = {"espressif": "espressif8266"}
@@ -238,7 +241,11 @@ class EnvironmentProcessor(object):
                 v = self.RENAMED_PLATFORMS[v]
 
             # warn about unknown options
-            if k not in self.KNOWN_ENV_OPTIONS and not k.startswith("custom_"):
+            unknown_conditions = [
+                k not in self.KNOWN_ENV_OPTIONS, not k.startswith("custom_"),
+                not k.startswith("board_")
+            ]
+            if all(unknown_conditions):
                 click.secho(
                     "Detected non-PlatformIO `%s` option in `[env:%s]` section"
                     % (k, self.name),

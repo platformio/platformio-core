@@ -54,10 +54,12 @@ commonvars.AddVariables(
 
     # board options
     ("BOARD",),
+    # deprecated options, use board_{object.path} instead
     ("BOARD_MCU",),
     ("BOARD_F_CPU",),
     ("BOARD_F_FLASH",),
     ("BOARD_FLASH_MODE",),
+    # end of deprecated options
 
     # upload options
     ("UPLOAD_PORT",),

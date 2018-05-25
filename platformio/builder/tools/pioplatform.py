@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+import base64
 import sys
 from os.path import isdir, isfile, join
 
@@ -83,16 +84,23 @@ def LoadPioPlatform(env, variables):
     if "BOARD" not in env:
         return
 
+    # update board manifest with a custom data
     board_config = env.BoardConfig()
-    for k in variables.keys():
-        if k in env or \
-                not any([k.startswith("BOARD_"), k.startswith("UPLOAD_")]):
+    for key, value in variables.UnknownVariables().items():
+        if not key.startswith("BOARD_"):
             continue
-        _opt, _val = k.lower().split("_", 1)
+        board_config.update(key.lower()[6:], base64.b64decode(value))
+
+    # update default environment variables
+    for key in variables.keys():
+        if key in env or \
+                not any([key.startswith("BOARD_"), key.startswith("UPLOAD_")]):
+            continue
+        _opt, _val = key.lower().split("_", 1)
         if _opt == "board":
             _opt = "build"
         if _val in board_config.get(_opt):
-            env.Replace(**{k: board_config.get("%s.%s" % (_opt, _val))})
+            env.Replace(**{key: board_config.get("%s.%s" % (_opt, _val))})
 
     if "build.ldscript" in board_config:
         env.Replace(LDSCRIPT_PATH=board_config.get("build.ldscript"))
