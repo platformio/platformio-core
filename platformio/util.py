@@ -754,6 +754,18 @@ def format_filesize(filesize):
     return "%d%sB" % ((base * filesize / unit), suffix)
 
 
+def merge_dicts(d1, d2, path=None):
+    if path is None:
+        path = []
+    for key in d2:
+        if (key in d1 and isinstance(d1[key], dict)
+                and isinstance(d2[key], dict)):
+            merge_dicts(d1[key], d2[key], path + [str(key)])
+        else:
+            d1[key] = d2[key]
+    return d1
+
+
 def rmtree_(path):
 
     def _onerror(_, name, __):

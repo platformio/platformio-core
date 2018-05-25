@@ -665,6 +665,15 @@ class PlatformBoardConfig(object):
             else:
                 raise KeyError("Invalid board option '%s'" % path)
 
+    def update(self, path, value):
+        newdict = None
+        for key in path.split(".")[::-1]:
+            if newdict is None:
+                newdict = {key: value}
+            else:
+                newdict = {key: newdict}
+        util.merge_dicts(self._manifest, newdict)
+
     def __contains__(self, key):
         try:
             self.get(key)
