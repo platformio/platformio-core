@@ -22,7 +22,8 @@ PlatformIO 3.0
 * Updated Unity tool to 2.4.3
 * Improved support for Black Magic Probe in "uploader" mode
 * Renamed "monitor_baud" option to "monitor_speed"
-* Fixed issue when a custom `lib_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#lib-dir> `__ was not handled correctly
+* Fixed issue when a custom `lib_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#lib-dir>`__
+  was not handled correctly
   (`issue #1473 <https://github.com/platformio/platformio-core/issues/1473>`_)
 * Fixed issue with useless project rebuilding for case insensitive file
   systems (Windows)
