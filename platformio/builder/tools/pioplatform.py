@@ -23,6 +23,8 @@ from SCons.Script import COMMAND_LINE_TARGETS
 from platformio import exception, util
 from platformio.managers.platform import PlatformFactory
 
+# pylint: disable=too-many-branches
+
 
 @util.memoized()
 def initPioPlatform(name):
@@ -82,6 +84,12 @@ def LoadPioPlatform(env, variables):
         env.Prepend(LIBPATH=[join(p.get_dir(), "ldscripts")])
 
     if "BOARD" not in env:
+        # handle _MCU and _F_CPU variables for AVR native
+        for key, value in variables.UnknownVariables().items():
+            if not key.startswith("BOARD_"):
+                continue
+            env.Replace(
+                **{key.upper().replace("BUILD.", ""): base64.b64decode(value)})
         return
 
     # update board manifest with a custom data
@@ -106,7 +114,7 @@ def LoadPioPlatform(env, variables):
         env.Replace(LDSCRIPT_PATH=board_config.get("build.ldscript"))
 
 
-def PrintConfiguration(env):  # pylint: disable=too-many-branches
+def PrintConfiguration(env):
     platform_data = ["PLATFORM: %s >" % env.PioPlatform().title]
     system_data = ["SYSTEM:"]
     mcu = env.subst("$BOARD_MCU")
