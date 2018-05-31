@@ -46,12 +46,14 @@
             "intelliSenseMode": "clang-x64",
 % import re
 % STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
+% cc_stds = STD_RE.findall(cc_flags)
+% cxx_stds = STD_RE.findall(cxx_flags)
 %
-% if STD_RE.search(cc_flags):
-            "cStandard": "c{{ STD_RE.search(cc_flags).group(1) }}",
+% if cc_stds:
+            "cStandard": "c{{ cc_stds[-1] }}",
 % end
-% if STD_RE.search(cxx_flags):
-            "cppStandard": "c++{{ STD_RE.search(cxx_flags).group(1) }}",
+% if cxx_stds:
+            "cppStandard": "c++{{ cxx_stds[-1] }}",
 % end
             "compilerPath": "{{ cc_path.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"') }}"
         }
