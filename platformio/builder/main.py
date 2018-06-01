@@ -54,10 +54,12 @@ commonvars.AddVariables(
 
     # board options
     ("BOARD",),
+    # deprecated options, use board_{object.path} instead
     ("BOARD_MCU",),
     ("BOARD_F_CPU",),
     ("BOARD_F_FLASH",),
     ("BOARD_FLASH_MODE",),
+    # end of deprecated options
 
     # upload options
     ("UPLOAD_PORT",),
@@ -68,7 +70,7 @@ commonvars.AddVariables(
 
     # debug options
     ("DEBUG_TOOL",),
-
+    ("DEBUG_SVD_PATH",),
 
 )  # yapf: disable
 
@@ -99,6 +101,7 @@ DEFAULT_ENV_OPTIONS = dict(
     BUILD_DIR=join("$PROJECTBUILD_DIR", "$PIOENV"),
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     BUILDTEST_DIR=join("$BUILD_DIR", "test"),
+    LIBPATH=["$BUILD_DIR"],
     LIBSOURCE_DIRS=[
         util.get_projectlib_dir(),
         util.get_projectlibdeps_dir(),
@@ -156,7 +159,7 @@ env.LoadPioPlatform(commonvars)
 env.SConscriptChdir(0)
 env.SConsignFile(join("$PROJECTBUILD_DIR", ".sconsign.dblite"))
 
-for item in env.GetPreExtraScripts():
+for item in env.GetExtraScripts("pre"):
     env.SConscript(item, exports="env")
 
 env.SConscript("$BUILD_SCRIPT")
@@ -165,9 +168,9 @@ AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS + ["size"]))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS + ["size"]))
 
 if "UPLOAD_FLAGS" in env:
-    env.Append(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
+    env.Prepend(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
 
-for item in env.GetPostExtraScripts():
+for item in env.GetExtraScripts("post"):
     env.SConscript(item, exports="env")
 
 if "envdump" in COMMAND_LINE_TARGETS:

@@ -16,7 +16,7 @@ from __future__ import absolute_import
 
 from glob import glob
 from os import environ
-from os.path import join
+from os.path import abspath, isfile, join
 
 from SCons.Defaults import processDefines
 
@@ -53,11 +53,11 @@ def _dump_includes(env):
     if unity_dir:
         includes.append(unity_dir)
 
-    # remove dupicates
+    # remove duplicates
     result = []
     for item in includes:
         if item not in result:
-            result.append(item)
+            result.append(abspath(item))
 
     return result
 
@@ -101,10 +101,32 @@ def _dump_defines(env):
                     .replace("ATMEGA", "ATmega").replace("ATTINY", "ATtiny")))
 
     # built-in GCC marcos
-    if env.GetCompilerType() == "gcc":
-        defines.extend(_get_gcc_defines(env))
+    # if env.GetCompilerType() == "gcc":
+    #     defines.extend(_get_gcc_defines(env))
 
     return defines
+
+
+def _get_svd_path(env):
+    svd_path = env.subst("$DEBUG_SVD_PATH")
+    if svd_path:
+        return abspath(svd_path)
+
+    if "BOARD" not in env:
+        return None
+    try:
+        svd_path = env.BoardConfig().get("debug.svd_path")
+        assert svd_path
+    except (AssertionError, KeyError):
+        return None
+    # custom path to SVD file
+    if isfile(svd_path):
+        return svd_path
+    # default file from ./platform/misc/svd folder
+    p = env.PioPlatform()
+    if isfile(join(p.get_dir(), "misc", "svd", svd_path)):
+        return abspath(join(p.get_dir(), "misc", "svd", svd_path))
+    return None
 
 
 def DumpIDEData(env):
@@ -130,6 +152,8 @@ def DumpIDEData(env):
         util.where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
         "prog_path":
         env.subst("$PROG_PATH"),
+        "svd_path":
+        _get_svd_path(env),
         "compiler_type":
         env.GetCompilerType()
     }

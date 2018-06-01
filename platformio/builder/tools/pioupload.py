@@ -130,10 +130,12 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
             if not _is_match_pattern(item['port']):
                 continue
             port = item['port']
-            if upload_protocol.startswith("blackmagic") \
-                    and "GDB" in item['description']:
-                return ("\\\\.\\%s" % port if "windows" in util.get_systype()
-                        and port.startswith("COM") and len(port) > 4 else port)
+            if upload_protocol.startswith("blackmagic"):
+                if "windows" in util.get_systype() and \
+                        port.startswith("COM") and len(port) > 4:
+                    port = "\\\\.\\%s" % port
+                if "GDB" in item['description']:
+                    return port
             for hwid in board_hwids:
                 hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
                 if hwid_str in item['hwid']:
@@ -220,7 +222,7 @@ def PrintUploadInfo(env):
         available.extend(env.BoardConfig().get("upload", {}).get(
             "protocols", []))
     if available:
-        print "AVAILABLE: %s" % ", ".join(sorted(available))
+        print "AVAILABLE: %s" % ", ".join(sorted(set(available)))
     if configured:
         print "CURRENT: upload_protocol = %s" % configured
 

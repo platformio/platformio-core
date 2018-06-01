@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import codecs
 import hashlib
 import json
 import os
@@ -106,7 +107,7 @@ class State(object):
     def __exit__(self, type_, value, traceback):
         if self._prev_state != self._state:
             try:
-                with open(self.path, "w") as fp:
+                with codecs.open(self.path, "w", encoding="utf8") as fp:
                     if "dev" in __version__:
                         json.dump(self._state, fp, indent=4)
                     else:
@@ -187,11 +188,8 @@ class ContentCache(object):
         cache_path = self.get_cache_path(key)
         if not isfile(cache_path):
             return None
-        with open(cache_path, "rb") as fp:
-            data = fp.read()
-            if data and data[0] in ("{", "["):
-                return json.loads(data)
-            return data
+        with codecs.open(cache_path, "rb", encoding="utf8") as fp:
+            return fp.read()
 
     def set(self, key, data, valid):
         if not get_setting("enable_cache"):
@@ -212,13 +210,17 @@ class ContentCache(object):
 
         if not isdir(dirname(cache_path)):
             os.makedirs(dirname(cache_path))
-        with open(cache_path, "wb") as fp:
-            if isinstance(data, (dict, list)):
-                json.dump(data, fp)
-            else:
-                fp.write(str(data))
-        with open(self._db_path, "a") as fp:
-            fp.write("%s=%s\n" % (str(expire_time), cache_path))
+        try:
+            with codecs.open(cache_path, "wb", encoding="utf8") as fp:
+                fp.write(data)
+            with open(self._db_path, "a") as fp:
+                fp.write("%s=%s\n" % (str(expire_time), cache_path))
+        except UnicodeError:
+            if isfile(cache_path):
+                try:
+                    remove(cache_path)
+                except OSError:
+                    pass
 
         return self._unlock_dbindex()
 

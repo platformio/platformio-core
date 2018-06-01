@@ -4,6 +4,38 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.5.3 (2018-06-01)
+~~~~~~~~~~~~~~~~~~
+
+* `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`__ -
+  interact with PlatformIO ecosystem using modern and cross-platform GUI:
+
+  - "Recent News" block on "Welcome" page
+  - Direct import of development platform's example
+
+* Simplify configuration for `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__: separate main program from a test build process, drop
+  requirement for ``#ifdef UNIT_TEST`` guard
+* Override any option from board manifest in `Project Configuration File "platformio.ini" <http://docs.platformio.org/page/projectconf/section_env_board.html#more-options>`__
+  (`issue #1612 <https://github.com/platformio/platformio-core/issues/1612>`_)
+* Configure a custom path to SVD file using `debug_svd_path <http://docs.platformio.org/page/projectconf/section_env_debug.html#debug-svd-path>`__
+  option
+* Custom project `description <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#description>`_
+  which will be used by `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`_
+* Updated Unity tool to 2.4.3
+* Improved support for Black Magic Probe in "uploader" mode
+* Renamed "monitor_baud" option to "monitor_speed"
+* Fixed issue when a custom `lib_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#lib-dir>`__
+  was not handled correctly
+  (`issue #1473 <https://github.com/platformio/platformio-core/issues/1473>`_)
+* Fixed issue with useless project rebuilding for case insensitive file
+  systems (Windows)
+* Fixed issue with ``build_unflags`` option when a macro contains value
+  (e.g., ``-DNAME=VALUE``)
+* Fixed issue which did not allow to override runtime build environment using
+  extra POST script
+* Fixed "RuntimeError: maximum recursion depth exceeded" for library manager
+  (`issue #1528 <https://github.com/platformio/platformio-core/issues/1528>`_)
+
 3.5.2 (2018-03-13)
 ~~~~~~~~~~~~~~~~~~
 

@@ -139,15 +139,12 @@ def init_base_project(project_dir):
             join(util.get_source_dir(), "projectconftpl.ini"),
             join(project_dir, "platformio.ini"))
 
-    lib_dir = join(project_dir, "lib")
-    src_dir = join(project_dir, "src")
-    config = util.load_project_config(project_dir)
-    if config.has_option("platformio", "src_dir"):
-        src_dir = join(project_dir, config.get("platformio", "src_dir"))
-
-    for d in (src_dir, lib_dir):
-        if not isdir(d):
-            makedirs(d)
+    with util.cd(project_dir):
+        lib_dir = util.get_projectlib_dir()
+        src_dir = util.get_projectsrc_dir()
+        for d in (src_dir, lib_dir):
+            if not isdir(d):
+                makedirs(d)
 
     init_lib_readme(lib_dir)
     init_ci_conf(project_dir)
@@ -168,16 +165,21 @@ The source code of each library should be placed in separate directory, like
 For example, see how can be organized `Foo` and `Bar` libraries:
 
 |--lib
+|  |
 |  |--Bar
 |  |  |--docs
 |  |  |--examples
 |  |  |--src
 |  |     |- Bar.c
 |  |     |- Bar.h
+|  |  |- library.json (optional, custom build options, etc) http://docs.platformio.org/page/librarymanager/config.html
+|  |
 |  |--Foo
 |  |  |- Foo.c
 |  |  |- Foo.h
+|  |
 |  |- readme.txt --> THIS FILE
+|
 |- platformio.ini
 |--src
    |- main.c

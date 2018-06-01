@@ -30,7 +30,7 @@ from platformio.managers.package import BasePkgManager, PackageManager
 
 class PlatformManager(BasePkgManager):
 
-    FILE_CACHE_VALID = None  # disable platform caching
+    FILE_CACHE_VALID = None  # disable platform download caching
 
     def __init__(self, package_dir=None, repositories=None):
         if not repositories:
@@ -62,7 +62,7 @@ class PlatformManager(BasePkgManager):
                 with_packages=None,
                 without_packages=None,
                 skip_default_package=False,
-                trigger_event=True,
+                after_update=False,
                 silent=False,
                 force=False,
                 **_):  # pylint: disable=too-many-arguments, arguments-differ
@@ -70,20 +70,20 @@ class PlatformManager(BasePkgManager):
             self, name, requirements, silent=silent, force=force)
         p = PlatformFactory.newPlatform(platform_dir)
 
-        # @Hook: when 'update' operation (trigger_event is False),
-        # don't cleanup packages or install them
-        if not trigger_event:
+        # don't cleanup packages or install them after update
+        # we check packages for updates in def update()
+        if after_update:
             return True
+
         p.install_packages(
             with_packages,
             without_packages,
             skip_default_package,
             silent=silent,
             force=force)
-        self.cleanup_packages(p.packages.keys())
-        return True
+        return self.cleanup_packages(p.packages.keys())
 
-    def uninstall(self, package, requirements=None, trigger_event=True):
+    def uninstall(self, package, requirements=None, after_update=False):
         if isdir(package):
             pkg_dir = package
         else:
@@ -96,13 +96,12 @@ class PlatformManager(BasePkgManager):
         p = PlatformFactory.newPlatform(pkg_dir)
         BasePkgManager.uninstall(self, pkg_dir, requirements)
 
-        # @Hook: when 'update' operation (trigger_event is False),
-        # don't cleanup packages or install them
-        if not trigger_event:
+        # don't cleanup packages or install them after update
+        # we check packages for updates in def update()
+        if after_update:
             return True
 
-        self.cleanup_packages(p.packages.keys())
-        return True
+        return self.cleanup_packages(p.packages.keys())
 
     def update(  # pylint: disable=arguments-differ
             self,
@@ -154,11 +153,15 @@ class PlatformManager(BasePkgManager):
                 continue
             if (manifest['name'] not in deppkgs
                     or manifest['version'] not in deppkgs[manifest['name']]):
-                pm.uninstall(manifest['__pkg_dir'], trigger_event=False)
+                try:
+                    pm.uninstall(manifest['__pkg_dir'], after_update=True)
+                except exception.UnknownPackage:
+                    pass
 
         self.cache_reset()
         return True
 
+    @util.memoized(expire=5000)
     def get_installed_boards(self):
         boards = []
         for manifest in self.get_installed():
@@ -170,7 +173,7 @@ class PlatformManager(BasePkgManager):
         return boards
 
     @staticmethod
-    @util.memoized
+    @util.memoized()
     def get_registered_boards():
         return util.get_api_result("/boards", cache_valid="7d")
 
@@ -280,21 +283,25 @@ class PlatformPackagesMixin(object):
 
         return True
 
-    def find_pkg_names(self, items):
+    def find_pkg_names(self, candidates):
         result = []
-        for item in items:
-            candidate = item
+        for candidate in candidates:
+            found = False
 
             # lookup by package types
             for _name, _opts in self.packages.items():
-                if _opts.get("type") == item:
-                    candidate = _name
+                if _opts.get("type") == candidate:
+                    result.append(_name)
+                    found = True
 
-            if (self.frameworks and item.startswith("framework-")
-                    and item[10:] in self.frameworks):
-                candidate = self.frameworks[item[10:]]['package']
+            if (self.frameworks and candidate.startswith("framework-")
+                    and candidate[10:] in self.frameworks):
+                result.append(self.frameworks[candidate[10:]]['package'])
+                found = True
 
-            result.append(candidate)
+            if not found:
+                result.append(candidate)
+
         return result
 
     def update_packages(self, only_check=False):
@@ -490,6 +497,10 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         return self._manifest.get("url")
 
     @property
+    def docs_url(self):
+        return self._manifest.get("docs")
+
+    @property
     def repository_url(self):
         return self._manifest.get("repository", {}).get("url")
 
@@ -653,6 +664,15 @@ class PlatformBoardConfig(object):
                 return default
             else:
                 raise KeyError("Invalid board option '%s'" % path)
+
+    def update(self, path, value):
+        newdict = None
+        for key in path.split(".")[::-1]:
+            if newdict is None:
+                newdict = {key: value}
+            else:
+                newdict = {key: newdict}
+        util.merge_dicts(self._manifest, newdict)
 
     def __contains__(self, key):
         try:

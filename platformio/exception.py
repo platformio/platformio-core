@@ -207,6 +207,11 @@ class InvalidSettingValue(PlatformioException):
     MESSAGE = "Invalid value '{0}' for the setting '{1}'"
 
 
+class InvalidJSONFile(PlatformioException):
+
+    MESSAGE = "Could not load broken JSON: {0}"
+
+
 class CIBuildEnvsEmpty(PlatformioException):
 
     MESSAGE = ("Can't find PlatformIO build environments.\n"

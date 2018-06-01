@@ -126,32 +126,31 @@ class EnvironmentProcessor(object):
 
     DEFAULT_DUMP_OPTIONS = ("platform", "framework", "board")
 
-    KNOWN_PLATFORMIO_OPTIONS = ("env_default", "home_dir", "lib_dir",
-                                "libdeps_dir", "include_dir", "src_dir",
-                                "build_dir", "data_dir", "test_dir",
+    KNOWN_PLATFORMIO_OPTIONS = ("description", "env_default", "home_dir",
+                                "lib_dir", "libdeps_dir", "include_dir",
+                                "src_dir", "build_dir", "data_dir", "test_dir",
                                 "boards_dir", "lib_extra_dirs")
 
-    KNOWN_ENV_OPTIONS = ("platform", "framework", "board", "board_mcu",
-                         "board_f_cpu", "board_f_flash", "board_flash_mode",
-                         "build_flags", "src_build_flags", "build_unflags",
-                         "src_filter", "extra_scripts", "targets",
-                         "upload_port", "upload_protocol", "upload_speed",
-                         "upload_flags", "upload_resetmethod", "lib_deps",
-                         "lib_ignore", "lib_extra_dirs", "lib_ldf_mode",
-                         "lib_compat_mode", "lib_archive", "piotest",
-                         "test_transport", "test_filter", "test_ignore",
-                         "test_port", "test_speed", "debug_tool", "debug_port",
+    KNOWN_ENV_OPTIONS = ("platform", "framework", "board", "build_flags",
+                         "src_build_flags", "build_unflags", "src_filter",
+                         "extra_scripts", "targets", "upload_port",
+                         "upload_protocol", "upload_speed", "upload_flags",
+                         "upload_resetmethod", "lib_deps", "lib_ignore",
+                         "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
+                         "lib_archive", "piotest", "test_transport",
+                         "test_filter", "test_ignore", "test_port",
+                         "test_speed", "debug_tool", "debug_port",
                          "debug_init_cmds", "debug_extra_cmds", "debug_server",
                          "debug_init_break", "debug_load_cmd",
-                         "debug_load_mode", "monitor_port", "monitor_baud",
-                         "monitor_rts", "monitor_dtr")
+                         "debug_load_mode", "debug_svd_path", "monitor_port",
+                         "monitor_speed", "monitor_rts", "monitor_dtr")
 
     IGNORE_BUILD_OPTIONS = ("test_transport", "test_filter", "test_ignore",
                             "test_port", "test_speed", "debug_port",
                             "debug_init_cmds", "debug_extra_cmds",
                             "debug_server", "debug_init_break",
                             "debug_load_cmd", "debug_load_mode",
-                            "monitor_port", "monitor_baud", "monitor_rts",
+                            "monitor_port", "monitor_speed", "monitor_rts",
                             "monitor_dtr")
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
@@ -159,7 +158,12 @@ class EnvironmentProcessor(object):
     RENAMED_OPTIONS = {
         "lib_use": "lib_deps",
         "lib_force": "lib_deps",
-        "extra_script": "extra_scripts"
+        "extra_script": "extra_scripts",
+        "monitor_baud": "monitor_speed",
+        "board_mcu": "board_build.mcu",
+        "board_f_cpu": "board_build.f_cpu",
+        "board_f_flash": "board_build.f_flash",
+        "board_flash_mode": "board_build.flash_mode"
     }
 
     RENAMED_PLATFORMS = {"espressif": "espressif8266"}
@@ -237,7 +241,11 @@ class EnvironmentProcessor(object):
                 v = self.RENAMED_PLATFORMS[v]
 
             # warn about unknown options
-            if k not in self.KNOWN_ENV_OPTIONS and not k.startswith("custom_"):
+            unknown_conditions = [
+                k not in self.KNOWN_ENV_OPTIONS, not k.startswith("custom_"),
+                not k.startswith("board_")
+            ]
+            if all(unknown_conditions):
                 click.secho(
                     "Detected non-PlatformIO `%s` option in `[env:%s]` section"
                     % (k, self.name),
@@ -411,7 +419,7 @@ def check_project_envs(config, environments=None):
 
 def calculate_project_hash():
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
-    structure = [__version__]
+    chunks = [__version__]
     for d in (util.get_projectsrc_dir(), util.get_projectlib_dir()):
         if not isdir(d):
             continue
@@ -419,5 +427,10 @@ def calculate_project_hash():
             for f in files:
                 path = join(root, f)
                 if path.endswith(check_suffixes):
-                    structure.append(path)
-    return sha1(",".join(sorted(structure))).hexdigest()
+                    chunks.append(path)
+    chunks_to_str = ",".join(sorted(chunks))
+    if "windows" in util.get_systype():
+        # Fix issue with useless project rebuilding for case insensitive FS.
+        # A case of disk drive can differ...
+        chunks_to_str = chunks_to_str.lower()
+    return sha1(chunks_to_str).hexdigest()

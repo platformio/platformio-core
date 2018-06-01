@@ -21,10 +21,10 @@ from platformio import __version__, exception, util
 from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
-    "contrib-piohome": ">=0.7.1,<2",
-    "contrib-pysite": ">=0.1.5,<2",
-    "tool-pioplus": ">=0.14.5,<2",
-    "tool-unity": "~1.20302.1",
+    "contrib-piohome": ">=0.9.5,<2",
+    "contrib-pysite": ">=0.2.0,<2",
+    "tool-pioplus": ">=1.3.1,<2",
+    "tool-unity": "~1.20403.0",
     "tool-scons": "~2.20501.4"
 }
 
@@ -69,7 +69,7 @@ class CorePackageManager(PackageManager):
             if manifest['name'] not in best_pkg_versions:
                 continue
             if manifest['version'] != best_pkg_versions[manifest['name']]:
-                self.uninstall(manifest['__pkg_dir'], trigger_event=False)
+                self.uninstall(manifest['__pkg_dir'], after_update=True)
         self.cache_reset()
         return True
 

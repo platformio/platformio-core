@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+import base64
 import sys
 from os.path import isdir, isfile, join
 
@@ -22,8 +23,10 @@ from SCons.Script import COMMAND_LINE_TARGETS
 from platformio import exception, util
 from platformio.managers.platform import PlatformFactory
 
+# pylint: disable=too-many-branches
 
-@util.memoized
+
+@util.memoized()
 def initPioPlatform(name):
     return PlatformFactory.newPlatform(name)
 
@@ -69,7 +72,7 @@ def LoadPioPlatform(env, variables):
     # Add toolchains and uploaders to $PATH
     for name in installed_packages:
         type_ = p.get_package_type(name)
-        if type_ not in ("toolchain", "uploader"):
+        if type_ not in ("toolchain", "uploader", "debugger"):
             continue
         path = p.get_package_dir(name)
         if isdir(join(path, "bin")):
@@ -81,24 +84,37 @@ def LoadPioPlatform(env, variables):
         env.Prepend(LIBPATH=[join(p.get_dir(), "ldscripts")])
 
     if "BOARD" not in env:
+        # handle _MCU and _F_CPU variables for AVR native
+        for key, value in variables.UnknownVariables().items():
+            if not key.startswith("BOARD_"):
+                continue
+            env.Replace(
+                **{key.upper().replace("BUILD.", ""): base64.b64decode(value)})
         return
 
+    # update board manifest with a custom data
     board_config = env.BoardConfig()
-    for k in variables.keys():
-        if k in env or \
-                not any([k.startswith("BOARD_"), k.startswith("UPLOAD_")]):
+    for key, value in variables.UnknownVariables().items():
+        if not key.startswith("BOARD_"):
             continue
-        _opt, _val = k.lower().split("_", 1)
+        board_config.update(key.lower()[6:], base64.b64decode(value))
+
+    # update default environment variables
+    for key in variables.keys():
+        if key in env or \
+                not any([key.startswith("BOARD_"), key.startswith("UPLOAD_")]):
+            continue
+        _opt, _val = key.lower().split("_", 1)
         if _opt == "board":
             _opt = "build"
         if _val in board_config.get(_opt):
-            env.Replace(**{k: board_config.get("%s.%s" % (_opt, _val))})
+            env.Replace(**{key: board_config.get("%s.%s" % (_opt, _val))})
 
     if "build.ldscript" in board_config:
         env.Replace(LDSCRIPT_PATH=board_config.get("build.ldscript"))
 
 
-def PrintConfiguration(env):  # pylint: disable=too-many-branches
+def PrintConfiguration(env):
     platform_data = ["PLATFORM: %s >" % env.PioPlatform().title]
     system_data = ["SYSTEM:"]
     mcu = env.subst("$BOARD_MCU")

@@ -332,7 +332,7 @@ class LibraryManager(BasePkgManager):
             name,
             requirements=None,
             silent=False,
-            trigger_event=True,
+            after_update=False,
             interactive=False,
             force=False):
         _name, _requirements, _url = self.parse_pkg_uri(name, requirements)
@@ -350,7 +350,7 @@ class LibraryManager(BasePkgManager):
             name,
             requirements,
             silent=silent,
-            trigger_event=trigger_event,
+            after_update=after_update,
             force=force)
 
         if not pkg_dir:
@@ -365,11 +365,20 @@ class LibraryManager(BasePkgManager):
 
         for filters in self.normalize_dependencies(manifest['dependencies']):
             assert "name" in filters
+
+            # avoid circle dependencies
+            if not self.INSTALL_HISTORY:
+                self.INSTALL_HISTORY = []
+            history_key = str(filters)
+            if history_key in self.INSTALL_HISTORY:
+                continue
+            self.INSTALL_HISTORY.append(history_key)
+
             if any(s in filters.get("version", "") for s in ("\\", "/")):
                 self.install(
                     "{name}={version}".format(**filters),
                     silent=silent,
-                    trigger_event=trigger_event,
+                    after_update=after_update,
                     interactive=interactive,
                     force=force)
             else:
@@ -385,20 +394,20 @@ class LibraryManager(BasePkgManager):
                         lib_id,
                         filters.get("version"),
                         silent=silent,
-                        trigger_event=trigger_event,
+                        after_update=after_update,
                         interactive=interactive,
                         force=force)
                 else:
                     self.install(
                         lib_id,
                         silent=silent,
-                        trigger_event=trigger_event,
+                        after_update=after_update,
                         interactive=interactive,
                         force=force)
         return pkg_dir
 
 
-@util.memoized
+@util.memoized()
 def get_builtin_libs(storage_names=None):
     items = []
     storage_names = storage_names or []
@@ -417,7 +426,7 @@ def get_builtin_libs(storage_names=None):
     return items
 
 
-@util.memoized
+@util.memoized()
 def is_builtin_lib(name):
     for storage in get_builtin_libs():
         if any(l.get("name") == name for l in storage['items']):

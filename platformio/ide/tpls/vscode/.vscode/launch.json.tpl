@@ -1,16 +1,40 @@
+// AUTOMATICALLY GENERATED FILE. PLEASE DO NOT MODIFY IT MANUALLY
+
+// PIO Unified Debugger
+//
+// Documentation: http://docs.platformio.org/page/plus/debugging.html
+// Configuration: http://docs.platformio.org/page/projectconf/section_env_debug.html
+
 % from os.path import dirname, join
+%
+% def _escape_path(path):
+%   return path.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')
+% end
+%
 {
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "gdb",
+            "type": "platformio-debug",
             "request": "launch",
-            "cwd": "${workspaceRoot}",
             "name": "PlatformIO Debugger",
-            "target": "{{prog_path.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')}}",
-            "gdbpath": "{{join(dirname(platformio_path), "piodebuggdb").replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')}}",
-            "autorun": [ "source .pioinit" ],
+            "executable": "{{ _escape_path(prog_path) }}",
+            "toolchainBinDir": "{{ _escape_path(dirname(gdb_path)) }}",
+% if svd_path:
+            "svdPath": "{{ _escape_path(svd_path) }}",
+% end
             "preLaunchTask": "PlatformIO: Pre-Debug",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PlatformIO Debugger (Skip Pre-Debug)",
+            "executable": "{{ _escape_path(prog_path) }}",
+            "toolchainBinDir": "{{ _escape_path(dirname(gdb_path)) }}",
+% if svd_path:
+            "svdPath": "{{ _escape_path(svd_path) }}",
+% end
             "internalConsoleOptions": "openOnSessionStart"
         }
     ]

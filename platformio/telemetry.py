@@ -16,6 +16,7 @@ import atexit
 import platform
 import Queue
 import re
+import sys
 import threading
 from collections import deque
 from os import getenv, sep
@@ -152,16 +153,22 @@ class MeasurementProtocol(TelemetryBase):
                         cmd_path.append(sub_cmd)
         self['screen_name'] = " ".join([p.title() for p in cmd_path])
 
-    def send(self, hittype):
+    @staticmethod
+    def _ignore_hit():
         if not app.get_setting("enable_telemetry"):
+            return True
+        if app.get_session_var("caller_id") and \
+                all(c in sys.argv for c in ("run", "idedata")):
+            return True
+        return False
+
+    def send(self, hittype):
+        if self._ignore_hit():
             return
-
         self['t'] = hittype
-
         # correct queue time
         if "qt" in self._params and isinstance(self['qt'], float):
             self['qt'] = int((time() - self['qt']) * 1000)
-
         MPDataPusher().push(self._params)
 
 

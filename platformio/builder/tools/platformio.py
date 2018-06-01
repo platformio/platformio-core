@@ -20,7 +20,7 @@ from glob import glob
 from os import sep, walk
 from os.path import basename, dirname, isdir, join, realpath
 
-from SCons import Action, Builder, Util
+from SCons import Builder, Util
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
                           DefaultEnvironment, SConscript)
 
@@ -30,12 +30,11 @@ SRC_HEADER_EXT = ["h", "hpp"]
 SRC_C_EXT = ["c", "cc", "cpp"]
 SRC_BUILD_EXT = SRC_C_EXT + ["S", "spp", "SPP", "sx", "s", "asm", "ASM"]
 SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
+SRC_FILTER_PATTERNS_RE = re.compile(r"(\+|\-)<([^>]+)>")
 
 
 def scons_patched_match_splitext(path, suffixes=None):
-    """
-    Patch SCons Builder, append $OBJSUFFIX to the end of each target
-    """
+    """Patch SCons Builder, append $OBJSUFFIX to the end of each target"""
     tokens = Util.splitext(path)
     if suffixes and tokens[1] and tokens[1] in suffixes:
         return (path, tokens[1])
@@ -63,8 +62,6 @@ def BuildProgram(env):
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
         env.ProcessFlags(env.BoardConfig().get("build.extra_flags"))
-    # remove base flags
-    env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
     # apply user flags
     env.ProcessFlags(env.get("BUILD_FLAGS"))
 
@@ -73,6 +70,9 @@ def BuildProgram(env):
 
     # restore PIO macros if it was deleted by framework
     _append_pio_macros()
+
+    # remove specified flags
+    env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 
     # build dependent libs; place them before built-in libs
     env.Prepend(LIBS=env.BuildProjectLibraries())
@@ -90,16 +90,14 @@ def BuildProgram(env):
     # Handle SRC_BUILD_FLAGS
     env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
-    env.Append(
-        LIBPATH=["$BUILD_DIR"],
-        PIOBUILDFILES=env.CollectBuildFiles(
-            "$BUILDSRC_DIR",
-            "$PROJECTSRC_DIR",
-            src_filter=env.get("SRC_FILTER"),
-            duplicate=False))
-
     if "__test" in COMMAND_LINE_TARGETS:
         env.Append(PIOBUILDFILES=env.ProcessTest())
+    else:
+        env.Append(
+            PIOBUILDFILES=env.CollectBuildFiles(
+                "$BUILDSRC_DIR",
+                "$PROJECTSRC_DIR",
+                src_filter=env.get("SRC_FILTER")))
 
     if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
@@ -110,8 +108,8 @@ def BuildProgram(env):
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
 
-    checksize_action = Action.Action(env.CheckUploadSize,
-                                     "Checking program size")
+    checksize_action = env.VerboseAction(env.CheckUploadSize,
+                                         "Checking program size")
     AlwaysBuild(env.Alias("checkprogsize", program, checksize_action))
     if set(["upload", "program"]) & set(COMMAND_LINE_TARGETS):
         env.AddPostAction(program, checksize_action)
@@ -119,38 +117,47 @@ def BuildProgram(env):
     return program
 
 
-def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
-    if not flags:
-        return
+def ParseFlagsExtended(env, flags):
     if isinstance(flags, list):
         flags = " ".join(flags)
-    parsed_flags = env.ParseFlags(str(flags))
-    for flag in parsed_flags.pop("CPPDEFINES"):
-        if not Util.is_Sequence(flag):
-            env.Append(CPPDEFINES=flag)
+    result = env.ParseFlags(str(flags))
+
+    cppdefines = []
+    for item in result['CPPDEFINES']:
+        if not Util.is_Sequence(item):
+            cppdefines.append(item)
             continue
-        _key, _value = flag[:2]
-        if '\"' in _value:
-            _value = _value.replace('\"', '\\\"')
-        elif _value.isdigit():
-            _value = int(_value)
-        elif _value.replace(".", "", 1).isdigit():
-            _value = float(_value)
-        env.Append(CPPDEFINES=(_key, _value))
-    env.Append(**parsed_flags)
+        name, value = item[:2]
+        if '\"' in value:
+            value = value.replace('\"', '\\\"')
+        elif value.isdigit():
+            value = int(value)
+        elif value.replace(".", "", 1).isdigit():
+            value = float(value)
+        cppdefines.append((name, value))
+    result['CPPDEFINES'] = cppdefines
 
     # fix relative CPPPATH & LIBPATH
     for k in ("CPPPATH", "LIBPATH"):
-        for i, p in enumerate(env.get(k, [])):
+        for i, p in enumerate(result.get(k, [])):
             if isdir(p):
-                env[k][i] = realpath(p)
+                result[k][i] = realpath(p)
+
     # fix relative path for "-include"
-    for i, f in enumerate(env.get("CCFLAGS", [])):
+    for i, f in enumerate(result.get("CCFLAGS", [])):
         if isinstance(f, tuple) and f[0] == "-include":
-            env['CCFLAGS'][i] = (f[0], env.File(realpath(f[1].get_path())))
+            result['CCFLAGS'][i] = (f[0], env.File(realpath(f[1].get_path())))
+
+    return result
+
+
+def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
+    if not flags:
+        return
+    env.Append(**env.ParseFlagsExtended(flags))
 
     # Cancel any previous definition of name, either built in or
-    # provided with a -D option // Issue #191
+    # provided with a -U option // Issue #191
     undefines = [
         u for u in env.get("CCFLAGS", [])
         if isinstance(u, basestring) and u.startswith("-U")
@@ -164,19 +171,16 @@ def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
 def ProcessUnFlags(env, flags):
     if not flags:
         return
-    if isinstance(flags, list):
-        flags = " ".join(flags)
-    parsed_flags = env.ParseFlags(str(flags))
-    all_flags = []
-    for items in parsed_flags.values():
-        all_flags.extend(items)
-    all_flags = set(all_flags)
-
-    for key in parsed_flags:
-        cur_flags = set(env.Flatten(env.get(key, [])))
-        for item in cur_flags & all_flags:
-            while item in env[key]:
-                env[key].remove(item)
+    for key, unflags in env.ParseFlagsExtended(flags).items():
+        for unflag in unflags:
+            for current in env.get(key, []):
+                conditions = [
+                    unflag == current,
+                    isinstance(current, (tuple, list))
+                    and unflag[0] == current[0]
+                ]
+                if any(conditions):
+                    env[key].remove(current)
 
 
 def IsFileWithExt(env, file_, ext):  # pylint: disable=W0613
@@ -189,8 +193,6 @@ def IsFileWithExt(env, file_, ext):  # pylint: disable=W0613
 
 
 def MatchSourceFiles(env, src_dir, src_filter=None):
-
-    SRC_FILTER_PATTERNS_RE = re.compile(r"(\+|\-)<([^>]+)>")
 
     def _append_build_item(items, item, src_dir):
         if env.IsFileWithExt(item, SRC_BUILD_EXT + SRC_HEADER_EXT):
@@ -281,15 +283,14 @@ def BuildFrameworks(env, frameworks):
 
 
 def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
-    lib = env.Clone()
-    return lib.StaticLibrary(
-        lib.subst(variant_dir),
-        lib.CollectBuildFiles(variant_dir, src_dir, src_filter))
+    return env.StaticLibrary(
+        env.subst(variant_dir),
+        env.CollectBuildFiles(variant_dir, src_dir, src_filter))
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):
-    DefaultEnvironment().Append(PIOBUILDFILES=env.Clone().CollectBuildFiles(
-        variant_dir, src_dir, src_filter))
+    DefaultEnvironment().Append(
+        PIOBUILDFILES=env.CollectBuildFiles(variant_dir, src_dir, src_filter))
 
 
 def exists(_):
@@ -298,6 +299,7 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(BuildProgram)
+    env.AddMethod(ParseFlagsExtended)
     env.AddMethod(ProcessFlags)
     env.AddMethod(ProcessUnFlags)
     env.AddMethod(IsFileWithExt)

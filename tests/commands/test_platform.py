@@ -61,13 +61,14 @@ def test_install_known_version(clirunner, validate_cliresult,
     assert len(isolated_pio_home.join("packages").listdir()) == 1
 
 
-def test_install_from_vcs(clirunner, validate_cliresult):
+def test_install_from_vcs(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cli_platform.platform_install, [
         "https://github.com/platformio/"
         "platform-espressif8266.git#feature/stage", "--skip-default-package"
     ])
     validate_cliresult(result)
     assert "espressif8266" in result.output
+    assert len(isolated_pio_home.join("packages").listdir()) == 1
 
 
 def test_list_json_output(clirunner, validate_cliresult):

@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import collections
-import functools
 import json
 import os
 import platform
@@ -113,40 +111,23 @@ class cd(object):
 
 
 class memoized(object):
-    '''
-    Decorator. Caches a function's return value each time it is called.
-    If called later with the same arguments, the cached value is returned
-    (not reevaluated).
-    https://wiki.python.org/moin/PythonDecoratorLibrary#Memoize
-    '''
 
-    def __init__(self, func):
-        self.func = func
+    def __init__(self, expire=0):
+        self.expire = expire / 1000  # milliseconds
         self.cache = {}
 
-    def __call__(self, *args):
-        if not isinstance(args, collections.Hashable):
-            # uncacheable. a list, for instance.
-            # better to not cache than blow up.
-            return self.func(*args)
-        if args in self.cache:
-            return self.cache[args]
-        value = self.func(*args)
-        self.cache[args] = value
-        return value
+    def __call__(self, func):
 
-    def __repr__(self):
-        '''Return the function's docstring.'''
-        return self.func.__doc__
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            key = str(args) + str(kwargs)
+            if (key not in self.cache
+                    or (self.expire > 0
+                        and self.cache[key][0] < time.time() - self.expire)):
+                self.cache[key] = (time.time(), func(*args, **kwargs))
+            return self.cache[key][1]
 
-    def __get__(self, obj, objtype):
-        '''Support instance methods.'''
-        fn = functools.partial(self.__call__, obj)
-        fn.reset = self._reset
-        return fn
-
-    def _reset(self):
-        self.cache = {}
+        return wrapper
 
 
 class throttle(object):
@@ -155,15 +136,15 @@ class throttle(object):
         self.threshhold = threshhold  # milliseconds
         self.last = 0
 
-    def __call__(self, fn):
+    def __call__(self, func):
 
-        @wraps(fn)
+        @wraps(func)
         def wrapper(*args, **kwargs):
             diff = int(round((time.time() - self.last) * 1000))
             if diff < self.threshhold:
                 time.sleep((self.threshhold - diff) * 0.001)
             self.last = time.time()
-            return fn(*args, **kwargs)
+            return func(*args, **kwargs)
 
         return wrapper
 
@@ -189,8 +170,7 @@ def load_json(file_path):
         with open(file_path, "r") as f:
             return json.load(f)
     except ValueError:
-        raise exception.PlatformioException(
-            "Could not load broken JSON: %s" % file_path)
+        raise exception.InvalidJSONFile(file_path)
 
 
 def get_systype():
@@ -548,6 +528,14 @@ def get_mdns_services():
     with mDNSListener() as mdns:
         time.sleep(3)
         for service in mdns.get_services():
+            properties = None
+            try:
+                if service.properties:
+                    json.dumps(service.properties)
+                properties = service.properties
+            except UnicodeDecodeError:
+                pass
+
             items.append({
                 "type":
                 service.type,
@@ -558,7 +546,7 @@ def get_mdns_services():
                 "port":
                 service.port,
                 "properties":
-                service.properties
+                properties
             })
     return items
 
@@ -568,7 +556,7 @@ def get_request_defheaders():
     return {"User-Agent": "PlatformIO/%s CI/%d %s" % data}
 
 
-@memoized
+@memoized(expire=10000)
 def _api_request_session():
     return requests.Session()
 
@@ -609,6 +597,7 @@ def _get_api_result(
                 verify=verify_ssl)
         result = r.json()
         r.raise_for_status()
+        return r.text
     except requests.exceptions.HTTPError as e:
         if result and "message" in result:
             raise exception.APIRequestError(result['message'])
@@ -622,7 +611,7 @@ def _get_api_result(
     finally:
         if r:
             r.close()
-    return result
+    return None
 
 
 def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
@@ -637,7 +626,7 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
                 if cache_key:
                     result = cc.get(cache_key)
                     if result is not None:
-                        return result
+                        return json.loads(result)
 
             # check internet before and resolve issue with 60 seconds timeout
             internet_on(raise_exception=True)
@@ -646,7 +635,7 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
             if cache_valid:
                 with ContentCache() as cc:
                     cc.set(cache_key, result, cache_valid)
-            return result
+            return json.loads(result)
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
             from platformio.maintenance import in_silence
@@ -670,7 +659,7 @@ PING_INTERNET_IPS = [
 ]
 
 
-@memoized
+@memoized(expire=5000)
 def _internet_on():
     timeout = 2
     socket.setdefaulttimeout(timeout)
@@ -763,6 +752,18 @@ def format_filesize(filesize):
             return "%.2f%sB" % ((base * filesize / unit), suffix)
         break
     return "%d%sB" % ((base * filesize / unit), suffix)
+
+
+def merge_dicts(d1, d2, path=None):
+    if path is None:
+        path = []
+    for key in d2:
+        if (key in d1 and isinstance(d1[key], dict)
+                and isinstance(d2[key], dict)):
+            merge_dicts(d1[key], d2[key], path + [str(key)])
+        else:
+            d1[key] = d2[key]
+    return d1
 
 
 def rmtree_(path):

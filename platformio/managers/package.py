@@ -177,8 +177,25 @@ class PkgInstallerMixin(object):
                     shutil.copy(cache_path, dst_path)
                     return dst_path
 
-        fd = FileDownloader(url, dest_dir)
-        fd.start()
+        with_progress = not app.is_disabled_progressbar()
+        try:
+            fd = FileDownloader(url, dest_dir)
+            fd.start(with_progress=with_progress)
+        except IOError as e:
+            raise_error = not with_progress
+            if with_progress:
+                try:
+                    fd = FileDownloader(url, dest_dir)
+                    fd.start(with_progress=False)
+                except IOError:
+                    raise_error = True
+            if raise_error:
+                click.secho(
+                    "Error: Please read http://bit.ly/package-manager-ioerror",
+                    fg="red",
+                    err=True)
+                raise e
+
         if sha1:
             fd.verify(sha1)
         dst_path = fd.get_filepath()
@@ -194,8 +211,15 @@ class PkgInstallerMixin(object):
 
     @staticmethod
     def unpack(source_path, dest_dir):
-        with FileUnpacker(source_path) as fu:
-            return fu.unpack(dest_dir)
+        with_progress = not app.is_disabled_progressbar()
+        try:
+            with FileUnpacker(source_path) as fu:
+                return fu.unpack(dest_dir, with_progress=with_progress)
+        except IOError as e:
+            if not with_progress:
+                raise e
+            with FileUnpacker(source_path) as fu:
+                return fu.unpack(dest_dir, with_progress=False)
 
     @staticmethod
     def parse_semver_spec(value, raise_exception=False):
@@ -478,7 +502,7 @@ class PkgInstallerMixin(object):
                     target_dirname = "%s@src-%s" % (
                         pkg_dirname,
                         hashlib.md5(cur_manifest['__src_url']).hexdigest())
-                os.rename(pkg_dir, join(self.package_dir, target_dirname))
+                shutil.move(pkg_dir, join(self.package_dir, target_dirname))
             # fix to a version
             elif action == 2:
                 target_dirname = "%s@%s" % (pkg_dirname,
@@ -492,7 +516,7 @@ class PkgInstallerMixin(object):
         # remove previous/not-satisfied package
         if isdir(pkg_dir):
             util.rmtree_(pkg_dir)
-        os.rename(tmp_dir, pkg_dir)
+        shutil.move(tmp_dir, pkg_dir)
         assert isdir(pkg_dir)
         self.cache_reset()
         return pkg_dir
@@ -633,7 +657,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 name,
                 requirements=None,
                 silent=False,
-                trigger_event=True,
+                after_update=False,
                 force=False):
         name, requirements, url = self.parse_pkg_uri(name, requirements)
         package_dir = self.get_package_dir(name, requirements, url)
@@ -676,7 +700,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         manifest = self.load_manifest(pkg_dir)
         assert manifest
 
-        if trigger_event:
+        if not after_update:
             telemetry.on_event(
                 category=self.__class__.__name__,
                 action="Install",
@@ -690,7 +714,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
         return pkg_dir
 
-    def uninstall(self, package, requirements=None, trigger_event=True):
+    def uninstall(self, package, requirements=None, after_update=False):
         if isdir(package):
             pkg_dir = package
         else:
@@ -716,14 +740,14 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         # unfix package with the same name
         pkg_dir = self.get_package_dir(manifest['name'])
         if pkg_dir and "@" in pkg_dir:
-            os.rename(pkg_dir,
-                      join(self.package_dir,
-                           self.get_install_dirname(manifest)))
+            shutil.move(pkg_dir,
+                        join(self.package_dir,
+                             self.get_install_dirname(manifest)))
             self.cache_reset()
 
         click.echo("[%s]" % click.style("OK", fg="green"))
 
-        if trigger_event:
+        if not after_update:
             telemetry.on_event(
                 category=self.__class__.__name__,
                 action="Uninstall",
@@ -769,8 +793,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             self._update_src_manifest(
                 dict(version=vcs.get_current_revision()), vcs.storage_dir)
         else:
-            self.uninstall(pkg_dir, trigger_event=False)
-            self.install(name, latest, trigger_event=False)
+            self.uninstall(pkg_dir, after_update=True)
+            self.install(name, latest, after_update=True)
 
         telemetry.on_event(
             category=self.__class__.__name__,
