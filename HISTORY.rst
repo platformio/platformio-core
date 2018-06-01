@@ -4,6 +4,12 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.5.4 (2018-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Check maximum allowed firmware size for programming/uploading using `platformio run --target checkprogsize <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-t>`__
+  (`issue #1412 <https://github.com/platformio/platformio-core/issues/1412>`_)
+
 3.5.3 (2018-06-01)
 ~~~~~~~~~~~~~~~~~~
 
