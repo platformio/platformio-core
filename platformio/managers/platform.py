@@ -39,9 +39,9 @@ class PlatformManager(BasePkgManager):
                 "{0}://dl.platformio.org/platforms/manifest.json".format(
                     "https" if app.get_setting("enable_ssl") else "http")
             ]
-        BasePkgManager.__init__(self, package_dir
-                                or join(util.get_home_dir(), "platforms"),
-                                repositories)
+        BasePkgManager.__init__(
+            self, package_dir or join(util.get_home_dir(), "platforms"),
+            repositories)
 
     @property
     def manifest_names(self):
@@ -331,8 +331,8 @@ class PlatformPackagesMixin(object):
     def get_package_dir(self, name):
         version = self.packages[name].get("version", "")
         if ":" in version:
-            return self.pm.get_package_dir(*self.pm.parse_pkg_uri(
-                "%s=%s" % (name, version)))
+            return self.pm.get_package_dir(
+                *self.pm.parse_pkg_uri("%s=%s" % (name, version)))
         return self.pm.get_package_dir(name, version)
 
     def get_package_version(self, name):
