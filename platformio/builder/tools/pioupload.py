@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+import re
 import sys
 from fnmatch import fnmatch
 from os import environ
@@ -21,10 +22,12 @@ from os.path import isfile, join
 from shutil import copyfile
 from time import sleep
 
-from SCons.Node.Alias import Alias
+from SCons.Script import ARGUMENTS
 from serial import Serial, SerialException
 
 from platformio import util
+
+# pylint: disable=unused-argument
 
 
 def FlushSerialBuffer(env, port):
@@ -45,7 +48,7 @@ def TouchSerialPort(env, port, baudrate):
         s = Serial(port=port, baudrate=baudrate)
         s.setDTR(False)
         s.close()
-    except:  # pylint: disable=W0702
+    except:  # pylint: disable=bare-except
         pass
     sleep(0.4)  # DO NOT REMOVE THAT (required by SAM-BA based boards)
 
@@ -88,7 +91,7 @@ def WaitForNewSerialPort(env, before):
     return new_port
 
 
-def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
+def AutodetectUploadPort(*args, **kwargs):
     env = args[0]
 
     def _get_pattern():
@@ -173,7 +176,7 @@ def AutodetectUploadPort(*args, **kwargs):  # pylint: disable=unused-argument
         env.Exit(1)
 
 
-def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
+def UploadToDisk(_, target, source, env):
     assert "UPLOAD_PORT" in env
     progname = env.subst("$PROGNAME")
     for ext in ("bin", "hex"):
@@ -186,32 +189,87 @@ def UploadToDisk(_, target, source, env):  # pylint: disable=W0613,W0621
           "(Some boards may require manual hard reset)"
 
 
-def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
-    if "BOARD" not in env:
-        return
-    max_size = int(env.BoardConfig().get("upload.maximum_size", 0))
-    if max_size == 0 or "SIZETOOL" not in env:
-        return
-
-    sysenv = environ.copy()
-    sysenv['PATH'] = str(env['ENV']['PATH'])
-    cmd = [
-        env.subst("$SIZETOOL"), "-B",
-        str(source[0] if isinstance(target[0], Alias) else target[0])
+def CheckUploadSize(_, target, source, env):
+    check_conditions = [
+        env.get("BOARD"),
+        env.get("SIZETOOL") or env.get("SIZECHECKCMD")
     ]
-    result = util.exec_command(cmd, env=sysenv)
-    if result['returncode'] != 0:
+    if not all(check_conditions):
         return
-    print result['out'].strip()
+    program_max_size = int(env.BoardConfig().get("upload.maximum_size", 0))
+    data_max_size = int(env.BoardConfig().get("upload.maximum_ram_size", 0))
+    if program_max_size == 0:
+        return
 
-    line = result['out'].strip().splitlines()[1]
-    values = [v.strip() for v in line.split("\t")]
-    used_size = int(values[0]) + int(values[1])
+    def _configure_defaults():
+        env.Replace(
+            SIZECHECKCMD="$SIZETOOL -B -d $SOURCES",
+            SIZEPROGREGEXP=r"^(\d+)\s+(\d+)\s+\d+\s",
+            SIZEDATAREGEXP=r"^\d+\s+(\d+)\s+(\d+)\s+\d+")
 
-    if used_size > max_size:
+    def _get_size_output():
+        cmd = env.get("SIZECHECKCMD")
+        if not cmd:
+            return None
+        if not isinstance(cmd, list):
+            cmd = cmd.split()
+        cmd = [arg.replace("$SOURCES", str(source[0])) for arg in cmd if arg]
+        sysenv = environ.copy()
+        sysenv['PATH'] = str(env['ENV']['PATH'])
+        result = util.exec_command(env.subst(cmd), env=sysenv)
+        if result['returncode'] != 0:
+            return None
+        return result['out'].strip()
+
+    def _calculate_size(output, pattern):
+        if not output or not pattern:
+            return -1
+        size = 0
+        regexp = re.compile(pattern)
+        for line in output.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            match = regexp.search(line)
+            if not match:
+                continue
+            size += sum(int(value) for value in match.groups())
+        return size
+
+    def _format_availale_bytes(value, total):
+        percent_raw = float(value) / float(total)
+        blocks_per_progress = 10
+        used_blocks = int(round(blocks_per_progress * percent_raw))
+        if used_blocks > blocks_per_progress:
+            used_blocks = blocks_per_progress
+        return "[{:{}}] {: 6.1%} (used {:d} bytes from {:d} bytes)".format(
+            "=" * used_blocks, blocks_per_progress, percent_raw, value, total)
+
+    if not env.get("SIZECHECKCMD") and not env.get("SIZEPROGREGEXP"):
+        _configure_defaults()
+    output = _get_size_output()
+    program_size = _calculate_size(output, env.get("SIZEPROGREGEXP"))
+    data_size = _calculate_size(output, env.get("SIZEDATAREGEXP"))
+
+    print "Memory Usage -> http://bit.ly/pio-memory-usage"
+    if data_max_size and data_size > -1:
+        print "DATA:    %s" % _format_availale_bytes(data_size, data_max_size)
+    if program_size > -1:
+        print "PROGRAM: %s" % _format_availale_bytes(program_size,
+                                                     program_max_size)
+    if int(ARGUMENTS.get("PIOVERBOSE", 0)):
+        print output
+
+    # raise error
+    if data_max_size and data_size > data_max_size:
+        sys.stderr.write(
+            "Error: The data size (%d bytes) is greater "
+            "than maximum allowed (%s bytes)\n" % (data_size, data_max_size))
+        env.Exit(1)
+    if program_size > program_max_size:
         sys.stderr.write("Error: The program size (%d bytes) is greater "
-                         "than maximum allowed (%s bytes)\n" % (used_size,
-                                                                max_size))
+                         "than maximum allowed (%s bytes)\n" %
+                         (program_size, program_max_size))
         env.Exit(1)
 
 

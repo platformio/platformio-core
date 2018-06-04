@@ -107,12 +107,13 @@ def BuildProgram(env):
 
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
+    env.Replace(PIOMAINPROG=program)
 
-    checksize_action = env.VerboseAction(env.CheckUploadSize,
-                                         "Checking program size")
-    AlwaysBuild(env.Alias("checkprogsize", program, checksize_action))
-    if set(["upload", "program"]) & set(COMMAND_LINE_TARGETS):
-        env.AddPostAction(program, checksize_action)
+    AlwaysBuild(
+        env.Alias(
+            "checkprogsize", program,
+            env.VerboseAction(env.CheckUploadSize,
+                              "Checking size $PIOMAINPROG")))
 
     return program
 

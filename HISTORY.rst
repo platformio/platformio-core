@@ -4,11 +4,16 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.5.4 (2018-??-??)
+3.6.0 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Check maximum allowed firmware size for programming/uploading using `platformio run --target checkprogsize <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-t>`__
-  (`issue #1412 <https://github.com/platformio/platformio-core/issues/1412>`_)
+* `Program Memory Usage <http://docs.platformio.org/en/latest/faq.html#program-memory-usage>`_
+
+  - Print human-readable memory usage information after a build and before uploading
+  - Print detailed memory usage information with "sections" and "addresses"
+    in `verbose mode <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-v>`__
+  - Check maximum allowed "program" and "data" sizes before uploading/programming
+    (`issue #1412 <https://github.com/platformio/platformio-core/issues/1412>`_)
 
 3.5.3 (2018-06-01)
 ~~~~~~~~~~~~~~~~~~
