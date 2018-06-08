@@ -208,9 +208,9 @@ class LibraryManager(BasePkgManager):
             cache_valid="30d")
         assert dl_data
 
-        return self._install_from_url(name, dl_data['url'].replace(
-            "http://", "https://") if app.get_setting("enable_ssl") else
-                                      dl_data['url'], requirements)
+        return self._install_from_url(
+            name, dl_data['url'].replace("http://", "https://")
+            if app.get_setting("enable_ssl") else dl_data['url'], requirements)
 
     def search_lib_id(  # pylint: disable=too-many-branches
             self,
@@ -237,9 +237,9 @@ class LibraryManager(BasePkgManager):
             if not isinstance(values, list):
                 values = [v.strip() for v in values.split(",") if v]
             for value in values:
-                query.append('%s:"%s"' % (key[:-1]
-                                          if key.endswith("s") else key,
-                                          value))
+                query.append(
+                    '%s:"%s"' % (key[:-1]
+                                 if key.endswith("s") else key, value))
 
         lib_info = None
         result = util.get_api_result(
@@ -290,9 +290,9 @@ class LibraryManager(BasePkgManager):
     def _get_lib_id_from_installed(self, filters):
         if filters['name'].startswith("id="):
             return int(filters['name'][3:])
-        package_dir = self.get_package_dir(filters['name'],
-                                           filters.get("requirements",
-                                                       filters.get("version")))
+        package_dir = self.get_package_dir(
+            filters['name'], filters.get("requirements",
+                                         filters.get("version")))
         if not package_dir:
             return None
         manifest = self.load_manifest(package_dir)

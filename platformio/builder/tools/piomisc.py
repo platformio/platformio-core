@@ -30,7 +30,8 @@ from platformio.managers.core import get_core_package_dir
 
 class InoToCPPConverter(object):
 
-    PROTOTYPE_RE = re.compile(r"""^(
+    PROTOTYPE_RE = re.compile(
+        r"""^(
         (?:template\<.*\>\s*)?      # template
         ([a-z_\d]+\*?\s+){1,2}      # return type
         ([a-z_\d]+\s*)              # name of prototype
@@ -89,8 +90,8 @@ class InoToCPPConverter(object):
         self.env.Execute(
             self.env.VerboseAction(
                 '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
-                    out_file,
-                    tmp_path), "Converting " + basename(out_file[:-4])))
+                    out_file, tmp_path),
+                "Converting " + basename(out_file[:-4])))
         atexit.register(_delete_file, tmp_path)
         return isfile(out_file)
 
@@ -163,18 +164,17 @@ class InoToCPPConverter(object):
 
         prototype_names = set([m.group(3).strip() for m in prototypes])
         split_pos = prototypes[0].start()
-        match_ptrs = re.search(self.PROTOPTRS_TPLRE %
-                               ("|".join(prototype_names)),
-                               contents[:split_pos], re.M)
+        match_ptrs = re.search(
+            self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),
+            contents[:split_pos], re.M)
         if match_ptrs:
             split_pos = contents.rfind("\n", 0, match_ptrs.start()) + 1
 
         result = []
         result.append(contents[:split_pos].strip())
         result.append("%s;" % ";\n".join([m.group(1) for m in prototypes]))
-        result.append('#line %d "%s"' %
-                      (self._get_total_lines(contents[:split_pos]),
-                       self._main_ino.replace("\\", "/")))
+        result.append('#line %d "%s"' % (self._get_total_lines(
+            contents[:split_pos]), self._main_ino.replace("\\", "/")))
         result.append(contents[split_pos:].strip())
         return "\n".join(result)
 

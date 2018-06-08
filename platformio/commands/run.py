@@ -296,10 +296,10 @@ class EnvironmentProcessor(object):
                     if d.strip()
                 ], self.verbose)
             if "lib_deps" in self.options:
-                _autoinstall_libdeps(self.cmd_ctx,
-                                     util.parse_conf_multi_values(
-                                         self.options['lib_deps']),
-                                     self.verbose)
+                _autoinstall_libdeps(
+                    self.cmd_ctx,
+                    util.parse_conf_multi_values(self.options['lib_deps']),
+                    self.verbose)
 
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])
@@ -385,10 +385,10 @@ def print_summary(results, start_time):
             err=status is False)
 
     print_header(
-        "[%s] Took %.2f seconds" %
-        ((click.style("SUCCESS", fg="green", bold=True)
-          if successed else click.style("ERROR", fg="red", bold=True)),
-         time() - start_time),
+        "[%s] Took %.2f seconds" % (
+            (click.style("SUCCESS", fg="green", bold=True)
+             if successed else click.style("ERROR", fg="red", bold=True)),
+            time() - start_time),
         is_error=not successed)
 
 

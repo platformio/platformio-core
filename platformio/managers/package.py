@@ -500,8 +500,8 @@ class PkgInstallerMixin(object):
                                             cur_manifest['version'])
                 if "__src_url" in cur_manifest:
                     target_dirname = "%s@src-%s" % (
-                        pkg_dirname,
-                        hashlib.md5(cur_manifest['__src_url']).hexdigest())
+                        pkg_dirname, hashlib.md5(
+                            cur_manifest['__src_url']).hexdigest())
                 shutil.move(pkg_dir, join(self.package_dir, target_dirname))
             # fix to a version
             elif action == 2:
@@ -509,8 +509,8 @@ class PkgInstallerMixin(object):
                                             tmp_manifest['version'])
                 if "__src_url" in tmp_manifest:
                     target_dirname = "%s@src-%s" % (
-                        pkg_dirname,
-                        hashlib.md5(tmp_manifest['__src_url']).hexdigest())
+                        pkg_dirname, hashlib.md5(
+                            tmp_manifest['__src_url']).hexdigest())
                 pkg_dir = join(self.package_dir, target_dirname)
 
         # remove previous/not-satisfied package
@@ -722,13 +722,13 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         if not pkg_dir:
-            raise exception.UnknownPackage("%s @ %s" % (package,
-                                                        requirements or "*"))
+            raise exception.UnknownPackage(
+                "%s @ %s" % (package, requirements or "*"))
 
         manifest = self.load_manifest(pkg_dir)
         click.echo(
-            "Uninstalling %s @ %s: \t" %
-            (click.style(manifest['name'], fg="cyan"), manifest['version']),
+            "Uninstalling %s @ %s: \t" % (click.style(
+                manifest['name'], fg="cyan"), manifest['version']),
             nl=False)
 
         if islink(pkg_dir):
@@ -740,9 +740,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         # unfix package with the same name
         pkg_dir = self.get_package_dir(manifest['name'])
         if pkg_dir and "@" in pkg_dir:
-            shutil.move(pkg_dir,
-                        join(self.package_dir,
-                             self.get_install_dirname(manifest)))
+            shutil.move(
+                pkg_dir,
+                join(self.package_dir, self.get_install_dirname(manifest)))
             self.cache_reset()
 
         click.echo("[%s]" % click.style("OK", fg="green"))
@@ -761,8 +761,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             pkg_dir = self.get_package_dir(*self.parse_pkg_uri(package))
 
         if not pkg_dir:
-            raise exception.UnknownPackage("%s @ %s" % (package,
-                                                        requirements or "*"))
+            raise exception.UnknownPackage(
+                "%s @ %s" % (package, requirements or "*"))
 
         manifest = self.load_manifest(pkg_dir)
         name = manifest['name']

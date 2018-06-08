@@ -279,9 +279,8 @@ class LibBuilderBase(object):
                 if (key in item and
                         not util.items_in_list(self.env[env_key], item[key])):
                     if self.verbose:
-                        sys.stderr.write(
-                            "Skip %s incompatible dependency %s\n" % (key[:-1],
-                                                                      item))
+                        sys.stderr.write("Skip %s incompatible dependency %s\n"
+                                         % (key[:-1], item))
                     skip = True
             if skip:
                 continue
@@ -394,9 +393,9 @@ class LibBuilderBase(object):
         if self != lb:
             if _already_depends(lb):
                 if self.verbose:
-                    sys.stderr.write("Warning! Circular dependencies detected "
-                                     "between `%s` and `%s`\n" % (self.path,
-                                                                  lb.path))
+                    sys.stderr.write(
+                        "Warning! Circular dependencies detected "
+                        "between `%s` and `%s`\n" % (self.path, lb.path))
                 self._circular_deps.append(lb)
             elif lb not in self._depbuilders:
                 self._depbuilders.append(lb)
