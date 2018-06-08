@@ -109,9 +109,8 @@ def BuildProgram(env):
     _build_project_deps(env)
 
     # append specified LD_SCRIPT
-    if ("LDSCRIPT_PATH" in env
-            and not any("-Wl,-T" in f for f in env['LINKFLAGS'])):
-        env.Append(LINKFLAGS=['-Wl,-T"$LDSCRIPT_PATH"'])
+    if "LDSCRIPT_PATH" in env and not any("-T" in f for f in env['LINKFLAGS']):
+        env.Append(LINKFLAGS=["-T", "$LDSCRIPT_PATH"])
 
     # enable "cyclic reference" for linker
     if env.get("LIBS") and env.GetCompilerType() == "gcc":

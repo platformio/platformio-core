@@ -9,6 +9,7 @@ PlatformIO 3.0
 
 * Don't export ``CPPPATH`` of project dependent libraries to frameworks
   (`issue #1665 <https://github.com/platformio/platformio-core/issues/1665>`_)
+* Fixed issue with invalid LD script if path contains space
 
 3.5.3 (2018-06-01)
 ~~~~~~~~~~~~~~~~~~
