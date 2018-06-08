@@ -4,6 +4,12 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.5.4 (2018-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Don't export ``CPPPATH`` of project dependent libraries to frameworks
+  (`issue #1665 <https://github.com/platformio/platformio-core/issues/1665>`_)
+
 3.5.3 (2018-06-01)
 ~~~~~~~~~~~~~~~~~~
 

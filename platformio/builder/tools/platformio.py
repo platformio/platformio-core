@@ -22,7 +22,7 @@ from os.path import basename, dirname, isdir, join, realpath
 
 from SCons import Builder, Util
 from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
-                          DefaultEnvironment, SConscript)
+                          DefaultEnvironment, Export, SConscript)
 
 from platformio.util import glob_escape, pioversion_to_intstr
 
@@ -39,6 +39,36 @@ def scons_patched_match_splitext(path, suffixes=None):
     if suffixes and tokens[1] and tokens[1] in suffixes:
         return (path, tokens[1])
     return tokens
+
+
+def _build_project_deps(env):
+    deps = env.BuildProjectLibraries()
+    srcnodes = None
+    if "__test" in COMMAND_LINE_TARGETS:
+        srcnodes = env.ProcessTest()
+    else:
+        srcnodes = env.CollectBuildFiles(
+            "$BUILDSRC_DIR",
+            "$PROJECTSRC_DIR",
+            src_filter=env.get("SRC_FILTER"))
+
+    projenv = env.Clone()
+    Export("projenv")
+
+    # CPPPATH from dependencies
+    projenv.PrependUnique(CPPPATH=deps['CPPPATH'])
+    # extra build flags from `platformio.ini`
+    projenv.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
+
+    # prepend dependent libs before built-in
+    env.Prepend(
+        LIBS=deps['LIBS'], PIOBUILDFILES=[projenv.Object(n) for n in srcnodes])
+
+    if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
+        sys.stderr.write(
+            "Error: Nothing to build. Please put your source code files "
+            "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR"))
+        env.Exit(1)
 
 
 def BuildProgram(env):
@@ -62,6 +92,7 @@ def BuildProgram(env):
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
         env.ProcessFlags(env.BoardConfig().get("build.extra_flags"))
+
     # apply user flags
     env.ProcessFlags(env.get("BUILD_FLAGS"))
 
@@ -74,8 +105,8 @@ def BuildProgram(env):
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 
-    # build dependent libs; place them before built-in libs
-    env.Prepend(LIBS=env.BuildProjectLibraries())
+    # build project with dependencies
+    _build_project_deps(env)
 
     # append specified LD_SCRIPT
     if ("LDSCRIPT_PATH" in env
@@ -86,24 +117,6 @@ def BuildProgram(env):
     if env.get("LIBS") and env.GetCompilerType() == "gcc":
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
-
-    # Handle SRC_BUILD_FLAGS
-    env.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
-
-    if "__test" in COMMAND_LINE_TARGETS:
-        env.Append(PIOBUILDFILES=env.ProcessTest())
-    else:
-        env.Append(
-            PIOBUILDFILES=env.CollectBuildFiles(
-                "$BUILDSRC_DIR",
-                "$PROJECTSRC_DIR",
-                src_filter=env.get("SRC_FILTER")))
-
-    if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
-        sys.stderr.write(
-            "Error: Nothing to build. Please put your source code files "
-            "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR"))
-        env.Exit(1)
 
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
@@ -275,7 +288,7 @@ def BuildFrameworks(env, frameworks):
             env.ConvertInoToCpp()
 
         if f in board_frameworks:
-            SConscript(env.GetFrameworkScript(f))
+            SConscript(env.GetFrameworkScript(f), exports="env")
         else:
             sys.stderr.write(
                 "Error: This board doesn't support %s framework!\n" % f)
