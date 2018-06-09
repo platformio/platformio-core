@@ -43,32 +43,31 @@ def scons_patched_match_splitext(path, suffixes=None):
 
 def _build_project_deps(env):
     deps = env.BuildProjectLibraries()
-    srcnodes = None
-    if "__test" in COMMAND_LINE_TARGETS:
-        srcnodes = env.ProcessTest()
-    else:
-        srcnodes = env.CollectBuildFiles(
-            "$BUILDSRC_DIR",
-            "$PROJECTSRC_DIR",
-            src_filter=env.get("SRC_FILTER"))
+    # prepend dependent libs before built-in
+    env.Prepend(LIBS=deps['LIBS'])
 
-    projenv = env.Clone()
-    Export("projenv")
+    if "__test" in COMMAND_LINE_TARGETS:
+        env.ProcessTest()
+        projenv = env.Clone()
+        projenv.BuildSources("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
+                             "$PIOTEST_SRC_FILTER")
+    else:
+        projenv = env.Clone()
+        projenv.BuildSources("$BUILDSRC_DIR", "$PROJECTSRC_DIR",
+                             env.get("SRC_FILTER"))
 
     # CPPPATH from dependencies
     projenv.PrependUnique(CPPPATH=deps['CPPPATH'])
     # extra build flags from `platformio.ini`
     projenv.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
-    # prepend dependent libs before built-in
-    env.Prepend(
-        LIBS=deps['LIBS'], PIOBUILDFILES=[projenv.Object(n) for n in srcnodes])
-
-    if not env['PIOBUILDFILES'] and not COMMAND_LINE_TARGETS:
+    if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
             "Error: Nothing to build. Please put your source code files "
             "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR"))
         env.Exit(1)
+
+    Export("projenv")
 
 
 def BuildProgram(env):
@@ -302,8 +301,9 @@ def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):
+    nodes = env.CollectBuildFiles(variant_dir, src_dir, src_filter)
     DefaultEnvironment().Append(
-        PIOBUILDFILES=env.CollectBuildFiles(variant_dir, src_dir, src_filter))
+        PIOBUILDFILES=[env.Object(node) for node in nodes])
 
 
 def exists(_):
