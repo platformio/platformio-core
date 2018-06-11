@@ -15,6 +15,13 @@ PlatformIO 3.0
   - Check maximum allowed "program" and "data" sizes before uploading/programming
     (`issue #1412 <https://github.com/platformio/platformio-core/issues/1412>`_)
 
+3.5.4 (2018-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Don't export ``CPPPATH`` of project dependent libraries to frameworks
+  (`issue #1665 <https://github.com/platformio/platformio-core/issues/1665>`_)
+* Fixed issue with invalid LD script if path contains space
+
 3.5.3 (2018-06-01)
 ~~~~~~~~~~~~~~~~~~
 

@@ -821,7 +821,7 @@ def BuildProjectLibraries(env):
             title = "<%s>" % lb.name
             vcs_info = lb.vcs_info
             if lb.version:
-                title += " v%s" % lb.version
+                title += " %s" % lb.version
             if vcs_info and vcs_info.get("version"):
                 title += " #%s" % vcs_info.get("version")
             sys.stdout.write("%s|-- %s" % (margin, title))
@@ -836,7 +836,6 @@ def BuildProjectLibraries(env):
                 print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
-    project.env = env
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
 
     print "Library Dependency Finder -> http://bit.ly/configure-pio-ldf"
@@ -858,7 +857,8 @@ def BuildProjectLibraries(env):
     else:
         print "No dependencies"
 
-    return project.build()
+    libs = project.build()
+    return dict(LIBS=libs, CPPPATH=project.env.get("CPPPATH"))
 
 
 def exists(_):

@@ -231,14 +231,25 @@ def GetActualLDScript(env):
         return None
 
     script = None
+    script_in_next = False
     for f in env.get("LINKFLAGS", []):
-        if f.startswith("-Wl,-T"):
-            script = env.subst(f[6:].replace('"', "").strip())
-            if isfile(script):
-                return script
-            path = _lookup_in_ldpath(script)
-            if path:
-                return path
+        raw_script = None
+        if f == "-T":
+            script_in_next = True
+            continue
+        elif script_in_next:
+            script_in_next = False
+            raw_script = f
+        elif f.startswith("-Wl,-T"):
+            raw_script = f[6:]
+        else:
+            continue
+        script = env.subst(raw_script.replace('"', "").strip())
+        if isfile(script):
+            return script
+        path = _lookup_in_ldpath(script)
+        if path:
+            return path
 
     if script:
         sys.stderr.write(
@@ -294,9 +305,6 @@ def ProcessTest(env):
     if "PIOTEST" in env:
         src_filter.append("+<%s%s>" % (env['PIOTEST'], sep))
     env.Replace(PIOTEST_SRC_FILTER=src_filter)
-
-    return env.CollectBuildFiles("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
-                                 "$PIOTEST_SRC_FILTER")
 
 
 def GetExtraScripts(env, scope):
