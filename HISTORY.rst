@@ -20,6 +20,8 @@ PlatformIO 3.0
 
 * Don't export ``CPPPATH`` of project dependent libraries to frameworks
   (`issue #1665 <https://github.com/platformio/platformio-core/issues/1665>`_)
+* Handle "architectures" data from "library.properties" manifest in
+  `lib_compat_mode = strict <http://docs.platformio.org/en/latest/librarymanager/ldf.html#compatibility-mode>`__
 * Fixed issue with invalid LD script if path contains space
 
 3.5.3 (2018-06-01)

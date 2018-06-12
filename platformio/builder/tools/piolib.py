@@ -501,6 +501,28 @@ class ArduinoLibBuilder(LibBuilderBase):
     def is_frameworks_compatible(self, frameworks):
         return util.items_in_list(frameworks, ["arduino", "energia"])
 
+    def is_platforms_compatible(self, platforms):
+        platforms_map = {
+            "avr": "atmelavr",
+            "sam": "atmelsam",
+            "samd": "atmelsam",
+            "esp8266": "espressif8266",
+            "esp32": "espressif32",
+            "arc32": "intel_arc32",
+            "stm32": "ststm32"
+        }
+        items = []
+        for arch in self._manifest.get("architectures", "").split(","):
+            arch = arch.strip()
+            if arch == "*":
+                items = "*"
+                break
+            if arch in platforms_map:
+                items.append(platforms_map[arch])
+        if not items:
+            return LibBuilderBase.is_platforms_compatible(self, platforms)
+        return util.items_in_list(platforms, items)
+
 
 class MbedLibBuilder(LibBuilderBase):
 
