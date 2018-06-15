@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from datetime import datetime
 from hashlib import sha1
 from os import getcwd, makedirs, walk
 from os.path import getmtime, isdir, isfile, join
@@ -197,10 +196,8 @@ class EnvironmentProcessor(object):
                     "%s: %s" % (k, ", ".join(util.parse_conf_multi_values(v))))
 
         if not self.silent:
-            click.echo("[%s] Processing %s (%s)" %
-                       (datetime.now().strftime("%c"),
-                        click.style(self.name, fg="cyan", bold=True),
-                        "; ".join(env_dump)))
+            click.echo("Processing %s (%s)" % (click.style(
+                self.name, fg="cyan", bold=True), "; ".join(env_dump)))
             click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
