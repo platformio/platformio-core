@@ -25,6 +25,8 @@ PlatformIO 3.0
 * Removed "date&time" when processing project with `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__ command
   (`issue #1343 <https://github.com/platformio/platformio-core/issues/1343>`_)
 * Fixed issue with invalid LD script if path contains space
+* Fixed preprocessor for Arduino sketch when function returns certain type
+  (`issue #1683 <https://github.com/platformio/platformio-core/issues/1683>`_)
 
 3.5.3 (2018-06-01)
 ~~~~~~~~~~~~~~~~~~
