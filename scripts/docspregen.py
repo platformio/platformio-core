@@ -396,10 +396,8 @@ def update_platform_docs():
         rst_path = join(platforms_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
             f.write(
-                generate_platform(name,
-                                  isfile(
-                                      join(platforms_dir,
-                                           "%s_extra.rst" % name))))
+                generate_platform(
+                    name, isfile(join(platforms_dir, "%s_extra.rst" % name))))
 
 
 def generate_framework(type_, data, has_extra=False):
@@ -518,10 +516,9 @@ def update_framework_docs():
         rst_path = join(frameworks_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
             f.write(
-                generate_framework(name, framework,
-                                   isfile(
-                                       join(frameworks_dir,
-                                            "%s_extra.rst" % name))))
+                generate_framework(
+                    name, framework,
+                    isfile(join(frameworks_dir, "%s_extra.rst" % name))))
 
 
 def update_create_platform_doc():
@@ -691,19 +688,78 @@ Boards
                  "\n".join(lines))
 
 
-def update_examples_readme():
-    examples_dir = join(util.get_source_dir(), "..", "examples")
+def update_project_examples():
+    platform_readme_tpl = """
+# {title}: development platform for [PlatformIO](https://platformio.org)
 
-    # Platforms
+{description}
+
+* [Home](https://platformio.org/platforms/{name}) (home page in PlatformIO Registry)
+* [Documentation](http://docs.platformio.org/page/platforms/{name}.html) (advanced usage, packages, boards, frameworks, etc.)
+
+# Examples
+
+{examples}
+"""
+    framework_readme_tpl = """
+# {title}: framework for [PlatformIO](https://platformio.org)
+
+{description}
+
+* [Home](https://platformio.org/frameworks/{name}) (home page in PlatformIO Registry)
+* [Documentation](http://docs.platformio.org/page/frameworks/{name}.html)
+
+# Examples
+
+{examples}
+"""
+
+    project_examples_dir = join(util.get_source_dir(), "..", "examples")
+    framework_examples_md_lines = {}
     embedded = []
     desktop = []
+
     for manifest in PLATFORM_MANIFESTS:
         p = PlatformFactory.newPlatform(manifest['name'])
-        url = campaign_url(
-            "http://docs.platformio.org/en/latest/platforms/%s.html#examples" %
-            p.name,
-            source="github",
-            medium="examples")
+        github_platform_url = (
+            "https://github.com/platformio/platform-%s" % p.name)
+
+        # Platform README
+        platform_examples_dir = join(p.get_dir(), "examples")
+        examples_md_lines = []
+        if isdir(platform_examples_dir):
+            for item in os.listdir(platform_examples_dir):
+                if not isdir(join(platform_examples_dir, item)):
+                    continue
+                url = ("%s/tree/develop/examples/%s" % (github_platform_url,
+                                                        item))
+                examples_md_lines.append("* [%s](%s)" % (item, url))
+
+        readme_dir = join(project_examples_dir, "platforms", p.name)
+        if not isdir(readme_dir):
+            os.makedirs(readme_dir)
+        with open(join(readme_dir, "README.md"), "w") as fp:
+            fp.write(
+                platform_readme_tpl.format(
+                    name=p.name,
+                    title=p.title,
+                    description=p.description,
+                    examples="\n".join(examples_md_lines)))
+
+        # Framework README
+        for framework in API_FRAMEWORKS:
+            if not is_compat_platform_and_framework(p.name, framework['name']):
+                continue
+            if framework['name'] not in framework_examples_md_lines:
+                framework_examples_md_lines[framework['name']] = []
+            lines = []
+            lines.append("- [%s](%s)" % (p.title, github_platform_url))
+            lines.extend("  %s" % l for l in examples_md_lines)
+            lines.append("")
+            framework_examples_md_lines[framework['name']].extend(lines)
+
+        # Root README
+        url = "https://github.com/platformio/platform-%s/tree/develop/examples" % p.name
         line = "* [%s](%s)" % (p.title, url)
         if p.is_embedded():
             embedded.append(line)
@@ -713,6 +769,18 @@ def update_examples_readme():
     # Frameworks
     frameworks = []
     for framework in API_FRAMEWORKS:
+        readme_dir = join(project_examples_dir, "frameworks",
+                          framework['name'])
+        if not isdir(readme_dir):
+            os.makedirs(readme_dir)
+        with open(join(readme_dir, "README.md"), "w") as fp:
+            fp.write(
+                framework_readme_tpl.format(
+                    name=framework['name'],
+                    title=framework['title'],
+                    description=framework['description'],
+                    examples="\n".join(
+                        framework_examples_md_lines[framework['name']])))
         url = campaign_url(
             "http://docs.platformio.org/en/latest/frameworks/%s.html#examples"
             % framework['name'],
@@ -720,7 +788,7 @@ def update_examples_readme():
             medium="examples")
         frameworks.append("* [%s](%s)" % (framework['title'], url))
 
-    with open(join(examples_dir, "README.md"), "w") as fp:
+    with open(join(project_examples_dir, "README.md"), "w") as fp:
         fp.write("""# PlatformIO Project Examples
 
 - [Development platforms](#development-platforms):
@@ -750,7 +818,7 @@ def main():
     update_framework_docs()
     update_embedded_boards()
     update_debugging()
-    update_examples_readme()
+    update_project_examples()
 
 
 if __name__ == "__main__":
