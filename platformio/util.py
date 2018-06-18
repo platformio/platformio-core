@@ -268,6 +268,15 @@ def get_home_dir():
 
 
 def get_source_dir():
+    '''
+    .. versionchanged:: X.X.X
+        Add support for loading ``platformio`` module from a ``.zip`` file
+        (e.g., in an application packaged using ``py2exe``).  This is done by
+        looking for source files in ``<prefix>/platformio``, where required
+        source files may be stored outside of the ``.zip`` modules archive.
+    '''
+    if getattr(sys, 'frozen', False):
+        return os.path.join(sys.prefix, 'platformio')
     curpath = abspath(__file__)
     if not isfile(curpath):
         for p in sys.path:
