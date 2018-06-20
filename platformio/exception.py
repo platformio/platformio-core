@@ -192,6 +192,11 @@ class InvalidLibConfURL(PlatformioException):
     MESSAGE = "Invalid library config URL '{0}'"
 
 
+class InvalidProjectConf(PlatformioException):
+
+    MESSAGE = "Invalid `platformio.ini`, project configuration file: '{0}'"
+
+
 class BuildScriptNotFound(PlatformioException):
 
     MESSAGE = "Invalid path '{0}' to build script"
