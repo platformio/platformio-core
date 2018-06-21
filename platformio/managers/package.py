@@ -18,7 +18,7 @@ import json
 import os
 import re
 import shutil
-from os.path import basename, getsize, isdir, isfile, islink, join
+from os.path import abspath, basename, getsize, isdir, isfile, islink, join
 from tempfile import mkdtemp
 
 import click
@@ -366,6 +366,12 @@ class PkgInstallerMixin(object):
         manifest = self.get_package(name, requirements, url)
         return manifest.get("__pkg_dir") if manifest and isdir(
             manifest.get("__pkg_dir")) else None
+
+    def get_package_by_dir(self, pkg_dir):
+        for manifest in self.get_installed():
+            if manifest['__pkg_dir'] == util.path_to_unicode(abspath(pkg_dir)):
+                return manifest
+        return None
 
     def find_pkg_root(self, src_dir):
         if self.manifest_exists(src_dir):
@@ -715,7 +721,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         return pkg_dir
 
     def uninstall(self, package, requirements=None, after_update=False):
-        if isdir(package):
+        if isdir(package) and self.get_package_by_dir(package):
             pkg_dir = package
         else:
             name, requirements, url = self.parse_pkg_uri(package, requirements)
@@ -755,7 +761,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         return True
 
     def update(self, package, requirements=None, only_check=False):
-        if isdir(package):
+        if isdir(package) and self.get_package_by_dir(package):
             pkg_dir = package
         else:
             pkg_dir = self.get_package_dir(*self.parse_pkg_uri(package))
