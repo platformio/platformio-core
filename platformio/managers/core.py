@@ -107,7 +107,7 @@ def pioplus_call(args, **kwargs):
     pythonexe_path = util.get_pythonexe_path()
     os.environ['PYTHONEXEPATH'] = pythonexe_path
     os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("contrib-pysite")
-    os.environ['PIOPYSITEDIR'] = dirname(util.get_source_dir() or "")
+    os.environ['PIOCOREPYSITEDIR'] = dirname(util.get_source_dir() or "")
     os.environ['PATH'] = (os.pathsep).join(
         [dirname(pythonexe_path), os.environ['PATH']])
     util.copy_pythonpath_to_osenv()
