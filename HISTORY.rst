@@ -27,8 +27,7 @@ PlatformIO 3.0
 * Fixed issue with invalid LD script if path contains space
 * Fixed preprocessor for Arduino sketch when function returns certain type
   (`issue #1683 <https://github.com/platformio/platformio-core/issues/1683>`_)
-* Fixed issue when `
-platformio lib uninstall <http://docs.platformio.org/page/userguide/lib/cmd_uninstall.html>`__
+* Fixed issue when `platformio lib uninstall <http://docs.platformio.org/page/userguide/lib/cmd_uninstall.html>`__
   removes initial source code
   (`issue #1023 <https://github.com/platformio/platformio-core/issues/1023>`_)
 
