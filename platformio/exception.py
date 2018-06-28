@@ -253,7 +253,7 @@ class CygwinEnvDetected(PlatformioException):
 class DebugSupportError(PlatformioException):
 
     MESSAGE = ("Currently, PlatformIO does not support debugging for `{0}`.\n"
-               "Please mail contact@pioplus.com or visit "
+               "Please contact support@pioplus.com or visit "
                "< http://docs.platformio.org/page/plus/debugging.html >")
 
 
