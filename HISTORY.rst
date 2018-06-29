@@ -11,6 +11,8 @@ PlatformIO 3.0
   (`issue #1665 <https://github.com/platformio/platformio-core/issues/1665>`_)
 * Handle "architectures" data from "library.properties" manifest in
   `lib_compat_mode = strict <http://docs.platformio.org/en/page/librarymanager/ldf.html#compatibility-mode>`__
+* Replaced conflicted "env" pattern by "sysenv" for `"platformio.ini" Dynamic Variables" <http://docs.platformio.org/page/projectconf/dynamic_variables.html>`__
+  (`issue #1705 <https://github.com/platformio/platformio-core/issues/1705>`_)
 * Removed "date&time" when processing project with `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__ command
   (`issue #1343 <https://github.com/platformio/platformio-core/issues/1343>`_)
 * Fixed issue with invalid LD script if path contains space
