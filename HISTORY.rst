@@ -7,7 +7,10 @@ PlatformIO 3.0
 3.5.4 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Don't export ``CPPPATH`` of project dependent libraries to frameworks
+* Export ``LIBS``, ``LIBPATH``, and ``LINKFLAGS`` data from project dependent
+  libraries to the global build environment
+* Don't export ``CPPPATH`` data of project dependent libraries to framework's
+  build environment
   (`issue #1665 <https://github.com/platformio/platformio-core/issues/1665>`_)
 * Handle "architectures" data from "library.properties" manifest in
   `lib_compat_mode = strict <http://docs.platformio.org/en/page/librarymanager/ldf.html#compatibility-mode>`__

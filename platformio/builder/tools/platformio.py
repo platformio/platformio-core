@@ -42,9 +42,16 @@ def scons_patched_match_splitext(path, suffixes=None):
 
 
 def _build_project_deps(env):
-    deps = env.BuildProjectLibraries()
-    # prepend dependent libs before built-in
-    env.Prepend(LIBS=deps['LIBS'])
+    project_lib_builder = env.ConfigureProjectLibBuilder()
+
+    # append project libs to the beginning of list
+    env.Prepend(LIBS=project_lib_builder.build())
+    # append extra linker related options from libs
+    env.AppendUnique(
+        **{
+            key: project_lib_builder.env.get(key)
+            for key in ("LIBS", "LIBPATH", "LINKFLAGS")
+        })
 
     if "__test" in COMMAND_LINE_TARGETS:
         env.ProcessTest()
@@ -57,7 +64,7 @@ def _build_project_deps(env):
                              env.get("SRC_FILTER"))
 
     # CPPPATH from dependencies
-    projenv.PrependUnique(CPPPATH=deps['CPPPATH'])
+    projenv.PrependUnique(CPPPATH=project_lib_builder.env.get("CPPPATH"))
     # extra build flags from `platformio.ini`
     projenv.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
