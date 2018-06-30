@@ -51,6 +51,7 @@ def _build_project_deps(env):
         **{
             key: project_lib_builder.env.get(key)
             for key in ("LIBS", "LIBPATH", "LINKFLAGS")
+            if project_lib_builder.env.get(key)
         })
 
     if "__test" in COMMAND_LINE_TARGETS:
