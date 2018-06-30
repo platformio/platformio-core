@@ -824,7 +824,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
     return items
 
 
-def BuildProjectLibraries(env):
+def ConfigureProjectLibBuilder(env):
 
     def correct_found_libs(lib_builders):
         # build full dependency graph
@@ -879,8 +879,7 @@ def BuildProjectLibraries(env):
     else:
         print "No dependencies"
 
-    libs = project.build()
-    return dict(LIBS=libs, CPPPATH=project.env.get("CPPPATH"))
+    return project
 
 
 def exists(_):
@@ -889,5 +888,5 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(GetLibBuilders)
-    env.AddMethod(BuildProjectLibraries)
+    env.AddMethod(ConfigureProjectLibBuilder)
     return env

@@ -63,7 +63,13 @@ class ProjectConfig(ConfigParser.ConfigParser):
 
     def _re_sub_handler(self, match):
         section, option = match.group(1), match.group(2)
-        if section == "env" and not self.has_section(section):
+        if section in ("env", "sysenv") and not self.has_section(section):
+            if section == "env":
+                click.secho(
+                    "Warning! Access to system environment variable via "
+                    "`${{env.{0}}}` is deprecated. Please use "
+                    "`${{sysenv.{0}}}` instead".format(option),
+                    fg="yellow")
             return os.getenv(option)
         return self.get(section, option)
 

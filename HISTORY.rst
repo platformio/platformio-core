@@ -18,10 +18,17 @@ PlatformIO 3.0
 3.5.4 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Don't export ``CPPPATH`` of project dependent libraries to frameworks
+* Improved removing of default build flags using `build_unflags <http://docs.platformio.org/page/projectconf/section_env_build.html#build-unflags>`__ option
+  (`issue #1712 <https://github.com/platformio/platformio-core/issues/1712>`_)
+* Export ``LIBS``, ``LIBPATH``, and ``LINKFLAGS`` data from project dependent
+  libraries to the global build environment
+* Don't export ``CPPPATH`` data of project dependent libraries to framework's
+  build environment
   (`issue #1665 <https://github.com/platformio/platformio-core/issues/1665>`_)
 * Handle "architectures" data from "library.properties" manifest in
   `lib_compat_mode = strict <http://docs.platformio.org/en/page/librarymanager/ldf.html#compatibility-mode>`__
+* Replaced conflicted "env" pattern by "sysenv" for `"platformio.ini" Dynamic Variables" <http://docs.platformio.org/page/projectconf/dynamic_variables.html>`__
+  (`issue #1705 <https://github.com/platformio/platformio-core/issues/1705>`_)
 * Removed "date&time" when processing project with `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__ command
   (`issue #1343 <https://github.com/platformio/platformio-core/issues/1343>`_)
 * Fixed issue with invalid LD script if path contains space
