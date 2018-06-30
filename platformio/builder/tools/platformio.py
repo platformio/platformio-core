@@ -190,7 +190,18 @@ def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
 def ProcessUnFlags(env, flags):
     if not flags:
         return
-    for key, unflags in env.ParseFlagsExtended(flags).items():
+    parsed = env.ParseFlagsExtended(flags)
+
+    # get all flags and copy them to each "*FLAGS" variable
+    all_flags = []
+    for key, unflags in parsed.items():
+        if key.endswith("FLAGS"):
+            all_flags.extend(unflags)
+    for key, unflags in parsed.items():
+        if key.endswith("FLAGS"):
+            parsed[key].extend(all_flags)
+
+    for key, unflags in parsed.items():
         for unflag in unflags:
             for current in env.get(key, []):
                 conditions = [

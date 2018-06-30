@@ -7,6 +7,8 @@ PlatformIO 3.0
 3.5.4 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Improved removing of default build flags using `build_unflags <http://docs.platformio.org/page/projectconf/section_env_build.html#build-unflags>`__ option
+  (`issue #1712 <https://github.com/platformio/platformio-core/issues/1712>`_)
 * Export ``LIBS``, ``LIBPATH``, and ``LINKFLAGS`` data from project dependent
   libraries to the global build environment
 * Don't export ``CPPPATH`` data of project dependent libraries to framework's
