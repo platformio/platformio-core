@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.5.4 (2018-??-??)
+3.5.4 (2018-07-03)
 ~~~~~~~~~~~~~~~~~~
 
 * Improved removing of default build flags using `build_unflags <http://docs.platformio.org/page/projectconf/section_env_build.html#build-unflags>`__ option
