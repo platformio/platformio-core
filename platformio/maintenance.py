@@ -208,8 +208,8 @@ def after_upgrade(ctx):
 
     # PlatformIO banner
     click.echo("*" * terminal_width)
-    click.echo("If you like %s, please:" %
-               (click.style("PlatformIO", fg="cyan")))
+    click.echo(
+        "If you like %s, please:" % (click.style("PlatformIO", fg="cyan")))
     click.echo("- %s us on Twitter to stay up-to-date "
                "on the latest project news > %s" %
                (click.style("follow", fg="cyan"),
@@ -224,9 +224,9 @@ def after_upgrade(ctx):
             (click.style("try", fg="cyan"),
              click.style("https://platformio.org/platformio-ide", fg="cyan")))
     if not util.is_ci():
-        click.echo("- %s us with PlatformIO Plus > %s" %
-                   (click.style("support", fg="cyan"),
-                    click.style("https://pioplus.com", fg="cyan")))
+        click.echo("- %s us with PlatformIO Plus > %s" % (click.style(
+            "support", fg="cyan"), click.style(
+                "https://pioplus.com", fg="cyan")))
 
     click.echo("*" * terminal_width)
     click.echo("")
@@ -296,8 +296,8 @@ def check_internal_updates(ctx, what):
         if manifest['name'] in outdated_items:
             continue
         conds = [
-            pm.outdated(manifest['__pkg_dir']),
-            what == "platforms" and PlatformFactory.newPlatform(
+            pm.outdated(manifest['__pkg_dir']), what == "platforms"
+            and PlatformFactory.newPlatform(
                 manifest['__pkg_dir']).are_outdated_packages()
         ]
         if any(conds):
@@ -318,8 +318,8 @@ def check_internal_updates(ctx, what):
     if not app.get_setting("auto_update_" + what):
         click.secho("Please update them via ", fg="yellow", nl=False)
         click.secho(
-            "`platformio %s update`" %
-            ("lib --global" if what == "libraries" else "platform"),
+            "`platformio %s update`" % ("lib --global" if what == "libraries"
+                                        else "platform"),
             fg="cyan",
             nl=False)
         click.secho(" command.\n", fg="yellow")

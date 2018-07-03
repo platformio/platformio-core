@@ -439,8 +439,8 @@ def lib_stats(json_output):
             printitem_tpl.format(
                 name=click.style(name, fg="cyan"),
                 url=click.style(
-                    "https://platformio.org/lib/search?query=" +
-                    quote("keyword:%s" % name),
+                    "https://platformio.org/lib/search?query=" + quote(
+                        "keyword:%s" % name),
                     fg="blue")))
 
     for key in ("updated", "added"):

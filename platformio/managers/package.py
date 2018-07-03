@@ -18,7 +18,7 @@ import json
 import os
 import re
 import shutil
-from os.path import basename, getsize, isdir, isfile, islink, join
+from os.path import abspath, basename, getsize, isdir, isfile, islink, join
 from tempfile import mkdtemp
 
 import click
@@ -90,7 +90,8 @@ class PkgRepoMixin(object):
         reqspec = None
         if requirements:
             try:
-                reqspec = semantic_version.Spec(requirements)
+                reqspec = self.parse_semver_spec(
+                    requirements, raise_exception=True)
             except ValueError:
                 pass
 
@@ -98,8 +99,8 @@ class PkgRepoMixin(object):
             if not self.is_system_compatible(v.get("system")):
                 continue
             if "platformio" in v.get("engines", {}):
-                if PkgRepoMixin.PIO_VERSION not in semantic_version.Spec(
-                        v['engines']['platformio']):
+                if PkgRepoMixin.PIO_VERSION not in self.parse_semver_spec(
+                        v['engines']['platformio'], raise_exception=True):
                     continue
             specver = semantic_version.Version(v['version'])
             if reqspec and specver not in reqspec:
@@ -224,7 +225,20 @@ class PkgInstallerMixin(object):
     @staticmethod
     def parse_semver_spec(value, raise_exception=False):
         try:
-            return semantic_version.Spec(value)
+            # Workaround for ^ issue and pre-releases
+            # https://github.com/rbarrois/python-semanticversion/issues/61
+            requirements = []
+            for item in str(value).split(","):
+                item = item.strip()
+                if not item:
+                    continue
+                if item.startswith("^"):
+                    major = semantic_version.Version.coerce(item[1:]).major
+                    requirements.append(">=%s" % major)
+                    requirements.append("<%s" % (int(major) + 1))
+                else:
+                    requirements.append(item)
+            return semantic_version.Spec(*requirements)
         except ValueError as e:
             if raise_exception:
                 raise e
@@ -367,6 +381,12 @@ class PkgInstallerMixin(object):
         return manifest.get("__pkg_dir") if manifest and isdir(
             manifest.get("__pkg_dir")) else None
 
+    def get_package_by_dir(self, pkg_dir):
+        for manifest in self.get_installed():
+            if manifest['__pkg_dir'] == util.path_to_unicode(abspath(pkg_dir)):
+                return manifest
+        return None
+
     def find_pkg_root(self, src_dir):
         if self.manifest_exists(src_dir):
             return src_dir
@@ -474,8 +494,8 @@ class PkgInstallerMixin(object):
                 "Package version %s doesn't satisfy requirements %s" %
                 (tmp_manifest['version'], requirements))
             try:
-                assert tmp_semver and tmp_semver in semantic_version.Spec(
-                    requirements), mismatch_error
+                assert tmp_semver and tmp_semver in self.parse_semver_spec(
+                    requirements, raise_exception=True), mismatch_error
             except (AssertionError, ValueError):
                 assert tmp_manifest['version'] == requirements, mismatch_error
 
@@ -500,8 +520,8 @@ class PkgInstallerMixin(object):
                                             cur_manifest['version'])
                 if "__src_url" in cur_manifest:
                     target_dirname = "%s@src-%s" % (
-                        pkg_dirname,
-                        hashlib.md5(cur_manifest['__src_url']).hexdigest())
+                        pkg_dirname, hashlib.md5(
+                            cur_manifest['__src_url']).hexdigest())
                 shutil.move(pkg_dir, join(self.package_dir, target_dirname))
             # fix to a version
             elif action == 2:
@@ -509,8 +529,8 @@ class PkgInstallerMixin(object):
                                             tmp_manifest['version'])
                 if "__src_url" in tmp_manifest:
                     target_dirname = "%s@src-%s" % (
-                        pkg_dirname,
-                        hashlib.md5(tmp_manifest['__src_url']).hexdigest())
+                        pkg_dirname, hashlib.md5(
+                            tmp_manifest['__src_url']).hexdigest())
                 pkg_dir = join(self.package_dir, target_dirname)
 
         # remove previous/not-satisfied package
@@ -715,20 +735,20 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         return pkg_dir
 
     def uninstall(self, package, requirements=None, after_update=False):
-        if isdir(package):
+        if isdir(package) and self.get_package_by_dir(package):
             pkg_dir = package
         else:
             name, requirements, url = self.parse_pkg_uri(package, requirements)
             pkg_dir = self.get_package_dir(name, requirements, url)
 
         if not pkg_dir:
-            raise exception.UnknownPackage("%s @ %s" % (package,
-                                                        requirements or "*"))
+            raise exception.UnknownPackage(
+                "%s @ %s" % (package, requirements or "*"))
 
         manifest = self.load_manifest(pkg_dir)
         click.echo(
-            "Uninstalling %s @ %s: \t" %
-            (click.style(manifest['name'], fg="cyan"), manifest['version']),
+            "Uninstalling %s @ %s: \t" % (click.style(
+                manifest['name'], fg="cyan"), manifest['version']),
             nl=False)
 
         if islink(pkg_dir):
@@ -740,9 +760,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         # unfix package with the same name
         pkg_dir = self.get_package_dir(manifest['name'])
         if pkg_dir and "@" in pkg_dir:
-            shutil.move(pkg_dir,
-                        join(self.package_dir,
-                             self.get_install_dirname(manifest)))
+            shutil.move(
+                pkg_dir,
+                join(self.package_dir, self.get_install_dirname(manifest)))
             self.cache_reset()
 
         click.echo("[%s]" % click.style("OK", fg="green"))
@@ -755,14 +775,14 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         return True
 
     def update(self, package, requirements=None, only_check=False):
-        if isdir(package):
+        if isdir(package) and self.get_package_by_dir(package):
             pkg_dir = package
         else:
             pkg_dir = self.get_package_dir(*self.parse_pkg_uri(package))
 
         if not pkg_dir:
-            raise exception.UnknownPackage("%s @ %s" % (package,
-                                                        requirements or "*"))
+            raise exception.UnknownPackage(
+                "%s @ %s" % (package, requirements or "*"))
 
         manifest = self.load_manifest(pkg_dir)
         name = manifest['name']

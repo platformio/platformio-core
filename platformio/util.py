@@ -36,30 +36,40 @@ from platformio import __apiurl__, __version__, exception
 # pylint: disable=wrong-import-order, too-many-ancestors
 
 try:
-    from configparser import ConfigParser
+    import configparser as ConfigParser
 except ImportError:
-    from ConfigParser import ConfigParser
+    import ConfigParser as ConfigParser
 
 
-class ProjectConfig(ConfigParser):
+class ProjectConfig(ConfigParser.ConfigParser):
 
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
 
     def items(self, section, **_):  # pylint: disable=arguments-differ
         items = []
-        for option in ConfigParser.options(self, section):
+        for option in ConfigParser.ConfigParser.options(self, section):
             items.append((option, self.get(section, option)))
         return items
 
     def get(self, section, option, **kwargs):
-        value = ConfigParser.get(self, section, option, **kwargs)
+        try:
+            value = ConfigParser.ConfigParser.get(self, section, option,
+                                                  **kwargs)
+        except ConfigParser.Error as e:
+            raise exception.InvalidProjectConf(str(e))
         if "${" not in value or "}" not in value:
             return value
         return self.VARTPL_RE.sub(self._re_sub_handler, value)
 
     def _re_sub_handler(self, match):
         section, option = match.group(1), match.group(2)
-        if section == "env" and not self.has_section(section):
+        if section in ("env", "sysenv") and not self.has_section(section):
+            if section == "env":
+                click.secho(
+                    "Warning! Access to system environment variable via "
+                    "`${{env.{0}}}` is deprecated. Please use "
+                    "`${{sysenv.{0}}}` instead".format(option),
+                    fg="yellow")
             return os.getenv(option)
         return self.get(section, option)
 
@@ -331,7 +341,10 @@ def load_project_config(path=None):
         raise exception.NotPlatformIOProject(
             dirname(path) if path.endswith("platformio.ini") else path)
     cp = ProjectConfig()
-    cp.read(path)
+    try:
+        cp.read(path)
+    except ConfigParser.Error as e:
+        raise exception.InvalidProjectConf(str(e))
     return cp
 
 

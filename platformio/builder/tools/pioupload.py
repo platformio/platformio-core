@@ -209,9 +209,9 @@ def CheckUploadSize(_, target, source, env):  # pylint: disable=W0613,W0621
     used_size = int(values[0]) + int(values[1])
 
     if used_size > max_size:
-        sys.stderr.write("Error: The program size (%d bytes) is greater "
-                         "than maximum allowed (%s bytes)\n" % (used_size,
-                                                                max_size))
+        sys.stderr.write(
+            "Error: The program size (%d bytes) is greater "
+            "than maximum allowed (%s bytes)\n" % (used_size, max_size))
         env.Exit(1)
 
 

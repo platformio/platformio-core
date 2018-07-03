@@ -30,9 +30,10 @@ from platformio.managers.core import get_core_package_dir
 
 class InoToCPPConverter(object):
 
-    PROTOTYPE_RE = re.compile(r"""^(
+    PROTOTYPE_RE = re.compile(
+        r"""^(
         (?:template\<.*\>\s*)?      # template
-        ([a-z_\d]+\*?\s+){1,2}      # return type
+        ([a-z_\d\&]+\*?\s+){1,2}      # return type
         ([a-z_\d]+\s*)              # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*\{                      # must end with {
@@ -89,8 +90,8 @@ class InoToCPPConverter(object):
         self.env.Execute(
             self.env.VerboseAction(
                 '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
-                    out_file,
-                    tmp_path), "Converting " + basename(out_file[:-4])))
+                    out_file, tmp_path),
+                "Converting " + basename(out_file[:-4])))
         atexit.register(_delete_file, tmp_path)
         return isfile(out_file)
 
@@ -163,18 +164,17 @@ class InoToCPPConverter(object):
 
         prototype_names = set([m.group(3).strip() for m in prototypes])
         split_pos = prototypes[0].start()
-        match_ptrs = re.search(self.PROTOPTRS_TPLRE %
-                               ("|".join(prototype_names)),
-                               contents[:split_pos], re.M)
+        match_ptrs = re.search(
+            self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),
+            contents[:split_pos], re.M)
         if match_ptrs:
             split_pos = contents.rfind("\n", 0, match_ptrs.start()) + 1
 
         result = []
         result.append(contents[:split_pos].strip())
         result.append("%s;" % ";\n".join([m.group(1) for m in prototypes]))
-        result.append('#line %d "%s"' %
-                      (self._get_total_lines(contents[:split_pos]),
-                       self._main_ino.replace("\\", "/")))
+        result.append('#line %d "%s"' % (self._get_total_lines(
+            contents[:split_pos]), self._main_ino.replace("\\", "/")))
         result.append(contents[split_pos:].strip())
         return "\n".join(result)
 
@@ -231,14 +231,25 @@ def GetActualLDScript(env):
         return None
 
     script = None
+    script_in_next = False
     for f in env.get("LINKFLAGS", []):
-        if f.startswith("-Wl,-T"):
-            script = env.subst(f[6:].replace('"', "").strip())
-            if isfile(script):
-                return script
-            path = _lookup_in_ldpath(script)
-            if path:
-                return path
+        raw_script = None
+        if f == "-T":
+            script_in_next = True
+            continue
+        elif script_in_next:
+            script_in_next = False
+            raw_script = f
+        elif f.startswith("-Wl,-T"):
+            raw_script = f[6:]
+        else:
+            continue
+        script = env.subst(raw_script.replace('"', "").strip())
+        if isfile(script):
+            return script
+        path = _lookup_in_ldpath(script)
+        if path:
+            return path
 
     if script:
         sys.stderr.write(
@@ -294,9 +305,6 @@ def ProcessTest(env):
     if "PIOTEST" in env:
         src_filter.append("+<%s%s>" % (env['PIOTEST'], sep))
     env.Replace(PIOTEST_SRC_FILTER=src_filter)
-
-    return env.CollectBuildFiles("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
-                                 "$PIOTEST_SRC_FILTER")
 
 
 def GetExtraScripts(env, scope):

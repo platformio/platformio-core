@@ -192,6 +192,11 @@ class InvalidLibConfURL(PlatformioException):
     MESSAGE = "Invalid library config URL '{0}'"
 
 
+class InvalidProjectConf(PlatformioException):
+
+    MESSAGE = "Invalid `platformio.ini`, project configuration file: '{0}'"
+
+
 class BuildScriptNotFound(PlatformioException):
 
     MESSAGE = "Invalid path '{0}' to build script"
@@ -248,7 +253,7 @@ class CygwinEnvDetected(PlatformioException):
 class DebugSupportError(PlatformioException):
 
     MESSAGE = ("Currently, PlatformIO does not support debugging for `{0}`.\n"
-               "Please mail contact@pioplus.com or visit "
+               "Please contact support@pioplus.com or visit "
                "< http://docs.platformio.org/page/plus/debugging.html >")
 
 

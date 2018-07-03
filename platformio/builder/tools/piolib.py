@@ -279,9 +279,8 @@ class LibBuilderBase(object):
                 if (key in item and
                         not util.items_in_list(self.env[env_key], item[key])):
                     if self.verbose:
-                        sys.stderr.write(
-                            "Skip %s incompatible dependency %s\n" % (key[:-1],
-                                                                      item))
+                        sys.stderr.write("Skip %s incompatible dependency %s\n"
+                                         % (key[:-1], item))
                     skip = True
             if skip:
                 continue
@@ -394,9 +393,9 @@ class LibBuilderBase(object):
         if self != lb:
             if _already_depends(lb):
                 if self.verbose:
-                    sys.stderr.write("Warning! Circular dependencies detected "
-                                     "between `%s` and `%s`\n" % (self.path,
-                                                                  lb.path))
+                    sys.stderr.write(
+                        "Warning! Circular dependencies detected "
+                        "between `%s` and `%s`\n" % (self.path, lb.path))
                 self._circular_deps.append(lb)
             elif lb not in self._depbuilders:
                 self._depbuilders.append(lb)
@@ -501,6 +500,28 @@ class ArduinoLibBuilder(LibBuilderBase):
 
     def is_frameworks_compatible(self, frameworks):
         return util.items_in_list(frameworks, ["arduino", "energia"])
+
+    def is_platforms_compatible(self, platforms):
+        platforms_map = {
+            "avr": "atmelavr",
+            "sam": "atmelsam",
+            "samd": "atmelsam",
+            "esp8266": "espressif8266",
+            "esp32": "espressif32",
+            "arc32": "intel_arc32",
+            "stm32": "ststm32"
+        }
+        items = []
+        for arch in self._manifest.get("architectures", "").split(","):
+            arch = arch.strip()
+            if arch == "*":
+                items = "*"
+                break
+            if arch in platforms_map:
+                items.append(platforms_map[arch])
+        if not items:
+            return LibBuilderBase.is_platforms_compatible(self, platforms)
+        return util.items_in_list(platforms, items)
 
 
 class MbedLibBuilder(LibBuilderBase):
@@ -803,7 +824,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
     return items
 
 
-def BuildProjectLibraries(env):
+def ConfigureProjectLibBuilder(env):
 
     def correct_found_libs(lib_builders):
         # build full dependency graph
@@ -822,7 +843,7 @@ def BuildProjectLibraries(env):
             title = "<%s>" % lb.name
             vcs_info = lb.vcs_info
             if lb.version:
-                title += " v%s" % lb.version
+                title += " %s" % lb.version
             if vcs_info and vcs_info.get("version"):
                 title += " #%s" % vcs_info.get("version")
             sys.stdout.write("%s|-- %s" % (margin, title))
@@ -837,7 +858,6 @@ def BuildProjectLibraries(env):
                 print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
-    project.env = env
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
 
     print "Library Dependency Finder -> http://bit.ly/configure-pio-ldf"
@@ -859,7 +879,7 @@ def BuildProjectLibraries(env):
     else:
         print "No dependencies"
 
-    return project.build()
+    return project
 
 
 def exists(_):
@@ -868,5 +888,5 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(GetLibBuilders)
-    env.AddMethod(BuildProjectLibraries)
+    env.AddMethod(ConfigureProjectLibBuilder)
     return env

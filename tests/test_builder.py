@@ -29,8 +29,9 @@ build_flags = %s
     """ % " ".join([f[0] for f in build_flags]))
 
     tmpdir.join("extra.py").write("""
-Import("env")
-env.Append(CPPDEFINES="POST_SCRIPT_MACRO")
+Import("projenv")
+
+projenv.Append(CPPDEFINES="POST_SCRIPT_MACRO")
     """)
 
     tmpdir.mkdir("src").join("main.cpp").write("""

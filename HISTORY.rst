@@ -4,6 +4,30 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.5.4 (2018-07-03)
+~~~~~~~~~~~~~~~~~~
+
+* Improved removing of default build flags using `build_unflags <http://docs.platformio.org/page/projectconf/section_env_build.html#build-unflags>`__ option
+  (`issue #1712 <https://github.com/platformio/platformio-core/issues/1712>`_)
+* Export ``LIBS``, ``LIBPATH``, and ``LINKFLAGS`` data from project dependent
+  libraries to the global build environment
+* Don't export ``CPPPATH`` data of project dependent libraries to framework's
+  build environment
+  (`issue #1665 <https://github.com/platformio/platformio-core/issues/1665>`_)
+* Handle "architectures" data from "library.properties" manifest in
+  `lib_compat_mode = strict <http://docs.platformio.org/en/page/librarymanager/ldf.html#compatibility-mode>`__
+* Added workaround for Python SemVer package's `issue #61 <https://github.com/rbarrois/python-semanticversion/issues/61>`_ with caret range and pre-releases
+* Replaced conflicted "env" pattern by "sysenv" for `"platformio.ini" Dynamic Variables" <http://docs.platformio.org/page/projectconf/dynamic_variables.html>`__
+  (`issue #1705 <https://github.com/platformio/platformio-core/issues/1705>`_)
+* Removed "date&time" when processing project with `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__ command
+  (`issue #1343 <https://github.com/platformio/platformio-core/issues/1343>`_)
+* Fixed issue with invalid LD script if path contains space
+* Fixed preprocessor for Arduino sketch when function returns certain type
+  (`issue #1683 <https://github.com/platformio/platformio-core/issues/1683>`_)
+* Fixed issue when `platformio lib uninstall <http://docs.platformio.org/page/userguide/lib/cmd_uninstall.html>`__
+  removes initial source code
+  (`issue #1023 <https://github.com/platformio/platformio-core/issues/1023>`_)
+
 3.5.3 (2018-06-01)
 ~~~~~~~~~~~~~~~~~~
 
@@ -19,7 +43,7 @@ PlatformIO 3.0
   (`issue #1612 <https://github.com/platformio/platformio-core/issues/1612>`_)
 * Configure a custom path to SVD file using `debug_svd_path <http://docs.platformio.org/page/projectconf/section_env_debug.html#debug-svd-path>`__
   option
-* Custom project `description <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#description>`_
+* Custom project `description <http://docs.platformio.org/en/page/projectconf/section_platformio.html#description>`_
   which will be used by `PlatformIO Home <http://docs.platformio.org/page/home/index.html>`_
 * Updated Unity tool to 2.4.3
 * Improved support for Black Magic Probe in "uploader" mode
@@ -45,9 +69,9 @@ PlatformIO 3.0
   - Multiple themes (Dark & Light)
   - Ability to specify a name for new project
 
-* Control `PIO Unified Debugger <http://docs.platformio.org/en/latest/plus/debugging.html>`__
+* Control `PIO Unified Debugger <http://docs.platformio.org/en/page/plus/debugging.html>`__
   and its firmware loading mode using
-  `debug_load_mode <http://docs.platformio.org/en/latest/projectconf/section_env_debug.html#debug-load-mode>`__ option
+  `debug_load_mode <http://docs.platformio.org/en/page/projectconf/section_env_debug.html#debug-load-mode>`__ option
 * Added aliases (off, light, strict) for
   `LDF Compatibility Mode <http://docs.platformio.org/page/librarymanager/ldf.html>`__
 * Search for a library using PIO Library Registry ID ``id:X`` (e.g. ``pio lib search id:13``)

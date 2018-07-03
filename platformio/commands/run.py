@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from datetime import datetime
 from hashlib import sha1
 from os import getcwd, makedirs, walk
 from os.path import getmtime, isdir, isfile, join
@@ -197,10 +196,8 @@ class EnvironmentProcessor(object):
                     "%s: %s" % (k, ", ".join(util.parse_conf_multi_values(v))))
 
         if not self.silent:
-            click.echo("[%s] Processing %s (%s)" %
-                       (datetime.now().strftime("%c"),
-                        click.style(self.name, fg="cyan", bold=True),
-                        "; ".join(env_dump)))
+            click.echo("Processing %s (%s)" % (click.style(
+                self.name, fg="cyan", bold=True), "; ".join(env_dump)))
             click.secho("-" * terminal_width, bold=True)
 
         self.options = self._validate_options(self.options)
@@ -296,10 +293,10 @@ class EnvironmentProcessor(object):
                     if d.strip()
                 ], self.verbose)
             if "lib_deps" in self.options:
-                _autoinstall_libdeps(self.cmd_ctx,
-                                     util.parse_conf_multi_values(
-                                         self.options['lib_deps']),
-                                     self.verbose)
+                _autoinstall_libdeps(
+                    self.cmd_ctx,
+                    util.parse_conf_multi_values(self.options['lib_deps']),
+                    self.verbose)
 
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])
@@ -385,10 +382,10 @@ def print_summary(results, start_time):
             err=status is False)
 
     print_header(
-        "[%s] Took %.2f seconds" %
-        ((click.style("SUCCESS", fg="green", bold=True)
-          if successed else click.style("ERROR", fg="red", bold=True)),
-         time() - start_time),
+        "[%s] Took %.2f seconds" % (
+            (click.style("SUCCESS", fg="green", bold=True)
+             if successed else click.style("ERROR", fg="red", bold=True)),
+            time() - start_time),
         is_error=not successed)
 
 
