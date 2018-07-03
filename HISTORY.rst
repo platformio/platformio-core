@@ -15,7 +15,7 @@ PlatformIO 3.0
   - Check maximum allowed "program" and "data" sizes before uploading/programming
     (`issue #1412 <https://github.com/platformio/platformio-core/issues/1412>`_)
 
-3.5.4 (2018-??-??)
+3.5.4 (2018-07-03)
 ~~~~~~~~~~~~~~~~~~
 
 * Improved removing of default build flags using `build_unflags <http://docs.platformio.org/page/projectconf/section_env_build.html#build-unflags>`__ option
@@ -27,6 +27,7 @@ PlatformIO 3.0
   (`issue #1665 <https://github.com/platformio/platformio-core/issues/1665>`_)
 * Handle "architectures" data from "library.properties" manifest in
   `lib_compat_mode = strict <http://docs.platformio.org/en/page/librarymanager/ldf.html#compatibility-mode>`__
+* Added workaround for Python SemVer package's `issue #61 <https://github.com/rbarrois/python-semanticversion/issues/61>`_ with caret range and pre-releases
 * Replaced conflicted "env" pattern by "sysenv" for `"platformio.ini" Dynamic Variables" <http://docs.platformio.org/page/projectconf/dynamic_variables.html>`__
   (`issue #1705 <https://github.com/platformio/platformio-core/issues/1705>`_)
 * Removed "date&time" when processing project with `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__ command
