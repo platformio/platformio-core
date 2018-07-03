@@ -18,6 +18,7 @@
             "name": "Win32",
 % elif systype == "darwin":
             "name": "Mac",
+            "macFrameworkPath": [],
 % else:
             "name": "Linux",
 % end
