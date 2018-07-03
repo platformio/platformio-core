@@ -90,7 +90,8 @@ class PkgRepoMixin(object):
         reqspec = None
         if requirements:
             try:
-                reqspec = semantic_version.Spec(requirements)
+                reqspec = self.parse_semver_spec(
+                    requirements, raise_exception=True)
             except ValueError:
                 pass
 
@@ -98,8 +99,8 @@ class PkgRepoMixin(object):
             if not self.is_system_compatible(v.get("system")):
                 continue
             if "platformio" in v.get("engines", {}):
-                if PkgRepoMixin.PIO_VERSION not in semantic_version.Spec(
-                        v['engines']['platformio']):
+                if PkgRepoMixin.PIO_VERSION not in self.parse_semver_spec(
+                        v['engines']['platformio'], raise_exception=True):
                     continue
             specver = semantic_version.Version(v['version'])
             if reqspec and specver not in reqspec:
@@ -224,7 +225,20 @@ class PkgInstallerMixin(object):
     @staticmethod
     def parse_semver_spec(value, raise_exception=False):
         try:
-            return semantic_version.Spec(value)
+            # Workaround for ^ issue and pre-releases
+            # https://github.com/rbarrois/python-semanticversion/issues/61
+            requirements = []
+            for item in str(value).split(","):
+                item = item.strip()
+                if not item:
+                    continue
+                if item.startswith("^"):
+                    major = semantic_version.Version.coerce(item[1:]).major
+                    requirements.append(">=%s" % major)
+                    requirements.append("<%s" % (int(major) + 1))
+                else:
+                    requirements.append(item)
+            return semantic_version.Spec(*requirements)
         except ValueError as e:
             if raise_exception:
                 raise e
@@ -480,8 +494,8 @@ class PkgInstallerMixin(object):
                 "Package version %s doesn't satisfy requirements %s" %
                 (tmp_manifest['version'], requirements))
             try:
-                assert tmp_semver and tmp_semver in semantic_version.Spec(
-                    requirements), mismatch_error
+                assert tmp_semver and tmp_semver in self.parse_semver_spec(
+                    requirements, raise_exception=True), mismatch_error
             except (AssertionError, ValueError):
                 assert tmp_manifest['version'] == requirements, mismatch_error
 
