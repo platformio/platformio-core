@@ -141,22 +141,22 @@ You can switch between debugging :ref:`debugging_tools` using
 """)
     if onboard_debug:
         lines.append("""
-On-Board tools
-~~~~~~~~~~~~~~
+On-Board Debug Tools
+~~~~~~~~~~~~~~~~~~~~~
 
-Boards listed below have on-board debugging tools and **ARE READY** for debugging!
-You do not need to use/buy external debugger.
+Boards listed below have on-board debug tool and **ARE READY** for debugging!
+You do not need to use/buy external debug tool.
 """)
         lines.extend(
             generate_boards(
                 onboard_debug, extend_debug=True, skip_columns=skip_columns))
     if external_debug:
         lines.append("""
-External tools
-~~~~~~~~~~~~~~
+External Debug Tools
+~~~~~~~~~~~~~~~~~~~~~
 
-Boards listed below are compatible with :ref:`piodebug` but depend on external
-debugging tools. See "Debug" column for compatible debugging tools.
+Boards listed below are compatible with :ref:`piodebug` but **DEPEND ON**
+external debug tool. See "Debug" column for compatible debug tools.
 """)
         lines.extend(
             generate_boards(
@@ -614,12 +614,20 @@ popular embedded boards and IDE.
 
 
 def update_debugging():
+    tools_to_platforms = {}
     vendors = {}
     platforms = []
     frameworks = []
     for data in BOARDS:
         if not data['debug']:
             continue
+
+        for tool in data['debug']['tools']:
+            tool = str(tool)
+            if tool not in tools_to_platforms:
+                tools_to_platforms[tool] = []
+            tools_to_platforms[tool].append(data['platform'])
+
         platforms.append(data['platform'])
         frameworks.extend(data['frameworks'])
         vendor = data['vendor']
@@ -627,6 +635,24 @@ def update_debugging():
             vendors[vendor].append(data)
         else:
             vendors[vendor] = [data]
+
+    def _update_tool_compat_platforms(content):
+        begin_tpl = ".. begin_compatible_platforms_"
+        end_tpl = ".. end_compatible_platforms_"
+        for tool, platforms in tools_to_platforms.items():
+            begin = begin_tpl + tool
+            end = end_tpl + tool
+            begin_index = content.index(begin)
+            end_index = content.index(end)
+            chunk = ["\n\n**Compatible development platforms:**\n"]
+            chunk.extend([
+                "* :ref:`platform_%s`" % str(p)
+                for p in sorted(set(platforms))
+            ])
+            chunk.extend(["\n"])
+            content = content[:begin_index + len(begin)] + "\n".join(
+                chunk) + content[end_index:]
+        return content
 
     lines = []
     # Platforms
@@ -681,7 +707,7 @@ Boards
     with open(
             join(util.get_source_dir(), "..", "docs", "plus", "debugging.rst"),
             "r+") as fp:
-        content = fp.read()
+        content = _update_tool_compat_platforms(fp.read())
         fp.seek(0)
         fp.truncate()
         fp.write(content[:content.index(".. _debugging_platforms:")] +
