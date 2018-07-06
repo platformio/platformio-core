@@ -152,6 +152,10 @@ def DumpIDEData(env):
         util.where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
         "prog_path":
         env.subst("$PROG_PATH"),
+        "flash_extra_images": [{
+            "offset": item[0],
+            "path": env.subst(item[1])
+        } for item in env.get("FLASH_EXTRA_IMAGES", [])],
         "svd_path":
         _get_svd_path(env),
         "compiler_type":
