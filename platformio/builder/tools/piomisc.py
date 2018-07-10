@@ -288,6 +288,7 @@ def PioClean(env, clean_dir):
 def ProcessDebug(env):
     if not env.subst("$PIODEBUGFLAGS"):
         env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb3"])
+    env.Append(PIODEBUGFLAGS=["-D__PLATFORMIO_DEBUG__"])
     env.Append(
         BUILD_FLAGS=env.get("PIODEBUGFLAGS", []),
         BUILD_UNFLAGS=["-Os", "-O0", "-O1", "-O2", "-O3"])
