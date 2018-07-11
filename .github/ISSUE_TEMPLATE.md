@@ -6,8 +6,8 @@ What kind of issue is this?
       or to understand why something isn't working the way you expect it to, 
       use:
      
-      * Community Forums https://community.platformio.org
-      * Premium Support https://platformio.org/support
+      * Community Forums [https://community.platformio.org](https://community.platformio.org)
+      * Premium Support [https://platformio.org/support](https://platformio.org/support)
 
 - [ ] **PlatformIO IDE**
 
