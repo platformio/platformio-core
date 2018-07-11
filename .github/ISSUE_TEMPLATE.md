@@ -3,16 +3,12 @@ What kind of issue is this?
 - [ ] **Question**.
       This issue tracker is not the place for questions. If you want to ask how to do something,
       or to understand why something isn't working the way you expect it to, 
-      use:
-     
-      * Community Forums https://community.platformio.org
-      * Premium Support https://platformio.org/support
+      use [Community Forums](https://community.platformio.org) or [Premium Support](https://platformio.org/support)
 
 - [ ] **PlatformIO IDE**.
       All issues related to PlatformIO IDE should be reported to appropriate repository:
-
-      * Atom   https://github.com/platformio/platformio-atom-ide/issues
-      * VSCode https://github.com/platformio/platformio-vscode-ide/issues
+      [PlatformIO IDE for Atom](https://github.com/platformio/platformio-atom-ide/issues) or
+      [PlatformIO IDE for VSCode](https://github.com/platformio/platformio-vscode-ide/issues)
 
 - [ ] **Development Platform or Board**.
       All issues (building, uploading, adding new boards, etc.) related to PlatformIO development platforms
