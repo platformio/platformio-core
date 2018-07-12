@@ -102,6 +102,13 @@ class PackageInstallError(PlatformioException):
                "Please try this solution -> http://bit.ly/faq-package-manager")
 
 
+class ExtractArchiveItemError(PlatformioException):
+
+    MESSAGE = (
+        "Could not extract `{0}` to `{1}`. Try to disable antivirus "
+        "tool or check this solution -> http://bit.ly/faq-package-manager")
+
+
 class FDUnrecognizedStatusCode(PlatformioException):
 
     MESSAGE = "Got an unrecognized status code '{0}' when downloaded {1}"

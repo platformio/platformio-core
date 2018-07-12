@@ -15,6 +15,10 @@ PlatformIO 3.0
   - Check maximum allowed "program" and "data" sizes before uploading/programming
     (`issue #1412 <https://github.com/platformio/platformio-core/issues/1412>`_)
 
+* Check package structure after unpacking and raise error when antivirus tool
+  blocks PlatformIO package manager
+  (`issue #1462 <https://github.com/platformio/platformio-core/issues/1462>`_)
+
 3.5.4 (2018-07-03)
 ~~~~~~~~~~~~~~~~~~
 
