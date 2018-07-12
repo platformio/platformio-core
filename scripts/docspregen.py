@@ -521,40 +521,6 @@ def update_framework_docs():
                     isfile(join(frameworks_dir, "%s_extra.rst" % name))))
 
 
-def update_create_platform_doc():
-    lines = []
-    lines.append(""".. _platform_creating_packages:
-
-Packages
---------
-
-*PlatformIO* has pre-built packages for the most popular operation systems:
-*Mac OS*, *Linux (+ARM)* and *Windows*.
-
-.. list-table::
-    :header-rows:  1
-
-    * - Name
-      - Description""")
-    for name, items in sorted(API_PACKAGES.iteritems()):
-        lines.append("""
-    * - `{name} <{url}>`__
-      - {description}""".format(
-            name=name,
-            url=API_PACKAGES[name]['url'],
-            description=API_PACKAGES[name]['description']))
-
-    with open(
-            join(util.get_source_dir(), "..", "docs", "platforms",
-                 "creating_platform.rst"), "r+") as fp:
-        content = fp.read()
-        fp.seek(0)
-        fp.truncate()
-        fp.write(content[:content.index(".. _platform_creating_packages:")] +
-                 "\n".join(lines) + "\n\n" + content[content.index(
-                     ".. _platform_creating_manifest_file:"):])
-
-
 def update_embedded_boards():
     lines = []
 
@@ -839,7 +805,6 @@ def update_project_examples():
 
 
 def main():
-    update_create_platform_doc()
     update_platform_docs()
     update_framework_docs()
     update_embedded_boards()
