@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from os import chmod
-from os.path import exists, join
+from os.path import exists, islink, join
 from tarfile import open as tarfile_open
 from time import mktime
 from zipfile import ZipFile
@@ -50,9 +50,10 @@ class TARArchive(ArchiveBase):
     def get_items(self):
         return self._afo.getmembers()
 
-    # def after_extract(self, item, dest_dir):
-    #     if not exists(join(dest_dir, item.name)):
-    #         raise exception.ExtractArchiveItemError(item.name, dest_dir)
+    def after_extract(self, item, dest_dir):
+        item_path = join(dest_dir, item.name)
+        if not islink(item_path) and not exists(item_path):
+            raise exception.ExtractArchiveItemError(item.name, dest_dir)
 
 
 class ZIPArchive(ArchiveBase):
@@ -76,8 +77,9 @@ class ZIPArchive(ArchiveBase):
         return self._afo.infolist()
 
     def after_extract(self, item, dest_dir):
-        # if not exists(join(dest_dir, item.filename)):
-        #     raise exception.ExtractArchiveItemError(item.filename, dest_dir)
+        item_path = join(dest_dir, item.filename)
+        if not islink(item_path) and not exists(item_path):
+            raise exception.ExtractArchiveItemError(item.filename, dest_dir)
         self.preserve_permissions(item, dest_dir)
         self.preserve_mtime(item, dest_dir)
 
