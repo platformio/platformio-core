@@ -50,9 +50,9 @@ class TARArchive(ArchiveBase):
     def get_items(self):
         return self._afo.getmembers()
 
-    def after_extract(self, item, dest_dir):
-        if not exists(join(dest_dir, item.name)):
-            raise exception.ExtractArchiveItemError(item.name, dest_dir)
+    # def after_extract(self, item, dest_dir):
+    #     if not exists(join(dest_dir, item.name)):
+    #         raise exception.ExtractArchiveItemError(item.name, dest_dir)
 
 
 class ZIPArchive(ArchiveBase):
@@ -76,8 +76,8 @@ class ZIPArchive(ArchiveBase):
         return self._afo.infolist()
 
     def after_extract(self, item, dest_dir):
-        if not exists(join(dest_dir, item.filename)):
-            raise exception.ExtractArchiveItemError(item.filename, dest_dir)
+        # if not exists(join(dest_dir, item.filename)):
+        #     raise exception.ExtractArchiveItemError(item.filename, dest_dir)
         self.preserve_permissions(item, dest_dir)
         self.preserve_mtime(item, dest_dir)
 
