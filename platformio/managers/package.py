@@ -680,38 +680,38 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 silent=False,
                 after_update=False,
                 force=False):
-        name, requirements, url = self.parse_pkg_uri(name, requirements)
-        package_dir = self.get_package_dir(name, requirements, url)
-
-        # avoid circle dependencies
-        if not self.INSTALL_HISTORY:
-            self.INSTALL_HISTORY = []
-        history_key = "%s-%s-%s" % (name, requirements or "", url or "")
-        if history_key in self.INSTALL_HISTORY:
-            return package_dir
-        self.INSTALL_HISTORY.append(history_key)
-
-        if package_dir and force:
-            self.uninstall(package_dir)
-            package_dir = None
-
-        if not package_dir or not silent:
-            msg = "Installing " + click.style(name, fg="cyan")
-            if requirements:
-                msg += " @ " + requirements
-            self.print_message(msg)
-        if package_dir:
-            if not silent:
-                click.secho(
-                    "{name} @ {version} is already installed".format(
-                        **self.load_manifest(package_dir)),
-                    fg="yellow")
-            return package_dir
-
         pkg_dir = None
         # interprocess lock
         with LockFile(self.package_dir):
             self.cache_reset()
+
+            name, requirements, url = self.parse_pkg_uri(name, requirements)
+            package_dir = self.get_package_dir(name, requirements, url)
+
+            # avoid circle dependencies
+            if not self.INSTALL_HISTORY:
+                self.INSTALL_HISTORY = []
+            history_key = "%s-%s-%s" % (name, requirements or "", url or "")
+            if history_key in self.INSTALL_HISTORY:
+                return package_dir
+            self.INSTALL_HISTORY.append(history_key)
+
+            if package_dir and force:
+                self.uninstall(package_dir)
+                package_dir = None
+
+            if not package_dir or not silent:
+                msg = "Installing " + click.style(name, fg="cyan")
+                if requirements:
+                    msg += " @ " + requirements
+                self.print_message(msg)
+            if package_dir:
+                if not silent:
+                    click.secho(
+                        "{name} @ {version} is already installed".format(
+                            **self.load_manifest(package_dir)),
+                        fg="yellow")
+                return package_dir
 
             if url:
                 pkg_dir = self._install_from_url(
