@@ -18,6 +18,9 @@ PlatformIO 3.0
 * Check package structure after unpacking and raise error when antivirus tool
   blocks PlatformIO package manager
   (`issue #1462 <https://github.com/platformio/platformio-core/issues/1462>`_)
+* Lock interprocess requests to PlatformIO Package Manager for
+  install/uninstall operations
+  (`issue #1594 <https://github.com/platformio/platformio-core/issues/1594>`_)
 
 3.5.4 (2018-07-03)
 ~~~~~~~~~~~~~~~~~~

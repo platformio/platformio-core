@@ -28,6 +28,10 @@ class ReturnErrorCode(PlatformioException):
     MESSAGE = "{0}"
 
 
+class LockFileTimeoutError(PlatformioException):
+    pass
+
+
 class MinitermException(PlatformioException):
     pass
 

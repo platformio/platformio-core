@@ -27,6 +27,7 @@ import semantic_version
 
 from platformio import __version__, app, exception, telemetry, util
 from platformio.downloader import FileDownloader
+from platformio.lockfile import LockFile
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
@@ -707,71 +708,82 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                     fg="yellow")
             return package_dir
 
-        if url:
-            pkg_dir = self._install_from_url(
-                name, url, requirements, track=True)
-        else:
-            pkg_dir = self._install_from_piorepo(name, requirements)
+        pkg_dir = None
+        # interprocess lock
+        with LockFile(self.package_dir):
+            self.cache_reset()
 
-        if not pkg_dir or not self.manifest_exists(pkg_dir):
-            raise exception.PackageInstallError(name, requirements or "*",
-                                                util.get_systype())
+            if url:
+                pkg_dir = self._install_from_url(
+                    name, url, requirements, track=True)
+            else:
+                pkg_dir = self._install_from_piorepo(name, requirements)
 
-        manifest = self.load_manifest(pkg_dir)
-        assert manifest
+            if not pkg_dir or not self.manifest_exists(pkg_dir):
+                raise exception.PackageInstallError(name, requirements or "*",
+                                                    util.get_systype())
 
-        if not after_update:
-            telemetry.on_event(
-                category=self.__class__.__name__,
-                action="Install",
-                label=manifest['name'])
+            manifest = self.load_manifest(pkg_dir)
+            assert manifest
 
-        if not silent:
-            click.secho(
-                "{name} @ {version} has been successfully installed!".format(
-                    **manifest),
-                fg="green")
+            if not after_update:
+                telemetry.on_event(
+                    category=self.__class__.__name__,
+                    action="Install",
+                    label=manifest['name'])
+
+            if not silent:
+                click.secho(
+                    "{name} @ {version} has been successfully installed!".
+                    format(**manifest),
+                    fg="green")
 
         return pkg_dir
 
     def uninstall(self, package, requirements=None, after_update=False):
-        if isdir(package) and self.get_package_by_dir(package):
-            pkg_dir = package
-        else:
-            name, requirements, url = self.parse_pkg_uri(package, requirements)
-            pkg_dir = self.get_package_dir(name, requirements, url)
-
-        if not pkg_dir:
-            raise exception.UnknownPackage(
-                "%s @ %s" % (package, requirements or "*"))
-
-        manifest = self.load_manifest(pkg_dir)
-        click.echo(
-            "Uninstalling %s @ %s: \t" % (click.style(
-                manifest['name'], fg="cyan"), manifest['version']),
-            nl=False)
-
-        if islink(pkg_dir):
-            os.unlink(pkg_dir)
-        else:
-            util.rmtree_(pkg_dir)
-        self.cache_reset()
-
-        # unfix package with the same name
-        pkg_dir = self.get_package_dir(manifest['name'])
-        if pkg_dir and "@" in pkg_dir:
-            shutil.move(
-                pkg_dir,
-                join(self.package_dir, self.get_install_dirname(manifest)))
+        # interprocess lock
+        with LockFile(self.package_dir):
             self.cache_reset()
 
-        click.echo("[%s]" % click.style("OK", fg="green"))
+            if isdir(package) and self.get_package_by_dir(package):
+                pkg_dir = package
+            else:
+                name, requirements, url = self.parse_pkg_uri(
+                    package, requirements)
+                pkg_dir = self.get_package_dir(name, requirements, url)
 
-        if not after_update:
-            telemetry.on_event(
-                category=self.__class__.__name__,
-                action="Uninstall",
-                label=manifest['name'])
+            if not pkg_dir:
+                raise exception.UnknownPackage(
+                    "%s @ %s" % (package, requirements or "*"))
+
+            manifest = self.load_manifest(pkg_dir)
+            click.echo(
+                "Uninstalling %s @ %s: \t" % (click.style(
+                    manifest['name'], fg="cyan"), manifest['version']),
+                nl=False)
+
+            if islink(pkg_dir):
+                os.unlink(pkg_dir)
+            else:
+                util.rmtree_(pkg_dir)
+            self.cache_reset()
+
+            # unfix package with the same name
+            pkg_dir = self.get_package_dir(manifest['name'])
+            if pkg_dir and "@" in pkg_dir:
+                shutil.move(
+                    pkg_dir,
+                    join(self.package_dir, self.get_install_dirname(manifest)))
+                self.cache_reset()
+
+            click.echo("[%s]" % click.style("OK", fg="green"))
+
+            if not after_update:
+                telemetry.on_event(
+                    category=self.__class__.__name__,
+                    action="Uninstall",
+                    label=manifest['name'])
+
         return True
 
     def update(self, package, requirements=None, only_check=False):

@@ -19,13 +19,12 @@ import os
 import uuid
 from copy import deepcopy
 from os import environ, getenv, listdir, remove
-from os.path import abspath, dirname, expanduser, getmtime, isdir, isfile, join
+from os.path import abspath, dirname, expanduser, isdir, isfile, join
 from time import time
 
 import requests
-from lockfile import LockFailed, LockFile
 
-from platformio import __version__, exception, util
+from platformio import exception, lockfile, util
 
 
 def projects_dir_validate(projects_dir):
@@ -108,10 +107,7 @@ class State(object):
         if self._prev_state != self._state:
             try:
                 with codecs.open(self.path, "w", encoding="utf8") as fp:
-                    if "dev" in __version__:
-                        json.dump(self._state, fp, indent=4)
-                    else:
-                        json.dump(self._state, fp)
+                    json.dump(self._state, fp)
             except IOError:
                 raise exception.HomeDirPermissionsError(util.get_home_dir())
         self._unlock_state_file()
@@ -119,20 +115,18 @@ class State(object):
     def _lock_state_file(self):
         if not self.lock:
             return
-        self._lockfile = LockFile(self.path)
-
-        if self._lockfile.is_locked() and \
-                (time() - getmtime(self._lockfile.lock_file)) > 10:
-            self._lockfile.break_lock()
-
+        self._lockfile = lockfile.LockFile(self.path)
         try:
             self._lockfile.acquire()
-        except LockFailed:
+        except IOError:
             raise exception.HomeDirPermissionsError(dirname(self.path))
 
     def _unlock_state_file(self):
         if self._lockfile:
             self._lockfile.release()
+
+    def __del__(self):
+        self._unlock_state_file()
 
 
 class ContentCache(object):
@@ -155,15 +149,10 @@ class ContentCache(object):
     def _lock_dbindex(self):
         if not self.cache_dir:
             os.makedirs(self.cache_dir)
-        self._lockfile = LockFile(self.cache_dir)
-        if self._lockfile.is_locked() and \
-                isfile(self._lockfile.lock_file) and \
-                (time() - getmtime(self._lockfile.lock_file)) > 10:
-            self._lockfile.break_lock()
-
+        self._lockfile = lockfile.LockFile(self.cache_dir)
         try:
             self._lockfile.acquire()
-        except LockFailed:
+        except:  # pylint: disable=bare-except
             return False
 
         return True
