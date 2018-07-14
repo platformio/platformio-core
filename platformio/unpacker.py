@@ -31,6 +31,9 @@ class ArchiveBase(object):
     def get_items(self):
         raise NotImplementedError()
 
+    def get_item_filename(self, item):
+        raise NotImplementedError()
+
     def extract_item(self, item, dest_dir):
         self._afo.extract(item, dest_dir)
         self.after_extract(item, dest_dir)
@@ -50,10 +53,8 @@ class TARArchive(ArchiveBase):
     def get_items(self):
         return self._afo.getmembers()
 
-    def after_extract(self, item, dest_dir):
-        item_path = join(dest_dir, item.name)
-        if not islink(item_path) and not exists(item_path):
-            raise exception.ExtractArchiveItemError(item.name, dest_dir)
+    def get_item_filename(self, item):
+        return item.name
 
 
 class ZIPArchive(ArchiveBase):
@@ -76,10 +77,10 @@ class ZIPArchive(ArchiveBase):
     def get_items(self):
         return self._afo.infolist()
 
+    def get_item_filename(self, item):
+        return item.filename
+
     def after_extract(self, item, dest_dir):
-        item_path = join(dest_dir, item.filename)
-        if not islink(item_path) and not exists(item_path):
-            raise exception.ExtractArchiveItemError(item.filename, dest_dir)
         self.preserve_permissions(item, dest_dir)
         self.preserve_mtime(item, dest_dir)
 
@@ -114,4 +115,12 @@ class FileUnpacker(object):
             with click.progressbar(items, label="Unpacking") as pb:
                 for item in pb:
                     self._unpacker.extract_item(item, dest_dir)
+
+        # check on disk
+        for item in self._unpacker.get_items():
+            filename = self._unpacker.get_item_filename(item)
+            item_path = join(dest_dir, filename)
+            if not islink(item_path) and not exists(item_path):
+                raise exception.ExtractArchiveItemError(filename, dest_dir)
+
         return True
