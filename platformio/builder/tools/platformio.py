@@ -61,10 +61,11 @@ def _build_project_deps(env):
     # extra build flags from `platformio.ini`
     projenv.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
-    if "__test" in COMMAND_LINE_TARGETS:
+    is_test = "__test" in COMMAND_LINE_TARGETS
+    if is_test:
         projenv.BuildSources("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
                              "$PIOTEST_SRC_FILTER")
-    else:
+    if not is_test or env['TEST_BUILD_PROJECT_SRC'] == "true":
         projenv.BuildSources("$BUILDSRC_DIR", "$PROJECTSRC_DIR",
                              env.get("SRC_FILTER"))
 

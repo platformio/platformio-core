@@ -68,6 +68,9 @@ commonvars.AddVariables(
     ("UPLOAD_FLAGS",),
     ("UPLOAD_RESETMETHOD",),
 
+    # test options
+    ("TEST_BUILD_PROJECT_SRC",),
+
     # debug options
     ("DEBUG_TOOL",),
     ("DEBUG_SVD_PATH",),
@@ -76,7 +79,8 @@ commonvars.AddVariables(
 
 MULTILINE_VARS = [
     "EXTRA_SCRIPTS", "PIOFRAMEWORK", "BUILD_FLAGS", "SRC_BUILD_FLAGS",
-    "BUILD_UNFLAGS", "SRC_FILTER", "LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"
+    "BUILD_UNFLAGS", "UPLOAD_FLAGS", "SRC_FILTER", "LIB_DEPS", "LIB_IGNORE",
+    "LIB_EXTRA_DIRS"
 ]
 
 DEFAULT_ENV_OPTIONS = dict(
