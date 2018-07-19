@@ -240,6 +240,8 @@ def generate_platform(name, has_extra=False):
     limitations under the License.
 """)
     p = PlatformFactory.newPlatform(name)
+    assert p.repository_url.endswith(".git")
+    github_url = p.repository_url[:-4]
 
     lines.append(".. _platform_%s:" % p.name)
     lines.append("")
@@ -272,17 +274,13 @@ Examples
 --------
 
 Examples are listed from `%s development platform repository <%s>`_:
-""" % (p.title,
-       campaign_url(
-           "https://github.com/platformio/platform-%s/tree/develop/examples" %
-           p.name)))
+""" % (p.title, campaign_url("%s/tree/master/examples" % github_url)))
     examples_dir = join(p.get_dir(), "examples")
     if isdir(examples_dir):
         for eitem in os.listdir(examples_dir):
             if not isdir(join(examples_dir, eitem)):
                 continue
-            url = ("https://github.com/platformio/platform-%s"
-                   "/tree/develop/examples/%s" % (p.name, eitem))
+            url = "%s/tree/master/examples/%s" % (github_url, eitem)
             lines.append("* `%s <%s>`_" % (eitem, campaign_url(url)))
 
     #
@@ -300,7 +298,7 @@ Examples are listed from `%s development platform repository <%s>`_:
 Stable and upstream versions
 ----------------------------
 
-You can switch between `stable releases <https://github.com/platformio/platform-{name}/releases>`__
+You can switch between `stable releases <{github_url}/releases>`__
 of {title} development platform and the latest upstream version using
 :ref:`projectconf_env_platform` option in :ref:`projectconf` as described below.
 
@@ -325,9 +323,9 @@ Upstream
 .. code-block:: ini
 
     [env:upstream_develop]
-    platform = https://github.com/platformio/platform-{name}.git
+    platform = {github_url}.git
     board = ...
-""".format(name=p.name, title=p.title))
+""".format(name=p.name, title=p.title, github_url=github_url))
 
     #
     # Packages
@@ -460,11 +458,12 @@ Examples
 --------
 """)
         for manifest in compatible_platforms:
-            lines.append("* `%s for %s <%s>`_" % (
-                data['title'], manifest['title'],
-                campaign_url(
-                    "https://github.com/platformio/platform-%s/tree/develop/examples"
-                    % manifest['name'])))
+            p = PlatformFactory.newPlatform(manifest['name'])
+            lines.append(
+                "* `%s for %s <%s>`_" %
+                (data['title'], manifest['title'],
+                 campaign_url(
+                     "%s/tree/master/examples" % p.repository_url[:-4])))
 
         # Platforms
         lines.append("""
@@ -713,8 +712,7 @@ def update_project_examples():
 
     for manifest in PLATFORM_MANIFESTS:
         p = PlatformFactory.newPlatform(manifest['name'])
-        github_platform_url = (
-            "https://github.com/platformio/platform-%s" % p.name)
+        github_url = p.repository_url[:-4]
 
         # Platform README
         platform_examples_dir = join(p.get_dir(), "examples")
@@ -723,8 +721,7 @@ def update_project_examples():
             for item in os.listdir(platform_examples_dir):
                 if not isdir(join(platform_examples_dir, item)):
                     continue
-                url = ("%s/tree/develop/examples/%s" % (github_platform_url,
-                                                        item))
+                url = "%s/tree/master/examples/%s" % (github_url, item)
                 examples_md_lines.append("* [%s](%s)" % (item, url))
 
         readme_dir = join(project_examples_dir, "platforms", p.name)
@@ -745,14 +742,13 @@ def update_project_examples():
             if framework['name'] not in framework_examples_md_lines:
                 framework_examples_md_lines[framework['name']] = []
             lines = []
-            lines.append("- [%s](%s)" % (p.title, github_platform_url))
+            lines.append("- [%s](%s)" % (p.title, github_url))
             lines.extend("  %s" % l for l in examples_md_lines)
             lines.append("")
             framework_examples_md_lines[framework['name']].extend(lines)
 
         # Root README
-        url = "https://github.com/platformio/platform-%s/tree/develop/examples" % p.name
-        line = "* [%s](%s)" % (p.title, url)
+        line = "* [%s](%s)" % (p.title, "%s/tree/master/examples" % github_url)
         if p.is_embedded():
             embedded.append(line)
         else:
