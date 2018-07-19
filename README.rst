@@ -7,9 +7,6 @@ PlatformIO
 .. image:: https://ci.appveyor.com/api/projects/status/unnpw0n3c5k14btn/branch/develop?svg=true
     :target: https://ci.appveyor.com/project/ivankravets/platformio-core
     :alt: AppVeyor.CI Build Status
-.. image:: https://requires.io/github/platformio/platformio-core/requirements.svg?branch=develop
-    :target: https://requires.io/github/platformio/platformio-core/requirements/?branch=develop
-    :alt: Requirements Status
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
