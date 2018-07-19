@@ -7,9 +7,11 @@ PlatformIO 3.0
 3.5.5 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Fixed `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
-  issue with a shared code between main and test programs when ``UNIT_TEST``
-  macro was not set in a build environment
+* `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__:
+
+  - Documented `Project Shared Code <http://docs.platformio.org/page/plus/unit-testing.html#shared-code>`__
+  - Force building of project source code using `test_build_project_src <http://docs.platformio.org/page/projectconf/section_env_test.html#test_build_project_src>`__ option
+  - Fixed missed ``UNIT_TEST`` macro for unit test components/libraries
 
 3.5.4 (2018-07-03)
 ~~~~~~~~~~~~~~~~~~

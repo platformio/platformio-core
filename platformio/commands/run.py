@@ -125,32 +125,33 @@ class EnvironmentProcessor(object):
 
     DEFAULT_DUMP_OPTIONS = ("platform", "framework", "board")
 
-    KNOWN_PLATFORMIO_OPTIONS = ("description", "env_default", "home_dir",
-                                "lib_dir", "libdeps_dir", "include_dir",
-                                "src_dir", "build_dir", "data_dir", "test_dir",
-                                "boards_dir", "lib_extra_dirs")
+    KNOWN_PLATFORMIO_OPTIONS = [
+        "description", "env_default", "home_dir", "lib_dir", "libdeps_dir",
+        "include_dir", "src_dir", "build_dir", "data_dir", "test_dir",
+        "boards_dir", "lib_extra_dirs"
+    ]
 
-    KNOWN_ENV_OPTIONS = ("platform", "framework", "board", "build_flags",
-                         "src_build_flags", "build_unflags", "src_filter",
-                         "extra_scripts", "targets", "upload_port",
-                         "upload_protocol", "upload_speed", "upload_flags",
-                         "upload_resetmethod", "lib_deps", "lib_ignore",
-                         "lib_extra_dirs", "lib_ldf_mode", "lib_compat_mode",
-                         "lib_archive", "piotest", "test_transport",
-                         "test_filter", "test_ignore", "test_port",
-                         "test_speed", "debug_tool", "debug_port",
-                         "debug_init_cmds", "debug_extra_cmds", "debug_server",
-                         "debug_init_break", "debug_load_cmd",
-                         "debug_load_mode", "debug_svd_path", "monitor_port",
-                         "monitor_speed", "monitor_rts", "monitor_dtr")
+    KNOWN_ENV_OPTIONS = [
+        "platform", "framework", "board", "build_flags", "src_build_flags",
+        "build_unflags", "src_filter", "extra_scripts", "targets",
+        "upload_port", "upload_protocol", "upload_speed", "upload_flags",
+        "upload_resetmethod", "lib_deps", "lib_ignore", "lib_extra_dirs",
+        "lib_ldf_mode", "lib_compat_mode", "lib_archive", "piotest",
+        "test_transport", "test_filter", "test_ignore", "test_port",
+        "test_speed", "test_build_project_src", "debug_tool", "debug_port",
+        "debug_init_cmds", "debug_extra_cmds", "debug_server",
+        "debug_init_break", "debug_load_cmd", "debug_load_mode",
+        "debug_svd_path", "monitor_port", "monitor_speed", "monitor_rts",
+        "monitor_dtr"
+    ]
 
-    IGNORE_BUILD_OPTIONS = ("test_transport", "test_filter", "test_ignore",
-                            "test_port", "test_speed", "debug_port",
-                            "debug_init_cmds", "debug_extra_cmds",
-                            "debug_server", "debug_init_break",
-                            "debug_load_cmd", "debug_load_mode",
-                            "monitor_port", "monitor_speed", "monitor_rts",
-                            "monitor_dtr")
+    IGNORE_BUILD_OPTIONS = [
+        "test_transport", "test_filter", "test_ignore", "test_port",
+        "test_speed", "debug_port", "debug_init_cmds", "debug_extra_cmds",
+        "debug_server", "debug_init_break", "debug_load_cmd",
+        "debug_load_mode", "monitor_port", "monitor_speed", "monitor_rts",
+        "monitor_dtr"
+    ]
 
     REMAPED_OPTIONS = {"framework": "pioframework", "platform": "pioplatform"}
 
