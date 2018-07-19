@@ -19,12 +19,12 @@ PlatformIO
 .. image:: https://img.shields.io/PlatformIO/Community.png
    :alt: Community Forums
    :target: https://community.platformio.org?utm_source=github&utm_medium=core
-.. image:: https://img.shields.io/PlatformIO/Plus.png?color=orange
-   :alt: PlatformIO Plus: Professional solutions for an awesome open source PlatformIO ecosystem
+.. image:: https://img.shields.io/PIO/Plus.png?color=orange
+   :alt: PIO Plus: Professional solutions for an awesome open source PlatformIO ecosystem
    :target: https://platformio.org/pricing?utm_source=github&utm_medium=core
 
-**Quick Links:** `Home Page <https://platformio.org?utm_source=github&utm_medium=core>`_ |
-`PlatformIO Plus <https://platformio.org/pricing?utm_source=github&utm_medium=core>`_ |
+**Quick Links:** `Web <https://platformio.org?utm_source=github&utm_medium=core>`_ |
+`PIO Plus <https://platformio.org/pricing?utm_source=github&utm_medium=core>`_ |
 `PlatformIO IDE <https://platformio.org/platformio-ide?utm_source=github&utm_medium=core>`_ |
 `Project Examples <https://github.com/platformio/platformio-examples/>`_ |
 `Docs <http://docs.platformio.org?utm_source=github&utm_medium=core>`_ |
@@ -32,6 +32,7 @@ PlatformIO
 `Contact Us <https://platformio.org/contact?utm_source=github&utm_medium=core>`_
 
 **Social:** `Twitter <https://twitter.com/PlatformIO_Org>`_ |
+`LinkedIn <https://www.linkedin.com/company/platformio/>`_ |
 `Facebook <https://www.facebook.com/platformio>`_ |
 `Hackaday <https://hackaday.io/project/7980-platformio>`_ |
 `Bintray <https://bintray.com/platformio>`_ |
@@ -49,16 +50,25 @@ Get Started
 
 * `What is PlatformIO? <http://docs.platformio.org/en/latest/what-is-platformio.html?utm_source=github&utm_medium=core>`_
 
-Products
---------
+Open Source
+-----------
 
 * `PlatformIO IDE <https://platformio.org/platformio-ide?utm_source=github&utm_medium=core>`_
 * `PlatformIO Core (CLI) <http://docs.platformio.org/en/latest/core.html?utm_source=github&utm_medium=core>`_
-* `PIO Remote™ <http://docs.platformio.org/en/latest/plus/pio-remote.html?utm_source=github&utm_medium=core>`_
-* `PIO Unified Debugger <http://docs.platformio.org/en/latest/plus/debugging.html?utm_source=github&utm_medium=core>`_
+* `Library Management <http://docs.platformio.org/page/librarymanager/index.html?utm_source=github&utm_medium=core>`_
+* `Project Examples <https://github.com/platformio/platformio-examples?utm_source=github&utm_medium=core>`_
+* `Desktop IDEs Integration <http://docs.platformio.org/page/ide.html?utm_source=github&utm_medium=core>`_
+* `Continuous Integration <http://docs.platformio.org/page/ci/index.html?utm_source=github&utm_medium=core>`_
+* `Advanced Scripting API <http://docs.platformio.org/page/projectconf/advanced_scripting.html?utm_source=github&utm_medium=core>`_
+
+PIO Plus
+--------
+
+* `PIO Remote™ <http://docs.platformio.org/page/plus/pio-remote.html?utm_source=github&utm_medium=core>`_
+* `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html?utm_source=github&utm_medium=core>`_
 * `PIO Unit Testing <http://docs.platformio.org/en/latest/plus/unit-testing.html?utm_source=github&utm_medium=core>`_
-* `PIO Delivery™ <https://platformio.org/pricing?utm_source=github&utm_medium=core#solution-pio-delivery>`_
-* `Cloud Builder <https://platformio.org/pricing?utm_source=github&utm_medium=core#solution-cloud-builder>`_
+* `Cloud IDEs Integration <http://docs.platformio.org/en/latest/ide.html?utm_source=github&utm_medium=core#solution-pio-delivery>`_
+* `Integration Services <https://platformio.org/pricing?utm_source=github&utm_medium=core#enterprise-features>`_
 
 Registry
 --------
@@ -84,6 +94,7 @@ Development Platforms
 * `Espressif 32 <https://platformio.org/platforms/espressif32?utm_source=github&utm_medium=core>`_
 * `Espressif 8266 <https://platformio.org/platforms/espressif8266?utm_source=github&utm_medium=core>`_
 * `Freescale Kinetis <https://platformio.org/platforms/freescalekinetis?utm_source=github&utm_medium=core>`_
+* * `Infineon XMC <https://platformio.org/platforms/infineonxmc?utm_source=github&utm_medium=core>`_
 * `Intel ARC32 <https://platformio.org/platforms/intel_arc32?utm_source=github&utm_medium=core>`_
 * `Lattice iCE40 <https://platformio.org/platforms/lattice_ice40?utm_source=github&utm_medium=core>`_
 * `Maxim 32 <https://platformio.org/platforms/maxim32?utm_source=github&utm_medium=core>`_
@@ -91,6 +102,8 @@ Development Platforms
 * `Nordic nRF51 <https://platformio.org/platforms/nordicnrf51?utm_source=github&utm_medium=core>`_
 * `Nordic nRF52 <https://platformio.org/platforms/nordicnrf52?utm_source=github&utm_medium=core>`_
 * `NXP LPC <https://platformio.org/platforms/nxplpc?utm_source=github&utm_medium=core>`_
+* `RISC-V <https://platformio.org/platforms/riscv?utm_source=github&utm_medium=core>`_
+* `Samsung ARTIK <https://platformio.org/platforms/samsung_artik?utm_source=github&utm_medium=core>`_
 * `Silicon Labs EFM32 <https://platformio.org/platforms/siliconlabsefm32?utm_source=github&utm_medium=core>`_
 * `ST STM32 <https://platformio.org/platforms/ststm32?utm_source=github&utm_medium=core>`_
 * `Teensy <https://platformio.org/platforms/teensy?utm_source=github&utm_medium=core>`_
