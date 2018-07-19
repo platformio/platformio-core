@@ -61,7 +61,7 @@ Open Source
 PIO Plus
 --------
 
-* `PIO Remote™ <http://docs.platformio.org/page/plus/pio-remote.html?utm_source=github&utm_medium=core>`_
+* `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html?utm_source=github&utm_medium=core>`_
 * `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html?utm_source=github&utm_medium=core>`_
 * `PIO Unit Testing <http://docs.platformio.org/en/latest/plus/unit-testing.html?utm_source=github&utm_medium=core>`_
 * `Cloud IDEs Integration <http://docs.platformio.org/en/latest/ide.html?utm_source=github&utm_medium=core#solution-pio-delivery>`_
@@ -83,7 +83,7 @@ Development Platforms
 * `Espressif 32 <https://platformio.org/platforms/espressif32?utm_source=github&utm_medium=core>`_
 * `Espressif 8266 <https://platformio.org/platforms/espressif8266?utm_source=github&utm_medium=core>`_
 * `Freescale Kinetis <https://platformio.org/platforms/freescalekinetis?utm_source=github&utm_medium=core>`_
-* * `Infineon XMC <https://platformio.org/platforms/infineonxmc?utm_source=github&utm_medium=core>`_
+* `Infineon XMC <https://platformio.org/platforms/infineonxmc?utm_source=github&utm_medium=core>`_
 * `Intel ARC32 <https://platformio.org/platforms/intel_arc32?utm_source=github&utm_medium=core>`_
 * `Lattice iCE40 <https://platformio.org/platforms/lattice_ice40?utm_source=github&utm_medium=core>`_
 * `Maxim 32 <https://platformio.org/platforms/maxim32?utm_source=github&utm_medium=core>`_
