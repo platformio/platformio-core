@@ -4,6 +4,13 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.5.5 (2018-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
+  issue with a shared code between main and test programs when ``UNIT_TEST``
+  macro was not set in a build environment
+
 3.5.4 (2018-07-03)
 ~~~~~~~~~~~~~~~~~~
 
