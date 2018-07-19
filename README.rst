@@ -78,14 +78,6 @@ Registry
 * `Frameworks <https://platformio.org/frameworks?utm_source=github&utm_medium=core>`_
 * `Embedded Boards <https://platformio.org/boards?utm_source=github&utm_medium=core>`_
 
-Solutions
----------
-
-* `Library Manager <http://docs.platformio.org/en/latest/librarymanager/index.html?utm_source=github&utm_medium=core>`_
-* `Cloud IDEs Integration <https://platformio.org/pricing?utm_source=github&utm_medium=core#solution-cloud-ide>`_
-* `Standalone IDEs Integration <http://docs.platformio.org/en/latest/ide.html?utm_source=github&utm_medium=core#other-ide>`_
-* `Continuous Integration <http://docs.platformio.org/en/latest/ci/index.html?utm_source=github&utm_medium=core>`_
-
 Development Platforms
 ---------------------
 
