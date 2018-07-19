@@ -54,20 +54,19 @@ def _build_project_deps(env):
             if project_lib_builder.env.get(key)
         })
 
-    if "__test" in COMMAND_LINE_TARGETS:
-        env.ProcessTest()
-        projenv = env.Clone()
-        projenv.BuildSources("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
-                             "$PIOTEST_SRC_FILTER")
-    else:
-        projenv = env.Clone()
-        projenv.BuildSources("$BUILDSRC_DIR", "$PROJECTSRC_DIR",
-                             env.get("SRC_FILTER"))
+    projenv = env.Clone()
 
     # CPPPATH from dependencies
     projenv.PrependUnique(CPPPATH=project_lib_builder.env.get("CPPPATH"))
     # extra build flags from `platformio.ini`
     projenv.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
+
+    if "__test" in COMMAND_LINE_TARGETS:
+        projenv.BuildSources("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
+                             "$PIOTEST_SRC_FILTER")
+    else:
+        projenv.BuildSources("$BUILDSRC_DIR", "$PROJECTSRC_DIR",
+                             env.get("SRC_FILTER"))
 
     if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
@@ -95,6 +94,8 @@ def BuildProgram(env):
 
     if "__debug" in COMMAND_LINE_TARGETS:
         env.ProcessDebug()
+    if "__test" in COMMAND_LINE_TARGETS:
+        env.ProcessTest()
 
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():

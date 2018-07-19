@@ -22,6 +22,13 @@ PlatformIO 3.0
   install/uninstall operations
   (`issue #1594 <https://github.com/platformio/platformio-core/issues/1594>`_)
 
+3.5.5 (2018-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
+  issue with a shared code between main and test programs when ``UNIT_TEST``
+  macro was not set in a build environment
+
 3.5.4 (2018-07-03)
 ~~~~~~~~~~~~~~~~~~
 
