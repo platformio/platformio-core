@@ -166,14 +166,12 @@ def test_global_lib_list(clirunner, validate_cliresult):
     assert sorted(items1) == sorted(items2)
 
     versions1 = [
-        "{name}@{version}".format(**item)
-        for item in json.loads(result.output)
+        "{name}@{version}".format(**item) for item in json.loads(result.output)
     ]
     versions2 = [
         'ArduinoJson@5.8.2', 'ArduinoJson@5.10.1', 'AsyncMqttClient@0.8.2',
-        'AsyncTCP@1.0.1', 'ESPAsyncTCP@1.1.3', 'NeoPixelBus@2.2.4',
-        'PJON@07fe9aa', 'PJON@1fb26fd', 'PubSubClient@bef5814',
-        'RFcontrol@77d4eb3f8a', 'RadioHead-1.62@0.0.0'
+        'AsyncTCP@1.0.1', 'NeoPixelBus@2.2.4', 'PJON@07fe9aa', 'PJON@1fb26fd',
+        'PubSubClient@bef5814', 'RFcontrol@77d4eb3f8a', 'RadioHead-1.62@0.0.0'
     ]
     assert set(versions1) >= set(versions2)
 
