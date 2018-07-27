@@ -29,10 +29,6 @@ install:
 script:
   - tox -e $TOX_ENV
 
-after_success:
-  - if [[ "$TOX_ENV" == "py27" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tox -e coverage; fi
-  - if [[ "$TOX_ENV" == "py27" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash); fi
-
 notifications:
   email: false
 
