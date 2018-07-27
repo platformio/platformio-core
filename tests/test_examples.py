@@ -42,10 +42,15 @@ def pytest_generate_tests(metafunc):
 
     project_dirs = []
     for examples_dir in examples_dirs:
+        platform_examples = []
         for root, _, files in walk(examples_dir):
             if "platformio.ini" not in files or ".skiptest" in files:
                 continue
-            project_dirs.append(root)
+            platform_examples.append(root)
+
+        # test random 3 examples
+        random.shuffle(platform_examples)
+        project_dirs.extend(platform_examples[:3])
     project_dirs.sort()
     metafunc.parametrize("pioproject_dir", project_dirs)
 
