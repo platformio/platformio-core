@@ -95,8 +95,6 @@ def BuildProgram(env):
 
     if "__debug" in COMMAND_LINE_TARGETS:
         env.ProcessDebug()
-    if "__test" in COMMAND_LINE_TARGETS:
-        env.ProcessTest()
 
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
@@ -113,6 +111,9 @@ def BuildProgram(env):
 
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
+
+    if "__test" in COMMAND_LINE_TARGETS:
+        env.ProcessTest()
 
     # build project with dependencies
     _build_project_deps(env)
