@@ -14,7 +14,7 @@
 
 import sys
 
-VERSION = (3, 6, "0a10")
+VERSION = (3, 6, "0a11")
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
