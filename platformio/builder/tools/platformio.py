@@ -307,7 +307,8 @@ def BuildFrameworks(env, frameworks):
         if f in ("arduino", "energia"):
             # Arduino IDE appends .o the end of filename
             Builder.match_splitext = scons_patched_match_splitext
-            env.ConvertInoToCpp()
+            if "nobuild" not in COMMAND_LINE_TARGETS:
+                env.ConvertInoToCpp()
 
         if f in board_frameworks:
             SConscript(env.GetFrameworkScript(f), exports="env")
