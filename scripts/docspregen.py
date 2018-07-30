@@ -118,7 +118,7 @@ def generate_boards(boards, extend_debug=False, skip_columns=None):
     return lines
 
 
-def generate_debug_boards(boards, skip_columns=None):
+def generate_debug_contents(boards, skip_board_columns=None, extra_rst=None):
     lines = []
     onboard_debug = [
         b for b in boards if b['debug'] and any(
@@ -127,40 +127,61 @@ def generate_debug_boards(boards, skip_columns=None):
     external_debug = [
         b for b in boards if b['debug'] and b not in onboard_debug
     ]
-    if onboard_debug or external_debug:
-        lines.append("""
+    if not onboard_debug and not external_debug:
+        return lines
+
+    lines.append("""
 Debugging
 ---------
 
 :ref:`piodebug` - "1-click" solution for debugging with a zero configuration.
 
+.. contents::
+    :local:
+""")
+    if extra_rst:
+        lines.append(".. include:: %s" % extra_rst)
+
+    lines.append("""
+Debug Tools
+~~~~~~~~~~~
+
 Supported debugging tools are listed in "Debug" column. For more detailed
 information, please scroll table by horizontal.
 You can switch between debugging :ref:`debugging_tools` using
 :ref:`projectconf_debug_tool` options.
+
+.. warning::
+    You will need to install debug tool drivers depending on your system.
+    Please click on compatible debug tool below for the further instructions.
 """)
+
     if onboard_debug:
         lines.append("""
 On-Board Debug Tools
-~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^
 
 Boards listed below have on-board debug tool and **ARE READY** for debugging!
 You do not need to use/buy external debug tool.
 """)
         lines.extend(
             generate_boards(
-                onboard_debug, extend_debug=True, skip_columns=skip_columns))
+                onboard_debug,
+                extend_debug=True,
+                skip_columns=skip_board_columns))
     if external_debug:
         lines.append("""
 External Debug Tools
-~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^
 
 Boards listed below are compatible with :ref:`piodebug` but **DEPEND ON**
 external debug tool. See "Debug" column for compatible debug tools.
 """)
         lines.extend(
             generate_boards(
-                external_debug, extend_debug=True, skip_columns=skip_columns))
+                external_debug,
+                extend_debug=True,
+                skip_columns=skip_board_columns))
     return lines
 
 
@@ -218,7 +239,7 @@ Packages
     return "\n".join(lines)
 
 
-def generate_platform(name, has_extra=False):
+def generate_platform(name, rst_dir):
     print "Processing platform: %s" % name
 
     compatible_boards = [
@@ -263,7 +284,7 @@ For more detailed information please visit `vendor site <%s>`_.""" %
     #
     # Extra
     #
-    if has_extra:
+    if isfile(join(rst_dir, "%s_extra.rst" % name)):
         lines.append(".. include:: %s_extra.rst" % p.name)
 
     #
@@ -288,8 +309,11 @@ Examples are listed from `%s development platform repository <%s>`_:
     #
     if compatible_boards:
         lines.extend(
-            generate_debug_boards(
-                compatible_boards, skip_columns=["Platform"]))
+            generate_debug_contents(
+                compatible_boards,
+                skip_board_columns=["Platform"],
+                extra_rst="%s_debug.rst" % name
+                if isfile(join(rst_dir, "%s_debug.rst" % name)) else None))
 
     #
     # Development version of dev/platform
@@ -393,12 +417,10 @@ def update_platform_docs():
             dirname(realpath(__file__)), "..", "docs", "platforms")
         rst_path = join(platforms_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
-            f.write(
-                generate_platform(
-                    name, isfile(join(platforms_dir, "%s_extra.rst" % name))))
+            f.write(generate_platform(name, platforms_dir))
 
 
-def generate_framework(type_, data, has_extra=False):
+def generate_framework(type_, data, rst_dir=None):
     print "Processing framework: %s" % type_
 
     compatible_platforms = [
@@ -442,14 +464,18 @@ For more detailed information please visit `vendor site <%s>`_.
     :depth: 1""")
 
     # Extra
-    if has_extra:
+    if isfile(join(rst_dir, "%s_extra.rst" % type_)):
         lines.append(".. include:: %s_extra.rst" % type_)
 
     #
     # Debugging
     #
     if compatible_boards:
-        lines.extend(generate_debug_boards(compatible_boards))
+        lines.extend(
+            generate_debug_contents(
+                compatible_boards,
+                extra_rst="%s_debug.rst" % type_
+                if isfile(join(rst_dir, "%s_debug.rst" % type_)) else None))
 
     if compatible_platforms:
         # examples
@@ -514,10 +540,7 @@ def update_framework_docs():
             dirname(realpath(__file__)), "..", "docs", "frameworks")
         rst_path = join(frameworks_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
-            f.write(
-                generate_framework(
-                    name, framework,
-                    isfile(join(frameworks_dir, "%s_extra.rst" % name))))
+            f.write(generate_framework(name, framework, frameworks_dir))
 
 
 def update_embedded_boards():
