@@ -632,9 +632,9 @@ def update_debugging():
             end = end_tpl + tool
             begin_index = content.index(begin)
             end_index = content.index(end)
-            chunk = ["\n\n**Compatible development platforms:**\n"]
+            chunk = ["\n\n:Compatible Platforms:\n"]
             chunk.extend([
-                "* :ref:`platform_%s`" % str(p)
+                "  * :ref:`platform_%s`" % str(p)
                 for p in sorted(set(platforms))
             ])
             chunk.extend(["\n"])
