@@ -13,6 +13,8 @@ PlatformIO 3.0
   - Force building of project source code using `test_build_project_src <http://docs.platformio.org/page/projectconf/section_env_test.html#test_build_project_src>`__ option
   - Fixed missed ``UNIT_TEST`` macro for unit test components/libraries
 
+* Fixed an issue with `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html>`__
+  when upload process depends on the source code of a project framework
 * Fixed an issue when ``srcFilter`` field in `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
   breaks a library build
   (`issue #1735 <https://github.com/platformio/platformio-core/issues/1735>`_)

@@ -604,12 +604,13 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
 
         # enable upload tools for upload targets
         if any(["upload" in t for t in targets] + ["program" in targets]):
-            for _name, _opts in self.packages.iteritems():
-                if _opts.get("type") == "uploader":
-                    self.packages[_name]['optional'] = False
-                elif "nobuild" in targets:
-                    # skip all packages, allow only upload tools
-                    self.packages[_name]['optional'] = True
+            for name, opts in self.packages.iteritems():
+                if opts.get("type") == "uploader":
+                    self.packages[name]['optional'] = False
+                # skip all packages in "nobuild" mode
+                # allow only upload tools and frameworks
+                elif "nobuild" in targets and opts.get("type") != "framework":
+                    self.packages[name]['optional'] = True
 
     def get_lib_storages(self):
         storages = []
