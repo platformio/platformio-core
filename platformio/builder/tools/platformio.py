@@ -54,20 +54,20 @@ def _build_project_deps(env):
             if project_lib_builder.env.get(key)
         })
 
-    if "__test" in COMMAND_LINE_TARGETS:
-        env.ProcessTest()
-        projenv = env.Clone()
-        projenv.BuildSources("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
-                             "$PIOTEST_SRC_FILTER")
-    else:
-        projenv = env.Clone()
-        projenv.BuildSources("$BUILDSRC_DIR", "$PROJECTSRC_DIR",
-                             env.get("SRC_FILTER"))
+    projenv = env.Clone()
 
     # CPPPATH from dependencies
     projenv.PrependUnique(CPPPATH=project_lib_builder.env.get("CPPPATH"))
     # extra build flags from `platformio.ini`
     projenv.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
+
+    is_test = "__test" in COMMAND_LINE_TARGETS
+    if is_test:
+        projenv.BuildSources("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
+                             "$PIOTEST_SRC_FILTER")
+    if not is_test or env.get("TEST_BUILD_PROJECT_SRC") == "true":
+        projenv.BuildSources("$BUILDSRC_DIR", "$PROJECTSRC_DIR",
+                             env.get("SRC_FILTER"))
 
     if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
@@ -112,6 +112,9 @@ def BuildProgram(env):
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 
+    if "__test" in COMMAND_LINE_TARGETS:
+        env.ProcessTest()
+
     # build project with dependencies
     _build_project_deps(env)
 
@@ -127,12 +130,13 @@ def BuildProgram(env):
 
     program = env.Program(
         join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
+    env.Replace(PIOMAINPROG=program)
 
-    checksize_action = env.VerboseAction(env.CheckUploadSize,
-                                         "Checking program size")
-    AlwaysBuild(env.Alias("checkprogsize", program, checksize_action))
-    if set(["upload", "program"]) & set(COMMAND_LINE_TARGETS):
-        env.AddPostAction(program, checksize_action)
+    AlwaysBuild(
+        env.Alias(
+            "checkprogsize", program,
+            env.VerboseAction(env.CheckUploadSize,
+                              "Checking size $PIOMAINPROG")))
 
     return program
 
@@ -303,7 +307,8 @@ def BuildFrameworks(env, frameworks):
         if f in ("arduino", "energia"):
             # Arduino IDE appends .o the end of filename
             Builder.match_splitext = scons_patched_match_splitext
-            env.ConvertInoToCpp()
+            if "nobuild" not in COMMAND_LINE_TARGETS:
+                env.ConvertInoToCpp()
 
         if f in board_frameworks:
             SConscript(env.GetFrameworkScript(f), exports="env")

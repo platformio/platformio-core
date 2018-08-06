@@ -97,7 +97,7 @@
     "settings":
     {
          "sublimegdb_workingdir": "{{project_dir}}",
-         "sublimegdb_exec_cmd": "-exec-continue",
+         "sublimegdb_exec_cmd": "",
          "sublimegdb_commandline": "{{platformio_path}} -f -c sublimetext debug --interface=gdb --interpreter=mi -x .pioinit"
 
     }

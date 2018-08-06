@@ -4,6 +4,35 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.6.0 (2018-08-06)
+~~~~~~~~~~~~~~~~~~
+
+* `Program Memory Usage <http://docs.platformio.org/en/latest/faq.html#program-memory-usage>`_
+
+  - Print human-readable memory usage information after a build and before uploading
+  - Print detailed memory usage information with "sections" and "addresses"
+    in `verbose mode <http://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-v>`__
+  - Check maximum allowed "program" and "data" sizes before uploading/programming
+    (`issue #1412 <https://github.com/platformio/platformio-core/issues/1412>`_)
+
+* `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__:
+
+  - Documented `Project Shared Code <http://docs.platformio.org/page/plus/unit-testing.html#shared-code>`__
+  - Force building of project source code using `test_build_project_src <http://docs.platformio.org/page/projectconf/section_env_test.html#test_build_project_src>`__ option
+  - Fixed missed ``UNIT_TEST`` macro for unit test components/libraries
+
+* Check package structure after unpacking and raise error when antivirus tool
+  blocks PlatformIO package manager
+  (`issue #1462 <https://github.com/platformio/platformio-core/issues/1462>`_)
+* Lock interprocess requests to PlatformIO Package Manager for
+  install/uninstall operations
+  (`issue #1594 <https://github.com/platformio/platformio-core/issues/1594>`_)
+* Fixed an issue with `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html>`__
+  when upload process depends on the source code of a project framework
+* Fixed an issue when ``srcFilter`` field in `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
+  breaks a library build
+  (`issue #1735 <https://github.com/platformio/platformio-core/issues/1735>`_)
+
 3.5.4 (2018-07-03)
 ~~~~~~~~~~~~~~~~~~
 

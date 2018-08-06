@@ -69,15 +69,22 @@ def LoadPioPlatform(env, variables):
     # Ensure real platform name
     env['PIOPLATFORM'] = p.name
 
-    # Add toolchains and uploaders to $PATH
+    # Add toolchains and uploaders to $PATH and $*_LIBRARY_PATH
+    systype = util.get_systype()
     for name in installed_packages:
         type_ = p.get_package_type(name)
         if type_ not in ("toolchain", "uploader", "debugger"):
             continue
-        path = p.get_package_dir(name)
-        if isdir(join(path, "bin")):
-            path = join(path, "bin")
-        env.PrependENVPath("PATH", path)
+        pkg_dir = p.get_package_dir(name)
+        env.PrependENVPath(
+            "PATH",
+            join(pkg_dir, "bin") if isdir(join(pkg_dir, "bin")) else pkg_dir)
+        if ("windows" not in systype and isdir(join(pkg_dir, "lib"))
+                and type_ != "toolchain"):
+            env.PrependENVPath(
+                "DYLD_LIBRARY_PATH"
+                if "darwin" in systype else "LD_LIBRARY_PATH",
+                join(pkg_dir, "lib"))
 
     # Platform specific LD Scripts
     if isdir(join(p.get_dir(), "ldscripts")):

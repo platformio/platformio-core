@@ -150,7 +150,7 @@ def get_develop_latest_version():
 
 def get_pypi_latest_version():
     r = requests.get(
-        "https://pypi.python.org/pypi/platformio/json",
+        "https://pypi.org/pypi/platformio/json",
         headers=util.get_request_defheaders())
     r.raise_for_status()
     return r.json()['info']['version']

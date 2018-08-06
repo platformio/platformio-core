@@ -13,15 +13,14 @@
 # limitations under the License.
 
 from os import chmod
-from os.path import join
+from os.path import exists, islink, join
 from tarfile import open as tarfile_open
 from time import mktime
 from zipfile import ZipFile
 
 import click
 
-from platformio import util
-from platformio.exception import UnsupportedArchiveType
+from platformio import exception, util
 
 
 class ArchiveBase(object):
@@ -30,6 +29,9 @@ class ArchiveBase(object):
         self._afo = arhfileobj
 
     def get_items(self):
+        raise NotImplementedError()
+
+    def get_item_filename(self, item):
         raise NotImplementedError()
 
     def extract_item(self, item, dest_dir):
@@ -50,6 +52,9 @@ class TARArchive(ArchiveBase):
 
     def get_items(self):
         return self._afo.getmembers()
+
+    def get_item_filename(self, item):
+        return item.name
 
 
 class ZIPArchive(ArchiveBase):
@@ -72,6 +77,9 @@ class ZIPArchive(ArchiveBase):
     def get_items(self):
         return self._afo.infolist()
 
+    def get_item_filename(self, item):
+        return item.filename
+
     def after_extract(self, item, dest_dir):
         self.preserve_permissions(item, dest_dir)
         self.preserve_mtime(item, dest_dir)
@@ -89,7 +97,7 @@ class FileUnpacker(object):
         elif self.archpath.lower().endswith(".zip"):
             self._unpacker = ZIPArchive(self.archpath)
         if not self._unpacker:
-            raise UnsupportedArchiveType(self.archpath)
+            raise exception.UnsupportedArchiveType(self.archpath)
         return self
 
     def __exit__(self, *args):
@@ -107,4 +115,12 @@ class FileUnpacker(object):
             with click.progressbar(items, label="Unpacking") as pb:
                 for item in pb:
                     self._unpacker.extract_item(item, dest_dir)
+
+        # check on disk
+        for item in self._unpacker.get_items():
+            filename = self._unpacker.get_item_filename(item)
+            item_path = join(dest_dir, filename)
+            if not islink(item_path) and not exists(item_path):
+                raise exception.ExtractArchiveItemError(filename, dest_dir)
+
         return True

@@ -17,7 +17,7 @@
         {
             "type": "platformio-debug",
             "request": "launch",
-            "name": "PlatformIO Debugger",
+            "name": "PIO Debug",
             "executable": "{{ _escape_path(prog_path) }}",
             "toolchainBinDir": "{{ _escape_path(dirname(gdb_path)) }}",
 % if svd_path:
@@ -29,7 +29,7 @@
         {
             "type": "platformio-debug",
             "request": "launch",
-            "name": "PlatformIO Debugger (Skip Pre-Debug)",
+            "name": "PIO Debug (Skip Pre-Debug)",
             "executable": "{{ _escape_path(prog_path) }}",
             "toolchainBinDir": "{{ _escape_path(dirname(gdb_path)) }}",
 % if svd_path:

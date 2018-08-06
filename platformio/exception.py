@@ -28,6 +28,10 @@ class ReturnErrorCode(PlatformioException):
     MESSAGE = "{0}"
 
 
+class LockFileTimeoutError(PlatformioException):
+    pass
+
+
 class MinitermException(PlatformioException):
     pass
 
@@ -100,6 +104,13 @@ class PackageInstallError(PlatformioException):
     MESSAGE = ("Could not install '{0}' with version requirements '{1}' "
                "for your system '{2}'.\n\n"
                "Please try this solution -> http://bit.ly/faq-package-manager")
+
+
+class ExtractArchiveItemError(PlatformioException):
+
+    MESSAGE = (
+        "Could not extract `{0}` to `{1}`. Try to disable antivirus "
+        "tool or check this solution -> http://bit.ly/faq-package-manager")
 
 
 class FDUnrecognizedStatusCode(PlatformioException):

@@ -20,7 +20,7 @@ from os.path import expanduser, join
 from time import time
 
 from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
-                          Action, AllowSubstExceptions, AlwaysBuild,
+                          AllowSubstExceptions, AlwaysBuild, Default,
                           DefaultEnvironment, Variables)
 
 from platformio import util
@@ -68,6 +68,9 @@ commonvars.AddVariables(
     ("UPLOAD_FLAGS",),
     ("UPLOAD_RESETMETHOD",),
 
+    # test options
+    ("TEST_BUILD_PROJECT_SRC",),
+
     # debug options
     ("DEBUG_TOOL",),
     ("DEBUG_SVD_PATH",),
@@ -76,7 +79,8 @@ commonvars.AddVariables(
 
 MULTILINE_VARS = [
     "EXTRA_SCRIPTS", "PIOFRAMEWORK", "BUILD_FLAGS", "SRC_BUILD_FLAGS",
-    "BUILD_UNFLAGS", "SRC_FILTER", "LIB_DEPS", "LIB_IGNORE", "LIB_EXTRA_DIRS"
+    "BUILD_UNFLAGS", "UPLOAD_FLAGS", "SRC_FILTER", "LIB_DEPS", "LIB_IGNORE",
+    "LIB_EXTRA_DIRS"
 ]
 
 DEFAULT_ENV_OPTIONS = dict(
@@ -164,14 +168,33 @@ for item in env.GetExtraScripts("pre"):
 
 env.SConscript("$BUILD_SCRIPT")
 
-AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS + ["size"]))
-AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS + ["size"]))
-
 if "UPLOAD_FLAGS" in env:
     env.Prepend(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
 
 for item in env.GetExtraScripts("post"):
     env.SConscript(item, exports="env")
+
+##############################################################################
+
+# Checking program size
+if env.get("SIZETOOL") and "nobuild" not in COMMAND_LINE_TARGETS:
+    env.Depends(["upload", "program"], "checkprogsize")
+    # Replace platform's "size" target with our
+    _new_targets = [t for t in DEFAULT_TARGETS if str(t) != "size"]
+    Default(None)
+    Default(_new_targets)
+    Default("checkprogsize")
+
+# Print configured protocols
+env.AddPreAction(
+    ["upload", "program"],
+    env.VerboseAction(lambda source, target, env: env.PrintUploadInfo(),
+                      "Configuring upload protocol..."))
+
+AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS))
+AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
+
+##############################################################################
 
 if "envdump" in COMMAND_LINE_TARGETS:
     print env.Dump()
@@ -189,7 +212,3 @@ if "idedata" in COMMAND_LINE_TARGETS:
             "See explanation in FAQ > Troubleshooting > Building\n"
             "http://docs.platformio.org/page/faq.html\n\n")
         env.Exit(1)
-
-env.AddPreAction(["upload", "program"],
-                 Action(lambda source, target, env: env.PrintUploadInfo(),
-                        "Configuring upload protocol..."))
