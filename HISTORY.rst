@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.6.0 (2018-??-??)
+3.6.0 (2018-08-06)
 ~~~~~~~~~~~~~~~~~~
 
 * `Program Memory Usage <http://docs.platformio.org/en/latest/faq.html#program-memory-usage>`_
@@ -15,22 +15,18 @@ PlatformIO 3.0
   - Check maximum allowed "program" and "data" sizes before uploading/programming
     (`issue #1412 <https://github.com/platformio/platformio-core/issues/1412>`_)
 
-* Check package structure after unpacking and raise error when antivirus tool
-  blocks PlatformIO package manager
-  (`issue #1462 <https://github.com/platformio/platformio-core/issues/1462>`_)
-* Lock interprocess requests to PlatformIO Package Manager for
-  install/uninstall operations
-  (`issue #1594 <https://github.com/platformio/platformio-core/issues/1594>`_)
-
-3.5.5 (2018-??-??)
-~~~~~~~~~~~~~~~~~~
-
 * `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__:
 
   - Documented `Project Shared Code <http://docs.platformio.org/page/plus/unit-testing.html#shared-code>`__
   - Force building of project source code using `test_build_project_src <http://docs.platformio.org/page/projectconf/section_env_test.html#test_build_project_src>`__ option
   - Fixed missed ``UNIT_TEST`` macro for unit test components/libraries
 
+* Check package structure after unpacking and raise error when antivirus tool
+  blocks PlatformIO package manager
+  (`issue #1462 <https://github.com/platformio/platformio-core/issues/1462>`_)
+* Lock interprocess requests to PlatformIO Package Manager for
+  install/uninstall operations
+  (`issue #1594 <https://github.com/platformio/platformio-core/issues/1594>`_)
 * Fixed an issue with `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html>`__
   when upload process depends on the source code of a project framework
 * Fixed an issue when ``srcFilter`` field in `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
