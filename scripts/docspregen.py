@@ -27,6 +27,7 @@ API_PACKAGES = util.get_api_result("/packages")
 API_FRAMEWORKS = util.get_api_result("/frameworks")
 BOARDS = PlatformManager().get_installed_boards()
 PLATFORM_MANIFESTS = PlatformManager().get_installed()
+DOCS_ROOT_DIR = realpath(join(dirname(realpath(__file__)), "..", "docs"))
 
 
 def is_compat_platform_and_framework(platform, framework):
@@ -118,6 +119,48 @@ def generate_boards(boards, extend_debug=False, skip_columns=None):
     return lines
 
 
+def generate_frameworks_contents(frameworks):
+    if not frameworks:
+        return []
+    lines = []
+    lines.append("""
+Frameworks
+----------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description""")
+    for framework in API_FRAMEWORKS:
+        if framework['name'] not in frameworks:
+            continue
+        lines.append("""
+    * - :ref:`framework_{name}`
+      - {description}""".format(**framework))
+    return lines
+
+
+def generate_platforms_contents(platforms):
+    if not platforms:
+        return []
+    lines = []
+    lines.append("""
+Platforms
+---------
+.. list-table::
+    :header-rows:  1
+
+    * - Name
+      - Description""")
+
+    for name in sorted(platforms):
+        p = PlatformFactory.newPlatform(name)
+        lines.append("""
+    * - :ref:`platform_{name}`
+      - {description}""".format(name=p.name, description=p.description))
+    return lines
+
+
 def generate_debug_contents(boards, skip_board_columns=None, extra_rst=None):
     lines = []
     onboard_debug = [
@@ -143,8 +186,8 @@ Debugging
         lines.append(".. include:: %s" % extra_rst)
 
     lines.append("""
-Debug Tools
-~~~~~~~~~~~
+Tools & Debug Probes
+~~~~~~~~~~~~~~~~~~~~
 
 Supported debugging tools are listed in "Debug" column. For more detailed
 information, please scroll table by horizontal.
@@ -269,7 +312,9 @@ def generate_platform(name, rst_dir):
 
     lines.append(p.title)
     lines.append("=" * len(p.title))
-    lines.append(":ref:`projectconf_env_platform` = ``%s``" % p.name)
+    lines.append("")
+    lines.append(":Configuration:")
+    lines.append("  :ref:`projectconf_env_platform` = ``%s``" % p.name)
     lines.append("")
     lines.append(p.description)
     lines.append("""
@@ -362,24 +407,11 @@ Upstream
     #
     # Frameworks
     #
-    _frameworks_lines = []
+    compatible_frameworks = []
     for framework in API_FRAMEWORKS:
-        if not is_compat_platform_and_framework(name, framework['name']):
-            continue
-        _frameworks_lines.append("""
-    * - :ref:`framework_{name}`
-      - {description}""".format(**framework))
-
-    if _frameworks_lines:
-        lines.append("""
-Frameworks
-----------
-.. list-table::
-    :header-rows:  1
-
-    * - Name
-      - Description""")
-        lines.extend(_frameworks_lines)
+        if is_compat_platform_and_framework(name, framework['name']):
+            compatible_frameworks.append(framework['name'])
+    lines.extend(generate_frameworks_contents(compatible_frameworks))
 
     #
     # Boards
@@ -413,8 +445,7 @@ Boards
 def update_platform_docs():
     for manifest in PLATFORM_MANIFESTS:
         name = manifest['name']
-        platforms_dir = join(
-            dirname(realpath(__file__)), "..", "docs", "platforms")
+        platforms_dir = join(DOCS_ROOT_DIR, "platforms")
         rst_path = join(platforms_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
             f.write(generate_platform(name, platforms_dir))
@@ -451,7 +482,9 @@ def generate_framework(type_, data, rst_dir=None):
 
     lines.append(data['title'])
     lines.append("=" * len(data['title']))
-    lines.append(":ref:`projectconf_env_framework` = ``%s``" % type_)
+    lines.append("")
+    lines.append(":Configuration:")
+    lines.append("  :ref:`projectconf_env_framework` = ``%s``" % type_)
     lines.append("")
     lines.append(data['description'])
     lines.append("""
@@ -492,21 +525,9 @@ Examples
                      "%s/tree/master/examples" % p.repository_url[:-4])))
 
         # Platforms
-        lines.append("""
-Platforms
----------
-.. list-table::
-    :header-rows:  1
-
-    * - Name
-      - Description""")
-
-        for manifest in compatible_platforms:
-            p = PlatformFactory.newPlatform(manifest['name'])
-            lines.append("""
-    * - :ref:`platform_{type_}`
-      - {description}""".format(
-                type_=manifest['name'], description=p.description))
+        lines.extend(
+            generate_platforms_contents(
+                [manifest['name'] for manifest in compatible_platforms]))
 
     #
     # Boards
@@ -536,8 +557,7 @@ Boards
 def update_framework_docs():
     for framework in API_FRAMEWORKS:
         name = framework['name']
-        frameworks_dir = join(
-            dirname(realpath(__file__)), "..", "docs", "frameworks")
+        frameworks_dir = join(DOCS_ROOT_DIR, "frameworks")
         rst_path = join(frameworks_dir, "%s.rst" % name)
         with open(rst_path, "w") as f:
             f.write(generate_framework(name, framework, frameworks_dir))
@@ -594,15 +614,14 @@ popular embedded boards and IDE.
         lines.append("~" * len(vendor))
         lines.extend(generate_boards(boards))
 
-    emboards_rst = join(
-        dirname(realpath(__file__)), "..", "docs", "platforms",
-        "embedded_boards.rst")
+    emboards_rst = join(DOCS_ROOT_DIR, "platforms", "embedded_boards.rst")
     with open(emboards_rst, "w") as f:
         f.write("\n".join(lines))
 
 
 def update_debugging():
-    tools_to_platforms = {}
+    tool_to_platforms = {}
+    tool_to_boards = {}
     vendors = {}
     platforms = []
     frameworks = []
@@ -612,9 +631,12 @@ def update_debugging():
 
         for tool in data['debug']['tools']:
             tool = str(tool)
-            if tool not in tools_to_platforms:
-                tools_to_platforms[tool] = []
-            tools_to_platforms[tool].append(data['platform'])
+            if tool not in tool_to_platforms:
+                tool_to_platforms[tool] = []
+            tool_to_platforms[tool].append(data['platform'])
+            if tool not in tool_to_boards:
+                tool_to_boards[tool] = []
+            tool_to_boards[tool].append(data['id'])
 
         platforms.append(data['platform'])
         frameworks.extend(data['frameworks'])
@@ -624,60 +646,12 @@ def update_debugging():
         else:
             vendors[vendor] = [data]
 
-    def _update_tool_compat_platforms(content):
-        begin_tpl = ".. begin_compatible_platforms_"
-        end_tpl = ".. end_compatible_platforms_"
-        for tool, platforms in tools_to_platforms.items():
-            begin = begin_tpl + tool
-            end = end_tpl + tool
-            begin_index = content.index(begin)
-            end_index = content.index(end)
-            chunk = ["\n\n:Compatible Platforms:\n"]
-            chunk.extend([
-                "  * :ref:`platform_%s`" % str(p)
-                for p in sorted(set(platforms))
-            ])
-            chunk.extend(["\n"])
-            content = content[:begin_index + len(begin)] + "\n".join(
-                chunk) + content[end_index:]
-        return content
+    platforms = sorted(set(platforms))
+    frameworks = sorted(set(frameworks))
 
-    lines = []
-    # Platforms
-    lines.append(""".. _debugging_platforms:
-
-Platforms
----------
-.. list-table::
-    :header-rows:  1
-
-    * - Name
-      - Description""")
-
-    for manifest in PLATFORM_MANIFESTS:
-        if manifest['name'] not in platforms:
-            continue
-        p = PlatformFactory.newPlatform(manifest['name'])
-        lines.append("""
-    * - :ref:`platform_{type_}`
-      - {description}""".format(
-            type_=manifest['name'], description=p.description))
-
-    # Frameworks
-    lines.append("""
-Frameworks
-----------
-.. list-table::
-    :header-rows:  1
-
-    * - Name
-      - Description""")
-    for framework in API_FRAMEWORKS:
-        if framework['name'] not in frameworks:
-            continue
-        lines.append("""
-    * - :ref:`framework_{name}`
-      - {description}""".format(**framework))
+    lines = [".. _debugging_platforms:"]
+    lines.extend(generate_platforms_contents(platforms))
+    lines.extend(generate_frameworks_contents(frameworks))
 
     # Boards
     lines.append("""
@@ -692,14 +666,50 @@ Boards
         lines.append("~" * len(vendor))
         lines.extend(generate_boards(boards, extend_debug=True))
 
+    # save
     with open(
             join(util.get_source_dir(), "..", "docs", "plus", "debugging.rst"),
             "r+") as fp:
-        content = _update_tool_compat_platforms(fp.read())
+        content = fp.read()
         fp.seek(0)
         fp.truncate()
         fp.write(content[:content.index(".. _debugging_platforms:")] +
                  "\n".join(lines))
+
+    # Debug tools
+    for tool, platforms in tool_to_platforms.items():
+        tool_path = join(DOCS_ROOT_DIR, "plus", "debug-tools", "%s.rst" % tool)
+        assert isfile(tool_path)
+        platforms = sorted(set(platforms))
+
+        lines = [".. begin_platforms"]
+        lines.extend(generate_platforms_contents(platforms))
+        tool_frameworks = []
+        for platform in platforms:
+            for framework in frameworks:
+                if is_compat_platform_and_framework(platform, framework):
+                    tool_frameworks.append(framework)
+        lines.extend(generate_frameworks_contents(tool_frameworks))
+
+        lines.append("""
+Boards
+------
+
+.. note::
+    For more detailed ``board`` information please scroll tables below by horizontal.
+""")
+        lines.extend(
+            generate_boards(
+                [b for b in BOARDS if b['id'] in tool_to_boards[tool]],
+                extend_debug=True,
+                skip_columns=None))
+
+        with open(tool_path, "r+") as fp:
+            content = fp.read()
+            fp.seek(0)
+            fp.truncate()
+            fp.write(content[:content.index(".. begin_platforms")] +
+                     "\n".join(lines))
 
 
 def update_project_examples():
