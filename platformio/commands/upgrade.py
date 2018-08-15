@@ -63,7 +63,7 @@ def cli(dev):
             fg="green")
         click.echo("Release notes: ", nl=False)
         click.secho(
-            "http://docs.platformio.org/en/latest/history.html", fg="cyan")
+            "https://docs.platformio.org/en/latest/history.html", fg="cyan")
     except Exception as e:  # pylint: disable=broad-except
         if not r:
             raise exception.UpgradeError("\n".join([str(cmd), str(e)]))

@@ -172,7 +172,7 @@ For example, see how can be organized `Foo` and `Bar` libraries:
 |  |  |--src
 |  |     |- Bar.c
 |  |     |- Bar.h
-|  |  |- library.json (optional, custom build options, etc) http://docs.platformio.org/page/librarymanager/config.html
+|  |  |- library.json (optional, custom build options, etc) https://docs.platformio.org/page/librarymanager/config.html
 |  |
 |  |--Foo
 |  |  |- Foo.c
@@ -195,7 +195,7 @@ PlatformIO will find your libraries automatically, configure preprocessor's
 include paths and build them.
 
 More information about PlatformIO Library Dependency Finder
-- http://docs.platformio.org/page/librarymanager/ldf.html
+- https://docs.platformio.org/page/librarymanager/ldf.html
 """)
 
 
@@ -205,7 +205,7 @@ def init_ci_conf(project_dir):
     with open(join(project_dir, ".travis.yml"), "w") as f:
         f.write("""# Continuous Integration (CI) is the practice, in software
 # engineering, of merging all developer working copies with a shared mainline
-# several times a day < http://docs.platformio.org/page/ci/index.html >
+# several times a day < https://docs.platformio.org/page/ci/index.html >
 #
 # Documentation:
 #
@@ -213,10 +213,10 @@ def init_ci_conf(project_dir):
 #   < https://docs.travis-ci.com/user/integration/platformio/ >
 #
 # * PlatformIO integration with Travis CI
-#   < http://docs.platformio.org/page/ci/travis.html >
+#   < https://docs.platformio.org/page/ci/travis.html >
 #
 # * User Guide for `platformio ci` command
-#   < http://docs.platformio.org/page/userguide/cmd_ci.html >
+#   < https://docs.platformio.org/page/userguide/cmd_ci.html >
 #
 #
 # Please choice one of the following templates (proposed below) and uncomment

@@ -210,5 +210,5 @@ if "idedata" in COMMAND_LINE_TARGETS:
             "\nUnicodeDecodeError: Non-ASCII characters found in build "
             "environment\n"
             "See explanation in FAQ > Troubleshooting > Building\n"
-            "http://docs.platformio.org/page/faq.html\n\n")
+            "https://docs.platformio.org/page/faq.html\n\n")
         env.Exit(1)

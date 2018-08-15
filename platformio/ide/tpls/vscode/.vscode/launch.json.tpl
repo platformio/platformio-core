@@ -2,8 +2,8 @@
 
 // PIO Unified Debugger
 //
-// Documentation: http://docs.platformio.org/page/plus/debugging.html
-// Configuration: http://docs.platformio.org/page/projectconf/section_env_debug.html
+// Documentation: https://docs.platformio.org/page/plus/debugging.html
+// Configuration: https://docs.platformio.org/page/projectconf/section_env_debug.html
 
 % from os.path import dirname, join
 %

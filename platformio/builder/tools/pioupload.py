@@ -161,7 +161,7 @@ def AutodetectUploadPort(*args, **kwargs):
             sys.stderr.write(
                 "\nWarning! Please install `99-platformio-udev.rules` and "
                 "check that your board's PID and VID are listed in the rules."
-                "\n http://docs.platformio.org/en/latest/faq.html"
+                "\n https://docs.platformio.org/en/latest/faq.html"
                 "#platformio-udev-rules\n")
         env.Replace(UPLOAD_PORT=_look_for_serial_port())
 

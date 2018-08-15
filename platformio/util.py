@@ -317,7 +317,7 @@ def get_projectbuild_dir(force=False):
             with open(dontmod_path, "w") as fp:
                 fp.write("""
 [InternetShortcut]
-URL=http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir
+URL=https://docs.platformio.org/page/projectconf/section_platformio.html#build-dir
 """)
     except Exception as e:  # pylint: disable=broad-except
         if not force:

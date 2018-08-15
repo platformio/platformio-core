@@ -63,7 +63,7 @@ DEFAULT_SETTINGS = {
     },
     "enable_telemetry": {
         "description":
-        ("Telemetry service <http://docs.platformio.org/page/"
+        ("Telemetry service <https://docs.platformio.org/page/"
          "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
         "value":
         True
