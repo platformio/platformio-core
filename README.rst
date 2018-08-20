@@ -85,6 +85,7 @@ Development Platforms
 * `Freescale Kinetis <https://platformio.org/platforms/freescalekinetis?utm_source=github&utm_medium=core>`_
 * `Infineon XMC <https://platformio.org/platforms/infineonxmc?utm_source=github&utm_medium=core>`_
 * `Intel ARC32 <https://platformio.org/platforms/intel_arc32?utm_source=github&utm_medium=core>`_
+* `Intel MCS-51 (8051) <https://platformio.org/platforms/intel_mcs51?utm_source=github&utm_medium=core>`_
 * `Lattice iCE40 <https://platformio.org/platforms/lattice_ice40?utm_source=github&utm_medium=core>`_
 * `Maxim 32 <https://platformio.org/platforms/maxim32?utm_source=github&utm_medium=core>`_
 * `Microchip PIC32 <https://platformio.org/platforms/microchippic32?utm_source=github&utm_medium=core>`_
