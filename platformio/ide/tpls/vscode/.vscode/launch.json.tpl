@@ -23,7 +23,10 @@
 % if svd_path:
             "svdPath": "{{ _escape_path(svd_path) }}",
 % end
-            "preLaunchTask": "PlatformIO: Pre-Debug",
+            "preLaunchTask": {
+                "type": "PlatformIO",
+                "task": "Pre-Debug"
+            },
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
