@@ -74,7 +74,7 @@ def cli(
                 "\nThe current working directory", fg="yellow", nl=False)
             click.secho(" %s " % project_dir, fg="cyan", nl=False)
             click.secho(
-                "will be used for project.\n"
+                "will be used for the project.\n"
                 "You can specify another project directory via\n"
                 "`platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.",
                 fg="yellow")
@@ -156,13 +156,13 @@ def init_lib_readme(lib_dir):
         return
     with open(join(lib_dir, "readme.txt"), "w") as f:
         f.write("""
-This directory is intended for the project specific (private) libraries.
-PlatformIO will compile them to static libraries and link to executable file.
+This directory is intended for project specific (private) libraries.
+PlatformIO will compile them to static libraries and link them to executable files.
 
-The source code of each library should be placed in separate directory, like
+The source code of each library should be placed in separate directories, like
 "lib/private_lib/[here are source files]".
 
-For example, see how can be organized `Foo` and `Bar` libraries:
+For example, see the structure of the following two libraries `Foo` and `Bar`:
 
 |--lib
 |  |
@@ -219,7 +219,7 @@ def init_ci_conf(project_dir):
 #   < https://docs.platformio.org/page/userguide/cmd_ci.html >
 #
 #
-# Please choice one of the following templates (proposed below) and uncomment
+# Please choose one of the following templates (proposed below) and uncomment
 # it (remove "# " before each line) or use own configuration according to the
 # Travis CI documentation (see above).
 #
@@ -247,7 +247,7 @@ def init_ci_conf(project_dir):
 
 
 #
-# Template #2: The project is intended to by used as a library with examples
+# Template #2: The project is intended to be used as a library with examples.
 #
 
 # language: python
