@@ -191,6 +191,7 @@ env.AddPreAction(
     env.VerboseAction(lambda source, target, env: env.PrintUploadInfo(),
                       "Configuring upload protocol..."))
 
+AlwaysBuild(env.Alias("debug", DEFAULT_TARGETS))
 AlwaysBuild(env.Alias("__debug", DEFAULT_TARGETS))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
 

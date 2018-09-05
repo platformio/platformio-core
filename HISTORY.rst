@@ -4,14 +4,22 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.6.1 (2018-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Build project in "Debug Mode" including debug information with a new
+  ``debug`` target using `platformio run <https://docs.platformio.org/page/userguide/cmd_run.html>`__ command or `targets <http://docs.platformio.org/page/projectconf/section_env_general.html#targets>`__ option in ``platformio.ini``.
+  The last option allows to avoid project rebuilding between "Run/Debug" modes.
+  (`issue #1833 <https://github.com/platformio/platformio-core/issues/1833>`_)
+
 3.6.0 (2018-08-06)
 ~~~~~~~~~~~~~~~~~~
 
-* `Program Memory Usage <https://docs.platformio.org/en/latest/faq.html#program-memory-usage>`_
+* `Program Memory Usage <https://docs.platformio.org/page/faq.html#program-memory-usage>`_
 
   - Print human-readable memory usage information after a build and before uploading
   - Print detailed memory usage information with "sections" and "addresses"
-    in `verbose mode <https://docs.platformio.org/en/latest/userguide/cmd_run.html#cmdoption-platformio-run-v>`__
+    in `verbose mode <https://docs.platformio.org/page/userguide/cmd_run.html#cmdoption-platformio-run-v>`__
   - Check maximum allowed "program" and "data" sizes before uploading/programming
     (`issue #1412 <https://github.com/platformio/platformio-core/issues/1412>`_)
 
