@@ -23,21 +23,21 @@
 % if svd_path:
             "svdPath": "{{ _escape_path(svd_path) }}",
 % end
+            "preLaunchTask": {
+                "type": "PlatformIO",
+                "task": "Pre-Debug"
+            },
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "type": "platformio-debug",
             "request": "launch",
-            "name": "PIO Debug (with Pre-Debug)",
+            "name": "PIO Debug (skip Pre-Debug)",
             "executable": "{{ _escape_path(prog_path) }}",
             "toolchainBinDir": "{{ _escape_path(dirname(gdb_path)) }}",
 % if svd_path:
             "svdPath": "{{ _escape_path(svd_path) }}",
 % end
-            "preLaunchTask": {
-                "type": "PlatformIO",
-                "task": "Pre-Debug"
-            },
             "internalConsoleOptions": "openOnSessionStart"
         }
     ]
