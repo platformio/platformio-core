@@ -319,8 +319,8 @@ def check_internal_updates(ctx, what):
     if not app.get_setting("auto_update_" + what):
         click.secho("Please update them via ", fg="yellow", nl=False)
         click.secho(
-            "`platformio %s update`" % ("lib --global" if what == "libraries"
-                                        else "platform"),
+            "`platformio %s update`" %
+            ("lib --global" if what == "libraries" else "platform"),
             fg="cyan",
             nl=False)
         click.secho(" command.\n", fg="yellow")

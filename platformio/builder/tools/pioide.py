@@ -97,8 +97,8 @@ def _dump_defines(env):
             board_mcu = env.BoardConfig().get("build.mcu")
         if board_mcu:
             defines.append(
-                str("__AVR_%s__" % board_mcu.upper()
-                    .replace("ATMEGA", "ATmega").replace("ATTINY", "ATtiny")))
+                str("__AVR_%s__" % board_mcu.upper().replace(
+                    "ATMEGA", "ATmega").replace("ATTINY", "ATtiny")))
 
     # built-in GCC marcos
     # if env.GetCompilerType() == "gcc":

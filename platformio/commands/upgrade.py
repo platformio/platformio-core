@@ -102,8 +102,9 @@ def get_pip_package(to_develop):
     pkg_name = os.path.join(cache_dir, "piocoredevelop.zip")
     try:
         with open(pkg_name, "w") as fp:
-            r = util.exec_command(
-                ["curl", "-fsSL", dl_url], stdout=fp, universal_newlines=True)
+            r = util.exec_command(["curl", "-fsSL", dl_url],
+                                  stdout=fp,
+                                  universal_newlines=True)
             assert r['returncode'] == 0
         # check ZIP structure
         with ZipFile(pkg_name) as zp:

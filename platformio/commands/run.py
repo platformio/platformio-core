@@ -210,10 +210,10 @@ class EnvironmentProcessor(object):
 
         if is_error or "piotest_processor" not in self.cmd_ctx.meta:
             print_header(
-                "[%s] Took %.2f seconds" %
-                ((click.style("ERROR", fg="red", bold=True)
-                  if is_error else click.style(
-                      "SUCCESS", fg="green", bold=True)), time() - start_time),
+                "[%s] Took %.2f seconds" % (
+                    (click.style("ERROR", fg="red", bold=True) if is_error else
+                     click.style("SUCCESS", fg="green", bold=True)),
+                    time() - start_time),
                 is_error=is_error)
 
         return not is_error
@@ -384,9 +384,8 @@ def print_summary(results, start_time):
 
     print_header(
         "[%s] Took %.2f seconds" % (
-            (click.style("SUCCESS", fg="green", bold=True)
-             if successed else click.style("ERROR", fg="red", bold=True)),
-            time() - start_time),
+            (click.style("SUCCESS", fg="green", bold=True) if successed else
+             click.style("ERROR", fg="red", bold=True)), time() - start_time),
         is_error=not successed)
 
 

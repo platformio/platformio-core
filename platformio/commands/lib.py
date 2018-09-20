@@ -307,13 +307,12 @@ def lib_builtin(storage, json_output):
 def lib_show(library, json_output):
     lm = LibraryManager()
     name, requirements, _ = lm.parse_pkg_uri(library)
-    lib_id = lm.search_lib_id(
-        {
-            "name": name,
-            "requirements": requirements
-        },
-        silent=json_output,
-        interactive=not json_output)
+    lib_id = lm.search_lib_id({
+        "name": name,
+        "requirements": requirements
+    },
+                              silent=json_output,
+                              interactive=not json_output)
     lib = get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
     if json_output:
         return click.echo(json.dumps(lib))
@@ -423,16 +422,16 @@ def lib_stats(json_output):
         click.echo("-" * terminal_width)
 
     def _print_lib_item(item):
-        click.echo((printitemdate_tpl
-                    if "date" in item else printitem_tpl).format(
-                        name=click.style(item['name'], fg="cyan"),
-                        date=str(
-                            time.strftime("%c", util.parse_date(item['date']))
-                            if "date" in item else ""),
-                        url=click.style(
-                            "https://platformio.org/lib/show/%s/%s" %
-                            (item['id'], quote(item['name'])),
-                            fg="blue")))
+        date = str(
+            time.strftime("%c", util.parse_date(item['date'])) if "date" in
+            item else "")
+        url = click.style(
+            "https://platformio.org/lib/show/%s/%s" % (item['id'],
+                                                       quote(item['name'])),
+            fg="blue")
+        click.echo(
+            (printitemdate_tpl if "date" in item else printitem_tpl).format(
+                name=click.style(item['name'], fg="cyan"), date=date, url=url))
 
     def _print_tag_item(name):
         click.echo(

@@ -235,8 +235,8 @@ class PlatformFactory(object):
                 name = pm.load_manifest(platform_dir)['name']
 
         if not platform_dir:
-            raise exception.UnknownPlatform(name if not requirements else
-                                            "%s@%s" % (name, requirements))
+            raise exception.UnknownPlatform(
+                name if not requirements else "%s@%s" % (name, requirements))
 
         platform_cls = None
         if isfile(join(platform_dir, "platform.py")):
