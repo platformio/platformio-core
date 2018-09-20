@@ -138,6 +138,8 @@ def init_base_project(project_dir):
         copyfile(
             join(util.get_source_dir(), "projectconftpl.ini"),
             join(project_dir, "platformio.ini"))
+        init_ci_conf(project_dir)
+        init_cvs_ignore(project_dir)
 
     with util.cd(project_dir):
         lib_dir = util.get_projectlib_dir()
@@ -147,8 +149,6 @@ def init_base_project(project_dir):
                 makedirs(d)
 
     init_lib_readme(lib_dir)
-    init_ci_conf(project_dir)
-    init_cvs_ignore(project_dir)
 
 
 def init_lib_readme(lib_dir):

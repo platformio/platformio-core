@@ -130,7 +130,9 @@ class ProjectGenerator(object):
         file_name = basename(dst_path)
 
         # merge .gitignore
-        if file_name == ".gitignore" and isfile(dst_path):
+        if file_name == ".gitignore":
+            if not isfile(dst_path):
+                return
             modified = False
             default = [l.strip() for l in contents.split("\n")]
             with open(dst_path) as fp:

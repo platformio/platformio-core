@@ -12,6 +12,8 @@ PlatformIO 3.0
   ``debug`` target using `platformio run <https://docs.platformio.org/page/userguide/cmd_run.html>`__ command or `targets <http://docs.platformio.org/page/projectconf/section_env_general.html#targets>`__ option in ``platformio.ini``.
   The last option allows to avoid project rebuilding between "Run/Debug" modes.
   (`issue #1833 <https://github.com/platformio/platformio-core/issues/1833>`_)
+* Do not re-create ".gitignore" and ".travis.yml" files if they were removed
+  from a project
 
 3.6.0 (2018-08-06)
 ~~~~~~~~~~~~~~~~~~
