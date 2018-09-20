@@ -286,7 +286,7 @@ def generate_platform(name, rst_dir):
     print "Processing platform: %s" % name
 
     compatible_boards = [
-        board for board in BOARDS if name in board['platform']
+        board for board in BOARDS if name == board['platform']
     ]
 
     lines = []
