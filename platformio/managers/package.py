@@ -628,7 +628,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
     def outdated(self, pkg_dir, requirements=None):
         """
         Has 3 different results:
-        `None` - unknown package, VCS is fixed to commit
+        `None` - unknown package, VCS is detached to commit
         `False` - package is up-to-date
         `String` - a found latest version
         """
@@ -636,7 +636,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             return None
         latest = None
         manifest = self.load_manifest(pkg_dir)
-        # skip fixed package to a specific version
+        # skip detached package to a specific version
         if "@" in pkg_dir and "__src_url" not in manifest and not requirements:
             return None
 
@@ -814,7 +814,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         elif latest is False:
             click.echo("[%s]" % (click.style("Up-to-date", fg="green")))
         else:
-            click.echo("[%s]" % (click.style("Fixed", fg="yellow")))
+            click.echo("[%s]" % (click.style("Detached", fg="yellow")))
 
         if only_check or not latest:
             return True
