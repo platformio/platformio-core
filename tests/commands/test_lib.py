@@ -202,7 +202,7 @@ def test_global_lib_update(clirunner, validate_cliresult):
     # update rest libraries
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
-    assert result.output.count("[Fixed]") == 6
+    assert result.output.count("[Detached]") == 6
     assert result.output.count("[Up-to-date]") == 11
     assert "Uninstalling RFcontrol @ 77d4eb3f8a" in result.output
 
