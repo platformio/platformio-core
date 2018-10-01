@@ -349,12 +349,19 @@ def load_project_config(path=None):
 
 
 def parse_conf_multi_values(items):
+    result = []
     if not items:
-        return []
-    return [
-        item.strip() for item in items.split("\n" if "\n" in items else ", ")
-        if item.strip()
-    ]
+        return result
+    inline_comment_re = re.compile(r"\s+;.*$")
+    for item in items.split("\n" if "\n" in items else ", "):
+        item = item.strip()
+        # comment
+        if not item or item.startswith((";", "#")):
+            continue
+        if ";" in item:
+            item = inline_comment_re.sub("", item).strip()
+        result.append(item)
+    return result
 
 
 def change_filemtime(path, mtime):

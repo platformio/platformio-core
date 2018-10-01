@@ -25,7 +25,9 @@ def test_build_flags(clirunner, validate_cliresult, tmpdir):
 [env:native]
 platform = native
 extra_scripts = extra.py
-build_flags = %s
+build_flags =
+    ; -DCOMMENTED_MACRO
+    %s ; inline comment
     """ % " ".join([f[0] for f in build_flags]))
 
     tmpdir.join("extra.py").write("""
@@ -45,6 +47,10 @@ projenv.Append(CPPDEFINES="POST_SCRIPT_MACRO")
 
 #ifndef POST_SCRIPT_MACRO
 #error "POST_SCRIPT_MACRO"
+#endif
+
+#ifdef COMMENTED_MACRO
+#error "COMMENTED_MACRO"
 #endif
 
 int main() {

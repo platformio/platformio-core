@@ -12,6 +12,7 @@ PlatformIO 3.0
   ``debug`` target using `platformio run <https://docs.platformio.org/page/userguide/cmd_run.html>`__ command or `targets <http://docs.platformio.org/page/projectconf/section_env_general.html#targets>`__ option in ``platformio.ini``.
   The last option allows to avoid project rebuilding between "Run/Debug" modes.
   (`issue #1833 <https://github.com/platformio/platformio-core/issues/1833>`_)
+* Support in-line comments for multi-line value (``lib_deps``, ``build_flags``, etc) in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
 * Do not re-create ".gitignore" and ".travis.yml" files if they were removed
   from a project
 
@@ -79,7 +80,7 @@ PlatformIO 3.0
 
 * Simplify configuration for `PIO Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html>`__: separate main program from a test build process, drop
   requirement for ``#ifdef UNIT_TEST`` guard
-* Override any option from board manifest in `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf/section_env_board.html#more-options>`__
+* Override any option from board manifest in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf/section_env_board.html#more-options>`__
   (`issue #1612 <https://github.com/platformio/platformio-core/issues/1612>`_)
 * Configure a custom path to SVD file using `debug_svd_path <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-svd-path>`__
   option
@@ -142,7 +143,7 @@ PlatformIO 3.0
   (`issue #1274 <https://github.com/platformio/platformio-core/issues/1274>`_)
 * Configure a custom firmware/program name in build directory (`example <https://docs.platformio.org/page/projectconf/advanced_scripting.html#custom-firmware-program-name>`__)
 * Renamed ``envs_dir`` option to ``build_dir``
-  in `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__
+  in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf/section_platformio.html#build-dir>`__
 * Refactored code without "arrow" dependency (resolve issue with "ImportError:
   No module named backports.functools_lru_cache")
 * Improved support of PIO Unified Debugger for Eclipse Oxygen
@@ -177,7 +178,7 @@ PlatformIO 3.0
   folder for project's header files
   (`issue #1107 <https://github.com/platformio/platformio-core/issues/1107>`_)
 * Depend on development platform using VCS URL (Git, Mercurial and Subversion)
-  instead of a name in `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf/section_env_general.html#platform>`__.
+  instead of a name in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf/section_env_general.html#platform>`__.
   Drop support for ``*_stage`` dev/platform names (use VCS URL instead).
 * Reinstall/redownload package with a new ``-f, --force`` option for
   `platformio lib install <https://docs.platformio.org/page/userguide/lib/cmd_install.html>`__
@@ -198,7 +199,7 @@ PlatformIO 3.0
   - Parse library source file in pair with a header when they have the same name
     (`issue #1175 <https://github.com/platformio/platformio-core/issues/1175>`_)
   - Handle library dependencies defined as VCS or SemVer in
-    `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf/section_env_general.html#platform>`__
+    `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf/section_env_general.html#platform>`__
     (`issue #1155 <https://github.com/platformio/platformio-core/issues/1155>`_)
   - Added option to configure library `Compatible Mode <https://docs.platformio.org/page/librarymanager/ldf.html#compatibility-mode>`__
     using `library.json <https://docs.platformio.org/page/librarymanager/config.html>`__
@@ -234,7 +235,7 @@ PlatformIO 3.0
 * Use a root of library when filtering source code using
   `library.json <https://docs.platformio.org/page/librarymanager/config.html>`__
   and ``srcFilter`` field
-* Added ``monitor_*`` options to white-list for `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+* Added ``monitor_*`` options to white-list for `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
   (`issue #982 <https://github.com/platformio/platformio-core/issues/982>`_)
 * Do not ask for board ID when initialize project for desktop platform
 * Handle broken PIO Core state and create new one
@@ -255,18 +256,18 @@ PlatformIO 3.0
   - Integration with `Eclipse <https://docs.platformio.org/page/ide/eclipse.html>`__ and `Sublime Text <https://docs.platformio.org/page/ide/sublimetext.html>`__
 
 * Filter `PIO Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html>`__
-  tests using a new ``test_filter`` option in `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+  tests using a new ``test_filter`` option in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
   or `platformio test --filter <https://docs.platformio.org/page/userguide/cmd_test.html#cmdoption-platformio-test-f>`__ command
   (`issue #934 <https://github.com/platformio/platformio-core/issues/934>`_)
 * Custom ``test_transport`` for `PIO Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html>`__ Engine
-* Configure Serial Port Monitor in `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+* Configure Serial Port Monitor in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
   (`issue #787 <https://github.com/platformio/platformio-core/issues/787>`_)
 * New `monitor <https://docs.platformio.org/page/userguide/cmd_run.html#cmdoption-platformio-run-t>`__
   target which allows to launch Serial Monitor automatically after successful
   "build" or "upload" operations
   (`issue #788 <https://github.com/platformio/platformio-core/issues/788>`_)
 * Project generator for `VIM <https://docs.platformio.org/page/ide/vim.html>`__
-* Multi-line support for the different options in `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__,
+* Multi-line support for the different options in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__,
   such as: ``build_flags``, ``build_unflags``, etc.
   (`issue #889 <https://github.com/platformio/platformio-core/issues/889>`_)
 * Handle dynamic ``SRC_FILTER`` environment variable from
@@ -278,7 +279,7 @@ PlatformIO 3.0
   that were installed from repository
 * Add support for ``.*cc`` extension
   (`issue #939 <https://github.com/platformio/platformio-core/issues/939>`_)
-* Handle ``env_default`` in `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+* Handle ``env_default`` in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
   when re-initializing a project
   (`issue #950 <https://github.com/platformio/platformio-core/issues/950>`_)
 * Use root directory for PIO Home when path contains non-ascii characters
@@ -376,10 +377,10 @@ PlatformIO 3.0
   (`issue #808 <https://github.com/platformio/platformio-core/issues/808>`_,
   `issue #467 <https://github.com/platformio/platformio-core/issues/467>`_)
 * Inject system environment variables to configuration settings in
-  `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+  `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
   (`issue #792 <https://github.com/platformio/platformio-core/issues/792>`_)
 * Custom boards per project with ``boards_dir`` option in
-  `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+  `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
   (`issue #515 <https://github.com/platformio/platformio-core/issues/515>`_)
 * Unix shell-style wildcards for `upload_port <https://docs.platformio.org/page/projectconf/section_env_upload.html#upload-port>`_
   (`issue #839 <https://github.com/platformio/platformio-core/issues/839>`_)
@@ -390,7 +391,7 @@ PlatformIO 3.0
 * Added new `LDF Modes <https://docs.platformio.org/page/librarymanager/ldf.html#ldf-mode>`__:
   ``chain+`` and ``deep+`` and set ``chain+`` as default
 * Added global ``lib_extra_dirs`` option to ``[platformio]`` section for
-  `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+  `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
   (`issue #842 <https://github.com/platformio/platformio-core/issues/842>`_)
 * Enabled caching by default for API requests and Library Manager (see `enable_cache <https://docs.platformio.org/page/userguide/cmd_settings.html#enable-cache>`__ setting)
 * Native integration with VIM/Neovim using `neomake-platformio <https://github.com/coddingtonbear/neomake-platformio>`__ plugin
@@ -413,7 +414,7 @@ PlatformIO 3.0
 3.1.0 (2016-09-19)
 ~~~~~~~~~~~~~~~~~~
 
-* New! Dynamic variables/templates for `Project Configuration File "platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+* New! Dynamic variables/templates for `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
   (`issue #705 <https://github.com/platformio/platformio-core/issues/705>`_)
 * Summary about processed environments
   (`issue #777 <https://github.com/platformio/platformio-core/issues/777>`_)
