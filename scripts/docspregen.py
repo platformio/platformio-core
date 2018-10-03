@@ -626,7 +626,6 @@ def update_embedded_board(rst_path, board):
     lines.append("=" * len(board['name']))
     lines.append("""
 .. contents::
-    :local:
 
 Platform :ref:`platform_%s`: %s""" % (platform.name, platform.description))
 
