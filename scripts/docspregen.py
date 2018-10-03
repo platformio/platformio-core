@@ -23,6 +23,18 @@ path.append("..")
 from platformio import util
 from platformio.managers.platform import PlatformFactory, PlatformManager
 
+RST_COPYRIGHT = """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+"""
+
 API_PACKAGES = util.get_api_result("/packages")
 API_FRAMEWORKS = util.get_api_result("/frameworks")
 BOARDS = PlatformManager().get_installed_boards()
@@ -32,10 +44,7 @@ DOCS_ROOT_DIR = realpath(join(dirname(realpath(__file__)), "..", "docs"))
 
 def is_compat_platform_and_framework(platform, framework):
     p = PlatformFactory.newPlatform(platform)
-    for pkg in p.packages.keys():
-        if pkg.startswith("framework-%s" % framework):
-            return True
-    return False
+    return framework in (p.frameworks or {}).keys()
 
 
 def campaign_url(url, source="platformio", medium="docs"):
@@ -49,20 +58,17 @@ def campaign_url(url, source="platformio", medium="docs"):
                              query, data.fragment))
 
 
-def generate_boards(boards, extend_debug=False, skip_columns=None):
+def generate_boards_table(boards, skip_columns=None):
     columns = [
-        ("ID", "``{id}``"),
-        ("Name", "`{name} <{url}>`_"),
-        ("Platform", ":ref:`{platform_title} <platform_{platform}>`"),
+        ("Name", ":ref:`board_{platform}_{id}`"),
+        ("Platform", ":ref:`platform_{platform}`"),
         ("Debug", "{debug}"),
         ("MCU", "{mcu}"),
         ("Frequency", "{f_cpu:d}MHz"),
         ("Flash", "{rom}"),
         ("RAM", "{ram}"),
     ]
-    platforms = {m['name']: m['title'] for m in PLATFORM_MANIFESTS}
     lines = []
-
     lines.append("""
 .. list-table::
     :header-rows:  1
@@ -72,36 +78,23 @@ def generate_boards(boards, extend_debug=False, skip_columns=None):
     for (name, template) in columns:
         if skip_columns and name in skip_columns:
             continue
-        prefix = "    * - " if name == "ID" else "      - "
+        prefix = "    * - " if name == "Name" else "      - "
         lines.append(prefix + name)
 
-    for data in sorted(boards, key=lambda item: item['id']):
-        debug = [":ref:`Yes <piodebug>`" if data['debug'] else "No"]
-        if extend_debug and data['debug']:
-            debug_onboard = []
-            debug_external = []
-            for name, options in data['debug']['tools'].items():
-                attrs = []
-                if options.get("default"):
-                    attrs.append("default")
-                if options.get("onboard"):
-                    attrs.append("on-board")
-                tool = ":ref:`debugging_tool_%s`" % name
-                if attrs:
-                    tool = "%s (%s)" % (tool, ", ".join(attrs))
-                if options.get("onboard"):
-                    debug_onboard.append(tool)
-                else:
-                    debug_external.append(tool)
-            debug = sorted(debug_onboard) + sorted(debug_external)
+    for data in sorted(boards, key=lambda item: item['name']):
+        has_onboard_debug = (data['debug'] and any(
+            t.get("onboard") for (_, t) in data['debug']['tools'].items()))
+        debug = "No"
+        if has_onboard_debug:
+            debug = "Yes"
+        elif data['debug']:
+            debug = "Yes :sup:`?`"
 
         variables = dict(
             id=data['id'],
             name=data['name'],
             platform=data['platform'],
-            platform_title=platforms[data['platform']],
-            debug=", ".join(debug),
-            url=campaign_url(data['url']),
+            debug=debug,
             mcu=data['mcu'].upper(),
             f_cpu=int(data['fcpu']) / 1000000,
             ram=util.format_filesize(data['ram']),
@@ -110,7 +103,7 @@ def generate_boards(boards, extend_debug=False, skip_columns=None):
         for (name, template) in columns:
             if skip_columns and name in skip_columns:
                 continue
-            prefix = "    * - " if name == "ID" else "      - "
+            prefix = "    * - " if name == "Name" else "      - "
             lines.append(prefix + template.format(**variables))
 
     if lines:
@@ -131,12 +124,16 @@ Frameworks
 
     * - Name
       - Description""")
+    known = set()
     for framework in API_FRAMEWORKS:
+        known.add(framework['name'])
         if framework['name'] not in frameworks:
             continue
         lines.append("""
     * - :ref:`framework_{name}`
       - {description}""".format(**framework))
+    assert known >= set(frameworks), "Unknown frameworks %s " % (
+        set(frameworks) - known)
     return lines
 
 
@@ -162,6 +159,9 @@ Platforms
 
 
 def generate_debug_contents(boards, skip_board_columns=None, extra_rst=None):
+    if not skip_board_columns:
+        skip_board_columns = []
+    skip_board_columns.append("Debug")
     lines = []
     onboard_debug = [
         b for b in boards if b['debug'] and any(
@@ -192,7 +192,7 @@ Tools & Debug Probes
 Supported debugging tools are listed in "Debug" column. For more detailed
 information, please scroll table by horizontal.
 You can switch between debugging :ref:`debugging_tools` using
-:ref:`projectconf_debug_tool` options.
+:ref:`projectconf_debug_tool` option in :ref:`projectconf`.
 
 .. warning::
     You will need to install debug tool drivers depending on your system.
@@ -204,27 +204,24 @@ You can switch between debugging :ref:`debugging_tools` using
 On-Board Debug Tools
 ^^^^^^^^^^^^^^^^^^^^
 
-Boards listed below have on-board debug tool and **ARE READY** for debugging!
-You do not need to use/buy external debug tool.
+Boards listed below have on-board debug probe and **ARE READY** for debugging!
+You do not need to use/buy external debug probe.
 """)
         lines.extend(
-            generate_boards(
-                onboard_debug,
-                extend_debug=True,
-                skip_columns=skip_board_columns))
+            generate_boards_table(
+                onboard_debug, skip_columns=skip_board_columns))
     if external_debug:
         lines.append("""
 External Debug Tools
 ^^^^^^^^^^^^^^^^^^^^
 
 Boards listed below are compatible with :ref:`piodebug` but **DEPEND ON**
-external debug tool. See "Debug" column for compatible debug tools.
+external debug probe. They **ARE NOT READY** for debugging.
+Please click on board name for the further details.
 """)
         lines.extend(
-            generate_boards(
-                external_debug,
-                extend_debug=True,
-                skip_columns=skip_board_columns))
+            generate_boards_table(
+                external_debug, skip_columns=skip_board_columns))
     return lines
 
 
@@ -291,18 +288,7 @@ def generate_platform(name, rst_dir):
 
     lines = []
 
-    lines.append(
-        """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-       http://www.apache.org/licenses/LICENSE-2.0
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-""")
+    lines.append(RST_COPYRIGHT)
     p = PlatformFactory.newPlatform(name)
     assert p.repository_url.endswith(".git")
     github_url = p.repository_url[:-4]
@@ -357,8 +343,8 @@ Examples are listed from `%s development platform repository <%s>`_:
             generate_debug_contents(
                 compatible_boards,
                 skip_board_columns=["Platform"],
-                extra_rst="%s_debug.rst" % name
-                if isfile(join(rst_dir, "%s_debug.rst" % name)) else None))
+                extra_rst="%s_debug.rst" % name if isfile(
+                    join(rst_dir, "%s_debug.rst" % name)) else None))
 
     #
     # Development version of dev/platform
@@ -437,7 +423,8 @@ Boards
         for vendor, boards in sorted(vendors.items()):
             lines.append(str(vendor))
             lines.append("~" * len(vendor))
-            lines.extend(generate_boards(boards, skip_columns=["Platform"]))
+            lines.extend(
+                generate_boards_table(boards, skip_columns=["Platform"]))
 
     return "\n".join(lines)
 
@@ -464,19 +451,7 @@ def generate_framework(type_, data, rst_dir=None):
 
     lines = []
 
-    lines.append(
-        """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-       http://www.apache.org/licenses/LICENSE-2.0
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-""")
-
+    lines.append(RST_COPYRIGHT)
     lines.append(".. _framework_%s:" % type_)
     lines.append("")
 
@@ -507,8 +482,8 @@ For more detailed information please visit `vendor site <%s>`_.
         lines.extend(
             generate_debug_contents(
                 compatible_boards,
-                extra_rst="%s_debug.rst" % type_
-                if isfile(join(rst_dir, "%s_debug.rst" % type_)) else None))
+                extra_rst="%s_debug.rst" % type_ if isfile(
+                    join(rst_dir, "%s_debug.rst" % type_)) else None))
 
     if compatible_platforms:
         # examples
@@ -550,7 +525,7 @@ Boards
         for vendor, boards in sorted(vendors.items()):
             lines.append(str(vendor))
             lines.append("~" * len(vendor))
-            lines.extend(generate_boards(boards))
+            lines.extend(generate_boards_table(boards))
     return "\n".join(lines)
 
 
@@ -563,27 +538,15 @@ def update_framework_docs():
             f.write(generate_framework(name, framework, frameworks_dir))
 
 
-def update_embedded_boards():
+def update_boards():
     lines = []
 
-    lines.append(
-        """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-       http://www.apache.org/licenses/LICENSE-2.0
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-""")
-
-    lines.append(".. _embedded_boards:")
+    lines.append(RST_COPYRIGHT)
+    lines.append(".. _boards:")
     lines.append("")
 
-    lines.append("Embedded Boards")
-    lines.append("===============")
+    lines.append("Boards")
+    lines.append("======")
 
     lines.append("""
 Rapid Embedded Development, Continuous and IDE integration in a few
@@ -596,26 +559,206 @@ popular embedded boards and IDE.
     * For more detailed ``board`` information please scroll tables below by horizontal.
 """)
 
-    lines.append("""
-.. contents:: Vendors
-    :local:
-    """)
-
-    vendors = {}
+    platforms = {}
     for data in BOARDS:
-        vendor = data['vendor']
-        if vendor in vendors:
-            vendors[vendor].append(data)
+        platform = data['platform']
+        if platform in platforms:
+            platforms[platform].append(data)
         else:
-            vendors[vendor] = [data]
+            platforms[platform] = [data]
 
-    for vendor, boards in sorted(vendors.iteritems()):
-        lines.append(str(vendor))
-        lines.append("~" * len(vendor))
-        lines.extend(generate_boards(boards))
+    for platform, boards in sorted(platforms.iteritems()):
+        p = PlatformFactory.newPlatform(platform)
+        lines.append(p.title)
+        lines.append("-" * len(p.title))
+        lines.append("""
+.. toctree::
+    :maxdepth: 1
+        """)
+        for board in sorted(boards, key=lambda item: item['name']):
+            lines.append("    %s/%s" % (platform, board["id"]))
+        lines.append("")
 
-    emboards_rst = join(DOCS_ROOT_DIR, "platforms", "embedded_boards.rst")
+    emboards_rst = join(DOCS_ROOT_DIR, "boards", "index.rst")
     with open(emboards_rst, "w") as f:
+        f.write("\n".join(lines))
+
+    # individual board page
+    for data in BOARDS:
+        # if data['id'] != "m5stack-core-esp32":
+        #     continue
+        rst_path = join(DOCS_ROOT_DIR, "boards", data["platform"],
+                        "%s.rst" % data["id"])
+        if not isdir(dirname(rst_path)):
+            os.makedirs(dirname(rst_path))
+        update_embedded_board(rst_path, data)
+
+
+def update_embedded_board(rst_path, board):
+    platform = PlatformFactory.newPlatform(board['platform'])
+    board_config = platform.board_config(board['id'])
+
+    board_manifest_url = platform.repository_url
+    assert board_manifest_url
+    if board_manifest_url.endswith(".git"):
+        board_manifest_url = board_manifest_url[:-4]
+    board_manifest_url += "/blob/master/boards/%s.json" % board['id']
+
+    variables = dict(
+        id=board['id'],
+        name=board['name'],
+        platform=board['platform'],
+        url=campaign_url(board['url']),
+        mcu=board_config.get("build", {}).get("mcu", ""),
+        mcu_upper=board['mcu'].upper(),
+        f_cpu=board['fcpu'],
+        f_cpu_mhz=int(board['fcpu']) / 1000000,
+        ram=util.format_filesize(board['ram']),
+        rom=util.format_filesize(board['rom']),
+        vendor=board['vendor'],
+        board_manifest_url=board_manifest_url,
+        upload_protocol=board_config.get("upload.protocol", ""))
+
+    lines = [RST_COPYRIGHT]
+    lines.append(".. _board_{platform}_{id}:".format(**variables))
+    lines.append("")
+    lines.append(board['name'])
+    lines.append("=" * len(board['name']))
+    lines.append("""
+.. contents::
+    :local:
+
+Platform :ref:`platform_%s`: %s""" % (platform.name, platform.description))
+
+    lines.append("""
+System
+------
+
+.. list-table::
+
+  * - **Microcontroller**
+    - {mcu_upper}
+  * - **Frequency**
+    - {f_cpu_mhz}Mhz
+  * - **Flash**
+    - {rom}
+  * - **RAM**
+    - {ram}
+  * - **Vendor**
+    - `{vendor} <{url}>`__
+""".format(**variables))
+
+    #
+    # Configuration
+    #
+    lines.append("""
+Configuration
+-------------
+
+Please use ``{id}`` ID for :ref:`projectconf_env_board` option in :ref:`projectconf`:
+
+.. code-block:: ini
+
+  [env:{id}]
+  platform = {platform}
+  board = {id}
+
+You can override default {name} settings per build environment using
+``board_{{JSON.PATH}}`` option, where ``{{JSON.PATH}}`` is a path from
+board manifest `{id}.json <{board_manifest_url}>`_. For example,
+
+.. code-block:: ini
+
+  [env:{id}]
+  platform = {platform}
+  board = {id}
+
+  ; change microcontroller
+  board_build.mcu = {mcu}
+
+  ; change MCU frequency
+  board_build.f_cpu = {f_cpu}L
+""".format(**variables))
+
+    #
+    # Uploading
+    #
+    upload_protocols = board_config.get("upload.protocols", [])
+    if len(upload_protocols) > 1:
+        lines.append("""
+Uploading
+---------
+%s supports the next uploading protocols:
+""" % board['name'])
+        for protocol in upload_protocols:
+            lines.append("* ``%s``" % protocol)
+        lines.append("""
+Default protocol is ``%s``""" % variables['upload_protocol'])
+        lines.append("""
+You can change upload protocol using :ref:`projectconf_upload_protocol` option:
+
+.. code-block:: ini
+
+  [env:{id}]
+  platform = {platform}
+  board = {id}
+
+  upload_protocol = {upload_protocol}
+""".format(**variables))
+
+    #
+    # Debugging
+    #
+    lines.append("Debugging")
+    lines.append("---------")
+    if not board['debug']:
+        lines.append(
+            ":ref:`piodebug` currently does not support {name} board.".format(
+                **variables))
+    else:
+        default_debug_tool = board_config.get_debug_tool_name()
+        has_onboard_debug = any(
+            t.get("onboard") for (_, t) in board['debug']['tools'].items())
+        lines.append("""
+:ref:`piodebug` - "1-click" solution for debugging with a zero configuration.
+
+.. warning::
+    You will need to install debug tool drivers depending on your system.
+    Please click on compatible debug tool below for the further
+    instructions and configuration information.
+
+You can switch between debugging :ref:`debugging_tools` using
+:ref:`projectconf_debug_tool` option in :ref:`projectconf`.
+""")
+        if has_onboard_debug:
+            lines.append(
+                "{name} has on-board debug probe and **IS READY** for "
+                "debugging. You don't need to use/buy external debug probe.".
+                format(**variables))
+        else:
+            lines.append(
+                "{name} does not have on-board debug probe and **IS NOT "
+                "READY** for debugging. You will need to use/buy one of "
+                "external probe listed below.".format(**variables))
+        lines.append("""
+.. list-table::
+  :header-rows:  1
+
+  * - Compatible Tools
+    - On-board
+    - Default""")
+        for (tool_name, tool_data) in sorted(board['debug']['tools'].items()):
+            lines.append("""  * - :ref:`debugging_tool_{name}`
+    - {onboard}
+    - {default}""".format(
+                name=tool_name,
+                onboard="Yes" if tool_data.get("onboard") else "",
+                default="Yes" if tool_name == default_debug_tool else ""))
+
+    if board['frameworks']:
+        lines.extend(generate_frameworks_contents(board['frameworks']))
+
+    with open(rst_path, "w") as f:
         f.write("\n".join(lines))
 
 
@@ -664,7 +807,7 @@ Boards
     for vendor, boards in sorted(vendors.iteritems()):
         lines.append(str(vendor))
         lines.append("~" * len(vendor))
-        lines.extend(generate_boards(boards, extend_debug=True))
+        lines.extend(generate_boards_table(boards))
 
     # save
     with open(
@@ -699,9 +842,8 @@ Boards
     For more detailed ``board`` information please scroll tables below by horizontal.
 """)
         lines.extend(
-            generate_boards(
+            generate_boards_table(
                 [b for b in BOARDS if b['id'] in tool_to_boards[tool]],
-                extend_debug=True,
                 skip_columns=None))
 
         with open(tool_path, "r+") as fp:
@@ -836,7 +978,7 @@ def update_project_examples():
 def main():
     update_platform_docs()
     update_framework_docs()
-    update_embedded_boards()
+    update_boards()
     update_debugging()
     update_project_examples()
 
