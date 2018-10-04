@@ -608,6 +608,7 @@ def update_embedded_board(rst_path, board):
         id=board['id'],
         name=board['name'],
         platform=board['platform'],
+        platform_description=platform.description,
         url=campaign_url(board['url']),
         mcu=board_config.get("build", {}).get("mcu", ""),
         mcu_upper=board['mcu'].upper(),
@@ -627,18 +628,17 @@ def update_embedded_board(rst_path, board):
     lines.append("""
 .. contents::
 
-Platform :ref:`platform_%s`: %s""" % (platform.name, platform.description))
-
-    lines.append("""
 System
 ------
+
+Platform :ref:`platform_{platform}`: {platform_description}
 
 .. list-table::
 
   * - **Microcontroller**
     - {mcu_upper}
   * - **Frequency**
-    - {f_cpu_mhz}Mhz
+    - {f_cpu_mhz}MHz
   * - **Flash**
     - {rom}
   * - **RAM**
@@ -663,8 +663,9 @@ Please use ``{id}`` ID for :ref:`projectconf_env_board` option in :ref:`projectc
   board = {id}
 
 You can override default {name} settings per build environment using
-``board_{{JSON.PATH}}`` option, where ``{{JSON.PATH}}`` is a path from
+``board_***`` option, where ``***`` is a JSON object path from
 board manifest `{id}.json <{board_manifest_url}>`_. For example,
+``board_build.mcu``, ``board_build.f_cpu``, etc.
 
 .. code-block:: ini
 
