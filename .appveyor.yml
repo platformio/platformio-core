@@ -1,12 +1,18 @@
 build: off
-environment:
 
+platform:
+  - x86
+  - x64
+
+environment:
   matrix:
     - TOXENV: "py27"
 
 install:
   - cmd: git submodule update --init --recursive
-  - cmd: SET PATH=%PATH%;C:\Python27\Scripts;C:\MinGW\bin
+  - cmd: SET PATH=C:\MinGW\bin;%PATH%
+  - if %PLATFORM% == x64 SET PATH=C:\Python27-x64;C:\Python27-x64\Scripts;%PATH%
+  - if %PLATFORM% == x86 SET PATH=C:\Python27;C:\Python27\Scripts;%PATH%
   - cmd: pip install tox
 
 test_script:

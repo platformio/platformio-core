@@ -15,6 +15,7 @@
 import json
 import subprocess
 import sys
+from platformio import util
 
 
 def main():
@@ -23,6 +24,10 @@ def main():
             ["platformio", "platform", "search", "--json-output"]))
     for platform in platforms:
         if platform['forDesktop']:
+            continue
+        # RISC-V GAP does not support Windows 86
+        if (util.get_systype() == "windows_x86"
+                and platform['name'] == "riscv_gap"):
             continue
         subprocess.check_call(
             ["platformio", "platform", "install", platform['repository']])
