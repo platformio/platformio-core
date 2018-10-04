@@ -86,9 +86,9 @@ def generate_boards_table(boards, skip_columns=None):
             t.get("onboard") for (_, t) in data['debug']['tools'].items()))
         debug = "No"
         if has_onboard_debug:
-            debug = "Yes"
+            debug = "On-board"
         elif data['debug']:
-            debug = "Yes :sup:`?`"
+            debug = "External"
 
         variables = dict(
             id=data['id'],
