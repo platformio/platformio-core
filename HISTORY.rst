@@ -7,6 +7,8 @@ PlatformIO 3.0
 3.6.1 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Generate an `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__
+  directory with a README file when initializing a new project
 * Introduced `"Release" and "Debug" Build Configurations <http://docs.platformio.org/page/projectconf/build_configurations.html>`__
 * Build project in "Debug Mode" including debug information with a new
   ``debug`` target using `platformio run <https://docs.platformio.org/page/userguide/cmd_run.html>`__ command or `targets <http://docs.platformio.org/page/projectconf/section_env_general.html#targets>`__ option in ``platformio.ini``.

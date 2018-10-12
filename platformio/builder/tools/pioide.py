@@ -25,7 +25,7 @@ from platformio.managers.core import get_core_package_dir
 
 
 def _dump_includes(env):
-    includes = []
+    includes = [env.subst("$PROJECTINCLUDE_DIR"), env.subst("$PROJECTSRC_DIR")]
 
     for item in env.get("CPPPATH", []):
         includes.append(env.subst(item))
