@@ -26,6 +26,10 @@ PlatformIO 3.0
 * Fixed an issue when ``pio run -t monitor`` always uses first ``monitor_port``
   even with multiple environments
   (`issue #1841 <https://github.com/platformio/platformio-core/issues/1841>`_)
+* Fixed an issue with broken includes when generating ``.clang_complete`` and
+  space is used in path
+  (`issue #1873 <https://github.com/platformio/platformio-core/issues/1873>`_)
+
 
 3.6.0 (2018-08-06)
 ~~~~~~~~~~~~~~~~~~
