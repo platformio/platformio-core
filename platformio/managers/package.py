@@ -414,6 +414,7 @@ class PkgInstallerMixin(object):
                 click.secho("Looking for another mirror...", fg="yellow")
 
         if versions is None:
+            util.internet_on(raise_exception=True)
             raise exception.UnknownPackage(name)
         elif not pkgdata:
             raise exception.UndefinedPackageVersion(requirements or "latest",

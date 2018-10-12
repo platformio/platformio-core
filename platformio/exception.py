@@ -178,7 +178,7 @@ class InternetIsOffline(PlatformioException):
     MESSAGE = (
         "You are not connected to the Internet.\n"
         "If you build a project first time, we need Internet connection "
-        "to install all dependencies and toolchain.")
+        "to install all dependencies and toolchains.")
 
 
 class LibNotFound(PlatformioException):

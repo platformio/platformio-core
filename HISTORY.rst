@@ -19,6 +19,8 @@ PlatformIO 3.0
   from a project
 * Report about outdated `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__
   (`issue #1823 <https://github.com/platformio/platformio-core/issues/1823>`_)
+* Show a valid error when Internet is off-line while initializing a new project
+  (`issue #1784 <https://github.com/platformio/platformio-core/issues/1784>`_)
 * Fixed an issue when dynamic build flags were not handled correctly
   (`issue #1799 <https://github.com/platformio/platformio-core/issues/1799>`_)
 * Fixed an issue when ``pio run -t monitor`` always uses first ``monitor_port``
