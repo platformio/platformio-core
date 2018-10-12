@@ -108,7 +108,9 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
             results.append(result)
             if result[1] and "monitor" in ep.get_build_targets() and \
                     "nobuild" not in ep.get_build_targets():
-                ctx.invoke(cmd_device_monitor)
+                ctx.invoke(
+                    cmd_device_monitor,
+                    environment=environment[0] if environment else None)
 
         found_error = any(status is False for (_, status) in results)
 

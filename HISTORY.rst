@@ -21,6 +21,9 @@ PlatformIO 3.0
   (`issue #1823 <https://github.com/platformio/platformio-core/issues/1823>`_)
 * Fixed an issue when dynamic build flags were not handled correctly
   (`issue #1799 <https://github.com/platformio/platformio-core/issues/1799>`_)
+* Fixed an issue when ``pio run -t monitor`` always uses first ``monitor_port``
+  even with multiple environments
+  (`issue #1841 <https://github.com/platformio/platformio-core/issues/1841>`_)
 
 3.6.0 (2018-08-06)
 ~~~~~~~~~~~~~~~~~~
