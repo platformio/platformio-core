@@ -142,9 +142,14 @@ def BuildProgram(env):
 
 
 def ParseFlagsExtended(env, flags):
-    if isinstance(flags, list):
-        flags = " ".join(flags)
-    result = env.ParseFlags(str(flags))
+    if not isinstance(flags, list):
+        flags = [flags]
+    result = {}
+    for raw in flags:
+        for key, value in env.ParseFlags(str(raw)).items():
+            if key not in result:
+                result[key] = []
+            result[key].extend(value)
 
     cppdefines = []
     for item in result['CPPDEFINES']:
