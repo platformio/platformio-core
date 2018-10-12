@@ -25,7 +25,7 @@ from time import sleep
 from SCons.Script import ARGUMENTS
 from serial import Serial, SerialException
 
-from platformio import util
+from platformio import exception, util
 
 # pylint: disable=unused-argument
 
@@ -154,15 +154,10 @@ def AutodetectUploadPort(*args, **kwargs):
                 and not env.subst("$UPLOAD_PROTOCOL"))):
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
-        if ("linux" in util.get_systype() and not any([
-                isfile("/etc/udev/rules.d/99-platformio-udev.rules"),
-                isfile("/lib/udev/rules.d/99-platformio-udev.rules")
-        ])):
-            sys.stderr.write(
-                "\nWarning! Please install `99-platformio-udev.rules` and "
-                "check that your board's PID and VID are listed in the rules."
-                "\n https://docs.platformio.org/en/latest/faq.html"
-                "#platformio-udev-rules\n")
+        try:
+            util.ensure_udev_rules()
+        except exception.InvalidUdevRules as e:
+            sys.stderr.write("\n%s\n\n" % e)
         env.Replace(UPLOAD_PORT=_look_for_serial_port())
 
     if env.subst("$UPLOAD_PORT"):

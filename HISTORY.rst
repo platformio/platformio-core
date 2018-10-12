@@ -15,6 +15,8 @@ PlatformIO 3.0
 * Support in-line comments for multi-line value (``lib_deps``, ``build_flags``, etc) in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
 * Do not re-create ".gitignore" and ".travis.yml" files if they were removed
   from a project
+* Report about outdated `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__
+  (`issue #1823 <https://github.com/platformio/platformio-core/issues/1823>`_)
 * Fixed an issue when dynamic build flags were not handled correctly
   (`issue #1799 <https://github.com/platformio/platformio-core/issues/1799>`_)
 

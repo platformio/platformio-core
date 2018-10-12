@@ -141,7 +141,7 @@ def BuildProgram(env):
     return program
 
 
-def ParseFlagsExtended(env, flags):
+def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
     if not isinstance(flags, list):
         flags = [flags]
     result = {}

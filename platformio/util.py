@@ -786,6 +786,43 @@ def merge_dicts(d1, d2, path=None):
     return d1
 
 
+def ensure_udev_rules():
+
+    def _rules_to_set(rules_path):
+        result = set([])
+        with open(rules_path, "rb") as fp:
+            for line in fp.readlines():
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                result.add(line)
+        return result
+
+    if "linux" not in get_systype():
+        return None
+    installed_rules = [
+        "/etc/udev/rules.d/99-platformio-udev.rules",
+        "/lib/udev/rules.d/99-platformio-udev.rules"
+    ]
+    if not any(isfile(p) for p in installed_rules):
+        raise exception.MissedUdevRules
+
+    origin_path = abspath(
+        join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules"))
+    if not isfile(origin_path):
+        return None
+
+    origin_rules = _rules_to_set(origin_path)
+    for rules_path in installed_rules:
+        if not isfile(rules_path):
+            continue
+        current_rules = _rules_to_set(rules_path)
+        if not origin_rules <= current_rules:
+            raise exception.OutdatedUdevRules(rules_path)
+
+    return True
+
+
 def rmtree_(path):
 
     def _onerror(_, name, __):
