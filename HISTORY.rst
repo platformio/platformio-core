@@ -9,12 +9,14 @@ PlatformIO 3.0
 
 * Generate an `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__
   directory with a README file when initializing a new project
+* Support in-line comments for multi-line value (``lib_deps``, ``build_flags``, etc) in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
+* Improved `PIO Unified Debugger <https://docs.platformio.org/en/page/plus/debugging.html>`__
+  for "mbed" framework and fixed issue with missed local variables
 * Introduced `"Release" and "Debug" Build Configurations <http://docs.platformio.org/page/projectconf/build_configurations.html>`__
 * Build project in "Debug Mode" including debug information with a new
   ``debug`` target using `platformio run <https://docs.platformio.org/page/userguide/cmd_run.html>`__ command or `targets <http://docs.platformio.org/page/projectconf/section_env_general.html#targets>`__ option in ``platformio.ini``.
   The last option allows to avoid project rebuilding between "Run/Debug" modes.
   (`issue #1833 <https://github.com/platformio/platformio-core/issues/1833>`_)
-* Support in-line comments for multi-line value (``lib_deps``, ``build_flags``, etc) in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
 * Do not re-create ".gitignore" and ".travis.yml" files if they were removed
   from a project
 * Report about outdated `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__
@@ -29,7 +31,6 @@ PlatformIO 3.0
 * Fixed an issue with broken includes when generating ``.clang_complete`` and
   space is used in path
   (`issue #1873 <https://github.com/platformio/platformio-core/issues/1873>`_)
-
 
 3.6.0 (2018-08-06)
 ~~~~~~~~~~~~~~~~~~
