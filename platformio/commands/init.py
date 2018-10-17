@@ -141,12 +141,15 @@ def get_best_envname(project_dir, boards=None):
 
 
 def init_base_project(project_dir):
-    if not util.is_platformio_project(project_dir):
-        copyfile(
-            join(util.get_source_dir(), "projectconftpl.ini"),
-            join(project_dir, "platformio.ini"))
-        init_ci_conf(project_dir)
-        init_cvs_ignore(project_dir)
+    if util.is_platformio_project(project_dir):
+        return
+
+    copyfile(
+        join(util.get_source_dir(), "projectconftpl.ini"),
+        join(project_dir, "platformio.ini"))
+
+    init_ci_conf(project_dir)
+    init_cvs_ignore(project_dir)
 
     with util.cd(project_dir):
         dir_to_readme = [
@@ -163,9 +166,7 @@ def init_base_project(project_dir):
 
 
 def init_include_readme(include_dir):
-    if isfile(join(include_dir, "readme.txt")):
-        return
-    with open(join(include_dir, "readme.txt"), "w") as f:
+    with open(join(include_dir, "README"), "w") as f:
         f.write("""
 This directory is intended for project header files.
 
@@ -209,9 +210,7 @@ https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
 
 
 def init_lib_readme(lib_dir):
-    if isfile(join(lib_dir, "readme.txt")):
-        return
-    with open(join(lib_dir, "readme.txt"), "w") as f:
+    with open(join(lib_dir, "README"), "w") as f:
         f.write("""
 This directory is intended for project specific (private) libraries.
 PlatformIO will compile them to static libraries and link into executable file.
@@ -235,7 +234,7 @@ For example, see a structure of the following two libraries `Foo` and `Bar`:
 |  |  |- Foo.c
 |  |  |- Foo.h
 |  |
-|  |- readme.txt --> THIS FILE
+|  |- README --> THIS FILE
 |
 |- platformio.ini
 |--src
@@ -262,8 +261,6 @@ More information about PlatformIO Library Dependency Finder
 
 
 def init_ci_conf(project_dir):
-    if isfile(join(project_dir, ".travis.yml")):
-        return
     with open(join(project_dir, ".travis.yml"), "w") as f:
         f.write("""# Continuous Integration (CI) is the practice, in software
 # engineering, of merging all developer working copies with a shared mainline
