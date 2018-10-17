@@ -78,12 +78,12 @@ def cli(
 
         click.echo("The next files/directories have been created in %s" %
                    click.style(project_dir, fg="cyan"))
-        click.echo("%s - Put your header files here" % click.style(
+        click.echo("%s - Put project header files here" % click.style(
             "include", fg="cyan"))
         click.echo("%s - Put here project specific (private) libraries" %
                    click.style("lib", fg="cyan"))
-        click.echo(
-            "%s - Put your source files here" % click.style("src", fg="cyan"))
+        click.echo("%s - Put project source files here" % click.style(
+            "src", fg="cyan"))
         click.echo("%s - Project Configuration File" % click.style(
             "platformio.ini", fg="cyan"))
 
@@ -156,6 +156,7 @@ def init_base_project(project_dir):
             (util.get_projectsrc_dir(), None),
             (util.get_projectinclude_dir(), init_include_readme),
             (util.get_projectlib_dir(), init_lib_readme),
+            (util.get_projecttest_dir(), init_test_readme),
         ]
         for (path, cb) in dir_to_readme:
             if isdir(path):
@@ -257,6 +258,22 @@ libraries scanning project source files.
 
 More information about PlatformIO Library Dependency Finder
 - https://docs.platformio.org/page/librarymanager/ldf.html
+""")
+
+
+def init_test_readme(test_dir):
+    with open(join(test_dir, "README"), "w") as f:
+        f.write("""
+This directory is intended for PIO Unit Testing and project tests.
+
+Unit Testing is a software testing method by which individual units of
+source code, sets of one or more MCU program modules together with associated
+control data, usage procedures, and operating procedures, are tested to
+determine whether they are fit for use. Unit testing finds problems early
+in the development cycle.
+
+More information about PIO Unit Testing:
+- https://docs.platformio.org/page/plus/unit-testing.html
 """)
 
 

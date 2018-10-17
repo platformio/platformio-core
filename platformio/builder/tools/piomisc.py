@@ -290,8 +290,7 @@ def ProcessDebug(env):
         env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb3"])
     env.Append(
         PIODEBUGFLAGS=["-D__PLATFORMIO_DEBUG__"],
-        BUILD_FLAGS=env.get("PIODEBUGFLAGS", [])
-    )
+        BUILD_FLAGS=env.get("PIODEBUGFLAGS", []))
     unflags = ["-Os"]
     for level in [0, 1, 2]:
         for flag in ("O", "g", "ggdb"):

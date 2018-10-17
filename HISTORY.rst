@@ -8,7 +8,8 @@ PlatformIO 3.0
 ~~~~~~~~~~~~~~~~~~
 
 * Generate an `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__
-  directory with a README file when initializing a new project
+  and `test <http://docs.platformio.org/page/projectconf/section_platformio.html#test-dir>`__
+  directories with a README file when initializing a new project
 * Support in-line comments for multi-line value (``lib_deps``, ``build_flags``, etc) in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
 * Improved `PIO Unified Debugger <https://docs.platformio.org/en/page/plus/debugging.html>`__
   for "mbed" framework and fixed issue with missed local variables
