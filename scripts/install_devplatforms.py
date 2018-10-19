@@ -29,6 +29,10 @@ def main():
         if (util.get_systype() == "windows_x86"
                 and platform['name'] == "riscv_gap"):
             continue
+        # unknown issue on Linux
+        if ("linux" in util.get_systype()
+                and platform['name'] == "aceinna_imu"):
+            continue
         subprocess.check_call(
             ["platformio", "platform", "install", platform['repository']])
 
