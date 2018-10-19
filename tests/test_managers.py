@@ -54,7 +54,7 @@ def test_pkg_input_parser():
         ],
         [
             "https://somedomain.com/path/LibraryName-1.2.3.zip",
-            ("LibraryName-1", None,
+            ("LibraryName-1.2.3", None,
              "https://somedomain.com/path/LibraryName-1.2.3.zip")
         ],
         [
@@ -69,12 +69,12 @@ def test_pkg_input_parser():
         ],
         [
             "https://github.com/user/package/archive/branch.tar.gz",
-            ("branch", None,
+            ("branch.tar", None,
              "https://github.com/user/package/archive/branch.tar.gz")
         ],
         [
             "https://github.com/user/package/archive/branch.tar.gz@!=5",
-            ("branch", "!=5",
+            ("branch.tar", "!=5",
              "https://github.com/user/package/archive/branch.tar.gz")
         ],
         [
