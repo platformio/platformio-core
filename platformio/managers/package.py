@@ -260,6 +260,69 @@ class PkgInstallerMixin(object):
         return None
 
     @staticmethod
+    def parse_pkg_uri(  # pylint: disable=too-many-branches
+            text, requirements=None):
+        text = str(text)
+        name, url = None, None
+
+        # Parse requirements
+        req_conditions = [
+            "@" in text, not requirements, ":" not in text
+            or text.rfind("/") < text.rfind("@")
+        ]
+        if all(req_conditions):
+            text, requirements = text.rsplit("@", 1)
+
+        # Handle PIO Library Registry ID
+        if text.isdigit():
+            text = "id=" + text
+        # Parse custom name
+        elif "=" in text and not text.startswith("id="):
+            name, text = text.split("=", 1)
+
+        # Parse URL
+        # if valid URL with scheme vcs+protocol://
+        if "+" in text and text.find("+") < text.find("://"):
+            url = text
+        elif "/" in text or "\\" in text:
+            git_conditions = [
+                # Handle GitHub URL (https://github.com/user/package)
+                text.startswith("https://github.com/") and not text.endswith(
+                    (".zip", ".tar.gz")),
+                (text.split("#", 1)[0]
+                 if "#" in text else text).endswith(".git")
+            ]
+            hg_conditions = [
+                # Handle Developer Mbed URL
+                # (https://developer.mbed.org/users/user/code/package/)
+                # (https://os.mbed.com/users/user/code/package/)
+                text.startswith("https://developer.mbed.org"),
+                text.startswith("https://os.mbed.com")
+            ]
+            if any(git_conditions):
+                url = "git+" + text
+            elif any(hg_conditions):
+                url = "hg+" + text
+            elif "://" not in text and (isfile(text) or isdir(text)):
+                url = "file://" + text
+            elif "://" in text:
+                url = text
+            # Handle short version of GitHub URL
+            elif text.count("/") == 1:
+                url = "git+https://github.com/" + text
+
+        # Parse name from URL
+        if url and not name:
+            _url = url.split("#", 1)[0] if "#" in url else url
+            if _url.endswith(("\\", "/")):
+                _url = _url[:-1]
+            name = basename(_url)
+            if "." in name and not name.startswith("."):
+                name = name.rsplit(".", 1)[0]
+
+        return (name or text, requirements, url)
+
+    @staticmethod
     def get_install_dirname(manifest):
         name = re.sub(r"[^\da-z\_\-\. ]", "_", manifest['name'], flags=re.I)
         if "id" in manifest:
@@ -316,11 +379,13 @@ class PkgInstallerMixin(object):
                     manifest[key.strip()] = value.strip()
 
         if src_manifest:
-            if "name" not in manifest:
-                manifest['name'] = src_manifest['name']
             if "version" in src_manifest:
                 manifest['version'] = src_manifest['version']
             manifest['__src_url'] = src_manifest['url']
+            # handle a custom package name
+            autogen_name = self.parse_pkg_uri(manifest['__src_url'])[0]
+            if "name" not in manifest or autogen_name != src_manifest['name']:
+                manifest['name'] = src_manifest['name']
 
         if "name" not in manifest:
             manifest['name'] = basename(pkg_dir)
@@ -562,69 +627,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
     def print_message(self, message, nl=True):
         click.echo("%s: %s" % (self.__class__.__name__, message), nl=nl)
-
-    @staticmethod
-    def parse_pkg_uri(  # pylint: disable=too-many-branches
-            text, requirements=None):
-        text = str(text)
-        name, url = None, None
-
-        # Parse requirements
-        req_conditions = [
-            "@" in text, not requirements, ":" not in text
-            or text.rfind("/") < text.rfind("@")
-        ]
-        if all(req_conditions):
-            text, requirements = text.rsplit("@", 1)
-
-        # Handle PIO Library Registry ID
-        if text.isdigit():
-            text = "id=" + text
-        # Parse custom name
-        elif "=" in text and not text.startswith("id="):
-            name, text = text.split("=", 1)
-
-        # Parse URL
-        # if valid URL with scheme vcs+protocol://
-        if "+" in text and text.find("+") < text.find("://"):
-            url = text
-        elif "/" in text or "\\" in text:
-            git_conditions = [
-                # Handle GitHub URL (https://github.com/user/package)
-                text.startswith("https://github.com/") and not text.endswith(
-                    (".zip", ".tar.gz")),
-                (text.split("#", 1)[0]
-                 if "#" in text else text).endswith(".git")
-            ]
-            hg_conditions = [
-                # Handle Developer Mbed URL
-                # (https://developer.mbed.org/users/user/code/package/)
-                # (https://os.mbed.com/users/user/code/package/)
-                text.startswith("https://developer.mbed.org"),
-                text.startswith("https://os.mbed.com")
-            ]
-            if any(git_conditions):
-                url = "git+" + text
-            elif any(hg_conditions):
-                url = "hg+" + text
-            elif "://" not in text and (isfile(text) or isdir(text)):
-                url = "file://" + text
-            elif "://" in text:
-                url = text
-            # Handle short version of GitHub URL
-            elif text.count("/") == 1:
-                url = "git+https://github.com/" + text
-
-        # Parse name from URL
-        if url and not name:
-            _url = url.split("#", 1)[0] if "#" in url else url
-            if _url.endswith(("\\", "/")):
-                _url = _url[:-1]
-            name = basename(_url)
-            if "." in name and not name.startswith("."):
-                name = name.rsplit(".", 1)[0]
-
-        return (name or text, requirements, url)
 
     def outdated(self, pkg_dir, requirements=None):
         """
