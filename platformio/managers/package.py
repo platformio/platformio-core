@@ -622,7 +622,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 _url = _url[:-1]
             name = basename(_url)
             if "." in name and not name.startswith("."):
-                name = name.rsplit(".", 1)[0]
+                name = name.split(".", 1)[0]
 
         return (name or text, requirements, url)
 
