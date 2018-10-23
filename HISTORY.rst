@@ -9,21 +9,22 @@ PlatformIO 3.0
 
 * Generate an `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__ and `test <http://docs.platformio.org/page/projectconf/section_platformio.html#test-dir>`__ directories with a README file when initializing a new project
 * Support in-line comments for multi-line value (``lib_deps``, ``build_flags``, etc) in `“platformio.ini” (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
+* Added ``$PROJECT_HASH`` template variable for `build_dir <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#projectconf-pio-build-dir>`__. One of the use cases is setting a global storage for project artifacts using `PLATFORMIO_BUILD_DIR <http://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_BUILD_DIR>`__ system environment variable. For example, ``/tmp/pio-build/$PROJECT_HASH``.
 * Improved `PIO Unified Debugger <https://docs.platformio.org/en/page/plus/debugging.html>`__ for "mbed" framework and fixed issue with missed local variables
 * Introduced `"Release" and "Debug" Build Configurations <http://docs.platformio.org/page/projectconf/build_configurations.html>`__
-* Build project in "Debug Mode" including debug information with a new ``debug`` target using `platformio run <https://docs.platformio.org/page/userguide/cmd_run.html>`__ command or `targets <http://docs.platformio.org/page/projectconf/section_env_general.html#targets>`__ option in ``platformio.ini``. The last option allows to avoid project rebuilding between "Run/Debug" modes.
+* Build project in "Debug Mode" including debugging information with a new ``debug`` target using `platformio run <https://docs.platformio.org/page/userguide/cmd_run.html>`__ command or `targets <http://docs.platformio.org/page/projectconf/section_env_general.html#targets>`__ option in ``platformio.ini``. The last option allows avoiding project rebuilding between "Run/Debug" modes.
   (`issue #1833 <https://github.com/platformio/platformio-core/issues/1833>`_)
-* Process ``build_unflags`` for cloned environment when building a static library
-* Report about outdated `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__
+* Process ``build_unflags`` for the cloned environment when building a static library
+* Report on outdated `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__
   (`issue #1823 <https://github.com/platformio/platformio-core/issues/1823>`_)
-* Show a valid error when Internet is off-line while initializing a new project
+* Show a valid error when the Internet is off-line while initializing a new project
   (`issue #1784 <https://github.com/platformio/platformio-core/issues/1784>`_)
 * Do not re-create ".gitignore" and ".travis.yml" files if they were removed from a project
 * Fixed an issue when dynamic build flags were not handled correctly
   (`issue #1799 <https://github.com/platformio/platformio-core/issues/1799>`_)
-* Fixed an issue when ``pio run -t monitor`` always uses first ``monitor_port`` even with multiple environments
+* Fixed an issue when ``pio run -t monitor`` always uses the first ``monitor_port`` even with multiple environments
   (`issue #1841 <https://github.com/platformio/platformio-core/issues/1841>`_)
-* Fixed an issue with broken includes when generating ``.clang_complete`` and space is used in path
+* Fixed an issue with broken includes when generating ``.clang_complete`` and space is used in a path
   (`issue #1873 <https://github.com/platformio/platformio-core/issues/1873>`_)
 * Fixed an issue with incorrect handling of a custom package name when using `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__ or `platformio platform install <http://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__ commands
 

@@ -23,6 +23,7 @@ import sys
 import time
 from functools import wraps
 from glob import glob
+from hashlib import sha1
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
 from shutil import rmtree
@@ -309,6 +310,9 @@ def get_projectboards_dir():
 def get_projectbuild_dir(force=False):
     path = get_project_optional_dir("build_dir",
                                     join(get_project_dir(), ".pioenvs"))
+    if "$PROJECT_HASH" in path:
+        path = path.replace("$PROJECT_HASH",
+                            sha1(get_project_dir()).hexdigest()[:10])
     try:
         if not isdir(path):
             os.makedirs(path)
