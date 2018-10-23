@@ -138,7 +138,11 @@ class memoized(object):
                 self.cache[key] = (time.time(), func(*args, **kwargs))
             return self.cache[key][1]
 
+        wrapper.reset = self._reset
         return wrapper
+
+    def _reset(self):
+        self.cache = {}
 
 
 class throttle(object):
