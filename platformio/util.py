@@ -342,23 +342,18 @@ def get_projectdata_dir():
                                                      "data"))
 
 
-@memoized()
-def _load_project_config(path):
-    cp = ProjectConfig()
-    try:
-        cp.read(path)
-    except ConfigParser.Error as e:
-        raise exception.InvalidProjectConf(str(e))
-    return cp
-
-
 def load_project_config(path=None):
     if not path or isdir(path):
         path = join(path or get_project_dir(), "platformio.ini")
     if not isfile(path):
         raise exception.NotPlatformIOProject(
             dirname(path) if path.endswith("platformio.ini") else path)
-    return _load_project_config(path)
+    cp = ProjectConfig()
+    try:
+        cp.read(path)
+    except ConfigParser.Error as e:
+        raise exception.InvalidProjectConf(str(e))
+    return cp
 
 
 def parse_conf_multi_values(items):
