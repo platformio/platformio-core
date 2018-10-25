@@ -839,8 +839,7 @@ def rmtree_(path):
             os.remove(name)
         except Exception as e:  # pylint: disable=broad-except
             click.secho(
-                "%s \n\nCould not remove the file `%s`. "
-                "Please remove it manually." % (str(e), name),
+                "%s \nPlease manually remove the file `%s`" % (str(e), name),
                 fg="red",
                 err=True)
 
