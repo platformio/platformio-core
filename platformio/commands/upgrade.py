@@ -20,7 +20,7 @@ import click
 import requests
 
 from platformio import VERSION, __version__, exception, util
-from platformio.commands.home import shutdown_servers
+from platformio.managers.core import shutdown_piohome_servers
 
 
 @click.command(
@@ -36,7 +36,7 @@ def cli(dev):
     click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
 
     # kill all PIO Home servers, they block `pioplus` binary
-    shutdown_servers()
+    shutdown_piohome_servers()
 
     to_develop = dev or not all(c.isdigit() for c in __version__ if c != ".")
     cmds = (["pip", "install", "--upgrade",

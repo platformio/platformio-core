@@ -17,13 +17,15 @@ import subprocess
 import sys
 from os.path import dirname, join
 
+import requests
+
 from platformio import __version__, exception, util
 from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
     "contrib-piohome": "^1.0.2",
     "contrib-pysite": ">=0.3.2,<2",
-    "tool-pioplus": "^1.4.5",
+    "tool-pioplus": "^1.4.11",
     "tool-unity": "~1.20403.0",
     "tool-scons": "~2.20501.4"
 }
@@ -92,8 +94,20 @@ def update_core_packages(only_check=False, silent=False):
         if not pkg_dir:
             continue
         if not silent or pm.outdated(pkg_dir, requirements):
+            if name == "tool-pioplus" and not only_check:
+                shutdown_piohome_servers()
             pm.update(name, requirements, only_check=only_check)
     return True
+
+
+def shutdown_piohome_servers():
+    port = 8010
+    while port < 9000:
+        try:
+            requests.get("http://127.0.0.1:%d?__shutdown__=1" % port)
+            port += 1
+        except:  # pylint: disable=bare-except
+            return
 
 
 def pioplus_call(args, **kwargs):
