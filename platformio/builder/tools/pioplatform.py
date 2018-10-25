@@ -23,7 +23,7 @@ from SCons.Script import COMMAND_LINE_TARGETS
 from platformio import exception, util
 from platformio.managers.platform import PlatformFactory
 
-# pylint: disable=too-many-branches
+# pylint: disable=too-many-branches, too-many-locals
 
 
 @util.memoized()
