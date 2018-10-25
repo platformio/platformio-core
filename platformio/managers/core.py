@@ -16,6 +16,7 @@ import os
 import subprocess
 import sys
 from os.path import dirname, join
+from time import sleep
 
 import requests
 
@@ -96,6 +97,8 @@ def update_core_packages(only_check=False, silent=False):
         if not silent or pm.outdated(pkg_dir, requirements):
             if name == "tool-pioplus" and not only_check:
                 shutdown_piohome_servers()
+                if "windows" in util.get_systype():
+                    sleep(1)
             pm.update(name, requirements, only_check=only_check)
     return True
 
