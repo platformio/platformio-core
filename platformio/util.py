@@ -839,8 +839,10 @@ def rmtree_(path):
             os.remove(name)
         except Exception as e:  # pylint: disable=broad-except
             click.secho(
-                "Please manually remove file `%s`" % name, fg="red", err=True)
-            raise e
+                "%s \n\nCould not remove the file `%s`. "
+                "Please remove it manually." % (str(e), name),
+                fg="red",
+                err=True)
 
     return rmtree(path, onerror=_onerror)
 
@@ -857,8 +859,7 @@ except ImportError:
     magic_check_bytes = re.compile(b'([*?[])')
 
     def glob_escape(pathname):
-        """Escape all special characters.
-        """
+        """Escape all special characters."""
         # Escaping is done by wrapping any of "*?[" between square brackets.
         # Metacharacters do not work in the drive part and shouldn't be
         # escaped.
