@@ -61,7 +61,7 @@ class MeasurementProtocol(TelemetryBase):
     }
 
     def __init__(self):
-        TelemetryBase.__init__(self)
+        super(MeasurementProtocol, self).__init__()
         self['v'] = 1
         self['tid'] = self.TID
         self['cid'] = app.get_cid()

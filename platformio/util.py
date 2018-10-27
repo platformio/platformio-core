@@ -78,7 +78,7 @@ class ProjectConfig(ConfigParser.ConfigParser):
 class AsyncPipe(Thread):
 
     def __init__(self, outcallback=None):
-        Thread.__init__(self)
+        super(AsyncPipe, self).__init__()
         self.outcallback = outcallback
 
         self._fd_read, self._fd_write = os.pipe()

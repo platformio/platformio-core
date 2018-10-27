@@ -32,7 +32,7 @@ class LibraryManager(BasePkgManager):
     def __init__(self, package_dir=None):
         if not package_dir:
             package_dir = join(util.get_home_dir(), "lib")
-        BasePkgManager.__init__(self, package_dir)
+        super(LibraryManager, self).__init__(package_dir)
 
     @property
     def manifest_names(self):

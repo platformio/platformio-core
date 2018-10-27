@@ -39,11 +39,12 @@ PIOPLUS_AUTO_UPDATES_MAX = 100
 class CorePackageManager(PackageManager):
 
     def __init__(self):
-        PackageManager.__init__(self, join(util.get_home_dir(), "packages"), [
-            "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-            "http%s://dl.platformio.org/packages/manifest.json" %
-            ("" if sys.version_info < (2, 7, 9) else "s")
-        ])
+        super(CorePackageManager, self).__init__(
+            join(util.get_home_dir(), "packages"), [
+                "https://dl.bintray.com/platformio/dl-packages/manifest.json",
+                "http%s://dl.platformio.org/packages/manifest.json" %
+                ("" if sys.version_info < (2, 7, 9) else "s")
+            ])
 
     def install(  # pylint: disable=keyword-arg-before-vararg
             self,
