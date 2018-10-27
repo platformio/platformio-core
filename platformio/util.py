@@ -100,7 +100,7 @@ class AsyncPipe(Thread):
             if self.outcallback:
                 self.outcallback(line)
             else:
-                print line
+                print(line)
         self._pipe_reader.close()
 
     def close(self):

@@ -150,7 +150,7 @@ def PrintConfiguration(env):
 
     for data in (configuration_data, platform_data, system_data):
         if len(data) > 1:
-            print " ".join(data)
+            print(" ".join(data))
 
     # Debugging
     if not debug_tools:
@@ -172,7 +172,7 @@ def PrintConfiguration(env):
     if external:
         data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
 
-    print "DEBUG: %s" % " ".join(data)
+    print("DEBUG: %s" % " ".join(data))
 
 
 def exists(_):

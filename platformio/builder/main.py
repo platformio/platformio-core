@@ -135,7 +135,7 @@ if env.GetOption('clean'):
     env.PioClean(env.subst("$BUILD_DIR"))
     env.Exit(0)
 elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
-    print "Verbose mode can be enabled via `-v, --verbose` option"
+    print("Verbose mode can be enabled via `-v, --verbose` option")
 
 # Handle custom variables from system environment
 for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPTS",
@@ -198,13 +198,13 @@ AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
 ##############################################################################
 
 if "envdump" in COMMAND_LINE_TARGETS:
-    print env.Dump()
+    print(env.Dump())
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
     try:
-        print "\n%s\n" % util.path_to_unicode(
-            json.dumps(env.DumpIDEData(), ensure_ascii=False))
+        print("\n%s\n" % util.path_to_unicode(
+            json.dumps(env.DumpIDEData(), ensure_ascii=False)))
         env.Exit(0)
     except UnicodeDecodeError:
         sys.stderr.write(
