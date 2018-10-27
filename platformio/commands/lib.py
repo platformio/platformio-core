@@ -203,7 +203,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
     if not isinstance(query, list):
         query = list(query)
 
-    for key, values in filters.iteritems():
+    for key, values in filters.items():
         for value in values:
             query.append('%s:"%s"' % (key, value))
 

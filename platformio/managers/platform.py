@@ -604,7 +604,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
 
         # enable upload tools for upload targets
         if any(["upload" in t for t in targets] + ["program" in targets]):
-            for name, opts in self.packages.iteritems():
+            for name, opts in self.packages.items():
                 if opts.get("type") == "uploader":
                     self.packages[name]['optional'] = False
                 # skip all packages in "nobuild" mode

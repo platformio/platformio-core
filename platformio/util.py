@@ -413,7 +413,7 @@ def exec_command(*args, **kwargs):
         if isinstance(kwargs[s], AsyncPipe):
             result[s[3:]] = "\n".join(kwargs[s].get_buffer())
 
-    for k, v in result.iteritems():
+    for k, v in result.items():
         if v and isinstance(v, basestring):
             result[k].strip()
 

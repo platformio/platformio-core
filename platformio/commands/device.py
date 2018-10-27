@@ -55,7 +55,7 @@ def device_list(  # pylint: disable=too-many-branches
         "mdns": "Multicast DNS Services"
     }
 
-    for key, value in data.iteritems():
+    for key, value in data.items():
         if not single_key:
             click.secho(titles[key], bold=True)
             click.echo("=" * len(titles[key]))
@@ -85,7 +85,7 @@ def device_list(  # pylint: disable=too-many-branches
                 if item['properties']:
                     click.echo("Properties: %s" % ("; ".join([
                         "%s=%s" % (k, v)
-                        for k, v in item['properties'].iteritems()
+                        for k, v in item['properties'].items()
                     ])))
                 click.echo("")
 
@@ -182,7 +182,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
             kwargs['port'] = ports[0]['port']
 
     sys.argv = ["monitor"]
-    for k, v in kwargs.iteritems():
+    for k, v in kwargs.items():
         if k in ("port", "baud", "rts", "dtr", "environment", "project_dir"):
             continue
         k = "--" + k.replace("_", "-")

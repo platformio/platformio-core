@@ -291,7 +291,7 @@ def measure_ci():
         }
     }
 
-    for key, value in envmap.iteritems():
+    for key, value in envmap.items():
         if getenv(key, "").lower() != "true":
             continue
         event.update({"action": key, "label": value['label']})
