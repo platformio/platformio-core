@@ -100,6 +100,9 @@ def cli(
         pg = ProjectGenerator(project_dir, ide, env_name)
         pg.generate()
 
+    init_ci_conf(project_dir)
+    init_cvs_ignore(project_dir)
+
     if silent:
         return
 
@@ -147,9 +150,6 @@ def init_base_project(project_dir):
     copyfile(
         join(util.get_source_dir(), "projectconftpl.ini"),
         join(project_dir, "platformio.ini"))
-
-    init_ci_conf(project_dir)
-    init_cvs_ignore(project_dir)
 
     with util.cd(project_dir):
         dir_to_readme = [
@@ -278,7 +278,10 @@ More information about PIO Unit Testing:
 
 
 def init_ci_conf(project_dir):
-    with open(join(project_dir, ".travis.yml"), "w") as f:
+    conf_path = join(project_dir, ".travis.yml")
+    if isfile(conf_path):
+        return
+    with open(conf_path, "w") as f:
         f.write("""# Continuous Integration (CI) is the practice, in software
 # engineering, of merging all developer working copies with a shared mainline
 # several times a day < https://docs.platformio.org/page/ci/index.html >
@@ -350,23 +353,11 @@ def init_ci_conf(project_dir):
 
 
 def init_cvs_ignore(project_dir):
-    ignore_path = join(project_dir, ".gitignore")
-    default = [".pioenvs\n", ".piolibdeps\n"]
-    current = []
-    modified = False
-    if isfile(ignore_path):
-        with open(ignore_path) as fp:
-            current = fp.readlines()
-        if current and not current[-1].endswith("\n"):
-            current[-1] += "\n"
-    for d in default:
-        if d not in current:
-            modified = True
-            current.append(d)
-    if not modified:
+    conf_path = join(project_dir, ".gitignore")
+    if isfile(conf_path):
         return
-    with open(ignore_path, "w") as fp:
-        fp.writelines(current)
+    with open(conf_path, "w") as fp:
+        fp.writelines([".pio\n", ".pioenvs\n", ".piolibdeps\n"])
 
 
 def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
