@@ -7,6 +7,7 @@ PlatformIO 3.0
 3.6.2 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Fixed an issue with VSCode IntelliSense warning about the missed headers located in `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__ folder
 * Fixed incorrect wording when initializing/updating project
 
 3.6.1 (2018-10-29)
