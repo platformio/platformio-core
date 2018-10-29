@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.6.1 (2018-??-??)
+3.6.1 (2018-10-29)
 ~~~~~~~~~~~~~~~~~~
 
 * Generate an `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__ and `test <http://docs.platformio.org/page/projectconf/section_platformio.html#test-dir>`__ directories with a README file when initializing a new project
