@@ -23,6 +23,7 @@ import sys
 import time
 from functools import wraps
 from glob import glob
+from hashlib import sha1
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
 from shutil import rmtree
@@ -77,7 +78,7 @@ class ProjectConfig(ConfigParser.ConfigParser):
 class AsyncPipe(Thread):
 
     def __init__(self, outcallback=None):
-        Thread.__init__(self)
+        super(AsyncPipe, self).__init__()
         self.outcallback = outcallback
 
         self._fd_read, self._fd_write = os.pipe()
@@ -99,7 +100,7 @@ class AsyncPipe(Thread):
             if self.outcallback:
                 self.outcallback(line)
             else:
-                print line
+                print(line)
         self._pipe_reader.close()
 
     def close(self):
@@ -137,7 +138,11 @@ class memoized(object):
                 self.cache[key] = (time.time(), func(*args, **kwargs))
             return self.cache[key][1]
 
+        wrapper.reset = self._reset
         return wrapper
+
+    def _reset(self):
+        self.cache = {}
 
 
 class throttle(object):
@@ -309,6 +314,9 @@ def get_projectboards_dir():
 def get_projectbuild_dir(force=False):
     path = get_project_optional_dir("build_dir",
                                     join(get_project_dir(), ".pioenvs"))
+    if "$PROJECT_HASH" in path:
+        path = path.replace("$PROJECT_HASH",
+                            sha1(get_project_dir()).hexdigest()[:10])
     try:
         if not isdir(path):
             os.makedirs(path)
@@ -317,7 +325,7 @@ def get_projectbuild_dir(force=False):
             with open(dontmod_path, "w") as fp:
                 fp.write("""
 [InternetShortcut]
-URL=http://docs.platformio.org/page/projectconf/section_platformio.html#build-dir
+URL=https://docs.platformio.org/page/projectconf/section_platformio.html#build-dir
 """)
     except Exception as e:  # pylint: disable=broad-except
         if not force:
@@ -349,12 +357,19 @@ def load_project_config(path=None):
 
 
 def parse_conf_multi_values(items):
+    result = []
     if not items:
-        return []
-    return [
-        item.strip() for item in items.split("\n" if "\n" in items else ", ")
-        if item.strip()
-    ]
+        return result
+    inline_comment_re = re.compile(r"\s+;.*$")
+    for item in items.split("\n" if "\n" in items else ", "):
+        item = item.strip()
+        # comment
+        if not item or item.startswith((";", "#")):
+            continue
+        if ";" in item:
+            item = inline_comment_re.sub("", item).strip()
+        result.append(item)
+    return result
 
 
 def change_filemtime(path, mtime):
@@ -398,7 +413,7 @@ def exec_command(*args, **kwargs):
         if isinstance(kwargs[s], AsyncPipe):
             result[s[3:]] = "\n".join(kwargs[s].get_buffer())
 
-    for k, v in result.iteritems():
+    for k, v in result.items():
         if v and isinstance(v, basestring):
             result[k].strip()
 
@@ -779,6 +794,43 @@ def merge_dicts(d1, d2, path=None):
     return d1
 
 
+def ensure_udev_rules():
+
+    def _rules_to_set(rules_path):
+        result = set([])
+        with open(rules_path, "rb") as fp:
+            for line in fp.readlines():
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                result.add(line)
+        return result
+
+    if "linux" not in get_systype():
+        return None
+    installed_rules = [
+        "/etc/udev/rules.d/99-platformio-udev.rules",
+        "/lib/udev/rules.d/99-platformio-udev.rules"
+    ]
+    if not any(isfile(p) for p in installed_rules):
+        raise exception.MissedUdevRules
+
+    origin_path = abspath(
+        join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules"))
+    if not isfile(origin_path):
+        return None
+
+    origin_rules = _rules_to_set(origin_path)
+    for rules_path in installed_rules:
+        if not isfile(rules_path):
+            continue
+        current_rules = _rules_to_set(rules_path)
+        if not origin_rules <= current_rules:
+            raise exception.OutdatedUdevRules(rules_path)
+
+    return True
+
+
 def rmtree_(path):
 
     def _onerror(_, name, __):
@@ -787,8 +839,9 @@ def rmtree_(path):
             os.remove(name)
         except Exception as e:  # pylint: disable=broad-except
             click.secho(
-                "Please manually remove file `%s`" % name, fg="red", err=True)
-            raise e
+                "%s \nPlease manually remove the file `%s`" % (str(e), name),
+                fg="red",
+                err=True)
 
     return rmtree(path, onerror=_onerror)
 
@@ -805,8 +858,7 @@ except ImportError:
     magic_check_bytes = re.compile(b'([*?[])')
 
     def glob_escape(pathname):
-        """Escape all special characters.
-        """
+        """Escape all special characters."""
         # Escaping is done by wrapping any of "*?[" between square brackets.
         # Metacharacters do not work in the drive part and shouldn't be
         # escaped.

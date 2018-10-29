@@ -25,7 +25,7 @@ from time import sleep
 from SCons.Script import ARGUMENTS
 from serial import Serial, SerialException
 
-from platformio import util
+from platformio import exception, util
 
 # pylint: disable=unused-argument
 
@@ -43,7 +43,7 @@ def FlushSerialBuffer(env, port):
 
 def TouchSerialPort(env, port, baudrate):
     port = env.subst(port)
-    print "Forcing reset using %dbps open/close on port %s" % (baudrate, port)
+    print("Forcing reset using %dbps open/close on port %s" % (baudrate, port))
     try:
         s = Serial(port=port, baudrate=baudrate)
         s.setDTR(False)
@@ -54,7 +54,7 @@ def TouchSerialPort(env, port, baudrate):
 
 
 def WaitForNewSerialPort(env, before):
-    print "Waiting for the new upload port..."
+    print("Waiting for the new upload port...")
     prev_port = env.subst("$UPLOAD_PORT")
     new_port = None
     elapsed = 0
@@ -146,7 +146,7 @@ def AutodetectUploadPort(*args, **kwargs):
         return port
 
     if "UPLOAD_PORT" in env and not _get_pattern():
-        print env.subst("Use manually specified: $UPLOAD_PORT")
+        print(env.subst("Use manually specified: $UPLOAD_PORT"))
         return
 
     if (env.subst("$UPLOAD_PROTOCOL") == "mbed"
@@ -154,19 +154,14 @@ def AutodetectUploadPort(*args, **kwargs):
                 and not env.subst("$UPLOAD_PROTOCOL"))):
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
-        if ("linux" in util.get_systype() and not any([
-                isfile("/etc/udev/rules.d/99-platformio-udev.rules"),
-                isfile("/lib/udev/rules.d/99-platformio-udev.rules")
-        ])):
-            sys.stderr.write(
-                "\nWarning! Please install `99-platformio-udev.rules` and "
-                "check that your board's PID and VID are listed in the rules."
-                "\n http://docs.platformio.org/en/latest/faq.html"
-                "#platformio-udev-rules\n")
+        try:
+            util.ensure_udev_rules()
+        except exception.InvalidUdevRules as e:
+            sys.stderr.write("\n%s\n\n" % e)
         env.Replace(UPLOAD_PORT=_look_for_serial_port())
 
     if env.subst("$UPLOAD_PORT"):
-        print env.subst("Auto-detected: $UPLOAD_PORT")
+        print(env.subst("Auto-detected: $UPLOAD_PORT"))
     else:
         sys.stderr.write(
             "Error: Please specify `upload_port` for environment or use "
@@ -185,8 +180,8 @@ def UploadToDisk(_, target, source, env):
             continue
         copyfile(fpath,
                  join(env.subst("$UPLOAD_PORT"), "%s.%s" % (progname, ext)))
-    print "Firmware has been successfully uploaded.\n"\
-          "(Some boards may require manual hard reset)"
+    print("Firmware has been successfully uploaded.\n"
+          "(Some boards may require manual hard reset)")
 
 
 def CheckUploadSize(_, target, source, env):
@@ -251,14 +246,14 @@ def CheckUploadSize(_, target, source, env):
     program_size = _calculate_size(output, env.get("SIZEPROGREGEXP"))
     data_size = _calculate_size(output, env.get("SIZEDATAREGEXP"))
 
-    print "Memory Usage -> http://bit.ly/pio-memory-usage"
+    print("Memory Usage -> http://bit.ly/pio-memory-usage")
     if data_max_size and data_size > -1:
-        print "DATA:    %s" % _format_availale_bytes(data_size, data_max_size)
+        print("DATA:    %s" % _format_availale_bytes(data_size, data_max_size))
     if program_size > -1:
-        print "PROGRAM: %s" % _format_availale_bytes(program_size,
-                                                     program_max_size)
+        print("PROGRAM: %s" % _format_availale_bytes(program_size,
+                                                     program_max_size))
     if int(ARGUMENTS.get("PIOVERBOSE", 0)):
-        print output
+        print(output)
 
     # raise error
     # if data_max_size and data_size > data_max_size:
@@ -280,9 +275,9 @@ def PrintUploadInfo(env):
         available.extend(env.BoardConfig().get("upload", {}).get(
             "protocols", []))
     if available:
-        print "AVAILABLE: %s" % ", ".join(sorted(set(available)))
+        print("AVAILABLE: %s" % ", ".join(sorted(set(available))))
     if configured:
-        print "CURRENT: upload_protocol = %s" % configured
+        print("CURRENT: upload_protocol = %s" % configured)
 
 
 def exists(_):

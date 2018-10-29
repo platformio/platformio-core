@@ -48,7 +48,7 @@ class ArchiveBase(object):
 class TARArchive(ArchiveBase):
 
     def __init__(self, archpath):
-        ArchiveBase.__init__(self, tarfile_open(archpath))
+        super(TARArchive, self).__init__(tarfile_open(archpath))
 
     def get_items(self):
         return self._afo.getmembers()
@@ -60,7 +60,7 @@ class TARArchive(ArchiveBase):
 class ZIPArchive(ArchiveBase):
 
     def __init__(self, archpath):
-        ArchiveBase.__init__(self, ZipFile(archpath))
+        super(ZIPArchive, self).__init__(ZipFile(archpath))
 
     @staticmethod
     def preserve_permissions(item, dest_dir):

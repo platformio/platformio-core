@@ -73,22 +73,21 @@ def cli(
             click.secho(
                 "\nThe current working directory", fg="yellow", nl=False)
             click.secho(" %s " % project_dir, fg="cyan", nl=False)
-            click.secho(
-                "will be used for project.\n"
-                "You can specify another project directory via\n"
-                "`platformio init -d %PATH_TO_THE_PROJECT_DIR%` command.",
-                fg="yellow")
+            click.secho("will be used for the project.", fg="yellow")
             click.echo("")
 
         click.echo("The next files/directories have been created in %s" %
                    click.style(project_dir, fg="cyan"))
-        click.echo("%s - Project Configuration File" % click.style(
-            "platformio.ini", fg="cyan"))
-        click.echo(
-            "%s - Put your source files here" % click.style("src", fg="cyan"))
+        click.echo("%s - Put project header files here" % click.style(
+            "include", fg="cyan"))
         click.echo("%s - Put here project specific (private) libraries" %
                    click.style("lib", fg="cyan"))
+        click.echo("%s - Put project source files here" % click.style(
+            "src", fg="cyan"))
+        click.echo("%s - Project Configuration File" % click.style(
+            "platformio.ini", fg="cyan"))
 
+    is_new_project = util.is_platformio_project(project_dir)
     init_base_project(project_dir)
 
     if board:
@@ -102,16 +101,28 @@ def cli(
         pg = ProjectGenerator(project_dir, ide, env_name)
         pg.generate()
 
-    if not silent:
+    if is_new_project:
+        init_ci_conf(project_dir)
+        init_cvs_ignore(project_dir)
+
+    if silent:
+        return
+
+    if ide:
         click.secho(
-            "\nProject has been successfully initialized!\nUseful commands:\n"
-            "`platformio run` - process/build project from the current "
-            "directory\n"
-            "`platformio run --target upload` or `platformio run -t upload` "
-            "- upload firmware to embedded board\n"
-            "`platformio run --target clean` - clean project (remove compiled "
-            "files)\n"
-            "`platformio run --help` - additional information",
+            "\nProject has been successfully %s including configuration files "
+            "for `%s` IDE." % ("initialized" if is_new_project else "updated",
+                               ide),
+            fg="green")
+    else:
+        click.secho(
+            "\nProject has been successfully %s! Useful commands:\n"
+            "`pio run` - process/build project from the current directory\n"
+            "`pio run --target upload` or `pio run -t upload` "
+            "- upload firmware to a target\n"
+            "`pio run --target clean` - clean project (remove compiled files)"
+            "\n`pio run --help` - additional information" %
+            ("initialized" if is_new_project else "updated"),
             fg="green")
 
 
@@ -134,35 +145,82 @@ def get_best_envname(project_dir, boards=None):
 
 
 def init_base_project(project_dir):
-    if not util.is_platformio_project(project_dir):
-        copyfile(
-            join(util.get_source_dir(), "projectconftpl.ini"),
-            join(project_dir, "platformio.ini"))
+    if util.is_platformio_project(project_dir):
+        return
+
+    copyfile(
+        join(util.get_source_dir(), "projectconftpl.ini"),
+        join(project_dir, "platformio.ini"))
 
     with util.cd(project_dir):
-        lib_dir = util.get_projectlib_dir()
-        src_dir = util.get_projectsrc_dir()
-        for d in (src_dir, lib_dir):
-            if not isdir(d):
-                makedirs(d)
+        dir_to_readme = [
+            (util.get_projectsrc_dir(), None),
+            (util.get_projectinclude_dir(), init_include_readme),
+            (util.get_projectlib_dir(), init_lib_readme),
+            (util.get_projecttest_dir(), init_test_readme),
+        ]
+        for (path, cb) in dir_to_readme:
+            if isdir(path):
+                continue
+            makedirs(path)
+            if cb:
+                cb(path)
 
-    init_lib_readme(lib_dir)
-    init_ci_conf(project_dir)
-    init_cvs_ignore(project_dir)
+
+def init_include_readme(include_dir):
+    with open(join(include_dir, "README"), "w") as f:
+        f.write("""
+This directory is intended for project header files.
+
+A header file is a file containing C declarations and macro definitions
+to be shared between several project source files. You request the use of a
+header file in your project source file (C, C++, etc) located in `src` folder
+by including it, with the C preprocessing directive `#include'.
+
+```src/main.c
+
+#include "header.h"
+
+int main (void)
+{
+ ...
+}
+```
+
+Including a header file produces the same results as copying the header file
+into each source file that needs it. Such copying would be time-consuming
+and error-prone. With a header file, the related declarations appear
+in only one place. If they need to be changed, they can be changed in one
+place, and programs that include the header file will automatically use the
+new version when next recompiled. The header file eliminates the labor of
+finding and changing all the copies as well as the risk that a failure to
+find one copy will result in inconsistencies within a program.
+
+In C, the usual convention is to give header files names that end with `.h'.
+It is most portable to use only letters, digits, dashes, and underscores in
+header file names, and at most one dot.
+
+Read more about using header files in official GCC documentation:
+
+* Include Syntax
+* Include Operation
+* Once-Only Headers
+* Computed Includes
+
+https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
+""")
 
 
 def init_lib_readme(lib_dir):
-    if isfile(join(lib_dir, "readme.txt")):
-        return
-    with open(join(lib_dir, "readme.txt"), "w") as f:
+    with open(join(lib_dir, "README"), "w") as f:
         f.write("""
-This directory is intended for the project specific (private) libraries.
-PlatformIO will compile them to static libraries and link to executable file.
+This directory is intended for project specific (private) libraries.
+PlatformIO will compile them to static libraries and link into executable file.
 
-The source code of each library should be placed in separate directory, like
-"lib/private_lib/[here are source files]".
+The source code of each library should be placed in a an own separate directory
+("lib/your_library_name/[here are source files]").
 
-For example, see how can be organized `Foo` and `Bar` libraries:
+For example, see a structure of the following two libraries `Foo` and `Bar`:
 
 |--lib
 |  |
@@ -172,40 +230,62 @@ For example, see how can be organized `Foo` and `Bar` libraries:
 |  |  |--src
 |  |     |- Bar.c
 |  |     |- Bar.h
-|  |  |- library.json (optional, custom build options, etc) http://docs.platformio.org/page/librarymanager/config.html
+|  |  |- library.json (optional, custom build options, etc) https://docs.platformio.org/page/librarymanager/config.html
 |  |
 |  |--Foo
 |  |  |- Foo.c
 |  |  |- Foo.h
 |  |
-|  |- readme.txt --> THIS FILE
+|  |- README --> THIS FILE
 |
 |- platformio.ini
 |--src
    |- main.c
 
-Then in `src/main.c` you should use:
-
+and a contents of `src/main.c`:
+```
 #include <Foo.h>
 #include <Bar.h>
 
-// rest H/C/CPP code
+int main (void)
+{
+  ...
+}
 
-PlatformIO will find your libraries automatically, configure preprocessor's
-include paths and build them.
+```
+
+PlatformIO Library Dependency Finder will find automatically dependent
+libraries scanning project source files.
 
 More information about PlatformIO Library Dependency Finder
-- http://docs.platformio.org/page/librarymanager/ldf.html
+- https://docs.platformio.org/page/librarymanager/ldf.html
+""")
+
+
+def init_test_readme(test_dir):
+    with open(join(test_dir, "README"), "w") as f:
+        f.write("""
+This directory is intended for PIO Unit Testing and project tests.
+
+Unit Testing is a software testing method by which individual units of
+source code, sets of one or more MCU program modules together with associated
+control data, usage procedures, and operating procedures, are tested to
+determine whether they are fit for use. Unit testing finds problems early
+in the development cycle.
+
+More information about PIO Unit Testing:
+- https://docs.platformio.org/page/plus/unit-testing.html
 """)
 
 
 def init_ci_conf(project_dir):
-    if isfile(join(project_dir, ".travis.yml")):
+    conf_path = join(project_dir, ".travis.yml")
+    if isfile(conf_path):
         return
-    with open(join(project_dir, ".travis.yml"), "w") as f:
+    with open(conf_path, "w") as f:
         f.write("""# Continuous Integration (CI) is the practice, in software
 # engineering, of merging all developer working copies with a shared mainline
-# several times a day < http://docs.platformio.org/page/ci/index.html >
+# several times a day < https://docs.platformio.org/page/ci/index.html >
 #
 # Documentation:
 #
@@ -213,13 +293,13 @@ def init_ci_conf(project_dir):
 #   < https://docs.travis-ci.com/user/integration/platformio/ >
 #
 # * PlatformIO integration with Travis CI
-#   < http://docs.platformio.org/page/ci/travis.html >
+#   < https://docs.platformio.org/page/ci/travis.html >
 #
 # * User Guide for `platformio ci` command
-#   < http://docs.platformio.org/page/userguide/cmd_ci.html >
+#   < https://docs.platformio.org/page/userguide/cmd_ci.html >
 #
 #
-# Please choice one of the following templates (proposed below) and uncomment
+# Please choose one of the following templates (proposed below) and uncomment
 # it (remove "# " before each line) or use own configuration according to the
 # Travis CI documentation (see above).
 #
@@ -247,7 +327,7 @@ def init_ci_conf(project_dir):
 
 
 #
-# Template #2: The project is intended to by used as a library with examples
+# Template #2: The project is intended to be used as a library with examples.
 #
 
 # language: python
@@ -274,23 +354,11 @@ def init_ci_conf(project_dir):
 
 
 def init_cvs_ignore(project_dir):
-    ignore_path = join(project_dir, ".gitignore")
-    default = [".pioenvs\n", ".piolibdeps\n"]
-    current = []
-    modified = False
-    if isfile(ignore_path):
-        with open(ignore_path) as fp:
-            current = fp.readlines()
-        if current and not current[-1].endswith("\n"):
-            current[-1] += "\n"
-    for d in default:
-        if d not in current:
-            modified = True
-            current.append(d)
-    if not modified:
+    conf_path = join(project_dir, ".gitignore")
+    if isfile(conf_path):
         return
-    with open(ignore_path, "w") as fp:
-        fp.writelines(current)
+    with open(conf_path, "w") as fp:
+        fp.writelines([".pio\n", ".pioenvs\n", ".piolibdeps\n"])
 
 
 def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,

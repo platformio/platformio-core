@@ -20,7 +20,7 @@ import click
 import requests
 
 from platformio import VERSION, __version__, exception, util
-from platformio.commands.home import shutdown_servers
+from platformio.managers.core import shutdown_piohome_servers
 
 
 @click.command(
@@ -36,7 +36,7 @@ def cli(dev):
     click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
 
     # kill all PIO Home servers, they block `pioplus` binary
-    shutdown_servers()
+    shutdown_piohome_servers()
 
     to_develop = dev or not all(c.isdigit() for c in __version__ if c != ".")
     cmds = (["pip", "install", "--upgrade",
@@ -63,7 +63,7 @@ def cli(dev):
             fg="green")
         click.echo("Release notes: ", nl=False)
         click.secho(
-            "http://docs.platformio.org/en/latest/history.html", fg="cyan")
+            "https://docs.platformio.org/en/latest/history.html", fg="cyan")
     except Exception as e:  # pylint: disable=broad-except
         if not r:
             raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
@@ -102,8 +102,9 @@ def get_pip_package(to_develop):
     pkg_name = os.path.join(cache_dir, "piocoredevelop.zip")
     try:
         with open(pkg_name, "w") as fp:
-            r = util.exec_command(
-                ["curl", "-fsSL", dl_url], stdout=fp, universal_newlines=True)
+            r = util.exec_command(["curl", "-fsSL", dl_url],
+                                  stdout=fp,
+                                  universal_newlines=True)
             assert r['returncode'] == 0
         # check ZIP structure
         with ZipFile(pkg_name) as zp:

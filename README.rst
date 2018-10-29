@@ -24,7 +24,7 @@ PlatformIO
 `PIO Plus <https://platformio.org/pricing?utm_source=github&utm_medium=core>`_ |
 `PlatformIO IDE <https://platformio.org/platformio-ide?utm_source=github&utm_medium=core>`_ |
 `Project Examples <https://github.com/platformio/platformio-examples/>`_ |
-`Docs <http://docs.platformio.org?utm_source=github&utm_medium=core>`_ |
+`Docs <https://docs.platformio.org?utm_source=github&utm_medium=core>`_ |
 `Donate <https://platformio.org/donate?utm_source=github&utm_medium=core>`_ |
 `Contact Us <https://platformio.org/contact?utm_source=github&utm_medium=core>`_
 
@@ -45,26 +45,26 @@ firmware updates.
 Get Started
 -----------
 
-* `What is PlatformIO? <http://docs.platformio.org/en/latest/what-is-platformio.html?utm_source=github&utm_medium=core>`_
+* `What is PlatformIO? <https://docs.platformio.org/en/latest/what-is-platformio.html?utm_source=github&utm_medium=core>`_
 
 Open Source
 -----------
 
 * `PlatformIO IDE <https://platformio.org/platformio-ide?utm_source=github&utm_medium=core>`_
-* `PlatformIO Core (CLI) <http://docs.platformio.org/en/latest/core.html?utm_source=github&utm_medium=core>`_
-* `Library Management <http://docs.platformio.org/page/librarymanager/index.html?utm_source=github&utm_medium=core>`_
+* `PlatformIO Core (CLI) <https://docs.platformio.org/en/latest/core.html?utm_source=github&utm_medium=core>`_
+* `Library Management <https://docs.platformio.org/page/librarymanager/index.html?utm_source=github&utm_medium=core>`_
 * `Project Examples <https://github.com/platformio/platformio-examples?utm_source=github&utm_medium=core>`_
-* `Desktop IDEs Integration <http://docs.platformio.org/page/ide.html?utm_source=github&utm_medium=core>`_
-* `Continuous Integration <http://docs.platformio.org/page/ci/index.html?utm_source=github&utm_medium=core>`_
-* `Advanced Scripting API <http://docs.platformio.org/page/projectconf/advanced_scripting.html?utm_source=github&utm_medium=core>`_
+* `Desktop IDEs Integration <https://docs.platformio.org/page/ide.html?utm_source=github&utm_medium=core>`_
+* `Continuous Integration <https://docs.platformio.org/page/ci/index.html?utm_source=github&utm_medium=core>`_
+* `Advanced Scripting API <https://docs.platformio.org/page/projectconf/advanced_scripting.html?utm_source=github&utm_medium=core>`_
 
 PIO Plus
 --------
 
-* `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html?utm_source=github&utm_medium=core>`_
-* `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html?utm_source=github&utm_medium=core>`_
-* `PIO Unit Testing <http://docs.platformio.org/en/latest/plus/unit-testing.html?utm_source=github&utm_medium=core>`_
-* `Cloud IDEs Integration <http://docs.platformio.org/en/latest/ide.html?utm_source=github&utm_medium=core#solution-pio-delivery>`_
+* `PIO Remote <https://docs.platformio.org/page/plus/pio-remote.html?utm_source=github&utm_medium=core>`_
+* `PIO Unified Debugger <https://docs.platformio.org/page/plus/debugging.html?utm_source=github&utm_medium=core>`_
+* `PIO Unit Testing <https://docs.platformio.org/en/latest/plus/unit-testing.html?utm_source=github&utm_medium=core>`_
+* `Cloud IDEs Integration <https://docs.platformio.org/en/latest/ide.html?utm_source=github&utm_medium=core#solution-pio-delivery>`_
 * `Integration Services <https://platformio.org/pricing?utm_source=github&utm_medium=core#enterprise-features>`_
 
 Registry
@@ -85,6 +85,7 @@ Development Platforms
 * `Freescale Kinetis <https://platformio.org/platforms/freescalekinetis?utm_source=github&utm_medium=core>`_
 * `Infineon XMC <https://platformio.org/platforms/infineonxmc?utm_source=github&utm_medium=core>`_
 * `Intel ARC32 <https://platformio.org/platforms/intel_arc32?utm_source=github&utm_medium=core>`_
+* `Intel MCS-51 (8051) <https://platformio.org/platforms/intel_mcs51?utm_source=github&utm_medium=core>`_
 * `Lattice iCE40 <https://platformio.org/platforms/lattice_ice40?utm_source=github&utm_medium=core>`_
 * `Maxim 32 <https://platformio.org/platforms/maxim32?utm_source=github&utm_medium=core>`_
 * `Microchip PIC32 <https://platformio.org/platforms/microchippic32?utm_source=github&utm_medium=core>`_

@@ -37,7 +37,7 @@ setup(
     license=__license__,
     python_requires='>=2.7, <3',
     install_requires=install_requires,
-    packages=find_packages(),
+    packages=find_packages() + ["scripts"],
     package_data={
         "platformio": [
             "projectconftpl.ini",
@@ -45,6 +45,9 @@ setup(
             "ide/tpls/*/*.tpl",
             "ide/tpls/*/*/*.tpl",
             "ide/tpls/*/.*/*.tpl"
+        ],
+        "scripts": [
+            "99-platformio-udev.rules"
         ]
     },
     entry_points={

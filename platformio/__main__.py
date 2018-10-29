@@ -107,8 +107,8 @@ def configure():
         try:
             click_echo_origin[origin](*args, **kwargs)
         except IOError:
-            (sys.stderr.write if kwargs.get("err") else
-             sys.stdout.write)("%s\n" % (args[0] if args else ""))
+            (sys.stderr.write if kwargs.get("err") else sys.stdout.write)(
+                "%s\n" % (args[0] if args else ""))
 
     click.echo = lambda *args, **kwargs: _safe_echo(0, *args, **kwargs)
     click.secho = lambda *args, **kwargs: _safe_echo(1, *args, **kwargs)
@@ -135,7 +135,7 @@ An unexpected error occurred. Further steps:
   `pip install -U platformio` command
 
 * Try to find answer in FAQ Troubleshooting section
-  http://docs.platformio.org/page/faq.html
+  https://docs.platformio.org/page/faq.html
 
 * Report this problem to the developers
   https://github.com/platformio/platformio-core/issues

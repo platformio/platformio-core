@@ -86,7 +86,7 @@ def cli(  # pylint: disable=too-many-arguments
         app.set_session_var("force_option", True)
         _clean_dir(build_dir)
 
-        for dir_name, patterns in dict(lib=lib, src=src).iteritems():
+        for dir_name, patterns in dict(lib=lib, src=src).items():
             if not patterns:
                 continue
             contents = []

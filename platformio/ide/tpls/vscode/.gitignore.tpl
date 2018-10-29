@@ -1,3 +1,4 @@
+.pio
 .pioenvs
 .piolibdeps
 .vscode/.browse.c_cpp.db*

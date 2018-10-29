@@ -108,7 +108,9 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
             results.append(result)
             if result[1] and "monitor" in ep.get_build_targets() and \
                     "nobuild" not in ep.get_build_targets():
-                ctx.invoke(cmd_device_monitor)
+                ctx.invoke(
+                    cmd_device_monitor,
+                    environment=environment[0] if environment else None)
 
         found_error = any(status is False for (_, status) in results)
 
@@ -210,10 +212,10 @@ class EnvironmentProcessor(object):
 
         if is_error or "piotest_processor" not in self.cmd_ctx.meta:
             print_header(
-                "[%s] Took %.2f seconds" %
-                ((click.style("ERROR", fg="red", bold=True)
-                  if is_error else click.style(
-                      "SUCCESS", fg="green", bold=True)), time() - start_time),
+                "[%s] Took %.2f seconds" % (
+                    (click.style("ERROR", fg="red", bold=True) if is_error else
+                     click.style("SUCCESS", fg="green", bold=True)),
+                    time() - start_time),
                 is_error=is_error)
 
         return not is_error
@@ -384,9 +386,8 @@ def print_summary(results, start_time):
 
     print_header(
         "[%s] Took %.2f seconds" % (
-            (click.style("SUCCESS", fg="green", bold=True)
-             if successed else click.style("ERROR", fg="red", bold=True)),
-            time() - start_time),
+            (click.style("SUCCESS", fg="green", bold=True) if successed else
+             click.style("ERROR", fg="red", bold=True)), time() - start_time),
         is_error=not successed)
 
 

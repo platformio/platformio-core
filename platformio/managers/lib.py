@@ -32,7 +32,7 @@ class LibraryManager(BasePkgManager):
     def __init__(self, package_dir=None):
         if not package_dir:
             package_dir = join(util.get_home_dir(), "lib")
-        BasePkgManager.__init__(self, package_dir)
+        super(LibraryManager, self).__init__(package_dir)
 
     @property
     def manifest_names(self):
@@ -237,9 +237,8 @@ class LibraryManager(BasePkgManager):
             if not isinstance(values, list):
                 values = [v.strip() for v in values.split(",") if v]
             for value in values:
-                query.append(
-                    '%s:"%s"' % (key[:-1]
-                                 if key.endswith("s") else key, value))
+                query.append('%s:"%s"' %
+                             (key[:-1] if key.endswith("s") else key, value))
 
         lib_info = None
         result = util.get_api_result(
@@ -337,13 +336,12 @@ class LibraryManager(BasePkgManager):
             force=False):
         _name, _requirements, _url = self.parse_pkg_uri(name, requirements)
         if not _url:
-            name = "id=%d" % self.search_lib_id(
-                {
-                    "name": _name,
-                    "requirements": _requirements
-                },
-                silent=silent,
-                interactive=interactive)
+            name = "id=%d" % self.search_lib_id({
+                "name": _name,
+                "requirements": _requirements
+            },
+                                                silent=silent,
+                                                interactive=interactive)
             requirements = _requirements
         pkg_dir = BasePkgManager.install(
             self,

@@ -32,13 +32,13 @@ from platformio.managers.lib import LibraryManager
     help="Do not update, only check for new version")
 @click.pass_context
 def cli(ctx, core_packages, only_check):
+    # cleanup lib search results, cached board and platform lists
+    app.clean_cache()
+
     update_core_packages(only_check)
 
     if core_packages:
         return
-
-    # cleanup lib search results, cached board and platform lists
-    app.clean_cache()
 
     click.echo()
     click.echo("Platform Manager")

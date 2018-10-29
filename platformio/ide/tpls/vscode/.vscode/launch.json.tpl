@@ -2,8 +2,8 @@
 
 // PIO Unified Debugger
 //
-// Documentation: http://docs.platformio.org/page/plus/debugging.html
-// Configuration: http://docs.platformio.org/page/projectconf/section_env_debug.html
+// Documentation: https://docs.platformio.org/page/plus/debugging.html
+// Configuration: https://docs.platformio.org/page/projectconf/section_env_debug.html
 
 % from os.path import dirname, join
 %
@@ -23,13 +23,16 @@
 % if svd_path:
             "svdPath": "{{ _escape_path(svd_path) }}",
 % end
-            "preLaunchTask": "PlatformIO: Pre-Debug",
+            "preLaunchTask": {
+                "type": "PlatformIO",
+                "task": "Pre-Debug"
+            },
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "type": "platformio-debug",
             "request": "launch",
-            "name": "PIO Debug (Skip Pre-Debug)",
+            "name": "PIO Debug (skip Pre-Debug)",
             "executable": "{{ _escape_path(prog_path) }}",
             "toolchainBinDir": "{{ _escape_path(dirname(gdb_path)) }}",
 % if svd_path:

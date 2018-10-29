@@ -274,13 +274,13 @@ def VerboseAction(_, act, actstr):
 
 def PioClean(env, clean_dir):
     if not isdir(clean_dir):
-        print "Build environment is clean"
+        print("Build environment is clean")
         env.Exit(0)
     for root, _, files in walk(clean_dir):
         for file_ in files:
             remove(join(root, file_))
-            print "Removed %s" % relpath(join(root, file_))
-    print "Done cleaning"
+            print("Removed %s" % relpath(join(root, file_)))
+    print("Done cleaning")
     util.rmtree_(clean_dir)
     env.Exit(0)
 
@@ -288,10 +288,14 @@ def PioClean(env, clean_dir):
 def ProcessDebug(env):
     if not env.subst("$PIODEBUGFLAGS"):
         env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb3"])
-    env.Append(PIODEBUGFLAGS=["-D__PLATFORMIO_DEBUG__"])
     env.Append(
-        BUILD_FLAGS=env.get("PIODEBUGFLAGS", []),
-        BUILD_UNFLAGS=["-Os", "-O0", "-O1", "-O2", "-O3"])
+        PIODEBUGFLAGS=["-D__PLATFORMIO_DEBUG__"],
+        BUILD_FLAGS=env.get("PIODEBUGFLAGS", []))
+    unflags = ["-Os"]
+    for level in [0, 1, 2]:
+        for flag in ("O", "g", "ggdb"):
+            unflags.append("-%s%d" % (flag, level))
+    env.Append(BUILD_UNFLAGS=unflags)
 
 
 def ProcessTest(env):

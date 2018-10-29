@@ -61,7 +61,7 @@ def test_global_install_archive(clirunner, validate_cliresult,
         "http://www.airspayce.com/mikem/arduino/RadioHead/RadioHead-1.62.zip",
         "https://github.com/bblanchon/ArduinoJson/archive/v5.8.2.zip",
         "https://github.com/bblanchon/ArduinoJson/archive/v5.8.2.zip@5.8.2",
-        "http://dl.platformio.org/libraries/archives/0/9540.tar.gz",
+        "SomeLib=http://dl.platformio.org/libraries/archives/0/9540.tar.gz",
         "https://github.com/Pedroalbuquerque/ESP32WebServer/archive/master.zip"
     ])
     validate_cliresult(result)
@@ -75,7 +75,7 @@ def test_global_install_archive(clirunner, validate_cliresult,
 
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
     items2 = [
-        "RadioHead-1.62", "ArduinoJson", "DallasTemperature_ID54",
+        "RadioHead-1.62", "ArduinoJson", "SomeLib_ID54",
         "OneWire_ID1", "ESP32WebServer"
     ]
     assert set(items1) >= set(items2)
@@ -158,7 +158,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
     items1 = [i['name'] for i in json.loads(result.output)]
     items2 = [
         "ESP32WebServer", "ArduinoJson", "ArduinoJson", "ArduinoJson",
-        "ArduinoJson", "AsyncMqttClient", "AsyncTCP", "DallasTemperature",
+        "ArduinoJson", "AsyncMqttClient", "AsyncTCP", "SomeLib",
         "ESPAsyncTCP", "NeoPixelBus", "OneWire", "PJON", "PJON",
         "PubSubClient", "RFcontrol", "RadioHead-1.62", "platformio-libmirror",
         "rs485-nodeproto"
@@ -202,7 +202,7 @@ def test_global_lib_update(clirunner, validate_cliresult):
     # update rest libraries
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
-    assert result.output.count("[Fixed]") == 6
+    assert result.output.count("[Detached]") == 6
     assert result.output.count("[Up-to-date]") == 11
     assert "Uninstalling RFcontrol @ 77d4eb3f8a" in result.output
 
@@ -234,7 +234,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
     items2 = [
         "RadioHead-1.62", "rs485-nodeproto", "platformio-libmirror",
         "PubSubClient", "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
-        "ESPAsyncTCP_ID305", "DallasTemperature_ID54", "NeoPixelBus_ID547",
+        "ESPAsyncTCP_ID305", "SomeLib_ID54", "NeoPixelBus_ID547",
         "PJON", "AsyncMqttClient_ID346", "ArduinoJson_ID64",
         "PJON@src-79de467ebe19de18287becff0a1fb42d", "ESP32WebServer"
     ]

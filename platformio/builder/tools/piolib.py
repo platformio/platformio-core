@@ -373,7 +373,7 @@ class LibBuilderBase(object):
                         if isfile("%s.%s" % (_f_part, ext)):
                             incs.append(
                                 self.env.File("%s.%s" % (_f_part, ext)))
-            # print path, map(lambda n: n.get_abspath(), incs)
+            # print(path, map(lambda n: n.get_abspath(), incs))
             for inc in incs:
                 if inc not in result:
                     result.append(inc)
@@ -808,7 +808,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
     if verbose and found_incompat:
         sys.stderr.write(
             "More details about \"Library Compatibility Mode\": "
-            "http://docs.platformio.org/page/librarymanager/ldf.html#"
+            "https://docs.platformio.org/page/librarymanager/ldf.html#"
             "ldf-compat-mode\n")
 
     DefaultEnvironment()['__PIO_LIB_BUILDERS'] = items
@@ -851,24 +851,24 @@ def ConfigureProjectLibBuilder(env):
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
 
-    print "Library Dependency Finder -> http://bit.ly/configure-pio-ldf"
-    print "LDF MODES: FINDER(%s) COMPATIBILITY(%s)" % (ldf_mode,
-                                                       project.lib_compat_mode)
+    print("Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
+    print("LDF MODES: FINDER(%s) COMPATIBILITY(%s)" %
+          (ldf_mode, project.lib_compat_mode))
 
     lib_builders = env.GetLibBuilders()
-    print "Collected %d compatible libraries" % len(lib_builders)
+    print("Collected %d compatible libraries" % len(lib_builders))
 
-    print "Scanning dependencies..."
+    print("Scanning dependencies...")
     project.search_deps_recursive()
 
     if ldf_mode.startswith("chain") and project.depbuilders:
         correct_found_libs(lib_builders)
 
     if project.depbuilders:
-        print "Dependency Graph"
+        print("Dependency Graph")
         print_deps_tree(project)
     else:
-        print "No dependencies"
+        print("No dependencies")
 
     return project
 

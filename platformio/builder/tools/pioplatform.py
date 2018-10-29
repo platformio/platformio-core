@@ -23,7 +23,7 @@ from SCons.Script import COMMAND_LINE_TARGETS
 from platformio import exception, util
 from platformio.managers.platform import PlatformFactory
 
-# pylint: disable=too-many-branches
+# pylint: disable=too-many-branches, too-many-locals
 
 
 @util.memoized()
@@ -122,8 +122,10 @@ def LoadPioPlatform(env, variables):
 
 
 def PrintConfiguration(env):
-    platform_data = ["PLATFORM: %s >" % env.PioPlatform().title]
+    platform = env.PioPlatform()
+    platform_data = ["PLATFORM: %s >" % platform.title]
     system_data = ["SYSTEM:"]
+    configuration_data = ["CONFIGURATION:"]
     mcu = env.subst("$BOARD_MCU")
     f_cpu = env.subst("$BOARD_F_CPU")
     if mcu:
@@ -142,11 +144,13 @@ def PrintConfiguration(env):
         flash = board_config.get("upload", {}).get("maximum_size")
         system_data.append("%s RAM (%s Flash)" % (util.format_filesize(ram),
                                                   util.format_filesize(flash)))
+        configuration_data.append(
+            "https://docs.platformio.org/page/boards/%s/%s.html" %
+            (platform.name, board_config.id))
 
-    if platform_data:
-        print " ".join(platform_data)
-    if system_data:
-        print " ".join(system_data)
+    for data in (configuration_data, platform_data, system_data):
+        if len(data) > 1:
+            print(" ".join(data))
 
     # Debugging
     if not debug_tools:
@@ -168,7 +172,7 @@ def PrintConfiguration(env):
     if external:
         data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
 
-    print "DEBUG: %s" % " ".join(data)
+    print("DEBUG: %s" % " ".join(data))
 
 
 def exists(_):

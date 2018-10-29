@@ -93,7 +93,7 @@ def BuildProgram(env):
     if not Util.case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 
-    if "__debug" in COMMAND_LINE_TARGETS:
+    if set(["__debug", "debug"]) & set(COMMAND_LINE_TARGETS):
         env.ProcessDebug()
 
     # process extra flags from board
@@ -141,10 +141,15 @@ def BuildProgram(env):
     return program
 
 
-def ParseFlagsExtended(env, flags):
-    if isinstance(flags, list):
-        flags = " ".join(flags)
-    result = env.ParseFlags(str(flags))
+def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
+    if not isinstance(flags, list):
+        flags = [flags]
+    result = {}
+    for raw in flags:
+        for key, value in env.ParseFlags(str(raw)).items():
+            if key not in result:
+                result[key] = []
+            result[key].extend(value)
 
     cppdefines = []
     for item in result['CPPDEFINES']:
@@ -319,6 +324,7 @@ def BuildFrameworks(env, frameworks):
 
 
 def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
+    env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
     return env.StaticLibrary(
         env.subst(variant_dir),
         env.CollectBuildFiles(variant_dir, src_dir, src_filter))

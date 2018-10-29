@@ -178,7 +178,7 @@ class InternetIsOffline(PlatformioException):
     MESSAGE = (
         "You are not connected to the Internet.\n"
         "If you build a project first time, we need Internet connection "
-        "to install all dependencies and toolchain.")
+        "to install all dependencies and toolchains.")
 
 
 class LibNotFound(PlatformioException):
@@ -235,13 +235,32 @@ class CIBuildEnvsEmpty(PlatformioException):
                "predefined environments using `--project-conf` option")
 
 
+class InvalidUdevRules(PlatformioException):
+    pass
+
+
+class MissedUdevRules(InvalidUdevRules):
+
+    MESSAGE = (
+        "Warning! Please install `99-platformio-udev.rules`. \nMode details: "
+        "https://docs.platformio.org/en/latest/faq.html#platformio-udev-rules")
+
+
+class OutdatedUdevRules(InvalidUdevRules):
+
+    MESSAGE = (
+        "Warning! Your `{0}` are outdated. Please update or reinstall them."
+        "\n Mode details: https://docs.platformio.org"
+        "/en/latest/faq.html#platformio-udev-rules")
+
+
 class UpgradeError(PlatformioException):
 
     MESSAGE = """{0}
 
 * Upgrade using `pip install -U platformio`
 * Try different installation/upgrading steps:
-  http://docs.platformio.org/page/installation.html
+  https://docs.platformio.org/page/installation.html
 """
 
 
@@ -265,7 +284,7 @@ class DebugSupportError(PlatformioException):
 
     MESSAGE = ("Currently, PlatformIO does not support debugging for `{0}`.\n"
                "Please contact support@pioplus.com or visit "
-               "< http://docs.platformio.org/page/plus/debugging.html >")
+               "< https://docs.platformio.org/page/plus/debugging.html >")
 
 
 class DebugInvalidOptions(PlatformioException):

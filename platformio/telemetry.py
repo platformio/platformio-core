@@ -61,7 +61,7 @@ class MeasurementProtocol(TelemetryBase):
     }
 
     def __init__(self):
-        TelemetryBase.__init__(self)
+        super(MeasurementProtocol, self).__init__()
         self['v'] = 1
         self['tid'] = self.TID
         self['cid'] = app.get_cid()
@@ -112,8 +112,8 @@ class MeasurementProtocol(TelemetryBase):
         self['cd2'] = "Python/%s %s" % (platform.python_version(),
                                         platform.platform())
         # self['cd3'] = " ".join(_filter_args(sys.argv[1:]))
-        self['cd4'] = 1 if (not util.is_ci()
-                            and (caller_id or not util.is_container())) else 0
+        self['cd4'] = 1 if (not util.is_ci() and
+                            (caller_id or not util.is_container())) else 0
         if caller_id:
             self['cd5'] = caller_id.lower()
 
@@ -291,7 +291,7 @@ def measure_ci():
         }
     }
 
-    for key, value in envmap.iteritems():
+    for key, value in envmap.items():
         if getenv(key, "").lower() != "true":
             continue
         event.update({"action": key, "label": value['label']})

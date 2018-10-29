@@ -127,22 +127,8 @@ class ProjectGenerator(object):
 
     @staticmethod
     def _merge_contents(dst_path, contents):
-        file_name = basename(dst_path)
-
-        # merge .gitignore
-        if file_name == ".gitignore" and isfile(dst_path):
-            modified = False
-            default = [l.strip() for l in contents.split("\n")]
-            with open(dst_path) as fp:
-                current = [l.strip() for l in fp.readlines()]
-            for d in default:
-                if d and d not in current:
-                    modified = True
-                    current.append(d)
-            if not modified:
-                return
-            contents = "\n".join(current) + "\n"
-
+        if basename(dst_path) == ".gitignore" and isfile(dst_path):
+            return
         with open(dst_path, "w") as f:
             f.write(contents)
 

@@ -273,8 +273,8 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
             if item['type']:
                 click.echo("Type: %s" % item['type'])
             click.echo("Requirements: %s" % item['requirements'])
-            click.echo("Installed: %s" % ("Yes" if item.get("version") else
-                                          "No (optional)"))
+            click.echo("Installed: %s" %
+                       ("Yes" if item.get("version") else "No (optional)"))
             if "version" in item:
                 click.echo("Version: %s" % item['version'])
             if "originalVersion" in item:
@@ -365,8 +365,8 @@ def platform_update(platforms, only_packages, only_check, json_output):
             if not pkg_dir:
                 continue
             latest = pm.outdated(pkg_dir, requirements)
-            if (not latest and not PlatformFactory.newPlatform(pkg_dir)
-                    .are_outdated_packages()):
+            if (not latest and not PlatformFactory.newPlatform(pkg_dir).
+                    are_outdated_packages()):
                 continue
             data = _get_installed_platform_data(
                 pkg_dir, with_boards=False, expose_packages=False)

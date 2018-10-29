@@ -16,6 +16,9 @@ import os
 import subprocess
 import sys
 from os.path import dirname, join
+from time import sleep
+
+import requests
 
 from platformio import __version__, exception, util
 from platformio.managers.package import PackageManager
@@ -23,7 +26,7 @@ from platformio.managers.package import PackageManager
 CORE_PACKAGES = {
     "contrib-piohome": "^1.0.2",
     "contrib-pysite": ">=0.3.2,<2",
-    "tool-pioplus": "^1.4.5",
+    "tool-pioplus": "^1.5.0",
     "tool-unity": "~1.20403.0",
     "tool-scons": "~2.20501.4"
 }
@@ -36,11 +39,12 @@ PIOPLUS_AUTO_UPDATES_MAX = 100
 class CorePackageManager(PackageManager):
 
     def __init__(self):
-        PackageManager.__init__(self, join(util.get_home_dir(), "packages"), [
-            "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-            "http%s://dl.platformio.org/packages/manifest.json" %
-            ("" if sys.version_info < (2, 7, 9) else "s")
-        ])
+        super(CorePackageManager, self).__init__(
+            join(util.get_home_dir(), "packages"), [
+                "https://dl.bintray.com/platformio/dl-packages/manifest.json",
+                "http%s://dl.platformio.org/packages/manifest.json" %
+                ("" if sys.version_info < (2, 7, 9) else "s")
+            ])
 
     def install(  # pylint: disable=keyword-arg-before-vararg
             self,
@@ -92,8 +96,22 @@ def update_core_packages(only_check=False, silent=False):
         if not pkg_dir:
             continue
         if not silent or pm.outdated(pkg_dir, requirements):
+            if name == "tool-pioplus" and not only_check:
+                shutdown_piohome_servers()
+                if "windows" in util.get_systype():
+                    sleep(1)
             pm.update(name, requirements, only_check=only_check)
     return True
+
+
+def shutdown_piohome_servers():
+    port = 8010
+    while port < 9000:
+        try:
+            requests.get("http://127.0.0.1:%d?__shutdown__=1" % port)
+            port += 1
+        except:  # pylint: disable=bare-except
+            return
 
 
 def pioplus_call(args, **kwargs):
