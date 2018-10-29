@@ -822,7 +822,7 @@ Boards
     # Debug tools
     for tool, platforms in tool_to_platforms.items():
         tool_path = join(DOCS_ROOT_DIR, "plus", "debug-tools", "%s.rst" % tool)
-        assert isfile(tool_path)
+        assert isfile(tool_path), tool
         platforms = sorted(set(platforms))
 
         lines = [".. begin_platforms"]
