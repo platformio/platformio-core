@@ -87,6 +87,7 @@ def cli(
         click.echo("%s - Project Configuration File" % click.style(
             "platformio.ini", fg="cyan"))
 
+    is_new_project = util.is_platformio_project(project_dir)
     init_base_project(project_dir)
 
     if board:
@@ -100,18 +101,18 @@ def cli(
         pg = ProjectGenerator(project_dir, ide, env_name)
         pg.generate()
 
-    init_ci_conf(project_dir)
-    init_cvs_ignore(project_dir)
+    if is_new_project:
+        init_ci_conf(project_dir)
+        init_cvs_ignore(project_dir)
 
     if silent:
         return
 
-    project_inited_before = util.is_platformio_project(project_dir)
     if ide:
         click.secho(
             "\nProject has been successfully %s including configuration files "
-            "for `%s` IDE." %
-            ("updated" if project_inited_before else "initialized", ide),
+            "for `%s` IDE." % ("initialized" if is_new_project else "updated",
+                               ide),
             fg="green")
     else:
         click.secho(
@@ -121,7 +122,7 @@ def cli(
             "- upload firmware to a target\n"
             "`pio run --target clean` - clean project (remove compiled files)"
             "\n`pio run --help` - additional information" %
-            ("updated" if project_inited_before else "initialized"),
+            ("initialized" if is_new_project else "updated"),
             fg="green")
 
 
