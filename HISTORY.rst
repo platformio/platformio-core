@@ -4,6 +4,11 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.6.2 (2018-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed incorrect wording when initializing/updating project
+
 3.6.1 (2018-10-29)
 ~~~~~~~~~~~~~~~~~~
 

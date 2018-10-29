@@ -87,7 +87,7 @@ def cli(
         click.echo("%s - Project Configuration File" % click.style(
             "platformio.ini", fg="cyan"))
 
-    is_new_project = util.is_platformio_project(project_dir)
+    is_new_project = not util.is_platformio_project(project_dir)
     init_base_project(project_dir)
 
     if board:
