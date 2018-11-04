@@ -124,15 +124,15 @@ def LoadPioPlatform(env, variables):
 def PrintConfiguration(env):
     platform = env.PioPlatform()
     platform_data = ["PLATFORM: %s >" % platform.title]
-    system_data = ["SYSTEM:"]
+    hardware_data = ["HARDWARE:"]
     configuration_data = ["CONFIGURATION:"]
     mcu = env.subst("$BOARD_MCU")
     f_cpu = env.subst("$BOARD_F_CPU")
     if mcu:
-        system_data.append(mcu.upper())
+        hardware_data.append(mcu.upper())
     if f_cpu:
         f_cpu = int("".join([c for c in str(f_cpu) if c.isdigit()]))
-        system_data.append("%dMHz" % (f_cpu / 1000000))
+        hardware_data.append("%dMHz" % (f_cpu / 1000000))
 
     debug_tools = None
     if "BOARD" in env:
@@ -142,13 +142,14 @@ def PrintConfiguration(env):
         debug_tools = board_config.get("debug", {}).get("tools")
         ram = board_config.get("upload", {}).get("maximum_ram_size")
         flash = board_config.get("upload", {}).get("maximum_size")
-        system_data.append("%s RAM (%s Flash)" % (util.format_filesize(ram),
-                                                  util.format_filesize(flash)))
+        hardware_data.append(
+            "%s RAM (%s Flash)" % (util.format_filesize(ram),
+                                   util.format_filesize(flash)))
         configuration_data.append(
             "https://docs.platformio.org/page/boards/%s/%s.html" %
             (platform.name, board_config.id))
 
-    for data in (configuration_data, platform_data, system_data):
+    for data in (configuration_data, platform_data, hardware_data):
         if len(data) > 1:
             print(" ".join(data))
 

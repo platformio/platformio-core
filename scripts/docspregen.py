@@ -628,8 +628,8 @@ def update_embedded_board(rst_path, board):
     lines.append("""
 .. contents::
 
-System
-------
+Hardware
+--------
 
 Platform :ref:`platform_{platform}`: {platform_description}
 
