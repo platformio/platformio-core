@@ -9,6 +9,8 @@ PlatformIO 3.0
 
 * Fixed an issue with VSCode IntelliSense warning about the missed headers located in `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__ folder
 * Fixed incorrect wording when initializing/updating project
+* Fixed an issue with incorrect order for library dependencies ``CPPPATH``
+  (`issue #1914 <https://github.com/platformio/platformio-core/issues/1914>`_)
 
 3.6.1 (2018-10-29)
 ~~~~~~~~~~~~~~~~~~

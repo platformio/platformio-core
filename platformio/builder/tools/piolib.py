@@ -432,23 +432,23 @@ class LibBuilderBase(object):
             libs.extend(lb.build())
             # copy shared information to self env
             for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
-                self.env.AppendUnique(**{key: lb.env.get(key)})
+                self.env.PrependUnique(**{key: lb.env.get(key)})
 
         for lb in self._circular_deps:
-            self.env.AppendUnique(CPPPATH=lb.get_include_dirs())
+            self.env.PrependUnique(CPPPATH=lb.get_include_dirs())
 
         if self._is_built:
             return libs
         self._is_built = True
 
-        self.env.AppendUnique(CPPPATH=self.get_include_dirs())
+        self.env.PrependUnique(CPPPATH=self.get_include_dirs())
 
         if self.lib_ldf_mode == "off":
             for lb in self.env.GetLibBuilders():
                 if self == lb or not lb.is_built:
                     continue
                 for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
-                    self.env.AppendUnique(**{key: lb.env.get(key)})
+                    self.env.PrependUnique(**{key: lb.env.get(key)})
 
         if self.lib_archive:
             libs.append(
@@ -743,7 +743,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     def build(self):
         self._is_built = True  # do not build Project now
-        self.env.AppendUnique(CPPPATH=self.get_include_dirs())
+        self.env.PrependUnique(CPPPATH=self.get_include_dirs())
         return LibBuilderBase.build(self)
 
 
