@@ -663,6 +663,12 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
 class ProjectAsLibBuilder(LibBuilderBase):
 
+    def __init__(self, env, path, manifest=None, verbose=False):
+        # backup original value, will be reset in base.__init__
+        project_src_filter = env.get("SRC_FILTER")
+        super(ProjectAsLibBuilder, self).__init__(env, path)
+        self.env['SRC_FILTER'] = project_src_filter
+
     @property
     def include_dir(self):
         include_dir = self.env.subst("$PROJECTINCLUDE_DIR")
@@ -701,7 +707,8 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
     def src_filter(self):
-        return self.env.get("SRC_FILTER", LibBuilderBase.src_filter.fget(self))
+        return (self.env.get("SRC_FILTER")
+                or LibBuilderBase.src_filter.fget(self))
 
     def process_extra_options(self):
         # skip for project, options are already processed
