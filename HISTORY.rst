@@ -13,6 +13,8 @@ PlatformIO 3.0
   (`issue #1914 <https://github.com/platformio/platformio-core/issues/1914>`_)
 * Fixed an issue when Library Dependency Finder (LDF) does not handle project `src_filter <http://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__
   (`issue #1905 <https://github.com/platformio/platformio-core/issues/1905>`_)
+* Fixed an issue when Library Dependency Finder (LDF) finds spurious dependencies in ``chain+`` and ``deep+`` modes
+  (`issue #1930 <https://github.com/platformio/platformio-core/issues/1930>`_)
 
 3.6.1 (2018-10-29)
 ~~~~~~~~~~~~~~~~~~
