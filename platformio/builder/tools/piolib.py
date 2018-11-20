@@ -347,7 +347,7 @@ class LibBuilderBase(object):
         for path in self._validate_search_files(search_files):
             try:
                 assert "+" in self.lib_ldf_mode
-                incs = LibBuilderBase.CCONDITIONAL_SCANNER(
+                candidates = LibBuilderBase.CCONDITIONAL_SCANNER(
                     self.env.File(path),
                     self.env,
                     tuple(include_dirs),
@@ -357,26 +357,26 @@ class LibBuilderBase(object):
                     sys.stderr.write(
                         "Warning! Classic Pre Processor is used for `%s`, "
                         "advanced has failed with `%s`\n" % (path, e))
-                _incs = LibBuilderBase.CLASSIC_SCANNER(
+                candidates = LibBuilderBase.CLASSIC_SCANNER(
                     self.env.File(path), self.env, tuple(include_dirs))
-                incs = []
-                for inc in _incs:
-                    incs.append(inc)
-                    if not self.PARSE_SRC_BY_H_NAME:
+
+            # print(path, map(lambda n: n.get_abspath(), candidates))
+            for item in candidates:
+                if item not in result:
+                    result.append(item)
+                if not self.PARSE_SRC_BY_H_NAME:
+                    continue
+                _h_path = item.get_abspath()
+                if not self.env.IsFileWithExt(_h_path, piotool.SRC_HEADER_EXT):
+                    continue
+                _f_part = _h_path[:_h_path.rindex(".")]
+                for ext in piotool.SRC_C_EXT:
+                    if not isfile("%s.%s" % (_f_part, ext)):
                         continue
-                    _h_path = inc.get_abspath()
-                    if not self.env.IsFileWithExt(_h_path,
-                                                  piotool.SRC_HEADER_EXT):
-                        continue
-                    _f_part = _h_path[:_h_path.rindex(".")]
-                    for ext in piotool.SRC_C_EXT:
-                        if isfile("%s.%s" % (_f_part, ext)):
-                            incs.append(
-                                self.env.File("%s.%s" % (_f_part, ext)))
-            # print(path, map(lambda n: n.get_abspath(), incs))
-            for inc in incs:
-                if inc not in result:
-                    result.append(inc)
+                    _c_path = self.env.File("%s.%s" % (_f_part, ext))
+                    if _c_path not in result:
+                        result.append(_c_path)
+
         return result
 
     def depend_recursive(self, lb, search_files=None):
