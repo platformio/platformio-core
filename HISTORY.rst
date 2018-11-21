@@ -7,6 +7,7 @@ PlatformIO 3.0
 3.6.2 (2018-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Improved IntelliSense for `PlatformIO IDE for VSCode <http://docs.platformio.org/page/ide/vscode.html>`__ via passing extra compiler information for C/C++ Code Parser (resolves issues with spurious project's "Problems")
 * Fixed an issue with VSCode IntelliSense warning about the missed headers located in `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__ folder
 * Fixed incorrect wording when initializing/updating project
 * Fixed an issue with incorrect order for library dependencies ``CPPPATH``

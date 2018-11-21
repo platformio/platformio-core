@@ -134,8 +134,8 @@ def _get_svd_path(env):
 
 
 def DumpIDEData(env):
-    LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
-    LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
+    LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS"
+    LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS"
 
     data = {
         "libsource_dirs":

@@ -56,7 +56,7 @@
 % if cxx_stds:
             "cppStandard": "c++{{ cxx_stds[-1] }}",
 % end
-            "compilerPath": "{{ cc_path.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"') }}"
+            "compilerPath": "{{ cc_path.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"') }} {{! STD_RE.sub("", cc_flags).replace('"', '\\"') }}"
         }
     ]
 }
