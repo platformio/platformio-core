@@ -7,10 +7,14 @@
 %
 % systype = platform.system().lower()
 %
+% def _escape(text):
+%   return text.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')
+% end
+%
 % cleaned_includes = []
 % for include in includes:
 %   if "toolchain-" not in dirname(commonprefix([include, cc_path])):
-%       cleaned_includes.append(include)
+%     cleaned_includes.append(include)
 %   end
 % end
 %
@@ -24,7 +28,7 @@
 % end
             "includePath": [
 % for include in cleaned_includes:
-                "{{include.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')}}",
+                "{{! _escape(include) }}",
 % end
                 ""
             ],
@@ -33,14 +37,14 @@
                 "databaseFilename": "${workspaceRoot}/.vscode/.browse.c_cpp.db",
                 "path": [
 % for include in cleaned_includes:
-                    "{{include.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')}}",
+                    "{{! _escape(include) }}}",
 % end
                     ""
                 ]
             },
             "defines": [
 % for define in defines:
-                "{{!define.replace('"', '\\"')}}",
+                "{{! _escape(define) }}",
 % end
                 ""
             ],
@@ -56,7 +60,7 @@
 % if cxx_stds:
             "cppStandard": "c++{{ cxx_stds[-1] }}",
 % end
-            "compilerPath": "{{ cc_path.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"') }} {{! STD_RE.sub("", cc_flags).replace('"', '\\"') }}"
+            "compilerPath": "{{! _escape(cc_path) }} {{! _escape(STD_RE.sub("", cc_flags)) }}"
         }
     ]
 }
