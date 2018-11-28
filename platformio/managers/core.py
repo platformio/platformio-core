@@ -26,7 +26,7 @@ from platformio.managers.package import PackageManager
 CORE_PACKAGES = {
     "contrib-piohome": "^2.0.0",
     "contrib-pysite": "^2.%d%d.0" % (sys.version_info[0], sys.version_info[1]),
-    "tool-pioplus": "^1.5.0",
+    "tool-pioplus": "^2.0.0",
     "tool-unity": "~1.20403.0",
     "tool-scons": "~2.20501.7"
 }
