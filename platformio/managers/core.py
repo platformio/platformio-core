@@ -24,8 +24,8 @@ from platformio import __version__, exception, util
 from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
-    "contrib-piohome": "^1.0.2",
-    "contrib-pysite": ">=0.3.2,<2",
+    "contrib-piohome": "^2.0.0",
+    "contrib-pysite": "^2.%d%d.0" % (sys.version_info[0], sys.version_info[1]),
     "tool-pioplus": "^1.5.0",
     "tool-unity": "~1.20403.0",
     "tool-scons": "~2.20501.7"
