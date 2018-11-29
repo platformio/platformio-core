@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.6.2 (2018-??-??)
+3.6.2 (2018-11-29)
 ~~~~~~~~~~~~~~~~~~
 
 * Improved IntelliSense for `PlatformIO IDE for VSCode <http://docs.platformio.org/page/ide/vscode.html>`__ via passing extra compiler information for C/C++ Code Parser (resolves issues with spurious project's "Problems")
