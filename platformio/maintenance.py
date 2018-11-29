@@ -66,11 +66,13 @@ def on_platformio_exception(e):
 
 def in_silence(ctx=None):
     ctx = ctx or app.get_session_var("command_ctx")
-    assert ctx
-    ctx_args = ctx.args or []
-    return ctx_args and any([
-        ctx.args[0] == "upgrade", "--json-output" in ctx_args,
-        "--version" in ctx_args
+    if not ctx:
+        return True
+    return ctx.args and any([
+        ctx.args[0] == "debug" and "--interpreter" in " ".join(ctx.args),
+        ctx.args[0] == "upgrade",
+        "--json-output" in ctx.args,
+        "--version" in ctx.args
     ])
 
 
