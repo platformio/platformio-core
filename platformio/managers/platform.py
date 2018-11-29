@@ -460,8 +460,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         self._manifest = util.load_json(manifest_path)
 
         self.pm = PackageManager(
-            join(util.get_home_dir(), "packages"),
-            self._manifest.get("packageRepositories"))
+            join(util.get_home_dir(), "packages"), self.package_repositories)
 
         self.silent = False
         self.verbose = False
@@ -515,6 +514,10 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
     @property
     def engines(self):
         return self._manifest.get("engines")
+
+    @property
+    def package_repositories(self):
+        return self._manifest.get("packageRepositories")
 
     @property
     def manifest(self):
