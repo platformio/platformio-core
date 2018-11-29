@@ -25,7 +25,7 @@ from platformio.managers.core import get_core_package_dir
 
 
 def _dump_includes(env):
-    includes = [env.subst("$PROJECTINCLUDE_DIR"), env.subst("$PROJECTSRC_DIR")]
+    includes = []
 
     for item in env.get("CPPPATH", []):
         includes.append(env.subst(item))
@@ -52,6 +52,10 @@ def _dump_includes(env):
     unity_dir = get_core_package_dir("tool-unity")
     if unity_dir:
         includes.append(unity_dir)
+
+    includes.extend(
+        [env.subst("$PROJECTINCLUDE_DIR"),
+         env.subst("$PROJECTSRC_DIR")])
 
     # remove duplicates
     result = []
@@ -130,8 +134,8 @@ def _get_svd_path(env):
 
 
 def DumpIDEData(env):
-    LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
-    LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS"
+    LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS"
+    LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS"
 
     data = {
         "libsource_dirs":

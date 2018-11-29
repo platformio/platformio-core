@@ -347,7 +347,7 @@ class LibBuilderBase(object):
         for path in self._validate_search_files(search_files):
             try:
                 assert "+" in self.lib_ldf_mode
-                incs = LibBuilderBase.CCONDITIONAL_SCANNER(
+                candidates = LibBuilderBase.CCONDITIONAL_SCANNER(
                     self.env.File(path),
                     self.env,
                     tuple(include_dirs),
@@ -357,26 +357,26 @@ class LibBuilderBase(object):
                     sys.stderr.write(
                         "Warning! Classic Pre Processor is used for `%s`, "
                         "advanced has failed with `%s`\n" % (path, e))
-                _incs = LibBuilderBase.CLASSIC_SCANNER(
+                candidates = LibBuilderBase.CLASSIC_SCANNER(
                     self.env.File(path), self.env, tuple(include_dirs))
-                incs = []
-                for inc in _incs:
-                    incs.append(inc)
-                    if not self.PARSE_SRC_BY_H_NAME:
+
+            # print(path, map(lambda n: n.get_abspath(), candidates))
+            for item in candidates:
+                if item not in result:
+                    result.append(item)
+                if not self.PARSE_SRC_BY_H_NAME:
+                    continue
+                _h_path = item.get_abspath()
+                if not self.env.IsFileWithExt(_h_path, piotool.SRC_HEADER_EXT):
+                    continue
+                _f_part = _h_path[:_h_path.rindex(".")]
+                for ext in piotool.SRC_C_EXT:
+                    if not isfile("%s.%s" % (_f_part, ext)):
                         continue
-                    _h_path = inc.get_abspath()
-                    if not self.env.IsFileWithExt(_h_path,
-                                                  piotool.SRC_HEADER_EXT):
-                        continue
-                    _f_part = _h_path[:_h_path.rindex(".")]
-                    for ext in piotool.SRC_C_EXT:
-                        if isfile("%s.%s" % (_f_part, ext)):
-                            incs.append(
-                                self.env.File("%s.%s" % (_f_part, ext)))
-            # print(path, map(lambda n: n.get_abspath(), incs))
-            for inc in incs:
-                if inc not in result:
-                    result.append(inc)
+                    _c_path = self.env.File("%s.%s" % (_f_part, ext))
+                    if _c_path not in result:
+                        result.append(_c_path)
+
         return result
 
     def depend_recursive(self, lb, search_files=None):
@@ -432,23 +432,23 @@ class LibBuilderBase(object):
             libs.extend(lb.build())
             # copy shared information to self env
             for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
-                self.env.AppendUnique(**{key: lb.env.get(key)})
+                self.env.PrependUnique(**{key: lb.env.get(key)})
 
         for lb in self._circular_deps:
-            self.env.AppendUnique(CPPPATH=lb.get_include_dirs())
+            self.env.PrependUnique(CPPPATH=lb.get_include_dirs())
 
         if self._is_built:
             return libs
         self._is_built = True
 
-        self.env.AppendUnique(CPPPATH=self.get_include_dirs())
+        self.env.PrependUnique(CPPPATH=self.get_include_dirs())
 
         if self.lib_ldf_mode == "off":
             for lb in self.env.GetLibBuilders():
                 if self == lb or not lb.is_built:
                     continue
                 for key in ("CPPPATH", "LIBPATH", "LIBS", "LINKFLAGS"):
-                    self.env.AppendUnique(**{key: lb.env.get(key)})
+                    self.env.PrependUnique(**{key: lb.env.get(key)})
 
         if self.lib_archive:
             libs.append(
@@ -663,6 +663,12 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
 class ProjectAsLibBuilder(LibBuilderBase):
 
+    def __init__(self, env, *args, **kwargs):
+        # backup original value, will be reset in base.__init__
+        project_src_filter = env.get("SRC_FILTER")
+        super(ProjectAsLibBuilder, self).__init__(env, *args, **kwargs)
+        self.env['SRC_FILTER'] = project_src_filter
+
     @property
     def include_dir(self):
         include_dir = self.env.subst("$PROJECTINCLUDE_DIR")
@@ -701,7 +707,8 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
     def src_filter(self):
-        return self.env.get("SRC_FILTER", LibBuilderBase.src_filter.fget(self))
+        return (self.env.get("SRC_FILTER")
+                or LibBuilderBase.src_filter.fget(self))
 
     def process_extra_options(self):
         # skip for project, options are already processed
@@ -743,7 +750,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     def build(self):
         self._is_built = True  # do not build Project now
-        self.env.AppendUnique(CPPPATH=self.get_include_dirs())
+        self.env.PrependUnique(CPPPATH=self.get_include_dirs())
         return LibBuilderBase.build(self)
 
 

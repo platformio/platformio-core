@@ -4,6 +4,19 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.6.2 (2018-11-29)
+~~~~~~~~~~~~~~~~~~
+
+* Improved IntelliSense for `PlatformIO IDE for VSCode <http://docs.platformio.org/page/ide/vscode.html>`__ via passing extra compiler information for C/C++ Code Parser (resolves issues with spurious project's "Problems")
+* Fixed an issue with VSCode IntelliSense warning about the missed headers located in `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__ folder
+* Fixed incorrect wording when initializing/updating project
+* Fixed an issue with incorrect order for library dependencies ``CPPPATH``
+  (`issue #1914 <https://github.com/platformio/platformio-core/issues/1914>`_)
+* Fixed an issue when Library Dependency Finder (LDF) does not handle project `src_filter <http://docs.platformio.org/page/projectconf/section_env_build.html#src-filter>`__
+  (`issue #1905 <https://github.com/platformio/platformio-core/issues/1905>`_)
+* Fixed an issue when Library Dependency Finder (LDF) finds spurious dependencies in ``chain+`` and ``deep+`` modes
+  (`issue #1930 <https://github.com/platformio/platformio-core/issues/1930>`_)
+
 3.6.1 (2018-10-29)
 ~~~~~~~~~~~~~~~~~~
 

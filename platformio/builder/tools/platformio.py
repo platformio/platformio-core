@@ -44,10 +44,10 @@ def scons_patched_match_splitext(path, suffixes=None):
 def _build_project_deps(env):
     project_lib_builder = env.ConfigureProjectLibBuilder()
 
-    # append project libs to the beginning of list
+    # prepend project libs to the beginning of list
     env.Prepend(LIBS=project_lib_builder.build())
-    # append extra linker related options from libs
-    env.AppendUnique(
+    # prepend extra linker related options from libs
+    env.PrependUnique(
         **{
             key: project_lib_builder.env.get(key)
             for key in ("LIBS", "LIBPATH", "LINKFLAGS")
