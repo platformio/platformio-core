@@ -70,8 +70,7 @@ def in_silence(ctx=None):
         return True
     return ctx.args and any([
         ctx.args[0] == "debug" and "--interpreter" in " ".join(ctx.args),
-        ctx.args[0] == "upgrade",
-        "--json-output" in ctx.args,
+        ctx.args[0] == "upgrade", "--json-output" in ctx.args,
         "--version" in ctx.args
     ])
 
