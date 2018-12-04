@@ -122,7 +122,7 @@ class State(object):
             raise exception.HomeDirPermissionsError(dirname(self.path))
 
     def _unlock_state_file(self):
-        if self._lockfile:
+        if hasattr(self, "_lockfile") and self._lockfile:
             self._lockfile.release()
 
     def __del__(self):
