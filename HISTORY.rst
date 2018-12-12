@@ -7,6 +7,7 @@ PlatformIO 3.0
 3.6.3 (2018-12-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Ignore *.asm and *.ASM files when building Arduino-based library (compatibility with Arduino builder)
 * Fixed spurious project's "Problems" for `PlatformIO IDE for VSCode <http://docs.platformio.org/page/ide/vscode.html>`__ when ARM mbed framework is used
 
 3.6.2 (2018-11-29)
