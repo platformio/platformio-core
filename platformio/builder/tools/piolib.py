@@ -488,11 +488,29 @@ class ArduinoLibBuilder(LibBuilderBase):
 
     @property
     def src_filter(self):
-        if isdir(join(self.path, "src")):
-            return LibBuilderBase.src_filter.fget(self)
+        src_dir = join(self.path, "src")
+        if isdir(src_dir):
+            src_filter = LibBuilderBase.src_filter.fget(self)
+            for root, _, files in os.walk(src_dir, followlinks=True):
+                found = False
+                for fname in files:
+                    if fname.lower().endswith("asm"):
+                        found = True
+                        break
+                if not found:
+                    continue
+                rel_path = root.replace(src_dir, "")
+                if rel_path.startswith(sep):
+                    rel_path = rel_path[1:] + sep
+                src_filter.append("-<%s*.[aA][sS][mM]>" % rel_path)
+            return src_filter
+
         src_filter = []
         is_utility = isdir(join(self.path, "utility"))
         for ext in piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT:
+            # arduino ide ignores files with .asm or .ASM extensions
+            if ext.lower() == "asm":
+                continue
             src_filter.append("+<*.%s>" % ext)
             if is_utility:
                 src_filter.append("+<utility%s*.%s>" % (sep, ext))

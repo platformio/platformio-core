@@ -54,13 +54,16 @@
 % cc_stds = STD_RE.findall(cc_flags)
 % cxx_stds = STD_RE.findall(cxx_flags)
 %
+% # pass only architecture specific flags
+% cc_m_flags = " ".join([f.strip() for f in cc_flags.split(" ") if f.strip().startswith("-m")])
+%
 % if cc_stds:
             "cStandard": "c{{ cc_stds[-1] }}",
 % end
 % if cxx_stds:
             "cppStandard": "c++{{ cxx_stds[-1] }}",
 % end
-            "compilerPath": "{{! _escape(cc_path) }} {{! _escape(STD_RE.sub("", cc_flags)) }}"
+            "compilerPath": "{{! _escape(cc_path) }} {{! _escape(cc_m_flags) }}"
         }
     ]
 }
