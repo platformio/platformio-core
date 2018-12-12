@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.6.3 (2018-12-??)
+3.6.3 (2018-12-12)
 ~~~~~~~~~~~~~~~~~~
 
 * Ignore *.asm and *.ASM files when building Arduino-based library (compatibility with Arduino builder)
