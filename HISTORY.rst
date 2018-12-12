@@ -7,7 +7,7 @@ PlatformIO 3.0
 3.6.3 (2018-12-12)
 ~~~~~~~~~~~~~~~~~~
 
-* Ignore *.asm and *.ASM files when building Arduino-based library (compatibility with Arduino builder)
+* Ignore ``*.asm`` and ``*.ASM`` files when building Arduino-based library (compatibility with Arduino builder)
 * Fixed spurious project's "Problems" for `PlatformIO IDE for VSCode <http://docs.platformio.org/page/ide/vscode.html>`__ when ARM mbed framework is used
 * Fixed an issue with a broken headers list when generating ".clang_complete" for `Emacs <http://docs.platformio.org/page/ide/emacs.html>`__
   (`issue #1960 <https://github.com/platformio/platformio-core/issues/1960>`_)
