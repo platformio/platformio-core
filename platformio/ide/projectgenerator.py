@@ -15,6 +15,7 @@
 import json
 import os
 import re
+import sys
 from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
 
 import bottle
@@ -146,7 +147,8 @@ class ProjectGenerator(object):
                 "project_libdeps_dir": util.get_projectlibdeps_dir(),
                 "systype": util.get_systype(),
                 "platformio_path": self._fix_os_path(
-                    util.where_is_program("platformio")),
+                    sys.argv[0] if isfile(sys.argv[0])
+                    else util.where_is_program("platformio")),
                 "env_pathsep": os.pathsep,
                 "env_path": self._fix_os_path(os.getenv("PATH"))
             })  # yapf: disable

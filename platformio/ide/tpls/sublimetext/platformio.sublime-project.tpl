@@ -4,7 +4,7 @@
 		{
 			"cmd":
 			[
-				"platformio",
+				"{{ platformio_path }}",
 				"-f", "-c", "sublimetext",
 				"run"
 			],
@@ -14,7 +14,7 @@
 				{
 					"cmd":
 					[
-						"platformio",
+						"{{ platformio_path }}",
 						"-f", "-c", "sublimetext",
 						"run"
 					],
@@ -23,27 +23,7 @@
 				{
 					"cmd":
 					[
-						"platformio",
-						"-f", "-c", "sublimetext",
-						"run",
-						"--target",
-						"clean"
-					],
-					"name": "Clean"
-				},
-				{
-					"cmd":
-					[
-						"platformio",
-						"-f", "-c", "sublimetext",
-						"test"
-					],
-					"name": "Test"
-				},
-				{
-					"cmd":
-					[
-						"platformio",
+						"{{ platformio_path }}",
 						"-f", "-c", "sublimetext",
 						"run",
 						"--target",
@@ -54,7 +34,27 @@
 				{
 					"cmd":
 					[
-						"platformio",
+						"{{ platformio_path }}",
+						"-f", "-c", "sublimetext",
+						"run",
+						"--target",
+						"clean"
+					],
+					"name": "Clean"
+				},
+				{
+					"cmd":
+					[
+						"{{ platformio_path }}",
+						"-f", "-c", "sublimetext",
+						"test"
+					],
+					"name": "Test"
+				},
+				{
+					"cmd":
+					[
+						"{{ platformio_path }}",
 						"-f", "-c", "sublimetext",
 						"run",
 						"--target",
@@ -65,7 +65,7 @@
 				{
 					"cmd":
 					[
-						"platformio",
+						"{{ platformio_path }}",
 						"-f", "-c", "sublimetext",
 						"run",
 						"--target",
@@ -76,16 +76,24 @@
 				{
 					"cmd":
 					[
-						"platformio",
+						"{{ platformio_path }}",
 						"-f", "-c", "sublimetext",
 						"update"
 					],
 					"name": "Update platforms and libraries"
+				},
+				{
+					"cmd":
+					[
+						"{{ platformio_path }}",
+						"-f", "-c", "sublimetext",
+						"upgrade"
+					],
+					"name": "Upgrade PlatformIO Core"
 				}
 			],
 			"working_dir": "${project_path:${folder}}",
-			"selector": "source.c, source.c++",
-			"path": "{{env_path}}"
+			"selector": "source.c, source.c++"
 		}
 	],
 	"folders":
@@ -98,7 +106,7 @@
     {
          "sublimegdb_workingdir": "{{project_dir}}",
          "sublimegdb_exec_cmd": "",
-         "sublimegdb_commandline": "{{platformio_path}} -f -c sublimetext debug --interface=gdb --interpreter=mi -x .pioinit"
+         "sublimegdb_commandline": "{{ platformio_path }} -f -c sublimetext debug --interface=gdb --interpreter=mi -x .pioinit"
 
     }
 }
