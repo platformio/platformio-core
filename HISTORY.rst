@@ -4,6 +4,15 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.6.4 (2018-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Improved Project Generator for IDEs:
+
+  - Use full path to PlatformIO CLI when generating a project
+    (`issue #1674 <https://github.com/platformio/platformio-core/issues/1674>`_)
+  - CLion: Improved project portability using "${CMAKE_CURRENT_LIST_DIR}" instead of full path
+
 3.6.3 (2018-12-12)
 ~~~~~~~~~~~~~~~~~~
 
@@ -49,7 +58,6 @@ PlatformIO 3.0
 * Fixed an issue with broken includes when generating ``.clang_complete`` and space is used in a path
   (`issue #1873 <https://github.com/platformio/platformio-core/issues/1873>`_)
 * Fixed an issue with incorrect handling of a custom package name when using `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__ or `platformio platform install <http://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__ commands
-
 
 3.6.0 (2018-08-06)
 ~~~~~~~~~~~~~~~~~~
