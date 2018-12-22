@@ -19,6 +19,7 @@ from __future__ import absolute_import
 
 import hashlib
 import os
+import re
 import sys
 from glob import glob
 from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
@@ -64,6 +65,9 @@ class LibBuilderFactory(object):
         if isfile(join(path, "module.json")):
             return ["mbed"]
 
+        include_re = re.compile(
+            r'^#include\s+(<|")(Arduino|mbed)\.h(<|")', flags=re.MULTILINE)
+
         # check source files
         for root, _, files in os.walk(path, followlinks=True):
             for fname in files:
@@ -72,9 +76,9 @@ class LibBuilderFactory(object):
                     continue
                 with open(join(root, fname)) as f:
                     content = f.read()
-                    if "Arduino.h" in content:
+                    if "Arduino.h" in content and include_re.search(content):
                         return ["arduino"]
-                    elif "mbed.h" in content:
+                    elif "mbed.h" in content and include_re.search(content):
                         return ["mbed"]
         return []
 

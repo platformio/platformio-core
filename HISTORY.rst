@@ -13,6 +13,8 @@ PlatformIO 3.0
     (`issue #1674 <https://github.com/platformio/platformio-core/issues/1674>`_)
   - CLion: Improved project portability using "${CMAKE_CURRENT_LIST_DIR}" instead of full path
 
+* Fixed an issue with incorrect detecting of compatibility (LDF) between generic library and Arduino or ARM mbed frameworks
+
 3.6.3 (2018-12-12)
 ~~~~~~~~~~~~~~~~~~
 
