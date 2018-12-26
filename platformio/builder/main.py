@@ -92,7 +92,7 @@ DEFAULT_ENV_OPTIONS = dict(
     variables=commonvars,
 
     # Propagating External Environment
-    PIOVARIABLES=commonvars.keys(),
+    PIOVARIABLES=list(commonvars.keys()),
     ENV=environ,
     UNIX_TIME=int(time()),
     PIOHOME_DIR=util.get_home_dir(),
@@ -125,9 +125,11 @@ if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
 env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 
 # decode common variables
-for k in commonvars.keys():
+for k in list(commonvars.keys()):
     if k in env:
         env[k] = base64.b64decode(env[k])
+        if isinstance(env[k], bytes):
+            env[k] = env[k].decode()
         if k in MULTILINE_VARS:
             env[k] = util.parse_conf_multi_values(env[k])
 
@@ -161,7 +163,9 @@ env['LIBSOURCE_DIRS'] = [
 env.LoadPioPlatform(commonvars)
 
 env.SConscriptChdir(0)
-env.SConsignFile(join("$PROJECTBUILD_DIR", ".sconsign.dblite"))
+env.SConsignFile(
+    join("$PROJECTBUILD_DIR",
+         ".sconsign.dblite" if util.PY2 else ".sconsign3.dblite"))
 
 for item in env.GetExtraScripts("pre"):
     env.SConscript(item, exports="env")

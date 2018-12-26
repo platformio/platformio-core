@@ -116,9 +116,10 @@ class ProjectGenerator(object):
                     os.makedirs(dst_dir)
 
             file_name = basename(tpl_path)[:-4]
+            contents = self._render_tpl(tpl_path)
             self._merge_contents(
                 join(dst_dir, file_name),
-                self._render_tpl(tpl_path).encode("utf8"))
+                contents.encode("utf8") if util.PY2 else contents)
 
     def _render_tpl(self, tpl_path):
         content = ""

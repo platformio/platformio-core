@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import absolute_import
+
 from hashlib import md5
 from os import makedirs
 from os.path import isdir, isfile, join
-from platform import system
+
+from platformio import util
 
 # Windows CLI has limit with command length to 8192
 # Leave 2000 chars for flags and other options
@@ -58,7 +61,9 @@ def _file_long_data(env, data):
     build_dir = env.subst("$BUILD_DIR")
     if not isdir(build_dir):
         makedirs(build_dir)
-    tmp_file = join(build_dir, "longcmd-%s" % md5(data).hexdigest())
+    tmp_file = join(
+        build_dir,
+        "longcmd-%s" % md5(data if util.PY2 else data.encode()).hexdigest())
     if isfile(tmp_file):
         return tmp_file
     with open(tmp_file, "w") as fp:
@@ -71,7 +76,7 @@ def exists(_):
 
 
 def generate(env):
-    if system() != "Windows":
+    if "windows" not in util.get_systype():
         return None
 
     env.Replace(_long_sources_hook=long_sources_hook)

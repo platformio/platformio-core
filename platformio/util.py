@@ -34,12 +34,15 @@ import requests
 
 from platformio import __apiurl__, __version__, exception
 
-# pylint: disable=wrong-import-order, too-many-ancestors
+# pylint: disable=too-many-ancestors
 
-try:
-    import configparser as ConfigParser
-except ImportError:
+PY2 = sys.version_info[0] == 2
+if PY2:
     import ConfigParser as ConfigParser
+    string_types = basestring  # pylint: disable=undefined-variable
+else:
+    import configparser as ConfigParser
+    string_types = str
 
 
 class ProjectConfig(ConfigParser.ConfigParser):
@@ -52,7 +55,8 @@ class ProjectConfig(ConfigParser.ConfigParser):
             items.append((option, self.get(section, option)))
         return items
 
-    def get(self, section, option, **kwargs):
+    def get(  # pylint: disable=arguments-differ
+            self, section, option, **kwargs):
         try:
             value = ConfigParser.ConfigParser.get(self, section, option,
                                                   **kwargs)
@@ -177,6 +181,8 @@ def singleton(cls):
 
 
 def path_to_unicode(path):
+    if not PY2:
+        return path
     return path.decode(sys.getfilesystemencoding()).encode("utf-8")
 
 
@@ -315,8 +321,11 @@ def get_projectbuild_dir(force=False):
     path = get_project_optional_dir("build_dir",
                                     join(get_project_dir(), ".pioenvs"))
     if "$PROJECT_HASH" in path:
-        path = path.replace("$PROJECT_HASH",
-                            sha1(get_project_dir()).hexdigest()[:10])
+        project_dir = get_project_dir()
+        path = path.replace(
+            "$PROJECT_HASH",
+            sha1(project_dir if PY2 else project_dir.encode()).hexdigest()
+            [:10])
     try:
         if not isdir(path):
             os.makedirs(path)
@@ -414,8 +423,10 @@ def exec_command(*args, **kwargs):
             result[s[3:]] = "\n".join(kwargs[s].get_buffer())
 
     for k, v in result.items():
-        if v and isinstance(v, basestring):
-            result[k].strip()
+        if not PY2 and isinstance(result[k], bytes):
+            result[k] = result[k].decode()
+        if v and isinstance(v, string_types):
+            result[k] = result[k].strip()
 
     return result
 
@@ -445,10 +456,13 @@ def get_serial_ports(filter_hwid=False):
         if not p:
             continue
         if "windows" in get_systype():
-            try:
-                d = unicode(d, errors="ignore")
-            except TypeError:
-                pass
+            if PY2:
+                try:
+                    d = unicode(  # pylint: disable=undefined-variable
+                        d,
+                        errors="ignore")
+                except TypeError:
+                    pass
         if not filter_hwid or "VID:PID" in h:
             result.append({"port": p, "description": d, "hwid": h})
 
@@ -490,17 +504,17 @@ def get_logical_devices():
         for device in re.findall(r"[A-Z]:\\", result):
             items.append({"path": device, "name": None})
         return items
-    else:
-        result = exec_command(["df"]).get("out")
-        devicenamere = re.compile(r"^/.+\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
-        for line in result.split("\n"):
-            match = devicenamere.match(line.strip())
-            if not match:
-                continue
-            items.append({
-                "path": match.group(1),
-                "name": basename(match.group(1))
-            })
+
+    result = exec_command(["df"]).get("out")
+    devicenamere = re.compile(r"^/.+\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
+    for line in result.split("\n"):
+        match = devicenamere.match(line.strip())
+        if not match:
+            continue
+        items.append({
+            "path": match.group(1),
+            "name": basename(match.group(1))
+        })
     return items
 
 
@@ -557,12 +571,16 @@ def get_mdns_services():
         time.sleep(3)
         for service in mdns.get_services():
             properties = None
-            try:
-                if service.properties:
-                    json.dumps(service.properties)
-                properties = service.properties
-            except UnicodeDecodeError:
-                pass
+            if service.properties:
+                try:
+                    properties = {
+                        k.decode("utf8"):
+                        v.decode("utf8") if isinstance(v, bytes) else v
+                        for k, v in service.properties.items()
+                    }
+                    json.dumps(properties)
+                except UnicodeDecodeError:
+                    properties = None
 
             items.append({
                 "type":
@@ -570,7 +588,10 @@ def get_mdns_services():
                 "name":
                 service.name,
                 "ip":
-                ".".join([str(ord(c)) for c in service.address]),
+                ".".join([
+                    str(c if isinstance(c, int) else ord(c))
+                    for c in service.address
+                ]),
                 "port":
                 service.port,
                 "properties":
@@ -735,7 +756,7 @@ def where_is_program(program, envpath=None):
     for bin_dir in env.get("PATH", "").split(os.pathsep):
         if isfile(join(bin_dir, program)):
             return join(bin_dir, program)
-        elif isfile(join(bin_dir, "%s.exe" % program)):
+        if isfile(join(bin_dir, "%s.exe" % program)):
             return join(bin_dir, "%s.exe" % program)
 
     return program

@@ -120,7 +120,7 @@ class LibraryManager(BasePkgManager):
         # convert listed items via comma to array
         for key in ("keywords", "frameworks", "platforms"):
             if key not in manifest or \
-                    not isinstance(manifest[key], basestring):
+                    not isinstance(manifest[key], util.string_types):
                 continue
             manifest[key] = [
                 i.strip() for i in manifest[key].split(",") if i.strip()
@@ -147,7 +147,7 @@ class LibraryManager(BasePkgManager):
                     continue
                 if item[k] == "*":
                     del item[k]
-                elif isinstance(item[k], basestring):
+                elif isinstance(item[k], util.string_types):
                     item[k] = [
                         i.strip() for i in item[k].split(",") if i.strip()
                     ]
@@ -275,7 +275,7 @@ class LibraryManager(BasePkgManager):
                             break
 
         if not lib_info:
-            if filters.keys() == ["name"]:
+            if list(filters) == ["name"]:
                 raise exception.LibNotFound(filters['name'])
             else:
                 raise exception.LibNotFound(str(filters))

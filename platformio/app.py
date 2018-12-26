@@ -169,8 +169,11 @@ class ContentCache(object):
     @staticmethod
     def key_from_args(*args):
         h = hashlib.md5()
-        for data in args:
-            h.update(str(data))
+        for arg in args:
+            if not arg:
+                continue
+            arg = str(arg)
+            h.update(arg if util.PY2 else arg.encode())
         return h.hexdigest()
 
     def get(self, key):
@@ -191,7 +194,7 @@ class ContentCache(object):
         if not isdir(self.cache_dir):
             os.makedirs(self.cache_dir)
         tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
-        assert valid.endswith(tuple(tdmap.keys()))
+        assert valid.endswith(tuple(tdmap))
         expire_time = int(time() + tdmap[valid[-1]] * int(valid[:-1]))
 
         if not self._lock_dbindex():
@@ -339,21 +342,22 @@ def is_disabled_progressbar():
 
 def get_cid():
     cid = get_state_item("cid")
-    if not cid:
-        _uid = None
-        if getenv("C9_UID"):
-            _uid = getenv("C9_UID")
-        elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
-            try:
-                _uid = requests.get("{api}/user?token={token}".format(
-                    api=getenv("CHE_API", getenv("CHE_API_ENDPOINT")),
-                    token=getenv("USER_TOKEN"))).json().get("id")
-            except:  # pylint: disable=bare-except
-                pass
-        cid = str(
-            uuid.UUID(
-                bytes=hashlib.md5(str(_uid if _uid else uuid.getnode())).
-                digest()))
-        if "windows" in util.get_systype() or os.getuid() > 0:
-            set_state_item("cid", cid)
+    if cid:
+        return cid
+    uid = None
+    if getenv("C9_UID"):
+        uid = getenv("C9_UID")
+    elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
+        try:
+            uid = requests.get("{api}/user?token={token}".format(
+                api=getenv("CHE_API", getenv("CHE_API_ENDPOINT")),
+                token=getenv("USER_TOKEN"))).json().get("id")
+        except:  # pylint: disable=bare-except
+            pass
+    if not uid:
+        uid = uuid.getnode()
+    cid = uuid.UUID(bytes=hashlib.md5(str(uid).encode()).digest())
+    cid = str(cid)
+    if "windows" in util.get_systype() or os.getuid() > 0:
+        set_state_item("cid", cid)
     return cid

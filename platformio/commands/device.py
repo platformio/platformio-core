@@ -44,7 +44,7 @@ def device_list(  # pylint: disable=too-many-branches
     if mdns:
         data['mdns'] = util.get_mdns_services()
 
-    single_key = data.keys()[0] if len(data.keys()) == 1 else None
+    single_key = list(data)[0] if len(list(data)) == 1 else None
 
     if json_output:
         return click.echo(json.dumps(data[single_key] if single_key else data))

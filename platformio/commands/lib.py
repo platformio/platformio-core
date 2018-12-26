@@ -17,13 +17,17 @@
 import json
 import time
 from os.path import isdir, join
-from urllib import quote
 
 import click
 
 from platformio import exception, util
 from platformio.managers.lib import LibraryManager, get_builtin_libs
 from platformio.util import get_api_result
+
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib import quote
 
 
 @click.group(short_help="Library Manager")
@@ -142,9 +146,9 @@ def lib_update(lm, libraries, only_check, json_output):
             manifest['versionLatest'] = latest
             result.append(manifest)
         return click.echo(json.dumps(result))
-    else:
-        for library in libraries:
-            lm.update(library, only_check=only_check)
+
+    for library in libraries:
+        lm.update(library, only_check=only_check)
 
     return True
 

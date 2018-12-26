@@ -127,7 +127,7 @@ class Upgrader(object):
                 if not item.endswith(".json"):
                     continue
                 data = util.load_json(join(boards_dir, item))
-                if set(["name", "url", "vendor"]) <= set(data.keys()):
+                if set(["name", "url", "vendor"]) <= set(data):
                     continue
                 os.remove(join(boards_dir, item))
                 for key, value in data.items():

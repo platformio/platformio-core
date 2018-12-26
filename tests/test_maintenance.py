@@ -44,7 +44,7 @@ def test_after_upgrade_2_to_3(clirunner, validate_cliresult,
 
     result = clirunner.invoke(cli_pio, ["settings", "get"])
     validate_cliresult(result)
-    assert "upgraded to 3" in result.output
+    assert "upgraded to " in result.output
 
     # check PlatformIO 3.0 boards
     assert board_ids == set([p.basename[:-5] for p in boards.listdir()])

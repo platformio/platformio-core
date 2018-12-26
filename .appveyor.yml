@@ -7,6 +7,8 @@ platform:
 environment:
   matrix:
     - TOXENV: "py27"
+    - TOXENV: "py35"
+    - TOXENV: "py36"
 
 install:
   - cmd: git submodule update --init --recursive

@@ -64,7 +64,7 @@ class ZIPArchive(ArchiveBase):
 
     @staticmethod
     def preserve_permissions(item, dest_dir):
-        attrs = item.external_attr >> 16L
+        attrs = item.external_attr >> 16
         if attrs:
             chmod(join(dest_dir, item.filename), attrs)
 
@@ -72,7 +72,7 @@ class ZIPArchive(ArchiveBase):
     def preserve_mtime(item, dest_dir):
         util.change_filemtime(
             join(dest_dir, item.filename),
-            mktime(list(item.date_time) + [0] * 3))
+            mktime(tuple(item.date_time) + tuple([0, 0, 0])))
 
     def get_items(self):
         return self._afo.infolist()

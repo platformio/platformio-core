@@ -21,7 +21,7 @@ from platformio import util
 def main():
     platforms = json.loads(
         subprocess.check_output(
-            ["platformio", "platform", "search", "--json-output"]))
+            ["platformio", "platform", "search", "--json-output"]).decode())
     for platform in platforms:
         if platform['forDesktop']:
             continue

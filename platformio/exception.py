@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=not-an-iterable
+
 
 class PlatformioException(Exception):
 
@@ -20,7 +22,7 @@ class PlatformioException(Exception):
     def __str__(self):  # pragma: no cover
         if self.MESSAGE:
             return self.MESSAGE.format(*self.args)
-        return Exception.__str__(self)
+        return super(PlatformioException, self).__str__()
 
 
 class ReturnErrorCode(PlatformioException):

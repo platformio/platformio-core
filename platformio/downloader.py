@@ -45,14 +45,16 @@ class FileDownloader(object):
         if disposition and "filename=" in disposition:
             self._fname = disposition[disposition.index("filename=") +
                                       9:].replace('"', "").replace("'", "")
-            self._fname = self._fname.encode("utf8")
+            if util.PY2:
+                self._fname = self._fname.encode("utf8")
         else:
             self._fname = [p for p in url.split("/") if p][-1]
 
         self._destination = self._fname
         if dest_dir:
-            self.set_destination(
-                join(dest_dir.decode(getfilesystemencoding()), self._fname))
+            if util.PY2:
+                dest_dir = dest_dir.decode(getfilesystemencoding())
+            self.set_destination(join(dest_dir, self._fname))
 
     def set_destination(self, destination):
         self._destination = destination

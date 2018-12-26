@@ -1,10 +1,19 @@
 Release Notes
 =============
 
+PlatformIO 4.0
+--------------
+
+4.0.0 (2019-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Added Python 3.5+ support
+  (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
+
 PlatformIO 3.0
 --------------
 
-3.6.4 (2018-??-??)
+3.6.4 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
 * Improved Project Generator for IDEs:

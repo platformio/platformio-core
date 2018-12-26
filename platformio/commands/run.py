@@ -357,7 +357,7 @@ def _clean_build_dir(build_dir):
 def print_header(label, is_error=False):
     terminal_width, _ = click.get_terminal_size()
     width = len(click.unstyle(label))
-    half_line = "=" * ((terminal_width - width - 2) / 2)
+    half_line = "=" * int((terminal_width - width - 2) / 2)
     click.echo("%s %s %s" % (half_line, label, half_line), err=is_error)
 
 
@@ -394,7 +394,7 @@ def print_summary(results, start_time):
 def check_project_defopts(config):
     if not config.has_section("platformio"):
         return True
-    unknown = set([k for k, _ in config.items("platformio")]) - set(
+    unknown = set(k for k, _ in config.items("platformio")) - set(
         EnvironmentProcessor.KNOWN_PLATFORMIO_OPTIONS)
     if not unknown:
         return True
@@ -409,7 +409,7 @@ def check_project_envs(config, environments=None):
     if not config.sections():
         raise exception.ProjectEnvsNotAvailable()
 
-    known = set([s[4:] for s in config.sections() if s.startswith("env:")])
+    known = set(s[4:] for s in config.sections() if s.startswith("env:"))
     unknown = set(environments or []) - known
     if unknown:
         raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
@@ -432,4 +432,5 @@ def calculate_project_hash():
         # Fix issue with useless project rebuilding for case insensitive FS.
         # A case of disk drive can differ...
         chunks_to_str = chunks_to_str.lower()
-    return sha1(chunks_to_str).hexdigest()
+    return sha1(chunks_to_str if util.PY2 else chunks_to_str.
+                encode()).hexdigest()

@@ -71,7 +71,7 @@ class PackageRepoIterator(object):
 
         if self.package in manifest:
             return manifest[self.package]
-        return self.next()
+        return next(self)
 
 
 class PkgRepoMixin(object):
@@ -544,7 +544,7 @@ class PkgInstallerMixin(object):
     def _install_from_tmp_dir(  # pylint: disable=too-many-branches
             self, tmp_dir, requirements=None):
         tmp_manifest = self.load_manifest(tmp_dir)
-        assert set(["name", "version"]) <= set(tmp_manifest.keys())
+        assert set(["name", "version"]) <= set(tmp_manifest)
 
         pkg_dirname = self.get_install_dirname(tmp_manifest)
         pkg_dir = join(self.package_dir, pkg_dirname)
@@ -587,8 +587,10 @@ class PkgInstallerMixin(object):
                                             cur_manifest['version'])
                 if "__src_url" in cur_manifest:
                     target_dirname = "%s@src-%s" % (
-                        pkg_dirname, hashlib.md5(
-                            cur_manifest['__src_url']).hexdigest())
+                        pkg_dirname,
+                        hashlib.md5(cur_manifest['__src_url'] if util.
+                                    PY2 else cur_manifest['__src_url'].
+                                    encode()).hexdigest())
                 shutil.move(pkg_dir, join(self.package_dir, target_dirname))
             # fix to a version
             elif action == 2:
@@ -596,8 +598,10 @@ class PkgInstallerMixin(object):
                                             tmp_manifest['version'])
                 if "__src_url" in tmp_manifest:
                     target_dirname = "%s@src-%s" % (
-                        pkg_dirname, hashlib.md5(
-                            tmp_manifest['__src_url']).hexdigest())
+                        pkg_dirname,
+                        hashlib.md5(tmp_manifest['__src_url'] if util.
+                                    PY2 else tmp_manifest['__src_url'].
+                                    encode()).hexdigest())
                 pkg_dir = join(self.package_dir, target_dirname)
 
         # remove previous/not-satisfied package

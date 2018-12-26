@@ -95,8 +95,10 @@ def LoadPioPlatform(env, variables):
         for key, value in variables.UnknownVariables().items():
             if not key.startswith("BOARD_"):
                 continue
-            env.Replace(
-                **{key.upper().replace("BUILD.", ""): base64.b64decode(value)})
+            value = base64.b64decode(value)
+            if isinstance(value, bytes):
+                value = value.decode()
+            env.Replace(**{key.upper().replace("BUILD.", ""): value})
         return
 
     # update board manifest with a custom data
@@ -104,10 +106,13 @@ def LoadPioPlatform(env, variables):
     for key, value in variables.UnknownVariables().items():
         if not key.startswith("BOARD_"):
             continue
-        board_config.update(key.lower()[6:], base64.b64decode(value))
+        value = base64.b64decode(value)
+        if isinstance(value, bytes):
+            value = value.decode()
+        board_config.update(key.lower()[6:], value)
 
     # update default environment variables
-    for key in variables.keys():
+    for key in list(variables.keys()):
         if key in env or \
                 not any([key.startswith("BOARD_"), key.startswith("UPLOAD_")]):
             continue

@@ -14,7 +14,6 @@
 
 import atexit
 import platform
-import Queue
 import re
 import sys
 import threading
@@ -28,6 +27,11 @@ import click
 import requests
 
 from platformio import __version__, app, exception, util
+
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 
 
 class TelemetryBase(object):
@@ -74,12 +78,12 @@ class MeasurementProtocol(TelemetryBase):
     def __getitem__(self, name):
         if name in self.PARAMS_MAP:
             name = self.PARAMS_MAP[name]
-        return TelemetryBase.__getitem__(self, name)
+        return super(MeasurementProtocol, self).__getitem__(name)
 
     def __setitem__(self, name, value):
         if name in self.PARAMS_MAP:
             name = self.PARAMS_MAP[name]
-        TelemetryBase.__setitem__(self, name, value)
+        super(MeasurementProtocol, self).__setitem__(name, value)
 
     def _prefill_appinfo(self):
         self['av'] = __version__
@@ -178,7 +182,7 @@ class MPDataPusher(object):
     MAX_WORKERS = 5
 
     def __init__(self):
-        self._queue = Queue.LifoQueue()
+        self._queue = queue.LifoQueue()
         self._failedque = deque()
         self._http_session = requests.Session()
         self._http_offline = False
@@ -203,7 +207,7 @@ class MPDataPusher(object):
         try:
             while True:
                 items.append(self._queue.get_nowait())
-        except Queue.Empty:
+        except queue.Empty:
             pass
         return items
 
@@ -384,7 +388,7 @@ def backup_reports(items):
 
     for params in items:
         # skip static options
-        for key in params.keys():
+        for key in params:
             if key in ("v", "tid", "cid", "cd1", "cd2", "sr", "an"):
                 del params[key]
 

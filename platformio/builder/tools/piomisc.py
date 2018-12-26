@@ -162,7 +162,7 @@ class InoToCPPConverter(object):
         if not prototypes:
             return contents
 
-        prototype_names = set([m.group(3).strip() for m in prototypes])
+        prototype_names = set(m.group(3).strip() for m in prototypes)
         split_pos = prototypes[0].start()
         match_ptrs = re.search(
             self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),
@@ -212,7 +212,7 @@ def _get_compiler_type(env):
     output = "".join([result['out'], result['err']]).lower()
     if "clang" in output and "LLVM" in output:
         return "clang"
-    elif "gcc" in output:
+    if "gcc" in output:
         return "gcc"
     return None
 

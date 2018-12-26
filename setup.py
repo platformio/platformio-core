@@ -35,7 +35,8 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
-    python_requires='>=2.7, <3',
+    python_requires=", ".join([
+        ">=2.7", "!=3.0.*", "!=3.1.*", "!=3.2.*", "!=3.3.*", "!=3.4.*"]),
     install_requires=install_requires,
     packages=find_packages() + ["scripts"],
     package_data={
@@ -65,6 +66,7 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: C",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
         "Topic :: Software Development",
         "Topic :: Software Development :: Build Tools",
         "Topic :: Software Development :: Compilers"

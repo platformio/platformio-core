@@ -74,7 +74,7 @@ def test_run(pioproject_dir):
             ["platformio", "run", "-e",
              random.choice(env_names)])
         if result['returncode'] != 0:
-            pytest.fail(result)
+            pytest.fail(str(result))
 
         assert isdir(build_dir)
 

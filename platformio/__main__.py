@@ -53,7 +53,7 @@ class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
         if name == "platforms":
             from platformio.commands import platform
             return platform.cli
-        elif name == "serialports":
+        if name == "serialports":
             from platformio.commands import device
             return device.cli
         raise AttributeError()

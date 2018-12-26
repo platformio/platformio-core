@@ -16,10 +16,14 @@ import re
 from os.path import join
 from subprocess import CalledProcessError, check_call
 from sys import modules
-from urlparse import urlparse
 
 from platformio import util
 from platformio.exception import PlatformioException, UserSideException
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 
 class VCSClientFactory(object):

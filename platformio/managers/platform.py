@@ -18,7 +18,6 @@ import re
 from imp import load_source
 from multiprocessing import cpu_count
 from os.path import basename, dirname, isdir, isfile, join
-from urllib import quote
 
 import click
 import semantic_version
@@ -26,6 +25,11 @@ import semantic_version
 from platformio import __version__, app, exception, util
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
+
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib import quote
 
 
 class PlatformManager(BasePkgManager):
@@ -81,7 +85,7 @@ class PlatformManager(BasePkgManager):
             skip_default_package,
             silent=silent,
             force=force)
-        return self.cleanup_packages(p.packages.keys())
+        return self.cleanup_packages(list(p.packages))
 
     def uninstall(self, package, requirements=None, after_update=False):
         if isdir(package):
@@ -101,7 +105,7 @@ class PlatformManager(BasePkgManager):
         if after_update:
             return True
 
-        return self.cleanup_packages(p.packages.keys())
+        return self.cleanup_packages(list(p.packages))
 
     def update(  # pylint: disable=arguments-differ
             self,
@@ -119,17 +123,17 @@ class PlatformManager(BasePkgManager):
             raise exception.UnknownPlatform(package)
 
         p = PlatformFactory.newPlatform(pkg_dir)
-        pkgs_before = p.get_installed_packages().keys()
+        pkgs_before = list(p.get_installed_packages())
 
         missed_pkgs = set()
         if not only_packages:
             BasePkgManager.update(self, pkg_dir, requirements, only_check)
             p = PlatformFactory.newPlatform(pkg_dir)
-            missed_pkgs = set(pkgs_before) & set(p.packages.keys())
-            missed_pkgs -= set(p.get_installed_packages().keys())
+            missed_pkgs = set(pkgs_before) & set(p.packages)
+            missed_pkgs -= set(p.get_installed_packages())
 
         p.update_packages(only_check)
-        self.cleanup_packages(p.packages.keys())
+        self.cleanup_packages(list(p.packages))
 
         if missed_pkgs:
             p.install_packages(
@@ -265,7 +269,7 @@ class PlatformPackagesMixin(object):
         without_packages = set(self.find_pkg_names(without_packages or []))
 
         upkgs = with_packages | without_packages
-        ppkgs = set(self.packages.keys())
+        ppkgs = set(self.packages)
         if not upkgs.issubset(ppkgs):
             raise exception.UnknownPackage(", ".join(upkgs - ppkgs))
 
@@ -384,7 +388,12 @@ class PlatformRunMixin(object):
 
         # encode and append variables
         for key, value in variables.items():
-            cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
+            if util.PY2:
+                cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
+            else:
+                cmd.append(
+                    "%s=%s" % (key.upper(), base64.b64encode(
+                        value.encode()).decode()))
 
         util.copy_pythonpath_to_osenv()
         result = util.exec_command(
@@ -550,7 +559,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
             config = PlatformBoardConfig(manifest_path)
             if "platform" in config and config.get("platform") != self.name:
                 return
-            elif "platforms" in config \
+            if "platforms" in config \
                     and self.name not in config.get("platforms"):
                 return
             config.manifest['platform'] = self.name
@@ -652,7 +661,7 @@ class PlatformBoardConfig(object):
             self._manifest = util.load_json(manifest_path)
         except ValueError:
             raise exception.InvalidBoardManifest(manifest_path)
-        if not set(["name", "url", "vendor"]) <= set(self._manifest.keys()):
+        if not set(["name", "url", "vendor"]) <= set(self._manifest):
             raise exception.PlatformioException(
                 "Please specify name, url and vendor fields for " +
                 manifest_path)
@@ -666,8 +675,7 @@ class PlatformBoardConfig(object):
         except KeyError:
             if default is not None:
                 return default
-            else:
-                raise KeyError("Invalid board option '%s'" % path)
+        raise KeyError("Invalid board option '%s'" % path)
 
     def update(self, path, value):
         newdict = None
@@ -752,7 +760,7 @@ class PlatformBoardConfig(object):
                 return tool_name
             raise exception.DebugInvalidOptions(
                 "Unknown debug tool `%s`. Please use one of `%s` or `custom`" %
-                (tool_name, ", ".join(sorted(debug_tools.keys()))))
+                (tool_name, ", ".join(sorted(list(debug_tools)))))
 
         # automatically select best tool
         data = {"default": [], "onboard": [], "external": []}
