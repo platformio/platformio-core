@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import
 
+import codecs
 import hashlib
 import os
 import re
@@ -74,13 +75,7 @@ class LibBuilderFactory(object):
                 if not env.IsFileWithExt(
                         fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT):
                     continue
-                content = ""
-                try:
-                    with open(join(root, fname)) as f:
-                        content = f.read()
-                except UnicodeDecodeError:
-                    with open(join(root, fname), encoding="latin-1") as f:
-                        content = f.read()
+                content = util.get_file_contents(join(root, fname))
                 if not content:
                     continue
                 if "Arduino.h" in content and include_re.search(content):
@@ -481,7 +476,8 @@ class ArduinoLibBuilder(LibBuilderBase):
         manifest = {}
         if not isfile(join(self.path, "library.properties")):
             return manifest
-        with open(join(self.path, "library.properties")) as fp:
+        manifest_path = join(self.path, "library.properties")
+        with codecs.open(manifest_path, encoding="utf-8") as fp:
             for line in fp.readlines():
                 if "=" not in line:
                     continue

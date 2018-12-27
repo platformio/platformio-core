@@ -122,10 +122,8 @@ class ProjectGenerator(object):
                 contents.encode("utf8") if util.PY2 else contents)
 
     def _render_tpl(self, tpl_path):
-        content = ""
-        with open(tpl_path) as f:
-            content = f.read()
-        return bottle.template(content, **self._tplvars)
+        return bottle.template(
+            util.get_file_contents(tpl_path), **self._tplvars)
 
     @staticmethod
     def _merge_contents(dst_path, contents):

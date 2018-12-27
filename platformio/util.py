@@ -852,6 +852,15 @@ def ensure_udev_rules():
     return True
 
 
+def get_file_contents(path):
+    try:
+        with open(path) as f:
+            return f.read()
+    except UnicodeDecodeError:
+        with open(path, encoding="latin-1") as f:
+            return f.read()
+
+
 def rmtree_(path):
 
     def _onerror(_, name, __):

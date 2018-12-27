@@ -76,8 +76,7 @@ class InoToCPPConverter(object):
     def process(self, contents):
         out_file = self._main_ino + ".cpp"
         assert self._gcc_preprocess(contents, out_file)
-        with open(out_file) as fp:
-            contents = fp.read()
+        contents = util.get_file_contents(out_file)
         contents = self._join_multiline_strings(contents)
         with open(out_file, "w") as fp:
             fp.write(self.append_prototypes(contents))
