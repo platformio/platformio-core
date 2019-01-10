@@ -12,6 +12,8 @@ PlatformIO 3.0
   - Use full path to PlatformIO CLI when generating a project
     (`issue #1674 <https://github.com/platformio/platformio-core/issues/1674>`_)
   - CLion: Improved project portability using "${CMAKE_CURRENT_LIST_DIR}" instead of full path
+  - Eclipse: Provide language standard to a project C/C++ indexer
+    (`issue #1010 <https://github.com/platformio/platformio-core/issues/1010>`_)
 
 * Fixed an issue with incorrect detecting of compatibility (LDF) between generic library and Arduino or ARM mbed frameworks
 * Fixed "Runtime Error: Dictionary size changed during iteration"
