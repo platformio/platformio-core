@@ -818,14 +818,10 @@ def merge_dicts(d1, d2, path=None):
 def ensure_udev_rules():
 
     def _rules_to_set(rules_path):
-        result = set([])
-        with open(rules_path, "rb") as fp:
-            for line in fp.readlines():
-                line = line.strip()
-                if not line or line.startswith("#"):
-                    continue
-                result.add(line)
-        return result
+        return set([
+            l.strip() for l in get_file_contents(rules_path).split("\n")
+            if l.strip() and not l.startswith("#")
+        ])
 
     if "linux" not in get_systype():
         return None
