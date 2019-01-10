@@ -25,6 +25,8 @@ PlatformIO 3.0
 * Fixed an issue with incorrect detecting of compatibility (LDF) between generic library and Arduino or ARM mbed frameworks
 * Fixed "Runtime Error: Dictionary size changed during iteration"
   (`issue #2003 <https://github.com/platformio/platformio-core/issues/2003>`_)
+* Fixed an error "Could not extract item..." when extracting TAR archive with symbolic items on Windows platform
+  (`issue #2015 <https://github.com/platformio/platformio-core/issues/2015>`_)
 
 3.6.3 (2018-12-12)
 ~~~~~~~~~~~~~~~~~~
