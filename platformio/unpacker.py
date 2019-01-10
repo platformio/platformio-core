@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from os import chmod
-from os.path import exists, islink, join
+from os.path import exists, join
 from tarfile import open as tarfile_open
 from time import mktime
 from zipfile import ZipFile
@@ -56,6 +56,10 @@ class TARArchive(ArchiveBase):
     def get_item_filename(self, item):
         return item.name
 
+    @staticmethod
+    def islink(item):
+        return item.islnk() or item.issym()
+
 
 class ZIPArchive(ArchiveBase):
 
@@ -79,6 +83,9 @@ class ZIPArchive(ArchiveBase):
 
     def get_item_filename(self, item):
         return item.filename
+
+    def islink(self, item):
+        raise NotImplementedError()
 
     def after_extract(self, item, dest_dir):
         self.preserve_permissions(item, dest_dir)
@@ -120,7 +127,9 @@ class FileUnpacker(object):
         for item in self._unpacker.get_items():
             filename = self._unpacker.get_item_filename(item)
             item_path = join(dest_dir, filename)
-            if not islink(item_path) and not exists(item_path):
-                raise exception.ExtractArchiveItemError(filename, dest_dir)
-
+            try:
+                if not self._unpacker.islink(item) and not exists(item_path):
+                    raise exception.ExtractArchiveItemError(filename, dest_dir)
+            except NotImplementedError:
+                pass
         return True
