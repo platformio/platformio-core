@@ -99,10 +99,10 @@ class PkgRepoMixin(object):
         for v in versions:
             if not self.is_system_compatible(v.get("system")):
                 continue
-            if "platformio" in v.get("engines", {}):
-                if PkgRepoMixin.PIO_VERSION not in self.parse_semver_spec(
-                        v['engines']['platformio'], raise_exception=True):
-                    continue
+            # if "platformio" in v.get("engines", {}):
+            #     if PkgRepoMixin.PIO_VERSION not in self.parse_semver_spec(
+            #             v['engines']['platformio'], raise_exception=True):
+            #         continue
             specver = semantic_version.Version(v['version'])
             if reqspec and specver not in reqspec:
                 continue

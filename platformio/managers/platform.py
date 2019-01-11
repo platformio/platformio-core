@@ -474,11 +474,11 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         self.silent = False
         self.verbose = False
 
-        if self.engines and "platformio" in self.engines:
-            if self.PIO_VERSION not in semantic_version.Spec(
-                    self.engines['platformio']):
-                raise exception.IncompatiblePlatform(self.name,
-                                                     str(self.PIO_VERSION))
+        # if self.engines and "platformio" in self.engines:
+        #     if self.PIO_VERSION not in semantic_version.Spec(
+        #             self.engines['platformio']):
+        #         raise exception.IncompatiblePlatform(self.name,
+        #                                              str(self.PIO_VERSION))
 
     @property
     def name(self):
