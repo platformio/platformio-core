@@ -37,7 +37,8 @@ def pytest_generate_tests(metafunc):
         if not p.is_embedded():
             continue
         # issue with "version `CXXABI_1.3.9' not found (required by sdcc)"
-        if "linux" in util.get_systype() and p.name == "intel_mcs51":
+        if "linux" in util.get_systype() and p.name in ("intel_mcs51",
+                                                        "ststm8"):
             continue
         examples_dir = join(p.get_dir(), "examples")
         assert isdir(examples_dir)
