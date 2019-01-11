@@ -96,6 +96,7 @@ Development Platforms
 * `Samsung ARTIK <https://platformio.org/platforms/samsung_artik?utm_source=github&utm_medium=core>`_
 * `Silicon Labs EFM32 <https://platformio.org/platforms/siliconlabsefm32?utm_source=github&utm_medium=core>`_
 * `ST STM32 <https://platformio.org/platforms/ststm32?utm_source=github&utm_medium=core>`_
+* `ST STM8 <https://platformio.org/platforms/ststm8?utm_source=github&utm_medium=core>`_
 * `Teensy <https://platformio.org/platforms/teensy?utm_source=github&utm_medium=core>`_
 * `TI MSP430 <https://platformio.org/platforms/timsp430?utm_source=github&utm_medium=core>`_
 * `TI Tiva <https://platformio.org/platforms/titiva?utm_source=github&utm_medium=core>`_
