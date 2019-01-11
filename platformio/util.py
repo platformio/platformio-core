@@ -815,6 +815,15 @@ def merge_dicts(d1, d2, path=None):
     return d1
 
 
+def get_file_contents(path):
+    try:
+        with open(path) as f:
+            return f.read()
+    except UnicodeDecodeError:
+        with open(path, encoding="latin-1") as f:
+            return f.read()
+
+
 def ensure_udev_rules():
 
     def _rules_to_set(rules_path):
@@ -844,15 +853,6 @@ def ensure_udev_rules():
             raise exception.OutdatedUdevRules(rules_path)
 
     return True
-
-
-def get_file_contents(path):
-    try:
-        with open(path) as f:
-            return f.read()
-    except UnicodeDecodeError:
-        with open(path, encoding="latin-1") as f:
-            return f.read()
 
 
 def rmtree_(path):
