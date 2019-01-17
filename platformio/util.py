@@ -329,13 +329,6 @@ def get_projectbuild_dir(force=False):
     try:
         if not isdir(path):
             os.makedirs(path)
-        dontmod_path = join(path, "do-not-modify-files-here.url")
-        if not isfile(dontmod_path):
-            with open(dontmod_path, "w") as fp:
-                fp.write("""
-[InternetShortcut]
-URL=https://docs.platformio.org/page/projectconf/section_platformio.html#build-dir
-""")
     except Exception as e:  # pylint: disable=broad-except
         if not force:
             raise Exception(e)
