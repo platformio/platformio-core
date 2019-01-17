@@ -170,7 +170,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
     ]
     versions2 = [
         'ArduinoJson@5.8.2', 'ArduinoJson@5.10.1', 'AsyncMqttClient@0.8.2',
-        'AsyncTCP@1.0.1', 'NeoPixelBus@2.2.4', 'PJON@07fe9aa', 'PJON@1fb26fd',
+        'NeoPixelBus@2.2.4', 'PJON@07fe9aa', 'PJON@1fb26fd',
         'PubSubClient@bef5814', 'RFcontrol@77d4eb3f8a', 'RadioHead-1.62@0.0.0'
     ]
     assert set(versions1) >= set(versions2)
