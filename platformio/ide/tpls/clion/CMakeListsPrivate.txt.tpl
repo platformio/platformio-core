@@ -1,12 +1,12 @@
 % def _normalize_path(path):
-%   if user_home_dir in path:
+%   if project_dir in path:
+%     path = path.replace(project_dir, "${CMAKE_CURRENT_LIST_DIR}")
+%   elif user_home_dir in path:
 %     if "windows" in systype:
 %       path = path.replace(user_home_dir, "$ENV{HOMEDRIVE}$ENV{HOMEPATH}")
 %     else:
 %       path = path.replace(user_home_dir, "$ENV{HOME}")
 %     end
-%   elif project_dir in path:
-%     path = path.replace(project_dir, "${CMAKE_CURRENT_LIST_DIR}")
 %   end
 %   return path.replace("\\", "/")
 % end
