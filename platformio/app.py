@@ -229,9 +229,9 @@ class ContentCache(object):
         newlines = []
         with open(self._db_path) as fp:
             for line in fp.readlines():
+                line = line.strip()
                 if "=" not in line:
                     continue
-                line = line.strip()
                 expire, path = line.split("=")
                 if time() < int(expire) and isfile(path) and \
                         path not in paths_for_delete:
