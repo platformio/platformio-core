@@ -233,10 +233,13 @@ class ContentCache(object):
                 if "=" not in line:
                     continue
                 expire, path = line.split("=")
-                if time() < int(expire) and isfile(path) and \
-                        path not in paths_for_delete:
-                    newlines.append(line)
-                    continue
+                try:
+                    if time() < int(expire) and isfile(path) and \
+                            path not in paths_for_delete:
+                        newlines.append(line)
+                        continue
+                except ValueError:
+                    pass
                 found = True
                 if isfile(path):
                     try:
