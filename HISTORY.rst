@@ -13,7 +13,7 @@ PlatformIO 4.0
 PlatformIO 3.0
 --------------
 
-3.6.4 (2019-??-??)
+3.6.4 (2019-01-23)
 ~~~~~~~~~~~~~~~~~~
 
 * Improved Project Generator for IDEs:
