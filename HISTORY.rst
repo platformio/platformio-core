@@ -4,10 +4,27 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.6.4 (2019-01-23)
+~~~~~~~~~~~~~~~~~~
+
+* Improved Project Generator for IDEs:
+
+  - Use full path to PlatformIO CLI when generating a project
+    (`issue #1674 <https://github.com/platformio/platformio-core/issues/1674>`_)
+  - CLion: Improved project portability using "${CMAKE_CURRENT_LIST_DIR}" instead of full path
+  - Eclipse: Provide language standard to a project C/C++ indexer
+    (`issue #1010 <https://github.com/platformio/platformio-core/issues/1010>`_)
+
+* Fixed an issue with incorrect detecting of compatibility (LDF) between generic library and Arduino or ARM mbed frameworks
+* Fixed "Runtime Error: Dictionary size changed during iteration"
+  (`issue #2003 <https://github.com/platformio/platformio-core/issues/2003>`_)
+* Fixed an error "Could not extract item..." when extracting TAR archive with symbolic items on Windows platform
+  (`issue #2015 <https://github.com/platformio/platformio-core/issues/2015>`_)
+
 3.6.3 (2018-12-12)
 ~~~~~~~~~~~~~~~~~~
 
-* Ignore *.asm and *.ASM files when building Arduino-based library (compatibility with Arduino builder)
+* Ignore ``*.asm`` and ``*.ASM`` files when building Arduino-based library (compatibility with Arduino builder)
 * Fixed spurious project's "Problems" for `PlatformIO IDE for VSCode <http://docs.platformio.org/page/ide/vscode.html>`__ when ARM mbed framework is used
 * Fixed an issue with a broken headers list when generating ".clang_complete" for `Emacs <http://docs.platformio.org/page/ide/emacs.html>`__
   (`issue #1960 <https://github.com/platformio/platformio-core/issues/1960>`_)
@@ -49,7 +66,6 @@ PlatformIO 3.0
 * Fixed an issue with broken includes when generating ``.clang_complete`` and space is used in a path
   (`issue #1873 <https://github.com/platformio/platformio-core/issues/1873>`_)
 * Fixed an issue with incorrect handling of a custom package name when using `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__ or `platformio platform install <http://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__ commands
-
 
 3.6.0 (2018-08-06)
 ~~~~~~~~~~~~~~~~~~
