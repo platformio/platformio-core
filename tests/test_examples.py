@@ -34,11 +34,13 @@ def pytest_generate_tests(metafunc):
     # dev/platforms
     for manifest in PlatformManager().get_installed():
         p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
-        if not p.is_embedded():
-            continue
-        # issue with "version `CXXABI_1.3.9' not found (required by sdcc)"
-        if "linux" in util.get_systype() and p.name in ("intel_mcs51",
-                                                        "ststm8"):
+        ignore_conds = [
+            not p.is_embedded(),
+            p.name == "ststm8",
+            # issue with "version `CXXABI_1.3.9' not found (required by sdcc)"
+            "linux" in util.get_systype() and p.name == "intel_mcs51"
+        ]
+        if any(ignore_conds):
             continue
         examples_dir = join(p.get_dir(), "examples")
         assert isdir(examples_dir)
