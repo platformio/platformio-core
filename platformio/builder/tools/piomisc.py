@@ -33,7 +33,8 @@ class InoToCPPConverter(object):
     PROTOTYPE_RE = re.compile(
         r"""^(
         (?:template\<.*\>\s*)?      # template
-        ([a-z_\d\&]+\*?\s+){1,2}      # return type
+        [ \t\f\v]*                  # ignore spaces, tabs etc
+        ([a-z_\d\&]+\*?\s+){1,2}    # return type
         ([a-z_\d]+\s*)              # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*\{                      # must end with {
@@ -171,7 +172,7 @@ class InoToCPPConverter(object):
 
         result = []
         result.append(contents[:split_pos].strip())
-        result.append("%s;" % ";\n".join([m.group(1) for m in prototypes]))
+        result.append("%s;" % ";\n".join([m.group(1).strip() for m in prototypes]))
         result.append('#line %d "%s"' % (self._get_total_lines(
             contents[:split_pos]), self._main_ino.replace("\\", "/")))
         result.append(contents[split_pos:].strip())
