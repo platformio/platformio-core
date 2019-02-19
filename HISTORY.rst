@@ -9,6 +9,7 @@ PlatformIO 4.0
 
 * Added Python 3.5+ support
   (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
+* Fixed an issue with slow updating of PlatformIO Core packages on Windows
 
 PlatformIO 3.0
 --------------
