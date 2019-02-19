@@ -7,6 +7,8 @@ PlatformIO 3.0
 3.6.5 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Fixed an issue with slow updating of PlatformIO Core packages on Windows
+
 3.6.4 (2019-01-23)
 ~~~~~~~~~~~~~~~~~~
 

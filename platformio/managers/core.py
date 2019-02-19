@@ -106,9 +106,10 @@ def update_core_packages(only_check=False, silent=False):
 
 def shutdown_piohome_servers():
     port = 8010
-    while port < 8100:
+    while port < 8050:
         try:
-            requests.get("http://127.0.0.1:%d?__shutdown__=1" % port)
+            requests.get(
+                "http://127.0.0.1:%d?__shutdown__=1" % port, timeout=0.01)
         except:  # pylint: disable=bare-except
             pass
         port += 1
