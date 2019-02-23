@@ -8,6 +8,8 @@ PlatformIO 3.0
 ~~~~~~~~~~~~~~~~~~
 
 * Fixed an issue with slow updating of PlatformIO Core packages on Windows
+* Fixed an issue when `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ recompiles project if ``--keep-build-dir`` option is passed
+  (`issue #2109 <https://github.com/platformio/platformio-core/issues/2109>`_)
 
 3.6.4 (2019-01-23)
 ~~~~~~~~~~~~~~~~~~
