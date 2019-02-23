@@ -84,7 +84,11 @@ def cli(  # pylint: disable=too-many-arguments
 
     try:
         app.set_session_var("force_option", True)
-        _clean_dir(build_dir)
+
+        if not keep_build_dir and isdir(build_dir):
+            util.rmtree_(build_dir)
+        if not isdir(build_dir):
+            makedirs(build_dir)
 
         for dir_name, patterns in dict(lib=lib, src=src).items():
             if not patterns:
@@ -114,11 +118,6 @@ def cli(  # pylint: disable=too-many-arguments
     finally:
         if not keep_build_dir:
             util.rmtree_(build_dir)
-
-
-def _clean_dir(dirpath):
-    util.rmtree_(dirpath)
-    makedirs(dirpath)
 
 
 def _copy_contents(dst_dir, contents):
