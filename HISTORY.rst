@@ -9,6 +9,8 @@ PlatformIO 4.0
 
 * Added Python 3.5+ support
   (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
+* Project Generator: added new targets for CLion IDE "BUILD_VERBOSE" and "MONITOR" (serial port monitor)
+  (`issue #359 <https://github.com/platformio/platformio-core/issues/359>`_)
 * Fixed an issue with slow updating of PlatformIO Core packages on Windows
 * Fixed an issue when `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ recompiles project if ``--keep-build-dir`` option is passed
   (`issue #2109 <https://github.com/platformio/platformio-core/issues/2109>`_)

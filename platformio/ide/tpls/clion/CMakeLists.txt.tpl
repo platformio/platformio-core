@@ -10,6 +10,12 @@ add_custom_target(
 )
 
 add_custom_target(
+    PLATFORMIO_BUILD_VERBOSE ALL
+    COMMAND ${PLATFORMIO_CMD} -f -c clion run --verbose
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_custom_target(
     PLATFORMIO_UPLOAD ALL
     COMMAND ${PLATFORMIO_CMD} -f -c clion run --target upload
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -18,6 +24,12 @@ add_custom_target(
 add_custom_target(
     PLATFORMIO_CLEAN ALL
     COMMAND ${PLATFORMIO_CMD} -f -c clion run --target clean
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_custom_target(
+    PLATFORMIO_MONITOR ALL
+    COMMAND ${PLATFORMIO_CMD} -f -c clion device monitor
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
