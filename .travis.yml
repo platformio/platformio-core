@@ -12,10 +12,6 @@ matrix:
       env: TOX_ENV=py27
     - os: linux
       sudo: required
-      python: 3.5
-      env: TOX_ENV=py35
-    - os: linux
-      sudo: required
       python: 3.6
       env: TOX_ENV=py36
     - os: osx
