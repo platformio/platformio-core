@@ -696,7 +696,7 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
 
 PING_INTERNET_IPS = [
     "192.30.253.113",  # github.com
-    "159.122.18.156",  # dl.bintray.com
+    "18.195.111.75",  # dl.bintray.com
     "193.222.52.25"  # dl.platformio.org
 ]
 
