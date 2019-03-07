@@ -643,10 +643,9 @@ def _get_api_result(
     except requests.exceptions.HTTPError as e:
         if result and "message" in result:
             raise exception.APIRequestError(result['message'])
-        elif result and "errors" in result:
+        if result and "errors" in result:
             raise exception.APIRequestError(result['errors'][0]['title'])
-        else:
-            raise exception.APIRequestError(e)
+        raise exception.APIRequestError(e)
     except ValueError:
         raise exception.APIRequestError(
             "Invalid response: %s" % r.text.encode("utf-8"))

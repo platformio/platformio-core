@@ -481,7 +481,7 @@ class PkgInstallerMixin(object):
         if versions is None:
             util.internet_on(raise_exception=True)
             raise exception.UnknownPackage(name)
-        elif not pkgdata:
+        if not pkgdata:
             raise exception.UndefinedPackageVersion(requirements or "latest",
                                                     util.get_systype())
         return pkg_dir

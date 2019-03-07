@@ -277,8 +277,7 @@ class LibraryManager(BasePkgManager):
         if not lib_info:
             if list(filters) == ["name"]:
                 raise exception.LibNotFound(filters['name'])
-            else:
-                raise exception.LibNotFound(str(filters))
+            raise exception.LibNotFound(str(filters))
         if not silent:
             click.echo("Found: %s" % click.style(
                 "https://platformio.org/lib/show/{id}/{name}".format(
