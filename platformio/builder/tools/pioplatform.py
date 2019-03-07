@@ -95,8 +95,10 @@ def LoadPioPlatform(env, variables):
         for key, value in variables.UnknownVariables().items():
             if not key.startswith("BOARD_"):
                 continue
-            env.Replace(
-                **{key.upper().replace("BUILD.", ""): base64.b64decode(value)})
+            env.Replace(**{
+                key.upper().replace("BUILD.", ""):
+                base64.b64decode(value)
+            })
         return
 
     # update board manifest with a custom data

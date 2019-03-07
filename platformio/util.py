@@ -568,16 +568,11 @@ def get_mdns_services():
                 pass
 
             items.append({
-                "type":
-                service.type,
-                "name":
-                service.name,
-                "ip":
-                ".".join([str(ord(c)) for c in service.address]),
-                "port":
-                service.port,
-                "properties":
-                properties
+                "type": service.type,
+                "name": service.name,
+                "ip": ".".join([str(ord(c)) for c in service.address]),
+                "port": service.port,
+                "properties": properties
             })
     return items
 
