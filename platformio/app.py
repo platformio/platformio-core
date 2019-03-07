@@ -352,8 +352,8 @@ def get_cid():
                 pass
         cid = str(
             uuid.UUID(
-                bytes=hashlib.md5(str(_uid if _uid else uuid.getnode())).
-                digest()))
+                bytes=hashlib.md5(str(
+                    _uid if _uid else uuid.getnode())).digest()))
         if "windows" in util.get_systype() or os.getuid() > 0:
             set_state_item("cid", cid)
     return cid

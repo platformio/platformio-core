@@ -1,3 +1,7 @@
+# !!! WARNING !!!
+# PLEASE DO NOT MODIFY THIS FILE!
+# USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+
 % def _normalize_path(path):
 %   if project_dir in path:
 %     path = path.replace(project_dir, "${CMAKE_CURRENT_LIST_DIR}")
