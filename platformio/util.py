@@ -209,28 +209,37 @@ def pioversion_to_intstr():
 
 
 def get_project_optional_dir(name, default=None):
-    data = None
+    paths = None
     var_name = "PLATFORMIO_%s" % name.upper()
     if var_name in os.environ:
-        data = os.getenv(var_name)
+        paths = os.getenv(var_name)
     else:
         try:
             config = load_project_config()
             if (config.has_section("platformio")
                     and config.has_option("platformio", name)):
-                data = config.get("platformio", name)
+                paths = config.get("platformio", name)
         except exception.NotPlatformIOProject:
             pass
 
-    if not data:
+    if not paths:
         return default
 
     items = []
-    for item in data.split(", "):
+    for item in paths.split(", "):
         if item.startswith("~"):
             item = expanduser(item)
         items.append(abspath(item))
-    return ", ".join(items)
+    paths = ", ".join(items)
+
+    while "$PROJECT_HASH" in paths:
+        project_dir = get_project_dir()
+        paths = paths.replace(
+            "$PROJECT_HASH",
+            sha1(project_dir if PY2 else project_dir.encode()).hexdigest()
+            [:10])
+
+    return paths
 
 
 def get_home_dir():
@@ -320,12 +329,6 @@ def get_projectboards_dir():
 def get_projectbuild_dir(force=False):
     path = get_project_optional_dir("build_dir",
                                     join(get_project_dir(), ".pioenvs"))
-    if "$PROJECT_HASH" in path:
-        project_dir = get_project_dir()
-        path = path.replace(
-            "$PROJECT_HASH",
-            sha1(project_dir if PY2 else project_dir.encode()).hexdigest()
-            [:10])
     try:
         if not isdir(path):
             os.makedirs(path)
