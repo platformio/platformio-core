@@ -10,11 +10,10 @@ PlatformIO 4.0
 * Added Python 3.5+ support
   (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
 
-
 PlatformIO 3.0
 --------------
 
-3.6.5 (2019-??-??)
+3.6.5 (2019-03-07)
 ~~~~~~~~~~~~~~~~~~
 
 * Project Generator: added new targets for CLion IDE "BUILD_VERBOSE" and "MONITOR" (serial port monitor)
