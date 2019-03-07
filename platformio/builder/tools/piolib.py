@@ -185,8 +185,8 @@ class LibBuilderBase(object):
 
     @property
     def build_dir(self):
-        lib_hash = hashlib.sha1(self.path if util.PY2 else self.path.
-                                encode()).hexdigest()[:3]
+        lib_hash = hashlib.sha1(
+            self.path if util.PY2 else self.path.encode()).hexdigest()[:3]
         return join("$BUILD_DIR", "lib%s" % lib_hash, basename(self.path))
 
     @property

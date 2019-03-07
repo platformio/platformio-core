@@ -589,8 +589,8 @@ class PkgInstallerMixin(object):
                     target_dirname = "%s@src-%s" % (
                         pkg_dirname,
                         hashlib.md5(cur_manifest['__src_url'] if util.
-                                    PY2 else cur_manifest['__src_url'].
-                                    encode()).hexdigest())
+                                    PY2 else cur_manifest['__src_url'].encode(
+                                    )).hexdigest())
                 shutil.move(pkg_dir, join(self.package_dir, target_dirname))
             # fix to a version
             elif action == 2:
@@ -600,8 +600,8 @@ class PkgInstallerMixin(object):
                     target_dirname = "%s@src-%s" % (
                         pkg_dirname,
                         hashlib.md5(tmp_manifest['__src_url'] if util.
-                                    PY2 else tmp_manifest['__src_url'].
-                                    encode()).hexdigest())
+                                    PY2 else tmp_manifest['__src_url'].encode(
+                                    )).hexdigest())
                 pkg_dir = join(self.package_dir, target_dirname)
 
         # remove previous/not-satisfied package

@@ -642,10 +642,8 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
                 if not isdir(libcore_dir):
                     continue
                 storages.append({
-                    "name":
-                    "%s-core-%s" % (opts['package'], item),
-                    "path":
-                    libcore_dir
+                    "name": "%s-core-%s" % (opts['package'], item),
+                    "path": libcore_dir
                 })
 
         return storages

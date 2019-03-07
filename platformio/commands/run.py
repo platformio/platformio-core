@@ -432,5 +432,5 @@ def calculate_project_hash():
         # Fix issue with useless project rebuilding for case insensitive FS.
         # A case of disk drive can differ...
         chunks_to_str = chunks_to_str.lower()
-    return sha1(chunks_to_str if util.PY2 else chunks_to_str.
-                encode()).hexdigest()
+    return sha1(
+        chunks_to_str if util.PY2 else chunks_to_str.encode()).hexdigest()
