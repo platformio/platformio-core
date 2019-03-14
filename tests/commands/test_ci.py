@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os.path import join
+from os.path import isfile, join
 
 from platformio.commands.ci import cli as cmd_ci
 from platformio.commands.lib import cli as cmd_lib
@@ -30,6 +30,36 @@ def test_ci_boards(clirunner, validate_cliresult):
         "leonardo"
     ])
     validate_cliresult(result)
+
+
+def test_ci_build_dir(clirunner, tmpdir_factory, validate_cliresult):
+    build_dir = str(tmpdir_factory.mktemp("ci_build_dir"))
+    result = clirunner.invoke(cmd_ci, [
+        join("examples", "wiring-blink", "src", "main.cpp"), "-b", "uno",
+        "--build-dir", build_dir
+    ])
+    validate_cliresult(result)
+    assert not isfile(join(build_dir, "platformio.ini"))
+
+
+def test_ci_keep_build_dir(clirunner, tmpdir_factory, validate_cliresult):
+    build_dir = str(tmpdir_factory.mktemp("ci_build_dir"))
+    result = clirunner.invoke(cmd_ci, [
+        join("examples", "wiring-blink", "src", "main.cpp"), "-b", "uno",
+        "--build-dir", build_dir, "--keep-build-dir"
+    ])
+    validate_cliresult(result)
+    assert isfile(join(build_dir, "platformio.ini"))
+
+    # 2nd attempt
+    result = clirunner.invoke(cmd_ci, [
+        join("examples", "wiring-blink", "src", "main.cpp"), "-b", "metro",
+        "--build-dir", build_dir, "--keep-build-dir"
+    ])
+    validate_cliresult(result)
+
+    assert "board: uno" in result.output
+    assert "board: metro" in result.output
 
 
 def test_ci_project_conf(clirunner, validate_cliresult):

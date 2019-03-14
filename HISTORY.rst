@@ -13,6 +13,11 @@ PlatformIO 4.0
 PlatformIO 3.0
 --------------
 
+3.6.6 (2019-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed "FileExistsError" when `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ command is used in pair with ``--keep-build-dir`` option
+
 3.6.5 (2019-03-07)
 ~~~~~~~~~~~~~~~~~~
 
