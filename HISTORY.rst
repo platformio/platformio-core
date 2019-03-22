@@ -7,7 +7,9 @@ PlatformIO 3.0
 3.6.6 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Fixed error with conflicting declaration of a prototype (Arduino sketch preprocessor)
+* Project Generator: fixed a warning "Property !!! WARNING !!! is not allowed" for VSCode
+  (`issue #2243 <https://github.com/platformio/platformio-core/issues/2243>`_)
+* Fixed an error with conflicting declaration of a prototype (Arduino sketch preprocessor)
 * Fixed "FileExistsError" when `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ command is used in pair with ``--keep-build-dir`` option
 
 3.6.5 (2019-03-07)
