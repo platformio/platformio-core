@@ -145,7 +145,10 @@ def _copy_contents(dst_dir, contents):
         dst_dir = join(dst_dir, mkdtemp(dir=dst_dir))
 
     for f in items['files']:
-        copyfile(f, join(dst_dir, basename(f)))
+        dst_file = join(dst_dir, basename(f))
+        if f == dst_file:
+            continue
+        copyfile(f, dst_file)
 
 
 def _exclude_contents(dst_dir, patterns):
