@@ -1,6 +1,8 @@
 {
-    "!!! WARNING !!!": "PLEASE DO NOT MODIFY THIS FILE! USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags",
     "configurations": [
+        {
+            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
+        },
         {
 % import platform
 % from os.path import commonprefix, dirname
