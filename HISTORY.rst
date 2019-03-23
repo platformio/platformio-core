@@ -18,6 +18,8 @@ PlatformIO 3.0
 
 * Project Generator: fixed a warning "Property !!! WARNING !!! is not allowed" for VSCode
   (`issue #2243 <https://github.com/platformio/platformio-core/issues/2243>`_)
+* Fixed an issue when PlatformIO Build System does not pick up "mbed_lib.json" files from libraries
+  (`issue #2164 <https://github.com/platformio/platformio-core/issues/2164>`_)
 * Fixed an error with conflicting declaration of a prototype (Arduino sketch preprocessor)
 * Fixed "FileExistsError" when `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ command is used in pair with ``--keep-build-dir`` option
 

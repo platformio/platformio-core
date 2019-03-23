@@ -71,6 +71,8 @@ class LibBuilderFactory(object):
 
         # check source files
         for root, _, files in os.walk(path, followlinks=True):
+            if "mbed_lib.json" in files:
+                return ["mbed"]
             for fname in files:
                 if not env.IsFileWithExt(
                         fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT):
@@ -262,7 +264,6 @@ class LibBuilderBase(object):
 
     def process_extra_options(self):
         with util.cd(self.path):
-            self.env.ProcessUnFlags(self.build_unflags)
             self.env.ProcessFlags(self.build_flags)
             if self.extra_script:
                 self.env.SConscriptChdir(1)
@@ -272,6 +273,7 @@ class LibBuilderBase(object):
                         "env": self.env,
                         "pio_lib_builder": self
                     })
+            self.env.ProcessUnFlags(self.build_unflags)
 
     def process_dependencies(self):
         if not self.dependencies:
@@ -590,6 +592,59 @@ class MbedLibBuilder(LibBuilderBase):
 
     def is_frameworks_compatible(self, frameworks):
         return util.items_in_list(frameworks, ["mbed"])
+
+    @property
+    def build_flags(self):
+        return self._mbed_lib_json_to_build_flags()
+
+    def _mbed_lib_json_to_build_flags(self):  # pylint: disable=too-many-locals
+        json_files = [
+            join(root, "mbed_lib.json")
+            for root, _, files in os.walk(self.path)
+            if "mbed_lib.json" in files
+        ]
+        if not json_files:
+            return None
+
+        build_flags = []
+        cppdefines = str(self.env.Flatten(self.env.subst("$CPPDEFINES")))
+        for p in json_files:
+            manifest = util.load_json(p)
+
+            # default macros
+            build_flags.extend(["-D" + m for m in manifest.get("macros", [])])
+
+            macros = {}
+            # configuration items
+            for key, options in manifest.get("config", {}).items():
+                if "value" not in options:
+                    continue
+                macros[key] = dict(
+                    name=options.get("macro_name"), value=options.get("value"))
+            # overrode items per target
+            for target, options in manifest.get("target_overrides",
+                                                {}).items():
+                if target != "*" and "TARGET_" + target not in cppdefines:
+                    continue
+                build_flags.extend(
+                    ["-D" + m for m in options.get("target.macros_add", [])])
+                for key, value in options.items():
+                    if not key.startswith("target.") and key in macros:
+                        macros[key]['value'] = value
+            for key, macro in macros.items():
+                name = macro['name']
+                value = macro['value']
+                if not name:
+                    name = key
+                    if "." not in name:
+                        name = manifest.get("name") + "." + name
+                    name = re.sub(r"[^a-z\d]+", "_", name, flags=re.I).upper()
+                    name = "MBED_CONF_" + name
+                if isinstance(value, bool):
+                    value = 1 if value else 0
+                build_flags.append("-D%s=%s" % (name, value))
+
+        return build_flags
 
 
 class PlatformIOLibBuilder(LibBuilderBase):
