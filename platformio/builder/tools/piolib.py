@@ -179,10 +179,11 @@ class LibBuilderBase(object):
                 if isdir(join(self.path, "src")) else self.path)
 
     def get_include_dirs(self):
-        items = [self.src_dir]
+        items = []
         include_dir = self.include_dir
         if include_dir and include_dir not in items:
             items.append(include_dir)
+        items.append(self.src_dir)
         return items
 
     @property
@@ -759,10 +760,11 @@ class ProjectAsLibBuilder(LibBuilderBase):
         return self.env.subst("$PROJECTSRC_DIR")
 
     def get_include_dirs(self):
-        include_dirs = LibBuilderBase.get_include_dirs(self)
+        include_dirs = []
         project_include_dir = self.env.subst("$PROJECTINCLUDE_DIR")
         if isdir(project_include_dir):
             include_dirs.append(project_include_dir)
+        include_dirs.extend(LibBuilderBase.get_include_dirs(self))
         return include_dirs
 
     def get_search_files(self):
@@ -830,8 +832,9 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     def build(self):
         self._is_built = True  # do not build Project now
+        result = LibBuilderBase.build(self)
         self.env.PrependUnique(CPPPATH=self.get_include_dirs())
-        return LibBuilderBase.build(self)
+        return result
 
 
 def GetLibBuilders(env):  # pylint: disable=too-many-branches
