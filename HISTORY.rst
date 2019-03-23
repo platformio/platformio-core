@@ -13,6 +13,8 @@ PlatformIO 3.0
   (`issue #2164 <https://github.com/platformio/platformio-core/issues/2164>`_)
 * Fixed an error with conflicting declaration of a prototype (Arduino sketch preprocessor)
 * Fixed "FileExistsError" when `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ command is used in pair with ``--keep-build-dir`` option
+* Fixed an issue with incorrect order of project "include" and "src" paths in ``CPPPATH``
+  (`issue #1914 <https://github.com/platformio/platformio-core/issues/1914>`_)
 
 3.6.5 (2019-03-07)
 ~~~~~~~~~~~~~~~~~~
