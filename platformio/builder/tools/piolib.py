@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-member, no-self-use, unused-argument
+# pylint: disable=no-member, no-self-use, unused-argument, too-many-lines
 # pylint: disable=too-many-instance-attributes, too-many-public-methods
 
 from __future__ import absolute_import
@@ -591,58 +591,110 @@ class MbedLibBuilder(LibBuilderBase):
     def is_frameworks_compatible(self, frameworks):
         return util.items_in_list(frameworks, ["mbed"])
 
-    @property
-    def build_flags(self):
-        return self._mbed_lib_json_to_build_flags()
+    def process_extra_options(self):
+        self._process_mbed_lib_confs()
+        return super(MbedLibBuilder, self).process_extra_options()
 
-    def _mbed_lib_json_to_build_flags(self):  # pylint: disable=too-many-locals
-        json_files = [
+    def _process_mbed_lib_confs(self):
+        mbed_lib_paths = [
             join(root, "mbed_lib.json")
             for root, _, files in os.walk(self.path)
             if "mbed_lib.json" in files
         ]
-        if not json_files:
+        if not mbed_lib_paths:
             return None
 
-        build_flags = []
+        mbed_config_path = None
+        for p in self.env.get("CPPPATH"):
+            mbed_config_path = join(self.env.subst(p), "mbed_config.h")
+            if isfile(mbed_config_path):
+                break
+            else:
+                mbed_config_path = None
+        if not mbed_config_path:
+            return None
+
+        macros = {}
+        for mbed_lib_path in mbed_lib_paths:
+            macros.update(self._mbed_lib_conf_parse_macros(mbed_lib_path))
+
+        self._mbed_conf_append_macros(mbed_config_path, macros)
+        return True
+
+    @staticmethod
+    def _mbed_normalize_macro(macro):
+        name = macro
+        value = None
+        if "=" in macro:
+            name, value = macro.split("=", 1)
+        return dict(name=name, value=value)
+
+    def _mbed_lib_conf_parse_macros(self, mbed_lib_path):
+        macros = {}
         cppdefines = str(self.env.Flatten(self.env.subst("$CPPDEFINES")))
-        for p in json_files:
-            manifest = util.load_json(p)
+        manifest = util.load_json(mbed_lib_path)
 
-            # default macros
-            build_flags.extend(["-D" + m for m in manifest.get("macros", [])])
+        # default macros
+        for macro in manifest.get("macros", []):
+            macro = self._mbed_normalize_macro(macro)
+            macros[macro['name']] = macro
 
-            macros = {}
-            # configuration items
-            for key, options in manifest.get("config", {}).items():
-                if "value" not in options:
+        # configuration items
+        for key, options in manifest.get("config", {}).items():
+            if "value" not in options:
+                continue
+            macros[key] = dict(
+                name=options.get("macro_name"), value=options.get("value"))
+
+        # overrode items per target
+        for target, options in manifest.get("target_overrides", {}).items():
+            if target != "*" and "TARGET_" + target not in cppdefines:
+                continue
+            for macro in options.get("target.macros_add", []):
+                macro = self._mbed_normalize_macro(macro)
+                macros[macro['name']] = macro
+            for key, value in options.items():
+                if not key.startswith("target.") and key in macros:
+                    macros[key]['value'] = value
+
+        # normalize macro names
+        for key, macro in macros.items():
+            if not macro['name']:
+                macro['name'] = key
+                if "." not in macro['name']:
+                    macro['name'] = "%s.%s" % (manifest.get("name"),
+                                               macro['name'])
+                macro['name'] = re.sub(
+                    r"[^a-z\d]+", "_", macro['name'], flags=re.I).upper()
+                macro['name'] = "MBED_CONF_" + macro['name']
+            if isinstance(macro['value'], bool):
+                macro['value'] = 1 if macro['value'] else 0
+
+        return {macro["name"]: macro["value"] for macro in macros.values()}
+
+    def _mbed_conf_append_macros(self, mbed_config_path, macros):
+        lines = []
+        with open(mbed_config_path) as fp:
+            for line in fp.readlines():
+                line = line.strip()
+                if line == "#endif":
+                    lines.append(
+                        "// PlatformIO Library Dependency Finder (LDF)")
+                    lines.extend([
+                        "#define %s %s" % (name,
+                                           value if value is not None else "")
+                        for name, value in macros.items()
+                    ])
+                    lines.append("")
+                if not line.startswith("#define"):
+                    lines.append(line)
                     continue
-                macros[key] = dict(
-                    name=options.get("macro_name"), value=options.get("value"))
-            # overrode items per target
-            for target, options in manifest.get("target_overrides",
-                                                {}).items():
-                if target != "*" and "TARGET_" + target not in cppdefines:
-                    continue
-                build_flags.extend(
-                    ["-D" + m for m in options.get("target.macros_add", [])])
-                for key, value in options.items():
-                    if not key.startswith("target.") and key in macros:
-                        macros[key]['value'] = value
-            for key, macro in macros.items():
-                name = macro['name']
-                value = macro['value']
-                if not name:
-                    name = key
-                    if "." not in name:
-                        name = manifest.get("name") + "." + name
-                    name = re.sub(r"[^a-z\d]+", "_", name, flags=re.I).upper()
-                    name = "MBED_CONF_" + name
-                if isinstance(value, bool):
-                    value = 1 if value else 0
-                build_flags.append("-D%s=%s" % (name, value))
-
-        return build_flags
+                tokens = line.split()
+                if len(tokens) < 2 or tokens[1] not in macros:
+                    lines.append(line)
+        lines.append("")
+        with open(mbed_config_path, "w") as fp:
+            fp.write("\n".join(lines))
 
 
 class PlatformIOLibBuilder(LibBuilderBase):
