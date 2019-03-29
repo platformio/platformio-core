@@ -4,6 +4,11 @@ Release Notes
 PlatformIO 3.0
 --------------
 
+3.6.7 (2019-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Project Generator: fixed a VSCode C/C++'s "Cannot find" warning when CPPPATH folder does not exist
+
 3.6.6 (2019-03-29)
 ~~~~~~~~~~~~~~~~~~
 
