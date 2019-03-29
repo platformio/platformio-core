@@ -33,10 +33,10 @@ class InoToCPPConverter(object):
     PROTOTYPE_RE = re.compile(
         r"""^(
         (?:template\<.*\>\s*)?      # template
-        ([a-z_\d\&]+\*?\s+){1,2}      # return type
+        ([a-z_\d\&]+\*?\s+){1,2}    # return type
         ([a-z_\d]+\s*)              # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
-        )\s*\{                      # must end with {
+        )\s*(\{|;)                  # must end with `{` or `;`
         """, re.X | re.M | re.I)
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
     PROTOPTRS_TPLRE = r"\([^&\(]*&(%s)[^\)]*\)"
@@ -162,7 +162,14 @@ class InoToCPPConverter(object):
         if not prototypes:
             return contents
 
-        prototype_names = set([m.group(3).strip() for m in prototypes])
+        # skip already declared prototypes
+        declared = set(
+            m.group(1).strip() for m in prototypes if m.group(4) == ";")
+        prototypes = [
+            m for m in prototypes if m.group(1).strip() not in declared
+        ]
+
+        prototype_names = set(m.group(3).strip() for m in prototypes)
         split_pos = prototypes[0].start()
         match_ptrs = re.search(
             self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),

@@ -55,7 +55,6 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     "--build-dir",
     default=mkdtemp,
     type=click.Path(
-        exists=True,
         file_okay=False,
         dir_okay=True,
         writable=True,
@@ -134,7 +133,8 @@ def _copy_contents(dst_dir, contents):
     if dst_dir_name == "src" and len(items['dirs']) == 1:
         copytree(list(items['dirs']).pop(), dst_dir, symlinks=True)
     else:
-        makedirs(dst_dir)
+        if not isdir(dst_dir):
+            makedirs(dst_dir)
         for d in items['dirs']:
             copytree(d, join(dst_dir, basename(d)), symlinks=True)
 
@@ -145,7 +145,10 @@ def _copy_contents(dst_dir, contents):
         dst_dir = join(dst_dir, mkdtemp(dir=dst_dir))
 
     for f in items['files']:
-        copyfile(f, join(dst_dir, basename(f)))
+        dst_file = join(dst_dir, basename(f))
+        if f == dst_file:
+            continue
+        copyfile(f, dst_file)
 
 
 def _exclude_contents(dst_dir, patterns):

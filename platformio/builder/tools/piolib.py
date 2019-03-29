@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-member, no-self-use, unused-argument
+# pylint: disable=no-member, no-self-use, unused-argument, too-many-lines
 # pylint: disable=too-many-instance-attributes, too-many-public-methods
 
 from __future__ import absolute_import
@@ -70,6 +70,8 @@ class LibBuilderFactory(object):
 
         # check source files
         for root, _, files in os.walk(path, followlinks=True):
+            if "mbed_lib.json" in files:
+                return ["mbed"]
             for fname in files:
                 if not env.IsFileWithExt(
                         fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT):
@@ -175,10 +177,11 @@ class LibBuilderBase(object):
                 if isdir(join(self.path, "src")) else self.path)
 
     def get_include_dirs(self):
-        items = [self.src_dir]
+        items = []
         include_dir = self.include_dir
         if include_dir and include_dir not in items:
             items.append(include_dir)
+        items.append(self.src_dir)
         return items
 
     @property
@@ -260,7 +263,6 @@ class LibBuilderBase(object):
 
     def process_extra_options(self):
         with util.cd(self.path):
-            self.env.ProcessUnFlags(self.build_unflags)
             self.env.ProcessFlags(self.build_flags)
             if self.extra_script:
                 self.env.SConscriptChdir(1)
@@ -270,6 +272,7 @@ class LibBuilderBase(object):
                         "env": self.env,
                         "pio_lib_builder": self
                     })
+            self.env.ProcessUnFlags(self.build_unflags)
 
     def process_dependencies(self):
         if not self.dependencies:
@@ -588,6 +591,111 @@ class MbedLibBuilder(LibBuilderBase):
     def is_frameworks_compatible(self, frameworks):
         return util.items_in_list(frameworks, ["mbed"])
 
+    def process_extra_options(self):
+        self._process_mbed_lib_confs()
+        return super(MbedLibBuilder, self).process_extra_options()
+
+    def _process_mbed_lib_confs(self):
+        mbed_lib_paths = [
+            join(root, "mbed_lib.json")
+            for root, _, files in os.walk(self.path)
+            if "mbed_lib.json" in files
+        ]
+        if not mbed_lib_paths:
+            return None
+
+        mbed_config_path = None
+        for p in self.env.get("CPPPATH"):
+            mbed_config_path = join(self.env.subst(p), "mbed_config.h")
+            if isfile(mbed_config_path):
+                break
+            else:
+                mbed_config_path = None
+        if not mbed_config_path:
+            return None
+
+        macros = {}
+        for mbed_lib_path in mbed_lib_paths:
+            macros.update(self._mbed_lib_conf_parse_macros(mbed_lib_path))
+
+        self._mbed_conf_append_macros(mbed_config_path, macros)
+        return True
+
+    @staticmethod
+    def _mbed_normalize_macro(macro):
+        name = macro
+        value = None
+        if "=" in macro:
+            name, value = macro.split("=", 1)
+        return dict(name=name, value=value)
+
+    def _mbed_lib_conf_parse_macros(self, mbed_lib_path):
+        macros = {}
+        cppdefines = str(self.env.Flatten(self.env.subst("$CPPDEFINES")))
+        manifest = util.load_json(mbed_lib_path)
+
+        # default macros
+        for macro in manifest.get("macros", []):
+            macro = self._mbed_normalize_macro(macro)
+            macros[macro['name']] = macro
+
+        # configuration items
+        for key, options in manifest.get("config", {}).items():
+            if "value" not in options:
+                continue
+            macros[key] = dict(
+                name=options.get("macro_name"), value=options.get("value"))
+
+        # overrode items per target
+        for target, options in manifest.get("target_overrides", {}).items():
+            if target != "*" and "TARGET_" + target not in cppdefines:
+                continue
+            for macro in options.get("target.macros_add", []):
+                macro = self._mbed_normalize_macro(macro)
+                macros[macro['name']] = macro
+            for key, value in options.items():
+                if not key.startswith("target.") and key in macros:
+                    macros[key]['value'] = value
+
+        # normalize macro names
+        for key, macro in macros.items():
+            if not macro['name']:
+                macro['name'] = key
+                if "." not in macro['name']:
+                    macro['name'] = "%s.%s" % (manifest.get("name"),
+                                               macro['name'])
+                macro['name'] = re.sub(
+                    r"[^a-z\d]+", "_", macro['name'], flags=re.I).upper()
+                macro['name'] = "MBED_CONF_" + macro['name']
+            if isinstance(macro['value'], bool):
+                macro['value'] = 1 if macro['value'] else 0
+
+        return {macro["name"]: macro["value"] for macro in macros.values()}
+
+    def _mbed_conf_append_macros(self, mbed_config_path, macros):
+        lines = []
+        with open(mbed_config_path) as fp:
+            for line in fp.readlines():
+                line = line.strip()
+                if line == "#endif":
+                    lines.append(
+                        "// PlatformIO Library Dependency Finder (LDF)")
+                    lines.extend([
+                        "#define %s %s" % (name,
+                                           value if value is not None else "")
+                        for name, value in macros.items()
+                    ])
+                    lines.append("")
+                if not line.startswith("#define"):
+                    lines.append(line)
+                    continue
+                tokens = line.split()
+                if len(tokens) < 2 or tokens[1] not in macros:
+                    lines.append(line)
+        lines.append("")
+        with open(mbed_config_path, "w") as fp:
+            fp.write("\n".join(lines))
+
 
 class PlatformIOLibBuilder(LibBuilderBase):
 
@@ -701,10 +809,11 @@ class ProjectAsLibBuilder(LibBuilderBase):
         return self.env.subst("$PROJECTSRC_DIR")
 
     def get_include_dirs(self):
-        include_dirs = LibBuilderBase.get_include_dirs(self)
+        include_dirs = []
         project_include_dir = self.env.subst("$PROJECTINCLUDE_DIR")
         if isdir(project_include_dir):
             include_dirs.append(project_include_dir)
+        include_dirs.extend(LibBuilderBase.get_include_dirs(self))
         return include_dirs
 
     def get_search_files(self):
@@ -772,8 +881,9 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     def build(self):
         self._is_built = True  # do not build Project now
+        result = LibBuilderBase.build(self)
         self.env.PrependUnique(CPPPATH=self.get_include_dirs())
-        return LibBuilderBase.build(self)
+        return result
 
 
 def GetLibBuilders(env):  # pylint: disable=too-many-branches
