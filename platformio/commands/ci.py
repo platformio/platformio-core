@@ -55,10 +55,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     "--build-dir",
     default=mkdtemp,
     type=click.Path(
-        file_okay=False,
-        dir_okay=True,
-        writable=True,
-        resolve_path=True))
+        file_okay=False, dir_okay=True, writable=True, resolve_path=True))
 @click.option("--keep-build-dir", is_flag=True)
 @click.option(
     "-C",
