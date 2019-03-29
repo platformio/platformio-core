@@ -121,7 +121,7 @@ def BuildProgram(env):
     # append into the beginning a main LD script
     if (env.get("LDSCRIPT_PATH")
             and not any("-Wl,-T" in f for f in env['LINKFLAGS'])):
-        env.Prepend(LINKFLAGS=["-T", "$LDSCRIPT_PATH"])
+        env.Prepend(LINKFLAGS=["-T", "\"$LDSCRIPT_PATH\""])
 
     # enable "cyclic reference" for linker
     if env.get("LIBS") and env.GetCompilerType() == "gcc":
