@@ -13,7 +13,7 @@ PlatformIO 4.0
 PlatformIO 3.0
 --------------
 
-3.6.6 (2019-??-??)
+3.6.6 (2019-03-29)
 ~~~~~~~~~~~~~~~~~~
 
 * Project Generator: fixed a warning "Property !!! WARNING !!! is not allowed" for VSCode
