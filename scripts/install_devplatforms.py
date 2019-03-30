@@ -34,7 +34,7 @@ def main():
                 and platform['name'] == "aceinna_imu"):
             continue
         subprocess.check_call(
-            ["platformio", "platform", "install", platform['repository']])
+            ["platformio", "platform", "install", platform['name']])
 
 
 if __name__ == "__main__":
