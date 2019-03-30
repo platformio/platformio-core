@@ -67,5 +67,6 @@
 % end
             "compilerPath": "\"{{! _escape(cc_path) }}\" {{! _escape(cc_m_flags) }}"
         }
-    ]
+    ],
+    "version": 4
 }
