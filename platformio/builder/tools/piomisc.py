@@ -157,9 +157,7 @@ class InoToCPPConverter(object):
         return total
 
     def append_prototypes(self, contents):
-        prototypes = self._parse_prototypes(contents)
-        if not prototypes:
-            return contents
+        prototypes = self._parse_prototypes(contents) or []
 
         # skip already declared prototypes
         declared = set(
@@ -167,6 +165,9 @@ class InoToCPPConverter(object):
         prototypes = [
             m for m in prototypes if m.group(1).strip() not in declared
         ]
+
+        if not prototypes:
+            return contents
 
         prototype_names = set(m.group(3).strip() for m in prototypes)
         split_pos = prototypes[0].start()
