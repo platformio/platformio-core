@@ -70,7 +70,11 @@ class MeasurementProtocol(TelemetryBase):
         self['tid'] = self.TID
         self['cid'] = app.get_cid()
 
-        self['sr'] = "%dx%d" % click.get_terminal_size()
+        try:
+            self['sr'] = "%dx%d" % click.get_terminal_size()
+        except ValueError:
+            pass
+
         self._prefill_screen_name()
         self._prefill_appinfo()
         self._prefill_custom_data()
