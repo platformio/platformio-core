@@ -849,6 +849,18 @@ def ensure_udev_rules():
     return True
 
 
+def get_original_version(version):
+    if version.count(".") != 2:
+        return None
+    _, y = version.split(".")[:2]
+    if int(y) < 100:
+        return None
+    if len(y) % 2 != 0:
+        y = "0" + y
+    parts = [str(int(y[i * 2:i * 2 + 2])) for i in range(int(len(y) / 2))]
+    return ".".join(parts)
+
+
 def rmtree_(path):
 
     def _onerror(_, name, __):

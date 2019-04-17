@@ -54,18 +54,6 @@ def _get_registry_platforms():
     return platforms
 
 
-def _original_version(version):
-    if version.count(".") != 2:
-        return None
-    _, y = version.split(".")[:2]
-    if int(y) < 100:
-        return None
-    if len(y) % 2 != 0:
-        y = "0" + y
-    parts = [str(int(y[i * 2:i * 2 + 2])) for i in range(int(len(y) / 2))]
-    return ".".join(parts)
-
-
 def _get_platform_data(*args, **kwargs):
     try:
         return _get_installed_platform_data(*args, **kwargs)
@@ -122,7 +110,7 @@ def _get_installed_platform_data(platform,
                     continue
                 item[key] = value
                 if key == "version":
-                    item["originalVersion"] = _original_version(value)
+                    item["originalVersion"] = util.get_original_version(value)
         data['packages'].append(item)
 
     return data
