@@ -19,6 +19,8 @@ PlatformIO 3.0
 * Project Generator: fixed a VSCode C/C++'s "Cannot find" warning when CPPPATH folder does not exist
 * Fixed an "IndexError: list index out of range" for Arduino sketch preprocessor
   (`issue #2268 <https://github.com/platformio/platformio-core/issues/2268>`_)
+* Fixed an issue when invalid "env_default" in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ results into unhandled errors
+  (`issue #2265 <https://github.com/platformio/platformio-core/issues/2265>`_)
 
 3.6.6 (2019-03-29)
 ~~~~~~~~~~~~~~~~~~

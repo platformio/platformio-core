@@ -23,6 +23,7 @@ import click
 from platformio import exception, util
 from platformio.commands.platform import \
     platform_install as cli_platform_install
+from platformio.commands.run import check_project_envs
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 
@@ -130,10 +131,11 @@ def get_best_envname(project_dir, boards=None):
     config = util.load_project_config(project_dir)
     env_default = None
     if config.has_option("platformio", "env_default"):
-        env_default = config.get("platformio",
-                                 "env_default").split(", ")[0].strip()
+        env_default = util.parse_conf_multi_values(
+            config.get("platformio", "env_default"))
+        check_project_envs(config, env_default)
     if env_default:
-        return env_default
+        return env_default[0]
     section = None
     for section in config.sections():
         if not section.startswith("env:"):
