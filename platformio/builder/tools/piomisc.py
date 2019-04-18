@@ -58,7 +58,7 @@ class InoToCPPConverter(object):
         assert nodes
         lines = []
         for node in nodes:
-            contents = node.get_text_contents()
+            contents = util.get_file_contents(node.get_path())
             _lines = [
                 '# 1 "%s"' % node.get_path().replace("\\", "/"), contents
             ]
