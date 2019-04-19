@@ -94,7 +94,7 @@ end
 set language auto
 """
 
-MSPDEBUG_INIT_CONFIG = """
+GDB_MSPDEBUG_INIT_CONFIG = """
 define pio_reset_halt_target
 end
 
