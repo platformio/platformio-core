@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-arguments, too-many-locals, too-many-branches
+
 from fnmatch import fnmatch
 from os import getcwd, listdir
 from os.path import isdir, join
