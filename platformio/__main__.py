@@ -14,7 +14,7 @@
 
 import os
 import sys
-from os.path import join
+from os.path import isdir, isfile, join
 from platform import system
 from traceback import format_exc
 
@@ -24,15 +24,19 @@ from platformio import __version__, exception, maintenance
 from platformio.util import get_source_dir
 
 
-class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
+class PlatformioCLI(click.MultiCommand):
 
     def list_commands(self, ctx):
         cmds = []
-        for filename in os.listdir(join(get_source_dir(), "commands")):
-            if filename.startswith("__init__"):
+        commands_dir = join(get_source_dir(), "commands")
+        for name in os.listdir(commands_dir):
+            if name.startswith("__init__"):
                 continue
-            if filename.endswith(".py"):
-                cmds.append(filename[:-3])
+            if (isdir(join(commands_dir, name))
+                    and isfile(join(commands_dir, name, "command.py"))):
+                cmds.append(name)
+            elif name.endswith(".py"):
+                cmds.append(name[:-3])
         cmds.sort()
         return cmds
 
