@@ -7,6 +7,7 @@ PlatformIO 3.0
 3.6.7 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* `PIO Unified Debugger <https://docs.platformio.org/en/page/plus/debugging.html>`__: improved debugging in ``debug_load_mode = modified`` and fixed an issue with useless project rebuilding
 * Project Generator: fixed a VSCode C/C++'s "Cannot find" warning when CPPPATH folder does not exist
 * Fixed an "IndexError: list index out of range" for Arduino sketch preprocessor
   (`issue #2268 <https://github.com/platformio/platformio-core/issues/2268>`_)
