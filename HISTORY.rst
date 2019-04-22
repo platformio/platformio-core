@@ -16,7 +16,7 @@ PlatformIO 3.0
 3.6.7 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* `PIO Unified Debugger <https://docs.platformio.org/en/page/plus/debugging.html>`__: improved debugging in ``debug_load_mode = modified`` and fixed an issue with useless project rebuilding
+* `PIO Unified Debugger <https://docs.platformio.org/page/plus/debugging.html>`__: improved debugging in ``debug_load_mode = modified`` and fixed an issue with useless project rebuilding
 * Project Generator: fixed a VSCode C/C++'s "Cannot find" warning when CPPPATH folder does not exist
 * Fixed an "IndexError: list index out of range" for Arduino sketch preprocessor
   (`issue #2268 <https://github.com/platformio/platformio-core/issues/2268>`_)
@@ -31,7 +31,7 @@ PlatformIO 3.0
 * Fixed an issue when PlatformIO Build System does not pick up "mbed_lib.json" files from libraries
   (`issue #2164 <https://github.com/platformio/platformio-core/issues/2164>`_)
 * Fixed an error with conflicting declaration of a prototype (Arduino sketch preprocessor)
-* Fixed "FileExistsError" when `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ command is used in pair with ``--keep-build-dir`` option
+* Fixed "FileExistsError" when `platformio ci <https://docs.platformio.org/page/userguide/cmd_ci.html>`__ command is used in pair with ``--keep-build-dir`` option
 * Fixed an issue with incorrect order of project "include" and "src" paths in ``CPPPATH``
   (`issue #1914 <https://github.com/platformio/platformio-core/issues/1914>`_)
 
@@ -41,7 +41,7 @@ PlatformIO 3.0
 * Project Generator: added new targets for CLion IDE "BUILD_VERBOSE" and "MONITOR" (serial port monitor)
   (`issue #359 <https://github.com/platformio/platformio-core/issues/359>`_)
 * Fixed an issue with slow updating of PlatformIO Core packages on Windows
-* Fixed an issue when `platformio ci <https://docs.platformio.org/en/latest/userguide/cmd_ci.html>`__ recompiles project if ``--keep-build-dir`` option is passed
+* Fixed an issue when `platformio ci <https://docs.platformio.org/page/userguide/cmd_ci.html>`__ recompiles project if ``--keep-build-dir`` option is passed
   (`issue #2109 <https://github.com/platformio/platformio-core/issues/2109>`_)
 * Fixed an issue when ``$PROJECT_HASH`` template was not expanded for the other directory ``***_dir`` options in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
   (`issue #2170 <https://github.com/platformio/platformio-core/issues/2170>`_)
@@ -89,9 +89,9 @@ PlatformIO 3.0
 
 * Generate an `include <http://docs.platformio.org/page/projectconf/section_platformio.html#include-dir>`__ and `test <http://docs.platformio.org/page/projectconf/section_platformio.html#test-dir>`__ directories with a README file when initializing a new project
 * Support in-line comments for multi-line value (``lib_deps``, ``build_flags``, etc) in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
-* Added ``$PROJECT_HASH`` template variable for `build_dir <http://docs.platformio.org/en/latest/projectconf/section_platformio.html#projectconf-pio-build-dir>`__. One of the use cases is setting a global storage for project artifacts using `PLATFORMIO_BUILD_DIR <http://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_BUILD_DIR>`__ system environment variable. For example, ``/tmp/pio-build/$PROJECT_HASH`` (Unix) or ``$[sysenv.TEMP}/pio-build/$PROJECT_HASH`` (Windows)
+* Added ``$PROJECT_HASH`` template variable for `build_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#projectconf-pio-build-dir>`__. One of the use cases is setting a global storage for project artifacts using `PLATFORMIO_BUILD_DIR <http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_BUILD_DIR>`__ system environment variable. For example, ``/tmp/pio-build/$PROJECT_HASH`` (Unix) or ``$[sysenv.TEMP}/pio-build/$PROJECT_HASH`` (Windows)
 * Improved a loading speed of PIO Home "Recent News"
-* Improved `PIO Unified Debugger <https://docs.platformio.org/en/page/plus/debugging.html>`__ for "mbed" framework and fixed issue with missed local variables
+* Improved `PIO Unified Debugger <https://docs.platformio.org/page/plus/debugging.html>`__ for "mbed" framework and fixed issue with missed local variables
 * Introduced `"Release" and "Debug" Build Configurations <http://docs.platformio.org/page/projectconf/build_configurations.html>`__
 * Build project in "Debug Mode" including debugging information with a new ``debug`` target using `platformio run <https://docs.platformio.org/page/userguide/cmd_run.html>`__ command or `targets <http://docs.platformio.org/page/projectconf/section_env_general.html#targets>`__ option in ``platformio.ini``. The last option allows avoiding project rebuilding between "Run/Debug" modes.
   (`issue #1833 <https://github.com/platformio/platformio-core/issues/1833>`_)
@@ -149,7 +149,7 @@ PlatformIO 3.0
   build environment
   (`issue #1665 <https://github.com/platformio/platformio-core/issues/1665>`_)
 * Handle "architectures" data from "library.properties" manifest in
-  `lib_compat_mode = strict <https://docs.platformio.org/en/page/librarymanager/ldf.html#compatibility-mode>`__
+  `lib_compat_mode = strict <https://docs.platformio.org/page/librarymanager/ldf.html#compatibility-mode>`__
 * Added workaround for Python SemVer package's `issue #61 <https://github.com/rbarrois/python-semanticversion/issues/61>`_ with caret range and pre-releases
 * Replaced conflicted "env" pattern by "sysenv" for `"platformio.ini" Dynamic Variables" <https://docs.platformio.org/page/projectconf/dynamic_variables.html>`__
   (`issue #1705 <https://github.com/platformio/platformio-core/issues/1705>`_)
@@ -177,7 +177,7 @@ PlatformIO 3.0
   (`issue #1612 <https://github.com/platformio/platformio-core/issues/1612>`_)
 * Configure a custom path to SVD file using `debug_svd_path <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-svd-path>`__
   option
-* Custom project `description <https://docs.platformio.org/en/page/projectconf/section_platformio.html#description>`_
+* Custom project `description <https://docs.platformio.org/page/projectconf/section_platformio.html#description>`_
   which will be used by `PlatformIO Home <https://docs.platformio.org/page/home/index.html>`_
 * Updated Unity tool to 2.4.3
 * Improved support for Black Magic Probe in "uploader" mode
@@ -203,9 +203,9 @@ PlatformIO 3.0
   - Multiple themes (Dark & Light)
   - Ability to specify a name for new project
 
-* Control `PIO Unified Debugger <https://docs.platformio.org/en/page/plus/debugging.html>`__
+* Control `PIO Unified Debugger <https://docs.platformio.org/page/plus/debugging.html>`__
   and its firmware loading mode using
-  `debug_load_mode <https://docs.platformio.org/en/page/projectconf/section_env_debug.html#debug-load-mode>`__ option
+  `debug_load_mode <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-load-mode>`__ option
 * Added aliases (off, light, strict) for
   `LDF Compatibility Mode <https://docs.platformio.org/page/librarymanager/ldf.html>`__
 * Search for a library using PIO Library Registry ID ``id:X`` (e.g. ``pio lib search id:13``)
