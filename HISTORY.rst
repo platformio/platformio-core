@@ -4,7 +4,7 @@ Release Notes
 PlatformIO 3.0
 --------------
 
-3.6.7 (2019-??-??)
+3.6.7 (2019-04-23)
 ~~~~~~~~~~~~~~~~~~
 
 * `PIO Unified Debugger <https://docs.platformio.org/page/plus/debugging.html>`__: improved debugging in ``debug_load_mode = modified`` and fixed an issue with useless project rebuilding
