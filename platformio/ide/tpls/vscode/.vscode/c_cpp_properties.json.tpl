@@ -5,7 +5,7 @@
         },
         {
 % import platform
-% from os.path import commonprefix, dirname
+% from os.path import commonprefix, dirname, isdir
 %
 % systype = platform.system().lower()
 %
@@ -15,7 +15,7 @@
 %
 % cleaned_includes = []
 % for include in includes:
-%   if "toolchain-" not in dirname(commonprefix([include, cc_path])):
+%   if "toolchain-" not in dirname(commonprefix([include, cc_path])) and isdir(include):
 %     cleaned_includes.append(include)
 %   end
 % end
@@ -65,7 +65,8 @@
 % if cxx_stds:
             "cppStandard": "c++{{ cxx_stds[-1] }}",
 % end
-            "compilerPath": "{{! _escape(cc_path) }} {{! _escape(cc_m_flags) }}"
+            "compilerPath": "\"{{! _escape(cc_path) }}\" {{! _escape(cc_m_flags) }}"
         }
-    ]
+    ],
+    "version": 4
 }
