@@ -13,6 +13,12 @@ PlatformIO 4.0
 PlatformIO 3.0
 --------------
 
+3.6.8 (2019-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/en/latest/faq.html#platformio-udev-rules>`__
+  (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
+
 3.6.7 (2019-04-23)
 ~~~~~~~~~~~~~~~~~~
 
