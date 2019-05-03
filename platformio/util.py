@@ -33,50 +33,15 @@ import click
 import requests
 
 from platformio import __apiurl__, __version__, exception
+from platformio.project.config import ProjectConfig
 
 # pylint: disable=too-many-ancestors
 
 PY2 = sys.version_info[0] == 2
 if PY2:
-    import ConfigParser as ConfigParser
     string_types = basestring  # pylint: disable=undefined-variable
 else:
-    import configparser as ConfigParser
     string_types = str
-
-
-class ProjectConfig(ConfigParser.ConfigParser):
-
-    VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
-
-    def items(self, section, **_):  # pylint: disable=arguments-differ
-        items = []
-        for option in ConfigParser.ConfigParser.options(self, section):
-            items.append((option, self.get(section, option)))
-        return items
-
-    def get(  # pylint: disable=arguments-differ
-            self, section, option, **kwargs):
-        try:
-            value = ConfigParser.ConfigParser.get(self, section, option,
-                                                  **kwargs)
-        except ConfigParser.Error as e:
-            raise exception.InvalidProjectConf(str(e))
-        if "${" not in value or "}" not in value:
-            return value
-        return self.VARTPL_RE.sub(self._re_sub_handler, value)
-
-    def _re_sub_handler(self, match):
-        section, option = match.group(1), match.group(2)
-        if section in ("env", "sysenv") and not self.has_section(section):
-            if section == "env":
-                click.secho(
-                    "Warning! Access to system environment variable via "
-                    "`${{env.{0}}}` is deprecated. Please use "
-                    "`${{sysenv.{0}}}` instead".format(option),
-                    fg="yellow")
-            return os.getenv(option)
-        return self.get(section, option)
 
 
 class AsyncPipe(Thread):
@@ -347,34 +312,17 @@ def get_projectdata_dir():
                                                      "data"))
 
 
-def load_project_config(path=None):
+def load_project_config(path=None):  # FIXME:
     if not path or isdir(path):
         path = join(path or get_project_dir(), "platformio.ini")
     if not isfile(path):
         raise exception.NotPlatformIOProject(
             dirname(path) if path.endswith("platformio.ini") else path)
-    cp = ProjectConfig()
-    try:
-        cp.read(path)
-    except ConfigParser.Error as e:
-        raise exception.InvalidProjectConf(str(e))
-    return cp
+    return ProjectConfig(path)
 
 
-def parse_conf_multi_values(items):
-    result = []
-    if not items:
-        return result
-    inline_comment_re = re.compile(r"\s+;.*$")
-    for item in items.split("\n" if "\n" in items else ", "):
-        item = item.strip()
-        # comment
-        if not item or item.startswith((";", "#")):
-            continue
-        if ";" in item:
-            item = inline_comment_re.sub("", item).strip()
-        result.append(item)
-    return result
+def parse_conf_multi_values(items):  # FIXME:
+    return ProjectConfig.parse_multi_values(items)
 
 
 def change_filemtime(path, mtime):

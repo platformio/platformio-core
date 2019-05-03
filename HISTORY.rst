@@ -7,8 +7,10 @@ PlatformIO 4.0
 4.0.0 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Added Python 3.5+ support
+* Python 3 support
   (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
+* Include external configuration files with "extra_configs" option
+  (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
 
 PlatformIO 3.0
 --------------

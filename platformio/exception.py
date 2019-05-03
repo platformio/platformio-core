@@ -207,7 +207,7 @@ class InvalidLibConfURL(PlatformioException):
 
 class InvalidProjectConf(PlatformioException):
 
-    MESSAGE = "Invalid `platformio.ini`, project configuration file: '{0}'"
+    MESSAGE = ("Invalid '{0}' (project configuration file): '{1}'")
 
 
 class BuildScriptNotFound(PlatformioException):

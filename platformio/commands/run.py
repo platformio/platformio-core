@@ -130,7 +130,7 @@ class EnvironmentProcessor(object):
     KNOWN_PLATFORMIO_OPTIONS = [
         "description", "env_default", "home_dir", "lib_dir", "libdeps_dir",
         "include_dir", "src_dir", "build_dir", "data_dir", "test_dir",
-        "boards_dir", "lib_extra_dirs"
+        "boards_dir", "lib_extra_dirs", "extra_configs"
     ]
 
     KNOWN_ENV_OPTIONS = [
