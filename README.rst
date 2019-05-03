@@ -78,6 +78,7 @@ Registry
 Development Platforms
 ---------------------
 
+* `Aceinna IMU <https://platformio.org/platforms/aceinna_imu?utm_source=github&utm_medium=core>`_
 * `Atmel AVR <https://platformio.org/platforms/atmelavr?utm_source=github&utm_medium=core>`_
 * `Atmel SAM <https://platformio.org/platforms/atmelsam?utm_source=github&utm_medium=core>`_
 * `Espressif 32 <https://platformio.org/platforms/espressif32?utm_source=github&utm_medium=core>`_
@@ -86,6 +87,7 @@ Development Platforms
 * `Infineon XMC <https://platformio.org/platforms/infineonxmc?utm_source=github&utm_medium=core>`_
 * `Intel ARC32 <https://platformio.org/platforms/intel_arc32?utm_source=github&utm_medium=core>`_
 * `Intel MCS-51 (8051) <https://platformio.org/platforms/intel_mcs51?utm_source=github&utm_medium=core>`_
+* `Kendryte K210 <https://platformio.org/platforms/kendryte210?utm_source=github&utm_medium=core>`_
 * `Lattice iCE40 <https://platformio.org/platforms/lattice_ice40?utm_source=github&utm_medium=core>`_
 * `Maxim 32 <https://platformio.org/platforms/maxim32?utm_source=github&utm_medium=core>`_
 * `Microchip PIC32 <https://platformio.org/platforms/microchippic32?utm_source=github&utm_medium=core>`_
@@ -93,6 +95,7 @@ Development Platforms
 * `Nordic nRF52 <https://platformio.org/platforms/nordicnrf52?utm_source=github&utm_medium=core>`_
 * `NXP LPC <https://platformio.org/platforms/nxplpc?utm_source=github&utm_medium=core>`_
 * `RISC-V <https://platformio.org/platforms/riscv?utm_source=github&utm_medium=core>`_
+* `RISC-V GAP <https://platformio.org/platforms/riscv_gap?utm_source=github&utm_medium=core>`_
 * `Samsung ARTIK <https://platformio.org/platforms/samsung_artik?utm_source=github&utm_medium=core>`_
 * `Silicon Labs EFM32 <https://platformio.org/platforms/siliconlabsefm32?utm_source=github&utm_medium=core>`_
 * `ST STM32 <https://platformio.org/platforms/ststm32?utm_source=github&utm_medium=core>`_
@@ -112,8 +115,11 @@ Frameworks
 * `ESP-IDF <https://platformio.org/frameworks/espidf?utm_source=github&utm_medium=core>`_
 * `ESP8266 Non-OS SDK <https://platformio.org/frameworks/esp8266-nonos-sdk?utm_source=github&utm_medium=core>`_
 * `ESP8266 RTOS SDK <https://platformio.org/frameworks/esp8266-rtos-sdk?utm_source=github&utm_medium=core>`_
+* `Freedom E SDK <https://platformio.org/frameworks/freedom-e-sdk?utm_source=github&utm_medium=core>`_
+* `Kendryte Standalone SDK <https://platformio.org/frameworks/kendryte-standalone-sdk?utm_source=github&utm_medium=core>`_
 * `libOpenCM3 <https://platformio.org/frameworks/libopencm3?utm_source=github&utm_medium=core>`_
 * `mbed <https://platformio.org/frameworks/mbed?utm_source=github&utm_medium=core>`_
+* `PULP OS <https://platformio.org/frameworks/pulp-os?utm_source=github&utm_medium=core>`_
 * `Pumbaa <https://platformio.org/frameworks/pumbaa?utm_source=github&utm_medium=core>`_
 * `Simba <https://platformio.org/frameworks/simba?utm_source=github&utm_medium=core>`_
 * `SPL <https://platformio.org/frameworks/spl?utm_source=github&utm_medium=core>`_
