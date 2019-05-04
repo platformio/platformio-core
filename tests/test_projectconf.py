@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from platformio.project.config import ProjectConfig
 
 BASE_CONFIG = """
@@ -23,12 +24,13 @@ extra_configs =
 [common]
 debug_flags = -D RELEASE
 lib_flags = -lc -lm
+extra_flags = ${sysenv.__PIO_TEST_CNF_EXTRA_FLAGS}
 
 [env:esp-wrover-kit]
 platform = espressif32
 framework = espidf
 board = esp-wrover-kit
-build_flags = ${common.debug_flags}
+build_flags = ${common.debug_flags} ${common.extra_flags}
 """
 
 EXTRA_ENVS_CONFIG = """
@@ -42,7 +44,7 @@ build_flags = ${common.lib_flags} ${common.debug_flags}
 platform = espressif32
 framework = espidf
 board = lolin32
-build_flags = ${common.debug_flags}
+build_flags = ${common.debug_flags} ${common.extra_flags}
 """
 
 EXTRA_DEBUG_CONFIG = """
@@ -65,10 +67,27 @@ def test_parser(tmpdir):
         config = ProjectConfig(tmpdir.join("platformio.ini").strpath)
     assert config
 
+    # sections
     assert config.sections() == [
         "platformio", "common", "env:esp-wrover-kit", "env:esp32dev",
         "env:lolin32"
     ]
+
+    # sysenv
+    assert config.get("common", "extra_flags") == ""
+    os.environ["__PIO_TEST_CNF_EXTRA_FLAGS"] = "-L /usr/local/lib"
+    assert config.get("common", "extra_flags") == "-L /usr/local/lib"
+
+    # get
     assert config.get("common", "debug_flags") == "-D DEBUG=1"
     assert config.get("env:esp32dev", "build_flags") == "-lc -lm -D DEBUG=1"
     assert config.get("env:lolin32", "build_flags") == "-Og"
+    assert config.get("env:esp-wrover-kit",
+                      "build_flags") == ("-D DEBUG=1 -L /usr/local/lib")
+
+    # items
+    assert config.items("env:esp32dev") == [("platform", "espressif32"),
+                                            ("framework", "espidf"),
+                                            ("board", "esp32dev"),
+                                            ("build_flags",
+                                             "-lc -lm -D DEBUG=1")]

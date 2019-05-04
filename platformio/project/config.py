@@ -80,7 +80,7 @@ class ProjectConfig(object):
     def items(self, section):
         items = []
         for option in self._parser.options(section):
-            items.append((option, self._parser.get(section, option)))
+            items.append((option, self.get(section, option)))
         return items
 
     def get(self, section, option):
@@ -95,7 +95,7 @@ class ProjectConfig(object):
     def _re_sub_handler(self, match):
         section, option = match.group(1), match.group(2)
         if section in ("env",
-                       "sysenv") and not self._parser.has_section(section):
+                       "sysenv") and not self.has_section(section):
             if section == "env":
                 click.secho(
                     "Warning! Access to system environment variable via "
@@ -103,4 +103,4 @@ class ProjectConfig(object):
                     "`${{sysenv.{0}}}` instead".format(option),
                     fg="yellow")
             return os.getenv(option)
-        return self._parser.get(section, option)
+        return self.get(section, option)
