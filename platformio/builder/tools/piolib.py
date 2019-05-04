@@ -720,6 +720,18 @@ class PlatformIOLibBuilder(LibBuilderBase):
         return isfile(join(self.path, "library.properties"))
 
     @property
+    def include_dir(self):
+        if "includeDir" in self._manifest.get("build", {}):
+            return self._manifest.get("build").get("includeDir")
+        return LibBuilderBase.include_dir.fget(self)
+
+    @property
+    def src_dir(self):
+        if "srcDir" in self._manifest.get("build", {}):
+            return self._manifest.get("build").get("srcDir")
+        return LibBuilderBase.src_dir.fget(self)
+
+    @property
     def src_filter(self):
         if "srcFilter" in self._manifest.get("build", {}):
             return self._manifest.get("build").get("srcFilter")

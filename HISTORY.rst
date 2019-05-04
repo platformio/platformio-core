@@ -9,8 +9,9 @@ PlatformIO 4.0
 
 * Python 3 support
   (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
-* Include external configuration files with "extra_configs" option
+* Include external configuration files with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option
   (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
+* Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
 
 PlatformIO 3.0
 --------------
@@ -18,7 +19,7 @@ PlatformIO 3.0
 3.6.8 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/en/latest/faq.html#platformio-udev-rules>`__
+* Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__
   (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
 
 3.6.7 (2019-04-23)
