@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=too-many-ancestors
-
 import json
 import os
 import platform
@@ -464,7 +462,7 @@ def _get_api_result(
         auth=None):
     from platformio.app import get_setting
 
-    result = None
+    result = {}
     r = None
     verify_ssl = sys.version_info >= (2, 7, 9)
 
