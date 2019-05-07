@@ -179,15 +179,11 @@ def get_project_optional_dir(name, default=None):
     if var_name in os.environ:
         paths = os.getenv(var_name)
     else:
-        try:
-            config = ProjectConfig.get_instance(
-                join(get_project_dir(), "platformio.ini"))
-            if (config.has_section("platformio")
-                    and config.has_option("platformio", name)):
-                paths = config.get("platformio", name)
-        except exception.NotPlatformIOProject:
-            pass
-
+        config = ProjectConfig.get_instance(
+            join(get_project_dir(), "platformio.ini"))
+        if (config.has_section("platformio")
+                and config.has_option("platformio", name)):
+            paths = config.get("platformio", name)
     if not paths:
         return default
 

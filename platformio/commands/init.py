@@ -16,7 +16,6 @@
 
 from os import getcwd, makedirs
 from os.path import isdir, isfile, join
-from shutil import copyfile
 
 import click
 
@@ -89,7 +88,8 @@ def cli(
             "platformio.ini", fg="cyan"))
 
     is_new_project = not util.is_platformio_project(project_dir)
-    init_base_project(project_dir)
+    if is_new_project:
+        init_base_project(project_dir)
 
     if board:
         fill_project_envs(ctx, project_dir, board, project_option, env_prefix,
@@ -144,13 +144,7 @@ def get_best_envname(project_dir, boards=None):
 
 
 def init_base_project(project_dir):
-    if util.is_platformio_project(project_dir):
-        return
-
-    copyfile(
-        join(util.get_source_dir(), "projectconftpl.ini"),
-        join(project_dir, "platformio.ini"))
-
+    ProjectConfig(join(project_dir, "platformio.ini")).save()
     with util.cd(project_dir):
         dir_to_readme = [
             (util.get_projectsrc_dir(), None),
@@ -362,12 +356,9 @@ def init_cvs_ignore(project_dir):
 
 def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
                       force_download):
-    content = []
+    config = ProjectConfig(
+        join(project_dir, "platformio.ini"), parse_extra=False)
     used_boards = []
-    used_platforms = []
-
-    config_path = join(project_dir, "platformio.ini")
-    config = util.load_project_config(config_path)
     for section in config.sections():
         cond = [
             section.startswith("env:"),
@@ -377,12 +368,15 @@ def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
             used_boards.append(config.get(section, "board"))
 
     pm = PlatformManager()
+    used_platforms = []
+    modified = False
     for id_ in board_ids:
         board_config = pm.board_config(id_)
         used_platforms.append(board_config['platform'])
         if id_ in used_boards:
             continue
         used_boards.append(id_)
+        modified = True
 
         envopts = {"platform": board_config['platform'], "board": id_}
         # find default framework for board
@@ -396,22 +390,18 @@ def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
             _name, _value = item.split("=", 1)
             envopts[_name.strip()] = _value.strip()
 
-        content.append("")
-        content.append("[env:%s%s]" % (env_prefix, id_))
-        for name, value in envopts.items():
-            content.append("%s = %s" % (name, value))
+        section = "env:%s%s" % (env_prefix, id_)
+        config.add_section(section)
+
+        for option, value in envopts.items():
+            config.set(section, option, value)
 
     if force_download and used_platforms:
         _install_dependent_platforms(ctx, used_platforms)
 
-    if not content:
-        return
-
-    with open(config_path, "a") as f:
-        content.append("")
-        f.write("\n".join(content))
-
-    ProjectConfig.reset_instances()
+    if modified:
+        config.save()
+        config.reset_instances()
 
 
 def _install_dependent_platforms(ctx, platforms):

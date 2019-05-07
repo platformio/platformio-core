@@ -41,7 +41,6 @@ setup(
     packages=find_packages() + ["scripts"],
     package_data={
         "platformio": [
-            "projectconftpl.ini",
             "ide/tpls/*/.*.tpl",
             "ide/tpls/*/*.tpl",
             "ide/tpls/*/*/*.tpl",

@@ -26,6 +26,18 @@ try:
 except ImportError:
     import configparser as ConfigParser
 
+CONFIG_HEADER = """
+; PlatformIO Project Configuration File
+;
+;   Build options: build flags, source filter
+;   Upload options: custom upload port, speed and extra flags
+;   Library options: dependencies, extra library storages
+;   Advanced options: extra scripting
+;
+; Please visit documentation for the other options and examples
+; https://docs.platformio.org/page/projectconf.html
+"""
+
 KNOWN_PLATFORMIO_OPTIONS = [
     "description",
     "env_default",
@@ -118,6 +130,7 @@ class ProjectConfig(object):
 
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
 
+    expand_interpolations = True
     _instances = {}
     _parser = None
     _parsed = []
@@ -140,8 +153,6 @@ class ProjectConfig(object):
 
     @staticmethod
     def get_instance(path):
-        if not isfile(path):
-            raise exception.NotPlatformIOProject(path)
         if path not in ProjectConfig._instances:
             ProjectConfig._instances[path] = ProjectConfig(path)
         return ProjectConfig._instances[path]
@@ -150,13 +161,13 @@ class ProjectConfig(object):
     def reset_instances():
         ProjectConfig._instances = {}
 
-    def __init__(self, path, parse_extra=True):
-        if not isfile(path):
-            raise exception.NotPlatformIOProject(path)
+    def __init__(self, path, parse_extra=True, expand_interpolations=True):
         self.path = path
+        self.expand_interpolations = expand_interpolations
         self._parsed = []
         self._parser = ConfigParser.ConfigParser()
-        self.read(path, parse_extra)
+        if isfile(path):
+            self.read(path, parse_extra)
 
     def __getattr__(self, name):
         return getattr(self._parser, name)
@@ -197,6 +208,8 @@ class ProjectConfig(object):
                 for option in self.options(section)]
 
     def get(self, section, option):
+        if not self.expand_interpolations:
+            return self._parser.get(section, option)
         try:
             value = self._parser.get(section, option)
         except ConfigParser.Error as e:
@@ -227,6 +240,8 @@ class ProjectConfig(object):
         return self.parse_multi_values(self.get("platformio", "env_default"))
 
     def validate(self, envs=None):
+        if not isfile(self.path):
+            raise exception.NotPlatformIOProject(self.path)
         # check envs
         known = set(self.envs())
         if not known:
@@ -246,7 +261,7 @@ class ProjectConfig(object):
                 KNOWN_PLATFORMIO_OPTIONS)
             if unknown:
                 warnings.add(
-                    "Ignore unknown `%s` options in `[platformio]` section" %
+                    "Ignore unknown `%s` options in section `[platformio]`" %
                     ", ".join(unknown))
 
         # check [env:*] sections
@@ -257,7 +272,7 @@ class ProjectConfig(object):
                 # obsolete
                 if option in RENAMED_OPTIONS:
                     warnings.add(
-                        "`%s` option in `[%s]` section is deprecated and will "
+                        "`%s` option in section `[%s]` is deprecated and will "
                         "be removed in the next release! Please use `%s` "
                         "instead" % (option, section, RENAMED_OPTIONS[option]))
                     # rename on-the-fly
@@ -281,3 +296,9 @@ class ProjectConfig(object):
             click.secho("Warning! %s" % warning, fg="yellow")
 
         return True
+
+    def save(self, path=None):
+        with open(path or self.path, "wb") as fp:
+            fp.write(CONFIG_HEADER.strip())
+            fp.write("\n\n")
+            self._parser.write(fp)

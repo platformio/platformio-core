@@ -165,5 +165,4 @@ def _copy_project_conf(build_dir, project_conf):
     config = ProjectConfig(project_conf, parse_extra=False)
     if config.has_section("platformio"):
         config.remove_section("platformio")
-    with open(join(build_dir, "platformio.ini"), "wb") as fp:
-        config.write(fp)
+    config.save(join(build_dir, "platformio.ini"))
