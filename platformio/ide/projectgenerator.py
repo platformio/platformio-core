@@ -23,6 +23,7 @@ from click.testing import CliRunner
 
 from platformio import exception, util
 from platformio.commands.run import cli as cmd_run
+from platformio.project.config import ProjectConfig
 
 
 class ProjectGenerator(object):
@@ -44,14 +45,13 @@ class ProjectGenerator(object):
     @util.memoized()
     def get_project_env(self):
         data = {}
-        config = util.load_project_config(self.project_dir)
-        for section in config.sections():
-            if not section.startswith("env:"):
+        config = ProjectConfig.get_instance(
+            join(self.project_dir, "platformio.ini"))
+        for env in config.envs():
+            if self.env_name != env:
                 continue
-            if self.env_name != section[4:]:
-                continue
-            data = {"env_name": section[4:]}
-            for k, v in config.items(section):
+            data = {"env_name": self.env_name}
+            for k, v in config.items(env=env):
                 data[k] = v
         return data
 

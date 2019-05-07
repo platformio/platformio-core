@@ -180,7 +180,8 @@ def get_project_optional_dir(name, default=None):
         paths = os.getenv(var_name)
     else:
         try:
-            config = load_project_config()
+            config = ProjectConfig.get_instance(
+                join(get_project_dir(), "platformio.ini"))
             if (config.has_section("platformio")
                     and config.has_option("platformio", name)):
                 paths = config.get("platformio", name)
@@ -312,7 +313,7 @@ def get_projectdata_dir():
                                                      "data"))
 
 
-def load_project_config(path=None):  # FIXME:
+def load_project_config(path=None):  # FIXME: Remove
     if not path or isdir(path):
         path = join(path or get_project_dir(), "platformio.ini")
     if not isfile(path):
@@ -321,7 +322,7 @@ def load_project_config(path=None):  # FIXME:
     return ProjectConfig(path)
 
 
-def parse_conf_multi_values(items):  # FIXME:
+def parse_conf_multi_values(items):  # FIXME: Remove
     return ProjectConfig.parse_multi_values(items)
 
 

@@ -24,8 +24,10 @@ from platformio import util
 def validate_cliresult():
 
     def decorator(result):
-        assert result.exit_code == 0, result.output
-        assert not result.exception, result.output
+        assert result.exit_code == 0, "{} => {}".format(
+            result.exception, result.output)
+        assert not result.exception, "{} => {}".format(result.exception,
+                                                       result.output)
 
     return decorator
 

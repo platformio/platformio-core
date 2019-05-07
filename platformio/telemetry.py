@@ -342,12 +342,9 @@ def on_exception(e):
         return text.strip()
 
     skip_conditions = [
-        isinstance(e, cls)
-        for cls in (IOError, exception.ReturnErrorCode,
-                    exception.AbortedByUser, exception.NotGlobalLibDir,
-                    exception.InternetIsOffline,
-                    exception.NotPlatformIOProject,
-                    exception.UserSideException)
+        isinstance(e, cls) for cls in (IOError, exception.ReturnErrorCode,
+                                       exception.UserSideException,
+                                       exception.PlatformIOProjectException)
     ]
     try:
         skip_conditions.append("[API] Account: " in str(e))

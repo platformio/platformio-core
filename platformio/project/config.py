@@ -15,6 +15,7 @@
 import glob
 import os
 import re
+from os.path import isfile
 
 import click
 
@@ -25,11 +26,99 @@ try:
 except ImportError:
     import configparser as ConfigParser
 
+KNOWN_PLATFORMIO_OPTIONS = [
+    "description",
+    "env_default",
+    "extra_configs",
+
+    # Dirs
+    "home_dir",
+    "lib_dir",
+    "libdeps_dir",
+    "include_dir",
+    "src_dir",
+    "build_dir",
+    "data_dir",
+    "test_dir",
+    "boards_dir",
+    "lib_extra_dirs"
+]
+
+KNOWN_ENV_OPTIONS = [
+    # Generic
+    "platform",
+    "framework",
+    "board",
+    "targets",
+
+    # Build
+    "build_flags",
+    "src_build_flags",
+    "build_unflags",
+    "src_filter",
+
+    # Upload
+    "upload_port",
+    "upload_protocol",
+    "upload_speed",
+    "upload_flags",
+    "upload_resetmethod",
+
+    # Monitor
+    "monitor_port",
+    "monitor_speed",
+    "monitor_rts",
+    "monitor_dtr",
+
+    # Library
+    "lib_deps",
+    "lib_ignore",
+    "lib_extra_dirs",
+    "lib_ldf_mode",
+    "lib_compat_mode",
+    "lib_archive",
+
+    # Test
+    "piotest",
+    "test_filter",
+    "test_ignore",
+    "test_port",
+    "test_speed",
+    "test_transport",
+    "test_build_project_src",
+
+    # Debug
+    "debug_tool",
+    "debug_init_break",
+    "debug_init_cmds",
+    "debug_extra_cmds",
+    "debug_load_cmd",
+    "debug_load_mode",
+    "debug_server",
+    "debug_port",
+    "debug_svd_path",
+
+    # Other
+    "extra_scripts"
+]
+
+RENAMED_OPTIONS = {
+    "lib_use": "lib_deps",
+    "lib_force": "lib_deps",
+    "extra_script": "extra_scripts",
+    "monitor_baud": "monitor_speed",
+    "board_mcu": "board_build.mcu",
+    "board_f_cpu": "board_build.f_cpu",
+    "board_f_flash": "board_build.f_flash",
+    "board_flash_mode": "board_build.flash_mode"
+}
+
 
 class ProjectConfig(object):
 
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
 
+    _instances = {}
     _parser = None
     _parsed = []
 
@@ -49,13 +138,30 @@ class ProjectConfig(object):
             result.append(item)
         return result
 
-    def __init__(self, path):
+    @staticmethod
+    def get_instance(path):
+        if not isfile(path):
+            raise exception.NotPlatformIOProject(path)
+        if path not in ProjectConfig._instances:
+            ProjectConfig._instances[path] = ProjectConfig(path)
+        return ProjectConfig._instances[path]
+
+    @staticmethod
+    def reset_instances():
+        ProjectConfig._instances = {}
+
+    def __init__(self, path, parse_extra=True):
+        if not isfile(path):
+            raise exception.NotPlatformIOProject(path)
         self.path = path
         self._parsed = []
         self._parser = ConfigParser.ConfigParser()
-        self.read(path)
+        self.read(path, parse_extra)
 
-    def read(self, path):
+    def __getattr__(self, name):
+        return getattr(self._parser, name)
+
+    def read(self, path, parse_extra=True):
         if path in self._parsed:
             return
         self._parsed.append(path)
@@ -63,6 +169,9 @@ class ProjectConfig(object):
             self._parser.read(path)
         except ConfigParser.Error as e:
             raise exception.InvalidProjectConf(path, str(e))
+
+        if not parse_extra:
+            return
 
         # load extra configs
         if (not self._parser.has_section("platformio")
@@ -74,14 +183,18 @@ class ProjectConfig(object):
             for item in glob.glob(pattern):
                 self.read(item)
 
-    def __getattr__(self, name):
-        return getattr(self._parser, name)
+    def options(self, section=None, env=None):
+        assert section or env
+        if not section:
+            section = "env:" + env
+        return self._parser.options(section)
 
-    def items(self, section):
-        items = []
-        for option in self._parser.options(section):
-            items.append((option, self.get(section, option)))
-        return items
+    def items(self, section=None, env=None):
+        assert section or env
+        if not section:
+            section = "env:" + env
+        return [(option, self.get(section, option))
+                for option in self.options(section)]
 
     def get(self, section, option):
         try:
@@ -95,7 +208,7 @@ class ProjectConfig(object):
     def _re_sub_handler(self, match):
         section, option = match.group(1), match.group(2)
         if section in ("env",
-                       "sysenv") and not self.has_section(section):
+                       "sysenv") and not self._parser.has_section(section):
             if section == "env":
                 click.secho(
                     "Warning! Access to system environment variable via "
@@ -104,3 +217,67 @@ class ProjectConfig(object):
                     fg="yellow")
             return os.getenv(option)
         return self.get(section, option)
+
+    def envs(self):
+        return [s[4:] for s in self._parser.sections() if s.startswith("env:")]
+
+    def default_envs(self):
+        if not self._parser.has_option("platformio", "env_default"):
+            return []
+        return self.parse_multi_values(self.get("platformio", "env_default"))
+
+    def validate(self, envs=None):
+        # check envs
+        known = set(self.envs())
+        if not known:
+            raise exception.ProjectEnvsNotAvailable()
+
+        unknown = set((envs or []) + self.default_envs()) - known
+        if unknown:
+            raise exception.UnknownEnvNames(", ".join(unknown),
+                                            ", ".join(known))
+        return self.validate_options()
+
+    def validate_options(self):
+        warnings = set()
+        # check [platformio] section
+        if self._parser.has_section("platformio"):
+            unknown = set(k for k, _ in self.items("platformio")) - set(
+                KNOWN_PLATFORMIO_OPTIONS)
+            if unknown:
+                warnings.add(
+                    "Ignore unknown `%s` options in `[platformio]` section" %
+                    ", ".join(unknown))
+
+        # check [env:*] sections
+        for section in self._parser.sections():
+            if not section.startswith("env:"):
+                continue
+            for option in self._parser.options(section):
+                # obsolete
+                if option in RENAMED_OPTIONS:
+                    warnings.add(
+                        "`%s` option in `[%s]` section is deprecated and will "
+                        "be removed in the next release! Please use `%s` "
+                        "instead" % (option, section, RENAMED_OPTIONS[option]))
+                    # rename on-the-fly
+                    self._parser.set(section, RENAMED_OPTIONS[option],
+                                     self._parser.get(section, option))
+                    self._parser.remove_option(section, option)
+                    continue
+
+                # unknown
+                unknown_conditions = [
+                    option not in KNOWN_ENV_OPTIONS,
+                    not option.startswith("custom_"),
+                    not option.startswith("board_")
+                ]  # yapf: disable
+                if all(unknown_conditions):
+                    warnings.add(
+                        "Detected non-PlatformIO `%s` option in `[%s]` section"
+                        % (option, section))
+
+        for warning in warnings:
+            click.secho("Warning! %s" % warning, fg="yellow")
+
+        return True

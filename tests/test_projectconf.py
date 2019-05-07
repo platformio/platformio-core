@@ -13,10 +13,12 @@
 # limitations under the License.
 
 import os
+
 from platformio.project.config import ProjectConfig
 
 BASE_CONFIG = """
 [platformio]
+env_default = esp32dev, lolin32
 extra_configs =
   extra_envs.ini
   extra_debug.ini
@@ -86,8 +88,15 @@ def test_parser(tmpdir):
                       "build_flags") == ("-D DEBUG=1 -L /usr/local/lib")
 
     # items
-    assert config.items("env:esp32dev") == [("platform", "espressif32"),
+    assert config.items("common") == [("debug_flags", "-D DEBUG=1"),
+                                      ("lib_flags", "-lc -lm"),
+                                      ("extra_flags", "-L /usr/local/lib")]
+    assert config.items(env="esp32dev") == [("platform", "espressif32"),
                                             ("framework", "espidf"),
                                             ("board", "esp32dev"),
                                             ("build_flags",
                                              "-lc -lm -D DEBUG=1")]
+
+    # envs
+    assert config.envs() == ["esp-wrover-kit", "esp32dev", "lolin32"]
+    assert config.default_envs() == ["esp32dev", "lolin32"]

@@ -25,6 +25,7 @@ from platformio.commands.init import cli as cmd_init
 from platformio.commands.init import validate_boards
 from platformio.commands.run import cli as cmd_run
 from platformio.exception import CIBuildEnvsEmpty
+from platformio.project.config import ProjectConfig
 
 
 def validate_path(ctx, param, value):  # pylint: disable=unused-argument
@@ -161,8 +162,8 @@ def _exclude_contents(dst_dir, patterns):
 
 
 def _copy_project_conf(build_dir, project_conf):
-    config = util.load_project_config(project_conf)
+    config = ProjectConfig(project_conf, parse_extra=False)
     if config.has_section("platformio"):
         config.remove_section("platformio")
-    with open(join(build_dir, "platformio.ini"), "w") as fp:
+    with open(join(build_dir, "platformio.ini"), "wb") as fp:
         config.write(fp)

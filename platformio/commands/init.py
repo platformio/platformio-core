@@ -23,9 +23,9 @@ import click
 from platformio import exception, util
 from platformio.commands.platform import \
     platform_install as cli_platform_install
-from platformio.commands.run import check_project_envs
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
+from platformio.project.config import ProjectConfig
 
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
@@ -128,14 +128,11 @@ def cli(
 
 
 def get_best_envname(project_dir, boards=None):
-    config = util.load_project_config(project_dir)
-    env_default = None
-    if config.has_option("platformio", "env_default"):
-        env_default = util.parse_conf_multi_values(
-            config.get("platformio", "env_default"))
-        check_project_envs(config, env_default)
-    if env_default:
-        return env_default[0]
+    config = ProjectConfig(join(project_dir, "platformio.ini"))
+    config.validate()
+    default_envs = config.default_envs()
+    if default_envs:
+        return default_envs[0]
     section = None
     for section in config.sections():
         if not section.startswith("env:"):
@@ -369,7 +366,8 @@ def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
     used_boards = []
     used_platforms = []
 
-    config = util.load_project_config(project_dir)
+    config_path = join(project_dir, "platformio.ini")
+    config = util.load_project_config(config_path)
     for section in config.sections():
         cond = [
             section.startswith("env:"),
@@ -409,9 +407,11 @@ def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
     if not content:
         return
 
-    with open(join(project_dir, "platformio.ini"), "a") as f:
+    with open(config_path, "a") as f:
         content.append("")
         f.write("\n".join(content))
+
+    ProjectConfig.reset_instances()
 
 
 def _install_dependent_platforms(ctx, platforms):
