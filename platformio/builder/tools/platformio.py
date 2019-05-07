@@ -20,9 +20,12 @@ from glob import glob
 from os import sep, walk
 from os.path import basename, dirname, isdir, join, realpath
 
-from SCons import Builder, Util
-from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
-                          DefaultEnvironment, Export, SConscript)
+from SCons import Builder, Util  # pylint: disable=import-error
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
+from SCons.Script import AlwaysBuild  # pylint: disable=import-error
+from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
+from SCons.Script import Export  # pylint: disable=import-error
+from SCons.Script import SConscript  # pylint: disable=import-error
 
 from platformio.util import glob_escape, pioversion_to_intstr, string_types
 

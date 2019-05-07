@@ -21,8 +21,8 @@ from os import environ, remove, walk
 from os.path import basename, isdir, isfile, join, realpath, relpath, sep
 from tempfile import mkstemp
 
-from SCons.Action import Action
-from SCons.Script import ARGUMENTS
+from SCons.Action import Action  # pylint: disable=import-error
+from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 
 from platformio import util
 from platformio.managers.core import get_core_package_dir

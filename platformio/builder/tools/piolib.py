@@ -26,8 +26,10 @@ from glob import glob
 from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
                      realpath, sep)
 
-import SCons.Scanner
-from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, DefaultEnvironment
+import SCons.Scanner  # pylint: disable=import-error
+from SCons.Script import ARGUMENTS  # pylint: disable=import-error
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
+from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, util
 from platformio.builder.tools import platformio as piotool

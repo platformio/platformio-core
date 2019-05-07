@@ -19,9 +19,14 @@ from os import environ
 from os.path import expanduser, join
 from time import time
 
-from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
-                          AllowSubstExceptions, AlwaysBuild, Default,
-                          DefaultEnvironment, Variables)
+from SCons.Script import ARGUMENTS  # pylint: disable=import-error
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
+from SCons.Script import DEFAULT_TARGETS  # pylint: disable=import-error
+from SCons.Script import AllowSubstExceptions  # pylint: disable=import-error
+from SCons.Script import AlwaysBuild  # pylint: disable=import-error
+from SCons.Script import Default  # pylint: disable=import-error
+from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
+from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import util
 

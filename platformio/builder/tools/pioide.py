@@ -18,7 +18,7 @@ from glob import glob
 from os import environ
 from os.path import abspath, isfile, join
 
-from SCons.Defaults import processDefines
+from SCons.Defaults import processDefines  # pylint: disable=import-error
 
 from platformio import util
 from platformio.managers.core import get_core_package_dir
