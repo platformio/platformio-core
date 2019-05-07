@@ -37,8 +37,8 @@ from platformio import __apiurl__, __version__, exception
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (  # pylint: disable=unused-import
     get_project_dir, get_project_optional_dir, get_projectboards_dir,
-    get_projectbuild_dir, get_projectlib_dir, get_projectsrc_dir,
-    get_projecttest_dir, is_platformio_project)
+    get_projectbuild_dir, get_projectdata_dir, get_projectlib_dir,
+    get_projectsrc_dir, get_projecttest_dir, is_platformio_project)
 
 # FIXME: check platformio.project.helpers imports
 
