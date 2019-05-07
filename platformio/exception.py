@@ -68,13 +68,6 @@ class PlatformNotInstalledYet(PlatformioException):
                "Use `platformio platform install {0}` command")
 
 
-class BoardNotDefined(PlatformioException):
-
-    MESSAGE = (
-        "You need to specify board ID using `-b` or `--board` option. "
-        "Supported boards list is available via `platformio boards` command")
-
-
 class UnknownBoard(PlatformioException):
 
     MESSAGE = "Unknown board ID '{0}'"

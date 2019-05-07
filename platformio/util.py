@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-ancestors
+
 import json
 import os
 import platform
@@ -23,7 +25,6 @@ import sys
 import time
 from functools import wraps
 from glob import glob
-from hashlib import sha1
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
                      join, normpath, splitdrive)
 from shutil import rmtree
@@ -34,8 +35,12 @@ import requests
 
 from platformio import __apiurl__, __version__, exception
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import (  # pylint: disable=unused-import
+    get_project_dir, get_project_optional_dir, get_projectboards_dir,
+    get_projectbuild_dir, get_projectlib_dir, get_projectsrc_dir,
+    get_projecttest_dir, is_platformio_project)
 
-# pylint: disable=too-many-ancestors
+# FIXME: check platformio.project.helpers imports
 
 PY2 = sys.version_info[0] == 2
 if PY2:
@@ -173,37 +178,6 @@ def pioversion_to_intstr():
     return [int(i) for i in vermatch.group(1).split(".")[:3]]
 
 
-def get_project_optional_dir(name, default=None):
-    paths = None
-    var_name = "PLATFORMIO_%s" % name.upper()
-    if var_name in os.environ:
-        paths = os.getenv(var_name)
-    else:
-        config = ProjectConfig.get_instance(
-            join(get_project_dir(), "platformio.ini"))
-        if (config.has_section("platformio")
-                and config.has_option("platformio", name)):
-            paths = config.get("platformio", name)
-    if not paths:
-        return default
-
-    items = []
-    for item in paths.split(", "):
-        if item.startswith("~"):
-            item = expanduser(item)
-        items.append(abspath(item))
-    paths = ", ".join(items)
-
-    while "$PROJECT_HASH" in paths:
-        project_dir = get_project_dir()
-        paths = paths.replace(
-            "$PROJECT_HASH",
-            sha1(project_dir if PY2 else project_dir.encode()).hexdigest()
-            [:10])
-
-    return paths
-
-
 def get_home_dir():
     home_dir = get_project_optional_dir("home_dir",
                                         join(expanduser("~"), ".platformio"))
@@ -238,75 +212,6 @@ def get_source_dir():
                 curpath = join(p, __file__)
                 break
     return dirname(curpath)
-
-
-def get_project_dir():
-    return os.getcwd()
-
-
-def find_project_dir_above(path):
-    if isfile(path):
-        path = dirname(path)
-    if is_platformio_project(path):
-        return path
-    if isdir(dirname(path)):
-        return find_project_dir_above(dirname(path))
-    return None
-
-
-def is_platformio_project(project_dir=None):
-    if not project_dir:
-        project_dir = get_project_dir()
-    return isfile(join(project_dir, "platformio.ini"))
-
-
-def get_projectlib_dir():
-    return get_project_optional_dir("lib_dir", join(get_project_dir(), "lib"))
-
-
-def get_projectlibdeps_dir():
-    return get_project_optional_dir("libdeps_dir",
-                                    join(get_project_dir(), ".piolibdeps"))
-
-
-def get_projectsrc_dir():
-    return get_project_optional_dir("src_dir", join(get_project_dir(), "src"))
-
-
-def get_projectinclude_dir():
-    return get_project_optional_dir("include_dir",
-                                    join(get_project_dir(), "include"))
-
-
-def get_projecttest_dir():
-    return get_project_optional_dir("test_dir", join(get_project_dir(),
-                                                     "test"))
-
-
-def get_projectboards_dir():
-    return get_project_optional_dir("boards_dir",
-                                    join(get_project_dir(), "boards"))
-
-
-def get_projectbuild_dir(force=False):
-    path = get_project_optional_dir("build_dir",
-                                    join(get_project_dir(), ".pioenvs"))
-    try:
-        if not isdir(path):
-            os.makedirs(path)
-    except Exception as e:  # pylint: disable=broad-except
-        if not force:
-            raise Exception(e)
-    return path
-
-
-# compatibility with PIO Core+
-get_projectpioenvs_dir = get_projectbuild_dir
-
-
-def get_projectdata_dir():
-    return get_project_optional_dir("data_dir", join(get_project_dir(),
-                                                     "data"))
 
 
 def load_project_config(path=None):  # FIXME: Remove

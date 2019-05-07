@@ -24,6 +24,8 @@ from click.testing import CliRunner
 from platformio import exception, util
 from platformio.commands.run import cli as cmd_run
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import (
+    get_projectlib_dir, get_projectlibdeps_dir, get_projectsrc_dir)
 
 
 class ProjectGenerator(object):
@@ -50,9 +52,8 @@ class ProjectGenerator(object):
         for env in config.envs():
             if self.env_name != env:
                 continue
-            data = {"env_name": self.env_name}
-            for k, v in config.items(env=env):
-                data[k] = v
+            data = config.items(env=env, as_dict=True)
+            data['env_name'] = self.env_name
         return data
 
     def get_project_build_data(self):
@@ -89,7 +90,7 @@ class ProjectGenerator(object):
     def get_src_files(self):
         result = []
         with util.cd(self.project_dir):
-            for root, _, files in os.walk(util.get_projectsrc_dir()):
+            for root, _, files in os.walk(get_projectsrc_dir()):
                 for f in files:
                     result.append(relpath(join(root, f)))
         return result
@@ -141,9 +142,9 @@ class ProjectGenerator(object):
                 "src_files": self.get_src_files(),
                 "user_home_dir": abspath(expanduser("~")),
                 "project_dir": self.project_dir,
-                "project_src_dir": util.get_projectsrc_dir(),
-                "project_lib_dir": util.get_projectlib_dir(),
-                "project_libdeps_dir": util.get_projectlibdeps_dir(),
+                "project_src_dir": get_projectsrc_dir(),
+                "project_lib_dir": get_projectlib_dir(),
+                "project_libdeps_dir": get_projectlibdeps_dir(),
                 "systype": util.get_systype(),
                 "platformio_path": self._fix_os_path(
                     sys.argv[0] if isfile(sys.argv[0])

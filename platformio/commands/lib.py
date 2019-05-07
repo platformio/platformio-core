@@ -22,7 +22,8 @@ import click
 
 from platformio import exception, util
 from platformio.managers.lib import LibraryManager, get_builtin_libs
-from platformio.util import get_api_result
+from platformio.project.helpers import (
+    get_project_dir, get_projectlibdeps_dir, is_platformio_project)
 
 try:
     from urllib.parse import quote
@@ -58,8 +59,8 @@ def cli(ctx, **options):
     if not storage_dir:
         if options['global']:
             storage_dir = join(util.get_home_dir(), "lib")
-        elif util.is_platformio_project():
-            storage_dir = util.get_projectlibdeps_dir()
+        elif is_platformio_project():
+            storage_dir = get_projectlibdeps_dir()
         elif util.is_ci():
             storage_dir = join(util.get_home_dir(), "lib")
             click.secho(
@@ -67,12 +68,12 @@ def cli(ctx, **options):
                 "Please use `platformio lib --global %s` command to remove "
                 "this warning." % ctx.invoked_subcommand,
                 fg="yellow")
-    elif util.is_platformio_project(storage_dir):
+    elif is_platformio_project(storage_dir):
         with util.cd(storage_dir):
-            storage_dir = util.get_projectlibdeps_dir()
+            storage_dir = get_projectlibdeps_dir()
 
-    if not storage_dir and not util.is_platformio_project():
-        raise exception.NotGlobalLibDir(util.get_project_dir(),
+    if not storage_dir and not is_platformio_project():
+        raise exception.NotGlobalLibDir(get_project_dir(),
                                         join(util.get_home_dir(), "lib"),
                                         ctx.invoked_subcommand)
 
@@ -211,7 +212,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         for value in values:
             query.append('%s:"%s"' % (key, value))
 
-    result = get_api_result(
+    result = util.get_api_result(
         "/v2/lib/search",
         dict(query=" ".join(query), page=page),
         cache_valid="1d")
@@ -258,7 +259,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
             time.sleep(5)
         elif not click.confirm("Show next libraries?"):
             break
-        result = get_api_result(
+        result = util.get_api_result(
             "/v2/lib/search", {
                 "query": " ".join(query),
                 "page": int(result['page']) + 1
@@ -317,7 +318,7 @@ def lib_show(library, json_output):
     },
                               silent=json_output,
                               interactive=not json_output)
-    lib = get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
+    lib = util.get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
     if json_output:
         return click.echo(json.dumps(lib))
 
@@ -393,7 +394,8 @@ def lib_register(config_url):
             and not config_url.startswith("https://")):
         raise exception.InvalidLibConfURL(config_url)
 
-    result = get_api_result("/lib/register", data=dict(config_url=config_url))
+    result = util.get_api_result(
+        "/lib/register", data=dict(config_url=config_url))
     if "message" in result and result['message']:
         click.secho(
             result['message'],
@@ -404,7 +406,7 @@ def lib_register(config_url):
 @cli.command("stats", short_help="Library Registry Statistics")
 @click.option("--json-output", is_flag=True)
 def lib_stats(json_output):
-    result = get_api_result("/lib/stats", cache_valid="1h")
+    result = util.get_api_result("/lib/stats", cache_valid="1h")
 
     if json_output:
         return click.echo(json.dumps(result))

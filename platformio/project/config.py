@@ -26,8 +26,7 @@ try:
 except ImportError:
     import configparser as ConfigParser
 
-CONFIG_HEADER = """
-; PlatformIO Project Configuration File
+CONFIG_HEADER = """;PlatformIO Project Configuration File
 ;
 ;   Build options: build flags, source filter
 ;   Upload options: custom upload port, speed and extra flags
@@ -36,6 +35,7 @@ CONFIG_HEADER = """
 ;
 ; Please visit documentation for the other options and examples
 ; https://docs.platformio.org/page/projectconf.html
+
 """
 
 KNOWN_PLATFORMIO_OPTIONS = [
@@ -200,10 +200,15 @@ class ProjectConfig(object):
             section = "env:" + env
         return self._parser.options(section)
 
-    def items(self, section=None, env=None):
+    def items(self, section=None, env=None, as_dict=False):
         assert section or env
         if not section:
             section = "env:" + env
+        if as_dict:
+            return {
+                option: self.get(section, option)
+                for option in self.options(section)
+            }
         return [(option, self.get(section, option))
                 for option in self.options(section)]
 
@@ -298,7 +303,6 @@ class ProjectConfig(object):
         return True
 
     def save(self, path=None):
-        with open(path or self.path, "wb") as fp:
-            fp.write(CONFIG_HEADER.strip())
-            fp.write("\n\n")
+        with open(path or self.path, "w") as fp:
+            fp.write(CONFIG_HEADER)
             self._parser.write(fp)

@@ -215,4 +215,4 @@ def get_project_options(project_dir, environment=None):
             environment = default_envs[0]
         else:
             environment = config.envs()[0]
-    return {k: v for k, v in config.items(env=environment)}
+    return config.items(env=environment, as_dict=True)

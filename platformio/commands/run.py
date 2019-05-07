@@ -12,14 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from hashlib import sha1
-from os import getcwd, makedirs, walk
+from os import getcwd, makedirs
 from os.path import getmtime, isdir, isfile, join
 from time import time
 
 import click
 
-from platformio import __version__, exception, telemetry, util
+from platformio import exception, telemetry, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.commands.lib import lib_install as cmd_lib_install
 from platformio.commands.platform import \
@@ -27,6 +26,9 @@ from platformio.commands.platform import \
 from platformio.managers.lib import LibraryManager, is_builtin_lib
 from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import (
+    calculate_project_hash, find_project_dir_above, get_project_dir,
+    get_projectbuild_dir, get_projectlibdeps_dir)
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
 
@@ -53,18 +55,18 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
         disable_auto_clean):
     # find project directory on upper level
     if isfile(project_dir):
-        project_dir = util.find_project_dir_above(project_dir)
+        project_dir = find_project_dir_above(project_dir)
 
     with util.cd(project_dir):
         # clean obsolete build dir
         if not disable_auto_clean:
             try:
-                _clean_build_dir(util.get_projectbuild_dir())
+                _clean_build_dir(get_projectbuild_dir())
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
                     "it manually to avoid build issues" %
-                    util.get_projectbuild_dir(force=True),
+                    get_projectbuild_dir(force=True),
                     fg="yellow")
 
         config = ProjectConfig.get_instance(
@@ -86,9 +88,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
             if not silent and results:
                 click.echo()
 
-            options = {}
-            for k, v in config.items(env=envname):
-                options[k] = v
+            options = config.items(env=envname, as_dict=True)
             if "piotest" not in options and "piotest" in ctx.meta:
                 options['piotest'] = ctx.meta['piotest']
 
@@ -239,7 +239,7 @@ class EnvironmentProcessor(object):
 def _autoinstall_libdeps(ctx, libraries, verbose=False):
     if not libraries:
         return
-    storage_dir = util.get_projectlibdeps_dir()
+    storage_dir = get_projectlibdeps_dir()
     ctx.obj = LibraryManager(storage_dir)
     if verbose:
         click.echo("Library Storage: " + storage_dir)
@@ -258,9 +258,8 @@ def _clean_build_dir(build_dir):
     proj_hash = calculate_project_hash()
 
     # if project's config is modified
-    if (isdir(build_dir)
-            and getmtime(join(util.get_project_dir(),
-                              "platformio.ini")) > getmtime(build_dir)):
+    if (isdir(build_dir) and getmtime(
+            join(get_project_dir(), "platformio.ini")) > getmtime(build_dir)):
         util.rmtree_(build_dir)
 
     # check project structure
@@ -323,23 +322,3 @@ def check_project_envs(config, environments=None):  # FIXME: Remove
     if unknown:
         raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
     return True
-
-
-def calculate_project_hash():
-    check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
-    chunks = [__version__]
-    for d in (util.get_projectsrc_dir(), util.get_projectlib_dir()):
-        if not isdir(d):
-            continue
-        for root, _, files in walk(d):
-            for f in files:
-                path = join(root, f)
-                if path.endswith(check_suffixes):
-                    chunks.append(path)
-    chunks_to_str = ",".join(sorted(chunks))
-    if "windows" in util.get_systype():
-        # Fix issue with useless project rebuilding for case insensitive FS.
-        # A case of disk drive can differ...
-        chunks_to_str = chunks_to_str.lower()
-    return sha1(
-        chunks_to_str if util.PY2 else chunks_to_str.encode()).hexdigest()

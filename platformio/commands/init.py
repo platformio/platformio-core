@@ -25,6 +25,9 @@ from platformio.commands.platform import \
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import (
+    get_projectinclude_dir, get_projectlib_dir, get_projectsrc_dir,
+    get_projecttest_dir, is_platformio_project)
 
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
@@ -87,7 +90,7 @@ def cli(
         click.echo("%s - Project Configuration File" % click.style(
             "platformio.ini", fg="cyan"))
 
-    is_new_project = not util.is_platformio_project(project_dir)
+    is_new_project = not is_platformio_project(project_dir)
     if is_new_project:
         init_base_project(project_dir)
 
@@ -96,10 +99,8 @@ def cli(
                           ide is not None)
 
     if ide:
-        env_name = get_best_envname(project_dir, board)
-        if not env_name:
-            raise exception.BoardNotDefined()
-        pg = ProjectGenerator(project_dir, ide, env_name)
+        pg = ProjectGenerator(project_dir, ide,
+                              get_best_envname(project_dir, board))
         pg.generate()
 
     if is_new_project:
@@ -130,27 +131,34 @@ def cli(
 def get_best_envname(project_dir, boards=None):
     config = ProjectConfig(join(project_dir, "platformio.ini"))
     config.validate()
+
+    envname = None
     default_envs = config.default_envs()
     if default_envs:
-        return default_envs[0]
-    section = None
-    for section in config.sections():
-        if not section.startswith("env:"):
-            continue
-        elif config.has_option(section, "board") and (not boards or config.get(
-                section, "board") in boards):
-            break
-    return section[4:] if section else None
+        envname = default_envs[0]
+        if not boards:
+            return envname
+
+    for env in config.envs():
+        if not boards:
+            return env
+        if not envname:
+            envname = env
+        items = config.items(env=env, as_dict=True)
+        if "board" in items and items.get("board") in boards:
+            return env
+
+    return envname
 
 
 def init_base_project(project_dir):
     ProjectConfig(join(project_dir, "platformio.ini")).save()
     with util.cd(project_dir):
         dir_to_readme = [
-            (util.get_projectsrc_dir(), None),
-            (util.get_projectinclude_dir(), init_include_readme),
-            (util.get_projectlib_dir(), init_lib_readme),
-            (util.get_projecttest_dir(), init_test_readme),
+            (get_projectsrc_dir(), None),
+            (get_projectinclude_dir(), init_include_readme),
+            (get_projectlib_dir(), init_lib_readme),
+            (get_projecttest_dir(), init_test_readme),
         ]
         for (path, cb) in dir_to_readme:
             if isdir(path):
