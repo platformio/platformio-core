@@ -16,7 +16,10 @@ import json
 import re
 
 from platformio import exception
+from platformio.commands import PlatformioCLI
 from platformio.commands.lib import cli as cmd_lib
+
+PlatformioCLI.leftover_args = ["--json-output"]  # hook for click
 
 
 def test_search(clirunner, validate_cliresult):

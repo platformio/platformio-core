@@ -57,7 +57,7 @@ def test_init_duplicated_boards(clirunner, validate_cliresult, tmpdir):
 def test_init_ide_without_board(clirunner, tmpdir):
     with tmpdir.as_cwd():
         result = clirunner.invoke(cmd_init, ["--ide", "atom"])
-        assert result.exit_code == -1
+        assert result.exit_code != 0
         assert isinstance(result.exception, exception.ProjectEnvsNotAvailable)
 
 

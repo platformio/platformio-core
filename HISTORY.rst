@@ -14,6 +14,8 @@ PlatformIO 4.0
 * Include external configuration files with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option
   (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
 * Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
+* Added support for the latest Python "Click" package (CLI Builder)
+  (`issue #349 <https://github.com/platformio/platformio-core/issues/349>`_)
 
 PlatformIO 3.0
 --------------

@@ -14,49 +14,13 @@
 
 import os
 import sys
-from os.path import join
 from platform import system
 from traceback import format_exc
 
 import click
 
 from platformio import __version__, exception, maintenance
-from platformio.util import get_source_dir
-
-
-class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
-
-    def list_commands(self, ctx):
-        cmds = []
-        for filename in os.listdir(join(get_source_dir(), "commands")):
-            if filename.startswith("__init__"):
-                continue
-            if filename.endswith(".py"):
-                cmds.append(filename[:-3])
-        cmds.sort()
-        return cmds
-
-    def get_command(self, ctx, cmd_name):
-        mod = None
-        try:
-            mod = __import__("platformio.commands." + cmd_name, None, None,
-                             ["cli"])
-        except ImportError:
-            try:
-                return self._handle_obsolate_command(cmd_name)
-            except AttributeError:
-                raise click.UsageError('No such command "%s"' % cmd_name, ctx)
-        return mod.cli
-
-    @staticmethod
-    def _handle_obsolate_command(name):
-        if name == "platforms":
-            from platformio.commands import platform
-            return platform.cli
-        if name == "serialports":
-            from platformio.commands import device
-            return device.cli
-        raise AttributeError()
+from platformio.commands import PlatformioCLI
 
 
 @click.command(

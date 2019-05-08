@@ -21,6 +21,7 @@ from os.path import isdir, join
 import click
 
 from platformio import exception, util
+from platformio.commands import PlatformioCLI
 from platformio.managers.lib import LibraryManager, get_builtin_libs
 from platformio.project.helpers import (
     get_project_dir, get_projectlibdeps_dir, is_platformio_project)
@@ -78,7 +79,7 @@ def cli(ctx, **options):
                                         ctx.invoked_subcommand)
 
     ctx.obj = LibraryManager(storage_dir)
-    if "--json-output" not in ctx.args:
+    if "--json-output" not in PlatformioCLI.leftover_args:
         click.echo("Library Storage: " + storage_dir)
 
 

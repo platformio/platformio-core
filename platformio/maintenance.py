@@ -22,6 +22,7 @@ import click
 import semantic_version
 
 from platformio import __version__, app, exception, telemetry, util
+from platformio.commands import PlatformioCLI
 from platformio.commands.lib import lib_update as cmd_lib_update
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
@@ -40,12 +41,12 @@ def on_platformio_start(ctx, force, caller):
     set_caller(caller)
     telemetry.on_command()
 
-    if not in_silence(ctx):
+    if not in_silence():
         after_upgrade(ctx)
 
 
-def on_platformio_end(ctx, result):  # pylint: disable=W0613
-    if in_silence(ctx):
+def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
+    if in_silence():
         return
 
     try:
@@ -64,14 +65,11 @@ def on_platformio_exception(e):
     telemetry.on_exception(e)
 
 
-def in_silence(ctx=None):
-    ctx = ctx or app.get_session_var("command_ctx")
-    if not ctx:
-        return True
-    return ctx.args and any([
-        ctx.args[0] == "debug" and "--interpreter" in " ".join(ctx.args),
-        ctx.args[0] == "upgrade", "--json-output" in ctx.args,
-        "--version" in ctx.args
+def in_silence():
+    args = PlatformioCLI.leftover_args
+    return args and any([
+        args[0] == "debug" and "--interpreter" in " ".join(args),
+        args[0] == "upgrade", "--json-output" in args, "--version" in args
     ])
 
 

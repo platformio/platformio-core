@@ -27,6 +27,7 @@ import click
 import requests
 
 from platformio import __version__, app, exception, util
+from platformio.commands import PlatformioCLI
 
 try:
     import queue
@@ -133,10 +134,10 @@ class MeasurementProtocol(TelemetryBase):
                     return _arg
             return None
 
-        if not app.get_session_var("command_ctx"):
-            return
-        ctx_args = app.get_session_var("command_ctx").args
-        args = [str(s).lower() for s in ctx_args if not str(s).startswith("-")]
+        args = [
+            str(arg).lower() for arg in PlatformioCLI.leftover_args
+            if not str(arg).startswith("-")
+        ]
         if not args:
             return
         cmd_path = args[:1]
