@@ -19,8 +19,9 @@ class PlatformioException(Exception):
 
     def __str__(self):  # pragma: no cover
         if self.MESSAGE:
-            return self.MESSAGE.format(*self.args  # pylint: disable=not-an-iterable
-                                       )
+            # pylint: disable=not-an-iterable
+            return self.MESSAGE.format(*self.args)
+
         return super(PlatformioException, self).__str__()
 
 
