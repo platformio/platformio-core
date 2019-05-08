@@ -9,6 +9,8 @@ PlatformIO 4.0
 
 * Python 3 support
   (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
+* Share common (global) options between declared build environments using ``[env]`` section in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
+  (`issue #1643 <https://github.com/platformio/platformio-core/issues/1643>`_)
 * Include external configuration files with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option
   (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
 * Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields

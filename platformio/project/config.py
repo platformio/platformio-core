@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import glob
+import json
 import os
 import re
 from os.path import isfile
@@ -198,7 +199,22 @@ class ProjectConfig(object):
         assert section or env
         if not section:
             section = "env:" + env
-        return self._parser.options(section)
+        options = self._parser.options(section)
+
+        # handle global options from [env]
+        if ((env or section.startswith("env:"))
+                and self._parser.has_section("env")):
+            for option in self._parser.options("env"):
+                if option not in options:
+                    options.append(option)
+
+        return options
+
+    def has_option(self, section, option):
+        if self._parser.has_option(section, option):
+            return True
+        return (section.startswith("env:") and self._parser.has_section("env")
+                and self._parser.has_option("env", option))
 
     def items(self, section=None, env=None, as_dict=False):
         assert section or env
@@ -215,24 +231,21 @@ class ProjectConfig(object):
     def get(self, section, option):
         if not self.expand_interpolations:
             return self._parser.get(section, option)
+
         try:
             value = self._parser.get(section, option)
+        except ConfigParser.NoOptionError:
+            value = self._parser.get("env", option)
         except ConfigParser.Error as e:
             raise exception.InvalidProjectConf(self.path, str(e))
+
         if "${" not in value or "}" not in value:
             return value
         return self.VARTPL_RE.sub(self._re_sub_handler, value)
 
     def _re_sub_handler(self, match):
         section, option = match.group(1), match.group(2)
-        if section in ("env",
-                       "sysenv") and not self._parser.has_section(section):
-            if section == "env":
-                click.secho(
-                    "Warning! Access to system environment variable via "
-                    "`${{env.{0}}}` is deprecated. Please use "
-                    "`${{sysenv.{0}}}` instead".format(option),
-                    fg="yellow")
+        if section == "sysenv":
             return os.getenv(option)
         return self.get(section, option)
 
@@ -271,7 +284,7 @@ class ProjectConfig(object):
 
         # check [env:*] sections
         for section in self._parser.sections():
-            if not section.startswith("env:"):
+            if section != "env" and not section.startswith("env:"):
                 continue
             for option in self._parser.options(section):
                 # obsolete
@@ -301,6 +314,12 @@ class ProjectConfig(object):
             click.secho("Warning! %s" % warning, fg="yellow")
 
         return True
+
+    def to_json(self):
+        result = {}
+        for section in self.sections():
+            result[section] = self.items(section, as_dict=True)
+        return json.dumps(result)
 
     def save(self, path=None):
         with open(path or self.path, "w") as fp:

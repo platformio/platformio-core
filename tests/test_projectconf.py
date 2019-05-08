@@ -18,43 +18,42 @@ from platformio.project.config import ProjectConfig
 
 BASE_CONFIG = """
 [platformio]
-env_default = esp32dev, lolin32
+env_default = base, extra_2
 extra_configs =
   extra_envs.ini
   extra_debug.ini
 
-[common]
+# global options per [env:*]
+[env]
+monitor_speed = 115200
+lib_deps = Lib1, Lib2
+lib_ignore = ${custom.lib_ignore}
+
+[custom]
 debug_flags = -D RELEASE
 lib_flags = -lc -lm
 extra_flags = ${sysenv.__PIO_TEST_CNF_EXTRA_FLAGS}
+lib_ignore = LibIgnoreCustom
 
-[env:esp-wrover-kit]
-platform = espressif32
-framework = espidf
-board = esp-wrover-kit
-build_flags = ${common.debug_flags} ${common.extra_flags}
+[env:base]
+build_flags = ${custom.debug_flags} ${custom.extra_flags}
 """
 
 EXTRA_ENVS_CONFIG = """
-[env:esp32dev]
-platform = espressif32
-framework = espidf
-board = esp32dev
-build_flags = ${common.lib_flags} ${common.debug_flags}
+[env:extra_1]
+build_flags = ${custom.lib_flags} ${custom.debug_flags}
 
-[env:lolin32]
-platform = espressif32
-framework = espidf
-board = lolin32
-build_flags = ${common.debug_flags} ${common.extra_flags}
+[env:extra_2]
+build_flags = ${custom.debug_flags} ${custom.extra_flags}
+lib_ignore = ${env.lib_ignore}, Lib3
 """
 
 EXTRA_DEBUG_CONFIG = """
-# Override base "common.debug_flags"
-[common]
+# Override original "custom.debug_flags"
+[custom]
 debug_flags = -D DEBUG=1
 
-[env:lolin32]
+[env:extra_2]
 build_flags = -Og
 """
 
@@ -71,32 +70,47 @@ def test_parser(tmpdir):
 
     # sections
     assert config.sections() == [
-        "platformio", "common", "env:esp-wrover-kit", "env:esp32dev",
-        "env:lolin32"
+        "platformio", "env", "custom", "env:base", "env:extra_1", "env:extra_2"
     ]
 
+    # envs
+    assert config.envs() == ["base", "extra_1", "extra_2"]
+    assert config.default_envs() == ["base", "extra_2"]
+
+    # options
+    assert config.options(env="base") == [
+        "build_flags", "monitor_speed", "lib_deps", "lib_ignore"
+    ]
+
+    # has_option
+    assert config.has_option("env:base", "monitor_speed")
+    assert not config.has_option("custom", "monitor_speed")
+
     # sysenv
-    assert config.get("common", "extra_flags") == ""
+    assert config.get("custom", "extra_flags") == ""
     os.environ["__PIO_TEST_CNF_EXTRA_FLAGS"] = "-L /usr/local/lib"
-    assert config.get("common", "extra_flags") == "-L /usr/local/lib"
+    assert config.get("custom", "extra_flags") == "-L /usr/local/lib"
 
     # get
-    assert config.get("common", "debug_flags") == "-D DEBUG=1"
-    assert config.get("env:esp32dev", "build_flags") == "-lc -lm -D DEBUG=1"
-    assert config.get("env:lolin32", "build_flags") == "-Og"
-    assert config.get("env:esp-wrover-kit",
+    assert config.get("custom", "debug_flags") == "-D DEBUG=1"
+    assert config.get("env:extra_1", "build_flags") == "-lc -lm -D DEBUG=1"
+    assert config.get("env:extra_2", "build_flags") == "-Og"
+    assert config.get("env:extra_2", "monitor_speed") == "115200"
+    assert config.get("env:base",
                       "build_flags") == ("-D DEBUG=1 -L /usr/local/lib")
 
     # items
-    assert config.items("common") == [("debug_flags", "-D DEBUG=1"),
+    assert config.items("custom") == [("debug_flags", "-D DEBUG=1"),
                                       ("lib_flags", "-lc -lm"),
-                                      ("extra_flags", "-L /usr/local/lib")]
-    assert config.items(env="esp32dev") == [("platform", "espressif32"),
-                                            ("framework", "espidf"),
-                                            ("board", "esp32dev"),
-                                            ("build_flags",
-                                             "-lc -lm -D DEBUG=1")]
-
-    # envs
-    assert config.envs() == ["esp-wrover-kit", "esp32dev", "lolin32"]
-    assert config.default_envs() == ["esp32dev", "lolin32"]
+                                      ("extra_flags", "-L /usr/local/lib"),
+                                      ("lib_ignore", "LibIgnoreCustom")]
+    assert config.items(env="extra_1") == [("build_flags",
+                                            "-lc -lm -D DEBUG=1"),
+                                           ("monitor_speed", "115200"),
+                                           ("lib_deps", "Lib1, Lib2"),
+                                           ("lib_ignore", "LibIgnoreCustom")]
+    assert config.items(env="extra_2") == [("build_flags", "-Og"),
+                                           ("lib_ignore",
+                                            "LibIgnoreCustom, Lib3"),
+                                           ("monitor_speed", "115200"),
+                                           ("lib_deps", "Lib1, Lib2")]
