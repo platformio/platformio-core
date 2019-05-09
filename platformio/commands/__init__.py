@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import os
-from os.path import dirname, join
+from os.path import dirname
 
 import click
 
@@ -30,7 +30,7 @@ class PlatformioCLI(click.MultiCommand):
 
     def list_commands(self, ctx):
         cmds = []
-        for filename in os.listdir(join(dirname(__file__), "commands")):
+        for filename in os.listdir(dirname(__file__)):
             if filename.startswith("__init__"):
                 continue
             if filename.endswith(".py"):
