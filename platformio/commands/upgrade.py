@@ -43,11 +43,10 @@ def cli(dev):
              get_pip_package(to_develop)], ["platformio", "--version"])
 
     cmd = None
-    r = None
+    r = {}
     try:
         for cmd in cmds:
             cmd = [util.get_pythonexe_path(), "-m"] + cmd
-            r = None
             r = util.exec_command(cmd)
 
             # try pip with disabled cache

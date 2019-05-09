@@ -25,6 +25,7 @@ import semantic_version
 from platformio import __version__, app, exception, util
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
+from platformio.project.helpers import get_projectboards_dir
 
 try:
     from urllib.parse import quote
@@ -566,7 +567,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
             self._BOARDS_CACHE[board_id] = config
 
         bdirs = [
-            util.get_projectboards_dir(),
+            get_projectboards_dir(),
             join(util.get_home_dir(), "boards"),
             join(self.get_dir(), "boards"),
         ]

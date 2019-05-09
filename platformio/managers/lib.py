@@ -164,7 +164,7 @@ class LibraryManager(BasePkgManager):
 
         semver_spec = self.parse_semver_spec(
             requirements) if requirements else None
-        item = None
+        item = {}
 
         for v in versions:
             semver_new = self.parse_semver_version(v['name'])

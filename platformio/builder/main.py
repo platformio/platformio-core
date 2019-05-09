@@ -19,11 +19,20 @@ from os import environ
 from os.path import expanduser, join
 from time import time
 
-from SCons.Script import (ARGUMENTS, COMMAND_LINE_TARGETS, DEFAULT_TARGETS,
-                          AllowSubstExceptions, AlwaysBuild, Default,
-                          DefaultEnvironment, Variables)
+from SCons.Script import ARGUMENTS  # pylint: disable=import-error
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
+from SCons.Script import DEFAULT_TARGETS  # pylint: disable=import-error
+from SCons.Script import AllowSubstExceptions  # pylint: disable=import-error
+from SCons.Script import AlwaysBuild  # pylint: disable=import-error
+from SCons.Script import Default  # pylint: disable=import-error
+from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
+from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import util
+from platformio.project.helpers import (
+    get_project_dir, get_project_optional_dir, get_projectbuild_dir,
+    get_projectdata_dir, get_projectinclude_dir, get_projectlib_dir,
+    get_projectlibdeps_dir, get_projectsrc_dir, get_projecttest_dir)
 
 AllowSubstExceptions(NameError)
 
@@ -96,19 +105,19 @@ DEFAULT_ENV_OPTIONS = dict(
     ENV=environ,
     UNIX_TIME=int(time()),
     PIOHOME_DIR=util.get_home_dir(),
-    PROJECT_DIR=util.get_project_dir(),
-    PROJECTINCLUDE_DIR=util.get_projectinclude_dir(),
-    PROJECTSRC_DIR=util.get_projectsrc_dir(),
-    PROJECTTEST_DIR=util.get_projecttest_dir(),
-    PROJECTDATA_DIR=util.get_projectdata_dir(),
-    PROJECTBUILD_DIR=util.get_projectbuild_dir(),
+    PROJECT_DIR=get_project_dir(),
+    PROJECTINCLUDE_DIR=get_projectinclude_dir(),
+    PROJECTSRC_DIR=get_projectsrc_dir(),
+    PROJECTTEST_DIR=get_projecttest_dir(),
+    PROJECTDATA_DIR=get_projectdata_dir(),
+    PROJECTBUILD_DIR=get_projectbuild_dir(),
     BUILD_DIR=join("$PROJECTBUILD_DIR", "$PIOENV"),
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     BUILDTEST_DIR=join("$BUILD_DIR", "test"),
     LIBPATH=["$BUILD_DIR"],
     LIBSOURCE_DIRS=[
-        util.get_projectlib_dir(),
-        util.get_projectlibdeps_dir(),
+        get_projectlib_dir(),
+        get_projectlibdeps_dir(),
         join("$PIOHOME_DIR", "lib")
     ],
     PROGNAME="program",
@@ -151,10 +160,10 @@ for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPTS",
     env.Append(**{var: util.parse_conf_multi_values(environ.get(k))})
 
 # Configure extra library source directories for LDF
-if util.get_project_optional_dir("lib_extra_dirs"):
+if get_project_optional_dir("lib_extra_dirs"):
     env.Prepend(
         LIBSOURCE_DIRS=util.parse_conf_multi_values(
-            util.get_project_optional_dir("lib_extra_dirs")))
+            get_project_optional_dir("lib_extra_dirs")))
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
 env['LIBSOURCE_DIRS'] = [
     expanduser(d) if d.startswith("~") else d for d in env['LIBSOURCE_DIRS']

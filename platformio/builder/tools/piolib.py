@@ -26,8 +26,10 @@ from glob import glob
 from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
                      realpath, sep)
 
-import SCons.Scanner
-from SCons.Script import ARGUMENTS, COMMAND_LINE_TARGETS, DefaultEnvironment
+import SCons.Scanner  # pylint: disable=import-error
+from SCons.Script import ARGUMENTS  # pylint: disable=import-error
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
+from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, util
 from platformio.builder.tools import platformio as piotool
@@ -44,8 +46,8 @@ class LibBuilderFactory(object):
             clsname = "PlatformIOLibBuilder"
         else:
             used_frameworks = LibBuilderFactory.get_used_frameworks(env, path)
-            common_frameworks = (
-                set(env.get("PIOFRAMEWORK", [])) & set(used_frameworks))
+            common_frameworks = (set(env.get("PIOFRAMEWORK", []))
+                                 & set(used_frameworks))
             if common_frameworks:
                 clsname = "%sLibBuilder" % list(common_frameworks)[0].title()
             elif used_frameworks:
@@ -718,6 +720,18 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     def _is_arduino_manifest(self):
         return isfile(join(self.path, "library.properties"))
+
+    @property
+    def include_dir(self):
+        if "includeDir" in self._manifest.get("build", {}):
+            return self._manifest.get("build").get("includeDir")
+        return LibBuilderBase.include_dir.fget(self)
+
+    @property
+    def src_dir(self):
+        if "srcDir" in self._manifest.get("build", {}):
+            return self._manifest.get("build").get("srcDir")
+        return LibBuilderBase.src_dir.fget(self)
 
     @property
     def src_filter(self):

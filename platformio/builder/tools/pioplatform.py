@@ -18,7 +18,7 @@ import base64
 import sys
 from os.path import isdir, isfile, join
 
-from SCons.Script import COMMAND_LINE_TARGETS
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 
 from platformio import exception, util
 from platformio.managers.platform import PlatformFactory

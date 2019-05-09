@@ -19,7 +19,7 @@ from platformio import (__author__, __description__, __email__, __license__,
 
 install_requires = [
     "bottle<0.13",
-    "click>=5,<6",
+    "click>=5,<8",
     "colorama",
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",
@@ -41,7 +41,6 @@ setup(
     packages=find_packages() + ["scripts"],
     package_data={
         "platformio": [
-            "projectconftpl.ini",
             "ide/tpls/*/.*.tpl",
             "ide/tpls/*/*.tpl",
             "ide/tpls/*/*/*.tpl",

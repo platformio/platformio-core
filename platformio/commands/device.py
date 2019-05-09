@@ -15,11 +15,13 @@
 import json
 import sys
 from os import getcwd
+from os.path import join
 
 import click
 from serial.tools import miniterm
 
 from platformio import exception, util
+from platformio.project.config import ProjectConfig
 
 
 @click.group(short_help="Monitor device or list existing")
@@ -161,11 +163,10 @@ def device_list(  # pylint: disable=too-many-branches
     help="Load configuration from `platformio.ini` and specified environment")
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
     try:
-        project_options = get_project_options(kwargs['project_dir'],
+        monitor_options = get_project_options(kwargs['project_dir'],
                                               kwargs['environment'])
-        monitor_options = {k: v for k, v in project_options or []}
         if monitor_options:
-            for k in ("port", "baud", "speed", "rts", "dtr"):
+            for k in ("port", "speed", "rts", "dtr"):
                 k2 = "monitor_%s" % k
                 if k == "speed":
                     k = "baud"
@@ -205,24 +206,13 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         raise exception.MinitermException(e)
 
 
-def get_project_options(project_dir, environment):
-    config = util.load_project_config(project_dir)
-    if not config.sections():
-        return None
-
-    known_envs = [s[4:] for s in config.sections() if s.startswith("env:")]
-    if environment:
-        if environment in known_envs:
-            return config.items("env:%s" % environment)
-        raise exception.UnknownEnvNames(environment, ", ".join(known_envs))
-
-    if not known_envs:
-        return None
-
-    if config.has_option("platformio", "env_default"):
-        env_default = config.get("platformio",
-                                 "env_default").split(", ")[0].strip()
-        if env_default and env_default in known_envs:
-            return config.items("env:%s" % env_default)
-
-    return config.items("env:%s" % known_envs[0])
+def get_project_options(project_dir, environment=None):
+    config = ProjectConfig.get_instance(join(project_dir, "platformio.ini"))
+    config.validate(envs=[environment] if environment else None)
+    if not environment:
+        default_envs = config.default_envs()
+        if default_envs:
+            environment = default_envs[0]
+        else:
+            environment = config.envs()[0]
+    return config.items(env=environment, as_dict=True)

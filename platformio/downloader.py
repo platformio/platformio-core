@@ -100,7 +100,7 @@ class FileDownloader(object):
             raise FDSizeMismatch(_dlsize, self._fname, self.get_size())
 
         if not sha1:
-            return
+            return None
 
         dlsha1 = None
         try:
@@ -113,11 +113,12 @@ class FileDownloader(object):
                 dlsha1 = result['out']
             except (OSError, ValueError):
                 pass
-
-        if dlsha1:
-            dlsha1 = dlsha1[1:41] if dlsha1.startswith("\\") else dlsha1[:40]
-            if sha1 != dlsha1:
-                raise FDSHASumMismatch(dlsha1, self._fname, sha1)
+        if not dlsha1:
+            return None
+        dlsha1 = dlsha1[1:41] if dlsha1.startswith("\\") else dlsha1[:40]
+        if sha1.lower() != dlsha1.lower():
+            raise FDSHASumMismatch(dlsha1, self._fname, sha1)
+        return True
 
     def _preserve_filemtime(self, lmdate):
         timedata = parsedate_tz(lmdate)

@@ -22,7 +22,7 @@ from os.path import isfile, join
 from shutil import copyfile
 from time import sleep
 
-from SCons.Script import ARGUMENTS
+from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from serial import Serial, SerialException
 
 from platformio import exception, util

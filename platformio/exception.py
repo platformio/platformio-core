@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=not-an-iterable
-
 
 class PlatformioException(Exception):
 
@@ -21,7 +19,9 @@ class PlatformioException(Exception):
 
     def __str__(self):  # pragma: no cover
         if self.MESSAGE:
+            # pylint: disable=not-an-iterable
             return self.MESSAGE.format(*self.args)
+
         return super(PlatformioException, self).__str__()
 
 
@@ -42,9 +42,14 @@ class UserSideException(PlatformioException):
     pass
 
 
-class AbortedByUser(PlatformioException):
+class AbortedByUser(UserSideException):
 
     MESSAGE = "Aborted by user"
+
+
+#
+# Development Platform
+#
 
 
 class UnknownPlatform(PlatformioException):
@@ -63,13 +68,6 @@ class PlatformNotInstalledYet(PlatformioException):
                "Use `platformio platform install {0}` command")
 
 
-class BoardNotDefined(PlatformioException):
-
-    MESSAGE = (
-        "You need to specify board ID using `-b` or `--board` option. "
-        "Supported boards list is available via `platformio boards` command")
-
-
 class UnknownBoard(PlatformioException):
 
     MESSAGE = "Unknown board ID '{0}'"
@@ -85,54 +83,75 @@ class UnknownFramework(PlatformioException):
     MESSAGE = "Unknown framework '{0}'"
 
 
-class UnknownPackage(PlatformioException):
+# Package Manager
+
+
+class PlatformIOPackageException(PlatformioException):
+    pass
+
+
+class UnknownPackage(PlatformIOPackageException):
 
     MESSAGE = "Detected unknown package '{0}'"
 
 
-class MissingPackageManifest(PlatformioException):
+class MissingPackageManifest(PlatformIOPackageException):
 
     MESSAGE = "Could not find one of '{0}' manifest files in the package"
 
 
-class UndefinedPackageVersion(PlatformioException):
+class UndefinedPackageVersion(PlatformIOPackageException):
 
     MESSAGE = ("Could not find a version that satisfies the requirement '{0}'"
                " for your system '{1}'")
 
 
-class PackageInstallError(PlatformioException):
+class PackageInstallError(PlatformIOPackageException):
 
     MESSAGE = ("Could not install '{0}' with version requirements '{1}' "
                "for your system '{2}'.\n\n"
                "Please try this solution -> http://bit.ly/faq-package-manager")
 
 
-class ExtractArchiveItemError(PlatformioException):
+class ExtractArchiveItemError(PlatformIOPackageException):
 
     MESSAGE = (
         "Could not extract `{0}` to `{1}`. Try to disable antivirus "
         "tool or check this solution -> http://bit.ly/faq-package-manager")
 
 
-class FDUnrecognizedStatusCode(PlatformioException):
+class UnsupportedArchiveType(PlatformIOPackageException):
+
+    MESSAGE = "Can not unpack file '{0}'"
+
+
+class FDUnrecognizedStatusCode(PlatformIOPackageException):
 
     MESSAGE = "Got an unrecognized status code '{0}' when downloaded {1}"
 
 
-class FDSizeMismatch(PlatformioException):
+class FDSizeMismatch(PlatformIOPackageException):
 
     MESSAGE = ("The size ({0:d} bytes) of downloaded file '{1}' "
                "is not equal to remote size ({2:d} bytes)")
 
 
-class FDSHASumMismatch(PlatformioException):
+class FDSHASumMismatch(PlatformIOPackageException):
 
     MESSAGE = ("The 'sha1' sum '{0}' of downloaded file '{1}' "
                "is not equal to remote '{2}'")
 
 
-class NotPlatformIOProject(PlatformioException):
+#
+# Project
+#
+
+
+class PlatformIOProjectException(PlatformioException):
+    pass
+
+
+class NotPlatformIOProject(PlatformIOProjectException):
 
     MESSAGE = (
         "Not a PlatformIO project. `platformio.ini` file has not been "
@@ -140,24 +159,80 @@ class NotPlatformIOProject(PlatformioException):
         "please use `platformio init` command")
 
 
-class UndefinedEnvPlatform(PlatformioException):
+class InvalidProjectConf(PlatformIOProjectException):
+
+    MESSAGE = ("Invalid '{0}' (project configuration file): '{1}'")
+
+
+class UndefinedEnvPlatform(PlatformIOProjectException):
 
     MESSAGE = "Please specify platform for '{0}' environment"
 
 
-class UnsupportedArchiveType(PlatformioException):
-
-    MESSAGE = "Can not unpack file '{0}'"
-
-
-class ProjectEnvsNotAvailable(PlatformioException):
+class ProjectEnvsNotAvailable(PlatformIOProjectException):
 
     MESSAGE = "Please setup environments in `platformio.ini` file"
 
 
-class UnknownEnvNames(PlatformioException):
+class UnknownEnvNames(PlatformIOProjectException):  # FIXME: UnknownProjectEnvs
 
     MESSAGE = "Unknown environment names '{0}'. Valid names are '{1}'"
+
+
+#
+# Library
+#
+
+
+class LibNotFound(PlatformioException):
+
+    MESSAGE = ("Library `{0}` has not been found in PlatformIO Registry.\n"
+               "You can ignore this message, if `{0}` is a built-in library "
+               "(included in framework, SDK). E.g., SPI, Wire, etc.")
+
+
+class NotGlobalLibDir(UserSideException):
+
+    MESSAGE = (
+        "The `{0}` is not a PlatformIO project.\n\n"
+        "To manage libraries in global storage `{1}`,\n"
+        "please use `platformio lib --global {2}` or specify custom storage "
+        "`platformio lib --storage-dir /path/to/storage/ {2}`.\n"
+        "Check `platformio lib --help` for details.")
+
+
+class InvalidLibConfURL(PlatformioException):
+
+    MESSAGE = "Invalid library config URL '{0}'"
+
+
+#
+# UDEV Rules
+#
+
+
+class InvalidUdevRules(PlatformioException):
+    pass
+
+
+class MissedUdevRules(InvalidUdevRules):
+
+    MESSAGE = (
+        "Warning! Please install `99-platformio-udev.rules`. \nMode details: "
+        "https://docs.platformio.org/en/latest/faq.html#platformio-udev-rules")
+
+
+class OutdatedUdevRules(InvalidUdevRules):
+
+    MESSAGE = (
+        "Warning! Your `{0}` are outdated. Please update or reinstall them."
+        "\n Mode details: https://docs.platformio.org"
+        "/en/latest/faq.html#platformio-udev-rules")
+
+
+#
+# Misc
+#
 
 
 class GetSerialPortsError(PlatformioException):
@@ -175,39 +250,12 @@ class APIRequestError(PlatformioException):
     MESSAGE = "[API] {0}"
 
 
-class InternetIsOffline(PlatformioException):
+class InternetIsOffline(UserSideException):
 
     MESSAGE = (
         "You are not connected to the Internet.\n"
         "If you build a project first time, we need Internet connection "
         "to install all dependencies and toolchains.")
-
-
-class LibNotFound(PlatformioException):
-
-    MESSAGE = ("Library `{0}` has not been found in PlatformIO Registry.\n"
-               "You can ignore this message, if `{0}` is a built-in library "
-               "(included in framework, SDK). E.g., SPI, Wire, etc.")
-
-
-class NotGlobalLibDir(PlatformioException):
-
-    MESSAGE = (
-        "The `{0}` is not a PlatformIO project.\n\n"
-        "To manage libraries in global storage `{1}`,\n"
-        "please use `platformio lib --global {2}` or specify custom storage "
-        "`platformio lib --storage-dir /path/to/storage/ {2}`.\n"
-        "Check `platformio lib --help` for details.")
-
-
-class InvalidLibConfURL(PlatformioException):
-
-    MESSAGE = "Invalid library config URL '{0}'"
-
-
-class InvalidProjectConf(PlatformioException):
-
-    MESSAGE = "Invalid `platformio.ini`, project configuration file: '{0}'"
 
 
 class BuildScriptNotFound(PlatformioException):
@@ -235,25 +283,6 @@ class CIBuildEnvsEmpty(PlatformioException):
     MESSAGE = ("Can't find PlatformIO build environments.\n"
                "Please specify `--board` or path to `platformio.ini` with "
                "predefined environments using `--project-conf` option")
-
-
-class InvalidUdevRules(PlatformioException):
-    pass
-
-
-class MissedUdevRules(InvalidUdevRules):
-
-    MESSAGE = (
-        "Warning! Please install `99-platformio-udev.rules`. \nMode details: "
-        "https://docs.platformio.org/en/latest/faq.html#platformio-udev-rules")
-
-
-class OutdatedUdevRules(InvalidUdevRules):
-
-    MESSAGE = (
-        "Warning! Your `{0}` are outdated. Please update or reinstall them."
-        "\n Mode details: https://docs.platformio.org"
-        "/en/latest/faq.html#platformio-udev-rules")
 
 
 class UpgradeError(PlatformioException):
@@ -290,7 +319,6 @@ class DebugSupportError(PlatformioException):
 
 
 class DebugInvalidOptions(PlatformioException):
-
     pass
 
 

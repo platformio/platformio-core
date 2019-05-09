@@ -38,14 +38,14 @@ def test_search_raw_output(clirunner, validate_cliresult):
 def test_install_unknown_version(clirunner):
     result = clirunner.invoke(cli_platform.platform_install,
                               ["atmelavr@99.99.99"])
-    assert result.exit_code == -1
+    assert result.exit_code != 0
     assert isinstance(result.exception, exception.UndefinedPackageVersion)
 
 
 def test_install_unknown_from_registry(clirunner):
     result = clirunner.invoke(cli_platform.platform_install,
                               ["unknown-platform"])
-    assert result.exit_code == -1
+    assert result.exit_code != 0
     assert isinstance(result.exception, exception.UnknownPackage)
 
 
