@@ -18,6 +18,12 @@ import requests
 from platformio import exception, util
 
 
+def test_platformio_cli():
+    result = util.exec_command(["pio", "--help"])
+    assert result['returncode'] == 0
+    assert "Usage: pio [OPTIONS] COMMAND [ARGS]..." in result['out']
+
+
 def test_ping_internet_ips():
     for ip in util.PING_INTERNET_IPS:
         requests.get("http://%s" % ip, allow_redirects=False, timeout=2)

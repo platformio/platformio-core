@@ -11,8 +11,10 @@ PlatformIO 4.0
   (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
 * Share common (global) options between declared build environments using ``[env]`` section in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
   (`issue #1643 <https://github.com/platformio/platformio-core/issues/1643>`_)
-* Include external configuration files with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option
+* Include external configuration files in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option
   (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
+* Override default `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with a custom using ``-c, --project-conf`` option for `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__, `platformio debug <http://docs.platformio.org/page/userguide/cmd_debug.html>`__, or `platformio test <http://docs.platformio.org/page/userguide/cmd_test.html>`__ commands
+  (`issue #1913 <https://github.com/platformio/platformio-core/issues/1913>`_)
 * Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
 * Added support for the latest Python "Click" package (CLI Builder)
   (`issue #349 <https://github.com/platformio/platformio-core/issues/349>`_)

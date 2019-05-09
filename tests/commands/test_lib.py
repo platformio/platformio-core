@@ -61,7 +61,6 @@ def test_global_install_archive(clirunner, validate_cliresult,
                                 isolated_pio_home):
     result = clirunner.invoke(cmd_lib, [
         "-g", "install",
-        "http://www.airspayce.com/mikem/arduino/RadioHead/RadioHead-1.62.zip",
         "https://github.com/bblanchon/ArduinoJson/archive/v5.8.2.zip",
         "https://github.com/bblanchon/ArduinoJson/archive/v5.8.2.zip@5.8.2",
         "SomeLib=http://dl.platformio.org/libraries/archives/0/9540.tar.gz",
@@ -77,10 +76,7 @@ def test_global_install_archive(clirunner, validate_cliresult,
     assert result.exit_code != 0
 
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
-    items2 = [
-        "RadioHead-1.62", "ArduinoJson", "SomeLib_ID54",
-        "OneWire_ID1", "ESP32WebServer"
-    ]
+    items2 = ["ArduinoJson", "SomeLib_ID54", "OneWire_ID1", "ESP32WebServer"]
     assert set(items1) >= set(items2)
 
 
@@ -126,7 +122,7 @@ def test_install_duplicates(clirunner, validate_cliresult, without_internet):
     # archive
     result = clirunner.invoke(cmd_lib, [
         "-g", "install",
-        "http://www.airspayce.com/mikem/arduino/RadioHead/RadioHead-1.62.zip"
+        "https://github.com/Pedroalbuquerque/ESP32WebServer/archive/master.zip"
     ])
     validate_cliresult(result)
     assert "is already installed" in result.output
@@ -148,7 +144,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
         ("Source: https://github.com/Pedroalbuquerque/ESP32WebServer/archive/master.zip",
          "Version: 5.10.1",
          "Source: git+https://github.com/gioblu/PJON.git#3.0",
-         "Version: 1fb26fd", "RadioHead-1.62")
+         "Version: 1fb26fd")
     ])
 
     result = clirunner.invoke(cmd_lib, ["-g", "list", "--json-output"])
@@ -161,10 +157,9 @@ def test_global_lib_list(clirunner, validate_cliresult):
     items1 = [i['name'] for i in json.loads(result.output)]
     items2 = [
         "ESP32WebServer", "ArduinoJson", "ArduinoJson", "ArduinoJson",
-        "ArduinoJson", "AsyncMqttClient", "AsyncTCP", "SomeLib",
-        "ESPAsyncTCP", "NeoPixelBus", "OneWire", "PJON", "PJON",
-        "PubSubClient", "RFcontrol", "RadioHead-1.62", "platformio-libmirror",
-        "rs485-nodeproto"
+        "ArduinoJson", "AsyncMqttClient", "AsyncTCP", "SomeLib", "ESPAsyncTCP",
+        "NeoPixelBus", "OneWire", "PJON", "PJON", "PubSubClient", "RFcontrol",
+        "platformio-libmirror", "rs485-nodeproto"
     ]
     assert sorted(items1) == sorted(items2)
 
@@ -172,9 +167,9 @@ def test_global_lib_list(clirunner, validate_cliresult):
         "{name}@{version}".format(**item) for item in json.loads(result.output)
     ]
     versions2 = [
-        'ArduinoJson@5.8.2', 'ArduinoJson@5.10.1', 'AsyncMqttClient@0.8.2',
-        'NeoPixelBus@2.2.4', 'PJON@07fe9aa', 'PJON@1fb26fd',
-        'PubSubClient@bef5814', 'RFcontrol@77d4eb3f8a', 'RadioHead-1.62@0.0.0'
+        "ArduinoJson@5.8.2", "ArduinoJson@5.10.1", "AsyncMqttClient@0.8.2",
+        "NeoPixelBus@2.2.4", "PJON@07fe9aa", "PJON@1fb26fd",
+        "PubSubClient@bef5814", "RFcontrol@77d4eb3f8a"
     ]
     assert set(versions1) >= set(versions2)
 
@@ -205,7 +200,7 @@ def test_global_lib_update(clirunner, validate_cliresult):
     # update rest libraries
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
-    assert result.output.count("[Detached]") == 6
+    assert result.output.count("[Detached]") == 5
     assert result.output.count("[Up-to-date]") == 11
     assert "Uninstalling RFcontrol @ 77d4eb3f8a" in result.output
 
@@ -235,10 +230,10 @@ def test_global_lib_uninstall(clirunner, validate_cliresult,
 
     items1 = [d.basename for d in isolated_pio_home.join("lib").listdir()]
     items2 = [
-        "RadioHead-1.62", "rs485-nodeproto", "platformio-libmirror",
+        "rs485-nodeproto", "platformio-libmirror",
         "PubSubClient", "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
-        "ESPAsyncTCP_ID305", "SomeLib_ID54", "NeoPixelBus_ID547",
-        "PJON", "AsyncMqttClient_ID346", "ArduinoJson_ID64",
+        "ESPAsyncTCP_ID305", "SomeLib_ID54", "NeoPixelBus_ID547", "PJON",
+        "AsyncMqttClient_ID346", "ArduinoJson_ID64",
         "PJON@src-79de467ebe19de18287becff0a1fb42d", "ESP32WebServer"
     ]
     assert set(items1) == set(items2)

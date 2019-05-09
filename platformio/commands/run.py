@@ -47,12 +47,21 @@ from platformio.project.helpers import (
         dir_okay=True,
         writable=True,
         resolve_path=True))
+@click.option(
+    "-c",
+    "--project-conf",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True))
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.pass_context
-def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
-        disable_auto_clean):
+def cli(ctx, environment, target, upload_port, project_dir, project_conf,
+        silent, verbose, disable_auto_clean):
     # find project directory on upper level
     if isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
@@ -70,7 +79,7 @@ def cli(ctx, environment, target, upload_port, project_dir, silent, verbose,
                     fg="yellow")
 
         config = ProjectConfig.get_instance(
-            join(project_dir, "platformio.ini"))
+            project_conf or join(project_dir, "platformio.ini"))
         config.validate()
 
         results = []

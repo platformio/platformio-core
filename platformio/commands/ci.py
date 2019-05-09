@@ -59,7 +59,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
         file_okay=False, dir_okay=True, writable=True, resolve_path=True))
 @click.option("--keep-build-dir", is_flag=True)
 @click.option(
-    "-C",
+    "-c",
     "--project-conf",
     type=click.Path(
         exists=True,
