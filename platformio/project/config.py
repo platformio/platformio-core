@@ -189,8 +189,7 @@ class ProjectConfig(object):
         if (not self._parser.has_section("platformio")
                 or not self._parser.has_option("platformio", "extra_configs")):
             return
-        extra_configs = self.parse_multi_values(
-            self.get("platformio", "extra_configs"))
+        extra_configs = self.getlist("platformio", "extra_configs")
         for pattern in extra_configs:
             for item in glob.glob(pattern):
                 self.read(item)
@@ -249,13 +248,16 @@ class ProjectConfig(object):
             return os.getenv(option)
         return self.get(section, option)
 
+    def getlist(self, section, option):
+        return self.parse_multi_values(self.get(section, option))
+
     def envs(self):
         return [s[4:] for s in self._parser.sections() if s.startswith("env:")]
 
     def default_envs(self):
         if not self._parser.has_option("platformio", "env_default"):
             return []
-        return self.parse_multi_values(self.get("platformio", "env_default"))
+        return self.getlist("platformio", "env_default")
 
     def validate(self, envs=None):
         if not isfile(self.path):
