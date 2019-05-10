@@ -25,6 +25,7 @@ from time import time
 import requests
 
 from platformio import exception, lockfile, util
+from platformio.compat import PY2, WINDOWS
 
 
 def projects_dir_validate(projects_dir):
@@ -173,7 +174,7 @@ class ContentCache(object):
             if not arg:
                 continue
             arg = str(arg)
-            h.update(arg if util.PY2 else arg.encode())
+            h.update(arg if PY2 else arg.encode())
         return h.hexdigest()
 
     def get(self, key):
@@ -361,7 +362,6 @@ def get_cid():
         uid = uuid.getnode()
     cid = uuid.UUID(bytes=hashlib.md5(str(uid).encode()).digest())
     cid = str(cid)
-    if ("windows" in util.get_systype()
-            or os.getuid() > 0):  # yapf: disable pylint: disable=no-member
+    if WINDOWS or os.getuid() > 0:  # yapf: disable pylint: disable=no-member
         set_state_item("cid", cid)
     return cid

@@ -23,6 +23,7 @@ from click.testing import CliRunner
 
 from platformio import exception, util
 from platformio.commands.run import cli as cmd_run
+from platformio.compat import PY2, WINDOWS
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
     get_projectlib_dir, get_projectlibdeps_dir, get_projectsrc_dir)
@@ -120,7 +121,7 @@ class ProjectGenerator(object):
             contents = self._render_tpl(tpl_path)
             self._merge_contents(
                 join(dst_dir, file_name),
-                contents.encode("utf8") if util.PY2 else contents)
+                contents.encode("utf8") if PY2 else contents)
 
     def _render_tpl(self, tpl_path):
         return bottle.template(
@@ -155,5 +156,4 @@ class ProjectGenerator(object):
 
     @staticmethod
     def _fix_os_path(path):
-        return (re.sub(r"[\\]+", '\\' * 4, path)
-                if "windows" in util.get_systype() else path)
+        return (re.sub(r"[\\]+", '\\' * 4, path) if WINDOWS else path)

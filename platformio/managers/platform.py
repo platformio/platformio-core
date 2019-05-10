@@ -23,6 +23,7 @@ import click
 import semantic_version
 
 from platformio import __version__, app, exception, util
+from platformio.compat import PY2
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
 from platformio.project.helpers import get_projectboards_dir
@@ -389,7 +390,7 @@ class PlatformRunMixin(object):
 
         # encode and append variables
         for key, value in variables.items():
-            if util.PY2:
+            if PY2:
                 cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
             else:
                 cmd.append(
