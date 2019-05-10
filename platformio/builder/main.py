@@ -29,6 +29,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import util
+from platformio.compat import PY2, path_to_unicode
 from platformio.project.helpers import (
     get_project_dir, get_project_optional_dir, get_projectbuild_dir,
     get_projectdata_dir, get_projectinclude_dir, get_projectlib_dir,
@@ -174,7 +175,7 @@ env.LoadPioPlatform(commonvars)
 env.SConscriptChdir(0)
 env.SConsignFile(
     join("$PROJECTBUILD_DIR",
-         ".sconsign.dblite" if util.PY2 else ".sconsign3.dblite"))
+         ".sconsign.dblite" if PY2 else ".sconsign3.dblite"))
 
 for item in env.GetExtraScripts("pre"):
     env.SConscript(item, exports="env")
@@ -216,7 +217,7 @@ if "envdump" in COMMAND_LINE_TARGETS:
 
 if "idedata" in COMMAND_LINE_TARGETS:
     try:
-        print("\n%s\n" % util.path_to_unicode(
+        print("\n%s\n" % path_to_unicode(
             json.dumps(env.DumpIDEData(), ensure_ascii=False)))
         env.Exit(0)
     except UnicodeDecodeError:
