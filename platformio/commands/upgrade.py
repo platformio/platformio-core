@@ -20,6 +20,7 @@ import click
 import requests
 
 from platformio import VERSION, __version__, exception, util
+from platformio.compat import WINDOWS
 from platformio.managers.core import shutdown_piohome_servers
 
 
@@ -68,7 +69,7 @@ def cli(dev):
             raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
         permission_errors = ("permission denied", "not permitted")
         if (any(m in r['err'].lower() for m in permission_errors)
-                and "windows" not in util.get_systype()):
+                and not WINDOWS):
             click.secho(
                 """
 -----------------

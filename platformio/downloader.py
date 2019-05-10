@@ -15,13 +15,14 @@
 from email.utils import parsedate_tz
 from math import ceil
 from os.path import getsize, join
-from sys import getfilesystemencoding, version_info
+from sys import version_info
 from time import mktime
 
 import click
 import requests
 
 from platformio import util
+from platformio.compat import PY2, get_filesystem_encoding
 from platformio.exception import (FDSHASumMismatch, FDSizeMismatch,
                                   FDUnrecognizedStatusCode)
 
@@ -45,15 +46,15 @@ class FileDownloader(object):
         if disposition and "filename=" in disposition:
             self._fname = disposition[disposition.index("filename=") +
                                       9:].replace('"', "").replace("'", "")
-            if util.PY2:
+            if PY2:
                 self._fname = self._fname.encode("utf8")
         else:
             self._fname = [p for p in url.split("/") if p][-1]
 
         self._destination = self._fname
         if dest_dir:
-            if util.PY2:
-                dest_dir = dest_dir.decode(getfilesystemencoding())
+            if PY2:
+                dest_dir = dest_dir.decode(get_filesystem_encoding())
             self.set_destination(join(dest_dir, self._fname))
 
     def set_destination(self, destination):

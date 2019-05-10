@@ -27,7 +27,8 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Export  # pylint: disable=import-error
 from SCons.Script import SConscript  # pylint: disable=import-error
 
-from platformio.util import glob_escape, pioversion_to_intstr, string_types
+from platformio.compat import string_types
+from platformio.util import glob_escape, pioversion_to_intstr
 
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_C_EXT = ["c", "cc", "cpp"]

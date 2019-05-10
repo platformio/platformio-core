@@ -13,15 +13,13 @@
 # limitations under the License.
 
 import os
-import sys
 from hashlib import sha1
 from os import walk
 from os.path import abspath, dirname, expanduser, isdir, isfile, join
 
 from platformio import __version__
+from platformio.compat import PY2, WINDOWS
 from platformio.project.config import ProjectConfig
-
-PY2 = sys.version_info[0] == 2
 
 
 def get_project_dir():
@@ -132,7 +130,7 @@ def calculate_project_hash():
                 if path.endswith(check_suffixes):
                     chunks.append(path)
     chunks_to_str = ",".join(sorted(chunks))
-    if sys.platform == "win32":
+    if WINDOWS:
         # Fix issue with useless project rebuilding for case insensitive FS.
         # A case of disk drive can differ...
         chunks_to_str = chunks_to_str.lower()

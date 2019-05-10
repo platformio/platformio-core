@@ -14,13 +14,13 @@
 
 import os
 import sys
-from platform import system
 from traceback import format_exc
 
 import click
 
 from platformio import __version__, exception, maintenance
 from platformio.commands import PlatformioCLI
+from platformio.compat import CYGWIN
 
 
 @click.command(
@@ -45,7 +45,7 @@ def process_result(ctx, result, force, caller):  # pylint: disable=W0613
 
 
 def configure():
-    if "cygwin" in system().lower():
+    if CYGWIN:
         raise exception.CygwinEnvDetected()
 
     # https://urllib3.readthedocs.org

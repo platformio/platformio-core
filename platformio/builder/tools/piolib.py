@@ -33,6 +33,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, util
 from platformio.builder.tools import platformio as piotool
+from platformio.compat import PY2, WINDOWS
 from platformio.managers.lib import LibraryManager
 from platformio.managers.package import PackageManager
 
@@ -91,8 +92,6 @@ class LibBuilderFactory(object):
 
 class LibBuilderBase(object):
 
-    IS_WINDOWS = "windows" in util.get_systype()
-
     LDF_MODES = ["off", "chain", "deep", "chain+", "deep+"]
     LDF_MODE_DEFAULT = "chain"
 
@@ -135,7 +134,7 @@ class LibBuilderBase(object):
     def __contains__(self, path):
         p1 = self.path
         p2 = path
-        if self.IS_WINDOWS:
+        if WINDOWS:
             p1 = p1.lower()
             p2 = p2.lower()
         return commonprefix((p1 + sep, p2)) == p1 + sep
@@ -191,7 +190,7 @@ class LibBuilderBase(object):
     @property
     def build_dir(self):
         lib_hash = hashlib.sha1(
-            self.path if util.PY2 else self.path.encode()).hexdigest()[:3]
+            self.path if PY2 else self.path.encode()).hexdigest()[:3]
         return join("$BUILD_DIR", "lib%s" % lib_hash, basename(self.path))
 
     @property

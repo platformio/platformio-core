@@ -23,6 +23,7 @@ from os.path import isdir, join
 import click
 
 from platformio import app, commands, exception, util
+from platformio.compat import string_types
 from platformio.managers.package import BasePkgManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
 
@@ -120,7 +121,7 @@ class LibraryManager(BasePkgManager):
         # convert listed items via comma to array
         for key in ("keywords", "frameworks", "platforms"):
             if key not in manifest or \
-                    not isinstance(manifest[key], util.string_types):
+                    not isinstance(manifest[key], string_types):
                 continue
             manifest[key] = [
                 i.strip() for i in manifest[key].split(",") if i.strip()
@@ -147,7 +148,7 @@ class LibraryManager(BasePkgManager):
                     continue
                 if item[k] == "*":
                     del item[k]
-                elif isinstance(item[k], util.string_types):
+                elif isinstance(item[k], string_types):
                     item[k] = [
                         i.strip() for i in item[k].split(",") if i.strip()
                     ]

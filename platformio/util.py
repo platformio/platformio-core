@@ -32,19 +32,15 @@ import click
 import requests
 
 from platformio import __apiurl__, __version__, exception
+from platformio.compat import path_to_unicode  # pylint: disable=unused-import
+from platformio.compat import PY2, WINDOWS, string_types
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (  # pylint: disable=unused-import
     get_project_dir, get_project_optional_dir, get_projectboards_dir,
     get_projectbuild_dir, get_projectdata_dir, get_projectlib_dir,
     get_projectsrc_dir, get_projecttest_dir, is_platformio_project)
 
-# FIXME: check platformio.project.helpers imports
-
-PY2 = sys.version_info[0] == 2
-if PY2:
-    string_types = basestring  # pylint: disable=undefined-variable
-else:
-    string_types = str
+# FIXME: remove import of path_to_unicode
 
 
 class AsyncPipe(Thread):
@@ -148,12 +144,6 @@ def singleton(cls):
     return get_instance
 
 
-def path_to_unicode(path):
-    if not PY2:
-        return path
-    return path.decode(sys.getfilesystemencoding()).encode("utf-8")
-
-
 def load_json(file_path):
     try:
         with open(file_path, "r") as f:
@@ -180,7 +170,7 @@ def get_home_dir():
     home_dir = get_project_optional_dir("home_dir",
                                         join(expanduser("~"), ".platformio"))
     win_home_dir = None
-    if "windows" in get_systype():
+    if WINDOWS:
         win_home_dir = splitdrive(home_dir)[0] + "\\.platformio"
         if isdir(win_home_dir):
             home_dir = win_home_dir
@@ -281,7 +271,7 @@ def copy_pythonpath_to_osenv():
         _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
     for p in os.sys.path:
         conditions = [p not in _PYTHONPATH]
-        if "windows" not in get_systype():
+        if not WINDOWS:
             conditions.append(
                 isdir(join(p, "click")) or isdir(join(p, "platformio")))
         if all(conditions):
@@ -299,14 +289,12 @@ def get_serial_ports(filter_hwid=False):
     for p, d, h in comports():
         if not p:
             continue
-        if "windows" in get_systype():
-            if PY2:
-                try:
-                    d = unicode(  # pylint: disable=undefined-variable
-                        d,
-                        errors="ignore")
-                except TypeError:
-                    pass
+        if WINDOWS and PY2:
+            try:
+                # pylint: disable=undefined-variable
+                d = unicode(d, errors="ignore")
+            except TypeError:
+                pass
         if not filter_hwid or "VID:PID" in h:
             result.append({"port": p, "description": d, "hwid": h})
 
@@ -326,7 +314,7 @@ get_serialports = get_serial_ports
 
 def get_logical_devices():
     items = []
-    if "windows" in get_systype():
+    if WINDOWS:
         try:
             result = exec_command(
                 ["wmic", "logicaldisk", "get", "name,VolumeName"]).get(
@@ -586,9 +574,8 @@ def where_is_program(program, envpath=None):
 
     # try OS's built-in commands
     try:
-        result = exec_command(
-            ["where" if "windows" in get_systype() else "which", program],
-            env=env)
+        result = exec_command(["where" if WINDOWS else "which", program],
+                              env=env)
         if result['returncode'] == 0 and isfile(result['out'].strip()):
             return result['out'].strip()
     except OSError:

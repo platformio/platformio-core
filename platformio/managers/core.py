@@ -21,6 +21,7 @@ from time import sleep
 import requests
 
 from platformio import __version__, exception, util
+from platformio.compat import PY2, WINDOWS
 from platformio.managers.package import PackageManager
 
 CORE_PACKAGES = {
@@ -29,7 +30,7 @@ CORE_PACKAGES = {
     "~2.%d%d.190418" % (sys.version_info[0], sys.version_info[1]),
     "tool-pioplus": "^2.2.0",
     "tool-unity": "~1.20403.0",
-    "tool-scons": "~2.20501.7" if util.PY2 else "~3.30005.0"
+    "tool-scons": "~2.20501.7" if PY2 else "~3.30005.0"
 }
 
 PIOPLUS_AUTO_UPDATES_MAX = 100
@@ -99,7 +100,7 @@ def update_core_packages(only_check=False, silent=False):
         if not silent or pm.outdated(pkg_dir, requirements):
             if name == "tool-pioplus" and not only_check:
                 shutdown_piohome_servers()
-                if "windows" in util.get_systype():
+                if WINDOWS:
                     sleep(1)
             pm.update(name, requirements, only_check=only_check)
     return True
@@ -117,7 +118,7 @@ def shutdown_piohome_servers():
 
 
 def pioplus_call(args, **kwargs):
-    if "windows" in util.get_systype() and sys.version_info < (2, 7, 6):
+    if WINDOWS and sys.version_info < (2, 7, 6):
         raise exception.PlatformioException(
             "PlatformIO Core Plus v%s does not run under Python version %s.\n"
             "Minimum supported version is 2.7.6, please upgrade Python.\n"

@@ -21,6 +21,7 @@ from os.path import isdir, isfile, join
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 
 from platformio import exception, util
+from platformio.compat import WINDOWS
 from platformio.managers.platform import PlatformFactory
 
 # pylint: disable=too-many-branches, too-many-locals
@@ -79,7 +80,7 @@ def LoadPioPlatform(env, variables):
         env.PrependENVPath(
             "PATH",
             join(pkg_dir, "bin") if isdir(join(pkg_dir, "bin")) else pkg_dir)
-        if ("windows" not in systype and isdir(join(pkg_dir, "lib"))
+        if (not WINDOWS and isdir(join(pkg_dir, "lib"))
                 and type_ != "toolchain"):
             env.PrependENVPath(
                 "DYLD_LIBRARY_PATH"
