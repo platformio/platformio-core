@@ -14,8 +14,8 @@
 
 import time
 
-from jsonrpc.exceptions import JSONRPCDispatchException
-from twisted.internet import defer
+import jsonrpc  # pylint: disable=import-error
+from twisted.internet import defer  # pylint: disable=import-error
 
 
 class IDERPC(object):
@@ -25,7 +25,7 @@ class IDERPC(object):
 
     def send_command(self, command, params):
         if not self._queue:
-            raise JSONRPCDispatchException(
+            raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4005, message="PIO Home IDE agent is not started")
         while self._queue:
             self._queue.pop().callback({

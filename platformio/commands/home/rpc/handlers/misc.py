@@ -16,8 +16,8 @@ import json
 import re
 import time
 
-from bs4 import BeautifulSoup
-from twisted.internet import defer, reactor
+from bs4 import BeautifulSoup  # pylint: disable=import-error
+from twisted.internet import defer, reactor  # pylint: disable=import-error
 
 from platformio import app
 from platformio.commands.home import helpers

@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from twisted.internet import reactor
-from twisted.web import static
+from twisted.internet import reactor  # pylint: disable=import-error
+from twisted.web import static  # pylint: disable=import-error
 
 
 class WebRoot(static.File):

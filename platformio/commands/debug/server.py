@@ -15,7 +15,7 @@
 import os
 from os.path import isdir, isfile, join
 
-from twisted.internet import reactor
+from twisted.internet import reactor  # pylint: disable=import-error
 
 from platformio import exception, util
 from platformio.commands.debug import helpers

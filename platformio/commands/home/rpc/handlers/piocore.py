@@ -19,8 +19,8 @@ import os
 import re
 import sys
 
-from jsonrpc.exceptions import JSONRPCDispatchException
-from twisted.internet.utils import getProcessOutputAndValue
+import jsonrpc  # pylint: disable=import-error
+from twisted.internet import utils  # pylint: disable=import-error
 
 from platformio import __version__, util
 from platformio.commands.home import helpers
@@ -37,9 +37,9 @@ class PIOCoreRPC(object):
                     arg, util.string_types) else str(arg) for arg in args
             ]
         except UnicodeError:
-            raise JSONRPCDispatchException(
+            raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4002, message="PIO Core: non-ASCII chars in arguments")
-        d = getProcessOutputAndValue(
+        d = utils.getProcessOutputAndValue(
             helpers.get_core_fullpath(),
             args,
             path=(options or {}).get("cwd"),
@@ -73,7 +73,7 @@ class PIOCoreRPC(object):
 
     @staticmethod
     def _call_errback(failure):
-        raise JSONRPCDispatchException(
+        raise jsonrpc.exceptions.JSONRPCDispatchException(
             code=4003,
             message="PIO Core Call Error",
             data=failure.getErrorMessage())

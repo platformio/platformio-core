@@ -21,7 +21,7 @@ import time
 from os.path import (basename, expanduser, getmtime, isdir, isfile, join,
                      realpath, sep)
 
-from jsonrpc.exceptions import JSONRPCDispatchException
+import jsonrpc  # pylint: disable=import-error
 
 from platformio import exception, util
 from platformio.commands.home.rpc.handlers.app import AppRPC
@@ -189,7 +189,7 @@ class ProjectRPC(object):
             for ext in ("ino", "pde")
         ])
         if not is_arduino_project:
-            raise JSONRPCDispatchException(
+            raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4000,
                 message="Not an Arduino project: %s" % arduino_project_dir)
 
@@ -265,7 +265,7 @@ class ProjectRPC(object):
     @staticmethod
     def import_pio(project_dir):
         if not project_dir or not util.is_platformio_project(project_dir):
-            raise JSONRPCDispatchException(
+            raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4001,
                 message="Not an PlatformIO project: %s" % project_dir)
         new_project_dir = join(

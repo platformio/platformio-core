@@ -20,7 +20,10 @@ from hashlib import sha1
 from os.path import abspath, basename, dirname, isdir, join, splitext
 from tempfile import mkdtemp
 
-from twisted.internet import protocol, reactor, stdio, task
+from twisted.internet import protocol  # pylint: disable=import-error
+from twisted.internet import reactor  # pylint: disable=import-error
+from twisted.internet import stdio  # pylint: disable=import-error
+from twisted.internet import task  # pylint: disable=import-error
 
 from platformio import app, exception, util
 from platformio.commands.debug import helpers, initcfgs

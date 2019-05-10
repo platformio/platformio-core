@@ -15,7 +15,7 @@
 import os
 
 import click
-from twisted.internet import protocol
+from twisted.internet import protocol  # pylint: disable=import-error
 
 from platformio import util
 from platformio.commands.debug import helpers

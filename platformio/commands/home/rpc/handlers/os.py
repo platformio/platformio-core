@@ -22,7 +22,7 @@ from functools import cmp_to_key
 from os.path import expanduser, isdir, isfile, join
 
 import click
-from twisted.internet import defer
+from twisted.internet import defer  # pylint: disable=import-error
 
 from platformio import app, util
 from platformio.commands.home import helpers

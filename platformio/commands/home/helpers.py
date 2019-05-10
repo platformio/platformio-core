@@ -18,8 +18,9 @@ import os
 import socket
 
 import requests
-from twisted.internet import threads
-from twisted.internet.defer import ensureDeferred
+from twisted.internet import defer  # pylint: disable=import-error
+from twisted.internet import reactor  # pylint: disable=import-error
+from twisted.internet import threads  # pylint: disable=import-error
 
 from platformio import util
 
@@ -28,7 +29,6 @@ class AsyncSession(requests.Session):
 
     def __init__(self, n=None, *args, **kwargs):
         if n:
-            from twisted.internet import reactor
             pool = reactor.getThreadPool()
             pool.adjustPoolsize(0, n)
 
@@ -39,7 +39,7 @@ class AsyncSession(requests.Session):
         return threads.deferToThread(func, *args, **kwargs)
 
     def wrap(self, *args, **kwargs):  # pylint: disable=no-self-use
-        return ensureDeferred(*args, **kwargs)
+        return defer.ensureDeferred(*args, **kwargs)
 
 
 @util.memoized(expire=5000)
