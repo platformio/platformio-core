@@ -17,7 +17,6 @@ from __future__ import absolute_import
 import glob
 import os
 import shutil
-import sys
 from functools import cmp_to_key
 from os.path import expanduser, isdir, isfile, join
 
@@ -26,6 +25,7 @@ from twisted.internet import defer  # pylint: disable=import-error
 
 from platformio import app, util
 from platformio.commands.home import helpers
+from platformio.compat import PY2, get_filesystem_encoding, path_to_unicode
 
 
 class OSRPC(object):
@@ -81,7 +81,7 @@ class OSRPC(object):
     @staticmethod
     def reveal_file(path):
         return click.launch(
-            path.encode(sys.getfilesystemencoding()) if util.PY2 else path,
+            path.encode(get_filesystem_encoding()) if PY2 else path,
             locate=True)
 
     @staticmethod
@@ -148,6 +148,6 @@ class OSRPC(object):
         items = []
         for item in util.get_logical_devices():
             if item['name']:
-                item['name'] = util.path_to_unicode(item['name'])
+                item['name'] = path_to_unicode(item['name'])
             items.append(item)
         return items

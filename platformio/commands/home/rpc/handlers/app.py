@@ -18,6 +18,7 @@ import json
 from os.path import expanduser, isfile, join
 
 from platformio import __version__, app, exception, util
+from platformio.compat import path_to_unicode
 
 
 class AppRPC(object):
@@ -55,12 +56,11 @@ class AppRPC(object):
         for key in storage['coreSettings']:
             if not key.endswith("dir"):
                 continue
-            storage['coreSettings'][key][
-                'default_value'] = util.path_to_unicode(
-                    storage['coreSettings'][key]['default_value'])
-            storage['coreSettings'][key]['value'] = util.path_to_unicode(
+            storage['coreSettings'][key]['default_value'] = path_to_unicode(
+                storage['coreSettings'][key]['default_value'])
+            storage['coreSettings'][key]['value'] = path_to_unicode(
                 storage['coreSettings'][key]['value'])
-        storage['homeDir'] = util.path_to_unicode(expanduser("~"))
+        storage['homeDir'] = path_to_unicode(expanduser("~"))
         storage['projectsDir'] = storage['coreSettings']['projects_dir'][
             'value']
 

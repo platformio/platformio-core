@@ -29,6 +29,7 @@ from platformio import app, exception, util
 from platformio.commands.debug import helpers, initcfgs
 from platformio.commands.debug.process import BaseProcess
 from platformio.commands.debug.server import DebugServer
+from platformio.compat import PY2
 from platformio.telemetry import MeasurementProtocol
 
 LOG_FILE = None
@@ -60,7 +61,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
     def spawn(self, gdb_path, prog_path):
         session_hash = gdb_path + prog_path
         self._session_id = sha1(
-            session_hash if util.PY2 else session_hash.encode()).hexdigest()
+            session_hash if PY2 else session_hash.encode()).hexdigest()
         self._kill_previous_session()
 
         patterns = {

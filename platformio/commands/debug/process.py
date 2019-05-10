@@ -19,6 +19,7 @@ from twisted.internet import protocol  # pylint: disable=import-error
 
 from platformio import util
 from platformio.commands.debug import helpers
+from platformio.compat import string_types
 
 LOG_FILE = None
 
@@ -42,13 +43,13 @@ class BaseProcess(protocol.ProcessProtocol, object):
                 text = text.replace(pattern, value or "")
             return text
 
-        if isinstance(source, util.string_types):
+        if isinstance(source, string_types):
             source = _replace(source)
         elif isinstance(source, (list, dict)):
             items = enumerate(source) if isinstance(source,
                                                     list) else source.items()
             for key, value in items:
-                if isinstance(value, util.string_types):
+                if isinstance(value, string_types):
                     source[key] = _replace(value)
                 elif isinstance(value, (list, dict)):
                     source[key] = self.apply_patterns(value, patterns)

@@ -16,7 +16,6 @@ from __future__ import absolute_import
 
 import os
 import shutil
-import sys
 import time
 from os.path import (basename, expanduser, getmtime, isdir, isfile, join,
                      realpath, sep)
@@ -26,6 +25,7 @@ import jsonrpc  # pylint: disable=import-error
 from platformio import exception, util
 from platformio.commands.home.rpc.handlers.app import AppRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
+from platformio.compat import get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
@@ -215,8 +215,7 @@ class ProjectRPC(object):
             if isdir(src_dir):
                 util.rmtree_(src_dir)
             shutil.copytree(
-                arduino_project_dir.encode(sys.getfilesystemencoding()),
-                src_dir)
+                arduino_project_dir.encode(get_filesystem_encoding()), src_dir)
         return project_dir
 
     @staticmethod

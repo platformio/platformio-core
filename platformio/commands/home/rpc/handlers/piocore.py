@@ -17,13 +17,13 @@ from __future__ import absolute_import
 import json
 import os
 import re
-import sys
 
 import jsonrpc  # pylint: disable=import-error
 from twisted.internet import utils  # pylint: disable=import-error
 
-from platformio import __version__, util
+from platformio import __version__
 from platformio.commands.home import helpers
+from platformio.compat import get_filesystem_encoding, string_types
 
 
 class PIOCoreRPC(object):
@@ -33,8 +33,8 @@ class PIOCoreRPC(object):
         json_output = "--json-output" in args
         try:
             args = [
-                arg.encode(sys.getfilesystemencoding()) if isinstance(
-                    arg, util.string_types) else str(arg) for arg in args
+                arg.encode(get_filesystem_encoding()) if isinstance(
+                    arg, string_types) else str(arg) for arg in args
             ]
         except UnicodeError:
             raise jsonrpc.exceptions.JSONRPCDispatchException(
@@ -54,7 +54,7 @@ class PIOCoreRPC(object):
         result = list(result)
         assert len(result) == 3
         for i in (0, 1):
-            result[i] = result[i].decode(sys.getfilesystemencoding()).strip()
+            result[i] = result[i].decode(get_filesystem_encoding()).strip()
         out, err, code = result
         text = ("%s\n\n%s" % (out, err)).strip()
         if code != 0:
