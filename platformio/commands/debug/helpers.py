@@ -46,29 +46,9 @@ def escape_path(path):
     return path.replace("\\", "/")
 
 
-def check_env_name(project_conf, environment):
-    config = util.load_project_config(project_conf)
-    envs = []
-    for section in config.sections():
-        if section.startswith("env:"):
-            envs.append(section[4:])
-    if not envs:
-        raise exception.ProjectEnvsNotAvailable()
-    if not environment and config.has_option("platformio", "env_default"):
-        environment = config.get("platformio", "env_default").split(", ")[0]
-    if environment:
-        if environment in envs:
-            return environment
-        raise exception.UnknownEnvNames(environment, envs)
-    return envs[0]
-
-
-def get_env_options(project_conf, environment):
-    config = util.load_project_config(project_conf)
-    options = {}
-    for k, v in config.items("env:%s" % environment):
-        options[k] = v
-    return options
+def get_default_debug_env(config):
+    default_envs = config.default_envs()
+    return default_envs[0] if default_envs else config.envs()[0]
 
 
 def validate_debug_options(cmd_ctx, env_options):

@@ -28,11 +28,7 @@ from platformio.commands.home.rpc.handlers.app import AppRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
-
-try:
-    from configparser import Error as ConfigParserError
-except ImportError:
-    from ConfigParser import Error as ConfigParserError
+from platformio.project.config import ProjectConfig
 
 
 class ProjectRPC(object):
@@ -42,7 +38,8 @@ class ProjectRPC(object):
 
         def _get_project_data(project_dir):
             data = {"boards": [], "libExtraDirs": []}
-            config = util.load_project_config(project_dir)
+            config = ProjectConfig(join(project_dir, "platformio.ini"))
+            config.validate(validate_options=False)
 
             if config.has_section("platformio") and \
                     config.has_option("platformio", "lib_extra_dirs"):
@@ -87,10 +84,8 @@ class ProjectRPC(object):
             boards = []
             try:
                 data = _get_project_data(project_dir)
-            except exception.NotPlatformIOProject:
+            except exception.PlatformIOProjectException:
                 continue
-            except ConfigParserError:
-                pass
 
             for board_id in data.get("boards", []):
                 name = board_id
@@ -235,13 +230,13 @@ class ProjectRPC(object):
             for project_dir, _, __ in os.walk(examples_dir):
                 project_description = None
                 try:
-                    config = util.load_project_config(project_dir)
+                    config = ProjectConfig(join(project_dir, "platformio.ini"))
+                    config.validate(validate_options=False)
                     if config.has_section("platformio") and \
                             config.has_option("platformio", "description"):
                         project_description = config.get(
                             "platformio", "description")
-                except (exception.NotPlatformIOProject,
-                        exception.InvalidProjectConf):
+                except exception.PlatformIOProjectException:
                     continue
 
                 path_tokens = project_dir.split(sep)

@@ -85,10 +85,8 @@ class TestProcessorBase(object):
         self.test_name = testname
         self.options = options
         self.env_name = envname
-        self.env_options = {
-            k: v
-            for k, v in options['project_config'].items("env:" + envname)
-        }
+        self.env_options = options['project_config'].items(
+            env=envname, as_dict=True)
         self._run_failed = False
         self._outputcpp_generated = False
 

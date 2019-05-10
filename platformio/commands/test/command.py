@@ -22,9 +22,10 @@ from time import time
 import click
 
 from platformio import exception, util
-from platformio.commands.run import check_project_envs, print_header
+from platformio.commands.run import print_header
 from platformio.commands.test.embedded import EmbeddedTestProcessor
 from platformio.commands.test.native import NativeTestProcessor
+from platformio.project.config import ProjectConfig
 
 
 @click.command("test", short_help="Unit Testing")
@@ -87,39 +88,32 @@ def cli(  # pylint: disable=redefined-builtin
         if not isdir(test_dir):
             raise exception.TestDirNotExists(test_dir)
         test_names = get_test_names(test_dir)
-        projectconf = util.load_project_config(project_conf)
-        env_default = None
-        if projectconf.has_option("platformio", "env_default"):
-            env_default = util.parse_conf_multi_values(
-                projectconf.get("platformio", "env_default"))
-        assert check_project_envs(projectconf, environment or env_default)
+
+        config = ProjectConfig.get_instance(
+            project_conf or join(project_dir, "platformio.ini"))
+        config.validate(envs=environment)
 
         click.echo("Verbose mode can be enabled via `-v, --verbose` option")
         click.echo("Collected %d items" % len(test_names))
 
-        start_time = time()
         results = []
+        start_time = time()
+        default_envs = config.default_envs()
         for testname in test_names:
-            for section in projectconf.sections():
-                if not section.startswith("env:"):
-                    continue
+            for envname in config.envs():
+                section = "env:%s" % envname
 
                 # filter and ignore patterns
                 patterns = dict(filter=list(filter), ignore=list(ignore))
                 for key in patterns:
-                    if projectconf.has_option(section, "test_%s" % key):
-                        patterns[key].extend([
-                            p.strip()
-                            for p in projectconf.get(section, "test_%s" %
-                                                     key).split(", ")
-                            if p.strip()
-                        ])
+                    if config.has_option(section, "test_%s" % key):
+                        patterns[key].extend(
+                            config.getlist(section, "test_%s" % key))
 
-                envname = section[4:]
                 skip_conditions = [
                     environment and envname not in environment,
-                    not environment and env_default
-                    and envname not in env_default,
+                    not environment and default_envs
+                    and envname not in default_envs,
                     testname != "*" and patterns['filter'] and
                     not any([fnmatch(testname, p)
                              for p in patterns['filter']]),
@@ -131,13 +125,13 @@ def cli(  # pylint: disable=redefined-builtin
                     results.append((None, testname, envname))
                     continue
 
-                cls = (NativeTestProcessor if projectconf.get(
-                    section, "platform") == "native" else
+                cls = (NativeTestProcessor
+                       if config.get(section, "platform") == "native" else
                        EmbeddedTestProcessor)
                 tp = cls(
                     ctx, testname, envname,
                     dict(
-                        project_config=projectconf,
+                        project_config=config,
                         project_dir=project_dir,
                         upload_port=upload_port,
                         test_port=test_port,

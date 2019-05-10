@@ -16,13 +16,14 @@
 # pylint: disable=too-many-locals, too-many-branches
 
 import os
-from os.path import isfile
+from os.path import isfile, join
 
 import click
 
 from platformio import exception, util
 from platformio.commands.debug import helpers
 from platformio.managers.core import inject_contrib_pysite
+from platformio.project.config import ProjectConfig
 
 
 @click.command(
@@ -69,10 +70,12 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
         project_dir = os.getenv("CWD")
 
     with util.cd(project_dir):
-        env_name = helpers.check_env_name(project_conf or project_dir,
-                                          environment)
-        env_options = helpers.get_env_options(project_conf or project_dir,
-                                              env_name)
+        config = ProjectConfig.get_instance(
+            project_conf or join(project_dir, "platformio.ini"))
+        config.validate(envs=[environment] if environment else None)
+
+        env_name = environment or helpers.get_default_debug_env(config)
+        env_options = config.items(env=env_name, as_dict=True)
         if not set(env_options.keys()) >= set(["platform", "board"]):
             raise exception.ProjectEnvsNotAvailable()
         debug_options = helpers.validate_debug_options(ctx, env_options)
