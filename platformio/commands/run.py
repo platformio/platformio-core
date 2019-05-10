@@ -80,7 +80,7 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf,
 
         config = ProjectConfig.get_instance(
             project_conf or join(project_dir, "platformio.ini"))
-        config.validate()
+        config.validate(environment)
 
         results = []
         start_time = time()
