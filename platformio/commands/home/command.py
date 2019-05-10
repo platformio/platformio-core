@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import mimetypes
 import socket
 from os.path import isdir
 
@@ -58,6 +59,12 @@ def cli(port, host, no_open):
     contrib_dir = get_core_package_dir("contrib-piohome")
     if not isdir(contrib_dir):
         raise exception.PlatformioException("Invalid path to PIO Home Contrib")
+
+    # Ensure PIO Home mimetypes are known
+    mimetypes.add_type("text/html", ".html")
+    mimetypes.add_type("text/css", ".css")
+    mimetypes.add_type("application/javascript", ".js")
+
     root = WebRoot(contrib_dir)
     root.putChild(b"wsrpc", WebSocketResource(factory))
     site = server.Site(root)
