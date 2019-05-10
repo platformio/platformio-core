@@ -259,7 +259,7 @@ class ProjectConfig(object):
             return []
         return self.getlist("platformio", "env_default")
 
-    def validate(self, envs=None):
+    def validate(self, envs=None, validate_options=True):
         if not isfile(self.path):
             raise exception.NotPlatformIOProject(self.path)
         # check envs
@@ -267,11 +267,11 @@ class ProjectConfig(object):
         if not known:
             raise exception.ProjectEnvsNotAvailable()
 
-        unknown = set((envs or []) + self.default_envs()) - known
+        unknown = set(list(envs or []) + self.default_envs()) - known
         if unknown:
             raise exception.UnknownEnvNames(", ".join(unknown),
                                             ", ".join(known))
-        return self.validate_options()
+        return self.validate_options() if validate_options else True
 
     def validate_options(self):
         warnings = set()
