@@ -39,12 +39,22 @@ from platformio.managers.core import inject_contrib_pysite
         dir_okay=True,
         writable=True,
         resolve_path=True))
+@click.option(
+    "-c",
+    "--project-conf",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True))
 @click.option("--environment", "-e", metavar="<environment>")
 @click.option("--verbose", "-v", is_flag=True)
 @click.option("--interface", type=click.Choice(["gdb"]))
 @click.argument("__unprocessed", nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
-def cli(ctx, project_dir, environment, verbose, interface, __unprocessed):
+def cli(ctx, project_dir, project_conf, environment, verbose, interface,
+        __unprocessed):
     try:
         util.ensure_udev_rules()
     except NameError:
@@ -59,8 +69,10 @@ def cli(ctx, project_dir, environment, verbose, interface, __unprocessed):
         project_dir = os.getenv("CWD")
 
     with util.cd(project_dir):
-        env_name = helpers.check_env_name(project_dir, environment)
-        env_options = helpers.get_env_options(project_dir, env_name)
+        env_name = helpers.check_env_name(project_conf or project_dir,
+                                          environment)
+        env_options = helpers.get_env_options(project_conf or project_dir,
+                                              env_name)
         if not set(env_options.keys()) >= set(["platform", "board"]):
             raise exception.ProjectEnvsNotAvailable()
         debug_options = helpers.validate_debug_options(ctx, env_options)

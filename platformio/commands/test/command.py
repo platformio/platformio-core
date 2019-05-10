@@ -53,6 +53,15 @@ from platformio.commands.test.native import NativeTestProcessor
         dir_okay=True,
         writable=True,
         resolve_path=True))
+@click.option(
+    "-c",
+    "--project-conf",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        resolve_path=True))
 @click.option("--without-building", is_flag=True)
 @click.option("--without-uploading", is_flag=True)
 @click.option("--without-testing", is_flag=True)
@@ -71,14 +80,14 @@ from platformio.commands.test.native import NativeTestProcessor
 @click.pass_context
 def cli(  # pylint: disable=redefined-builtin
         ctx, environment, ignore, filter, upload_port, test_port, project_dir,
-        without_building, without_uploading, without_testing, no_reset,
-        monitor_rts, monitor_dtr, verbose):
+        project_conf, without_building, without_uploading, without_testing,
+        no_reset, monitor_rts, monitor_dtr, verbose):
     with util.cd(project_dir):
         test_dir = util.get_projecttest_dir()
         if not isdir(test_dir):
             raise exception.TestDirNotExists(test_dir)
         test_names = get_test_names(test_dir)
-        projectconf = util.load_project_config()
+        projectconf = util.load_project_config(project_conf)
         env_default = None
         if projectconf.has_option("platformio", "env_default"):
             env_default = util.parse_conf_multi_values(

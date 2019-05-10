@@ -46,8 +46,8 @@ def escape_path(path):
     return path.replace("\\", "/")
 
 
-def check_env_name(project_dir, environment):
-    config = util.load_project_config(project_dir)
+def check_env_name(project_conf, environment):
+    config = util.load_project_config(project_conf)
     envs = []
     for section in config.sections():
         if section.startswith("env:"):
@@ -63,8 +63,8 @@ def check_env_name(project_dir, environment):
     return envs[0]
 
 
-def get_env_options(project_dir, environment):
-    config = util.load_project_config(project_dir)
+def get_env_options(project_conf, environment):
+    config = util.load_project_config(project_conf)
     options = {}
     for k, v in config.items("env:%s" % environment):
         options[k] = v
