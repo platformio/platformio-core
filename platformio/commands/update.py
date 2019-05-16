@@ -34,7 +34,6 @@ from platformio.managers.lib import LibraryManager
     "--dry-run",
     is_flag=True,
     help="Do not update, only check for the new versions")
-@click.option("--json-output", is_flag=True)
 @click.pass_context
 def cli(ctx, core_packages, only_check, dry_run):
     # cleanup lib search results, cached board and platform lists
