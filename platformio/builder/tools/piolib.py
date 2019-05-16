@@ -33,7 +33,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, util
 from platformio.builder.tools import platformio as piotool
-from platformio.compat import PY2, WINDOWS
+from platformio.compat import PY2, WINDOWS, string_types
 from platformio.managers.lib import LibraryManager
 from platformio.managers.package import PackageManager
 
@@ -233,7 +233,7 @@ class LibBuilderBase(object):
 
     @staticmethod
     def validate_ldf_mode(mode):
-        if isinstance(mode, util.string_types):
+        if isinstance(mode, string_types):
             mode = mode.strip().lower()
         if mode in LibBuilderBase.LDF_MODES:
             return mode
@@ -245,7 +245,7 @@ class LibBuilderBase(object):
 
     @staticmethod
     def validate_compat_mode(mode):
-        if isinstance(mode, util.string_types):
+        if isinstance(mode, string_types):
             mode = mode.strip().lower()
         if mode in LibBuilderBase.COMPAT_MODES:
             return mode
