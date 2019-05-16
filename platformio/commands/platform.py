@@ -335,8 +335,8 @@ def platform_uninstall(platforms):
     is_flag=True,
     help="Do not update, only check for the new versions")
 @click.option("--json-output", is_flag=True)
-def platform_update(platforms, only_packages, only_check, dry_run,
-                    json_output):
+def platform_update(  # pylint: disable=too-many-locals
+        platforms, only_packages, only_check, dry_run, json_output):
     pm = PlatformManager()
     pkg_dir_to_name = {}
     if not platforms:

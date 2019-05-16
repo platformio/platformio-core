@@ -23,6 +23,7 @@ import click
 from platformio import exception, util
 from platformio.commands import PlatformioCLI
 from platformio.managers.lib import LibraryManager, get_builtin_libs
+from platformio.proc import is_ci
 from platformio.project.helpers import (
     get_project_dir, get_projectlibdeps_dir, is_platformio_project)
 
@@ -62,7 +63,7 @@ def cli(ctx, **options):
             storage_dir = join(util.get_home_dir(), "lib")
         elif is_platformio_project():
             storage_dir = get_projectlibdeps_dir()
-        elif util.is_ci():
+        elif is_ci():
             storage_dir = join(util.get_home_dir(), "lib")
             click.secho(
                 "Warning! Global library storage is used automatically. "

@@ -33,6 +33,7 @@ from platformio.commands.upgrade import get_latest_version
 from platformio.managers.core import update_core_packages
 from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.proc import is_ci, is_container
 
 
 def on_platformio_start(ctx, force, caller):
@@ -79,7 +80,7 @@ def set_caller(caller=None):
             caller = getenv("PLATFORMIO_CALLER")
         elif getenv("VSCODE_PID") or getenv("VSCODE_NLS_CONFIG"):
             caller = "vscode"
-        elif util.is_container():
+        elif is_container():
             if getenv("C9_UID"):
                 caller = "C9"
             elif getenv("USER") == "cabox":
@@ -222,7 +223,7 @@ def after_upgrade(ctx):
             "- %s PlatformIO IDE for IoT development > %s" %
             (click.style("try", fg="cyan"),
              click.style("https://platformio.org/platformio-ide", fg="cyan")))
-    if not util.is_ci():
+    if not is_ci():
         click.echo("- %s us with PlatformIO Plus > %s" % (click.style(
             "support", fg="cyan"), click.style(
                 "https://pioplus.com", fg="cyan")))

@@ -12,68 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# FIXME: Remove line below before 4.0 release
+# pylint: disable=unused-import
+
 import json
 import os
 import platform
 import re
 import socket
 import stat
-import subprocess
 import sys
 import time
 from functools import wraps
 from glob import glob
 from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
-                     join, normpath, splitdrive)
+                     join, splitdrive)
 from shutil import rmtree
-from threading import Thread
 
 import click
 import requests
 
 from platformio import __apiurl__, __version__, exception
-from platformio.compat import path_to_unicode  # pylint: disable=unused-import
-from platformio.compat import PY2, WINDOWS, string_types
+from platformio.compat import PY2, WINDOWS, path_to_unicode
+from platformio.proc import AsyncPipe, exec_command, is_ci, where_is_program
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (  # pylint: disable=unused-import
+from platformio.project.helpers import (
     get_project_dir, get_project_optional_dir, get_projectboards_dir,
     get_projectbuild_dir, get_projectdata_dir, get_projectlib_dir,
     get_projectsrc_dir, get_projecttest_dir, is_platformio_project)
-
-# FIXME: remove import of path_to_unicode
-
-
-class AsyncPipe(Thread):
-
-    def __init__(self, outcallback=None):
-        super(AsyncPipe, self).__init__()
-        self.outcallback = outcallback
-
-        self._fd_read, self._fd_write = os.pipe()
-        self._pipe_reader = os.fdopen(self._fd_read)
-        self._buffer = []
-
-        self.start()
-
-    def get_buffer(self):
-        return self._buffer
-
-    def fileno(self):
-        return self._fd_write
-
-    def run(self):
-        for line in iter(self._pipe_reader.readline, ""):
-            line = line.strip()
-            self._buffer.append(line)
-            if self.outcallback:
-                self.outcallback(line)
-            else:
-                print(line)
-        self._pipe_reader.close()
-
-    def close(self):
-        os.close(self._fd_write)
-        self.join()
 
 
 class cd(object):
@@ -217,66 +183,6 @@ def parse_conf_multi_values(items):  # FIXME: Remove
 
 def change_filemtime(path, mtime):
     os.utime(path, (mtime, mtime))
-
-
-def is_ci():
-    return os.getenv("CI", "").lower() == "true"
-
-
-def is_container():
-    if not isfile("/proc/1/cgroup"):
-        return False
-    with open("/proc/1/cgroup") as fp:
-        for line in fp:
-            line = line.strip()
-            if ":" in line and not line.endswith(":/"):
-                return True
-    return False
-
-
-def exec_command(*args, **kwargs):
-    result = {"out": None, "err": None, "returncode": None}
-
-    default = dict(stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    default.update(kwargs)
-    kwargs = default
-
-    p = subprocess.Popen(*args, **kwargs)
-    try:
-        result['out'], result['err'] = p.communicate()
-        result['returncode'] = p.returncode
-    except KeyboardInterrupt:
-        raise exception.AbortedByUser()
-    finally:
-        for s in ("stdout", "stderr"):
-            if isinstance(kwargs[s], AsyncPipe):
-                kwargs[s].close()
-
-    for s in ("stdout", "stderr"):
-        if isinstance(kwargs[s], AsyncPipe):
-            result[s[3:]] = "\n".join(kwargs[s].get_buffer())
-
-    for k, v in result.items():
-        if not PY2 and isinstance(result[k], bytes):
-            result[k] = result[k].decode()
-        if v and isinstance(v, string_types):
-            result[k] = result[k].strip()
-
-    return result
-
-
-def copy_pythonpath_to_osenv():
-    _PYTHONPATH = []
-    if "PYTHONPATH" in os.environ:
-        _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
-    for p in os.sys.path:
-        conditions = [p not in _PYTHONPATH]
-        if not WINDOWS:
-            conditions.append(
-                isdir(join(p, "click")) or isdir(join(p, "platformio")))
-        if all(conditions):
-            _PYTHONPATH.append(p)
-    os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
 
 
 def get_serial_ports(filter_hwid=False):
@@ -561,34 +467,6 @@ def internet_on(raise_exception=False):
     if raise_exception and not result:
         raise exception.InternetIsOffline()
     return result
-
-
-def get_pythonexe_path():
-    return os.environ.get("PYTHONEXEPATH", normpath(sys.executable))
-
-
-def where_is_program(program, envpath=None):
-    env = os.environ
-    if envpath:
-        env['PATH'] = envpath
-
-    # try OS's built-in commands
-    try:
-        result = exec_command(["where" if WINDOWS else "which", program],
-                              env=env)
-        if result['returncode'] == 0 and isfile(result['out'].strip()):
-            return result['out'].strip()
-    except OSError:
-        pass
-
-    # look up in $PATH
-    for bin_dir in env.get("PATH", "").split(os.pathsep):
-        if isfile(join(bin_dir, program)):
-            return join(bin_dir, program)
-        if isfile(join(bin_dir, "%s.exe" % program)):
-            return join(bin_dir, "%s.exe" % program)
-
-    return program
 
 
 def pepver_to_semver(pepver):

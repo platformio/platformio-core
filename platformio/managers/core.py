@@ -23,6 +23,7 @@ import requests
 from platformio import __version__, exception, util
 from platformio.compat import PY2, WINDOWS
 from platformio.managers.package import PackageManager
+from platformio.proc import copy_pythonpath_to_osenv, get_pythonexe_path
 
 CORE_PACKAGES = {
     "contrib-piohome": "^2.0.1",
@@ -125,13 +126,13 @@ def pioplus_call(args, **kwargs):
             "Python 3 is not yet supported.\n" % (__version__, sys.version))
 
     pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
-    pythonexe_path = util.get_pythonexe_path()
+    pythonexe_path = get_pythonexe_path()
     os.environ['PYTHONEXEPATH'] = pythonexe_path
     os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("contrib-pysite")
     os.environ['PIOCOREPYSITEDIR'] = dirname(util.get_source_dir() or "")
     os.environ['PATH'] = (os.pathsep).join(
         [dirname(pythonexe_path), os.environ['PATH']])
-    util.copy_pythonpath_to_osenv()
+    copy_pythonpath_to_osenv()
     code = subprocess.call([pioplus_path] + args, **kwargs)
 
     # handle remote update request

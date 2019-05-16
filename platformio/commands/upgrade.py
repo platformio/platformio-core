@@ -22,6 +22,7 @@ import requests
 from platformio import VERSION, __version__, exception, util
 from platformio.compat import WINDOWS
 from platformio.managers.core import shutdown_piohome_servers
+from platformio.proc import exec_command, get_pythonexe_path
 
 
 @click.command(
@@ -47,13 +48,13 @@ def cli(dev):
     r = {}
     try:
         for cmd in cmds:
-            cmd = [util.get_pythonexe_path(), "-m"] + cmd
-            r = util.exec_command(cmd)
+            cmd = [get_pythonexe_path(), "-m"] + cmd
+            r = exec_command(cmd)
 
             # try pip with disabled cache
             if r['returncode'] != 0 and cmd[2] == "pip":
                 cmd.insert(3, "--no-cache-dir")
-                r = util.exec_command(cmd)
+                r = exec_command(cmd)
 
             assert r['returncode'] == 0
         assert "version" in r['out']
@@ -100,9 +101,9 @@ def get_pip_package(to_develop):
     pkg_name = os.path.join(cache_dir, "piocoredevelop.zip")
     try:
         with open(pkg_name, "w") as fp:
-            r = util.exec_command(["curl", "-fsSL", dl_url],
-                                  stdout=fp,
-                                  universal_newlines=True)
+            r = exec_command(["curl", "-fsSL", dl_url],
+                             stdout=fp,
+                             universal_newlines=True)
             assert r['returncode'] == 0
         # check ZIP structure
         with ZipFile(pkg_name) as zp:

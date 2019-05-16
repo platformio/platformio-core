@@ -30,6 +30,7 @@ from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import util
 from platformio.compat import PY2, path_to_unicode
+from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import (
     get_project_dir, get_project_optional_dir, get_projectbuild_dir,
     get_projectdata_dir, get_projectinclude_dir, get_projectlib_dir,
@@ -123,7 +124,7 @@ DEFAULT_ENV_OPTIONS = dict(
     ],
     PROGNAME="program",
     PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
-    PYTHONEXE=util.get_pythonexe_path())
+    PYTHONEXE=get_pythonexe_path())
 
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     DEFAULT_ENV_OPTIONS['ARCOMSTR'] = "Archiving $TARGET"

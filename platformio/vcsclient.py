@@ -17,8 +17,8 @@ from os.path import join
 from subprocess import CalledProcessError, check_call
 from sys import modules
 
-from platformio import util
 from platformio.exception import PlatformioException, UserSideException
+from platformio.proc import exec_command
 
 try:
     from urllib.parse import urlparse
@@ -109,7 +109,7 @@ class VCSClientBase(object):
         args = [self.command] + args
         if "cwd" not in kwargs:
             kwargs['cwd'] = self.src_dir
-        result = util.exec_command(args, **kwargs)
+        result = exec_command(args, **kwargs)
         if result['returncode'] == 0:
             return result['out'].strip()
         raise PlatformioException(

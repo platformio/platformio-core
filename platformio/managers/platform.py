@@ -26,6 +26,8 @@ from platformio import __version__, app, exception, util
 from platformio.compat import PY2
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
+from platformio.proc import (copy_pythonpath_to_osenv, exec_command,
+                             get_pythonexe_path)
 from platformio.project.helpers import get_projectboards_dir
 
 try:
@@ -379,7 +381,7 @@ class PlatformRunMixin(object):
 
     def _run_scons(self, variables, targets):
         cmd = [
-            util.get_pythonexe_path(),
+            get_pythonexe_path(),
             join(get_core_package_dir("tool-scons"), "script", "scons"), "-Q",
             "-j %d" % self.get_job_nums(), "--warn=no-no-parallel-support",
             "-f",
@@ -397,8 +399,8 @@ class PlatformRunMixin(object):
                     "%s=%s" % (key.upper(), base64.b64encode(
                         value.encode()).decode()))
 
-        util.copy_pythonpath_to_osenv()
-        result = util.exec_command(
+        copy_pythonpath_to_osenv()
+        result = exec_command(
             cmd,
             stdout=util.AsyncPipe(self.on_run_out),
             stderr=util.AsyncPipe(self.on_run_err))

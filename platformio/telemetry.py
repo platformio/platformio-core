@@ -28,6 +28,7 @@ import requests
 
 from platformio import __version__, app, exception, util
 from platformio.commands import PlatformioCLI
+from platformio.proc import is_ci, is_container
 
 try:
     import queue
@@ -122,7 +123,7 @@ class MeasurementProtocol(TelemetryBase):
                                         platform.platform())
         # self['cd3'] = " ".join(_filter_args(sys.argv[1:]))
         self['cd4'] = 1 if (not util.is_ci() and
-                            (caller_id or not util.is_container())) else 0
+                            (caller_id or not is_container())) else 0
         if caller_id:
             self['cd5'] = caller_id.lower()
 
@@ -273,7 +274,7 @@ def on_command():
     mp = MeasurementProtocol()
     mp.send("screenview")
 
-    if util.is_ci():
+    if is_ci():
         measure_ci()
 
 

@@ -22,6 +22,7 @@ from SCons.Defaults import processDefines  # pylint: disable=import-error
 
 from platformio import util
 from platformio.managers.core import get_core_package_dir
+from platformio.proc import exec_command
 
 
 def _dump_includes(env):
@@ -71,7 +72,7 @@ def _get_gcc_defines(env):
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
-        result = util.exec_command(
+        result = exec_command(
             "echo | %s -dM -E -" % env.subst("$CC"), env=sysenv, shell=True)
     except OSError:
         return items

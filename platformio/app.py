@@ -26,6 +26,7 @@ import requests
 
 from platformio import exception, lockfile, util
 from platformio.compat import PY2, WINDOWS
+from platformio.proc import is_ci
 
 
 def projects_dir_validate(projects_dir):
@@ -339,7 +340,7 @@ def set_session_var(name, value):
 def is_disabled_progressbar():
     return any([
         get_session_var("force_option"),
-        util.is_ci(),
+        is_ci(),
         getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"
     ])
 

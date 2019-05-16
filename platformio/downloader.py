@@ -25,6 +25,7 @@ from platformio import util
 from platformio.compat import PY2, get_filesystem_encoding
 from platformio.exception import (FDSHASumMismatch, FDSizeMismatch,
                                   FDUnrecognizedStatusCode)
+from platformio.proc import exec_command
 
 
 class FileDownloader(object):
@@ -105,12 +106,11 @@ class FileDownloader(object):
 
         dlsha1 = None
         try:
-            result = util.exec_command(["sha1sum", self._destination])
+            result = exec_command(["sha1sum", self._destination])
             dlsha1 = result['out']
         except (OSError, ValueError):
             try:
-                result = util.exec_command(
-                    ["shasum", "-a", "1", self._destination])
+                result = exec_command(["shasum", "-a", "1", self._destination])
                 dlsha1 = result['out']
             except (OSError, ValueError):
                 pass

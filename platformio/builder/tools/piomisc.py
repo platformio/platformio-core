@@ -26,6 +26,7 @@ from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 
 from platformio import util
 from platformio.managers.core import get_core_package_dir
+from platformio.proc import exec_command
 
 
 class InoToCPPConverter(object):
@@ -211,7 +212,7 @@ def _get_compiler_type(env):
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
-        result = util.exec_command([env.subst("$CC"), "-v"], env=sysenv)
+        result = exec_command([env.subst("$CC"), "-v"], env=sysenv)
     except OSError:
         return None
     if result['returncode'] != 0:

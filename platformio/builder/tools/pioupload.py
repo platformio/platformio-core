@@ -27,6 +27,7 @@ from serial import Serial, SerialException
 
 from platformio import exception, util
 from platformio.compat import WINDOWS
+from platformio.proc import exec_command
 
 # pylint: disable=unused-argument
 
@@ -211,7 +212,7 @@ def CheckUploadSize(_, target, source, env):
         cmd = [arg.replace("$SOURCES", str(source[0])) for arg in cmd if arg]
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
-        result = util.exec_command(env.subst(cmd), env=sysenv)
+        result = exec_command(env.subst(cmd), env=sysenv)
         if result['returncode'] != 0:
             return None
         return result['out'].strip()
