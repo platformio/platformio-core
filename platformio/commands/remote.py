@@ -68,8 +68,12 @@ def remote_agent_list():
     "-c",
     "--only-check",
     is_flag=True,
-    help="Do not update, only check for new version")
-def remote_update(only_check):
+    help="DEPRECATED. Please use `--dry-run` instead")
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Do not update, only check for the new versions")
+def remote_update(only_check, dry_run):
     pioplus_call(sys.argv[1:])
 
 

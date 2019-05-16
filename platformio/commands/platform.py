@@ -329,9 +329,14 @@ def platform_uninstall(platforms):
     "-c",
     "--only-check",
     is_flag=True,
-    help="Do not update, only check for a new version")
+    help="DEPRECATED. Please use `--dry-run` instead")
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Do not update, only check for the new versions")
 @click.option("--json-output", is_flag=True)
-def platform_update(platforms, only_packages, only_check, json_output):
+def platform_update(platforms, only_packages, only_check, dry_run,
+                    json_output):
     pm = PlatformManager()
     pkg_dir_to_name = {}
     if not platforms:
@@ -340,6 +345,8 @@ def platform_update(platforms, only_packages, only_check, json_output):
             platforms.append(manifest['__pkg_dir'])
             pkg_dir_to_name[manifest['__pkg_dir']] = manifest.get(
                 "title", manifest['name'])
+
+    only_check = dry_run or only_check
 
     if only_check and json_output:
         result = []

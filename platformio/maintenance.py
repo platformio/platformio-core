@@ -329,7 +329,7 @@ def check_internal_updates(ctx, what):
             fg="yellow",
             nl=False)
         click.secho(
-            "`platformio %s update --only-check`" %
+            "`platformio %s update --dry-run`" %
             ("lib --global" if what == "libraries" else "platform"),
             fg="cyan",
             nl=False)

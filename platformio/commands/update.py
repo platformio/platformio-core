@@ -29,11 +29,18 @@ from platformio.managers.lib import LibraryManager
     "-c",
     "--only-check",
     is_flag=True,
-    help="Do not update, only check for new version")
+    help="DEPRECATED. Please use `--dry-run` instead")
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Do not update, only check for the new versions")
+@click.option("--json-output", is_flag=True)
 @click.pass_context
-def cli(ctx, core_packages, only_check):
+def cli(ctx, core_packages, only_check, dry_run):
     # cleanup lib search results, cached board and platform lists
     app.clean_cache()
+
+    only_check = dry_run or only_check
 
     update_core_packages(only_check)
 

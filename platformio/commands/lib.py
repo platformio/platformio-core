@@ -123,12 +123,18 @@ def lib_uninstall(lm, libraries):
     "-c",
     "--only-check",
     is_flag=True,
-    help="Do not update, only check for new version")
+    help="DEPRECATED. Please use `--dry-run` instead")
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Do not update, only check for the new versions")
 @click.option("--json-output", is_flag=True)
 @click.pass_obj
-def lib_update(lm, libraries, only_check, json_output):
+def lib_update(lm, libraries, only_check, dry_run, json_output):
     if not libraries:
         libraries = [manifest['__pkg_dir'] for manifest in lm.get_installed()]
+
+    only_check = dry_run or only_check
 
     if only_check and json_output:
         result = []
