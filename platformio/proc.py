@@ -22,17 +22,14 @@ from platformio import exception
 from platformio.compat import PY2, WINDOWS, string_types
 
 
-class AsyncPipe(Thread):
+class AsyncPipeBase(object):
 
-    def __init__(self, outcallback=None):
-        super(AsyncPipe, self).__init__()
-        self.outcallback = outcallback
-
+    def __init__(self):
         self._fd_read, self._fd_write = os.pipe()
         self._pipe_reader = os.fdopen(self._fd_read)
-        self._buffer = []
-
-        self.start()
+        self._buffer = ""
+        self._thread = Thread(target=self.run)
+        self._thread.start()
 
     def get_buffer(self):
         return self._buffer
@@ -41,18 +38,67 @@ class AsyncPipe(Thread):
         return self._fd_write
 
     def run(self):
-        for line in iter(self._pipe_reader.readline, ""):
-            line = line.strip()
-            self._buffer.append(line)
-            if self.outcallback:
-                self.outcallback(line)
-            else:
-                print(line)
-        self._pipe_reader.close()
+        try:
+            self.do_reading()
+        except (KeyboardInterrupt, SystemExit, IOError):
+            self.close()
+
+    def do_reading(self):
+        raise NotImplementedError()
 
     def close(self):
+        self._buffer = ""
         os.close(self._fd_write)
-        self.join()
+        self._thread.join()
+
+
+class BuildAsyncPipe(AsyncPipeBase):
+
+    def __init__(self, line_callback, data_callback):
+        self.line_callback = line_callback
+        self.data_callback = data_callback
+        super(BuildAsyncPipe, self).__init__()
+
+    def do_reading(self):
+        line = ""
+        print_immediately = False
+
+        for byte in iter(lambda: self._pipe_reader.read(1), ""):
+            self._buffer += byte
+
+            if line and line[-3:] == (line[-1] * 3):
+                print_immediately = True
+
+            if print_immediately:
+                # leftover bytes
+                if line:
+                    self.data_callback(line)
+                    line = ""
+                self.data_callback(byte)
+                if byte == "\n":
+                    print_immediately = False
+            else:
+                line += byte
+                if byte != "\n":
+                    continue
+                self.line_callback(line)
+                line = ""
+
+        self._pipe_reader.close()
+
+
+class LineBufferedAsyncPipe(AsyncPipeBase):
+
+    def __init__(self, line_callback):
+        self.line_callback = line_callback
+        super(LineBufferedAsyncPipe, self).__init__()
+
+    def do_reading(self):
+        for line in iter(self._pipe_reader.readline, ""):
+            self._buffer += line
+            # FIXME: Remove striping
+            self.line_callback(line.strip())
+        self._pipe_reader.close()
 
 
 def exec_command(*args, **kwargs):
@@ -70,12 +116,12 @@ def exec_command(*args, **kwargs):
         raise exception.AbortedByUser()
     finally:
         for s in ("stdout", "stderr"):
-            if isinstance(kwargs[s], AsyncPipe):
+            if isinstance(kwargs[s], AsyncPipeBase):
                 kwargs[s].close()
 
     for s in ("stdout", "stderr"):
-        if isinstance(kwargs[s], AsyncPipe):
-            result[s[3:]] = "\n".join(kwargs[s].get_buffer())
+        if isinstance(kwargs[s], AsyncPipeBase):
+            result[s[3:]] = kwargs[s].get_buffer()
 
     for k, v in result.items():
         if not PY2 and isinstance(result[k], bytes):

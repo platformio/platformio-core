@@ -15,6 +15,7 @@
 import base64
 import os
 import re
+import sys
 from imp import load_source
 from multiprocessing import cpu_count
 from os.path import basename, dirname, isdir, isfile, join
@@ -26,8 +27,8 @@ from platformio import __version__, app, exception, util
 from platformio.compat import PY2
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
-from platformio.proc import (copy_pythonpath_to_osenv, exec_command,
-                             get_pythonexe_path)
+from platformio.proc import (BuildAsyncPipe, copy_pythonpath_to_osenv,
+                             exec_command, get_pythonexe_path)
 from platformio.project.helpers import get_projectboards_dir
 
 try:
@@ -399,19 +400,27 @@ class PlatformRunMixin(object):
                     "%s=%s" % (key.upper(), base64.b64encode(
                         value.encode()).decode()))
 
+        def _write_and_flush(stream, data):
+            stream.write(data)
+            stream.flush()
+
         copy_pythonpath_to_osenv()
         result = exec_command(
             cmd,
-            stdout=util.AsyncPipe(self.on_run_out),
-            stderr=util.AsyncPipe(self.on_run_err))
+            stdout=BuildAsyncPipe(
+                line_callback=self._on_stdout_line,
+                data_callback=lambda data: _write_and_flush(sys.stdout, data)),
+            stderr=BuildAsyncPipe(
+                line_callback=self._on_stderr_line,
+                data_callback=lambda data: _write_and_flush(sys.stderr, data)))
         return result
 
-    def on_run_out(self, line):
+    def _on_stdout_line(self, line):
         if "`buildprog' is up to date." in line:
             return
         self._echo_line(line, level=1)
 
-    def on_run_err(self, line):
+    def _on_stderr_line(self, line):
         is_error = self.LINE_ERROR_RE.search(line) is not None
         self._echo_line(line, level=3 if is_error else 2)
 
@@ -430,7 +439,7 @@ class PlatformRunMixin(object):
         fg = (None, "yellow", "red")[level - 1]
         if level == 1 and "is up to date" in line:
             fg = "green"
-        click.secho(line, fg=fg, err=level > 1)
+        click.secho(line, fg=fg, err=level > 1, nl=False)
 
     @staticmethod
     def _echo_missed_dependency(filename):

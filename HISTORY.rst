@@ -18,7 +18,9 @@ PlatformIO 4.0
 * Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
 * Added support for the latest Python "Click" package (CLI Builder)
   (`issue #349 <https://github.com/platformio/platformio-core/issues/349>`_)
-* Deprecated ``--only-check`` CLI option for "update" sub-commands, please use ``--dry-run`` instead
+* Deprecated ``--only-check`` PlatformIO Core CLI option for "update" sub-commands, please use ``--dry-run`` instead
+* Removed line-buffering from `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__ command which was leading to omitting progress bar from upload tools
+  (`issue #856 <https://github.com/platformio/platformio-core/issues/856>`_)
 
 PlatformIO 3.0
 --------------

@@ -34,7 +34,8 @@ import requests
 
 from platformio import __apiurl__, __version__, exception
 from platformio.compat import PY2, WINDOWS, path_to_unicode
-from platformio.proc import AsyncPipe, exec_command, is_ci, where_is_program
+from platformio.proc import LineBufferedAsyncPipe as AsyncPipe
+from platformio.proc import exec_command, is_ci, where_is_program
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
     get_project_dir, get_project_optional_dir, get_projectboards_dir,
