@@ -33,7 +33,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, util
 from platformio.builder.tools import platformio as piotool
-from platformio.compat import PY2, WINDOWS, string_types
+from platformio.compat import PY2, WINDOWS, get_file_contents, string_types
 from platformio.managers.lib import LibraryManager
 from platformio.managers.package import PackageManager
 
@@ -80,7 +80,7 @@ class LibBuilderFactory(object):
                 if not env.IsFileWithExt(
                         fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT):
                     continue
-                content = util.get_file_contents(join(root, fname))
+                content = get_file_contents(join(root, fname))
                 if not content:
                     continue
                 if "Arduino.h" in content and include_re.search(content):

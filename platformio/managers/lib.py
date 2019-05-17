@@ -23,7 +23,7 @@ from os.path import isdir, join
 import click
 
 from platformio import app, commands, exception, util
-from platformio.compat import string_types
+from platformio.compat import glob_escape, string_types
 from platformio.managers.package import BasePkgManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
 
@@ -48,7 +48,7 @@ class LibraryManager(BasePkgManager):
             return path
 
         # if library without manifest, returns first source file
-        src_dir = join(util.glob_escape(pkg_dir))
+        src_dir = join(glob_escape(pkg_dir))
         if isdir(join(pkg_dir, "src")):
             src_dir = join(src_dir, "src")
         chs_files = glob(join(src_dir, "*.[chS]"))

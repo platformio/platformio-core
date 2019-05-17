@@ -23,7 +23,7 @@ from click.testing import CliRunner
 
 from platformio import exception, util
 from platformio.commands.run import cli as cmd_run
-from platformio.compat import PY2, WINDOWS
+from platformio.compat import PY2, WINDOWS, get_file_contents
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
     get_projectlib_dir, get_projectlibdeps_dir, get_projectsrc_dir)
@@ -124,8 +124,7 @@ class ProjectGenerator(object):
                 contents.encode("utf8") if PY2 else contents)
 
     def _render_tpl(self, tpl_path):
-        return bottle.template(
-            util.get_file_contents(tpl_path), **self._tplvars)
+        return bottle.template(get_file_contents(tpl_path), **self._tplvars)
 
     @staticmethod
     def _merge_contents(dst_path, contents):

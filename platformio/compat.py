@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=unused-import
+
+import os
+import re
 import sys
 
 PY2 = sys.version_info[0] == 2
@@ -32,7 +36,29 @@ if PY2:
 
     def path_to_unicode(path):
         return path.decode(get_filesystem_encoding()).encode("utf-8")
+
+    def get_file_contents(path):
+        with open(path) as f:
+            return f.read()
+
+    _magic_check = re.compile('([*?[])')
+    _magic_check_bytes = re.compile(b'([*?[])')
+
+    def glob_escape(pathname):
+        """Escape all special characters."""
+        # https://github.com/python/cpython/blob/master/Lib/glob.py#L161
+        # Escaping is done by wrapping any of "*?[" between square brackets.
+        # Metacharacters do not work in the drive part and shouldn't be
+        # escaped.
+        drive, pathname = os.path.splitdrive(pathname)
+        if isinstance(pathname, bytes):
+            pathname = _magic_check_bytes.sub(br'[\1]', pathname)
+        else:
+            pathname = _magic_check.sub(r'[\1]', pathname)
+        return drive + pathname
 else:
+    from glob import escape as glob_escape  # pylint: disable=no-name-in-module
+
     string_types = (str, )
 
     def is_bytes(x):
@@ -40,3 +66,11 @@ else:
 
     def path_to_unicode(path):
         return path
+
+    def get_file_contents(path):
+        try:
+            with open(path) as f:
+                return f.read()
+        except UnicodeDecodeError:
+            with open(path, encoding="latin-1") as f:
+                return f.read()

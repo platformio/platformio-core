@@ -33,7 +33,7 @@ import click
 import requests
 
 from platformio import __apiurl__, __version__, exception
-from platformio.compat import PY2, WINDOWS, path_to_unicode
+from platformio.compat import PY2, WINDOWS, get_file_contents, path_to_unicode
 from platformio.proc import LineBufferedAsyncPipe as AsyncPipe
 from platformio.proc import exec_command, is_ci, where_is_program
 from platformio.project.config import ProjectConfig
@@ -523,15 +523,6 @@ def merge_dicts(d1, d2, path=None):
     return d1
 
 
-def get_file_contents(path):
-    try:
-        with open(path) as f:
-            return f.read()
-    except UnicodeDecodeError:
-        with open(path, encoding="latin-1") as f:
-            return f.read()
-
-
 def ensure_udev_rules():
 
     def _rules_to_set(rules_path):
@@ -588,27 +579,3 @@ def rmtree_(path):
                 err=True)
 
     return rmtree(path, onerror=_onerror)
-
-
-#
-# Glob.Escape from Python 3.4
-# https://github.com/python/cpython/blob/master/Lib/glob.py#L161
-#
-
-try:
-    from glob import escape as glob_escape  # pylint: disable=unused-import
-except ImportError:
-    magic_check = re.compile('([*?[])')
-    magic_check_bytes = re.compile(b'([*?[])')
-
-    def glob_escape(pathname):
-        """Escape all special characters."""
-        # Escaping is done by wrapping any of "*?[" between square brackets.
-        # Metacharacters do not work in the drive part and shouldn't be
-        # escaped.
-        drive, pathname = os.path.splitdrive(pathname)
-        if isinstance(pathname, bytes):
-            pathname = magic_check_bytes.sub(br'[\1]', pathname)
-        else:
-            pathname = magic_check.sub(r'[\1]', pathname)
-        return drive + pathname

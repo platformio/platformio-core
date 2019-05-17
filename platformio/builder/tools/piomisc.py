@@ -25,6 +25,7 @@ from SCons.Action import Action  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 
 from platformio import util
+from platformio.compat import get_file_contents, glob_escape
 from platformio.managers.core import get_core_package_dir
 from platformio.proc import exec_command
 
@@ -59,7 +60,7 @@ class InoToCPPConverter(object):
         assert nodes
         lines = []
         for node in nodes:
-            contents = util.get_file_contents(node.get_path())
+            contents = get_file_contents(node.get_path())
             _lines = [
                 '# 1 "%s"' % node.get_path().replace("\\", "/"), contents
             ]
@@ -77,7 +78,7 @@ class InoToCPPConverter(object):
     def process(self, contents):
         out_file = self._main_ino + ".cpp"
         assert self._gcc_preprocess(contents, out_file)
-        contents = util.get_file_contents(out_file)
+        contents = get_file_contents(out_file)
         contents = self._join_multiline_strings(contents)
         with open(out_file, "w") as fp:
             fp.write(self.append_prototypes(contents))
@@ -188,7 +189,7 @@ class InoToCPPConverter(object):
 
 
 def ConvertInoToCpp(env):
-    src_dir = util.glob_escape(env.subst("$PROJECTSRC_DIR"))
+    src_dir = glob_escape(env.subst("$PROJECTSRC_DIR"))
     ino_nodes = (
         env.Glob(join(src_dir, "*.ino")) + env.Glob(join(src_dir, "*.pde")))
     if not ino_nodes:

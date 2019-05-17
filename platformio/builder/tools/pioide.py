@@ -21,6 +21,7 @@ from os.path import abspath, isfile, join
 from SCons.Defaults import processDefines  # pylint: disable=import-error
 
 from platformio import util
+from platformio.compat import glob_escape
 from platformio.managers.core import get_core_package_dir
 from platformio.proc import exec_command
 
@@ -40,7 +41,7 @@ def _dump_includes(env):
     for name in p.get_installed_packages():
         if p.get_package_type(name) != "toolchain":
             continue
-        toolchain_dir = util.glob_escape(p.get_package_dir(name))
+        toolchain_dir = glob_escape(p.get_package_dir(name))
         toolchain_incglobs = [
             join(toolchain_dir, "*", "include*"),
             join(toolchain_dir, "*", "include", "c++", "*"),

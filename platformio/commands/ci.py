@@ -24,6 +24,7 @@ from platformio import app, util
 from platformio.commands.init import cli as cmd_init
 from platformio.commands.init import validate_boards
 from platformio.commands.run import cli as cmd_run
+from platformio.compat import glob_escape
 from platformio.exception import CIBuildEnvsEmpty
 from platformio.project.config import ProjectConfig
 
@@ -152,7 +153,7 @@ def _copy_contents(dst_dir, contents):
 def _exclude_contents(dst_dir, patterns):
     contents = []
     for p in patterns:
-        contents += glob(join(util.glob_escape(dst_dir), p))
+        contents += glob(join(glob_escape(dst_dir), p))
     for path in contents:
         path = abspath(path)
         if isdir(path):
