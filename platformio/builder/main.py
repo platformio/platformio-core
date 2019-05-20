@@ -31,11 +31,11 @@ from SCons.Script import Variables  # pylint: disable=import-error
 from platformio import util
 from platformio.compat import PY2, path_to_unicode
 from platformio.proc import get_pythonexe_path
+from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
-    get_project_dir, get_project_optional_dir, get_projectbuild_dir,
-    get_projectdata_dir, get_projectinclude_dir, get_projectlib_dir,
-    get_projectlibdeps_dir, get_projectsrc_dir, get_projecttest_dir,
-    get_projectworkspace_dir)
+    get_project_dir, get_projectbuild_dir, get_projectdata_dir,
+    get_projectinclude_dir, get_projectlib_dir, get_projectlibdeps_dir,
+    get_projectsrc_dir, get_projecttest_dir, get_projectworkspace_dir)
 
 AllowSubstExceptions(NameError)
 
@@ -144,7 +144,7 @@ for k in list(commonvars.keys()):
         if isinstance(env[k], bytes):
             env[k] = env[k].decode()
         if k in MULTILINE_VARS:
-            env[k] = util.parse_conf_multi_values(env[k])
+            env[k] = ProjectConfig.parse_multi_values(env[k])
 
 if env.GetOption('clean'):
     env.PioClean(env.subst("$BUILD_DIR"))
@@ -161,17 +161,14 @@ for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPTS",
     if var in ("UPLOAD_PORT", ):
         env[var] = environ.get(k)
         continue
-    env.Append(**{var: util.parse_conf_multi_values(environ.get(k))})
+    env.Append(**{var: ProjectConfig.parse_multi_values(environ.get(k))})
 
-# Configure extra library source directories for LDF
-if get_project_optional_dir("lib_extra_dirs"):
-    env.Prepend(
-        LIBSOURCE_DIRS=util.parse_conf_multi_values(
-            get_project_optional_dir("lib_extra_dirs")))
 env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
 env['LIBSOURCE_DIRS'] = [
     expanduser(d) if d.startswith("~") else d for d in env['LIBSOURCE_DIRS']
 ]
+
+print(env['LIBSOURCE_DIRS'])
 
 env.LoadPioPlatform(commonvars)
 

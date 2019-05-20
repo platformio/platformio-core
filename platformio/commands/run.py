@@ -161,8 +161,8 @@ class EnvironmentProcessor(object):
         for k, v in self.options.items():
             self.options[k] = self.options[k].strip()
             if self.verbose or k in self.DEFAULT_DUMP_OPTIONS:
-                env_dump.append(
-                    "%s: %s" % (k, ", ".join(util.parse_conf_multi_values(v))))
+                env_dump.append("%s: %s" % (k, ", ".join(
+                    ProjectConfig.parse_multi_values(v))))
 
         if not self.silent:
             click.echo("Processing %s (%s)" % (click.style(
@@ -230,7 +230,7 @@ class EnvironmentProcessor(object):
             if "lib_deps" in self.options:
                 _autoinstall_libdeps(
                     self.cmd_ctx,
-                    util.parse_conf_multi_values(self.options['lib_deps']),
+                    ProjectConfig.parse_multi_values(self.options['lib_deps']),
                     self.verbose)
 
         try:

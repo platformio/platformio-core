@@ -54,8 +54,7 @@ KNOWN_PLATFORMIO_OPTIONS = [
     "build_dir",
     "data_dir",
     "test_dir",
-    "boards_dir",
-    "lib_extra_dirs"
+    "boards_dir"
 ]
 
 KNOWN_ENV_OPTIONS = [
@@ -275,17 +274,40 @@ class ProjectConfig(object):
         return self.validate_options() if validate_options else True
 
     def validate_options(self):
-        warnings = set()
-        # check [platformio] section
-        if self._parser.has_section("platformio"):
-            unknown = set(k for k, _ in self.items("platformio")) - set(
-                KNOWN_PLATFORMIO_OPTIONS)
-            if unknown:
-                warnings.add(
-                    "Ignore unknown `%s` options in section `[platformio]`" %
-                    ", ".join(unknown))
+        return (self._validate_platformio_options()
+                and self._validate_env_options())
 
-        # check [env:*] sections
+    def _validate_platformio_options(self):
+        if not self._parser.has_section("platformio"):
+            return True
+        warnings = set()
+
+        # legacy `lib_extra_dirs`
+        if self._parser.has_option("platformio", "lib_extra_dirs"):
+            if not self._parser.has_section("env"):
+                self._parser.add_section("env")
+            self._parser.set("env", "lib_extra_dirs",
+                             self._parser.get("platformio", "lib_extra_dirs"))
+            self._parser.remove_option("platformio", "lib_extra_dirs")
+            warnings.add(
+                "`lib_extra_dirs` option is deprecated in section "
+                "`platformio`! Please move it to global `env` section")
+
+        unknown = set(k for k, _ in self.items("platformio")) - set(
+            KNOWN_PLATFORMIO_OPTIONS)
+        if unknown:
+            warnings.add(
+                "Ignore unknown `%s` options in section `[platformio]`" %
+                ", ".join(unknown))
+
+        for warning in warnings:
+            click.secho("Warning! %s" % warning, fg="yellow")
+
+        return True
+
+    def _validate_env_options(self):
+        warnings = set()
+
         for section in self._parser.sections():
             if section != "env" and not section.startswith("env:"):
                 continue
