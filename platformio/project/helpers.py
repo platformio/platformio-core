@@ -44,15 +44,18 @@ def find_project_dir_above(path):
 
 def get_project_optional_dir(name, default=None):
     paths = None
+
+    # check for system environment variable
     var_name = "PLATFORMIO_%s" % name.upper()
     if var_name in os.environ:
         paths = os.getenv(var_name)
-    else:
-        config = ProjectConfig.get_instance(
-            join(get_project_dir(), "platformio.ini"))
-        if (config.has_section("platformio")
-                and config.has_option("platformio", name)):
-            paths = config.get("platformio", name)
+
+    config = ProjectConfig.get_instance(
+        join(get_project_dir(), "platformio.ini"))
+    if (config.has_section("platformio")
+            and config.has_option("platformio", name)):
+        paths = config.get("platformio", name)
+
     if not paths:
         return default
 
