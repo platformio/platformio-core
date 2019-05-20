@@ -34,7 +34,8 @@ from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import (
     get_project_dir, get_project_optional_dir, get_projectbuild_dir,
     get_projectdata_dir, get_projectinclude_dir, get_projectlib_dir,
-    get_projectlibdeps_dir, get_projectsrc_dir, get_projecttest_dir)
+    get_projectlibdeps_dir, get_projectsrc_dir, get_projecttest_dir,
+    get_projectworkspace_dir)
 
 AllowSubstExceptions(NameError)
 
@@ -108,6 +109,7 @@ DEFAULT_ENV_OPTIONS = dict(
     UNIX_TIME=int(time()),
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=get_project_dir(),
+    PROJECTWORKSPACE_DIR=get_projectworkspace_dir(),
     PROJECTINCLUDE_DIR=get_projectinclude_dir(),
     PROJECTSRC_DIR=get_projectsrc_dir(),
     PROJECTTEST_DIR=get_projecttest_dir(),

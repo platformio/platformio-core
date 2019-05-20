@@ -12,8 +12,5 @@
     <excludeRoots>
       <file path="$PROJECT_DIR$/.pio" />
     </excludeRoots>
-    <excludeRoots>
-      <file path="$PROJECT_DIR$/.pioenvs" />
-    </excludeRoots>
   </component>
 </project>

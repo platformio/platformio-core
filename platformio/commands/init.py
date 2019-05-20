@@ -359,7 +359,7 @@ def init_cvs_ignore(project_dir):
     if isfile(conf_path):
         return
     with open(conf_path, "w") as fp:
-        fp.writelines([".pio\n", ".pioenvs\n", ".piolibdeps\n"])
+        fp.writelines([".pio\n", ".piolibdeps\n"])
 
 
 def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,

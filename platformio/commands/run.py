@@ -263,6 +263,11 @@ def _autoinstall_libdeps(ctx, libraries, verbose=False):
 
 
 def _clean_build_dir(build_dir):
+    # remove legacy ".pioenvs" folder
+    legacy_build_dir = join(get_project_dir(), ".pioenvs")
+    if isdir(legacy_build_dir) and legacy_build_dir != build_dir:
+        util.rmtree_(legacy_build_dir)
+
     structhash_file = join(build_dir, "structure.hash")
     proj_hash = calculate_project_hash()
 

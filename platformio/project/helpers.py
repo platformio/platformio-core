@@ -73,6 +73,23 @@ def get_project_optional_dir(name, default=None):
     return paths
 
 
+def get_projectworkspace_dir():
+    return get_project_optional_dir("workspace_dir",
+                                    join(get_project_dir(), ".pio"))
+
+
+def get_projectbuild_dir(force=False):
+    path = get_project_optional_dir("build_dir",
+                                    join(get_projectworkspace_dir(), "build"))
+    try:
+        if not isdir(path):
+            os.makedirs(path)
+    except Exception as e:  # pylint: disable=broad-except
+        if not force:
+            raise Exception(e)
+    return path
+
+
 def get_projectlib_dir():
     return get_project_optional_dir("lib_dir", join(get_project_dir(), "lib"))
 
@@ -99,18 +116,6 @@ def get_projecttest_dir():
 def get_projectboards_dir():
     return get_project_optional_dir("boards_dir",
                                     join(get_project_dir(), "boards"))
-
-
-def get_projectbuild_dir(force=False):
-    path = get_project_optional_dir("build_dir",
-                                    join(get_project_dir(), ".pioenvs"))
-    try:
-        if not isdir(path):
-            os.makedirs(path)
-    except Exception as e:  # pylint: disable=broad-except
-        if not force:
-            raise Exception(e)
-    return path
 
 
 def get_projectdata_dir():

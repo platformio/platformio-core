@@ -46,6 +46,7 @@ KNOWN_PLATFORMIO_OPTIONS = [
 
     # Dirs
     "home_dir",
+    "workspace_dir",
     "lib_dir",
     "libdeps_dir",
     "include_dir",

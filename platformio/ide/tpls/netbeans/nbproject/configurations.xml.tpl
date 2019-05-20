@@ -11,7 +11,7 @@
       <itemPath>nbproject/private/launcher.properties</itemPath>
     </logicalFolder>
   </logicalFolder>
-  <sourceFolderFilter>^(nbproject|.pio|.pioenvs)$</sourceFolderFilter>
+  <sourceFolderFilter>^(nbproject|.pio)$</sourceFolderFilter>
   <sourceRootList>
     <Elem>.</Elem>
   </sourceRootList>
