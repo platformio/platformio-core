@@ -168,8 +168,6 @@ env['LIBSOURCE_DIRS'] = [
     expanduser(d) if d.startswith("~") else d for d in env['LIBSOURCE_DIRS']
 ]
 
-print(env['LIBSOURCE_DIRS'])
-
 env.LoadPioPlatform(commonvars)
 
 env.SConscriptChdir(0)
