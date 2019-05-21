@@ -33,6 +33,7 @@ import click
 import requests
 
 from platformio import __apiurl__, __version__, exception
+from platformio.commands import PlatformioCLI
 from platformio.compat import PY2, WINDOWS, get_file_contents, path_to_unicode
 from platformio.proc import LineBufferedAsyncPipe as AsyncPipe
 from platformio.proc import exec_command, is_ci, where_is_program
@@ -425,9 +426,8 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
             return json.loads(result)
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
-            from platformio.maintenance import in_silence
             total += 1
-            if not in_silence():
+            if not PlatformioCLI.in_silence():
                 click.secho(
                     "[API] ConnectionError: {0} (incremented retry: max={1}, "
                     "total={2})".format(e, max_retries, total),

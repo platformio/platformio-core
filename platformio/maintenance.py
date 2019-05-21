@@ -42,12 +42,12 @@ def on_platformio_start(ctx, force, caller):
     set_caller(caller)
     telemetry.on_command()
 
-    if not in_silence():
+    if not PlatformioCLI.in_silence():
         after_upgrade(ctx)
 
 
 def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
-    if in_silence():
+    if PlatformioCLI.in_silence():
         return
 
     try:
@@ -64,14 +64,6 @@ def on_platformio_end(ctx, result):  # pylint: disable=unused-argument
 
 def on_platformio_exception(e):
     telemetry.on_exception(e)
-
-
-def in_silence():
-    args = PlatformioCLI.leftover_args
-    return args and any([
-        args[0] == "debug" and "--interpreter" in " ".join(args),
-        args[0] == "upgrade", "--json-output" in args, "--version" in args
-    ])
 
 
 def set_caller(caller=None):

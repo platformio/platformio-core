@@ -22,6 +22,14 @@ class PlatformioCLI(click.MultiCommand):
 
     leftover_args = []
 
+    @staticmethod
+    def in_silence():
+        args = PlatformioCLI.leftover_args
+        return args and any([
+            args[0] == "debug" and "--interpreter" in " ".join(args),
+            args[0] == "upgrade", "--json-output" in args, "--version" in args
+        ])
+
     def invoke(self, ctx):
         PlatformioCLI.leftover_args = ctx.args
         if hasattr(ctx, "protected_args"):

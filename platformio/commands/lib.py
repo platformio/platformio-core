@@ -80,7 +80,7 @@ def cli(ctx, **options):
                                         ctx.invoked_subcommand)
 
     ctx.obj = LibraryManager(storage_dir)
-    if "--json-output" not in PlatformioCLI.leftover_args:
+    if not PlatformioCLI.in_silence():
         click.echo("Library Storage: " + storage_dir)
 
 
