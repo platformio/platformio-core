@@ -93,13 +93,13 @@ def get_projectbuild_dir(force=False):
     return path
 
 
+def get_projectlibdeps_dir():
+    return get_project_optional_dir(
+        "libdeps_dir", join(get_projectworkspace_dir(), "libdeps"))
+
+
 def get_projectlib_dir():
     return get_project_optional_dir("lib_dir", join(get_project_dir(), "lib"))
-
-
-def get_projectlibdeps_dir():
-    return get_project_optional_dir("libdeps_dir",
-                                    join(get_project_dir(), ".piolibdeps"))
 
 
 def get_projectsrc_dir():

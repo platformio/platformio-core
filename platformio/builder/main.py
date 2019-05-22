@@ -110,6 +110,7 @@ DEFAULT_ENV_OPTIONS = dict(
     PIOHOME_DIR=util.get_home_dir(),
     PROJECT_DIR=get_project_dir(),
     PROJECTWORKSPACE_DIR=get_projectworkspace_dir(),
+    PROJECTLIBDEPS_DIR=get_projectlibdeps_dir(),
     PROJECTINCLUDE_DIR=get_projectinclude_dir(),
     PROJECTSRC_DIR=get_projectsrc_dir(),
     PROJECTTEST_DIR=get_projecttest_dir(),
@@ -121,7 +122,7 @@ DEFAULT_ENV_OPTIONS = dict(
     LIBPATH=["$BUILD_DIR"],
     LIBSOURCE_DIRS=[
         get_projectlib_dir(),
-        get_projectlibdeps_dir(),
+        join("$PROJECTLIBDEPS_DIR", "$PIOENV"),
         join("$PIOHOME_DIR", "lib")
     ],
     PROGNAME="program",

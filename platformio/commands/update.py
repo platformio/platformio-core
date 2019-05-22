@@ -54,5 +54,5 @@ def cli(ctx, core_packages, only_check, dry_run):
     click.echo()
     click.echo("Library Manager")
     click.echo("===============")
-    ctx.obj = LibraryManager()
+    ctx.obj = [LibraryManager().package_dir]
     ctx.invoke(cmd_lib_update, only_check=only_check)

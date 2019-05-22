@@ -21,9 +21,9 @@ from os.path import isdir, join
 import click
 
 from platformio import exception, util
-from platformio.commands import PlatformioCLI
 from platformio.managers.lib import LibraryManager, get_builtin_libs
 from platformio.proc import is_ci
+from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
     get_project_dir, get_projectlibdeps_dir, is_platformio_project)
 
@@ -35,13 +35,9 @@ except ImportError:
 
 @click.group(short_help="Library Manager")
 @click.option(
-    "-g",
-    "--global",
-    is_flag=True,
-    help="Manage global PlatformIO library storage")
-@click.option(
     "-d",
     "--storage-dir",
+    multiple=True,
     default=None,
     type=click.Path(
         exists=True,
@@ -50,38 +46,56 @@ except ImportError:
         writable=True,
         resolve_path=True),
     help="Manage custom library storage")
+@click.option(
+    "-g",
+    "--global",
+    is_flag=True,
+    help="Manage global PlatformIO library storage")
+@click.option(
+    "-e",
+    "--environment",
+    multiple=True,
+    help=("Manage libraries for the specific project build environments "
+          "declared in `platformio.ini`"))
 @click.pass_context
 def cli(ctx, **options):
-    non_storage_cmds = ("search", "show", "register", "stats", "builtin")
+    storage_cmds = ("install", "uninstall", "update", "list")
     # skip commands that don't need storage folder
-    if ctx.invoked_subcommand in non_storage_cmds or \
+    if ctx.invoked_subcommand not in storage_cmds or \
             (len(ctx.args) == 2 and ctx.args[1] in ("-h", "--help")):
         return
-    storage_dir = options['storage_dir']
-    if not storage_dir:
-        if options['global']:
-            storage_dir = join(util.get_home_dir(), "lib")
-        elif is_platformio_project():
-            storage_dir = get_projectlibdeps_dir()
+    storage_dirs = list(options['storage_dir'])
+    if options['global']:
+        storage_dirs.append(join(util.get_home_dir(), "lib"))
+    if not storage_dirs:
+        if is_platformio_project():
+            storage_dirs = [get_project_dir()]
         elif is_ci():
-            storage_dir = join(util.get_home_dir(), "lib")
+            storage_dirs = [join(util.get_home_dir(), "lib")]
             click.secho(
                 "Warning! Global library storage is used automatically. "
                 "Please use `platformio lib --global %s` command to remove "
                 "this warning." % ctx.invoked_subcommand,
                 fg="yellow")
-    elif is_platformio_project(storage_dir):
-        with util.cd(storage_dir):
-            storage_dir = get_projectlibdeps_dir()
 
-    if not storage_dir and not is_platformio_project():
+    if not storage_dirs:
         raise exception.NotGlobalLibDir(get_project_dir(),
                                         join(util.get_home_dir(), "lib"),
                                         ctx.invoked_subcommand)
-
-    ctx.obj = LibraryManager(storage_dir)
-    if not PlatformioCLI.in_silence():
-        click.echo("Library Storage: " + storage_dir)
+    ctx.obj = []
+    for storage_dir in storage_dirs:
+        if is_platformio_project(storage_dir):
+            with util.cd(storage_dir):
+                config = ProjectConfig.get_instance(
+                    join(storage_dir, "platformio.ini"))
+                config.validate(options['environment'])
+                libdeps_dir = get_projectlibdeps_dir()
+                for env in config.envs():
+                    if (not options['environment']
+                            or env in options['environment']):
+                        ctx.obj.append(join(libdeps_dir, env))
+        else:
+            ctx.obj.append(storage_dir)
 
 
 @cli.command("install", short_help="Install library")
@@ -103,19 +117,24 @@ def cli(ctx, **options):
     is_flag=True,
     help="Reinstall/redownload library if exists")
 @click.pass_obj
-def lib_install(lm, libraries, silent, interactive, force):
-    # @TODO: "save" option
-    for library in libraries:
-        lm.install(
-            library, silent=silent, interactive=interactive, force=force)
+def lib_install(storage_dirs, libraries, silent, interactive, force):
+    for storage_dir in storage_dirs:
+        print_storage_header(storage_dirs, storage_dir)
+        lm = LibraryManager(storage_dir)
+        for library in libraries:
+            lm.install(
+                library, silent=silent, interactive=interactive, force=force)
 
 
 @cli.command("uninstall", short_help="Uninstall libraries")
 @click.argument("libraries", nargs=-1, metavar="[LIBRARY...]")
 @click.pass_obj
-def lib_uninstall(lm, libraries):
-    for library in libraries:
-        lm.uninstall(library)
+def lib_uninstall(storage_dirs, libraries):
+    for storage_dir in storage_dirs:
+        print_storage_header(storage_dirs, storage_dir)
+        lm = LibraryManager(storage_dir)
+        for library in libraries:
+            lm.uninstall(library)
 
 
 @cli.command("update", short_help="Update installed libraries")
@@ -131,68 +150,72 @@ def lib_uninstall(lm, libraries):
     help="Do not update, only check for the new versions")
 @click.option("--json-output", is_flag=True)
 @click.pass_obj
-def lib_update(lm, libraries, only_check, dry_run, json_output):
-    if not libraries:
-        libraries = [manifest['__pkg_dir'] for manifest in lm.get_installed()]
-
+def lib_update(storage_dirs, libraries, only_check, dry_run, json_output):
     only_check = dry_run or only_check
+    json_result = {}
+    for storage_dir in storage_dirs:
+        if not json_output:
+            print_storage_header(storage_dirs, storage_dir)
+        lm = LibraryManager(storage_dir)
 
-    if only_check and json_output:
-        result = []
-        for library in libraries:
-            pkg_dir = library if isdir(library) else None
-            requirements = None
-            url = None
-            if not pkg_dir:
-                name, requirements, url = lm.parse_pkg_uri(library)
-                pkg_dir = lm.get_package_dir(name, requirements, url)
-            if not pkg_dir:
-                continue
-            latest = lm.outdated(pkg_dir, requirements)
-            if not latest:
-                continue
-            manifest = lm.load_manifest(pkg_dir)
-            manifest['versionLatest'] = latest
-            result.append(manifest)
-        return click.echo(json.dumps(result))
+        _libraries = libraries
+        if not _libraries:
+            _libraries = [
+                manifest['__pkg_dir'] for manifest in lm.get_installed()
+            ]
 
-    for library in libraries:
-        lm.update(library, only_check=only_check)
+        if only_check and json_output:
+            result = []
+            for library in _libraries:
+                pkg_dir = library if isdir(library) else None
+                requirements = None
+                url = None
+                if not pkg_dir:
+                    name, requirements, url = lm.parse_pkg_uri(library)
+                    pkg_dir = lm.get_package_dir(name, requirements, url)
+                if not pkg_dir:
+                    continue
+                latest = lm.outdated(pkg_dir, requirements)
+                if not latest:
+                    continue
+                manifest = lm.load_manifest(pkg_dir)
+                manifest['versionLatest'] = latest
+                result.append(manifest)
+            json_result[storage_dir] = result
+        else:
+            for library in _libraries:
+                lm.update(library, only_check=only_check)
+
+    if json_output:
+        return click.echo(
+            json.dumps(json_result[storage_dirs[0]] if len(storage_dirs) ==
+                       1 else json_result))
 
     return True
 
 
-def print_lib_item(item):
-    click.secho(item['name'], fg="cyan")
-    click.echo("=" * len(item['name']))
-    if "id" in item:
-        click.secho("#ID: %d" % item['id'], bold=True)
-    if "description" in item or "url" in item:
-        click.echo(item.get("description", item.get("url", "")))
-    click.echo()
-
-    for key in ("version", "homepage", "license", "keywords"):
-        if key not in item or not item[key]:
-            continue
-        if isinstance(item[key], list):
-            click.echo("%s: %s" % (key.title(), ", ".join(item[key])))
+@cli.command("list", short_help="List installed libraries")
+@click.option("--json-output", is_flag=True)
+@click.pass_obj
+def lib_list(storage_dirs, json_output):
+    json_result = {}
+    for storage_dir in storage_dirs:
+        if not json_output:
+            print_storage_header(storage_dirs, storage_dir)
+        lm = LibraryManager(storage_dir)
+        items = lm.get_installed()
+        if json_output:
+            json_result[storage_dir] = items
         else:
-            click.echo("%s: %s" % (key.title(), item[key]))
+            for item in sorted(items, key=lambda i: i['name']):
+                print_lib_item(item)
 
-    for key in ("frameworks", "platforms"):
-        if key not in item:
-            continue
-        click.echo("Compatible %s: %s" % (key, ", ".join(
-            [i['title'] if isinstance(i, dict) else i for i in item[key]])))
+    if json_output:
+        return click.echo(
+            json.dumps(json_result[storage_dirs[0]] if len(storage_dirs) ==
+                       1 else json_result))
 
-    if "authors" in item or "authornames" in item:
-        click.echo("Authors: %s" % ", ".join(
-            item.get("authornames",
-                     [a.get("name", "") for a in item.get("authors", [])])))
-
-    if "__src_url" in item:
-        click.secho("Source: %s" % item['__src_url'])
-    click.echo()
+    return True
 
 
 @cli.command("search", short_help="Search for a library")
@@ -273,24 +296,6 @@ def lib_search(query, json_output, page, noninteractive, **filters):
                 "page": int(result['page']) + 1
             },
             cache_valid="1d")
-
-
-@cli.command("list", short_help="List installed libraries")
-@click.option("--json-output", is_flag=True)
-@click.pass_obj
-def lib_list(lm, json_output):
-    items = lm.get_installed()
-
-    if json_output:
-        return click.echo(json.dumps(items))
-
-    if not items:
-        return None
-
-    for item in sorted(items, key=lambda i: i['name']):
-        print_lib_item(item)
-
-    return True
 
 
 @cli.command("builtin", short_help="List built-in libraries")
@@ -484,3 +489,44 @@ def lib_stats(json_output):
         click.echo()
 
     return True
+
+
+def print_storage_header(storage_dirs, storage_dir):
+    if storage_dirs and storage_dirs[0] != storage_dir:
+        click.echo("")
+    click.echo(
+        click.style("Library Storage: ", bold=True) +
+        click.style(storage_dir, fg="blue"))
+
+
+def print_lib_item(item):
+    click.secho(item['name'], fg="cyan")
+    click.echo("=" * len(item['name']))
+    if "id" in item:
+        click.secho("#ID: %d" % item['id'], bold=True)
+    if "description" in item or "url" in item:
+        click.echo(item.get("description", item.get("url", "")))
+    click.echo()
+
+    for key in ("version", "homepage", "license", "keywords"):
+        if key not in item or not item[key]:
+            continue
+        if isinstance(item[key], list):
+            click.echo("%s: %s" % (key.title(), ", ".join(item[key])))
+        else:
+            click.echo("%s: %s" % (key.title(), item[key]))
+
+    for key in ("frameworks", "platforms"):
+        if key not in item:
+            continue
+        click.echo("Compatible %s: %s" % (key, ", ".join(
+            [i['title'] if isinstance(i, dict) else i for i in item[key]])))
+
+    if "authors" in item or "authornames" in item:
+        click.echo("Authors: %s" % ", ".join(
+            item.get("authornames",
+                     [a.get("name", "") for a in item.get("authors", [])])))
+
+    if "__src_url" in item:
+        click.secho("Source: %s" % item['__src_url'])
+    click.echo()

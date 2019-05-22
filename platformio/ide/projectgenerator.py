@@ -144,7 +144,8 @@ class ProjectGenerator(object):
                 "project_dir": self.project_dir,
                 "project_src_dir": get_projectsrc_dir(),
                 "project_lib_dir": get_projectlib_dir(),
-                "project_libdeps_dir": get_projectlibdeps_dir(),
+                "project_libdeps_dir": join(
+                    get_projectlibdeps_dir(), self.env_name),
                 "systype": util.get_systype(),
                 "platformio_path": self._fix_os_path(
                     sys.argv[0] if isfile(sys.argv[0])

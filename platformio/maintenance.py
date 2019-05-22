@@ -332,7 +332,7 @@ def check_internal_updates(ctx, what):
         if what == "platforms":
             ctx.invoke(cmd_platform_update, platforms=outdated_items)
         elif what == "libraries":
-            ctx.obj = pm
+            ctx.obj = [pm.package_dir]
             ctx.invoke(cmd_lib_update, libraries=outdated_items)
         click.echo()
 

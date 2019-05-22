@@ -23,7 +23,7 @@ from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.commands.lib import lib_install as cmd_lib_install
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
-from platformio.managers.lib import LibraryManager, is_builtin_lib
+from platformio.managers.lib import is_builtin_lib
 from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
@@ -82,6 +82,8 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf,
             project_conf or join(project_dir, "platformio.ini"))
         config.validate(environment)
 
+        _handle_legacy_libdeps(project_dir, config)
+
         results = []
         start_time = time()
         default_envs = config.default_envs()
@@ -94,7 +96,8 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf,
                 results.append((envname, None))
                 continue
 
-            if not silent and results:
+            if not silent and any(
+                    status is not None for (_, status) in results):
                 click.echo()
 
             options = config.items(env=envname, as_dict=True)
@@ -222,14 +225,14 @@ class EnvironmentProcessor(object):
         if "nobuild" not in build_targets:
             # install dependent libraries
             if "lib_install" in self.options:
-                _autoinstall_libdeps(self.cmd_ctx, [
+                _autoinstall_libdeps(self.cmd_ctx, self.name, [
                     int(d.strip())
                     for d in self.options['lib_install'].split(",")
                     if d.strip()
                 ], self.verbose)
             if "lib_deps" in self.options:
                 _autoinstall_libdeps(
-                    self.cmd_ctx,
+                    self.cmd_ctx, self.name,
                     ProjectConfig.parse_multi_values(self.options['lib_deps']),
                     self.verbose)
 
@@ -245,13 +248,31 @@ class EnvironmentProcessor(object):
         return p.run(build_vars, build_targets, self.silent, self.verbose)
 
 
-def _autoinstall_libdeps(ctx, libraries, verbose=False):
+def _handle_legacy_libdeps(project_dir, config):
+    legacy_libdeps_dir = join(project_dir, ".piolibdeps")
+    if (not isdir(legacy_libdeps_dir)
+            or legacy_libdeps_dir == get_projectlibdeps_dir()):
+        return
+    if not config.has_section("env"):
+        config.add_section("env")
+    lib_extra_dirs = []
+    if config.has_option("env", "lib_extra_dirs"):
+        lib_extra_dirs = config.getlist("env", "lib_extra_dirs")
+    lib_extra_dirs.append(legacy_libdeps_dir)
+    config.set("env", "lib_extra_dirs", lib_extra_dirs)
+    click.secho(
+        "DEPRECATED! A legacy library storage `{0}` has been found in a "
+        "project. \nPlease declare project dependencies in `platformio.ini`"
+        " file using `lib_deps` option and remove `{0}` folder."
+        "\nMore details -> http://docs.platformio.org/page/projectconf/"
+        "section_env_library.html#lib-deps".format(legacy_libdeps_dir),
+        fg="yellow")
+
+
+def _autoinstall_libdeps(ctx, envname, libraries, verbose=False):
     if not libraries:
         return
-    storage_dir = get_projectlibdeps_dir()
-    ctx.obj = LibraryManager(storage_dir)
-    if verbose:
-        click.echo("Library Storage: " + storage_dir)
+    ctx.obj = [join(get_projectlibdeps_dir(), envname)]
     for lib in libraries:
         try:
             ctx.invoke(cmd_lib_install, libraries=[lib], silent=not verbose)

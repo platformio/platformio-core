@@ -26,10 +26,10 @@ from platformio.managers.package import PackageManager
 from platformio.proc import copy_pythonpath_to_osenv, get_pythonexe_path
 
 CORE_PACKAGES = {
-    "contrib-piohome": "^2.0.1",
+    "contrib-piohome": "^2.1.0",
     "contrib-pysite":
     "~2.%d%d.190418" % (sys.version_info[0], sys.version_info[1]),
-    "tool-pioplus": "^2.2.0",
+    "tool-pioplus": "^2.3.0",
     "tool-unity": "~1.20403.0",
     "tool-scons": "~2.20501.7" if PY2 else "~3.30005.0"
 }

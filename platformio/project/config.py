@@ -227,6 +227,11 @@ class ProjectConfig(object):
         return [(option, self.get(section, option))
                 for option in self.options(section)]
 
+    def set(self, section, option, value):
+        if isinstance(value, (list, tuple)):
+            value = "\n".join(value)
+        self._parser.set(section, option, value)
+
     def get(self, section, option):
         if not self.expand_interpolations:
             return self._parser.get(section, option)

@@ -7,14 +7,20 @@ PlatformIO 4.0
 4.0.0 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* **PlatformIO-based Project**
+* **Project Management**
 
-  - Implemented unified project workspace storage (`workspace_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#workspace-dir>`__ -> ``.pio``) for PlatformIO Build System, Library Dependency Finder, and other internal services (`issue #1778 <https://github.com/platformio/platformio-core/issues/1778>`_)
+  - Unified workspace storage (`workspace_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#workspace-dir>`__ -> ``.pio``) for PlatformIO Build System, Library Manager, and other internal services (`issue #1778 <https://github.com/platformio/platformio-core/issues/1778>`_)
   - Share common (global) options between build environments using ``[env]`` section in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ (`issue #1643 <https://github.com/platformio/platformio-core/issues/1643>`_)
   - Include external configuration files in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
   - Override default `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with a custom using ``-c, --project-conf`` option for `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__, `platformio debug <http://docs.platformio.org/page/userguide/cmd_debug.html>`__, or `platformio test <http://docs.platformio.org/page/userguide/cmd_test.html>`__ commands (`issue #1913 <https://github.com/platformio/platformio-core/issues/1913>`_)
   - Custom project ``***_dir`` options declared in "platformio" section of `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ have higher priority than `Environment variables <http://docs.platformio.org/page/envvars.html>`__
-  - Moved ``.pioenvs`` build directory to workspace storage ``.pio/build``
+  - Use workspace ``.pio/build`` folder for build artifacts instead of ``.pioenvs``
+
+* **Library Management**
+
+  - Use isolated library dependency storage per project build environment (`issue #1696 <https://github.com/platformio/platformio-core/issues/1696>`_)
+  - Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
+  - Use workspace ``.pio/libdeps`` folder for project dependencies instead of ``.piolibdeps``
 
 * **Infrastructure**
 
@@ -24,7 +30,6 @@ PlatformIO 4.0
 
 * **Miscellaneous**
 
-  - Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
   - Deprecated ``--only-check`` PlatformIO Core CLI option for "update" sub-commands, please use ``--dry-run`` instead
 
 PlatformIO 3.0
