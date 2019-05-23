@@ -21,7 +21,8 @@ from os.path import isdir, join
 import click
 
 from platformio import exception, util
-from platformio.managers.lib import LibraryManager, get_builtin_libs
+from platformio.managers.lib import (LibraryManager, get_builtin_libs,
+                                     is_builtin_lib)
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
@@ -33,6 +34,7 @@ except ImportError:
     from urllib import quote
 
 CTX_META_STORAGE_DIRS_KEY = __name__ + ".storage_dirs"
+CTX_META_STORAGE_LIBDEPS_KEY = __name__ + ".storage_lib_deps"
 
 
 @click.group(short_help="Library Manager")
@@ -86,20 +88,24 @@ def cli(ctx, **options):
                                         ctx.invoked_subcommand)
 
     ctx.meta[CTX_META_STORAGE_DIRS_KEY] = []
+    ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY] = {}
     for storage_dir in storage_dirs:
-        if is_platformio_project(storage_dir):
-            with util.cd(storage_dir):
-                config = ProjectConfig.get_instance(
-                    join(storage_dir, "platformio.ini"))
-                config.validate(options['environment'])
-                libdeps_dir = get_projectlibdeps_dir()
-                for env in config.envs():
-                    if (not options['environment']
-                            or env in options['environment']):
-                        ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(
-                            join(libdeps_dir, env))
-        else:
+        if not is_platformio_project(storage_dir):
             ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
+            continue
+        with util.cd(storage_dir):
+            libdeps_dir = get_projectlibdeps_dir()
+        config = ProjectConfig.get_instance(
+            join(storage_dir, "platformio.ini"))
+        config.validate(options['environment'])
+        for env in config.envs():
+            if options['environment'] and env not in options['environment']:
+                continue
+            storage_dir = join(libdeps_dir, env)
+            ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
+            if config.has_option("env:" + env, "lib_deps"):
+                ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY][
+                    storage_dir] = config.getlist("env:" + env, "lib_deps")
 
 
 @cli.command("install", short_help="Install library")
@@ -122,13 +128,30 @@ def cli(ctx, **options):
     help="Reinstall/redownload library if exists")
 @click.pass_context
 def lib_install(ctx, libraries, silent, interactive, force):
+    storage_libdeps = ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY]
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     for storage_dir in storage_dirs:
-        print_storage_header(storage_dirs, storage_dir)
+        if not silent and (libraries or storage_dir in storage_libdeps):
+            print_storage_header(storage_dirs, storage_dir)
         lm = LibraryManager(storage_dir)
-        for library in libraries:
-            lm.install(
-                library, silent=silent, interactive=interactive, force=force)
+        if libraries:
+            for library in libraries:
+                lm.install(
+                    library,
+                    silent=silent,
+                    interactive=interactive,
+                    force=force)
+        elif storage_dir in storage_libdeps:
+            for library in storage_libdeps[storage_dir]:
+                try:
+                    lm.install(
+                        library,
+                        silent=silent,
+                        interactive=interactive,
+                        force=force)
+                except exception.LibNotFound as e:
+                    if not silent or not is_builtin_lib(library):
+                        click.secho("Warning! %s" % e, fg="yellow")
 
 
 @cli.command("uninstall", short_help="Uninstall libraries")

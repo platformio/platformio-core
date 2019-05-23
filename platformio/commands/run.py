@@ -20,11 +20,11 @@ import click
 
 from platformio import exception, telemetry, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
-from platformio.commands.lib import CTX_META_STORAGE_DIRS_KEY
+from platformio.commands.lib import (CTX_META_STORAGE_DIRS_KEY,
+                                     CTX_META_STORAGE_LIBDEPS_KEY)
 from platformio.commands.lib import lib_install as cmd_lib_install
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
-from platformio.managers.lib import is_builtin_lib
 from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
@@ -273,17 +273,17 @@ def _handle_legacy_libdeps(project_dir, config):
 def _autoinstall_libdeps(ctx, envname, libraries, verbose=False):
     if not libraries:
         return
-    ctx.meta[CTX_META_STORAGE_DIRS_KEY] = [
-        join(get_projectlibdeps_dir(), envname)
-    ]
-    for lib in libraries:
-        try:
-            ctx.invoke(cmd_lib_install, libraries=[lib], silent=not verbose)
-        except exception.LibNotFound as e:
-            if verbose or not is_builtin_lib(lib):
-                click.secho("Warning! %s" % e, fg="yellow")
-        except exception.InternetIsOffline as e:
-            click.secho(str(e), fg="yellow")
+    libdeps_dir = join(get_projectlibdeps_dir(), envname)
+    ctx.meta.update({
+        CTX_META_STORAGE_DIRS_KEY: [libdeps_dir],
+        CTX_META_STORAGE_LIBDEPS_KEY: {
+            libdeps_dir: libraries
+        }
+    })
+    try:
+        ctx.invoke(cmd_lib_install, silent=not verbose)
+    except exception.InternetIsOffline as e:
+        click.secho(str(e), fg="yellow")
 
 
 def _clean_build_dir(build_dir):
