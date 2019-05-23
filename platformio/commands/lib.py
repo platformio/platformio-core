@@ -33,6 +33,8 @@ try:
 except ImportError:
     from urllib import quote
 
+CTX_META_INPUT_DIRS_KEY = __name__ + ".input_dirs"
+CTX_META_PROJECT_ENVIRONMENTS_KEY = __name__ + ".project_environments"
 CTX_META_STORAGE_DIRS_KEY = __name__ + ".storage_dirs"
 CTX_META_STORAGE_LIBDEPS_KEY = __name__ + ".storage_lib_deps"
 
@@ -87,6 +89,8 @@ def cli(ctx, **options):
                                         join(util.get_home_dir(), "lib"),
                                         ctx.invoked_subcommand)
 
+    ctx.meta[CTX_META_PROJECT_ENVIRONMENTS_KEY] = options['environment']
+    ctx.meta[CTX_META_INPUT_DIRS_KEY] = storage_dirs
     ctx.meta[CTX_META_STORAGE_DIRS_KEY] = []
     ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY] = {}
     for storage_dir in storage_dirs:
@@ -110,11 +114,10 @@ def cli(ctx, **options):
 
 @cli.command("install", short_help="Install library")
 @click.argument("libraries", required=False, nargs=-1, metavar="[LIBRARY...]")
-# @click.option(
-#     "--save",
-#     is_flag=True,
-#     help="Save installed libraries into the project's platformio.ini "
-#     "library dependencies")
+@click.option(
+    "--save",
+    is_flag=True,
+    help="Save installed libraries into the `platformio.ini` dependency list")
 @click.option(
     "-s", "--silent", is_flag=True, help="Suppress progress reporting")
 @click.option(
@@ -127,9 +130,29 @@ def cli(ctx, **options):
     is_flag=True,
     help="Reinstall/redownload library if exists")
 @click.pass_context
-def lib_install(ctx, libraries, silent, interactive, force):
-    storage_libdeps = ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY]
+def lib_install(  # pylint: disable=too-many-arguments
+        ctx, libraries, save, silent, interactive, force):
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
+    input_dirs = ctx.meta.get(CTX_META_INPUT_DIRS_KEY, [])
+    storage_libdeps = ctx.meta.get(CTX_META_STORAGE_LIBDEPS_KEY, [])
+
+    if save and libraries:
+        project_environments = ctx.meta[CTX_META_PROJECT_ENVIRONMENTS_KEY]
+        for input_dir in input_dirs:
+            config = ProjectConfig.get_instance(
+                join(input_dir, "platformio.ini"))
+            config.validate(project_environments)
+            for env in config.envs():
+                if project_environments and env not in project_environments:
+                    continue
+                config.expand_interpolations = False
+                lib_deps = (config.getlist(
+                    "env:" + env, "lib_deps") if config.has_option(
+                        "env:" + env, "lib_deps") else [])
+                lib_deps.extend(l for l in libraries if l not in lib_deps)
+                config.set("env:" + env, "lib_deps", lib_deps)
+                config.save()
+
     for storage_dir in storage_dirs:
         if not silent and (libraries or storage_dir in storage_libdeps):
             print_storage_header(storage_dirs, storage_dir)

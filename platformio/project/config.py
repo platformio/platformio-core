@@ -230,6 +230,8 @@ class ProjectConfig(object):
     def set(self, section, option, value):
         if isinstance(value, (list, tuple)):
             value = "\n".join(value)
+            if value:
+                value = "\n" + value  # start from a new line
         self._parser.set(section, option, value)
 
     def get(self, section, option):
