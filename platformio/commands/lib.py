@@ -32,6 +32,8 @@ try:
 except ImportError:
     from urllib import quote
 
+CTX_META_STORAGE_DIRS_KEY = __name__ + ".storage_dirs"
+
 
 @click.group(short_help="Library Manager")
 @click.option(
@@ -82,7 +84,8 @@ def cli(ctx, **options):
         raise exception.NotGlobalLibDir(get_project_dir(),
                                         join(util.get_home_dir(), "lib"),
                                         ctx.invoked_subcommand)
-    ctx.obj = []
+
+    ctx.meta[CTX_META_STORAGE_DIRS_KEY] = []
     for storage_dir in storage_dirs:
         if is_platformio_project(storage_dir):
             with util.cd(storage_dir):
@@ -93,9 +96,10 @@ def cli(ctx, **options):
                 for env in config.envs():
                     if (not options['environment']
                             or env in options['environment']):
-                        ctx.obj.append(join(libdeps_dir, env))
+                        ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(
+                            join(libdeps_dir, env))
         else:
-            ctx.obj.append(storage_dir)
+            ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
 
 
 @cli.command("install", short_help="Install library")
@@ -116,8 +120,9 @@ def cli(ctx, **options):
     "--force",
     is_flag=True,
     help="Reinstall/redownload library if exists")
-@click.pass_obj
-def lib_install(storage_dirs, libraries, silent, interactive, force):
+@click.pass_context
+def lib_install(ctx, libraries, silent, interactive, force):
+    storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     for storage_dir in storage_dirs:
         print_storage_header(storage_dirs, storage_dir)
         lm = LibraryManager(storage_dir)
@@ -128,8 +133,9 @@ def lib_install(storage_dirs, libraries, silent, interactive, force):
 
 @cli.command("uninstall", short_help="Uninstall libraries")
 @click.argument("libraries", nargs=-1, metavar="[LIBRARY...]")
-@click.pass_obj
-def lib_uninstall(storage_dirs, libraries):
+@click.pass_context
+def lib_uninstall(ctx, libraries):
+    storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     for storage_dir in storage_dirs:
         print_storage_header(storage_dirs, storage_dir)
         lm = LibraryManager(storage_dir)
@@ -149,8 +155,9 @@ def lib_uninstall(storage_dirs, libraries):
     is_flag=True,
     help="Do not update, only check for the new versions")
 @click.option("--json-output", is_flag=True)
-@click.pass_obj
-def lib_update(storage_dirs, libraries, only_check, dry_run, json_output):
+@click.pass_context
+def lib_update(ctx, libraries, only_check, dry_run, json_output):
+    storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     only_check = dry_run or only_check
     json_result = {}
     for storage_dir in storage_dirs:
@@ -196,8 +203,9 @@ def lib_update(storage_dirs, libraries, only_check, dry_run, json_output):
 
 @cli.command("list", short_help="List installed libraries")
 @click.option("--json-output", is_flag=True)
-@click.pass_obj
-def lib_list(storage_dirs, json_output):
+@click.pass_context
+def lib_list(ctx, json_output):
+    storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     json_result = {}
     for storage_dir in storage_dirs:
         if not json_output:

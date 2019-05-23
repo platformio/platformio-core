@@ -20,6 +20,7 @@ import click
 
 from platformio import exception, telemetry, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
+from platformio.commands.lib import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib import lib_install as cmd_lib_install
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
@@ -272,7 +273,9 @@ def _handle_legacy_libdeps(project_dir, config):
 def _autoinstall_libdeps(ctx, envname, libraries, verbose=False):
     if not libraries:
         return
-    ctx.obj = [join(get_projectlibdeps_dir(), envname)]
+    ctx.meta[CTX_META_STORAGE_DIRS_KEY] = [
+        join(get_projectlibdeps_dir(), envname)
+    ]
     for lib in libraries:
         try:
             ctx.invoke(cmd_lib_install, libraries=[lib], silent=not verbose)

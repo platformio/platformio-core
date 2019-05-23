@@ -23,6 +23,7 @@ import semantic_version
 
 from platformio import __version__, app, exception, telemetry, util
 from platformio.commands import PlatformioCLI
+from platformio.commands.lib import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib import lib_update as cmd_lib_update
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
@@ -332,7 +333,7 @@ def check_internal_updates(ctx, what):
         if what == "platforms":
             ctx.invoke(cmd_platform_update, platforms=outdated_items)
         elif what == "libraries":
-            ctx.obj = [pm.package_dir]
+            ctx.meta[CTX_META_STORAGE_DIRS_KEY] = [pm.package_dir]
             ctx.invoke(cmd_lib_update, libraries=outdated_items)
         click.echo()
 
