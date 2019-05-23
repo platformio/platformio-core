@@ -182,7 +182,7 @@ class LibBuilderBase(object):
     def get_include_dirs(self):
         items = []
         include_dir = self.include_dir
-        if include_dir and include_dir not in items:
+        if include_dir:
             items.append(include_dir)
         items.append(self.src_dir)
         return items
@@ -723,13 +723,15 @@ class PlatformIOLibBuilder(LibBuilderBase):
     @property
     def include_dir(self):
         if "includeDir" in self._manifest.get("build", {}):
-            return self._manifest.get("build").get("includeDir")
+            with util.cd(self.path):
+                return realpath(self._manifest.get("build").get("includeDir"))
         return LibBuilderBase.include_dir.fget(self)
 
     @property
     def src_dir(self):
         if "srcDir" in self._manifest.get("build", {}):
-            return self._manifest.get("build").get("srcDir")
+            with util.cd(self.path):
+                return realpath(self._manifest.get("build").get("srcDir"))
         return LibBuilderBase.src_dir.fget(self)
 
     @property
@@ -804,6 +806,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
         for path in self.env.get("CPPPATH", []):
             if path not in self.envorigin.get("CPPPATH", []):
                 include_dirs.append(self.env.subst(path))
+
         return include_dirs
 
 
