@@ -19,6 +19,7 @@ import time
 from os.path import isdir, join
 
 import click
+import semantic_version
 
 from platformio import exception, util
 from platformio.managers.lib import (LibraryManager, get_builtin_libs,
@@ -133,48 +134,60 @@ def cli(ctx, **options):
 def lib_install(  # pylint: disable=too-many-arguments
         ctx, libraries, save, silent, interactive, force):
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
-    input_dirs = ctx.meta.get(CTX_META_INPUT_DIRS_KEY, [])
     storage_libdeps = ctx.meta.get(CTX_META_STORAGE_LIBDEPS_KEY, [])
 
-    if save and libraries:
-        project_environments = ctx.meta[CTX_META_PROJECT_ENVIRONMENTS_KEY]
-        for input_dir in input_dirs:
-            config = ProjectConfig.get_instance(
-                join(input_dir, "platformio.ini"))
-            config.validate(project_environments)
-            for env in config.envs():
-                if project_environments and env not in project_environments:
-                    continue
-                config.expand_interpolations = False
-                lib_deps = (config.getlist(
-                    "env:" + env, "lib_deps") if config.has_option(
-                        "env:" + env, "lib_deps") else [])
-                lib_deps.extend(l for l in libraries if l not in lib_deps)
-                config.set("env:" + env, "lib_deps", lib_deps)
-                config.save()
-
+    installed_manifests = {}
     for storage_dir in storage_dirs:
         if not silent and (libraries or storage_dir in storage_libdeps):
             print_storage_header(storage_dirs, storage_dir)
         lm = LibraryManager(storage_dir)
         if libraries:
             for library in libraries:
-                lm.install(
+                pkg_dir = lm.install(
                     library,
                     silent=silent,
                     interactive=interactive,
                     force=force)
+                installed_manifests[library] = lm.load_manifest(pkg_dir)
         elif storage_dir in storage_libdeps:
             for library in storage_libdeps[storage_dir]:
                 try:
-                    lm.install(
+                    pkg_dir = lm.install(
                         library,
                         silent=silent,
                         interactive=interactive,
                         force=force)
+                    installed_manifests[library] = lm.load_manifest(pkg_dir)
                 except exception.LibNotFound as e:
                     if not silent or not is_builtin_lib(library):
                         click.secho("Warning! %s" % e, fg="yellow")
+
+    if not save or not libraries:
+        return
+
+    input_dirs = ctx.meta.get(CTX_META_INPUT_DIRS_KEY, [])
+    project_environments = ctx.meta[CTX_META_PROJECT_ENVIRONMENTS_KEY]
+    for input_dir in input_dirs:
+        config = ProjectConfig.get_instance(join(input_dir, "platformio.ini"))
+        config.validate(project_environments)
+        for env in config.envs():
+            if project_environments and env not in project_environments:
+                continue
+            config.expand_interpolations = False
+            lib_deps = (config.getlist("env:" + env, "lib_deps")
+                        if config.has_option("env:" + env, "lib_deps") else [])
+            for library in libraries:
+                if library in lib_deps:
+                    continue
+                manifest = installed_manifests[library]
+                try:
+                    assert library.lower() == manifest['name'].lower()
+                    assert semantic_version.Version(manifest['version'])
+                    lib_deps.append("{name}@^{version}".format(**manifest))
+                except (AssertionError, ValueError):
+                    lib_deps.append(library)
+            config.set("env:" + env, "lib_deps", lib_deps)
+            config.save()
 
 
 @cli.command("uninstall", short_help="Uninstall libraries")
