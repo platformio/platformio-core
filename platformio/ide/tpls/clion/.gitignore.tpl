@@ -1,3 +1,2 @@
 .pio
-.piolibdeps
 CMakeListsPrivate.txt

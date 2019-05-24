@@ -7,7 +7,7 @@
     </sourceRoots>
     <libraryRoots>
       <file path="$PROJECT_DIR$/lib" />
-      <file path="$PROJECT_DIR$/.piolibdeps" />
+      <file path="$PROJECT_DIR$/.pio/libdeps" />
     </libraryRoots>
     <excludeRoots>
       <file path="$PROJECT_DIR$/.pio" />
