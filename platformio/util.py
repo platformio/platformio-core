@@ -25,8 +25,7 @@ import sys
 import time
 from functools import wraps
 from glob import glob
-from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
-                     join, splitdrive)
+from os.path import abspath, basename, dirname, isdir, isfile, join
 from shutil import rmtree
 
 import click
@@ -38,11 +37,25 @@ from platformio.compat import PY2, WINDOWS, get_file_contents, path_to_unicode
 from platformio.proc import LineBufferedAsyncPipe as AsyncPipe
 from platformio.proc import exec_command, is_ci, where_is_program
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_dir, get_project_optional_dir, get_projectboards_dir,
-    get_projectbuild_dir, get_projectdata_dir, get_projectlib_dir,
-    get_projectlibdeps_dir, get_projectsrc_dir, get_projecttest_dir,
-    is_platformio_project)
+from platformio.project.helpers import \
+    get_project_boards_dir as get_projectboards_dir
+from platformio.project.helpers import \
+    get_project_build_dir as get_projectbuild_dir
+from platformio.project.helpers import get_project_cache_dir as get_cache_dir
+from platformio.project.helpers import get_project_core_dir as get_home_dir
+from platformio.project.helpers import \
+    get_project_data_dir as get_projectdata_dir
+from platformio.project.helpers import get_project_dir
+from platformio.project.helpers import \
+    get_project_lib_dir as get_projectlib_dir
+from platformio.project.helpers import \
+    get_project_libdeps_dir as get_projectlibdeps_dir
+from platformio.project.helpers import get_project_optional_dir
+from platformio.project.helpers import \
+    get_project_src_dir as get_projectsrc_dir
+from platformio.project.helpers import \
+    get_project_test_dir as get_projecttest_dir
+from platformio.project.helpers import is_platformio_project
 
 
 class cd(object):
@@ -133,32 +146,6 @@ def pioversion_to_intstr():
     vermatch = re.match(r"^([\d\.]+)", __version__)
     assert vermatch
     return [int(i) for i in vermatch.group(1).split(".")[:3]]
-
-
-def get_home_dir():
-    home_dir = get_project_optional_dir("home_dir",
-                                        join(expanduser("~"), ".platformio"))
-    win_home_dir = None
-    if WINDOWS:
-        win_home_dir = splitdrive(home_dir)[0] + "\\.platformio"
-        if isdir(win_home_dir):
-            home_dir = win_home_dir
-
-    if not isdir(home_dir):
-        try:
-            os.makedirs(home_dir)
-        except:  # pylint: disable=bare-except
-            if win_home_dir:
-                os.makedirs(win_home_dir)
-                home_dir = win_home_dir
-
-    assert isdir(home_dir)
-    return home_dir
-
-
-def get_cache_dir():
-    return get_project_optional_dir("cache_dir", join(get_home_dir(),
-                                                      ".cache"))
 
 
 def get_source_dir():

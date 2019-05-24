@@ -35,6 +35,7 @@ from platformio.managers.core import update_core_packages
 from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
 from platformio.proc import is_ci, is_container
+from platformio.project.helpers import get_project_core_dir
 
 
 def on_platformio_start(ctx, force, caller):
@@ -113,7 +114,7 @@ class Upgrader(object):
     @staticmethod
     def _upgrade_to_3_0_0(ctx):
         # convert custom board configuration
-        boards_dir = join(util.get_home_dir(), "boards")
+        boards_dir = join(get_project_core_dir(), "boards")
         if isdir(boards_dir):
             for item in os.listdir(boards_dir):
                 if not item.endswith(".json"):

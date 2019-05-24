@@ -26,13 +26,14 @@ from platformio import app, commands, exception, util
 from platformio.compat import glob_escape, string_types
 from platformio.managers.package import BasePkgManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.project.helpers import get_project_global_lib_dir
 
 
 class LibraryManager(BasePkgManager):
 
     def __init__(self, package_dir=None):
         if not package_dir:
-            package_dir = join(util.get_home_dir(), "lib")
+            package_dir = get_project_global_lib_dir()
         super(LibraryManager, self).__init__(package_dir)
 
     @property

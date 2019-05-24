@@ -24,6 +24,7 @@ from platformio import __version__, exception, util
 from platformio.compat import PY2, WINDOWS
 from platformio.managers.package import PackageManager
 from platformio.proc import copy_pythonpath_to_osenv, get_pythonexe_path
+from platformio.project.helpers import get_project_packages_dir
 
 CORE_PACKAGES = {
     "contrib-piohome": "^2.1.0",
@@ -42,12 +43,11 @@ PIOPLUS_AUTO_UPDATES_MAX = 100
 class CorePackageManager(PackageManager):
 
     def __init__(self):
-        super(CorePackageManager, self).__init__(
-            join(util.get_home_dir(), "packages"), [
-                "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-                "http%s://dl.platformio.org/packages/manifest.json" %
-                ("" if sys.version_info < (2, 7, 9) else "s")
-            ])
+        super(CorePackageManager, self).__init__(get_project_packages_dir(), [
+            "https://dl.bintray.com/platformio/dl-packages/manifest.json",
+            "http%s://dl.platformio.org/packages/manifest.json" %
+            ("" if sys.version_info < (2, 7, 9) else "s")
+        ])
 
     def install(  # pylint: disable=keyword-arg-before-vararg
             self,

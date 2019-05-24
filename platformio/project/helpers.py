@@ -15,7 +15,8 @@
 import os
 from hashlib import sha1
 from os import walk
-from os.path import abspath, dirname, expanduser, isdir, isfile, join
+from os.path import (abspath, dirname, expanduser, isdir, isfile, join,
+                     splitdrive)
 
 from platformio import __version__
 from platformio.compat import PY2, WINDOWS
@@ -76,14 +77,57 @@ def get_project_optional_dir(name, default=None):
     return paths
 
 
-def get_projectworkspace_dir():
+def get_project_core_dir():
+    core_dir = get_project_optional_dir(
+        "core_dir",
+        get_project_optional_dir("home_dir",
+                                 join(expanduser("~"), ".platformio")))
+    win_core_dir = None
+    if WINDOWS:
+        win_core_dir = splitdrive(core_dir)[0] + "\\.platformio"
+        if isdir(win_core_dir):
+            core_dir = win_core_dir
+
+    if not isdir(core_dir):
+        try:
+            os.makedirs(core_dir)
+        except:  # pylint: disable=bare-except
+            if win_core_dir:
+                os.makedirs(win_core_dir)
+                core_dir = win_core_dir
+
+    assert isdir(core_dir)
+    return core_dir
+
+
+def get_project_global_lib_dir():
+    return get_project_optional_dir("globallib_dir",
+                                    join(get_project_core_dir(), "lib"))
+
+
+def get_project_platforms_dir():
+    return get_project_optional_dir("platforms_dir",
+                                    join(get_project_core_dir(), "platforms"))
+
+
+def get_project_packages_dir():
+    return get_project_optional_dir("packages_dir",
+                                    join(get_project_core_dir(), "packages"))
+
+
+def get_project_cache_dir():
+    return get_project_optional_dir("cache_dir",
+                                    join(get_project_core_dir(), ".cache"))
+
+
+def get_project_workspace_dir():
     return get_project_optional_dir("workspace_dir",
                                     join(get_project_dir(), ".pio"))
 
 
-def get_projectbuild_dir(force=False):
+def get_project_build_dir(force=False):
     path = get_project_optional_dir("build_dir",
-                                    join(get_projectworkspace_dir(), "build"))
+                                    join(get_project_workspace_dir(), "build"))
     try:
         if not isdir(path):
             os.makedirs(path)
@@ -93,35 +137,35 @@ def get_projectbuild_dir(force=False):
     return path
 
 
-def get_projectlibdeps_dir():
+def get_project_libdeps_dir():
     return get_project_optional_dir(
-        "libdeps_dir", join(get_projectworkspace_dir(), "libdeps"))
+        "libdeps_dir", join(get_project_workspace_dir(), "libdeps"))
 
 
-def get_projectlib_dir():
+def get_project_lib_dir():
     return get_project_optional_dir("lib_dir", join(get_project_dir(), "lib"))
 
 
-def get_projectsrc_dir():
-    return get_project_optional_dir("src_dir", join(get_project_dir(), "src"))
-
-
-def get_projectinclude_dir():
+def get_project_include_dir():
     return get_project_optional_dir("include_dir",
                                     join(get_project_dir(), "include"))
 
 
-def get_projecttest_dir():
+def get_project_src_dir():
+    return get_project_optional_dir("src_dir", join(get_project_dir(), "src"))
+
+
+def get_project_test_dir():
     return get_project_optional_dir("test_dir", join(get_project_dir(),
                                                      "test"))
 
 
-def get_projectboards_dir():
+def get_project_boards_dir():
     return get_project_optional_dir("boards_dir",
                                     join(get_project_dir(), "boards"))
 
 
-def get_projectdata_dir():
+def get_project_data_dir():
     return get_project_optional_dir("data_dir", join(get_project_dir(),
                                                      "data"))
 
@@ -129,7 +173,7 @@ def get_projectdata_dir():
 def calculate_project_hash():
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
     chunks = [__version__]
-    for d in (get_projectsrc_dir(), get_projectlib_dir()):
+    for d in (get_project_src_dir(), get_project_lib_dir()):
         if not isdir(d):
             continue
         for root, _, files in walk(d):

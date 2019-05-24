@@ -45,16 +45,20 @@ KNOWN_PLATFORMIO_OPTIONS = [
     "extra_configs",
 
     # Dirs
-    "home_dir",
+    "core_dir",
+    "globallib_dir",
+    "platforms_dir",
+    "packages_dir",
+    "cache_dir",
     "workspace_dir",
-    "lib_dir",
+    "build_dir",
     "libdeps_dir",
+    "lib_dir",
     "include_dir",
     "src_dir",
-    "build_dir",
-    "data_dir",
     "test_dir",
-    "boards_dir"
+    "boards_dir",
+    "data_dir"
 ]
 
 KNOWN_ENV_OPTIONS = [

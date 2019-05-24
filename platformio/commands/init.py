@@ -26,8 +26,8 @@ from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
-    get_projectinclude_dir, get_projectlib_dir, get_projectsrc_dir,
-    get_projecttest_dir, is_platformio_project)
+    get_project_include_dir, get_project_lib_dir, get_project_src_dir,
+    get_project_test_dir, is_platformio_project)
 
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
@@ -155,10 +155,10 @@ def init_base_project(project_dir):
     ProjectConfig(join(project_dir, "platformio.ini")).save()
     with util.cd(project_dir):
         dir_to_readme = [
-            (get_projectsrc_dir(), None),
-            (get_projectinclude_dir(), init_include_readme),
-            (get_projectlib_dir(), init_lib_readme),
-            (get_projecttest_dir(), init_test_readme),
+            (get_project_src_dir(), None),
+            (get_project_include_dir(), init_include_readme),
+            (get_project_lib_dir(), init_lib_readme),
+            (get_project_test_dir(), init_test_readme),
         ]
         for (path, cb) in dir_to_readme:
             if isdir(path):

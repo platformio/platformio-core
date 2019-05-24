@@ -26,7 +26,7 @@ from platformio.commands.run import cli as cmd_run
 from platformio.compat import PY2, WINDOWS, get_file_contents
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
-    get_projectlib_dir, get_projectlibdeps_dir, get_projectsrc_dir)
+    get_project_lib_dir, get_project_libdeps_dir, get_project_src_dir)
 
 
 class ProjectGenerator(object):
@@ -91,7 +91,7 @@ class ProjectGenerator(object):
     def get_src_files(self):
         result = []
         with util.cd(self.project_dir):
-            for root, _, files in os.walk(get_projectsrc_dir()):
+            for root, _, files in os.walk(get_project_src_dir()):
                 for f in files:
                     result.append(relpath(join(root, f)))
         return result
@@ -142,10 +142,10 @@ class ProjectGenerator(object):
                 "src_files": self.get_src_files(),
                 "user_home_dir": abspath(expanduser("~")),
                 "project_dir": self.project_dir,
-                "project_src_dir": get_projectsrc_dir(),
-                "project_lib_dir": get_projectlib_dir(),
+                "project_src_dir": get_project_src_dir(),
+                "project_lib_dir": get_project_lib_dir(),
                 "project_libdeps_dir": join(
-                    get_projectlibdeps_dir(), self.env_name),
+                    get_project_libdeps_dir(), self.env_name),
                 "systype": util.get_systype(),
                 "platformio_path": self._fix_os_path(
                     sys.argv[0] if isfile(sys.argv[0])

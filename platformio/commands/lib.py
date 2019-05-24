@@ -27,7 +27,8 @@ from platformio.managers.lib import (LibraryManager, get_builtin_libs,
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
-    get_project_dir, get_projectlibdeps_dir, is_platformio_project)
+    get_project_dir, get_project_global_lib_dir, get_project_libdeps_dir,
+    is_platformio_project)
 
 try:
     from urllib.parse import quote
@@ -73,12 +74,12 @@ def cli(ctx, **options):
         return
     storage_dirs = list(options['storage_dir'])
     if options['global']:
-        storage_dirs.append(join(util.get_home_dir(), "lib"))
+        storage_dirs.append(get_project_global_lib_dir())
     if not storage_dirs:
         if is_platformio_project():
             storage_dirs = [get_project_dir()]
         elif is_ci():
-            storage_dirs = [join(util.get_home_dir(), "lib")]
+            storage_dirs = [get_project_global_lib_dir()]
             click.secho(
                 "Warning! Global library storage is used automatically. "
                 "Please use `platformio lib --global %s` command to remove "
@@ -87,7 +88,7 @@ def cli(ctx, **options):
 
     if not storage_dirs:
         raise exception.NotGlobalLibDir(get_project_dir(),
-                                        join(util.get_home_dir(), "lib"),
+                                        get_project_global_lib_dir(),
                                         ctx.invoked_subcommand)
 
     ctx.meta[CTX_META_PROJECT_ENVIRONMENTS_KEY] = options['environment']
@@ -99,7 +100,7 @@ def cli(ctx, **options):
             ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
             continue
         with util.cd(storage_dir):
-            libdeps_dir = get_projectlibdeps_dir()
+            libdeps_dir = get_project_libdeps_dir()
         config = ProjectConfig.get_instance(
             join(storage_dir, "platformio.ini"))
         config.validate(options['environment'])

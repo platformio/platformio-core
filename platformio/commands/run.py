@@ -28,8 +28,8 @@ from platformio.commands.platform import \
 from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
-    calculate_project_hash, find_project_dir_above, get_project_dir,
-    get_projectbuild_dir, get_projectlibdeps_dir)
+    calculate_project_hash, find_project_dir_above, get_project_build_dir,
+    get_project_dir, get_project_libdeps_dir)
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
 
@@ -71,12 +71,12 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf,
         # clean obsolete build dir
         if not disable_auto_clean:
             try:
-                _clean_build_dir(get_projectbuild_dir())
+                _clean_build_dir(get_project_build_dir())
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
                     "it manually to avoid build issues" %
-                    get_projectbuild_dir(force=True),
+                    get_project_build_dir(force=True),
                     fg="yellow")
 
         config = ProjectConfig.get_instance(
@@ -252,7 +252,7 @@ class EnvironmentProcessor(object):
 def _handle_legacy_libdeps(project_dir, config):
     legacy_libdeps_dir = join(project_dir, ".piolibdeps")
     if (not isdir(legacy_libdeps_dir)
-            or legacy_libdeps_dir == get_projectlibdeps_dir()):
+            or legacy_libdeps_dir == get_project_libdeps_dir()):
         return
     if not config.has_section("env"):
         config.add_section("env")
@@ -273,7 +273,7 @@ def _handle_legacy_libdeps(project_dir, config):
 def _autoinstall_libdeps(ctx, envname, libraries, verbose=False):
     if not libraries:
         return
-    libdeps_dir = join(get_projectlibdeps_dir(), envname)
+    libdeps_dir = join(get_project_libdeps_dir(), envname)
     ctx.meta.update({
         CTX_META_STORAGE_DIRS_KEY: [libdeps_dir],
         CTX_META_STORAGE_LIBDEPS_KEY: {

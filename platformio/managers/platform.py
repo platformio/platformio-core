@@ -29,7 +29,9 @@ from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
 from platformio.proc import (BuildAsyncPipe, copy_pythonpath_to_osenv,
                              exec_command, get_pythonexe_path)
-from platformio.project.helpers import get_projectboards_dir
+from platformio.project.helpers import (
+    get_project_boards_dir, get_project_core_dir, get_project_packages_dir,
+    get_project_platforms_dir)
 
 try:
     from urllib.parse import quote
@@ -48,9 +50,8 @@ class PlatformManager(BasePkgManager):
                 "{0}://dl.platformio.org/platforms/manifest.json".format(
                     "https" if app.get_setting("enable_ssl") else "http")
             ]
-        BasePkgManager.__init__(
-            self, package_dir or join(util.get_home_dir(), "platforms"),
-            repositories)
+        BasePkgManager.__init__(self, package_dir
+                                or get_project_platforms_dir(), repositories)
 
     @property
     def manifest_names(self):
@@ -156,7 +157,7 @@ class PlatformManager(BasePkgManager):
                     deppkgs[pkgname] = set()
                 deppkgs[pkgname].add(pkgmanifest['version'])
 
-        pm = PackageManager(join(util.get_home_dir(), "packages"))
+        pm = PackageManager(get_project_packages_dir())
         for manifest in pm.get_installed():
             if manifest['name'] not in names:
                 continue
@@ -481,8 +482,8 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         self.manifest_path = manifest_path
         self._manifest = util.load_json(manifest_path)
 
-        self.pm = PackageManager(
-            join(util.get_home_dir(), "packages"), self.package_repositories)
+        self.pm = PackageManager(get_project_packages_dir(),
+                                 self.package_repositories)
 
         self.silent = False
         self.verbose = False
@@ -579,8 +580,8 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
             self._BOARDS_CACHE[board_id] = config
 
         bdirs = [
-            get_projectboards_dir(),
-            join(util.get_home_dir(), "boards"),
+            get_project_boards_dir(),
+            join(get_project_core_dir(), "boards"),
             join(self.get_dir(), "boards"),
         ]
 

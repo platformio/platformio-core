@@ -27,6 +27,7 @@ import requests
 from platformio import exception, lockfile, util
 from platformio.compat import PY2, WINDOWS
 from platformio.proc import is_ci
+from platformio.project.helpers import get_project_core_dir
 
 
 def projects_dir_validate(projects_dir):
@@ -90,7 +91,7 @@ class State(object):
         self.path = path
         self.lock = lock
         if not self.path:
-            self.path = join(util.get_home_dir(), "appstate.json")
+            self.path = join(get_project_core_dir(), "appstate.json")
         self._state = {}
         self._prev_state = {}
         self._lockfile = None
@@ -111,7 +112,7 @@ class State(object):
                 with codecs.open(self.path, "w", encoding="utf8") as fp:
                     json.dump(self._state, fp)
             except IOError:
-                raise exception.HomeDirPermissionsError(util.get_home_dir())
+                raise exception.HomeDirPermissionsError(get_project_core_dir())
         self._unlock_state_file()
 
     def _lock_state_file(self):

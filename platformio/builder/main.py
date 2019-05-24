@@ -32,11 +32,8 @@ from SCons.Script import Variables  # pylint: disable=import-error
 from platformio import util
 from platformio.compat import PY2, path_to_unicode
 from platformio.proc import get_pythonexe_path
+from platformio.project import helpers as project_helpers
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_dir, get_projectbuild_dir, get_projectdata_dir,
-    get_projectinclude_dir, get_projectlib_dir, get_projectlibdeps_dir,
-    get_projectsrc_dir, get_projecttest_dir, get_projectworkspace_dir)
 
 AllowSubstExceptions(NameError)
 
@@ -108,23 +105,23 @@ DEFAULT_ENV_OPTIONS = dict(
     PIOVARIABLES=list(commonvars.keys()),
     ENV=environ,
     UNIX_TIME=int(time()),
-    PIOHOME_DIR=util.get_home_dir(),
-    PROJECT_DIR=get_project_dir(),
-    PROJECTWORKSPACE_DIR=get_projectworkspace_dir(),
-    PROJECTLIBDEPS_DIR=get_projectlibdeps_dir(),
-    PROJECTINCLUDE_DIR=get_projectinclude_dir(),
-    PROJECTSRC_DIR=get_projectsrc_dir(),
-    PROJECTTEST_DIR=get_projecttest_dir(),
-    PROJECTDATA_DIR=get_projectdata_dir(),
-    PROJECTBUILD_DIR=get_projectbuild_dir(),
+    PROJECT_DIR=project_helpers.get_project_dir(),
+    PROJECTCORE_DIR=project_helpers.get_project_core_dir(),
+    PROJECTWORKSPACE_DIR=project_helpers.get_project_workspace_dir(),
+    PROJECTLIBDEPS_DIR=project_helpers.get_project_libdeps_dir(),
+    PROJECTINCLUDE_DIR=project_helpers.get_project_include_dir(),
+    PROJECTSRC_DIR=project_helpers.get_project_src_dir(),
+    PROJECTTEST_DIR=project_helpers.get_project_test_dir(),
+    PROJECTDATA_DIR=project_helpers.get_project_data_dir(),
+    PROJECTBUILD_DIR=project_helpers.get_project_build_dir(),
     BUILD_DIR=join("$PROJECTBUILD_DIR", "$PIOENV"),
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     BUILDTEST_DIR=join("$BUILD_DIR", "test"),
     LIBPATH=["$BUILD_DIR"],
     LIBSOURCE_DIRS=[
-        get_projectlib_dir(),
+        project_helpers.get_project_lib_dir(),
         join("$PROJECTLIBDEPS_DIR", "$PIOENV"),
-        join("$PIOHOME_DIR", "lib")
+        project_helpers.get_project_global_lib_dir()
     ],
     PROGNAME="program",
     PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
