@@ -42,6 +42,7 @@ PlatformIO 3.0
 
 * Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/en/latest/faq.html#platformio-udev-rules>`__ (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
 * Fixed an issue when ``-U`` in ``build_flags`` does not remove macro previously defined via ``-D`` flag (`issue #2508 <https://github.com/platformio/platformio-core/issues/2508>`_)
+* Fixed an issue for Project Generator when include path search order is inconsistent to what passed to the compiler (`issue #2509 <https://github.com/platformio/platformio-core/issues/2509>`_)
 
 3.6.7 (2019-04-23)
 ~~~~~~~~~~~~~~~~~~

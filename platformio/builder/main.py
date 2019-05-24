@@ -26,6 +26,7 @@ from SCons.Script import AllowSubstExceptions  # pylint: disable=import-error
 from SCons.Script import AlwaysBuild  # pylint: disable=import-error
 from SCons.Script import Default  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
+from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import util
@@ -216,8 +217,11 @@ if "envdump" in COMMAND_LINE_TARGETS:
 
 if "idedata" in COMMAND_LINE_TARGETS:
     try:
+        Import("projenv")
         print("\n%s\n" % path_to_unicode(
-            json.dumps(env.DumpIDEData(), ensure_ascii=False)))
+            json.dumps(
+                env.DumpIDEData(projenv),  # pylint: disable=undefined-variable
+                ensure_ascii=False)))
         env.Exit(0)
     except UnicodeDecodeError:
         sys.stderr.write(

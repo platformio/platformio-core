@@ -832,7 +832,9 @@ class ProjectAsLibBuilder(LibBuilderBase):
         project_include_dir = self.env.subst("$PROJECTINCLUDE_DIR")
         if isdir(project_include_dir):
             include_dirs.append(project_include_dir)
-        include_dirs.extend(LibBuilderBase.get_include_dirs(self))
+        for include_dir in LibBuilderBase.get_include_dirs(self):
+            if include_dir not in include_dirs:
+                include_dirs.append(include_dir)
         return include_dirs
 
     def get_search_files(self):
