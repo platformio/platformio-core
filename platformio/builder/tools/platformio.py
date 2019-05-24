@@ -198,6 +198,8 @@ def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
     if undefines:
         for undef in undefines:
             env['CCFLAGS'].remove(undef)
+            if undef[2:] in env['CPPDEFINES']:
+                env['CPPDEFINES'].remove(undef[2:])
         env.Append(_CPPDEFFLAGS=" %s" % " ".join(undefines))
 
 

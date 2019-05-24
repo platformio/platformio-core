@@ -33,6 +33,7 @@ PlatformIO 4.0
 * **Miscellaneous**
 
   - Deprecated ``--only-check`` PlatformIO Core CLI option for "update" sub-commands, please use ``--dry-run`` instead
+  - Fixed an issue when ``-U`` in ``build_flags`` does not remove macro previously defined via ``-D`` flag (`issue #2508 <https://github.com/platformio/platformio-core/issues/2508>`_)
 
 PlatformIO 3.0
 --------------
