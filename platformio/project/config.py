@@ -86,6 +86,7 @@ KNOWN_ENV_OPTIONS = [
     "monitor_speed",
     "monitor_rts",
     "monitor_dtr",
+    "monitor_flags",
 
     # Library
     "lib_deps",

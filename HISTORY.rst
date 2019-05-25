@@ -10,11 +10,12 @@ PlatformIO 4.0
 * **Project Management**
 
   - Unified workspace storage (`workspace_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#workspace-dir>`__ -> ``.pio``) for PlatformIO Build System, Library Manager, and other internal services (`issue #1778 <https://github.com/platformio/platformio-core/issues/1778>`_)
+  - Switched to workspace ``.pio/build`` folder for build artifacts instead of ``.pioenvs``
   - Share common (global) options between build environments using ``[env]`` section in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ (`issue #1643 <https://github.com/platformio/platformio-core/issues/1643>`_)
   - Include external configuration files in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
   - Override default `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with a custom using ``-c, --project-conf`` option for `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__, `platformio debug <http://docs.platformio.org/page/userguide/cmd_debug.html>`__, or `platformio test <http://docs.platformio.org/page/userguide/cmd_test.html>`__ commands (`issue #1913 <https://github.com/platformio/platformio-core/issues/1913>`_)
   - Custom project ``***_dir`` options declared in "platformio" section of `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ have higher priority than `Environment variables <http://docs.platformio.org/page/envvars.html>`__
-  - Use workspace ``.pio/build`` folder for build artifacts instead of ``.pioenvs``
+  - Added new `monitor_flags <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-flags>`__ option to `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ which allows passing extra flags and options to `platformio device monitor <http://docs.platformio.org/page/userguide/cmd_device.html#cmd-device-monitor>`__ command (`issue #2165 <https://github.com/platformio/platformio-core/issues/2165>`_)
 
 * **Library Management**
 
@@ -22,7 +23,7 @@ PlatformIO 4.0
   - Install all project dependencies declared via `lib_deps <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__ option using a simple `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__ command (`issue #2147 <https://github.com/platformio/platformio-core/issues/2147>`_)
   - Use isolated library dependency storage per project build environment (`issue #1696 <https://github.com/platformio/platformio-core/issues/1696>`_)
   - Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
-  - Use workspace ``.pio/libdeps`` folder for project dependencies instead of ``.piolibdeps``
+  - Switched to workspace ``.pio/libdeps`` folder for project dependencies instead of ``.piolibdeps``
 
 * **Infrastructure**
 
@@ -43,7 +44,7 @@ PlatformIO 3.0
 
 * Support custom CMake configuration for CLion IDE using ``CMakeListsUser.txt`` file
 * Fixed an issue with hardcoded C stadard version when generating project for CLion IDE (`issue #2527 <https://github.com/platformio/platformio-core/issues/2527>`_)
-* Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/en/latest/faq.html#platformio-udev-rules>`__ (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
+* Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__ (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
 * Fixed an issue when ``-U`` in ``build_flags`` does not remove macro previously defined via ``-D`` flag (`issue #2508 <https://github.com/platformio/platformio-core/issues/2508>`_)
 * Fixed an issue for Project Generator when include path search order is inconsistent to what passed to the compiler (`issue #2509 <https://github.com/platformio/platformio-core/issues/2509>`_)
 

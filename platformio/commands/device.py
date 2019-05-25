@@ -162,16 +162,20 @@ def device_list(  # pylint: disable=too-many-branches
     "--environment",
     help="Load configuration from `platformio.ini` and specified environment")
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
+    custom_monitor_flags = []
     try:
-        monitor_options = get_project_options(kwargs['project_dir'],
-                                              kwargs['environment'])
-        if monitor_options:
+        env_options = get_project_options(kwargs['project_dir'],
+                                          kwargs['environment'])
+        if "monitor_flags" in env_options:
+            custom_monitor_flags = ProjectConfig.parse_multi_values(
+                env_options['monitor_flags'])
+        if env_options:
             for k in ("port", "speed", "rts", "dtr"):
                 k2 = "monitor_%s" % k
                 if k == "speed":
                     k = "baud"
-                if kwargs[k] is None and k2 in monitor_options:
-                    kwargs[k] = monitor_options[k2]
+                if kwargs[k] is None and k2 in env_options:
+                    kwargs[k] = env_options[k2]
                     if k != "port":
                         kwargs[k] = int(kwargs[k])
     except exception.NotPlatformIOProject:
@@ -182,11 +186,13 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         if len(ports) == 1:
             kwargs['port'] = ports[0]['port']
 
-    sys.argv = ["monitor"]
+    sys.argv = ["monitor"] + custom_monitor_flags
     for k, v in kwargs.items():
         if k in ("port", "baud", "rts", "dtr", "environment", "project_dir"):
             continue
         k = "--" + k.replace("_", "-")
+        if k in custom_monitor_flags:
+            continue
         if isinstance(v, bool):
             if v:
                 sys.argv.append(k)
@@ -195,6 +201,8 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
                 sys.argv.extend([k, i])
         else:
             sys.argv.extend([k, str(v)])
+
+    print(sys.argv)
 
     try:
         miniterm.main(
