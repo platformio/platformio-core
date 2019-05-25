@@ -14,6 +14,7 @@
 
 import json
 import sys
+from fnmatch import fnmatch
 from os import getcwd
 from os.path import join
 
@@ -202,7 +203,11 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         else:
             sys.argv.extend([k, str(v)])
 
-    print(sys.argv)
+    if kwargs['port'] and (set(["*", "?", "[", "]"]) & set(kwargs['port'])):
+        for item in util.get_serial_ports():
+            if fnmatch(item['port'], kwargs['port']):
+                kwargs['port'] = item['port']
+                break
 
     try:
         miniterm.main(

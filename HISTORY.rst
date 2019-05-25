@@ -7,15 +7,16 @@ PlatformIO 4.0
 4.0.0 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* **Project Management**
+* **Project Configuration**
 
   - Unified workspace storage (`workspace_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#workspace-dir>`__ -> ``.pio``) for PlatformIO Build System, Library Manager, and other internal services (`issue #1778 <https://github.com/platformio/platformio-core/issues/1778>`_)
   - Switched to workspace ``.pio/build`` folder for build artifacts instead of ``.pioenvs``
-  - Share common (global) options between build environments using ``[env]`` section in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ (`issue #1643 <https://github.com/platformio/platformio-core/issues/1643>`_)
-  - Include external configuration files in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
+  - Share common (global) options between project environments using `[env] <http://docs.platformio.org/page/projectconf/section_env.html#global-scope-env>`__ section (`issue #1643 <https://github.com/platformio/platformio-core/issues/1643>`_)
+  - Include external configuration files with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
   - Override default `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with a custom using ``-c, --project-conf`` option for `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__, `platformio debug <http://docs.platformio.org/page/userguide/cmd_debug.html>`__, or `platformio test <http://docs.platformio.org/page/userguide/cmd_test.html>`__ commands (`issue #1913 <https://github.com/platformio/platformio-core/issues/1913>`_)
-  - Custom project ``***_dir`` options declared in "platformio" section of `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ have higher priority than `Environment variables <http://docs.platformio.org/page/envvars.html>`__
-  - Added new `monitor_flags <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-flags>`__ option to `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ which allows passing extra flags and options to `platformio device monitor <http://docs.platformio.org/page/userguide/cmd_device.html#cmd-device-monitor>`__ command (`issue #2165 <https://github.com/platformio/platformio-core/issues/2165>`_)
+  - Custom project ``***_dir`` options declared in `platformio <http://docs.platformio.org/page/projectconf/section_platformio.html>`__ section have higher priority than `Environment variables <http://docs.platformio.org/page/envvars.html>`__
+  - Added support for Unix shell-style wildcards for `monitor_port <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-port>`__ option (`issue #2541 <https://github.com/platformio/platformio-core/issues/2541>`_)
+  - Added new `monitor_flags <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-flags>`__ option which allows passing extra flags and options to `platformio device monitor <http://docs.platformio.org/page/userguide/cmd_device.html#cmd-device-monitor>`__ command (`issue #2165 <https://github.com/platformio/platformio-core/issues/2165>`_)
 
 * **Library Management**
 
