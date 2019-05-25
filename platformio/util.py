@@ -47,6 +47,8 @@ from platformio.project.helpers import \
     get_project_data_dir as get_projectdata_dir
 from platformio.project.helpers import get_project_dir
 from platformio.project.helpers import \
+    get_project_include_dir as get_projectinclude_dir
+from platformio.project.helpers import \
     get_project_lib_dir as get_projectlib_dir
 from platformio.project.helpers import \
     get_project_libdeps_dir as get_projectlibdeps_dir
