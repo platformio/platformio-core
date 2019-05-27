@@ -14,7 +14,7 @@
 
 import random
 from glob import glob
-from os import listdir, walk
+from os import getenv, listdir, walk
 from os.path import dirname, getsize, isdir, isfile, join, normpath
 
 import pytest
@@ -54,11 +54,16 @@ def pytest_generate_tests(metafunc):
                 continue
             platform_examples.append(root)
 
-        # test random 3 examples
         random.shuffle(platform_examples)
-        project_dirs.extend(platform_examples[:3])
-    project_dirs.sort()
-    metafunc.parametrize("pioproject_dir", project_dirs)
+
+        if getenv("APPVEYOR"):
+            # use only 1 example for AppVeyor CI
+            project_dirs.append(platform_examples[0])
+        else:
+            # test random 3 examples
+            project_dirs.extend(platform_examples[:3])
+
+    metafunc.parametrize("pioproject_dir", sorted(project_dirs))
 
 
 @pytest.mark.examples
