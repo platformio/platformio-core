@@ -17,6 +17,7 @@ PlatformIO 4.0
   - Custom project ``***_dir`` options declared in `platformio <http://docs.platformio.org/page/projectconf/section_platformio.html>`__ section have higher priority than `Environment variables <http://docs.platformio.org/page/envvars.html>`__
   - Added support for Unix shell-style wildcards for `monitor_port <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-port>`__ option (`issue #2541 <https://github.com/platformio/platformio-core/issues/2541>`_)
   - Added new `monitor_flags <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-flags>`__ option which allows passing extra flags and options to `platformio device monitor <http://docs.platformio.org/page/userguide/cmd_device.html#cmd-device-monitor>`__ command (`issue #2165 <https://github.com/platformio/platformio-core/issues/2165>`_)
+  - Fixed an issue when ``-U`` in ``build_flags`` does not remove macro previously defined via ``-D`` flag (`issue #2508 <https://github.com/platformio/platformio-core/issues/2508>`_)
 
 * **Library Management**
 
@@ -33,22 +34,20 @@ PlatformIO 4.0
   - Added options to override default locations used by PlatformIO Core (`core_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#core-dir>`__, `globallib_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#globallib-dir>`__, `platforms_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#platforms-dir>`__, `packages_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#packages-dir>`__, `cache_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#cache-dir>`__) (`issue #1615 <https://github.com/platformio/platformio-core/issues/1615>`_)
   - Removed line-buffering from `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__ command which was leading to omitting progress bar from upload tools (`issue #856 <https://github.com/platformio/platformio-core/issues/856>`_)
 
+* **Integration**
+
+  - Support custom CMake configuration for CLion IDE using ``CMakeListsUser.txt`` file
+  - Fixed an issue with hardcoded C standard version when generating project for CLion IDE (`issue #2527 <https://github.com/platformio/platformio-core/issues/2527>`_)
+  - Fixed an issue with Project Generator when include path search order is inconsistent to what passed to the compiler (`issue #2509 <https://github.com/platformio/platformio-core/issues/2509>`_)
+
 * **Miscellaneous**
 
   - Deprecated ``--only-check`` PlatformIO Core CLI option for "update" sub-commands, please use ``--dry-run`` instead
+  - Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__ (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
+  - Fixed an issue when package cache (Library Manager) expires too fast (`issue #2559 <https://github.com/platformio/platformio-core/issues/2559>`_)
 
 PlatformIO 3.0
 --------------
-
-3.6.8 (2019-??-??)
-~~~~~~~~~~~~~~~~~~
-
-* Support custom CMake configuration for CLion IDE using ``CMakeListsUser.txt`` file
-* Fixed an issue with hardcoded C stadard version when generating project for CLion IDE (`issue #2527 <https://github.com/platformio/platformio-core/issues/2527>`_)
-* Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__ (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
-* Fixed an issue when ``-U`` in ``build_flags`` does not remove macro previously defined via ``-D`` flag (`issue #2508 <https://github.com/platformio/platformio-core/issues/2508>`_)
-* Fixed an issue for Project Generator when include path search order is inconsistent to what passed to the compiler (`issue #2509 <https://github.com/platformio/platformio-core/issues/2509>`_)
-* Fixed an issue when package cache (Library Manager) expires too fast (`issue #2559 <https://github.com/platformio/platformio-core/issues/2559>`_)
 
 3.6.7 (2019-04-23)
 ~~~~~~~~~~~~~~~~~~
