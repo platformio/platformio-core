@@ -118,6 +118,15 @@ def shutdown_piohome_servers():
         port += 1
 
 
+def inject_contrib_pysite():
+    from site import addsitedir
+    contrib_pysite_dir = get_core_package_dir("contrib-pysite")
+    if contrib_pysite_dir in sys.path:
+        return
+    addsitedir(contrib_pysite_dir)
+    sys.path.insert(0, contrib_pysite_dir)
+
+
 def pioplus_call(args, **kwargs):
     if WINDOWS and sys.version_info < (2, 7, 6):
         raise exception.PlatformioException(

@@ -274,11 +274,11 @@ def lib_list(ctx, json_output):
         items = lm.get_installed()
         if json_output:
             json_result[storage_dir] = items
-        else:
+        elif items:
             for item in sorted(items, key=lambda i: i['name']):
                 print_lib_item(item)
-            else:
-                click.echo("No items found")
+        else:
+            click.echo("No items found")
 
     if json_output:
         return click.echo(
