@@ -29,6 +29,7 @@ from platformio.compat import get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import get_project_libdeps_dir
 
 
 class ProjectRPC(object):
@@ -37,9 +38,10 @@ class ProjectRPC(object):
     def _get_projects(project_dirs=None):
 
         def _get_project_data(project_dir):
-            data = {"boards": [], "libExtraDirs": []}
+            data = {"boards": [], "envLibdepsDirs": [], "libExtraDirs": []}
             config = ProjectConfig(join(project_dir, "platformio.ini"))
             config.validate(validate_options=False)
+            libdeps_dir = get_project_libdeps_dir()
 
             if config.has_section("platformio") and \
                     config.has_option("platformio", "lib_extra_dirs"):
@@ -50,6 +52,7 @@ class ProjectRPC(object):
             for section in config.sections():
                 if not section.startswith("env:"):
                     continue
+                data['envLibdepsDirs'].append(join(libdeps_dir, section[4:]))
                 if config.has_option(section, "board"):
                     data['boards'].append(config.get(section, "board"))
                 if config.has_option(section, "lib_extra_dirs"):
@@ -57,17 +60,12 @@ class ProjectRPC(object):
                         util.parse_conf_multi_values(
                             config.get(section, "lib_extra_dirs")))
 
-            # resolve libExtraDirs paths
-            with util.cd(project_dir):
-                data['libExtraDirs'] = [
+            # skip non existing folders and resolve full path
+            for key in ("envLibdepsDirs", "libExtraDirs"):
+                data[key] = [
                     expanduser(d) if d.startswith("~") else realpath(d)
-                    for d in data['libExtraDirs']
+                    for d in data[key] if isdir(d)
                 ]
-
-            # skip non existing folders
-            data['libExtraDirs'] = [
-                d for d in data['libExtraDirs'] if isdir(d)
-            ]
 
             return data
 
@@ -83,7 +81,8 @@ class ProjectRPC(object):
             data = {}
             boards = []
             try:
-                data = _get_project_data(project_dir)
+                with util.cd(project_dir):
+                    data = _get_project_data(project_dir)
             except exception.PlatformIOProjectException:
                 continue
 
@@ -104,6 +103,10 @@ class ProjectRPC(object):
                 int(getmtime(project_dir)),
                 "boards":
                 boards,
+                "envLibStorages": [{
+                    "name": basename(d),
+                    "path": d
+                } for d in data.get("envLibdepsDirs", [])],
                 "extraLibStorages": [{
                     "name": _path_to_name(d),
                     "path": d
