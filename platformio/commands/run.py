@@ -314,11 +314,12 @@ def _clean_build_dir(build_dir):
         f.write(proj_hash)
 
 
-def print_header(label, is_error=False):
+def print_header(label, is_error=False, fg=None):
     terminal_width, _ = click.get_terminal_size()
     width = len(click.unstyle(label))
     half_line = "=" * int((terminal_width - width - 2) / 2)
-    click.echo("%s %s %s" % (half_line, label, half_line), err=is_error)
+    click.secho(
+        "%s %s %s" % (half_line, label, half_line), fg=fg, err=is_error)
 
 
 def print_summary(results, start_time):

@@ -148,7 +148,8 @@ def cli(  # pylint: disable=redefined-builtin
     if without_testing:
         return
 
-    passed = True
+    passed_nums = 0
+    failed_nums = 0
     testname_max_len = max([len(r[1]) for r in results])
     envname_max_len = max([len(click.style(r[2], fg="cyan")) for r in results])
 
@@ -157,12 +158,14 @@ def cli(  # pylint: disable=redefined-builtin
 
     for result in results:
         status, testname, envname = result
-        status_str = click.style("PASSED", fg="green")
         if status is False:
-            passed = False
+            failed_nums += 1
             status_str = click.style("FAILED", fg="red")
         elif status is None:
             status_str = click.style("IGNORED", fg="yellow")
+        else:
+            passed_nums += 1
+            status_str = click.style("PASSED", fg="green")
 
         click.echo(
             ("test/{:<%d} > {:<%d}\t[{}]" %
@@ -171,12 +174,13 @@ def cli(  # pylint: disable=redefined-builtin
             err=status is False)
 
     print_header(
-        "[%s] Took %.2f seconds" % (
-            (click.style("PASSED", fg="green", bold=True) if passed else
-             click.style("FAILED", fg="red", bold=True)), time() - start_time),
-        is_error=not passed)
+        "%s%d passed in %.2f seconds"
+        % ("%d failed, " % failed_nums if failed_nums else "", passed_nums,
+           time() - start_time),
+        is_error=failed_nums,
+        fg="red" if failed_nums else "green")
 
-    if not passed:
+    if failed_nums:
         raise exception.ReturnErrorCode(1)
 
 
