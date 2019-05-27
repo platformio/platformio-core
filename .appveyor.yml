@@ -11,7 +11,7 @@ environment:
 install:
   - cmd: git submodule update --init --recursive
   - cmd: SET PATH=C:\MinGW\bin;%PATH%
-  - cmd: pip install tox
+  - cmd: pip install --force-reinstall tox
 
 test_script:
   - cmd: tox
