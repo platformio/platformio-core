@@ -41,8 +41,6 @@ except ImportError:
 
 class PlatformManager(BasePkgManager):
 
-    FILE_CACHE_VALID = None  # disable platform download caching
-
     def __init__(self, package_dir=None, repositories=None):
         if not repositories:
             repositories = [

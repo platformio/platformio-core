@@ -31,6 +31,8 @@ from platformio.project.helpers import get_project_global_lib_dir
 
 class LibraryManager(BasePkgManager):
 
+    FILE_CACHE_VALID = "30d"  # 1 month
+
     def __init__(self, package_dir=None):
         if not package_dir:
             package_dir = get_project_global_lib_dir()

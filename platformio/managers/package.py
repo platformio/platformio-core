@@ -139,8 +139,8 @@ class PkgInstallerMixin(object):
     SRC_MANIFEST_NAME = ".piopkgmanager.json"
     TMP_FOLDER_PREFIX = "_tmp_installing-"
 
-    FILE_CACHE_VALID = "1m"  # 1 month
-    FILE_CACHE_MAX_SIZE = 1024 * 1024
+    FILE_CACHE_VALID = None  # for example, 1 week = "7d"
+    FILE_CACHE_MAX_SIZE = 1024 * 1024 * 50  # 50 Mb
 
     MEMORY_CACHE = {}
 
@@ -842,8 +842,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
 
 class PackageManager(BasePkgManager):
-
-    FILE_CACHE_VALID = None  # disable package caching
 
     @property
     def manifest_names(self):
