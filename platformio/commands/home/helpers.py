@@ -23,6 +23,7 @@ from twisted.internet import reactor  # pylint: disable=import-error
 from twisted.internet import threads  # pylint: disable=import-error
 
 from platformio import util
+from platformio.proc import where_is_program
 
 
 class AsyncSession(requests.Session):
@@ -49,7 +50,7 @@ def requests_session():
 
 @util.memoized()
 def get_core_fullpath():
-    return util.where_is_program(
+    return where_is_program(
         "platformio" + (".exe" if "windows" in util.get_systype() else ""))
 
 

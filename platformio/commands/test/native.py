@@ -16,6 +16,8 @@ from os.path import join
 
 from platformio import util
 from platformio.commands.test.processor import TestProcessorBase
+from platformio.proc import LineBufferedAsyncPipe
+from platformio.project.helpers import get_project_build_dir
 
 
 class NativeTestProcessor(TestProcessorBase):
@@ -31,9 +33,10 @@ class NativeTestProcessor(TestProcessorBase):
 
     def run(self):
         with util.cd(self.options['project_dir']):
-            build_dir = util.get_projectbuild_dir()
-        result = util.exec_command([join(build_dir, self.env_name, "program")],
-                                   stdout=util.AsyncPipe(self.on_run_out),
-                                   stderr=util.AsyncPipe(self.on_run_out))
+            build_dir = get_project_build_dir()
+        result = util.exec_command(
+            [join(build_dir, self.env_name, "program")],
+            stdout=LineBufferedAsyncPipe(self.on_run_out),
+            stderr=LineBufferedAsyncPipe(self.on_run_out))
         assert "returncode" in result
         return result['returncode'] == 0 and not self._run_failed

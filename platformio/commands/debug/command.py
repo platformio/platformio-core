@@ -24,6 +24,7 @@ from platformio import exception, util
 from platformio.commands.debug import helpers
 from platformio.managers.core import inject_contrib_pysite
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import is_platformio_project
 
 
 @click.command(
@@ -66,7 +67,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
                 ('~"%s\\n"' if helpers.is_mi_mode(__unprocessed) else "%s") %
                 line)
 
-    if not util.is_platformio_project(project_dir) and os.getenv("CWD"):
+    if not is_platformio_project(project_dir) and os.getenv("CWD"):
         project_dir = os.getenv("CWD")
 
     with util.cd(project_dir):

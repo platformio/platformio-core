@@ -96,8 +96,7 @@ class LineBufferedAsyncPipe(AsyncPipeBase):
     def do_reading(self):
         for line in iter(self._pipe_reader.readline, ""):
             self._buffer += line
-            # FIXME: Remove striping
-            self.line_callback(line.strip())
+            self.line_callback(line)
         self._pipe_reader.close()
 
 

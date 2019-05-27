@@ -349,14 +349,3 @@ def print_summary(results, start_time):
             (click.style("SUCCESS", fg="green", bold=True) if successed else
              click.style("ERROR", fg="red", bold=True)), time() - start_time),
         is_error=not successed)
-
-
-def check_project_envs(config, environments=None):  # FIXME: Remove
-    if not config.sections():
-        raise exception.ProjectEnvsNotAvailable()
-
-    known = set(s[4:] for s in config.sections() if s.startswith("env:"))
-    unknown = set(environments or []) - known
-    if unknown:
-        raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
-    return True

@@ -19,11 +19,13 @@ from os.path import expanduser, isfile, join
 
 from platformio import __version__, app, exception, util
 from platformio.compat import path_to_unicode
+from platformio.project.helpers import (get_project_core_dir,
+                                        is_platformio_project)
 
 
 class AppRPC(object):
 
-    APPSTATE_PATH = join(util.get_home_dir(), "homestate.json")
+    APPSTATE_PATH = join(get_project_core_dir(), "homestate.json")
 
     @staticmethod
     def load_state():
@@ -67,7 +69,7 @@ class AppRPC(object):
         # skip non-existing recent projects
         storage['recentProjects'] = [
             p for p in storage.get("recentProjects", [])
-            if util.is_platformio_project(p)
+            if is_platformio_project(p)
         ]
 
         state['storage'] = storage

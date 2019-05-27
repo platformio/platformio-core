@@ -20,10 +20,9 @@ from os.path import abspath, isfile, join
 
 from SCons.Defaults import processDefines  # pylint: disable=import-error
 
-from platformio import util
 from platformio.compat import glob_escape
 from platformio.managers.core import get_core_package_dir
-from platformio.proc import exec_command
+from platformio.proc import exec_command, where_is_program
 
 
 def _dump_includes(env, projenv):
@@ -151,11 +150,11 @@ def DumpIDEData(env, projenv):
         "cxx_flags":
         env.subst(LINTCXXCOM),
         "cc_path":
-        util.where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
+        where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
         "cxx_path":
-        util.where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
+        where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
         "gdb_path":
-        util.where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
+        where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
         "prog_path":
         env.subst("$PROG_PATH"),
         "flash_extra_images": [{

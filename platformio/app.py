@@ -27,7 +27,8 @@ import requests
 from platformio import exception, lockfile, util
 from platformio.compat import PY2, WINDOWS
 from platformio.proc import is_ci
-from platformio.project.helpers import get_project_core_dir
+from platformio.project.helpers import (get_project_cache_dir,
+                                        get_project_core_dir)
 
 
 def projects_dir_validate(projects_dir):
@@ -139,7 +140,7 @@ class ContentCache(object):
         self._db_path = None
         self._lockfile = None
 
-        self.cache_dir = cache_dir or util.get_cache_dir()
+        self.cache_dir = cache_dir or get_project_cache_dir()
         self._db_path = join(self.cache_dir, "db.data")
 
     def __enter__(self):

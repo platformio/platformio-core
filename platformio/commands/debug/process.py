@@ -17,9 +17,9 @@ import os
 import click
 from twisted.internet import protocol  # pylint: disable=import-error
 
-from platformio import util
 from platformio.commands.debug import helpers
 from platformio.compat import string_types
+from platformio.project.helpers import get_project_core_dir
 
 LOG_FILE = None
 
@@ -29,7 +29,8 @@ class BaseProcess(protocol.ProcessProtocol, object):
     STDOUT_CHUNK_SIZE = 2048
 
     COMMON_PATTERNS = {
-        "PLATFORMIO_HOME_DIR": helpers.escape_path(util.get_home_dir()),
+        "PLATFORMIO_HOME_DIR": helpers.escape_path(get_project_core_dir()),
+        "PLATFORMIO_CORE_DIR": helpers.escape_path(get_project_core_dir()),
         "PYTHONEXE": os.getenv("PYTHONEXEPATH", "")
     }
 

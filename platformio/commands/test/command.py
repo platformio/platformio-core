@@ -26,6 +26,7 @@ from platformio.commands.run import print_header
 from platformio.commands.test.embedded import EmbeddedTestProcessor
 from platformio.commands.test.native import NativeTestProcessor
 from platformio.project.config import ProjectConfig
+from platformio.project.helpers import get_project_test_dir
 
 
 @click.command("test", short_help="Unit Testing")
@@ -84,7 +85,7 @@ def cli(  # pylint: disable=redefined-builtin
         project_conf, without_building, without_uploading, without_testing,
         no_reset, monitor_rts, monitor_dtr, verbose):
     with util.cd(project_dir):
-        test_dir = util.get_projecttest_dir()
+        test_dir = get_project_test_dir()
         if not isdir(test_dir):
             raise exception.TestDirNotExists(test_dir)
         test_names = get_test_names(test_dir)
@@ -147,10 +148,13 @@ def cli(  # pylint: disable=redefined-builtin
     if without_testing:
         return
 
-    click.echo()
-    print_header("[%s]" % click.style("TEST SUMMARY"))
-
     passed = True
+    testname_max_len = max([len(r[1]) for r in results])
+    envname_max_len = max([len(click.style(r[2], fg="cyan")) for r in results])
+
+    print_header("[%s]" % click.style("TEST SUMMARY"))
+    click.echo()
+
     for result in results:
         status, testname, envname = result
         status_str = click.style("PASSED", fg="green")
@@ -161,9 +165,9 @@ def cli(  # pylint: disable=redefined-builtin
             status_str = click.style("IGNORED", fg="yellow")
 
         click.echo(
-            "test/%s/env:%s\t[%s]" % (click.style(testname, fg="yellow"),
-                                      click.style(envname, fg="cyan"),
-                                      status_str),
+            ("test/{:<%d} > {:<%d}\t[{}]" %
+             (testname_max_len, envname_max_len)).format(
+                 testname, click.style(envname, fg="cyan"), status_str),
             err=status is False)
 
     print_header(

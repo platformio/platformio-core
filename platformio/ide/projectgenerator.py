@@ -24,6 +24,7 @@ from click.testing import CliRunner
 from platformio import exception, util
 from platformio.commands.run import cli as cmd_run
 from platformio.compat import PY2, WINDOWS, get_file_contents
+from platformio.proc import where_is_program
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
     get_project_lib_dir, get_project_libdeps_dir, get_project_src_dir)
@@ -149,7 +150,7 @@ class ProjectGenerator(object):
                 "systype": util.get_systype(),
                 "platformio_path": self._fix_os_path(
                     sys.argv[0] if isfile(sys.argv[0])
-                    else util.where_is_program("platformio")),
+                    else where_is_program("platformio")),
                 "env_pathsep": os.pathsep,
                 "env_path": self._fix_os_path(os.getenv("PATH"))
             })  # yapf: disable

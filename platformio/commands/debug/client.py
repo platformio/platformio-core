@@ -30,6 +30,7 @@ from platformio.commands.debug import helpers, initcfgs
 from platformio.commands.debug.process import BaseProcess
 from platformio.commands.debug.server import DebugServer
 from platformio.compat import PY2
+from platformio.project.helpers import get_project_cache_dir
 from platformio.telemetry import MeasurementProtocol
 
 LOG_FILE = None
@@ -49,10 +50,10 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self._debug_server = DebugServer(debug_options, env_options)
         self._session_id = None
 
-        if not isdir(util.get_cache_dir()):
-            os.makedirs(util.get_cache_dir())
+        if not isdir(get_project_cache_dir()):
+            os.makedirs(get_project_cache_dir())
         self._gdbsrc_dir = mkdtemp(
-            dir=util.get_cache_dir(), prefix=".piodebug-")
+            dir=get_project_cache_dir(), prefix=".piodebug-")
 
         self._target_is_run = False
         self._last_server_activity = 0

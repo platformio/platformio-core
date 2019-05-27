@@ -20,6 +20,7 @@ from twisted.internet import reactor  # pylint: disable=import-error
 from platformio import exception, util
 from platformio.commands.debug import helpers
 from platformio.commands.debug.process import BaseProcess
+from platformio.proc import where_is_program
 
 
 class DebugServer(BaseProcess):
@@ -47,7 +48,7 @@ class DebugServer(BaseProcess):
             server_executable = server_executable + ".exe"
 
         if not isfile(server_executable):
-            server_executable = util.where_is_program(server_executable)
+            server_executable = where_is_program(server_executable)
         if not isfile(server_executable):
             raise exception.DebugInvalidOptions(
                 "\nCould not launch Debug Server '%s'. Please check that it "

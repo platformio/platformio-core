@@ -29,7 +29,8 @@ from platformio.compat import get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import get_project_libdeps_dir
+from platformio.project.helpers import (
+    get_project_libdeps_dir, get_project_src_dir, is_platformio_project)
 
 
 class ProjectRPC(object):
@@ -46,8 +47,7 @@ class ProjectRPC(object):
             if config.has_section("platformio") and \
                     config.has_option("platformio", "lib_extra_dirs"):
                 data['libExtraDirs'].extend(
-                    util.parse_conf_multi_values(
-                        config.get("platformio", "lib_extra_dirs")))
+                    config.getlist("platformio", "lib_extra_dirs"))
 
             for section in config.sections():
                 if not section.startswith("env:"):
@@ -57,8 +57,7 @@ class ProjectRPC(object):
                     data['boards'].append(config.get(section, "board"))
                 if config.has_option(section, "lib_extra_dirs"):
                     data['libExtraDirs'].extend(
-                        util.parse_conf_multi_values(
-                            config.get(section, "lib_extra_dirs")))
+                        config.getlist(section, "lib_extra_dirs"))
 
             # skip non existing folders and resolve full path
             for key in ("envLibdepsDirs", "libExtraDirs"):
@@ -165,7 +164,7 @@ class ProjectRPC(object):
         if not main_content:
             return project_dir
         with util.cd(project_dir):
-            src_dir = util.get_projectsrc_dir()
+            src_dir = get_project_src_dir()
             main_path = join(src_dir, "main.cpp")
             if isfile(main_path):
                 return project_dir
@@ -177,7 +176,7 @@ class ProjectRPC(object):
 
     def import_arduino(self, board, use_arduino_libs, arduino_project_dir):
         # don't import PIO Project
-        if util.is_platformio_project(arduino_project_dir):
+        if is_platformio_project(arduino_project_dir):
             return arduino_project_dir
 
         is_arduino_project = any([
@@ -214,7 +213,7 @@ class ProjectRPC(object):
     @staticmethod
     def _finalize_arduino_import(_, project_dir, arduino_project_dir):
         with util.cd(project_dir):
-            src_dir = util.get_projectsrc_dir()
+            src_dir = get_project_src_dir()
             if isdir(src_dir):
                 util.rmtree_(src_dir)
             shutil.copytree(
@@ -261,7 +260,7 @@ class ProjectRPC(object):
 
     @staticmethod
     def import_pio(project_dir):
-        if not project_dir or not util.is_platformio_project(project_dir):
+        if not project_dir or not is_platformio_project(project_dir):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4001,
                 message="Not an PlatformIO project: %s" % project_dir)

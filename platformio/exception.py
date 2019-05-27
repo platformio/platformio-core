@@ -174,7 +174,7 @@ class ProjectEnvsNotAvailable(PlatformIOProjectException):
     MESSAGE = "Please setup environments in `platformio.ini` file"
 
 
-class UnknownEnvNames(PlatformIOProjectException):  # FIXME: UnknownProjectEnvs
+class UnknownEnvNames(PlatformIOProjectException):
 
     MESSAGE = "Unknown environment names '{0}'. Valid names are '{1}'"
 

@@ -19,9 +19,10 @@ from string import Template
 
 import click
 
-from platformio import exception, util
+from platformio import exception
 from platformio.commands.run import cli as cmd_run
 from platformio.commands.run import print_header
+from platformio.project.helpers import get_project_test_dir
 
 TRANSPORT_OPTIONS = {
     "arduino": {
@@ -113,7 +114,7 @@ class TestProcessorBase(object):
 
     def build_or_upload(self, target):
         if not self._outputcpp_generated:
-            self.generate_outputcpp(util.get_projecttest_dir())
+            self.generate_outputcpp(get_project_test_dir())
             self._outputcpp_generated = True
 
         if self.test_name != "*":
@@ -138,6 +139,7 @@ class TestProcessorBase(object):
         raise NotImplementedError
 
     def on_run_out(self, line):
+        line = line.strip()
         if line.endswith(":PASS"):
             click.echo(
                 "%s\t[%s]" % (line[:-5], click.style("PASSED", fg="green")))

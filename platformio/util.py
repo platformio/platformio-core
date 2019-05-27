@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# FIXME: Remove line below before 4.0 release
-# pylint: disable=unused-import
-
 import json
 import os
 import platform
@@ -25,7 +22,7 @@ import sys
 import time
 from functools import wraps
 from glob import glob
-from os.path import abspath, basename, dirname, isdir, isfile, join
+from os.path import abspath, basename, dirname, isfile, join
 from shutil import rmtree
 
 import click
@@ -33,31 +30,8 @@ import requests
 
 from platformio import __apiurl__, __version__, exception
 from platformio.commands import PlatformioCLI
-from platformio.compat import PY2, WINDOWS, get_file_contents, path_to_unicode
-from platformio.proc import LineBufferedAsyncPipe as AsyncPipe
-from platformio.proc import exec_command, is_ci, where_is_program
-from platformio.project.config import ProjectConfig
-from platformio.project.helpers import \
-    get_project_boards_dir as get_projectboards_dir
-from platformio.project.helpers import \
-    get_project_build_dir as get_projectbuild_dir
-from platformio.project.helpers import get_project_cache_dir as get_cache_dir
-from platformio.project.helpers import get_project_core_dir as get_home_dir
-from platformio.project.helpers import \
-    get_project_data_dir as get_projectdata_dir
-from platformio.project.helpers import get_project_dir
-from platformio.project.helpers import \
-    get_project_include_dir as get_projectinclude_dir
-from platformio.project.helpers import \
-    get_project_lib_dir as get_projectlib_dir
-from platformio.project.helpers import \
-    get_project_libdeps_dir as get_projectlibdeps_dir
-from platformio.project.helpers import get_project_optional_dir
-from platformio.project.helpers import \
-    get_project_src_dir as get_projectsrc_dir
-from platformio.project.helpers import \
-    get_project_test_dir as get_projecttest_dir
-from platformio.project.helpers import is_platformio_project
+from platformio.compat import PY2, WINDOWS, get_file_contents
+from platformio.proc import exec_command, is_ci
 
 
 class cd(object):
@@ -158,19 +132,6 @@ def get_source_dir():
                 curpath = join(p, __file__)
                 break
     return dirname(curpath)
-
-
-def load_project_config(path=None):  # FIXME: Remove
-    if not path or isdir(path):
-        path = join(path or get_project_dir(), "platformio.ini")
-    if not isfile(path):
-        raise exception.NotPlatformIOProject(
-            dirname(path) if path.endswith("platformio.ini") else path)
-    return ProjectConfig(path)
-
-
-def parse_conf_multi_values(items):  # FIXME: Remove
-    return ProjectConfig.parse_multi_values(items)
 
 
 def change_filemtime(path, mtime):

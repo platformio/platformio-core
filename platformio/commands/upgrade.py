@@ -23,6 +23,7 @@ from platformio import VERSION, __version__, exception, util
 from platformio.compat import WINDOWS
 from platformio.managers.core import shutdown_piohome_servers
 from platformio.proc import exec_command, get_pythonexe_path
+from platformio.project.helpers import get_project_cache_dir
 
 
 @click.command(
@@ -95,7 +96,7 @@ def get_pip_package(to_develop):
         return "platformio"
     dl_url = ("https://github.com/platformio/"
               "platformio-core/archive/develop.zip")
-    cache_dir = util.get_cache_dir()
+    cache_dir = get_project_cache_dir()
     if not os.path.isdir(cache_dir):
         os.makedirs(cache_dir)
     pkg_name = os.path.join(cache_dir, "piocoredevelop.zip")
