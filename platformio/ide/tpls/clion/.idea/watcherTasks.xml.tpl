@@ -15,7 +15,7 @@
           <FilterInfo>
             <option name="description" value="" />
             <option name="name" value="PIO Conf" />
-            <option name="regExp" value="$FILE_PATH$:^platofrmio" />
+            <option name="regExp" value="$FILE_PATH$:^platformio" />
           </FilterInfo>
         </array>
       </option>
