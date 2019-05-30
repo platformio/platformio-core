@@ -25,7 +25,8 @@ class NativeTestProcessor(TestProcessorBase):
     def process(self):
         if not self.options['without_building']:
             self.print_progress("Building... (1/2)")
-            self.build_or_upload(["__test"])
+            if not self.build_or_upload(["__test"]):
+                return False
         if self.options['without_testing']:
             return None
         self.print_progress("Testing... (2/2)")

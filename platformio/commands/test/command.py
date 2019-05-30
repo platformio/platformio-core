@@ -22,7 +22,7 @@ from time import time
 import click
 
 from platformio import exception, util
-from platformio.commands.run import print_header
+from platformio.commands.run.helpers import print_header
 from platformio.commands.test.embedded import EmbeddedTestProcessor
 from platformio.commands.test.native import NativeTestProcessor
 from platformio.project.config import ProjectConfig
@@ -166,10 +166,11 @@ def cli(  # pylint: disable=redefined-builtin
             passed_nums += 1
             status_str = click.style("PASSED", fg="green")
 
+        format_str = "test/{:<%d} > {:<%d}\t[{}]" % (testname_max_len,
+                                                     envname_max_len)
         click.echo(
-            ("test/{:<%d} > {:<%d}\t[{}]" %
-             (testname_max_len, envname_max_len)).format(
-                 testname, click.style(envname, fg="cyan"), status_str),
+            format_str.format(testname, click.style(envname, fg="cyan"),
+                              status_str),
             err=status is False)
 
     print_header(
