@@ -10,7 +10,7 @@ yapf:
 	yapf --recursive --in-place platformio/
 
 test:
-	py.test -v -s -n 3 --dist=loadscope tests --ignore tests/test_examples.py --ignore tests/test_pkgmanifest.py
+	py.test --verbose --capture=no --exitfirst -n 3 --dist=loadscope tests --ignore tests/test_examples.py --ignore tests/test_pkgmanifest.py
 
 before-commit: isort yapf lint test
 

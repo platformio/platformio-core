@@ -92,9 +92,10 @@ class TestProcessorBase(object):
         self._outputcpp_generated = False
 
     def get_transport(self):
-        transport = self.env_options.get("framework")
         if self.env_options.get("platform") == "native":
             transport = "native"
+        elif "framework" in self.env_options:
+            transport = self.env_options.get("framework")[0]
         if "test_transport" in self.env_options:
             transport = self.env_options['test_transport']
         if transport not in TRANSPORT_OPTIONS:

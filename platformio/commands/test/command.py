@@ -107,9 +107,8 @@ def cli(  # pylint: disable=redefined-builtin
                 # filter and ignore patterns
                 patterns = dict(filter=list(filter), ignore=list(ignore))
                 for key in patterns:
-                    if config.has_option(section, "test_%s" % key):
-                        patterns[key].extend(
-                            config.getlist(section, "test_%s" % key))
+                    patterns[key].extend(
+                        config.get(section, "test_%s" % key, []))
 
                 skip_conditions = [
                     environment and envname not in environment,

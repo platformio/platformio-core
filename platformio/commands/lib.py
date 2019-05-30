@@ -109,9 +109,8 @@ def cli(ctx, **options):
                 continue
             storage_dir = join(libdeps_dir, env)
             ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
-            if config.has_option("env:" + env, "lib_deps"):
-                ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY][
-                    storage_dir] = config.getlist("env:" + env, "lib_deps")
+            ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY][storage_dir] = config.get(
+                "env:" + env, "lib_deps", [])
 
 
 @cli.command("install", short_help="Install library")
@@ -175,8 +174,7 @@ def lib_install(  # pylint: disable=too-many-arguments
             if project_environments and env not in project_environments:
                 continue
             config.expand_interpolations = False
-            lib_deps = (config.getlist("env:" + env, "lib_deps")
-                        if config.has_option("env:" + env, "lib_deps") else [])
+            lib_deps = config.get("env:" + env, "lib_deps", [])
             for library in libraries:
                 if library in lib_deps:
                     continue

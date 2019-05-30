@@ -44,10 +44,8 @@ class ProjectRPC(object):
             config.validate(validate_options=False)
             libdeps_dir = get_project_libdeps_dir()
 
-            if config.has_section("platformio") and \
-                    config.has_option("platformio", "lib_extra_dirs"):
-                data['libExtraDirs'].extend(
-                    config.getlist("platformio", "lib_extra_dirs"))
+            data['libExtraDirs'].extend(
+                config.get("platformio", "lib_extra_dirs", []))
 
             for section in config.sections():
                 if not section.startswith("env:"):
@@ -55,9 +53,8 @@ class ProjectRPC(object):
                 data['envLibdepsDirs'].append(join(libdeps_dir, section[4:]))
                 if config.has_option(section, "board"):
                     data['boards'].append(config.get(section, "board"))
-                if config.has_option(section, "lib_extra_dirs"):
-                    data['libExtraDirs'].extend(
-                        config.getlist(section, "lib_extra_dirs"))
+                data['libExtraDirs'].extend(
+                    config.get(section, "lib_extra_dirs", []))
 
             # skip non existing folders and resolve full path
             for key in ("envLibdepsDirs", "libExtraDirs"):
@@ -233,10 +230,8 @@ class ProjectRPC(object):
                 try:
                     config = ProjectConfig(join(project_dir, "platformio.ini"))
                     config.validate(validate_options=False)
-                    if config.has_section("platformio") and \
-                            config.has_option("platformio", "description"):
-                        project_description = config.get(
-                            "platformio", "description")
+                    project_description = config.get("platformio",
+                                                     "description")
                 except exception.PlatformIOProjectException:
                     continue
 
