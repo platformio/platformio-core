@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-
 import click
 from twisted.internet import protocol  # pylint: disable=import-error
 
 from platformio.commands.debug import helpers
 from platformio.compat import string_types
+from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_core_dir
 
 LOG_FILE = None
@@ -31,7 +30,7 @@ class BaseProcess(protocol.ProcessProtocol, object):
     COMMON_PATTERNS = {
         "PLATFORMIO_HOME_DIR": helpers.escape_path(get_project_core_dir()),
         "PLATFORMIO_CORE_DIR": helpers.escape_path(get_project_core_dir()),
-        "PYTHONEXE": os.getenv("PYTHONEXEPATH", "")
+        "PYTHONEXE": get_pythonexe_path()
     }
 
     def apply_patterns(self, source, patterns=None):

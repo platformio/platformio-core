@@ -89,18 +89,18 @@ if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
 
 env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 
-if env.GetOption('clean'):
-    env.PioClean(env.subst("$BUILD_DIR"))
-    env.Exit(0)
-elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
-    print("Verbose mode can be enabled via `-v, --verbose` option")
-
 # Load variables from CLI
 for key in list(clivars.keys()):
     if key in env:
         env[key] = base64.b64decode(env[key])
         if isinstance(env[key], bytes):
             env[key] = env[key].decode()
+
+if env.GetOption('clean'):
+    env.PioClean(env.subst("$BUILD_DIR"))
+    env.Exit(0)
+elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
+    print("Verbose mode can be enabled via `-v, --verbose` option")
 
 env.GetProjectConfig().validate([env['PIOENV']], silent=True)
 env.LoadProjectOptions()
