@@ -151,7 +151,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             ]  # yapf: disable
 
         banner = [
-            "echo PlatformIO Unified Debugger > http://bit.ly/pio-debug\\n",
+            "echo PlatformIO Unified Debugger -> http://bit.ly/pio-debug\\n",
             "echo PlatformIO: Initializing remote target...\\n"
         ]
         footer = ["echo %s\\n" % self.INIT_COMPLETED_BANNER]
@@ -228,6 +228,8 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self.console_log(
             "PlatformIO: Resume the execution to `debug_init_break = %s`" %
             self.debug_options['init_break'])
+        self.console_log("PlatformIO: More configuration options -> "
+                         "http://bit.ly/pio-debug")
         self.transport.write(b"0-exec-continue\n" if helpers.
                              is_mi_mode(self.args) else b"continue\n")
         self._target_is_run = True
