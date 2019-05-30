@@ -21,7 +21,7 @@ matrix:
 install:
   - git submodule update --init --recursive
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl -fsSL https://bootstrap.pypa.io/get-pip.py | sudo python; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo pip install "tox==3.0.0"; else pip install -U tox; fi
+  - pip install -U tox
 
   # ChipKIT issue: install 32-bit support for GCC PIC32
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libc6-i386; fi
