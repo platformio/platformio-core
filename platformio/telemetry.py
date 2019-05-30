@@ -310,12 +310,15 @@ def measure_ci():
 
 
 def on_run_environment(options, targets):
-    opts = [
-        "%s=%s" % (opt, value.replace("\n", ", ") if "\n" in value else value)
-        for opt, value in sorted(options.items())
-    ]
+    non_sensative_values = ["board", "platform", "framework"]
+    safe_options = []
+    for key, value in sorted(options.items()):
+        if key in non_sensative_values:
+            safe_options.append("%s=%s" % (key, value))
+        else:
+            safe_options.append(key)
     targets = [t.title() for t in targets or ["run"]]
-    on_event("Env", " ".join(targets), "&".join(opts))
+    on_event("Env", " ".join(targets), "&".join(safe_options))
 
 
 def on_event(category, action, label=None, value=None, screen_name=None):
