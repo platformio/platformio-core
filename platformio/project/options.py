@@ -150,8 +150,7 @@ ProjectOptions = OrderedDict([
 
         # Monitor
         ConfigEnvOption(name="monitor_port"),
-        ConfigEnvOption(
-            name="monitor_speed", oldnames=["monitor_baud"]),
+        ConfigEnvOption(name="monitor_speed", oldnames=["monitor_baud"]),
         ConfigEnvOption(name="monitor_rts"),
         ConfigEnvOption(name="monitor_dtr"),
         ConfigEnvOption(name="monitor_flags", multiple=True),

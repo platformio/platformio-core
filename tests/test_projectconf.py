@@ -102,7 +102,7 @@ def test_real_config(tmpdir):
     assert not config.has_option("custom", "monitor_speed")
 
     # sysenv
-    assert config.get("custom", "extra_flags") == ""
+    assert config.get("custom", "extra_flags") is None
     assert config.get("env:base", "build_flags") == ["-D DEBUG=1"]
     assert config.get("env:base", "upload_port") is None
     assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"

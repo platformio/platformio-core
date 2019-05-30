@@ -185,7 +185,7 @@ class ProjectConfig(object):
         option_meta = ProjectOptions.get(
             "%s.%s" % (section.split(":", 1)[0], option))
         if not option_meta:
-            return default
+            return value or default
 
         if value and option_meta.multiple:
             value = self.parse_multi_values(value)
@@ -207,19 +207,21 @@ class ProjectConfig(object):
         if value is None:
             return default
 
-        # cast types
-        if not isinstance(value, (list, tuple)):
-            value = [value]
-        for i, v in enumerate(value):
-            if option_meta.type == bool:
-                value[i] = v in ("1", "true", "yes")
-            elif option_meta.type == int:
-                value[i] = int(v)
-            elif option_meta.type == float:
-                value[i] = float(v)
-        value = value if option_meta.multiple else value[0]
+        return self._covert_value(value, option_meta.type)
 
-        return value
+    @staticmethod
+    def _covert_value(value, to_type):
+        items = value
+        if not isinstance(value, (list, tuple)):
+            items = [value]
+        for i, v in enumerate(items):
+            if to_type == bool:
+                items[i] = v in ("1", "true", "yes", "y")
+            elif to_type == int:
+                items[i] = int(v)
+            elif to_type == float:
+                items[i] = float(v)
+        return items if isinstance(value, (list, tuple)) else items[0]
 
     def envs(self):
         return [s[4:] for s in self._parser.sections() if s.startswith("env:")]
