@@ -23,15 +23,13 @@ from platformio.commands import PlatformioCLI
 from platformio.compat import CYGWIN
 
 
-@click.command(
-    cls=PlatformioCLI,
-    context_settings=dict(help_option_names=["-h", "--help"]))
+@click.command(cls=PlatformioCLI,
+               context_settings=dict(help_option_names=["-h", "--help"]))
 @click.version_option(__version__, prog_name="PlatformIO")
-@click.option(
-    "--force",
-    "-f",
-    is_flag=True,
-    help="Force to accept any confirmation prompts.")
+@click.option("--force",
+              "-f",
+              is_flag=True,
+              help="Force to accept any confirmation prompts.")
 @click.option("--caller", "-c", help="Caller ID (service).")
 @click.pass_context
 def cli(ctx, force, caller):

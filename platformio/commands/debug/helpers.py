@@ -63,16 +63,15 @@ def validate_debug_options(cmd_ctx, env_options):
     try:
         platform = PlatformFactory.newPlatform(env_options['platform'])
     except exception.UnknownPlatform:
-        cmd_ctx.invoke(
-            cmd_platform_install,
-            platforms=[env_options['platform']],
-            skip_default_package=True)
+        cmd_ctx.invoke(cmd_platform_install,
+                       platforms=[env_options['platform']],
+                       skip_default_package=True)
         platform = PlatformFactory.newPlatform(env_options['platform'])
 
     board_config = platform.board_config(env_options['board'])
     tool_name = board_config.get_debug_tool_name(env_options.get("debug_tool"))
-    tool_settings = board_config.get("debug", {}).get("tools", {}).get(
-        tool_name, {})
+    tool_settings = board_config.get("debug", {}).get("tools",
+                                                      {}).get(tool_name, {})
     server_options = None
 
     # specific server per a system
@@ -102,10 +101,9 @@ def validate_debug_options(cmd_ctx, env_options):
         server_package_dir = platform.get_package_dir(
             server_package) if server_package else None
         if server_package and not server_package_dir:
-            platform.install_packages(
-                with_packages=[server_package],
-                skip_default_package=True,
-                silent=True)
+            platform.install_packages(with_packages=[server_package],
+                                      skip_default_package=True,
+                                      silent=True)
             server_package_dir = platform.get_package_dir(server_package)
         server_options = dict(
             cwd=server_package_dir if server_package else None,
@@ -143,12 +141,11 @@ def validate_debug_options(cmd_ctx, env_options):
 
 
 def predebug_project(ctx, project_dir, env_name, preload, verbose):
-    ctx.invoke(
-        cmd_run,
-        project_dir=project_dir,
-        environment=[env_name],
-        target=["__debug"] + (["upload"] if preload else []),
-        verbose=verbose)
+    ctx.invoke(cmd_run,
+               project_dir=project_dir,
+               environment=[env_name],
+               target=["__debug"] + (["upload"] if preload else []),
+               verbose=verbose)
     if preload:
         time.sleep(5)
 
@@ -167,11 +164,10 @@ def capture_std_streams(stdout, stderr=None):
 def load_configuration(ctx, project_dir, env_name):
     output = BytesIO()
     with capture_std_streams(output):
-        ctx.invoke(
-            cmd_run,
-            project_dir=project_dir,
-            environment=[env_name],
-            target=["idedata"])
+        ctx.invoke(cmd_run,
+                   project_dir=project_dir,
+                   environment=[env_name],
+                   target=["idedata"])
     result = output.getvalue().decode()
     output.close()
     if '"includes":' not in result:

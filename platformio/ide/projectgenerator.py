@@ -26,8 +26,9 @@ from platformio.commands.run import cli as cmd_run
 from platformio.compat import PY2, WINDOWS, get_file_contents
 from platformio.proc import where_is_program
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_lib_dir, get_project_libdeps_dir, get_project_src_dir)
+from platformio.project.helpers import (get_project_lib_dir,
+                                        get_project_libdeps_dir,
+                                        get_project_src_dir)
 
 
 class ProjectGenerator(object):
@@ -120,9 +121,8 @@ class ProjectGenerator(object):
 
             file_name = basename(tpl_path)[:-4]
             contents = self._render_tpl(tpl_path)
-            self._merge_contents(
-                join(dst_dir, file_name),
-                contents.encode("utf8") if PY2 else contents)
+            self._merge_contents(join(dst_dir, file_name),
+                                 contents.encode("utf8") if PY2 else contents)
 
     def _render_tpl(self, tpl_path):
         return bottle.template(get_file_contents(tpl_path), **self._tplvars)

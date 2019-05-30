@@ -67,11 +67,11 @@ class MiscRPC(object):
             html_or_json = json.loads(html_or_json)
         assert "items_html" in html_or_json
         soup = BeautifulSoup(html_or_json['items_html'], "html.parser")
-        tweet_nodes = soup.find_all(
-            "div", attrs={
-                "class": "tweet",
-                "data-tweet-id": True
-            })
+        tweet_nodes = soup.find_all("div",
+                                    attrs={
+                                        "class": "tweet",
+                                        "data-tweet-id": True
+                                    })
         result = yield defer.DeferredList(
             [self._parse_tweet_node(node, username) for node in tweet_nodes],
             consumeErrors=True)
@@ -97,13 +97,14 @@ class MiscRPC(object):
             node.get("data-expanded-url")
             for node in (quote_text_node or text_node).find_all(
                 class_="twitter-timeline-link",
-                attrs={"data-expanded-url": True})
-        ]
+                attrs={"data-expanded-url": True}
+            )
+        ]  # yapf: disable
 
         # fetch data from iframe card
         if (not photos or not urls) and tweet.get("data-card2-type"):
-            iframe_node = tweet.find(
-                "div", attrs={"data-full-card-iframe-url": True})
+            iframe_node = tweet.find("div",
+                                     attrs={"data-full-card-iframe-url": True})
             if iframe_node:
                 iframe_card = yield self._fetch_iframe_card(
                     twitter_url + iframe_node.get("data-full-card-iframe-url"),
@@ -161,8 +162,8 @@ class MiscRPC(object):
         url_node = soup.find("a", class_="TwitterCard-container")
         text_node = soup.find("div", class_="SummaryCard-content")
         if text_node:
-            text_node.find(
-                "span", class_="SummaryCard-destination").decompose()
+            text_node.find("span",
+                           class_="SummaryCard-destination").decompose()
         defer.returnValue({
             "photo":
             photo_node.get("data-src") if photo_node else None,

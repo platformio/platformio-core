@@ -198,10 +198,9 @@ def CheckUploadSize(_, target, source, env):
         return
 
     def _configure_defaults():
-        env.Replace(
-            SIZECHECKCMD="$SIZETOOL -B -d $SOURCES",
-            SIZEPROGREGEXP=r"^(\d+)\s+(\d+)\s+\d+\s",
-            SIZEDATAREGEXP=r"^\d+\s+(\d+)\s+(\d+)\s+\d+")
+        env.Replace(SIZECHECKCMD="$SIZETOOL -B -d $SOURCES",
+                    SIZEPROGREGEXP=r"^(\d+)\s+(\d+)\s+\d+\s",
+                    SIZEDATAREGEXP=r"^\d+\s+(\d+)\s+(\d+)\s+\d+")
 
     def _get_size_output():
         cmd = env.get("SIZECHECKCMD")
@@ -251,8 +250,8 @@ def CheckUploadSize(_, target, source, env):
     if data_max_size and data_size > -1:
         print("DATA:    %s" % _format_availale_bytes(data_size, data_max_size))
     if program_size > -1:
-        print("PROGRAM: %s" % _format_availale_bytes(program_size,
-                                                     program_max_size))
+        print("PROGRAM: %s" %
+              _format_availale_bytes(program_size, program_max_size))
     if int(ARGUMENTS.get("PIOVERBOSE", 0)):
         print(output)
 
@@ -273,8 +272,8 @@ def PrintUploadInfo(env):
     configured = env.subst("$UPLOAD_PROTOCOL")
     available = [configured] if configured else []
     if "BOARD" in env:
-        available.extend(env.BoardConfig().get("upload", {}).get(
-            "protocols", []))
+        available.extend(env.BoardConfig().get("upload",
+                                               {}).get("protocols", []))
     if available:
         print("AVAILABLE: %s" % ", ".join(sorted(set(available))))
     if configured:

@@ -48,8 +48,8 @@ class JSONRPCServerProtocol(WebSocketServerProtocol):
         if isinstance(failure.value, JSONRPCDispatchException):
             e = failure.value
         else:
-            e = JSONRPCDispatchException(
-                code=4999, message=failure.getErrorMessage())
+            e = JSONRPCDispatchException(code=4999,
+                                         message=failure.getErrorMessage())
         del response["result"]
         response['error'] = e.error._data  # pylint: disable=protected-access
         print(response['error'])

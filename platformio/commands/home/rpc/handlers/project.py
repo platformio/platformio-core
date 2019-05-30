@@ -29,8 +29,9 @@ from platformio.compat import get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_libdeps_dir, get_project_src_dir, is_platformio_project)
+from platformio.project.helpers import (get_project_libdeps_dir,
+                                        get_project_src_dir,
+                                        is_platformio_project)
 
 
 class ProjectRPC(object):

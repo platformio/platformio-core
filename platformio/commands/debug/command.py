@@ -27,29 +27,24 @@ from platformio.project.config import ProjectConfig
 from platformio.project.helpers import is_platformio_project
 
 
-@click.command(
-    "debug",
-    context_settings=dict(ignore_unknown_options=True),
-    short_help="PIO Unified Debugger")
-@click.option(
-    "-d",
-    "--project-dir",
-    default=os.getcwd,
-    type=click.Path(
-        exists=True,
-        file_okay=False,
-        dir_okay=True,
-        writable=True,
-        resolve_path=True))
-@click.option(
-    "-c",
-    "--project-conf",
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=False,
-        readable=True,
-        resolve_path=True))
+@click.command("debug",
+               context_settings=dict(ignore_unknown_options=True),
+               short_help="PIO Unified Debugger")
+@click.option("-d",
+              "--project-dir",
+              default=os.getcwd,
+              type=click.Path(exists=True,
+                              file_okay=False,
+                              dir_okay=True,
+                              writable=True,
+                              resolve_path=True))
+@click.option("-c",
+              "--project-conf",
+              type=click.Path(exists=True,
+                              file_okay=True,
+                              dir_okay=False,
+                              readable=True,
+                              resolve_path=True))
 @click.option("--environment", "-e", metavar="<environment>")
 @click.option("--verbose", "-v", is_flag=True)
 @click.option("--interface", type=click.Choice(["gdb"]))

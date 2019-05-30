@@ -182,8 +182,8 @@ class ProjectConfig(object):
         except ConfigParser.Error as e:
             raise exception.InvalidProjectConf(self.path, str(e))
 
-        option_meta = ProjectOptions.get(
-            "%s.%s" % (section.split(":", 1)[0], option))
+        option_meta = ProjectOptions.get("%s.%s" %
+                                         (section.split(":", 1)[0], option))
         if not option_meta:
             return value or default
 
@@ -281,8 +281,8 @@ class ProjectConfig(object):
                     warnings.append(
                         "`%s` configuration option in section [%s] is "
                         "deprecated and will be removed in the next release! "
-                        "Please use `%s` instead" % (option, section,
-                                                     renamed_options[option]))
+                        "Please use `%s` instead" %
+                        (option, section, renamed_options[option]))
                     # rename on-the-fly
                     self._parser.set(section, renamed_options[option],
                                      self._parser.get(section, option))

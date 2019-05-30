@@ -42,10 +42,11 @@ class VCSClientFactory(object):
         if "#" in remote_url:
             remote_url, tag = remote_url.rsplit("#", 1)
         if not type_:
-            raise PlatformioException(
-                "VCS: Unknown repository type %s" % remote_url)
-        obj = getattr(modules[__name__], "%sClient" % type_.title())(
-            src_dir, remote_url, tag, silent)
+            raise PlatformioException("VCS: Unknown repository type %s" %
+                                      remote_url)
+        obj = getattr(modules[__name__],
+                      "%sClient" % type_.title())(src_dir, remote_url, tag,
+                                                  silent)
         assert isinstance(obj, VCSClientBase)
         return obj
 
@@ -102,8 +103,8 @@ class VCSClientBase(object):
             check_call(args, **kwargs)
             return True
         except CalledProcessError as e:
-            raise PlatformioException(
-                "VCS: Could not process command %s" % e.cmd)
+            raise PlatformioException("VCS: Could not process command %s" %
+                                      e.cmd)
 
     def get_cmd_output(self, args, **kwargs):
         args = [self.command] + args

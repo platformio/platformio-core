@@ -46,41 +46,39 @@ ProjectOptions = OrderedDict([
         # [platformio]
         #
         ConfigPlatformioOption(name="description"),
-        ConfigPlatformioOption(
-            name="env_default",
-            multiple=True,
-            sysenvvar="PLATFORMIO_ENV_DEFAULT"),
+        ConfigPlatformioOption(name="env_default",
+                               multiple=True,
+                               sysenvvar="PLATFORMIO_ENV_DEFAULT"),
         ConfigPlatformioOption(name="extra_configs", multiple=True),
 
         # Dirs
-        ConfigPlatformioOption(
-            name="core_dir",
-            oldnames=["home_dir"],
-            sysenvvar="PLATFORMIO_CORE_DIR"),
-        ConfigPlatformioOption(
-            name="globallib_dir", sysenvvar="PLATFORMIO_GLOBALLIB_DIR"),
-        ConfigPlatformioOption(
-            name="platforms_dir", sysenvvar="PLATFORMIO_PLATFORMS_DIR"),
-        ConfigPlatformioOption(
-            name="packages_dir", sysenvvar="PLATFORMIO_PACKAGES_DIR"),
-        ConfigPlatformioOption(
-            name="cache_dir", sysenvvar="PLATFORMIO_CACHE_DIR"),
-        ConfigPlatformioOption(
-            name="workspace_dir", sysenvvar="PLATFORMIO_WORKSPACE_DIR"),
-        ConfigPlatformioOption(
-            name="build_dir", sysenvvar="PLATFORMIO_BUILD_DIR"),
-        ConfigPlatformioOption(
-            name="libdeps_dir", sysenvvar="PLATFORMIO_LIBDEPS_DIR"),
+        ConfigPlatformioOption(name="core_dir",
+                               oldnames=["home_dir"],
+                               sysenvvar="PLATFORMIO_CORE_DIR"),
+        ConfigPlatformioOption(name="globallib_dir",
+                               sysenvvar="PLATFORMIO_GLOBALLIB_DIR"),
+        ConfigPlatformioOption(name="platforms_dir",
+                               sysenvvar="PLATFORMIO_PLATFORMS_DIR"),
+        ConfigPlatformioOption(name="packages_dir",
+                               sysenvvar="PLATFORMIO_PACKAGES_DIR"),
+        ConfigPlatformioOption(name="cache_dir",
+                               sysenvvar="PLATFORMIO_CACHE_DIR"),
+        ConfigPlatformioOption(name="workspace_dir",
+                               sysenvvar="PLATFORMIO_WORKSPACE_DIR"),
+        ConfigPlatformioOption(name="build_dir",
+                               sysenvvar="PLATFORMIO_BUILD_DIR"),
+        ConfigPlatformioOption(name="libdeps_dir",
+                               sysenvvar="PLATFORMIO_LIBDEPS_DIR"),
         ConfigPlatformioOption(name="lib_dir", sysenvvar="PLATFORMIO_LIB_DIR"),
-        ConfigPlatformioOption(
-            name="include_dir", sysenvvar="PLATFORMIO_INCLUDE_DIR"),
+        ConfigPlatformioOption(name="include_dir",
+                               sysenvvar="PLATFORMIO_INCLUDE_DIR"),
         ConfigPlatformioOption(name="src_dir", sysenvvar="PLATFORMIO_SRC_DIR"),
-        ConfigPlatformioOption(
-            name="test_dir", sysenvvar="PLATFORMIO_TEST_DIR"),
-        ConfigPlatformioOption(
-            name="boards_dir", sysenvvar="PLATFORMIO_BOARDS_DIR"),
-        ConfigPlatformioOption(
-            name="data_dir", sysenvvar="PLATFORMIO_DATA_DIR"),
+        ConfigPlatformioOption(name="test_dir",
+                               sysenvvar="PLATFORMIO_TEST_DIR"),
+        ConfigPlatformioOption(name="boards_dir",
+                               sysenvvar="PLATFORMIO_BOARDS_DIR"),
+        ConfigPlatformioOption(name="data_dir",
+                               sysenvvar="PLATFORMIO_DATA_DIR"),
 
         #
         # [env]
@@ -94,59 +92,49 @@ ProjectOptions = OrderedDict([
 
         # Board
         ConfigEnvOption(name="board", buildenvvar="BOARD"),
-        ConfigEnvOption(
-            name="board_build.mcu",
-            oldnames=["board_mcu"],
-            buildenvvar="BOARD_MCU"),
-        ConfigEnvOption(
-            name="board_build.f_cpu",
-            oldnames=["board_f_cpu"],
-            buildenvvar="BOARD_F_CPU"),
-        ConfigEnvOption(
-            name="board_build.f_flash",
-            oldnames=["board_f_flash"],
-            buildenvvar="BOARD_F_FLASH"),
-        ConfigEnvOption(
-            name="board_build.flash_mode",
-            oldnames=["board_flash_mode"],
-            buildenvvar="BOARD_FLASH_MODE"),
+        ConfigEnvOption(name="board_build.mcu",
+                        oldnames=["board_mcu"],
+                        buildenvvar="BOARD_MCU"),
+        ConfigEnvOption(name="board_build.f_cpu",
+                        oldnames=["board_f_cpu"],
+                        buildenvvar="BOARD_F_CPU"),
+        ConfigEnvOption(name="board_build.f_flash",
+                        oldnames=["board_f_flash"],
+                        buildenvvar="BOARD_F_FLASH"),
+        ConfigEnvOption(name="board_build.flash_mode",
+                        oldnames=["board_flash_mode"],
+                        buildenvvar="BOARD_FLASH_MODE"),
 
         # Build
-        ConfigEnvOption(
-            name="build_flags",
-            multiple=True,
-            sysenvvar="PLATFORMIO_BUILD_FLAGS",
-            buildenvvar="BUILD_FLAGS"),
-        ConfigEnvOption(
-            name="src_build_flags",
-            multiple=True,
-            sysenvvar="PLATFORMIO_SRC_BUILD_FLAGS",
-            buildenvvar="SRC_BUILD_FLAGS"),
-        ConfigEnvOption(
-            name="build_unflags",
-            multiple=True,
-            sysenvvar="PLATFORMIO_BUILD_UNFLAGS",
-            buildenvvar="BUILD_UNFLAGS"),
-        ConfigEnvOption(
-            name="src_filter",
-            multiple=True,
-            sysenvvar="PLATFORMIO_SRC_FILTER",
-            buildenvvar="SRC_FILTER"),
+        ConfigEnvOption(name="build_flags",
+                        multiple=True,
+                        sysenvvar="PLATFORMIO_BUILD_FLAGS",
+                        buildenvvar="BUILD_FLAGS"),
+        ConfigEnvOption(name="src_build_flags",
+                        multiple=True,
+                        sysenvvar="PLATFORMIO_SRC_BUILD_FLAGS",
+                        buildenvvar="SRC_BUILD_FLAGS"),
+        ConfigEnvOption(name="build_unflags",
+                        multiple=True,
+                        sysenvvar="PLATFORMIO_BUILD_UNFLAGS",
+                        buildenvvar="BUILD_UNFLAGS"),
+        ConfigEnvOption(name="src_filter",
+                        multiple=True,
+                        sysenvvar="PLATFORMIO_SRC_FILTER",
+                        buildenvvar="SRC_FILTER"),
 
         # Upload
-        ConfigEnvOption(
-            name="upload_port",
-            sysenvvar="PLATFORMIO_UPLOAD_PORT",
-            buildenvvar="UPLOAD_PORT"),
+        ConfigEnvOption(name="upload_port",
+                        sysenvvar="PLATFORMIO_UPLOAD_PORT",
+                        buildenvvar="UPLOAD_PORT"),
         ConfigEnvOption(name="upload_protocol", buildenvvar="UPLOAD_PROTOCOL"),
         ConfigEnvOption(name="upload_speed", buildenvvar="UPLOAD_SPEED"),
-        ConfigEnvOption(
-            name="upload_flags",
-            multiple=True,
-            sysenvvar="PLATFORMIO_UPLOAD_FLAGS",
-            buildenvvar="UPLOAD_FLAGS"),
-        ConfigEnvOption(
-            name="upload_resetmethod", buildenvvar="UPLOAD_RESETMETHOD"),
+        ConfigEnvOption(name="upload_flags",
+                        multiple=True,
+                        sysenvvar="PLATFORMIO_UPLOAD_FLAGS",
+                        buildenvvar="UPLOAD_FLAGS"),
+        ConfigEnvOption(name="upload_resetmethod",
+                        buildenvvar="UPLOAD_RESETMETHOD"),
 
         # Monitor
         ConfigEnvOption(name="monitor_port"),
@@ -156,15 +144,13 @@ ProjectOptions = OrderedDict([
         ConfigEnvOption(name="monitor_flags", multiple=True),
 
         # Library
-        ConfigEnvOption(
-            name="lib_deps",
-            oldnames=["lib_use", "lib_force", "lib_install"],
-            multiple=True),
+        ConfigEnvOption(name="lib_deps",
+                        oldnames=["lib_use", "lib_force", "lib_install"],
+                        multiple=True),
         ConfigEnvOption(name="lib_ignore", multiple=True),
-        ConfigEnvOption(
-            name="lib_extra_dirs",
-            multiple=True,
-            sysenvvar="PLATFORMIO_LIB_EXTRA_DIRS"),
+        ConfigEnvOption(name="lib_extra_dirs",
+                        multiple=True,
+                        sysenvvar="PLATFORMIO_LIB_EXTRA_DIRS"),
         ConfigEnvOption(name="lib_ldf_mode"),
         ConfigEnvOption(name="lib_compat_mode"),
         ConfigEnvOption(name="lib_archive", type=bool),
@@ -189,10 +175,9 @@ ProjectOptions = OrderedDict([
         ConfigEnvOption(name="debug_svd_path"),
 
         # Other
-        ConfigEnvOption(
-            name="extra_scripts",
-            oldnames=["extra_script"],
-            multiple=True,
-            sysenvvar="PLATFORMIO_EXTRA_SCRIPTS")
+        ConfigEnvOption(name="extra_scripts",
+                        oldnames=["extra_script"],
+                        multiple=True,
+                        sysenvvar="PLATFORMIO_EXTRA_SCRIPTS")
     ]
 ])

@@ -57,8 +57,8 @@ class EmbeddedTestProcessor(TestProcessorBase):
         click.echo()
 
         try:
-            ser = serial.Serial(
-                baudrate=self.get_baudrate(), timeout=self.SERIAL_TIMEOUT)
+            ser = serial.Serial(baudrate=self.get_baudrate(),
+                                timeout=self.SERIAL_TIMEOUT)
             ser.port = self.get_test_port()
             ser.rts = self.options['monitor_rts']
             ser.dtr = self.options['monitor_dtr']

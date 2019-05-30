@@ -60,8 +60,9 @@ def is_twitter_blocked():
     timeout = 2
     try:
         if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-            requests.get(
-                "http://%s" % ip, allow_redirects=False, timeout=timeout)
+            requests.get("http://%s" % ip,
+                         allow_redirects=False,
+                         timeout=timeout)
         else:
             socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip, 80))
         return False

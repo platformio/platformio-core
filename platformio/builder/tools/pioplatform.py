@@ -138,8 +138,8 @@ def PrintConfiguration(env):
         ram = board_config.get("upload", {}).get("maximum_ram_size")
         flash = board_config.get("upload", {}).get("maximum_size")
         hardware_data.append(
-            "%s RAM (%s Flash)" % (util.format_filesize(ram),
-                                   util.format_filesize(flash)))
+            "%s RAM (%s Flash)" %
+            (util.format_filesize(ram), util.format_filesize(flash)))
         configuration_data.append(
             "https://docs.platformio.org/page/boards/%s/%s.html" %
             (platform.name, board_config.id))
@@ -153,8 +153,8 @@ def PrintConfiguration(env):
         return
 
     data = [
-        "CURRENT(%s)" % board_config.get_debug_tool_name(
-            env.GetProjectOption("debug_tool"))
+        "CURRENT(%s)" %
+        board_config.get_debug_tool_name(env.GetProjectOption("debug_tool"))
     ]
     onboard = []
     external = []

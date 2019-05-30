@@ -86,8 +86,8 @@ class TestProcessorBase(object):
         self.test_name = testname
         self.options = options
         self.env_name = envname
-        self.env_options = options['project_config'].items(
-            env=envname, as_dict=True)
+        self.env_options = options['project_config'].items(env=envname,
+                                                           as_dict=True)
         self._run_failed = False
         self._outputcpp_generated = False
 
@@ -108,11 +108,10 @@ class TestProcessorBase(object):
 
     def print_progress(self, text, is_error=False):
         click.echo()
-        print_header(
-            "[test/%s > %s] %s" % (click.style(self.test_name, fg="yellow"),
-                                   click.style(self.env_name, fg="cyan"),
-                                   text),
-            is_error=is_error)
+        print_header("[test/%s > %s] %s" %
+                     (click.style(self.test_name, fg="yellow"),
+                      click.style(self.env_name, fg="cyan"), text),
+                     is_error=is_error)
 
     def build_or_upload(self, target):
         if not self._outputcpp_generated:
@@ -126,14 +125,13 @@ class TestProcessorBase(object):
             click.echo("Please wait...")
 
         try:
-            return self.cmd_ctx.invoke(
-                cmd_run,
-                project_dir=self.options['project_dir'],
-                upload_port=self.options['upload_port'],
-                silent=not self.options['verbose'],
-                environment=[self.env_name],
-                disable_auto_clean="nobuild" in target,
-                target=target)
+            return self.cmd_ctx.invoke(cmd_run,
+                                       project_dir=self.options['project_dir'],
+                                       upload_port=self.options['upload_port'],
+                                       silent=not self.options['verbose'],
+                                       environment=[self.env_name],
+                                       disable_auto_clean="nobuild" in target,
+                                       target=target)
         except exception.ReturnErrorCode:
             return False
 
@@ -146,8 +144,8 @@ class TestProcessorBase(object):
     def on_run_out(self, line):
         line = line.strip()
         if line.endswith(":PASS"):
-            click.echo(
-                "%s\t[%s]" % (line[:-5], click.style("PASSED", fg="green")))
+            click.echo("%s\t[%s]" %
+                       (line[:-5], click.style("PASSED", fg="green")))
         elif ":FAIL" in line:
             self._run_failed = True
             click.echo("%s\t[%s]" % (line, click.style("FAILED", fg="red")))

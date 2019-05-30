@@ -176,8 +176,8 @@ def get_logical_devices():
     if WINDOWS:
         try:
             result = exec_command(
-                ["wmic", "logicaldisk", "get", "name,VolumeName"]).get(
-                    "out", "")
+                ["wmic", "logicaldisk", "get",
+                 "name,VolumeName"]).get("out", "")
             devicenamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
             for line in result.split("\n"):
                 match = devicenamere.match(line.strip())
@@ -321,20 +321,18 @@ def _get_api_result(
 
     try:
         if data:
-            r = _api_request_session().post(
-                url,
-                params=params,
-                data=data,
-                headers=headers,
-                auth=auth,
-                verify=verify_ssl)
+            r = _api_request_session().post(url,
+                                            params=params,
+                                            data=data,
+                                            headers=headers,
+                                            auth=auth,
+                                            verify=verify_ssl)
         else:
-            r = _api_request_session().get(
-                url,
-                params=params,
-                headers=headers,
-                auth=auth,
-                verify=verify_ssl)
+            r = _api_request_session().get(url,
+                                           params=params,
+                                           headers=headers,
+                                           auth=auth,
+                                           verify=verify_ssl)
         result = r.json()
         r.raise_for_status()
         return r.text
@@ -345,8 +343,8 @@ def _get_api_result(
             raise exception.APIRequestError(result['errors'][0]['title'])
         raise exception.APIRequestError(e)
     except ValueError:
-        raise exception.APIRequestError(
-            "Invalid response: %s" % r.text.encode("utf-8"))
+        raise exception.APIRequestError("Invalid response: %s" %
+                                        r.text.encode("utf-8"))
     finally:
         if r:
             r.close()
@@ -403,11 +401,12 @@ def _internet_on():
     for ip in PING_INTERNET_IPS:
         try:
             if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-                requests.get(
-                    "http://%s" % ip, allow_redirects=False, timeout=timeout)
+                requests.get("http://%s" % ip,
+                             allow_redirects=False,
+                             timeout=timeout)
             else:
-                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip,
-                                                                           80))
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(
+                    (ip, 80))
             return True
         except:  # pylint: disable=bare-except
             pass
@@ -524,9 +523,9 @@ def rmtree_(path):
             os.chmod(name, stat.S_IWRITE)
             os.remove(name)
         except Exception as e:  # pylint: disable=broad-except
-            click.secho(
-                "%s \nPlease manually remove the file `%s`" % (str(e), name),
-                fg="red",
-                err=True)
+            click.secho("%s \nPlease manually remove the file `%s`" %
+                        (str(e), name),
+                        fg="red",
+                        err=True)
 
     return rmtree(path, onerror=_onerror)

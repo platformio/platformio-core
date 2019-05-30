@@ -26,9 +26,10 @@ from platformio.managers.lib import (LibraryManager, get_builtin_libs,
                                      is_builtin_lib)
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_dir, get_project_global_lib_dir, get_project_libdeps_dir,
-    is_platformio_project)
+from platformio.project.helpers import (get_project_dir,
+                                        get_project_global_lib_dir,
+                                        get_project_libdeps_dir,
+                                        is_platformio_project)
 
 try:
     from urllib.parse import quote
@@ -42,23 +43,20 @@ CTX_META_STORAGE_LIBDEPS_KEY = __name__ + ".storage_lib_deps"
 
 
 @click.group(short_help="Library Manager")
-@click.option(
-    "-d",
-    "--storage-dir",
-    multiple=True,
-    default=None,
-    type=click.Path(
-        exists=True,
-        file_okay=False,
-        dir_okay=True,
-        writable=True,
-        resolve_path=True),
-    help="Manage custom library storage")
-@click.option(
-    "-g",
-    "--global",
-    is_flag=True,
-    help="Manage global PlatformIO library storage")
+@click.option("-d",
+              "--storage-dir",
+              multiple=True,
+              default=None,
+              type=click.Path(exists=True,
+                              file_okay=False,
+                              dir_okay=True,
+                              writable=True,
+                              resolve_path=True),
+              help="Manage custom library storage")
+@click.option("-g",
+              "--global",
+              is_flag=True,
+              help="Manage global PlatformIO library storage")
 @click.option(
     "-e",
     "--environment",
@@ -101,8 +99,8 @@ def cli(ctx, **options):
             continue
         with util.cd(storage_dir):
             libdeps_dir = get_project_libdeps_dir()
-        config = ProjectConfig.get_instance(
-            join(storage_dir, "platformio.ini"))
+        config = ProjectConfig.get_instance(join(storage_dir,
+                                                 "platformio.ini"))
         config.validate(options['environment'])
         for env in config.envs():
             if options['environment'] and env not in options['environment']:
@@ -119,17 +117,17 @@ def cli(ctx, **options):
     "--save",
     is_flag=True,
     help="Save installed libraries into the `platformio.ini` dependency list")
-@click.option(
-    "-s", "--silent", is_flag=True, help="Suppress progress reporting")
-@click.option(
-    "--interactive",
-    is_flag=True,
-    help="Allow to make a choice for all prompts")
-@click.option(
-    "-f",
-    "--force",
-    is_flag=True,
-    help="Reinstall/redownload library if exists")
+@click.option("-s",
+              "--silent",
+              is_flag=True,
+              help="Suppress progress reporting")
+@click.option("--interactive",
+              is_flag=True,
+              help="Allow to make a choice for all prompts")
+@click.option("-f",
+              "--force",
+              is_flag=True,
+              help="Reinstall/redownload library if exists")
 @click.pass_context
 def lib_install(  # pylint: disable=too-many-arguments
         ctx, libraries, save, silent, interactive, force):
@@ -143,20 +141,18 @@ def lib_install(  # pylint: disable=too-many-arguments
         lm = LibraryManager(storage_dir)
         if libraries:
             for library in libraries:
-                pkg_dir = lm.install(
-                    library,
-                    silent=silent,
-                    interactive=interactive,
-                    force=force)
+                pkg_dir = lm.install(library,
+                                     silent=silent,
+                                     interactive=interactive,
+                                     force=force)
                 installed_manifests[library] = lm.load_manifest(pkg_dir)
         elif storage_dir in storage_libdeps:
             for library in storage_libdeps[storage_dir]:
                 try:
-                    pkg_dir = lm.install(
-                        library,
-                        silent=silent,
-                        interactive=interactive,
-                        force=force)
+                    pkg_dir = lm.install(library,
+                                         silent=silent,
+                                         interactive=interactive,
+                                         force=force)
                     installed_manifests[library] = lm.load_manifest(pkg_dir)
                 except exception.LibNotFound as e:
                     if not silent or not is_builtin_lib(library):
@@ -203,15 +199,13 @@ def lib_uninstall(ctx, libraries):
 
 @cli.command("update", short_help="Update installed libraries")
 @click.argument("libraries", required=False, nargs=-1, metavar="[LIBRARY...]")
-@click.option(
-    "-c",
-    "--only-check",
-    is_flag=True,
-    help="DEPRECATED. Please use `--dry-run` instead")
-@click.option(
-    "--dry-run",
-    is_flag=True,
-    help="Do not update, only check for the new versions")
+@click.option("-c",
+              "--only-check",
+              is_flag=True,
+              help="DEPRECATED. Please use `--dry-run` instead")
+@click.option("--dry-run",
+              is_flag=True,
+              help="Do not update, only check for the new versions")
 @click.option("--json-output", is_flag=True)
 @click.pass_context
 def lib_update(ctx, libraries, only_check, dry_run, json_output):
@@ -297,10 +291,9 @@ def lib_list(ctx, json_output):
 @click.option("-f", "--framework", multiple=True)
 @click.option("-p", "--platform", multiple=True)
 @click.option("-i", "--header", multiple=True)
-@click.option(
-    "--noninteractive",
-    is_flag=True,
-    help="Do not prompt, automatically paginate with delay")
+@click.option("--noninteractive",
+              is_flag=True,
+              help="Do not prompt, automatically paginate with delay")
 def lib_search(query, json_output, page, noninteractive, **filters):
     if not query:
         query = []
@@ -311,10 +304,9 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         for value in values:
             query.append('%s:"%s"' % (key, value))
 
-    result = util.get_api_result(
-        "/v2/lib/search",
-        dict(query=" ".join(query), page=page),
-        cache_valid="1d")
+    result = util.get_api_result("/v2/lib/search",
+                                 dict(query=" ".join(query), page=page),
+                                 cache_valid="1d")
 
     if json_output:
         click.echo(json.dumps(result))
@@ -336,9 +328,8 @@ def lib_search(query, json_output, page, noninteractive, **filters):
             fg="cyan")
         return
 
-    click.secho(
-        "Found %d libraries:\n" % result['total'],
-        fg="green" if result['total'] else "yellow")
+    click.secho("Found %d libraries:\n" % result['total'],
+                fg="green" if result['total'] else "yellow")
 
     while True:
         for item in result['items']:
@@ -350,20 +341,18 @@ def lib_search(query, json_output, page, noninteractive, **filters):
 
         if noninteractive:
             click.echo()
-            click.secho(
-                "Loading next %d libraries... Press Ctrl+C to stop!" %
-                result['perpage'],
-                fg="yellow")
+            click.secho("Loading next %d libraries... Press Ctrl+C to stop!" %
+                        result['perpage'],
+                        fg="yellow")
             click.echo()
             time.sleep(5)
         elif not click.confirm("Show next libraries?"):
             break
-        result = util.get_api_result(
-            "/v2/lib/search", {
-                "query": " ".join(query),
-                "page": int(result['page']) + 1
-            },
-            cache_valid="1d")
+        result = util.get_api_result("/v2/lib/search", {
+            "query": " ".join(query),
+            "page": int(result['page']) + 1
+        },
+                                     cache_valid="1d")
 
 
 @cli.command("builtin", short_help="List built-in libraries")
@@ -475,13 +464,12 @@ def lib_register(config_url):
             and not config_url.startswith("https://")):
         raise exception.InvalidLibConfURL(config_url)
 
-    result = util.get_api_result(
-        "/lib/register", data=dict(config_url=config_url))
+    result = util.get_api_result("/lib/register",
+                                 data=dict(config_url=config_url))
     if "message" in result and result['message']:
-        click.secho(
-            result['message'],
-            fg="green"
-            if "successed" in result and result['successed'] else "red")
+        click.secho(result['message'],
+                    fg="green" if "successed" in result and result['successed']
+                    else "red")
 
 
 @cli.command("stats", short_help="Library Registry Statistics")
@@ -512,10 +500,9 @@ def lib_stats(json_output):
         date = str(
             time.strftime("%c", util.parse_date(item['date'])) if "date" in
             item else "")
-        url = click.style(
-            "https://platformio.org/lib/show/%s/%s" % (item['id'],
-                                                       quote(item['name'])),
-            fg="blue")
+        url = click.style("https://platformio.org/lib/show/%s/%s" %
+                          (item['id'], quote(item['name'])),
+                          fg="blue")
         click.echo(
             (printitemdate_tpl if "date" in item else printitem_tpl).format(
                 name=click.style(item['name'], fg="cyan"), date=date, url=url))
@@ -524,10 +511,9 @@ def lib_stats(json_output):
         click.echo(
             printitem_tpl.format(
                 name=click.style(name, fg="cyan"),
-                url=click.style(
-                    "https://platformio.org/lib/search?query=" + quote(
-                        "keyword:%s" % name),
-                    fg="blue")))
+                url=click.style("https://platformio.org/lib/search?query=" +
+                                quote("keyword:%s" % name),
+                                fg="blue")))
 
     for key in ("updated", "added"):
         _print_title("Recently " + key)

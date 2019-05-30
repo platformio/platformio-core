@@ -338,11 +338,10 @@ def on_exception(e):
 
     def _cleanup_description(text):
         text = text.replace("Traceback (most recent call last):", "")
-        text = re.sub(
-            r'File "([^"]+)"',
-            lambda m: join(*m.group(1).split(sep)[-2:]),
-            text,
-            flags=re.M)
+        text = re.sub(r'File "([^"]+)"',
+                      lambda m: join(*m.group(1).split(sep)[-2:]),
+                      text,
+                      flags=re.M)
         text = re.sub(r"\s+", " ", text, flags=re.M)
         return text.strip()
 

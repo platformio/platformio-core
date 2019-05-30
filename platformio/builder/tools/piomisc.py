@@ -190,8 +190,8 @@ class InoToCPPConverter(object):
 
 def ConvertInoToCpp(env):
     src_dir = glob_escape(env.subst("$PROJECTSRC_DIR"))
-    ino_nodes = (
-        env.Glob(join(src_dir, "*.ino")) + env.Glob(join(src_dir, "*.pde")))
+    ino_nodes = (env.Glob(join(src_dir, "*.ino")) +
+                 env.Glob(join(src_dir, "*.pde")))
     if not ino_nodes:
         return
     c = InoToCPPConverter(env)
@@ -297,8 +297,8 @@ def PioClean(env, clean_dir):
 def ProcessDebug(env):
     if not env.subst("$PIODEBUGFLAGS"):
         env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb3"])
-    env.Append(
-        BUILD_FLAGS=list(env['PIODEBUGFLAGS']) + ["-D__PLATFORMIO_DEBUG__"])
+    env.Append(BUILD_FLAGS=list(env['PIODEBUGFLAGS']) +
+               ["-D__PLATFORMIO_DEBUG__"])
     unflags = ["-Os"]
     for level in [0, 1, 2]:
         for flag in ("O", "g", "ggdb"):
@@ -307,11 +307,10 @@ def ProcessDebug(env):
 
 
 def ProcessTest(env):
-    env.Append(
-        CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
-        CPPPATH=[join("$BUILD_DIR", "UnityTestLib")])
-    unitylib = env.BuildLibrary(
-        join("$BUILD_DIR", "UnityTestLib"), get_core_package_dir("tool-unity"))
+    env.Append(CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
+               CPPPATH=[join("$BUILD_DIR", "UnityTestLib")])
+    unitylib = env.BuildLibrary(join("$BUILD_DIR", "UnityTestLib"),
+                                get_core_package_dir("tool-unity"))
     env.Prepend(LIBS=[unitylib])
 
     src_filter = ["+<*.cpp>", "+<*.c>"]

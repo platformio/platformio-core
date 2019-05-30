@@ -74,9 +74,8 @@ class ZIPArchive(ArchiveBase):
 
     @staticmethod
     def preserve_mtime(item, dest_dir):
-        util.change_filemtime(
-            join(dest_dir, item.filename),
-            mktime(tuple(item.date_time) + tuple([0, 0, 0])))
+        util.change_filemtime(join(dest_dir, item.filename),
+                              mktime(tuple(item.date_time) + tuple([0, 0, 0])))
 
     def get_items(self):
         return self._afo.infolist()

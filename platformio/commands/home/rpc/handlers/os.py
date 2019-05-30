@@ -54,8 +54,10 @@ class OSRPC(object):
 
         session = helpers.requests_session()
         if data:
-            r = yield session.post(
-                uri, data=data, headers=headers, timeout=timeout)
+            r = yield session.post(uri,
+                                   data=data,
+                                   headers=headers,
+                                   timeout=timeout)
         else:
             r = yield session.get(uri, headers=headers, timeout=timeout)
 

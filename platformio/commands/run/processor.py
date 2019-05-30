@@ -64,10 +64,10 @@ class EnvironmentProcessor(object):
 
         if is_error or "piotest_processor" not in self.cmd_ctx.meta:
             print_header(
-                "[%s] Took %.2f seconds" % (
-                    (click.style("ERROR", fg="red", bold=True) if is_error else
-                     click.style("SUCCESS", fg="green", bold=True)),
-                    time() - start_time),
+                "[%s] Took %.2f seconds" %
+                ((click.style("ERROR", fg="red", bold=True) if
+                  is_error else click.style("SUCCESS", fg="green", bold=True)),
+                 time() - start_time),
                 is_error=is_error)
 
         return not is_error
@@ -106,10 +106,9 @@ class EnvironmentProcessor(object):
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])
         except exception.UnknownPlatform:
-            self.cmd_ctx.invoke(
-                cmd_platform_install,
-                platforms=[self.options['platform']],
-                skip_default_package=True)
+            self.cmd_ctx.invoke(cmd_platform_install,
+                                platforms=[self.options['platform']],
+                                skip_default_package=True)
             p = PlatformFactory.newPlatform(self.options['platform'])
 
         return p.run(build_vars, build_targets, self.silent, self.verbose)

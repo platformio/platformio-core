@@ -52,8 +52,8 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
 
         if not isdir(get_project_cache_dir()):
             os.makedirs(get_project_cache_dir())
-        self._gdbsrc_dir = mkdtemp(
-            dir=get_project_cache_dir(), prefix=".piodebug-")
+        self._gdbsrc_dir = mkdtemp(dir=get_project_cache_dir(),
+                                   prefix=".piodebug-")
 
         self._target_is_run = False
         self._last_server_activity = 0
@@ -98,8 +98,11 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             args.extend(["--data-directory", gdb_data_dir])
         args.append(patterns['PROG_PATH'])
 
-        return reactor.spawnProcess(
-            self, gdb_path, args, path=self.project_dir, env=os.environ)
+        return reactor.spawnProcess(self,
+                                    gdb_path,
+                                    args,
+                                    path=self.project_dir,
+                                    env=os.environ)
 
     @staticmethod
     def _get_data_dir(gdb_path):
@@ -109,8 +112,8 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         return gdb_data_dir if isdir(gdb_data_dir) else None
 
     def generate_pioinit(self, dst_dir, patterns):
-        server_exe = (self.debug_options.get("server") or {}).get(
-            "executable", "").lower()
+        server_exe = (self.debug_options.get("server")
+                      or {}).get("executable", "").lower()
         if "jlink" in server_exe:
             cfg = initcfgs.GDB_JLINK_INIT_CONFIG
         elif "st-util" in server_exe:

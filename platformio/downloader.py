@@ -35,11 +35,10 @@ class FileDownloader(object):
     def __init__(self, url, dest_dir=None):
         self._request = None
         # make connection
-        self._request = requests.get(
-            url,
-            stream=True,
-            headers=util.get_request_defheaders(),
-            verify=version_info >= (2, 7, 9))
+        self._request = requests.get(url,
+                                     stream=True,
+                                     headers=util.get_request_defheaders(),
+                                     verify=version_info >= (2, 7, 9))
         if self._request.status_code != 200:
             raise FDUnrecognizedStatusCode(self._request.status_code, url)
 

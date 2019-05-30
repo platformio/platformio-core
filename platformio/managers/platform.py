@@ -30,9 +30,10 @@ from platformio.managers.package import BasePkgManager, PackageManager
 from platformio.proc import (BuildAsyncPipe, copy_pythonpath_to_osenv,
                              exec_command, get_pythonexe_path)
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_boards_dir, get_project_core_dir, get_project_packages_dir,
-    get_project_platforms_dir)
+from platformio.project.helpers import (get_project_boards_dir,
+                                        get_project_core_dir,
+                                        get_project_packages_dir,
+                                        get_project_platforms_dir)
 
 try:
     from urllib.parse import quote
@@ -75,8 +76,11 @@ class PlatformManager(BasePkgManager):
                 silent=False,
                 force=False,
                 **_):  # pylint: disable=too-many-arguments, arguments-differ
-        platform_dir = BasePkgManager.install(
-            self, name, requirements, silent=silent, force=force)
+        platform_dir = BasePkgManager.install(self,
+                                              name,
+                                              requirements,
+                                              silent=silent,
+                                              force=force)
         p = PlatformFactory.newPlatform(platform_dir)
 
         # don't cleanup packages or install them after update
@@ -84,12 +88,11 @@ class PlatformManager(BasePkgManager):
         if after_update:
             return True
 
-        p.install_packages(
-            with_packages,
-            without_packages,
-            skip_default_package,
-            silent=silent,
-            force=force)
+        p.install_packages(with_packages,
+                           without_packages,
+                           skip_default_package,
+                           silent=silent,
+                           force=force)
         return self.cleanup_packages(list(p.packages))
 
     def uninstall(self, package, requirements=None, after_update=False):
@@ -141,8 +144,8 @@ class PlatformManager(BasePkgManager):
         self.cleanup_packages(list(p.packages))
 
         if missed_pkgs:
-            p.install_packages(
-                with_packages=list(missed_pkgs), skip_default_package=True)
+            p.install_packages(with_packages=list(missed_pkgs),
+                               skip_default_package=True)
 
         return True
 
@@ -253,8 +256,8 @@ class PlatformFactory(object):
                 cls.load_module(name, join(platform_dir, "platform.py")),
                 cls.get_clsname(name))
         else:
-            platform_cls = type(
-                str(cls.get_clsname(name)), (PlatformBase, ), {})
+            platform_cls = type(str(cls.get_clsname(name)), (PlatformBase, ),
+                                {})
 
         _instance = platform_cls(join(platform_dir, "platform.json"))
         assert isinstance(_instance, PlatformBase)
@@ -285,8 +288,9 @@ class PlatformPackagesMixin(object):
             elif (name in with_packages or
                   not (skip_default_package or opts.get("optional", False))):
                 if ":" in version:
-                    self.pm.install(
-                        "%s=%s" % (name, version), silent=silent, force=force)
+                    self.pm.install("%s=%s" % (name, version),
+                                    silent=silent,
+                                    force=force)
                 else:
                     self.pm.install(name, version, silent=silent, force=force)
 
@@ -402,8 +406,8 @@ class PlatformRunMixin(object):
                 cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
             else:
                 cmd.append(
-                    "%s=%s" % (key.upper(), base64.b64encode(
-                        value.encode()).decode()))
+                    "%s=%s" %
+                    (key.upper(), base64.b64encode(value.encode()).decode()))
 
         def _write_and_flush(stream, data):
             stream.write(data)
@@ -461,8 +465,8 @@ class PlatformRunMixin(object):
 """.format(filename=filename,
            filename_styled=click.style(filename, fg="cyan"),
            link=click.style(
-               "https://platformio.org/lib/search?query=header:%s" % quote(
-                   filename, safe=""),
+               "https://platformio.org/lib/search?query=header:%s" %
+               quote(filename, safe=""),
                fg="blue"),
            dots="*" * (56 + len(filename)))
         click.echo(banner, err=True)

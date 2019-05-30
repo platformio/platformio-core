@@ -25,9 +25,11 @@ from platformio.commands.platform import \
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_include_dir, get_project_lib_dir, get_project_src_dir,
-    get_project_test_dir, is_platformio_project)
+from platformio.project.helpers import (get_project_include_dir,
+                                        get_project_lib_dir,
+                                        get_project_src_dir,
+                                        get_project_test_dir,
+                                        is_platformio_project)
 
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
@@ -42,22 +44,23 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
     return value
 
 
-@click.command(
-    "init", short_help="Initialize PlatformIO project or update existing")
-@click.option(
-    "--project-dir",
-    "-d",
-    default=getcwd,
-    type=click.Path(
-        exists=True,
-        file_okay=False,
-        dir_okay=True,
-        writable=True,
-        resolve_path=True))
-@click.option(
-    "-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
-@click.option(
-    "--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
+@click.command("init",
+               short_help="Initialize PlatformIO project or update existing")
+@click.option("--project-dir",
+              "-d",
+              default=getcwd,
+              type=click.Path(exists=True,
+                              file_okay=False,
+                              dir_okay=True,
+                              writable=True,
+                              resolve_path=True))
+@click.option("-b",
+              "--board",
+              multiple=True,
+              metavar="ID",
+              callback=validate_boards)
+@click.option("--ide",
+              type=click.Choice(ProjectGenerator.get_supported_ides()))
 @click.option("-O", "--project-option", multiple=True)
 @click.option("--env-prefix", default="")
 @click.option("-s", "--silent", is_flag=True)
@@ -72,22 +75,23 @@ def cli(
         silent):
     if not silent:
         if project_dir == getcwd():
-            click.secho(
-                "\nThe current working directory", fg="yellow", nl=False)
+            click.secho("\nThe current working directory",
+                        fg="yellow",
+                        nl=False)
             click.secho(" %s " % project_dir, fg="cyan", nl=False)
             click.secho("will be used for the project.", fg="yellow")
             click.echo("")
 
         click.echo("The next files/directories have been created in %s" %
                    click.style(project_dir, fg="cyan"))
-        click.echo("%s - Put project header files here" % click.style(
-            "include", fg="cyan"))
+        click.echo("%s - Put project header files here" %
+                   click.style("include", fg="cyan"))
         click.echo("%s - Put here project specific (private) libraries" %
                    click.style("lib", fg="cyan"))
-        click.echo("%s - Put project source files here" % click.style(
-            "src", fg="cyan"))
-        click.echo("%s - Project Configuration File" % click.style(
-            "platformio.ini", fg="cyan"))
+        click.echo("%s - Put project source files here" %
+                   click.style("src", fg="cyan"))
+        click.echo("%s - Project Configuration File" %
+                   click.style("platformio.ini", fg="cyan"))
 
     is_new_project = not is_platformio_project(project_dir)
     if is_new_project:
@@ -112,8 +116,8 @@ def cli(
     if ide:
         click.secho(
             "\nProject has been successfully %s including configuration files "
-            "for `%s` IDE." % ("initialized" if is_new_project else "updated",
-                               ide),
+            "for `%s` IDE." %
+            ("initialized" if is_new_project else "updated", ide),
             fg="green")
     else:
         click.secho(
@@ -363,8 +367,8 @@ def init_cvs_ignore(project_dir):
 
 def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
                       force_download):
-    config = ProjectConfig(
-        join(project_dir, "platformio.ini"), parse_extra=False)
+    config = ProjectConfig(join(project_dir, "platformio.ini"),
+                           parse_extra=False)
     used_boards = []
     for section in config.sections():
         cond = [
@@ -417,6 +421,5 @@ def _install_dependent_platforms(ctx, platforms):
     ]
     if set(platforms) <= set(installed_platforms):
         return
-    ctx.invoke(
-        cli_platform_install,
-        platforms=list(set(platforms) - set(installed_platforms)))
+    ctx.invoke(cli_platform_install,
+               platforms=list(set(platforms) - set(installed_platforms)))

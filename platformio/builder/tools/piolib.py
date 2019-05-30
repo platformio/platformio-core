@@ -54,8 +54,9 @@ class LibBuilderFactory(object):
             elif used_frameworks:
                 clsname = "%sLibBuilder" % used_frameworks[0].title()
 
-        obj = getattr(sys.modules[__name__], clsname)(
-            env, path, verbose=verbose)
+        obj = getattr(sys.modules[__name__], clsname)(env,
+                                                      path,
+                                                      verbose=verbose)
         assert isinstance(obj, LibBuilderBase)
         return obj
 
@@ -69,8 +70,8 @@ class LibBuilderFactory(object):
         if isfile(join(path, "module.json")):
             return ["mbed"]
 
-        include_re = re.compile(
-            r'^#include\s+(<|")(Arduino|mbed)\.h(<|")', flags=re.MULTILINE)
+        include_re = re.compile(r'^#include\s+(<|")(Arduino|mbed)\.h(<|")',
+                                flags=re.MULTILINE)
 
         # check source files
         for root, _, files in os.walk(path, followlinks=True):
@@ -270,12 +271,11 @@ class LibBuilderBase(object):
             self.env.ProcessFlags(self.build_flags)
             if self.extra_script:
                 self.env.SConscriptChdir(1)
-                self.env.SConscript(
-                    realpath(self.extra_script),
-                    exports={
-                        "env": self.env,
-                        "pio_lib_builder": self
-                    })
+                self.env.SConscript(realpath(self.extra_script),
+                                    exports={
+                                        "env": self.env,
+                                        "pio_lib_builder": self
+                                    })
             self.env.ProcessUnFlags(self.build_unflags)
 
     def process_dependencies(self):
@@ -290,8 +290,9 @@ class LibBuilderBase(object):
                 if (key in item and
                         not util.items_in_list(self.env[env_key], item[key])):
                     if self.verbose:
-                        sys.stderr.write("Skip %s incompatible dependency %s\n"
-                                         % (key[:-1], item))
+                        sys.stderr.write(
+                            "Skip %s incompatible dependency %s\n" %
+                            (key[:-1], item))
                     skip = True
             if skip:
                 continue
@@ -404,9 +405,9 @@ class LibBuilderBase(object):
         if self != lb:
             if _already_depends(lb):
                 if self.verbose:
-                    sys.stderr.write(
-                        "Warning! Circular dependencies detected "
-                        "between `%s` and `%s`\n" % (self.path, lb.path))
+                    sys.stderr.write("Warning! Circular dependencies detected "
+                                     "between `%s` and `%s`\n" %
+                                     (self.path, lb.path))
                 self._circular_deps.append(lb)
             elif lb not in self._depbuilders:
                 self._depbuilders.append(lb)
@@ -648,8 +649,8 @@ class MbedLibBuilder(LibBuilderBase):
         for key, options in manifest.get("config", {}).items():
             if "value" not in options:
                 continue
-            macros[key] = dict(
-                name=options.get("macro_name"), value=options.get("value"))
+            macros[key] = dict(name=options.get("macro_name"),
+                               value=options.get("value"))
 
         # overrode items per target
         for target, options in manifest.get("target_overrides", {}).items():
@@ -669,8 +670,10 @@ class MbedLibBuilder(LibBuilderBase):
                 if "." not in macro['name']:
                     macro['name'] = "%s.%s" % (manifest.get("name"),
                                                macro['name'])
-                macro['name'] = re.sub(
-                    r"[^a-z\d]+", "_", macro['name'], flags=re.I).upper()
+                macro['name'] = re.sub(r"[^a-z\d]+",
+                                       "_",
+                                       macro['name'],
+                                       flags=re.I).upper()
                 macro['name'] = "MBED_CONF_" + macro['name']
             if isinstance(macro['value'], bool):
                 macro['value'] = 1 if macro['value'] else 0
@@ -686,8 +689,8 @@ class MbedLibBuilder(LibBuilderBase):
                     lines.append(
                         "// PlatformIO Library Dependency Finder (LDF)")
                     lines.extend([
-                        "#define %s %s" % (name,
-                                           value if value is not None else "")
+                        "#define %s %s" %
+                        (name, value if value is not None else "")
                         for name, value in macros.items()
                     ])
                     lines.append("")
@@ -919,9 +922,8 @@ def GetLibSourceDirs(env):
 def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
     if "__PIO_LIB_BUILDERS" in DefaultEnvironment():
-        return sorted(
-            DefaultEnvironment()['__PIO_LIB_BUILDERS'],
-            key=lambda lb: 0 if lb.dependent else 1)
+        return sorted(DefaultEnvironment()['__PIO_LIB_BUILDERS'],
+                      key=lambda lb: 0 if lb.dependent else 1)
 
     items = []
     verbose = int(ARGUMENTS.get("PIOVERBOSE",
@@ -936,14 +938,14 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
         if compat_mode == "strict" and not lb.is_platforms_compatible(
                 env['PIOPLATFORM']):
             if verbose:
-                sys.stderr.write(
-                    "Platform incompatible library %s\n" % lb.path)
+                sys.stderr.write("Platform incompatible library %s\n" %
+                                 lb.path)
             return False
         if compat_mode == "soft" and "PIOFRAMEWORK" in env and \
            not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", [])):
             if verbose:
-                sys.stderr.write(
-                    "Framework incompatible library %s\n" % lb.path)
+                sys.stderr.write("Framework incompatible library %s\n" %
+                                 lb.path)
             return False
         return True
 
@@ -956,12 +958,14 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             if item == "__cores__" or not isdir(join(libs_dir, item)):
                 continue
             try:
-                lb = LibBuilderFactory.new(
-                    env, join(libs_dir, item), verbose=verbose)
+                lb = LibBuilderFactory.new(env,
+                                           join(libs_dir, item),
+                                           verbose=verbose)
             except exception.InvalidJSONFile:
                 if verbose:
-                    sys.stderr.write("Skip library with broken manifest: %s\n"
-                                     % join(libs_dir, item))
+                    sys.stderr.write(
+                        "Skip library with broken manifest: %s\n" %
+                        join(libs_dir, item))
                 continue
             if _check_lib_builder(lb):
                 items.append(lb)

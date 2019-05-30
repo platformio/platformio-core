@@ -101,63 +101,57 @@ def device_list(  # pylint: disable=too-many-branches
 @cli.command("monitor", short_help="Monitor device (Serial)")
 @click.option("--port", "-p", help="Port, a number or a device name")
 @click.option("--baud", "-b", type=int, help="Set baud rate, default=9600")
-@click.option(
-    "--parity",
-    default="N",
-    type=click.Choice(["N", "E", "O", "S", "M"]),
-    help="Set parity, default=N")
-@click.option(
-    "--rtscts", is_flag=True, help="Enable RTS/CTS flow control, default=Off")
-@click.option(
-    "--xonxoff",
-    is_flag=True,
-    help="Enable software flow control, default=Off")
-@click.option(
-    "--rts",
-    default=None,
-    type=click.IntRange(0, 1),
-    help="Set initial RTS line state")
-@click.option(
-    "--dtr",
-    default=None,
-    type=click.IntRange(0, 1),
-    help="Set initial DTR line state")
+@click.option("--parity",
+              default="N",
+              type=click.Choice(["N", "E", "O", "S", "M"]),
+              help="Set parity, default=N")
+@click.option("--rtscts",
+              is_flag=True,
+              help="Enable RTS/CTS flow control, default=Off")
+@click.option("--xonxoff",
+              is_flag=True,
+              help="Enable software flow control, default=Off")
+@click.option("--rts",
+              default=None,
+              type=click.IntRange(0, 1),
+              help="Set initial RTS line state")
+@click.option("--dtr",
+              default=None,
+              type=click.IntRange(0, 1),
+              help="Set initial DTR line state")
 @click.option("--echo", is_flag=True, help="Enable local echo, default=Off")
-@click.option(
-    "--encoding",
-    default="UTF-8",
-    help="Set the encoding for the serial port (e.g. hexlify, "
-    "Latin1, UTF-8), default: UTF-8")
+@click.option("--encoding",
+              default="UTF-8",
+              help="Set the encoding for the serial port (e.g. hexlify, "
+              "Latin1, UTF-8), default: UTF-8")
 @click.option("--filter", "-f", multiple=True, help="Add text transformation")
-@click.option(
-    "--eol",
-    default="CRLF",
-    type=click.Choice(["CR", "LF", "CRLF"]),
-    help="End of line mode, default=CRLF")
-@click.option(
-    "--raw", is_flag=True, help="Do not apply any encodings/transformations")
-@click.option(
-    "--exit-char",
-    type=int,
-    default=3,
-    help="ASCII code of special character that is used to exit "
-    "the application, default=3 (Ctrl+C)")
-@click.option(
-    "--menu-char",
-    type=int,
-    default=20,
-    help="ASCII code of special character that is used to "
-    "control miniterm (menu), default=20 (DEC)")
-@click.option(
-    "--quiet",
-    is_flag=True,
-    help="Diagnostics: suppress non-error messages, default=Off")
-@click.option(
-    "-d",
-    "--project-dir",
-    default=getcwd,
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, resolve_path=True))
+@click.option("--eol",
+              default="CRLF",
+              type=click.Choice(["CR", "LF", "CRLF"]),
+              help="End of line mode, default=CRLF")
+@click.option("--raw",
+              is_flag=True,
+              help="Do not apply any encodings/transformations")
+@click.option("--exit-char",
+              type=int,
+              default=3,
+              help="ASCII code of special character that is used to exit "
+              "the application, default=3 (Ctrl+C)")
+@click.option("--menu-char",
+              type=int,
+              default=20,
+              help="ASCII code of special character that is used to "
+              "control miniterm (menu), default=20 (DEC)")
+@click.option("--quiet",
+              is_flag=True,
+              help="Diagnostics: suppress non-error messages, default=Off")
+@click.option("-d",
+              "--project-dir",
+              default=getcwd,
+              type=click.Path(exists=True,
+                              file_okay=False,
+                              dir_okay=True,
+                              resolve_path=True))
 @click.option(
     "-e",
     "--environment",
@@ -206,11 +200,10 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
                 break
 
     try:
-        miniterm.main(
-            default_port=kwargs['port'],
-            default_baudrate=kwargs['baud'] or 9600,
-            default_rts=kwargs['rts'],
-            default_dtr=kwargs['dtr'])
+        miniterm.main(default_port=kwargs['port'],
+                      default_baudrate=kwargs['baud'] or 9600,
+                      default_rts=kwargs['rts'],
+                      default_dtr=kwargs['dtr'])
     except Exception as e:
         raise exception.MinitermException(e)
 

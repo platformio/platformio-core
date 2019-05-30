@@ -31,53 +31,45 @@ from platformio.project.helpers import get_project_test_dir
 
 @click.command("test", short_help="Unit Testing")
 @click.option("--environment", "-e", multiple=True, metavar="<environment>")
-@click.option(
-    "--filter",
-    "-f",
-    multiple=True,
-    metavar="<pattern>",
-    help="Filter tests by a pattern")
-@click.option(
-    "--ignore",
-    "-i",
-    multiple=True,
-    metavar="<pattern>",
-    help="Ignore tests by a pattern")
+@click.option("--filter",
+              "-f",
+              multiple=True,
+              metavar="<pattern>",
+              help="Filter tests by a pattern")
+@click.option("--ignore",
+              "-i",
+              multiple=True,
+              metavar="<pattern>",
+              help="Ignore tests by a pattern")
 @click.option("--upload-port")
 @click.option("--test-port")
-@click.option(
-    "-d",
-    "--project-dir",
-    default=getcwd,
-    type=click.Path(
-        exists=True,
-        file_okay=False,
-        dir_okay=True,
-        writable=True,
-        resolve_path=True))
-@click.option(
-    "-c",
-    "--project-conf",
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=False,
-        readable=True,
-        resolve_path=True))
+@click.option("-d",
+              "--project-dir",
+              default=getcwd,
+              type=click.Path(exists=True,
+                              file_okay=False,
+                              dir_okay=True,
+                              writable=True,
+                              resolve_path=True))
+@click.option("-c",
+              "--project-conf",
+              type=click.Path(exists=True,
+                              file_okay=True,
+                              dir_okay=False,
+                              readable=True,
+                              resolve_path=True))
 @click.option("--without-building", is_flag=True)
 @click.option("--without-uploading", is_flag=True)
 @click.option("--without-testing", is_flag=True)
 @click.option("--no-reset", is_flag=True)
-@click.option(
-    "--monitor-rts",
-    default=None,
-    type=click.IntRange(0, 1),
-    help="Set initial RTS line state for Serial Monitor")
-@click.option(
-    "--monitor-dtr",
-    default=None,
-    type=click.IntRange(0, 1),
-    help="Set initial DTR line state for Serial Monitor")
+@click.option("--monitor-rts",
+              default=None,
+              type=click.IntRange(0, 1),
+              help="Set initial RTS line state for Serial Monitor")
+@click.option("--monitor-dtr",
+              default=None,
+              type=click.IntRange(0, 1),
+              help="Set initial DTR line state for Serial Monitor")
 @click.option("--verbose", "-v", is_flag=True)
 @click.pass_context
 def cli(  # pylint: disable=redefined-builtin
@@ -130,18 +122,17 @@ def cli(  # pylint: disable=redefined-builtin
                        EmbeddedTestProcessor)
                 tp = cls(
                     ctx, testname, envname,
-                    dict(
-                        project_config=config,
-                        project_dir=project_dir,
-                        upload_port=upload_port,
-                        test_port=test_port,
-                        without_building=without_building,
-                        without_uploading=without_uploading,
-                        without_testing=without_testing,
-                        no_reset=no_reset,
-                        monitor_rts=monitor_rts,
-                        monitor_dtr=monitor_dtr,
-                        verbose=verbose))
+                    dict(project_config=config,
+                         project_dir=project_dir,
+                         upload_port=upload_port,
+                         test_port=test_port,
+                         without_building=without_building,
+                         without_uploading=without_uploading,
+                         without_testing=without_testing,
+                         no_reset=no_reset,
+                         monitor_rts=monitor_rts,
+                         monitor_dtr=monitor_dtr,
+                         verbose=verbose))
                 results.append((tp.process(), testname, envname))
 
     if without_testing:
@@ -168,17 +159,15 @@ def cli(  # pylint: disable=redefined-builtin
 
         format_str = "test/{:<%d} > {:<%d}\t[{}]" % (testname_max_len,
                                                      envname_max_len)
-        click.echo(
-            format_str.format(testname, click.style(envname, fg="cyan"),
-                              status_str),
-            err=status is False)
+        click.echo(format_str.format(testname, click.style(envname, fg="cyan"),
+                                     status_str),
+                   err=status is False)
 
-    print_header(
-        "%s%d passed in %.2f seconds"
-        % ("%d failed, " % failed_nums if failed_nums else "", passed_nums,
-           time() - start_time),
-        is_error=failed_nums,
-        fg="red" if failed_nums else "green")
+    print_header("%s%d passed in %.2f seconds" %
+                 ("%d failed, " % failed_nums if failed_nums else "",
+                  passed_nums, time() - start_time),
+                 is_error=failed_nums,
+                 fg="red" if failed_nums else "green")
 
     if failed_nums:
         raise exception.ReturnErrorCode(1)

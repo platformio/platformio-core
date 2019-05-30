@@ -51,24 +51,22 @@ def print_boards(boards):
     BOARDLIST_TPL = ("{type:<30} {mcu:<14} {frequency:<8} "
                      " {flash:<7} {ram:<6} {name}")
     click.echo(
-        BOARDLIST_TPL.format(
-            type=click.style("ID", fg="cyan"),
-            mcu="MCU",
-            frequency="Frequency",
-            flash="Flash",
-            ram="RAM",
-            name="Name"))
+        BOARDLIST_TPL.format(type=click.style("ID", fg="cyan"),
+                             mcu="MCU",
+                             frequency="Frequency",
+                             flash="Flash",
+                             ram="RAM",
+                             name="Name"))
     click.echo("-" * terminal_width)
 
     for board in boards:
         click.echo(
-            BOARDLIST_TPL.format(
-                type=click.style(board['id'], fg="cyan"),
-                mcu=board['mcu'],
-                frequency="%dMHz" % (board['fcpu'] / 1000000),
-                flash=util.format_filesize(board['rom']),
-                ram=util.format_filesize(board['ram']),
-                name=board['name']))
+            BOARDLIST_TPL.format(type=click.style(board['id'], fg="cyan"),
+                                 mcu=board['mcu'],
+                                 frequency="%dMHz" % (board['fcpu'] / 1000000),
+                                 flash=util.format_filesize(board['rom']),
+                                 ram=util.format_filesize(board['ram']),
+                                 name=board['name']))
 
 
 def _get_boards(installed=False):

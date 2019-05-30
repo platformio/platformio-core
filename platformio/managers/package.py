@@ -92,8 +92,8 @@ class PkgRepoMixin(object):
         reqspec = None
         if requirements:
             try:
-                reqspec = self.parse_semver_spec(
-                    requirements, raise_exception=True)
+                reqspec = self.parse_semver_spec(requirements,
+                                                 raise_exception=True)
             except ValueError:
                 pass
 
@@ -430,8 +430,8 @@ class PkgInstallerMixin(object):
             try:
                 if requirements and not self.parse_semver_spec(
                         requirements, raise_exception=True).match(
-                            self.parse_semver_version(
-                                manifest['version'], raise_exception=True)):
+                            self.parse_semver_version(manifest['version'],
+                                                      raise_exception=True)):
                     continue
                 elif not best or (self.parse_semver_version(
                         manifest['version'], raise_exception=True) >
@@ -648,8 +648,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
         if "__src_url" in manifest:
             try:
-                vcs = VCSClientFactory.newClient(
-                    pkg_dir, manifest['__src_url'], silent=True)
+                vcs = VCSClientFactory.newClient(pkg_dir,
+                                                 manifest['__src_url'],
+                                                 silent=True)
             except (AttributeError, exception.PlatformioException):
                 return None
             if not vcs.can_be_updated:
@@ -658,8 +659,8 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         else:
             try:
                 latest = self.get_latest_repo_version(
-                    "id=%d" % manifest['id']
-                    if "id" in manifest else manifest['name'],
+                    "id=%d" %
+                    manifest['id'] if "id" in manifest else manifest['name'],
                     requirements,
                     silent=True)
             except (exception.PlatformioException, ValueError):
@@ -671,10 +672,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         up_to_date = False
         try:
             assert "__src_url" not in manifest
-            up_to_date = (self.parse_semver_version(
-                manifest['version'], raise_exception=True) >=
-                          self.parse_semver_version(
-                              latest, raise_exception=True))
+            up_to_date = (self.parse_semver_version(manifest['version'],
+                                                    raise_exception=True) >=
+                          self.parse_semver_version(latest,
+                                                    raise_exception=True))
         except (AssertionError, ValueError):
             up_to_date = latest == manifest['version']
 
@@ -720,8 +721,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 return package_dir
 
             if url:
-                pkg_dir = self._install_from_url(
-                    name, url, requirements, track=True)
+                pkg_dir = self._install_from_url(name,
+                                                 url,
+                                                 requirements,
+                                                 track=True)
             else:
                 pkg_dir = self._install_from_piorepo(name, requirements)
 
@@ -733,10 +736,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             assert manifest
 
             if not after_update:
-                telemetry.on_event(
-                    category=self.__class__.__name__,
-                    action="Install",
-                    label=manifest['name'])
+                telemetry.on_event(category=self.__class__.__name__,
+                                   action="Install",
+                                   label=manifest['name'])
 
             if not silent:
                 click.secho(
@@ -759,14 +761,13 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 pkg_dir = self.get_package_dir(name, requirements, url)
 
             if not pkg_dir:
-                raise exception.UnknownPackage(
-                    "%s @ %s" % (package, requirements or "*"))
+                raise exception.UnknownPackage("%s @ %s" %
+                                               (package, requirements or "*"))
 
             manifest = self.load_manifest(pkg_dir)
-            click.echo(
-                "Uninstalling %s @ %s: \t" % (click.style(
-                    manifest['name'], fg="cyan"), manifest['version']),
-                nl=False)
+            click.echo("Uninstalling %s @ %s: \t" % (click.style(
+                manifest['name'], fg="cyan"), manifest['version']),
+                       nl=False)
 
             if islink(pkg_dir):
                 os.unlink(pkg_dir)
@@ -785,10 +786,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             click.echo("[%s]" % click.style("OK", fg="green"))
 
             if not after_update:
-                telemetry.on_event(
-                    category=self.__class__.__name__,
-                    action="Uninstall",
-                    label=manifest['name'])
+                telemetry.on_event(category=self.__class__.__name__,
+                                   action="Uninstall",
+                                   label=manifest['name'])
 
         return True
 
@@ -799,17 +799,16 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             pkg_dir = self.get_package_dir(*self.parse_pkg_uri(package))
 
         if not pkg_dir:
-            raise exception.UnknownPackage(
-                "%s @ %s" % (package, requirements or "*"))
+            raise exception.UnknownPackage("%s @ %s" %
+                                           (package, requirements or "*"))
 
         manifest = self.load_manifest(pkg_dir)
         name = manifest['name']
 
-        click.echo(
-            "{} {:<40} @ {:<15}".format(
-                "Checking" if only_check else "Updating",
-                click.style(manifest['name'], fg="cyan"), manifest['version']),
-            nl=False)
+        click.echo("{} {:<40} @ {:<15}".format(
+            "Checking" if only_check else "Updating",
+            click.style(manifest['name'], fg="cyan"), manifest['version']),
+                   nl=False)
         if not util.internet_on():
             click.echo("[%s]" % (click.style("Off-line", fg="yellow")))
             return None
@@ -828,16 +827,15 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         if "__src_url" in manifest:
             vcs = VCSClientFactory.newClient(pkg_dir, manifest['__src_url'])
             assert vcs.update()
-            self._update_src_manifest(
-                dict(version=vcs.get_current_revision()), vcs.storage_dir)
+            self._update_src_manifest(dict(version=vcs.get_current_revision()),
+                                      vcs.storage_dir)
         else:
             self.uninstall(pkg_dir, after_update=True)
             self.install(name, latest, after_update=True)
 
-        telemetry.on_event(
-            category=self.__class__.__name__,
-            action="Update",
-            label=manifest['name'])
+        telemetry.on_event(category=self.__class__.__name__,
+                           action="Update",
+                           label=manifest['name'])
         return True
 
 

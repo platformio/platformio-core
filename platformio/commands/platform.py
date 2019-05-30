@@ -29,9 +29,9 @@ def cli():
 
 def _print_platforms(platforms):
     for platform in platforms:
-        click.echo("{name} ~ {title}".format(
-            name=click.style(platform['name'], fg="cyan"),
-            title=platform['title']))
+        click.echo("{name} ~ {title}".format(name=click.style(platform['name'],
+                                                              fg="cyan"),
+                                             title=platform['title']))
         click.echo("=" * (3 + len(platform['name'] + platform['title'])))
         click.echo(platform['description'])
         click.echo()
@@ -65,19 +65,18 @@ def _get_installed_platform_data(platform,
                                  with_boards=True,
                                  expose_packages=True):
     p = PlatformFactory.newPlatform(platform)
-    data = dict(
-        name=p.name,
-        title=p.title,
-        description=p.description,
-        version=p.version,
-        homepage=p.homepage,
-        repository=p.repository_url,
-        url=p.vendor_url,
-        docs=p.docs_url,
-        license=p.license,
-        forDesktop=not p.is_embedded(),
-        frameworks=sorted(list(p.frameworks) if p.frameworks else []),
-        packages=list(p.packages) if p.packages else [])
+    data = dict(name=p.name,
+                title=p.title,
+                description=p.description,
+                version=p.version,
+                homepage=p.homepage,
+                repository=p.repository_url,
+                url=p.vendor_url,
+                docs=p.docs_url,
+                license=p.license,
+                forDesktop=not p.is_embedded(),
+                frameworks=sorted(list(p.frameworks) if p.frameworks else []),
+                packages=list(p.packages) if p.packages else [])
 
     # if dump to API
     # del data['version']
@@ -99,11 +98,10 @@ def _get_installed_platform_data(platform,
     data['packages'] = []
     installed_pkgs = p.get_installed_packages()
     for name, opts in p.packages.items():
-        item = dict(
-            name=name,
-            type=p.get_package_type(name),
-            requirements=opts.get("version"),
-            optional=opts.get("optional") is True)
+        item = dict(name=name,
+                    type=p.get_package_type(name),
+                    requirements=opts.get("version"),
+                    optional=opts.get("optional") is True)
         if name in installed_pkgs:
             for key, value in installed_pkgs[name].items():
                 if key not in ("url", "version", "description"):
@@ -129,18 +127,17 @@ def _get_registry_platform_data(  # pylint: disable=unused-argument
     if not _data:
         return None
 
-    data = dict(
-        name=_data['name'],
-        title=_data['title'],
-        description=_data['description'],
-        homepage=_data['homepage'],
-        repository=_data['repository'],
-        url=_data['url'],
-        license=_data['license'],
-        forDesktop=_data['forDesktop'],
-        frameworks=_data['frameworks'],
-        packages=_data['packages'],
-        versions=_data['versions'])
+    data = dict(name=_data['name'],
+                title=_data['title'],
+                description=_data['description'],
+                homepage=_data['homepage'],
+                repository=_data['repository'],
+                url=_data['url'],
+                license=_data['license'],
+                forDesktop=_data['forDesktop'],
+                frameworks=_data['frameworks'],
+                packages=_data['packages'],
+                versions=_data['versions'])
 
     if with_boards:
         data['boards'] = [
@@ -163,8 +160,9 @@ def platform_search(query, json_output):
         if query and query.lower() not in search_data.lower():
             continue
         platforms.append(
-            _get_registry_platform_data(
-                platform['name'], with_boards=False, expose_packages=False))
+            _get_registry_platform_data(platform['name'],
+                                        with_boards=False,
+                                        expose_packages=False))
 
     if json_output:
         click.echo(json.dumps(platforms))
@@ -183,8 +181,8 @@ def platform_frameworks(query, json_output):
         search_data = json.dumps(framework)
         if query and query.lower() not in search_data.lower():
             continue
-        framework['homepage'] = (
-            "https://platformio.org/frameworks/" + framework['name'])
+        framework['homepage'] = ("https://platformio.org/frameworks/" +
+                                 framework['name'])
         framework['platforms'] = [
             platform['name'] for platform in _get_registry_platforms()
             if framework['name'] in platform['frameworks']
@@ -205,10 +203,9 @@ def platform_list(json_output):
     pm = PlatformManager()
     for manifest in pm.get_installed():
         platforms.append(
-            _get_installed_platform_data(
-                manifest['__pkg_dir'],
-                with_boards=False,
-                expose_packages=False))
+            _get_installed_platform_data(manifest['__pkg_dir'],
+                                         with_boards=False,
+                                         expose_packages=False))
 
     platforms = sorted(platforms, key=lambda manifest: manifest['name'])
     if json_output:
@@ -227,8 +224,9 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
     if json_output:
         return click.echo(json.dumps(data))
 
-    click.echo("{name} ~ {title}".format(
-        name=click.style(data['name'], fg="cyan"), title=data['title']))
+    click.echo("{name} ~ {title}".format(name=click.style(data['name'],
+                                                          fg="cyan"),
+                                         title=data['title']))
     click.echo("=" * (3 + len(data['name'] + data['title'])))
     click.echo(data['description'])
     click.echo()
@@ -293,17 +291,15 @@ def platform_install(platforms, with_package, without_package,
                      skip_default_package, force):
     pm = PlatformManager()
     for platform in platforms:
-        if pm.install(
-                name=platform,
-                with_packages=with_package,
-                without_packages=without_package,
-                skip_default_package=skip_default_package,
-                force=force):
-            click.secho(
-                "The platform '%s' has been successfully installed!\n"
-                "The rest of packages will be installed automatically "
-                "depending on your build environment." % platform,
-                fg="green")
+        if pm.install(name=platform,
+                      with_packages=with_package,
+                      without_packages=without_package,
+                      skip_default_package=skip_default_package,
+                      force=force):
+            click.secho("The platform '%s' has been successfully installed!\n"
+                        "The rest of packages will be installed automatically "
+                        "depending on your build environment." % platform,
+                        fg="green")
 
 
 @cli.command("uninstall", short_help="Uninstall development platform")
@@ -312,28 +308,24 @@ def platform_uninstall(platforms):
     pm = PlatformManager()
     for platform in platforms:
         if pm.uninstall(platform):
-            click.secho(
-                "The platform '%s' has been successfully "
-                "uninstalled!" % platform,
-                fg="green")
+            click.secho("The platform '%s' has been successfully "
+                        "uninstalled!" % platform,
+                        fg="green")
 
 
 @cli.command("update", short_help="Update installed development platforms")
 @click.argument("platforms", nargs=-1, required=False, metavar="[PLATFORM...]")
-@click.option(
-    "-p",
-    "--only-packages",
-    is_flag=True,
-    help="Update only the platform packages")
-@click.option(
-    "-c",
-    "--only-check",
-    is_flag=True,
-    help="DEPRECATED. Please use `--dry-run` instead")
-@click.option(
-    "--dry-run",
-    is_flag=True,
-    help="Do not update, only check for the new versions")
+@click.option("-p",
+              "--only-packages",
+              is_flag=True,
+              help="Update only the platform packages")
+@click.option("-c",
+              "--only-check",
+              is_flag=True,
+              help="DEPRECATED. Please use `--dry-run` instead")
+@click.option("--dry-run",
+              is_flag=True,
+              help="Do not update, only check for the new versions")
 @click.option("--json-output", is_flag=True)
 def platform_update(  # pylint: disable=too-many-locals
         platforms, only_packages, only_check, dry_run, json_output):
@@ -363,8 +355,9 @@ def platform_update(  # pylint: disable=too-many-locals
             if (not latest and not PlatformFactory.newPlatform(
                     pkg_dir).are_outdated_packages()):
                 continue
-            data = _get_installed_platform_data(
-                pkg_dir, with_boards=False, expose_packages=False)
+            data = _get_installed_platform_data(pkg_dir,
+                                                with_boards=False,
+                                                expose_packages=False)
             if latest:
                 data['versionLatest'] = latest
             result.append(data)
@@ -373,8 +366,9 @@ def platform_update(  # pylint: disable=too-many-locals
     # cleanup cached board and platform lists
     app.clean_cache()
     for platform in platforms:
-        click.echo("Platform %s" % click.style(
-            pkg_dir_to_name.get(platform, platform), fg="cyan"))
+        click.echo(
+            "Platform %s" %
+            click.style(pkg_dir_to_name.get(platform, platform), fg="cyan"))
         click.echo("--------")
         pm.update(platform, only_packages=only_packages, only_check=only_check)
         click.echo()

@@ -190,14 +190,12 @@ class LibraryManager(BasePkgManager):
 
     def get_latest_repo_version(self, name, requirements, silent=False):
         item = self.max_satisfying_repo_version(
-            util.get_api_result(
-                "/lib/info/%d" % self.search_lib_id(
-                    {
-                        "name": name,
-                        "requirements": requirements
-                    },
-                    silent=silent),
-                cache_valid="1h")['versions'], requirements)
+            util.get_api_result("/lib/info/%d" % self.search_lib_id(
+                {
+                    "name": name,
+                    "requirements": requirements
+                }, silent=silent),
+                                cache_valid="1h")['versions'], requirements)
         return item['name'] if item else None
 
     def _install_from_piorepo(self, name, requirements):
@@ -206,10 +204,9 @@ class LibraryManager(BasePkgManager):
         if not version:
             raise exception.UndefinedPackageVersion(requirements or "latest",
                                                     util.get_systype())
-        dl_data = util.get_api_result(
-            "/lib/download/" + str(name[3:]),
-            dict(version=version),
-            cache_valid="30d")
+        dl_data = util.get_api_result("/lib/download/" + str(name[3:]),
+                                      dict(version=version),
+                                      cache_valid="30d")
         assert dl_data
 
         return self._install_from_url(
@@ -231,8 +228,8 @@ class LibraryManager(BasePkgManager):
 
         # looking in PIO Library Registry
         if not silent:
-            click.echo("Looking for %s library in registry" % click.style(
-                filters['name'], fg="cyan"))
+            click.echo("Looking for %s library in registry" %
+                       click.style(filters['name'], fg="cyan"))
         query = []
         for key in filters:
             if key not in ("name", "authors", "frameworks", "platforms"):
@@ -245,19 +242,19 @@ class LibraryManager(BasePkgManager):
                              (key[:-1] if key.endswith("s") else key, value))
 
         lib_info = None
-        result = util.get_api_result(
-            "/v2/lib/search", dict(query=" ".join(query)), cache_valid="1h")
+        result = util.get_api_result("/v2/lib/search",
+                                     dict(query=" ".join(query)),
+                                     cache_valid="1h")
         if result['total'] == 1:
             lib_info = result['items'][0]
         elif result['total'] > 1:
             if silent and not interactive:
                 lib_info = result['items'][0]
             else:
-                click.secho(
-                    "Conflict: More than one library has been found "
-                    "by request %s:" % json.dumps(filters),
-                    fg="yellow",
-                    err=True)
+                click.secho("Conflict: More than one library has been found "
+                            "by request %s:" % json.dumps(filters),
+                            fg="yellow",
+                            err=True)
                 for item in result['items']:
                     commands.lib.print_lib_item(item)
 
@@ -269,10 +266,11 @@ class LibraryManager(BasePkgManager):
                         err=True)
                     lib_info = result['items'][0]
                 else:
-                    deplib_id = click.prompt(
-                        "Please choose library ID",
-                        type=click.Choice(
-                            [str(i['id']) for i in result['items']]))
+                    deplib_id = click.prompt("Please choose library ID",
+                                             type=click.Choice([
+                                                 str(i['id'])
+                                                 for i in result['items']
+                                             ]))
                     for item in result['items']:
                         if item['id'] == int(deplib_id):
                             lib_info = item
@@ -306,9 +304,8 @@ class LibraryManager(BasePkgManager):
                 continue
             if key not in manifest:
                 return None
-            if not util.items_in_list(
-                    util.items_to_list(filters[key]),
-                    util.items_to_list(manifest[key])):
+            if not util.items_in_list(util.items_to_list(filters[key]),
+                                      util.items_to_list(manifest[key])):
                 return None
 
         if "authors" in filters:
@@ -339,20 +336,20 @@ class LibraryManager(BasePkgManager):
             force=False):
         _name, _requirements, _url = self.parse_pkg_uri(name, requirements)
         if not _url:
-            name = "id=%d" % self.search_lib_id({
-                "name": _name,
-                "requirements": _requirements
-            },
-                                                silent=silent,
-                                                interactive=interactive)
+            name = "id=%d" % self.search_lib_id(
+                {
+                    "name": _name,
+                    "requirements": _requirements
+                },
+                silent=silent,
+                interactive=interactive)
             requirements = _requirements
-        pkg_dir = BasePkgManager.install(
-            self,
-            name,
-            requirements,
-            silent=silent,
-            after_update=after_update,
-            force=force)
+        pkg_dir = BasePkgManager.install(self,
+                                         name,
+                                         requirements,
+                                         silent=silent,
+                                         after_update=after_update,
+                                         force=force)
 
         if not pkg_dir:
             return None
@@ -376,12 +373,11 @@ class LibraryManager(BasePkgManager):
             self.INSTALL_HISTORY.append(history_key)
 
             if any(s in filters.get("version", "") for s in ("\\", "/")):
-                self.install(
-                    "{name}={version}".format(**filters),
-                    silent=silent,
-                    after_update=after_update,
-                    interactive=interactive,
-                    force=force)
+                self.install("{name}={version}".format(**filters),
+                             silent=silent,
+                             after_update=after_update,
+                             interactive=interactive,
+                             force=force)
             else:
                 try:
                     lib_id = self.search_lib_id(filters, silent, interactive)
@@ -391,20 +387,18 @@ class LibraryManager(BasePkgManager):
                     continue
 
                 if filters.get("version"):
-                    self.install(
-                        lib_id,
-                        filters.get("version"),
-                        silent=silent,
-                        after_update=after_update,
-                        interactive=interactive,
-                        force=force)
+                    self.install(lib_id,
+                                 filters.get("version"),
+                                 silent=silent,
+                                 after_update=after_update,
+                                 interactive=interactive,
+                                 force=force)
                 else:
-                    self.install(
-                        lib_id,
-                        silent=silent,
-                        after_update=after_update,
-                        interactive=interactive,
-                        force=force)
+                    self.install(lib_id,
+                                 silent=silent,
+                                 after_update=after_update,
+                                 interactive=interactive,
+                                 force=force)
         return pkg_dir
 
 

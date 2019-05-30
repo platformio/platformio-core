@@ -20,8 +20,9 @@ import click
 
 from platformio import exception, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
-from platformio.commands.run.helpers import (
-    _clean_build_dir, _handle_legacy_libdeps, print_summary)
+from platformio.commands.run.helpers import (_clean_build_dir,
+                                             _handle_legacy_libdeps,
+                                             print_summary)
 from platformio.commands.run.processor import EnvironmentProcessor
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (find_project_dir_above,
@@ -34,25 +35,21 @@ from platformio.project.helpers import (find_project_dir_above,
 @click.option("-e", "--environment", multiple=True)
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")
-@click.option(
-    "-d",
-    "--project-dir",
-    default=getcwd,
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=True,
-        writable=True,
-        resolve_path=True))
-@click.option(
-    "-c",
-    "--project-conf",
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=False,
-        readable=True,
-        resolve_path=True))
+@click.option("-d",
+              "--project-dir",
+              default=getcwd,
+              type=click.Path(exists=True,
+                              file_okay=True,
+                              dir_okay=True,
+                              writable=True,
+                              resolve_path=True))
+@click.option("-c",
+              "--project-conf",
+              type=click.Path(exists=True,
+                              file_okay=True,
+                              dir_okay=False,
+                              readable=True,
+                              resolve_path=True))
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
@@ -93,8 +90,8 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf,
                 results.append((envname, None))
                 continue
 
-            if not silent and any(
-                    status is not None for (_, status) in results):
+            if not silent and any(status is not None
+                                  for (_, status) in results):
                 click.echo()
 
             ep = EnvironmentProcessor(ctx, envname, config, target,
@@ -104,9 +101,8 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf,
 
             if result[1] and "monitor" in ep.get_build_targets() and \
                     "nobuild" not in ep.get_build_targets():
-                ctx.invoke(
-                    cmd_device_monitor,
-                    environment=environment[0] if environment else None)
+                ctx.invoke(cmd_device_monitor,
+                           environment=environment[0] if environment else None)
 
         found_error = any(status is False for (_, status) in results)
 
