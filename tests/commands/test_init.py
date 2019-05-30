@@ -16,7 +16,7 @@ import json
 from os import getcwd, makedirs
 from os.path import getsize, isdir, isfile, join
 
-from platformio import exception, util
+from platformio import exception
 from platformio.commands.boards import cli as cmd_boards
 from platformio.commands.init import cli as cmd_init
 from platformio.project.config import ProjectConfig
@@ -109,13 +109,13 @@ def test_init_special_board(clirunner, validate_cliresult):
 
         config = ProjectConfig(join(getcwd(), "platformio.ini"))
         config.validate()
-        expected_result = [("platform", str(boards[0]['platform'])),
-                           ("framework",
-                            str(boards[0]['frameworks'][0])), ("board", "uno")]
 
+        expected_result = dict(platform=str(boards[0]['platform']),
+                               board="uno",
+                               framework=[str(boards[0]['frameworks'][0])])
         assert config.has_section("env:uno")
-        assert not set(expected_result).symmetric_difference(
-            set(config.items("env:uno")))
+        assert sorted(config.items(env="uno", as_dict=True).items()) == sorted(
+            expected_result.items())
 
 
 def test_init_enable_auto_uploading(clirunner, validate_cliresult):
@@ -126,11 +126,13 @@ def test_init_enable_auto_uploading(clirunner, validate_cliresult):
         validate_pioproject(getcwd())
         config = ProjectConfig(join(getcwd(), "platformio.ini"))
         config.validate()
-        expected_result = [("platform", "atmelavr"), ("framework", "arduino"),
-                           ("board", "uno"), ("targets", "upload")]
+        expected_result = dict(targets=["upload"],
+                               platform="atmelavr",
+                               board="uno",
+                               framework=["arduino"])
         assert config.has_section("env:uno")
-        assert not set(expected_result).symmetric_difference(
-            set(config.items("env:uno")))
+        assert sorted(config.items(env="uno", as_dict=True).items()) == sorted(
+            expected_result.items())
 
 
 def test_init_custom_framework(clirunner, validate_cliresult):
@@ -141,11 +143,13 @@ def test_init_custom_framework(clirunner, validate_cliresult):
         validate_pioproject(getcwd())
         config = ProjectConfig(join(getcwd(), "platformio.ini"))
         config.validate()
-        expected_result = [("platform", "teensy"), ("framework", "mbed"),
-                           ("board", "teensy31")]
+        expected_result = dict(platform="teensy",
+                               board="teensy31",
+                               framework=["mbed"])
         assert config.has_section("env:teensy31")
-        assert not set(expected_result).symmetric_difference(
-            set(config.items("env:teensy31")))
+        assert sorted(config.items(env="teensy31",
+                                   as_dict=True).items()) == sorted(
+                                       expected_result.items())
 
 
 def test_init_incorrect_board(clirunner):

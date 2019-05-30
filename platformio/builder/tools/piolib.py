@@ -23,8 +23,8 @@ import os
 import re
 import sys
 from glob import glob
-from os.path import (basename, commonprefix, dirname, isdir, isfile, join,
-                     realpath, sep)
+from os.path import (basename, commonprefix, dirname, expanduser, isdir,
+                     isfile, join, realpath, sep)
 
 import SCons.Scanner  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
@@ -207,17 +207,18 @@ class LibBuilderBase(object):
 
     @property
     def lib_archive(self):
-        return self.env.get("LIB_ARCHIVE", "") != "false"
+        return self.env.GetProjectOption("lib_archive", True)
 
     @property
     def lib_ldf_mode(self):
         return self.validate_ldf_mode(
-            self.env.get("LIB_LDF_MODE", self.LDF_MODE_DEFAULT))
+            self.env.GetProjectOption("lib_ldf_mode", self.LDF_MODE_DEFAULT))
 
     @property
     def lib_compat_mode(self):
         return self.validate_compat_mode(
-            self.env.get("LIB_COMPAT_MODE", self.COMPAT_MODE_DEFAULT))
+            self.env.GetProjectOption("lib_compat_mode",
+                                      self.COMPAT_MODE_DEFAULT))
 
     @property
     def depbuilders(self):
@@ -867,7 +868,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
         pass
 
     def process_dependencies(self):  # pylint: disable=too-many-branches
-        uris = self.env.get("LIB_DEPS", [])
+        uris = self.env.GetProjectOption("lib_deps", [])
         if not uris:
             return
         storage_dirs = []
@@ -907,6 +908,14 @@ class ProjectAsLibBuilder(LibBuilderBase):
         return result
 
 
+def GetLibSourceDirs(env):
+    items = env.GetProjectOption("lib_extra_dirs", [])
+    items.extend(env['LIBSOURCE_DIRS'])
+    return [
+        expanduser(item) if item.startswith("~") else item for item in items
+    ]
+
+
 def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
     if "__PIO_LIB_BUILDERS" in DefaultEnvironment():
@@ -920,7 +929,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
     def _check_lib_builder(lb):
         compat_mode = lb.lib_compat_mode
-        if lb.name in env.get("LIB_IGNORE", []):
+        if lb.name in env.GetProjectOption("lib_ignore", []):
             if verbose:
                 sys.stderr.write("Ignored library %s\n" % lb.path)
             return None
@@ -939,7 +948,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
         return True
 
     found_incompat = False
-    for libs_dir in env['LIBSOURCE_DIRS']:
+    for libs_dir in env.GetLibSourceDirs():
         libs_dir = env.subst(libs_dir)
         if not isdir(libs_dir):
             continue
@@ -1038,6 +1047,7 @@ def exists(_):
 
 
 def generate(env):
+    env.AddMethod(GetLibSourceDirs)
     env.AddMethod(GetLibBuilders)
     env.AddMethod(ConfigureProjectLibBuilder)
     return env

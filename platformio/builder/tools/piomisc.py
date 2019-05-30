@@ -322,7 +322,7 @@ def ProcessTest(env):
 
 def GetExtraScripts(env, scope):
     items = []
-    for item in env.get("EXTRA_SCRIPTS", []):
+    for item in env.GetProjectOption("extra_scripts", []):
         if scope == "post" and ":" not in item:
             items.append(item)
         elif item.startswith("%s:" % scope):

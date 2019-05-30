@@ -14,7 +14,9 @@
 
 import os
 
-from platformio.project.config import ProjectConfig
+import pytest
+
+from platformio.project.config import ConfigParser, ProjectConfig
 
 BASE_CONFIG = """
 [platformio]
@@ -26,7 +28,9 @@ extra_configs =
 # global options per [env:*]
 [env]
 monitor_speed = 115200
-lib_deps = Lib1, Lib2
+lib_deps =
+    Lib1
+    Lib2
 lib_ignore = ${custom.lib_ignore}
 
 [custom]
@@ -46,6 +50,7 @@ build_flags = ${custom.lib_flags} ${custom.debug_flags}
 [env:extra_2]
 build_flags = ${custom.debug_flags} ${custom.extra_flags}
 lib_ignore = ${env.lib_ignore}, Lib3
+upload_port = /dev/extra_2/port
 """
 
 EXTRA_DEBUG_CONFIG = """
@@ -58,7 +63,7 @@ build_flags = -Og
 """
 
 
-def test_parser(tmpdir):
+def test_real_config(tmpdir):
     tmpdir.join("platformio.ini").write(BASE_CONFIG)
     tmpdir.join("extra_envs.ini").write(EXTRA_ENVS_CONFIG)
     tmpdir.join("extra_debug.ini").write(EXTRA_DEBUG_CONFIG)
@@ -67,6 +72,16 @@ def test_parser(tmpdir):
     with tmpdir.as_cwd():
         config = ProjectConfig(tmpdir.join("platformio.ini").strpath)
     assert config
+
+    # unknown section
+    with pytest.raises(ConfigParser.NoSectionError):
+        config.getraw("unknown_section", "unknown_option")
+    # unknown option
+    with pytest.raises(ConfigParser.NoOptionError):
+        config.getraw("custom", "unknown_option")
+    # unknown option even if exists in [env]
+    with pytest.raises(ConfigParser.NoOptionError):
+        config.getraw("platformio", "monitor_speed")
 
     # sections
     assert config.sections() == [
@@ -87,30 +102,76 @@ def test_parser(tmpdir):
     assert not config.has_option("custom", "monitor_speed")
 
     # sysenv
-    assert config.get("custom", "extra_flags") == ""
+    assert config.get("custom", "extra_flags") is None
+    assert config.get("env:base", "build_flags") == ["-D DEBUG=1"]
+    assert config.get("env:base", "upload_port") is None
+    assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
+    os.environ["PLATFORMIO_BUILD_FLAGS"] = "-DSYSENVDEPS1 -DSYSENVDEPS2"
+    os.environ["PLATFORMIO_UPLOAD_PORT"] = "/dev/sysenv/port"
     os.environ["__PIO_TEST_CNF_EXTRA_FLAGS"] = "-L /usr/local/lib"
     assert config.get("custom", "extra_flags") == "-L /usr/local/lib"
+    assert config.get("env:base", "build_flags") == [
+        "-D DEBUG=1 -L /usr/local/lib", "-DSYSENVDEPS1 -DSYSENVDEPS2"
+    ]
+    assert config.get("env:base", "upload_port") == "/dev/sysenv/port"
+    assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
+
+    # getraw
+    assert config.getraw("env:extra_1", "lib_deps") == "\nLib1\nLib2"
+    assert config.getraw("env:extra_1", "build_flags") == "-lc -lm -D DEBUG=1"
 
     # get
     assert config.get("custom", "debug_flags") == "-D DEBUG=1"
-    assert config.get("env:extra_1", "build_flags") == "-lc -lm -D DEBUG=1"
-    assert config.get("env:extra_2", "build_flags") == "-Og"
+    assert config.get("env:extra_1", "build_flags") == [
+        "-lc -lm -D DEBUG=1", "-DSYSENVDEPS1 -DSYSENVDEPS2"
+    ]
+    assert config.get("env:extra_2", "build_flags") == [
+        "-Og", "-DSYSENVDEPS1 -DSYSENVDEPS2"]
     assert config.get("env:extra_2", "monitor_speed") == "115200"
-    assert config.get("env:base",
-                      "build_flags") == ("-D DEBUG=1 -L /usr/local/lib")
+    assert config.get("env:base", "build_flags") == ([
+        "-D DEBUG=1 -L /usr/local/lib", "-DSYSENVDEPS1 -DSYSENVDEPS2"
+    ])
 
     # items
-    assert config.items("custom") == [("debug_flags", "-D DEBUG=1"),
-                                      ("lib_flags", "-lc -lm"),
-                                      ("extra_flags", "-L /usr/local/lib"),
-                                      ("lib_ignore", "LibIgnoreCustom")]
-    assert config.items(env="extra_1") == [("build_flags",
-                                            "-lc -lm -D DEBUG=1"),
-                                           ("monitor_speed", "115200"),
-                                           ("lib_deps", "Lib1, Lib2"),
-                                           ("lib_ignore", "LibIgnoreCustom")]
-    assert config.items(env="extra_2") == [("build_flags", "-Og"),
-                                           ("lib_ignore",
-                                            "LibIgnoreCustom, Lib3"),
-                                           ("monitor_speed", "115200"),
-                                           ("lib_deps", "Lib1, Lib2")]
+    assert config.items("custom") == [
+        ("debug_flags", "-D DEBUG=1"),
+        ("lib_flags", "-lc -lm"),
+        ("extra_flags", "-L /usr/local/lib"),
+        ("lib_ignore", "LibIgnoreCustom")
+    ]  # yapf: disable
+    assert config.items(env="extra_1") == [
+        ("build_flags", ["-lc -lm -D DEBUG=1", "-DSYSENVDEPS1 -DSYSENVDEPS2"]),
+        ("monitor_speed", "115200"),
+        ("lib_deps", ["Lib1", "Lib2"]),
+        ("lib_ignore", ["LibIgnoreCustom"]),
+        ("upload_port", "/dev/sysenv/port")
+    ]  # yapf: disable
+    assert config.items(env="extra_2") == [
+        ("build_flags", ["-Og", "-DSYSENVDEPS1 -DSYSENVDEPS2"]),
+        ("lib_ignore", ["LibIgnoreCustom", "Lib3"]),
+        ("upload_port", "/dev/extra_2/port"),
+        ("monitor_speed", "115200"),
+        ("lib_deps", ["Lib1", "Lib2"])
+    ]  # yapf: disable
+
+    # cleanup system environment variables
+    del os.environ["PLATFORMIO_BUILD_FLAGS"]
+    del os.environ["PLATFORMIO_UPLOAD_PORT"]
+    del os.environ["__PIO_TEST_CNF_EXTRA_FLAGS"]
+
+
+def test_empty_config():
+    config = ProjectConfig("/non/existing/platformio.ini")
+
+    # unknown section
+    with pytest.raises(ConfigParser.NoSectionError):
+        config.getraw("unknown_section", "unknown_option")
+
+    assert config.sections() == []
+    assert config.get("section", "option") is None
+    assert config.get("section", "option", 13) == 13
+
+    # sysenv
+    os.environ["PLATFORMIO_HOME_DIR"] = "/custom/core/dir"
+    assert config.get("platformio", "core_dir") == "/custom/core/dir"
+    del os.environ["PLATFORMIO_HOME_DIR"]

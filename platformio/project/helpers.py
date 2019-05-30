@@ -15,7 +15,7 @@
 import os
 from hashlib import sha1
 from os import walk
-from os.path import (abspath, dirname, expanduser, isdir, isfile, join,
+from os.path import (dirname, expanduser, isdir, isfile, join, realpath,
                      splitdrive)
 
 from platformio import __version__
@@ -44,46 +44,31 @@ def find_project_dir_above(path):
 
 
 def get_project_optional_dir(name, default=None):
-    paths = None
+    project_dir = get_project_dir()
+    config = ProjectConfig.get_instance(join(project_dir, "platformio.ini"))
+    optional_dir = config.get("platformio", name)
 
-    # check for system environment variable
-    var_name = "PLATFORMIO_%s" % name.upper()
-    if var_name in os.environ:
-        paths = os.getenv(var_name)
-
-    config = ProjectConfig.get_instance(
-        join(get_project_dir(), "platformio.ini"))
-    if (config.has_section("platformio")
-            and config.has_option("platformio", name)):
-        paths = config.get("platformio", name)
-
-    if not paths:
+    if not optional_dir:
         return default
 
-    items = []
-    for item in paths.split(", "):
-        if item.startswith("~"):
-            item = expanduser(item)
-        items.append(abspath(item))
-    paths = ", ".join(items)
-
-    while "$PROJECT_HASH" in paths:
-        project_dir = get_project_dir()
-        paths = paths.replace(
+    if "$PROJECT_HASH" in optional_dir:
+        optional_dir = optional_dir.replace(
             "$PROJECT_HASH",
             sha1(project_dir if PY2 else project_dir.encode()).hexdigest()
             [:10])
 
-    return paths
+    if optional_dir.startswith("~"):
+        optional_dir = expanduser(optional_dir)
+
+    return realpath(optional_dir)
 
 
 def get_project_core_dir():
+    default = join(expanduser("~"), ".platformio")
     core_dir = get_project_optional_dir(
-        "core_dir",
-        get_project_optional_dir("home_dir",
-                                 join(expanduser("~"), ".platformio")))
+        "core_dir", get_project_optional_dir("home_dir", default))
     win_core_dir = None
-    if WINDOWS:
+    if WINDOWS and core_dir == default:
         win_core_dir = splitdrive(core_dir)[0] + "\\.platformio"
         if isdir(win_core_dir):
             core_dir = win_core_dir
@@ -91,10 +76,12 @@ def get_project_core_dir():
     if not isdir(core_dir):
         try:
             os.makedirs(core_dir)
-        except:  # pylint: disable=bare-except
+        except OSError as e:
             if win_core_dir:
                 os.makedirs(win_core_dir)
                 core_dir = win_core_dir
+            else:
+                raise e
 
     assert isdir(core_dir)
     return core_dir

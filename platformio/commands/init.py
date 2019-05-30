@@ -70,7 +70,6 @@ def cli(
         project_option,
         env_prefix,
         silent):
-
     if not silent:
         if project_dir == getcwd():
             click.secho(

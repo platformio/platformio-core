@@ -16,7 +16,7 @@ import base64
 import json
 import sys
 from os import environ
-from os.path import expanduser, join
+from os.path import join
 from time import time
 
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
@@ -33,76 +33,29 @@ from platformio import util
 from platformio.compat import PY2, path_to_unicode
 from platformio.proc import get_pythonexe_path
 from platformio.project import helpers as project_helpers
-from platformio.project.config import ProjectConfig
 
 AllowSubstExceptions(NameError)
 
-# allow common variables from INI file
-commonvars = Variables(None)
-commonvars.AddVariables(
+# append CLI arguments to build environment
+clivars = Variables(None)
+clivars.AddVariables(
     ("PLATFORM_MANIFEST",),
     ("BUILD_SCRIPT",),
-    ("EXTRA_SCRIPTS",),
+    ("PROJECT_CONFIG",),
     ("PIOENV",),
     ("PIOTEST",),
-    ("PIOPLATFORM",),
-    ("PIOFRAMEWORK",),
-
-    # build options
-    ("BUILD_FLAGS",),
-    ("SRC_BUILD_FLAGS",),
-    ("BUILD_UNFLAGS",),
-    ("SRC_FILTER",),
-
-    # library options
-    ("LIB_LDF_MODE",),
-    ("LIB_COMPAT_MODE",),
-    ("LIB_DEPS",),
-    ("LIB_IGNORE",),
-    ("LIB_EXTRA_DIRS",),
-    ("LIB_ARCHIVE",),
-
-    # board options
-    ("BOARD",),
-    # deprecated options, use board_{object.path} instead
-    ("BOARD_MCU",),
-    ("BOARD_F_CPU",),
-    ("BOARD_F_FLASH",),
-    ("BOARD_FLASH_MODE",),
-    # end of deprecated options
-
-    # upload options
-    ("UPLOAD_PORT",),
-    ("UPLOAD_PROTOCOL",),
-    ("UPLOAD_SPEED",),
-    ("UPLOAD_FLAGS",),
-    ("UPLOAD_RESETMETHOD",),
-
-    # test options
-    ("TEST_BUILD_PROJECT_SRC",),
-
-    # debug options
-    ("DEBUG_TOOL",),
-    ("DEBUG_SVD_PATH",),
-
+    ("UPLOAD_PORT",)
 )  # yapf: disable
-
-MULTILINE_VARS = [
-    "EXTRA_SCRIPTS", "PIOFRAMEWORK", "BUILD_FLAGS", "SRC_BUILD_FLAGS",
-    "BUILD_UNFLAGS", "UPLOAD_FLAGS", "SRC_FILTER", "LIB_DEPS", "LIB_IGNORE",
-    "LIB_EXTRA_DIRS"
-]
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
         "ar", "gas", "gcc", "g++", "gnulink", "platformio", "pioplatform",
-        "piowinhooks", "piolib", "pioupload", "piomisc", "pioide"
-    ],  # yapf: disable
+        "pioproject", "piowinhooks", "piolib", "pioupload", "piomisc", "pioide"
+    ],
     toolpath=[join(util.get_source_dir(), "builder", "tools")],
-    variables=commonvars,
+    variables=clivars,
 
     # Propagating External Environment
-    PIOVARIABLES=list(commonvars.keys()),
     ENV=environ,
     UNIX_TIME=int(time()),
     PROJECT_DIR=project_helpers.get_project_dir(),
@@ -136,38 +89,22 @@ if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
 
 env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 
-# decode common variables
-for k in list(commonvars.keys()):
-    if k in env:
-        env[k] = base64.b64decode(env[k])
-        if isinstance(env[k], bytes):
-            env[k] = env[k].decode()
-        if k in MULTILINE_VARS:
-            env[k] = ProjectConfig.parse_multi_values(env[k])
-
 if env.GetOption('clean'):
     env.PioClean(env.subst("$BUILD_DIR"))
     env.Exit(0)
 elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     print("Verbose mode can be enabled via `-v, --verbose` option")
 
-# Handle custom variables from system environment
-for var in ("BUILD_FLAGS", "SRC_BUILD_FLAGS", "SRC_FILTER", "EXTRA_SCRIPTS",
-            "UPLOAD_PORT", "UPLOAD_FLAGS", "LIB_EXTRA_DIRS"):
-    k = "PLATFORMIO_%s" % var
-    if k not in environ:
-        continue
-    if var in ("UPLOAD_PORT", ):
-        env[var] = environ.get(k)
-        continue
-    env.Append(**{var: ProjectConfig.parse_multi_values(environ.get(k))})
+# Load variables from CLI
+for key in list(clivars.keys()):
+    if key in env:
+        env[key] = base64.b64decode(env[key])
+        if isinstance(env[key], bytes):
+            env[key] = env[key].decode()
 
-env.Prepend(LIBSOURCE_DIRS=env.get("LIB_EXTRA_DIRS", []))
-env['LIBSOURCE_DIRS'] = [
-    expanduser(d) if d.startswith("~") else d for d in env['LIBSOURCE_DIRS']
-]
-
-env.LoadPioPlatform(commonvars)
+env.GetProjectConfig().validate([env['PIOENV']], silent=True)
+env.LoadProjectOptions()
+env.LoadPioPlatform()
 
 env.SConscriptChdir(0)
 env.SConsignFile(

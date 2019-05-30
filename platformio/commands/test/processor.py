@@ -21,7 +21,7 @@ import click
 
 from platformio import exception
 from platformio.commands.run import cli as cmd_run
-from platformio.commands.run import print_header
+from platformio.commands.run.helpers import print_header
 from platformio.project.helpers import get_project_test_dir
 
 TRANSPORT_OPTIONS = {
@@ -82,7 +82,7 @@ class TestProcessorBase(object):
 
     def __init__(self, cmd_ctx, testname, envname, options):
         self.cmd_ctx = cmd_ctx
-        self.cmd_ctx.meta['piotest_processor'] = True
+        self.cmd_ctx.meta['piotest_processor'] = True  # FIXME
         self.test_name = testname
         self.options = options
         self.env_name = envname
@@ -92,9 +92,10 @@ class TestProcessorBase(object):
         self._outputcpp_generated = False
 
     def get_transport(self):
-        transport = self.env_options.get("framework")
         if self.env_options.get("platform") == "native":
             transport = "native"
+        elif "framework" in self.env_options:
+            transport = self.env_options.get("framework")[0]
         if "test_transport" in self.env_options:
             transport = self.env_options['test_transport']
         if transport not in TRANSPORT_OPTIONS:
@@ -108,8 +109,9 @@ class TestProcessorBase(object):
     def print_progress(self, text, is_error=False):
         click.echo()
         print_header(
-            "[test/%s] %s" % (click.style(
-                self.test_name, fg="yellow", bold=True), text),
+            "[test/%s > %s] %s" % (click.style(self.test_name, fg="yellow"),
+                                   click.style(self.env_name, fg="cyan"),
+                                   text),
             is_error=is_error)
 
     def build_or_upload(self, target):
@@ -118,19 +120,22 @@ class TestProcessorBase(object):
             self._outputcpp_generated = True
 
         if self.test_name != "*":
-            self.cmd_ctx.meta['piotest'] = self.test_name
+            self.cmd_ctx.meta['piotest'] = self.test_name  # FIXME
 
         if not self.options['verbose']:
             click.echo("Please wait...")
 
-        return self.cmd_ctx.invoke(
-            cmd_run,
-            project_dir=self.options['project_dir'],
-            upload_port=self.options['upload_port'],
-            silent=not self.options['verbose'],
-            environment=[self.env_name],
-            disable_auto_clean="nobuild" in target,
-            target=target)
+        try:
+            return self.cmd_ctx.invoke(
+                cmd_run,
+                project_dir=self.options['project_dir'],
+                upload_port=self.options['upload_port'],
+                silent=not self.options['verbose'],
+                environment=[self.env_name],
+                disable_auto_clean="nobuild" in target,
+                target=target)
+        except exception.ReturnErrorCode:
+            return False
 
     def process(self):
         raise NotImplementedError
