@@ -13,3 +13,4 @@
 # limitations under the License.
 
 from platformio.commands.run.command import cli
+from platformio.commands.run.helpers import print_header

@@ -110,11 +110,12 @@ def test_init_special_board(clirunner, validate_cliresult):
         config = ProjectConfig(join(getcwd(), "platformio.ini"))
         config.validate()
 
-        expected_result = [("platform", boards[0]['platform']),
-                           ("board", "uno"),
-                           ("framework", [boards[0]['frameworks'][0]])]
+        expected_result = dict(platform=str(boards[0]['platform']),
+                               board="uno",
+                               framework=[str(boards[0]['frameworks'][0])])
         assert config.has_section("env:uno")
-        assert config.items("env:uno") == expected_result
+        assert sorted(config.items(env="uno", as_dict=True).items()) == sorted(
+            expected_result.items())
 
 
 def test_init_enable_auto_uploading(clirunner, validate_cliresult):
@@ -125,10 +126,13 @@ def test_init_enable_auto_uploading(clirunner, validate_cliresult):
         validate_pioproject(getcwd())
         config = ProjectConfig(join(getcwd(), "platformio.ini"))
         config.validate()
-        expected_result = [("targets", ["upload"]), ("platform", "atmelavr"),
-                           ("board", "uno"), ("framework", ["arduino"])]
+        expected_result = dict(targets=["upload"],
+                               platform="atmelavr",
+                               board="uno",
+                               framework=["arduino"])
         assert config.has_section("env:uno")
-        assert config.items("env:uno") == expected_result
+        assert sorted(config.items(env="uno", as_dict=True).items()) == sorted(
+            expected_result.items())
 
 
 def test_init_custom_framework(clirunner, validate_cliresult):
@@ -139,10 +143,13 @@ def test_init_custom_framework(clirunner, validate_cliresult):
         validate_pioproject(getcwd())
         config = ProjectConfig(join(getcwd(), "platformio.ini"))
         config.validate()
-        expected_result = [("platform", "teensy"), ("board", "teensy31"),
-                           ("framework", ["mbed"])]
+        expected_result = dict(platform="teensy",
+                               board="teensy31",
+                               framework=["mbed"])
         assert config.has_section("env:teensy31")
-        assert config.items("env:teensy31") == expected_result
+        assert sorted(config.items(env="teensy31",
+                                   as_dict=True).items()) == sorted(
+                                       expected_result.items())
 
 
 def test_init_incorrect_board(clirunner):

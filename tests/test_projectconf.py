@@ -172,6 +172,6 @@ def test_empty_config():
     assert config.get("section", "option", 13) == 13
 
     # sysenv
-    os.environ["PLATFORMIO_CORE_DIR"] = "/custom/core/dir"
+    os.environ["PLATFORMIO_HOME_DIR"] = "/custom/core/dir"
     assert config.get("platformio", "core_dir") == "/custom/core/dir"
-    del os.environ["PLATFORMIO_CORE_DIR"]
+    del os.environ["PLATFORMIO_HOME_DIR"]

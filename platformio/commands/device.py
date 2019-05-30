@@ -163,6 +163,7 @@ def device_list(  # pylint: disable=too-many-branches
     "--environment",
     help="Load configuration from `platformio.ini` and specified environment")
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
+    env_options = {}
     try:
         env_options = get_project_options(kwargs['project_dir'],
                                           kwargs['environment'])
