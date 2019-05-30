@@ -102,6 +102,7 @@ for key in list(clivars.keys()):
         if isinstance(env[key], bytes):
             env[key] = env[key].decode()
 
+env.GetProjectConfig().validate([env['PIOENV']], silent=True)
 env.LoadProjectOptions()
 env.LoadPioPlatform()
 

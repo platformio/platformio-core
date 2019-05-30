@@ -229,7 +229,7 @@ class ProjectConfig(object):
     def default_envs(self):
         return self.get("platformio", "env_default", [])
 
-    def validate(self, envs=None, validate_options=True):
+    def validate(self, envs=None, silent=False):
         if not isfile(self.path):
             raise exception.NotPlatformIOProject(self.path)
         # check envs
@@ -241,9 +241,10 @@ class ProjectConfig(object):
         if unknown:
             raise exception.UnknownEnvNames(", ".join(unknown),
                                             ", ".join(known))
-        return self.validate_options() if validate_options else True
+        return self.validate_options(silent)
 
-    def validate_options(self):
+    def validate_options(self, silent=False):
+        warnings = []
         # legacy `lib_extra_dirs` in [platformio]
         if (self._parser.has_section("platformio")
                 and self._parser.has_option("platformio", "lib_extra_dirs")):
@@ -252,15 +253,20 @@ class ProjectConfig(object):
             self._parser.set("env", "lib_extra_dirs",
                              self._parser.get("platformio", "lib_extra_dirs"))
             self._parser.remove_option("platformio", "lib_extra_dirs")
-            click.secho(
-                "Warning! `lib_extra_dirs` option is deprecated in section "
-                "[platformio]! Please move it to global `env` section",
-                fg="yellow")
+            warnings.append(
+                "`lib_extra_dirs` configuration option is deprecated in "
+                "section [platformio]! Please move it to global `env` section")
 
-        return self._validate_unknown_options()
+        warnings.extend(self._validate_unknown_options())
+
+        if not silent:
+            for warning in warnings:
+                click.secho("Warning! %s" % warning, fg="yellow")
+
+        return warnings
 
     def _validate_unknown_options(self):
-        warnings = set()
+        warnings = []
         renamed_options = {}
         for option in ProjectOptions.values():
             if option.oldnames:
@@ -272,10 +278,11 @@ class ProjectConfig(object):
             for option in self._parser.options(section):
                 # obsolete
                 if option in renamed_options:
-                    warnings.add(
-                        "`%s` option in section `[%s]` is deprecated and will "
-                        "be removed in the next release! Please use `%s` "
-                        "instead" % (option, section, renamed_options[option]))
+                    warnings.append(
+                        "`%s` configuration option in section [%s] is "
+                        "deprecated and will be removed in the next release! "
+                        "Please use `%s` instead" % (option, section,
+                                                     renamed_options[option]))
                     # rename on-the-fly
                     self._parser.set(section, renamed_options[option],
                                      self._parser.get(section, option))
@@ -290,13 +297,9 @@ class ProjectConfig(object):
                     not option.startswith(("custom_", "board_"))
                 ]  # yapf: disable
                 if all(unknown_conditions):
-                    warnings.add("Ignore unknown option `%s` in section `[%s]`"
-                                 % (option, section))
-
-        for warning in warnings:
-            click.secho("Warning! %s" % warning, fg="yellow")
-
-        return True
+                    warnings.append("Ignore unknown configuration option `%s` "
+                                    "in section [%s]" % (option, section))
+        return warnings
 
     def to_json(self):
         result = {}

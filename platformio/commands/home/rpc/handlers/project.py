@@ -41,7 +41,7 @@ class ProjectRPC(object):
         def _get_project_data(project_dir):
             data = {"boards": [], "envLibdepsDirs": [], "libExtraDirs": []}
             config = ProjectConfig(join(project_dir, "platformio.ini"))
-            config.validate(validate_options=False)
+            config.validate(silent=True)
             libdeps_dir = get_project_libdeps_dir()
 
             data['libExtraDirs'].extend(
@@ -229,7 +229,7 @@ class ProjectRPC(object):
                 project_description = None
                 try:
                     config = ProjectConfig(join(project_dir, "platformio.ini"))
-                    config.validate(validate_options=False)
+                    config.validate(silent=True)
                     project_description = config.get("platformio",
                                                      "description")
                 except exception.PlatformIOProjectException:
