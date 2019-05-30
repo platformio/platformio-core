@@ -64,12 +64,11 @@ def get_project_optional_dir(name, default=None):
 
 
 def get_project_core_dir():
+    default = join(expanduser("~"), ".platformio")
     core_dir = get_project_optional_dir(
-        "core_dir",
-        get_project_optional_dir("home_dir",
-                                 join(expanduser("~"), ".platformio")))
+        "core_dir", get_project_optional_dir("home_dir", default))
     win_core_dir = None
-    if WINDOWS:
+    if WINDOWS and core_dir == default:
         win_core_dir = splitdrive(core_dir)[0] + "\\.platformio"
         if isdir(win_core_dir):
             core_dir = win_core_dir
@@ -77,10 +76,12 @@ def get_project_core_dir():
     if not isdir(core_dir):
         try:
             os.makedirs(core_dir)
-        except:  # pylint: disable=bare-except
+        except OSError as e:
             if win_core_dir:
                 os.makedirs(win_core_dir)
                 core_dir = win_core_dir
+            else:
+                raise e
 
     assert isdir(core_dir)
     return core_dir
