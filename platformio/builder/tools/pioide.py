@@ -113,7 +113,7 @@ def _dump_defines(env):
 
 
 def _get_svd_path(env):
-    svd_path = env.subst("$DEBUG_SVD_PATH")
+    svd_path = env.GetProjectOption("debug_svd_path")
     if svd_path:
         return abspath(svd_path)
 
@@ -139,8 +139,7 @@ def DumpIDEData(env, projenv):
     LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS"
 
     data = {
-        "libsource_dirs":
-        [env.subst(l) for l in env.get("LIBSOURCE_DIRS", [])],
+        "libsource_dirs": [env.subst(l) for l in env.GetLibSourceDirs()],
         "defines":
         _dump_defines(env),
         "includes":

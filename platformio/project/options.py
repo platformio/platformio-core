@@ -151,7 +151,7 @@ ProjectOptions = OrderedDict([
         # Monitor
         ConfigEnvOption(name="monitor_port"),
         ConfigEnvOption(
-            name="monitor_speed", oldnames=["monitor_baud"], type=int),
+            name="monitor_speed", oldnames=["monitor_baud"]),
         ConfigEnvOption(name="monitor_rts"),
         ConfigEnvOption(name="monitor_dtr"),
         ConfigEnvOption(name="monitor_flags", multiple=True),
@@ -168,7 +168,7 @@ ProjectOptions = OrderedDict([
             sysenvvar="PLATFORMIO_LIB_EXTRA_DIRS"),
         ConfigEnvOption(name="lib_ldf_mode"),
         ConfigEnvOption(name="lib_compat_mode"),
-        ConfigEnvOption(name="lib_archive", type=bool),  # FIXME: B
+        ConfigEnvOption(name="lib_archive", type=bool),
 
         # Test
         ConfigEnvOption(name="test_filter", multiple=True),

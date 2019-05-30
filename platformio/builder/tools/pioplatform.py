@@ -14,7 +14,6 @@
 
 from __future__ import absolute_import
 
-import base64
 import sys
 from os.path import isdir, isfile, join
 
@@ -23,6 +22,7 @@ from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from platformio import exception, util
 from platformio.compat import WINDOWS
 from platformio.managers.platform import PlatformFactory
+from platformio.project.config import ProjectOptions
 
 # pylint: disable=too-many-branches, too-many-locals
 
@@ -33,10 +33,10 @@ def initPioPlatform(name):
 
 
 def PioPlatform(env):
-    variables = {}
-    for name in env['PIOVARIABLES']:
-        if name in env:
-            variables[name.lower()] = env[name]
+    variables = env.GetProjectOptions(as_dict=True)
+    if "framework" in variables:
+        # support PIO Core 3.0 dev/platforms
+        variables['pioframework'] = variables['framework']
     p = initPioPlatform(env['PLATFORM_MANIFEST'])
     p.configure_default_packages(variables, COMMAND_LINE_TARGETS)
     return p
@@ -63,7 +63,7 @@ def GetFrameworkScript(env, framework):
     return script_path
 
 
-def LoadPioPlatform(env, variables):
+def LoadPioPlatform(env):
     p = env.PioPlatform()
     installed_packages = p.get_installed_packages()
 
@@ -92,36 +92,25 @@ def LoadPioPlatform(env, variables):
         env.Prepend(LIBPATH=[join(p.get_dir(), "ldscripts")])
 
     if "BOARD" not in env:
-        # handle _MCU and _F_CPU variables for AVR native
-        for key, value in variables.UnknownVariables().items():
-            if not key.startswith("BOARD_"):
-                continue
-            value = base64.b64decode(value)
-            if isinstance(value, bytes):
-                value = value.decode()
-            env.Replace(**{key.upper().replace("BUILD.", ""): value})
         return
 
-    # update board manifest with a custom data
+    # update board manifest with overridden data from INI config
     board_config = env.BoardConfig()
-    for key, value in variables.UnknownVariables().items():
-        if not key.startswith("BOARD_"):
-            continue
-        value = base64.b64decode(value)
-        if isinstance(value, bytes):
-            value = value.decode()
-        board_config.update(key.lower()[6:], value)
+    for option, value in env.GetProjectOptions():
+        if option.startswith("board_"):
+            board_config.update(option.lower()[6:], value)
 
-    # update default environment variables
-    for key in list(variables.keys()):
-        if key in env or \
-                not any([key.startswith("BOARD_"), key.startswith("UPLOAD_")]):
+    # load default variables from board config
+    for option_meta in ProjectOptions.values():
+        if not option_meta.buildenvvar or option_meta.buildenvvar in env:
             continue
-        _opt, _val = key.lower().split("_", 1)
-        if _opt == "board":
-            _opt = "build"
-        if _val in board_config.get(_opt):
-            env.Replace(**{key: board_config.get("%s.%s" % (_opt, _val))})
+        data_path = (option_meta.name[6:]
+                     if option_meta.name.startswith("board_") else
+                     option_meta.name.replace("_", "."))
+        try:
+            env[option_meta.buildenvvar] = board_config.get(data_path)
+        except KeyError:
+            pass
 
     if "build.ldscript" in board_config:
         env.Replace(LDSCRIPT_PATH=board_config.get("build.ldscript"))
@@ -165,7 +154,7 @@ def PrintConfiguration(env):
 
     data = [
         "CURRENT(%s)" % board_config.get_debug_tool_name(
-            env.subst("$DEBUG_TOOL"))
+            env.GetProjectOption("debug_tool"))
     ]
     onboard = []
     external = []

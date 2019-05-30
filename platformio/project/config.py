@@ -174,7 +174,7 @@ class ProjectConfig(object):
         return self.getraw(section, option)
 
     def get(self, section, option, default=None):
-        value = default
+        value = None
         try:
             value = self.getraw(section, option)
         except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
@@ -185,7 +185,7 @@ class ProjectConfig(object):
         option_meta = ProjectOptions.get(
             "%s.%s" % (section.split(":", 1)[0], option))
         if not option_meta:
-            return value
+            return default
 
         if value and option_meta.multiple:
             value = self.parse_multi_values(value)
@@ -202,6 +202,22 @@ class ProjectConfig(object):
                 value.extend(self.parse_multi_values(envvar_value))
             elif envvar_value and not value:
                 value = envvar_value
+
+        # option is not specified by user
+        if value is None:
+            return default
+
+        # cast types
+        if not isinstance(value, (list, tuple)):
+            value = [value]
+        for i, v in enumerate(value):
+            if option_meta.type == bool:
+                value[i] = v in ("1", "true", "yes")
+            elif option_meta.type == int:
+                value[i] = int(v)
+            elif option_meta.type == float:
+                value[i] = float(v)
+        value = value if option_meta.multiple else value[0]
 
         return value
 

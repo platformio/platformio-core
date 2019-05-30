@@ -29,6 +29,7 @@ from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
 from platformio.proc import (BuildAsyncPipe, copy_pythonpath_to_osenv,
                              exec_command, get_pythonexe_path)
+from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (
     get_project_boards_dir, get_project_core_dir, get_project_packages_dir,
     get_project_platforms_dir)
@@ -358,7 +359,12 @@ class PlatformRunMixin(object):
         assert isinstance(variables, dict)
         assert isinstance(targets, list)
 
-        self.configure_default_packages(variables, targets)
+        config = ProjectConfig.get_instance(variables['project_config'])
+        options = config.items(env=variables['pioenv'], as_dict=True)
+        if "framework" in options:
+            # support PIO Core 3.0 dev/platforms
+            options['pioframework'] = options['framework']
+        self.configure_default_packages(options, targets)
         self.install_packages(silent=True)
 
         self.silent = silent
@@ -611,12 +617,9 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
     def get_package_type(self, name):
         return self.packages[name].get("type")
 
-    def configure_default_packages(self, variables, targets):
+    def configure_default_packages(self, options, targets):
         # enable used frameworks
-        frameworks = variables.get("pioframework", [])
-        if not isinstance(frameworks, list):
-            frameworks = frameworks.split(", ")
-        for framework in frameworks:
+        for framework in options.get("framework", []):
             if not self.frameworks:
                 continue
             framework = framework.lower().strip()
