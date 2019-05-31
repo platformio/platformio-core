@@ -24,7 +24,7 @@ end
 target extended-remote $DEBUG_PORT
 $INIT_BREAK
 pio_reset_halt_target
-$LOAD_CMD
+$LOAD_CMDS
 monitor init
 pio_reset_halt_target
 """
@@ -42,7 +42,7 @@ end
 target extended-remote $DEBUG_PORT
 $INIT_BREAK
 pio_reset_halt_target
-$LOAD_CMD
+$LOAD_CMDS
 pio_reset_halt_target
 """
 
@@ -59,7 +59,7 @@ end
 target extended-remote $DEBUG_PORT
 $INIT_BREAK
 pio_reset_halt_target
-$LOAD_CMD
+$LOAD_CMDS
 pio_reset_halt_target
 """
 
@@ -83,7 +83,7 @@ monitor swdp_scan
 attach 1
 set mem inaccessible-by-default off
 $INIT_BREAK
-$LOAD_CMD
+$LOAD_CMDS
 
 set language c
 set *0xE000ED0C = 0x05FA0004
@@ -104,6 +104,6 @@ end
 target extended-remote $DEBUG_PORT
 $INIT_BREAK
 monitor erase
-$LOAD_CMD
+$LOAD_CMDS
 pio_reset_halt_target
 """

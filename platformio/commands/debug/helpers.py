@@ -26,6 +26,7 @@ from platformio.commands.platform import \
     platform_install as cmd_platform_install
 from platformio.commands.run import cli as cmd_run
 from platformio.managers.platform import PlatformFactory
+from platformio.project.config import ProjectConfig
 
 
 class GDBBytesIO(BytesIO):  # pylint: disable=too-few-public-methods
@@ -53,12 +54,11 @@ def get_default_debug_env(config):
 
 def validate_debug_options(cmd_ctx, env_options):
 
-    def _cleanup_cmds(cmds):
-        if not cmds:
-            return []
-        if not isinstance(cmds, list):
-            cmds = cmds.split("\n")
-        return [c.strip() for c in cmds if c.strip()]
+    def _cleanup_cmds(items):
+        items = ProjectConfig.parse_multi_values(items)
+        return [
+            "$LOAD_CMDS" if item == "$LOAD_CMD" else item for item in items
+        ]
 
     try:
         platform = PlatformFactory.newPlatform(env_options['platform'])
@@ -115,8 +115,11 @@ def validate_debug_options(cmd_ctx, env_options):
         upload_protocol=env_options.get(
             "upload_protocol",
             board_config.get("upload", {}).get("protocol")),
-        load_cmd=env_options.get("debug_load_cmd",
-                                 tool_settings.get("load_cmd", "load")),
+        load_cmds=_cleanup_cmds(
+            env_options.get(
+                "debug_load_cmds",
+                tool_settings.get("load_cmds",
+                                  tool_settings.get("load_cmd", "load")))),
         load_mode=env_options.get("debug_load_mode",
                                   tool_settings.get("load_mode", "always")),
         init_break=env_options.get(
@@ -173,9 +176,9 @@ def load_configuration(ctx, project_dir, env_name):
     return None
 
 
-def configure_esp32_load_cmd(debug_options, configuration):
+def configure_esp32_load_cmds(debug_options, configuration):
     ignore_conds = [
-        debug_options['load_cmd'] != "load",
+        debug_options['load_cmds'] != ["load"],
         "xtensa-esp32" not in configuration.get("cc_path", ""),
         not configuration.get("flash_extra_images"), not all([
             isfile(item['path'])
@@ -183,7 +186,7 @@ def configure_esp32_load_cmd(debug_options, configuration):
         ])
     ]
     if any(ignore_conds):
-        return debug_options['load_cmd']
+        return debug_options['load_cmds']
 
     mon_cmds = [
         'monitor program_esp32 "{{{path}}}" {offset} verify'.format(
@@ -192,7 +195,7 @@ def configure_esp32_load_cmd(debug_options, configuration):
     ]
     mon_cmds.append('monitor program_esp32 "{%s.bin}" 0x10000 verify' %
                     escape_path(configuration['prog_path'][:-4]))
-    return "\n".join(mon_cmds)
+    return mon_cmds
 
 
 def has_debug_symbols(prog_path):

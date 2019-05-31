@@ -73,7 +73,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             "DEBUG_PORT": self.debug_options['port'],
             "UPLOAD_PROTOCOL": self.debug_options['upload_protocol'],
             "INIT_BREAK": self.debug_options['init_break'] or "",
-            "LOAD_CMD": self.debug_options['load_cmd'] or "",
+            "LOAD_CMDS": "\n".join(self.debug_options['load_cmds'] or []),
         }
 
         self._debug_server.spawn(patterns)

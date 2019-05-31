@@ -93,11 +93,11 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
         raise exception.PlatformioException("\n".join(
             [result['out'], result['err']]))
 
-    debug_options['load_cmd'] = helpers.configure_esp32_load_cmd(
+    debug_options['load_cmds'] = helpers.configure_esp32_load_cmds(
         debug_options, configuration)
 
     rebuild_prog = False
-    preload = debug_options['load_cmd'] == "preload"
+    preload = debug_options['load_cmds'] == ["preload"]
     load_mode = debug_options['load_mode']
     if load_mode == "always":
         rebuild_prog = (
@@ -112,7 +112,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
 
     if preload or (not rebuild_prog and load_mode != "always"):
         # don't load firmware through debug server
-        debug_options['load_cmd'] = None
+        debug_options['load_cmds'] = []
 
     if rebuild_prog:
         if helpers.is_mi_mode(__unprocessed):
