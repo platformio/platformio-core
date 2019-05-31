@@ -41,6 +41,10 @@ PlatformIO 4.0
   - Fixed an issue with hardcoded C standard version when generating project for CLion IDE (`issue #2527 <https://github.com/platformio/platformio-core/issues/2527>`_)
   - Fixed an issue with Project Generator when include path search order is inconsistent to what passed to the compiler (`issue #2509 <https://github.com/platformio/platformio-core/issues/2509>`_)
 
+* **PIO Remote**
+
+  - Added support for `shared_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#shared-dir>`__ where you can place an extra files (extra scripts, LD scripts, etc.) which should be transferred to a remote machine
+
 * **Miscellaneous**
 
   - Deprecated ``--only-check`` PlatformIO Core CLI option for "update" sub-commands, please use ``--dry-run`` instead

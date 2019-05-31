@@ -81,6 +81,8 @@ ProjectOptions = OrderedDict([
                                sysenvvar="PLATFORMIO_BOARDS_DIR"),
         ConfigPlatformioOption(name="data_dir",
                                sysenvvar="PLATFORMIO_DATA_DIR"),
+        ConfigPlatformioOption(name="shared_dir",
+                               sysenvvar="PLATFORMIO_SHARED_DIR"),
 
         #
         # [env]

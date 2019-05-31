@@ -157,6 +157,11 @@ def get_project_data_dir():
                                                      "data"))
 
 
+def get_project_shared_dir():
+    return get_project_optional_dir("shared_dir",
+                                    join(get_project_dir(), "shared"))
+
+
 def calculate_project_hash():
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
     chunks = [__version__]
