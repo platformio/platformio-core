@@ -16,6 +16,8 @@
 
 from collections import OrderedDict, namedtuple
 
+import click
+
 ConfigOptionClass = namedtuple("ConfigOption", [
     "scope", "name", "type", "multiple", "sysenvvar", "buildenvvar", "oldnames"
 ])
@@ -128,7 +130,8 @@ ProjectOptions = OrderedDict([
                         sysenvvar="PLATFORMIO_UPLOAD_PORT",
                         buildenvvar="UPLOAD_PORT"),
         ConfigEnvOption(name="upload_protocol", buildenvvar="UPLOAD_PROTOCOL"),
-        ConfigEnvOption(name="upload_speed", buildenvvar="UPLOAD_SPEED"),
+        ConfigEnvOption(
+            name="upload_speed", type=click.INT, buildenvvar="UPLOAD_SPEED"),
         ConfigEnvOption(name="upload_flags",
                         multiple=True,
                         sysenvvar="PLATFORMIO_UPLOAD_FLAGS",
@@ -139,8 +142,8 @@ ProjectOptions = OrderedDict([
         # Monitor
         ConfigEnvOption(name="monitor_port"),
         ConfigEnvOption(name="monitor_speed", oldnames=["monitor_baud"]),
-        ConfigEnvOption(name="monitor_rts"),
-        ConfigEnvOption(name="monitor_dtr"),
+        ConfigEnvOption(name="monitor_rts", type=click.IntRange(0, 1)),
+        ConfigEnvOption(name="monitor_dtr", type=click.IntRange(0, 1)),
         ConfigEnvOption(name="monitor_flags", multiple=True),
 
         # Library
@@ -150,18 +153,23 @@ ProjectOptions = OrderedDict([
         ConfigEnvOption(name="lib_ignore", multiple=True),
         ConfigEnvOption(name="lib_extra_dirs",
                         multiple=True,
-                        sysenvvar="PLATFORMIO_LIB_EXTRA_DIRS"),
-        ConfigEnvOption(name="lib_ldf_mode"),
-        ConfigEnvOption(name="lib_compat_mode"),
-        ConfigEnvOption(name="lib_archive", type=bool),
+                        sysenvvar="PLATFORMIO_LIB_EXTRA_DIRS",
+                        type=click.Path(
+                            exists=True, file_okay=False, dir_okay=True)),
+        ConfigEnvOption(name="lib_ldf_mode",
+                        type=click.Choice(
+                            ["off", "chain", "deep", "chain+", "deep+"])),
+        ConfigEnvOption(name="lib_compat_mode",
+                        type=click.Choice(["off", "soft", "strict"])),
+        ConfigEnvOption(name="lib_archive", type=click.BOOL),
 
         # Test
         ConfigEnvOption(name="test_filter", multiple=True),
         ConfigEnvOption(name="test_ignore", multiple=True),
         ConfigEnvOption(name="test_port"),
-        ConfigEnvOption(name="test_speed"),
+        ConfigEnvOption(name="test_speed", type=click.INT),
         ConfigEnvOption(name="test_transport"),
-        ConfigEnvOption(name="test_build_project_src"),
+        ConfigEnvOption(name="test_build_project_src", type=click.BOOL),
 
         # Debug
         ConfigEnvOption(name="debug_tool"),
@@ -169,10 +177,13 @@ ProjectOptions = OrderedDict([
         ConfigEnvOption(name="debug_init_cmds", multiple=True),
         ConfigEnvOption(name="debug_extra_cmds", multiple=True),
         ConfigEnvOption(name="debug_load_cmd"),
-        ConfigEnvOption(name="debug_load_mode"),
-        ConfigEnvOption(name="debug_server"),
+        ConfigEnvOption(name="debug_load_mode",
+                        type=click.Choice(["always", "modified", "manual"])),
+        ConfigEnvOption(name="debug_server", multiple=True),
         ConfigEnvOption(name="debug_port"),
-        ConfigEnvOption(name="debug_svd_path"),
+        ConfigEnvOption(name="debug_svd_path",
+                        type=click.Path(
+                            exists=True, file_okay=True, dir_okay=False)),
 
         # Other
         ConfigEnvOption(name="extra_scripts",

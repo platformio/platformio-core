@@ -43,6 +43,7 @@ CONFIG_HEADER = """;PlatformIO Project Configuration File
 
 class ProjectConfig(object):
 
+    INLINE_COMMENT_RE = re.compile(r"\s+;.*$")
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
 
     expand_interpolations = True
@@ -55,14 +56,15 @@ class ProjectConfig(object):
         result = []
         if not items:
             return result
-        inline_comment_re = re.compile(r"\s+;.*$")
-        for item in items.split("\n" if "\n" in items else ", "):
+        if not isinstance(items, (list, tuple)):
+            items = items.split("\n" if "\n" in items else ", ")
+        for item in items:
             item = item.strip()
             # comment
             if not item or item.startswith((";", "#")):
                 continue
             if ";" in item:
-                item = inline_comment_re.sub("", item).strip()
+                item = ProjectConfig.INLINE_COMMENT_RE.sub("", item).strip()
             result.append(item)
         return result
 
@@ -207,20 +209,21 @@ class ProjectConfig(object):
         if value is None:
             return default
 
-        return self._covert_value(value, option_meta.type)
+        try:
+            return self._covert_value(value, option_meta.type)
+        except click.BadParameter as e:
+            raise exception.ProjectOptionValueError(e.format_message(), option,
+                                                    section)
 
     @staticmethod
     def _covert_value(value, to_type):
         items = value
         if not isinstance(value, (list, tuple)):
             items = [value]
-        for i, v in enumerate(items):
-            if to_type == bool:
-                items[i] = v in ("1", "true", "yes", "y")
-            elif to_type == int:
-                items[i] = int(v)
-            elif to_type == float:
-                items[i] = float(v)
+        items = [
+            to_type(item) if isinstance(to_type, click.ParamType) else item
+            for item in items
+        ]
         return items if isinstance(value, (list, tuple)) else items[0]
 
     def envs(self):

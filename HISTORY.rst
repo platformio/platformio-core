@@ -9,6 +9,7 @@ PlatformIO 4.0
 
 * **Project Configuration**
 
+  - New project configuration parser with a strict options typing (`API <https://github.com/platformio/platformio-core/blob/develop/platformio/project/options.py>`__)
   - Unified workspace storage (`workspace_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#workspace-dir>`__ -> ``.pio``) for PlatformIO Build System, Library Manager, and other internal services (`issue #1778 <https://github.com/platformio/platformio-core/issues/1778>`_)
   - Switched to workspace ``.pio/build`` folder for build artifacts instead of ``.pioenvs``
   - Share common (global) options between project environments using `[env] <http://docs.platformio.org/page/projectconf/section_env.html#global-scope-env>`__ section (`issue #1643 <https://github.com/platformio/platformio-core/issues/1643>`_)

@@ -179,6 +179,11 @@ class UnknownEnvNames(PlatformIOProjectException):
     MESSAGE = "Unknown environment names '{0}'. Valid names are '{1}'"
 
 
+class ProjectOptionValueError(PlatformIOProjectException):
+
+    MESSAGE = "{0} for option `{1}` in section [{2}]"
+
+
 #
 # Library
 #

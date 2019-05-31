@@ -88,12 +88,6 @@ def validate_debug_options(cmd_ctx, env_options):
             "executable": None,
             "arguments": env_options.get("debug_server")
         }
-        if not isinstance(server_options['arguments'], list):
-            server_options['arguments'] = server_options['arguments'].split(
-                "\n")
-        server_options['arguments'] = [
-            arg.strip() for arg in server_options['arguments'] if arg.strip()
-        ]
         server_options['executable'] = server_options['arguments'][0]
         server_options['arguments'] = server_options['arguments'][1:]
     elif "server" in tool_settings:
