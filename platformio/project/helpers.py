@@ -15,8 +15,8 @@
 import os
 from hashlib import sha1
 from os import walk
-from os.path import (dirname, expanduser, isdir, isfile, join, realpath,
-                     splitdrive)
+from os.path import (basename, dirname, expanduser, isdir, isfile, join,
+                     realpath, splitdrive)
 
 from platformio import __version__
 from platformio.compat import PY2, WINDOWS
@@ -53,9 +53,10 @@ def get_project_optional_dir(name, default=None):
 
     if "$PROJECT_HASH" in optional_dir:
         optional_dir = optional_dir.replace(
-            "$PROJECT_HASH",
-            sha1(project_dir if PY2 else project_dir.encode()).hexdigest()
-            [:10])
+            "$PROJECT_HASH", "%s-%s" %
+            (basename(project_dir),
+             sha1(project_dir if PY2 else project_dir.encode()).hexdigest()
+             [:10]))
 
     if optional_dir.startswith("~"):
         optional_dir = expanduser(optional_dir)
