@@ -314,8 +314,8 @@ def ProcessTest(env):
     env.Prepend(LIBS=[unitylib])
 
     src_filter = ["+<*.cpp>", "+<*.c>"]
-    if "PIOTEST" in env:
-        src_filter.append("+<%s%s>" % (env['PIOTEST'], sep))
+    if "PIOTEST_RUNNING_NAME" in env:
+        src_filter.append("+<%s%s>" % (env['PIOTEST_RUNNING_NAME'], sep))
     env.Replace(PIOTEST_SRC_FILTER=src_filter)
 
 

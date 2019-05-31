@@ -20,7 +20,6 @@ from string import Template
 import click
 
 from platformio import exception
-from platformio.commands.run import cli as cmd_run
 from platformio.commands.run.helpers import print_header
 from platformio.project.helpers import get_project_test_dir
 
@@ -75,6 +74,9 @@ TRANSPORT_OPTIONS = {
     }
 }
 
+CTX_META_TEST_IS_RUNNING = __name__ + ".test_running"
+CTX_META_TEST_RUNNING_NAME = __name__ + ".test_running_name"
+
 
 class TestProcessorBase(object):
 
@@ -82,7 +84,7 @@ class TestProcessorBase(object):
 
     def __init__(self, cmd_ctx, testname, envname, options):
         self.cmd_ctx = cmd_ctx
-        self.cmd_ctx.meta['piotest_processor'] = True  # FIXME
+        self.cmd_ctx.meta[CTX_META_TEST_IS_RUNNING] = True
         self.test_name = testname
         self.options = options
         self.env_name = envname
@@ -119,12 +121,13 @@ class TestProcessorBase(object):
             self._outputcpp_generated = True
 
         if self.test_name != "*":
-            self.cmd_ctx.meta['piotest'] = self.test_name  # FIXME
+            self.cmd_ctx.meta[CTX_META_TEST_RUNNING_NAME] = self.test_name
 
         if not self.options['verbose']:
             click.echo("Please wait...")
 
         try:
+            from platformio.commands.run import cli as cmd_run
             return self.cmd_ctx.invoke(cmd_run,
                                        project_dir=self.options['project_dir'],
                                        upload_port=self.options['upload_port'],

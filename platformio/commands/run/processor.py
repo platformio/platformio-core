@@ -20,6 +20,8 @@ from platformio import exception, telemetry
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
 from platformio.commands.run.helpers import _autoinstall_libdeps, print_header
+from platformio.commands.test.processor import (CTX_META_TEST_IS_RUNNING,
+                                                CTX_META_TEST_RUNNING_NAME)
 from platformio.managers.platform import PlatformFactory
 
 # pylint: disable=too-many-instance-attributes
@@ -62,7 +64,7 @@ class EnvironmentProcessor(object):
         if self.silent and not is_error:
             return True
 
-        if is_error or "piotest_processor" not in self.cmd_ctx.meta:
+        if is_error or CTX_META_TEST_IS_RUNNING not in self.cmd_ctx.meta:
             print_header(
                 "[%s] Took %.2f seconds" %
                 ((click.style("ERROR", fg="red", bold=True) if
@@ -74,8 +76,11 @@ class EnvironmentProcessor(object):
 
     def get_build_variables(self):
         variables = {"pioenv": self.name, "project_config": self.config.path}
-        if "piotest" in self.cmd_ctx.meta:
-            variables['piotest'] = self.cmd_ctx.meta['piotest']
+
+        if CTX_META_TEST_RUNNING_NAME in self.cmd_ctx.meta:
+            variables['piotest_running_name'] = self.cmd_ctx.meta[
+                CTX_META_TEST_RUNNING_NAME]
+
         if self.upload_port:
             # override upload port with a custom from CLI
             variables['upload_port'] = self.upload_port

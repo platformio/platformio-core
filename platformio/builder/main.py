@@ -43,7 +43,7 @@ clivars.AddVariables(
     ("BUILD_SCRIPT",),
     ("PROJECT_CONFIG",),
     ("PIOENV",),
-    ("PIOTEST",),
+    ("PIOTEST_RUNNING_NAME",),
     ("UPLOAD_PORT",)
 )  # yapf: disable
 
