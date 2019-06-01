@@ -140,6 +140,7 @@ ProjectOptions = OrderedDict([
                         buildenvvar="UPLOAD_FLAGS"),
         ConfigEnvOption(name="upload_resetmethod",
                         buildenvvar="UPLOAD_RESETMETHOD"),
+        ConfigEnvOption(name="upload_command", buildenvvar="UPLOADCMD"),
 
         # Monitor
         ConfigEnvOption(name="monitor_port"),

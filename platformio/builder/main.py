@@ -60,6 +60,7 @@ DEFAULT_ENV_OPTIONS = dict(
     UNIX_TIME=int(time()),
     PROJECT_DIR=project_helpers.get_project_dir(),
     PROJECTCORE_DIR=project_helpers.get_project_core_dir(),
+    PROJECTPACKAGES_DIR=project_helpers.get_project_packages_dir(),
     PROJECTWORKSPACE_DIR=project_helpers.get_project_workspace_dir(),
     PROJECTLIBDEPS_DIR=project_helpers.get_project_libdeps_dir(),
     PROJECTINCLUDE_DIR=project_helpers.get_project_include_dir(),
@@ -118,6 +119,8 @@ env.SConscript("$BUILD_SCRIPT")
 
 if "UPLOAD_FLAGS" in env:
     env.Prepend(UPLOADERFLAGS=["$UPLOAD_FLAGS"])
+if env.GetProjectOption("upload_command"):
+    env.Replace(UPLOADCMD=env.GetProjectOption("upload_command"))
 
 for item in env.GetExtraScripts("post"):
     env.SConscript(item, exports="env")
