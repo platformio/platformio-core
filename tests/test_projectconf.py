@@ -74,8 +74,10 @@ def test_real_config(tmpdir):
     with tmpdir.as_cwd():
         config = ProjectConfig(tmpdir.join("platformio.ini").strpath)
     assert config
+    assert len(config.warnings) == 1
+    assert "lib_install" in config.warnings[0]
 
-    len(config.validate(["extra_2", "base"], silent=True)) == 1
+    config.validate(["extra_2", "base"], silent=True)
     with pytest.raises(UnknownEnvNames):
         config.validate(["non-existing-env"])
 

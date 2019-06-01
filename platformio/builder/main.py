@@ -103,7 +103,6 @@ if env.GetOption('clean'):
 elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     print("Verbose mode can be enabled via `-v, --verbose` option")
 
-env.GetProjectConfig().validate([env['PIOENV']], silent=True)
 env.LoadProjectOptions()
 env.LoadPioPlatform()
 

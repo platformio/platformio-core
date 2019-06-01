@@ -47,6 +47,8 @@ class ProjectConfig(object):
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
 
     expand_interpolations = True
+    warnings = []
+
     _instances = {}
     _parser = None
     _parsed = []
@@ -81,6 +83,7 @@ class ProjectConfig(object):
     def __init__(self, path, parse_extra=True, expand_interpolations=True):
         self.path = path
         self.expand_interpolations = expand_interpolations
+        self.warnings = []
         self._parsed = []
         self._parser = ConfigParser.ConfigParser()
         if isfile(path):
@@ -105,6 +108,57 @@ class ProjectConfig(object):
         for pattern in self.get("platformio", "extra_configs", []):
             for item in glob.glob(pattern):
                 self.read(item)
+
+        self._maintain_renaimed_options()
+
+    def _maintain_renaimed_options(self):
+        # legacy `lib_extra_dirs` in [platformio]
+        if (self._parser.has_section("platformio")
+                and self._parser.has_option("platformio", "lib_extra_dirs")):
+            if not self._parser.has_section("env"):
+                self._parser.add_section("env")
+            self._parser.set("env", "lib_extra_dirs",
+                             self._parser.get("platformio", "lib_extra_dirs"))
+            self._parser.remove_option("platformio", "lib_extra_dirs")
+            self.warnings.append(
+                "`lib_extra_dirs` configuration option is deprecated in "
+                "section [platformio]! Please move it to global `env` section")
+
+        renamed_options = {}
+        for option in ProjectOptions.values():
+            if option.oldnames:
+                renamed_options.update(
+                    {name: option.name
+                     for name in option.oldnames})
+
+        for section in self._parser.sections():
+            scope = section.split(":", 1)[0]
+            if scope not in ("platformio", "env"):
+                continue
+            for option in self._parser.options(section):
+                if option in renamed_options:
+                    self.warnings.append(
+                        "`%s` configuration option in section [%s] is "
+                        "deprecated and will be removed in the next release! "
+                        "Please use `%s` instead" %
+                        (option, section, renamed_options[option]))
+                    # rename on-the-fly
+                    self._parser.set(section, renamed_options[option],
+                                     self._parser.get(section, option))
+                    self._parser.remove_option(section, option)
+                    continue
+
+                # unknown
+                unknown_conditions = [
+                    ("%s.%s" % (scope, option)) not in ProjectOptions,
+                    scope != "env" or
+                    not option.startswith(("custom_", "board_"))
+                ]  # yapf: disable
+                if all(unknown_conditions):
+                    self.warnings.append(
+                        "Ignore unknown configuration option `%s` "
+                        "in section [%s]" % (option, section))
+        return True
 
     def options(self, section=None, env=None):
         assert section or env
@@ -239,72 +293,14 @@ class ProjectConfig(object):
         known = set(self.envs())
         if not known:
             raise exception.ProjectEnvsNotAvailable()
-
         unknown = set(list(envs or []) + self.default_envs()) - known
         if unknown:
             raise exception.UnknownEnvNames(", ".join(unknown),
                                             ", ".join(known))
-        return self.validate_options(silent)
-
-    def validate_options(self, silent=False):
-        warnings = []
-        # legacy `lib_extra_dirs` in [platformio]
-        if (self._parser.has_section("platformio")
-                and self._parser.has_option("platformio", "lib_extra_dirs")):
-            if not self._parser.has_section("env"):
-                self._parser.add_section("env")
-            self._parser.set("env", "lib_extra_dirs",
-                             self._parser.get("platformio", "lib_extra_dirs"))
-            self._parser.remove_option("platformio", "lib_extra_dirs")
-            warnings.append(
-                "`lib_extra_dirs` configuration option is deprecated in "
-                "section [platformio]! Please move it to global `env` section")
-
-        warnings.extend(self._validate_unknown_options())
-
         if not silent:
-            for warning in warnings:
+            for warning in self.warnings:
                 click.secho("Warning! %s" % warning, fg="yellow")
-
-        return warnings
-
-    def _validate_unknown_options(self):
-        warnings = []
-        renamed_options = {}
-        for option in ProjectOptions.values():
-            if option.oldnames:
-                renamed_options.update(
-                    {name: option.name
-                     for name in option.oldnames})
-
-        for section in self._parser.sections():
-            if not section.startswith("env:") and section != "platformio":
-                continue
-            for option in self._parser.options(section):
-                # obsolete
-                if option in renamed_options:
-                    warnings.append(
-                        "`%s` configuration option in section [%s] is "
-                        "deprecated and will be removed in the next release! "
-                        "Please use `%s` instead" %
-                        (option, section, renamed_options[option]))
-                    # rename on-the-fly
-                    self._parser.set(section, renamed_options[option],
-                                     self._parser.get(section, option))
-                    self._parser.remove_option(section, option)
-                    continue
-
-                # unknown
-                scope = section.split(":", 1)[0]
-                unknown_conditions = [
-                    ("%s.%s" % (scope, option)) not in ProjectOptions,
-                    scope != "env" or
-                    not option.startswith(("custom_", "board_"))
-                ]  # yapf: disable
-                if all(unknown_conditions):
-                    warnings.append("Ignore unknown configuration option `%s` "
-                                    "in section [%s]" % (option, section))
-        return warnings
+        return True
 
     def to_json(self):
         result = {}

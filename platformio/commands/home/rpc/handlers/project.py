@@ -42,7 +42,6 @@ class ProjectRPC(object):
         def _get_project_data(project_dir):
             data = {"boards": [], "envLibdepsDirs": [], "libExtraDirs": []}
             config = ProjectConfig(join(project_dir, "platformio.ini"))
-            config.validate(silent=True)
             libdeps_dir = get_project_libdeps_dir()
 
             data['libExtraDirs'].extend(
