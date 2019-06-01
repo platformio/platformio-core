@@ -29,6 +29,14 @@ PlatformIO 4.0
   - Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
   - Switched to workspace ``.pio/libdeps`` folder for project dependencies instead of ``.piolibdeps``
 
+* **Build System**
+
+  - Print platform package details, such as version, VSC source and commit (`issue #2155 <https://github.com/platformio/platformio-core/issues/2155>`_)
+
+* **PIO Remote**
+
+  - Added support for `shared_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#shared-dir>`__ where you can place an extra files (extra scripts, LD scripts, etc.) which should be transferred to a remote machine
+
 * **Infrastructure**
 
   - Python 3 support (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
@@ -41,10 +49,6 @@ PlatformIO 4.0
   - Support custom CMake configuration for CLion IDE using ``CMakeListsUser.txt`` file
   - Fixed an issue with hardcoded C standard version when generating project for CLion IDE (`issue #2527 <https://github.com/platformio/platformio-core/issues/2527>`_)
   - Fixed an issue with Project Generator when include path search order is inconsistent to what passed to the compiler (`issue #2509 <https://github.com/platformio/platformio-core/issues/2509>`_)
-
-* **PIO Remote**
-
-  - Added support for `shared_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#shared-dir>`__ where you can place an extra files (extra scripts, LD scripts, etc.) which should be transferred to a remote machine
 
 * **Miscellaneous**
 

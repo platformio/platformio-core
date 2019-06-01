@@ -22,7 +22,6 @@ import hashlib
 import os
 import re
 import sys
-from glob import glob
 from os.path import (basename, commonprefix, dirname, expanduser, isdir,
                      isfile, join, realpath, sep)
 
@@ -35,7 +34,6 @@ from platformio import exception, util
 from platformio.builder.tools import platformio as piotool
 from platformio.compat import PY2, WINDOWS, get_file_contents, string_types
 from platformio.managers.lib import LibraryManager
-from platformio.managers.package import PackageManager
 
 
 class LibBuilderFactory(object):
@@ -147,13 +145,6 @@ class LibBuilderBase(object):
     @property
     def version(self):
         return self._manifest.get("version")
-
-    @property
-    def vcs_info(self):
-        items = glob(join(self.path, ".*", PackageManager.SRC_MANIFEST_NAME))
-        if not items:
-            return None
-        return util.load_json(items[0])
 
     @property
     def dependencies(self):
@@ -990,7 +981,11 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
 
 def ConfigureProjectLibBuilder(env):
 
-    def correct_found_libs(lib_builders):
+    def _get_vcs_info(lb):
+        path = LibraryManager.get_src_manifest_path(lb.path)
+        return util.load_json(path) if path else None
+
+    def _correct_found_libs(lib_builders):
         # build full dependency graph
         found_lbs = [lb for lb in lib_builders if lb.dependent]
         for lb in lib_builders:
@@ -1001,11 +996,11 @@ def ConfigureProjectLibBuilder(env):
                 if deplb not in found_lbs:
                     lb.depbuilders.remove(deplb)
 
-    def print_deps_tree(root, level=0):
+    def _print_deps_tree(root, level=0):
         margin = "|   " * (level)
         for lb in root.depbuilders:
             title = "<%s>" % lb.name
-            vcs_info = lb.vcs_info
+            vcs_info = _get_vcs_info(lb)
             if lb.version:
                 title += " %s" % lb.version
             if vcs_info and vcs_info.get("version"):
@@ -1019,13 +1014,13 @@ def ConfigureProjectLibBuilder(env):
                 sys.stdout.write(")")
             sys.stdout.write("\n")
             if lb.depbuilders:
-                print_deps_tree(lb, level + 1)
+                _print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
 
-    print("Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
-    print("LDF MODES: FINDER(%s) COMPATIBILITY(%s)" %
+    print("LDF: Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
+    print("LDF Modes: Finder [%s] Compatibility [%s]" %
           (ldf_mode, project.lib_compat_mode))
 
     lib_builders = env.GetLibBuilders()
@@ -1035,11 +1030,11 @@ def ConfigureProjectLibBuilder(env):
     project.search_deps_recursive()
 
     if ldf_mode.startswith("chain") and project.depbuilders:
-        correct_found_libs(lib_builders)
+        _correct_found_libs(lib_builders)
 
     if project.depbuilders:
         print("Dependency Graph")
-        print_deps_tree(project)
+        _print_deps_tree(project)
     else:
         print("No dependencies")
 

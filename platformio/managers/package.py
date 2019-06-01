@@ -330,14 +330,15 @@ class PkgInstallerMixin(object):
             name += "_ID%d" % manifest['id']
         return str(name)
 
-    def get_src_manifest_path(self, pkg_dir):
+    @classmethod
+    def get_src_manifest_path(cls, pkg_dir):
         if not isdir(pkg_dir):
             return None
         for item in os.listdir(pkg_dir):
             if not isdir(join(pkg_dir, item)):
                 continue
-            if isfile(join(pkg_dir, item, self.SRC_MANIFEST_NAME)):
-                return join(pkg_dir, item, self.SRC_MANIFEST_NAME)
+            if isfile(join(pkg_dir, item, cls.SRC_MANIFEST_NAME)):
+                return join(pkg_dir, item, cls.SRC_MANIFEST_NAME)
         return None
 
     def get_manifest_path(self, pkg_dir):

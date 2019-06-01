@@ -17,6 +17,7 @@ from __future__ import absolute_import
 import sys
 from os.path import isdir, isfile, join
 
+from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 
 from platformio import exception, util
@@ -118,57 +119,97 @@ def LoadPioPlatform(env):
 
 def PrintConfiguration(env):
     platform = env.PioPlatform()
-    platform_data = ["PLATFORM: %s >" % platform.title]
-    hardware_data = ["HARDWARE:"]
-    configuration_data = ["CONFIGURATION:"]
-    mcu = env.subst("$BOARD_MCU")
-    f_cpu = env.subst("$BOARD_F_CPU")
-    if mcu:
-        hardware_data.append(mcu.upper())
-    if f_cpu:
-        f_cpu = int("".join([c for c in str(f_cpu) if c.isdigit()]))
-        hardware_data.append("%dMHz" % (f_cpu / 1000000))
+    board_config = env.BoardConfig() if "BOARD" in env else None
 
-    debug_tools = None
-    if "BOARD" in env:
-        board_config = env.BoardConfig()
-        platform_data.append(board_config.get("name"))
+    def _get_configuration_data():
+        return None if not board_config else [
+            "CONFIGURATION:",
+            "https://docs.platformio.org/page/boards/%s/%s.html" %
+            (platform.name, board_config.id)
+        ]
 
-        debug_tools = board_config.get("debug", {}).get("tools")
+    def _get_plaform_data():
+        data = ["PLATFORM: %s @ %s" % (platform.title, platform.version)]
+        src_manifest_path = platform.pm.get_src_manifest_path(
+            platform.get_dir())
+        if src_manifest_path:
+            src_manifest = util.load_json(src_manifest_path)
+            if "version" in src_manifest:
+                data.append("#" + src_manifest['version'])
+            if int(ARGUMENTS.get("PIOVERBOSE", 0)):
+                data.append("(%s)" % src_manifest['url'])
+        if board_config:
+            data.extend([">", board_config.get("name")])
+        return data
+
+    def _get_hardware_data():
+        data = ["HARDWARE:"]
+        mcu = env.subst("$BOARD_MCU")
+        f_cpu = env.subst("$BOARD_F_CPU")
+        if mcu:
+            data.append(mcu.upper())
+        if f_cpu:
+            f_cpu = int("".join([c for c in str(f_cpu) if c.isdigit()]))
+            data.append("%dMHz" % (f_cpu / 1000000))
+        if not board_config:
+            return data
         ram = board_config.get("upload", {}).get("maximum_ram_size")
         flash = board_config.get("upload", {}).get("maximum_size")
-        hardware_data.append(
-            "%s RAM (%s Flash)" %
-            (util.format_filesize(ram), util.format_filesize(flash)))
-        configuration_data.append(
-            "https://docs.platformio.org/page/boards/%s/%s.html" %
-            (platform.name, board_config.id))
+        data.append("%s RAM [%s Flash]" %
+                    (util.format_filesize(ram), util.format_filesize(flash)))
+        return data
 
-    for data in (configuration_data, platform_data, hardware_data):
-        if len(data) > 1:
+    def _get_debug_data():
+        debug_tools = board_config.get(
+            "debug", {}).get("tools") if board_config else None
+        if not debug_tools:
+            return None
+        data = [
+            "DEBUG:",
+            "CURRENT(%s)" % board_config.get_debug_tool_name(
+                env.GetProjectOption("debug_tool"))
+        ]
+        onboard = []
+        external = []
+        for key, value in debug_tools.items():
+            if value.get("onboard"):
+                onboard.append(key)
+            else:
+                external.append(key)
+        if onboard:
+            data.append("ON-BOARD(%s)" % ", ".join(sorted(onboard)))
+        if external:
+            data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
+        return data
+
+    def _get_packages_data():
+        data = []
+        for name, options in platform.packages.items():
+            if options.get("optional"):
+                continue
+            pkg_dir = platform.get_package_dir(name)
+            if not pkg_dir:
+                continue
+            manifest = platform.pm.load_manifest(pkg_dir)
+            original_version = util.get_original_version(manifest['version'])
+            info = "%s %s %s" % (manifest['name'],
+                                 "#" if "__src_url" in manifest else "@",
+                                 manifest['version'])
+            extra = []
+            if original_version:
+                extra.append(original_version)
+            if "__src_url" in manifest and int(ARGUMENTS.get("PIOVERBOSE", 0)):
+                extra.append(manifest['__src_url'])
+            if extra:
+                info += "(%s)" % ", ".join(extra)
+            data.append(info)
+        return ["PACKAGES:", ", ".join(data)]
+
+    for data in (_get_configuration_data(), _get_plaform_data(),
+                 _get_hardware_data(), _get_debug_data(),
+                 _get_packages_data()):
+        if data and len(data) > 1:
             print(" ".join(data))
-
-    # Debugging
-    if not debug_tools:
-        return
-
-    data = [
-        "CURRENT(%s)" %
-        board_config.get_debug_tool_name(env.GetProjectOption("debug_tool"))
-    ]
-    onboard = []
-    external = []
-    for key, value in debug_tools.items():
-        if value.get("onboard"):
-            onboard.append(key)
-        else:
-            external.append(key)
-    if onboard:
-        data.append("ON-BOARD(%s)" % ", ".join(sorted(onboard)))
-    if external:
-        data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
-
-    print("DEBUG: %s" % " ".join(data))
 
 
 def exists(_):
