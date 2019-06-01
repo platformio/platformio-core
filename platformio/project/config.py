@@ -284,7 +284,7 @@ class ProjectConfig(object):
         return [s[4:] for s in self._parser.sections() if s.startswith("env:")]
 
     def default_envs(self):
-        return self.get("platformio", "env_default", [])
+        return self.get("platformio", "default_envs", [])
 
     def validate(self, envs=None, silent=False):
         if not isfile(self.path):

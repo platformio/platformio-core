@@ -19,6 +19,7 @@ PlatformIO 4.0
   - Added support for Unix shell-style wildcards for `monitor_port <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-port>`__ option (`issue #2541 <https://github.com/platformio/platformio-core/issues/2541>`_)
   - Added new `monitor_flags <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-flags>`__ option which allows passing extra flags and options to `platformio device monitor <http://docs.platformio.org/page/userguide/cmd_device.html#cmd-device-monitor>`__ command (`issue #2165 <https://github.com/platformio/platformio-core/issues/2165>`_)
   - Override default development platform upload command with a custom `upload_command <http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-command>`__ (`issue #2599 <https://github.com/platformio/platformio-core/issues/2599>`_)
+  - Added support for `PLATFORMIO_DEFAULT_ENVS <http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_DEFAULT_ENVS>`__ system environment variable (`issue #1967 <https://github.com/platformio/platformio-core/issues/1967>`_)
   - Fixed an issue when ``-U`` in ``build_flags`` does not remove macro previously defined via ``-D`` flag (`issue #2508 <https://github.com/platformio/platformio-core/issues/2508>`_)
 
 * **Library Management**

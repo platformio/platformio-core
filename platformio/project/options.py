@@ -48,9 +48,10 @@ ProjectOptions = OrderedDict([
         # [platformio]
         #
         ConfigPlatformioOption(name="description"),
-        ConfigPlatformioOption(name="env_default",
+        ConfigPlatformioOption(name="default_envs",
+                               oldnames=["env_default"],
                                multiple=True,
-                               sysenvvar="PLATFORMIO_ENV_DEFAULT"),
+                               sysenvvar="PLATFORMIO_DEFAULT_ENVS"),
         ConfigPlatformioOption(name="extra_configs", multiple=True),
 
         # Dirs
