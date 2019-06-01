@@ -16,6 +16,7 @@ import os
 
 import pytest
 
+from platformio.exception import UnknownEnvNames
 from platformio.project.config import ConfigParser, ProjectConfig
 
 BASE_CONFIG = """
@@ -46,6 +47,7 @@ build_flags = ${custom.debug_flags} ${custom.extra_flags}
 EXTRA_ENVS_CONFIG = """
 [env:extra_1]
 build_flags = ${custom.lib_flags} ${custom.debug_flags}
+lib_install = 574
 
 [env:extra_2]
 build_flags = ${custom.debug_flags} ${custom.extra_flags}
@@ -72,6 +74,10 @@ def test_real_config(tmpdir):
     with tmpdir.as_cwd():
         config = ProjectConfig(tmpdir.join("platformio.ini").strpath)
     assert config
+
+    len(config.validate(["extra_2", "base"], silent=True)) == 1
+    with pytest.raises(UnknownEnvNames):
+        config.validate(["non-existing-env"])
 
     # unknown section
     with pytest.raises(ConfigParser.NoSectionError):
@@ -100,6 +106,7 @@ def test_real_config(tmpdir):
     # has_option
     assert config.has_option("env:base", "monitor_speed")
     assert not config.has_option("custom", "monitor_speed")
+    assert not config.has_option("env:extra_1", "lib_install")
 
     # sysenv
     assert config.get("custom", "extra_flags") is None
@@ -117,7 +124,7 @@ def test_real_config(tmpdir):
     assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
 
     # getraw
-    assert config.getraw("env:extra_1", "lib_deps") == "\nLib1\nLib2"
+    assert config.getraw("env:extra_1", "lib_deps") == "574"
     assert config.getraw("env:extra_1", "build_flags") == "-lc -lm -D DEBUG=1"
 
     # get
@@ -141,8 +148,8 @@ def test_real_config(tmpdir):
     ]  # yapf: disable
     assert config.items(env="extra_1") == [
         ("build_flags", ["-lc -lm -D DEBUG=1", "-DSYSENVDEPS1 -DSYSENVDEPS2"]),
+        ("lib_deps", ["574"]),
         ("monitor_speed", "115200"),
-        ("lib_deps", ["Lib1", "Lib2"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
         ("upload_port", "/dev/sysenv/port")
     ]  # yapf: disable

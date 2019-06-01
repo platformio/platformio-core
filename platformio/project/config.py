@@ -278,7 +278,7 @@ class ProjectConfig(object):
                      for name in option.oldnames})
 
         for section in self._parser.sections():
-            if not section.startswith("env:") or section != "platformio":
+            if not section.startswith("env:") and section != "platformio":
                 continue
             for option in self._parser.options(section):
                 # obsolete
