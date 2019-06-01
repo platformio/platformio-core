@@ -117,7 +117,7 @@ def LoadPioPlatform(env):
         env.Replace(LDSCRIPT_PATH=board_config.get("build.ldscript"))
 
 
-def PrintConfiguration(env):
+def PrintConfiguration(env):  # pylint: disable=too-many-statements
     platform = env.PioPlatform()
     board_config = env.BoardConfig() if "BOARD" in env else None
 
@@ -129,7 +129,7 @@ def PrintConfiguration(env):
         ]
 
     def _get_plaform_data():
-        data = ["PLATFORM: %s @ %s" % (platform.title, platform.version)]
+        data = ["PLATFORM: %s %s" % (platform.title, platform.version)]
         src_manifest_path = platform.pm.get_src_manifest_path(
             platform.get_dir())
         if src_manifest_path:
@@ -150,12 +150,12 @@ def PrintConfiguration(env):
             data.append(mcu.upper())
         if f_cpu:
             f_cpu = int("".join([c for c in str(f_cpu) if c.isdigit()]))
-            data.append("%dMHz" % (f_cpu / 1000000))
+            data.append("%dMHz," % (f_cpu / 1000000))
         if not board_config:
             return data
         ram = board_config.get("upload", {}).get("maximum_ram_size")
         flash = board_config.get("upload", {}).get("maximum_size")
-        data.append("%s RAM [%s Flash]" %
+        data.append("%s RAM, %s Flash" %
                     (util.format_filesize(ram), util.format_filesize(flash)))
         return data
 
@@ -165,8 +165,8 @@ def PrintConfiguration(env):
         if not debug_tools:
             return None
         data = [
-            "DEBUG:",
-            "CURRENT(%s)" % board_config.get_debug_tool_name(
+            "DEBUG:", "Current",
+            "(%s)" % board_config.get_debug_tool_name(
                 env.GetProjectOption("debug_tool"))
         ]
         onboard = []
@@ -177,9 +177,9 @@ def PrintConfiguration(env):
             else:
                 external.append(key)
         if onboard:
-            data.append("ON-BOARD(%s)" % ", ".join(sorted(onboard)))
+            data.extend(["On-board", "(%s)" % ", ".join(sorted(onboard))])
         if external:
-            data.append("EXTERNAL(%s)" % ", ".join(sorted(external)))
+            data.extend(["External", "(%s)" % ", ".join(sorted(external))])
         return data
 
     def _get_packages_data():
@@ -192,16 +192,14 @@ def PrintConfiguration(env):
                 continue
             manifest = platform.pm.load_manifest(pkg_dir)
             original_version = util.get_original_version(manifest['version'])
-            info = "%s %s %s" % (manifest['name'],
-                                 "#" if "__src_url" in manifest else "@",
-                                 manifest['version'])
+            info = "%s %s" % (manifest['name'], manifest['version'])
             extra = []
             if original_version:
                 extra.append(original_version)
             if "__src_url" in manifest and int(ARGUMENTS.get("PIOVERBOSE", 0)):
                 extra.append(manifest['__src_url'])
             if extra:
-                info += "(%s)" % ", ".join(extra)
+                info += " (%s)" % ", ".join(extra)
             data.append(info)
         return ["PACKAGES:", ", ".join(data)]
 

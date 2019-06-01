@@ -741,11 +741,10 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                                    action="Install",
                                    label=manifest['name'])
 
-            if not silent:
-                click.secho(
-                    "{name} @ {version} has been successfully installed!".
-                    format(**manifest),
-                    fg="green")
+            click.secho(
+                "{name} @ {version} has been successfully installed!".format(
+                    **manifest),
+                fg="green")
 
         return pkg_dir
 

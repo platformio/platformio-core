@@ -507,13 +507,12 @@ def ensure_udev_rules():
 def get_original_version(version):
     if version.count(".") != 2:
         return None
-    _, y = version.split(".")[:2]
-    if int(y) < 100:
+    _, raw = version.split(".")[:2]
+    if int(raw) <= 99:
         return None
-    if len(y) % 2 != 0:
-        y = "0" + y
-    parts = [str(int(y[i * 2:i * 2 + 2])) for i in range(int(len(y) / 2))]
-    return ".".join(parts)
+    if int(raw) <= 999:
+        return "%s.%s" % (raw[:-2], int(raw[-2:]))
+    return "%s.%s.%s" % (raw[:-4], int(raw[-4:-2]), int(raw[-2:]))
 
 
 def rmtree_(path):

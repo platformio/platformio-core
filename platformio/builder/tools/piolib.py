@@ -1020,11 +1020,11 @@ def ConfigureProjectLibBuilder(env):
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
 
     print("LDF: Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
-    print("LDF Modes: Finder [%s] Compatibility [%s]" %
+    print("LDF Modes: Finder ~ %s, Compatibility ~ %s" %
           (ldf_mode, project.lib_compat_mode))
 
     lib_builders = env.GetLibBuilders()
-    print("Collected %d compatible libraries" % len(lib_builders))
+    print("Found %d compatible libraries" % len(lib_builders))
 
     print("Scanning dependencies...")
     project.search_deps_recursive()
