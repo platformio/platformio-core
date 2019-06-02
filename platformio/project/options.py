@@ -111,6 +111,8 @@ ProjectOptions = OrderedDict([
                         buildenvvar="BOARD_FLASH_MODE"),
 
         # Build
+        ConfigEnvOption(name="build_type",
+                        type=click.Choice(["release", "debug"])),
         ConfigEnvOption(name="build_flags",
                         multiple=True,
                         sysenvvar="PLATFORMIO_BUILD_FLAGS",

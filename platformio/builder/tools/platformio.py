@@ -69,7 +69,7 @@ def _build_project_deps(env):
     if is_test:
         projenv.BuildSources("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
                              "$PIOTEST_SRC_FILTER")
-    if not is_test or env.get("TEST_BUILD_PROJECT_SRC") == "true":
+    if not is_test or env.GetProjectOption("test_build_project_src", False):
         projenv.BuildSources("$BUILDSRC_DIR", "$PROJECTSRC_DIR",
                              env.get("SRC_FILTER"))
 
@@ -97,7 +97,8 @@ def BuildProgram(env):
     if not Util.case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 
-    if set(["__debug", "debug"]) & set(COMMAND_LINE_TARGETS):
+    if ("debug" in COMMAND_LINE_TARGETS
+            or env.GetProjectOption("build_type") == "debug"):
         env.ProcessDebug()
 
     # process extra flags from board

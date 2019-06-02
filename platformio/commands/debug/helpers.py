@@ -21,7 +21,7 @@ from hashlib import sha1
 from io import BytesIO
 from os.path import isfile
 
-from platformio import VERSION, exception, util
+from platformio import exception, util
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
 from platformio.commands.run import cli as cmd_run
@@ -49,7 +49,14 @@ def escape_path(path):
 
 def get_default_debug_env(config):
     default_envs = config.default_envs()
-    return default_envs[0] if default_envs else config.envs()[0]
+    all_envs = config.envs()
+    for env in default_envs:
+        if config.get("env:" + env, "build_type") == "debug":
+            return env
+    for env in all_envs:
+        if config.get("env:" + env, "build_type") == "debug":
+            return env
+    return default_envs[0] if default_envs else all_envs[0]
 
 
 def validate_debug_options(cmd_ctx, env_options):
@@ -141,7 +148,7 @@ def predebug_project(ctx, project_dir, env_name, preload, verbose):
     ctx.invoke(cmd_run,
                project_dir=project_dir,
                environment=[env_name],
-               target=["__debug"] + (["upload"] if preload else []),
+               target=["debug"] + (["upload"] if preload else []),
                verbose=verbose)
     if preload:
         time.sleep(5)
@@ -206,7 +213,7 @@ def has_debug_symbols(prog_path):
         b".debug_abbrev": False,
         b" -Og": False,
         b" -g": False,
-        b"__PLATFORMIO_DEBUG__": (3, 6) > VERSION[:2]
+        b"__PLATFORMIO_BUILD_DEBUG__": False
     }
     with open(prog_path, "rb") as fp:
         last_data = b""

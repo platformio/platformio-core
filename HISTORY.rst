@@ -11,32 +11,30 @@ PlatformIO 4.0
 
   - New project configuration parser with a strict options typing (`API <https://github.com/platformio/platformio-core/blob/develop/platformio/project/options.py>`__)
   - Unified workspace storage (`workspace_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#workspace-dir>`__ -> ``.pio``) for PlatformIO Build System, Library Manager, and other internal services (`issue #1778 <https://github.com/platformio/platformio-core/issues/1778>`_)
-  - Switched to workspace ``.pio/build`` folder for build artifacts instead of ``.pioenvs``
   - Share common (global) options between project environments using `[env] <http://docs.platformio.org/page/projectconf/section_env.html#global-scope-env>`__ section (`issue #1643 <https://github.com/platformio/platformio-core/issues/1643>`_)
   - Include external configuration files with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
-  - Override default `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with a custom using ``-c, --project-conf`` option for `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__, `platformio debug <http://docs.platformio.org/page/userguide/cmd_debug.html>`__, or `platformio test <http://docs.platformio.org/page/userguide/cmd_test.html>`__ commands (`issue #1913 <https://github.com/platformio/platformio-core/issues/1913>`_)
   - Custom project ``***_dir`` options declared in `platformio <http://docs.platformio.org/page/projectconf/section_platformio.html>`__ section have higher priority than `Environment variables <http://docs.platformio.org/page/envvars.html>`__
   - Added support for Unix shell-style wildcards for `monitor_port <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-port>`__ option (`issue #2541 <https://github.com/platformio/platformio-core/issues/2541>`_)
   - Added new `monitor_flags <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-flags>`__ option which allows passing extra flags and options to `platformio device monitor <http://docs.platformio.org/page/userguide/cmd_device.html#cmd-device-monitor>`__ command (`issue #2165 <https://github.com/platformio/platformio-core/issues/2165>`_)
-  - Override default development platform upload command with a custom `upload_command <http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-command>`__ (`issue #2599 <https://github.com/platformio/platformio-core/issues/2599>`_)
   - Added support for `PLATFORMIO_DEFAULT_ENVS <http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_DEFAULT_ENVS>`__ system environment variable (`issue #1967 <https://github.com/platformio/platformio-core/issues/1967>`_)
-  - Fixed an issue when ``-U`` in ``build_flags`` does not remove macro previously defined via ``-D`` flag (`issue #2508 <https://github.com/platformio/platformio-core/issues/2508>`_)
+  - Added support for `shared_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#shared-dir>`__ where you can place an extra files (extra scripts, LD scripts, etc.) which should be transferred to a `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html>`__ machine
 
 * **Library Management**
 
+  - Switched to workspace ``.pio/libdeps`` folder for project dependencies instead of ``.piolibdeps``
   - Save libraries passed to `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__ command into the project dependency list (`lib_deps <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__) with a new ``--save`` flag (`issue #1028 <https://github.com/platformio/platformio-core/issues/1028>`_)
   - Install all project dependencies declared via `lib_deps <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__ option using a simple `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__ command (`issue #2147 <https://github.com/platformio/platformio-core/issues/2147>`_)
   - Use isolated library dependency storage per project build environment (`issue #1696 <https://github.com/platformio/platformio-core/issues/1696>`_)
   - Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
-  - Switched to workspace ``.pio/libdeps`` folder for project dependencies instead of ``.piolibdeps``
 
 * **Build System**
 
+  - Switched to workspace ``.pio/build`` folder for build artifacts instead of ``.pioenvs``
+  - Switch between `Build Configurations <http://docs.platformio.org/page/projectconf/build_configurations.html>`__ (``release`` and ``debug``) with a new project configuration option `build_type <http://docs.platformio.org/page/projectconf/section_env_build.html#build-type>`__
   - Print platform package details, such as version, VSC source and commit (`issue #2155 <https://github.com/platformio/platformio-core/issues/2155>`_)
-
-* **PIO Remote**
-
-  - Added support for `shared_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#shared-dir>`__ where you can place an extra files (extra scripts, LD scripts, etc.) which should be transferred to a remote machine
+  - Override default `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with a custom using ``-c, --project-conf`` option for `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__, `platformio debug <http://docs.platformio.org/page/userguide/cmd_debug.html>`__, or `platformio test <http://docs.platformio.org/page/userguide/cmd_test.html>`__ commands (`issue #1913 <https://github.com/platformio/platformio-core/issues/1913>`_)
+  - Override default development platform upload command with a custom `upload_command <http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-command>`__ (`issue #2599 <https://github.com/platformio/platformio-core/issues/2599>`_)
+  - Fixed an issue when ``-U`` in ``build_flags`` does not remove macro previously defined via ``-D`` flag (`issue #2508 <https://github.com/platformio/platformio-core/issues/2508>`_)
 
 * **Infrastructure**
 
