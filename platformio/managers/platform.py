@@ -24,8 +24,7 @@ import click
 import semantic_version
 
 from platformio import __version__, app, exception, util
-from platformio.compat import (get_filesystem_encoding, hashlib_encode_data,
-                               is_bytes)
+from platformio.compat import hashlib_encode_data, is_bytes
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
 from platformio.proc import (BuildAsyncPipe, copy_pythonpath_to_osenv,
