@@ -24,7 +24,8 @@ import click
 import semantic_version
 
 from platformio import __version__, app, exception, util
-from platformio.compat import get_filesystem_encoding, string_types
+from platformio.compat import (get_filesystem_encoding, hashlib_encode_data,
+                               is_bytes)
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
 from platformio.proc import (BuildAsyncPipe, copy_pythonpath_to_osenv,
@@ -361,14 +362,13 @@ class PlatformRunMixin(object):
 
     @staticmethod
     def encode_scons_arg(value):
-        if isinstance(value, string_types):
-            value = value.encode(get_filesystem_encoding())
-        return base64.urlsafe_b64encode(value).decode()
+        data = base64.urlsafe_b64encode(hashlib_encode_data(value))
+        return data.decode() if is_bytes(data) else data
 
     @staticmethod
-    def decode_scons_arg(value):
-        return base64.urlsafe_b64decode(value).decode(
-            get_filesystem_encoding())
+    def decode_scons_arg(data):
+        value = base64.urlsafe_b64decode(data)
+        return value.decode() if is_bytes(value) else value
 
     def run(self, variables, targets, silent, verbose):
         assert isinstance(variables, dict)
