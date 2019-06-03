@@ -18,7 +18,7 @@ from hashlib import md5
 from os import makedirs
 from os.path import isdir, isfile, join
 
-from platformio.compat import PY2, WINDOWS
+from platformio.compat import WINDOWS, hashlib_encode_data
 
 # Windows CLI has limit with command length to 8192
 # Leave 2000 chars for flags and other options
@@ -61,9 +61,8 @@ def _file_long_data(env, data):
     build_dir = env.subst("$BUILD_DIR")
     if not isdir(build_dir):
         makedirs(build_dir)
-    tmp_file = join(
-        build_dir,
-        "longcmd-%s" % md5(data if PY2 else data.encode()).hexdigest())
+    tmp_file = join(build_dir,
+                    "longcmd-%s" % md5(hashlib_encode_data(data)).hexdigest())
     if isfile(tmp_file):
         return tmp_file
     with open(tmp_file, "w") as fp:

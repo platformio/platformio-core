@@ -19,7 +19,7 @@ from os.path import isdir, isfile, join, normpath
 from threading import Thread
 
 from platformio import exception
-from platformio.compat import PY2, WINDOWS, string_types
+from platformio.compat import WINDOWS, get_filesystem_encoding, string_types
 
 
 class AsyncPipeBase(object):
@@ -123,8 +123,8 @@ def exec_command(*args, **kwargs):
             result[s[3:]] = kwargs[s].get_buffer()
 
     for k, v in result.items():
-        if not PY2 and isinstance(result[k], bytes):
-            result[k] = result[k].decode()
+        if isinstance(result[k], bytes):
+            result[k] = result[k].decode(get_filesystem_encoding())
         if v and isinstance(v, string_types):
             result[k] = result[k].strip()
 

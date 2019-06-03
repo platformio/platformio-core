@@ -24,7 +24,7 @@ import click
 import semantic_version
 
 from platformio import __version__, app, exception, util
-from platformio.compat import PY2
+from platformio.compat import get_filesystem_encoding, string_types
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
 from platformio.proc import (BuildAsyncPipe, copy_pythonpath_to_osenv,
@@ -359,6 +359,17 @@ class PlatformRunMixin(object):
 
     LINE_ERROR_RE = re.compile(r"(^|\s+)error:?\s+", re.I)
 
+    @staticmethod
+    def encode_scons_arg(value):
+        if isinstance(value, string_types):
+            value = value.encode(get_filesystem_encoding())
+        return base64.urlsafe_b64encode(value).decode()
+
+    @staticmethod
+    def decode_scons_arg(value):
+        return base64.urlsafe_b64decode(value).decode(
+            get_filesystem_encoding())
+
     def run(self, variables, targets, silent, verbose):
         assert isinstance(variables, dict)
         assert isinstance(targets, list)
@@ -402,12 +413,7 @@ class PlatformRunMixin(object):
 
         # encode and append variables
         for key, value in variables.items():
-            if PY2:
-                cmd.append("%s=%s" % (key.upper(), base64.b64encode(value)))
-            else:
-                cmd.append(
-                    "%s=%s" %
-                    (key.upper(), base64.b64encode(value.encode()).decode()))
+            cmd.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
 
         def _write_and_flush(stream, data):
             stream.write(data)

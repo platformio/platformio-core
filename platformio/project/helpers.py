@@ -19,7 +19,7 @@ from os.path import (basename, dirname, expanduser, isdir, isfile, join,
                      realpath, splitdrive)
 
 from platformio import __version__
-from platformio.compat import PY2, WINDOWS
+from platformio.compat import WINDOWS, hashlib_encode_data
 from platformio.project.config import ProjectConfig
 
 
@@ -54,9 +54,8 @@ def get_project_optional_dir(name, default=None):
     if "$PROJECT_HASH" in optional_dir:
         optional_dir = optional_dir.replace(
             "$PROJECT_HASH", "%s-%s" %
-            (basename(project_dir),
-             sha1(project_dir if PY2 else project_dir.encode()).hexdigest()
-             [:10]))
+            (basename(project_dir), sha1(
+                hashlib_encode_data(project_dir)).hexdigest()[:10]))
 
     if optional_dir.startswith("~"):
         optional_dir = expanduser(optional_dir)
@@ -179,4 +178,4 @@ def calculate_project_hash():
         # Fix issue with useless project rebuilding for case insensitive FS.
         # A case of disk drive can differ...
         chunks_to_str = chunks_to_str.lower()
-    return sha1(chunks_to_str if PY2 else chunks_to_str.encode()).hexdigest()
+    return sha1(hashlib_encode_data(chunks_to_str)).hexdigest()

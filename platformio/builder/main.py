@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import base64
 import json
 import sys
 from os import environ
@@ -31,6 +30,7 @@ from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import util
 from platformio.compat import PY2, path_to_unicode
+from platformio.managers.platform import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project import helpers as project_helpers
 
@@ -91,11 +91,11 @@ if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
 env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 
 # Load variables from CLI
-for key in list(clivars.keys()):
-    if key in env:
-        env[key] = base64.b64decode(env[key])
-        if isinstance(env[key], bytes):
-            env[key] = env[key].decode()
+env.Replace(
+    **{
+        key: PlatformBase.decode_scons_arg(env[key])
+        for key in list(clivars.keys()) if key in env
+    })
 
 if env.GetOption('clean'):
     env.PioClean(env.subst("$BUILD_DIR"))

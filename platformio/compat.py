@@ -35,11 +35,20 @@ if PY2:
         return isinstance(x, (buffer, bytearray))
 
     def path_to_unicode(path):
+        if isinstance(path, unicode):
+            return path
         return path.decode(get_filesystem_encoding()).encode("utf-8")
 
     def get_file_contents(path):
         with open(path) as f:
             return f.read()
+
+    def hashlib_encode_data(data):
+        if is_bytes(data):
+            return data
+        if not isinstance(data, string_types):
+            data = str(data)
+        return data
 
     _magic_check = re.compile('([*?[])')
     _magic_check_bytes = re.compile(b'([*?[])')
@@ -74,3 +83,10 @@ else:
         except UnicodeDecodeError:
             with open(path, encoding="latin-1") as f:
                 return f.read()
+
+    def hashlib_encode_data(data):
+        if is_bytes(data):
+            return data
+        if not isinstance(data, string_types):
+            data = str(data)
+        return data.encode()

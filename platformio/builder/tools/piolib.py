@@ -32,7 +32,8 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, util
 from platformio.builder.tools import platformio as piotool
-from platformio.compat import PY2, WINDOWS, get_file_contents, string_types
+from platformio.compat import (WINDOWS, get_file_contents, hashlib_encode_data,
+                               string_types)
 from platformio.managers.lib import LibraryManager
 
 
@@ -181,8 +182,7 @@ class LibBuilderBase(object):
 
     @property
     def build_dir(self):
-        lib_hash = hashlib.sha1(
-            self.path if PY2 else self.path.encode()).hexdigest()[:3]
+        lib_hash = hashlib.sha1(hashlib_encode_data(self.path)).hexdigest()[:3]
         return join("$BUILD_DIR", "lib%s" % lib_hash, basename(self.path))
 
     @property

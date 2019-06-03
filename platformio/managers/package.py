@@ -26,7 +26,7 @@ import requests
 import semantic_version
 
 from platformio import __version__, app, exception, telemetry, util
-from platformio.compat import path_to_unicode
+from platformio.compat import hashlib_encode_data, path_to_unicode
 from platformio.downloader import FileDownloader
 from platformio.lockfile import LockFile
 from platformio.unpacker import FileUnpacker
@@ -173,7 +173,7 @@ class PkgInstallerMixin(object):
         cache_key_data = app.ContentCache.key_from_args(url, "data")
         if self.FILE_CACHE_VALID:
             with app.ContentCache() as cc:
-                fname = cc.get(cache_key_fname)
+                fname = str(cc.get(cache_key_fname))
                 cache_path = cc.get_cache_path(cache_key_data)
                 if fname and isfile(cache_path):
                     dst_path = join(dest_dir, fname)
@@ -591,7 +591,8 @@ class PkgInstallerMixin(object):
                     target_dirname = "%s@src-%s" % (
                         pkg_dirname,
                         hashlib.md5(
-                            cur_manifest['__src_url'].encode()).hexdigest())
+                            hashlib_encode_data(
+                                cur_manifest['__src_url'])).hexdigest())
                 shutil.move(pkg_dir, join(self.package_dir, target_dirname))
             # fix to a version
             elif action == 2:
@@ -601,7 +602,8 @@ class PkgInstallerMixin(object):
                     target_dirname = "%s@src-%s" % (
                         pkg_dirname,
                         hashlib.md5(
-                            tmp_manifest['__src_url'].encode()).hexdigest())
+                            hashlib_encode_data(
+                                tmp_manifest['__src_url'])).hexdigest())
                 pkg_dir = join(self.package_dir, target_dirname)
 
         # remove previous/not-satisfied package

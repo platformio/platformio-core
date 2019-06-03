@@ -25,7 +25,7 @@ from time import time
 import requests
 
 from platformio import exception, lockfile, util
-from platformio.compat import PY2, WINDOWS
+from platformio.compat import WINDOWS, hashlib_encode_data
 from platformio.proc import is_ci
 from platformio.project.helpers import (get_project_cache_dir,
                                         get_project_core_dir)
@@ -174,10 +174,8 @@ class ContentCache(object):
     def key_from_args(*args):
         h = hashlib.md5()
         for arg in args:
-            if not arg:
-                continue
-            arg = str(arg)
-            h.update(arg if PY2 else arg.encode())
+            if arg:
+                h.update(hashlib_encode_data(arg))
         return h.hexdigest()
 
     def get(self, key):
@@ -363,7 +361,7 @@ def get_cid():
             pass
     if not uid:
         uid = uuid.getnode()
-    cid = uuid.UUID(bytes=hashlib.md5(str(uid).encode()).digest())
+    cid = uuid.UUID(bytes=hashlib.md5(hashlib_encode_data(uid)).digest())
     cid = str(cid)
     if WINDOWS or os.getuid() > 0:  # yapf: disable pylint: disable=no-member
         set_state_item("cid", cid)

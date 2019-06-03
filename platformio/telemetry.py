@@ -28,6 +28,7 @@ import requests
 
 from platformio import __version__, app, exception, util
 from platformio.commands import PlatformioCLI
+from platformio.compat import string_types
 from platformio.proc import is_ci, is_container
 
 try:
@@ -135,12 +136,15 @@ class MeasurementProtocol(TelemetryBase):
                     return _arg
             return None
 
-        args = [
-            str(arg).lower() for arg in PlatformioCLI.leftover_args
-            if not str(arg).startswith("-")
-        ]
+        args = []
+        for arg in PlatformioCLI.leftover_args:
+            if not isinstance(arg, string_types):
+                arg = str(arg)
+            if not arg.startswith("-"):
+                args.append(arg.lower())
         if not args:
             return
+
         cmd_path = args[:1]
         if args[0] in ("platform", "platforms", "serialports", "device",
                        "settings", "account"):
