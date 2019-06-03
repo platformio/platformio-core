@@ -132,7 +132,7 @@ def cli(
 
 
 def get_best_envname(project_dir, boards=None):
-    config = ProjectConfig(join(project_dir, "platformio.ini"))
+    config = ProjectConfig.get_instance(join(project_dir, "platformio.ini"))
     config.validate()
 
     envname = None

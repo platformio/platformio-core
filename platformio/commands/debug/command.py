@@ -24,7 +24,8 @@ from platformio import exception, util
 from platformio.commands.debug import helpers
 from platformio.managers.core import inject_contrib_pysite
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import is_platformio_project
+from platformio.project.helpers import (is_platformio_project,
+                                        load_project_ide_data)
 
 
 @click.command("debug",
@@ -81,7 +82,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
         return helpers.predebug_project(ctx, project_dir, env_name, False,
                                         verbose)
 
-    configuration = helpers.load_configuration(ctx, project_dir, env_name)
+    configuration = load_project_ide_data(project_dir, env_name)
     if not configuration:
         raise exception.DebugInvalidOptions(
             "Could not load debug configuration")
@@ -116,8 +117,8 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
 
     if rebuild_prog:
         if helpers.is_mi_mode(__unprocessed):
-            output = helpers.GDBBytesIO()
             click.echo('~"Preparing firmware for debugging...\\n"')
+            output = helpers.GDBBytesIO()
             with helpers.capture_std_streams(output):
                 helpers.predebug_project(ctx, project_dir, env_name, preload,
                                          verbose)

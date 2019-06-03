@@ -27,7 +27,7 @@ from platformio.project.helpers import (calculate_project_hash,
                                         get_project_libdeps_dir)
 
 
-def _handle_legacy_libdeps(project_dir, config):
+def handle_legacy_libdeps(project_dir, config):
     legacy_libdeps_dir = join(project_dir, ".piolibdeps")
     if (not isdir(legacy_libdeps_dir)
             or legacy_libdeps_dir == get_project_libdeps_dir()):
@@ -46,7 +46,7 @@ def _handle_legacy_libdeps(project_dir, config):
         fg="yellow")
 
 
-def _autoinstall_libdeps(ctx, envname, libraries, verbose=False):
+def autoinstall_libdeps(ctx, envname, libraries, verbose=False):
     if not libraries:
         return
     libdeps_dir = join(get_project_libdeps_dir(), envname)
@@ -62,7 +62,7 @@ def _autoinstall_libdeps(ctx, envname, libraries, verbose=False):
         click.secho(str(e), fg="yellow")
 
 
-def _clean_build_dir(build_dir):
+def clean_build_dir(build_dir):
     # remove legacy ".pioenvs" folder
     legacy_build_dir = join(get_project_dir(), ".pioenvs")
     if isdir(legacy_build_dir) and legacy_build_dir != build_dir:

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import sys
 import time
 from contextlib import contextmanager
@@ -39,6 +38,17 @@ class GDBBytesIO(BytesIO):  # pylint: disable=too-few-public-methods
         self.STDOUT.flush()
 
 
+@contextmanager
+def capture_std_streams(stdout, stderr=None):
+    _stdout = sys.stdout
+    _stderr = sys.stderr
+    sys.stdout = stdout
+    sys.stderr = stderr or stdout
+    yield
+    sys.stdout = _stdout
+    sys.stderr = _stderr
+
+
 def is_mi_mode(args):
     return "--interpreter" in " ".join(args)
 
@@ -57,6 +67,16 @@ def get_default_debug_env(config):
         if config.get("env:" + env, "build_type") == "debug":
             return env
     return default_envs[0] if default_envs else all_envs[0]
+
+
+def predebug_project(ctx, project_dir, env_name, preload, verbose):
+    ctx.invoke(cmd_run,
+               project_dir=project_dir,
+               environment=[env_name],
+               target=["debug"] + (["upload"] if preload else []),
+               verbose=verbose)
+    if preload:
+        time.sleep(5)
 
 
 def validate_debug_options(cmd_ctx, env_options):
@@ -142,45 +162,6 @@ def validate_debug_options(cmd_ctx, env_options):
             tool_name, tool_settings),
         server=server_options)
     return result
-
-
-def predebug_project(ctx, project_dir, env_name, preload, verbose):
-    ctx.invoke(cmd_run,
-               project_dir=project_dir,
-               environment=[env_name],
-               target=["debug"] + (["upload"] if preload else []),
-               verbose=verbose)
-    if preload:
-        time.sleep(5)
-
-
-@contextmanager
-def capture_std_streams(stdout, stderr=None):
-    _stdout = sys.stdout
-    _stderr = sys.stderr
-    sys.stdout = stdout
-    sys.stderr = stderr or stdout
-    yield
-    sys.stdout = _stdout
-    sys.stderr = _stderr
-
-
-def load_configuration(ctx, project_dir, env_name):
-    output = BytesIO()
-    with capture_std_streams(output):
-        ctx.invoke(cmd_run,
-                   project_dir=project_dir,
-                   environment=[env_name],
-                   target=["idedata"])
-    result = output.getvalue().decode()
-    output.close()
-    if '"includes":' not in result:
-        return None
-    for line in result.split("\n"):
-        line = line.strip()
-        if line.startswith('{"') and "cxx_path" in line:
-            return json.loads(line[:line.rindex("}") + 1])
-    return None
 
 
 def configure_esp32_load_cmds(debug_options, configuration):

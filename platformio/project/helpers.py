@@ -12,13 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import os
 from hashlib import sha1
 from os import walk
 from os.path import (basename, dirname, expanduser, isdir, isfile, join,
                      realpath, splitdrive)
 
-from platformio import __version__
+from click.testing import CliRunner
+
+from platformio import __version__, exception
 from platformio.compat import WINDOWS, hashlib_encode_data
 from platformio.project.config import ProjectConfig
 
@@ -179,3 +182,22 @@ def calculate_project_hash():
         # A case of disk drive can differ...
         chunks_to_str = chunks_to_str.lower()
     return sha1(hashlib_encode_data(chunks_to_str)).hexdigest()
+
+
+def load_project_ide_data(project_dir, env_name):
+    from platformio.commands.run import cli as cmd_run
+    result = CliRunner().invoke(cmd_run, [
+        "--project-dir", project_dir, "--environment", env_name, "--target",
+        "idedata"
+    ])
+    if result.exit_code != 0 and not isinstance(result.exception,
+                                                exception.ReturnErrorCode):
+        raise result.exception
+    if '"includes":' not in result.output:
+        raise exception.PlatformioException(result.output)
+
+    for line in result.output.split("\n"):
+        line = line.strip()
+        if line.startswith('{"') and line.endswith("}"):
+            return json.loads(line)
+    return None

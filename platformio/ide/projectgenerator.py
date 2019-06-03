@@ -13,23 +13,21 @@
 # limitations under the License.
 
 import codecs
-import json
 import os
 import re
 import sys
 from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
 
 import bottle
-from click.testing import CliRunner
 
-from platformio import exception, util
-from platformio.commands.run import cli as cmd_run
+from platformio import util
 from platformio.compat import WINDOWS, get_file_contents
 from platformio.proc import where_is_program
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (get_project_lib_dir,
                                         get_project_libdeps_dir,
-                                        get_project_src_dir)
+                                        get_project_src_dir,
+                                        load_project_ide_data)
 
 
 class ProjectGenerator(object):
@@ -39,57 +37,45 @@ class ProjectGenerator(object):
         self.ide = str(ide)
         self.env_name = env_name
 
-        self._tplvars = {}
-        self._gather_tplvars()
-
     @staticmethod
     def get_supported_ides():
         tpls_dir = join(util.get_source_dir(), "ide", "tpls")
         return sorted(
             [d for d in os.listdir(tpls_dir) if isdir(join(tpls_dir, d))])
 
-    @util.memoized()
-    def get_project_env(self):
-        data = {}
-        config = ProjectConfig.get_instance(
-            join(self.project_dir, "platformio.ini"))
-        for env in config.envs():
-            if self.env_name != env:
-                continue
-            data = config.items(env=env, as_dict=True)
-            data['env_name'] = self.env_name
-        return data
+    def _load_tplvars(self):
+        tpl_vars = {"env_name": self.env_name}
+        # default env configuration
+        tpl_vars.update(
+            ProjectConfig.get_instance(join(
+                self.project_dir, "platformio.ini")).items(env=self.env_name,
+                                                           as_dict=True))
+        # build data
+        tpl_vars.update(
+            load_project_ide_data(self.project_dir, self.env_name) or {})
 
-    def get_project_build_data(self):
-        data = {
-            "defines": [],
-            "includes": [],
-            "cxx_path": None,
-            "prog_path": None
-        }
-        envdata = self.get_project_env()
-        if not envdata:
-            return data
+        with util.cd(self.project_dir):
+            tpl_vars.update({
+                "project_name": basename(self.project_dir),
+                "src_files": self.get_src_files(),
+                "user_home_dir": abspath(expanduser("~")),
+                "project_dir": self.project_dir,
+                "project_src_dir": get_project_src_dir(),
+                "project_lib_dir": get_project_lib_dir(),
+                "project_libdeps_dir": join(
+                    get_project_libdeps_dir(), self.env_name),
+                "systype": util.get_systype(),
+                "platformio_path": self._fix_os_path(
+                    sys.argv[0] if isfile(sys.argv[0])
+                    else where_is_program("platformio")),
+                "env_pathsep": os.pathsep,
+                "env_path": self._fix_os_path(os.getenv("PATH"))
+            })  # yapf: disable
+        return tpl_vars
 
-        result = CliRunner().invoke(cmd_run, [
-            "--project-dir", self.project_dir, "--environment",
-            envdata['env_name'], "--target", "idedata"
-        ])
-
-        if result.exit_code != 0 and not isinstance(result.exception,
-                                                    exception.ReturnErrorCode):
-            raise result.exception
-        if '"includes":' not in result.output:
-            raise exception.PlatformioException(result.output)
-
-        for line in result.output.split("\n"):
-            line = line.strip()
-            if line.startswith('{"') and line.endswith("}"):
-                data = json.loads(line)
-        return data
-
-    def get_project_name(self):
-        return basename(self.project_dir)
+    @staticmethod
+    def _fix_os_path(path):
+        return (re.sub(r"[\\]+", '\\' * 4, path) if WINDOWS else path)
 
     def get_src_files(self):
         result = []
@@ -113,6 +99,7 @@ class ProjectGenerator(object):
         return tpls
 
     def generate(self):
+        tpl_vars = self._load_tplvars()
         for tpl_relpath, tpl_path in self.get_tpls():
             dst_dir = self.project_dir
             if tpl_relpath:
@@ -121,11 +108,12 @@ class ProjectGenerator(object):
                     os.makedirs(dst_dir)
 
             file_name = basename(tpl_path)[:-4]
-            contents = self._render_tpl(tpl_path)
+            contents = self._render_tpl(tpl_path, tpl_vars)
             self._merge_contents(join(dst_dir, file_name), contents)
 
-    def _render_tpl(self, tpl_path):
-        return bottle.template(get_file_contents(tpl_path), **self._tplvars)
+    @staticmethod
+    def _render_tpl(tpl_path, tpl_vars):
+        return bottle.template(get_file_contents(tpl_path), **tpl_vars)
 
     @staticmethod
     def _merge_contents(dst_path, contents):
@@ -133,28 +121,3 @@ class ProjectGenerator(object):
             return
         with codecs.open(dst_path, "w", encoding="utf8") as fp:
             fp.write(contents)
-
-    def _gather_tplvars(self):
-        self._tplvars.update(self.get_project_env())
-        self._tplvars.update(self.get_project_build_data())
-        with util.cd(self.project_dir):
-            self._tplvars.update({
-                "project_name": self.get_project_name(),
-                "src_files": self.get_src_files(),
-                "user_home_dir": abspath(expanduser("~")),
-                "project_dir": self.project_dir,
-                "project_src_dir": get_project_src_dir(),
-                "project_lib_dir": get_project_lib_dir(),
-                "project_libdeps_dir": join(
-                    get_project_libdeps_dir(), self.env_name),
-                "systype": util.get_systype(),
-                "platformio_path": self._fix_os_path(
-                    sys.argv[0] if isfile(sys.argv[0])
-                    else where_is_program("platformio")),
-                "env_pathsep": os.pathsep,
-                "env_path": self._fix_os_path(os.getenv("PATH"))
-            })  # yapf: disable
-
-    @staticmethod
-    def _fix_os_path(path):
-        return (re.sub(r"[\\]+", '\\' * 4, path) if WINDOWS else path)

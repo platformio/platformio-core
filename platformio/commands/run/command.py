@@ -20,8 +20,8 @@ import click
 
 from platformio import exception, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
-from platformio.commands.run.helpers import (_clean_build_dir,
-                                             _handle_legacy_libdeps,
+from platformio.commands.run.helpers import (clean_build_dir,
+                                             handle_legacy_libdeps,
                                              print_summary)
 from platformio.commands.run.processor import EnvironmentProcessor
 from platformio.project.config import ProjectConfig
@@ -64,7 +64,7 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf,
         # clean obsolete build dir
         if not disable_auto_clean:
             try:
-                _clean_build_dir(get_project_build_dir())
+                clean_build_dir(get_project_build_dir())
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
@@ -76,7 +76,7 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf,
             project_conf or join(project_dir, "platformio.ini"))
         config.validate(environment)
 
-        _handle_legacy_libdeps(project_dir, config)
+        handle_legacy_libdeps(project_dir, config)
 
         results = []
         start_time = time()
