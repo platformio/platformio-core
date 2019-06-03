@@ -14,6 +14,7 @@
 
 # pylint: disable=unused-import
 
+import json
 import os
 import re
 import sys
@@ -49,6 +50,11 @@ if PY2:
         if not isinstance(data, string_types):
             data = str(data)
         return data
+
+    def dump_json_to_unicode(obj):
+        return json.dumps(obj,
+                          encoding=get_filesystem_encoding(),
+                          ensure_ascii=False).encode("utf8")
 
     _magic_check = re.compile('([*?[])')
     _magic_check_bytes = re.compile(b'([*?[])')
@@ -90,3 +96,6 @@ else:
         if not isinstance(data, string_types):
             data = str(data)
         return data.encode()
+
+    def dump_json_to_unicode(obj):
+        return json.dumps(obj, ensure_ascii=False)

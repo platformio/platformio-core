@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-import sys
 from os import environ
 from os.path import join
 from time import time
@@ -29,7 +27,7 @@ from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import util
-from platformio.compat import PY2, path_to_unicode
+from platformio.compat import PY2, dump_json_to_unicode
 from platformio.managers.platform import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project import helpers as project_helpers
@@ -151,17 +149,8 @@ if "envdump" in COMMAND_LINE_TARGETS:
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
-    try:
-        Import("projenv")
-        print("\n%s\n" % path_to_unicode(
-            json.dumps(
-                env.DumpIDEData(projenv),  # pylint: disable=undefined-variable
-                ensure_ascii=False)))
-        env.Exit(0)
-    except UnicodeDecodeError:
-        sys.stderr.write(
-            "\nUnicodeDecodeError: Non-ASCII characters found in build "
-            "environment\n"
-            "See explanation in FAQ > Troubleshooting > Building\n"
-            "https://docs.platformio.org/page/faq.html\n\n")
-        env.Exit(1)
+    Import("projenv")
+    print("\n%s\n" % dump_json_to_unicode(
+        env.DumpIDEData(projenv)  # pylint: disable=undefined-variable
+    ))
+    env.Exit(0)

@@ -42,6 +42,7 @@ PlatformIO 4.0
   - Added support for the latest Python "Click" package (CLI) (`issue #349 <https://github.com/platformio/platformio-core/issues/349>`_)
   - Added options to override default locations used by PlatformIO Core (`core_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#core-dir>`__, `globallib_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#globallib-dir>`__, `platforms_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#platforms-dir>`__, `packages_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#packages-dir>`__, `cache_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#cache-dir>`__) (`issue #1615 <https://github.com/platformio/platformio-core/issues/1615>`_)
   - Removed line-buffering from `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__ command which was leading to omitting progress bar from upload tools (`issue #856 <https://github.com/platformio/platformio-core/issues/856>`_)
+  - Fixed numerous issues related to "UnicodeDecodeError" and international locales, or when project path contains non-ASCII chars (`issue #2100 <https://github.com/platformio/platformio-core/issues/2100>`_)
 
 * **Integration**
 

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import codecs
 import json
 import os
 import re
@@ -23,7 +24,7 @@ from click.testing import CliRunner
 
 from platformio import exception, util
 from platformio.commands.run import cli as cmd_run
-from platformio.compat import PY2, WINDOWS, get_file_contents
+from platformio.compat import WINDOWS, get_file_contents
 from platformio.proc import where_is_program
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (get_project_lib_dir,
@@ -35,7 +36,7 @@ class ProjectGenerator(object):
 
     def __init__(self, project_dir, ide, env_name):
         self.project_dir = project_dir
-        self.ide = ide
+        self.ide = str(ide)
         self.env_name = env_name
 
         self._tplvars = {}
@@ -121,8 +122,7 @@ class ProjectGenerator(object):
 
             file_name = basename(tpl_path)[:-4]
             contents = self._render_tpl(tpl_path)
-            self._merge_contents(join(dst_dir, file_name),
-                                 contents.encode("utf8") if PY2 else contents)
+            self._merge_contents(join(dst_dir, file_name), contents)
 
     def _render_tpl(self, tpl_path):
         return bottle.template(get_file_contents(tpl_path), **self._tplvars)
@@ -131,8 +131,8 @@ class ProjectGenerator(object):
     def _merge_contents(dst_path, contents):
         if basename(dst_path) == ".gitignore" and isfile(dst_path):
             return
-        with open(dst_path, "w") as f:
-            f.write(contents)
+        with codecs.open(dst_path, "w", encoding="utf8") as fp:
+            fp.write(contents)
 
     def _gather_tplvars(self):
         self._tplvars.update(self.get_project_env())
