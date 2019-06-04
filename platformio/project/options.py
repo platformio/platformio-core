@@ -159,9 +159,7 @@ ProjectOptions = OrderedDict([
         ConfigEnvOption(name="lib_ignore", multiple=True),
         ConfigEnvOption(name="lib_extra_dirs",
                         multiple=True,
-                        sysenvvar="PLATFORMIO_LIB_EXTRA_DIRS",
-                        type=click.Path(
-                            exists=True, file_okay=False, dir_okay=True)),
+                        sysenvvar="PLATFORMIO_LIB_EXTRA_DIRS"),
         ConfigEnvOption(name="lib_ldf_mode",
                         type=click.Choice(
                             ["off", "chain", "deep", "chain+", "deep+"])),
