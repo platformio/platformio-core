@@ -17,6 +17,7 @@ import json
 import click
 
 from platformio import util
+from platformio.compat import dump_json_to_unicode
 from platformio.managers.platform import PlatformManager
 
 
@@ -82,4 +83,4 @@ def _print_boards_json(query, installed=False):
             if query.lower() not in search_data.lower():
                 continue
         result.append(board)
-    click.echo(json.dumps(result))
+    click.echo(dump_json_to_unicode(result))

@@ -25,7 +25,7 @@ from twisted.internet import defer  # pylint: disable=import-error
 
 from platformio import app, util
 from platformio.commands.home import helpers
-from platformio.compat import PY2, get_filesystem_encoding, path_to_unicode
+from platformio.compat import PY2, get_filesystem_encoding
 
 
 class OSRPC(object):
@@ -150,6 +150,6 @@ class OSRPC(object):
         items = []
         for item in util.get_logical_devices():
             if item['name']:
-                item['name'] = path_to_unicode(item['name'])
+                item['name'] = item['name']
             items.append(item)
         return items

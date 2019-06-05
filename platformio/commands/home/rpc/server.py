@@ -14,13 +14,13 @@
 
 # pylint: disable=import-error
 
-import json
-
 import jsonrpc
 from autobahn.twisted.websocket import (WebSocketServerFactory,
                                         WebSocketServerProtocol)
 from jsonrpc.exceptions import JSONRPCDispatchException
 from twisted.internet import defer
+
+from platformio.compat import PY2, dump_json_to_unicode, is_bytes
 
 
 class JSONRPCServerProtocol(WebSocketServerProtocol):
@@ -57,7 +57,10 @@ class JSONRPCServerProtocol(WebSocketServerProtocol):
 
     def sendJSONResponse(self, response):
         # print("< %s" % response)
-        self.sendMessage(json.dumps(response).encode("utf8"))
+        response = dump_json_to_unicode(response)
+        if not PY2 and not is_bytes(response):
+            response = response.encode("utf-8")
+        self.sendMessage(response)
 
 
 class JSONRPCServerFactory(WebSocketServerFactory):

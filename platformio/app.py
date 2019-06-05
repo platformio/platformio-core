@@ -14,7 +14,6 @@
 
 import codecs
 import hashlib
-import json
 import os
 import uuid
 from copy import deepcopy
@@ -25,7 +24,8 @@ from time import time
 import requests
 
 from platformio import exception, lockfile, util
-from platformio.compat import WINDOWS, hashlib_encode_data
+from platformio.compat import (WINDOWS, dump_json_to_unicode,
+                               hashlib_encode_data)
 from platformio.proc import is_ci
 from platformio.project.helpers import (get_project_cache_dir,
                                         get_project_core_dir)
@@ -102,16 +102,19 @@ class State(object):
             self._lock_state_file()
             if isfile(self.path):
                 self._state = util.load_json(self.path)
-        except exception.PlatformioException:
+                assert isinstance(self._state, dict)
+        except (AssertionError, UnicodeDecodeError,
+                exception.PlatformioException):
             self._state = {}
         self._prev_state = deepcopy(self._state)
         return self._state
 
     def __exit__(self, type_, value, traceback):
-        if self._prev_state != self._state:
+        new_state = dump_json_to_unicode(self._state)
+        if self._prev_state != new_state:
             try:
-                with codecs.open(self.path, "w", encoding="utf8") as fp:
-                    json.dump(self._state, fp)
+                with open(self.path, "w") as fp:
+                    fp.write(new_state)
             except IOError:
                 raise exception.HomeDirPermissionsError(get_project_core_dir())
         self._unlock_state_file()
@@ -167,6 +170,7 @@ class ContentCache(object):
         return True
 
     def get_cache_path(self, key):
+        key = str(key)
         assert len(key) > 3
         return join(self.cache_dir, key[-2:], key)
 

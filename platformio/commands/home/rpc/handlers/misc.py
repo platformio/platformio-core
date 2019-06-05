@@ -27,7 +27,7 @@ from platformio.commands.home.rpc.handlers.os import OSRPC
 class MiscRPC(object):
 
     def load_latest_tweets(self, username):
-        cache_key = "piohome_latest_tweets_%s" % username
+        cache_key = "piohome_latest_tweets_" + str(username)
         cache_valid = "7d"
         with app.ContentCache() as cc:
             cache_data = cc.get(cache_key)
@@ -60,13 +60,11 @@ class MiscRPC(object):
                    "include_new_items_bar=true") % username
         if helpers.is_twitter_blocked():
             api_url = self._get_proxed_uri(api_url)
-        html_or_json = yield OSRPC.fetch_content(
+        content = yield OSRPC.fetch_content(
             api_url, headers=self._get_twitter_headers(username))
-        # issue with PIO Core < 3.5.3 and ContentCache
-        if not isinstance(html_or_json, dict):
-            html_or_json = json.loads(html_or_json)
-        assert "items_html" in html_or_json
-        soup = BeautifulSoup(html_or_json['items_html'], "html.parser")
+        content = json.loads(content)
+        assert "items_html" in content
+        soup = BeautifulSoup(content['items_html'], "html.parser")
         tweet_nodes = soup.find_all("div",
                                     attrs={
                                         "class": "tweet",

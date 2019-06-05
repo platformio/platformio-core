@@ -14,7 +14,6 @@
 
 # pylint: disable=too-many-branches, too-many-locals
 
-import json
 import time
 from os.path import isdir, join
 
@@ -22,6 +21,7 @@ import click
 import semantic_version
 
 from platformio import exception, util
+from platformio.compat import dump_json_to_unicode
 from platformio.managers.lib import (LibraryManager, get_builtin_libs,
                                      is_builtin_lib)
 from platformio.proc import is_ci
@@ -247,8 +247,8 @@ def lib_update(ctx, libraries, only_check, dry_run, json_output):
 
     if json_output:
         return click.echo(
-            json.dumps(json_result[storage_dirs[0]] if len(storage_dirs) ==
-                       1 else json_result))
+            dump_json_to_unicode(json_result[storage_dirs[0]]
+                                 if len(storage_dirs) == 1 else json_result))
 
     return True
 
@@ -274,8 +274,8 @@ def lib_list(ctx, json_output):
 
     if json_output:
         return click.echo(
-            json.dumps(json_result[storage_dirs[0]] if len(storage_dirs) ==
-                       1 else json_result))
+            dump_json_to_unicode(json_result[storage_dirs[0]]
+                                 if len(storage_dirs) == 1 else json_result))
 
     return True
 
@@ -309,7 +309,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
                                  cache_valid="1d")
 
     if json_output:
-        click.echo(json.dumps(result))
+        click.echo(dump_json_to_unicode(result))
         return
 
     if result['total'] == 0:
@@ -361,7 +361,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
 def lib_builtin(storage, json_output):
     items = get_builtin_libs(storage)
     if json_output:
-        return click.echo(json.dumps(items))
+        return click.echo(dump_json_to_unicode(items))
 
     for storage_ in items:
         if not storage_['items']:
@@ -390,7 +390,7 @@ def lib_show(library, json_output):
                               interactive=not json_output)
     lib = util.get_api_result("/lib/info/%d" % lib_id, cache_valid="1d")
     if json_output:
-        return click.echo(json.dumps(lib))
+        return click.echo(dump_json_to_unicode(lib))
 
     click.secho(lib['name'], fg="cyan")
     click.echo("=" * len(lib['name']))
@@ -478,7 +478,7 @@ def lib_stats(json_output):
     result = util.get_api_result("/lib/stats", cache_valid="1h")
 
     if json_output:
-        return click.echo(json.dumps(result))
+        return click.echo(dump_json_to_unicode(result))
 
     printitem_tpl = "{name:<33} {url}"
     printitemdate_tpl = "{name:<33} {date:23} {url}"

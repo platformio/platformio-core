@@ -14,11 +14,9 @@
 
 from __future__ import absolute_import
 
-import json
-from os.path import expanduser, isfile, join
+from os.path import expanduser, join
 
-from platformio import __version__, app, exception, util
-from platformio.compat import path_to_unicode
+from platformio import __version__, app, util
 from platformio.project.helpers import (get_project_core_dir,
                                         is_platformio_project)
 
@@ -29,57 +27,45 @@ class AppRPC(object):
 
     @staticmethod
     def load_state():
-        state = None
-        try:
-            if isfile(AppRPC.APPSTATE_PATH):
-                state = util.load_json(AppRPC.APPSTATE_PATH)
-        except exception.PlatformioException:
-            pass
-        if not isinstance(state, dict):
-            state = {}
-        storage = state.get("storage", {})
+        with app.State(AppRPC.APPSTATE_PATH, lock=True) as state:
+            storage = state.get("storage", {})
 
-        # base data
-        caller_id = app.get_session_var("caller_id")
-        storage['cid'] = app.get_cid()
-        storage['coreVersion'] = __version__
-        storage['coreSystype'] = util.get_systype()
-        storage['coreCaller'] = (str(caller_id).lower() if caller_id else None)
-        storage['coreSettings'] = {
-            name: {
-                "description": data['description'],
-                "default_value": data['value'],
-                "value": app.get_setting(name)
+            # base data
+            caller_id = app.get_session_var("caller_id")
+            storage['cid'] = app.get_cid()
+            storage['coreVersion'] = __version__
+            storage['coreSystype'] = util.get_systype()
+            storage['coreCaller'] = (str(caller_id).lower()
+                                     if caller_id else None)
+            storage['coreSettings'] = {
+                name: {
+                    "description": data['description'],
+                    "default_value": data['value'],
+                    "value": app.get_setting(name)
+                }
+                for name, data in app.DEFAULT_SETTINGS.items()
             }
-            for name, data in app.DEFAULT_SETTINGS.items()
-        }
 
-        # encode to UTF-8
-        for key in storage['coreSettings']:
-            if not key.endswith("dir"):
-                continue
-            storage['coreSettings'][key]['default_value'] = path_to_unicode(
-                storage['coreSettings'][key]['default_value'])
-            storage['coreSettings'][key]['value'] = path_to_unicode(
-                storage['coreSettings'][key]['value'])
-        storage['homeDir'] = path_to_unicode(expanduser("~"))
-        storage['projectsDir'] = storage['coreSettings']['projects_dir'][
-            'value']
+            storage['homeDir'] = expanduser("~")
+            storage['projectsDir'] = storage['coreSettings']['projects_dir'][
+                'value']
 
-        # skip non-existing recent projects
-        storage['recentProjects'] = [
-            p for p in storage.get("recentProjects", [])
-            if is_platformio_project(p)
-        ]
+            # skip non-existing recent projects
+            storage['recentProjects'] = [
+                p for p in storage.get("recentProjects", [])
+                if is_platformio_project(p)
+            ]
 
-        state['storage'] = storage
-        return state
+            state['storage'] = storage
+            return state
 
     @staticmethod
     def get_state():
         return AppRPC.load_state()
 
-    def save_state(self, state):
-        with open(self.APPSTATE_PATH, "w") as fp:
-            json.dump(state, fp)
+    @staticmethod
+    def save_state(state):
+        with app.State(AppRPC.APPSTATE_PATH, lock=True) as s:
+            s.clear()
+            s.update(state)
         return True

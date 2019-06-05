@@ -37,7 +37,7 @@ class EnvironmentProcessor(object):
         self.cmd_ctx = cmd_ctx
         self.name = name
         self.config = config
-        self.targets = targets
+        self.targets = [str(t) for t in targets]
         self.upload_port = upload_port
         self.silent = silent
         self.verbose = verbose

@@ -25,7 +25,7 @@ import jsonrpc  # pylint: disable=import-error
 from platformio import exception, util
 from platformio.commands.home.rpc.handlers.app import AppRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
-from platformio.compat import get_filesystem_encoding
+from platformio.compat import PY2, get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
@@ -172,6 +172,10 @@ class ProjectRPC(object):
         return project_dir
 
     def import_arduino(self, board, use_arduino_libs, arduino_project_dir):
+        board = str(board)
+        if arduino_project_dir and PY2:
+            arduino_project_dir = arduino_project_dir.encode(
+                get_filesystem_encoding())
         # don't import PIO Project
         if is_platformio_project(arduino_project_dir):
             return arduino_project_dir
@@ -188,7 +192,7 @@ class ProjectRPC(object):
                 message="Not an Arduino project: %s" % arduino_project_dir)
 
         state = AppRPC.load_state()
-        project_dir = join(state['storage']['projectsDir'].decode("utf-8"),
+        project_dir = join(state['storage']['projectsDir'],
                            time.strftime("%y%m%d-%H%M%S-") + board)
         if not isdir(project_dir):
             os.makedirs(project_dir)
@@ -213,8 +217,7 @@ class ProjectRPC(object):
             src_dir = get_project_src_dir()
             if isdir(src_dir):
                 util.rmtree_(src_dir)
-            shutil.copytree(
-                arduino_project_dir.encode(get_filesystem_encoding()), src_dir)
+            shutil.copytree(arduino_project_dir, src_dir)
         return project_dir
 
     @staticmethod
@@ -255,12 +258,14 @@ class ProjectRPC(object):
 
     @staticmethod
     def import_pio(project_dir):
+        if project_dir and PY2:
+            project_dir = project_dir.encode(get_filesystem_encoding())
         if not project_dir or not is_platformio_project(project_dir):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4001,
                 message="Not an PlatformIO project: %s" % project_dir)
         new_project_dir = join(
-            AppRPC.load_state()['storage']['projectsDir'].decode("utf-8"),
+            AppRPC.load_state()['storage']['projectsDir'],
             time.strftime("%y%m%d-%H%M%S-") + basename(project_dir))
         shutil.copytree(project_dir, new_project_dir)
 
