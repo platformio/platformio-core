@@ -42,7 +42,11 @@ def _print_platforms(platforms):
         if "packages" in platform:
             click.echo("Packages: %s" % ", ".join(platform['packages']))
         if "version" in platform:
-            click.echo("Version: " + platform['version'])
+            if "__src_url" in platform:
+                click.echo("Version: #%s (%s)" %
+                           (platform['version'], platform['__src_url']))
+            else:
+                click.echo("Version: " + platform['version'])
         click.echo()
 
 
