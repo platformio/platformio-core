@@ -26,7 +26,7 @@ import requests
 import semantic_version
 
 from platformio import __version__, app, exception, telemetry, util
-from platformio.compat import hashlib_encode_data, path_to_unicode
+from platformio.compat import hashlib_encode_data
 from platformio.downloader import FileDownloader
 from platformio.lockfile import LockFile
 from platformio.unpacker import FileUnpacker
@@ -394,7 +394,7 @@ class PkgInstallerMixin(object):
         if "version" not in manifest:
             manifest['version'] = "0.0.0"
 
-        manifest['__pkg_dir'] = path_to_unicode(pkg_dir)
+        manifest['__pkg_dir'] = pkg_dir
         self.cache_set(cache_key, manifest)
         return manifest
 
@@ -451,7 +451,7 @@ class PkgInstallerMixin(object):
 
     def get_package_by_dir(self, pkg_dir):
         for manifest in self.get_installed():
-            if manifest['__pkg_dir'] == path_to_unicode(abspath(pkg_dir)):
+            if manifest['__pkg_dir'] == abspath(pkg_dir):
                 return manifest
         return None
 
