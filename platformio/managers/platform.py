@@ -173,7 +173,7 @@ class PlatformManager(BasePkgManager):
         self.cache_reset()
         return True
 
-    @util.memoized(expire=5000)
+    @util.memoized(expire="5s")
     def get_installed_boards(self):
         boards = []
         for manifest in self.get_installed():
@@ -185,7 +185,6 @@ class PlatformManager(BasePkgManager):
         return boards
 
     @staticmethod
-    @util.memoized()
     def get_registered_boards():
         return util.get_api_result("/boards", cache_valid="7d")
 

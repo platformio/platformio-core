@@ -37,8 +37,6 @@ from platformio.vcsclient import VCSClientFactory
 
 class PackageRepoIterator(object):
 
-    _MANIFEST_CACHE = {}
-
     def __init__(self, package, repositories):
         assert isinstance(repositories, list)
         self.package = package
@@ -50,27 +48,25 @@ class PackageRepoIterator(object):
     def __next__(self):
         return self.next()
 
-    def next(self):
-        manifest = {}
-        repo = next(self.repositories)
-        if isinstance(repo, dict):
-            manifest = repo
-        elif repo in PackageRepoIterator._MANIFEST_CACHE:
-            manifest = PackageRepoIterator._MANIFEST_CACHE[repo]
-        else:
-            r = None
-            try:
-                r = requests.get(repo, headers=util.get_request_defheaders())
-                r.raise_for_status()
-                manifest = r.json()
-            except:  # pylint: disable=bare-except
-                pass
-            finally:
-                if r:
-                    r.close()
-            PackageRepoIterator._MANIFEST_CACHE[repo] = manifest
+    @staticmethod
+    @util.memoized(expire="60s")
+    def load_manifest(url):
+        r = None
+        try:
+            r = requests.get(url, headers=util.get_request_defheaders())
+            r.raise_for_status()
+            return r.json()
+        except:  # pylint: disable=bare-except
+            pass
+        finally:
+            if r:
+                r.close()
+        return None
 
-        if self.package in manifest:
+    def next(self):
+        repo = next(self.repositories)
+        manifest = repo if isinstance(repo, dict) else self.load_manifest(repo)
+        if manifest and self.package in manifest:
             return manifest[self.package]
         return next(self)
 
@@ -795,6 +791,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
         return True
 
     def update(self, package, requirements=None, only_check=False):
+        self.cache_reset()
         if isdir(package) and self.get_package_by_dir(package):
             pkg_dir = package
         else:

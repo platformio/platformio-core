@@ -361,6 +361,7 @@ class LibraryManager(BasePkgManager):
         if not silent:
             click.secho("Installing dependencies", fg="yellow")
 
+        builtin_lib_storages = None
         for filters in self.normalize_dependencies(manifest['dependencies']):
             assert "name" in filters
 
@@ -382,7 +383,10 @@ class LibraryManager(BasePkgManager):
                 try:
                     lib_id = self.search_lib_id(filters, silent, interactive)
                 except exception.LibNotFound as e:
-                    if not silent or is_builtin_lib(filters['name']):
+                    if builtin_lib_storages is None:
+                        builtin_lib_storages = get_builtin_libs()
+                    if not silent or is_builtin_lib(builtin_lib_storages,
+                                                    filters['name']):
                         click.secho("Warning! %s" % e, fg="yellow")
                     continue
 
@@ -402,7 +406,6 @@ class LibraryManager(BasePkgManager):
         return pkg_dir
 
 
-@util.memoized()
 def get_builtin_libs(storage_names=None):
     items = []
     storage_names = storage_names or []
@@ -421,9 +424,8 @@ def get_builtin_libs(storage_names=None):
     return items
 
 
-@util.memoized()
-def is_builtin_lib(name):
-    for storage in get_builtin_libs():
+def is_builtin_lib(storages, name):
+    for storage in storages or []:
         if any(l.get("name") == name for l in storage['items']):
             return True
     return False

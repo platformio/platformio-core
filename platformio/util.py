@@ -50,7 +50,12 @@ class cd(object):
 class memoized(object):
 
     def __init__(self, expire=0):
-        self.expire = expire / 1000  # milliseconds
+        expire = str(expire)
+        if expire.isdigit():
+            expire = "%ss" % (int(expire) / 1000)
+        tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+        assert expire.endswith(tuple(tdmap))
+        self.expire = int(tdmap[expire[-1]] * int(expire[:-1]))
         self.cache = {}
 
     def __call__(self, func):
@@ -68,7 +73,7 @@ class memoized(object):
         return wrapper
 
     def _reset(self):
-        self.cache = {}
+        self.cache.clear()
 
 
 class throttle(object):
@@ -296,7 +301,7 @@ def get_request_defheaders():
     return {"User-Agent": "PlatformIO/%s CI/%d %s" % data}
 
 
-@memoized(expire=10000)
+@memoized(expire="60s")
 def _api_request_session():
     return requests.Session()
 
@@ -394,7 +399,7 @@ PING_INTERNET_IPS = [
 ]
 
 
-@memoized(expire=5000)
+@memoized(expire="5s")
 def _internet_on():
     timeout = 2
     socket.setdefaulttimeout(timeout)

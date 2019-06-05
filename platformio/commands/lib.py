@@ -147,6 +147,7 @@ def lib_install(  # pylint: disable=too-many-arguments
                                      force=force)
                 installed_manifests[library] = lm.load_manifest(pkg_dir)
         elif storage_dir in storage_libdeps:
+            builtin_lib_storages = None
             for library in storage_libdeps[storage_dir]:
                 try:
                     pkg_dir = lm.install(library,
@@ -155,7 +156,10 @@ def lib_install(  # pylint: disable=too-many-arguments
                                          force=force)
                     installed_manifests[library] = lm.load_manifest(pkg_dir)
                 except exception.LibNotFound as e:
-                    if not silent or not is_builtin_lib(library):
+                    if builtin_lib_storages is None:
+                        builtin_lib_storages = get_builtin_libs()
+                    if not silent or not is_builtin_lib(
+                            builtin_lib_storages, library):
                         click.secho("Warning! %s" % e, fg="yellow")
 
     if not save or not libraries:

@@ -43,18 +43,18 @@ class AsyncSession(requests.Session):
         return defer.ensureDeferred(*args, **kwargs)
 
 
-@util.memoized(expire=5000)
+@util.memoized(expire="60s")
 def requests_session():
     return AsyncSession(n=5)
 
 
-@util.memoized()
+@util.memoized(expire="60s")
 def get_core_fullpath():
     return where_is_program(
         "platformio" + (".exe" if "windows" in util.get_systype() else ""))
 
 
-@util.memoized(expire=10000)
+@util.memoized(expire="10s")
 def is_twitter_blocked():
     ip = "104.244.42.1"
     timeout = 2
