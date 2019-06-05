@@ -285,10 +285,13 @@ def PioClean(env, clean_dir):
     if not isdir(clean_dir):
         print("Build environment is clean")
         env.Exit(0)
+    clean_rel_path = relpath(clean_dir)
     for root, _, files in walk(clean_dir):
-        for file_ in files:
-            remove(join(root, file_))
-            print("Removed %s" % relpath(join(root, file_)))
+        for f in files:
+            dst = join(root, f)
+            remove(dst)
+            print("Removed %s" %
+                  (dst if clean_rel_path.startswith(".") else relpath(dst)))
     print("Done cleaning")
     util.rmtree_(clean_dir)
     env.Exit(0)
