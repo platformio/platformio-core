@@ -1,6 +1,8 @@
 Release Notes
 =============
 
+.. _release_notes_4_0:
+
 PlatformIO 4.0
 --------------
 
