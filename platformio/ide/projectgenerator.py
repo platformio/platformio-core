@@ -35,7 +35,7 @@ class ProjectGenerator(object):
     def __init__(self, project_dir, ide, env_name):
         self.project_dir = project_dir
         self.ide = str(ide)
-        self.env_name = env_name
+        self.env_name = str(env_name)
 
     @staticmethod
     def get_supported_ides():
