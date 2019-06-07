@@ -138,19 +138,16 @@ class PkgInstallerMixin(object):
     FILE_CACHE_VALID = None  # for example, 1 week = "7d"
     FILE_CACHE_MAX_SIZE = 1024 * 1024 * 50  # 50 Mb
 
-    MEMORY_CACHE = {}
+    MEMORY_CACHE = {}  # cache for package manifests and read dirs
 
-    @staticmethod
-    def cache_get(key, default=None):
-        return PkgInstallerMixin.MEMORY_CACHE.get(key, default)
+    def cache_get(self, key, default=None):
+        return self.MEMORY_CACHE.get(key, default)
 
-    @staticmethod
-    def cache_set(key, value):
-        PkgInstallerMixin.MEMORY_CACHE[key] = value
+    def cache_set(self, key, value):
+        self.MEMORY_CACHE[key] = value
 
-    @staticmethod
-    def cache_reset():
-        PkgInstallerMixin.MEMORY_CACHE = {}
+    def cache_reset(self):
+        self.MEMORY_CACHE.clear()
 
     def read_dirs(self, src_dir):
         cache_key = "read_dirs-%s" % src_dir
