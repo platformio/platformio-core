@@ -52,7 +52,7 @@ class memoized(object):
     def __init__(self, expire=0):
         expire = str(expire)
         if expire.isdigit():
-            expire = "%ss" % (int(expire) / 1000)
+            expire = "%ss" % int((int(expire) / 1000))
         tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
         assert expire.endswith(tuple(tdmap))
         self.expire = int(tdmap[expire[-1]] * int(expire[:-1]))
