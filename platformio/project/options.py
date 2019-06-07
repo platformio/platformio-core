@@ -91,9 +91,9 @@ ProjectOptions = OrderedDict([
 
         # Generic
         ConfigEnvOption(name="platform", buildenvvar="PIOPLATFORM"),
+        ConfigEnvOption(name="platform_packages", multiple=True),
         ConfigEnvOption(
             name="framework", multiple=True, buildenvvar="PIOFRAMEWORK"),
-        ConfigEnvOption(name="targets", multiple=True),
 
         # Board
         ConfigEnvOption(name="board", buildenvvar="BOARD"),
@@ -129,6 +129,7 @@ ProjectOptions = OrderedDict([
                         multiple=True,
                         sysenvvar="PLATFORMIO_SRC_FILTER",
                         buildenvvar="SRC_FILTER"),
+        ConfigEnvOption(name="targets", multiple=True),
 
         # Upload
         ConfigEnvOption(name="upload_port",

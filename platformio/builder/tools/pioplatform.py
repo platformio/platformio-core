@@ -29,22 +29,18 @@ from platformio.project.config import ProjectOptions
 
 
 @util.memoized()
-def initPioPlatform(name):
-    return PlatformFactory.newPlatform(name)
-
-
 def PioPlatform(env):
     variables = env.GetProjectOptions(as_dict=True)
     if "framework" in variables:
         # support PIO Core 3.0 dev/platforms
         variables['pioframework'] = variables['framework']
-    p = initPioPlatform(env['PLATFORM_MANIFEST'])
+    p = PlatformFactory.newPlatform(env['PLATFORM_MANIFEST'])
     p.configure_default_packages(variables, COMMAND_LINE_TARGETS)
     return p
 
 
 def BoardConfig(env, board=None):
-    p = initPioPlatform(env['PLATFORM_MANIFEST'])
+    p = env.PioPlatform()
     try:
         board = board or env.get("BOARD")
         assert board, "BoardConfig: Board is not defined"

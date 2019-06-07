@@ -490,15 +490,16 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
     _BOARDS_CACHE = {}
 
     def __init__(self, manifest_path):
-        self._BOARDS_CACHE = {}
         self.manifest_path = manifest_path
+        self.silent = False
+        self.verbose = False
+
+        self._BOARDS_CACHE = {}
         self._manifest = util.load_json(manifest_path)
+        self._custom_packages = None
 
         self.pm = PackageManager(get_project_packages_dir(),
                                  self.package_repositories)
-
-        self.silent = False
-        self.verbose = False
 
         # if self.engines and "platformio" in self.engines:
         #     if self.PIO_VERSION not in semantic_version.Spec(
@@ -560,9 +561,20 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
 
     @property
     def packages(self):
-        if "packages" not in self._manifest:
-            self._manifest['packages'] = {}
-        return self._manifest['packages']
+        packages = self._manifest.get("packages", {})
+        for item in (self._custom_packages or []):
+            name = item
+            version = "*"
+            if "@" in item:
+                name, version = item.split("@", 2)
+            name = name.strip()
+            if name not in packages:
+                packages[name] = {}
+            packages[name].update({
+                "version": version.strip(),
+                "optional": False
+            })
+        return packages
 
     def get_dir(self):
         return dirname(self.manifest_path)
@@ -626,6 +638,9 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         return self.packages[name].get("type")
 
     def configure_default_packages(self, options, targets):
+        # override user custom packages
+        self._custom_packages = options.get("platform_packages")
+
         # enable used frameworks
         for framework in options.get("framework", []):
             if not self.frameworks:
