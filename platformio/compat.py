@@ -47,7 +47,9 @@ if PY2:
     def hashlib_encode_data(data):
         if is_bytes(data):
             return data
-        if not isinstance(data, string_types):
+        if isinstance(data, unicode):
+            data = data.encode(get_filesystem_encoding())
+        elif not isinstance(data, string_types):
             data = str(data)
         return data
 
