@@ -53,16 +53,6 @@ from platformio.project.helpers import (is_platformio_project,
 @click.pass_context
 def cli(ctx, project_dir, project_conf, environment, verbose, interface,
         __unprocessed):
-    try:
-        util.ensure_udev_rules()
-    except NameError:
-        pass
-    except exception.InvalidUdevRules as e:
-        for line in str(e).split("\n") + [""]:
-            click.echo(
-                ('~"%s\\n"' if helpers.is_mi_mode(__unprocessed) else "%s") %
-                line)
-
     if not is_platformio_project(project_dir) and os.getenv("CWD"):
         project_dir = os.getenv("CWD")
 
@@ -93,6 +83,16 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
             return click.echo(result['out'])
         raise exception.PlatformioException("\n".join(
             [result['out'], result['err']]))
+
+    try:
+        util.ensure_udev_rules()
+    except NameError:
+        pass
+    except exception.InvalidUdevRules as e:
+        for line in str(e).split("\n") + [""]:
+            click.echo(
+                ('~"%s\\n"' if helpers.is_mi_mode(__unprocessed) else "%s") %
+                line)
 
     debug_options['load_cmds'] = helpers.configure_esp32_load_cmds(
         debug_options, configuration)
