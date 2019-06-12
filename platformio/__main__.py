@@ -18,7 +18,7 @@ from traceback import format_exc
 
 import click
 
-from platformio import __version__, exception, maintenance, util
+from platformio import __version__, exception, maintenance
 from platformio.commands import PlatformioCLI
 from platformio.compat import CYGWIN
 
@@ -42,7 +42,6 @@ def process_result(ctx, result, force, caller):  # pylint: disable=W0613
     maintenance.on_platformio_end(ctx, result)
 
 
-@util.memoized()
 def configure():
     if CYGWIN:
         raise exception.CygwinEnvDetected()
@@ -77,17 +76,10 @@ def configure():
     click.secho = lambda *args, **kwargs: _safe_echo(1, *args, **kwargs)
 
 
-def main(argv=None):
-    exit_code = 0
-    prev_sys_argv = sys.argv[:]
-    if argv:
-        assert isinstance(argv, list)
-        sys.argv = argv
+def main():
     try:
         configure()
         cli(None, None, None)
-    except SystemExit:
-        pass
     except Exception as e:  # pylint: disable=broad-except
         if not isinstance(e, exception.ReturnErrorCode):
             maintenance.on_platformio_exception(e)
@@ -113,9 +105,8 @@ An unexpected error occurred. Further steps:
 ============================================================
 """
             click.secho(error_str, fg="red", err=True)
-        exit_code = int(str(e)) if str(e).isdigit() else 1
-    sys.argv = prev_sys_argv
-    return exit_code
+        return int(str(e)) if str(e).isdigit() else 1
+    return 0
 
 
 def debug_gdb_main():

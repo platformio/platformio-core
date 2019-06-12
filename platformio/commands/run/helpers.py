@@ -18,7 +18,10 @@ from time import time
 
 import click
 
-from platformio import util
+from platformio import exception, util
+from platformio.commands.lib import (CTX_META_STORAGE_DIRS_KEY,
+                                     CTX_META_STORAGE_LIBDEPS_KEY)
+from platformio.commands.lib import lib_install as cmd_lib_install
 from platformio.project.helpers import (calculate_project_hash,
                                         get_project_dir,
                                         get_project_libdeps_dir)
@@ -41,6 +44,22 @@ def handle_legacy_libdeps(project_dir, config):
         "\nMore details -> http://docs.platformio.org/page/projectconf/"
         "section_env_library.html#lib-deps".format(legacy_libdeps_dir),
         fg="yellow")
+
+
+def autoinstall_libdeps(ctx, envname, libraries, verbose=False):
+    if not libraries:
+        return
+    libdeps_dir = join(get_project_libdeps_dir(), envname)
+    ctx.meta.update({
+        CTX_META_STORAGE_DIRS_KEY: [libdeps_dir],
+        CTX_META_STORAGE_LIBDEPS_KEY: {
+            libdeps_dir: libraries
+        }
+    })
+    try:
+        ctx.invoke(cmd_lib_install, silent=not verbose)
+    except exception.InternetIsOffline as e:
+        click.secho(str(e), fg="yellow")
 
 
 def clean_build_dir(build_dir):

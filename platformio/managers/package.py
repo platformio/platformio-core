@@ -171,7 +171,6 @@ class PkgInstallerMixin(object):
                 if fname and isfile(cache_path):
                     dst_path = join(dest_dir, fname)
                     shutil.copy(cache_path, dst_path)
-                    click.echo("Using cache: %s" % cache_path)
                     return dst_path
 
         with_progress = not app.is_disabled_progressbar()

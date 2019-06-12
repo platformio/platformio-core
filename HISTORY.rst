@@ -27,7 +27,6 @@ PlatformIO 4.0
   - Save libraries passed to `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__ command into the project dependency list (`lib_deps <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__) with a new ``--save`` flag (`issue #1028 <https://github.com/platformio/platformio-core/issues/1028>`_)
   - Install all project dependencies declared via `lib_deps <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__ option using a simple `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__ command (`issue #2147 <https://github.com/platformio/platformio-core/issues/2147>`_)
   - Use isolated library dependency storage per project build environment (`issue #1696 <https://github.com/platformio/platformio-core/issues/1696>`_)
-  - Look firstly in built-in library storages for a missing dependency instead of PlatformIO Registry (`issue #1654 <https://github.com/platformio/platformio-core/issues/1654>`_)
   - Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
   - Fixed an issue when library keeps reinstalling for non-latin path (`issue #1252 <https://github.com/platformio/platformio-core/issues/1252>`_)
 

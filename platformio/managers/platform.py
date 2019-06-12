@@ -407,9 +407,6 @@ class PlatformRunMixin(object):
             join(util.get_source_dir(), "builder", "main.py")
         ]
         cmd.append("PIOVERBOSE=%d" % (1 if self.verbose else 0))
-        # pylint: disable=protected-access
-        cmd.append("ISATTY=%d" %
-                   (1 if click._compat.isatty(sys.stdout) else 0))
         cmd += targets
 
         # encode and append variables

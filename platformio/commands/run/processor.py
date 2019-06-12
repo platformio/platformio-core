@@ -19,7 +19,7 @@ import click
 from platformio import exception, telemetry
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
-from platformio.commands.run.helpers import print_header
+from platformio.commands.run.helpers import autoinstall_libdeps, print_header
 from platformio.commands.test.processor import (CTX_META_TEST_IS_RUNNING,
                                                 CTX_META_TEST_RUNNING_NAME)
 from platformio.managers.platform import PlatformFactory
@@ -103,6 +103,10 @@ class EnvironmentProcessor(object):
         # skip monitor target, we call it above
         if "monitor" in build_targets:
             build_targets.remove("monitor")
+        if "nobuild" not in build_targets and "lib_deps" in self.options:
+            autoinstall_libdeps(
+                self.cmd_ctx, self.name,
+                self.config.get("env:" + self.name, "lib_deps"), self.verbose)
 
         try:
             p = PlatformFactory.newPlatform(self.options['platform'])

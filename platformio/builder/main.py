@@ -16,7 +16,6 @@ from os import environ
 from os.path import join
 from time import time
 
-import click
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import DEFAULT_TARGETS  # pylint: disable=import-error
@@ -95,10 +94,6 @@ env.Replace(
         key: PlatformBase.decode_scons_arg(env[key])
         for key in list(clivars.keys()) if key in env
     })
-
-if int(ARGUMENTS.get("ISATTY", 0)):
-    # pylint: disable=protected-access
-    click._compat.isatty = lambda stream: True
 
 if env.GetOption('clean'):
     env.PioClean(env.subst("$BUILD_DIR"))
