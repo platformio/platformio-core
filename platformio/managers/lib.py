@@ -22,7 +22,7 @@ from os.path import isdir, join
 
 import click
 
-from platformio import app, commands, exception, util
+from platformio import app, exception, util
 from platformio.compat import glob_escape, string_types
 from platformio.managers.package import BasePkgManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
@@ -255,8 +255,9 @@ class LibraryManager(BasePkgManager):
                             "by request %s:" % json.dumps(filters),
                             fg="yellow",
                             err=True)
+                from platformio.commands.lib import print_lib_item
                 for item in result['items']:
-                    commands.lib.print_lib_item(item)
+                    print_lib_item(item)
 
                 if not interactive:
                     click.secho(
