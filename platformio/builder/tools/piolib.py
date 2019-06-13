@@ -25,6 +25,7 @@ import sys
 from os.path import (basename, commonprefix, dirname, expanduser, isdir,
                      isfile, join, realpath, sep)
 
+import click
 import SCons.Scanner  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
@@ -862,15 +863,15 @@ class ProjectAsLibBuilder(LibBuilderBase):
         pass
 
     def process_dependencies(self):  # pylint: disable=too-many-branches
-        uris = self.env.GetProjectOption("lib_deps", [])
-        if not uris:
+        lib_deps = self.env.GetProjectOption("lib_deps")
+        if not lib_deps:
             return
         storage_dirs = []
         for lb in self.env.GetLibBuilders():
             if dirname(lb.path) not in storage_dirs:
                 storage_dirs.append(dirname(lb.path))
 
-        for uri in uris:
+        for uri in lib_deps:
             found = False
             for storage_dir in storage_dirs:
                 if found:
@@ -888,12 +889,26 @@ class ProjectAsLibBuilder(LibBuilderBase):
                     break
 
             if not found:
+                # look for built-in libraries by a name
+                # which don't have package manifest
                 for lb in self.env.GetLibBuilders():
-                    if lb.name != uri:
-                        continue
-                    if lb not in self.depbuilders:
-                        self.depend_recursive(lb)
-                    break
+                    if lb.name == uri:
+                        if lb not in self.depbuilders:
+                            self.depend_recursive(lb)
+                        found = True
+                        break
+
+            if not found:
+                lm = LibraryManager(
+                    self.env.subst(join("$PROJECTLIBDEPS_DIR", "$PIOENV")))
+                try:
+                    lm.install(uri)
+                    # delete cached lib builders
+                    if "__PIO_LIB_BUILDERS" in DefaultEnvironment():
+                        del DefaultEnvironment()['__PIO_LIB_BUILDERS']
+                except (exception.LibNotFound,
+                        exception.InternetIsOffline) as e:
+                    click.secho("Warning! %s" % e, fg="yellow")
 
     def build(self):
         self._is_built = True  # do not build Project now
@@ -917,8 +932,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
                       key=lambda lb: 0 if lb.dependent else 1)
 
     items = []
-    verbose = int(ARGUMENTS.get("PIOVERBOSE",
-                                0)) and not env.GetOption('clean')
+    verbose = int(ARGUMENTS.get("PIOVERBOSE", 0))
 
     def _check_lib_builder(lb):
         compat_mode = lb.lib_compat_mode
