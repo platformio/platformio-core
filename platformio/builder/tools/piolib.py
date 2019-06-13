@@ -967,13 +967,13 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
                     sys.stderr.write(
                         "Skip library with broken manifest: %s\n" % lib_dir)
                 continue
-            if env.IsCompatbileLibBuilder(lb):
+            if env.IsCompatibleLibBuilder(lb):
                 DefaultEnvironment().Append(__PIO_LIB_BUILDERS=[lb])
             else:
                 found_incompat = True
 
     for lb in env.get("EXTRA_LIB_BUILDERS", []):
-        if env.IsCompatbileLibBuilder(lb):
+        if env.IsCompatibleLibBuilder(lb):
             DefaultEnvironment().Append(__PIO_LIB_BUILDERS=[lb])
         else:
             found_incompat = True
