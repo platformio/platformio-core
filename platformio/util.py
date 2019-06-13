@@ -515,7 +515,7 @@ def get_original_version(version):
     _, raw = version.split(".")[:2]
     if int(raw) <= 99:
         return None
-    if int(raw) <= 999:
+    if int(raw) <= 9999:
         return "%s.%s" % (raw[:-2], int(raw[-2:]))
     return "%s.%s.%s" % (raw[:-4], int(raw[-4:-2]), int(raw[-2:]))
 
