@@ -41,7 +41,7 @@ from platformio.managers.lib import LibraryManager
 class LibBuilderFactory(object):
 
     @staticmethod
-    def new(env, path, verbose=False):
+    def new(env, path, verbose=int(ARGUMENTS.get("PIOVERBOSE", 0))):
         clsname = "UnknownLibBuilder"
         if isfile(join(path, "library.json")):
             clsname = "PlatformIOLibBuilder"
@@ -138,6 +138,8 @@ class LibBuilderBase(object):
         if WINDOWS:
             p1 = p1.lower()
             p2 = p2.lower()
+        if p1 == p2:
+            return True
         return commonprefix((p1 + sep, p2)) == p1 + sep
 
     @property
@@ -274,40 +276,17 @@ class LibBuilderBase(object):
         if not self.dependencies:
             return
         for item in self.dependencies:
-            skip = False
-            for key in ("platforms", "frameworks"):
-                env_key = "PIO" + key.upper()[:-1]
-                if env_key not in self.env:
-                    continue
-                if (key in item and
-                        not util.items_in_list(self.env[env_key], item[key])):
-                    if self.verbose:
-                        sys.stderr.write(
-                            "Skip %s incompatible dependency %s\n" %
-                            (key[:-1], item))
-                    skip = True
-            if skip:
-                continue
-
             found = False
             for lb in self.env.GetLibBuilders():
                 if item['name'] != lb.name:
-                    continue
-                elif "frameworks" in item and \
-                     not lb.is_frameworks_compatible(item["frameworks"]):
-                    continue
-                elif "platforms" in item and \
-                     not lb.is_platforms_compatible(item["platforms"]):
                     continue
                 found = True
                 self.depend_recursive(lb)
                 break
 
-            if not found:
-                sys.stderr.write(
-                    "Error: Could not find `%s` dependency for `%s` "
-                    "library\n" % (item['name'], self.name))
-                self.env.Exit(1)
+            if not found and self.verbose:
+                sys.stderr.write("Warning: Ignored `%s` dependency for `%s` "
+                                 "library\n" % (item['name'], self.name))
 
     def get_search_files(self):
         items = [
@@ -384,6 +363,8 @@ class LibBuilderBase(object):
         return result
 
     def depend_recursive(self, lb, search_files=None):
+        if lb in self.depbuilders:
+            return
 
         def _already_depends(_lb):
             if self in _lb.depbuilders:
@@ -858,57 +839,72 @@ class ProjectAsLibBuilder(LibBuilderBase):
         return (self.env.get("SRC_FILTER")
                 or LibBuilderBase.src_filter.fget(self))
 
+    @property
+    def dependencies(self):
+        return self.env.GetProjectOption("lib_deps", [])
+
     def process_extra_options(self):
         # skip for project, options are already processed
         pass
 
+    def install_dependencies(self):
+
+        def _is_builtin(uri):
+            for lb in self.env.GetLibBuilders():
+                if lb.name == uri:
+                    return True
+            return False
+
+        lm = LibraryManager(
+            self.env.subst(join("$PROJECTLIBDEPS_DIR", "$PIOENV")))
+        did_install = False
+        for item in self.dependencies:
+            # check if built-in library or already installed
+            if (_is_builtin(item)
+                    or lm.get_package_dir(*lm.parse_pkg_uri(item))):
+                continue
+            try:
+                lm.install(item)
+                did_install = True
+            except (exception.LibNotFound, exception.InternetIsOffline) as e:
+                click.secho("Warning! %s" % e, fg="yellow")
+
+        # reset cache
+        if did_install:
+            DefaultEnvironment().Replace(__PIO_LIB_BUILDERS=None)
+
     def process_dependencies(self):  # pylint: disable=too-many-branches
-        lib_deps = self.env.GetProjectOption("lib_deps")
-        if not lib_deps:
-            return
         storage_dirs = []
         for lb in self.env.GetLibBuilders():
             if dirname(lb.path) not in storage_dirs:
                 storage_dirs.append(dirname(lb.path))
 
-        for uri in lib_deps:
+        for uri in self.dependencies:
             found = False
             for storage_dir in storage_dirs:
                 if found:
                     break
                 lm = LibraryManager(storage_dir)
-                pkg_dir = lm.get_package_dir(*lm.parse_pkg_uri(uri))
-                if not pkg_dir:
+                lib_dir = lm.get_package_dir(*lm.parse_pkg_uri(uri))
+                if not lib_dir:
                     continue
                 for lb in self.env.GetLibBuilders():
-                    if lb.path != pkg_dir:
+                    if lib_dir not in lb:
                         continue
-                    if lb not in self.depbuilders:
-                        self.depend_recursive(lb)
+                    self.depend_recursive(lb)
                     found = True
                     break
+            if found:
+                continue
 
-            if not found:
-                # look for built-in libraries by a name
-                # which don't have package manifest
-                for lb in self.env.GetLibBuilders():
-                    if lb.name == uri:
-                        if lb not in self.depbuilders:
-                            self.depend_recursive(lb)
-                        found = True
-                        break
-
-            if not found:
-                lm = LibraryManager(
-                    self.env.subst(join("$PROJECTLIBDEPS_DIR", "$PIOENV")))
-                try:
-                    lm.install(uri)
-                    # delete cached lib builders
-                    if "__PIO_LIB_BUILDERS" in DefaultEnvironment():
-                        del DefaultEnvironment()['__PIO_LIB_BUILDERS']
-                except (exception.LibNotFound,
-                        exception.InternetIsOffline) as e:
-                    click.secho("Warning! %s" % e, fg="yellow")
+            # look for built-in libraries by a name
+            # which don't have package manifest
+            for lb in self.env.GetLibBuilders():
+                if lb.name != uri:
+                    continue
+                self.depend_recursive(lb)
+                found = True
+                break
 
     def build(self):
         self._is_built = True  # do not build Project now
@@ -925,61 +921,60 @@ def GetLibSourceDirs(env):
     ]
 
 
-def GetLibBuilders(env):  # pylint: disable=too-many-branches
+def IsCompatibleLibBuilder(env,
+                           lb,
+                           verbose=int(ARGUMENTS.get("PIOVERBOSE", 0))):
+    compat_mode = lb.lib_compat_mode
+    if lb.name in env.GetProjectOption("lib_ignore", []):
+        if verbose:
+            sys.stderr.write("Ignored library %s\n" % lb.path)
+        return None
+    if compat_mode == "strict" and not lb.is_platforms_compatible(
+            env['PIOPLATFORM']):
+        if verbose:
+            sys.stderr.write("Platform incompatible library %s\n" % lb.path)
+        return False
+    if (compat_mode == "soft" and "PIOFRAMEWORK" in env
+            and not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", []))):
+        if verbose:
+            sys.stderr.write("Framework incompatible library %s\n" % lb.path)
+        return False
+    return True
 
-    if "__PIO_LIB_BUILDERS" in DefaultEnvironment():
+
+def GetLibBuilders(env):  # pylint: disable=too-many-branches
+    if DefaultEnvironment().get("__PIO_LIB_BUILDERS", None) is not None:
         return sorted(DefaultEnvironment()['__PIO_LIB_BUILDERS'],
                       key=lambda lb: 0 if lb.dependent else 1)
 
-    items = []
+    DefaultEnvironment().Replace(__PIO_LIB_BUILDERS=[])
+
     verbose = int(ARGUMENTS.get("PIOVERBOSE", 0))
-
-    def _check_lib_builder(lb):
-        compat_mode = lb.lib_compat_mode
-        if lb.name in env.GetProjectOption("lib_ignore", []):
-            if verbose:
-                sys.stderr.write("Ignored library %s\n" % lb.path)
-            return None
-        if compat_mode == "strict" and not lb.is_platforms_compatible(
-                env['PIOPLATFORM']):
-            if verbose:
-                sys.stderr.write("Platform incompatible library %s\n" %
-                                 lb.path)
-            return False
-        if compat_mode == "soft" and "PIOFRAMEWORK" in env and \
-           not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", [])):
-            if verbose:
-                sys.stderr.write("Framework incompatible library %s\n" %
-                                 lb.path)
-            return False
-        return True
-
     found_incompat = False
+
     for libs_dir in env.GetLibSourceDirs():
-        libs_dir = env.subst(libs_dir)
+        libs_dir = realpath(env.subst(libs_dir))
         if not isdir(libs_dir):
             continue
         for item in sorted(os.listdir(libs_dir)):
-            if item == "__cores__" or not isdir(join(libs_dir, item)):
+            lib_dir = join(libs_dir, item)
+            if item == "__cores__" or not isdir(lib_dir):
                 continue
             try:
-                lb = LibBuilderFactory.new(env,
-                                           join(libs_dir, item),
-                                           verbose=verbose)
+                lb = LibBuilderFactory.new(env, lib_dir)
             except exception.InvalidJSONFile:
                 if verbose:
                     sys.stderr.write(
-                        "Skip library with broken manifest: %s\n" %
-                        join(libs_dir, item))
+                        "Skip library with broken manifest: %s\n" % lib_dir)
                 continue
-            if _check_lib_builder(lb):
-                items.append(lb)
+            if env.IsCompatbileLibBuilder(lb):
+                DefaultEnvironment().Append(__PIO_LIB_BUILDERS=[lb])
             else:
                 found_incompat = True
 
     for lb in env.get("EXTRA_LIB_BUILDERS", []):
-        if _check_lib_builder(lb):
-            items.append(lb)
+        if env.IsCompatbileLibBuilder(lb):
+            DefaultEnvironment().Append(__PIO_LIB_BUILDERS=[lb])
         else:
             found_incompat = True
 
@@ -989,8 +984,7 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
             "https://docs.platformio.org/page/librarymanager/ldf.html#"
             "ldf-compat-mode\n")
 
-    DefaultEnvironment()['__PIO_LIB_BUILDERS'] = items
-    return items
+    return DefaultEnvironment()['__PIO_LIB_BUILDERS']
 
 
 def ConfigureProjectLibBuilder(env):
@@ -1031,6 +1025,7 @@ def ConfigureProjectLibBuilder(env):
                 _print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
+    project.install_dependencies()
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
 
     print("LDF: Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
@@ -1061,6 +1056,7 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(GetLibSourceDirs)
+    env.AddMethod(IsCompatibleLibBuilder)
     env.AddMethod(GetLibBuilders)
     env.AddMethod(ConfigureProjectLibBuilder)
     return env
