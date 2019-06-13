@@ -1025,12 +1025,13 @@ def ConfigureProjectLibBuilder(env):
                 _print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
-    project.install_dependencies()
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
 
     print("LDF: Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
     print("LDF Modes: Finder ~ %s, Compatibility ~ %s" %
           (ldf_mode, project.lib_compat_mode))
+
+    project.install_dependencies()
 
     lib_builders = env.GetLibBuilders()
     print("Found %d compatible libraries" % len(lib_builders))
