@@ -14,8 +14,8 @@
 
 import random
 from glob import glob
-from os import getenv, listdir, walk
-from os.path import dirname, getsize, isdir, isfile, join, normpath
+from os import listdir, walk
+from os.path import basename, dirname, getsize, isdir, isfile, join, normpath
 
 import pytest
 
@@ -50,20 +50,21 @@ def pytest_generate_tests(metafunc):
 
     project_dirs = []
     for examples_dir in examples_dirs:
-        platform_examples = []
+        candidates = {}
         for root, _, files in walk(examples_dir):
             if "platformio.ini" not in files or ".skiptest" in files:
                 continue
-            platform_examples.append(root)
+            group = basename(root)
+            if "-" in group:
+                group = group.split("-", 1)[0]
+            if group not in candidates:
+                candidates[group] = []
+            candidates[group].append(root)
 
-        random.shuffle(platform_examples)
-
-        if getenv("APPVEYOR"):
-            # use only 1 example for AppVeyor CI
-            project_dirs.append(platform_examples[0])
-        else:
-            # test random 3 examples
-            project_dirs.extend(platform_examples[:3])
+        project_dirs.extend([
+            random.choice(examples) for examples in candidates.values()
+            if examples
+        ])
 
     metafunc.parametrize("pioproject_dir", sorted(project_dirs))
 
@@ -75,7 +76,8 @@ def test_run(pioproject_dir):
         if isdir(build_dir):
             util.rmtree_(build_dir)
 
-        env_names = ProjectConfig(join(pioproject_dir, "platformio.ini")).envs()
+        env_names = ProjectConfig(join(pioproject_dir,
+                                       "platformio.ini")).envs()
         result = util.exec_command(
             ["platformio", "run", "-e",
              random.choice(env_names)])
