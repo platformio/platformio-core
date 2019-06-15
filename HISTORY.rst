@@ -39,6 +39,7 @@ PlatformIO 4.0
   - Print platform package details, such as version, VSC source and commit (`issue #2155 <https://github.com/platformio/platformio-core/issues/2155>`_)
   - Override default `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with a custom using ``-c, --project-conf`` option for `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__, `platformio debug <http://docs.platformio.org/page/userguide/cmd_debug.html>`__, or `platformio test <http://docs.platformio.org/page/userguide/cmd_test.html>`__ commands (`issue #1913 <https://github.com/platformio/platformio-core/issues/1913>`_)
   - Override default development platform upload command with a custom `upload_command <http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-command>`__ (`issue #2599 <https://github.com/platformio/platformio-core/issues/2599>`_)
+  - Configure a shared folder for the derived files (objects, firmwares, ELFs) from a build system using `build_cache_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#build-cache-dir>`__ option (`issue #2674 <https://github.com/platformio/platformio-core/issues/2674>`_)
   - Fixed an issue when ``-U`` in ``build_flags`` does not remove macro previously defined via ``-D`` flag (`issue #2508 <https://github.com/platformio/platformio-core/issues/2508>`_)
 
 * **Infrastructure**

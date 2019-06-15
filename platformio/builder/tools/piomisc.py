@@ -210,6 +210,8 @@ def _delete_file(path):
 
 @util.memoized()
 def _get_compiler_type(env):
+    if env.subst("$CC").endswith("-gcc"):
+        return "gcc"
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])

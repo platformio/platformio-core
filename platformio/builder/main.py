@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import environ
-from os.path import join
+from os import environ, makedirs
+from os.path import isdir, join
 from time import time
 
 import click
@@ -67,6 +67,7 @@ DEFAULT_ENV_OPTIONS = dict(
     PROJECTTEST_DIR=project_helpers.get_project_test_dir(),
     PROJECTDATA_DIR=project_helpers.get_project_data_dir(),
     PROJECTBUILD_DIR=project_helpers.get_project_build_dir(),
+    BUILDCACHE_DIR=project_helpers.get_project_optional_dir("build_cache_dir"),
     BUILD_DIR=join("$PROJECTBUILD_DIR", "$PIOENV"),
     BUILDSRC_DIR=join("$BUILD_DIR", "src"),
     BUILDTEST_DIR=join("$BUILD_DIR", "test"),
@@ -95,6 +96,11 @@ env.Replace(
         key: PlatformBase.decode_scons_arg(env[key])
         for key in list(clivars.keys()) if key in env
     })
+
+if env.subst("$BUILDCACHE_DIR"):
+    if not isdir(env.subst("$BUILDCACHE_DIR")):
+        makedirs(env.subst("$BUILDCACHE_DIR"))
+    env.CacheDir("$BUILDCACHE_DIR")
 
 if int(ARGUMENTS.get("ISATTY", 0)):
     # pylint: disable=protected-access
