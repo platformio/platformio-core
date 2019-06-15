@@ -9,11 +9,11 @@ matrix:
     - os: linux
       sudo: required
       python: 2.7
-      env: TOX_ENV=py27
+      env: TOX_ENV=py27 PLATFORMIO_BUILD_CACHE_DIR=$(mktemp -d)
     - os: linux
       sudo: required
       python: 3.6
-      env: TOX_ENV=py36
+      env: TOX_ENV=py36 PLATFORMIO_BUILD_CACHE_DIR=$(mktemp -d)
     - os: osx
       language: generic
       env: TOX_ENV=skipexamples
