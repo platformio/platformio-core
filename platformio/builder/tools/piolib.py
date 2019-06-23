@@ -281,7 +281,8 @@ class LibBuilderBase(object):
                 if item['name'] != lb.name:
                     continue
                 found = True
-                self.depend_recursive(lb)
+                if lb not in self.depbuilders:
+                    self.depend_recursive(lb)
                 break
 
             if not found and self.verbose:
@@ -363,8 +364,6 @@ class LibBuilderBase(object):
         return result
 
     def depend_recursive(self, lb, search_files=None):
-        if lb in self.depbuilders:
-            return
 
         def _already_depends(_lb):
             if self in _lb.depbuilders:
@@ -892,7 +891,8 @@ class ProjectAsLibBuilder(LibBuilderBase):
                 for lb in self.env.GetLibBuilders():
                     if lib_dir not in lb:
                         continue
-                    self.depend_recursive(lb)
+                    if lb not in self.depbuilders:
+                        self.depend_recursive(lb)
                     found = True
                     break
             if found:
@@ -903,7 +903,8 @@ class ProjectAsLibBuilder(LibBuilderBase):
             for lb in self.env.GetLibBuilders():
                 if lb.name != uri:
                     continue
-                self.depend_recursive(lb)
+                if lb not in self.depbuilders:
+                    self.depend_recursive(lb)
                 found = True
                 break
 
