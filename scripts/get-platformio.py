@@ -90,7 +90,7 @@ def exec_python_cmd(args):
 def install_pip():
     r = exec_python_cmd(["-m", "pip", "--version"])
     if r['returncode'] == 0:
-        print r['out']
+        print(r['out'])
         return
     try:
         from urllib2 import urlopen
@@ -143,7 +143,7 @@ def main():
         try:
             s[1]()
             print("[SUCCESS]")
-        except Exception, e:
+        except Exception as e:
             is_error = True
             print(str(e))
             print("[FAILURE]")
