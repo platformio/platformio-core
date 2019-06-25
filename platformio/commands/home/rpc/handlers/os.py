@@ -33,7 +33,6 @@ class OSRPC(object):
     @staticmethod
     @defer.inlineCallbacks
     def fetch_content(uri, data=None, headers=None, cache_valid=None):
-        timeout = 2
         if not headers:
             headers = {
                 "User-Agent":
@@ -54,12 +53,9 @@ class OSRPC(object):
 
         session = helpers.requests_session()
         if data:
-            r = yield session.post(uri,
-                                   data=data,
-                                   headers=headers,
-                                   timeout=timeout)
+            r = yield session.post(uri, data=data, headers=headers)
         else:
-            r = yield session.get(uri, headers=headers, timeout=timeout)
+            r = yield session.get(uri, headers=headers)
 
         r.raise_for_status()
         result = r.text
