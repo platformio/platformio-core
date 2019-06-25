@@ -417,8 +417,11 @@ class PlatformRunMixin(object):
             cmd.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
 
         def _write_and_flush(stream, data):
-            stream.write(data)
-            stream.flush()
+            try:
+                stream.write(data)
+                stream.flush()
+            except IOError:
+                pass
 
         copy_pythonpath_to_osenv()
         result = exec_command(
