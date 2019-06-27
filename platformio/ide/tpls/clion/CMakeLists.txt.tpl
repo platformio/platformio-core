@@ -10,7 +10,7 @@ project({{project_name}})
 
 include(CMakeListsPrivate.txt)
 
-if(EXISTS CMakeListsUser.txt)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeListsUser.txt)
 include(CMakeListsUser.txt)
 endif()
 
