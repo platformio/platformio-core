@@ -59,9 +59,9 @@ class DebugServer(BaseProcess):
 
         self._debug_port = ":3333"
         openocd_pipe_allowed = all([
-            not self.debug_options['port'], "openocd" in server_executable,
-            self.env_options['platform'] != "riscv"
-        ])
+            not self.debug_options['port'],
+            "openocd" in server_executable
+        ])  # yapf: disable
         if openocd_pipe_allowed:
             args = []
             if server['cwd']:
