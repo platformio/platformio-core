@@ -170,10 +170,11 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         stdio.StandardIO(p)
 
     def onStdInData(self, data):
-        self._last_server_activity = time.time()
         if LOG_FILE:
             with open(LOG_FILE, "ab") as fp:
                 fp.write(data)
+
+        self._last_server_activity = time.time()
 
         if b"-exec-run" in data:
             if self._target_is_run:
@@ -198,6 +199,10 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         reactor.stop()
 
     def outReceived(self, data):
+        if LOG_FILE:
+            with open(LOG_FILE, "ab") as fp:
+                fp.write(data)
+
         self._last_server_activity = time.time()
         super(GDBClient, self).outReceived(data)
         self._handle_error(data)
