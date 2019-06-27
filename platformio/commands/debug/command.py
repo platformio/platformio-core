@@ -53,8 +53,12 @@ from platformio.project.helpers import (is_platformio_project,
 @click.pass_context
 def cli(ctx, project_dir, project_conf, environment, verbose, interface,
         __unprocessed):
-    if not is_platformio_project(project_dir) and os.getenv("CWD"):
-        project_dir = os.getenv("CWD")
+    # use env variables from Eclipse or CLion
+    for sysenv in ("CWD", "PWD", "PLATFORMIO_PROJECT_DIR"):
+        if is_platformio_project(project_dir):
+            break
+        if os.getenv(sysenv):
+            project_dir = os.getenv(sysenv)
 
     with util.cd(project_dir):
         config = ProjectConfig.get_instance(
