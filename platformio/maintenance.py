@@ -12,10 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-import os
 from os import getenv
-from os.path import isdir, join
+from os.path import join
 from time import time
 
 import click
@@ -25,17 +23,12 @@ from platformio import __version__, app, exception, telemetry, util
 from platformio.commands import PlatformioCLI
 from platformio.commands.lib import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib import lib_update as cmd_lib_update
-from platformio.commands.platform import \
-    platform_install as cmd_platform_install
-from platformio.commands.platform import \
-    platform_uninstall as cmd_platform_uninstall
 from platformio.commands.platform import platform_update as cmd_platform_update
 from platformio.commands.upgrade import get_latest_version
 from platformio.managers.core import update_core_packages
 from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
 from platformio.proc import is_ci, is_container
-from platformio.project.helpers import get_project_core_dir
 
 
 def on_platformio_start(ctx, force, caller):
@@ -93,9 +86,6 @@ class Upgrader(object):
             util.pepver_to_semver(to_version))
 
         self._upgraders = [
-            (semantic_version.Version("3.0.0-a.1"), self._upgrade_to_3_0_0),
-            (semantic_version.Version("3.0.0-b.11"),
-             self._upgrade_to_3_0_0b11),
             (semantic_version.Version("3.5.0-a.2"), self._update_dev_platforms)
         ]
 
@@ -110,43 +100,6 @@ class Upgrader(object):
             result.append(callback(ctx))
 
         return all(result)
-
-    @staticmethod
-    def _upgrade_to_3_0_0(ctx):
-        # convert custom board configuration
-        boards_dir = join(get_project_core_dir(), "boards")
-        if isdir(boards_dir):
-            for item in os.listdir(boards_dir):
-                if not item.endswith(".json"):
-                    continue
-                data = util.load_json(join(boards_dir, item))
-                if set(["name", "url", "vendor"]) <= set(data):
-                    continue
-                os.remove(join(boards_dir, item))
-                for key, value in data.items():
-                    with open(join(boards_dir, "%s.json" % key), "w") as f:
-                        json.dump(value, f, sort_keys=True, indent=2)
-
-        # re-install PlatformIO 2.0 development platforms
-        installed_platforms = app.get_state_item("installed_platforms", [])
-        if installed_platforms:
-            if "espressif" in installed_platforms:
-                installed_platforms[installed_platforms.index(
-                    "espressif")] = "espressif8266"
-            ctx.invoke(cmd_platform_install, platforms=installed_platforms)
-
-        return True
-
-    @staticmethod
-    def _upgrade_to_3_0_0b11(ctx):
-        current_platforms = [
-            m['name'] for m in PlatformManager().get_installed()
-        ]
-        if "espressif" not in current_platforms:
-            return True
-        ctx.invoke(cmd_platform_install, platforms=["espressif8266"])
-        ctx.invoke(cmd_platform_uninstall, platforms=["espressif"])
-        return True
 
     @staticmethod
     def _update_dev_platforms(ctx):
