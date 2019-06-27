@@ -100,6 +100,8 @@ class DebugServer(BaseProcess):
                 self._debug_port = ":2000"
             elif "jlink" in server_executable.lower():
                 self._debug_port = ":2331"
+            elif "qemu" in server_executable.lower():
+                self._debug_port = ":1234"
 
         return self._transport
 
