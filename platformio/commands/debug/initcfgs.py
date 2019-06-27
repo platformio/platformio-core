@@ -107,3 +107,18 @@ monitor erase
 $LOAD_CMDS
 pio_reset_halt_target
 """
+
+GDB_QEMU_INIT_CONFIG = """
+define pio_reset_halt_target
+    monitor system_reset
+end
+
+define pio_reset_target
+    pio_reset_halt_target
+end
+
+target extended-remote $DEBUG_PORT
+$INIT_BREAK
+$LOAD_CMDS
+pio_reset_halt_target
+"""

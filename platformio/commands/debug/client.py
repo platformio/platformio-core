@@ -119,6 +119,8 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             cfg = initcfgs.GDB_STUTIL_INIT_CONFIG
         elif "mspdebug" in server_exe:
             cfg = initcfgs.GDB_MSPDEBUG_INIT_CONFIG
+        elif "qemu" in server_exe:
+            cfg = initcfgs.GDB_QEMU_INIT_CONFIG
         elif self.debug_options['require_debug_port']:
             cfg = initcfgs.GDB_BLACKMAGIC_INIT_CONFIG
         else:
