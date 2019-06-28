@@ -22,8 +22,8 @@ import hashlib
 import os
 import re
 import sys
-from os.path import (basename, commonprefix, dirname, expanduser, isdir,
-                     isfile, join, realpath, sep)
+from os.path import (basename, commonprefix, expanduser, isdir, isfile, join,
+                     realpath, sep)
 
 import click
 import SCons.Scanner  # pylint: disable=import-error
@@ -855,16 +855,27 @@ class ProjectAsLibBuilder(LibBuilderBase):
                     return True
             return False
 
+        not_found_uri = []
+        for uri in self.dependencies:
+            # check if built-in library
+            if _is_builtin(uri):
+                continue
+
+            found = False
+            for storage_dir in self.env.GetLibSourceDirs():
+                lm = LibraryManager(storage_dir)
+                if lm.get_package_dir(*lm.parse_pkg_uri(uri)):
+                    found = True
+                    break
+            if not found:
+                not_found_uri.append(uri)
+
+        did_install = False
         lm = LibraryManager(
             self.env.subst(join("$PROJECTLIBDEPS_DIR", "$PIOENV")))
-        did_install = False
-        for item in self.dependencies:
-            # check if built-in library or already installed
-            if (_is_builtin(item)
-                    or lm.get_package_dir(*lm.parse_pkg_uri(item))):
-                continue
+        for uri in not_found_uri:
             try:
-                lm.install(item)
+                lm.install(uri)
                 did_install = True
             except (exception.LibNotFound, exception.InternetIsOffline) as e:
                 click.secho("Warning! %s" % e, fg="yellow")
@@ -874,14 +885,9 @@ class ProjectAsLibBuilder(LibBuilderBase):
             DefaultEnvironment().Replace(__PIO_LIB_BUILDERS=None)
 
     def process_dependencies(self):  # pylint: disable=too-many-branches
-        storage_dirs = []
-        for lb in self.env.GetLibBuilders():
-            if dirname(lb.path) not in storage_dirs:
-                storage_dirs.append(dirname(lb.path))
-
         for uri in self.dependencies:
             found = False
-            for storage_dir in storage_dirs:
+            for storage_dir in self.env.GetLibSourceDirs():
                 if found:
                     break
                 lm = LibraryManager(storage_dir)
@@ -919,7 +925,8 @@ def GetLibSourceDirs(env):
     items = env.GetProjectOption("lib_extra_dirs", [])
     items.extend(env['LIBSOURCE_DIRS'])
     return [
-        expanduser(item) if item.startswith("~") else item for item in items
+        env.subst(expanduser(item) if item.startswith("~") else item)
+        for item in items
     ]
 
 
@@ -954,12 +961,12 @@ def GetLibBuilders(env):  # pylint: disable=too-many-branches
     verbose = int(ARGUMENTS.get("PIOVERBOSE", 0))
     found_incompat = False
 
-    for libs_dir in env.GetLibSourceDirs():
-        libs_dir = realpath(env.subst(libs_dir))
-        if not isdir(libs_dir):
+    for storage_dir in env.GetLibSourceDirs():
+        storage_dir = realpath(storage_dir)
+        if not isdir(storage_dir):
             continue
-        for item in sorted(os.listdir(libs_dir)):
-            lib_dir = join(libs_dir, item)
+        for item in sorted(os.listdir(storage_dir)):
+            lib_dir = join(storage_dir, item)
             if item == "__cores__" or not isdir(lib_dir):
                 continue
             try:
