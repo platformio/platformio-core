@@ -22,39 +22,6 @@ from platformio.commands import upgrade as cmd_upgrade
 from platformio.managers.platform import PlatformManager
 
 
-def test_after_upgrade_2_to_3(clirunner, validate_cliresult,
-                              isolated_pio_home):
-    app.set_state_item("last_version", "2.11.2")
-    app.set_state_item("installed_platforms", ["native"])
-
-    # generate PlatformIO 2.0 boards
-    boards = isolated_pio_home.mkdir("boards")
-    board_ids = set()
-    for prefix in ("foo", "bar"):
-        data = {}
-        for i in range(3):
-            board_id = "board_%s_%d" % (prefix, i)
-            board_ids.add(board_id)
-            data[board_id] = {
-                "name": "Board %s #%d" % (prefix, i),
-                "url": "",
-                "vendor": ""
-            }
-        boards.join(prefix + ".json").write(json.dumps(data))
-
-    result = clirunner.invoke(cli_pio, ["settings", "get"])
-    validate_cliresult(result)
-    assert "upgraded to " in result.output
-
-    # check PlatformIO 3.0 boards
-    assert board_ids == set([p.basename[:-5] for p in boards.listdir()])
-
-    result = clirunner.invoke(cli_pio,
-                              ["boards", "--installed", "--json-output"])
-    validate_cliresult(result)
-    assert board_ids == set([b['id'] for b in json.loads(result.output)])
-
-
 def test_after_upgrade_silence(clirunner, validate_cliresult):
     app.set_state_item("last_version", "2.11.2")
     result = clirunner.invoke(cli_pio, ["boards", "--json-output"])
