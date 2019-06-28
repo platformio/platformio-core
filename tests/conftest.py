@@ -40,10 +40,10 @@ def clirunner():
 @pytest.fixture(scope="module")
 def isolated_pio_home(request, tmpdir_factory):
     home_dir = tmpdir_factory.mktemp(".platformio")
-    os.environ['PLATFORMIO_HOME_DIR'] = str(home_dir)
+    os.environ['PLATFORMIO_CORE_DIR'] = str(home_dir)
 
     def fin():
-        del os.environ['PLATFORMIO_HOME_DIR']
+        del os.environ['PLATFORMIO_CORE_DIR']
 
     request.addfinalizer(fin)
     return home_dir

@@ -22,15 +22,7 @@ from platformio.commands import upgrade as cmd_upgrade
 from platformio.managers.platform import PlatformManager
 
 
-def test_after_upgrade_silence(clirunner, validate_cliresult):
-    app.set_state_item("last_version", "2.11.2")
-    result = clirunner.invoke(cli_pio, ["boards", "--json-output"])
-    validate_cliresult(result)
-    boards = json.loads(result.output)
-    assert any([b['id'] == "uno" for b in boards])
-
-
-def test_check_pio_upgrade(clirunner, validate_cliresult):
+def test_check_pio_upgrade(clirunner, isolated_pio_home, validate_cliresult):
 
     def _patch_pio_version(version):
         maintenance.__version__ = version
@@ -60,7 +52,7 @@ def test_check_pio_upgrade(clirunner, validate_cliresult):
     _patch_pio_version(origin_version)
 
 
-def test_check_lib_updates(clirunner, validate_cliresult):
+def test_check_lib_updates(clirunner, isolated_pio_home, validate_cliresult):
     # install obsolete library
     result = clirunner.invoke(cli_pio,
                               ["lib", "-g", "install", "ArduinoJson@<5.7"])
@@ -77,7 +69,8 @@ def test_check_lib_updates(clirunner, validate_cliresult):
             result.output)
 
 
-def test_check_and_update_libraries(clirunner, validate_cliresult):
+def test_check_and_update_libraries(clirunner, isolated_pio_home,
+                                    validate_cliresult):
     # enable library auto-updates
     result = clirunner.invoke(
         cli_pio, ["settings", "set", "auto_update_libraries", "Yes"])
@@ -108,8 +101,8 @@ def test_check_and_update_libraries(clirunner, validate_cliresult):
     assert prev_data[0]['version'] != json.loads(result.output)[0]['version']
 
 
-def test_check_platform_updates(clirunner, validate_cliresult,
-                                isolated_pio_home):
+def test_check_platform_updates(clirunner, isolated_pio_home,
+                                validate_cliresult):
     # install obsolete platform
     result = clirunner.invoke(cli_pio, ["platform", "install", "native"])
     validate_cliresult(result)
@@ -131,7 +124,8 @@ def test_check_platform_updates(clirunner, validate_cliresult,
     assert "There are the new updates for platforms (native)" in result.output
 
 
-def test_check_and_update_platforms(clirunner, validate_cliresult):
+def test_check_and_update_platforms(clirunner, isolated_pio_home,
+                                    validate_cliresult):
     # enable library auto-updates
     result = clirunner.invoke(
         cli_pio, ["settings", "set", "auto_update_platforms", "Yes"])
