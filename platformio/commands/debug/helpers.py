@@ -33,8 +33,11 @@ class GDBBytesIO(BytesIO):  # pylint: disable=too-few-public-methods
     STDOUT = sys.stdout
 
     def write(self, text):
-        for line in text.strip().split("\n"):
-            self.STDOUT.write('~"%s\\n"\n' % line)
+        if "\n" in text:
+            for line in text.strip().split("\n"):
+                self.STDOUT.write('~"%s\\n"\n' % line)
+        else:
+            self.STDOUT.write('~"%s"' % text)
         self.STDOUT.flush()
 
 

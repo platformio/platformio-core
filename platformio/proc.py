@@ -66,7 +66,7 @@ class BuildAsyncPipe(AsyncPipeBase):
         for byte in iter(lambda: self._pipe_reader.read(1), ""):
             self._buffer += byte
 
-            if line and line[-3:] == (line[-1] * 3):
+            if line and byte.strip() and line[-3:] == (byte * 3):
                 print_immediately = True
 
             if print_immediately:
