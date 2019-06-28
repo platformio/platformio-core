@@ -85,9 +85,8 @@ class Upgrader(object):
         self.to_version = semantic_version.Version.coerce(
             util.pepver_to_semver(to_version))
 
-        self._upgraders = [
-            (semantic_version.Version("3.5.0-a.2"), self._update_dev_platforms)
-        ]
+        self._upgraders = [(semantic_version.Version("3.5.0-a.2"),
+                            self._update_dev_platforms)]
 
     def run(self, ctx):
         if self.from_version > self.to_version:
