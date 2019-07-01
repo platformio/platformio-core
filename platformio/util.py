@@ -20,6 +20,7 @@ import socket
 import stat
 import sys
 import time
+from contextlib import contextmanager
 from functools import wraps
 from glob import glob
 from os.path import abspath, basename, dirname, isfile, join
@@ -105,6 +106,17 @@ def singleton(cls):
         return _instances[cls]
 
     return get_instance
+
+
+@contextmanager
+def capture_std_streams(stdout, stderr=None):
+    _stdout = sys.stdout
+    _stderr = sys.stderr
+    sys.stdout = stdout
+    sys.stderr = stderr or stdout
+    yield
+    sys.stdout = _stdout
+    sys.stderr = _stderr
 
 
 def load_json(file_path):

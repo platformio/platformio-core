@@ -119,8 +119,7 @@ An unexpected error occurred. Further steps:
 
 
 def debug_gdb_main():
-    sys.argv = [sys.argv[0], "debug", "--interface", "gdb"] + sys.argv[1:]
-    return main()
+    return main([sys.argv[0], "debug", "--interface", "gdb"] + sys.argv[1:])
 
 
 if __name__ == "__main__":

@@ -182,7 +182,7 @@ def platform_frameworks(query, json_output):
     for framework in util.get_api_result("/frameworks", cache_valid="7d"):
         if query == "all":
             query = ""
-        search_data = dump_json_to_unicode(framework)
+        search_data = framework
         if query and query.lower() not in search_data.lower():
             continue
         framework['homepage'] = ("https://platformio.org/frameworks/" +

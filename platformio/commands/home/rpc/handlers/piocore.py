@@ -17,12 +17,12 @@ from __future__ import absolute_import
 import json
 import os
 import re
+from io import BytesIO
 
 import jsonrpc  # pylint: disable=import-error
-from twisted.internet import utils  # pylint: disable=import-error
+from twisted.internet import threads  # pylint: disable=import-error
 
-from platformio import __version__
-from platformio.commands.home import helpers
+from platformio import __main__, __version__, util
 from platformio.compat import string_types
 
 
@@ -30,7 +30,6 @@ class PIOCoreRPC(object):
 
     @staticmethod
     def call(args, options=None):
-        json_output = "--json-output" in args
         try:
             args = [
                 str(arg) if not isinstance(arg, string_types) else arg
@@ -39,13 +38,20 @@ class PIOCoreRPC(object):
         except UnicodeError:
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4002, message="PIO Core: non-ASCII chars in arguments")
-        d = utils.getProcessOutputAndValue(
-            helpers.get_core_fullpath(),
-            args,
-            path=(options or {}).get("cwd"),
-            env={k: v
-                 for k, v in os.environ.items() if "%" not in k})
-        d.addCallback(PIOCoreRPC._call_callback, json_output)
+
+        def _call_cli():
+            outbuff = BytesIO()
+            errbuff = BytesIO()
+            with util.capture_std_streams(outbuff, errbuff):
+                with util.cd((options or {}).get("cwd") or os.getcwd()):
+                    exit_code = __main__.main(["-c"] + args)
+            result = (outbuff.getvalue(), errbuff.getvalue(), exit_code)
+            outbuff.close()
+            errbuff.close()
+            return result
+
+        d = threads.deferToThread(_call_cli)
+        d.addCallback(PIOCoreRPC._call_callback, "--json-output" in args)
         d.addErrback(PIOCoreRPC._call_errback)
         return d
 

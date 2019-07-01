@@ -54,6 +54,8 @@ if PY2:
         return data
 
     def dump_json_to_unicode(obj):
+        if isinstance(obj, unicode):
+            return obj
         return json.dumps(obj,
                           encoding=get_filesystem_encoding(),
                           ensure_ascii=False).encode("utf8")
@@ -100,4 +102,6 @@ else:
         return data.encode()
 
     def dump_json_to_unicode(obj):
+        if isinstance(obj, string_types):
+            return obj
         return json.dumps(obj, ensure_ascii=False)
