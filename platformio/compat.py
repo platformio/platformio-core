@@ -58,7 +58,8 @@ if PY2:
             return obj
         return json.dumps(obj,
                           encoding=get_filesystem_encoding(),
-                          ensure_ascii=False).encode("utf8")
+                          ensure_ascii=False,
+                          sort_keys=True).encode("utf8")
 
     _magic_check = re.compile('([*?[])')
     _magic_check_bytes = re.compile(b'([*?[])')
@@ -104,4 +105,4 @@ else:
     def dump_json_to_unicode(obj):
         if isinstance(obj, string_types):
             return obj
-        return json.dumps(obj, ensure_ascii=False)
+        return json.dumps(obj, ensure_ascii=False, sort_keys=True)

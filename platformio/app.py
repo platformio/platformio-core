@@ -14,9 +14,9 @@
 
 import codecs
 import hashlib
+import json
 import os
 import uuid
-from copy import deepcopy
 from os import environ, getenv, listdir, remove
 from os.path import abspath, dirname, expanduser, isdir, isfile, join
 from time import time
@@ -94,27 +94,28 @@ class State(object):
         if not self.path:
             self.path = join(get_project_core_dir(), "appstate.json")
         self._state = {}
-        self._prev_state = {}
+        self._prev_state_raw = ""
         self._lockfile = None
 
     def __enter__(self):
         try:
             self._lock_state_file()
             if isfile(self.path):
-                self._state = util.load_json(self.path)
+                with open(self.path) as fp:
+                    self._prev_state_raw = fp.read().strip()
+                self._state = json.loads(self._prev_state_raw)
                 assert isinstance(self._state, dict)
-        except (AssertionError, UnicodeDecodeError,
-                exception.PlatformioException):
+        except (AssertionError, ValueError, UnicodeDecodeError):
             self._state = {}
-        self._prev_state = deepcopy(self._state)
+            self._prev_state_raw = ""
         return self._state
 
     def __exit__(self, type_, value, traceback):
-        new_state = dump_json_to_unicode(self._state)
-        if self._prev_state != new_state:
+        new_state_raw = dump_json_to_unicode(self._state)
+        if self._prev_state_raw != new_state_raw:
             try:
                 with open(self.path, "w") as fp:
-                    fp.write(new_state)
+                    fp.write(new_state_raw)
             except IOError:
                 raise exception.HomeDirPermissionsError(get_project_core_dir())
         self._unlock_state_file()
