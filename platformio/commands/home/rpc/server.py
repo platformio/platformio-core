@@ -14,6 +14,7 @@
 
 # pylint: disable=import-error
 
+import click
 import jsonrpc
 from autobahn.twisted.websocket import (WebSocketServerFactory,
                                         WebSocketServerProtocol)
@@ -26,7 +27,7 @@ from platformio.compat import PY2, dump_json_to_unicode, is_bytes
 class JSONRPCServerProtocol(WebSocketServerProtocol):
 
     def onMessage(self, payload, isBinary):  # pylint: disable=unused-argument
-        # print("> %s" % payload)
+        # click.echo("> %s" % payload)
         response = jsonrpc.JSONRPCResponseManager.handle(
             payload, self.factory.dispatcher).data
         # if error
@@ -52,11 +53,12 @@ class JSONRPCServerProtocol(WebSocketServerProtocol):
                                          message=failure.getErrorMessage())
         del response["result"]
         response['error'] = e.error._data  # pylint: disable=protected-access
-        print(response['error'])
         self.sendJSONResponse(response)
 
     def sendJSONResponse(self, response):
-        # print("< %s" % response)
+        # click.echo("< %s" % response)
+        if "error" in response:
+            click.secho("Error: %s" % response['error'], fg="red", err=True)
         response = dump_json_to_unicode(response)
         if not PY2 and not is_bytes(response):
             response = response.encode("utf-8")

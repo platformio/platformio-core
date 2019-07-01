@@ -16,7 +16,6 @@ import codecs
 import hashlib
 import os
 import uuid
-from copy import deepcopy
 from os import environ, getenv, listdir, remove
 from os.path import abspath, dirname, expanduser, isdir, isfile, join
 from time import time
@@ -93,28 +92,26 @@ class State(object):
         self.lock = lock
         if not self.path:
             self.path = join(get_project_core_dir(), "appstate.json")
-        self._state = {}
-        self._prev_state = {}
+        self._storage = {}
         self._lockfile = None
+        self._modified = False
 
     def __enter__(self):
         try:
             self._lock_state_file()
             if isfile(self.path):
-                self._state = util.load_json(self.path)
-                assert isinstance(self._state, dict)
-        except (AssertionError, UnicodeDecodeError,
-                exception.PlatformioException):
-            self._state = {}
-        self._prev_state = deepcopy(self._state)
-        return self._state
+                self._storage = util.load_json(self.path)
+            assert isinstance(self._storage, dict)
+        except (AssertionError, ValueError, UnicodeDecodeError,
+                exception.InvalidJSONFile):
+            self._storage = {}
+        return self
 
     def __exit__(self, type_, value, traceback):
-        new_state = dump_json_to_unicode(self._state)
-        if self._prev_state != new_state:
+        if self._modified:
             try:
                 with open(self.path, "w") as fp:
-                    fp.write(new_state)
+                    fp.write(dump_json_to_unicode(self._storage))
             except IOError:
                 raise exception.HomeDirPermissionsError(get_project_core_dir())
         self._unlock_state_file()
@@ -132,8 +129,31 @@ class State(object):
         if hasattr(self, "_lockfile") and self._lockfile:
             self._lockfile.release()
 
-    def __del__(self):
-        self._unlock_state_file()
+    # Dictionary Proxy
+
+    def as_dict(self):
+        return self._storage
+
+    def get(self, key, default=True):
+        return self._storage.get(key, default)
+
+    def update(self, *args, **kwargs):
+        self._modified = True
+        return self._storage.update(*args, **kwargs)
+
+    def __getitem__(self, key):
+        return self._storage[key]
+
+    def __setitem__(self, key, value):
+        self._modified = True
+        self._storage[key] = value
+
+    def __delitem__(self, key):
+        self._modified = True
+        del self._storage[key]
+
+    def __contains__(self, item):
+        return item in self._storage
 
 
 class ContentCache(object):

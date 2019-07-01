@@ -57,7 +57,7 @@ class AppRPC(object):
             ]
 
             state['storage'] = storage
-            return state
+            return state.as_dict()
 
     @staticmethod
     def get_state():
@@ -66,6 +66,6 @@ class AppRPC(object):
     @staticmethod
     def save_state(state):
         with app.State(AppRPC.APPSTATE_PATH, lock=True) as s:
-            s.clear()
+            # s.clear()
             s.update(state)
         return True

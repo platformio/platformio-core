@@ -14,7 +14,6 @@
 
 import sys
 import time
-from contextlib import contextmanager
 from fnmatch import fnmatch
 from hashlib import sha1
 from io import BytesIO
@@ -39,17 +38,6 @@ class GDBBytesIO(BytesIO):  # pylint: disable=too-few-public-methods
         else:
             self.STDOUT.write('~"%s"' % text)
         self.STDOUT.flush()
-
-
-@contextmanager
-def capture_std_streams(stdout, stderr=None):
-    _stdout = sys.stdout
-    _stderr = sys.stderr
-    sys.stdout = stdout
-    sys.stderr = stderr or stdout
-    yield
-    sys.stdout = _stdout
-    sys.stderr = _stderr
 
 
 def is_mi_mode(args):

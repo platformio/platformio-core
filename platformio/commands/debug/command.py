@@ -123,7 +123,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
         if helpers.is_mi_mode(__unprocessed):
             click.echo('~"Preparing firmware for debugging...\\n"')
             output = helpers.GDBBytesIO()
-            with helpers.capture_std_streams(output):
+            with util.capture_std_streams(output):
                 helpers.predebug_project(ctx, project_dir, env_name, preload,
                                          verbose)
             output.close()
