@@ -129,6 +129,9 @@ class State(object):
         if hasattr(self, "_lockfile") and self._lockfile:
             self._lockfile.release()
 
+    def __del__(self):
+        self._unlock_state_file()
+
     # Dictionary Proxy
 
     def as_dict(self):
