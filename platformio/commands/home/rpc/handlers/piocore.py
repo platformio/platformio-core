@@ -17,7 +17,6 @@ from __future__ import absolute_import
 import json
 import os
 import sys
-import thread
 from io import BytesIO
 
 import jsonrpc  # pylint: disable=import-error
@@ -25,6 +24,11 @@ from twisted.internet import threads  # pylint: disable=import-error
 
 from platformio import __main__, __version__, util
 from platformio.compat import string_types
+
+try:
+    from thread import get_ident as thread_get_ident
+except ImportError:
+    from threading import get_ident as thread_get_ident
 
 
 class ThreadSafeStdBuffer(object):
@@ -35,19 +39,20 @@ class ThreadSafeStdBuffer(object):
         self._buffer = {}
 
     def write(self, value):
-        thread_id = thread.get_ident()
+        thread_id = thread_get_ident()
         if thread_id == self.parent_thread_id:
-            return self.parent_stream.write(value)
+            return self.parent_stream.write(
+                value if isinstance(value, string_types) else value.decode())
         if thread_id not in self._buffer:
             self._buffer[thread_id] = BytesIO()
         return self._buffer[thread_id].write(value)
 
     def flush(self):
         return (self.parent_stream.flush()
-                if thread.get_ident() == self.parent_thread_id else None)
+                if thread_get_ident() == self.parent_thread_id else None)
 
     def getvalue_and_close(self, thread_id=None):
-        thread_id = thread_id or thread.get_ident()
+        thread_id = thread_id or thread_get_ident()
         if thread_id not in self._buffer:
             return ""
         result = self._buffer.get(thread_id).getvalue()
@@ -59,7 +64,7 @@ class ThreadSafeStdBuffer(object):
 class PIOCoreRPC(object):
 
     def __init__(self):
-        cur_thread_id = thread.get_ident()
+        cur_thread_id = thread_get_ident()
         PIOCoreRPC.thread_stdout = ThreadSafeStdBuffer(sys.stdout,
                                                        cur_thread_id)
         PIOCoreRPC.thread_stderr = ThreadSafeStdBuffer(sys.stderr,

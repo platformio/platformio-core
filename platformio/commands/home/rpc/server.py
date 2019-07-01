@@ -53,11 +53,12 @@ class JSONRPCServerProtocol(WebSocketServerProtocol):
                                          message=failure.getErrorMessage())
         del response["result"]
         response['error'] = e.error._data  # pylint: disable=protected-access
-        click.secho(str(response['error']), fg="red", err=True)
         self.sendJSONResponse(response)
 
     def sendJSONResponse(self, response):
         # click.echo("< %s" % response)
+        if "error" in response:
+            click.secho("Error: %s" % response['error'], fg="red", err=True)
         response = dump_json_to_unicode(response)
         if not PY2 and not is_bytes(response):
             response = response.encode("utf-8")
