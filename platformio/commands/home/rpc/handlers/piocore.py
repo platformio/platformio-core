@@ -16,7 +16,8 @@ from __future__ import absolute_import
 
 import json
 import os
-import re
+import sys
+import thread
 from io import BytesIO
 
 import jsonrpc  # pylint: disable=import-error
@@ -26,7 +27,45 @@ from platformio import __main__, __version__, util
 from platformio.compat import string_types
 
 
+class ThreadSafeStdBuffer(object):
+
+    def __init__(self, parent_stream, parent_thread_id):
+        self.parent_stream = parent_stream
+        self.parent_thread_id = parent_thread_id
+        self._buffer = {}
+
+    def write(self, value):
+        thread_id = thread.get_ident()
+        if thread_id == self.parent_thread_id:
+            return self.parent_stream.write(value)
+        if thread_id not in self._buffer:
+            self._buffer[thread_id] = BytesIO()
+        return self._buffer[thread_id].write(value)
+
+    def flush(self):
+        return (self.parent_stream.flush()
+                if thread.get_ident() == self.parent_thread_id else None)
+
+    def getvalue_and_close(self, thread_id=None):
+        thread_id = thread_id or thread.get_ident()
+        if thread_id not in self._buffer:
+            return ""
+        result = self._buffer.get(thread_id).getvalue()
+        self._buffer.get(thread_id).close()
+        del self._buffer[thread_id]
+        return result
+
+
 class PIOCoreRPC(object):
+
+    def __init__(self):
+        cur_thread_id = thread.get_ident()
+        PIOCoreRPC.thread_stdout = ThreadSafeStdBuffer(sys.stdout,
+                                                       cur_thread_id)
+        PIOCoreRPC.thread_stderr = ThreadSafeStdBuffer(sys.stderr,
+                                                       cur_thread_id)
+        sys.stdout = PIOCoreRPC.thread_stdout
+        sys.stderr = PIOCoreRPC.thread_stderr
 
     @staticmethod
     def call(args, options=None):
@@ -40,15 +79,10 @@ class PIOCoreRPC(object):
                 code=4002, message="PIO Core: non-ASCII chars in arguments")
 
         def _call_cli():
-            outbuff = BytesIO()
-            errbuff = BytesIO()
-            with util.capture_std_streams(outbuff, errbuff):
-                with util.cd((options or {}).get("cwd") or os.getcwd()):
-                    exit_code = __main__.main(["-c"] + args)
-            result = (outbuff.getvalue(), errbuff.getvalue(), exit_code)
-            outbuff.close()
-            errbuff.close()
-            return result
+            with util.cd((options or {}).get("cwd") or os.getcwd()):
+                exit_code = __main__.main(["-c"] + args)
+            return (PIOCoreRPC.thread_stdout.getvalue_and_close(),
+                    PIOCoreRPC.thread_stderr.getvalue_and_close(), exit_code)
 
         d = threads.deferToThread(_call_cli)
         d.addCallback(PIOCoreRPC._call_callback, "--json-output" in args)
@@ -61,15 +95,7 @@ class PIOCoreRPC(object):
         text = ("%s\n\n%s" % (out, err)).strip()
         if code != 0:
             raise Exception(text)
-        if not json_output:
-            return text
-        try:
-            return json.loads(out)
-        except ValueError as e:
-            if "sh: " in out:
-                return json.loads(
-                    re.sub(r"^sh: [^\n]+$", "", out, flags=re.M).strip())
-            raise e
+        return json.loads(out) if json_output else text
 
     @staticmethod
     def _call_errback(failure):
