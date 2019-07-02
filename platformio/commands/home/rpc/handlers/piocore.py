@@ -77,6 +77,7 @@ class PIOCoreRPC(object):
 
     @staticmethod
     def call(args, options=None):
+        PIOCoreRPC.setup_multithreading_std_streams()
         try:
             args = [
                 str(arg) if not isinstance(arg, string_types) else arg
@@ -86,11 +87,8 @@ class PIOCoreRPC(object):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4002, message="PIO Core: non-ASCII chars in arguments")
 
-        PIOCoreRPC.setup_multithreading_std_streams()
-        cwd = (options or {}).get("cwd") or os.getcwd()
-
         def _call_inline():
-            with util.cd(cwd):
+            with util.cd((options or {}).get("cwd") or os.getcwd()):
                 exit_code = __main__.main(["-c"] + args)
             return (PIOCoreRPC.thread_stdout.get_value_and_close(),
                     PIOCoreRPC.thread_stderr.get_value_and_close(), exit_code)
