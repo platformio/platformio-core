@@ -42,6 +42,7 @@ lib_ignore = LibIgnoreCustom
 
 [env:base]
 build_flags = ${custom.debug_flags} ${custom.extra_flags}
+targets =
 """
 
 EXTRA_ENVS_CONFIG = """
@@ -102,7 +103,7 @@ def test_real_config(tmpdir):
 
     # options
     assert config.options(env="base") == [
-        "build_flags", "monitor_speed", "lib_deps", "lib_ignore"
+        "build_flags", "targets", "monitor_speed", "lib_deps", "lib_ignore"
     ]
 
     # has_option
@@ -126,6 +127,7 @@ def test_real_config(tmpdir):
     assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
 
     # getraw
+    assert config.getraw("env:base", "targets") == ""
     assert config.getraw("env:extra_1", "lib_deps") == "574"
     assert config.getraw("env:extra_1", "build_flags") == "-lc -lm -D DEBUG=1"
 
@@ -147,6 +149,16 @@ def test_real_config(tmpdir):
         ("lib_flags", "-lc -lm"),
         ("extra_flags", "-L /usr/local/lib"),
         ("lib_ignore", "LibIgnoreCustom")
+    ]  # yapf: disable
+    print(config.items(env="base"))
+    assert config.items(env="base") == [
+        ("build_flags", [
+            "-D DEBUG=1 -L /usr/local/lib", "-DSYSENVDEPS1 -DSYSENVDEPS2"]),
+        ("targets", []),
+        ("monitor_speed", "115200"),
+        ("lib_deps", ["Lib1", "Lib2"]),
+        ("lib_ignore", ["LibIgnoreCustom"]),
+        ("upload_port", "/dev/sysenv/port")
     ]  # yapf: disable
     assert config.items(env="extra_1") == [
         ("build_flags", ["-lc -lm -D DEBUG=1", "-DSYSENVDEPS1 -DSYSENVDEPS2"]),

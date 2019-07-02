@@ -243,7 +243,7 @@ class ProjectConfig(object):
         if not option_meta:
             return value or default
 
-        if value and option_meta.multiple:
+        if option_meta.multiple:
             value = self.parse_multi_values(value)
 
         if option_meta.sysenvvar:
