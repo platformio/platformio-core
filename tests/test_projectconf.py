@@ -150,7 +150,6 @@ def test_real_config(tmpdir):
         ("extra_flags", "-L /usr/local/lib"),
         ("lib_ignore", "LibIgnoreCustom")
     ]  # yapf: disable
-    print(config.items(env="base"))
     assert config.items(env="base") == [
         ("build_flags", [
             "-D DEBUG=1 -L /usr/local/lib", "-DSYSENVDEPS1 -DSYSENVDEPS2"]),
