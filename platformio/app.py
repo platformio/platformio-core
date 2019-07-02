@@ -94,7 +94,7 @@ class State(object):
             self.path = join(get_project_core_dir(), "appstate.json")
         self._storage = {}
         self._lockfile = None
-        self._modified = False
+        self.modified = False
 
     def __enter__(self):
         try:
@@ -108,7 +108,7 @@ class State(object):
         return self
 
     def __exit__(self, type_, value, traceback):
-        if self._modified:
+        if self.modified:
             try:
                 with open(self.path, "w") as fp:
                     fp.write(dump_json_to_unicode(self._storage))
@@ -141,18 +141,18 @@ class State(object):
         return self._storage.get(key, default)
 
     def update(self, *args, **kwargs):
-        self._modified = True
+        self.modified = True
         return self._storage.update(*args, **kwargs)
 
     def __getitem__(self, key):
         return self._storage[key]
 
     def __setitem__(self, key, value):
-        self._modified = True
+        self.modified = True
         self._storage[key] = value
 
     def __delitem__(self, key):
-        self._modified = True
+        self.modified = True
         del self._storage[key]
 
     def __contains__(self, item):
@@ -315,19 +315,20 @@ def sanitize_setting(name, value):
 
 
 def get_state_item(name, default=None):
-    with State() as data:
-        return data.get(name, default)
+    with State() as state:
+        return state.get(name, default)
 
 
 def set_state_item(name, value):
-    with State(lock=True) as data:
-        data[name] = value
+    with State(lock=True) as state:
+        state[name] = value
+        state.modified = True
 
 
 def delete_state_item(name):
-    with State(lock=True) as data:
-        if name in data:
-            del data[name]
+    with State(lock=True) as state:
+        if name in state:
+            del state[name]
 
 
 def get_setting(name):
@@ -335,24 +336,25 @@ def get_setting(name):
     if _env_name in environ:
         return sanitize_setting(name, getenv(_env_name))
 
-    with State() as data:
-        if "settings" in data and name in data['settings']:
-            return data['settings'][name]
+    with State() as state:
+        if "settings" in state and name in state['settings']:
+            return state['settings'][name]
 
     return DEFAULT_SETTINGS[name]['value']
 
 
 def set_setting(name, value):
-    with State(lock=True) as data:
-        if "settings" not in data:
-            data['settings'] = {}
-        data['settings'][name] = sanitize_setting(name, value)
+    with State(lock=True) as state:
+        if "settings" not in state:
+            state['settings'] = {}
+        state['settings'][name] = sanitize_setting(name, value)
+        state.modified = True
 
 
 def reset_settings():
-    with State(lock=True) as data:
-        if "settings" in data:
-            del data['settings']
+    with State(lock=True) as state:
+        if "settings" in state:
+            del state['settings']
 
 
 def get_session_var(name, default=None):
