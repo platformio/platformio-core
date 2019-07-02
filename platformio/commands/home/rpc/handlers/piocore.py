@@ -17,13 +17,13 @@ from __future__ import absolute_import
 import json
 import os
 import sys
-from io import BytesIO
+from io import BytesIO, StringIO
 
 import jsonrpc  # pylint: disable=import-error
 from twisted.internet import threads  # pylint: disable=import-error
 
 from platformio import __main__, __version__, util
-from platformio.compat import string_types
+from platformio.compat import PY2, is_bytes, string_types
 
 try:
     from thread import get_ident as thread_get_ident
@@ -45,11 +45,9 @@ class MultiThreadingStdStream(object):
     def write(self, value):
         thread_id = thread_get_ident()
         if thread_id not in self._buffers:
-            self._buffers[thread_id] = BytesIO()
-        try:
-            return self._buffers[thread_id].write(value)
-        except TypeError:
-            return self._buffers[thread_id].write(value.encode())
+            self._buffers[thread_id] = BytesIO() if PY2 else StringIO()
+        return self._buffers[thread_id].write(
+            value.decode() if is_bytes(value) else value)
 
     def get_value_and_close(self):
         thread_id = thread_get_ident()
