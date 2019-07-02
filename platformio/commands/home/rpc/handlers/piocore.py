@@ -31,7 +31,7 @@ except ImportError:
     from threading import get_ident as thread_get_ident
 
 
-class ThreadSafeStdBuffer(object):
+class MultiThreadingStdStream(object):
 
     def __init__(self, parent_stream):
         self._buffers = {thread_get_ident(): parent_stream}
@@ -66,9 +66,12 @@ class ThreadSafeStdBuffer(object):
 
 class PIOCoreRPC(object):
 
-    def __init__(self):
-        PIOCoreRPC.thread_stdout = ThreadSafeStdBuffer(sys.stdout)
-        PIOCoreRPC.thread_stderr = ThreadSafeStdBuffer(sys.stderr)
+    @staticmethod
+    def setup_multithreading_std_streams():
+        if isinstance(sys.stdout, MultiThreadingStdStream):
+            return
+        PIOCoreRPC.thread_stdout = MultiThreadingStdStream(sys.stdout)
+        PIOCoreRPC.thread_stderr = MultiThreadingStdStream(sys.stderr)
         sys.stdout = PIOCoreRPC.thread_stdout
         sys.stderr = PIOCoreRPC.thread_stderr
 
@@ -83,13 +86,17 @@ class PIOCoreRPC(object):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4002, message="PIO Core: non-ASCII chars in arguments")
 
-        def _call_cli():
-            with util.cd((options or {}).get("cwd") or os.getcwd()):
+        PIOCoreRPC.setup_multithreading_std_streams()
+        cwd = (options or {}).get("cwd") or os.getcwd()
+
+        def _call_inline():
+            with util.cd(cwd):
                 exit_code = __main__.main(["-c"] + args)
             return (PIOCoreRPC.thread_stdout.get_value_and_close(),
                     PIOCoreRPC.thread_stderr.get_value_and_close(), exit_code)
 
-        d = threads.deferToThread(_call_cli)
+        d = threads.deferToThread(_call_inline)
+
         d.addCallback(PIOCoreRPC._call_callback, "--json-output" in args)
         d.addErrback(PIOCoreRPC._call_errback)
         return d
