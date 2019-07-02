@@ -49,14 +49,12 @@ class MultiThreadingStdStream(object):
         return self._buffers[thread_id].write(
             value.decode() if is_bytes(value) else value)
 
-    def get_value_and_close(self):
-        thread_id = thread_get_ident()
+    def get_value_and_reset(self):
         result = ""
         try:
             result = self.getvalue()
-            self.close()
-            if thread_id in self._buffers:
-                del self._buffers[thread_id]
+            self.truncate(0)
+            self.seek(0)
         except AttributeError:
             pass
         return result
@@ -88,11 +86,10 @@ class PIOCoreRPC(object):
         def _call_inline():
             with util.cd((options or {}).get("cwd") or os.getcwd()):
                 exit_code = __main__.main(["-c"] + args)
-            return (PIOCoreRPC.thread_stdout.get_value_and_close(),
-                    PIOCoreRPC.thread_stderr.get_value_and_close(), exit_code)
+            return (PIOCoreRPC.thread_stdout.get_value_and_reset(),
+                    PIOCoreRPC.thread_stderr.get_value_and_reset(), exit_code)
 
         d = threads.deferToThread(_call_inline)
-
         d.addCallback(PIOCoreRPC._call_callback, "--json-output" in args)
         d.addErrback(PIOCoreRPC._call_errback)
         return d
