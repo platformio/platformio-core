@@ -38,14 +38,16 @@ class MultiThreadingStdStream(object):
 
     def __getattr__(self, name):
         thread_id = thread_get_ident()
-        if thread_id not in self._buffers:
-            raise AttributeError(name)
+        self._ensure_thread_buffer(thread_id)
         return getattr(self._buffers[thread_id], name)
+
+    def _ensure_thread_buffer(self, thread_id):
+        if thread_id not in self._buffers:
+            self._buffers[thread_id] = BytesIO() if PY2 else StringIO()
 
     def write(self, value):
         thread_id = thread_get_ident()
-        if thread_id not in self._buffers:
-            self._buffers[thread_id] = BytesIO() if PY2 else StringIO()
+        self._ensure_thread_buffer(thread_id)
         return self._buffers[thread_id].write(
             value.decode() if is_bytes(value) else value)
 
