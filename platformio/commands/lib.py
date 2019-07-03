@@ -263,7 +263,6 @@ def lib_update(ctx, libraries, only_check, dry_run, json_output):
 @click.option("--json-output", is_flag=True)
 @click.pass_context
 def lib_list(ctx, json_output):
-    print("hello")
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     json_result = {}
     for storage_dir in storage_dirs:
