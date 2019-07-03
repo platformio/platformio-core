@@ -21,6 +21,7 @@ import click
 import semantic_version
 
 from platformio import exception, util
+from platformio.commands import PlatformioCLI
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.lib import (LibraryManager, get_builtin_libs,
                                      is_builtin_lib)
@@ -89,6 +90,7 @@ def cli(ctx, **options):
                                         get_project_global_lib_dir(),
                                         ctx.invoked_subcommand)
 
+    in_silence = PlatformioCLI.in_silence()
     ctx.meta[CTX_META_PROJECT_ENVIRONMENTS_KEY] = options['environment']
     ctx.meta[CTX_META_INPUT_DIRS_KEY] = storage_dirs
     ctx.meta[CTX_META_STORAGE_DIRS_KEY] = []
@@ -101,7 +103,7 @@ def cli(ctx, **options):
             libdeps_dir = get_project_libdeps_dir()
         config = ProjectConfig.get_instance(join(storage_dir,
                                                  "platformio.ini"))
-        config.validate(options['environment'])
+        config.validate(options['environment'], silent=in_silence)
         for env in config.envs():
             if options['environment'] and env not in options['environment']:
                 continue
@@ -261,6 +263,7 @@ def lib_update(ctx, libraries, only_check, dry_run, json_output):
 @click.option("--json-output", is_flag=True)
 @click.pass_context
 def lib_list(ctx, json_output):
+    print("hello")
     storage_dirs = ctx.meta[CTX_META_STORAGE_DIRS_KEY]
     json_result = {}
     for storage_dir in storage_dirs:

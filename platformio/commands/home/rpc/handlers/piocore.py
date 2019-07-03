@@ -19,6 +19,7 @@ import os
 import sys
 from io import BytesIO, StringIO
 
+import click
 import jsonrpc  # pylint: disable=import-error
 from twisted.internet import threads  # pylint: disable=import-error
 
@@ -102,7 +103,22 @@ class PIOCoreRPC(object):
         text = ("%s\n\n%s" % (out, err)).strip()
         if code != 0:
             raise Exception(text)
-        return json.loads(out) if json_output else text
+        if not json_output:
+            return text
+        try:
+            return json.loads(out)
+        except ValueError as e:
+            click.secho("%s => `%s`" % (e, out), fg="red", err=True)
+            # if PIO Core prints unhandled warnings
+            for line in out.split("\n"):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    return json.loads(line)
+                except ValueError:
+                    pass
+            raise e
 
     @staticmethod
     def _call_errback(failure):
