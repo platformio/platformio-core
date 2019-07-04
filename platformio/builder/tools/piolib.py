@@ -943,7 +943,7 @@ def IsCompatibleLibBuilder(env,
         if verbose:
             sys.stderr.write("Platform incompatible library %s\n" % lb.path)
         return False
-    if (compat_mode == "soft" and "PIOFRAMEWORK" in env
+    if (compat_mode in ("soft", "strict") and "PIOFRAMEWORK" in env
             and not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", []))):
         if verbose:
             sys.stderr.write("Framework incompatible library %s\n" % lb.path)

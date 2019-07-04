@@ -13,8 +13,8 @@ PlatformIO 4.0
 
 * `PlatformIO Plus Goes Open Source <https://community.platformio.org/t/platformio-plus-goes-open-source-improving-embedded-development-community-worldwide/8240/4>`__
 
-  - Open source `PIO Unified Debugger <http://docs.platformio.org/en/latest/plus/debugging.html>`__
-  - Open source `PIO Unit Testing <http://docs.platformio.org/en/latest/plus/unit-testing.html>`__
+  - Open source `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+  - Open source `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
 
 * **Project Configuration**
 
@@ -37,6 +37,7 @@ PlatformIO 4.0
   - Look firstly in built-in library storages for a missing dependency instead of PlatformIO Registry (`issue #1654 <https://github.com/platformio/platformio-core/issues/1654>`_)
   - Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
   - Fixed an issue when library keeps reinstalling for non-latin path (`issue #1252 <https://github.com/platformio/platformio-core/issues/1252>`_)
+  - Fixed an issue when `lib_compat_mode = strict <http://docs.platformio.org/page/librarymanager/ldf.html#ldf-compat-mode>`__ does not ignore libraries incompatible with a project framework
 
 * **Build System**
 
