@@ -15,6 +15,7 @@
 import os
 from os.path import isdir, isfile, join
 
+from twisted.internet import error  # pylint: disable=import-error
 from twisted.internet import reactor  # pylint: disable=import-error
 
 from platformio import exception, util
@@ -31,6 +32,7 @@ class DebugServer(BaseProcess):
 
         self._debug_port = None
         self._transport = None
+        self._process_ended = False
 
     def spawn(self, patterns):  # pylint: disable=too-many-branches
         systype = util.get_systype()
@@ -108,6 +110,14 @@ class DebugServer(BaseProcess):
     def get_debug_port(self):
         return self._debug_port
 
+    def processEnded(self, reason):
+        self._process_ended = True
+        super(DebugServer, self).processEnded(reason)
+
     def terminate(self):
-        if self._transport:
+        if self._process_ended or not self._transport:
+            return
+        try:
             self._transport.signalProcess("KILL")
+        except (OSError, error.ProcessExitedAlready):
+            pass

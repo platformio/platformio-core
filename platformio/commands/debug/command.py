@@ -16,6 +16,7 @@
 # pylint: disable=too-many-locals, too-many-branches
 
 import os
+import signal
 from os.path import isfile, join
 
 import click
@@ -146,6 +147,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
     client = GDBClient(project_dir, __unprocessed, debug_options, env_options)
     client.spawn(configuration['gdb_path'], configuration['prog_path'])
 
+    signal.signal(signal.SIGINT, lambda *args, **kwargs: None)
     reactor.run()
 
     return True

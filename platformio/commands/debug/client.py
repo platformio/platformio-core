@@ -15,6 +15,7 @@
 import json
 import os
 import re
+import signal
 import time
 from hashlib import sha1
 from os.path import abspath, basename, dirname, isdir, join, splitext
@@ -188,6 +189,8 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         if b"-exec-continue" in data:
             self._target_is_run = True
         if b"-gdb-exit" in data or data.strip() in (b"q", b"quit"):
+            # Allow terminating via SIGINT/CTRL+C
+            signal.signal(signal.SIGINT, signal.default_int_handler)
             self.transport.write(b"pio_reset_target\n")
         self.transport.write(data)
 

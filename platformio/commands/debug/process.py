@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import signal
+
 import click
 from twisted.internet import protocol  # pylint: disable=import-error
 
@@ -71,3 +73,8 @@ class BaseProcess(protocol.ProcessProtocol, object):
             with open(LOG_FILE, "ab") as fp:
                 fp.write(data)
         click.echo(data, nl=False, err=True)
+
+    @staticmethod
+    def processEnded(_):
+        # Allow terminating via SIGINT/CTRL+C
+        signal.signal(signal.SIGINT, signal.default_int_handler)
