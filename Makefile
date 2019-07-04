@@ -1,4 +1,3 @@
-
 lint:
 	pylint --rcfile=./.pylintrc ./platformio
 
@@ -24,3 +23,8 @@ clean: clean-docs
 	rm -rf build
 	rm -rf htmlcov
 	rm -f .coverage
+
+profile:
+	# Usage $ > make PIOARGS="boards" profile
+	python -m cProfile -o .tox/.tmp/cprofile.prof $(shell which platformio) ${PIOARGS}
+	snakeviz .tox/.tmp/cprofile.prof
