@@ -63,7 +63,8 @@ PlatformIO 4.0
 
   - Support custom CMake configuration for CLion IDE using ``CMakeListsUser.txt`` file
   - Fixed an issue with hardcoded C standard version when generating project for CLion IDE (`issue #2527 <https://github.com/platformio/platformio-core/issues/2527>`_)
-  - Fixed an issue with Project Generator when include path search order is inconsistent to what passed to the compiler (`issue #2509 <https://github.com/platformio/platformio-core/issues/2509>`_)
+  - Fixed an issue with Project Generator when an include path search order is inconsistent to what passed to the compiler (`issue #2509 <https://github.com/platformio/platformio-core/issues/2509>`_)
+  - Fixed an issue when generating invalid "Eclipse CDT Cross GCC Built-in Compiler Settings" if a custom `PLATFORMIO_CORE_DIR <http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_CORE_DIR>`__ is used (`issue #806 <https://github.com/platformio/platformio-core/issues/806>`_)
 
 * **Miscellaneous**
 
