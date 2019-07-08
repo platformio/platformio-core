@@ -30,6 +30,19 @@ from platformio.project.helpers import (get_project_cache_dir,
                                         get_project_core_dir)
 
 
+def get_default_projects_dir():
+    docs_dir = join(expanduser("~"), "Documents")
+    try:
+        assert WINDOWS
+        import ctypes.wintypes
+        buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+        ctypes.windll.shell32.SHGetFolderPathW(None, 5, None, 0, buf)
+        docs_dir = buf.value
+    except:  # pylint: disable=bare-except
+        pass
+    return join(docs_dir, "PlatformIO", "Projects")
+
+
 def projects_dir_validate(projects_dir):
     assert isdir(projects_dir)
     return abspath(projects_dir)
@@ -77,7 +90,7 @@ DEFAULT_SETTINGS = {
     },
     "projects_dir": {
         "description": "Default location for PlatformIO projects (PIO Home)",
-        "value": join(expanduser("~"), "Documents", "PlatformIO", "Projects"),
+        "value": get_default_projects_dir(),
         "validator": projects_dir_validate
     },
 }

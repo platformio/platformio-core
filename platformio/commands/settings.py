@@ -15,6 +15,7 @@
 import click
 
 from platformio import app
+from platformio.compat import string_types
 
 
 @click.group(short_help="Manage PlatformIO settings")
@@ -26,7 +27,7 @@ def cli():
 @click.argument("name", required=False)
 def settings_get(name):
 
-    list_tpl = "{name:<40} {value:<35} {description}"
+    list_tpl = u"{name:<40} {value:<35} {description}"
     terminal_width, _ = click.get_terminal_size()
 
     click.echo(
@@ -41,7 +42,8 @@ def settings_get(name):
             continue
         _value = app.get_setting(_name)
 
-        _value_str = str(_value)
+        _value_str = (str(_value)
+                      if not isinstance(_value, string_types) else _value)
         if isinstance(_value, bool):
             _value_str = "Yes" if _value else "No"
         _value_str = click.style(_value_str, fg="green")
