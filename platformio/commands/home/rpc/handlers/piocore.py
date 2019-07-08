@@ -24,7 +24,8 @@ import jsonrpc  # pylint: disable=import-error
 from twisted.internet import threads  # pylint: disable=import-error
 
 from platformio import __main__, __version__, util
-from platformio.compat import PY2, is_bytes, string_types
+from platformio.compat import (PY2, get_filesystem_encoding, is_bytes,
+                               string_types)
 
 try:
     from thread import get_ident as thread_get_ident
@@ -77,14 +78,11 @@ class PIOCoreRPC(object):
     @staticmethod
     def call(args, options=None):
         PIOCoreRPC.setup_multithreading_std_streams()
-        try:
-            args = [
-                str(arg) if not isinstance(arg, string_types) else arg
-                for arg in args
-            ]
-        except UnicodeError:
-            raise jsonrpc.exceptions.JSONRPCDispatchException(
-                code=4002, message="PIO Core: non-ASCII chars in arguments")
+        for i, arg in enumerate(args):
+            if isinstance(arg, string_types):
+                args[i] = arg.encode(get_filesystem_encoding()) if PY2 else arg
+            else:
+                args[i] = str(arg)
 
         def _call_inline():
             with util.cd((options or {}).get("cwd") or os.getcwd()):

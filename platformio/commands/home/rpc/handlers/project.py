@@ -113,18 +113,54 @@ class ProjectRPC(object):
     def get_projects(self, project_dirs=None):
         return self._get_projects(project_dirs)
 
+    @staticmethod
+    def get_project_examples():
+        result = []
+        for manifest in PlatformManager().get_installed():
+            examples_dir = join(manifest['__pkg_dir'], "examples")
+            if not isdir(examples_dir):
+                continue
+            items = []
+            for project_dir, _, __ in os.walk(examples_dir):
+                project_description = None
+                try:
+                    config = ProjectConfig(join(project_dir, "platformio.ini"))
+                    config.validate(silent=True)
+                    project_description = config.get("platformio",
+                                                     "description")
+                except exception.PlatformIOProjectException:
+                    continue
+
+                path_tokens = project_dir.split(sep)
+                items.append({
+                    "name":
+                    "/".join(path_tokens[path_tokens.index("examples") + 1:]),
+                    "path":
+                    project_dir,
+                    "description":
+                    project_description
+                })
+            result.append({
+                "platform": {
+                    "title": manifest['title'],
+                    "version": manifest['version']
+                },
+                "items": sorted(items, key=lambda item: item['name'])
+            })
+        return sorted(result, key=lambda data: data['platform']['title'])
+
     def init(self, board, framework, project_dir):
         assert project_dir
         state = AppRPC.load_state()
         if not isdir(project_dir):
             os.makedirs(project_dir)
-        args = ["init", "--project-dir", project_dir, "--board", board]
+        args = ["init", "--board", board]
         if framework:
             args.extend(["--project-option", "framework = %s" % framework])
         if (state['storage']['coreCaller'] and state['storage']['coreCaller']
                 in ProjectGenerator.get_supported_ides()):
             args.extend(["--ide", state['storage']['coreCaller']])
-        d = PIOCoreRPC.call(args)
+        d = PIOCoreRPC.call(args, options={"cwd": project_dir})
         d.addCallback(self._generate_project_main, project_dir, framework)
         return d
 
@@ -196,7 +232,7 @@ class ProjectRPC(object):
                            time.strftime("%y%m%d-%H%M%S-") + board)
         if not isdir(project_dir):
             os.makedirs(project_dir)
-        args = ["init", "--project-dir", project_dir, "--board", board]
+        args = ["init", "--board", board]
         args.extend(["--project-option", "framework = arduino"])
         if use_arduino_libs:
             args.extend([
@@ -206,7 +242,7 @@ class ProjectRPC(object):
         if (state['storage']['coreCaller'] and state['storage']['coreCaller']
                 in ProjectGenerator.get_supported_ides()):
             args.extend(["--ide", state['storage']['coreCaller']])
-        d = PIOCoreRPC.call(args)
+        d = PIOCoreRPC.call(args, options={"cwd": project_dir})
         d.addCallback(self._finalize_arduino_import, project_dir,
                       arduino_project_dir)
         return d
@@ -221,45 +257,7 @@ class ProjectRPC(object):
         return project_dir
 
     @staticmethod
-    def get_project_examples():
-        result = []
-        for manifest in PlatformManager().get_installed():
-            examples_dir = join(manifest['__pkg_dir'], "examples")
-            if not isdir(examples_dir):
-                continue
-            items = []
-            for project_dir, _, __ in os.walk(examples_dir):
-                project_description = None
-                try:
-                    config = ProjectConfig(join(project_dir, "platformio.ini"))
-                    config.validate(silent=True)
-                    project_description = config.get("platformio",
-                                                     "description")
-                except exception.PlatformIOProjectException:
-                    continue
-
-                path_tokens = project_dir.split(sep)
-                items.append({
-                    "name":
-                    "/".join(path_tokens[path_tokens.index("examples") + 1:]),
-                    "path":
-                    project_dir,
-                    "description":
-                    project_description
-                })
-            result.append({
-                "platform": {
-                    "title": manifest['title'],
-                    "version": manifest['version']
-                },
-                "items": sorted(items, key=lambda item: item['name'])
-            })
-        return sorted(result, key=lambda data: data['platform']['title'])
-
-    @staticmethod
     def import_pio(project_dir):
-        if project_dir and PY2:
-            project_dir = project_dir.encode(get_filesystem_encoding())
         if not project_dir or not is_platformio_project(project_dir):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4001,
@@ -270,10 +268,10 @@ class ProjectRPC(object):
         shutil.copytree(project_dir, new_project_dir)
 
         state = AppRPC.load_state()
-        args = ["init", "--project-dir", new_project_dir]
+        args = ["init"]
         if (state['storage']['coreCaller'] and state['storage']['coreCaller']
                 in ProjectGenerator.get_supported_ides()):
             args.extend(["--ide", state['storage']['coreCaller']])
-        d = PIOCoreRPC.call(args)
+        d = PIOCoreRPC.call(args, options={"cwd": new_project_dir})
         d.addCallback(lambda _: new_project_dir)
         return d
