@@ -139,8 +139,9 @@ def pioplus_call(args, **kwargs):
     os.environ['PYTHONEXEPATH'] = pythonexe_path
     os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("contrib-pysite")
     os.environ['PIOCOREPYSITEDIR'] = dirname(util.get_source_dir() or "")
-    os.environ['PATH'] = (os.pathsep).join(
-        [dirname(pythonexe_path), os.environ['PATH']])
+    if dirname(pythonexe_path) not in os.environ['PATH'].split(os.pathsep):
+        os.environ['PATH'] = (os.pathsep).join(
+            [dirname(pythonexe_path), os.environ['PATH']])
     copy_pythonpath_to_osenv()
     code = subprocess.call([pioplus_path] + args, **kwargs)
 

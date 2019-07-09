@@ -22,8 +22,10 @@ from io import BytesIO, StringIO
 import click
 import jsonrpc  # pylint: disable=import-error
 from twisted.internet import threads  # pylint: disable=import-error
+from twisted.internet import utils  # pylint: disable=import-error
 
 from platformio import __main__, __version__, util
+from platformio.commands.home import helpers
 from platformio.compat import (PY2, get_filesystem_encoding, is_bytes,
                                string_types)
 
@@ -78,6 +80,7 @@ class PIOCoreRPC(object):
     @staticmethod
     def call(args, options=None):
         PIOCoreRPC.setup_multithreading_std_streams()
+        cwd = (options or {}).get("cwd") or os.getcwd()
         for i, arg in enumerate(args):
             if isinstance(arg, string_types):
                 args[i] = arg.encode(get_filesystem_encoding()) if PY2 else arg
@@ -85,12 +88,21 @@ class PIOCoreRPC(object):
                 args[i] = str(arg)
 
         def _call_inline():
-            with util.cd((options or {}).get("cwd") or os.getcwd()):
+            with util.cd(cwd):
                 exit_code = __main__.main(["-c"] + args)
             return (PIOCoreRPC.thread_stdout.get_value_and_reset(),
                     PIOCoreRPC.thread_stderr.get_value_and_reset(), exit_code)
 
-        d = threads.deferToThread(_call_inline)
+        if args and args[0] in ("account", "remote"):
+            d = utils.getProcessOutputAndValue(
+                helpers.get_core_fullpath(),
+                args,
+                path=cwd,
+                env={k: v
+                     for k, v in os.environ.items() if "%" not in k})
+        else:
+            d = threads.deferToThread(_call_inline)
+
         d.addCallback(PIOCoreRPC._call_callback, "--json-output" in args)
         d.addErrback(PIOCoreRPC._call_errback)
         return d
