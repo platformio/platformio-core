@@ -6,15 +6,15 @@ Release Notes
 PlatformIO 4.0
 --------------
 
-4.0.0 (2019-??-??)
+4.0.0 (2019-07-10)
 ~~~~~~~~~~~~~~~~~~
 
 `Migration Guide from 3.0 to 4.0 <http://docs.platformio.org/page/migration.html>`__.
 
 * `PlatformIO Plus Goes Open Source <https://community.platformio.org/t/platformio-plus-goes-open-source-improving-embedded-development-community-worldwide/8240/4>`__
 
-  - Open source `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
-  - Open source `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
+  - Built-in `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+  - Built-in `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
 
 * **Project Configuration**
 
