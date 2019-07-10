@@ -219,17 +219,17 @@
 			<target name="PlatformIO: Upload using Programmer" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>platformio</buildCommand>
 				<buildArguments>-f -c eclipse</buildArguments>
-				<buildTarget>run -t program</buildTarget>
+				<buildTarget>run --target program</buildTarget>
 				<stopOnError>true</stopOnError>
-				<useDefaultCommand>true</useDefaultCommand>
+				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>
 			</target>
 			<target name="PlatformIO: Upload SPIFFS image" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>platformio</buildCommand>
 				<buildArguments>-f -c eclipse</buildArguments>
-				<buildTarget>run -t uploadfs</buildTarget>
+				<buildTarget>run --target uploadfs</buildTarget>
 				<stopOnError>true</stopOnError>
-				<useDefaultCommand>true</useDefaultCommand>
+				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>
 			</target>
 			<target name="PlatformIO: Build" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
@@ -237,23 +237,39 @@
 				<buildArguments>-f -c eclipse</buildArguments>
 				<buildTarget>run</buildTarget>
 				<stopOnError>true</stopOnError>
-				<useDefaultCommand>true</useDefaultCommand>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>false</runAllBuilders>
+			</target>
+			<target name="PlatformIO: Verbose Build" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>platformio</buildCommand>
+				<buildArguments>-f -c eclipse</buildArguments>
+				<buildTarget>run --verbose</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>
 			</target>
 			<target name="PlatformIO: Upload" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>platformio</buildCommand>
 				<buildArguments>-f -c eclipse</buildArguments>
-				<buildTarget>run -t upload</buildTarget>
+				<buildTarget>run --target upload</buildTarget>
 				<stopOnError>true</stopOnError>
-				<useDefaultCommand>true</useDefaultCommand>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>false</runAllBuilders>
+			</target>
+			<target name="PlatformIO: Verbose Upload" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>platformio</buildCommand>
+				<buildArguments>-f -c eclipse</buildArguments>
+				<buildTarget>run --target upload --verbose</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>
 			</target>
 			<target name="PlatformIO: Clean" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>platformio</buildCommand>
 				<buildArguments>-f -c eclipse</buildArguments>
-				<buildTarget>run -t clean</buildTarget>
+				<buildTarget>run --target clean</buildTarget>
 				<stopOnError>true</stopOnError>
-				<useDefaultCommand>true</useDefaultCommand>
+				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>
 			</target>
 			<target name="PlatformIO: Test" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
@@ -261,15 +277,15 @@
 				<buildArguments>-f -c eclipse</buildArguments>
 				<buildTarget>test</buildTarget>
 				<stopOnError>true</stopOnError>
-				<useDefaultCommand>true</useDefaultCommand>
+				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>
 			</target>
-			<target name="PlatformIO: Update platforms and libraries" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+			<target name="PlatformIO: Remote" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>platformio</buildCommand>
 				<buildArguments>-f -c eclipse</buildArguments>
-				<buildTarget>update</buildTarget>
+				<buildTarget>remote run --target upload</buildTarget>
 				<stopOnError>true</stopOnError>
-				<useDefaultCommand>true</useDefaultCommand>
+				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>
 			</target>
 			<target name="PlatformIO: Rebuild C/C++ Project Index" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
@@ -277,7 +293,39 @@
 				<buildArguments>-f -c eclipse</buildArguments>
 				<buildTarget>init --ide eclipse</buildTarget>
 				<stopOnError>true</stopOnError>
-				<useDefaultCommand>true</useDefaultCommand>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>false</runAllBuilders>
+			</target>
+			<target name="PlatformIO: List Devices" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>platformio</buildCommand>
+				<buildArguments>-f -c eclipse</buildArguments>
+				<buildTarget>device list</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>false</runAllBuilders>
+			</target>
+			<target name="PlatformIO: Update Project Libraries" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>platformio</buildCommand>
+				<buildArguments>-f -c eclipse</buildArguments>
+				<buildTarget>lib update</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>false</runAllBuilders>
+			</target>
+			<target name="PlatformIO: Update All" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>platformio</buildCommand>
+				<buildArguments>-f -c eclipse</buildArguments>
+				<buildTarget>update</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>false</runAllBuilders>
+			</target>
+			<target name="PlatformIO: Upgrade Core" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>platformio</buildCommand>
+				<buildArguments>-f -c eclipse</buildArguments>
+				<buildTarget>upgrade</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>
 			</target>
 		</buildTargets>

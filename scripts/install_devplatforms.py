@@ -21,7 +21,7 @@ from platformio import util
 def main():
     platforms = json.loads(
         subprocess.check_output(
-            ["platformio", "platform", "search", "--json-output"]))
+            ["platformio", "platform", "search", "--json-output"]).decode())
     for platform in platforms:
         if platform['forDesktop']:
             continue
@@ -34,7 +34,7 @@ def main():
                 and platform['name'] == "aceinna_imu"):
             continue
         subprocess.check_call(
-            ["platformio", "platform", "install", platform['repository']])
+            ["platformio", "platform", "install", platform['name']])
 
 
 if __name__ == "__main__":

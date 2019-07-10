@@ -22,48 +22,7 @@ from platformio.commands import upgrade as cmd_upgrade
 from platformio.managers.platform import PlatformManager
 
 
-def test_after_upgrade_2_to_3(clirunner, validate_cliresult,
-                              isolated_pio_home):
-    app.set_state_item("last_version", "2.11.2")
-    app.set_state_item("installed_platforms", ["native"])
-
-    # generate PlatformIO 2.0 boards
-    boards = isolated_pio_home.mkdir("boards")
-    board_ids = set()
-    for prefix in ("foo", "bar"):
-        data = {}
-        for i in range(3):
-            board_id = "board_%s_%d" % (prefix, i)
-            board_ids.add(board_id)
-            data[board_id] = {
-                "name": "Board %s #%d" % (prefix, i),
-                "url": "",
-                "vendor": ""
-            }
-        boards.join(prefix + ".json").write(json.dumps(data))
-
-    result = clirunner.invoke(cli_pio, ["settings", "get"])
-    validate_cliresult(result)
-    assert "upgraded to 3" in result.output
-
-    # check PlatformIO 3.0 boards
-    assert board_ids == set([p.basename[:-5] for p in boards.listdir()])
-
-    result = clirunner.invoke(cli_pio,
-                              ["boards", "--installed", "--json-output"])
-    validate_cliresult(result)
-    assert board_ids == set([b['id'] for b in json.loads(result.output)])
-
-
-def test_after_upgrade_silence(clirunner, validate_cliresult):
-    app.set_state_item("last_version", "2.11.2")
-    result = clirunner.invoke(cli_pio, ["boards", "--json-output"])
-    validate_cliresult(result)
-    boards = json.loads(result.output)
-    assert any([b['id'] == "uno" for b in boards])
-
-
-def test_check_pio_upgrade(clirunner, validate_cliresult):
+def test_check_pio_upgrade(clirunner, isolated_pio_home, validate_cliresult):
 
     def _patch_pio_version(version):
         maintenance.__version__ = version
@@ -93,7 +52,7 @@ def test_check_pio_upgrade(clirunner, validate_cliresult):
     _patch_pio_version(origin_version)
 
 
-def test_check_lib_updates(clirunner, validate_cliresult):
+def test_check_lib_updates(clirunner, isolated_pio_home, validate_cliresult):
     # install obsolete library
     result = clirunner.invoke(cli_pio,
                               ["lib", "-g", "install", "ArduinoJson@<5.7"])
@@ -110,7 +69,8 @@ def test_check_lib_updates(clirunner, validate_cliresult):
             result.output)
 
 
-def test_check_and_update_libraries(clirunner, validate_cliresult):
+def test_check_and_update_libraries(clirunner, isolated_pio_home,
+                                    validate_cliresult):
     # enable library auto-updates
     result = clirunner.invoke(
         cli_pio, ["settings", "set", "auto_update_libraries", "Yes"])
@@ -141,8 +101,8 @@ def test_check_and_update_libraries(clirunner, validate_cliresult):
     assert prev_data[0]['version'] != json.loads(result.output)[0]['version']
 
 
-def test_check_platform_updates(clirunner, validate_cliresult,
-                                isolated_pio_home):
+def test_check_platform_updates(clirunner, isolated_pio_home,
+                                validate_cliresult):
     # install obsolete platform
     result = clirunner.invoke(cli_pio, ["platform", "install", "native"])
     validate_cliresult(result)
@@ -164,7 +124,8 @@ def test_check_platform_updates(clirunner, validate_cliresult,
     assert "There are the new updates for platforms (native)" in result.output
 
 
-def test_check_and_update_platforms(clirunner, validate_cliresult):
+def test_check_and_update_platforms(clirunner, isolated_pio_home,
+                                    validate_cliresult):
     # enable library auto-updates
     result = clirunner.invoke(
         cli_pio, ["settings", "set", "auto_update_platforms", "Yes"])

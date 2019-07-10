@@ -20,7 +20,7 @@ from platformio.commands.lib import cli as cmd_lib
 
 def test_ci_empty(clirunner):
     result = clirunner.invoke(cmd_ci)
-    assert result.exit_code == 2
+    assert result.exit_code != 0
     assert "Invalid value: Missing argument 'src'" in result.output
 
 

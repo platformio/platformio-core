@@ -1,6 +1,78 @@
 Release Notes
 =============
 
+.. _release_notes_4_0:
+
+PlatformIO 4.0
+--------------
+
+4.0.0 (2019-07-10)
+~~~~~~~~~~~~~~~~~~
+
+`Migration Guide from 3.0 to 4.0 <http://docs.platformio.org/page/migration.html>`__.
+
+* `PlatformIO Plus Goes Open Source <https://community.platformio.org/t/platformio-plus-goes-open-source-improving-embedded-development-community-worldwide/8240/4>`__
+
+  - Built-in `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__
+  - Built-in `PIO Unit Testing <http://docs.platformio.org/page/plus/unit-testing.html>`__
+
+* **Project Configuration**
+
+  - New project configuration parser with a strict options typing (`API <https://github.com/platformio/platformio-core/blob/develop/platformio/project/options.py>`__)
+  - Unified workspace storage (`workspace_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#workspace-dir>`__ -> ``.pio``) for PlatformIO Build System, Library Manager, and other internal services (`issue #1778 <https://github.com/platformio/platformio-core/issues/1778>`_)
+  - Share common (global) options between project environments using `[env] <http://docs.platformio.org/page/projectconf/section_env.html#global-scope-env>`__ section (`issue #1643 <https://github.com/platformio/platformio-core/issues/1643>`_)
+  - Include external configuration files with `extra_configs <http://docs.platformio.org/page/projectconf/section_platformio.html#extra-configs>`__ option (`issue #1590 <https://github.com/platformio/platformio-core/issues/1590>`_)
+  - Custom project ``***_dir`` options declared in `platformio <http://docs.platformio.org/page/projectconf/section_platformio.html>`__ section have higher priority than `Environment variables <http://docs.platformio.org/page/envvars.html>`__
+  - Added support for Unix shell-style wildcards for `monitor_port <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-port>`__ option (`issue #2541 <https://github.com/platformio/platformio-core/issues/2541>`_)
+  - Added new `monitor_flags <http://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-flags>`__ option which allows passing extra flags and options to `platformio device monitor <http://docs.platformio.org/page/userguide/cmd_device.html#cmd-device-monitor>`__ command (`issue #2165 <https://github.com/platformio/platformio-core/issues/2165>`_)
+  - Added support for `PLATFORMIO_DEFAULT_ENVS <http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_DEFAULT_ENVS>`__ system environment variable (`issue #1967 <https://github.com/platformio/platformio-core/issues/1967>`_)
+  - Added support for `shared_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#shared-dir>`__ where you can place an extra files (extra scripts, LD scripts, etc.) which should be transferred to a `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html>`__ machine
+
+* **Library Management**
+
+  - Switched to workspace ``.pio/libdeps`` folder for project dependencies instead of ``.piolibdeps``
+  - Save libraries passed to `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__ command into the project dependency list (`lib_deps <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__) with a new ``--save`` flag (`issue #1028 <https://github.com/platformio/platformio-core/issues/1028>`_)
+  - Install all project dependencies declared via `lib_deps <http://docs.platformio.org/page/projectconf/section_env_library.html#lib-deps>`__ option using a simple `platformio lib install <http://docs.platformio.org/page/userguide/lib/cmd_install.html>`__ command (`issue #2147 <https://github.com/platformio/platformio-core/issues/2147>`_)
+  - Use isolated library dependency storage per project build environment (`issue #1696 <https://github.com/platformio/platformio-core/issues/1696>`_)
+  - Look firstly in built-in library storages for a missing dependency instead of PlatformIO Registry (`issue #1654 <https://github.com/platformio/platformio-core/issues/1654>`_)
+  - Override default source and include directories for a library via `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ manifest using ``includeDir`` and ``srcDir`` fields
+  - Fixed an issue when library keeps reinstalling for non-latin path (`issue #1252 <https://github.com/platformio/platformio-core/issues/1252>`_)
+  - Fixed an issue when `lib_compat_mode = strict <http://docs.platformio.org/page/librarymanager/ldf.html#ldf-compat-mode>`__ does not ignore libraries incompatible with a project framework
+
+* **Build System**
+
+  - Switched to workspace ``.pio/build`` folder for build artifacts instead of ``.pioenvs``
+  - Switch between `Build Configurations <http://docs.platformio.org/page/projectconf/build_configurations.html>`__ (``release`` and ``debug``) with a new project configuration option `build_type <http://docs.platformio.org/page/projectconf/section_env_build.html#build-type>`__
+  - Custom `platform_packages <http://docs.platformio.org/page/projectconf/section_env_general.html#platform>`__ per a build environment with an option to override default (`issue #1367 <https://github.com/platformio/platformio-core/issues/1367>`_)
+  - Print platform package details, such as version, VSC source and commit (`issue #2155 <https://github.com/platformio/platformio-core/issues/2155>`_)
+  - Control a number of parallel build jobs with a new `-j, --jobs <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption-platformio-run-j>`__ option
+  - Override default `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__ with a custom using ``-c, --project-conf`` option for `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__, `platformio debug <http://docs.platformio.org/page/userguide/cmd_debug.html>`__, or `platformio test <http://docs.platformio.org/page/userguide/cmd_test.html>`__ commands (`issue #1913 <https://github.com/platformio/platformio-core/issues/1913>`_)
+  - Override default development platform upload command with a custom `upload_command <http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-command>`__ (`issue #2599 <https://github.com/platformio/platformio-core/issues/2599>`_)
+  - Configure a shared folder for the derived files (objects, firmwares, ELFs) from a build system using `build_cache_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#build-cache-dir>`__ option (`issue #2674 <https://github.com/platformio/platformio-core/issues/2674>`_)
+  - Fixed an issue when ``-U`` in ``build_flags`` does not remove macro previously defined via ``-D`` flag (`issue #2508 <https://github.com/platformio/platformio-core/issues/2508>`_)
+
+* **Infrastructure**
+
+  - Python 3 support (`issue #895 <https://github.com/platformio/platformio-core/issues/895>`_)
+  - Significantly speedup back-end for PIO Home. It works super fast now!
+  - Added support for the latest Python "Click" package (CLI) (`issue #349 <https://github.com/platformio/platformio-core/issues/349>`_)
+  - Added options to override default locations used by PlatformIO Core (`core_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#core-dir>`__, `globallib_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#globallib-dir>`__, `platforms_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#platforms-dir>`__, `packages_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#packages-dir>`__, `cache_dir <http://docs.platformio.org/page/projectconf/section_platformio.html#cache-dir>`__) (`issue #1615 <https://github.com/platformio/platformio-core/issues/1615>`_)
+  - Removed line-buffering from `platformio run <http://docs.platformio.org/page/userguide/cmd_run.html>`__ command which was leading to omitting progress bar from upload tools (`issue #856 <https://github.com/platformio/platformio-core/issues/856>`_)
+  - Fixed numerous issues related to "UnicodeDecodeError" and international locales, or when project path contains non-ASCII chars (`issue #143 <https://github.com/platformio/platformio-core/issues/143>`_, `issue #1342 <https://github.com/platformio/platformio-core/issues/1342>`_, `issue #1959 <https://github.com/platformio/platformio-core/issues/1959>`_, `issue #2100 <https://github.com/platformio/platformio-core/issues/2100>`_)
+
+* **Integration**
+
+  - Support custom CMake configuration for CLion IDE using ``CMakeListsUser.txt`` file
+  - Fixed an issue with hardcoded C standard version when generating project for CLion IDE (`issue #2527 <https://github.com/platformio/platformio-core/issues/2527>`_)
+  - Fixed an issue with Project Generator when an include path search order is inconsistent to what passed to the compiler (`issue #2509 <https://github.com/platformio/platformio-core/issues/2509>`_)
+  - Fixed an issue when generating invalid "Eclipse CDT Cross GCC Built-in Compiler Settings" if a custom `PLATFORMIO_CORE_DIR <http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_CORE_DIR>`__ is used (`issue #806 <https://github.com/platformio/platformio-core/issues/806>`_)
+
+* **Miscellaneous**
+
+  - Deprecated ``--only-check`` PlatformIO Core CLI option for "update" sub-commands, please use ``--dry-run`` instead
+  - Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__ (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
+  - Fixed an issue when package cache (Library Manager) expires too fast (`issue #2559 <https://github.com/platformio/platformio-core/issues/2559>`_)
+
 PlatformIO 3.0
 --------------
 

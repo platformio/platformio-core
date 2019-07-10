@@ -1,19 +1,20 @@
 build: off
 
 platform:
-  - x86
   - x64
 
 environment:
   matrix:
     - TOXENV: "py27"
+      PLATFORMIO_BUILD_CACHE_DIR: C:/Temp/PIO_Build_Cache_P2_{build}
+
+    - TOXENV: "py36"
+      PLATFORMIO_BUILD_CACHE_DIR: C:/Temp/PIO_Build_Cache_P3_{build}
 
 install:
   - cmd: git submodule update --init --recursive
   - cmd: SET PATH=C:\MinGW\bin;%PATH%
-  - if %PLATFORM% == x64 SET PATH=C:\Python27-x64;C:\Python27-x64\Scripts;%PATH%
-  - if %PLATFORM% == x86 SET PATH=C:\Python27;C:\Python27\Scripts;%PATH%
-  - cmd: pip install tox
+  - cmd: pip install --force-reinstall tox
 
 test_script:
   - cmd: tox

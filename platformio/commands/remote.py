@@ -23,6 +23,7 @@ import click
 
 from platformio import exception, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
+from platformio.compat import get_file_contents
 from platformio.managers.core import pioplus_call
 
 # pylint: disable=unused-argument
@@ -42,12 +43,13 @@ def remote_agent():
 @remote_agent.command("start", short_help="Start agent")
 @click.option("-n", "--name")
 @click.option("-s", "--share", multiple=True, metavar="E-MAIL")
-@click.option(
-    "-d",
-    "--working-dir",
-    envvar="PLATFORMIO_REMOTE_AGENT_DIR",
-    type=click.Path(
-        file_okay=False, dir_okay=True, writable=True, resolve_path=True))
+@click.option("-d",
+              "--working-dir",
+              envvar="PLATFORMIO_REMOTE_AGENT_DIR",
+              type=click.Path(file_okay=False,
+                              dir_okay=True,
+                              writable=True,
+                              resolve_path=True))
 def remote_agent_start(**kwargs):
     pioplus_call(sys.argv[1:])
 
@@ -62,14 +64,16 @@ def remote_agent_list():
     pioplus_call(sys.argv[1:])
 
 
-@cli.command(
-    "update", short_help="Update installed Platforms, Packages and Libraries")
-@click.option(
-    "-c",
-    "--only-check",
-    is_flag=True,
-    help="Do not update, only check for new version")
-def remote_update(only_check):
+@cli.command("update",
+             short_help="Update installed Platforms, Packages and Libraries")
+@click.option("-c",
+              "--only-check",
+              is_flag=True,
+              help="DEPRECATED. Please use `--dry-run` instead")
+@click.option("--dry-run",
+              is_flag=True,
+              help="Do not update, only check for the new versions")
+def remote_update(only_check, dry_run):
     pioplus_call(sys.argv[1:])
 
 
@@ -77,16 +81,14 @@ def remote_update(only_check):
 @click.option("-e", "--environment", multiple=True)
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")
-@click.option(
-    "-d",
-    "--project-dir",
-    default=getcwd,
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=True,
-        writable=True,
-        resolve_path=True))
+@click.option("-d",
+              "--project-dir",
+              default=getcwd,
+              type=click.Path(exists=True,
+                              file_okay=True,
+                              dir_okay=True,
+                              writable=True,
+                              resolve_path=True))
 @click.option("--disable-auto-clean", is_flag=True)
 @click.option("-r", "--force-remote", is_flag=True)
 @click.option("-s", "--silent", is_flag=True)
@@ -100,16 +102,14 @@ def remote_run(**kwargs):
 @click.option("--ignore", "-i", multiple=True, metavar="<pattern>")
 @click.option("--upload-port")
 @click.option("--test-port")
-@click.option(
-    "-d",
-    "--project-dir",
-    default=getcwd,
-    type=click.Path(
-        exists=True,
-        file_okay=False,
-        dir_okay=True,
-        writable=True,
-        resolve_path=True))
+@click.option("-d",
+              "--project-dir",
+              default=getcwd,
+              type=click.Path(exists=True,
+                              file_okay=False,
+                              dir_okay=True,
+                              writable=True,
+                              resolve_path=True))
 @click.option("-r", "--force-remote", is_flag=True)
 @click.option("--without-building", is_flag=True)
 @click.option("--without-uploading", is_flag=True)
@@ -131,59 +131,55 @@ def device_list(json_output):
 
 @remote_device.command("monitor", short_help="Monitor remote device")
 @click.option("--port", "-p", help="Port, a number or a device name")
-@click.option(
-    "--baud", "-b", type=int, default=9600, help="Set baud rate, default=9600")
-@click.option(
-    "--parity",
-    default="N",
-    type=click.Choice(["N", "E", "O", "S", "M"]),
-    help="Set parity, default=N")
-@click.option(
-    "--rtscts", is_flag=True, help="Enable RTS/CTS flow control, default=Off")
-@click.option(
-    "--xonxoff",
-    is_flag=True,
-    help="Enable software flow control, default=Off")
-@click.option(
-    "--rts",
-    default=None,
-    type=click.IntRange(0, 1),
-    help="Set initial RTS line state")
-@click.option(
-    "--dtr",
-    default=None,
-    type=click.IntRange(0, 1),
-    help="Set initial DTR line state")
+@click.option("--baud",
+              "-b",
+              type=int,
+              default=9600,
+              help="Set baud rate, default=9600")
+@click.option("--parity",
+              default="N",
+              type=click.Choice(["N", "E", "O", "S", "M"]),
+              help="Set parity, default=N")
+@click.option("--rtscts",
+              is_flag=True,
+              help="Enable RTS/CTS flow control, default=Off")
+@click.option("--xonxoff",
+              is_flag=True,
+              help="Enable software flow control, default=Off")
+@click.option("--rts",
+              default=None,
+              type=click.IntRange(0, 1),
+              help="Set initial RTS line state")
+@click.option("--dtr",
+              default=None,
+              type=click.IntRange(0, 1),
+              help="Set initial DTR line state")
 @click.option("--echo", is_flag=True, help="Enable local echo, default=Off")
-@click.option(
-    "--encoding",
-    default="UTF-8",
-    help="Set the encoding for the serial port (e.g. hexlify, "
-    "Latin1, UTF-8), default: UTF-8")
+@click.option("--encoding",
+              default="UTF-8",
+              help="Set the encoding for the serial port (e.g. hexlify, "
+              "Latin1, UTF-8), default: UTF-8")
 @click.option("--filter", "-f", multiple=True, help="Add text transformation")
-@click.option(
-    "--eol",
-    default="CRLF",
-    type=click.Choice(["CR", "LF", "CRLF"]),
-    help="End of line mode, default=CRLF")
-@click.option(
-    "--raw", is_flag=True, help="Do not apply any encodings/transformations")
-@click.option(
-    "--exit-char",
-    type=int,
-    default=3,
-    help="ASCII code of special character that is used to exit "
-    "the application, default=3 (Ctrl+C)")
-@click.option(
-    "--menu-char",
-    type=int,
-    default=20,
-    help="ASCII code of special character that is used to "
-    "control miniterm (menu), default=20 (DEC)")
-@click.option(
-    "--quiet",
-    is_flag=True,
-    help="Diagnostics: suppress non-error messages, default=Off")
+@click.option("--eol",
+              default="CRLF",
+              type=click.Choice(["CR", "LF", "CRLF"]),
+              help="End of line mode, default=CRLF")
+@click.option("--raw",
+              is_flag=True,
+              help="Do not apply any encodings/transformations")
+@click.option("--exit-char",
+              type=int,
+              default=3,
+              help="ASCII code of special character that is used to exit "
+              "the application, default=3 (Ctrl+C)")
+@click.option("--menu-char",
+              type=int,
+              default=20,
+              help="ASCII code of special character that is used to "
+              "control miniterm (menu), default=20 (DEC)")
+@click.option("--quiet",
+              is_flag=True,
+              help="Diagnostics: suppress non-error messages, default=Off")
 @click.pass_context
 def device_monitor(ctx, **kwargs):
 
@@ -202,7 +198,7 @@ def device_monitor(ctx, **kwargs):
             sleep(0.1)
         if not t.is_alive():
             return
-        kwargs['port'] = open(sock_file).read()
+        kwargs['port'] = get_file_contents(sock_file)
         ctx.invoke(cmd_device_monitor, **kwargs)
         t.join(2)
     finally:

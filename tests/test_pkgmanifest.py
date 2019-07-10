@@ -28,7 +28,7 @@ def test_packages():
         "https://dl.bintray.com/platformio/dl-packages/manifest.json").json()
     assert isinstance(pkgs_manifest, dict)
     items = []
-    for _, variants in pkgs_manifest.iteritems():
+    for _, variants in pkgs_manifest.items():
         for item in variants:
             items.append(item)
 

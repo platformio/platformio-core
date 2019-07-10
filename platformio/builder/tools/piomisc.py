@@ -21,11 +21,13 @@ from os import environ, remove, walk
 from os.path import basename, isdir, isfile, join, realpath, relpath, sep
 from tempfile import mkstemp
 
-from SCons.Action import Action
-from SCons.Script import ARGUMENTS
+from SCons.Action import Action  # pylint: disable=import-error
+from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 
 from platformio import util
+from platformio.compat import get_file_contents, glob_escape
 from platformio.managers.core import get_core_package_dir
+from platformio.proc import exec_command
 
 
 class InoToCPPConverter(object):
@@ -58,7 +60,7 @@ class InoToCPPConverter(object):
         assert nodes
         lines = []
         for node in nodes:
-            contents = node.get_text_contents()
+            contents = get_file_contents(node.get_path())
             _lines = [
                 '# 1 "%s"' % node.get_path().replace("\\", "/"), contents
             ]
@@ -76,8 +78,7 @@ class InoToCPPConverter(object):
     def process(self, contents):
         out_file = self._main_ino + ".cpp"
         assert self._gcc_preprocess(contents, out_file)
-        with open(out_file) as fp:
-            contents = fp.read()
+        contents = get_file_contents(out_file)
         contents = self._join_multiline_strings(contents)
         with open(out_file, "w") as fp:
             fp.write(self.append_prototypes(contents))
@@ -158,9 +159,7 @@ class InoToCPPConverter(object):
         return total
 
     def append_prototypes(self, contents):
-        prototypes = self._parse_prototypes(contents)
-        if not prototypes:
-            return contents
+        prototypes = self._parse_prototypes(contents) or []
 
         # skip already declared prototypes
         declared = set(
@@ -168,6 +167,9 @@ class InoToCPPConverter(object):
         prototypes = [
             m for m in prototypes if m.group(1).strip() not in declared
         ]
+
+        if not prototypes:
+            return contents
 
         prototype_names = set(m.group(3).strip() for m in prototypes)
         split_pos = prototypes[0].start()
@@ -187,9 +189,9 @@ class InoToCPPConverter(object):
 
 
 def ConvertInoToCpp(env):
-    src_dir = util.glob_escape(env.subst("$PROJECTSRC_DIR"))
-    ino_nodes = (
-        env.Glob(join(src_dir, "*.ino")) + env.Glob(join(src_dir, "*.pde")))
+    src_dir = glob_escape(env.subst("$PROJECTSRC_DIR"))
+    ino_nodes = (env.Glob(join(src_dir, "*.ino")) +
+                 env.Glob(join(src_dir, "*.pde")))
     if not ino_nodes:
         return
     c = InoToCPPConverter(env)
@@ -208,10 +210,12 @@ def _delete_file(path):
 
 @util.memoized()
 def _get_compiler_type(env):
+    if env.subst("$CC").endswith("-gcc"):
+        return "gcc"
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
-        result = util.exec_command([env.subst("$CC"), "-v"], env=sysenv)
+        result = exec_command([env.subst("$CC"), "-v"], env=sysenv)
     except OSError:
         return None
     if result['returncode'] != 0:
@@ -219,7 +223,7 @@ def _get_compiler_type(env):
     output = "".join([result['out'], result['err']]).lower()
     if "clang" in output and "LLVM" in output:
         return "clang"
-    elif "gcc" in output:
+    if "gcc" in output:
         return "gcc"
     return None
 
@@ -283,10 +287,13 @@ def PioClean(env, clean_dir):
     if not isdir(clean_dir):
         print("Build environment is clean")
         env.Exit(0)
+    clean_rel_path = relpath(clean_dir)
     for root, _, files in walk(clean_dir):
-        for file_ in files:
-            remove(join(root, file_))
-            print("Removed %s" % relpath(join(root, file_)))
+        for f in files:
+            dst = join(root, f)
+            remove(dst)
+            print("Removed %s" %
+                  (dst if clean_rel_path.startswith(".") else relpath(dst)))
     print("Done cleaning")
     util.rmtree_(clean_dir)
     env.Exit(0)
@@ -295,8 +302,8 @@ def PioClean(env, clean_dir):
 def ProcessDebug(env):
     if not env.subst("$PIODEBUGFLAGS"):
         env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb3"])
-    env.Append(
-        BUILD_FLAGS=list(env['PIODEBUGFLAGS']) + ["-D__PLATFORMIO_DEBUG__"])
+    env.Append(BUILD_FLAGS=list(env['PIODEBUGFLAGS']) +
+               ["-D__PLATFORMIO_BUILD_DEBUG__"])
     unflags = ["-Os"]
     for level in [0, 1, 2]:
         for flag in ("O", "g", "ggdb"):
@@ -305,22 +312,21 @@ def ProcessDebug(env):
 
 
 def ProcessTest(env):
-    env.Append(
-        CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
-        CPPPATH=[join("$BUILD_DIR", "UnityTestLib")])
-    unitylib = env.BuildLibrary(
-        join("$BUILD_DIR", "UnityTestLib"), get_core_package_dir("tool-unity"))
+    env.Append(CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
+               CPPPATH=[join("$BUILD_DIR", "UnityTestLib")])
+    unitylib = env.BuildLibrary(join("$BUILD_DIR", "UnityTestLib"),
+                                get_core_package_dir("tool-unity"))
     env.Prepend(LIBS=[unitylib])
 
     src_filter = ["+<*.cpp>", "+<*.c>"]
-    if "PIOTEST" in env:
-        src_filter.append("+<%s%s>" % (env['PIOTEST'], sep))
+    if "PIOTEST_RUNNING_NAME" in env:
+        src_filter.append("+<%s%s>" % (env['PIOTEST_RUNNING_NAME'], sep))
     env.Replace(PIOTEST_SRC_FILTER=src_filter)
 
 
 def GetExtraScripts(env, scope):
     items = []
-    for item in env.get("EXTRA_SCRIPTS", []):
+    for item in env.GetProjectOption("extra_scripts", []):
         if scope == "post" and ":" not in item:
             items.append(item)
         elif item.startswith("%s:" % scope):

@@ -14,60 +14,22 @@
 
 import os
 import sys
-from os.path import join
-from platform import system
 from traceback import format_exc
 
 import click
 
-from platformio import __version__, exception, maintenance
-from platformio.util import get_source_dir
+from platformio import __version__, exception, maintenance, util
+from platformio.commands import PlatformioCLI
+from platformio.compat import CYGWIN
 
 
-class PlatformioCLI(click.MultiCommand):  # pylint: disable=R0904
-
-    def list_commands(self, ctx):
-        cmds = []
-        for filename in os.listdir(join(get_source_dir(), "commands")):
-            if filename.startswith("__init__"):
-                continue
-            if filename.endswith(".py"):
-                cmds.append(filename[:-3])
-        cmds.sort()
-        return cmds
-
-    def get_command(self, ctx, cmd_name):
-        mod = None
-        try:
-            mod = __import__("platformio.commands." + cmd_name, None, None,
-                             ["cli"])
-        except ImportError:
-            try:
-                return self._handle_obsolate_command(cmd_name)
-            except AttributeError:
-                raise click.UsageError('No such command "%s"' % cmd_name, ctx)
-        return mod.cli
-
-    @staticmethod
-    def _handle_obsolate_command(name):
-        if name == "platforms":
-            from platformio.commands import platform
-            return platform.cli
-        elif name == "serialports":
-            from platformio.commands import device
-            return device.cli
-        raise AttributeError()
-
-
-@click.command(
-    cls=PlatformioCLI,
-    context_settings=dict(help_option_names=["-h", "--help"]))
+@click.command(cls=PlatformioCLI,
+               context_settings=dict(help_option_names=["-h", "--help"]))
 @click.version_option(__version__, prog_name="PlatformIO")
-@click.option(
-    "--force",
-    "-f",
-    is_flag=True,
-    help="Force to accept any confirmation prompts.")
+@click.option("--force",
+              "-f",
+              is_flag=True,
+              help="Force to accept any confirmation prompts.")
 @click.option("--caller", "-c", help="Caller ID (service).")
 @click.pass_context
 def cli(ctx, force, caller):
@@ -80,8 +42,9 @@ def process_result(ctx, result, force, caller):  # pylint: disable=W0613
     maintenance.on_platformio_end(ctx, result)
 
 
+@util.memoized()
 def configure():
-    if "cygwin" in system().lower():
+    if CYGWIN:
         raise exception.CygwinEnvDetected()
 
     # https://urllib3.readthedocs.org
@@ -114,10 +77,17 @@ def configure():
     click.secho = lambda *args, **kwargs: _safe_echo(1, *args, **kwargs)
 
 
-def main():
+def main(argv=None):
+    exit_code = 0
+    prev_sys_argv = sys.argv[:]
+    if argv:
+        assert isinstance(argv, list)
+        sys.argv = argv
     try:
         configure()
         cli(None, None, None)
+    except SystemExit:
+        pass
     except Exception as e:  # pylint: disable=broad-except
         if not isinstance(e, exception.ReturnErrorCode):
             maintenance.on_platformio_exception(e)
@@ -143,13 +113,13 @@ An unexpected error occurred. Further steps:
 ============================================================
 """
             click.secho(error_str, fg="red", err=True)
-        return int(str(e)) if str(e).isdigit() else 1
-    return 0
+        exit_code = int(str(e)) if str(e).isdigit() else 1
+    sys.argv = prev_sys_argv
+    return exit_code
 
 
 def debug_gdb_main():
-    sys.argv = [sys.argv[0], "debug", "--interface", "gdb"] + sys.argv[1:]
-    return main()
+    return main([sys.argv[0], "debug", "--interface", "gdb"] + sys.argv[1:])
 
 
 if __name__ == "__main__":

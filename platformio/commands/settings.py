@@ -15,6 +15,7 @@
 import click
 
 from platformio import app
+from platformio.compat import string_types
 
 
 @click.group(short_help="Manage PlatformIO settings")
@@ -26,15 +27,14 @@ def cli():
 @click.argument("name", required=False)
 def settings_get(name):
 
-    list_tpl = "{name:<40} {value:<35} {description}"
+    list_tpl = u"{name:<40} {value:<35} {description}"
     terminal_width, _ = click.get_terminal_size()
 
     click.echo(
-        list_tpl.format(
-            name=click.style("Name", fg="cyan"),
-            value=(click.style("Value", fg="green") + click.style(
-                " [Default]", fg="yellow")),
-            description="Description"))
+        list_tpl.format(name=click.style("Name", fg="cyan"),
+                        value=(click.style("Value", fg="green") +
+                               click.style(" [Default]", fg="yellow")),
+                        description="Description"))
     click.echo("-" * terminal_width)
 
     for _name, _data in sorted(app.DEFAULT_SETTINGS.items()):
@@ -42,7 +42,8 @@ def settings_get(name):
             continue
         _value = app.get_setting(_name)
 
-        _value_str = str(_value)
+        _value_str = (str(_value)
+                      if not isinstance(_value, string_types) else _value)
         if isinstance(_value, bool):
             _value_str = "Yes" if _value else "No"
         _value_str = click.style(_value_str, fg="green")
@@ -56,10 +57,9 @@ def settings_get(name):
             _value_str += click.style(" ", fg="yellow")
 
         click.echo(
-            list_tpl.format(
-                name=click.style(_name, fg="cyan"),
-                value=_value_str,
-                description=_data['description']))
+            list_tpl.format(name=click.style(_name, fg="cyan"),
+                            value=_value_str,
+                            description=_data['description']))
 
 
 @cli.command("set", short_help="Set new value for the setting")

@@ -14,7 +14,6 @@
 
 import atexit
 import platform
-import Queue
 import re
 import sys
 import threading
@@ -28,6 +27,14 @@ import click
 import requests
 
 from platformio import __version__, app, exception, util
+from platformio.commands import PlatformioCLI
+from platformio.compat import string_types
+from platformio.proc import is_ci, is_container
+
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 
 
 class TelemetryBase(object):
@@ -78,12 +85,12 @@ class MeasurementProtocol(TelemetryBase):
     def __getitem__(self, name):
         if name in self.PARAMS_MAP:
             name = self.PARAMS_MAP[name]
-        return TelemetryBase.__getitem__(self, name)
+        return super(MeasurementProtocol, self).__getitem__(name)
 
     def __setitem__(self, name, value):
         if name in self.PARAMS_MAP:
             name = self.PARAMS_MAP[name]
-        TelemetryBase.__setitem__(self, name, value)
+        super(MeasurementProtocol, self).__setitem__(name, value)
 
     def _prefill_appinfo(self):
         self['av'] = __version__
@@ -117,7 +124,7 @@ class MeasurementProtocol(TelemetryBase):
                                         platform.platform())
         # self['cd3'] = " ".join(_filter_args(sys.argv[1:]))
         self['cd4'] = 1 if (not util.is_ci() and
-                            (caller_id or not util.is_container())) else 0
+                            (caller_id or not is_container())) else 0
         if caller_id:
             self['cd5'] = caller_id.lower()
 
@@ -129,12 +136,15 @@ class MeasurementProtocol(TelemetryBase):
                     return _arg
             return None
 
-        if not app.get_session_var("command_ctx"):
-            return
-        ctx_args = app.get_session_var("command_ctx").args
-        args = [str(s).lower() for s in ctx_args if not str(s).startswith("-")]
+        args = []
+        for arg in PlatformioCLI.leftover_args:
+            if not isinstance(arg, string_types):
+                arg = str(arg)
+            if not arg.startswith("-"):
+                args.append(arg.lower())
         if not args:
             return
+
         cmd_path = args[:1]
         if args[0] in ("platform", "platforms", "serialports", "device",
                        "settings", "account"):
@@ -182,7 +192,7 @@ class MPDataPusher(object):
     MAX_WORKERS = 5
 
     def __init__(self):
-        self._queue = Queue.LifoQueue()
+        self._queue = queue.LifoQueue()
         self._failedque = deque()
         self._http_session = requests.Session()
         self._http_offline = False
@@ -207,7 +217,7 @@ class MPDataPusher(object):
         try:
             while True:
                 items.append(self._queue.get_nowait())
-        except Queue.Empty:
+        except queue.Empty:
             pass
         return items
 
@@ -268,7 +278,7 @@ def on_command():
     mp = MeasurementProtocol()
     mp.send("screenview")
 
-    if util.is_ci():
+    if is_ci():
         measure_ci()
 
 
@@ -304,12 +314,15 @@ def measure_ci():
 
 
 def on_run_environment(options, targets):
-    opts = [
-        "%s=%s" % (opt, value.replace("\n", ", ") if "\n" in value else value)
-        for opt, value in sorted(options.items())
-    ]
+    non_sensative_values = ["board", "platform", "framework"]
+    safe_options = []
+    for key, value in sorted(options.items()):
+        if key in non_sensative_values:
+            safe_options.append("%s=%s" % (key, value))
+        else:
+            safe_options.append(key)
     targets = [t.title() for t in targets or ["run"]]
-    on_event("Env", " ".join(targets), "&".join(opts))
+    on_event("Env", " ".join(targets), "&".join(safe_options))
 
 
 def on_event(category, action, label=None, value=None, screen_name=None):
@@ -329,21 +342,17 @@ def on_exception(e):
 
     def _cleanup_description(text):
         text = text.replace("Traceback (most recent call last):", "")
-        text = re.sub(
-            r'File "([^"]+)"',
-            lambda m: join(*m.group(1).split(sep)[-2:]),
-            text,
-            flags=re.M)
+        text = re.sub(r'File "([^"]+)"',
+                      lambda m: join(*m.group(1).split(sep)[-2:]),
+                      text,
+                      flags=re.M)
         text = re.sub(r"\s+", " ", text, flags=re.M)
         return text.strip()
 
     skip_conditions = [
-        isinstance(e, cls)
-        for cls in (IOError, exception.ReturnErrorCode,
-                    exception.AbortedByUser, exception.NotGlobalLibDir,
-                    exception.InternetIsOffline,
-                    exception.NotPlatformIOProject,
-                    exception.UserSideException)
+        isinstance(e, cls) for cls in (IOError, exception.ReturnErrorCode,
+                                       exception.UserSideException,
+                                       exception.PlatformIOProjectException)
     ]
     try:
         skip_conditions.append("[API] Account: " in str(e))
@@ -388,7 +397,7 @@ def backup_reports(items):
 
     for params in items:
         # skip static options
-        for key in params.keys():
+        for key in list(params.keys()):
             if key in ("v", "tid", "cid", "cd1", "cd2", "sr", "an"):
                 del params[key]
 

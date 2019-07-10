@@ -1,0 +1,117 @@
+# Copyright (c) 2014-present PlatformIO <contact@platformio.org>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from time import time
+
+import click
+
+from platformio import exception, telemetry
+from platformio.commands.platform import \
+    platform_install as cmd_platform_install
+from platformio.commands.run.helpers import print_header
+from platformio.commands.test.processor import (CTX_META_TEST_IS_RUNNING,
+                                                CTX_META_TEST_RUNNING_NAME)
+from platformio.managers.platform import PlatformFactory
+
+# pylint: disable=too-many-instance-attributes
+
+
+class EnvironmentProcessor(object):
+
+    DEFAULT_PRINT_OPTIONS = ("platform", "framework", "board")
+
+    def __init__(  # pylint: disable=too-many-arguments
+            self, cmd_ctx, name, config, targets, upload_port, silent, verbose,
+            jobs):
+        self.cmd_ctx = cmd_ctx
+        self.name = name
+        self.config = config
+        self.targets = [str(t) for t in targets]
+        self.upload_port = upload_port
+        self.silent = silent
+        self.verbose = verbose
+        self.jobs = jobs
+        self.options = config.items(env=name, as_dict=True)
+
+    def process(self):
+        terminal_width, _ = click.get_terminal_size()
+        start_time = time()
+        env_dump = []
+
+        for k, v in self.options.items():
+            if self.verbose or k in self.DEFAULT_PRINT_OPTIONS:
+                env_dump.append(
+                    "%s: %s" % (k, ", ".join(v) if isinstance(v, list) else v))
+
+        if not self.silent:
+            click.echo("Processing %s (%s)" % (click.style(
+                self.name, fg="cyan", bold=True), "; ".join(env_dump)))
+            click.secho("-" * terminal_width, bold=True)
+
+        result = self._run_platform()
+        is_error = result['returncode'] != 0
+
+        if self.silent and not is_error:
+            return True
+
+        if is_error or CTX_META_TEST_IS_RUNNING not in self.cmd_ctx.meta:
+            print_header(
+                "[%s] Took %.2f seconds" %
+                ((click.style("ERROR", fg="red", bold=True) if
+                  is_error else click.style("SUCCESS", fg="green", bold=True)),
+                 time() - start_time),
+                is_error=is_error)
+
+        return not is_error
+
+    def get_build_variables(self):
+        variables = {"pioenv": self.name, "project_config": self.config.path}
+
+        if CTX_META_TEST_RUNNING_NAME in self.cmd_ctx.meta:
+            variables['piotest_running_name'] = self.cmd_ctx.meta[
+                CTX_META_TEST_RUNNING_NAME]
+
+        if self.upload_port:
+            # override upload port with a custom from CLI
+            variables['upload_port'] = self.upload_port
+        return variables
+
+    def get_build_targets(self):
+        if self.targets:
+            return [t for t in self.targets]
+        return self.config.get("env:" + self.name, "targets", [])
+
+    def _run_platform(self):
+        if "platform" not in self.options:
+            raise exception.UndefinedEnvPlatform(self.name)
+
+        build_vars = self.get_build_variables()
+        build_targets = self.get_build_targets()
+
+        telemetry.on_run_environment(self.options, build_targets)
+
+        # skip monitor target, we call it above
+        if "monitor" in build_targets:
+            build_targets.remove("monitor")
+
+        try:
+            p = PlatformFactory.newPlatform(self.options['platform'])
+        except exception.UnknownPlatform:
+            self.cmd_ctx.invoke(cmd_platform_install,
+                                platforms=[self.options['platform']],
+                                skip_default_package=True)
+            p = PlatformFactory.newPlatform(self.options['platform'])
+
+        return p.run(build_vars, build_targets, self.silent, self.verbose,
+                     self.jobs)

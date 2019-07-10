@@ -21,15 +21,18 @@ from time import sleep
 import requests
 
 from platformio import __version__, exception, util
+from platformio.compat import PY2, WINDOWS
 from platformio.managers.package import PackageManager
+from platformio.proc import copy_pythonpath_to_osenv, get_pythonexe_path
+from platformio.project.helpers import get_project_packages_dir
 
 CORE_PACKAGES = {
-    "contrib-piohome": "^2.0.1",
+    "contrib-piohome": "^2.1.0",
     "contrib-pysite":
     "~2.%d%d.190418" % (sys.version_info[0], sys.version_info[1]),
-    "tool-pioplus": "^2.1.4",
+    "tool-pioplus": "^2.5.2",
     "tool-unity": "~1.20403.0",
-    "tool-scons": "~2.20501.7"
+    "tool-scons": "~2.20501.7" if PY2 else "~3.30005.0"
 }
 
 PIOPLUS_AUTO_UPDATES_MAX = 100
@@ -40,12 +43,11 @@ PIOPLUS_AUTO_UPDATES_MAX = 100
 class CorePackageManager(PackageManager):
 
     def __init__(self):
-        super(CorePackageManager, self).__init__(
-            join(util.get_home_dir(), "packages"), [
-                "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-                "http%s://dl.platformio.org/packages/manifest.json" %
-                ("" if sys.version_info < (2, 7, 9) else "s")
-            ])
+        super(CorePackageManager, self).__init__(get_project_packages_dir(), [
+            "https://dl.bintray.com/platformio/dl-packages/manifest.json",
+            "http%s://dl.platformio.org/packages/manifest.json" %
+            ("" if sys.version_info < (2, 7, 9) else "s")
+        ])
 
     def install(  # pylint: disable=keyword-arg-before-vararg
             self,
@@ -99,7 +101,7 @@ def update_core_packages(only_check=False, silent=False):
         if not silent or pm.outdated(pkg_dir, requirements):
             if name == "tool-pioplus" and not only_check:
                 shutdown_piohome_servers()
-                if "windows" in util.get_systype():
+                if WINDOWS:
                     sleep(1)
             pm.update(name, requirements, only_check=only_check)
     return True
@@ -109,28 +111,38 @@ def shutdown_piohome_servers():
     port = 8010
     while port < 8050:
         try:
-            requests.get(
-                "http://127.0.0.1:%d?__shutdown__=1" % port, timeout=0.01)
+            requests.get("http://127.0.0.1:%d?__shutdown__=1" % port,
+                         timeout=0.01)
         except:  # pylint: disable=bare-except
             pass
         port += 1
 
 
+def inject_contrib_pysite():
+    from site import addsitedir
+    contrib_pysite_dir = get_core_package_dir("contrib-pysite")
+    if contrib_pysite_dir in sys.path:
+        return
+    addsitedir(contrib_pysite_dir)
+    sys.path.insert(0, contrib_pysite_dir)
+
+
 def pioplus_call(args, **kwargs):
-    if "windows" in util.get_systype() and sys.version_info < (2, 7, 6):
+    if WINDOWS and sys.version_info < (2, 7, 6):
         raise exception.PlatformioException(
             "PlatformIO Core Plus v%s does not run under Python version %s.\n"
             "Minimum supported version is 2.7.6, please upgrade Python.\n"
             "Python 3 is not yet supported.\n" % (__version__, sys.version))
 
     pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
-    pythonexe_path = util.get_pythonexe_path()
+    pythonexe_path = get_pythonexe_path()
     os.environ['PYTHONEXEPATH'] = pythonexe_path
     os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("contrib-pysite")
     os.environ['PIOCOREPYSITEDIR'] = dirname(util.get_source_dir() or "")
-    os.environ['PATH'] = (os.pathsep).join(
-        [dirname(pythonexe_path), os.environ['PATH']])
-    util.copy_pythonpath_to_osenv()
+    if dirname(pythonexe_path) not in os.environ['PATH'].split(os.pathsep):
+        os.environ['PATH'] = (os.pathsep).join(
+            [dirname(pythonexe_path), os.environ['PATH']])
+    copy_pythonpath_to_osenv()
     code = subprocess.call([pioplus_path] + args, **kwargs)
 
     # handle remote update request

@@ -16,9 +16,10 @@ import json
 from os import getcwd, makedirs
 from os.path import getsize, isdir, isfile, join
 
-from platformio import exception, util
+from platformio import exception
 from platformio.commands.boards import cli as cmd_boards
 from platformio.commands.init import cli as cmd_init
+from platformio.project.config import ProjectConfig
 
 
 def validate_pioproject(pioproject_dir):
@@ -50,15 +51,16 @@ def test_init_duplicated_boards(clirunner, validate_cliresult, tmpdir):
             result = clirunner.invoke(cmd_init, ["-b", "uno", "-b", "uno"])
             validate_cliresult(result)
             validate_pioproject(str(tmpdir))
-        config = util.load_project_config()
+        config = ProjectConfig(join(getcwd(), "platformio.ini"))
+        config.validate()
         assert set(config.sections()) == set(["env:uno"])
 
 
 def test_init_ide_without_board(clirunner, tmpdir):
     with tmpdir.as_cwd():
         result = clirunner.invoke(cmd_init, ["--ide", "atom"])
-        assert result.exit_code == -1
-        assert isinstance(result.exception, exception.BoardNotDefined)
+        assert result.exit_code != 0
+        assert isinstance(result.exception, exception.ProjectEnvsNotAvailable)
 
 
 def test_init_ide_atom(clirunner, validate_cliresult, tmpdir):
@@ -105,14 +107,15 @@ def test_init_special_board(clirunner, validate_cliresult):
         validate_cliresult(result)
         boards = json.loads(result.output)
 
-        config = util.load_project_config()
-        expected_result = [("platform", str(boards[0]['platform'])),
-                           ("framework",
-                            str(boards[0]['frameworks'][0])), ("board", "uno")]
+        config = ProjectConfig(join(getcwd(), "platformio.ini"))
+        config.validate()
 
+        expected_result = dict(platform=str(boards[0]['platform']),
+                               board="uno",
+                               framework=[str(boards[0]['frameworks'][0])])
         assert config.has_section("env:uno")
-        assert not set(expected_result).symmetric_difference(
-            set(config.items("env:uno")))
+        assert sorted(config.items(env="uno", as_dict=True).items()) == sorted(
+            expected_result.items())
 
 
 def test_init_enable_auto_uploading(clirunner, validate_cliresult):
@@ -121,12 +124,15 @@ def test_init_enable_auto_uploading(clirunner, validate_cliresult):
             cmd_init, ["-b", "uno", "--project-option", "targets=upload"])
         validate_cliresult(result)
         validate_pioproject(getcwd())
-        config = util.load_project_config()
-        expected_result = [("platform", "atmelavr"), ("framework", "arduino"),
-                           ("board", "uno"), ("targets", "upload")]
+        config = ProjectConfig(join(getcwd(), "platformio.ini"))
+        config.validate()
+        expected_result = dict(targets=["upload"],
+                               platform="atmelavr",
+                               board="uno",
+                               framework=["arduino"])
         assert config.has_section("env:uno")
-        assert not set(expected_result).symmetric_difference(
-            set(config.items("env:uno")))
+        assert sorted(config.items(env="uno", as_dict=True).items()) == sorted(
+            expected_result.items())
 
 
 def test_init_custom_framework(clirunner, validate_cliresult):
@@ -135,12 +141,15 @@ def test_init_custom_framework(clirunner, validate_cliresult):
             cmd_init, ["-b", "teensy31", "--project-option", "framework=mbed"])
         validate_cliresult(result)
         validate_pioproject(getcwd())
-        config = util.load_project_config()
-        expected_result = [("platform", "teensy"), ("framework", "mbed"),
-                           ("board", "teensy31")]
+        config = ProjectConfig(join(getcwd(), "platformio.ini"))
+        config.validate()
+        expected_result = dict(platform="teensy",
+                               board="teensy31",
+                               framework=["mbed"])
         assert config.has_section("env:teensy31")
-        assert not set(expected_result).symmetric_difference(
-            set(config.items("env:teensy31")))
+        assert sorted(config.items(env="teensy31",
+                                   as_dict=True).items()) == sorted(
+                                       expected_result.items())
 
 
 def test_init_incorrect_board(clirunner):

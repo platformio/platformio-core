@@ -14,10 +14,8 @@
 
 import codecs
 import hashlib
-import json
 import os
 import uuid
-from copy import deepcopy
 from os import environ, getenv, listdir, remove
 from os.path import abspath, dirname, expanduser, isdir, isfile, join
 from time import time
@@ -25,6 +23,24 @@ from time import time
 import requests
 
 from platformio import exception, lockfile, util
+from platformio.compat import (WINDOWS, dump_json_to_unicode,
+                               hashlib_encode_data)
+from platformio.proc import is_ci
+from platformio.project.helpers import (get_project_cache_dir,
+                                        get_project_core_dir)
+
+
+def get_default_projects_dir():
+    docs_dir = join(expanduser("~"), "Documents")
+    try:
+        assert WINDOWS
+        import ctypes.wintypes
+        buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+        ctypes.windll.shell32.SHGetFolderPathW(None, 5, None, 0, buf)
+        docs_dir = buf.value
+    except:  # pylint: disable=bare-except
+        pass
+    return join(docs_dir, "PlatformIO", "Projects")
 
 
 def projects_dir_validate(projects_dir):
@@ -74,7 +90,7 @@ DEFAULT_SETTINGS = {
     },
     "projects_dir": {
         "description": "Default location for PlatformIO projects (PIO Home)",
-        "value": join(expanduser("~"), "Documents", "PlatformIO", "Projects"),
+        "value": get_default_projects_dir(),
         "validator": projects_dir_validate
     },
 }
@@ -88,28 +104,29 @@ class State(object):
         self.path = path
         self.lock = lock
         if not self.path:
-            self.path = join(util.get_home_dir(), "appstate.json")
-        self._state = {}
-        self._prev_state = {}
+            self.path = join(get_project_core_dir(), "appstate.json")
+        self._storage = {}
         self._lockfile = None
+        self.modified = False
 
     def __enter__(self):
         try:
             self._lock_state_file()
             if isfile(self.path):
-                self._state = util.load_json(self.path)
-        except exception.PlatformioException:
-            self._state = {}
-        self._prev_state = deepcopy(self._state)
-        return self._state
+                self._storage = util.load_json(self.path)
+            assert isinstance(self._storage, dict)
+        except (AssertionError, ValueError, UnicodeDecodeError,
+                exception.InvalidJSONFile):
+            self._storage = {}
+        return self
 
     def __exit__(self, type_, value, traceback):
-        if self._prev_state != self._state:
+        if self.modified:
             try:
-                with codecs.open(self.path, "w", encoding="utf8") as fp:
-                    json.dump(self._state, fp)
+                with open(self.path, "w") as fp:
+                    fp.write(dump_json_to_unicode(self._storage))
             except IOError:
-                raise exception.HomeDirPermissionsError(util.get_home_dir())
+                raise exception.HomeDirPermissionsError(get_project_core_dir())
         self._unlock_state_file()
 
     def _lock_state_file(self):
@@ -128,6 +145,32 @@ class State(object):
     def __del__(self):
         self._unlock_state_file()
 
+    # Dictionary Proxy
+
+    def as_dict(self):
+        return self._storage
+
+    def get(self, key, default=True):
+        return self._storage.get(key, default)
+
+    def update(self, *args, **kwargs):
+        self.modified = True
+        return self._storage.update(*args, **kwargs)
+
+    def __getitem__(self, key):
+        return self._storage[key]
+
+    def __setitem__(self, key, value):
+        self.modified = True
+        self._storage[key] = value
+
+    def __delitem__(self, key):
+        self.modified = True
+        del self._storage[key]
+
+    def __contains__(self, item):
+        return item in self._storage
+
 
 class ContentCache(object):
 
@@ -136,7 +179,7 @@ class ContentCache(object):
         self._db_path = None
         self._lockfile = None
 
-        self.cache_dir = cache_dir or util.get_cache_dir()
+        self.cache_dir = cache_dir or get_project_cache_dir()
         self._db_path = join(self.cache_dir, "db.data")
 
     def __enter__(self):
@@ -163,14 +206,16 @@ class ContentCache(object):
         return True
 
     def get_cache_path(self, key):
+        key = str(key)
         assert len(key) > 3
         return join(self.cache_dir, key[-2:], key)
 
     @staticmethod
     def key_from_args(*args):
         h = hashlib.md5()
-        for data in args:
-            h.update(str(data))
+        for arg in args:
+            if arg:
+                h.update(hashlib_encode_data(arg))
         return h.hexdigest()
 
     def get(self, key):
@@ -191,7 +236,7 @@ class ContentCache(object):
         if not isdir(self.cache_dir):
             os.makedirs(self.cache_dir)
         tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
-        assert valid.endswith(tuple(tdmap.keys()))
+        assert valid.endswith(tuple(tdmap))
         expire_time = int(time() + tdmap[valid[-1]] * int(valid[:-1]))
 
         if not self._lock_dbindex():
@@ -230,10 +275,13 @@ class ContentCache(object):
                 if "=" not in line:
                     continue
                 expire, path = line.split("=")
-                if time() < int(expire) and isfile(path) and \
-                        path not in paths_for_delete:
-                    newlines.append(line)
-                    continue
+                try:
+                    if time() < int(expire) and isfile(path) and \
+                            path not in paths_for_delete:
+                        newlines.append(line)
+                        continue
+                except ValueError:
+                    pass
                 found = True
                 if isfile(path):
                     try:
@@ -280,19 +328,20 @@ def sanitize_setting(name, value):
 
 
 def get_state_item(name, default=None):
-    with State() as data:
-        return data.get(name, default)
+    with State() as state:
+        return state.get(name, default)
 
 
 def set_state_item(name, value):
-    with State(lock=True) as data:
-        data[name] = value
+    with State(lock=True) as state:
+        state[name] = value
+        state.modified = True
 
 
 def delete_state_item(name):
-    with State(lock=True) as data:
-        if name in data:
-            del data[name]
+    with State(lock=True) as state:
+        if name in state:
+            del state[name]
 
 
 def get_setting(name):
@@ -300,24 +349,25 @@ def get_setting(name):
     if _env_name in environ:
         return sanitize_setting(name, getenv(_env_name))
 
-    with State() as data:
-        if "settings" in data and name in data['settings']:
-            return data['settings'][name]
+    with State() as state:
+        if "settings" in state and name in state['settings']:
+            return state['settings'][name]
 
     return DEFAULT_SETTINGS[name]['value']
 
 
 def set_setting(name, value):
-    with State(lock=True) as data:
-        if "settings" not in data:
-            data['settings'] = {}
-        data['settings'][name] = sanitize_setting(name, value)
+    with State(lock=True) as state:
+        if "settings" not in state:
+            state['settings'] = {}
+        state['settings'][name] = sanitize_setting(name, value)
+        state.modified = True
 
 
 def reset_settings():
-    with State(lock=True) as data:
-        if "settings" in data:
-            del data['settings']
+    with State(lock=True) as state:
+        if "settings" in state:
+            del state['settings']
 
 
 def get_session_var(name, default=None):
@@ -332,28 +382,29 @@ def set_session_var(name, value):
 def is_disabled_progressbar():
     return any([
         get_session_var("force_option"),
-        util.is_ci(),
+        is_ci(),
         getenv("PLATFORMIO_DISABLE_PROGRESSBAR") == "true"
     ])
 
 
 def get_cid():
     cid = get_state_item("cid")
-    if not cid:
-        _uid = None
-        if getenv("C9_UID"):
-            _uid = getenv("C9_UID")
-        elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
-            try:
-                _uid = requests.get("{api}/user?token={token}".format(
-                    api=getenv("CHE_API", getenv("CHE_API_ENDPOINT")),
-                    token=getenv("USER_TOKEN"))).json().get("id")
-            except:  # pylint: disable=bare-except
-                pass
-        cid = str(
-            uuid.UUID(
-                bytes=hashlib.md5(str(
-                    _uid if _uid else uuid.getnode())).digest()))
-        if "windows" in util.get_systype() or os.getuid() > 0:
-            set_state_item("cid", cid)
+    if cid:
+        return cid
+    uid = None
+    if getenv("C9_UID"):
+        uid = getenv("C9_UID")
+    elif getenv("CHE_API", getenv("CHE_API_ENDPOINT")):
+        try:
+            uid = requests.get("{api}/user?token={token}".format(
+                api=getenv("CHE_API", getenv("CHE_API_ENDPOINT")),
+                token=getenv("USER_TOKEN"))).json().get("id")
+        except:  # pylint: disable=bare-except
+            pass
+    if not uid:
+        uid = uuid.getnode()
+    cid = uuid.UUID(bytes=hashlib.md5(hashlib_encode_data(uid)).digest())
+    cid = str(cid)
+    if WINDOWS or os.getuid() > 0:  # yapf: disable pylint: disable=no-member
+        set_state_item("cid", cid)
     return cid

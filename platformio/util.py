@@ -18,94 +18,21 @@ import platform
 import re
 import socket
 import stat
-import subprocess
 import sys
 import time
+from contextlib import contextmanager
 from functools import wraps
 from glob import glob
-from hashlib import sha1
-from os.path import (abspath, basename, dirname, expanduser, isdir, isfile,
-                     join, normpath, splitdrive)
+from os.path import abspath, basename, dirname, isfile, join
 from shutil import rmtree
-from threading import Thread
 
 import click
 import requests
 
 from platformio import __apiurl__, __version__, exception
-
-# pylint: disable=wrong-import-order, too-many-ancestors
-
-try:
-    import configparser as ConfigParser
-except ImportError:
-    import ConfigParser as ConfigParser
-
-
-class ProjectConfig(ConfigParser.ConfigParser):
-
-    VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
-
-    def items(self, section, **_):  # pylint: disable=arguments-differ
-        items = []
-        for option in ConfigParser.ConfigParser.options(self, section):
-            items.append((option, self.get(section, option)))
-        return items
-
-    def get(self, section, option, **kwargs):
-        try:
-            value = ConfigParser.ConfigParser.get(self, section, option,
-                                                  **kwargs)
-        except ConfigParser.Error as e:
-            raise exception.InvalidProjectConf(str(e))
-        if "${" not in value or "}" not in value:
-            return value
-        return self.VARTPL_RE.sub(self._re_sub_handler, value)
-
-    def _re_sub_handler(self, match):
-        section, option = match.group(1), match.group(2)
-        if section in ("env", "sysenv") and not self.has_section(section):
-            if section == "env":
-                click.secho(
-                    "Warning! Access to system environment variable via "
-                    "`${{env.{0}}}` is deprecated. Please use "
-                    "`${{sysenv.{0}}}` instead".format(option),
-                    fg="yellow")
-            return os.getenv(option)
-        return self.get(section, option)
-
-
-class AsyncPipe(Thread):
-
-    def __init__(self, outcallback=None):
-        super(AsyncPipe, self).__init__()
-        self.outcallback = outcallback
-
-        self._fd_read, self._fd_write = os.pipe()
-        self._pipe_reader = os.fdopen(self._fd_read)
-        self._buffer = []
-
-        self.start()
-
-    def get_buffer(self):
-        return self._buffer
-
-    def fileno(self):
-        return self._fd_write
-
-    def run(self):
-        for line in iter(self._pipe_reader.readline, ""):
-            line = line.strip()
-            self._buffer.append(line)
-            if self.outcallback:
-                self.outcallback(line)
-            else:
-                print(line)
-        self._pipe_reader.close()
-
-    def close(self):
-        os.close(self._fd_write)
-        self.join()
+from platformio.commands import PlatformioCLI
+from platformio.compat import PY2, WINDOWS, get_file_contents
+from platformio.proc import exec_command, is_ci
 
 
 class cd(object):
@@ -124,7 +51,12 @@ class cd(object):
 class memoized(object):
 
     def __init__(self, expire=0):
-        self.expire = expire / 1000  # milliseconds
+        expire = str(expire)
+        if expire.isdigit():
+            expire = "%ss" % int((int(expire) / 1000))
+        tdmap = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+        assert expire.endswith(tuple(tdmap))
+        self.expire = int(tdmap[expire[-1]] * int(expire[:-1]))
         self.cache = {}
 
     def __call__(self, func):
@@ -142,7 +74,7 @@ class memoized(object):
         return wrapper
 
     def _reset(self):
-        self.cache = {}
+        self.cache.clear()
 
 
 class throttle(object):
@@ -176,8 +108,15 @@ def singleton(cls):
     return get_instance
 
 
-def path_to_unicode(path):
-    return path.decode(sys.getfilesystemencoding()).encode("utf-8")
+@contextmanager
+def capture_std_streams(stdout, stderr=None):
+    _stdout = sys.stdout
+    _stderr = sys.stderr
+    sys.stdout = stdout
+    sys.stderr = stderr or stdout
+    yield
+    sys.stdout = _stdout
+    sys.stderr = _stderr
 
 
 def load_json(file_path):
@@ -202,63 +141,6 @@ def pioversion_to_intstr():
     return [int(i) for i in vermatch.group(1).split(".")[:3]]
 
 
-def get_project_optional_dir(name, default=None):
-    paths = None
-    var_name = "PLATFORMIO_%s" % name.upper()
-    if var_name in os.environ:
-        paths = os.getenv(var_name)
-    else:
-        try:
-            config = load_project_config()
-            if (config.has_section("platformio")
-                    and config.has_option("platformio", name)):
-                paths = config.get("platformio", name)
-        except exception.NotPlatformIOProject:
-            pass
-
-    if not paths:
-        return default
-
-    items = []
-    for item in paths.split(", "):
-        if item.startswith("~"):
-            item = expanduser(item)
-        items.append(abspath(item))
-    paths = ", ".join(items)
-
-    while "$PROJECT_HASH" in paths:
-        paths = paths.replace("$PROJECT_HASH",
-                              sha1(get_project_dir()).hexdigest()[:10])
-
-    return paths
-
-
-def get_home_dir():
-    home_dir = get_project_optional_dir("home_dir",
-                                        join(expanduser("~"), ".platformio"))
-    win_home_dir = None
-    if "windows" in get_systype():
-        win_home_dir = splitdrive(home_dir)[0] + "\\.platformio"
-        if isdir(win_home_dir):
-            home_dir = win_home_dir
-
-    if not isdir(home_dir):
-        try:
-            os.makedirs(home_dir)
-        except:  # pylint: disable=bare-except
-            if win_home_dir:
-                os.makedirs(win_home_dir)
-                home_dir = win_home_dir
-
-    assert isdir(home_dir)
-    return home_dir
-
-
-def get_cache_dir():
-    return get_project_optional_dir("cache_dir", join(get_home_dir(),
-                                                      ".cache"))
-
-
 def get_source_dir():
     curpath = abspath(__file__)
     if not isfile(curpath):
@@ -269,172 +151,8 @@ def get_source_dir():
     return dirname(curpath)
 
 
-def get_project_dir():
-    return os.getcwd()
-
-
-def find_project_dir_above(path):
-    if isfile(path):
-        path = dirname(path)
-    if is_platformio_project(path):
-        return path
-    if isdir(dirname(path)):
-        return find_project_dir_above(dirname(path))
-    return None
-
-
-def is_platformio_project(project_dir=None):
-    if not project_dir:
-        project_dir = get_project_dir()
-    return isfile(join(project_dir, "platformio.ini"))
-
-
-def get_projectlib_dir():
-    return get_project_optional_dir("lib_dir", join(get_project_dir(), "lib"))
-
-
-def get_projectlibdeps_dir():
-    return get_project_optional_dir("libdeps_dir",
-                                    join(get_project_dir(), ".piolibdeps"))
-
-
-def get_projectsrc_dir():
-    return get_project_optional_dir("src_dir", join(get_project_dir(), "src"))
-
-
-def get_projectinclude_dir():
-    return get_project_optional_dir("include_dir",
-                                    join(get_project_dir(), "include"))
-
-
-def get_projecttest_dir():
-    return get_project_optional_dir("test_dir", join(get_project_dir(),
-                                                     "test"))
-
-
-def get_projectboards_dir():
-    return get_project_optional_dir("boards_dir",
-                                    join(get_project_dir(), "boards"))
-
-
-def get_projectbuild_dir(force=False):
-    path = get_project_optional_dir("build_dir",
-                                    join(get_project_dir(), ".pioenvs"))
-    try:
-        if not isdir(path):
-            os.makedirs(path)
-        dontmod_path = join(path, "do-not-modify-files-here.url")
-        if not isfile(dontmod_path):
-            with open(dontmod_path, "w") as fp:
-                fp.write("""
-[InternetShortcut]
-URL=https://docs.platformio.org/page/projectconf/section_platformio.html#build-dir
-""")
-    except Exception as e:  # pylint: disable=broad-except
-        if not force:
-            raise Exception(e)
-    return path
-
-
-# compatibility with PIO Core+
-get_projectpioenvs_dir = get_projectbuild_dir
-
-
-def get_projectdata_dir():
-    return get_project_optional_dir("data_dir", join(get_project_dir(),
-                                                     "data"))
-
-
-def load_project_config(path=None):
-    if not path or isdir(path):
-        path = join(path or get_project_dir(), "platformio.ini")
-    if not isfile(path):
-        raise exception.NotPlatformIOProject(
-            dirname(path) if path.endswith("platformio.ini") else path)
-    cp = ProjectConfig()
-    try:
-        cp.read(path)
-    except ConfigParser.Error as e:
-        raise exception.InvalidProjectConf(str(e))
-    return cp
-
-
-def parse_conf_multi_values(items):
-    result = []
-    if not items:
-        return result
-    inline_comment_re = re.compile(r"\s+;.*$")
-    for item in items.split("\n" if "\n" in items else ", "):
-        item = item.strip()
-        # comment
-        if not item or item.startswith((";", "#")):
-            continue
-        if ";" in item:
-            item = inline_comment_re.sub("", item).strip()
-        result.append(item)
-    return result
-
-
 def change_filemtime(path, mtime):
     os.utime(path, (mtime, mtime))
-
-
-def is_ci():
-    return os.getenv("CI", "").lower() == "true"
-
-
-def is_container():
-    if not isfile("/proc/1/cgroup"):
-        return False
-    with open("/proc/1/cgroup") as fp:
-        for line in fp:
-            line = line.strip()
-            if ":" in line and not line.endswith(":/"):
-                return True
-    return False
-
-
-def exec_command(*args, **kwargs):
-    result = {"out": None, "err": None, "returncode": None}
-
-    default = dict(stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    default.update(kwargs)
-    kwargs = default
-
-    p = subprocess.Popen(*args, **kwargs)
-    try:
-        result['out'], result['err'] = p.communicate()
-        result['returncode'] = p.returncode
-    except KeyboardInterrupt:
-        raise exception.AbortedByUser()
-    finally:
-        for s in ("stdout", "stderr"):
-            if isinstance(kwargs[s], AsyncPipe):
-                kwargs[s].close()
-
-    for s in ("stdout", "stderr"):
-        if isinstance(kwargs[s], AsyncPipe):
-            result[s[3:]] = "\n".join(kwargs[s].get_buffer())
-
-    for k, v in result.items():
-        if v and isinstance(v, basestring):
-            result[k].strip()
-
-    return result
-
-
-def copy_pythonpath_to_osenv():
-    _PYTHONPATH = []
-    if "PYTHONPATH" in os.environ:
-        _PYTHONPATH = os.environ.get("PYTHONPATH").split(os.pathsep)
-    for p in os.sys.path:
-        conditions = [p not in _PYTHONPATH]
-        if "windows" not in get_systype():
-            conditions.append(
-                isdir(join(p, "click")) or isdir(join(p, "platformio")))
-        if all(conditions):
-            _PYTHONPATH.append(p)
-    os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
 
 
 def get_serial_ports(filter_hwid=False):
@@ -447,8 +165,9 @@ def get_serial_ports(filter_hwid=False):
     for p, d, h in comports():
         if not p:
             continue
-        if "windows" in get_systype():
+        if WINDOWS and PY2:
             try:
+                # pylint: disable=undefined-variable
                 d = unicode(d, errors="ignore")
             except TypeError:
                 pass
@@ -471,11 +190,11 @@ get_serialports = get_serial_ports
 
 def get_logical_devices():
     items = []
-    if "windows" in get_systype():
+    if WINDOWS:
         try:
             result = exec_command(
-                ["wmic", "logicaldisk", "get", "name,VolumeName"]).get(
-                    "out", "")
+                ["wmic", "logicaldisk", "get",
+                 "name,VolumeName"]).get("out", "")
             devicenamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
             for line in result.split("\n"):
                 match = devicenamere.match(line.strip())
@@ -493,17 +212,17 @@ def get_logical_devices():
         for device in re.findall(r"[A-Z]:\\", result):
             items.append({"path": device, "name": None})
         return items
-    else:
-        result = exec_command(["df"]).get("out")
-        devicenamere = re.compile(r"^/.+\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
-        for line in result.split("\n"):
-            match = devicenamere.match(line.strip())
-            if not match:
-                continue
-            items.append({
-                "path": match.group(1),
-                "name": basename(match.group(1))
-            })
+
+    result = exec_command(["df"]).get("out")
+    devicenamere = re.compile(r"^/.+\d+\%\s+([a-z\d\-_/]+)$", flags=re.I)
+    for line in result.split("\n"):
+        match = devicenamere.match(line.strip())
+        if not match:
+            continue
+        items.append({
+            "path": match.group(1),
+            "name": basename(match.group(1))
+        })
     return items
 
 
@@ -560,19 +279,31 @@ def get_mdns_services():
         time.sleep(3)
         for service in mdns.get_services():
             properties = None
-            try:
-                if service.properties:
-                    json.dumps(service.properties)
-                properties = service.properties
-            except UnicodeDecodeError:
-                pass
+            if service.properties:
+                try:
+                    properties = {
+                        k.decode("utf8"):
+                        v.decode("utf8") if isinstance(v, bytes) else v
+                        for k, v in service.properties.items()
+                    }
+                    json.dumps(properties)
+                except UnicodeDecodeError:
+                    properties = None
 
             items.append({
-                "type": service.type,
-                "name": service.name,
-                "ip": ".".join([str(ord(c)) for c in service.address]),
-                "port": service.port,
-                "properties": properties
+                "type":
+                service.type,
+                "name":
+                service.name,
+                "ip":
+                ".".join([
+                    str(c if isinstance(c, int) else ord(c))
+                    for c in service.address
+                ]),
+                "port":
+                service.port,
+                "properties":
+                properties
             })
     return items
 
@@ -582,7 +313,7 @@ def get_request_defheaders():
     return {"User-Agent": "PlatformIO/%s CI/%d %s" % data}
 
 
-@memoized(expire=10000)
+@memoized(expire="60s")
 def _api_request_session():
     return requests.Session()
 
@@ -595,7 +326,7 @@ def _get_api_result(
         auth=None):
     from platformio.app import get_setting
 
-    result = None
+    result = {}
     r = None
     verify_ssl = sys.version_info >= (2, 7, 9)
 
@@ -607,33 +338,30 @@ def _get_api_result(
 
     try:
         if data:
-            r = _api_request_session().post(
-                url,
-                params=params,
-                data=data,
-                headers=headers,
-                auth=auth,
-                verify=verify_ssl)
+            r = _api_request_session().post(url,
+                                            params=params,
+                                            data=data,
+                                            headers=headers,
+                                            auth=auth,
+                                            verify=verify_ssl)
         else:
-            r = _api_request_session().get(
-                url,
-                params=params,
-                headers=headers,
-                auth=auth,
-                verify=verify_ssl)
+            r = _api_request_session().get(url,
+                                           params=params,
+                                           headers=headers,
+                                           auth=auth,
+                                           verify=verify_ssl)
         result = r.json()
         r.raise_for_status()
         return r.text
     except requests.exceptions.HTTPError as e:
         if result and "message" in result:
             raise exception.APIRequestError(result['message'])
-        elif result and "errors" in result:
+        if result and "errors" in result:
             raise exception.APIRequestError(result['errors'][0]['title'])
-        else:
-            raise exception.APIRequestError(e)
+        raise exception.APIRequestError(e)
     except ValueError:
-        raise exception.APIRequestError(
-            "Invalid response: %s" % r.text.encode("utf-8"))
+        raise exception.APIRequestError("Invalid response: %s" %
+                                        r.text.encode("utf-8"))
     finally:
         if r:
             r.close()
@@ -664,9 +392,8 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
             return json.loads(result)
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout) as e:
-            from platformio.maintenance import in_silence
             total += 1
-            if not in_silence():
+            if not PlatformioCLI.in_silence():
                 click.secho(
                     "[API] ConnectionError: {0} (incremented retry: max={1}, "
                     "total={2})".format(e, max_retries, total),
@@ -684,18 +411,19 @@ PING_INTERNET_IPS = [
 ]
 
 
-@memoized(expire=5000)
+@memoized(expire="5s")
 def _internet_on():
     timeout = 2
     socket.setdefaulttimeout(timeout)
     for ip in PING_INTERNET_IPS:
         try:
             if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-                requests.get(
-                    "http://%s" % ip, allow_redirects=False, timeout=timeout)
+                requests.get("http://%s" % ip,
+                             allow_redirects=False,
+                             timeout=timeout)
             else:
-                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip,
-                                                                           80))
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(
+                    (ip, 80))
             return True
         except:  # pylint: disable=bare-except
             pass
@@ -707,35 +435,6 @@ def internet_on(raise_exception=False):
     if raise_exception and not result:
         raise exception.InternetIsOffline()
     return result
-
-
-def get_pythonexe_path():
-    return os.environ.get("PYTHONEXEPATH", normpath(sys.executable))
-
-
-def where_is_program(program, envpath=None):
-    env = os.environ
-    if envpath:
-        env['PATH'] = envpath
-
-    # try OS's built-in commands
-    try:
-        result = exec_command(
-            ["where" if "windows" in get_systype() else "which", program],
-            env=env)
-        if result['returncode'] == 0 and isfile(result['out'].strip()):
-            return result['out'].strip()
-    except OSError:
-        pass
-
-    # look up in $PATH
-    for bin_dir in env.get("PATH", "").split(os.pathsep):
-        if isfile(join(bin_dir, program)):
-            return join(bin_dir, program)
-        elif isfile(join(bin_dir, "%s.exe" % program)):
-            return join(bin_dir, "%s.exe" % program)
-
-    return program
 
 
 def pepver_to_semver(pepver):
@@ -791,15 +490,6 @@ def merge_dicts(d1, d2, path=None):
     return d1
 
 
-def get_file_contents(path):
-    try:
-        with open(path) as f:
-            return f.read()
-    except UnicodeDecodeError:
-        with open(path, encoding="latin-1") as f:
-            return f.read()
-
-
 def ensure_udev_rules():
 
     def _rules_to_set(rules_path):
@@ -831,6 +521,17 @@ def ensure_udev_rules():
     return True
 
 
+def get_original_version(version):
+    if version.count(".") != 2:
+        return None
+    _, raw = version.split(".")[:2]
+    if int(raw) <= 99:
+        return None
+    if int(raw) <= 9999:
+        return "%s.%s" % (raw[:-2], int(raw[-2:]))
+    return "%s.%s.%s" % (raw[:-4], int(raw[-4:-2]), int(raw[-2:]))
+
+
 def rmtree_(path):
 
     def _onerror(_, name, __):
@@ -838,33 +539,9 @@ def rmtree_(path):
             os.chmod(name, stat.S_IWRITE)
             os.remove(name)
         except Exception as e:  # pylint: disable=broad-except
-            click.secho(
-                "%s \nPlease manually remove the file `%s`" % (str(e), name),
-                fg="red",
-                err=True)
+            click.secho("%s \nPlease manually remove the file `%s`" %
+                        (str(e), name),
+                        fg="red",
+                        err=True)
 
     return rmtree(path, onerror=_onerror)
-
-
-#
-# Glob.Escape from Python 3.4
-# https://github.com/python/cpython/blob/master/Lib/glob.py#L161
-#
-
-try:
-    from glob import escape as glob_escape  # pylint: disable=unused-import
-except ImportError:
-    magic_check = re.compile('([*?[])')
-    magic_check_bytes = re.compile(b'([*?[])')
-
-    def glob_escape(pathname):
-        """Escape all special characters."""
-        # Escaping is done by wrapping any of "*?[" between square brackets.
-        # Metacharacters do not work in the drive part and shouldn't be
-        # escaped.
-        drive, pathname = os.path.splitdrive(pathname)
-        if isinstance(pathname, bytes):
-            pathname = magic_check_bytes.sub(br'[\1]', pathname)
-        else:
-            pathname = magic_check.sub(r'[\1]', pathname)
-        return drive + pathname

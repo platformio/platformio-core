@@ -15,7 +15,7 @@
 from email.utils import parsedate_tz
 from math import ceil
 from os.path import getsize, join
-from sys import getfilesystemencoding, version_info
+from sys import version_info
 from time import mktime
 
 import click
@@ -24,6 +24,7 @@ import requests
 from platformio import util
 from platformio.exception import (FDSHASumMismatch, FDSizeMismatch,
                                   FDUnrecognizedStatusCode)
+from platformio.proc import exec_command
 
 
 class FileDownloader(object):
@@ -33,11 +34,10 @@ class FileDownloader(object):
     def __init__(self, url, dest_dir=None):
         self._request = None
         # make connection
-        self._request = requests.get(
-            url,
-            stream=True,
-            headers=util.get_request_defheaders(),
-            verify=version_info >= (2, 7, 9))
+        self._request = requests.get(url,
+                                     stream=True,
+                                     headers=util.get_request_defheaders(),
+                                     verify=version_info >= (2, 7, 9))
         if self._request.status_code != 200:
             raise FDUnrecognizedStatusCode(self._request.status_code, url)
 
@@ -45,14 +45,12 @@ class FileDownloader(object):
         if disposition and "filename=" in disposition:
             self._fname = disposition[disposition.index("filename=") +
                                       9:].replace('"', "").replace("'", "")
-            self._fname = self._fname.encode("utf8")
         else:
             self._fname = [p for p in url.split("/") if p][-1]
-
+        self._fname = str(self._fname)
         self._destination = self._fname
         if dest_dir:
-            self.set_destination(
-                join(dest_dir.decode(getfilesystemencoding()), self._fname))
+            self.set_destination(join(dest_dir, self._fname))
 
     def set_destination(self, destination):
         self._destination = destination
@@ -98,24 +96,24 @@ class FileDownloader(object):
             raise FDSizeMismatch(_dlsize, self._fname, self.get_size())
 
         if not sha1:
-            return
+            return None
 
         dlsha1 = None
         try:
-            result = util.exec_command(["sha1sum", self._destination])
+            result = exec_command(["sha1sum", self._destination])
             dlsha1 = result['out']
         except (OSError, ValueError):
             try:
-                result = util.exec_command(
-                    ["shasum", "-a", "1", self._destination])
+                result = exec_command(["shasum", "-a", "1", self._destination])
                 dlsha1 = result['out']
             except (OSError, ValueError):
                 pass
-
-        if dlsha1:
-            dlsha1 = dlsha1[1:41] if dlsha1.startswith("\\") else dlsha1[:40]
-            if sha1 != dlsha1:
-                raise FDSHASumMismatch(dlsha1, self._fname, sha1)
+        if not dlsha1:
+            return None
+        dlsha1 = dlsha1[1:41] if dlsha1.startswith("\\") else dlsha1[:40]
+        if sha1.lower() != dlsha1.lower():
+            raise FDSHASumMismatch(dlsha1, self._fname, sha1)
+        return True
 
     def _preserve_filemtime(self, lmdate):
         timedata = parsedate_tz(lmdate)

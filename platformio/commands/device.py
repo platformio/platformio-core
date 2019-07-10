@@ -12,14 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import sys
+from fnmatch import fnmatch
 from os import getcwd
+from os.path import join
 
 import click
 from serial.tools import miniterm
 
 from platformio import exception, util
+from platformio.compat import dump_json_to_unicode
+from platformio.project.config import ProjectConfig
 
 
 @click.group(short_help="Monitor device or list existing")
@@ -44,10 +47,11 @@ def device_list(  # pylint: disable=too-many-branches
     if mdns:
         data['mdns'] = util.get_mdns_services()
 
-    single_key = data.keys()[0] if len(data.keys()) == 1 else None
+    single_key = list(data)[0] if len(list(data)) == 1 else None
 
     if json_output:
-        return click.echo(json.dumps(data[single_key] if single_key else data))
+        return click.echo(
+            dump_json_to_unicode(data[single_key] if single_key else data))
 
     titles = {
         "serial": "Serial Ports",
@@ -98,81 +102,74 @@ def device_list(  # pylint: disable=too-many-branches
 @cli.command("monitor", short_help="Monitor device (Serial)")
 @click.option("--port", "-p", help="Port, a number or a device name")
 @click.option("--baud", "-b", type=int, help="Set baud rate, default=9600")
-@click.option(
-    "--parity",
-    default="N",
-    type=click.Choice(["N", "E", "O", "S", "M"]),
-    help="Set parity, default=N")
-@click.option(
-    "--rtscts", is_flag=True, help="Enable RTS/CTS flow control, default=Off")
-@click.option(
-    "--xonxoff",
-    is_flag=True,
-    help="Enable software flow control, default=Off")
-@click.option(
-    "--rts",
-    default=None,
-    type=click.IntRange(0, 1),
-    help="Set initial RTS line state")
-@click.option(
-    "--dtr",
-    default=None,
-    type=click.IntRange(0, 1),
-    help="Set initial DTR line state")
+@click.option("--parity",
+              default="N",
+              type=click.Choice(["N", "E", "O", "S", "M"]),
+              help="Set parity, default=N")
+@click.option("--rtscts",
+              is_flag=True,
+              help="Enable RTS/CTS flow control, default=Off")
+@click.option("--xonxoff",
+              is_flag=True,
+              help="Enable software flow control, default=Off")
+@click.option("--rts",
+              default=None,
+              type=click.IntRange(0, 1),
+              help="Set initial RTS line state")
+@click.option("--dtr",
+              default=None,
+              type=click.IntRange(0, 1),
+              help="Set initial DTR line state")
 @click.option("--echo", is_flag=True, help="Enable local echo, default=Off")
-@click.option(
-    "--encoding",
-    default="UTF-8",
-    help="Set the encoding for the serial port (e.g. hexlify, "
-    "Latin1, UTF-8), default: UTF-8")
+@click.option("--encoding",
+              default="UTF-8",
+              help="Set the encoding for the serial port (e.g. hexlify, "
+              "Latin1, UTF-8), default: UTF-8")
 @click.option("--filter", "-f", multiple=True, help="Add text transformation")
-@click.option(
-    "--eol",
-    default="CRLF",
-    type=click.Choice(["CR", "LF", "CRLF"]),
-    help="End of line mode, default=CRLF")
-@click.option(
-    "--raw", is_flag=True, help="Do not apply any encodings/transformations")
-@click.option(
-    "--exit-char",
-    type=int,
-    default=3,
-    help="ASCII code of special character that is used to exit "
-    "the application, default=3 (Ctrl+C)")
-@click.option(
-    "--menu-char",
-    type=int,
-    default=20,
-    help="ASCII code of special character that is used to "
-    "control miniterm (menu), default=20 (DEC)")
-@click.option(
-    "--quiet",
-    is_flag=True,
-    help="Diagnostics: suppress non-error messages, default=Off")
-@click.option(
-    "-d",
-    "--project-dir",
-    default=getcwd,
-    type=click.Path(
-        exists=True, file_okay=False, dir_okay=True, resolve_path=True))
+@click.option("--eol",
+              default="CRLF",
+              type=click.Choice(["CR", "LF", "CRLF"]),
+              help="End of line mode, default=CRLF")
+@click.option("--raw",
+              is_flag=True,
+              help="Do not apply any encodings/transformations")
+@click.option("--exit-char",
+              type=int,
+              default=3,
+              help="ASCII code of special character that is used to exit "
+              "the application, default=3 (Ctrl+C)")
+@click.option("--menu-char",
+              type=int,
+              default=20,
+              help="ASCII code of special character that is used to "
+              "control miniterm (menu), default=20 (DEC)")
+@click.option("--quiet",
+              is_flag=True,
+              help="Diagnostics: suppress non-error messages, default=Off")
+@click.option("-d",
+              "--project-dir",
+              default=getcwd,
+              type=click.Path(exists=True,
+                              file_okay=False,
+                              dir_okay=True,
+                              resolve_path=True))
 @click.option(
     "-e",
     "--environment",
     help="Load configuration from `platformio.ini` and specified environment")
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
+    env_options = {}
     try:
-        project_options = get_project_options(kwargs['project_dir'],
-                                              kwargs['environment'])
-        monitor_options = {k: v for k, v in project_options or []}
-        if monitor_options:
-            for k in ("port", "baud", "speed", "rts", "dtr"):
-                k2 = "monitor_%s" % k
-                if k == "speed":
-                    k = "baud"
-                if kwargs[k] is None and k2 in monitor_options:
-                    kwargs[k] = monitor_options[k2]
-                    if k != "port":
-                        kwargs[k] = int(kwargs[k])
+        env_options = get_project_options(kwargs['project_dir'],
+                                          kwargs['environment'])
+        for k in ("port", "speed", "rts", "dtr"):
+            k2 = "monitor_%s" % k
+            if k == "speed":
+                k = "baud"
+            if kwargs[k] is None and k2 in env_options:
+                kwargs[k] = env_options[k2]
+                if k != "port":
+                    kwargs[k] = int(kwargs[k])
     except exception.NotPlatformIOProject:
         pass
 
@@ -181,11 +178,13 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         if len(ports) == 1:
             kwargs['port'] = ports[0]['port']
 
-    sys.argv = ["monitor"]
+    sys.argv = ["monitor"] + env_options.get("monitor_flags", [])
     for k, v in kwargs.items():
         if k in ("port", "baud", "rts", "dtr", "environment", "project_dir"):
             continue
         k = "--" + k.replace("_", "-")
+        if k in env_options.get("monitor_flags", []):
+            continue
         if isinstance(v, bool):
             if v:
                 sys.argv.append(k)
@@ -195,34 +194,28 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         else:
             sys.argv.extend([k, str(v)])
 
+    if kwargs['port'] and (set(["*", "?", "[", "]"]) & set(kwargs['port'])):
+        for item in util.get_serial_ports():
+            if fnmatch(item['port'], kwargs['port']):
+                kwargs['port'] = item['port']
+                break
+
     try:
-        miniterm.main(
-            default_port=kwargs['port'],
-            default_baudrate=kwargs['baud'] or 9600,
-            default_rts=kwargs['rts'],
-            default_dtr=kwargs['dtr'])
+        miniterm.main(default_port=kwargs['port'],
+                      default_baudrate=kwargs['baud'] or 9600,
+                      default_rts=kwargs['rts'],
+                      default_dtr=kwargs['dtr'])
     except Exception as e:
         raise exception.MinitermException(e)
 
 
-def get_project_options(project_dir, environment):
-    config = util.load_project_config(project_dir)
-    if not config.sections():
-        return None
-
-    known_envs = [s[4:] for s in config.sections() if s.startswith("env:")]
-    if environment:
-        if environment in known_envs:
-            return config.items("env:%s" % environment)
-        raise exception.UnknownEnvNames(environment, ", ".join(known_envs))
-
-    if not known_envs:
-        return None
-
-    if config.has_option("platformio", "env_default"):
-        env_default = config.get("platformio",
-                                 "env_default").split(", ")[0].strip()
-        if env_default and env_default in known_envs:
-            return config.items("env:%s" % env_default)
-
-    return config.items("env:%s" % known_envs[0])
+def get_project_options(project_dir, environment=None):
+    config = ProjectConfig.get_instance(join(project_dir, "platformio.ini"))
+    config.validate(envs=[environment] if environment else None)
+    if not environment:
+        default_envs = config.default_envs()
+        if default_envs:
+            environment = default_envs[0]
+        else:
+            environment = config.envs()[0]
+    return config.items(env=environment, as_dict=True)

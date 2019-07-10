@@ -15,12 +15,14 @@
 import random
 from glob import glob
 from os import listdir, walk
-from os.path import dirname, getsize, isdir, isfile, join, normpath
+from os.path import basename, dirname, getsize, isdir, isfile, join, normpath
 
 import pytest
 
 from platformio import util
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.project.config import ProjectConfig
+from platformio.project.helpers import get_project_build_dir
 
 
 def pytest_generate_tests(metafunc):
@@ -34,11 +36,13 @@ def pytest_generate_tests(metafunc):
     # dev/platforms
     for manifest in PlatformManager().get_installed():
         p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
-        if not p.is_embedded():
-            continue
-        # issue with "version `CXXABI_1.3.9' not found (required by sdcc)"
-        if "linux" in util.get_systype() and p.name in ("intel_mcs51",
-                                                        "ststm8"):
+        ignore_conds = [
+            not p.is_embedded(),
+            p.name == "ststm8",
+            # issue with "version `CXXABI_1.3.9' not found (required by sdcc)"
+            "linux" in util.get_systype() and p.name == "intel_mcs51"
+        ]
+        if any(ignore_conds):
             continue
         examples_dir = join(p.get_dir(), "examples")
         assert isdir(examples_dir)
@@ -46,36 +50,39 @@ def pytest_generate_tests(metafunc):
 
     project_dirs = []
     for examples_dir in examples_dirs:
-        platform_examples = []
+        candidates = {}
         for root, _, files in walk(examples_dir):
             if "platformio.ini" not in files or ".skiptest" in files:
                 continue
-            platform_examples.append(root)
+            group = basename(root)
+            if "-" in group:
+                group = group.split("-", 1)[0]
+            if group not in candidates:
+                candidates[group] = []
+            candidates[group].append(root)
 
-        # test random 3 examples
-        random.shuffle(platform_examples)
-        project_dirs.extend(platform_examples[:3])
-    project_dirs.sort()
-    metafunc.parametrize("pioproject_dir", project_dirs)
+        project_dirs.extend([
+            random.choice(examples) for examples in candidates.values()
+            if examples
+        ])
+
+    metafunc.parametrize("pioproject_dir", sorted(project_dirs))
 
 
 @pytest.mark.examples
 def test_run(pioproject_dir):
     with util.cd(pioproject_dir):
-        build_dir = util.get_projectbuild_dir()
+        build_dir = get_project_build_dir()
         if isdir(build_dir):
             util.rmtree_(build_dir)
 
-        env_names = []
-        for section in util.load_project_config().sections():
-            if section.startswith("env:"):
-                env_names.append(section[4:])
-
+        env_names = ProjectConfig(join(pioproject_dir,
+                                       "platformio.ini")).envs()
         result = util.exec_command(
             ["platformio", "run", "-e",
              random.choice(env_names)])
         if result['returncode'] != 0:
-            pytest.fail(result)
+            pytest.fail(str(result))
 
         assert isdir(build_dir)
 

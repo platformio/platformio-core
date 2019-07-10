@@ -22,16 +22,20 @@ from os.path import isdir, join
 
 import click
 
-from platformio import app, commands, exception, util
+from platformio import app, exception, util
+from platformio.compat import glob_escape, string_types
 from platformio.managers.package import BasePkgManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.project.helpers import get_project_global_lib_dir
 
 
 class LibraryManager(BasePkgManager):
 
+    FILE_CACHE_VALID = "30d"  # 1 month
+
     def __init__(self, package_dir=None):
         if not package_dir:
-            package_dir = join(util.get_home_dir(), "lib")
+            package_dir = get_project_global_lib_dir()
         super(LibraryManager, self).__init__(package_dir)
 
     @property
@@ -47,7 +51,7 @@ class LibraryManager(BasePkgManager):
             return path
 
         # if library without manifest, returns first source file
-        src_dir = join(util.glob_escape(pkg_dir))
+        src_dir = join(glob_escape(pkg_dir))
         if isdir(join(pkg_dir, "src")):
             src_dir = join(src_dir, "src")
         chs_files = glob(join(src_dir, "*.[chS]"))
@@ -120,7 +124,7 @@ class LibraryManager(BasePkgManager):
         # convert listed items via comma to array
         for key in ("keywords", "frameworks", "platforms"):
             if key not in manifest or \
-                    not isinstance(manifest[key], basestring):
+                    not isinstance(manifest[key], string_types):
                 continue
             manifest[key] = [
                 i.strip() for i in manifest[key].split(",") if i.strip()
@@ -147,7 +151,7 @@ class LibraryManager(BasePkgManager):
                     continue
                 if item[k] == "*":
                     del item[k]
-                elif isinstance(item[k], basestring):
+                elif isinstance(item[k], string_types):
                     item[k] = [
                         i.strip() for i in item[k].split(",") if i.strip()
                     ]
@@ -164,7 +168,7 @@ class LibraryManager(BasePkgManager):
 
         semver_spec = self.parse_semver_spec(
             requirements) if requirements else None
-        item = None
+        item = {}
 
         for v in versions:
             semver_new = self.parse_semver_version(v['name'])
@@ -186,14 +190,12 @@ class LibraryManager(BasePkgManager):
 
     def get_latest_repo_version(self, name, requirements, silent=False):
         item = self.max_satisfying_repo_version(
-            util.get_api_result(
-                "/lib/info/%d" % self.search_lib_id(
-                    {
-                        "name": name,
-                        "requirements": requirements
-                    },
-                    silent=silent),
-                cache_valid="1h")['versions'], requirements)
+            util.get_api_result("/lib/info/%d" % self.search_lib_id(
+                {
+                    "name": name,
+                    "requirements": requirements
+                }, silent=silent),
+                                cache_valid="1h")['versions'], requirements)
         return item['name'] if item else None
 
     def _install_from_piorepo(self, name, requirements):
@@ -202,10 +204,9 @@ class LibraryManager(BasePkgManager):
         if not version:
             raise exception.UndefinedPackageVersion(requirements or "latest",
                                                     util.get_systype())
-        dl_data = util.get_api_result(
-            "/lib/download/" + str(name[3:]),
-            dict(version=version),
-            cache_valid="30d")
+        dl_data = util.get_api_result("/lib/download/" + str(name[3:]),
+                                      dict(version=version),
+                                      cache_valid="30d")
         assert dl_data
 
         return self._install_from_url(
@@ -227,8 +228,8 @@ class LibraryManager(BasePkgManager):
 
         # looking in PIO Library Registry
         if not silent:
-            click.echo("Looking for %s library in registry" % click.style(
-                filters['name'], fg="cyan"))
+            click.echo("Looking for %s library in registry" %
+                       click.style(filters['name'], fg="cyan"))
         query = []
         for key in filters:
             if key not in ("name", "authors", "frameworks", "platforms"):
@@ -241,21 +242,22 @@ class LibraryManager(BasePkgManager):
                              (key[:-1] if key.endswith("s") else key, value))
 
         lib_info = None
-        result = util.get_api_result(
-            "/v2/lib/search", dict(query=" ".join(query)), cache_valid="1h")
+        result = util.get_api_result("/v2/lib/search",
+                                     dict(query=" ".join(query)),
+                                     cache_valid="1h")
         if result['total'] == 1:
             lib_info = result['items'][0]
         elif result['total'] > 1:
             if silent and not interactive:
                 lib_info = result['items'][0]
             else:
-                click.secho(
-                    "Conflict: More than one library has been found "
-                    "by request %s:" % json.dumps(filters),
-                    fg="yellow",
-                    err=True)
+                click.secho("Conflict: More than one library has been found "
+                            "by request %s:" % json.dumps(filters),
+                            fg="yellow",
+                            err=True)
+                from platformio.commands.lib import print_lib_item
                 for item in result['items']:
-                    commands.lib.print_lib_item(item)
+                    print_lib_item(item)
 
                 if not interactive:
                     click.secho(
@@ -265,20 +267,20 @@ class LibraryManager(BasePkgManager):
                         err=True)
                     lib_info = result['items'][0]
                 else:
-                    deplib_id = click.prompt(
-                        "Please choose library ID",
-                        type=click.Choice(
-                            [str(i['id']) for i in result['items']]))
+                    deplib_id = click.prompt("Please choose library ID",
+                                             type=click.Choice([
+                                                 str(i['id'])
+                                                 for i in result['items']
+                                             ]))
                     for item in result['items']:
                         if item['id'] == int(deplib_id):
                             lib_info = item
                             break
 
         if not lib_info:
-            if filters.keys() == ["name"]:
+            if list(filters) == ["name"]:
                 raise exception.LibNotFound(filters['name'])
-            else:
-                raise exception.LibNotFound(str(filters))
+            raise exception.LibNotFound(str(filters))
         if not silent:
             click.echo("Found: %s" % click.style(
                 "https://platformio.org/lib/show/{id}/{name}".format(
@@ -303,9 +305,8 @@ class LibraryManager(BasePkgManager):
                 continue
             if key not in manifest:
                 return None
-            if not util.items_in_list(
-                    util.items_to_list(filters[key]),
-                    util.items_to_list(manifest[key])):
+            if not util.items_in_list(util.items_to_list(filters[key]),
+                                      util.items_to_list(manifest[key])):
                 return None
 
         if "authors" in filters:
@@ -336,20 +337,20 @@ class LibraryManager(BasePkgManager):
             force=False):
         _name, _requirements, _url = self.parse_pkg_uri(name, requirements)
         if not _url:
-            name = "id=%d" % self.search_lib_id({
-                "name": _name,
-                "requirements": _requirements
-            },
-                                                silent=silent,
-                                                interactive=interactive)
+            name = "id=%d" % self.search_lib_id(
+                {
+                    "name": _name,
+                    "requirements": _requirements
+                },
+                silent=silent,
+                interactive=interactive)
             requirements = _requirements
-        pkg_dir = BasePkgManager.install(
-            self,
-            name,
-            requirements,
-            silent=silent,
-            after_update=after_update,
-            force=force)
+        pkg_dir = BasePkgManager.install(self,
+                                         name,
+                                         requirements,
+                                         silent=silent,
+                                         after_update=after_update,
+                                         force=force)
 
         if not pkg_dir:
             return None
@@ -361,6 +362,7 @@ class LibraryManager(BasePkgManager):
         if not silent:
             click.secho("Installing dependencies", fg="yellow")
 
+        builtin_lib_storages = None
         for filters in self.normalize_dependencies(manifest['dependencies']):
             assert "name" in filters
 
@@ -373,39 +375,38 @@ class LibraryManager(BasePkgManager):
             self.INSTALL_HISTORY.append(history_key)
 
             if any(s in filters.get("version", "") for s in ("\\", "/")):
-                self.install(
-                    "{name}={version}".format(**filters),
-                    silent=silent,
-                    after_update=after_update,
-                    interactive=interactive,
-                    force=force)
+                self.install("{name}={version}".format(**filters),
+                             silent=silent,
+                             after_update=after_update,
+                             interactive=interactive,
+                             force=force)
             else:
                 try:
                     lib_id = self.search_lib_id(filters, silent, interactive)
                 except exception.LibNotFound as e:
-                    if not silent or is_builtin_lib(filters['name']):
+                    if builtin_lib_storages is None:
+                        builtin_lib_storages = get_builtin_libs()
+                    if not silent or is_builtin_lib(builtin_lib_storages,
+                                                    filters['name']):
                         click.secho("Warning! %s" % e, fg="yellow")
                     continue
 
                 if filters.get("version"):
-                    self.install(
-                        lib_id,
-                        filters.get("version"),
-                        silent=silent,
-                        after_update=after_update,
-                        interactive=interactive,
-                        force=force)
+                    self.install(lib_id,
+                                 filters.get("version"),
+                                 silent=silent,
+                                 after_update=after_update,
+                                 interactive=interactive,
+                                 force=force)
                 else:
-                    self.install(
-                        lib_id,
-                        silent=silent,
-                        after_update=after_update,
-                        interactive=interactive,
-                        force=force)
+                    self.install(lib_id,
+                                 silent=silent,
+                                 after_update=after_update,
+                                 interactive=interactive,
+                                 force=force)
         return pkg_dir
 
 
-@util.memoized()
 def get_builtin_libs(storage_names=None):
     items = []
     storage_names = storage_names or []
@@ -424,9 +425,8 @@ def get_builtin_libs(storage_names=None):
     return items
 
 
-@util.memoized()
-def is_builtin_lib(name):
-    for storage in get_builtin_libs():
+def is_builtin_lib(storages, name):
+    for storage in storages or []:
         if any(l.get("name") == name for l in storage['items']):
             return True
     return False

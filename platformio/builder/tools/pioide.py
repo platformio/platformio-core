@@ -18,17 +18,18 @@ from glob import glob
 from os import environ
 from os.path import abspath, isfile, join
 
-from SCons.Defaults import processDefines
+from SCons.Defaults import processDefines  # pylint: disable=import-error
 
-from platformio import util
+from platformio.compat import glob_escape
 from platformio.managers.core import get_core_package_dir
+from platformio.proc import exec_command, where_is_program
 
 
-def _dump_includes(env):
+def _dump_includes(env, projenv):
     includes = []
 
-    for item in env.get("CPPPATH", []):
-        includes.append(env.subst(item))
+    for item in projenv.get("CPPPATH", []):
+        includes.append(projenv.subst(item))
 
     # installed libs
     for lb in env.GetLibBuilders():
@@ -39,7 +40,7 @@ def _dump_includes(env):
     for name in p.get_installed_packages():
         if p.get_package_type(name) != "toolchain":
             continue
-        toolchain_dir = util.glob_escape(p.get_package_dir(name))
+        toolchain_dir = glob_escape(p.get_package_dir(name))
         toolchain_incglobs = [
             join(toolchain_dir, "*", "include*"),
             join(toolchain_dir, "*", "include", "c++", "*"),
@@ -71,8 +72,9 @@ def _get_gcc_defines(env):
     try:
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
-        result = util.exec_command(
-            "echo | %s -dM -E -" % env.subst("$CC"), env=sysenv, shell=True)
+        result = exec_command("echo | %s -dM -E -" % env.subst("$CC"),
+                              env=sysenv,
+                              shell=True)
     except OSError:
         return items
     if result['returncode'] != 0:
@@ -112,7 +114,7 @@ def _dump_defines(env):
 
 
 def _get_svd_path(env):
-    svd_path = env.subst("$DEBUG_SVD_PATH")
+    svd_path = env.GetProjectOption("debug_svd_path")
     if svd_path:
         return abspath(svd_path)
 
@@ -133,27 +135,26 @@ def _get_svd_path(env):
     return None
 
 
-def DumpIDEData(env):
+def DumpIDEData(env, projenv):
     LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS"
     LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS"
 
     data = {
-        "libsource_dirs":
-        [env.subst(l) for l in env.get("LIBSOURCE_DIRS", [])],
+        "libsource_dirs": [env.subst(l) for l in env.GetLibSourceDirs()],
         "defines":
         _dump_defines(env),
         "includes":
-        _dump_includes(env),
+        _dump_includes(env, projenv),
         "cc_flags":
         env.subst(LINTCCOM),
         "cxx_flags":
         env.subst(LINTCXXCOM),
         "cc_path":
-        util.where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
+        where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
         "cxx_path":
-        util.where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
+        where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
         "gdb_path":
-        util.where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
+        where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
         "prog_path":
         env.subst("$PROG_PATH"),
         "flash_extra_images": [{

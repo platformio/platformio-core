@@ -22,10 +22,12 @@ from os.path import isfile, join
 from shutil import copyfile
 from time import sleep
 
-from SCons.Script import ARGUMENTS
+from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from serial import Serial, SerialException
 
 from platformio import exception, util
+from platformio.compat import WINDOWS
+from platformio.proc import exec_command
 
 # pylint: disable=unused-argument
 
@@ -134,8 +136,7 @@ def AutodetectUploadPort(*args, **kwargs):
                 continue
             port = item['port']
             if upload_protocol.startswith("blackmagic"):
-                if "windows" in util.get_systype() and \
-                        port.startswith("COM") and len(port) > 4:
+                if WINDOWS and port.startswith("COM") and len(port) > 4:
                     port = "\\\\.\\%s" % port
                 if "GDB" in item['description']:
                     return port
@@ -197,10 +198,9 @@ def CheckUploadSize(_, target, source, env):
         return
 
     def _configure_defaults():
-        env.Replace(
-            SIZECHECKCMD="$SIZETOOL -B -d $SOURCES",
-            SIZEPROGREGEXP=r"^(\d+)\s+(\d+)\s+\d+\s",
-            SIZEDATAREGEXP=r"^\d+\s+(\d+)\s+(\d+)\s+\d+")
+        env.Replace(SIZECHECKCMD="$SIZETOOL -B -d $SOURCES",
+                    SIZEPROGREGEXP=r"^(\d+)\s+(\d+)\s+\d+\s",
+                    SIZEDATAREGEXP=r"^\d+\s+(\d+)\s+(\d+)\s+\d+")
 
     def _get_size_output():
         cmd = env.get("SIZECHECKCMD")
@@ -211,7 +211,7 @@ def CheckUploadSize(_, target, source, env):
         cmd = [arg.replace("$SOURCES", str(source[0])) for arg in cmd if arg]
         sysenv = environ.copy()
         sysenv['PATH'] = str(env['ENV']['PATH'])
-        result = util.exec_command(env.subst(cmd), env=sysenv)
+        result = exec_command(env.subst(cmd), env=sysenv)
         if result['returncode'] != 0:
             return None
         return result['out'].strip()
@@ -250,8 +250,8 @@ def CheckUploadSize(_, target, source, env):
     if data_max_size and data_size > -1:
         print("DATA:    %s" % _format_availale_bytes(data_size, data_max_size))
     if program_size > -1:
-        print("PROGRAM: %s" % _format_availale_bytes(program_size,
-                                                     program_max_size))
+        print("PROGRAM: %s" %
+              _format_availale_bytes(program_size, program_max_size))
     if int(ARGUMENTS.get("PIOVERBOSE", 0)):
         print(output)
 
@@ -272,8 +272,8 @@ def PrintUploadInfo(env):
     configured = env.subst("$UPLOAD_PROTOCOL")
     available = [configured] if configured else []
     if "BOARD" in env:
-        available.extend(env.BoardConfig().get("upload", {}).get(
-            "protocols", []))
+        available.extend(env.BoardConfig().get("upload",
+                                               {}).get("protocols", []))
     if available:
         print("AVAILABLE: %s" % ", ".join(sorted(set(available))))
     if configured:

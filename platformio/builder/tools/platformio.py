@@ -20,11 +20,15 @@ from glob import glob
 from os import sep, walk
 from os.path import basename, dirname, isdir, join, realpath
 
-from SCons import Builder, Util
-from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild,
-                          DefaultEnvironment, Export, SConscript)
+from SCons import Builder, Util  # pylint: disable=import-error
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
+from SCons.Script import AlwaysBuild  # pylint: disable=import-error
+from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
+from SCons.Script import Export  # pylint: disable=import-error
+from SCons.Script import SConscript  # pylint: disable=import-error
 
-from platformio.util import glob_escape, pioversion_to_intstr
+from platformio.compat import glob_escape, string_types
+from platformio.util import pioversion_to_intstr
 
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_C_EXT = ["c", "cc", "cpp"]
@@ -65,7 +69,7 @@ def _build_project_deps(env):
     if is_test:
         projenv.BuildSources("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
                              "$PIOTEST_SRC_FILTER")
-    if not is_test or env.get("TEST_BUILD_PROJECT_SRC") == "true":
+    if not is_test or env.GetProjectOption("test_build_project_src", False):
         projenv.BuildSources("$BUILDSRC_DIR", "$PROJECTSRC_DIR",
                              env.get("SRC_FILTER"))
 
@@ -93,7 +97,8 @@ def BuildProgram(env):
     if not Util.case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 
-    if set(["__debug", "debug"]) & set(COMMAND_LINE_TARGETS):
+    if ("debug" in COMMAND_LINE_TARGETS
+            or env.GetProjectOption("build_type") == "debug"):
         env.ProcessDebug()
 
     # process extra flags from board
@@ -128,8 +133,8 @@ def BuildProgram(env):
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 
-    program = env.Program(
-        join("$BUILD_DIR", env.subst("$PROGNAME")), env['PIOBUILDFILES'])
+    program = env.Program(join("$BUILD_DIR", env.subst("$PROGNAME")),
+                          env['PIOBUILDFILES'])
     env.Replace(PIOMAINPROG=program)
 
     AlwaysBuild(
@@ -189,11 +194,13 @@ def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
     # provided with a -U option // Issue #191
     undefines = [
         u for u in env.get("CCFLAGS", [])
-        if isinstance(u, basestring) and u.startswith("-U")
+        if isinstance(u, string_types) and u.startswith("-U")
     ]
     if undefines:
         for undef in undefines:
             env['CCFLAGS'].remove(undef)
+            if undef[2:] in env['CPPDEFINES']:
+                env['CPPDEFINES'].remove(undef[2:])
         env.Append(_CPPDEFFLAGS=" %s" % " ".join(undefines))
 
 

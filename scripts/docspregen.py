@@ -690,7 +690,7 @@ Uploading
 ---------
 %s supports the next uploading protocols:
 """ % board['name'])
-        for protocol in upload_protocols:
+        for protocol in sorted(upload_protocols):
             lines.append("* ``%s``" % protocol)
         lines.append("""
 Default protocol is ``%s``""" % variables['upload_protocol'])

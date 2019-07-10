@@ -24,7 +24,9 @@ from platformio import app, util
 from platformio.commands.init import cli as cmd_init
 from platformio.commands.init import validate_boards
 from platformio.commands.run import cli as cmd_run
+from platformio.compat import glob_escape
 from platformio.exception import CIBuildEnvsEmpty
+from platformio.project.config import ProjectConfig
 
 
 def validate_path(ctx, param, value):  # pylint: disable=unused-argument
@@ -46,29 +48,31 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
 
 @click.command("ci", short_help="Continuous Integration")
 @click.argument("src", nargs=-1, callback=validate_path)
-@click.option(
-    "-l", "--lib", multiple=True, callback=validate_path, metavar="DIRECTORY")
+@click.option("-l",
+              "--lib",
+              multiple=True,
+              callback=validate_path,
+              metavar="DIRECTORY")
 @click.option("--exclude", multiple=True)
-@click.option(
-    "-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
-@click.option(
-    "--build-dir",
-    default=mkdtemp,
-    type=click.Path(
-        file_okay=False,
-        dir_okay=True,
-        writable=True,
-        resolve_path=True))
+@click.option("-b",
+              "--board",
+              multiple=True,
+              metavar="ID",
+              callback=validate_boards)
+@click.option("--build-dir",
+              default=mkdtemp,
+              type=click.Path(file_okay=False,
+                              dir_okay=True,
+                              writable=True,
+                              resolve_path=True))
 @click.option("--keep-build-dir", is_flag=True)
-@click.option(
-    "-C",
-    "--project-conf",
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=False,
-        readable=True,
-        resolve_path=True))
+@click.option("-c",
+              "--project-conf",
+              type=click.Path(exists=True,
+                              file_okay=True,
+                              dir_okay=False,
+                              readable=True,
+                              resolve_path=True))
 @click.option("-O", "--project-option", multiple=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
@@ -106,11 +110,10 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
             _exclude_contents(build_dir, exclude)
 
         # initialise project
-        ctx.invoke(
-            cmd_init,
-            project_dir=build_dir,
-            board=board,
-            project_option=project_option)
+        ctx.invoke(cmd_init,
+                   project_dir=build_dir,
+                   board=board,
+                   project_option=project_option)
 
         # process project
         ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)
@@ -154,7 +157,7 @@ def _copy_contents(dst_dir, contents):
 def _exclude_contents(dst_dir, patterns):
     contents = []
     for p in patterns:
-        contents += glob(join(util.glob_escape(dst_dir), p))
+        contents += glob(join(glob_escape(dst_dir), p))
     for path in contents:
         path = abspath(path)
         if isdir(path):
@@ -164,8 +167,7 @@ def _exclude_contents(dst_dir, patterns):
 
 
 def _copy_project_conf(build_dir, project_conf):
-    config = util.load_project_config(project_conf)
+    config = ProjectConfig(project_conf, parse_extra=False)
     if config.has_section("platformio"):
         config.remove_section("platformio")
-    with open(join(build_dir, "platformio.ini"), "w") as fp:
-        config.write(fp)
+    config.save(join(build_dir, "platformio.ini"))

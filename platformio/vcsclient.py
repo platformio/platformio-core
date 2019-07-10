@@ -16,10 +16,14 @@ import re
 from os.path import join
 from subprocess import CalledProcessError, check_call
 from sys import modules
-from urlparse import urlparse
 
-from platformio import util
 from platformio.exception import PlatformioException, UserSideException
+from platformio.proc import exec_command
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 
 class VCSClientFactory(object):
@@ -38,10 +42,11 @@ class VCSClientFactory(object):
         if "#" in remote_url:
             remote_url, tag = remote_url.rsplit("#", 1)
         if not type_:
-            raise PlatformioException(
-                "VCS: Unknown repository type %s" % remote_url)
-        obj = getattr(modules[__name__], "%sClient" % type_.title())(
-            src_dir, remote_url, tag, silent)
+            raise PlatformioException("VCS: Unknown repository type %s" %
+                                      remote_url)
+        obj = getattr(modules[__name__],
+                      "%sClient" % type_.title())(src_dir, remote_url, tag,
+                                                  silent)
         assert isinstance(obj, VCSClientBase)
         return obj
 
@@ -98,14 +103,14 @@ class VCSClientBase(object):
             check_call(args, **kwargs)
             return True
         except CalledProcessError as e:
-            raise PlatformioException(
-                "VCS: Could not process command %s" % e.cmd)
+            raise PlatformioException("VCS: Could not process command %s" %
+                                      e.cmd)
 
     def get_cmd_output(self, args, **kwargs):
         args = [self.command] + args
         if "cwd" not in kwargs:
             kwargs['cwd'] = self.src_dir
-        result = util.exec_command(args, **kwargs)
+        result = exec_command(args, **kwargs)
         if result['returncode'] == 0:
             return result['out'].strip()
         raise PlatformioException(
