@@ -23,7 +23,7 @@ PlatformIO
 **Quick Links:** `Web <https://platformio.org?utm_source=github&utm_medium=core>`_ |
 `PIO Plus <https://platformio.org/pricing?utm_source=github&utm_medium=core>`_ |
 `PlatformIO IDE <https://platformio.org/platformio-ide?utm_source=github&utm_medium=core>`_ |
-`Project Examples <https://github.com/platformio/platformio-examples/>`_ |
+`Project Examples <https://github.com/platformio/platformio-examples/>`__ |
 `Docs <https://docs.platformio.org?utm_source=github&utm_medium=core>`_ |
 `Donate <https://platformio.org/donate?utm_source=github&utm_medium=core>`_ |
 `Contact Us <https://platformio.org/contact?utm_source=github&utm_medium=core>`_
@@ -53,7 +53,7 @@ Open Source
 * `PlatformIO IDE <https://platformio.org/platformio-ide?utm_source=github&utm_medium=core>`_
 * `PlatformIO Core (CLI) <https://docs.platformio.org/en/latest/core.html?utm_source=github&utm_medium=core>`_
 * `Library Management <https://docs.platformio.org/page/librarymanager/index.html?utm_source=github&utm_medium=core>`_
-* `Project Examples <https://github.com/platformio/platformio-examples?utm_source=github&utm_medium=core>`_
+* `Project Examples <https://github.com/platformio/platformio-examples?utm_source=github&utm_medium=core>`__
 * `Desktop IDEs Integration <https://docs.platformio.org/page/ide.html?utm_source=github&utm_medium=core>`_
 * `Continuous Integration <https://docs.platformio.org/page/ci/index.html?utm_source=github&utm_medium=core>`_
 * `Advanced Scripting API <https://docs.platformio.org/page/projectconf/advanced_scripting.html?utm_source=github&utm_medium=core>`_
