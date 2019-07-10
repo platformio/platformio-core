@@ -17,7 +17,6 @@ import os
 import re
 import sys
 from imp import load_source
-from multiprocessing import cpu_count
 from os.path import basename, dirname, isdir, isfile, join
 
 import click
@@ -368,7 +367,8 @@ class PlatformRunMixin(object):
         value = base64.urlsafe_b64decode(data)
         return value.decode() if is_bytes(value) else value
 
-    def run(self, variables, targets, silent, verbose):
+    def run(  # pylint: disable=too-many-arguments
+            self, variables, targets, silent, verbose, jobs):
         assert isinstance(variables, dict)
         assert isinstance(targets, list)
 
@@ -393,28 +393,28 @@ class PlatformRunMixin(object):
         if not isfile(variables['build_script']):
             raise exception.BuildScriptNotFound(variables['build_script'])
 
-        result = self._run_scons(variables, targets)
+        result = self._run_scons(variables, targets, jobs)
         assert "returncode" in result
 
         return result
 
-    def _run_scons(self, variables, targets):
-        cmd = [
+    def _run_scons(self, variables, targets, jobs):
+        args = [
             get_pythonexe_path(),
-            join(get_core_package_dir("tool-scons"), "script", "scons"), "-Q",
-            "-j %d" % self.get_job_nums(), "--warn=no-no-parallel-support",
-            "-f",
-            join(util.get_source_dir(), "builder", "main.py")
-        ]
-        cmd.append("PIOVERBOSE=%d" % (1 if self.verbose else 0))
+            join(get_core_package_dir("tool-scons"), "script", "scons"),
+            "-Q", "--warn=no-no-parallel-support",
+            "--jobs", str(jobs),
+            "--sconstruct", join(util.get_source_dir(), "builder", "main.py")
+        ]  # yapf: disable
+        args.append("PIOVERBOSE=%d" % (1 if self.verbose else 0))
         # pylint: disable=protected-access
-        cmd.append("ISATTY=%d" %
-                   (1 if click._compat.isatty(sys.stdout) else 0))
-        cmd += targets
+        args.append("ISATTY=%d" %
+                    (1 if click._compat.isatty(sys.stdout) else 0))
+        args += targets
 
         # encode and append variables
         for key, value in variables.items():
-            cmd.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
+            args.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
 
         def _write_and_flush(stream, data):
             try:
@@ -425,7 +425,7 @@ class PlatformRunMixin(object):
 
         copy_pythonpath_to_osenv()
         result = exec_command(
-            cmd,
+            args,
             stdout=BuildAsyncPipe(
                 line_callback=self._on_stdout_line,
                 data_callback=lambda data: _write_and_flush(sys.stdout, data)),
@@ -480,13 +480,6 @@ class PlatformRunMixin(object):
                fg="blue"),
            dots="*" * (56 + len(filename)))
         click.echo(banner, err=True)
-
-    @staticmethod
-    def get_job_nums():
-        try:
-            return cpu_count()
-        except NotImplementedError:
-            return 1
 
 
 class PlatformBase(  # pylint: disable=too-many-public-methods

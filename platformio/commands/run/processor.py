@@ -32,8 +32,8 @@ class EnvironmentProcessor(object):
     DEFAULT_PRINT_OPTIONS = ("platform", "framework", "board")
 
     def __init__(  # pylint: disable=too-many-arguments
-            self, cmd_ctx, name, config, targets, upload_port, silent,
-            verbose):
+            self, cmd_ctx, name, config, targets, upload_port, silent, verbose,
+            jobs):
         self.cmd_ctx = cmd_ctx
         self.name = name
         self.config = config
@@ -41,6 +41,7 @@ class EnvironmentProcessor(object):
         self.upload_port = upload_port
         self.silent = silent
         self.verbose = verbose
+        self.jobs = jobs
         self.options = config.items(env=name, as_dict=True)
 
     def process(self):
@@ -112,4 +113,5 @@ class EnvironmentProcessor(object):
                                 skip_default_package=True)
             p = PlatformFactory.newPlatform(self.options['platform'])
 
-        return p.run(build_vars, build_targets, self.silent, self.verbose)
+        return p.run(build_vars, build_targets, self.silent, self.verbose,
+                     self.jobs)

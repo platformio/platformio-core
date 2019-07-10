@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from multiprocessing import cpu_count
 from os import getcwd
 from os.path import isfile, join
 from time import time
@@ -29,6 +30,11 @@ from platformio.project.helpers import (find_project_dir_above,
                                         get_project_build_dir)
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
+
+try:
+    DEFAULT_JOB_NUMS = cpu_count()
+except NotImplementedError:
+    DEFAULT_JOB_NUMS = 1
 
 
 @click.command("run", short_help="Process project environments")
@@ -50,11 +56,18 @@ from platformio.project.helpers import (find_project_dir_above,
                               dir_okay=False,
                               readable=True,
                               resolve_path=True))
+@click.option("-j",
+              "--jobs",
+              type=int,
+              default=DEFAULT_JOB_NUMS,
+              help=("Allow N jobs at once. "
+                    "Default is a number of CPUs in a system (N=%d)" %
+                    DEFAULT_JOB_NUMS))
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.pass_context
-def cli(ctx, environment, target, upload_port, project_dir, project_conf,
+def cli(ctx, environment, target, upload_port, project_dir, project_conf, jobs,
         silent, verbose, disable_auto_clean):
     # find project directory on upper level
     if isfile(project_dir):
@@ -95,7 +108,7 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf,
                 click.echo()
 
             ep = EnvironmentProcessor(ctx, envname, config, target,
-                                      upload_port, silent, verbose)
+                                      upload_port, silent, verbose, jobs)
             result = (envname, ep.process())
             results.append(result)
 
