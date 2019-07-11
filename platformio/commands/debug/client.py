@@ -157,6 +157,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
 
         banner = [
             "echo PlatformIO Unified Debugger -> http://bit.ly/pio-debug\\n",
+            "echo PlatformIO: debug_tool = %s\\n" % self.debug_options['tool'],
             "echo PlatformIO: Initializing remote target...\\n"
         ]
         footer = ["echo %s\\n" % self.INIT_COMPLETED_BANNER]
