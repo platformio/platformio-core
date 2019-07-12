@@ -18,7 +18,6 @@ PlatformIO
    :target: https://community.platformio.org?utm_source=github&utm_medium=core
 
 **Quick Links:** `Web <https://platformio.org?utm_source=github&utm_medium=core>`_ |
-`PIO Plus <https://platformio.org/pricing?utm_source=github&utm_medium=core>`_ |
 `PlatformIO IDE <https://platformio.org/platformio-ide?utm_source=github&utm_medium=core>`_ |
 `Project Examples <https://github.com/platformio/platformio-examples/>`__ |
 `Docs <https://docs.platformio.org?utm_source=github&utm_medium=core>`_ |
