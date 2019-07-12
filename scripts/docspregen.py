@@ -280,7 +280,7 @@ Packages
 
 
 def generate_platform(name, rst_dir):
-    print "Processing platform: %s" % name
+    print("Processing platform: %s" % name)
 
     compatible_boards = [
         board for board in BOARDS if name == board['platform']
@@ -439,7 +439,7 @@ def update_platform_docs():
 
 
 def generate_framework(type_, data, rst_dir=None):
-    print "Processing framework: %s" % type_
+    print("Processing framework: %s" % type_)
 
     compatible_platforms = [
         m for m in PLATFORM_MANIFESTS
