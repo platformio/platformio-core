@@ -10,15 +10,12 @@ PlatformIO
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
-.. image:: https://img.shields.io/pypi/l/platformio.svg
+.. image:: https://img.shields.io/badge/license-Apache%202.0-blue.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
-.. image:: https://img.shields.io/PlatformIO/Community.png
+.. image:: https://img.shields.io/badge/PlatformIO-Community-orange.svg
    :alt: Community Forums
    :target: https://community.platformio.org?utm_source=github&utm_medium=core
-.. image:: https://img.shields.io/PIO/Plus.png?color=orange
-   :alt: PIO Plus: Professional solutions for an awesome open source PlatformIO ecosystem
-   :target: https://platformio.org/pricing?utm_source=github&utm_medium=core
 
 **Quick Links:** `Web <https://platformio.org?utm_source=github&utm_medium=core>`_ |
 `PIO Plus <https://platformio.org/pricing?utm_source=github&utm_medium=core>`_ |
