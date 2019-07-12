@@ -12,13 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
+
 from os import chdir, getcwd, readlink, remove, symlink, walk
 from os.path import exists, islink, join, relpath
 from sys import exit as sys_exit
 
 
 def fix_symlink(root, fname, brokenlink):
-    print root, fname, brokenlink
+    print(root, fname, brokenlink)
     prevcwd = getcwd()
 
     chdir(root)

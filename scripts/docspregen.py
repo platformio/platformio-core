@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import print_function
 
 import os
 import urlparse
@@ -280,7 +281,7 @@ Packages
 
 
 def generate_platform(name, rst_dir):
-    print "Processing platform: %s" % name
+    print("Processing platform: %s" % name)
 
     compatible_boards = [
         board for board in BOARDS if name == board['platform']
@@ -439,7 +440,7 @@ def update_platform_docs():
 
 
 def generate_framework(type_, data, rst_dir=None):
-    print "Processing framework: %s" % type_
+    print("Processing framework: %s" % type_)
 
     compatible_platforms = [
         m for m in PLATFORM_MANIFESTS
