@@ -21,7 +21,6 @@ import requests
 
 from platformio import VERSION, __version__, exception, util
 from platformio.compat import WINDOWS
-from platformio.managers.core import shutdown_piohome_servers
 from platformio.proc import exec_command, get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir
 
@@ -37,9 +36,6 @@ def cli(dev):
             fg="green")
 
     click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
-
-    # kill all PIO Home servers, they block `pioplus` binary
-    shutdown_piohome_servers()
 
     to_develop = dev or not all(c.isdigit() for c in __version__ if c != ".")
     cmds = (["pip", "install", "--upgrade",
