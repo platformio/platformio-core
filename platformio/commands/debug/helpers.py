@@ -44,10 +44,6 @@ def is_mi_mode(args):
     return "--interpreter" in " ".join(args)
 
 
-def escape_path(path):
-    return path.replace("\\", "/")
-
-
 def get_default_debug_env(config):
     default_envs = config.default_envs()
     all_envs = config.envs()
@@ -169,11 +165,11 @@ def configure_esp32_load_cmds(debug_options, configuration):
 
     mon_cmds = [
         'monitor program_esp32 "{{{path}}}" {offset} verify'.format(
-            path=escape_path(item['path']), offset=item['offset'])
+            path=item['path'], offset=item['offset'])
         for item in configuration.get("flash_extra_images")
     ]
     mon_cmds.append('monitor program_esp32 "{%s.bin}" 0x10000 verify' %
-                    escape_path(configuration['prog_path'][:-4]))
+                    configuration['prog_path'][:-4])
     return mon_cmds
 
 
