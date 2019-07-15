@@ -121,7 +121,7 @@ def validate_debug_options(cmd_ctx, env_options):
             cwd=server_package_dir if server_package else None,
             executable=tool_settings['server'].get("executable"),
             arguments=[
-                a.replace("$PACKAGE_DIR", escape_path(server_package_dir))
+                a.replace("$PACKAGE_DIR", server_package_dir)
                 if server_package_dir else a
                 for a in tool_settings['server'].get("arguments", [])
             ])

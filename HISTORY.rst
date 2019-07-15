@@ -6,6 +6,12 @@ Release Notes
 PlatformIO 4.0
 --------------
 
+4.0.1 (2019-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Print `debug tool <http://docs.platformio.org/en/latest/plus/debugging.html#tools-debug-probes>`__ name for the active debugging session
+* Fixed an issue with incorrect escaping of Windows slashes when using `PIO Unified Debugger <http://docs.platformio.org/en/latest/plus/debugging.html>`__ and "piped" openOCD
+
 4.0.0 (2019-07-10)
 ~~~~~~~~~~~~~~~~~~
 

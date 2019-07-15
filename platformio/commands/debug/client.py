@@ -66,9 +66,9 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self._kill_previous_session()
 
         patterns = {
-            "PROJECT_DIR": helpers.escape_path(self.project_dir),
-            "PROG_PATH": helpers.escape_path(prog_path),
-            "PROG_DIR": helpers.escape_path(dirname(prog_path)),
+            "PROJECT_DIR": self.project_dir,
+            "PROG_PATH": prog_path,
+            "PROG_DIR": dirname(prog_path),
             "PROG_NAME": basename(splitext(prog_path)[0]),
             "DEBUG_PORT": self.debug_options['port'],
             "UPLOAD_PROTOCOL": self.debug_options['upload_protocol'],
