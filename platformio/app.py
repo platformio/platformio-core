@@ -157,6 +157,9 @@ class State(object):
         self.modified = True
         return self._storage.update(*args, **kwargs)
 
+    def clear(self):
+        return self._storage.clear()
+
     def __getitem__(self, key):
         return self._storage[key]
 

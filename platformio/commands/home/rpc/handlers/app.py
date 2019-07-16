@@ -25,6 +25,11 @@ class AppRPC(object):
 
     APPSTATE_PATH = join(get_project_core_dir(), "homestate.json")
 
+    IGNORE_STORAGE_KEYS = [
+        "cid", "coreVersion", "coreSystype", "coreCaller", "coreSettings",
+        "homeDir", "projectsDir"
+    ]
+
     @staticmethod
     def load_state():
         with app.State(AppRPC.APPSTATE_PATH, lock=True) as state:
@@ -66,6 +71,10 @@ class AppRPC(object):
     @staticmethod
     def save_state(state):
         with app.State(AppRPC.APPSTATE_PATH, lock=True) as s:
-            # s.clear()
+            s.clear()
             s.update(state)
+            storage = s.get("storage", {})
+            for k in AppRPC.IGNORE_STORAGE_KEYS:
+                if k in storage:
+                    del storage[k]
         return True
