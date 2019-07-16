@@ -129,12 +129,13 @@ Contributing
 See `contributing guidelines <https://github.com/platformio/platformio/blob/develop/CONTRIBUTING.md>`_.
 
 Telemetry / Privacy Policy
----------------------------
+--------------------------
 
-Share diagnostics and usage information to help us make PlatformIO better. It is enabled by default. For more information see:
+Share minimal diagnostics and usage information to help us make PlatformIO better.
+It is enabled by default. For more information see:
 
 * `Telemetry Setting <https://docs.platformio.org/en/latest/userguide/cmd_settings.html?utm_source=github&utm_medium=core#enable-telemetry>`_
-* `SSL Setting <https://docs.platformio.org/en/latest/userguide/cmd_settings.html?utm_source=github&utm_medium=core#enable-ssl>`_
+* `SSL Setting <https://docs.platformio.org/en/latest/userguide/cmd_settings.html?utm_source=github&utm_medium=core#strict-ssl>`_
 
 License
 -------

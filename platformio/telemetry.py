@@ -302,6 +302,9 @@ def measure_ci():
         },
         "DRONE": {
             "label": getenv("DRONE_REPO_SLUG")
+        },
+        "GITLAB": {
+            "label": getenv("CI_PROJECT_PATH_SLUG")
         }
     }
 

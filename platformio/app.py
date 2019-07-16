@@ -73,8 +73,8 @@ DEFAULT_SETTINGS = {
         "description": "Enable caching for API requests and Library Manager",
         "value": True
     },
-    "enable_ssl": {
-        "description": "Enable SSL for PlatformIO Services",
+    "strict_ssl": {
+        "description": "Strict SSL for PlatformIO Services",
         "value": False
     },
     "enable_telemetry": {

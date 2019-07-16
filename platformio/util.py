@@ -333,7 +333,7 @@ def _get_api_result(
     headers = get_request_defheaders()
     if not url.startswith("http"):
         url = __apiurl__ + url
-        if not get_setting("enable_ssl"):
+        if not get_setting("strict_ssl"):
             url = url.replace("https://", "http://")
 
     try:

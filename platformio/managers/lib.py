@@ -211,7 +211,7 @@ class LibraryManager(BasePkgManager):
 
         return self._install_from_url(
             name, dl_data['url'].replace("http://", "https://")
-            if app.get_setting("enable_ssl") else dl_data['url'], requirements)
+            if app.get_setting("strict_ssl") else dl_data['url'], requirements)
 
     def search_lib_id(  # pylint: disable=too-many-branches
             self,
