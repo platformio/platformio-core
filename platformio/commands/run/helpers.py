@@ -13,13 +13,13 @@
 # limitations under the License.
 
 from os import makedirs
-from os.path import getmtime, isdir, isfile, join
+from os.path import isdir, isfile, join
 from time import time
 
 import click
 
 from platformio import util
-from platformio.project.helpers import (calculate_project_hash,
+from platformio.project.helpers import (compute_project_checksum,
                                         get_project_dir,
                                         get_project_libdeps_dir)
 
@@ -43,32 +43,26 @@ def handle_legacy_libdeps(project_dir, config):
         fg="yellow")
 
 
-def clean_build_dir(build_dir):
+def clean_build_dir(build_dir, config):
     # remove legacy ".pioenvs" folder
     legacy_build_dir = join(get_project_dir(), ".pioenvs")
     if isdir(legacy_build_dir) and legacy_build_dir != build_dir:
         util.rmtree_(legacy_build_dir)
 
-    structhash_file = join(build_dir, "structure.hash")
-    proj_hash = calculate_project_hash()
+    checksum_file = join(build_dir, "project.checksum")
+    checksum = compute_project_checksum(config)
 
-    # if project's config is modified
-    if (isdir(build_dir) and getmtime(join(
-            get_project_dir(), "platformio.ini")) > getmtime(build_dir)):
+    if isdir(build_dir):
+        # check project structure
+        if isfile(checksum_file):
+            with open(checksum_file) as f:
+                if f.read() == checksum:
+                    return
         util.rmtree_(build_dir)
 
-    # check project structure
-    if isdir(build_dir) and isfile(structhash_file):
-        with open(structhash_file) as f:
-            if f.read() == proj_hash:
-                return
-        util.rmtree_(build_dir)
-
-    if not isdir(build_dir):
-        makedirs(build_dir)
-
-    with open(structhash_file, "w") as f:
-        f.write(proj_hash)
+    makedirs(build_dir)
+    with open(checksum_file, "w") as f:
+        f.write(checksum)
 
 
 def print_header(label, is_error=False, fg=None):

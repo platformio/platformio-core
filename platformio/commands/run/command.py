@@ -74,20 +74,20 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf, jobs,
         project_dir = find_project_dir_above(project_dir)
 
     with util.cd(project_dir):
+        config = ProjectConfig.get_instance(
+            project_conf or join(project_dir, "platformio.ini"))
+        config.validate(environment)
+
         # clean obsolete build dir
         if not disable_auto_clean:
             try:
-                clean_build_dir(get_project_build_dir())
+                clean_build_dir(get_project_build_dir(), config)
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
                     "it manually to avoid build issues" %
                     get_project_build_dir(force=True),
                     fg="yellow")
-
-        config = ProjectConfig.get_instance(
-            project_conf or join(project_dir, "platformio.ini"))
-        config.validate(environment)
 
         handle_legacy_libdeps(project_dir, config)
 

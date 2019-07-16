@@ -16,7 +16,7 @@ import glob
 import json
 import os
 import re
-from os.path import isfile
+from os.path import expanduser, isfile
 
 import click
 
@@ -106,6 +106,8 @@ class ProjectConfig(object):
 
         # load extra configs
         for pattern in self.get("platformio", "extra_configs", []):
+            if pattern.startswith("~"):
+                pattern = expanduser(pattern)
             for item in glob.glob(pattern):
                 self.read(item)
 
