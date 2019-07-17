@@ -284,35 +284,12 @@ def on_command():
 
 def measure_ci():
     event = {"category": "CI", "action": "NoName", "label": None}
-
-    envmap = {
-        "APPVEYOR": {
-            "label": getenv("APPVEYOR_REPO_NAME")
-        },
-        "CIRCLECI": {
-            "label":
-            "%s/%s" % (getenv("CIRCLE_PROJECT_USERNAME"),
-                       getenv("CIRCLE_PROJECT_REPONAME"))
-        },
-        "TRAVIS": {
-            "label": getenv("TRAVIS_REPO_SLUG")
-        },
-        "SHIPPABLE": {
-            "label": getenv("REPO_NAME")
-        },
-        "DRONE": {
-            "label": getenv("DRONE_REPO_SLUG")
-        },
-        "GITLAB": {
-            "label": getenv("CI_PROJECT_PATH_SLUG")
-        }
-    }
-
-    for key, value in envmap.items():
-        if getenv(key, "").lower() != "true":
-            continue
-        event.update({"action": key, "label": value['label']})
-
+    known_cis = ("TRAVIS", "APPVEYOR", "GITLAB_CI", "CIRCLECI", "SHIPPABLE",
+                 "DRONE")
+    for name in known_cis:
+        if getenv(name, "false").lower() == "true":
+            event['action'] = name
+            break
     on_event(**event)
 
 
