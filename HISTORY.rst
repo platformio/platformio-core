@@ -14,6 +14,7 @@ PlatformIO 4.0
 * Improved computing of project check sum (structure, configuration) and avoid unnecessary rebuilding
 * Renamed "enable_ssl" setting to `strict_ssl <http://docs.platformio.org/page/userguide/cmd_settings.html#strict-ssl>`__
 * Fixed an issue with incorrect escaping of Windows slashes when using `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__ and "piped" openOCD
+* Fixed an issue when "debug", "home", "run", and "test" commands were not shown in "platformio --help" CLI
 
 4.0.0 (2019-07-10)
 ~~~~~~~~~~~~~~~~~~
