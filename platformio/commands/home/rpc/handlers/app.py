@@ -62,6 +62,7 @@ class AppRPC(object):
             ]
 
             state['storage'] = storage
+            state.modified = False  # skip saving extra fields
             return state.as_dict()
 
     @staticmethod
