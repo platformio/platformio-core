@@ -21,22 +21,24 @@ from twisted.internet import defer  # pylint: disable=import-error
 class IDERPC(object):
 
     def __init__(self):
-        self._queue = []
+        self._queue = {}
 
-    def send_command(self, command, params):
-        if not self._queue:
+    def send_command(self, command, params, sid=0):
+        if not self._queue.get(sid):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4005, message="PIO Home IDE agent is not started")
-        while self._queue:
-            self._queue.pop().callback({
+        while self._queue[sid]:
+            self._queue[sid].pop().callback({
                 "id": time.time(),
                 "method": command,
                 "params": params
             })
 
-    def listen_commands(self):
-        self._queue.append(defer.Deferred())
-        return self._queue[-1]
+    def listen_commands(self, sid=0):
+        if sid not in self._queue:
+            self._queue[sid] = []
+        self._queue[sid].append(defer.Deferred())
+        return self._queue[sid][-1]
 
-    def open_project(self, project_dir):
-        return self.send_command("open_project", project_dir)
+    def open_project(self, project_dir, sid=0):
+        return self.send_command("open_project", project_dir, sid)
