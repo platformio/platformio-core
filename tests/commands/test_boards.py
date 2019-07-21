@@ -27,9 +27,9 @@ def test_board_json_output(clirunner, validate_cliresult):
 
 
 def test_board_raw_output(clirunner, validate_cliresult):
-    result = clirunner.invoke(cmd_boards, ["energia"])
+    result = clirunner.invoke(cmd_boards, ["espidf"])
     validate_cliresult(result)
-    assert "titiva" in result.output
+    assert "espressif32" in result.output
 
 
 def test_board_options(clirunner, validate_cliresult):
