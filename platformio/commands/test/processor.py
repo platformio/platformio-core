@@ -40,14 +40,6 @@ TRANSPORT_OPTIONS = {
         "begin": "pc.baud($baudrate)",
         "end": ""
     },
-    "energia": {
-        "include": "#include <Energia.h>",
-        "object": "",
-        "putchar": "Serial.write(c)",
-        "flush": "Serial.flush()",
-        "begin": "Serial.begin($baudrate)",
-        "end": "Serial.end()"
-    },
     "espidf": {
         "include": "#include <stdio.h>",
         "object": "",
