@@ -6,12 +6,12 @@ To get started, <a href="https://www.clahub.com/agreements/platformio/platformio
 1. Fork the repository on GitHub.
 2. Make a branch off of ``develop``
 3. Run ``pip install tox``
-4. Go to the root of project where is located ``tox.ini`` and run ``tox -e develop``
+4. Go to the root of project where is located ``tox.ini`` and run ``tox -e py27``
 5. Activate current development environment:
 
-   * Windows: ``.tox\develop\Scripts\activate``
-   * Bash/ZSH: ``source .tox/develop/bin/activate``
-   * Fish: ``source .tox/bin/activate.fish``
+   * Windows: ``.tox\py27\Scripts\activate``
+   * Bash/ZSH: ``source .tox/py27/bin/activate``
+   * Fish: ``source .tox/py27/bin/activate.fish``
 
 6. Make changes to code, documentation, etc.
 7. Lint source code ``tox -e lint``
