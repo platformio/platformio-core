@@ -14,8 +14,8 @@ To get started, <a href="https://www.clahub.com/agreements/platformio/platformio
    * Fish: ``source .tox/py27/bin/activate.fish``
 
 6. Make changes to code, documentation, etc.
-7. Lint source code ``tox -e lint``
-8. Run the tests ``tox -e py27``
+7. Lint source code ``make lint``
+8. Run the tests ``make test``
 9. Build documentation ``tox -e docs`` (creates a directory _build under docs where you can find the html)
 10. Commit changes to your forked repository
 11. Submit a Pull Request on GitHub.
