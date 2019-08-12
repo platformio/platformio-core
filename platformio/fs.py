@@ -108,7 +108,7 @@ def ensure_udev_rules():
 
 
 def path_endswith_ext(path, extensions):
-    if not isinstance(extensions, list):
+    if not isinstance(extensions, (list, tuple)):
         extensions = [extensions]
     for ext in extensions:
         if path.endswith("." + ext):
