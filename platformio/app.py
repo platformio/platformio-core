@@ -22,7 +22,7 @@ from time import time
 
 import requests
 
-from platformio import exception, lockfile, util
+from platformio import exception, fs, lockfile
 from platformio.compat import (WINDOWS, dump_json_to_unicode,
                                hashlib_encode_data)
 from platformio.proc import is_ci
@@ -113,7 +113,7 @@ class State(object):
         try:
             self._lock_state_file()
             if isfile(self.path):
-                self._storage = util.load_json(self.path)
+                self._storage = fs.load_json(self.path)
             assert isinstance(self._storage, dict)
         except (AssertionError, ValueError, UnicodeDecodeError,
                 exception.InvalidJSONFile):
@@ -290,7 +290,7 @@ class ContentCache(object):
                     try:
                         remove(path)
                         if not listdir(dirname(path)):
-                            util.rmtree_(dirname(path))
+                            fs.rmtree(dirname(path))
                     except OSError:
                         pass
 
@@ -304,7 +304,7 @@ class ContentCache(object):
     def clean(self):
         if not self.cache_dir or not isdir(self.cache_dir):
             return
-        util.rmtree_(self.cache_dir)
+        fs.rmtree(self.cache_dir)
 
 
 def clean_cache():

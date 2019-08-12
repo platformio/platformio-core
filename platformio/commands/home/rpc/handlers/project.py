@@ -22,7 +22,7 @@ from os.path import (basename, expanduser, getmtime, isdir, isfile, join,
 
 import jsonrpc  # pylint: disable=import-error
 
-from platformio import exception, util
+from platformio import exception, fs
 from platformio.commands.home.rpc.handlers.app import AppRPC
 from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.compat import PY2, get_filesystem_encoding
@@ -77,7 +77,7 @@ class ProjectRPC(object):
             data = {}
             boards = []
             try:
-                with util.cd(project_dir):
+                with fs.cd(project_dir):
                     data = _get_project_data(project_dir)
             except exception.PlatformIOProjectException:
                 continue
@@ -196,7 +196,7 @@ class ProjectRPC(object):
             ])   # yapf: disable
         if not main_content:
             return project_dir
-        with util.cd(project_dir):
+        with fs.cd(project_dir):
             src_dir = get_project_src_dir()
             main_path = join(src_dir, "main.cpp")
             if isfile(main_path):
@@ -249,10 +249,10 @@ class ProjectRPC(object):
 
     @staticmethod
     def _finalize_arduino_import(_, project_dir, arduino_project_dir):
-        with util.cd(project_dir):
+        with fs.cd(project_dir):
             src_dir = get_project_src_dir()
             if isdir(src_dir):
-                util.rmtree_(src_dir)
+                fs.rmtree(src_dir)
             shutil.copytree(arduino_project_dir, src_dir)
         return project_dir
 

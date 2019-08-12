@@ -26,7 +26,7 @@ from twisted.internet import reactor  # pylint: disable=import-error
 from twisted.internet import stdio  # pylint: disable=import-error
 from twisted.internet import task  # pylint: disable=import-error
 
-from platformio import app, exception, util
+from platformio import app, exception, fs, proc, util
 from platformio.commands.debug import helpers, initcfgs
 from platformio.commands.debug.process import BaseProcess
 from platformio.commands.debug.server import DebugServer
@@ -198,7 +198,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
     def processEnded(self, reason):  # pylint: disable=unused-argument
         self._unlock_session()
         if self._gdbsrc_dir and isdir(self._gdbsrc_dir):
-            util.rmtree_(self._gdbsrc_dir)
+            fs.rmtree(self._gdbsrc_dir)
         if self._debug_server:
             self._debug_server.terminate()
 
@@ -274,7 +274,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         else:
             kill = ["kill", pid]
         try:
-            util.exec_command(kill)
+            proc.exec_command(kill)
         except:  # pylint: disable=bare-except
             pass
 

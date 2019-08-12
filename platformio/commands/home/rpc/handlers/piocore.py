@@ -24,7 +24,7 @@ import jsonrpc  # pylint: disable=import-error
 from twisted.internet import threads  # pylint: disable=import-error
 from twisted.internet import utils  # pylint: disable=import-error
 
-from platformio import __main__, __version__, util
+from platformio import __main__, __version__, fs
 from platformio.commands.home import helpers
 from platformio.compat import (PY2, get_filesystem_encoding, is_bytes,
                                string_types)
@@ -88,7 +88,7 @@ class PIOCoreRPC(object):
                 args[i] = str(arg)
 
         def _call_inline():
-            with util.cd(cwd):
+            with fs.cd(cwd):
                 exit_code = __main__.main(["-c"] + args)
             return (PIOCoreRPC.thread_stdout.get_value_and_reset(),
                     PIOCoreRPC.thread_stderr.get_value_and_reset(), exit_code)

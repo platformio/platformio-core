@@ -25,7 +25,7 @@ from time import sleep
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from serial import Serial, SerialException
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.compat import WINDOWS
 from platformio.proc import exec_command
 
@@ -156,7 +156,7 @@ def AutodetectUploadPort(*args, **kwargs):
         env.Replace(UPLOAD_PORT=_look_for_mbed_disk())
     else:
         try:
-            util.ensure_udev_rules()
+            fs.ensure_udev_rules()
         except exception.InvalidUdevRules as e:
             sys.stderr.write("\n%s\n\n" % e)
         env.Replace(UPLOAD_PORT=_look_for_serial_port())

@@ -20,7 +20,7 @@ from os.path import isdir, isfile, join
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.compat import WINDOWS
 from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectOptions
@@ -129,7 +129,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
         src_manifest_path = platform.pm.get_src_manifest_path(
             platform.get_dir())
         if src_manifest_path:
-            src_manifest = util.load_json(src_manifest_path)
+            src_manifest = fs.load_json(src_manifest_path)
             if "version" in src_manifest:
                 data.append("#" + src_manifest['version'])
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
@@ -152,7 +152,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
         ram = board_config.get("upload", {}).get("maximum_ram_size")
         flash = board_config.get("upload", {}).get("maximum_size")
         data.append("%s RAM, %s Flash" %
-                    (util.format_filesize(ram), util.format_filesize(flash)))
+                    (fs.format_filesize(ram), fs.format_filesize(flash)))
         return data
 
     def _get_debug_data():

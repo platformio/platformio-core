@@ -21,7 +21,7 @@ from time import time
 
 import click
 
-from platformio import exception, util
+from platformio import exception, fs
 from platformio.commands.run.helpers import print_header
 from platformio.commands.test.embedded import EmbeddedTestProcessor
 from platformio.commands.test.native import NativeTestProcessor
@@ -76,7 +76,7 @@ def cli(  # pylint: disable=redefined-builtin
         ctx, environment, ignore, filter, upload_port, test_port, project_dir,
         project_conf, without_building, without_uploading, without_testing,
         no_reset, monitor_rts, monitor_dtr, verbose):
-    with util.cd(project_dir):
+    with fs.cd(project_dir):
         test_dir = get_project_test_dir()
         if not isdir(test_dir):
             raise exception.TestDirNotExists(test_dir)

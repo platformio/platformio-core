@@ -20,7 +20,7 @@ from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
 
 import bottle
 
-from platformio import util
+from platformio import fs, util
 from platformio.compat import WINDOWS, get_file_contents
 from platformio.proc import where_is_program
 from platformio.project.config import ProjectConfig
@@ -39,7 +39,7 @@ class ProjectGenerator(object):
 
     @staticmethod
     def get_supported_ides():
-        tpls_dir = join(util.get_source_dir(), "ide", "tpls")
+        tpls_dir = join(fs.get_source_dir(), "ide", "tpls")
         return sorted(
             [d for d in os.listdir(tpls_dir) if isdir(join(tpls_dir, d))])
 
@@ -54,7 +54,7 @@ class ProjectGenerator(object):
         tpl_vars.update(
             load_project_ide_data(self.project_dir, self.env_name) or {})
 
-        with util.cd(self.project_dir):
+        with fs.cd(self.project_dir):
             tpl_vars.update({
                 "project_name": basename(self.project_dir),
                 "src_files": self.get_src_files(),
@@ -79,7 +79,7 @@ class ProjectGenerator(object):
 
     def get_src_files(self):
         result = []
-        with util.cd(self.project_dir):
+        with fs.cd(self.project_dir):
             for root, _, files in os.walk(get_project_src_dir()):
                 for f in files:
                     result.append(relpath(join(root, f)))
@@ -87,7 +87,7 @@ class ProjectGenerator(object):
 
     def get_tpls(self):
         tpls = []
-        tpls_dir = join(util.get_source_dir(), "ide", "tpls", self.ide)
+        tpls_dir = join(fs.get_source_dir(), "ide", "tpls", self.ide)
         for root, _, files in os.walk(tpls_dir):
             for f in files:
                 if not f.endswith(".tpl"):

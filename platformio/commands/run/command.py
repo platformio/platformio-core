@@ -19,7 +19,7 @@ from time import time
 
 import click
 
-from platformio import exception, util
+from platformio import exception, fs
 from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.commands.run.helpers import (clean_build_dir,
                                              handle_legacy_libdeps,
@@ -73,7 +73,7 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf, jobs,
     if isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
 
-    with util.cd(project_dir):
+    with fs.cd(project_dir):
         config = ProjectConfig.get_instance(
             project_conf or join(project_dir, "platformio.ini"))
         config.validate(environment)

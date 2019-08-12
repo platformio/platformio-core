@@ -16,7 +16,7 @@ import json
 
 import click
 
-from platformio import util
+from platformio import fs
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.platform import PlatformManager
 
@@ -65,8 +65,8 @@ def print_boards(boards):
             BOARDLIST_TPL.format(type=click.style(board['id'], fg="cyan"),
                                  mcu=board['mcu'],
                                  frequency="%dMHz" % (board['fcpu'] / 1000000),
-                                 flash=util.format_filesize(board['rom']),
-                                 ram=util.format_filesize(board['ram']),
+                                 flash=fs.format_filesize(board['rom']),
+                                 ram=fs.format_filesize(board['ram']),
                                  name=board['name']))
 
 

@@ -20,7 +20,7 @@ from os.path import isdir, join
 import click
 import semantic_version
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.commands import PlatformioCLI
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.lib import (LibraryManager, get_builtin_libs,
@@ -99,7 +99,7 @@ def cli(ctx, **options):
         if not is_platformio_project(storage_dir):
             ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
             continue
-        with util.cd(storage_dir):
+        with fs.cd(storage_dir):
             libdeps_dir = get_project_libdeps_dir()
         config = ProjectConfig.get_instance(join(storage_dir,
                                                  "platformio.ini"))

@@ -25,7 +25,7 @@ import click
 import requests
 import semantic_version
 
-from platformio import __version__, app, exception, telemetry, util
+from platformio import __version__, app, exception, fs, telemetry, util
 from platformio.compat import hashlib_encode_data
 from platformio.downloader import FileDownloader
 from platformio.lockfile import LockFile
@@ -359,13 +359,13 @@ class PkgInstallerMixin(object):
         manifest_path = self.get_manifest_path(pkg_dir)
         src_manifest_path = self.get_src_manifest_path(pkg_dir)
         if src_manifest_path:
-            src_manifest = util.load_json(src_manifest_path)
+            src_manifest = fs.load_json(src_manifest_path)
 
         if not manifest_path and not src_manifest_path:
             return None
 
         if manifest_path and manifest_path.endswith(".json"):
-            manifest = util.load_json(manifest_path)
+            manifest = fs.load_json(manifest_path)
         elif manifest_path and manifest_path.endswith(".properties"):
             with codecs.open(manifest_path, encoding="utf-8") as fp:
                 for line in fp.readlines():
@@ -498,7 +498,7 @@ class PkgInstallerMixin(object):
                 if isfile(_url):
                     self.unpack(_url, tmp_dir)
                 else:
-                    util.rmtree_(tmp_dir)
+                    fs.rmtree(tmp_dir)
                     shutil.copytree(_url, tmp_dir)
             elif url.startswith(("http://", "https://")):
                 dlpath = self.download(url, tmp_dir, sha1)
@@ -523,7 +523,7 @@ class PkgInstallerMixin(object):
             return self._install_from_tmp_dir(_tmp_dir, requirements)
         finally:
             if isdir(tmp_dir):
-                util.rmtree_(tmp_dir)
+                fs.rmtree(tmp_dir)
         return None
 
     def _update_src_manifest(self, data, src_dir):
@@ -532,7 +532,7 @@ class PkgInstallerMixin(object):
         src_manifest_path = join(src_dir, self.SRC_MANIFEST_NAME)
         _data = {}
         if isfile(src_manifest_path):
-            _data = util.load_json(src_manifest_path)
+            _data = fs.load_json(src_manifest_path)
         _data.update(data)
         with open(src_manifest_path, "w") as fp:
             json.dump(_data, fp)
@@ -602,7 +602,7 @@ class PkgInstallerMixin(object):
 
         # remove previous/not-satisfied package
         if isdir(pkg_dir):
-            util.rmtree_(pkg_dir)
+            fs.rmtree(pkg_dir)
         shutil.move(tmp_dir, pkg_dir)
         assert isdir(pkg_dir)
         self.cache_reset()
@@ -768,7 +768,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             if islink(pkg_dir):
                 os.unlink(pkg_dir)
             else:
-                util.rmtree_(pkg_dir)
+                fs.rmtree(pkg_dir)
             self.cache_reset()
 
             # unfix package with the same name

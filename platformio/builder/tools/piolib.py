@@ -31,7 +31,7 @@ from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
 from platformio.compat import (WINDOWS, get_file_contents, hashlib_encode_data,
                                string_types)
@@ -261,7 +261,7 @@ class LibBuilderBase(object):
         return {}
 
     def process_extra_options(self):
-        with util.cd(self.path):
+        with fs.cd(self.path):
             self.env.ProcessFlags(self.build_flags)
             if self.extra_script:
                 self.env.SConscriptChdir(1)
@@ -533,7 +533,7 @@ class MbedLibBuilder(LibBuilderBase):
     def load_manifest(self):
         if not isfile(join(self.path, "module.json")):
             return {}
-        return util.load_json(join(self.path, "module.json"))
+        return fs.load_json(join(self.path, "module.json"))
 
     @property
     def include_dir(self):
@@ -611,7 +611,7 @@ class MbedLibBuilder(LibBuilderBase):
     def _mbed_lib_conf_parse_macros(self, mbed_lib_path):
         macros = {}
         cppdefines = str(self.env.Flatten(self.env.subst("$CPPDEFINES")))
-        manifest = util.load_json(mbed_lib_path)
+        manifest = fs.load_json(mbed_lib_path)
 
         # default macros
         for macro in manifest.get("macros", []):
@@ -682,7 +682,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     def load_manifest(self):
         assert isfile(join(self.path, "library.json"))
-        manifest = util.load_json(join(self.path, "library.json"))
+        manifest = fs.load_json(join(self.path, "library.json"))
         assert "name" in manifest
 
         # replace "espressif" old name dev/platform with ESP8266
@@ -700,14 +700,14 @@ class PlatformIOLibBuilder(LibBuilderBase):
     @property
     def include_dir(self):
         if "includeDir" in self._manifest.get("build", {}):
-            with util.cd(self.path):
+            with fs.cd(self.path):
                 return realpath(self._manifest.get("build").get("includeDir"))
         return LibBuilderBase.include_dir.fget(self)
 
     @property
     def src_dir(self):
         if "srcDir" in self._manifest.get("build", {}):
-            with util.cd(self.path):
+            with fs.cd(self.path):
                 return realpath(self._manifest.get("build").get("srcDir"))
         return LibBuilderBase.src_dir.fget(self)
 
@@ -1000,7 +1000,7 @@ def ConfigureProjectLibBuilder(env):
 
     def _get_vcs_info(lb):
         path = LibraryManager.get_src_manifest_path(lb.path)
-        return util.load_json(path) if path else None
+        return fs.load_json(path) if path else None
 
     def _correct_found_libs(lib_builders):
         # build full dependency graph

@@ -27,7 +27,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
-from platformio import util
+from platformio import fs
 from platformio.compat import PY2, dump_json_to_unicode
 from platformio.managers.platform import PlatformBase
 from platformio.proc import get_pythonexe_path
@@ -51,7 +51,7 @@ DEFAULT_ENV_OPTIONS = dict(
         "ar", "gas", "gcc", "g++", "gnulink", "platformio", "pioplatform",
         "pioproject", "piowinhooks", "piolib", "pioupload", "piomisc", "pioide"
     ],
-    toolpath=[join(util.get_source_dir(), "builder", "tools")],
+    toolpath=[join(fs.get_source_dir(), "builder", "tools")],
     variables=clivars,
 
     # Propagating External Environment

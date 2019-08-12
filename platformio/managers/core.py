@@ -17,7 +17,7 @@ import subprocess
 import sys
 from os.path import dirname, join
 
-from platformio import __version__, exception, util
+from platformio import __version__, exception, fs
 from platformio.compat import PY2, WINDOWS
 from platformio.managers.package import PackageManager
 from platformio.proc import copy_pythonpath_to_osenv, get_pythonexe_path
@@ -120,7 +120,7 @@ def pioplus_call(args, **kwargs):
     pythonexe_path = get_pythonexe_path()
     os.environ['PYTHONEXEPATH'] = pythonexe_path
     os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("contrib-pysite")
-    os.environ['PIOCOREPYSITEDIR'] = dirname(util.get_source_dir() or "")
+    os.environ['PIOCOREPYSITEDIR'] = dirname(fs.get_source_dir() or "")
     if dirname(pythonexe_path) not in os.environ['PATH'].split(os.pathsep):
         os.environ['PATH'] = (os.pathsep).join(
             [dirname(pythonexe_path), os.environ['PATH']])
