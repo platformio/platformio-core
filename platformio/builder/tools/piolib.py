@@ -78,7 +78,7 @@ class LibBuilderFactory(object):
             if "mbed_lib.json" in files:
                 return ["mbed"]
             for fname in files:
-                if not env.IsFileWithExt(
+                if not fs.path_endswith_ext(
                         fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT):
                     continue
                 content = get_file_contents(join(root, fname))
@@ -351,7 +351,7 @@ class LibBuilderBase(object):
                 if not self.PARSE_SRC_BY_H_NAME:
                     continue
                 _h_path = item.get_abspath()
-                if not self.env.IsFileWithExt(_h_path, piotool.SRC_HEADER_EXT):
+                if not fs.path_endswith_ext(_h_path, piotool.SRC_HEADER_EXT):
                     continue
                 _f_part = _h_path[:_h_path.rindex(".")]
                 for ext in piotool.SRC_C_EXT:

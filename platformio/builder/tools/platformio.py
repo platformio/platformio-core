@@ -14,10 +14,8 @@
 
 from __future__ import absolute_import
 
-import re
+import os
 import sys
-from glob import glob
-from os import sep, walk
 from os.path import basename, dirname, isdir, join, realpath
 
 from SCons import Builder, Util  # pylint: disable=import-error
@@ -27,14 +25,14 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 from SCons.Script import Export  # pylint: disable=import-error
 from SCons.Script import SConscript  # pylint: disable=import-error
 
-from platformio.compat import glob_escape, string_types
+from platformio import fs
+from platformio.compat import string_types
 from platformio.util import pioversion_to_intstr
 
 SRC_HEADER_EXT = ["h", "hpp"]
 SRC_C_EXT = ["c", "cc", "cpp"]
 SRC_BUILD_EXT = SRC_C_EXT + ["S", "spp", "SPP", "sx", "s", "asm", "ASM"]
-SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % sep, "-<svn%s>" % sep]
-SRC_FILTER_PATTERNS_RE = re.compile(r"(\+|\-)<([^>]+)>")
+SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % os.sep, "-<.svn%s>" % os.sep]
 
 
 def scons_patched_match_splitext(path, suffixes=None):
@@ -230,44 +228,11 @@ def ProcessUnFlags(env, flags):
                     env[key].remove(current)
 
 
-def IsFileWithExt(env, file_, ext):  # pylint: disable=W0613
-    if basename(file_).startswith("."):
-        return False
-    for e in ext:
-        if file_.endswith(".%s" % e):
-            return True
-    return False
-
-
 def MatchSourceFiles(env, src_dir, src_filter=None):
-
-    def _append_build_item(items, item, src_dir):
-        if env.IsFileWithExt(item, SRC_BUILD_EXT + SRC_HEADER_EXT):
-            items.add(item.replace(src_dir + sep, ""))
-
-    src_dir = env.subst(src_dir)
     src_filter = env.subst(src_filter) if src_filter else None
     src_filter = src_filter or SRC_FILTER_DEFAULT
-    if isinstance(src_filter, (list, tuple)):
-        src_filter = " ".join(src_filter)
-
-    matches = set()
-    # correct fs directory separator
-    src_filter = src_filter.replace("/", sep).replace("\\", sep)
-    for (action, pattern) in SRC_FILTER_PATTERNS_RE.findall(src_filter):
-        items = set()
-        for item in glob(join(glob_escape(src_dir), pattern)):
-            if isdir(item):
-                for root, _, files in walk(item, followlinks=True):
-                    for f in files:
-                        _append_build_item(items, join(root, f), src_dir)
-            else:
-                _append_build_item(items, item, src_dir)
-        if action == "+":
-            matches |= items
-        else:
-            matches -= items
-    return sorted(list(matches))
+    return fs.match_src_files(env.subst(src_dir), src_filter,
+                              SRC_BUILD_EXT + SRC_HEADER_EXT)
 
 
 def CollectBuildFiles(env,
@@ -279,7 +244,7 @@ def CollectBuildFiles(env,
     variants = []
 
     src_dir = env.subst(src_dir)
-    if src_dir.endswith(sep):
+    if src_dir.endswith(os.sep):
         src_dir = src_dir[:-1]
 
     for item in env.MatchSourceFiles(src_dir, src_filter):
@@ -291,7 +256,7 @@ def CollectBuildFiles(env,
             variants.append(_var_dir)
             env.VariantDir(_var_dir, _src_dir, duplicate)
 
-        if env.IsFileWithExt(item, SRC_BUILD_EXT):
+        if fs.path_endswith_ext(item, SRC_BUILD_EXT):
             sources.append(env.File(join(_var_dir, basename(item))))
 
     return sources
@@ -352,7 +317,6 @@ def generate(env):
     env.AddMethod(ParseFlagsExtended)
     env.AddMethod(ProcessFlags)
     env.AddMethod(ProcessUnFlags)
-    env.AddMethod(IsFileWithExt)
     env.AddMethod(MatchSourceFiles)
     env.AddMethod(CollectBuildFiles)
     env.AddMethod(BuildFrameworks)

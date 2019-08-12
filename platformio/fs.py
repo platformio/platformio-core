@@ -14,14 +14,16 @@
 
 import json
 import os
+import re
 import shutil
 import stat
 import sys
+from glob import glob
 
 import click
 
 from platformio import exception
-from platformio.compat import get_file_contents
+from platformio.compat import get_file_contents, glob_escape
 
 
 class cd(object):
@@ -103,6 +105,45 @@ def ensure_udev_rules():
             raise exception.OutdatedUdevRules(rules_path)
 
     return True
+
+
+def path_endswith_ext(path, extensions):
+    if not isinstance(extensions, list):
+        extensions = [extensions]
+    for ext in extensions:
+        if path.endswith("." + ext):
+            return True
+    return False
+
+
+def match_src_files(src_dir, src_filter=None, src_exts=None):
+
+    def _append_build_item(items, item, src_dir):
+        if not src_exts or path_endswith_ext(item, src_exts):
+            items.add(item.replace(src_dir + os.sep, ""))
+
+    src_filter = src_filter or ""
+    if isinstance(src_filter, (list, tuple)):
+        src_filter = " ".join(src_filter)
+
+    matches = set()
+    # correct fs directory separator
+    src_filter = src_filter.replace("/", os.sep).replace("\\", os.sep)
+    for (action, pattern) in re.findall(r"(\+|\-)<([^>]+)>", src_filter):
+        items = set()
+        for item in glob(os.path.join(glob_escape(src_dir), pattern)):
+            if os.path.isdir(item):
+                for root, _, files in os.walk(item, followlinks=True):
+                    for f in files:
+                        _append_build_item(items, os.path.join(root, f),
+                                           src_dir)
+            else:
+                _append_build_item(items, item, src_dir)
+        if action == "+":
+            matches |= items
+        else:
+            matches -= items
+    return sorted(list(matches))
 
 
 def rmtree(path):
