@@ -42,10 +42,11 @@ def settings_get(name):
             _defvalue_str = str(_data['value'])
             if isinstance(_data['value'], bool):
                 _defvalue_str = "Yes" if _data['value'] else "No"
-            _value_str += " [%s]" % _defvalue_str
             _value_str = click.style(_value_str, fg="yellow")
-
-        tabular_data.append((_name, _value_str, _data['description']))
+            _value_str += "%s[%s]" % ("\n" if len(_value_str) > 10 else " ",
+                                      _defvalue_str)
+        tabular_data.append(
+            (click.style(_name, fg="cyan"), _value_str, _data['description']))
 
     click.echo(
         tabulate(tabular_data,
