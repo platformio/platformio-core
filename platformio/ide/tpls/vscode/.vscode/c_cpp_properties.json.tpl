@@ -36,7 +36,6 @@
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
-                "databaseFilename": "${workspaceRoot}/.vscode/.browse.c_cpp.db",
                 "path": [
 % for include in cleaned_includes:
                     "{{! _escape(include) }}",
