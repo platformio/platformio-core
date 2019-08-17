@@ -167,7 +167,7 @@ def get_project_shared_dir():
 
 def compute_project_checksum(config):
     # rebuild when PIO Core version changes
-    checksum = sha1(__version__)
+    checksum = sha1(hashlib_encode_data(__version__))
 
     # configuration file state
     checksum.update(hashlib_encode_data(config.to_json()))
