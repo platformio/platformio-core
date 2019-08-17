@@ -86,7 +86,7 @@ class ProjectRPC(object):
                 name = board_id
                 try:
                     name = pm.board_config(board_id)['name']
-                except (exception.UnknownBoard, exception.UnknownPlatform):
+                except exception.PlatformioException:
                     pass
                 boards.append({"id": board_id, "name": name})
 
