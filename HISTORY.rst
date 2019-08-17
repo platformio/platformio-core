@@ -12,6 +12,7 @@ PlatformIO 4.0
 * Print `debug tool <http://docs.platformio.org/page/plus/debugging.html#tools-debug-probes>`__ name for the active debugging session
 * Do not shutdown PIO Home Server for "upgrade" operations (`issue #2784 <https://github.com/platformio/platformio-core/issues/2784>`_)
 * Improved computing of project check sum (structure, configuration) and avoid unnecessary rebuilding
+* Improved printing of tabulated results
 * Renamed "enable_ssl" setting to `strict_ssl <http://docs.platformio.org/page/userguide/cmd_settings.html#strict-ssl>`__
 * Fixed an issue with incorrect escaping of Windows slashes when using `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__ and "piped" openOCD
 * Fixed an issue when "debug", "home", "run", and "test" commands were not shown in "platformio --help" CLI
