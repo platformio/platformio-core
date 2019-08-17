@@ -43,12 +43,14 @@ def handle_legacy_libdeps(project_dir, config):
         fg="yellow")
 
 
-def clean_build_dir(build_dir, config):
+def handle_legacy_build_dir(project_dir, build_dir):
     # remove legacy ".pioenvs" folder
-    legacy_build_dir = join(get_project_dir(), ".pioenvs")
+    legacy_build_dir = join(project_dir, ".pioenvs")
     if isdir(legacy_build_dir) and legacy_build_dir != build_dir:
         fs.rmtree(legacy_build_dir)
 
+
+def clean_build_dir(build_dir, config):
     checksum_file = join(build_dir, "project.checksum")
     checksum = compute_project_checksum(config)
 
