@@ -15,6 +15,7 @@
 import json
 
 import click
+from tabulate import tabulate
 
 from platformio import fs
 from platformio.compat import dump_json_to_unicode
@@ -42,32 +43,18 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
         click.echo("")
         click.echo("Platform: ", nl=False)
         click.secho(platform, bold=True)
-        click.echo("-" * terminal_width)
+        click.echo("=" * terminal_width)
         print_boards(boards)
     return True
 
 
 def print_boards(boards):
-    terminal_width, _ = click.get_terminal_size()
-    BOARDLIST_TPL = ("{type:<30} {mcu:<14} {frequency:<8} "
-                     " {flash:<7} {ram:<6} {name}")
     click.echo(
-        BOARDLIST_TPL.format(type=click.style("ID", fg="cyan"),
-                             mcu="MCU",
-                             frequency="Frequency",
-                             flash="Flash",
-                             ram="RAM",
-                             name="Name"))
-    click.echo("-" * terminal_width)
-
-    for board in boards:
-        click.echo(
-            BOARDLIST_TPL.format(type=click.style(board['id'], fg="cyan"),
-                                 mcu=board['mcu'],
-                                 frequency="%dMHz" % (board['fcpu'] / 1000000),
-                                 flash=fs.format_filesize(board['rom']),
-                                 ram=fs.format_filesize(board['ram']),
-                                 name=board['name']))
+        tabulate([(click.style(b['id'], fg="cyan"), b['mcu'], "%dMHz" %
+                   (b['fcpu'] / 1000000), fs.format_filesize(
+                       b['rom']), fs.format_filesize(b['ram']), b['name'])
+                  for b in boards],
+                 headers=["ID", "MCU", "Frequency", "Flash", "RAM", "Name"]))
 
 
 def _get_boards(installed=False):

@@ -20,9 +20,9 @@ from os.path import isdir, join
 from time import time
 
 import click
+from tabulate import tabulate
 
-from platformio import exception, fs
-from platformio.commands.run.helpers import print_header
+from platformio import exception, fs, util
 from platformio.commands.test.embedded import EmbeddedTestProcessor
 from platformio.commands.test.native import NativeTestProcessor
 from platformio.project.config import ProjectConfig
@@ -87,12 +87,12 @@ def cli(  # pylint: disable=redefined-builtin
         config.validate(envs=environment)
 
         click.echo("Verbose mode can be enabled via `-v, --verbose` option")
-        click.echo("Collected %d items" % len(test_names))
+        click.secho("Collected %d items" % len(test_names), bold=True)
 
         results = []
-        start_time = time()
         default_envs = config.default_envs()
         for testname in test_names:
+
             for envname in config.envs():
                 section = "env:%s" % envname
 
@@ -114,8 +114,11 @@ def cli(  # pylint: disable=redefined-builtin
                              for p in patterns['ignore']]),
                 ]
                 if any(skip_conditions):
-                    results.append((None, testname, envname))
+                    results.append({"env": envname, "test": testname})
                     continue
+
+                click.echo()
+                print_processing_header(testname, envname)
 
                 cls = (NativeTestProcessor
                        if config.get(section, "platform") == "native" else
@@ -133,43 +136,24 @@ def cli(  # pylint: disable=redefined-builtin
                          monitor_rts=monitor_rts,
                          monitor_dtr=monitor_dtr,
                          verbose=verbose))
-                results.append((tp.process(), testname, envname))
+                result = {
+                    "env": envname,
+                    "test": testname,
+                    "elapsed": time(),
+                    "succeeded": tp.process()
+                }
+                result['elapsed'] = time() - result['elapsed']
+                results.append(result)
+
+                print_processing_footer(result)
 
     if without_testing:
         return
 
-    passed_nums = 0
-    failed_nums = 0
-    testname_max_len = max([len(r[1]) for r in results])
-    envname_max_len = max([len(click.style(r[2], fg="cyan")) for r in results])
+    print_testing_summary(results)
 
-    print_header("[%s]" % click.style("TEST SUMMARY"))
-    click.echo()
-
-    for result in results:
-        status, testname, envname = result
-        if status is False:
-            failed_nums += 1
-            status_str = click.style("FAILED", fg="red")
-        elif status is None:
-            status_str = click.style("IGNORED", fg="yellow")
-        else:
-            passed_nums += 1
-            status_str = click.style("PASSED", fg="green")
-
-        format_str = "test/{:<%d} > {:<%d}\t[{}]" % (testname_max_len,
-                                                     envname_max_len)
-        click.echo(format_str.format(testname, click.style(envname, fg="cyan"),
-                                     status_str),
-                   err=status is False)
-
-    print_header("%s%d passed in %.2f seconds" %
-                 ("%d failed, " % failed_nums if failed_nums else "",
-                  passed_nums, time() - start_time),
-                 is_error=failed_nums,
-                 fg="red" if failed_nums else "green")
-
-    if failed_nums:
+    command_failed = any(r.get("succeeded") is False for r in results)
+    if command_failed:
         raise exception.ReturnErrorCode(1)
 
 
@@ -181,3 +165,58 @@ def get_test_names(test_dir):
     if not names:
         names = ["*"]
     return names
+
+
+def print_processing_header(test, env):
+    click.echo("Processing %s in %s environment" % (click.style(
+        test, fg="yellow", bold=True), click.style(env, fg="cyan", bold=True)))
+    terminal_width, _ = click.get_terminal_size()
+    click.secho("-" * terminal_width, bold=True)
+
+
+def print_processing_footer(result):
+    is_failed = not result.get("succeeded")
+    util.print_labeled_bar(
+        "[%s] Took %.2f seconds" %
+        ((click.style("FAILED", fg="red", bold=True) if is_failed else
+          click.style("PASSED", fg="green", bold=True)), result['elapsed']),
+        is_error=is_failed)
+
+
+def print_testing_summary(results):
+    click.echo()
+    # util.print_labeled_bar("SUMMARY")
+
+    tabular_data = []
+    succeeded_nums = 0
+    failed_nums = 0
+    elapsed = 0
+
+    for result in results:
+        elapsed += result.get("elapsed", 0)
+        if result.get("succeeded") is False:
+            failed_nums += 1
+            status_str = click.style("FAILED", fg="red")
+        elif result.get("succeeded") is None:
+            status_str = "IGNORED"
+        else:
+            succeeded_nums += 1
+            status_str = click.style("PASSED", fg="green")
+
+        tabular_data.append(
+            (result['test'], click.style(result['env'], fg="cyan"), status_str,
+             util.humanize_elapsed_time(result.get("elapsed"))))
+
+    click.echo(tabulate(tabular_data,
+                        headers=[
+                            click.style(s, bold=True)
+                            for s in ("Test", "Environment", "Status", "Time")
+                        ]),
+               err=failed_nums)
+
+    util.print_labeled_bar(
+        "%s%d succeeded in %s" %
+        ("%d failed, " % failed_nums if failed_nums else "", succeeded_nums,
+         util.humanize_elapsed_time(elapsed)),
+        is_error=failed_nums,
+        fg="red" if failed_nums else "green")

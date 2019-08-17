@@ -12,24 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from time import time
-
-import click
-
 from platformio import exception, telemetry
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
-from platformio.commands.run.helpers import print_header
-from platformio.commands.test.processor import (CTX_META_TEST_IS_RUNNING,
-                                                CTX_META_TEST_RUNNING_NAME)
+from platformio.commands.test.processor import CTX_META_TEST_RUNNING_NAME
 from platformio.managers.platform import PlatformFactory
 
 # pylint: disable=too-many-instance-attributes
 
 
 class EnvironmentProcessor(object):
-
-    DEFAULT_PRINT_OPTIONS = ("platform", "framework", "board")
 
     def __init__(  # pylint: disable=too-many-arguments
             self, cmd_ctx, name, config, targets, upload_port, silent, verbose,
@@ -43,37 +35,6 @@ class EnvironmentProcessor(object):
         self.verbose = verbose
         self.jobs = jobs
         self.options = config.items(env=name, as_dict=True)
-
-    def process(self):
-        terminal_width, _ = click.get_terminal_size()
-        start_time = time()
-        env_dump = []
-
-        for k, v in self.options.items():
-            if self.verbose or k in self.DEFAULT_PRINT_OPTIONS:
-                env_dump.append(
-                    "%s: %s" % (k, ", ".join(v) if isinstance(v, list) else v))
-
-        if not self.silent:
-            click.echo("Processing %s (%s)" % (click.style(
-                self.name, fg="cyan", bold=True), "; ".join(env_dump)))
-            click.secho("-" * terminal_width, bold=True)
-
-        result = self._run_platform()
-        is_error = result['returncode'] != 0
-
-        if self.silent and not is_error:
-            return True
-
-        if is_error or CTX_META_TEST_IS_RUNNING not in self.cmd_ctx.meta:
-            print_header(
-                "[%s] Took %.2f seconds" %
-                ((click.style("ERROR", fg="red", bold=True) if
-                  is_error else click.style("SUCCESS", fg="green", bold=True)),
-                 time() - start_time),
-                is_error=is_error)
-
-        return not is_error
 
     def get_build_variables(self):
         variables = {"pioenv": self.name, "project_config": self.config.path}
@@ -92,7 +53,7 @@ class EnvironmentProcessor(object):
             return [t for t in self.targets]
         return self.config.get("env:" + self.name, "targets", [])
 
-    def _run_platform(self):
+    def process(self):
         if "platform" not in self.options:
             raise exception.UndefinedEnvPlatform(self.name)
 
@@ -113,5 +74,6 @@ class EnvironmentProcessor(object):
                                 skip_default_package=True)
             p = PlatformFactory.newPlatform(self.options['platform'])
 
-        return p.run(build_vars, build_targets, self.silent, self.verbose,
-                     self.jobs)
+        result = p.run(build_vars, build_targets, self.silent, self.verbose,
+                       self.jobs)
+        return result['returncode'] == 0

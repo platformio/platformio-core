@@ -14,7 +14,6 @@
 
 from os import makedirs
 from os.path import isdir, isfile, join
-from time import time
 
 import click
 
@@ -63,41 +62,3 @@ def clean_build_dir(build_dir, config):
     makedirs(build_dir)
     with open(checksum_file, "w") as f:
         f.write(checksum)
-
-
-def print_header(label, is_error=False, fg=None):
-    terminal_width, _ = click.get_terminal_size()
-    width = len(click.unstyle(label))
-    half_line = "=" * int((terminal_width - width - 2) / 2)
-    click.secho("%s %s %s" % (half_line, label, half_line),
-                fg=fg,
-                err=is_error)
-
-
-def print_summary(results, start_time):
-    print_header("[%s]" % click.style("SUMMARY"))
-
-    succeeded_nums = 0
-    failed_nums = 0
-    envname_max_len = max(
-        [len(click.style(envname, fg="cyan")) for (envname, _) in results])
-    for (envname, status) in results:
-        if status is False:
-            failed_nums += 1
-            status_str = click.style("FAILED", fg="red")
-        elif status is None:
-            status_str = click.style("IGNORED", fg="yellow")
-        else:
-            succeeded_nums += 1
-            status_str = click.style("SUCCESS", fg="green")
-
-        format_str = "Environment {0:<%d}\t[{1}]" % envname_max_len
-        click.echo(format_str.format(click.style(envname, fg="cyan"),
-                                     status_str),
-                   err=status is False)
-
-    print_header("%s%d succeeded in %.2f seconds" %
-                 ("%d failed, " % failed_nums if failed_nums else "",
-                  succeeded_nums, time() - start_time),
-                 is_error=failed_nums,
-                 fg="red" if failed_nums else "green")
