@@ -148,13 +148,14 @@ def match_src_files(src_dir, src_filter=None, src_exts=None):
 
 def rmtree(path):
 
-    def _onerror(_, name, __):
+    def _onerror(_, name, exc_info):
+        _, top_exc, _ = exc_info
         try:
             os.chmod(name, stat.S_IWRITE)
             os.remove(name)
-        except Exception as e:  # pylint: disable=broad-except
-            click.secho("%s \nPlease manually remove the file `%s`" %
-                        (str(e), name),
+        except:  # pylint: disable=broad-except
+            click.secho("%s \nPlease manually remove `%s` to avoid build issues" %
+                        (str(top_exc), name),
                         fg="red",
                         err=True)
 
