@@ -20,7 +20,6 @@ import click
 
 from platformio import fs
 from platformio.project.helpers import (compute_project_checksum,
-                                        get_project_dir,
                                         get_project_libdeps_dir)
 
 

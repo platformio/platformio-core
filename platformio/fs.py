@@ -153,7 +153,7 @@ def rmtree(path):
         try:
             os.chmod(name, stat.S_IWRITE)
             os.remove(name)
-        except:  # pylint: disable=broad-except
+        except:  # pylint: disable=bare-except
             click.secho("%s \nPlease manually remove `%s` to avoid build issues" %
                         (str(top_exc), name),
                         fg="red",
