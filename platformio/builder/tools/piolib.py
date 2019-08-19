@@ -201,21 +201,6 @@ class LibBuilderBase(object):
         return None
 
     @property
-    def lib_archive(self):
-        return self.env.GetProjectOption("lib_archive", True)
-
-    @property
-    def lib_ldf_mode(self):
-        return self.validate_ldf_mode(
-            self.env.GetProjectOption("lib_ldf_mode", self.LDF_MODE_DEFAULT))
-
-    @property
-    def lib_compat_mode(self):
-        return self.validate_compat_mode(
-            self.env.GetProjectOption("lib_compat_mode",
-                                      self.COMPAT_MODE_DEFAULT))
-
-    @property
     def depbuilders(self):
         return self._depbuilders
 
@@ -226,6 +211,14 @@ class LibBuilderBase(object):
     @property
     def is_built(self):
         return self._is_built
+
+    @property
+    def lib_archive(self):
+        return self.env.GetProjectOption("lib_archive", True)
+
+    @property
+    def lib_ldf_mode(self):
+        return self.env.GetProjectOption("lib_ldf_mode", self.LDF_MODE_DEFAULT)
 
     @staticmethod
     def validate_ldf_mode(mode):
@@ -238,6 +231,11 @@ class LibBuilderBase(object):
         except (IndexError, ValueError):
             pass
         return LibBuilderBase.LDF_MODE_DEFAULT
+
+    @property
+    def lib_compat_mode(self):
+        return self.env.GetProjectOption("lib_compat_mode",
+                                         self.COMPAT_MODE_DEFAULT)
 
     @staticmethod
     def validate_compat_mode(mode):
@@ -741,23 +739,28 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def lib_archive(self):
-        if "libArchive" in self._manifest.get("build", {}):
-            return self._manifest.get("build").get("libArchive")
-        return LibBuilderBase.lib_archive.fget(self)
+        global_value = self.env.GetProjectOption("lib_archive")
+        if global_value is not None:
+            return global_value
+        return self._manifest.get("build", {}).get(
+            "libArchive", LibBuilderBase.lib_archive.fget(self))
 
     @property
     def lib_ldf_mode(self):
-        if "libLDFMode" in self._manifest.get("build", {}):
-            return self.validate_ldf_mode(
-                self._manifest.get("build").get("libLDFMode"))
-        return LibBuilderBase.lib_ldf_mode.fget(self)
+        return self.validate_ldf_mode(
+            self.env.GetProjectOption(
+                "lib_ldf_mode",
+                self._manifest.get("build", {}).get(
+                    "libLDFMode", LibBuilderBase.lib_ldf_mode.fget(self))))
 
     @property
     def lib_compat_mode(self):
-        if "libCompatMode" in self._manifest.get("build", {}):
-            return self.validate_compat_mode(
-                self._manifest.get("build").get("libCompatMode"))
-        return LibBuilderBase.lib_compat_mode.fget(self)
+        return self.validate_ldf_mode(
+            self.env.GetProjectOption(
+                "lib_compat_mode",
+                self._manifest.get("build", {}).get(
+                    "libCompatMode",
+                    LibBuilderBase.lib_compat_mode.fget(self))))
 
     def is_platforms_compatible(self, platforms):
         items = self._manifest.get("platforms")

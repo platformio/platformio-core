@@ -19,6 +19,7 @@ PlatformIO 4.0
 * Fixed an issue with incorrect escaping of Windows slashes when using `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__ and "piped" openOCD
 * Fixed an issue when "debug", "home", "run", and "test" commands were not shown in "platformio --help" CLI
 * Fixed an issue with PIO Home's "No JSON object could be decoded" (`issue #2823 <https://github.com/platformio/platformio-core/issues/2823>`_)
+* Fixed an issue when `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__ had priority over project configuration for `LDF <http://docs.platformio.org/page/librarymanager/ldf.html>`__ (`issue #2867 <https://github.com/platformio/platformio-core/issues/2867>`_)
 
 4.0.0 (2019-07-10)
 ~~~~~~~~~~~~~~~~~~
