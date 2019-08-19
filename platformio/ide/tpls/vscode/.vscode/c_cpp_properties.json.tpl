@@ -10,7 +10,7 @@
 % systype = platform.system().lower()
 %
 % def _escape(text):
-%   return text.replace('\\\\', '/').replace('\\', '/').replace('"', '\\"')
+%   return to_unix_path(text).replace('"', '\\"')
 % end
 %
 % cleaned_includes = []
@@ -30,7 +30,7 @@
 % end
             "includePath": [
 % for include in cleaned_includes:
-                "{{! _escape(include) }}",
+                "{{ include }}",
 % end
                 ""
             ],
@@ -38,7 +38,7 @@
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
 % for include in cleaned_includes:
-                    "{{! _escape(include) }}",
+                    "{{ include }}",
 % end
                     ""
                 ]
@@ -64,7 +64,7 @@
 % if cxx_stds:
             "cppStandard": "c++{{ cxx_stds[-1] }}",
 % end
-            "compilerPath": "\"{{! _escape(cc_path) }}\" {{! _escape(cc_m_flags) }}"
+            "compilerPath": "\"{{cc_path}}\" {{! _escape(cc_m_flags) }}"
         }
     ],
     "version": 4

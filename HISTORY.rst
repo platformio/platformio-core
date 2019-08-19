@@ -13,6 +13,7 @@ PlatformIO 4.0
 * Do not shutdown PIO Home Server for "upgrade" operations (`issue #2784 <https://github.com/platformio/platformio-core/issues/2784>`_)
 * Improved computing of project check sum (structure, configuration) and avoid unnecessary rebuilding
 * Improved printing of tabulated results
+* Automatically normalize file system paths to UNIX-style for Project Generator (`issue #2857 <https://github.com/platformio/platformio-core/issues/2857>`_)
 * Ability to set "databaseFilename" for VSCode and C/C++ extension (`issue #2825 <https://github.com/platformio/platformio-core/issues/2825>`_)
 * Renamed "enable_ssl" setting to `strict_ssl <http://docs.platformio.org/page/userguide/cmd_settings.html#strict-ssl>`__
 * Fixed an issue with incorrect escaping of Windows slashes when using `PIO Unified Debugger <http://docs.platformio.org/page/plus/debugging.html>`__ and "piped" openOCD

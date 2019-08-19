@@ -73,10 +73,10 @@ class ProjectGenerator(object):
             "project_dir": self.project_dir,
             "env_name": self.env_name,
             "user_home_dir": abspath(expanduser("~")),
-            "platformio_path": self._fix_os_path(
+            "platformio_path":
                 sys.argv[0] if isfile(sys.argv[0])
-                else where_is_program("platformio")),
-            "env_path": self._fix_os_path(os.getenv("PATH")),
+                else where_is_program("platformio"),
+            "env_path": os.getenv("PATH"),
             "env_pathsep": os.pathsep
         }   # yapf: disable
 
@@ -95,11 +95,23 @@ class ProjectGenerator(object):
                     get_project_libdeps_dir(), self.env_name)
 
             })  # yapf: disable
+
+        for key, value in tpl_vars.items():
+            if key.endswith(("_path", "_dir")):
+                tpl_vars[key] = self.to_unix_path(value)
+        for key in ("includes", "src_files", "libsource_dirs"):
+            if key not in tpl_vars:
+                continue
+            tpl_vars[key] = [self.to_unix_path(inc) for inc in tpl_vars[key]]
+
+        tpl_vars['to_unix_path'] = self.to_unix_path
         return tpl_vars
 
     @staticmethod
-    def _fix_os_path(path):
-        return (re.sub(r"[\\]+", '\\' * 4, path) if WINDOWS else path)
+    def to_unix_path(path):
+        if not WINDOWS or not path:
+            return path
+        return re.sub(r"[\\]+", "/", path)
 
     def get_src_files(self):
         result = []
