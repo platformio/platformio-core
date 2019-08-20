@@ -455,20 +455,16 @@ def print_labeled_bar(label, is_error=False, fg=None):
                 err=is_error)
 
 
-def humanize_elapsed_time(total):
-    total = total or 0
-    constants = ((3600 * 24, "day"), (3600, "hour"), (60, "minute"),
-                 (1, "second"))
+def humanize_duration_time(duration):
+    if duration is None:
+        return duration
+    duration = duration * 1000
     tokens = []
-    for coef, name in constants:
-        t = (math.floor if total > 60 else round)(total / coef)
-        if t == 0:
-            continue
-        tokens.append("%d %s%s" % (t, name, "s" if t > 1 else ""))
-        total -= t * coef
-    if len(tokens) > 1:
-        tokens[-1] = "and %s" % tokens[-1]
-    return ", ".join(tokens)
+    for multiplier in (3600000, 60000, 1000, 1):
+        fraction = math.floor(duration / multiplier)
+        tokens.append(int(round(duration) if multiplier == 1 else fraction))
+        duration -= fraction * multiplier
+    return "{:02d}:{:02d}:{:02d}.{:03d}".format(*tokens)
 
 
 def get_original_version(version):
