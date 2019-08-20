@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import click
+from tabulate import tabulate
 
 from platformio import app
 from platformio.compat import string_types
@@ -26,17 +27,7 @@ def cli():
 @cli.command("get", short_help="Get existing setting/-s")
 @click.argument("name", required=False)
 def settings_get(name):
-
-    list_tpl = u"{name:<40} {value:<35} {description}"
-    terminal_width, _ = click.get_terminal_size()
-
-    click.echo(
-        list_tpl.format(name=click.style("Name", fg="cyan"),
-                        value=(click.style("Value", fg="green") +
-                               click.style(" [Default]", fg="yellow")),
-                        description="Description"))
-    click.echo("-" * terminal_width)
-
+    tabular_data = []
     for _name, _data in sorted(app.DEFAULT_SETTINGS.items()):
         if name and name != _name:
             continue
@@ -46,20 +37,20 @@ def settings_get(name):
                       if not isinstance(_value, string_types) else _value)
         if isinstance(_value, bool):
             _value_str = "Yes" if _value else "No"
-        _value_str = click.style(_value_str, fg="green")
 
         if _value != _data['value']:
             _defvalue_str = str(_data['value'])
             if isinstance(_data['value'], bool):
                 _defvalue_str = "Yes" if _data['value'] else "No"
-            _value_str += click.style(" [%s]" % _defvalue_str, fg="yellow")
-        else:
-            _value_str += click.style(" ", fg="yellow")
+            _value_str = click.style(_value_str, fg="yellow")
+            _value_str += "%s[%s]" % ("\n" if len(_value_str) > 10 else " ",
+                                      _defvalue_str)
+        tabular_data.append(
+            (click.style(_name, fg="cyan"), _value_str, _data['description']))
 
-        click.echo(
-            list_tpl.format(name=click.style(_name, fg="cyan"),
-                            value=_value_str,
-                            description=_data['description']))
+    click.echo(
+        tabulate(tabular_data,
+                 headers=["Name", "Current value [Default]", "Description"]))
 
 
 @cli.command("set", short_help="Set new value for the setting")

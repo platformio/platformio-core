@@ -28,7 +28,7 @@ class EmbeddedTestProcessor(TestProcessorBase):
 
     def process(self):
         if not self.options['without_building']:
-            self.print_progress("Building... (1/3)")
+            self.print_progress("Building...")
             target = ["__test"]
             if self.options['without_uploading']:
                 target.append("checkprogsize")
@@ -36,7 +36,7 @@ class EmbeddedTestProcessor(TestProcessorBase):
                 return False
 
         if not self.options['without_uploading']:
-            self.print_progress("Uploading... (2/3)")
+            self.print_progress("Uploading...")
             target = ["upload"]
             if self.options['without_building']:
                 target.append("nobuild")
@@ -48,7 +48,7 @@ class EmbeddedTestProcessor(TestProcessorBase):
         if self.options['without_testing']:
             return None
 
-        self.print_progress("Testing... (3/3)")
+        self.print_progress("Testing...")
         return self.run()
 
     def run(self):

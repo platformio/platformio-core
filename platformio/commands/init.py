@@ -102,8 +102,7 @@ def cli(
                           ide is not None)
 
     if ide:
-        pg = ProjectGenerator(project_dir, ide,
-                              get_best_envname(project_dir, board))
+        pg = ProjectGenerator(project_dir, ide, board)
         pg.generate()
 
     if is_new_project:
@@ -129,29 +128,6 @@ def cli(
             "\n`pio run --help` - additional information" %
             ("initialized" if is_new_project else "updated"),
             fg="green")
-
-
-def get_best_envname(project_dir, boards=None):
-    config = ProjectConfig.get_instance(join(project_dir, "platformio.ini"))
-    config.validate()
-
-    envname = None
-    default_envs = config.default_envs()
-    if default_envs:
-        envname = default_envs[0]
-        if not boards:
-            return envname
-
-    for env in config.envs():
-        if not boards:
-            return env
-        if not envname:
-            envname = env
-        items = config.items(env=env, as_dict=True)
-        if "board" in items and items.get("board") in boards:
-            return env
-
-    return envname
 
 
 def init_base_project(project_dir):

@@ -253,8 +253,9 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             return
         configuration = {"debug": self.debug_options, "env": self.env_options}
         exd = re.sub(r'\\(?!")', "/", json.dumps(configuration))
-        exd = re.sub(r'"(?:[a-z]\:)?((/[^"/]+)+)"', lambda m: '"%s"' % join(
-            *m.group(1).split("/")[-2:]), exd, re.I | re.M)
+        exd = re.sub(r'"(?:[a-z]\:)?((/[^"/]+)+)"',
+                     lambda m: '"%s"' % join(*m.group(1).split("/")[-2:]), exd,
+                     re.I | re.M)
         mp = MeasurementProtocol()
         mp['exd'] = "DebugGDBPioInitError: %s" % exd
         mp['exf'] = 1

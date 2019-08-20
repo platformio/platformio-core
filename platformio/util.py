@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+import math
 import os
 import platform
 import re
@@ -443,6 +444,31 @@ def merge_dicts(d1, d2, path=None):
         else:
             d1[key] = d2[key]
     return d1
+
+
+def print_labeled_bar(label, is_error=False, fg=None):
+    terminal_width, _ = click.get_terminal_size()
+    width = len(click.unstyle(label))
+    half_line = "=" * int((terminal_width - width - 2) / 2)
+    click.secho("%s %s %s" % (half_line, label, half_line),
+                fg=fg,
+                err=is_error)
+
+
+def humanize_elapsed_time(total):
+    total = total or 0
+    constants = ((3600 * 24, "day"), (3600, "hour"), (60, "minute"),
+                 (1, "second"))
+    tokens = []
+    for coef, name in constants:
+        t = (math.floor if total > 60 else round)(total / coef)
+        if t == 0:
+            continue
+        tokens.append("%d %s%s" % (t, name, "s" if t > 1 else ""))
+        total -= t * coef
+    if len(tokens) > 1:
+        tokens[-1] = "and %s" % tokens[-1]
+    return ", ".join(tokens)
 
 
 def get_original_version(version):

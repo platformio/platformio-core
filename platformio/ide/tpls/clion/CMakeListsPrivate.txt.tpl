@@ -17,7 +17,7 @@
 %       path = path.replace(user_home_dir, "$ENV{HOME}")
 %     end
 %   end
-%   return path.replace("\\", "/")
+%   return path
 % end
 
 set(PLATFORMIO_CMD "{{ _normalize_path(platformio_path) }}")

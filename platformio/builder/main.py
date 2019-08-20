@@ -145,10 +145,10 @@ if env.get("SIZETOOL") and "nobuild" not in COMMAND_LINE_TARGETS:
     Default("checkprogsize")
 
 # Print configured protocols
-env.AddPreAction(
-    ["upload", "program"],
-    env.VerboseAction(lambda source, target, env: env.PrintUploadInfo(),
-                      "Configuring upload protocol..."))
+env.AddPreAction(["upload", "program"],
+                 env.VerboseAction(
+                     lambda source, target, env: env.PrintUploadInfo(),
+                     "Configuring upload protocol..."))
 
 AlwaysBuild(env.Alias("debug", DEFAULT_TARGETS))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))

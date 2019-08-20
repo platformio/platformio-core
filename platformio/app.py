@@ -79,10 +79,8 @@ DEFAULT_SETTINGS = {
     },
     "enable_telemetry": {
         "description":
-        ("Telemetry service <https://docs.platformio.org/page/"
-         "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
-        "value":
-        True
+        ("Telemetry service <http://bit.ly/pio-telemetry> (Yes/No)"),
+        "value": True
     },
     "force_verbose": {
         "description": "Force verbose output when processing environments",
