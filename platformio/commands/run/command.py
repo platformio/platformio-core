@@ -132,8 +132,8 @@ def process_env(ctx, name, config, environments, targets, upload_port, silent,
 
     ep = EnvironmentProcessor(ctx, name, config, targets, upload_port, silent,
                               verbose, jobs)
-    result = {"env": name, "elapsed": time(), "succeeded": ep.process()}
-    result['elapsed'] = time() - result['elapsed']
+    result = {"env": name, "duration": time(), "succeeded": ep.process()}
+    result['duration'] = time() - result['duration']
 
     # print footer on error or when is not unit testing
     if not is_test_running and (not silent or not result['succeeded']):
@@ -164,7 +164,7 @@ def print_processing_footer(result):
     util.print_labeled_bar(
         "[%s] Took %.2f seconds" %
         ((click.style("FAILED", fg="red", bold=True) if is_failed else
-          click.style("SUCCESS", fg="green", bold=True)), result['elapsed']),
+          click.style("SUCCESS", fg="green", bold=True)), result['duration']),
         is_error=is_failed)
 
 
@@ -172,10 +172,10 @@ def print_processing_summary(results):
     tabular_data = []
     succeeded_nums = 0
     failed_nums = 0
-    elapsed = 0
+    duration = 0
 
     for result in results:
-        elapsed += result.get("elapsed", 0)
+        duration += result.get("duration", 0)
         if result.get("succeeded") is False:
             failed_nums += 1
             status_str = click.style("FAILED", fg="red")
@@ -187,19 +187,19 @@ def print_processing_summary(results):
 
         tabular_data.append(
             (click.style(result['env'], fg="cyan"), status_str,
-             util.humanize_elapsed_time(result.get("elapsed"))))
+             util.humanize_duration_time(result.get("duration"))))
 
     click.echo()
     click.echo(tabulate(tabular_data,
                         headers=[
                             click.style(s, bold=True)
-                            for s in ("Environment", "Status", "Time")
+                            for s in ("Environment", "Status", "Duration")
                         ]),
                err=failed_nums)
 
     util.print_labeled_bar(
         "%s%d succeeded in %s" %
         ("%d failed, " % failed_nums if failed_nums else "", succeeded_nums,
-         util.humanize_elapsed_time(elapsed)),
+         util.humanize_duration_time(duration)),
         is_error=failed_nums,
         fg="red" if failed_nums else "green")
