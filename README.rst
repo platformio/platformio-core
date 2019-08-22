@@ -10,20 +10,16 @@ PlatformIO
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
-.. image:: https://img.shields.io/pypi/l/platformio.svg
+.. image:: https://img.shields.io/badge/license-Apache%202.0-blue.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt:  License
-.. image:: https://img.shields.io/PlatformIO/Community.png
+.. image:: https://img.shields.io/badge/PlatformIO-Community-orange.svg
    :alt: Community Forums
    :target: https://community.platformio.org?utm_source=github&utm_medium=core
-.. image:: https://img.shields.io/PIO/Plus.png?color=orange
-   :alt: PIO Plus: Professional solutions for an awesome open source PlatformIO ecosystem
-   :target: https://platformio.org/pricing?utm_source=github&utm_medium=core
 
 **Quick Links:** `Web <https://platformio.org?utm_source=github&utm_medium=core>`_ |
-`PIO Plus <https://platformio.org/pricing?utm_source=github&utm_medium=core>`_ |
 `PlatformIO IDE <https://platformio.org/platformio-ide?utm_source=github&utm_medium=core>`_ |
-`Project Examples <https://github.com/platformio/platformio-examples/>`_ |
+`Project Examples <https://github.com/platformio/platformio-examples/>`__ |
 `Docs <https://docs.platformio.org?utm_source=github&utm_medium=core>`_ |
 `Donate <https://platformio.org/donate?utm_source=github&utm_medium=core>`_ |
 `Contact Us <https://platformio.org/contact?utm_source=github&utm_medium=core>`_
@@ -53,7 +49,7 @@ Open Source
 * `PlatformIO IDE <https://platformio.org/platformio-ide?utm_source=github&utm_medium=core>`_
 * `PlatformIO Core (CLI) <https://docs.platformio.org/en/latest/core.html?utm_source=github&utm_medium=core>`_
 * `Library Management <https://docs.platformio.org/page/librarymanager/index.html?utm_source=github&utm_medium=core>`_
-* `Project Examples <https://github.com/platformio/platformio-examples?utm_source=github&utm_medium=core>`_
+* `Project Examples <https://github.com/platformio/platformio-examples?utm_source=github&utm_medium=core>`__
 * `Desktop IDEs Integration <https://docs.platformio.org/page/ide.html?utm_source=github&utm_medium=core>`_
 * `Continuous Integration <https://docs.platformio.org/page/ci/index.html?utm_source=github&utm_medium=core>`_
 * `Advanced Scripting API <https://docs.platformio.org/page/projectconf/advanced_scripting.html?utm_source=github&utm_medium=core>`_
@@ -131,6 +127,15 @@ Contributing
 ------------
 
 See `contributing guidelines <https://github.com/platformio/platformio/blob/develop/CONTRIBUTING.md>`_.
+
+Telemetry / Privacy Policy
+--------------------------
+
+Share minimal diagnostics and usage information to help us make PlatformIO better.
+It is enabled by default. For more information see:
+
+* `Telemetry Setting <https://docs.platformio.org/en/latest/userguide/cmd_settings.html?utm_source=github&utm_medium=core#enable-telemetry>`_
+* `SSL Setting <https://docs.platformio.org/en/latest/userguide/cmd_settings.html?utm_source=github&utm_medium=core#strict-ssl>`_
 
 License
 -------

@@ -20,7 +20,7 @@ from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
 
 import bottle
 
-from platformio import util
+from platformio import fs, util
 from platformio.compat import WINDOWS, get_file_contents
 from platformio.proc import where_is_program
 from platformio.project.config import ProjectConfig
@@ -32,54 +32,90 @@ from platformio.project.helpers import (get_project_lib_dir,
 
 class ProjectGenerator(object):
 
-    def __init__(self, project_dir, ide, env_name):
+    def __init__(self, project_dir, ide, boards):
+        self.config = ProjectConfig.get_instance(
+            join(project_dir, "platformio.ini"))
+        self.config.validate()
         self.project_dir = project_dir
         self.ide = str(ide)
-        self.env_name = str(env_name)
+        self.env_name = str(self.get_best_envname(boards))
 
     @staticmethod
     def get_supported_ides():
-        tpls_dir = join(util.get_source_dir(), "ide", "tpls")
+        tpls_dir = join(fs.get_source_dir(), "ide", "tpls")
         return sorted(
             [d for d in os.listdir(tpls_dir) if isdir(join(tpls_dir, d))])
 
+    def get_best_envname(self, boards=None):
+        envname = None
+        default_envs = self.config.default_envs()
+        if default_envs:
+            envname = default_envs[0]
+            if not boards:
+                return envname
+
+        for env in self.config.envs():
+            if not boards:
+                return env
+            if not envname:
+                envname = env
+            items = self.config.items(env=env, as_dict=True)
+            if "board" in items and items.get("board") in boards:
+                return env
+
+        return envname
+
     def _load_tplvars(self):
-        tpl_vars = {"env_name": self.env_name}
+        tpl_vars = {
+            "config": self.config,
+            "systype": util.get_systype(),
+            "project_name": basename(self.project_dir),
+            "project_dir": self.project_dir,
+            "env_name": self.env_name,
+            "user_home_dir": abspath(expanduser("~")),
+            "platformio_path":
+                sys.argv[0] if isfile(sys.argv[0])
+                else where_is_program("platformio"),
+            "env_path": os.getenv("PATH"),
+            "env_pathsep": os.pathsep
+        }   # yapf: disable
+
         # default env configuration
-        tpl_vars.update(
-            ProjectConfig.get_instance(join(
-                self.project_dir, "platformio.ini")).items(env=self.env_name,
-                                                           as_dict=True))
+        tpl_vars.update(self.config.items(env=self.env_name, as_dict=True))
         # build data
         tpl_vars.update(
             load_project_ide_data(self.project_dir, self.env_name) or {})
 
-        with util.cd(self.project_dir):
+        with fs.cd(self.project_dir):
             tpl_vars.update({
-                "project_name": basename(self.project_dir),
                 "src_files": self.get_src_files(),
-                "user_home_dir": abspath(expanduser("~")),
-                "project_dir": self.project_dir,
                 "project_src_dir": get_project_src_dir(),
                 "project_lib_dir": get_project_lib_dir(),
                 "project_libdeps_dir": join(
-                    get_project_libdeps_dir(), self.env_name),
-                "systype": util.get_systype(),
-                "platformio_path": self._fix_os_path(
-                    sys.argv[0] if isfile(sys.argv[0])
-                    else where_is_program("platformio")),
-                "env_pathsep": os.pathsep,
-                "env_path": self._fix_os_path(os.getenv("PATH"))
+                    get_project_libdeps_dir(), self.env_name)
+
             })  # yapf: disable
+
+        for key, value in tpl_vars.items():
+            if key.endswith(("_path", "_dir")):
+                tpl_vars[key] = self.to_unix_path(value)
+        for key in ("includes", "src_files", "libsource_dirs"):
+            if key not in tpl_vars:
+                continue
+            tpl_vars[key] = [self.to_unix_path(inc) for inc in tpl_vars[key]]
+
+        tpl_vars['to_unix_path'] = self.to_unix_path
         return tpl_vars
 
     @staticmethod
-    def _fix_os_path(path):
-        return (re.sub(r"[\\]+", '\\' * 4, path) if WINDOWS else path)
+    def to_unix_path(path):
+        if not WINDOWS or not path:
+            return path
+        return re.sub(r"[\\]+", "/", path)
 
     def get_src_files(self):
         result = []
-        with util.cd(self.project_dir):
+        with fs.cd(self.project_dir):
             for root, _, files in os.walk(get_project_src_dir()):
                 for f in files:
                     result.append(relpath(join(root, f)))
@@ -87,7 +123,7 @@ class ProjectGenerator(object):
 
     def get_tpls(self):
         tpls = []
-        tpls_dir = join(util.get_source_dir(), "ide", "tpls", self.ide)
+        tpls_dir = join(fs.get_source_dir(), "ide", "tpls", self.ide)
         for root, _, files in os.walk(tpls_dir):
             for f in files:
                 if not f.endswith(".tpl"):

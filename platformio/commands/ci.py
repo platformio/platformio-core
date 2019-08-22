@@ -20,7 +20,7 @@ from tempfile import mkdtemp
 
 import click
 
-from platformio import app, util
+from platformio import app, fs
 from platformio.commands.init import cli as cmd_init
 from platformio.commands.init import validate_boards
 from platformio.commands.run import cli as cmd_run
@@ -89,7 +89,7 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
         app.set_session_var("force_option", True)
 
         if not keep_build_dir and isdir(build_dir):
-            util.rmtree_(build_dir)
+            fs.rmtree(build_dir)
         if not isdir(build_dir):
             makedirs(build_dir)
 
@@ -119,7 +119,7 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
         ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)
     finally:
         if not keep_build_dir:
-            util.rmtree_(build_dir)
+            fs.rmtree(build_dir)
 
 
 def _copy_contents(dst_dir, contents):
@@ -161,7 +161,7 @@ def _exclude_contents(dst_dir, patterns):
     for path in contents:
         path = abspath(path)
         if isdir(path):
-            util.rmtree_(path)
+            fs.rmtree(path)
         elif isfile(path):
             remove(path)
 

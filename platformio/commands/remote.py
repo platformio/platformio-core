@@ -21,7 +21,7 @@ from time import sleep
 
 import click
 
-from platformio import exception, util
+from platformio import exception, fs
 from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.compat import get_file_contents
 from platformio.managers.core import pioplus_call
@@ -202,4 +202,4 @@ def device_monitor(ctx, **kwargs):
         ctx.invoke(cmd_device_monitor, **kwargs)
         t.join(2)
     finally:
-        util.rmtree_(sock_dir)
+        fs.rmtree(sock_dir)

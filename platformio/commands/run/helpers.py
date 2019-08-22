@@ -13,13 +13,12 @@
 # limitations under the License.
 
 from os import makedirs
-from os.path import getmtime, isdir, isfile, join
-from time import time
+from os.path import isdir, isfile, join
 
 import click
 
-from platformio import util
-from platformio.project.helpers import (calculate_project_hash,
+from platformio import fs
+from platformio.project.helpers import (compute_project_checksum,
                                         get_project_dir,
                                         get_project_libdeps_dir)
 
@@ -43,67 +42,23 @@ def handle_legacy_libdeps(project_dir, config):
         fg="yellow")
 
 
-def clean_build_dir(build_dir):
+def clean_build_dir(build_dir, config):
     # remove legacy ".pioenvs" folder
     legacy_build_dir = join(get_project_dir(), ".pioenvs")
     if isdir(legacy_build_dir) and legacy_build_dir != build_dir:
-        util.rmtree_(legacy_build_dir)
+        fs.rmtree(legacy_build_dir)
 
-    structhash_file = join(build_dir, "structure.hash")
-    proj_hash = calculate_project_hash()
+    checksum_file = join(build_dir, "project.checksum")
+    checksum = compute_project_checksum(config)
 
-    # if project's config is modified
-    if (isdir(build_dir) and getmtime(join(
-            get_project_dir(), "platformio.ini")) > getmtime(build_dir)):
-        util.rmtree_(build_dir)
+    if isdir(build_dir):
+        # check project structure
+        if isfile(checksum_file):
+            with open(checksum_file) as f:
+                if f.read() == checksum:
+                    return
+        fs.rmtree(build_dir)
 
-    # check project structure
-    if isdir(build_dir) and isfile(structhash_file):
-        with open(structhash_file) as f:
-            if f.read() == proj_hash:
-                return
-        util.rmtree_(build_dir)
-
-    if not isdir(build_dir):
-        makedirs(build_dir)
-
-    with open(structhash_file, "w") as f:
-        f.write(proj_hash)
-
-
-def print_header(label, is_error=False, fg=None):
-    terminal_width, _ = click.get_terminal_size()
-    width = len(click.unstyle(label))
-    half_line = "=" * int((terminal_width - width - 2) / 2)
-    click.secho("%s %s %s" % (half_line, label, half_line),
-                fg=fg,
-                err=is_error)
-
-
-def print_summary(results, start_time):
-    print_header("[%s]" % click.style("SUMMARY"))
-
-    succeeded_nums = 0
-    failed_nums = 0
-    envname_max_len = max(
-        [len(click.style(envname, fg="cyan")) for (envname, _) in results])
-    for (envname, status) in results:
-        if status is False:
-            failed_nums += 1
-            status_str = click.style("FAILED", fg="red")
-        elif status is None:
-            status_str = click.style("IGNORED", fg="yellow")
-        else:
-            succeeded_nums += 1
-            status_str = click.style("SUCCESS", fg="green")
-
-        format_str = "Environment {0:<%d}\t[{1}]" % envname_max_len
-        click.echo(format_str.format(click.style(envname, fg="cyan"),
-                                     status_str),
-                   err=status is False)
-
-    print_header("%s%d succeeded in %.2f seconds" %
-                 ("%d failed, " % failed_nums if failed_nums else "",
-                  succeeded_nums, time() - start_time),
-                 is_error=failed_nums,
-                 fg="red" if failed_nums else "green")
+    makedirs(build_dir)
+    with open(checksum_file, "w") as f:
+        f.write(checksum)

@@ -13,39 +13,30 @@
 # limitations under the License.
 
 import json
+import math
 import os
 import platform
 import re
 import socket
-import stat
 import sys
 import time
 from contextlib import contextmanager
 from functools import wraps
 from glob import glob
-from os.path import abspath, basename, dirname, isfile, join
-from shutil import rmtree
 
 import click
 import requests
 
 from platformio import __apiurl__, __version__, exception
 from platformio.commands import PlatformioCLI
-from platformio.compat import PY2, WINDOWS, get_file_contents
-from platformio.proc import exec_command, is_ci
+from platformio.compat import PY2, WINDOWS
+from platformio.fs import cd  # pylint: disable=unused-import
+from platformio.fs import load_json  # pylint: disable=unused-import
+from platformio.fs import rmtree as rmtree_  # pylint: disable=unused-import
+from platformio.proc import exec_command  # pylint: disable=unused-import
+from platformio.proc import is_ci  # pylint: disable=unused-import
 
-
-class cd(object):
-
-    def __init__(self, new_path):
-        self.new_path = new_path
-        self.prev_path = os.getcwd()
-
-    def __enter__(self):
-        os.chdir(self.new_path)
-
-    def __exit__(self, etype, value, traceback):
-        os.chdir(self.prev_path)
+# KEEP unused imports for backward compatibility with PIO Core 3.0 API
 
 
 class memoized(object):
@@ -119,14 +110,6 @@ def capture_std_streams(stdout, stderr=None):
     sys.stderr = _stderr
 
 
-def load_json(file_path):
-    try:
-        with open(file_path, "r") as f:
-            return json.load(f)
-    except ValueError:
-        raise exception.InvalidJSONFile(file_path)
-
-
 def get_systype():
     type_ = platform.system().lower()
     arch = platform.machine().lower()
@@ -139,16 +122,6 @@ def pioversion_to_intstr():
     vermatch = re.match(r"^([\d\.]+)", __version__)
     assert vermatch
     return [int(i) for i in vermatch.group(1).split(".")[:3]]
-
-
-def get_source_dir():
-    curpath = abspath(__file__)
-    if not isfile(curpath):
-        for p in sys.path:
-            if isfile(join(p, __file__)):
-                curpath = join(p, __file__)
-                break
-    return dirname(curpath)
 
 
 def change_filemtime(path, mtime):
@@ -221,7 +194,7 @@ def get_logical_devices():
             continue
         items.append({
             "path": match.group(1),
-            "name": basename(match.group(1))
+            "name": os.path.basename(match.group(1))
         })
     return items
 
@@ -333,7 +306,7 @@ def _get_api_result(
     headers = get_request_defheaders()
     if not url.startswith("http"):
         url = __apiurl__ + url
-        if not get_setting("enable_ssl"):
+        if not get_setting("strict_ssl"):
             url = url.replace("https://", "http://")
 
     try:
@@ -461,23 +434,6 @@ def parse_date(datestr):
     return time.strptime(datestr)
 
 
-def format_filesize(filesize):
-    base = 1024
-    unit = 0
-    suffix = "B"
-    filesize = float(filesize)
-    if filesize < base:
-        return "%d%s" % (filesize, suffix)
-    for i, suffix in enumerate("KMGTPEZY"):
-        unit = base**(i + 2)
-        if filesize >= unit:
-            continue
-        if filesize % (base**(i + 1)):
-            return "%.2f%sB" % ((base * filesize / unit), suffix)
-        break
-    return "%d%sB" % ((base * filesize / unit), suffix)
-
-
 def merge_dicts(d1, d2, path=None):
     if path is None:
         path = []
@@ -490,35 +446,25 @@ def merge_dicts(d1, d2, path=None):
     return d1
 
 
-def ensure_udev_rules():
+def print_labeled_bar(label, is_error=False, fg=None):
+    terminal_width, _ = click.get_terminal_size()
+    width = len(click.unstyle(label))
+    half_line = "=" * int((terminal_width - width - 2) / 2)
+    click.secho("%s %s %s" % (half_line, label, half_line),
+                fg=fg,
+                err=is_error)
 
-    def _rules_to_set(rules_path):
-        return set(l.strip() for l in get_file_contents(rules_path).split("\n")
-                   if l.strip() and not l.startswith("#"))
 
-    if "linux" not in get_systype():
-        return None
-    installed_rules = [
-        "/etc/udev/rules.d/99-platformio-udev.rules",
-        "/lib/udev/rules.d/99-platformio-udev.rules"
-    ]
-    if not any(isfile(p) for p in installed_rules):
-        raise exception.MissedUdevRules
-
-    origin_path = abspath(
-        join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules"))
-    if not isfile(origin_path):
-        return None
-
-    origin_rules = _rules_to_set(origin_path)
-    for rules_path in installed_rules:
-        if not isfile(rules_path):
-            continue
-        current_rules = _rules_to_set(rules_path)
-        if not origin_rules <= current_rules:
-            raise exception.OutdatedUdevRules(rules_path)
-
-    return True
+def humanize_duration_time(duration):
+    if duration is None:
+        return duration
+    duration = duration * 1000
+    tokens = []
+    for multiplier in (3600000, 60000, 1000, 1):
+        fraction = math.floor(duration / multiplier)
+        tokens.append(int(round(duration) if multiplier == 1 else fraction))
+        duration -= fraction * multiplier
+    return "{:02d}:{:02d}:{:02d}.{:03d}".format(*tokens)
 
 
 def get_original_version(version):
@@ -530,18 +476,3 @@ def get_original_version(version):
     if int(raw) <= 9999:
         return "%s.%s" % (raw[:-2], int(raw[-2:]))
     return "%s.%s.%s" % (raw[:-4], int(raw[-4:-2]), int(raw[-2:]))
-
-
-def rmtree_(path):
-
-    def _onerror(_, name, __):
-        try:
-            os.chmod(name, stat.S_IWRITE)
-            os.remove(name)
-        except Exception as e:  # pylint: disable=broad-except
-            click.secho("%s \nPlease manually remove the file `%s`" %
-                        (str(e), name),
-                        fg="red",
-                        err=True)
-
-    return rmtree(path, onerror=_onerror)

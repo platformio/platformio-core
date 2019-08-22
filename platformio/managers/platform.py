@@ -22,7 +22,7 @@ from os.path import basename, dirname, isdir, isfile, join
 import click
 import semantic_version
 
-from platformio import __version__, app, exception, util
+from platformio import __version__, app, exception, fs, util
 from platformio.compat import PY2, hashlib_encode_data, is_bytes
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
@@ -47,7 +47,7 @@ class PlatformManager(BasePkgManager):
             repositories = [
                 "https://dl.bintray.com/platformio/dl-platforms/manifest.json",
                 "{0}://dl.platformio.org/platforms/manifest.json".format(
-                    "https" if app.get_setting("enable_ssl") else "http")
+                    "https" if app.get_setting("strict_ssl") else "http")
             ]
         BasePkgManager.__init__(self, package_dir
                                 or get_project_platforms_dir(), repositories)
@@ -237,7 +237,7 @@ class PlatformFactory(object):
             name = pm.load_manifest(platform_dir)['name']
         elif name.endswith("platform.json") and isfile(name):
             platform_dir = dirname(name)
-            name = util.load_json(name)['name']
+            name = fs.load_json(name)['name']
         else:
             name, requirements, url = pm.parse_pkg_uri(name, requirements)
             platform_dir = pm.get_package_dir(name, requirements, url)
@@ -404,7 +404,7 @@ class PlatformRunMixin(object):
             join(get_core_package_dir("tool-scons"), "script", "scons"),
             "-Q", "--warn=no-no-parallel-support",
             "--jobs", str(jobs),
-            "--sconstruct", join(util.get_source_dir(), "builder", "main.py")
+            "--sconstruct", join(fs.get_source_dir(), "builder", "main.py")
         ]  # yapf: disable
         args.append("PIOVERBOSE=%d" % (1 if self.verbose else 0))
         # pylint: disable=protected-access
@@ -494,7 +494,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         self.verbose = False
 
         self._BOARDS_CACHE = {}
-        self._manifest = util.load_json(manifest_path)
+        self._manifest = fs.load_json(manifest_path)
         self._custom_packages = None
 
         self.pm = PackageManager(get_project_packages_dir(),
@@ -693,7 +693,7 @@ class PlatformBoardConfig(object):
         assert isfile(manifest_path)
         self.manifest_path = manifest_path
         try:
-            self._manifest = util.load_json(manifest_path)
+            self._manifest = fs.load_json(manifest_path)
         except ValueError:
             raise exception.InvalidBoardManifest(manifest_path)
         if not set(["name", "url", "vendor"]) <= set(self._manifest):

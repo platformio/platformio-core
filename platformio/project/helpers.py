@@ -165,23 +165,33 @@ def get_project_shared_dir():
                                     join(get_project_dir(), "shared"))
 
 
-def calculate_project_hash():
+def compute_project_checksum(config):
+    # rebuild when PIO Core version changes
+    checksum = sha1(hashlib_encode_data(__version__))
+
+    # configuration file state
+    checksum.update(hashlib_encode_data(config.to_json()))
+
+    # project file structure
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
-    chunks = [__version__]
-    for d in (get_project_src_dir(), get_project_lib_dir()):
+    for d in (get_project_include_dir(), get_project_src_dir(),
+              get_project_lib_dir()):
         if not isdir(d):
             continue
+        chunks = []
         for root, _, files in walk(d):
             for f in files:
                 path = join(root, f)
                 if path.endswith(check_suffixes):
                     chunks.append(path)
-    chunks_to_str = ",".join(sorted(chunks))
-    if WINDOWS:
-        # Fix issue with useless project rebuilding for case insensitive FS.
-        # A case of disk drive can differ...
-        chunks_to_str = chunks_to_str.lower()
-    return sha1(hashlib_encode_data(chunks_to_str)).hexdigest()
+        if not chunks:
+            continue
+        chunks_to_str = ",".join(sorted(chunks))
+        if WINDOWS:  # case insensitive OS
+            chunks_to_str = chunks_to_str.lower()
+        checksum.update(hashlib_encode_data(chunks_to_str))
+
+    return checksum.hexdigest()
 
 
 def load_project_ide_data(project_dir, env_name):

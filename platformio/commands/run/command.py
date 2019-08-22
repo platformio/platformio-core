@@ -18,13 +18,14 @@ from os.path import isfile, join
 from time import time
 
 import click
+from tabulate import tabulate
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.commands.run.helpers import (clean_build_dir,
-                                             handle_legacy_libdeps,
-                                             print_summary)
+                                             handle_legacy_libdeps)
 from platformio.commands.run.processor import EnvironmentProcessor
+from platformio.commands.test.processor import CTX_META_TEST_IS_RUNNING
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (find_project_dir_above,
                                         get_project_build_dir)
@@ -73,11 +74,17 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf, jobs,
     if isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
 
-    with util.cd(project_dir):
+    is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
+
+    with fs.cd(project_dir):
+        config = ProjectConfig.get_instance(
+            project_conf or join(project_dir, "platformio.ini"))
+        config.validate(environment)
+
         # clean obsolete build dir
         if not disable_auto_clean:
             try:
-                clean_build_dir(get_project_build_dir())
+                clean_build_dir(get_project_build_dir(), config)
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
@@ -85,44 +92,114 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf, jobs,
                     get_project_build_dir(force=True),
                     fg="yellow")
 
-        config = ProjectConfig.get_instance(
-            project_conf or join(project_dir, "platformio.ini"))
-        config.validate(environment)
-
         handle_legacy_libdeps(project_dir, config)
 
-        results = []
-        start_time = time()
         default_envs = config.default_envs()
-        for envname in config.envs():
+        results = []
+        for env in config.envs():
             skipenv = any([
-                environment and envname not in environment, not environment
-                and default_envs and envname not in default_envs
+                environment and env not in environment, not environment
+                and default_envs and env not in default_envs
             ])
             if skipenv:
-                results.append((envname, None))
+                results.append({"env": env})
                 continue
 
-            if not silent and any(status is not None
-                                  for (_, status) in results):
+            # print empty line between multi environment project
+            if not silent and any(
+                    r.get("succeeded") is not None for r in results):
                 click.echo()
 
-            ep = EnvironmentProcessor(ctx, envname, config, target,
-                                      upload_port, silent, verbose, jobs)
-            result = (envname, ep.process())
-            results.append(result)
+            results.append(
+                process_env(ctx, env, config, environment, target, upload_port,
+                            silent, verbose, jobs, is_test_running))
 
-            if result[1] and "monitor" in ep.get_build_targets() and \
-                    "nobuild" not in ep.get_build_targets():
-                ctx.invoke(cmd_device_monitor,
-                           environment=environment[0] if environment else None)
+        command_failed = any(r.get("succeeded") is False for r in results)
 
-        found_error = any(status is False for (_, status) in results)
+        if (not is_test_running and (command_failed or not silent)
+                and len(results) > 1):
+            print_processing_summary(results)
 
-        if (found_error or not silent) and len(results) > 1:
-            click.echo()
-            print_summary(results, start_time)
-
-        if found_error:
+        if command_failed:
             raise exception.ReturnErrorCode(1)
         return True
+
+
+def process_env(ctx, name, config, environments, targets, upload_port, silent,
+                verbose, jobs, is_test_running):
+    if not is_test_running and not silent:
+        print_processing_header(name, config, verbose)
+
+    ep = EnvironmentProcessor(ctx, name, config, targets, upload_port, silent,
+                              verbose, jobs)
+    result = {"env": name, "duration": time(), "succeeded": ep.process()}
+    result['duration'] = time() - result['duration']
+
+    # print footer on error or when is not unit testing
+    if not is_test_running and (not silent or not result['succeeded']):
+        print_processing_footer(result)
+
+    if (result['succeeded'] and "monitor" in ep.get_build_targets()
+            and "nobuild" not in ep.get_build_targets()):
+        ctx.invoke(cmd_device_monitor,
+                   environment=environments[0] if environments else None)
+
+    return result
+
+
+def print_processing_header(env, config, verbose=False):
+    env_dump = []
+    for k, v in config.items(env=env):
+        if verbose or k in ("platform", "framework", "board"):
+            env_dump.append("%s: %s" %
+                            (k, ", ".join(v) if isinstance(v, list) else v))
+    click.echo("Processing %s (%s)" %
+               (click.style(env, fg="cyan", bold=True), "; ".join(env_dump)))
+    terminal_width, _ = click.get_terminal_size()
+    click.secho("-" * terminal_width, bold=True)
+
+
+def print_processing_footer(result):
+    is_failed = not result.get("succeeded")
+    util.print_labeled_bar(
+        "[%s] Took %.2f seconds" %
+        ((click.style("FAILED", fg="red", bold=True) if is_failed else
+          click.style("SUCCESS", fg="green", bold=True)), result['duration']),
+        is_error=is_failed)
+
+
+def print_processing_summary(results):
+    tabular_data = []
+    succeeded_nums = 0
+    failed_nums = 0
+    duration = 0
+
+    for result in results:
+        duration += result.get("duration", 0)
+        if result.get("succeeded") is False:
+            failed_nums += 1
+            status_str = click.style("FAILED", fg="red")
+        elif result.get("succeeded") is None:
+            status_str = "IGNORED"
+        else:
+            succeeded_nums += 1
+            status_str = click.style("SUCCESS", fg="green")
+
+        tabular_data.append(
+            (click.style(result['env'], fg="cyan"), status_str,
+             util.humanize_duration_time(result.get("duration"))))
+
+    click.echo()
+    click.echo(tabulate(tabular_data,
+                        headers=[
+                            click.style(s, bold=True)
+                            for s in ("Environment", "Status", "Duration")
+                        ]),
+               err=failed_nums)
+
+    util.print_labeled_bar(
+        "%s%d succeeded in %s" %
+        ("%d failed, " % failed_nums if failed_nums else "", succeeded_nums,
+         util.humanize_duration_time(duration)),
+        is_error=failed_nums,
+        fg="red" if failed_nums else "green")

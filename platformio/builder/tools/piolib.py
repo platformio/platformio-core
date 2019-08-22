@@ -31,7 +31,7 @@ from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
 from platformio.compat import (WINDOWS, get_file_contents, hashlib_encode_data,
                                string_types)
@@ -78,7 +78,7 @@ class LibBuilderFactory(object):
             if "mbed_lib.json" in files:
                 return ["mbed"]
             for fname in files:
-                if not env.IsFileWithExt(
+                if not fs.path_endswith_ext(
                         fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT):
                     continue
                 content = get_file_contents(join(root, fname))
@@ -201,21 +201,6 @@ class LibBuilderBase(object):
         return None
 
     @property
-    def lib_archive(self):
-        return self.env.GetProjectOption("lib_archive", True)
-
-    @property
-    def lib_ldf_mode(self):
-        return self.validate_ldf_mode(
-            self.env.GetProjectOption("lib_ldf_mode", self.LDF_MODE_DEFAULT))
-
-    @property
-    def lib_compat_mode(self):
-        return self.validate_compat_mode(
-            self.env.GetProjectOption("lib_compat_mode",
-                                      self.COMPAT_MODE_DEFAULT))
-
-    @property
     def depbuilders(self):
         return self._depbuilders
 
@@ -226,6 +211,14 @@ class LibBuilderBase(object):
     @property
     def is_built(self):
         return self._is_built
+
+    @property
+    def lib_archive(self):
+        return self.env.GetProjectOption("lib_archive", True)
+
+    @property
+    def lib_ldf_mode(self):
+        return self.env.GetProjectOption("lib_ldf_mode", self.LDF_MODE_DEFAULT)
 
     @staticmethod
     def validate_ldf_mode(mode):
@@ -238,6 +231,11 @@ class LibBuilderBase(object):
         except (IndexError, ValueError):
             pass
         return LibBuilderBase.LDF_MODE_DEFAULT
+
+    @property
+    def lib_compat_mode(self):
+        return self.env.GetProjectOption("lib_compat_mode",
+                                         self.COMPAT_MODE_DEFAULT)
 
     @staticmethod
     def validate_compat_mode(mode):
@@ -261,7 +259,7 @@ class LibBuilderBase(object):
         return {}
 
     def process_extra_options(self):
-        with util.cd(self.path):
+        with fs.cd(self.path):
             self.env.ProcessFlags(self.build_flags)
             if self.extra_script:
                 self.env.SConscriptChdir(1)
@@ -351,7 +349,7 @@ class LibBuilderBase(object):
                 if not self.PARSE_SRC_BY_H_NAME:
                     continue
                 _h_path = item.get_abspath()
-                if not self.env.IsFileWithExt(_h_path, piotool.SRC_HEADER_EXT):
+                if not fs.path_endswith_ext(_h_path, piotool.SRC_HEADER_EXT):
                     continue
                 _f_part = _h_path[:_h_path.rindex(".")]
                 for ext in piotool.SRC_C_EXT:
@@ -533,7 +531,7 @@ class MbedLibBuilder(LibBuilderBase):
     def load_manifest(self):
         if not isfile(join(self.path, "module.json")):
             return {}
-        return util.load_json(join(self.path, "module.json"))
+        return fs.load_json(join(self.path, "module.json"))
 
     @property
     def include_dir(self):
@@ -611,7 +609,7 @@ class MbedLibBuilder(LibBuilderBase):
     def _mbed_lib_conf_parse_macros(self, mbed_lib_path):
         macros = {}
         cppdefines = str(self.env.Flatten(self.env.subst("$CPPDEFINES")))
-        manifest = util.load_json(mbed_lib_path)
+        manifest = fs.load_json(mbed_lib_path)
 
         # default macros
         for macro in manifest.get("macros", []):
@@ -682,7 +680,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     def load_manifest(self):
         assert isfile(join(self.path, "library.json"))
-        manifest = util.load_json(join(self.path, "library.json"))
+        manifest = fs.load_json(join(self.path, "library.json"))
         assert "name" in manifest
 
         # replace "espressif" old name dev/platform with ESP8266
@@ -700,14 +698,14 @@ class PlatformIOLibBuilder(LibBuilderBase):
     @property
     def include_dir(self):
         if "includeDir" in self._manifest.get("build", {}):
-            with util.cd(self.path):
+            with fs.cd(self.path):
                 return realpath(self._manifest.get("build").get("includeDir"))
         return LibBuilderBase.include_dir.fget(self)
 
     @property
     def src_dir(self):
         if "srcDir" in self._manifest.get("build", {}):
-            with util.cd(self.path):
+            with fs.cd(self.path):
                 return realpath(self._manifest.get("build").get("srcDir"))
         return LibBuilderBase.src_dir.fget(self)
 
@@ -741,23 +739,28 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def lib_archive(self):
-        if "libArchive" in self._manifest.get("build", {}):
-            return self._manifest.get("build").get("libArchive")
-        return LibBuilderBase.lib_archive.fget(self)
+        global_value = self.env.GetProjectOption("lib_archive")
+        if global_value is not None:
+            return global_value
+        return self._manifest.get("build", {}).get(
+            "libArchive", LibBuilderBase.lib_archive.fget(self))
 
     @property
     def lib_ldf_mode(self):
-        if "libLDFMode" in self._manifest.get("build", {}):
-            return self.validate_ldf_mode(
-                self._manifest.get("build").get("libLDFMode"))
-        return LibBuilderBase.lib_ldf_mode.fget(self)
+        return self.validate_ldf_mode(
+            self.env.GetProjectOption(
+                "lib_ldf_mode",
+                self._manifest.get("build", {}).get(
+                    "libLDFMode", LibBuilderBase.lib_ldf_mode.fget(self))))
 
     @property
     def lib_compat_mode(self):
-        if "libCompatMode" in self._manifest.get("build", {}):
-            return self.validate_compat_mode(
-                self._manifest.get("build").get("libCompatMode"))
-        return LibBuilderBase.lib_compat_mode.fget(self)
+        return self.validate_ldf_mode(
+            self.env.GetProjectOption(
+                "lib_compat_mode",
+                self._manifest.get("build", {}).get(
+                    "libCompatMode",
+                    LibBuilderBase.lib_compat_mode.fget(self))))
 
     def is_platforms_compatible(self, platforms):
         items = self._manifest.get("platforms")
@@ -1000,7 +1003,7 @@ def ConfigureProjectLibBuilder(env):
 
     def _get_vcs_info(lb):
         path = LibraryManager.get_src_manifest_path(lb.path)
-        return util.load_json(path) if path else None
+        return fs.load_json(path) if path else None
 
     def _correct_found_libs(lib_builders):
         # build full dependency graph

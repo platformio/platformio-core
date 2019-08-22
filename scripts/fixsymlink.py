@@ -18,7 +18,7 @@ from sys import exit as sys_exit
 
 
 def fix_symlink(root, fname, brokenlink):
-    print root, fname, brokenlink
+    print(root, fname, brokenlink)
     prevcwd = getcwd()
 
     chdir(root)

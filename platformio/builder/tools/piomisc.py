@@ -24,7 +24,7 @@ from tempfile import mkstemp
 from SCons.Action import Action  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 
-from platformio import util
+from platformio import fs, util
 from platformio.compat import get_file_contents, glob_escape
 from platformio.managers.core import get_core_package_dir
 from platformio.proc import exec_command
@@ -295,7 +295,7 @@ def PioClean(env, clean_dir):
             print("Removed %s" %
                   (dst if clean_rel_path.startswith(".") else relpath(dst)))
     print("Done cleaning")
-    util.rmtree_(clean_dir)
+    fs.rmtree(clean_dir)
     env.Exit(0)
 
 
@@ -333,7 +333,7 @@ def GetExtraScripts(env, scope):
             items.append(item[len(scope) + 1:])
     if not items:
         return items
-    with util.cd(env.subst("$PROJECT_DIR")):
+    with fs.cd(env.subst("$PROJECT_DIR")):
         return [realpath(item) for item in items]
 
 

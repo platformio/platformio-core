@@ -26,7 +26,7 @@ from twisted.internet import reactor  # pylint: disable=import-error
 from twisted.internet import stdio  # pylint: disable=import-error
 from twisted.internet import task  # pylint: disable=import-error
 
-from platformio import app, exception, util
+from platformio import app, exception, fs, proc, util
 from platformio.commands.debug import helpers, initcfgs
 from platformio.commands.debug.process import BaseProcess
 from platformio.commands.debug.server import DebugServer
@@ -66,9 +66,9 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self._kill_previous_session()
 
         patterns = {
-            "PROJECT_DIR": helpers.escape_path(self.project_dir),
-            "PROG_PATH": helpers.escape_path(prog_path),
-            "PROG_DIR": helpers.escape_path(dirname(prog_path)),
+            "PROJECT_DIR": self.project_dir,
+            "PROG_PATH": prog_path,
+            "PROG_DIR": dirname(prog_path),
             "PROG_NAME": basename(splitext(prog_path)[0]),
             "DEBUG_PORT": self.debug_options['port'],
             "UPLOAD_PROTOCOL": self.debug_options['upload_protocol'],
@@ -157,6 +157,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
 
         banner = [
             "echo PlatformIO Unified Debugger -> http://bit.ly/pio-debug\\n",
+            "echo PlatformIO: debug_tool = %s\\n" % self.debug_options['tool'],
             "echo PlatformIO: Initializing remote target...\\n"
         ]
         footer = ["echo %s\\n" % self.INIT_COMPLETED_BANNER]
@@ -197,7 +198,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
     def processEnded(self, reason):  # pylint: disable=unused-argument
         self._unlock_session()
         if self._gdbsrc_dir and isdir(self._gdbsrc_dir):
-            util.rmtree_(self._gdbsrc_dir)
+            fs.rmtree(self._gdbsrc_dir)
         if self._debug_server:
             self._debug_server.terminate()
 
@@ -252,8 +253,9 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             return
         configuration = {"debug": self.debug_options, "env": self.env_options}
         exd = re.sub(r'\\(?!")', "/", json.dumps(configuration))
-        exd = re.sub(r'"(?:[a-z]\:)?((/[^"/]+)+)"', lambda m: '"%s"' % join(
-            *m.group(1).split("/")[-2:]), exd, re.I | re.M)
+        exd = re.sub(r'"(?:[a-z]\:)?((/[^"/]+)+)"',
+                     lambda m: '"%s"' % join(*m.group(1).split("/")[-2:]), exd,
+                     re.I | re.M)
         mp = MeasurementProtocol()
         mp['exd'] = "DebugGDBPioInitError: %s" % exd
         mp['exf'] = 1
@@ -273,7 +275,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         else:
             kill = ["kill", pid]
         try:
-            util.exec_command(kill)
+            proc.exec_command(kill)
         except:  # pylint: disable=bare-except
             pass
 

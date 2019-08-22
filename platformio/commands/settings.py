@@ -13,9 +13,18 @@
 # limitations under the License.
 
 import click
+from tabulate import tabulate
 
 from platformio import app
 from platformio.compat import string_types
+
+
+def format_value(raw):
+    if isinstance(raw, bool):
+        return "Yes" if raw else "No"
+    if isinstance(raw, string_types):
+        return raw
+    return str(raw)
 
 
 @click.group(short_help="Manage PlatformIO settings")
@@ -26,40 +35,27 @@ def cli():
 @cli.command("get", short_help="Get existing setting/-s")
 @click.argument("name", required=False)
 def settings_get(name):
+    tabular_data = []
+    for key, options in sorted(app.DEFAULT_SETTINGS.items()):
+        if name and name != key:
+            continue
+        raw_value = app.get_setting(key)
+        formatted_value = format_value(raw_value)
 
-    list_tpl = u"{name:<40} {value:<35} {description}"
-    terminal_width, _ = click.get_terminal_size()
+        if raw_value != options['value']:
+            default_formatted_value = format_value(options['value'])
+            formatted_value += "%s" % (
+                "\n" if len(default_formatted_value) > 10 else " ")
+            formatted_value += "[%s]" % click.style(default_formatted_value,
+                                                    fg="yellow")
+
+        tabular_data.append(
+            (click.style(key,
+                         fg="cyan"), formatted_value, options['description']))
 
     click.echo(
-        list_tpl.format(name=click.style("Name", fg="cyan"),
-                        value=(click.style("Value", fg="green") +
-                               click.style(" [Default]", fg="yellow")),
-                        description="Description"))
-    click.echo("-" * terminal_width)
-
-    for _name, _data in sorted(app.DEFAULT_SETTINGS.items()):
-        if name and name != _name:
-            continue
-        _value = app.get_setting(_name)
-
-        _value_str = (str(_value)
-                      if not isinstance(_value, string_types) else _value)
-        if isinstance(_value, bool):
-            _value_str = "Yes" if _value else "No"
-        _value_str = click.style(_value_str, fg="green")
-
-        if _value != _data['value']:
-            _defvalue_str = str(_data['value'])
-            if isinstance(_data['value'], bool):
-                _defvalue_str = "Yes" if _data['value'] else "No"
-            _value_str += click.style(" [%s]" % _defvalue_str, fg="yellow")
-        else:
-            _value_str += click.style(" ", fg="yellow")
-
-        click.echo(
-            list_tpl.format(name=click.style(_name, fg="cyan"),
-                            value=_value_str,
-                            description=_data['description']))
+        tabulate(tabular_data,
+                 headers=["Name", "Current value [Default]", "Description"]))
 
 
 @cli.command("set", short_help="Set new value for the setting")

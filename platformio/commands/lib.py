@@ -19,8 +19,9 @@ from os.path import isdir, join
 
 import click
 import semantic_version
+from tabulate import tabulate
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.commands import PlatformioCLI
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.lib import (LibraryManager, get_builtin_libs,
@@ -99,7 +100,7 @@ def cli(ctx, **options):
         if not is_platformio_project(storage_dir):
             ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
             continue
-        with util.cd(storage_dir):
+        with fs.cd(storage_dir):
             libdeps_dir = get_project_libdeps_dir()
         config = ProjectConfig.get_instance(join(storage_dir,
                                                  "platformio.ini"))
@@ -486,66 +487,48 @@ def lib_stats(json_output):
     if json_output:
         return click.echo(dump_json_to_unicode(result))
 
-    printitem_tpl = "{name:<33} {url}"
-    printitemdate_tpl = "{name:<33} {date:23} {url}"
-
-    def _print_title(title):
-        click.secho(title.upper(), bold=True)
-        click.echo("*" * len(title))
-
-    def _print_header(with_date=False):
-        click.echo((printitemdate_tpl if with_date else printitem_tpl).format(
-            name=click.style("Name", fg="cyan"),
-            date="Date",
-            url=click.style("Url", fg="blue")))
-
-        terminal_width, _ = click.get_terminal_size()
-        click.echo("-" * terminal_width)
-
-    def _print_lib_item(item):
-        date = str(
-            time.strftime("%c", util.parse_date(item['date'])) if "date" in
-            item else "")
-        url = click.style("https://platformio.org/lib/show/%s/%s" %
-                          (item['id'], quote(item['name'])),
-                          fg="blue")
-        click.echo(
-            (printitemdate_tpl if "date" in item else printitem_tpl).format(
-                name=click.style(item['name'], fg="cyan"), date=date, url=url))
-
-    def _print_tag_item(name):
-        click.echo(
-            printitem_tpl.format(
-                name=click.style(name, fg="cyan"),
-                url=click.style("https://platformio.org/lib/search?query=" +
-                                quote("keyword:%s" % name),
-                                fg="blue")))
-
     for key in ("updated", "added"):
-        _print_title("Recently " + key)
-        _print_header(with_date=True)
-        for item in result.get(key, []):
-            _print_lib_item(item)
+        tabular_data = [(click.style(item['name'], fg="cyan"),
+                         time.strftime("%c", util.parse_date(item['date'])),
+                         "https://platformio.org/lib/show/%s/%s" %
+                         (item['id'], quote(item['name'])))
+                        for item in result.get(key, [])]
+        table = tabulate(tabular_data,
+                         headers=[
+                             click.style("RECENTLY " + key.upper(), bold=True),
+                             "Date", "URL"
+                         ])
+        click.echo(table)
         click.echo()
 
-    _print_title("Recent keywords")
-    _print_header(with_date=False)
-    for item in result.get("lastkeywords"):
-        _print_tag_item(item)
-    click.echo()
-
-    _print_title("Popular keywords")
-    _print_header(with_date=False)
-    for item in result.get("topkeywords"):
-        _print_tag_item(item)
-    click.echo()
+    for key in ("lastkeywords", "topkeywords"):
+        tabular_data = [(click.style(name, fg="cyan"),
+                         "https://platformio.org/lib/search?query=" +
+                         quote("keyword:%s" % name))
+                        for name in result.get(key, [])]
+        table = tabulate(
+            tabular_data,
+            headers=[
+                click.style(
+                    ("RECENT" if key == "lastkeywords" else "POPULAR") +
+                    " KEYWORDS",
+                    bold=True), "URL"
+            ])
+        click.echo(table)
+        click.echo()
 
     for key, title in (("dlday", "Today"), ("dlweek", "Week"), ("dlmonth",
                                                                 "Month")):
-        _print_title("Featured: " + title)
-        _print_header(with_date=False)
-        for item in result.get(key, []):
-            _print_lib_item(item)
+        tabular_data = [(click.style(item['name'], fg="cyan"),
+                         "https://platformio.org/lib/show/%s/%s" %
+                         (item['id'], quote(item['name'])))
+                        for item in result.get(key, [])]
+        table = tabulate(tabular_data,
+                         headers=[
+                             click.style("FEATURED: " + title.upper(),
+                                         bold=True), "URL"
+                         ])
+        click.echo(table)
         click.echo()
 
     return True

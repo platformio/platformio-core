@@ -19,7 +19,7 @@ from os.path import isdir, isfile, join
 
 import click
 
-from platformio import exception, util
+from platformio import exception, fs
 from platformio.commands.platform import \
     platform_install as cli_platform_install
 from platformio.ide.projectgenerator import ProjectGenerator
@@ -102,8 +102,7 @@ def cli(
                           ide is not None)
 
     if ide:
-        pg = ProjectGenerator(project_dir, ide,
-                              get_best_envname(project_dir, board))
+        pg = ProjectGenerator(project_dir, ide, board)
         pg.generate()
 
     if is_new_project:
@@ -131,32 +130,9 @@ def cli(
             fg="green")
 
 
-def get_best_envname(project_dir, boards=None):
-    config = ProjectConfig.get_instance(join(project_dir, "platformio.ini"))
-    config.validate()
-
-    envname = None
-    default_envs = config.default_envs()
-    if default_envs:
-        envname = default_envs[0]
-        if not boards:
-            return envname
-
-    for env in config.envs():
-        if not boards:
-            return env
-        if not envname:
-            envname = env
-        items = config.items(env=env, as_dict=True)
-        if "board" in items and items.get("board") in boards:
-            return env
-
-    return envname
-
-
 def init_base_project(project_dir):
     ProjectConfig(join(project_dir, "platformio.ini")).save()
-    with util.cd(project_dir):
+    with fs.cd(project_dir):
         dir_to_readme = [
             (get_project_src_dir(), None),
             (get_project_include_dir(), init_include_readme),

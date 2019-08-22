@@ -23,7 +23,8 @@ install_requires = [
     "colorama",
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",
-    "semantic_version>=2.5.0,<3"
+    "semantic_version>=2.5.0,<3",
+    "tabulate>=0.8.3"
 ]
 
 setup(
@@ -65,6 +66,7 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: C",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Topic :: Software Development",
         "Topic :: Software Development :: Build Tools",

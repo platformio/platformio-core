@@ -53,12 +53,12 @@
 			<Add option="-D{{define}}"/>
 			% end
 			% for include in includes:
-			<Add directory="{{include.replace("\\", "/")}}"/>
-			% end		
+			<Add directory="{{include}}"/>
+			% end
 		</Compiler>
 		<Unit filename="platformio.ini" />
 		% for file in src_files:
-		<Unit filename="{{file.replace("\\", "/")}}"></Unit>
+		<Unit filename="{{file}}"></Unit>
 		% end
 	</Project>
 </CodeBlocks_project_file>

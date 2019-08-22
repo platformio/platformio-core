@@ -21,7 +21,7 @@ from os.path import isfile, join
 
 import click
 
-from platformio import exception, util
+from platformio import exception, fs, proc, util
 from platformio.commands.debug import helpers
 from platformio.managers.core import inject_contrib_pysite
 from platformio.project.config import ProjectConfig
@@ -61,7 +61,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
         if os.getenv(sysenv):
             project_dir = os.getenv(sysenv)
 
-    with util.cd(project_dir):
+    with fs.cd(project_dir):
         config = ProjectConfig.get_instance(
             project_conf or join(project_dir, "platformio.ini"))
         config.validate(envs=[environment] if environment else None)
@@ -83,16 +83,14 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface,
             "Could not load debug configuration")
 
     if "--version" in __unprocessed:
-        result = util.exec_command([configuration['gdb_path'], "--version"])
+        result = proc.exec_command([configuration['gdb_path'], "--version"])
         if result['returncode'] == 0:
             return click.echo(result['out'])
         raise exception.PlatformioException("\n".join(
             [result['out'], result['err']]))
 
     try:
-        util.ensure_udev_rules()
-    except NameError:
-        pass
+        fs.ensure_udev_rules()
     except exception.InvalidUdevRules as e:
         for line in str(e).split("\n") + [""]:
             click.echo(

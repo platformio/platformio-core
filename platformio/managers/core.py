@@ -16,11 +16,8 @@ import os
 import subprocess
 import sys
 from os.path import dirname, join
-from time import sleep
 
-import requests
-
-from platformio import __version__, exception, util
+from platformio import __version__, exception, fs
 from platformio.compat import PY2, WINDOWS
 from platformio.managers.package import PackageManager
 from platformio.proc import copy_pythonpath_to_osenv, get_pythonexe_path
@@ -99,23 +96,8 @@ def update_core_packages(only_check=False, silent=False):
         if not pkg_dir:
             continue
         if not silent or pm.outdated(pkg_dir, requirements):
-            if name == "tool-pioplus" and not only_check:
-                shutdown_piohome_servers()
-                if WINDOWS:
-                    sleep(1)
             pm.update(name, requirements, only_check=only_check)
     return True
-
-
-def shutdown_piohome_servers():
-    port = 8010
-    while port < 8050:
-        try:
-            requests.get("http://127.0.0.1:%d?__shutdown__=1" % port,
-                         timeout=0.01)
-        except:  # pylint: disable=bare-except
-            pass
-        port += 1
 
 
 def inject_contrib_pysite():
@@ -138,7 +120,7 @@ def pioplus_call(args, **kwargs):
     pythonexe_path = get_pythonexe_path()
     os.environ['PYTHONEXEPATH'] = pythonexe_path
     os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("contrib-pysite")
-    os.environ['PIOCOREPYSITEDIR'] = dirname(util.get_source_dir() or "")
+    os.environ['PIOCOREPYSITEDIR'] = dirname(fs.get_source_dir() or "")
     if dirname(pythonexe_path) not in os.environ['PATH'].split(os.pathsep):
         os.environ['PATH'] = (os.pathsep).join(
             [dirname(pythonexe_path), os.environ['PATH']])

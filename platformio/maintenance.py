@@ -19,7 +19,7 @@ from time import time
 import click
 import semantic_version
 
-from platformio import __version__, app, exception, telemetry, util
+from platformio import __version__, app, exception, fs, telemetry, util
 from platformio.commands import PlatformioCLI
 from platformio.commands.lib import CTX_META_STORAGE_DIRS_KEY
 from platformio.commands.lib import lib_update as cmd_lib_update
@@ -208,7 +208,7 @@ def check_platformio_upgrade():
                     fg="cyan",
                     nl=False)
         click.secho("`.", fg="yellow")
-    elif join("Cellar", "platformio") in util.get_source_dir():
+    elif join("Cellar", "platformio") in fs.get_source_dir():
         click.secho("brew update && brew upgrade", fg="cyan", nl=False)
         click.secho("` command.", fg="yellow")
     else:

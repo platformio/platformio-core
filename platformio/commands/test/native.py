@@ -14,7 +14,7 @@
 
 from os.path import join
 
-from platformio import util
+from platformio import fs, proc
 from platformio.commands.test.processor import TestProcessorBase
 from platformio.proc import LineBufferedAsyncPipe
 from platformio.project.helpers import get_project_build_dir
@@ -24,18 +24,18 @@ class NativeTestProcessor(TestProcessorBase):
 
     def process(self):
         if not self.options['without_building']:
-            self.print_progress("Building... (1/2)")
+            self.print_progress("Building...")
             if not self.build_or_upload(["__test"]):
                 return False
         if self.options['without_testing']:
             return None
-        self.print_progress("Testing... (2/2)")
+        self.print_progress("Testing...")
         return self.run()
 
     def run(self):
-        with util.cd(self.options['project_dir']):
+        with fs.cd(self.options['project_dir']):
             build_dir = get_project_build_dir()
-        result = util.exec_command(
+        result = proc.exec_command(
             [join(build_dir, self.env_name, "program")],
             stdout=LineBufferedAsyncPipe(self.on_run_out),
             stderr=LineBufferedAsyncPipe(self.on_run_out))

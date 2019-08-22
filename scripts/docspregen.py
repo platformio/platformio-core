@@ -20,7 +20,7 @@ from sys import path
 
 path.append("..")
 
-from platformio import util
+from platformio import fs, util
 from platformio.managers.platform import PlatformFactory, PlatformManager
 
 RST_COPYRIGHT = """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
@@ -97,8 +97,8 @@ def generate_boards_table(boards, skip_columns=None):
             debug=debug,
             mcu=data['mcu'].upper(),
             f_cpu=int(data['fcpu']) / 1000000,
-            ram=util.format_filesize(data['ram']),
-            rom=util.format_filesize(data['rom']))
+            ram=fs.format_filesize(data['ram']),
+            rom=fs.format_filesize(data['rom']))
 
         for (name, template) in columns:
             if skip_columns and name in skip_columns:
@@ -280,7 +280,7 @@ Packages
 
 
 def generate_platform(name, rst_dir):
-    print "Processing platform: %s" % name
+    print("Processing platform: %s" % name)
 
     compatible_boards = [
         board for board in BOARDS if name == board['platform']
@@ -439,7 +439,7 @@ def update_platform_docs():
 
 
 def generate_framework(type_, data, rst_dir=None):
-    print "Processing framework: %s" % type_
+    print("Processing framework: %s" % type_)
 
     compatible_platforms = [
         m for m in PLATFORM_MANIFESTS
@@ -614,8 +614,8 @@ def update_embedded_board(rst_path, board):
         mcu_upper=board['mcu'].upper(),
         f_cpu=board['fcpu'],
         f_cpu_mhz=int(board['fcpu']) / 1000000,
-        ram=util.format_filesize(board['ram']),
-        rom=util.format_filesize(board['rom']),
+        ram=fs.format_filesize(board['ram']),
+        rom=fs.format_filesize(board['rom']),
         vendor=board['vendor'],
         board_manifest_url=board_manifest_url,
         upload_protocol=board_config.get("upload.protocol", ""))
@@ -811,7 +811,7 @@ Boards
 
     # save
     with open(
-            join(util.get_source_dir(), "..", "docs", "plus", "debugging.rst"),
+            join(fs.get_source_dir(), "..", "docs", "plus", "debugging.rst"),
             "r+") as fp:
         content = fp.read()
         fp.seek(0)
@@ -880,7 +880,7 @@ def update_project_examples():
 {examples}
 """
 
-    project_examples_dir = join(util.get_source_dir(), "..", "examples")
+    project_examples_dir = join(fs.get_source_dir(), "..", "examples")
     framework_examples_md_lines = {}
     embedded = []
     desktop = []

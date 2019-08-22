@@ -20,7 +20,6 @@ from string import Template
 import click
 
 from platformio import exception
-from platformio.commands.run.helpers import print_header
 from platformio.project.helpers import get_project_test_dir
 
 TRANSPORT_OPTIONS = {
@@ -39,14 +38,6 @@ TRANSPORT_OPTIONS = {
         "flush": "",
         "begin": "pc.baud($baudrate)",
         "end": ""
-    },
-    "energia": {
-        "include": "#include <Energia.h>",
-        "object": "",
-        "putchar": "Serial.write(c)",
-        "flush": "Serial.flush()",
-        "begin": "Serial.begin($baudrate)",
-        "end": "Serial.end()"
     },
     "espidf": {
         "include": "#include <stdio.h>",
@@ -108,12 +99,8 @@ class TestProcessorBase(object):
     def get_baudrate(self):
         return int(self.env_options.get("test_speed", self.DEFAULT_BAUDRATE))
 
-    def print_progress(self, text, is_error=False):
-        click.echo()
-        print_header("[test/%s > %s] %s" %
-                     (click.style(self.test_name, fg="yellow"),
-                      click.style(self.env_name, fg="cyan"), text),
-                     is_error=is_error)
+    def print_progress(self, text):
+        click.secho(text, bold=self.options.get("verbose"))
 
     def build_or_upload(self, target):
         if not self._outputcpp_generated:
@@ -122,9 +109,6 @@ class TestProcessorBase(object):
 
         if self.test_name != "*":
             self.cmd_ctx.meta[CTX_META_TEST_RUNNING_NAME] = self.test_name
-
-        if not self.options['verbose']:
-            click.echo("Please wait...")
 
         try:
             from platformio.commands.run import cli as cmd_run
@@ -164,7 +148,11 @@ class TestProcessorBase(object):
             "",
             "$object",
             "",
+            "#ifdef __GNUC__",
+            "void output_start(unsigned int baudrate __attribute__((unused)))",
+            "#else",
             "void output_start(unsigned int baudrate)",
+            "#endif",
             "{",
             "    $begin;",
             "}",

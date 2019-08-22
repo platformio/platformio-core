@@ -22,7 +22,7 @@ from time import time
 
 import requests
 
-from platformio import exception, lockfile, util
+from platformio import exception, fs, lockfile
 from platformio.compat import (WINDOWS, dump_json_to_unicode,
                                hashlib_encode_data)
 from platformio.proc import is_ci
@@ -73,16 +73,14 @@ DEFAULT_SETTINGS = {
         "description": "Enable caching for API requests and Library Manager",
         "value": True
     },
-    "enable_ssl": {
-        "description": "Enable SSL for PlatformIO Services",
+    "strict_ssl": {
+        "description": "Strict SSL for PlatformIO Services",
         "value": False
     },
     "enable_telemetry": {
         "description":
-        ("Telemetry service <https://docs.platformio.org/page/"
-         "userguide/cmd_settings.html?#enable-telemetry> (Yes/No)"),
-        "value":
-        True
+        ("Telemetry service <http://bit.ly/pio-telemetry> (Yes/No)"),
+        "value": True
     },
     "force_verbose": {
         "description": "Force verbose output when processing environments",
@@ -113,7 +111,7 @@ class State(object):
         try:
             self._lock_state_file()
             if isfile(self.path):
-                self._storage = util.load_json(self.path)
+                self._storage = fs.load_json(self.path)
             assert isinstance(self._storage, dict)
         except (AssertionError, ValueError, UnicodeDecodeError,
                 exception.InvalidJSONFile):
@@ -156,6 +154,9 @@ class State(object):
     def update(self, *args, **kwargs):
         self.modified = True
         return self._storage.update(*args, **kwargs)
+
+    def clear(self):
+        return self._storage.clear()
 
     def __getitem__(self, key):
         return self._storage[key]
@@ -287,7 +288,7 @@ class ContentCache(object):
                     try:
                         remove(path)
                         if not listdir(dirname(path)):
-                            util.rmtree_(dirname(path))
+                            fs.rmtree(dirname(path))
                     except OSError:
                         pass
 
@@ -301,7 +302,7 @@ class ContentCache(object):
     def clean(self):
         if not self.cache_dir or not isdir(self.cache_dir):
             return
-        util.rmtree_(self.cache_dir)
+        fs.rmtree(self.cache_dir)
 
 
 def clean_cache():
