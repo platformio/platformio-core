@@ -6,7 +6,7 @@ Release Notes
 PlatformIO 4.0
 --------------
 
-4.0.1 (2019-??-??)
+4.0.1 (2019-08-22)
 ~~~~~~~~~~~~~~~~~~
 
 * Print `debug tool <http://docs.platformio.org/page/plus/debugging.html#tools-debug-probes>`__ name for the active debugging session
