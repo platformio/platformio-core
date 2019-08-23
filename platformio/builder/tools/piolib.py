@@ -755,7 +755,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def lib_compat_mode(self):
-        return self.validate_ldf_mode(
+        return self.validate_compat_mode(
             self.env.GetProjectOption(
                 "lib_compat_mode",
                 self._manifest.get("build", {}).get(
