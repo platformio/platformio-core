@@ -6,6 +6,11 @@ Release Notes
 PlatformIO 4.0
 --------------
 
+4.0.2 (2019-08-23)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed an issue with a broken `LDF <http://docs.platformio.org/page/librarymanager/ldf.html>`__ when checking for framework compatibility (`issue #2940 <https://github.com/platformio/platformio-core/issues/2940>`_)
+
 4.0.1 (2019-08-22)
 ~~~~~~~~~~~~~~~~~~
 
