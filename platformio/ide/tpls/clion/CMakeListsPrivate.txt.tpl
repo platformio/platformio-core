@@ -23,6 +23,7 @@
 % end
 %
 % envs = config.envs()
+% project_dir = get_project_dir()
 
 % if len(envs) > 1:
 set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }}" CACHE STRING "" FORCE)
@@ -49,7 +50,7 @@ set(CMAKE_CXX_STANDARD {{ cxx_stds[-1] }})
 
 % for env in envs:
 if (CMAKE_BUILD_TYPE MATCHES {{ env }})
-%   items = load_project_ide_data(get_project_dir(),env)
+%   items = load_project_ide_data(project_dir,env)
 %   for define in items["defines"]:
     add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
 %   end
