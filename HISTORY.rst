@@ -6,6 +6,11 @@ Release Notes
 PlatformIO 4.0
 --------------
 
+4.0.3 (2019-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Remove ProjectConfig cache when "platformio.ini" was modified outside
+
 4.0.2 (2019-08-23)
 ~~~~~~~~~~~~~~~~~~
 
