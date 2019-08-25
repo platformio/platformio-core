@@ -5,6 +5,8 @@
 # please create `CMakeListsUser.txt` in the root of project.
 # The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
 
+%from platformio.project.helpers import (get_project_dir,load_project_ide_data)
+%
 % import re
 %
 % def _normalize_path(path):
@@ -18,6 +20,14 @@
 %     end
 %   end
 %   return path
+% end
+%
+% envs = config.envs()
+
+% if len(envs) > 1:
+set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }}" CACHE STRING "" FORCE)
+% else:
+set(CMAKE_CONFIGURATION_TYPES "{{ env_name }}" CACHE STRING "" FORCE)
 % end
 
 set(PLATFORMIO_CMD "{{ _normalize_path(platformio_path) }}")
@@ -37,12 +47,16 @@ SET(CMAKE_C_STANDARD {{ cc_stds[-1] }})
 set(CMAKE_CXX_STANDARD {{ cxx_stds[-1] }})
 % end
 
-% for define in defines:
-add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
-% end
+% for env in envs:
+if (CMAKE_BUILD_TYPE MATCHES {{ env }})
+%   items = load_project_ide_data(get_project_dir(),env)
+%   for define in items["defines"]:
+    add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
+%   end
 
-% for include in includes:
-include_directories("{{ _normalize_path(include) }}")
+%   for include in items["includes"]:
+    include_directories("{{ _normalize_path(include) }}")
+%   end
+endif()
 % end
-
 FILE(GLOB_RECURSE SRC_LIST "{{ _normalize_path(project_src_dir) }}/*.*" "{{ _normalize_path(project_lib_dir) }}/*.*" "{{ _normalize_path(project_libdeps_dir) }}/*.*")
