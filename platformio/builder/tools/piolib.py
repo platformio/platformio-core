@@ -300,20 +300,8 @@ class LibBuilderBase(object):
             ])
         return items
 
-    def _validate_search_files(self, search_files=None):
-        if not search_files:
-            search_files = []
-        assert isinstance(search_files, list)
-
-        _search_files = []
-        for path in search_files:
-            if path not in self._processed_files:
-                _search_files.append(path)
-                self._processed_files.append(path)
-
-        return _search_files
-
-    def _get_found_includes(self, search_files=None):
+    def _get_found_includes(  # pylint: disable=too-many-branches
+            self, search_files=None):
         # all include directories
         if not LibBuilderBase._INCLUDE_DIRS_CACHE:
             LibBuilderBase._INCLUDE_DIRS_CACHE = []
@@ -326,7 +314,11 @@ class LibBuilderBase(object):
         include_dirs.extend(LibBuilderBase._INCLUDE_DIRS_CACHE)
 
         result = []
-        for path in self._validate_search_files(search_files):
+        for path in (search_files or []):
+            if path in self._processed_files:
+                continue
+            self._processed_files.append(path)
+
             try:
                 assert "+" in self.lib_ldf_mode
                 candidates = LibBuilderBase.CCONDITIONAL_SCANNER(
@@ -334,6 +326,11 @@ class LibBuilderBase(object):
                     self.env,
                     tuple(include_dirs),
                     depth=self.CCONDITIONAL_SCANNER_DEPTH)
+                # mark candidates already processed via Conditional Scanner
+                self._processed_files.extend([
+                    c.get_abspath() for c in candidates
+                    if c.get_abspath() not in self._processed_files
+                ])
             except Exception as e:  # pylint: disable=broad-except
                 if self.verbose and "+" in self.lib_ldf_mode:
                     sys.stderr.write(
