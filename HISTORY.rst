@@ -9,6 +9,7 @@ PlatformIO 4.0
 4.0.3 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Update SCons tool to 3.1.1
 * Remove ProjectConfig cache when "platformio.ini" was modified outside
 
 4.0.2 (2019-08-23)
