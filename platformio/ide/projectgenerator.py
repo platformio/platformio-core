@@ -14,14 +14,13 @@
 
 import codecs
 import os
-import re
 import sys
 from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
 
 import bottle
 
 from platformio import fs, util
-from platformio.compat import WINDOWS, get_file_contents
+from platformio.compat import get_file_contents
 from platformio.proc import where_is_program
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (get_project_lib_dir,
@@ -98,20 +97,14 @@ class ProjectGenerator(object):
 
         for key, value in tpl_vars.items():
             if key.endswith(("_path", "_dir")):
-                tpl_vars[key] = self.to_unix_path(value)
+                tpl_vars[key] = fs.to_unix_path(value)
         for key in ("includes", "src_files", "libsource_dirs"):
             if key not in tpl_vars:
                 continue
-            tpl_vars[key] = [self.to_unix_path(inc) for inc in tpl_vars[key]]
+            tpl_vars[key] = [fs.to_unix_path(inc) for inc in tpl_vars[key]]
 
-        tpl_vars['to_unix_path'] = self.to_unix_path
+        tpl_vars['to_unix_path'] = fs.to_unix_path
         return tpl_vars
-
-    @staticmethod
-    def to_unix_path(path):
-        if not WINDOWS or not path:
-            return path
-        return re.sub(r"[\\]+", "/", path)
 
     def get_src_files(self):
         result = []
