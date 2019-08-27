@@ -5,7 +5,7 @@
 # please create `CMakeListsUser.txt` in the root of project.
 # The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
 
-%from platformio.project.helpers import (get_project_dir,load_project_ide_data)
+%from platformio.project.helpers import (load_project_ide_data)
 %
 % import re
 %
@@ -23,7 +23,6 @@
 % end
 %
 % envs = config.envs()
-% project_dir = get_project_dir()
 
 % if len(envs) > 1:
 set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }}" CACHE STRING "" FORCE)
@@ -56,7 +55,7 @@ if (CMAKE_BUILD_TYPE MATCHES {{ env }})
 %   end
 
 %   for include in items["includes"]:
-    include_directories("{{ _normalize_path(include) }}")
+    include_directories("{{ _normalize_path(to_unix_path(include)) }}")
 %   end
 endif()
 % end
