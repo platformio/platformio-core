@@ -41,7 +41,6 @@ class BaseProcess(protocol.ProcessProtocol, object):
 
         for key, value in _patterns.items():
             if key.endswith(("_DIR", "_PATH")):
-                print(13, key)
                 _patterns[key] = fs.to_unix_path(value)
 
         def _replace(text):
