@@ -11,6 +11,7 @@ PlatformIO 4.0
 
 * Update SCons tool to 3.1.1
 * Remove ProjectConfig cache when "platformio.ini" was modified outside
+* Fixed an issue with PIO Unified Debugger on Windows OS when debug server is piped
 
 4.0.2 (2019-08-23)
 ~~~~~~~~~~~~~~~~~~
