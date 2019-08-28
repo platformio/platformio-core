@@ -312,6 +312,9 @@ class ProjectConfig(object):
         return json.dumps(result)
 
     def save(self, path=None):
+        path = path or self.path
+        if path in self._instances:
+            del self._instances[path]
         with open(path or self.path, "w") as fp:
             fp.write(CONFIG_HEADER)
             self._parser.write(fp)
