@@ -32,7 +32,8 @@ def GetProjectOption(env, option, default=None):
 def LoadProjectOptions(env):
     for option, value in env.GetProjectOptions():
         option_meta = ProjectOptions.get("env." + option)
-        if not option_meta or not option_meta.buildenvvar:
+        if (not option_meta or not option_meta.buildenvvar
+                or option_meta.buildenvvar in env):
             continue
         env[option_meta.buildenvvar] = value
 

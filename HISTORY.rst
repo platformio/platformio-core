@@ -12,6 +12,7 @@ PlatformIO 4.0
 * Update SCons tool to 3.1.1
 * Remove ProjectConfig cache when "platformio.ini" was modified outside
 * Fixed an issue with PIO Unified Debugger on Windows OS when debug server is piped
+* Fixed an issue when `--upload-port <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption-platformio-run-upload-port>`__ CLI flag does not override declared  `upload_port <http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-port>`_ option in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
 
 4.0.2 (2019-08-23)
 ~~~~~~~~~~~~~~~~~~
