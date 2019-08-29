@@ -10,6 +10,7 @@ PlatformIO 4.0
 ~~~~~~~~~~~~~~~~~~
 
 * Update SCons tool to 3.1.1
+* Generate ``.ccls`` LSP file for `Vim <http://docs.platformio.org/en/page/vim.html>`__ cross references, hierarchies, completion and semantic highlighting (`issue #2952 <https://github.com/platformio/platformio-core/issues/2952>`_)
 * Remove ProjectConfig cache when "platformio.ini" was modified outside
 * Fixed an issue with PIO Unified Debugger on Windows OS when debug server is piped
 * Fixed an issue when `--upload-port <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption-platformio-run-upload-port>`__ CLI flag does not override declared  `upload_port <http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-port>`__ option in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
