@@ -140,6 +140,8 @@ def DumpIDEData(env, projenv):
     LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS"
 
     data = {
+        "env_name":
+        env['PIOENV'],
         "libsource_dirs": [env.subst(l) for l in env.GetLibSourceDirs()],
         "defines":
         _dump_defines(env),
