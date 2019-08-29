@@ -9,8 +9,9 @@ PlatformIO 4.0
 4.0.3 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Support `PLATFORMIO_DISABLE_COLOR <http://docs.platformio.org/en/latest/envvars.html#envvar-PLATFORMIO_DISABLE_COLOR>`__ system environment variable which disables color ANSI-codes in a terminal output (`issue #2956 <https://github.com/platformio/platformio-core/issues/2956>`_)
+* Added support for multi-environment PlatformIO project for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__ (`issue #2824 <https://github.com/platformio/platformio-core/issues/2824>`_)
 * Generate ``.ccls`` LSP file for `Vim <http://docs.platformio.org/en/page/vim.html>`__ cross references, hierarchies, completion and semantic highlighting (`issue #2952 <https://github.com/platformio/platformio-core/issues/2952>`_)
+* Added support for `PLATFORMIO_DISABLE_COLOR <http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_DISABLE_COLOR>`__ system environment variable which disables color ANSI-codes in a terminal output (`issue #2956 <https://github.com/platformio/platformio-core/issues/2956>`_)
 * Updated SCons tool to 3.1.1
 * Remove ProjectConfig cache when "platformio.ini" was modified outside
 * Fixed an issue with PIO Unified Debugger on Windows OS when debug server is piped

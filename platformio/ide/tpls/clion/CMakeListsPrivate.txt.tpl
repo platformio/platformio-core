@@ -47,14 +47,30 @@ SET(CMAKE_C_STANDARD {{ cc_stds[-1] }})
 set(CMAKE_CXX_STANDARD {{ cxx_stds[-1] }})
 % end
 
-% for env in envs:
+if (CMAKE_BUILD_TYPE MATCHES {{ env_name }})
+%for define in defines:
+    add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
+%end
+
+%for include in includes:
+    include_directories("{{ _normalize_path(to_unix_path(include)) }}")
+%end
+endif()
+
+% leftover_envs = set(envs) ^ set([env_name])
+%
+% if leftover_envs:
+%   ide_data = load_project_ide_data(project_dir, leftover_envs)
+% end
+%
+% for env in leftover_envs:
 if (CMAKE_BUILD_TYPE MATCHES {{ env }})
-%   items = load_project_ide_data(project_dir,env)
-%   for define in items["defines"]:
+%   data = ide_data[env]
+%   for define in data["defines"]:
     add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
 %   end
 
-%   for include in items["includes"]:
+%   for include in data["includes"]:
     include_directories("{{ _normalize_path(to_unix_path(include)) }}")
 %   end
 endif()

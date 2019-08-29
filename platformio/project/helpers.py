@@ -197,7 +197,7 @@ def compute_project_checksum(config):
 def load_project_ide_data(project_dir, envs):
     from platformio.commands.run import cli as cmd_run
     assert envs
-    if not isinstance(envs, (list, tuple)):
+    if not isinstance(envs, (list, tuple, set)):
         envs = [envs]
     args = ["--project-dir", project_dir, "--target", "idedata"]
     for env in envs:
