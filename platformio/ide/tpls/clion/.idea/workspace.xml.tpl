@@ -15,10 +15,18 @@
       <config projectName="{{project_name}}" targetName="DEBUG" />
     </generated>
   </component>
-  <component name="CMakeSettings" AUTO_RELOAD="true" GENERATION_PASS_SYSTEM_ENVIRONMENT="true">
-    <ADDITIONAL_GENERATION_ENVIRONMENT>
-      <envs />
-    </ADDITIONAL_GENERATION_ENVIRONMENT>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+   <configurations>
+%   envs = config.envs()
+%   if len(envs) > 1:
+%       for env in envs:
+      <configuration PROFILE_NAME="{{ env }}" CONFIG_NAME="{{ env }}" />
+%       end
+      <configuration PROFILE_NAME="All" CONFIG_NAME="All" />
+%   else:
+      <configuration PROFILE_NAME="{{ env_name }}" CONFIG_NAME="{{ env_name }}" />
+%   end
+    </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ec922180-b3d3-40f1-af0b-2568113a9075" name="Default" comment="" />
