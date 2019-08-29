@@ -63,9 +63,8 @@ endif()
 %   ide_data = load_project_ide_data(project_dir, leftover_envs)
 % end
 %
-% for env in leftover_envs:
+% for env, data in ide_data.items():
 if (CMAKE_BUILD_TYPE MATCHES {{ env }})
-%   data = ide_data[env]
 %   for define in data["defines"]:
     add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
 %   end

@@ -74,4 +74,10 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+add_custom_target(
+    PLATFORMIO_DEVICE_LIST ALL
+    COMMAND ${PLATFORMIO_CMD} -f -c clion device list
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 add_executable(${PROJECT_NAME} ${SRC_LIST})
