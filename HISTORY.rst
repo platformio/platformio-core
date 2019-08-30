@@ -6,7 +6,7 @@ Release Notes
 PlatformIO 4.0
 --------------
 
-4.0.3 (2019-??-??)
+4.0.3 (2019-08-30)
 ~~~~~~~~~~~~~~~~~~
 
 * Added support for multi-environment PlatformIO project for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__ (`issue #2824 <https://github.com/platformio/platformio-core/issues/2824>`_)
