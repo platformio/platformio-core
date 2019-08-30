@@ -59,6 +59,7 @@ endif()
 
 % leftover_envs = set(envs) ^ set([env_name])
 %
+% ide_data = {}
 % if leftover_envs:
 %   ide_data = load_project_ide_data(project_dir, leftover_envs)
 % end
