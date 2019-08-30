@@ -194,10 +194,11 @@ def compute_project_checksum(config):
     return checksum.hexdigest()
 
 
-def load_project_ide_data(project_dir, envs):
+def load_project_ide_data(project_dir, env_or_envs):
     from platformio.commands.run import cli as cmd_run
-    assert envs
-    if not isinstance(envs, (list, tuple, set)):
+    assert env_or_envs
+    envs = env_or_envs
+    if not isinstance(envs, list):
         envs = [envs]
     args = ["--project-dir", project_dir, "--target", "idedata"]
     for env in envs:
@@ -217,6 +218,6 @@ def load_project_ide_data(project_dir, envs):
             _data = json.loads(line)
             if "env_name" in _data:
                 data[_data['env_name']] = _data
-    if len(envs) == 1 and envs[0] in data:
-        return data[envs[0]]
+    if not isinstance(env_or_envs, list) and env_or_envs in data:
+        return data[env_or_envs]
     return data or None

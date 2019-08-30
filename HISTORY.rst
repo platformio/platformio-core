@@ -6,6 +6,11 @@ Release Notes
 PlatformIO 4.0
 --------------
 
+4.0.4 (2019-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed an issue with project generator for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__ when 2 environments were used (`issue #2824 <https://github.com/platformio/platformio-core/issues/2824>`_)
+
 4.0.3 (2019-08-30)
 ~~~~~~~~~~~~~~~~~~
 

@@ -57,7 +57,7 @@ if (CMAKE_BUILD_TYPE MATCHES "{{ env_name }}")
 %end
 endif()
 
-% leftover_envs = set(envs) ^ set([env_name])
+% leftover_envs = list(set(envs) ^ set([env_name]))
 %
 % ide_data = {}
 % if leftover_envs:
