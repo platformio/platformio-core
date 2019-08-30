@@ -19,7 +19,7 @@ from hashlib import sha1
 from io import BytesIO
 from os.path import isfile
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.commands.platform import \
     platform_install as cmd_platform_install
 from platformio.commands.run import cli as cmd_run
@@ -165,11 +165,11 @@ def configure_esp32_load_cmds(debug_options, configuration):
 
     mon_cmds = [
         'monitor program_esp32 "{{{path}}}" {offset} verify'.format(
-            path=item['path'], offset=item['offset'])
+            path=fs.to_unix_path(item['path']), offset=item['offset'])
         for item in configuration.get("flash_extra_images")
     ]
     mon_cmds.append('monitor program_esp32 "{%s.bin}" 0x10000 verify' %
-                    configuration['prog_path'][:-4])
+                    fs.to_unix_path(configuration['prog_path'][:-4]))
     return mon_cmds
 
 

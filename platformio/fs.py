@@ -23,7 +23,7 @@ from glob import glob
 import click
 
 from platformio import exception
-from platformio.compat import get_file_contents, glob_escape
+from platformio.compat import WINDOWS, get_file_contents, glob_escape
 
 
 class cd(object):
@@ -144,6 +144,12 @@ def match_src_files(src_dir, src_filter=None, src_exts=None):
         else:
             matches -= items
     return sorted(list(matches))
+
+
+def to_unix_path(path):
+    if not WINDOWS or not path:
+        return path
+    return re.sub(r"[\\]+", "/", path)
 
 
 def rmtree(path):

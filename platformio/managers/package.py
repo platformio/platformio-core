@@ -86,19 +86,18 @@ class PkgRepoMixin(object):
     def max_satisfying_repo_version(self, versions, requirements=None):
         item = None
         reqspec = None
-        if requirements:
-            try:
-                reqspec = self.parse_semver_spec(requirements,
-                                                 raise_exception=True)
-            except ValueError:
-                pass
+        try:
+            reqspec = semantic_version.SimpleSpec(
+                requirements) if requirements else None
+        except ValueError:
+            pass
 
         for v in versions:
             if not self.is_system_compatible(v.get("system")):
                 continue
             # if "platformio" in v.get("engines", {}):
-            #     if PkgRepoMixin.PIO_VERSION not in self.parse_semver_spec(
-            #             v['engines']['platformio'], raise_exception=True):
+            #     if PkgRepoMixin.PIO_VERSION not in requirements.SimpleSpec(
+            #             v['engines']['platformio']):
             #         continue
             specver = semantic_version.Version(v['version'])
             if reqspec and specver not in reqspec:
@@ -217,28 +216,6 @@ class PkgInstallerMixin(object):
                 raise e
             with FileUnpacker(source_path) as fu:
                 return fu.unpack(dest_dir, with_progress=False)
-
-    @staticmethod
-    def parse_semver_spec(value, raise_exception=False):
-        try:
-            # Workaround for ^ issue and pre-releases
-            # https://github.com/rbarrois/python-semanticversion/issues/61
-            requirements = []
-            for item in str(value).split(","):
-                item = item.strip()
-                if not item:
-                    continue
-                if item.startswith("^"):
-                    major = semantic_version.Version.coerce(item[1:]).major
-                    requirements.append(">=%s" % major)
-                    requirements.append("<%s" % (int(major) + 1))
-                else:
-                    requirements.append(item)
-            return semantic_version.Spec(*requirements)
-        except ValueError as e:
-            if raise_exception:
-                raise e
-        return None
 
     @staticmethod
     def parse_semver_version(value, raise_exception=False):
@@ -423,8 +400,8 @@ class PkgInstallerMixin(object):
                 return manifest
 
             try:
-                if requirements and not self.parse_semver_spec(
-                        requirements, raise_exception=True).match(
+                if requirements and not semantic_version.SimpleSpec(
+                        requirements).match(
                             self.parse_semver_version(manifest['version'],
                                                       raise_exception=True)):
                     continue
@@ -557,8 +534,8 @@ class PkgInstallerMixin(object):
                 "Package version %s doesn't satisfy requirements %s" %
                 (tmp_manifest['version'], requirements))
             try:
-                assert tmp_semver and tmp_semver in self.parse_semver_spec(
-                    requirements, raise_exception=True), mismatch_error
+                assert tmp_semver and tmp_semver in semantic_version.SimpleSpec(
+                    requirements), mismatch_error
             except (AssertionError, ValueError):
                 assert tmp_manifest['version'] == requirements, mismatch_error
 

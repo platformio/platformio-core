@@ -17,6 +17,7 @@ import signal
 import click
 from twisted.internet import protocol  # pylint: disable=import-error
 
+from platformio import fs
 from platformio.compat import string_types
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_core_dir
@@ -37,6 +38,10 @@ class BaseProcess(protocol.ProcessProtocol, object):
     def apply_patterns(self, source, patterns=None):
         _patterns = self.COMMON_PATTERNS.copy()
         _patterns.update(patterns or {})
+
+        for key, value in _patterns.items():
+            if key.endswith(("_DIR", "_PATH")):
+                _patterns[key] = fs.to_unix_path(value)
 
         def _replace(text):
             for key, value in _patterns.items():

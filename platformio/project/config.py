@@ -16,7 +16,7 @@ import glob
 import json
 import os
 import re
-from os.path import expanduser, isfile
+from os.path import expanduser, getmtime, isfile
 
 import click
 
@@ -72,13 +72,14 @@ class ProjectConfig(object):
 
     @staticmethod
     def get_instance(path):
-        if path not in ProjectConfig._instances:
-            ProjectConfig._instances[path] = ProjectConfig(path)
-        return ProjectConfig._instances[path]
-
-    @staticmethod
-    def reset_instances():
-        ProjectConfig._instances = {}
+        mtime = getmtime(path) if isfile(path) else 0
+        instance = ProjectConfig._instances.get(path)
+        if instance and instance["mtime"] != mtime:
+            instance = None
+        if not instance:
+            instance = {"mtime": mtime, "config": ProjectConfig(path)}
+            ProjectConfig._instances[path] = instance
+        return instance["config"]
 
     def __init__(self, path, parse_extra=True, expand_interpolations=True):
         self.path = path
@@ -311,6 +312,9 @@ class ProjectConfig(object):
         return json.dumps(result)
 
     def save(self, path=None):
+        path = path or self.path
+        if path in self._instances:
+            del self._instances[path]
         with open(path or self.path, "w") as fp:
             fp.write(CONFIG_HEADER)
             self._parser.write(fp)

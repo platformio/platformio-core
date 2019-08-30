@@ -330,7 +330,8 @@ Examples are listed from `%s development platform repository <%s>`_:
     examples_dir = join(p.get_dir(), "examples")
     if isdir(examples_dir):
         for eitem in os.listdir(examples_dir):
-            if not isdir(join(examples_dir, eitem)):
+            example_dir = join(examples_dir, eitem)
+            if not isdir(example_dir) or not os.listdir(example_dir):
                 continue
             url = "%s/tree/master/examples/%s" % (github_url, eitem)
             lines.append("* `%s <%s>`_" % (eitem, campaign_url(url)))
@@ -894,7 +895,8 @@ def update_project_examples():
         examples_md_lines = []
         if isdir(platform_examples_dir):
             for item in os.listdir(platform_examples_dir):
-                if not isdir(join(platform_examples_dir, item)):
+                example_dir = join(platform_examples_dir, item)
+                if not isdir(example_dir) or not os.listdir(example_dir):
                     continue
                 url = "%s/tree/master/examples/%s" % (github_url, item)
                 examples_md_lines.append("* [%s](%s)" % (item, url))

@@ -388,7 +388,6 @@ def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
 
     if modified:
         config.save()
-        config.reset_instances()
 
 
 def _install_dependent_platforms(ctx, platforms):
