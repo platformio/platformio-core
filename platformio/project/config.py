@@ -90,6 +90,9 @@ class ProjectConfig(object):
         if isfile(path):
             self.read(path, parse_extra)
 
+    def __repr__(self):
+        return "<ProjectConfig %s>" % (self.path or "in-memory")
+
     def __getattr__(self, name):
         return getattr(self._parser, name)
 
@@ -163,34 +166,46 @@ class ProjectConfig(object):
                         "in section [%s]" % (option, section))
         return True
 
+    def walk_options(self, root_section):
+        extends_queue = (["env", root_section] if
+                         root_section.startswith("env:") else [root_section])
+        extends_done = []
+        while extends_queue:
+            section = extends_queue.pop()
+            extends_done.append(section)
+            if not self._parser.has_section(section):
+                continue
+            for option in self._parser.options(section):
+                yield (section, option)
+            if self._parser.has_option(section, "extends"):
+                extends_queue.extend(
+                    self.parse_multi_values(
+                        self._parser.get(section, "extends"))[::-1])
+
     def options(self, section=None, env=None):
+        result = []
         assert section or env
         if not section:
             section = "env:" + env
-        options = self._parser.options(section)
 
-        # handle global options from [env]
-        if ((env or section.startswith("env:"))
-                and self._parser.has_section("env")):
-            for option in self._parser.options("env"):
-                if option not in options:
-                    options.append(option)
+        for _, option in self.walk_options(section):
+            if option not in result:
+                result.append(option)
 
         # handle system environment variables
         scope = section.split(":", 1)[0]
         for option_meta in ProjectOptions.values():
-            if option_meta.scope != scope or option_meta.name in options:
+            if option_meta.scope != scope or option_meta.name in result:
                 continue
             if option_meta.sysenvvar and option_meta.sysenvvar in os.environ:
-                options.append(option_meta.name)
+                result.append(option_meta.name)
 
-        return options
+        return result
 
     def has_option(self, section, option):
         if self._parser.has_option(section, option):
             return True
-        return (section.startswith("env:") and self._parser.has_section("env")
-                and self._parser.has_option("env", option))
+        return option in self.options(section)
 
     def items(self, section=None, env=None, as_dict=False):
         assert section or env
@@ -215,12 +230,16 @@ class ProjectConfig(object):
         if not self.expand_interpolations:
             return self._parser.get(section, option)
 
-        try:
+        value = None
+        found = False
+        for sec, opt in self.walk_options(section):
+            if opt == option:
+                value = self._parser.get(sec, option)
+                found = True
+                break
+
+        if not found:
             value = self._parser.get(section, option)
-        except ConfigParser.NoOptionError as e:
-            if not section.startswith("env:"):
-                raise e
-            value = self._parser.get("env", option)
 
         if "${" not in value or "}" not in value:
             return value
@@ -267,13 +286,13 @@ class ProjectConfig(object):
             return default
 
         try:
-            return self._covert_value(value, option_meta.type)
+            return self._cast_to(value, option_meta.type)
         except click.BadParameter as e:
             raise exception.ProjectOptionValueError(e.format_message(), option,
                                                     section)
 
     @staticmethod
-    def _covert_value(value, to_type):
+    def _cast_to(value, to_type):
         items = value
         if not isinstance(value, (list, tuple)):
             items = [value]

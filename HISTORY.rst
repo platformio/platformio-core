@@ -3,12 +3,13 @@ Release Notes
 
 .. _release_notes_4_0:
 
-PlatformIO 4.0
---------------
+PlatformIO Core 4.0
+-------------------
 
-4.0.4 (2019-??-??)
+4.1.0 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Extend project environment configuration in "platformio.ini" with other sections using a new `extends <http://docs.platformio.org/page/projectconf/section_env_advanced.html#extends>`__ option (`issue #2953 <https://github.com/platformio/platformio-core/issues/2953>`_)
 * Fixed an issue with project generator for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__ when 2 environments were used (`issue #2824 <https://github.com/platformio/platformio-core/issues/2824>`_)
 
 4.0.3 (2019-08-30)
@@ -109,8 +110,8 @@ PlatformIO 4.0
   - Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__ (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
   - Fixed an issue when package cache (Library Manager) expires too fast (`issue #2559 <https://github.com/platformio/platformio-core/issues/2559>`_)
 
-PlatformIO 3.0
---------------
+PlatformIO Core 3.0
+-------------------
 
 3.6.7 (2019-04-23)
 ~~~~~~~~~~~~~~~~~~
@@ -710,8 +711,8 @@ PlatformIO 3.0
   (`issue #742 <https://github.com/platformio/platformio-core/issues/742>`_)
 * Stopped supporting Python 2.6
 
-PlatformIO 2.0
---------------
+PlatformIO Core 2.0
+--------------------
 
 2.11.2 (2016-08-02)
 ~~~~~~~~~~~~~~~~~~~
@@ -1496,8 +1497,8 @@ PlatformIO 2.0
 * Fixed bug with creating copies of source files
   (`issue #177 <https://github.com/platformio/platformio-core/issues/177>`_)
 
-PlatformIO 1.0
---------------
+PlatformIO Core 1.0
+-------------------
 
 1.5.0 (2015-05-15)
 ~~~~~~~~~~~~~~~~~~
@@ -1687,8 +1688,8 @@ PlatformIO 1.0
   error (`issue #81 <https://github.com/platformio/platformio-core/issues/81>`_)
 * Several bug fixes, increased stability and performance improvements
 
-PlatformIO 0.0
---------------
+PlatformIO Core 0.0
+-------------------
 
 0.10.2 (2015-01-06)
 ~~~~~~~~~~~~~~~~~~~

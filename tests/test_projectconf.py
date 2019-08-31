@@ -34,6 +34,17 @@ lib_deps =
     Lib2
 lib_ignore = ${custom.lib_ignore}
 
+[strict_ldf]
+lib_ldf_mode = chain+
+lib_compat_mode = strict
+
+[monitor_custom]
+monitor_speed = 9600
+
+[strict_settings]
+extends = strict_ldf, monitor_custom
+build_flags = -D RELEASE
+
 [custom]
 debug_flags = -D RELEASE
 lib_flags = -lc -lm
@@ -43,6 +54,10 @@ lib_ignore = LibIgnoreCustom
 [env:base]
 build_flags = ${custom.debug_flags} ${custom.extra_flags}
 targets =
+
+[env:test_extends]
+extends = strict_settings
+
 """
 
 EXTRA_ENVS_CONFIG = """
@@ -66,52 +81,70 @@ build_flags = -Og
 """
 
 
-def test_real_config(tmpdir):
+@pytest.fixture(scope="module")
+def config(tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp("project")
     tmpdir.join("platformio.ini").write(BASE_CONFIG)
     tmpdir.join("extra_envs.ini").write(EXTRA_ENVS_CONFIG)
     tmpdir.join("extra_debug.ini").write(EXTRA_DEBUG_CONFIG)
-
-    config = None
     with tmpdir.as_cwd():
-        config = ProjectConfig(tmpdir.join("platformio.ini").strpath)
-    assert config
-    assert len(config.warnings) == 2
-    assert "lib_install" in config.warnings[1]
+        return ProjectConfig(tmpdir.join("platformio.ini").strpath)
 
-    config.validate(["extra_2", "base"], silent=True)
-    with pytest.raises(UnknownEnvNames):
-        config.validate(["non-existing-env"])
+
+def test_empty_config():
+    config = ProjectConfig("/non/existing/platformio.ini")
 
     # unknown section
     with pytest.raises(ConfigParser.NoSectionError):
         config.getraw("unknown_section", "unknown_option")
-    # unknown option
-    with pytest.raises(ConfigParser.NoOptionError):
-        config.getraw("custom", "unknown_option")
-    # unknown option even if exists in [env]
-    with pytest.raises(ConfigParser.NoOptionError):
-        config.getraw("platformio", "monitor_speed")
 
-    # sections
+    assert config.sections() == []
+    assert config.get("section", "option") is None
+    assert config.get("section", "option", 13) == 13
+
+
+def test_warnings(config):
+    config.validate(["extra_2", "base"], silent=True)
+    assert len(config.warnings) == 2
+    assert "lib_install" in config.warnings[1]
+
+    with pytest.raises(UnknownEnvNames):
+        config.validate(["non-existing-env"])
+
+
+def test_sections(config):
+    with pytest.raises(ConfigParser.NoSectionError):
+        config.getraw("unknown_section", "unknown_option")
+
     assert config.sections() == [
-        "platformio", "env", "custom", "env:base", "env:extra_1", "env:extra_2"
+        "platformio", "env", "strict_ldf", "monitor_custom", "strict_settings",
+        "custom", "env:base", "env:test_extends", "env:extra_1", "env:extra_2"
     ]
 
-    # envs
-    assert config.envs() == ["base", "extra_1", "extra_2"]
+
+def test_envs(config):
+    assert config.envs() == ["base", "test_extends", "extra_1", "extra_2"]
     assert config.default_envs() == ["base", "extra_2"]
 
-    # options
+
+def test_options(config):
     assert config.options(env="base") == [
         "build_flags", "targets", "monitor_speed", "lib_deps", "lib_ignore"
     ]
+    assert config.options(env="test_extends") == [
+        "extends", "build_flags", "lib_ldf_mode", "lib_compat_mode",
+        "monitor_speed", "lib_deps", "lib_ignore"
+    ]
 
-    # has_option
+
+def test_has_option(config):
     assert config.has_option("env:base", "monitor_speed")
     assert not config.has_option("custom", "monitor_speed")
     assert not config.has_option("env:extra_1", "lib_install")
+    assert config.has_option("env:test_extends", "lib_compat_mode")
 
-    # sysenv
+
+def test_sysenv_options(config):
     assert config.get("custom", "extra_flags") is None
     assert config.get("env:base", "build_flags") == ["-D DEBUG=1"]
     assert config.get("env:base", "upload_port") is None
@@ -126,72 +159,83 @@ def test_real_config(tmpdir):
     assert config.get("env:base", "upload_port") == "/dev/sysenv/port"
     assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
 
-    # getraw
-    assert config.getraw("env:base", "targets") == ""
-    assert config.getraw("env:extra_1", "lib_deps") == "574"
-    assert config.getraw("env:extra_1", "build_flags") == "-lc -lm -D DEBUG=1"
-
-    # get
-    assert config.get("custom", "debug_flags") == "-D DEBUG=1"
-    assert config.get("env:extra_1", "build_flags") == [
-        "-lc -lm -D DEBUG=1", "-DSYSENVDEPS1 -DSYSENVDEPS2"
+    # env var as option
+    assert config.options(env="test_extends") == [
+        "extends", "build_flags", "lib_ldf_mode", "lib_compat_mode",
+        "monitor_speed", "lib_deps", "lib_ignore", "upload_port"
     ]
-    assert config.get("env:extra_2", "build_flags") == [
-        "-Og", "-DSYSENVDEPS1 -DSYSENVDEPS2"]
-    assert config.get("env:extra_2", "monitor_speed") == "115200"
-    assert config.get("env:base", "build_flags") == ([
-        "-D DEBUG=1 -L /usr/local/lib", "-DSYSENVDEPS1 -DSYSENVDEPS2"
-    ])
 
-    # items
-    assert config.items("custom") == [
-        ("debug_flags", "-D DEBUG=1"),
-        ("lib_flags", "-lc -lm"),
-        ("extra_flags", "-L /usr/local/lib"),
-        ("lib_ignore", "LibIgnoreCustom")
-    ]  # yapf: disable
-    assert config.items(env="base") == [
-        ("build_flags", [
-            "-D DEBUG=1 -L /usr/local/lib", "-DSYSENVDEPS1 -DSYSENVDEPS2"]),
-        ("targets", []),
-        ("monitor_speed", "115200"),
-        ("lib_deps", ["Lib1", "Lib2"]),
-        ("lib_ignore", ["LibIgnoreCustom"]),
-        ("upload_port", "/dev/sysenv/port")
-    ]  # yapf: disable
-    assert config.items(env="extra_1") == [
-        ("build_flags", ["-lc -lm -D DEBUG=1", "-DSYSENVDEPS1 -DSYSENVDEPS2"]),
-        ("lib_deps", ["574"]),
-        ("monitor_speed", "115200"),
-        ("lib_ignore", ["LibIgnoreCustom"]),
-        ("upload_port", "/dev/sysenv/port")
-    ]  # yapf: disable
-    assert config.items(env="extra_2") == [
-        ("build_flags", ["-Og", "-DSYSENVDEPS1 -DSYSENVDEPS2"]),
-        ("lib_ignore", ["LibIgnoreCustom", "Lib3"]),
-        ("upload_port", "/dev/extra_2/port"),
-        ("monitor_speed", "115200"),
-        ("lib_deps", ["Lib1", "Lib2"])
-    ]  # yapf: disable
+    # sysenv
+    os.environ["PLATFORMIO_HOME_DIR"] = "/custom/core/dir"
+    assert config.get("platformio", "core_dir") == "/custom/core/dir"
 
     # cleanup system environment variables
     del os.environ["PLATFORMIO_BUILD_FLAGS"]
     del os.environ["PLATFORMIO_UPLOAD_PORT"]
     del os.environ["__PIO_TEST_CNF_EXTRA_FLAGS"]
-
-
-def test_empty_config():
-    config = ProjectConfig("/non/existing/platformio.ini")
-
-    # unknown section
-    with pytest.raises(ConfigParser.NoSectionError):
-        config.getraw("unknown_section", "unknown_option")
-
-    assert config.sections() == []
-    assert config.get("section", "option") is None
-    assert config.get("section", "option", 13) == 13
-
-    # sysenv
-    os.environ["PLATFORMIO_HOME_DIR"] = "/custom/core/dir"
-    assert config.get("platformio", "core_dir") == "/custom/core/dir"
     del os.environ["PLATFORMIO_HOME_DIR"]
+
+
+def test_getraw_value(config):
+    # unknown option
+    with pytest.raises(ConfigParser.NoOptionError):
+        config.getraw("custom", "unknown_option")
+    # unknown option even if exists in [env]
+    with pytest.raises(ConfigParser.NoOptionError):
+        config.getraw("platformio", "monitor_speed")
+
+    # known
+    assert config.getraw("env:base", "targets") == ""
+    assert config.getraw("env:extra_1", "lib_deps") == "574"
+    assert config.getraw("env:extra_1", "build_flags") == "-lc -lm -D DEBUG=1"
+
+    # extended
+    assert config.getraw("env:test_extends", "lib_ldf_mode") == "chain+"
+    assert config.getraw("env", "monitor_speed") == "115200"
+    assert config.getraw("env:test_extends", "monitor_speed") == "9600"
+
+
+def test_get_value(config):
+    assert config.get("custom", "debug_flags") == "-D DEBUG=1"
+    assert config.get("env:extra_1", "build_flags") == ["-lc -lm -D DEBUG=1"]
+    assert config.get("env:extra_2", "build_flags") == ["-Og"]
+    assert config.get("env:extra_2", "monitor_speed") == "115200"
+    assert config.get("env:base", "build_flags") == ["-D DEBUG=1"]
+
+
+def test_items(config):
+    assert config.items("custom") == [
+        ("debug_flags", "-D DEBUG=1"),
+        ("lib_flags", "-lc -lm"),
+        ("extra_flags", None),
+        ("lib_ignore", "LibIgnoreCustom")
+    ]  # yapf: disable
+    assert config.items(env="base") == [
+        ("build_flags", ["-D DEBUG=1"]),
+        ("targets", []),
+        ("monitor_speed", "115200"),
+        ("lib_deps", ["Lib1", "Lib2"]),
+        ("lib_ignore", ["LibIgnoreCustom"]),
+    ]  # yapf: disable
+    assert config.items(env="extra_1") == [
+        ("build_flags", ["-lc -lm -D DEBUG=1"]),
+        ("lib_deps", ["574"]),
+        ("monitor_speed", "115200"),
+        ("lib_ignore", ["LibIgnoreCustom"]),
+    ]  # yapf: disable
+    assert config.items(env="extra_2") == [
+        ("build_flags", ["-Og"]),
+        ("lib_ignore", ["LibIgnoreCustom", "Lib3"]),
+        ("upload_port", "/dev/extra_2/port"),
+        ("monitor_speed", "115200"),
+        ("lib_deps", ["Lib1", "Lib2"])
+    ]  # yapf: disable
+    assert config.items(env="test_extends") == [
+        ("extends", ["strict_settings"]),
+        ("build_flags", ["-D RELEASE"]),
+        ("lib_ldf_mode", "chain+"),
+        ("lib_compat_mode", "strict"),
+        ("monitor_speed", "9600"),
+        ("lib_deps", ["Lib1", "Lib2"]),
+        ("lib_ignore", ["LibIgnoreCustom"])
+    ]  # yapf: disable
