@@ -11,6 +11,7 @@ PlatformIO Core 4.0
 
 * Extend project environment configuration in "platformio.ini" with other sections using a new `extends <http://docs.platformio.org/page/projectconf/section_env_advanced.html#extends>`__ option (`issue #2953 <https://github.com/platformio/platformio-core/issues/2953>`_)
 * Fixed an issue with project generator for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__ when 2 environments were used (`issue #2824 <https://github.com/platformio/platformio-core/issues/2824>`_)
+* Fixed default PIO Unified Debugger configuration for `J-Link probe <http://docs.platformio.org/en/latest/plus/debug-tools/jlink.html>`__
 
 4.0.3 (2019-08-30)
 ~~~~~~~~~~~~~~~~~~
