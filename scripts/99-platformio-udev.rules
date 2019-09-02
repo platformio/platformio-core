@@ -27,9 +27,6 @@
 # CP210X USB UART
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE:="0666"
 
-# FT232R USB UART
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", MODE:="0666"
-
 # FT231XS USB UART
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6015", MODE:="0666"
 
@@ -52,9 +49,6 @@ KERNEL=="ttyACM*", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", MODE:="066
 # Digistump boards
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="16d0", ATTRS{idProduct}=="0753", MODE:="0666"
 KERNEL=="ttyACM*", ATTRS{idVendor}=="16d0", ATTRS{idProduct}=="0753", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1"
-
-# STM32 discovery boards, with onboard st/linkv2
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374?", MODE:="0666"
 
 # Maple with DFU
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="1eaf", ATTRS{idProduct}=="000[34]", MODE:="0666"
@@ -134,23 +128,14 @@ ATTRS{idVendor}=="0403", ATTRS{idProduct}=="cff8", MODE="0666"
 # TI ICDI
 ATTRS{idVendor}=="0451", ATTRS{idProduct}=="c32a", MODE="0666"
 
-# STLink v1
-ATTRS{idVendor}=="0483", ATTRS{idProduct}=="3744", MODE="0666"
-
-# STLink v2
-ATTRS{idVendor}=="0483", ATTRS{idProduct}=="3748", MODE="0666"
-
-# STLink v2-1
-ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374b", MODE="0666"
+# STLink probes
+ATTRS{idVendor}=="0483", MODE="0666"
 
 # Hilscher NXHX Boards
 ATTRS{idVendor}=="0640", ATTRS{idProduct}=="0028", MODE="0666"
 
-# Hitex STR9-comStick
-ATTRS{idVendor}=="0640", ATTRS{idProduct}=="002c", MODE="0666"
-
-# Hitex STM32-PerformanceStick
-ATTRS{idVendor}=="0640", ATTRS{idProduct}=="002d", MODE="0666"
+# Hitex probes
+ATTRS{idVendor}=="0640", MODE="0666"
 
 # Altera USB Blaster
 ATTRS{idVendor}=="09fb", ATTRS{idProduct}=="6001", MODE="0666"
@@ -167,20 +152,8 @@ ATTRS{idVendor}=="138e", ATTRS{idProduct}=="9000", MODE="0666"
 # Debug Board for Neo1973
 ATTRS{idVendor}=="1457", ATTRS{idProduct}=="5118", MODE="0666"
 
-# Olimex ARM-USB-OCD
-ATTRS{idVendor}=="15ba", ATTRS{idProduct}=="0003", MODE="0666"
-
-# Olimex ARM-USB-OCD-TINY
-ATTRS{idVendor}=="15ba", ATTRS{idProduct}=="0004", MODE="0666"
-
-# Olimex ARM-JTAG-EW
-ATTRS{idVendor}=="15ba", ATTRS{idProduct}=="001e", MODE="0666"
-
-# Olimex ARM-USB-OCD-TINY-H
-ATTRS{idVendor}=="15ba", ATTRS{idProduct}=="002a", MODE="0666"
-
-# Olimex ARM-USB-OCD-H
-ATTRS{idVendor}=="15ba", ATTRS{idProduct}=="002b", MODE="0666"
+# Olimex probes
+ATTRS{idVendor}=="15ba", MODE="0666"
 
 # USBprog with OpenOCD firmware
 ATTRS{idVendor}=="1781", ATTRS{idProduct}=="0c63", MODE="0666"
