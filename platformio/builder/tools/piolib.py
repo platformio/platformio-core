@@ -816,15 +816,21 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     def get_search_files(self):
         # project files
-        items = LibBuilderBase.get_search_files(self)
+        search_files = LibBuilderBase.get_search_files(self)
         # test files
         if "__test" in COMMAND_LINE_TARGETS:
-            items.extend([
+            search_files.extend([
                 join("$PROJECTTEST_DIR",
                      item) for item in self.env.MatchSourceFiles(
                          "$PROJECTTEST_DIR", "$PIOTEST_SRC_FILTER")
             ])
-        return items
+        if "arduino" in self.env.get("PIOFRAMEWORK", []):
+            search_files.extend([
+                join(self.src_dir, item)
+                for item in fs.match_src_files(self.src_dir, self.src_filter, (
+                    "ino", "pde"))
+            ])
+        return search_files
 
     @property
     def lib_ldf_mode(self):

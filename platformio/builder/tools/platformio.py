@@ -63,6 +63,10 @@ def _build_project_deps(env):
     # extra build flags from `platformio.ini`
     projenv.ProcessFlags(env.get("SRC_BUILD_FLAGS"))
 
+    if ("nobuild" not in COMMAND_LINE_TARGETS
+            and "arduino" in projenv.get("PIOFRAMEWORK", [])):
+        projenv.ConvertInoToCpp()
+
     is_test = "__test" in COMMAND_LINE_TARGETS
     if is_test:
         projenv.BuildSources("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
@@ -284,8 +288,6 @@ def BuildFrameworks(env, frameworks):
         if f == "arduino":
             # Arduino IDE appends .o the end of filename
             Builder.match_splitext = scons_patched_match_splitext
-            if "nobuild" not in COMMAND_LINE_TARGETS:
-                env.ConvertInoToCpp()
 
         if f in board_frameworks:
             SConscript(env.GetFrameworkScript(f), exports="env")

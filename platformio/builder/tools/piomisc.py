@@ -88,11 +88,13 @@ class InoToCPPConverter(object):
         tmp_path = mkstemp()[1]
         with open(tmp_path, "w") as fp:
             fp.write(contents)
-        self.env.Execute(
-            self.env.VerboseAction(
-                '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
-                    out_file, tmp_path),
-                "Converting " + basename(out_file[:-4])))
+        env = self.env.Clone()
+        env.Append(CCFLAGS=["-x", "c++", "-E"])
+        cmd = env["CXXCOM"]\
+            .replace("$TARGET", '"%s"' % out_file)\
+            .replace("$SOURCES", '"%s"' % tmp_path)
+        env.Execute(
+            env.VerboseAction(cmd, "Converting " + basename(out_file[:-4])))
         atexit.register(_delete_file, tmp_path)
         return isfile(out_file)
 
