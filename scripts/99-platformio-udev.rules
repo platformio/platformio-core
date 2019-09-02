@@ -25,39 +25,35 @@
 #
 
 # CP210X USB UART
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE:="0666"
+ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # FT231XS USB UART
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6015", MODE:="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6015", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Prolific Technology, Inc. PL2303 Serial Port
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", MODE:="0666"
+ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # QinHeng Electronics HL-340 USB-Serial adapter
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE:="0666"
+ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Arduino boards
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="2341", ATTRS{idProduct}=="[08][02]*", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="2a03", ATTRS{idProduct}=="[08][02]*", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
+ATTRS{idVendor}=="2341", ATTRS{idProduct}=="[08][02]*", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
+ATTRS{idVendor}=="2a03", ATTRS{idProduct}=="[08][02]*", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Arduino SAM-BA
-ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", ENV{ID_MM_DEVICE_IGNORE}="1"
-ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", ENV{MTP_NO_PROBE}="1"
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", MODE:="0666"
-KERNEL=="ttyACM*", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", MODE:="0666"
+ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{MTP_NO_PROBE}="1"
 
 # Digistump boards
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="16d0", ATTRS{idProduct}=="0753", MODE:="0666"
-KERNEL=="ttyACM*", ATTRS{idVendor}=="16d0", ATTRS{idProduct}=="0753", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1"
+ATTRS{idVendor}=="16d0", ATTRS{idProduct}=="0753", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Maple with DFU
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="1eaf", ATTRS{idProduct}=="000[34]", MODE:="0666"
+ATTRS{idVendor}=="1eaf", ATTRS{idProduct}=="000[34]", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # USBtiny
-SUBSYSTEMS=="usb", ATTRS{idProduct}=="0c9f", ATTRS{idVendor}=="1781", MODE="0666"
+ATTRS{idProduct}=="0c9f", ATTRS{idVendor}=="1781", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # USBasp V2.0
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05dc", MODE:="0666"
+ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="05dc", MODE:="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Teensy boards
 ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04[789B]?", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
@@ -66,10 +62,10 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04[789ABCD]?", MO
 KERNEL=="ttyACM*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04[789B]?", MODE:="0666"
 
 #TI Stellaris Launchpad
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="1cbe", ATTRS{idProduct}=="00fd", MODE="0666"
+ATTRS{idVendor}=="1cbe", ATTRS{idProduct}=="00fd", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 #TI MSP430 Launchpad
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="f432", MODE="0666"
+ATTRS{idVendor}=="0451", ATTRS{idProduct}=="f432", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 
 #
@@ -77,95 +73,95 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="f432", MODE="0666
 #
 
 # Black Magic Probe
-SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic GDB Server"
-SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic UART Port"
+SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic GDB Server", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
+SUBSYSTEM=="tty", ATTRS{interface}=="Black Magic UART Port", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # opendous and estick
-ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="204f", MODE="0666"
+ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="204f", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Original FT232/FT245 VID:PID
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Original FT2232 VID:PID
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Original FT4232 VID:PID
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6011", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Original FT232H VID:PID
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # DISTORTEC JTAG-lock-pick Tiny 2
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="8220", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="8220", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # TUMPA, TUMPA Lite
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="8a98", MODE="0666"
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="8a99", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="8a98", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="8a99", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # XDS100v2
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="a6d0", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="a6d0", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Xverve Signalyzer Tool (DT-USB-ST), Signalyzer LITE (DT-USB-SLITE)
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="bca0", MODE="0666"
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="bca1", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="bca0", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="bca1", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # TI/Luminary Stellaris Evaluation Board FTDI (several)
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="bcd9", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="bcd9", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # TI/Luminary Stellaris In-Circuit Debug Interface FTDI (ICDI) Board
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="bcda", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="bcda", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # egnite Turtelizer 2
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="bdc8", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="bdc8", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Section5 ICEbear
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="c140", MODE="0666"
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="c141", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="c140", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="c141", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Amontec JTAGkey and JTAGkey-tiny
-ATTRS{idVendor}=="0403", ATTRS{idProduct}=="cff8", MODE="0666"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="cff8", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # TI ICDI
-ATTRS{idVendor}=="0451", ATTRS{idProduct}=="c32a", MODE="0666"
+ATTRS{idVendor}=="0451", ATTRS{idProduct}=="c32a", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # STLink probes
-ATTRS{idVendor}=="0483", MODE="0666"
+ATTRS{idVendor}=="0483", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Hilscher NXHX Boards
-ATTRS{idVendor}=="0640", ATTRS{idProduct}=="0028", MODE="0666"
+ATTRS{idVendor}=="0640", ATTRS{idProduct}=="0028", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Hitex probes
-ATTRS{idVendor}=="0640", MODE="0666"
+ATTRS{idVendor}=="0640", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Altera USB Blaster
-ATTRS{idVendor}=="09fb", ATTRS{idProduct}=="6001", MODE="0666"
+ATTRS{idVendor}=="09fb", ATTRS{idProduct}=="6001", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Amontec JTAGkey-HiSpeed
-ATTRS{idVendor}=="0fbb", ATTRS{idProduct}=="1000", MODE="0666"
+ATTRS{idVendor}=="0fbb", ATTRS{idProduct}=="1000", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # SEGGER J-Link
-ATTRS{idVendor}=="1366", MODE="0666"
+ATTRS{idVendor}=="1366", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Raisonance RLink
-ATTRS{idVendor}=="138e", ATTRS{idProduct}=="9000", MODE="0666"
+ATTRS{idVendor}=="138e", ATTRS{idProduct}=="9000", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Debug Board for Neo1973
-ATTRS{idVendor}=="1457", ATTRS{idProduct}=="5118", MODE="0666"
+ATTRS{idVendor}=="1457", ATTRS{idProduct}=="5118", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Olimex probes
-ATTRS{idVendor}=="15ba", MODE="0666"
+ATTRS{idVendor}=="15ba", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # USBprog with OpenOCD firmware
-ATTRS{idVendor}=="1781", ATTRS{idProduct}=="0c63", MODE="0666"
+ATTRS{idVendor}=="1781", ATTRS{idProduct}=="0c63", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # TI/Luminary Stellaris In-Circuit Debug Interface (ICDI) Board
-ATTRS{idVendor}=="1cbe", ATTRS{idProduct}=="00fd", MODE="0666"
+ATTRS{idVendor}=="1cbe", ATTRS{idProduct}=="00fd", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Marvell Sheevaplug
-ATTRS{idVendor}=="9e88", ATTRS{idProduct}=="9e8f", MODE="0666"
+ATTRS{idVendor}=="9e88", ATTRS{idProduct}=="9e8f", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # Keil Software, Inc. ULink
-ATTRS{idVendor}=="c251", ATTRS{idProduct}=="2710", MODE="0666"
+ATTRS{idVendor}=="c251", ATTRS{idProduct}=="2710", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
 
 # CMSIS-DAP compatible adapters
-ATTRS{product}=="*CMSIS-DAP*", MODE="0666"
+ATTRS{product}=="*CMSIS-DAP*", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_PORT_IGNORE}="1"
