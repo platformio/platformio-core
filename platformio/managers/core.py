@@ -30,7 +30,8 @@ CORE_PACKAGES = {
     "tool-pioplus": "^2.5.2",
     "tool-unity": "~1.20403.0",
     "tool-scons": "~2.20501.7" if PY2 else "~3.30005.0",
-    "tool-cppcheck": "~1.188.0"
+    "tool-cppcheck": "~1.189.0",
+    "tool-clangtidy": "^1.80000.0"
 }
 
 PIOPLUS_AUTO_UPDATES_MAX = 100
