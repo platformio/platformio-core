@@ -199,6 +199,9 @@ ProjectOptions = OrderedDict([
         ConfigEnvOption(name="check_tool", multiple=True),
         ConfigEnvOption(name="check_filter", multiple=True),
         ConfigEnvOption(name="check_flags", multiple=True),
+        ConfigEnvOption(name="check_severity",
+                        multiple=True,
+                        type=click.Choice(["low", "medium", "high"])),
 
         # Other
         ConfigEnvOption(name="extra_scripts",

@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import json
 from os.path import isfile, join
+
+import pytest
 
 from platformio.commands.check import cli as cmd_check
 
@@ -64,6 +65,14 @@ EXPECTED_STYLE = 1
 EXPECTED_DEFECTS = EXPECTED_ERRORS + EXPECTED_WARNINGS + EXPECTED_STYLE
 
 
+@pytest.fixture(scope="module")
+def check_dir(tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp("project")
+    tmpdir.join("platformio.ini").write(DEFAULT_CONFIG)
+    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
+    return tmpdir
+
+
 def count_defects(output):
     error, warning, style = 0, 0, 0
     for l in output.split("\n"):
@@ -76,16 +85,8 @@ def count_defects(output):
     return error, warning, style
 
 
-def prepare_project(tmpdir):
-    tmpdir.join("platformio.ini").write(DEFAULT_CONFIG)
-    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
-
-
-def test_check_cli_output(clirunner, tmpdir):
-    prepare_project(tmpdir)
-
-    result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir)])
+def test_check_cli_output(clirunner, check_dir):
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(check_dir)])
 
     errors, warnings, style = count_defects(result.output)
 
@@ -93,33 +94,30 @@ def test_check_cli_output(clirunner, tmpdir):
     assert (errors + warnings + style == EXPECTED_DEFECTS)
 
 
-def test_check_json_output(clirunner, tmpdir):
-    prepare_project(tmpdir)
-
+def test_check_json_output(clirunner, check_dir):
     result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), "--json-output"])
+        cmd_check,
+        ["--project-dir", str(check_dir), "--json-output"])
     output = json.loads(result.stdout.strip())
 
     assert isinstance(output, list)
     assert (len(output[0].get("defects", [])) == EXPECTED_DEFECTS)
 
 
-def test_check_tool_defines_passed(clirunner, tmpdir):
-    prepare_project(tmpdir)
-
+def test_check_tool_defines_passed(clirunner, check_dir):
     result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), "--verbose"])
+        cmd_check,
+        ["--project-dir", str(check_dir), "--verbose"])
     output = result.output
 
     assert ("PLATFORMIO=" in output)
     assert ("__GNUC__" in output)
 
 
-def test_check_severity_threshold(clirunner, tmpdir):
-    prepare_project(tmpdir)
-
+def test_check_severity_threshold(clirunner, check_dir):
     result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), "--severity=high"])
+        cmd_check,
+        ["--project-dir", str(check_dir), "--severity=high"])
 
     errors, warnings, style = count_defects(result.output)
 
@@ -129,11 +127,10 @@ def test_check_severity_threshold(clirunner, tmpdir):
     assert (style == 0)
 
 
-def test_check_includes_passed(clirunner, tmpdir):
-    prepare_project(tmpdir)
-
+def test_check_includes_passed(clirunner, check_dir):
     result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), "--verbose"])
+        cmd_check,
+        ["--project-dir", str(check_dir), "--verbose"])
     output = result.output
 
     inc_count = 0
@@ -145,11 +142,10 @@ def test_check_includes_passed(clirunner, tmpdir):
     assert (inc_count > 1)
 
 
-def test_check_silent_mode(clirunner, tmpdir):
-    prepare_project(tmpdir)
-
+def test_check_silent_mode(clirunner, check_dir):
     result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), "--silent"])
+        cmd_check,
+        ["--project-dir", str(check_dir), "--silent"])
 
     errors, warnings, style = count_defects(result.output)
 
@@ -159,15 +155,13 @@ def test_check_silent_mode(clirunner, tmpdir):
     assert style == 0
 
 
-def test_check_filter_sources(clirunner, tmpdir):
-    prepare_project(tmpdir)
-
-    tmpdir.mkdir(join("src", "app")).join("additional.cpp").write(TEST_CODE)
+def test_check_filter_sources(clirunner, check_dir):
+    check_dir.mkdir(join("src", "app")).join("additional.cpp").write(TEST_CODE)
 
     result = clirunner.invoke(
         cmd_check,
         ["--project-dir",
-         str(tmpdir), "--filter=-<*> +<src/app/>"])
+         str(check_dir), "--filter=-<*> +<src/app/>"])
 
     errors, warnings, style = count_defects(result.output)
 
@@ -181,8 +175,7 @@ def test_check_failed_if_no_source_files(clirunner, tmpdir):
     tmpdir.join("platformio.ini").write(DEFAULT_CONFIG)
     tmpdir.mkdir("src")
 
-    result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir)])
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
 
     errors, warnings, style = count_defects(result.output)
 
@@ -192,11 +185,10 @@ def test_check_failed_if_no_source_files(clirunner, tmpdir):
     assert style == 0
 
 
-def test_check_failed_if_bad_flag_passed(clirunner, tmpdir):
-    prepare_project(tmpdir)
-
+def test_check_failed_if_bad_flag_passed(clirunner, check_dir):
     result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), '"--flags=--UNKNOWN"'])
+        cmd_check, ["--project-dir",
+                    str(check_dir), '"--flags=--UNKNOWN"'])
 
     errors, warnings, style = count_defects(result.output)
 
@@ -221,8 +213,7 @@ int main() {
 }
 """)
 
-    result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir)])
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
 
     errors, warnings, style = count_defects(result.output)
 
@@ -238,8 +229,7 @@ def test_check_individual_flags_passed(clirunner, tmpdir):
     config += "\ncheck_flags = cppcheck: --std=c++11 \n\tclangtidy: --fix-errors"
     tmpdir.join("platformio.ini").write(config)
     tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
-    result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), "-v"])
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
 
     clang_flags_found = cppcheck_flags_found = False
     for l in result.output.split("\n"):
@@ -252,17 +242,15 @@ def test_check_individual_flags_passed(clirunner, tmpdir):
     assert cppcheck_flags_found
 
 
-def test_check_cppcheck_misra_addon(clirunner, tmpdir):
-    prepare_project(tmpdir)
-
-    tmpdir.join("misra.json").write("""
+def test_check_cppcheck_misra_addon(clirunner, check_dir):
+    check_dir.join("misra.json").write("""
 {
     "script": "addons/misra.py",
     "args": ["--rule-texts=rules.txt"]
 }
 """)
 
-    tmpdir.join("rules.txt").write("""
+    check_dir.join("rules.txt").write("""
 Appendix A Summary of guidelines
 Rule 3.1 Required
 R3.1 text.
@@ -286,9 +274,11 @@ Rule 21.4
 R21.4 text.
 """)
 
-    result = clirunner.invoke(cmd_check, [
-        "--project-dir", str(tmpdir), "--flags=--addon=misra.json"])
+    result = clirunner.invoke(
+        cmd_check,
+        ["--project-dir",
+         str(check_dir), "--flags=--addon=misra.json"])
 
     assert result.exit_code != 0
     assert "R21.3 Found MISRA defect" in result.output
-    assert not isfile(join(str(tmpdir), "src", "main.cpp.dump"))
+    assert not isfile(join(str(check_dir), "src", "main.cpp.dump"))

@@ -24,7 +24,8 @@ import click
 from tabulate import tabulate
 
 from platformio import exception, fs, util
-from platformio.commands.check.tools import CheckToolFactory, DefectItem
+from platformio.commands.check.tools import CheckToolFactory
+from platformio.commands.check.defect import DefectItem
 from platformio.compat import dump_json_to_unicode
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import (find_project_dir_above,
@@ -53,8 +54,8 @@ from platformio.project.helpers import (find_project_dir_above,
 @click.option("--filter", multiple=True, help="Pattern: +<include> -<exclude>")
 @click.option("--flags", multiple=True)
 @click.option("--severity",
-              type=click.Choice(DefectItem.SEVERITY_LABELS.values()),
-              default=DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_LOW])
+              multiple=True,
+              type=click.Choice(DefectItem.SEVERITY_LABELS.values()))
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("--json-output", is_flag=True)
@@ -95,8 +96,11 @@ def cli(environment, project_dir, project_conf, filter, flags, severity,
                 silent=silent,
                 filter=filter
                 or env_options.get("check_filter", default_filter),
-                flags=flags or env_options.get("check_flags", ()),
-                severity=severity if not silent else "high")
+                flags=flags or env_options.get("check_flags"),
+                severity=[
+                    DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]
+                ] if silent else
+                (severity or env_options.get("check_severity")))
 
             for tool in env_options.get("check_tool", ["cppcheck"]):
                 if skipenv:
@@ -124,6 +128,8 @@ def cli(environment, project_dir, project_conf, filter, flags, severity,
                     click.echo("\n".join(repr(d) for d in result['defects']))
 
                 if not json_output and not silent:
+                    if not result['defects']:
+                        click.echo("No defects found")
                     print_processing_footer(result)
 
     if json_output:
@@ -216,6 +222,7 @@ def print_check_summary(results):
     duration = 0
 
     print_defects_stats(results)
+
     for result in results:
         duration += result.get("duration", 0)
         if result.get("succeeded") is False:
