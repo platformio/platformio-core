@@ -15,7 +15,6 @@
 import re
 from os.path import join
 
-
 from platformio.commands.check.tools.base import CheckToolBase
 from platformio.commands.check.defect import DefectItem
 from platformio.managers.core import get_core_package_dir
@@ -43,7 +42,7 @@ class ClangtidyCheckTool(CheckToolBase):
         if not match:
             return raw_line
 
-        file, line, column, category, message, defect_id = match.groups()
+        file_, line, column, category, message, defect_id = match.groups()
 
         severity = DefectItem.SEVERITY_LOW
         if category == "error":
@@ -51,7 +50,7 @@ class ClangtidyCheckTool(CheckToolBase):
         elif category == "warning":
             severity = DefectItem.SEVERITY_MEDIUM
 
-        return DefectItem(severity, category, message, file, line, column,
+        return DefectItem(severity, category, message, file_, line, column,
                           defect_id)
 
     def configure_command(self):
