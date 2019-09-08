@@ -194,20 +194,30 @@ def compute_project_checksum(config):
     return checksum.hexdigest()
 
 
-def load_project_ide_data(project_dir, env_name):
+def load_project_ide_data(project_dir, env_or_envs):
     from platformio.commands.run import cli as cmd_run
-    result = CliRunner().invoke(cmd_run, [
-        "--project-dir", project_dir, "--environment", env_name, "--target",
-        "idedata"
-    ])
+    assert env_or_envs
+    envs = env_or_envs
+    if not isinstance(envs, list):
+        envs = [envs]
+    args = ["--project-dir", project_dir, "--target", "idedata"]
+    for env in envs:
+        args.extend(["-e", env])
+    result = CliRunner().invoke(cmd_run, args)
     if result.exit_code != 0 and not isinstance(result.exception,
                                                 exception.ReturnErrorCode):
         raise result.exception
     if '"includes":' not in result.output:
         raise exception.PlatformioException(result.output)
 
+    data = {}
     for line in result.output.split("\n"):
         line = line.strip()
-        if line.startswith('{"') and line.endswith("}"):
-            return json.loads(line)
-    return None
+        if (line.startswith('{"') and line.endswith("}")
+                and "env_name" in line):
+            _data = json.loads(line)
+            if "env_name" in _data:
+                data[_data['env_name']] = _data
+    if not isinstance(env_or_envs, list) and env_or_envs in data:
+        return data[env_or_envs]
+    return data or None

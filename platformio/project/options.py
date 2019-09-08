@@ -90,6 +90,7 @@ ProjectOptions = OrderedDict([
         #
         # [env]
         #
+        ConfigEnvOption(name="extends", multiple=True),
 
         # Generic
         ConfigEnvOption(name="platform", buildenvvar="PIOPLATFORM"),

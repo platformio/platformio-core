@@ -3,10 +3,29 @@ Release Notes
 
 .. _release_notes_4_0:
 
-PlatformIO 4.0
---------------
+PlatformIO Core 4.0
+-------------------
 
-4.0.2 (2019-08-??)
+4.1.0 (2019-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Extend project environment configuration in "platformio.ini" with other sections using a new `extends <http://docs.platformio.org/page/projectconf/section_env_advanced.html#extends>`__ option (`issue #2953 <https://github.com/platformio/platformio-core/issues/2953>`_)
+* Generate ``.ccls`` LSP file for `Emacs <https://docs.platformio.org/page/ide/emacs.html>`__ cross references, hierarchies, completion and semantic highlighting
+* Fixed an issue with project generator for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__ when 2 environments were used (`issue #2824 <https://github.com/platformio/platformio-core/issues/2824>`_)
+* Fixed default PIO Unified Debugger configuration for `J-Link probe <http://docs.platformio.org/page/plus/debug-tools/jlink.html>`__
+
+4.0.3 (2019-08-30)
+~~~~~~~~~~~~~~~~~~
+
+* Added support for multi-environment PlatformIO project for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__ (`issue #2824 <https://github.com/platformio/platformio-core/issues/2824>`_)
+* Generate ``.ccls`` LSP file for `Vim <http://docs.platformio.org/en/page/vim.html>`__ cross references, hierarchies, completion and semantic highlighting (`issue #2952 <https://github.com/platformio/platformio-core/issues/2952>`_)
+* Added support for `PLATFORMIO_DISABLE_COLOR <http://docs.platformio.org/page/envvars.html#envvar-PLATFORMIO_DISABLE_COLOR>`__ system environment variable which disables color ANSI-codes in a terminal output (`issue #2956 <https://github.com/platformio/platformio-core/issues/2956>`_)
+* Updated SCons tool to 3.1.1
+* Remove ProjectConfig cache when "platformio.ini" was modified outside
+* Fixed an issue with PIO Unified Debugger on Windows OS when debug server is piped
+* Fixed an issue when `--upload-port <http://docs.platformio.org/page/userguide/cmd_run.html#cmdoption-platformio-run-upload-port>`__ CLI flag does not override declared  `upload_port <http://docs.platformio.org/page/projectconf/section_env_upload.html#upload-port>`__ option in `"platformio.ini" (Project Configuration File) <https://docs.platformio.org/page/projectconf.html>`__
+
+4.0.2 (2019-08-23)
 ~~~~~~~~~~~~~~~~~~
 
 * Fixed an issue with a broken `LDF <http://docs.platformio.org/page/librarymanager/ldf.html>`__ when checking for framework compatibility (`issue #2940 <https://github.com/platformio/platformio-core/issues/2940>`_)
@@ -93,8 +112,8 @@ PlatformIO 4.0
   - Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__ (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
   - Fixed an issue when package cache (Library Manager) expires too fast (`issue #2559 <https://github.com/platformio/platformio-core/issues/2559>`_)
 
-PlatformIO 3.0
---------------
+PlatformIO Core 3.0
+-------------------
 
 3.6.7 (2019-04-23)
 ~~~~~~~~~~~~~~~~~~
@@ -694,8 +713,8 @@ PlatformIO 3.0
   (`issue #742 <https://github.com/platformio/platformio-core/issues/742>`_)
 * Stopped supporting Python 2.6
 
-PlatformIO 2.0
---------------
+PlatformIO Core 2.0
+--------------------
 
 2.11.2 (2016-08-02)
 ~~~~~~~~~~~~~~~~~~~
@@ -1480,8 +1499,8 @@ PlatformIO 2.0
 * Fixed bug with creating copies of source files
   (`issue #177 <https://github.com/platformio/platformio-core/issues/177>`_)
 
-PlatformIO 1.0
---------------
+PlatformIO Core 1.0
+-------------------
 
 1.5.0 (2015-05-15)
 ~~~~~~~~~~~~~~~~~~
@@ -1671,8 +1690,8 @@ PlatformIO 1.0
   error (`issue #81 <https://github.com/platformio/platformio-core/issues/81>`_)
 * Several bug fixes, increased stability and performance improvements
 
-PlatformIO 0.0
---------------
+PlatformIO Core 0.0
+-------------------
 
 0.10.2 (2015-01-06)
 ~~~~~~~~~~~~~~~~~~~

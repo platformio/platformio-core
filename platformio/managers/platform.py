@@ -501,7 +501,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
                                  self.package_repositories)
 
         # if self.engines and "platformio" in self.engines:
-        #     if self.PIO_VERSION not in semantic_version.Spec(
+        #     if self.PIO_VERSION not in semantic_version.SimpleSpec(
         #             self.engines['platformio']):
         #         raise exception.IncompatiblePlatform(self.name,
         #                                              str(self.PIO_VERSION))

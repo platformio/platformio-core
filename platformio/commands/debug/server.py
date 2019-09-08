@@ -18,7 +18,7 @@ from os.path import isdir, isfile, join
 from twisted.internet import error  # pylint: disable=import-error
 from twisted.internet import reactor  # pylint: disable=import-error
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.commands.debug.process import BaseProcess
 from platformio.proc import where_is_program
 
@@ -74,7 +74,7 @@ class DebugServer(BaseProcess):
             str_args = " ".join(
                 [arg if arg.startswith("-") else '"%s"' % arg for arg in args])
             self._debug_port = '| "%s" %s' % (server_executable, str_args)
-            self._debug_port = self._debug_port.replace("\\", "\\\\")
+            self._debug_port = fs.to_unix_path(self._debug_port)
         else:
             env = os.environ.copy()
             # prepend server "lib" folder to LD path

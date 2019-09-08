@@ -55,13 +55,15 @@ def configure():
     except (AttributeError, ImportError):
         pass
 
-    # handle PLATFORMIO_FORCE_COLOR
-    if str(os.getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
-        try:
+    try:
+        if str(os.getenv("PLATFORMIO_DISABLE_COLOR", "")).lower() == "true":
+            # pylint: disable=protected-access
+            click._compat.isatty = lambda stream: False
+        elif str(os.getenv("PLATFORMIO_FORCE_COLOR", "")).lower() == "true":
             # pylint: disable=protected-access
             click._compat.isatty = lambda stream: True
-        except:  # pylint: disable=bare-except
-            pass
+    except:  # pylint: disable=bare-except
+        pass
 
     # Handle IOError issue with VSCode's Terminal (Windows)
     click_echo_origin = [click.echo, click.secho]

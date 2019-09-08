@@ -15,10 +15,18 @@
       <config projectName="{{project_name}}" targetName="DEBUG" />
     </generated>
   </component>
-  <component name="CMakeSettings" AUTO_RELOAD="true" GENERATION_PASS_SYSTEM_ENVIRONMENT="true">
-    <ADDITIONAL_GENERATION_ENVIRONMENT>
-      <envs />
-    </ADDITIONAL_GENERATION_ENVIRONMENT>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+   <configurations>
+%   envs = config.envs()
+%   if len(envs) > 1:
+%       for env in envs:
+      <configuration PROFILE_NAME="{{ env }}" CONFIG_NAME="{{ env }}" />
+%       end
+      <configuration PROFILE_NAME="All" CONFIG_NAME="All" />
+%   else:
+      <configuration PROFILE_NAME="{{ env_name }}" CONFIG_NAME="{{ env_name }}" />
+%   end
+    </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ec922180-b3d3-40f1-af0b-2568113a9075" name="Default" comment="" />
@@ -163,10 +171,6 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="Build All" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS="FALSE" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
-      <envs />
-      <method />
-    </configuration>
     <configuration default="false" name="PLATFORMIO_BUILD" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS="FALSE" PROJECT_NAME="{{project_name}}" TARGET_NAME="PLATFORMIO_BUILD" CONFIG_NAME="Debug">
       <envs />
       <method />
@@ -199,17 +203,6 @@
       <envs />
       <method />
     </configuration>
-    <list size="9">
-      <item index="0" class="java.lang.String" itemvalue="Application.Build All" />
-      <item index="1" class="java.lang.String" itemvalue="Application.PLATFORMIO_BUILD" />
-      <item index="2" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPLOAD" />
-      <item index="3" class="java.lang.String" itemvalue="Application.PLATFORMIO_CLEAN" />
-      <item index="4" class="java.lang.String" itemvalue="Application.PLATFORMIO_TEST" />
-      <item index="5" class="java.lang.String" itemvalue="Application.PLATFORMIO_PROGRAM" />
-      <item index="6" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPLOADFS" />
-      <item index="7" class="java.lang.String" itemvalue="Application.PLATFORMIO_UPDATE" />
-      <item index="8" class="java.lang.String" itemvalue="Application.PLATFORMIO_REBUILD_PROJECT_INDEX" />
-    </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
   <component name="SvnConfiguration">

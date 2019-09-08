@@ -60,7 +60,6 @@ target extended-remote $DEBUG_PORT
 $INIT_BREAK
 pio_reset_halt_target
 $LOAD_CMDS
-pio_reset_halt_target
 """
 
 GDB_BLACKMAGIC_INIT_CONFIG = """

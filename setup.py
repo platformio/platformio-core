@@ -23,8 +23,8 @@ install_requires = [
     "colorama",
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",
-    "semantic_version>=2.5.0,<3",
-    "tabulate>=0.8.3"
+    "semantic_version>=2.8.1,<3",
+    "tabulate>=0.8.3,<1"
 ]
 
 setup(

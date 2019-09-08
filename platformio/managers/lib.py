@@ -21,6 +21,7 @@ from glob import glob
 from os.path import isdir, join
 
 import click
+import semantic_version
 
 from platformio import app, exception, util
 from platformio.compat import glob_escape, string_types
@@ -166,8 +167,13 @@ class LibraryManager(BasePkgManager):
                 return 0
             return -1 if date1 < date2 else 1
 
-        semver_spec = self.parse_semver_spec(
-            requirements) if requirements else None
+        semver_spec = None
+        try:
+            semver_spec = semantic_version.SimpleSpec(
+                requirements) if requirements else None
+        except ValueError:
+            pass
+
         item = {}
 
         for v in versions:
