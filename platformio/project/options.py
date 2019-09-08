@@ -195,6 +195,11 @@ ProjectOptions = OrderedDict([
                         type=click.Path(
                             exists=True, file_okay=True, dir_okay=False)),
 
+        # Check
+        ConfigEnvOption(name="check_tool", multiple=True),
+        ConfigEnvOption(name="check_filter", multiple=True),
+        ConfigEnvOption(name="check_flags", multiple=True),
+
         # Other
         ConfigEnvOption(name="extra_scripts",
                         oldnames=["extra_script"],
