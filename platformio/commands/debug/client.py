@@ -102,7 +102,8 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
                                     gdb_path,
                                     args,
                                     path=self.project_dir,
-                                    env=os.environ)
+                                    env=os.environ
+                                    usePTY=True)
 
     @staticmethod
     def _get_data_dir(gdb_path):
