@@ -90,7 +90,7 @@ class EmbeddedTestProcessor(TestProcessorBase):
             if not line:
                 continue
             if isinstance(line, bytes):
-                line = line.decode("utf8")
+                line = line.decode("utf8", "ignore")
             self.on_run_out(line)
             if all([l in line for l in ("Tests", "Failures", "Ignored")]):
                 break
