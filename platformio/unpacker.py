@@ -110,7 +110,7 @@ class FileUnpacker(object):
         if self._unpacker:
             self._unpacker.close()
 
-    def unpack(self, dest_dir=".", with_progress=True):
+    def unpack(self, dest_dir=".", with_progress=True, check_unpacked=True):
         assert self._unpacker
         if not with_progress:
             click.echo("Unpacking...")
@@ -121,6 +121,9 @@ class FileUnpacker(object):
             with click.progressbar(items, label="Unpacking") as pb:
                 for item in pb:
                     self._unpacker.extract_item(item, dest_dir)
+
+        if not check_unpacked:
+            return True
 
         # check on disk
         for item in self._unpacker.get_items():
