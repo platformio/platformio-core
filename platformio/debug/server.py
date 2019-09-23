@@ -19,7 +19,7 @@ from twisted.internet import error  # pylint: disable=import-error
 from twisted.internet import reactor  # pylint: disable=import-error
 
 from platformio import exception, fs, util
-from platformio.commands.debug.process import BaseProcess
+from platformio.debug.process import BaseProcess
 from platformio.proc import where_is_program
 
 
