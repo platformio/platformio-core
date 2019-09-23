@@ -1,5 +1,7 @@
 [MESSAGES CONTROL]
 disable=
+    bad-continuation,
+    bad-whitespace,
     missing-docstring,
     ungrouped-imports,
     invalid-name,

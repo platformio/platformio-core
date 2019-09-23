@@ -26,13 +26,19 @@ from platformio import __version__, app, exception, fs, util
 from platformio.compat import PY2, hashlib_encode_data, is_bytes
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
-from platformio.proc import (BuildAsyncPipe, copy_pythonpath_to_osenv,
-                             exec_command, get_pythonexe_path)
+from platformio.proc import (
+    BuildAsyncPipe,
+    copy_pythonpath_to_osenv,
+    exec_command,
+    get_pythonexe_path,
+)
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (get_project_boards_dir,
-                                        get_project_core_dir,
-                                        get_project_packages_dir,
-                                        get_project_platforms_dir)
+from platformio.project.helpers import (
+    get_project_boards_dir,
+    get_project_core_dir,
+    get_project_packages_dir,
+    get_project_platforms_dir,
+)
 
 try:
     from urllib.parse import quote
@@ -41,16 +47,17 @@ except ImportError:
 
 
 class PlatformManager(BasePkgManager):
-
     def __init__(self, package_dir=None, repositories=None):
         if not repositories:
             repositories = [
                 "https://dl.bintray.com/platformio/dl-platforms/manifest.json",
                 "{0}://dl.platformio.org/platforms/manifest.json".format(
-                    "https" if app.get_setting("strict_ssl") else "http")
+                    "https" if app.get_setting("strict_ssl") else "http"
+                ),
             ]
-        BasePkgManager.__init__(self, package_dir
-                                or get_project_platforms_dir(), repositories)
+        BasePkgManager.__init__(
+            self, package_dir or get_project_platforms_dir(), repositories
+        )
 
     @property
     def manifest_names(self):
@@ -65,21 +72,21 @@ class PlatformManager(BasePkgManager):
                 return manifest_path
         return None
 
-    def install(self,
-                name,
-                requirements=None,
-                with_packages=None,
-                without_packages=None,
-                skip_default_package=False,
-                after_update=False,
-                silent=False,
-                force=False,
-                **_):  # pylint: disable=too-many-arguments, arguments-differ
-        platform_dir = BasePkgManager.install(self,
-                                              name,
-                                              requirements,
-                                              silent=silent,
-                                              force=force)
+    def install(
+        self,
+        name,
+        requirements=None,
+        with_packages=None,
+        without_packages=None,
+        skip_default_package=False,
+        after_update=False,
+        silent=False,
+        force=False,
+        **_
+    ):  # pylint: disable=too-many-arguments, arguments-differ
+        platform_dir = BasePkgManager.install(
+            self, name, requirements, silent=silent, force=force
+        )
         p = PlatformFactory.newPlatform(platform_dir)
 
         # don't cleanup packages or install them after update
@@ -87,11 +94,13 @@ class PlatformManager(BasePkgManager):
         if after_update:
             return True
 
-        p.install_packages(with_packages,
-                           without_packages,
-                           skip_default_package,
-                           silent=silent,
-                           force=force)
+        p.install_packages(
+            with_packages,
+            without_packages,
+            skip_default_package,
+            silent=silent,
+            force=force,
+        )
         return self.cleanup_packages(list(p.packages))
 
     def uninstall(self, package, requirements=None, after_update=False):
@@ -115,11 +124,8 @@ class PlatformManager(BasePkgManager):
         return self.cleanup_packages(list(p.packages))
 
     def update(  # pylint: disable=arguments-differ
-            self,
-            package,
-            requirements=None,
-            only_check=False,
-            only_packages=False):
+        self, package, requirements=None, only_check=False, only_packages=False
+    ):
         if isdir(package):
             pkg_dir = package
         else:
@@ -143,8 +149,9 @@ class PlatformManager(BasePkgManager):
         self.cleanup_packages(list(p.packages))
 
         if missed_pkgs:
-            p.install_packages(with_packages=list(missed_pkgs),
-                               skip_default_package=True)
+            p.install_packages(
+                with_packages=list(missed_pkgs), skip_default_package=True
+            )
 
         return True
 
@@ -152,20 +159,22 @@ class PlatformManager(BasePkgManager):
         self.cache_reset()
         deppkgs = {}
         for manifest in PlatformManager().get_installed():
-            p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
+            p = PlatformFactory.newPlatform(manifest["__pkg_dir"])
             for pkgname, pkgmanifest in p.get_installed_packages().items():
                 if pkgname not in deppkgs:
                     deppkgs[pkgname] = set()
-                deppkgs[pkgname].add(pkgmanifest['version'])
+                deppkgs[pkgname].add(pkgmanifest["version"])
 
         pm = PackageManager(get_project_packages_dir())
         for manifest in pm.get_installed():
-            if manifest['name'] not in names:
+            if manifest["name"] not in names:
                 continue
-            if (manifest['name'] not in deppkgs
-                    or manifest['version'] not in deppkgs[manifest['name']]):
+            if (
+                manifest["name"] not in deppkgs
+                or manifest["version"] not in deppkgs[manifest["name"]]
+            ):
                 try:
-                    pm.uninstall(manifest['__pkg_dir'], after_update=True)
+                    pm.uninstall(manifest["__pkg_dir"], after_update=True)
                 except exception.UnknownPackage:
                     pass
 
@@ -176,7 +185,7 @@ class PlatformManager(BasePkgManager):
     def get_installed_boards(self):
         boards = []
         for manifest in self.get_installed():
-            p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
+            p = PlatformFactory.newPlatform(manifest["__pkg_dir"])
             for config in p.get_boards().values():
                 board = config.get_brief_data()
                 if board not in boards:
@@ -189,30 +198,31 @@ class PlatformManager(BasePkgManager):
 
     def get_all_boards(self):
         boards = self.get_installed_boards()
-        know_boards = ["%s:%s" % (b['platform'], b['id']) for b in boards]
+        know_boards = ["%s:%s" % (b["platform"], b["id"]) for b in boards]
         try:
             for board in self.get_registered_boards():
-                key = "%s:%s" % (board['platform'], board['id'])
+                key = "%s:%s" % (board["platform"], board["id"])
                 if key not in know_boards:
                     boards.append(board)
         except (exception.APIRequestError, exception.InternetIsOffline):
             pass
-        return sorted(boards, key=lambda b: b['name'])
+        return sorted(boards, key=lambda b: b["name"])
 
     def board_config(self, id_, platform=None):
         for manifest in self.get_installed_boards():
-            if manifest['id'] == id_ and (not platform
-                                          or manifest['platform'] == platform):
+            if manifest["id"] == id_ and (
+                not platform or manifest["platform"] == platform
+            ):
                 return manifest
         for manifest in self.get_registered_boards():
-            if manifest['id'] == id_ and (not platform
-                                          or manifest['platform'] == platform):
+            if manifest["id"] == id_ and (
+                not platform or manifest["platform"] == platform
+            ):
                 return manifest
         raise exception.UnknownBoard(id_)
 
 
 class PlatformFactory(object):
-
     @staticmethod
     def get_clsname(name):
         name = re.sub(r"[^\da-z\_]+", "", name, flags=re.I)
@@ -222,8 +232,7 @@ class PlatformFactory(object):
     def load_module(name, path):
         module = None
         try:
-            module = load_source("platformio.managers.platform.%s" % name,
-                                 path)
+            module = load_source("platformio.managers.platform.%s" % name, path)
         except ImportError:
             raise exception.UnknownPlatform(name)
         return module
@@ -234,28 +243,29 @@ class PlatformFactory(object):
         platform_dir = None
         if isdir(name):
             platform_dir = name
-            name = pm.load_manifest(platform_dir)['name']
+            name = pm.load_manifest(platform_dir)["name"]
         elif name.endswith("platform.json") and isfile(name):
             platform_dir = dirname(name)
-            name = fs.load_json(name)['name']
+            name = fs.load_json(name)["name"]
         else:
             name, requirements, url = pm.parse_pkg_uri(name, requirements)
             platform_dir = pm.get_package_dir(name, requirements, url)
             if platform_dir:
-                name = pm.load_manifest(platform_dir)['name']
+                name = pm.load_manifest(platform_dir)["name"]
 
         if not platform_dir:
             raise exception.UnknownPlatform(
-                name if not requirements else "%s@%s" % (name, requirements))
+                name if not requirements else "%s@%s" % (name, requirements)
+            )
 
         platform_cls = None
         if isfile(join(platform_dir, "platform.py")):
             platform_cls = getattr(
                 cls.load_module(name, join(platform_dir, "platform.py")),
-                cls.get_clsname(name))
+                cls.get_clsname(name),
+            )
         else:
-            platform_cls = type(str(cls.get_clsname(name)), (PlatformBase, ),
-                                {})
+            platform_cls = type(str(cls.get_clsname(name)), (PlatformBase,), {})
 
         _instance = platform_cls(join(platform_dir, "platform.json"))
         assert isinstance(_instance, PlatformBase)
@@ -263,14 +273,14 @@ class PlatformFactory(object):
 
 
 class PlatformPackagesMixin(object):
-
     def install_packages(  # pylint: disable=too-many-arguments
-            self,
-            with_packages=None,
-            without_packages=None,
-            skip_default_package=False,
-            silent=False,
-            force=False):
+        self,
+        with_packages=None,
+        without_packages=None,
+        skip_default_package=False,
+        silent=False,
+        force=False,
+    ):
         with_packages = set(self.find_pkg_names(with_packages or []))
         without_packages = set(self.find_pkg_names(without_packages or []))
 
@@ -283,12 +293,13 @@ class PlatformPackagesMixin(object):
             version = opts.get("version", "")
             if name in without_packages:
                 continue
-            elif (name in with_packages or
-                  not (skip_default_package or opts.get("optional", False))):
+            elif name in with_packages or not (
+                skip_default_package or opts.get("optional", False)
+            ):
                 if ":" in version:
-                    self.pm.install("%s=%s" % (name, version),
-                                    silent=silent,
-                                    force=force)
+                    self.pm.install(
+                        "%s=%s" % (name, version), silent=silent, force=force
+                    )
                 else:
                     self.pm.install(name, version, silent=silent, force=force)
 
@@ -305,9 +316,12 @@ class PlatformPackagesMixin(object):
                     result.append(_name)
                     found = True
 
-            if (self.frameworks and candidate.startswith("framework-")
-                    and candidate[10:] in self.frameworks):
-                result.append(self.frameworks[candidate[10:]]['package'])
+            if (
+                self.frameworks
+                and candidate.startswith("framework-")
+                and candidate[10:] in self.frameworks
+            ):
+                result.append(self.frameworks[candidate[10:]]["package"])
                 found = True
 
             if not found:
@@ -320,7 +334,7 @@ class PlatformPackagesMixin(object):
             requirements = self.packages[name].get("version", "")
             if ":" in requirements:
                 _, requirements, __ = self.pm.parse_pkg_uri(requirements)
-            self.pm.update(manifest['__pkg_dir'], requirements, only_check)
+            self.pm.update(manifest["__pkg_dir"], requirements, only_check)
 
     def get_installed_packages(self):
         items = {}
@@ -335,7 +349,7 @@ class PlatformPackagesMixin(object):
             requirements = self.packages[name].get("version", "")
             if ":" in requirements:
                 _, requirements, __ = self.pm.parse_pkg_uri(requirements)
-            if self.pm.outdated(manifest['__pkg_dir'], requirements):
+            if self.pm.outdated(manifest["__pkg_dir"], requirements):
                 return True
         return False
 
@@ -343,7 +357,8 @@ class PlatformPackagesMixin(object):
         version = self.packages[name].get("version", "")
         if ":" in version:
             return self.pm.get_package_dir(
-                *self.pm.parse_pkg_uri("%s=%s" % (name, version)))
+                *self.pm.parse_pkg_uri("%s=%s" % (name, version))
+            )
         return self.pm.get_package_dir(name, version)
 
     def get_package_version(self, name):
@@ -368,15 +383,16 @@ class PlatformRunMixin(object):
         return value.decode() if is_bytes(value) else value
 
     def run(  # pylint: disable=too-many-arguments
-            self, variables, targets, silent, verbose, jobs):
+        self, variables, targets, silent, verbose, jobs
+    ):
         assert isinstance(variables, dict)
         assert isinstance(targets, list)
 
-        config = ProjectConfig.get_instance(variables['project_config'])
-        options = config.items(env=variables['pioenv'], as_dict=True)
+        config = ProjectConfig.get_instance(variables["project_config"])
+        options = config.items(env=variables["pioenv"], as_dict=True)
         if "framework" in options:
             # support PIO Core 3.0 dev/platforms
-            options['pioframework'] = options['framework']
+            options["pioframework"] = options["framework"]
         self.configure_default_packages(options, targets)
         self.install_packages(silent=True)
 
@@ -386,12 +402,12 @@ class PlatformRunMixin(object):
         if "clean" in targets:
             targets = ["-c", "."]
 
-        variables['platform_manifest'] = self.manifest_path
+        variables["platform_manifest"] = self.manifest_path
 
         if "build_script" not in variables:
-            variables['build_script'] = self.get_build_script()
-        if not isfile(variables['build_script']):
-            raise exception.BuildScriptNotFound(variables['build_script'])
+            variables["build_script"] = self.get_build_script()
+        if not isfile(variables["build_script"]):
+            raise exception.BuildScriptNotFound(variables["build_script"])
 
         result = self._run_scons(variables, targets, jobs)
         assert "returncode" in result
@@ -402,14 +418,16 @@ class PlatformRunMixin(object):
         args = [
             get_pythonexe_path(),
             join(get_core_package_dir("tool-scons"), "script", "scons"),
-            "-Q", "--warn=no-no-parallel-support",
-            "--jobs", str(jobs),
-            "--sconstruct", join(fs.get_source_dir(), "builder", "main.py")
+            "-Q",
+            "--warn=no-no-parallel-support",
+            "--jobs",
+            str(jobs),
+            "--sconstruct",
+            join(fs.get_source_dir(), "builder", "main.py"),
         ]  # yapf: disable
         args.append("PIOVERBOSE=%d" % (1 if self.verbose else 0))
         # pylint: disable=protected-access
-        args.append("ISATTY=%d" %
-                    (1 if click._compat.isatty(sys.stdout) else 0))
+        args.append("ISATTY=%d" % (1 if click._compat.isatty(sys.stdout) else 0))
         args += targets
 
         # encode and append variables
@@ -428,10 +446,13 @@ class PlatformRunMixin(object):
             args,
             stdout=BuildAsyncPipe(
                 line_callback=self._on_stdout_line,
-                data_callback=lambda data: _write_and_flush(sys.stdout, data)),
+                data_callback=lambda data: _write_and_flush(sys.stdout, data),
+            ),
             stderr=BuildAsyncPipe(
                 line_callback=self._on_stderr_line,
-                data_callback=lambda data: _write_and_flush(sys.stderr, data)))
+                data_callback=lambda data: _write_and_flush(sys.stderr, data),
+            ),
+        )
         return result
 
     def _on_stdout_line(self, line):
@@ -447,7 +468,7 @@ class PlatformRunMixin(object):
         b_pos = line.rfind(": No such file or directory")
         if a_pos == -1 or b_pos == -1:
             return
-        self._echo_missed_dependency(line[a_pos + 12:b_pos].strip())
+        self._echo_missed_dependency(line[a_pos + 12 : b_pos].strip())
 
     def _echo_line(self, line, level):
         if line.startswith("scons: "):
@@ -472,18 +493,22 @@ class PlatformRunMixin(object):
 * Web  > {link}
 *
 {dots}
-""".format(filename=filename,
-           filename_styled=click.style(filename, fg="cyan"),
-           link=click.style(
-               "https://platformio.org/lib/search?query=header:%s" %
-               quote(filename, safe=""),
-               fg="blue"),
-           dots="*" * (56 + len(filename)))
+""".format(
+            filename=filename,
+            filename_styled=click.style(filename, fg="cyan"),
+            link=click.style(
+                "https://platformio.org/lib/search?query=header:%s"
+                % quote(filename, safe=""),
+                fg="blue",
+            ),
+            dots="*" * (56 + len(filename)),
+        )
         click.echo(banner, err=True)
 
 
 class PlatformBase(  # pylint: disable=too-many-public-methods
-        PlatformPackagesMixin, PlatformRunMixin):
+    PlatformPackagesMixin, PlatformRunMixin
+):
 
     PIO_VERSION = semantic_version.Version(util.pepver_to_semver(__version__))
     _BOARDS_CACHE = {}
@@ -497,8 +522,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         self._manifest = fs.load_json(manifest_path)
         self._custom_packages = None
 
-        self.pm = PackageManager(get_project_packages_dir(),
-                                 self.package_repositories)
+        self.pm = PackageManager(get_project_packages_dir(), self.package_repositories)
 
         # if self.engines and "platformio" in self.engines:
         #     if self.PIO_VERSION not in semantic_version.SimpleSpec(
@@ -508,19 +532,19 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
 
     @property
     def name(self):
-        return self._manifest['name']
+        return self._manifest["name"]
 
     @property
     def title(self):
-        return self._manifest['title']
+        return self._manifest["title"]
 
     @property
     def description(self):
-        return self._manifest['description']
+        return self._manifest["description"]
 
     @property
     def version(self):
-        return self._manifest['version']
+        return self._manifest["version"]
 
     @property
     def homepage(self):
@@ -561,7 +585,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
     @property
     def packages(self):
         packages = self._manifest.get("packages", {})
-        for item in (self._custom_packages or []):
+        for item in self._custom_packages or []:
             name = item
             version = "*"
             if "@" in item:
@@ -569,10 +593,7 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
             name = name.strip()
             if name not in packages:
                 packages[name] = {}
-            packages[name].update({
-                "version": version.strip(),
-                "optional": False
-            })
+            packages[name].update({"version": version.strip(), "optional": False})
         return packages
 
     def get_dir(self):
@@ -591,15 +612,13 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         return False
 
     def get_boards(self, id_=None):
-
         def _append_board(board_id, manifest_path):
             config = PlatformBoardConfig(manifest_path)
             if "platform" in config and config.get("platform") != self.name:
                 return
-            if "platforms" in config \
-                    and self.name not in config.get("platforms"):
+            if "platforms" in config and self.name not in config.get("platforms"):
                 return
-            config.manifest['platform'] = self.name
+            config.manifest["platform"] = self.name
             self._BOARDS_CACHE[board_id] = config
 
         bdirs = [
@@ -649,28 +668,28 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
                 continue
             _pkg_name = self.frameworks[framework].get("package")
             if _pkg_name:
-                self.packages[_pkg_name]['optional'] = False
+                self.packages[_pkg_name]["optional"] = False
 
         # enable upload tools for upload targets
         if any(["upload" in t for t in targets] + ["program" in targets]):
             for name, opts in self.packages.items():
                 if opts.get("type") == "uploader":
-                    self.packages[name]['optional'] = False
+                    self.packages[name]["optional"] = False
                 # skip all packages in "nobuild" mode
                 # allow only upload tools and frameworks
                 elif "nobuild" in targets and opts.get("type") != "framework":
-                    self.packages[name]['optional'] = True
+                    self.packages[name]["optional"] = True
 
     def get_lib_storages(self):
         storages = []
         for opts in (self.frameworks or {}).values():
             if "package" not in opts:
                 continue
-            pkg_dir = self.get_package_dir(opts['package'])
+            pkg_dir = self.get_package_dir(opts["package"])
             if not pkg_dir or not isdir(join(pkg_dir, "libraries")):
                 continue
             libs_dir = join(pkg_dir, "libraries")
-            storages.append({"name": opts['package'], "path": libs_dir})
+            storages.append({"name": opts["package"], "path": libs_dir})
             libcores_dir = join(libs_dir, "__cores__")
             if not isdir(libcores_dir):
                 continue
@@ -678,16 +697,17 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
                 libcore_dir = join(libcores_dir, item)
                 if not isdir(libcore_dir):
                     continue
-                storages.append({
-                    "name": "%s-core-%s" % (opts['package'], item),
-                    "path": libcore_dir
-                })
+                storages.append(
+                    {
+                        "name": "%s-core-%s" % (opts["package"], item),
+                        "path": libcore_dir,
+                    }
+                )
 
         return storages
 
 
 class PlatformBoardConfig(object):
-
     def __init__(self, manifest_path):
         self._id = basename(manifest_path)[:-5]
         assert isfile(manifest_path)
@@ -698,8 +718,8 @@ class PlatformBoardConfig(object):
             raise exception.InvalidBoardManifest(manifest_path)
         if not set(["name", "url", "vendor"]) <= set(self._manifest):
             raise exception.PlatformioException(
-                "Please specify name, url and vendor fields for " +
-                manifest_path)
+                "Please specify name, url and vendor fields for " + manifest_path
+            )
 
     def get(self, path, default=None):
         try:
@@ -751,41 +771,33 @@ class PlatformBoardConfig(object):
 
     def get_brief_data(self):
         return {
-            "id":
-            self.id,
-            "name":
-            self._manifest['name'],
-            "platform":
-            self._manifest.get("platform"),
-            "mcu":
-            self._manifest.get("build", {}).get("mcu", "").upper(),
-            "fcpu":
-            int("".join([
-                c for c in str(
-                    self._manifest.get("build", {}).get("f_cpu", "0L"))
-                if c.isdigit()
-            ])),
-            "ram":
-            self._manifest.get("upload", {}).get("maximum_ram_size", 0),
-            "rom":
-            self._manifest.get("upload", {}).get("maximum_size", 0),
-            "connectivity":
-            self._manifest.get("connectivity"),
-            "frameworks":
-            self._manifest.get("frameworks"),
-            "debug":
-            self.get_debug_data(),
-            "vendor":
-            self._manifest['vendor'],
-            "url":
-            self._manifest['url']
+            "id": self.id,
+            "name": self._manifest["name"],
+            "platform": self._manifest.get("platform"),
+            "mcu": self._manifest.get("build", {}).get("mcu", "").upper(),
+            "fcpu": int(
+                "".join(
+                    [
+                        c
+                        for c in str(self._manifest.get("build", {}).get("f_cpu", "0L"))
+                        if c.isdigit()
+                    ]
+                )
+            ),
+            "ram": self._manifest.get("upload", {}).get("maximum_ram_size", 0),
+            "rom": self._manifest.get("upload", {}).get("maximum_size", 0),
+            "connectivity": self._manifest.get("connectivity"),
+            "frameworks": self._manifest.get("frameworks"),
+            "debug": self.get_debug_data(),
+            "vendor": self._manifest["vendor"],
+            "url": self._manifest["url"],
         }
 
     def get_debug_data(self):
         if not self._manifest.get("debug", {}).get("tools"):
             return None
         tools = {}
-        for name, options in self._manifest['debug']['tools'].items():
+        for name, options in self._manifest["debug"]["tools"].items():
             tools[name] = {}
             for key, value in options.items():
                 if key in ("default", "onboard"):
@@ -798,22 +810,23 @@ class PlatformBoardConfig(object):
         if tool_name == "custom":
             return tool_name
         if not debug_tools:
-            raise exception.DebugSupportError(self._manifest['name'])
+            raise exception.DebugSupportError(self._manifest["name"])
         if tool_name:
             if tool_name in debug_tools:
                 return tool_name
             raise exception.DebugInvalidOptions(
-                "Unknown debug tool `%s`. Please use one of `%s` or `custom`" %
-                (tool_name, ", ".join(sorted(list(debug_tools)))))
+                "Unknown debug tool `%s`. Please use one of `%s` or `custom`"
+                % (tool_name, ", ".join(sorted(list(debug_tools))))
+            )
 
         # automatically select best tool
         data = {"default": [], "onboard": [], "external": []}
         for key, value in debug_tools.items():
             if value.get("default"):
-                data['default'].append(key)
+                data["default"].append(key)
             elif value.get("onboard"):
-                data['onboard'].append(key)
-            data['external'].append(key)
+                data["onboard"].append(key)
+            data["external"].append(key)
 
         for key, value in data.items():
             if not value:

@@ -119,23 +119,26 @@ class ProjectConfig(object):
 
     def _maintain_renaimed_options(self):
         # legacy `lib_extra_dirs` in [platformio]
-        if (self._parser.has_section("platformio")
-                and self._parser.has_option("platformio", "lib_extra_dirs")):
+        if self._parser.has_section("platformio") and self._parser.has_option(
+            "platformio", "lib_extra_dirs"
+        ):
             if not self._parser.has_section("env"):
                 self._parser.add_section("env")
-            self._parser.set("env", "lib_extra_dirs",
-                             self._parser.get("platformio", "lib_extra_dirs"))
+            self._parser.set(
+                "env",
+                "lib_extra_dirs",
+                self._parser.get("platformio", "lib_extra_dirs"),
+            )
             self._parser.remove_option("platformio", "lib_extra_dirs")
             self.warnings.append(
                 "`lib_extra_dirs` configuration option is deprecated in "
-                "section [platformio]! Please move it to global `env` section")
+                "section [platformio]! Please move it to global `env` section"
+            )
 
         renamed_options = {}
         for option in ProjectOptions.values():
             if option.oldnames:
-                renamed_options.update(
-                    {name: option.name
-                     for name in option.oldnames})
+                renamed_options.update({name: option.name for name in option.oldnames})
 
         for section in self._parser.sections():
             scope = section.split(":", 1)[0]
@@ -146,29 +149,34 @@ class ProjectConfig(object):
                     self.warnings.append(
                         "`%s` configuration option in section [%s] is "
                         "deprecated and will be removed in the next release! "
-                        "Please use `%s` instead" %
-                        (option, section, renamed_options[option]))
+                        "Please use `%s` instead"
+                        % (option, section, renamed_options[option])
+                    )
                     # rename on-the-fly
-                    self._parser.set(section, renamed_options[option],
-                                     self._parser.get(section, option))
+                    self._parser.set(
+                        section,
+                        renamed_options[option],
+                        self._parser.get(section, option),
+                    )
                     self._parser.remove_option(section, option)
                     continue
 
                 # unknown
                 unknown_conditions = [
                     ("%s.%s" % (scope, option)) not in ProjectOptions,
-                    scope != "env" or
-                    not option.startswith(("custom_", "board_"))
+                    scope != "env" or not option.startswith(("custom_", "board_")),
                 ]  # yapf: disable
                 if all(unknown_conditions):
                     self.warnings.append(
                         "Ignore unknown configuration option `%s` "
-                        "in section [%s]" % (option, section))
+                        "in section [%s]" % (option, section)
+                    )
         return True
 
     def walk_options(self, root_section):
-        extends_queue = (["env", root_section] if
-                         root_section.startswith("env:") else [root_section])
+        extends_queue = (
+            ["env", root_section] if root_section.startswith("env:") else [root_section]
+        )
         extends_done = []
         while extends_queue:
             section = extends_queue.pop()
@@ -179,8 +187,8 @@ class ProjectConfig(object):
                 yield (section, option)
             if self._parser.has_option(section, "extends"):
                 extends_queue.extend(
-                    self.parse_multi_values(
-                        self._parser.get(section, "extends"))[::-1])
+                    self.parse_multi_values(self._parser.get(section, "extends"))[::-1]
+                )
 
     def options(self, section=None, env=None):
         result = []
@@ -213,11 +221,9 @@ class ProjectConfig(object):
             section = "env:" + env
         if as_dict:
             return {
-                option: self.get(section, option)
-                for option in self.options(section)
+                option: self.get(section, option) for option in self.options(section)
             }
-        return [(option, self.get(section, option))
-                for option in self.options(section)]
+        return [(option, self.get(section, option)) for option in self.options(section)]
 
     def set(self, section, option, value):
         if isinstance(value, (list, tuple)):
@@ -260,8 +266,7 @@ class ProjectConfig(object):
         except ConfigParser.Error as e:
             raise exception.InvalidProjectConf(self.path, str(e))
 
-        option_meta = ProjectOptions.get("%s.%s" %
-                                         (section.split(":", 1)[0], option))
+        option_meta = ProjectOptions.get("%s.%s" % (section.split(":", 1)[0], option))
         if not option_meta:
             return value or default
 
@@ -288,8 +293,7 @@ class ProjectConfig(object):
         try:
             return self._cast_to(value, option_meta.type)
         except click.BadParameter as e:
-            raise exception.ProjectOptionValueError(e.format_message(), option,
-                                                    section)
+            raise exception.ProjectOptionValueError(e.format_message(), option, section)
 
     @staticmethod
     def _cast_to(value, to_type):
@@ -317,8 +321,7 @@ class ProjectConfig(object):
             raise exception.ProjectEnvsNotAvailable()
         unknown = set(list(envs or []) + self.default_envs()) - known
         if unknown:
-            raise exception.UnknownEnvNames(", ".join(unknown),
-                                            ", ".join(known))
+            raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
         if not silent:
             for warning in self.warnings:
                 click.secho("Warning! %s" % warning, fg="yellow")

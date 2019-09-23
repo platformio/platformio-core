@@ -22,8 +22,11 @@ import click
 import requests
 
 from platformio import util
-from platformio.exception import (FDSHASumMismatch, FDSizeMismatch,
-                                  FDUnrecognizedStatusCode)
+from platformio.exception import (
+    FDSHASumMismatch,
+    FDSizeMismatch,
+    FDUnrecognizedStatusCode,
+)
 from platformio.proc import exec_command
 
 
@@ -34,17 +37,22 @@ class FileDownloader(object):
     def __init__(self, url, dest_dir=None):
         self._request = None
         # make connection
-        self._request = requests.get(url,
-                                     stream=True,
-                                     headers=util.get_request_defheaders(),
-                                     verify=version_info >= (2, 7, 9))
+        self._request = requests.get(
+            url,
+            stream=True,
+            headers=util.get_request_defheaders(),
+            verify=version_info >= (2, 7, 9),
+        )
         if self._request.status_code != 200:
             raise FDUnrecognizedStatusCode(self._request.status_code, url)
 
         disposition = self._request.headers.get("content-disposition")
         if disposition and "filename=" in disposition:
-            self._fname = disposition[disposition.index("filename=") +
-                                      9:].replace('"', "").replace("'", "")
+            self._fname = (
+                disposition[disposition.index("filename=") + 9 :]
+                .replace('"', "")
+                .replace("'", "")
+            )
         else:
             self._fname = [p for p in url.split("/") if p][-1]
         self._fname = str(self._fname)
@@ -64,7 +72,7 @@ class FileDownloader(object):
     def get_size(self):
         if "content-length" not in self._request.headers:
             return -1
-        return int(self._request.headers['content-length'])
+        return int(self._request.headers["content-length"])
 
     def start(self, with_progress=True):
         label = "Downloading"
@@ -101,11 +109,11 @@ class FileDownloader(object):
         dlsha1 = None
         try:
             result = exec_command(["sha1sum", self._destination])
-            dlsha1 = result['out']
+            dlsha1 = result["out"]
         except (OSError, ValueError):
             try:
                 result = exec_command(["shasum", "-a", "1", self._destination])
-                dlsha1 = result['out']
+                dlsha1 = result["out"]
             except (OSError, ValueError):
                 pass
         if not dlsha1:

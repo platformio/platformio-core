@@ -25,10 +25,14 @@ class PlatformioCLI(click.MultiCommand):
     @staticmethod
     def in_silence():
         args = PlatformioCLI.leftover_args
-        return args and any([
-            args[0] == "debug" and "--interpreter" in " ".join(args),
-            args[0] == "upgrade", "--json-output" in args, "--version" in args
-        ])
+        return args and any(
+            [
+                args[0] == "debug" and "--interpreter" in " ".join(args),
+                args[0] == "upgrade",
+                "--json-output" in args,
+                "--version" in args,
+            ]
+        )
 
     def invoke(self, ctx):
         PlatformioCLI.leftover_args = ctx.args
@@ -52,8 +56,7 @@ class PlatformioCLI(click.MultiCommand):
     def get_command(self, ctx, cmd_name):
         mod = None
         try:
-            mod = __import__("platformio.commands." + cmd_name, None, None,
-                             ["cli"])
+            mod = __import__("platformio.commands." + cmd_name, None, None, ["cli"])
         except ImportError:
             try:
                 return self._handle_obsolate_command(cmd_name)
@@ -65,8 +68,10 @@ class PlatformioCLI(click.MultiCommand):
     def _handle_obsolate_command(name):
         if name == "platforms":
             from platformio.commands import platform
+
             return platform.cli
         if name == "serialports":
             from platformio.commands import device
+
             return device.cli
         raise AttributeError()

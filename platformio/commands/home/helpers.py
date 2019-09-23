@@ -27,7 +27,6 @@ from platformio.proc import where_is_program
 
 
 class AsyncSession(requests.Session):
-
     def __init__(self, n=None, *args, **kwargs):
         if n:
             pool = reactor.getThreadPool()
@@ -51,7 +50,8 @@ def requests_session():
 @util.memoized(expire="60s")
 def get_core_fullpath():
     return where_is_program(
-        "platformio" + (".exe" if "windows" in util.get_systype() else ""))
+        "platformio" + (".exe" if "windows" in util.get_systype() else "")
+    )
 
 
 @util.memoized(expire="10s")
@@ -60,9 +60,7 @@ def is_twitter_blocked():
     timeout = 2
     try:
         if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-            requests.get("http://%s" % ip,
-                         allow_redirects=False,
-                         timeout=timeout)
+            requests.get("http://%s" % ip, allow_redirects=False, timeout=timeout)
         else:
             socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip, 80))
         return False

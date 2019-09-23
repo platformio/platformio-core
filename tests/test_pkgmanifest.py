@@ -18,14 +18,14 @@ import requests
 
 def validate_response(r):
     assert r.status_code == 200, r.url
-    assert int(r.headers['Content-Length']) > 0, r.url
-    assert r.headers['Content-Type'] in ("application/gzip",
-                                         "application/octet-stream")
+    assert int(r.headers["Content-Length"]) > 0, r.url
+    assert r.headers["Content-Type"] in ("application/gzip", "application/octet-stream")
 
 
 def test_packages():
     pkgs_manifest = requests.get(
-        "https://dl.bintray.com/platformio/dl-packages/manifest.json").json()
+        "https://dl.bintray.com/platformio/dl-packages/manifest.json"
+    ).json()
     assert isinstance(pkgs_manifest, dict)
     items = []
     for _, variants in pkgs_manifest.items():
@@ -33,12 +33,12 @@ def test_packages():
             items.append(item)
 
     for item in items:
-        assert item['url'].endswith(".tar.gz"), item
+        assert item["url"].endswith(".tar.gz"), item
 
-        r = requests.head(item['url'], allow_redirects=True)
+        r = requests.head(item["url"], allow_redirects=True)
         validate_response(r)
 
         if "X-Checksum-Sha1" not in r.headers:
             return pytest.skip("X-Checksum-Sha1 is not provided")
 
-        assert item['sha1'] == r.headers.get("X-Checksum-Sha1")[0:40], item
+        assert item["sha1"] == r.headers.get("X-Checksum-Sha1")[0:40], item

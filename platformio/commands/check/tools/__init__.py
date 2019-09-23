@@ -18,7 +18,6 @@ from platformio.commands.check.tools.cppcheck import CppcheckCheckTool
 
 
 class CheckToolFactory(object):
-
     @staticmethod
     def new(tool, project_dir, config, envname, options):
         cls = None
@@ -27,6 +26,5 @@ class CheckToolFactory(object):
         elif tool == "clangtidy":
             cls = ClangtidyCheckTool
         else:
-            raise exception.PlatformioException("Unknown check tool `%s`" %
-                                                tool)
+            raise exception.PlatformioException("Unknown check tool `%s`" % tool)
         return cls(project_dir, config, envname, options)

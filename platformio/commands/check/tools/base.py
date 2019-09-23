@@ -20,7 +20,6 @@ from platformio.project.helpers import get_project_dir, load_project_ide_data
 
 
 class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
-
     def __init__(self, project_dir, config, envname, options):
         self.config = config
         self.envname = envname
@@ -35,14 +34,15 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
 
         # detect all defects by default
         if not self.options.get("severity"):
-            self.options['severity'] = [
-                DefectItem.SEVERITY_LOW, DefectItem.SEVERITY_MEDIUM,
-                DefectItem.SEVERITY_HIGH
+            self.options["severity"] = [
+                DefectItem.SEVERITY_LOW,
+                DefectItem.SEVERITY_MEDIUM,
+                DefectItem.SEVERITY_HIGH,
             ]
         # cast to severity by ids
-        self.options['severity'] = [
+        self.options["severity"] = [
             s if isinstance(s, int) else DefectItem.severity_to_int(s)
-            for s in self.options['severity']
+            for s in self.options["severity"]
         ]
 
     def _load_cpp_data(self, project_dir, envname):
@@ -51,8 +51,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
             return
         self.cpp_includes = data.get("includes", [])
         self.cpp_defines = data.get("defines", [])
-        self.cpp_defines.extend(
-            self._get_toolchain_defines(data.get("cc_path")))
+        self.cpp_defines.extend(self._get_toolchain_defines(data.get("cc_path")))
 
     def get_flags(self, tool):
         result = []
@@ -61,18 +60,16 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
             if ":" not in flag:
                 result.extend([f for f in flag.split(" ") if f])
             elif flag.startswith("%s:" % tool):
-                result.extend(
-                    [f for f in flag.split(":", 1)[1].split(" ") if f])
+                result.extend([f for f in flag.split(":", 1)[1].split(" ") if f])
 
         return result
 
     @staticmethod
     def _get_toolchain_defines(cc_path):
         defines = []
-        result = proc.exec_command("echo | %s -dM -E -x c++ -" % cc_path,
-                                   shell=True)
+        result = proc.exec_command("echo | %s -dM -E -x c++ -" % cc_path, shell=True)
 
-        for line in result['out'].split("\n"):
+        for line in result["out"].split("\n"):
             tokens = line.strip().split(" ", 2)
             if not tokens or tokens[0] != "#define":
                 continue
@@ -105,7 +102,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
                 click.echo(line)
             return
 
-        if defect.severity not in self.options['severity']:
+        if defect.severity not in self.options["severity"]:
             return
 
         self._defects.append(defect)
@@ -125,8 +122,9 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
 
     def get_project_src_files(self):
         file_extensions = ["h", "hpp", "c", "cc", "cpp", "ino"]
-        return fs.match_src_files(get_project_dir(),
-                                  self.options.get("filter"), file_extensions)
+        return fs.match_src_files(
+            get_project_dir(), self.options.get("filter"), file_extensions
+        )
 
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback
@@ -137,7 +135,8 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         proc.exec_command(
             cmd,
             stdout=proc.LineBufferedAsyncPipe(self.on_tool_output),
-            stderr=proc.LineBufferedAsyncPipe(self.on_tool_output))
+            stderr=proc.LineBufferedAsyncPipe(self.on_tool_output),
+        )
 
         self.clean_up()
 

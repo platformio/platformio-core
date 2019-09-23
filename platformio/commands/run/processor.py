@@ -13,8 +13,7 @@
 # limitations under the License.
 
 from platformio import exception, telemetry
-from platformio.commands.platform import \
-    platform_install as cmd_platform_install
+from platformio.commands.platform import platform_install as cmd_platform_install
 from platformio.commands.test.processor import CTX_META_TEST_RUNNING_NAME
 from platformio.managers.platform import PlatformFactory
 
@@ -22,10 +21,9 @@ from platformio.managers.platform import PlatformFactory
 
 
 class EnvironmentProcessor(object):
-
     def __init__(  # pylint: disable=too-many-arguments
-            self, cmd_ctx, name, config, targets, upload_port, silent, verbose,
-            jobs):
+        self, cmd_ctx, name, config, targets, upload_port, silent, verbose, jobs
+    ):
         self.cmd_ctx = cmd_ctx
         self.name = name
         self.config = config
@@ -40,12 +38,13 @@ class EnvironmentProcessor(object):
         variables = {"pioenv": self.name, "project_config": self.config.path}
 
         if CTX_META_TEST_RUNNING_NAME in self.cmd_ctx.meta:
-            variables['piotest_running_name'] = self.cmd_ctx.meta[
-                CTX_META_TEST_RUNNING_NAME]
+            variables["piotest_running_name"] = self.cmd_ctx.meta[
+                CTX_META_TEST_RUNNING_NAME
+            ]
 
         if self.upload_port:
             # override upload port with a custom from CLI
-            variables['upload_port'] = self.upload_port
+            variables["upload_port"] = self.upload_port
         return variables
 
     def get_build_targets(self):
@@ -67,13 +66,14 @@ class EnvironmentProcessor(object):
             build_targets.remove("monitor")
 
         try:
-            p = PlatformFactory.newPlatform(self.options['platform'])
+            p = PlatformFactory.newPlatform(self.options["platform"])
         except exception.UnknownPlatform:
-            self.cmd_ctx.invoke(cmd_platform_install,
-                                platforms=[self.options['platform']],
-                                skip_default_package=True)
-            p = PlatformFactory.newPlatform(self.options['platform'])
+            self.cmd_ctx.invoke(
+                cmd_platform_install,
+                platforms=[self.options["platform"]],
+                skip_default_package=True,
+            )
+            p = PlatformFactory.newPlatform(self.options["platform"])
 
-        result = p.run(build_vars, build_targets, self.silent, self.verbose,
-                       self.jobs)
-        return result['returncode'] == 0
+        result = p.run(build_vars, build_targets, self.silent, self.verbose, self.jobs)
+        return result["returncode"] == 0

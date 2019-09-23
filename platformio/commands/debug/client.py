@@ -53,8 +53,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
 
         if not isdir(get_project_cache_dir()):
             os.makedirs(get_project_cache_dir())
-        self._gdbsrc_dir = mkdtemp(dir=get_project_cache_dir(),
-                                   prefix=".piodebug-")
+        self._gdbsrc_dir = mkdtemp(dir=get_project_cache_dir(), prefix=".piodebug-")
 
         self._target_is_run = False
         self._last_server_activity = 0
@@ -70,25 +69,28 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             "PROG_PATH": prog_path,
             "PROG_DIR": dirname(prog_path),
             "PROG_NAME": basename(splitext(prog_path)[0]),
-            "DEBUG_PORT": self.debug_options['port'],
-            "UPLOAD_PROTOCOL": self.debug_options['upload_protocol'],
-            "INIT_BREAK": self.debug_options['init_break'] or "",
-            "LOAD_CMDS": "\n".join(self.debug_options['load_cmds'] or []),
+            "DEBUG_PORT": self.debug_options["port"],
+            "UPLOAD_PROTOCOL": self.debug_options["upload_protocol"],
+            "INIT_BREAK": self.debug_options["init_break"] or "",
+            "LOAD_CMDS": "\n".join(self.debug_options["load_cmds"] or []),
         }
 
         self._debug_server.spawn(patterns)
 
-        if not patterns['DEBUG_PORT']:
-            patterns['DEBUG_PORT'] = self._debug_server.get_debug_port()
+        if not patterns["DEBUG_PORT"]:
+            patterns["DEBUG_PORT"] = self._debug_server.get_debug_port()
         self.generate_pioinit(self._gdbsrc_dir, patterns)
 
         # start GDB client
         args = [
             "piogdb",
             "-q",
-            "--directory", self._gdbsrc_dir,
-            "--directory", self.project_dir,
-            "-l", "10"
+            "--directory",
+            self._gdbsrc_dir,
+            "--directory",
+            self.project_dir,
+            "-l",
+            "10",
         ]  # yapf: disable
         args.extend(self.args)
         if not gdb_path:
@@ -96,13 +98,11 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         gdb_data_dir = self._get_data_dir(gdb_path)
         if gdb_data_dir:
             args.extend(["--data-directory", gdb_data_dir])
-        args.append(patterns['PROG_PATH'])
+        args.append(patterns["PROG_PATH"])
 
-        return reactor.spawnProcess(self,
-                                    gdb_path,
-                                    args,
-                                    path=self.project_dir,
-                                    env=os.environ)
+        return reactor.spawnProcess(
+            self, gdb_path, args, path=self.project_dir, env=os.environ
+        )
 
     @staticmethod
     def _get_data_dir(gdb_path):
@@ -112,8 +112,9 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         return gdb_data_dir if isdir(gdb_data_dir) else None
 
     def generate_pioinit(self, dst_dir, patterns):
-        server_exe = (self.debug_options.get("server")
-                      or {}).get("executable", "").lower()
+        server_exe = (
+            (self.debug_options.get("server") or {}).get("executable", "").lower()
+        )
         if "jlink" in server_exe:
             cfg = initcfgs.GDB_JLINK_INIT_CONFIG
         elif "st-util" in server_exe:
@@ -122,43 +123,43 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             cfg = initcfgs.GDB_MSPDEBUG_INIT_CONFIG
         elif "qemu" in server_exe:
             cfg = initcfgs.GDB_QEMU_INIT_CONFIG
-        elif self.debug_options['require_debug_port']:
+        elif self.debug_options["require_debug_port"]:
             cfg = initcfgs.GDB_BLACKMAGIC_INIT_CONFIG
         else:
             cfg = initcfgs.GDB_DEFAULT_INIT_CONFIG
         commands = cfg.split("\n")
 
-        if self.debug_options['init_cmds']:
-            commands = self.debug_options['init_cmds']
-        commands.extend(self.debug_options['extra_cmds'])
+        if self.debug_options["init_cmds"]:
+            commands = self.debug_options["init_cmds"]
+        commands.extend(self.debug_options["extra_cmds"])
 
         if not any("define pio_reset_target" in cmd for cmd in commands):
             commands = [
                 "define pio_reset_target",
                 "   echo Warning! Undefined pio_reset_target command\\n",
                 "   mon reset",
-                "end"
+                "end",
             ] + commands  # yapf: disable
         if not any("define pio_reset_halt_target" in cmd for cmd in commands):
             commands = [
                 "define pio_reset_halt_target",
                 "   echo Warning! Undefined pio_reset_halt_target command\\n",
                 "   mon reset halt",
-                "end"
+                "end",
             ] + commands  # yapf: disable
         if not any("define pio_restart_target" in cmd for cmd in commands):
             commands += [
                 "define pio_restart_target",
                 "   pio_reset_halt_target",
                 "   $INIT_BREAK",
-                "   %s" % ("continue" if patterns['INIT_BREAK'] else "next"),
-                "end"
+                "   %s" % ("continue" if patterns["INIT_BREAK"] else "next"),
+                "end",
             ]  # yapf: disable
 
         banner = [
             "echo PlatformIO Unified Debugger -> http://bit.ly/pio-debug\\n",
-            "echo PlatformIO: debug_tool = %s\\n" % self.debug_options['tool'],
-            "echo PlatformIO: Initializing remote target...\\n"
+            "echo PlatformIO: debug_tool = %s\\n" % self.debug_options["tool"],
+            "echo PlatformIO: Initializing remote target...\\n",
         ]
         footer = ["echo %s\\n" % self.INIT_COMPLETED_BANNER]
         commands = banner + commands + footer
@@ -214,8 +215,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self._handle_error(data)
         # go to init break automatically
         if self.INIT_COMPLETED_BANNER.encode() in data:
-            self._auto_continue_timer = task.LoopingCall(
-                self._auto_exec_continue)
+            self._auto_continue_timer = task.LoopingCall(self._auto_exec_continue)
             self._auto_continue_timer.start(0.1)
 
     def errReceived(self, data):
@@ -236,29 +236,34 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             self._auto_continue_timer.stop()
         self._auto_continue_timer = None
 
-        if not self.debug_options['init_break'] or self._target_is_run:
+        if not self.debug_options["init_break"] or self._target_is_run:
             return
         self.console_log(
-            "PlatformIO: Resume the execution to `debug_init_break = %s`" %
-            self.debug_options['init_break'])
-        self.console_log("PlatformIO: More configuration options -> "
-                         "http://bit.ly/pio-debug")
-        self.transport.write(b"0-exec-continue\n" if helpers.
-                             is_mi_mode(self.args) else b"continue\n")
+            "PlatformIO: Resume the execution to `debug_init_break = %s`"
+            % self.debug_options["init_break"]
+        )
+        self.console_log(
+            "PlatformIO: More configuration options -> " "http://bit.ly/pio-debug"
+        )
+        self.transport.write(
+            b"0-exec-continue\n" if helpers.is_mi_mode(self.args) else b"continue\n"
+        )
         self._target_is_run = True
 
     def _handle_error(self, data):
-        if (self.PIO_SRC_NAME.encode() not in data
-                or b"Error in sourced" not in data):
+        if self.PIO_SRC_NAME.encode() not in data or b"Error in sourced" not in data:
             return
         configuration = {"debug": self.debug_options, "env": self.env_options}
         exd = re.sub(r'\\(?!")', "/", json.dumps(configuration))
-        exd = re.sub(r'"(?:[a-z]\:)?((/[^"/]+)+)"',
-                     lambda m: '"%s"' % join(*m.group(1).split("/")[-2:]), exd,
-                     re.I | re.M)
+        exd = re.sub(
+            r'"(?:[a-z]\:)?((/[^"/]+)+)"',
+            lambda m: '"%s"' % join(*m.group(1).split("/")[-2:]),
+            exd,
+            re.I | re.M,
+        )
         mp = MeasurementProtocol()
-        mp['exd'] = "DebugGDBPioInitError: %s" % exd
-        mp['exf'] = 1
+        mp["exd"] = "DebugGDBPioInitError: %s" % exd
+        mp["exf"] = 1
         mp.send("exception")
         self.transport.loseConnection()
 

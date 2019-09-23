@@ -61,8 +61,9 @@ def _file_long_data(env, data):
     build_dir = env.subst("$BUILD_DIR")
     if not isdir(build_dir):
         makedirs(build_dir)
-    tmp_file = join(build_dir,
-                    "longcmd-%s" % md5(hashlib_encode_data(data)).hexdigest())
+    tmp_file = join(
+        build_dir, "longcmd-%s" % md5(hashlib_encode_data(data)).hexdigest()
+    )
     if isfile(tmp_file):
         return tmp_file
     with open(tmp_file, "w") as fp:
@@ -83,10 +84,12 @@ def generate(env):
     coms = {}
     for key in ("ARCOM", "LINKCOM"):
         coms[key] = env.get(key, "").replace(
-            "$SOURCES", "${_long_sources_hook(__env__, SOURCES)}")
+            "$SOURCES", "${_long_sources_hook(__env__, SOURCES)}"
+        )
     for key in ("_CCCOMCOM", "ASPPCOM"):
         coms[key] = env.get(key, "").replace(
-            "$_CPPINCFLAGS", "${_long_incflags_hook(__env__, _CPPINCFLAGS)}")
+            "$_CPPINCFLAGS", "${_long_incflags_hook(__env__, _CPPINCFLAGS)}"
+        )
     env.Replace(**coms)
 
     return env

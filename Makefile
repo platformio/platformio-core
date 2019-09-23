@@ -5,13 +5,14 @@ isort:
 	isort -rc ./platformio
 	isort -rc ./tests
 
-yapf:
-	yapf --recursive --in-place platformio/
+black:
+	black --target-version py27 ./platformio
+	black --target-version py27 ./tests
 
 test:
 	py.test --verbose --capture=no --exitfirst -n 3 --dist=loadscope tests --ignore tests/test_examples.py --ignore tests/test_pkgmanifest.py
 
-before-commit: isort yapf lint test
+before-commit: isort black lint test
 
 clean-docs:
 	rm -rf docs/_build

@@ -117,8 +117,16 @@ def test_sections(config):
         config.getraw("unknown_section", "unknown_option")
 
     assert config.sections() == [
-        "platformio", "env", "strict_ldf", "monitor_custom", "strict_settings",
-        "custom", "env:base", "env:test_extends", "env:extra_1", "env:extra_2"
+        "platformio",
+        "env",
+        "strict_ldf",
+        "monitor_custom",
+        "strict_settings",
+        "custom",
+        "env:base",
+        "env:test_extends",
+        "env:extra_1",
+        "env:extra_2",
     ]
 
 
@@ -129,11 +137,20 @@ def test_envs(config):
 
 def test_options(config):
     assert config.options(env="base") == [
-        "build_flags", "targets", "monitor_speed", "lib_deps", "lib_ignore"
+        "build_flags",
+        "targets",
+        "monitor_speed",
+        "lib_deps",
+        "lib_ignore",
     ]
     assert config.options(env="test_extends") == [
-        "extends", "build_flags", "lib_ldf_mode", "lib_compat_mode",
-        "monitor_speed", "lib_deps", "lib_ignore"
+        "extends",
+        "build_flags",
+        "lib_ldf_mode",
+        "lib_compat_mode",
+        "monitor_speed",
+        "lib_deps",
+        "lib_ignore",
     ]
 
 
@@ -154,15 +171,22 @@ def test_sysenv_options(config):
     os.environ["__PIO_TEST_CNF_EXTRA_FLAGS"] = "-L /usr/local/lib"
     assert config.get("custom", "extra_flags") == "-L /usr/local/lib"
     assert config.get("env:base", "build_flags") == [
-        "-D DEBUG=1 -L /usr/local/lib", "-DSYSENVDEPS1 -DSYSENVDEPS2"
+        "-D DEBUG=1 -L /usr/local/lib",
+        "-DSYSENVDEPS1 -DSYSENVDEPS2",
     ]
     assert config.get("env:base", "upload_port") == "/dev/sysenv/port"
     assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
 
     # env var as option
     assert config.options(env="test_extends") == [
-        "extends", "build_flags", "lib_ldf_mode", "lib_compat_mode",
-        "monitor_speed", "lib_deps", "lib_ignore", "upload_port"
+        "extends",
+        "build_flags",
+        "lib_ldf_mode",
+        "lib_compat_mode",
+        "monitor_speed",
+        "lib_deps",
+        "lib_ignore",
+        "upload_port",
     ]
 
     # sysenv
@@ -208,7 +232,7 @@ def test_items(config):
         ("debug_flags", "-D DEBUG=1"),
         ("lib_flags", "-lc -lm"),
         ("extra_flags", None),
-        ("lib_ignore", "LibIgnoreCustom")
+        ("lib_ignore", "LibIgnoreCustom"),
     ]  # yapf: disable
     assert config.items(env="base") == [
         ("build_flags", ["-D DEBUG=1"]),
@@ -228,7 +252,7 @@ def test_items(config):
         ("lib_ignore", ["LibIgnoreCustom", "Lib3"]),
         ("upload_port", "/dev/extra_2/port"),
         ("monitor_speed", "115200"),
-        ("lib_deps", ["Lib1", "Lib2"])
+        ("lib_deps", ["Lib1", "Lib2"]),
     ]  # yapf: disable
     assert config.items(env="test_extends") == [
         ("extends", ["strict_settings"]),
@@ -237,5 +261,5 @@ def test_items(config):
         ("lib_compat_mode", "strict"),
         ("monitor_speed", "9600"),
         ("lib_deps", ["Lib1", "Lib2"]),
-        ("lib_ignore", ["LibIgnoreCustom"])
+        ("lib_ignore", ["LibIgnoreCustom"]),
     ]  # yapf: disable

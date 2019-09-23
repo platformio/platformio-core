@@ -39,7 +39,9 @@ class InoToCPPConverter(object):
         ([a-z_\d]+\s*)              # name of prototype
         \([a-z_,\.\*\&\[\]\s\d]*\)  # arguments
         )\s*(\{|;)                  # must end with `{` or `;`
-        """, re.X | re.M | re.I)
+        """,
+        re.X | re.M | re.I,
+    )
     DETECTMAIN_RE = re.compile(r"void\s+(setup|loop)\s*\(", re.M | re.I)
     PROTOPTRS_TPLRE = r"\([^&\(]*&(%s)[^\)]*\)"
 
@@ -61,9 +63,7 @@ class InoToCPPConverter(object):
         lines = []
         for node in nodes:
             contents = get_file_contents(node.get_path())
-            _lines = [
-                '# 1 "%s"' % node.get_path().replace("\\", "/"), contents
-            ]
+            _lines = ['# 1 "%s"' % node.get_path().replace("\\", "/"), contents]
             if self.is_main_node(contents):
                 lines = _lines + lines
                 self._main_ino = node.get_path()
@@ -91,8 +91,11 @@ class InoToCPPConverter(object):
         self.env.Execute(
             self.env.VerboseAction(
                 '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
-                    out_file, tmp_path),
-                "Converting " + basename(out_file[:-4])))
+                    out_file, tmp_path
+                ),
+                "Converting " + basename(out_file[:-4]),
+            )
+        )
         atexit.register(_delete_file, tmp_path)
         return isfile(out_file)
 
@@ -120,8 +123,9 @@ class InoToCPPConverter(object):
             elif stropen and line.endswith(('",', '";')):
                 newlines[len(newlines) - 1] += line
                 stropen = False
-                newlines.append('#line %d "%s"' %
-                                (linenum, self._main_ino.replace("\\", "/")))
+                newlines.append(
+                    '#line %d "%s"' % (linenum, self._main_ino.replace("\\", "/"))
+                )
                 continue
 
             newlines.append(line)
@@ -141,8 +145,10 @@ class InoToCPPConverter(object):
         prototypes = []
         reserved_keywords = set(["if", "else", "while"])
         for match in self.PROTOTYPE_RE.finditer(contents):
-            if (set([match.group(2).strip(),
-                     match.group(3).strip()]) & reserved_keywords):
+            if (
+                set([match.group(2).strip(), match.group(3).strip()])
+                & reserved_keywords
+            ):
                 continue
             prototypes.append(match)
         return prototypes
@@ -162,11 +168,8 @@ class InoToCPPConverter(object):
         prototypes = self._parse_prototypes(contents) or []
 
         # skip already declared prototypes
-        declared = set(
-            m.group(1).strip() for m in prototypes if m.group(4) == ";")
-        prototypes = [
-            m for m in prototypes if m.group(1).strip() not in declared
-        ]
+        declared = set(m.group(1).strip() for m in prototypes if m.group(4) == ";")
+        prototypes = [m for m in prototypes if m.group(1).strip() not in declared]
 
         if not prototypes:
             return contents
@@ -175,23 +178,29 @@ class InoToCPPConverter(object):
         split_pos = prototypes[0].start()
         match_ptrs = re.search(
             self.PROTOPTRS_TPLRE % ("|".join(prototype_names)),
-            contents[:split_pos], re.M)
+            contents[:split_pos],
+            re.M,
+        )
         if match_ptrs:
             split_pos = contents.rfind("\n", 0, match_ptrs.start()) + 1
 
         result = []
         result.append(contents[:split_pos].strip())
         result.append("%s;" % ";\n".join([m.group(1) for m in prototypes]))
-        result.append('#line %d "%s"' % (self._get_total_lines(
-            contents[:split_pos]), self._main_ino.replace("\\", "/")))
+        result.append(
+            '#line %d "%s"'
+            % (
+                self._get_total_lines(contents[:split_pos]),
+                self._main_ino.replace("\\", "/"),
+            )
+        )
         result.append(contents[split_pos:].strip())
         return "\n".join(result)
 
 
 def ConvertInoToCpp(env):
     src_dir = glob_escape(env.subst("$PROJECTSRC_DIR"))
-    ino_nodes = (env.Glob(join(src_dir, "*.ino")) +
-                 env.Glob(join(src_dir, "*.pde")))
+    ino_nodes = env.Glob(join(src_dir, "*.ino")) + env.Glob(join(src_dir, "*.pde"))
     if not ino_nodes:
         return
     c = InoToCPPConverter(env)
@@ -214,13 +223,13 @@ def _get_compiler_type(env):
         return "gcc"
     try:
         sysenv = environ.copy()
-        sysenv['PATH'] = str(env['ENV']['PATH'])
+        sysenv["PATH"] = str(env["ENV"]["PATH"])
         result = exec_command([env.subst("$CC"), "-v"], env=sysenv)
     except OSError:
         return None
-    if result['returncode'] != 0:
+    if result["returncode"] != 0:
         return None
-    output = "".join([result['out'], result['err']]).lower()
+    output = "".join([result["out"], result["err"]]).lower()
     if "clang" in output and "LLVM" in output:
         return "clang"
     if "gcc" in output:
@@ -233,7 +242,6 @@ def GetCompilerType(env):
 
 
 def GetActualLDScript(env):
-
     def _lookup_in_ldpath(script):
         for d in env.get("LIBPATH", []):
             path = join(env.subst(d), script)
@@ -264,12 +272,13 @@ def GetActualLDScript(env):
 
     if script:
         sys.stderr.write(
-            "Error: Could not find '%s' LD script in LDPATH '%s'\n" %
-            (script, env.subst("$LIBPATH")))
+            "Error: Could not find '%s' LD script in LDPATH '%s'\n"
+            % (script, env.subst("$LIBPATH"))
+        )
         env.Exit(1)
 
     if not script and "LDSCRIPT_PATH" in env:
-        path = _lookup_in_ldpath(env['LDSCRIPT_PATH'])
+        path = _lookup_in_ldpath(env["LDSCRIPT_PATH"])
         if path:
             return path
 
@@ -285,16 +294,17 @@ def VerboseAction(_, act, actstr):
 
 def PioClean(env, clean_dir):
     if not isdir(clean_dir):
-        print("Build environment is clean")
+        print ("Build environment is clean")
         env.Exit(0)
     clean_rel_path = relpath(clean_dir)
     for root, _, files in walk(clean_dir):
         for f in files:
             dst = join(root, f)
             remove(dst)
-            print("Removed %s" %
-                  (dst if clean_rel_path.startswith(".") else relpath(dst)))
-    print("Done cleaning")
+            print (
+                "Removed %s" % (dst if clean_rel_path.startswith(".") else relpath(dst))
+            )
+    print ("Done cleaning")
     fs.rmtree(clean_dir)
     env.Exit(0)
 
@@ -302,8 +312,9 @@ def PioClean(env, clean_dir):
 def ProcessDebug(env):
     if not env.subst("$PIODEBUGFLAGS"):
         env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb3"])
-    env.Append(BUILD_FLAGS=list(env['PIODEBUGFLAGS']) +
-               ["-D__PLATFORMIO_BUILD_DEBUG__"])
+    env.Append(
+        BUILD_FLAGS=list(env["PIODEBUGFLAGS"]) + ["-D__PLATFORMIO_BUILD_DEBUG__"]
+    )
     unflags = ["-Os"]
     for level in [0, 1, 2]:
         for flag in ("O", "g", "ggdb"):
@@ -312,15 +323,18 @@ def ProcessDebug(env):
 
 
 def ProcessTest(env):
-    env.Append(CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
-               CPPPATH=[join("$BUILD_DIR", "UnityTestLib")])
-    unitylib = env.BuildLibrary(join("$BUILD_DIR", "UnityTestLib"),
-                                get_core_package_dir("tool-unity"))
+    env.Append(
+        CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
+        CPPPATH=[join("$BUILD_DIR", "UnityTestLib")],
+    )
+    unitylib = env.BuildLibrary(
+        join("$BUILD_DIR", "UnityTestLib"), get_core_package_dir("tool-unity")
+    )
     env.Prepend(LIBS=[unitylib])
 
     src_filter = ["+<*.cpp>", "+<*.c>"]
     if "PIOTEST_RUNNING_NAME" in env:
-        src_filter.append("+<%s%s>" % (env['PIOTEST_RUNNING_NAME'], sep))
+        src_filter.append("+<%s%s>" % (env["PIOTEST_RUNNING_NAME"], sep))
     env.Replace(PIOTEST_SRC_FILTER=src_filter)
 
 
@@ -330,7 +344,7 @@ def GetExtraScripts(env, scope):
         if scope == "post" and ":" not in item:
             items.append(item)
         elif item.startswith("%s:" % scope):
-            items.append(item[len(scope) + 1:])
+            items.append(item[len(scope) + 1 :])
     if not items:
         return items
     with fs.cd(env.subst("$PROJECT_DIR")):

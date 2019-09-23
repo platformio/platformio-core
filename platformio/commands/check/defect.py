@@ -29,18 +29,19 @@ class DefectItem(object):
     SEVERITY_LOW = 4
     SEVERITY_LABELS = {4: "low", 2: "medium", 1: "high"}
 
-    def __init__(self,
-                 severity,
-                 category,
-                 message,
-                 file="unknown",
-                 line=0,
-                 column=0,
-                 id=None,
-                 callstack=None,
-                 cwe=None):
-        assert severity in (self.SEVERITY_HIGH, self.SEVERITY_MEDIUM,
-                            self.SEVERITY_LOW)
+    def __init__(
+        self,
+        severity,
+        category,
+        message,
+        file="unknown",
+        line=0,
+        column=0,
+        id=None,
+        callstack=None,
+        cwe=None,
+    ):
+        assert severity in (self.SEVERITY_HIGH, self.SEVERITY_MEDIUM, self.SEVERITY_LOW)
         self.severity = severity
         self.category = category
         self.message = message
@@ -61,14 +62,14 @@ class DefectItem(object):
             defect_color = "yellow"
 
         format_str = "{file}:{line}: [{severity}:{category}] {message} {id}"
-        return format_str.format(severity=click.style(
-            self.SEVERITY_LABELS[self.severity], fg=defect_color),
-                                 category=click.style(self.category.lower(),
-                                                      fg=defect_color),
-                                 file=click.style(self.file, bold=True),
-                                 message=self.message,
-                                 line=self.line,
-                                 id="%s" % "[%s]" % self.id if self.id else "")
+        return format_str.format(
+            severity=click.style(self.SEVERITY_LABELS[self.severity], fg=defect_color),
+            category=click.style(self.category.lower(), fg=defect_color),
+            file=click.style(self.file, bold=True),
+            message=self.message,
+            line=self.line,
+            id="%s" % "[%s]" % self.id if self.id else "",
+        )
 
     def __or__(self, defect):
         return self.severity | defect.severity
@@ -90,5 +91,5 @@ class DefectItem(object):
             "column": self.column,
             "callstack": self.callstack,
             "id": self.id,
-            "cwe": self.cwe
+            "cwe": self.cwe,
         }

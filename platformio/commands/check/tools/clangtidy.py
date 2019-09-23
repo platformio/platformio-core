@@ -21,10 +21,8 @@ from platformio.managers.core import get_core_package_dir
 
 
 class ClangtidyCheckTool(CheckToolBase):
-
     def tool_output_filter(self, line):
-        if not self.options.get(
-                "verbose") and "[clang-diagnostic-error]" in line:
+        if not self.options.get("verbose") and "[clang-diagnostic-error]" in line:
             return ""
 
         if "[CommonOptionsParser]" in line:
@@ -37,8 +35,7 @@ class ClangtidyCheckTool(CheckToolBase):
         return ""
 
     def parse_defect(self, raw_line):
-        match = re.match(r"^(.*):(\d+):(\d+):\s+([^:]+):\s(.+)\[([^]]+)\]$",
-                         raw_line)
+        match = re.match(r"^(.*):(\d+):(\d+):\s+([^:]+):\s(.+)\[([^]]+)\]$", raw_line)
         if not match:
             return raw_line
 
@@ -50,8 +47,7 @@ class ClangtidyCheckTool(CheckToolBase):
         elif category == "warning":
             severity = DefectItem.SEVERITY_MEDIUM
 
-        return DefectItem(severity, category, message, file_, line, column,
-                          defect_id)
+        return DefectItem(severity, category, message, file_, line, column, defect_id)
 
     def configure_command(self):
         tool_path = join(get_core_package_dir("tool-clangtidy"), "clang-tidy")

@@ -27,7 +27,6 @@ from platformio.compat import WINDOWS, get_file_contents, glob_escape
 
 
 class cd(object):
-
     def __init__(self, new_path):
         self.new_path = new_path
         self.prev_path = os.getcwd()
@@ -65,10 +64,10 @@ def format_filesize(filesize):
     if filesize < base:
         return "%d%s" % (filesize, suffix)
     for i, suffix in enumerate("KMGTPEZY"):
-        unit = base**(i + 2)
+        unit = base ** (i + 2)
         if filesize >= unit:
             continue
-        if filesize % (base**(i + 1)):
+        if filesize % (base ** (i + 1)):
             return "%.2f%sB" % ((base * filesize / unit), suffix)
         break
     return "%d%sB" % ((base * filesize / unit), suffix)
@@ -78,21 +77,24 @@ def ensure_udev_rules():
     from platformio.util import get_systype
 
     def _rules_to_set(rules_path):
-        return set(l.strip() for l in get_file_contents(rules_path).split("\n")
-                   if l.strip() and not l.startswith("#"))
+        return set(
+            l.strip()
+            for l in get_file_contents(rules_path).split("\n")
+            if l.strip() and not l.startswith("#")
+        )
 
     if "linux" not in get_systype():
         return None
     installed_rules = [
         "/etc/udev/rules.d/99-platformio-udev.rules",
-        "/lib/udev/rules.d/99-platformio-udev.rules"
+        "/lib/udev/rules.d/99-platformio-udev.rules",
     ]
     if not any(os.path.isfile(p) for p in installed_rules):
         raise exception.MissedUdevRules
 
     origin_path = os.path.abspath(
-        os.path.join(get_source_dir(), "..", "scripts",
-                     "99-platformio-udev.rules"))
+        os.path.join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules")
+    )
     if not os.path.isfile(origin_path):
         return None
 
@@ -117,7 +119,6 @@ def path_endswith_ext(path, extensions):
 
 
 def match_src_files(src_dir, src_filter=None, src_exts=None):
-
     def _append_build_item(items, item, src_dir):
         if not src_exts or path_endswith_ext(item, src_exts):
             items.add(item.replace(src_dir + os.sep, ""))
@@ -135,8 +136,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None):
             if os.path.isdir(item):
                 for root, _, files in os.walk(item, followlinks=True):
                     for f in files:
-                        _append_build_item(items, os.path.join(root, f),
-                                           src_dir)
+                        _append_build_item(items, os.path.join(root, f), src_dir)
             else:
                 _append_build_item(items, item, src_dir)
         if action == "+":
@@ -153,7 +153,6 @@ def to_unix_path(path):
 
 
 def rmtree(path):
-
     def _onerror(func, path, __):
         try:
             st_mode = os.stat(path).st_mode
@@ -161,9 +160,10 @@ def rmtree(path):
                 os.chmod(path, st_mode | stat.S_IWRITE)
             func(path)
         except Exception as e:  # pylint: disable=broad-except
-            click.secho("%s \nPlease manually remove the file `%s`" %
-                        (str(e), path),
-                        fg="red",
-                        err=True)
+            click.secho(
+                "%s \nPlease manually remove the file `%s`" % (str(e), path),
+                fg="red",
+                err=True,
+            )
 
     return shutil.rmtree(path, onerror=_onerror)

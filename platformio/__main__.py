@@ -23,27 +23,31 @@ from platformio.commands import PlatformioCLI
 from platformio.compat import CYGWIN
 
 
-@click.command(cls=PlatformioCLI,
-               context_settings=dict(help_option_names=["-h", "--help"]))
+@click.command(
+    cls=PlatformioCLI, context_settings=dict(help_option_names=["-h", "--help"])
+)
 @click.version_option(__version__, prog_name="PlatformIO")
 @click.option("--force", "-f", is_flag=True, help="DEPRECATE")
 @click.option("--caller", "-c", help="Caller ID (service)")
-@click.option("--no-ansi",
-              is_flag=True,
-              help="Do not print ANSI control characters")
+@click.option("--no-ansi", is_flag=True, help="Do not print ANSI control characters")
 @click.pass_context
 def cli(ctx, force, caller, no_ansi):
     try:
-        if (no_ansi or str(
-                os.getenv(
-                    "PLATFORMIO_NO_ANSI",
-                    os.getenv("PLATFORMIO_DISABLE_COLOR"))).lower() == "true"):
+        if (
+            no_ansi
+            or str(
+                os.getenv("PLATFORMIO_NO_ANSI", os.getenv("PLATFORMIO_DISABLE_COLOR"))
+            ).lower()
+            == "true"
+        ):
             # pylint: disable=protected-access
             click._compat.isatty = lambda stream: False
-        elif str(
-                os.getenv(
-                    "PLATFORMIO_FORCE_ANSI",
-                    os.getenv("PLATFORMIO_FORCE_COLOR"))).lower() == "true":
+        elif (
+            str(
+                os.getenv("PLATFORMIO_FORCE_ANSI", os.getenv("PLATFORMIO_FORCE_COLOR"))
+            ).lower()
+            == "true"
+        ):
             # pylint: disable=protected-access
             click._compat.isatty = lambda stream: True
     except:  # pylint: disable=bare-except
@@ -67,6 +71,7 @@ def configure():
     # /en/latest/security.html#insecureplatformwarning
     try:
         import urllib3
+
         urllib3.disable_warnings()
     except (AttributeError, ImportError):
         pass
@@ -79,7 +84,8 @@ def configure():
             click_echo_origin[origin](*args, **kwargs)
         except IOError:
             (sys.stderr.write if kwargs.get("err") else sys.stdout.write)(
-                "%s\n" % (args[0] if args else ""))
+                "%s\n" % (args[0] if args else "")
+            )
 
     click.echo = lambda *args, **kwargs: _safe_echo(0, *args, **kwargs)
     click.secho = lambda *args, **kwargs: _safe_echo(1, *args, **kwargs)

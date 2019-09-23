@@ -23,29 +23,42 @@ from platformio.project.helpers import get_project_core_dir
 
 
 class CppcheckCheckTool(CheckToolBase):
-
     def __init__(self, *args, **kwargs):
         self._tmp_files = []
         self.defect_fields = [
-            "severity", "message", "file", "line", "column", "callstack",
-            "cwe", "id"
+            "severity",
+            "message",
+            "file",
+            "line",
+            "column",
+            "callstack",
+            "cwe",
+            "id",
         ]
         super(CppcheckCheckTool, self).__init__(*args, **kwargs)
 
     def tool_output_filter(self, line):
-        if not self.options.get(
-                "verbose") and "--suppress=unmatchedSuppression:" in line:
+        if (
+            not self.options.get("verbose")
+            and "--suppress=unmatchedSuppression:" in line
+        ):
             return ""
 
-        if any(msg in line for msg in ("No C or C++ source files found",
-                                       "unrecognized command line option")):
+        if any(
+            msg in line
+            for msg in (
+                "No C or C++ source files found",
+                "unrecognized command line option",
+            )
+        ):
             self._bad_input = True
 
         return line
 
     def parse_defect(self, raw_line):
-        if "<&PIO&>" not in raw_line or any(f not in raw_line
-                                            for f in self.defect_fields):
+        if "<&PIO&>" not in raw_line or any(
+            f not in raw_line for f in self.defect_fields
+        ):
             return None
 
         args = dict()
@@ -54,13 +67,13 @@ class CppcheckCheckTool(CheckToolBase):
             name, value = field.split("=", 1)
             args[name] = value
 
-        args['category'] = args['severity']
-        if args['severity'] == "error":
-            args['severity'] = DefectItem.SEVERITY_HIGH
-        elif args['severity'] == "warning":
-            args['severity'] = DefectItem.SEVERITY_MEDIUM
+        args["category"] = args["severity"]
+        if args["severity"] == "error":
+            args["severity"] = DefectItem.SEVERITY_HIGH
+        elif args["severity"] == "warning":
+            args["severity"] = DefectItem.SEVERITY_MEDIUM
         else:
-            args['severity'] = DefectItem.SEVERITY_LOW
+            args["severity"] = DefectItem.SEVERITY_LOW
 
         return DefectItem(**args)
 
@@ -68,20 +81,26 @@ class CppcheckCheckTool(CheckToolBase):
         tool_path = join(get_core_package_dir("tool-cppcheck"), "cppcheck")
 
         cmd = [
-            tool_path, "--error-exitcode=1",
-            "--verbose" if self.options.get("verbose") else "--quiet"
+            tool_path,
+            "--error-exitcode=1",
+            "--verbose" if self.options.get("verbose") else "--quiet",
         ]
 
-        cmd.append('--template="%s"' % "<&PIO&>".join(
-            ["{0}={{{0}}}".format(f) for f in self.defect_fields]))
+        cmd.append(
+            '--template="%s"'
+            % "<&PIO&>".join(["{0}={{{0}}}".format(f) for f in self.defect_fields])
+        )
 
         flags = self.get_flags("cppcheck")
         if not self.is_flag_set("--platform", flags):
             cmd.append("--platform=unspecified")
         if not self.is_flag_set("--enable", flags):
             enabled_checks = [
-                "warning", "style", "performance", "portability",
-                "unusedFunction"
+                "warning",
+                "style",
+                "performance",
+                "portability",
+                "unusedFunction",
             ]
             cmd.append("--enable=%s" % ",".join(enabled_checks))
 

@@ -48,37 +48,37 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
 
 @click.command("ci", short_help="Continuous Integration")
 @click.argument("src", nargs=-1, callback=validate_path)
-@click.option("-l",
-              "--lib",
-              multiple=True,
-              callback=validate_path,
-              metavar="DIRECTORY")
+@click.option("-l", "--lib", multiple=True, callback=validate_path, metavar="DIRECTORY")
 @click.option("--exclude", multiple=True)
-@click.option("-b",
-              "--board",
-              multiple=True,
-              metavar="ID",
-              callback=validate_boards)
-@click.option("--build-dir",
-              default=mkdtemp,
-              type=click.Path(file_okay=False,
-                              dir_okay=True,
-                              writable=True,
-                              resolve_path=True))
+@click.option("-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
+@click.option(
+    "--build-dir",
+    default=mkdtemp,
+    type=click.Path(file_okay=False, dir_okay=True, writable=True, resolve_path=True),
+)
 @click.option("--keep-build-dir", is_flag=True)
-@click.option("-c",
-              "--project-conf",
-              type=click.Path(exists=True,
-                              file_okay=True,
-                              dir_okay=False,
-                              readable=True,
-                              resolve_path=True))
+@click.option(
+    "-c",
+    "--project-conf",
+    type=click.Path(
+        exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True
+    ),
+)
 @click.option("-O", "--project-option", multiple=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.pass_context
 def cli(  # pylint: disable=too-many-arguments, too-many-branches
-        ctx, src, lib, exclude, board, build_dir, keep_build_dir, project_conf,
-        project_option, verbose):
+    ctx,
+    src,
+    lib,
+    exclude,
+    board,
+    build_dir,
+    keep_build_dir,
+    project_conf,
+    project_option,
+    verbose,
+):
 
     if not src and getenv("PLATFORMIO_CI_SRC"):
         src = validate_path(ctx, None, getenv("PLATFORMIO_CI_SRC").split(":"))
@@ -110,10 +110,9 @@ def cli(  # pylint: disable=too-many-arguments, too-many-branches
             _exclude_contents(build_dir, exclude)
 
         # initialise project
-        ctx.invoke(cmd_init,
-                   project_dir=build_dir,
-                   board=board,
-                   project_option=project_option)
+        ctx.invoke(
+            cmd_init, project_dir=build_dir, board=board, project_option=project_option
+        )
 
         # process project
         ctx.invoke(cmd_run, project_dir=build_dir, verbose=verbose)
@@ -127,27 +126,27 @@ def _copy_contents(dst_dir, contents):
 
     for path in contents:
         if isdir(path):
-            items['dirs'].add(path)
+            items["dirs"].add(path)
         elif isfile(path):
-            items['files'].add(path)
+            items["files"].add(path)
 
     dst_dir_name = basename(dst_dir)
 
-    if dst_dir_name == "src" and len(items['dirs']) == 1:
-        copytree(list(items['dirs']).pop(), dst_dir, symlinks=True)
+    if dst_dir_name == "src" and len(items["dirs"]) == 1:
+        copytree(list(items["dirs"]).pop(), dst_dir, symlinks=True)
     else:
         if not isdir(dst_dir):
             makedirs(dst_dir)
-        for d in items['dirs']:
+        for d in items["dirs"]:
             copytree(d, join(dst_dir, basename(d)), symlinks=True)
 
-    if not items['files']:
+    if not items["files"]:
         return
 
     if dst_dir_name == "lib":
         dst_dir = join(dst_dir, mkdtemp(dir=dst_dir))
 
-    for f in items['files']:
+    for f in items["files"]:
         dst_file = join(dst_dir, basename(f))
         if f == dst_file:
             continue

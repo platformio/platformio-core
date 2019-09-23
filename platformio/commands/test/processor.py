@@ -29,7 +29,7 @@ TRANSPORT_OPTIONS = {
         "putchar": "Serial.write(c)",
         "flush": "Serial.flush()",
         "begin": "Serial.begin($baudrate)",
-        "end": "Serial.end()"
+        "end": "Serial.end()",
     },
     "mbed": {
         "include": "#include <mbed.h>",
@@ -37,7 +37,7 @@ TRANSPORT_OPTIONS = {
         "putchar": "pc.putc(c)",
         "flush": "",
         "begin": "pc.baud($baudrate)",
-        "end": ""
+        "end": "",
     },
     "espidf": {
         "include": "#include <stdio.h>",
@@ -45,7 +45,7 @@ TRANSPORT_OPTIONS = {
         "putchar": "putchar(c)",
         "flush": "fflush(stdout)",
         "begin": "",
-        "end": ""
+        "end": "",
     },
     "native": {
         "include": "#include <stdio.h>",
@@ -53,7 +53,7 @@ TRANSPORT_OPTIONS = {
         "putchar": "putchar(c)",
         "flush": "fflush(stdout)",
         "begin": "",
-        "end": ""
+        "end": "",
     },
     "custom": {
         "include": '#include "unittest_transport.h"',
@@ -61,8 +61,8 @@ TRANSPORT_OPTIONS = {
         "putchar": "unittest_uart_putchar(c)",
         "flush": "unittest_uart_flush()",
         "begin": "unittest_uart_begin()",
-        "end": "unittest_uart_end()"
-    }
+        "end": "unittest_uart_end()",
+    },
 }
 
 CTX_META_TEST_IS_RUNNING = __name__ + ".test_running"
@@ -79,8 +79,7 @@ class TestProcessorBase(object):
         self.test_name = testname
         self.options = options
         self.env_name = envname
-        self.env_options = options['project_config'].items(env=envname,
-                                                           as_dict=True)
+        self.env_options = options["project_config"].items(env=envname, as_dict=True)
         self._run_failed = False
         self._outputcpp_generated = False
 
@@ -90,10 +89,11 @@ class TestProcessorBase(object):
         elif "framework" in self.env_options:
             transport = self.env_options.get("framework")[0]
         if "test_transport" in self.env_options:
-            transport = self.env_options['test_transport']
+            transport = self.env_options["test_transport"]
         if transport not in TRANSPORT_OPTIONS:
             raise exception.PlatformioException(
-                "Unknown Unit Test transport `%s`" % transport)
+                "Unknown Unit Test transport `%s`" % transport
+            )
         return transport.lower()
 
     def get_baudrate(self):
@@ -112,13 +112,16 @@ class TestProcessorBase(object):
 
         try:
             from platformio.commands.run import cli as cmd_run
-            return self.cmd_ctx.invoke(cmd_run,
-                                       project_dir=self.options['project_dir'],
-                                       upload_port=self.options['upload_port'],
-                                       silent=not self.options['verbose'],
-                                       environment=[self.env_name],
-                                       disable_auto_clean="nobuild" in target,
-                                       target=target)
+
+            return self.cmd_ctx.invoke(
+                cmd_run,
+                project_dir=self.options["project_dir"],
+                upload_port=self.options["upload_port"],
+                silent=not self.options["verbose"],
+                environment=[self.env_name],
+                disable_auto_clean="nobuild" in target,
+                target=target,
+            )
         except exception.ReturnErrorCode:
             return False
 
@@ -131,8 +134,7 @@ class TestProcessorBase(object):
     def on_run_out(self, line):
         line = line.strip()
         if line.endswith(":PASS"):
-            click.echo("%s\t[%s]" %
-                       (line[:-5], click.style("PASSED", fg="green")))
+            click.echo("%s\t[%s]" % (line[:-5], click.style("PASSED", fg="green")))
         elif ":FAIL" in line:
             self._run_failed = True
             click.echo("%s\t[%s]" % (line, click.style("FAILED", fg="red")))
@@ -142,36 +144,38 @@ class TestProcessorBase(object):
     def generate_outputcpp(self, test_dir):
         assert isdir(test_dir)
 
-        cpp_tpl = "\n".join([
-            "$include",
-            "#include <output_export.h>",
-            "",
-            "$object",
-            "",
-            "#ifdef __GNUC__",
-            "void output_start(unsigned int baudrate __attribute__((unused)))",
-            "#else",
-            "void output_start(unsigned int baudrate)",
-            "#endif",
-            "{",
-            "    $begin;",
-            "}",
-            "",
-            "void output_char(int c)",
-            "{",
-            "    $putchar;",
-            "}",
-            "",
-            "void output_flush(void)",
-            "{",
-            "    $flush;",
-            "}",
-            "",
-            "void output_complete(void)",
-            "{",
-            "   $end;",
-            "}"
-        ])  # yapf: disable
+        cpp_tpl = "\n".join(
+            [
+                "$include",
+                "#include <output_export.h>",
+                "",
+                "$object",
+                "",
+                "#ifdef __GNUC__",
+                "void output_start(unsigned int baudrate __attribute__((unused)))",
+                "#else",
+                "void output_start(unsigned int baudrate)",
+                "#endif",
+                "{",
+                "    $begin;",
+                "}",
+                "",
+                "void output_char(int c)",
+                "{",
+                "    $putchar;",
+                "}",
+                "",
+                "void output_flush(void)",
+                "{",
+                "    $flush;",
+                "}",
+                "",
+                "void output_complete(void)",
+                "{",
+                "   $end;",
+                "}",
+            ]
+        )  # yapf: disable
 
         def delete_tmptest_file(file_):
             try:
@@ -181,10 +185,10 @@ class TestProcessorBase(object):
                     click.secho(
                         "Warning: Could not remove temporary file '%s'. "
                         "Please remove it manually." % file_,
-                        fg="yellow")
+                        fg="yellow",
+                    )
 
-        tpl = Template(cpp_tpl).substitute(
-            TRANSPORT_OPTIONS[self.get_transport()])
+        tpl = Template(cpp_tpl).substitute(TRANSPORT_OPTIONS[self.get_transport()])
         data = Template(tpl).substitute(baudrate=self.get_baudrate())
 
         tmp_file = join(test_dir, "output_export.cpp")

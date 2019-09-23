@@ -17,8 +17,7 @@ from __future__ import absolute_import
 from os.path import expanduser, join
 
 from platformio import __version__, app, util
-from platformio.project.helpers import (get_project_core_dir,
-                                        is_platformio_project)
+from platformio.project.helpers import get_project_core_dir, is_platformio_project
 
 
 class AppRPC(object):
@@ -26,8 +25,13 @@ class AppRPC(object):
     APPSTATE_PATH = join(get_project_core_dir(), "homestate.json")
 
     IGNORE_STORAGE_KEYS = [
-        "cid", "coreVersion", "coreSystype", "coreCaller", "coreSettings",
-        "homeDir", "projectsDir"
+        "cid",
+        "coreVersion",
+        "coreSystype",
+        "coreCaller",
+        "coreSettings",
+        "homeDir",
+        "projectsDir",
     ]
 
     @staticmethod
@@ -37,31 +41,28 @@ class AppRPC(object):
 
             # base data
             caller_id = app.get_session_var("caller_id")
-            storage['cid'] = app.get_cid()
-            storage['coreVersion'] = __version__
-            storage['coreSystype'] = util.get_systype()
-            storage['coreCaller'] = (str(caller_id).lower()
-                                     if caller_id else None)
-            storage['coreSettings'] = {
+            storage["cid"] = app.get_cid()
+            storage["coreVersion"] = __version__
+            storage["coreSystype"] = util.get_systype()
+            storage["coreCaller"] = str(caller_id).lower() if caller_id else None
+            storage["coreSettings"] = {
                 name: {
-                    "description": data['description'],
-                    "default_value": data['value'],
-                    "value": app.get_setting(name)
+                    "description": data["description"],
+                    "default_value": data["value"],
+                    "value": app.get_setting(name),
                 }
                 for name, data in app.DEFAULT_SETTINGS.items()
             }
 
-            storage['homeDir'] = expanduser("~")
-            storage['projectsDir'] = storage['coreSettings']['projects_dir'][
-                'value']
+            storage["homeDir"] = expanduser("~")
+            storage["projectsDir"] = storage["coreSettings"]["projects_dir"]["value"]
 
             # skip non-existing recent projects
-            storage['recentProjects'] = [
-                p for p in storage.get("recentProjects", [])
-                if is_platformio_project(p)
+            storage["recentProjects"] = [
+                p for p in storage.get("recentProjects", []) if is_platformio_project(p)
             ]
 
-            state['storage'] = storage
+            state["storage"] = storage
             state.modified = False  # skip saving extra fields
             return state.as_dict()
 

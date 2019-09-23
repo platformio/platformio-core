@@ -19,20 +19,18 @@ from twisted.internet import defer  # pylint: disable=import-error
 
 
 class IDERPC(object):
-
     def __init__(self):
         self._queue = {}
 
     def send_command(self, command, params, sid=0):
         if not self._queue.get(sid):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
-                code=4005, message="PIO Home IDE agent is not started")
+                code=4005, message="PIO Home IDE agent is not started"
+            )
         while self._queue[sid]:
-            self._queue[sid].pop().callback({
-                "id": time.time(),
-                "method": command,
-                "params": params
-            })
+            self._queue[sid].pop().callback(
+                {"id": time.time(), "method": command, "params": params}
+            )
 
     def listen_commands(self, sid=0):
         if sid not in self._queue:

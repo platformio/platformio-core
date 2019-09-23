@@ -42,20 +42,24 @@ def settings_get(name):
         raw_value = app.get_setting(key)
         formatted_value = format_value(raw_value)
 
-        if raw_value != options['value']:
-            default_formatted_value = format_value(options['value'])
+        if raw_value != options["value"]:
+            default_formatted_value = format_value(options["value"])
             formatted_value += "%s" % (
-                "\n" if len(default_formatted_value) > 10 else " ")
-            formatted_value += "[%s]" % click.style(default_formatted_value,
-                                                    fg="yellow")
+                "\n" if len(default_formatted_value) > 10 else " "
+            )
+            formatted_value += "[%s]" % click.style(
+                default_formatted_value, fg="yellow"
+            )
 
         tabular_data.append(
-            (click.style(key,
-                         fg="cyan"), formatted_value, options['description']))
+            (click.style(key, fg="cyan"), formatted_value, options["description"])
+        )
 
     click.echo(
-        tabulate(tabular_data,
-                 headers=["Name", "Current value [Default]", "Description"]))
+        tabulate(
+            tabular_data, headers=["Name", "Current value [Default]", "Description"]
+        )
+    )
 
 
 @cli.command("set", short_help="Set new value for the setting")

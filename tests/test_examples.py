@@ -35,12 +35,12 @@ def pytest_generate_tests(metafunc):
 
     # dev/platforms
     for manifest in PlatformManager().get_installed():
-        p = PlatformFactory.newPlatform(manifest['__pkg_dir'])
+        p = PlatformFactory.newPlatform(manifest["__pkg_dir"])
         ignore_conds = [
             not p.is_embedded(),
             p.name == "ststm8",
             # issue with "version `CXXABI_1.3.9' not found (required by sdcc)"
-            "linux" in util.get_systype() and p.name == "intel_mcs51"
+            "linux" in util.get_systype() and p.name == "intel_mcs51",
         ]
         if any(ignore_conds):
             continue
@@ -61,10 +61,9 @@ def pytest_generate_tests(metafunc):
                 candidates[group] = []
             candidates[group].append(root)
 
-        project_dirs.extend([
-            random.choice(examples) for examples in candidates.values()
-            if examples
-        ])
+        project_dirs.extend(
+            [random.choice(examples) for examples in candidates.values() if examples]
+        )
 
     metafunc.parametrize("pioproject_dir", sorted(project_dirs))
 
@@ -76,12 +75,11 @@ def test_run(pioproject_dir):
         if isdir(build_dir):
             util.rmtree_(build_dir)
 
-        env_names = ProjectConfig(join(pioproject_dir,
-                                       "platformio.ini")).envs()
+        env_names = ProjectConfig(join(pioproject_dir, "platformio.ini")).envs()
         result = util.exec_command(
-            ["platformio", "run", "-e",
-             random.choice(env_names)])
-        if result['returncode'] != 0:
+            ["platformio", "run", "-e", random.choice(env_names)]
+        )
+        if result["returncode"] != 0:
             pytest.fail(str(result))
 
         assert isdir(build_dir)

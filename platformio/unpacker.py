@@ -24,7 +24,6 @@ from platformio import exception, util
 
 
 class ArchiveBase(object):
-
     def __init__(self, arhfileobj):
         self._afo = arhfileobj
 
@@ -46,7 +45,6 @@ class ArchiveBase(object):
 
 
 class TARArchive(ArchiveBase):
-
     def __init__(self, archpath):
         super(TARArchive, self).__init__(tarfile_open(archpath))
 
@@ -62,7 +60,6 @@ class TARArchive(ArchiveBase):
 
 
 class ZIPArchive(ArchiveBase):
-
     def __init__(self, archpath):
         super(ZIPArchive, self).__init__(ZipFile(archpath))
 
@@ -74,8 +71,10 @@ class ZIPArchive(ArchiveBase):
 
     @staticmethod
     def preserve_mtime(item, dest_dir):
-        util.change_filemtime(join(dest_dir, item.filename),
-                              mktime(tuple(item.date_time) + tuple([0, 0, 0])))
+        util.change_filemtime(
+            join(dest_dir, item.filename),
+            mktime(tuple(item.date_time) + tuple([0, 0, 0])),
+        )
 
     def get_items(self):
         return self._afo.infolist()
@@ -92,7 +91,6 @@ class ZIPArchive(ArchiveBase):
 
 
 class FileUnpacker(object):
-
     def __init__(self, archpath):
         self.archpath = archpath
         self._unpacker = None

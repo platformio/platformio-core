@@ -20,11 +20,18 @@ from platformio import util
 
 
 def test_local_env():
-    result = util.exec_command([
-        "platformio", "test", "-d",
-        join("examples", "unit-testing", "calculator"), "-e", "native"
-    ])
-    if result['returncode'] != 1:
+    result = util.exec_command(
+        [
+            "platformio",
+            "test",
+            "-d",
+            join("examples", "unit-testing", "calculator"),
+            "-e",
+            "native",
+        ]
+    )
+    if result["returncode"] != 1:
         pytest.fail(result)
-    assert all([s in result['err']
-                for s in ("PASSED", "IGNORED", "FAILED")]), result['out']
+    assert all([s in result["err"] for s in ("PASSED", "IGNORED", "FAILED")]), result[
+        "out"
+    ]

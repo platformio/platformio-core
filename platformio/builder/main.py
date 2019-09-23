@@ -43,17 +43,27 @@ clivars.AddVariables(
     ("PROJECT_CONFIG",),
     ("PIOENV",),
     ("PIOTEST_RUNNING_NAME",),
-    ("UPLOAD_PORT",)
+    ("UPLOAD_PORT",),
 )  # yapf: disable
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
-        "ar", "gas", "gcc", "g++", "gnulink", "platformio", "pioplatform",
-        "pioproject", "piowinhooks", "piolib", "pioupload", "piomisc", "pioide"
+        "ar",
+        "gas",
+        "gcc",
+        "g++",
+        "gnulink",
+        "platformio",
+        "pioplatform",
+        "pioproject",
+        "piowinhooks",
+        "piolib",
+        "pioupload",
+        "piomisc",
+        "pioide",
     ],
     toolpath=[join(fs.get_source_dir(), "builder", "tools")],
     variables=clivars,
-
     # Propagating External Environment
     ENV=environ,
     UNIX_TIME=int(time()),
@@ -75,16 +85,17 @@ DEFAULT_ENV_OPTIONS = dict(
     LIBSOURCE_DIRS=[
         project_helpers.get_project_lib_dir(),
         join("$PROJECTLIBDEPS_DIR", "$PIOENV"),
-        project_helpers.get_project_global_lib_dir()
+        project_helpers.get_project_global_lib_dir(),
     ],
     PROGNAME="program",
     PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
-    PYTHONEXE=get_pythonexe_path())
+    PYTHONEXE=get_pythonexe_path(),
+)
 
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
-    DEFAULT_ENV_OPTIONS['ARCOMSTR'] = "Archiving $TARGET"
-    DEFAULT_ENV_OPTIONS['LINKCOMSTR'] = "Linking $TARGET"
-    DEFAULT_ENV_OPTIONS['RANLIBCOMSTR'] = "Indexing $TARGET"
+    DEFAULT_ENV_OPTIONS["ARCOMSTR"] = "Archiving $TARGET"
+    DEFAULT_ENV_OPTIONS["LINKCOMSTR"] = "Linking $TARGET"
+    DEFAULT_ENV_OPTIONS["RANLIBCOMSTR"] = "Indexing $TARGET"
     for k in ("ASCOMSTR", "ASPPCOMSTR", "CCCOMSTR", "CXXCOMSTR"):
         DEFAULT_ENV_OPTIONS[k] = "Compiling $TARGET"
 
@@ -94,8 +105,10 @@ env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 env.Replace(
     **{
         key: PlatformBase.decode_scons_arg(env[key])
-        for key in list(clivars.keys()) if key in env
-    })
+        for key in list(clivars.keys())
+        if key in env
+    }
+)
 
 if env.subst("$BUILDCACHE_DIR"):
     if not isdir(env.subst("$BUILDCACHE_DIR")):
@@ -106,18 +119,17 @@ if int(ARGUMENTS.get("ISATTY", 0)):
     # pylint: disable=protected-access
     click._compat.isatty = lambda stream: True
 
-if env.GetOption('clean'):
+if env.GetOption("clean"):
     env.PioClean(env.subst("$BUILD_DIR"))
     env.Exit(0)
 elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
-    print("Verbose mode can be enabled via `-v, --verbose` option")
+    print ("Verbose mode can be enabled via `-v, --verbose` option")
 
 env.LoadProjectOptions()
 env.LoadPioPlatform()
 
 env.SConscriptChdir(0)
-env.SConsignFile(
-    join("$BUILD_DIR", ".sconsign.dblite" if PY2 else ".sconsign3.dblite"))
+env.SConsignFile(join("$BUILD_DIR", ".sconsign.dblite" if PY2 else ".sconsign3.dblite"))
 
 for item in env.GetExtraScripts("pre"):
     env.SConscript(item, exports="env")
@@ -144,10 +156,13 @@ if env.get("SIZETOOL") and "nobuild" not in COMMAND_LINE_TARGETS:
     Default("checkprogsize")
 
 # Print configured protocols
-env.AddPreAction(["upload", "program"],
-                 env.VerboseAction(
-                     lambda source, target, env: env.PrintUploadInfo(),
-                     "Configuring upload protocol..."))
+env.AddPreAction(
+    ["upload", "program"],
+    env.VerboseAction(
+        lambda source, target, env: env.PrintUploadInfo(),
+        "Configuring upload protocol...",
+    ),
+)
 
 AlwaysBuild(env.Alias("debug", DEFAULT_TARGETS))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
@@ -155,12 +170,15 @@ AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
 ##############################################################################
 
 if "envdump" in COMMAND_LINE_TARGETS:
-    print(env.Dump())
+    print (env.Dump())
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
     Import("projenv")
-    print("\n%s\n" % dump_json_to_unicode(
-        env.DumpIDEData(projenv)  # pylint: disable=undefined-variable
-    ))
+    print (
+        "\n%s\n"
+        % dump_json_to_unicode(
+            env.DumpIDEData(projenv)  # pylint: disable=undefined-variable
+        )
+    )
     env.Exit(0)

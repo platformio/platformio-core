@@ -32,7 +32,7 @@ class BaseProcess(protocol.ProcessProtocol, object):
     COMMON_PATTERNS = {
         "PLATFORMIO_HOME_DIR": get_project_core_dir(),
         "PLATFORMIO_CORE_DIR": get_project_core_dir(),
-        "PYTHONEXE": get_pythonexe_path()
+        "PYTHONEXE": get_pythonexe_path(),
     }
 
     def apply_patterns(self, source, patterns=None):
@@ -52,8 +52,7 @@ class BaseProcess(protocol.ProcessProtocol, object):
         if isinstance(source, string_types):
             source = _replace(source)
         elif isinstance(source, (list, dict)):
-            items = enumerate(source) if isinstance(source,
-                                                    list) else source.items()
+            items = enumerate(source) if isinstance(source, list) else source.items()
             for key, value in items:
                 if isinstance(value, string_types):
                     source[key] = _replace(value)
@@ -67,9 +66,9 @@ class BaseProcess(protocol.ProcessProtocol, object):
             with open(LOG_FILE, "ab") as fp:
                 fp.write(data)
         while data:
-            chunk = data[:self.STDOUT_CHUNK_SIZE]
+            chunk = data[: self.STDOUT_CHUNK_SIZE]
             click.echo(chunk, nl=False)
-            data = data[self.STDOUT_CHUNK_SIZE:]
+            data = data[self.STDOUT_CHUNK_SIZE :]
 
     @staticmethod
     def errReceived(data):

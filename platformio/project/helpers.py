@@ -16,8 +16,16 @@ import json
 import os
 from hashlib import sha1
 from os import walk
-from os.path import (basename, dirname, expanduser, isdir, isfile, join,
-                     realpath, splitdrive)
+from os.path import (
+    basename,
+    dirname,
+    expanduser,
+    isdir,
+    isfile,
+    join,
+    realpath,
+    splitdrive,
+)
 
 from click.testing import CliRunner
 
@@ -56,9 +64,13 @@ def get_project_optional_dir(name, default=None):
 
     if "$PROJECT_HASH" in optional_dir:
         optional_dir = optional_dir.replace(
-            "$PROJECT_HASH", "%s-%s" %
-            (basename(project_dir), sha1(
-                hashlib_encode_data(project_dir)).hexdigest()[:10]))
+            "$PROJECT_HASH",
+            "%s-%s"
+            % (
+                basename(project_dir),
+                sha1(hashlib_encode_data(project_dir)).hexdigest()[:10],
+            ),
+        )
 
     if optional_dir.startswith("~"):
         optional_dir = expanduser(optional_dir)
@@ -69,7 +81,8 @@ def get_project_optional_dir(name, default=None):
 def get_project_core_dir():
     default = join(expanduser("~"), ".platformio")
     core_dir = get_project_optional_dir(
-        "core_dir", get_project_optional_dir("home_dir", default))
+        "core_dir", get_project_optional_dir("home_dir", default)
+    )
     win_core_dir = None
     if WINDOWS and core_dir == default:
         win_core_dir = splitdrive(core_dir)[0] + "\\.platformio"
@@ -91,33 +104,35 @@ def get_project_core_dir():
 
 
 def get_project_global_lib_dir():
-    return get_project_optional_dir("globallib_dir",
-                                    join(get_project_core_dir(), "lib"))
+    return get_project_optional_dir(
+        "globallib_dir", join(get_project_core_dir(), "lib")
+    )
 
 
 def get_project_platforms_dir():
-    return get_project_optional_dir("platforms_dir",
-                                    join(get_project_core_dir(), "platforms"))
+    return get_project_optional_dir(
+        "platforms_dir", join(get_project_core_dir(), "platforms")
+    )
 
 
 def get_project_packages_dir():
-    return get_project_optional_dir("packages_dir",
-                                    join(get_project_core_dir(), "packages"))
+    return get_project_optional_dir(
+        "packages_dir", join(get_project_core_dir(), "packages")
+    )
 
 
 def get_project_cache_dir():
-    return get_project_optional_dir("cache_dir",
-                                    join(get_project_core_dir(), ".cache"))
+    return get_project_optional_dir("cache_dir", join(get_project_core_dir(), ".cache"))
 
 
 def get_project_workspace_dir():
-    return get_project_optional_dir("workspace_dir",
-                                    join(get_project_dir(), ".pio"))
+    return get_project_optional_dir("workspace_dir", join(get_project_dir(), ".pio"))
 
 
 def get_project_build_dir(force=False):
-    path = get_project_optional_dir("build_dir",
-                                    join(get_project_workspace_dir(), "build"))
+    path = get_project_optional_dir(
+        "build_dir", join(get_project_workspace_dir(), "build")
+    )
     try:
         if not isdir(path):
             os.makedirs(path)
@@ -129,7 +144,8 @@ def get_project_build_dir(force=False):
 
 def get_project_libdeps_dir():
     return get_project_optional_dir(
-        "libdeps_dir", join(get_project_workspace_dir(), "libdeps"))
+        "libdeps_dir", join(get_project_workspace_dir(), "libdeps")
+    )
 
 
 def get_project_lib_dir():
@@ -137,8 +153,7 @@ def get_project_lib_dir():
 
 
 def get_project_include_dir():
-    return get_project_optional_dir("include_dir",
-                                    join(get_project_dir(), "include"))
+    return get_project_optional_dir("include_dir", join(get_project_dir(), "include"))
 
 
 def get_project_src_dir():
@@ -146,23 +161,19 @@ def get_project_src_dir():
 
 
 def get_project_test_dir():
-    return get_project_optional_dir("test_dir", join(get_project_dir(),
-                                                     "test"))
+    return get_project_optional_dir("test_dir", join(get_project_dir(), "test"))
 
 
 def get_project_boards_dir():
-    return get_project_optional_dir("boards_dir",
-                                    join(get_project_dir(), "boards"))
+    return get_project_optional_dir("boards_dir", join(get_project_dir(), "boards"))
 
 
 def get_project_data_dir():
-    return get_project_optional_dir("data_dir", join(get_project_dir(),
-                                                     "data"))
+    return get_project_optional_dir("data_dir", join(get_project_dir(), "data"))
 
 
 def get_project_shared_dir():
-    return get_project_optional_dir("shared_dir",
-                                    join(get_project_dir(), "shared"))
+    return get_project_optional_dir("shared_dir", join(get_project_dir(), "shared"))
 
 
 def compute_project_checksum(config):
@@ -174,8 +185,7 @@ def compute_project_checksum(config):
 
     # project file structure
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
-    for d in (get_project_include_dir(), get_project_src_dir(),
-              get_project_lib_dir()):
+    for d in (get_project_include_dir(), get_project_src_dir(), get_project_lib_dir()):
         if not isdir(d):
             continue
         chunks = []
@@ -196,6 +206,7 @@ def compute_project_checksum(config):
 
 def load_project_ide_data(project_dir, env_or_envs):
     from platformio.commands.run import cli as cmd_run
+
     assert env_or_envs
     envs = env_or_envs
     if not isinstance(envs, list):
@@ -204,8 +215,9 @@ def load_project_ide_data(project_dir, env_or_envs):
     for env in envs:
         args.extend(["-e", env])
     result = CliRunner().invoke(cmd_run, args)
-    if result.exit_code != 0 and not isinstance(result.exception,
-                                                exception.ReturnErrorCode):
+    if result.exit_code != 0 and not isinstance(
+        result.exception, exception.ReturnErrorCode
+    ):
         raise result.exception
     if '"includes":' not in result.output:
         raise exception.PlatformioException(result.output)
@@ -213,11 +225,10 @@ def load_project_ide_data(project_dir, env_or_envs):
     data = {}
     for line in result.output.split("\n"):
         line = line.strip()
-        if (line.startswith('{"') and line.endswith("}")
-                and "env_name" in line):
+        if line.startswith('{"') and line.endswith("}") and "env_name" in line:
             _data = json.loads(line)
             if "env_name" in _data:
-                data[_data['env_name']] = _data
+                data[_data["env_name"]] = _data
     if not isinstance(env_or_envs, list) and env_or_envs in data:
         return data[env_or_envs]
     return data or None

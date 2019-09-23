@@ -40,7 +40,6 @@ from platformio.proc import is_ci  # pylint: disable=unused-import
 
 
 class memoized(object):
-
     def __init__(self, expire=0):
         expire = str(expire)
         if expire.isdigit():
@@ -51,13 +50,12 @@ class memoized(object):
         self.cache = {}
 
     def __call__(self, func):
-
         @wraps(func)
         def wrapper(*args, **kwargs):
             key = str(args) + str(kwargs)
-            if (key not in self.cache
-                    or (self.expire > 0
-                        and self.cache[key][0] < time.time() - self.expire)):
+            if key not in self.cache or (
+                self.expire > 0 and self.cache[key][0] < time.time() - self.expire
+            ):
                 self.cache[key] = (time.time(), func(*args, **kwargs))
             return self.cache[key][1]
 
@@ -69,13 +67,11 @@ class memoized(object):
 
 
 class throttle(object):
-
     def __init__(self, threshhold):
         self.threshhold = threshhold  # milliseconds
         self.last = 0
 
     def __call__(self, func):
-
         @wraps(func)
         def wrapper(*args, **kwargs):
             diff = int(round((time.time() - self.last) * 1000))
@@ -166,17 +162,14 @@ def get_logical_devices():
     if WINDOWS:
         try:
             result = exec_command(
-                ["wmic", "logicaldisk", "get",
-                 "name,VolumeName"]).get("out", "")
+                ["wmic", "logicaldisk", "get", "name,VolumeName"]
+            ).get("out", "")
             devicenamere = re.compile(r"^([A-Z]{1}\:)\s*(\S+)?")
             for line in result.split("\n"):
                 match = devicenamere.match(line.strip())
                 if not match:
                     continue
-                items.append({
-                    "path": match.group(1) + "\\",
-                    "name": match.group(2)
-                })
+                items.append({"path": match.group(1) + "\\", "name": match.group(2)})
             return items
         except WindowsError:  # pylint: disable=undefined-variable
             pass
@@ -192,10 +185,7 @@ def get_logical_devices():
         match = devicenamere.match(line.strip())
         if not match:
             continue
-        items.append({
-            "path": match.group(1),
-            "name": os.path.basename(match.group(1))
-        })
+        items.append({"path": match.group(1), "name": os.path.basename(match.group(1))})
     return items
 
 
@@ -205,22 +195,20 @@ def get_mdns_services():
     except ImportError:
         from site import addsitedir
         from platformio.managers.core import get_core_package_dir
+
         contrib_pysite_dir = get_core_package_dir("contrib-pysite")
         addsitedir(contrib_pysite_dir)
         sys.path.insert(0, contrib_pysite_dir)
         import zeroconf
 
     class mDNSListener(object):
-
         def __init__(self):
-            self._zc = zeroconf.Zeroconf(
-                interfaces=zeroconf.InterfaceChoice.All)
+            self._zc = zeroconf.Zeroconf(interfaces=zeroconf.InterfaceChoice.All)
             self._found_types = []
             self._found_services = []
 
         def __enter__(self):
-            zeroconf.ServiceBrowser(self._zc, "_services._dns-sd._udp.local.",
-                                    self)
+            zeroconf.ServiceBrowser(self._zc, "_services._dns-sd._udp.local.", self)
             return self
 
         def __exit__(self, etype, value, traceback):
@@ -233,8 +221,7 @@ def get_mdns_services():
             try:
                 assert zeroconf.service_type_name(name)
                 assert str(name)
-            except (AssertionError, UnicodeError,
-                    zeroconf.BadTypeInNameException):
+            except (AssertionError, UnicodeError, zeroconf.BadTypeInNameException):
                 return
             if name not in self._found_types:
                 self._found_types.append(name)
@@ -255,29 +242,29 @@ def get_mdns_services():
             if service.properties:
                 try:
                     properties = {
-                        k.decode("utf8"):
-                        v.decode("utf8") if isinstance(v, bytes) else v
+                        k.decode("utf8"): v.decode("utf8")
+                        if isinstance(v, bytes)
+                        else v
                         for k, v in service.properties.items()
                     }
                     json.dumps(properties)
                 except UnicodeDecodeError:
                     properties = None
 
-            items.append({
-                "type":
-                service.type,
-                "name":
-                service.name,
-                "ip":
-                ".".join([
-                    str(c if isinstance(c, int) else ord(c))
-                    for c in service.address
-                ]),
-                "port":
-                service.port,
-                "properties":
-                properties
-            })
+            items.append(
+                {
+                    "type": service.type,
+                    "name": service.name,
+                    "ip": ".".join(
+                        [
+                            str(c if isinstance(c, int) else ord(c))
+                            for c in service.address
+                        ]
+                    ),
+                    "port": service.port,
+                    "properties": properties,
+                }
+            )
     return items
 
 
@@ -293,10 +280,8 @@ def _api_request_session():
 
 @throttle(500)
 def _get_api_result(
-        url,  # pylint: disable=too-many-branches
-        params=None,
-        data=None,
-        auth=None):
+    url, params=None, data=None, auth=None  # pylint: disable=too-many-branches
+):
     from platformio.app import get_setting
 
     result = {}
@@ -311,30 +296,29 @@ def _get_api_result(
 
     try:
         if data:
-            r = _api_request_session().post(url,
-                                            params=params,
-                                            data=data,
-                                            headers=headers,
-                                            auth=auth,
-                                            verify=verify_ssl)
+            r = _api_request_session().post(
+                url,
+                params=params,
+                data=data,
+                headers=headers,
+                auth=auth,
+                verify=verify_ssl,
+            )
         else:
-            r = _api_request_session().get(url,
-                                           params=params,
-                                           headers=headers,
-                                           auth=auth,
-                                           verify=verify_ssl)
+            r = _api_request_session().get(
+                url, params=params, headers=headers, auth=auth, verify=verify_ssl
+            )
         result = r.json()
         r.raise_for_status()
         return r.text
     except requests.exceptions.HTTPError as e:
         if result and "message" in result:
-            raise exception.APIRequestError(result['message'])
+            raise exception.APIRequestError(result["message"])
         if result and "errors" in result:
-            raise exception.APIRequestError(result['errors'][0]['title'])
+            raise exception.APIRequestError(result["errors"][0]["title"])
         raise exception.APIRequestError(e)
     except ValueError:
-        raise exception.APIRequestError("Invalid response: %s" %
-                                        r.text.encode("utf-8"))
+        raise exception.APIRequestError("Invalid response: %s" % r.text.encode("utf-8"))
     finally:
         if r:
             r.close()
@@ -343,10 +327,12 @@ def _get_api_result(
 
 def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
     from platformio.app import ContentCache
+
     total = 0
     max_retries = 5
-    cache_key = (ContentCache.key_from_args(url, params, data, auth)
-                 if cache_valid else None)
+    cache_key = (
+        ContentCache.key_from_args(url, params, data, auth) if cache_valid else None
+    )
     while total < max_retries:
         try:
             with ContentCache() as cc:
@@ -363,24 +349,24 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
                 with ContentCache() as cc:
                     cc.set(cache_key, result, cache_valid)
             return json.loads(result)
-        except (requests.exceptions.ConnectionError,
-                requests.exceptions.Timeout) as e:
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
             total += 1
             if not PlatformioCLI.in_silence():
                 click.secho(
                     "[API] ConnectionError: {0} (incremented retry: max={1}, "
                     "total={2})".format(e, max_retries, total),
-                    fg="yellow")
+                    fg="yellow",
+                )
             time.sleep(2 * total)
 
     raise exception.APIRequestError(
-        "Could not connect to PlatformIO API Service. "
-        "Please try later.")
+        "Could not connect to PlatformIO API Service. " "Please try later."
+    )
 
 
 PING_INTERNET_IPS = [
     "192.30.253.113",  # github.com
-    "193.222.52.25"  # dl.platformio.org
+    "193.222.52.25",  # dl.platformio.org
 ]
 
 
@@ -391,12 +377,9 @@ def _internet_on():
     for ip in PING_INTERNET_IPS:
         try:
             if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-                requests.get("http://%s" % ip,
-                             allow_redirects=False,
-                             timeout=timeout)
+                requests.get("http://%s" % ip, allow_redirects=False, timeout=timeout)
             else:
-                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(
-                    (ip, 80))
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip, 80))
             return True
         except:  # pylint: disable=bare-except
             pass
@@ -438,8 +421,7 @@ def merge_dicts(d1, d2, path=None):
     if path is None:
         path = []
     for key in d2:
-        if (key in d1 and isinstance(d1[key], dict)
-                and isinstance(d2[key], dict)):
+        if key in d1 and isinstance(d1[key], dict) and isinstance(d2[key], dict):
             merge_dicts(d1[key], d2[key], path + [str(key)])
         else:
             d1[key] = d2[key]
@@ -450,9 +432,7 @@ def print_labeled_bar(label, is_error=False, fg=None):
     terminal_width, _ = click.get_terminal_size()
     width = len(click.unstyle(label))
     half_line = "=" * int((terminal_width - width - 2) / 2)
-    click.secho("%s %s %s" % (half_line, label, half_line),
-                fg=fg,
-                err=is_error)
+    click.secho("%s %s %s" % (half_line, label, half_line), fg=fg, err=is_error)
 
 
 def humanize_duration_time(duration):

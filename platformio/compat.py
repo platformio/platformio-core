@@ -20,8 +20,8 @@ import re
 import sys
 
 PY2 = sys.version_info[0] == 2
-CYGWIN = sys.platform.startswith('cygwin')
-WINDOWS = sys.platform.startswith('win')
+CYGWIN = sys.platform.startswith("cygwin")
+WINDOWS = sys.platform.startswith("win")
 
 
 def get_filesystem_encoding():
@@ -56,13 +56,12 @@ if PY2:
     def dump_json_to_unicode(obj):
         if isinstance(obj, unicode):
             return obj
-        return json.dumps(obj,
-                          encoding=get_filesystem_encoding(),
-                          ensure_ascii=False,
-                          sort_keys=True).encode("utf8")
+        return json.dumps(
+            obj, encoding=get_filesystem_encoding(), ensure_ascii=False, sort_keys=True
+        ).encode("utf8")
 
-    _magic_check = re.compile('([*?[])')
-    _magic_check_bytes = re.compile(b'([*?[])')
+    _magic_check = re.compile("([*?[])")
+    _magic_check_bytes = re.compile(b"([*?[])")
 
     def glob_escape(pathname):
         """Escape all special characters."""
@@ -72,14 +71,16 @@ if PY2:
         # escaped.
         drive, pathname = os.path.splitdrive(pathname)
         if isinstance(pathname, bytes):
-            pathname = _magic_check_bytes.sub(br'[\1]', pathname)
+            pathname = _magic_check_bytes.sub(br"[\1]", pathname)
         else:
-            pathname = _magic_check.sub(r'[\1]', pathname)
+            pathname = _magic_check.sub(r"[\1]", pathname)
         return drive + pathname
+
+
 else:
     from glob import escape as glob_escape  # pylint: disable=no-name-in-module
 
-    string_types = (str, )
+    string_types = (str,)
 
     def is_bytes(x):
         return isinstance(x, (bytes, memoryview, bytearray))

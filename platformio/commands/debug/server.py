@@ -24,7 +24,6 @@ from platformio.proc import where_is_program
 
 
 class DebugServer(BaseProcess):
-
     def __init__(self, debug_options, env_options):
         self.debug_options = debug_options
         self.env_options = env_options
@@ -39,13 +38,16 @@ class DebugServer(BaseProcess):
         if not server:
             return None
         server = self.apply_patterns(server, patterns)
-        server_executable = server['executable']
+        server_executable = server["executable"]
         if not server_executable:
             return None
-        if server['cwd']:
-            server_executable = join(server['cwd'], server_executable)
-        if ("windows" in systype and not server_executable.endswith(".exe")
-                and isfile(server_executable + ".exe")):
+        if server["cwd"]:
+            server_executable = join(server["cwd"], server_executable)
+        if (
+            "windows" in systype
+            and not server_executable.endswith(".exe")
+            and isfile(server_executable + ".exe")
+        ):
             server_executable = server_executable + ".exe"
 
         if not isfile(server_executable):
@@ -55,48 +57,56 @@ class DebugServer(BaseProcess):
                 "\nCould not launch Debug Server '%s'. Please check that it "
                 "is installed and is included in a system PATH\n\n"
                 "See documentation or contact contact@platformio.org:\n"
-                "http://docs.platformio.org/page/plus/debugging.html\n" %
-                server_executable)
+                "http://docs.platformio.org/page/plus/debugging.html\n"
+                % server_executable
+            )
 
         self._debug_port = ":3333"
-        openocd_pipe_allowed = all([
-            not self.debug_options['port'],
-            "openocd" in server_executable
-        ])  # yapf: disable
+        openocd_pipe_allowed = all(
+            [not self.debug_options["port"], "openocd" in server_executable]
+        )  # yapf: disable
         if openocd_pipe_allowed:
             args = []
-            if server['cwd']:
-                args.extend(["-s", server['cwd']])
-            args.extend([
-                "-c", "gdb_port pipe; tcl_port disabled; telnet_port disabled"
-            ])
-            args.extend(server['arguments'])
+            if server["cwd"]:
+                args.extend(["-s", server["cwd"]])
+            args.extend(
+                ["-c", "gdb_port pipe; tcl_port disabled; telnet_port disabled"]
+            )
+            args.extend(server["arguments"])
             str_args = " ".join(
-                [arg if arg.startswith("-") else '"%s"' % arg for arg in args])
+                [arg if arg.startswith("-") else '"%s"' % arg for arg in args]
+            )
             self._debug_port = '| "%s" %s' % (server_executable, str_args)
             self._debug_port = fs.to_unix_path(self._debug_port)
         else:
             env = os.environ.copy()
             # prepend server "lib" folder to LD path
-            if ("windows" not in systype and server['cwd']
-                    and isdir(join(server['cwd'], "lib"))):
-                ld_key = ("DYLD_LIBRARY_PATH"
-                          if "darwin" in systype else "LD_LIBRARY_PATH")
-                env[ld_key] = join(server['cwd'], "lib")
+            if (
+                "windows" not in systype
+                and server["cwd"]
+                and isdir(join(server["cwd"], "lib"))
+            ):
+                ld_key = (
+                    "DYLD_LIBRARY_PATH" if "darwin" in systype else "LD_LIBRARY_PATH"
+                )
+                env[ld_key] = join(server["cwd"], "lib")
                 if os.environ.get(ld_key):
-                    env[ld_key] = "%s:%s" % (env[ld_key],
-                                             os.environ.get(ld_key))
+                    env[ld_key] = "%s:%s" % (env[ld_key], os.environ.get(ld_key))
             # prepend BIN to PATH
-            if server['cwd'] and isdir(join(server['cwd'], "bin")):
-                env['PATH'] = "%s%s%s" % (
-                    join(server['cwd'], "bin"), os.pathsep,
-                    os.environ.get("PATH", os.environ.get("Path", "")))
+            if server["cwd"] and isdir(join(server["cwd"], "bin")):
+                env["PATH"] = "%s%s%s" % (
+                    join(server["cwd"], "bin"),
+                    os.pathsep,
+                    os.environ.get("PATH", os.environ.get("Path", "")),
+                )
 
             self._transport = reactor.spawnProcess(
                 self,
-                server_executable, [server_executable] + server['arguments'],
-                path=server['cwd'],
-                env=env)
+                server_executable,
+                [server_executable] + server["arguments"],
+                path=server["cwd"],
+                env=env,
+            )
             if "mspdebug" in server_executable.lower():
                 self._debug_port = ":2000"
             elif "jlink" in server_executable.lower():

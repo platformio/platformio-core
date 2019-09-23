@@ -27,7 +27,6 @@ except ImportError:
 
 
 class VCSClientFactory(object):
-
     @staticmethod
     def newClient(src_dir, remote_url, silent=False):
         result = urlparse(remote_url)
@@ -38,15 +37,14 @@ class VCSClientFactory(object):
             remote_url = remote_url[4:]
         elif "+" in result.scheme:
             type_, _ = result.scheme.split("+", 1)
-            remote_url = remote_url[len(type_) + 1:]
+            remote_url = remote_url[len(type_) + 1 :]
         if "#" in remote_url:
             remote_url, tag = remote_url.rsplit("#", 1)
         if not type_:
-            raise PlatformioException("VCS: Unknown repository type %s" %
-                                      remote_url)
-        obj = getattr(modules[__name__],
-                      "%sClient" % type_.title())(src_dir, remote_url, tag,
-                                                  silent)
+            raise PlatformioException("VCS: Unknown repository type %s" % remote_url)
+        obj = getattr(modules[__name__], "%sClient" % type_.title())(
+            src_dir, remote_url, tag, silent
+        )
         assert isinstance(obj, VCSClientBase)
         return obj
 
@@ -71,8 +69,8 @@ class VCSClientBase(object):
                 assert self.run_cmd(["--version"])
         except (AssertionError, OSError, PlatformioException):
             raise UserSideException(
-                "VCS: `%s` client is not installed in your system" %
-                self.command)
+                "VCS: `%s` client is not installed in your system" % self.command
+            )
         return True
 
     @property
@@ -98,24 +96,23 @@ class VCSClientBase(object):
     def run_cmd(self, args, **kwargs):
         args = [self.command] + args
         if "cwd" not in kwargs:
-            kwargs['cwd'] = self.src_dir
+            kwargs["cwd"] = self.src_dir
         try:
             check_call(args, **kwargs)
             return True
         except CalledProcessError as e:
-            raise PlatformioException("VCS: Could not process command %s" %
-                                      e.cmd)
+            raise PlatformioException("VCS: Could not process command %s" % e.cmd)
 
     def get_cmd_output(self, args, **kwargs):
         args = [self.command] + args
         if "cwd" not in kwargs:
-            kwargs['cwd'] = self.src_dir
+            kwargs["cwd"] = self.src_dir
         result = exec_command(args, **kwargs)
-        if result['returncode'] == 0:
-            return result['out'].strip()
+        if result["returncode"] == 0:
+            return result["out"].strip()
         raise PlatformioException(
-            "VCS: Could not receive an output from `%s` command (%s)" %
-            (args, result))
+            "VCS: Could not receive an output from `%s` command (%s)" % (args, result)
+        )
 
 
 class GitClient(VCSClientBase):
@@ -127,7 +124,8 @@ class GitClient(VCSClientBase):
             return VCSClientBase.check_client(self)
         except UserSideException:
             raise UserSideException(
-                "Please install Git client from https://git-scm.com/downloads")
+                "Please install Git client from https://git-scm.com/downloads"
+            )
 
     def get_branches(self):
         output = self.get_cmd_output(["branch"])
@@ -232,7 +230,8 @@ class SvnClient(VCSClientBase):
 
     def get_current_revision(self):
         output = self.get_cmd_output(
-            ["info", "--non-interactive", "--trust-server-cert", "-r", "HEAD"])
+            ["info", "--non-interactive", "--trust-server-cert", "-r", "HEAD"]
+        )
         for line in output.split("\n"):
             line = line.strip()
             if line.startswith("Revision:"):

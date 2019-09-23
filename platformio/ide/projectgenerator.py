@@ -23,17 +23,17 @@ from platformio import fs, util
 from platformio.compat import get_file_contents
 from platformio.proc import where_is_program
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (get_project_lib_dir,
-                                        get_project_libdeps_dir,
-                                        get_project_src_dir,
-                                        load_project_ide_data)
+from platformio.project.helpers import (
+    get_project_lib_dir,
+    get_project_libdeps_dir,
+    get_project_src_dir,
+    load_project_ide_data,
+)
 
 
 class ProjectGenerator(object):
-
     def __init__(self, project_dir, ide, boards):
-        self.config = ProjectConfig.get_instance(
-            join(project_dir, "platformio.ini"))
+        self.config = ProjectConfig.get_instance(join(project_dir, "platformio.ini"))
         self.config.validate()
         self.project_dir = project_dir
         self.ide = str(ide)
@@ -42,8 +42,7 @@ class ProjectGenerator(object):
     @staticmethod
     def get_supported_ides():
         tpls_dir = join(fs.get_source_dir(), "ide", "tpls")
-        return sorted(
-            [d for d in os.listdir(tpls_dir) if isdir(join(tpls_dir, d))])
+        return sorted([d for d in os.listdir(tpls_dir) if isdir(join(tpls_dir, d))])
 
     def get_best_envname(self, boards=None):
         envname = None
@@ -72,28 +71,29 @@ class ProjectGenerator(object):
             "project_dir": self.project_dir,
             "env_name": self.env_name,
             "user_home_dir": abspath(expanduser("~")),
-            "platformio_path":
-                sys.argv[0] if isfile(sys.argv[0])
-                else where_is_program("platformio"),
+            "platformio_path": sys.argv[0]
+            if isfile(sys.argv[0])
+            else where_is_program("platformio"),
             "env_path": os.getenv("PATH"),
-            "env_pathsep": os.pathsep
-        }   # yapf: disable
+            "env_pathsep": os.pathsep,
+        }  # yapf: disable
 
         # default env configuration
         tpl_vars.update(self.config.items(env=self.env_name, as_dict=True))
         # build data
-        tpl_vars.update(
-            load_project_ide_data(self.project_dir, self.env_name) or {})
+        tpl_vars.update(load_project_ide_data(self.project_dir, self.env_name) or {})
 
         with fs.cd(self.project_dir):
-            tpl_vars.update({
-                "src_files": self.get_src_files(),
-                "project_src_dir": get_project_src_dir(),
-                "project_lib_dir": get_project_lib_dir(),
-                "project_libdeps_dir": join(
-                    get_project_libdeps_dir(), self.env_name)
-
-            })  # yapf: disable
+            tpl_vars.update(
+                {
+                    "src_files": self.get_src_files(),
+                    "project_src_dir": get_project_src_dir(),
+                    "project_lib_dir": get_project_lib_dir(),
+                    "project_libdeps_dir": join(
+                        get_project_libdeps_dir(), self.env_name
+                    ),
+                }
+            )  # yapf: disable
 
         for key, value in tpl_vars.items():
             if key.endswith(("_path", "_dir")):
@@ -103,7 +103,7 @@ class ProjectGenerator(object):
                 continue
             tpl_vars[key] = [fs.to_unix_path(inc) for inc in tpl_vars[key]]
 
-        tpl_vars['to_unix_path'] = fs.to_unix_path
+        tpl_vars["to_unix_path"] = fs.to_unix_path
         return tpl_vars
 
     def get_src_files(self):

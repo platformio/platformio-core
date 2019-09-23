@@ -23,7 +23,6 @@ from platformio.compat import WINDOWS, string_types
 
 
 class AsyncPipeBase(object):
-
     def __init__(self):
         self._fd_read, self._fd_write = os.pipe()
         self._pipe_reader = os.fdopen(self._fd_read)
@@ -53,7 +52,6 @@ class AsyncPipeBase(object):
 
 
 class BuildAsyncPipe(AsyncPipeBase):
-
     def __init__(self, line_callback, data_callback):
         self.line_callback = line_callback
         self.data_callback = data_callback
@@ -88,7 +86,6 @@ class BuildAsyncPipe(AsyncPipeBase):
 
 
 class LineBufferedAsyncPipe(AsyncPipeBase):
-
     def __init__(self, line_callback):
         self.line_callback = line_callback
         super(LineBufferedAsyncPipe, self).__init__()
@@ -109,8 +106,8 @@ def exec_command(*args, **kwargs):
 
     p = subprocess.Popen(*args, **kwargs)
     try:
-        result['out'], result['err'] = p.communicate()
-        result['returncode'] = p.returncode
+        result["out"], result["err"] = p.communicate()
+        result["returncode"] = p.returncode
     except KeyboardInterrupt:
         raise exception.AbortedByUser()
     finally:
@@ -160,24 +157,22 @@ def copy_pythonpath_to_osenv():
     for p in os.sys.path:
         conditions = [p not in _PYTHONPATH]
         if not WINDOWS:
-            conditions.append(
-                isdir(join(p, "click")) or isdir(join(p, "platformio")))
+            conditions.append(isdir(join(p, "click")) or isdir(join(p, "platformio")))
         if all(conditions):
             _PYTHONPATH.append(p)
-    os.environ['PYTHONPATH'] = os.pathsep.join(_PYTHONPATH)
+    os.environ["PYTHONPATH"] = os.pathsep.join(_PYTHONPATH)
 
 
 def where_is_program(program, envpath=None):
     env = os.environ
     if envpath:
-        env['PATH'] = envpath
+        env["PATH"] = envpath
 
     # try OS's built-in commands
     try:
-        result = exec_command(["where" if WINDOWS else "which", program],
-                              env=env)
-        if result['returncode'] == 0 and isfile(result['out'].strip()):
-            return result['out'].strip()
+        result = exec_command(["where" if WINDOWS else "which", program], env=env)
+        if result["returncode"] == 0 and isfile(result["out"].strip()):
+            return result["out"].strip()
     except OSError:
         pass
 
