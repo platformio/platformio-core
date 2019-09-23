@@ -22,9 +22,9 @@ from os.path import basename, expanduser, getmtime, isdir, isfile, join, realpat
 import jsonrpc  # pylint: disable=import-error
 
 from platformio import exception, fs
-from platformio.commands.home.rpc.handlers.app import AppRPC
-from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.compat import PY2, get_filesystem_encoding
+from platformio.home.rpc.handlers.app import AppRPC
+from platformio.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig

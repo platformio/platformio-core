@@ -18,7 +18,7 @@ import time
 from twisted.internet import defer, reactor  # pylint: disable=import-error
 
 from platformio import app
-from platformio.commands.home.rpc.handlers.os import OSRPC
+from platformio.home.rpc.handlers.os import OSRPC
 
 
 class MiscRPC(object):

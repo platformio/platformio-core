@@ -25,8 +25,8 @@ import click
 from twisted.internet import defer  # pylint: disable=import-error
 
 from platformio import app, util
-from platformio.commands.home import helpers
 from platformio.compat import PY2, get_filesystem_encoding
+from platformio.home import helpers
 
 
 class OSRPC(object):
