@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=unused-import
+# pylint: disable=unused-import, no-name-in-module, import-error,
+# pylint: disable=no-member, undefined-variable
 
 import json
 import os
@@ -31,7 +32,6 @@ def get_filesystem_encoding():
 if PY2:
     import imp
 
-    # pylint: disable=undefined-variable
     string_types = (str, unicode)
 
     def is_bytes(x):
@@ -84,7 +84,7 @@ if PY2:
 
 else:
     import importlib.util
-    from glob import escape as glob_escape  # pylint: disable=no-name-in-module
+    from glob import escape as glob_escape
 
     string_types = (str,)
 
