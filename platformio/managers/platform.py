@@ -16,14 +16,13 @@ import base64
 import os
 import re
 import sys
-from imp import load_source
 from os.path import basename, dirname, isdir, isfile, join
 
 import click
 import semantic_version
 
 from platformio import __version__, app, exception, fs, util
-from platformio.compat import PY2, hashlib_encode_data, is_bytes
+from platformio.compat import PY2, hashlib_encode_data, is_bytes, load_python_module
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
 from platformio.proc import (
@@ -230,12 +229,10 @@ class PlatformFactory(object):
 
     @staticmethod
     def load_module(name, path):
-        module = None
         try:
-            module = load_source("platformio.managers.platform.%s" % name, path)
+            return load_python_module("platformio.managers.platform.%s" % name, path)
         except ImportError:
             raise exception.UnknownPlatform(name)
-        return module
 
     @classmethod
     def newPlatform(cls, name, requirements=None):

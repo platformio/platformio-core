@@ -29,6 +29,8 @@ def get_filesystem_encoding():
 
 
 if PY2:
+    import imp
+
     # pylint: disable=undefined-variable
     string_types = (str, unicode)
 
@@ -76,8 +78,12 @@ if PY2:
             pathname = _magic_check.sub(r"[\1]", pathname)
         return drive + pathname
 
+    def load_python_module(name, pathname):
+        return imp.load_source(name, pathname)
+
 
 else:
+    import importlib.util
     from glob import escape as glob_escape  # pylint: disable=no-name-in-module
 
     string_types = (str,)
@@ -107,3 +113,9 @@ else:
         if isinstance(obj, string_types):
             return obj
         return json.dumps(obj, ensure_ascii=False, sort_keys=True)
+
+    def load_python_module(name, pathname):
+        spec = importlib.util.spec_from_file_location(name, pathname)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
