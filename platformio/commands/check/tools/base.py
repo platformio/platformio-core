@@ -16,7 +16,7 @@ import click
 
 from platformio import fs, proc
 from platformio.commands.check.defect import DefectItem
-from platformio.project.helpers import (get_project_dir, load_project_ide_data)
+from platformio.project.helpers import get_project_dir, load_project_ide_data
 
 
 class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
