@@ -15,9 +15,9 @@
 from os.path import join
 
 from platformio import fs, proc
-from platformio.commands.test.processor import TestProcessorBase
 from platformio.proc import LineBufferedAsyncPipe
 from platformio.project.helpers import get_project_build_dir
+from platformio.test.processor import TestProcessorBase
 
 
 class NativeTestProcessor(TestProcessorBase):

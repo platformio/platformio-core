@@ -23,10 +23,10 @@ import click
 from tabulate import tabulate
 
 from platformio import exception, fs, util
-from platformio.commands.test.embedded import EmbeddedTestProcessor
-from platformio.commands.test.native import NativeTestProcessor
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import get_project_test_dir
+from platformio.test.embedded import EmbeddedTestProcessor
+from platformio.test.native import NativeTestProcessor
 
 
 @click.command("test", short_help="Unit Testing")

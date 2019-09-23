@@ -18,8 +18,8 @@ import click
 import serial
 
 from platformio import exception, util
-from platformio.commands.test.processor import TestProcessorBase
 from platformio.managers.platform import PlatformFactory
+from platformio.test.processor import TestProcessorBase
 
 
 class EmbeddedTestProcessor(TestProcessorBase):

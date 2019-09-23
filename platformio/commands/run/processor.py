@@ -14,8 +14,8 @@
 
 from platformio import exception, telemetry
 from platformio.commands.platform import platform_install as cmd_platform_install
-from platformio.commands.test.processor import CTX_META_TEST_RUNNING_NAME
 from platformio.managers.platform import PlatformFactory
+from platformio.test.processor import CTX_META_TEST_RUNNING_NAME
 
 # pylint: disable=too-many-instance-attributes
 
