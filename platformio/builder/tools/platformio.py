@@ -104,6 +104,9 @@ def BuildProgram(env):
     if "debug" in COMMAND_LINE_TARGETS or env.GetProjectOption("build_type") == "debug":
         env.ProcessDebug()
 
+    if "sizedata" in COMMAND_LINE_TARGETS:
+        env.ConfigureSizeDataTarget()
+
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
         env.ProcessFlags(env.BoardConfig().get("build.extra_flags"))
