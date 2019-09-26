@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import sys
+from os import environ
 from os.path import join
 
 from elftools.elf.descriptions import describe_sh_flags
@@ -23,10 +23,10 @@ from platformio.compat import dump_json_to_unicode
 from platformio.proc import exec_command
 
 
-def _get_file_location(env, elf_path, addr):
+def _get_file_location(env, elf_path, addr, sysenv):
     cmd = [env.subst("$CC").replace(
         "-gcc", "-addr2line"), "-e", elf_path, hex(addr)]
-    result = exec_command(cmd)
+    result = exec_command(cmd, env=sysenv)
     location = result['out'].strip().replace("\\", "/")
     return location
 
@@ -39,9 +39,9 @@ def _determine_section(sections, symbol_addr):
     return "unknown"
 
 
-def _demangle_cpp_name(env, symbol_name):
+def _demangle_cpp_name(env, symbol_name, sysenv):
     cmd = [env.subst("$CC").replace("-gcc", "-c++filt"), symbol_name]
-    result = exec_command(cmd)
+    result = exec_command(cmd, env=sysenv)
     demangled_name = result['out'].strip()
     if "(" in demangled_name:
         demangled_name = demangled_name[0:demangled_name.find("(")]
@@ -93,6 +93,9 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         sys.stderr.write("Couldn't find symbol table. Is ELF file stripped?")
         env.Exit(1)
 
+    sysenv = environ.copy()
+    sysenv["PATH"] = str(env["ENV"]["PATH"])
+
     for s in symbol_section.iter_symbols():
         symbol_info = s.entry['st_info']
         symbol_addr = s['st_value']
@@ -105,7 +108,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         symbol = {
             "addr": symbol_addr,
             "bind": symbol_info['bind'],
-            "location": _get_file_location(env, elf_path, symbol_addr),
+            "location": _get_file_location(env, elf_path, symbol_addr, sysenv),
             "name": s.name,
             "type": symbol_type,
             "size": symbol_size,
@@ -113,7 +116,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         }
 
         if s.name.startswith("_Z"):
-            symbol['demangled_name'] = _demangle_cpp_name(env, s.name)
+            symbol['demangled_name'] = _demangle_cpp_name(env, s.name, sysenv)
 
         symbols.append(symbol)
 
