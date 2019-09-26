@@ -1,0 +1,2 @@
+.pio
+CMakeListsPrivate.txt
