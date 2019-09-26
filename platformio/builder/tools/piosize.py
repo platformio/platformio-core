@@ -19,6 +19,7 @@ from os.path import join
 from elftools.elf.descriptions import describe_sh_flags
 from elftools.elf.elffile import ELFFile
 
+from platformio.compat import dump_json_to_unicode
 from platformio.proc import exec_command
 
 
@@ -35,7 +36,6 @@ def _determine_section(sections, symbol_addr):
         if symbol_addr in range(info['start_addr'],
                                 info['start_addr'] + info['size']):
             return section
-
     return "unknown"
 
 
@@ -49,9 +49,8 @@ def _demangle_cpp_name(env, symbol_name):
 
 
 def _is_ram_section(section):
-    if section.get("type",
-                   "") in ("SHT_NOBITS", "SHT_PROGBITS") and section.get(
-                       "flags", "") == "WA":
+    if section.get("type", "") in (
+            "SHT_NOBITS", "SHT_PROGBITS") and section.get("flags", "") == "WA":
         return True
     return False
 
@@ -103,17 +102,14 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         if not _is_valid_symbol(s.name, symbol_type, symbol_addr):
             continue
 
-        symbol_location = _get_file_location(env, elf_path, symbol_addr)
-        section = _determine_section(sections, symbol_addr)
-
         symbol = {
             "addr": symbol_addr,
             "bind": symbol_info['bind'],
-            "location": symbol_location,
+            "location": _get_file_location(env, elf_path, symbol_addr),
             "name": s.name,
             "type": symbol_type,
             "size": symbol_size,
-            "section": section
+            "section": _determine_section(sections, symbol_addr)
         }
 
         if s.name.startswith("_Z"):
@@ -175,7 +171,7 @@ def DumpSizeData(_, target, source, env):
             section = sections.get(symbol.get("section", ""), {})
             if _is_ram_section(section):
                 files[file_path]['ram_size'] += symbol_size
-            elif _is_flash_section(section):
+            if _is_flash_section(section):
                 files[file_path]['flash_size'] += symbol_size
 
             files[file_path]['symbols'].append(symbol)
@@ -183,12 +179,13 @@ def DumpSizeData(_, target, source, env):
         data['memory']['files'] = files
 
     with open(join(env.subst("$BUILD_DIR"), "sizedata.json"), "w") as fp:
-        json.dump(data, fp, indent=2)
+        fp.write(dump_json_to_unicode(data))
 
 
 def ConfigureSizeDataTarget(env):
     for flags_section in ("ASFLAGS", "CCFLAGS", "LINKFLAGS"):
-        env.PrependUnique(**{flags_section: ["-g"]})
+        if not any("-g" in f for f in env.get(flags_section, [])):
+            env.Prepend(**{flags_section: ["-g"]})
 
 
 def exists(_):
