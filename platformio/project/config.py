@@ -159,7 +159,7 @@ class ProjectConfigBase(object):
                 unknown_conditions = [
                     ("%s.%s" % (scope, option)) not in ProjectOptions,
                     scope != "env" or not option.startswith(("custom_", "board_")),
-                ]  # yapf: disable
+                ]
                 if all(unknown_conditions):
                     self.warnings.append(
                         "Ignore unknown configuration option `%s` "

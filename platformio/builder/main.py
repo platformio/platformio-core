@@ -44,7 +44,7 @@ clivars.AddVariables(
     ("PIOENV",),
     ("PIOTEST_RUNNING_NAME",),
     ("UPLOAD_PORT",),
-)  # yapf: disable
+)
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[

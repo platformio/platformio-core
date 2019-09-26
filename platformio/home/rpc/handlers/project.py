@@ -177,7 +177,7 @@ class ProjectRPC(object):
                     "}",
                     "",
                 ]
-            )  # yapf: disable
+            )
         elif framework == "mbed":
             main_content = "\n".join(
                 [
@@ -193,7 +193,7 @@ class ProjectRPC(object):
                     "}",
                     "",
                 ]
-            )  # yapf: disable
+            )
         if not main_content:
             return project_dir
         with fs.cd(project_dir):

@@ -71,7 +71,7 @@ class ProjectGenerator(object):
             else where_is_program("platformio"),
             "env_path": os.getenv("PATH"),
             "env_pathsep": os.pathsep,
-        }  # yapf: disable
+        }
 
         # default env configuration
         tpl_vars.update(self.config.items(env=self.env_name, as_dict=True))
@@ -88,7 +88,7 @@ class ProjectGenerator(object):
                         self.config.get_optional_dir("libdeps"), self.env_name
                     ),
                 }
-            )  # yapf: disable
+            )
 
         for key, value in tpl_vars.items():
             if key.endswith(("_path", "_dir")):

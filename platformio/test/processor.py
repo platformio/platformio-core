@@ -176,7 +176,7 @@ class TestProcessorBase(object):
                 "   $end;",
                 "}",
             ]
-        )  # yapf: disable
+        )
 
         def delete_tmptest_file(file_):
             try:

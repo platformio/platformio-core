@@ -420,6 +420,6 @@ def get_cid():
         uid = uuid.getnode()
     cid = uuid.UUID(bytes=hashlib.md5(hashlib_encode_data(uid)).digest())
     cid = str(cid)
-    if WINDOWS or os.getuid() > 0:  # yapf: disable pylint: disable=no-member
+    if WINDOWS or os.getuid() > 0:  # pylint: disable=no-member
         set_state_item("cid", cid)
     return cid
