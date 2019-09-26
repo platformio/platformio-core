@@ -601,8 +601,7 @@ class MbedLibBuilder(LibBuilderBase):
             mbed_config_path = join(self.env.subst(p), "mbed_config.h")
             if isfile(mbed_config_path):
                 break
-            else:
-                mbed_config_path = None
+            mbed_config_path = None
         if not mbed_config_path:
             return None
 

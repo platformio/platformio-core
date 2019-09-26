@@ -117,7 +117,7 @@ class InoToCPPConverter(object):
                     stropen = True
                     newlines.append(line[:-1])
                     continue
-                elif stropen:
+                if stropen:
                     newlines[len(newlines) - 1] += line[:-1]
                     continue
             elif stropen and line.endswith(('",', '";')):
@@ -256,7 +256,7 @@ def GetActualLDScript(env):
         if f == "-T":
             script_in_next = True
             continue
-        elif script_in_next:
+        if script_in_next:
             script_in_next = False
             raw_script = f
         elif f.startswith("-Wl,-T"):

@@ -191,7 +191,7 @@ def get_logical_devices():
 
 def get_mdns_services():
     try:
-        import zeroconf
+        import zeroconf  # pylint: disable=import-outside-toplevel
     except ImportError:
         from site import addsitedir
         from platformio.managers.core import get_core_package_dir
@@ -199,7 +199,7 @@ def get_mdns_services():
         contrib_pysite_dir = get_core_package_dir("contrib-pysite")
         addsitedir(contrib_pysite_dir)
         sys.path.insert(0, contrib_pysite_dir)
-        import zeroconf
+        import zeroconf  # pylint: disable=import-outside-toplevel
 
     class mDNSListener(object):
         def __init__(self):

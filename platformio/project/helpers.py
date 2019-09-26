@@ -16,7 +16,7 @@ import json
 import os
 from hashlib import sha1
 from os import walk
-from os.path import dirname, isdir, isfile, join
+from os.path import expanduser, dirname, isdir, isfile, join
 
 from click.testing import CliRunner
 
@@ -57,6 +57,20 @@ def get_project_cache_dir():
     return ProjectConfig.get_instance(
         join(get_project_dir(), "platformio.ini")
     ).get_optional_dir("cache")
+
+
+def get_default_projects_dir():
+    docs_dir = join(expanduser("~"), "Documents")
+    try:
+        assert WINDOWS
+        import ctypes.wintypes  # pylint: disable=import-outside-toplevel
+
+        buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+        ctypes.windll.shell32.SHGetFolderPathW(None, 5, None, 0, buf)
+        docs_dir = buf.value
+    except:  # pylint: disable=bare-except
+        pass
+    return join(docs_dir, "PlatformIO", "Projects")
 
 
 def compute_project_checksum(config):

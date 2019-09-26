@@ -17,7 +17,7 @@ import hashlib
 import os
 import uuid
 from os import environ, getenv, listdir, remove
-from os.path import abspath, dirname, expanduser, isdir, isfile, join
+from os.path import abspath, dirname, isdir, isfile, join
 from time import time
 
 import requests
@@ -25,21 +25,11 @@ import requests
 from platformio import exception, fs, lockfile
 from platformio.compat import WINDOWS, dump_json_to_unicode, hashlib_encode_data
 from platformio.proc import is_ci
-from platformio.project.helpers import get_project_cache_dir, get_project_core_dir
-
-
-def get_default_projects_dir():
-    docs_dir = join(expanduser("~"), "Documents")
-    try:
-        assert WINDOWS
-        import ctypes.wintypes
-
-        buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
-        ctypes.windll.shell32.SHGetFolderPathW(None, 5, None, 0, buf)
-        docs_dir = buf.value
-    except:  # pylint: disable=bare-except
-        pass
-    return join(docs_dir, "PlatformIO", "Projects")
+from platformio.project.helpers import (
+    get_project_cache_dir,
+    get_project_core_dir,
+    get_default_projects_dir,
+)
 
 
 def projects_dir_validate(projects_dir):

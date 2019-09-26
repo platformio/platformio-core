@@ -287,7 +287,7 @@ class PlatformPackagesMixin(object):
             version = opts.get("version", "")
             if name in without_packages:
                 continue
-            elif name in with_packages or not (
+            if name in with_packages or not (
                 skip_default_package or opts.get("optional", False)
             ):
                 if ":" in version:
