@@ -20,7 +20,7 @@ from hashlib import sha1
 
 import click
 
-from platformio import app, exception
+from platformio import exception
 from platformio.compat import WINDOWS, hashlib_encode_data
 from platformio.project.options import ProjectOptions
 
@@ -72,6 +72,8 @@ class ProjectConfigBase(object):
 
     @staticmethod
     def get_default_path():
+        from platformio import app
+
         return app.get_session_var("custom_project_conf") or os.path.join(
             os.getcwd(), "platformio.ini"
         )
