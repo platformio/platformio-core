@@ -16,11 +16,12 @@ import glob
 import json
 import os
 import re
-from os.path import expanduser, getmtime, isfile
+from hashlib import sha1
 
 import click
 
-from platformio import exception
+from platformio import app, exception
+from platformio.compat import WINDOWS, hashlib_encode_data
 from platformio.project.options import ProjectOptions
 
 try:
@@ -41,7 +42,7 @@ CONFIG_HEADER = """;PlatformIO Project Configuration File
 """
 
 
-class ProjectConfig(object):
+class ProjectConfigBase(object):
 
     INLINE_COMMENT_RE = re.compile(r"\s+;.*$")
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
@@ -49,7 +50,6 @@ class ProjectConfig(object):
     expand_interpolations = True
     warnings = []
 
-    _instances = {}
     _parser = None
     _parsed = []
 
@@ -66,32 +66,24 @@ class ProjectConfig(object):
             if not item or item.startswith((";", "#")):
                 continue
             if ";" in item:
-                item = ProjectConfig.INLINE_COMMENT_RE.sub("", item).strip()
+                item = ProjectConfigBase.INLINE_COMMENT_RE.sub("", item).strip()
             result.append(item)
         return result
 
     @staticmethod
-    def get_instance(path):
-        mtime = getmtime(path) if isfile(path) else 0
-        instance = ProjectConfig._instances.get(path)
-        if instance and instance["mtime"] != mtime:
-            instance = None
-        if not instance:
-            instance = {"mtime": mtime, "config": ProjectConfig(path)}
-            ProjectConfig._instances[path] = instance
-        return instance["config"]
+    def get_default_path():
+        return app.get_session_var("custom_project_conf") or os.path.join(
+            os.getcwd(), "platformio.ini"
+        )
 
-    def __init__(self, path, parse_extra=True, expand_interpolations=True):
-        self.path = path
+    def __init__(self, path=None, parse_extra=True, expand_interpolations=True):
+        self.path = self.get_default_path() if path is None else path
         self.expand_interpolations = expand_interpolations
         self.warnings = []
         self._parsed = []
         self._parser = ConfigParser.ConfigParser()
-        if isfile(path):
+        if path and os.path.isfile(path):
             self.read(path, parse_extra)
-
-    def __repr__(self):
-        return "<ProjectConfig %s>" % (self.path or "in-memory")
 
     def __getattr__(self, name):
         return getattr(self._parser, name)
@@ -111,7 +103,7 @@ class ProjectConfig(object):
         # load extra configs
         for pattern in self.get("platformio", "extra_configs", []):
             if pattern.startswith("~"):
-                pattern = expanduser(pattern)
+                pattern = os.path.expanduser(pattern)
             for item in glob.glob(pattern):
                 self.read(item)
 
@@ -288,7 +280,7 @@ class ProjectConfig(object):
 
         # option is not specified by user
         if value is None:
-            return default
+            return default if default is not None else option_meta.default
 
         try:
             return self._cast_to(value, option_meta.type)
@@ -313,7 +305,7 @@ class ProjectConfig(object):
         return self.get("platformio", "default_envs", [])
 
     def validate(self, envs=None, silent=False):
-        if not isfile(self.path):
+        if not os.path.isfile(self.path):
             raise exception.NotPlatformIOProject(self.path)
         # check envs
         known = set(self.envs())
@@ -326,6 +318,93 @@ class ProjectConfig(object):
             for warning in self.warnings:
                 click.secho("Warning! %s" % warning, fg="yellow")
         return True
+
+
+class ProjectConfigDirsMixin(object):
+    def _get_core_dir(self, exists=False):
+        default = ProjectOptions["platformio.core_dir"].default
+        core_dir = self.get("platformio", "core_dir")
+        win_core_dir = None
+        if WINDOWS and core_dir == default:
+            win_core_dir = os.path.splitdrive(core_dir)[0] + "\\.platformio"
+            if os.path.isdir(win_core_dir):
+                core_dir = win_core_dir
+
+        if exists and not os.path.isdir(core_dir):
+            try:
+                os.makedirs(core_dir)
+            except OSError as e:
+                if win_core_dir:
+                    os.makedirs(win_core_dir)
+                    core_dir = win_core_dir
+                else:
+                    raise e
+
+        return core_dir
+
+    def get_optional_dir(self, name, exists=False):
+        if not ProjectOptions.get("platformio.%s_dir" % name):
+            raise ValueError("Unknown optional directory -> " + name)
+
+        if name == "core":
+            result = self._get_core_dir(exists)
+        else:
+            result = self.get("platformio", name + "_dir")
+
+        if result is None:
+            return None
+
+        project_dir = os.getcwd()
+
+        # patterns
+        if "$PROJECT_HASH" in result:
+            result = result.replace(
+                "$PROJECT_HASH",
+                "%s-%s"
+                % (
+                    os.path.basename(project_dir),
+                    sha1(hashlib_encode_data(project_dir)).hexdigest()[:10],
+                ),
+            )
+
+        if "$PROJECT_DIR" in result:
+            result = result.replace("$PROJECT_DIR", project_dir)
+        if "$PROJECT_CORE_DIR" in result:
+            result = result.replace("$PROJECT_CORE_DIR", self.get_optional_dir("core"))
+        if "$PROJECT_WORKSPACE_DIR" in result:
+            result = result.replace(
+                "$PROJECT_WORKSPACE_DIR", self.get_optional_dir("workspace")
+            )
+
+        if result.startswith("~"):
+            result = os.path.expanduser(result)
+
+        result = os.path.realpath(result)
+
+        if exists:
+            os.makedirs(result, exist_ok=True)
+
+        return result
+
+
+class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
+
+    _instances = {}
+
+    @staticmethod
+    def get_instance(path=None):
+        path = ProjectConfig.get_default_path() if path is None else path
+        mtime = os.path.getmtime(path) if os.path.isfile(path) else 0
+        instance = ProjectConfig._instances.get(path)
+        if instance and instance["mtime"] != mtime:
+            instance = None
+        if not instance:
+            instance = {"mtime": mtime, "config": ProjectConfig(path)}
+            ProjectConfig._instances[path] = instance
+        return instance["config"]
+
+    def __repr__(self):
+        return "<ProjectConfig %s>" % (self.path or "in-memory")
 
     def to_json(self):
         result = {}

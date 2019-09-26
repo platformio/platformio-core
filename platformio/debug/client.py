@@ -243,7 +243,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             % self.debug_options["init_break"]
         )
         self.console_log(
-            "PlatformIO: More configuration options -> " "http://bit.ly/pio-debug"
+            "PlatformIO: More configuration options -> http://bit.ly/pio-debug"
         )
         self.transport.write(
             b"0-exec-continue\n" if helpers.is_mi_mode(self.args) else b"continue\n"

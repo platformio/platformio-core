@@ -23,12 +23,7 @@ from platformio import fs, util
 from platformio.compat import get_file_contents
 from platformio.proc import where_is_program
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_lib_dir,
-    get_project_libdeps_dir,
-    get_project_src_dir,
-    load_project_ide_data,
-)
+from platformio.project.helpers import load_project_ide_data
 
 
 class ProjectGenerator(object):
@@ -87,10 +82,10 @@ class ProjectGenerator(object):
             tpl_vars.update(
                 {
                     "src_files": self.get_src_files(),
-                    "project_src_dir": get_project_src_dir(),
-                    "project_lib_dir": get_project_lib_dir(),
+                    "project_src_dir": self.config.get_optional_dir("src"),
+                    "project_lib_dir": self.config.get_optional_dir("lib"),
                     "project_libdeps_dir": join(
-                        get_project_libdeps_dir(), self.env_name
+                        self.config.get_optional_dir("libdeps"), self.env_name
                     ),
                 }
             )  # yapf: disable
@@ -109,7 +104,7 @@ class ProjectGenerator(object):
     def get_src_files(self):
         result = []
         with fs.cd(self.project_dir):
-            for root, _, files in os.walk(get_project_src_dir()):
+            for root, _, files in os.walk(self.config.get_optional_dir("src")):
                 for f in files:
                     result.append(relpath(join(root, f)))
         return result

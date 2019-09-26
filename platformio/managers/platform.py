@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-public-methods, too-many-instance-attributes
+
 import base64
 import os
 import re
@@ -32,12 +34,6 @@ from platformio.proc import (
     get_pythonexe_path,
 )
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_boards_dir,
-    get_project_core_dir,
-    get_project_packages_dir,
-    get_project_platforms_dir,
-)
 
 try:
     from urllib.parse import quote
@@ -54,8 +50,9 @@ class PlatformManager(BasePkgManager):
                     "https" if app.get_setting("strict_ssl") else "http"
                 ),
             ]
+        self.config = ProjectConfig.get_instance()
         BasePkgManager.__init__(
-            self, package_dir or get_project_platforms_dir(), repositories
+            self, package_dir or self.config.get_optional_dir("platforms"), repositories
         )
 
     @property
@@ -164,7 +161,7 @@ class PlatformManager(BasePkgManager):
                     deppkgs[pkgname] = set()
                 deppkgs[pkgname].add(pkgmanifest["version"])
 
-        pm = PackageManager(get_project_packages_dir())
+        pm = PackageManager(self.config.get_optional_dir("packages"))
         for manifest in pm.get_installed():
             if manifest["name"] not in names:
                 continue
@@ -385,8 +382,7 @@ class PlatformRunMixin(object):
         assert isinstance(variables, dict)
         assert isinstance(targets, list)
 
-        config = ProjectConfig.get_instance(variables["project_config"])
-        options = config.items(env=variables["pioenv"], as_dict=True)
+        options = self.config.items(env=variables["pioenv"], as_dict=True)
         if "framework" in options:
             # support PIO Core 3.0 dev/platforms
             options["pioframework"] = options["framework"]
@@ -503,9 +499,7 @@ class PlatformRunMixin(object):
         click.echo(banner, err=True)
 
 
-class PlatformBase(  # pylint: disable=too-many-public-methods
-    PlatformPackagesMixin, PlatformRunMixin
-):
+class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 
     PIO_VERSION = semantic_version.Version(util.pepver_to_semver(__version__))
     _BOARDS_CACHE = {}
@@ -519,8 +513,10 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
         self._manifest = fs.load_json(manifest_path)
         self._custom_packages = None
 
-        self.pm = PackageManager(get_project_packages_dir(), self.package_repositories)
-
+        self.config = ProjectConfig.get_instance()
+        self.pm = PackageManager(
+            self.config.get_optional_dir("packages"), self.package_repositories
+        )
         # if self.engines and "platformio" in self.engines:
         #     if self.PIO_VERSION not in semantic_version.SimpleSpec(
         #             self.engines['platformio']):
@@ -619,8 +615,8 @@ class PlatformBase(  # pylint: disable=too-many-public-methods
             self._BOARDS_CACHE[board_id] = config
 
         bdirs = [
-            get_project_boards_dir(),
-            join(get_project_core_dir(), "boards"),
+            self.config.get_optional_dir("boards"),
+            join(self.config.get_optional_dir("core"), "boards"),
             join(self.get_dir(), "boards"),
         ]
 

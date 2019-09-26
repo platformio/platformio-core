@@ -360,7 +360,7 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
             time.sleep(2 * total)
 
     raise exception.APIRequestError(
-        "Could not connect to PlatformIO API Service. " "Please try later."
+        "Could not connect to PlatformIO API Service. Please try later."
     )
 
 

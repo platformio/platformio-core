@@ -14,13 +14,23 @@
 
 # pylint: disable=redefined-builtin, too-many-arguments
 
+import os
 from collections import OrderedDict, namedtuple
 
 import click
 
 ConfigOptionClass = namedtuple(
     "ConfigOption",
-    ["scope", "name", "type", "multiple", "sysenvvar", "buildenvvar", "oldnames"],
+    [
+        "scope",
+        "name",
+        "type",
+        "multiple",
+        "sysenvvar",
+        "buildenvvar",
+        "oldnames",
+        "default",
+    ],
 )
 
 
@@ -32,9 +42,10 @@ def ConfigOption(
     sysenvvar=None,
     buildenvvar=None,
     oldnames=None,
+    default=None,
 ):
     return ConfigOptionClass(
-        scope, name, type, multiple, sysenvvar, buildenvvar, oldnames
+        scope, name, type, multiple, sysenvvar, buildenvvar, oldnames, default
     )
 
 
@@ -63,40 +74,83 @@ ProjectOptions = OrderedDict(
             ConfigPlatformioOption(name="extra_configs", multiple=True),
             # Dirs
             ConfigPlatformioOption(
-                name="core_dir", oldnames=["home_dir"], sysenvvar="PLATFORMIO_CORE_DIR"
+                name="core_dir",
+                oldnames=["home_dir"],
+                sysenvvar="PLATFORMIO_CORE_DIR",
+                default=os.path.join(os.path.expanduser("~"), ".platformio"),
             ),
             ConfigPlatformioOption(
-                name="globallib_dir", sysenvvar="PLATFORMIO_GLOBALLIB_DIR"
+                name="globallib_dir",
+                sysenvvar="PLATFORMIO_GLOBALLIB_DIR",
+                default=os.path.join("$PROJECT_CORE_DIR", "lib"),
             ),
             ConfigPlatformioOption(
-                name="platforms_dir", sysenvvar="PLATFORMIO_PLATFORMS_DIR"
+                name="platforms_dir",
+                sysenvvar="PLATFORMIO_PLATFORMS_DIR",
+                default=os.path.join("$PROJECT_CORE_DIR", "platforms"),
             ),
             ConfigPlatformioOption(
-                name="packages_dir", sysenvvar="PLATFORMIO_PACKAGES_DIR"
+                name="packages_dir",
+                sysenvvar="PLATFORMIO_PACKAGES_DIR",
+                default=os.path.join("$PROJECT_CORE_DIR", "packages"),
             ),
-            ConfigPlatformioOption(name="cache_dir", sysenvvar="PLATFORMIO_CACHE_DIR"),
+            ConfigPlatformioOption(
+                name="cache_dir",
+                sysenvvar="PLATFORMIO_CACHE_DIR",
+                default=os.path.join("$PROJECT_CORE_DIR", ".cache"),
+            ),
             ConfigPlatformioOption(
                 name="build_cache_dir", sysenvvar="PLATFORMIO_BUILD_CACHE_DIR"
             ),
             ConfigPlatformioOption(
-                name="workspace_dir", sysenvvar="PLATFORMIO_WORKSPACE_DIR"
+                name="workspace_dir",
+                sysenvvar="PLATFORMIO_WORKSPACE_DIR",
+                default=os.path.join("$PROJECT_DIR", ".pio"),
             ),
-            ConfigPlatformioOption(name="build_dir", sysenvvar="PLATFORMIO_BUILD_DIR"),
             ConfigPlatformioOption(
-                name="libdeps_dir", sysenvvar="PLATFORMIO_LIBDEPS_DIR"
+                name="build_dir",
+                sysenvvar="PLATFORMIO_BUILD_DIR",
+                default=os.path.join("$PROJECT_WORKSPACE_DIR", "build"),
             ),
-            ConfigPlatformioOption(name="lib_dir", sysenvvar="PLATFORMIO_LIB_DIR"),
             ConfigPlatformioOption(
-                name="include_dir", sysenvvar="PLATFORMIO_INCLUDE_DIR"
+                name="libdeps_dir",
+                sysenvvar="PLATFORMIO_LIBDEPS_DIR",
+                default=os.path.join("$PROJECT_WORKSPACE_DIR", "libdeps"),
             ),
-            ConfigPlatformioOption(name="src_dir", sysenvvar="PLATFORMIO_SRC_DIR"),
-            ConfigPlatformioOption(name="test_dir", sysenvvar="PLATFORMIO_TEST_DIR"),
             ConfigPlatformioOption(
-                name="boards_dir", sysenvvar="PLATFORMIO_BOARDS_DIR"
+                name="lib_dir",
+                sysenvvar="PLATFORMIO_LIB_DIR",
+                default=os.path.join("$PROJECT_DIR", "lib"),
             ),
-            ConfigPlatformioOption(name="data_dir", sysenvvar="PLATFORMIO_DATA_DIR"),
             ConfigPlatformioOption(
-                name="shared_dir", sysenvvar="PLATFORMIO_SHARED_DIR"
+                name="include_dir",
+                sysenvvar="PLATFORMIO_INCLUDE_DIR",
+                default=os.path.join("$PROJECT_DIR", "include"),
+            ),
+            ConfigPlatformioOption(
+                name="src_dir",
+                sysenvvar="PLATFORMIO_SRC_DIR",
+                default=os.path.join("$PROJECT_DIR", "src"),
+            ),
+            ConfigPlatformioOption(
+                name="test_dir",
+                sysenvvar="PLATFORMIO_TEST_DIR",
+                default=os.path.join("$PROJECT_DIR", "test"),
+            ),
+            ConfigPlatformioOption(
+                name="boards_dir",
+                sysenvvar="PLATFORMIO_BOARDS_DIR",
+                default=os.path.join("$PROJECT_DIR", "boards"),
+            ),
+            ConfigPlatformioOption(
+                name="data_dir",
+                sysenvvar="PLATFORMIO_DATA_DIR",
+                default=os.path.join("$PROJECT_DIR", "data"),
+            ),
+            ConfigPlatformioOption(
+                name="shared_dir",
+                sysenvvar="PLATFORMIO_SHARED_DIR",
+                default=os.path.join("$PROJECT_DIR", "shared"),
             ),
             #
             # [env]

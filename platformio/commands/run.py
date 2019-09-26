@@ -14,16 +14,16 @@
 
 from multiprocessing import cpu_count
 from os import getcwd
-from os.path import isfile, join
+from os.path import isfile
 from time import time
 
 import click
 from tabulate import tabulate
 
-from platformio import exception, fs, util
+from platformio import app, exception, fs, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import find_project_dir_above, get_project_build_dir
+from platformio.project.helpers import find_project_dir_above
 from platformio.run.helpers import clean_build_dir, handle_legacy_libdeps
 from platformio.run.processor import EnvironmentProcessor
 from platformio.test.processor import CTX_META_TEST_IS_RUNNING
@@ -81,6 +81,8 @@ def cli(
     verbose,
     disable_auto_clean,
 ):
+    app.set_session_var("custom_project_conf", project_conf)
+
     # find project directory on upper level
     if isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
@@ -88,20 +90,18 @@ def cli(
     is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
 
     with fs.cd(project_dir):
-        config = ProjectConfig.get_instance(
-            project_conf or join(project_dir, "platformio.ini")
-        )
+        config = ProjectConfig.get_instance(project_conf)
         config.validate(environment)
 
         # clean obsolete build dir
         if not disable_auto_clean:
+            build_dir = config.get_optional_dir("build")
             try:
-                clean_build_dir(get_project_build_dir(), config)
+                clean_build_dir(build_dir, config)
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
-                    "it manually to avoid build issues"
-                    % get_project_build_dir(force=True),
+                    "it manually to avoid build issues" % build_dir,
                     fg="yellow",
                 )
 

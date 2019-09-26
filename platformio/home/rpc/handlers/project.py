@@ -28,20 +28,16 @@ from platformio.home.rpc.handlers.piocore import PIOCoreRPC
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_libdeps_dir,
-    get_project_src_dir,
-    is_platformio_project,
-)
+from platformio.project.helpers import is_platformio_project
 
 
 class ProjectRPC(object):
     @staticmethod
     def _get_projects(project_dirs=None):
-        def _get_project_data(project_dir):
+        def _get_project_data():
             data = {"boards": [], "envLibdepsDirs": [], "libExtraDirs": []}
-            config = ProjectConfig(join(project_dir, "platformio.ini"))
-            libdeps_dir = get_project_libdeps_dir()
+            config = ProjectConfig()
+            libdeps_dir = config.get_optional_dir("libdeps")
 
             data["libExtraDirs"].extend(config.get("platformio", "lib_extra_dirs", []))
 
@@ -76,7 +72,7 @@ class ProjectRPC(object):
             boards = []
             try:
                 with fs.cd(project_dir):
-                    data = _get_project_data(project_dir)
+                    data = _get_project_data()
             except exception.PlatformIOProjectException:
                 continue
 
@@ -178,7 +174,8 @@ class ProjectRPC(object):
                     "",
                     "void loop() {",
                     "  // put your main code here, to run repeatedly:",
-                    "}" "",
+                    "}",
+                    "",
                 ]
             )  # yapf: disable
         elif framework == "mbed":
@@ -200,7 +197,8 @@ class ProjectRPC(object):
         if not main_content:
             return project_dir
         with fs.cd(project_dir):
-            src_dir = get_project_src_dir()
+            config = ProjectConfig()
+            src_dir = config.get_optional_dir("src")
             main_path = join(src_dir, "main.cpp")
             if isfile(main_path):
                 return project_dir
@@ -258,7 +256,8 @@ class ProjectRPC(object):
     @staticmethod
     def _finalize_arduino_import(_, project_dir, arduino_project_dir):
         with fs.cd(project_dir):
-            src_dir = get_project_src_dir()
+            config = ProjectConfig()
+            src_dir = config.get_optional_dir("src")
             if isdir(src_dir):
                 fs.rmtree(src_dir)
             shutil.copytree(arduino_project_dir, src_dir)

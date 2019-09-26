@@ -88,7 +88,12 @@ DEFAULT_SETTINGS = {
     },
 }
 
-SESSION_VARS = {"command_ctx": None, "force_option": False, "caller_id": None}
+SESSION_VARS = {
+    "command_ctx": None,
+    "force_option": False,
+    "caller_id": None,
+    "custom_project_conf": None,
+}
 
 
 class State(object):

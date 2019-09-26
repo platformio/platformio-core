@@ -112,6 +112,13 @@ def test_warnings(config):
         config.validate(["non-existing-env"])
 
 
+def test_defaults(config):
+    assert config.get_optional_dir("core") == os.path.join(
+        os.path.expanduser("~"), ".platformio"
+    )
+    assert config.get_optional_dir("build_cache") is None
+
+
 def test_sections(config):
     with pytest.raises(ConfigParser.NoSectionError):
         config.getraw("unknown_section", "unknown_option")

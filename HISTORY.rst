@@ -23,6 +23,7 @@ PlatformIO Core 4.0
 * Added ``--no-ansi`` flag for `PIO Core <http://docs.platformio.org/page/userguide/index.html>`__ to disable ANSI control characters
 * Fixed an issue with project generator for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__ when 2 environments were used (`issue #2824 <https://github.com/platformio/platformio-core/issues/2824>`_)
 * Fixed default PIO Unified Debugger configuration for `J-Link probe <http://docs.platformio.org/page/plus/debug-tools/jlink.html>`__
+- Fixed an issue when configuration file options partly ignored when using custom ``--project-conf`` (`issue #3034 <https://github.com/platformio/platformio-core/issues/3034>`_)
 
 4.0.3 (2019-08-30)
 ~~~~~~~~~~~~~~~~~~

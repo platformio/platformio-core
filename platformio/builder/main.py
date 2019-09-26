@@ -31,7 +31,7 @@ from platformio import fs
 from platformio.compat import PY2, dump_json_to_unicode
 from platformio.managers.platform import PlatformBase
 from platformio.proc import get_pythonexe_path
-from platformio.project import helpers as project_helpers
+from platformio.project.helpers import get_project_dir
 
 AllowSubstExceptions(NameError)
 
@@ -67,26 +67,10 @@ DEFAULT_ENV_OPTIONS = dict(
     # Propagating External Environment
     ENV=environ,
     UNIX_TIME=int(time()),
-    PROJECT_DIR=project_helpers.get_project_dir(),
-    PROJECTCORE_DIR=project_helpers.get_project_core_dir(),
-    PROJECTPACKAGES_DIR=project_helpers.get_project_packages_dir(),
-    PROJECTWORKSPACE_DIR=project_helpers.get_project_workspace_dir(),
-    PROJECTLIBDEPS_DIR=project_helpers.get_project_libdeps_dir(),
-    PROJECTINCLUDE_DIR=project_helpers.get_project_include_dir(),
-    PROJECTSRC_DIR=project_helpers.get_project_src_dir(),
-    PROJECTTEST_DIR=project_helpers.get_project_test_dir(),
-    PROJECTDATA_DIR=project_helpers.get_project_data_dir(),
-    PROJECTBUILD_DIR=project_helpers.get_project_build_dir(),
-    BUILDCACHE_DIR=project_helpers.get_project_optional_dir("build_cache_dir"),
-    BUILD_DIR=join("$PROJECTBUILD_DIR", "$PIOENV"),
-    BUILDSRC_DIR=join("$BUILD_DIR", "src"),
-    BUILDTEST_DIR=join("$BUILD_DIR", "test"),
+    BUILD_DIR=join("$PROJECT_BUILD_DIR", "$PIOENV"),
+    BUILD_SRC_DIR=join("$BUILD_DIR", "src"),
+    BUILD_TEST_DIR=join("$BUILD_DIR", "test"),
     LIBPATH=["$BUILD_DIR"],
-    LIBSOURCE_DIRS=[
-        project_helpers.get_project_lib_dir(),
-        join("$PROJECTLIBDEPS_DIR", "$PIOENV"),
-        project_helpers.get_project_global_lib_dir(),
-    ],
     PROGNAME="program",
     PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
     PYTHONEXE=get_pythonexe_path(),
@@ -110,10 +94,33 @@ env.Replace(
     }
 )
 
-if env.subst("$BUILDCACHE_DIR"):
-    if not isdir(env.subst("$BUILDCACHE_DIR")):
-        makedirs(env.subst("$BUILDCACHE_DIR"))
-    env.CacheDir("$BUILDCACHE_DIR")
+# Setup project optional directories
+config = env.GetProjectConfig()
+env.Replace(
+    PROJECT_DIR=get_project_dir(),
+    PROJECT_CORE_DIR=config.get_optional_dir("core"),
+    PROJECT_PACKAGES_DIR=config.get_optional_dir("packages"),
+    PROJECT_WORKSPACE_DIR=config.get_optional_dir("workspace"),
+    PROJECT_LIBDEPS_DIR=config.get_optional_dir("libdeps"),
+    PROJECT_INCLUDE_DIR=config.get_optional_dir("include"),
+    PROJECT_SRC_DIR=config.get_optional_dir("src"),
+    PROJECTSRC_DIR=config.get_optional_dir("src"),  # legacy for dev/platform
+    PROJECT_TEST_DIR=config.get_optional_dir("test"),
+    PROJECT_DATA_DIR=config.get_optional_dir("data"),
+    PROJECTDATA_DIR=config.get_optional_dir("data"),  # legacy for dev/platform
+    PROJECT_BUILD_DIR=config.get_optional_dir("build"),
+    BUILD_CACHE_DIR=config.get_optional_dir("build_cache"),
+    LIBSOURCE_DIRS=[
+        config.get_optional_dir("lib"),
+        join("$PROJECT_LIBDEPS_DIR", "$PIOENV"),
+        config.get_optional_dir("globallib"),
+    ],
+)
+
+if env.subst("$BUILD_CACHE_DIR"):
+    if not isdir(env.subst("$BUILD_CACHE_DIR")):
+        makedirs(env.subst("$BUILD_CACHE_DIR"))
+    env.CacheDir("$BUILD_CACHE_DIR")
 
 if int(ARGUMENTS.get("ISATTY", 0)):
     # pylint: disable=protected-access

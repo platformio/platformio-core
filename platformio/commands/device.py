@@ -15,12 +15,11 @@
 import sys
 from fnmatch import fnmatch
 from os import getcwd
-from os.path import join
 
 import click
 from serial.tools import miniterm
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.compat import dump_json_to_unicode
 from platformio.project.config import ProjectConfig
 
@@ -175,7 +174,8 @@ def device_list(  # pylint: disable=too-many-branches
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
     env_options = {}
     try:
-        env_options = get_project_options(kwargs["project_dir"], kwargs["environment"])
+        with fs.cd(kwargs["project_dir"]):
+            env_options = get_project_options(kwargs["environment"])
         for k in ("port", "speed", "rts", "dtr"):
             k2 = "monitor_%s" % k
             if k == "speed":
@@ -225,8 +225,8 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         raise exception.MinitermException(e)
 
 
-def get_project_options(project_dir, environment=None):
-    config = ProjectConfig.get_instance(join(project_dir, "platformio.ini"))
+def get_project_options(environment=None):
+    config = ProjectConfig.get_instance()
     config.validate(envs=[environment] if environment else None)
     if not environment:
         default_envs = config.default_envs()

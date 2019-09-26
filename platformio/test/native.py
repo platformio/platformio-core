@@ -14,9 +14,8 @@
 
 from os.path import join
 
-from platformio import fs, proc
+from platformio import proc
 from platformio.proc import LineBufferedAsyncPipe
-from platformio.project.helpers import get_project_build_dir
 from platformio.test.processor import TestProcessorBase
 
 
@@ -32,8 +31,7 @@ class NativeTestProcessor(TestProcessorBase):
         return self.run()
 
     def run(self):
-        with fs.cd(self.options["project_dir"]):
-            build_dir = get_project_build_dir()
+        build_dir = self.options["project_config"].get_optional_dir("build")
         result = proc.exec_command(
             [join(build_dir, self.env_name, "program")],
             stdout=LineBufferedAsyncPipe(self.on_run_out),

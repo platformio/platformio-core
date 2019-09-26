@@ -16,16 +16,7 @@ import json
 import os
 from hashlib import sha1
 from os import walk
-from os.path import (
-    basename,
-    dirname,
-    expanduser,
-    isdir,
-    isfile,
-    join,
-    realpath,
-    splitdrive,
-)
+from os.path import dirname, isdir, isfile, join
 
 from click.testing import CliRunner
 
@@ -54,126 +45,18 @@ def find_project_dir_above(path):
     return None
 
 
-def get_project_optional_dir(name, default=None):
-    project_dir = get_project_dir()
-    config = ProjectConfig.get_instance(join(project_dir, "platformio.ini"))
-    optional_dir = config.get("platformio", name)
-
-    if not optional_dir:
-        return default
-
-    if "$PROJECT_HASH" in optional_dir:
-        optional_dir = optional_dir.replace(
-            "$PROJECT_HASH",
-            "%s-%s"
-            % (
-                basename(project_dir),
-                sha1(hashlib_encode_data(project_dir)).hexdigest()[:10],
-            ),
-        )
-
-    if optional_dir.startswith("~"):
-        optional_dir = expanduser(optional_dir)
-
-    return realpath(optional_dir)
-
-
 def get_project_core_dir():
-    default = join(expanduser("~"), ".platformio")
-    core_dir = get_project_optional_dir(
-        "core_dir", get_project_optional_dir("home_dir", default)
-    )
-    win_core_dir = None
-    if WINDOWS and core_dir == default:
-        win_core_dir = splitdrive(core_dir)[0] + "\\.platformio"
-        if isdir(win_core_dir):
-            core_dir = win_core_dir
-
-    if not isdir(core_dir):
-        try:
-            os.makedirs(core_dir)
-        except OSError as e:
-            if win_core_dir:
-                os.makedirs(win_core_dir)
-                core_dir = win_core_dir
-            else:
-                raise e
-
-    assert isdir(core_dir)
-    return core_dir
-
-
-def get_project_global_lib_dir():
-    return get_project_optional_dir(
-        "globallib_dir", join(get_project_core_dir(), "lib")
-    )
-
-
-def get_project_platforms_dir():
-    return get_project_optional_dir(
-        "platforms_dir", join(get_project_core_dir(), "platforms")
-    )
-
-
-def get_project_packages_dir():
-    return get_project_optional_dir(
-        "packages_dir", join(get_project_core_dir(), "packages")
-    )
+    """ Deprecated, use ProjectConfig.get_optional_dir("core") instead """
+    return ProjectConfig.get_instance(
+        join(get_project_dir(), "platformio.ini")
+    ).get_optional_dir("core", exists=True)
 
 
 def get_project_cache_dir():
-    return get_project_optional_dir("cache_dir", join(get_project_core_dir(), ".cache"))
-
-
-def get_project_workspace_dir():
-    return get_project_optional_dir("workspace_dir", join(get_project_dir(), ".pio"))
-
-
-def get_project_build_dir(force=False):
-    path = get_project_optional_dir(
-        "build_dir", join(get_project_workspace_dir(), "build")
-    )
-    try:
-        if not isdir(path):
-            os.makedirs(path)
-    except Exception as e:  # pylint: disable=broad-except
-        if not force:
-            raise Exception(e)
-    return path
-
-
-def get_project_libdeps_dir():
-    return get_project_optional_dir(
-        "libdeps_dir", join(get_project_workspace_dir(), "libdeps")
-    )
-
-
-def get_project_lib_dir():
-    return get_project_optional_dir("lib_dir", join(get_project_dir(), "lib"))
-
-
-def get_project_include_dir():
-    return get_project_optional_dir("include_dir", join(get_project_dir(), "include"))
-
-
-def get_project_src_dir():
-    return get_project_optional_dir("src_dir", join(get_project_dir(), "src"))
-
-
-def get_project_test_dir():
-    return get_project_optional_dir("test_dir", join(get_project_dir(), "test"))
-
-
-def get_project_boards_dir():
-    return get_project_optional_dir("boards_dir", join(get_project_dir(), "boards"))
-
-
-def get_project_data_dir():
-    return get_project_optional_dir("data_dir", join(get_project_dir(), "data"))
-
-
-def get_project_shared_dir():
-    return get_project_optional_dir("shared_dir", join(get_project_dir(), "shared"))
+    """ Deprecated, use ProjectConfig.get_optional_dir("cache") instead """
+    return ProjectConfig.get_instance(
+        join(get_project_dir(), "platformio.ini")
+    ).get_optional_dir("cache")
 
 
 def compute_project_checksum(config):
@@ -185,7 +68,11 @@ def compute_project_checksum(config):
 
     # project file structure
     check_suffixes = (".c", ".cc", ".cpp", ".h", ".hpp", ".s", ".S")
-    for d in (get_project_include_dir(), get_project_src_dir(), get_project_lib_dir()):
+    for d in (
+        config.get_optional_dir("include"),
+        config.get_optional_dir("src"),
+        config.get_optional_dir("lib"),
+    ):
         if not isdir(d):
             continue
         chunks = []

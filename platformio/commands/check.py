@@ -17,23 +17,18 @@
 
 import os
 from collections import Counter
-from os.path import basename, dirname, isfile, join
+from os.path import basename, dirname, isfile
 from time import time
 
 import click
 from tabulate import tabulate
 
-from platformio import exception, fs, util
+from platformio import app, exception, fs, util
 from platformio.check.defect import DefectItem
 from platformio.check.tools import CheckToolFactory
 from platformio.compat import dump_json_to_unicode
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    find_project_dir_above,
-    get_project_dir,
-    get_project_include_dir,
-    get_project_src_dir,
-)
+from platformio.project.helpers import find_project_dir_above, get_project_dir
 
 
 @click.command("check", short_help="Run a static analysis tool on code")
@@ -72,15 +67,15 @@ def cli(
     verbose,
     json_output,
 ):
+    app.set_session_var("custom_project_conf", project_conf)
+
     # find project directory on upper level
     if isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
 
     results = []
     with fs.cd(project_dir):
-        config = ProjectConfig.get_instance(
-            project_conf or join(project_dir, "platformio.ini")
-        )
+        config = ProjectConfig.get_instance(project_conf)
         config.validate(environment)
 
         default_envs = config.default_envs()
@@ -103,7 +98,10 @@ def cli(
 
             default_filter = [
                 "+<%s/>" % basename(d)
-                for d in (get_project_src_dir(), get_project_include_dir())
+                for d in (
+                    config.get_optional_dir("src"),
+                    config.get_optional_dir("include"),
+                )
             ]
 
             tool_options = dict(

@@ -27,7 +27,7 @@ from platformio import app, exception, util
 from platformio.compat import glob_escape, string_types
 from platformio.managers.package import BasePkgManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
-from platformio.project.helpers import get_project_global_lib_dir
+from platformio.project.config import ProjectConfig
 
 
 class LibraryManager(BasePkgManager):
@@ -35,9 +35,10 @@ class LibraryManager(BasePkgManager):
     FILE_CACHE_VALID = "30d"  # 1 month
 
     def __init__(self, package_dir=None):
-        if not package_dir:
-            package_dir = get_project_global_lib_dir()
-        super(LibraryManager, self).__init__(package_dir)
+        self.config = ProjectConfig.get_instance()
+        super(LibraryManager, self).__init__(
+            package_dir or self.config.get_optional_dir("globallib")
+        )
 
     @property
     def manifest_names(self):

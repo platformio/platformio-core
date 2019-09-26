@@ -20,7 +20,6 @@ from string import Template
 import click
 
 from platformio import exception
-from platformio.project.helpers import get_project_test_dir
 
 TRANSPORT_OPTIONS = {
     "arduino": {
@@ -104,7 +103,9 @@ class TestProcessorBase(object):
 
     def build_or_upload(self, target):
         if not self._outputcpp_generated:
-            self.generate_outputcpp(get_project_test_dir())
+            self.generate_outputcpp(
+                self.options["project_config"].get_optional_dir("test")
+            )
             self._outputcpp_generated = True
 
         if self.test_name != "*":

@@ -821,16 +821,16 @@ class ProjectAsLibBuilder(LibBuilderBase):
 
     @property
     def include_dir(self):
-        include_dir = self.env.subst("$PROJECTINCLUDE_DIR")
+        include_dir = self.env.subst("$PROJECT_INCLUDE_DIR")
         return include_dir if isdir(include_dir) else None
 
     @property
     def src_dir(self):
-        return self.env.subst("$PROJECTSRC_DIR")
+        return self.env.subst("$PROJECT_SRC_DIR")
 
     def get_include_dirs(self):
         include_dirs = []
-        project_include_dir = self.env.subst("$PROJECTINCLUDE_DIR")
+        project_include_dir = self.env.subst("$PROJECT_INCLUDE_DIR")
         if isdir(project_include_dir):
             include_dirs.append(project_include_dir)
         for include_dir in LibBuilderBase.get_include_dirs(self):
@@ -845,9 +845,9 @@ class ProjectAsLibBuilder(LibBuilderBase):
         if "__test" in COMMAND_LINE_TARGETS:
             items.extend(
                 [
-                    join("$PROJECTTEST_DIR", item)
+                    join("$PROJECT_TEST_DIR", item)
                     for item in self.env.MatchSourceFiles(
-                        "$PROJECTTEST_DIR", "$PIOTEST_SRC_FILTER"
+                        "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
                     )
                 ]
             )
@@ -896,7 +896,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
                 not_found_uri.append(uri)
 
         did_install = False
-        lm = LibraryManager(self.env.subst(join("$PROJECTLIBDEPS_DIR", "$PIOENV")))
+        lm = LibraryManager(self.env.subst(join("$PROJECT_LIBDEPS_DIR", "$PIOENV")))
         for uri in not_found_uri:
             try:
                 lm.install(uri)

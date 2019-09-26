@@ -22,9 +22,8 @@ from time import time
 import click
 from tabulate import tabulate
 
-from platformio import exception, fs, util
+from platformio import app, exception, fs, util
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import get_project_test_dir
 from platformio.test.embedded import EmbeddedTestProcessor
 from platformio.test.native import NativeTestProcessor
 
@@ -97,16 +96,16 @@ def cli(  # pylint: disable=redefined-builtin
     monitor_dtr,
     verbose,
 ):
+    app.set_session_var("custom_project_conf", project_conf)
+
     with fs.cd(project_dir):
-        test_dir = get_project_test_dir()
+        config = ProjectConfig.get_instance(project_conf)
+        config.validate(envs=environment)
+
+        test_dir = config.get_optional_dir("test")
         if not isdir(test_dir):
             raise exception.TestDirNotExists(test_dir)
         test_names = get_test_names(test_dir)
-
-        config = ProjectConfig.get_instance(
-            project_conf or join(project_dir, "platformio.ini")
-        )
-        config.validate(envs=environment)
 
         click.echo("Verbose mode can be enabled via `-v, --verbose` option")
         click.secho("Collected %d items" % len(test_names), bold=True)

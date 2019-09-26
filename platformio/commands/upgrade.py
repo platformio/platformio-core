@@ -92,7 +92,7 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
 def get_pip_package(to_develop):
     if not to_develop:
         return "platformio"
-    dl_url = "https://github.com/platformio/" "platformio-core/archive/develop.zip"
+    dl_url = "https://github.com/platformio/platformio-core/archive/develop.zip"
     cache_dir = get_project_cache_dir()
     if not os.path.isdir(cache_dir):
         os.makedirs(cache_dir)
