@@ -27,8 +27,7 @@ def _get_file_location(env, elf_path, addr, sysenv):
     cmd = [env.subst("$CC").replace(
         "-gcc", "-addr2line"), "-e", elf_path, hex(addr)]
     result = exec_command(cmd, env=sysenv)
-    location = result['out'].strip().replace("\\", "/")
-    return location
+    return result['out'].strip().replace("\\", "/")
 
 
 def _determine_section(sections, symbol_addr):
@@ -49,16 +48,13 @@ def _demangle_cpp_name(env, symbol_name, sysenv):
 
 
 def _is_ram_section(section):
-    if section.get("type", "") in (
-            "SHT_NOBITS", "SHT_PROGBITS") and section.get("flags", "") == "WA":
-        return True
-    return False
+    return section.get("type", "") in (
+            "SHT_NOBITS", "SHT_PROGBITS") and section.get("flags", "") == "WA"
 
 
 def _is_flash_section(section):
-    if section.get("type") == "SHT_PROGBITS" and "A" in section.get("flags"):
-        return True
-    return False
+    return section.get("type") == "SHT_PROGBITS" and "A" in section.get(
+        "flags")
 
 
 def _is_valid_symbol(symbol_name, symbol_type, symbol_address):
