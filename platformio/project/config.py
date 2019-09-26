@@ -381,8 +381,8 @@ class ProjectConfigDirsMixin(object):
 
         result = os.path.realpath(result)
 
-        if exists:
-            os.makedirs(result, exist_ok=True)
+        if exists and not os.path.isdir(result):
+            os.makedirs(result)
 
         return result
 
