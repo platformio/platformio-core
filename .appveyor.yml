@@ -14,6 +14,7 @@ environment:
 install:
   - cmd: git submodule update --init --recursive
   - cmd: SET PATH=C:\MinGW\bin;%PATH%
+  - cmd: SET PLATFORMIO_CORE_DIR=C:\.pio
   - cmd: pip install --force-reinstall tox
 
 test_script:
