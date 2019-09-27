@@ -24,16 +24,14 @@ from platformio.proc import exec_command
 
 
 def _get_file_location(env, elf_path, addr, sysenv):
-    cmd = [env.subst("$CC").replace(
-        "-gcc", "-addr2line"), "-e", elf_path, hex(addr)]
+    cmd = [env.subst("$CC").replace("-gcc", "-addr2line"), "-e", elf_path, hex(addr)]
     result = exec_command(cmd, env=sysenv)
-    return result['out'].strip().replace("\\", "/")
+    return result["out"].strip().replace("\\", "/")
 
 
 def _determine_section(sections, symbol_addr):
     for section, info in sections.items():
-        if symbol_addr in range(info['start_addr'],
-                                info['start_addr'] + info['size']):
+        if symbol_addr in range(info["start_addr"], info["start_addr"] + info["size"]):
             return section
     return "unknown"
 
@@ -41,20 +39,21 @@ def _determine_section(sections, symbol_addr):
 def _demangle_cpp_name(env, symbol_name, sysenv):
     cmd = [env.subst("$CC").replace("-gcc", "-c++filt"), symbol_name]
     result = exec_command(cmd, env=sysenv)
-    demangled_name = result['out'].strip()
+    demangled_name = result["out"].strip()
     if "(" in demangled_name:
-        demangled_name = demangled_name[0:demangled_name.find("(")]
+        demangled_name = demangled_name[0 : demangled_name.find("(")]
     return demangled_name
 
 
 def _is_ram_section(section):
-    return section.get("type", "") in (
-            "SHT_NOBITS", "SHT_PROGBITS") and section.get("flags", "") == "WA"
+    return (
+        section.get("type", "") in ("SHT_NOBITS", "SHT_PROGBITS")
+        and section.get("flags", "") == "WA"
+    )
 
 
 def _is_flash_section(section):
-    return section.get("type") == "SHT_PROGBITS" and "A" in section.get(
-        "flags")
+    return section.get("type") == "SHT_PROGBITS" and "A" in section.get("flags")
 
 
 def _is_valid_symbol(symbol_name, symbol_type, symbol_address):
@@ -67,15 +66,15 @@ def _collect_sections_info(elffile):
         if section.is_null():
             continue
 
-        section_type = section['sh_type']
-        section_flags = describe_sh_flags(section['sh_flags'])
+        section_type = section["sh_type"]
+        section_flags = describe_sh_flags(section["sh_flags"])
         section_size = section.data_size
 
         sections[section.name] = {
             "size": section_size,
-            "start_addr": section['sh_addr'],
+            "start_addr": section["sh_addr"],
             "type": section_type,
-            "flags": section_flags
+            "flags": section_flags,
         }
 
     return sections
@@ -84,7 +83,7 @@ def _collect_sections_info(elffile):
 def _collect_symbols_info(env, elffile, elf_path, sections):
     symbols = []
 
-    symbol_section = elffile.get_section_by_name('.symtab')
+    symbol_section = elffile.get_section_by_name(".symtab")
     if symbol_section.is_null():
         sys.stderr.write("Couldn't find symbol table. Is ELF file stripped?")
         env.Exit(1)
@@ -93,26 +92,26 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
     sysenv["PATH"] = str(env["ENV"]["PATH"])
 
     for s in symbol_section.iter_symbols():
-        symbol_info = s.entry['st_info']
-        symbol_addr = s['st_value']
-        symbol_size = s['st_size']
-        symbol_type = symbol_info['type']
+        symbol_info = s.entry["st_info"]
+        symbol_addr = s["st_value"]
+        symbol_size = s["st_size"]
+        symbol_type = symbol_info["type"]
 
         if not _is_valid_symbol(s.name, symbol_type, symbol_addr):
             continue
 
         symbol = {
             "addr": symbol_addr,
-            "bind": symbol_info['bind'],
+            "bind": symbol_info["bind"],
             "location": _get_file_location(env, elf_path, symbol_addr, sysenv),
             "name": s.name,
             "type": symbol_type,
             "size": symbol_size,
-            "section": _determine_section(sections, symbol_addr)
+            "section": _determine_section(sections, symbol_addr),
         }
 
         if s.name.startswith("_Z"):
-            symbol['demangled_name'] = _demangle_cpp_name(env, s.name, sysenv)
+            symbol["demangled_name"] = _demangle_cpp_name(env, s.name, sysenv)
 
         symbols.append(symbol)
 
@@ -130,11 +129,8 @@ def _calculate_firmware_size(sections):
     return ram_size, flash_size
 
 
-def DumpSizeData(_, target, source, env):
-    data = {
-        "memory": {},
-        "version": 1
-    }
+def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
+    data = {"memory": {}, "version": 1}
 
     elf_path = env.subst("$PIOMAINPROG")
 
@@ -147,10 +143,10 @@ def DumpSizeData(_, target, source, env):
 
         sections = _collect_sections_info(elffile)
         firmware_ram, firmware_flash = _calculate_firmware_size(sections)
-        data['memory']['total'] = {
+        data["memory"]["total"] = {
             "ram_size": firmware_ram,
             "flash_size": firmware_flash,
-            "sections": sections
+            "sections": sections,
         }
 
         files = dict()
@@ -160,31 +156,21 @@ def DumpSizeData(_, target, source, env):
                 file_path = "unknown"
 
             if not files.get(file_path, {}):
-                files[file_path] = {
-                    "symbols": [],
-                    "ram_size": 0,
-                    "flash_size": 0
-                }
+                files[file_path] = {"symbols": [], "ram_size": 0, "flash_size": 0}
 
             symbol_size = symbol.get("size", 0)
             section = sections.get(symbol.get("section", ""), {})
             if _is_ram_section(section):
-                files[file_path]['ram_size'] += symbol_size
+                files[file_path]["ram_size"] += symbol_size
             if _is_flash_section(section):
-                files[file_path]['flash_size'] += symbol_size
+                files[file_path]["flash_size"] += symbol_size
 
-            files[file_path]['symbols'].append(symbol)
+            files[file_path]["symbols"].append(symbol)
 
-        data['memory']['files'] = files
+        data["memory"]["files"] = files
 
     with open(join(env.subst("$BUILD_DIR"), "sizedata.json"), "w") as fp:
         fp.write(dump_json_to_unicode(data))
-
-
-def ConfigureSizeDataTarget(env):
-    for flags_section in ("ASFLAGS", "CCFLAGS", "LINKFLAGS"):
-        if not any("-g" in f for f in env.get(flags_section, [])):
-            env.Prepend(**{flags_section: ["-g"]})
 
 
 def exists(_):
@@ -193,5 +179,4 @@ def exists(_):
 
 def generate(env):
     env.AddMethod(DumpSizeData)
-    env.AddMethod(ConfigureSizeDataTarget)
     return env

@@ -103,9 +103,6 @@ def BuildProgram(env):
     if not Util.case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 
-    if "debug" in COMMAND_LINE_TARGETS or env.GetProjectOption("build_type") == "debug":
-        env.ConfigureDebugTarget()
-
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
         env.ProcessFlags(env.BoardConfig().get("build.extra_flags"))
@@ -116,17 +113,17 @@ def BuildProgram(env):
     # process framework scripts
     env.BuildFrameworks(env.get("PIOFRAMEWORK"))
 
-    # restore PIO macros if it was deleted by framework
-    _append_pio_macros()
+    if (
+        set(["debug", "sizedata"]) & set(COMMAND_LINE_TARGETS)
+        or env.GetProjectOption("build_type") == "debug"
+    ):
+        env.ConfigureDebugFlags()
 
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 
     if "__test" in COMMAND_LINE_TARGETS:
         env.ConfigureTestTarget()
-
-    if "sizedata" in COMMAND_LINE_TARGETS:
-        env.ConfigureSizeDataTarget()
 
     # build project with dependencies
     _build_project_deps(env)

@@ -194,10 +194,9 @@ if "idedata" in COMMAND_LINE_TARGETS:
 if "sizedata" in COMMAND_LINE_TARGETS:
     AlwaysBuild(
         env.Alias(
-            "sizedata", DEFAULT_TARGETS,
-            env.VerboseAction(
-                env.DumpSizeData, "Generating memory usage report...",
-            )
+            "sizedata",
+            DEFAULT_TARGETS,
+            env.VerboseAction(env.DumpSizeData, "Generating memory usage report..."),
         )
     )
 

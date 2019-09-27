@@ -23,6 +23,7 @@ from tempfile import mkstemp
 
 from SCons.Action import Action  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
+from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 
 from platformio import fs, util
 from platformio.compat import get_file_contents, glob_escape
@@ -294,32 +295,37 @@ def VerboseAction(_, act, actstr):
 
 def PioClean(env, clean_dir):
     if not isdir(clean_dir):
-        print ("Build environment is clean")
+        print("Build environment is clean")
         env.Exit(0)
     clean_rel_path = relpath(clean_dir)
     for root, _, files in walk(clean_dir):
         for f in files:
             dst = join(root, f)
             remove(dst)
-            print (
+            print(
                 "Removed %s" % (dst if clean_rel_path.startswith(".") else relpath(dst))
             )
-    print ("Done cleaning")
+    print("Done cleaning")
     fs.rmtree(clean_dir)
     env.Exit(0)
 
 
-def ConfigureDebugTarget(env):
-    if not env.subst("$PIODEBUGFLAGS"):
-        env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb3"])
-    env.Append(
-        BUILD_FLAGS=list(env["PIODEBUGFLAGS"]) + ["-D__PLATFORMIO_BUILD_DEBUG__"]
-    )
-    unflags = ["-Os"]
-    for level in [0, 1, 2]:
-        for flag in ("O", "g", "ggdb"):
-            unflags.append("-%s%d" % (flag, level))
-    env.Append(BUILD_UNFLAGS=unflags)
+def ConfigureDebugFlags(env):
+    def _cleanup_debug_flags(scope):
+        if scope not in env:
+            return
+        unflags = ["-Os", "-g"]
+        for level in [0, 1, 2]:
+            for flag in ("O", "g", "ggdb"):
+                unflags.append("-%s%d" % (flag, level))
+        env[scope] = [f for f in env.get(scope, []) if f not in unflags]
+
+    env.Append(CPPDEFINES=["__PLATFORMIO_BUILD_DEBUG__"])
+
+    debug_flags = ["-Og", "-g3", "-ggdb3"]
+    for scope in ("ASFLAGS", "CCFLAGS", "LINKFLAGS"):
+        _cleanup_debug_flags(scope)
+        env.Append(**{scope: debug_flags})
 
 
 def ConfigureTestTarget(env):
@@ -361,7 +367,7 @@ def generate(env):
     env.AddMethod(GetActualLDScript)
     env.AddMethod(VerboseAction)
     env.AddMethod(PioClean)
-    env.AddMethod(ConfigureDebugTarget)
+    env.AddMethod(ConfigureDebugFlags)
     env.AddMethod(ConfigureTestTarget)
     env.AddMethod(GetExtraScripts)
     return env
