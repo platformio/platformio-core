@@ -125,6 +125,9 @@ def BuildProgram(env):
     if "__test" in COMMAND_LINE_TARGETS:
         env.ConfigureTestTarget()
 
+    if "sizedata" in COMMAND_LINE_TARGETS:
+        env.ConfigureSizeDataTarget()
+
     # build project with dependencies
     _build_project_deps(env)
 

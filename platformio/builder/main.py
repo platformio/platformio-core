@@ -61,6 +61,7 @@ DEFAULT_ENV_OPTIONS = dict(
         "pioupload",
         "piomisc",
         "pioide",
+        "piosize",
     ],
     toolpath=[join(fs.get_source_dir(), "builder", "tools")],
     variables=clivars,
@@ -189,3 +190,15 @@ if "idedata" in COMMAND_LINE_TARGETS:
         )
     )
     env.Exit(0)
+
+if "sizedata" in COMMAND_LINE_TARGETS:
+    AlwaysBuild(
+        env.Alias(
+            "sizedata", DEFAULT_TARGETS,
+            env.VerboseAction(
+                env.DumpSizeData, "Generating memory usage report...",
+            )
+        )
+    )
+
+    Default("sizedata")
