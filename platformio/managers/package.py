@@ -405,7 +405,7 @@ class PkgInstallerMixin(object):
                     self.parse_semver_version(manifest["version"], raise_exception=True)
                 ):
                     continue
-                elif not best or (
+                if not best or (
                     self.parse_semver_version(manifest["version"], raise_exception=True)
                     > self.parse_semver_version(best["version"], raise_exception=True)
                 ):

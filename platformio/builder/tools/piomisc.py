@@ -117,7 +117,7 @@ class InoToCPPConverter(object):
                     stropen = True
                     newlines.append(line[:-1])
                     continue
-                elif stropen:
+                if stropen:
                     newlines[len(newlines) - 1] += line[:-1]
                     continue
             elif stropen and line.endswith(('",', '";')):
@@ -199,7 +199,7 @@ class InoToCPPConverter(object):
 
 
 def ConvertInoToCpp(env):
-    src_dir = glob_escape(env.subst("$PROJECTSRC_DIR"))
+    src_dir = glob_escape(env.subst("$PROJECT_SRC_DIR"))
     ino_nodes = env.Glob(join(src_dir, "*.ino")) + env.Glob(join(src_dir, "*.pde"))
     if not ino_nodes:
         return
@@ -256,7 +256,7 @@ def GetActualLDScript(env):
         if f == "-T":
             script_in_next = True
             continue
-        elif script_in_next:
+        if script_in_next:
             script_in_next = False
             raw_script = f
         elif f.startswith("-Wl,-T"):
@@ -309,7 +309,7 @@ def PioClean(env, clean_dir):
     env.Exit(0)
 
 
-def ProcessDebug(env):
+def ConfigureDebugTarget(env):
     if not env.subst("$PIODEBUGFLAGS"):
         env.Replace(PIODEBUGFLAGS=["-Og", "-g3", "-ggdb3"])
     env.Append(
@@ -322,7 +322,7 @@ def ProcessDebug(env):
     env.Append(BUILD_UNFLAGS=unflags)
 
 
-def ProcessTest(env):
+def ConfigureTestTarget(env):
     env.Append(
         CPPDEFINES=["UNIT_TEST", "UNITY_INCLUDE_CONFIG_H"],
         CPPPATH=[join("$BUILD_DIR", "UnityTestLib")],
@@ -361,7 +361,7 @@ def generate(env):
     env.AddMethod(GetActualLDScript)
     env.AddMethod(VerboseAction)
     env.AddMethod(PioClean)
-    env.AddMethod(ProcessDebug)
-    env.AddMethod(ProcessTest)
+    env.AddMethod(ConfigureDebugTarget)
+    env.AddMethod(ConfigureTestTarget)
     env.AddMethod(GetExtraScripts)
     return env

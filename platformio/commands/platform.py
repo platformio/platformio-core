@@ -331,7 +331,7 @@ def platform_uninstall(platforms):
     for platform in platforms:
         if pm.uninstall(platform):
             click.secho(
-                "The platform '%s' has been successfully " "uninstalled!" % platform,
+                "The platform '%s' has been successfully uninstalled!" % platform,
                 fg="green",
             )
 

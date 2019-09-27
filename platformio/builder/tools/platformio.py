@@ -67,15 +67,17 @@ def _build_project_deps(env):
     is_test = "__test" in COMMAND_LINE_TARGETS
     if is_test:
         projenv.BuildSources(
-            "$BUILDTEST_DIR", "$PROJECTTEST_DIR", "$PIOTEST_SRC_FILTER"
+            "$BUILD_TEST_DIR", "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
         )
     if not is_test or env.GetProjectOption("test_build_project_src", False):
-        projenv.BuildSources("$BUILDSRC_DIR", "$PROJECTSRC_DIR", env.get("SRC_FILTER"))
+        projenv.BuildSources(
+            "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
+        )
 
     if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
             "Error: Nothing to build. Please put your source code files "
-            "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR")
+            "to '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
         )
         env.Exit(1)
 
@@ -102,7 +104,7 @@ def BuildProgram(env):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
 
     if "debug" in COMMAND_LINE_TARGETS or env.GetProjectOption("build_type") == "debug":
-        env.ProcessDebug()
+        env.ConfigureDebugTarget()
 
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
@@ -121,7 +123,7 @@ def BuildProgram(env):
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 
     if "__test" in COMMAND_LINE_TARGETS:
-        env.ProcessTest()
+        env.ConfigureTestTarget()
 
     # build project with dependencies
     _build_project_deps(env)

@@ -148,7 +148,7 @@ class FDSizeMismatch(PlatformIOPackageException):
 class FDSHASumMismatch(PlatformIOPackageException):
 
     MESSAGE = (
-        "The 'sha1' sum '{0}' of downloaded file '{1}' " "is not equal to remote '{2}'"
+        "The 'sha1' sum '{0}' of downloaded file '{1}' is not equal to remote '{2}'"
     )
 
 

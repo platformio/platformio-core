@@ -22,7 +22,6 @@ import pytest
 from platformio import util
 from platformio.managers.platform import PlatformFactory, PlatformManager
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import get_project_build_dir
 
 
 def pytest_generate_tests(metafunc):
@@ -71,11 +70,12 @@ def pytest_generate_tests(metafunc):
 @pytest.mark.examples
 def test_run(pioproject_dir):
     with util.cd(pioproject_dir):
-        build_dir = get_project_build_dir()
+        config = ProjectConfig()
+        build_dir = config.get_optional_dir("build")
         if isdir(build_dir):
             util.rmtree_(build_dir)
 
-        env_names = ProjectConfig(join(pioproject_dir, "platformio.ini")).envs()
+        env_names = config.envs()
         result = util.exec_command(
             ["platformio", "run", "-e", random.choice(env_names)]
         )

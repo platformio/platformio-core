@@ -164,7 +164,7 @@ def test_check_filter_sources(clirunner, check_dir):
     assert style == EXPECTED_STYLE
 
 
-def test_check_failed_if_no_source_files(clirunner, tmpdir):
+def test_check_no_source_files(clirunner, tmpdir):
     tmpdir.join("platformio.ini").write(DEFAULT_CONFIG)
     tmpdir.mkdir("src")
 
@@ -178,7 +178,7 @@ def test_check_failed_if_no_source_files(clirunner, tmpdir):
     assert style == 0
 
 
-def test_check_failed_if_bad_flag_passed(clirunner, check_dir):
+def test_check_bad_flag_passed(clirunner, check_dir):
     result = clirunner.invoke(
         cmd_check, ["--project-dir", str(check_dir), '"--flags=--UNKNOWN"']
     )

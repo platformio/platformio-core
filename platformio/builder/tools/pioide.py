@@ -54,7 +54,7 @@ def _dump_includes(env, projenv):
     if unity_dir:
         includes.append(unity_dir)
 
-    includes.extend([env.subst("$PROJECTINCLUDE_DIR"), env.subst("$PROJECTSRC_DIR")])
+    includes.extend([env.subst("$PROJECT_INCLUDE_DIR"), env.subst("$PROJECT_SRC_DIR")])
 
     # remove duplicates
     result = []

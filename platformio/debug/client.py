@@ -91,7 +91,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             self.project_dir,
             "-l",
             "10",
-        ]  # yapf: disable
+        ]
         args.extend(self.args)
         if not gdb_path:
             raise exception.DebugInvalidOptions("GDB client is not configured")
@@ -139,14 +139,14 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
                 "   echo Warning! Undefined pio_reset_target command\\n",
                 "   mon reset",
                 "end",
-            ] + commands  # yapf: disable
+            ] + commands
         if not any("define pio_reset_halt_target" in cmd for cmd in commands):
             commands = [
                 "define pio_reset_halt_target",
                 "   echo Warning! Undefined pio_reset_halt_target command\\n",
                 "   mon reset halt",
                 "end",
-            ] + commands  # yapf: disable
+            ] + commands
         if not any("define pio_restart_target" in cmd for cmd in commands):
             commands += [
                 "define pio_restart_target",
@@ -154,7 +154,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
                 "   $INIT_BREAK",
                 "   %s" % ("continue" if patterns["INIT_BREAK"] else "next"),
                 "end",
-            ]  # yapf: disable
+            ]
 
         banner = [
             "echo PlatformIO Unified Debugger -> http://bit.ly/pio-debug\\n",
@@ -243,7 +243,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             % self.debug_options["init_break"]
         )
         self.console_log(
-            "PlatformIO: More configuration options -> " "http://bit.ly/pio-debug"
+            "PlatformIO: More configuration options -> http://bit.ly/pio-debug"
         )
         self.transport.write(
             b"0-exec-continue\n" if helpers.is_mi_mode(self.args) else b"continue\n"

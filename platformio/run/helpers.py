@@ -18,16 +18,14 @@ from os.path import isdir, isfile, join
 import click
 
 from platformio import fs
-from platformio.project.helpers import (
-    compute_project_checksum,
-    get_project_dir,
-    get_project_libdeps_dir,
-)
+from platformio.project.helpers import compute_project_checksum, get_project_dir
 
 
 def handle_legacy_libdeps(project_dir, config):
     legacy_libdeps_dir = join(project_dir, ".piolibdeps")
-    if not isdir(legacy_libdeps_dir) or legacy_libdeps_dir == get_project_libdeps_dir():
+    if not isdir(legacy_libdeps_dir) or legacy_libdeps_dir == config.get_optional_dir(
+        "libdeps"
+    ):
         return
     if not config.has_section("env"):
         config.add_section("env")

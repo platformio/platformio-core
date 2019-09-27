@@ -19,7 +19,6 @@ from tempfile import NamedTemporaryFile
 from platformio.check.defect import DefectItem
 from platformio.check.tools.base import CheckToolBase
 from platformio.managers.core import get_core_package_dir
-from platformio.project.helpers import get_project_core_dir
 
 
 class CppcheckCheckTool(CheckToolBase):
@@ -110,7 +109,7 @@ class CppcheckCheckTool(CheckToolBase):
         cmd.append("--file-list=%s" % self._generate_src_file())
         cmd.append("--includes-file=%s" % self._generate_inc_file())
 
-        core_dir = get_project_core_dir()
+        core_dir = self.config.get_optional_dir("core")
         cmd.append("--suppress=*:%s*" % core_dir)
         cmd.append("--suppress=unmatchedSuppression:%s*" % core_dir)
 

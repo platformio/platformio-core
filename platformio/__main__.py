@@ -70,7 +70,7 @@ def configure():
     # https://urllib3.readthedocs.org
     # /en/latest/security.html#insecureplatformwarning
     try:
-        import urllib3
+        import urllib3  # pylint: disable=import-outside-toplevel
 
         urllib3.disable_warnings()
     except (AttributeError, ImportError):

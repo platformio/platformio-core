@@ -17,11 +17,11 @@
 
 import os
 import signal
-from os.path import isfile, join
+from os.path import isfile
 
 import click
 
-from platformio import exception, fs, proc, util
+from platformio import app, exception, fs, proc, util
 from platformio.debug import helpers
 from platformio.managers.core import inject_contrib_pysite
 from platformio.project.config import ProjectConfig
@@ -54,6 +54,8 @@ from platformio.project.helpers import is_platformio_project, load_project_ide_d
 @click.argument("__unprocessed", nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
 def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unprocessed):
+    app.set_session_var("custom_project_conf", project_conf)
+
     # use env variables from Eclipse or CLion
     for sysenv in ("CWD", "PWD", "PLATFORMIO_PROJECT_DIR"):
         if is_platformio_project(project_dir):
@@ -62,9 +64,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
             project_dir = os.getenv(sysenv)
 
     with fs.cd(project_dir):
-        config = ProjectConfig.get_instance(
-            project_conf or join(project_dir, "platformio.ini")
-        )
+        config = ProjectConfig.get_instance(project_conf)
         config.validate(envs=[environment] if environment else None)
 
         env_name = environment or helpers.get_default_debug_env(config)

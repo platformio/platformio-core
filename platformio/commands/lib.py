@@ -21,18 +21,13 @@ import click
 import semantic_version
 from tabulate import tabulate
 
-from platformio import exception, fs, util
+from platformio import exception, util
 from platformio.commands import PlatformioCLI
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.lib import LibraryManager, get_builtin_libs, is_builtin_lib
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (
-    get_project_dir,
-    get_project_global_lib_dir,
-    get_project_libdeps_dir,
-    is_platformio_project,
-)
+from platformio.project.helpers import get_project_dir, is_platformio_project
 
 try:
     from urllib.parse import quote
@@ -43,6 +38,10 @@ CTX_META_INPUT_DIRS_KEY = __name__ + ".input_dirs"
 CTX_META_PROJECT_ENVIRONMENTS_KEY = __name__ + ".project_environments"
 CTX_META_STORAGE_DIRS_KEY = __name__ + ".storage_dirs"
 CTX_META_STORAGE_LIBDEPS_KEY = __name__ + ".storage_lib_deps"
+
+
+def get_project_global_lib_dir():
+    return ProjectConfig.get_instance().get_optional_dir("globallib")
 
 
 @click.group(short_help="Library Manager")
@@ -105,10 +104,9 @@ def cli(ctx, **options):
         if not is_platformio_project(storage_dir):
             ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
             continue
-        with fs.cd(storage_dir):
-            libdeps_dir = get_project_libdeps_dir()
         config = ProjectConfig.get_instance(join(storage_dir, "platformio.ini"))
         config.validate(options["environment"], silent=in_silence)
+        libdeps_dir = config.get_optional_dir("libdeps")
         for env in config.envs():
             if options["environment"] and env not in options["environment"]:
                 continue
@@ -336,7 +334,7 @@ def lib_search(query, json_output, page, noninteractive, **filters):
         click.secho(" *", fg="green")
         click.secho("For example: DS*, PCA*, DHT* and etc.\n", fg="yellow")
         click.echo(
-            "For more examples and advanced search syntax, " "please use documentation:"
+            "For more examples and advanced search syntax, please use documentation:"
         )
         click.secho(
             "https://docs.platformio.org/page/userguide/lib/cmd_search.html\n",

@@ -11,4 +11,5 @@ disable=
     too-few-public-methods,
     useless-object-inheritance,
     useless-import-alias,
-    fixme
+    fixme,
+    bad-option-value

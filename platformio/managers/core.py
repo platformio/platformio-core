@@ -21,7 +21,7 @@ from platformio import __version__, exception, fs
 from platformio.compat import PY2, WINDOWS
 from platformio.managers.package import PackageManager
 from platformio.proc import copy_pythonpath_to_osenv, get_pythonexe_path
-from platformio.project.helpers import get_project_packages_dir
+from platformio.project.config import ProjectConfig
 
 CORE_PACKAGES = {
     "contrib-piohome": "^2.3.2",
@@ -40,8 +40,10 @@ PIOPLUS_AUTO_UPDATES_MAX = 100
 
 class CorePackageManager(PackageManager):
     def __init__(self):
+        config = ProjectConfig.get_instance()
+        packages_dir = config.get_optional_dir("packages")
         super(CorePackageManager, self).__init__(
-            get_project_packages_dir(),
+            packages_dir,
             [
                 "https://dl.bintray.com/platformio/dl-packages/manifest.json",
                 "http%s://dl.platformio.org/packages/manifest.json"

@@ -6,14 +6,15 @@ platform:
 environment:
   matrix:
     - TOXENV: "py27"
-      PLATFORMIO_BUILD_CACHE_DIR: C:/Temp/PIO_Build_Cache_P2_{build}
+      PLATFORMIO_BUILD_CACHE_DIR: C:\Temp\PIO_Build_Cache_P2_{build}
 
     - TOXENV: "py36"
-      PLATFORMIO_BUILD_CACHE_DIR: C:/Temp/PIO_Build_Cache_P3_{build}
+      PLATFORMIO_BUILD_CACHE_DIR: C:\Temp\PIO_Build_Cache_P3_{build}
 
 install:
   - cmd: git submodule update --init --recursive
   - cmd: SET PATH=C:\MinGW\bin;%PATH%
+  - cmd: SET PLATFORMIO_CORE_DIR=C:\.pio
   - cmd: pip install --force-reinstall tox
 
 test_script:
