@@ -116,7 +116,9 @@ def test_defaults(config):
     assert config.get_optional_dir("core") == os.path.join(
         os.path.expanduser("~"), ".platformio"
     )
-    assert config.get_optional_dir("build_cache") is None
+    assert config.get_optional_dir("build_cache") == os.environ.get(
+        "PLATFORMIO_BUILD_CACHE_DIR"
+    )
 
 
 def test_sections(config):
