@@ -79,7 +79,8 @@ class ProjectConfigBase(object):
         )
 
     def __init__(self, path=None, parse_extra=True, expand_interpolations=True):
-        self.path = self.get_default_path() if path is None else path
+        path = self.get_default_path() if path is None else path
+        self.path = path
         self.expand_interpolations = expand_interpolations
         self.warnings = []
         self._parsed = []

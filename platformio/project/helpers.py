@@ -16,7 +16,7 @@ import json
 import os
 from hashlib import sha1
 from os import walk
-from os.path import expanduser, dirname, isdir, isfile, join
+from os.path import dirname, expanduser, isdir, isfile, join
 
 from click.testing import CliRunner
 
