@@ -176,7 +176,9 @@ def test_library_json_valid_model():
   "license": "MIT"
 }
 """
-    data = parser.ManifestFactory.new(contents, parser.ManifestFileType.LIBRARY_JSON)
+    data = parser.ManifestParserFactory.new(
+        contents, parser.ManifestFileType.LIBRARY_JSON
+    )
     model = ManifestModel(**data.as_dict())
     assert sorted(model.as_dict().items()) == sorted(
         {
@@ -221,7 +223,7 @@ category=Display
 url=https://github.com/olikraus/u8glib
 architectures=avr,sam
 """
-    data = parser.ManifestFactory.new(
+    data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_PROPERTIES
     )
     model = ManifestModel(**data.as_dict())

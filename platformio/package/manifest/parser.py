@@ -56,33 +56,52 @@ class ManifestFileType(object):
         return ManifestFileType.LIBRARY_JSON
 
 
-class ManifestFactory(object):
+class ManifestParserFactory(object):
     @staticmethod
-    def type_to_clsname(type_):
-        type_ = type_.replace(".", " ")
-        type_ = type_.title()
-        return "%sManifestParser" % type_.replace(" ", "")
+    def type_to_clsname(t):
+        t = t.replace(".", " ")
+        t = t.title()
+        return "%sManifestParser" % t.replace(" ", "")
 
     @staticmethod
-    def new_from_file(path):
+    def new_from_file(path, remote_url=False):
         if not path or not os.path.isfile(path):
             raise ManifestException("Manifest file does not exist %s" % path)
-        for type_ in get_class_attributes(ManifestFileType).values():
-            if path.endswith(type_):
-                return ManifestFactory.new(get_file_contents(path), type_)
+        for t in get_class_attributes(ManifestFileType).values():
+            if path.endswith(t):
+                return ManifestParserFactory.new(get_file_contents(path), t, remote_url)
         raise ManifestException("Unknown manifest file type %s" % path)
+
+    @staticmethod
+    def new_from_dir(path, remote_url=None):
+        assert os.path.isdir(path), "Invalid directory %s" % path
+        file_order = [
+            ManifestFileType.PLATFORM_JSON,
+            ManifestFileType.LIBRARY_JSON,
+            ManifestFileType.LIBRARY_PROPERTIES,
+            ManifestFileType.MODULE_JSON,
+            ManifestFileType.PACKAGE_JSON,
+        ]
+        for t in file_order:
+            if not os.path.isfile(os.path.join(path, t)):
+                continue
+            return ManifestParserFactory.new(
+                get_file_contents(os.path.join(path, t)), t, remote_url
+            )
+        raise ManifestException("Unknown manifest file type in %s directory" % path)
 
     @staticmethod
     def new_from_url(remote_url):
         r = requests.get(remote_url)
         r.raise_for_status()
-        return ManifestFactory.new(
+        return ManifestParserFactory.new(
             r.text, ManifestFileType.from_uri(remote_url), remote_url
         )
 
     @staticmethod
-    def new(contents, type_, remote_url=None):
-        clsname = ManifestFactory.type_to_clsname(type_)
+    def new(contents, type, remote_url=None):
+        # pylint: disable=redefined-builtin
+        clsname = ManifestParserFactory.type_to_clsname(type)
         if clsname not in globals():
             raise ManifestException("Unknown manifest file type %s" % clsname)
         return globals()[clsname](contents, remote_url)
