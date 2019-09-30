@@ -26,6 +26,11 @@ class DataModelException(PlatformioException):
     pass
 
 
+class ListOfType(object):
+    def __init__(self, type):
+        self.type = type
+
+
 class DataField(object):
     def __init__(
         self,
@@ -47,6 +52,8 @@ class DataField(object):
         self.validate_factory = validate_factory
         self.title = title
 
+        self._parent = None
+        self._name = None
         self._value = None
 
     def __repr__(self):
@@ -55,36 +62,53 @@ class DataField(object):
             self.default if self._value is None else self._value,
         )
 
-    def validate(self, value, parent, attr):
-        if self.title is None:
-            self.title = attr.title()
+    def validate(self, parent, name, value):
+        self._parent = parent
+        self._name = name
+        self.title = self.title or name.title()
+
         try:
             if self.required and value is None:
-                raise ValueError("Required field, value is None")
+                raise ValueError("Required field `%s` is None" % name)
             if self.validate_factory is not None:
-                value = self.validate_factory(value)
+                return self.validate_factory(self, value) or self.default
             if value is None:
                 return self.default
-            if issubclass(self.type, (str, list, bool)):
+            if inspect.isclass(self.type) and issubclass(self.type, DataModel):
+                return self.type(**value).as_dict()
+            if isinstance(self.type, ListOfType):
+                return self._validate_list_of_type(self.type.type, value)
+            if issubclass(self.type, (str, bool)):
                 return getattr(self, "_validate_%s_value" % self.type.__name__)(value)
-        except (AssertionError, ValueError) as e:
+        except ValueError as e:
             raise DataModelException(
-                "%s for %s.%s" % (str(e), parent.__class__.__name__, attr)
+                "%s for %s.%s" % (str(e), parent.__class__.__name__, name)
             )
         return value
+
+    def _validate_list_of_type(self, list_of_type, value):
+        if not isinstance(value, list):
+            raise ValueError("Value should be a list")
+        if isinstance(list_of_type, DataField):
+            return [list_of_type.validate(self._parent, self._name, v) for v in value]
+        assert issubclass(list_of_type, DataModel)
+        return [list_of_type(**v).as_dict() for v in value]
 
     def _validate_str_value(self, value):
         if not isinstance(value, string_types):
             value = str(value)
-        assert self.min_length is None or len(value) >= self.min_length, (
-            "Minimum allowed length is %d characters" % self.min_length
-        )
-        assert self.max_length is None or len(value) <= self.max_length, (
-            "Maximum allowed length is %d characters" % self.max_length
-        )
-        assert self.regex is None or re.match(
-            self.regex, value
-        ), "Value `%s` does not match RegExp `%s` pattern" % (value, self.regex)
+        if self.min_length and len(value) < self.min_length:
+            raise ValueError(
+                "Minimum allowed length is %d characters" % self.min_length
+            )
+        if self.max_length and len(value) > self.max_length:
+            raise ValueError(
+                "Maximum allowed length is %d characters" % self.max_length
+            )
+        if self.regex and not re.match(self.regex, value):
+            raise ValueError(
+                "Value `%s` does not match RegExp `%s` pattern" % (value, self.regex)
+            )
         return value
 
     @staticmethod
@@ -95,60 +119,21 @@ class DataField(object):
 
 
 class DataModel(object):
-    __PRIVATE_ATTRIBUTES__ = ("__PRIVATE_ATTRIBUTES__", "_init_type", "as_dict")
-
-    def __init__(self, data=None):
-        data = data or {}
-        assert isinstance(data, dict)
-
-        for attr, scheme_or_model in get_class_attributes(self).items():
-            if attr in self.__PRIVATE_ATTRIBUTES__:
+    def __init__(self, **kwargs):
+        self._known_attributes = []
+        for name, field in get_class_attributes(self).items():
+            if not isinstance(field, DataField):
                 continue
-            if isinstance(scheme_or_model, list):
-                assert len(scheme_or_model) == 1
-                if data.get(attr) is None:
-                    setattr(self, attr, None)
-                    continue
+            self._known_attributes.append(name)
+            setattr(self, name, field.validate(self, name, kwargs.get(name)))
 
-                if not isinstance(data.get(attr), list):
-                    raise DataModelException("Value should be a list for %s" % (attr))
-                setattr(
-                    self,
-                    attr,
-                    [
-                        self._init_type(scheme_or_model[0], v, attr)
-                        for v in data.get(attr)
-                    ],
-                )
-            else:
-                setattr(
-                    self, attr, self._init_type(scheme_or_model, data.get(attr), attr)
-                )
-
-    def __repr__(self):
-        attrs = []
-        for name, value in get_class_attributes(self).items():
-            if name in self.__PRIVATE_ATTRIBUTES__:
-                continue
-            attrs.append('%s="%s"' % (name, value))
-        return "<%s %s>" % (self.__class__.__name__, " ".join(attrs))
-
-    def _init_type(self, type_, value, attr):
-        if inspect.isclass(type_) and issubclass(type_, DataModel):
-            return type_(value)
-        if isinstance(type_, DataField):
-            return type_.validate(value, parent=self, attr=attr)
-        raise DataModelException("Undeclared or unknown data type for %s" % attr)
+    # def __repr__(self):
+    #     attrs = []
+    #     for name, value in get_class_attributes(self).items():
+    #         if name in self.__PRIVATE_ATTRIBUTES__:
+    #             continue
+    #         attrs.append('%s="%s"' % (name, value))
+    #     return "<%s %s>" % (self.__class__.__name__, " ".join(attrs))
 
     def as_dict(self):
-        result = {}
-        for name, value in get_class_attributes(self).items():
-            if name in self.__PRIVATE_ATTRIBUTES__:
-                continue
-            if isinstance(value, DataModel):
-                result[name] = value.as_dict()
-            elif value and isinstance(value, list) and isinstance(value[0], DataModel):
-                result[name] = value[0].as_dict()
-            else:
-                result[name] = value
-        return result
+        return {name: getattr(self, name) for name in self._known_attributes}

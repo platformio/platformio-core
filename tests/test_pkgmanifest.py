@@ -14,7 +14,9 @@
 
 import pytest
 
+from platformio.datamodel import DataModelException
 from platformio.package.manifest import parser
+from platformio.package.manifest.model import ManifestModel
 
 
 def test_library_json_parser():
@@ -88,10 +90,6 @@ def test_module_json_parser():
 
 
 def test_library_properties_parser():
-    # test missed fields
-    with pytest.raises(parser.ManifestParserException):
-        parser.LibraryPropertiesManifestParser("name=TestPackage")
-
     # Base
     contents = """
 name=TestPackage
@@ -151,7 +149,7 @@ sentence=This is Arduino library
     }
 
 
-def test_library_json_model():
+def test_library_json_valid_model():
     contents = """
 {
   "name": "ArduinoJson",
@@ -178,7 +176,8 @@ def test_library_json_model():
   "license": "MIT"
 }
 """
-    model = parser.ManifestFactory.new(contents, parser.ManifestFileType.LIBRARY_JSON)
+    data = parser.ManifestFactory.new(contents, parser.ManifestFileType.LIBRARY_JSON)
+    model = ManifestModel(**data.as_dict())
     assert sorted(model.as_dict().items()) == sorted(
         {
             "name": "ArduinoJson",
@@ -191,15 +190,17 @@ def test_library_json_model():
                 "branch": None,
             },
             "version": "6.12.0",
-            "authors": {
-                "url": "https://blog.benoitblanchon.fr",
-                "maintainer": False,
-                "email": None,
-                "name": "Benoit Blanchon",
-            },
+            "authors": [
+                {
+                    "url": "https://blog.benoitblanchon.fr",
+                    "maintainer": False,
+                    "email": None,
+                    "name": "Benoit Blanchon",
+                }
+            ],
             "export": {
-                "include": None,
                 "exclude": ["fuzzing", "scripts", "test", "third-party"],
+                "include": None,
             },
             "frameworks": ["arduino"],
             "platforms": ["*"],

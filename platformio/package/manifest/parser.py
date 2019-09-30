@@ -21,7 +21,6 @@ import requests
 from platformio.compat import get_class_attributes, string_types
 from platformio.exception import PlatformioException
 from platformio.fs import get_file_contents
-from platformio.package.manifest.model import ManifestModel
 
 try:
     from urllib.parse import urlparse
@@ -86,8 +85,7 @@ class ManifestFactory(object):
         clsname = ManifestFactory.type_to_clsname(type_)
         if clsname not in globals():
             raise ManifestException("Unknown manifest file type %s" % clsname)
-        mp = globals()[clsname](contents, remote_url)
-        return ManifestModel(mp.as_dict())
+        return globals()[clsname](contents, remote_url)
 
 
 class BaseManifestParser(object):
@@ -234,9 +232,9 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         if repository and repository["url"] == homepage:
             homepage = None
         return dict(
-            name=properties["name"],
-            version=properties["version"],
-            description=properties["sentence"],
+            name=properties.get("name"),
+            version=properties.get("version"),
+            description=properties.get("sentence"),
             frameworks=["arduino"],
             platforms=self._process_platforms(properties) or ["*"],
             keywords=self._parse_keywords(properties),
@@ -258,12 +256,6 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                 continue
             key, value = line.split("=", 1)
             data[key.strip()] = value.strip()
-
-        required_fields = set(["name", "version", "author", "sentence"])
-        if not set(data.keys()) >= required_fields:
-            raise ManifestParserException(
-                "Missing fields: " + ",".join(required_fields - set(data.keys()))
-            )
         return data
 
     @staticmethod
@@ -301,6 +293,8 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         return result
 
     def _parse_authors(self, properties):
+        if "author" not in properties:
+            return None
         authors = []
         for author in properties["author"].split(","):
             name, email = self.parse_author_name_and_email(author)

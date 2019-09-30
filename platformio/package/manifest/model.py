@@ -14,7 +14,7 @@
 
 import semantic_version
 
-from platformio.datamodel import DataField, DataModel
+from platformio.datamodel import DataField, DataModel, ListOfType
 
 
 class AuthorModel(DataModel):
@@ -31,27 +31,36 @@ class RepositoryModel(DataModel):
 
 
 class ExportModel(DataModel):
-    include = [DataField()]
-    exclude = [DataField()]
+    include = DataField(type=ListOfType(DataField()))
+    exclude = DataField(type=ListOfType(DataField()))
 
 
 class ManifestModel(DataModel):
 
+    # Required fields
     name = DataField(max_length=100, required=True)
     version = DataField(
-        required=True,
         max_length=50,
-        validate_factory=lambda v: v if semantic_version.Version.coerce(v) else None,
+        validate_factory=lambda field, value: value
+        if semantic_version.Version.coerce(value)
+        else None,
+        required=True,
     )
-
-    description = DataField(max_length=1000)
-    keywords = [DataField(max_length=255, regex=r"^[a-z][a-z\d\- ]*[a-z]$")]
-    authors = [AuthorModel]
+    description = DataField(max_length=1000, required=True)
+    keywords = DataField(
+        type=ListOfType(DataField(max_length=255, regex=r"^[a-z][a-z\d\- ]*[a-z]$")),
+        required=True,
+    )
+    authors = DataField(type=ListOfType(AuthorModel), required=True)
 
     homepage = DataField(max_length=255)
     license = DataField(max_length=255)
-    platforms = [DataField(max_length=50, regex=r"^[a-z\d\-_\*]+$")]
-    frameworks = [DataField(max_length=50, regex=r"^[a-z\d\-_\*]+$")]
+    platforms = DataField(
+        type=ListOfType(DataField(max_length=50, regex=r"^([a-z\d\-_]+|\*)$"))
+    )
+    frameworks = DataField(
+        type=ListOfType(DataField(max_length=50, regex=r"^([a-z\d\-_\*]+|\*)$"))
+    )
 
-    repository = RepositoryModel
-    export = ExportModel
+    repository = DataField(type=RepositoryModel)
+    export = DataField(type=ExportModel)
