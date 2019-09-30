@@ -15,6 +15,7 @@
 # pylint: disable=unused-import, no-name-in-module, import-error,
 # pylint: disable=no-member, undefined-variable
 
+import inspect
 import json
 import os
 import re
@@ -27,6 +28,15 @@ WINDOWS = sys.platform.startswith("win")
 
 def get_filesystem_encoding():
     return sys.getfilesystemencoding() or sys.getdefaultencoding()
+
+
+def get_class_attributes(cls):
+    attributes = inspect.getmembers(cls, lambda a: not (inspect.isroutine(a)))
+    return {
+        a[0]: a[1]
+        for a in attributes
+        if not (a[0].startswith("__") and a[0].endswith("__"))
+    }
 
 
 if PY2:

@@ -14,8 +14,8 @@
 
 # pylint: disable=too-many-branches, too-many-locals
 
+import os
 import time
-from os.path import isdir, join
 
 import click
 import semantic_version
@@ -25,6 +25,7 @@ from platformio import exception, util
 from platformio.commands import PlatformioCLI
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.lib import LibraryManager, get_builtin_libs, is_builtin_lib
+from platformio.package.manifest.parser import ManifestFactory
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import get_project_dir, is_platformio_project
@@ -104,13 +105,13 @@ def cli(ctx, **options):
         if not is_platformio_project(storage_dir):
             ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
             continue
-        config = ProjectConfig.get_instance(join(storage_dir, "platformio.ini"))
+        config = ProjectConfig.get_instance(os.path.join(storage_dir, "platformio.ini"))
         config.validate(options["environment"], silent=in_silence)
         libdeps_dir = config.get_optional_dir("libdeps")
         for env in config.envs():
             if options["environment"] and env not in options["environment"]:
                 continue
-            storage_dir = join(libdeps_dir, env)
+            storage_dir = os.path.join(libdeps_dir, env)
             ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
             ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY][storage_dir] = config.get(
                 "env:" + env, "lib_deps", []
@@ -169,7 +170,7 @@ def lib_install(  # pylint: disable=too-many-arguments
     input_dirs = ctx.meta.get(CTX_META_INPUT_DIRS_KEY, [])
     project_environments = ctx.meta[CTX_META_PROJECT_ENVIRONMENTS_KEY]
     for input_dir in input_dirs:
-        config = ProjectConfig.get_instance(join(input_dir, "platformio.ini"))
+        config = ProjectConfig.get_instance(os.path.join(input_dir, "platformio.ini"))
         config.validate(project_environments)
         for env in config.envs():
             if project_environments and env not in project_environments:
@@ -231,7 +232,7 @@ def lib_update(ctx, libraries, only_check, dry_run, json_output):
         if only_check and json_output:
             result = []
             for library in _libraries:
-                pkg_dir = library if isdir(library) else None
+                pkg_dir = library if os.path.isdir(library) else None
                 requirements = None
                 url = None
                 if not pkg_dir:
@@ -491,6 +492,9 @@ def lib_show(library, json_output):
 def lib_register(config_url):
     if not config_url.startswith("http://") and not config_url.startswith("https://"):
         raise exception.InvalidLibConfURL(config_url)
+
+    manifest = ManifestFactory.new_from_url(config_url)
+    assert set(["name", "version"]) & set(list(manifest.as_dict()))
 
     result = util.get_api_result("/lib/register", data=dict(config_url=config_url))
     if "message" in result and result["message"]:
