@@ -232,15 +232,15 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         if repository and repository["url"] == homepage:
             homepage = None
         return dict(
-            name=properties.get("name"),
-            version=properties.get("version"),
-            description=properties.get("sentence"),
             frameworks=["arduino"],
-            platforms=self._process_platforms(properties) or ["*"],
-            keywords=self._parse_keywords(properties),
-            authors=self._parse_authors(properties) or None,
             homepage=homepage,
             repository=repository or None,
+            name=properties.get("name"),
+            version=properties.get("version"),
+            description=self._parse_description(properties),
+            platforms=self._parse_platforms(properties) or ["*"],
+            keywords=self._parse_keywords(properties),
+            authors=self._parse_authors(properties) or None,
             export=self._parse_export(),
         )
 
@@ -259,6 +259,16 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         return data
 
     @staticmethod
+    def _parse_description(properties):
+        lines = []
+        for k in ("sentence", "paragraph"):
+            if k in properties and properties[k] not in lines:
+                lines.append(properties[k])
+        if len(lines) == 2 and not lines[0].endswith("."):
+            lines[0] += "."
+        return " ".join(lines)
+
+    @staticmethod
     def _parse_keywords(properties):
         result = []
         for item in re.split(r"[\s/]+", properties.get("category", "uncategorized")):
@@ -269,7 +279,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         return result
 
     @staticmethod
-    def _process_platforms(properties):
+    def _parse_platforms(properties):
         result = []
         platforms_map = {
             "avr": "atmelavr",

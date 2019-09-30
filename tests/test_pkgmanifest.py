@@ -16,7 +16,7 @@ import pytest
 
 from platformio.datamodel import DataModelException
 from platformio.package.manifest import parser
-from platformio.package.manifest.model import ManifestModel
+from platformio.package.manifest.model import ManifestModel, StrictManifestModel
 
 
 def test_library_json_parser():
@@ -207,3 +207,78 @@ def test_library_json_valid_model():
             "license": "MIT",
         }.items()
     )
+
+
+def test_library_properties_valid_model():
+    contents = """
+name=U8glib
+version=1.19.1
+author=oliver <olikraus@gmail.com>
+maintainer=oliver <olikraus@gmail.com>
+sentence=A library for monochrome TFTs and OLEDs
+paragraph=Supported display controller: SSD1306, SSD1309, SSD1322, SSD1325
+category=Display
+url=https://github.com/olikraus/u8glib
+architectures=avr,sam
+"""
+    data = parser.ManifestFactory.new(
+        contents, parser.ManifestFileType.LIBRARY_PROPERTIES
+    )
+    model = ManifestModel(**data.as_dict())
+    assert sorted(model.as_dict().items()) == sorted(
+        {
+            "license": None,
+            "description": (
+                "A library for monochrome TFTs and OLEDs. Supported display "
+                "controller: SSD1306, SSD1309, SSD1322, SSD1325"
+            ),
+            "repository": {
+                "url": "https://github.com/olikraus/u8glib",
+                "type": "git",
+                "branch": None,
+            },
+            "frameworks": ["arduino"],
+            "platforms": ["atmelavr", "atmelsam"],
+            "version": "1.19.1",
+            "export": {
+                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"],
+                "include": None,
+            },
+            "authors": [
+                {
+                    "url": None,
+                    "maintainer": True,
+                    "email": "olikraus@gmail.com",
+                    "name": "oliver",
+                }
+            ],
+            "keywords": ["display"],
+            "homepage": None,
+            "name": "U8glib",
+        }.items()
+    )
+
+
+def test_broken_model():
+    # "version" field is required
+    with pytest.raises(
+        DataModelException, match="Missed value for `ManifestModel.version` field"
+    ):
+        assert ManifestModel(name="MyPackage")
+
+    # broken SemVer
+    with pytest.raises(
+        DataModelException,
+        match="Invalid semantic versioning format for `ManifestModel.version` field",
+    ):
+        assert ManifestModel(name="MyPackage", version="broken_version")
+
+    # the only name and version fields are required for base ManifestModel
+    assert ManifestModel(name="MyPackage", version="1.0")
+
+    # check strict model
+    with pytest.raises(
+        DataModelException,
+        match="Missed value for `StrictManifestModel.description` field",
+    ):
+        assert StrictManifestModel(name="MyPackage", version="1.0")

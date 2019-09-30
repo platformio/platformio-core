@@ -69,7 +69,7 @@ class DataField(object):
 
         try:
             if self.required and value is None:
-                raise ValueError("Required field `%s` is None" % name)
+                raise ValueError("Missed value")
             if self.validate_factory is not None:
                 return self.validate_factory(self, value) or self.default
             if value is None:
@@ -82,7 +82,7 @@ class DataField(object):
                 return getattr(self, "_validate_%s_value" % self.type.__name__)(value)
         except ValueError as e:
             raise DataModelException(
-                "%s for %s.%s" % (str(e), parent.__class__.__name__, name)
+                "%s for `%s.%s` field" % (str(e), parent.__class__.__name__, name)
             )
         return value
 
@@ -127,13 +127,11 @@ class DataModel(object):
             self._known_attributes.append(name)
             setattr(self, name, field.validate(self, name, kwargs.get(name)))
 
-    # def __repr__(self):
-    #     attrs = []
-    #     for name, value in get_class_attributes(self).items():
-    #         if name in self.__PRIVATE_ATTRIBUTES__:
-    #             continue
-    #         attrs.append('%s="%s"' % (name, value))
-    #     return "<%s %s>" % (self.__class__.__name__, " ".join(attrs))
+    def __repr__(self):
+        fields = []
+        for name in self._known_attributes:
+            fields.append('%s="%s"' % (name, getattr(self, name)))
+        return "<%s %s>" % (self.__class__.__name__, " ".join(fields))
 
     def as_dict(self):
         return {name: getattr(self, name) for name in self._known_attributes}

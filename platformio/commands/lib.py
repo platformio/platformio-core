@@ -25,7 +25,7 @@ from platformio import exception, util
 from platformio.commands import PlatformioCLI
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.lib import LibraryManager, get_builtin_libs, is_builtin_lib
-from platformio.package.manifest.model import ManifestModel
+from platformio.package.manifest.model import StrictManifestModel
 from platformio.package.manifest.parser import ManifestFactory
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
@@ -494,8 +494,8 @@ def lib_register(config_url):
     if not config_url.startswith("http://") and not config_url.startswith("https://"):
         raise exception.InvalidLibConfURL(config_url)
 
-    model = ManifestModel(**ManifestFactory.new_from_url(config_url).as_dict())
-    assert set(["name", "version"]) & set(list(model.as_dict()))
+    # Validate manifest
+    StrictManifestModel(**ManifestFactory.new_from_url(config_url).as_dict())
 
     result = util.get_api_result("/lib/register", data=dict(config_url=config_url))
     if "message" in result and result["message"]:

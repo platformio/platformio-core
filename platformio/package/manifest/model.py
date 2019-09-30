@@ -17,6 +17,12 @@ import semantic_version
 from platformio.datamodel import DataField, DataModel, ListOfType
 
 
+def validate_semver_field(_, value):
+    if "." not in value:
+        raise ValueError("Invalid semantic versioning format")
+    return value if semantic_version.Version.coerce(value) else None
+
+
 class AuthorModel(DataModel):
     name = DataField(max_length=50, required=True)
     email = DataField(max_length=50)
@@ -40,18 +46,14 @@ class ManifestModel(DataModel):
     # Required fields
     name = DataField(max_length=100, required=True)
     version = DataField(
-        max_length=50,
-        validate_factory=lambda field, value: value
-        if semantic_version.Version.coerce(value)
-        else None,
-        required=True,
+        max_length=50, validate_factory=validate_semver_field, required=True
     )
-    description = DataField(max_length=1000, required=True)
+
+    description = DataField(max_length=1000)
     keywords = DataField(
-        type=ListOfType(DataField(max_length=255, regex=r"^[a-z][a-z\d\- ]*[a-z]$")),
-        required=True,
+        type=ListOfType(DataField(max_length=255, regex=r"^[a-z][a-z\d\- ]*[a-z]$"))
     )
-    authors = DataField(type=ListOfType(AuthorModel), required=True)
+    authors = DataField(type=ListOfType(AuthorModel))
 
     homepage = DataField(max_length=255)
     license = DataField(max_length=255)
@@ -64,3 +66,10 @@ class ManifestModel(DataModel):
 
     repository = DataField(type=RepositoryModel)
     export = DataField(type=ExportModel)
+
+
+class StrictManifestModel(ManifestModel):
+    def __init__(self, *args, **kwargs):
+        for name in ("description", "keywords", "authors"):
+            getattr(self, name).required = True
+        super(StrictManifestModel, self).__init__(*args, **kwargs)
