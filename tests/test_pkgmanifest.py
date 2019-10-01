@@ -210,6 +210,8 @@ def test_library_json_model():
         contents, parser.ManifestFileType.LIBRARY_JSON
     )
     model = ManifestModel(**data.as_dict())
+    assert model.repository.url == "https://github.com/bblanchon/ArduinoJson.git"
+    assert model.examples["JsonHttpClient"].files == ["JsonHttpClient.ino"]
     assert model == ManifestModel(
         **{
             "name": "ArduinoJson",

@@ -84,7 +84,9 @@ class DataField(object):
             self.default if self.value is None else self.value,
         )
 
-    def validate(self, parent, name, value):
+    def validate(
+        self, parent, name, value
+    ):  # pylint: disable=too-many-return-statements
         self.parent = parent
         self.name = name
         self.title = self.title or name.title()
@@ -97,7 +99,7 @@ class DataField(object):
             if value is None:
                 return self.default
             if inspect.isclass(self.type) and issubclass(self.type, DataModel):
-                return self.type(**value).as_dict()
+                return self.type(**value)
             if isinstance(self.type, ListOfType):
                 return self._validate_list_of_type(self.type.type, value)
             if isinstance(self.type, DictOfType):
@@ -114,13 +116,14 @@ class DataField(object):
         if isinstance(list_of_type, DataField):
             return [list_of_type.validate(self.parent, self.name, v) for v in value]
         assert issubclass(list_of_type, DataModel)
-        return [list_of_type(**v).as_dict() for v in value]
+        return [list_of_type(**v) for v in value]
 
-    def _validate_dict_of_type(self, dict_of_type, value):
+    @staticmethod
+    def _validate_dict_of_type(dict_of_type, value):
         if not isinstance(value, dict):
             raise ValueError("Value should be a dict")
         assert issubclass(dict_of_type, DataModel)
-        return {k: dict_of_type(**v).as_dict() for k, v in value.items()}
+        return {k: dict_of_type(**v) for k, v in value.items()}
 
     def _validate_str_value(self, value):
         if not isinstance(value, string_types):
@@ -169,15 +172,7 @@ class DataModel(object):
                 setattr(self, name, value)
 
     def __eq__(self, other):
-        assert isinstance(other, DataModel)
-        if self.get_field_names() != other.get_field_names():
-            return False
-        if self.get_exceptions() != other.get_exceptions():
-            return False
-        for name in self._field_names:
-            if getattr(self, name) != getattr(other, name):
-                return False
-        return True
+        raise NotImplementedError
 
     def __repr__(self):
         fields = []
@@ -192,7 +187,20 @@ class DataModel(object):
         return self._exceptions
 
     def as_dict(self):
-        return {name: getattr(self, name) for name in self._field_names}
+        result = {}
+        for name in self._field_names:
+            value = getattr(self, name)
+            if isinstance(value, DataModel):
+                value = getattr(self, name).as_dict()
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    if not isinstance(v, DataModel):
+                        continue
+                    value[k] = v.as_dict()
+            elif isinstance(value, list):
+                value = [v.as_dict() if isinstance(v, DataModel) else v for v in value]
+            result[name] = value
+        return result
 
 
 class StrictDataModel(DataModel):
