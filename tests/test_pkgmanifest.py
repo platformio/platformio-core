@@ -169,7 +169,7 @@ sentence=This is Arduino library
     }
 
 
-def test_library_json_valid_model():
+def test_library_json_model():
     contents = """
 {
   "name": "ArduinoJson",
@@ -193,7 +193,17 @@ def test_library_json_valid_model():
   ],
   "frameworks": "arduino",
   "platforms": "*",
-  "license": "MIT"
+  "license": "MIT",
+  "examples": {
+    "JsonConfigFile": {
+        "base": "examples/JsonConfigFile",
+        "files": ["JsonConfigFile.ino"]
+    },
+    "JsonHttpClient": {
+        "base": "examples/JsonHttpClient",
+        "files": ["JsonHttpClient.ino"]
+    }
+  }
 }
 """
     data = parser.ManifestParserFactory.new(
@@ -227,11 +237,21 @@ def test_library_json_valid_model():
             "frameworks": ["arduino"],
             "platforms": ["*"],
             "license": "MIT",
+            "examples": {
+                "JsonConfigFile": {
+                    "base": "examples/JsonConfigFile",
+                    "files": ["JsonConfigFile.ino"],
+                },
+                "JsonHttpClient": {
+                    "base": "examples/JsonHttpClient",
+                    "files": ["JsonHttpClient.ino"],
+                },
+            },
         }
     )
 
 
-def test_library_properties_valid_model():
+def library_properties_model():
     contents = """
 name=U8glib
 version=1.19.1
@@ -282,7 +302,7 @@ architectures=avr,sam
     )
 
 
-def test_broken_model():
+def test_broken_models():
     # non-strict mode
     assert len(ManifestModel(name="MyPackage").get_exceptions()) == 4
     assert ManifestModel(name="MyPackage", version="broken_version").version is None

@@ -39,8 +39,16 @@ class DataFieldException(DataModelException):
             self.field.name,
         )
 
+    def __repr__(self):
+        return str(self)
+
 
 class ListOfType(object):
+    def __init__(self, type):
+        self.type = type
+
+
+class DictOfType(object):
     def __init__(self, type):
         self.type = type
 
@@ -92,6 +100,8 @@ class DataField(object):
                 return self.type(**value).as_dict()
             if isinstance(self.type, ListOfType):
                 return self._validate_list_of_type(self.type.type, value)
+            if isinstance(self.type, DictOfType):
+                return self._validate_dict_of_type(self.type.type, value)
             if issubclass(self.type, (str, bool)):
                 return getattr(self, "_validate_%s_value" % self.type.__name__)(value)
         except ValueError as e:
@@ -105,6 +115,12 @@ class DataField(object):
             return [list_of_type.validate(self.parent, self.name, v) for v in value]
         assert issubclass(list_of_type, DataModel)
         return [list_of_type(**v).as_dict() for v in value]
+
+    def _validate_dict_of_type(self, dict_of_type, value):
+        if not isinstance(value, dict):
+            raise ValueError("Value should be a dict")
+        assert issubclass(dict_of_type, DataModel)
+        return {k: dict_of_type(**v).as_dict() for k, v in value.items()}
 
     def _validate_str_value(self, value):
         if not isinstance(value, string_types):
