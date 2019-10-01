@@ -14,7 +14,7 @@
 
 import semantic_version
 
-from platformio.datamodel import DataField, DataModel, ListOfType
+from platformio.datamodel import DataField, DataModel, ListOfType, StrictDataModel
 
 
 def validate_semver_field(_, value):
@@ -48,12 +48,12 @@ class ManifestModel(DataModel):
     version = DataField(
         max_length=50, validate_factory=validate_semver_field, required=True
     )
-
-    description = DataField(max_length=1000)
+    description = DataField(max_length=1000, required=True)
     keywords = DataField(
-        type=ListOfType(DataField(max_length=255, regex=r"^[a-z][a-z\d\- ]*[a-z]$"))
+        type=ListOfType(DataField(max_length=255, regex=r"^[a-z\d\- ]+$")),
+        required=True,
     )
-    authors = DataField(type=ListOfType(AuthorModel))
+    authors = DataField(type=ListOfType(AuthorModel), required=True)
 
     homepage = DataField(max_length=255)
     license = DataField(max_length=255)
@@ -68,8 +68,5 @@ class ManifestModel(DataModel):
     export = DataField(type=ExportModel)
 
 
-class StrictManifestModel(ManifestModel):
-    def __init__(self, *args, **kwargs):
-        for name in ("description", "keywords", "authors"):
-            getattr(self, name).required = True
-        super(StrictManifestModel, self).__init__(*args, **kwargs)
+class StrictManifestModel(ManifestModel, StrictDataModel):
+    pass

@@ -14,7 +14,7 @@
 
 import pytest
 
-from platformio.datamodel import DataModelException
+from platformio.datamodel import DataFieldException
 from platformio.package.manifest import parser
 from platformio.package.manifest.model import ManifestModel, StrictManifestModel
 
@@ -38,6 +38,26 @@ def test_library_json_parser():
             "export": {"exclude": [".gitignore", "tests"], "include": ["mylib"]},
             "keywords": ["kw1", "kw2", "kw3"],
             "homepage": "http://old.url.format",
+        }.items()
+    )
+
+    contents = """
+{
+    "keywords": ["sound", "audio", "music", "SD", "card", "playback"],
+    "frameworks": "arduino",
+    "platforms": "atmelavr",
+    "export": {
+        "exclude": "audio_samples"
+    }
+}
+"""
+    mp = parser.LibraryJsonManifestParser(contents)
+    assert sorted(mp.as_dict().items()) == sorted(
+        {
+            "keywords": ["sound", "audio", "music", "sd", "card", "playback"],
+            "frameworks": ["arduino"],
+            "export": {"exclude": ["audio_samples"]},
+            "platforms": ["atmelavr"],
         }.items()
     )
 
@@ -180,8 +200,8 @@ def test_library_json_valid_model():
         contents, parser.ManifestFileType.LIBRARY_JSON
     )
     model = ManifestModel(**data.as_dict())
-    assert sorted(model.as_dict().items()) == sorted(
-        {
+    assert model == ManifestModel(
+        **{
             "name": "ArduinoJson",
             "keywords": ["json", "rest", "http", "web"],
             "description": "An elegant and efficient JSON library for embedded systems",
@@ -207,7 +227,7 @@ def test_library_json_valid_model():
             "frameworks": ["arduino"],
             "platforms": ["*"],
             "license": "MIT",
-        }.items()
+        }
     )
 
 
@@ -227,8 +247,9 @@ architectures=avr,sam
         contents, parser.ManifestFileType.LIBRARY_PROPERTIES
     )
     model = ManifestModel(**data.as_dict())
-    assert sorted(model.as_dict().items()) == sorted(
-        {
+    assert not model.get_exceptions()
+    assert model == ManifestModel(
+        **{
             "license": None,
             "description": (
                 "A library for monochrome TFTs and OLEDs. Supported display "
@@ -257,30 +278,30 @@ architectures=avr,sam
             "keywords": ["display"],
             "homepage": None,
             "name": "U8glib",
-        }.items()
+        }
     )
 
 
 def test_broken_model():
-    # "version" field is required
-    with pytest.raises(
-        DataModelException, match="Missed value for `ManifestModel.version` field"
-    ):
-        assert ManifestModel(name="MyPackage")
+    # non-strict mode
+    assert len(ManifestModel(name="MyPackage").get_exceptions()) == 4
+    assert ManifestModel(name="MyPackage", version="broken_version").version is None
+
+    # strict mode
+
+    with pytest.raises(DataFieldException) as excinfo:
+        assert StrictManifestModel(name="MyPackage")
+    assert excinfo.match(r"Missed value for `StrictManifestModel.[a-z]+` field")
 
     # broken SemVer
     with pytest.raises(
-        DataModelException,
-        match="Invalid semantic versioning format for `ManifestModel.version` field",
+        DataFieldException,
+        match="Invalid semantic versioning format for `StrictManifestModel.version` field",
     ):
-        assert ManifestModel(name="MyPackage", version="broken_version")
-
-    # the only name and version fields are required for base ManifestModel
-    assert ManifestModel(name="MyPackage", version="1.0")
-
-    # check strict model
-    with pytest.raises(
-        DataModelException,
-        match="Missed value for `StrictManifestModel.description` field",
-    ):
-        assert StrictManifestModel(name="MyPackage", version="1.0")
+        assert StrictManifestModel(
+            name="MyPackage",
+            description="MyDescription",
+            keywords=["a", "b"],
+            authors=[{"name": "Author"}],
+            version="broken_version",
+        )

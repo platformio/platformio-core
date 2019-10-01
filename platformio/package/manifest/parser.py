@@ -151,6 +151,8 @@ class LibraryJsonManifestParser(BaseManifestParser):
             data["authors"] = self._parse_authors(data["authors"])
         if "platforms" in data:
             data["platforms"] = self._parse_platforms(data["platforms"]) or None
+        if "export" in data:
+            data["export"] = self._parse_export(data["export"])
 
         return data
 
@@ -180,9 +182,7 @@ class LibraryJsonManifestParser(BaseManifestParser):
                 continue
             if "export" not in data:
                 data["export"] = {}
-            data["export"][key] = (
-                data[key] if isinstance(data[key], list) else [data[key]]
-            )
+            data["export"][key] = data[key]
             del data[key]
 
         return data
@@ -204,6 +204,17 @@ class LibraryJsonManifestParser(BaseManifestParser):
             if item == "espressif":
                 item = "espressif8266"
             result.append(item)
+        return result
+
+    @staticmethod
+    def _parse_export(raw):
+        if not isinstance(raw, dict):
+            return None
+        result = {}
+        for k in ("include", "exclude"):
+            if k not in raw:
+                continue
+            result[k] = raw[k] if isinstance(raw[k], list) else [raw[k]]
         return result
 
 
