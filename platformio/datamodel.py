@@ -172,7 +172,12 @@ class DataModel(object):
                 setattr(self, name, value)
 
     def __eq__(self, other):
-        raise NotImplementedError
+        assert isinstance(other, DataModel)
+        if self.get_field_names() != other.get_field_names():
+            return False
+        if len(self.get_exceptions()) != len(other.get_exceptions()):
+            return False
+        return self.as_dict() == other.as_dict()
 
     def __repr__(self):
         fields = []

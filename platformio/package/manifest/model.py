@@ -79,6 +79,14 @@ class ManifestModel(DataModel):
     export = DataField(type=ExportModel)
     examples = DataField(type=DictOfType(ExampleModel))
 
+    # platform.json specific
+    title = DataField(max_length=100)
+
+    # package.json specific
+    system = DataField(
+        type=ListOfType(DataField(max_length=50, regex=r"^[a-z\d\-_]+$"))
+    )
+
 
 class StrictManifestModel(ManifestModel, StrictDataModel):
     pass

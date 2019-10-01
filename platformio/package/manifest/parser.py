@@ -401,3 +401,44 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             "include": include,
             "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"],
         }
+
+
+class PlatformJsonManifestParser(BaseManifestParser):
+    def parse(self, contents):
+        data = json.loads(contents)
+        if "frameworks" in data:
+            data["frameworks"] = self._parse_frameworks(data["frameworks"])
+        return data
+
+    @staticmethod
+    def _parse_frameworks(raw):
+        if not isinstance(raw, dict):
+            return None
+        return [name.lower() for name in raw.keys()]
+
+
+class PackageJsonManifestParser(BaseManifestParser):
+    def parse(self, contents):
+        data = json.loads(contents)
+        data = self._parse_system(data)
+        data = self._parse_homepage(data)
+        return data
+
+    @staticmethod
+    def _parse_system(data):
+        if "system" not in data:
+            return data
+        if data["system"] in ("*", ["*"]):
+            del data["system"]
+            return data
+        if not isinstance(data["system"], list):
+            data["system"] = [data["system"]]
+        data["system"] = [s.strip().lower() for s in data["system"]]
+        return data
+
+    @staticmethod
+    def _parse_homepage(data):
+        if "url" in data:
+            data["homepage"] = data["url"]
+            del data["url"]
+        return data

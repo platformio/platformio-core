@@ -206,13 +206,13 @@ def test_library_json_model():
   }
 }
 """
-    data = parser.ManifestParserFactory.new(
+    mp = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_JSON
     )
-    model = ManifestModel(**data.as_dict())
+    model = StrictManifestModel(**mp.as_dict())
     assert model.repository.url == "https://github.com/bblanchon/ArduinoJson.git"
     assert model.examples["JsonHttpClient"].files == ["JsonHttpClient.ino"]
-    assert model == ManifestModel(
+    assert model == StrictManifestModel(
         **{
             "name": "ArduinoJson",
             "keywords": ["json", "rest", "http", "web"],
@@ -226,10 +226,10 @@ def test_library_json_model():
             "version": "6.12.0",
             "authors": [
                 {
+                    "name": "Benoit Blanchon",
                     "url": "https://blog.benoitblanchon.fr",
                     "maintainer": False,
                     "email": None,
-                    "name": "Benoit Blanchon",
                 }
             ],
             "export": {
@@ -265,12 +265,12 @@ category=Display
 url=https://github.com/olikraus/u8glib
 architectures=avr,sam
 """
-    data = parser.ManifestParserFactory.new(
+    mp = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_PROPERTIES
     )
-    model = ManifestModel(**data.as_dict())
+    model = StrictManifestModel(**mp.as_dict())
     assert not model.get_exceptions()
-    assert model == ManifestModel(
+    assert model == StrictManifestModel(
         **{
             "license": None,
             "description": (
@@ -302,6 +302,120 @@ architectures=avr,sam
             "name": "U8glib",
         }
     )
+
+
+def test_platform_json_model():
+    contents = """
+{
+  "name": "atmelavr",
+  "title": "Atmel AVR",
+  "description": "Atmel AVR 8- and 32-bit MCUs deliver a unique combination of performance, power efficiency and design flexibility. Optimized to speed time to market-and easily adapt to new ones-they are based on the industrys most code-efficient architecture for C and assembly programming.",
+  "url": "http://www.atmel.com/products/microcontrollers/avr/default.aspx",
+  "homepage": "http://platformio.org/platforms/atmelavr",
+  "license": "Apache-2.0",
+  "engines": {
+    "platformio": "<5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/platformio/platform-atmelavr.git"
+  },
+  "version": "1.15.0",
+  "frameworks": {
+    "arduino": {
+      "package": "framework-arduinoavr",
+      "script": "builder/frameworks/arduino.py"
+    },
+    "simba": {
+      "package": "framework-simba",
+      "script": "builder/frameworks/simba.py"
+    }
+  },
+  "packages": {
+    "toolchain-atmelavr": {
+      "type": "toolchain",
+      "version": "~1.50400.0"
+    },
+    "framework-arduinoavr": {
+      "type": "framework",
+      "optional": true,
+      "version": "~4.2.0"
+    },
+    "framework-simba": {
+      "type": "framework",
+      "optional": true,
+      "version": ">=7.0.0"
+    },
+    "tool-avrdude": {
+      "type": "uploader",
+      "optional": true,
+      "version": "~1.60300.0"
+    }
+  }
+}
+"""
+    mp = parser.ManifestParserFactory.new(
+        contents, parser.ManifestFileType.PLATFORM_JSON
+    )
+    model = ManifestModel(**mp.as_dict())
+    assert sorted(model.frameworks) == sorted(["arduino", "simba"])
+    assert model == ManifestModel(
+        **{
+            "name": "atmelavr",
+            "title": "Atmel AVR",
+            "description": (
+                "Atmel AVR 8- and 32-bit MCUs deliver a unique combination of "
+                "performance, power efficiency and design flexibility. Optimized to "
+                "speed time to market-and easily adapt to new ones-they are based "
+                "on the industrys most code-efficient architecture for C and "
+                "assembly programming."
+            ),
+            "homepage": "http://platformio.org/platforms/atmelavr",
+            "license": "Apache-2.0",
+            "repository": {
+                "url": "https://github.com/platformio/platform-atmelavr.git",
+                "type": "git",
+                "branch": None,
+            },
+            "frameworks": ["simba", "arduino"],
+            "version": "1.15.0",
+        }
+    )
+
+
+def test_package_json_model():
+    contents = """
+{
+    "name": "tool-scons",
+    "description": "SCons software construction tool",
+    "url": "http://www.scons.org",
+    "version": "3.30101.0"
+}
+"""
+    mp = parser.ManifestParserFactory.new(
+        contents, parser.ManifestFileType.PACKAGE_JSON
+    )
+    model = ManifestModel(**mp.as_dict())
+    assert model.system is None
+    assert model.homepage == "http://www.scons.org"
+    assert model == ManifestModel(
+        **{
+            "name": "tool-scons",
+            "description": "SCons software construction tool",
+            "homepage": "http://www.scons.org",
+            "version": "3.30101.0",
+        }
+    )
+
+    mp = parser.ManifestParserFactory.new(
+        '{"system": "*"}', parser.ManifestFileType.PACKAGE_JSON
+    )
+    assert "system" not in mp.as_dict()
+
+    mp = parser.ManifestParserFactory.new(
+        '{"system": "darwin_x86_64"}', parser.ManifestFileType.PACKAGE_JSON
+    )
+    assert mp.as_dict()["system"] == ["darwin_x86_64"]
 
 
 def test_broken_models():
