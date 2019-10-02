@@ -165,7 +165,9 @@ class GitClient(VCSClientBase):
         assert self.run_cmd(args)
         if is_commit:
             assert self.run_cmd(["reset", "--hard", self.tag])
-            return self.run_cmd(["submodule", "update", "--init", "--recursive"])
+            return self.run_cmd(
+                ["submodule", "update", "--init", "--recursive", "--force"]
+            )
         return True
 
     def update(self):
