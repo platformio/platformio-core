@@ -14,13 +14,7 @@
 
 import semantic_version
 
-from platformio.datamodel import (
-    DataField,
-    DataModel,
-    DictOfType,
-    ListOfType,
-    StrictDataModel,
-)
+from platformio.datamodel import DataField, DataModel, ListOfType, StrictDataModel
 
 
 def validate_semver_field(_, value):
@@ -48,6 +42,7 @@ class ExportModel(DataModel):
 
 
 class ExampleModel(DataModel):
+    name = DataField(max_length=100, regex=r"^[a-zA-Z\d\-\_ ]+$", required=True)
     base = DataField(required=True)
     files = DataField(type=ListOfType(DataField()))
 
@@ -77,7 +72,7 @@ class ManifestModel(DataModel):
 
     repository = DataField(type=RepositoryModel)
     export = DataField(type=ExportModel)
-    examples = DataField(type=DictOfType(ExampleModel))
+    examples = DataField(type=ListOfType(ExampleModel))
 
     # platform.json specific
     title = DataField(max_length=100)

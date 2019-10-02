@@ -194,16 +194,18 @@ def test_library_json_model():
   "frameworks": "arduino",
   "platforms": "*",
   "license": "MIT",
-  "examples": {
-    "JsonConfigFile": {
+  "examples": [
+    {
+        "name": "JsonConfigFile",
         "base": "examples/JsonConfigFile",
         "files": ["JsonConfigFile.ino"]
     },
-    "JsonHttpClient": {
+    {
+        "name": "JsonHttpClient",
         "base": "examples/JsonHttpClient",
         "files": ["JsonHttpClient.ino"]
     }
-  }
+  ]
 }
 """
     mp = parser.ManifestParserFactory.new(
@@ -211,7 +213,8 @@ def test_library_json_model():
     )
     model = StrictManifestModel(**mp.as_dict())
     assert model.repository.url == "https://github.com/bblanchon/ArduinoJson.git"
-    assert model.examples["JsonHttpClient"].files == ["JsonHttpClient.ino"]
+    assert model.examples[1].base == "examples/JsonHttpClient"
+    assert model.examples[1].files == ["JsonHttpClient.ino"]
     assert model == StrictManifestModel(
         **{
             "name": "ArduinoJson",
@@ -239,16 +242,18 @@ def test_library_json_model():
             "frameworks": ["arduino"],
             "platforms": ["*"],
             "license": "MIT",
-            "examples": {
-                "JsonConfigFile": {
+            "examples": [
+                {
+                    "name": "JsonConfigFile",
                     "base": "examples/JsonConfigFile",
                     "files": ["JsonConfigFile.ino"],
                 },
-                "JsonHttpClient": {
+                {
+                    "name": "JsonHttpClient",
                     "base": "examples/JsonHttpClient",
                     "files": ["JsonHttpClient.ino"],
                 },
-            },
+            ],
         }
     )
 
@@ -357,8 +362,10 @@ def test_platform_json_model():
     mp = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.PLATFORM_JSON
     )
+    data = mp.as_dict()
+    data["frameworks"] = sorted(data["frameworks"])
     model = ManifestModel(**mp.as_dict())
-    assert sorted(model.frameworks) == sorted(["arduino", "simba"])
+    assert model.frameworks == ["arduino", "simba"]
     assert model == ManifestModel(
         **{
             "name": "atmelavr",
@@ -377,7 +384,7 @@ def test_platform_json_model():
                 "type": "git",
                 "branch": None,
             },
-            "frameworks": ["simba", "arduino"],
+            "frameworks": ["arduino", "simba"],
             "version": "1.15.0",
         }
     )
