@@ -425,6 +425,94 @@ def test_package_json_model():
     assert mp.as_dict()["system"] == ["darwin_x86_64"]
 
 
+def test_examples_from_dir(tmpdir_factory):
+    package_dir = tmpdir_factory.mktemp("project")
+    package_dir.join("library.json").write('{"name": "pkg", "version": "1.0.0"}')
+    examples_dir = package_dir.mkdir("examples")
+
+    # PlatformIO project #1
+    pio_dir = examples_dir.mkdir("PlatformIO").mkdir("hello")
+    pio_dir.join("platformio.ini").write("")
+    pio_dir.mkdir("include").join("main.h").write("")
+    pio_dir.mkdir("src").join("main.cpp").write("")
+
+    # wiring examples
+    examples_dir.mkdir("SomeSketchIno").join("SomeSketchIno.ino").write("")
+    examples_dir.mkdir("SomeSketchPde").join("SomeSketchPde.pde").write("")
+
+    # custom examples
+    demo_dir = examples_dir.mkdir("demo")
+    demo_dir.join("demo.cpp").write("")
+    demo_dir.join("demo.h").write("")
+    demo_dir.join("util.h").write("")
+
+    # PlatformIO project #2
+    pio_dir = examples_dir.mkdir("world")
+    pio_dir.join("platformio.ini").write("")
+    pio_dir.join("README").write("")
+    pio_dir.join("extra.py").write("")
+    pio_dir.mkdir("include").join("world.h").write("")
+    pio_dir.mkdir("src").join("world.c").write("")
+
+    # invalid example
+    examples_dir.mkdir("invalid-example").join("hello.json")
+
+    # Do testing
+
+    data = parser.ManifestParserFactory.new_from_dir(str(package_dir)).as_dict()
+    assert isinstance(data["examples"], list)
+    assert len(data["examples"]) == 5
+
+    def _sort_examples(items):
+        for i, item in enumerate(items):
+            items[i]["files"] = sorted(item["files"])
+        return sorted(items, key=lambda item: item["name"])
+
+    data["examples"] = _sort_examples(data["examples"])
+    model = ManifestModel(**data)
+    assert model == ManifestModel(
+        **{
+            "version": "1.0.0",
+            "name": "pkg",
+            "examples": _sort_examples(
+                [
+                    {
+                        "name": "PlatformIO/hello",
+                        "base": "examples/PlatformIO/hello",
+                        "files": ["platformio.ini", "include/main.h", "src/main.cpp"],
+                    },
+                    {
+                        "name": "SomeSketchIno",
+                        "base": "examples/SomeSketchIno",
+                        "files": ["SomeSketchIno.ino"],
+                    },
+                    {
+                        "name": "SomeSketchPde",
+                        "base": "examples/SomeSketchPde",
+                        "files": ["SomeSketchPde.pde"],
+                    },
+                    {
+                        "name": "demo",
+                        "base": "examples/demo",
+                        "files": ["demo.h", "util.h", "demo.cpp"],
+                    },
+                    {
+                        "name": "world",
+                        "base": "examples/world",
+                        "files": [
+                            "platformio.ini",
+                            "include/world.h",
+                            "src/world.c",
+                            "README",
+                            "extra.py",
+                        ],
+                    },
+                ]
+            ),
+        }
+    )
+
+
 def test_broken_models():
     # non-strict mode
     assert len(ManifestModel(name="MyPackage").get_exceptions()) == 4
@@ -453,9 +541,7 @@ def test_broken_models():
         )
 
     # broken value for DataModel
-    with pytest.raises(
-        DataFieldException, match="Value should be type of dict, not `<type 'str'>"
-    ):
+    with pytest.raises(DataFieldException, match="Value should be type of dict"):
         assert StrictManifestModel(
             name="MyPackage",
             description="MyDescription",

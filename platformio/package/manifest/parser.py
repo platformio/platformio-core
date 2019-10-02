@@ -21,6 +21,7 @@ import requests
 from platformio.compat import get_class_attributes, string_types
 from platformio.exception import PlatformioException
 from platformio.fs import get_file_contents
+from platformio.project.helpers import is_platformio_project
 
 try:
     from urllib.parse import urlparse
@@ -86,7 +87,10 @@ class ManifestParserFactory(object):
             if not os.path.isfile(os.path.join(path, t)):
                 continue
             return ManifestParserFactory.new(
-                get_file_contents(os.path.join(path, t)), t, remote_url
+                get_file_contents(os.path.join(path, t)),
+                t,
+                remote_url=remote_url,
+                package_dir=path,
             )
         raise ManifestException("Unknown manifest file type in %s directory" % path)
 
@@ -99,18 +103,20 @@ class ManifestParserFactory(object):
         )
 
     @staticmethod
-    def new(contents, type, remote_url=None):
+    def new(contents, type, remote_url=None, package_dir=None):
         # pylint: disable=redefined-builtin
         clsname = ManifestParserFactory.type_to_clsname(type)
         if clsname not in globals():
             raise ManifestException("Unknown manifest file type %s" % clsname)
-        return globals()[clsname](contents, remote_url)
+        return globals()[clsname](contents, remote_url, package_dir)
 
 
 class BaseManifestParser(object):
-    def __init__(self, contents, remote_url=None):
+    def __init__(self, contents, remote_url=None, package_dir=None):
         self.remote_url = remote_url
+        self.package_dir = package_dir
         self._data = self.parse(contents)
+        self._data = self.parse_examples(self._data)
 
     def parse(self, contents):
         raise NotImplementedError
@@ -119,7 +125,7 @@ class BaseManifestParser(object):
         return self._data
 
     @staticmethod
-    def _cleanup_author(author):
+    def cleanup_author(author):
         if author.get("email"):
             author["email"] = re.sub(r"\s+[aA][tT]\s+", "@", author["email"])
         return author
@@ -135,6 +141,74 @@ class BaseManifestParser(object):
                 name = raw[: raw.index(ldel)]
                 email = raw[raw.index(ldel) + 1 : raw.index(rdel)]
         return (name.strip(), email.strip() if email else None)
+
+    def parse_examples(self, data):
+        examples = data.get("examples")
+        if (
+            not examples
+            or not isinstance(examples, list)
+            or not all(isinstance(v, dict) for v in examples)
+        ):
+            data["examples"] = None
+        if not examples and self.package_dir:
+            data["examples"] = self.parse_examples_from_dir(self.package_dir)
+        if "examples" in data and not data["examples"]:
+            del data["examples"]
+        return data
+
+    @staticmethod
+    def parse_examples_from_dir(package_dir):
+        assert os.path.isdir(package_dir)
+        examples_dir = os.path.join(package_dir, "examples")
+        if not os.path.isdir(examples_dir):
+            return None
+
+        allowed_exts = (
+            ".c",
+            ".cc",
+            ".cpp",
+            ".h",
+            ".hpp",
+            ".asm",
+            ".ASM",
+            ".s",
+            ".S",
+            ".ino",
+            ".pde",
+        )
+
+        result = {}
+        last_pio_project = None
+        for root, _, files in os.walk(examples_dir):
+            if is_platformio_project(root):
+                last_pio_project = root
+                result[last_pio_project] = dict(
+                    name=os.path.relpath(root, examples_dir),
+                    base=os.path.relpath(root, package_dir),
+                    files=files,
+                )
+                continue
+            if last_pio_project:
+                if root.startswith(last_pio_project):
+                    result[last_pio_project]["files"].extend(
+                        [
+                            os.path.relpath(os.path.join(root, f), last_pio_project)
+                            for f in files
+                        ]
+                    )
+                    continue
+                last_pio_project = None
+
+            matched_files = [f for f in files if f.endswith(allowed_exts)]
+            if not matched_files:
+                continue
+            result[root] = dict(
+                name=os.path.relpath(root, examples_dir),
+                base=os.path.relpath(root, package_dir),
+                files=matched_files,
+            )
+
+        return list(result.values()) or None
 
 
 class LibraryJsonManifestParser(BaseManifestParser):
@@ -193,7 +267,7 @@ class LibraryJsonManifestParser(BaseManifestParser):
         # normalize Union[dict, list] fields
         if not isinstance(raw, list):
             raw = [raw]
-        return [self._cleanup_author(author) for author in raw]
+        return [self.cleanup_author(author) for author in raw]
 
     @staticmethod
     def _parse_platforms(raw):
@@ -243,7 +317,7 @@ class ModuleJsonManifestParser(BaseManifestParser):
             if not name:
                 continue
             result.append(
-                self._cleanup_author(dict(name=name, email=email, maintainer=False))
+                self.cleanup_author(dict(name=name, email=email, maintainer=False))
             )
         return result
 
@@ -341,7 +415,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             if not name:
                 continue
             authors.append(
-                self._cleanup_author(dict(name=name, email=email, maintainer=False))
+                self.cleanup_author(dict(name=name, email=email, maintainer=False))
             )
         for author in properties.get("maintainer", "").split(","):
             name, email = self.parse_author_name_and_email(author)
@@ -357,7 +431,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                     item["email"] = email
             if not found:
                 authors.append(
-                    self._cleanup_author(dict(name=name, email=email, maintainer=True))
+                    self.cleanup_author(dict(name=name, email=email, maintainer=True))
                 )
         return authors
 
