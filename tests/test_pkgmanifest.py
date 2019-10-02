@@ -439,7 +439,10 @@ def test_broken_models():
     # broken SemVer
     with pytest.raises(
         DataFieldException,
-        match="Invalid semantic versioning format for `StrictManifestModel.version` field",
+        match=(
+            "Invalid semantic versioning format for "
+            "`StrictManifestModel.version` field"
+        ),
     ):
         assert StrictManifestModel(
             name="MyPackage",
@@ -447,4 +450,16 @@ def test_broken_models():
             keywords=["a", "b"],
             authors=[{"name": "Author"}],
             version="broken_version",
+        )
+
+    # broken value for DataModel
+    with pytest.raises(
+        DataFieldException, match="Value should be type of dict, not `<type 'str'>"
+    ):
+        assert StrictManifestModel(
+            name="MyPackage",
+            description="MyDescription",
+            keywords=["a", "b"],
+            authors=["should be dict here"],
+            version="1.2.3",
         )

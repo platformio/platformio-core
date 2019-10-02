@@ -99,7 +99,7 @@ class DataField(object):
             if value is None:
                 return self.default
             if inspect.isclass(self.type) and issubclass(self.type, DataModel):
-                return self.type(**value)
+                return self.type(**self._ensure_value_is_dict(value))
             if isinstance(self.type, ListOfType):
                 return self._validate_list_of_type(self.type.type, value)
             if isinstance(self.type, DictOfType):
@@ -110,20 +110,26 @@ class DataField(object):
             raise DataFieldException(self, str(e))
         return value
 
+    @staticmethod
+    def _ensure_value_is_dict(value):
+        if not isinstance(value, dict):
+            raise ValueError("Value should be type of dict, not `%s`" % type(value))
+        return value
+
     def _validate_list_of_type(self, list_of_type, value):
         if not isinstance(value, list):
             raise ValueError("Value should be a list")
         if isinstance(list_of_type, DataField):
             return [list_of_type.validate(self.parent, self.name, v) for v in value]
         assert issubclass(list_of_type, DataModel)
-        return [list_of_type(**v) for v in value]
+        return [list_of_type(**self._ensure_value_is_dict(v)) for v in value]
 
-    @staticmethod
-    def _validate_dict_of_type(dict_of_type, value):
-        if not isinstance(value, dict):
-            raise ValueError("Value should be a dict")
+    def _validate_dict_of_type(self, dict_of_type, value):
         assert issubclass(dict_of_type, DataModel)
-        return {k: dict_of_type(**v) for k, v in value.items()}
+        value = self._ensure_value_is_dict(value)
+        return {
+            k: dict_of_type(**self._ensure_value_is_dict(v)) for k, v in value.items()
+        }
 
     def _validate_str_value(self, value):
         if not isinstance(value, string_types):
