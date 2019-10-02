@@ -9,5 +9,5 @@ formats:
   - pdf
 
 submodules:
-  - include: all
-  - recursive: true
+  include: all
+  recursive: true
