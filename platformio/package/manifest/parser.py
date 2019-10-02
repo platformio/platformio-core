@@ -180,6 +180,11 @@ class BaseManifestParser(object):
         result = {}
         last_pio_project = None
         for root, _, files in os.walk(examples_dir):
+            # skip hidden files and folders
+            files = [f for f in files if not f.startswith(".")]
+            if os.path.basename(root).startswith(".") or not files:
+                continue
+
             if is_platformio_project(root):
                 last_pio_project = root
                 result[last_pio_project] = dict(

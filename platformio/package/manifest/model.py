@@ -42,7 +42,7 @@ class ExportModel(DataModel):
 
 
 class ExampleModel(DataModel):
-    name = DataField(max_length=100, regex=r"^[a-zA-Z\d\-\_ ]+$", required=True)
+    name = DataField(max_length=100, regex=r"^[a-zA-Z\d\-\_/ ]+$", required=True)
     base = DataField(required=True)
     files = DataField(type=ListOfType(DataField()))
 
