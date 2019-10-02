@@ -3,4 +3,4 @@
 version: 2
 
 formats:
-  - pdf
+  - htmlzip
