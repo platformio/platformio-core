@@ -56,7 +56,7 @@ DEFAULT_ENV_OPTIONS = dict(
         "platformio",
         "pioplatform",
         "pioproject",
-        "piowinhooks",
+        "piomaxlen",
         "piolib",
         "pioupload",
         "piomisc",

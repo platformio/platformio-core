@@ -22,12 +22,12 @@ from platformio.compat import WINDOWS, hashlib_encode_data
 
 # Windows CLI has limit with command length to 8192
 # Leave 2000 chars for flags and other options
-MAX_SOURCES_LENGTH = 6000
+MAX_LINE_LENGTH = 6000 if WINDOWS else 128072
 
 
 def long_sources_hook(env, sources):
     _sources = str(sources).replace("\\", "/")
-    if len(str(_sources)) < MAX_SOURCES_LENGTH:
+    if len(str(_sources)) < MAX_LINE_LENGTH:
         return sources
 
     # fix space in paths
@@ -43,7 +43,7 @@ def long_sources_hook(env, sources):
 
 def long_incflags_hook(env, incflags):
     _incflags = env.subst(incflags).replace("\\", "/")
-    if len(_incflags) < MAX_SOURCES_LENGTH:
+    if len(_incflags) < MAX_LINE_LENGTH:
         return incflags
 
     # fix space in paths
@@ -76,9 +76,6 @@ def exists(_):
 
 
 def generate(env):
-    if not WINDOWS:
-        return None
-
     env.Replace(_long_sources_hook=long_sources_hook)
     env.Replace(_long_incflags_hook=long_incflags_hook)
     coms = {}
