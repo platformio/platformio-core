@@ -425,6 +425,20 @@ def test_package_json_model():
     assert mp.as_dict()["system"] == ["darwin_x86_64"]
 
 
+def test_parser_from_dir(tmpdir_factory):
+    pkg_dir = tmpdir_factory.mktemp("package")
+    pkg_dir.join("library.json").write('{"name": "library.json"}')
+    pkg_dir.join("library.properties").write("name=library.properties")
+
+    data = parser.ManifestParserFactory.new_from_dir(str(pkg_dir)).as_dict()
+    assert data["name"] == "library.json"
+
+    data = parser.ManifestParserFactory.new_from_dir(
+        str(pkg_dir), remote_url="http://localhost/library.properties"
+    ).as_dict()
+    assert data["name"] == "library.properties"
+
+
 def test_examples_from_dir(tmpdir_factory):
     package_dir = tmpdir_factory.mktemp("project")
     package_dir.join("library.json").write(

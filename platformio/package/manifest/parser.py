@@ -54,7 +54,7 @@ class ManifestFileType(object):
             return ManifestFileType.MODULE_JSON
         if uri.endswith("package.json"):
             return ManifestFileType.PACKAGE_JSON
-        return ManifestFileType.LIBRARY_JSON
+        return None
 
 
 class ManifestParserFactory(object):
@@ -76,6 +76,16 @@ class ManifestParserFactory(object):
     @staticmethod
     def new_from_dir(path, remote_url=None):
         assert os.path.isdir(path), "Invalid directory %s" % path
+
+        type_from_uri = ManifestFileType.from_uri(remote_url) if remote_url else None
+        if type_from_uri and os.path.isfile(os.path.join(path, type_from_uri)):
+            return ManifestParserFactory.new(
+                get_file_contents(os.path.join(path, type_from_uri)),
+                type_from_uri,
+                remote_url=remote_url,
+                package_dir=path,
+            )
+
         file_order = [
             ManifestFileType.PLATFORM_JSON,
             ManifestFileType.LIBRARY_JSON,
@@ -99,7 +109,9 @@ class ManifestParserFactory(object):
         r = requests.get(remote_url)
         r.raise_for_status()
         return ManifestParserFactory.new(
-            r.text, ManifestFileType.from_uri(remote_url), remote_url
+            r.text,
+            ManifestFileType.from_uri(remote_url) or ManifestFileType.LIBRARY_JSON,
+            remote_url,
         )
 
     @staticmethod
