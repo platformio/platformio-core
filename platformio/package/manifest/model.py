@@ -56,7 +56,7 @@ class ManifestModel(DataModel):
     )
     description = DataField(max_length=1000, required=True)
     keywords = DataField(
-        type=ListOfType(DataField(max_length=255, regex=r"^[a-z\d\-\. ]+$")),
+        type=ListOfType(DataField(max_length=255, regex=r"^[a-z\d\-\+\. ]+$")),
         required=True,
     )
     authors = DataField(type=ListOfType(AuthorModel), required=True)
