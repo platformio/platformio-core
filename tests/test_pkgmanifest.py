@@ -427,7 +427,9 @@ def test_package_json_model():
 
 def test_examples_from_dir(tmpdir_factory):
     package_dir = tmpdir_factory.mktemp("project")
-    package_dir.join("library.json").write('{"name": "pkg", "version": "1.0.0"}')
+    package_dir.join("library.json").write(
+        '{"name": "pkg", "version": "1.0.0", "examples": ["examples/*/*.pde"]}'
+    )
     examples_dir = package_dir.mkdir("examples")
 
     # PlatformIO project #1
