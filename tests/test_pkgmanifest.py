@@ -438,8 +438,9 @@ def test_examples_from_dir(tmpdir_factory):
     pio_dir.mkdir("src").join("main.cpp").write("")
 
     # wiring examples
-    examples_dir.mkdir("SomeSketchIno").join("SomeSketchIno.ino").write("")
-    examples_dir.mkdir("SomeSketchPde").join("SomeSketchPde.pde").write("")
+    arduino_dir = examples_dir.mkdir("1. General")
+    arduino_dir.mkdir("SomeSketchIno").join("SomeSketchIno.ino").write("")
+    arduino_dir.mkdir("SomeSketchPde").join("SomeSketchPde.pde").write("")
 
     # custom examples
     demo_dir = examples_dir.mkdir("demo")
@@ -455,6 +456,10 @@ def test_examples_from_dir(tmpdir_factory):
     pio_dir.mkdir("include").join("world.h").write("")
     pio_dir.mkdir("src").join("world.c").write("")
 
+    # example files in root
+    examples_dir.join("root.c").write("")
+    examples_dir.join("root.h").write("")
+
     # invalid example
     examples_dir.mkdir("invalid-example").join("hello.json")
 
@@ -462,7 +467,7 @@ def test_examples_from_dir(tmpdir_factory):
 
     data = parser.ManifestParserFactory.new_from_dir(str(package_dir)).as_dict()
     assert isinstance(data["examples"], list)
-    assert len(data["examples"]) == 5
+    assert len(data["examples"]) == 6
 
     def _sort_examples(items):
         for i, item in enumerate(items):
@@ -471,7 +476,7 @@ def test_examples_from_dir(tmpdir_factory):
 
     data["examples"] = _sort_examples(data["examples"])
     model = ManifestModel(**data)
-    assert model.examples[0].name == "PlatformIO/hello"
+    assert model.examples[3].name == "PlatformIO/hello"
     assert model == ManifestModel(
         **{
             "version": "1.0.0",
@@ -484,13 +489,13 @@ def test_examples_from_dir(tmpdir_factory):
                         "files": ["platformio.ini", "include/main.h", "src/main.cpp"],
                     },
                     {
-                        "name": "SomeSketchIno",
-                        "base": "examples/SomeSketchIno",
+                        "name": "1_General/SomeSketchIno",
+                        "base": "examples/1. General/SomeSketchIno",
                         "files": ["SomeSketchIno.ino"],
                     },
                     {
-                        "name": "SomeSketchPde",
-                        "base": "examples/SomeSketchPde",
+                        "name": "1_General/SomeSketchPde",
+                        "base": "examples/1. General/SomeSketchPde",
                         "files": ["SomeSketchPde.pde"],
                     },
                     {
@@ -508,6 +513,11 @@ def test_examples_from_dir(tmpdir_factory):
                             "README",
                             "extra.py",
                         ],
+                    },
+                    {
+                        "name": "Examples",
+                        "base": "examples",
+                        "files": ["root.c", "root.h"],
                     },
                 ]
             ),

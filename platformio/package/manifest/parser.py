@@ -208,12 +208,20 @@ class BaseManifestParser(object):
             if not matched_files:
                 continue
             result[root] = dict(
-                name=os.path.relpath(root, examples_dir),
+                name="Examples"
+                if root == examples_dir
+                else os.path.relpath(root, examples_dir),
                 base=os.path.relpath(root, package_dir),
                 files=matched_files,
             )
 
-        return list(result.values()) or None
+        result = list(result.values())
+
+        # normalize example names
+        for item in result:
+            item["name"] = re.sub(r"[^a-z\d\d\-\_/]+", "_", item["name"], flags=re.I)
+
+        return result or None
 
 
 class LibraryJsonManifestParser(BaseManifestParser):
