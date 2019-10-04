@@ -30,6 +30,10 @@ class AuthorModel(DataModel):
     url = DataField(max_length=255)
 
 
+class StrictAuthorModel(AuthorModel, StrictDataModel):
+    pass
+
+
 class RepositoryModel(DataModel):
     type = DataField(max_length=3, required=True)
     url = DataField(max_length=255, required=True)
@@ -44,7 +48,7 @@ class ExportModel(DataModel):
 class ExampleModel(DataModel):
     name = DataField(max_length=100, regex=r"^[a-zA-Z\d\-\_/]+$", required=True)
     base = DataField(required=True)
-    files = DataField(type=ListOfType(DataField()))
+    files = DataField(type=ListOfType(DataField()), required=True)
 
 
 class ManifestModel(DataModel):
@@ -84,4 +88,4 @@ class ManifestModel(DataModel):
 
 
 class StrictManifestModel(ManifestModel, StrictDataModel):
-    pass
+    authors = DataField(type=ListOfType(StrictAuthorModel), required=True)

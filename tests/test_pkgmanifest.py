@@ -14,9 +14,8 @@
 
 import pytest
 
-from platformio.datamodel import DataFieldException
-from platformio.package.manifest import parser
-from platformio.package.manifest.model import ManifestModel, StrictManifestModel
+from platformio import datamodel
+from platformio.package.manifest import model, parser
 
 
 def test_library_json_parser():
@@ -139,31 +138,39 @@ sentence=This is Arduino library
     )
 
     # Platforms ALL
-    mp = parser.LibraryPropertiesManifestParser("architectures=*\n" + contents)
-    assert mp.as_dict()["platforms"] == ["*"]
+    data = parser.LibraryPropertiesManifestParser(
+        "architectures=*\n" + contents
+    ).as_dict()
+    assert data["platforms"] == ["*"]
     # Platforms specific
-    mp = parser.LibraryPropertiesManifestParser("architectures=avr, esp32\n" + contents)
-    assert mp.as_dict()["platforms"] == ["atmelavr", "espressif32"]
+    data = parser.LibraryPropertiesManifestParser(
+        "architectures=avr, esp32\n" + contents
+    ).as_dict()
+    assert data["platforms"] == ["atmelavr", "espressif32"]
 
     # Remote URL
-    mp = parser.LibraryPropertiesManifestParser(
+    data = parser.LibraryPropertiesManifestParser(
         contents,
         remote_url=(
             "https://raw.githubusercontent.com/username/reponame/master/"
             "libraries/TestPackage/library.properties"
         ),
-    )
-    assert mp.as_dict()["export"] == {
+    ).as_dict()
+    assert data["export"] == {
         "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"],
         "include": "libraries/TestPackage",
     }
+    assert data["repository"] == {
+        "url": "https://github.com/username/reponame",
+        "type": "git",
+    }
 
     # Hope page
-    mp = parser.LibraryPropertiesManifestParser(
+    data = parser.LibraryPropertiesManifestParser(
         "url=https://github.com/username/reponame.git\n" + contents
-    )
-    assert mp.as_dict()["homepage"] is None
-    assert mp.as_dict()["repository"] == {
+    ).as_dict()
+    assert data["homepage"] is None
+    assert data["repository"] == {
         "type": "git",
         "url": "https://github.com/username/reponame.git",
     }
@@ -208,14 +215,14 @@ def test_library_json_model():
   ]
 }
 """
-    mp = parser.ManifestParserFactory.new(
+    data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_JSON
-    )
-    model = StrictManifestModel(**mp.as_dict())
-    assert model.repository.url == "https://github.com/bblanchon/ArduinoJson.git"
-    assert model.examples[1].base == "examples/JsonHttpClient"
-    assert model.examples[1].files == ["JsonHttpClient.ino"]
-    assert model == StrictManifestModel(
+    ).as_dict()
+    m = model.StrictManifestModel(**data)
+    assert m.repository.url == "https://github.com/bblanchon/ArduinoJson.git"
+    assert m.examples[1].base == "examples/JsonHttpClient"
+    assert m.examples[1].files == ["JsonHttpClient.ino"]
+    assert m == model.StrictManifestModel(
         **{
             "name": "ArduinoJson",
             "keywords": ["json", "rest", "http", "web"],
@@ -270,12 +277,12 @@ category=Display
 url=https://github.com/olikraus/u8glib
 architectures=avr,sam
 """
-    mp = parser.ManifestParserFactory.new(
+    data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_PROPERTIES
-    )
-    model = StrictManifestModel(**mp.as_dict())
-    assert not model.get_exceptions()
-    assert model == StrictManifestModel(
+    ).as_dict()
+    m = model.StrictManifestModel(**data)
+    assert not m.get_exceptions()
+    assert m == model.StrictManifestModel(
         **{
             "license": None,
             "description": (
@@ -359,14 +366,13 @@ def test_platform_json_model():
   }
 }
 """
-    mp = parser.ManifestParserFactory.new(
+    data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.PLATFORM_JSON
-    )
-    data = mp.as_dict()
+    ).as_dict()
     data["frameworks"] = sorted(data["frameworks"])
-    model = ManifestModel(**mp.as_dict())
-    assert model.frameworks == ["arduino", "simba"]
-    assert model == ManifestModel(
+    m = model.ManifestModel(**data)
+    assert m.frameworks == ["arduino", "simba"]
+    assert m == model.ManifestModel(
         **{
             "name": "atmelavr",
             "title": "Atmel AVR",
@@ -399,13 +405,13 @@ def test_package_json_model():
     "version": "3.30101.0"
 }
 """
-    mp = parser.ManifestParserFactory.new(
+    data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.PACKAGE_JSON
-    )
-    model = ManifestModel(**mp.as_dict())
-    assert model.system is None
-    assert model.homepage == "http://www.scons.org"
-    assert model == ManifestModel(
+    ).as_dict()
+    m = model.ManifestModel(**data)
+    assert m.system is None
+    assert m.homepage == "http://www.scons.org"
+    assert m == model.ManifestModel(
         **{
             "name": "tool-scons",
             "description": "SCons software construction tool",
@@ -491,9 +497,9 @@ def test_examples_from_dir(tmpdir_factory):
         return sorted(items, key=lambda item: item["name"])
 
     data["examples"] = _sort_examples(data["examples"])
-    model = ManifestModel(**data)
-    assert model.examples[3].name == "PlatformIO/hello"
-    assert model == ManifestModel(
+    m = model.ManifestModel(**data)
+    assert m.examples[3].name == "PlatformIO/hello"
+    assert m == model.ManifestModel(
         **{
             "version": "1.0.0",
             "name": "pkg",
@@ -541,26 +547,64 @@ def test_examples_from_dir(tmpdir_factory):
     )
 
 
+def test_dict_of_type():
+    class TestModel(datamodel.DataModel):
+        examples = datamodel.DataField(type=datamodel.DictOfType(model.ExampleModel))
+
+    class StrictTestModel(TestModel, datamodel.StrictDataModel):
+        pass
+
+    # valid
+    m = TestModel(
+        examples={
+            "valid": dict(name="Valid", base="valid", files=["valid.h"]),
+            "invalid": "test",
+        }
+    )
+    assert list(m.examples.keys()) == ["valid"]
+
+    # invalid
+    with pytest.raises(datamodel.DataFieldException):
+        StrictTestModel(examples=[dict(name="Valid", base="valid", files=["valid.h"])])
+
+    with pytest.raises(datamodel.DataFieldException):
+        StrictTestModel(
+            examples={
+                "valid": dict(name="Valid", base="valid", files=["valid.h"]),
+                "invalid": "test",
+            }
+        )
+
+
 def test_broken_models():
     # non-strict mode
-    assert len(ManifestModel(name="MyPackage").get_exceptions()) == 4
-    assert ManifestModel(name="MyPackage", version="broken_version").version is None
+    assert len(model.ManifestModel(name="MyPackage").get_exceptions()) == 4
+    assert (
+        model.ManifestModel(name="MyPackage", version="broken_version").version is None
+    )
+
+    # invalid keywords
+    m = model.ManifestModel(keywords=["kw1", "*^[]"])
+    assert any(
+        "Value `*^[]` does not match RegExp" in str(e) for e in m.get_exceptions()
+    )
+    assert m.keywords == ["kw1"]
 
     # strict mode
 
-    with pytest.raises(DataFieldException) as excinfo:
-        assert StrictManifestModel(name="MyPackage")
+    with pytest.raises(datamodel.DataFieldException) as excinfo:
+        assert model.StrictManifestModel(name="MyPackage")
     assert excinfo.match(r"Missed value for `StrictManifestModel.[a-z]+` field")
 
     # broken SemVer
     with pytest.raises(
-        DataFieldException,
+        datamodel.DataFieldException,
         match=(
             "Invalid semantic versioning format for "
             "`StrictManifestModel.version` field"
         ),
     ):
-        assert StrictManifestModel(
+        assert model.StrictManifestModel(
             name="MyPackage",
             description="MyDescription",
             keywords=["a", "b"],
@@ -569,8 +613,11 @@ def test_broken_models():
         )
 
     # broken value for DataModel
-    with pytest.raises(DataFieldException, match="Value should be type of dict"):
-        assert StrictManifestModel(
+    with pytest.raises(
+        datamodel.DataFieldException,
+        match=("Value `should be dict here` should be type of dictionary"),
+    ):
+        assert model.StrictManifestModel(
             name="MyPackage",
             description="MyDescription",
             keywords=["a", "b"],

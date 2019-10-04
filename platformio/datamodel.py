@@ -74,8 +74,8 @@ class DataField(object):
         self.validate_factory = validate_factory
         self.title = title
 
-        self.parent = None
-        self.name = None
+        self._parent = None
+        self._name = None
         self.value = None
 
     def __repr__(self):
@@ -84,13 +84,24 @@ class DataField(object):
             self.default if self.value is None else self.value,
         )
 
-    def validate(
-        self, parent, name, value
-    ):  # pylint: disable=too-many-return-statements
-        self.parent = parent
-        self.name = name
-        self.title = self.title or name.title()
+    @property
+    def parent(self):
+        return self._parent
 
+    @parent.setter
+    def parent(self, value):
+        self._parent = value
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+        self.title = self.title or value.title()
+
+    def validate(self, value):
         try:
             if self.required and value is None:
                 raise ValueError("Missed value")
@@ -99,37 +110,18 @@ class DataField(object):
             if value is None:
                 return self.default
             if inspect.isclass(self.type) and issubclass(self.type, DataModel):
-                return self.type(**self._ensure_value_is_dict(value))
-            if isinstance(self.type, ListOfType):
-                return self._validate_list_of_type(self.type.type, value)
-            if isinstance(self.type, DictOfType):
-                return self._validate_dict_of_type(self.type.type, value)
-            if issubclass(self.type, (str, bool)):
+                return self.type(**self.ensure_value_is_dict(value))
+            if inspect.isclass(self.type) and issubclass(self.type, (str, bool)):
                 return getattr(self, "_validate_%s_value" % self.type.__name__)(value)
         except ValueError as e:
             raise DataFieldException(self, str(e))
         return value
 
     @staticmethod
-    def _ensure_value_is_dict(value):
+    def ensure_value_is_dict(value):
         if not isinstance(value, dict):
             raise ValueError("Value should be type of dict, not `%s`" % type(value))
         return value
-
-    def _validate_list_of_type(self, list_of_type, value):
-        if not isinstance(value, list):
-            raise ValueError("Value should be a list")
-        if isinstance(list_of_type, DataField):
-            return [list_of_type.validate(self.parent, self.name, v) for v in value]
-        assert issubclass(list_of_type, DataModel)
-        return [list_of_type(**self._ensure_value_is_dict(v)) for v in value]
-
-    def _validate_dict_of_type(self, dict_of_type, value):
-        assert issubclass(dict_of_type, DataModel)
-        value = self._ensure_value_is_dict(value)
-        return {
-            k: dict_of_type(**self._ensure_value_is_dict(v)) for k, v in value.items()
-        }
 
     def _validate_str_value(self, value):
         if not isinstance(value, string_types):
@@ -162,20 +154,93 @@ class DataModel(object):
 
     def __init__(self, **kwargs):
         self._field_names = []
-        self._exceptions = []
+        self._exceptions = set()
         for name, field in get_class_attributes(self).items():
             if not isinstance(field, DataField):
                 continue
+            field.parent = self
+            field.name = name
             self._field_names.append(name)
+
+            raw_value = kwargs.get(name)
             value = None
             try:
-                value = field.validate(self, name, kwargs.get(name))
+                if isinstance(field.type, ListOfType):
+                    value = self._validate_list_of_type(field, name, raw_value)
+                elif isinstance(field.type, DictOfType):
+                    value = self._validate_dict_of_type(field, name, raw_value)
+                else:
+                    value = field.validate(raw_value)
             except DataFieldException as e:
-                self._exceptions.append(e)
+                self._exceptions.add(e)
                 if isinstance(self, StrictDataModel):
                     raise e
             finally:
                 setattr(self, name, value)
+
+    def _validate_list_of_type(self, field, name, value):
+        data_type = field.type.type
+        # check if ListOfType is not required
+        value = field.validate(value)
+        if not value:
+            return None
+        if not isinstance(value, list):
+            raise DataFieldException(field, "Value should be a list")
+
+        if isinstance(data_type, DataField):
+            result = []
+            data_type.parent = self
+            data_type.name = name
+            for v in value:
+                try:
+                    result.append(data_type.validate(v))
+                except DataFieldException as e:
+                    self._exceptions.add(e)
+                    if isinstance(self, StrictDataModel):
+                        raise e
+            return result
+
+        assert issubclass(data_type, DataModel)
+
+        result = []
+        for v in value:
+            try:
+                if not isinstance(v, dict):
+                    raise DataFieldException(
+                        field, "Value `%s` should be type of dictionary" % v
+                    )
+                result.append(data_type(**v))
+            except DataFieldException as e:
+                self._exceptions.add(e)
+                if isinstance(self, StrictDataModel):
+                    raise e
+        return result
+
+    def _validate_dict_of_type(self, field, _, value):
+        data_type = field.type.type
+        assert issubclass(data_type, DataModel)
+
+        # check if DictOfType is not required
+        value = field.validate(value)
+        if not value:
+            return None
+        if not isinstance(value, dict):
+            raise DataFieldException(
+                field, "Value `%s` should be type of dictionary" % value
+            )
+        result = {}
+        for k, v in value.items():
+            try:
+                if not isinstance(v, dict):
+                    raise DataFieldException(
+                        field, "Value `%s` should be type of dictionary" % v
+                    )
+                result[k] = data_type(**v)
+            except DataFieldException as e:
+                self._exceptions.add(e)
+                if isinstance(self, StrictDataModel):
+                    raise e
+        return result
 
     def __eq__(self, other):
         assert isinstance(other, DataModel)
@@ -195,7 +260,19 @@ class DataModel(object):
         return self._field_names
 
     def get_exceptions(self):
-        return self._exceptions
+        result = list(self._exceptions)
+        for name in self._field_names:
+            value = getattr(self, name)
+            if isinstance(value, DataModel):
+                result.extend(value.get_exceptions())
+                continue
+            if not isinstance(value, (dict, list)):
+                continue
+            for v in value.values() if isinstance(value, dict) else value:
+                if not isinstance(v, DataModel):
+                    continue
+                result.extend(v.get_exceptions())
+        return result
 
     def as_dict(self):
         result = {}
