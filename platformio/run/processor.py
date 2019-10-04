@@ -59,7 +59,7 @@ class EnvironmentProcessor(object):
             raise exception.UndefinedEnvPlatform(self.name)
 
         build_vars = self.get_build_variables()
-        build_targets = self.get_build_targets()
+        build_targets = list(self.get_build_targets())
 
         telemetry.on_run_environment(self.options, build_targets)
 
