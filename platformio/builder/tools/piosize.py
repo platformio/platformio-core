@@ -33,6 +33,8 @@ def _get_file_location(env, elf_path, addr, sysenv):
 
 def _determine_section(sections, symbol_addr):
     for section, info in sections.items():
+        if not _is_flash_section(info) and not _is_ram_section(info):
+            continue
         if symbol_addr in range(info["start_addr"], info["start_addr"] + info["size"]):
             return section
     return "unknown"
@@ -55,7 +57,7 @@ def _is_ram_section(section):
 
 
 def _is_flash_section(section):
-    return section.get("type") == "SHT_PROGBITS" and "A" in section.get("flags")
+    return section.get("type", "") == "SHT_PROGBITS" and "A" in section.get("flags", "")
 
 
 def _is_valid_symbol(symbol_name, symbol_type, symbol_address):
