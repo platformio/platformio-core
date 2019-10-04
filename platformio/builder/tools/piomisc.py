@@ -321,7 +321,7 @@ def ConfigureDebugFlags(env):
 
     env.Append(CPPDEFINES=["__PLATFORMIO_BUILD_DEBUG__"])
 
-    debug_flags = ["-Og", "-g3", "-ggdb3"]
+    debug_flags = ["-Og", "-g2", "-ggdb2"]
     for scope in ("ASFLAGS", "CCFLAGS", "LINKFLAGS"):
         _cleanup_debug_flags(scope)
         env.Append(**{scope: debug_flags})
