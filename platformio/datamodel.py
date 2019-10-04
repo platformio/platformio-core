@@ -209,7 +209,12 @@ class DataModel(object):
                     raise DataFieldException(
                         field, "Value `%s` should be type of dictionary" % v
                     )
-                result.append(data_type(**v))
+                m = data_type(**v)
+                me = m.get_exceptions()
+                if not me:
+                    result.append(m)
+                else:
+                    self._exceptions |= set(me)
             except DataFieldException as e:
                 self._exceptions.add(e)
                 if isinstance(self, StrictDataModel):
@@ -235,7 +240,12 @@ class DataModel(object):
                     raise DataFieldException(
                         field, "Value `%s` should be type of dictionary" % v
                     )
-                result[k] = data_type(**v)
+                m = data_type(**v)
+                me = m.get_exceptions()
+                if not me:
+                    result[k] = m
+                else:
+                    self._exceptions |= set(me)
             except DataFieldException as e:
                 self._exceptions.add(e)
                 if isinstance(self, StrictDataModel):
@@ -245,8 +255,6 @@ class DataModel(object):
     def __eq__(self, other):
         assert isinstance(other, DataModel)
         if self.get_field_names() != other.get_field_names():
-            return False
-        if len(self.get_exceptions()) != len(other.get_exceptions()):
             return False
         return self.as_dict() == other.as_dict()
 

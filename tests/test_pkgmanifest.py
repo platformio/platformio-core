@@ -265,7 +265,7 @@ def test_library_json_model():
     )
 
 
-def library_properties_model():
+def test_library_properties_model():
     contents = """
 name=U8glib
 version=1.19.1
@@ -312,6 +312,58 @@ architectures=avr,sam
             "keywords": ["display"],
             "homepage": None,
             "name": "U8glib",
+        }
+    )
+
+    # Broken fields
+    contents = """
+name=Mozzi
+version=1.0.3
+author=Tim Barrass and contributors as documented in source, and at https://github.com/sensorium/Mozzi/graphs/contributors
+maintainer=Tim Barrass <faveflave@gmail.com>
+sentence=Sound synthesis library for Arduino
+paragraph=With Mozzi, you can construct sounds using familiar synthesis units like oscillators, delays, filters and envelopes.
+category=Signal Input/Output
+url=https://sensorium.github.io/Mozzi/
+architectures=*
+dot_a_linkage=false
+includes=MozziGuts.h
+"""
+    data = parser.ManifestParserFactory.new(
+        contents,
+        parser.ManifestFileType.LIBRARY_PROPERTIES,
+        remote_url=(
+            "https://raw.githubusercontent.com/sensorium/Mozzi/"
+            "master/library.properties"
+        ),
+    ).as_dict()
+    m = model.ManifestModel(**data)
+    assert m.get_exceptions()
+    assert m == model.ManifestModel(
+        **{
+            "name": "Mozzi",
+            "version": "1.0.3",
+            "description": (
+                "Sound synthesis library for Arduino. With Mozzi, you can construct "
+                "sounds using familiar synthesis units like oscillators, delays, "
+                "filters and envelopes."
+            ),
+            "repository": {"url": "https://github.com/sensorium/Mozzi", "type": "git"},
+            "platforms": ["*"],
+            "frameworks": ["arduino"],
+            "export": {
+                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"],
+                "include": None,
+            },
+            "authors": [
+                {
+                    "maintainer": True,
+                    "email": "faveflave@gmail.com",
+                    "name": "Tim Barrass",
+                }
+            ],
+            "keywords": ["signal", "input", "output"],
+            "homepage": "https://sensorium.github.io/Mozzi/",
         }
     )
 
