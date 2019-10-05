@@ -173,7 +173,9 @@ class BaseManifestParser(object):
         assert os.path.isdir(package_dir)
         examples_dir = os.path.join(package_dir, "examples")
         if not os.path.isdir(examples_dir):
-            return None
+            examples_dir = os.path.join(package_dir, "Examples")
+            if not os.path.isdir(examples_dir):
+                return None
 
         allowed_exts = (
             ".c",
