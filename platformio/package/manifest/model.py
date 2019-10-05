@@ -18,6 +18,7 @@ from platformio.datamodel import DataField, DataModel, ListOfType, StrictDataMod
 
 
 def validate_semver_field(_, value):
+    value = str(value)
     if "." not in value:
         raise ValueError("Invalid semantic versioning format")
     return value if semantic_version.Version.coerce(value) else None
