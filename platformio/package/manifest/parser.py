@@ -195,7 +195,11 @@ class BaseManifestParser(object):
         last_pio_project = None
         for root, _, files in os.walk(examples_dir):
             # skip hidden files and folders
-            files = [f for f in files if not f.startswith(".")]
+            files = [
+                f
+                for f in files
+                if not f.startswith(".") and not os.path.islink(os.path.join(root, f))
+            ]
             if os.path.basename(root).startswith(".") or not files:
                 continue
 

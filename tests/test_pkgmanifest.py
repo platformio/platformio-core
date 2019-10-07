@@ -507,6 +507,9 @@ def test_examples_from_dir(tmpdir_factory):
     # PlatformIO project #1
     pio_dir = examples_dir.mkdir("PlatformIO").mkdir("hello")
     pio_dir.join(".vimrc").write("")
+    pio_ini = pio_dir.join("platformio.ini")
+    pio_ini.write("")
+    pio_dir.join("platformio.ini.copy").mksymlinkto(pio_ini)
     pio_dir.join("platformio.ini").write("")
     pio_dir.mkdir("include").join("main.h").write("")
     pio_dir.mkdir("src").join("main.cpp").write("")
