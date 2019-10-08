@@ -171,7 +171,11 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
 
             files[file_path]["symbols"].append(symbol)
 
-        data["memory"]["files"] = files
+        data["memory"]["files"] = list()
+        for k, v in files.items():
+            file_data = {"path": k}
+            file_data.update(v)
+            data["memory"]["files"].append(file_data)
 
     with open(join(env.subst("$BUILD_DIR"), "sizedata.json"), "w") as fp:
         fp.write(dump_json_to_unicode(data))
