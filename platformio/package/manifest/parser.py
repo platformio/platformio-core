@@ -194,7 +194,7 @@ class BaseManifestParser(object):
         result = {}
         last_pio_project = None
         for root, _, files in os.walk(examples_dir):
-            # skip hidden files and folders
+            # skip hidden files, symlinks, and folders
             files = [
                 f
                 for f in files
