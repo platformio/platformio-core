@@ -25,14 +25,12 @@ from elftools.elf.elffile import ELFFile
 
 from platformio.compat import dump_json_to_unicode
 from platformio.proc import exec_command
-from platformio.util import get_systype
 
 
 def _get_file_location(env, elf_path, addr, sysenv):
     cmd = [env.subst("$CC").replace("-gcc", "-addr2line"), "-e", elf_path, hex(addr)]
     result = exec_command(cmd, env=sysenv)
-    path = result["out"].strip()
-    return path.replace("/", "\\") if "windows" in get_systype() else path
+    return result["out"].strip().replace("\\", "/")
 
 
 def _determine_section(sections, symbol_addr):
