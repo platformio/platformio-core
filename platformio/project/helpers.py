@@ -59,6 +59,36 @@ def get_project_cache_dir():
     ).get_optional_dir("cache")
 
 
+def get_project_global_lib_dir():
+    """
+    Deprecated, use ProjectConfig.get_optional_dir("globallib") instead
+    "platformio-node-helpers" depends on it
+    """
+    return ProjectConfig.get_instance(
+        join(get_project_dir(), "platformio.ini")
+    ).get_optional_dir("globallib")
+
+
+def get_project_lib_dir():
+    """
+    Deprecated, use ProjectConfig.get_optional_dir("lib") instead
+    "platformio-node-helpers" depends on it
+    """
+    return ProjectConfig.get_instance(
+        join(get_project_dir(), "platformio.ini")
+    ).get_optional_dir("lib")
+
+
+def get_project_libdeps_dir():
+    """
+    Deprecated, use ProjectConfig.get_optional_dir("libdeps") instead
+    "platformio-node-helpers" depends on it
+    """
+    return ProjectConfig.get_instance(
+        join(get_project_dir(), "platformio.ini")
+    ).get_optional_dir("libdeps")
+
+
 def get_default_projects_dir():
     docs_dir = join(expanduser("~"), "Documents")
     try:
