@@ -33,6 +33,10 @@ from platformio.project.helpers import is_platformio_project
 
 class ProjectRPC(object):
     @staticmethod
+    def config_call(path, method, *args):
+        return getattr(ProjectConfig(path), method)(*args)
+
+    @staticmethod
     def _get_projects(project_dirs=None):
         def _get_project_data():
             data = {"boards": [], "envLibdepsDirs": [], "libExtraDirs": []}

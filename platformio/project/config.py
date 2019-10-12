@@ -409,11 +409,11 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
     def __repr__(self):
         return "<ProjectConfig %s>" % (self.path or "in-memory")
 
+    def as_dict(self):
+        return {s: self.items(s, as_dict=True) for s in self.sections()}
+
     def to_json(self):
-        result = {}
-        for section in self.sections():
-            result[section] = self.items(section, as_dict=True)
-        return json.dumps(result)
+        return json.dumps(self.as_dict())
 
     def save(self, path=None):
         path = path or self.path
