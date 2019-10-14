@@ -127,7 +127,10 @@ class BaseManifestParser(object):
     def __init__(self, contents, remote_url=None, package_dir=None):
         self.remote_url = remote_url
         self.package_dir = package_dir
-        self._data = self.parse(contents)
+        try:
+            self._data = self.parse(contents)
+        except Exception as e:
+            raise ManifestParserException("Could not parse manifest -> %s" % e)
         self._data = self.parse_examples(self._data)
 
     def parse(self, contents):
