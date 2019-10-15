@@ -69,8 +69,8 @@ def exec_command(*args, **kwargs):
     result['out'], result['err'] = p.communicate()
     result['returncode'] = p.returncode
 
-    for k, v in result.iteritems():
-        if v and isinstance(v, basestring):
+    for k, v in result.items():
+        if v and isinstance(v, str):
             result[k].strip()
 
     return result
