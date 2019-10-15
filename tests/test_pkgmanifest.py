@@ -15,6 +15,7 @@
 import pytest
 
 from platformio import datamodel
+from platformio.compat import WINDOWS
 from platformio.package.manifest import model, parser
 
 
@@ -509,8 +510,8 @@ def test_examples_from_dir(tmpdir_factory):
     pio_dir.join(".vimrc").write("")
     pio_ini = pio_dir.join("platformio.ini")
     pio_ini.write("")
-    pio_dir.join("platformio.ini.copy").mksymlinkto(pio_ini)
-    pio_dir.join("platformio.ini").write("")
+    if not WINDOWS:
+        pio_dir.join("platformio.ini.copy").mksymlinkto(pio_ini)
     pio_dir.mkdir("include").join("main.h").write("")
     pio_dir.mkdir("src").join("main.cpp").write("")
 

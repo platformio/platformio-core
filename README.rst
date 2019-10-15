@@ -93,6 +93,7 @@ Development Platforms
 * `RISC-V <https://platformio.org/platforms/riscv?utm_source=github&utm_medium=core>`_
 * `RISC-V GAP <https://platformio.org/platforms/riscv_gap?utm_source=github&utm_medium=core>`_
 * `Samsung ARTIK <https://platformio.org/platforms/samsung_artik?utm_source=github&utm_medium=core>`_
+* `Shakti <https://platformio.org/platforms/shakti?utm_source=github&utm_medium=core>`_
 * `Silicon Labs EFM32 <https://platformio.org/platforms/siliconlabsefm32?utm_source=github&utm_medium=core>`_
 * `ST STM32 <https://platformio.org/platforms/ststm32?utm_source=github&utm_medium=core>`_
 * `ST STM8 <https://platformio.org/platforms/ststm8?utm_source=github&utm_medium=core>`_
@@ -117,6 +118,7 @@ Frameworks
 * `mbed <https://platformio.org/frameworks/mbed?utm_source=github&utm_medium=core>`_
 * `PULP OS <https://platformio.org/frameworks/pulp-os?utm_source=github&utm_medium=core>`_
 * `Pumbaa <https://platformio.org/frameworks/pumbaa?utm_source=github&utm_medium=core>`_
+* `Shakti <https://platformio.org/frameworks/shakti?utm_source=github&utm_medium=core>`_
 * `Simba <https://platformio.org/frameworks/simba?utm_source=github&utm_medium=core>`_
 * `SPL <https://platformio.org/frameworks/spl?utm_source=github&utm_medium=core>`_
 * `STM32Cube <https://platformio.org/frameworks/stm32cube?utm_source=github&utm_medium=core>`_
