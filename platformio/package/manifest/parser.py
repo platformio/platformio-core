@@ -240,6 +240,7 @@ class BaseManifestParser(object):
 
         # normalize example names
         for item in result:
+            item["name"] = item["name"].replace(os.path.sep, "/")
             item["name"] = re.sub(r"[^a-z\d\d\-\_/]+", "_", item["name"], flags=re.I)
 
         return result or None

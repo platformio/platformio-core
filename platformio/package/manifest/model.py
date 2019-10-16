@@ -72,7 +72,7 @@ class ManifestModel(DataModel):
         type=ListOfType(DataField(max_length=50, regex=r"^([a-z\d\-_]+|\*)$"))
     )
     frameworks = DataField(
-        type=ListOfType(DataField(max_length=50, regex=r"^([a-z\d\-_\*]+|\*)$"))
+        type=ListOfType(DataField(max_length=50, regex=r"^([a-z\d\-_]+|\*)$"))
     )
 
     repository = DataField(type=RepositoryModel)
