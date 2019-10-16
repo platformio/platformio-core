@@ -19,22 +19,14 @@ import re
 import requests
 
 from platformio.compat import get_class_attributes, string_types
-from platformio.exception import PlatformioException
 from platformio.fs import get_file_contents
+from platformio.package.exception import ManifestParserError
 from platformio.project.helpers import is_platformio_project
 
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
-
-
-class ManifestException(PlatformioException):
-    pass
-
-
-class ManifestParserException(ManifestException):
-    pass
 
 
 class ManifestFileType(object):
@@ -67,11 +59,11 @@ class ManifestParserFactory(object):
     @staticmethod
     def new_from_file(path, remote_url=False):
         if not path or not os.path.isfile(path):
-            raise ManifestException("Manifest file does not exist %s" % path)
+            raise ManifestParserError("Manifest file does not exist %s" % path)
         for t in get_class_attributes(ManifestFileType).values():
             if path.endswith(t):
                 return ManifestParserFactory.new(get_file_contents(path), t, remote_url)
-        raise ManifestException("Unknown manifest file type %s" % path)
+        raise ManifestParserError("Unknown manifest file type %s" % path)
 
     @staticmethod
     def new_from_dir(path, remote_url=None):
@@ -102,7 +94,7 @@ class ManifestParserFactory(object):
                 remote_url=remote_url,
                 package_dir=path,
             )
-        raise ManifestException("Unknown manifest file type in %s directory" % path)
+        raise ManifestParserError("Unknown manifest file type in %s directory" % path)
 
     @staticmethod
     def new_from_url(remote_url):
@@ -119,7 +111,7 @@ class ManifestParserFactory(object):
         # pylint: disable=redefined-builtin
         clsname = ManifestParserFactory.type_to_clsname(type)
         if clsname not in globals():
-            raise ManifestException("Unknown manifest file type %s" % clsname)
+            raise ManifestParserError("Unknown manifest file type %s" % clsname)
         return globals()[clsname](contents, remote_url, package_dir)
 
 
@@ -130,8 +122,13 @@ class BaseManifestParser(object):
         try:
             self._data = self.parse(contents)
         except Exception as e:
-            raise ManifestParserException("Could not parse manifest -> %s" % e)
+            raise ManifestParserError("Could not parse manifest -> %s" % e)
         self._data = self.parse_examples(self._data)
+
+        # remove None fields
+        for key in list(self._data.keys()):
+            if self._data[key] is None:
+                del self._data[key]
 
     def parse(self, contents):
         raise NotImplementedError
@@ -141,8 +138,12 @@ class BaseManifestParser(object):
 
     @staticmethod
     def cleanup_author(author):
+        assert isinstance(author, dict)
         if author.get("email"):
             author["email"] = re.sub(r"\s+[aA][tT]\s+", "@", author["email"])
+        for key in list(author.keys()):
+            if author[key] is None:
+                del author[key]
         return author
 
     @staticmethod
@@ -351,9 +352,7 @@ class ModuleJsonManifestParser(BaseManifestParser):
             name, email = self.parse_author_name_and_email(author)
             if not name:
                 continue
-            result.append(
-                self.cleanup_author(dict(name=name, email=email, maintainer=False))
-            )
+            result.append(self.cleanup_author(dict(name=name, email=email)))
         return result
 
     @staticmethod
@@ -431,7 +430,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         }
         for arch in properties.get("architectures", "").split(","):
             if "particle-" in arch:
-                raise ManifestParserException("Particle is not supported yet")
+                raise ManifestParserError("Particle is not supported yet")
             arch = arch.strip()
             if not arch:
                 continue
@@ -449,20 +448,18 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             name, email = self.parse_author_name_and_email(author)
             if not name:
                 continue
-            authors.append(
-                self.cleanup_author(dict(name=name, email=email, maintainer=False))
-            )
+            authors.append(self.cleanup_author(dict(name=name, email=email)))
         for author in properties.get("maintainer", "").split(","):
             name, email = self.parse_author_name_and_email(author)
             if not name:
                 continue
             found = False
             for item in authors:
-                if item["name"].lower() != name.lower():
+                if item.get("name", "").lower() != name.lower():
                     continue
                 found = True
                 item["maintainer"] = True
-                if not item["email"]:
+                if not item.get("email"):
                     item["email"] = email
             if not found:
                 authors.append(
@@ -495,6 +492,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         return None
 
     def _parse_export(self):
+        result = {"exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]}
         include = None
         if self.remote_url:
             repo_parse = urlparse(self.remote_url)
@@ -506,10 +504,9 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                     "/".join(repo_path_tokens[repo_path_tokens.index("raw") + 2 :])
                     or None
                 )
-        return {
-            "include": include,
-            "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"],
-        }
+        if include:
+            result["include"] = include
+        return result
 
 
 class PlatformJsonManifestParser(BaseManifestParser):

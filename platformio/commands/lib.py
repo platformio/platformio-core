@@ -25,8 +25,8 @@ from platformio import exception, util
 from platformio.commands import PlatformioCLI
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.lib import LibraryManager, get_builtin_libs, is_builtin_lib
-from platformio.package.manifest.model import StrictManifestModel
 from platformio.package.manifest.parser import ManifestParserFactory
+from platformio.package.manifest.schema import ManifestSchema, ManifestValidationError
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import get_project_dir, is_platformio_project
@@ -495,7 +495,11 @@ def lib_register(config_url):
         raise exception.InvalidLibConfURL(config_url)
 
     # Validate manifest
-    StrictManifestModel(**ManifestParserFactory.new_from_url(config_url).as_dict())
+    data, error = ManifestSchema(strict=False).load(
+        ManifestParserFactory.new_from_url(config_url).as_dict()
+    )
+    if error:
+        raise ManifestValidationError(error, data)
 
     result = util.get_api_result("/lib/register", data=dict(config_url=config_url))
     if "message" in result and result["message"]:

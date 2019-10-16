@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import jsondiff
 import pytest
 
-from platformio import datamodel
 from platformio.compat import WINDOWS
-from platformio.package.manifest import model, parser
+from platformio.package.manifest import parser
+from platformio.package.manifest.schema import ManifestSchema, ManifestValidationError
 
 
 def test_library_json_parser():
@@ -31,14 +32,15 @@ def test_library_json_parser():
 }
 """
     mp = parser.LibraryJsonManifestParser(contents)
-    assert sorted(mp.as_dict().items()) == sorted(
+    assert not jsondiff.diff(
+        mp.as_dict(),
         {
             "name": "TestPackage",
             "platforms": ["atmelavr", "espressif8266"],
             "export": {"exclude": [".gitignore", "tests"], "include": ["mylib"]},
             "keywords": ["kw1", "kw2", "kw3"],
             "homepage": "http://old.url.format",
-        }.items()
+        },
     )
 
     contents = """
@@ -52,13 +54,14 @@ def test_library_json_parser():
 }
 """
     mp = parser.LibraryJsonManifestParser(contents)
-    assert sorted(mp.as_dict().items()) == sorted(
+    assert not jsondiff.diff(
+        mp.as_dict(),
         {
             "keywords": ["sound", "audio", "music", "sd", "card", "playback"],
             "frameworks": ["arduino"],
             "export": {"exclude": ["audio_samples"]},
             "platforms": ["atmelavr"],
-        }.items()
+        },
     )
 
 
@@ -87,7 +90,8 @@ def test_module_json_parser():
 }
 """
     mp = parser.ModuleJsonManifestParser(contents)
-    assert sorted(mp.as_dict().items()) == sorted(
+    assert not jsondiff.diff(
+        mp.as_dict(),
         {
             "name": "YottaLibrary",
             "description": "This is Yotta library",
@@ -97,15 +101,9 @@ def test_module_json_parser():
             "platforms": ["*"],
             "frameworks": ["mbed"],
             "export": {"exclude": ["tests", "test", "*.doxyfile", "*.pdf"]},
-            "authors": [
-                {
-                    "maintainer": False,
-                    "email": "name@surname.com",
-                    "name": "Name Surname",
-                }
-            ],
+            "authors": [{"email": "name@surname.com", "name": "Name Surname"}],
             "version": "1.2.3",
-        }.items()
+        },
     )
 
 
@@ -118,24 +116,20 @@ author=SomeAuthor <info AT author.com>
 sentence=This is Arduino library
 """
     mp = parser.LibraryPropertiesManifestParser(contents)
-    assert sorted(mp.as_dict().items()) == sorted(
+    assert not jsondiff.diff(
+        mp.as_dict(),
         {
             "name": "TestPackage",
             "version": "1.2.3",
             "description": "This is Arduino library",
-            "repository": None,
             "platforms": ["*"],
             "frameworks": ["arduino"],
             "export": {
-                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"],
-                "include": None,
+                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
             },
-            "authors": [
-                {"maintainer": False, "email": "info@author.com", "name": "SomeAuthor"}
-            ],
+            "authors": [{"email": "info@author.com", "name": "SomeAuthor"}],
             "keywords": ["uncategorized"],
-            "homepage": None,
-        }.items()
+        },
     )
 
     # Platforms ALL
@@ -170,7 +164,6 @@ sentence=This is Arduino library
     data = parser.LibraryPropertiesManifestParser(
         "url=https://github.com/username/reponame.git\n" + contents
     ).as_dict()
-    assert data["homepage"] is None
     assert data["repository"] == {
         "type": "git",
         "url": "https://github.com/username/reponame.git",
@@ -216,15 +209,20 @@ def test_library_json_model():
   ]
 }
 """
-    data = parser.ManifestParserFactory.new(
+    raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_JSON
     ).as_dict()
-    m = model.StrictManifestModel(**data)
-    assert m.repository.url == "https://github.com/bblanchon/ArduinoJson.git"
-    assert m.examples[1].base == "examples/JsonHttpClient"
-    assert m.examples[1].files == ["JsonHttpClient.ino"]
-    assert m == model.StrictManifestModel(
-        **{
+
+    data, errors = ManifestSchema(strict=True).load(raw_data)
+    assert not errors
+
+    assert data["repository"]["url"] == "https://github.com/bblanchon/ArduinoJson.git"
+    assert data["examples"][1]["base"] == "examples/JsonHttpClient"
+    assert data["examples"][1]["files"] == ["JsonHttpClient.ino"]
+
+    assert not jsondiff.diff(
+        data,
+        {
             "name": "ArduinoJson",
             "keywords": ["json", "rest", "http", "web"],
             "description": "An elegant and efficient JSON library for embedded systems",
@@ -232,21 +230,12 @@ def test_library_json_model():
             "repository": {
                 "url": "https://github.com/bblanchon/ArduinoJson.git",
                 "type": "git",
-                "branch": None,
             },
             "version": "6.12.0",
             "authors": [
-                {
-                    "name": "Benoit Blanchon",
-                    "url": "https://blog.benoitblanchon.fr",
-                    "maintainer": False,
-                    "email": None,
-                }
+                {"name": "Benoit Blanchon", "url": "https://blog.benoitblanchon.fr"}
             ],
-            "export": {
-                "exclude": ["fuzzing", "scripts", "test", "third-party"],
-                "include": None,
-            },
+            "export": {"exclude": ["fuzzing", "scripts", "test", "third-party"]},
             "frameworks": ["arduino"],
             "platforms": ["*"],
             "license": "MIT",
@@ -262,7 +251,7 @@ def test_library_json_model():
                     "files": ["JsonHttpClient.ino"],
                 },
             ],
-        }
+        },
     )
 
 
@@ -278,42 +267,33 @@ category=Display
 url=https://github.com/olikraus/u8glib
 architectures=avr,sam
 """
-    data = parser.ManifestParserFactory.new(
+    raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_PROPERTIES
     ).as_dict()
-    m = model.StrictManifestModel(**data)
-    assert not m.get_exceptions()
-    assert m == model.StrictManifestModel(
-        **{
-            "license": None,
+
+    data, errors = ManifestSchema(strict=True).load(raw_data)
+    assert not errors
+
+    assert not jsondiff.diff(
+        data,
+        {
             "description": (
                 "A library for monochrome TFTs and OLEDs. Supported display "
                 "controller: SSD1306, SSD1309, SSD1322, SSD1325"
             ),
-            "repository": {
-                "url": "https://github.com/olikraus/u8glib",
-                "type": "git",
-                "branch": None,
-            },
+            "repository": {"url": "https://github.com/olikraus/u8glib", "type": "git"},
             "frameworks": ["arduino"],
             "platforms": ["atmelavr", "atmelsam"],
             "version": "1.19.1",
             "export": {
-                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"],
-                "include": None,
+                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
             },
             "authors": [
-                {
-                    "url": None,
-                    "maintainer": True,
-                    "email": "olikraus@gmail.com",
-                    "name": "oliver",
-                }
+                {"maintainer": True, "email": "olikraus@gmail.com", "name": "oliver"}
             ],
             "keywords": ["display"],
-            "homepage": None,
             "name": "U8glib",
-        }
+        },
     )
 
     # Broken fields
@@ -330,7 +310,7 @@ architectures=*
 dot_a_linkage=false
 includes=MozziGuts.h
 """
-    data = parser.ManifestParserFactory.new(
+    raw_data = parser.ManifestParserFactory.new(
         contents,
         parser.ManifestFileType.LIBRARY_PROPERTIES,
         remote_url=(
@@ -338,10 +318,13 @@ includes=MozziGuts.h
             "master/library.properties"
         ),
     ).as_dict()
-    m = model.ManifestModel(**data)
-    assert m.get_exceptions()
-    assert m == model.ManifestModel(
-        **{
+
+    data, errors = ManifestSchema(strict=False).load(raw_data)
+    assert errors["authors"]
+
+    assert not jsondiff.diff(
+        data,
+        {
             "name": "Mozzi",
             "version": "1.0.3",
             "description": (
@@ -353,8 +336,7 @@ includes=MozziGuts.h
             "platforms": ["*"],
             "frameworks": ["arduino"],
             "export": {
-                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"],
-                "include": None,
+                "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]
             },
             "authors": [
                 {
@@ -365,7 +347,7 @@ includes=MozziGuts.h
             ],
             "keywords": ["signal", "input", "output"],
             "homepage": "https://sensorium.github.io/Mozzi/",
-        }
+        },
     )
 
 
@@ -419,14 +401,16 @@ def test_platform_json_model():
   }
 }
 """
-    data = parser.ManifestParserFactory.new(
+    raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.PLATFORM_JSON
     ).as_dict()
-    data["frameworks"] = sorted(data["frameworks"])
-    m = model.ManifestModel(**data)
-    assert m.frameworks == ["arduino", "simba"]
-    assert m == model.ManifestModel(
-        **{
+
+    data, errors = ManifestSchema(strict=False).load(raw_data)
+    assert not errors
+
+    assert not jsondiff.diff(
+        data,
+        {
             "name": "atmelavr",
             "title": "Atmel AVR",
             "description": (
@@ -441,11 +425,10 @@ def test_platform_json_model():
             "repository": {
                 "url": "https://github.com/platformio/platform-atmelavr.git",
                 "type": "git",
-                "branch": None,
             },
             "frameworks": ["arduino", "simba"],
             "version": "1.15.0",
-        }
+        },
     )
 
 
@@ -458,19 +441,21 @@ def test_package_json_model():
     "version": "3.30101.0"
 }
 """
-    data = parser.ManifestParserFactory.new(
+    raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.PACKAGE_JSON
     ).as_dict()
-    m = model.ManifestModel(**data)
-    assert m.system is None
-    assert m.homepage == "http://www.scons.org"
-    assert m == model.ManifestModel(
-        **{
+
+    data, errors = ManifestSchema(strict=False).load(raw_data)
+    assert not errors
+
+    assert not jsondiff.diff(
+        data,
+        {
             "name": "tool-scons",
             "description": "SCons software construction tool",
             "homepage": "http://www.scons.org",
             "version": "3.30101.0",
-        }
+        },
     )
 
     mp = parser.ManifestParserFactory.new(
@@ -543,20 +528,23 @@ def test_examples_from_dir(tmpdir_factory):
 
     # Do testing
 
-    data = parser.ManifestParserFactory.new_from_dir(str(package_dir)).as_dict()
-    assert isinstance(data["examples"], list)
-    assert len(data["examples"]) == 6
+    raw_data = parser.ManifestParserFactory.new_from_dir(str(package_dir)).as_dict()
+    assert isinstance(raw_data["examples"], list)
+    assert len(raw_data["examples"]) == 6
 
     def _sort_examples(items):
         for i, item in enumerate(items):
             items[i]["files"] = sorted(item["files"])
         return sorted(items, key=lambda item: item["name"])
 
-    data["examples"] = _sort_examples(data["examples"])
-    m = model.ManifestModel(**data)
-    assert m.examples[3].name == "PlatformIO/hello"
-    assert m == model.ManifestModel(
-        **{
+    raw_data["examples"] = _sort_examples(raw_data["examples"])
+
+    data, errors = ManifestSchema(strict=True).load(raw_data)
+    assert not errors
+
+    assert not jsondiff.diff(
+        data,
+        {
             "version": "1.0.0",
             "name": "pkg",
             "examples": _sort_examples(
@@ -599,84 +587,44 @@ def test_examples_from_dir(tmpdir_factory):
                     },
                 ]
             ),
-        }
+        },
     )
-
-
-def test_dict_of_type():
-    class TestModel(datamodel.DataModel):
-        examples = datamodel.DataField(type=datamodel.DictOfType(model.ExampleModel))
-
-    class StrictTestModel(TestModel, datamodel.StrictDataModel):
-        pass
-
-    # valid
-    m = TestModel(
-        examples={
-            "valid": dict(name="Valid", base="valid", files=["valid.h"]),
-            "invalid": "test",
-        }
-    )
-    assert list(m.examples.keys()) == ["valid"]
-
-    # invalid
-    with pytest.raises(datamodel.DataFieldException):
-        StrictTestModel(examples=[dict(name="Valid", base="valid", files=["valid.h"])])
-
-    with pytest.raises(datamodel.DataFieldException):
-        StrictTestModel(
-            examples={
-                "valid": dict(name="Valid", base="valid", files=["valid.h"]),
-                "invalid": "test",
-            }
-        )
 
 
 def test_broken_models():
     # non-strict mode
-    assert len(model.ManifestModel(name="MyPackage").get_exceptions()) == 4
-    assert (
-        model.ManifestModel(name="MyPackage", version="broken_version").version is None
-    )
+    data, errors = ManifestSchema(strict=False).load(dict(name="MyPackage"))
+    assert set(errors.keys()) == set(["version"])
+    assert data.get("version") is None
 
     # invalid keywords
-    m = model.ManifestModel(keywords=["kw1", "*^[]"])
-    assert any(
-        "Value `*^[]` does not match RegExp" in str(e) for e in m.get_exceptions()
-    )
-    assert m.keywords == ["kw1"]
+    data, errors = ManifestSchema(strict=False).load(dict(keywords=["kw1", "*^[]"]))
+    assert errors
+    assert data["keywords"] == ["kw1"]
 
     # strict mode
 
-    with pytest.raises(datamodel.DataFieldException) as excinfo:
-        assert model.StrictManifestModel(name="MyPackage")
-    assert excinfo.match(r"Missed value for `StrictManifestModel.[a-z]+` field")
+    with pytest.raises(
+        ManifestValidationError, match="Missing data for required field"
+    ):
+        ManifestSchema(strict=True).load(dict(name="MyPackage"))
 
     # broken SemVer
     with pytest.raises(
-        datamodel.DataFieldException,
-        match=(
-            "Invalid semantic versioning format for "
-            "`StrictManifestModel.version` field"
-        ),
+        ManifestValidationError, match=("Invalid semantic versioning format")
     ):
-        assert model.StrictManifestModel(
-            name="MyPackage",
-            description="MyDescription",
-            keywords=["a", "b"],
-            authors=[{"name": "Author"}],
-            version="broken_version",
+        ManifestSchema(strict=True).load(
+            dict(name="MyPackage", version="broken_version")
         )
 
-    # broken value for DataModel
-    with pytest.raises(
-        datamodel.DataFieldException,
-        match=("Value `should be dict here` should be type of dictionary"),
-    ):
-        assert model.StrictManifestModel(
-            name="MyPackage",
-            description="MyDescription",
-            keywords=["a", "b"],
-            authors=["should be dict here"],
-            version="1.2.3",
+    # broken value for Nested
+    with pytest.raises(ManifestValidationError, match=r"authors.*Invalid input type"):
+        ManifestSchema(strict=True).load(
+            dict(
+                name="MyPackage",
+                description="MyDescription",
+                keywords=["a", "b"],
+                authors=["should be dict here"],
+                version="1.2.3",
+            )
         )
