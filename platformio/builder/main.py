@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 from os import environ, makedirs
 from os.path import isdir, join
 from time import time
@@ -28,7 +29,7 @@ from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import fs
-from platformio.compat import PY2, dump_json_to_unicode
+from platformio.compat import dump_json_to_unicode
 from platformio.managers.platform import PlatformBase
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_dir
@@ -137,7 +138,9 @@ env.LoadProjectOptions()
 env.LoadPioPlatform()
 
 env.SConscriptChdir(0)
-env.SConsignFile(join("$BUILD_DIR", ".sconsign.dblite" if PY2 else ".sconsign3.dblite"))
+env.SConsignFile(
+    join("$BUILD_DIR", ".sconsign.py%d%d" % (sys.version_info[0], sys.version_info[1]))
+)
 
 for item in env.GetExtraScripts("pre"):
     env.SConscript(item, exports="env")
