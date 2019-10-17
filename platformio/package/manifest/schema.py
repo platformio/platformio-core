@@ -37,7 +37,8 @@ class StrictListField(fields.List):
         try:
             return super(StrictListField, self)._deserialize(value, attr, data)
         except ValidationError as exc:
-            exc.data = [item for item in exc.data if item is not None]
+            if exc.data:
+                exc.data = [item for item in exc.data if item is not None]
             raise exc
 
 
