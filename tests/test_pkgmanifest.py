@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 import jsondiff
 import pytest
 
@@ -551,22 +553,26 @@ def test_examples_from_dir(tmpdir_factory):
                 [
                     {
                         "name": "PlatformIO/hello",
-                        "base": "examples/PlatformIO/hello",
-                        "files": ["platformio.ini", "include/main.h", "src/main.cpp"],
+                        "base": os.path.join("examples", "PlatformIO", "hello"),
+                        "files": [
+                            "platformio.ini",
+                            os.path.join("include", "main.h"),
+                            os.path.join("src", "main.cpp"),
+                        ],
                     },
                     {
                         "name": "1_General/SomeSketchIno",
-                        "base": "examples/1. General/SomeSketchIno",
+                        "base": os.path.join("examples", "1. General", "SomeSketchIno"),
                         "files": ["SomeSketchIno.ino"],
                     },
                     {
                         "name": "1_General/SomeSketchPde",
-                        "base": "examples/1. General/SomeSketchPde",
+                        "base": os.path.join("examples", "1. General", "SomeSketchPde"),
                         "files": ["SomeSketchPde.pde"],
                     },
                     {
                         "name": "demo",
-                        "base": "examples/demo",
+                        "base": os.path.join("examples", "demo"),
                         "files": ["demo.h", "util.h", "demo.cpp"],
                     },
                     {
@@ -574,8 +580,8 @@ def test_examples_from_dir(tmpdir_factory):
                         "base": "examples/world",
                         "files": [
                             "platformio.ini",
-                            "include/world.h",
-                            "src/world.c",
+                            os.path.join("include", "world.h"),
+                            os.path.join("src", "world.c"),
                             "README",
                             "extra.py",
                         ],

@@ -16,7 +16,6 @@ from __future__ import absolute_import
 
 import os
 import sys
-from os.path import basename, dirname, isdir, join, realpath
 
 from SCons import Builder, Util  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
@@ -130,7 +129,14 @@ def BuildProgram(env):
 
     # append into the beginning a main LD script
     if env.get("LDSCRIPT_PATH") and not any("-Wl,-T" in f for f in env["LINKFLAGS"]):
-        env.Prepend(LINKFLAGS=["-T", env["LDSCRIPT_PATH"]])
+        env.Prepend(
+            LINKFLAGS=[
+                "-T",
+                env["LDSCRIPT_PATH"]
+                if os.path.isfile(env["LDSCRIPT_PATH"])
+                else "$LDSCRIPT_PATH",
+            ]
+        )
 
     # enable "cyclic reference" for linker
     if env.get("LIBS") and env.GetCompilerType() == "gcc":
@@ -138,7 +144,7 @@ def BuildProgram(env):
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 
     program = env.Program(
-        join("$BUILD_DIR", env.subst("$PROGNAME")), env["PIOBUILDFILES"]
+        os.path.join("$BUILD_DIR", env.subst("$PROGNAME")), env["PIOBUILDFILES"]
     )
     env.Replace(PIOMAINPROG=program)
 
@@ -181,13 +187,13 @@ def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
     # fix relative CPPPATH & LIBPATH
     for k in ("CPPPATH", "LIBPATH"):
         for i, p in enumerate(result.get(k, [])):
-            if isdir(p):
-                result[k][i] = realpath(p)
+            if os.path.isdir(p):
+                result[k][i] = os.path.realpath(p)
 
     # fix relative path for "-include"
     for i, f in enumerate(result.get("CCFLAGS", [])):
         if isinstance(f, tuple) and f[0] == "-include":
-            result["CCFLAGS"][i] = (f[0], env.File(realpath(f[1].get_path())))
+            result["CCFLAGS"][i] = (f[0], env.File(os.path.realpath(f[1].get_path())))
 
     return result
 
@@ -254,16 +260,16 @@ def CollectBuildFiles(env, variant_dir, src_dir, src_filter=None, duplicate=Fals
         src_dir = src_dir[:-1]
 
     for item in env.MatchSourceFiles(src_dir, src_filter):
-        _reldir = dirname(item)
-        _src_dir = join(src_dir, _reldir) if _reldir else src_dir
-        _var_dir = join(variant_dir, _reldir) if _reldir else variant_dir
+        _reldir = os.path.dirname(item)
+        _src_dir = os.path.join(src_dir, _reldir) if _reldir else src_dir
+        _var_dir = os.path.join(variant_dir, _reldir) if _reldir else variant_dir
 
         if _var_dir not in variants:
             variants.append(_var_dir)
             env.VariantDir(_var_dir, _src_dir, duplicate)
 
         if fs.path_endswith_ext(item, SRC_BUILD_EXT):
-            sources.append(env.File(join(_var_dir, basename(item))))
+            sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
 
     return sources
 
