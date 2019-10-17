@@ -153,7 +153,7 @@ sentence=This is Arduino library
     ).as_dict()
     assert data["export"] == {
         "exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"],
-        "include": "libraries/TestPackage",
+        "include": ["libraries/TestPackage"],
     }
     assert data["repository"] == {
         "url": "https://github.com/username/reponame",

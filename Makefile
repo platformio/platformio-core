@@ -10,7 +10,7 @@ black:
 	black --target-version py27 ./tests
 
 test:
-	py.test --verbose --capture=no --exitfirst -n 3 --dist=loadscope tests --ignore tests/test_examples.py --ignore tests/test_pkgmanifest.py
+	py.test --verbose --capture=no --exitfirst -n 3 --dist=loadscope tests --ignore tests/test_examples.py
 
 before-commit: isort black lint test
 
