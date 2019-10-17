@@ -62,7 +62,7 @@ def write_file_contents(path, contents):
     try:
         with open(path, "w") as fp:
             return fp.write(contents)
-    except UnicodeDecodeError:
+    except UnicodeEncodeError:
         with io.open(path, "w", encoding="latin-1") as fp:
             return fp.write(contents)
 
