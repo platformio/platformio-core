@@ -19,12 +19,12 @@ import glob
 import os
 import shutil
 from functools import cmp_to_key
-from os.path import expanduser, isdir, isfile, join
+from os.path import isdir, isfile, join
 
 import click
 from twisted.internet import defer  # pylint: disable=import-error
 
-from platformio import app, util
+from platformio import app, fs, util
 from platformio.compat import PY2, get_filesystem_encoding
 from platformio.home import helpers
 
@@ -126,7 +126,7 @@ class OSRPC(object):
 
         items = []
         if path.startswith("~"):
-            path = expanduser(path)
+            path = fs.expanduser(path)
         if not isdir(path):
             return items
         for item in os.listdir(path):

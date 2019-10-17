@@ -14,9 +14,9 @@
 
 from __future__ import absolute_import
 
-from os.path import expanduser, join
+from os.path import join
 
-from platformio import __version__, app, util
+from platformio import __version__, app, fs, util
 from platformio.project.helpers import get_project_core_dir, is_platformio_project
 
 
@@ -54,7 +54,7 @@ class AppRPC(object):
                 for name, data in app.DEFAULT_SETTINGS.items()
             }
 
-            storage["homeDir"] = expanduser("~")
+            storage["homeDir"] = fs.expanduser("~")
             storage["projectsDir"] = storage["coreSettings"]["projects_dir"]["value"]
 
             # skip non-existing recent projects

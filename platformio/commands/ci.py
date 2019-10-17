@@ -14,7 +14,7 @@
 
 from glob import glob
 from os import getenv, makedirs, remove
-from os.path import abspath, basename, expanduser, isdir, isfile, join
+from os.path import abspath, basename, isdir, isfile, join
 from shutil import copyfile, copytree
 from tempfile import mkdtemp
 
@@ -34,7 +34,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     value = list(value)
     for i, p in enumerate(value):
         if p.startswith("~"):
-            value[i] = expanduser(p)
+            value[i] = fs.expanduser(p)
         value[i] = abspath(value[i])
         if not glob(value[i]):
             invalid_path = p

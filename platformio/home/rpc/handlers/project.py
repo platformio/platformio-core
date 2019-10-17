@@ -17,7 +17,7 @@ from __future__ import absolute_import
 import os
 import shutil
 import time
-from os.path import basename, expanduser, getmtime, isdir, isfile, join, realpath, sep
+from os.path import basename, getmtime, isdir, isfile, join, realpath, sep
 
 import jsonrpc  # pylint: disable=import-error
 
@@ -56,7 +56,7 @@ class ProjectRPC(object):
             # skip non existing folders and resolve full path
             for key in ("envLibdepsDirs", "libExtraDirs"):
                 data[key] = [
-                    expanduser(d) if d.startswith("~") else realpath(d)
+                    fs.expanduser(d) if d.startswith("~") else realpath(d)
                     for d in data[key]
                     if isdir(d)
                 ]

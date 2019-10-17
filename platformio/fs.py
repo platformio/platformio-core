@@ -171,6 +171,15 @@ def to_unix_path(path):
     return re.sub(r"[\\]+", "/", path)
 
 
+def expanduser(path):
+    """
+    Be compatible with Python 3.8, on Windows skip HOME and check for USERPROFILE
+    """
+    if not WINDOWS or not path.startswith("~") or "USERPROFILE" not in os.environ:
+        return os.path.expanduser(path)
+    return os.environ["USERPROFILE"] + path[1:]
+
+
 def rmtree(path):
     def _onerror(func, path, __):
         try:

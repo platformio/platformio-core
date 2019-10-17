@@ -20,7 +20,7 @@ from hashlib import sha1
 
 import click
 
-from platformio import exception
+from platformio import exception, fs
 from platformio.compat import WINDOWS, hashlib_encode_data
 from platformio.project.options import ProjectOptions
 
@@ -106,7 +106,7 @@ class ProjectConfigBase(object):
         # load extra configs
         for pattern in self.get("platformio", "extra_configs", []):
             if pattern.startswith("~"):
-                pattern = os.path.expanduser(pattern)
+                pattern = fs.expanduser(pattern)
             for item in glob.glob(pattern):
                 self.read(item)
 
@@ -380,7 +380,7 @@ class ProjectConfigDirsMixin(object):
             )
 
         if result.startswith("~"):
-            result = os.path.expanduser(result)
+            result = fs.expanduser(result)
 
         result = os.path.realpath(result)
 

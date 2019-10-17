@@ -15,7 +15,7 @@
 import io
 import os
 import sys
-from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
+from os.path import abspath, basename, isdir, isfile, join, relpath
 
 import bottle
 
@@ -64,7 +64,7 @@ class ProjectGenerator(object):
             "project_name": basename(self.project_dir),
             "project_dir": self.project_dir,
             "env_name": self.env_name,
-            "user_home_dir": abspath(expanduser("~")),
+            "user_home_dir": abspath(fs.expanduser("~")),
             "platformio_path": sys.argv[0]
             if isfile(sys.argv[0])
             else where_is_program("platformio"),

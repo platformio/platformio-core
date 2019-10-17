@@ -19,6 +19,8 @@ from collections import OrderedDict, namedtuple
 
 import click
 
+from platformio import fs
+
 ConfigOptionClass = namedtuple(
     "ConfigOption",
     [
@@ -77,7 +79,7 @@ ProjectOptions = OrderedDict(
                 name="core_dir",
                 oldnames=["home_dir"],
                 sysenvvar="PLATFORMIO_CORE_DIR",
-                default=os.path.join(os.path.expanduser("~"), ".platformio"),
+                default=os.path.join(fs.expanduser("~"), ".platformio"),
             ),
             ConfigPlatformioOption(
                 name="globallib_dir",

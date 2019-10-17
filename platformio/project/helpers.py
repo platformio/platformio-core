@@ -16,11 +16,11 @@ import json
 import os
 from hashlib import sha1
 from os import walk
-from os.path import dirname, expanduser, isdir, isfile, join
+from os.path import dirname, isdir, isfile, join
 
 from click.testing import CliRunner
 
-from platformio import __version__, exception
+from platformio import __version__, exception, fs
 from platformio.compat import WINDOWS, hashlib_encode_data
 from platformio.project.config import ProjectConfig
 
@@ -90,7 +90,7 @@ def get_project_libdeps_dir():
 
 
 def get_default_projects_dir():
-    docs_dir = join(expanduser("~"), "Documents")
+    docs_dir = join(fs.expanduser("~"), "Documents")
     try:
         assert WINDOWS
         import ctypes.wintypes  # pylint: disable=import-outside-toplevel

@@ -22,16 +22,7 @@ import hashlib
 import os
 import re
 import sys
-from os.path import (
-    basename,
-    commonprefix,
-    expanduser,
-    isdir,
-    isfile,
-    join,
-    realpath,
-    sep,
-)
+from os.path import basename, commonprefix, isdir, isfile, join, realpath, sep
 
 import click
 import SCons.Scanner  # pylint: disable=import-error
@@ -943,7 +934,8 @@ def GetLibSourceDirs(env):
     items = env.GetProjectOption("lib_extra_dirs", [])
     items.extend(env["LIBSOURCE_DIRS"])
     return [
-        env.subst(expanduser(item) if item.startswith("~") else item) for item in items
+        env.subst(fs.expanduser(item) if item.startswith("~") else item)
+        for item in items
     ]
 
 
