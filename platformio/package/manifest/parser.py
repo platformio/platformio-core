@@ -505,7 +505,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                     or None
                 )
         if include:
-            result["include"] = include
+            result["include"] = [include]
         return result
 
 
