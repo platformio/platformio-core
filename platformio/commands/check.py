@@ -147,17 +147,19 @@ def cli(
                         click.echo("No defects found")
                     print_processing_footer(result)
 
+    component_stats = collect_component_stats(results)
     if json_output:
-        click.echo(dump_json_to_unicode(results_to_json(results)))
+        click.echo(dump_json_to_unicode(
+            results_to_json(results, component_stats)))
     elif not silent:
-        print_check_summary(results)
+        print_check_summary(results, component_stats)
 
     command_failed = any(r.get("succeeded") is False for r in results)
     if command_failed:
         raise exception.ReturnErrorCode(1)
 
 
-def results_to_json(raw):
+def results_to_json(raw, components):
     results = []
     for item in raw:
         item.update(
@@ -165,6 +167,7 @@ def results_to_json(raw):
                 "ignored": item.get("succeeded") is None,
                 "succeeded": bool(item.get("succeeded")),
                 "defects": [d.to_json() for d in item.get("defects", [])],
+                "stats": [{k: v} for k, v in components.items()]
             }
         )
         results.append(item)
@@ -197,7 +200,7 @@ def print_processing_footer(result):
     )
 
 
-def print_defects_stats(results):
+def collect_component_stats(results):
     components = dict()
 
     def _append_defect(component, defect):
@@ -215,13 +218,17 @@ def print_defects_stats(results):
                     component = dirname(component)
                     _append_defect(component, defect)
 
-    if not components:
+    return dict(components)
+
+
+def print_defects_stats(component_stats):
+    if not component_stats:
         return
 
     severity_labels = list(DefectItem.SEVERITY_LABELS.values())
     severity_labels.reverse()
     tabular_data = list()
-    for k, v in components.items():
+    for k, v in component_stats.items():
         tool_defect = [v.get(s, 0) for s in severity_labels]
         tabular_data.append([k] + tool_defect)
 
@@ -237,7 +244,7 @@ def print_defects_stats(results):
     click.echo()
 
 
-def print_check_summary(results):
+def print_check_summary(results, component_stats):
     click.echo()
 
     tabular_data = []
@@ -245,7 +252,7 @@ def print_check_summary(results):
     failed_nums = 0
     duration = 0
 
-    print_defects_stats(results)
+    print_defects_stats(component_stats)
 
     for result in results:
         duration += result.get("duration", 0)
