@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import codecs
+import io
 import os
 import sys
 from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
@@ -20,7 +20,6 @@ from os.path import abspath, basename, expanduser, isdir, isfile, join, relpath
 import bottle
 
 from platformio import fs, util
-from platformio.compat import get_file_contents
 from platformio.proc import where_is_program
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import load_project_ide_data
@@ -137,11 +136,11 @@ class ProjectGenerator(object):
 
     @staticmethod
     def _render_tpl(tpl_path, tpl_vars):
-        return bottle.template(get_file_contents(tpl_path), **tpl_vars)
+        return bottle.template(fs.get_file_contents(tpl_path), **tpl_vars)
 
     @staticmethod
     def _merge_contents(dst_path, contents):
         if basename(dst_path) == ".gitignore" and isfile(dst_path):
             return
-        with codecs.open(dst_path, "w", encoding="utf8") as fp:
+        with io.open(dst_path, "w", encoding="utf8") as fp:
             fp.write(contents)

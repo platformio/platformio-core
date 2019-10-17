@@ -25,7 +25,7 @@ from SCons.Action import Action  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 
 from platformio import fs, util
-from platformio.compat import get_file_contents, glob_escape
+from platformio.compat import glob_escape
 from platformio.managers.core import get_core_package_dir
 from platformio.proc import exec_command
 
@@ -62,7 +62,7 @@ class InoToCPPConverter(object):
         assert nodes
         lines = []
         for node in nodes:
-            contents = get_file_contents(node.get_path())
+            contents = fs.get_file_contents(node.get_path())
             _lines = ['# 1 "%s"' % node.get_path().replace("\\", "/"), contents]
             if self.is_main_node(contents):
                 lines = _lines + lines
@@ -78,16 +78,14 @@ class InoToCPPConverter(object):
     def process(self, contents):
         out_file = self._main_ino + ".cpp"
         assert self._gcc_preprocess(contents, out_file)
-        contents = get_file_contents(out_file)
+        contents = fs.get_file_contents(out_file)
         contents = self._join_multiline_strings(contents)
-        with open(out_file, "w") as fp:
-            fp.write(self.append_prototypes(contents))
+        fs.write_file_contents(out_file, self.append_prototypes(contents))
         return out_file
 
     def _gcc_preprocess(self, contents, out_file):
         tmp_path = mkstemp()[1]
-        with open(tmp_path, "w") as fp:
-            fp.write(contents)
+        fs.write_file_contents(tmp_path, contents)
         self.env.Execute(
             self.env.VerboseAction(
                 '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(

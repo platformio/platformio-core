@@ -41,12 +41,7 @@ from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
 
 from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
-from platformio.compat import (
-    WINDOWS,
-    get_file_contents,
-    hashlib_encode_data,
-    string_types,
-)
+from platformio.compat import WINDOWS, hashlib_encode_data, string_types
 from platformio.managers.lib import LibraryManager
 
 
@@ -92,7 +87,7 @@ class LibBuilderFactory(object):
                     fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
                 ):
                     continue
-                content = get_file_contents(join(root, fname))
+                content = fs.get_file_contents(join(root, fname))
                 if not content:
                     continue
                 if "Arduino.h" in content and include_re.search(content):
@@ -1047,22 +1042,22 @@ def ConfigureProjectLibBuilder(env):
                 title += " %s" % lb.version
             if vcs_info and vcs_info.get("version"):
                 title += " #%s" % vcs_info.get("version")
-            sys.stdout.write("%s|-- %s" % (margin, title))
+            click.echo("%s|-- %s" % (margin, title), nl=False)
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
                 if vcs_info:
-                    sys.stdout.write(" [%s]" % vcs_info.get("url"))
-                sys.stdout.write(" (")
-                sys.stdout.write(lb.path)
-                sys.stdout.write(")")
-            sys.stdout.write("\n")
+                    click.echo(" [%s]" % vcs_info.get("url"), nl=False)
+                click.echo(" (", nl=False)
+                click.echo(lb.path, nl=False)
+                click.echo(")", nl=False)
+            click.echo("")
             if lb.depbuilders:
                 _print_deps_tree(lb, level + 1)
 
     project = ProjectAsLibBuilder(env, "$PROJECT_DIR")
     ldf_mode = LibBuilderBase.lib_ldf_mode.fget(project)
 
-    print ("LDF: Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
-    print (
+    click.echo("LDF: Library Dependency Finder -> http://bit.ly/configure-pio-ldf")
+    click.echo(
         "LDF Modes: Finder ~ %s, Compatibility ~ %s"
         % (ldf_mode, project.lib_compat_mode)
     )
@@ -1070,19 +1065,19 @@ def ConfigureProjectLibBuilder(env):
     project.install_dependencies()
 
     lib_builders = env.GetLibBuilders()
-    print ("Found %d compatible libraries" % len(lib_builders))
+    click.echo("Found %d compatible libraries" % len(lib_builders))
 
-    print ("Scanning dependencies...")
+    click.echo("Scanning dependencies...")
     project.search_deps_recursive()
 
     if ldf_mode.startswith("chain") and project.depbuilders:
         _correct_found_libs(lib_builders)
 
     if project.depbuilders:
-        print ("Dependency Graph")
+        click.echo("Dependency Graph")
         _print_deps_tree(project)
     else:
-        print ("No dependencies")
+        click.echo("No dependencies")
 
     return project
 

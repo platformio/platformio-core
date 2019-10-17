@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import io
 import json
 import os
 import re
@@ -23,7 +24,7 @@ from glob import glob
 import click
 
 from platformio import exception
-from platformio.compat import WINDOWS, get_file_contents, glob_escape
+from platformio.compat import WINDOWS, glob_escape
 
 
 class cd(object):
@@ -46,6 +47,24 @@ def get_source_dir():
                 curpath = os.path.join(p, __file__)
                 break
     return os.path.dirname(curpath)
+
+
+def get_file_contents(path):
+    try:
+        with open(path) as fp:
+            return fp.read()
+    except UnicodeDecodeError:
+        with io.open(path, encoding="latin-1") as fp:
+            return fp.read()
+
+
+def write_file_contents(path, contents):
+    try:
+        with open(path, "w") as fp:
+            return fp.write(contents)
+    except UnicodeDecodeError:
+        with io.open(path, "w", encoding="latin-1") as fp:
+            return fp.write(contents)
 
 
 def load_json(file_path):

@@ -53,12 +53,9 @@ def clean_build_dir(build_dir, config):
 
     if isdir(build_dir):
         # check project structure
-        if isfile(checksum_file):
-            with open(checksum_file) as f:
-                if f.read() == checksum:
-                    return
+        if isfile(checksum_file) and fs.get_file_contents(checksum_file) == checksum:
+            return
         fs.rmtree(build_dir)
 
     makedirs(build_dir)
-    with open(checksum_file, "w") as f:
-        f.write(checksum)
+    fs.write_file_contents(checksum_file, checksum)

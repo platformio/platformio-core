@@ -19,7 +19,7 @@ from string import Template
 
 import click
 
-from platformio import exception
+from platformio import exception, fs
 
 TRANSPORT_OPTIONS = {
     "arduino": {
@@ -193,7 +193,6 @@ class TestProcessorBase(object):
         data = Template(tpl).substitute(baudrate=self.get_baudrate())
 
         tmp_file = join(test_dir, "output_export.cpp")
-        with open(tmp_file, "w") as f:
-            f.write(data)
+        fs.write_file_contents(tmp_file, data)
 
         atexit.register(delete_tmptest_file, tmp_file)

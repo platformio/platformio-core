@@ -145,9 +145,9 @@ def init_base_project(project_dir):
 
 
 def init_include_readme(include_dir):
-    with open(join(include_dir, "README"), "w") as f:
-        f.write(
-            """
+    fs.write_file_contents(
+        join(include_dir, "README"),
+        """
 This directory is intended for project header files.
 
 A header file is a file containing C declarations and macro definitions
@@ -186,15 +186,15 @@ Read more about using header files in official GCC documentation:
 * Computed Includes
 
 https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
-"""
-        )
+""",
+    )
 
 
 def init_lib_readme(lib_dir):
-    with open(join(lib_dir, "README"), "w") as f:
-        # pylint: disable=line-too-long
-        f.write(
-            """
+    # pylint: disable=line-too-long
+    fs.write_file_contents(
+        join(lib_dir, "README"),
+        """
 This directory is intended for project specific (private) libraries.
 PlatformIO will compile them to static libraries and link into executable file.
 
@@ -240,14 +240,14 @@ libraries scanning project source files.
 
 More information about PlatformIO Library Dependency Finder
 - https://docs.platformio.org/page/librarymanager/ldf.html
-"""
-        )
+""",
+    )
 
 
 def init_test_readme(test_dir):
-    with open(join(test_dir, "README"), "w") as f:
-        f.write(
-            """
+    fs.write_file_contents(
+        join(test_dir, "README"),
+        """
 This directory is intended for PIO Unit Testing and project tests.
 
 Unit Testing is a software testing method by which individual units of
@@ -258,17 +258,17 @@ in the development cycle.
 
 More information about PIO Unit Testing:
 - https://docs.platformio.org/page/plus/unit-testing.html
-"""
-        )
+""",
+    )
 
 
 def init_ci_conf(project_dir):
     conf_path = join(project_dir, ".travis.yml")
     if isfile(conf_path):
         return
-    with open(conf_path, "w") as f:
-        f.write(
-            """# Continuous Integration (CI) is the practice, in software
+    fs.write_file_contents(
+        conf_path,
+        """# Continuous Integration (CI) is the practice, in software
 # engineering, of merging all developer working copies with a shared mainline
 # several times a day < https://docs.platformio.org/page/ci/index.html >
 #
@@ -335,16 +335,15 @@ def init_ci_conf(project_dir):
 #
 # script:
 #     - platformio ci --lib="." --board=ID_1 --board=ID_2 --board=ID_N
-"""
-        )
+""",
+    )
 
 
 def init_cvs_ignore(project_dir):
     conf_path = join(project_dir, ".gitignore")
     if isfile(conf_path):
         return
-    with open(conf_path, "w") as fp:
-        fp.write(".pio\n")
+    fs.write_file_contents(conf_path, ".pio\n")
 
 
 def fill_project_envs(

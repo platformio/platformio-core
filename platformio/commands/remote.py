@@ -23,7 +23,6 @@ import click
 
 from platformio import exception, fs
 from platformio.commands.device import device_monitor as cmd_device_monitor
-from platformio.compat import get_file_contents
 from platformio.managers.core import pioplus_call
 
 # pylint: disable=unused-argument
@@ -201,7 +200,7 @@ def device_monitor(ctx, **kwargs):
             sleep(0.1)
         if not t.is_alive():
             return
-        kwargs["port"] = get_file_contents(sock_file)
+        kwargs["port"] = fs.get_file_contents(sock_file)
         ctx.invoke(cmd_device_monitor, **kwargs)
         t.join(2)
     finally:

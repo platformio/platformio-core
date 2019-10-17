@@ -18,6 +18,7 @@ from hashlib import md5
 from os import makedirs
 from os.path import isdir, isfile, join
 
+from platformio import fs
 from platformio.compat import WINDOWS, hashlib_encode_data
 
 # Windows CLI has limit with command length to 8192
@@ -66,8 +67,7 @@ def _file_long_data(env, data):
     )
     if isfile(tmp_file):
         return tmp_file
-    with open(tmp_file, "w") as fp:
-        fp.write(data)
+    fs.write_file_contents(tmp_file, data)
     return tmp_file
 
 

@@ -149,8 +149,7 @@ def cli(
 
     component_stats = collect_component_stats(results)
     if json_output:
-        click.echo(dump_json_to_unicode(
-            results_to_json(results, component_stats)))
+        click.echo(dump_json_to_unicode(results_to_json(results, component_stats)))
     elif not silent:
         print_check_summary(results, component_stats)
 
@@ -167,7 +166,7 @@ def results_to_json(raw, components):
                 "ignored": item.get("succeeded") is None,
                 "succeeded": bool(item.get("succeeded")),
                 "defects": [d.to_json() for d in item.get("defects", [])],
-                "stats": [{k: v} for k, v in components.items()]
+                "stats": [{k: v} for k, v in components.items()],
             }
         )
         results.append(item)

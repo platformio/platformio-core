@@ -428,7 +428,7 @@ def test_platform_json_schema():
             },
             "frameworks": sorted(["arduino", "simba"]),
             "version": "1.15.0",
-        }
+        },
     )
 
 
