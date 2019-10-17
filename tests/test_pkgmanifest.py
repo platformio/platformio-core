@@ -170,7 +170,7 @@ sentence=This is Arduino library
     }
 
 
-def test_library_json_model():
+def test_library_json_schema():
     contents = """
 {
   "name": "ArduinoJson",
@@ -255,7 +255,7 @@ def test_library_json_model():
     )
 
 
-def test_library_properties_model():
+def test_library_properties_schema():
     contents = """
 name=U8glib
 version=1.19.1
@@ -351,7 +351,7 @@ includes=MozziGuts.h
     )
 
 
-def test_platform_json_model():
+def test_platform_json_schema():
     contents = """
 {
   "name": "atmelavr",
@@ -404,7 +404,7 @@ def test_platform_json_model():
     raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.PLATFORM_JSON
     ).as_dict()
-
+    raw_data["frameworks"] = sorted(raw_data["frameworks"])
     data, errors = ManifestSchema(strict=False).load(raw_data)
     assert not errors
 
@@ -426,13 +426,13 @@ def test_platform_json_model():
                 "url": "https://github.com/platformio/platform-atmelavr.git",
                 "type": "git",
             },
-            "frameworks": ["arduino", "simba"],
+            "frameworks": sorted(["arduino", "simba"]),
             "version": "1.15.0",
-        },
+        }
     )
 
 
-def test_package_json_model():
+def test_package_json_schema():
     contents = """
 {
     "name": "tool-scons",
@@ -591,7 +591,7 @@ def test_examples_from_dir(tmpdir_factory):
     )
 
 
-def test_broken_models():
+def test_broken_schemas():
     # non-strict mode
     data, errors = ManifestSchema(strict=False).load(dict(name="MyPackage"))
     assert set(errors.keys()) == set(["version"])
