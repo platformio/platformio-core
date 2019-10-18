@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import re
 
 import jsondiff
 import pytest
@@ -534,9 +535,13 @@ def test_examples_from_dir(tmpdir_factory):
     assert isinstance(raw_data["examples"], list)
     assert len(raw_data["examples"]) == 6
 
+    def _to_unix_path(path):
+        return re.sub(r"[\\/]+", "/", path)
+
     def _sort_examples(items):
         for i, item in enumerate(items):
-            items[i]["files"] = sorted(item["files"])
+            items[i]["base"] = _to_unix_path(items[i]["base"])
+            items[i]["files"] = [_to_unix_path(f) for f in sorted(items[i]["files"])]
         return sorted(items, key=lambda item: item["name"])
 
     raw_data["examples"] = _sort_examples(raw_data["examples"])

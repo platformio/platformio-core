@@ -54,6 +54,12 @@ def get_file_contents(path):
         with open(path) as fp:
             return fp.read()
     except UnicodeDecodeError:
+        click.secho(
+            "Unicode decode error has occurred, please remove invalid "
+            "(non-ASCII or non-UTF8) characters from %s file" % path,
+            fg="yellow",
+            err=True,
+        )
         with io.open(path, encoding="latin-1") as fp:
             return fp.read()
 
@@ -63,13 +69,6 @@ def write_file_contents(path, contents, errors=None):
         with open(path, "w") as fp:
             return fp.write(contents)
     except UnicodeEncodeError:
-        if errors:
-            click.secho(
-                "Warning! There is a problem with contents encoding, please remove "
-                "invalid characters (non-ASCII or non-UT8) in %s" % path,
-                fg="yellow",
-                err=True,
-            )
         with io.open(path, "w", encoding="latin-1", errors=errors) as fp:
             return fp.write(contents)
 
