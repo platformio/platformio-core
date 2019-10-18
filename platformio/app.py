@@ -25,11 +25,8 @@ import requests
 from platformio import exception, fs, lockfile
 from platformio.compat import WINDOWS, dump_json_to_unicode, hashlib_encode_data
 from platformio.proc import is_ci
-from platformio.project.helpers import (
-    get_default_projects_dir,
-    get_project_cache_dir,
-    get_project_core_dir,
-)
+from platformio.project.helpers import (get_default_projects_dir, get_project_cache_dir,
+                                        get_project_core_dir)
 
 
 def projects_dir_validate(projects_dir):

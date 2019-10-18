@@ -264,6 +264,7 @@ class LibraryManager(BasePkgManager):
                     fg="yellow",
                     err=True,
                 )
+                # pylint: disable=import-outside-toplevel
                 from platformio.commands.lib import print_lib_item
 
                 for item in result["items"]:

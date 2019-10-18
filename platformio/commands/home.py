@@ -36,14 +36,14 @@ from platformio.managers.core import get_core_package_dir, inject_contrib_pysite
 )
 @click.option("--no-open", is_flag=True)
 def cli(port, host, no_open):
+    # pylint: disable=import-error, import-outside-toplevel
+
     # import contrib modules
     inject_contrib_pysite()
-    # pylint: disable=import-error
     from autobahn.twisted.resource import WebSocketResource
     from twisted.internet import reactor
     from twisted.web import server
 
-    # pylint: enable=import-error
     from platformio.home.rpc.handlers.app import AppRPC
     from platformio.home.rpc.handlers.ide import IDERPC
     from platformio.home.rpc.handlers.misc import MiscRPC

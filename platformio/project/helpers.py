@@ -136,6 +136,7 @@ def compute_project_checksum(config):
 
 
 def load_project_ide_data(project_dir, env_or_envs):
+    # pylint: disable=import-outside-toplevel
     from platformio.commands.run import cli as cmd_run
 
     assert env_or_envs

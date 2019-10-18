@@ -103,7 +103,7 @@ def update_core_packages(only_check=False, silent=False):
 
 
 def inject_contrib_pysite():
-    from site import addsitedir
+    from site import addsitedir  # pylint: disable=import-outside-toplevel
 
     contrib_pysite_dir = get_core_package_dir("contrib-pysite")
     if contrib_pysite_dir in sys.path:

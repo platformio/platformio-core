@@ -93,7 +93,7 @@ def format_filesize(filesize):
 
 
 def ensure_udev_rules():
-    from platformio.util import get_systype
+    from platformio.util import get_systype  # pylint: disable=import-outside-toplevel
 
     def _rules_to_set(rules_path):
         return set(

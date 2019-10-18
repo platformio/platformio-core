@@ -72,7 +72,7 @@ class ProjectConfigBase(object):
 
     @staticmethod
     def get_default_path():
-        from platformio import app
+        from platformio import app  # pylint: disable=import-outside-toplevel
 
         return app.get_session_var("custom_project_conf") or os.path.join(
             os.getcwd(), "platformio.ini"

@@ -126,6 +126,7 @@ def change_filemtime(path, mtime):
 
 def get_serial_ports(filter_hwid=False):
     try:
+        # pylint: disable=import-outside-toplevel
         from serial.tools.list_ports import comports
     except ImportError:
         raise exception.GetSerialPortsError(os.name)
@@ -190,8 +191,9 @@ def get_logical_devices():
 
 
 def get_mdns_services():
+    # pylint: disable=import-outside-toplevel
     try:
-        import zeroconf  # pylint: disable=import-outside-toplevel
+        import zeroconf
     except ImportError:
         from site import addsitedir
         from platformio.managers.core import get_core_package_dir
@@ -282,7 +284,7 @@ def _api_request_session():
 def _get_api_result(
     url, params=None, data=None, auth=None  # pylint: disable=too-many-branches
 ):
-    from platformio.app import get_setting
+    from platformio.app import get_setting  # pylint: disable=import-outside-toplevel
 
     result = {}
     r = None
@@ -326,7 +328,7 @@ def _get_api_result(
 
 
 def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
-    from platformio.app import ContentCache
+    from platformio.app import ContentCache  # pylint: disable=import-outside-toplevel
 
     total = 0
     max_retries = 5

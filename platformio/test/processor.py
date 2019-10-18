@@ -112,6 +112,7 @@ class TestProcessorBase(object):
             self.cmd_ctx.meta[CTX_META_TEST_RUNNING_NAME] = self.test_name
 
         try:
+            # pylint: disable=import-outside-toplevel
             from platformio.commands.run import cli as cmd_run
 
             return self.cmd_ctx.invoke(
