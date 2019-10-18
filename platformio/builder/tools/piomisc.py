@@ -80,12 +80,14 @@ class InoToCPPConverter(object):
         assert self._gcc_preprocess(contents, out_file)
         contents = fs.get_file_contents(out_file)
         contents = self._join_multiline_strings(contents)
-        fs.write_file_contents(out_file, self.append_prototypes(contents))
+        fs.write_file_contents(
+            out_file, self.append_prototypes(contents), errors="backslashreplace"
+        )
         return out_file
 
     def _gcc_preprocess(self, contents, out_file):
         tmp_path = mkstemp()[1]
-        fs.write_file_contents(tmp_path, contents)
+        fs.write_file_contents(tmp_path, contents, errors="backslashreplace")
         self.env.Execute(
             self.env.VerboseAction(
                 '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(
