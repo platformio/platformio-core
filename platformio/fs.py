@@ -63,7 +63,7 @@ def write_file_contents(path, contents):
         with open(path, "w") as fp:
             return fp.write(contents)
     except UnicodeEncodeError:
-        with io.open(path, "w", encoding="latin-1") as fp:
+        with io.open(path, "w", encoding="latin-1", errors="backslashreplace") as fp:
             return fp.write(contents)
 
 
