@@ -27,8 +27,12 @@ from platformio import __version__, app, exception, fs, util
 from platformio.compat import PY2, hashlib_encode_data, is_bytes, load_python_module
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
-from platformio.proc import (BuildAsyncPipe, copy_pythonpath_to_osenv, exec_command,
-                             get_pythonexe_path)
+from platformio.proc import (
+    BuildAsyncPipe,
+    copy_pythonpath_to_osenv,
+    exec_command,
+    get_pythonexe_path,
+)
 from platformio.project.config import ProjectConfig
 
 try:
