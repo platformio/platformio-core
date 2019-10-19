@@ -34,6 +34,9 @@ from platformio.project.helpers import is_platformio_project
 class ProjectRPC(object):
     @staticmethod
     def config_call(path, method, *args):
+        if isfile(path):
+            with fs.cd(os.path.dirname(path)):
+                return getattr(ProjectConfig(path), method)(*args)
         return getattr(ProjectConfig(path), method)(*args)
 
     @staticmethod
@@ -41,10 +44,11 @@ class ProjectRPC(object):
         def _get_project_data():
             data = {"boards": [], "envLibdepsDirs": [], "libExtraDirs": []}
             config = ProjectConfig()
-            libdeps_dir = config.get_optional_dir("libdeps")
-
+            data["envs"] = config.envs()
+            data["description"] = config.get("platformio", "description")
             data["libExtraDirs"].extend(config.get("platformio", "lib_extra_dirs", []))
 
+            libdeps_dir = config.get_optional_dir("libdeps")
             for section in config.sections():
                 if not section.startswith("env:"):
                     continue
@@ -94,6 +98,8 @@ class ProjectRPC(object):
                     "name": _path_to_name(project_dir),
                     "modified": int(getmtime(project_dir)),
                     "boards": boards,
+                    "description": data.get("description"),
+                    "envs": data.get("envs", []),
                     "envLibStorages": [
                         {"name": basename(d), "path": d}
                         for d in data.get("envLibdepsDirs", [])
