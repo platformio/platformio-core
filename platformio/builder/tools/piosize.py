@@ -136,7 +136,17 @@ def _calculate_firmware_size(sections):
 
 
 def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
-    data = {"memory": {}, "version": 1}
+    data = {"device": {}, "memory": {}, "version": 1}
+
+    board = env.BoardConfig()
+    if board:
+        data["device"] = {
+            "mcu": board.get("build.mcu", ""),
+            "cpu": board.get("build.cpu", ""),
+            "frequency": board.get("build.f_cpu"),
+            "flash": int(board.get("upload.maximum_size", 0)),
+            "ram": int(board.get("upload.maximum_ram_size", 0)),
+        }
 
     elf_path = env.subst("$PIOMAINPROG")
 
