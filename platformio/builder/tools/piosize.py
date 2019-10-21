@@ -147,6 +147,8 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
             "flash": int(board.get("upload.maximum_size", 0)),
             "ram": int(board.get("upload.maximum_ram_size", 0)),
         }
+        if data["device"]["frequency"] and data["device"]["frequency"].endswith("L"):
+            data["device"]["frequency"] = int(data["device"]["frequency"][0:-1])
 
     elf_path = env.subst("$PIOMAINPROG")
 
