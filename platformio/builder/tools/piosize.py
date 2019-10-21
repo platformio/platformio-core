@@ -17,8 +17,8 @@
 from __future__ import absolute_import
 
 import sys
-from os import environ
-from os.path import join
+from os import environ, makedirs, remove
+from os.path import join, isdir
 
 from elftools.elf.descriptions import describe_sh_flags
 from elftools.elf.elffile import ELFFile
@@ -27,10 +27,42 @@ from platformio.compat import dump_json_to_unicode
 from platformio.proc import exec_command
 
 
-def _get_file_location(env, elf_path, addr, sysenv):
-    cmd = [env.subst("$CC").replace("-gcc", "-addr2line"), "-e", elf_path, hex(addr)]
+def _run_tool(cmd, env, tool_args):
+    sysenv = environ.copy()
+    sysenv["PATH"] = str(env["ENV"]["PATH"])
+
+    build_dir = env.subst("$BUILD_DIR")
+    if not isdir(build_dir):
+        makedirs(build_dir)
+    tmp_file = join(build_dir, "size-data-longcmd.txt")
+
+    with open(tmp_file, "w") as fp:
+        fp.write("\n".join(tool_args))
+
+    cmd.append("@" + tmp_file)
     result = exec_command(cmd, env=sysenv)
-    return result["out"].strip().replace("\\", "/")
+    remove(tmp_file)
+
+    return result
+
+
+def _get_symbol_locations(env, elf_path, addrs):
+    cmd = [env.subst("$CC").replace("-gcc", "-addr2line"), "-e", elf_path]
+    result = _run_tool(cmd, env, addrs)
+    locations = [line for line in result["out"].split("\n") if line]
+    assert(len(addrs) == len(locations))
+
+    return dict(zip(addrs, [l.strip().replace("\\", "/") for l in locations]))
+
+
+def _get_demangled_names(env, mangled_names):
+    result = _run_tool(
+        [env.subst("$CC").replace("-gcc", "-c++filt")], env, mangled_names)
+    demangled_names = [line for line in result["out"].split("\n") if line]
+    assert(len(mangled_names) == len(demangled_names))
+
+    return dict(zip(mangled_names, [dn.strip().replace(
+        "::__FUNCTION__", "") for dn in demangled_names]))
 
 
 def _determine_section(sections, symbol_addr):
@@ -40,15 +72,6 @@ def _determine_section(sections, symbol_addr):
         if symbol_addr in range(info["start_addr"], info["start_addr"] + info["size"]):
             return section
     return "unknown"
-
-
-def _demangle_cpp_name(env, symbol_name, sysenv):
-    cmd = [env.subst("$CC").replace("-gcc", "-c++filt"), symbol_name]
-    result = exec_command(cmd, env=sysenv)
-    demangled_name = result["out"].strip()
-    if "(" in demangled_name:
-        demangled_name = demangled_name[0 : demangled_name.find("(")]
-    return demangled_name
 
 
 def _is_ram_section(section):
@@ -97,6 +120,8 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
     sysenv = environ.copy()
     sysenv["PATH"] = str(env["ENV"]["PATH"])
 
+    symbol_addrs = []
+    mangled_names = []
     for s in symbol_section.iter_symbols():
         symbol_info = s.entry["st_info"]
         symbol_addr = s["st_value"]
@@ -109,7 +134,6 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         symbol = {
             "addr": symbol_addr,
             "bind": symbol_info["bind"],
-            "location": _get_file_location(env, elf_path, symbol_addr, sysenv),
             "name": s.name,
             "type": symbol_type,
             "size": symbol_size,
@@ -117,9 +141,18 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         }
 
         if s.name.startswith("_Z"):
-            symbol["demangled_name"] = _demangle_cpp_name(env, s.name, sysenv)
+            mangled_names.append(s.name)
 
+        symbol_addrs.append(hex(symbol_addr))
         symbols.append(symbol)
+
+    symbol_locations = _get_symbol_locations(
+        env, elf_path, symbol_addrs)
+    demangled_names = _get_demangled_names(env, mangled_names)
+    for symbol in symbols:
+        if symbol["name"].startswith("_Z"):
+            symbol["demangled_name"] = demangled_names.get(symbol["name"])
+        symbol["location"] = symbol_locations.get(hex(symbol["addr"]))
 
     return symbols
 
