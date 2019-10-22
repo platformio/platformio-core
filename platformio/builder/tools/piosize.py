@@ -47,6 +47,8 @@ def _run_tool(cmd, env, tool_args):
 
 
 def _get_symbol_locations(env, elf_path, addrs):
+    if not addrs:
+        return {}
     cmd = [env.subst("$CC").replace("-gcc", "-addr2line"), "-e", elf_path]
     result = _run_tool(cmd, env, addrs)
     locations = [line for line in result["out"].split("\n") if line]
@@ -56,6 +58,8 @@ def _get_symbol_locations(env, elf_path, addrs):
 
 
 def _get_demangled_names(env, mangled_names):
+    if not mangled_names:
+        return {}
     result = _run_tool(
         [env.subst("$CC").replace("-gcc", "-c++filt")], env, mangled_names)
     demangled_names = [line for line in result["out"].split("\n") if line]
