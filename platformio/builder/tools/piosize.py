@@ -96,7 +96,7 @@ def _is_valid_symbol(symbol_name, symbol_type, symbol_address):
 def _collect_sections_info(elffile):
     sections = {}
     for section in elffile.iter_sections():
-        if section.is_null():
+        if section.is_null() or section.name.startswith(".debug"):
             continue
 
         section_type = section["sh_type"]
