@@ -23,7 +23,7 @@ import click
 from platformio import app, fs
 from platformio.commands.init import cli as cmd_init
 from platformio.commands.init import validate_boards
-from platformio.commands.run import cli as cmd_run
+from platformio.commands.run.command import cli as cmd_run
 from platformio.compat import glob_escape
 from platformio.exception import CIBuildEnvsEmpty
 from platformio.project.config import ProjectConfig

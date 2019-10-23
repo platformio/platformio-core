@@ -113,7 +113,7 @@ class TestProcessorBase(object):
 
         try:
             # pylint: disable=import-outside-toplevel
-            from platformio.commands.run import cli as cmd_run
+            from platformio.commands.run.command import cli as cmd_run
 
             return self.cmd_ctx.invoke(
                 cmd_run,

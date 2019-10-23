@@ -15,7 +15,7 @@
 import click
 
 from platformio import fs, proc
-from platformio.check.defect import DefectItem
+from platformio.commands.check.defect import DefectItem
 from platformio.project.helpers import get_project_dir, load_project_ide_data
 
 

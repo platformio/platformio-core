@@ -15,8 +15,8 @@
 import re
 from os.path import join
 
-from platformio.check.defect import DefectItem
-from platformio.check.tools.base import CheckToolBase
+from platformio.commands.check.defect import DefectItem
+from platformio.commands.check.tools.base import CheckToolBase
 from platformio.managers.core import get_core_package_dir
 
 

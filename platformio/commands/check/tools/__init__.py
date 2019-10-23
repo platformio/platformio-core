@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from platformio import exception
-from platformio.check.tools.clangtidy import ClangtidyCheckTool
-from platformio.check.tools.cppcheck import CppcheckCheckTool
+from platformio.commands.check.tools.clangtidy import ClangtidyCheckTool
+from platformio.commands.check.tools.cppcheck import CppcheckCheckTool
 
 
 class CheckToolFactory(object):

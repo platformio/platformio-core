@@ -21,7 +21,7 @@ from os.path import isfile
 
 from platformio import exception, fs, util
 from platformio.commands.platform import platform_install as cmd_platform_install
-from platformio.commands.run import cli as cmd_run
+from platformio.commands.run.command import cli as cmd_run
 from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectConfig
 

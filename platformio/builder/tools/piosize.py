@@ -18,7 +18,7 @@ from __future__ import absolute_import
 
 import sys
 from os import environ, makedirs, remove
-from os.path import join, isdir
+from os.path import isdir, join
 
 from elftools.elf.descriptions import describe_sh_flags
 from elftools.elf.elffile import ELFFile
@@ -52,7 +52,7 @@ def _get_symbol_locations(env, elf_path, addrs):
     cmd = [env.subst("$CC").replace("-gcc", "-addr2line"), "-e", elf_path]
     result = _run_tool(cmd, env, addrs)
     locations = [line for line in result["out"].split("\n") if line]
-    assert(len(addrs) == len(locations))
+    assert len(addrs) == len(locations)
 
     return dict(zip(addrs, [l.strip().replace("\\", "/") for l in locations]))
 
@@ -61,12 +61,17 @@ def _get_demangled_names(env, mangled_names):
     if not mangled_names:
         return {}
     result = _run_tool(
-        [env.subst("$CC").replace("-gcc", "-c++filt")], env, mangled_names)
+        [env.subst("$CC").replace("-gcc", "-c++filt")], env, mangled_names
+    )
     demangled_names = [line for line in result["out"].split("\n") if line]
-    assert(len(mangled_names) == len(demangled_names))
+    assert len(mangled_names) == len(demangled_names)
 
-    return dict(zip(mangled_names, [dn.strip().replace(
-        "::__FUNCTION__", "") for dn in demangled_names]))
+    return dict(
+        zip(
+            mangled_names,
+            [dn.strip().replace("::__FUNCTION__", "") for dn in demangled_names],
+        )
+    )
 
 
 def _determine_section(sections, symbol_addr):
@@ -150,8 +155,7 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         symbol_addrs.append(hex(symbol_addr))
         symbols.append(symbol)
 
-    symbol_locations = _get_symbol_locations(
-        env, elf_path, symbol_addrs)
+    symbol_locations = _get_symbol_locations(env, elf_path, symbol_addrs)
     demangled_names = _get_demangled_names(env, mangled_names)
     for symbol in symbols:
         if symbol["name"].startswith("_Z"):

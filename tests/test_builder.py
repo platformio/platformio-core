@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio.commands.run import cli as cmd_run
+from platformio.commands.run.command import cli as cmd_run
 
 
 def test_build_flags(clirunner, validate_cliresult, tmpdir):

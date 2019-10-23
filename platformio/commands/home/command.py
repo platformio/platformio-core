@@ -44,14 +44,14 @@ def cli(port, host, no_open):
     from twisted.internet import reactor
     from twisted.web import server
 
-    from platformio.home.rpc.handlers.app import AppRPC
-    from platformio.home.rpc.handlers.ide import IDERPC
-    from platformio.home.rpc.handlers.misc import MiscRPC
-    from platformio.home.rpc.handlers.os import OSRPC
-    from platformio.home.rpc.handlers.piocore import PIOCoreRPC
-    from platformio.home.rpc.handlers.project import ProjectRPC
-    from platformio.home.rpc.server import JSONRPCServerFactory
-    from platformio.home.web import WebRoot
+    from platformio.commands.home.rpc.handlers.app import AppRPC
+    from platformio.commands.home.rpc.handlers.ide import IDERPC
+    from platformio.commands.home.rpc.handlers.misc import MiscRPC
+    from platformio.commands.home.rpc.handlers.os import OSRPC
+    from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
+    from platformio.commands.home.rpc.handlers.project import ProjectRPC
+    from platformio.commands.home.rpc.server import JSONRPCServerFactory
+    from platformio.commands.home.web import WebRoot
 
     factory = JSONRPCServerFactory()
     factory.addHandler(AppRPC(), namespace="app")

@@ -27,10 +27,10 @@ from twisted.internet import stdio  # pylint: disable=import-error
 from twisted.internet import task  # pylint: disable=import-error
 
 from platformio import app, exception, fs, proc, util
+from platformio.commands.debug import helpers, initcfgs
+from platformio.commands.debug.process import BaseProcess
+from platformio.commands.debug.server import DebugServer
 from platformio.compat import hashlib_encode_data
-from platformio.debug import helpers, initcfgs
-from platformio.debug.process import BaseProcess
-from platformio.debug.server import DebugServer
 from platformio.project.helpers import get_project_cache_dir
 from platformio.telemetry import MeasurementProtocol
 

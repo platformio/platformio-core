@@ -26,8 +26,8 @@ from twisted.internet import threads  # pylint: disable=import-error
 from twisted.internet import utils  # pylint: disable=import-error
 
 from platformio import __main__, __version__, fs
+from platformio.commands.home import helpers
 from platformio.compat import PY2, get_filesystem_encoding, is_bytes, string_types
-from platformio.home import helpers
 
 try:
     from thread import get_ident as thread_get_ident

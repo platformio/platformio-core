@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-from os.path import dirname, isfile, join
 
 import click
 
@@ -21,6 +20,10 @@ import click
 class PlatformioCLI(click.MultiCommand):
 
     leftover_args = []
+
+    def __init__(self, *args, **kwargs):
+        super(PlatformioCLI, self).__init__(*args, **kwargs)
+        self._pio_cmds_dir = os.path.dirname(__file__)
 
     @staticmethod
     def in_silence():
@@ -42,34 +45,23 @@ class PlatformioCLI(click.MultiCommand):
 
     def list_commands(self, ctx):
         cmds = []
-        cmds_dir = dirname(__file__)
-        for name in os.listdir(cmds_dir):
-            if name.startswith("__init__"):
+        for cmd_name in os.listdir(self._pio_cmds_dir):
+            if cmd_name.startswith("__init__"):
                 continue
-            if isfile(join(cmds_dir, name, "command.py")):
-                cmds.append(name)
-            elif name.endswith(".py"):
-                cmds.append(name[:-3])
+            if os.path.isfile(os.path.join(self._pio_cmds_dir, cmd_name, "command.py")):
+                cmds.append(cmd_name)
+            elif cmd_name.endswith(".py"):
+                cmds.append(cmd_name[:-3])
         cmds.sort()
         return cmds
 
     def get_command(self, ctx, cmd_name):
         mod = None
         try:
-            mod = __import__("platformio.commands." + cmd_name, None, None, ["cli"])
+            mod_path = "platformio.commands." + cmd_name
+            if os.path.isfile(os.path.join(self._pio_cmds_dir, cmd_name, "command.py")):
+                mod_path = "platformio.commands.%s.command" % cmd_name
+            mod = __import__(mod_path, None, None, ["cli"])
         except ImportError:
             raise click.UsageError('No such command "%s"' % cmd_name, ctx)
         return mod.cli
-
-    @staticmethod
-    def _handle_obsolate_command(name):
-        # pylint: disable=import-outside-toplevel
-        if name == "platforms":
-            from platformio.commands import platform
-
-            return platform.cli
-        if name == "serialports":
-            from platformio.commands import device
-
-            return device.cli
-        raise AttributeError()

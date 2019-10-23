@@ -22,7 +22,7 @@ from os.path import isfile
 import click
 
 from platformio import app, exception, fs, proc, util
-from platformio.debug import helpers
+from platformio.commands.debug import helpers
 from platformio.managers.core import inject_contrib_pysite
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import is_platformio_project, load_project_ide_data
@@ -139,7 +139,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
     inject_contrib_pysite()
 
     # pylint: disable=import-outside-toplevel
-    from platformio.debug.client import GDBClient, reactor
+    from platformio.commands.debug.client import GDBClient, reactor
 
     client = GDBClient(project_dir, __unprocessed, debug_options, env_options)
     client.spawn(configuration["gdb_path"], configuration["prog_path"])
