@@ -304,7 +304,10 @@ class LibBuilderBase(object):
     ):
         # all include directories
         if not LibBuilderBase._INCLUDE_DIRS_CACHE:
-            LibBuilderBase._INCLUDE_DIRS_CACHE = []
+            LibBuilderBase._INCLUDE_DIRS_CACHE = [
+                self.env.Dir(os.path.realpath(d) if os.path.isdir(d) else d)
+                for d in self.envorigin.get("CPPPATH", [])
+            ]
             for lb in self.env.GetLibBuilders():
                 LibBuilderBase._INCLUDE_DIRS_CACHE.extend(
                     [self.env.Dir(d) for d in lb.get_include_dirs()]
@@ -346,7 +349,7 @@ class LibBuilderBase(object):
                     self.env.File(path), self.env, tuple(include_dirs)
                 )
 
-            # print(path, map(lambda n: n.get_abspath(), candidates))
+            # print(path, [c.get_abspath() for c in candidates])
             for item in candidates:
                 if item not in result:
                     result.append(item)
