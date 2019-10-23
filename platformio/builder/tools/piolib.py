@@ -305,8 +305,10 @@ class LibBuilderBase(object):
         # all include directories
         if not LibBuilderBase._INCLUDE_DIRS_CACHE:
             LibBuilderBase._INCLUDE_DIRS_CACHE = [
-                self.env.Dir(os.path.realpath(d) if os.path.isdir(d) else d)
-                for d in self.envorigin.get("CPPPATH", [])
+                self.env.Dir(d)
+                for d in ProjectAsLibBuilder(
+                    self.envorigin, "$PROJECT_DIR"
+                ).get_include_dirs()
             ]
             for lb in self.env.GetLibBuilders():
                 LibBuilderBase._INCLUDE_DIRS_CACHE.extend(
