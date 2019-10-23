@@ -956,7 +956,6 @@ def IsCompatibleLibBuilder(env, lb, verbose=int(ARGUMENTS.get("PIOVERBOSE", 0)))
         return False
     if (
         compat_mode in ("soft", "strict")
-        and "PIOFRAMEWORK" in env
         and not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", []))
     ):
         if verbose:
