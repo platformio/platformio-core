@@ -165,7 +165,7 @@ def results_to_json(raw):
             {
                 "ignored": item.get("succeeded") is None,
                 "succeeded": bool(item.get("succeeded")),
-                "defects": [d.as_dict() for d in item.get("defects", [])]
+                "defects": [d.as_dict() for d in item.get("defects", [])],
             }
         )
         results.append(item)

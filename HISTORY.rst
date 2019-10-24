@@ -18,6 +18,7 @@ PlatformIO Core 4.0
   - Unused variables or functions
   - Out of scope memory usage.
 
+* Added support for `Build Middlewares <http://docs.platformio.org/page/projectconf/advanced_scripting.html#build-middlewares>`__: configure custom build flags per specific file, skip any build nodes from a framework, replace build file with another on-the-fly, etc.
 * Extend project environment configuration in "platformio.ini" with other sections using a new `extends <http://docs.platformio.org/page/projectconf/section_env_advanced.html#extends>`__ option (`issue #2953 <https://github.com/platformio/platformio-core/issues/2953>`_)
 * Generate ``.ccls`` LSP file for `Emacs <https://docs.platformio.org/page/ide/emacs.html>`__ cross references, hierarchies, completion and semantic highlighting
 * Added ``--no-ansi`` flag for `PIO Core <http://docs.platformio.org/page/userguide/index.html>`__ to disable ANSI control characters

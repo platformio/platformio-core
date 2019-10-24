@@ -14,10 +14,12 @@
 
 from __future__ import absolute_import
 
+import fnmatch
 import os
 import sys
 
 from SCons import Builder, Util  # pylint: disable=import-error
+from SCons.Node import FS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import AlwaysBuild  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
@@ -244,7 +246,9 @@ def MatchSourceFiles(env, src_dir, src_filter=None):
     )
 
 
-def CollectBuildFiles(env, variant_dir, src_dir, src_filter=None, duplicate=False):
+def CollectBuildFiles(
+    env, variant_dir, src_dir, src_filter=None, duplicate=False
+):  # pylint: disable=too-many-locals
     sources = []
     variants = []
 
@@ -264,7 +268,22 @@ def CollectBuildFiles(env, variant_dir, src_dir, src_filter=None, duplicate=Fals
         if fs.path_endswith_ext(item, SRC_BUILD_EXT):
             sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
 
+    for callback, pattern in env.get("__PIO_BUILD_MIDDLEWARES", []):
+        tmp = []
+        for node in sources:
+            if pattern and not fnmatch.fnmatch(node.get_path(), pattern):
+                tmp.append(node)
+                continue
+            n = callback(node)
+            if n:
+                tmp.append(n)
+        sources = tmp
+
     return sources
+
+
+def AddBuildMiddleware(env, callback, pattern=None):
+    env.Append(__PIO_BUILD_MIDDLEWARES=[(callback, pattern)])
 
 
 def BuildFrameworks(env, frameworks):
@@ -309,7 +328,11 @@ def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):
     nodes = env.CollectBuildFiles(variant_dir, src_dir, src_filter)
-    DefaultEnvironment().Append(PIOBUILDFILES=[env.Object(node) for node in nodes])
+    DefaultEnvironment().Append(
+        PIOBUILDFILES=[
+            env.Object(node) if isinstance(node, FS.File) else node for node in nodes
+        ]
+    )
 
 
 def exists(_):
@@ -323,6 +346,7 @@ def generate(env):
     env.AddMethod(ProcessUnFlags)
     env.AddMethod(MatchSourceFiles)
     env.AddMethod(CollectBuildFiles)
+    env.AddMethod(AddBuildMiddleware)
     env.AddMethod(BuildFrameworks)
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildSources)
