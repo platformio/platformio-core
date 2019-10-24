@@ -137,6 +137,7 @@ def cli(
                 result["succeeded"] = rc == 0 and not any(
                     d.severity == DefectItem.SEVERITY_HIGH for d in result["defects"]
                 )
+                result["stats"] = collect_component_stats(result)
                 results.append(result)
 
                 if verbose:
@@ -147,26 +148,24 @@ def cli(
                         click.echo("No defects found")
                     print_processing_footer(result)
 
-    component_stats = collect_component_stats(results)
     if json_output:
-        click.echo(dump_json_to_unicode(results_to_json(results, component_stats)))
+        click.echo(dump_json_to_unicode(results_to_json(results)))
     elif not silent:
-        print_check_summary(results, component_stats)
+        print_check_summary(results)
 
     command_failed = any(r.get("succeeded") is False for r in results)
     if command_failed:
         raise exception.ReturnErrorCode(1)
 
 
-def results_to_json(raw, components):
+def results_to_json(raw):
     results = []
     for item in raw:
         item.update(
             {
                 "ignored": item.get("succeeded") is None,
                 "succeeded": bool(item.get("succeeded")),
-                "defects": [d.to_json() for d in item.get("defects", [])],
-                "stats": [{k: v} for k, v in components.items()],
+                "defects": [d.to_json() for d in item.get("defects", [])]
             }
         )
         results.append(item)
@@ -199,7 +198,7 @@ def print_processing_footer(result):
     )
 
 
-def collect_component_stats(results):
+def collect_component_stats(result):
     components = dict()
 
     def _append_defect(component, defect):
@@ -207,20 +206,29 @@ def collect_component_stats(results):
             components[component] = Counter()
         components[component].update({DefectItem.SEVERITY_LABELS[defect.severity]: 1})
 
-    for result in results:
-        for defect in result.get("defects", []):
-            component = dirname(defect.file) or defect.file
-            _append_defect(component, defect)
+    for defect in result.get("defects", []):
+        component = dirname(defect.file) or defect.file
+        _append_defect(component, defect)
 
-            if component.startswith(get_project_dir()):
-                while os.sep in component:
-                    component = dirname(component)
-                    _append_defect(component, defect)
+        if component.startswith(get_project_dir()):
+            while os.sep in component:
+                component = dirname(component)
+                _append_defect(component, defect)
 
-    return dict(components)
+    return components
 
 
-def print_defects_stats(component_stats):
+def print_defects_stats(results):
+    if not results:
+        return
+
+    component_stats = {}
+    for r in results:
+        for k, v in r.get("stats", {}).items():
+            if not component_stats.get(k):
+                component_stats[k] = Counter()
+            component_stats[k].update(r["stats"][k])
+
     if not component_stats:
         return
 
@@ -233,7 +241,7 @@ def print_defects_stats(component_stats):
 
     total = ["Total"] + [sum(d) for d in list(zip(*tabular_data))[1:]]
     tabular_data.sort()
-    tabular_data.append([])  # Empty line as delimeter
+    tabular_data.append([])  # Empty line as delimiter
     tabular_data.append(total)
 
     headers = ["Component"]
@@ -243,7 +251,7 @@ def print_defects_stats(component_stats):
     click.echo()
 
 
-def print_check_summary(results, component_stats):
+def print_check_summary(results):
     click.echo()
 
     tabular_data = []
@@ -251,7 +259,7 @@ def print_check_summary(results, component_stats):
     failed_nums = 0
     duration = 0
 
-    print_defects_stats(component_stats)
+    print_defects_stats(results)
 
     for result in results:
         duration += result.get("duration", 0)
