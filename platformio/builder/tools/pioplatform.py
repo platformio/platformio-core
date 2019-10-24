@@ -93,8 +93,14 @@ def LoadPioPlatform(env):
     # update board manifest with overridden data from INI config
     board_config = env.BoardConfig()
     for option, value in env.GetProjectOptions():
-        if option.startswith("board_"):
-            board_config.update(option.lower()[6:], value)
+        if not option.startswith("board_"):
+            continue
+        option = option.lower()[6:]
+        if isinstance(board_config.get(option), bool):
+            value = str(value).lower() in ("1", "yes", "true")
+        elif isinstance(board_config.get(option), int):
+            value = int(value)
+        board_config.update(option, value)
 
     # load default variables from board config
     for option_meta in ProjectOptions.values():

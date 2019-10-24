@@ -28,6 +28,7 @@ PlatformIO Core 4.0
 * Fixed an issue with linking process when ``$LDSCRIPT`` contains a space in path
 * Fixed security issue when extracting items from TAR archive (`issue #2995 <https://github.com/platformio/platformio-core/issues/2995>`_)
 * Fixed an issue with project generator when ``src_build_flags`` were not respected (`issue #3137 <https://github.com/platformio/platformio-core/issues/3137>`_)
+* Fixed an issue when booleans in "platformio.ini" are not parsed properly (`issue #3022 <https://github.com/platformio/platformio-core/issues/3022>`_)
 
 4.0.3 (2019-08-30)
 ~~~~~~~~~~~~~~~~~~
