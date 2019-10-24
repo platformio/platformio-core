@@ -33,7 +33,7 @@ class GDBBytesIO(BytesIO):  # pylint: disable=too-few-public-methods
 
     @staticmethod
     def escape(text):
-        return re.sub(r"\\+", "\\\\", text)
+        return re.sub(r"\\+", "\\\\\\\\", text)
 
     def write(self, text):
         if "\n" in text:
