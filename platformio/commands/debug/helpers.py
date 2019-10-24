@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import re
 import sys
 import time
 from fnmatch import fnmatch
@@ -30,12 +31,16 @@ class GDBBytesIO(BytesIO):  # pylint: disable=too-few-public-methods
 
     STDOUT = sys.stdout
 
+    @staticmethod
+    def escape(text):
+        return re.sub(r"\\+", "\\\\", text)
+
     def write(self, text):
         if "\n" in text:
             for line in text.strip().split("\n"):
-                self.STDOUT.write('~"%s\\n"\n' % line)
+                self.STDOUT.write('~"%s\\n"\n' % self.escape(line))
         else:
-            self.STDOUT.write('~"%s"' % text)
+            self.STDOUT.write('~"%s"' % self.escape(text))
         self.STDOUT.flush()
 
 
