@@ -17,7 +17,6 @@
 
 from __future__ import absolute_import
 
-import codecs
 import hashlib
 import os
 import re
@@ -34,6 +33,7 @@ from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
 from platformio.compat import WINDOWS, hashlib_encode_data, string_types
 from platformio.managers.lib import LibraryManager
+from platformio.package.manifest.parser import ManifestParserFactory
 
 
 class LibBuilderFactory(object):
@@ -456,17 +456,10 @@ class UnknownLibBuilder(LibBuilderBase):
 
 class ArduinoLibBuilder(LibBuilderBase):
     def load_manifest(self):
-        manifest = {}
-        if not isfile(join(self.path, "library.properties")):
-            return manifest
         manifest_path = join(self.path, "library.properties")
-        with codecs.open(manifest_path, encoding="utf-8") as fp:
-            for line in fp.readlines():
-                if "=" not in line:
-                    continue
-                key, value = line.split("=", 1)
-                manifest[key.strip()] = value.strip()
-        return manifest
+        if not isfile(manifest_path):
+            return {}
+        return ManifestParserFactory.new_from_file(manifest_path).as_dict()
 
     def get_include_dirs(self):
         include_dirs = LibBuilderBase.get_include_dirs(self)
@@ -510,24 +503,7 @@ class ArduinoLibBuilder(LibBuilderBase):
         return util.items_in_list(frameworks, ["arduino", "energia"])
 
     def is_platforms_compatible(self, platforms):
-        platforms_map = {
-            "avr": ["atmelavr"],
-            "sam": ["atmelsam"],
-            "samd": ["atmelsam"],
-            "esp8266": ["espressif8266"],
-            "esp32": ["espressif32"],
-            "arc32": ["intel_arc32"],
-            "stm32": ["ststm32"],
-            "nrf5": ["nordicnrf51", "nordicnrf52"],
-        }
-        items = []
-        for arch in self._manifest.get("architectures", "").split(","):
-            arch = arch.strip().lower()
-            if arch == "*":
-                items = "*"
-                break
-            if arch in platforms_map:
-                items.extend(platforms_map[arch])
+        items = self._manifest.get("platforms", [])
         if not items:
             return LibBuilderBase.is_platforms_compatible(self, platforms)
         return util.items_in_list(platforms, items)
@@ -535,9 +511,10 @@ class ArduinoLibBuilder(LibBuilderBase):
 
 class MbedLibBuilder(LibBuilderBase):
     def load_manifest(self):
-        if not isfile(join(self.path, "module.json")):
+        manifest_path = join(self.path, "module.json")
+        if not isfile(manifest_path):
             return {}
-        return fs.load_json(join(self.path, "module.json"))
+        return ManifestParserFactory.new_from_file(manifest_path).as_dict()
 
     @property
     def include_dir(self):
@@ -682,20 +659,12 @@ class MbedLibBuilder(LibBuilderBase):
 
 class PlatformIOLibBuilder(LibBuilderBase):
     def load_manifest(self):
-        assert isfile(join(self.path, "library.json"))
-        manifest = fs.load_json(join(self.path, "library.json"))
-        assert "name" in manifest
+        manifest_path = join(self.path, "library.json")
+        if not isfile(manifest_path):
+            return {}
+        return ManifestParserFactory.new_from_file(manifest_path).as_dict()
 
-        # replace "espressif" old name dev/platform with ESP8266
-        if "platforms" in manifest:
-            manifest["platforms"] = [
-                "espressif8266" if p == "espressif" else p
-                for p in util.items_to_list(manifest["platforms"])
-            ]
-
-        return manifest
-
-    def _is_arduino_manifest(self):
+    def _has_arduino_manifest(self):
         return isfile(join(self.path, "library.properties"))
 
     @property
@@ -718,7 +687,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
             return self._manifest.get("build").get("srcFilter")
         if self.env["SRC_FILTER"]:
             return self.env["SRC_FILTER"]
-        if self._is_arduino_manifest():
+        if self._has_arduino_manifest():
             return ArduinoLibBuilder.src_filter.fget(self)
         return LibBuilderBase.src_filter.fget(self)
 
@@ -789,7 +758,7 @@ class PlatformIOLibBuilder(LibBuilderBase):
         # backwards compatibility with PlatformIO 2.0
         if (
             "build" not in self._manifest
-            and self._is_arduino_manifest()
+            and self._has_arduino_manifest()
             and not isdir(join(self.path, "src"))
             and isdir(join(self.path, "utility"))
         ):
@@ -954,9 +923,8 @@ def IsCompatibleLibBuilder(env, lb, verbose=int(ARGUMENTS.get("PIOVERBOSE", 0)))
         if verbose:
             sys.stderr.write("Platform incompatible library %s\n" % lb.path)
         return False
-    if (
-        compat_mode in ("soft", "strict")
-        and not lb.is_frameworks_compatible(env.get("PIOFRAMEWORK", []))
+    if compat_mode in ("soft", "strict") and not lb.is_frameworks_compatible(
+        env.get("PIOFRAMEWORK", [])
     ):
         if verbose:
             sys.stderr.write("Framework incompatible library %s\n" % lb.path)

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import codecs
 import hashlib
 import json
 import os
@@ -29,6 +28,10 @@ from platformio import __version__, app, exception, fs, telemetry, util
 from platformio.compat import hashlib_encode_data
 from platformio.downloader import FileDownloader
 from platformio.lockfile import LockFile
+from platformio.package.manifest.parser import (
+    ManifestParserError,
+    ManifestParserFactory,
+)
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
@@ -326,7 +329,7 @@ class PkgInstallerMixin(object):
     def manifest_exists(self, pkg_dir):
         return self.get_manifest_path(pkg_dir) or self.get_src_manifest_path(pkg_dir)
 
-    def load_manifest(self, pkg_dir):
+    def load_manifest(self, pkg_dir):  # pylint: disable=too-many-branches
         cache_key = "load_manifest-%s" % pkg_dir
         result = self.cache_get(cache_key)
         if result:
@@ -342,15 +345,10 @@ class PkgInstallerMixin(object):
         if not manifest_path and not src_manifest_path:
             return None
 
-        if manifest_path and manifest_path.endswith(".json"):
-            manifest = fs.load_json(manifest_path)
-        elif manifest_path and manifest_path.endswith(".properties"):
-            with codecs.open(manifest_path, encoding="utf-8") as fp:
-                for line in fp.readlines():
-                    if "=" not in line:
-                        continue
-                    key, value = line.split("=", 1)
-                    manifest[key.strip()] = value.strip()
+        try:
+            manifest = ManifestParserFactory.new_from_file(manifest_path).as_dict()
+        except ManifestParserError:
+            pass
 
         if src_manifest:
             if "version" in src_manifest:

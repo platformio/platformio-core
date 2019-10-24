@@ -16,7 +16,6 @@
 # pylint: disable=too-many-return-statements
 
 import json
-import re
 from glob import glob
 from os.path import isdir, join
 
@@ -61,73 +60,6 @@ class LibraryManager(BasePkgManager):
             return cpp_files[0]
 
         return None
-
-    def load_manifest(self, pkg_dir):
-        manifest = BasePkgManager.load_manifest(self, pkg_dir)
-        if not manifest:
-            return manifest
-
-        # if Arduino library.properties
-        if "sentence" in manifest:
-            manifest["frameworks"] = ["arduino"]
-            manifest["description"] = manifest["sentence"]
-            del manifest["sentence"]
-
-        if "author" in manifest:
-            if isinstance(manifest["author"], dict):
-                manifest["authors"] = [manifest["author"]]
-            else:
-                manifest["authors"] = [{"name": manifest["author"]}]
-            del manifest["author"]
-
-        if "authors" in manifest and not isinstance(manifest["authors"], list):
-            manifest["authors"] = [manifest["authors"]]
-
-        if "keywords" not in manifest:
-            keywords = []
-            for keyword in re.split(
-                r"[\s/]+", manifest.get("category", "Uncategorized")
-            ):
-                keyword = keyword.strip()
-                if not keyword:
-                    continue
-                keywords.append(keyword.lower())
-            manifest["keywords"] = keywords
-            if "category" in manifest:
-                del manifest["category"]
-
-        # don't replace VCS URL
-        if "url" in manifest and "description" in manifest:
-            manifest["homepage"] = manifest["url"]
-            del manifest["url"]
-
-        if "architectures" in manifest:
-            platforms = []
-            platforms_map = {
-                "avr": "atmelavr",
-                "sam": "atmelsam",
-                "samd": "atmelsam",
-                "esp8266": "espressif8266",
-                "esp32": "espressif32",
-                "arc32": "intel_arc32",
-            }
-            for arch in manifest["architectures"].split(","):
-                arch = arch.strip()
-                if arch == "*":
-                    platforms = "*"
-                    break
-                if arch in platforms_map:
-                    platforms.append(platforms_map[arch])
-            manifest["platforms"] = platforms
-            del manifest["architectures"]
-
-        # convert listed items via comma to array
-        for key in ("keywords", "frameworks", "platforms"):
-            if key not in manifest or not isinstance(manifest[key], string_types):
-                continue
-            manifest[key] = [i.strip() for i in manifest[key].split(",") if i.strip()]
-
-        return manifest
 
     @staticmethod
     def normalize_dependencies(dependencies):

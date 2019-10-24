@@ -31,7 +31,11 @@ def test_library_json_parser():
     "platforms": ["atmelavr", "espressif"],
     "url": "http://old.url.format",
     "exclude": [".gitignore", "tests"],
-    "include": "mylib"
+    "include": "mylib",
+    "build": {
+        "flags": ["-DHELLO"]
+    },
+    "customField": "Custom Value"
 }
 """
     mp = parser.LibraryJsonManifestParser(contents)
@@ -43,6 +47,8 @@ def test_library_json_parser():
             "export": {"exclude": [".gitignore", "tests"], "include": ["mylib"]},
             "keywords": ["kw1", "kw2", "kw3"],
             "homepage": "http://old.url.format",
+            "build": {"flags": ["-DHELLO"]},
+            "customField": "Custom Value",
         },
     )
 
@@ -89,9 +95,11 @@ def test_module_json_parser():
     "type": "git",
     "url": "git@github.com:username/repo.git"
   },
-  "version": "1.2.3"
+  "version": "1.2.3",
+  "customField": "Custom Value"
 }
 """
+
     mp = parser.ModuleJsonManifestParser(contents)
     assert not jsondiff.diff(
         mp.as_dict(),
@@ -106,6 +114,8 @@ def test_module_json_parser():
             "export": {"exclude": ["tests", "test", "*.doxyfile", "*.pdf"]},
             "authors": [{"email": "name@surname.com", "name": "Name Surname"}],
             "version": "1.2.3",
+            "repository": {"type": "git", "url": "git@github.com:username/repo.git"},
+            "customField": "Custom Value",
         },
     )
 
@@ -117,6 +127,7 @@ name=TestPackage
 version=1.2.3
 author=SomeAuthor <info AT author.com>
 sentence=This is Arduino library
+customField=Custom Value
 """
     mp = parser.LibraryPropertiesManifestParser(contents)
     assert not jsondiff.diff(
@@ -125,6 +136,7 @@ sentence=This is Arduino library
             "name": "TestPackage",
             "version": "1.2.3",
             "description": "This is Arduino library",
+            "sentence": "This is Arduino library",
             "platforms": ["*"],
             "frameworks": ["arduino"],
             "export": {
@@ -132,6 +144,7 @@ sentence=This is Arduino library
             },
             "authors": [{"email": "info@author.com", "name": "SomeAuthor"}],
             "keywords": ["uncategorized"],
+            "customField": "Custom Value",
         },
     )
 

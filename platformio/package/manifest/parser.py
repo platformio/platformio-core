@@ -46,6 +46,8 @@ class ManifestFileType(object):
             return ManifestFileType.MODULE_JSON
         if uri.endswith("package.json"):
             return ManifestFileType.PACKAGE_JSON
+        if uri.endswith("library.json"):
+            return ManifestFileType.LIBRARY_JSON
         return None
 
 
@@ -331,18 +333,16 @@ class LibraryJsonManifestParser(BaseManifestParser):
 class ModuleJsonManifestParser(BaseManifestParser):
     def parse(self, contents):
         data = json.loads(contents)
-        return dict(
-            name=data["name"],
-            version=data["version"],
-            keywords=data.get("keywords"),
-            description=data["description"],
-            frameworks=["mbed"],
-            platforms=["*"],
-            homepage=data.get("homepage"),
-            export={"exclude": ["tests", "test", "*.doxyfile", "*.pdf"]},
-            authors=self._parse_authors(data.get("author")),
-            license=self._parse_license(data.get("licenses")),
-        )
+        data["frameworks"] = ["mbed"]
+        data["platforms"] = ["*"]
+        data["export"] = {"exclude": ["tests", "test", "*.doxyfile", "*.pdf"]}
+        if "author" in data:
+            data["authors"] = self._parse_authors(data.get("author"))
+            del data["author"]
+        if "licenses" in data:
+            data["license"] = self._parse_license(data.get("licenses"))
+            del data["licenses"]
+        return data
 
     def _parse_authors(self, raw):
         if not raw:
@@ -364,23 +364,26 @@ class ModuleJsonManifestParser(BaseManifestParser):
 
 class LibraryPropertiesManifestParser(BaseManifestParser):
     def parse(self, contents):
-        properties = self._parse_properties(contents)
-        repository = self._parse_repository(properties)
-        homepage = properties.get("url")
+        data = self._parse_properties(contents)
+        repository = self._parse_repository(data)
+        homepage = data.get("url")
         if repository and repository["url"] == homepage:
             homepage = None
-        return dict(
-            frameworks=["arduino"],
-            homepage=homepage,
-            repository=repository or None,
-            name=properties.get("name"),
-            version=properties.get("version"),
-            description=self._parse_description(properties),
-            platforms=self._parse_platforms(properties) or ["*"],
-            keywords=self._parse_keywords(properties),
-            authors=self._parse_authors(properties) or None,
-            export=self._parse_export(),
+        data.update(
+            dict(
+                frameworks=["arduino"],
+                homepage=homepage,
+                repository=repository or None,
+                description=self._parse_description(data),
+                platforms=self._parse_platforms(data) or ["*"],
+                keywords=self._parse_keywords(data),
+                export=self._parse_export(),
+            )
         )
+        if "author" in data:
+            data["authors"] = self._parse_authors(data)
+            del data["author"]
+        return data
 
     @staticmethod
     def _parse_properties(contents):
