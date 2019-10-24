@@ -67,25 +67,24 @@ class TARArchive(ArchiveBase):
     def is_bad_path(self, path, base):
         return not self.resolve_path(os.path.join(base, path)).startswith(base)
 
-    def is_bad_link(self, tarinfo, base):
-        return self.is_bad_path(
-            tarinfo.linkname,
-            base=self.resolve_path(os.path.join(base, os.path.dirname(tarinfo.name))),
-        )
+    def is_bad_link(self, item, base):
+        return not self.resolve_path(
+            os.path.join(os.path.join(base, os.path.dirname(item.name)), item.linkname)
+        ).startswith(base)
 
-    # def extract_item(self, item, dest_dir):
-    #     bad_conds = [
-    #         self.is_link(item) and self.is_bad_link(item, dest_dir),
-    #         not self.is_link(item) and self.is_bad_path(item.name, dest_dir),
-    #     ]
-    #     if not any(bad_conds):
-    #         super(TARArchive, self).extract_item(item, dest_dir)
-    #     else:
-    #         click.secho(
-    #             "Blocked insecure item `%s` from archive" % item.name,
-    #             fg="red",
-    #             err=True,
-    #         )
+    def extract_item(self, item, dest_dir):
+        bad_conds = [
+            self.is_bad_path(item.name, dest_dir),
+            self.is_link(item) and self.is_bad_link(item, dest_dir),
+        ]
+        if not any(bad_conds):
+            super(TARArchive, self).extract_item(item, dest_dir)
+        else:
+            click.secho(
+                "Blocked insecure item `%s` from TAR archive" % item.name,
+                fg="red",
+                err=True,
+            )
 
 
 class ZIPArchive(ArchiveBase):
