@@ -480,6 +480,11 @@ def test_package_json_schema():
     assert "system" not in mp.as_dict()
 
     mp = parser.ManifestParserFactory.new(
+        '{"system": "all"}', parser.ManifestFileType.PACKAGE_JSON
+    )
+    assert "system" not in mp.as_dict()
+
+    mp = parser.ManifestParserFactory.new(
         '{"system": "darwin_x86_64"}', parser.ManifestFileType.PACKAGE_JSON
     )
     assert mp.as_dict()["system"] == ["darwin_x86_64"]

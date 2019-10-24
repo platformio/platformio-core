@@ -79,7 +79,7 @@ class PkgRepoMixin(object):
 
     @staticmethod
     def is_system_compatible(valid_systems):
-        if valid_systems in (None, "all", "*"):
+        if not valid_systems or "*" in valid_systems:
             return True
         if not isinstance(valid_systems, list):
             valid_systems = list([valid_systems])

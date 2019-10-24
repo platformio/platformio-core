@@ -537,7 +537,7 @@ class PackageJsonManifestParser(BaseManifestParser):
     def _parse_system(data):
         if "system" not in data:
             return data
-        if data["system"] in ("*", ["*"]):
+        if data["system"] in ("*", ["*"], "all"):
             del data["system"]
             return data
         if not isinstance(data["system"], list):
