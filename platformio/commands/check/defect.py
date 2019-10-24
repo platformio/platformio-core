@@ -81,7 +81,7 @@ class DefectItem(object):
                 return key
         raise Exception("Unknown severity label -> %s" % label)
 
-    def to_json(self):
+    def as_dict(self):
         return {
             "severity": self.SEVERITY_LABELS[self.severity],
             "category": self.category,
