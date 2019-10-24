@@ -63,6 +63,12 @@ add_custom_target(
 )
 
 add_custom_target(
+    PLATFORMIO_BUILD_DEBUG ALL
+    COMMAND ${PLATFORMIO_CMD} -f -c clion run --target debug "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_custom_target(
     PLATFORMIO_UPDATE_ALL ALL
     COMMAND ${PLATFORMIO_CMD} -f -c clion update
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
