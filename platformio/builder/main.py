@@ -189,7 +189,7 @@ if "idedata" in COMMAND_LINE_TARGETS:
     print (
         "\n%s\n"
         % dump_json_to_unicode(
-            env.DumpIDEData(projenv)  # pylint: disable=undefined-variable
+            projenv.DumpIDEData()  # pylint: disable=undefined-variable
         )
     )
     env.Exit(0)

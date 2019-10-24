@@ -27,6 +27,7 @@ PlatformIO Core 4.0
 * Fixed an issue when installing a package using custom Git tag and submodules were not updated correctly (`issue #3060 <https://github.com/platformio/platformio-core/issues/3060>`_)
 * Fixed an issue with linking process when ``$LDSCRIPT`` contains a space in path
 * Fixed security issue when extracting items from TAR archive (`issue #2995 <https://github.com/platformio/platformio-core/issues/2995>`_)
+* Fixed an issue with project generator when ``src_build_flags`` were not respected (`issue #3137 <https://github.com/platformio/platformio-core/issues/3137>`_)
 
 4.0.3 (2019-08-30)
 ~~~~~~~~~~~~~~~~~~

@@ -124,9 +124,6 @@ def BuildProgram(env):
     if "__test" in COMMAND_LINE_TARGETS:
         env.ConfigureTestTarget()
 
-    # build project with dependencies
-    _build_project_deps(env)
-
     # append into the beginning a main LD script
     if env.get("LDSCRIPT_PATH") and not any("-Wl,-T" in f for f in env["LINKFLAGS"]):
         env.Prepend(LINKFLAGS=["-T", env.subst("$LDSCRIPT_PATH")])
@@ -135,6 +132,9 @@ def BuildProgram(env):
     if env.get("LIBS") and env.GetCompilerType() == "gcc":
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
+
+    # build project with dependencies
+    _build_project_deps(env)
 
     program = env.Program(
         os.path.join("$BUILD_DIR", env.subst("$PROGNAME")), env["PIOBUILDFILES"]

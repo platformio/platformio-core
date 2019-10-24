@@ -25,11 +25,11 @@ from platformio.managers.core import get_core_package_dir
 from platformio.proc import exec_command, where_is_program
 
 
-def _dump_includes(env, projenv):
+def _dump_includes(env):
     includes = []
 
-    for item in projenv.get("CPPPATH", []):
-        includes.append(projenv.subst(item))
+    for item in env.get("CPPPATH", []):
+        includes.append(env.subst(item))
 
     # installed libs
     for lb in env.GetLibBuilders():
@@ -138,7 +138,7 @@ def _get_svd_path(env):
     return None
 
 
-def DumpIDEData(env, projenv):
+def DumpIDEData(env):
     LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS"
     LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS"
 
@@ -146,7 +146,7 @@ def DumpIDEData(env, projenv):
         "env_name": env["PIOENV"],
         "libsource_dirs": [env.subst(l) for l in env.GetLibSourceDirs()],
         "defines": _dump_defines(env),
-        "includes": _dump_includes(env, projenv),
+        "includes": _dump_includes(env),
         "cc_flags": env.subst(LINTCCOM),
         "cxx_flags": env.subst(LINTCXXCOM),
         "cc_path": where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
