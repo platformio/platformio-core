@@ -18,6 +18,13 @@ PlatformIO Core 4.0
   - Unused variables or functions
   - Out of scope memory usage.
 
+* `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__
+
+  - Static Code Analysis
+  - Firmware File Explorer
+  - Firmware Memory Inspection
+  - Firmware Sections & Symbols Viewer.
+
 * Added support for `Build Middlewares <http://docs.platformio.org/page/projectconf/advanced_scripting.html#build-middlewares>`__: configure custom build flags per specific file, skip any build nodes from a framework, replace build file with another on-the-fly, etc.
 * Extend project environment configuration in "platformio.ini" with other sections using a new `extends <http://docs.platformio.org/page/projectconf/section_env_advanced.html#extends>`__ option (`issue #2953 <https://github.com/platformio/platformio-core/issues/2953>`_)
 * Generate ``.ccls`` LSP file for `Emacs <https://docs.platformio.org/page/ide/emacs.html>`__ cross references, hierarchies, completion and semantic highlighting
