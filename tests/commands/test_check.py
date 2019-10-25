@@ -280,3 +280,29 @@ R21.4 text.
     assert result.exit_code != 0
     assert "R21.3 Found MISRA defect" in result.output
     assert not isfile(join(str(check_dir), "src", "main.cpp.dump"))
+
+
+def test_check_fails_on_defects_only_with_flag(clirunner, tmpdir):
+    config = DEFAULT_CONFIG + "\ncheck_tool = cppcheck, clangtidy"
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
+
+    default_result = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir)])
+
+    result_with_flag = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir), "--fail-on-defect"])
+
+    assert default_result.exit_code == 0
+    assert result_with_flag.exit_code != 0
+
+
+def test_check_bad_tool_flag_fails_check(clirunner, tmpdir):
+    config = DEFAULT_CONFIG + "\ncheck_tool = cppcheck, clangtidy"
+    config += "\ncheck_flags = --unknown-flag"
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
+
+    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
+
+    assert result.exit_code != 0
