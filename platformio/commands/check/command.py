@@ -168,9 +168,10 @@ def cli(
 def results_to_json(raw):
     results = []
     for item in raw:
+        if item.get("succeeded") is None:
+            continue
         item.update(
             {
-                "ignored": item.get("succeeded") is None,
                 "succeeded": bool(item.get("succeeded")),
                 "defects": [d.as_dict() for d in item.get("defects", [])],
             }
