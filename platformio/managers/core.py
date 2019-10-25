@@ -25,8 +25,8 @@ from platformio.project.config import ProjectConfig
 
 CORE_PACKAGES = {
     "contrib-piohome": "^2.3.2",
-    "contrib-pysite": "~2.%d%d.190418" % (sys.version_info[0], sys.version_info[1]),
-    "tool-pioplus": "^2.5.6",
+    "contrib-pysite": "~2.%d%d.0" % (sys.version_info[0], sys.version_info[1]),
+    "tool-pioplus": "^2.5.8",
     "tool-unity": "~1.20403.0",
     "tool-scons": "~2.20501.7" if PY2 else "~3.30101.0",
     "tool-cppcheck": "~1.189.0",
