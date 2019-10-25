@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import click
+import os
 
 from platformio import fs, proc
 from platformio.commands.check.defect import DefectItem
@@ -125,6 +126,16 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         return fs.match_src_files(
             get_project_dir(), self.options.get("filter"), file_extensions
         )
+
+    def get_source_language(self):
+        with fs.cd(get_project_dir()):
+            for _, __, files in os.walk(self.config.get_optional_dir("src")):
+                for name in files:
+                    if "." not in name:
+                        continue
+                    if os.path.splitext(name)[1].lower() in (".cpp", ".cxx", ".ino"):
+                        return "c++"
+            return "c"
 
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback

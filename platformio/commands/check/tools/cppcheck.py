@@ -90,6 +90,9 @@ class CppcheckCheckTool(CheckToolBase):
             % "<&PIO&>".join(["{0}={{{0}}}".format(f) for f in self.defect_fields])
         )
 
+        if self.get_source_language() == "c++":
+            cmd.append("--language=c++")
+
         flags = self.get_flags("cppcheck")
         if not self.is_flag_set("--platform", flags):
             cmd.append("--platform=unspecified")
