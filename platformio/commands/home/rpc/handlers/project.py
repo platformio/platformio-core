@@ -28,16 +28,19 @@ from platformio.compat import PY2, get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import is_platformio_project
+from platformio.project.helpers import get_project_dir, is_platformio_project
 
 
 class ProjectRPC(object):
     @staticmethod
-    def config_call(path, method, *args):
-        if isfile(path):
-            with fs.cd(os.path.dirname(path)):
-                return getattr(ProjectConfig(path), method)(*args)
-        return getattr(ProjectConfig(path), method)(*args)
+    def config_call(init_kwargs, method, *args):
+        assert isinstance(init_kwargs, dict)
+        assert "path" in init_kwargs
+        project_dir = get_project_dir()
+        if isfile(init_kwargs["path"]):
+            project_dir = os.path.dirname(init_kwargs["path"])
+        with fs.cd(project_dir):
+            return getattr(ProjectConfig(**init_kwargs), method)(*args)
 
     @staticmethod
     def _get_projects(project_dirs=None):
