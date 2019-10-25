@@ -90,9 +90,6 @@ class CppcheckCheckTool(CheckToolBase):
             % "<&PIO&>".join(["{0}={{{0}}}".format(f) for f in self.defect_fields])
         )
 
-        if self.get_source_language() == "c++":
-            cmd.append("--language=c++")
-
         flags = self.get_flags("cppcheck")
         if not self.is_flag_set("--platform", flags):
             cmd.append("--platform=unspecified")
@@ -105,6 +102,16 @@ class CppcheckCheckTool(CheckToolBase):
                 "unusedFunction",
             ]
             cmd.append("--enable=%s" % ",".join(enabled_checks))
+
+        if not self.is_flag_set("--language", flags):
+            if self.get_source_language() == "c++":
+                cmd.append("--language=c++")
+
+                if not self.is_flag_set("--std", flags):
+                    for f in self.cpp_flags:
+                        if "-std" in f:
+                            # Standards with GNU extensions are not allowed
+                            cmd.append("-" + f.replace("gnu", "c"))
 
         cmd.extend(["-D%s" % d for d in self.cpp_defines])
         cmd.extend(flags)

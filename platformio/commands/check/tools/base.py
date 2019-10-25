@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import click
 import os
+
+import click
 
 from platformio import fs, proc
 from platformio.commands.check.defect import DefectItem
@@ -26,6 +27,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         self.envname = envname
         self.options = options
         self.cpp_defines = []
+        self.cpp_flags = []
         self.cpp_includes = []
 
         self._defects = []
@@ -50,6 +52,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         data = load_project_ide_data(project_dir, envname)
         if not data:
             return
+        self.cpp_flags = data.get("cxx_flags", "").split(" ")
         self.cpp_includes = data.get("includes", [])
         self.cpp_defines = data.get("defines", [])
         self.cpp_defines.extend(self._get_toolchain_defines(data.get("cc_path")))
