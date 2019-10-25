@@ -67,7 +67,7 @@ def cli(
     silent,
     verbose,
     json_output,
-    fail_on_defect
+    fail_on_defect,
 ):
     app.set_session_var("custom_project_conf", project_conf)
 
@@ -140,7 +140,9 @@ def cli(
                 result["succeeded"] = rc == 0
                 if fail_on_defect:
                     result["succeeded"] = rc == 0 and not any(
-                        d.severity == DefectItem.SEVERITY_HIGH for d in result["defects"])
+                        d.severity == DefectItem.SEVERITY_HIGH
+                        for d in result["defects"]
+                    )
                 result["stats"] = collect_component_stats(result)
                 results.append(result)
 
@@ -149,8 +151,10 @@ def cli(
 
                 if not json_output and not silent:
                     if rc != 0:
-                        click.echo("Error: %s failed to perform check! Please "
-                            "examine tool output in verbose mode." % tool)
+                        click.echo(
+                            "Error: %s failed to perform check! Please "
+                            "examine tool output in verbose mode." % tool
+                        )
                     elif not result["defects"]:
                         click.echo("No defects found")
                     print_processing_footer(result)

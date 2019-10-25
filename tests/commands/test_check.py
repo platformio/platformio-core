@@ -287,11 +287,11 @@ def test_check_fails_on_defects_only_with_flag(clirunner, tmpdir):
     tmpdir.join("platformio.ini").write(config)
     tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
 
-    default_result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir)])
+    default_result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
 
     result_with_flag = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), "--fail-on-defect"])
+        cmd_check, ["--project-dir", str(tmpdir), "--fail-on-defect"]
+    )
 
     assert default_result.exit_code == 0
     assert result_with_flag.exit_code != 0
