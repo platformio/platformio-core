@@ -96,10 +96,13 @@ def LoadPioPlatform(env):
         if not option.startswith("board_"):
             continue
         option = option.lower()[6:]
-        if isinstance(board_config.get(option), bool):
-            value = str(value).lower() in ("1", "yes", "true")
-        elif isinstance(board_config.get(option), int):
-            value = int(value)
+        try:
+            if isinstance(board_config.get(option), bool):
+                value = str(value).lower() in ("1", "yes", "true")
+            elif isinstance(board_config.get(option), int):
+                value = int(value)
+        except KeyError:
+            pass
         board_config.update(option, value)
 
     # load default variables from board config
