@@ -90,7 +90,7 @@ def test_check_cli_output(clirunner, check_dir):
 
     errors, warnings, style = count_defects(result.output)
 
-    assert result.exit_code != 0
+    assert result.exit_code == 0
     assert errors + warnings + style == EXPECTED_DEFECTS
 
 
@@ -119,7 +119,7 @@ def test_check_severity_threshold(clirunner, check_dir):
 
     errors, warnings, style = count_defects(result.output)
 
-    assert result.exit_code != 0
+    assert result.exit_code == 0
     assert errors == EXPECTED_ERRORS
     assert warnings == 0
     assert style == 0
@@ -143,7 +143,7 @@ def test_check_silent_mode(clirunner, check_dir):
 
     errors, warnings, style = count_defects(result.output)
 
-    assert result.exit_code != 0
+    assert result.exit_code == 0
     assert errors == EXPECTED_ERRORS
     assert warnings == 0
     assert style == 0
@@ -158,7 +158,7 @@ def test_check_filter_sources(clirunner, check_dir):
 
     errors, warnings, style = count_defects(result.output)
 
-    assert result.exit_code != 0
+    assert result.exit_code == 0
     assert errors == EXPECTED_ERRORS
     assert warnings == EXPECTED_WARNINGS
     assert style == EXPECTED_STYLE
@@ -277,7 +277,7 @@ R21.4 text.
         cmd_check, ["--project-dir", str(check_dir), "--flags=--addon=misra.json"]
     )
 
-    assert result.exit_code != 0
+    assert result.exit_code == 0
     assert "R21.3 Found MISRA defect" in result.output
     assert not isfile(join(str(check_dir), "src", "main.cpp.dump"))
 
@@ -295,14 +295,3 @@ def test_check_fails_on_defects_only_with_flag(clirunner, tmpdir):
 
     assert default_result.exit_code == 0
     assert result_with_flag.exit_code != 0
-
-
-def test_check_bad_tool_flag_fails_check(clirunner, tmpdir):
-    config = DEFAULT_CONFIG + "\ncheck_tool = cppcheck, clangtidy"
-    config += "\ncheck_flags = --unknown-flag"
-    tmpdir.join("platformio.ini").write(config)
-    tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
-
-    result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
-
-    assert result.exit_code != 0
