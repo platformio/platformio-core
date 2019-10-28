@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os.path import isabs, isfile, join, relpath
+from os.path import abspath, relpath
 
 import click
 
@@ -82,15 +82,11 @@ class DefectItem(object):
         raise Exception("Unknown severity label -> %s" % label)
 
     def as_dict(self):
-        filepath = self.file
-        if not isabs(filepath) and isfile(join(get_project_dir(), filepath)):
-            filepath = join(get_project_dir(), filepath)
-
         return {
             "severity": self.SEVERITY_LABELS[self.severity],
             "category": self.category,
             "message": self.message,
-            "file": filepath,
+            "file": abspath(self.file),
             "line": self.line,
             "column": self.column,
             "callstack": self.callstack,
