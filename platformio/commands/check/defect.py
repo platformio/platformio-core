@@ -45,8 +45,8 @@ class DefectItem(object):
         self.severity = severity
         self.category = category
         self.message = message
-        self.line = line
-        self.column = column
+        self.line = int(line)
+        self.column = int(column)
         self.callstack = callstack
         self.cwe = cwe
         self.id = id
