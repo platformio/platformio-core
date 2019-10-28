@@ -91,6 +91,10 @@ class CppcheckCheckTool(CheckToolBase):
         )
 
         flags = self.get_flags("cppcheck")
+        if not flags:
+            # by default user can suppress reporting individual defects
+            # directly in code // cppcheck-suppress warningID
+            cmd.append("--inline-suppr")
         if not self.is_flag_set("--platform", flags):
             cmd.append("--platform=unspecified")
         if not self.is_flag_set("--enable", flags):
