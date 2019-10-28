@@ -159,10 +159,10 @@ def cli(
                         click.echo("No defects found")
                     print_processing_footer(result)
 
-    if json_output:
-        click.echo(dump_json_to_unicode(results_to_json(results)))
-    elif not silent:
-        print_check_summary(results)
+        if json_output:
+            click.echo(dump_json_to_unicode(results_to_json(results)))
+        elif not silent:
+            print_check_summary(results)
 
     command_failed = any(r.get("succeeded") is False for r in results)
     if command_failed:
