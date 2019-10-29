@@ -72,7 +72,7 @@ def test_init_ide_atom(clirunner, validate_cliresult, tmpdir):
         assert all(
             [tmpdir.join(f).check() for f in (".clang_complete", ".gcc-flags.json")]
         )
-        assert "arduinoavr" in tmpdir.join(".clang_complete").read()
+        assert "framework-arduino" in tmpdir.join(".clang_complete").read()
 
         # switch to NodeMCU
         result = clirunner.invoke(cmd_init, ["--ide", "atom", "-b", "nodemcuv2"])
@@ -84,7 +84,7 @@ def test_init_ide_atom(clirunner, validate_cliresult, tmpdir):
         result = clirunner.invoke(cmd_init, ["--ide", "atom"])
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
-        assert "arduinoavr" in tmpdir.join(".clang_complete").read()
+        assert "framework-arduino" in tmpdir.join(".clang_complete").read()
 
 
 def test_init_ide_eclipse(clirunner, validate_cliresult):
