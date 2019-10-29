@@ -160,8 +160,16 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
     for symbol in symbols:
         if symbol["name"].startswith("_Z"):
             symbol["demangled_name"] = demangled_names.get(symbol["name"])
-        symbol["location"] = symbol_locations.get(hex(symbol["addr"]))
-
+        location = symbol_locations.get(hex(symbol["addr"]))
+        if not location or "?" in location:
+            continue
+        symbol["file"] = location
+        symbol["line"] = 0
+        if ":" in location:
+            file_, line = location.rsplit(":", 1)
+            if line.isdigit():
+                symbol["file"] = file_
+                symbol["line"] = int(line)
     return symbols
 
 
@@ -210,10 +218,7 @@ def DumpSizeData(_, target, source, env):  # pylint: disable=unused-argument
 
         files = dict()
         for symbol in _collect_symbols_info(env, elffile, elf_path, sections):
-            file_path, _ = symbol.get("location").rsplit(":", 1)
-            if not file_path or file_path.startswith("?"):
-                file_path = "unknown"
-
+            file_path = symbol.get("file") or "unknown"
             if not files.get(file_path, {}):
                 files[file_path] = {"symbols": [], "ram_size": 0, "flash_size": 0}
 
