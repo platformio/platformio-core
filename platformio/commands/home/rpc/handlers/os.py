@@ -83,6 +83,10 @@ class OSRPC(object):
         )
 
     @staticmethod
+    def open_file(path):
+        return click.launch(path.encode(get_filesystem_encoding()) if PY2 else path)
+
+    @staticmethod
     def is_file(path):
         return isfile(path)
 
