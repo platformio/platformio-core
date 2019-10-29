@@ -19,7 +19,7 @@ from zipfile import ZipFile
 import click
 import requests
 
-from platformio import VERSION, __version__, exception, util
+from platformio import VERSION, __version__, app, exception, util
 from platformio.compat import WINDOWS
 from platformio.proc import exec_command, get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir
@@ -64,6 +64,10 @@ def cli(dev):
         )
         click.echo("Release notes: ", nl=False)
         click.secho("https://docs.platformio.org/en/latest/history.html", fg="cyan")
+        if app.get_session_var("caller_id"):
+            click.secho(
+                "Warning! Please restart IDE to affect PIO Home changes", fg="yellow"
+            )
     except Exception as e:  # pylint: disable=broad-except
         if not r:
             raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
