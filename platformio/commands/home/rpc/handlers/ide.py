@@ -22,7 +22,7 @@ class IDERPC(object):
     def __init__(self):
         self._queue = {}
 
-    def send_command(self, command, params, sid=0):
+    def send_command(self, sid, command, params):
         if not self._queue.get(sid):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4005, message="PIO Home IDE agent is not started"
@@ -38,5 +38,10 @@ class IDERPC(object):
         self._queue[sid].append(defer.Deferred())
         return self._queue[sid][-1]
 
-    def open_project(self, project_dir, sid=0):
-        return self.send_command("open_project", project_dir, sid)
+    def open_project(self, sid, project_dir):
+        return self.send_command(sid, "open_project", project_dir)
+
+    def open_text_document(self, sid, path, line=None, column=None):
+        return self.send_command(
+            sid, "open_text_document", dict(path=path, line=line, column=column)
+        )
