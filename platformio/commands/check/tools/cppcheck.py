@@ -136,7 +136,10 @@ class CppcheckCheckTool(CheckToolBase):
             return fp.name
 
     def _generate_src_file(self):
-        return self._create_tmp_file("\n".join(self.get_project_src_files()))
+        src_files = [
+            f for f in self.get_project_src_files() if not f.endswith((".h", ".hpp"))
+        ]
+        return self._create_tmp_file("\n".join(src_files))
 
     def _generate_inc_file(self):
         return self._create_tmp_file("\n".join(self.cpp_includes))
