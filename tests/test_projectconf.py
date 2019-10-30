@@ -242,27 +242,27 @@ def test_items(config):
         ("lib_flags", "-lc -lm"),
         ("extra_flags", None),
         ("lib_ignore", "LibIgnoreCustom"),
-    ]  # yapf: disable
+    ]
     assert config.items(env="base") == [
         ("build_flags", ["-D DEBUG=1"]),
         ("targets", []),
         ("monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
-    ]  # yapf: disable
+    ]
     assert config.items(env="extra_1") == [
         ("build_flags", ["-lc -lm -D DEBUG=1"]),
         ("lib_deps", ["574"]),
         ("monitor_speed", "115200"),
         ("lib_ignore", ["LibIgnoreCustom"]),
-    ]  # yapf: disable
+    ]
     assert config.items(env="extra_2") == [
         ("build_flags", ["-Og"]),
         ("lib_ignore", ["LibIgnoreCustom", "Lib3"]),
         ("upload_port", "/dev/extra_2/port"),
         ("monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
-    ]  # yapf: disable
+    ]
     assert config.items(env="test_extends") == [
         ("extends", ["strict_settings"]),
         ("build_flags", ["-D RELEASE"]),
@@ -271,4 +271,87 @@ def test_items(config):
         ("monitor_speed", "9600"),
         ("lib_deps", ["Lib1", "Lib2"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
-    ]  # yapf: disable
+    ]
+
+
+def test_as_tuple(config):
+    assert config.as_tuple() == [
+        (
+            "platformio",
+            [
+                ("extra_configs", ["extra_envs.ini", "extra_debug.ini"]),
+                ("default_envs", ["base", "extra_2"]),
+                ("workspace_dir", "/tmp/pio-workspaces/$PROJECT_HASH"),
+            ],
+        ),
+        (
+            "env",
+            [
+                ("monitor_speed", "115200"),
+                ("lib_deps", ["Lib1", "Lib2"]),
+                ("lib_ignore", ["LibIgnoreCustom"]),
+            ],
+        ),
+        ("strict_ldf", [("lib_ldf_mode", "chain+"), ("lib_compat_mode", "strict")]),
+        ("monitor_custom", [("monitor_speed", "9600")]),
+        (
+            "strict_settings",
+            [
+                ("extends", "strict_ldf, monitor_custom"),
+                ("build_flags", "-D RELEASE"),
+                ("lib_ldf_mode", "chain+"),
+                ("lib_compat_mode", "strict"),
+                ("monitor_speed", "9600"),
+            ],
+        ),
+        (
+            "custom",
+            [
+                ("debug_flags", "-D DEBUG=1"),
+                ("lib_flags", "-lc -lm"),
+                ("extra_flags", None),
+                ("lib_ignore", "LibIgnoreCustom"),
+            ],
+        ),
+        (
+            "env:base",
+            [
+                ("build_flags", ["-D DEBUG=1"]),
+                ("targets", []),
+                ("monitor_speed", "115200"),
+                ("lib_deps", ["Lib1", "Lib2"]),
+                ("lib_ignore", ["LibIgnoreCustom"]),
+            ],
+        ),
+        (
+            "env:test_extends",
+            [
+                ("extends", ["strict_settings"]),
+                ("build_flags", ["-D RELEASE"]),
+                ("lib_ldf_mode", "chain+"),
+                ("lib_compat_mode", "strict"),
+                ("monitor_speed", "9600"),
+                ("lib_deps", ["Lib1", "Lib2"]),
+                ("lib_ignore", ["LibIgnoreCustom"]),
+            ],
+        ),
+        (
+            "env:extra_1",
+            [
+                ("build_flags", ["-lc -lm -D DEBUG=1"]),
+                ("lib_deps", ["574"]),
+                ("monitor_speed", "115200"),
+                ("lib_ignore", ["LibIgnoreCustom"]),
+            ],
+        ),
+        (
+            "env:extra_2",
+            [
+                ("build_flags", ["-Og"]),
+                ("lib_ignore", ["LibIgnoreCustom", "Lib3"]),
+                ("upload_port", "/dev/extra_2/port"),
+                ("monitor_speed", "115200"),
+                ("lib_deps", ["Lib1", "Lib2"]),
+            ],
+        ),
+    ]

@@ -412,6 +412,9 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
     def as_dict(self):
         return {s: self.items(s, as_dict=True) for s in self.sections()}
 
+    def as_tuple(self):
+        return [(s, self.items(s)) for s in self.sections()]
+
     def to_json(self):
         return json.dumps(self.as_dict())
 
