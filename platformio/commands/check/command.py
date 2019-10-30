@@ -56,7 +56,11 @@ from platformio.project.helpers import find_project_dir_above, get_project_dir
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("--json-output", is_flag=True)
-@click.option("--fail-on-defect", is_flag=True)
+@click.option(
+    "--fail-on-defect",
+    multiple=True,
+    type=click.Choice(DefectItem.SEVERITY_LABELS.values()),
+)
 def cli(
     environment,
     project_dir,
@@ -140,7 +144,7 @@ def cli(
                 result["succeeded"] = rc == 0
                 if fail_on_defect:
                     result["succeeded"] = rc == 0 and not any(
-                        d.severity == DefectItem.SEVERITY_HIGH
+                        DefectItem.SEVERITY_LABELS[d.severity] in fail_on_defect
                         for d in result["defects"]
                     )
                 result["stats"] = collect_component_stats(result)

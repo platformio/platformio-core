@@ -32,25 +32,26 @@ void run_defects() {
     int* doubleFreePi = (int*)malloc(sizeof(int));
     *doubleFreePi=2;
     free(doubleFreePi);
-    free(doubleFreePi);
+    free(doubleFreePi); /* High */
 
     /* Reading uninitialized memory */
     int* uninitializedPi = (int*)malloc(sizeof(int));
-    *uninitializedPi++;
+    *uninitializedPi++; /* High + Medium*/
     free(uninitializedPi);
 
     /* Delete instead of delete [] */
     int* wrongDeletePi = new int[10];
     wrongDeletePi++;
-    delete wrongDeletePi;
+    delete wrongDeletePi; /* High */
 
     /* Index out of bounds */
     int arr[10];
     for(int i=0; i < 11; i++) {
-        arr[i] = 0;
+        arr[i] = 0; /* High */
     }
 }
 
+/* Low */
 void unusedFuntion(){
 }
 
@@ -197,7 +198,7 @@ def test_check_success_if_no_errors(clirunner, tmpdir):
         """
 #include <stdlib.h>
 
-void unused_functin(){
+void unused_function(){
     int unusedVar = 0;
     int* iP = &unusedVar;
     *iP++;
@@ -290,8 +291,38 @@ def test_check_fails_on_defects_only_with_flag(clirunner, tmpdir):
     default_result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
 
     result_with_flag = clirunner.invoke(
-        cmd_check, ["--project-dir", str(tmpdir), "--fail-on-defect"]
+        cmd_check, ["--project-dir", str(tmpdir), "--fail-on-defect=high"]
     )
 
     assert default_result.exit_code == 0
     assert result_with_flag.exit_code != 0
+
+
+def test_check_fails_on_defects_only_on_specified_level(clirunner, tmpdir):
+    config = DEFAULT_CONFIG + "\ncheck_tool = cppcheck, clangtidy"
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.c").write(
+        """
+#include <stdlib.h>
+
+void unused_function(){
+    int unusedVar = 0;
+    int* iP = &unusedVar;
+    *iP++;
+}
+
+int main() {
+}
+"""
+    )
+
+    high_result = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir), "--fail-on-defect=high"]
+    )
+
+    low_result = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir), "--fail-on-defect=low"]
+    )
+
+    assert high_result.exit_code == 0
+    assert low_result.exit_code != 0
