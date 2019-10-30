@@ -249,7 +249,7 @@ def CheckUploadSize(_, target, source, env):
     program_size = _calculate_size(output, env.get("SIZEPROGREGEXP"))
     data_size = _calculate_size(output, env.get("SIZEDATAREGEXP"))
 
-    print ("Memory Usage -> http://bit.ly/pio-memory-usage")
+    print ('Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"')
     if data_max_size and data_size > -1:
         print ("DATA:    %s" % _format_availale_bytes(data_size, data_max_size))
     if program_size > -1:
