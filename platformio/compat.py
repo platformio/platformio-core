@@ -17,6 +17,7 @@
 
 import inspect
 import json
+import locale
 import os
 import re
 import sys
@@ -28,6 +29,10 @@ WINDOWS = sys.platform.startswith("win")
 
 def get_filesystem_encoding():
     return sys.getfilesystemencoding() or sys.getdefaultencoding()
+
+
+def get_locale_encoding():
+    return locale.getdefaultlocale()[1]
 
 
 def get_class_attributes(cls):

@@ -19,7 +19,12 @@ from os.path import isdir, isfile, join, normpath
 from threading import Thread
 
 from platformio import exception
-from platformio.compat import WINDOWS, get_filesystem_encoding, string_types
+from platformio.compat import (
+    WINDOWS,
+    get_filesystem_encoding,
+    get_locale_encoding,
+    string_types,
+)
 
 
 class AsyncPipeBase(object):
@@ -122,7 +127,9 @@ def exec_command(*args, **kwargs):
     for k, v in result.items():
         if isinstance(result[k], bytes):
             try:
-                result[k] = result[k].decode(get_filesystem_encoding())
+                result[k] = result[k].decode(
+                    get_locale_encoding() or get_filesystem_encoding()
+                )
             except UnicodeDecodeError:
                 result[k] = result[k].decode("latin-1")
         if v and isinstance(v, string_types):
