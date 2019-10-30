@@ -18,12 +18,23 @@ import click
 import jsonrpc
 from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
 from jsonrpc.exceptions import JSONRPCDispatchException
-from twisted.internet import defer
+from twisted.internet import defer, reactor
 
 from platformio.compat import PY2, dump_json_to_unicode, is_bytes
 
 
 class JSONRPCServerProtocol(WebSocketServerProtocol):
+    def onOpen(self):
+        self.factory.connection_nums += 1
+        if self.factory.shutdown_timer:
+            self.factory.shutdown_timer.cancel()
+            self.factory.shutdown_timer = None
+
+    def onClose(self, wasClean, code, reason):  # pylint: disable=unused-argument
+        self.factory.connection_nums -= 1
+        if self.factory.connection_nums == 0:
+            self.factory.shutdownByTimeout()
+
     def onMessage(self, payload, isBinary):  # pylint: disable=unused-argument
         # click.echo("> %s" % payload)
         response = jsonrpc.JSONRPCResponseManager.handle(
@@ -65,11 +76,24 @@ class JSONRPCServerProtocol(WebSocketServerProtocol):
 
 class JSONRPCServerFactory(WebSocketServerFactory):
 
+    SHUTDOWN_TIMEOUT = 3600  # in seconds
+
     protocol = JSONRPCServerProtocol
+    connection_nums = 0
+    shutdown_timer = 0
 
     def __init__(self):
         super(JSONRPCServerFactory, self).__init__()
         self.dispatcher = jsonrpc.Dispatcher()
+
+    def shutdownByTimeout(self):
+        def _auto_shutdown_server():
+            click.echo("Automatically shutdown server on timeout")
+            reactor.stop()
+
+        self.shutdown_timer = reactor.callLater(
+            self.SHUTDOWN_TIMEOUT, _auto_shutdown_server
+        )
 
     def addHandler(self, handler, namespace):
         self.dispatcher.build_method_map(handler, prefix="%s." % namespace)
