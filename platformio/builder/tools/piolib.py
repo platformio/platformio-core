@@ -211,7 +211,7 @@ class LibBuilderBase(object):
 
     @property
     def lib_archive(self):
-        return self.env.GetProjectOption("lib_archive", True)
+        return self.env.GetProjectOption("lib_archive")
 
     @property
     def lib_ldf_mode(self):
@@ -711,8 +711,9 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def lib_archive(self):
-        global_value = self.env.GetProjectOption("lib_archive")
-        if global_value is not None:
+        unique_value = "_not_declared_%s" % id(self)
+        global_value = self.env.GetProjectOption("lib_archive", unique_value)
+        if global_value != unique_value:
             return global_value
         return self._manifest.get("build", {}).get(
             "libArchive", LibBuilderBase.lib_archive.fget(self)

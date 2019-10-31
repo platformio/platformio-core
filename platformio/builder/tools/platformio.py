@@ -70,7 +70,7 @@ def _build_project_deps(env):
         projenv.BuildSources(
             "$BUILD_TEST_DIR", "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
         )
-    if not is_test or env.GetProjectOption("test_build_project_src", False):
+    if not is_test or env.GetProjectOption("test_build_project_src"):
         projenv.BuildSources(
             "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
         )
