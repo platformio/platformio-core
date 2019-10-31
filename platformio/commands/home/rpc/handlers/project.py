@@ -29,6 +29,7 @@ from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
 from platformio.project.helpers import get_project_dir, is_platformio_project
+from platformio.project.options import get_config_options_schema
 
 
 class ProjectRPC(object):
@@ -41,6 +42,20 @@ class ProjectRPC(object):
             project_dir = os.path.dirname(init_kwargs["path"])
         with fs.cd(project_dir):
             return getattr(ProjectConfig(**init_kwargs), method)(*args)
+
+    @staticmethod
+    def config_load(path):
+        return ProjectConfig(path).as_tuple()
+
+    @staticmethod
+    def config_dump(path, data):
+        config = ProjectConfig(path)
+        config.update(data, clear=True)
+        return config.save()
+
+    @staticmethod
+    def get_config_schema():
+        return get_config_options_schema()
 
     @staticmethod
     def _get_projects(project_dirs=None):
