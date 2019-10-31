@@ -18,7 +18,7 @@ PlatformIO Core 4.0
   - Unused variables or functions
   - Out of scope memory usage.
 
-* `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__
+* `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__ and Project Inspection
 
   - Static Code Analysis
   - Firmware File Explorer
@@ -39,6 +39,7 @@ PlatformIO Core 4.0
 * Fixed an issue when booleans in "platformio.ini" are not parsed properly (`issue #3022 <https://github.com/platformio/platformio-core/issues/3022>`_)
 * Fixed an issue with invalid encoding when generating project for Visual Studio (`issue #3183 <https://github.com/platformio/platformio-core/issues/3183>`_)
 * Fixed an issue when Project Config Parser does not remove in-line comments when Python 3 is used (`issue #3213 <https://github.com/platformio/platformio-core/issues/3213>`_)
+* Fixed an issue with a GCC Linter for PlatformIO IDE for Atom (`issue #3218 <https://github.com/platformio/platformio-core/issues/3218>`_)
 
 4.0.3 (2019-08-30)
 ~~~~~~~~~~~~~~~~~~
