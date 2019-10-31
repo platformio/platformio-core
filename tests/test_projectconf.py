@@ -274,84 +274,67 @@ def test_items(config):
     ]
 
 
-def test_as_tuple(config):
+def test_update_and_save(tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp("project")
+    tmpdir.join("platformio.ini").write(
+        """
+[platformio]
+extra_configs = a.ini, b.ini
+
+[env:myenv]
+board = myboard
+    """
+    )
+    config = ProjectConfig(tmpdir.join("platformio.ini").strpath)
+    assert config.envs() == ["myenv"]
+    assert config.as_tuple()[0][1][0][1] == ["a.ini", "b.ini"]
+
+    config.update(
+        [
+            ["platformio", [("extra_configs", ["extra.ini"])]],
+            ["env:myenv", [("framework", ["espidf", "arduino"])]],
+            ["check_types", [("float_option", 13.99), ("bool_option", True)]],
+        ]
+    )
+    config.get("platformio", "extra_configs") == "extra.ini"
+    config.remove_section("platformio")
     assert config.as_tuple() == [
-        (
-            "platformio",
-            [
-                ("extra_configs", ["extra_envs.ini", "extra_debug.ini"]),
-                ("default_envs", ["base", "extra_2"]),
-                ("workspace_dir", "/tmp/pio-workspaces/$PROJECT_HASH"),
-            ],
-        ),
-        (
-            "env",
-            [
-                ("monitor_speed", "115200"),
-                ("lib_deps", ["Lib1", "Lib2"]),
-                ("lib_ignore", ["LibIgnoreCustom"]),
-            ],
-        ),
-        ("strict_ldf", [("lib_ldf_mode", "chain+"), ("lib_compat_mode", "strict")]),
-        ("monitor_custom", [("monitor_speed", "9600")]),
-        (
-            "strict_settings",
-            [
-                ("extends", "strict_ldf, monitor_custom"),
-                ("build_flags", "-D RELEASE"),
-                ("lib_ldf_mode", "chain+"),
-                ("lib_compat_mode", "strict"),
-                ("monitor_speed", "9600"),
-            ],
-        ),
-        (
-            "custom",
-            [
-                ("debug_flags", "-D DEBUG=1"),
-                ("lib_flags", "-lc -lm"),
-                ("extra_flags", None),
-                ("lib_ignore", "LibIgnoreCustom"),
-            ],
-        ),
-        (
-            "env:base",
-            [
-                ("build_flags", ["-D DEBUG=1"]),
-                ("targets", []),
-                ("monitor_speed", "115200"),
-                ("lib_deps", ["Lib1", "Lib2"]),
-                ("lib_ignore", ["LibIgnoreCustom"]),
-            ],
-        ),
-        (
-            "env:test_extends",
-            [
-                ("extends", ["strict_settings"]),
-                ("build_flags", ["-D RELEASE"]),
-                ("lib_ldf_mode", "chain+"),
-                ("lib_compat_mode", "strict"),
-                ("monitor_speed", "9600"),
-                ("lib_deps", ["Lib1", "Lib2"]),
-                ("lib_ignore", ["LibIgnoreCustom"]),
-            ],
-        ),
-        (
-            "env:extra_1",
-            [
-                ("build_flags", ["-lc -lm -D DEBUG=1"]),
-                ("lib_deps", ["574"]),
-                ("monitor_speed", "115200"),
-                ("lib_ignore", ["LibIgnoreCustom"]),
-            ],
-        ),
-        (
-            "env:extra_2",
-            [
-                ("build_flags", ["-Og"]),
-                ("lib_ignore", ["LibIgnoreCustom", "Lib3"]),
-                ("upload_port", "/dev/extra_2/port"),
-                ("monitor_speed", "115200"),
-                ("lib_deps", ["Lib1", "Lib2"]),
-            ],
-        ),
+        ("env:myenv", [("board", "myboard"), ("framework", ["espidf", "arduino"])]),
+        ("check_types", [("float_option", "13.99"), ("bool_option", "yes")]),
+    ]
+
+    config.save()
+    lines = [
+        line.strip()
+        for line in tmpdir.join("platformio.ini").readlines()
+        if line.strip() and not line.startswith((";", "#"))
+    ]
+    assert lines == [
+        "[env:myenv]",
+        "board = myboard",
+        "framework =",
+        "espidf",
+        "arduino",
+        "[check_types]",
+        "float_option = 13.99",
+        "bool_option = yes",
+    ]
+
+
+def test_update_and_clear(tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp("project")
+    tmpdir.join("platformio.ini").write(
+        """
+[platformio]
+extra_configs = a.ini, b.ini
+
+[env:myenv]
+board = myboard
+    """
+    )
+    config = ProjectConfig(tmpdir.join("platformio.ini").strpath)
+    assert config.sections() == ["platformio", "env:myenv"]
+    config.update([["mysection", [("opt1", "value1"), ("opt2", "value2")]]], clear=True)
+    assert config.as_tuple() == [
+        ("mysection", [("opt1", "value1"), ("opt2", "value2")])
     ]

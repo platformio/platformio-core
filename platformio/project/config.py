@@ -225,6 +225,10 @@ class ProjectConfigBase(object):
             value = "\n".join(value)
             if value:
                 value = "\n" + value  # start from a new line
+        elif isinstance(value, bool):
+            value = "yes" if value else "no"
+        elif isinstance(value, (int, float)):
+            value = str(value)
         self._parser.set(section, option, value)
 
     def getraw(self, section, option):
@@ -418,6 +422,16 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
     def to_json(self):
         return json.dumps(self.as_dict())
 
+    def update(self, data, clear=False):
+        assert isinstance(data, list)
+        if clear:
+            self._parser = ConfigParser.ConfigParser()
+        for section, options in data:
+            if not self._parser.has_section(section):
+                self._parser.add_section(section)
+            for option, value in options:
+                self.set(section, option, value)
+
     def save(self, path=None):
         path = path or self.path
         if path in self._instances:
@@ -425,3 +439,4 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
         with open(path or self.path, "w") as fp:
             fp.write(CONFIG_HEADER)
             self._parser.write(fp)
+        return True
