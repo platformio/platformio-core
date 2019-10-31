@@ -28,9 +28,9 @@ extra_configs =
 
 # global options per [env:*]
 [env]
-monitor_speed = 115200
+monitor_speed = 115200  ; inline comment
 lib_deps =
-    Lib1
+    Lib1 ; inline comment in multi-line value
     Lib2
 lib_ignore = ${custom.lib_ignore}
 

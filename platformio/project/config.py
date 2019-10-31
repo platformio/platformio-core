@@ -21,7 +21,7 @@ from hashlib import sha1
 import click
 
 from platformio import exception, fs
-from platformio.compat import WINDOWS, hashlib_encode_data
+from platformio.compat import PY2, WINDOWS, hashlib_encode_data
 from platformio.project.options import ProjectOptions
 
 try:
@@ -84,7 +84,11 @@ class ProjectConfigBase(object):
         self.expand_interpolations = expand_interpolations
         self.warnings = []
         self._parsed = []
-        self._parser = ConfigParser.ConfigParser()
+        self._parser = (
+            ConfigParser.ConfigParser()
+            if PY2
+            else ConfigParser.ConfigParser(inline_comment_prefixes=("#", ";"))
+        )
         if path and os.path.isfile(path):
             self.read(path, parse_extra)
 
