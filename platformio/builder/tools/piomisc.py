@@ -294,17 +294,17 @@ def VerboseAction(_, act, actstr):
 
 def PioClean(env, clean_dir):
     if not isdir(clean_dir):
-        print ("Build environment is clean")
+        print("Build environment is clean")
         env.Exit(0)
     clean_rel_path = relpath(clean_dir)
     for root, _, files in walk(clean_dir):
         for f in files:
             dst = join(root, f)
             remove(dst)
-            print (
+            print(
                 "Removed %s" % (dst if clean_rel_path.startswith(".") else relpath(dst))
             )
-    print ("Done cleaning")
+    print("Done cleaning")
     fs.rmtree(clean_dir)
     env.Exit(0)
 

@@ -223,7 +223,7 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
         _get_packages_data(),
     ):
         if data and len(data) > 1:
-            print (" ".join(data))
+            print(" ".join(data))
 
 
 def exists(_):

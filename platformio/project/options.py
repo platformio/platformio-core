@@ -397,4 +397,4 @@ ProjectOptions = OrderedDict(
 
 
 def get_config_options_schema():
-    return [option.as_dict() for option in ProjectOptions.values()]
+    return [opt.as_dict() for opt in ProjectOptions.values()]
