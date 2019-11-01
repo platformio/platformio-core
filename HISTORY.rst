@@ -29,6 +29,7 @@ PlatformIO Core 4.0
 * Extend project environment configuration in "platformio.ini" with other sections using a new `extends <http://docs.platformio.org/page/projectconf/section_env_advanced.html#extends>`__ option (`issue #2953 <https://github.com/platformio/platformio-core/issues/2953>`_)
 * Generate ``.ccls`` LSP file for `Emacs <https://docs.platformio.org/page/ide/emacs.html>`__ cross references, hierarchies, completion and semantic highlighting
 * Added ``--no-ansi`` flag for `PIO Core <http://docs.platformio.org/page/userguide/index.html>`__ to disable ANSI control characters
+* Added ``--shutdown-timeout`` option to `PIO Home Server <http://docs.platformio.org/page/userguide/cmd_home.html>`__
 * Fixed an issue with project generator for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__ when 2 environments were used (`issue #2824 <https://github.com/platformio/platformio-core/issues/2824>`_)
 * Fixed default PIO Unified Debugger configuration for `J-Link probe <http://docs.platformio.org/page/plus/debug-tools/jlink.html>`__
 * Fixed an issue when configuration file options partly ignored when using custom ``--project-conf`` (`issue #3034 <https://github.com/platformio/platformio-core/issues/3034>`_)

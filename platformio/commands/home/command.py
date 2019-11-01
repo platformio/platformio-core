@@ -35,7 +35,16 @@ from platformio.managers.core import get_core_package_dir, inject_contrib_pysite
     ),
 )
 @click.option("--no-open", is_flag=True)
-def cli(port, host, no_open):
+@click.option(
+    "--shutdown-timeout",
+    default=0,
+    type=int,
+    help=(
+        "Automatically shutdown server on timeout (in seconds) when no clients "
+        "are connected. Default is 0 which means never auto shutdown"
+    ),
+)
+def cli(port, host, no_open, shutdown_timeout):
     # pylint: disable=import-error, import-outside-toplevel
 
     # import contrib modules
@@ -53,7 +62,7 @@ def cli(port, host, no_open):
     from platformio.commands.home.rpc.server import JSONRPCServerFactory
     from platformio.commands.home.web import WebRoot
 
-    factory = JSONRPCServerFactory()
+    factory = JSONRPCServerFactory(shutdown_timeout)
     factory.addHandler(AppRPC(), namespace="app")
     factory.addHandler(IDERPC(), namespace="ide")
     factory.addHandler(MiscRPC(), namespace="misc")

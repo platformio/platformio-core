@@ -76,23 +76,25 @@ class JSONRPCServerProtocol(WebSocketServerProtocol):
 
 class JSONRPCServerFactory(WebSocketServerFactory):
 
-    SHUTDOWN_TIMEOUT = 3600  # in seconds
-
     protocol = JSONRPCServerProtocol
     connection_nums = 0
     shutdown_timer = 0
 
-    def __init__(self):
+    def __init__(self, shutdown_timeout=0):
         super(JSONRPCServerFactory, self).__init__()
+        self.shutdown_timeout = shutdown_timeout
         self.dispatcher = jsonrpc.Dispatcher()
 
     def shutdownByTimeout(self):
+        if self.shutdown_timeout < 1:
+            return
+
         def _auto_shutdown_server():
             click.echo("Automatically shutdown server on timeout")
             reactor.stop()
 
         self.shutdown_timer = reactor.callLater(
-            self.SHUTDOWN_TIMEOUT, _auto_shutdown_server
+            self.shutdown_timeout, _auto_shutdown_server
         )
 
     def addHandler(self, handler, namespace):
