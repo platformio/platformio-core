@@ -674,7 +674,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
                     self.packages[name]["optional"] = True
 
     def get_lib_storages(self):
-        storages = []
+        storages = {}
         for opts in (self.frameworks or {}).values():
             if "package" not in opts:
                 continue
@@ -682,7 +682,7 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             if not pkg_dir or not isdir(join(pkg_dir, "libraries")):
                 continue
             libs_dir = join(pkg_dir, "libraries")
-            storages.append({"name": opts["package"], "path": libs_dir})
+            storages[libs_dir] = opts["package"]
             libcores_dir = join(libs_dir, "__cores__")
             if not isdir(libcores_dir):
                 continue
@@ -690,14 +690,9 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
                 libcore_dir = join(libcores_dir, item)
                 if not isdir(libcore_dir):
                     continue
-                storages.append(
-                    {
-                        "name": "%s-core-%s" % (opts["package"], item),
-                        "path": libcore_dir,
-                    }
-                )
+                storages[libcore_dir] = "%s-core-%s" % (opts["package"], item)
 
-        return storages
+        return [dict(name=name, path=path) for path, name in storages.items()]
 
 
 class PlatformBoardConfig(object):
