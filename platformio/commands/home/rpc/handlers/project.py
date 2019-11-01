@@ -45,11 +45,11 @@ class ProjectRPC(object):
 
     @staticmethod
     def config_load(path):
-        return ProjectConfig(path).as_tuple()
+        return ProjectConfig(path, parse_extra=False).as_tuple()
 
     @staticmethod
     def config_dump(path, data):
-        config = ProjectConfig(path)
+        config = ProjectConfig(path, parse_extra=False)
         config.update(data, clear=True)
         return config.save()
 
