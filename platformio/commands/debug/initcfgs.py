@@ -39,16 +39,15 @@ define pio_reset_target
 end
 
 target extended-remote $DEBUG_PORT
-$INIT_BREAK
 pio_reset_halt_target
 $LOAD_CMDS
-pio_reset_halt_target
+$INIT_BREAK
 """
 
 GDB_JLINK_INIT_CONFIG = """
 define pio_reset_halt_target
-    monitor halt
     monitor reset
+    monitor halt
 end
 
 define pio_reset_target
@@ -56,6 +55,8 @@ define pio_reset_target
 end
 
 target extended-remote $DEBUG_PORT
+monitor clrbp
+monitor speed auto
 pio_reset_halt_target
 $LOAD_CMDS
 $INIT_BREAK
