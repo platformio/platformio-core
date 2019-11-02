@@ -139,15 +139,11 @@ def validate_debug_options(cmd_ctx, env_options):
         load_cmds=_cleanup_cmds(
             env_options.get(
                 "debug_load_cmds",
-                tool_settings.get("load_cmds", tool_settings.get("load_cmd", "load")),
+                tool_settings.get("load_cmds", tool_settings.get("load_cmd")),
             )
         ),
-        load_mode=env_options.get(
-            "debug_load_mode", tool_settings.get("load_mode", "always")
-        ),
-        init_break=env_options.get(
-            "debug_init_break", tool_settings.get("init_break", "tbreak main")
-        ),
+        load_mode=env_options.get("debug_load_mode", tool_settings.get("load_mode")),
+        init_break=env_options.get("debug_init_break", tool_settings.get("init_break")),
         init_cmds=_cleanup_cmds(
             env_options.get("debug_init_cmds", tool_settings.get("init_cmds"))
         ),

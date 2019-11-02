@@ -34,6 +34,7 @@ from platformio.builder.tools import platformio as piotool
 from platformio.compat import WINDOWS, hashlib_encode_data, string_types
 from platformio.managers.lib import LibraryManager
 from platformio.package.manifest.parser import ManifestParserFactory
+from platformio.project.options import ProjectOptions
 
 
 class LibBuilderFactory(object):
@@ -89,12 +90,6 @@ class LibBuilderFactory(object):
 
 
 class LibBuilderBase(object):
-
-    LDF_MODES = ["off", "chain", "deep", "chain+", "deep+"]
-    LDF_MODE_DEFAULT = "chain"
-
-    COMPAT_MODES = ["off", "soft", "strict"]
-    COMPAT_MODE_DEFAULT = "soft"
 
     CLASSIC_SCANNER = SCons.Scanner.C.CScanner()
     CCONDITIONAL_SCANNER = SCons.Scanner.C.CConditionalScanner()
@@ -215,35 +210,37 @@ class LibBuilderBase(object):
 
     @property
     def lib_ldf_mode(self):
-        return self.env.GetProjectOption("lib_ldf_mode", self.LDF_MODE_DEFAULT)
+        return self.env.GetProjectOption("lib_ldf_mode")
 
     @staticmethod
     def validate_ldf_mode(mode):
+        ldf_modes = ProjectOptions["env.lib_ldf_mode"].type.choices
         if isinstance(mode, string_types):
             mode = mode.strip().lower()
-        if mode in LibBuilderBase.LDF_MODES:
+        if mode in ldf_modes:
             return mode
         try:
-            return LibBuilderBase.LDF_MODES[int(mode)]
+            return ldf_modes[int(mode)]
         except (IndexError, ValueError):
             pass
-        return LibBuilderBase.LDF_MODE_DEFAULT
+        return ProjectOptions["env.lib_ldf_mode"].default
 
     @property
     def lib_compat_mode(self):
-        return self.env.GetProjectOption("lib_compat_mode", self.COMPAT_MODE_DEFAULT)
+        return self.env.GetProjectOption("lib_compat_mode")
 
     @staticmethod
     def validate_compat_mode(mode):
+        compat_modes = ProjectOptions["env.lib_compat_mode"].type.choices
         if isinstance(mode, string_types):
             mode = mode.strip().lower()
-        if mode in LibBuilderBase.COMPAT_MODES:
+        if mode in compat_modes:
             return mode
         try:
-            return LibBuilderBase.COMPAT_MODES[int(mode)]
+            return compat_modes[int(mode)]
         except (IndexError, ValueError):
             pass
-        return LibBuilderBase.COMPAT_MODE_DEFAULT
+        return ProjectOptions["env.lib_compat_mode"].default
 
     def is_platforms_compatible(self, platforms):
         return True

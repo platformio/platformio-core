@@ -117,10 +117,10 @@ def cli(
                 flags=flags or env_options.get("check_flags"),
                 severity=[DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
                 if silent
-                else (severity or env_options.get("check_severity")),
+                else severity or config.get("env:" + envname, "check_severity"),
             )
 
-            for tool in env_options.get("check_tool", ["cppcheck"]):
+            for tool in config.get("env:" + envname, "check_tool"):
                 if skipenv:
                     results.append({"env": envname, "tool": tool})
                     continue
