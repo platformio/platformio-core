@@ -25,6 +25,7 @@ from platformio.commands.platform import platform_install as cmd_platform_instal
 from platformio.commands.run.command import cli as cmd_run
 from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectConfig
+from platformio.project.options import ProjectOptions
 
 
 class GDBBytesIO(BytesIO):  # pylint: disable=too-few-public-methods
@@ -139,11 +140,26 @@ def validate_debug_options(cmd_ctx, env_options):
         load_cmds=_cleanup_cmds(
             env_options.get(
                 "debug_load_cmds",
-                tool_settings.get("load_cmds", tool_settings.get("load_cmd")),
+                tool_settings.get(
+                    "load_cmds",
+                    tool_settings.get(
+                        "load_cmd", ProjectOptions["env.debug_load_cmds"].default
+                    ),
+                ),
             )
         ),
-        load_mode=env_options.get("debug_load_mode", tool_settings.get("load_mode")),
-        init_break=env_options.get("debug_init_break", tool_settings.get("init_break")),
+        load_mode=env_options.get(
+            "debug_load_mode",
+            tool_settings.get(
+                "load_mode", ProjectOptions["env.debug_load_mode"].default
+            ),
+        ),
+        init_break=env_options.get(
+            "debug_init_break",
+            tool_settings.get(
+                "init_break", ProjectOptions["env.debug_init_break"].default
+            ),
+        ),
         init_cmds=_cleanup_cmds(
             env_options.get("debug_init_cmds", tool_settings.get("init_cmds"))
         ),
