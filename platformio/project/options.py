@@ -263,7 +263,7 @@ ProjectOptions = OrderedDict(
                 name="shared_dir",
                 description=(
                     "A location which PIO Remote uses to synchronize extra files "
-                    "between remote machine."
+                    "between remote machines"
                 ),
                 sysenvvar="PLATFORMIO_SHARED_DIR",
                 default=os.path.join("$PROJECT_DIR", "shared"),
