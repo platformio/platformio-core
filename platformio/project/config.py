@@ -290,7 +290,9 @@ class ProjectConfigBase(object):
                 value = envvar_value
 
         # option is not specified by user
-        if value is None:
+        if value is None or (
+            option_meta.multiple and value == [] and option_meta.default
+        ):
             return default if default is not None else option_meta.default
 
         try:
@@ -417,14 +419,11 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
     def __repr__(self):
         return "<ProjectConfig %s>" % (self.path or "in-memory")
 
-    def as_dict(self):
-        return {s: self.items(s, as_dict=True) for s in self.sections()}
-
     def as_tuple(self):
         return [(s, self.items(s)) for s in self.sections()]
 
     def to_json(self):
-        return json.dumps(self.as_dict())
+        return json.dumps(self.as_tuple())
 
     def update(self, data, clear=False):
         assert isinstance(data, list)

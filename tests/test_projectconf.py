@@ -116,9 +116,8 @@ def test_defaults(config):
     assert config.get_optional_dir("core") == os.path.join(
         os.path.expanduser("~"), ".platformio"
     )
-    assert config.get_optional_dir("build_cache") == os.environ.get(
-        "PLATFORMIO_BUILD_CACHE_DIR"
-    )
+    assert config.get("env:extra_2", "lib_compat_mode") == "soft"
+    assert config.get("env:extra_2", "build_type") == "release"
 
 
 def test_sections(config):
@@ -232,7 +231,7 @@ def test_get_value(config):
     assert config.get("custom", "debug_flags") == "-D DEBUG=1"
     assert config.get("env:extra_1", "build_flags") == ["-lc -lm -D DEBUG=1"]
     assert config.get("env:extra_2", "build_flags") == ["-Og"]
-    assert config.get("env:extra_2", "monitor_speed") == "115200"
+    assert config.get("env:extra_2", "monitor_speed") == 115200
     assert config.get("env:base", "build_flags") == ["-D DEBUG=1"]
 
 
@@ -246,21 +245,21 @@ def test_items(config):
     assert config.items(env="base") == [
         ("build_flags", ["-D DEBUG=1"]),
         ("targets", []),
-        ("monitor_speed", "115200"),
+        ("monitor_speed", 115200),
         ("lib_deps", ["Lib1", "Lib2"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
     ]
     assert config.items(env="extra_1") == [
         ("build_flags", ["-lc -lm -D DEBUG=1"]),
         ("lib_deps", ["574"]),
-        ("monitor_speed", "115200"),
+        ("monitor_speed", 115200),
         ("lib_ignore", ["LibIgnoreCustom"]),
     ]
     assert config.items(env="extra_2") == [
         ("build_flags", ["-Og"]),
         ("lib_ignore", ["LibIgnoreCustom", "Lib3"]),
         ("upload_port", "/dev/extra_2/port"),
-        ("monitor_speed", "115200"),
+        ("monitor_speed", 115200),
         ("lib_deps", ["Lib1", "Lib2"]),
     ]
     assert config.items(env="test_extends") == [
@@ -268,7 +267,7 @@ def test_items(config):
         ("build_flags", ["-D RELEASE"]),
         ("lib_ldf_mode", "chain+"),
         ("lib_compat_mode", "strict"),
-        ("monitor_speed", "9600"),
+        ("monitor_speed", 9600),
         ("lib_deps", ["Lib1", "Lib2"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
     ]

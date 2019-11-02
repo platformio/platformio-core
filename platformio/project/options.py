@@ -28,34 +28,35 @@ class ConfigOption(object):  # pylint: disable=too-many-instance-attributes
         scope,
         group,
         name,
+        description,
         type=str,
         multiple=False,
         sysenvvar=None,
         buildenvvar=None,
         oldnames=None,
         default=None,
-        description=None,
     ):
         self.scope = scope
         self.group = group
         self.name = name
+        self.description = description
         self.type = type
         self.multiple = multiple
         self.sysenvvar = sysenvvar
         self.buildenvvar = buildenvvar
         self.oldnames = oldnames
         self.default = default
-        self.description = description
 
     def as_dict(self):
         result = dict(
             scope=self.scope,
             group=self.group,
             name=self.name,
+            description=self.description,
             type="string",
             multiple=self.multiple,
+            sysenvvar=self.sysenvvar,
             default=self.default,
-            description=self.description,
         )
         if isinstance(self.type, click.ParamType):
             result["type"] = self.type.name
@@ -84,21 +85,39 @@ ProjectOptions = OrderedDict(
             #
             # [platformio]
             #
-            ConfigPlatformioOption(group="generic", name="description"),
+            ConfigPlatformioOption(
+                group="generic",
+                name="description",
+                description="Describe a project with a short information",
+            ),
             ConfigPlatformioOption(
                 group="generic",
                 name="default_envs",
+                description=(
+                    "Configure a list with environments which PlatformIO should "
+                    "process by default"
+                ),
                 oldnames=["env_default"],
                 multiple=True,
                 sysenvvar="PLATFORMIO_DEFAULT_ENVS",
             ),
             ConfigPlatformioOption(
-                group="generic", name="extra_configs", multiple=True
+                group="generic",
+                name="extra_configs",
+                description=(
+                    "Extend main configuration with the extra configuration files"
+                ),
+                multiple=True,
             ),
             # Dirs
             ConfigPlatformioOption(
                 group="directory",
                 name="core_dir",
+                description=(
+                    "PlatformIO Core location where it keeps installed development "
+                    "platforms, packages, global libraries, "
+                    "and other internal information"
+                ),
                 oldnames=["home_dir"],
                 sysenvvar="PLATFORMIO_CORE_DIR",
                 default=os.path.join(fs.expanduser("~"), ".platformio"),
@@ -106,89 +125,146 @@ ProjectOptions = OrderedDict(
             ConfigPlatformioOption(
                 group="directory",
                 name="globallib_dir",
+                description=(
+                    "A library folder/storage where PlatformIO Library Dependency "
+                    "Finder (LDF) looks for global libraries"
+                ),
                 sysenvvar="PLATFORMIO_GLOBALLIB_DIR",
                 default=os.path.join("$PROJECT_CORE_DIR", "lib"),
             ),
             ConfigPlatformioOption(
                 group="directory",
                 name="platforms_dir",
+                description=(
+                    "A location where PlatformIO Core keeps installed development "
+                    "platforms"
+                ),
                 sysenvvar="PLATFORMIO_PLATFORMS_DIR",
                 default=os.path.join("$PROJECT_CORE_DIR", "platforms"),
             ),
             ConfigPlatformioOption(
                 group="directory",
                 name="packages_dir",
+                description=(
+                    "A location where PlatformIO Core keeps installed packages"
+                ),
                 sysenvvar="PLATFORMIO_PACKAGES_DIR",
                 default=os.path.join("$PROJECT_CORE_DIR", "packages"),
             ),
             ConfigPlatformioOption(
                 group="directory",
                 name="cache_dir",
+                description=(
+                    "A location where PlatformIO Core stores caching information "
+                    "(requests to PlatformIO Registry, downloaded packages and "
+                    "other service information)"
+                ),
                 sysenvvar="PLATFORMIO_CACHE_DIR",
                 default=os.path.join("$PROJECT_CORE_DIR", ".cache"),
             ),
             ConfigPlatformioOption(
                 group="directory",
                 name="build_cache_dir",
+                description=(
+                    "A location where PlatformIO Core keeps derived files from a "
+                    "build system (objects, firmwares, ELFs) and caches them between "
+                    "build environments"
+                ),
                 sysenvvar="PLATFORMIO_BUILD_CACHE_DIR",
             ),
             ConfigPlatformioOption(
                 group="directory",
                 name="workspace_dir",
+                description=(
+                    "A path to a project workspace directory where PlatformIO keeps "
+                    "by default compiled objects, static libraries, firmwares, and "
+                    "external library dependencies"
+                ),
                 sysenvvar="PLATFORMIO_WORKSPACE_DIR",
                 default=os.path.join("$PROJECT_DIR", ".pio"),
             ),
             ConfigPlatformioOption(
                 group="directory",
                 name="build_dir",
+                description=(
+                    "PlatformIO Build System uses this folder for project environments"
+                    " to store compiled object files, static libraries, firmwares, "
+                    "and other cached information"
+                ),
                 sysenvvar="PLATFORMIO_BUILD_DIR",
                 default=os.path.join("$PROJECT_WORKSPACE_DIR", "build"),
             ),
             ConfigPlatformioOption(
                 group="directory",
                 name="libdeps_dir",
+                description=(
+                    "Internal storage where Library Manager will install project "
+                    "dependencies declared via `lib_deps` option"
+                ),
                 sysenvvar="PLATFORMIO_LIBDEPS_DIR",
                 default=os.path.join("$PROJECT_WORKSPACE_DIR", "libdeps"),
             ),
             ConfigPlatformioOption(
                 group="directory",
-                name="lib_dir",
-                sysenvvar="PLATFORMIO_LIB_DIR",
-                default=os.path.join("$PROJECT_DIR", "lib"),
-            ),
-            ConfigPlatformioOption(
-                group="directory",
                 name="include_dir",
+                description=(
+                    "A default location for project header files. PlatformIO Build "
+                    "System automatically adds this path to CPPPATH scope"
+                ),
                 sysenvvar="PLATFORMIO_INCLUDE_DIR",
                 default=os.path.join("$PROJECT_DIR", "include"),
             ),
             ConfigPlatformioOption(
                 group="directory",
                 name="src_dir",
+                description=(
+                    "A default location where PlatformIO Build System looks for the "
+                    "project C/C++ source files"
+                ),
                 sysenvvar="PLATFORMIO_SRC_DIR",
                 default=os.path.join("$PROJECT_DIR", "src"),
             ),
             ConfigPlatformioOption(
                 group="directory",
+                name="lib_dir",
+                description="A storage for the custom/private project libraries",
+                sysenvvar="PLATFORMIO_LIB_DIR",
+                default=os.path.join("$PROJECT_DIR", "lib"),
+            ),
+            ConfigPlatformioOption(
+                group="directory",
+                name="data_dir",
+                description=(
+                    "A data directory to store contents which can be uploaded to "
+                    "file system (SPIFFS, etc.)"
+                ),
+                sysenvvar="PLATFORMIO_DATA_DIR",
+                default=os.path.join("$PROJECT_DIR", "data"),
+            ),
+            ConfigPlatformioOption(
+                group="directory",
                 name="test_dir",
+                description=(
+                    "A location where PIO Unit Testing engine looks for "
+                    "test source files"
+                ),
                 sysenvvar="PLATFORMIO_TEST_DIR",
                 default=os.path.join("$PROJECT_DIR", "test"),
             ),
             ConfigPlatformioOption(
                 group="directory",
                 name="boards_dir",
+                description="A global storage for custom board manifests",
                 sysenvvar="PLATFORMIO_BOARDS_DIR",
                 default=os.path.join("$PROJECT_DIR", "boards"),
             ),
             ConfigPlatformioOption(
                 group="directory",
-                name="data_dir",
-                sysenvvar="PLATFORMIO_DATA_DIR",
-                default=os.path.join("$PROJECT_DIR", "data"),
-            ),
-            ConfigPlatformioOption(
-                group="directory",
                 name="shared_dir",
+                description=(
+                    "A location which PIO Remote uses to synchronize extra files "
+                    "between remote machine."
+                ),
                 sysenvvar="PLATFORMIO_SHARED_DIR",
                 default=os.path.join("$PROJECT_DIR", "shared"),
             ),
@@ -197,38 +273,56 @@ ProjectOptions = OrderedDict(
             #
             # Platform
             ConfigEnvOption(
-                group="platform", name="platform", buildenvvar="PIOPLATFORM"
+                group="platform",
+                name="platform",
+                description="A name or specification of development platform",
+                buildenvvar="PIOPLATFORM",
             ),
-            ConfigEnvOption(group="platform", name="platform_packages", multiple=True),
+            ConfigEnvOption(
+                group="platform",
+                name="platform_packages",
+                description="Custom packages and specifications",
+                multiple=True,
+            ),
             ConfigEnvOption(
                 group="platform",
                 name="framework",
+                description="A list of project dependent frameworks",
                 multiple=True,
                 buildenvvar="PIOFRAMEWORK",
             ),
             # Board
-            ConfigEnvOption(group="board", name="board", buildenvvar="BOARD"),
+            ConfigEnvOption(
+                group="board",
+                name="board",
+                description="A board ID",
+                buildenvvar="BOARD",
+            ),
             ConfigEnvOption(
                 group="board",
                 name="board_build.mcu",
+                description="A custom board MCU",
                 oldnames=["board_mcu"],
                 buildenvvar="BOARD_MCU",
             ),
             ConfigEnvOption(
                 group="board",
                 name="board_build.f_cpu",
+                description="A custom MCU frequency",
                 oldnames=["board_f_cpu"],
                 buildenvvar="BOARD_F_CPU",
             ),
             ConfigEnvOption(
                 group="board",
                 name="board_build.f_flash",
+                description="A custom flash frequency",
                 oldnames=["board_f_flash"],
                 buildenvvar="BOARD_F_FLASH",
             ),
             ConfigEnvOption(
                 group="board",
                 name="board_build.flash_mode",
+                description="A custom flash mode",
                 oldnames=["board_flash_mode"],
                 buildenvvar="BOARD_FLASH_MODE",
             ),
@@ -236,11 +330,17 @@ ProjectOptions = OrderedDict(
             ConfigEnvOption(
                 group="build",
                 name="build_type",
+                description="Project build configuration",
                 type=click.Choice(["release", "debug"]),
+                default="release",
             ),
             ConfigEnvOption(
                 group="build",
                 name="build_flags",
+                description=(
+                    "Custom build flags/options for preprocessing, compilation, "
+                    "assembly, and linking processes"
+                ),
                 multiple=True,
                 sysenvvar="PLATFORMIO_BUILD_FLAGS",
                 buildenvvar="BUILD_FLAGS",
@@ -248,6 +348,10 @@ ProjectOptions = OrderedDict(
             ConfigEnvOption(
                 group="build",
                 name="src_build_flags",
+                description=(
+                    "The same as `build_flags` but configures flags the only for "
+                    "project source files (`src` folder)"
+                ),
                 multiple=True,
                 sysenvvar="PLATFORMIO_SRC_BUILD_FLAGS",
                 buildenvvar="SRC_BUILD_FLAGS",
@@ -255,6 +359,7 @@ ProjectOptions = OrderedDict(
             ConfigEnvOption(
                 group="build",
                 name="build_unflags",
+                description="A list with flags/option which should be removed",
                 multiple=True,
                 sysenvvar="PLATFORMIO_BUILD_UNFLAGS",
                 buildenvvar="BUILD_UNFLAGS",
@@ -262,30 +367,51 @@ ProjectOptions = OrderedDict(
             ConfigEnvOption(
                 group="build",
                 name="src_filter",
+                description=(
+                    "Control which source files should be included/excluded from a "
+                    "build process"
+                ),
                 multiple=True,
                 sysenvvar="PLATFORMIO_SRC_FILTER",
                 buildenvvar="SRC_FILTER",
+                default="+<*> -<.git/> -<.svn/>",
             ),
-            ConfigEnvOption(group="build", name="targets", multiple=True),
+            ConfigEnvOption(
+                group="build",
+                name="targets",
+                description="A custom list of targets for PlatformIO Build System",
+                multiple=True,
+            ),
             # Upload
             ConfigEnvOption(
                 group="upload",
                 name="upload_port",
+                description=(
+                    "An upload port which `uploader` tool uses for a firmware flashing"
+                ),
                 sysenvvar="PLATFORMIO_UPLOAD_PORT",
                 buildenvvar="UPLOAD_PORT",
             ),
             ConfigEnvOption(
-                group="upload", name="upload_protocol", buildenvvar="UPLOAD_PROTOCOL"
+                group="upload",
+                name="upload_protocol",
+                description="A protocol that `uploader` tool uses to talk to a board",
+                buildenvvar="UPLOAD_PROTOCOL",
             ),
             ConfigEnvOption(
                 group="upload",
                 name="upload_speed",
+                description=(
+                    "A connection speed (baud rate) which `uploader` tool uses when "
+                    "sending firmware to a board"
+                ),
                 type=click.INT,
                 buildenvvar="UPLOAD_SPEED",
             ),
             ConfigEnvOption(
                 group="upload",
                 name="upload_flags",
+                description="An extra flags for `uploader` tool",
                 multiple=True,
                 sysenvvar="PLATFORMIO_UPLOAD_FLAGS",
                 buildenvvar="UPLOAD_FLAGS",
@@ -293,104 +419,265 @@ ProjectOptions = OrderedDict(
             ConfigEnvOption(
                 group="upload",
                 name="upload_resetmethod",
+                description="A custom reset method",
                 buildenvvar="UPLOAD_RESETMETHOD",
             ),
             ConfigEnvOption(
-                group="upload", name="upload_command", buildenvvar="UPLOADCMD"
+                group="upload",
+                name="upload_command",
+                description=(
+                    "A custom upload command which overwrites a default from "
+                    "development platform"
+                ),
+                buildenvvar="UPLOADCMD",
             ),
             # Monitor
-            ConfigEnvOption(group="monitor", name="monitor_port"),
             ConfigEnvOption(
-                group="monitor", name="monitor_speed", oldnames=["monitor_baud"]
+                group="monitor",
+                name="monitor_port",
+                description="A port, a number or a device name",
             ),
             ConfigEnvOption(
-                group="monitor", name="monitor_rts", type=click.IntRange(0, 1)
+                group="monitor",
+                name="monitor_speed",
+                description="A monitor speed (baud rate)",
+                type=click.INT,
+                oldnames=["monitor_baud"],
+                default=9600,
             ),
             ConfigEnvOption(
-                group="monitor", name="monitor_dtr", type=click.IntRange(0, 1)
+                group="monitor",
+                name="monitor_rts",
+                description="A monitor initial RTS line state",
+                type=click.IntRange(0, 1),
             ),
-            ConfigEnvOption(group="monitor", name="monitor_flags", multiple=True),
+            ConfigEnvOption(
+                group="monitor",
+                name="monitor_dtr",
+                description="A monitor initial DTR line state",
+                type=click.IntRange(0, 1),
+            ),
+            ConfigEnvOption(
+                group="monitor",
+                name="monitor_flags",
+                description=(
+                    "The extra flags and options for `platformio device monitor` "
+                    "command"
+                ),
+                multiple=True,
+            ),
             # Library
             ConfigEnvOption(
-                group="lib",
+                group="library",
                 name="lib_deps",
+                description=(
+                    "A list of project library dependencies which should be installed "
+                    "automatically before a build process"
+                ),
                 oldnames=["lib_use", "lib_force", "lib_install"],
                 multiple=True,
             ),
-            ConfigEnvOption(group="lib", name="lib_ignore", multiple=True),
             ConfigEnvOption(
-                group="lib",
+                group="library",
+                name="lib_ignore",
+                description=(
+                    "A list of library names which should be ignored by "
+                    "Library Dependency Finder (LDF)"
+                ),
+                multiple=True,
+            ),
+            ConfigEnvOption(
+                group="library",
                 name="lib_extra_dirs",
+                description=(
+                    "A list of extra directories/storages where Library Dependency "
+                    "Finder (LDF) will look for dependencies"
+                ),
                 multiple=True,
                 sysenvvar="PLATFORMIO_LIB_EXTRA_DIRS",
             ),
             ConfigEnvOption(
-                group="lib",
+                group="library",
                 name="lib_ldf_mode",
+                description=(
+                    "Control how Library Dependency Finder (LDF) should analyze "
+                    "dependencies (`#include` directives)"
+                ),
                 type=click.Choice(["off", "chain", "deep", "chain+", "deep+"]),
+                default="chain",
             ),
             ConfigEnvOption(
-                group="lib",
+                group="library",
                 name="lib_compat_mode",
+                description=(
+                    "Configure a strictness (compatibility mode by frameworks, "
+                    "development platforms) of Library Dependency Finder (LDF)"
+                ),
                 type=click.Choice(["off", "soft", "strict"]),
+                default="soft",
             ),
             ConfigEnvOption(
-                group="lib", name="lib_archive", type=click.BOOL, default=True
+                group="library",
+                name="lib_archive",
+                description=(
+                    "Create an archive (`*.a`, static library) from the object files "
+                    "and link it into a firmware (program)"
+                ),
+                type=click.BOOL,
+                default=True,
+            ),
+            # Check
+            ConfigEnvOption(
+                group="check",
+                name="check_tool",
+                description="A list of check tools used for analysis",
+                type=click.Choice(["cppcheck", "clangtidy"]),
+                multiple=True,
+                default=["cppcheck"],
+            ),
+            ConfigEnvOption(
+                group="check",
+                name="check_filter",
+                description=(
+                    "Configure a list of source files which should be "
+                    "included/excluded from a check process"
+                ),
+                multiple=True,
+            ),
+            ConfigEnvOption(
+                group="check",
+                name="check_flags",
+                description="An extra flags to be passed to a check tool",
+                multiple=True,
+            ),
+            ConfigEnvOption(
+                group="check",
+                name="check_severity",
+                description="List of defect severity types for analysis",
+                multiple=True,
+                type=click.Choice(["low", "medium", "high"]),
+                default=["low", "medium", "high"],
             ),
             # Test
-            ConfigEnvOption(group="test", name="test_filter", multiple=True),
-            ConfigEnvOption(group="test", name="test_ignore", multiple=True),
-            ConfigEnvOption(group="test", name="test_port"),
-            ConfigEnvOption(group="test", name="test_speed", type=click.INT),
-            ConfigEnvOption(group="test", name="test_transport"),
+            ConfigEnvOption(
+                group="test",
+                name="test_filter",
+                description="Process tests where the name matches specified patterns",
+                multiple=True,
+            ),
+            ConfigEnvOption(
+                group="test",
+                name="test_ignore",
+                description="Ignore tests where the name matches specified patterns",
+                multiple=True,
+            ),
+            ConfigEnvOption(
+                group="test",
+                name="test_port",
+                description="A serial port to communicate with a target device",
+            ),
+            ConfigEnvOption(
+                group="test",
+                name="test_speed",
+                description="A connection speed (baud rate) to communicate with a target device",
+                type=click.INT,
+            ),
+            ConfigEnvOption(group="test", name="test_transport", description="",),
             ConfigEnvOption(
                 group="test",
                 name="test_build_project_src",
+                description="",
                 type=click.BOOL,
                 default=False,
             ),
             # Debug
-            ConfigEnvOption(group="debug", name="debug_tool"),
-            ConfigEnvOption(group="debug", name="debug_init_break"),
-            ConfigEnvOption(group="debug", name="debug_init_cmds", multiple=True),
-            ConfigEnvOption(group="debug", name="debug_extra_cmds", multiple=True),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_tool",
+                description="A name of debugging tool",
+            ),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_init_break",
+                description=(
+                    "An initial breakpoint that makes program stop whenever a "
+                    "certain point in the program is reached"
+                ),
+                default="tbreak main",
+            ),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_init_cmds",
+                description="Initial commands to be passed to a back-end debugger",
+                multiple=True,
+            ),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_extra_cmds",
+                description="An extra commands to be passed to a back-end debugger",
+                multiple=True,
+            ),
             ConfigEnvOption(
                 group="debug",
                 name="debug_load_cmds",
+                description=(
+                    "A list of commands to be used to load program/firmware "
+                    "to a target device"
+                ),
                 oldnames=["debug_load_cmd"],
                 multiple=True,
+                default=["load"],
             ),
             ConfigEnvOption(
                 group="debug",
                 name="debug_load_mode",
+                description=(
+                    "Allows one to control when PlatformIO should load debugging "
+                    "firmware to the end target"
+                ),
                 type=click.Choice(["always", "modified", "manual"]),
+                default="always",
             ),
-            ConfigEnvOption(group="debug", name="debug_server", multiple=True),
-            ConfigEnvOption(group="debug", name="debug_port"),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_server",
+                description="Allows one to setup a custom debugging server",
+                multiple=True,
+            ),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_port",
+                description=(
+                    "A debugging port of a remote target (a serial device or "
+                    "network address)"
+                ),
+            ),
             ConfigEnvOption(
                 group="debug",
                 name="debug_svd_path",
+                description=(
+                    "A custom path to SVD file which contains information about "
+                    "device peripherals"
+                ),
                 type=click.Path(exists=True, file_okay=True, dir_okay=False),
-            ),
-            # Check
-            ConfigEnvOption(group="check", name="check_tool", multiple=True),
-            ConfigEnvOption(group="check", name="check_filter", multiple=True),
-            ConfigEnvOption(group="check", name="check_flags", multiple=True),
-            ConfigEnvOption(
-                group="check",
-                name="check_severity",
-                multiple=True,
-                type=click.Choice(["low", "medium", "high"]),
             ),
             # Advanced
             ConfigEnvOption(
                 group="advanced",
+                name="extends",
+                description=(
+                    "Inherit configuration from other sections or build environments"
+                ),
+                multiple=True,
+            ),
+            ConfigEnvOption(
+                group="advanced",
                 name="extra_scripts",
+                description="A list of PRE and POST extra scripts",
                 oldnames=["extra_script"],
                 multiple=True,
                 sysenvvar="PLATFORMIO_EXTRA_SCRIPTS",
             ),
-            ConfigEnvOption(group="advanced", name="extends", multiple=True),
         ]
     ]
 )
