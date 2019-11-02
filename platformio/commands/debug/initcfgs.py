@@ -22,11 +22,10 @@ define pio_reset_target
 end
 
 target extended-remote $DEBUG_PORT
-$INIT_BREAK
-pio_reset_halt_target
-$LOAD_CMDS
 monitor init
 pio_reset_halt_target
+$LOAD_CMDS
+$INIT_BREAK
 """
 
 GDB_STUTIL_INIT_CONFIG = """
@@ -57,9 +56,9 @@ define pio_reset_target
 end
 
 target extended-remote $DEBUG_PORT
-$INIT_BREAK
 pio_reset_halt_target
 $LOAD_CMDS
+$INIT_BREAK
 """
 
 GDB_BLACKMAGIC_INIT_CONFIG = """
@@ -81,8 +80,8 @@ target extended-remote $DEBUG_PORT
 monitor swdp_scan
 attach 1
 set mem inaccessible-by-default off
-$INIT_BREAK
 $LOAD_CMDS
+$INIT_BREAK
 
 set language c
 set *0xE000ED0C = 0x05FA0004
@@ -101,10 +100,10 @@ define pio_reset_target
 end
 
 target extended-remote $DEBUG_PORT
-$INIT_BREAK
 monitor erase
-$LOAD_CMDS
 pio_reset_halt_target
+$LOAD_CMDS
+$INIT_BREAK
 """
 
 GDB_QEMU_INIT_CONFIG = """
@@ -117,7 +116,7 @@ define pio_reset_target
 end
 
 target extended-remote $DEBUG_PORT
-$INIT_BREAK
-$LOAD_CMDS
 pio_reset_halt_target
+$LOAD_CMDS
+$INIT_BREAK
 """
