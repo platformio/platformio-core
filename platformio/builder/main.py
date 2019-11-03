@@ -132,7 +132,10 @@ if env.GetOption("clean"):
     env.PioClean(env.subst("$BUILD_DIR"))
     env.Exit(0)
 elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
-    print("Verbose mode can be enabled via `-v, --verbose` option")
+    click.echo("Verbose mode can be enabled via `-v, --verbose` option")
+
+if not isdir(env.subst("$BUILD_DIR")):
+    makedirs(env.subst("$BUILD_DIR"))
 
 env.LoadProjectOptions()
 env.LoadPioPlatform()
@@ -181,12 +184,12 @@ AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
 ##############################################################################
 
 if "envdump" in COMMAND_LINE_TARGETS:
-    print(env.Dump())
+    click.echo(env.Dump())
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
     Import("projenv")
-    print(
+    click.echo(
         "\n%s\n"
         % dump_json_to_unicode(
             projenv.DumpIDEData()  # pylint: disable=undefined-variable

@@ -151,6 +151,8 @@ def BuildProgram(env):
         )
     )
 
+    print("Building in %s mode" % env.GetProjectOption("build_type"))
+
     return program
 
 
