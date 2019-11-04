@@ -537,10 +537,10 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="check",
-                name="check_filter",
+                name="check_patterns",
                 description=(
-                    "Configure a list of source files which should be "
-                    "included/excluded from a check process"
+                    "Configure a list of target files or directories for checking "
+                    "(Unix shell-style wildcards)"
                 ),
                 multiple=True,
             ),

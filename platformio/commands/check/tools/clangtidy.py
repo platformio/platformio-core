@@ -58,7 +58,7 @@ class ClangtidyCheckTool(CheckToolBase):
             cmd.append("--checks=*")
 
         cmd.extend(flags)
-        cmd.extend(self.get_project_src_files())
+        cmd.extend(self.get_project_target_files())
         cmd.append("--")
 
         cmd.extend(["-D%s" % d for d in self.cpp_defines])

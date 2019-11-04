@@ -17,7 +17,7 @@
 
 import os
 from collections import Counter
-from os.path import basename, dirname, isfile
+from os.path import dirname, isfile
 from time import time
 
 import click
@@ -48,7 +48,7 @@ from platformio.project.helpers import find_project_dir_above, get_project_dir
         exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True
     ),
 )
-@click.option("--filter", multiple=True, help="Pattern: +<include> -<exclude>")
+@click.option("--pattern", multiple=True)
 @click.option("--flags", multiple=True)
 @click.option(
     "--severity", multiple=True, type=click.Choice(DefectItem.SEVERITY_LABELS.values())
@@ -65,7 +65,7 @@ def cli(
     environment,
     project_dir,
     project_conf,
-    filter,
+    pattern,
     flags,
     severity,
     silent,
@@ -102,18 +102,14 @@ def cli(
                     "%s: %s" % (k, ", ".join(v) if isinstance(v, list) else v)
                 )
 
-            default_filter = [
-                "+<%s/>" % basename(d)
-                for d in (
-                    config.get_optional_dir("src"),
-                    config.get_optional_dir("include"),
-                )
+            default_patterns = [
+                config.get_optional_dir("src"),
+                config.get_optional_dir("include"),
             ]
-
             tool_options = dict(
                 verbose=verbose,
                 silent=silent,
-                filter=filter or env_options.get("check_filter", default_filter),
+                patterns=pattern or env_options.get("check_patterns", default_patterns),
                 flags=flags or env_options.get("check_flags"),
                 severity=[DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
                 if silent

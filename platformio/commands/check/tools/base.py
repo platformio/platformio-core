@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import glob
 import os
 
 import click
@@ -124,11 +125,24 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
     def clean_up(self):
         pass
 
-    def get_project_src_files(self):
-        file_extensions = ["h", "hpp", "c", "cc", "cpp", "ino"]
-        return fs.match_src_files(
-            get_project_dir(), self.options.get("filter"), file_extensions
-        )
+    def get_project_target_files(self):
+        allowed_extensions = (".h", ".hpp", ".c", ".cc", ".cpp", ".ino")
+        result = []
+
+        def _add_file(path):
+            if not path.endswith(allowed_extensions):
+                return
+            result.append(os.path.abspath(path))
+
+        for pattern in self.options["patterns"]:
+            for item in glob.glob(pattern):
+                if not os.path.isdir(item):
+                    _add_file(item)
+                for root, _, files in os.walk(item, followlinks=True):
+                    for f in files:
+                        _add_file(os.path.join(root, f))
+
+        return result
 
     def get_source_language(self):
         with fs.cd(get_project_dir()):
