@@ -23,15 +23,15 @@ end
 
 target extended-remote $DEBUG_PORT
 monitor init
-pio_reset_halt_target
 $LOAD_CMDS
+pio_reset_halt_target
 $INIT_BREAK
 """
 
 GDB_STUTIL_INIT_CONFIG = """
 define pio_reset_halt_target
-    monitor halt
     monitor reset
+    monitor halt
 end
 
 define pio_reset_target
@@ -39,8 +39,8 @@ define pio_reset_target
 end
 
 target extended-remote $DEBUG_PORT
-pio_reset_halt_target
 $LOAD_CMDS
+pio_reset_halt_target
 $INIT_BREAK
 """
 
@@ -57,8 +57,8 @@ end
 target extended-remote $DEBUG_PORT
 monitor clrbp
 monitor speed auto
-pio_reset_halt_target
 $LOAD_CMDS
+pio_reset_halt_target
 $INIT_BREAK
 """
 
@@ -102,8 +102,8 @@ end
 
 target extended-remote $DEBUG_PORT
 monitor erase
-pio_reset_halt_target
 $LOAD_CMDS
+pio_reset_halt_target
 $INIT_BREAK
 """
 
@@ -117,7 +117,7 @@ define pio_reset_target
 end
 
 target extended-remote $DEBUG_PORT
-pio_reset_halt_target
 $LOAD_CMDS
+pio_reset_halt_target
 $INIT_BREAK
 """
