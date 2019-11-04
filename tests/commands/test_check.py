@@ -51,11 +51,8 @@ void run_defects() {
     }
 }
 
-/* Low */
-void unusedFuntion(){
-}
-
 int main() {
+    int uninitializedVar; /* Low */
     run_defects();
 }
 """
@@ -150,11 +147,15 @@ def test_check_silent_mode(clirunner, check_dir):
     assert style == 0
 
 
-def test_check_filter_sources(clirunner, check_dir):
-    check_dir.mkdir(join("src", "app")).join("additional.cpp").write(TEST_CODE)
+def test_check_custom_pattern_absolute_path(clirunner, tmpdir_factory):
+    project_dir = tmpdir_factory.mktemp("project")
+    project_dir.join("platformio.ini").write(DEFAULT_CONFIG)
+
+    check_dir = tmpdir_factory.mktemp("custom_src_dir")
+    check_dir.join("main.cpp").write(TEST_CODE)
 
     result = clirunner.invoke(
-        cmd_check, ["--project-dir", str(check_dir), "--filter=-<*> +<src/app/>"]
+        cmd_check, ["--project-dir", str(project_dir), "--pattern=" + str(check_dir)]
     )
 
     errors, warnings, style = count_defects(result.output)
@@ -163,6 +164,23 @@ def test_check_filter_sources(clirunner, check_dir):
     assert errors == EXPECTED_ERRORS
     assert warnings == EXPECTED_WARNINGS
     assert style == EXPECTED_STYLE
+
+
+def test_check_custom_pattern_relative_path(clirunner, tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp("project")
+    tmpdir.join("platformio.ini").write(DEFAULT_CONFIG)
+
+    tmpdir.mkdir("app").join("main.cpp").write(TEST_CODE)
+    tmpdir.mkdir("prj").join("test.cpp").write(TEST_CODE)
+
+    result = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir), "--pattern=app", "--pattern=prj"]
+    )
+
+    errors, warnings, style = count_defects(result.output)
+
+    assert result.exit_code == 0
+    assert errors + warnings + style == EXPECTED_DEFECTS * 2
 
 
 def test_check_no_source_files(clirunner, tmpdir):
@@ -326,3 +344,4 @@ int main() {
 
     assert high_result.exit_code == 0
     assert low_result.exit_code != 0
+
