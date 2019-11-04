@@ -92,6 +92,8 @@ class ProjectConfigBase(object):
         if path and os.path.isfile(path):
             self.read(path, parse_extra)
 
+        self._maintain_renaimed_options()
+
     def __getattr__(self, name):
         return getattr(self._parser, name)
 
@@ -113,8 +115,6 @@ class ProjectConfigBase(object):
                 pattern = fs.expanduser(pattern)
             for item in glob.glob(pattern):
                 self.read(item)
-
-        self._maintain_renaimed_options()
 
     def _maintain_renaimed_options(self):
         # legacy `lib_extra_dirs` in [platformio]
@@ -195,6 +195,9 @@ class ProjectConfigBase(object):
         if not section:
             section = "env:" + env
 
+        if not self.expand_interpolations:
+            return self._parser.options(section)
+
         for _, option in self.walk_options(section):
             if option not in result:
                 result.append(option)
@@ -260,7 +263,7 @@ class ProjectConfigBase(object):
             return os.getenv(option)
         return self.getraw(section, option)
 
-    def get(self, section, option, default=None):
+    def get(self, section, option, default=None):  # pylint: disable=too-many-branches
         value = None
         try:
             value = self.getraw(section, option)
@@ -296,12 +299,14 @@ class ProjectConfigBase(object):
             return default if default is not None else option_meta.default
 
         try:
-            return self._cast_to(value, option_meta.type)
+            return self.cast_to(value, option_meta.type)
         except click.BadParameter as e:
+            if not self.expand_interpolations:
+                return value
             raise exception.ProjectOptionValueError(e.format_message(), option, section)
 
     @staticmethod
-    def _cast_to(value, to_type):
+    def cast_to(value, to_type):
         items = value
         if not isinstance(value, (list, tuple)):
             items = [value]

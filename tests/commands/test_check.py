@@ -344,4 +344,3 @@ int main() {
 
     assert high_result.exit_code == 0
     assert low_result.exit_code != 0
-

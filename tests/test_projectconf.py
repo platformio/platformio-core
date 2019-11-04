@@ -28,7 +28,8 @@ extra_configs =
 
 # global options per [env:*]
 [env]
-monitor_speed = 115200  ; inline comment
+monitor_speed = 9600  ; inline comment
+custom_monitor_speed = 115200
 lib_deps =
     Lib1 ; inline comment in multi-line value
     Lib2
@@ -39,7 +40,7 @@ lib_ldf_mode = chain+
 lib_compat_mode = strict
 
 [monitor_custom]
-monitor_speed = 9600
+monitor_speed = ${env.custom_monitor_speed}
 
 [strict_settings]
 extends = strict_ldf, monitor_custom
@@ -53,10 +54,12 @@ lib_ignore = LibIgnoreCustom
 
 [env:base]
 build_flags = ${custom.debug_flags} ${custom.extra_flags}
+lib_compat_mode = ${strict_ldf.strict}
 targets =
 
 [env:test_extends]
 extends = strict_settings
+
 
 """
 
@@ -146,8 +149,10 @@ def test_envs(config):
 def test_options(config):
     assert config.options(env="base") == [
         "build_flags",
+        "lib_compat_mode",
         "targets",
         "monitor_speed",
+        "custom_monitor_speed",
         "lib_deps",
         "lib_ignore",
     ]
@@ -157,6 +162,7 @@ def test_options(config):
         "lib_ldf_mode",
         "lib_compat_mode",
         "monitor_speed",
+        "custom_monitor_speed",
         "lib_deps",
         "lib_ignore",
     ]
@@ -192,6 +198,7 @@ def test_sysenv_options(config):
         "lib_ldf_mode",
         "lib_compat_mode",
         "monitor_speed",
+        "custom_monitor_speed",
         "lib_deps",
         "lib_ignore",
         "upload_port",
@@ -223,15 +230,15 @@ def test_getraw_value(config):
 
     # extended
     assert config.getraw("env:test_extends", "lib_ldf_mode") == "chain+"
-    assert config.getraw("env", "monitor_speed") == "115200"
-    assert config.getraw("env:test_extends", "monitor_speed") == "9600"
+    assert config.getraw("env", "monitor_speed") == "9600"
+    assert config.getraw("env:test_extends", "monitor_speed") == "115200"
 
 
 def test_get_value(config):
     assert config.get("custom", "debug_flags") == "-D DEBUG=1"
     assert config.get("env:extra_1", "build_flags") == ["-lc -lm -D DEBUG=1"]
     assert config.get("env:extra_2", "build_flags") == ["-Og"]
-    assert config.get("env:extra_2", "monitor_speed") == 115200
+    assert config.get("env:extra_2", "monitor_speed") == 9600
     assert config.get("env:base", "build_flags") == ["-D DEBUG=1"]
 
 
@@ -244,22 +251,26 @@ def test_items(config):
     ]
     assert config.items(env="base") == [
         ("build_flags", ["-D DEBUG=1"]),
+        ("lib_compat_mode", "soft"),
         ("targets", []),
-        ("monitor_speed", 115200),
+        ("monitor_speed", 9600),
+        ("custom_monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
     ]
     assert config.items(env="extra_1") == [
         ("build_flags", ["-lc -lm -D DEBUG=1"]),
         ("lib_deps", ["574"]),
-        ("monitor_speed", 115200),
+        ("monitor_speed", 9600),
+        ("custom_monitor_speed", "115200"),
         ("lib_ignore", ["LibIgnoreCustom"]),
     ]
     assert config.items(env="extra_2") == [
         ("build_flags", ["-Og"]),
         ("lib_ignore", ["LibIgnoreCustom", "Lib3"]),
         ("upload_port", "/dev/extra_2/port"),
-        ("monitor_speed", 115200),
+        ("monitor_speed", 9600),
+        ("custom_monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
     ]
     assert config.items(env="test_extends") == [
@@ -267,7 +278,8 @@ def test_items(config):
         ("build_flags", ["-D RELEASE"]),
         ("lib_ldf_mode", "chain+"),
         ("lib_compat_mode", "strict"),
-        ("monitor_speed", 9600),
+        ("monitor_speed", 115200),
+        ("custom_monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
     ]
@@ -336,4 +348,58 @@ board = myboard
     config.update([["mysection", [("opt1", "value1"), ("opt2", "value2")]]], clear=True)
     assert config.as_tuple() == [
         ("mysection", [("opt1", "value1"), ("opt2", "value2")])
+    ]
+
+
+def test_dump(tmpdir_factory):
+    tmpdir = tmpdir_factory.mktemp("project")
+    tmpdir.join("platformio.ini").write(BASE_CONFIG)
+    tmpdir.join("extra_envs.ini").write(EXTRA_ENVS_CONFIG)
+    tmpdir.join("extra_debug.ini").write(EXTRA_DEBUG_CONFIG)
+    config = ProjectConfig(
+        tmpdir.join("platformio.ini").strpath,
+        parse_extra=False,
+        expand_interpolations=False,
+    )
+    assert config.as_tuple() == [
+        (
+            "platformio",
+            [
+                ("extra_configs", ["extra_envs.ini", "extra_debug.ini"]),
+                ("default_envs", ["base", "extra_2"]),
+            ],
+        ),
+        (
+            "env",
+            [
+                ("monitor_speed", 9600),
+                ("custom_monitor_speed", "115200"),
+                ("lib_deps", ["Lib1", "Lib2"]),
+                ("lib_ignore", ["${custom.lib_ignore}"]),
+            ],
+        ),
+        ("strict_ldf", [("lib_ldf_mode", "chain+"), ("lib_compat_mode", "strict")]),
+        ("monitor_custom", [("monitor_speed", "${env.custom_monitor_speed}")]),
+        (
+            "strict_settings",
+            [("extends", "strict_ldf, monitor_custom"), ("build_flags", "-D RELEASE")],
+        ),
+        (
+            "custom",
+            [
+                ("debug_flags", "-D RELEASE"),
+                ("lib_flags", "-lc -lm"),
+                ("extra_flags", "${sysenv.__PIO_TEST_CNF_EXTRA_FLAGS}"),
+                ("lib_ignore", "LibIgnoreCustom"),
+            ],
+        ),
+        (
+            "env:base",
+            [
+                ("build_flags", ["${custom.debug_flags} ${custom.extra_flags}"]),
+                ("lib_compat_mode", "${strict_ldf.strict}"),
+                ("targets", []),
+            ],
+        ),
+        ("env:test_extends", [("extends", ["strict_settings"])]),
     ]
