@@ -537,7 +537,7 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="check",
-                name="check_patterns",
+                name="check_pattern",
                 description=(
                     "Configure a list of target files or directories for checking "
                     "(Unix shell-style wildcards)"
