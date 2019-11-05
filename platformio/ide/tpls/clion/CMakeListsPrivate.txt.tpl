@@ -31,6 +31,9 @@ set(CMAKE_CONFIGURATION_TYPES "{{ env_name }}" CACHE STRING "" FORCE)
 % end
 
 set(PLATFORMIO_CMD "{{ _normalize_path(platformio_path) }}")
+% if svd_path:
+set(SVD_PATH "{{ _normalize_path(svd_path) }}")
+% end
 
 SET(CMAKE_C_COMPILER "{{ _normalize_path(cc_path) }}")
 SET(CMAKE_CXX_COMPILER "{{ _normalize_path(cxx_path) }}")
