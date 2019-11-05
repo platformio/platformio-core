@@ -53,7 +53,7 @@ def test_check_pio_upgrade(clirunner, isolated_pio_home, validate_cliresult):
 
 def test_check_lib_updates(clirunner, isolated_pio_home, validate_cliresult):
     # install obsolete library
-    result = clirunner.invoke(cli_pio, ["lib", "-g", "install", "ArduinoJson@<5.7"])
+    result = clirunner.invoke(cli_pio, ["lib", "-g", "install", "ArduinoJson@<6.13"])
     validate_cliresult(result)
 
     # reset check time
@@ -88,7 +88,7 @@ def test_check_and_update_libraries(clirunner, isolated_pio_home, validate_clire
     validate_cliresult(result)
     assert "There are the new updates for libraries (ArduinoJson)" in result.output
     assert "Please wait while updating libraries" in result.output
-    assert re.search(r"Updating ArduinoJson\s+@ 5.6.7\s+\[[\d\.]+\]", result.output)
+    assert re.search(r"Updating ArduinoJson\s+@ 6.12.0\s+\[[\d\.]+\]", result.output)
 
     # check updated version
     result = clirunner.invoke(cli_pio, ["lib", "-g", "list", "--json-output"])
