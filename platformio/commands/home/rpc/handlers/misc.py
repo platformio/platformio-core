@@ -22,8 +22,8 @@ from platformio.commands.home.rpc.handlers.os import OSRPC
 
 
 class MiscRPC(object):
-    def load_latest_tweets(self, username):
-        cache_key = "piohome_latest_tweets_" + str(username)
+    def load_latest_tweets(self, data_url):
+        cache_key = data_url
         cache_valid = "7d"
         with app.ContentCache() as cc:
             cache_data = cc.get(cache_key)
@@ -32,20 +32,17 @@ class MiscRPC(object):
                 # automatically update cache in background every 12 hours
                 if cache_data["time"] < (time.time() - (3600 * 12)):
                     reactor.callLater(
-                        5, self._preload_latest_tweets, username, cache_key, cache_valid
+                        5, self._preload_latest_tweets, data_url, cache_key, cache_valid
                     )
                 return cache_data["result"]
 
-        result = self._preload_latest_tweets(username, cache_key, cache_valid)
+        result = self._preload_latest_tweets(data_url, cache_key, cache_valid)
         return result
 
     @staticmethod
     @defer.inlineCallbacks
-    def _preload_latest_tweets(username, cache_key, cache_valid):
-        result = yield OSRPC.fetch_content(
-            "https://api.platformio.org/tweets/" + username
-        )
-        result = json.loads(result)
+    def _preload_latest_tweets(data_url, cache_key, cache_valid):
+        result = json.loads((yield OSRPC.fetch_content(data_url)))
         with app.ContentCache() as cc:
             cc.set(
                 cache_key,
