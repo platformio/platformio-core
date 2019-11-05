@@ -134,7 +134,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
                 return
             result.append(os.path.abspath(path))
 
-        for pattern in self.options["patterns"]:
+        for pattern in self.options["pattern"]:
             for item in glob.glob(pattern):
                 if not os.path.isdir(item):
                     _add_file(item)

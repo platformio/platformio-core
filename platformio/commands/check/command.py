@@ -109,7 +109,7 @@ def cli(
             tool_options = dict(
                 verbose=verbose,
                 silent=silent,
-                patterns=pattern or env_options.get("check_patterns", default_patterns),
+                pattern=pattern or env_options.get("check_pattern", default_patterns),
                 flags=flags or env_options.get("check_flags"),
                 severity=[DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
                 if silent
