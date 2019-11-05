@@ -230,12 +230,13 @@ class ProjectConfigBase(object):
     def set(self, section, option, value):
         if isinstance(value, (list, tuple)):
             value = "\n".join(value)
-            if value:
-                value = "\n" + value  # start from a new line
         elif isinstance(value, bool):
             value = "yes" if value else "no"
         elif isinstance(value, (int, float)):
             value = str(value)
+        # start multi-line value from a new line
+        if "\n" in value and not value.startswith("\n"):
+            value = "\n" + value
         self._parser.set(section, option, value)
 
     def getraw(self, section, option):
