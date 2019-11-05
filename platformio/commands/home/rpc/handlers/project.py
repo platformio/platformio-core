@@ -56,6 +56,14 @@ class ProjectRPC(object):
         return config.save()
 
     @staticmethod
+    def config_update_description(path, text):
+        config = ProjectConfig(path, parse_extra=False, expand_interpolations=False)
+        if not config.has_section("platformio"):
+            config.add_section("platformio")
+        config.set("platformio", "description", text)
+        return config.save()
+
+    @staticmethod
     def get_config_schema():
         return get_config_options_schema()
 
