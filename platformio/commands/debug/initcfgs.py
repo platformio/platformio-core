@@ -17,7 +17,7 @@ define pio_reset_halt_target
     monitor reset halt
 end
 
-define pio_reset_target
+define pio_reset_run_target
     monitor reset
 end
 
@@ -34,7 +34,7 @@ define pio_reset_halt_target
     monitor halt
 end
 
-define pio_reset_target
+define pio_reset_run_target
     monitor reset
 end
 
@@ -50,8 +50,10 @@ define pio_reset_halt_target
     monitor halt
 end
 
-define pio_reset_target
+define pio_reset_run_target
+    monitor clrbp
     monitor reset
+    monitor go
 end
 
 target extended-remote $DEBUG_PORT
@@ -73,7 +75,7 @@ define pio_reset_halt_target
     set language auto
 end
 
-define pio_reset_target
+define pio_reset_run_target
     pio_reset_halt_target
 end
 
@@ -97,7 +99,7 @@ GDB_MSPDEBUG_INIT_CONFIG = """
 define pio_reset_halt_target
 end
 
-define pio_reset_target
+define pio_reset_run_target
 end
 
 target extended-remote $DEBUG_PORT
@@ -112,8 +114,8 @@ define pio_reset_halt_target
     monitor system_reset
 end
 
-define pio_reset_target
-    pio_reset_halt_target
+define pio_reset_run_target
+    monitor system_reset
 end
 
 target extended-remote $DEBUG_PORT

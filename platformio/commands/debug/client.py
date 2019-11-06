@@ -133,18 +133,18 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             commands = self.debug_options["init_cmds"]
         commands.extend(self.debug_options["extra_cmds"])
 
-        if not any("define pio_reset_target" in cmd for cmd in commands):
+        if not any("define pio_reset_run_target" in cmd for cmd in commands):
             commands = [
-                "define pio_reset_target",
-                "   echo Warning! Undefined pio_reset_target command\\n",
-                "   mon reset",
+                "define pio_reset_run_target",
+                "   echo Warning! Undefined pio_reset_run_target command\\n",
+                "   monitor reset",
                 "end",
             ] + commands
         if not any("define pio_reset_halt_target" in cmd for cmd in commands):
             commands = [
                 "define pio_reset_halt_target",
                 "   echo Warning! Undefined pio_reset_halt_target command\\n",
-                "   mon reset halt",
+                "   monitor reset halt",
                 "end",
             ] + commands
         if not any("define pio_restart_target" in cmd for cmd in commands):
@@ -193,7 +193,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         if b"-gdb-exit" in data or data.strip() in (b"q", b"quit"):
             # Allow terminating via SIGINT/CTRL+C
             signal.signal(signal.SIGINT, signal.default_int_handler)
-            self.transport.write(b"pio_reset_target\n")
+            self.transport.write(b"pio_reset_run_target\n")
         self.transport.write(data)
 
     def processEnded(self, reason):  # pylint: disable=unused-argument
