@@ -23,16 +23,10 @@ from os.path import basename, dirname, isdir, isfile, join
 import click
 import semantic_version
 
-from platformio import __version__, app, exception, fs, util
+from platformio import __version__, app, exception, fs, proc, util
 from platformio.compat import PY2, hashlib_encode_data, is_bytes, load_python_module
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
-from platformio.proc import (
-    BuildAsyncPipe,
-    copy_pythonpath_to_osenv,
-    exec_command,
-    get_pythonexe_path,
-)
 from platformio.project.config import ProjectConfig
 
 try:
@@ -409,7 +403,7 @@ class PlatformRunMixin(object):
 
     def _run_scons(self, variables, targets, jobs):
         args = [
-            get_pythonexe_path(),
+            proc.get_pythonexe_path(),
             join(get_core_package_dir("tool-scons"), "script", "scons"),
             "-Q",
             "--warn=no-no-parallel-support",
@@ -434,18 +428,25 @@ class PlatformRunMixin(object):
             except IOError:
                 pass
 
-        copy_pythonpath_to_osenv()
-        result = exec_command(
-            args,
-            stdout=BuildAsyncPipe(
-                line_callback=self._on_stdout_line,
-                data_callback=lambda data: _write_and_flush(sys.stdout, data),
-            ),
-            stderr=BuildAsyncPipe(
-                line_callback=self._on_stderr_line,
-                data_callback=lambda data: _write_and_flush(sys.stderr, data),
-            ),
-        )
+        proc.copy_pythonpath_to_osenv()
+        if click._compat.isatty(sys.stdout):
+            result = proc.exec_command(
+                args,
+                stdout=proc.BuildAsyncPipe(
+                    line_callback=self._on_stdout_line,
+                    data_callback=lambda data: _write_and_flush(sys.stdout, data),
+                ),
+                stderr=proc.BuildAsyncPipe(
+                    line_callback=self._on_stderr_line,
+                    data_callback=lambda data: _write_and_flush(sys.stderr, data),
+                ),
+            )
+        else:
+            result = proc.exec_command(
+                args,
+                stdout=proc.LineBufferedAsyncPipe(line_callback=self._on_stdout_line),
+                stderr=proc.LineBufferedAsyncPipe(line_callback=self._on_stderr_line),
+            )
         return result
 
     def _on_stdout_line(self, line):
