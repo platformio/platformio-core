@@ -18,13 +18,14 @@ from __future__ import absolute_import
 
 import sys
 from os import environ, makedirs, remove
-from os.path import isdir, join
+from os.path import isdir, join, splitdrive
 
 from elftools.elf.descriptions import describe_sh_flags
 from elftools.elf.elffile import ELFFile
 
 from platformio.compat import dump_json_to_unicode
 from platformio.proc import exec_command
+from platformio.util import get_systype
 
 
 def _run_tool(cmd, env, tool_args):
@@ -54,7 +55,7 @@ def _get_symbol_locations(env, elf_path, addrs):
     locations = [line for line in result["out"].split("\n") if line]
     assert len(addrs) == len(locations)
 
-    return dict(zip(addrs, [l.strip().replace("\\", "/") for l in locations]))
+    return dict(zip(addrs, [l.strip() for l in locations]))
 
 
 def _get_demangled_names(env, mangled_names):
@@ -163,6 +164,9 @@ def _collect_symbols_info(env, elffile, elf_path, sections):
         location = symbol_locations.get(hex(symbol["addr"]))
         if not location or "?" in location:
             continue
+        if "windows" in get_systype():
+            drive, tail = splitdrive(location)
+            location = join(drive.upper(), tail)
         symbol["file"] = location
         symbol["line"] = 0
         if ":" in location:
