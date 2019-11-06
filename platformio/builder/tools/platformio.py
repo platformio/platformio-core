@@ -114,10 +114,11 @@ def BuildProgram(env):
     # process framework scripts
     env.BuildFrameworks(env.get("PIOFRAMEWORK"))
 
-    if (
+    is_build_type_debug = (
         set(["debug", "sizedata"]) & set(COMMAND_LINE_TARGETS)
         or env.GetProjectOption("build_type") == "debug"
-    ):
+    )
+    if is_build_type_debug:
         env.ConfigureDebugFlags()
 
     # remove specified flags
@@ -151,7 +152,7 @@ def BuildProgram(env):
         )
     )
 
-    print("Building in %s mode" % env.GetProjectOption("build_type"))
+    print("Building in %s mode" % ("debug" if is_build_type_debug else "release"))
 
     return program
 
