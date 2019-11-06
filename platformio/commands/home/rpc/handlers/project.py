@@ -60,7 +60,13 @@ class ProjectRPC(object):
         config = ProjectConfig(path, parse_extra=False, expand_interpolations=False)
         if not config.has_section("platformio"):
             config.add_section("platformio")
-        config.set("platformio", "description", text)
+        if text:
+            config.set("platformio", "description", text)
+        else:
+            if config.has_option("platformio", "description"):
+                config.remove_option("platformio", "description")
+            if not config.options("platformio"):
+                config.remove_section("platformio")
         return config.save()
 
     @staticmethod
