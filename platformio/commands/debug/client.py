@@ -30,7 +30,7 @@ from platformio import app, exception, fs, proc, util
 from platformio.commands.debug import helpers, initcfgs
 from platformio.commands.debug.process import BaseProcess
 from platformio.commands.debug.server import DebugServer
-from platformio.compat import hashlib_encode_data
+from platformio.compat import hashlib_encode_data, is_bytes
 from platformio.project.helpers import get_project_cache_dir
 from platformio.telemetry import MeasurementProtocol
 
@@ -223,10 +223,9 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self._handle_error(data)
 
     def console_log(self, msg):
-        if helpers.is_mi_mode(self.args):
-            self.outReceived(('~"%s\\n"\n' % msg).encode())
-        else:
-            self.outReceived(("%s\n" % msg).encode())
+        if helpers.is_gdbmi_mode():
+            msg = helpers.escape_gdbmi_stream("~", msg)
+        self.outReceived(msg if is_bytes(msg) else msg.encode())
 
     def _auto_exec_continue(self):
         auto_exec_delay = 0.5  # in seconds
@@ -239,14 +238,14 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         if not self.debug_options["init_break"] or self._target_is_run:
             return
         self.console_log(
-            "PlatformIO: Resume the execution to `debug_init_break = %s`"
+            "PlatformIO: Resume the execution to `debug_init_break = %s`\n"
             % self.debug_options["init_break"]
         )
         self.console_log(
-            "PlatformIO: More configuration options -> http://bit.ly/pio-debug"
+            "PlatformIO: More configuration options -> http://bit.ly/pio-debug\n"
         )
         self.transport.write(
-            b"0-exec-continue\n" if helpers.is_mi_mode(self.args) else b"continue\n"
+            b"0-exec-continue\n" if helpers.is_gdbmi_mode() else b"continue\n"
         )
         self._target_is_run = True
 

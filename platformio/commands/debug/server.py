@@ -19,6 +19,7 @@ from twisted.internet import error  # pylint: disable=import-error
 from twisted.internet import reactor  # pylint: disable=import-error
 
 from platformio import exception, fs, util
+from platformio.commands.debug.helpers import escape_gdbmi_stream, is_gdbmi_mode
 from platformio.commands.debug.process import BaseProcess
 from platformio.proc import where_is_program
 
@@ -118,6 +119,11 @@ class DebugServer(BaseProcess):
 
     def get_debug_port(self):
         return self._debug_port
+
+    def outReceived(self, data):
+        super(DebugServer, self).outReceived(
+            escape_gdbmi_stream("@", data) if is_gdbmi_mode() else data
+        )
 
     def processEnded(self, reason):
         self._process_ended = True

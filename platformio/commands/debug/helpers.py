@@ -21,32 +21,46 @@ from io import BytesIO
 from os.path import isfile
 
 from platformio import exception, fs, util
+from platformio.commands import PlatformioCLI
 from platformio.commands.platform import platform_install as cmd_platform_install
 from platformio.commands.run.command import cli as cmd_run
+from platformio.compat import is_bytes
 from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.options import ProjectOptions
 
 
-class GDBBytesIO(BytesIO):  # pylint: disable=too-few-public-methods
+class GDBMIConsoleStream(BytesIO):  # pylint: disable=too-few-public-methods
 
     STDOUT = sys.stdout
 
-    @staticmethod
-    def escape(text):
-        return re.sub(r"\\+", "\\\\\\\\", text)
-
     def write(self, text):
-        if "\n" in text:
-            for line in text.strip().split("\n"):
-                self.STDOUT.write('~"%s\\n"\n' % self.escape(line))
-        else:
-            self.STDOUT.write('~"%s"' % self.escape(text))
+        self.STDOUT.write(escape_gdbmi_stream("~", text))
         self.STDOUT.flush()
 
 
-def is_mi_mode(args):
-    return "--interpreter" in " ".join(args)
+def is_gdbmi_mode():
+    return "--interpreter" in " ".join(PlatformioCLI.leftover_args)
+
+
+def escape_gdbmi_stream(prefix, stream):
+    bytes_stream = False
+    if is_bytes(stream):
+        bytes_stream = True
+        stream = stream.decode()
+
+    if not stream:
+        return b"" if bytes_stream else ""
+
+    ends_nl = stream.endswith("\n")
+    stream = re.sub(r"\\+", "\\\\\\\\", stream)
+    stream = stream.replace('"', '\\"')
+    stream = stream.replace("\n", "\\n")
+    stream = '%s"%s"' % (prefix, stream)
+    if ends_nl:
+        stream += "\n"
+
+    return stream.encode() if bytes_stream else stream
 
 
 def get_default_debug_env(config):

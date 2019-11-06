@@ -90,10 +90,12 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
     try:
         fs.ensure_udev_rules()
     except exception.InvalidUdevRules as e:
-        for line in str(e).split("\n") + [""]:
-            click.echo(
-                ('~"%s\\n"' if helpers.is_mi_mode(__unprocessed) else "%s") % line
-            )
+        click.echo(
+            helpers.escape_gdbmi_stream("~", str(e) + "\n")
+            if helpers.is_gdbmi_mode()
+            else str(e) + "\n",
+            nl=False,
+        )
 
     debug_options["load_cmds"] = helpers.configure_esp32_load_cmds(
         debug_options, configuration
@@ -118,12 +120,17 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
         debug_options["load_cmds"] = []
 
     if rebuild_prog:
-        if helpers.is_mi_mode(__unprocessed):
-            click.echo('~"Preparing firmware for debugging...\\n"')
-            output = helpers.GDBBytesIO()
-            with util.capture_std_streams(output):
+        if helpers.is_gdbmi_mode():
+            click.echo(
+                helpers.escape_gdbmi_stream(
+                    "~", "Preparing firmware for debugging...\n"
+                ),
+                nl=False,
+            )
+            stream = helpers.GDBMIConsoleStream()
+            with util.capture_std_streams(stream):
                 helpers.predebug_project(ctx, project_dir, env_name, preload, verbose)
-            output.close()
+            stream.close()
         else:
             click.echo("Preparing firmware for debugging...")
             helpers.predebug_project(ctx, project_dir, env_name, preload, verbose)
