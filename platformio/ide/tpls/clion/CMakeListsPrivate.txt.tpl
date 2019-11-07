@@ -31,6 +31,9 @@ set(CMAKE_CONFIGURATION_TYPES "{{ env_name }}" CACHE STRING "" FORCE)
 % end
 
 set(PLATFORMIO_CMD "{{ _normalize_path(platformio_path) }}")
+% if svd_path:
+set(SVD_PATH "{{ _normalize_path(svd_path) }}")
+% end
 
 SET(CMAKE_C_COMPILER "{{ _normalize_path(cc_path) }}")
 SET(CMAKE_CXX_COMPILER "{{ _normalize_path(cxx_path) }}")
@@ -57,8 +60,9 @@ if (CMAKE_BUILD_TYPE MATCHES "{{ env_name }}")
 %end
 endif()
 
-% leftover_envs = set(envs) ^ set([env_name])
+% leftover_envs = list(set(envs) ^ set([env_name]))
 %
+% ide_data = {}
 % if leftover_envs:
 %   ide_data = load_project_ide_data(project_dir, leftover_envs)
 % end

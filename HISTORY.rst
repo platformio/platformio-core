@@ -3,8 +3,44 @@ Release Notes
 
 .. _release_notes_4_0:
 
-PlatformIO 4.0
---------------
+PlatformIO Core 4.0
+-------------------
+
+4.1.0 (2019-11-07)
+~~~~~~~~~~~~~~~~~~
+
+* `PIO Check <http://docs.platformio.org/page/plus/pio-check.html>`__ – automated code analysis without hassle:
+
+  - Potential NULL pointer dereferences
+  - Possible indexing beyond array bounds
+  - Suspicious assignments
+  - Reads of potentially uninitialized objects
+  - Unused variables or functions
+  - Out of scope memory usage.
+
+* `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__ and Project Inspection
+
+  - Static Code Analysis
+  - Firmware File Explorer
+  - Firmware Memory Inspection
+  - Firmware Sections & Symbols Viewer.
+
+* Added support for `Build Middlewares <http://docs.platformio.org/page/projectconf/advanced_scripting.html#build-middlewares>`__: configure custom build flags per specific file, skip any build nodes from a framework, replace build file with another on-the-fly, etc.
+* Extend project environment configuration in "platformio.ini" with other sections using a new `extends <http://docs.platformio.org/page/projectconf/section_env_advanced.html#extends>`__ option (`issue #2953 <https://github.com/platformio/platformio-core/issues/2953>`_)
+* Generate ``.ccls`` LSP file for `Emacs <https://docs.platformio.org/page/ide/emacs.html>`__ cross references, hierarchies, completion and semantic highlighting
+* Added ``--no-ansi`` flag for `PIO Core <http://docs.platformio.org/page/userguide/index.html>`__ to disable ANSI control characters
+* Added ``--shutdown-timeout`` option to `PIO Home Server <http://docs.platformio.org/page/userguide/cmd_home.html>`__
+* Fixed an issue with project generator for `CLion IDE <http://docs.platformio.org/page/ide/clion.html>`__ when 2 environments were used (`issue #2824 <https://github.com/platformio/platformio-core/issues/2824>`_)
+* Fixed default PIO Unified Debugger configuration for `J-Link probe <http://docs.platformio.org/page/plus/debug-tools/jlink.html>`__
+* Fixed an issue when configuration file options partly ignored when using custom ``--project-conf`` (`issue #3034 <https://github.com/platformio/platformio-core/issues/3034>`_)
+* Fixed an issue when installing a package using custom Git tag and submodules were not updated correctly (`issue #3060 <https://github.com/platformio/platformio-core/issues/3060>`_)
+* Fixed an issue with linking process when ``$LDSCRIPT`` contains a space in path
+* Fixed security issue when extracting items from TAR archive (`issue #2995 <https://github.com/platformio/platformio-core/issues/2995>`_)
+* Fixed an issue with project generator when ``src_build_flags`` were not respected (`issue #3137 <https://github.com/platformio/platformio-core/issues/3137>`_)
+* Fixed an issue when booleans in "platformio.ini" are not parsed properly (`issue #3022 <https://github.com/platformio/platformio-core/issues/3022>`_)
+* Fixed an issue with invalid encoding when generating project for Visual Studio (`issue #3183 <https://github.com/platformio/platformio-core/issues/3183>`_)
+* Fixed an issue when Project Config Parser does not remove in-line comments when Python 3 is used (`issue #3213 <https://github.com/platformio/platformio-core/issues/3213>`_)
+* Fixed an issue with a GCC Linter for PlatformIO IDE for Atom (`issue #3218 <https://github.com/platformio/platformio-core/issues/3218>`_)
 
 4.0.3 (2019-08-30)
 ~~~~~~~~~~~~~~~~~~
@@ -104,8 +140,8 @@ PlatformIO 4.0
   - Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__ (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
   - Fixed an issue when package cache (Library Manager) expires too fast (`issue #2559 <https://github.com/platformio/platformio-core/issues/2559>`_)
 
-PlatformIO 3.0
---------------
+PlatformIO Core 3.0
+-------------------
 
 3.6.7 (2019-04-23)
 ~~~~~~~~~~~~~~~~~~
@@ -705,8 +741,8 @@ PlatformIO 3.0
   (`issue #742 <https://github.com/platformio/platformio-core/issues/742>`_)
 * Stopped supporting Python 2.6
 
-PlatformIO 2.0
---------------
+PlatformIO Core 2.0
+--------------------
 
 2.11.2 (2016-08-02)
 ~~~~~~~~~~~~~~~~~~~
@@ -1491,8 +1527,8 @@ PlatformIO 2.0
 * Fixed bug with creating copies of source files
   (`issue #177 <https://github.com/platformio/platformio-core/issues/177>`_)
 
-PlatformIO 1.0
---------------
+PlatformIO Core 1.0
+-------------------
 
 1.5.0 (2015-05-15)
 ~~~~~~~~~~~~~~~~~~
@@ -1682,8 +1718,8 @@ PlatformIO 1.0
   error (`issue #81 <https://github.com/platformio/platformio-core/issues/81>`_)
 * Several bug fixes, increased stability and performance improvements
 
-PlatformIO 0.0
---------------
+PlatformIO Core 0.0
+-------------------
 
 0.10.2 (2015-01-06)
 ~~~~~~~~~~~~~~~~~~~

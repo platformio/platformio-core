@@ -27,8 +27,7 @@ from twisted.internet import utils  # pylint: disable=import-error
 
 from platformio import __main__, __version__, fs
 from platformio.commands.home import helpers
-from platformio.compat import (PY2, get_filesystem_encoding, is_bytes,
-                               string_types)
+from platformio.compat import PY2, get_filesystem_encoding, is_bytes, string_types
 
 try:
     from thread import get_ident as thread_get_ident
@@ -37,7 +36,6 @@ except ImportError:
 
 
 class MultiThreadingStdStream(object):
-
     def __init__(self, parent_stream):
         self._buffers = {thread_get_ident(): parent_stream}
 
@@ -54,7 +52,8 @@ class MultiThreadingStdStream(object):
         thread_id = thread_get_ident()
         self._ensure_thread_buffer(thread_id)
         return self._buffers[thread_id].write(
-            value.decode() if is_bytes(value) else value)
+            value.decode() if is_bytes(value) else value
+        )
 
     def get_value_and_reset(self):
         result = ""
@@ -68,7 +67,6 @@ class MultiThreadingStdStream(object):
 
 
 class PIOCoreRPC(object):
-
     @staticmethod
     def version():
         return __version__
@@ -104,16 +102,15 @@ class PIOCoreRPC(object):
             else:
                 result = yield PIOCoreRPC._call_inline(args, options)
                 try:
-                    defer.returnValue(
-                        PIOCoreRPC._process_result(result, to_json))
+                    defer.returnValue(PIOCoreRPC._process_result(result, to_json))
                 except ValueError:
                     # fall-back to subprocess method
                     result = yield PIOCoreRPC._call_subprocess(args, options)
-                    defer.returnValue(
-                        PIOCoreRPC._process_result(result, to_json))
+                    defer.returnValue(PIOCoreRPC._process_result(result, to_json))
         except Exception as e:  # pylint: disable=bare-except
             raise jsonrpc.exceptions.JSONRPCDispatchException(
-                code=4003, message="PIO Core Call Error", data=str(e))
+                code=4003, message="PIO Core Call Error", data=str(e)
+            )
 
     @staticmethod
     def _call_inline(args, options):
@@ -123,8 +120,11 @@ class PIOCoreRPC(object):
         def _thread_task():
             with fs.cd(cwd):
                 exit_code = __main__.main(["-c"] + args)
-            return (PIOCoreRPC.thread_stdout.get_value_and_reset(),
-                    PIOCoreRPC.thread_stderr.get_value_and_reset(), exit_code)
+            return (
+                PIOCoreRPC.thread_stdout.get_value_and_reset(),
+                PIOCoreRPC.thread_stderr.get_value_and_reset(),
+                exit_code,
+            )
 
         return threads.deferToThread(_thread_task)
 
@@ -135,8 +135,8 @@ class PIOCoreRPC(object):
             helpers.get_core_fullpath(),
             args,
             path=cwd,
-            env={k: v
-                 for k, v in os.environ.items() if "%" not in k})
+            env={k: v for k, v in os.environ.items() if "%" not in k},
+        )
 
     @staticmethod
     def _process_result(result, to_json=False):

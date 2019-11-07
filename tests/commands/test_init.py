@@ -25,8 +25,7 @@ from platformio.project.config import ProjectConfig
 def validate_pioproject(pioproject_dir):
     pioconf_path = join(pioproject_dir, "platformio.ini")
     assert isfile(pioconf_path) and getsize(pioconf_path) > 0
-    assert isdir(join(pioproject_dir, "src")) and isdir(
-        join(pioproject_dir, "lib"))
+    assert isdir(join(pioproject_dir, "src")) and isdir(join(pioproject_dir, "lib"))
 
 
 def test_init_default(clirunner, validate_cliresult):
@@ -66,18 +65,17 @@ def test_init_ide_without_board(clirunner, tmpdir):
 def test_init_ide_atom(clirunner, validate_cliresult, tmpdir):
     with tmpdir.as_cwd():
         result = clirunner.invoke(
-            cmd_init, ["--ide", "atom", "-b", "uno", "-b", "teensy31"])
+            cmd_init, ["--ide", "atom", "-b", "uno", "-b", "teensy31"]
+        )
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
-        assert all([
-            tmpdir.join(f).check()
-            for f in (".clang_complete", ".gcc-flags.json")
-        ])
-        assert "arduinoavr" in tmpdir.join(".clang_complete").read()
+        assert all(
+            [tmpdir.join(f).check() for f in (".clang_complete", ".gcc-flags.json")]
+        )
+        assert "framework-arduino" in tmpdir.join(".clang_complete").read()
 
         # switch to NodeMCU
-        result = clirunner.invoke(cmd_init,
-                                  ["--ide", "atom", "-b", "nodemcuv2"])
+        result = clirunner.invoke(cmd_init, ["--ide", "atom", "-b", "nodemcuv2"])
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
         assert "arduinoespressif" in tmpdir.join(".clang_complete").read()
@@ -86,7 +84,7 @@ def test_init_ide_atom(clirunner, validate_cliresult, tmpdir):
         result = clirunner.invoke(cmd_init, ["--ide", "atom"])
         validate_cliresult(result)
         validate_pioproject(str(tmpdir))
-        assert "arduinoavr" in tmpdir.join(".clang_complete").read()
+        assert "framework-arduino" in tmpdir.join(".clang_complete").read()
 
 
 def test_init_ide_eclipse(clirunner, validate_cliresult):
@@ -110,46 +108,49 @@ def test_init_special_board(clirunner, validate_cliresult):
         config = ProjectConfig(join(getcwd(), "platformio.ini"))
         config.validate()
 
-        expected_result = dict(platform=str(boards[0]['platform']),
-                               board="uno",
-                               framework=[str(boards[0]['frameworks'][0])])
+        expected_result = dict(
+            platform=str(boards[0]["platform"]),
+            board="uno",
+            framework=[str(boards[0]["frameworks"][0])],
+        )
         assert config.has_section("env:uno")
         assert sorted(config.items(env="uno", as_dict=True).items()) == sorted(
-            expected_result.items())
+            expected_result.items()
+        )
 
 
 def test_init_enable_auto_uploading(clirunner, validate_cliresult):
     with clirunner.isolated_filesystem():
         result = clirunner.invoke(
-            cmd_init, ["-b", "uno", "--project-option", "targets=upload"])
+            cmd_init, ["-b", "uno", "--project-option", "targets=upload"]
+        )
         validate_cliresult(result)
         validate_pioproject(getcwd())
         config = ProjectConfig(join(getcwd(), "platformio.ini"))
         config.validate()
-        expected_result = dict(targets=["upload"],
-                               platform="atmelavr",
-                               board="uno",
-                               framework=["arduino"])
+        expected_result = dict(
+            targets=["upload"], platform="atmelavr", board="uno", framework=["arduino"]
+        )
         assert config.has_section("env:uno")
         assert sorted(config.items(env="uno", as_dict=True).items()) == sorted(
-            expected_result.items())
+            expected_result.items()
+        )
 
 
 def test_init_custom_framework(clirunner, validate_cliresult):
     with clirunner.isolated_filesystem():
         result = clirunner.invoke(
-            cmd_init, ["-b", "teensy31", "--project-option", "framework=mbed"])
+            cmd_init, ["-b", "teensy31", "--project-option", "framework=mbed"]
+        )
         validate_cliresult(result)
         validate_pioproject(getcwd())
         config = ProjectConfig(join(getcwd(), "platformio.ini"))
         config.validate()
-        expected_result = dict(platform="teensy",
-                               board="teensy31",
-                               framework=["mbed"])
+        expected_result = dict(platform="teensy", board="teensy31", framework=["mbed"])
         assert config.has_section("env:teensy31")
-        assert sorted(config.items(env="teensy31",
-                                   as_dict=True).items()) == sorted(
-                                       expected_result.items())
+        assert sorted(config.items(env="teensy31", as_dict=True).items()) == sorted(
+            expected_result.items()
+        )
 
 
 def test_init_incorrect_board(clirunner):

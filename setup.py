@@ -14,8 +14,15 @@
 
 from setuptools import find_packages, setup
 
-from platformio import (__author__, __description__, __email__, __license__,
-                        __title__, __url__, __version__)
+from platformio import (
+    __author__,
+    __description__,
+    __email__,
+    __license__,
+    __title__,
+    __url__,
+    __version__,
+)
 
 install_requires = [
     "bottle<0.13",
@@ -24,7 +31,9 @@ install_requires = [
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",
     "semantic_version>=2.8.1,<3",
-    "tabulate>=0.8.3,<1"
+    "tabulate>=0.8.3,<1",
+    "pyelftools>=0.25,<1",
+    "marshmallow>=2.20.5,<3"
 ]
 
 setup(
@@ -36,8 +45,9 @@ setup(
     author_email=__email__,
     url=__url__,
     license=__license__,
-    python_requires=", ".join([
-        ">=2.7", "!=3.0.*", "!=3.1.*", "!=3.2.*", "!=3.3.*", "!=3.4.*"]),
+    python_requires=", ".join(
+        [">=2.7", "!=3.0.*", "!=3.1.*", "!=3.2.*", "!=3.3.*", "!=3.4.*"]
+    ),
     install_requires=install_requires,
     packages=find_packages() + ["scripts"],
     package_data={
@@ -45,17 +55,15 @@ setup(
             "ide/tpls/*/.*.tpl",
             "ide/tpls/*/*.tpl",
             "ide/tpls/*/*/*.tpl",
-            "ide/tpls/*/.*/*.tpl"
+            "ide/tpls/*/.*/*.tpl",
         ],
-        "scripts": [
-            "99-platformio-udev.rules"
-        ]
+        "scripts": ["99-platformio-udev.rules"],
     },
     entry_points={
         "console_scripts": [
+            "platformio = platformio.__main__:main",
             "pio = platformio.__main__:main",
             "piodebuggdb = platformio.__main__:debug_gdb_main",
-            "platformio = platformio.__main__:main"
         ]
     },
     classifiers=[
@@ -70,11 +78,26 @@ setup(
         "Programming Language :: Python :: 3",
         "Topic :: Software Development",
         "Topic :: Software Development :: Build Tools",
-        "Topic :: Software Development :: Compilers"
+        "Topic :: Software Development :: Compilers",
     ],
     keywords=[
-        "iot", "embedded", "arduino", "mbed", "esp8266", "esp32", "fpga",
-        "firmware", "continuous-integration", "cloud-ide", "avr", "arm",
-        "ide", "unit-testing", "hardware", "verilog", "microcontroller",
-        "debug"
-    ])
+        "iot",
+        "embedded",
+        "arduino",
+        "mbed",
+        "esp8266",
+        "esp32",
+        "fpga",
+        "firmware",
+        "continuous-integration",
+        "cloud-ide",
+        "avr",
+        "arm",
+        "ide",
+        "unit-testing",
+        "hardware",
+        "verilog",
+        "microcontroller",
+        "debug",
+    ],
+)

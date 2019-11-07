@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-locals
+
 import mimetypes
 import socket
 from os.path import isdir
@@ -19,8 +21,7 @@ from os.path import isdir
 import click
 
 from platformio import exception
-from platformio.managers.core import (get_core_package_dir,
-                                      inject_contrib_pysite)
+from platformio.managers.core import get_core_package_dir, inject_contrib_pysite
 
 
 @click.command("home", short_help="PIO Home")
@@ -28,17 +29,30 @@ from platformio.managers.core import (get_core_package_dir,
 @click.option(
     "--host",
     default="127.0.0.1",
-    help="HTTP host, default=127.0.0.1. "
-    "You can open PIO Home for inbound connections with --host=0.0.0.0")
-@click.option("--no-open", is_flag=True)  # pylint: disable=too-many-locals
-def cli(port, host, no_open):
+    help=(
+        "HTTP host, default=127.0.0.1. You can open PIO Home for inbound "
+        "connections with --host=0.0.0.0"
+    ),
+)
+@click.option("--no-open", is_flag=True)
+@click.option(
+    "--shutdown-timeout",
+    default=0,
+    type=int,
+    help=(
+        "Automatically shutdown server on timeout (in seconds) when no clients "
+        "are connected. Default is 0 which means never auto shutdown"
+    ),
+)
+def cli(port, host, no_open, shutdown_timeout):
+    # pylint: disable=import-error, import-outside-toplevel
+
     # import contrib modules
     inject_contrib_pysite()
-    # pylint: disable=import-error
     from autobahn.twisted.resource import WebSocketResource
     from twisted.internet import reactor
     from twisted.web import server
-    # pylint: enable=import-error
+
     from platformio.commands.home.rpc.handlers.app import AppRPC
     from platformio.commands.home.rpc.handlers.ide import IDERPC
     from platformio.commands.home.rpc.handlers.misc import MiscRPC
@@ -48,7 +62,7 @@ def cli(port, host, no_open):
     from platformio.commands.home.rpc.server import JSONRPCServerFactory
     from platformio.commands.home.web import WebRoot
 
-    factory = JSONRPCServerFactory()
+    factory = JSONRPCServerFactory(shutdown_timeout)
     factory.addHandler(AppRPC(), namespace="app")
     factory.addHandler(IDERPC(), namespace="ide")
     factory.addHandler(MiscRPC(), namespace="misc")
@@ -89,14 +103,18 @@ def cli(port, host, no_open):
         else:
             reactor.callLater(1, lambda: click.launch(home_url))
 
-    click.echo("\n".join([
-        "",
-        "  ___I_",
-        " /\\-_--\\   PlatformIO Home",
-        "/  \\_-__\\",
-        "|[]| [] |  %s" % home_url,
-        "|__|____|______________%s" % ("_" * len(host)),
-    ]))
+    click.echo(
+        "\n".join(
+            [
+                "",
+                "  ___I_",
+                " /\\-_--\\   PlatformIO Home",
+                "/  \\_-__\\",
+                "|[]| [] |  %s" % home_url,
+                "|__|____|______________%s" % ("_" * len(host)),
+            ]
+        )
+    )
     click.echo("")
     click.echo("Open PIO Home in your browser by this URL => %s" % home_url)
 

@@ -21,15 +21,16 @@ from platformio import __version__, exception, fs
 from platformio.compat import PY2, WINDOWS
 from platformio.managers.package import PackageManager
 from platformio.proc import copy_pythonpath_to_osenv, get_pythonexe_path
-from platformio.project.helpers import get_project_packages_dir
+from platformio.project.config import ProjectConfig
 
 CORE_PACKAGES = {
-    "contrib-piohome": "^2.3.2",
-    "contrib-pysite":
-    "~2.%d%d.190418" % (sys.version_info[0], sys.version_info[1]),
-    "tool-pioplus": "^2.5.2",
+    "contrib-piohome": "~3.0.0",
+    "contrib-pysite": "~2.%d%d.0" % (sys.version_info[0], sys.version_info[1]),
+    "tool-pioplus": "^2.5.8",
     "tool-unity": "~1.20403.0",
-    "tool-scons": "~2.20501.7" if PY2 else "~3.30101.0"
+    "tool-scons": "~2.20501.7" if PY2 else "~3.30101.0",
+    "tool-cppcheck": "~1.189.0",
+    "tool-clangtidy": "^1.80000.0",
 }
 
 PIOPLUS_AUTO_UPDATES_MAX = 100
@@ -38,20 +39,21 @@ PIOPLUS_AUTO_UPDATES_MAX = 100
 
 
 class CorePackageManager(PackageManager):
-
     def __init__(self):
-        super(CorePackageManager, self).__init__(get_project_packages_dir(), [
-            "https://dl.bintray.com/platformio/dl-packages/manifest.json",
-            "http%s://dl.platformio.org/packages/manifest.json" %
-            ("" if sys.version_info < (2, 7, 9) else "s")
-        ])
+        config = ProjectConfig.get_instance()
+        packages_dir = config.get_optional_dir("packages")
+        super(CorePackageManager, self).__init__(
+            packages_dir,
+            [
+                "https://dl.bintray.com/platformio/dl-packages/manifest.json",
+                "http%s://dl.platformio.org/packages/manifest.json"
+                % ("" if sys.version_info < (2, 7, 9) else "s"),
+            ],
+        )
 
     def install(  # pylint: disable=keyword-arg-before-vararg
-            self,
-            name,
-            requirements=None,
-            *args,
-            **kwargs):
+        self, name, requirements=None, *args, **kwargs
+    ):
         PackageManager.install(self, name, requirements, *args, **kwargs)
         self.cleanup_packages()
         return self.get_package_dir(name, requirements)
@@ -68,12 +70,12 @@ class CorePackageManager(PackageManager):
             pkg_dir = self.get_package_dir(name, requirements)
             if not pkg_dir:
                 continue
-            best_pkg_versions[name] = self.load_manifest(pkg_dir)['version']
+            best_pkg_versions[name] = self.load_manifest(pkg_dir)["version"]
         for manifest in self.get_installed():
-            if manifest['name'] not in best_pkg_versions:
+            if manifest["name"] not in best_pkg_versions:
                 continue
-            if manifest['version'] != best_pkg_versions[manifest['name']]:
-                self.uninstall(manifest['__pkg_dir'], after_update=True)
+            if manifest["version"] != best_pkg_versions[manifest["name"]]:
+                self.uninstall(manifest["__pkg_dir"], after_update=True)
         self.cache_reset()
         return True
 
@@ -101,7 +103,8 @@ def update_core_packages(only_check=False, silent=False):
 
 
 def inject_contrib_pysite():
-    from site import addsitedir
+    from site import addsitedir  # pylint: disable=import-outside-toplevel
+
     contrib_pysite_dir = get_core_package_dir("contrib-pysite")
     if contrib_pysite_dir in sys.path:
         return
@@ -114,16 +117,18 @@ def pioplus_call(args, **kwargs):
         raise exception.PlatformioException(
             "PlatformIO Core Plus v%s does not run under Python version %s.\n"
             "Minimum supported version is 2.7.6, please upgrade Python.\n"
-            "Python 3 is not yet supported.\n" % (__version__, sys.version))
+            "Python 3 is not yet supported.\n" % (__version__, sys.version)
+        )
 
     pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
     pythonexe_path = get_pythonexe_path()
-    os.environ['PYTHONEXEPATH'] = pythonexe_path
-    os.environ['PYTHONPYSITEDIR'] = get_core_package_dir("contrib-pysite")
-    os.environ['PIOCOREPYSITEDIR'] = dirname(fs.get_source_dir() or "")
-    if dirname(pythonexe_path) not in os.environ['PATH'].split(os.pathsep):
-        os.environ['PATH'] = (os.pathsep).join(
-            [dirname(pythonexe_path), os.environ['PATH']])
+    os.environ["PYTHONEXEPATH"] = pythonexe_path
+    os.environ["PYTHONPYSITEDIR"] = get_core_package_dir("contrib-pysite")
+    os.environ["PIOCOREPYSITEDIR"] = dirname(fs.get_source_dir() or "")
+    if dirname(pythonexe_path) not in os.environ["PATH"].split(os.pathsep):
+        os.environ["PATH"] = (os.pathsep).join(
+            [dirname(pythonexe_path), os.environ["PATH"]]
+        )
     copy_pythonpath_to_osenv()
     code = subprocess.call([pioplus_path] + args, **kwargs)
 

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 from os import environ, makedirs
 from os.path import isdir, join
 from time import time
@@ -28,10 +29,10 @@ from SCons.Script import Import  # pylint: disable=import-error
 from SCons.Script import Variables  # pylint: disable=import-error
 
 from platformio import fs
-from platformio.compat import PY2, dump_json_to_unicode
+from platformio.compat import dump_json_to_unicode
 from platformio.managers.platform import PlatformBase
 from platformio.proc import get_pythonexe_path
-from platformio.project import helpers as project_helpers
+from platformio.project.helpers import get_project_dir
 
 AllowSubstExceptions(NameError)
 
@@ -43,48 +44,44 @@ clivars.AddVariables(
     ("PROJECT_CONFIG",),
     ("PIOENV",),
     ("PIOTEST_RUNNING_NAME",),
-    ("UPLOAD_PORT",)
-)  # yapf: disable
+    ("UPLOAD_PORT",),
+)
 
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
-        "ar", "gas", "gcc", "g++", "gnulink", "platformio", "pioplatform",
-        "pioproject", "piowinhooks", "piolib", "pioupload", "piomisc", "pioide"
+        "ar",
+        "gas",
+        "gcc",
+        "g++",
+        "gnulink",
+        "platformio",
+        "pioplatform",
+        "pioproject",
+        "piomaxlen",
+        "piolib",
+        "pioupload",
+        "piomisc",
+        "pioide",
+        "piosize",
     ],
     toolpath=[join(fs.get_source_dir(), "builder", "tools")],
     variables=clivars,
-
     # Propagating External Environment
     ENV=environ,
     UNIX_TIME=int(time()),
-    PROJECT_DIR=project_helpers.get_project_dir(),
-    PROJECTCORE_DIR=project_helpers.get_project_core_dir(),
-    PROJECTPACKAGES_DIR=project_helpers.get_project_packages_dir(),
-    PROJECTWORKSPACE_DIR=project_helpers.get_project_workspace_dir(),
-    PROJECTLIBDEPS_DIR=project_helpers.get_project_libdeps_dir(),
-    PROJECTINCLUDE_DIR=project_helpers.get_project_include_dir(),
-    PROJECTSRC_DIR=project_helpers.get_project_src_dir(),
-    PROJECTTEST_DIR=project_helpers.get_project_test_dir(),
-    PROJECTDATA_DIR=project_helpers.get_project_data_dir(),
-    PROJECTBUILD_DIR=project_helpers.get_project_build_dir(),
-    BUILDCACHE_DIR=project_helpers.get_project_optional_dir("build_cache_dir"),
-    BUILD_DIR=join("$PROJECTBUILD_DIR", "$PIOENV"),
-    BUILDSRC_DIR=join("$BUILD_DIR", "src"),
-    BUILDTEST_DIR=join("$BUILD_DIR", "test"),
+    BUILD_DIR=join("$PROJECT_BUILD_DIR", "$PIOENV"),
+    BUILD_SRC_DIR=join("$BUILD_DIR", "src"),
+    BUILD_TEST_DIR=join("$BUILD_DIR", "test"),
     LIBPATH=["$BUILD_DIR"],
-    LIBSOURCE_DIRS=[
-        project_helpers.get_project_lib_dir(),
-        join("$PROJECTLIBDEPS_DIR", "$PIOENV"),
-        project_helpers.get_project_global_lib_dir()
-    ],
     PROGNAME="program",
     PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
-    PYTHONEXE=get_pythonexe_path())
+    PYTHONEXE=get_pythonexe_path(),
+)
 
 if not int(ARGUMENTS.get("PIOVERBOSE", 0)):
-    DEFAULT_ENV_OPTIONS['ARCOMSTR'] = "Archiving $TARGET"
-    DEFAULT_ENV_OPTIONS['LINKCOMSTR'] = "Linking $TARGET"
-    DEFAULT_ENV_OPTIONS['RANLIBCOMSTR'] = "Indexing $TARGET"
+    DEFAULT_ENV_OPTIONS["ARCOMSTR"] = "Archiving $TARGET"
+    DEFAULT_ENV_OPTIONS["LINKCOMSTR"] = "Linking $TARGET"
+    DEFAULT_ENV_OPTIONS["RANLIBCOMSTR"] = "Indexing $TARGET"
     for k in ("ASCOMSTR", "ASPPCOMSTR", "CCCOMSTR", "CXXCOMSTR"):
         DEFAULT_ENV_OPTIONS[k] = "Compiling $TARGET"
 
@@ -94,31 +91,59 @@ env = DefaultEnvironment(**DEFAULT_ENV_OPTIONS)
 env.Replace(
     **{
         key: PlatformBase.decode_scons_arg(env[key])
-        for key in list(clivars.keys()) if key in env
-    })
+        for key in list(clivars.keys())
+        if key in env
+    }
+)
 
-if env.subst("$BUILDCACHE_DIR"):
-    if not isdir(env.subst("$BUILDCACHE_DIR")):
-        makedirs(env.subst("$BUILDCACHE_DIR"))
-    env.CacheDir("$BUILDCACHE_DIR")
+# Setup project optional directories
+config = env.GetProjectConfig()
+env.Replace(
+    PROJECT_DIR=get_project_dir(),
+    PROJECT_CORE_DIR=config.get_optional_dir("core"),
+    PROJECT_PACKAGES_DIR=config.get_optional_dir("packages"),
+    PROJECT_WORKSPACE_DIR=config.get_optional_dir("workspace"),
+    PROJECT_LIBDEPS_DIR=config.get_optional_dir("libdeps"),
+    PROJECT_INCLUDE_DIR=config.get_optional_dir("include"),
+    PROJECT_SRC_DIR=config.get_optional_dir("src"),
+    PROJECTSRC_DIR=config.get_optional_dir("src"),  # legacy for dev/platform
+    PROJECT_TEST_DIR=config.get_optional_dir("test"),
+    PROJECT_DATA_DIR=config.get_optional_dir("data"),
+    PROJECTDATA_DIR=config.get_optional_dir("data"),  # legacy for dev/platform
+    PROJECT_BUILD_DIR=config.get_optional_dir("build"),
+    BUILD_CACHE_DIR=config.get_optional_dir("build_cache"),
+    LIBSOURCE_DIRS=[
+        config.get_optional_dir("lib"),
+        join("$PROJECT_LIBDEPS_DIR", "$PIOENV"),
+        config.get_optional_dir("globallib"),
+    ],
+)
+
+if env.subst("$BUILD_CACHE_DIR"):
+    if not isdir(env.subst("$BUILD_CACHE_DIR")):
+        makedirs(env.subst("$BUILD_CACHE_DIR"))
+    env.CacheDir("$BUILD_CACHE_DIR")
 
 if int(ARGUMENTS.get("ISATTY", 0)):
     # pylint: disable=protected-access
     click._compat.isatty = lambda stream: True
 
-if env.GetOption('clean'):
+if env.GetOption("clean"):
     env.PioClean(env.subst("$BUILD_DIR"))
     env.Exit(0)
 elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
-    print("Verbose mode can be enabled via `-v, --verbose` option")
+    click.echo("Verbose mode can be enabled via `-v, --verbose` option")
+
+if not isdir(env.subst("$BUILD_DIR")):
+    makedirs(env.subst("$BUILD_DIR"))
 
 env.LoadProjectOptions()
 env.LoadPioPlatform()
 
 env.SConscriptChdir(0)
 env.SConsignFile(
-    join("$PROJECTBUILD_DIR",
-         ".sconsign.dblite" if PY2 else ".sconsign3.dblite"))
+    join("$BUILD_DIR", ".sconsign.py%d%d" % (sys.version_info[0], sys.version_info[1]))
+)
 
 for item in env.GetExtraScripts("pre"):
     env.SConscript(item, exports="env")
@@ -145,10 +170,13 @@ if env.get("SIZETOOL") and "nobuild" not in COMMAND_LINE_TARGETS:
     Default("checkprogsize")
 
 # Print configured protocols
-env.AddPreAction(["upload", "program"],
-                 env.VerboseAction(
-                     lambda source, target, env: env.PrintUploadInfo(),
-                     "Configuring upload protocol..."))
+env.AddPreAction(
+    ["upload", "program"],
+    env.VerboseAction(
+        lambda source, target, env: env.PrintUploadInfo(),
+        "Configuring upload protocol...",
+    ),
+)
 
 AlwaysBuild(env.Alias("debug", DEFAULT_TARGETS))
 AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
@@ -156,12 +184,26 @@ AlwaysBuild(env.Alias("__test", DEFAULT_TARGETS))
 ##############################################################################
 
 if "envdump" in COMMAND_LINE_TARGETS:
-    print(env.Dump())
+    click.echo(env.Dump())
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
     Import("projenv")
-    print("\n%s\n" % dump_json_to_unicode(
-        env.DumpIDEData(projenv)  # pylint: disable=undefined-variable
-    ))
+    click.echo(
+        "\n%s\n"
+        % dump_json_to_unicode(
+            projenv.DumpIDEData()  # pylint: disable=undefined-variable
+        )
+    )
     env.Exit(0)
+
+if "sizedata" in COMMAND_LINE_TARGETS:
+    AlwaysBuild(
+        env.Alias(
+            "sizedata",
+            DEFAULT_TARGETS,
+            env.VerboseAction(env.DumpSizeData, "Generating memory usage report..."),
+        )
+    )
+
+    Default("sizedata")

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import io
 import json
 import os
 import re
@@ -23,11 +24,10 @@ from glob import glob
 import click
 
 from platformio import exception
-from platformio.compat import WINDOWS, get_file_contents, glob_escape
+from platformio.compat import WINDOWS, glob_escape
 
 
 class cd(object):
-
     def __init__(self, new_path):
         self.new_path = new_path
         self.prev_path = os.getcwd()
@@ -49,6 +49,30 @@ def get_source_dir():
     return os.path.dirname(curpath)
 
 
+def get_file_contents(path):
+    try:
+        with open(path) as fp:
+            return fp.read()
+    except UnicodeDecodeError:
+        click.secho(
+            "Unicode decode error has occurred, please remove invalid "
+            "(non-ASCII or non-UTF8) characters from %s file" % path,
+            fg="yellow",
+            err=True,
+        )
+        with io.open(path, encoding="latin-1") as fp:
+            return fp.read()
+
+
+def write_file_contents(path, contents, errors=None):
+    try:
+        with open(path, "w") as fp:
+            return fp.write(contents)
+    except UnicodeEncodeError:
+        with io.open(path, "w", encoding="latin-1", errors=errors) as fp:
+            return fp.write(contents)
+
+
 def load_json(file_path):
     try:
         with open(file_path, "r") as f:
@@ -65,34 +89,37 @@ def format_filesize(filesize):
     if filesize < base:
         return "%d%s" % (filesize, suffix)
     for i, suffix in enumerate("KMGTPEZY"):
-        unit = base**(i + 2)
+        unit = base ** (i + 2)
         if filesize >= unit:
             continue
-        if filesize % (base**(i + 1)):
+        if filesize % (base ** (i + 1)):
             return "%.2f%sB" % ((base * filesize / unit), suffix)
         break
     return "%d%sB" % ((base * filesize / unit), suffix)
 
 
 def ensure_udev_rules():
-    from platformio.util import get_systype
+    from platformio.util import get_systype  # pylint: disable=import-outside-toplevel
 
     def _rules_to_set(rules_path):
-        return set(l.strip() for l in get_file_contents(rules_path).split("\n")
-                   if l.strip() and not l.startswith("#"))
+        return set(
+            l.strip()
+            for l in get_file_contents(rules_path).split("\n")
+            if l.strip() and not l.startswith("#")
+        )
 
     if "linux" not in get_systype():
         return None
     installed_rules = [
         "/etc/udev/rules.d/99-platformio-udev.rules",
-        "/lib/udev/rules.d/99-platformio-udev.rules"
+        "/lib/udev/rules.d/99-platformio-udev.rules",
     ]
     if not any(os.path.isfile(p) for p in installed_rules):
         raise exception.MissedUdevRules
 
     origin_path = os.path.abspath(
-        os.path.join(get_source_dir(), "..", "scripts",
-                     "99-platformio-udev.rules"))
+        os.path.join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules")
+    )
     if not os.path.isfile(origin_path):
         return None
 
@@ -117,7 +144,6 @@ def path_endswith_ext(path, extensions):
 
 
 def match_src_files(src_dir, src_filter=None, src_exts=None):
-
     def _append_build_item(items, item, src_dir):
         if not src_exts or path_endswith_ext(item, src_exts):
             items.add(item.replace(src_dir + os.sep, ""))
@@ -135,8 +161,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None):
             if os.path.isdir(item):
                 for root, _, files in os.walk(item, followlinks=True):
                     for f in files:
-                        _append_build_item(items, os.path.join(root, f),
-                                           src_dir)
+                        _append_build_item(items, os.path.join(root, f), src_dir)
             else:
                 _append_build_item(items, item, src_dir)
         if action == "+":
@@ -152,8 +177,16 @@ def to_unix_path(path):
     return re.sub(r"[\\]+", "/", path)
 
 
-def rmtree(path):
+def expanduser(path):
+    """
+    Be compatible with Python 3.8, on Windows skip HOME and check for USERPROFILE
+    """
+    if not WINDOWS or not path.startswith("~") or "USERPROFILE" not in os.environ:
+        return os.path.expanduser(path)
+    return os.environ["USERPROFILE"] + path[1:]
 
+
+def rmtree(path):
     def _onerror(func, path, __):
         try:
             st_mode = os.stat(path).st_mode
@@ -161,9 +194,10 @@ def rmtree(path):
                 os.chmod(path, st_mode | stat.S_IWRITE)
             func(path)
         except Exception as e:  # pylint: disable=broad-except
-            click.secho("%s \nPlease manually remove the file `%s`" %
-                        (str(e), path),
-                        fg="red",
-                        err=True)
+            click.secho(
+                "%s \nPlease manually remove the file `%s`" % (str(e), path),
+                fg="red",
+                err=True,
+            )
 
     return shutil.rmtree(path, onerror=_onerror)

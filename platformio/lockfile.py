@@ -26,10 +26,12 @@ LOCKFILE_INTERFACE_MSVCRT = 2
 
 try:
     import fcntl
+
     LOCKFILE_CURRENT_INTERFACE = LOCKFILE_INTERFACE_FCNTL
 except ImportError:
     try:
         import msvcrt
+
         LOCKFILE_CURRENT_INTERFACE = LOCKFILE_INTERFACE_MSVCRT
     except ImportError:
         LOCKFILE_CURRENT_INTERFACE = None
@@ -40,7 +42,6 @@ class LockFileExists(Exception):
 
 
 class LockFile(object):
-
     def __init__(self, path, timeout=LOCKFILE_TIMEOUT, delay=LOCKFILE_DELAY):
         self.timeout = timeout
         self.delay = delay

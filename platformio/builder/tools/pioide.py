@@ -25,11 +25,11 @@ from platformio.managers.core import get_core_package_dir
 from platformio.proc import exec_command, where_is_program
 
 
-def _dump_includes(env, projenv):
+def _dump_includes(env):
     includes = []
 
-    for item in projenv.get("CPPPATH", []):
-        includes.append(projenv.subst(item))
+    for item in env.get("CPPPATH", []):
+        includes.append(env.subst(item))
 
     # installed libs
     for lb in env.GetLibBuilders():
@@ -45,7 +45,7 @@ def _dump_includes(env, projenv):
             join(toolchain_dir, "*", "include*"),
             join(toolchain_dir, "*", "include", "c++", "*"),
             join(toolchain_dir, "*", "include", "c++", "*", "*-*-*"),
-            join(toolchain_dir, "lib", "gcc", "*", "*", "include*")
+            join(toolchain_dir, "lib", "gcc", "*", "*", "include*"),
         ]
         for g in toolchain_incglobs:
             includes.extend(glob(g))
@@ -54,9 +54,7 @@ def _dump_includes(env, projenv):
     if unity_dir:
         includes.append(unity_dir)
 
-    includes.extend(
-        [env.subst("$PROJECTINCLUDE_DIR"),
-         env.subst("$PROJECTSRC_DIR")])
+    includes.extend([env.subst("$PROJECT_INCLUDE_DIR"), env.subst("$PROJECT_SRC_DIR")])
 
     # remove duplicates
     result = []
@@ -71,15 +69,15 @@ def _get_gcc_defines(env):
     items = []
     try:
         sysenv = environ.copy()
-        sysenv['PATH'] = str(env['ENV']['PATH'])
-        result = exec_command("echo | %s -dM -E -" % env.subst("$CC"),
-                              env=sysenv,
-                              shell=True)
+        sysenv["PATH"] = str(env["ENV"]["PATH"])
+        result = exec_command(
+            "echo | %s -dM -E -" % env.subst("$CC"), env=sysenv, shell=True
+        )
     except OSError:
         return items
-    if result['returncode'] != 0:
+    if result["returncode"] != 0:
         return items
-    for line in result['out'].split("\n"):
+    for line in result["out"].split("\n"):
         tokens = line.strip().split(" ", 2)
         if not tokens or tokens[0] != "#define":
             continue
@@ -94,17 +92,22 @@ def _dump_defines(env):
     defines = []
     # global symbols
     for item in processDefines(env.get("CPPDEFINES", [])):
-        defines.append(env.subst(item).replace('\\', ''))
+        defines.append(env.subst(item).replace("\\", ""))
 
     # special symbol for Atmel AVR MCU
-    if env['PIOPLATFORM'] == "atmelavr":
+    if env["PIOPLATFORM"] == "atmelavr":
         board_mcu = env.get("BOARD_MCU")
         if not board_mcu and "BOARD" in env:
             board_mcu = env.BoardConfig().get("build.mcu")
         if board_mcu:
             defines.append(
-                str("__AVR_%s__" % board_mcu.upper().replace(
-                    "ATMEGA", "ATmega").replace("ATTINY", "ATtiny")))
+                str(
+                    "__AVR_%s__"
+                    % board_mcu.upper()
+                    .replace("ATMEGA", "ATmega")
+                    .replace("ATTINY", "ATtiny")
+                )
+            )
 
     # built-in GCC marcos
     # if env.GetCompilerType() == "gcc":
@@ -135,38 +138,27 @@ def _get_svd_path(env):
     return None
 
 
-def DumpIDEData(env, projenv):
+def DumpIDEData(env):
     LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS"
     LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS"
 
     data = {
-        "env_name":
-        env['PIOENV'],
+        "env_name": env["PIOENV"],
         "libsource_dirs": [env.subst(l) for l in env.GetLibSourceDirs()],
-        "defines":
-        _dump_defines(env),
-        "includes":
-        _dump_includes(env, projenv),
-        "cc_flags":
-        env.subst(LINTCCOM),
-        "cxx_flags":
-        env.subst(LINTCXXCOM),
-        "cc_path":
-        where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
-        "cxx_path":
-        where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
-        "gdb_path":
-        where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
-        "prog_path":
-        env.subst("$PROG_PATH"),
-        "flash_extra_images": [{
-            "offset": item[0],
-            "path": env.subst(item[1])
-        } for item in env.get("FLASH_EXTRA_IMAGES", [])],
-        "svd_path":
-        _get_svd_path(env),
-        "compiler_type":
-        env.GetCompilerType()
+        "defines": _dump_defines(env),
+        "includes": _dump_includes(env),
+        "cc_flags": env.subst(LINTCCOM),
+        "cxx_flags": env.subst(LINTCXXCOM),
+        "cc_path": where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
+        "cxx_path": where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
+        "gdb_path": where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
+        "prog_path": env.subst("$PROG_PATH"),
+        "flash_extra_images": [
+            {"offset": item[0], "path": env.subst(item[1])}
+            for item in env.get("FLASH_EXTRA_IMAGES", [])
+        ],
+        "svd_path": _get_svd_path(env),
+        "compiler_type": env.GetCompilerType(),
     }
 
     env_ = env.Clone()
@@ -180,10 +172,7 @@ def DumpIDEData(env, projenv):
             _new_defines.append(item)
     env_.Replace(CPPDEFINES=_new_defines)
 
-    data.update({
-        "cc_flags": env_.subst(LINTCCOM),
-        "cxx_flags": env_.subst(LINTCXXCOM)
-    })
+    data.update({"cc_flags": env_.subst(LINTCCOM), "cxx_flags": env_.subst(LINTCXXCOM)})
 
     return data
 

@@ -19,30 +19,29 @@ import glob
 import os
 import shutil
 from functools import cmp_to_key
-from os.path import expanduser, isdir, isfile, join
+from os.path import isdir, isfile, join
 
 import click
 from twisted.internet import defer  # pylint: disable=import-error
 
-from platformio import app, util
+from platformio import app, fs, util
 from platformio.commands.home import helpers
 from platformio.compat import PY2, get_filesystem_encoding
 
 
 class OSRPC(object):
-
     @staticmethod
     @defer.inlineCallbacks
     def fetch_content(uri, data=None, headers=None, cache_valid=None):
         if not headers:
             headers = {
-                "User-Agent":
-                ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) "
-                 "AppleWebKit/603.3.8 (KHTML, like Gecko) Version/10.1.2 "
-                 "Safari/603.3.8")
+                "User-Agent": (
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) "
+                    "AppleWebKit/603.3.8 (KHTML, like Gecko) Version/10.1.2 "
+                    "Safari/603.3.8"
+                )
             }
-        cache_key = (app.ContentCache.key_from_args(uri, data)
-                     if cache_valid else None)
+        cache_key = app.ContentCache.key_from_args(uri, data) if cache_valid else None
         with app.ContentCache() as cc:
             if cache_key:
                 result = cc.get(cache_key)
@@ -66,7 +65,7 @@ class OSRPC(object):
         defer.returnValue(result)
 
     def request_content(self, uri, data=None, headers=None, cache_valid=None):
-        if uri.startswith('http'):
+        if uri.startswith("http"):
             return self.fetch_content(uri, data, headers, cache_valid)
         if not isfile(uri):
             return None
@@ -80,8 +79,12 @@ class OSRPC(object):
     @staticmethod
     def reveal_file(path):
         return click.launch(
-            path.encode(get_filesystem_encoding()) if PY2 else path,
-            locate=True)
+            path.encode(get_filesystem_encoding()) if PY2 else path, locate=True
+        )
+
+    @staticmethod
+    def open_file(path):
+        return click.launch(path.encode(get_filesystem_encoding()) if PY2 else path)
 
     @staticmethod
     def is_file(path):
@@ -109,13 +112,11 @@ class OSRPC(object):
             pathnames = [pathnames]
         result = set()
         for pathname in pathnames:
-            result |= set(
-                glob.glob(join(root, pathname) if root else pathname))
+            result |= set(glob.glob(join(root, pathname) if root else pathname))
         return list(result)
 
     @staticmethod
     def list_dir(path):
-
         def _cmp(x, y):
             if x[1] and not y[1]:
                 return -1
@@ -129,7 +130,7 @@ class OSRPC(object):
 
         items = []
         if path.startswith("~"):
-            path = expanduser(path)
+            path = fs.expanduser(path)
         if not isdir(path):
             return items
         for item in os.listdir(path):
@@ -146,7 +147,7 @@ class OSRPC(object):
     def get_logical_devices():
         items = []
         for item in util.get_logical_devices():
-            if item['name']:
-                item['name'] = item['name']
+            if item["name"]:
+                item["name"] = item["name"]
             items.append(item)
         return items

@@ -22,18 +22,19 @@ from platformio.managers.core import update_core_packages
 from platformio.managers.lib import LibraryManager
 
 
-@click.command("update",
-               short_help="Update installed platforms, packages and libraries")
-@click.option("--core-packages",
-              is_flag=True,
-              help="Update only the core packages")
-@click.option("-c",
-              "--only-check",
-              is_flag=True,
-              help="DEPRECATED. Please use `--dry-run` instead")
-@click.option("--dry-run",
-              is_flag=True,
-              help="Do not update, only check for the new versions")
+@click.command(
+    "update", short_help="Update installed platforms, packages and libraries"
+)
+@click.option("--core-packages", is_flag=True, help="Update only the core packages")
+@click.option(
+    "-c",
+    "--only-check",
+    is_flag=True,
+    help="DEPRECATED. Please use `--dry-run` instead",
+)
+@click.option(
+    "--dry-run", is_flag=True, help="Do not update, only check for the new versions"
+)
 @click.pass_context
 def cli(ctx, core_packages, only_check, dry_run):
     # cleanup lib search results, cached board and platform lists

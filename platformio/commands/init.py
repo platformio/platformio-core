@@ -20,16 +20,11 @@ from os.path import isdir, isfile, join
 import click
 
 from platformio import exception, fs
-from platformio.commands.platform import \
-    platform_install as cli_platform_install
+from platformio.commands.platform import platform_install as cli_platform_install
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (get_project_include_dir,
-                                        get_project_lib_dir,
-                                        get_project_src_dir,
-                                        get_project_test_dir,
-                                        is_platformio_project)
+from platformio.project.helpers import is_platformio_project
 
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
@@ -40,66 +35,66 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
         except exception.UnknownBoard:
             raise click.BadParameter(
                 "`%s`. Please search for board ID using `platformio boards` "
-                "command" % id_)
+                "command" % id_
+            )
     return value
 
 
-@click.command("init",
-               short_help="Initialize PlatformIO project or update existing")
-@click.option("--project-dir",
-              "-d",
-              default=getcwd,
-              type=click.Path(exists=True,
-                              file_okay=False,
-                              dir_okay=True,
-                              writable=True,
-                              resolve_path=True))
-@click.option("-b",
-              "--board",
-              multiple=True,
-              metavar="ID",
-              callback=validate_boards)
-@click.option("--ide",
-              type=click.Choice(ProjectGenerator.get_supported_ides()))
+@click.command("init", short_help="Initialize PlatformIO project or update existing")
+@click.option(
+    "--project-dir",
+    "-d",
+    default=getcwd,
+    type=click.Path(
+        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
+    ),
+)
+@click.option("-b", "--board", multiple=True, metavar="ID", callback=validate_boards)
+@click.option("--ide", type=click.Choice(ProjectGenerator.get_supported_ides()))
 @click.option("-O", "--project-option", multiple=True)
 @click.option("--env-prefix", default="")
 @click.option("-s", "--silent", is_flag=True)
 @click.pass_context
 def cli(
-        ctx,  # pylint: disable=R0913
-        project_dir,
-        board,
-        ide,
-        project_option,
-        env_prefix,
-        silent):
+    ctx,  # pylint: disable=R0913
+    project_dir,
+    board,
+    ide,
+    project_option,
+    env_prefix,
+    silent,
+):
     if not silent:
         if project_dir == getcwd():
-            click.secho("\nThe current working directory",
-                        fg="yellow",
-                        nl=False)
+            click.secho("\nThe current working directory", fg="yellow", nl=False)
             click.secho(" %s " % project_dir, fg="cyan", nl=False)
             click.secho("will be used for the project.", fg="yellow")
             click.echo("")
 
-        click.echo("The next files/directories have been created in %s" %
-                   click.style(project_dir, fg="cyan"))
-        click.echo("%s - Put project header files here" %
-                   click.style("include", fg="cyan"))
-        click.echo("%s - Put here project specific (private) libraries" %
-                   click.style("lib", fg="cyan"))
-        click.echo("%s - Put project source files here" %
-                   click.style("src", fg="cyan"))
-        click.echo("%s - Project Configuration File" %
-                   click.style("platformio.ini", fg="cyan"))
+        click.echo(
+            "The next files/directories have been created in %s"
+            % click.style(project_dir, fg="cyan")
+        )
+        click.echo(
+            "%s - Put project header files here" % click.style("include", fg="cyan")
+        )
+        click.echo(
+            "%s - Put here project specific (private) libraries"
+            % click.style("lib", fg="cyan")
+        )
+        click.echo("%s - Put project source files here" % click.style("src", fg="cyan"))
+        click.echo(
+            "%s - Project Configuration File" % click.style("platformio.ini", fg="cyan")
+        )
 
     is_new_project = not is_platformio_project(project_dir)
     if is_new_project:
         init_base_project(project_dir)
 
     if board:
-        fill_project_envs(ctx, project_dir, board, project_option, env_prefix,
-                          ide is not None)
+        fill_project_envs(
+            ctx, project_dir, board, project_option, env_prefix, ide is not None
+        )
 
     if ide:
         pg = ProjectGenerator(project_dir, ide, board)
@@ -115,9 +110,9 @@ def cli(
     if ide:
         click.secho(
             "\nProject has been successfully %s including configuration files "
-            "for `%s` IDE." %
-            ("initialized" if is_new_project else "updated", ide),
-            fg="green")
+            "for `%s` IDE." % ("initialized" if is_new_project else "updated", ide),
+            fg="green",
+        )
     else:
         click.secho(
             "\nProject has been successfully %s! Useful commands:\n"
@@ -125,19 +120,21 @@ def cli(
             "`pio run --target upload` or `pio run -t upload` "
             "- upload firmware to a target\n"
             "`pio run --target clean` - clean project (remove compiled files)"
-            "\n`pio run --help` - additional information" %
-            ("initialized" if is_new_project else "updated"),
-            fg="green")
+            "\n`pio run --help` - additional information"
+            % ("initialized" if is_new_project else "updated"),
+            fg="green",
+        )
 
 
 def init_base_project(project_dir):
-    ProjectConfig(join(project_dir, "platformio.ini")).save()
     with fs.cd(project_dir):
+        config = ProjectConfig()
+        config.save()
         dir_to_readme = [
-            (get_project_src_dir(), None),
-            (get_project_include_dir(), init_include_readme),
-            (get_project_lib_dir(), init_lib_readme),
-            (get_project_test_dir(), init_test_readme),
+            (config.get_optional_dir("src"), None),
+            (config.get_optional_dir("include"), init_include_readme),
+            (config.get_optional_dir("lib"), init_lib_readme),
+            (config.get_optional_dir("test"), init_test_readme),
         ]
         for (path, cb) in dir_to_readme:
             if isdir(path):
@@ -148,8 +145,9 @@ def init_base_project(project_dir):
 
 
 def init_include_readme(include_dir):
-    with open(join(include_dir, "README"), "w") as f:
-        f.write("""
+    fs.write_file_contents(
+        join(include_dir, "README"),
+        """
 This directory is intended for project header files.
 
 A header file is a file containing C declarations and macro definitions
@@ -188,12 +186,15 @@ Read more about using header files in official GCC documentation:
 * Computed Includes
 
 https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
-""")
+""",
+    )
 
 
 def init_lib_readme(lib_dir):
-    with open(join(lib_dir, "README"), "w") as f:
-        f.write("""
+    # pylint: disable=line-too-long
+    fs.write_file_contents(
+        join(lib_dir, "README"),
+        """
 This directory is intended for project specific (private) libraries.
 PlatformIO will compile them to static libraries and link into executable file.
 
@@ -239,12 +240,14 @@ libraries scanning project source files.
 
 More information about PlatformIO Library Dependency Finder
 - https://docs.platformio.org/page/librarymanager/ldf.html
-""")
+""",
+    )
 
 
 def init_test_readme(test_dir):
-    with open(join(test_dir, "README"), "w") as f:
-        f.write("""
+    fs.write_file_contents(
+        join(test_dir, "README"),
+        """
 This directory is intended for PIO Unit Testing and project tests.
 
 Unit Testing is a software testing method by which individual units of
@@ -255,15 +258,17 @@ in the development cycle.
 
 More information about PIO Unit Testing:
 - https://docs.platformio.org/page/plus/unit-testing.html
-""")
+""",
+    )
 
 
 def init_ci_conf(project_dir):
     conf_path = join(project_dir, ".travis.yml")
     if isfile(conf_path):
         return
-    with open(conf_path, "w") as f:
-        f.write("""# Continuous Integration (CI) is the practice, in software
+    fs.write_file_contents(
+        conf_path,
+        """# Continuous Integration (CI) is the practice, in software
 # engineering, of merging all developer working copies with a shared mainline
 # several times a day < https://docs.platformio.org/page/ci/index.html >
 #
@@ -330,27 +335,24 @@ def init_ci_conf(project_dir):
 #
 # script:
 #     - platformio ci --lib="." --board=ID_1 --board=ID_2 --board=ID_N
-""")
+""",
+    )
 
 
 def init_cvs_ignore(project_dir):
     conf_path = join(project_dir, ".gitignore")
     if isfile(conf_path):
         return
-    with open(conf_path, "w") as fp:
-        fp.write(".pio\n")
+    fs.write_file_contents(conf_path, ".pio\n")
 
 
-def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
-                      force_download):
-    config = ProjectConfig(join(project_dir, "platformio.ini"),
-                           parse_extra=False)
+def fill_project_envs(
+    ctx, project_dir, board_ids, project_option, env_prefix, force_download
+):
+    config = ProjectConfig(join(project_dir, "platformio.ini"), parse_extra=False)
     used_boards = []
     for section in config.sections():
-        cond = [
-            section.startswith("env:"),
-            config.has_option(section, "board")
-        ]
+        cond = [section.startswith("env:"), config.has_option(section, "board")]
         if all(cond):
             used_boards.append(config.get(section, "board"))
 
@@ -359,17 +361,17 @@ def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
     modified = False
     for id_ in board_ids:
         board_config = pm.board_config(id_)
-        used_platforms.append(board_config['platform'])
+        used_platforms.append(board_config["platform"])
         if id_ in used_boards:
             continue
         used_boards.append(id_)
         modified = True
 
-        envopts = {"platform": board_config['platform'], "board": id_}
+        envopts = {"platform": board_config["platform"], "board": id_}
         # find default framework for board
         frameworks = board_config.get("frameworks")
         if frameworks:
-            envopts['framework'] = frameworks[0]
+            envopts["framework"] = frameworks[0]
 
         for item in project_option:
             if "=" not in item:
@@ -391,10 +393,9 @@ def fill_project_envs(ctx, project_dir, board_ids, project_option, env_prefix,
 
 
 def _install_dependent_platforms(ctx, platforms):
-    installed_platforms = [
-        p['name'] for p in PlatformManager().get_installed()
-    ]
+    installed_platforms = [p["name"] for p in PlatformManager().get_installed()]
     if set(platforms) <= set(installed_platforms):
         return
-    ctx.invoke(cli_platform_install,
-               platforms=list(set(platforms) - set(installed_platforms)))
+    ctx.invoke(
+        cli_platform_install, platforms=list(set(platforms) - set(installed_platforms))
+    )

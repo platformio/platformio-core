@@ -14,11 +14,12 @@
 
 from __future__ import absolute_import
 
+import fnmatch
 import os
 import sys
-from os.path import basename, dirname, isdir, join, realpath
 
 from SCons import Builder, Util  # pylint: disable=import-error
+from SCons.Node import FS  # pylint: disable=import-error
 from SCons.Script import COMMAND_LINE_TARGETS  # pylint: disable=import-error
 from SCons.Script import AlwaysBuild  # pylint: disable=import-error
 from SCons.Script import DefaultEnvironment  # pylint: disable=import-error
@@ -54,7 +55,8 @@ def _build_project_deps(env):
             key: project_lib_builder.env.get(key)
             for key in ("LIBS", "LIBPATH", "LINKFLAGS")
             if project_lib_builder.env.get(key)
-        })
+        }
+    )
 
     projenv = env.Clone()
 
@@ -65,27 +67,34 @@ def _build_project_deps(env):
 
     is_test = "__test" in COMMAND_LINE_TARGETS
     if is_test:
-        projenv.BuildSources("$BUILDTEST_DIR", "$PROJECTTEST_DIR",
-                             "$PIOTEST_SRC_FILTER")
-    if not is_test or env.GetProjectOption("test_build_project_src", False):
-        projenv.BuildSources("$BUILDSRC_DIR", "$PROJECTSRC_DIR",
-                             env.get("SRC_FILTER"))
+        projenv.BuildSources(
+            "$BUILD_TEST_DIR", "$PROJECT_TEST_DIR", "$PIOTEST_SRC_FILTER"
+        )
+    if not is_test or env.GetProjectOption("test_build_project_src"):
+        projenv.BuildSources(
+            "$BUILD_SRC_DIR", "$PROJECT_SRC_DIR", env.get("SRC_FILTER")
+        )
 
     if not env.get("PIOBUILDFILES") and not COMMAND_LINE_TARGETS:
         sys.stderr.write(
             "Error: Nothing to build. Please put your source code files "
-            "to '%s' folder\n" % env.subst("$PROJECTSRC_DIR"))
+            "to '%s' folder\n" % env.subst("$PROJECT_SRC_DIR")
+        )
         env.Exit(1)
 
     Export("projenv")
 
 
 def BuildProgram(env):
-
     def _append_pio_macros():
-        env.AppendUnique(CPPDEFINES=[(
-            "PLATFORMIO",
-            int("{0:02d}{1:02d}{2:02d}".format(*pioversion_to_intstr())))])
+        env.AppendUnique(
+            CPPDEFINES=[
+                (
+                    "PLATFORMIO",
+                    int("{0:02d}{1:02d}{2:02d}".format(*pioversion_to_intstr())),
+                )
+            ]
+        )
 
     _append_pio_macros()
 
@@ -94,10 +103,6 @@ def BuildProgram(env):
     # fix ASM handling under non case-sensitive OS
     if not Util.case_sensitive_suffixes(".s", ".S"):
         env.Replace(AS="$CC", ASCOM="$ASPPCOM")
-
-    if ("debug" in COMMAND_LINE_TARGETS
-            or env.GetProjectOption("build_type") == "debug"):
-        env.ProcessDebug()
 
     # process extra flags from board
     if "BOARD" in env and "build.extra_flags" in env.BoardConfig():
@@ -109,37 +114,45 @@ def BuildProgram(env):
     # process framework scripts
     env.BuildFrameworks(env.get("PIOFRAMEWORK"))
 
-    # restore PIO macros if it was deleted by framework
-    _append_pio_macros()
+    is_build_type_debug = (
+        set(["debug", "sizedata"]) & set(COMMAND_LINE_TARGETS)
+        or env.GetProjectOption("build_type") == "debug"
+    )
+    if is_build_type_debug:
+        env.ConfigureDebugFlags()
 
     # remove specified flags
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
 
     if "__test" in COMMAND_LINE_TARGETS:
-        env.ProcessTest()
-
-    # build project with dependencies
-    _build_project_deps(env)
+        env.ConfigureTestTarget()
 
     # append into the beginning a main LD script
-    if (env.get("LDSCRIPT_PATH")
-            and not any("-Wl,-T" in f for f in env['LINKFLAGS'])):
-        env.Prepend(LINKFLAGS=["-T", "$LDSCRIPT_PATH"])
+    if env.get("LDSCRIPT_PATH") and not any("-Wl,-T" in f for f in env["LINKFLAGS"]):
+        env.Prepend(LINKFLAGS=["-T", env.subst("$LDSCRIPT_PATH")])
 
     # enable "cyclic reference" for linker
     if env.get("LIBS") and env.GetCompilerType() == "gcc":
         env.Prepend(_LIBFLAGS="-Wl,--start-group ")
         env.Append(_LIBFLAGS=" -Wl,--end-group")
 
-    program = env.Program(join("$BUILD_DIR", env.subst("$PROGNAME")),
-                          env['PIOBUILDFILES'])
+    # build project with dependencies
+    _build_project_deps(env)
+
+    program = env.Program(
+        os.path.join("$BUILD_DIR", env.subst("$PROGNAME")), env["PIOBUILDFILES"]
+    )
     env.Replace(PIOMAINPROG=program)
 
     AlwaysBuild(
         env.Alias(
-            "checkprogsize", program,
-            env.VerboseAction(env.CheckUploadSize,
-                              "Checking size $PIOMAINPROG")))
+            "checkprogsize",
+            program,
+            env.VerboseAction(env.CheckUploadSize, "Checking size $PIOMAINPROG"),
+        )
+    )
+
+    print("Building in %s mode" % ("debug" if is_build_type_debug else "release"))
 
     return program
 
@@ -155,30 +168,30 @@ def ParseFlagsExtended(env, flags):  # pylint: disable=too-many-branches
             result[key].extend(value)
 
     cppdefines = []
-    for item in result['CPPDEFINES']:
+    for item in result["CPPDEFINES"]:
         if not Util.is_Sequence(item):
             cppdefines.append(item)
             continue
         name, value = item[:2]
-        if '\"' in value:
-            value = value.replace('\"', '\\\"')
+        if '"' in value:
+            value = value.replace('"', '\\"')
         elif value.isdigit():
             value = int(value)
         elif value.replace(".", "", 1).isdigit():
             value = float(value)
         cppdefines.append((name, value))
-    result['CPPDEFINES'] = cppdefines
+    result["CPPDEFINES"] = cppdefines
 
     # fix relative CPPPATH & LIBPATH
     for k in ("CPPPATH", "LIBPATH"):
         for i, p in enumerate(result.get(k, [])):
-            if isdir(p):
-                result[k][i] = realpath(p)
+            if os.path.isdir(p):
+                result[k][i] = os.path.realpath(p)
 
     # fix relative path for "-include"
     for i, f in enumerate(result.get("CCFLAGS", [])):
         if isinstance(f, tuple) and f[0] == "-include":
-            result['CCFLAGS'][i] = (f[0], env.File(realpath(f[1].get_path())))
+            result["CCFLAGS"][i] = (f[0], env.File(os.path.realpath(f[1].get_path())))
 
     return result
 
@@ -191,14 +204,15 @@ def ProcessFlags(env, flags):  # pylint: disable=too-many-branches
     # Cancel any previous definition of name, either built in or
     # provided with a -U option // Issue #191
     undefines = [
-        u for u in env.get("CCFLAGS", [])
+        u
+        for u in env.get("CCFLAGS", [])
         if isinstance(u, string_types) and u.startswith("-U")
     ]
     if undefines:
         for undef in undefines:
-            env['CCFLAGS'].remove(undef)
-            if undef[2:] in env['CPPDEFINES']:
-                env['CPPDEFINES'].remove(undef[2:])
+            env["CCFLAGS"].remove(undef)
+            if undef[2:] in env["CPPDEFINES"]:
+                env["CPPDEFINES"].remove(undef[2:])
         env.Append(_CPPDEFFLAGS=" %s" % " ".join(undefines))
 
 
@@ -221,8 +235,7 @@ def ProcessUnFlags(env, flags):
             for current in env.get(key, []):
                 conditions = [
                     unflag == current,
-                    isinstance(current, (tuple, list))
-                    and unflag[0] == current[0]
+                    isinstance(current, (tuple, list)) and unflag[0] == current[0],
                 ]
                 if any(conditions):
                     env[key].remove(current)
@@ -231,15 +244,14 @@ def ProcessUnFlags(env, flags):
 def MatchSourceFiles(env, src_dir, src_filter=None):
     src_filter = env.subst(src_filter) if src_filter else None
     src_filter = src_filter or SRC_FILTER_DEFAULT
-    return fs.match_src_files(env.subst(src_dir), src_filter,
-                              SRC_BUILD_EXT + SRC_HEADER_EXT)
+    return fs.match_src_files(
+        env.subst(src_dir), src_filter, SRC_BUILD_EXT + SRC_HEADER_EXT
+    )
 
 
-def CollectBuildFiles(env,
-                      variant_dir,
-                      src_dir,
-                      src_filter=None,
-                      duplicate=False):
+def CollectBuildFiles(
+    env, variant_dir, src_dir, src_filter=None, duplicate=False
+):  # pylint: disable=too-many-locals
     sources = []
     variants = []
 
@@ -248,18 +260,33 @@ def CollectBuildFiles(env,
         src_dir = src_dir[:-1]
 
     for item in env.MatchSourceFiles(src_dir, src_filter):
-        _reldir = dirname(item)
-        _src_dir = join(src_dir, _reldir) if _reldir else src_dir
-        _var_dir = join(variant_dir, _reldir) if _reldir else variant_dir
+        _reldir = os.path.dirname(item)
+        _src_dir = os.path.join(src_dir, _reldir) if _reldir else src_dir
+        _var_dir = os.path.join(variant_dir, _reldir) if _reldir else variant_dir
 
         if _var_dir not in variants:
             variants.append(_var_dir)
             env.VariantDir(_var_dir, _src_dir, duplicate)
 
         if fs.path_endswith_ext(item, SRC_BUILD_EXT):
-            sources.append(env.File(join(_var_dir, basename(item))))
+            sources.append(env.File(os.path.join(_var_dir, os.path.basename(item))))
+
+    for callback, pattern in env.get("__PIO_BUILD_MIDDLEWARES", []):
+        tmp = []
+        for node in sources:
+            if pattern and not fnmatch.fnmatch(node.get_path(), pattern):
+                tmp.append(node)
+                continue
+            n = callback(node)
+            if n:
+                tmp.append(n)
+        sources = tmp
 
     return sources
+
+
+def AddBuildMiddleware(env, callback, pattern=None):
+    env.Append(__PIO_BUILD_MIDDLEWARES=[(callback, pattern)])
 
 
 def BuildFrameworks(env, frameworks):
@@ -267,8 +294,10 @@ def BuildFrameworks(env, frameworks):
         return
 
     if "BOARD" not in env:
-        sys.stderr.write("Please specify `board` in `platformio.ini` to use "
-                         "with '%s' framework\n" % ", ".join(frameworks))
+        sys.stderr.write(
+            "Please specify `board` in `platformio.ini` to use "
+            "with '%s' framework\n" % ", ".join(frameworks)
+        )
         env.Exit(1)
 
     board_frameworks = env.BoardConfig().get("frameworks", [])
@@ -276,8 +305,7 @@ def BuildFrameworks(env, frameworks):
         if board_frameworks:
             frameworks.insert(0, board_frameworks[0])
         else:
-            sys.stderr.write(
-                "Error: Please specify `board` in `platformio.ini`\n")
+            sys.stderr.write("Error: Please specify `board` in `platformio.ini`\n")
             env.Exit(1)
 
     for f in frameworks:
@@ -290,22 +318,24 @@ def BuildFrameworks(env, frameworks):
         if f in board_frameworks:
             SConscript(env.GetFrameworkScript(f), exports="env")
         else:
-            sys.stderr.write(
-                "Error: This board doesn't support %s framework!\n" % f)
+            sys.stderr.write("Error: This board doesn't support %s framework!\n" % f)
             env.Exit(1)
 
 
 def BuildLibrary(env, variant_dir, src_dir, src_filter=None):
     env.ProcessUnFlags(env.get("BUILD_UNFLAGS"))
     return env.StaticLibrary(
-        env.subst(variant_dir),
-        env.CollectBuildFiles(variant_dir, src_dir, src_filter))
+        env.subst(variant_dir), env.CollectBuildFiles(variant_dir, src_dir, src_filter)
+    )
 
 
 def BuildSources(env, variant_dir, src_dir, src_filter=None):
     nodes = env.CollectBuildFiles(variant_dir, src_dir, src_filter)
     DefaultEnvironment().Append(
-        PIOBUILDFILES=[env.Object(node) for node in nodes])
+        PIOBUILDFILES=[
+            env.Object(node) if isinstance(node, FS.File) else node for node in nodes
+        ]
+    )
 
 
 def exists(_):
@@ -319,6 +349,7 @@ def generate(env):
     env.AddMethod(ProcessUnFlags)
     env.AddMethod(MatchSourceFiles)
     env.AddMethod(CollectBuildFiles)
+    env.AddMethod(AddBuildMiddleware)
     env.AddMethod(BuildFrameworks)
     env.AddMethod(BuildLibrary)
     env.AddMethod(BuildSources)

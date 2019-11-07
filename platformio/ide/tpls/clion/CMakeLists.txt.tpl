@@ -6,7 +6,7 @@
 # The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
 
 cmake_minimum_required(VERSION 3.2)
-project({{project_name}})
+project("{{project_name}}")
 
 include(CMakeListsPrivate.txt)
 
@@ -63,6 +63,12 @@ add_custom_target(
 )
 
 add_custom_target(
+    PLATFORMIO_BUILD_DEBUG ALL
+    COMMAND ${PLATFORMIO_CMD} -f -c clion run --target debug "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_custom_target(
     PLATFORMIO_UPDATE_ALL ALL
     COMMAND ${PLATFORMIO_CMD} -f -c clion update
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -80,4 +86,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(${PROJECT_NAME} ${SRC_LIST})
+add_executable(Z_DUMMY_TARGET ${SRC_LIST})

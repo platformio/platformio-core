@@ -16,11 +16,12 @@ import glob
 import json
 import os
 import re
-from os.path import expanduser, getmtime, isfile
+from hashlib import sha1
 
 import click
 
-from platformio import exception
+from platformio import exception, fs
+from platformio.compat import PY2, WINDOWS, hashlib_encode_data
 from platformio.project.options import ProjectOptions
 
 try:
@@ -41,7 +42,7 @@ CONFIG_HEADER = """;PlatformIO Project Configuration File
 """
 
 
-class ProjectConfig(object):
+class ProjectConfigBase(object):
 
     INLINE_COMMENT_RE = re.compile(r"\s+;.*$")
     VARTPL_RE = re.compile(r"\$\{([^\.\}]+)\.([^\}]+)\}")
@@ -49,7 +50,6 @@ class ProjectConfig(object):
     expand_interpolations = True
     warnings = []
 
-    _instances = {}
     _parser = None
     _parsed = []
 
@@ -66,29 +66,33 @@ class ProjectConfig(object):
             if not item or item.startswith((";", "#")):
                 continue
             if ";" in item:
-                item = ProjectConfig.INLINE_COMMENT_RE.sub("", item).strip()
+                item = ProjectConfigBase.INLINE_COMMENT_RE.sub("", item).strip()
             result.append(item)
         return result
 
     @staticmethod
-    def get_instance(path):
-        mtime = getmtime(path) if isfile(path) else 0
-        instance = ProjectConfig._instances.get(path)
-        if instance and instance["mtime"] != mtime:
-            instance = None
-        if not instance:
-            instance = {"mtime": mtime, "config": ProjectConfig(path)}
-            ProjectConfig._instances[path] = instance
-        return instance["config"]
+    def get_default_path():
+        from platformio import app  # pylint: disable=import-outside-toplevel
 
-    def __init__(self, path, parse_extra=True, expand_interpolations=True):
+        return app.get_session_var("custom_project_conf") or os.path.join(
+            os.getcwd(), "platformio.ini"
+        )
+
+    def __init__(self, path=None, parse_extra=True, expand_interpolations=True):
+        path = self.get_default_path() if path is None else path
         self.path = path
         self.expand_interpolations = expand_interpolations
         self.warnings = []
         self._parsed = []
-        self._parser = ConfigParser.ConfigParser()
-        if isfile(path):
+        self._parser = (
+            ConfigParser.ConfigParser()
+            if PY2
+            else ConfigParser.ConfigParser(inline_comment_prefixes=("#", ";"))
+        )
+        if path and os.path.isfile(path):
             self.read(path, parse_extra)
+
+        self._maintain_renaimed_options()
 
     def __getattr__(self, name):
         return getattr(self._parser, name)
@@ -108,31 +112,32 @@ class ProjectConfig(object):
         # load extra configs
         for pattern in self.get("platformio", "extra_configs", []):
             if pattern.startswith("~"):
-                pattern = expanduser(pattern)
+                pattern = fs.expanduser(pattern)
             for item in glob.glob(pattern):
                 self.read(item)
 
-        self._maintain_renaimed_options()
-
     def _maintain_renaimed_options(self):
         # legacy `lib_extra_dirs` in [platformio]
-        if (self._parser.has_section("platformio")
-                and self._parser.has_option("platformio", "lib_extra_dirs")):
+        if self._parser.has_section("platformio") and self._parser.has_option(
+            "platformio", "lib_extra_dirs"
+        ):
             if not self._parser.has_section("env"):
                 self._parser.add_section("env")
-            self._parser.set("env", "lib_extra_dirs",
-                             self._parser.get("platformio", "lib_extra_dirs"))
+            self._parser.set(
+                "env",
+                "lib_extra_dirs",
+                self._parser.get("platformio", "lib_extra_dirs"),
+            )
             self._parser.remove_option("platformio", "lib_extra_dirs")
             self.warnings.append(
                 "`lib_extra_dirs` configuration option is deprecated in "
-                "section [platformio]! Please move it to global `env` section")
+                "section [platformio]! Please move it to global `env` section"
+            )
 
         renamed_options = {}
         for option in ProjectOptions.values():
             if option.oldnames:
-                renamed_options.update(
-                    {name: option.name
-                     for name in option.oldnames})
+                renamed_options.update({name: option.name for name in option.oldnames})
 
         for section in self._parser.sections():
             scope = section.split(":", 1)[0]
@@ -143,54 +148,74 @@ class ProjectConfig(object):
                     self.warnings.append(
                         "`%s` configuration option in section [%s] is "
                         "deprecated and will be removed in the next release! "
-                        "Please use `%s` instead" %
-                        (option, section, renamed_options[option]))
+                        "Please use `%s` instead"
+                        % (option, section, renamed_options[option])
+                    )
                     # rename on-the-fly
-                    self._parser.set(section, renamed_options[option],
-                                     self._parser.get(section, option))
+                    self._parser.set(
+                        section,
+                        renamed_options[option],
+                        self._parser.get(section, option),
+                    )
                     self._parser.remove_option(section, option)
                     continue
 
                 # unknown
                 unknown_conditions = [
                     ("%s.%s" % (scope, option)) not in ProjectOptions,
-                    scope != "env" or
-                    not option.startswith(("custom_", "board_"))
-                ]  # yapf: disable
+                    scope != "env" or not option.startswith(("custom_", "board_")),
+                ]
                 if all(unknown_conditions):
                     self.warnings.append(
                         "Ignore unknown configuration option `%s` "
-                        "in section [%s]" % (option, section))
+                        "in section [%s]" % (option, section)
+                    )
         return True
 
+    def walk_options(self, root_section):
+        extends_queue = (
+            ["env", root_section] if root_section.startswith("env:") else [root_section]
+        )
+        extends_done = []
+        while extends_queue:
+            section = extends_queue.pop()
+            extends_done.append(section)
+            if not self._parser.has_section(section):
+                continue
+            for option in self._parser.options(section):
+                yield (section, option)
+            if self._parser.has_option(section, "extends"):
+                extends_queue.extend(
+                    self.parse_multi_values(self._parser.get(section, "extends"))[::-1]
+                )
+
     def options(self, section=None, env=None):
+        result = []
         assert section or env
         if not section:
             section = "env:" + env
-        options = self._parser.options(section)
 
-        # handle global options from [env]
-        if ((env or section.startswith("env:"))
-                and self._parser.has_section("env")):
-            for option in self._parser.options("env"):
-                if option not in options:
-                    options.append(option)
+        if not self.expand_interpolations:
+            return self._parser.options(section)
+
+        for _, option in self.walk_options(section):
+            if option not in result:
+                result.append(option)
 
         # handle system environment variables
         scope = section.split(":", 1)[0]
         for option_meta in ProjectOptions.values():
-            if option_meta.scope != scope or option_meta.name in options:
+            if option_meta.scope != scope or option_meta.name in result:
                 continue
             if option_meta.sysenvvar and option_meta.sysenvvar in os.environ:
-                options.append(option_meta.name)
+                result.append(option_meta.name)
 
-        return options
+        return result
 
     def has_option(self, section, option):
         if self._parser.has_option(section, option):
             return True
-        return (section.startswith("env:") and self._parser.has_section("env")
-                and self._parser.has_option("env", option))
+        return option in self.options(section)
 
     def items(self, section=None, env=None, as_dict=False):
         assert section or env
@@ -198,29 +223,36 @@ class ProjectConfig(object):
             section = "env:" + env
         if as_dict:
             return {
-                option: self.get(section, option)
-                for option in self.options(section)
+                option: self.get(section, option) for option in self.options(section)
             }
-        return [(option, self.get(section, option))
-                for option in self.options(section)]
+        return [(option, self.get(section, option)) for option in self.options(section)]
 
     def set(self, section, option, value):
         if isinstance(value, (list, tuple)):
             value = "\n".join(value)
-            if value:
-                value = "\n" + value  # start from a new line
+        elif isinstance(value, bool):
+            value = "yes" if value else "no"
+        elif isinstance(value, (int, float)):
+            value = str(value)
+        # start multi-line value from a new line
+        if "\n" in value and not value.startswith("\n"):
+            value = "\n" + value
         self._parser.set(section, option, value)
 
     def getraw(self, section, option):
         if not self.expand_interpolations:
             return self._parser.get(section, option)
 
-        try:
+        value = None
+        found = False
+        for sec, opt in self.walk_options(section):
+            if opt == option:
+                value = self._parser.get(sec, option)
+                found = True
+                break
+
+        if not found:
             value = self._parser.get(section, option)
-        except ConfigParser.NoOptionError as e:
-            if not section.startswith("env:"):
-                raise e
-            value = self._parser.get("env", option)
 
         if "${" not in value or "}" not in value:
             return value
@@ -232,7 +264,7 @@ class ProjectConfig(object):
             return os.getenv(option)
         return self.getraw(section, option)
 
-    def get(self, section, option, default=None):
+    def get(self, section, option, default=None):  # pylint: disable=too-many-branches
         value = None
         try:
             value = self.getraw(section, option)
@@ -241,8 +273,7 @@ class ProjectConfig(object):
         except ConfigParser.Error as e:
             raise exception.InvalidProjectConf(self.path, str(e))
 
-        option_meta = ProjectOptions.get("%s.%s" %
-                                         (section.split(":", 1)[0], option))
+        option_meta = ProjectOptions.get("%s.%s" % (section.split(":", 1)[0], option))
         if not option_meta:
             return value or default
 
@@ -263,17 +294,20 @@ class ProjectConfig(object):
                 value = envvar_value
 
         # option is not specified by user
-        if value is None:
-            return default
+        if value is None or (
+            option_meta.multiple and value == [] and option_meta.default
+        ):
+            return default if default is not None else option_meta.default
 
         try:
-            return self._covert_value(value, option_meta.type)
+            return self.cast_to(value, option_meta.type)
         except click.BadParameter as e:
-            raise exception.ProjectOptionValueError(e.format_message(), option,
-                                                    section)
+            if not self.expand_interpolations:
+                return value
+            raise exception.ProjectOptionValueError(e.format_message(), option, section)
 
     @staticmethod
-    def _covert_value(value, to_type):
+    def cast_to(value, to_type):
         items = value
         if not isinstance(value, (list, tuple)):
             items = [value]
@@ -290,7 +324,7 @@ class ProjectConfig(object):
         return self.get("platformio", "default_envs", [])
 
     def validate(self, envs=None, silent=False):
-        if not isfile(self.path):
+        if not os.path.isfile(self.path):
             raise exception.NotPlatformIOProject(self.path)
         # check envs
         known = set(self.envs())
@@ -298,18 +332,114 @@ class ProjectConfig(object):
             raise exception.ProjectEnvsNotAvailable()
         unknown = set(list(envs or []) + self.default_envs()) - known
         if unknown:
-            raise exception.UnknownEnvNames(", ".join(unknown),
-                                            ", ".join(known))
+            raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
         if not silent:
             for warning in self.warnings:
                 click.secho("Warning! %s" % warning, fg="yellow")
         return True
 
+
+class ProjectConfigDirsMixin(object):
+    def _get_core_dir(self, exists=False):
+        default = ProjectOptions["platformio.core_dir"].default
+        core_dir = self.get("platformio", "core_dir")
+        win_core_dir = None
+        if WINDOWS and core_dir == default:
+            win_core_dir = os.path.splitdrive(core_dir)[0] + "\\.platformio"
+            if os.path.isdir(win_core_dir):
+                core_dir = win_core_dir
+
+        if exists and not os.path.isdir(core_dir):
+            try:
+                os.makedirs(core_dir)
+            except OSError as e:
+                if win_core_dir:
+                    os.makedirs(win_core_dir)
+                    core_dir = win_core_dir
+                else:
+                    raise e
+
+        return core_dir
+
+    def get_optional_dir(self, name, exists=False):
+        if not ProjectOptions.get("platformio.%s_dir" % name):
+            raise ValueError("Unknown optional directory -> " + name)
+
+        if name == "core":
+            result = self._get_core_dir(exists)
+        else:
+            result = self.get("platformio", name + "_dir")
+
+        if result is None:
+            return None
+
+        project_dir = os.getcwd()
+
+        # patterns
+        if "$PROJECT_HASH" in result:
+            result = result.replace(
+                "$PROJECT_HASH",
+                "%s-%s"
+                % (
+                    os.path.basename(project_dir),
+                    sha1(hashlib_encode_data(project_dir)).hexdigest()[:10],
+                ),
+            )
+
+        if "$PROJECT_DIR" in result:
+            result = result.replace("$PROJECT_DIR", project_dir)
+        if "$PROJECT_CORE_DIR" in result:
+            result = result.replace("$PROJECT_CORE_DIR", self.get_optional_dir("core"))
+        if "$PROJECT_WORKSPACE_DIR" in result:
+            result = result.replace(
+                "$PROJECT_WORKSPACE_DIR", self.get_optional_dir("workspace")
+            )
+
+        if result.startswith("~"):
+            result = fs.expanduser(result)
+
+        result = os.path.realpath(result)
+
+        if exists and not os.path.isdir(result):
+            os.makedirs(result)
+
+        return result
+
+
+class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
+
+    _instances = {}
+
+    @staticmethod
+    def get_instance(path=None):
+        path = ProjectConfig.get_default_path() if path is None else path
+        mtime = os.path.getmtime(path) if os.path.isfile(path) else 0
+        instance = ProjectConfig._instances.get(path)
+        if instance and instance["mtime"] != mtime:
+            instance = None
+        if not instance:
+            instance = {"mtime": mtime, "config": ProjectConfig(path)}
+            ProjectConfig._instances[path] = instance
+        return instance["config"]
+
+    def __repr__(self):
+        return "<ProjectConfig %s>" % (self.path or "in-memory")
+
+    def as_tuple(self):
+        return [(s, self.items(s)) for s in self.sections()]
+
     def to_json(self):
-        result = {}
-        for section in self.sections():
-            result[section] = self.items(section, as_dict=True)
-        return json.dumps(result)
+        return json.dumps(self.as_tuple())
+
+    def update(self, data, clear=False):
+        assert isinstance(data, list)
+        if clear:
+            self._parser = ConfigParser.ConfigParser()
+        for section, options in data:
+            if not self._parser.has_section(section):
+                self._parser.add_section(section)
+            for option, value in options:
+                self.set(section, option, value)
 
     def save(self, path=None):
         path = path or self.path
@@ -318,3 +448,4 @@ class ProjectConfig(object):
         with open(path or self.path, "w") as fp:
             fp.write(CONFIG_HEADER)
             self._parser.write(fp)
+        return True

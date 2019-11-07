@@ -18,22 +18,25 @@ from platformio.project.config import ProjectConfig, ProjectOptions
 
 
 def GetProjectConfig(env):
-    return ProjectConfig.get_instance(env['PROJECT_CONFIG'])
+    return ProjectConfig.get_instance(env["PROJECT_CONFIG"])
 
 
 def GetProjectOptions(env, as_dict=False):
-    return env.GetProjectConfig().items(env=env['PIOENV'], as_dict=as_dict)
+    return env.GetProjectConfig().items(env=env["PIOENV"], as_dict=as_dict)
 
 
 def GetProjectOption(env, option, default=None):
-    return env.GetProjectConfig().get("env:" + env['PIOENV'], option, default)
+    return env.GetProjectConfig().get("env:" + env["PIOENV"], option, default)
 
 
 def LoadProjectOptions(env):
     for option, value in env.GetProjectOptions():
         option_meta = ProjectOptions.get("env." + option)
-        if (not option_meta or not option_meta.buildenvvar
-                or option_meta.buildenvvar in env):
+        if (
+            not option_meta
+            or not option_meta.buildenvvar
+            or option_meta.buildenvvar in env
+        ):
             continue
         env[option_meta.buildenvvar] = value
 

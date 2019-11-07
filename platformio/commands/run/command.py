@@ -14,21 +14,19 @@
 
 from multiprocessing import cpu_count
 from os import getcwd
-from os.path import isfile, join
+from os.path import isfile
 from time import time
 
 import click
 from tabulate import tabulate
 
-from platformio import exception, fs, util
+from platformio import app, exception, fs, util
 from platformio.commands.device import device_monitor as cmd_device_monitor
-from platformio.commands.run.helpers import (clean_build_dir,
-                                             handle_legacy_libdeps)
+from platformio.commands.run.helpers import clean_build_dir, handle_legacy_libdeps
 from platformio.commands.run.processor import EnvironmentProcessor
 from platformio.commands.test.processor import CTX_META_TEST_IS_RUNNING
 from platformio.project.config import ProjectConfig
-from platformio.project.helpers import (find_project_dir_above,
-                                        get_project_build_dir)
+from platformio.project.helpers import find_project_dir_above
 
 # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
 
@@ -42,34 +40,49 @@ except NotImplementedError:
 @click.option("-e", "--environment", multiple=True)
 @click.option("-t", "--target", multiple=True)
 @click.option("--upload-port")
-@click.option("-d",
-              "--project-dir",
-              default=getcwd,
-              type=click.Path(exists=True,
-                              file_okay=True,
-                              dir_okay=True,
-                              writable=True,
-                              resolve_path=True))
-@click.option("-c",
-              "--project-conf",
-              type=click.Path(exists=True,
-                              file_okay=True,
-                              dir_okay=False,
-                              readable=True,
-                              resolve_path=True))
-@click.option("-j",
-              "--jobs",
-              type=int,
-              default=DEFAULT_JOB_NUMS,
-              help=("Allow N jobs at once. "
-                    "Default is a number of CPUs in a system (N=%d)" %
-                    DEFAULT_JOB_NUMS))
+@click.option(
+    "-d",
+    "--project-dir",
+    default=getcwd,
+    type=click.Path(
+        exists=True, file_okay=True, dir_okay=True, writable=True, resolve_path=True
+    ),
+)
+@click.option(
+    "-c",
+    "--project-conf",
+    type=click.Path(
+        exists=True, file_okay=True, dir_okay=False, readable=True, resolve_path=True
+    ),
+)
+@click.option(
+    "-j",
+    "--jobs",
+    type=int,
+    default=DEFAULT_JOB_NUMS,
+    help=(
+        "Allow N jobs at once. "
+        "Default is a number of CPUs in a system (N=%d)" % DEFAULT_JOB_NUMS
+    ),
+)
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("--disable-auto-clean", is_flag=True)
 @click.pass_context
-def cli(ctx, environment, target, upload_port, project_dir, project_conf, jobs,
-        silent, verbose, disable_auto_clean):
+def cli(
+    ctx,
+    environment,
+    target,
+    upload_port,
+    project_dir,
+    project_conf,
+    jobs,
+    silent,
+    verbose,
+    disable_auto_clean,
+):
+    app.set_session_var("custom_project_conf", project_conf)
+
     # find project directory on upper level
     if isfile(project_dir):
         project_dir = find_project_dir_above(project_dir)
@@ -77,47 +90,58 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf, jobs,
     is_test_running = CTX_META_TEST_IS_RUNNING in ctx.meta
 
     with fs.cd(project_dir):
-        config = ProjectConfig.get_instance(
-            project_conf or join(project_dir, "platformio.ini"))
+        config = ProjectConfig.get_instance(project_conf)
         config.validate(environment)
 
         # clean obsolete build dir
         if not disable_auto_clean:
+            build_dir = config.get_optional_dir("build")
             try:
-                clean_build_dir(get_project_build_dir(), config)
+                clean_build_dir(build_dir, config)
             except:  # pylint: disable=bare-except
                 click.secho(
                     "Can not remove temporary directory `%s`. Please remove "
-                    "it manually to avoid build issues" %
-                    get_project_build_dir(force=True),
-                    fg="yellow")
+                    "it manually to avoid build issues" % build_dir,
+                    fg="yellow",
+                )
 
         handle_legacy_libdeps(project_dir, config)
 
         default_envs = config.default_envs()
         results = []
         for env in config.envs():
-            skipenv = any([
-                environment and env not in environment, not environment
-                and default_envs and env not in default_envs
-            ])
+            skipenv = any(
+                [
+                    environment and env not in environment,
+                    not environment and default_envs and env not in default_envs,
+                ]
+            )
             if skipenv:
                 results.append({"env": env})
                 continue
 
             # print empty line between multi environment project
-            if not silent and any(
-                    r.get("succeeded") is not None for r in results):
+            if not silent and any(r.get("succeeded") is not None for r in results):
                 click.echo()
 
             results.append(
-                process_env(ctx, env, config, environment, target, upload_port,
-                            silent, verbose, jobs, is_test_running))
+                process_env(
+                    ctx,
+                    env,
+                    config,
+                    environment,
+                    target,
+                    upload_port,
+                    silent,
+                    verbose,
+                    jobs,
+                    is_test_running,
+                )
+            )
 
         command_failed = any(r.get("succeeded") is False for r in results)
 
-        if (not is_test_running and (command_failed or not silent)
-                and len(results) > 1):
+        if not is_test_running and (command_failed or not silent) and len(results) > 1:
             print_processing_summary(results)
 
         if command_failed:
@@ -125,24 +149,39 @@ def cli(ctx, environment, target, upload_port, project_dir, project_conf, jobs,
         return True
 
 
-def process_env(ctx, name, config, environments, targets, upload_port, silent,
-                verbose, jobs, is_test_running):
+def process_env(
+    ctx,
+    name,
+    config,
+    environments,
+    targets,
+    upload_port,
+    silent,
+    verbose,
+    jobs,
+    is_test_running,
+):
     if not is_test_running and not silent:
         print_processing_header(name, config, verbose)
 
-    ep = EnvironmentProcessor(ctx, name, config, targets, upload_port, silent,
-                              verbose, jobs)
+    ep = EnvironmentProcessor(
+        ctx, name, config, targets, upload_port, silent, verbose, jobs
+    )
     result = {"env": name, "duration": time(), "succeeded": ep.process()}
-    result['duration'] = time() - result['duration']
+    result["duration"] = time() - result["duration"]
 
     # print footer on error or when is not unit testing
-    if not is_test_running and (not silent or not result['succeeded']):
+    if not is_test_running and (not silent or not result["succeeded"]):
         print_processing_footer(result)
 
-    if (result['succeeded'] and "monitor" in ep.get_build_targets()
-            and "nobuild" not in ep.get_build_targets()):
-        ctx.invoke(cmd_device_monitor,
-                   environment=environments[0] if environments else None)
+    if (
+        result["succeeded"]
+        and "monitor" in ep.get_build_targets()
+        and "nobuild" not in ep.get_build_targets()
+    ):
+        ctx.invoke(
+            cmd_device_monitor, environment=environments[0] if environments else None
+        )
 
     return result
 
@@ -151,10 +190,11 @@ def print_processing_header(env, config, verbose=False):
     env_dump = []
     for k, v in config.items(env=env):
         if verbose or k in ("platform", "framework", "board"):
-            env_dump.append("%s: %s" %
-                            (k, ", ".join(v) if isinstance(v, list) else v))
-    click.echo("Processing %s (%s)" %
-               (click.style(env, fg="cyan", bold=True), "; ".join(env_dump)))
+            env_dump.append("%s: %s" % (k, ", ".join(v) if isinstance(v, list) else v))
+    click.echo(
+        "Processing %s (%s)"
+        % (click.style(env, fg="cyan", bold=True), "; ".join(env_dump))
+    )
     terminal_width, _ = click.get_terminal_size()
     click.secho("-" * terminal_width, bold=True)
 
@@ -162,10 +202,17 @@ def print_processing_header(env, config, verbose=False):
 def print_processing_footer(result):
     is_failed = not result.get("succeeded")
     util.print_labeled_bar(
-        "[%s] Took %.2f seconds" %
-        ((click.style("FAILED", fg="red", bold=True) if is_failed else
-          click.style("SUCCESS", fg="green", bold=True)), result['duration']),
-        is_error=is_failed)
+        "[%s] Took %.2f seconds"
+        % (
+            (
+                click.style("FAILED", fg="red", bold=True)
+                if is_failed
+                else click.style("SUCCESS", fg="green", bold=True)
+            ),
+            result["duration"],
+        ),
+        is_error=is_failed,
+    )
 
 
 def print_processing_summary(results):
@@ -186,20 +233,31 @@ def print_processing_summary(results):
             status_str = click.style("SUCCESS", fg="green")
 
         tabular_data.append(
-            (click.style(result['env'], fg="cyan"), status_str,
-             util.humanize_duration_time(result.get("duration"))))
+            (
+                click.style(result["env"], fg="cyan"),
+                status_str,
+                util.humanize_duration_time(result.get("duration")),
+            )
+        )
 
     click.echo()
-    click.echo(tabulate(tabular_data,
-                        headers=[
-                            click.style(s, bold=True)
-                            for s in ("Environment", "Status", "Duration")
-                        ]),
-               err=failed_nums)
+    click.echo(
+        tabulate(
+            tabular_data,
+            headers=[
+                click.style(s, bold=True) for s in ("Environment", "Status", "Duration")
+            ],
+        ),
+        err=failed_nums,
+    )
 
     util.print_labeled_bar(
-        "%s%d succeeded in %s" %
-        ("%d failed, " % failed_nums if failed_nums else "", succeeded_nums,
-         util.humanize_duration_time(duration)),
+        "%s%d succeeded in %s"
+        % (
+            "%d failed, " % failed_nums if failed_nums else "",
+            succeeded_nums,
+            util.humanize_duration_time(duration),
+        ),
         is_error=failed_nums,
-        fg="red" if failed_nums else "green")
+        fg="red" if failed_nums else "green",
+    )

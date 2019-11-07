@@ -19,27 +19,29 @@ from zipfile import ZipFile
 import click
 import requests
 
-from platformio import VERSION, __version__, exception, util
+from platformio import VERSION, __version__, app, exception, util
 from platformio.compat import WINDOWS
 from platformio.proc import exec_command, get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir
 
 
-@click.command("upgrade",
-               short_help="Upgrade PlatformIO to the latest version")
+@click.command("upgrade", short_help="Upgrade PlatformIO to the latest version")
 @click.option("--dev", is_flag=True, help="Use development branch")
 def cli(dev):
     if not dev and __version__ == get_latest_version():
         return click.secho(
             "You're up-to-date!\nPlatformIO %s is currently the "
             "newest version available." % __version__,
-            fg="green")
+            fg="green",
+        )
 
     click.secho("Please wait while upgrading PlatformIO ...", fg="yellow")
 
     to_develop = dev or not all(c.isdigit() for c in __version__ if c != ".")
-    cmds = (["pip", "install", "--upgrade",
-             get_pip_package(to_develop)], ["platformio", "--version"])
+    cmds = (
+        ["pip", "install", "--upgrade", get_pip_package(to_develop)],
+        ["platformio", "--version"],
+    )
 
     cmd = None
     r = {}
@@ -49,26 +51,30 @@ def cli(dev):
             r = exec_command(cmd)
 
             # try pip with disabled cache
-            if r['returncode'] != 0 and cmd[2] == "pip":
+            if r["returncode"] != 0 and cmd[2] == "pip":
                 cmd.insert(3, "--no-cache-dir")
                 r = exec_command(cmd)
 
-            assert r['returncode'] == 0
-        assert "version" in r['out']
-        actual_version = r['out'].strip().split("version", 1)[1].strip()
-        click.secho("PlatformIO has been successfully upgraded to %s" %
-                    actual_version,
-                    fg="green")
+            assert r["returncode"] == 0
+        assert "version" in r["out"]
+        actual_version = r["out"].strip().split("version", 1)[1].strip()
+        click.secho(
+            "PlatformIO has been successfully upgraded to %s" % actual_version,
+            fg="green",
+        )
         click.echo("Release notes: ", nl=False)
-        click.secho("https://docs.platformio.org/en/latest/history.html",
-                    fg="cyan")
+        click.secho("https://docs.platformio.org/en/latest/history.html", fg="cyan")
+        if app.get_session_var("caller_id"):
+            click.secho(
+                "Warning! Please restart IDE to affect PIO Home changes", fg="yellow"
+            )
     except Exception as e:  # pylint: disable=broad-except
         if not r:
             raise exception.UpgradeError("\n".join([str(cmd), str(e)]))
         permission_errors = ("permission denied", "not permitted")
-        if (any(m in r['err'].lower() for m in permission_errors)
-                and not WINDOWS):
-            click.secho("""
+        if any(m in r["err"].lower() for m in permission_errors) and not WINDOWS:
+            click.secho(
+                """
 -----------------
 Permission denied
 -----------------
@@ -78,10 +84,11 @@ You need the `sudo` permission to install Python packages. Try
 
 WARNING! Don't use `sudo` for the rest PlatformIO commands.
 """,
-                        fg="yellow",
-                        err=True)
+                fg="yellow",
+                err=True,
+            )
             raise exception.ReturnErrorCode(1)
-        raise exception.UpgradeError("\n".join([str(cmd), r['out'], r['err']]))
+        raise exception.UpgradeError("\n".join([str(cmd), r["out"], r["err"]]))
 
     return True
 
@@ -89,18 +96,17 @@ WARNING! Don't use `sudo` for the rest PlatformIO commands.
 def get_pip_package(to_develop):
     if not to_develop:
         return "platformio"
-    dl_url = ("https://github.com/platformio/"
-              "platformio-core/archive/develop.zip")
+    dl_url = "https://github.com/platformio/platformio-core/archive/develop.zip"
     cache_dir = get_project_cache_dir()
     if not os.path.isdir(cache_dir):
         os.makedirs(cache_dir)
     pkg_name = os.path.join(cache_dir, "piocoredevelop.zip")
     try:
         with open(pkg_name, "w") as fp:
-            r = exec_command(["curl", "-fsSL", dl_url],
-                             stdout=fp,
-                             universal_newlines=True)
-            assert r['returncode'] == 0
+            r = exec_command(
+                ["curl", "-fsSL", dl_url], stdout=fp, universal_newlines=True
+            )
+            assert r["returncode"] == 0
         # check ZIP structure
         with ZipFile(pkg_name) as zp:
             assert zp.testzip() is None
@@ -127,7 +133,8 @@ def get_develop_latest_version():
     r = requests.get(
         "https://raw.githubusercontent.com/platformio/platformio"
         "/develop/platformio/__init__.py",
-        headers=util.get_request_defheaders())
+        headers=util.get_request_defheaders(),
+    )
     r.raise_for_status()
     for line in r.text.split("\n"):
         line = line.strip()
@@ -145,7 +152,8 @@ def get_develop_latest_version():
 
 
 def get_pypi_latest_version():
-    r = requests.get("https://pypi.org/pypi/platformio/json",
-                     headers=util.get_request_defheaders())
+    r = requests.get(
+        "https://pypi.org/pypi/platformio/json", headers=util.get_request_defheaders()
+    )
     r.raise_for_status()
-    return r.json()['info']['version']
+    return r.json()["info"]["version"]

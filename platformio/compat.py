@@ -12,24 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=unused-import
+# pylint: disable=unused-import, no-name-in-module, import-error,
+# pylint: disable=no-member, undefined-variable
 
+import inspect
 import json
+import locale
 import os
 import re
 import sys
 
 PY2 = sys.version_info[0] == 2
-CYGWIN = sys.platform.startswith('cygwin')
-WINDOWS = sys.platform.startswith('win')
+CYGWIN = sys.platform.startswith("cygwin")
+WINDOWS = sys.platform.startswith("win")
 
 
 def get_filesystem_encoding():
     return sys.getfilesystemencoding() or sys.getdefaultencoding()
 
 
+def get_locale_encoding():
+    return locale.getdefaultlocale()[1]
+
+
+def get_class_attributes(cls):
+    attributes = inspect.getmembers(cls, lambda a: not (inspect.isroutine(a)))
+    return {
+        a[0]: a[1]
+        for a in attributes
+        if not (a[0].startswith("__") and a[0].endswith("__"))
+    }
+
+
 if PY2:
-    # pylint: disable=undefined-variable
+    import imp
+
     string_types = (str, unicode)
 
     def is_bytes(x):
@@ -39,10 +56,6 @@ if PY2:
         if isinstance(path, unicode):
             return path
         return path.decode(get_filesystem_encoding()).encode("utf-8")
-
-    def get_file_contents(path):
-        with open(path) as f:
-            return f.read()
 
     def hashlib_encode_data(data):
         if is_bytes(data):
@@ -56,13 +69,12 @@ if PY2:
     def dump_json_to_unicode(obj):
         if isinstance(obj, unicode):
             return obj
-        return json.dumps(obj,
-                          encoding=get_filesystem_encoding(),
-                          ensure_ascii=False,
-                          sort_keys=True).encode("utf8")
+        return json.dumps(
+            obj, encoding=get_filesystem_encoding(), ensure_ascii=False, sort_keys=True
+        ).encode("utf8")
 
-    _magic_check = re.compile('([*?[])')
-    _magic_check_bytes = re.compile(b'([*?[])')
+    _magic_check = re.compile("([*?[])")
+    _magic_check_bytes = re.compile(b"([*?[])")
 
     def glob_escape(pathname):
         """Escape all special characters."""
@@ -72,28 +84,26 @@ if PY2:
         # escaped.
         drive, pathname = os.path.splitdrive(pathname)
         if isinstance(pathname, bytes):
-            pathname = _magic_check_bytes.sub(br'[\1]', pathname)
+            pathname = _magic_check_bytes.sub(br"[\1]", pathname)
         else:
-            pathname = _magic_check.sub(r'[\1]', pathname)
+            pathname = _magic_check.sub(r"[\1]", pathname)
         return drive + pathname
-else:
-    from glob import escape as glob_escape  # pylint: disable=no-name-in-module
 
-    string_types = (str, )
+    def load_python_module(name, pathname):
+        return imp.load_source(name, pathname)
+
+
+else:
+    import importlib.util
+    from glob import escape as glob_escape
+
+    string_types = (str,)
 
     def is_bytes(x):
         return isinstance(x, (bytes, memoryview, bytearray))
 
     def path_to_unicode(path):
         return path
-
-    def get_file_contents(path):
-        try:
-            with open(path) as f:
-                return f.read()
-        except UnicodeDecodeError:
-            with open(path, encoding="latin-1") as f:
-                return f.read()
 
     def hashlib_encode_data(data):
         if is_bytes(data):
@@ -106,3 +116,9 @@ else:
         if isinstance(obj, string_types):
             return obj
         return json.dumps(obj, ensure_ascii=False, sort_keys=True)
+
+    def load_python_module(name, pathname):
+        spec = importlib.util.spec_from_file_location(name, pathname)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module

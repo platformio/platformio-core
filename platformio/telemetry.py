@@ -38,7 +38,6 @@ except ImportError:
 
 
 class TelemetryBase(object):
-
     def __init__(self):
         self._params = {}
 
@@ -64,17 +63,17 @@ class MeasurementProtocol(TelemetryBase):
         "event_category": "ec",
         "event_action": "ea",
         "event_label": "el",
-        "event_value": "ev"
+        "event_value": "ev",
     }
 
     def __init__(self):
         super(MeasurementProtocol, self).__init__()
-        self['v'] = 1
-        self['tid'] = self.TID
-        self['cid'] = app.get_cid()
+        self["v"] = 1
+        self["tid"] = self.TID
+        self["cid"] = app.get_cid()
 
         try:
-            self['sr'] = "%dx%d" % click.get_terminal_size()
+            self["sr"] = "%dx%d" % click.get_terminal_size()
         except ValueError:
             pass
 
@@ -93,7 +92,7 @@ class MeasurementProtocol(TelemetryBase):
         super(MeasurementProtocol, self).__setitem__(name, value)
 
     def _prefill_appinfo(self):
-        self['av'] = __version__
+        self["av"] = __version__
 
         # gather dependent packages
         dpdata = []
@@ -102,10 +101,9 @@ class MeasurementProtocol(TelemetryBase):
             dpdata.append("Caller/%s" % app.get_session_var("caller_id"))
         if getenv("PLATFORMIO_IDE"):
             dpdata.append("IDE/%s" % getenv("PLATFORMIO_IDE"))
-        self['an'] = " ".join(dpdata)
+        self["an"] = " ".join(dpdata)
 
     def _prefill_custom_data(self):
-
         def _filter_args(items):
             result = []
             stop = False
@@ -119,17 +117,16 @@ class MeasurementProtocol(TelemetryBase):
             return result
 
         caller_id = str(app.get_session_var("caller_id"))
-        self['cd1'] = util.get_systype()
-        self['cd2'] = "Python/%s %s" % (platform.python_version(),
-                                        platform.platform())
+        self["cd1"] = util.get_systype()
+        self["cd2"] = "Python/%s %s" % (platform.python_version(), platform.platform())
         # self['cd3'] = " ".join(_filter_args(sys.argv[1:]))
-        self['cd4'] = 1 if (not util.is_ci() and
-                            (caller_id or not is_container())) else 0
+        self["cd4"] = (
+            1 if (not util.is_ci() and (caller_id or not is_container())) else 0
+        )
         if caller_id:
-            self['cd5'] = caller_id.lower()
+            self["cd5"] = caller_id.lower()
 
     def _prefill_screen_name(self):
-
         def _first_arg_from_list(args_, list_):
             for _arg in args_:
                 if _arg in list_:
@@ -146,12 +143,27 @@ class MeasurementProtocol(TelemetryBase):
             return
 
         cmd_path = args[:1]
-        if args[0] in ("platform", "platforms", "serialports", "device",
-                       "settings", "account"):
+        if args[0] in (
+            "platform",
+            "platforms",
+            "serialports",
+            "device",
+            "settings",
+            "account",
+        ):
             cmd_path = args[:2]
         if args[0] == "lib" and len(args) > 1:
-            lib_subcmds = ("builtin", "install", "list", "register", "search",
-                           "show", "stats", "uninstall", "update")
+            lib_subcmds = (
+                "builtin",
+                "install",
+                "list",
+                "register",
+                "search",
+                "show",
+                "stats",
+                "uninstall",
+                "update",
+            )
             sub_cmd = _first_arg_from_list(args[1:], lib_subcmds)
             if sub_cmd:
                 cmd_path.append(sub_cmd)
@@ -165,24 +177,25 @@ class MeasurementProtocol(TelemetryBase):
                     sub_cmd = _first_arg_from_list(args[2:], remote2_subcmds)
                     if sub_cmd:
                         cmd_path.append(sub_cmd)
-        self['screen_name'] = " ".join([p.title() for p in cmd_path])
+        self["screen_name"] = " ".join([p.title() for p in cmd_path])
 
     @staticmethod
     def _ignore_hit():
         if not app.get_setting("enable_telemetry"):
             return True
-        if app.get_session_var("caller_id") and \
-                all(c in sys.argv for c in ("run", "idedata")):
+        if app.get_session_var("caller_id") and all(
+            c in sys.argv for c in ("run", "idedata")
+        ):
             return True
         return False
 
     def send(self, hittype):
         if self._ignore_hit():
             return
-        self['t'] = hittype
+        self["t"] = hittype
         # correct queue time
-        if "qt" in self._params and isinstance(self['qt'], float):
-            self['qt'] = int((time() - self['qt']) * 1000)
+        if "qt" in self._params and isinstance(self["qt"], float):
+            self["qt"] = int((time() - self["qt"]) * 1000)
         MPDataPusher().push(self._params)
 
 
@@ -202,7 +215,7 @@ class MPDataPusher(object):
         # if network is off-line
         if self._http_offline:
             if "qt" not in item:
-                item['qt'] = time()
+                item["qt"] = time()
             self._failedque.append(item)
             return
 
@@ -243,7 +256,7 @@ class MPDataPusher(object):
                 item = self._queue.get()
                 _item = item.copy()
                 if "qt" not in _item:
-                    _item['qt'] = time()
+                    _item["qt"] = time()
                 self._failedque.append(_item)
                 if self._send_data(item):
                     self._failedque.remove(_item)
@@ -259,7 +272,8 @@ class MPDataPusher(object):
                 "https://ssl.google-analytics.com/collect",
                 data=data,
                 headers=util.get_request_defheaders(),
-                timeout=1)
+                timeout=1,
+            )
             r.raise_for_status()
             return True
         except requests.exceptions.HTTPError as e:
@@ -284,11 +298,10 @@ def on_command():
 
 def measure_ci():
     event = {"category": "CI", "action": "NoName", "label": None}
-    known_cis = ("TRAVIS", "APPVEYOR", "GITLAB_CI", "CIRCLECI", "SHIPPABLE",
-                 "DRONE")
+    known_cis = ("TRAVIS", "APPVEYOR", "GITLAB_CI", "CIRCLECI", "SHIPPABLE", "DRONE")
     for name in known_cis:
         if getenv(name, "false").lower() == "true":
-            event['action'] = name
+            event["action"] = name
             break
     on_event(**event)
 
@@ -307,32 +320,37 @@ def on_run_environment(options, targets):
 
 def on_event(category, action, label=None, value=None, screen_name=None):
     mp = MeasurementProtocol()
-    mp['event_category'] = category[:150]
-    mp['event_action'] = action[:500]
+    mp["event_category"] = category[:150]
+    mp["event_action"] = action[:500]
     if label:
-        mp['event_label'] = label[:500]
+        mp["event_label"] = label[:500]
     if value:
-        mp['event_value'] = int(value)
+        mp["event_value"] = int(value)
     if screen_name:
-        mp['screen_name'] = screen_name[:2048]
+        mp["screen_name"] = screen_name[:2048]
     mp.send("event")
 
 
 def on_exception(e):
-
     def _cleanup_description(text):
         text = text.replace("Traceback (most recent call last):", "")
-        text = re.sub(r'File "([^"]+)"',
-                      lambda m: join(*m.group(1).split(sep)[-2:]),
-                      text,
-                      flags=re.M)
+        text = re.sub(
+            r'File "([^"]+)"',
+            lambda m: join(*m.group(1).split(sep)[-2:]),
+            text,
+            flags=re.M,
+        )
         text = re.sub(r"\s+", " ", text, flags=re.M)
         return text.strip()
 
     skip_conditions = [
-        isinstance(e, cls) for cls in (IOError, exception.ReturnErrorCode,
-                                       exception.UserSideException,
-                                       exception.PlatformIOProjectException)
+        isinstance(e, cls)
+        for cls in (
+            IOError,
+            exception.ReturnErrorCode,
+            exception.UserSideException,
+            exception.PlatformIOProjectException,
+        )
     ]
     try:
         skip_conditions.append("[API] Account: " in str(e))
@@ -340,14 +358,16 @@ def on_exception(e):
         e = ue
     if any(skip_conditions):
         return
-    is_crash = any([
-        not isinstance(e, exception.PlatformioException),
-        "Error" in e.__class__.__name__
-    ])
+    is_crash = any(
+        [
+            not isinstance(e, exception.PlatformioException),
+            "Error" in e.__class__.__name__,
+        ]
+    )
     mp = MeasurementProtocol()
     description = _cleanup_description(format_exc() if is_crash else str(e))
-    mp['exd'] = ("%s: %s" % (type(e).__name__, description))[:2048]
-    mp['exf'] = 1 if is_crash else 0
+    mp["exd"] = ("%s: %s" % (type(e).__name__, description))[:2048]
+    mp["exf"] = 1 if is_crash else 0
     mp.send("exception")
 
 
@@ -373,7 +393,7 @@ def backup_reports(items):
     KEEP_MAX_REPORTS = 100
     tm = app.get_state_item("telemetry", {})
     if "backup" not in tm:
-        tm['backup'] = []
+        tm["backup"] = []
 
     for params in items:
         # skip static options
@@ -383,28 +403,28 @@ def backup_reports(items):
 
         # store time in UNIX format
         if "qt" not in params:
-            params['qt'] = time()
-        elif not isinstance(params['qt'], float):
-            params['qt'] = time() - (params['qt'] / 1000)
+            params["qt"] = time()
+        elif not isinstance(params["qt"], float):
+            params["qt"] = time() - (params["qt"] / 1000)
 
-        tm['backup'].append(params)
+        tm["backup"].append(params)
 
-    tm['backup'] = tm['backup'][KEEP_MAX_REPORTS * -1:]
+    tm["backup"] = tm["backup"][KEEP_MAX_REPORTS * -1 :]
     app.set_state_item("telemetry", tm)
 
 
 def resend_backuped_reports():
     tm = app.get_state_item("telemetry", {})
-    if "backup" not in tm or not tm['backup']:
+    if "backup" not in tm or not tm["backup"]:
         return False
 
-    for report in tm['backup']:
+    for report in tm["backup"]:
         mp = MeasurementProtocol()
         for key, value in report.items():
             mp[key] = value
-        mp.send(report['t'])
+        mp.send(report["t"])
 
     # clean
-    tm['backup'] = []
+    tm["backup"] = []
     app.set_state_item("telemetry", tm)
     return True

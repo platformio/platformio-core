@@ -13,15 +13,21 @@
 # limitations under the License.
 
 import os
-import urlparse
 from os.path import dirname, isdir, isfile, join, realpath
 from sys import exit as sys_exit
 from sys import path
 
 path.append("..")
 
+import click
+
 from platformio import fs, util
 from platformio.managers.platform import PlatformFactory, PlatformManager
+
+try:
+    from urlparse import ParseResult, urlparse, urlunparse
+except ImportError:
+    from urllib.parse import ParseResult, urlparse, urlunparse
 
 RST_COPYRIGHT = """..  Copyright (c) 2014-present PlatformIO <contact@platformio.org>
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,14 +54,14 @@ def is_compat_platform_and_framework(platform, framework):
 
 
 def campaign_url(url, source="platformio", medium="docs"):
-    data = urlparse.urlparse(url)
+    data = urlparse(url)
     query = data.query
     if query:
         query += "&"
     query += "utm_source=%s&utm_medium=%s" % (source, medium)
-    return urlparse.urlunparse(
-        urlparse.ParseResult(data.scheme, data.netloc, data.path, data.params,
-                             query, data.fragment))
+    return urlunparse(
+        ParseResult(data.scheme, data.netloc, data.path, data.params, query,
+                    data.fragment))
 
 
 def generate_boards_table(boards, skip_columns=None):
@@ -64,7 +70,7 @@ def generate_boards_table(boards, skip_columns=None):
         ("Platform", ":ref:`platform_{platform}`"),
         ("Debug", "{debug}"),
         ("MCU", "{mcu}"),
-        ("Frequency", "{f_cpu:d}MHz"),
+        ("Frequency", "{f_cpu}MHz"),
         ("Flash", "{rom}"),
         ("RAM", "{ram}"),
     ]
@@ -90,15 +96,14 @@ def generate_boards_table(boards, skip_columns=None):
         elif data['debug']:
             debug = "External"
 
-        variables = dict(
-            id=data['id'],
-            name=data['name'],
-            platform=data['platform'],
-            debug=debug,
-            mcu=data['mcu'].upper(),
-            f_cpu=int(data['fcpu']) / 1000000,
-            ram=fs.format_filesize(data['ram']),
-            rom=fs.format_filesize(data['rom']))
+        variables = dict(id=data['id'],
+                         name=data['name'],
+                         platform=data['platform'],
+                         debug=debug,
+                         mcu=data['mcu'].upper(),
+                         f_cpu=int(data['fcpu'] / 1000000.0),
+                         ram=fs.format_filesize(data['ram']),
+                         rom=fs.format_filesize(data['rom']))
 
         for (name, template) in columns:
             if skip_columns and name in skip_columns:
@@ -132,8 +137,9 @@ Frameworks
         lines.append("""
     * - :ref:`framework_{name}`
       - {description}""".format(**framework))
-    assert known >= set(frameworks), "Unknown frameworks %s " % (
-        set(frameworks) - known)
+    if set(frameworks) - known:
+        click.secho("Unknown frameworks %s " % (
+        set(frameworks) - known), fg="red")
     return lines
 
 
@@ -208,8 +214,8 @@ Boards listed below have on-board debug probe and **ARE READY** for debugging!
 You do not need to use/buy external debug probe.
 """)
         lines.extend(
-            generate_boards_table(
-                onboard_debug, skip_columns=skip_board_columns))
+            generate_boards_table(onboard_debug,
+                                  skip_columns=skip_board_columns))
     if external_debug:
         lines.append("""
 External Debug Tools
@@ -220,8 +226,8 @@ external debug probe. They **ARE NOT READY** for debugging.
 Please click on board name for the further details.
 """)
         lines.extend(
-            generate_boards_table(
-                external_debug, skip_columns=skip_board_columns))
+            generate_boards_table(external_debug,
+                                  skip_columns=skip_board_columns))
     return lines
 
 
@@ -239,13 +245,18 @@ Packages
     * - Name
       - Description""")
     for name in sorted(packagenames):
-        assert name in API_PACKAGES, name
-        lines.append("""
+        if name not in API_PACKAGES:
+            click.secho("Unknown package `%s`" % name, fg="red")
+            lines.append("""
+    * - {name}
+      -
+                """.format(name=name))
+        else:
+            lines.append("""
     * - `{name} <{url}>`__
-      - {description}""".format(
-            name=name,
-            url=campaign_url(API_PACKAGES[name]['url']),
-            description=API_PACKAGES[name]['description']))
+      - {description}""".format(name=name,
+                                url=campaign_url(API_PACKAGES[name]['url']),
+                                description=API_PACKAGES[name]['description']))
 
     if is_embedded:
         lines.append("""
@@ -344,8 +355,9 @@ Examples are listed from `%s development platform repository <%s>`_:
             generate_debug_contents(
                 compatible_boards,
                 skip_board_columns=["Platform"],
-                extra_rst="%s_debug.rst" % name if isfile(
-                    join(rst_dir, "%s_debug.rst" % name)) else None))
+                extra_rst="%s_debug.rst" %
+                name if isfile(join(rst_dir, "%s_debug.rst" %
+                                    name)) else None))
 
     #
     # Development version of dev/platform
@@ -483,8 +495,9 @@ For more detailed information please visit `vendor site <%s>`_.
         lines.extend(
             generate_debug_contents(
                 compatible_boards,
-                extra_rst="%s_debug.rst" % type_ if isfile(
-                    join(rst_dir, "%s_debug.rst" % type_)) else None))
+                extra_rst="%s_debug.rst" %
+                type_ if isfile(join(rst_dir, "%s_debug.rst" %
+                                     type_)) else None))
 
     if compatible_platforms:
         # examples
@@ -494,11 +507,10 @@ Examples
 """)
         for manifest in compatible_platforms:
             p = PlatformFactory.newPlatform(manifest['name'])
-            lines.append(
-                "* `%s for %s <%s>`_" %
-                (data['title'], manifest['title'],
-                 campaign_url(
-                     "%s/tree/master/examples" % p.repository_url[:-4])))
+            lines.append("* `%s for %s <%s>`_" %
+                         (data['title'], manifest['title'],
+                          campaign_url("%s/tree/master/examples" %
+                                       p.repository_url[:-4])))
 
         # Platforms
         lines.extend(
@@ -568,7 +580,7 @@ popular embedded boards and IDE.
         else:
             platforms[platform] = [data]
 
-    for platform, boards in sorted(platforms.iteritems()):
+    for platform, boards in sorted(platforms.items()):
         p = PlatformFactory.newPlatform(platform)
         lines.append(p.title)
         lines.append("-" * len(p.title))
@@ -605,21 +617,20 @@ def update_embedded_board(rst_path, board):
         board_manifest_url = board_manifest_url[:-4]
     board_manifest_url += "/blob/master/boards/%s.json" % board['id']
 
-    variables = dict(
-        id=board['id'],
-        name=board['name'],
-        platform=board['platform'],
-        platform_description=platform.description,
-        url=campaign_url(board['url']),
-        mcu=board_config.get("build", {}).get("mcu", ""),
-        mcu_upper=board['mcu'].upper(),
-        f_cpu=board['fcpu'],
-        f_cpu_mhz=int(board['fcpu']) / 1000000,
-        ram=fs.format_filesize(board['ram']),
-        rom=fs.format_filesize(board['rom']),
-        vendor=board['vendor'],
-        board_manifest_url=board_manifest_url,
-        upload_protocol=board_config.get("upload.protocol", ""))
+    variables = dict(id=board['id'],
+                     name=board['name'],
+                     platform=board['platform'],
+                     platform_description=platform.description,
+                     url=campaign_url(board['url']),
+                     mcu=board_config.get("build", {}).get("mcu", ""),
+                     mcu_upper=board['mcu'].upper(),
+                     f_cpu=board['fcpu'],
+                     f_cpu_mhz=int(int(board['fcpu']) / 1000000),
+                     ram=fs.format_filesize(board['ram']),
+                     rom=fs.format_filesize(board['rom']),
+                     vendor=board['vendor'],
+                     board_manifest_url=board_manifest_url,
+                     upload_protocol=board_config.get("upload.protocol", ""))
 
     lines = [RST_COPYRIGHT]
     lines.append(".. _board_{platform}_{id}:".format(**variables))
@@ -639,7 +650,7 @@ Platform :ref:`platform_{platform}`: {platform_description}
   * - **Microcontroller**
     - {mcu_upper}
   * - **Frequency**
-    - {f_cpu_mhz}MHz
+    - {f_cpu_mhz:d}MHz
   * - **Flash**
     - {rom}
   * - **RAM**
@@ -805,15 +816,14 @@ Boards
 .. note::
     For more detailed ``board`` information please scroll tables below by horizontal.
 """)
-    for vendor, boards in sorted(vendors.iteritems()):
+    for vendor, boards in sorted(vendors.items()):
         lines.append(str(vendor))
         lines.append("~" * len(vendor))
         lines.extend(generate_boards_table(boards))
 
     # save
-    with open(
-            join(fs.get_source_dir(), "..", "docs", "plus", "debugging.rst"),
-            "r+") as fp:
+    with open(join(fs.get_source_dir(), "..", "docs", "plus", "debugging.rst"),
+              "r+") as fp:
         content = fp.read()
         fp.seek(0)
         fp.truncate()
@@ -823,7 +833,9 @@ Boards
     # Debug tools
     for tool, platforms in tool_to_platforms.items():
         tool_path = join(DOCS_ROOT_DIR, "plus", "debug-tools", "%s.rst" % tool)
-        assert isfile(tool_path), tool
+        if not isfile(tool_path):
+            click.secho("Unknown debug tool `%s`" % tool, fg="red")
+            continue
         platforms = sorted(set(platforms))
 
         lines = [".. begin_platforms"]

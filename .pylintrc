@@ -1,5 +1,7 @@
 [MESSAGES CONTROL]
 disable=
+    bad-continuation,
+    bad-whitespace,
     missing-docstring,
     ungrouped-imports,
     invalid-name,
@@ -9,4 +11,5 @@ disable=
     too-few-public-methods,
     useless-object-inheritance,
     useless-import-alias,
-    fixme
+    fixme,
+    bad-option-value

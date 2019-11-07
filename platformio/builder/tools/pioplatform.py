@@ -33,8 +33,8 @@ def PioPlatform(env):
     variables = env.GetProjectOptions(as_dict=True)
     if "framework" in variables:
         # support PIO Core 3.0 dev/platforms
-        variables['pioframework'] = variables['framework']
-    p = PlatformFactory.newPlatform(env['PLATFORM_MANIFEST'])
+        variables["pioframework"] = variables["framework"]
+    p = PlatformFactory.newPlatform(env["PLATFORM_MANIFEST"])
     p.configure_default_packages(variables, COMMAND_LINE_TARGETS)
     return p
 
@@ -54,7 +54,7 @@ def BoardConfig(env, board=None):
 def GetFrameworkScript(env, framework):
     p = env.PioPlatform()
     assert p.frameworks and framework in p.frameworks
-    script_path = env.subst(p.frameworks[framework]['script'])
+    script_path = env.subst(p.frameworks[framework]["script"])
     if not isfile(script_path):
         script_path = join(p.get_dir(), script_path)
     return script_path
@@ -65,7 +65,7 @@ def LoadPioPlatform(env):
     installed_packages = p.get_installed_packages()
 
     # Ensure real platform name
-    env['PIOPLATFORM'] = p.name
+    env["PIOPLATFORM"] = p.name
 
     # Add toolchains and uploaders to $PATH and $*_LIBRARY_PATH
     systype = util.get_systype()
@@ -75,14 +75,13 @@ def LoadPioPlatform(env):
             continue
         pkg_dir = p.get_package_dir(name)
         env.PrependENVPath(
-            "PATH",
-            join(pkg_dir, "bin") if isdir(join(pkg_dir, "bin")) else pkg_dir)
-        if (not WINDOWS and isdir(join(pkg_dir, "lib"))
-                and type_ != "toolchain"):
+            "PATH", join(pkg_dir, "bin") if isdir(join(pkg_dir, "bin")) else pkg_dir
+        )
+        if not WINDOWS and isdir(join(pkg_dir, "lib")) and type_ != "toolchain":
             env.PrependENVPath(
-                "DYLD_LIBRARY_PATH"
-                if "darwin" in systype else "LD_LIBRARY_PATH",
-                join(pkg_dir, "lib"))
+                "DYLD_LIBRARY_PATH" if "darwin" in systype else "LD_LIBRARY_PATH",
+                join(pkg_dir, "lib"),
+            )
 
     # Platform specific LD Scripts
     if isdir(join(p.get_dir(), "ldscripts")):
@@ -94,16 +93,27 @@ def LoadPioPlatform(env):
     # update board manifest with overridden data from INI config
     board_config = env.BoardConfig()
     for option, value in env.GetProjectOptions():
-        if option.startswith("board_"):
-            board_config.update(option.lower()[6:], value)
+        if not option.startswith("board_"):
+            continue
+        option = option.lower()[6:]
+        try:
+            if isinstance(board_config.get(option), bool):
+                value = str(value).lower() in ("1", "yes", "true")
+            elif isinstance(board_config.get(option), int):
+                value = int(value)
+        except KeyError:
+            pass
+        board_config.update(option, value)
 
     # load default variables from board config
     for option_meta in ProjectOptions.values():
         if not option_meta.buildenvvar or option_meta.buildenvvar in env:
             continue
-        data_path = (option_meta.name[6:]
-                     if option_meta.name.startswith("board_") else
-                     option_meta.name.replace("_", "."))
+        data_path = (
+            option_meta.name[6:]
+            if option_meta.name.startswith("board_")
+            else option_meta.name.replace("_", ".")
+        )
         try:
             env[option_meta.buildenvvar] = board_config.get(data_path)
         except KeyError:
@@ -118,22 +128,25 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
     board_config = env.BoardConfig() if "BOARD" in env else None
 
     def _get_configuration_data():
-        return None if not board_config else [
-            "CONFIGURATION:",
-            "https://docs.platformio.org/page/boards/%s/%s.html" %
-            (platform.name, board_config.id)
-        ]
+        return (
+            None
+            if not board_config
+            else [
+                "CONFIGURATION:",
+                "https://docs.platformio.org/page/boards/%s/%s.html"
+                % (platform.name, board_config.id),
+            ]
+        )
 
     def _get_plaform_data():
         data = ["PLATFORM: %s %s" % (platform.title, platform.version)]
-        src_manifest_path = platform.pm.get_src_manifest_path(
-            platform.get_dir())
+        src_manifest_path = platform.pm.get_src_manifest_path(platform.get_dir())
         if src_manifest_path:
             src_manifest = fs.load_json(src_manifest_path)
             if "version" in src_manifest:
-                data.append("#" + src_manifest['version'])
+                data.append("#" + src_manifest["version"])
             if int(ARGUMENTS.get("PIOVERBOSE", 0)):
-                data.append("(%s)" % src_manifest['url'])
+                data.append("(%s)" % src_manifest["url"])
         if board_config:
             data.extend([">", board_config.get("name")])
         return data
@@ -151,19 +164,22 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
             return data
         ram = board_config.get("upload", {}).get("maximum_ram_size")
         flash = board_config.get("upload", {}).get("maximum_size")
-        data.append("%s RAM, %s Flash" %
-                    (fs.format_filesize(ram), fs.format_filesize(flash)))
+        data.append(
+            "%s RAM, %s Flash" % (fs.format_filesize(ram), fs.format_filesize(flash))
+        )
         return data
 
     def _get_debug_data():
-        debug_tools = board_config.get(
-            "debug", {}).get("tools") if board_config else None
+        debug_tools = (
+            board_config.get("debug", {}).get("tools") if board_config else None
+        )
         if not debug_tools:
             return None
         data = [
-            "DEBUG:", "Current",
-            "(%s)" % board_config.get_debug_tool_name(
-                env.GetProjectOption("debug_tool"))
+            "DEBUG:",
+            "Current",
+            "(%s)"
+            % board_config.get_debug_tool_name(env.GetProjectOption("debug_tool")),
         ]
         onboard = []
         external = []
@@ -187,21 +203,25 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
             if not pkg_dir:
                 continue
             manifest = platform.pm.load_manifest(pkg_dir)
-            original_version = util.get_original_version(manifest['version'])
-            info = "%s %s" % (manifest['name'], manifest['version'])
+            original_version = util.get_original_version(manifest["version"])
+            info = "%s %s" % (manifest["name"], manifest["version"])
             extra = []
             if original_version:
                 extra.append(original_version)
             if "__src_url" in manifest and int(ARGUMENTS.get("PIOVERBOSE", 0)):
-                extra.append(manifest['__src_url'])
+                extra.append(manifest["__src_url"])
             if extra:
                 info += " (%s)" % ", ".join(extra)
             data.append(info)
         return ["PACKAGES:", ", ".join(data)]
 
-    for data in (_get_configuration_data(), _get_plaform_data(),
-                 _get_hardware_data(), _get_debug_data(),
-                 _get_packages_data()):
+    for data in (
+        _get_configuration_data(),
+        _get_plaform_data(),
+        _get_hardware_data(),
+        _get_debug_data(),
+        _get_packages_data(),
+    ):
         if data and len(data) > 1:
             print(" ".join(data))
 
