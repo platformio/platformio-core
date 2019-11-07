@@ -120,7 +120,7 @@ Frameworks
 * `mbed <https://platformio.org/frameworks/mbed?utm_source=github&utm_medium=core>`_
 * `PULP OS <https://platformio.org/frameworks/pulp-os?utm_source=github&utm_medium=core>`_
 * `Pumbaa <https://platformio.org/frameworks/pumbaa?utm_source=github&utm_medium=core>`_
-* `Shakti <https://platformio.org/frameworks/shakti?utm_source=github&utm_medium=core>`_
+* `Shakti SDK <https://platformio.org/frameworks/shakti-sdk?utm_source=github&utm_medium=core>`_
 * `Simba <https://platformio.org/frameworks/simba?utm_source=github&utm_medium=core>`_
 * `SPL <https://platformio.org/frameworks/spl?utm_source=github&utm_medium=core>`_
 * `STM32Cube <https://platformio.org/frameworks/stm32cube?utm_source=github&utm_medium=core>`_
