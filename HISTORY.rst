@@ -6,7 +6,7 @@ Release Notes
 PlatformIO Core 4.0
 -------------------
 
-4.1.0 (2019-??-??)
+4.1.0 (2019-11-07)
 ~~~~~~~~~~~~~~~~~~
 
 * `PIO Check <http://docs.platformio.org/page/plus/pio-check.html>`__ – automated code analysis without hassle:
