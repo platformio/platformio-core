@@ -180,7 +180,7 @@ def after_upgrade(ctx):
     )
     if not getenv("PLATFORMIO_IDE"):
         click.echo(
-            "- %s PlatformIO IDE for IoT development > %s"
+            "- %s PlatformIO IDE for embedded development > %s"
             % (
                 click.style("try", fg="cyan"),
                 click.style("https://platformio.org/platformio-ide", fg="cyan"),

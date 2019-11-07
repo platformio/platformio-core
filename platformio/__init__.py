@@ -17,11 +17,13 @@ __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
 __description__ = (
-    "An open source ecosystem for IoT development. "
-    "Cross-platform IDE and unified debugger. "
-    "Remote unit testing and firmware updates. "
+    "An open source ecosystem for embedded development. "
+    "Cross-platform IDE and Unified Debugger. "
+    "Static Code Analyzer and Remote Unit Testing. "
+    "Multi-platform and Multi-architecture Build System. "
+    "Firmware File Explorer and Memory Inspection. "
     "Arduino, ARM mbed, Espressif (ESP8266/ESP32), STM32, PIC32, nRF51/nRF52, "
-    "FPGA, CMSIS, SPL, AVR, Samsung ARTIK, libOpenCM3"
+    "RISC-V, FPGA, CMSIS, SPL, AVR, Samsung ARTIK, libOpenCM3"
 )
 __url__ = "https://platformio.org"
 
