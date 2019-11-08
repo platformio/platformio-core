@@ -36,10 +36,10 @@ PlatformIO
 
 `PlatformIO <https://platformio.org?utm_source=github&utm_medium=core>`_ an open source ecosystem for embedded development
 
-* **Cross-platform IDE** and **Unified Debugger**
-* **Static Code Analyzer** and **Remote Unit Testing**
-* **Multi-platform** and **Multi-architecture Build System**
-* **Firmware File Explorer** and **Memory Inspection**.
+* Cross-platform IDE and Unified Debugger
+* Static Code Analyzer and Remote Unit Testing
+* Multi-platform and Multi-architecture Build System
+* Firmware File Explorer and Memory Inspection.
 
 Get Started
 -----------
