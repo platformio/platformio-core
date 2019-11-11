@@ -46,7 +46,7 @@ class EmbeddedTestProcessor(TestProcessorBase):
                 return False
 
         if self.options["without_testing"]:
-            return None
+            return True
 
         self.print_progress("Testing...")
         return self.run()
