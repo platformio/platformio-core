@@ -6,6 +6,11 @@ Release Notes
 PlatformIO Core 4.0
 -------------------
 
+4.1.1 (2019-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Handle project configuration (monitor, test, and upload options) for PIO Remote commands (`issue #2591 <https://github.com/platformio/platformio-core/issues/2591>`_)
+
 4.1.0 (2019-11-07)
 ~~~~~~~~~~~~~~~~~~
 

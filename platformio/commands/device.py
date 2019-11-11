@@ -172,18 +172,11 @@ def device_list(  # pylint: disable=too-many-branches
     help="Load configuration from `platformio.ini` and specified environment",
 )
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
-    env_options = {}
+    project_options = {}
     try:
         with fs.cd(kwargs["project_dir"]):
-            env_options = get_project_options(kwargs["environment"])
-        for k in ("port", "speed", "rts", "dtr"):
-            k2 = "monitor_%s" % k
-            if k == "speed":
-                k = "baud"
-            if kwargs[k] is None and k2 in env_options:
-                kwargs[k] = env_options[k2]
-                if k != "port":
-                    kwargs[k] = int(kwargs[k])
+            project_options = get_project_options(kwargs["environment"])
+        kwargs = apply_project_monitor_options(kwargs, project_options)
     except exception.NotPlatformIOProject:
         pass
 
@@ -191,28 +184,18 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         ports = util.get_serial_ports(filter_hwid=True)
         if len(ports) == 1:
             kwargs["port"] = ports[0]["port"]
-
-    sys.argv = ["monitor"] + env_options.get("monitor_flags", [])
-    for k, v in kwargs.items():
-        if k in ("port", "baud", "rts", "dtr", "environment", "project_dir"):
-            continue
-        k = "--" + k.replace("_", "-")
-        if k in env_options.get("monitor_flags", []):
-            continue
-        if isinstance(v, bool):
-            if v:
-                sys.argv.append(k)
-        elif isinstance(v, tuple):
-            for i in v:
-                sys.argv.extend([k, i])
-        else:
-            sys.argv.extend([k, str(v)])
-
-    if kwargs["port"] and (set(["*", "?", "[", "]"]) & set(kwargs["port"])):
+    elif kwargs["port"] and (set(["*", "?", "[", "]"]) & set(kwargs["port"])):
         for item in util.get_serial_ports():
             if fnmatch(item["port"], kwargs["port"]):
                 kwargs["port"] = item["port"]
                 break
+
+    # override system argv with patched options
+    sys.argv = ["monitor"] + options_to_argv(
+        kwargs,
+        project_options,
+        ignore=("port", "baud", "rts", "dtr", "environment", "project_dir"),
+    )
 
     try:
         miniterm.main(
@@ -223,6 +206,37 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         )
     except Exception as e:
         raise exception.MinitermException(e)
+
+
+def apply_project_monitor_options(cli_options, project_options):
+    for k in ("port", "speed", "rts", "dtr"):
+        k2 = "monitor_%s" % k
+        if k == "speed":
+            k = "baud"
+        if cli_options[k] is None and k2 in project_options:
+            cli_options[k] = project_options[k2]
+            if k != "port":
+                cli_options[k] = int(cli_options[k])
+    return cli_options
+
+
+def options_to_argv(cli_options, project_options, ignore=None):
+    result = project_options.get("monitor_flags", [])
+    for k, v in cli_options.items():
+        if v is None or (ignore and k in ignore):
+            continue
+        k = "--" + k.replace("_", "-")
+        if k in project_options.get("monitor_flags", []):
+            continue
+        if isinstance(v, bool):
+            if v:
+                result.append(k)
+        elif isinstance(v, tuple):
+            for i in v:
+                result.extend([k, i])
+        else:
+            result.extend([k, str(v)])
+    return result
 
 
 def get_project_options(environment=None):

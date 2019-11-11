@@ -12,17 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import sys
 import threading
-from os import getcwd
-from os.path import isfile, join
 from tempfile import mkdtemp
 from time import sleep
 
 import click
 
 from platformio import exception, fs
-from platformio.commands.device import device_monitor as cmd_device_monitor
+from platformio.commands import device
 from platformio.managers.core import pioplus_call
 
 # pylint: disable=unused-argument
@@ -83,7 +82,7 @@ def remote_update(only_check, dry_run):
 @click.option(
     "-d",
     "--project-dir",
-    default=getcwd,
+    default=os.getcwd,
     type=click.Path(
         exists=True, file_okay=True, dir_okay=True, writable=True, resolve_path=True
     ),
@@ -104,7 +103,7 @@ def remote_run(**kwargs):
 @click.option(
     "-d",
     "--project-dir",
-    default=getcwd,
+    default=os.getcwd,
     type=click.Path(
         exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
     ),
@@ -130,9 +129,7 @@ def device_list(json_output):
 
 @remote_device.command("monitor", short_help="Monitor remote device")
 @click.option("--port", "-p", help="Port, a number or a device name")
-@click.option(
-    "--baud", "-b", type=int, default=9600, help="Set baud rate, default=9600"
-)
+@click.option("--baud", "-b", type=int, help="Set baud rate, default=9600")
 @click.option(
     "--parity",
     default="N",
@@ -183,25 +180,49 @@ def device_list(json_output):
     is_flag=True,
     help="Diagnostics: suppress non-error messages, default=Off",
 )
+@click.option(
+    "-d",
+    "--project-dir",
+    default=os.getcwd,
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
+)
+@click.option(
+    "-e",
+    "--environment",
+    help="Load configuration from `platformio.ini` and specified environment",
+)
 @click.pass_context
 def device_monitor(ctx, **kwargs):
+    project_options = {}
+    try:
+        with fs.cd(kwargs["project_dir"]):
+            project_options = device.get_project_options(kwargs["environment"])
+        kwargs = device.apply_project_monitor_options(kwargs, project_options)
+    except exception.NotPlatformIOProject:
+        pass
+
+    kwargs["baud"] = kwargs["baud"] or 9600
+
     def _tx_target(sock_dir):
+        pioplus_argv = ["remote", "device", "monitor"]
+        pioplus_argv.extend(device.options_to_argv(kwargs, project_options))
+        pioplus_argv.extend(["--sock", sock_dir])
         try:
-            pioplus_call(sys.argv[1:] + ["--sock", sock_dir])
+            pioplus_call(pioplus_argv)
         except exception.ReturnErrorCode:
             pass
 
     sock_dir = mkdtemp(suffix="pioplus")
-    sock_file = join(sock_dir, "sock")
+    sock_file = os.path.join(sock_dir, "sock")
     try:
         t = threading.Thread(target=_tx_target, args=(sock_dir,))
         t.start()
-        while t.is_alive() and not isfile(sock_file):
+        while t.is_alive() and not os.path.isfile(sock_file):
             sleep(0.1)
         if not t.is_alive():
             return
         kwargs["port"] = fs.get_file_contents(sock_file)
-        ctx.invoke(cmd_device_monitor, **kwargs)
+        ctx.invoke(device.device_monitor, **kwargs)
         t.join(2)
     finally:
         fs.rmtree(sock_dir)
