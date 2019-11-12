@@ -44,7 +44,8 @@ def BoardConfig(env, board=None):
     try:
         board = board or env.get("BOARD")
         assert board, "BoardConfig: Board is not defined"
-        config = p.board_config(board)
+        with fs.cd(env.subst("$PROJECT_DIR")):
+            config = p.board_config(board)
     except (AssertionError, exception.UnknownBoard) as e:
         sys.stderr.write("Error: %s\n" % str(e))
         env.Exit(1)
