@@ -40,16 +40,15 @@ def PioPlatform(env):
 
 
 def BoardConfig(env, board=None):
-    p = env.PioPlatform()
-    try:
-        board = board or env.get("BOARD")
-        assert board, "BoardConfig: Board is not defined"
-        with fs.cd(env.subst("$PROJECT_DIR")):
-            config = p.board_config(board)
-    except (AssertionError, exception.UnknownBoard) as e:
-        sys.stderr.write("Error: %s\n" % str(e))
-        env.Exit(1)
-    return config
+    with fs.cd(env.subst("$PROJECT_DIR")):
+        try:
+            p = env.PioPlatform()
+            board = board or env.get("BOARD")
+            assert board, "BoardConfig: Board is not defined"
+            return p.board_config(board)
+        except (AssertionError, exception.UnknownBoard) as e:
+            sys.stderr.write("Error: %s\n" % str(e))
+            env.Exit(1)
 
 
 def GetFrameworkScript(env, framework):
