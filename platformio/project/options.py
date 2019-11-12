@@ -582,7 +582,11 @@ ProjectOptions = OrderedDict(
                 description="A connection speed (baud rate) to communicate with a target device",
                 type=click.INT,
             ),
-            ConfigEnvOption(group="test", name="test_transport", description="A transport to communicate with a target device",),
+            ConfigEnvOption(
+                group="test",
+                name="test_transport",
+                description="A transport to communicate with a target device",
+            ),
             ConfigEnvOption(
                 group="test",
                 name="test_build_project_src",
