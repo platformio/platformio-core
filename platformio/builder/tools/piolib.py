@@ -33,7 +33,10 @@ from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
 from platformio.compat import WINDOWS, hashlib_encode_data, string_types
 from platformio.managers.lib import LibraryManager
-from platformio.package.manifest.parser import ManifestParserFactory
+from platformio.package.manifest.parser import (
+    ManifestParserError,
+    ManifestParserFactory,
+)
 from platformio.project.options import ProjectOptions
 
 
@@ -108,7 +111,14 @@ class LibBuilderBase(object):
         self.path = realpath(env.subst(path))
         self.verbose = verbose
 
-        self._manifest = manifest if manifest else self.load_manifest()
+        try:
+            self._manifest = manifest if manifest else self.load_manifest()
+        except ManifestParserError:
+            click.secho(
+                "Warning! Ignoring broken library manifest in " + self.path, fg="yellow"
+            )
+            self._manifest = {}
+
         self._is_dependent = False
         self._is_built = False
         self._depbuilders = list()
