@@ -10,6 +10,7 @@ PlatformIO Core 4.0
 ~~~~~~~~~~~~~~~~~~
 
 * Handle project configuration (monitor, test, and upload options) for PIO Remote commands (`issue #2591 <https://github.com/platformio/platformio-core/issues/2591>`_)
+* Fixed an issue with the broken latest news for PIO Home
 
 4.1.0 (2019-11-07)
 ~~~~~~~~~~~~~~~~~~
