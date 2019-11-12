@@ -199,6 +199,7 @@ class ContentCache(object):
         return True
 
     def get_cache_path(self, key):
+        assert "/" not in key and "\\" not in key
         key = str(key)
         assert len(key) > 3
         return join(self.cache_dir, key[-2:], key)
