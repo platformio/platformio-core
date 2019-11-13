@@ -73,7 +73,7 @@ class ProjectRPC(object):
         return get_config_options_schema()
 
     @staticmethod
-    def _get_projects(project_dirs=None):
+    def get_projects():
         def _get_project_data():
             data = {"boards": [], "envLibdepsDirs": [], "libExtraDirs": []}
             config = ProjectConfig()
@@ -103,12 +103,9 @@ class ProjectRPC(object):
         def _path_to_name(path):
             return (os.path.sep).join(path.split(os.path.sep)[-2:])
 
-        if not project_dirs:
-            project_dirs = AppRPC.load_state()["storage"]["recentProjects"]
-
         result = []
         pm = PlatformManager()
-        for project_dir in project_dirs:
+        for project_dir in AppRPC.load_state()["storage"]["recentProjects"]:
             if not os.path.isdir(project_dir):
                 continue
             data = {}
@@ -146,9 +143,6 @@ class ProjectRPC(object):
                 }
             )
         return result
-
-    def get_projects(self, project_dirs=None):
-        return self._get_projects(project_dirs)
 
     @staticmethod
     def get_project_examples():
