@@ -32,7 +32,10 @@ def get_filesystem_encoding():
 
 
 def get_locale_encoding():
-    return locale.getdefaultlocale()[1]
+    try:
+        return locale.getdefaultlocale()[1]
+    except ValueError:
+        return None
 
 
 def get_class_attributes(cls):
