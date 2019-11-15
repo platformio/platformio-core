@@ -14,7 +14,7 @@
 
 from glob import glob
 from os import getenv, makedirs, remove
-from os.path import abspath, basename, isdir, isfile, join
+from os.path import basename, isdir, isfile, join, realpath
 from shutil import copyfile, copytree
 from tempfile import mkdtemp
 
@@ -35,7 +35,7 @@ def validate_path(ctx, param, value):  # pylint: disable=unused-argument
     for i, p in enumerate(value):
         if p.startswith("~"):
             value[i] = fs.expanduser(p)
-        value[i] = abspath(value[i])
+        value[i] = realpath(value[i])
         if not glob(value[i]):
             invalid_path = p
             break
@@ -158,7 +158,7 @@ def _exclude_contents(dst_dir, patterns):
     for p in patterns:
         contents += glob(join(glob_escape(dst_dir), p))
     for path in contents:
-        path = abspath(path)
+        path = realpath(path)
         if isdir(path):
             fs.rmtree(path)
         elif isfile(path):

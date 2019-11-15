@@ -17,7 +17,7 @@ import hashlib
 import os
 import uuid
 from os import environ, getenv, listdir, remove
-from os.path import abspath, dirname, isdir, isfile, join
+from os.path import dirname, isdir, isfile, join, realpath
 from time import time
 
 import requests
@@ -34,7 +34,7 @@ from platformio.project.helpers import (
 
 def projects_dir_validate(projects_dir):
     assert isdir(projects_dir)
-    return abspath(projects_dir)
+    return realpath(projects_dir)
 
 
 DEFAULT_SETTINGS = {

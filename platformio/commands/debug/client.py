@@ -18,7 +18,7 @@ import re
 import signal
 import time
 from hashlib import sha1
-from os.path import abspath, basename, dirname, isdir, join, splitext
+from os.path import basename, dirname, isdir, join, realpath, splitext
 from tempfile import mkdtemp
 
 from twisted.internet import protocol  # pylint: disable=import-error
@@ -108,7 +108,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
     def _get_data_dir(gdb_path):
         if "msp430" in gdb_path:
             return None
-        gdb_data_dir = abspath(join(dirname(gdb_path), "..", "share", "gdb"))
+        gdb_data_dir = realpath(join(dirname(gdb_path), "..", "share", "gdb"))
         return gdb_data_dir if isdir(gdb_data_dir) else None
 
     def generate_pioinit(self, dst_dir, patterns):

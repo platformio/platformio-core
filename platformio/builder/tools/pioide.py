@@ -14,9 +14,8 @@
 
 from __future__ import absolute_import
 
+import os
 from glob import glob
-from os import environ
-from os.path import abspath, isfile, join
 
 from SCons.Defaults import processDefines  # pylint: disable=import-error
 
@@ -42,10 +41,10 @@ def _dump_includes(env):
             continue
         toolchain_dir = glob_escape(p.get_package_dir(name))
         toolchain_incglobs = [
-            join(toolchain_dir, "*", "include*"),
-            join(toolchain_dir, "*", "include", "c++", "*"),
-            join(toolchain_dir, "*", "include", "c++", "*", "*-*-*"),
-            join(toolchain_dir, "lib", "gcc", "*", "*", "include*"),
+            os.path.join(toolchain_dir, "*", "include*"),
+            os.path.join(toolchain_dir, "*", "include", "c++", "*"),
+            os.path.join(toolchain_dir, "*", "include", "c++", "*", "*-*-*"),
+            os.path.join(toolchain_dir, "lib", "gcc", "*", "*", "include*"),
         ]
         for g in toolchain_incglobs:
             includes.extend(glob(g))
@@ -59,8 +58,9 @@ def _dump_includes(env):
     # remove duplicates
     result = []
     for item in includes:
+        item = os.path.realpath(item)
         if item not in result:
-            result.append(abspath(item))
+            result.append(item)
 
     return result
 
@@ -68,7 +68,7 @@ def _dump_includes(env):
 def _get_gcc_defines(env):
     items = []
     try:
-        sysenv = environ.copy()
+        sysenv = os.environ.copy()
         sysenv["PATH"] = str(env["ENV"]["PATH"])
         result = exec_command(
             "echo | %s -dM -E -" % env.subst("$CC"), env=sysenv, shell=True
@@ -119,7 +119,7 @@ def _dump_defines(env):
 def _get_svd_path(env):
     svd_path = env.GetProjectOption("debug_svd_path")
     if svd_path:
-        return abspath(svd_path)
+        return os.path.realpath(svd_path)
 
     if "BOARD" not in env:
         return None
@@ -129,12 +129,12 @@ def _get_svd_path(env):
     except (AssertionError, KeyError):
         return None
     # custom path to SVD file
-    if isfile(svd_path):
+    if os.path.isfile(svd_path):
         return svd_path
     # default file from ./platform/misc/svd folder
     p = env.PioPlatform()
-    if isfile(join(p.get_dir(), "misc", "svd", svd_path)):
-        return abspath(join(p.get_dir(), "misc", "svd", svd_path))
+    if os.path.isfile(os.path.join(p.get_dir(), "misc", "svd", svd_path)):
+        return os.path.realpath(os.path.join(p.get_dir(), "misc", "svd", svd_path))
     return None
 
 

@@ -132,7 +132,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         def _add_file(path):
             if not path.endswith(allowed_extensions):
                 return
-            result.append(os.path.abspath(path))
+            result.append(os.path.realpath(path))
 
         for pattern in self.options["patterns"]:
             for item in glob.glob(pattern):

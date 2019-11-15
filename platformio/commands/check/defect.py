@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os.path import abspath, relpath
+import os
 
 import click
 
@@ -52,7 +52,7 @@ class DefectItem(object):
         self.id = id
         self.file = file
         if file.startswith(get_project_dir()):
-            self.file = relpath(file, get_project_dir())
+            self.file = os.path.relpath(file, get_project_dir())
 
     def __repr__(self):
         defect_color = None
@@ -86,7 +86,7 @@ class DefectItem(object):
             "severity": self.SEVERITY_LABELS[self.severity],
             "category": self.category,
             "message": self.message,
-            "file": abspath(self.file),
+            "file": os.path.realpath(self.file),
             "line": self.line,
             "column": self.column,
             "callstack": self.callstack,

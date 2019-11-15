@@ -40,7 +40,7 @@ class cd(object):
 
 
 def get_source_dir():
-    curpath = os.path.abspath(__file__)
+    curpath = os.path.realpath(__file__)
     if not os.path.isfile(curpath):
         for p in sys.path:
             if os.path.isfile(os.path.join(p, __file__)):
@@ -117,7 +117,7 @@ def ensure_udev_rules():
     if not any(os.path.isfile(p) for p in installed_rules):
         raise exception.MissedUdevRules
 
-    origin_path = os.path.abspath(
+    origin_path = os.path.realpath(
         os.path.join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules")
     )
     if not os.path.isfile(origin_path):

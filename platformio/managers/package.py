@@ -17,7 +17,7 @@ import json
 import os
 import re
 import shutil
-from os.path import abspath, basename, getsize, isdir, isfile, islink, join
+from os.path import basename, getsize, isdir, isfile, islink, join, realpath
 from tempfile import mkdtemp
 
 import click
@@ -423,7 +423,7 @@ class PkgInstallerMixin(object):
 
     def get_package_by_dir(self, pkg_dir):
         for manifest in self.get_installed():
-            if manifest["__pkg_dir"] == abspath(pkg_dir):
+            if manifest["__pkg_dir"] == realpath(pkg_dir):
                 return manifest
         return None
 
