@@ -56,7 +56,7 @@
 % cxx_stds = STD_RE.findall(cxx_flags)
 %
 % # pass only architecture specific flags
-% cc_m_flags = " ".join([f.strip() for f in cc_flags.split(" ") if f.strip().startswith("-m")])
+% cc_m_flags = " ".join([f.strip() for f in cc_flags.split(" ") if f.strip().startswith(("-m", "-i"))])
 %
 % if cc_stds:
             "cStandard": "c{{ cc_stds[-1] }}",
