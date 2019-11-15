@@ -9,6 +9,11 @@ PlatformIO Core 4.0
 4.1.1 (2019-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__:
+
+  - Project Manager
+  - Project Configuration UI for `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+
 * Handle project configuration (monitor, test, and upload options) for PIO Remote commands (`issue #2591 <https://github.com/platformio/platformio-core/issues/2591>`_)
 * Warn about broken library manifest when scanning dependencies (`issue #3268 <https://github.com/platformio/platformio-core/issues/3268>`_)
 * Fixed an issue with the broken latest news for PIO Home
@@ -26,8 +31,9 @@ PlatformIO Core 4.0
   - Unused variables or functions
   - Out of scope memory usage.
 
-* `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__ and Project Inspection
+* `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__:
 
+  - Project Inspection
   - Static Code Analysis
   - Firmware File Explorer
   - Firmware Memory Inspection
