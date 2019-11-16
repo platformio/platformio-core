@@ -19,7 +19,6 @@ import glob
 import os
 import shutil
 from functools import cmp_to_key
-from os.path import isdir, isfile, join
 
 import click
 from twisted.internet import defer  # pylint: disable=import-error
@@ -67,7 +66,7 @@ class OSRPC(object):
     def request_content(self, uri, data=None, headers=None, cache_valid=None):
         if uri.startswith("http"):
             return self.fetch_content(uri, data, headers, cache_valid)
-        if not isfile(uri):
+        if not os.path.isfile(uri):
             return None
         with codecs.open(uri, encoding="utf-8") as fp:
             return fp.read()
@@ -88,15 +87,19 @@ class OSRPC(object):
 
     @staticmethod
     def is_file(path):
-        return isfile(path)
+        return os.path.isfile(path)
 
     @staticmethod
     def is_dir(path):
-        return isdir(path)
+        return os.path.isdir(path)
 
     @staticmethod
     def make_dirs(path):
         return os.makedirs(path)
+
+    @staticmethod
+    def get_file_mtime(path):
+        return os.path.getmtime(path)
 
     @staticmethod
     def rename(src, dst):
@@ -112,7 +115,7 @@ class OSRPC(object):
             pathnames = [pathnames]
         result = set()
         for pathname in pathnames:
-            result |= set(glob.glob(join(root, pathname) if root else pathname))
+            result |= set(glob.glob(os.path.join(root, pathname) if root else pathname))
         return list(result)
 
     @staticmethod
@@ -131,13 +134,13 @@ class OSRPC(object):
         items = []
         if path.startswith("~"):
             path = fs.expanduser(path)
-        if not isdir(path):
+        if not os.path.isdir(path):
             return items
         for item in os.listdir(path):
             try:
-                item_is_dir = isdir(join(path, item))
+                item_is_dir = os.path.isdir(os.path.join(path, item))
                 if item_is_dir:
-                    os.listdir(join(path, item))
+                    os.listdir(os.path.join(path, item))
                 items.append((item, item_is_dir))
             except OSError:
                 pass
