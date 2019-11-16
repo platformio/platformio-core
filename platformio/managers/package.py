@@ -439,6 +439,7 @@ class PkgInstallerMixin(object):
         pkg_dir = None
         pkgdata = None
         versions = None
+        last_exc = None
         for versions in PackageRepoIterator(name, self.repositories):
             pkgdata = self.max_satisfying_repo_version(versions, requirements)
             if not pkgdata:
@@ -449,12 +450,15 @@ class PkgInstallerMixin(object):
                 )
                 break
             except Exception as e:  # pylint: disable=broad-except
+                last_exc = e
                 click.secho("Warning! Package Mirror: %s" % e, fg="yellow")
                 click.secho("Looking for another mirror...", fg="yellow")
 
         if versions is None:
             util.internet_on(raise_exception=True)
-            raise exception.UnknownPackage(name)
+            raise exception.UnknownPackage(
+                name + (". Error -> %s" % last_exc if last_exc else "")
+            )
         if not pkgdata:
             raise exception.UndefinedPackageVersion(
                 requirements or "latest", util.get_systype()
