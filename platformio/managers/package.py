@@ -364,7 +364,7 @@ class PkgInstallerMixin(object):
         if "version" not in manifest:
             manifest["version"] = "0.0.0"
 
-        manifest["__pkg_dir"] = pkg_dir
+        manifest["__pkg_dir"] = realpath(pkg_dir)
         self.cache_set(cache_key, manifest)
         return manifest
 
