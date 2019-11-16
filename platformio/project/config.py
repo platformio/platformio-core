@@ -29,7 +29,7 @@ try:
 except ImportError:
     import configparser as ConfigParser
 
-CONFIG_HEADER = """;PlatformIO Project Configuration File
+CONFIG_HEADER = """; PlatformIO Project Configuration File
 ;
 ;   Build options: build flags, source filter
 ;   Upload options: custom upload port, speed and extra flags
