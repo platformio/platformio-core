@@ -172,6 +172,10 @@ def device_list(  # pylint: disable=too-many-branches
     help="Load configuration from `platformio.ini` and specified environment",
 )
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
+    click.echo(
+        "Looking for advanced Serial Monitor with UI? "
+        "Check http://bit.ly/pio-advanced-monitor"
+    )
     project_options = {}
     try:
         with fs.cd(kwargs["project_dir"]):
