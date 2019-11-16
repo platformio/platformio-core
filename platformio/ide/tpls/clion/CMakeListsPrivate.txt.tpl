@@ -25,7 +25,7 @@
 % envs = config.envs()
 
 % if len(envs) > 1:
-set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }}" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }};" CACHE STRING "" FORCE)
 % else:
 set(CMAKE_CONFIGURATION_TYPES "{{ env_name }}" CACHE STRING "" FORCE)
 % end

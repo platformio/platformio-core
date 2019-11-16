@@ -6,9 +6,10 @@
 # The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
 
 cmake_minimum_required(VERSION 3.2)
-project("{{project_name}}")
 
 include(CMakeListsPrivate.txt)
+
+project("{{project_name}}")
 
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeListsUser.txt)
 include(CMakeListsUser.txt)
