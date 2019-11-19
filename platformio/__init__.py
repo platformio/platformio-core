@@ -17,7 +17,7 @@ __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
 __description__ = (
-    "An open source ecosystem for embedded development. "
+    "A new generation ecosystem for embedded development. "
     "Cross-platform IDE and Unified Debugger. "
     "Static Code Analyzer and Remote Unit Testing. "
     "Multi-platform and Multi-architecture Build System. "
