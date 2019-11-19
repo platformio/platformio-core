@@ -15,7 +15,6 @@
 import os
 from os.path import isdir, isfile, join
 
-from twisted.internet import error  # pylint: disable=import-error
 from twisted.internet import reactor  # pylint: disable=import-error
 
 from platformio import exception, fs, util
@@ -134,5 +133,5 @@ class DebugServer(BaseProcess):
             return
         try:
             self._transport.signalProcess("KILL")
-        except (OSError, error.ProcessExitedAlready):
+        except:  # pylint: disable=bare-except
             pass
