@@ -37,8 +37,8 @@ set(SVD_PATH "{{ _normalize_path(svd_path) }}")
 
 SET(CMAKE_C_COMPILER "{{ _normalize_path(cc_path) }}")
 SET(CMAKE_CXX_COMPILER "{{ _normalize_path(cxx_path) }}")
-SET(CMAKE_CXX_FLAGS_DISTRIBUTION "{{cxx_flags}}")
-SET(CMAKE_C_FLAGS_DISTRIBUTION "{{cc_flags}}")
+SET(CMAKE_CXX_FLAGS "{{cxx_flags}}")
+SET(CMAKE_C_FLAGS "{{cc_flags}}")
 
 % STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
 % cc_stds = STD_RE.findall(cc_flags)
