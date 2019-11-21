@@ -59,6 +59,15 @@ def BuildProgram(env):
     env.ProcessProgramDeps()
     env.ProcessProjectDeps()
 
+    # append into the beginning a main LD script
+    if env.get("LDSCRIPT_PATH") and not any("-Wl,-T" in f for f in env["LINKFLAGS"]):
+        env.Prepend(LINKFLAGS=["-T", env.subst("$LDSCRIPT_PATH")])
+
+    # enable "cyclic reference" for linker
+    if env.get("LIBS") and env.GetCompilerType() == "gcc":
+        env.Prepend(_LIBFLAGS="-Wl,--start-group ")
+        env.Append(_LIBFLAGS=" -Wl,--end-group")
+
     program = env.Program(
         os.path.join("$BUILD_DIR", env.subst("$PROGNAME")), env["PIOBUILDFILES"]
     )
@@ -114,15 +123,6 @@ def ProcessProgramDeps(env):
 
     if "__test" in COMMAND_LINE_TARGETS:
         env.ConfigureTestTarget()
-
-    # append into the beginning a main LD script
-    if env.get("LDSCRIPT_PATH") and not any("-Wl,-T" in f for f in env["LINKFLAGS"]):
-        env.Prepend(LINKFLAGS=["-T", env.subst("$LDSCRIPT_PATH")])
-
-    # enable "cyclic reference" for linker
-    if env.get("LIBS") and env.GetCompilerType() == "gcc":
-        env.Prepend(_LIBFLAGS="-Wl,--start-group ")
-        env.Append(_LIBFLAGS=" -Wl,--end-group")
 
 
 def ProcessProjectDeps(env):
