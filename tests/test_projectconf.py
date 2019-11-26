@@ -65,7 +65,11 @@ extends = strict_settings
 
 EXTRA_ENVS_CONFIG = """
 [env:extra_1]
-build_flags = ${custom.lib_flags} ${custom.debug_flags}
+build_flags =
+    -fdata-sections
+    -Wl,--gc-sections
+    ${custom.lib_flags}
+    ${custom.debug_flags}
 lib_install = 574
 
 [env:extra_2]
@@ -226,7 +230,10 @@ def test_getraw_value(config):
     # known
     assert config.getraw("env:base", "targets") == ""
     assert config.getraw("env:extra_1", "lib_deps") == "574"
-    assert config.getraw("env:extra_1", "build_flags") == "-lc -lm -D DEBUG=1"
+    assert (
+        config.getraw("env:extra_1", "build_flags")
+        == "\n-fdata-sections\n-Wl,--gc-sections\n-lc -lm\n-D DEBUG=1"
+    )
 
     # extended
     assert config.getraw("env:test_extends", "lib_ldf_mode") == "chain+"
@@ -236,7 +243,12 @@ def test_getraw_value(config):
 
 def test_get_value(config):
     assert config.get("custom", "debug_flags") == "-D DEBUG=1"
-    assert config.get("env:extra_1", "build_flags") == ["-lc -lm -D DEBUG=1"]
+    assert config.get("env:extra_1", "build_flags") == [
+        "-fdata-sections",
+        "-Wl,--gc-sections",
+        "-lc -lm",
+        "-D DEBUG=1",
+    ]
     assert config.get("env:extra_2", "build_flags") == ["-Og"]
     assert config.get("env:extra_2", "monitor_speed") == 9600
     assert config.get("env:base", "build_flags") == ["-D DEBUG=1"]
@@ -259,7 +271,10 @@ def test_items(config):
         ("lib_ignore", ["LibIgnoreCustom"]),
     ]
     assert config.items(env="extra_1") == [
-        ("build_flags", ["-lc -lm -D DEBUG=1"]),
+        (
+            "build_flags",
+            ["-fdata-sections", "-Wl,--gc-sections", "-lc -lm", "-D DEBUG=1"],
+        ),
         ("lib_deps", ["574"]),
         ("monitor_speed", 9600),
         ("custom_monitor_speed", "115200"),
