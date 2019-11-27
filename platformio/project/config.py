@@ -228,6 +228,8 @@ class ProjectConfigBase(object):
         return [(option, self.get(section, option)) for option in self.options(section)]
 
     def set(self, section, option, value):
+        if value is None:
+            value = ""
         if isinstance(value, (list, tuple)):
             value = "\n".join(value)
         elif isinstance(value, bool):
