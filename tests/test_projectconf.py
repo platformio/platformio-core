@@ -16,8 +16,8 @@ import os
 
 import pytest
 
-from platformio.exception import UnknownEnvNames
 from platformio.project.config import ConfigParser, ProjectConfig
+from platformio.project.exception import UnknownEnvNamesError
 
 BASE_CONFIG = """
 [platformio]
@@ -115,7 +115,7 @@ def test_warnings(config):
     assert len(config.warnings) == 2
     assert "lib_install" in config.warnings[1]
 
-    with pytest.raises(UnknownEnvNames):
+    with pytest.raises(UnknownEnvNamesError):
         config.validate(["non-existing-env"])
 
 
