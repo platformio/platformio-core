@@ -87,16 +87,7 @@ def cli(port, host, no_open, shutdown_timeout):
     if host == "__do_not_start__":
         return
 
-    # if already started
-    already_started = True
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind((host, port))
-        s.close()
-        already_started = False
-    except (OSError, socket.error):
-        pass
-
+    already_started = is_port_used(host, port)
     home_url = "http://%s:%d" % (host, port)
     if not no_open:
         if already_started:
@@ -126,3 +117,14 @@ def cli(port, host, no_open, shutdown_timeout):
 
     reactor.listenTCP(port, site, interface=host)
     reactor.run()
+
+
+def is_port_used(host, port):
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind((host, port))
+        s.close()
+        return False
+    except (OSError, socket.error):
+        pass
+    return True
