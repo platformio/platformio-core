@@ -17,7 +17,8 @@ from os.path import isdir, isfile, join
 
 from twisted.internet import reactor  # pylint: disable=import-error
 
-from platformio import exception, fs, util
+from platformio import fs, util
+from platformio.commands.debug.exception import DebugInvalidOptionsError
 from platformio.commands.debug.helpers import escape_gdbmi_stream, is_gdbmi_mode
 from platformio.commands.debug.process import BaseProcess
 from platformio.proc import where_is_program
@@ -53,7 +54,7 @@ class DebugServer(BaseProcess):
         if not isfile(server_executable):
             server_executable = where_is_program(server_executable)
         if not isfile(server_executable):
-            raise exception.DebugInvalidOptions(
+            raise DebugInvalidOptionsError(
                 "\nCould not launch Debug Server '%s'. Please check that it "
                 "is installed and is included in a system PATH\n\n"
                 "See documentation or contact contact@platformio.org:\n"

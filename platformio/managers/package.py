@@ -24,7 +24,7 @@ import click
 import requests
 import semantic_version
 
-from platformio import __version__, app, exception, fs, telemetry, util
+from platformio import __version__, app, exception, fs, util
 from platformio.compat import hashlib_encode_data
 from platformio.downloader import FileDownloader
 from platformio.lockfile import LockFile
@@ -660,7 +660,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
     def install(
         self, name, requirements=None, silent=False, after_update=False, force=False
-    ):
+    ):  # pylint: disable=unused-argument
         pkg_dir = None
         # interprocess lock
         with LockFile(self.package_dir):
@@ -709,13 +709,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             manifest = self.load_manifest(pkg_dir)
             assert manifest
 
-            if not after_update:
-                telemetry.on_event(
-                    category=self.__class__.__name__,
-                    action="Install",
-                    label=manifest["name"],
-                )
-
             click.secho(
                 "{name} @ {version} has been successfully installed!".format(
                     **manifest
@@ -725,7 +718,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
         return pkg_dir
 
-    def uninstall(self, package, requirements=None, after_update=False):
+    def uninstall(
+        self, package, requirements=None, after_update=False
+    ):  # pylint: disable=unused-argument
         # interprocess lock
         with LockFile(self.package_dir):
             self.cache_reset()
@@ -763,13 +758,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 self.cache_reset()
 
             click.echo("[%s]" % click.style("OK", fg="green"))
-
-            if not after_update:
-                telemetry.on_event(
-                    category=self.__class__.__name__,
-                    action="Uninstall",
-                    label=manifest["name"],
-                )
 
         return True
 
@@ -819,9 +807,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             self.uninstall(pkg_dir, after_update=True)
             self.install(name, latest, after_update=True)
 
-        telemetry.on_event(
-            category=self.__class__.__name__, action="Update", label=manifest["name"]
-        )
         return True
 
 

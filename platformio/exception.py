@@ -153,49 +153,6 @@ class FDSHASumMismatch(PlatformIOPackageException):
 
 
 #
-# Project
-#
-
-
-class PlatformIOProjectException(PlatformioException):
-    pass
-
-
-class NotPlatformIOProject(PlatformIOProjectException):
-
-    MESSAGE = (
-        "Not a PlatformIO project. `platformio.ini` file has not been "
-        "found in current working directory ({0}). To initialize new project "
-        "please use `platformio init` command"
-    )
-
-
-class InvalidProjectConf(PlatformIOProjectException):
-
-    MESSAGE = "Invalid '{0}' (project configuration file): '{1}'"
-
-
-class UndefinedEnvPlatform(PlatformIOProjectException):
-
-    MESSAGE = "Please specify platform for '{0}' environment"
-
-
-class ProjectEnvsNotAvailable(PlatformIOProjectException):
-
-    MESSAGE = "Please setup environments in `platformio.ini` file"
-
-
-class UnknownEnvNames(PlatformIOProjectException):
-
-    MESSAGE = "Unknown environment names '{0}'. Valid names are '{1}'"
-
-
-class ProjectOptionValueError(PlatformIOProjectException):
-
-    MESSAGE = "{0} for option `{1}` in section [{2}]"
-
-
-#
 # Library
 #
 
@@ -319,7 +276,7 @@ class UpgradeError(PlatformioException):
 """
 
 
-class HomeDirPermissionsError(PlatformioException):
+class HomeDirPermissionsError(UserSideException):
 
     MESSAGE = (
         "The directory `{0}` or its parent directory is not owned by the "
@@ -336,20 +293,6 @@ class CygwinEnvDetected(PlatformioException):
         "PlatformIO does not work within Cygwin environment. "
         "Use native Terminal instead."
     )
-
-
-class DebugSupportError(PlatformioException):
-
-    MESSAGE = (
-        "Currently, PlatformIO does not support debugging for `{0}`.\n"
-        "Please request support at https://github.com/platformio/"
-        "platformio-core/issues \nor visit -> https://docs.platformio.org"
-        "/page/plus/debugging.html"
-    )
-
-
-class DebugInvalidOptions(PlatformioException):
-    pass
 
 
 class TestDirNotExists(PlatformioException):

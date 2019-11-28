@@ -23,6 +23,7 @@ import click
 from platformio import exception, fs
 from platformio.commands import device
 from platformio.managers.core import pioplus_call
+from platformio.project.exception import NotPlatformIOProjectError
 
 # pylint: disable=unused-argument
 
@@ -198,7 +199,7 @@ def device_monitor(ctx, **kwargs):
         with fs.cd(kwargs["project_dir"]):
             project_options = device.get_project_options(kwargs["environment"])
         kwargs = device.apply_project_monitor_options(kwargs, project_options)
-    except exception.NotPlatformIOProject:
+    except NotPlatformIOProjectError:
         pass
 
     kwargs["baud"] = kwargs["baud"] or 9600

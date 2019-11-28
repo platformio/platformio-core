@@ -16,6 +16,7 @@ from platformio import exception, telemetry
 from platformio.commands.platform import platform_install as cmd_platform_install
 from platformio.commands.test.processor import CTX_META_TEST_RUNNING_NAME
 from platformio.managers.platform import PlatformFactory
+from platformio.project.exception import UndefinedEnvPlatformError
 
 # pylint: disable=too-many-instance-attributes
 
@@ -56,12 +57,12 @@ class EnvironmentProcessor(object):
 
     def process(self):
         if "platform" not in self.options:
-            raise exception.UndefinedEnvPlatform(self.name)
+            raise UndefinedEnvPlatformError(self.name)
 
         build_vars = self.get_build_variables()
         build_targets = list(self.get_build_targets())
 
-        telemetry.on_run_environment(self.options, build_targets)
+        telemetry.send_run_environment(self.options, build_targets)
 
         # skip monitor target, we call it above
         if "monitor" in build_targets:

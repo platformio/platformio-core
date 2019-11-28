@@ -22,6 +22,7 @@ from serial.tools import miniterm
 from platformio import exception, fs, util
 from platformio.compat import dump_json_to_unicode
 from platformio.project.config import ProjectConfig
+from platformio.project.exception import NotPlatformIOProjectError
 
 
 @click.group(short_help="Monitor device or list existing")
@@ -181,7 +182,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         with fs.cd(kwargs["project_dir"]):
             project_options = get_project_options(kwargs["environment"])
         kwargs = apply_project_monitor_options(kwargs, project_options)
-    except exception.NotPlatformIOProject:
+    except NotPlatformIOProjectError:
         pass
 
     if not kwargs["port"]:

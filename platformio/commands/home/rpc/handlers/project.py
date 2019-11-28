@@ -27,6 +27,7 @@ from platformio.compat import PY2, get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
+from platformio.project.exception import ProjectError
 from platformio.project.helpers import get_project_dir, is_platformio_project
 from platformio.project.options import get_config_options_schema
 
@@ -113,7 +114,7 @@ class ProjectRPC(object):
             try:
                 with fs.cd(project_dir):
                     data = _get_project_data()
-            except exception.PlatformIOProjectException:
+            except ProjectError:
                 continue
 
             for board_id in data.get("boards", []):
@@ -158,7 +159,7 @@ class ProjectRPC(object):
                     config = ProjectConfig(os.path.join(project_dir, "platformio.ini"))
                     config.validate(silent=True)
                     project_description = config.get("platformio", "description")
-                except exception.PlatformIOProjectException:
+                except ProjectError:
                     continue
 
                 path_tokens = project_dir.split(os.path.sep)

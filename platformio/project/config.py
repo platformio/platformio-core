@@ -20,8 +20,9 @@ from hashlib import sha1
 
 import click
 
-from platformio import exception, fs
+from platformio import fs
 from platformio.compat import PY2, WINDOWS, hashlib_encode_data
+from platformio.project import exception
 from platformio.project.options import ProjectOptions
 
 try:
@@ -104,7 +105,7 @@ class ProjectConfigBase(object):
         try:
             self._parser.read(path)
         except ConfigParser.Error as e:
-            raise exception.InvalidProjectConf(path, str(e))
+            raise exception.InvalidProjectConfError(path, str(e))
 
         if not parse_extra:
             return
@@ -273,7 +274,7 @@ class ProjectConfigBase(object):
         except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
             pass  # handle value from system environment
         except ConfigParser.Error as e:
-            raise exception.InvalidProjectConf(self.path, str(e))
+            raise exception.InvalidProjectConfError(self.path, str(e))
 
         option_meta = ProjectOptions.get("%s.%s" % (section.split(":", 1)[0], option))
         if not option_meta:
@@ -327,14 +328,14 @@ class ProjectConfigBase(object):
 
     def validate(self, envs=None, silent=False):
         if not os.path.isfile(self.path):
-            raise exception.NotPlatformIOProject(self.path)
+            raise exception.NotPlatformIOProjectError(self.path)
         # check envs
         known = set(self.envs())
         if not known:
-            raise exception.ProjectEnvsNotAvailable()
+            raise exception.ProjectEnvsNotAvailableError()
         unknown = set(list(envs or []) + self.default_envs()) - known
         if unknown:
-            raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
+            raise exception.UnknownEnvNamesError(", ".join(unknown), ", ".join(known))
         if not silent:
             for warning in self.warnings:
                 click.secho("Warning! %s" % warning, fg="yellow")

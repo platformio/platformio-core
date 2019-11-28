@@ -23,7 +23,11 @@ from os.path import basename, dirname, isdir, isfile, join
 import click
 import semantic_version
 
-from platformio import __version__, app, exception, fs, proc, util
+from platformio import __version__, app, exception, fs, proc, telemetry, util
+from platformio.commands.debug.exception import (
+    DebugInvalidOptionsError,
+    DebugSupportError,
+)
 from platformio.compat import PY2, hashlib_encode_data, is_bytes, load_python_module
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
@@ -799,11 +803,12 @@ class PlatformBoardConfig(object):
         if tool_name == "custom":
             return tool_name
         if not debug_tools:
-            raise exception.DebugSupportError(self._manifest["name"])
+            telemetry.send_event("Debug", "Request", self.id)
+            raise DebugSupportError(self._manifest["name"])
         if tool_name:
             if tool_name in debug_tools:
                 return tool_name
-            raise exception.DebugInvalidOptions(
+            raise DebugInvalidOptionsError(
                 "Unknown debug tool `%s`. Please use one of `%s` or `custom`"
                 % (tool_name, ", ".join(sorted(list(debug_tools))))
             )
