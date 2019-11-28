@@ -88,12 +88,13 @@ def cli(port, host, no_open, shutdown_timeout):
         return
 
     # if already started
-    already_started = False
-    socket.setdefaulttimeout(1)
+    already_started = True
     try:
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        already_started = True
-    except:  # pylint: disable=bare-except
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind((host, port))
+        s.close()
+        already_started = False
+    except (OSError, socket.error):
         pass
 
     home_url = "http://%s:%d" % (host, port)
