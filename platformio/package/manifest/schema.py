@@ -15,13 +15,14 @@
 import requests
 import semantic_version
 from marshmallow import Schema, ValidationError, fields, validate, validates
+from marshmallow import __version_info__ as marshmallow_version
 
 from platformio.package.exception import ManifestValidationError
 from platformio.util import memoized
 
 
 class StrictSchema(Schema):
-    def handle_error(self, error, data):
+    def handle_error(self, error, data, *, _many, **_kwargs):
         # skip broken records
         if self.many:
             error.data = [
@@ -33,8 +34,10 @@ class StrictSchema(Schema):
 
 
 class StrictListField(fields.List):
-    def _deserialize(self, value, attr, data):
+    def _deserialize(self, value, attr, data, **kwargs):
         try:
+            if marshmallow_version >= (3, ):
+                return super(StrictListField, self)._deserialize(value, attr, data, **kwargs)
             return super(StrictListField, self)._deserialize(value, attr, data)
         except ValidationError as exc:
             if exc.data:
@@ -142,9 +145,17 @@ class ManifestSchema(Schema):
         )
     )
 
-    def handle_error(self, error, data):
-        if self.strict:
-            raise ManifestValidationError(error, data)
+    # Wrapper to encapsulate differences between marshmallow 2 and 3
+    # load() method
+    def load_manifest(self, manifest):
+        if marshmallow_version >= (3, ):
+            data = self.load(manifest)
+        else:
+            data, _ = self.load(manifest)
+        return data
+
+    def handle_error(self, error, data, *, _many, **_kwargs):
+        raise ManifestValidationError(error, data)
 
     @validates("version")
     def validate_version(self, value):  # pylint: disable=no-self-use

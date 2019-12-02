@@ -33,7 +33,7 @@ install_requires = [
     "semantic_version>=2.8.1,<3",
     "tabulate>=0.8.3,<1",
     "pyelftools>=0.25,<1",
-    "marshmallow>=2.20.5,<3"
+    "marshmallow>=2.20.5"
 ]
 
 setup(
