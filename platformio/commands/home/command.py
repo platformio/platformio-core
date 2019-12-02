@@ -108,9 +108,12 @@ def cli(port, host, no_open, shutdown_timeout):
         )
     )
     click.echo("")
-    click.echo("Open PIO Home in your browser by this URL => %s" % home_url)
+    click.echo("Open PlatformIO Home in your browser by this URL => %s" % home_url)
 
     if already_started:
+        click.secho(
+            "PlatformIO Home server is already started in another process.", fg="yellow"
+        )
         return
 
     click.echo("PIO Home has been started. Press Ctrl+C to shutdown.")
