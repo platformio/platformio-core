@@ -5,9 +5,12 @@
 # please create `CMakeListsUser.txt` in the root of project.
 # The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
 
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.13)
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_C_COMPILER_WORKS 1)
+set(CMAKE_CXX_COMPILER_WORKS 1)
 
-project("{{project_name}}")
+project("{{project_name}}" C CXX)
 
 include(CMakeListsPrivate.txt)
 
@@ -16,74 +19,14 @@ include(CMakeListsUser.txt)
 endif()
 
 add_custom_target(
-    PLATFORMIO_BUILD ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion run "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
+    Production ALL
+    COMMAND platformio -c clion run "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 add_custom_target(
-    PLATFORMIO_BUILD_VERBOSE ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion run --verbose "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_custom_target(
-    PLATFORMIO_UPLOAD ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion run --target upload "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_custom_target(
-    PLATFORMIO_CLEAN ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion run --target clean "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_custom_target(
-    PLATFORMIO_MONITOR ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion device monitor "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_custom_target(
-    PLATFORMIO_TEST ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion test "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_custom_target(
-    PLATFORMIO_PROGRAM ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion run --target program "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_custom_target(
-    PLATFORMIO_UPLOADFS ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion run --target uploadfs "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_custom_target(
-    PLATFORMIO_BUILD_DEBUG ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion run --target debug "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_custom_target(
-    PLATFORMIO_UPDATE_ALL ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion update
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_custom_target(
-    PLATFORMIO_REBUILD_PROJECT_INDEX ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion init --ide clion
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-add_custom_target(
-    PLATFORMIO_DEVICE_LIST ALL
-    COMMAND ${PLATFORMIO_CMD} -f -c clion device list
+    Debug ALL
+    COMMAND platformio -c clion run --target debug "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

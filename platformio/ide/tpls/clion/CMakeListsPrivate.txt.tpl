@@ -25,14 +25,13 @@
 % envs = config.envs()
 
 % if len(envs) > 1:
-set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }};" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }};" CACHE STRING "Build Types reflect PlatformIO Environments" FORCE)
 % else:
-set(CMAKE_CONFIGURATION_TYPES "{{ env_name }}" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "{{ env_name }}" CACHE STRING "Build Types reflect PlatformIO Environments" FORCE)
 % end
 
-set(PLATFORMIO_CMD "{{ _normalize_path(platformio_path) }}")
 % if svd_path:
-set(SVD_PATH "{{ _normalize_path(svd_path) }}")
+set(CLION_SVD_FILE_PATH "{{ _normalize_path(svd_path) }}" CACHE FILEPATH "Peripheral Registers Definitions File" FORCE)
 % end
 
 SET(CMAKE_C_COMPILER "{{ _normalize_path(cc_path) }}")
