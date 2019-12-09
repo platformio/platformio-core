@@ -21,6 +21,7 @@ from os.path import isdir
 import click
 
 from platformio import exception
+from platformio.compat import WINDOWS
 from platformio.managers.core import get_core_package_dir, inject_contrib_pysite
 
 
@@ -123,11 +124,20 @@ def cli(port, host, no_open, shutdown_timeout):
 
 
 def is_port_used(host, port):
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind((host, port))
-        s.close()
-        return False
-    except (OSError, socket.error):
-        pass
+    socket.setdefaulttimeout(1)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    if WINDOWS:
+        try:
+            s.bind((host, port))
+            s.close()
+            return False
+        except (OSError, socket.error):
+            pass
+    else:
+        try:
+            s.connect((host, port))
+            s.close()
+        except socket.error:
+            return False
+
     return True
