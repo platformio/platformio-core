@@ -95,7 +95,6 @@ Development Platforms
 * `NXP LPC <https://platformio.org/platforms/nxplpc?utm_source=github&utm_medium=core>`_
 * `RISC-V <https://platformio.org/platforms/riscv?utm_source=github&utm_medium=core>`_
 * `RISC-V GAP <https://platformio.org/platforms/riscv_gap?utm_source=github&utm_medium=core>`_
-* `Samsung ARTIK <https://platformio.org/platforms/samsung_artik?utm_source=github&utm_medium=core>`_
 * `Shakti <https://platformio.org/platforms/shakti?utm_source=github&utm_medium=core>`_
 * `Silicon Labs EFM32 <https://platformio.org/platforms/siliconlabsefm32?utm_source=github&utm_medium=core>`_
 * `ST STM32 <https://platformio.org/platforms/ststm32?utm_source=github&utm_medium=core>`_
@@ -109,7 +108,6 @@ Frameworks
 ----------
 
 * `Arduino <https://platformio.org/frameworks/arduino?utm_source=github&utm_medium=core>`_
-* `ARTIK SDK <https://platformio.org/frameworks/artik-sdk?utm_source=github&utm_medium=core>`_
 * `CMSIS <https://platformio.org/frameworks/cmsis?utm_source=github&utm_medium=core>`_
 * `Energia <https://platformio.org/frameworks/energia?utm_source=github&utm_medium=core>`_
 * `ESP-IDF <https://platformio.org/frameworks/espidf?utm_source=github&utm_medium=core>`_
@@ -125,7 +123,6 @@ Frameworks
 * `Simba <https://platformio.org/frameworks/simba?utm_source=github&utm_medium=core>`_
 * `SPL <https://platformio.org/frameworks/spl?utm_source=github&utm_medium=core>`_
 * `STM32Cube <https://platformio.org/frameworks/stm32cube?utm_source=github&utm_medium=core>`_
-* `Tizen RT <https://platformio.org/frameworks/tizenrt?utm_source=github&utm_medium=core>`_
 * `WiringPi <https://platformio.org/frameworks/wiringpi?utm_source=github&utm_medium=core>`_
 
 Contributing
