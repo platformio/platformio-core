@@ -284,19 +284,19 @@ ProjectOptions = OrderedDict(
                 description="Custom packages and specifications",
                 multiple=True,
             ),
-            ConfigEnvOption(
-                group="platform",
-                name="framework",
-                description="A list of project dependent frameworks",
-                multiple=True,
-                buildenvvar="PIOFRAMEWORK",
-            ),
             # Board
             ConfigEnvOption(
                 group="platform",
                 name="board",
                 description="A board ID",
                 buildenvvar="BOARD",
+            ),
+            ConfigEnvOption(
+                group="platform",
+                name="framework",
+                description="A list of project dependent frameworks",
+                multiple=True,
+                buildenvvar="PIOFRAMEWORK",
             ),
             ConfigEnvOption(
                 group="platform",
