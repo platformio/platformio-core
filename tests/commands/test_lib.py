@@ -230,7 +230,9 @@ def test_global_lib_update_check(clirunner, validate_cliresult):
     )
     validate_cliresult(result)
     output = json.loads(result.output)
-    assert set(["RFcontrol", "NeoPixelBus"]) == set([l["name"] for l in output])
+    assert set(["RFcontrol", "ESPAsyncTCP", "NeoPixelBus"]) == set(
+        [l["name"] for l in output]
+    )
 
 
 def test_global_lib_update(clirunner, validate_cliresult):
@@ -250,7 +252,7 @@ def test_global_lib_update(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
     assert result.output.count("[Detached]") == 5
-    assert result.output.count("[Up-to-date]") == 11
+    assert result.output.count("[Up-to-date]") == 10
     assert "Uninstalling RFcontrol @ 77d4eb3f8a" in result.output
 
     # update unknown library
