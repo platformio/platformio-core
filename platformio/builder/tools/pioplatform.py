@@ -213,7 +213,9 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
             if extra:
                 info += " (%s)" % ", ".join(extra)
             data.append(info)
-        return ["PACKAGES:", ", ".join(data)]
+        if not data:
+            return None
+        return ["PACKAGES:"] + ["\n - %s" % d for d in sorted(data)]
 
     for data in (
         _get_configuration_data(),
