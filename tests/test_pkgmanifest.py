@@ -202,6 +202,7 @@ def test_library_json_schema():
     "name": "Benoit Blanchon",
     "url": "https://blog.benoitblanchon.fr"
   },
+  "downloadUrl": "https://example.com/package.tar.gz",
   "exclude": [
     "fuzzing",
     "scripts",
@@ -251,6 +252,7 @@ def test_library_json_schema():
             "authors": [
                 {"name": "Benoit Blanchon", "url": "https://blog.benoitblanchon.fr"}
             ],
+            "downloadUrl": "https://example.com/package.tar.gz",
             "export": {"exclude": ["fuzzing", "scripts", "test", "third-party"]},
             "frameworks": ["arduino"],
             "platforms": ["*"],

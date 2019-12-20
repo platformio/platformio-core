@@ -92,8 +92,11 @@ class ManifestSchema(Schema):
     homepage = fields.Url(validate=validate.Length(min=1, max=255))
     license = fields.Str(validate=validate.Length(min=1, max=255))
     repository = fields.Nested(RepositorySchema)
+
+    # library.json
     export = fields.Nested(ExportSchema)
     examples = fields.Nested(ExampleSchema, many=True)
+    downloadUrl = fields.Url(validate=validate.Length(min=1, max=255))
 
     keywords = StrictListField(
         fields.Str(
@@ -105,7 +108,6 @@ class ManifestSchema(Schema):
             ]
         )
     )
-
     platforms = StrictListField(
         fields.Str(
             validate=[
