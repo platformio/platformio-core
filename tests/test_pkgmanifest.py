@@ -29,6 +29,10 @@ def test_library_json_parser():
     "name": "TestPackage",
     "keywords": "kw1, KW2, kw3",
     "platforms": ["atmelavr", "espressif"],
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/username/repo/"
+    },
     "url": "http://old.url.format",
     "exclude": [".gitignore", "tests"],
     "include": "mylib",
@@ -44,6 +48,10 @@ def test_library_json_parser():
         {
             "name": "TestPackage",
             "platforms": ["atmelavr", "espressif8266"],
+            "repository": {
+                "type": "git",
+                "url": "https://github.com/username/repo.git",
+            },
             "export": {"exclude": [".gitignore", "tests"], "include": ["mylib"]},
             "keywords": ["kw1", "kw2", "kw3"],
             "homepage": "http://old.url.format",
@@ -172,7 +180,7 @@ customField=Custom Value
         "include": ["libraries/TestPackage"],
     }
     assert data["repository"] == {
-        "url": "https://github.com/username/reponame",
+        "url": "https://github.com/username/reponame.git",
         "type": "git",
     }
 
@@ -299,7 +307,10 @@ architectures=avr,sam
                 "A library for monochrome TFTs and OLEDs. Supported display "
                 "controller: SSD1306, SSD1309, SSD1322, SSD1325"
             ),
-            "repository": {"url": "https://github.com/olikraus/u8glib", "type": "git"},
+            "repository": {
+                "url": "https://github.com/olikraus/u8glib.git",
+                "type": "git",
+            },
             "frameworks": ["arduino"],
             "platforms": ["atmelavr", "atmelsam"],
             "version": "1.19.1",
@@ -350,7 +361,10 @@ includes=MozziGuts.h
                 "sounds using familiar synthesis units like oscillators, delays, "
                 "filters and envelopes."
             ),
-            "repository": {"url": "https://github.com/sensorium/Mozzi", "type": "git"},
+            "repository": {
+                "url": "https://github.com/sensorium/Mozzi.git",
+                "type": "git",
+            },
             "platforms": ["*"],
             "frameworks": ["arduino"],
             "export": {
