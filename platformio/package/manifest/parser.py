@@ -125,6 +125,8 @@ class BaseManifestParser(object):
             self._data = self.parse(contents)
         except Exception as e:
             raise ManifestParserError("Could not parse manifest -> %s" % e)
+
+        self._data = self.normalize_repository(self._data)
         self._data = self.parse_examples(self._data)
 
         # remove None fields
@@ -139,7 +141,7 @@ class BaseManifestParser(object):
         return self._data
 
     @staticmethod
-    def cleanup_author(author):
+    def normalize_author(author):
         assert isinstance(author, dict)
         if author.get("email"):
             author["email"] = re.sub(r"\s+[aA][tT]\s+", "@", author["email"])
@@ -159,6 +161,22 @@ class BaseManifestParser(object):
                 name = raw[: raw.index(ldel)]
                 email = raw[raw.index(ldel) + 1 : raw.index(rdel)]
         return (name.strip(), email.strip() if email else None)
+
+    @staticmethod
+    def normalize_repository(data):
+        url = (data.get("repository") or {}).get("url")
+        if not url or "://" not in url:
+            return data
+        url_attrs = urlparse(url)
+        if url_attrs.netloc not in ("github.com", "bitbucket.org", "gitlab.com"):
+            return data
+        url = "https://%s%s" % (url_attrs.netloc, url_attrs.path)
+        if url.endswith("/"):
+            url = url[:-1]
+        if not url.endswith(".git"):
+            url += ".git"
+        data["repository"]["url"] = url
+        return data
 
     def parse_examples(self, data):
         examples = data.get("examples")
@@ -305,7 +323,7 @@ class LibraryJsonManifestParser(BaseManifestParser):
         # normalize Union[dict, list] fields
         if not isinstance(raw, list):
             raw = [raw]
-        return [self.cleanup_author(author) for author in raw]
+        return [self.normalize_author(author) for author in raw]
 
     @staticmethod
     def _parse_platforms(raw):
@@ -352,7 +370,7 @@ class ModuleJsonManifestParser(BaseManifestParser):
             name, email = self.parse_author_name_and_email(author)
             if not name:
                 continue
-            result.append(self.cleanup_author(dict(name=name, email=email)))
+            result.append(self.normalize_author(dict(name=name, email=email)))
         return result
 
     @staticmethod
@@ -451,7 +469,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             name, email = self.parse_author_name_and_email(author)
             if not name:
                 continue
-            authors.append(self.cleanup_author(dict(name=name, email=email)))
+            authors.append(self.normalize_author(dict(name=name, email=email)))
         for author in properties.get("maintainer", "").split(","):
             name, email = self.parse_author_name_and_email(author)
             if not name:
@@ -466,27 +484,25 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                     item["email"] = email
             if not found:
                 authors.append(
-                    self.cleanup_author(dict(name=name, email=email, maintainer=True))
+                    self.normalize_author(dict(name=name, email=email, maintainer=True))
                 )
         return authors
 
     def _parse_repository(self, properties):
         if self.remote_url:
-            repo_parse = urlparse(self.remote_url)
-            repo_path_tokens = repo_parse.path[1:].split("/")[:-1]
-            if "github" in repo_parse.netloc:
+            url_attrs = urlparse(self.remote_url)
+            repo_path_tokens = url_attrs.path[1:].split("/")[:-1]
+            if "github" in url_attrs.netloc:
                 return dict(
                     type="git",
-                    url="%s://github.com/%s"
-                    % (repo_parse.scheme, "/".join(repo_path_tokens[:2])),
+                    url="https://github.com/" + "/".join(repo_path_tokens[:2]),
                 )
             if "raw" in repo_path_tokens:
                 return dict(
                     type="git",
-                    url="%s://%s/%s"
+                    url="https://%s/%s"
                     % (
-                        repo_parse.scheme,
-                        repo_parse.netloc,
+                        url_attrs.netloc,
                         "/".join(repo_path_tokens[: repo_path_tokens.index("raw")]),
                     ),
                 )
@@ -498,9 +514,9 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         result = {"exclude": ["extras", "docs", "tests", "test", "*.doxyfile", "*.pdf"]}
         include = None
         if self.remote_url:
-            repo_parse = urlparse(self.remote_url)
-            repo_path_tokens = repo_parse.path[1:].split("/")[:-1]
-            if "github" in repo_parse.netloc:
+            url_attrs = urlparse(self.remote_url)
+            repo_path_tokens = url_attrs.path[1:].split("/")[:-1]
+            if "github" in url_attrs.netloc:
                 include = "/".join(repo_path_tokens[3:]) or None
             elif "raw" in repo_path_tokens:
                 include = (
