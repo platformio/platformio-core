@@ -19,6 +19,7 @@ PlatformIO Core 4.0
 * Warn about broken library manifest when scanning dependencies (`issue #3268 <https://github.com/platformio/platformio-core/issues/3268>`_)
 * Fixed an issue when ``env.BoardConfig()`` does not work for custom boards in extra scripts of libraries (`issue #3264 <https://github.com/platformio/platformio-core/issues/3264>`_)
 * Fixed an issue with "start-group/end-group" linker flags on Native development platform (`issue #3282 <https://github.com/platformio/platformio-core/issues/3282>`_)
+* Fixed default PIO Unified Debugger configuration for `J-Link probe <http://docs.platformio.org/page/plus/debug-tools/jlink.html>`__
 
 4.1.0 (2019-11-07)
 ~~~~~~~~~~~~~~~~~~

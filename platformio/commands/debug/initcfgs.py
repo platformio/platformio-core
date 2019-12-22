@@ -59,8 +59,8 @@ end
 target extended-remote $DEBUG_PORT
 monitor clrbp
 monitor speed auto
-$LOAD_CMDS
 pio_reset_halt_target
+$LOAD_CMDS
 $INIT_BREAK
 """
 
