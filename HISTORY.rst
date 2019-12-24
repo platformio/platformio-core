@@ -20,6 +20,7 @@ PlatformIO Core 4.0
 * Fixed an issue when ``env.BoardConfig()`` does not work for custom boards in extra scripts of libraries (`issue #3264 <https://github.com/platformio/platformio-core/issues/3264>`_)
 * Fixed an issue with "start-group/end-group" linker flags on Native development platform (`issue #3282 <https://github.com/platformio/platformio-core/issues/3282>`_)
 * Fixed default PIO Unified Debugger configuration for `J-Link probe <http://docs.platformio.org/page/plus/debug-tools/jlink.html>`__
+* Fixed an issue with LDF when header files not found if "libdeps_dir" is within a subdirectory of "lib_extra_dirs" (`issue #3311 <https://github.com/platformio/platformio-core/issues/3311>`_)
 
 4.1.0 (2019-11-07)
 ~~~~~~~~~~~~~~~~~~
