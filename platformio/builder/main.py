@@ -188,7 +188,10 @@ if "envdump" in COMMAND_LINE_TARGETS:
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
-    Import("projenv")
+    try:
+        Import("projenv")
+    except:  # pylint: disable=bare-except
+        projenv = env
     click.echo(
         "\n%s\n"
         % dump_json_to_unicode(
