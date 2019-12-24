@@ -886,7 +886,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
                 if not lib_dir:
                     continue
                 for lb in self.env.GetLibBuilders():
-                    if lib_dir not in lb:
+                    if lib_dir != lb.path:
                         continue
                     if lb not in self.depbuilders:
                         self.depend_recursive(lb)
