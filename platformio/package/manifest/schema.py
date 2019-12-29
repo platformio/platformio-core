@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-ancestors
+
 import marshmallow
 import requests
 import semantic_version
@@ -32,12 +34,10 @@ if MARSHMALLOW_2:
 else:
 
     class CompatSchema(Schema):
-        class Meta:
-            unknown = marshmallow.EXCLUDE
+        class Meta(object):  # pylint: disable=no-init
+            unknown = marshmallow.EXCLUDE  # pylint: disable=no-member
 
-        def handle_error(  # pylint: disable=arguments-differ
-            self, error, data, **kwargs
-        ):
+        def handle_error(self, error, data, **_):  # pylint: disable=arguments-differ
             raise ManifestValidationError(
                 error.messages,
                 data,
@@ -56,7 +56,7 @@ class BaseSchema(CompatSchema):
 
 
 class StrictSchema(BaseSchema):
-    def handle_error(self, error, data, **kwargs):  # pylint: disable=arguments-differ
+    def handle_error(self, error, data, **_):  # pylint: disable=arguments-differ
         # skip broken records
         if self.many:
             error.valid_data = [
@@ -70,7 +70,9 @@ class StrictSchema(BaseSchema):
 
 
 class StrictListField(fields.List):
-    def _deserialize(self, value, attr, data, **kwargs):
+    def _deserialize(  # pylint: disable=arguments-differ
+        self, value, attr, data, **kwargs
+    ):
         try:
             return super(StrictListField, self)._deserialize(
                 value, attr, data, **kwargs
