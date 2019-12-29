@@ -161,6 +161,7 @@ customField=Custom Value
         "architectures=*\n" + contents
     ).as_dict()
     assert data["platforms"] == ["*"]
+
     # Platforms specific
     data = parser.LibraryPropertiesManifestParser(
         "architectures=avr, esp32\n" + contents
@@ -184,7 +185,7 @@ customField=Custom Value
         "type": "git",
     }
 
-    # Hope page
+    # Home page
     data = parser.LibraryPropertiesManifestParser(
         "url=https://github.com/username/reponame.git\n" + contents
     ).as_dict()
@@ -192,6 +193,17 @@ customField=Custom Value
         "type": "git",
         "url": "https://github.com/username/reponame.git",
     }
+
+    # Author + Maintainer
+    data = parser.LibraryPropertiesManifestParser(
+        """
+author=Rocket Scream Electronics
+maintainer=Rocket Scream Electronics
+"""
+    ).as_dict()
+    assert data["authors"] == [
+        {"name": "Rocket Scream Electronics", "maintainer": True}
+    ]
 
 
 def test_library_json_schema():
