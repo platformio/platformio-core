@@ -24,13 +24,14 @@ class ManifestParserError(ManifestException):
 
 
 class ManifestValidationError(ManifestException):
-    def __init__(self, error, data):
+    def __init__(self, messages, data, valid_data):
         super(ManifestValidationError, self).__init__()
-        self.error = error
+        self.messages = messages
         self.data = data
+        self.valid_data = valid_data
 
     def __str__(self):
         return (
             "Invalid manifest fields: %s. \nPlease check specification -> "
-            "http://docs.platformio.org/page/librarymanager/config.html" % self.error
+            "http://docs.platformio.org/page/librarymanager/config.html" % self.messages
         )

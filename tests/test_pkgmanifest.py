@@ -238,8 +238,7 @@ def test_library_json_schema():
         contents, parser.ManifestFileType.LIBRARY_JSON
     ).as_dict()
 
-    data, errors = ManifestSchema(strict=True).load(raw_data)
-    assert not errors
+    data = ManifestSchema().load_manifest(raw_data)
 
     assert data["repository"]["url"] == "https://github.com/bblanchon/ArduinoJson.git"
     assert data["examples"][1]["base"] == "examples/JsonHttpClient"
@@ -297,8 +296,7 @@ architectures=avr,sam
         contents, parser.ManifestFileType.LIBRARY_PROPERTIES
     ).as_dict()
 
-    data, errors = ManifestSchema(strict=True).load(raw_data)
-    assert not errors
+    data = ManifestSchema().load_manifest(raw_data)
 
     assert not jsondiff.diff(
         data,
@@ -348,7 +346,12 @@ includes=MozziGuts.h
         ),
     ).as_dict()
 
-    data, errors = ManifestSchema(strict=False).load(raw_data)
+    try:
+        ManifestSchema().load_manifest(raw_data)
+    except ManifestValidationError as e:
+        data = e.valid_data
+        errors = e.messages
+
     assert errors["authors"]
 
     assert not jsondiff.diff(
@@ -437,8 +440,7 @@ def test_platform_json_schema():
         contents, parser.ManifestFileType.PLATFORM_JSON
     ).as_dict()
     raw_data["frameworks"] = sorted(raw_data["frameworks"])
-    data, errors = ManifestSchema(strict=False).load(raw_data)
-    assert not errors
+    data = ManifestSchema().load_manifest(raw_data)
 
     assert not jsondiff.diff(
         data,
@@ -477,8 +479,7 @@ def test_package_json_schema():
         contents, parser.ManifestFileType.PACKAGE_JSON
     ).as_dict()
 
-    data, errors = ManifestSchema(strict=False).load(raw_data)
-    assert not errors
+    data = ManifestSchema().load_manifest(raw_data)
 
     assert not jsondiff.diff(
         data,
@@ -580,8 +581,7 @@ def test_examples_from_dir(tmpdir_factory):
 
     raw_data["examples"] = _sort_examples(raw_data["examples"])
 
-    data, errors = ManifestSchema(strict=True).load(raw_data)
-    assert not errors
+    data = ManifestSchema().load_manifest(raw_data)
 
     assert not jsondiff.diff(
         data,
@@ -637,34 +637,32 @@ def test_examples_from_dir(tmpdir_factory):
 
 
 def test_broken_schemas():
-    # non-strict mode
-    data, errors = ManifestSchema(strict=False).load(dict(name="MyPackage"))
-    assert set(errors.keys()) == set(["version"])
-    assert data.get("version") is None
-
-    # invalid keywords
-    data, errors = ManifestSchema(strict=False).load(dict(keywords=["kw1", "*^[]"]))
-    assert errors
-    assert data["keywords"] == ["kw1"]
-
-    # strict mode
-
+    # missing required field
     with pytest.raises(
-        ManifestValidationError, match="Missing data for required field"
-    ):
-        ManifestSchema(strict=True).load(dict(name="MyPackage"))
+        ManifestValidationError, match=("Invalid semantic versioning format")
+    ) as exc_info:
+        ManifestSchema().load_manifest(dict(name="MyPackage", version="broken_version"))
+    assert exc_info.value.valid_data == {"name": "MyPackage"}
+
+    # invalid StrictList
+    with pytest.raises(
+        ManifestValidationError, match=("Invalid manifest fields.+keywords")
+    ) as exc_info:
+        ManifestSchema().load_manifest(
+            dict(name="MyPackage", version="1.0.0", keywords=["kw1", "*^[]"])
+        )
+    assert list(exc_info.value.messages.keys()) == ["keywords"]
+    assert exc_info.value.valid_data["keywords"] == ["kw1"]
 
     # broken SemVer
     with pytest.raises(
         ManifestValidationError, match=("Invalid semantic versioning format")
     ):
-        ManifestSchema(strict=True).load(
-            dict(name="MyPackage", version="broken_version")
-        )
+        ManifestSchema().load_manifest(dict(name="MyPackage", version="broken_version"))
 
     # broken value for Nested
     with pytest.raises(ManifestValidationError, match=r"authors.*Invalid input type"):
-        ManifestSchema(strict=True).load(
+        ManifestSchema().load_manifest(
             dict(
                 name="MyPackage",
                 description="MyDescription",
