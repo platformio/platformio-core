@@ -480,7 +480,7 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
                     continue
                 found = True
                 item["maintainer"] = True
-                if not item.get("email"):
+                if not item.get("email") and email:
                     item["email"] = email
             if not found:
                 authors.append(
