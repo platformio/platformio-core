@@ -142,7 +142,7 @@ env.LoadPioPlatform()
 
 env.SConscriptChdir(0)
 env.SConsignFile(
-    join("$BUILD_DIR", ".sconsign.py%d%d" % (sys.version_info[0], sys.version_info[1]))
+    join("$BUILD_DIR", ".sconsign.dblite")
 )
 
 for item in env.GetExtraScripts("pre"):
