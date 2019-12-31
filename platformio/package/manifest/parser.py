@@ -342,7 +342,7 @@ class LibraryJsonManifestParser(BaseManifestParser):
             return None
         result = {}
         for k in ("include", "exclude"):
-            if k not in raw:
+            if not raw.get(k):
                 continue
             result[k] = raw[k] if isinstance(raw[k], list) else [raw[k]]
         return result
