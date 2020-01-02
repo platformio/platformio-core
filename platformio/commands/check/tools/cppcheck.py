@@ -112,12 +112,12 @@ class CppcheckCheckTool(CheckToolBase):
                 cmd.append("--language=c++")
 
                 if not self.is_flag_set("--std", flags):
-                    for f in self.cpp_flags:
+                    for f in self.cxx_flags + self.cc_flags:
                         if "-std" in f:
                             # Standards with GNU extensions are not allowed
                             cmd.append("-" + f.replace("gnu", "c"))
 
-        cmd.extend(["-D%s" % d for d in self.cpp_defines])
+        cmd.extend(["-D%s" % d for d in self.cpp_defines + self.toolchain_defines])
         cmd.extend(flags)
 
         cmd.append("--file-list=%s" % self._generate_src_file())

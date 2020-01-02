@@ -27,10 +27,13 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         self.config = config
         self.envname = envname
         self.options = options
-        self.cpp_defines = []
-        self.cpp_flags = []
+        self.cc_flags = []
+        self.cxx_flags = []
         self.cpp_includes = []
-
+        self.cpp_defines = []
+        self.toolchain_defines = []
+        self.cc_path = None
+        self.cxx_path = None
         self._defects = []
         self._on_defect_callback = None
         self._bad_input = False
@@ -53,10 +56,13 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         data = load_project_ide_data(project_dir, envname)
         if not data:
             return
-        self.cpp_flags = data.get("cxx_flags", "").split(" ")
+        self.cc_flags = data.get("cc_flags", "").split(" ")
+        self.cxx_flags = data.get("cxx_flags", "").split(" ")
         self.cpp_includes = data.get("includes", [])
         self.cpp_defines = data.get("defines", [])
-        self.cpp_defines.extend(self._get_toolchain_defines(data.get("cc_path")))
+        self.cc_path = data.get("cc_path")
+        self.cxx_path = data.get("cxx_path")
+        self.toolchain_defines = self._get_toolchain_defines(self.cc_path)
 
     def get_flags(self, tool):
         result = []
