@@ -20,6 +20,7 @@ from platformio import app, exception, util
 from platformio.commands.boards import print_boards
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.package.pack import PackagePacker
 
 
 @click.group(short_help="Platform Manager")
@@ -403,3 +404,13 @@ def platform_update(  # pylint: disable=too-many-locals
         click.echo()
 
     return True
+
+
+@cli.command(
+    "pack", short_help="Create a tarball from development platform/tool package"
+)
+@click.argument("package", required=True, metavar="[source directory, tar.gz or zip]")
+def platform_pack(package):
+    p = PackagePacker(package)
+    tarball_path = p.pack()
+    click.secho('Wrote a tarball to "%s"' % tarball_path, fg="green")

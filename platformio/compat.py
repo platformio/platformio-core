@@ -39,7 +39,7 @@ def get_locale_encoding():
 
 
 def get_class_attributes(cls):
-    attributes = inspect.getmembers(cls, lambda a: not (inspect.isroutine(a)))
+    attributes = inspect.getmembers(cls, lambda a: not inspect.isroutine(a))
     return {
         a[0]: a[1]
         for a in attributes

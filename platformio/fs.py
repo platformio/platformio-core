@@ -143,10 +143,10 @@ def path_endswith_ext(path, extensions):
     return False
 
 
-def match_src_files(src_dir, src_filter=None, src_exts=None):
+def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
     def _append_build_item(items, item, src_dir):
         if not src_exts or path_endswith_ext(item, src_exts):
-            items.add(item.replace(src_dir + os.sep, ""))
+            items.add(os.path.relpath(item, src_dir))
 
     src_filter = src_filter or ""
     if isinstance(src_filter, (list, tuple)):
@@ -159,7 +159,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None):
         items = set()
         for item in glob(os.path.join(glob_escape(src_dir), pattern)):
             if os.path.isdir(item):
-                for root, _, files in os.walk(item, followlinks=True):
+                for root, _, files in os.walk(item, followlinks=followlinks):
                     for f in files:
                         _append_build_item(items, os.path.join(root, f), src_dir)
             else:

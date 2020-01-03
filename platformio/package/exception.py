@@ -19,6 +19,10 @@ class ManifestException(PlatformioException):
     pass
 
 
+class UnknownManifestError(ManifestException):
+    pass
+
+
 class ManifestParserError(ManifestException):
     pass
 
