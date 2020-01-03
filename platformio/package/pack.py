@@ -18,6 +18,7 @@ import tarfile
 import tempfile
 
 from platformio import fs
+from platformio.package.exception import PackageException
 from platformio.package.manifest.parser import ManifestFileType, ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
 from platformio.unpacker import FileUnpacker
@@ -27,8 +28,9 @@ class PackagePacker(object):
     EXCLUDE_DEFAULT = ["._*", ".DS_Store", ".git", ".hg", ".svn", ".pio"]
     INCLUDE_DEFAULT = ManifestFileType.items().values()
 
-    def __init__(self, package):
+    def __init__(self, package, manifest_uri=None):
         self.package = package
+        self.manifest_uri = manifest_uri
 
     def pack(self, dst=None):
         tmp_dir = tempfile.mkdtemp()
@@ -40,6 +42,8 @@ class PackagePacker(object):
                 with FileUnpacker(src) as fu:
                     assert fu.unpack(tmp_dir, silent=True)
                 src = tmp_dir
+
+            src = self.find_source_root(src)
 
             manifest = self.load_manifest(src)
             filename = "{name}{system}-{version}.tar.gz".format(
@@ -66,6 +70,29 @@ class PackagePacker(object):
     def load_manifest(src):
         mp = ManifestParserFactory.new_from_dir(src)
         return ManifestSchema().load_manifest(mp.as_dict())
+
+    def find_source_root(self, src):
+        if self.manifest_uri:
+            mp = (
+                ManifestParserFactory.new_from_file(self.manifest_uri[5:])
+                if self.manifest_uri.startswith("file:")
+                else ManifestParserFactory.new_from_url(self.manifest_uri)
+            )
+            manifest = ManifestSchema().load_manifest(mp.as_dict())
+            include = manifest.get("export", {}).get("include", [])
+            if len(include) == 1:
+                if not os.path.isdir(os.path.join(src, include[0])):
+                    raise PackageException(
+                        "Non existing `include` directory `%s` in a package"
+                        % include[0]
+                    )
+                return os.path.join(src, include[0])
+
+        for root, _, __ in os.walk(src):
+            if ManifestFileType.from_dir(root):
+                return root
+
+        return src
 
     def _create_tarball(self, src, dst, include=None, exclude=None):
         # remap root

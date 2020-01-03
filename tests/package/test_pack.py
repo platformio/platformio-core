@@ -56,9 +56,7 @@ def test_filters(tmpdir_factory):
         json.dumps(dict(name="bar", version="1.2.3", export={"include": "src"}))
     )
     p = PackagePacker(str(pkg_dir))
-    dst = os.path.join(str(pkg_dir), "tarball.tar.gz")
-    p.pack(dst)
-    with tarfile.open(dst, "r:gz") as tar:
+    with tarfile.open(p.pack(str(pkg_dir)), "r:gz") as tar:
         assert set(tar.getnames()) == set(["util/helpers.cpp", "main.cpp"])
 
     # test include "src" and "include"
@@ -68,9 +66,7 @@ def test_filters(tmpdir_factory):
         )
     )
     p = PackagePacker(str(pkg_dir))
-    dst = os.path.join(str(pkg_dir), "tarball.tar.gz")
-    p.pack(dst)
-    with tarfile.open(dst, "r:gz") as tar:
+    with tarfile.open(p.pack(str(pkg_dir)), "r:gz") as tar:
         assert set(tar.getnames()) == set(
             ["include/main.h", "library.json", "src/main.cpp", "src/util/helpers.cpp"]
         )
@@ -86,9 +82,7 @@ def test_filters(tmpdir_factory):
         )
     )
     p = PackagePacker(str(pkg_dir))
-    dst = os.path.join(str(pkg_dir), "tarball.tar.gz")
-    p.pack(dst)
-    with tarfile.open(dst, "r:gz") as tar:
+    with tarfile.open(p.pack(str(pkg_dir)), "r:gz") as tar:
         assert set(tar.getnames()) == set(
             ["library.json", "src/main.cpp", "src/util/helpers.cpp"]
         )
@@ -114,3 +108,35 @@ def test_symlinks(tmpdir_factory):
         )
         m = tar.getmember("src/main.h")
         assert m.issym()
+
+
+def test_source_root(tmpdir_factory):
+    pkg_dir = tmpdir_factory.mktemp("package")
+    root_dir = pkg_dir.mkdir("root")
+    src_dir = root_dir.mkdir("src")
+    src_dir.join("main.cpp").write("#include <stdio.h>")
+    root_dir.join("library.json").write('{"name": "bar", "version": "2.0.0"}')
+    p = PackagePacker(str(pkg_dir))
+    with tarfile.open(p.pack(str(pkg_dir)), "r:gz") as tar:
+        assert set(tar.getnames()) == set(["library.json", "src/main.cpp"])
+
+
+def test_manifest_uri(tmpdir_factory):
+    pkg_dir = tmpdir_factory.mktemp("package")
+    root_dir = pkg_dir.mkdir("root")
+    src_dir = root_dir.mkdir("src")
+    src_dir.join("main.cpp").write("#include <stdio.h>")
+    root_dir.join("library.json").write('{"name": "foo", "version": "1.0.0"}')
+    bar_dir = root_dir.mkdir("library").mkdir("bar")
+    bar_dir.join("library.json").write('{"name": "bar", "version": "2.0.0"}')
+    bar_dir.mkdir("include").join("bar.h").write("")
+
+    manifest_path = pkg_dir.join("remote_library.json")
+    manifest_path.write(
+        '{"name": "bar", "version": "3.0.0", "export": {"include": "root/library/bar"}}'
+    )
+
+    p = PackagePacker(str(pkg_dir), manifest_uri="file:%s" % manifest_path)
+    p.pack(str(pkg_dir))
+    with tarfile.open(os.path.join(str(pkg_dir), "bar-2.0.0.tar.gz"), "r:gz") as tar:
+        assert set(tar.getnames()) == set(["library.json", "include/bar.h"])
