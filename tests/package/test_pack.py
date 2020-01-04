@@ -19,6 +19,7 @@ import tarfile
 import pytest
 
 from platformio import fs
+from platformio.compat import WINDOWS
 from platformio.package.exception import UnknownManifestError
 from platformio.package.pack import PackagePacker
 
@@ -89,6 +90,9 @@ def test_filters(tmpdir_factory):
 
 
 def test_symlinks(tmpdir_factory):
+    # Windows does not support symbolic links
+    if WINDOWS:
+        return
     pkg_dir = tmpdir_factory.mktemp("package")
     src_dir = pkg_dir.mkdir("src")
     src_dir.join("main.cpp").write("#include <stdio.h>")
