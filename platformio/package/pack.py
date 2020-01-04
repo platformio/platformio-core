@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import re
 import shutil
 import tarfile
 import tempfile
@@ -46,10 +47,14 @@ class PackagePacker(object):
             src = self.find_source_root(src)
 
             manifest = self.load_manifest(src)
-            filename = "{name}{system}-{version}.tar.gz".format(
-                name=manifest["name"],
-                system="-" + manifest["system"][0] if "system" in manifest else "",
-                version=manifest["version"],
+            filename = re.sub(
+                r"[^\da-zA-Z\-\._]+",
+                "",
+                "{name}{system}-{version}.tar.gz".format(
+                    name=manifest["name"],
+                    system="-" + manifest["system"][0] if "system" in manifest else "",
+                    version=manifest["version"],
+                ),
             )
 
             if not dst:
