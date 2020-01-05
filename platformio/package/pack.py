@@ -26,7 +26,14 @@ from platformio.unpacker import FileUnpacker
 
 
 class PackagePacker(object):
-    EXCLUDE_DEFAULT = ["._*", ".DS_Store", ".git", ".hg", ".svn", ".pio"]
+    EXCLUDE_DEFAULT = [
+        "._*",
+        ".DS_Store",
+        ".git",
+        ".hg",
+        ".svn",
+        ".pio",
+    ]
     INCLUDE_DEFAULT = ManifestFileType.items().values()
 
     def __init__(self, package, manifest_uri=None):
@@ -116,7 +123,7 @@ class PackagePacker(object):
         return dst
 
     def compute_src_filters(self, include, exclude):
-        result = ["+<%s>" % p for p in include or ["*"]]
+        result = ["+<%s>" % p for p in include or ["*", ".*"]]
         result += ["-<%s>" % p for p in exclude or []]
         result += ["-<%s>" % p for p in self.EXCLUDE_DEFAULT]
         # automatically include manifests
