@@ -186,8 +186,8 @@ class BaseManifestParser(object):
             or not isinstance(examples, list)
             or not all(isinstance(v, dict) for v in examples)
         ):
-            examples = None
-        if not examples and self.package_dir:
+            data["examples"] = None
+        if not data["examples"] and self.package_dir:
             data["examples"] = self.parse_examples_from_dir(self.package_dir)
         if "examples" in data and not data["examples"]:
             del data["examples"]

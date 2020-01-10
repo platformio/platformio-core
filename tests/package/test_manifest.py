@@ -39,6 +39,7 @@ def test_library_json_parser():
     "build": {
         "flags": ["-DHELLO"]
     },
+    "examples": ["examples/*/*.pde"],
     "customField": "Custom Value"
 }
 """
