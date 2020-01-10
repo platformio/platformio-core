@@ -78,6 +78,9 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             "cwe",
             "-m",
             "misra",
+            "-a",
+            # Enable all possible analyzers and defect levels
+            "GA:1,2,3;64:1,2,3;OP:1,2,3;CS:1,2,3;MISRA:1,2,3",
             "--cerr",
         )
 
