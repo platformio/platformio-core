@@ -239,21 +239,30 @@ int main() {
 
 
 def test_check_individual_flags_passed(clirunner, tmpdir):
-    config = DEFAULT_CONFIG + "\ncheck_tool = cppcheck, clangtidy"
-    config += "\ncheck_flags = cppcheck: --std=c++11 \n\tclangtidy: --fix-errors"
+    config = DEFAULT_CONFIG + "\ncheck_tool = cppcheck, clangtidy, pvs-studio"
+    config += """\ncheck_flags =
+    cppcheck: --std=c++11
+    clangtidy: --fix-errors
+    pvs-studio: --analysis-mode=4
+"""
     tmpdir.join("platformio.ini").write(config)
     tmpdir.mkdir("src").join("main.cpp").write(TEST_CODE)
     result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir), "-v"])
 
-    clang_flags_found = cppcheck_flags_found = False
+    clang_flags_found = cppcheck_flags_found = pvs_flags_found = False
     for l in result.output.split("\n"):
         if "--fix" in l and "clang-tidy" in l and "--std=c++11" not in l:
             clang_flags_found = True
         elif "--std=c++11" in l and "cppcheck" in l and "--fix" not in l:
             cppcheck_flags_found = True
+        elif (
+            "--analysis-mode=4" in l and "pvs-studio" in l.lower() and "--fix" not in l
+        ):
+            pvs_flags_found = True
 
     assert clang_flags_found
     assert cppcheck_flags_found
+    assert pvs_flags_found
 
 
 def test_check_cppcheck_misra_addon(clirunner, check_dir):
@@ -344,3 +353,33 @@ int main() {
 
     assert high_result.exit_code == 0
     assert low_result.exit_code != 0
+
+
+def test_check_pvs_studio_free_license(clirunner, tmpdir):
+    config = """
+[env:test]
+platform = teensy
+board = teensy35
+framework = arduino
+check_tool = pvs-studio
+"""
+    code = (
+        """// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+"""
+        + TEST_CODE
+    )
+
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.c").write(code)
+
+    result = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir), "--fail-on-defect=high", "-v"]
+    )
+
+    errors, warnings, style = count_defects(result.output)
+
+    assert result.exit_code != 0
+    assert errors != 0
+    assert warnings != 0
+    assert style == 0
