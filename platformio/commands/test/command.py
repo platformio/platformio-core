@@ -78,7 +78,6 @@ from platformio.project.config import ProjectConfig
     help="Set initial DTR line state for Serial Monitor",
 )
 @click.option("--verbose", "-v", is_flag=True)
-@click.option("--silent", "-s", is_flag=True)
 @click.pass_context
 def cli(  # pylint: disable=redefined-builtin
     ctx,
@@ -96,7 +95,6 @@ def cli(  # pylint: disable=redefined-builtin
     monitor_rts,
     monitor_dtr,
     verbose,
-    silent,
 ):
     app.set_session_var("custom_project_conf", project_conf)
 
@@ -162,7 +160,7 @@ def cli(  # pylint: disable=redefined-builtin
                         monitor_rts=monitor_rts,
                         monitor_dtr=monitor_dtr,
                         verbose=verbose,
-                        silent=silent,
+                        silent=not verbose,
                     ),
                 )
                 result = {
