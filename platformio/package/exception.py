@@ -15,7 +15,15 @@
 from platformio.exception import PlatformioException
 
 
-class ManifestException(PlatformioException):
+class PackageException(PlatformioException):
+    pass
+
+
+class ManifestException(PackageException):
+    pass
+
+
+class UnknownManifestError(ManifestException):
     pass
 
 

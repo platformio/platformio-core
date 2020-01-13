@@ -39,6 +39,7 @@ def test_library_json_parser():
     "build": {
         "flags": ["-DHELLO"]
     },
+    "examples": ["examples/*/*.pde"],
     "customField": "Custom Value"
 }
 """
@@ -521,6 +522,7 @@ def test_package_json_schema():
 
 def test_parser_from_dir(tmpdir_factory):
     pkg_dir = tmpdir_factory.mktemp("package")
+    pkg_dir.join("package.json").write('{"name": "package.json"}')
     pkg_dir.join("library.json").write('{"name": "library.json"}')
     pkg_dir.join("library.properties").write("name=library.properties")
 

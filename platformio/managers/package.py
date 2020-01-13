@@ -28,10 +28,8 @@ from platformio import __version__, app, exception, fs, util
 from platformio.compat import hashlib_encode_data
 from platformio.downloader import FileDownloader
 from platformio.lockfile import LockFile
-from platformio.package.manifest.parser import (
-    ManifestParserError,
-    ManifestParserFactory,
-)
+from platformio.package.exception import ManifestException
+from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
@@ -347,7 +345,7 @@ class PkgInstallerMixin(object):
 
         try:
             manifest = ManifestParserFactory.new_from_file(manifest_path).as_dict()
-        except ManifestParserError:
+        except ManifestException:
             pass
 
         if src_manifest:

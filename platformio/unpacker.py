@@ -73,6 +73,7 @@ class TARArchive(ArchiveBase):
         ).startswith(base)
 
     def extract_item(self, item, dest_dir):
+        dest_dir = self.resolve_path(dest_dir)
         bad_conds = [
             self.is_bad_path(item.name, dest_dir),
             self.is_link(item) and self.is_bad_link(item, dest_dir),
@@ -137,10 +138,13 @@ class FileUnpacker(object):
         if self._unpacker:
             self._unpacker.close()
 
-    def unpack(self, dest_dir=".", with_progress=True, check_unpacked=True):
+    def unpack(
+        self, dest_dir=".", with_progress=True, check_unpacked=True, silent=False
+    ):
         assert self._unpacker
-        if not with_progress:
-            click.echo("Unpacking...")
+        if not with_progress or silent:
+            if not silent:
+                click.echo("Unpacking...")
             for item in self._unpacker.get_items():
                 self._unpacker.extract_item(item, dest_dir)
         else:

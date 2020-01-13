@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
 import json
 import os
 import re
@@ -20,7 +21,7 @@ import requests
 
 from platformio.compat import get_class_attributes, string_types
 from platformio.fs import get_file_contents
-from platformio.package.exception import ManifestParserError
+from platformio.package.exception import ManifestParserError, UnknownManifestError
 from platformio.project.helpers import is_platformio_project
 
 try:
@@ -37,35 +38,35 @@ class ManifestFileType(object):
     PACKAGE_JSON = "package.json"
 
     @classmethod
+    def items(cls):
+        return get_class_attributes(ManifestFileType)
+
+    @classmethod
     def from_uri(cls, uri):
-        if uri.endswith(".properties"):
-            return ManifestFileType.LIBRARY_PROPERTIES
-        if uri.endswith("platform.json"):
-            return ManifestFileType.PLATFORM_JSON
-        if uri.endswith("module.json"):
-            return ManifestFileType.MODULE_JSON
-        if uri.endswith("package.json"):
-            return ManifestFileType.PACKAGE_JSON
-        if uri.endswith("library.json"):
-            return ManifestFileType.LIBRARY_JSON
+        for t in sorted(cls.items().values()):
+            if uri.endswith(t):
+                return t
+        return None
+
+    @classmethod
+    def from_dir(cls, path):
+        for t in sorted(cls.items().values()):
+            if os.path.isfile(os.path.join(path, t)):
+                return t
         return None
 
 
 class ManifestParserFactory(object):
     @staticmethod
-    def type_to_clsname(t):
-        t = t.replace(".", " ")
-        t = t.title()
-        return "%sManifestParser" % t.replace(" ", "")
-
-    @staticmethod
     def new_from_file(path, remote_url=False):
         if not path or not os.path.isfile(path):
-            raise ManifestParserError("Manifest file does not exist %s" % path)
-        for t in get_class_attributes(ManifestFileType).values():
-            if path.endswith(t):
-                return ManifestParserFactory.new(get_file_contents(path), t, remote_url)
-        raise ManifestParserError("Unknown manifest file type %s" % path)
+            raise UnknownManifestError("Manifest file does not exist %s" % path)
+        type_from_uri = ManifestFileType.from_uri(path)
+        if not type_from_uri:
+            raise UnknownManifestError("Unknown manifest file type %s" % path)
+        return ManifestParserFactory.new(
+            get_file_contents(path), type_from_uri, remote_url
+        )
 
     @staticmethod
     def new_from_dir(path, remote_url=None):
@@ -80,23 +81,17 @@ class ManifestParserFactory(object):
                 package_dir=path,
             )
 
-        file_order = [
-            ManifestFileType.PLATFORM_JSON,
-            ManifestFileType.LIBRARY_JSON,
-            ManifestFileType.LIBRARY_PROPERTIES,
-            ManifestFileType.MODULE_JSON,
-            ManifestFileType.PACKAGE_JSON,
-        ]
-        for t in file_order:
-            if not os.path.isfile(os.path.join(path, t)):
-                continue
-            return ManifestParserFactory.new(
-                get_file_contents(os.path.join(path, t)),
-                t,
-                remote_url=remote_url,
-                package_dir=path,
+        type_from_dir = ManifestFileType.from_dir(path)
+        if not type_from_dir:
+            raise UnknownManifestError(
+                "Unknown manifest file type in %s directory" % path
             )
-        raise ManifestParserError("Unknown manifest file type in %s directory" % path)
+        return ManifestParserFactory.new(
+            get_file_contents(os.path.join(path, type_from_dir)),
+            type_from_dir,
+            remote_url=remote_url,
+            package_dir=path,
+        )
 
     @staticmethod
     def new_from_url(remote_url):
@@ -109,12 +104,18 @@ class ManifestParserFactory(object):
         )
 
     @staticmethod
-    def new(contents, type, remote_url=None, package_dir=None):
-        # pylint: disable=redefined-builtin
-        clsname = ManifestParserFactory.type_to_clsname(type)
-        if clsname not in globals():
-            raise ManifestParserError("Unknown manifest file type %s" % clsname)
-        return globals()[clsname](contents, remote_url, package_dir)
+    def new(  # pylint: disable=redefined-builtin
+        contents, type, remote_url=None, package_dir=None
+    ):
+        for _, cls in globals().items():
+            if (
+                inspect.isclass(cls)
+                and issubclass(cls, BaseManifestParser)
+                and cls != BaseManifestParser
+                and cls.manifest_type == type
+            ):
+                return cls(contents, remote_url, package_dir)
+        raise UnknownManifestError("Unknown manifest file type %s" % type)
 
 
 class BaseManifestParser(object):
@@ -185,8 +186,8 @@ class BaseManifestParser(object):
             or not isinstance(examples, list)
             or not all(isinstance(v, dict) for v in examples)
         ):
-            examples = None
-        if not examples and self.package_dir:
+            data["examples"] = None
+        if not data["examples"] and self.package_dir:
             data["examples"] = self.parse_examples_from_dir(self.package_dir)
         if "examples" in data and not data["examples"]:
             del data["examples"]
@@ -268,6 +269,8 @@ class BaseManifestParser(object):
 
 
 class LibraryJsonManifestParser(BaseManifestParser):
+    manifest_type = ManifestFileType.LIBRARY_JSON
+
     def parse(self, contents):
         data = json.loads(contents)
         data = self._process_renamed_fields(data)
@@ -349,6 +352,8 @@ class LibraryJsonManifestParser(BaseManifestParser):
 
 
 class ModuleJsonManifestParser(BaseManifestParser):
+    manifest_type = ManifestFileType.MODULE_JSON
+
     def parse(self, contents):
         data = json.loads(contents)
         data["frameworks"] = ["mbed"]
@@ -381,10 +386,12 @@ class ModuleJsonManifestParser(BaseManifestParser):
 
 
 class LibraryPropertiesManifestParser(BaseManifestParser):
+    manifest_type = ManifestFileType.LIBRARY_PROPERTIES
+
     def parse(self, contents):
         data = self._parse_properties(contents)
         repository = self._parse_repository(data)
-        homepage = data.get("url")
+        homepage = data.get("url") or None
         if repository and repository["url"] == homepage:
             homepage = None
         data.update(
@@ -529,6 +536,8 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
 
 
 class PlatformJsonManifestParser(BaseManifestParser):
+    manifest_type = ManifestFileType.PLATFORM_JSON
+
     def parse(self, contents):
         data = json.loads(contents)
         if "frameworks" in data:
@@ -543,6 +552,8 @@ class PlatformJsonManifestParser(BaseManifestParser):
 
 
 class PackageJsonManifestParser(BaseManifestParser):
+    manifest_type = ManifestFileType.PACKAGE_JSON
+
     def parse(self, contents):
         data = json.loads(contents)
         data = self._parse_system(data)
