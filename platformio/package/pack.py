@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import re
 import shutil
 import tarfile
 import tempfile
@@ -25,7 +26,14 @@ from platformio.unpacker import FileUnpacker
 
 
 class PackagePacker(object):
-    EXCLUDE_DEFAULT = ["._*", ".DS_Store", ".git", ".hg", ".svn", ".pio"]
+    EXCLUDE_DEFAULT = [
+        "._*",
+        ".DS_Store",
+        ".git",
+        ".hg",
+        ".svn",
+        ".pio",
+    ]
     INCLUDE_DEFAULT = ManifestFileType.items().values()
 
     def __init__(self, package, manifest_uri=None):
@@ -46,10 +54,14 @@ class PackagePacker(object):
             src = self.find_source_root(src)
 
             manifest = self.load_manifest(src)
-            filename = "{name}{system}-{version}.tar.gz".format(
-                name=manifest["name"],
-                system="-" + manifest["system"][0] if "system" in manifest else "",
-                version=manifest["version"],
+            filename = re.sub(
+                r"[^\da-zA-Z\-\._]+",
+                "",
+                "{name}{system}-{version}.tar.gz".format(
+                    name=manifest["name"],
+                    system="-" + manifest["system"][0] if "system" in manifest else "",
+                    version=manifest["version"],
+                ),
             )
 
             if not dst:
@@ -111,7 +123,7 @@ class PackagePacker(object):
         return dst
 
     def compute_src_filters(self, include, exclude):
-        result = ["+<%s>" % p for p in include or ["*"]]
+        result = ["+<%s>" % p for p in include or ["*", ".*"]]
         result += ["-<%s>" % p for p in exclude or []]
         result += ["-<%s>" % p for p in self.EXCLUDE_DEFAULT]
         # automatically include manifests

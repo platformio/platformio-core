@@ -74,13 +74,14 @@ class FileDownloader(object):
             return -1
         return int(self._request.headers["content-length"])
 
-    def start(self, with_progress=True):
+    def start(self, with_progress=True, silent=False):
         label = "Downloading"
         itercontent = self._request.iter_content(chunk_size=self.CHUNK_SIZE)
         f = open(self._destination, "wb")
         try:
             if not with_progress or self.get_size() == -1:
-                click.echo("%s..." % label)
+                if not silent:
+                    click.echo("%s..." % label)
                 for chunk in itercontent:
                     if chunk:
                         f.write(chunk)

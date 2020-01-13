@@ -26,6 +26,9 @@ from platformio.package.pack import PackagePacker
 
 def test_base(tmpdir_factory):
     pkg_dir = tmpdir_factory.mktemp("package")
+    pkg_dir.join(".git").mkdir().join("file").write("")
+    pkg_dir.join(".gitignore").write("tests")
+    pkg_dir.join("._ignored").write("")
     pkg_dir.join("main.cpp").write("#include <stdio.h>")
     p = PackagePacker(str(pkg_dir))
     # test missed manifest
@@ -38,7 +41,7 @@ def test_base(tmpdir_factory):
         p.pack()
     with tarfile.open(os.path.join(str(pkg_dir), "foo-1.0.0.tar.gz"), "r:gz") as tar:
         assert set(tar.getnames()) == set(
-            ["include/main.h", "library.json", "main.cpp"]
+            [".gitignore", "include/main.h", "library.json", "main.cpp"]
         )
 
 
