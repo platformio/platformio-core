@@ -68,7 +68,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         result = []
         flags = self.options.get("flags") or []
         for flag in flags:
-            if ":" not in flag:
+            if ":" not in flag or flag.startswith("-"):
                 result.extend([f for f in flag.split(" ") if f])
             elif flag.startswith("%s:" % tool):
                 result.extend([f for f in flag.split(":", 1)[1].split(" ") if f])
