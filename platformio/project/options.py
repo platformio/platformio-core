@@ -602,6 +602,16 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="debug",
+                name="debug_build_flags",
+                description=(
+                    "Custom debug flags/options for preprocessing, compilation, "
+                    "assembly, and linking processes"
+                ),
+                multiple=True,
+                default=["-Og", "-g2", "-ggdb2"],
+            ),
+            ConfigEnvOption(
+                group="debug",
                 name="debug_init_break",
                 description=(
                     "An initial breakpoint that makes program stop whenever a "
