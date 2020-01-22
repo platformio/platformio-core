@@ -14,6 +14,7 @@ PlatformIO Core 4.0
   - Project Manager
   - Project Configuration UI for `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
 
+* Control debug flags and optimization level with a new `debug_build_flags <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-build-flags>`__ option
 * Handle project configuration (monitor, test, and upload options) for PIO Remote commands (`issue #2591 <https://github.com/platformio/platformio-core/issues/2591>`_)
 * Updated SCons tool to 3.1.2
 * Made package ManifestSchema compatible with marshmallow >= 3 (`issue #3296 <https://github.com/platformio/platformio-core/issues/3296>`_)
