@@ -314,17 +314,26 @@ def ConfigureDebugFlags(env):
         if scope not in env:
             return
         unflags = ["-Os", "-g"]
-        for level in [0, 1, 2]:
+        for level in [0, 1, 2, 3]:
             for flag in ("O", "g", "ggdb"):
                 unflags.append("-%s%d" % (flag, level))
         env[scope] = [f for f in env.get(scope, []) if f not in unflags]
 
     env.Append(CPPDEFINES=["__PLATFORMIO_BUILD_DEBUG__"])
 
-    debug_flags = ["-Og", "-g2", "-ggdb2"]
     for scope in ("ASFLAGS", "CCFLAGS", "LINKFLAGS"):
         _cleanup_debug_flags(scope)
-        env.Append(**{scope: debug_flags})
+
+    debug_flags = env.ParseFlags(env.GetProjectOption("debug_build_flags"))
+    env.MergeFlags(debug_flags)
+    optimization_flags = [f for f in debug_flags.get("CCFLAGS", []) if f.startswith(
+        ("-O", "-g"))]
+
+    if optimization_flags:
+        env.AppendUnique(
+            ASFLAGS=optimization_flags,
+            LINKFLAGS=optimization_flags
+        )
 
 
 def ConfigureTestTarget(env):
