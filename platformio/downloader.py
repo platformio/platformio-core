@@ -32,9 +32,6 @@ from platformio.exception import (
 
 
 class FileDownloader(object):
-
-    CHUNK_SIZE = 1024 * 8
-
     def __init__(self, url, dest_dir=None):
         self._request = None
         # make connection
@@ -77,7 +74,7 @@ class FileDownloader(object):
 
     def start(self, with_progress=True, silent=False):
         label = "Downloading"
-        itercontent = self._request.iter_content(chunk_size=self.CHUNK_SIZE)
+        itercontent = self._request.iter_content(chunk_size=io.DEFAULT_BUFFER_SIZE)
         f = open(self._destination, "wb")
         try:
             if not with_progress or self.get_size() == -1:
@@ -87,7 +84,7 @@ class FileDownloader(object):
                     if chunk:
                         f.write(chunk)
             else:
-                chunks = int(math.ceil(self.get_size() / float(self.CHUNK_SIZE)))
+                chunks = int(math.ceil(self.get_size() / float(io.DEFAULT_BUFFER_SIZE)))
                 with click.progressbar(length=chunks, label=label) as pb:
                     for _ in pb:
                         f.write(next(itercontent))
@@ -110,7 +107,7 @@ class FileDownloader(object):
         checksum = hashlib.sha1()
         with io.open(self._destination, "rb", buffering=0) as fp:
             while True:
-                chunk = fp.read(self.CHUNK_SIZE)
+                chunk = fp.read(io.DEFAULT_BUFFER_SIZE)
                 if not chunk:
                     break
                 checksum.update(chunk)
