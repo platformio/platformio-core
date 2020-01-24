@@ -74,6 +74,7 @@ class PlatformManager(BasePkgManager):
         with_packages=None,
         without_packages=None,
         skip_default_package=False,
+        with_all_packages=False,
         after_update=False,
         silent=False,
         force=False,
@@ -83,6 +84,9 @@ class PlatformManager(BasePkgManager):
             self, name, requirements, silent=silent, force=force
         )
         p = PlatformFactory.newPlatform(platform_dir)
+
+        if with_all_packages:
+            with_packages = list(p.packages.keys())
 
         # don't cleanup packages or install them after update
         # we check packages for updates in def update()
