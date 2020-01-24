@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import hashlib
 from email.utils import parsedate_tz
 from math import ceil
 from os.path import getsize, join
@@ -27,7 +28,6 @@ from platformio.exception import (
     FDSizeMismatch,
     FDUnrecognizedStatusCode,
 )
-from platformio.proc import exec_command
 
 
 class FileDownloader(object):
@@ -103,25 +103,19 @@ class FileDownloader(object):
         _dlsize = getsize(self._destination)
         if self.get_size() != -1 and _dlsize != self.get_size():
             raise FDSizeMismatch(_dlsize, self._fname, self.get_size())
-
         if not sha1:
             return None
 
-        dlsha1 = None
-        try:
-            result = exec_command(["sha1sum", self._destination])
-            dlsha1 = result["out"]
-        except (OSError, ValueError):
-            try:
-                result = exec_command(["shasum", "-a", "1", self._destination])
-                dlsha1 = result["out"]
-            except (OSError, ValueError):
-                pass
-        if not dlsha1:
-            return None
-        dlsha1 = dlsha1[1:41] if dlsha1.startswith("\\") else dlsha1[:40]
-        if sha1.lower() != dlsha1.lower():
-            raise FDSHASumMismatch(dlsha1, self._fname, sha1)
+        checksum = hashlib.sha1()
+        with open(self._destination, "rb") as fp:
+            while True:
+                chunk = fp.read(1024 * 64)
+                if not chunk:
+                    break
+                checksum.update(chunk)
+
+        if sha1.lower() != checksum.hexdigest().lower():
+            raise FDSHASumMismatch(checksum.hexdigest(), self._fname, sha1)
         return True
 
     def _preserve_filemtime(self, lmdate):
