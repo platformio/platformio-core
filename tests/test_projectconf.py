@@ -330,9 +330,11 @@ board = myboard
     ]
 
     config.save()
+    contents = tmpdir.join("platformio.ini").read()
+    assert contents[-4:] == "yes\n"
     lines = [
         line.strip()
-        for line in tmpdir.join("platformio.ini").readlines()
+        for line in contents.split("\n")
         if line.strip() and not line.startswith((";", "#"))
     ]
     assert lines == [

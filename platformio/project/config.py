@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import glob
+import io
 import json
 import os
 import re
@@ -30,7 +31,8 @@ try:
 except ImportError:
     import configparser as ConfigParser
 
-CONFIG_HEADER = """; PlatformIO Project Configuration File
+CONFIG_HEADER = """
+; PlatformIO Project Configuration File
 ;
 ;   Build options: build flags, source filter
 ;   Upload options: custom upload port, speed and extra flags
@@ -39,7 +41,6 @@ CONFIG_HEADER = """; PlatformIO Project Configuration File
 ;
 ; Please visit documentation for the other options and examples
 ; https://docs.platformio.org/page/projectconf.html
-
 """
 
 
@@ -449,6 +450,8 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
         if path in self._instances:
             del self._instances[path]
         with open(path or self.path, "w") as fp:
-            fp.write(CONFIG_HEADER)
-            self._parser.write(fp)
+            fp.write(CONFIG_HEADER.strip())
+            buf = io.StringIO()
+            self._parser.write(buf)
+            fp.write("\n\n%s\n" % buf.getvalue().strip())
         return True
