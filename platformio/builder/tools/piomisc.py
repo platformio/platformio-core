@@ -326,14 +326,12 @@ def ConfigureDebugFlags(env):
 
     debug_flags = env.ParseFlags(env.GetProjectOption("debug_build_flags"))
     env.MergeFlags(debug_flags)
-    optimization_flags = [f for f in debug_flags.get("CCFLAGS", []) if f.startswith(
-        ("-O", "-g"))]
+    optimization_flags = [
+        f for f in debug_flags.get("CCFLAGS", []) if f.startswith(("-O", "-g"))
+    ]
 
     if optimization_flags:
-        env.AppendUnique(
-            ASFLAGS=optimization_flags,
-            LINKFLAGS=optimization_flags
-        )
+        env.AppendUnique(ASFLAGS=optimization_flags, LINKFLAGS=optimization_flags)
 
 
 def ConfigureTestTarget(env):

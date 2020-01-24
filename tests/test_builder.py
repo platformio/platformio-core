@@ -136,8 +136,11 @@ int main() {
     for line in build_output.split("\n"):
         if line.startswith("gcc"):
             assert all(line.count(flag) == 1 for flag in ("-Og", "-g2", "-ggdb2"))
-            assert all(line.count("-%s%d" % (flag, level)) == 0 for flag in (
-                "O", "g", "ggdb") for level in (0, 1, 3))
+            assert all(
+                line.count("-%s%d" % (flag, level)) == 0
+                for flag in ("O", "g", "ggdb")
+                for level in (0, 1, 3)
+            )
             assert "-Os" not in line
 
 
@@ -167,6 +170,9 @@ int main() {
     for line in build_output.split("\n"):
         if line.startswith("gcc"):
             assert all(line.count(f) == 1 for f in custom_debug_build_flags)
-            assert all(line.count("-%s%d" % (flag, level)) == 0 for flag in (
-                "O", "g", "ggdb") for level in (0, 1, 2))
+            assert all(
+                line.count("-%s%d" % (flag, level)) == 0
+                for flag in ("O", "g", "ggdb")
+                for level in (0, 1, 2)
+            )
             assert all("-O%s" % optimization not in line for optimization in ("g", "s"))
