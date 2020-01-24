@@ -13,10 +13,11 @@
 # limitations under the License.
 
 import hashlib
+import io
+import math
+import sys
 from email.utils import parsedate_tz
-from math import ceil
 from os.path import getsize, join
-from sys import version_info
 from time import mktime
 
 import click
@@ -32,7 +33,7 @@ from platformio.exception import (
 
 class FileDownloader(object):
 
-    CHUNK_SIZE = 1024
+    CHUNK_SIZE = 1024 * 8
 
     def __init__(self, url, dest_dir=None):
         self._request = None
@@ -41,7 +42,7 @@ class FileDownloader(object):
             url,
             stream=True,
             headers=util.get_request_defheaders(),
-            verify=version_info >= (2, 7, 9),
+            verify=sys.version_info >= (2, 7, 9),
         )
         if self._request.status_code != 200:
             raise FDUnrecognizedStatusCode(self._request.status_code, url)
@@ -86,7 +87,7 @@ class FileDownloader(object):
                     if chunk:
                         f.write(chunk)
             else:
-                chunks = int(ceil(self.get_size() / float(self.CHUNK_SIZE)))
+                chunks = int(math.ceil(self.get_size() / float(self.CHUNK_SIZE)))
                 with click.progressbar(length=chunks, label=label) as pb:
                     for _ in pb:
                         f.write(next(itercontent))
@@ -107,9 +108,9 @@ class FileDownloader(object):
             return None
 
         checksum = hashlib.sha1()
-        with open(self._destination, "rb") as fp:
+        with io.open(self._destination, "rb", buffering=0) as fp:
             while True:
-                chunk = fp.read(1024 * 64)
+                chunk = fp.read(self.CHUNK_SIZE)
                 if not chunk:
                     break
                 checksum.update(chunk)
