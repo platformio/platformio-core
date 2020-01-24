@@ -17,6 +17,7 @@
 import base64
 import os
 import re
+import subprocess
 import sys
 from os.path import basename, dirname, isdir, isfile, join
 
@@ -86,6 +87,8 @@ class PlatformManager(BasePkgManager):
         # don't cleanup packages or install them after update
         # we check packages for updates in def update()
         if after_update:
+            p.install_python_packages()
+            p.on_installed()
             return True
 
         p.install_packages(
@@ -95,6 +98,8 @@ class PlatformManager(BasePkgManager):
             silent=silent,
             force=force,
         )
+        p.install_python_packages()
+        p.on_installed()
         return self.cleanup_packages(list(p.packages))
 
     def uninstall(self, package, requirements=None, after_update=False):
@@ -109,6 +114,8 @@ class PlatformManager(BasePkgManager):
 
         p = PlatformFactory.newPlatform(pkg_dir)
         BasePkgManager.uninstall(self, pkg_dir, requirements)
+        p.uninstall_python_packages()
+        p.on_uninstalled()
 
         # don't cleanup packages or install them after update
         # we check packages for updates in def update()
@@ -594,6 +601,10 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             packages[name].update({"version": version.strip(), "optional": False})
         return packages
 
+    @property
+    def python_packages(self):
+        return self._manifest.get("pythonPackages")
+
     def get_dir(self):
         return dirname(self.manifest_path)
 
@@ -698,6 +709,45 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
                 storages[libcore_dir] = "%s-core-%s" % (opts["package"], item)
 
         return [dict(name=name, path=path) for path, name in storages.items()]
+
+    def on_installed(self):
+        pass
+
+    def on_uninstalled(self):
+        pass
+
+    def install_python_packages(self):
+        if not self.python_packages:
+            return None
+        click.echo(
+            "Installing Python packages: %s"
+            % ", ".join(list(self.python_packages.keys())),
+        )
+        args = [proc.get_pythonexe_path(), "-m", "pip", "install", "--upgrade"]
+        for name, requirements in self.python_packages.items():
+            if any(c in requirements for c in ("<", ">", "=")):
+                args.append("%s%s" % (name, requirements))
+            else:
+                args.append("%s==%s" % (name, requirements))
+        try:
+            return subprocess.call(args) == 0
+        except Exception as e:  # pylint: disable=broad-except
+            click.secho(
+                "Could not install Python packages -> %s" % e, fg="red", err=True
+            )
+
+    def uninstall_python_packages(self):
+        if not self.python_packages:
+            return
+        click.echo("Uninstalling Python packages")
+        args = [proc.get_pythonexe_path(), "-m", "pip", "uninstall", "--yes"]
+        args.extend(list(self.python_packages.keys()))
+        try:
+            subprocess.call(args) == 0
+        except Exception as e:  # pylint: disable=broad-except
+            click.secho(
+                "Could not install Python packages -> %s" % e, fg="red", err=True
+            )
 
 
 class PlatformBoardConfig(object):
