@@ -24,7 +24,7 @@ from platformio.proc import copy_pythonpath_to_osenv, get_pythonexe_path
 from platformio.project.config import ProjectConfig
 
 CORE_PACKAGES = {
-    "contrib-piohome": ">=3.1.0-rc.1,<3.2.0",
+    "contrib-piohome": ">=3.1.0-rc.2,<3.2.0",
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info[0], sys.version_info[1]),
     "tool-pioplus": "^2.6.1",
     "tool-unity": "~1.20403.0",
