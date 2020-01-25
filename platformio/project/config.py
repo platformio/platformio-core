@@ -451,7 +451,7 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
             del self._instances[path]
         with open(path or self.path, "w") as fp:
             fp.write(CONFIG_HEADER.strip())
-            buf = io.StringIO()
+            buf = io.BytesIO() if PY2 else io.StringIO()
             self._parser.write(buf)
             fp.write("\n\n%s\n" % buf.getvalue().strip())
         return True
