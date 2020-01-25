@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import glob
-import io
 import json
 import os
 import re
@@ -449,9 +448,12 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
         path = path or self.path
         if path in self._instances:
             del self._instances[path]
-        with open(path or self.path, "w") as fp:
-            fp.write(CONFIG_HEADER.strip())
-            buf = io.BytesIO() if PY2 else io.StringIO()
-            self._parser.write(buf)
-            fp.write("\n\n%s\n" % buf.getvalue().strip())
+        with open(path or self.path, "w+") as fp:
+            fp.write(CONFIG_HEADER.strip() + "\n\n")
+            self._parser.write(fp)
+            fp.seek(0)
+            contents = fp.read()
+            fp.seek(0)
+            fp.truncate()
+            fp.write(contents.strip() + "\n")
         return True
