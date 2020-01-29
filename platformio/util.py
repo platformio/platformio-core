@@ -366,10 +366,11 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
     )
 
 
-PING_INTERNET_IPS = [
-    "192.30.253.113",  # github.com
-    "78.46.220.20",  # api.platformio.org
-    "3.124.149.187",  # registry.platformio.org
+PING_REMOTE_HOSTS = [
+    "140.82.118.3",  # Github.com
+    "35.231.145.151",  # Gitlab.com
+    "github.com",
+    "platformio.org",
 ]
 
 
@@ -377,12 +378,13 @@ PING_INTERNET_IPS = [
 def _internet_on():
     timeout = 2
     socket.setdefaulttimeout(timeout)
-    for ip in PING_INTERNET_IPS:
+    for host in PING_REMOTE_HOSTS:
         try:
             if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-                requests.get("http://%s" % ip, allow_redirects=False, timeout=timeout)
+                requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
             else:
-                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip, 80))
+
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, 80))
             return True
         except:  # pylint: disable=bare-except
             pass
