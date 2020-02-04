@@ -383,7 +383,6 @@ def _internet_on():
             if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
                 requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
             else:
-
                 socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, 80))
             return True
         except:  # pylint: disable=bare-except
@@ -403,9 +402,9 @@ def pepver_to_semver(pepver):
 
 
 def items_to_list(items):
-    if not isinstance(items, list):
-        items = [i.strip() for i in items.split(",")]
-    return [i.lower() for i in items if i]
+    if isinstance(items, list):
+        return items
+    return [i.strip() for i in items.split(",") if i.strip()]
 
 
 def items_in_list(needle, haystack):

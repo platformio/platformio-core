@@ -102,6 +102,32 @@ class RepositorySchema(StrictSchema):
     branch = fields.Str(validate=validate.Length(min=1, max=50))
 
 
+class DependencySchema(StrictSchema):
+    name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
+    version = fields.Str(validate=validate.Length(min=1, max=100))
+    authors = StrictListField(fields.Str(validate=validate.Length(min=1, max=50)))
+    platforms = StrictListField(
+        fields.Str(
+            validate=[
+                validate.Length(min=1, max=50),
+                validate.Regexp(
+                    r"^([a-z\d\-_]+|\*)$", error="Only [a-z0-9-_*] chars are allowed"
+                ),
+            ]
+        )
+    )
+    frameworks = StrictListField(
+        fields.Str(
+            validate=[
+                validate.Length(min=1, max=50),
+                validate.Regexp(
+                    r"^([a-z\d\-_]+|\*)$", error="Only [a-z0-9-_*] chars are allowed"
+                ),
+            ]
+        )
+    )
+
+
 class ExportSchema(BaseSchema):
     include = StrictListField(fields.Str)
     exclude = StrictListField(fields.Str)
@@ -133,6 +159,7 @@ class ManifestSchema(BaseSchema):
     homepage = fields.Url(validate=validate.Length(min=1, max=255))
     license = fields.Str(validate=validate.Length(min=1, max=255))
     repository = fields.Nested(RepositorySchema)
+    dependencies = fields.Nested(DependencySchema, many=True)
 
     # library.json
     export = fields.Nested(ExportSchema)

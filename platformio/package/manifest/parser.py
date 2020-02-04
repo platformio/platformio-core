@@ -19,6 +19,7 @@ import re
 
 import requests
 
+from platformio import util
 from platformio.compat import get_class_attributes, string_types
 from platformio.fs import get_file_contents
 from platformio.package.exception import ManifestParserError, UnknownManifestError
@@ -286,6 +287,8 @@ class LibraryJsonManifestParser(BaseManifestParser):
             data["platforms"] = self._parse_platforms(data["platforms"]) or None
         if "export" in data:
             data["export"] = self._parse_export(data["export"])
+        if "dependencies" in data:
+            data["dependencies"] = self._parse_dependencies(data["dependencies"])
 
         return data
 
@@ -350,6 +353,26 @@ class LibraryJsonManifestParser(BaseManifestParser):
             result[k] = raw[k] if isinstance(raw[k], list) else [raw[k]]
         return result
 
+    @staticmethod
+    def _parse_dependencies(raw):
+        if isinstance(raw, dict):
+            if "name" in raw:  # compatibility with dep as dict
+                return [raw]
+            return [dict(name=name, version=version) for name, version in raw.items()]
+        if isinstance(raw, list):
+            for i, dependency in enumerate(raw):
+                assert isinstance(dependency, dict)
+                for k, v in dependency.items():
+                    if k not in ("platforms", "frameworks", "authors"):
+                        continue
+                    if "*" in v:
+                        del raw[i][k]
+                    raw[i][k] = util.items_to_list(v)
+            return raw
+        raise ManifestParserError(
+            "Invalid dependencies format, should be list or dictionary"
+        )
+
 
 class ModuleJsonManifestParser(BaseManifestParser):
     manifest_type = ManifestFileType.MODULE_JSON
@@ -408,6 +431,8 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
         if "author" in data:
             data["authors"] = self._parse_authors(data)
             del data["author"]
+        if "depends" in data:
+            data["dependencies"] = self._parse_dependencies(data["depends"])
         return data
 
     @staticmethod
@@ -534,6 +559,26 @@ class LibraryPropertiesManifestParser(BaseManifestParser):
             result["include"] = [include]
         return result
 
+    @staticmethod
+    def _parse_dependencies(raw):
+        result = []
+        for item in raw.split(","):
+            item = item.strip()
+            if not item:
+                continue
+            if item.endswith(")") and "(" in item:
+                name, version = item.split("(")
+                result.append(
+                    dict(
+                        name=name.strip(),
+                        version=version[:-1].strip(),
+                        frameworks=["arduino"],
+                    )
+                )
+            else:
+                result.append(dict(name=item, frameworks=["arduino"]))
+        return result
+
 
 class PlatformJsonManifestParser(BaseManifestParser):
     manifest_type = ManifestFileType.PLATFORM_JSON
@@ -542,6 +587,8 @@ class PlatformJsonManifestParser(BaseManifestParser):
         data = json.loads(contents)
         if "frameworks" in data:
             data["frameworks"] = self._parse_frameworks(data["frameworks"])
+        if "packages" in data:
+            data["dependencies"] = self._parse_dependencies(data["packages"])
         return data
 
     @staticmethod
@@ -549,6 +596,12 @@ class PlatformJsonManifestParser(BaseManifestParser):
         if not isinstance(raw, dict):
             return None
         return [name.lower() for name in raw.keys()]
+
+    @staticmethod
+    def _parse_dependencies(raw):
+        return [
+            dict(name=name, version=opts.get("version")) for name, opts in raw.items()
+        ]
 
 
 class PackageJsonManifestParser(BaseManifestParser):

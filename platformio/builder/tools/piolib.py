@@ -154,9 +154,7 @@ class LibBuilderBase(object):
 
     @property
     def dependencies(self):
-        return LibraryManager.normalize_dependencies(
-            self._manifest.get("dependencies", [])
-        )
+        return self._manifest.get("dependencies")
 
     @property
     def src_filter(self):
