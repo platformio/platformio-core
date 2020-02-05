@@ -87,21 +87,22 @@ def test_library_json_parser():
     ]
 }
 """
-    mp = parser.LibraryJsonManifestParser(contents)
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
-        mp.as_dict(),
+        raw_data,
         {
             "keywords": ["sound", "audio", "music", "sd", "card", "playback"],
             "frameworks": ["arduino"],
             "export": {"exclude": ["audio_samples"]},
             "platforms": ["atmelavr"],
             "dependencies": [
-                {"name": "deps1", "version": "1.0.0"},
                 {
                     "name": "@owner/deps2",
                     "version": "1.0.0",
                     "frameworks": ["arduino", "espidf"],
                 },
+                {"name": "deps1", "version": "1.0.0"},
                 {
                     "name": "deps3",
                     "version": "1.0.0",
@@ -113,7 +114,7 @@ def test_library_json_parser():
 
     # broken dependencies
     with pytest.raises(parser.ManifestParserError):
-        mp = parser.LibraryJsonManifestParser({"dependencies": ["deps1", "deps2"]})
+        parser.LibraryJsonManifestParser({"dependencies": ["deps1", "deps2"]})
 
 
 def test_module_json_parser():
@@ -172,9 +173,10 @@ sentence=This is Arduino library
 customField=Custom Value
 depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
 """
-    mp = parser.LibraryPropertiesManifestParser(contents)
+    raw_data = parser.LibraryPropertiesManifestParser(contents).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
-        mp.as_dict(),
+        raw_data,
         {
             "name": "TestPackage",
             "version": "1.2.3",
@@ -303,6 +305,7 @@ def test_library_json_schema():
     raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_JSON
     ).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
 
     data = ManifestSchema().load_manifest(raw_data)
 
@@ -343,13 +346,43 @@ def test_library_json_schema():
                 },
             ],
             "dependencies": [
-                {"name": "deps1", "version": "1.0.0"},
                 {"name": "@owner/deps2", "version": "1.0.0", "frameworks": ["arduino"]},
+                {"name": "deps1", "version": "1.0.0"},
                 {
                     "name": "deps3",
                     "version": "1.0.0",
                     "platforms": ["ststm32", "sifive"],
                 },
+            ],
+        },
+    )
+
+    # legacy dependencies format
+    contents = """
+{
+    "name": "DallasTemperature",
+    "version": "3.8.0",
+    "dependencies":
+    {
+        "name": "OneWire",
+        "authors": "Paul Stoffregen",
+        "frameworks": "arduino"
+    }
+}
+"""
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    data = ManifestSchema().load_manifest(raw_data)
+    assert not jsondiff.diff(
+        data,
+        {
+            "name": "DallasTemperature",
+            "version": "3.8.0",
+            "dependencies": [
+                {
+                    "name": "OneWire",
+                    "authors": ["Paul Stoffregen"],
+                    "frameworks": ["arduino"],
+                }
             ],
         },
     )
@@ -371,6 +404,7 @@ depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
     raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_PROPERTIES
     ).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
 
     data = ManifestSchema().load_manifest(raw_data)
 
@@ -524,6 +558,8 @@ def test_platform_json_schema():
         contents, parser.ManifestFileType.PLATFORM_JSON
     ).as_dict()
     raw_data["frameworks"] = sorted(raw_data["frameworks"])
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
+
     data = ManifestSchema().load_manifest(raw_data)
 
     assert not jsondiff.diff(
@@ -547,9 +583,9 @@ def test_platform_json_schema():
             "frameworks": sorted(["arduino", "simba"]),
             "version": "1.15.0",
             "dependencies": [
-                {"name": "toolchain-atmelavr", "version": "~1.50400.0"},
                 {"name": "framework-arduinoavr", "version": "~4.2.0"},
                 {"name": "tool-avrdude", "version": "~1.60300.0"},
+                {"name": "toolchain-atmelavr", "version": "~1.50400.0"},
             ],
         },
     )

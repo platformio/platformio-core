@@ -355,9 +355,11 @@ class LibraryJsonManifestParser(BaseManifestParser):
 
     @staticmethod
     def _parse_dependencies(raw):
+        # compatibility with legacy dependency format
+        if isinstance(raw, dict) and "name" in raw:
+            raw = [raw]
+
         if isinstance(raw, dict):
-            if "name" in raw:  # compatibility with dep as dict
-                return [raw]
             return [dict(name=name, version=version) for name, version in raw.items()]
         if isinstance(raw, list):
             for i, dependency in enumerate(raw):
