@@ -139,8 +139,7 @@ def _get_svd_path(env):
 
 
 def _escape_build_flag(flags):
-    result = [flag if " " not in flag else '"%s"' % flag for flag in flags]
-    return result
+    return [flag if " " not in flag else '"%s"' % flag for flag in flags]
 
 
 def DumpIDEData(env):

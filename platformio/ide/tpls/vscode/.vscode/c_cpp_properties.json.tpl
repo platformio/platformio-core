@@ -13,6 +13,10 @@
 %   return to_unix_path(text).replace('"', '\\"')
 % end
 %
+% def _escape_required(flag):
+%   return " " in flag and systype == "windows"
+% end
+%
 % def _split_flags(flags):
 %   result = []
 %   i = 0
@@ -80,9 +84,6 @@
 % cc_stds = STD_RE.findall(cc_flags)
 % cxx_stds = STD_RE.findall(cxx_flags)
 %
-% # pass only architecture specific flags
-% cc_m_flags = " ".join([f.strip() for f in cc_flags.split(" ") if f.strip().startswith(("-m", "-i", "@"))])
-%
 % if cc_stds:
             "cStandard": "c{{ cc_stds[-1] }}",
 % end
@@ -91,7 +92,8 @@
 % end
             "compilerPath": "{{ cc_path }}",
             "compilerArgs": [
-% for flag in [f for f in _split_flags(cc_flags) if f.startswith(("-m", "-i", "@"))]:
+% for flag in [ '"%s"' % _escape(f) if _escape_required(f) else f for f in _split_flags(
+%       cc_flags) if f.startswith(("-m", "-i", "@"))]:
                 "{{ flag }}",
 % end
                 ""
