@@ -66,7 +66,7 @@ class ManifestParserFactory(object):
         if not type_from_uri:
             raise UnknownManifestError("Unknown manifest file type %s" % path)
         return ManifestParserFactory.new(
-            get_file_contents(path), type_from_uri, remote_url
+            get_file_contents(path, encoding="utf8"), type_from_uri, remote_url
         )
 
     @staticmethod
@@ -76,7 +76,7 @@ class ManifestParserFactory(object):
         type_from_uri = ManifestFileType.from_uri(remote_url) if remote_url else None
         if type_from_uri and os.path.isfile(os.path.join(path, type_from_uri)):
             return ManifestParserFactory.new(
-                get_file_contents(os.path.join(path, type_from_uri)),
+                get_file_contents(os.path.join(path, type_from_uri), encoding="utf8"),
                 type_from_uri,
                 remote_url=remote_url,
                 package_dir=path,
@@ -88,7 +88,7 @@ class ManifestParserFactory(object):
                 "Unknown manifest file type in %s directory" % path
             )
         return ManifestParserFactory.new(
-            get_file_contents(os.path.join(path, type_from_dir)),
+            get_file_contents(os.path.join(path, type_from_dir), encoding="utf8"),
             type_from_dir,
             remote_url=remote_url,
             package_dir=path,

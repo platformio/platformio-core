@@ -34,6 +34,7 @@ PlatformIO Core 4.0
 * Fixed an issue "Import of non-existent variable 'projenv''" when development platform does not call "env.BuildProgram()" (`issue #3315 <https://github.com/platformio/platformio-core/issues/3315>`_)
 * Fixed an issue when invalid CLI command does not return non-zero exit code
 * Fixed an issue when Project Inspector crashes when flash use > 100% (`issue #3368 <https://github.com/platformio/platformio-core/issues/3368>`_)
+* Fixed a "UnicodeDecodeError" when listing built-in libraries on macOS with Python 2.7 (`issue #3370 <https://github.com/platformio/platformio-core/issues/3370>`_)
 
 4.1.0 (2019-11-07)
 ~~~~~~~~~~~~~~~~~~

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import glob
+import io
 import json
 import os
 import re
@@ -448,7 +449,7 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
         path = path or self.path
         if path in self._instances:
             del self._instances[path]
-        with open(path or self.path, "w+") as fp:
+        with io.open(path or self.path, mode="w+", encoding="utf8") as fp:
             fp.write(CONFIG_HEADER.strip() + "\n\n")
             self._parser.write(fp)
             fp.seek(0)
