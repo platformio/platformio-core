@@ -33,6 +33,7 @@ PlatformIO Core 4.0
 * Fixed an issue with LDF when header files not found if "libdeps_dir" is within a subdirectory of "lib_extra_dirs" (`issue #3311 <https://github.com/platformio/platformio-core/issues/3311>`_)
 * Fixed an issue "Import of non-existent variable 'projenv''" when development platform does not call "env.BuildProgram()" (`issue #3315 <https://github.com/platformio/platformio-core/issues/3315>`_)
 * Fixed an issue when invalid CLI command does not return non-zero exit code
+* Fixed an issue when Project Inspector crashes when flash use > 100% (`issue #3368 <https://github.com/platformio/platformio-core/issues/3368>`_)
 
 4.1.0 (2019-11-07)
 ~~~~~~~~~~~~~~~~~~

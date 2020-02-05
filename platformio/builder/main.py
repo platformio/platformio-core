@@ -161,7 +161,9 @@ for item in env.GetExtraScripts("post"):
 ##############################################################################
 
 # Checking program size
-if env.get("SIZETOOL") and "nobuild" not in COMMAND_LINE_TARGETS:
+if env.get("SIZETOOL") and not (
+    set(["nobuild", "sizedata"]) & set(COMMAND_LINE_TARGETS)
+):
     env.Depends(["upload", "program"], "checkprogsize")
     # Replace platform's "size" target with our
     _new_targets = [t for t in DEFAULT_TARGETS if str(t) != "size"]
