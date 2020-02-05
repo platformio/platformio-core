@@ -23,6 +23,7 @@ PlatformIO Core 4.0
 * Added support for "pythonPackages" in `platform.json <https://docs.platformio.org/page/platforms/creating_platform.html#manifest-file-platform-json>`__ manifest (PlatformIO Package Manager will install dependent Python packages from PyPi registry automatically when dev-platform is installed)
 * Handle project configuration (monitor, test, and upload options) for PIO Remote commands (`issue #2591 <https://github.com/platformio/platformio-core/issues/2591>`_)
 * Added support for Arduino's library.properties ``depends`` field (`issue #2781 <https://github.com/platformio/platformio-core/issues/2781>`_)
+* Autodetect monitor port for boards with specified HWIDs (`issue #3349 <https://github.com/platformio/platformio-core/issues/3349>`_)
 * Updated SCons tool to 3.1.2
 * Updated Unity tool to 2.5.0
 * Made package ManifestSchema compatible with marshmallow >= 3 (`issue #3296 <https://github.com/platformio/platformio-core/issues/3296>`_)

@@ -21,6 +21,7 @@ from serial.tools import miniterm
 
 from platformio import exception, fs, util
 from platformio.compat import dump_json_to_unicode
+from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
 
@@ -189,6 +190,20 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         ports = util.get_serial_ports(filter_hwid=True)
         if len(ports) == 1:
             kwargs["port"] = ports[0]["port"]
+        elif "platform" in project_options and "board" in project_options:
+            board_hwids = get_board_hwids(
+                kwargs["project_dir"],
+                project_options["platform"],
+                project_options["board"],
+            )
+            for item in ports:
+                for hwid in board_hwids:
+                    hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
+                    if hwid_str in item["hwid"]:
+                        kwargs["port"] = item["port"]
+                        break
+                if kwargs["port"]:
+                    break
     elif kwargs["port"] and (set(["*", "?", "[", "]"]) & set(kwargs["port"])):
         for item in util.get_serial_ports():
             if fnmatch(item["port"], kwargs["port"]):
@@ -254,3 +269,12 @@ def get_project_options(environment=None):
         else:
             environment = config.envs()[0]
     return config.items(env=environment, as_dict=True)
+
+
+def get_board_hwids(project_dir, platform, board):
+    with fs.cd(project_dir):
+        return (
+            PlatformFactory.newPlatform(platform)
+            .board_config(board)
+            .get("build.hwids", [])
+        )
