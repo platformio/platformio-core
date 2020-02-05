@@ -69,7 +69,7 @@ def test_library_json_parser():
                 {"name": "deps2", "version": "https://github.com/username/package.git"},
             ],
             "customField": "Custom Value",
-        }
+        },
     )
 
     contents = """
