@@ -48,9 +48,10 @@ def test_library_json_parser():
     "customField": "Custom Value"
 }
 """
-    mp = parser.LibraryJsonManifestParser(contents)
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
-        mp.as_dict(),
+        raw_data,
         {
             "name": "TestPackage",
             "platforms": ["atmelavr", "espressif8266"],
@@ -63,12 +64,12 @@ def test_library_json_parser():
             "homepage": "http://old.url.format",
             "build": {"flags": ["-DHELLO"]},
             "dependencies": [
+                {"name": "@owner/deps3", "version": "^2.1.3"},
                 {"name": "deps1", "version": "1.2.0"},
                 {"name": "deps2", "version": "https://github.com/username/package.git"},
-                {"name": "@owner/deps3", "version": "^2.1.3"},
             ],
             "customField": "Custom Value",
-        },
+        }
     )
 
     contents = """
