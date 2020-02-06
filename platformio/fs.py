@@ -49,9 +49,9 @@ def get_source_dir():
     return os.path.dirname(curpath)
 
 
-def get_file_contents(path):
+def get_file_contents(path, encoding=None):
     try:
-        with open(path) as fp:
+        with io.open(path, encoding=encoding) as fp:
             return fp.read()
     except UnicodeDecodeError:
         click.secho(

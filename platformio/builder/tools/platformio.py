@@ -31,8 +31,10 @@ from platformio.compat import string_types
 from platformio.util import pioversion_to_intstr
 
 SRC_HEADER_EXT = ["h", "hpp"]
-SRC_C_EXT = ["c", "cc", "cpp"]
-SRC_BUILD_EXT = SRC_C_EXT + ["S", "spp", "SPP", "sx", "s", "asm", "ASM"]
+SRC_ASM_EXT = ["S", "spp", "SPP", "sx", "s", "asm", "ASM"]
+SRC_C_EXT = ["c"]
+SRC_CXX_EXT = ["cc", "cpp", "cxx", "c++"]
+SRC_BUILD_EXT = SRC_C_EXT + SRC_CXX_EXT + SRC_ASM_EXT
 SRC_FILTER_DEFAULT = ["+<*>", "-<.git%s>" % os.sep, "-<.svn%s>" % os.sep]
 
 

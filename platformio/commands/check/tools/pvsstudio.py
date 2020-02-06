@@ -14,6 +14,7 @@
 
 import os
 import tempfile
+import shutil
 from xml.etree.ElementTree import fromstring
 
 import click
@@ -193,15 +194,8 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             self._bad_input = True
 
     def clean_up(self):
-        temp_files = (
-            self._tmp_output_file,
-            self._tmp_preprocessed_file,
-            self._tmp_cfg_file,
-            self._tmp_cmd_file,
-        )
-        for f in temp_files:
-            if os.path.isfile(f):
-                os.remove(f)
+        if os.path.isdir(self._tmp_dir):
+            shutil.rmtree(self._tmp_dir)
 
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback

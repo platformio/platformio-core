@@ -63,5 +63,18 @@ class PlatformioCLI(click.MultiCommand):
                 mod_path = "platformio.commands.%s.command" % cmd_name
             mod = __import__(mod_path, None, None, ["cli"])
         except ImportError:
+            try:
+                return self._handle_obsolate_command(cmd_name)
+            except AttributeError:
+                pass
             raise click.UsageError('No such command "%s"' % cmd_name, ctx)
         return mod.cli
+
+    @staticmethod
+    def _handle_obsolate_command(name):
+        # pylint: disable=import-outside-toplevel
+        if name == "init":
+            from platformio.commands.project import project_init
+
+            return project_init
+        raise AttributeError()

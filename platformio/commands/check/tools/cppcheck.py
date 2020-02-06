@@ -123,7 +123,7 @@ class CppcheckCheckTool(CheckToolBase):
         cmd.append("--file-list=%s" % self._generate_src_file())
         cmd.append("--includes-file=%s" % self._generate_inc_file())
 
-        core_dir = self.config.get_optional_dir("core")
+        core_dir = self.config.get_optional_dir("packages")
         cmd.append("--suppress=*:%s*" % core_dir)
         cmd.append("--suppress=unmatchedSuppression:%s*" % core_dir)
 

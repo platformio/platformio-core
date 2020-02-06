@@ -14,7 +14,6 @@
 
 from __future__ import absolute_import
 
-import codecs
 import glob
 import os
 import shutil
@@ -66,10 +65,9 @@ class OSRPC(object):
     def request_content(self, uri, data=None, headers=None, cache_valid=None):
         if uri.startswith("http"):
             return self.fetch_content(uri, data, headers, cache_valid)
-        if not os.path.isfile(uri):
-            return None
-        with codecs.open(uri, encoding="utf-8") as fp:
-            return fp.read()
+        if os.path.isfile(uri):
+            return fs.get_file_contents(uri, encoding="utf8")
+        return None
 
     @staticmethod
     def open_url(url):

@@ -40,12 +40,18 @@ def test_library_json_parser():
         "flags": ["-DHELLO"]
     },
     "examples": ["examples/*/*.pde"],
+    "dependencies": {
+        "deps1": "1.2.0",
+        "deps2": "https://github.com/username/package.git",
+        "@owner/deps3": "^2.1.3"
+    },
     "customField": "Custom Value"
 }
 """
-    mp = parser.LibraryJsonManifestParser(contents)
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
-        mp.as_dict(),
+        raw_data,
         {
             "name": "TestPackage",
             "platforms": ["atmelavr", "espressif8266"],
@@ -57,6 +63,11 @@ def test_library_json_parser():
             "keywords": ["kw1", "kw2", "kw3"],
             "homepage": "http://old.url.format",
             "build": {"flags": ["-DHELLO"]},
+            "dependencies": [
+                {"name": "@owner/deps3", "version": "^2.1.3"},
+                {"name": "deps1", "version": "1.2.0"},
+                {"name": "deps2", "version": "https://github.com/username/package.git"},
+            ],
             "customField": "Custom Value",
         },
     )
@@ -68,19 +79,42 @@ def test_library_json_parser():
     "platforms": "atmelavr",
     "export": {
         "exclude": "audio_samples"
-    }
+    },
+    "dependencies": [
+        {"name": "deps1", "version": "1.0.0"},
+        {"name": "@owner/deps2", "version": "1.0.0", "frameworks": "arduino, espidf"},
+        {"name": "deps3", "version": "1.0.0", "platforms": ["ststm32", "sifive"]}
+    ]
 }
 """
-    mp = parser.LibraryJsonManifestParser(contents)
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
-        mp.as_dict(),
+        raw_data,
         {
             "keywords": ["sound", "audio", "music", "sd", "card", "playback"],
             "frameworks": ["arduino"],
             "export": {"exclude": ["audio_samples"]},
             "platforms": ["atmelavr"],
+            "dependencies": [
+                {
+                    "name": "@owner/deps2",
+                    "version": "1.0.0",
+                    "frameworks": ["arduino", "espidf"],
+                },
+                {"name": "deps1", "version": "1.0.0"},
+                {
+                    "name": "deps3",
+                    "version": "1.0.0",
+                    "platforms": ["ststm32", "sifive"],
+                },
+            ],
         },
     )
+
+    # broken dependencies
+    with pytest.raises(parser.ManifestParserError):
+        parser.LibraryJsonManifestParser({"dependencies": ["deps1", "deps2"]})
 
 
 def test_module_json_parser():
@@ -137,10 +171,12 @@ version=1.2.3
 author=SomeAuthor <info AT author.com>
 sentence=This is Arduino library
 customField=Custom Value
+depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
 """
-    mp = parser.LibraryPropertiesManifestParser(contents)
+    raw_data = parser.LibraryPropertiesManifestParser(contents).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
-        mp.as_dict(),
+        raw_data,
         {
             "name": "TestPackage",
             "version": "1.2.3",
@@ -154,6 +190,20 @@ customField=Custom Value
             "authors": [{"email": "info@author.com", "name": "SomeAuthor"}],
             "keywords": ["uncategorized"],
             "customField": "Custom Value",
+            "depends": "First Library (=2.0.0), Second Library (>=1.2.0), Third",
+            "dependencies": [
+                {
+                    "name": "First Library",
+                    "version": "=2.0.0",
+                    "frameworks": ["arduino"],
+                },
+                {
+                    "name": "Second Library",
+                    "version": ">=1.2.0",
+                    "frameworks": ["arduino"],
+                },
+                {"name": "Third", "frameworks": ["arduino"]},
+            ],
         },
     )
 
@@ -244,12 +294,18 @@ def test_library_json_schema():
         "base": "examples/JsonHttpClient",
         "files": ["JsonHttpClient.ino"]
     }
+  ],
+  "dependencies": [
+    {"name": "deps1", "version": "1.0.0"},
+    {"name": "@owner/deps2", "version": "1.0.0", "frameworks": "arduino"},
+    {"name": "deps3", "version": "1.0.0", "platforms": ["ststm32", "sifive"]}
   ]
 }
 """
     raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_JSON
     ).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
 
     data = ManifestSchema().load_manifest(raw_data)
 
@@ -289,6 +345,45 @@ def test_library_json_schema():
                     "files": ["JsonHttpClient.ino"],
                 },
             ],
+            "dependencies": [
+                {"name": "@owner/deps2", "version": "1.0.0", "frameworks": ["arduino"]},
+                {"name": "deps1", "version": "1.0.0"},
+                {
+                    "name": "deps3",
+                    "version": "1.0.0",
+                    "platforms": ["ststm32", "sifive"],
+                },
+            ],
+        },
+    )
+
+    # legacy dependencies format
+    contents = """
+{
+    "name": "DallasTemperature",
+    "version": "3.8.0",
+    "dependencies":
+    {
+        "name": "OneWire",
+        "authors": "Paul Stoffregen",
+        "frameworks": "arduino"
+    }
+}
+"""
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    data = ManifestSchema().load_manifest(raw_data)
+    assert not jsondiff.diff(
+        data,
+        {
+            "name": "DallasTemperature",
+            "version": "3.8.0",
+            "dependencies": [
+                {
+                    "name": "OneWire",
+                    "authors": ["Paul Stoffregen"],
+                    "frameworks": ["arduino"],
+                }
+            ],
         },
     )
 
@@ -304,10 +399,12 @@ paragraph=Supported display controller: SSD1306, SSD1309, SSD1322, SSD1325
 category=Display
 url=https://github.com/olikraus/u8glib
 architectures=avr,sam
+depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
 """
     raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_PROPERTIES
     ).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
 
     data = ManifestSchema().load_manifest(raw_data)
 
@@ -333,6 +430,19 @@ architectures=avr,sam
             ],
             "keywords": ["display"],
             "name": "U8glib",
+            "dependencies": [
+                {
+                    "name": "First Library",
+                    "version": "=2.0.0",
+                    "frameworks": ["arduino"],
+                },
+                {
+                    "name": "Second Library",
+                    "version": ">=1.2.0",
+                    "frameworks": ["arduino"],
+                },
+                {"name": "Third", "frameworks": ["arduino"]},
+            ],
         },
     )
 
@@ -436,11 +546,6 @@ def test_platform_json_schema():
       "optional": true,
       "version": "~4.2.0"
     },
-    "framework-simba": {
-      "type": "framework",
-      "optional": true,
-      "version": ">=7.0.0"
-    },
     "tool-avrdude": {
       "type": "uploader",
       "optional": true,
@@ -453,6 +558,8 @@ def test_platform_json_schema():
         contents, parser.ManifestFileType.PLATFORM_JSON
     ).as_dict()
     raw_data["frameworks"] = sorted(raw_data["frameworks"])
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
+
     data = ManifestSchema().load_manifest(raw_data)
 
     assert not jsondiff.diff(
@@ -475,6 +582,11 @@ def test_platform_json_schema():
             },
             "frameworks": sorted(["arduino", "simba"]),
             "version": "1.15.0",
+            "dependencies": [
+                {"name": "framework-arduinoavr", "version": "~4.2.0"},
+                {"name": "tool-avrdude", "version": "~1.60300.0"},
+                {"name": "toolchain-atmelavr", "version": "~1.50400.0"},
+            ],
         },
     )
 
