@@ -20,6 +20,7 @@ from __future__ import absolute_import
 
 import itertools
 import json
+import os
 
 import SCons
 
@@ -129,7 +130,9 @@ def WriteCompilationDb(target, source, env):
     entries = []
 
     for s in __COMPILATION_DB_ENTRIES:
-        entries.append(s.read())
+        item = s.read()
+        item["file"] = os.path.abspath(item["file"])
+        entries.append(item)
 
     with open(str(target[0]), "w") as target_file:
         json.dump(
