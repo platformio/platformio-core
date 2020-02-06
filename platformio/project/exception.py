@@ -24,7 +24,7 @@ class NotPlatformIOProjectError(ProjectError, UserSideException):
     MESSAGE = (
         "Not a PlatformIO project. `platformio.ini` file has not been "
         "found in current working directory ({0}). To initialize new project "
-        "please use `platformio init` command"
+        "please use `platformio project init` command"
     )
 
 

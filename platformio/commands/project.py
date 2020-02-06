@@ -14,17 +14,59 @@
 
 # pylint: disable=too-many-arguments,too-many-locals, too-many-branches
 
-from os import getcwd, makedirs
-from os.path import isdir, isfile, join
+import os
 
 import click
+from tabulate import tabulate
 
 from platformio import exception, fs
 from platformio.commands.platform import platform_install as cli_platform_install
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
+from platformio.project.exception import NotPlatformIOProjectError
 from platformio.project.helpers import is_platformio_project
+
+
+@click.group(short_help="Project Manager")
+def cli():
+    pass
+
+
+@cli.command("config", short_help="Show computed configuration")
+@click.option(
+    "-d",
+    "--project-dir",
+    default=os.getcwd,
+    type=click.Path(
+        exists=True, file_okay=True, dir_okay=True, writable=True, resolve_path=True
+    ),
+)
+@click.option("--json-output", is_flag=True)
+def project_config(project_dir, json_output):
+    if not is_platformio_project(project_dir):
+        raise NotPlatformIOProjectError(project_dir)
+    with fs.cd(project_dir):
+        config = ProjectConfig.get_instance()
+    if json_output:
+        return click.echo(config.to_json())
+    click.echo(
+        "Computed project configuration for %s" % click.style(project_dir, fg="cyan")
+    )
+    for section, options in config.as_tuple():
+        click.echo()
+        click.secho(section, fg="cyan")
+        click.echo("-" * len(section))
+        click.echo(
+            tabulate(
+                [
+                    (name, "=", "\n".join(value) if isinstance(value, list) else value)
+                    for name, value in options
+                ],
+                tablefmt="plain",
+            )
+        )
+    return None
 
 
 def validate_boards(ctx, param, value):  # pylint: disable=W0613
@@ -40,11 +82,11 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
     return value
 
 
-@click.command("init", short_help="Initialize PlatformIO project or update existing")
+@cli.command("init", short_help="Initialize a project or update existing")
 @click.option(
     "--project-dir",
     "-d",
-    default=getcwd,
+    default=os.getcwd,
     type=click.Path(
         exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
     ),
@@ -55,7 +97,7 @@ def validate_boards(ctx, param, value):  # pylint: disable=W0613
 @click.option("--env-prefix", default="")
 @click.option("-s", "--silent", is_flag=True)
 @click.pass_context
-def cli(
+def project_init(
     ctx,  # pylint: disable=R0913
     project_dir,
     board,
@@ -65,7 +107,7 @@ def cli(
     silent,
 ):
     if not silent:
-        if project_dir == getcwd():
+        if project_dir == os.getcwd():
             click.secho("\nThe current working directory", fg="yellow", nl=False)
             click.secho(" %s " % project_dir, fg="cyan", nl=False)
             click.secho("will be used for the project.", fg="yellow")
@@ -137,16 +179,16 @@ def init_base_project(project_dir):
             (config.get_optional_dir("test"), init_test_readme),
         ]
         for (path, cb) in dir_to_readme:
-            if isdir(path):
+            if os.path.isdir(path):
                 continue
-            makedirs(path)
+            os.makedirs(path)
             if cb:
                 cb(path)
 
 
 def init_include_readme(include_dir):
     fs.write_file_contents(
-        join(include_dir, "README"),
+        os.path.join(include_dir, "README"),
         """
 This directory is intended for project header files.
 
@@ -193,7 +235,7 @@ https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
 def init_lib_readme(lib_dir):
     # pylint: disable=line-too-long
     fs.write_file_contents(
-        join(lib_dir, "README"),
+        os.path.join(lib_dir, "README"),
         """
 This directory is intended for project specific (private) libraries.
 PlatformIO will compile them to static libraries and link into executable file.
@@ -246,7 +288,7 @@ More information about PlatformIO Library Dependency Finder
 
 def init_test_readme(test_dir):
     fs.write_file_contents(
-        join(test_dir, "README"),
+        os.path.join(test_dir, "README"),
         """
 This directory is intended for PIO Unit Testing and project tests.
 
@@ -263,8 +305,8 @@ More information about PIO Unit Testing:
 
 
 def init_ci_conf(project_dir):
-    conf_path = join(project_dir, ".travis.yml")
-    if isfile(conf_path):
+    conf_path = os.path.join(project_dir, ".travis.yml")
+    if os.path.isfile(conf_path):
         return
     fs.write_file_contents(
         conf_path,
@@ -340,8 +382,8 @@ def init_ci_conf(project_dir):
 
 
 def init_cvs_ignore(project_dir):
-    conf_path = join(project_dir, ".gitignore")
-    if isfile(conf_path):
+    conf_path = os.path.join(project_dir, ".gitignore")
+    if os.path.isfile(conf_path):
         return
     fs.write_file_contents(conf_path, ".pio\n")
 
@@ -349,7 +391,9 @@ def init_cvs_ignore(project_dir):
 def fill_project_envs(
     ctx, project_dir, board_ids, project_option, env_prefix, force_download
 ):
-    config = ProjectConfig(join(project_dir, "platformio.ini"), parse_extra=False)
+    config = ProjectConfig(
+        os.path.join(project_dir, "platformio.ini"), parse_extra=False
+    )
     used_boards = []
     for section in config.sections():
         cond = [section.startswith("env:"), config.has_option(section, "board")]

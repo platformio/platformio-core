@@ -17,7 +17,7 @@ from os import getcwd, makedirs
 from os.path import getsize, isdir, isfile, join
 
 from platformio.commands.boards import cli as cmd_boards
-from platformio.commands.init import cli as cmd_init
+from platformio.commands.project import project_init as cmd_init
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import ProjectEnvsNotAvailableError
 

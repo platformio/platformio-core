@@ -6,7 +6,7 @@ Release Notes
 PlatformIO Core 4.0
 -------------------
 
-4.1.1 (2020-??-??)
+4.2.0 (2020-02-??)
 ~~~~~~~~~~~~~~~~~~
 
 * `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__:
@@ -17,6 +17,11 @@ PlatformIO Core 4.0
 * `PIO Check <http://docs.platformio.org/page/plus/pio-check.html>`__ – automated code analysis without hassle:
 
   - Added support for `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ static code analyzer
+
+* Initial support for `Project Manager <https://docs.platformio.org/page/userguide/project/cmd_config.html>`_ CLI:
+
+  - Show computed project configuration with a new `platformio project config <https://docs.platformio.org/page/userguide/project/cmd_config.html>`_ command or dump to JSON with ``platformio project config --json-output`` (`issue #3335 <https://github.com/platformio/platformio-core/issues/3335>`_)
+  - Moved ``platformio init`` command to `platformio project init <https://docs.platformio.org/page/userguide/project/cmd_init.html>`_
 
 * Generate `compilation database "compile_commands.json" <https://docs.platformio.org/page/faq.html#compilation-database-compile-commands-json>`_ (`issue #2990 <https://github.com/platformio/platformio-core/issues/2990>`_)
 * Control debug flags and optimization level with a new `debug_build_flags <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-build-flags>`__ option
