@@ -18,6 +18,7 @@ PlatformIO Core 4.0
 
   - Added support for `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ static code analyzer
 
+* Generate `compilation database "compile_commands.json" <https://docs.platformio.org/page/faq.html#compilation-database-compile-commands-json>`_ (`issue #2990 <https://github.com/platformio/platformio-core/issues/2990>`_)
 * Control debug flags and optimization level with a new `debug_build_flags <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-build-flags>`__ option
 * Install a dev-platform with ALL declared packages using a new ``--with-all-packages`` option for `pio platform install <https://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__ command  (`issue #3345 <https://github.com/platformio/platformio-core/issues/3345>`_)
 * Added support for "pythonPackages" in `platform.json <https://docs.platformio.org/page/platforms/creating_platform.html#manifest-file-platform-json>`__ manifest (PlatformIO Package Manager will install dependent Python packages from PyPi registry automatically when dev-platform is installed)

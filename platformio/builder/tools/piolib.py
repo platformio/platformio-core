@@ -366,7 +366,7 @@ class LibBuilderBase(object):
                 if not fs.path_endswith_ext(_h_path, piotool.SRC_HEADER_EXT):
                     continue
                 _f_part = _h_path[: _h_path.rindex(".")]
-                for ext in piotool.SRC_C_EXT:
+                for ext in piotool.SRC_C_EXT + piotool.SRC_CXX_EXT:
                     if not isfile("%s.%s" % (_f_part, ext)):
                         continue
                     _c_path = self.env.File("%s.%s" % (_f_part, ext))

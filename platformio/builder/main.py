@@ -72,6 +72,7 @@ DEFAULT_ENV_OPTIONS = dict(
     BUILD_DIR=join("$PROJECT_BUILD_DIR", "$PIOENV"),
     BUILD_SRC_DIR=join("$BUILD_DIR", "src"),
     BUILD_TEST_DIR=join("$BUILD_DIR", "test"),
+    COMPILATIONDB_PATH=join("$BUILD_DIR", "compile_commands.json"),
     LIBPATH=["$BUILD_DIR"],
     PROGNAME="program",
     PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
@@ -134,6 +135,10 @@ if env.GetOption("clean"):
 elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     click.echo("Verbose mode can be enabled via `-v, --verbose` option")
 
+# Dynamically load dependent tools
+if "compiledb" in COMMAND_LINE_TARGETS:
+    env.Tool("compilation_db")
+
 if not isdir(env.subst("$BUILD_DIR")):
     makedirs(env.subst("$BUILD_DIR"))
 
@@ -170,6 +175,9 @@ if env.get("SIZETOOL") and not (
     Default(None)
     Default(_new_targets)
     Default("checkprogsize")
+
+if "compiledb" in COMMAND_LINE_TARGETS:
+    env.Alias("compiledb", env.CompilationDatabase("$COMPILATIONDB_PATH"))
 
 # Print configured protocols
 env.AddPreAction(
