@@ -18,7 +18,7 @@ PlatformIO Core 4.0
 
   - Added support for `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ static code analyzer
 
-* Initial support for `Project Manager <https://docs.platformio.org/page/userguide/project/cmd_config.html>`_ CLI:
+* Initial support for `Project Manager <https://docs.platformio.org/page/userguide/project/index.html>`_ CLI:
 
   - Show computed project configuration with a new `platformio project config <https://docs.platformio.org/page/userguide/project/cmd_config.html>`_ command or dump to JSON with ``platformio project config --json-output`` (`issue #3335 <https://github.com/platformio/platformio-core/issues/3335>`_)
   - Moved ``platformio init`` command to `platformio project init <https://docs.platformio.org/page/userguide/project/cmd_init.html>`_
