@@ -138,9 +138,16 @@ def _get_svd_path(env):
     return None
 
 
+def _escape_build_flag(flags):
+    return [flag if " " not in flag else '"%s"' % flag for flag in flags]
+
+
 def DumpIDEData(env):
-    LINTCCOM = "$CFLAGS $CCFLAGS $CPPFLAGS"
-    LINTCXXCOM = "$CXXFLAGS $CCFLAGS $CPPFLAGS"
+
+    env["__escape_build_flag"] = _escape_build_flag
+
+    LINTCCOM = "${__escape_build_flag(CFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
+    LINTCXXCOM = "${__escape_build_flag(CXXFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
 
     data = {
         "env_name": env["PIOENV"],

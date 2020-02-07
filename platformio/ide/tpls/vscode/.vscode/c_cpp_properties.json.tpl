@@ -13,6 +13,35 @@
 %   return to_unix_path(text).replace('"', '\\"')
 % end
 %
+% def _escape_required(flag):
+%   return " " in flag and systype == "windows"
+% end
+%
+% def _split_flags(flags):
+%   result = []
+%   i = 0
+%   flags = flags.strip()
+%   while i < len(flags):
+%       current_arg = []
+%       while i < len(flags) and flags[i] != " ":
+%         if flags[i] == '"':
+%           quotes_idx = flags.find('"', i + 1)
+%           current_arg.extend(flags[i + 1:quotes_idx])
+%           i = quotes_idx + 1
+%         else:
+%           current_arg.append(flags[i])
+%           i = i + 1
+%         end
+%       end
+%       arg = "".join(current_arg)
+%       if arg.strip():
+%         result.append(arg.strip())
+%       end
+%       i = i + 1
+%   end
+%   return result
+% end
+%
 % cleaned_includes = []
 % for include in includes:
 %   if "toolchain-" not in dirname(commonprefix([include, cc_path])) and isdir(include):
@@ -55,16 +84,20 @@
 % cc_stds = STD_RE.findall(cc_flags)
 % cxx_stds = STD_RE.findall(cxx_flags)
 %
-% # pass only architecture specific flags
-% cc_m_flags = " ".join([f.strip() for f in cc_flags.split(" ") if f.strip().startswith(("-m", "-i", "@"))])
-%
 % if cc_stds:
             "cStandard": "c{{ cc_stds[-1] }}",
 % end
 % if cxx_stds:
             "cppStandard": "c++{{ cxx_stds[-1] }}",
 % end
-            "compilerPath": "\"{{cc_path}}\" {{! _escape(cc_m_flags) }}"
+            "compilerPath": "{{ cc_path }}",
+            "compilerArgs": [
+% for flag in [ '"%s"' % _escape(f) if _escape_required(f) else f for f in _split_flags(
+%       cc_flags) if f.startswith(("-m", "-i", "@"))]:
+                "{{ flag }}",
+% end
+                ""
+            ]
         }
     ],
     "version": 4

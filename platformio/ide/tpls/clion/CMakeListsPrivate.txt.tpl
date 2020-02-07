@@ -5,7 +5,7 @@
 # please create `CMakeListsUser.txt` in the root of project.
 # The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
 
-%from platformio.project.helpers import (load_project_ide_data)
+% from platformio.project.helpers import (load_project_ide_data)
 %
 % import re
 %
@@ -20,6 +20,10 @@
 %     end
 %   end
 %   return path
+% end
+%
+% def _escape(text):
+%   return to_unix_path(text).replace('"', '\\"')
 % end
 %
 % envs = config.envs()
@@ -37,8 +41,8 @@ set(SVD_PATH "{{ _normalize_path(svd_path) }}")
 
 SET(CMAKE_C_COMPILER "{{ _normalize_path(cc_path) }}")
 SET(CMAKE_CXX_COMPILER "{{ _normalize_path(cxx_path) }}")
-SET(CMAKE_CXX_FLAGS "{{cxx_flags}}")
-SET(CMAKE_C_FLAGS "{{cc_flags}}")
+SET(CMAKE_CXX_FLAGS "{{ _normalize_path(to_unix_path(cxx_flags)) }}")
+SET(CMAKE_C_FLAGS "{{ _normalize_path(to_unix_path(cc_flags)) }}")
 
 % STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
 % cc_stds = STD_RE.findall(cc_flags)
