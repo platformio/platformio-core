@@ -146,8 +146,12 @@ def DumpIDEData(env):
 
     env["__escape_build_flag"] = _escape_build_flag
 
-    LINTCCOM = "${__escape_build_flag(CFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
-    LINTCXXCOM = "${__escape_build_flag(CXXFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
+    LINTCCOM = (
+        "${__escape_build_flag(CFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
+    )
+    LINTCXXCOM = (
+        "${__escape_build_flag(CXXFLAGS)} ${__escape_build_flag(CCFLAGS)} $CPPFLAGS"
+    )
 
     data = {
         "env_name": env["PIOENV"],

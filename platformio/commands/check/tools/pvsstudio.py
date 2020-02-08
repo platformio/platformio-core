@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import os
-import tempfile
 import shutil
+import tempfile
 from xml.etree.ElementTree import fromstring
 
 import click
