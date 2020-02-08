@@ -34,6 +34,7 @@ PlatformIO Core 4.0
 * Updated Unity tool to 2.5.0
 * Made package ManifestSchema compatible with marshmallow >= 3 (`issue #3296 <https://github.com/platformio/platformio-core/issues/3296>`_)
 * Warn about broken library manifest when scanning dependencies (`issue #3268 <https://github.com/platformio/platformio-core/issues/3268>`_)
+* Do not overwrite a custom items in VSCode's "extensions.json" (`issue #3374 <https://github.com/platformio/platformio-core/issues/3374>`_)
 * Fixed an issue when ``env.BoardConfig()`` does not work for custom boards in extra scripts of libraries (`issue #3264 <https://github.com/platformio/platformio-core/issues/3264>`_)
 * Fixed an issue with "start-group/end-group" linker flags on Native development platform (`issue #3282 <https://github.com/platformio/platformio-core/issues/3282>`_)
 * Fixed default PIO Unified Debugger configuration for `J-Link probe <http://docs.platformio.org/page/plus/debug-tools/jlink.html>`__
@@ -44,6 +45,7 @@ PlatformIO Core 4.0
 * Fixed a "UnicodeDecodeError" when listing built-in libraries on macOS with Python 2.7 (`issue #3370 <https://github.com/platformio/platformio-core/issues/3370>`_)
 * Fixed an issue with improperly handled compiler flags with space symbols in VSCode template (`issue #3364 <https://github.com/platformio/platformio-core/issues/3364>`_)
 * Fixed an issue when no error is raised if referred parameter (interpolation) is missing in a project configuration file (`issue #3279 <https://github.com/platformio/platformio-core/issues/3279>`_)
+
 
 4.1.0 (2019-11-07)
 ~~~~~~~~~~~~~~~~~~
