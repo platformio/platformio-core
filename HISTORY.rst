@@ -43,7 +43,7 @@ PlatformIO Core 4.0
 * Fixed an issue when Project Inspector crashes when flash use > 100% (`issue #3368 <https://github.com/platformio/platformio-core/issues/3368>`_)
 * Fixed a "UnicodeDecodeError" when listing built-in libraries on macOS with Python 2.7 (`issue #3370 <https://github.com/platformio/platformio-core/issues/3370>`_)
 * Fixed an issue with improperly handled compiler flags with space symbols in VSCode template (`issue #3364 <https://github.com/platformio/platformio-core/issues/3364>`_)
-
+* Fixed an issue when no error is raised if referred parameter (interpolation) is missing in a project configuration file (`issue #3279 <https://github.com/platformio/platformio-core/issues/3279>`_)
 
 4.1.0 (2019-11-07)
 ~~~~~~~~~~~~~~~~~~
