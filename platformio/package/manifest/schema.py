@@ -242,7 +242,7 @@ class ManifestSchema(BaseSchema):
     def load_spdx_licenses():
         r = requests.get(
             "https://raw.githubusercontent.com/spdx/license-list-data"
-            "/v3.7/json/licenses.json"
+            "/v3.8/json/licenses.json"
         )
         r.raise_for_status()
         return r.json()
