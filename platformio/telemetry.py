@@ -142,14 +142,7 @@ class MeasurementProtocol(TelemetryBase):
             return
 
         cmd_path = args[:1]
-        if args[0] in (
-            "platform",
-            "platforms",
-            "serialports",
-            "device",
-            "settings",
-            "account",
-        ):
+        if args[0] in ("account", "device", "platform", "project", "settings",):
             cmd_path = args[:2]
         if args[0] == "lib" and len(args) > 1:
             lib_subcmds = (
