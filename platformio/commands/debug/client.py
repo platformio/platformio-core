@@ -265,7 +265,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             telemetry.encode_run_environment(self.env_options),
             last_erros,
         )
-        telemetry.send_exception("DebugInitError: %s" % err, is_fatal=True)
+        telemetry.send_exception("DebugInitError: %s" % err)
         self.transport.loseConnection()
 
     def _kill_previous_session(self):

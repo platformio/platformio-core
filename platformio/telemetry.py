@@ -78,6 +78,7 @@ class MeasurementProtocol(TelemetryBase):
 
         self._prefill_screen_name()
         self._prefill_appinfo()
+        self._prefill_sysargs()
         self._prefill_custom_data()
 
     def __getitem__(self, name):
@@ -102,6 +103,15 @@ class MeasurementProtocol(TelemetryBase):
             dpdata.append("IDE/%s" % os.getenv("PLATFORMIO_IDE"))
         self["an"] = " ".join(dpdata)
 
+    def _prefill_sysargs(self):
+        args = []
+        for arg in sys.argv[1:]:
+            arg = str(arg).lower()
+            if "@" in arg or os.path.exists(arg):
+                arg = "***"
+            args.append(arg)
+        self["cd3"] = " ".join(args)
+
     def _prefill_custom_data(self):
         def _filter_args(items):
             result = []
@@ -118,7 +128,6 @@ class MeasurementProtocol(TelemetryBase):
         caller_id = str(app.get_session_var("caller_id"))
         self["cd1"] = util.get_systype()
         self["cd2"] = "Python/%s %s" % (platform.python_version(), platform.platform())
-        # self['cd3'] = " ".join(_filter_args(sys.argv[1:]))
         self["cd4"] = (
             1 if (not util.is_ci() and (caller_id or not is_container())) else 0
         )
