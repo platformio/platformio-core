@@ -92,6 +92,7 @@ Development Platforms
 * `Microchip PIC32 <https://platformio.org/platforms/microchippic32?utm_source=github&utm_medium=core>`_
 * `Nordic nRF51 <https://platformio.org/platforms/nordicnrf51?utm_source=github&utm_medium=core>`_
 * `Nordic nRF52 <https://platformio.org/platforms/nordicnrf52?utm_source=github&utm_medium=core>`_
+* `Nuclei <https://platformio.org/platforms/nuclei?utm_source=github&utm_medium=core>`_
 * `NXP LPC <https://platformio.org/platforms/nxplpc?utm_source=github&utm_medium=core>`_
 * `RISC-V <https://platformio.org/platforms/riscv?utm_source=github&utm_medium=core>`_
 * `RISC-V GAP <https://platformio.org/platforms/riscv_gap?utm_source=github&utm_medium=core>`_
@@ -109,14 +110,16 @@ Frameworks
 
 * `Arduino <https://platformio.org/frameworks/arduino?utm_source=github&utm_medium=core>`_
 * `CMSIS <https://platformio.org/frameworks/cmsis?utm_source=github&utm_medium=core>`_
-* `Energia <https://platformio.org/frameworks/energia?utm_source=github&utm_medium=core>`_
 * `ESP-IDF <https://platformio.org/frameworks/espidf?utm_source=github&utm_medium=core>`_
 * `ESP8266 Non-OS SDK <https://platformio.org/frameworks/esp8266-nonos-sdk?utm_source=github&utm_medium=core>`_
 * `ESP8266 RTOS SDK <https://platformio.org/frameworks/esp8266-rtos-sdk?utm_source=github&utm_medium=core>`_
 * `Freedom E SDK <https://platformio.org/frameworks/freedom-e-sdk?utm_source=github&utm_medium=core>`_
+* `GigaDevice GD32V SDK <https://platformio.org/frameworks/gd32vf103-sdk?utm_source=github&utm_medium=core>`_
 * `Kendryte Standalone SDK <https://platformio.org/frameworks/kendryte-standalone-sdk?utm_source=github&utm_medium=core>`_
+* `Kendryte FreeRTOS SDK <https://platformio.org/frameworks/kendryte-freertos-sdk?utm_source=github&utm_medium=core>`_
 * `libOpenCM3 <https://platformio.org/frameworks/libopencm3?utm_source=github&utm_medium=core>`_
-* `mbed <https://platformio.org/frameworks/mbed?utm_source=github&utm_medium=core>`_
+* `Mbed <https://platformio.org/frameworks/mbed?utm_source=github&utm_medium=core>`_
+* `Nuclei SDK <https://platformio.org/frameworks/nuclei-sdk?utm_source=github&utm_medium=core>`_
 * `PULP OS <https://platformio.org/frameworks/pulp-os?utm_source=github&utm_medium=core>`_
 * `Pumbaa <https://platformio.org/frameworks/pumbaa?utm_source=github&utm_medium=core>`_
 * `Shakti SDK <https://platformio.org/frameworks/shakti-sdk?utm_source=github&utm_medium=core>`_
@@ -124,6 +127,7 @@ Frameworks
 * `SPL <https://platformio.org/frameworks/spl?utm_source=github&utm_medium=core>`_
 * `STM32Cube <https://platformio.org/frameworks/stm32cube?utm_source=github&utm_medium=core>`_
 * `WiringPi <https://platformio.org/frameworks/wiringpi?utm_source=github&utm_medium=core>`_
+* `Zephyr <https://platformio.org/frameworks/zephyr?utm_source=github&utm_medium=core>`_
 
 Contributing
 ------------

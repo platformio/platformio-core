@@ -91,21 +91,12 @@ def configure():
     click.secho = lambda *args, **kwargs: _safe_echo(1, *args, **kwargs)
 
 
-def remap_command_arguments(argv):
-    if len(argv) > 1 and argv[1] == "init":
-        return argv[:1] + ["project"] + argv[1:]
-    return argv
-
-
 def main(argv=None):
     exit_code = 0
     prev_sys_argv = sys.argv[:]
     if argv:
         assert isinstance(argv, list)
         sys.argv = argv
-    else:
-        sys.argv = remap_command_arguments(sys.argv)
-
     try:
         configure()
         cli()  # pylint: disable=no-value-for-parameter

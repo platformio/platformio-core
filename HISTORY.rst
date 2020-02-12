@@ -6,10 +6,10 @@ Release Notes
 PlatformIO Core 4.0
 -------------------
 
-4.2.0 (2020-02-??)
+4.2.0 (2020-02-12)
 ~~~~~~~~~~~~~~~~~~
 
-* `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__:
+* `PlatformIO Home 3.1 <http://docs.platformio.org/page/home/index.html>`__:
 
   - Project Manager
   - Project Configuration UI for `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
