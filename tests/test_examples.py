@@ -20,6 +20,7 @@ from os.path import basename, dirname, getsize, isdir, isfile, join, normpath
 import pytest
 
 from platformio import util
+from platformio.compat import PY2
 from platformio.managers.platform import PlatformFactory, PlatformManager
 from platformio.project.config import ProjectConfig
 
@@ -52,6 +53,8 @@ def pytest_generate_tests(metafunc):
         candidates = {}
         for root, _, files in walk(examples_dir):
             if "platformio.ini" not in files or ".skiptest" in files:
+                continue
+            if "zephyr-" in root and PY2:
                 continue
             group = basename(root)
             if "-" in group:

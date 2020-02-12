@@ -21,6 +21,7 @@ from os.path import isdir
 import click
 
 from platformio import exception
+from platformio.compat import WINDOWS
 from platformio.managers.core import get_core_package_dir, inject_contrib_pysite
 
 
@@ -87,15 +88,7 @@ def cli(port, host, no_open, shutdown_timeout):
     if host == "__do_not_start__":
         return
 
-    # if already started
-    already_started = False
-    socket.setdefaulttimeout(1)
-    try:
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        already_started = True
-    except:  # pylint: disable=bare-except
-        pass
-
+    already_started = is_port_used(host, port)
     home_url = "http://%s:%d" % (host, port)
     if not no_open:
         if already_started:
@@ -116,12 +109,35 @@ def cli(port, host, no_open, shutdown_timeout):
         )
     )
     click.echo("")
-    click.echo("Open PIO Home in your browser by this URL => %s" % home_url)
+    click.echo("Open PlatformIO Home in your browser by this URL => %s" % home_url)
 
     if already_started:
+        click.secho(
+            "PlatformIO Home server is already started in another process.", fg="yellow"
+        )
         return
 
     click.echo("PIO Home has been started. Press Ctrl+C to shutdown.")
 
     reactor.listenTCP(port, site, interface=host)
     reactor.run()
+
+
+def is_port_used(host, port):
+    socket.setdefaulttimeout(1)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    if WINDOWS:
+        try:
+            s.bind((host, port))
+            s.close()
+            return False
+        except (OSError, socket.error):
+            pass
+    else:
+        try:
+            s.connect((host, port))
+            s.close()
+        except socket.error:
+            return False
+
+    return True

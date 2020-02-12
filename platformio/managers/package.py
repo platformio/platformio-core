@@ -17,21 +17,19 @@ import json
 import os
 import re
 import shutil
-from os.path import abspath, basename, getsize, isdir, isfile, islink, join
+from os.path import basename, getsize, isdir, isfile, islink, join, realpath
 from tempfile import mkdtemp
 
 import click
 import requests
 import semantic_version
 
-from platformio import __version__, app, exception, fs, telemetry, util
+from platformio import __version__, app, exception, fs, util
 from platformio.compat import hashlib_encode_data
 from platformio.downloader import FileDownloader
 from platformio.lockfile import LockFile
-from platformio.package.manifest.parser import (
-    ManifestParserError,
-    ManifestParserFactory,
-)
+from platformio.package.exception import ManifestException
+from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.unpacker import FileUnpacker
 from platformio.vcsclient import VCSClientFactory
 
@@ -347,7 +345,7 @@ class PkgInstallerMixin(object):
 
         try:
             manifest = ManifestParserFactory.new_from_file(manifest_path).as_dict()
-        except ManifestParserError:
+        except ManifestException:
             pass
 
         if src_manifest:
@@ -364,7 +362,7 @@ class PkgInstallerMixin(object):
         if "version" not in manifest:
             manifest["version"] = "0.0.0"
 
-        manifest["__pkg_dir"] = pkg_dir
+        manifest["__pkg_dir"] = realpath(pkg_dir)
         self.cache_set(cache_key, manifest)
         return manifest
 
@@ -423,7 +421,7 @@ class PkgInstallerMixin(object):
 
     def get_package_by_dir(self, pkg_dir):
         for manifest in self.get_installed():
-            if manifest["__pkg_dir"] == abspath(pkg_dir):
+            if manifest["__pkg_dir"] == realpath(pkg_dir):
                 return manifest
         return None
 
@@ -439,6 +437,7 @@ class PkgInstallerMixin(object):
         pkg_dir = None
         pkgdata = None
         versions = None
+        last_exc = None
         for versions in PackageRepoIterator(name, self.repositories):
             pkgdata = self.max_satisfying_repo_version(versions, requirements)
             if not pkgdata:
@@ -449,12 +448,15 @@ class PkgInstallerMixin(object):
                 )
                 break
             except Exception as e:  # pylint: disable=broad-except
+                last_exc = e
                 click.secho("Warning! Package Mirror: %s" % e, fg="yellow")
                 click.secho("Looking for another mirror...", fg="yellow")
 
         if versions is None:
             util.internet_on(raise_exception=True)
-            raise exception.UnknownPackage(name)
+            raise exception.UnknownPackage(
+                name + (". Error -> %s" % last_exc if last_exc else "")
+            )
         if not pkgdata:
             raise exception.UndefinedPackageVersion(
                 requirements or "latest", util.get_systype()
@@ -656,7 +658,7 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
     def install(
         self, name, requirements=None, silent=False, after_update=False, force=False
-    ):
+    ):  # pylint: disable=unused-argument
         pkg_dir = None
         # interprocess lock
         with LockFile(self.package_dir):
@@ -705,13 +707,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             manifest = self.load_manifest(pkg_dir)
             assert manifest
 
-            if not after_update:
-                telemetry.on_event(
-                    category=self.__class__.__name__,
-                    action="Install",
-                    label=manifest["name"],
-                )
-
             click.secho(
                 "{name} @ {version} has been successfully installed!".format(
                     **manifest
@@ -721,7 +716,9 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
 
         return pkg_dir
 
-    def uninstall(self, package, requirements=None, after_update=False):
+    def uninstall(
+        self, package, requirements=None, after_update=False
+    ):  # pylint: disable=unused-argument
         # interprocess lock
         with LockFile(self.package_dir):
             self.cache_reset()
@@ -759,13 +756,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
                 self.cache_reset()
 
             click.echo("[%s]" % click.style("OK", fg="green"))
-
-            if not after_update:
-                telemetry.on_event(
-                    category=self.__class__.__name__,
-                    action="Uninstall",
-                    label=manifest["name"],
-                )
 
         return True
 
@@ -815,9 +805,6 @@ class BasePkgManager(PkgRepoMixin, PkgInstallerMixin):
             self.uninstall(pkg_dir, after_update=True)
             self.install(name, latest, after_update=True)
 
-        telemetry.on_event(
-            category=self.__class__.__name__, action="Update", label=manifest["name"]
-        )
         return True
 
 

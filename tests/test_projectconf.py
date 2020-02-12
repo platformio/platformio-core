@@ -16,8 +16,8 @@ import os
 
 import pytest
 
-from platformio.exception import UnknownEnvNames
 from platformio.project.config import ConfigParser, ProjectConfig
+from platformio.project.exception import InvalidProjectConfError, UnknownEnvNamesError
 
 BASE_CONFIG = """
 [platformio]
@@ -34,6 +34,7 @@ lib_deps =
     Lib1 ; inline comment in multi-line value
     Lib2
 lib_ignore = ${custom.lib_ignore}
+custom_builtin_option = ${env.build_type}
 
 [strict_ldf]
 lib_ldf_mode = chain+
@@ -54,7 +55,7 @@ lib_ignore = LibIgnoreCustom
 
 [env:base]
 build_flags = ${custom.debug_flags} ${custom.extra_flags}
-lib_compat_mode = ${strict_ldf.strict}
+lib_compat_mode = ${strict_ldf.lib_compat_mode}
 targets =
 
 [env:test_extends]
@@ -65,7 +66,11 @@ extends = strict_settings
 
 EXTRA_ENVS_CONFIG = """
 [env:extra_1]
-build_flags = ${custom.lib_flags} ${custom.debug_flags}
+build_flags =
+    -fdata-sections
+    -Wl,--gc-sections
+    ${custom.lib_flags}
+    ${custom.debug_flags}
 lib_install = 574
 
 [env:extra_2]
@@ -96,13 +101,10 @@ def config(tmpdir_factory):
 
 def test_empty_config():
     config = ProjectConfig("/non/existing/platformio.ini")
-
     # unknown section
-    with pytest.raises(ConfigParser.NoSectionError):
-        config.getraw("unknown_section", "unknown_option")
-
+    with pytest.raises(InvalidProjectConfError):
+        config.get("unknown_section", "unknown_option")
     assert config.sections() == []
-    assert config.get("section", "option") is None
     assert config.get("section", "option", 13) == 13
 
 
@@ -111,7 +113,7 @@ def test_warnings(config):
     assert len(config.warnings) == 2
     assert "lib_install" in config.warnings[1]
 
-    with pytest.raises(UnknownEnvNames):
+    with pytest.raises(UnknownEnvNamesError):
         config.validate(["non-existing-env"])
 
 
@@ -155,6 +157,7 @@ def test_options(config):
         "custom_monitor_speed",
         "lib_deps",
         "lib_ignore",
+        "custom_builtin_option",
     ]
     assert config.options(env="test_extends") == [
         "extends",
@@ -165,6 +168,7 @@ def test_options(config):
         "custom_monitor_speed",
         "lib_deps",
         "lib_ignore",
+        "custom_builtin_option",
     ]
 
 
@@ -176,7 +180,7 @@ def test_has_option(config):
 
 
 def test_sysenv_options(config):
-    assert config.get("custom", "extra_flags") is None
+    assert config.getraw("custom", "extra_flags") == ""
     assert config.get("env:base", "build_flags") == ["-D DEBUG=1"]
     assert config.get("env:base", "upload_port") is None
     assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
@@ -201,6 +205,7 @@ def test_sysenv_options(config):
         "custom_monitor_speed",
         "lib_deps",
         "lib_ignore",
+        "custom_builtin_option",
         "upload_port",
     ]
 
@@ -223,10 +228,17 @@ def test_getraw_value(config):
     with pytest.raises(ConfigParser.NoOptionError):
         config.getraw("platformio", "monitor_speed")
 
+    # default
+    assert config.getraw("unknown", "option", "default") == "default"
+    assert config.getraw("env:base", "custom_builtin_option") == "release"
+
     # known
     assert config.getraw("env:base", "targets") == ""
     assert config.getraw("env:extra_1", "lib_deps") == "574"
-    assert config.getraw("env:extra_1", "build_flags") == "-lc -lm -D DEBUG=1"
+    assert (
+        config.getraw("env:extra_1", "build_flags")
+        == "\n-fdata-sections\n-Wl,--gc-sections\n-lc -lm\n-D DEBUG=1"
+    )
 
     # extended
     assert config.getraw("env:test_extends", "lib_ldf_mode") == "chain+"
@@ -236,7 +248,12 @@ def test_getraw_value(config):
 
 def test_get_value(config):
     assert config.get("custom", "debug_flags") == "-D DEBUG=1"
-    assert config.get("env:extra_1", "build_flags") == ["-lc -lm -D DEBUG=1"]
+    assert config.get("env:extra_1", "build_flags") == [
+        "-fdata-sections",
+        "-Wl,--gc-sections",
+        "-lc -lm",
+        "-D DEBUG=1",
+    ]
     assert config.get("env:extra_2", "build_flags") == ["-Og"]
     assert config.get("env:extra_2", "monitor_speed") == 9600
     assert config.get("env:base", "build_flags") == ["-D DEBUG=1"]
@@ -246,24 +263,29 @@ def test_items(config):
     assert config.items("custom") == [
         ("debug_flags", "-D DEBUG=1"),
         ("lib_flags", "-lc -lm"),
-        ("extra_flags", None),
+        ("extra_flags", ""),
         ("lib_ignore", "LibIgnoreCustom"),
     ]
     assert config.items(env="base") == [
         ("build_flags", ["-D DEBUG=1"]),
-        ("lib_compat_mode", "soft"),
+        ("lib_compat_mode", "strict"),
         ("targets", []),
         ("monitor_speed", 9600),
         ("custom_monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
+        ("custom_builtin_option", "release"),
     ]
     assert config.items(env="extra_1") == [
-        ("build_flags", ["-lc -lm -D DEBUG=1"]),
+        (
+            "build_flags",
+            ["-fdata-sections", "-Wl,--gc-sections", "-lc -lm", "-D DEBUG=1"],
+        ),
         ("lib_deps", ["574"]),
         ("monitor_speed", 9600),
         ("custom_monitor_speed", "115200"),
         ("lib_ignore", ["LibIgnoreCustom"]),
+        ("custom_builtin_option", "release"),
     ]
     assert config.items(env="extra_2") == [
         ("build_flags", ["-Og"]),
@@ -272,6 +294,7 @@ def test_items(config):
         ("monitor_speed", 9600),
         ("custom_monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
+        ("custom_builtin_option", "release"),
     ]
     assert config.items(env="test_extends") == [
         ("extends", ["strict_settings"]),
@@ -282,6 +305,7 @@ def test_items(config):
         ("custom_monitor_speed", "115200"),
         ("lib_deps", ["Lib1", "Lib2"]),
         ("lib_ignore", ["LibIgnoreCustom"]),
+        ("custom_builtin_option", "release"),
     ]
 
 
@@ -315,9 +339,11 @@ board = myboard
     ]
 
     config.save()
+    contents = tmpdir.join("platformio.ini").read()
+    assert contents[-4:] == "yes\n"
     lines = [
         line.strip()
-        for line in tmpdir.join("platformio.ini").readlines()
+        for line in contents.split("\n")
         if line.strip() and not line.startswith((";", "#"))
     ]
     assert lines == [
@@ -376,6 +402,7 @@ def test_dump(tmpdir_factory):
                 ("custom_monitor_speed", "115200"),
                 ("lib_deps", ["Lib1", "Lib2"]),
                 ("lib_ignore", ["${custom.lib_ignore}"]),
+                ("custom_builtin_option", "${env.build_type}"),
             ],
         ),
         ("strict_ldf", [("lib_ldf_mode", "chain+"), ("lib_compat_mode", "strict")]),
@@ -397,7 +424,7 @@ def test_dump(tmpdir_factory):
             "env:base",
             [
                 ("build_flags", ["${custom.debug_flags} ${custom.extra_flags}"]),
-                ("lib_compat_mode", "${strict_ldf.strict}"),
+                ("lib_compat_mode", "${strict_ldf.lib_compat_mode}"),
                 ("targets", []),
             ],
         ),

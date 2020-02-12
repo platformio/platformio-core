@@ -151,7 +151,7 @@ def after_upgrade(ctx):
                 "PlatformIO has been successfully upgraded to %s!\n" % __version__,
                 fg="green",
             )
-            telemetry.on_event(
+            telemetry.send_event(
                 category="Auto",
                 action="Upgrade",
                 label="%s > %s" % (last_version, __version__),
@@ -315,7 +315,7 @@ def check_internal_updates(ctx, what):
             ctx.invoke(cmd_lib_update, libraries=outdated_items)
         click.echo()
 
-        telemetry.on_event(category="Auto", action="Update", label=what.title())
+        telemetry.send_event(category="Auto", action="Update", label=what.title())
 
     click.echo("*" * terminal_width)
     click.echo("")

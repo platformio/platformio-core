@@ -20,6 +20,7 @@ from platformio import app, exception, util
 from platformio.commands.boards import print_boards
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.package.pack import PackagePacker
 
 
 @click.group(short_help="Platform Manager")
@@ -298,14 +299,20 @@ def platform_show(platform, json_output):  # pylint: disable=too-many-branches
 @click.option("--with-package", multiple=True)
 @click.option("--without-package", multiple=True)
 @click.option("--skip-default-package", is_flag=True)
+@click.option("--with-all-packages", is_flag=True)
 @click.option(
     "-f",
     "--force",
     is_flag=True,
     help="Reinstall/redownload dev/platform and its packages if exist",
 )
-def platform_install(
-    platforms, with_package, without_package, skip_default_package, force
+def platform_install(  # pylint: disable=too-many-arguments
+    platforms,
+    with_package,
+    without_package,
+    skip_default_package,
+    with_all_packages,
+    force,
 ):
     pm = PlatformManager()
     for platform in platforms:
@@ -314,6 +321,7 @@ def platform_install(
             with_packages=with_package,
             without_packages=without_package,
             skip_default_package=skip_default_package,
+            with_all_packages=with_all_packages,
             force=force,
         ):
             click.secho(
@@ -403,3 +411,13 @@ def platform_update(  # pylint: disable=too-many-locals
         click.echo()
 
     return True
+
+
+@cli.command(
+    "pack", short_help="Create a tarball from development platform/tool package"
+)
+@click.argument("package", required=True, metavar="[source directory, tar.gz or zip]")
+def platform_pack(package):
+    p = PackagePacker(package)
+    tarball_path = p.pack()
+    click.secho('Wrote a tarball to "%s"' % tarball_path, fg="green")

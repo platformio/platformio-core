@@ -33,7 +33,10 @@ from platformio import exception, fs, util
 from platformio.builder.tools import platformio as piotool
 from platformio.compat import WINDOWS, hashlib_encode_data, string_types
 from platformio.managers.lib import LibraryManager
-from platformio.package.manifest.parser import ManifestParserFactory
+from platformio.package.manifest.parser import (
+    ManifestParserError,
+    ManifestParserFactory,
+)
 from platformio.project.options import ProjectOptions
 
 
@@ -108,7 +111,14 @@ class LibBuilderBase(object):
         self.path = realpath(env.subst(path))
         self.verbose = verbose
 
-        self._manifest = manifest if manifest else self.load_manifest()
+        try:
+            self._manifest = manifest if manifest else self.load_manifest()
+        except ManifestParserError:
+            click.secho(
+                "Warning! Ignoring broken library manifest in " + self.path, fg="yellow"
+            )
+            self._manifest = {}
+
         self._is_dependent = False
         self._is_built = False
         self._depbuilders = list()
@@ -144,9 +154,7 @@ class LibBuilderBase(object):
 
     @property
     def dependencies(self):
-        return LibraryManager.normalize_dependencies(
-            self._manifest.get("dependencies", [])
-        )
+        return self._manifest.get("dependencies")
 
     @property
     def src_filter(self):
@@ -358,7 +366,7 @@ class LibBuilderBase(object):
                 if not fs.path_endswith_ext(_h_path, piotool.SRC_HEADER_EXT):
                     continue
                 _f_part = _h_path[: _h_path.rindex(".")]
-                for ext in piotool.SRC_C_EXT:
+                for ext in piotool.SRC_C_EXT + piotool.SRC_CXX_EXT:
                     if not isfile("%s.%s" % (_f_part, ext)):
                         continue
                     _c_path = self.env.File("%s.%s" % (_f_part, ext))
@@ -876,7 +884,7 @@ class ProjectAsLibBuilder(LibBuilderBase):
                 if not lib_dir:
                     continue
                 for lb in self.env.GetLibBuilders():
-                    if lib_dir not in lb:
+                    if lib_dir != lb.path:
                         continue
                     if lb not in self.depbuilders:
                         self.depend_recursive(lb)

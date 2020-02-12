@@ -107,7 +107,8 @@ def cli(  # pylint: disable=redefined-builtin
             raise exception.TestDirNotExists(test_dir)
         test_names = get_test_names(test_dir)
 
-        click.echo("Verbose mode can be enabled via `-v, --verbose` option")
+        if not verbose:
+            click.echo("Verbose mode can be enabled via `-v, --verbose` option")
         click.secho("Collected %d items" % len(test_names), bold=True)
 
         results = []
@@ -159,6 +160,7 @@ def cli(  # pylint: disable=redefined-builtin
                         monitor_rts=monitor_rts,
                         monitor_dtr=monitor_dtr,
                         verbose=verbose,
+                        silent=not verbose,
                     ),
                 )
                 result = {

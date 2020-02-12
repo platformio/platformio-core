@@ -6,6 +6,47 @@ Release Notes
 PlatformIO Core 4.0
 -------------------
 
+4.2.0 (2020-02-12)
+~~~~~~~~~~~~~~~~~~
+
+* `PlatformIO Home 3.1 <http://docs.platformio.org/page/home/index.html>`__:
+
+  - Project Manager
+  - Project Configuration UI for `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+
+* `PIO Check <http://docs.platformio.org/page/plus/pio-check.html>`__ – automated code analysis without hassle:
+
+  - Added support for `PVS-Studio <https://docs.platformio.org/page/plus/check-tools/pvs-studio.html>`__ static code analyzer
+
+* Initial support for `Project Manager <https://docs.platformio.org/page/userguide/project/index.html>`_ CLI:
+
+  - Show computed project configuration with a new `platformio project config <https://docs.platformio.org/page/userguide/project/cmd_config.html>`_ command or dump to JSON with ``platformio project config --json-output`` (`issue #3335 <https://github.com/platformio/platformio-core/issues/3335>`_)
+  - Moved ``platformio init`` command to `platformio project init <https://docs.platformio.org/page/userguide/project/cmd_init.html>`_
+
+* Generate `compilation database "compile_commands.json" <https://docs.platformio.org/page/faq.html#compilation-database-compile-commands-json>`_ (`issue #2990 <https://github.com/platformio/platformio-core/issues/2990>`_)
+* Control debug flags and optimization level with a new `debug_build_flags <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-build-flags>`__ option
+* Install a dev-platform with ALL declared packages using a new ``--with-all-packages`` option for `pio platform install <https://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__ command  (`issue #3345 <https://github.com/platformio/platformio-core/issues/3345>`_)
+* Added support for "pythonPackages" in `platform.json <https://docs.platformio.org/page/platforms/creating_platform.html#manifest-file-platform-json>`__ manifest (PlatformIO Package Manager will install dependent Python packages from PyPi registry automatically when dev-platform is installed)
+* Handle project configuration (monitor, test, and upload options) for PIO Remote commands (`issue #2591 <https://github.com/platformio/platformio-core/issues/2591>`_)
+* Added support for Arduino's library.properties ``depends`` field (`issue #2781 <https://github.com/platformio/platformio-core/issues/2781>`_)
+* Autodetect monitor port for boards with specified HWIDs (`issue #3349 <https://github.com/platformio/platformio-core/issues/3349>`_)
+* Updated SCons tool to 3.1.2
+* Updated Unity tool to 2.5.0
+* Made package ManifestSchema compatible with marshmallow >= 3 (`issue #3296 <https://github.com/platformio/platformio-core/issues/3296>`_)
+* Warn about broken library manifest when scanning dependencies (`issue #3268 <https://github.com/platformio/platformio-core/issues/3268>`_)
+* Do not overwrite custom items in VSCode's "extensions.json" (`issue #3374 <https://github.com/platformio/platformio-core/issues/3374>`_)
+* Fixed an issue when ``env.BoardConfig()`` does not work for custom boards in extra scripts of libraries (`issue #3264 <https://github.com/platformio/platformio-core/issues/3264>`_)
+* Fixed an issue with "start-group/end-group" linker flags on Native development platform (`issue #3282 <https://github.com/platformio/platformio-core/issues/3282>`_)
+* Fixed default PIO Unified Debugger configuration for `J-Link probe <http://docs.platformio.org/page/plus/debug-tools/jlink.html>`__
+* Fixed an issue with LDF when header files not found if "libdeps_dir" is within a subdirectory of "lib_extra_dirs" (`issue #3311 <https://github.com/platformio/platformio-core/issues/3311>`_)
+* Fixed an issue "Import of non-existent variable 'projenv''" when development platform does not call "env.BuildProgram()" (`issue #3315 <https://github.com/platformio/platformio-core/issues/3315>`_)
+* Fixed an issue when invalid CLI command does not return non-zero exit code
+* Fixed an issue when Project Inspector crashes when flash use > 100% (`issue #3368 <https://github.com/platformio/platformio-core/issues/3368>`_)
+* Fixed a "UnicodeDecodeError" when listing built-in libraries on macOS with Python 2.7 (`issue #3370 <https://github.com/platformio/platformio-core/issues/3370>`_)
+* Fixed an issue with improperly handled compiler flags with space symbols in VSCode template (`issue #3364 <https://github.com/platformio/platformio-core/issues/3364>`_)
+* Fixed an issue when no error is raised if referred parameter (interpolation) is missing in a project configuration file (`issue #3279 <https://github.com/platformio/platformio-core/issues/3279>`_)
+
+
 4.1.0 (2019-11-07)
 ~~~~~~~~~~~~~~~~~~
 
@@ -18,8 +59,9 @@ PlatformIO Core 4.0
   - Unused variables or functions
   - Out of scope memory usage.
 
-* `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__ and Project Inspection
+* `PlatformIO Home 3.0 <http://docs.platformio.org/page/home/index.html>`__:
 
+  - Project Inspection
   - Static Code Analysis
   - Firmware File Explorer
   - Firmware Memory Inspection

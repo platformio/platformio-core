@@ -40,7 +40,7 @@ class cd(object):
 
 
 def get_source_dir():
-    curpath = os.path.abspath(__file__)
+    curpath = os.path.realpath(__file__)
     if not os.path.isfile(curpath):
         for p in sys.path:
             if os.path.isfile(os.path.join(p, __file__)):
@@ -49,9 +49,9 @@ def get_source_dir():
     return os.path.dirname(curpath)
 
 
-def get_file_contents(path):
+def get_file_contents(path, encoding=None):
     try:
-        with open(path) as fp:
+        with io.open(path, encoding=encoding) as fp:
             return fp.read()
     except UnicodeDecodeError:
         click.secho(
@@ -117,7 +117,7 @@ def ensure_udev_rules():
     if not any(os.path.isfile(p) for p in installed_rules):
         raise exception.MissedUdevRules
 
-    origin_path = os.path.abspath(
+    origin_path = os.path.realpath(
         os.path.join(get_source_dir(), "..", "scripts", "99-platformio-udev.rules")
     )
     if not os.path.isfile(origin_path):
@@ -143,10 +143,10 @@ def path_endswith_ext(path, extensions):
     return False
 
 
-def match_src_files(src_dir, src_filter=None, src_exts=None):
+def match_src_files(src_dir, src_filter=None, src_exts=None, followlinks=True):
     def _append_build_item(items, item, src_dir):
         if not src_exts or path_endswith_ext(item, src_exts):
-            items.add(item.replace(src_dir + os.sep, ""))
+            items.add(os.path.relpath(item, src_dir))
 
     src_filter = src_filter or ""
     if isinstance(src_filter, (list, tuple)):
@@ -159,7 +159,7 @@ def match_src_files(src_dir, src_filter=None, src_exts=None):
         items = set()
         for item in glob(os.path.join(glob_escape(src_dir), pattern)):
             if os.path.isdir(item):
-                for root, _, files in os.walk(item, followlinks=True):
+                for root, _, files in os.walk(item, followlinks=followlinks):
                     for f in files:
                         _append_build_item(items, os.path.join(root, f), src_dir)
             else:

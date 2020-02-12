@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import io
+import codecs
 import os
 import sys
-from os.path import abspath, basename, isdir, isfile, join, relpath
+from os.path import basename, isdir, isfile, join, realpath, relpath
 
 import bottle
 
@@ -64,7 +64,7 @@ class ProjectGenerator(object):
             "project_name": basename(self.project_dir),
             "project_dir": self.project_dir,
             "env_name": self.env_name,
-            "user_home_dir": abspath(fs.expanduser("~")),
+            "user_home_dir": realpath(fs.expanduser("~")),
             "platformio_path": sys.argv[0]
             if isfile(sys.argv[0])
             else where_is_program("platformio"),
@@ -129,18 +129,18 @@ class ProjectGenerator(object):
                 dst_dir = join(self.project_dir, tpl_relpath)
                 if not isdir(dst_dir):
                     os.makedirs(dst_dir)
-
             file_name = basename(tpl_path)[:-4]
             contents = self._render_tpl(tpl_path, tpl_vars)
             self._merge_contents(join(dst_dir, file_name), contents)
 
     @staticmethod
     def _render_tpl(tpl_path, tpl_vars):
-        return bottle.template(fs.get_file_contents(tpl_path), **tpl_vars)
+        with codecs.open(tpl_path, "r", encoding="utf8") as fp:
+            return bottle.SimpleTemplate(fp.read()).render(**tpl_vars)
 
     @staticmethod
     def _merge_contents(dst_path, contents):
         if basename(dst_path) == ".gitignore" and isfile(dst_path):
             return
-        with io.open(dst_path, "w", encoding="utf8") as fp:
+        with codecs.open(dst_path, "w", encoding="utf8") as fp:
             fp.write(contents)

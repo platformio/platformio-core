@@ -17,7 +17,6 @@ from __future__ import absolute_import
 import os
 import shutil
 import time
-from os.path import basename, getmtime, isdir, isfile, join, realpath, sep
 
 import jsonrpc  # pylint: disable=import-error
 
@@ -28,6 +27,7 @@ from platformio.compat import PY2, get_filesystem_encoding
 from platformio.ide.projectgenerator import ProjectGenerator
 from platformio.managers.platform import PlatformManager
 from platformio.project.config import ProjectConfig
+from platformio.project.exception import ProjectError
 from platformio.project.helpers import get_project_dir, is_platformio_project
 from platformio.project.options import get_config_options_schema
 
@@ -38,7 +38,7 @@ class ProjectRPC(object):
         assert isinstance(init_kwargs, dict)
         assert "path" in init_kwargs
         project_dir = get_project_dir()
-        if isfile(init_kwargs["path"]):
+        if os.path.isfile(init_kwargs["path"]):
             project_dir = os.path.dirname(init_kwargs["path"])
         with fs.cd(project_dir):
             return getattr(ProjectConfig(**init_kwargs), method)(*args)
@@ -74,7 +74,7 @@ class ProjectRPC(object):
         return get_config_options_schema()
 
     @staticmethod
-    def _get_projects(project_dirs=None):
+    def get_projects():
         def _get_project_data():
             data = {"boards": [], "envLibdepsDirs": [], "libExtraDirs": []}
             config = ProjectConfig()
@@ -86,7 +86,7 @@ class ProjectRPC(object):
             for section in config.sections():
                 if not section.startswith("env:"):
                     continue
-                data["envLibdepsDirs"].append(join(libdeps_dir, section[4:]))
+                data["envLibdepsDirs"].append(os.path.join(libdeps_dir, section[4:]))
                 if config.has_option(section, "board"):
                     data["boards"].append(config.get(section, "board"))
                 data["libExtraDirs"].extend(config.get(section, "lib_extra_dirs", []))
@@ -94,28 +94,27 @@ class ProjectRPC(object):
             # skip non existing folders and resolve full path
             for key in ("envLibdepsDirs", "libExtraDirs"):
                 data[key] = [
-                    fs.expanduser(d) if d.startswith("~") else realpath(d)
+                    fs.expanduser(d) if d.startswith("~") else os.path.realpath(d)
                     for d in data[key]
-                    if isdir(d)
+                    if os.path.isdir(d)
                 ]
 
             return data
 
         def _path_to_name(path):
-            return (sep).join(path.split(sep)[-2:])
-
-        if not project_dirs:
-            project_dirs = AppRPC.load_state()["storage"]["recentProjects"]
+            return (os.path.sep).join(path.split(os.path.sep)[-2:])
 
         result = []
         pm = PlatformManager()
-        for project_dir in project_dirs:
+        for project_dir in AppRPC.load_state()["storage"]["recentProjects"]:
+            if not os.path.isdir(project_dir):
+                continue
             data = {}
             boards = []
             try:
                 with fs.cd(project_dir):
                     data = _get_project_data()
-            except exception.PlatformIOProjectException:
+            except ProjectError:
                 continue
 
             for board_id in data.get("boards", []):
@@ -130,12 +129,12 @@ class ProjectRPC(object):
                 {
                     "path": project_dir,
                     "name": _path_to_name(project_dir),
-                    "modified": int(getmtime(project_dir)),
+                    "modified": int(os.path.getmtime(project_dir)),
                     "boards": boards,
                     "description": data.get("description"),
                     "envs": data.get("envs", []),
                     "envLibStorages": [
-                        {"name": basename(d), "path": d}
+                        {"name": os.path.basename(d), "path": d}
                         for d in data.get("envLibdepsDirs", [])
                     ],
                     "extraLibStorages": [
@@ -146,27 +145,24 @@ class ProjectRPC(object):
             )
         return result
 
-    def get_projects(self, project_dirs=None):
-        return self._get_projects(project_dirs)
-
     @staticmethod
     def get_project_examples():
         result = []
         for manifest in PlatformManager().get_installed():
-            examples_dir = join(manifest["__pkg_dir"], "examples")
-            if not isdir(examples_dir):
+            examples_dir = os.path.join(manifest["__pkg_dir"], "examples")
+            if not os.path.isdir(examples_dir):
                 continue
             items = []
             for project_dir, _, __ in os.walk(examples_dir):
                 project_description = None
                 try:
-                    config = ProjectConfig(join(project_dir, "platformio.ini"))
+                    config = ProjectConfig(os.path.join(project_dir, "platformio.ini"))
                     config.validate(silent=True)
                     project_description = config.get("platformio", "description")
-                except exception.PlatformIOProjectException:
+                except ProjectError:
                     continue
 
-                path_tokens = project_dir.split(sep)
+                path_tokens = project_dir.split(os.path.sep)
                 items.append(
                     {
                         "name": "/".join(
@@ -190,7 +186,7 @@ class ProjectRPC(object):
     def init(self, board, framework, project_dir):
         assert project_dir
         state = AppRPC.load_state()
-        if not isdir(project_dir):
+        if not os.path.isdir(project_dir):
             os.makedirs(project_dir)
         args = ["init", "--board", board]
         if framework:
@@ -243,10 +239,10 @@ class ProjectRPC(object):
         with fs.cd(project_dir):
             config = ProjectConfig()
             src_dir = config.get_optional_dir("src")
-            main_path = join(src_dir, "main.cpp")
-            if isfile(main_path):
+            main_path = os.path.join(src_dir, "main.cpp")
+            if os.path.isfile(main_path):
                 return project_dir
-            if not isdir(src_dir):
+            if not os.path.isdir(src_dir):
                 os.makedirs(src_dir)
             fs.write_file_contents(main_path, main_content.strip())
         return project_dir
@@ -261,10 +257,10 @@ class ProjectRPC(object):
 
         is_arduino_project = any(
             [
-                isfile(
-                    join(
+                os.path.isfile(
+                    os.path.join(
                         arduino_project_dir,
-                        "%s.%s" % (basename(arduino_project_dir), ext),
+                        "%s.%s" % (os.path.basename(arduino_project_dir), ext),
                     )
                 )
                 for ext in ("ino", "pde")
@@ -276,10 +272,10 @@ class ProjectRPC(object):
             )
 
         state = AppRPC.load_state()
-        project_dir = join(
+        project_dir = os.path.join(
             state["storage"]["projectsDir"], time.strftime("%y%m%d-%H%M%S-") + board
         )
-        if not isdir(project_dir):
+        if not os.path.isdir(project_dir):
             os.makedirs(project_dir)
         args = ["init", "--board", board]
         args.extend(["--project-option", "framework = arduino"])
@@ -301,7 +297,7 @@ class ProjectRPC(object):
         with fs.cd(project_dir):
             config = ProjectConfig()
             src_dir = config.get_optional_dir("src")
-            if isdir(src_dir):
+            if os.path.isdir(src_dir):
                 fs.rmtree(src_dir)
             shutil.copytree(arduino_project_dir, src_dir)
         return project_dir
@@ -312,9 +308,9 @@ class ProjectRPC(object):
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4001, message="Not an PlatformIO project: %s" % project_dir
             )
-        new_project_dir = join(
+        new_project_dir = os.path.join(
             AppRPC.load_state()["storage"]["projectsDir"],
-            time.strftime("%y%m%d-%H%M%S-") + basename(project_dir),
+            time.strftime("%y%m%d-%H%M%S-") + os.path.basename(project_dir),
         )
         shutil.copytree(project_dir, new_project_dir)
 

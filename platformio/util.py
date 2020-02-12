@@ -366,10 +366,11 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
     )
 
 
-PING_INTERNET_IPS = [
-    "192.30.253.113",  # github.com
-    "31.28.1.238",  # dl.platformio.org
-    "193.222.52.25",  # dl.platformio.org
+PING_REMOTE_HOSTS = [
+    "140.82.118.3",  # Github.com
+    "35.231.145.151",  # Gitlab.com
+    "github.com",
+    "platformio.org",
 ]
 
 
@@ -377,12 +378,12 @@ PING_INTERNET_IPS = [
 def _internet_on():
     timeout = 2
     socket.setdefaulttimeout(timeout)
-    for ip in PING_INTERNET_IPS:
+    for host in PING_REMOTE_HOSTS:
         try:
             if os.getenv("HTTP_PROXY", os.getenv("HTTPS_PROXY")):
-                requests.get("http://%s" % ip, allow_redirects=False, timeout=timeout)
+                requests.get("http://%s" % host, allow_redirects=False, timeout=timeout)
             else:
-                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((ip, 80))
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, 80))
             return True
         except:  # pylint: disable=bare-except
             pass
@@ -401,9 +402,9 @@ def pepver_to_semver(pepver):
 
 
 def items_to_list(items):
-    if not isinstance(items, list):
-        items = [i.strip() for i in items.split(",")]
-    return [i.lower() for i in items if i]
+    if isinstance(items, list):
+        return items
+    return [i.strip() for i in items.split(",") if i.strip()]
 
 
 def items_in_list(needle, haystack):

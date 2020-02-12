@@ -21,7 +21,9 @@ from serial.tools import miniterm
 
 from platformio import exception, fs, util
 from platformio.compat import dump_json_to_unicode
+from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectConfig
+from platformio.project.exception import NotPlatformIOProjectError
 
 
 @click.group(short_help="Monitor device or list existing")
@@ -172,47 +174,48 @@ def device_list(  # pylint: disable=too-many-branches
     help="Load configuration from `platformio.ini` and specified environment",
 )
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
-    env_options = {}
+    click.echo(
+        "Looking for advanced Serial Monitor with UI? "
+        "Check http://bit.ly/pio-advanced-monitor"
+    )
+    project_options = {}
     try:
         with fs.cd(kwargs["project_dir"]):
-            env_options = get_project_options(kwargs["environment"])
-        for k in ("port", "speed", "rts", "dtr"):
-            k2 = "monitor_%s" % k
-            if k == "speed":
-                k = "baud"
-            if kwargs[k] is None and k2 in env_options:
-                kwargs[k] = env_options[k2]
-                if k != "port":
-                    kwargs[k] = int(kwargs[k])
-    except exception.NotPlatformIOProject:
+            project_options = get_project_options(kwargs["environment"])
+        kwargs = apply_project_monitor_options(kwargs, project_options)
+    except NotPlatformIOProjectError:
         pass
 
     if not kwargs["port"]:
         ports = util.get_serial_ports(filter_hwid=True)
         if len(ports) == 1:
             kwargs["port"] = ports[0]["port"]
-
-    sys.argv = ["monitor"] + env_options.get("monitor_flags", [])
-    for k, v in kwargs.items():
-        if k in ("port", "baud", "rts", "dtr", "environment", "project_dir"):
-            continue
-        k = "--" + k.replace("_", "-")
-        if k in env_options.get("monitor_flags", []):
-            continue
-        if isinstance(v, bool):
-            if v:
-                sys.argv.append(k)
-        elif isinstance(v, tuple):
-            for i in v:
-                sys.argv.extend([k, i])
-        else:
-            sys.argv.extend([k, str(v)])
-
-    if kwargs["port"] and (set(["*", "?", "[", "]"]) & set(kwargs["port"])):
+        elif "platform" in project_options and "board" in project_options:
+            board_hwids = get_board_hwids(
+                kwargs["project_dir"],
+                project_options["platform"],
+                project_options["board"],
+            )
+            for item in ports:
+                for hwid in board_hwids:
+                    hwid_str = ("%s:%s" % (hwid[0], hwid[1])).replace("0x", "")
+                    if hwid_str in item["hwid"]:
+                        kwargs["port"] = item["port"]
+                        break
+                if kwargs["port"]:
+                    break
+    elif kwargs["port"] and (set(["*", "?", "[", "]"]) & set(kwargs["port"])):
         for item in util.get_serial_ports():
             if fnmatch(item["port"], kwargs["port"]):
                 kwargs["port"] = item["port"]
                 break
+
+    # override system argv with patched options
+    sys.argv = ["monitor"] + options_to_argv(
+        kwargs,
+        project_options,
+        ignore=("port", "baud", "rts", "dtr", "environment", "project_dir"),
+    )
 
     try:
         miniterm.main(
@@ -225,6 +228,37 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         raise exception.MinitermException(e)
 
 
+def apply_project_monitor_options(cli_options, project_options):
+    for k in ("port", "speed", "rts", "dtr"):
+        k2 = "monitor_%s" % k
+        if k == "speed":
+            k = "baud"
+        if cli_options[k] is None and k2 in project_options:
+            cli_options[k] = project_options[k2]
+            if k != "port":
+                cli_options[k] = int(cli_options[k])
+    return cli_options
+
+
+def options_to_argv(cli_options, project_options, ignore=None):
+    result = project_options.get("monitor_flags", [])
+    for k, v in cli_options.items():
+        if v is None or (ignore and k in ignore):
+            continue
+        k = "--" + k.replace("_", "-")
+        if k in project_options.get("monitor_flags", []):
+            continue
+        if isinstance(v, bool):
+            if v:
+                result.append(k)
+        elif isinstance(v, tuple):
+            for i in v:
+                result.extend([k, i])
+        else:
+            result.extend([k, str(v)])
+    return result
+
+
 def get_project_options(environment=None):
     config = ProjectConfig.get_instance()
     config.validate(envs=[environment] if environment else None)
@@ -235,3 +269,12 @@ def get_project_options(environment=None):
         else:
             environment = config.envs()[0]
     return config.items(env=environment, as_dict=True)
+
+
+def get_board_hwids(project_dir, platform, board):
+    with fs.cd(project_dir):
+        return (
+            PlatformFactory.newPlatform(platform)
+            .board_config(board)
+            .get("build.hwids", [])
+        )

@@ -50,10 +50,10 @@ clivars.AddVariables(
 DEFAULT_ENV_OPTIONS = dict(
     tools=[
         "ar",
-        "gas",
-        "gcc",
-        "g++",
-        "gnulink",
+        "as",
+        "cc",
+        "c++",
+        "link",
         "platformio",
         "pioplatform",
         "pioproject",
@@ -72,6 +72,7 @@ DEFAULT_ENV_OPTIONS = dict(
     BUILD_DIR=join("$PROJECT_BUILD_DIR", "$PIOENV"),
     BUILD_SRC_DIR=join("$BUILD_DIR", "src"),
     BUILD_TEST_DIR=join("$BUILD_DIR", "test"),
+    COMPILATIONDB_PATH=join("$BUILD_DIR", "compile_commands.json"),
     LIBPATH=["$BUILD_DIR"],
     PROGNAME="program",
     PROG_PATH=join("$BUILD_DIR", "$PROGNAME$PROGSUFFIX"),
@@ -134,6 +135,10 @@ if env.GetOption("clean"):
 elif not int(ARGUMENTS.get("PIOVERBOSE", 0)):
     click.echo("Verbose mode can be enabled via `-v, --verbose` option")
 
+# Dynamically load dependent tools
+if "compiledb" in COMMAND_LINE_TARGETS:
+    env.Tool("compilation_db")
+
 if not isdir(env.subst("$BUILD_DIR")):
     makedirs(env.subst("$BUILD_DIR"))
 
@@ -161,13 +166,18 @@ for item in env.GetExtraScripts("post"):
 ##############################################################################
 
 # Checking program size
-if env.get("SIZETOOL") and "nobuild" not in COMMAND_LINE_TARGETS:
+if env.get("SIZETOOL") and not (
+    set(["nobuild", "sizedata"]) & set(COMMAND_LINE_TARGETS)
+):
     env.Depends(["upload", "program"], "checkprogsize")
     # Replace platform's "size" target with our
     _new_targets = [t for t in DEFAULT_TARGETS if str(t) != "size"]
     Default(None)
     Default(_new_targets)
     Default("checkprogsize")
+
+if "compiledb" in COMMAND_LINE_TARGETS:
+    env.Alias("compiledb", env.CompilationDatabase("$COMPILATIONDB_PATH"))
 
 # Print configured protocols
 env.AddPreAction(
@@ -188,7 +198,10 @@ if "envdump" in COMMAND_LINE_TARGETS:
     env.Exit(0)
 
 if "idedata" in COMMAND_LINE_TARGETS:
-    Import("projenv")
+    try:
+        Import("projenv")
+    except:  # pylint: disable=bare-except
+        projenv = env
     click.echo(
         "\n%s\n"
         % dump_json_to_unicode(

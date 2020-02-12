@@ -112,3 +112,67 @@ int main() {
     assert "-DTMP_MACRO1" not in build_output
     assert "-Os" not in build_output
     assert str(tmpdir) not in build_output
+
+
+def test_debug_default_build_flags(clirunner, validate_cliresult, tmpdir):
+    tmpdir.join("platformio.ini").write(
+        """
+[env:native]
+platform = native
+build_type = debug
+"""
+    )
+
+    tmpdir.mkdir("src").join("main.c").write(
+        """
+int main() {
+}
+"""
+    )
+
+    result = clirunner.invoke(cmd_run, ["--project-dir", str(tmpdir), "--verbose"])
+    validate_cliresult(result)
+    build_output = result.output[result.output.find("Scanning dependencies...") :]
+    for line in build_output.split("\n"):
+        if line.startswith("gcc"):
+            assert all(line.count(flag) == 1 for flag in ("-Og", "-g2", "-ggdb2"))
+            assert all(
+                line.count("-%s%d" % (flag, level)) == 0
+                for flag in ("O", "g", "ggdb")
+                for level in (0, 1, 3)
+            )
+            assert "-Os" not in line
+
+
+def test_debug_custom_build_flags(clirunner, validate_cliresult, tmpdir):
+    custom_debug_build_flags = ("-O3", "-g3", "-ggdb3")
+
+    tmpdir.join("platformio.ini").write(
+        """
+[env:native]
+platform = native
+build_type = debug
+debug_build_flags = %s
+    """
+        % " ".join(custom_debug_build_flags)
+    )
+
+    tmpdir.mkdir("src").join("main.c").write(
+        """
+int main() {
+}
+"""
+    )
+
+    result = clirunner.invoke(cmd_run, ["--project-dir", str(tmpdir), "--verbose"])
+    validate_cliresult(result)
+    build_output = result.output[result.output.find("Scanning dependencies...") :]
+    for line in build_output.split("\n"):
+        if line.startswith("gcc"):
+            assert all(line.count(f) == 1 for f in custom_debug_build_flags)
+            assert all(
+                line.count("-%s%d" % (flag, level)) == 0
+                for flag in ("O", "g", "ggdb")
+                for level in (0, 1, 2)
+            )
+            assert all("-O%s" % optimization not in line for optimization in ("g", "s"))

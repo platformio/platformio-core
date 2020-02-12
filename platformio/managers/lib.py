@@ -23,7 +23,7 @@ import click
 import semantic_version
 
 from platformio import app, exception, util
-from platformio.compat import glob_escape, string_types
+from platformio.compat import glob_escape
 from platformio.managers.package import BasePkgManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
 from platformio.project.config import ProjectConfig
@@ -60,29 +60,6 @@ class LibraryManager(BasePkgManager):
             return cpp_files[0]
 
         return None
-
-    @staticmethod
-    def normalize_dependencies(dependencies):
-        if not dependencies:
-            return []
-        items = []
-        if isinstance(dependencies, dict):
-            if "name" in dependencies:
-                items.append(dependencies)
-            else:
-                for name, version in dependencies.items():
-                    items.append({"name": name, "version": version})
-        elif isinstance(dependencies, list):
-            items = [d for d in dependencies if "name" in d]
-        for item in items:
-            for k in ("frameworks", "platforms"):
-                if k not in item or isinstance(k, list):
-                    continue
-                if item[k] == "*":
-                    del item[k]
-                elif isinstance(item[k], string_types):
-                    item[k] = [i.strip() for i in item[k].split(",") if i.strip()]
-        return items
 
     def max_satisfying_repo_version(self, versions, requirements=None):
         def _cmp_dates(datestr1, datestr2):
@@ -312,7 +289,7 @@ class LibraryManager(BasePkgManager):
             click.secho("Installing dependencies", fg="yellow")
 
         builtin_lib_storages = None
-        for filters in self.normalize_dependencies(manifest["dependencies"]):
+        for filters in manifest["dependencies"]:
             assert "name" in filters
 
             # avoid circle dependencies

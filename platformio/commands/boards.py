@@ -32,7 +32,10 @@ def cli(query, installed, json_output):  # pylint: disable=R0912
 
     grpboards = {}
     for board in _get_boards(installed):
-        if query and query.lower() not in json.dumps(board).lower():
+        if query and not any(
+            query.lower() in str(board.get(k, "")).lower()
+            for k in ("id", "name", "mcu", "vendor", "platform", "frameworks")
+        ):
             continue
         if board["platform"] not in grpboards:
             grpboards[board["platform"]] = []

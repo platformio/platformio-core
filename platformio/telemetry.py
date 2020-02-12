@@ -13,13 +13,12 @@
 # limitations under the License.
 
 import atexit
+import os
 import platform
 import re
 import sys
 import threading
 from collections import deque
-from os import getenv, sep
-from os.path import join
 from time import sleep, time
 from traceback import format_exc
 
@@ -79,6 +78,7 @@ class MeasurementProtocol(TelemetryBase):
 
         self._prefill_screen_name()
         self._prefill_appinfo()
+        self._prefill_sysargs()
         self._prefill_custom_data()
 
     def __getitem__(self, name):
@@ -99,9 +99,18 @@ class MeasurementProtocol(TelemetryBase):
         dpdata.append("PlatformIO/%s" % __version__)
         if app.get_session_var("caller_id"):
             dpdata.append("Caller/%s" % app.get_session_var("caller_id"))
-        if getenv("PLATFORMIO_IDE"):
-            dpdata.append("IDE/%s" % getenv("PLATFORMIO_IDE"))
+        if os.getenv("PLATFORMIO_IDE"):
+            dpdata.append("IDE/%s" % os.getenv("PLATFORMIO_IDE"))
         self["an"] = " ".join(dpdata)
+
+    def _prefill_sysargs(self):
+        args = []
+        for arg in sys.argv[1:]:
+            arg = str(arg).lower()
+            if "@" in arg or os.path.exists(arg):
+                arg = "***"
+            args.append(arg)
+        self["cd3"] = " ".join(args)
 
     def _prefill_custom_data(self):
         def _filter_args(items):
@@ -119,7 +128,6 @@ class MeasurementProtocol(TelemetryBase):
         caller_id = str(app.get_session_var("caller_id"))
         self["cd1"] = util.get_systype()
         self["cd2"] = "Python/%s %s" % (platform.python_version(), platform.platform())
-        # self['cd3'] = " ".join(_filter_args(sys.argv[1:]))
         self["cd4"] = (
             1 if (not util.is_ci() and (caller_id or not is_container())) else 0
         )
@@ -143,14 +151,7 @@ class MeasurementProtocol(TelemetryBase):
             return
 
         cmd_path = args[:1]
-        if args[0] in (
-            "platform",
-            "platforms",
-            "serialports",
-            "device",
-            "settings",
-            "account",
-        ):
+        if args[0] in ("account", "device", "platform", "project", "settings",):
             cmd_path = args[:2]
         if args[0] == "lib" and len(args) > 1:
             lib_subcmds = (
@@ -179,13 +180,10 @@ class MeasurementProtocol(TelemetryBase):
                         cmd_path.append(sub_cmd)
         self["screen_name"] = " ".join([p.title() for p in cmd_path])
 
-    @staticmethod
-    def _ignore_hit():
+    def _ignore_hit(self):
         if not app.get_setting("enable_telemetry"):
             return True
-        if app.get_session_var("caller_id") and all(
-            c in sys.argv for c in ("run", "idedata")
-        ):
+        if all(c in sys.argv for c in ("run", "idedata")) or self["ea"] == "Idedata":
             return True
         return False
 
@@ -296,29 +294,64 @@ def on_command():
         measure_ci()
 
 
+def on_exception(e):
+    skip_conditions = [
+        isinstance(e, cls)
+        for cls in (IOError, exception.ReturnErrorCode, exception.UserSideException,)
+    ]
+    try:
+        skip_conditions.append("[API] Account: " in str(e))
+    except UnicodeEncodeError as ue:
+        e = ue
+    if any(skip_conditions):
+        return
+    is_fatal = any(
+        [
+            not isinstance(e, exception.PlatformioException),
+            "Error" in e.__class__.__name__,
+        ]
+    )
+    description = "%s: %s" % (
+        type(e).__name__,
+        " ".join(reversed(format_exc().split("\n"))) if is_fatal else str(e),
+    )
+    send_exception(description, is_fatal)
+
+
 def measure_ci():
     event = {"category": "CI", "action": "NoName", "label": None}
     known_cis = ("TRAVIS", "APPVEYOR", "GITLAB_CI", "CIRCLECI", "SHIPPABLE", "DRONE")
     for name in known_cis:
-        if getenv(name, "false").lower() == "true":
+        if os.getenv(name, "false").lower() == "true":
             event["action"] = name
             break
-    on_event(**event)
+    send_event(**event)
 
 
-def on_run_environment(options, targets):
-    non_sensative_values = ["board", "platform", "framework"]
-    safe_options = []
-    for key, value in sorted(options.items()):
-        if key in non_sensative_values:
-            safe_options.append("%s=%s" % (key, value))
-        else:
-            safe_options.append(key)
-    targets = [t.title() for t in targets or ["run"]]
-    on_event("Env", " ".join(targets), "&".join(safe_options))
+def encode_run_environment(options):
+    non_sensative_keys = [
+        "platform",
+        "framework",
+        "board",
+        "upload_protocol",
+        "check_tool",
+        "debug_tool",
+    ]
+    safe_options = [
+        "%s=%s" % (k, v) for k, v in sorted(options.items()) if k in non_sensative_keys
+    ]
+    return "&".join(safe_options)
 
 
-def on_event(category, action, label=None, value=None, screen_name=None):
+def send_run_environment(options, targets):
+    send_event(
+        "Env",
+        " ".join([t.title() for t in targets or ["run"]]),
+        encode_run_environment(options),
+    )
+
+
+def send_event(category, action, label=None, value=None, screen_name=None):
     mp = MeasurementProtocol()
     mp["event_category"] = category[:150]
     mp["event_action"] = action[:500]
@@ -331,43 +364,21 @@ def on_event(category, action, label=None, value=None, screen_name=None):
     mp.send("event")
 
 
-def on_exception(e):
-    def _cleanup_description(text):
-        text = text.replace("Traceback (most recent call last):", "")
-        text = re.sub(
-            r'File "([^"]+)"',
-            lambda m: join(*m.group(1).split(sep)[-2:]),
-            text,
-            flags=re.M,
-        )
-        text = re.sub(r"\s+", " ", text, flags=re.M)
-        return text.strip()
-
-    skip_conditions = [
-        isinstance(e, cls)
-        for cls in (
-            IOError,
-            exception.ReturnErrorCode,
-            exception.UserSideException,
-            exception.PlatformIOProjectException,
-        )
-    ]
-    try:
-        skip_conditions.append("[API] Account: " in str(e))
-    except UnicodeEncodeError as ue:
-        e = ue
-    if any(skip_conditions):
-        return
-    is_crash = any(
-        [
-            not isinstance(e, exception.PlatformioException),
-            "Error" in e.__class__.__name__,
-        ]
+def send_exception(description, is_fatal=False):
+    # cleanup sensitive information, such as paths
+    description = description.replace("Traceback (most recent call last):", "")
+    description = description.replace("\\", "/")
+    description = re.sub(
+        r'(^|\s+|")(?:[a-z]\:)?((/[^"/]+)+)(\s+|"|$)',
+        lambda m: " %s " % os.path.join(*m.group(2).split("/")[-2:]),
+        description,
+        re.I | re.M,
     )
+    description = re.sub(r"\s+", " ", description, flags=re.M)
+
     mp = MeasurementProtocol()
-    description = _cleanup_description(format_exc() if is_crash else str(e))
-    mp["exd"] = ("%s: %s" % (type(e).__name__, description))[:2048]
-    mp["exf"] = 1 if is_crash else 0
+    mp["exd"] = description[:8192].strip()
+    mp["exf"] = 1 if is_fatal else 0
     mp.send("exception")
 
 

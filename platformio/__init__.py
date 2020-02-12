@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION = (4, 1, 0)
+VERSION = (4, 2, 0)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
 __description__ = (
-    "An open source ecosystem for embedded development. "
+    "A new generation ecosystem for embedded development. "
     "Cross-platform IDE and Unified Debugger. "
     "Static Code Analyzer and Remote Unit Testing. "
     "Multi-platform and Multi-architecture Build System. "

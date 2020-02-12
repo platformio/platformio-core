@@ -23,7 +23,7 @@ from platformio.commands.home.rpc.handlers.os import OSRPC
 
 class MiscRPC(object):
     def load_latest_tweets(self, data_url):
-        cache_key = data_url
+        cache_key = app.ContentCache.key_from_args(data_url, "tweets")
         cache_valid = "7d"
         with app.ContentCache() as cc:
             cache_data = cc.get(cache_key)

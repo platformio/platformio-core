@@ -23,8 +23,10 @@ import click
 
 from platformio import app, exception, fs, proc, util
 from platformio.commands.debug import helpers
+from platformio.commands.debug.exception import DebugInvalidOptionsError
 from platformio.managers.core import inject_contrib_pysite
 from platformio.project.config import ProjectConfig
+from platformio.project.exception import ProjectEnvsNotAvailableError
 from platformio.project.helpers import is_platformio_project, load_project_ide_data
 
 
@@ -70,7 +72,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
         env_name = environment or helpers.get_default_debug_env(config)
         env_options = config.items(env=env_name, as_dict=True)
         if not set(env_options.keys()) >= set(["platform", "board"]):
-            raise exception.ProjectEnvsNotAvailable()
+            raise ProjectEnvsNotAvailableError()
         debug_options = helpers.validate_debug_options(ctx, env_options)
         assert debug_options
 
@@ -79,7 +81,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
 
     configuration = load_project_ide_data(project_dir, env_name)
     if not configuration:
-        raise exception.DebugInvalidOptions("Could not load debug configuration")
+        raise DebugInvalidOptionsError("Could not load debug configuration")
 
     if "--version" in __unprocessed:
         result = proc.exec_command([configuration["gdb_path"], "--version"])
@@ -140,7 +142,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
             helpers.is_prog_obsolete(configuration["prog_path"])
 
     if not isfile(configuration["prog_path"]):
-        raise exception.DebugInvalidOptions("Program/firmware is missed")
+        raise DebugInvalidOptionsError("Program/firmware is missed")
 
     # run debugging client
     inject_contrib_pysite()

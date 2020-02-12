@@ -284,6 +284,13 @@ ProjectOptions = OrderedDict(
                 description="Custom packages and specifications",
                 multiple=True,
             ),
+            # Board
+            ConfigEnvOption(
+                group="platform",
+                name="board",
+                description="A board ID",
+                buildenvvar="BOARD",
+            ),
             ConfigEnvOption(
                 group="platform",
                 name="framework",
@@ -291,36 +298,29 @@ ProjectOptions = OrderedDict(
                 multiple=True,
                 buildenvvar="PIOFRAMEWORK",
             ),
-            # Board
             ConfigEnvOption(
-                group="board",
-                name="board",
-                description="A board ID",
-                buildenvvar="BOARD",
-            ),
-            ConfigEnvOption(
-                group="board",
+                group="platform",
                 name="board_build.mcu",
                 description="A custom board MCU",
                 oldnames=["board_mcu"],
                 buildenvvar="BOARD_MCU",
             ),
             ConfigEnvOption(
-                group="board",
+                group="platform",
                 name="board_build.f_cpu",
                 description="A custom MCU frequency",
                 oldnames=["board_f_cpu"],
                 buildenvvar="BOARD_F_CPU",
             ),
             ConfigEnvOption(
-                group="board",
+                group="platform",
                 name="board_build.f_flash",
                 description="A custom flash frequency",
                 oldnames=["board_f_flash"],
                 buildenvvar="BOARD_F_FLASH",
             ),
             ConfigEnvOption(
-                group="board",
+                group="platform",
                 name="board_build.flash_mode",
                 description="A custom flash mode",
                 oldnames=["board_flash_mode"],
@@ -531,7 +531,7 @@ ProjectOptions = OrderedDict(
                 group="check",
                 name="check_tool",
                 description="A list of check tools used for analysis",
-                type=click.Choice(["cppcheck", "clangtidy"]),
+                type=click.Choice(["cppcheck", "clangtidy", "pvs-studio"]),
                 multiple=True,
                 default=["cppcheck"],
             ),
@@ -582,11 +582,15 @@ ProjectOptions = OrderedDict(
                 description="A connection speed (baud rate) to communicate with a target device",
                 type=click.INT,
             ),
-            ConfigEnvOption(group="test", name="test_transport", description="",),
+            ConfigEnvOption(
+                group="test",
+                name="test_transport",
+                description="A transport to communicate with a target device",
+            ),
             ConfigEnvOption(
                 group="test",
                 name="test_build_project_src",
-                description="",
+                description="Build project source code in a pair with test code",
                 type=click.BOOL,
                 default=False,
             ),
@@ -595,6 +599,16 @@ ProjectOptions = OrderedDict(
                 group="debug",
                 name="debug_tool",
                 description="A name of debugging tool",
+            ),
+            ConfigEnvOption(
+                group="debug",
+                name="debug_build_flags",
+                description=(
+                    "Custom debug flags/options for preprocessing, compilation, "
+                    "assembly, and linking processes"
+                ),
+                multiple=True,
+                default=["-Og", "-g2", "-ggdb2"],
             ),
             ConfigEnvOption(
                 group="debug",

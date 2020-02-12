@@ -17,13 +17,18 @@
 import base64
 import os
 import re
+import subprocess
 import sys
 from os.path import basename, dirname, isdir, isfile, join
 
 import click
 import semantic_version
 
-from platformio import __version__, app, exception, fs, proc, util
+from platformio import __version__, app, exception, fs, proc, telemetry, util
+from platformio.commands.debug.exception import (
+    DebugInvalidOptionsError,
+    DebugSupportError,
+)
 from platformio.compat import PY2, hashlib_encode_data, is_bytes, load_python_module
 from platformio.managers.core import get_core_package_dir
 from platformio.managers.package import BasePkgManager, PackageManager
@@ -69,6 +74,7 @@ class PlatformManager(BasePkgManager):
         with_packages=None,
         without_packages=None,
         skip_default_package=False,
+        with_all_packages=False,
         after_update=False,
         silent=False,
         force=False,
@@ -79,9 +85,14 @@ class PlatformManager(BasePkgManager):
         )
         p = PlatformFactory.newPlatform(platform_dir)
 
+        if with_all_packages:
+            with_packages = list(p.packages.keys())
+
         # don't cleanup packages or install them after update
         # we check packages for updates in def update()
         if after_update:
+            p.install_python_packages()
+            p.on_installed()
             return True
 
         p.install_packages(
@@ -91,6 +102,8 @@ class PlatformManager(BasePkgManager):
             silent=silent,
             force=force,
         )
+        p.install_python_packages()
+        p.on_installed()
         return self.cleanup_packages(list(p.packages))
 
     def uninstall(self, package, requirements=None, after_update=False):
@@ -105,6 +118,8 @@ class PlatformManager(BasePkgManager):
 
         p = PlatformFactory.newPlatform(pkg_dir)
         BasePkgManager.uninstall(self, pkg_dir, requirements)
+        p.uninstall_python_packages()
+        p.on_uninstalled()
 
         # don't cleanup packages or install them after update
         # we check packages for updates in def update()
@@ -590,6 +605,10 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
             packages[name].update({"version": version.strip(), "optional": False})
         return packages
 
+    @property
+    def python_packages(self):
+        return self._manifest.get("pythonPackages")
+
     def get_dir(self):
         return dirname(self.manifest_path)
 
@@ -695,6 +714,45 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
 
         return [dict(name=name, path=path) for path, name in storages.items()]
 
+    def on_installed(self):
+        pass
+
+    def on_uninstalled(self):
+        pass
+
+    def install_python_packages(self):
+        if not self.python_packages:
+            return None
+        click.echo(
+            "Installing Python packages: %s"
+            % ", ".join(list(self.python_packages.keys())),
+        )
+        args = [proc.get_pythonexe_path(), "-m", "pip", "install", "--upgrade"]
+        for name, requirements in self.python_packages.items():
+            if any(c in requirements for c in ("<", ">", "=")):
+                args.append("%s%s" % (name, requirements))
+            else:
+                args.append("%s==%s" % (name, requirements))
+        try:
+            return subprocess.call(args) == 0
+        except Exception as e:  # pylint: disable=broad-except
+            click.secho(
+                "Could not install Python packages -> %s" % e, fg="red", err=True
+            )
+
+    def uninstall_python_packages(self):
+        if not self.python_packages:
+            return
+        click.echo("Uninstalling Python packages")
+        args = [proc.get_pythonexe_path(), "-m", "pip", "uninstall", "--yes"]
+        args.extend(list(self.python_packages.keys()))
+        try:
+            subprocess.call(args) == 0
+        except Exception as e:  # pylint: disable=broad-except
+            click.secho(
+                "Could not install Python packages -> %s" % e, fg="red", err=True
+            )
+
 
 class PlatformBoardConfig(object):
     def __init__(self, manifest_path):
@@ -799,11 +857,12 @@ class PlatformBoardConfig(object):
         if tool_name == "custom":
             return tool_name
         if not debug_tools:
-            raise exception.DebugSupportError(self._manifest["name"])
+            telemetry.send_event("Debug", "Request", self.id)
+            raise DebugSupportError(self._manifest["name"])
         if tool_name:
             if tool_name in debug_tools:
                 return tool_name
-            raise exception.DebugInvalidOptions(
+            raise DebugInvalidOptionsError(
                 "Unknown debug tool `%s`. Please use one of `%s` or `custom`"
                 % (tool_name, ", ".join(sorted(list(debug_tools))))
             )

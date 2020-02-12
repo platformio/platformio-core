@@ -22,6 +22,7 @@ from os.path import isfile
 
 from platformio import exception, fs, util
 from platformio.commands import PlatformioCLI
+from platformio.commands.debug.exception import DebugInvalidOptionsError
 from platformio.commands.platform import platform_install as cmd_platform_install
 from platformio.commands.run.command import cli as cmd_run
 from platformio.compat import is_bytes
@@ -301,7 +302,5 @@ def reveal_debug_port(env_debug_port, tool_name, tool_settings):
 
     debug_port = _look_for_serial_port(tool_settings.get("hwids", []))
     if not debug_port:
-        raise exception.DebugInvalidOptions(
-            "Please specify `debug_port` for environment"
-        )
+        raise DebugInvalidOptionsError("Please specify `debug_port` for environment")
     return debug_port

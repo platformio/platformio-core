@@ -20,8 +20,9 @@ from hashlib import sha1
 
 import click
 
-from platformio import exception, fs
-from platformio.compat import PY2, WINDOWS, hashlib_encode_data
+from platformio import fs
+from platformio.compat import PY2, WINDOWS, hashlib_encode_data, string_types
+from platformio.project import exception
 from platformio.project.options import ProjectOptions
 
 try:
@@ -29,7 +30,8 @@ try:
 except ImportError:
     import configparser as ConfigParser
 
-CONFIG_HEADER = """;PlatformIO Project Configuration File
+CONFIG_HEADER = """
+; PlatformIO Project Configuration File
 ;
 ;   Build options: build flags, source filter
 ;   Upload options: custom upload port, speed and extra flags
@@ -38,8 +40,10 @@ CONFIG_HEADER = """;PlatformIO Project Configuration File
 ;
 ; Please visit documentation for the other options and examples
 ; https://docs.platformio.org/page/projectconf.html
-
 """
+
+
+MISSING = object()
 
 
 class ProjectConfigBase(object):
@@ -104,7 +108,7 @@ class ProjectConfigBase(object):
         try:
             self._parser.read(path)
         except ConfigParser.Error as e:
-            raise exception.InvalidProjectConf(path, str(e))
+            raise exception.InvalidProjectConfError(path, str(e))
 
         if not parse_extra:
             return
@@ -228,6 +232,8 @@ class ProjectConfigBase(object):
         return [(option, self.get(section, option)) for option in self.options(section)]
 
     def set(self, section, option, value):
+        if value is None:
+            value = ""
         if isinstance(value, (list, tuple)):
             value = "\n".join(value)
         elif isinstance(value, bool):
@@ -239,46 +245,25 @@ class ProjectConfigBase(object):
             value = "\n" + value
         self._parser.set(section, option, value)
 
-    def getraw(self, section, option):
+    def getraw(  # pylint: disable=too-many-branches
+        self, section, option, default=MISSING
+    ):
         if not self.expand_interpolations:
             return self._parser.get(section, option)
 
-        value = None
-        found = False
+        value = MISSING
         for sec, opt in self.walk_options(section):
             if opt == option:
                 value = self._parser.get(sec, option)
-                found = True
                 break
-
-        if not found:
-            value = self._parser.get(section, option)
-
-        if "${" not in value or "}" not in value:
-            return value
-        return self.VARTPL_RE.sub(self._re_interpolation_handler, value)
-
-    def _re_interpolation_handler(self, match):
-        section, option = match.group(1), match.group(2)
-        if section == "sysenv":
-            return os.getenv(option)
-        return self.getraw(section, option)
-
-    def get(self, section, option, default=None):  # pylint: disable=too-many-branches
-        value = None
-        try:
-            value = self.getraw(section, option)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
-            pass  # handle value from system environment
-        except ConfigParser.Error as e:
-            raise exception.InvalidProjectConf(self.path, str(e))
 
         option_meta = ProjectOptions.get("%s.%s" % (section.split(":", 1)[0], option))
         if not option_meta:
-            return value or default
-
-        if option_meta.multiple:
-            value = self.parse_multi_values(value)
+            if value == MISSING:
+                value = (
+                    default if default != MISSING else self._parser.get(section, option)
+                )
+            return self._expand_interpolations(value)
 
         if option_meta.sysenvvar:
             envvar_value = os.getenv(option_meta.sysenvvar)
@@ -288,17 +273,45 @@ class ProjectConfigBase(object):
                     if envvar_value:
                         break
             if envvar_value and option_meta.multiple:
-                value = value or []
-                value.extend(self.parse_multi_values(envvar_value))
-            elif envvar_value and not value:
+                value += ("" if value == MISSING else "\n") + envvar_value
+            elif envvar_value and value == MISSING:
                 value = envvar_value
 
-        # option is not specified by user
-        if value is None or (
-            option_meta.multiple and value == [] and option_meta.default
-        ):
-            return default if default is not None else option_meta.default
+        if value == MISSING:
+            value = option_meta.default or default
+        if value == MISSING:
+            return None
 
+        return self._expand_interpolations(value)
+
+    def _expand_interpolations(self, value):
+        if (
+            not value
+            or not isinstance(value, string_types)
+            or not all(["${" in value, "}" in value])
+        ):
+            return value
+        return self.VARTPL_RE.sub(self._re_interpolation_handler, value)
+
+    def _re_interpolation_handler(self, match):
+        section, option = match.group(1), match.group(2)
+        if section == "sysenv":
+            return os.getenv(option)
+        return self.getraw(section, option)
+
+    def get(self, section, option, default=MISSING):
+        value = None
+        try:
+            value = self.getraw(section, option, default)
+        except ConfigParser.Error as e:
+            raise exception.InvalidProjectConfError(self.path, str(e))
+
+        option_meta = ProjectOptions.get("%s.%s" % (section.split(":", 1)[0], option))
+        if not option_meta:
+            return value
+
+        if option_meta.multiple:
+            value = self.parse_multi_values(value or [])
         try:
             return self.cast_to(value, option_meta.type)
         except click.BadParameter as e:
@@ -325,14 +338,14 @@ class ProjectConfigBase(object):
 
     def validate(self, envs=None, silent=False):
         if not os.path.isfile(self.path):
-            raise exception.NotPlatformIOProject(self.path)
+            raise exception.NotPlatformIOProjectError(self.path)
         # check envs
         known = set(self.envs())
         if not known:
-            raise exception.ProjectEnvsNotAvailable()
+            raise exception.ProjectEnvsNotAvailableError()
         unknown = set(list(envs or []) + self.default_envs()) - known
         if unknown:
-            raise exception.UnknownEnvNames(", ".join(unknown), ", ".join(known))
+            raise exception.UnknownEnvNamesError(", ".join(unknown), ", ".join(known))
         if not silent:
             for warning in self.warnings:
                 click.secho("Warning! %s" % warning, fg="yellow")
@@ -445,7 +458,12 @@ class ProjectConfig(ProjectConfigBase, ProjectConfigDirsMixin):
         path = path or self.path
         if path in self._instances:
             del self._instances[path]
-        with open(path or self.path, "w") as fp:
-            fp.write(CONFIG_HEADER)
+        with open(path or self.path, "w+") as fp:
+            fp.write(CONFIG_HEADER.strip() + "\n\n")
             self._parser.write(fp)
+            fp.seek(0)
+            contents = fp.read()
+            fp.seek(0)
+            fp.truncate()
+            fp.write(contents.strip() + "\n")
         return True

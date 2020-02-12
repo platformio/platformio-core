@@ -29,25 +29,45 @@ def test_library_json_parser():
     "name": "TestPackage",
     "keywords": "kw1, KW2, kw3",
     "platforms": ["atmelavr", "espressif"],
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/username/repo/"
+    },
     "url": "http://old.url.format",
     "exclude": [".gitignore", "tests"],
     "include": "mylib",
     "build": {
         "flags": ["-DHELLO"]
     },
+    "examples": ["examples/*/*.pde"],
+    "dependencies": {
+        "deps1": "1.2.0",
+        "deps2": "https://github.com/username/package.git",
+        "@owner/deps3": "^2.1.3"
+    },
     "customField": "Custom Value"
 }
 """
-    mp = parser.LibraryJsonManifestParser(contents)
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
-        mp.as_dict(),
+        raw_data,
         {
             "name": "TestPackage",
             "platforms": ["atmelavr", "espressif8266"],
+            "repository": {
+                "type": "git",
+                "url": "https://github.com/username/repo.git",
+            },
             "export": {"exclude": [".gitignore", "tests"], "include": ["mylib"]},
             "keywords": ["kw1", "kw2", "kw3"],
             "homepage": "http://old.url.format",
             "build": {"flags": ["-DHELLO"]},
+            "dependencies": [
+                {"name": "@owner/deps3", "version": "^2.1.3"},
+                {"name": "deps1", "version": "1.2.0"},
+                {"name": "deps2", "version": "https://github.com/username/package.git"},
+            ],
             "customField": "Custom Value",
         },
     )
@@ -59,19 +79,42 @@ def test_library_json_parser():
     "platforms": "atmelavr",
     "export": {
         "exclude": "audio_samples"
-    }
+    },
+    "dependencies": [
+        {"name": "deps1", "version": "1.0.0"},
+        {"name": "@owner/deps2", "version": "1.0.0", "frameworks": "arduino, espidf"},
+        {"name": "deps3", "version": "1.0.0", "platforms": ["ststm32", "sifive"]}
+    ]
 }
 """
-    mp = parser.LibraryJsonManifestParser(contents)
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
-        mp.as_dict(),
+        raw_data,
         {
             "keywords": ["sound", "audio", "music", "sd", "card", "playback"],
             "frameworks": ["arduino"],
             "export": {"exclude": ["audio_samples"]},
             "platforms": ["atmelavr"],
+            "dependencies": [
+                {
+                    "name": "@owner/deps2",
+                    "version": "1.0.0",
+                    "frameworks": ["arduino", "espidf"],
+                },
+                {"name": "deps1", "version": "1.0.0"},
+                {
+                    "name": "deps3",
+                    "version": "1.0.0",
+                    "platforms": ["ststm32", "sifive"],
+                },
+            ],
         },
     )
+
+    # broken dependencies
+    with pytest.raises(parser.ManifestParserError):
+        parser.LibraryJsonManifestParser({"dependencies": ["deps1", "deps2"]})
 
 
 def test_module_json_parser():
@@ -128,10 +171,12 @@ version=1.2.3
 author=SomeAuthor <info AT author.com>
 sentence=This is Arduino library
 customField=Custom Value
+depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
 """
-    mp = parser.LibraryPropertiesManifestParser(contents)
+    raw_data = parser.LibraryPropertiesManifestParser(contents).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
-        mp.as_dict(),
+        raw_data,
         {
             "name": "TestPackage",
             "version": "1.2.3",
@@ -145,6 +190,20 @@ customField=Custom Value
             "authors": [{"email": "info@author.com", "name": "SomeAuthor"}],
             "keywords": ["uncategorized"],
             "customField": "Custom Value",
+            "depends": "First Library (=2.0.0), Second Library (>=1.2.0), Third",
+            "dependencies": [
+                {
+                    "name": "First Library",
+                    "version": "=2.0.0",
+                    "frameworks": ["arduino"],
+                },
+                {
+                    "name": "Second Library",
+                    "version": ">=1.2.0",
+                    "frameworks": ["arduino"],
+                },
+                {"name": "Third", "frameworks": ["arduino"]},
+            ],
         },
     )
 
@@ -153,6 +212,7 @@ customField=Custom Value
         "architectures=*\n" + contents
     ).as_dict()
     assert data["platforms"] == ["*"]
+
     # Platforms specific
     data = parser.LibraryPropertiesManifestParser(
         "architectures=avr, esp32\n" + contents
@@ -172,11 +232,11 @@ customField=Custom Value
         "include": ["libraries/TestPackage"],
     }
     assert data["repository"] == {
-        "url": "https://github.com/username/reponame",
+        "url": "https://github.com/username/reponame.git",
         "type": "git",
     }
 
-    # Hope page
+    # Home page
     data = parser.LibraryPropertiesManifestParser(
         "url=https://github.com/username/reponame.git\n" + contents
     ).as_dict()
@@ -184,6 +244,17 @@ customField=Custom Value
         "type": "git",
         "url": "https://github.com/username/reponame.git",
     }
+
+    # Author + Maintainer
+    data = parser.LibraryPropertiesManifestParser(
+        """
+author=Rocket Scream Electronics
+maintainer=Rocket Scream Electronics
+"""
+    ).as_dict()
+    assert data["authors"] == [
+        {"name": "Rocket Scream Electronics", "maintainer": True}
+    ]
 
 
 def test_library_json_schema():
@@ -202,6 +273,7 @@ def test_library_json_schema():
     "name": "Benoit Blanchon",
     "url": "https://blog.benoitblanchon.fr"
   },
+  "downloadUrl": "https://example.com/package.tar.gz",
   "exclude": [
     "fuzzing",
     "scripts",
@@ -222,15 +294,20 @@ def test_library_json_schema():
         "base": "examples/JsonHttpClient",
         "files": ["JsonHttpClient.ino"]
     }
+  ],
+  "dependencies": [
+    {"name": "deps1", "version": "1.0.0"},
+    {"name": "@owner/deps2", "version": "1.0.0", "frameworks": "arduino"},
+    {"name": "deps3", "version": "1.0.0", "platforms": ["ststm32", "sifive"]}
   ]
 }
 """
     raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_JSON
     ).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
 
-    data, errors = ManifestSchema(strict=True).load(raw_data)
-    assert not errors
+    data = ManifestSchema().load_manifest(raw_data)
 
     assert data["repository"]["url"] == "https://github.com/bblanchon/ArduinoJson.git"
     assert data["examples"][1]["base"] == "examples/JsonHttpClient"
@@ -251,6 +328,7 @@ def test_library_json_schema():
             "authors": [
                 {"name": "Benoit Blanchon", "url": "https://blog.benoitblanchon.fr"}
             ],
+            "downloadUrl": "https://example.com/package.tar.gz",
             "export": {"exclude": ["fuzzing", "scripts", "test", "third-party"]},
             "frameworks": ["arduino"],
             "platforms": ["*"],
@@ -267,6 +345,45 @@ def test_library_json_schema():
                     "files": ["JsonHttpClient.ino"],
                 },
             ],
+            "dependencies": [
+                {"name": "@owner/deps2", "version": "1.0.0", "frameworks": ["arduino"]},
+                {"name": "deps1", "version": "1.0.0"},
+                {
+                    "name": "deps3",
+                    "version": "1.0.0",
+                    "platforms": ["ststm32", "sifive"],
+                },
+            ],
+        },
+    )
+
+    # legacy dependencies format
+    contents = """
+{
+    "name": "DallasTemperature",
+    "version": "3.8.0",
+    "dependencies":
+    {
+        "name": "OneWire",
+        "authors": "Paul Stoffregen",
+        "frameworks": "arduino"
+    }
+}
+"""
+    raw_data = parser.LibraryJsonManifestParser(contents).as_dict()
+    data = ManifestSchema().load_manifest(raw_data)
+    assert not jsondiff.diff(
+        data,
+        {
+            "name": "DallasTemperature",
+            "version": "3.8.0",
+            "dependencies": [
+                {
+                    "name": "OneWire",
+                    "authors": ["Paul Stoffregen"],
+                    "frameworks": ["arduino"],
+                }
+            ],
         },
     )
 
@@ -282,13 +399,14 @@ paragraph=Supported display controller: SSD1306, SSD1309, SSD1322, SSD1325
 category=Display
 url=https://github.com/olikraus/u8glib
 architectures=avr,sam
+depends=First Library (=2.0.0), Second Library (>=1.2.0), Third
 """
     raw_data = parser.ManifestParserFactory.new(
         contents, parser.ManifestFileType.LIBRARY_PROPERTIES
     ).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
 
-    data, errors = ManifestSchema(strict=True).load(raw_data)
-    assert not errors
+    data = ManifestSchema().load_manifest(raw_data)
 
     assert not jsondiff.diff(
         data,
@@ -297,7 +415,10 @@ architectures=avr,sam
                 "A library for monochrome TFTs and OLEDs. Supported display "
                 "controller: SSD1306, SSD1309, SSD1322, SSD1325"
             ),
-            "repository": {"url": "https://github.com/olikraus/u8glib", "type": "git"},
+            "repository": {
+                "url": "https://github.com/olikraus/u8glib.git",
+                "type": "git",
+            },
             "frameworks": ["arduino"],
             "platforms": ["atmelavr", "atmelsam"],
             "version": "1.19.1",
@@ -309,6 +430,19 @@ architectures=avr,sam
             ],
             "keywords": ["display"],
             "name": "U8glib",
+            "dependencies": [
+                {
+                    "name": "First Library",
+                    "version": "=2.0.0",
+                    "frameworks": ["arduino"],
+                },
+                {
+                    "name": "Second Library",
+                    "version": ">=1.2.0",
+                    "frameworks": ["arduino"],
+                },
+                {"name": "Third", "frameworks": ["arduino"]},
+            ],
         },
     )
 
@@ -335,7 +469,12 @@ includes=MozziGuts.h
         ),
     ).as_dict()
 
-    data, errors = ManifestSchema(strict=False).load(raw_data)
+    try:
+        ManifestSchema().load_manifest(raw_data)
+    except ManifestValidationError as e:
+        data = e.valid_data
+        errors = e.messages
+
     assert errors["authors"]
 
     assert not jsondiff.diff(
@@ -348,7 +487,10 @@ includes=MozziGuts.h
                 "sounds using familiar synthesis units like oscillators, delays, "
                 "filters and envelopes."
             ),
-            "repository": {"url": "https://github.com/sensorium/Mozzi", "type": "git"},
+            "repository": {
+                "url": "https://github.com/sensorium/Mozzi.git",
+                "type": "git",
+            },
             "platforms": ["*"],
             "frameworks": ["arduino"],
             "export": {
@@ -404,11 +546,6 @@ def test_platform_json_schema():
       "optional": true,
       "version": "~4.2.0"
     },
-    "framework-simba": {
-      "type": "framework",
-      "optional": true,
-      "version": ">=7.0.0"
-    },
     "tool-avrdude": {
       "type": "uploader",
       "optional": true,
@@ -421,8 +558,9 @@ def test_platform_json_schema():
         contents, parser.ManifestFileType.PLATFORM_JSON
     ).as_dict()
     raw_data["frameworks"] = sorted(raw_data["frameworks"])
-    data, errors = ManifestSchema(strict=False).load(raw_data)
-    assert not errors
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
+
+    data = ManifestSchema().load_manifest(raw_data)
 
     assert not jsondiff.diff(
         data,
@@ -444,6 +582,11 @@ def test_platform_json_schema():
             },
             "frameworks": sorted(["arduino", "simba"]),
             "version": "1.15.0",
+            "dependencies": [
+                {"name": "framework-arduinoavr", "version": "~4.2.0"},
+                {"name": "tool-avrdude", "version": "~1.60300.0"},
+                {"name": "toolchain-atmelavr", "version": "~1.50400.0"},
+            ],
         },
     )
 
@@ -461,8 +604,7 @@ def test_package_json_schema():
         contents, parser.ManifestFileType.PACKAGE_JSON
     ).as_dict()
 
-    data, errors = ManifestSchema(strict=False).load(raw_data)
-    assert not errors
+    data = ManifestSchema().load_manifest(raw_data)
 
     assert not jsondiff.diff(
         data,
@@ -492,6 +634,7 @@ def test_package_json_schema():
 
 def test_parser_from_dir(tmpdir_factory):
     pkg_dir = tmpdir_factory.mktemp("package")
+    pkg_dir.join("package.json").write('{"name": "package.json"}')
     pkg_dir.join("library.json").write('{"name": "library.json"}')
     pkg_dir.join("library.properties").write("name=library.properties")
 
@@ -564,8 +707,7 @@ def test_examples_from_dir(tmpdir_factory):
 
     raw_data["examples"] = _sort_examples(raw_data["examples"])
 
-    data, errors = ManifestSchema(strict=True).load(raw_data)
-    assert not errors
+    data = ManifestSchema().load_manifest(raw_data)
 
     assert not jsondiff.diff(
         data,
@@ -621,34 +763,32 @@ def test_examples_from_dir(tmpdir_factory):
 
 
 def test_broken_schemas():
-    # non-strict mode
-    data, errors = ManifestSchema(strict=False).load(dict(name="MyPackage"))
-    assert set(errors.keys()) == set(["version"])
-    assert data.get("version") is None
-
-    # invalid keywords
-    data, errors = ManifestSchema(strict=False).load(dict(keywords=["kw1", "*^[]"]))
-    assert errors
-    assert data["keywords"] == ["kw1"]
-
-    # strict mode
-
+    # missing required field
     with pytest.raises(
-        ManifestValidationError, match="Missing data for required field"
-    ):
-        ManifestSchema(strict=True).load(dict(name="MyPackage"))
+        ManifestValidationError, match=("Invalid semantic versioning format")
+    ) as exc_info:
+        ManifestSchema().load_manifest(dict(name="MyPackage", version="broken_version"))
+    assert exc_info.value.valid_data == {"name": "MyPackage"}
+
+    # invalid StrictList
+    with pytest.raises(
+        ManifestValidationError, match=("Invalid manifest fields.+keywords")
+    ) as exc_info:
+        ManifestSchema().load_manifest(
+            dict(name="MyPackage", version="1.0.0", keywords=["kw1", "*^[]"])
+        )
+    assert list(exc_info.value.messages.keys()) == ["keywords"]
+    assert exc_info.value.valid_data["keywords"] == ["kw1"]
 
     # broken SemVer
     with pytest.raises(
         ManifestValidationError, match=("Invalid semantic versioning format")
     ):
-        ManifestSchema(strict=True).load(
-            dict(name="MyPackage", version="broken_version")
-        )
+        ManifestSchema().load_manifest(dict(name="MyPackage", version="broken_version"))
 
     # broken value for Nested
     with pytest.raises(ManifestValidationError, match=r"authors.*Invalid input type"):
-        ManifestSchema(strict=True).load(
+        ManifestSchema().load_manifest(
             dict(
                 name="MyPackage",
                 description="MyDescription",

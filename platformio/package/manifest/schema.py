@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-ancestors
+
+import marshmallow
 import requests
 import semantic_version
 from marshmallow import Schema, ValidationError, fields, validate, validates
@@ -19,23 +22,61 @@ from marshmallow import Schema, ValidationError, fields, validate, validates
 from platformio.package.exception import ManifestValidationError
 from platformio.util import memoized
 
+MARSHMALLOW_2 = marshmallow.__version_info__ < (3,)
 
-class StrictSchema(Schema):
-    def handle_error(self, error, data):
+
+if MARSHMALLOW_2:
+
+    class CompatSchema(Schema):
+        pass
+
+
+else:
+
+    class CompatSchema(Schema):
+        class Meta(object):  # pylint: disable=no-init
+            unknown = marshmallow.EXCLUDE  # pylint: disable=no-member
+
+        def handle_error(self, error, data, **_):  # pylint: disable=arguments-differ
+            raise ManifestValidationError(
+                error.messages,
+                data,
+                error.valid_data if hasattr(error, "valid_data") else error.data,
+            )
+
+
+class BaseSchema(CompatSchema):
+    def load_manifest(self, data):
+        if MARSHMALLOW_2:
+            data, errors = self.load(data)
+            if errors:
+                raise ManifestValidationError(errors, data, data)
+            return data
+        return self.load(data)
+
+
+class StrictSchema(BaseSchema):
+    def handle_error(self, error, data, **_):  # pylint: disable=arguments-differ
         # skip broken records
         if self.many:
-            error.data = [
+            error.valid_data = [
                 item for idx, item in enumerate(data) if idx not in error.messages
             ]
         else:
-            error.data = None
+            error.valid_data = None
+        if MARSHMALLOW_2:
+            error.data = error.valid_data
         raise error
 
 
 class StrictListField(fields.List):
-    def _deserialize(self, value, attr, data):
+    def _deserialize(  # pylint: disable=arguments-differ
+        self, value, attr, data, **kwargs
+    ):
         try:
-            return super(StrictListField, self)._deserialize(value, attr, data)
+            return super(StrictListField, self)._deserialize(
+                value, attr, data, **kwargs
+            )
         except ValidationError as exc:
             if exc.data:
                 exc.data = [item for item in exc.data if item is not None]
@@ -61,7 +102,33 @@ class RepositorySchema(StrictSchema):
     branch = fields.Str(validate=validate.Length(min=1, max=50))
 
 
-class ExportSchema(Schema):
+class DependencySchema(StrictSchema):
+    name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
+    version = fields.Str(validate=validate.Length(min=1, max=100))
+    authors = StrictListField(fields.Str(validate=validate.Length(min=1, max=50)))
+    platforms = StrictListField(
+        fields.Str(
+            validate=[
+                validate.Length(min=1, max=50),
+                validate.Regexp(
+                    r"^([a-z\d\-_]+|\*)$", error="Only [a-z0-9-_*] chars are allowed"
+                ),
+            ]
+        )
+    )
+    frameworks = StrictListField(
+        fields.Str(
+            validate=[
+                validate.Length(min=1, max=50),
+                validate.Regexp(
+                    r"^([a-z\d\-_]+|\*)$", error="Only [a-z0-9-_*] chars are allowed"
+                ),
+            ]
+        )
+    )
+
+
+class ExportSchema(BaseSchema):
     include = StrictListField(fields.Str)
     exclude = StrictListField(fields.Str)
 
@@ -80,7 +147,7 @@ class ExampleSchema(StrictSchema):
     files = StrictListField(fields.Str, required=True)
 
 
-class ManifestSchema(Schema):
+class ManifestSchema(BaseSchema):
     # Required fields
     name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     version = fields.Str(required=True, validate=validate.Length(min=1, max=50))
@@ -92,8 +159,12 @@ class ManifestSchema(Schema):
     homepage = fields.Url(validate=validate.Length(min=1, max=255))
     license = fields.Str(validate=validate.Length(min=1, max=255))
     repository = fields.Nested(RepositorySchema)
+    dependencies = fields.Nested(DependencySchema, many=True)
+
+    # library.json
     export = fields.Nested(ExportSchema)
     examples = fields.Nested(ExampleSchema, many=True)
+    downloadUrl = fields.Url(validate=validate.Length(min=1, max=255))
 
     keywords = StrictListField(
         fields.Str(
@@ -105,7 +176,6 @@ class ManifestSchema(Schema):
             ]
         )
     )
-
     platforms = StrictListField(
         fields.Str(
             validate=[
@@ -142,10 +212,6 @@ class ManifestSchema(Schema):
         )
     )
 
-    def handle_error(self, error, data):
-        if self.strict:
-            raise ManifestValidationError(error, data)
-
     @validates("version")
     def validate_version(self, value):  # pylint: disable=no-self-use
         try:
@@ -176,7 +242,7 @@ class ManifestSchema(Schema):
     def load_spdx_licenses():
         r = requests.get(
             "https://raw.githubusercontent.com/spdx/license-list-data"
-            "/v3.6/json/licenses.json"
+            "/v3.8/json/licenses.json"
         )
         r.raise_for_status()
         return r.json()

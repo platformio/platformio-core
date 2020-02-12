@@ -100,8 +100,9 @@ def main(argv=None):
     try:
         configure()
         cli()  # pylint: disable=no-value-for-parameter
-    except SystemExit:
-        pass
+    except SystemExit as e:
+        if e.code and str(e.code).isdigit():
+            exit_code = int(e.code)
     except Exception as e:  # pylint: disable=broad-except
         if not isinstance(e, exception.ReturnErrorCode):
             maintenance.on_platformio_exception(e)

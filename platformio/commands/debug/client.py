@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import os
 import re
 import signal
 import time
 from hashlib import sha1
-from os.path import abspath, basename, dirname, isdir, join, splitext
+from os.path import basename, dirname, isdir, join, realpath, splitext
 from tempfile import mkdtemp
 
 from twisted.internet import protocol  # pylint: disable=import-error
@@ -26,13 +25,13 @@ from twisted.internet import reactor  # pylint: disable=import-error
 from twisted.internet import stdio  # pylint: disable=import-error
 from twisted.internet import task  # pylint: disable=import-error
 
-from platformio import app, exception, fs, proc, util
+from platformio import app, fs, proc, telemetry, util
 from platformio.commands.debug import helpers, initcfgs
+from platformio.commands.debug.exception import DebugInvalidOptionsError
 from platformio.commands.debug.process import BaseProcess
 from platformio.commands.debug.server import DebugServer
 from platformio.compat import hashlib_encode_data, is_bytes
 from platformio.project.helpers import get_project_cache_dir
-from platformio.telemetry import MeasurementProtocol
 
 LOG_FILE = None
 
@@ -58,6 +57,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self._target_is_run = False
         self._last_server_activity = 0
         self._auto_continue_timer = None
+        self._errors_buffer = b""
 
     def spawn(self, gdb_path, prog_path):
         session_hash = gdb_path + prog_path
@@ -94,7 +94,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         ]
         args.extend(self.args)
         if not gdb_path:
-            raise exception.DebugInvalidOptions("GDB client is not configured")
+            raise DebugInvalidOptionsError("GDB client is not configured")
         gdb_data_dir = self._get_data_dir(gdb_path)
         if gdb_data_dir:
             args.extend(["--data-directory", gdb_data_dir])
@@ -108,7 +108,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
     def _get_data_dir(gdb_path):
         if "msp430" in gdb_path:
             return None
-        gdb_data_dir = abspath(join(dirname(gdb_path), "..", "share", "gdb"))
+        gdb_data_dir = realpath(join(dirname(gdb_path), "..", "share", "gdb"))
         return gdb_data_dir if isdir(gdb_data_dir) else None
 
     def generate_pioinit(self, dst_dir, patterns):
@@ -215,6 +215,9 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self._handle_error(data)
         # go to init break automatically
         if self.INIT_COMPLETED_BANNER.encode() in data:
+            telemetry.send_event(
+                "Debug", "Started", telemetry.encode_run_environment(self.env_options)
+            )
             self._auto_continue_timer = task.LoopingCall(self._auto_exec_continue)
             self._auto_continue_timer.start(0.1)
 
@@ -250,20 +253,19 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self._target_is_run = True
 
     def _handle_error(self, data):
+        self._errors_buffer += data
         if self.PIO_SRC_NAME.encode() not in data or b"Error in sourced" not in data:
             return
-        configuration = {"debug": self.debug_options, "env": self.env_options}
-        exd = re.sub(r'\\(?!")', "/", json.dumps(configuration))
-        exd = re.sub(
-            r'"(?:[a-z]\:)?((/[^"/]+)+)"',
-            lambda m: '"%s"' % join(*m.group(1).split("/")[-2:]),
-            exd,
-            re.I | re.M,
+
+        last_erros = self._errors_buffer.decode()
+        last_erros = " ".join(reversed(last_erros.split("\n")))
+        last_erros = re.sub(r'((~|&)"|\\n\"|\\t)', " ", last_erros, flags=re.M)
+
+        err = "%s -> %s" % (
+            telemetry.encode_run_environment(self.env_options),
+            last_erros,
         )
-        mp = MeasurementProtocol()
-        mp["exd"] = "DebugGDBPioInitError: %s" % exd
-        mp["exf"] = 1
-        mp.send("exception")
+        telemetry.send_exception("DebugInitError: %s" % err)
         self.transport.loseConnection()
 
     def _kill_previous_session(self):
