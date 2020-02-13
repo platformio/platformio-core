@@ -57,7 +57,7 @@ def cli(port, host, no_open, shutdown_timeout):
 
     try:
         from autobahn.twisted.resource import WebSocketResource
-    except (ImportError, ModuleNotFoundError):
+    except:  # pylint: disable=bare-except
         build_contrib_pysite_deps(get_core_package_dir("contrib-pysite"))
         from autobahn.twisted.resource import WebSocketResource
 
