@@ -5,7 +5,7 @@
         },
         {
 % import platform
-% from os.path import commonprefix, dirname, isdir
+% from os.path import commonprefix, dirname, isabs, isdir, isfile, join
 %
 % systype = platform.system().lower()
 %
@@ -15,6 +15,35 @@
 %
 % def _escape_required(flag):
 %   return " " in flag and systype == "windows"
+% end
+%
+% def _find_abs_path(inc, inc_paths):
+%   for path in inc_paths:
+%     if isfile(join(path, inc)):
+%       return join(path, inc)
+%     end
+%   end
+%   return inc
+% end
+%
+% def _find_forced_includes(flags, inc_paths):
+%   result = []
+%   i = 0
+%   length = len(flags)
+%   while(i < length):
+%     if flags[i].startswith("-include"):
+%       i = i + 1
+%       if i < length and not flags[i].startswith("-"):
+%         inc = flags[i]
+%         if not isabs(inc):
+%           inc = _find_abs_path(inc, inc_paths)
+%         end
+%         result.append(to_unix_path(inc))
+%       end
+%     end
+%     i = i + 1
+%   end
+%   return result
 % end
 %
 % def _split_flags(flags):
@@ -83,6 +112,8 @@
 % STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
 % cc_stds = STD_RE.findall(cc_flags)
 % cxx_stds = STD_RE.findall(cxx_flags)
+% cc_m_flags = _split_flags(cc_flags)
+% forced_includes = _find_forced_includes(cc_m_flags, cleaned_includes)
 %
 % if cc_stds:
             "cStandard": "c{{ cc_stds[-1] }}",
@@ -90,10 +121,21 @@
 % if cxx_stds:
             "cppStandard": "c++{{ cxx_stds[-1] }}",
 % end
+% if forced_includes:
+            "forcedInclude": [
+% for include in forced_includes:
+                "{{ include }}",
+% end
+                ""
+            ],
+% end
             "compilerPath": "{{ cc_path }}",
             "compilerArgs": [
-% for flag in [ '"%s"' % _escape(f) if _escape_required(f) else f for f in _split_flags(
-%       cc_flags) if f.startswith(("-m", "-i", "@"))]:
+% for flag in [
+%     '"%s"' % _escape(f) if _escape_required(f) else f
+%     for f in cc_m_flags
+%     if f.startswith(("-m", "-i", "@")) and not f.startswith("-include")
+% ]:
                 "{{ flag }}",
 % end
                 ""
