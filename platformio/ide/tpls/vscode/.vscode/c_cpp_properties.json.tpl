@@ -4,8 +4,8 @@
             "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
         },
         {
+% import os
 % import platform
-% from os.path import commonprefix, dirname, isabs, isdir, isfile, join
 %
 % systype = platform.system().lower()
 %
@@ -19,8 +19,8 @@
 %
 % def _find_abs_path(inc, inc_paths):
 %   for path in inc_paths:
-%     if isfile(join(path, inc)):
-%       return join(path, inc)
+%     if os.path.isfile(os.path.join(path, inc)):
+%       return os.path.join(path, inc)
 %     end
 %   end
 %   return inc
@@ -35,7 +35,7 @@
 %       i = i + 1
 %       if i < length and not flags[i].startswith("-"):
 %         inc = flags[i]
-%         if not isabs(inc):
+%         if not os.path.isabs(inc):
 %           inc = _find_abs_path(inc, inc_paths)
 %         end
 %         result.append(to_unix_path(inc))
@@ -73,7 +73,8 @@
 %
 % cleaned_includes = []
 % for include in includes:
-%   if "toolchain-" not in dirname(commonprefix([include, cc_path])) and isdir(include):
+%   if "toolchain-" not in os.path.dirname(os.path.commonprefix(
+%       [include, cc_path])) and os.path.isdir(include):
 %     cleaned_includes.append(include)
 %   end
 % end
