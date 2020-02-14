@@ -727,22 +727,16 @@ class PlatformIOLibBuilder(LibBuilderBase):
     @property
     def lib_ldf_mode(self):
         return self.validate_ldf_mode(
-            self.env.GetProjectOption(
-                "lib_ldf_mode",
-                self._manifest.get("build", {}).get(
-                    "libLDFMode", LibBuilderBase.lib_ldf_mode.fget(self)
-                ),
+            self._manifest.get("build", {}).get(
+                "libLDFMode", LibBuilderBase.lib_ldf_mode.fget(self)
             )
         )
 
     @property
     def lib_compat_mode(self):
         return self.validate_compat_mode(
-            self.env.GetProjectOption(
-                "lib_compat_mode",
-                self._manifest.get("build", {}).get(
-                    "libCompatMode", LibBuilderBase.lib_compat_mode.fget(self)
-                ),
+            self._manifest.get("build", {}).get(
+                "libCompatMode", LibBuilderBase.lib_compat_mode.fget(self)
             )
         )
 

@@ -13,6 +13,7 @@ PlatformIO Core 4
 * Improved support of PIO Home on card-sized PC (Raspberry Pi, etc.) (`issue #3313 <https://github.com/platformio/platformio-core/issues/3313>`_)
 * Froze "marshmallow" dependency to 2.X for Python 2 (`issue #3380 <https://github.com/platformio/platformio-core/issues/3380>`_)
 * Fixed "TypeError: unsupported operand type(s)" when system environment variable is used by project configuration parser (`issue #3377 <https://github.com/platformio/platformio-core/issues/3377>`_)
+* Fixed an issue when Library Dependency Finder (LDF) ignores custom "libLDFMode" and "libCompatMode" options in `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
 
 
 4.2.0 (2020-02-12)
