@@ -9,7 +9,7 @@ PlatformIO Core 4
 4.2.1 (2020-02-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Improved VSCode template with special ``forceInclude`` field for direct inludes via ``-include`` flag (`issue #3379 <https://github.com/platformio/platformio-core/issues/3379>`_)
+* Improved VSCode template with special ``forceInclude`` field for direct includes via ``-include`` flag (`issue #3379 <https://github.com/platformio/platformio-core/issues/3379>`_)
 * Improved support of PIO Home on card-sized PC (Raspberry Pi, etc.) (`issue #3313 <https://github.com/platformio/platformio-core/issues/3313>`_)
 * Froze "marshmallow" dependency to 2.X for Python 2 (`issue #3380 <https://github.com/platformio/platformio-core/issues/3380>`_)
 * Fixed "TypeError: unsupported operand type(s)" when system environment variable is used by project configuration parser (`issue #3377 <https://github.com/platformio/platformio-core/issues/3377>`_)
