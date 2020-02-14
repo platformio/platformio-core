@@ -35,7 +35,7 @@ install_requires = [
     "semantic_version>=2.8.1,<3",
     "tabulate>=0.8.3,<1",
     "pyelftools>=0.25,<1",
-    "marshmallow%s" % (">=2,<3" if PY2 else ">=3"),
+    "marshmallow%s" % (">=2,<3" if PY2 else ">=2"),
 ]
 
 
