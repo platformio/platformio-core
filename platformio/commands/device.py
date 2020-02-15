@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import sys
 from fnmatch import fnmatch
-from os import getcwd
 
 import click
 from serial.tools import miniterm
 
 from platformio import exception, fs, util
-from platformio.compat import dump_json_to_unicode
+from platformio.compat import dump_json_to_unicode, load_python_module
 from platformio.managers.platform import PlatformFactory
 from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
@@ -165,7 +165,7 @@ def device_list(  # pylint: disable=too-many-branches
 @click.option(
     "-d",
     "--project-dir",
-    default=getcwd,
+    default=os.getcwd,
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
 )
 @click.option(
@@ -186,6 +186,12 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
     except NotPlatformIOProjectError:
         pass
 
+    platform = None
+    if "platform" in project_options:
+        with fs.cd(kwargs["project_dir"]):
+            platform = PlatformFactory.newPlatform(project_options["platform"])
+            register_platform_filters(platform, kwargs["project_dir"], kwargs["environment"])
+
     if not kwargs["port"]:
         ports = util.get_serial_ports(filter_hwid=True)
         if len(ports) == 1:
@@ -193,7 +199,7 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         elif "platform" in project_options and "board" in project_options:
             board_hwids = get_board_hwids(
                 kwargs["project_dir"],
-                project_options["platform"],
+                platform,
                 project_options["board"],
             )
             for item in ports:
@@ -226,7 +232,6 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         )
     except Exception as e:
         raise exception.MinitermException(e)
-
 
 def apply_project_monitor_options(cli_options, project_options):
     for k in ("port", "speed", "rts", "dtr"):
@@ -274,7 +279,51 @@ def get_project_options(environment=None):
 def get_board_hwids(project_dir, platform, board):
     with fs.cd(project_dir):
         return (
-            PlatformFactory.newPlatform(platform)
+            platform
             .board_config(board)
             .get("build.hwids", [])
         )
+
+class DeviceMonitorFilter(miniterm.Transform):
+    # NAME = "esp_exception_decoder" - all filters must have one
+
+    # Called by PlatformIO to pass context
+    def __init__(self, project_dir, environment):
+        super(DeviceMonitorFilter, self).__init__()
+
+        self.project_dir = project_dir
+        self.environment = environment
+
+        self.config = ProjectConfig.get_instance()
+        if not self.environment:
+            default_envs = self.config.default_envs()
+            if default_envs:
+                self.environment = default_envs[0]
+            else:
+                self.environment = self.config.envs()[0]
+
+    # Called by the miniterm library when the filter is acutally used
+    def __call__(self):
+        return self
+
+def register_platform_filters(platform, project_dir, environment):
+    monitor_dir = os.path.join(platform.get_dir(), "monitor")
+    if not os.path.isdir(monitor_dir):
+        return
+
+    for fn in os.listdir(monitor_dir):
+        if not fn.startswith("filter_") or not fn.endswith(".py"):
+            continue
+        path = os.path.join(monitor_dir, fn)
+        if not os.path.isfile(path):
+            continue
+
+        dot = fn.find(".")
+        module = load_python_module("platformio.commands.device.monitor.%s" % fn[:dot], path)
+        for key in dir(module):
+            member = getattr(module, key)
+            try:
+                if issubclass(member, DeviceMonitorFilter) and hasattr(member, "NAME"):
+                    miniterm.TRANSFORMATIONS[member.NAME] = member(project_dir, environment)
+            except TypeError:
+                pass
