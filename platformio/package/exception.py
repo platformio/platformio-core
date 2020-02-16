@@ -41,5 +41,5 @@ class ManifestValidationError(ManifestException):
     def __str__(self):
         return (
             "Invalid manifest fields: %s. \nPlease check specification -> "
-            "http://docs.platformio.org/page/librarymanager/config.html" % self.messages
+            "htts://docs.platformio.org/page/librarymanager/config.html" % self.messages
         )
