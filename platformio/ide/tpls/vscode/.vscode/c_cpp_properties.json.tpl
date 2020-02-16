@@ -21,7 +21,7 @@
 % end
 %
 % def split_args(args_string):
-%   return click.parser.split_arg_string(to_unix_path(arg_string))
+%   return click.parser.split_arg_string(to_unix_path(args_string))
 % end
 %
 % def filter_args(args, allowed, ignore=None):
