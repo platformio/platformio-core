@@ -1,9 +1,3 @@
-{
-    "configurations": [
-        {
-            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
-        },
-        {
 % import os
 % import platform
 % import re
@@ -28,10 +22,8 @@
 %   if not allowed:
 %     return []
 %   end
-%   if not ignore:
-%     ignore = []
-%   end
 %
+%   ignore = ignore or []
 %   result = []
 %   i = 0
 %   length = len(args)
@@ -89,6 +81,12 @@
 % forced_includes = _find_forced_includes(
 %   filter_args(cc_m_flags, ["-include"]), cleaned_includes)
 %
+{
+    "configurations": [
+        {
+            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
+        },
+        {
 % if systype == "windows":
             "name": "Win32",
 % elif systype == "darwin":
