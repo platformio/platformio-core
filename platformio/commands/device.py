@@ -319,7 +319,7 @@ def register_platform_filters(platform, project_dir, environment):
             continue
 
         dot = fn.find(".")
-        module = load_python_module("platformio.commands.device.monitor.%s" % fn[:dot], path)
+        module = load_python_module("platformio.commands.device.%s" % fn[:dot], path)
         for key in dir(module):
             member = getattr(module, key)
             try:
