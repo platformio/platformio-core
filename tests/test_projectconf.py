@@ -185,6 +185,7 @@ def test_sysenv_options(config):
     assert config.get("env:base", "upload_port") is None
     assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
     os.environ["PLATFORMIO_BUILD_FLAGS"] = "-DSYSENVDEPS1 -DSYSENVDEPS2"
+    os.environ["PLATFORMIO_BUILD_UNFLAGS"] = "-DREMOVE_MACRO"
     os.environ["PLATFORMIO_UPLOAD_PORT"] = "/dev/sysenv/port"
     os.environ["__PIO_TEST_CNF_EXTRA_FLAGS"] = "-L /usr/local/lib"
     assert config.get("custom", "extra_flags") == "-L /usr/local/lib"
@@ -194,6 +195,7 @@ def test_sysenv_options(config):
     ]
     assert config.get("env:base", "upload_port") == "/dev/sysenv/port"
     assert config.get("env:extra_2", "upload_port") == "/dev/extra_2/port"
+    assert config.get("env:base", "build_unflags") == ["-DREMOVE_MACRO"]
 
     # env var as option
     assert config.options(env="test_extends") == [
@@ -206,6 +208,7 @@ def test_sysenv_options(config):
         "lib_deps",
         "lib_ignore",
         "custom_builtin_option",
+        "build_unflags",
         "upload_port",
     ]
 
@@ -215,6 +218,7 @@ def test_sysenv_options(config):
 
     # cleanup system environment variables
     del os.environ["PLATFORMIO_BUILD_FLAGS"]
+    del os.environ["PLATFORMIO_BUILD_UNFLAGS"]
     del os.environ["PLATFORMIO_UPLOAD_PORT"]
     del os.environ["__PIO_TEST_CNF_EXTRA_FLAGS"]
     del os.environ["PLATFORMIO_HOME_DIR"]

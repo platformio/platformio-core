@@ -23,6 +23,8 @@ from platformio import (
     __url__,
     __version__,
 )
+from platformio.compat import PY2
+
 
 install_requires = [
     "bottle<0.13",
@@ -33,8 +35,9 @@ install_requires = [
     "semantic_version>=2.8.1,<3",
     "tabulate>=0.8.3,<1",
     "pyelftools>=0.25,<1",
-    "marshmallow>=2.20.5",
+    "marshmallow%s" % (">=2,<3" if PY2 else ">=2"),
 ]
+
 
 setup(
     name=__title__,

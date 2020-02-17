@@ -301,6 +301,6 @@ class TestDirNotExists(PlatformioException):
         "A test folder '{0}' does not exist.\nPlease create 'test' "
         "directory in project's root and put a test set.\n"
         "More details about Unit "
-        "Testing: http://docs.platformio.org/page/plus/"
+        "Testing: https://docs.platformio.org/page/plus/"
         "unit-testing.html"
     )

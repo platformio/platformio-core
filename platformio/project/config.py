@@ -273,7 +273,9 @@ class ProjectConfigBase(object):
                     if envvar_value:
                         break
             if envvar_value and option_meta.multiple:
-                value += ("" if value == MISSING else "\n") + envvar_value
+                if value == MISSING:
+                    value = ""
+                value += ("\n" if value else "") + envvar_value
             elif envvar_value and value == MISSING:
                 value = envvar_value
 

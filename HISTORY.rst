@@ -1,10 +1,21 @@
 Release Notes
 =============
 
-.. _release_notes_4_0:
+.. _release_notes_4:
 
-PlatformIO Core 4.0
--------------------
+PlatformIO Core 4
+-----------------
+
+4.2.1 (2020-02-17)
+~~~~~~~~~~~~~~~~~~
+
+* Improved VSCode template with special ``forceInclude`` field for direct includes via ``-include`` flag (`issue #3379 <https://github.com/platformio/platformio-core/issues/3379>`_)
+* Improved support of PIO Home on card-sized PC (Raspberry Pi, etc.) (`issue #3313 <https://github.com/platformio/platformio-core/issues/3313>`_)
+* Froze "marshmallow" dependency to 2.X for Python 2 (`issue #3380 <https://github.com/platformio/platformio-core/issues/3380>`_)
+* Fixed "TypeError: unsupported operand type(s)" when system environment variable is used by project configuration parser (`issue #3377 <https://github.com/platformio/platformio-core/issues/3377>`_)
+* Fixed an issue when Library Dependency Finder (LDF) ignores custom "libLDFMode" and "libCompatMode" options in `library.json <http://docs.platformio.org/page/librarymanager/config.html>`__
+* Fixed an issue when generating of compilation database "compile_commands.json" does not work with Python 2.7 (`issue #3378 <https://github.com/platformio/platformio-core/issues/3378>`_)
+
 
 4.2.0 (2020-02-12)
 ~~~~~~~~~~~~~~~~~~
@@ -182,8 +193,8 @@ PlatformIO Core 4.0
   - Fixed "systemd-udevd" warnings in `99-platformio-udev.rules <http://docs.platformio.org/page/faq.html#platformio-udev-rules>`__ (`issue #2442 <https://github.com/platformio/platformio-core/issues/2442>`_)
   - Fixed an issue when package cache (Library Manager) expires too fast (`issue #2559 <https://github.com/platformio/platformio-core/issues/2559>`_)
 
-PlatformIO Core 3.0
--------------------
+PlatformIO Core 3
+-----------------
 
 3.6.7 (2019-04-23)
 ~~~~~~~~~~~~~~~~~~
@@ -783,8 +794,8 @@ PlatformIO Core 3.0
   (`issue #742 <https://github.com/platformio/platformio-core/issues/742>`_)
 * Stopped supporting Python 2.6
 
-PlatformIO Core 2.0
---------------------
+PlatformIO Core 2
+-----------------
 
 2.11.2 (2016-08-02)
 ~~~~~~~~~~~~~~~~~~~
@@ -1569,8 +1580,8 @@ PlatformIO Core 2.0
 * Fixed bug with creating copies of source files
   (`issue #177 <https://github.com/platformio/platformio-core/issues/177>`_)
 
-PlatformIO Core 1.0
--------------------
+PlatformIO Core 1
+-----------------
 
 1.5.0 (2015-05-15)
 ~~~~~~~~~~~~~~~~~~
@@ -1760,8 +1771,8 @@ PlatformIO Core 1.0
   error (`issue #81 <https://github.com/platformio/platformio-core/issues/81>`_)
 * Several bug fixes, increased stability and performance improvements
 
-PlatformIO Core 0.0
--------------------
+PlatformIO Core Preview
+-----------------------
 
 0.10.2 (2015-01-06)
 ~~~~~~~~~~~~~~~~~~~
