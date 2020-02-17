@@ -25,6 +25,7 @@ import os
 import SCons
 
 from platformio.builder.tools.platformio import SRC_ASM_EXT, SRC_C_EXT, SRC_CXX_EXT
+from platformio.proc import where_is_program
 
 # Implements the ability for SCons to emit a compilation database for the MongoDB project. See
 # http://clang.llvm.org/docs/JSONCompilationDatabase.html for details on what a compilation
@@ -145,7 +146,6 @@ def ScanCompilationDb(node, env, path):
 
 
 def generate(env, **kwargs):
-
     static_obj, shared_obj = SCons.Tool.createObjBuilders(env)
 
     env["COMPILATIONDB_COMSTR"] = kwargs.get(
@@ -195,6 +195,14 @@ def generate(env, **kwargs):
     )
 
     def CompilationDatabase(env, target):
+        # Resolve absolute path of toolchain
+        for cmd in ("CC", "CXX", "AS"):
+            if cmd not in env:
+                continue
+            env[cmd] = where_is_program(
+                env.subst("$%s" % cmd), env.subst("${ENV['PATH']}")
+            )
+
         result = env.__COMPILATIONDB_Database(target=target, source=[])
 
         env.AlwaysBuild(result)
