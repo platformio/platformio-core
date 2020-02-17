@@ -1,11 +1,8 @@
-{
-    "configurations": [
-        {
-            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
-        },
-        {
 % import os
 % import platform
+% import re
+%
+% import click
 %
 % systype = platform.system().lower()
 %
@@ -15,6 +12,33 @@
 %
 % def _escape_required(flag):
 %   return " " in flag and systype == "windows"
+% end
+%
+% def split_args(args_string):
+%   return click.parser.split_arg_string(to_unix_path(args_string))
+% end
+%
+% def filter_args(args, allowed, ignore=None):
+%   if not allowed:
+%     return []
+%   end
+%
+%   ignore = ignore or []
+%   result = []
+%   i = 0
+%   length = len(args)
+%     while(i < length):
+%      if any(args[i].startswith(f) for f in allowed) and not any(
+%        args[i].startswith(f) for f in ignore):
+%        result.append(args[i])
+%        if i + 1 < length and not args[i + 1].startswith("-"):
+%          i += 1
+%          result.append(args[i])
+%        end
+%       end
+%      i += 1
+%    end
+%    return result
 % end
 %
 % def _find_abs_path(inc, inc_paths):
@@ -28,45 +52,16 @@
 %
 % def _find_forced_includes(flags, inc_paths):
 %   result = []
-%   i = 0
-%   length = len(flags)
-%   while(i < length):
-%     if flags[i].startswith("-include"):
-%       i = i + 1
-%       if i < length and not flags[i].startswith("-"):
-%         inc = flags[i]
-%         if not os.path.isabs(inc):
-%           inc = _find_abs_path(inc, inc_paths)
-%         end
-%         result.append(to_unix_path(inc))
-%       end
+%   for f in flags:
+%     inc = ""
+%     if f.startswith("-include") and f.split("-include")[1].strip():
+%       inc = f.split("-include")[1].strip()
+%     elif not f.startswith("-"):
+%       inc = f
 %     end
-%     i = i + 1
-%   end
-%   return result
-% end
-%
-% def _split_flags(flags):
-%   result = []
-%   i = 0
-%   flags = flags.strip()
-%   while i < len(flags):
-%       current_arg = []
-%       while i < len(flags) and flags[i] != " ":
-%         if flags[i] == '"':
-%           quotes_idx = flags.find('"', i + 1)
-%           current_arg.extend(flags[i + 1:quotes_idx])
-%           i = quotes_idx + 1
-%         else:
-%           current_arg.append(flags[i])
-%           i = i + 1
-%         end
-%       end
-%       arg = "".join(current_arg)
-%       if arg.strip():
-%         result.append(arg.strip())
-%       end
-%       i = i + 1
+%     if inc:
+%       result.append(_find_abs_path(inc, inc_paths))
+%     end
 %   end
 %   return result
 % end
@@ -79,6 +74,19 @@
 %   end
 % end
 %
+% STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
+% cc_stds = STD_RE.findall(cc_flags)
+% cxx_stds = STD_RE.findall(cxx_flags)
+% cc_m_flags = split_args(cc_flags)
+% forced_includes = _find_forced_includes(
+%   filter_args(cc_m_flags, ["-include"]), cleaned_includes)
+%
+{
+    "configurations": [
+        {
+            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
+        },
+        {
 % if systype == "windows":
             "name": "Win32",
 % elif systype == "darwin":
@@ -109,13 +117,6 @@
                 ""
             ],
             "intelliSenseMode": "clang-x64",
-% import re
-% STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
-% cc_stds = STD_RE.findall(cc_flags)
-% cxx_stds = STD_RE.findall(cxx_flags)
-% cc_m_flags = _split_flags(cc_flags)
-% forced_includes = _find_forced_includes(cc_m_flags, cleaned_includes)
-%
 % if cc_stds:
             "cStandard": "c{{ cc_stds[-1] }}",
 % end
@@ -134,8 +135,7 @@
             "compilerArgs": [
 % for flag in [
 %     '"%s"' % _escape(f) if _escape_required(f) else f
-%     for f in cc_m_flags
-%     if f.startswith(("-m", "-i", "@")) and not f.startswith("-include")
+%     for f in filter_args(cc_m_flags, ["-m", "-i", "@"], ["-include"])
 % ]:
                 "{{ flag }}",
 % end
