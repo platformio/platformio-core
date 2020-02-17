@@ -18,7 +18,7 @@ from twisted.web import static  # pylint: disable=import-error
 
 class WebRoot(static.File):
     def render_GET(self, request):
-        if request.args.get("__shutdown__", False):
+        if request.args.get(b"__shutdown__", False):
             reactor.stop()
             return "Server has been stopped"
 

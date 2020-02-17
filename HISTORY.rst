@@ -6,6 +6,11 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
+4.2.2 (2020-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed an issue when quitting from PlatformIO IDE does not shutdown PIO Home server
+
 4.2.1 (2020-02-17)
 ~~~~~~~~~~~~~~~~~~
 
