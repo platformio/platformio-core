@@ -6,7 +6,7 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
-4.2.1 (2020-02-??)
+4.2.1 (2020-02-17)
 ~~~~~~~~~~~~~~~~~~
 
 * Improved VSCode template with special ``forceInclude`` field for direct includes via ``-include`` flag (`issue #3379 <https://github.com/platformio/platformio-core/issues/3379>`_)
