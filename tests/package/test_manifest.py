@@ -112,6 +112,21 @@ def test_library_json_parser():
         },
     )
 
+    raw_data = parser.LibraryJsonManifestParser(
+        '{"dependencies": ["dep1", "dep2", "@owner/dep3"]}'
+    ).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
+    assert not jsondiff.diff(
+        raw_data,
+        {
+            "dependencies": [
+                {"name": "@owner/dep3"},
+                {"name": "dep1"},
+                {"name": "dep2"},
+            ],
+        },
+    )
+
     # broken dependencies
     with pytest.raises(parser.ManifestParserError):
         parser.LibraryJsonManifestParser({"dependencies": ["deps1", "deps2"]})

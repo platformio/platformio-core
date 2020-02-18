@@ -363,13 +363,15 @@ class LibraryJsonManifestParser(BaseManifestParser):
             return [dict(name=name, version=version) for name, version in raw.items()]
         if isinstance(raw, list):
             for i, dependency in enumerate(raw):
-                assert isinstance(dependency, dict)
-                for k, v in dependency.items():
-                    if k not in ("platforms", "frameworks", "authors"):
-                        continue
-                    if "*" in v:
-                        del raw[i][k]
-                    raw[i][k] = util.items_to_list(v)
+                if isinstance(dependency, dict):
+                    for k, v in dependency.items():
+                        if k not in ("platforms", "frameworks", "authors"):
+                            continue
+                        if "*" in v:
+                            del raw[i][k]
+                        raw[i][k] = util.items_to_list(v)
+                else:
+                    raw[i] = {"name": dependency}
             return raw
         raise ManifestParserError(
             "Invalid dependencies format, should be list or dictionary"
