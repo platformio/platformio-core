@@ -186,14 +186,6 @@ def after_upgrade(ctx):
                 click.style("https://platformio.org/platformio-ide", fg="cyan"),
             )
         )
-    if not is_ci():
-        click.echo(
-            "- %s us with PlatformIO Plus > %s"
-            % (
-                click.style("support", fg="cyan"),
-                click.style("https://pioplus.com", fg="cyan"),
-            )
-        )
 
     click.echo("*" * terminal_width)
     click.echo("")
