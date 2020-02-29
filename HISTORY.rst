@@ -10,6 +10,7 @@ PlatformIO Core 4
 ~~~~~~~~~~~~~~~~~~
 
 * Fixed an issue when quitting from PlatformIO IDE does not shutdown PIO Home server
+* Fixed an issue "the JSON object must be str, not 'bytes'" when PIO Home is used with Python 3.5 (`issue #3396 <https://github.com/platformio/platformio-core/issues/3396>`_)
 
 4.2.1 (2020-02-17)
 ~~~~~~~~~~~~~~~~~~
