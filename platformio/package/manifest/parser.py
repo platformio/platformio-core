@@ -392,6 +392,8 @@ class ModuleJsonManifestParser(BaseManifestParser):
         if "licenses" in data:
             data["license"] = self._parse_license(data.get("licenses"))
             del data["licenses"]
+        if "dependencies" in data:
+            data["dependencies"] = self._parse_dependencies(data["dependencies"])
         return data
 
     def _parse_authors(self, raw):
@@ -410,6 +412,15 @@ class ModuleJsonManifestParser(BaseManifestParser):
         if not raw or not isinstance(raw, list):
             return None
         return raw[0].get("type")
+
+    @staticmethod
+    def _parse_dependencies(raw):
+        if isinstance(raw, dict):
+            return [
+                dict(name=name, version=version, frameworks=["mbed"])
+                for name, version in raw.items()
+            ]
+        raise ManifestParserError("Invalid dependencies format, should be a dictionary")
 
 
 class LibraryPropertiesManifestParser(BaseManifestParser):

@@ -154,6 +154,10 @@ def test_module_json_parser():
     "url": "git@github.com:username/repo.git"
   },
   "version": "1.2.3",
+  "dependencies": {
+    "usefulmodule": "^1.2.3",
+    "simplelog": "ARMmbed/simplelog#~0.0.1"
+  },
   "customField": "Custom Value"
 }
 """
@@ -173,6 +177,14 @@ def test_module_json_parser():
             "authors": [{"email": "name@surname.com", "name": "Name Surname"}],
             "version": "1.2.3",
             "repository": {"type": "git", "url": "git@github.com:username/repo.git"},
+            "dependencies": [
+                {"name": "usefulmodule", "version": "^1.2.3", "frameworks": ["mbed"]},
+                {
+                    "name": "simplelog",
+                    "version": "ARMmbed/simplelog#~0.0.1",
+                    "frameworks": ["mbed"],
+                },
+            ],
             "customField": "Custom Value",
         },
     )
