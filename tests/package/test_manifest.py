@@ -162,9 +162,10 @@ def test_module_json_parser():
 }
 """
 
-    mp = parser.ModuleJsonManifestParser(contents)
+    raw_data = parser.ModuleJsonManifestParser(contents).as_dict()
+    raw_data["dependencies"] = sorted(raw_data["dependencies"], key=lambda a: a["name"])
     assert not jsondiff.diff(
-        mp.as_dict(),
+        raw_data,
         {
             "name": "YottaLibrary",
             "description": "This is Yotta library",
@@ -178,12 +179,12 @@ def test_module_json_parser():
             "version": "1.2.3",
             "repository": {"type": "git", "url": "git@github.com:username/repo.git"},
             "dependencies": [
-                {"name": "usefulmodule", "version": "^1.2.3", "frameworks": ["mbed"]},
                 {
                     "name": "simplelog",
                     "version": "ARMmbed/simplelog#~0.0.1",
                     "frameworks": ["mbed"],
                 },
+                {"name": "usefulmodule", "version": "^1.2.3", "frameworks": ["mbed"]},
             ],
             "customField": "Custom Value",
         },
