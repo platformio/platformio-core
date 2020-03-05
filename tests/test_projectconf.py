@@ -123,6 +123,8 @@ def test_defaults(config):
     )
     assert config.get("env:extra_2", "lib_compat_mode") == "soft"
     assert config.get("env:extra_2", "build_type") == "release"
+    assert config.get("env:extra_2", "build_type", None) is None
+    assert config.get("env:extra_2", "lib_archive", "no") is False
 
 
 def test_sections(config):
