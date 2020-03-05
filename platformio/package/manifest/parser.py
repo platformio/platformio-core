@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import inspect
+import io
 import json
 import os
 import re
@@ -21,7 +22,6 @@ import requests
 
 from platformio import util
 from platformio.compat import get_class_attributes, string_types
-from platformio.fs import get_file_contents
 from platformio.package.exception import ManifestParserError, UnknownManifestError
 from platformio.project.helpers import is_platformio_project
 
@@ -59,24 +59,29 @@ class ManifestFileType(object):
 
 class ManifestParserFactory(object):
     @staticmethod
-    def new_from_file(path, remote_url=False):
+    def read_manifest_contents(path):
+        with io.open(path, encoding="utf-8") as fp:
+            return fp.read()
+
+    @classmethod
+    def new_from_file(cls, path, remote_url=False):
         if not path or not os.path.isfile(path):
             raise UnknownManifestError("Manifest file does not exist %s" % path)
         type_from_uri = ManifestFileType.from_uri(path)
         if not type_from_uri:
             raise UnknownManifestError("Unknown manifest file type %s" % path)
         return ManifestParserFactory.new(
-            get_file_contents(path, encoding="utf8"), type_from_uri, remote_url
+            cls.read_manifest_contents(path), type_from_uri, remote_url
         )
 
-    @staticmethod
-    def new_from_dir(path, remote_url=None):
+    @classmethod
+    def new_from_dir(cls, path, remote_url=None):
         assert os.path.isdir(path), "Invalid directory %s" % path
 
         type_from_uri = ManifestFileType.from_uri(remote_url) if remote_url else None
         if type_from_uri and os.path.isfile(os.path.join(path, type_from_uri)):
             return ManifestParserFactory.new(
-                get_file_contents(os.path.join(path, type_from_uri), encoding="utf8"),
+                cls.read_manifest_contents(os.path.join(path, type_from_uri)),
                 type_from_uri,
                 remote_url=remote_url,
                 package_dir=path,
@@ -88,7 +93,7 @@ class ManifestParserFactory(object):
                 "Unknown manifest file type in %s directory" % path
             )
         return ManifestParserFactory.new(
-            get_file_contents(os.path.join(path, type_from_dir), encoding="utf8"),
+            cls.read_manifest_contents(os.path.join(path, type_from_dir)),
             type_from_dir,
             remote_url=remote_url,
             package_dir=path,

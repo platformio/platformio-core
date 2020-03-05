@@ -244,7 +244,8 @@ class ProjectRPC(object):
                 return project_dir
             if not os.path.isdir(src_dir):
                 os.makedirs(src_dir)
-            fs.write_file_contents(main_path, main_content.strip())
+            with open(main_path, "w") as fp:
+                fp.write(main_content.strip())
         return project_dir
 
     def import_arduino(self, board, use_arduino_libs, arduino_project_dir):

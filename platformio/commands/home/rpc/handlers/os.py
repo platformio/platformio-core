@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 
 import glob
+import io
 import os
 import shutil
 from functools import cmp_to_key
@@ -66,7 +67,8 @@ class OSRPC(object):
         if uri.startswith("http"):
             return self.fetch_content(uri, data, headers, cache_valid)
         if os.path.isfile(uri):
-            return fs.get_file_contents(uri, encoding="utf8")
+            with io.open(uri, encoding="utf-8") as fp:
+                return fp.read()
         return None
 
     @staticmethod

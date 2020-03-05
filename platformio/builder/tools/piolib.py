@@ -82,7 +82,8 @@ class LibBuilderFactory(object):
                     fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
                 ):
                     continue
-                content = fs.get_file_contents(join(root, fname))
+                with open(join(root, fname)) as fp:
+                    content = fp.read()
                 if not content:
                     continue
                 if "Arduino.h" in content and include_re.search(content):
