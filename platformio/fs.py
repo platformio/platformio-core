@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import io
 import json
 import os
 import re
@@ -49,30 +48,6 @@ def get_source_dir():
     return os.path.dirname(curpath)
 
 
-def get_file_contents(path, encoding=None):
-    try:
-        with io.open(path, encoding=encoding) as fp:
-            return fp.read()
-    except UnicodeDecodeError:
-        click.secho(
-            "Unicode decode error has occurred, please remove invalid "
-            "(non-ASCII or non-UTF8) characters from %s file" % path,
-            fg="yellow",
-            err=True,
-        )
-        with io.open(path, encoding="latin-1") as fp:
-            return fp.read()
-
-
-def write_file_contents(path, contents, errors=None):
-    try:
-        with open(path, "w") as fp:
-            return fp.write(contents)
-    except UnicodeEncodeError:
-        with io.open(path, "w", encoding="latin-1", errors=errors) as fp:
-            return fp.write(contents)
-
-
 def load_json(file_path):
     try:
         with open(file_path, "r") as f:
@@ -102,11 +77,14 @@ def ensure_udev_rules():
     from platformio.util import get_systype  # pylint: disable=import-outside-toplevel
 
     def _rules_to_set(rules_path):
-        return set(
-            l.strip()
-            for l in get_file_contents(rules_path).split("\n")
-            if l.strip() and not l.startswith("#")
-        )
+        result = set()
+        with open(rules_path) as fp:
+            for line in fp.readlines():
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                result.add(line)
+        return result
 
     if "linux" not in get_systype():
         return None

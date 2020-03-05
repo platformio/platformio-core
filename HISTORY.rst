@@ -12,6 +12,7 @@ PlatformIO Core 4
 * Added support for Arm Mbed "module.json" ``dependencies`` field (`issue #3400 <https://github.com/platformio/platformio-core/issues/3400>`_)
 * Fixed an issue when quitting from PlatformIO IDE does not shutdown PIO Home server
 * Fixed an issue "the JSON object must be str, not 'bytes'" when PIO Home is used with Python 3.5 (`issue #3396 <https://github.com/platformio/platformio-core/issues/3396>`_)
+* Fixed an issue when Python 2 does not keep encoding when converting .INO file (`issue #3393 <https://github.com/platformio/platformio-core/issues/3393>`_)
 
 4.2.1 (2020-02-17)
 ~~~~~~~~~~~~~~~~~~
