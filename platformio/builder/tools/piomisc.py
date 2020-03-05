@@ -53,7 +53,7 @@ class InoToCPPConverter(object):
         self._safe_encoding = None
 
     def read_safe_contents(self, path):
-        last_exc = None
+        error_reported = False
         for encoding in (
             "utf-8",
             None,
@@ -66,18 +66,17 @@ class InoToCPPConverter(object):
                     contents = fp.read()
                     self._safe_encoding = encoding
                     return contents
-            except UnicodeDecodeError as e:
-                last_exc = e
-                click.secho(
-                    "Unicode decode error has occurred, please remove invalid "
-                    "(non-ASCII or non-UTF8) characters from %s file or convert it to UTF-8"
-                    % path,
-                    fg="yellow",
-                    err=True,
-                )
-        if last_exc:
-            raise last_exc
-        return None
+            except UnicodeDecodeError:
+                if not error_reported:
+                    error_reported = True
+                    click.secho(
+                        "Unicode decode error has occurred, please remove invalid "
+                        "(non-ASCII or non-UTF8) characters from %s file or convert it to UTF-8"
+                        % path,
+                        fg="yellow",
+                        err=True,
+                    )
+        return ""
 
     def write_safe_contents(self, path, contents):
         with io.open(

@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 
 import hashlib
+import io
 import os
 import re
 import sys
@@ -82,7 +83,7 @@ class LibBuilderFactory(object):
                     fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
                 ):
                     continue
-                with open(join(root, fname)) as fp:
+                with io.open(join(root, fname), errors="ignore") as fp:
                     content = fp.read()
                 if not content:
                     continue
