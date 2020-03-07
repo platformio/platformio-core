@@ -44,7 +44,7 @@ def test_global_install_registry(clirunner, validate_cliresult, isolated_pio_hom
             "ArduinoJson@~5.10.0",
             "547@2.2.4",
             "AsyncMqttClient@<=0.8.2",
-            "999@77d4eb3f8a",
+            "Adafruit PN532@1.2.0",
         ],
     )
     validate_cliresult(result)
@@ -62,7 +62,8 @@ def test_global_install_registry(clirunner, validate_cliresult, isolated_pio_hom
         "AsyncMqttClient_ID346",
         "ESPAsyncTCP_ID305",
         "AsyncTCP_ID1826",
-        "RFcontrol_ID999",
+        "Adafruit PN532_ID29",
+        "Adafruit BusIO_ID6214",
     ]
     assert set(items1) == set(items2)
 
@@ -135,7 +136,7 @@ def test_install_duplicates(clirunner, validate_cliresult, without_internet):
     assert "is already installed" in result.output
 
     # by ID
-    result = clirunner.invoke(cmd_lib, ["-g", "install", "999"])
+    result = clirunner.invoke(cmd_lib, ["-g", "install", "29"])
     validate_cliresult(result)
     assert "is already installed" in result.output
 
@@ -202,7 +203,8 @@ def test_global_lib_list(clirunner, validate_cliresult):
         "PJON",
         "PJON",
         "PubSubClient",
-        "RFcontrol",
+        "Adafruit PN532",
+        "Adafruit BusIO",
         "platformio-libmirror",
         "rs485-nodeproto",
     ]
@@ -219,7 +221,7 @@ def test_global_lib_list(clirunner, validate_cliresult):
         "PJON@07fe9aa",
         "PJON@1fb26fd",
         "PubSubClient@bef5814",
-        "RFcontrol@77d4eb3f8a",
+        "Adafruit PN532@1.2.0",
     ]
     assert set(versions1) >= set(versions2)
 
@@ -230,9 +232,7 @@ def test_global_lib_update_check(clirunner, validate_cliresult):
     )
     validate_cliresult(result)
     output = json.loads(result.output)
-    assert set(["RFcontrol", "ESPAsyncTCP", "NeoPixelBus"]) == set(
-        [l["name"] for l in output]
-    )
+    assert set(["ESPAsyncTCP", "NeoPixelBus"]) == set([l["name"] for l in output])
 
 
 def test_global_lib_update(clirunner, validate_cliresult):
@@ -252,8 +252,7 @@ def test_global_lib_update(clirunner, validate_cliresult):
     result = clirunner.invoke(cmd_lib, ["-g", "update"])
     validate_cliresult(result)
     assert result.output.count("[Detached]") == 5
-    assert result.output.count("[Up-to-date]") == 10
-    assert "Uninstalling RFcontrol @ 77d4eb3f8a" in result.output
+    assert result.output.count("[Up-to-date]") == 12
 
     # update unknown library
     result = clirunner.invoke(cmd_lib, ["-g", "update", "Unknown"])
@@ -266,9 +265,10 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(cmd_lib, ["-g", "list", "--json-output"])
     validate_cliresult(result)
     items = json.loads(result.output)
-    result = clirunner.invoke(cmd_lib, ["-g", "uninstall", items[5]["__pkg_dir"]])
+    items = sorted(items, key=lambda item: item["__pkg_dir"])
+    result = clirunner.invoke(cmd_lib, ["-g", "uninstall", items[0]["__pkg_dir"]])
     validate_cliresult(result)
-    assert "Uninstalling AsyncTCP" in result.output
+    assert ("Uninstalling %s" % items[0]["name"]) in result.output
 
     # uninstall the rest libraries
     result = clirunner.invoke(
@@ -279,7 +279,7 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_home):
             "1",
             "https://github.com/bblanchon/ArduinoJson.git",
             "ArduinoJson@!=5.6.7",
-            "RFcontrol",
+            "Adafruit PN532",
         ],
     )
     validate_cliresult(result)
@@ -291,13 +291,14 @@ def test_global_lib_uninstall(clirunner, validate_cliresult, isolated_pio_home):
         "PubSubClient",
         "ArduinoJson@src-69ebddd821f771debe7ee734d3c7fa81",
         "ESPAsyncTCP_ID305",
-        "SomeLib_ID54",
+        "ESP32WebServer",
         "NeoPixelBus_ID547",
         "PJON",
         "AsyncMqttClient_ID346",
         "ArduinoJson_ID64",
+        "SomeLib_ID54",
         "PJON@src-79de467ebe19de18287becff0a1fb42d",
-        "ESP32WebServer",
+        "AsyncTCP_ID1826",
     ]
     assert set(items1) == set(items2)
 
