@@ -58,7 +58,7 @@ if PY2:
     def path_to_unicode(path):
         if isinstance(path, unicode):
             return path
-        return path.decode(get_filesystem_encoding()).encode("utf-8")
+        return path.decode(get_filesystem_encoding())
 
     def hashlib_encode_data(data):
         if is_bytes(data):
