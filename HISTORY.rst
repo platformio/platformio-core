@@ -6,7 +6,7 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
-4.2.2 (2020-??-??)
+4.3.0 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
 * Control device monitor output with `filters and text transformations <https://docs.platformio.org/page/userguide/device/cmd_monitor.html#cmd-device-monitor-filters>`__
