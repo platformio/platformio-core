@@ -38,12 +38,14 @@ def get_locale_encoding():
         return None
 
 
-def get_class_attributes(cls):
-    attributes = inspect.getmembers(cls, lambda a: not inspect.isroutine(a))
+def get_object_members(obj, ignore_private=True):
+    members = inspect.getmembers(obj, lambda a: not inspect.isroutine(a))
+    if not ignore_private:
+        return members
     return {
-        a[0]: a[1]
-        for a in attributes
-        if not (a[0].startswith("__") and a[0].endswith("__"))
+        item[0]: item[1]
+        for item in members
+        if not (item[0].startswith("__") and item[0].endswith("__"))
     }
 
 

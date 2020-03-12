@@ -21,7 +21,7 @@ import re
 import requests
 
 from platformio import util
-from platformio.compat import get_class_attributes, string_types
+from platformio.compat import get_object_members, string_types
 from platformio.package.exception import ManifestParserError, UnknownManifestError
 from platformio.project.helpers import is_platformio_project
 
@@ -40,7 +40,7 @@ class ManifestFileType(object):
 
     @classmethod
     def items(cls):
-        return get_class_attributes(ManifestFileType)
+        return get_object_members(ManifestFileType)
 
     @classmethod
     def from_uri(cls, uri):
