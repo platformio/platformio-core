@@ -9,6 +9,7 @@ PlatformIO Core 4
 4.2.2 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Control device monitor output with `filters and text transformations <https://docs.platformio.org/page/userguide/device/cmd_monitor.html#cmd-device-monitor-filters>`__
 * Added support for Arm Mbed "module.json" ``dependencies`` field (`issue #3400 <https://github.com/platformio/platformio-core/issues/3400>`_)
 * Improved support for Arduino "library.properties" ``depends`` field
 * Fixed an issue when quitting from PlatformIO IDE does not shutdown PIO Home server

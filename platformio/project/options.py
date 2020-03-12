@@ -447,6 +447,14 @@ ProjectOptions = OrderedDict(
             ),
             ConfigEnvOption(
                 group="monitor",
+                name="monitor_filters",
+                description=(
+                    "Apply the filters and text transformations to monitor output"
+                ),
+                multiple=True,
+            ),
+            ConfigEnvOption(
+                group="monitor",
                 name="monitor_rts",
                 description="A monitor initial RTS line state",
                 type=click.IntRange(0, 1),
