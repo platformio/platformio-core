@@ -75,7 +75,7 @@ def makeEmitCompilationDbEntry(comstr):
         :param env: Environment for use building this node
         :return: target(s), source(s)
         """
-        
+
         # Resolve absolute path of toolchain
         for cmd in ("CC", "CXX", "AS"):
             if cmd not in env:
