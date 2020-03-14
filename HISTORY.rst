@@ -9,6 +9,15 @@ PlatformIO Core 4
 4.3.0 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* Added initial support for an official `PlatformIO for CLion IDE <https://docs.platformio.org/en/latest/integration/ide/clion.html>`__ plugin:
+
+  - Smart C and C++ editor
+  - Code refactoring
+  - On-the-fly code analysis
+  - "New PlatformIO Project" wizard
+  - Building, Uploading, Testing
+  - Integrated debugger (inline variable view, conditional breakpoints, expressions, watchpoints, peripheral registers, multi-thread support, etc.)
+
 * Control device monitor output with `filters and text transformations <https://docs.platformio.org/page/userguide/device/cmd_monitor.html#cmd-device-monitor-filters>`__
 * Added support for Arm Mbed "module.json" ``dependencies`` field (`issue #3400 <https://github.com/platformio/platformio-core/issues/3400>`_)
 * Improved support for Arduino "library.properties" ``depends`` field
