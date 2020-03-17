@@ -20,10 +20,10 @@ PlatformIO Core 4
 
 * `Device Monitor 2.0 <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html>`__
 
-   - Added **PlatformIO Device Monitor Filter API** (dev-platforms can extend base device monitor with a custom functionality, such as exception decoding) (`pull #3383 <https://github.com/platformio/platformio-core/pull/3383>`_)
-   - Configure project device monitor with `monitor_filters <https://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-filters>`__ option
-   - Show a timestamp for each new line with ``time`` filter (`issue #981 <https://github.com/platformio/platformio-core/issues/981>`_)
-   - `Capture device monitor output to a file <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html#capture-output-to-a-file>`__ with ``log2file`` filter (`issue #670 <https://github.com/platformio/platformio-core/issues/670>`_)
+  - Added **PlatformIO Device Monitor Filter API** (dev-platforms can extend base device monitor with a custom functionality, such as exception decoding) (`pull #3383 <https://github.com/platformio/platformio-core/pull/3383>`_)
+  - Configure project device monitor with `monitor_filters <https://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-filters>`__ option
+  - Show a timestamp for each new line with ``time`` filter (`issue #981 <https://github.com/platformio/platformio-core/issues/981>`_)
+  - `Capture device monitor output to a file <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html#capture-output-to-a-file>`__ with ``log2file`` filter (`issue #670 <https://github.com/platformio/platformio-core/issues/670>`_)
 
 * Added support for Arm Mbed "module.json" ``dependencies`` field (`issue #3400 <https://github.com/platformio/platformio-core/issues/3400>`_)
 * Improved support for Arduino "library.properties" ``depends`` field
