@@ -76,6 +76,16 @@ def makeEmitCompilationDbEntry(comstr):
         :return: target(s), source(s)
         """
 
+        # Resolve absolute path of toolchain
+        for cmd in ("CC", "CXX", "AS"):
+            if cmd not in env:
+                continue
+            if os.path.isabs(env[cmd]):
+                continue
+            env[cmd] = where_is_program(
+                env.subst("$%s" % cmd), env.subst("${ENV['PATH']}")
+            )
+
         dbtarget = __CompilationDbNode(source)
 
         entry = env.__COMPILATIONDB_Entry(
@@ -195,14 +205,6 @@ def generate(env, **kwargs):
     )
 
     def CompilationDatabase(env, target):
-        # Resolve absolute path of toolchain
-        for cmd in ("CC", "CXX", "AS"):
-            if cmd not in env:
-                continue
-            env[cmd] = where_is_program(
-                env.subst("$%s" % cmd), env.subst("${ENV['PATH']}")
-            )
-
         result = env.__COMPILATIONDB_Database(target=target, source=[])
 
         env.AlwaysBuild(result)
