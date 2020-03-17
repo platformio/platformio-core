@@ -92,7 +92,7 @@ def main():
           "https://raw.githubusercontent.com/platformio/platformio-core-installer/develop/get-platformio.py")
     url = "https://raw.githubusercontent.com/platformio/platformio-core-installer/develop/get-platformio.py"
     with tempfile.NamedTemporaryFile() as tmp_file:
-        dst = download_file(url, str(tmp_file))
+        dst = download_file(url, str(tmp_file.name))
         command = [sys.executable, dst]
         command.extend(sys.argv[1:])
         subprocess.check_output(command)
