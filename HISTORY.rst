@@ -26,6 +26,7 @@ PlatformIO Core 4
 * Fixed an issue when Python 2 does not keep encoding when converting ".ino" (`issue #3393 <https://github.com/platformio/platformio-core/issues/3393>`_)
 * Fixed an issue when ``"libArchive": false`` in "library.json" does not work (`issue #3403 <https://github.com/platformio/platformio-core/issues/3403>`_)
 * Fixed an issue when not all commands in `compilation database "compile_commands.json" <https://docs.platformio.org/page/integration/compile_commands.html>`__ use absolute paths (`pull #3415 <https://github.com/platformio/platformio-core/pull/3415>`_)
+* Fixed an issue when unknown transport is used for `PIO Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html>`__ engine (`issue #3422 <https://github.com/platformio/platformio-core/issues/3422>`_)
 
 4.2.1 (2020-02-17)
 ~~~~~~~~~~~~~~~~~~
