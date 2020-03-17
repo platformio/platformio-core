@@ -76,27 +76,31 @@ def get_board_hwids(project_dir, platform, board):
         return platform.board_config(board).get("build.hwids", [])
 
 
+def load_monitor_filter(path, project_dir=None, environment=None):
+    name = os.path.basename(path)
+    name = name[: name.find(".")]
+    module = load_python_module("platformio.commands.device.filters.%s" % name, path)
+    for cls in get_object_members(module).values():
+        if (
+            not inspect.isclass(cls)
+            or not issubclass(cls, DeviceMonitorFilter)
+            or cls == DeviceMonitorFilter
+        ):
+            continue
+        obj = cls(project_dir, environment)
+        miniterm.TRANSFORMATIONS[obj.NAME] = obj
+    return True
+
+
 def register_platform_filters(platform, project_dir, environment):
     monitor_dir = os.path.join(platform.get_dir(), "monitor")
     if not os.path.isdir(monitor_dir):
         return
 
-    for fn in os.listdir(monitor_dir):
-        if not fn.startswith("filter_") or not fn.endswith(".py"):
+    for name in os.listdir(monitor_dir):
+        if not name.startswith("filter_") or not name.endswith(".py"):
             continue
-        path = os.path.join(monitor_dir, fn)
+        path = os.path.join(monitor_dir, name)
         if not os.path.isfile(path):
             continue
-
-        module = load_python_module(
-            "platformio.commands.device.filters.%s" % fn[: fn.find(".")], path
-        )
-        for cls in get_object_members(module).values():
-            if (
-                not inspect.isclass(cls)
-                or not issubclass(cls, DeviceMonitorFilter)
-                or cls == DeviceMonitorFilter
-            ):
-                continue
-            obj = cls(project_dir, environment)
-            miniterm.TRANSFORMATIONS[obj.NAME] = obj
+        load_monitor_filter(path, project_dir, environment)

@@ -18,7 +18,7 @@ from platformio.project.config import ProjectConfig
 
 
 class DeviceMonitorFilter(miniterm.Transform):
-    def __init__(self, project_dir, environment):
+    def __init__(self, project_dir=None, environment=None):
         """ Called by PlatformIO to pass context """
         super(DeviceMonitorFilter, self).__init__()
 
@@ -30,7 +30,7 @@ class DeviceMonitorFilter(miniterm.Transform):
             default_envs = self.config.default_envs()
             if default_envs:
                 self.environment = default_envs[0]
-            else:
+            elif self.config.envs():
                 self.environment = self.config.envs()[0]
 
     def __call__(self):

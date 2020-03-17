@@ -174,6 +174,13 @@ def device_list(  # pylint: disable=too-many-branches
     help="Load configuration from `platformio.ini` and specified environment",
 )
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
+    # load default monitor filters
+    filters_dir = os.path.join(fs.get_source_dir(), "commands", "device", "filters")
+    for name in os.listdir(filters_dir):
+        if not name.endswith(".py"):
+            continue
+        device_helpers.load_monitor_filter(os.path.join(filters_dir, name))
+
     project_options = {}
     try:
         with fs.cd(kwargs["project_dir"]):
@@ -221,10 +228,10 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
 
     if not kwargs["quiet"]:
         click.echo(
-            "Available filters and text transformations: %s"
+            "--- Available filters and text transformations: %s"
             % ", ".join(sorted(miniterm.TRANSFORMATIONS.keys()))
         )
-        click.echo("More details at http://bit.ly/pio-monitor-filters")
+        click.echo("--- More details at http://bit.ly/pio-monitor-filters")
     try:
         miniterm.main(
             default_port=kwargs["port"],

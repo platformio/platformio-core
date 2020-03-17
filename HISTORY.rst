@@ -9,7 +9,7 @@ PlatformIO Core 4
 4.3.0 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Added initial support for an official `PlatformIO for CLion IDE <https://docs.platformio.org/page/integration/ide/clion.html>`__ plugin:
+* Initial support for an official `PlatformIO for CLion IDE <https://docs.platformio.org/page/integration/ide/clion.html>`__ plugin:
 
   - Smart C and C++ editor
   - Code refactoring
@@ -18,7 +18,13 @@ PlatformIO Core 4
   - Building, Uploading, Testing
   - Integrated debugger (inline variable view, conditional breakpoints, expressions, watchpoints, peripheral registers, multi-thread support, etc.)
 
-* Control device monitor output with `filters and text transformations <https://docs.platformio.org/page/userguide/device/cmd_monitor.html#cmd-device-monitor-filters>`__ (`pull #3383 <https://github.com/platformio/platformio-core/pull/3383>`_)
+* `Device Monitor 2.0 <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html>`__
+
+   - Added **PlatformIO Device Monitor Filter API** (dev-platforms can extend base device monitor with a custom functionality, such as exception decoding) (`pull #3383 <https://github.com/platformio/platformio-core/pull/3383>`_)
+   - Configure project device monitor with `monitor_filters <https://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-filters>`__ option
+   - Show a timestamp for each new line with ``time`` filter (`issue #981 <https://github.com/platformio/platformio-core/issues/981>`_)
+   - `Capture device monitor output to a file <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html#capture-output-to-a-file>`__ with ``log2file`` filter (`issue #670 <https://github.com/platformio/platformio-core/issues/670>`_)
+
 * Added support for Arm Mbed "module.json" ``dependencies`` field (`issue #3400 <https://github.com/platformio/platformio-core/issues/3400>`_)
 * Improved support for Arduino "library.properties" ``depends`` field
 * Fixed an issue when quitting from PlatformIO IDE does not shutdown PIO Home server
