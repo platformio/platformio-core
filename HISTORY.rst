@@ -9,7 +9,7 @@ PlatformIO Core 4
 4.3.0 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* Added initial support for an official `PlatformIO for CLion IDE <https://docs.platformio.org/en/latest/integration/ide/clion.html>`__ plugin:
+* Added initial support for an official `PlatformIO for CLion IDE <https://docs.platformio.org/page/integration/ide/clion.html>`__ plugin:
 
   - Smart C and C++ editor
   - Code refactoring
@@ -18,13 +18,14 @@ PlatformIO Core 4
   - Building, Uploading, Testing
   - Integrated debugger (inline variable view, conditional breakpoints, expressions, watchpoints, peripheral registers, multi-thread support, etc.)
 
-* Control device monitor output with `filters and text transformations <https://docs.platformio.org/page/userguide/device/cmd_monitor.html#cmd-device-monitor-filters>`__
+* Control device monitor output with `filters and text transformations <https://docs.platformio.org/page/userguide/device/cmd_monitor.html#cmd-device-monitor-filters>`__ (`pull #3383 <https://github.com/platformio/platformio-core/pull/3383>`_)
 * Added support for Arm Mbed "module.json" ``dependencies`` field (`issue #3400 <https://github.com/platformio/platformio-core/issues/3400>`_)
 * Improved support for Arduino "library.properties" ``depends`` field
 * Fixed an issue when quitting from PlatformIO IDE does not shutdown PIO Home server
 * Fixed an issue "the JSON object must be str, not 'bytes'" when PIO Home is used with Python 3.5 (`issue #3396 <https://github.com/platformio/platformio-core/issues/3396>`_)
 * Fixed an issue when Python 2 does not keep encoding when converting ".ino" (`issue #3393 <https://github.com/platformio/platformio-core/issues/3393>`_)
 * Fixed an issue when ``"libArchive": false`` in "library.json" does not work (`issue #3403 <https://github.com/platformio/platformio-core/issues/3403>`_)
+* Fixed an issue when not all commands in `compilation database "compile_commands.json" <https://docs.platformio.org/page/integration/compile_commands.html>`__ use absolute paths (`pull #3415 <https://github.com/platformio/platformio-core/pull/3415>`_)
 
 4.2.1 (2020-02-17)
 ~~~~~~~~~~~~~~~~~~
@@ -54,7 +55,7 @@ PlatformIO Core 4
   - Show computed project configuration with a new `platformio project config <https://docs.platformio.org/page/userguide/project/cmd_config.html>`_ command or dump to JSON with ``platformio project config --json-output`` (`issue #3335 <https://github.com/platformio/platformio-core/issues/3335>`_)
   - Moved ``platformio init`` command to `platformio project init <https://docs.platformio.org/page/userguide/project/cmd_init.html>`_
 
-* Generate `compilation database "compile_commands.json" <https://docs.platformio.org/page/faq.html#compilation-database-compile-commands-json>`_ (`issue #2990 <https://github.com/platformio/platformio-core/issues/2990>`_)
+* Generate `compilation database "compile_commands.json" <https://docs.platformio.org/page/integration/compile_commands.html>`__ (`issue #2990 <https://github.com/platformio/platformio-core/issues/2990>`_)
 * Control debug flags and optimization level with a new `debug_build_flags <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-build-flags>`__ option
 * Install a dev-platform with ALL declared packages using a new ``--with-all-packages`` option for `pio platform install <https://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__ command  (`issue #3345 <https://github.com/platformio/platformio-core/issues/3345>`_)
 * Added support for "pythonPackages" in `platform.json <https://docs.platformio.org/page/platforms/creating_platform.html#manifest-file-platform-json>`__ manifest (PlatformIO Package Manager will install dependent Python packages from PyPi registry automatically when dev-platform is installed)
