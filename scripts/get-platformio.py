@@ -17,6 +17,8 @@ import io
 import sys
 import subprocess
 
+NEW_SCRIPT_URL = "https://raw.githubusercontent.com/platformio/platformio-core-installer/develop/get-platformio.py"
+
 
 def download_with_requests(url, dst):
     import requests
@@ -46,7 +48,10 @@ def download_with_urllib3(url, dst):
 
 
 def download_with_urllib(url, dst):
-    from urllib.request import urlopen
+    if sys.version_info[0] == 3:
+        from urllib.request import urlopen
+    else:
+        from urllib import urlopen
 
     response = urlopen(url)
     CHUNK = 16 * 1024
@@ -89,10 +94,9 @@ def download_file(url, dst):
 
 def main():
     print("This installer script is deprecated and will be removed in the next release. Please use %s" %
-          "https://raw.githubusercontent.com/platformio/platformio-core-installer/develop/get-platformio.py")
-    url = "https://raw.githubusercontent.com/platformio/platformio-core-installer/develop/get-platformio.py"
+          NEW_SCRIPT_URL)
     with tempfile.NamedTemporaryFile() as tmp_file:
-        dst = download_file(url, str(tmp_file.name))
+        dst = download_file(NEW_SCRIPT_URL, str(tmp_file.name))
         command = [sys.executable, dst]
         command.extend(sys.argv[1:])
         subprocess.check_output(command)
