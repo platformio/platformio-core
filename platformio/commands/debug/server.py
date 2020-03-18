@@ -69,7 +69,6 @@ class DebugServer(BaseProcess):
         openocd_pipe_allowed = all(
             [not self.debug_options["port"], "openocd" in server_executable]
         )
-        openocd_pipe_allowed = False
         if openocd_pipe_allowed:
             args = []
             if server["cwd"]:
