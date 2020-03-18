@@ -99,7 +99,7 @@ def main():
         dst = download_file(NEW_SCRIPT_URL, str(tmp_file.name))
         command = [sys.executable, dst]
         command.extend(sys.argv[1:])
-        subprocess.check_output(command)
+        subprocess.check_call(command)
 
 
 if __name__ == "__main__":
