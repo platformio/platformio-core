@@ -24,8 +24,8 @@ class SendOnEnter(DeviceMonitorFilter):
 
     def tx(self, text):
         self._buffer += text
-        if "\r\n" in self._buffer:
-            text = self._buffer
+        if self._buffer.endswith("\r\n"):
+            text = self._buffer[:-2]
             self._buffer = ""
             return text
         return ""
