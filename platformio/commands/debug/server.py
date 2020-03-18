@@ -131,7 +131,10 @@ class DebugServer(BaseProcess):
         while (
             not self._process_ended
             and elapsed < timeout
-            and not (self._last_activity < (time.time() - ready_delay))
+            and (
+                not self._last_activity
+                or not (self._last_activity < (time.time() - ready_delay))
+            )
         ):
             yield self.async_sleep(delay)
             elapsed += delay
