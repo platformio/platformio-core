@@ -25,6 +25,7 @@ PlatformIO Core 4
   - `Capture device monitor output to a file <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html#capture-output-to-a-file>`__ with ``log2file`` filter (`issue #670 <https://github.com/platformio/platformio-core/issues/670>`_)
   - Show a timestamp for each new line with ``time`` filter (`issue #981 <https://github.com/platformio/platformio-core/issues/981>`_)
   - Send a text to device on ENTER with ``send_on_enter`` filter (`issue #926 <https://github.com/platformio/platformio-core/issues/926>`_)
+  - Show a hexadecimal representation of the data (code point of each character) with ``hexlify`` filter
 
 * Added support for Arm Mbed "module.json" ``dependencies`` field (`issue #3400 <https://github.com/platformio/platformio-core/issues/3400>`_)
 * Improved support for Arduino "library.properties" ``depends`` field
