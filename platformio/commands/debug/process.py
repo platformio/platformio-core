@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import signal
+import time
 
 import click
 from twisted.internet import protocol  # pylint: disable=import-error
@@ -22,18 +23,20 @@ from platformio.compat import string_types
 from platformio.proc import get_pythonexe_path
 from platformio.project.helpers import get_project_core_dir
 
-LOG_FILE = None
-
 
 class BaseProcess(protocol.ProcessProtocol, object):
 
     STDOUT_CHUNK_SIZE = 2048
+    LOG_FILE = None
 
     COMMON_PATTERNS = {
         "PLATFORMIO_HOME_DIR": get_project_core_dir(),
         "PLATFORMIO_CORE_DIR": get_project_core_dir(),
         "PYTHONEXE": get_pythonexe_path(),
     }
+
+    def __init__(self):
+        self._last_activity = 0
 
     def apply_patterns(self, source, patterns=None):
         _patterns = self.COMMON_PATTERNS.copy()
@@ -61,23 +64,30 @@ class BaseProcess(protocol.ProcessProtocol, object):
 
         return source
 
+    def onStdInData(self, data):
+        self._last_activity = time.time()
+        if self.LOG_FILE:
+            with open(self.LOG_FILE, "ab") as fp:
+                fp.write(data)
+
     def outReceived(self, data):
-        if LOG_FILE:
-            with open(LOG_FILE, "ab") as fp:
+        self._last_activity = time.time()
+        if self.LOG_FILE:
+            with open(self.LOG_FILE, "ab") as fp:
                 fp.write(data)
         while data:
             chunk = data[: self.STDOUT_CHUNK_SIZE]
             click.echo(chunk, nl=False)
             data = data[self.STDOUT_CHUNK_SIZE :]
 
-    @staticmethod
-    def errReceived(data):
-        if LOG_FILE:
-            with open(LOG_FILE, "ab") as fp:
+    def errReceived(self, data):
+        self._last_activity = time.time()
+        if self.LOG_FILE:
+            with open(self.LOG_FILE, "ab") as fp:
                 fp.write(data)
         click.echo(data, nl=False, err=True)
 
-    @staticmethod
-    def processEnded(_):
+    def processEnded(self, _):
+        self._last_activity = time.time()
         # Allow terminating via SIGINT/CTRL+C
         signal.signal(signal.SIGINT, signal.default_int_handler)

@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import os
+import time
 from os.path import isdir, isfile, join
 
+from twisted.internet import defer  # pylint: disable=import-error
 from twisted.internet import reactor  # pylint: disable=import-error
 
 from platformio import fs, util
@@ -26,13 +28,15 @@ from platformio.proc import where_is_program
 
 class DebugServer(BaseProcess):
     def __init__(self, debug_options, env_options):
+        super(DebugServer, self).__init__()
         self.debug_options = debug_options
         self.env_options = env_options
 
-        self._debug_port = None
+        self._debug_port = ":3333"
         self._transport = None
         self._process_ended = False
 
+    @defer.inlineCallbacks
     def spawn(self, patterns):  # pylint: disable=too-many-branches
         systype = util.get_systype()
         server = self.debug_options.get("server")
@@ -62,10 +66,10 @@ class DebugServer(BaseProcess):
                 % server_executable
             )
 
-        self._debug_port = ":3333"
         openocd_pipe_allowed = all(
             [not self.debug_options["port"], "openocd" in server_executable]
         )
+        openocd_pipe_allowed = False
         if openocd_pipe_allowed:
             args = []
             if server["cwd"]:
@@ -79,43 +83,67 @@ class DebugServer(BaseProcess):
             )
             self._debug_port = '| "%s" %s' % (server_executable, str_args)
             self._debug_port = fs.to_unix_path(self._debug_port)
-        else:
-            env = os.environ.copy()
-            # prepend server "lib" folder to LD path
-            if (
-                "windows" not in systype
-                and server["cwd"]
-                and isdir(join(server["cwd"], "lib"))
-            ):
-                ld_key = (
-                    "DYLD_LIBRARY_PATH" if "darwin" in systype else "LD_LIBRARY_PATH"
-                )
-                env[ld_key] = join(server["cwd"], "lib")
-                if os.environ.get(ld_key):
-                    env[ld_key] = "%s:%s" % (env[ld_key], os.environ.get(ld_key))
-            # prepend BIN to PATH
-            if server["cwd"] and isdir(join(server["cwd"], "bin")):
-                env["PATH"] = "%s%s%s" % (
-                    join(server["cwd"], "bin"),
-                    os.pathsep,
-                    os.environ.get("PATH", os.environ.get("Path", "")),
-                )
+            return self._debug_port
 
-            self._transport = reactor.spawnProcess(
-                self,
-                server_executable,
-                [server_executable] + server["arguments"],
-                path=server["cwd"],
-                env=env,
+        env = os.environ.copy()
+        # prepend server "lib" folder to LD path
+        if (
+            "windows" not in systype
+            and server["cwd"]
+            and isdir(join(server["cwd"], "lib"))
+        ):
+            ld_key = "DYLD_LIBRARY_PATH" if "darwin" in systype else "LD_LIBRARY_PATH"
+            env[ld_key] = join(server["cwd"], "lib")
+            if os.environ.get(ld_key):
+                env[ld_key] = "%s:%s" % (env[ld_key], os.environ.get(ld_key))
+        # prepend BIN to PATH
+        if server["cwd"] and isdir(join(server["cwd"], "bin")):
+            env["PATH"] = "%s%s%s" % (
+                join(server["cwd"], "bin"),
+                os.pathsep,
+                os.environ.get("PATH", os.environ.get("Path", "")),
             )
-            if "mspdebug" in server_executable.lower():
-                self._debug_port = ":2000"
-            elif "jlink" in server_executable.lower():
-                self._debug_port = ":2331"
-            elif "qemu" in server_executable.lower():
-                self._debug_port = ":1234"
 
-        return self._transport
+        self._transport = reactor.spawnProcess(
+            self,
+            server_executable,
+            [server_executable] + server["arguments"],
+            path=server["cwd"],
+            env=env,
+        )
+        if "mspdebug" in server_executable.lower():
+            self._debug_port = ":2000"
+        elif "jlink" in server_executable.lower():
+            self._debug_port = ":2331"
+        elif "qemu" in server_executable.lower():
+            self._debug_port = ":1234"
+
+        yield self._wait_until_ready()
+
+        return self._debug_port
+
+    @defer.inlineCallbacks
+    def _wait_until_ready(self):
+        timeout = 10
+        elapsed = 0
+        delay = 1
+        ready_delay = 0.5
+        while (
+            not self._process_ended
+            and elapsed < timeout
+            and (
+                not self._last_activity
+                or not (self._last_activity < (time.time() - ready_delay))
+            )
+        ):
+            yield self.async_sleep(delay)
+            elapsed += delay
+
+    @staticmethod
+    def async_sleep(secs):
+        d = defer.Deferred()
+        reactor.callLater(secs, d.callback, None)
+        return d
 
     def get_debug_port(self):
         return self._debug_port

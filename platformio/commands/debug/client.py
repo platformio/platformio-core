@@ -20,6 +20,7 @@ from hashlib import sha1
 from os.path import basename, dirname, isdir, join, realpath, splitext
 from tempfile import mkdtemp
 
+from twisted.internet import defer  # pylint: disable=import-error
 from twisted.internet import protocol  # pylint: disable=import-error
 from twisted.internet import reactor  # pylint: disable=import-error
 from twisted.internet import stdio  # pylint: disable=import-error
@@ -33,8 +34,6 @@ from platformio.commands.debug.server import DebugServer
 from platformio.compat import hashlib_encode_data, is_bytes
 from platformio.project.helpers import get_project_cache_dir
 
-LOG_FILE = None
-
 
 class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
 
@@ -42,6 +41,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
     INIT_COMPLETED_BANNER = "PlatformIO: Initialization completed"
 
     def __init__(self, project_dir, args, debug_options, env_options):
+        super(GDBClient, self).__init__()
         self.project_dir = project_dir
         self.args = list(args)
         self.debug_options = debug_options
@@ -55,10 +55,10 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self._gdbsrc_dir = mkdtemp(dir=get_project_cache_dir(), prefix=".piodebug-")
 
         self._target_is_run = False
-        self._last_server_activity = 0
         self._auto_continue_timer = None
         self._errors_buffer = b""
 
+    @defer.inlineCallbacks
     def spawn(self, gdb_path, prog_path):
         session_hash = gdb_path + prog_path
         self._session_id = sha1(hashlib_encode_data(session_hash)).hexdigest()
@@ -75,10 +75,10 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             "LOAD_CMDS": "\n".join(self.debug_options["load_cmds"] or []),
         }
 
-        self._debug_server.spawn(patterns)
-
+        yield self._debug_server.spawn(patterns)
         if not patterns["DEBUG_PORT"]:
             patterns["DEBUG_PORT"] = self._debug_server.get_debug_port()
+
         self.generate_pioinit(self._gdbsrc_dir, patterns)
 
         # start GDB client
@@ -100,9 +100,10 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
             args.extend(["--data-directory", gdb_data_dir])
         args.append(patterns["PROG_PATH"])
 
-        return reactor.spawnProcess(
+        transport = reactor.spawnProcess(
             self, gdb_path, args, path=self.project_dir, env=os.environ
         )
+        defer.returnValue(transport)
 
     @staticmethod
     def _get_data_dir(gdb_path):
@@ -175,12 +176,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         stdio.StandardIO(p)
 
     def onStdInData(self, data):
-        if LOG_FILE:
-            with open(LOG_FILE, "ab") as fp:
-                fp.write(data)
-
-        self._last_server_activity = time.time()
-
+        super(GDBClient, self).onStdInData(data)
         if b"-exec-run" in data:
             if self._target_is_run:
                 token, _ = data.split(b"-", 1)
@@ -206,11 +202,6 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         reactor.stop()
 
     def outReceived(self, data):
-        if LOG_FILE:
-            with open(LOG_FILE, "ab") as fp:
-                fp.write(data)
-
-        self._last_server_activity = time.time()
         super(GDBClient, self).outReceived(data)
         self._handle_error(data)
         # go to init break automatically
@@ -232,7 +223,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
 
     def _auto_exec_continue(self):
         auto_exec_delay = 0.5  # in seconds
-        if self._last_server_activity > (time.time() - auto_exec_delay):
+        if self._last_activity > (time.time() - auto_exec_delay):
             return
         if self._auto_continue_timer:
             self._auto_continue_timer.stop()
