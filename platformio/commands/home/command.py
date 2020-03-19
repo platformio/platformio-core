@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=too-many-locals
+# pylint: disable=too-many-locals,too-many-statements
 
 import mimetypes
 import socket
@@ -63,6 +63,7 @@ def cli(port, host, no_open, shutdown_timeout):
 
     from twisted.internet import reactor
     from twisted.web import server
+    from twisted.internet.error import CannotListenError
 
     from platformio.commands.home.rpc.handlers.app import AppRPC
     from platformio.commands.home.rpc.handlers.ide import IDERPC
@@ -121,6 +122,12 @@ def cli(port, host, no_open, shutdown_timeout):
     click.echo("")
     click.echo("Open PlatformIO Home in your browser by this URL => %s" % home_url)
 
+    try:
+        reactor.listenTCP(port, site, interface=host)
+    except CannotListenError as e:
+        click.secho(str(e), fg="red", err=True)
+        already_started = True
+
     if already_started:
         click.secho(
             "PlatformIO Home server is already started in another process.", fg="yellow"
@@ -129,7 +136,6 @@ def cli(port, host, no_open, shutdown_timeout):
 
     click.echo("PIO Home has been started. Press Ctrl+C to shutdown.")
 
-    reactor.listenTCP(port, site, interface=host)
     reactor.run()
 
 
