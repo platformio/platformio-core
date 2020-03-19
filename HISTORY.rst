@@ -6,7 +6,7 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
-4.3.0 (2020-??-??)
+4.3.0 (2020-03-19)
 ~~~~~~~~~~~~~~~~~~
 
 * Initial support for an official `PlatformIO for CLion IDE <https://docs.platformio.org/page/integration/ide/clion.html>`__ plugin:
