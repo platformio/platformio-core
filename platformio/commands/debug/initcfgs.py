@@ -126,16 +126,17 @@ $INIT_BREAK
 
 GDB_RENODE_INIT_CONFIG = """
 define pio_reset_halt_target
-    monitor reset
+    monitor machine Reset
+    $LOAD_CMDS
+    monitor start
 end
 
 define pio_reset_run_target
-    monitor reset
+    pio_reset_halt_target
 end
 
 target extended-remote $DEBUG_PORT
 $LOAD_CMDS
-pio_reset_halt_target
 $INIT_BREAK
 monitor start
 """
