@@ -190,7 +190,7 @@ def get_contrib_pysite_deps():
 def pioplus_call(args, **kwargs):
     if WINDOWS and sys.version_info < (2, 7, 6):
         raise exception.PlatformioException(
-            "PlatformIO Core Plus v%s does not run under Python version %s.\n"
+            "PlatformIO Remote v%s does not run under Python version %s.\n"
             "Minimum supported version is 2.7.6, please upgrade Python.\n"
             "Python 3 is not yet supported.\n" % (__version__, sys.version)
         )

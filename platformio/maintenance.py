@@ -28,7 +28,7 @@ from platformio.commands.upgrade import get_latest_version
 from platformio.managers.core import update_core_packages
 from platformio.managers.lib import LibraryManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
-from platformio.proc import is_ci, is_container
+from platformio.proc import is_container
 
 
 def on_platformio_start(ctx, force, caller):
@@ -184,14 +184,6 @@ def after_upgrade(ctx):
             % (
                 click.style("try", fg="cyan"),
                 click.style("https://platformio.org/platformio-ide", fg="cyan"),
-            )
-        )
-    if not is_ci():
-        click.echo(
-            "- %s us with PlatformIO Plus > %s"
-            % (
-                click.style("support", fg="cyan"),
-                click.style("https://pioplus.com", fg="cyan"),
             )
         )
 

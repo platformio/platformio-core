@@ -58,8 +58,8 @@ Instruments
 * `Continuous Integration <https://docs.platformio.org/page/ci/index.html?utm_source=github&utm_medium=core>`_
 * `Advanced Scripting API <https://docs.platformio.org/page/projectconf/advanced_scripting.html?utm_source=github&utm_medium=core>`_
 
-PIO Plus
---------
+Professional
+------------
 
 * `PIO Check <https://docs.platformio.org/page/plus/pio-check.html?utm_source=github&utm_medium=core>`_
 * `PIO Remote <https://docs.platformio.org/page/plus/pio-remote.html?utm_source=github&utm_medium=core>`_

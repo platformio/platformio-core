@@ -19,7 +19,7 @@ from string import Template
 
 import click
 
-from platformio import exception, fs
+from platformio import exception
 
 TRANSPORT_OPTIONS = {
     "arduino": {
@@ -83,6 +83,7 @@ class TestProcessorBase(object):
         self._outputcpp_generated = False
 
     def get_transport(self):
+        transport = None
         if self.env_options.get("platform") == "native":
             transport = "native"
         elif "framework" in self.env_options:
@@ -91,7 +92,9 @@ class TestProcessorBase(object):
             transport = self.env_options["test_transport"]
         if transport not in TRANSPORT_OPTIONS:
             raise exception.PlatformioException(
-                "Unknown Unit Test transport `%s`" % transport
+                "Unknown Unit Test transport `%s`. Please check a documentation how "
+                "to create an own 'Test Transport':\n"
+                "- https://docs.platformio.org/page/plus/unit-testing.html" % transport
             )
         return transport.lower()
 
@@ -195,6 +198,7 @@ class TestProcessorBase(object):
         data = Template(tpl).substitute(baudrate=self.get_baudrate())
 
         tmp_file = join(test_dir, "output_export.cpp")
-        fs.write_file_contents(tmp_file, data)
+        with open(tmp_file, "w") as fp:
+            fp.write(data)
 
         atexit.register(delete_tmptest_file, tmp_file)

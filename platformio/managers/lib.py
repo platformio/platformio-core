@@ -26,6 +26,8 @@ from platformio import app, exception, util
 from platformio.compat import glob_escape
 from platformio.managers.package import BasePkgManager
 from platformio.managers.platform import PlatformFactory, PlatformManager
+from platformio.package.exception import ManifestException
+from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.project.config import ProjectConfig
 
 
@@ -281,8 +283,12 @@ class LibraryManager(BasePkgManager):
         if not pkg_dir:
             return None
 
-        manifest = self.load_manifest(pkg_dir)
-        if "dependencies" not in manifest:
+        manifest = None
+        try:
+            manifest = ManifestParserFactory.new_from_dir(pkg_dir).as_dict()
+        except ManifestException:
+            pass
+        if not manifest or not manifest.get("dependencies"):
             return pkg_dir
 
         if not silent:

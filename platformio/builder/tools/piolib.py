@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 
 import hashlib
+import io
 import os
 import re
 import sys
@@ -82,7 +83,8 @@ class LibBuilderFactory(object):
                     fname, piotool.SRC_BUILD_EXT + piotool.SRC_HEADER_EXT
                 ):
                     continue
-                content = fs.get_file_contents(join(root, fname))
+                with io.open(join(root, fname), errors="ignore") as fp:
+                    content = fp.read()
                 if not content:
                     continue
                 if "Arduino.h" in content and include_re.search(content):
@@ -716,9 +718,11 @@ class PlatformIOLibBuilder(LibBuilderBase):
 
     @property
     def lib_archive(self):
-        unique_value = "_not_declared_%s" % id(self)
-        global_value = self.env.GetProjectOption("lib_archive", unique_value)
-        if global_value != unique_value:
+        missing = object()
+        global_value = self.env.GetProjectConfig().getraw(
+            "env:" + self.env["PIOENV"], "lib_archive", missing
+        )
+        if global_value != missing:
             return global_value
         return self._manifest.get("build", {}).get(
             "libArchive", LibBuilderBase.lib_archive.fget(self)

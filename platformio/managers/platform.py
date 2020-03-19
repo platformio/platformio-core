@@ -436,16 +436,23 @@ class PlatformRunMixin(object):
         for key, value in variables.items():
             args.append("%s=%s" % (key.upper(), self.encode_scons_arg(value)))
 
-        def _write_and_flush(stream, data):
-            try:
-                stream.write(data)
-                stream.flush()
-            except IOError:
-                pass
-
         proc.copy_pythonpath_to_osenv()
+
+        if targets and "menuconfig" in targets:
+            return proc.exec_command(
+                args, stdout=sys.stdout, stderr=sys.stderr, stdin=sys.stdin
+            )
+
         if click._compat.isatty(sys.stdout):
-            result = proc.exec_command(
+
+            def _write_and_flush(stream, data):
+                try:
+                    stream.write(data)
+                    stream.flush()
+                except IOError:
+                    pass
+
+            return proc.exec_command(
                 args,
                 stdout=proc.BuildAsyncPipe(
                     line_callback=self._on_stdout_line,
@@ -456,13 +463,12 @@ class PlatformRunMixin(object):
                     data_callback=lambda data: _write_and_flush(sys.stderr, data),
                 ),
             )
-        else:
-            result = proc.exec_command(
-                args,
-                stdout=proc.LineBufferedAsyncPipe(line_callback=self._on_stdout_line),
-                stderr=proc.LineBufferedAsyncPipe(line_callback=self._on_stderr_line),
-            )
-        return result
+
+        return proc.exec_command(
+            args,
+            stdout=proc.LineBufferedAsyncPipe(line_callback=self._on_stdout_line),
+            stderr=proc.LineBufferedAsyncPipe(line_callback=self._on_stderr_line),
+        )
 
     def _on_stdout_line(self, line):
         if "`buildprog' is up to date." in line:

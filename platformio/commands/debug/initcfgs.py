@@ -123,3 +123,39 @@ $LOAD_CMDS
 pio_reset_halt_target
 $INIT_BREAK
 """
+
+GDB_RENODE_INIT_CONFIG = """
+define pio_reset_halt_target
+    monitor machine Reset
+    $LOAD_CMDS
+    monitor start
+end
+
+define pio_reset_run_target
+    pio_reset_halt_target
+end
+
+target extended-remote $DEBUG_PORT
+$LOAD_CMDS
+$INIT_BREAK
+monitor start
+"""
+
+
+TOOL_TO_CONFIG = {
+    "jlink": GDB_JLINK_INIT_CONFIG,
+    "mspdebug": GDB_MSPDEBUG_INIT_CONFIG,
+    "qemu": GDB_QEMU_INIT_CONFIG,
+    "blackmagic": GDB_BLACKMAGIC_INIT_CONFIG,
+    "renode": GDB_RENODE_INIT_CONFIG,
+}
+
+
+def get_gdb_init_config(debug_options):
+    tool = debug_options.get("tool")
+    if tool and tool in TOOL_TO_CONFIG:
+        return TOOL_TO_CONFIG[tool]
+    server_exe = (debug_options.get("server") or {}).get("executable", "").lower()
+    if "st-util" in server_exe:
+        return GDB_STUTIL_INIT_CONFIG
+    return GDB_DEFAULT_INIT_CONFIG

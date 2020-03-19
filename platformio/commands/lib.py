@@ -21,7 +21,7 @@ import click
 import semantic_version
 from tabulate import tabulate
 
-from platformio import exception, util
+from platformio import exception, fs, util
 from platformio.commands import PlatformioCLI
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.lib import LibraryManager, get_builtin_libs, is_builtin_lib
@@ -106,17 +106,20 @@ def cli(ctx, **options):
         if not is_platformio_project(storage_dir):
             ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
             continue
-        config = ProjectConfig.get_instance(os.path.join(storage_dir, "platformio.ini"))
-        config.validate(options["environment"], silent=in_silence)
-        libdeps_dir = config.get_optional_dir("libdeps")
-        for env in config.envs():
-            if options["environment"] and env not in options["environment"]:
-                continue
-            storage_dir = os.path.join(libdeps_dir, env)
-            ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
-            ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY][storage_dir] = config.get(
-                "env:" + env, "lib_deps", []
+        with fs.cd(storage_dir):
+            config = ProjectConfig.get_instance(
+                os.path.join(storage_dir, "platformio.ini")
             )
+            config.validate(options["environment"], silent=in_silence)
+            libdeps_dir = config.get_optional_dir("libdeps")
+            for env in config.envs():
+                if options["environment"] and env not in options["environment"]:
+                    continue
+                storage_dir = os.path.join(libdeps_dir, env)
+                ctx.meta[CTX_META_STORAGE_DIRS_KEY].append(storage_dir)
+                ctx.meta[CTX_META_STORAGE_LIBDEPS_KEY][storage_dir] = config.get(
+                    "env:" + env, "lib_deps", []
+                )
 
 
 @cli.command("install", short_help="Install library")

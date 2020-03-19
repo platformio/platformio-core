@@ -12,17 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import sys
 from fnmatch import fnmatch
-from os import getcwd
 
 import click
 from serial.tools import miniterm
 
 from platformio import exception, fs, util
+from platformio.commands.device import helpers as device_helpers
 from platformio.compat import dump_json_to_unicode
 from platformio.managers.platform import PlatformFactory
-from platformio.project.config import ProjectConfig
 from platformio.project.exception import NotPlatformIOProjectError
 
 
@@ -135,7 +135,7 @@ def device_list(  # pylint: disable=too-many-branches
     help="Set the encoding for the serial port (e.g. hexlify, "
     "Latin1, UTF-8), default: UTF-8",
 )
-@click.option("--filter", "-f", multiple=True, help="Add text transformation")
+@click.option("--filter", "-f", multiple=True, help="Add filters/text transformations")
 @click.option(
     "--eol",
     default="CRLF",
@@ -165,7 +165,7 @@ def device_list(  # pylint: disable=too-many-branches
 @click.option(
     "-d",
     "--project-dir",
-    default=getcwd,
+    default=os.getcwd,
     type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True),
 )
 @click.option(
@@ -174,27 +174,36 @@ def device_list(  # pylint: disable=too-many-branches
     help="Load configuration from `platformio.ini` and specified environment",
 )
 def device_monitor(**kwargs):  # pylint: disable=too-many-branches
-    click.echo(
-        "Looking for advanced Serial Monitor with UI? "
-        "Check http://bit.ly/pio-advanced-monitor"
-    )
+    # load default monitor filters
+    filters_dir = os.path.join(fs.get_source_dir(), "commands", "device", "filters")
+    for name in os.listdir(filters_dir):
+        if not name.endswith(".py"):
+            continue
+        device_helpers.load_monitor_filter(os.path.join(filters_dir, name))
+
     project_options = {}
     try:
         with fs.cd(kwargs["project_dir"]):
-            project_options = get_project_options(kwargs["environment"])
-        kwargs = apply_project_monitor_options(kwargs, project_options)
+            project_options = device_helpers.get_project_options(kwargs["environment"])
+        kwargs = device_helpers.apply_project_monitor_options(kwargs, project_options)
     except NotPlatformIOProjectError:
         pass
+
+    platform = None
+    if "platform" in project_options:
+        with fs.cd(kwargs["project_dir"]):
+            platform = PlatformFactory.newPlatform(project_options["platform"])
+            device_helpers.register_platform_filters(
+                platform, kwargs["project_dir"], kwargs["environment"]
+            )
 
     if not kwargs["port"]:
         ports = util.get_serial_ports(filter_hwid=True)
         if len(ports) == 1:
             kwargs["port"] = ports[0]["port"]
         elif "platform" in project_options and "board" in project_options:
-            board_hwids = get_board_hwids(
-                kwargs["project_dir"],
-                project_options["platform"],
-                project_options["board"],
+            board_hwids = device_helpers.get_board_hwids(
+                kwargs["project_dir"], platform, project_options["board"],
             )
             for item in ports:
                 for hwid in board_hwids:
@@ -211,12 +220,18 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
                 break
 
     # override system argv with patched options
-    sys.argv = ["monitor"] + options_to_argv(
+    sys.argv = ["monitor"] + device_helpers.options_to_argv(
         kwargs,
         project_options,
         ignore=("port", "baud", "rts", "dtr", "environment", "project_dir"),
     )
 
+    if not kwargs["quiet"]:
+        click.echo(
+            "--- Available filters and text transformations: %s"
+            % ", ".join(sorted(miniterm.TRANSFORMATIONS.keys()))
+        )
+        click.echo("--- More details at http://bit.ly/pio-monitor-filters")
     try:
         miniterm.main(
             default_port=kwargs["port"],
@@ -226,55 +241,3 @@ def device_monitor(**kwargs):  # pylint: disable=too-many-branches
         )
     except Exception as e:
         raise exception.MinitermException(e)
-
-
-def apply_project_monitor_options(cli_options, project_options):
-    for k in ("port", "speed", "rts", "dtr"):
-        k2 = "monitor_%s" % k
-        if k == "speed":
-            k = "baud"
-        if cli_options[k] is None and k2 in project_options:
-            cli_options[k] = project_options[k2]
-            if k != "port":
-                cli_options[k] = int(cli_options[k])
-    return cli_options
-
-
-def options_to_argv(cli_options, project_options, ignore=None):
-    result = project_options.get("monitor_flags", [])
-    for k, v in cli_options.items():
-        if v is None or (ignore and k in ignore):
-            continue
-        k = "--" + k.replace("_", "-")
-        if k in project_options.get("monitor_flags", []):
-            continue
-        if isinstance(v, bool):
-            if v:
-                result.append(k)
-        elif isinstance(v, tuple):
-            for i in v:
-                result.extend([k, i])
-        else:
-            result.extend([k, str(v)])
-    return result
-
-
-def get_project_options(environment=None):
-    config = ProjectConfig.get_instance()
-    config.validate(envs=[environment] if environment else None)
-    if not environment:
-        default_envs = config.default_envs()
-        if default_envs:
-            environment = default_envs[0]
-        else:
-            environment = config.envs()[0]
-    return config.items(env=environment, as_dict=True)
-
-
-def get_board_hwids(project_dir, platform, board):
-    with fs.cd(project_dir):
-        return (
-            PlatformFactory.newPlatform(platform)
-            .board_config(board)
-            .get("build.hwids", [])
-        )

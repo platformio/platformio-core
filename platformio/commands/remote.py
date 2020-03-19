@@ -21,7 +21,8 @@ from time import sleep
 import click
 
 from platformio import exception, fs
-from platformio.commands import device
+from platformio.commands.device import helpers as device_helpers
+from platformio.commands.device.command import device_monitor as cmd_device_monitor
 from platformio.managers.core import pioplus_call
 from platformio.project.exception import NotPlatformIOProjectError
 
@@ -197,8 +198,8 @@ def device_monitor(ctx, **kwargs):
     project_options = {}
     try:
         with fs.cd(kwargs["project_dir"]):
-            project_options = device.get_project_options(kwargs["environment"])
-        kwargs = device.apply_project_monitor_options(kwargs, project_options)
+            project_options = device_helpers.get_project_options(kwargs["environment"])
+        kwargs = device_helpers.apply_project_monitor_options(kwargs, project_options)
     except NotPlatformIOProjectError:
         pass
 
@@ -206,7 +207,7 @@ def device_monitor(ctx, **kwargs):
 
     def _tx_target(sock_dir):
         pioplus_argv = ["remote", "device", "monitor"]
-        pioplus_argv.extend(device.options_to_argv(kwargs, project_options))
+        pioplus_argv.extend(device_helpers.options_to_argv(kwargs, project_options))
         pioplus_argv.extend(["--sock", sock_dir])
         try:
             pioplus_call(pioplus_argv)
@@ -222,8 +223,9 @@ def device_monitor(ctx, **kwargs):
             sleep(0.1)
         if not t.is_alive():
             return
-        kwargs["port"] = fs.get_file_contents(sock_file)
-        ctx.invoke(device.device_monitor, **kwargs)
+        with open(sock_file) as fp:
+            kwargs["port"] = fp.read()
+        ctx.invoke(cmd_device_monitor, **kwargs)
         t.join(2)
     finally:
         fs.rmtree(sock_dir)

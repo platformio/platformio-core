@@ -280,7 +280,7 @@ class ProjectConfigBase(object):
                 value = envvar_value
 
         if value == MISSING:
-            value = option_meta.default or default
+            value = default if default != MISSING else option_meta.default
         if value == MISSING:
             return None
 

@@ -12,17 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from twisted.internet import reactor  # pylint: disable=import-error
-from twisted.web import static  # pylint: disable=import-error
+from platformio.commands.device import DeviceMonitorFilter
 
 
-class WebRoot(static.File):
-    def render_GET(self, request):
-        if request.args.get(b"__shutdown__", False):
-            reactor.stop()
-            return "Server has been stopped"
+class SendOnEnter(DeviceMonitorFilter):
+    NAME = "send_on_enter"
 
-        request.setHeader("cache-control", "no-cache, no-store, must-revalidate")
-        request.setHeader("pragma", "no-cache")
-        request.setHeader("expires", "0")
-        return static.File.render_GET(self, request)
+    def __init__(self, *args, **kwargs):
+        super(SendOnEnter, self).__init__(*args, **kwargs)
+        self._buffer = ""
+
+    def tx(self, text):
+        self._buffer += text
+        if self._buffer.endswith("\r\n"):
+            text = self._buffer[:-2]
+            self._buffer = ""
+            return text
+        return ""

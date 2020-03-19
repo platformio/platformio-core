@@ -14,7 +14,7 @@
 
 from __future__ import absolute_import
 
-from platformio.project.config import ProjectConfig, ProjectOptions
+from platformio.project.config import MISSING, ProjectConfig, ProjectOptions
 
 
 def GetProjectConfig(env):
@@ -25,7 +25,7 @@ def GetProjectOptions(env, as_dict=False):
     return env.GetProjectConfig().items(env=env["PIOENV"], as_dict=as_dict)
 
 
-def GetProjectOption(env, option, default=None):
+def GetProjectOption(env, option, default=MISSING):
     return env.GetProjectConfig().get("env:" + env["PIOENV"], option, default)
 
 

@@ -12,17 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from twisted.internet import reactor  # pylint: disable=import-error
-from twisted.web import static  # pylint: disable=import-error
-
-
-class WebRoot(static.File):
-    def render_GET(self, request):
-        if request.args.get(b"__shutdown__", False):
-            reactor.stop()
-            return "Server has been stopped"
-
-        request.setHeader("cache-control", "no-cache, no-store, must-revalidate")
-        request.setHeader("pragma", "no-cache")
-        request.setHeader("expires", "0")
-        return static.File.render_GET(self, request)
+from platformio.commands.device.filters.base import DeviceMonitorFilter

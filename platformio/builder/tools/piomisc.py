@@ -15,17 +15,19 @@
 from __future__ import absolute_import
 
 import atexit
+import io
 import re
 import sys
 from os import environ, remove, walk
 from os.path import basename, isdir, isfile, join, realpath, relpath, sep
 from tempfile import mkstemp
 
+import click
 from SCons.Action import Action  # pylint: disable=import-error
 from SCons.Script import ARGUMENTS  # pylint: disable=import-error
 
 from platformio import fs, util
-from platformio.compat import glob_escape
+from platformio.compat import get_filesystem_encoding, get_locale_encoding, glob_escape
 from platformio.managers.core import get_core_package_dir
 from platformio.proc import exec_command
 
@@ -48,6 +50,39 @@ class InoToCPPConverter(object):
     def __init__(self, env):
         self.env = env
         self._main_ino = None
+        self._safe_encoding = None
+
+    def read_safe_contents(self, path):
+        error_reported = False
+        for encoding in (
+            "utf-8",
+            None,
+            get_filesystem_encoding(),
+            get_locale_encoding(),
+            "latin-1",
+        ):
+            try:
+                with io.open(path, encoding=encoding) as fp:
+                    contents = fp.read()
+                    self._safe_encoding = encoding
+                    return contents
+            except UnicodeDecodeError:
+                if not error_reported:
+                    error_reported = True
+                    click.secho(
+                        "Unicode decode error has occurred, please remove invalid "
+                        "(non-ASCII or non-UTF8) characters from %s file or convert it to UTF-8"
+                        % path,
+                        fg="yellow",
+                        err=True,
+                    )
+        return ""
+
+    def write_safe_contents(self, path, contents):
+        with io.open(
+            path, "w", encoding=self._safe_encoding, errors="backslashreplace"
+        ) as fp:
+            return fp.write(contents)
 
     def is_main_node(self, contents):
         return self.DETECTMAIN_RE.search(contents)
@@ -62,7 +97,7 @@ class InoToCPPConverter(object):
         assert nodes
         lines = []
         for node in nodes:
-            contents = fs.get_file_contents(node.get_path())
+            contents = self.read_safe_contents(node.get_path())
             _lines = ['# 1 "%s"' % node.get_path().replace("\\", "/"), contents]
             if self.is_main_node(contents):
                 lines = _lines + lines
@@ -78,16 +113,14 @@ class InoToCPPConverter(object):
     def process(self, contents):
         out_file = self._main_ino + ".cpp"
         assert self._gcc_preprocess(contents, out_file)
-        contents = fs.get_file_contents(out_file)
+        contents = self.read_safe_contents(out_file)
         contents = self._join_multiline_strings(contents)
-        fs.write_file_contents(
-            out_file, self.append_prototypes(contents), errors="backslashreplace"
-        )
+        self.write_safe_contents(out_file, self.append_prototypes(contents))
         return out_file
 
     def _gcc_preprocess(self, contents, out_file):
         tmp_path = mkstemp()[1]
-        fs.write_file_contents(tmp_path, contents, errors="backslashreplace")
+        self.write_safe_contents(tmp_path, contents)
         self.env.Execute(
             self.env.VerboseAction(
                 '$CXX -o "{0}" -x c++ -fpreprocessed -dD -E "{1}"'.format(

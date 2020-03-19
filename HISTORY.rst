@@ -6,6 +6,38 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
+4.3.0 (2020-03-19)
+~~~~~~~~~~~~~~~~~~
+
+* Initial support for an official `PlatformIO for CLion IDE <https://docs.platformio.org/page/integration/ide/clion.html>`__ plugin:
+
+  - Smart C and C++ editor
+  - Code refactoring
+  - On-the-fly code analysis
+  - "New PlatformIO Project" wizard
+  - Building, Uploading, Testing
+  - Integrated debugger (inline variable view, conditional breakpoints, expressions, watchpoints, peripheral registers, multi-thread support, etc.)
+
+* `Device Monitor 2.0 <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html>`__
+
+  - Added **PlatformIO Device Monitor Filter API** (dev-platforms can extend base device monitor with a custom functionality, such as exception decoding) (`pull #3383 <https://github.com/platformio/platformio-core/pull/3383>`_)
+  - Configure project device monitor with `monitor_filters <https://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-filters>`__ option
+  - `Capture device monitor output to a file <https://docs.platformio.org/page/core/userguide/device/cmd_monitor.html#capture-output-to-a-file>`__ with ``log2file`` filter (`issue #670 <https://github.com/platformio/platformio-core/issues/670>`_)
+  - Show a timestamp for each new line with ``time`` filter (`issue #981 <https://github.com/platformio/platformio-core/issues/981>`_)
+  - Send a text to device on ENTER with ``send_on_enter`` filter (`issue #926 <https://github.com/platformio/platformio-core/issues/926>`_)
+  - Show a hexadecimal representation of the data (code point of each character) with ``hexlify`` filter
+
+* New standalone (1-script) `PlatformIO Core Installer <https://github.com/platformio/platformio-core-installer>`_
+* Initial support for `Renode <https://docs.platformio.org/page/plus/debug-tools/qemu.html>`__ simulation framework (`issue #3401 <https://github.com/platformio/platformio-core/issues/3401>`_)
+* Added support for Arm Mbed "module.json" ``dependencies`` field (`issue #3400 <https://github.com/platformio/platformio-core/issues/3400>`_)
+* Improved support for Arduino "library.properties" ``depends`` field
+* Fixed an issue when quitting from PlatformIO IDE does not shutdown PIO Home server
+* Fixed an issue "the JSON object must be str, not 'bytes'" when PIO Home is used with Python 3.5 (`issue #3396 <https://github.com/platformio/platformio-core/issues/3396>`_)
+* Fixed an issue when Python 2 does not keep encoding when converting ".ino" (`issue #3393 <https://github.com/platformio/platformio-core/issues/3393>`_)
+* Fixed an issue when ``"libArchive": false`` in "library.json" does not work (`issue #3403 <https://github.com/platformio/platformio-core/issues/3403>`_)
+* Fixed an issue when not all commands in `compilation database "compile_commands.json" <https://docs.platformio.org/page/integration/compile_commands.html>`__ use absolute paths (`pull #3415 <https://github.com/platformio/platformio-core/pull/3415>`_)
+* Fixed an issue when unknown transport is used for `PIO Unit Testing <https://docs.platformio.org/page/plus/unit-testing.html>`__ engine (`issue #3422 <https://github.com/platformio/platformio-core/issues/3422>`_)
+
 4.2.1 (2020-02-17)
 ~~~~~~~~~~~~~~~~~~
 
@@ -34,7 +66,7 @@ PlatformIO Core 4
   - Show computed project configuration with a new `platformio project config <https://docs.platformio.org/page/userguide/project/cmd_config.html>`_ command or dump to JSON with ``platformio project config --json-output`` (`issue #3335 <https://github.com/platformio/platformio-core/issues/3335>`_)
   - Moved ``platformio init`` command to `platformio project init <https://docs.platformio.org/page/userguide/project/cmd_init.html>`_
 
-* Generate `compilation database "compile_commands.json" <https://docs.platformio.org/page/faq.html#compilation-database-compile-commands-json>`_ (`issue #2990 <https://github.com/platformio/platformio-core/issues/2990>`_)
+* Generate `compilation database "compile_commands.json" <https://docs.platformio.org/page/integration/compile_commands.html>`__ (`issue #2990 <https://github.com/platformio/platformio-core/issues/2990>`_)
 * Control debug flags and optimization level with a new `debug_build_flags <https://docs.platformio.org/page/projectconf/section_env_debug.html#debug-build-flags>`__ option
 * Install a dev-platform with ALL declared packages using a new ``--with-all-packages`` option for `pio platform install <https://docs.platformio.org/page/userguide/platforms/cmd_install.html>`__ command  (`issue #3345 <https://github.com/platformio/platformio-core/issues/3345>`_)
 * Added support for "pythonPackages" in `platform.json <https://docs.platformio.org/page/platforms/creating_platform.html#manifest-file-platform-json>`__ manifest (PlatformIO Package Manager will install dependent Python packages from PyPi registry automatically when dev-platform is installed)

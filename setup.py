@@ -28,7 +28,7 @@ from platformio.compat import PY2
 
 install_requires = [
     "bottle<0.13",
-    "click>=5,<8",
+    "click>=5,<8,!=7.1,!=7.1.1",
     "colorama",
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",

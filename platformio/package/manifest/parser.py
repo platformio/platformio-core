@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import inspect
+import io
 import json
 import os
 import re
@@ -20,8 +21,7 @@ import re
 import requests
 
 from platformio import util
-from platformio.compat import get_class_attributes, string_types
-from platformio.fs import get_file_contents
+from platformio.compat import get_object_members, string_types
 from platformio.package.exception import ManifestParserError, UnknownManifestError
 from platformio.project.helpers import is_platformio_project
 
@@ -40,7 +40,7 @@ class ManifestFileType(object):
 
     @classmethod
     def items(cls):
-        return get_class_attributes(ManifestFileType)
+        return get_object_members(ManifestFileType)
 
     @classmethod
     def from_uri(cls, uri):
@@ -59,24 +59,29 @@ class ManifestFileType(object):
 
 class ManifestParserFactory(object):
     @staticmethod
-    def new_from_file(path, remote_url=False):
+    def read_manifest_contents(path):
+        with io.open(path, encoding="utf-8") as fp:
+            return fp.read()
+
+    @classmethod
+    def new_from_file(cls, path, remote_url=False):
         if not path or not os.path.isfile(path):
             raise UnknownManifestError("Manifest file does not exist %s" % path)
         type_from_uri = ManifestFileType.from_uri(path)
         if not type_from_uri:
             raise UnknownManifestError("Unknown manifest file type %s" % path)
         return ManifestParserFactory.new(
-            get_file_contents(path, encoding="utf8"), type_from_uri, remote_url
+            cls.read_manifest_contents(path), type_from_uri, remote_url
         )
 
-    @staticmethod
-    def new_from_dir(path, remote_url=None):
+    @classmethod
+    def new_from_dir(cls, path, remote_url=None):
         assert os.path.isdir(path), "Invalid directory %s" % path
 
         type_from_uri = ManifestFileType.from_uri(remote_url) if remote_url else None
         if type_from_uri and os.path.isfile(os.path.join(path, type_from_uri)):
             return ManifestParserFactory.new(
-                get_file_contents(os.path.join(path, type_from_uri), encoding="utf8"),
+                cls.read_manifest_contents(os.path.join(path, type_from_uri)),
                 type_from_uri,
                 remote_url=remote_url,
                 package_dir=path,
@@ -88,7 +93,7 @@ class ManifestParserFactory(object):
                 "Unknown manifest file type in %s directory" % path
             )
         return ManifestParserFactory.new(
-            get_file_contents(os.path.join(path, type_from_dir), encoding="utf8"),
+            cls.read_manifest_contents(os.path.join(path, type_from_dir)),
             type_from_dir,
             remote_url=remote_url,
             package_dir=path,
@@ -363,13 +368,15 @@ class LibraryJsonManifestParser(BaseManifestParser):
             return [dict(name=name, version=version) for name, version in raw.items()]
         if isinstance(raw, list):
             for i, dependency in enumerate(raw):
-                assert isinstance(dependency, dict)
-                for k, v in dependency.items():
-                    if k not in ("platforms", "frameworks", "authors"):
-                        continue
-                    if "*" in v:
-                        del raw[i][k]
-                    raw[i][k] = util.items_to_list(v)
+                if isinstance(dependency, dict):
+                    for k, v in dependency.items():
+                        if k not in ("platforms", "frameworks", "authors"):
+                            continue
+                        if "*" in v:
+                            del raw[i][k]
+                        raw[i][k] = util.items_to_list(v)
+                else:
+                    raw[i] = {"name": dependency}
             return raw
         raise ManifestParserError(
             "Invalid dependencies format, should be list or dictionary"
@@ -390,6 +397,8 @@ class ModuleJsonManifestParser(BaseManifestParser):
         if "licenses" in data:
             data["license"] = self._parse_license(data.get("licenses"))
             del data["licenses"]
+        if "dependencies" in data:
+            data["dependencies"] = self._parse_dependencies(data["dependencies"])
         return data
 
     def _parse_authors(self, raw):
@@ -408,6 +417,15 @@ class ModuleJsonManifestParser(BaseManifestParser):
         if not raw or not isinstance(raw, list):
             return None
         return raw[0].get("type")
+
+    @staticmethod
+    def _parse_dependencies(raw):
+        if isinstance(raw, dict):
+            return [
+                dict(name=name, version=version, frameworks=["mbed"])
+                for name, version in raw.items()
+            ]
+        raise ManifestParserError("Invalid dependencies format, should be a dictionary")
 
 
 class LibraryPropertiesManifestParser(BaseManifestParser):

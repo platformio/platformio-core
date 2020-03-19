@@ -146,6 +146,8 @@ class PIOCoreRPC(object):
             raise Exception(text)
         if not to_json:
             return text
+        if is_bytes(out):
+            out = out.decode()
         try:
             return json.loads(out)
         except ValueError as e:
