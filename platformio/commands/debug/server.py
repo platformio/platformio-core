@@ -35,6 +35,7 @@ class DebugServer(BaseProcess):
         self._debug_port = ":3333"
         self._transport = None
         self._process_ended = False
+        self._ready = False
 
     @defer.inlineCallbacks
     def spawn(self, patterns):  # pylint: disable=too-many-branches
@@ -126,15 +127,7 @@ class DebugServer(BaseProcess):
         timeout = 10
         elapsed = 0
         delay = 1
-        ready_delay = 0.5
-        while (
-            not self._process_ended
-            and elapsed < timeout
-            and (
-                not self._last_activity
-                or not (self._last_activity < (time.time() - ready_delay))
-            )
-        ):
+        while not self._ready and not self._process_ended and elapsed < timeout:
             yield self.async_sleep(delay)
             elapsed += delay
 
@@ -151,6 +144,14 @@ class DebugServer(BaseProcess):
         super(DebugServer, self).outReceived(
             escape_gdbmi_stream("@", data) if is_gdbmi_mode() else data
         )
+        if self._ready:
+            return
+        ready_pattern = self.debug_options.get("server", {}).get("ready_pattern")
+        if ready_pattern:
+            self._ready = ready_pattern.encode() in data
+        else:
+            ready_delay = 0.5
+            self._ready = self._last_activity < (time.time() - ready_delay)
 
     def processEnded(self, reason):
         self._process_ended = True

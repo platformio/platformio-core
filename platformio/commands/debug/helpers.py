@@ -125,7 +125,8 @@ def validate_debug_options(cmd_ctx, env_options):
         server_options["executable"] = server_options["arguments"][0]
         server_options["arguments"] = server_options["arguments"][1:]
     elif "server" in tool_settings:
-        server_package = tool_settings["server"].get("package")
+        server_options = tool_settings["server"]
+        server_package = server_options.get("package")
         server_package_dir = (
             platform.get_package_dir(server_package) if server_package else None
         )
@@ -134,15 +135,17 @@ def validate_debug_options(cmd_ctx, env_options):
                 with_packages=[server_package], skip_default_package=True, silent=True
             )
             server_package_dir = platform.get_package_dir(server_package)
-        server_options = dict(
-            cwd=server_package_dir if server_package else None,
-            executable=tool_settings["server"].get("executable"),
-            arguments=[
-                a.replace("$PACKAGE_DIR", server_package_dir)
-                if server_package_dir
-                else a
-                for a in tool_settings["server"].get("arguments", [])
-            ],
+        server_options.update(
+            dict(
+                cwd=server_package_dir if server_package else None,
+                executable=server_options.get("executable"),
+                arguments=[
+                    a.replace("$PACKAGE_DIR", server_package_dir)
+                    if server_package_dir
+                    else a
+                    for a in server_options.get("arguments", [])
+                ],
+            )
         )
 
     extra_cmds = _cleanup_cmds(env_options.get("debug_extra_cmds"))
