@@ -17,7 +17,7 @@ import io
 import sys
 import subprocess
 
-NEW_SCRIPT_URL = "https://raw.githubusercontent.com/platformio/platformio-core-installer/develop/get-platformio.py"
+MAIN_SCRIPT_URL = "https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py"
 
 
 def download_with_requests(url, dst):
@@ -33,10 +33,11 @@ def download_with_requests(url, dst):
 
 def download_with_urllib3(url, dst):
     import urllib3
-    http = urllib3.PoolManager()
-    r = http.request('GET', url, preload_content=False)
 
-    with open(dst, 'wb') as out:
+    http = urllib3.PoolManager()
+    r = http.request("GET", url, preload_content=False)
+
+    with open(dst, "wb") as out:
         while True:
             data = r.read(io.DEFAULT_BUFFER_SIZE)
             if not data:
@@ -55,7 +56,7 @@ def download_with_urllib(url, dst):
 
     response = urlopen(url)
     CHUNK = 16 * 1024
-    with open(dst, 'wb') as f:
+    with open(dst, "wb") as f:
         while True:
             chunk = response.read(CHUNK)
             if not chunk:
@@ -81,7 +82,7 @@ def download_file(url, dst):
         download_with_urllib3,
         download_with_urllib,
         download_with_curl,
-        download_with_wget
+        download_with_wget,
     ]
     for method in methods:
         try:
@@ -89,14 +90,12 @@ def download_file(url, dst):
             return dst
         except:
             pass
-    raise Exception("Could not download file '%s' to '%s' "%(url, dst))
+    raise Exception("Could not download file '%s' to '%s' " % (url, dst))
 
 
 def main():
-    print("This installer script is deprecated and will be removed in the next release. Please use %s" %
-          NEW_SCRIPT_URL)
     with tempfile.NamedTemporaryFile() as tmp_file:
-        dst = download_file(NEW_SCRIPT_URL, str(tmp_file.name))
+        dst = download_file(MAIN_SCRIPT_URL, str(tmp_file.name))
         command = [sys.executable, dst]
         command.extend(sys.argv[1:])
         subprocess.check_call(command)
