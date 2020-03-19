@@ -124,12 +124,29 @@ pio_reset_halt_target
 $INIT_BREAK
 """
 
+GDB_RENODE_INIT_CONFIG = """
+define pio_reset_halt_target
+    monitor reset
+end
+
+define pio_reset_run_target
+    monitor reset
+end
+
+target extended-remote $DEBUG_PORT
+$LOAD_CMDS
+pio_reset_halt_target
+$INIT_BREAK
+monitor start
+"""
+
 
 TOOL_TO_CONFIG = {
     "jlink": GDB_JLINK_INIT_CONFIG,
     "mspdebug": GDB_MSPDEBUG_INIT_CONFIG,
     "qemu": GDB_QEMU_INIT_CONFIG,
     "blackmagic": GDB_BLACKMAGIC_INIT_CONFIG,
+    "renode": GDB_RENODE_INIT_CONFIG,
 }
 
 
