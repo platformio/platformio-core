@@ -27,8 +27,9 @@ from twisted.internet import stdio  # pylint: disable=import-error
 from twisted.internet import task  # pylint: disable=import-error
 
 from platformio import app, fs, proc, telemetry, util
-from platformio.commands.debug import helpers, initcfgs
+from platformio.commands.debug import helpers
 from platformio.commands.debug.exception import DebugInvalidOptionsError
+from platformio.commands.debug.initcfgs import get_gdb_init_config
 from platformio.commands.debug.process import BaseProcess
 from platformio.commands.debug.server import DebugServer
 from platformio.compat import hashlib_encode_data, is_bytes
@@ -113,22 +114,8 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         return gdb_data_dir if isdir(gdb_data_dir) else None
 
     def generate_pioinit(self, dst_dir, patterns):
-        server_exe = (
-            (self.debug_options.get("server") or {}).get("executable", "").lower()
-        )
-        if "jlink" in server_exe:
-            cfg = initcfgs.GDB_JLINK_INIT_CONFIG
-        elif "st-util" in server_exe:
-            cfg = initcfgs.GDB_STUTIL_INIT_CONFIG
-        elif "mspdebug" in server_exe:
-            cfg = initcfgs.GDB_MSPDEBUG_INIT_CONFIG
-        elif "qemu" in server_exe:
-            cfg = initcfgs.GDB_QEMU_INIT_CONFIG
-        elif self.debug_options["require_debug_port"]:
-            cfg = initcfgs.GDB_BLACKMAGIC_INIT_CONFIG
-        else:
-            cfg = initcfgs.GDB_DEFAULT_INIT_CONFIG
-        commands = cfg.split("\n")
+        # default GDB init commands depending on debug tool
+        commands = get_gdb_init_config(self.debug_options).split("\n")
 
         if self.debug_options["init_cmds"]:
             commands = self.debug_options["init_cmds"]
