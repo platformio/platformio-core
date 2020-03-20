@@ -6,7 +6,7 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
-4.3.1 (2020-??-??)
+4.3.1 (2020-03-20)
 ~~~~~~~~~~~~~~~~~~
 
 * Fixed a SyntaxError "'return' with argument inside generator" for PIO Unified Debugger when Python 2.7 is used
