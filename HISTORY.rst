@@ -6,6 +6,13 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
+4.3.1 (2020-03-20)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed a SyntaxError "'return' with argument inside generator" for PIO Unified Debugger when Python 2.7 is used
+* Fixed an issue when ``lib_archive = no`` was not honored in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
+* Fixed an TypeError "super(type, obj): obj must be an instance or subtype of type" when device monitor is used with a custom dev-platform filter (`issue #3431 <https://github.com/platformio/platformio-core/issues/3431>`_)
+
 4.3.0 (2020-03-19)
 ~~~~~~~~~~~~~~~~~~
 

@@ -23,12 +23,12 @@ from platformio import (
     __url__,
     __version__,
 )
-from platformio.compat import PY2
+from platformio.compat import PY2, WINDOWS
 
 
 install_requires = [
     "bottle<0.13",
-    "click>=5,<8,!=7.1,!=7.1.1",
+    "click>=5,<8%s" % (",!=7.1,!=7.1.1" if WINDOWS else ""),
     "colorama",
     "pyserial>=3,<4,!=3.3",
     "requests>=2.4.0,<3",

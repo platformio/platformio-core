@@ -42,11 +42,11 @@ class DebugServer(BaseProcess):
         systype = util.get_systype()
         server = self.debug_options.get("server")
         if not server:
-            return None
+            defer.returnValue(None)
         server = self.apply_patterns(server, patterns)
         server_executable = server["executable"]
         if not server_executable:
-            return None
+            defer.returnValue(None)
         if server["cwd"]:
             server_executable = join(server["cwd"], server_executable)
         if (
@@ -83,7 +83,7 @@ class DebugServer(BaseProcess):
             )
             self._debug_port = '| "%s" %s' % (server_executable, str_args)
             self._debug_port = fs.to_unix_path(self._debug_port)
-            return self._debug_port
+            defer.returnValue(self._debug_port)
 
         env = os.environ.copy()
         # prepend server "lib" folder to LD path
@@ -120,7 +120,7 @@ class DebugServer(BaseProcess):
 
         yield self._wait_until_ready()
 
-        return self._debug_port
+        defer.returnValue(self._debug_port)
 
     @defer.inlineCallbacks
     def _wait_until_ready(self):

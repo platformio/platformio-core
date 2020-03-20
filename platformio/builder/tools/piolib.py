@@ -723,7 +723,9 @@ class PlatformIOLibBuilder(LibBuilderBase):
             "env:" + self.env["PIOENV"], "lib_archive", missing
         )
         if global_value != missing:
-            return global_value
+            return self.env.GetProjectConfig().get(
+                "env:" + self.env["PIOENV"], "lib_archive"
+            )
         return self._manifest.get("build", {}).get(
             "libArchive", LibBuilderBase.lib_archive.fget(self)
         )

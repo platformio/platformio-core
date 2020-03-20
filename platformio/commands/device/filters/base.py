@@ -20,7 +20,7 @@ from platformio.project.config import ProjectConfig
 class DeviceMonitorFilter(miniterm.Transform):
     def __init__(self, project_dir=None, environment=None):
         """ Called by PlatformIO to pass context """
-        super(DeviceMonitorFilter, self).__init__()
+        miniterm.Transform.__init__(self)
 
         self.project_dir = project_dir
         self.environment = environment
