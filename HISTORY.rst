@@ -35,7 +35,7 @@ PlatformIO Core 4
   - Show a hexadecimal representation of the data (code point of each character) with ``hexlify`` filter
 
 * New standalone (1-script) `PlatformIO Core Installer <https://github.com/platformio/platformio-core-installer>`_
-* Initial support for `Renode <https://docs.platformio.org/page/plus/debug-tools/qemu.html>`__ simulation framework (`issue #3401 <https://github.com/platformio/platformio-core/issues/3401>`_)
+* Initial support for `Renode <https://docs.platformio.org/page/plus/debug-tools/renode.html>`__ simulation framework (`issue #3401 <https://github.com/platformio/platformio-core/issues/3401>`_)
 * Added support for Arm Mbed "module.json" ``dependencies`` field (`issue #3400 <https://github.com/platformio/platformio-core/issues/3400>`_)
 * Improved support for Arduino "library.properties" ``depends`` field
 * Fixed an issue when quitting from PlatformIO IDE does not shutdown PIO Home server
