@@ -6,6 +6,11 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
+4.3.2 (2020-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed UnicodeDecodeError on Windows when network drive (NAS) is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
+
 4.3.1 (2020-03-20)
 ~~~~~~~~~~~~~~~~~~
 
