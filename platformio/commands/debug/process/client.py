@@ -30,8 +30,8 @@ from platformio import app, fs, proc, telemetry, util
 from platformio.commands.debug import helpers
 from platformio.commands.debug.exception import DebugInvalidOptionsError
 from platformio.commands.debug.initcfgs import get_gdb_init_config
-from platformio.commands.debug.process import BaseProcess
-from platformio.commands.debug.server import DebugServer
+from platformio.commands.debug.process.base import BaseProcess
+from platformio.commands.debug.process.server import DebugServer
 from platformio.compat import hashlib_encode_data, is_bytes
 from platformio.project.helpers import get_project_cache_dir
 
