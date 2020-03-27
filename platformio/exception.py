@@ -304,3 +304,8 @@ class TestDirNotExists(PlatformioException):
         "Testing: https://docs.platformio.org/page/plus/"
         "unit-testing.html"
     )
+
+
+class AccountError(PlatformioException):
+
+    MESSAGE = "{0}"
