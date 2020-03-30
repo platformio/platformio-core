@@ -53,7 +53,7 @@ def is_compat_platform_and_framework(platform, framework):
     return framework in (p.frameworks or {}).keys()
 
 
-def campaign_url(url, source="platformio", medium="docs"):
+def campaign_url(url, source="platformio.org", medium="docs"):
     data = urlparse(url)
     query = data.query
     if query:
