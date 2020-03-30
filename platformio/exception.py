@@ -309,3 +309,13 @@ class TestDirNotExists(PlatformioException):
 class AccountError(PlatformioException):
 
     MESSAGE = "{0}"
+
+
+class AccountNotLoggedIn(AccountError):
+
+    MESSAGE = "You are not logged in!"
+
+
+class AccountAlreadyLoggedIn(AccountError):
+
+    MESSAGE = "You are already logged in with {0} account!"

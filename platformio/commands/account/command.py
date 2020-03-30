@@ -17,15 +17,9 @@
 import sys
 
 import click
-import requests
 
-from platformio import app, exception
-from platformio.commands.account import (
-    PIO_ACCOUNT_LOGIN_URL,
-    PIO_ACCOUNT_LOGOUT_URL,
-    PIO_ACCOUNT_PASSWORD_URL,
-    helpers,
-)
+from platformio import exception
+from platformio.commands.account.client import AccountClient
 from platformio.managers.core import pioplus_call
 
 
@@ -44,50 +38,33 @@ def account_register(**kwargs):
 @click.option("-u", "--username")
 @click.option("-p", "--password")
 def account_login(username, password):
-    if helpers.get_authentication_token():
-        return click.secho(
-            "You are already logged in with %s account!"
-            % app.get_state_item("account").get("email"),
-            fg="yellow",
-        )
-    resp = requests.post(
-        PIO_ACCOUNT_LOGIN_URL, json={"username": username, "password": password},
-    )
+    client = AccountClient()
     try:
-        helpers.process_login_response(resp)
-    except exception.AccountError as e:
-        if "Invalid user credentials" in e.MESSAGE:
-            raise click.ClickException(e.MESSAGE)
-        raise e
-    return click.secho("Successfully logged in!", fg="green")
+        client.login(username, password)
+        return click.secho("Successfully logged in!", fg="green")
+    except exception.AccountAlreadyLoggedIn as e:
+        return click.secho(str(e), fg="yellow",)
 
 
 @cli.command("logout", short_help="Log out of PIO Account")
 def account_logout():
-    refresh_token = helpers.get_refresh_token()
-    if not refresh_token:
-        return click.secho("You are not logged in!", fg="yellow",)
-    requests.post(
-        PIO_ACCOUNT_LOGOUT_URL, json={"refresh_token": refresh_token},
-    )
-    app.delete_state_item("account")
-    return click.secho("Successfully logged out!", fg="green")
+    client = AccountClient()
+    try:
+        client.logout()
+        return click.secho("Successfully logged out!", fg="green")
+    except exception.AccountNotLoggedIn as e:
+        return click.secho(str(e), fg="yellow",)
 
 
 @cli.command("password", short_help="Change password")
 @click.option("--new-password", prompt=True, hide_input=True, confirmation_prompt=True)
 def account_password(new_password):
-    token = helpers.get_authentication_token()
-    if not token:
-        return click.secho("You are not logged in!", fg="yellow")
-    response = requests.post(
-        PIO_ACCOUNT_PASSWORD_URL,
-        headers={"Authorization": "Bearer %s" % token},
-        json={"new_password": new_password},
-    )
-    if response.status_code != 200:
-        raise exception.AccountError(response.json().get("message"))
-    return click.secho("Password successfully changed!", fg="green")
+    client = AccountClient()
+    try:
+        client.change_password(new_password)
+        return click.secho("Password successfully changed!", fg="green")
+    except exception.AccountNotLoggedIn as e:
+        return click.secho(str(e), fg="yellow",)
 
 
 @cli.command("token", short_help="Get or regenerate Authentication Token")

@@ -11,11 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# pylint: disable=unused-argument
-
-PIO_ACCOUNT_URL = "http://account.platormio.org/v1"
-
-PIO_ACCOUNT_LOGIN_URL = "%s/account/login" % PIO_ACCOUNT_URL
-PIO_ACCOUNT_LOGOUT_URL = "%s/account/logout" % PIO_ACCOUNT_URL
-PIO_ACCOUNT_PASSWORD_URL = "%s/account/password" % PIO_ACCOUNT_URL
