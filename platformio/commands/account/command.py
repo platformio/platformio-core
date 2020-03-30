@@ -23,6 +23,7 @@ from platformio import app, exception
 from platformio.commands.account import (
     PIO_ACCOUNT_LOGIN_URL,
     PIO_ACCOUNT_LOGOUT_URL,
+    PIO_ACCOUNT_PASSWORD_URL,
     helpers,
 )
 from platformio.managers.core import pioplus_call
@@ -74,10 +75,19 @@ def account_logout():
 
 
 @cli.command("password", short_help="Change password")
-@click.option("--old-password")
-@click.option("--new-password")
-def account_password(**kwargs):
-    pioplus_call(sys.argv[1:])
+@click.option("--new-password", prompt=True, hide_input=True, confirmation_prompt=True)
+def account_password(new_password):
+    token = helpers.get_authentication_token()
+    if not token:
+        return click.secho("You are not logged in!", fg="yellow")
+    response = requests.post(
+        PIO_ACCOUNT_PASSWORD_URL,
+        headers={"Authorization": "Bearer %s" % token},
+        json={"new_password": new_password},
+    )
+    if response.status_code != 200:
+        raise exception.AccountError(response.json().get("message"))
+    return click.secho("Password successfully changed!", fg="green")
 
 
 @cli.command("token", short_help="Get or regenerate Authentication Token")
