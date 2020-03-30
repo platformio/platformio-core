@@ -15,65 +15,43 @@
 # pylint: disable=unused-argument
 
 import os
+import time
 
-import jwt
 import requests
 
 from platformio import app, exception
-from platformio.commands.account import (
-    PIO_ACCOUNT_LOGIN_URL,
-    PIO_ACCOUNT_REFRESH_TOKEN_URL,
-)
+from platformio.commands.account import PIO_ACCOUNT_LOGIN_URL
 
 
 def get_authentication_token():
     auth = app.get_state_item("account", {}).get("auth", {})
-    if auth.get("access_token"):
-        try:
-            jwt.decode(
-                auth.get("access_token"),
-                algorithms="RS256",
-                options={
-                    "verify_signature": False,
-                    "verify_exp": True,
-                    "verify_aud": False,
-                },
-            )
+    if auth.get("access_token") and auth.get("access_token_expire"):
+        if auth.get("access_token_expire") > time.time():
             return auth.get("access_token")
-        except jwt.ExpiredSignatureError:
-            if not auth.get("refresh_token"):
-                return None
-            resp = requests.post(
-                PIO_ACCOUNT_REFRESH_TOKEN_URL,
-                json={"refresh_token": auth.get("refresh_token")},
-            )
-            return process_login_response(resp).get("access_token")
+        if not auth.get("refresh_token"):
+            return None
+        resp = requests.post(
+            PIO_ACCOUNT_LOGIN_URL,
+            headers={"Authorization": "Bearer %s" % auth.get("refresh_token")},
+        )
+        return process_login_response(resp).get("auth").get("access_token")
     if "PLATFORMIO_AUTH_TOKEN" not in os.environ:
         return None
     resp = requests.post(
         PIO_ACCOUNT_LOGIN_URL,
         headers={"Authorization": "Bearer %s" % os.environ["PLATFORMIO_AUTH_TOKEN"]},
     )
-    return process_login_response(resp).get("access_token")
-
-
-def get_user_info_from_token(token):
-    try:
-        data = jwt.decode(token, algorithms="RS256", verify=False)
-        return {
-            "username": data.get("preferred_username"),
-            "email": data.get("email"),
-            "email_verified": data.get("email_verified"),
-        }
-    except:  # pylint:disable=bare-except
-        return {}
+    return process_login_response(resp).get("auth").get("access_token")
 
 
 def process_login_response(response):
     resp_json = response.json()
     if response.status_code != 200:
         raise exception.AccountError(resp_json.get("message"))
-    data = get_user_info_from_token(resp_json.get("access_token"))
-    data["auth"] = resp_json
-    app.set_state_item("account", data)
+    app.set_state_item("account", resp_json)
     return resp_json
+
+
+def get_refresh_token():
+    auth = app.get_state_item("account", {}).get("auth", {})
+    return auth.get("refresh_token")

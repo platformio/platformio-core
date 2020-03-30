@@ -20,7 +20,11 @@ import click
 import requests
 
 from platformio import app, exception
-from platformio.commands.account import PIO_ACCOUNT_LOGIN_URL, helpers
+from platformio.commands.account import (
+    PIO_ACCOUNT_LOGIN_URL,
+    PIO_ACCOUNT_LOGOUT_URL,
+    helpers,
+)
 from platformio.managers.core import pioplus_call
 
 
@@ -59,7 +63,14 @@ def account_login(username, password):
 
 @cli.command("logout", short_help="Log out of PIO Account")
 def account_logout():
-    pioplus_call(sys.argv[1:])
+    refresh_token = helpers.get_refresh_token()
+    if not refresh_token:
+        return click.secho("You are not logged in!", fg="yellow",)
+    requests.post(
+        PIO_ACCOUNT_LOGOUT_URL, json={"refresh_token": refresh_token},
+    )
+    app.delete_state_item("account")
+    return click.secho("Successfully logged out!", fg="green")
 
 
 @cli.command("password", short_help="Change password")

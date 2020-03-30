@@ -17,4 +17,4 @@
 PIO_ACCOUNT_URL = "http://account.platormio.org/v1"
 
 PIO_ACCOUNT_LOGIN_URL = "%s/account/login" % PIO_ACCOUNT_URL
-PIO_ACCOUNT_REFRESH_TOKEN_URL = "%s/token/refresh" % PIO_ACCOUNT_URL
+PIO_ACCOUNT_LOGOUT_URL = "%s/account/logout" % PIO_ACCOUNT_URL

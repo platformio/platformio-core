@@ -36,7 +36,6 @@ install_requires = [
     "tabulate>=0.8.3,<1",
     "pyelftools>=0.25,<1",
     "marshmallow%s" % (">=2,<3" if PY2 else ">=2"),
-    "PyJWT[crypto]==1.7.1",
 ]
 
 
