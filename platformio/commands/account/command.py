@@ -42,7 +42,7 @@ def account_login(username, password):
     try:
         client.login(username, password)
         return click.secho("Successfully logged in!", fg="green")
-    except exception.AccountAlreadyLoggedIn as e:
+    except exception.AccountAlreadyAuthenticated as e:
         return click.secho(str(e), fg="yellow",)
 
 
@@ -52,18 +52,19 @@ def account_logout():
     try:
         client.logout()
         return click.secho("Successfully logged out!", fg="green")
-    except exception.AccountNotLoggedIn as e:
+    except exception.AccountNotAuthenticated as e:
         return click.secho(str(e), fg="yellow",)
 
 
 @cli.command("password", short_help="Change password")
+@click.option("--old-password", prompt=True, hide_input=True)
 @click.option("--new-password", prompt=True, hide_input=True, confirmation_prompt=True)
-def account_password(new_password):
+def account_password(old_password, new_password):
     client = AccountClient()
     try:
-        client.change_password(new_password)
+        client.change_password(old_password, new_password)
         return click.secho("Password successfully changed!", fg="green")
-    except exception.AccountNotLoggedIn as e:
+    except exception.AccountNotAuthenticated as e:
         return click.secho(str(e), fg="yellow",)
 
 

@@ -311,11 +311,11 @@ class AccountError(PlatformioException):
     MESSAGE = "{0}"
 
 
-class AccountNotLoggedIn(AccountError):
+class AccountNotAuthenticated(AccountError):
 
-    MESSAGE = "You are not logged in!"
+    MESSAGE = "You are not authenticated!"
 
 
-class AccountAlreadyLoggedIn(AccountError):
+class AccountAlreadyAuthenticated(AccountError):
 
-    MESSAGE = "You are already logged in with {0} account!"
+    MESSAGE = "You are already authenticated with {0} account."

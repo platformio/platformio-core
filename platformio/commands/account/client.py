@@ -22,122 +22,109 @@ from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-
 
 from platformio import app, exception
 
-try:
-    from urllib.parse import urljoin
-except ImportError:
-    from urlparse import urljoin
-
 
 class AccountClient(object):
     def __init__(
-        self,
-        base_url="http://account.platormio.org/v1/",
-        timeout=60,
-        verify=True,
-        retries=3,
+        self, api_base_url="http://api.account.platormio.org/", retries=3,
     ):
-        if not base_url.endswith("/"):
-            base_url += "/"
-        self._base_url = base_url
-        self._timeout = timeout
-        self._verify = verify
+        if not api_base_url.endswith("/"):
+            api_base_url += "/"
+        self.api_base_url = api_base_url
         self._session = requests.Session()
-        method_whitelist = set(Retry.DEFAULT_METHOD_WHITELIST)
-        method_whitelist.add("POST")
         retry = Retry(
             total=retries,
             read=retries,
             connect=retries,
             backoff_factor=2,
-            status_forcelist=(500, 502, 503, 504),
-            method_whitelist=frozenset(method_whitelist),
+            method_whitelist=list(Retry.DEFAULT_METHOD_WHITELIST) + ["POST"],
         )
         adapter = requests.adapters.HTTPAdapter(max_retries=retry)
-        self._session.mount("http://", adapter)
-        self._session.mount("https://", adapter)
+        self._session.mount(api_base_url, adapter)
 
-    def get_authentication_token(self):
+    def login(self, username, password):
+        try:
+            self.fetch_authentication_token()
+        except:  # pylint:disable=bare-except
+            pass
+        else:
+            raise exception.AccountAlreadyAuthenticated(
+                app.get_state_item("account").get("email")
+            )
+
+        response = self._session.post(
+            self.api_base_url + "v1/login", json={"username": username, "password": password},
+        )
+        result = self.raise_error_from_response(response)
+        app.set_state_item("account", result)
+        return result
+
+    def logout(self):
+        try:
+            refresh_token = self.get_refresh_token()
+        except:  # pylint:disable=bare-except
+            raise exception.AccountNotAuthenticated()
+        response = requests.post(
+            self.api_base_url + "v1/logout", json={"refresh_token": refresh_token},
+        )
+        self.raise_error_from_response(response)
+        app.delete_state_item("account")
+        return True
+
+    def change_password(self, old_password, new_password):
+        try:
+            token = self.fetch_authentication_token()
+        except:  # pylint:disable=bare-except
+            raise exception.AccountNotAuthenticated()
+        response = self._session.post(
+            self.api_base_url + "v1/password",
+            headers={"Authorization": "Bearer %s" % token},
+            json={"old_password": old_password, "new_password": new_password},
+        )
+        self.raise_error_from_response(response)
+        return True
+
+    def fetch_authentication_token(self):
         auth = app.get_state_item("account", {}).get("auth", {})
         if auth.get("access_token") and auth.get("access_token_expire"):
             if auth.get("access_token_expire") > time.time():
                 return auth.get("access_token")
-            if not auth.get("refresh_token"):
-                return None
-            resp = self._session.post(
-                urljoin(self._base_url, "account/login"),
-                headers={"Authorization": "Bearer %s" % auth.get("refresh_token")},
-                verify=self._verify,
-                timeout=self._timeout,
-            )
-            return self._finalize_login_response(resp).get("auth").get("access_token")
+            if auth.get("refresh_token"):
+                response = self._session.post(
+                    self.api_base_url + "v1/login",
+                    headers={"Authorization": "Bearer %s" % auth.get("refresh_token")},
+                )
+                result = self.raise_error_from_response(response)
+                app.set_state_item("account", result)
+                return result.get("auth").get("access_token")
         if "PLATFORMIO_AUTH_TOKEN" not in os.environ:
-            return None
-        resp = self._session.post(
-            urljoin(self._base_url, "account/login"),
+            raise exception.AccountNotAuthenticated()
+        response = self._session.post(
+            self.api_base_url + "v1/login",
             headers={
                 "Authorization": "Bearer %s" % os.environ["PLATFORMIO_AUTH_TOKEN"]
             },
-            verify=self._verify,
-            timeout=self._timeout,
         )
-        return self._finalize_login_response(resp).get("auth").get("access_token")
+        result = self.raise_error_from_response(response)
+        app.set_state_item("account", result)
+        return result.get("auth").get("access_token")
 
-    def login(self, username, password):
+    @staticmethod
+    def get_refresh_token():
         try:
-            if self.get_authentication_token():
-                raise exception.AccountAlreadyLoggedIn(
-                    app.get_state_item("account").get("email")
-                )
-        except exception.AccountAlreadyLoggedIn as e:
-            raise e
+            auth = app.get_state_item("account").get("auth").get("refresh_token")
+            return auth
         except:  # pylint:disable=bare-except
-            pass
-
-        resp = self._session.post(
-            urljoin(self._base_url, "account/login"),
-            json={"username": username, "password": password},
-            verify=self._verify,
-            timeout=self._timeout,
-        )
-        return self._finalize_login_response(resp)
-
-    def logout(self):
-        refresh_token = self._get_refresh_token()
-        if not refresh_token:
-            raise exception.AccountNotLoggedIn()
-        requests.post(
-            urljoin(self._base_url, "account/logout"),
-            json={"refresh_token": refresh_token},
-            verify=self._verify,
-            timeout=self._timeout,
-        )
-        app.delete_state_item("account")
-        return True
-
-    def change_password(self, new_password):
-        token = self.get_authentication_token()
-        if not token:
-            raise exception.AccountNotLoggedIn()
-        response = self._session.post(
-            urljoin(self._base_url, "account/password"),
-            headers={"Authorization": "Bearer %s" % token},
-            json={"new_password": new_password},
-            verify=self._verify,
-            timeout=self._timeout,
-        )
-        if response.status_code != 200:
-            raise exception.AccountError(response.json().get("message"))
-        return True
+            raise exception.AccountNotAuthenticated()
 
     @staticmethod
-    def _finalize_login_response(response):
-        resp_json = response.json()
-        if response.status_code != 200:
-            raise exception.AccountError(resp_json.get("message"))
-        app.set_state_item("account", resp_json)
-        return resp_json
-
-    @staticmethod
-    def _get_refresh_token():
-        auth = app.get_state_item("account", {}).get("auth", {})
-        return auth.get("refresh_token")
+    def raise_error_from_response(response, expected_codes=(200, 201, 202)):
+        if response.status_code in expected_codes:
+            try:
+                return response.json()
+            except ValueError:
+                pass
+        try:
+            message = response.json()['message']
+        except (KeyError, ValueError):
+            message = response.content
+        raise exception.AccountError(message)
