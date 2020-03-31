@@ -25,7 +25,7 @@ from platformio import app, exception
 
 class AccountClient(object):
     def __init__(
-        self, api_base_url="http://api.account.platormio.org/", retries=3,
+        self, api_base_url="https://api.account.platormio.org/", retries=3,
     ):
         if not api_base_url.endswith("/"):
             api_base_url += "/"
@@ -52,7 +52,8 @@ class AccountClient(object):
             )
 
         response = self._session.post(
-            self.api_base_url + "v1/login", json={"username": username, "password": password},
+            self.api_base_url + "v1/login",
+            json={"username": username, "password": password},
         )
         result = self.raise_error_from_response(response)
         app.set_state_item("account", result)
@@ -124,7 +125,7 @@ class AccountClient(object):
             except ValueError:
                 pass
         try:
-            message = response.json()['message']
+            message = response.json()["message"]
         except (KeyError, ValueError):
             message = response.content
         raise exception.AccountError(message)
