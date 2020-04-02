@@ -53,7 +53,7 @@ class AccountClient(object):
 
         response = self._session.post(
             self.api_base_url + "v1/login",
-            json={"username": username, "password": password},
+            data={"username": username, "password": password},
         )
         result = self.raise_error_from_response(response)
         app.set_state_item("account", result)
@@ -65,7 +65,7 @@ class AccountClient(object):
         except:  # pylint:disable=bare-except
             raise exception.AccountNotAuthenticated()
         response = requests.post(
-            self.api_base_url + "v1/logout", json={"refresh_token": refresh_token},
+            self.api_base_url + "v1/logout", data={"refresh_token": refresh_token},
         )
         self.raise_error_from_response(response)
         app.delete_state_item("account")
@@ -79,7 +79,7 @@ class AccountClient(object):
         response = self._session.post(
             self.api_base_url + "v1/password",
             headers={"Authorization": "Bearer %s" % token},
-            json={"old_password": old_password, "new_password": new_password},
+            data={"old_password": old_password, "new_password": new_password},
         )
         self.raise_error_from_response(response)
         return True
