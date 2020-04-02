@@ -127,5 +127,7 @@ class AccountClient(object):
         try:
             message = response.json()["message"]
         except (KeyError, ValueError):
-            message = response.content
+            message = response.text
+        if "Authorization session has been expired" in message:
+            app.delete_state_item("account")
         raise exception.AccountError(message)
