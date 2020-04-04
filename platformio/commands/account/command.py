@@ -29,14 +29,28 @@ def cli():
 
 
 @cli.command("register", short_help="Create new PIO Account")
-@click.option("-u", "--username")
-def account_register(**kwargs):
-    pioplus_call(sys.argv[1:])
+@click.option("-u", "--username", prompt=True)
+@click.option("-e", "--email", prompt=True)
+@click.option(
+    "-p", "--password", prompt=True, hide_input=True, confirmation_prompt=True
+)
+@click.option("-f", "--first-name", prompt=True, default="")
+@click.option("-l", "--last-name", prompt=True, default="")
+def account_register(username, email, password, first_name, last_name):
+    client = AccountClient()
+    try:
+        client.registration(username, email, password, first_name, last_name)
+        return click.secho(
+            "User successfully registered! Please, verify your email address.",
+            fg="green",
+        )
+    except exception.AccountAlreadyAuthenticated as e:
+        return click.secho(str(e), fg="yellow",)
 
 
 @cli.command("login", short_help="Log in to PIO Account")
-@click.option("-u", "--username")
-@click.option("-p", "--password")
+@click.option("-u", "--username", prompt=True)
+@click.option("-p", "--password", prompt=True, hide_input=True)
 def account_login(username, password):
     client = AccountClient()
     try:

@@ -84,6 +84,30 @@ class AccountClient(object):
         self.raise_error_from_response(response)
         return True
 
+    def registration(
+        self, username, email, password, first_name, last_name
+    ):  # pylint:disable=too-many-arguments
+        try:
+            self.fetch_authentication_token()
+        except:  # pylint:disable=bare-except
+            pass
+        else:
+            raise exception.AccountAlreadyAuthenticated(
+                app.get_state_item("account").get("email")
+            )
+
+        response = self._session.post(
+            self.api_base_url + "v1/registration",
+            data={
+                "username": username,
+                "email": email,
+                "password": password,
+                "first_name": first_name,
+                "last_name": last_name,
+            },
+        )
+        return self.raise_error_from_response(response)
+
     def fetch_authentication_token(self):
         auth = app.get_state_item("account", {}).get("auth", {})
         if auth.get("access_token") and auth.get("access_token_expire"):
