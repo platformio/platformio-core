@@ -63,7 +63,7 @@ def test_install_from_vcs(clirunner, validate_cliresult, isolated_pio_home):
     result = clirunner.invoke(
         cli_platform.platform_install,
         [
-            "https://github.com/platformio/" "platform-espressif8266.git#feature/stage",
+            "https://github.com/platformio/" "platform-espressif8266.git",
             "--skip-default-package",
         ],
     )
