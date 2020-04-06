@@ -15,6 +15,8 @@
 import os
 
 import click
+import click_completion
+click_completion.init()
 
 
 class PlatformioCLI(click.MultiCommand):

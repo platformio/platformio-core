@@ -3,7 +3,6 @@
 import click
 import click_completion
 import click_completion.core
-click_completion.init()
 
 @click.group("completion", short_help="Manage shell completions")
 def cli():
