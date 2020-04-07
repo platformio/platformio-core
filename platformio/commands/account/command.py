@@ -14,6 +14,7 @@
 
 # pylint: disable=unused-argument
 
+import re
 import sys
 
 import click
@@ -28,20 +29,28 @@ def cli():
     pass
 
 
+def cmd_validate_email(ctx, param, value):  # pylint: disable=unused-argument
+    value = str(value).strip()
+    if not re.match(r"^[a-z\d_.+-]+@[a-z\d\-]+\.[a-z\d\-.]+$", value, flags=re.I):
+        raise exception.AccountError("Invalid E-Mail address")
+    return value
+
+
 @cli.command("register", short_help="Create new PIO Account")
 @click.option("-u", "--username", prompt=True)
-@click.option("-e", "--email", prompt=True)
+@click.option("-e", "--email", prompt=True, callback=cmd_validate_email)
 @click.option(
     "-p", "--password", prompt=True, hide_input=True, confirmation_prompt=True
 )
-@click.option("-f", "--first-name", prompt=True, default="")
-@click.option("-l", "--last-name", prompt=True, default="")
+@click.option("--first-name", prompt=True)
+@click.option("--last-name", prompt=True)
 def account_register(username, email, password, first_name, last_name):
     client = AccountClient()
     try:
         client.registration(username, email, password, first_name, last_name)
         return click.secho(
-            "User successfully registered! Please, verify your email address.",
+            "An account has been successfully created. "
+            "Please check your mail to activate your account and verify your email address.",
             fg="green",
         )
     except exception.AccountAlreadyAuthenticated as e:
@@ -49,8 +58,8 @@ def account_register(username, email, password, first_name, last_name):
 
 
 @cli.command("login", short_help="Log in to PIO Account")
-@click.option("-u", "--username", prompt=True)
-@click.option("-p", "--password", prompt=True, hide_input=True)
+@click.option("--username", prompt="Username or e-mail")
+@click.option("--password", prompt=True)
 def account_login(username, password):
     client = AccountClient()
     try:
@@ -83,7 +92,7 @@ def account_password(old_password, new_password):
 
 
 @cli.command("token", short_help="Get or regenerate Authentication Token")
-@click.option("-p", "--password")
+@click.option("-p", "--password", prompt=True, hide_input=True)
 @click.option("--regenerate", is_flag=True)
 @click.option("--json-output", is_flag=True)
 def account_token(**kwargs):
@@ -91,7 +100,7 @@ def account_token(**kwargs):
 
 
 @cli.command("forgot", short_help="Forgot password")
-@click.option("-u", "--username")
+@click.option("--username", prompt="Username or e-mail")
 def account_forgot(**kwargs):
     pioplus_call(sys.argv[1:])
 
