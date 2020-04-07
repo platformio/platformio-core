@@ -32,7 +32,7 @@ def cli():
 def cmd_validate_email(ctx, param, value):  # pylint: disable=unused-argument
     value = str(value).strip()
     if not re.match(r"^[a-z\d_.+-]+@[a-z\d\-]+\.[a-z\d\-.]+$", value, flags=re.I):
-        raise exception.AccountError("Invalid E-Mail address")
+        raise click.BadParameter("Invalid E-Mail address")
     return value
 
 
@@ -58,8 +58,8 @@ def account_register(username, email, password, first_name, last_name):
 
 
 @cli.command("login", short_help="Log in to PIO Account")
-@click.option("--username", prompt="Username or e-mail")
-@click.option("--password", prompt=True)
+@click.option("-u", "--username", prompt="Username or e-mail")
+@click.option("-p", "--password", prompt=True)
 def account_login(username, password):
     client = AccountClient()
     try:
