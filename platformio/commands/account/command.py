@@ -29,6 +29,17 @@ def cli():
     pass
 
 
+def cmd_validate_username(ctx, param, value):  # pylint: disable=unused-argument
+    value = str(value).strip()
+    if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){3,38}$", value, flags=re.I):
+        raise click.BadParameter(
+            "Invalid username format. "
+            "Username must contain at least 4 characters including single hyphens,"
+            " and cannot begin or end with a hyphen"
+        )
+    return value
+
+
 def cmd_validate_email(ctx, param, value):  # pylint: disable=unused-argument
     value = str(value).strip()
     if not re.match(r"^[a-z\d_.+-]+@[a-z\d\-]+\.[a-z\d\-.]+$", value, flags=re.I):
@@ -36,11 +47,27 @@ def cmd_validate_email(ctx, param, value):  # pylint: disable=unused-argument
     return value
 
 
+def cmd_validate_password(ctx, param, value):  # pylint: disable=unused-argument
+    value = str(value).strip()
+    if not re.match(r"^(?=.*[a-z])(?=.*\d).{8,}$", value):
+        raise click.BadParameter(
+            "Invalid password format. "
+            "Password must contain at least 8 characters"
+            " including a number and a lowercase letter"
+        )
+    return value
+
+
 @cli.command("register", short_help="Create new PIO Account")
-@click.option("-u", "--username", prompt=True)
+@click.option("-u", "--username", prompt=True, callback=cmd_validate_username)
 @click.option("-e", "--email", prompt=True, callback=cmd_validate_email)
 @click.option(
-    "-p", "--password", prompt=True, hide_input=True, confirmation_prompt=True
+    "-p",
+    "--password",
+    prompt=True,
+    hide_input=True,
+    confirmation_prompt=True,
+    callback=cmd_validate_password,
 )
 @click.option("--first-name", prompt=True)
 @click.option("--last-name", prompt=True)
