@@ -86,7 +86,7 @@ def account_register(username, email, password, first_name, last_name):
 
 @cli.command("login", short_help="Log in to PIO Account")
 @click.option("-u", "--username", prompt="Username or e-mail")
-@click.option("-p", "--password", prompt=True)
+@click.option("-p", "--password", prompt=True, hide_input=True)
 def account_login(username, password):
     client = AccountClient()
     try:

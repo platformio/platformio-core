@@ -25,10 +25,10 @@ from platformio import app, exception
 
 class AccountClient(object):
     def __init__(
-        self, api_base_url="https://api.account.platormio.org/", retries=3,
+        self, api_base_url="https://api.accounts.platormio.org", retries=3,
     ):
-        if not api_base_url.endswith("/"):
-            api_base_url += "/"
+        if api_base_url.endswith("/"):
+            api_base_url = api_base_url[:-1]
         self.api_base_url = api_base_url
         self._session = requests.Session()
         retry = Retry(
@@ -52,7 +52,7 @@ class AccountClient(object):
             )
 
         response = self._session.post(
-            self.api_base_url + "v1/login",
+            self.api_base_url + "/v1/login",
             data={"username": username, "password": password},
         )
         result = self.raise_error_from_response(response)
@@ -65,7 +65,7 @@ class AccountClient(object):
         except:  # pylint:disable=bare-except
             raise exception.AccountNotAuthenticated()
         response = requests.post(
-            self.api_base_url + "v1/logout", data={"refresh_token": refresh_token},
+            self.api_base_url + "/v1/logout", data={"refresh_token": refresh_token},
         )
         self.raise_error_from_response(response)
         app.delete_state_item("account")
@@ -77,7 +77,7 @@ class AccountClient(object):
         except:  # pylint:disable=bare-except
             raise exception.AccountNotAuthenticated()
         response = self._session.post(
-            self.api_base_url + "v1/password",
+            self.api_base_url + "/v1/password",
             headers={"Authorization": "Bearer %s" % token},
             data={"old_password": old_password, "new_password": new_password},
         )
@@ -97,7 +97,7 @@ class AccountClient(object):
             )
 
         response = self._session.post(
-            self.api_base_url + "v1/registration",
+            self.api_base_url + "/v1/registration",
             data={
                 "username": username,
                 "email": email,
@@ -109,29 +109,21 @@ class AccountClient(object):
         return self.raise_error_from_response(response)
 
     def fetch_authentication_token(self):
+        if "PLATFORMIO_AUTH_TOKEN" in os.environ:
+            return os.environ["PLATFORMIO_AUTH_TOKEN"]
         auth = app.get_state_item("account", {}).get("auth", {})
         if auth.get("access_token") and auth.get("access_token_expire"):
             if auth.get("access_token_expire") > time.time():
                 return auth.get("access_token")
             if auth.get("refresh_token"):
                 response = self._session.post(
-                    self.api_base_url + "v1/login",
+                    self.api_base_url + "/v1/login",
                     headers={"Authorization": "Bearer %s" % auth.get("refresh_token")},
                 )
                 result = self.raise_error_from_response(response)
                 app.set_state_item("account", result)
                 return result.get("auth").get("access_token")
-        if "PLATFORMIO_AUTH_TOKEN" not in os.environ:
-            raise exception.AccountNotAuthenticated()
-        response = self._session.post(
-            self.api_base_url + "v1/login",
-            headers={
-                "Authorization": "Bearer %s" % os.environ["PLATFORMIO_AUTH_TOKEN"]
-            },
-        )
-        result = self.raise_error_from_response(response)
-        app.set_state_item("account", result)
-        return result.get("auth").get("access_token")
+        raise exception.AccountNotAuthenticated()
 
     @staticmethod
     def get_refresh_token():
