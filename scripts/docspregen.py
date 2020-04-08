@@ -906,7 +906,7 @@ def update_project_examples():
         platform_examples_dir = join(p.get_dir(), "examples")
         examples_md_lines = []
         if isdir(platform_examples_dir):
-            for item in os.listdir(platform_examples_dir):
+            for item in sorted(os.listdir(platform_examples_dir)):
                 example_dir = join(platform_examples_dir, item)
                 if not isdir(example_dir) or not os.listdir(example_dir):
                     continue
