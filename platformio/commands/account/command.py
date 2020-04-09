@@ -14,6 +14,7 @@
 
 # pylint: disable=unused-argument
 
+import json
 import re
 import sys
 
@@ -122,14 +123,30 @@ def account_password(old_password, new_password):
 @click.option("-p", "--password", prompt=True, hide_input=True)
 @click.option("--regenerate", is_flag=True)
 @click.option("--json-output", is_flag=True)
-def account_token(**kwargs):
-    pioplus_call(sys.argv[1:])
+def account_token(password, regenerate, json_output):
+    client = AccountClient()
+    try:
+        auth_token = client.auth_token(password, regenerate)
+        if json_output:
+            return click.echo(json.dumps({"status": "success", "result": auth_token}))
+        return click.secho("Personal Authentication Token: %s" % auth_token, fg="green")
+    except exception.AccountNotAuthenticated as e:
+        return click.secho(str(e), fg="yellow",)
 
 
 @cli.command("forgot", short_help="Forgot password")
 @click.option("--username", prompt="Username or e-mail")
-def account_forgot(**kwargs):
-    pioplus_call(sys.argv[1:])
+def account_forgot(username):
+    client = AccountClient()
+    try:
+        client.forgot_password(username)
+        return click.secho(
+            "If this account is registered, we will send the "
+            "further instructions to your E-Mail.",
+            fg="green",
+        )
+    except exception.AccountAlreadyAuthenticated as e:
+        return click.secho(str(e), fg="yellow",)
 
 
 @cli.command("show", short_help="PIO Account information")

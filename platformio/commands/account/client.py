@@ -108,6 +108,44 @@ class AccountClient(object):
         )
         return self.raise_error_from_response(response)
 
+    def auth_token(self, password, regenerate):
+        try:
+            token = self.fetch_authentication_token()
+        except:  # pylint:disable=bare-except
+            raise exception.AccountNotAuthenticated()
+        response = self._session.post(
+            self.api_base_url + "/v1/token",
+            headers={"Authorization": "Bearer %s" % token},
+            data={"password": password, "regenerate": 1 if regenerate else 0},
+        )
+        return self.raise_error_from_response(response).get("auth_token")
+
+    def forgot_password(self, username):
+        try:
+            self.fetch_authentication_token()
+        except:  # pylint:disable=bare-except
+            pass
+        else:
+            raise exception.AccountAlreadyAuthenticated(
+                app.get_state_item("account").get("email")
+            )
+
+        response = self._session.post(
+            self.api_base_url + "/v1/forgot", data={"username": username},
+        )
+        return self.raise_error_from_response(response).get("auth_token")
+
+    def profile_info(self):
+        try:
+            token = self.fetch_authentication_token()
+        except:  # pylint:disable=bare-except
+            raise exception.AccountNotAuthenticated()
+        response = self._session.get(
+            self.api_base_url + "/v1/profile",
+            headers={"Authorization": "Bearer %s" % token},
+        )
+        return self.raise_error_from_response(response)
+
     def fetch_authentication_token(self):
         if "PLATFORMIO_AUTH_TOKEN" in os.environ:
             return os.environ["PLATFORMIO_AUTH_TOKEN"]
