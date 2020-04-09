@@ -172,25 +172,18 @@ def account_update(current_password):
             if field == "username":
                 validate_username(new_profile[field])
         client.update_profile(new_profile, current_password)
-        if new_profile["email"] != profile["email"]:
-            try:
-                client.logout()
-            except exception.AccountNotAuthenticated:
-                pass
-            return click.secho(
-                "Profile successfully updated! "
-                "Please check your mail to verify your new email address and re-login.",
-                fg="green",
-            )
-        if new_profile["username"] != profile["username"]:
-            try:
-                client.logout()
-            except exception.AccountNotAuthenticated:
-                pass
-            return click.secho(
-                "Profile successfully updated! Please re-login.", fg="green"
-            )
-        return click.secho("Profile successfully updated!", fg="green")
+        click.secho("Profile successfully updated!", fg="green")
+        username_changed = new_profile["username"] != profile["username"]
+        email_changed = new_profile["email"] != profile["email"]
+        if not username_changed and not email_changed:
+            return
+        try:
+            client.logout()
+        except exception.AccountNotAuthenticated:
+            pass
+        if email_changed:
+            return click.secho("Please check your mail to verify your new email address and re-login. ", fg="yellow")
+        return click.secho("Please re-login.", fg="yellow")
     except exception.AccountNotAuthenticated as e:
         return click.secho(str(e), fg="yellow",)
 
