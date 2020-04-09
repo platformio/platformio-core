@@ -25,7 +25,7 @@ from platformio import app, exception
 
 class AccountClient(object):
     def __init__(
-        self, api_base_url="https://api.accounts.platormio.org", retries=3,
+        self, api_base_url="https://api.accounts.platformio.org", retries=3,
     ):
         if api_base_url.endswith("/"):
             api_base_url = api_base_url[:-1]
