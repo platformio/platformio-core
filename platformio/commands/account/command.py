@@ -182,7 +182,10 @@ def account_update(current_password):
         except exception.AccountNotAuthenticated:
             pass
         if email_changed:
-            return click.secho("Please check your mail to verify your new email address and re-login. ", fg="yellow")
+            return click.secho(
+                "Please check your mail to verify your new email address and re-login. ",
+                fg="yellow",
+            )
         return click.secho("Please re-login.", fg="yellow")
     except exception.AccountNotAuthenticated as e:
         return click.secho(str(e), fg="yellow",)
