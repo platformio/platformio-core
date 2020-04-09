@@ -30,7 +30,9 @@ def cli():
     pass
 
 
-def cmd_validate_username(ctx, param, value):  # pylint: disable=unused-argument
+def cmd_validate_username(
+    ctx=None, param=None, value=None
+):  # pylint: disable=unused-argument
     value = str(value).strip()
     if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){3,38}$", value, flags=re.I):
         raise click.BadParameter(
@@ -41,14 +43,18 @@ def cmd_validate_username(ctx, param, value):  # pylint: disable=unused-argument
     return value
 
 
-def cmd_validate_email(ctx, param, value):  # pylint: disable=unused-argument
+def cmd_validate_email(
+    ctx=None, param=None, value=None
+):  # pylint: disable=unused-argument
     value = str(value).strip()
     if not re.match(r"^[a-z\d_.+-]+@[a-z\d\-]+\.[a-z\d\-.]+$", value, flags=re.I):
         raise click.BadParameter("Invalid E-Mail address")
     return value
 
 
-def cmd_validate_password(ctx, param, value):  # pylint: disable=unused-argument
+def cmd_validate_password(
+    ctx=None, param=None, value=None
+):  # pylint: disable=unused-argument
     value = str(value).strip()
     if not re.match(r"^(?=.*[a-z])(?=.*\d).{8,}$", value):
         raise click.BadParameter(
@@ -146,6 +152,45 @@ def account_forgot(username):
             fg="green",
         )
     except exception.AccountAlreadyAuthenticated as e:
+        return click.secho(str(e), fg="yellow",)
+
+
+@cli.command("update", short_help="Update profile information")
+@click.option("--current-password", prompt=True, hide_input=True)
+def account_update(current_password):
+    client = AccountClient()
+    try:
+        profile = client.get_profile()
+        new_profile = {}
+        for field in profile:
+            new_profile[field] = click.prompt(
+                field.replace("_", " ").capitalize(), default=profile[field]
+            )
+            if field == "email":
+                cmd_validate_email(value=new_profile[field])
+            if field == "username":
+                cmd_validate_username(value=new_profile[field])
+        client.update_profile(new_profile, current_password)
+        if new_profile["email"] != profile["email"]:
+            try:
+                client.logout()
+            except exception.AccountNotAuthenticated:
+                pass
+            return click.secho(
+                "Profile successfully updated! "
+                "Please check your mail to verify your new email address and re-login.",
+                fg="green",
+            )
+        if new_profile["username"] != profile["username"]:
+            try:
+                client.logout()
+            except exception.AccountNotAuthenticated:
+                pass
+            return click.secho(
+                "Profile successfully updated! Please re-login.", fg="green"
+            )
+        return click.secho("Profile successfully updated!", fg="green")
+    except exception.AccountNotAuthenticated as e:
         return click.secho(str(e), fg="yellow",)
 
 

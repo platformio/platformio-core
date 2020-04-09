@@ -48,7 +48,7 @@ class AccountClient(object):
             pass
         else:
             raise exception.AccountAlreadyAuthenticated(
-                app.get_state_item("account").get("email")
+                app.get_state_item("account", {}).get("email", "")
             )
 
         response = self._session.post(
@@ -93,7 +93,7 @@ class AccountClient(object):
             pass
         else:
             raise exception.AccountAlreadyAuthenticated(
-                app.get_state_item("account").get("email")
+                app.get_state_item("account", {}).get("email", "")
             )
 
         response = self._session.post(
@@ -127,7 +127,7 @@ class AccountClient(object):
             pass
         else:
             raise exception.AccountAlreadyAuthenticated(
-                app.get_state_item("account").get("email")
+                app.get_state_item("account", {}).get("email", "")
             )
 
         response = self._session.post(
@@ -135,7 +135,7 @@ class AccountClient(object):
         )
         return self.raise_error_from_response(response).get("auth_token")
 
-    def profile_info(self):
+    def get_profile(self):
         try:
             token = self.fetch_authentication_token()
         except:  # pylint:disable=bare-except
@@ -143,6 +143,19 @@ class AccountClient(object):
         response = self._session.get(
             self.api_base_url + "/v1/profile",
             headers={"Authorization": "Bearer %s" % token},
+        )
+        return self.raise_error_from_response(response)
+
+    def update_profile(self, profile, current_password):
+        try:
+            token = self.fetch_authentication_token()
+        except:  # pylint:disable=bare-except
+            raise exception.AccountNotAuthenticated()
+        profile["current_password"] = current_password
+        response = self._session.put(
+            self.api_base_url + "/v1/profile",
+            headers={"Authorization": "Bearer %s" % token},
+            data=profile,
         )
         return self.raise_error_from_response(response)
 
