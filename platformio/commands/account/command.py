@@ -30,9 +30,7 @@ def cli():
     pass
 
 
-def cmd_validate_username(
-    ctx=None, param=None, value=None
-):  # pylint: disable=unused-argument
+def validate_username(value):
     value = str(value).strip()
     if not re.match(r"^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){3,38}$", value, flags=re.I):
         raise click.BadParameter(
@@ -43,18 +41,14 @@ def cmd_validate_username(
     return value
 
 
-def cmd_validate_email(
-    ctx=None, param=None, value=None
-):  # pylint: disable=unused-argument
+def validate_email(value):
     value = str(value).strip()
     if not re.match(r"^[a-z\d_.+-]+@[a-z\d\-]+\.[a-z\d\-.]+$", value, flags=re.I):
         raise click.BadParameter("Invalid E-Mail address")
     return value
 
 
-def cmd_validate_password(
-    ctx=None, param=None, value=None
-):  # pylint: disable=unused-argument
+def validate_password(value):
     value = str(value).strip()
     if not re.match(r"^(?=.*[a-z])(?=.*\d).{8,}$", value):
         raise click.BadParameter(
@@ -66,15 +60,22 @@ def cmd_validate_password(
 
 
 @cli.command("register", short_help="Create new PIO Account")
-@click.option("-u", "--username", prompt=True, callback=cmd_validate_username)
-@click.option("-e", "--email", prompt=True, callback=cmd_validate_email)
+@click.option(
+    "-u",
+    "--username",
+    prompt=True,
+    callback=lambda _, __, value: validate_username(value),
+)
+@click.option(
+    "-e", "--email", prompt=True, callback=lambda _, __, value: validate_email(value)
+)
 @click.option(
     "-p",
     "--password",
     prompt=True,
     hide_input=True,
     confirmation_prompt=True,
-    callback=cmd_validate_password,
+    callback=lambda _, __, value: validate_password(value),
 )
 @click.option("--first-name", prompt=True)
 @click.option("--last-name", prompt=True)
@@ -167,9 +168,9 @@ def account_update(current_password):
                 field.replace("_", " ").capitalize(), default=profile[field]
             )
             if field == "email":
-                cmd_validate_email(value=new_profile[field])
+                validate_email(new_profile[field])
             if field == "username":
-                cmd_validate_username(value=new_profile[field])
+                validate_username(new_profile[field])
         client.update_profile(new_profile, current_password)
         if new_profile["email"] != profile["email"]:
             try:
