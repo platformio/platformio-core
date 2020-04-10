@@ -53,7 +53,7 @@ class PackageRepoIterator(object):
     def load_manifest(url):
         r = None
         try:
-            r = requests.get(url, headers=util.get_request_defheaders())
+            r = requests.get(url, headers={"User-Agent": app.get_user_agent()})
             r.raise_for_status()
             return r.json()
         except:  # pylint: disable=bare-except
