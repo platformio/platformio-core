@@ -38,7 +38,7 @@ def pytest_generate_tests(metafunc):
         p = PlatformFactory.newPlatform(manifest["__pkg_dir"])
         ignore_conds = [
             not p.is_embedded(),
-            p.name == "ststm8",
+            p.name in ("ststm8", "infineonxmc"),
             # issue with "version `CXXABI_1.3.9' not found (required by sdcc)"
             "linux" in util.get_systype() and p.name == "intel_mcs51",
         ]

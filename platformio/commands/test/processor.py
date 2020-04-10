@@ -29,6 +29,7 @@ TRANSPORT_OPTIONS = {
         "flush": "Serial.flush()",
         "begin": "Serial.begin($baudrate)",
         "end": "Serial.end()",
+        "language": "cpp",
     },
     "mbed": {
         "include": "#include <mbed.h>",
@@ -37,12 +38,21 @@ TRANSPORT_OPTIONS = {
         "flush": "",
         "begin": "pc.baud($baudrate)",
         "end": "",
+        "language": "cpp",
     },
     "espidf": {
         "include": "#include <stdio.h>",
         "object": "",
         "putchar": "putchar(c)",
         "flush": "fflush(stdout)",
+        "begin": "",
+        "end": "",
+    },
+    "zephyr": {
+        "include": "#include <sys/printk.h>",
+        "object": "",
+        "putchar": 'printk("%c", c)',
+        "flush": "",
         "begin": "",
         "end": "",
     },
@@ -61,6 +71,7 @@ TRANSPORT_OPTIONS = {
         "flush": "unittest_uart_flush()",
         "begin": "unittest_uart_begin()",
         "end": "unittest_uart_end()",
+        "language": "cpp",
     },
 }
 
@@ -80,7 +91,7 @@ class TestProcessorBase(object):
         self.env_name = envname
         self.env_options = options["project_config"].items(env=envname, as_dict=True)
         self._run_failed = False
-        self._outputcpp_generated = False
+        self._output_file_generated = False
 
     def get_transport(self):
         transport = None
@@ -105,11 +116,11 @@ class TestProcessorBase(object):
         click.secho(text, bold=self.options.get("verbose"))
 
     def build_or_upload(self, target):
-        if not self._outputcpp_generated:
-            self.generate_outputcpp(
+        if not self._output_file_generated:
+            self.generate_output_file(
                 self.options["project_config"].get_optional_dir("test")
             )
-            self._outputcpp_generated = True
+            self._output_file_generated = True
 
         if self.test_name != "*":
             self.cmd_ctx.meta[CTX_META_TEST_RUNNING_NAME] = self.test_name
@@ -147,10 +158,10 @@ class TestProcessorBase(object):
         else:
             click.echo(line)
 
-    def generate_outputcpp(self, test_dir):
+    def generate_output_file(self, test_dir):
         assert isdir(test_dir)
 
-        cpp_tpl = "\n".join(
+        file_tpl = "\n".join(
             [
                 "$include",
                 "#include <output_export.h>",
@@ -194,10 +205,12 @@ class TestProcessorBase(object):
                         fg="yellow",
                     )
 
-        tpl = Template(cpp_tpl).substitute(TRANSPORT_OPTIONS[self.get_transport()])
+        transport_options = TRANSPORT_OPTIONS[self.get_transport()]
+        tpl = Template(file_tpl).substitute(transport_options)
         data = Template(tpl).substitute(baudrate=self.get_baudrate())
-
-        tmp_file = join(test_dir, "output_export.cpp")
+        tmp_file = join(
+            test_dir, "output_export." + transport_options.get("language", "c")
+        )
         with open(tmp_file, "w") as fp:
             fp.write(data)
 

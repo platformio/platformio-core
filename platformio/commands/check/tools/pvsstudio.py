@@ -140,9 +140,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             os.remove(self._tmp_output_file)
 
         if not os.path.isfile(self._tmp_preprocessed_file):
-            click.echo(
-                "Error: Missing preprocessed file '%s'" % (self._tmp_preprocessed_file)
-            )
+            click.echo("Error: Missing preprocessed file for '%s'" % src_file)
             return ""
 
         cmd = [
@@ -175,6 +173,9 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
         return os.path.join(self._tmp_dir, next(tempfile._get_candidate_names()))
 
     def _prepare_preprocessed_file(self, src_file):
+        if os.path.isfile(self._tmp_preprocessed_file):
+            os.remove(self._tmp_preprocessed_file)
+
         flags = self.cxx_flags
         compiler = self.cxx_path
         if src_file.endswith(".c"):
@@ -186,8 +187,12 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
         cmd.extend(["-D%s" % d for d in self.cpp_defines])
         cmd.append('@"%s"' % self._tmp_cmd_file)
 
+        # Explicitly specify C++ as the language used in .ino files
+        if src_file.endswith(".ino"):
+            cmd.insert(1, "-xc++")
+
         result = proc.exec_command(" ".join(cmd), shell=True)
-        if result["returncode"] != 0:
+        if result["returncode"] != 0 or result["err"]:
             if self.options.get("verbose"):
                 click.echo(" ".join(cmd))
             click.echo(result["err"])
