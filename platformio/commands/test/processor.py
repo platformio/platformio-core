@@ -51,7 +51,7 @@ TRANSPORT_OPTIONS = {
     "zephyr": {
         "include": "#include <sys/printk.h>",
         "object": "",
-        "putchar": "printk(\"%c\", c)",
+        "putchar": 'printk("%c", c)',
         "flush": "",
         "begin": "",
         "end": "",
