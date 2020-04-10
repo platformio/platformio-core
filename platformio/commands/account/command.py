@@ -176,7 +176,7 @@ def account_update(current_password):
         username_changed = new_profile["username"] != profile["username"]
         email_changed = new_profile["email"] != profile["email"]
         if not username_changed and not email_changed:
-            return
+            return None
         try:
             client.logout()
         except exception.AccountNotAuthenticated:

@@ -67,7 +67,10 @@ class AccountClient(object):
         response = requests.post(
             self.api_base_url + "/v1/logout", data={"refresh_token": refresh_token},
         )
-        self.raise_error_from_response(response)
+        try:
+            self.raise_error_from_response(response)
+        except exception.AccountError:
+            pass
         app.delete_state_item("account")
         return True
 
