@@ -31,6 +31,7 @@ class AccountClient(object):
             api_base_url = api_base_url[:-1]
         self.api_base_url = api_base_url
         self._session = requests.Session()
+        self._session.headers.update({"User-Agent": app.get_user_agent()})
         retry = Retry(
             total=retries,
             read=retries,
