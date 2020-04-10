@@ -313,7 +313,7 @@ class AccountError(PlatformioException):
 
 class AccountNotAuthenticated(AccountError):
 
-    MESSAGE = "You are not authenticated!"
+    MESSAGE = "You are not authenticated! Please login to PIO Account."
 
 
 class AccountAlreadyAuthenticated(AccountError):
