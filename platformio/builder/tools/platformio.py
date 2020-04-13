@@ -285,7 +285,7 @@ def CollectBuildFiles(
     for callback, pattern in env.get("__PIO_BUILD_MIDDLEWARES", []):
         tmp = []
         for node in sources:
-            if pattern and not fnmatch.fnmatch(node.get_path(), pattern):
+            if pattern and not fnmatch.fnmatch(node.srcnode().get_path(), pattern):
                 tmp.append(node)
                 continue
             n = callback(node)

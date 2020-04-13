@@ -12,6 +12,7 @@ PlatformIO Core 4
 * Fixed PIO Unit Testing for Zephyr RTOS
 * Fixed UnicodeDecodeError on Windows when network drive (NAS) is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
 * Fixed an issue when saving libraries in new project results in error "No option 'lib_deps' in section" (`issue #3442 <https://github.com/platformio/platformio-core/issues/3442>`_)
+* Fixed an incorrect node path used for pattern matching when processing middleware nodes
 
 4.3.1 (2020-03-20)
 ~~~~~~~~~~~~~~~~~~
