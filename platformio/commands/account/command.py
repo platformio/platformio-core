@@ -19,6 +19,7 @@ import json
 import re
 
 import click
+from tabulate import tabulate
 
 from platformio import exception
 from platformio.commands.account.client import AccountClient
@@ -209,22 +210,33 @@ def account_show(offline, json_output):
 
 
 def print_profile(profile):
-    click.echo("Profile:")
+    click.secho("Profile", fg="cyan", bold=True)
+    click.echo("=" * len("Profile"))
+    data = []
     if profile.get("username"):
-        click.echo("- Username: %s" % profile["username"])
+        data.append(("Username:", profile["username"]))
     if profile.get("email"):
-        click.echo("- Email: %s" % profile["email"])
+        data.append(("Email:", profile["email"]))
     if profile.get("first_name"):
-        click.echo("- First name: %s" % profile["first_name"])
+        data.append(("First name:", profile["first_name"]))
     if profile.get("last_name"):
-        click.echo("- Last name: %s" % profile["last_name"])
+        data.append(("Last name:", profile["last_name"]))
+    click.echo(tabulate(data, tablefmt="plain"))
 
 
 def print_packages(packages):
     click.echo()
-    click.echo("Package%s:" % ("s" if len(packages) > 1 else ""))
+    click.secho(
+        "Packages", fg="cyan",
+    )
+    click.echo("=" * len("Packages"))
     for package in packages:
-        click.echo("- %s" % package.get("name"))
+        click.echo()
+        click.secho(package.get("name"), bold=True)
+        click.echo("-" * len(package.get("name")))
+        if package.get("description"):
+            click.echo(package.get("description"))
+        data = []
         expire = "-"
         if "subscription" in package:
             expire = datetime.datetime.strptime(
@@ -234,41 +246,51 @@ def print_packages(packages):
                 ),
                 "%Y-%m-%dT%H:%M:%SZ",
             ).strftime("%Y-%m-%d")
-        click.echo("  Expire: %s" % expire)
-        permissions = []
+        data.append(("Expire:", expire))
+        services = []
         for key in package:
-            if not key.startswith("service.") or package[key].get("title"):
+            if not key.startswith("service."):
                 continue
-            permissions.append(package[key].get("title"))
-        if permissions:
-            click.echo("  Permissions: %s" % ", ".join(permissions))
+            if isinstance(package[key], dict):
+                services.append(package[key].get("title"))
+            else:
+                services.append(package[key])
+        if services:
+            data.append(("Services:", ", ".join(services)))
+        click.echo(tabulate(data, tablefmt="plain"))
 
 
 def print_subscriptions(subscriptions):
     click.echo()
-    click.echo("Subscription%s:" % ("s" if len(subscriptions) > 1 else ""))
+    click.secho(
+        "Subscriptions", fg="cyan",
+    )
+    click.echo("=" * len("Subscriptions"))
     for subscription in subscriptions:
-        click.echo("- %s" % (subscription.get("product_name")))
-        click.echo("  Status: %s" % subscription.get("status"))
+        click.echo()
+        click.secho(subscription.get("product_name"), bold=True)
+        click.echo("-" * len(subscription.get("product_name")))
+        data = [("State:", subscription.get("status"))]
         begin_at = datetime.datetime.strptime(
             subscription.get("begin_at"), "%Y-%m-%dT%H:%M:%SZ"
         ).strftime("%Y-%m-%d %H:%M:%S")
-        click.echo("  Begin at: %s" % (begin_at or "-"))
+        data.append(("Start date:", begin_at or "-"))
         end_at = subscription.get("end_at")
         if end_at:
             end_at = datetime.datetime.strptime(
                 subscription.get("end_at"), "%Y-%m-%dT%H:%M:%SZ"
             ).strftime("%Y-%m-%d %H:%M:%S")
-        click.echo("  End at: %s" % (end_at or "-"))
+        data.append(("End date:", end_at or "-"))
         next_bill_at = subscription.get("next_bill_at")
         if next_bill_at:
             next_bill_at = datetime.datetime.strptime(
                 subscription.get("next_bill_at"), "%Y-%m-%dT%H:%M:%SZ"
             ).strftime("%Y-%m-%d %H:%M:%S")
-        click.echo("  Next payment: %s" % (next_bill_at or "-"))
-        click.echo(
-            "  Edit: %s" % click.style(subscription.get("update_url"), fg="blue")
+        data.append(("Next payment:", next_bill_at or "-"))
+        data.append(
+            ("Edit:", click.style(subscription.get("update_url"), fg="blue") or "-")
         )
-        click.echo(
-            "  Cancel: %s" % click.style(subscription.get("cancel_url"), fg="blue")
+        data.append(
+            ("Cancel:", click.style(subscription.get("cancel_url"), fg="blue") or "-")
         )
+        click.echo(tabulate(data, tablefmt="plain"))
