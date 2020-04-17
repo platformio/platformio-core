@@ -140,18 +140,25 @@ def account_forgot(username):
 
 @cli.command("update", short_help="Update profile information")
 @click.option("--current-password", prompt=True, hide_input=True)
-def account_update(current_password):
+@click.option("--username")
+@click.option("--email")
+@click.option("--first-name")
+@click.option("--last-name")
+def account_update(current_password, **kwargs):
     client = AccountClient()
     profile = client.get_profile()
-    new_profile = {}
-    for field in profile:
-        new_profile[field] = click.prompt(
-            field.replace("_", " ").capitalize(), default=profile[field]
-        )
-        if field == "email":
-            validate_email(new_profile[field])
-        if field == "username":
-            validate_username(new_profile[field])
+    new_profile = profile.copy()
+    if not any(kwargs.values()):
+        for field in profile:
+            new_profile[field] = click.prompt(
+                field.replace("_", " ").capitalize(), default=profile[field]
+            )
+            if field == "email":
+                validate_email(new_profile[field])
+            if field == "username":
+                validate_username(new_profile[field])
+    else:
+        new_profile.update({key: value for key, value in kwargs.items() if value})
     client.update_profile(new_profile, current_password)
     click.secho("Profile successfully updated!", fg="green")
     username_changed = new_profile["username"] != profile["username"]
