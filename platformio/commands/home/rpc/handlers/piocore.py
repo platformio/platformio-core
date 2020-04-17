@@ -96,7 +96,7 @@ class PIOCoreRPC(object):
         to_json = "--json-output" in args
 
         try:
-            if args and args[0] in ("account", "remote"):
+            if args and args[0] == "remote":
                 result = yield PIOCoreRPC._call_subprocess(args, options)
                 defer.returnValue(PIOCoreRPC._process_result(result, to_json))
             else:

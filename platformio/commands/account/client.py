@@ -125,15 +125,6 @@ class AccountClient(object):
         return self.raise_error_from_response(response).get("auth_token")
 
     def forgot_password(self, username):
-        try:
-            self.fetch_authentication_token()
-        except:  # pylint:disable=bare-except
-            pass
-        else:
-            raise exception.AccountAlreadyAuthenticated(
-                app.get_state_item("account", {}).get("email", "")
-            )
-
         response = self._session.post(
             self.api_base_url + "/v1/forgot", data={"username": username},
         )
@@ -160,6 +151,27 @@ class AccountClient(object):
             self.api_base_url + "/v1/profile",
             headers={"Authorization": "Bearer %s" % token},
             data=profile,
+        )
+        return self.raise_error_from_response(response)
+
+    def get_account_info(self, offline):
+        if offline:
+            account = app.get_state_item("account")
+            if not account:
+                raise exception.AccountNotAuthenticated()
+            return {
+                "profile": {
+                    "email": account.get("email"),
+                    "username": account.get("username"),
+                }
+            }
+        try:
+            token = self.fetch_authentication_token()
+        except:  # pylint:disable=bare-except
+            raise exception.AccountNotAuthenticated()
+        response = self._session.get(
+            self.api_base_url + "/v1/summary",
+            headers={"Authorization": "Bearer %s" % token},
         )
         return self.raise_error_from_response(response)
 
