@@ -138,6 +138,8 @@ def account_token(password, regenerate, json_output):
             return click.echo(json.dumps({"status": "success", "result": auth_token}))
         return click.secho("Personal Authentication Token: %s" % auth_token, fg="green")
     except exception.AccountNotAuthenticated as e:
+        if json_output:
+            return click.secho(json.dumps(str(e)), fg="yellow", )
         return click.secho(str(e), fg="yellow",)
 
 
@@ -206,6 +208,8 @@ def account_show(offline, json_output):
             print_subscriptions(info["subscriptions"])
         return click.echo()
     except exception.AccountNotAuthenticated as e:
+        if json_output:
+            return click.secho(json.dumps(str(e)), fg="yellow",)
         return click.secho(str(e), fg="yellow",)
 
 
