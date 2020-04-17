@@ -81,15 +81,12 @@ def validate_password(value):
 @click.option("--last-name", prompt=True)
 def account_register(username, email, password, first_name, last_name):
     client = AccountClient()
-    try:
-        client.registration(username, email, password, first_name, last_name)
-        return click.secho(
-            "An account has been successfully created. "
-            "Please check your mail to activate your account and verify your email address.",
-            fg="green",
-        )
-    except exception.AccountAlreadyAuthenticated as e:
-        return click.secho(str(e), fg="yellow",)
+    client.registration(username, email, password, first_name, last_name)
+    return click.secho(
+        "An account has been successfully created. "
+        "Please check your mail to activate your account and verify your email address.",
+        fg="green",
+    )
 
 
 @cli.command("login", short_help="Log in to PIO Account")
@@ -97,21 +94,15 @@ def account_register(username, email, password, first_name, last_name):
 @click.option("-p", "--password", prompt=True, hide_input=True)
 def account_login(username, password):
     client = AccountClient()
-    try:
-        client.login(username, password)
-        return click.secho("Successfully logged in!", fg="green")
-    except exception.AccountAlreadyAuthenticated as e:
-        return click.secho(str(e), fg="yellow",)
+    client.login(username, password)
+    return click.secho("Successfully logged in!", fg="green")
 
 
 @cli.command("logout", short_help="Log out of PIO Account")
 def account_logout():
     client = AccountClient()
-    try:
-        client.logout()
-        return click.secho("Successfully logged out!", fg="green")
-    except exception.AccountNotAuthenticated as e:
-        return click.secho(str(e), fg="yellow",)
+    client.logout()
+    return click.secho("Successfully logged out!", fg="green")
 
 
 @cli.command("password", short_help="Change password")
@@ -119,11 +110,8 @@ def account_logout():
 @click.option("--new-password", prompt=True, hide_input=True, confirmation_prompt=True)
 def account_password(old_password, new_password):
     client = AccountClient()
-    try:
-        client.change_password(old_password, new_password)
-        return click.secho("Password successfully changed!", fg="green")
-    except exception.AccountNotAuthenticated as e:
-        return click.secho(str(e), fg="yellow",)
+    client.change_password(old_password, new_password)
+    return click.secho("Password successfully changed!", fg="green")
 
 
 @cli.command("token", short_help="Get or regenerate Authentication Token")
@@ -132,15 +120,10 @@ def account_password(old_password, new_password):
 @click.option("--json-output", is_flag=True)
 def account_token(password, regenerate, json_output):
     client = AccountClient()
-    try:
-        auth_token = client.auth_token(password, regenerate)
-        if json_output:
-            return click.echo(json.dumps({"status": "success", "result": auth_token}))
-        return click.secho("Personal Authentication Token: %s" % auth_token, fg="green")
-    except exception.AccountNotAuthenticated as e:
-        if json_output:
-            return click.secho(json.dumps(str(e)), fg="yellow", )
-        return click.secho(str(e), fg="yellow",)
+    auth_token = client.auth_token(password, regenerate)
+    if json_output:
+        return click.echo(json.dumps({"status": "success", "result": auth_token}))
+    return click.secho("Personal Authentication Token: %s" % auth_token, fg="green")
 
 
 @cli.command("forgot", short_help="Forgot password")
@@ -159,35 +142,32 @@ def account_forgot(username):
 @click.option("--current-password", prompt=True, hide_input=True)
 def account_update(current_password):
     client = AccountClient()
+    profile = client.get_profile()
+    new_profile = {}
+    for field in profile:
+        new_profile[field] = click.prompt(
+            field.replace("_", " ").capitalize(), default=profile[field]
+        )
+        if field == "email":
+            validate_email(new_profile[field])
+        if field == "username":
+            validate_username(new_profile[field])
+    client.update_profile(new_profile, current_password)
+    click.secho("Profile successfully updated!", fg="green")
+    username_changed = new_profile["username"] != profile["username"]
+    email_changed = new_profile["email"] != profile["email"]
+    if not username_changed and not email_changed:
+        return None
     try:
-        profile = client.get_profile()
-        new_profile = {}
-        for field in profile:
-            new_profile[field] = click.prompt(
-                field.replace("_", " ").capitalize(), default=profile[field]
-            )
-            if field == "email":
-                validate_email(new_profile[field])
-            if field == "username":
-                validate_username(new_profile[field])
-        client.update_profile(new_profile, current_password)
-        click.secho("Profile successfully updated!", fg="green")
-        username_changed = new_profile["username"] != profile["username"]
-        email_changed = new_profile["email"] != profile["email"]
-        if not username_changed and not email_changed:
-            return None
-        try:
-            client.logout()
-        except exception.AccountNotAuthenticated:
-            pass
-        if email_changed:
-            return click.secho(
-                "Please check your mail to verify your new email address and re-login. ",
-                fg="yellow",
-            )
-        return click.secho("Please re-login.", fg="yellow")
-    except exception.AccountNotAuthenticated as e:
-        return click.secho(str(e), fg="yellow",)
+        client.logout()
+    except exception.AccountNotAuthenticated:
+        pass
+    if email_changed:
+        return click.secho(
+            "Please check your mail to verify your new email address and re-login. ",
+            fg="yellow",
+        )
+    return click.secho("Please re-login.", fg="yellow")
 
 
 @cli.command("show", short_help="PIO Account information")
@@ -195,22 +175,17 @@ def account_update(current_password):
 @click.option("--json-output", is_flag=True)
 def account_show(offline, json_output):
     client = AccountClient()
-    try:
-        info = client.get_account_info(offline)
-        if json_output:
-            return click.echo(json.dumps(info))
-        click.echo()
-        if info.get("profile"):
-            print_profile(info["profile"])
-        if info.get("packages"):
-            print_packages(info["packages"])
-        if info.get("subscriptions"):
-            print_subscriptions(info["subscriptions"])
-        return click.echo()
-    except exception.AccountNotAuthenticated as e:
-        if json_output:
-            return click.secho(json.dumps(str(e)), fg="yellow",)
-        return click.secho(str(e), fg="yellow",)
+    info = client.get_account_info(offline)
+    if json_output:
+        return click.echo(json.dumps(info))
+    click.echo()
+    if info.get("profile"):
+        print_profile(info["profile"])
+    if info.get("packages"):
+        print_packages(info["packages"])
+    if info.get("subscriptions"):
+        print_subscriptions(info["subscriptions"])
+    return click.echo()
 
 
 def print_profile(profile):
