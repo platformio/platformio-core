@@ -304,18 +304,3 @@ class TestDirNotExists(PlatformioException):
         "Testing: https://docs.platformio.org/page/plus/"
         "unit-testing.html"
     )
-
-
-class AccountError(PlatformioException):
-
-    MESSAGE = "{0}"
-
-
-class AccountNotAuthenticated(AccountError):
-
-    MESSAGE = "You are not authenticated! Please login to PIO Account."
-
-
-class AccountAlreadyAuthenticated(AccountError):
-
-    MESSAGE = "You are already authenticated with {0} account."

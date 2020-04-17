@@ -21,7 +21,7 @@ import re
 import click
 from tabulate import tabulate
 
-from platformio import exception
+from platformio.commands.account import exception
 from platformio.commands.account.client import AccountClient
 
 
@@ -226,9 +226,7 @@ def print_profile(profile):
 
 def print_packages(packages):
     click.echo()
-    click.secho(
-        "Packages", fg="cyan",
-    )
+    click.secho("Packages", fg="cyan")
     click.echo("=" * len("Packages"))
     for package in packages:
         click.echo()
@@ -262,9 +260,7 @@ def print_packages(packages):
 
 def print_subscriptions(subscriptions):
     click.echo()
-    click.secho(
-        "Subscriptions", fg="cyan",
-    )
+    click.secho("Subscriptions", fg="cyan")
     click.echo("=" * len("Subscriptions"))
     for subscription in subscriptions:
         click.echo()
