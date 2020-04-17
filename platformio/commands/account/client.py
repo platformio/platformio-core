@@ -90,7 +90,7 @@ class AccountClient(object):
         return True
 
     def registration(
-        self, username, email, password, first_name, last_name
+        self, username, email, password, firstname, lastname
     ):  # pylint:disable=too-many-arguments
         try:
             self.fetch_authentication_token()
@@ -107,8 +107,8 @@ class AccountClient(object):
                 "username": username,
                 "email": email,
                 "password": password,
-                "first_name": first_name,
-                "last_name": last_name,
+                "firstname": firstname,
+                "lastname": lastname,
             },
         )
         return self.raise_error_from_response(response)

@@ -77,11 +77,11 @@ def validate_password(value):
     confirmation_prompt=True,
     callback=lambda _, __, value: validate_password(value),
 )
-@click.option("--first-name", prompt=True)
-@click.option("--last-name", prompt=True)
-def account_register(username, email, password, first_name, last_name):
+@click.option("--firstname", prompt=True)
+@click.option("--lastname", prompt=True)
+def account_register(username, email, password, firstname, lastname):
     client = AccountClient()
-    client.registration(username, email, password, first_name, last_name)
+    client.registration(username, email, password, firstname, lastname)
     return click.secho(
         "An account has been successfully created. "
         "Please check your mail to activate your account and verify your email address.",
@@ -142,8 +142,8 @@ def account_forgot(username):
 @click.option("--current-password", prompt=True, hide_input=True)
 @click.option("--username")
 @click.option("--email")
-@click.option("--first-name")
-@click.option("--last-name")
+@click.option("--firstname")
+@click.option("--lastname")
 def account_update(current_password, **kwargs):
     client = AccountClient()
     profile = client.get_profile()
@@ -203,10 +203,10 @@ def print_profile(profile):
         data.append(("Username:", profile["username"]))
     if profile.get("email"):
         data.append(("Email:", profile["email"]))
-    if profile.get("first_name"):
-        data.append(("First name:", profile["first_name"]))
-    if profile.get("last_name"):
-        data.append(("Last name:", profile["last_name"]))
+    if profile.get("firstname"):
+        data.append(("First name:", profile["firstname"]))
+    if profile.get("lastname"):
+        data.append(("Last name:", profile["lastname"]))
     click.echo(tabulate(data, tablefmt="plain"))
 
 
