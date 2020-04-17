@@ -17,7 +17,6 @@ from __future__ import absolute_import
 import json
 import os
 import sys
-import traceback
 from io import BytesIO, StringIO
 
 import click
@@ -109,8 +108,6 @@ class PIOCoreRPC(object):
                     result = yield PIOCoreRPC._call_subprocess(args, options)
                     defer.returnValue(PIOCoreRPC._process_result(result, to_json))
         except Exception as e:  # pylint: disable=bare-except
-            exc_info = sys.exc_info()
-            msg = traceback.format_exception(*exc_info)
             raise jsonrpc.exceptions.JSONRPCDispatchException(
                 code=4003, message="PIO Core Call Error", data=str(e)
             )
