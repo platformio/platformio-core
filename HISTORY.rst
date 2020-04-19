@@ -9,6 +9,7 @@ PlatformIO Core 4
 4.3.2 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
+* New `PIO Account <https://docs.platformio.org/page/plus/pio-account.html>`__ with "username" and profile support
 * Open source `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html>`__ client
 * Fixed PIO Unit Testing for Zephyr RTOS
 * Fixed UnicodeDecodeError on Windows when network drive (NAS) is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)

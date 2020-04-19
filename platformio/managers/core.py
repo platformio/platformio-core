@@ -24,17 +24,14 @@ from platformio.proc import get_pythonexe_path
 from platformio.project.config import ProjectConfig
 
 CORE_PACKAGES = {
-    "contrib-piohome": "~3.1.0",
+    "contrib-piohome": ">=3.2.0-rc.1",
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
-    "tool-pioplus": "^2.6.1",
     "tool-unity": "~1.20500.0",
     "tool-scons": "~2.20501.7" if PY2 else "~3.30102.0",
     "tool-cppcheck": "~1.189.0",
     "tool-clangtidy": "^1.80000.0",
     "tool-pvs-studio": "~7.5.0",
 }
-
-PIOPLUS_AUTO_UPDATES_MAX = 100
 
 # pylint: disable=arguments-differ
 

@@ -44,7 +44,7 @@ def validate_username(value):
 def validate_email(value):
     value = str(value).strip()
     if not re.match(r"^[a-z\d_.+-]+@[a-z\d\-]+\.[a-z\d\-.]+$", value, flags=re.I):
-        raise click.BadParameter("Invalid E-Mail address")
+        raise click.BadParameter("Invalid email address")
     return value
 
 
@@ -90,7 +90,7 @@ def account_register(username, email, password, firstname, lastname):
 
 
 @cli.command("login", short_help="Log in to PIO Account")
-@click.option("-u", "--username", prompt="Username or e-mail")
+@click.option("-u", "--username", prompt="Username or email")
 @click.option("-p", "--password", prompt=True, hide_input=True)
 def account_login(username, password):
     client = AccountClient()
@@ -127,13 +127,13 @@ def account_token(password, regenerate, json_output):
 
 
 @cli.command("forgot", short_help="Forgot password")
-@click.option("--username", prompt="Username or e-mail")
+@click.option("--username", prompt="Username or email")
 def account_forgot(username):
     client = AccountClient()
     client.forgot_password(username)
     return click.secho(
         "If this account is registered, we will send the "
-        "further instructions to your E-Mail.",
+        "further instructions to your email.",
         fg="green",
     )
 

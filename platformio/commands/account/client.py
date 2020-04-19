@@ -20,13 +20,13 @@ import time
 import requests.adapters
 from requests.packages.urllib3.util.retry import Retry  # pylint:disable=import-error
 
-from platformio import app
+from platformio import __pioaccount_api__, app
 from platformio.commands.account import exception
 
 
 class AccountClient(object):
     def __init__(
-        self, api_base_url="https://api.accounts.platformio.org", retries=3,
+        self, api_base_url=__pioaccount_api__, retries=3,
     ):
         if api_base_url.endswith("/"):
             api_base_url = api_base_url[:-1]

@@ -343,10 +343,10 @@ def device_monitor(ctx, agents, **kwargs):
     kwargs["baud"] = kwargs["baud"] or 9600
 
     def _tx_target(sock_dir):
-        pioplus_argv = ["remote", "device", "monitor"]
-        pioplus_argv.extend(device_helpers.options_to_argv(kwargs, project_options))
-        pioplus_argv.extend(["--sock", sock_dir])
-        subprocess.call([proc.where_is_program("platformio")] + pioplus_argv)
+        subcmd_argv = ["remote", "device", "monitor"]
+        subcmd_argv.extend(device_helpers.options_to_argv(kwargs, project_options))
+        subcmd_argv.extend(["--sock", sock_dir])
+        subprocess.call([proc.where_is_program("platformio")] + subcmd_argv)
 
     sock_dir = mkdtemp(suffix="pio")
     sock_file = os.path.join(sock_dir, "sock")
