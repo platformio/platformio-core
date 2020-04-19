@@ -16,12 +16,11 @@ import json
 import os
 import subprocess
 import sys
-from os.path import dirname, join
 
-from platformio import __version__, exception, fs, util
-from platformio.compat import PY2, WINDOWS
+from platformio import exception, util
+from platformio.compat import PY2
 from platformio.managers.package import PackageManager
-from platformio.proc import copy_pythonpath_to_osenv, get_pythonexe_path
+from platformio.proc import get_pythonexe_path
 from platformio.project.config import ProjectConfig
 
 CORE_PACKAGES = {
@@ -185,47 +184,3 @@ def get_contrib_pysite_deps():
         )
         result[0] = twisted_wheel
     return result
-
-
-def pioplus_call(args, **kwargs):
-    if WINDOWS and sys.version_info < (2, 7, 6):
-        raise exception.PlatformioException(
-            "PlatformIO Remote v%s does not run under Python version %s.\n"
-            "Minimum supported version is 2.7.6, please upgrade Python.\n"
-            "Python 3 is not yet supported.\n" % (__version__, sys.version)
-        )
-
-    pioplus_path = join(get_core_package_dir("tool-pioplus"), "pioplus")
-    pythonexe_path = get_pythonexe_path()
-    os.environ["PYTHONEXEPATH"] = pythonexe_path
-    os.environ["PYTHONPYSITEDIR"] = get_core_package_dir("contrib-pysite")
-    os.environ["PIOCOREPYSITEDIR"] = dirname(fs.get_source_dir() or "")
-    if dirname(pythonexe_path) not in os.environ["PATH"].split(os.pathsep):
-        os.environ["PATH"] = (os.pathsep).join(
-            [dirname(pythonexe_path), os.environ["PATH"]]
-        )
-    copy_pythonpath_to_osenv()
-    code = subprocess.call([pioplus_path] + args, **kwargs)
-
-    # handle remote update request
-    if code == 13:
-        count_attr = "_update_count"
-        try:
-            count_value = getattr(pioplus_call, count_attr)
-        except AttributeError:
-            count_value = 0
-            setattr(pioplus_call, count_attr, 1)
-        count_value += 1
-        setattr(pioplus_call, count_attr, count_value)
-        if count_value < PIOPLUS_AUTO_UPDATES_MAX:
-            update_core_packages()
-            return pioplus_call(args, **kwargs)
-
-    # handle reload request
-    elif code == 14:
-        return pioplus_call(args, **kwargs)
-
-    if code != 0:
-        raise exception.ReturnErrorCode(1)
-
-    return True

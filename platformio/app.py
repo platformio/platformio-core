@@ -13,9 +13,11 @@
 # limitations under the License.
 
 import codecs
+import getpass
 import hashlib
 import os
 import platform
+import socket
 import uuid
 from os import environ, getenv, listdir, remove
 from os.path import dirname, isdir, isfile, join, realpath
@@ -426,3 +428,17 @@ def get_user_agent():
     data.append("Python/%s" % platform.python_version())
     data.append("Platform/%s" % platform.platform())
     return " ".join(data)
+
+
+def get_host_id():
+    h = hashlib.sha1(hashlib_encode_data(get_cid()))
+    try:
+        username = getpass.getuser()
+        h.update(hashlib_encode_data(username))
+    except:  # pylint: disable=bare-except
+        pass
+    return h.hexdigest()
+
+
+def get_host_name():
+    return str(socket.gethostname())[:255]
