@@ -5,9 +5,11 @@
 # please create `CMakeListsUser.txt` in the root of project.
 # The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
 
-% from platformio.project.helpers import (load_project_ide_data)
-%
+% import os
 % import re
+%
+% from platformio.compat import WINDOWS
+% from platformio.project.helpers import (load_project_ide_data)
 %
 % def _normalize_path(path):
 %   if project_dir in path:
@@ -20,6 +22,39 @@
 %     end
 %   end
 %   return path
+% end
+%
+% def _get_lib_path(lib_dirs, inc):
+%   def _contains(p1, p2):
+%     if WINDOWS:
+%       p1 = p1.lower()
+%       p2 = p2.lower()
+%     end
+%     return p2.startswith(p1)
+%   end
+%
+%   inc = to_unix_path(inc)
+%   for lib_dir in lib_dirs:
+%     if not os.path.isabs(lib_dir):
+%       lib_dir = os.path.join(project_dir, lib_dir)
+%     end
+%     lib_dir = to_unix_path(os.path.normpath(lib_dir))
+%     if _contains(lib_dir, inc):
+%       return "/".join(inc.split("/")[:len(lib_dir.split("/"))+1])
+%     end
+%   end
+%   return ""
+% end
+%
+% def _get_used_libs(lib_dirs, includes):
+%   lib_paths = list()
+%   for inc in includes:
+%     lib_path = _get_lib_path(lib_dirs, inc)
+%     if lib_path and lib_path not in lib_paths:
+%       lib_paths.append(lib_path)
+%     end
+%   end
+%   return lib_paths
 % end
 %
 % def _escape(text):
@@ -81,4 +116,11 @@ if (CMAKE_BUILD_TYPE MATCHES "{{ env }}")
 %   end
 endif()
 % end
-FILE(GLOB_RECURSE SRC_LIST "{{ _normalize_path(project_src_dir) }}/*.*" "{{ _normalize_path(project_lib_dir) }}/*.*" "{{ _normalize_path(project_libdeps_dir) }}/*.*")
+%
+% used_lib_dirs = _get_used_libs([project_lib_dir, project_libdeps_dir] + lib_extra_dirs, lib_includes)
+% src_paths = [project_src_dir] + used_lib_dirs
+FILE(GLOB_RECURSE SRC_LIST
+%   for path in src_paths:
+    {{  _normalize_path(path) + "/*.*" }}
+%   end
+)

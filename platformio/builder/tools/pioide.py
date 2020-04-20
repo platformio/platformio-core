@@ -138,6 +138,16 @@ def _get_svd_path(env):
     return None
 
 
+def _get_used_lib_includes(env):
+    lib_paths = []
+    for lb in env.GetLibBuilders():
+        if not lb.dependent:
+            continue
+        lb.env.PrependUnique(CPPPATH=lb.get_include_dirs())
+        lib_paths.extend(lb.env["CPPPATH"])
+    return lib_paths
+
+
 def _escape_build_flag(flags):
     return [flag if " " not in flag else '"%s"' % flag for flag in flags]
 
@@ -170,6 +180,8 @@ def DumpIDEData(env):
         ],
         "svd_path": _get_svd_path(env),
         "compiler_type": env.GetCompilerType(),
+        "lib_includes": _get_used_lib_includes(env),
+        "lib_extra_dirs": env.GetProjectOption("lib_extra_dirs", [])
     }
 
     env_ = env.Clone()
