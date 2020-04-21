@@ -39,6 +39,12 @@
 %   return to_unix_path(text).replace('"', '\\"')
 % end
 %
+% def _get_lib_dirs(envname):
+%   env_libdeps_dir = os.path.join(config.get_optional_dir("libdeps"), envname)
+%   env_lib_extra_dirs = config.get("env:" + envname, "lib_extra_dirs", [])
+%   return _fix_lib_dirs([env_libdeps_dir] + env_lib_extra_dirs)
+% end
+%
 % envs = config.envs()
 
 
@@ -75,6 +81,12 @@ if (CMAKE_BUILD_TYPE MATCHES "{{ env_name }}")
 % for include in filter_includes(includes):
     include_directories("{{ _normalize_path(include) }}")
 % end
+
+    FILE(GLOB_RECURSE EXTRA_LIB_SOURCES
+% for dir in _get_lib_dirs(env_name):
+        {{  _normalize_path(dir) + "/*.*" }}
+% end
+    )
 endif()
 
 % leftover_envs = list(set(envs) ^ set([env_name]))
@@ -93,13 +105,19 @@ if (CMAKE_BUILD_TYPE MATCHES "{{ env }}")
 %   for include in filter_includes(data["includes"]):
     include_directories("{{ _normalize_path(to_unix_path(include)) }}")
 %   end
+
+    FILE(GLOB_RECURSE EXTRA_LIB_SOURCES
+%   for dir in _get_lib_dirs(env):
+        {{  _normalize_path(dir) + "/*.*" }}
+%   end
+    )
 endif()
 % end
-%
-% lib_extra_dirs = _fix_lib_dirs(config.get("env:" + env_name, "lib_extra_dirs", []))
-% src_paths = [project_src_dir, project_lib_dir, project_libdeps_dir] + lib_extra_dirs
+
 FILE(GLOB_RECURSE SRC_LIST
-%   for path in src_paths:
+%   for path in (project_src_dir, project_lib_dir):
     {{  _normalize_path(path) + "/*.*" }}
 %   end
 )
+
+list(APPEND SRC_LIST ${EXTRA_LIB_SOURCES})
