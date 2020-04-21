@@ -58,7 +58,7 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
             return
         self.cc_flags = data.get("cc_flags", "").split(" ")
         self.cxx_flags = data.get("cxx_flags", "").split(" ")
-        self.cpp_includes = data.get("includes", [])
+        self.cpp_includes = self._dump_includes(data.get("includes", {}))
         self.cpp_defines = data.get("defines", [])
         self.cc_path = data.get("cc_path")
         self.cxx_path = data.get("cxx_path")
@@ -90,6 +90,15 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
                 defines.append(tokens[1])
 
         return defines
+
+    @staticmethod
+    def _dump_includes(includes_map):
+        result = []
+        for includes in includes_map.values():
+            for include in includes:
+                if include not in result:
+                    result.append(include)
+        return result
 
     @staticmethod
     def is_flag_set(flag, flags):
