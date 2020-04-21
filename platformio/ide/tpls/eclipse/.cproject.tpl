@@ -23,10 +23,8 @@
 							<tool id="org.eclipse.cdt.build.core.settings.holder.libs.1409095472" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs"/>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1624502120" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.239157887" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
-									% for include in includes:
-									% if "toolchain" in include:
-									% continue
-									% end
+									% cleaned_includes = filter_includes(includes, ["toolchain"])
+									% for include in cleaned_includes:
                                     % if include.startswith(user_home_dir):
                                     % if "windows" in systype:
 									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
@@ -47,10 +45,7 @@
 							</tool>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.54121539" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1096940598" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
-									% for include in includes:
-									% if "toolchain" in include:
-									% continue
-									% end
+									% for include in cleaned_includes:
                                     % if include.startswith(user_home_dir):
                                     % if "windows" in systype:
 									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
@@ -71,10 +66,7 @@
 							</tool>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1310559623" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.41298875" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
-									% for include in includes:
-									% if "toolchain" in include:
-									% continue
-									% end
+									% for include in cleaned_includes:
                                     % if include.startswith(user_home_dir):
                                     % if "windows" in systype:
 									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
@@ -121,10 +113,7 @@
 							<tool id="org.eclipse.cdt.build.core.settings.holder.libs.1855678035" name="holder for library settings" superClass="org.eclipse.cdt.build.core.settings.holder.libs"/>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.30528994" name="Assembly" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.794801023" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
-									% for include in includes:
-									% if "toolchain" in include:
-									% continue
-									% end
+									% for include in cleaned_includes:
                                     % if include.startswith(user_home_dir):
                                     % if "windows" in systype:
 									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
@@ -145,10 +134,7 @@
 							</tool>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1146422798" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.650084869" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" useByScannerDiscovery="false" valueType="includePath">
-									% for include in includes:
-									% if "toolchain" in include:
-									% continue
-									% end
+									% for include in cleaned_includes:
                                     % if include.startswith(user_home_dir):
                                     % if "windows" in systype:
 									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>
@@ -169,10 +155,7 @@
 							</tool>
 							<tool id="org.eclipse.cdt.build.core.settings.holder.1637357529" name="GNU C" superClass="org.eclipse.cdt.build.core.settings.holder">
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1246337321" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" useByScannerDiscovery="false" valueType="includePath">
-									% for include in includes:
-									% if "toolchain" in include:
-									% continue
-									% end
+									% for include in cleaned_includes:
                                     % if include.startswith(user_home_dir):
                                     % if "windows" in systype:
 									<listOptionValue builtIn="false" value="${USERPROFILE}{{include.replace(user_home_dir, '')}}"/>

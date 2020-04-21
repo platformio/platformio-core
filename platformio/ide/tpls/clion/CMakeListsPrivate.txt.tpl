@@ -24,37 +24,15 @@
 %   return path
 % end
 %
-% def _get_lib_path(lib_dirs, inc):
-%   def _contains(p1, p2):
-%     if WINDOWS:
-%       p1 = p1.lower()
-%       p2 = p2.lower()
-%     end
-%     return p2.startswith(p1)
-%   end
-%
-%   inc = to_unix_path(inc)
+% def _fix_lib_dirs(lib_dirs):
+%   result = []
 %   for lib_dir in lib_dirs:
 %     if not os.path.isabs(lib_dir):
 %       lib_dir = os.path.join(project_dir, lib_dir)
 %     end
-%     lib_dir = to_unix_path(os.path.normpath(lib_dir))
-%     if _contains(lib_dir, inc):
-%       return "/".join(inc.split("/")[:len(lib_dir.split("/"))+1])
-%     end
+%     result.append(to_unix_path(os.path.normpath(lib_dir)))
 %   end
-%   return ""
-% end
-%
-% def _get_used_libs(lib_dirs, includes):
-%   lib_paths = list()
-%   for inc in includes:
-%     lib_path = _get_lib_path(lib_dirs, inc)
-%     if lib_path and lib_path not in lib_paths:
-%       lib_paths.append(lib_path)
-%     end
-%   end
-%   return lib_paths
+%   return result
 % end
 %
 % def _escape(text):
@@ -62,6 +40,7 @@
 % end
 %
 % envs = config.envs()
+
 
 % if len(envs) > 1:
 set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }};" CACHE STRING "Build Types reflect PlatformIO Environments" FORCE)
@@ -89,13 +68,13 @@ set(CMAKE_CXX_STANDARD {{ cxx_stds[-1] }})
 % end
 
 if (CMAKE_BUILD_TYPE MATCHES "{{ env_name }}")
-%for define in defines:
+% for define in defines:
     add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
-%end
+% end
 
-%for include in includes:
-    include_directories("{{ _normalize_path(to_unix_path(include)) }}")
-%end
+% for include in filter_includes(includes):
+    include_directories("{{ _normalize_path(include) }}")
+% end
 endif()
 
 % leftover_envs = list(set(envs) ^ set([env_name]))
@@ -111,14 +90,14 @@ if (CMAKE_BUILD_TYPE MATCHES "{{ env }}")
     add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
 %   end
 
-%   for include in data["includes"]:
+%   for include in filter_includes(data["includes"]):
     include_directories("{{ _normalize_path(to_unix_path(include)) }}")
 %   end
 endif()
 % end
 %
-% used_lib_dirs = _get_used_libs([project_lib_dir, project_libdeps_dir] + lib_extra_dirs, lib_includes)
-% src_paths = [project_src_dir] + used_lib_dirs
+% lib_extra_dirs = _fix_lib_dirs(config.get("env:" + env_name, "lib_extra_dirs", []))
+% src_paths = [project_src_dir, project_lib_dir, project_libdeps_dir] + lib_extra_dirs
 FILE(GLOB_RECURSE SRC_LIST
 %   for path in src_paths:
     {{  _normalize_path(path) + "/*.*" }}

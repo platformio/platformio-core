@@ -25,17 +25,26 @@ from platformio.proc import exec_command, where_is_program
 
 
 def _dump_includes(env):
-    includes = []
+    includes = {}
 
-    for item in env.get("CPPPATH", []):
-        includes.append(env.subst(item))
+    includes["build"] = [
+        env.subst("$PROJECT_INCLUDE_DIR"),
+        env.subst("$PROJECT_SRC_DIR"),
+    ]
+    includes["build"].extend(
+        [os.path.realpath(env.subst(item)) for item in env.get("CPPPATH", [])]
+    )
 
     # installed libs
+    includes["compatlib"] = []
     for lb in env.GetLibBuilders():
-        includes.extend(lb.get_include_dirs())
+        includes["compatlib"].extend(
+            [os.path.realpath(inc) for inc in lb.get_include_dirs()]
+        )
 
     # includes from toolchains
     p = env.PioPlatform()
+    includes["toolchain"] = []
     for name in p.get_installed_packages():
         if p.get_package_type(name) != "toolchain":
             continue
@@ -47,22 +56,14 @@ def _dump_includes(env):
             os.path.join(toolchain_dir, "lib", "gcc", "*", "*", "include*"),
         ]
         for g in toolchain_incglobs:
-            includes.extend(glob(g))
+            includes["toolchain"].extend([os.path.realpath(inc) for inc in glob(g)])
 
+    includes["unity"] = []
     unity_dir = get_core_package_dir("tool-unity")
     if unity_dir:
-        includes.append(unity_dir)
+        includes["unity"].append(unity_dir)
 
-    includes.extend([env.subst("$PROJECT_INCLUDE_DIR"), env.subst("$PROJECT_SRC_DIR")])
-
-    # remove duplicates
-    result = []
-    for item in includes:
-        item = os.path.realpath(item)
-        if item not in result:
-            result.append(item)
-
-    return result
+    return includes
 
 
 def _get_gcc_defines(env):
@@ -138,16 +139,6 @@ def _get_svd_path(env):
     return None
 
 
-def _get_used_lib_includes(env):
-    lib_paths = []
-    for lb in env.GetLibBuilders():
-        if not lb.dependent:
-            continue
-        lb.env.PrependUnique(CPPPATH=lb.get_include_dirs())
-        lib_paths.extend(lb.env["CPPPATH"])
-    return lib_paths
-
-
 def _escape_build_flag(flags):
     return [flag if " " not in flag else '"%s"' % flag for flag in flags]
 
@@ -168,8 +159,6 @@ def DumpIDEData(env):
         "libsource_dirs": [env.subst(l) for l in env.GetLibSourceDirs()],
         "defines": _dump_defines(env),
         "includes": _dump_includes(env),
-        "cc_flags": env.subst(LINTCCOM),
-        "cxx_flags": env.subst(LINTCXXCOM),
         "cc_path": where_is_program(env.subst("$CC"), env.subst("${ENV['PATH']}")),
         "cxx_path": where_is_program(env.subst("$CXX"), env.subst("${ENV['PATH']}")),
         "gdb_path": where_is_program(env.subst("$GDB"), env.subst("${ENV['PATH']}")),
@@ -180,8 +169,6 @@ def DumpIDEData(env):
         ],
         "svd_path": _get_svd_path(env),
         "compiler_type": env.GetCompilerType(),
-        "lib_includes": _get_used_lib_includes(env),
-        "lib_extra_dirs": env.GetProjectOption("lib_extra_dirs", [])
     }
 
     env_ = env.Clone()
