@@ -1,4 +1,4 @@
-% for include in includes:
+% for include in filter_includes(includes):
 -I"{{include}}"
 % end
 % for define in defines:

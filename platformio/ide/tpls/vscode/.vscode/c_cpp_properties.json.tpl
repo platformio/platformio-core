@@ -66,13 +66,7 @@
 %   return result
 % end
 %
-% cleaned_includes = []
-% for include in includes:
-%   if "toolchain-" not in os.path.dirname(os.path.commonprefix(
-%       [include, cc_path])) and os.path.isdir(include):
-%     cleaned_includes.append(include)
-%   end
-% end
+% cleaned_includes = filter_includes(includes, ["toolchain"])
 %
 % STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
 % cc_stds = STD_RE.findall(cc_flags)

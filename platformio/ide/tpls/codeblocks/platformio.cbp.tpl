@@ -52,7 +52,7 @@
 			% for define in defines:
 			<Add option="-D{{define}}"/>
 			% end
-			% for include in includes:
+			% for include in filter_includes(includes):
 			<Add directory="{{include}}"/>
 			% end
 		</Compiler>
