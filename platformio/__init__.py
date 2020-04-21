@@ -35,4 +35,4 @@ __copyright__ = "Copyright 2014-present PlatformIO"
 
 __apiurl__ = "https://api.platformio.org"
 __pioaccount_api__ = "https://api.accounts.platformio.org"
-__pioremote_endpoint__ = "ssl:remote.platformio.org:4413"
+__pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"

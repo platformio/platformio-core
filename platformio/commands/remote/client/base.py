@@ -73,15 +73,26 @@ class RemoteClientBase(  # pylint: disable=too-many-instance-attributes
     def connect(self):
         self.log.info("Name: {name}", name=self.name)
         self.log.info("Connecting to PIO Remote Cloud")
-        endpoint = endpoints.clientFromString(reactor, __pioremote_endpoint__)
+
+        # pylint: disable=protected-access
+        proto, options = endpoints._parse(__pioremote_endpoint__)
+        proto = proto[0]
+
         factory = RemoteClientFactory()
         factory.remote_client = self
         factory.sslContextFactory = None
-        if __pioremote_endpoint__.startswith("ssl:"):
-            # pylint: disable=protected-access
-            factory.sslContextFactory = SSLContextFactory(endpoint._host)
-            endpoint._sslContextFactory = factory.sslContextFactory
-        endpoint.connect(factory)
+        if proto == "ssl":
+            factory.sslContextFactory = SSLContextFactory(options["host"])
+            reactor.connectSSL(
+                options["host"],
+                int(options["port"]),
+                factory,
+                factory.sslContextFactory,
+            )
+        elif proto == "tcp":
+            reactor.connectTCP(options["host"], int(options["port"]), factory)
+        else:
+            raise exception.PlatformioException("Unknown PIO Remote Cloud protocol")
         reactor.run()
 
         if self._exit_code != 0:
