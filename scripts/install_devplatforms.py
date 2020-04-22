@@ -27,13 +27,13 @@ def main():
     for platform in platforms:
         skip = [
             platform["forDesktop"],
-            platform["name"] in ("ststm8", "infineonxmc"),
+            platform["name"] in ("ststm8", "infineonxmc", "microchippic32"),
             # RISC-V GAP does not support Windows 86
             util.get_systype() == "windows_x86" and platform["name"] == "riscv_gap",
             # intel_mcs51: "version `CXXABI_1.3.9' not found (required by sdcc)"
             # microchippic32: GCC does not work on x64
             "linux" in util.get_systype()
-            and platform["name"] in ("aceinna_imu", "intel_mcs51", "microchippic32"),
+            and platform["name"] in ("aceinna_imu", "intel_mcs51"),
             "darwin" in util.get_systype() and platform["name"] in ("gd32v", "nuclei"),
         ]
         if any(skip):
