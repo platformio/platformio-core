@@ -34,6 +34,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        git submodule update --init --recursive
         python -m pip install --upgrade pip
         pip install tox
     - run: |
