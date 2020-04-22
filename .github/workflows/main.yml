@@ -3,6 +3,22 @@ name: Main
 on: [push]
 
 jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install dependencies
+      run: |
+        git submodule update --init --recursive
+        python -m pip install --upgrade pip
+        pip install tox
+    - run: |
+        tox -e docs
+
   tests:
     strategy:
       matrix:
@@ -20,5 +36,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - run: |
-        python --version
-
+        python -c "import subprocess; subprocess.call(['tox', '-e', 'py${{ matrix.python-version }}'.replace('.', '')])"
