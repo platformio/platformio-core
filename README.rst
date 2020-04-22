@@ -2,8 +2,14 @@ PlatformIO
 ==========
 
 .. image:: https://github.com/platformio/platformio-core/workflows/Core/badge.svg
+    :target: https://github.com/platformio/platformio-core/actions?query=workflow%3ACore
+    :alt:  CI Build for PlatformIO Core
 .. image:: https://github.com/platformio/platformio-core/workflows/Examples/badge.svg
+    :target: https://github.com/platformio/platformio-core/actions?query=workflow%3AExamples
+    :alt:  CI Build for dev-platform examples
 .. image:: https://github.com/platformio/platformio-core/workflows/Docs/badge.svg
+    :target: https://github.com/platformio/platformio-core/actions?query=workflow%3ADocs
+    :alt:  CI Build for Docs
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
