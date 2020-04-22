@@ -21,6 +21,13 @@ jobs:
           git submodule update --init --recursive
           python -m pip install --upgrade pip
           pip install tox
+      - name: Free disk space
+        run: |
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          sudo apt clean
+          docker rmi $(docker image ls -aq)
+          df -h
 
       - name: Test dev-platform examples
         run: |
