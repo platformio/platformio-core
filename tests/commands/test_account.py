@@ -29,7 +29,9 @@ def credentials():
     }
 
 
-def test_account_register_with_already_exists_username(clirunner, credentials):
+def test_account_register_with_already_exists_username(
+    clirunner, credentials, isolated_pio_home
+):
     username = credentials["login"]
     email = "test@test.com"
     if "@" in credentials["login"]:
@@ -58,7 +60,7 @@ def test_account_register_with_already_exists_username(clirunner, credentials):
     ) or "User with same email already exists" in str(result.exception)
 
 
-def test_account_login(clirunner, credentials, validate_cliresult):
+def test_account_login(clirunner, credentials, validate_cliresult, isolated_pio_home):
     try:
         result = clirunner.invoke(cmd_account, ["login", "-u", "123", "-p", "123"])
         assert result.exit_code > 0
@@ -72,6 +74,16 @@ def test_account_login(clirunner, credentials, validate_cliresult):
         validate_cliresult(result)
         assert "Successfully logged in!" in result.output
 
+        with open(isolated_pio_home.join("appstate.json")) as fp:
+            appstate = json.load(fp)
+            assert appstate.get("account")
+            assert appstate.get("account").get("email")
+            assert appstate.get("account").get("username")
+            assert appstate.get("account").get("auth")
+            assert appstate.get("account").get("auth").get("access_token")
+            assert appstate.get("account").get("auth").get("access_token_expire")
+            assert appstate.get("account").get("auth").get("refresh_token")
+
         result = clirunner.invoke(
             cmd_account,
             ["login", "-u", credentials["login"], "-p", credentials["password"]],
@@ -83,7 +95,7 @@ def test_account_login(clirunner, credentials, validate_cliresult):
         clirunner.invoke(cmd_account, ["logout"])
 
 
-def test_account_logout(clirunner, credentials, validate_cliresult):
+def test_account_logout(clirunner, credentials, validate_cliresult, isolated_pio_home):
     try:
         result = clirunner.invoke(
             cmd_account,
@@ -105,7 +117,9 @@ def test_account_logout(clirunner, credentials, validate_cliresult):
         clirunner.invoke(cmd_account, ["logout"])
 
 
-def test_account_password_change(clirunner, credentials, validate_cliresult):
+def test_account_password_change(
+    clirunner, credentials, validate_cliresult, isolated_pio_home
+):
     try:
         result = clirunner.invoke(
             cmd_account,
@@ -193,7 +207,7 @@ def test_account_password_change(clirunner, credentials, validate_cliresult):
         clirunner.invoke(cmd_account, ["logout"])
 
 
-def test_account_token(clirunner, credentials, validate_cliresult):
+def test_account_token(clirunner, credentials, validate_cliresult, isolated_pio_home):
     try:
         result = clirunner.invoke(
             cmd_account, ["token", "--password", credentials["password"],],
@@ -248,13 +262,39 @@ def test_account_token(clirunner, credentials, validate_cliresult):
         assert json_result
         assert json_result.get("status") == "success"
         assert json_result.get("result")
-
         assert token != json_result.get("result")
+        token = json_result.get("result")
+
+        clirunner.invoke(cmd_account, ["logout"])
+
+        result = clirunner.invoke(
+            cmd_account, ["token", "--password", credentials["password"],],
+        )
+        assert result.exit_code > 0
+        assert result.exception
+        assert "You are not authenticated! Please login to PIO Account" in str(
+            result.exception
+        )
+
+        os.environ["PLATFORMIO_AUTH_TOKEN"] = token
+
+        result = clirunner.invoke(
+            cmd_account,
+            ["token", "--password", credentials["password"], "--json-output"],
+        )
+        validate_cliresult(result)
+        json_result = json.loads(result.output.strip())
+        assert json_result
+        assert json_result.get("status") == "success"
+        assert json_result.get("result") == token
+
+        os.environ.pop("PLATFORMIO_AUTH_TOKEN")
+
     finally:
         clirunner.invoke(cmd_account, ["logout"])
 
 
-def test_account_summary(clirunner, credentials, validate_cliresult):
+def test_account_summary(clirunner, credentials, validate_cliresult, isolated_pio_home):
     try:
         result = clirunner.invoke(cmd_account, ["show"],)
         assert result.exit_code > 0
@@ -304,7 +344,9 @@ def test_account_summary(clirunner, credentials, validate_cliresult):
         clirunner.invoke(cmd_account, ["logout"])
 
 
-def test_account_profile_update(clirunner, credentials, validate_cliresult):
+def test_account_profile_update(
+    clirunner, credentials, validate_cliresult, isolated_pio_home
+):
     try:
         result = clirunner.invoke(
             cmd_account, ["update", "--current-password", credentials["password"]],
