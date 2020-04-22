@@ -40,7 +40,10 @@ def pytest_generate_tests(metafunc):
             not p.is_embedded(),
             p.name in ("ststm8", "infineonxmc"),
             # issue with "version `CXXABI_1.3.9' not found (required by sdcc)"
-            "linux" in util.get_systype() and p.name == "intel_mcs51",
+            # ChipKIT issue: install 32-bit support for GCC PIC32
+            "linux" in util.get_systype()
+            and p.name == ("intel_mcs51", "microchippic32"),
+            "darwin" in util.get_systype() and p.name == "gd32v",
         ]
         if any(ignore_conds):
             continue
