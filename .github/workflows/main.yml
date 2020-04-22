@@ -4,10 +4,11 @@ on: [push]
 
 jobs:
   tests:
-    runs-on: [ubuntu-latest, windows-latest, macos-latest]
     strategy:
       matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: [2.7, 3.7]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
