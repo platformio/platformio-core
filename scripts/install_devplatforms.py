@@ -33,8 +33,8 @@ def main():
             # intel_mcs51: "version `CXXABI_1.3.9' not found (required by sdcc)"
             # microchippic32: GCC does not work on x64
             "linux" in util.get_systype()
-            and platform["name"] in ("intel_mcs51", "microchippic32"),
-            "darwin" in util.get_systype() and platform["name"] == "gd32v",
+            and platform["name"] in ("aceinna_imu", "intel_mcs51", "microchippic32"),
+            "darwin" in util.get_systype() and platform["name"] in ("gd32v", "nuclei"),
         ]
         if any(skip):
             continue
