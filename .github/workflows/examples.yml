@@ -22,7 +22,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install tox
 
-      - name: Free disk space
+      - name: Free disk space on Linux
         if:  matrix.os == 'ubuntu-16.04'
         run: |
           sudo swapoff -a
@@ -33,15 +33,19 @@ jobs:
 
       - name: Run on Unix
         if:  matrix.os != 'windows-latest'
+        env:
+          PLATFORMIO_BUILD_CACHE_DIR: $(mktemp -d)
         run: |
-          PLATFORMIO_BUILD_CACHE_DIR=$(mktemp -d)
+          python -c "import os; print(os.environ)"
           tox -e testexamples
 
       - name: Run on Windows
         if:  matrix.os == 'windows-latest'
+        env:
+          PLATFORMIO_CORE_DIR: C:/.platformio
+          PLATFORMIO_BUILD_CACHE_DIR: C:/.platformio/tmp
         run: |
-          set PLATFORMIO_CORE_DIR=C:/.platformio
-          set PLATFORMIO_BUILD_CACHE_DIR=C:/.platformio/tmp
+          python -c "import os; print(os.environ)"
           tox -e testexamples
 
       - name: Slack Notification
