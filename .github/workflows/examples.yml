@@ -21,7 +21,9 @@ jobs:
           git submodule update --init --recursive
           python -m pip install --upgrade pip
           pip install tox
+
       - name: Free disk space
+        if:  matrix.os == 'ubuntu-16.04'
         run: |
           sudo swapoff -a
           sudo rm -f /swapfile
@@ -29,8 +31,17 @@ jobs:
           docker rmi $(docker image ls -aq)
           df -h
 
-      - name: Test dev-platform examples
+      - name: Run on Unix
+        if:  matrix.os != 'windows-latest'
         run: |
+          PLATFORMIO_BUILD_CACHE_DIR=$(mktemp -d)
+          tox -e testexamples
+
+      - name: Run on Windows
+        if:  matrix.os == 'windows-latest'
+        run: |
+          set PLATFORMIO_CORE_DIR=C:/.platformio
+          set PLATFORMIO_BUILD_CACHE_DIR=C:/.platformio/tmp
           tox -e testexamples
 
       - name: Slack Notification
