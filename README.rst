@@ -1,12 +1,8 @@
 PlatformIO
 ==========
 
-.. image:: https://travis-ci.org/platformio/platformio-core.svg?branch=develop
-    :target: https://travis-ci.org/platformio/platformio-core
-    :alt: Travis.CI Build Status
-.. image:: https://ci.appveyor.com/api/projects/status/unnpw0n3c5k14btn/branch/develop?svg=true
-    :target: https://ci.appveyor.com/project/ivankravets/platformio-core
-    :alt: AppVeyor.CI Build Status
+.. image:: https://github.com/platformio/platformio-core/workflows/Tests/badge.svg
+.. image:: https://github.com/platformio/platformio-core/workflows/Docs/badge.svg
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
     :alt: Latest Version
