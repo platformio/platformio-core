@@ -21,20 +21,24 @@ from platformio import util
 def main():
     platforms = json.loads(
         subprocess.check_output(
-            ["platformio", "platform", "search", "--json-output"]).decode())
+            ["platformio", "platform", "search", "--json-output"]
+        ).decode()
+    )
     for platform in platforms:
-        if platform['forDesktop']:
+        skip = [
+            platform["forDesktop"],
+            platform["name"] in ("ststm8", "infineonxmc"),
+            # RISC-V GAP does not support Windows 86
+            util.get_systype() == "windows_x86" and platform["name"] == "riscv_gap",
+            # intel_mcs51: "version `CXXABI_1.3.9' not found (required by sdcc)"
+            # microchippic32: GCC does not work on x64
+            "linux" in util.get_systype()
+            and platform["name"] in ("intel_mcs51", "microchippic32"),
+            "darwin" in util.get_systype() and platform["name"] == "gd32v",
+        ]
+        if any(skip):
             continue
-        # RISC-V GAP does not support Windows 86
-        if (util.get_systype() == "windows_x86"
-                and platform['name'] == "riscv_gap"):
-            continue
-        # unknown issue on Linux
-        if ("linux" in util.get_systype()
-                and platform['name'] == "aceinna_imu"):
-            continue
-        subprocess.check_call(
-            ["platformio", "platform", "install", platform['name']])
+        subprocess.check_call(["platformio", "platform", "install", platform["name"]])
 
 
 if __name__ == "__main__":

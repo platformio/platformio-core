@@ -36,17 +36,6 @@ def pytest_generate_tests(metafunc):
     # dev/platforms
     for manifest in PlatformManager().get_installed():
         p = PlatformFactory.newPlatform(manifest["__pkg_dir"])
-        ignore_conds = [
-            not p.is_embedded(),
-            p.name in ("ststm8", "infineonxmc"),
-            # issue with "version `CXXABI_1.3.9' not found (required by sdcc)"
-            # ChipKIT issue: install 32-bit support for GCC PIC32
-            "linux" in util.get_systype()
-            and p.name == ("intel_mcs51", "microchippic32"),
-            "darwin" in util.get_systype() and p.name == "gd32v",
-        ]
-        if any(ignore_conds):
-            continue
         examples_dir = join(p.get_dir(), "examples")
         assert isdir(examples_dir)
         examples_dirs.append(examples_dir)
