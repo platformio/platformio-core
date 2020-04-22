@@ -34,16 +34,16 @@ jobs:
       - name: Run on Unix
         if:  matrix.os != 'windows-latest'
         env:
-          PLATFORMIO_BUILD_CACHE_DIR: $(mktemp -d)
+          PLATFORMIO_BUILD_CACHE_DIR: /tmp/pio
         run: |
           python -c "import os; print(os.environ)"
           tox -e testexamples
 
       - name: Run on Windows
-        if:  matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-latest'
         env:
-          PLATFORMIO_CORE_DIR: C:/.platformio
-          PLATFORMIO_BUILD_CACHE_DIR: C:/.platformio/tmp
+          PLATFORMIO_CORE_DIR: C:/pio
+          PLATFORMIO_BUILD_CACHE_DIR: C:/pio/tmp
         run: |
           python -c "import os; print(os.environ)"
           tox -e testexamples
