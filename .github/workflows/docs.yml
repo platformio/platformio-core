@@ -26,6 +26,6 @@ jobs:
         if: failure()
         with:
           type: ${{ job.status }}
-          job_name: '*Build Docs*'
+          job_name: '*Docs*'
           commit: true
           url: ${{ secrets.SLACK_BUILD_WEBHOOK }}

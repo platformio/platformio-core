@@ -25,12 +25,9 @@ jobs:
       - name: Python Lint
         run: |
           tox -e lint
-      - name: Test PIO Core
+      - name: Integration Tests
         run: |
           tox -e testcore
-      - name: Test dev-platform examples
-        run: |
-          tox -e testexamples
 
       - name: Slack Notification
         uses: homoluctus/slatify@master
