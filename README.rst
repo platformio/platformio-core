@@ -1,7 +1,8 @@
 PlatformIO
 ==========
 
-.. image:: https://github.com/platformio/platformio-core/workflows/Tests/badge.svg
+.. image:: https://github.com/platformio/platformio-core/workflows/Core/badge.svg
+.. image:: https://github.com/platformio/platformio-core/workflows/Examples/badge.svg
 .. image:: https://github.com/platformio/platformio-core/workflows/Docs/badge.svg
 .. image:: https://img.shields.io/pypi/v/platformio.svg
     :target: https://pypi.python.org/pypi/platformio/
