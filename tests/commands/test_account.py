@@ -74,7 +74,7 @@ def test_account_login(clirunner, credentials, validate_cliresult, isolated_pio_
         validate_cliresult(result)
         assert "Successfully logged in!" in result.output
 
-        with open(isolated_pio_home.join("appstate.json")) as fp:
+        with open(str(isolated_pio_home.join("appstate.json"))) as fp:
             appstate = json.load(fp)
             assert appstate.get("account")
             assert appstate.get("account").get("email")
