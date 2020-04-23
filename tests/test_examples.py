@@ -36,14 +36,6 @@ def pytest_generate_tests(metafunc):
     # dev/platforms
     for manifest in PlatformManager().get_installed():
         p = PlatformFactory.newPlatform(manifest["__pkg_dir"])
-        ignore_conds = [
-            not p.is_embedded(),
-            p.name in ("ststm8", "infineonxmc"),
-            # issue with "version `CXXABI_1.3.9' not found (required by sdcc)"
-            "linux" in util.get_systype() and p.name == "intel_mcs51",
-        ]
-        if any(ignore_conds):
-            continue
         examples_dir = join(p.get_dir(), "examples")
         assert isdir(examples_dir)
         examples_dirs.append(examples_dir)
@@ -70,7 +62,6 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize("pioproject_dir", sorted(project_dirs))
 
 
-@pytest.mark.examples
 def test_run(pioproject_dir):
     with util.cd(pioproject_dir):
         config = ProjectConfig()

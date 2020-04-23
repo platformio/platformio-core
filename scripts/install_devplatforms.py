@@ -15,26 +15,29 @@
 import json
 import subprocess
 import sys
-from platformio import util
+
+import click
 
 
-def main():
+@click.command()
+@click.option("--desktop", is_flag=True, default=False)
+@click.option(
+    "--ignore",
+    envvar="PIO_INSTALL_DEVPLATFORMS_IGNORE",
+    help="Ignore names split by comma",
+)
+def main(desktop, ignore):
     platforms = json.loads(
         subprocess.check_output(
-            ["platformio", "platform", "search", "--json-output"]).decode())
+            ["platformio", "platform", "search", "--json-output"]
+        ).decode()
+    )
+    ignore = [n.strip() for n in (ignore or "").split(",") if n.strip()]
     for platform in platforms:
-        if platform['forDesktop']:
+        skip = [not desktop and platform["forDesktop"], platform["name"] in ignore]
+        if any(skip):
             continue
-        # RISC-V GAP does not support Windows 86
-        if (util.get_systype() == "windows_x86"
-                and platform['name'] == "riscv_gap"):
-            continue
-        # unknown issue on Linux
-        if ("linux" in util.get_systype()
-                and platform['name'] == "aceinna_imu"):
-            continue
-        subprocess.check_call(
-            ["platformio", "platform", "install", platform['name']])
+        subprocess.check_call(["platformio", "platform", "install", platform["name"]])
 
 
 if __name__ == "__main__":

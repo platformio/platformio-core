@@ -1,0 +1,65 @@
+name: Examples
+
+on: [push]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-16.04, windows-latest, macos-latest]
+        python-version: [2.7, 3.7]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          git submodule update --init --recursive
+          python -m pip install --upgrade pip
+          pip install tox
+
+      - name: Run on Linux
+        if: startsWith(matrix.os, 'ubuntu')
+        env:
+          PLATFORMIO_BUILD_CACHE_DIR: /tmp/pio
+          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,intel_mcs51,aceinna_imu"
+        run: |
+          # ChipKIT issue: install 32-bit support for GCC PIC32
+          sudo apt-get install libc6-i386
+          # Free space
+          sudo apt clean
+          docker rmi $(docker image ls -aq)
+          df -h
+          # Run
+          tox -e testexamples
+
+      - name: Run on macOS
+        if: startsWith(matrix.os, 'macos')
+        env:
+          PLATFORMIO_BUILD_CACHE_DIR: /tmp/pio
+          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,microchippic32,gd32v,nuclei"
+        run: |
+          df -h
+          tox -e testexamples
+
+      - name: Run on Windows
+        if: startsWith(matrix.os, 'windows')
+        env:
+          PLATFORMIO_CORE_DIR: C:/pio
+          PLATFORMIO_BUILD_CACHE_DIR: C:/pio/tmp
+          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,riscv_gap"
+        run: |
+          tox -e testexamples
+
+      - name: Slack Notification
+        uses: homoluctus/slatify@master
+        if: failure()
+        with:
+          type: ${{ job.status }}
+          job_name: '*Examples*'
+          commit: true
+          url: ${{ secrets.SLACK_BUILD_WEBHOOK }}
