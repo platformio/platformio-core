@@ -62,7 +62,6 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize("pioproject_dir", sorted(project_dirs))
 
 
-@pytest.mark.examples
 def test_run(pioproject_dir):
     with util.cd(pioproject_dir):
         config = ProjectConfig()
