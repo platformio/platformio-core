@@ -41,7 +41,7 @@ jobs:
         if: startsWith(matrix.os, 'macos')
         env:
           PLATFORMIO_BUILD_CACHE_DIR: /tmp/pio
-          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,microchippic32"
+          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,microchippic32,gd32v,nuclei"
         run: |
           df -h
           tox -e testexamples
@@ -51,7 +51,7 @@ jobs:
         env:
           PLATFORMIO_CORE_DIR: C:/pio
           PLATFORMIO_BUILD_CACHE_DIR: C:/pio/tmp
-          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,riscv_gap,gd32v,nuclei"
+          PIO_INSTALL_DEVPLATFORMS_IGNORE: "ststm8,infineonxmc,riscv_gap"
         run: |
           tox -e testexamples
 
