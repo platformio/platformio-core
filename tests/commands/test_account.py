@@ -169,39 +169,39 @@ def test_account_password_change(
             in str(result.exception)
         )
 
-        result = clirunner.invoke(
-            cmd_account,
-            [
-                "password",
-                "--old-password",
-                credentials["password"],
-                "--new-password",
-                "Testpassword123",
-            ],
-        )
-        validate_cliresult(result)
-        assert "Password successfully changed!" in result.output
-
-        result = clirunner.invoke(cmd_account, ["logout"])
-        validate_cliresult(result)
-
-        result = clirunner.invoke(
-            cmd_account, ["login", "-u", credentials["login"], "-p", "Testpassword123"],
-        )
-        validate_cliresult(result)
-
-        result = clirunner.invoke(
-            cmd_account,
-            [
-                "password",
-                "--old-password",
-                "Testpassword123",
-                "--new-password",
-                credentials["password"],
-            ],
-        )
-        validate_cliresult(result)
-        assert "Password successfully changed!" in result.output
+        # result = clirunner.invoke(
+        #     cmd_account,
+        #     [
+        #         "password",
+        #         "--old-password",
+        #         credentials["password"],
+        #         "--new-password",
+        #         "Testpassword123",
+        #     ],
+        # )
+        # validate_cliresult(result)
+        # assert "Password successfully changed!" in result.output
+        #
+        # result = clirunner.invoke(cmd_account, ["logout"])
+        # validate_cliresult(result)
+        #
+        # result = clirunner.invoke(
+        #     cmd_account, ["login", "-u", credentials["login"], "-p", "Testpassword123"],
+        # )
+        # validate_cliresult(result)
+        #
+        # result = clirunner.invoke(
+        #     cmd_account,
+        #     [
+        #         "password",
+        #         "--old-password",
+        #         "Testpassword123",
+        #         "--new-password",
+        #         credentials["password"],
+        #     ],
+        # )
+        # validate_cliresult(result)
+        # assert "Password successfully changed!" in result.output
 
     finally:
         clirunner.invoke(cmd_account, ["logout"])
@@ -395,56 +395,57 @@ def test_account_profile_update(
         json_result = json.loads(result.output.strip())
         assert json_result.get("profile").get("firstname") == firstname
         assert json_result.get("profile").get("lastname") == lastname
-        old_username = json_result.get("profile").get("username")
-        new_username = "username" + str(int(time.time() * 1000))[-5:]
 
-        result = clirunner.invoke(
-            cmd_account,
-            [
-                "update",
-                "--current-password",
-                credentials["password"],
-                "--firstname",
-                firstname,
-                "--lastname",
-                lastname,
-                "--username",
-                new_username,
-            ],
-        )
-        validate_cliresult(result)
-        assert "Profile successfully updated!" in result.output
-        assert "Please re-login." in result.output
-
-        result = clirunner.invoke(cmd_account, ["show"],)
-        assert result.exit_code > 0
-        assert result.exception
-        assert "You are not authenticated! Please login to PIO Account" in str(
-            result.exception
-        )
-
-        result = clirunner.invoke(
-            cmd_account, ["login", "-u", new_username, "-p", credentials["password"]],
-        )
-        validate_cliresult(result)
-
-        result = clirunner.invoke(
-            cmd_account,
-            [
-                "update",
-                "--current-password",
-                credentials["password"],
-                "--username",
-                old_username,
-            ],
-        )
-        validate_cliresult(result)
-        assert "Profile successfully updated!" in result.output
-        assert "Please re-login." in result.output
-
-        result = clirunner.invoke(
-            cmd_account, ["login", "-u", old_username, "-p", credentials["password"]],
-        )
-        validate_cliresult(result)
+        # old_username = json_result.get("profile").get("username")
+        # new_username = "username" + str(int(time.time() * 1000))[-5:]
+        #
+        # result = clirunner.invoke(
+        #     cmd_account,
+        #     [
+        #         "update",
+        #         "--current-password",
+        #         credentials["password"],
+        #         "--firstname",
+        #         firstname,
+        #         "--lastname",
+        #         lastname,
+        #         "--username",
+        #         new_username,
+        #     ],
+        # )
+        # validate_cliresult(result)
+        # assert "Profile successfully updated!" in result.output
+        # assert "Please re-login." in result.output
+        #
+        # result = clirunner.invoke(cmd_account, ["show"],)
+        # assert result.exit_code > 0
+        # assert result.exception
+        # assert "You are not authenticated! Please login to PIO Account" in str(
+        #     result.exception
+        # )
+        #
+        # result = clirunner.invoke(
+        #     cmd_account, ["login", "-u", new_username, "-p", credentials["password"]],
+        # )
+        # validate_cliresult(result)
+        #
+        # result = clirunner.invoke(
+        #     cmd_account,
+        #     [
+        #         "update",
+        #         "--current-password",
+        #         credentials["password"],
+        #         "--username",
+        #         old_username,
+        #     ],
+        # )
+        # validate_cliresult(result)
+        # assert "Profile successfully updated!" in result.output
+        # assert "Please re-login." in result.output
+        #
+        # result = clirunner.invoke(
+        #     cmd_account, ["login", "-u", old_username, "-p", credentials["password"]],
+        # )
+        # validate_cliresult(result)
     finally:
         clirunner.invoke(cmd_account, ["logout"])
