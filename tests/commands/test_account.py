@@ -312,7 +312,8 @@ def test_account_summary(clirunner, credentials, validate_cliresult, isolated_pi
         result = clirunner.invoke(cmd_account, ["show"])
         validate_cliresult(result)
         assert credentials["login"] in result.output
-        assert "DefaultPackage" in result.output
+        assert "Community" in result.output
+        assert "100 Concurrent Remote Agents" in result.output
 
         result = clirunner.invoke(cmd_account, ["show", "--json-output"])
         validate_cliresult(result)
