@@ -365,6 +365,7 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
 PING_REMOTE_HOSTS = [
     "140.82.118.3",  # Github.com
     "35.231.145.151",  # Gitlab.com
+    "88.198.170.159",  # platformio.org
     "github.com",
     "platformio.org",
 ]
