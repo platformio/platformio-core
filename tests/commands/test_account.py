@@ -295,24 +295,6 @@ def test_account_token(clirunner, credentials, validate_cliresult, isolated_pio_
         assert json_result.get("result") == token
         token = json_result.get("result")
 
-        result = clirunner.invoke(
-            cmd_account,
-            [
-                "token",
-                "--password",
-                credentials["password"],
-                "--json-output",
-                "--regenerate",
-            ],
-        )
-        validate_cliresult(result)
-        json_result = json.loads(result.output.strip())
-        assert json_result
-        assert json_result.get("status") == "success"
-        assert json_result.get("result")
-        assert token != json_result.get("result")
-        token = json_result.get("result")
-
         clirunner.invoke(cmd_account, ["logout"])
 
         result = clirunner.invoke(
@@ -338,6 +320,48 @@ def test_account_token(clirunner, credentials, validate_cliresult, isolated_pio_
 
         os.environ.pop("PLATFORMIO_AUTH_TOKEN")
 
+    finally:
+        clirunner.invoke(cmd_account, ["logout"])
+
+
+@pytest.mark.skip_ci
+def test_account_token_with_refreshing(
+    clirunner, credentials, validate_cliresult, isolated_pio_home
+):
+    try:
+        result = clirunner.invoke(
+            cmd_account,
+            ["login", "-u", credentials["login"], "-p", credentials["password"]],
+        )
+        validate_cliresult(result)
+
+        result = clirunner.invoke(
+            cmd_account,
+            ["token", "--password", credentials["password"], "--json-output"],
+        )
+        validate_cliresult(result)
+        json_result = json.loads(result.output.strip())
+        assert json_result
+        assert json_result.get("status") == "success"
+        assert json_result.get("result")
+        token = json_result.get("result")
+
+        result = clirunner.invoke(
+            cmd_account,
+            [
+                "token",
+                "--password",
+                credentials["password"],
+                "--json-output",
+                "--regenerate",
+            ],
+        )
+        validate_cliresult(result)
+        json_result = json.loads(result.output.strip())
+        assert json_result
+        assert json_result.get("status") == "success"
+        assert json_result.get("result")
+        assert token != json_result.get("result")
     finally:
         clirunner.invoke(cmd_account, ["logout"])
 
@@ -426,6 +450,7 @@ def test_account_profile_update_with_invalid_password(
         clirunner.invoke(cmd_account, ["logout"])
 
 
+@pytest.mark.skip_ci
 def test_account_profile_update_only_firstname_and_lastname(
     clirunner, credentials, validate_cliresult, isolated_pio_home
 ):
