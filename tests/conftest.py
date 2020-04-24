@@ -20,6 +20,10 @@ from click.testing import CliRunner
 from platformio import util
 
 
+def pytest_configure(config):
+    config.addinivalue_line("markers", "skip_ci: mark a test that will not run in CI")
+
+
 @pytest.fixture(scope="session")
 def validate_cliresult():
     def decorator(result):
