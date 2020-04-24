@@ -60,13 +60,16 @@ def test_account_register_with_already_exists_username(
     ) or "User with same email already exists" in str(result.exception)
 
 
+@pytest.mark.skip_ci
+def test_account_login_with_invalid_creds(clirunner, credentials, isolated_pio_home):
+    result = clirunner.invoke(cmd_account, ["login", "-u", "123", "-p", "123"])
+    assert result.exit_code > 0
+    assert result.exception
+    assert "Invalid user credentials" in str(result.exception)
+
+
 def test_account_login(clirunner, credentials, validate_cliresult, isolated_pio_home):
     try:
-        result = clirunner.invoke(cmd_account, ["login", "-u", "123", "-p", "123"])
-        assert result.exit_code > 0
-        assert result.exception
-        assert "Invalid user credentials" in str(result.exception)
-
         result = clirunner.invoke(
             cmd_account,
             ["login", "-u", credentials["login"], "-p", credentials["password"]],
@@ -117,6 +120,62 @@ def test_account_logout(clirunner, credentials, validate_cliresult, isolated_pio
         clirunner.invoke(cmd_account, ["logout"])
 
 
+@pytest.mark.skip_ci
+def test_account_password_change_with_invalid_old_password(
+    clirunner, credentials, validate_cliresult
+):
+    try:
+        result = clirunner.invoke(
+            cmd_account,
+            ["login", "-u", credentials["login"], "-p", credentials["password"]],
+        )
+        validate_cliresult(result)
+
+        result = clirunner.invoke(
+            cmd_account,
+            ["password", "--old-password", "test", "--new-password", "test"],
+        )
+        assert result.exit_code > 0
+        assert result.exception
+        assert "Invalid user password" in str(result.exception)
+
+    finally:
+        clirunner.invoke(cmd_account, ["logout"])
+
+
+def test_account_password_change_with_invalid_new_password_format(
+    clirunner, credentials, validate_cliresult
+):
+    try:
+        result = clirunner.invoke(
+            cmd_account,
+            ["login", "-u", credentials["login"], "-p", credentials["password"]],
+        )
+        validate_cliresult(result)
+
+        result = clirunner.invoke(
+            cmd_account,
+            [
+                "password",
+                "--old-password",
+                credentials["password"],
+                "--new-password",
+                "test",
+            ],
+        )
+        assert result.exit_code > 0
+        assert result.exception
+        assert (
+            "Invalid password format. Password must contain at"
+            " least 8 characters including a number and a lowercase letter"
+            in str(result.exception)
+        )
+
+    finally:
+        clirunner.invoke(cmd_account, ["logout"])
+
+
+@pytest.mark.skip_ci
 def test_account_password_change(
     clirunner, credentials, validate_cliresult, isolated_pio_home
 ):
@@ -145,69 +204,46 @@ def test_account_password_change(
 
         result = clirunner.invoke(
             cmd_account,
-            ["password", "--old-password", "test", "--new-password", "test"],
+            [
+                "password",
+                "--old-password",
+                credentials["password"],
+                "--new-password",
+                "Testpassword123",
+            ],
         )
-        assert result.exit_code > 0
-        assert result.exception
-        assert "Invalid user password" in str(result.exception)
+        validate_cliresult(result)
+        assert "Password successfully changed!" in result.output
+
+        result = clirunner.invoke(cmd_account, ["logout"])
+        validate_cliresult(result)
+
+        result = clirunner.invoke(
+            cmd_account, ["login", "-u", credentials["login"], "-p", "Testpassword123"],
+        )
+        validate_cliresult(result)
 
         result = clirunner.invoke(
             cmd_account,
             [
                 "password",
                 "--old-password",
-                credentials["password"],
+                "Testpassword123",
                 "--new-password",
-                "test",
+                credentials["password"],
             ],
         )
-        assert result.exit_code > 0
-        assert result.exception
-        assert (
-            "Invalid password format. Password must contain at"
-            " least 8 characters including a number and a lowercase letter"
-            in str(result.exception)
-        )
-
-        # result = clirunner.invoke(
-        #     cmd_account,
-        #     [
-        #         "password",
-        #         "--old-password",
-        #         credentials["password"],
-        #         "--new-password",
-        #         "Testpassword123",
-        #     ],
-        # )
-        # validate_cliresult(result)
-        # assert "Password successfully changed!" in result.output
-        #
-        # result = clirunner.invoke(cmd_account, ["logout"])
-        # validate_cliresult(result)
-        #
-        # result = clirunner.invoke(
-        #     cmd_account, ["login", "-u", credentials["login"], "-p", "Testpassword123"],
-        # )
-        # validate_cliresult(result)
-        #
-        # result = clirunner.invoke(
-        #     cmd_account,
-        #     [
-        #         "password",
-        #         "--old-password",
-        #         "Testpassword123",
-        #         "--new-password",
-        #         credentials["password"],
-        #     ],
-        # )
-        # validate_cliresult(result)
-        # assert "Password successfully changed!" in result.output
+        validate_cliresult(result)
+        assert "Password successfully changed!" in result.output
 
     finally:
         clirunner.invoke(cmd_account, ["logout"])
 
 
-def test_account_token(clirunner, credentials, validate_cliresult, isolated_pio_home):
+@pytest.mark.skip_ci
+def test_account_token_with_invalid_password(
+    clirunner, credentials, validate_cliresult
+):
     try:
         result = clirunner.invoke(
             cmd_account, ["token", "--password", credentials["password"],],
@@ -228,6 +264,18 @@ def test_account_token(clirunner, credentials, validate_cliresult, isolated_pio_
         assert result.exit_code > 0
         assert result.exception
         assert "Invalid user password" in str(result.exception)
+
+    finally:
+        clirunner.invoke(cmd_account, ["logout"])
+
+
+def test_account_token(clirunner, credentials, validate_cliresult, isolated_pio_home):
+    try:
+        result = clirunner.invoke(
+            cmd_account,
+            ["login", "-u", credentials["login"], "-p", credentials["password"]],
+        )
+        validate_cliresult(result)
 
         result = clirunner.invoke(
             cmd_account, ["token", "--password", credentials["password"],],
@@ -345,7 +393,40 @@ def test_account_summary(clirunner, credentials, validate_cliresult, isolated_pi
         clirunner.invoke(cmd_account, ["logout"])
 
 
-def test_account_profile_update(
+@pytest.mark.skip_ci
+def test_account_profile_update_with_invalid_password(
+    clirunner, credentials, validate_cliresult
+):
+    try:
+        result = clirunner.invoke(
+            cmd_account, ["update", "--current-password", credentials["password"]],
+        )
+        assert result.exit_code > 0
+        assert result.exception
+        assert "You are not authenticated! Please login to PIO Account" in str(
+            result.exception
+        )
+
+        result = clirunner.invoke(
+            cmd_account,
+            ["login", "-u", credentials["login"], "-p", credentials["password"]],
+        )
+        validate_cliresult(result)
+
+        firstname = "First " + str(int(time.time() * 1000))
+
+        result = clirunner.invoke(
+            cmd_account,
+            ["update", "--current-password", "test", "--firstname", firstname],
+        )
+        assert result.exit_code > 0
+        assert result.exception
+        assert "Invalid user password" in str(result.exception)
+    finally:
+        clirunner.invoke(cmd_account, ["logout"])
+
+
+def test_account_profile_update_only_firstname_and_lastname(
     clirunner, credentials, validate_cliresult, isolated_pio_home
 ):
     try:
@@ -369,14 +450,6 @@ def test_account_profile_update(
 
         result = clirunner.invoke(
             cmd_account,
-            ["update", "--current-password", "test", "--firstname", firstname],
-        )
-        assert result.exit_code > 0
-        assert result.exception
-        assert "Invalid user password" in str(result.exception)
-
-        result = clirunner.invoke(
-            cmd_account,
             [
                 "update",
                 "--current-password",
@@ -396,56 +469,87 @@ def test_account_profile_update(
         assert json_result.get("profile").get("firstname") == firstname
         assert json_result.get("profile").get("lastname") == lastname
 
-        # old_username = json_result.get("profile").get("username")
-        # new_username = "username" + str(int(time.time() * 1000))[-5:]
-        #
-        # result = clirunner.invoke(
-        #     cmd_account,
-        #     [
-        #         "update",
-        #         "--current-password",
-        #         credentials["password"],
-        #         "--firstname",
-        #         firstname,
-        #         "--lastname",
-        #         lastname,
-        #         "--username",
-        #         new_username,
-        #     ],
-        # )
-        # validate_cliresult(result)
-        # assert "Profile successfully updated!" in result.output
-        # assert "Please re-login." in result.output
-        #
-        # result = clirunner.invoke(cmd_account, ["show"],)
-        # assert result.exit_code > 0
-        # assert result.exception
-        # assert "You are not authenticated! Please login to PIO Account" in str(
-        #     result.exception
-        # )
-        #
-        # result = clirunner.invoke(
-        #     cmd_account, ["login", "-u", new_username, "-p", credentials["password"]],
-        # )
-        # validate_cliresult(result)
-        #
-        # result = clirunner.invoke(
-        #     cmd_account,
-        #     [
-        #         "update",
-        #         "--current-password",
-        #         credentials["password"],
-        #         "--username",
-        #         old_username,
-        #     ],
-        # )
-        # validate_cliresult(result)
-        # assert "Profile successfully updated!" in result.output
-        # assert "Please re-login." in result.output
-        #
-        # result = clirunner.invoke(
-        #     cmd_account, ["login", "-u", old_username, "-p", credentials["password"]],
-        # )
-        # validate_cliresult(result)
+    finally:
+        clirunner.invoke(cmd_account, ["logout"])
+
+
+@pytest.mark.skip_ci
+def test_account_profile_update(
+    clirunner, credentials, validate_cliresult, isolated_pio_home
+):
+    try:
+        result = clirunner.invoke(
+            cmd_account, ["update", "--current-password", credentials["password"]],
+        )
+        assert result.exit_code > 0
+        assert result.exception
+        assert "You are not authenticated! Please login to PIO Account" in str(
+            result.exception
+        )
+
+        result = clirunner.invoke(
+            cmd_account,
+            ["login", "-u", credentials["login"], "-p", credentials["password"]],
+        )
+        validate_cliresult(result)
+
+        result = clirunner.invoke(cmd_account, ["show", "--json-output"])
+        validate_cliresult(result)
+        json_result = json.loads(result.output.strip())
+
+        firstname = "First " + str(int(time.time() * 1000))
+        lastname = "Last" + str(int(time.time() * 1000))
+
+        old_username = json_result.get("profile").get("username")
+        new_username = "username" + str(int(time.time() * 1000))[-5:]
+
+        result = clirunner.invoke(
+            cmd_account,
+            [
+                "update",
+                "--current-password",
+                credentials["password"],
+                "--firstname",
+                firstname,
+                "--lastname",
+                lastname,
+                "--username",
+                new_username,
+            ],
+        )
+        validate_cliresult(result)
+        assert "Profile successfully updated!" in result.output
+        assert "Please re-login." in result.output
+
+        result = clirunner.invoke(cmd_account, ["show"],)
+        assert result.exit_code > 0
+        assert result.exception
+        assert "You are not authenticated! Please login to PIO Account" in str(
+            result.exception
+        )
+
+        result = clirunner.invoke(
+            cmd_account, ["login", "-u", new_username, "-p", credentials["password"]],
+        )
+        validate_cliresult(result)
+
+        result = clirunner.invoke(
+            cmd_account,
+            [
+                "update",
+                "--current-password",
+                credentials["password"],
+                "--username",
+                old_username,
+            ],
+        )
+        validate_cliresult(result)
+        assert "Profile successfully updated!" in result.output
+        assert "Please re-login." in result.output
+
+        result = clirunner.invoke(
+            cmd_account, ["login", "-u", old_username, "-p", credentials["password"]],
+        )
+        validate_cliresult(result)
     finally:
         clirunner.invoke(cmd_account, ["logout"])
