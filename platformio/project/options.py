@@ -566,6 +566,13 @@ ProjectOptions = OrderedDict(
                 type=click.Choice(["low", "medium", "high"]),
                 default=["low", "medium", "high"],
             ),
+            ConfigEnvOption(
+                group="check",
+                name="check_skip_packages",
+                description="Skip checking includes from packages directory",
+                type=click.BOOL,
+                default=False,
+            ),
             # Test
             ConfigEnvOption(
                 group="test",
