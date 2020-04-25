@@ -14,6 +14,7 @@
 
 import json
 from os.path import isfile, join
+import sys
 
 import pytest
 
@@ -410,7 +411,12 @@ int main() {
 """
     )
 
-    for framework in ("arduino", "mbed", "zephyr"):
+    frameworks = ["arduino", "mbed", "stm32cube"]
+    if sys.version_info[0] == 3:
+        # Zephyr only supports Python 3
+        frameworks.append("zephyr")
+
+    for framework in frameworks:
         for tool in ("cppcheck", "clangtidy", "pvs-studio"):
             tmpdir.join("platformio.ini").write(config % (framework, tool))
 
