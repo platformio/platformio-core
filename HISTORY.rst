@@ -9,8 +9,9 @@ PlatformIO Core 4
 4.3.2 (2020-??-??)
 ~~~~~~~~~~~~~~~~~~
 
-* New `PIO Account <https://docs.platformio.org/page/plus/pio-account.html>`__ with "username" and profile support
+* New `Account Management System <https://docs.platformio.org/page/plus/pio-account.html>`__ with "username" and social providers (preview)
 * Open source `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html>`__ client
+* Echo what is typed when ``send_on_enter`` device monitor filter <https://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-filters>`__ is used (`issue #3452 <https://github.com/platformio/platformio-core/issues/3452>`_)
 * Fixed PIO Unit Testing for Zephyr RTOS
 * Fixed UnicodeDecodeError on Windows when network drive (NAS) is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
 * Fixed an issue when saving libraries in new project results in error "No option 'lib_deps' in section" (`issue #3442 <https://github.com/platformio/platformio-core/issues/3442>`_)
