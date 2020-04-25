@@ -18,6 +18,7 @@ import sys
 
 import pytest
 
+from platformio import fs
 from platformio.commands.check.command import cli as cmd_check
 
 DEFAULT_CONFIG = """
@@ -428,3 +429,29 @@ int main() {
                 framework,
                 tool,
             )
+
+
+def test_check_skip_includes_from_packages(clirunner, tmpdir):
+    config = """
+[env:test]
+platform = nordicnrf52
+board = nrf52_dk
+framework = arduino
+"""
+
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.c").write(TEST_CODE)
+
+    result = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir), "--skip-packages", "-v"]
+    )
+
+    output = result.output
+
+    project_path = fs.to_unix_path(str(tmpdir))
+    for l in output.split("\n"):
+        if not l.startswith("Includes:"):
+            continue
+        for inc in l.split(" "):
+            if inc.startswith("-I") and project_path not in inc:
+                pytest.fail("Detected an include path from packages: " + inc)
