@@ -370,6 +370,21 @@ class PlatformPackagesMixin(object):
             return None
         return self.pm.load_manifest(pkg_dir).get("version")
 
+    def dump_used_packages(self):
+        result = []
+        for name, options in self.packages.items():
+            if options.get("optional"):
+                continue
+            pkg_dir = self.get_package_dir(name)
+            if not pkg_dir:
+                continue
+            manifest = self.pm.load_manifest(pkg_dir)
+            item = {"name": manifest["name"], "version": manifest["version"]}
+            if manifest.get("__src_url"):
+                item["src_url"] = manifest.get("__src_url")
+            result.append(item)
+        return result
+
 
 class PlatformRunMixin(object):
 
@@ -398,6 +413,8 @@ class PlatformRunMixin(object):
         self.configure_default_packages(options, targets)
         self.install_packages(silent=True)
 
+        self._report_non_sensitive_data(options, targets)
+
         self.silent = silent
         self.verbose = verbose or app.get_setting("force_verbose")
 
@@ -415,6 +432,17 @@ class PlatformRunMixin(object):
         assert "returncode" in result
 
         return result
+
+    def _report_non_sensitive_data(self, options, targets):
+        topts = options.copy()
+        topts["platform_packages"] = [
+            dict(name=item["name"], version=item["version"])
+            for item in self.dump_used_packages()
+        ]
+        topts["platform"] = {"name": self.name, "version": self.version}
+        if self.src_version:
+            topts["platform"]["src_version"] = self.src_version
+        telemetry.send_run_environment(topts, targets)
 
     def _run_scons(self, variables, targets, jobs):
         args = [
@@ -531,14 +559,20 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
         self.silent = False
         self.verbose = False
 
-        self._BOARDS_CACHE = {}
         self._manifest = fs.load_json(manifest_path)
+        self._BOARDS_CACHE = {}
         self._custom_packages = None
 
         self.config = ProjectConfig.get_instance()
         self.pm = PackageManager(
             self.config.get_optional_dir("packages"), self.package_repositories
         )
+
+        self._src_manifest = None
+        src_manifest_path = self.pm.get_src_manifest_path(self.get_dir())
+        if src_manifest_path:
+            self._src_manifest = fs.load_json(src_manifest_path)
+
         # if self.engines and "platformio" in self.engines:
         #     if self.PIO_VERSION not in semantic_version.SimpleSpec(
         #             self.engines['platformio']):
@@ -560,6 +594,14 @@ class PlatformBase(PlatformPackagesMixin, PlatformRunMixin):
     @property
     def version(self):
         return self._manifest["version"]
+
+    @property
+    def src_version(self):
+        return self._src_manifest.get("version") if self._src_manifest else None
+
+    @property
+    def src_url(self):
+        return self._src_manifest.get("url") if self._src_manifest else None
 
     @property
     def homepage(self):

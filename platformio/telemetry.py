@@ -14,6 +14,7 @@
 
 import atexit
 import hashlib
+import json
 import os
 import re
 import sys
@@ -99,10 +100,12 @@ class MeasurementProtocol(TelemetryBase):
     def _prefill_sysargs(self):
         args = []
         for arg in sys.argv[1:]:
-            arg = str(arg).lower()
-            if "@" in arg or os.path.exists(arg):
+            arg = str(arg)
+            if arg == "account":  # ignore account cmd which can contain username
+                return
+            if any(("@" in arg, "/" in arg, "\\" in arg)):
                 arg = "***"
-            args.append(arg)
+            args.append(arg.lower())
         self["cd3"] = " ".join(args)
 
     def _prefill_custom_data(self):
@@ -257,6 +260,7 @@ class MPDataPusher(object):
     def _send_data(self, data):
         if self._http_offline:
             return False
+        print("MP:_send_data", data)
         try:
             r = self._http_session.post(
                 "https://ssl.google-analytics.com/collect",
@@ -320,8 +324,8 @@ def measure_ci():
     send_event(**event)
 
 
-def encode_run_environment(options):
-    non_sensative_keys = [
+def dump_run_environment(options):
+    non_sensitive_data = [
         "platform",
         "platform_packages",
         "framework",
@@ -331,20 +335,18 @@ def encode_run_environment(options):
         "debug_tool",
         "monitor_filters",
     ]
-    safe_options = [
-        "%s=%s" % (k, v) for k, v in sorted(options.items()) if k in non_sensative_keys
-    ]
+    safe_options = {k: v for k, v in options.items() if k in non_sensitive_data}
     if is_platformio_project(os.getcwd()):
         phash = hashlib.sha1(hashlib_encode_data(app.get_cid()))
-        safe_options.append("pid=%s" % phash.hexdigest())
-    return "&".join(safe_options)
+        safe_options["pid"] = phash.hexdigest()
+    return json.dumps(safe_options, sort_keys=True, ensure_ascii=False)
 
 
 def send_run_environment(options, targets):
     send_event(
         "Env",
         " ".join([t.title() for t in targets or ["run"]]),
-        encode_run_environment(options),
+        dump_run_environment(options),
     )
 
 

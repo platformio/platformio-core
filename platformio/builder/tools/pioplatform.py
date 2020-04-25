@@ -140,13 +140,10 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
 
     def _get_plaform_data():
         data = ["PLATFORM: %s %s" % (platform.title, platform.version)]
-        src_manifest_path = platform.pm.get_src_manifest_path(platform.get_dir())
-        if src_manifest_path:
-            src_manifest = fs.load_json(src_manifest_path)
-            if "version" in src_manifest:
-                data.append("#" + src_manifest["version"])
-            if int(ARGUMENTS.get("PIOVERBOSE", 0)):
-                data.append("(%s)" % src_manifest["url"])
+        if platform.src_version:
+            data.append("#" + platform.src_version)
+        if int(ARGUMENTS.get("PIOVERBOSE", 0)) and platform.src_url:
+            data.append("(%s)" % platform.src_url)
         if board_config:
             data.extend([">", board_config.get("name")])
         return data
@@ -196,20 +193,14 @@ def PrintConfiguration(env):  # pylint: disable=too-many-statements
 
     def _get_packages_data():
         data = []
-        for name, options in platform.packages.items():
-            if options.get("optional"):
-                continue
-            pkg_dir = platform.get_package_dir(name)
-            if not pkg_dir:
-                continue
-            manifest = platform.pm.load_manifest(pkg_dir)
-            original_version = util.get_original_version(manifest["version"])
-            info = "%s %s" % (manifest["name"], manifest["version"])
+        for item in platform.dump_used_packages():
+            original_version = util.get_original_version(item["version"])
+            info = "%s %s" % (item["name"], item["version"])
             extra = []
             if original_version:
                 extra.append(original_version)
-            if "__src_url" in manifest and int(ARGUMENTS.get("PIOVERBOSE", 0)):
-                extra.append(manifest["__src_url"])
+            if "src_url" in item and int(ARGUMENTS.get("PIOVERBOSE", 0)):
+                extra.append(item["src_url"])
             if extra:
                 info += " (%s)" % ", ".join(extra)
             data.append(info)
