@@ -28,9 +28,9 @@ CORE_PACKAGES = {
     "contrib-pysite": "~2.%d%d.0" % (sys.version_info.major, sys.version_info.minor),
     "tool-unity": "~1.20500.0",
     "tool-scons": "~2.20501.7" if PY2 else "~3.30102.0",
-    "tool-cppcheck": "~1.189.0",
-    "tool-clangtidy": "^1.80000.0",
-    "tool-pvs-studio": "~7.5.0",
+    "tool-cppcheck": "~1.190.0",
+    "tool-clangtidy": "~1.100000.0",
+    "tool-pvs-studio": "~7.7.0",
 }
 
 # pylint: disable=arguments-differ
