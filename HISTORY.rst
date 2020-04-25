@@ -11,6 +11,7 @@ PlatformIO Core 4
 
 * New `PIO Account <https://docs.platformio.org/page/plus/pio-account.html>`__ with "username" and profile support
 * Open source `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html>`__ client
+* Improved `PIO Check <http://docs.platformio.org/page/plus/pio-check.html>`__ with more accurate project processing
 * Fixed PIO Unit Testing for Zephyr RTOS
 * Fixed UnicodeDecodeError on Windows when network drive (NAS) is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
 * Fixed an issue when saving libraries in new project results in error "No option 'lib_deps' in section" (`issue #3442 <https://github.com/platformio/platformio-core/issues/3442>`_)
