@@ -260,7 +260,6 @@ class MPDataPusher(object):
     def _send_data(self, data):
         if self._http_offline:
             return False
-        print("MP:_send_data", data)
         try:
             r = self._http_session.post(
                 "https://ssl.google-analytics.com/collect",
