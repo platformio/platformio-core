@@ -14,12 +14,13 @@
 
 import glob
 import os
+from tempfile import NamedTemporaryFile
 
 import click
 
 from platformio import fs, proc
 from platformio.commands.check.defect import DefectItem
-from platformio.project.helpers import get_project_dir, load_project_ide_data
+from platformio.project.helpers import load_project_ide_data
 
 
 class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
@@ -32,12 +33,13 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         self.cpp_includes = []
         self.cpp_defines = []
         self.toolchain_defines = []
+        self._tmp_files = []
         self.cc_path = None
         self.cxx_path = None
         self._defects = []
         self._on_defect_callback = None
         self._bad_input = False
-        self._load_cpp_data(project_dir, envname)
+        self._load_cpp_data(project_dir)
 
         # detect all defects by default
         if not self.options.get("severity"):
@@ -52,17 +54,17 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
             for s in self.options["severity"]
         ]
 
-    def _load_cpp_data(self, project_dir, envname):
-        data = load_project_ide_data(project_dir, envname)
+    def _load_cpp_data(self, project_dir):
+        data = load_project_ide_data(project_dir, self.envname)
         if not data:
             return
-        self.cc_flags = data.get("cc_flags", "").split(" ")
-        self.cxx_flags = data.get("cxx_flags", "").split(" ")
+        self.cc_flags = click.parser.split_arg_string(data.get("cc_flags", ""))
+        self.cxx_flags = click.parser.split_arg_string(data.get("cxx_flags", ""))
         self.cpp_includes = self._dump_includes(data.get("includes", {}))
         self.cpp_defines = data.get("defines", [])
         self.cc_path = data.get("cc_path")
         self.cxx_path = data.get("cxx_path")
-        self.toolchain_defines = self._get_toolchain_defines(self.cc_path)
+        self.toolchain_defines = self._get_toolchain_defines()
 
     def get_flags(self, tool):
         result = []
@@ -75,21 +77,43 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
 
         return result
 
-    @staticmethod
-    def _get_toolchain_defines(cc_path):
-        defines = []
-        result = proc.exec_command("echo | %s -dM -E -x c++ -" % cc_path, shell=True)
+    def _get_toolchain_defines(self):
+        def _extract_defines(language, includes_file):
+            build_flags = self.cxx_flags if language == "c++" else self.cc_flags
+            defines = []
+            cmd = "echo | %s -x %s %s %s -dM -E -" % (
+                self.cc_path,
+                language,
+                " ".join([f for f in build_flags if f.startswith(("-m", "-f"))]),
+                includes_file,
+            )
+            result = proc.exec_command(cmd, shell=True)
+            for line in result["out"].split("\n"):
+                tokens = line.strip().split(" ", 2)
+                if not tokens or tokens[0] != "#define":
+                    continue
+                if len(tokens) > 2:
+                    defines.append("%s=%s" % (tokens[1], tokens[2]))
+                else:
+                    defines.append(tokens[1])
 
-        for line in result["out"].split("\n"):
-            tokens = line.strip().split(" ", 2)
-            if not tokens or tokens[0] != "#define":
-                continue
-            if len(tokens) > 2:
-                defines.append("%s=%s" % (tokens[1], tokens[2]))
-            else:
-                defines.append(tokens[1])
+            return defines
 
-        return defines
+        incflags_file = self._long_includes_hook(self.cpp_includes)
+        return {lang: _extract_defines(lang, incflags_file) for lang in ("c", "c++")}
+
+    def _create_tmp_file(self, data):
+        with NamedTemporaryFile("w", delete=False) as fp:
+            fp.write(data)
+            self._tmp_files.append(fp.name)
+            return fp.name
+
+    def _long_includes_hook(self, includes):
+        data = []
+        for inc in includes:
+            data.append('-I"%s"' % fs.to_unix_path(inc))
+
+        return '@"%s"' % self._create_tmp_file(" ".join(data))
 
     @staticmethod
     def _dump_includes(includes_map):
@@ -138,18 +162,27 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
         return raw_line
 
     def clean_up(self):
-        pass
+        for f in self._tmp_files:
+            if os.path.isfile(f):
+                os.remove(f)
 
-    def get_project_target_files(self):
-        allowed_extensions = (".h", ".hpp", ".c", ".cc", ".cpp", ".ino")
-        result = []
+    @staticmethod
+    def get_project_target_files(patterns):
+        c_extension = (".c",)
+        cpp_extensions = (".cc", ".cpp", ".cxx", ".ino")
+        header_extensions = (".h", ".hh", ".hpp", ".hxx")
+
+        result = {"c": [], "c++": [], "headers": []}
 
         def _add_file(path):
-            if not path.endswith(allowed_extensions):
-                return
-            result.append(os.path.realpath(path))
+            if path.endswith(header_extensions):
+                result["headers"].append(os.path.realpath(path))
+            elif path.endswith(c_extension):
+                result["c"].append(os.path.realpath(path))
+            elif path.endswith(cpp_extensions):
+                result["c++"].append(os.path.realpath(path))
 
-        for pattern in self.options["patterns"]:
+        for pattern in patterns:
             for item in glob.glob(pattern):
                 if not os.path.isdir(item):
                     _add_file(item)
@@ -159,27 +192,23 @@ class CheckToolBase(object):  # pylint: disable=too-many-instance-attributes
 
         return result
 
-    def get_source_language(self):
-        with fs.cd(get_project_dir()):
-            for _, __, files in os.walk(self.config.get_optional_dir("src")):
-                for name in files:
-                    if "." not in name:
-                        continue
-                    if os.path.splitext(name)[1].lower() in (".cpp", ".cxx", ".ino"):
-                        return "c++"
-            return "c"
-
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback
         cmd = self.configure_command()
-        if self.options.get("verbose"):
-            click.echo(" ".join(cmd))
+        if cmd:
+            if self.options.get("verbose"):
+                click.echo(" ".join(cmd))
 
-        proc.exec_command(
-            cmd,
-            stdout=proc.LineBufferedAsyncPipe(self.on_tool_output),
-            stderr=proc.LineBufferedAsyncPipe(self.on_tool_output),
-        )
+            proc.exec_command(
+                cmd,
+                stdout=proc.LineBufferedAsyncPipe(self.on_tool_output),
+                stderr=proc.LineBufferedAsyncPipe(self.on_tool_output),
+            )
+
+        else:
+            if self.options.get("verbose"):
+                click.echo("Error: Couldn't configure command")
+            self._bad_input = True
 
         self.clean_up()
 

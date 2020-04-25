@@ -225,7 +225,7 @@ def collect_component_stats(result):
         component = dirname(defect.file) or defect.file
         _append_defect(component, defect)
 
-        if component.startswith(get_project_dir()):
+        if component.lower().startswith(get_project_dir().lower()):
             while os.sep in component:
                 component = dirname(component)
                 _append_defect(component, defect)
