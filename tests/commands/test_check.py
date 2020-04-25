@@ -424,5 +424,7 @@ int main() {
 
             defects = sum(count_defects(result.output))
 
-            assert result.exit_code == 0
-            assert defects > 0, "%s with %s" % (framework, tool)
+            assert result.exit_code == 0 and defects > 0, "Failed %s with %s" % (
+                framework,
+                tool,
+            )

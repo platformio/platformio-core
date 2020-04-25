@@ -147,7 +147,7 @@ class CppcheckCheckTool(CheckToolBase):
 
         cmd.extend(
             "--include=" + inc
-            for inc in self._get_forced_includes(build_flags, self.cpp_includes)
+            for inc in self.get_forced_includes(build_flags, self.cpp_includes)
         )
         cmd.append("--file-list=%s" % self._generate_src_file(src_files))
         cmd.append("--includes-file=%s" % self._generate_inc_file())
@@ -155,7 +155,7 @@ class CppcheckCheckTool(CheckToolBase):
         return cmd
 
     @staticmethod
-    def _get_forced_includes(build_flags, includes):
+    def get_forced_includes(build_flags, includes):
         def _extract_filepath(flag, include_options, build_flags):
             path = ""
             for option in include_options:
