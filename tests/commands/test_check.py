@@ -14,6 +14,7 @@
 
 import json
 from os.path import isfile, join
+import sys
 
 import pytest
 
@@ -383,3 +384,47 @@ check_tool = pvs-studio
     assert errors != 0
     assert warnings != 0
     assert style == 0
+
+
+def test_check_embedded_platform_all_tools(clirunner, tmpdir):
+    config = """
+[env:test]
+platform = ststm32
+board = nucleo_f401re
+framework = %s
+check_tool = %s
+"""
+    # tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.c").write(
+        """// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+#include <stdlib.h>
+
+void unused_function(int val){
+    int unusedVar = 0;
+    int* iP = &unusedVar;
+    *iP++;
+}
+
+int main() {
+}
+"""
+    )
+
+    frameworks = ["arduino", "mbed", "stm32cube"]
+    if sys.version_info[0] == 3:
+        # Zephyr only supports Python 3
+        frameworks.append("zephyr")
+
+    for framework in frameworks:
+        for tool in ("cppcheck", "clangtidy", "pvs-studio"):
+            tmpdir.join("platformio.ini").write(config % (framework, tool))
+
+            result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
+
+            defects = sum(count_defects(result.output))
+
+            assert result.exit_code == 0 and defects > 0, "Failed %s with %s" % (
+                framework,
+                tool,
+            )

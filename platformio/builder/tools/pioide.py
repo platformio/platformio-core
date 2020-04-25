@@ -50,10 +50,10 @@ def _dump_includes(env):
             continue
         toolchain_dir = glob_escape(p.get_package_dir(name))
         toolchain_incglobs = [
-            os.path.join(toolchain_dir, "*", "include*"),
             os.path.join(toolchain_dir, "*", "include", "c++", "*"),
             os.path.join(toolchain_dir, "*", "include", "c++", "*", "*-*-*"),
             os.path.join(toolchain_dir, "lib", "gcc", "*", "*", "include*"),
+            os.path.join(toolchain_dir, "*", "include*"),
         ]
         for g in toolchain_incglobs:
             includes["toolchain"].extend([os.path.realpath(inc) for inc in glob(g)])

@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from os import remove
-from os.path import isfile, join
-from tempfile import NamedTemporaryFile
+import os
 
+import click
+
+from platformio import proc
 from platformio.commands.check.defect import DefectItem
 from platformio.commands.check.tools.base import CheckToolBase
 from platformio.managers.core import get_core_package_dir
@@ -23,7 +24,6 @@ from platformio.managers.core import get_core_package_dir
 
 class CppcheckCheckTool(CheckToolBase):
     def __init__(self, *args, **kwargs):
-        self._tmp_files = []
         self.defect_fields = [
             "severity",
             "message",
@@ -74,10 +74,32 @@ class CppcheckCheckTool(CheckToolBase):
         else:
             args["severity"] = DefectItem.SEVERITY_LOW
 
+        # Skip defects found in third-party software, but keep in mind that such defects
+        # might break checking process so defects from project files are not reported
+        breaking_defect_ids = ("preprocessorErrorDirective", "syntaxError")
+        if (
+            args.get("file", "")
+            .lower()
+            .startswith(self.config.get_optional_dir("packages").lower())
+        ):
+            if args["id"] in breaking_defect_ids:
+                if self.options.get("verbose"):
+                    click.echo(
+                        "Error: Found a breaking defect '%s' in %s:%s\n"
+                        "Please note: check results might not be valid!\n"
+                        "Try adding --skip-packages"
+                        % (args.get("message"), args.get("file"), args.get("line"))
+                    )
+                    click.echo()
+                self._bad_input = True
+            return None
+
         return DefectItem(**args)
 
-    def configure_command(self):
-        tool_path = join(get_core_package_dir("tool-cppcheck"), "cppcheck")
+    def configure_command(
+        self, language, src_files
+    ):  # pylint: disable=arguments-differ
+        tool_path = os.path.join(get_core_package_dir("tool-cppcheck"), "cppcheck")
 
         cmd = [
             tool_path,
@@ -108,51 +130,112 @@ class CppcheckCheckTool(CheckToolBase):
             cmd.append("--enable=%s" % ",".join(enabled_checks))
 
         if not self.is_flag_set("--language", flags):
-            if self.get_source_language() == "c++":
-                cmd.append("--language=c++")
+            cmd.append("--language=" + language)
 
-                if not self.is_flag_set("--std", flags):
-                    for f in self.cxx_flags + self.cc_flags:
-                        if "-std" in f:
-                            # Standards with GNU extensions are not allowed
-                            cmd.append("-" + f.replace("gnu", "c"))
+        build_flags = self.cxx_flags if language == "c++" else self.cc_flags
 
-        cmd.extend(["-D%s" % d for d in self.cpp_defines + self.toolchain_defines])
+        for flag in build_flags:
+            if "-std" in flag:
+                # Standards with GNU extensions are not allowed
+                cmd.append("-" + flag.replace("gnu", "c"))
+
+        cmd.extend(
+            ["-D%s" % d for d in self.cpp_defines + self.toolchain_defines[language]]
+        )
+
         cmd.extend(flags)
 
-        cmd.append("--file-list=%s" % self._generate_src_file())
+        cmd.extend(
+            "--include=" + inc
+            for inc in self.get_forced_includes(build_flags, self.cpp_includes)
+        )
+        cmd.append("--file-list=%s" % self._generate_src_file(src_files))
         cmd.append("--includes-file=%s" % self._generate_inc_file())
-
-        core_dir = self.config.get_optional_dir("packages")
-        cmd.append("--suppress=*:%s*" % core_dir)
-        cmd.append("--suppress=unmatchedSuppression:%s*" % core_dir)
 
         return cmd
 
-    def _create_tmp_file(self, data):
-        with NamedTemporaryFile("w", delete=False) as fp:
-            fp.write(data)
-            self._tmp_files.append(fp.name)
-            return fp.name
+    @staticmethod
+    def get_forced_includes(build_flags, includes):
+        def _extract_filepath(flag, include_options, build_flags):
+            path = ""
+            for option in include_options:
+                if not flag.startswith(option):
+                    continue
+                if flag.split(option)[1].strip():
+                    path = flag.split(option)[1].strip()
+                elif build_flags.index(flag) + 1 < len(build_flags):
+                    path = build_flags[build_flags.index(flag) + 1]
+            return path
 
-    def _generate_src_file(self):
-        src_files = [
-            f for f in self.get_project_target_files() if not f.endswith((".h", ".hpp"))
-        ]
+        def _search_include_dir(filepath, include_paths):
+            for inc_path in include_paths:
+                path = os.path.join(inc_path, filepath)
+                if os.path.isfile(path):
+                    return path
+            return ""
+
+        result = []
+        include_options = ("-include", "-imacros")
+        for f in build_flags:
+            if f.startswith(include_options):
+                filepath = _extract_filepath(f, include_options, build_flags)
+                if not os.path.isabs(filepath):
+                    filepath = _search_include_dir(filepath, includes)
+                if os.path.isfile(filepath):
+                    result.append(filepath)
+
+        return result
+
+    def _generate_src_file(self, src_files):
         return self._create_tmp_file("\n".join(src_files))
 
     def _generate_inc_file(self):
-        return self._create_tmp_file("\n".join(self.cpp_includes))
+        result = []
+        for inc in self.cpp_includes:
+            if self.options.get("skip_packages") and inc.lower().startswith(
+                self.config.get_optional_dir("packages").lower()
+            ):
+                continue
+            result.append(inc)
+        return self._create_tmp_file("\n".join(result))
 
     def clean_up(self):
-        for f in self._tmp_files:
-            if isfile(f):
-                remove(f)
+        super(CppcheckCheckTool, self).clean_up()
 
         # delete temporary dump files generated by addons
         if not self.is_flag_set("--addon", self.get_flags("cppcheck")):
             return
-        for f in self.get_project_target_files():
-            dump_file = f + ".dump"
-            if isfile(dump_file):
-                remove(dump_file)
+
+        for files in self.get_project_target_files(self.options["patterns"]).values():
+            for f in files:
+                dump_file = f + ".dump"
+                if os.path.isfile(dump_file):
+                    os.remove(dump_file)
+
+    def check(self, on_defect_callback=None):
+        self._on_defect_callback = on_defect_callback
+        project_files = self.get_project_target_files(self.options["patterns"])
+
+        languages = ("c", "c++")
+        if not any([project_files[t] for t in languages]):
+            click.echo("Error: Nothing to check.")
+            return True
+        for language in languages:
+            if not project_files[language]:
+                continue
+            cmd = self.configure_command(language, project_files[language])
+            if not cmd:
+                self._bad_input = True
+                continue
+            if self.options.get("verbose"):
+                click.echo(" ".join(cmd))
+
+            proc.exec_command(
+                cmd,
+                stdout=proc.LineBufferedAsyncPipe(self.on_tool_output),
+                stderr=proc.LineBufferedAsyncPipe(self.on_tool_output),
+            )
+
+        self.clean_up()
+
+        return self._bad_input

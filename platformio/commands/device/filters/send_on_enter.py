@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import click
-
 from platformio.commands.device import DeviceMonitorFilter
 
 
@@ -25,7 +23,6 @@ class SendOnEnter(DeviceMonitorFilter):
         self._buffer = ""
 
     def tx(self, text):
-        click.echo(text, nl=False)
         self._buffer += text
         if self._buffer.endswith("\r\n"):
             text = self._buffer[:-2]

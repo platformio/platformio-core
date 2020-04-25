@@ -199,32 +199,37 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             self._bad_input = True
 
     def clean_up(self):
+        super(PvsStudioCheckTool, self).clean_up()
         if os.path.isdir(self._tmp_dir):
             shutil.rmtree(self._tmp_dir)
 
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback
-        src_files = [
-            f for f in self.get_project_target_files() if not f.endswith((".h", ".hpp"))
-        ]
-
-        for src_file in src_files:
-            self._prepare_preprocessed_file(src_file)
-            cmd = self.configure_command(src_file)
-            if self.options.get("verbose"):
-                click.echo(" ".join(cmd))
-            if not cmd:
-                self._bad_input = True
+        for scope, files in self.get_project_target_files(
+            self.options["patterns"]
+        ).items():
+            if scope not in ("c", "c++"):
                 continue
+            for src_file in files:
+                self._prepare_preprocessed_file(src_file)
+                cmd = self.configure_command(src_file)
+                if self.options.get("verbose"):
+                    click.echo(" ".join(cmd))
+                if not cmd:
+                    self._bad_input = True
+                    continue
 
-            result = proc.exec_command(cmd)
-            # pylint: disable=unsupported-membership-test
-            if result["returncode"] != 0 or "License was not entered" in result["err"]:
-                self._bad_input = True
-                click.echo(result["err"])
-                continue
+                result = proc.exec_command(cmd)
+                # pylint: disable=unsupported-membership-test
+                if (
+                    result["returncode"] != 0
+                    or "license" in result["err"].lower()
+                ):
+                    self._bad_input = True
+                    click.echo(result["err"])
+                    continue
 
-            self._process_defects(self.parse_defects(self._tmp_output_file))
+                self._process_defects(self.parse_defects(self._tmp_output_file))
 
         self.clean_up()
 
