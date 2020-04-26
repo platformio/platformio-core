@@ -221,10 +221,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
 
                 result = proc.exec_command(cmd)
                 # pylint: disable=unsupported-membership-test
-                if (
-                    result["returncode"] != 0
-                    or "license" in result["err"].lower()
-                ):
+                if result["returncode"] != 0 or "license" in result["err"].lower():
                     self._bad_input = True
                     click.echo(result["err"])
                     continue

@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import json
-from os.path import isfile, join
 import sys
+from os.path import isfile, join
 
 import pytest
 
