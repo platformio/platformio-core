@@ -315,7 +315,15 @@ def on_exception(e):
 
 def measure_ci():
     event = {"category": "CI", "action": "NoName", "label": None}
-    known_cis = ("TRAVIS", "APPVEYOR", "GITLAB_CI", "CIRCLECI", "SHIPPABLE", "DRONE")
+    known_cis = (
+        "GITHUB_ACTIONS",
+        "TRAVIS",
+        "APPVEYOR",
+        "GITLAB_CI",
+        "CIRCLECI",
+        "SHIPPABLE",
+        "DRONE",
+    )
     for name in known_cis:
         if os.getenv(name, "false").lower() == "true":
             event["action"] = name
