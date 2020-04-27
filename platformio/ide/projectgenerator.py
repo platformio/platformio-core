@@ -151,7 +151,7 @@ class ProjectGenerator(object):
     @staticmethod
     def _render_tpl(tpl_path, tpl_vars):
         with codecs.open(tpl_path, "r", encoding="utf8") as fp:
-            return bottle.SimpleTemplate(fp.read()).render(**tpl_vars)
+            return bottle.template(fp.read(), **tpl_vars)
 
     @staticmethod
     def _merge_contents(dst_path, contents):
