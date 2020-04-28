@@ -6,7 +6,7 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
-4.3.3 (2020-??-??)
+4.3.3 (2020-04-28)
 ~~~~~~~~~~~~~~~~~~
 
 * Fixed "UnicodeDecodeError: 'utf-8' codec can't decode byte" when non-Latin chars are used in project path (`issue #3481 <https://github.com/platformio/platformio-core/issues/3481>`_)
