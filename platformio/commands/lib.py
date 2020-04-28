@@ -29,6 +29,7 @@ from platformio.package.manifest.parser import ManifestParserFactory
 from platformio.package.manifest.schema import ManifestSchema
 from platformio.proc import is_ci
 from platformio.project.config import ProjectConfig
+from platformio.project.exception import InvalidProjectConfError
 from platformio.project.helpers import get_project_dir, is_platformio_project
 
 try:
@@ -180,7 +181,10 @@ def lib_install(  # pylint: disable=too-many-arguments
             if project_environments and env not in project_environments:
                 continue
             config.expand_interpolations = False
-            lib_deps = config.get("env:" + env, "lib_deps", [])
+            try:
+                lib_deps = config.get("env:" + env, "lib_deps")
+            except InvalidProjectConfError:
+                lib_deps = []
             for library in libraries:
                 if library in lib_deps:
                     continue

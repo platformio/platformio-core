@@ -57,11 +57,28 @@ class ClangtidyCheckTool(CheckToolBase):
         if not self.is_flag_set("--checks", flags):
             cmd.append("--checks=*")
 
+        project_files = self.get_project_target_files(self.options["patterns"])
+
+        src_files = []
+        for scope in project_files:
+            src_files.extend(project_files[scope])
+
         cmd.extend(flags)
-        cmd.extend(self.get_project_target_files())
+        cmd.extend(src_files)
         cmd.append("--")
 
-        cmd.extend(["-D%s" % d for d in self.cpp_defines + self.toolchain_defines])
-        cmd.extend(["-I%s" % inc for inc in self.cpp_includes])
+        cmd.extend(
+            ["-D%s" % d for d in self.cpp_defines + self.toolchain_defines["c++"]]
+        )
+
+        includes = []
+        for inc in self.cpp_includes:
+            if self.options.get("skip_packages") and inc.lower().startswith(
+                self.config.get_optional_dir("packages").lower()
+            ):
+                continue
+            includes.append(inc)
+
+        cmd.append("--extra-arg=" + self._long_includes_hook(includes))
 
         return cmd

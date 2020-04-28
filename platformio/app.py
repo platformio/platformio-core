@@ -13,8 +13,11 @@
 # limitations under the License.
 
 import codecs
+import getpass
 import hashlib
 import os
+import platform
+import socket
 import uuid
 from os import environ, getenv, listdir, remove
 from os.path import dirname, isdir, isfile, join, realpath
@@ -22,7 +25,7 @@ from time import time
 
 import requests
 
-from platformio import exception, fs, lockfile
+from platformio import __version__, exception, fs, lockfile
 from platformio.compat import WINDOWS, dump_json_to_unicode, hashlib_encode_data
 from platformio.proc import is_ci
 from platformio.project.helpers import (
@@ -414,3 +417,28 @@ def get_cid():
     if WINDOWS or os.getuid() > 0:  # pylint: disable=no-member
         set_state_item("cid", cid)
     return cid
+
+
+def get_user_agent():
+    data = ["PlatformIO/%s" % __version__, "CI/%d" % int(is_ci())]
+    if get_session_var("caller_id"):
+        data.append("Caller/%s" % get_session_var("caller_id"))
+    if os.getenv("PLATFORMIO_IDE"):
+        data.append("IDE/%s" % os.getenv("PLATFORMIO_IDE"))
+    data.append("Python/%s" % platform.python_version())
+    data.append("Platform/%s" % platform.platform())
+    return " ".join(data)
+
+
+def get_host_id():
+    h = hashlib.sha1(hashlib_encode_data(get_cid()))
+    try:
+        username = getpass.getuser()
+        h.update(hashlib_encode_data(username))
+    except:  # pylint: disable=bare-except
+        pass
+    return h.hexdigest()
+
+
+def get_host_name():
+    return str(socket.gethostname())[:255]

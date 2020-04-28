@@ -6,12 +6,25 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
+4.3.2 (2020-04-28)
+~~~~~~~~~~~~~~~~~~
+
+* New `Account Management System <https://docs.platformio.org/page/plus/pio-account.html>`__ (preview)
+* Open source `PIO Remote <http://docs.platformio.org/page/plus/pio-remote.html>`__ client
+* Improved `PIO Check <http://docs.platformio.org/page/plus/pio-check.html>`__ with more accurate project processing
+* Echo what is typed when ``send_on_enter`` device monitor filter <https://docs.platformio.org/page/projectconf/section_env_monitor.html#monitor-filters>`__ is used (`issue #3452 <https://github.com/platformio/platformio-core/issues/3452>`_)
+* Fixed PIO Unit Testing for Zephyr RTOS
+* Fixed UnicodeDecodeError on Windows when network drive (NAS) is used (`issue #3417 <https://github.com/platformio/platformio-core/issues/3417>`_)
+* Fixed an issue when saving libraries in new project results in error "No option 'lib_deps' in section" (`issue #3442 <https://github.com/platformio/platformio-core/issues/3442>`_)
+* Fixed an incorrect node path used for pattern matching when processing middleware nodes
+* Fixed an issue with missing ``lib_extra_dirs`` option in SRC_LIST for CLion (`issue #3460 <https://github.com/platformio/platformio-core/issues/3460>`_)
+
 4.3.1 (2020-03-20)
 ~~~~~~~~~~~~~~~~~~
 
 * Fixed a SyntaxError "'return' with argument inside generator" for PIO Unified Debugger when Python 2.7 is used
 * Fixed an issue when ``lib_archive = no`` was not honored in `"platformio.ini" <https://docs.platformio.org/page/projectconf.html>`__
-* Fixed an TypeError "super(type, obj): obj must be an instance or subtype of type" when device monitor is used with a custom dev-platform filter (`issue #3431 <https://github.com/platformio/platformio-core/issues/3431>`_)
+* Fixed a TypeError "super(type, obj): obj must be an instance or subtype of type" when device monitor is used with a custom dev-platform filter (`issue #3431 <https://github.com/platformio/platformio-core/issues/3431>`_)
 
 4.3.0 (2020-03-19)
 ~~~~~~~~~~~~~~~~~~
@@ -35,7 +48,7 @@ PlatformIO Core 4
   - Show a hexadecimal representation of the data (code point of each character) with ``hexlify`` filter
 
 * New standalone (1-script) `PlatformIO Core Installer <https://github.com/platformio/platformio-core-installer>`_
-* Initial support for `Renode <https://docs.platformio.org/page/plus/debug-tools/qemu.html>`__ simulation framework (`issue #3401 <https://github.com/platformio/platformio-core/issues/3401>`_)
+* Initial support for `Renode <https://docs.platformio.org/page/plus/debug-tools/renode.html>`__ simulation framework (`issue #3401 <https://github.com/platformio/platformio-core/issues/3401>`_)
 * Added support for Arm Mbed "module.json" ``dependencies`` field (`issue #3400 <https://github.com/platformio/platformio-core/issues/3400>`_)
 * Improved support for Arduino "library.properties" ``depends`` field
 * Fixed an issue when quitting from PlatformIO IDE does not shutdown PIO Home server

@@ -156,5 +156,5 @@ def test_init_custom_framework(clirunner, validate_cliresult):
 def test_init_incorrect_board(clirunner):
     result = clirunner.invoke(cmd_init, ["-b", "missed_board"])
     assert result.exit_code == 2
-    assert 'Error: Invalid value for "-b" / "--board' in result.output
+    assert "Error: Invalid value for" in result.output
     assert isinstance(result.exception, SystemExit)

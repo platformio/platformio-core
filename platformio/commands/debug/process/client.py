@@ -30,8 +30,8 @@ from platformio import app, fs, proc, telemetry, util
 from platformio.commands.debug import helpers
 from platformio.commands.debug.exception import DebugInvalidOptionsError
 from platformio.commands.debug.initcfgs import get_gdb_init_config
-from platformio.commands.debug.process import BaseProcess
-from platformio.commands.debug.server import DebugServer
+from platformio.commands.debug.process.base import BaseProcess
+from platformio.commands.debug.process.server import DebugServer
 from platformio.compat import hashlib_encode_data, is_bytes
 from platformio.project.helpers import get_project_cache_dir
 
@@ -194,7 +194,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         # go to init break automatically
         if self.INIT_COMPLETED_BANNER.encode() in data:
             telemetry.send_event(
-                "Debug", "Started", telemetry.encode_run_environment(self.env_options)
+                "Debug", "Started", telemetry.dump_run_environment(self.env_options)
             )
             self._auto_continue_timer = task.LoopingCall(self._auto_exec_continue)
             self._auto_continue_timer.start(0.1)
@@ -231,8 +231,11 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         self._target_is_run = True
 
     def _handle_error(self, data):
-        self._errors_buffer += data
-        if self.PIO_SRC_NAME.encode() not in data or b"Error in sourced" not in data:
+        self._errors_buffer = (self._errors_buffer + data)[-8192:]  # keep last 8 KBytes
+        if not (
+            self.PIO_SRC_NAME.encode() in self._errors_buffer
+            and b"Error in sourced" in self._errors_buffer
+        ):
             return
 
         last_erros = self._errors_buffer.decode()
@@ -240,7 +243,7 @@ class GDBClient(BaseProcess):  # pylint: disable=too-many-instance-attributes
         last_erros = re.sub(r'((~|&)"|\\n\"|\\t)', " ", last_erros, flags=re.M)
 
         err = "%s -> %s" % (
-            telemetry.encode_run_environment(self.env_options),
+            telemetry.dump_run_environment(self.env_options),
             last_erros,
         )
         telemetry.send_exception("DebugInitError: %s" % err)

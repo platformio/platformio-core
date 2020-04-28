@@ -13,10 +13,12 @@
 # limitations under the License.
 
 import json
+import sys
 from os.path import isfile, join
 
 import pytest
 
+from platformio import fs
 from platformio.commands.check.command import cli as cmd_check
 
 DEFAULT_CONFIG = """
@@ -383,3 +385,73 @@ check_tool = pvs-studio
     assert errors != 0
     assert warnings != 0
     assert style == 0
+
+
+def test_check_embedded_platform_all_tools(clirunner, tmpdir):
+    config = """
+[env:test]
+platform = ststm32
+board = nucleo_f401re
+framework = %s
+check_tool = %s
+"""
+    # tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.c").write(
+        """// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+#include <stdlib.h>
+
+void unused_function(int val){
+    int unusedVar = 0;
+    int* iP = &unusedVar;
+    *iP++;
+}
+
+int main() {
+}
+"""
+    )
+
+    frameworks = ["arduino", "mbed", "stm32cube"]
+    if sys.version_info[0] == 3:
+        # Zephyr only supports Python 3
+        frameworks.append("zephyr")
+
+    for framework in frameworks:
+        for tool in ("cppcheck", "clangtidy", "pvs-studio"):
+            tmpdir.join("platformio.ini").write(config % (framework, tool))
+
+            result = clirunner.invoke(cmd_check, ["--project-dir", str(tmpdir)])
+
+            defects = sum(count_defects(result.output))
+
+            assert result.exit_code == 0 and defects > 0, "Failed %s with %s" % (
+                framework,
+                tool,
+            )
+
+
+def test_check_skip_includes_from_packages(clirunner, tmpdir):
+    config = """
+[env:test]
+platform = nordicnrf52
+board = nrf52_dk
+framework = arduino
+"""
+
+    tmpdir.join("platformio.ini").write(config)
+    tmpdir.mkdir("src").join("main.c").write(TEST_CODE)
+
+    result = clirunner.invoke(
+        cmd_check, ["--project-dir", str(tmpdir), "--skip-packages", "-v"]
+    )
+
+    output = result.output
+
+    project_path = fs.to_unix_path(str(tmpdir))
+    for l in output.split("\n"):
+        if not l.startswith("Includes:"):
+            continue
+        for inc in l.split(" "):
+            if inc.startswith("-I") and project_path not in inc:
+                pytest.fail("Detected an include path from packages: " + inc)

@@ -51,7 +51,7 @@ class DefectItem(object):
         self.cwe = cwe
         self.id = id
         self.file = file
-        if file.startswith(get_project_dir()):
+        if file.lower().startswith(get_project_dir().lower()):
             self.file = os.path.relpath(file, get_project_dir())
 
     def __repr__(self):

@@ -20,6 +20,7 @@ from threading import Thread
 
 from platformio import exception
 from platformio.compat import (
+    PY2,
     WINDOWS,
     get_filesystem_encoding,
     get_locale_encoding,
@@ -30,7 +31,10 @@ from platformio.compat import (
 class AsyncPipeBase(object):
     def __init__(self):
         self._fd_read, self._fd_write = os.pipe()
-        self._pipe_reader = os.fdopen(self._fd_read)
+        if PY2:
+            self._pipe_reader = os.fdopen(self._fd_read)
+        else:
+            self._pipe_reader = os.fdopen(self._fd_read, encoding="utf-8")
         self._buffer = ""
         self._thread = Thread(target=self.run)
         self._thread.start()

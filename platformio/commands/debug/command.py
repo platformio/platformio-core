@@ -148,7 +148,7 @@ def cli(ctx, project_dir, project_conf, environment, verbose, interface, __unpro
     inject_contrib_pysite()
 
     # pylint: disable=import-outside-toplevel
-    from platformio.commands.debug.client import GDBClient, reactor
+    from platformio.commands.debug.process.client import GDBClient, reactor
 
     client = GDBClient(project_dir, __unprocessed, debug_options, env_options)
     client.spawn(configuration["gdb_path"], configuration["prog_path"])

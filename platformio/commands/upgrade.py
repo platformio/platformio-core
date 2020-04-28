@@ -19,7 +19,7 @@ from zipfile import ZipFile
 import click
 import requests
 
-from platformio import VERSION, __version__, app, exception, util
+from platformio import VERSION, __version__, app, exception
 from platformio.compat import WINDOWS
 from platformio.proc import exec_command, get_pythonexe_path
 from platformio.project.helpers import get_project_cache_dir
@@ -133,7 +133,7 @@ def get_develop_latest_version():
     r = requests.get(
         "https://raw.githubusercontent.com/platformio/platformio"
         "/develop/platformio/__init__.py",
-        headers=util.get_request_defheaders(),
+        headers={"User-Agent": app.get_user_agent()},
     )
     r.raise_for_status()
     for line in r.text.split("\n"):
@@ -153,7 +153,8 @@ def get_develop_latest_version():
 
 def get_pypi_latest_version():
     r = requests.get(
-        "https://pypi.org/pypi/platformio/json", headers=util.get_request_defheaders()
+        "https://pypi.org/pypi/platformio/json",
+        headers={"User-Agent": app.get_user_agent()},
     )
     r.raise_for_status()
     return r.json()["info"]["version"]

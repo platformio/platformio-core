@@ -121,10 +121,18 @@ def test_defaults(config):
     assert config.get_optional_dir("core") == os.path.join(
         os.path.expanduser("~"), ".platformio"
     )
+    assert config.get("strict_ldf", "lib_deps", ["Empty"]) == ["Empty"]
     assert config.get("env:extra_2", "lib_compat_mode") == "soft"
     assert config.get("env:extra_2", "build_type") == "release"
     assert config.get("env:extra_2", "build_type", None) is None
     assert config.get("env:extra_2", "lib_archive", "no") is False
+
+    config.expand_interpolations = False
+    with pytest.raises(
+        InvalidProjectConfError, match="No option 'lib_deps' in section: 'strict_ldf'"
+    ):
+        assert config.get("strict_ldf", "lib_deps", ["Empty"]) == ["Empty"]
+    config.expand_interpolations = True
 
 
 def test_sections(config):

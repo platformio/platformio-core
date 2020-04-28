@@ -71,6 +71,7 @@ def cli(port, host, no_open, shutdown_timeout):
     from platformio.commands.home.rpc.handlers.os import OSRPC
     from platformio.commands.home.rpc.handlers.piocore import PIOCoreRPC
     from platformio.commands.home.rpc.handlers.project import ProjectRPC
+    from platformio.commands.home.rpc.handlers.account import AccountRPC
     from platformio.commands.home.rpc.server import JSONRPCServerFactory
     from platformio.commands.home.web import WebRoot
 
@@ -81,6 +82,7 @@ def cli(port, host, no_open, shutdown_timeout):
     factory.addHandler(OSRPC(), namespace="os")
     factory.addHandler(PIOCoreRPC(), namespace="core")
     factory.addHandler(ProjectRPC(), namespace="project")
+    factory.addHandler(AccountRPC(), namespace="account")
 
     contrib_dir = get_core_package_dir("contrib-piohome")
     if not isdir(contrib_dir):

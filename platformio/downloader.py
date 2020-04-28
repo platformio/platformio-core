@@ -23,7 +23,7 @@ from time import mktime
 import click
 import requests
 
-from platformio import util
+from platformio import app, util
 from platformio.exception import (
     FDSHASumMismatch,
     FDSizeMismatch,
@@ -38,7 +38,7 @@ class FileDownloader(object):
         self._request = requests.get(
             url,
             stream=True,
-            headers=util.get_request_defheaders(),
+            headers={"User-Agent": app.get_user_agent()},
             verify=sys.version_info >= (2, 7, 9),
         )
         if self._request.status_code != 200:

@@ -13,7 +13,7 @@ clang
 {{"%cpp"}} -std=c++{{ cxx_stds[-1] }}
 % end
 
-% for include in includes:
+% for include in filter_includes(includes):
 -I{{ include }}
 % end
 

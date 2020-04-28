@@ -46,14 +46,14 @@ class PackageRepoIterator(object):
         return self
 
     def __next__(self):
-        return self.next()
+        return self.next()  # pylint: disable=not-callable
 
     @staticmethod
     @util.memoized(expire="60s")
     def load_manifest(url):
         r = None
         try:
-            r = requests.get(url, headers=util.get_request_defheaders())
+            r = requests.get(url, headers={"User-Agent": app.get_user_agent()})
             r.raise_for_status()
             return r.json()
         except:  # pylint: disable=bare-except

@@ -5,9 +5,11 @@
 # please create `CMakeListsUser.txt` in the root of project.
 # The `CMakeListsUser.txt` will not be overwritten by PlatformIO.
 
-% from platformio.project.helpers import (load_project_ide_data)
-%
+% import os
 % import re
+%
+% from platformio.compat import WINDOWS
+% from platformio.project.helpers import (load_project_ide_data)
 %
 % def _normalize_path(path):
 %   if project_dir in path:
@@ -22,11 +24,29 @@
 %   return path
 % end
 %
+% def _fix_lib_dirs(lib_dirs):
+%   result = []
+%   for lib_dir in lib_dirs:
+%     if not os.path.isabs(lib_dir):
+%       lib_dir = os.path.join(project_dir, lib_dir)
+%     end
+%     result.append(to_unix_path(os.path.normpath(lib_dir)))
+%   end
+%   return result
+% end
+%
 % def _escape(text):
 %   return to_unix_path(text).replace('"', '\\"')
 % end
 %
+% def _get_lib_dirs(envname):
+%   env_libdeps_dir = os.path.join(config.get_optional_dir("libdeps"), envname)
+%   env_lib_extra_dirs = config.get("env:" + envname, "lib_extra_dirs", [])
+%   return _fix_lib_dirs([env_libdeps_dir] + env_lib_extra_dirs)
+% end
+%
 % envs = config.envs()
+
 
 % if len(envs) > 1:
 set(CMAKE_CONFIGURATION_TYPES "{{ ";".join(envs) }};" CACHE STRING "Build Types reflect PlatformIO Environments" FORCE)
@@ -54,13 +74,19 @@ set(CMAKE_CXX_STANDARD {{ cxx_stds[-1] }})
 % end
 
 if (CMAKE_BUILD_TYPE MATCHES "{{ env_name }}")
-%for define in defines:
+% for define in defines:
     add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
-%end
+% end
 
-%for include in includes:
-    include_directories("{{ _normalize_path(to_unix_path(include)) }}")
-%end
+% for include in filter_includes(includes):
+    include_directories("{{ _normalize_path(include) }}")
+% end
+
+    FILE(GLOB_RECURSE EXTRA_LIB_SOURCES
+% for dir in _get_lib_dirs(env_name):
+        {{  _normalize_path(dir) + "/*.*" }}
+% end
+    )
 endif()
 
 % leftover_envs = list(set(envs) ^ set([env_name]))
@@ -76,9 +102,22 @@ if (CMAKE_BUILD_TYPE MATCHES "{{ env }}")
     add_definitions(-D'{{!re.sub(r"([\"\(\)#])", r"\\\1", define)}}')
 %   end
 
-%   for include in data["includes"]:
+%   for include in filter_includes(data["includes"]):
     include_directories("{{ _normalize_path(to_unix_path(include)) }}")
 %   end
+
+    FILE(GLOB_RECURSE EXTRA_LIB_SOURCES
+%   for dir in _get_lib_dirs(env):
+        {{  _normalize_path(dir) + "/*.*" }}
+%   end
+    )
 endif()
 % end
-FILE(GLOB_RECURSE SRC_LIST "{{ _normalize_path(project_src_dir) }}/*.*" "{{ _normalize_path(project_lib_dir) }}/*.*" "{{ _normalize_path(project_libdeps_dir) }}/*.*")
+
+FILE(GLOB_RECURSE SRC_LIST
+%   for path in (project_src_dir, project_lib_dir):
+    {{  _normalize_path(path) + "/*.*" }}
+%   end
+)
+
+list(APPEND SRC_LIST ${EXTRA_LIB_SOURCES})

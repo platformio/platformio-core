@@ -14,6 +14,7 @@
 
 # pylint: disable=no-member, no-self-use, unused-argument, too-many-lines
 # pylint: disable=too-many-instance-attributes, too-many-public-methods
+# pylint: disable=assignment-from-no-return
 
 from __future__ import absolute_import
 

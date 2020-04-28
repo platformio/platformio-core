@@ -61,6 +61,7 @@ from platformio.project.helpers import find_project_dir_above, get_project_dir
     multiple=True,
     type=click.Choice(DefectItem.SEVERITY_LABELS.values()),
 )
+@click.option("--skip-packages", is_flag=True)
 def cli(
     environment,
     project_dir,
@@ -72,6 +73,7 @@ def cli(
     verbose,
     json_output,
     fail_on_defect,
+    skip_packages,
 ):
     app.set_session_var("custom_project_conf", project_conf)
 
@@ -114,6 +116,7 @@ def cli(
                 severity=[DefectItem.SEVERITY_LABELS[DefectItem.SEVERITY_HIGH]]
                 if silent
                 else severity or config.get("env:" + envname, "check_severity"),
+                skip_packages=skip_packages or env_options.get("check_skip_packages"),
             )
 
             for tool in config.get("env:" + envname, "check_tool"):
@@ -222,7 +225,7 @@ def collect_component_stats(result):
         component = dirname(defect.file) or defect.file
         _append_defect(component, defect)
 
-        if component.startswith(get_project_dir()):
+        if component.lower().startswith(get_project_dir().lower()):
             while os.sep in component:
                 component = dirname(component)
                 _append_defect(component, defect)

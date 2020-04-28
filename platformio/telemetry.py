@@ -13,8 +13,9 @@
 # limitations under the License.
 
 import atexit
+import hashlib
+import json
 import os
-import platform
 import re
 import sys
 import threading
@@ -27,8 +28,9 @@ import requests
 
 from platformio import __version__, app, exception, util
 from platformio.commands import PlatformioCLI
-from platformio.compat import string_types
+from platformio.compat import hashlib_encode_data, string_types
 from platformio.proc import is_ci, is_container
+from platformio.project.helpers import is_platformio_project
 
 try:
     import queue
@@ -93,23 +95,17 @@ class MeasurementProtocol(TelemetryBase):
 
     def _prefill_appinfo(self):
         self["av"] = __version__
-
-        # gather dependent packages
-        dpdata = []
-        dpdata.append("PlatformIO/%s" % __version__)
-        if app.get_session_var("caller_id"):
-            dpdata.append("Caller/%s" % app.get_session_var("caller_id"))
-        if os.getenv("PLATFORMIO_IDE"):
-            dpdata.append("IDE/%s" % os.getenv("PLATFORMIO_IDE"))
-        self["an"] = " ".join(dpdata)
+        self["an"] = app.get_user_agent()
 
     def _prefill_sysargs(self):
         args = []
         for arg in sys.argv[1:]:
-            arg = str(arg).lower()
-            if "@" in arg or os.path.exists(arg):
+            arg = str(arg)
+            if arg == "account":  # ignore account cmd which can contain username
+                return
+            if any(("@" in arg, "/" in arg, "\\" in arg)):
                 arg = "***"
-            args.append(arg)
+            args.append(arg.lower())
         self["cd3"] = " ".join(args)
 
     def _prefill_custom_data(self):
@@ -127,7 +123,6 @@ class MeasurementProtocol(TelemetryBase):
 
         caller_id = str(app.get_session_var("caller_id"))
         self["cd1"] = util.get_systype()
-        self["cd2"] = "Python/%s %s" % (platform.python_version(), platform.platform())
         self["cd4"] = (
             1 if (not util.is_ci() and (caller_id or not is_container())) else 0
         )
@@ -269,7 +264,7 @@ class MPDataPusher(object):
             r = self._http_session.post(
                 "https://ssl.google-analytics.com/collect",
                 data=data,
-                headers=util.get_request_defheaders(),
+                headers={"User-Agent": app.get_user_agent()},
                 timeout=1,
             )
             r.raise_for_status()
@@ -299,10 +294,6 @@ def on_exception(e):
         isinstance(e, cls)
         for cls in (IOError, exception.ReturnErrorCode, exception.UserSideException,)
     ]
-    try:
-        skip_conditions.append("[API] Account: " in str(e))
-    except UnicodeEncodeError as ue:
-        e = ue
     if any(skip_conditions):
         return
     is_fatal = any(
@@ -320,7 +311,15 @@ def on_exception(e):
 
 def measure_ci():
     event = {"category": "CI", "action": "NoName", "label": None}
-    known_cis = ("TRAVIS", "APPVEYOR", "GITLAB_CI", "CIRCLECI", "SHIPPABLE", "DRONE")
+    known_cis = (
+        "GITHUB_ACTIONS",
+        "TRAVIS",
+        "APPVEYOR",
+        "GITLAB_CI",
+        "CIRCLECI",
+        "SHIPPABLE",
+        "DRONE",
+    )
     for name in known_cis:
         if os.getenv(name, "false").lower() == "true":
             event["action"] = name
@@ -328,26 +327,29 @@ def measure_ci():
     send_event(**event)
 
 
-def encode_run_environment(options):
-    non_sensative_keys = [
+def dump_run_environment(options):
+    non_sensitive_data = [
         "platform",
+        "platform_packages",
         "framework",
         "board",
         "upload_protocol",
         "check_tool",
         "debug_tool",
+        "monitor_filters",
     ]
-    safe_options = [
-        "%s=%s" % (k, v) for k, v in sorted(options.items()) if k in non_sensative_keys
-    ]
-    return "&".join(safe_options)
+    safe_options = {k: v for k, v in options.items() if k in non_sensitive_data}
+    if is_platformio_project(os.getcwd()):
+        phash = hashlib.sha1(hashlib_encode_data(app.get_cid()))
+        safe_options["pid"] = phash.hexdigest()
+    return json.dumps(safe_options, sort_keys=True, ensure_ascii=False)
 
 
 def send_run_environment(options, targets):
     send_event(
         "Env",
         " ".join([t.title() for t in targets or ["run"]]),
-        encode_run_environment(options),
+        dump_run_environment(options),
     )
 
 

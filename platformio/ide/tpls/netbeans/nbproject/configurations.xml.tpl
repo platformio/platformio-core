@@ -34,9 +34,10 @@
           <cleanCommand>{{platformio_path}} -f -c netbeans run --target clean</cleanCommand>
           <executablePath></executablePath>
           <cTool>
+            % cleaned_includes = filter_includes(includes)
             <incDir>
               <pElem>src</pElem>
-              % for include in includes:
+              % for include in cleaned_includes:
               <pElem>{{include}}</pElem>
               % end
             </incDir>
@@ -49,7 +50,7 @@
           <ccTool>
             <incDir>
               <pElem>src</pElem>
-              % for include in includes:
+              % for include in cleaned_includes:
               <pElem>{{include}}</pElem>
               % end
             </incDir>

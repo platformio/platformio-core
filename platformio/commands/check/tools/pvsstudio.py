@@ -140,9 +140,7 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
             os.remove(self._tmp_output_file)
 
         if not os.path.isfile(self._tmp_preprocessed_file):
-            click.echo(
-                "Error: Missing preprocessed file '%s'" % (self._tmp_preprocessed_file)
-            )
+            click.echo("Error: Missing preprocessed file for '%s'" % src_file)
             return ""
 
         cmd = [
@@ -175,6 +173,9 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
         return os.path.join(self._tmp_dir, next(tempfile._get_candidate_names()))
 
     def _prepare_preprocessed_file(self, src_file):
+        if os.path.isfile(self._tmp_preprocessed_file):
+            os.remove(self._tmp_preprocessed_file)
+
         flags = self.cxx_flags
         compiler = self.cxx_path
         if src_file.endswith(".c"):
@@ -186,40 +187,46 @@ class PvsStudioCheckTool(CheckToolBase):  # pylint: disable=too-many-instance-at
         cmd.extend(["-D%s" % d for d in self.cpp_defines])
         cmd.append('@"%s"' % self._tmp_cmd_file)
 
+        # Explicitly specify C++ as the language used in .ino files
+        if src_file.endswith(".ino"):
+            cmd.insert(1, "-xc++")
+
         result = proc.exec_command(" ".join(cmd), shell=True)
-        if result["returncode"] != 0:
+        if result["returncode"] != 0 or result["err"]:
             if self.options.get("verbose"):
                 click.echo(" ".join(cmd))
             click.echo(result["err"])
             self._bad_input = True
 
     def clean_up(self):
+        super(PvsStudioCheckTool, self).clean_up()
         if os.path.isdir(self._tmp_dir):
             shutil.rmtree(self._tmp_dir)
 
     def check(self, on_defect_callback=None):
         self._on_defect_callback = on_defect_callback
-        src_files = [
-            f for f in self.get_project_target_files() if not f.endswith((".h", ".hpp"))
-        ]
-
-        for src_file in src_files:
-            self._prepare_preprocessed_file(src_file)
-            cmd = self.configure_command(src_file)
-            if self.options.get("verbose"):
-                click.echo(" ".join(cmd))
-            if not cmd:
-                self._bad_input = True
+        for scope, files in self.get_project_target_files(
+            self.options["patterns"]
+        ).items():
+            if scope not in ("c", "c++"):
                 continue
+            for src_file in files:
+                self._prepare_preprocessed_file(src_file)
+                cmd = self.configure_command(src_file)
+                if self.options.get("verbose"):
+                    click.echo(" ".join(cmd))
+                if not cmd:
+                    self._bad_input = True
+                    continue
 
-            result = proc.exec_command(cmd)
-            # pylint: disable=unsupported-membership-test
-            if result["returncode"] != 0 or "License was not entered" in result["err"]:
-                self._bad_input = True
-                click.echo(result["err"])
-                continue
+                result = proc.exec_command(cmd)
+                # pylint: disable=unsupported-membership-test
+                if result["returncode"] != 0 or "license" in result["err"].lower():
+                    self._bad_input = True
+                    click.echo(result["err"])
+                    continue
 
-            self._process_defects(self.parse_defects(self._tmp_output_file))
+                self._process_defects(self.parse_defects(self._tmp_output_file))
 
         self.clean_up()
 

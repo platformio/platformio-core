@@ -12,7 +12,7 @@ format:
 test:
 	py.test --verbose --capture=no --exitfirst -n 6 --dist=loadscope tests --ignore tests/test_examples.py
 
-before-commit: isort format lint test
+before-commit: isort format lint
 
 clean-docs:
 	rm -rf docs/_build

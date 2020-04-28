@@ -1,0 +1,31 @@
+name: Docs
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          git submodule update --init --recursive
+          python -m pip install --upgrade pip
+          pip install tox
+
+      - name: Build docs
+        run: |
+          tox -e docs
+
+      - name: Slack Notification
+        uses: homoluctus/slatify@master
+        if: failure()
+        with:
+          type: ${{ job.status }}
+          job_name: '*Docs*'
+          commit: true
+          url: ${{ secrets.SLACK_BUILD_WEBHOOK }}

@@ -12,30 +12,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=too-many-arguments, import-outside-toplevel
+# pylint: disable=inconsistent-return-statements
+
 import os
-import sys
+import subprocess
 import threading
 from tempfile import mkdtemp
 from time import sleep
 
 import click
 
-from platformio import exception, fs
+from platformio import exception, fs, proc
 from platformio.commands.device import helpers as device_helpers
 from platformio.commands.device.command import device_monitor as cmd_device_monitor
-from platformio.managers.core import pioplus_call
+from platformio.commands.run.command import cli as cmd_run
+from platformio.commands.test.command import cli as cmd_test
+from platformio.compat import PY2
+from platformio.managers.core import inject_contrib_pysite
 from platformio.project.exception import NotPlatformIOProjectError
-
-# pylint: disable=unused-argument
 
 
 @click.group("remote", short_help="PIO Remote")
 @click.option("-a", "--agent", multiple=True)
-def cli(**kwargs):
-    pass
+@click.pass_context
+def cli(ctx, agent):
+    if PY2:
+        raise exception.UserSideException(
+            "PIO Remote requires Python 3.5 or above. \nPlease install the latest "
+            "Python 3 and reinstall PlatformIO Core using installation script:\n"
+            "https://docs.platformio.org/page/core/installation.html"
+        )
+    ctx.obj = agent
+    inject_contrib_pysite()
 
 
-@cli.group("agent", short_help="Start new agent or list active")
+@cli.group("agent", short_help="Start a new agent or list active")
 def remote_agent():
     pass
 
@@ -49,18 +61,17 @@ def remote_agent():
     envvar="PLATFORMIO_REMOTE_AGENT_DIR",
     type=click.Path(file_okay=False, dir_okay=True, writable=True, resolve_path=True),
 )
-def remote_agent_start(**kwargs):
-    pioplus_call(sys.argv[1:])
+def remote_agent_start(name, share, working_dir):
+    from platformio.commands.remote.client.agent_service import RemoteAgentService
 
-
-@remote_agent.command("reload", short_help="Reload agents")
-def remote_agent_reload():
-    pioplus_call(sys.argv[1:])
+    RemoteAgentService(name, share, working_dir).connect()
 
 
 @remote_agent.command("list", short_help="List active agents")
 def remote_agent_list():
-    pioplus_call(sys.argv[1:])
+    from platformio.commands.remote.client.agent_list import AgentListClient
+
+    AgentListClient().connect()
 
 
 @cli.command("update", short_help="Update installed Platforms, Packages and Libraries")
@@ -73,8 +84,11 @@ def remote_agent_list():
 @click.option(
     "--dry-run", is_flag=True, help="Do not update, only check for the new versions"
 )
-def remote_update(only_check, dry_run):
-    pioplus_call(sys.argv[1:])
+@click.pass_obj
+def remote_update(agents, only_check, dry_run):
+    from platformio.commands.remote.client.update_core import UpdateCoreClient
+
+    UpdateCoreClient("update", agents, dict(only_check=only_check or dry_run)).connect()
 
 
 @cli.command("run", short_help="Process project environments remotely")
@@ -93,8 +107,65 @@ def remote_update(only_check, dry_run):
 @click.option("-r", "--force-remote", is_flag=True)
 @click.option("-s", "--silent", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
-def remote_run(**kwargs):
-    pioplus_call(sys.argv[1:])
+@click.pass_obj
+@click.pass_context
+def remote_run(
+    ctx,
+    agents,
+    environment,
+    target,
+    upload_port,
+    project_dir,
+    disable_auto_clean,
+    force_remote,
+    silent,
+    verbose,
+):
+
+    from platformio.commands.remote.client.run_or_test import RunOrTestClient
+
+    cr = RunOrTestClient(
+        "run",
+        agents,
+        dict(
+            environment=environment,
+            target=target,
+            upload_port=upload_port,
+            project_dir=project_dir,
+            disable_auto_clean=disable_auto_clean,
+            force_remote=force_remote,
+            silent=silent,
+            verbose=verbose,
+        ),
+    )
+    if force_remote:
+        return cr.connect()
+
+    click.secho("Building project locally", bold=True)
+    local_targets = []
+    if "clean" in target:
+        local_targets = ["clean"]
+    elif set(["buildfs", "uploadfs", "uploadfsota"]) & set(target):
+        local_targets = ["buildfs"]
+    else:
+        local_targets = ["checkprogsize", "buildprog"]
+    ctx.invoke(
+        cmd_run,
+        environment=environment,
+        target=local_targets,
+        project_dir=project_dir,
+        # disable_auto_clean=True,
+        silent=silent,
+        verbose=verbose,
+    )
+
+    if any(["upload" in t for t in target] + ["program" in target]):
+        click.secho("Uploading firmware remotely", bold=True)
+        cr.options["target"] += ("nobuild",)
+        cr.options["disable_auto_clean"] = True
+        cr.connect()
+
+    return True
 
 
 @cli.command("test", short_help="Remote Unit Testing")
@@ -114,8 +185,59 @@ def remote_run(**kwargs):
 @click.option("--without-building", is_flag=True)
 @click.option("--without-uploading", is_flag=True)
 @click.option("--verbose", "-v", is_flag=True)
-def remote_test(**kwargs):
-    pioplus_call(sys.argv[1:])
+@click.pass_obj
+@click.pass_context
+def remote_test(
+    ctx,
+    agents,
+    environment,
+    ignore,
+    upload_port,
+    test_port,
+    project_dir,
+    force_remote,
+    without_building,
+    without_uploading,
+    verbose,
+):
+
+    from platformio.commands.remote.client.run_or_test import RunOrTestClient
+
+    cr = RunOrTestClient(
+        "test",
+        agents,
+        dict(
+            environment=environment,
+            ignore=ignore,
+            upload_port=upload_port,
+            test_port=test_port,
+            project_dir=project_dir,
+            force_remote=force_remote,
+            without_building=without_building,
+            without_uploading=without_uploading,
+            verbose=verbose,
+        ),
+    )
+    if force_remote:
+        return cr.connect()
+
+    click.secho("Building project locally", bold=True)
+
+    ctx.invoke(
+        cmd_test,
+        environment=environment,
+        ignore=ignore,
+        project_dir=project_dir,
+        without_uploading=True,
+        without_testing=True,
+        verbose=verbose,
+    )
+
+    click.secho("Testing project remotely", bold=True)
+    cr.options["without_building"] = True
+    cr.connect()
+
+    return True
 
 
 @cli.group("device", short_help="Monitor remote device or list existing")
@@ -125,8 +247,11 @@ def remote_device():
 
 @remote_device.command("list", short_help="List remote devices")
 @click.option("--json-output", is_flag=True)
-def device_list(json_output):
-    pioplus_call(sys.argv[1:])
+@click.pass_obj
+def device_list(agents, json_output):
+    from platformio.commands.remote.client.device_list import DeviceListClient
+
+    DeviceListClient(agents, json_output).connect()
 
 
 @remote_device.command("monitor", short_help="Monitor remote device")
@@ -193,8 +318,20 @@ def device_list(json_output):
     "--environment",
     help="Load configuration from `platformio.ini` and specified environment",
 )
+@click.option(
+    "--sock",
+    type=click.Path(
+        exists=True, file_okay=False, dir_okay=True, writable=True, resolve_path=True
+    ),
+)
+@click.pass_obj
 @click.pass_context
-def device_monitor(ctx, **kwargs):
+def device_monitor(ctx, agents, **kwargs):
+    from platformio.commands.remote.client.device_monitor import DeviceMonitorClient
+
+    if kwargs["sock"]:
+        return DeviceMonitorClient(agents, **kwargs).connect()
+
     project_options = {}
     try:
         with fs.cd(kwargs["project_dir"]):
@@ -206,15 +343,12 @@ def device_monitor(ctx, **kwargs):
     kwargs["baud"] = kwargs["baud"] or 9600
 
     def _tx_target(sock_dir):
-        pioplus_argv = ["remote", "device", "monitor"]
-        pioplus_argv.extend(device_helpers.options_to_argv(kwargs, project_options))
-        pioplus_argv.extend(["--sock", sock_dir])
-        try:
-            pioplus_call(pioplus_argv)
-        except exception.ReturnErrorCode:
-            pass
+        subcmd_argv = ["remote", "device", "monitor"]
+        subcmd_argv.extend(device_helpers.options_to_argv(kwargs, project_options))
+        subcmd_argv.extend(["--sock", sock_dir])
+        subprocess.call([proc.where_is_program("platformio")] + subcmd_argv)
 
-    sock_dir = mkdtemp(suffix="pioplus")
+    sock_dir = mkdtemp(suffix="pio")
     sock_file = os.path.join(sock_dir, "sock")
     try:
         t = threading.Thread(target=_tx_target, args=(sock_dir,))
@@ -229,3 +363,5 @@ def device_monitor(ctx, **kwargs):
         t.join(2)
     finally:
         fs.rmtree(sock_dir)
+
+    return True

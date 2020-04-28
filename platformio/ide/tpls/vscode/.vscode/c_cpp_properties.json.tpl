@@ -52,34 +52,34 @@
 %
 % def _find_forced_includes(flags, inc_paths):
 %   result = []
+%   include_args = ("-include", "-imacros")
 %   for f in flags:
-%     inc = ""
-%     if f.startswith("-include") and f.split("-include")[1].strip():
-%       inc = f.split("-include")[1].strip()
-%     elif not f.startswith("-"):
-%       inc = f
+%     if not f.startswith(include_args):
+%       continue
 %     end
-%     if inc:
-%       result.append(_find_abs_path(inc, inc_paths))
+%     for arg in include_args:
+%       inc = ""
+%       if f.startswith(arg) and f.split(arg)[1].strip():
+%         inc = f.split(arg)[1].strip()
+%       elif not f.startswith("-"):
+%         inc = f
+%       end
+%       if inc:
+%         result.append(_find_abs_path(inc, inc_paths))
+%       end
 %     end
 %   end
 %   return result
 % end
 %
-% cleaned_includes = []
-% for include in includes:
-%   if "toolchain-" not in os.path.dirname(os.path.commonprefix(
-%       [include, cc_path])) and os.path.isdir(include):
-%     cleaned_includes.append(include)
-%   end
-% end
+% cleaned_includes = filter_includes(includes, ["toolchain"])
 %
 % STD_RE = re.compile(r"\-std=[a-z\+]+(\d+)")
 % cc_stds = STD_RE.findall(cc_flags)
 % cxx_stds = STD_RE.findall(cxx_flags)
 % cc_m_flags = split_args(cc_flags)
 % forced_includes = _find_forced_includes(
-%   filter_args(cc_m_flags, ["-include"]), cleaned_includes)
+%   filter_args(cc_m_flags, ["-include", "-imacros"]), cleaned_includes)
 %
 {
     "configurations": [
@@ -135,7 +135,7 @@
             "compilerArgs": [
 % for flag in [
 %     '"%s"' % _escape(f) if _escape_required(f) else f
-%     for f in filter_args(cc_m_flags, ["-m", "-i", "@"], ["-include"])
+%     for f in filter_args(cc_m_flags, ["-m", "-i", "@"], ["-include", "-imacros"])
 % ]:
                 "{{ flag }}",
 % end

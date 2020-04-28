@@ -92,7 +92,7 @@ class PlatformIOPackageException(PlatformioException):
     pass
 
 
-class UnknownPackage(PlatformIOPackageException):
+class UnknownPackage(UserSideException):
 
     MESSAGE = "Detected unknown package '{0}'"
 
@@ -177,7 +177,7 @@ class NotGlobalLibDir(UserSideException):
     )
 
 
-class InvalidLibConfURL(PlatformioException):
+class InvalidLibConfURL(UserSideException):
 
     MESSAGE = "Invalid library config URL '{0}'"
 
@@ -242,12 +242,12 @@ class BuildScriptNotFound(PlatformioException):
     MESSAGE = "Invalid path '{0}' to build script"
 
 
-class InvalidSettingName(PlatformioException):
+class InvalidSettingName(UserSideException):
 
     MESSAGE = "Invalid setting with the name '{0}'"
 
 
-class InvalidSettingValue(PlatformioException):
+class InvalidSettingValue(UserSideException):
 
     MESSAGE = "Invalid value '{0}' for the setting '{1}'"
 
@@ -257,7 +257,7 @@ class InvalidJSONFile(PlatformioException):
     MESSAGE = "Could not load broken JSON: {0}"
 
 
-class CIBuildEnvsEmpty(PlatformioException):
+class CIBuildEnvsEmpty(UserSideException):
 
     MESSAGE = (
         "Can't find PlatformIO build environments.\n"
@@ -295,7 +295,7 @@ class CygwinEnvDetected(PlatformioException):
     )
 
 
-class TestDirNotExists(PlatformioException):
+class TestDirNotExists(UserSideException):
 
     MESSAGE = (
         "A test folder '{0}' does not exist.\nPlease create 'test' "

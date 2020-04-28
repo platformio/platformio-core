@@ -53,7 +53,7 @@ def is_compat_platform_and_framework(platform, framework):
     return framework in (p.frameworks or {}).keys()
 
 
-def campaign_url(url, source="platformio", medium="docs"):
+def campaign_url(url, source="platformio.org", medium="docs"):
     data = urlparse(url)
     query = data.query
     if query:
@@ -429,8 +429,8 @@ Boards
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
       `PlatformIO Boards Explorer <https://platformio.org/boards>`_
-    * For more detailed ``board`` information please scroll tables below by
-      horizontal.
+    * For more detailed ``board`` information please scroll the tables below by
+      horizontally.
 """)
 
         for vendor, boards in sorted(vendors.items()):
@@ -533,7 +533,7 @@ Boards
 .. note::
     * You can list pre-configured boards by :ref:`cmd_boards` command or
       `PlatformIO Boards Explorer <https://platformio.org/boards>`_
-    * For more detailed ``board`` information please scroll tables below by horizontal.
+    * For more detailed ``board`` information please scroll the tables below by horizontally.
 """)
         for vendor, boards in sorted(vendors.items()):
             lines.append(str(vendor))
@@ -906,7 +906,7 @@ def update_project_examples():
         platform_examples_dir = join(p.get_dir(), "examples")
         examples_md_lines = []
         if isdir(platform_examples_dir):
-            for item in os.listdir(platform_examples_dir):
+            for item in sorted(os.listdir(platform_examples_dir)):
                 example_dir = join(platform_examples_dir, item)
                 if not isdir(example_dir) or not os.listdir(example_dir):
                     continue

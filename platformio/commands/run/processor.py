@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from platformio import exception, telemetry
+from platformio import exception
 from platformio.commands.platform import platform_install as cmd_platform_install
 from platformio.commands.test.processor import CTX_META_TEST_RUNNING_NAME
 from platformio.managers.platform import PlatformFactory
@@ -61,8 +61,6 @@ class EnvironmentProcessor(object):
 
         build_vars = self.get_build_variables()
         build_targets = list(self.get_build_targets())
-
-        telemetry.send_run_environment(self.options, build_targets)
 
         # skip monitor target, we call it above
         if "monitor" in build_targets:

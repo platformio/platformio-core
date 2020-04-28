@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-VERSION = (4, 3, 1)
+VERSION = (4, 3, 2)
 __version__ = ".".join([str(s) for s in VERSION])
 
 __title__ = "platformio"
@@ -34,3 +34,5 @@ __license__ = "Apache Software License"
 __copyright__ = "Copyright 2014-present PlatformIO"
 
 __apiurl__ = "https://api.platformio.org"
+__pioaccount_api__ = "https://api.accounts.platformio.org"
+__pioremote_endpoint__ = "ssl:host=remote.platformio.org:port=4413"

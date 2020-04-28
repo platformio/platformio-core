@@ -57,6 +57,20 @@ class ProjectGenerator(object):
 
         return envname
 
+    @staticmethod
+    def filter_includes(includes_map, ignore_scopes=None, to_unix_path=True):
+        ignore_scopes = ignore_scopes or []
+        result = []
+        for scope, includes in includes_map.items():
+            if scope in ignore_scopes:
+                continue
+            for include in includes:
+                if to_unix_path:
+                    include = fs.to_unix_path(include)
+                if include not in result:
+                    result.append(include)
+        return result
+
     def _load_tplvars(self):
         tpl_vars = {
             "config": self.config,
@@ -92,12 +106,13 @@ class ProjectGenerator(object):
         for key, value in tpl_vars.items():
             if key.endswith(("_path", "_dir")):
                 tpl_vars[key] = fs.to_unix_path(value)
-        for key in ("includes", "src_files", "libsource_dirs"):
+        for key in ("src_files", "libsource_dirs"):
             if key not in tpl_vars:
                 continue
             tpl_vars[key] = [fs.to_unix_path(inc) for inc in tpl_vars[key]]
 
         tpl_vars["to_unix_path"] = fs.to_unix_path
+        tpl_vars["filter_includes"] = self.filter_includes
         return tpl_vars
 
     def get_src_files(self):
@@ -136,7 +151,7 @@ class ProjectGenerator(object):
     @staticmethod
     def _render_tpl(tpl_path, tpl_vars):
         with codecs.open(tpl_path, "r", encoding="utf8") as fp:
-            return bottle.SimpleTemplate(fp.read()).render(**tpl_vars)
+            return bottle.template(fp.read(), **tpl_vars)
 
     @staticmethod
     def _merge_contents(dst_path, contents):

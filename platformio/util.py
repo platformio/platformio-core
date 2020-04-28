@@ -270,11 +270,6 @@ def get_mdns_services():
     return items
 
 
-def get_request_defheaders():
-    data = (__version__, int(is_ci()), requests.utils.default_user_agent())
-    return {"User-Agent": "PlatformIO/%s CI/%d %s" % data}
-
-
 @memoized(expire="60s")
 def _api_request_session():
     return requests.Session()
@@ -284,18 +279,19 @@ def _api_request_session():
 def _get_api_result(
     url, params=None, data=None, auth=None  # pylint: disable=too-many-branches
 ):
-    from platformio.app import get_setting  # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel
+    from platformio.app import get_user_agent, get_setting
 
     result = {}
     r = None
     verify_ssl = sys.version_info >= (2, 7, 9)
 
-    headers = get_request_defheaders()
     if not url.startswith("http"):
         url = __apiurl__ + url
         if not get_setting("strict_ssl"):
             url = url.replace("https://", "http://")
 
+    headers = {"User-Agent": get_user_agent()}
     try:
         if data:
             r = _api_request_session().post(
@@ -369,6 +365,7 @@ def get_api_result(url, params=None, data=None, auth=None, cache_valid=None):
 PING_REMOTE_HOSTS = [
     "140.82.118.3",  # Github.com
     "35.231.145.151",  # Gitlab.com
+    "88.198.170.159",  # platformio.org
     "github.com",
     "platformio.org",
 ]
