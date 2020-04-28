@@ -92,7 +92,7 @@ class PlatformIOPackageException(PlatformioException):
     pass
 
 
-class UnknownPackage(PlatformIOPackageException):
+class UnknownPackage(UserSideException):
 
     MESSAGE = "Detected unknown package '{0}'"
 

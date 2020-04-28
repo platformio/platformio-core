@@ -84,6 +84,7 @@ class LibraryManager(BasePkgManager):
         for v in versions:
             semver_new = self.parse_semver_version(v["name"])
             if semver_spec:
+                # pylint: disable=unsupported-membership-test
                 if not semver_new or semver_new not in semver_spec:
                     continue
                 if not item or self.parse_semver_version(item["name"]) < semver_new:

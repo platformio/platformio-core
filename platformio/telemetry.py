@@ -294,10 +294,6 @@ def on_exception(e):
         isinstance(e, cls)
         for cls in (IOError, exception.ReturnErrorCode, exception.UserSideException,)
     ]
-    try:
-        skip_conditions.append("[API] Account: " in str(e))
-    except UnicodeEncodeError as ue:
-        e = ue
     if any(skip_conditions):
         return
     is_fatal = any(

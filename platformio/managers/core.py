@@ -33,7 +33,7 @@ CORE_PACKAGES = {
     "tool-pvs-studio": "~7.7.0",
 }
 
-# pylint: disable=arguments-differ
+# pylint: disable=arguments-differ,signature-differs
 
 
 class CorePackageManager(PackageManager):

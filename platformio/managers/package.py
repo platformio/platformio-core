@@ -46,7 +46,7 @@ class PackageRepoIterator(object):
         return self
 
     def __next__(self):
-        return self.next()
+        return self.next()  # pylint: disable=not-callable
 
     @staticmethod
     @util.memoized(expire="60s")
