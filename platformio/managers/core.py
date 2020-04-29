@@ -114,7 +114,8 @@ def inject_contrib_pysite(verify_openssl=False):
         return True
 
     try:
-        from OpenSSL import SSL  # pylint: disable=import-error,unused-import
+        # pylint: disable=import-error,unused-import,unused-variable
+        from OpenSSL import SSL
     except:  # pylint: disable=bare-except
         build_contrib_pysite_deps(get_core_package_dir("contrib-pysite"))
 
