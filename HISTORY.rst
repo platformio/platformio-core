@@ -6,6 +6,11 @@ Release Notes
 PlatformIO Core 4
 -----------------
 
+4.3.4 (2020-??-??)
+~~~~~~~~~~~~~~~~~~
+
+* Automatically build ``contrib-pysite`` package on a target machine when pre-built package is not compatible (`issue #3482 <https://github.com/platformio/platformio-core/issues/3482>`_)
+
 4.3.3 (2020-04-28)
 ~~~~~~~~~~~~~~~~~~
 

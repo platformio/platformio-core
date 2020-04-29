@@ -100,14 +100,25 @@ def update_core_packages(only_check=False, silent=False):
     return True
 
 
-def inject_contrib_pysite():
-    from site import addsitedir  # pylint: disable=import-outside-toplevel
+def inject_contrib_pysite(verify_openssl=False):
+    # pylint: disable=import-outside-toplevel
+    from site import addsitedir
 
     contrib_pysite_dir = get_core_package_dir("contrib-pysite")
     if contrib_pysite_dir in sys.path:
-        return
+        return True
     addsitedir(contrib_pysite_dir)
     sys.path.insert(0, contrib_pysite_dir)
+
+    if not verify_openssl:
+        return True
+
+    try:
+        from OpenSSL import SSL  # pylint: disable=import-error,unused-import
+    except:  # pylint: disable=bare-except
+        build_contrib_pysite_deps(get_core_package_dir("contrib-pysite"))
+
+    return True
 
 
 def build_contrib_pysite_deps(target_dir):
@@ -146,11 +157,11 @@ def get_contrib_pysite_deps():
     sys_type = util.get_systype()
     py_version = "%d%d" % (sys.version_info.major, sys.version_info.minor)
 
-    twisted_version = "19.7.0"
+    twisted_version = "19.10.0" if PY2 else "20.3.0"
     result = [
         "twisted == %s" % twisted_version,
-        "autobahn == 19.10.1",
-        "json-rpc == 1.12.1",
+        "autobahn == 20.4.3",
+        "json-rpc == 1.13.0",
     ]
 
     # twisted[tls], see setup.py for %twisted_version%
@@ -159,12 +170,12 @@ def get_contrib_pysite_deps():
     )
 
     # zeroconf
-    if sys.version_info.major < 3:
+    if PY2:
         result.append(
             "https://github.com/ivankravets/python-zeroconf/" "archive/pio-py27.zip"
         )
     else:
-        result.append("zeroconf == 0.23.0")
+        result.append("zeroconf == 0.26.0")
 
     if "windows" in sys_type:
         result.append("pypiwin32 == 223")
