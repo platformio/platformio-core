@@ -144,7 +144,7 @@ def build_contrib_pysite_deps(target_dir):
                 "-m",
                 "pip",
                 "install",
-                "--no-cache-dir",
+                # "--no-cache-dir",
                 "--no-compile",
                 "-t",
                 target_dir,
