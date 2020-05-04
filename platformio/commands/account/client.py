@@ -206,9 +206,12 @@ class AccountClient(object):
                     self.api_base_url + "/v1/login",
                     headers={"Authorization": "Bearer %s" % auth.get("refresh_token")},
                 )
-                result = self.raise_error_from_response(response)
-                app.set_state_item("account", result)
-                return result.get("auth").get("access_token")
+                try:
+                    result = self.raise_error_from_response(response)
+                    app.set_state_item("account", result)
+                    return result.get("auth").get("access_token")
+                except exception.AccountError:
+                    app.delete_state_item("account")
         raise exception.AccountNotAuthenticated()
 
     @staticmethod
